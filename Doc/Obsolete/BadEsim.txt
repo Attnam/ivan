@@ -1,0 +1,9 @@
+void golem::MoveRandomly(void)
+{
+	USI ToTry = rand() % 9;
+	if(ToTry == 8 && rand() % 5)
+		Engrave("Golem Needs Master");
+	else
+	if(!game::CCurrentArea()->CSquare(CPos() + game::CMoveVector()[ToTry])->CCharacter());
+		TryMove(CPos() + game::CMoveVector()[ToTry]);
+}

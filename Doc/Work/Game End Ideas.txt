@@ -1,0 +1,5 @@
+game time used (days, hours, minutes)
+turns used
+game started, real time day & time
+game ended, real time day & time
+average time used for each turn

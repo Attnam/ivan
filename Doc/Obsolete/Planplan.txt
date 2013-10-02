@@ -1,0 +1,124 @@
+Sight direction, size 3
+* would allow sneaking etc.
+
+Animation engine, size 5
+* allows flies over corpses, evil item shine etc.
+
+Fire effects, size 2
+* animation engine almost necessary
+* with ego-item engine, allows flame weapons
+
+Fluid system that handles special material effects, size 1
+* with fire effects, allows lava
+
+***
+Ego-item engine, size 1
+* with fire effects, allows flame weapons
+***
+
+Ego-monster engine, size 1
+* multiplies monster amount and thus increases replayability
+
+***
+Races, size 2
+* new element to gameplay
+* increases replayability
+***
+
+Guild system, size 3
+* new element to gameplay
+* increases replayability
+
+***
+Multi-tiled creature engine, size 2
+* allows dragons and new mammoth
+***
+
+Government engine, size 3
+* with battle engine, allows wars
+
+Battle engine, size 3
+* with government engine, allows wars
+
+***
+Stat datafile, size 2
+* allows easier balancing
+***
+
+Wilderness encounters, size 1
+* fun when towns are ready
+
+Blessed/uncursed/cursed item statuses, size 1
+* new element to gameplay
+
+Identify system, size 2
+* new element to gameplay
+
+Magic system, size 2
+* new element to gameplay
+
+Skill system, size 2
+* new element to gameplay
+
+Throw remake using linear extrapolation, size 2
+* allows very ergonomic ranged attack system
+* allows more impressive explosion effects
+
+New route algorithm, size 3
+* allows increased hostile AI that finds hiding players
+* allows guards and shopkeepers to return to their normal place after battle
+* increases level generation speed
+* with mouse interface, allows "goto clicked square" command
+
+AI improvements like panicking and ranged attacks, size 2
+* new element to gameplay
+
+More commands for team members like "guard", "flee" and "unequip", size 2
+* increase playability
+
+Day and night, size 2
+* addition to roguelike scene
+* allows IvanDev to boast with its light engine
+
+Random town engine, size 3
+* innovative addition to rpg scene
+* increases replayability
+
+Random castle engine, size 3
+* innovative addition to rpg scene
+* increases replayability
+
+Renewed god system, size 4
+* innovative addition to rpg scene
+
+Mouse interface, size 5
+* increases playability and enlarges game target group
+* with new route algorithm, allows "goto clicked square" command
+
+***
+Possibility to increase window size or resolution while keeping the tile size, size 1
+* increases playability especially for new players
+***
+
+In-game manual, size 2
+* increase playability especially for new players
+
+Monster memory, size 2
+* increase playability especially for new players
+
+Character sagas, size 2
+* rewards the player
+
+Afterlife, size 2
+* rewards the player in an unseen way
+
+Bonefile system, size 2
+* new element to gameplay
+* allows innovative ghost Überpriests
+
+Febot engine for the Holy Haven of Gurus, size 4
+* a must
+
+Colored messages, size 5
+* would make the game prettier and give more information for the player
+* note: if this ought to be done, it must be done as soon as possible, as it becomes more difficult with every message added

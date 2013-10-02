@@ -1,0 +1,10 @@
+Map algorithms:
+
+*	Lux = Emitation / Distance ^ 2
+
+Character algorithms:
+
+*	HP Maximum = Endurance * 2
+*	Speed = 100 + (Agility - 10) / 2
+*	Attribute increase demand > 1.18 ^ Attribute * 193
+*	Attribute decrease demand < 1.18 ^ (100 - Attribute) * -193

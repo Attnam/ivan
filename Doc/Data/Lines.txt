@@ -1,0 +1,40 @@
+				      public					source			      datafiles			    graphics
+name	version		date	      release	lang	ports		files	 lines	  bytes		files	lines	  bytes		files	  bytes
+RL	prod. began 	08.04.1999
+RL	last build	04.05.1999	N	C	DOS		   28	  1262	  26188		    3	 7385	  22157		    0	      0
+RL2	last build	27.07.1999	N	C	DOS		    ?	     ?	      ?		    ?	    ?	      ?		    0	      0
+RL3	last build	28.07.1999	N	C	DOS		    6	  1424	  24899		    2	 3703	  11111		    0	      0
+RLPMM	0.100 alpha	10.12.1999	N	C	DOS		   25	  3261	  78122		    0	    0	      0		    0	      0
+RLPMM	0.190 alpha	24.12.1999	N	C	DOS		   29	  4070	  96149		    0	    0	      0		    1	   2950
+RLPMM	0.191 alpha	26.12.1999	N	C	DOS		   29	  4175	 101119		    0	    0	      0		    3	  27437
+RLPMM	0.192 alpha	26.01.2000	N	C	DOS		   29	  4397	 107856		    0	    0	      0		    3	  27850
+RLPMM	0.193 alpha	20.02.2000	N	C	DOS		   30	  5139	 122083		    0	    0	      0		    3	  29701
+RL5	0.200 alpha	11.02.2001	N	C++/Asm	DOS		   33	  7083	 176441		    0	    0	      0		    6	 117998
+RL5	0.210 alpha	25.03.2001	N	C++/Asm	DOS		   33	  8850	 234228		    0	    0	      0		    8	 141861
+RL5	0.220 alpha	23.04.2001	N	C++/Asm	DOS		   37	 10541	 270063		    0	    0	      0		    8	 141996
+IVAN	0.230 alpha	01.05.2001	N	C++/Asm	DOS		   43	 12110	 316597		    0	    0	      0		    9	 155737
+IVAN	0.231 alpha	07.05.2001	Y	C++/Asm	DOS		    ?	     ?	      ?		    ?	    ?	      ?		    ?	      ?
+IVAN	0.240 alpha	27.07.2001	Y	C++/Asm	Win32		   60	 16210	 440478		    0	    0	      0		    9	 155755
+IVAN	0.300 alpha	20.11.2001	N	C++/Asm	Win32		   97	 26624	 724371		    1	  782	  20469		    9	 149021
+IVAN	0.301 alpha	10.12.2001	Y	C++/Asm	Win32		  101	 28206	 766894		    1	  797	  20825		    9	 149109
+IVAN	0.310		04.02.2002	Y	C++/Asm	Win32/DOS/Linux	  104	 33502	 881187		    1	  916	  21887		    9	 196192
+IVAN	0.311		25.02.2002	Y	C++/Asm	Win32/DOS/Linux	  108	 33786	 888564		    1	  912	  21881		    9	 196380
+IVAN	0.400		10.12.2002	Y	C++/Asm	Win32/DOS/Linux	  123	 52615	1430270		    7	 9013	 205706		   11	 270042
+IVAN	0.401		05.02.2003	Y	C++/Asm	Win32/DOS/Linux	  138	 51457	1398352		    7	 9440	 215166		   12	 355227
+IVAN	0.410		27.03.2003	Y	C++	Win32/DOS/Linux	  137	 50032	1395504		    7	10276	 246754		   13	 285473
+IVAN	0.420		11.05.2003	Y	C++	Win32/DOS/Linux	  137	 53490	1533799		    7	10801	 264237		   13	 333229
+IVAN	0.430		05.08.2003	Y	C++	Win32/DOS/Linux	  137	 55705	1600010		    7	11612	 283226		   13	 344036
+IVAN	0.500		10.12.2004	Y	C++	Win32/DOS/Linux	  155	 74367	2022380		    7	15718	 422035		   13	 397339
+
+Competition:
+
+ADOM	prod. began	12.07.1994
+ADOM	0.20		07.05.1995	N	C	DOS/Linux	   62	 23918	 516497		    ?	    ?	      ?		    0	      0
+ADOM	0.99		30.04.1997	Y	C	DOS/Linux/Amiga	  143	103484  2593377		    ?	    ?	      ?		    0	      0
+
+ZAngb.	2.72		23.12.2002	Y	C	incredibly many	  200	279614	6056321		   34	32425	 793279		   45	1541919
+
+Hack	1.00		17.12.1984	Y	C	several Unixes	   73	 14652   339084		    2	  431	  19791		    0	      0
+Nethack	3.40		20.03.2002	Y	C	roughly all	  385	242120  6573492		   37	19191	 705513		    3	 356014
+
+Slashem	0.06E4F8	30.03.2002	Y	C	roughly all	  418	283664	7659049		   68	28007	1083943		   28	2911824

@@ -1,0 +1,42 @@
+Struktuuri:
+
+                 World Map
+                    ^
+                    |
+                 Dungeons
+                    ^
+                    |
+                  Areas
+                    ^
+                    |
+		 Squares
+                    ^
+    /--------------/|\----------------\
+    ^               ^                 ^
+    |               |                 |
+Terrains         Stack(s)    ->   Characters
+                    ^
+                    |
+		  Items
+
+The Plan:
+
+Kartta generoidaan esim. Wsimmin koodilla, t‰rke‰t paikat laitetaan joka peliin,
+v‰hemm‰n essentiaalisista valitaan satunnainen osa.
+
+Jokaisella kartan ruudulla on pointteri joko staattiseen tai dynaamiseen luolastoon
+ja sis‰‰ntulokohtaan (myˆs alempiin kerroksiin, vrt. Unremarkable Dungeon Adomissa).
+
+Luolasto k‰sitt‰‰ kolmiulotteisen taulukon, jossa jokaiselle vokselille m‰‰ritet‰‰n
+kentt‰ janalta 0-255 (0 == penetroimaton kiviblokki, joka ei kuulu mihink‰‰n kentt‰‰n).
+
+Kentt‰ on kaksiulotteinen taulukko ruutuja, joilla on ala- ja yl‰maasto, edellinen
+m‰‰ritt‰‰ lattian kovuuden esim. l‰pihakkuuta varten, j‰lkimm‰inen materiaalin ja
+valon l‰p‰isevyyden.
+
+Jokaisella ruudulla on myˆs joko yksi tai nelj‰ pinoa riippuen yl‰maaston l‰p‰isevyydest‰,
+ja 0-3 karakteria eri tasoissa (esim. hevonen, pelaaja ja lemmikkilepakko).
+
+Karaktereilla on yksi pino, josta joukosta varustelu m‰‰ritell‰‰n.
+
+Pino k‰sitt‰‰ 0-65535 esinett‰.

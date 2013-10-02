@@ -1,0 +1,19 @@
+*Inhandspics.
+//Messages.
+(s) Multi-tiled creatures.
+(s) New team system.
+/*Corpse.
+//Corpse size levels.
+(s) Lines & words.
+//*Healing.
+*Danger values & difficulty.
+//Name system.
+//(s) Vector based humanoid read.
+(s) Throw flipping.
+/*Silhouette.
+//*Graphical item menu.
+/*Effect types.
+Priest.
+/*Pick-axe.
+//*New state system.
+Oree author.

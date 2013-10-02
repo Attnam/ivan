@@ -1,0 +1,70 @@
+curved flaming iron two-handed sword of destruction
+valpurium can
+ancient sparkling diamond mace "Neerc Se-Ulb"
+
+curved blessed rustproof flaming +5 iron two-handed sword of destruction named "Oblivion"
+the curved flaming iron two-handed sword of destruction
+a curved flaming iron two-handed sword of destruction
+curved flaming iron two-handed swords of destruction
+the curved flaming iron two-handed swords of destruction
+
+flaming iron two-handed sword of destruction
+the flaming iron two-handed sword of destruction
+a flaming iron two-handed sword of destruction
+curved iron two-handed swords of destruction
+the curved iron two-handed swords of destruction
+
+iron two-handed sword of destruction
+the iron two-handed sword of destruction
+an iron two-handed sword of destruction
+iron two-handed swords of destruction
+the iron two-handed swords of destruction
+
+two-handed sword of destruction
+the iron two-handed sword of destruction
+a two-handed sword of destruction
+two-handed swords of destruction
+the two-handed swords of destruction
+
+Erno the vigorous valpurium golem
+
+curved blessed rustproof broken flaming +5 iron two-handed sword of destruction named "Oblivion"
+
+curved iron two-handed sword
+
+Petrus the high priest of Valpurus
+Kulgul the vigorous goblin king
+
+ancient diamond mace named "Neerc Se-Ulb"
+banana / iron banana
+empty iron can / iron can full of school food
+lump of school food
+
+std::string PostFix(bool Articled)
+
+
+article adjective prefix material namesingular/plural postfix
+
+std::string Article() const { return "a"; }
+
+GenerateName(uchar Case, std::string Article, std::string Adjective, std::string Prefix, std::string 
+{
+  if(!(Case & PLURAL))
+    if(!(Case & DEFINEBIT))
+      return Material[Index]->Name() + " " + NameSingular();
+    else
+      if(!(Case & INDEFINEBIT))
+	return std::string("the ") + Material[Index]->Name() + " " + NameSingular();
+      else
+	return Material[Index]->Name(INDEFINITE) + " " + NameSingular();
+  else
+    if(!(Case & DEFINEBIT))
+      return Material[Index]->Name() + " " + NamePlural();
+    else
+      if(!(Case & INDEFINEBIT))
+	return std::string("the ") + Material[Index]->Name() + " " + NamePlural();
+      else
+	return Material[Index]->Name() + " " + NamePlural();
+}
+
+NameWithAdjective

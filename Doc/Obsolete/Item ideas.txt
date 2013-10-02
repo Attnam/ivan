@@ -1,0 +1,25 @@
+Misc:
+
+//horn of bravery - cures panic of friendly creatures
+//horn of fear - causes panic to enemies
+
+Weapons:
+
+//hammer of thunderbolts - lightning animation, electricity damage
+//poleaxe of unholy power - energy damage (renamed to Poleaxe named Mjolak)
+//wormhole spear - teleports the enemy (renamed to Spear named Vermis)
+//mace of hellfire - causes an explosion (renamed to Mace named Turox)
+//whip of thievery - disarms the enemy
+//staff of archmagi - randomly polymorphs/teleports/slows the enemy
+
+Armor:
+
+//gauntlets of strength - +x arm str
+//gauntlets of dexterity - +x dexterity
+//armor of great health - +x end
+//helm of piercing perception - +x per
+//helm of understanding - +x wisdom
+//helm of innovation - +x intelligence
+//helm of attractivity - +x charisma
+//boots of kicking - more kicking damage
+//girdle of carrying - +x% carrying strength

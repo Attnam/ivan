@@ -1,0 +1,101 @@
+------------
+|          |
+| Changes  |
+|          |
+------------
+
+
+
+Date: 			3.18.01
+Files Changed: 		area.cc/h, square.h, character.cc/h, game.cc, item.cc/h
+Functions Changed: 	area = (HandleCharacters, CIdealPopulation, CPopulation, GenerateNewMonsters), square = (CPopulation) character = (Consume), humanoid(humanoid, draw), perttu(perttu) game = (panel::Draw), can = (Consume, GetConsumeType), potion = (Consume)
+Things Added: 		Population counter, Consume from the ground, More Monsters are created during the game, More info in Panel, dropping potions after drinking
+Bugs Corrected:		"Dying" in hunger in Wizard mode, no crashing while trying to consume empty cans or empty bottles, random humanoids, REALLY!
+Comments:		First change to this file! Yepee!
+Author:			Hex, Nuteater
+
+
+Date:			3.20.01
+Files Changed: 		game.cc/h, charachter.h/cc
+Functions Changed:	game = (CCommandDescription), character = (ShowKeyLayout)
+Things Added:		? key shows the current keylayout (which is currently unchangable)
+Bugs Corrected:		-
+Comments:		shard (also sherd) a broken piece of clay, glass, metal, etc: shard of pottery. (random word from a dictonary)
+Author:			Hex
+
+Date: 			3.8.3 jF
+Files Changed: 		All
+Functions Changed: 	So many functions that I won't list them
+			because it would cause instant death to numerous
+			species in Afganistan
+Things Added: 		Ligth & draw optimization
+Bugs Corrected:		Amount most likely negative
+Comments:		My brains are melting... Coke...
+Author:			DPV
+
+Date: 			3.8.3 jF
+Files Changed: 		character.cc
+Functions Changed: 	character::Consume	
+Bugs Corrected:		Worn/wielded items are no longer edible.
+Comments:		All your base are belong to us.
+
+Data:			10.8 jF
+Files Changed:		character.cc/character.h, game.cc, game.h
+Functions Changed:	golem = (kaikki), game = (BalancedCreateMonster, CalculateMonsterDifficulty(void), CurrentDifficulty(void)
+Things Added:		Golems' meleestrength depends on its material. And no longer are too hard monsters generated for stupid players..
+Comments:		I hate this !!! I f***ing hate this!!1 aaaaaaarfg!!128312
+Author:			Hex... 
+
+Date: 			15.8.3 jFEP
+Files Changed: 		character.cc
+Functions Changed: 	Consume
+Things Added: 		Bulimia prohibited		
+Comments:		Joku terveystieto 10 voi tasapainottaa noita ravintom‰‰ri‰,
+			jos h‰iritsee...
+Author:			PMGR Castus Petrus I
+
+Data: 			17.8.3 jF
+Files Changed:		character.cc/character.h, item.cc
+Functions Changed:	character::Move, scrollofteleport::Read
+Things Added:		-
+Bugs Corrected:		Teleport works even when overburdened
+Comments:		Not only does God play dice, he sometimes throws them 
+			where they can't be found ---Stephen Hawking
+Author:			Hex
+
+Data: 			17.8.3 jF (and maybe earlier)
+Files Changed:		terrain.cc/h, square.h, game.cc/h, character.cc
+Functions Changed:	something and something read below
+Things Added:		buggy lookmode and no longer will a character be able to eat 
+			too much....
+Comments:		I'm correcting Castus Petrus' code and I must state that he is not
+			worthy of his name. Lookmode is extremely buggy and most of all
+			he erased changes.txt for it. I was blind, but still I could make
+			this in to a release. Thank you PMGR Castus Petrus I. 
+Author:			PMGR Castus Petrus I with *slight* help from Hex 
+
+
+Data:			19.8.3 jF
+Files Changed:		character.cc/h, game.cc/h, square.h
+Functions Changed:	(kaikki tekemisen lis‰‰misen liittyv‰t... characterin konstruktori
+			jne) ja character = (WhatToEngrave, Engrave, Move), square = (CEngraved, Engrave), game::(KeyIsOK, StringQuestion)
+Things Added:		Engraving and related functions.
+Comments:		I can't say anything.
+Author:			Hex
+
+Data:			23.8.3 jF
+Files Changed:		Almost all files.
+Functions Changed:	75 % of all functions, so I won't list them because animals in 
+			Afganistan etc etc etc.
+Things Added:		You are a [species name] thing for debuging (try playing with a golem)
+			and more inside class fuction calls. Golem's ArmorModifier is now based 
+			on its material.
+Comments:		My back hurts. 
+Author:			Hex
+
+Data:			24.8.3
+Files Changed:		character::(GetAICommand, MoveRandomly), golem::MoveRandomly
+Things Added:		Golems write a message...
+Comments:		Brothers where art thou?
+Author:			Hex
+

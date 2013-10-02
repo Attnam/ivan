@@ -1,0 +1,136 @@
+----------------------------------------------------------------------------
+
+	       How to make a new item type, step-by-step tutorial
+
+----------------------------------------------------------------------------
+
+1. Choose whether you want to make an abstract item type, i.e. one that
+   is a base class for other item types but itself can't be instantiated,
+   like a "meleeweapon", or a concrete item like a "banana".
+2. If you chose your item to be concrete, goto 3, else goto 4.
+
+----------------------------------------------------------------------------
+
+3. Use the following syntax:
+
+	ITEM(
+		name,
+		base,
+		imaterials,
+		dparameters,
+		constructor,
+		load,
+		type,
+		possibility,
+		data
+	);
+
+   3.01. Add this at the end of item.h.
+   3.02. Replace "name" with the code name of the new item. This is
+	 the item's true name written in lowercase without any spaces
+	 or special letters. You may also shorten it somewhat as long as
+	 it's clear what you mean. I.e. "holy broadsword named
+	 Valpuri's Justifier" could be in this syntax just
+	 "valpurijustifier".
+   3.03. Replace "base" with the code name of the base class, like
+	 "item", "meleeweapon" or "scroll". The new class inherits all
+	 specialities of the base class.
+   3.04. Replace "imaterials" with the number of material types used in
+	 the item. A "banana" would have 2 materials: "bananaflesh" and
+	 "bananapeal".
+   3.05. Use the following syntax for "dparameters":
+
+	 (
+	  size,
+	  creatematerials
+	 )
+
+	 Place here the size of the item. Creatematerials determines
+	 whether the base class creates its own materials. Normally
+	 this is "false".
+
+   3.06. If your item will have only one material, replace "constructor"
+	 with the following syntax:
+
+	 { if(CreateMaterials) InitMaterials(material); }
+
+	 Where "material" is the chosen material, like "new glass(150)".
+
+	 If you want many materials, type something like this:
+
+	 { if(CreateMaterials)
+		 InitMaterials(n, material1, material2, ..., materialn); }
+
+	 Where n is the same number as imaterials, and material1-n are
+	 the materials created by default for your item.
+
+   3.07. Replace "load" with empty brackets, or optionally write some brief
+	 loading code between them.
+   3.08. Look above your class. Pick the last concrete class declared there,
+	 and take its "type". Add one to this, and place the result to
+	 "type".
+   3.09. Replace "possibility" with the possibility of appearing in the
+	 dungeon you want this item to have. It is compared with the
+	 possibilities of other items, so you should look at them to
+	 see how much this should be.
+   3.10. Place all the functions you want to overwrite to the "data"
+	 field. The essential functions are:
+
+	 NAME_SINGULAR RET(<name here>)
+	 NAME_PLURAL RET(<plural name here>)
+	 C_BITMAP_POS RETV(<x>, <y>)
+	 C_FORM_MODIFIER RET(<form modifier>)
+	 OFFER_MODIFIER RET(<offer modifier>)
+
+	 Which specify the name of the character, the coordinates
+	 of the item's picture in item.pcx, the modifier that is
+	 applied when calculating hit damage the item does when
+	 wielded, and the modifier which is used to determine
+	 you much the item is worth when sacrifying it to deities.
+
+	 Add any other functions here you want, like
+	 CAN_BE_WISHED RET(true) or IS_PERTTUS_NUT RET(true). If the
+	 function code is long, place semicolon (;) in the place of
+	 "RET(<something>)" and write your code to item.cpp instead.
+
+   3.11. Your item is ready!
+
+----------------------------------------------------------------------------
+
+4. Use the following syntax:
+
+	ABSTRACT_ITEM(
+		name,
+		base,
+		imaterials,
+		constructor,
+		load,
+		data
+	);
+
+   4.01. Add this at the end of item.h.
+   4.02. Replace "name" with the code name of the new item base class.
+   4.03. Replace "base" with the code name of the base class of the base
+	 class, like "meleeweapon" for "sword" or "item" for "scroll".
+	 The children of your base class will inherit all specialities
+	 of both classes.
+   4.04. Replace "imaterials" with the number of material types used in
+	 the item. A "sword" would have 3 materials: the material of the
+	 handle, the material of the edge and the material of the
+	 optional dipped poison.
+   4.05. Replace "constructor" with empty brackets, or optionally write
+	 some brief constructor code between them.
+   4.06. Replace "load" with empty brackets, or optionally write some brief
+	 loading code between them.
+   4.07. Place all the functions you want to overwrite to the "data"
+	 field. Add any other functions here you want, like
+	 CAN_BE_WISHED RET(true) or READ;. If the function code is long,
+	 place semicolon (;) in the place of "RET(<something>)" and write
+	 your code to item.cpp instead. All classes derived from this class
+	 will inherit these functions unless they overload them themselves.
+
+   4.08. Your new item base class is ready!
+
+----------------------------------------------------------------------------
+
+End of document.

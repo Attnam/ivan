@@ -1,0 +1,14 @@
+Killing player:	1000
+Escaping dungeon: 25
+
+NPs eaten: 0.3 * NP
+Damaging players: 10 * damage
+Surviving in the same level with player: 0.1 * Turns
+Causing player's danger level to drop: ---
+Increasing own danger value: ---
+
+1400
+464
+432
+423
+230

@@ -1,0 +1,130 @@
+A
+Air elemental [vaaleanharmaa E], greater air elemental [valkoinen E]
+Air shark [vaaleansininen A](lentävä hai featuring stormbringer)
+Ankheg [lila i]
+Alchemist [kirkkaan keltainen @](Heittelee erilaisia kemiallisia aineita. Kantaa aina kultaa mukanaan)
+
+
+
+B
+Bat [tummanruskea B], large bat [vaaleanharmaa B], huge bat [tummanharmaa B], fruit bat [vaaleanvihreä B], mana bat [vaaleansininen B] (drains mana)
+Brown bear [tummanruskea N], black bear [musta N], polar bear [valkoinen N]
+Beholder [musta e] (petrifying ja paralyzing gaze)
+
+C
+Coal slug [tummanharmaa f] (savupilvi/darkness)
+Coatl [valkoinen l](lisko höyhenillä varustettuna)
+
+D
+Small dog [tummanruskea d], big dog [tummanruskea d], dog pack leader [vaaleanharmaa d]
+Disruptor [sininen X]](bypass armor)
+Fire dragon [punainen D], ice dragon [valkoinen D], two-headed dragon [vaaleanharmaa D], three-headed dragon [tummanharmaa D]
+Djinni/genie [vaaleansininen D](toive, ehkä?)
+Doppleganger [pelaajan värinen @], greater doppleganger [pelaajan värinen @]
+Dark angel [musta @]
+Fire daemon [punainen &], ice daemon [valkoinen &], air daemon [vaaleanharmaa &], earth daemon [tummanruskea &]
+
+E
+Elk [tummanruskea y](siis hirvi, eikä kirjoitusvirhe)
+Dark elven wizard [musta u], grey elven bard [harmaa u], 
+
+F
+Forgotten hero [randomvärinen @]
+Trained fox [punainen tai punaisenruskea y]
+Falcon [valkoinen m]
+Floating eye [punainen e]
+Fire elemental [vaaleampi punainen E], greater fire elemental [tummanpunainen E]
+
+G
+Goblin [vaaleansininen g], goblin hiflyer [väriään vaihtava g](confuse), goblin chieftain [tummansininen g], goblin anarchist [musta g](polttopulloja) 
+Goat [valkoinen y]
+Genocider [punainen X](instakill/death ray)
+Gibberling [sininen r]
+Iron golem [musta Y], clay golem [vaaleanharmaa Y], snow golem [valkoinen Y], sand golem [oranssi Y], coal golem [tummanharmaa Y], flesh golem [vaaleankeltainen Y], adamantium golem [musta Y], eternium golem [musta Y], wax golem [valkoinen Y], wood golem [tummanruskea Y], ice golem [sininen Y], stone golem [vaaleanruskea Y]
+Gnoll [vaaleanruskea g], huge gnoll tummanruskea g], gnoll chieftain [vaaleanruskea g], gnoll king [keltainen g]
+
+H
+Hippie [väriään vaihtava @](confuse)
+
+
+I
+Ice elemental [vaaleansininen E], greater ice elemental [tummansininen E]
+Imp [punainen I]
+
+
+J
+Jackal [vaaleanharmaa j]
+
+
+K
+Kobold [vaaleanvihreä k], large kobold [tummanvihreä k], troll-sized kobold [ruskea k], kobold chieftain [vaaleanvihreä k], kobold mage [sininen k]
+Ki-rin [keltainen F](death ray)
+
+L
+Lion [keltainen f]
+
+M
+Mistress [musta @](ruoska)
+Mammoth [ruskea M]
+
+
+N
+Necromacer [tummanharmaa @]
+Nova [keltainen *](materia köntti)
+
+
+
+O
+Orc [tummanvihreä o], orc bouncer [punainen o], orc chieftain [tummanvihreä o], orc king [keltainen o], orc archer [vaaleanvihreä o]
+
+P
+Priest [valkoinen @]
+
+
+Q
+Quantum physician [oranssi @](fireball)
+
+
+R
+Rat [vaaleanruskea r], huge rat [tummanruskea r], mutated rat [vihreä r]
+Raven [ruskea m]
+
+S
+Large spider [vaaleansininen S], huge spider [ruskea S], tarantula [tummansininen S], black manta [musta S]
+Skeleton [valkoinen z]
+
+
+T
+Troll [ruskea T], troll barbarian [ruskea T], tiny troll [ruskea t], troll emperor [tummansininen T], troll king [keltainen T], troll mage [vaaleansininen T], troll fireblower [punainen T]
+Tiger [oranssi f], sabre-tooth tiger [valkoinen f]
+
+U
+Unicorn [valkoinen U]
+
+V
+Vampire [musta V]
+
+
+W
+Wolf [tummanharmaa j], silver wolf [valkoinen j], dire wolf [tummanharmaa j]
+Werewolf [musta j]
+walking tree [vihreä T]
+walking plate-mail [tummanharmaa [ ]
+
+X
+Xorn [tummanruskea x](elävä maaklöntti)
+
+
+Y
+
+
+
+Z
+Zapper [keltainen Z](sähköä)
+Zombie [ruskea z]
+
+
+
+- Jotkin monstereista ovat tietysti samanvärisiä
+- Yritin laittaa merkit monsuille ihan ajatuksen kanssa
+- Onhan tässäkin tietysti bugeja. Herjat maililla.

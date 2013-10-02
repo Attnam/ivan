@@ -1,0 +1,99 @@
+Esineet
+
+Tavallisten aseiden värit
+
+Musta
+Harmaa
+Teräs
+Valkoinen
+Kulta/keltainen
+Ruskea
+Jäätynyt
+Hehkuva
+Taika
+btw piirsin hehkuvaan miekkaan lieskat koska
+en nähnyt punaiselle värille muuta käyttöä kuin
+tuli. Pronssikin on ennemmin ruskeaa kuin
+punaista.
+
+
+Sitten Valpuri's Justifier
+Luulen että pyhä ase pystyy vastustamaan
+taikoja jotka muuttaisivat sitä. Jos se muuttuisi
+vaikka lateksiksi niin se olisi vähän...eri ase.
+Itseasiassa uskon että sen pitäisi muuttua
+tavalliseksi broadswordiksi jos sitä ryhdytään
+muuttelemaan. Sitäpaitsi en ole innostunut
+ajatuksesta että joku Justifierinlihaa oleva dark frog
+zappaa jollain Wand of Make Excrementillä miekkaani
+ja tappaa minut.
+Eli tein kuvat vain hehkuvasta, taiotusta ja 
+jäätyneestä.
+
+Kiviä ja pulloja tein monta koska niitä varmaankin
+tullaan tarvitsemaan. Ne potionit jotka ovat kokonaan
+punaisia, siis niin että pullo on punainen eikä neste,
+ovat kiehuvia. Siniset jäätyneitä. Vihreät taiottuja.
+
+Tuolla alempana on sitten lisää yksivärisiä potioneita
+mutta ne ovatkin tyhjien eri versioita.
+
+Banaaneita on noin monta koska tein niista alun perin
+monia versioita joita en raaskinut hävittää. Eli tässä
+banaanit, alkaen ylhäältä vasemmalta.
+
+Musta
+Harmaa
+Teräs / Jäätynyt
+Valkoinen
+Puu
+Kulta / grillattu
+Raaka / taiottu
+Ylikypsä
+Kuivunut banaani
+Normaali
+Möhjööntynyt
+
+Elpurin päitäkin tein vain kolme, eli normaalin, kylmän
+ja kuuman. En usko että itse Pahuutta voisi muuttaa
+vaikkapa sementiksi muun kuin ylipapin taioilla.
+
+Taidan joutua muuttamaan lattiatilejä niin että eri
+väiriset aseet tai tavarat eivät hukkuisi niihin.
+
+Muuten olisiko hyvä idea jos kentät luotaisiin
+randomilla mutta niihin sijoitettaisiin myös jotain
+ennalta suunniteltuja rakenteita randomisti?
+(kauppoja, alttarihuoneita, varastoja, hautahuoneita)
+Miten olisi myös jos tiloista tehtäisiin vähän
+yhtenäisempiä?
+
+Tässä on lista löytämistäni bugeista versiossa 0.192
+A. Luultavasti tiedätte ne kuitenkin mutta silti...
+
+Jossain pelissä wieldini vaihtui aina kun vaihdoin
+kerrosta. Kolmannessa se oli Elpuri's head
+
+Menetän hitpointteja taistelussa vaikka saan
+ilmoituksen että vihollinen löi ohi.
+
+En pysty käyttämään esineitä jotka ovat
+inventaarioni toisella sivulla.
+
+LOPPUHUOMAUTUS
+
+Mopo.pcx on tuman
+Mikko.pcx on mikon tekemä
+
+Nämä ovat siis nasujen kuvatiedostoja. He eivät
+oikein ole osanneet laittaa niitä kunnolla enkä minä
+viitsi tehdä sitä ennenkuin saan varmuuden siitä että
+mielestänne ne ovat "käyttökelpoisia".
+
+Mopo.pcx on aika ruma. Mutta oikeassa yläkulmassa
+oleva homo-Olog näyttää edustavalta. Pidän myös
+about keskikohdassa olevasta vihreästä möhköstä.
+Muut ovat rumia kuin uloste.
+
+Mikko.pcx kuvan pinkki tonttu on siistin näköinen.
+Kirves on... en tiedä.

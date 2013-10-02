@@ -1,0 +1,174 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+//Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
+//Nostoteko‰ly.
+//Kick ja bite toimimaan, jos k‰det irti. (timo)
+//Pertun kasvot. (timo)
+//Zoom lookiin. (hex)
+//V‰rien tarkistusl‰pik‰yminen.
+//Enner beast ihmiseksi + p‰‰ kuntoon. (timo)
+//Menua vasemmalle.
+(r) Damage estimate kuntoon. (timo)
+//Werewolfit kuntoon. (timo)
+//Paneeli kuntoon:
+//* Uusi siluetti. (kahvi)
+//* Itemit sen ymp‰rille.
+//* Attribuutit ja status alle.
+//Efektien l‰pik‰yminen. (timo)
+//Miina kuntoon. (timo)
+//Lookmoden messaget kuntoon. (timo)
+//Bodypartien ja actioneiden scoret. (timo)
+(r) Luut kuntoon. (timo)
+(r) BloodColorin animaatiostuktuuri. (timo)
+//Paniikki. (hex)
+//Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
+//Leather armorin nimi kuntoon. (hex)
+//Taistelun tasapainotus. (timo)
+//Animaatiot: Artifaktit, (s) lamput...
+//Amulet of life saving. (hex)
+//Amulet of ESP.
+//Ring of polymorph. (hex)
+(r) Ring of strength.
+//Ring of infravision. (timo)
+//Ring of teleportation. (hex)
+(r) ?Potion of invisibility. (hex)
+//Magic whistlen kuva. (kahvi)
+//Magic whistle. (hex)
+(s) Inhandspicit kuntoon. (timo)
+//Ruumiinosien hoitotavat:
+//* Temppelit rahaa vastaan - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
+//* Atavus - lahjaraaja (max hp). (hex)
+//* Seges - raaja paikoilleen (max hp) tai uusi luonnollinen raaja (max hp). (hex)
+//* Silva - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
+//* Loricatus - mithril raaja (max hp). (hex)
+//* Scabies - mutaatioraaja eli raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp), mutta ominaisuuksia on muuteltu satunnaisesti. (hex)
+//* Cruentus - ter‰sraaja (max hp). (hex)
+//* Potion of healing - uusi luonnollinen raaja (1 hp). (hex)
+//* Enkelit (kerran 2500 vuorossa) - raaja paikoilleen (1 hp). (hex)
+//* Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
+//Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
+//Avaimelle kuva. (kahvi)
+//Helmet. (hex)
+//BaseEmitationit toimintaan. (timo)
+//Pertun nutin wishaaminen. (timo)
+//Orc.
+//Prices. (timo)
+//OfferModifiers. (timo)
+//NPModifiers. (timo)
+//1-2 spesiaali helmetti‰, cloakkia, gauntlettia, beltti‰ ja boottia.
+//?Dipping to corpses, containers etc.
+//Aliases!!!!!!!!!!!!!! (timo)
+//Potion of poison. (timo)
+//One handed penalties. (timo)
+//Poisonous snake. (hex)
+//Biting shouldn't make bodyparts fly.
+//People shouldn't "die screaming" if their heads are not present.
+//Shields. (timo)
+//Lower all unarmed to hit values. (timo)
+//Skeleton bodyparts.
+//Amuletit, cloak
+//Unicorns
+//Effects and exps for wisdom and charisma.
+(s) ?Shirt.
+//Kamikaze dwarves.
+//Naming hostile monsters.
+(s) ?The flight of wielded item and amulet.
+(s) ?Cats & rat corpses.
+//Things thrown at doors.
+//%s"
+//CollectCreatures
+//Drinking should be separated.
+//Skeleton volume.
+//"snake is standing"
+//Genie's strength.
+//Items inside chests carried by player at death should be shown. (hex)
+//Consummo's pray effect. (hex)
+//"You didn't manage to get onto the high score list" message.
+//Glitter effect.
+//Fire effect.
+(s) Lightning effect.
+//Flies over spoiling items effect.
+(s) Monster mine triggering should be limited.
+//Boots and gauntlets should be generated in pairs of two.
+(s) Re-enable Golden Eagle Quest danger requirement.
+//Prevent escape from Oree.
+//?Configurations should be visually separated with colors.
+//Blocking and visibility should be considered when calculating relative danger.
+//Spiders must not trigger mines.
+//Hit effects of thrown items.
+(s) Applying wielded item should be possible.
+//?Vodka.
+//Splitting lines in highscores.
+//Calamus and whip of Calamus should work together.
+//Treasure room to the right arm of the Cathedral.
+//?Artifact vault.
+//Village and tunnel.
+//Kick system should be checked. (timo)
+//Kamikaze dwarves should be separated by colours.
+(s) ?Manual.
+//Item possibilities. (timo)
+//Skull. (hex)
+//Wand of cloning. (hex)
+//Water should make gunpowder useless!
+(r) ?Temporary invisibility should be cancelled if the character hits something.
+//Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
+//Prevent digging with a broken pick-axe.
+(s) Stethoscope should show relative danger.
+//Remove the school food effects of scabies (or make them a lot more seldom).
+(s) ?Raven.
+Kicking chests.
+//Prohibit spoiling in shops and on the cathedral floor.
+/?Mellis should give information about unknown gods.
+//Whips shouldn't really break when hitting armor.
+//Balancing Loricatus.
+//?Charges for magic whistle.
+//Smithy to Attnam.
+//Cut down the size of Elpuri's cave.
+//Mana should be hidden.
+//Solving the Elpuri Cave distance problem.
+//Apply + chests.
+//Stats of summoned bodyparts must be made more intelligent.
+//Ergonomification of corpse consumption.
+//RDAM and similiar unclear attributes should be moved to an own screen.
+//?Snake flesh should be poisonous.
+//?Some special effect for daemon flesh.
+//Checking throw balance.
+//Pick-axe available in the lowest levels.
+//Boot m-color.
+//?Look stretch config option.
+(r) ?If a mine in the inventory is active, it should be displayed somehow.
+//Potion full of antidote.
+//?Teleport to level 10.
+//Selecting from gear when using SoCM/SoEW/SoEA.
+//Weapon volumes should be more realistic.
+//?Flaming effect for holy banana.
+//?Solving the iron cloak conundrum.
+//?Broad tapeworm.
+//Imperialist quest.
+//Moving the lamp room to the tunnel.
+//New background story.
+//?Armor breaking.
+//Tunnel boss.
+(s) ?Something special to tunnel level 2.
+//?Penalty for eating spoiled food.
+//Pets shouldn't eat the player's bodyparts.
+(s) ?Village duelist.
+//?olterraincontainer
+(s) Smith prices.
+//?Kamikaze dwarf generation.
+//Renaming "single weapon skills".
+//?Scroll of repair.
+(s) ?Prices of golden items.
+//If a monster is polymorphed and kills the player, this should be shown in the high score entry.
+//High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
+//Invisibility + selling.
+//Bear traps should break eventually.
+//More color states to silhouette.
+//Digging walls should yield stones.
+//Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.
+//?Zombie flesh should already be spoiled when a zombie dies
+//Wait for keypress when player gets stuck in a bear trap.

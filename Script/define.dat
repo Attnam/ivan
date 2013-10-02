@@ -1,0 +1,952 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+/* Numerical defines for other script files */
+
+#define NONE 0
+#define MIRROR 1
+#define FLIP 2
+#define ROTATE 4
+
+#define RED 63488
+#define GREEN 2016
+#define BLUE 31
+
+#define YELLOW 65504
+#define PINK 61470
+
+#define WHITE 65535
+#define LIGHT_GRAY 46518
+#define DARK_GRAY 21130
+#define BLACK 0
+
+#define TRANSPARENT_COLOR 63519
+
+#define POLYMORPHED (1 << 0)
+#define HASTE (1 << 1)
+#define SLOW (1 << 2)
+#define POLYMORPH_CONTROL (1 << 3)
+#define LIFE_SAVED (1 << 4)
+#define LYCANTHROPY (1 << 5)
+#define INVISIBLE (1 << 6)
+#define INFRA_VISION (1 << 7)
+#define ESP (1 << 8)
+#define POISONED (1 << 9)
+#define TELEPORT (1 << 10)
+#define POLYMORPH (1 << 11)
+#define TELEPORT_CONTROL (1 << 12)
+#define PANIC (1 << 13)
+#define CONFUSED (1 << 14)
+#define PARASITIZED (1 << 15)
+#define SEARCHING (1 << 16)
+#define GAS_IMMUNITY (1 << 17)
+#define LEVITATION (1 << 18)
+#define LEPROSY (1 << 19)
+#define HICCUPS (1 << 20)
+
+#define HEAD 1
+#define TORSO 2
+#define RIGHT_ARM 4
+#define LEFT_ARM 8
+#define ARMS 12
+#define GROIN 16
+#define RIGHT_LEG 32
+#define LEFT_LEG 64
+#define LEGS 96
+#define OTHER 128
+#define ALL 255
+
+#define PHYSICAL_DAMAGE 1
+#define SOUND 2
+#define ACID 4
+#define FIRE 8
+#define ELECTRICITY 16
+#define ENERGY 32
+#define POISON 64
+#define DRAIN 128
+#define MUSTARD_GAS_DAMAGE 256
+#define THROW 32768
+
+#define UNDEFINED 0
+#define MALE 1
+#define FEMALE 2
+#define TRANSSEXUAL 3
+
+#define TORSO_INDEX 0
+#define HEAD_INDEX 1
+#define RIGHT_ARM_INDEX 2
+#define LEFT_ARM_INDEX 3
+#define GROIN_INDEX 4
+#define RIGHT_LEG_INDEX 5
+#define LEFT_LEG_INDEX 6
+
+#define ALPP 0
+#define ALP 1
+#define AL 2
+#define ALM 3
+#define ANP 4
+#define AN 5
+#define ANM 6
+#define ACP 7
+#define AC 8
+#define ACM 9
+#define ACMM 10
+
+#define UNARTICLED 0
+#define PLURAL 1
+#define ARTICLE_BIT 2
+#define DEFINITE 2
+#define INDEFINE_BIT 4
+#define INDEFINITE 6
+
+#define ANY_CATEGORY 2147483647
+#define HELMET (1 << 0)
+#define AMULET (1 << 1)
+#define CLOAK (1 << 2)
+#define BODY_ARMOR (1 << 3)
+#define WEAPON (1 << 4)
+#define SHIELD (1 << 5)
+#define RING (1 << 6)
+#define GAUNTLET (1 << 7)
+#define BELT (1 << 8)
+#define BOOT (1 << 9)
+#define FOOD (1 << 10)
+#define POTION (1 << 11)
+#define SCROLL (1 << 12)
+#define BOOK (1 << 13)
+#define WAND (1 << 14)
+#define TOOL (1 << 15)
+#define VALUABLE (1 << 16)
+#define MISC (1 << 17)
+
+#define GOOD 1
+#define NEUTRAL 2
+#define EVIL 3
+
+#define CT_FRUIT 1
+#define CT_MEAT 2
+#define CT_METAL 4
+#define CT_MINERAL 8
+#define CT_LIQUID 16
+#define CT_BONE 32
+#define CT_PROCESSED 64
+#define CT_MISC_ORGANIC 128
+#define CT_PLASTIC 256
+#define CT_GAS 512
+
+#define LEFT 0
+#define DOWN 1
+#define UP 2
+#define RIGHT 3
+#define CENTER 4
+
+#define HOSTILE 1
+#define UNCARING 2
+#define FRIEND 4
+
+#define MARTIAL_SKILL_CATEGORIES 3
+#define WEAPON_SKILL_CATEGORIES 11
+
+#define UNARMED 0
+#define KICK 1
+#define BITE 2
+#define UNCATEGORIZED 3
+#define SMALL_SWORDS 4
+#define LARGE_SWORDS 5
+#define BLUNT_WEAPONS 6
+#define AXES 7
+#define POLE_ARMS 8
+#define WHIPS 9
+#define SHIELDS 10
+
+#define LOCKED 1
+
+#define EFFECT_NOTHING 0
+#define EFFECT_POISON 1
+#define EFFECT_DARKNESS 2
+#define EFFECT_OMMEL_URINE 3
+#define EFFECT_PEPSI 4
+#define EFFECT_KOBOLD_FLESH 5
+#define EFFECT_HEAL 6
+#define EFFECT_LYCANTHROPY 7
+#define EFFECT_SCHOOL_FOOD 8
+#define EFFECT_ANTIDOTE 9
+#define EFFECT_CONFUSE 10
+#define EFFECT_POLYMORPH 11
+#define EFFECT_ESP 12
+#define EFFECT_SKUNK_SMELL 13
+#define EFFECT_MAGIC_MUSHROOM 14
+#define EFFECT_TRAIN_PERCEPTION 15
+#define EFFECT_HOLY_BANANA 16
+#define EFFECT_EVIL_WONDER_STAFF_VAPOUR 17
+#define EFFECT_GOOD_WONDER_STAFF_VAPOUR 18
+#define EFFECT_PEA_SOUP 19
+#define EFFECT_BLACK_UNICORN_FLESH 20
+#define EFFECT_GRAY_UNICORN_FLESH 21
+#define EFFECT_WHITE_UNICORN_FLESH 22
+#define EFFECT_TELEPORT_CONTROL 23
+#define EFFECT_MUSHROOM 24
+#define EFFECT_OMMEL_CERUMEN 25
+#define EFFECT_OMMEL_SWEAT 26
+#define EFFECT_OMMEL_TEARS 27
+#define EFFECT_OMMEL_SNOT 28
+#define EFFECT_OMMEL_BONE 29
+#define EFFECT_MUSTARD_GAS 30
+#define EFFECT_MUSTARD_GAS_LIQUID 31
+
+/* CEM = Consume End Message */
+
+#define CEM_NOTHING 0
+#define CEM_SCHOOL_FOOD 1
+#define CEM_BONE 2
+#define CEM_FROG_FLESH 3
+#define CEM_OMMEL 4
+#define CEM_PEPSI 5
+#define CEM_KOBOLD_FLESH 6
+#define CEM_HEALING_LIQUID 7
+#define CEM_ANTIDOTE 8
+#define CEM_ESP 9
+#define CEM_HOLY_BANANA 10
+#define CEM_PEA_SOUP 11
+#define CEM_BLACK_UNICORN_FLESH 12
+#define CEM_GRAY_UNICORN_FLESH 13
+#define CEM_WHITE_UNICORN_FLESH 14
+#define CEM_OMMEL_BONE 15
+
+/* HM = Hit Message */
+
+#define HM_NOTHING 0
+#define HM_SCHOOL_FOOD 1
+#define HM_FROG_FLESH 2
+#define HM_OMMEL 3
+#define HM_PEPSI 4
+#define HM_KOBOLD_FLESH 5
+#define HM_HEALING_LIQUID 6
+#define HM_ANTIDOTE 7
+#define HM_CONFUSE 8
+#define HM_HOLY_BANANA 9
+
+#define SOLID_ID 4096
+
+#define VALPURIUM (SOLID_ID + 1)
+#define GRAVEL (SOLID_ID + 2)
+#define MORAINE (SOLID_ID + 3)
+#define OCTIRON (SOLID_ID + 4)
+#define GLASS (SOLID_ID + 5)
+#define PARCHMENT (SOLID_ID + 6)
+#define CLOTH (SOLID_ID + 7)
+#define MITHRIL (SOLID_ID + 8)
+#define MARBLE (SOLID_ID + 9)
+#define GOLD (SOLID_ID + 10)
+#define GRASS (SOLID_ID + 11)
+#define LEATHER (SOLID_ID + 12)
+#define LEAF (SOLID_ID + 13)
+#define FABRIC (SOLID_ID + 14)
+#define PALM_LEAF (SOLID_ID + 15)
+#define SULFUR (SOLID_ID + 16)
+#define UNICORN_HORN (SOLID_ID + 17)
+#define DIAMOND (SOLID_ID + 18)
+#define SILVER (SOLID_ID + 19)
+#define SAPPHIRE (SOLID_ID + 20)
+#define RUBY (SOLID_ID + 21)
+#define BRONZE (SOLID_ID + 22)
+#define COPPER (SOLID_ID + 23)
+#define TIN (SOLID_ID + 24)
+#define SPIDER_SILK (SOLID_ID + 25)
+#define KEVLAR (SOLID_ID + 26)
+#define OMMEL_HAIR (SOLID_ID + 27)
+#define HARDENED_LEATHER (SOLID_ID + 28)
+#define TROLL_HIDE (SOLID_ID + 29)
+#define NYMPH_HAIR (SOLID_ID + 30)
+#define ANGEL_HAIR (SOLID_ID + 31)
+#define PHOENIX_FEATHER (SOLID_ID + 32)
+#define GOLDEN_EAGLE_FEATHER (SOLID_ID + 33)
+#define ICE (SOLID_ID + 34)
+#define DRAGON_HIDE (SOLID_ID + 35)
+#define ARCANITE (SOLID_ID + 36)
+#define ILLITHIUM (SOLID_ID + 37)
+#define BALSA_WOOD (SOLID_ID + 38)
+#define PINE_WOOD (SOLID_ID + 39)
+#define FIR_WOOD (SOLID_ID + 40)
+#define BIRCH_WOOD (SOLID_ID + 41)
+#define OAK_WOOD (SOLID_ID + 42)
+#define TEAK_WOOD (SOLID_ID + 43)
+#define EBONY_WOOD (SOLID_ID + 44)
+#define BLUE_CRYSTAL (SOLID_ID + 45)
+#define PURPLE_CRYSTAL (SOLID_ID + 46)
+#define GREEN_CRYSTAL (SOLID_ID + 47)
+#define SAND_STONE (SOLID_ID + 48)
+#define LIME_STONE (SOLID_ID + 49)
+#define CALCITE (SOLID_ID + 50)
+#define OBSIDIAN (SOLID_ID + 51)
+#define GNEISS (SOLID_ID + 52)
+#define SLATE (SOLID_ID + 53)
+#define GRANITE (SOLID_ID + 54)
+#define BASALT (SOLID_ID + 55)
+#define MILKY_QUARTZ (SOLID_ID + 56)
+#define FLINT (SOLID_ID + 57)
+#define QUARTZITE (SOLID_ID + 58)
+#define AMETHYST (SOLID_ID + 59)
+#define CITRINE (SOLID_ID + 60)
+#define ROSE_QUARTZ (SOLID_ID + 61)
+#define JASPER (SOLID_ID + 62)
+#define ROCK_CRYSTAL (SOLID_ID + 63)
+#define DARK_GRASS (SOLID_ID + 64)
+#define LEAD (SOLID_ID + 65)
+#define BLACK_GRANITE (SOLID_ID + 66)
+#define BLACK_LEATHER (SOLID_ID + 67)
+
+#define ORGANIC_ID (4096 * 2)
+
+#define BANANA_FLESH (ORGANIC_ID + 1)
+#define SCHOOL_FOOD (ORGANIC_ID + 2)
+#define BANANA_PEEL (ORGANIC_ID + 3)
+#define KIWI_FLESH (ORGANIC_ID + 4)
+#define PINEAPPLE_FLESH (ORGANIC_ID + 5)
+#define PLANT_FIBER (ORGANIC_ID + 6)
+#define MUTANT_PLANT_FIBER (ORGANIC_ID + 7)
+#define BONE (ORGANIC_ID + 8)
+#define BREAD (ORGANIC_ID + 9)
+#define HOLY_BANANA_FLESH (ORGANIC_ID + 10)
+#define CARROT_FLESH (ORGANIC_ID + 11)
+#define OMMEL_CERUMEN (ORGANIC_ID + 12)
+#define OMMEL_BONE (ORGANIC_ID + 13)
+#define OMMEL_TOOTH (ORGANIC_ID + 14)
+
+#define GAS_ID (4096 * 3)
+
+#define AIR (GAS_ID + 1)
+#define MAGICAL_AIR (GAS_ID + 2)
+#define SMOKE (GAS_ID + 3)
+#define SKUNK_SMELL (GAS_ID + 4)
+#define GHOST (GAS_ID + 5)
+#define MAGIC_VAPOUR (GAS_ID + 6)
+#define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
+#define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
+#define FART (GAS_ID + 9)
+#define MUSTARD_GAS (GAS_ID + 10)
+
+#define LIQUID_ID (4096 * 4)
+
+#define OMMEL_URINE (LIQUID_ID + 1)
+#define PEPSI (LIQUID_ID + 2)
+#define WATER (LIQUID_ID + 3)
+#define HEALING_LIQUID (LIQUID_ID + 4)
+#define BLOOD (LIQUID_ID + 5)
+#define BROWN_SLIME (LIQUID_ID + 6)
+#define POISON_LIQUID (LIQUID_ID + 7)
+#define VALDEMAR (LIQUID_ID + 8)
+#define ANTIDOTE_LIQUID (LIQUID_ID + 9)
+#define VODKA (LIQUID_ID + 10)
+#define TROLL_BLOOD (LIQUID_ID + 11)
+#define DARK_FROG_BLOOD (LIQUID_ID + 12)
+#define SPIDER_BLOOD (LIQUID_ID + 13)
+#define VOMIT (LIQUID_ID + 14)
+#define ACIDOUS_BLOOD (LIQUID_ID + 15)
+#define SULPHURIC_ACID (LIQUID_ID + 16)
+#define DOG_DROOL (LIQUID_ID + 17)
+#define PEA_SOUP (LIQUID_ID + 18)
+#define OMMEL_SWEAT (LIQUID_ID + 19)
+#define OMMEL_TEARS (LIQUID_ID + 20)
+#define OMMEL_SNOT (LIQUID_ID + 21)
+#define SWEAT (LIQUID_ID + 22)
+#define GLOWING_BLOOD (LIQUID_ID + 23)
+#define YELLOW_SLIME (LIQUID_ID + 24)
+#define SICK_BLOOD (LIQUID_ID + 25)
+#define MUSTARD_GAS_LIQUID (LIQUID_ID + 26)
+
+#define FLESH_ID (4096 * 5)
+
+#define GOBLINOID_FLESH (FLESH_ID + 1)
+#define PORK (FLESH_ID + 2)
+#define BEEF (FLESH_ID + 3)
+#define FROG_FLESH (FLESH_ID + 4)
+#define ELPURI_FLESH (FLESH_ID + 5)
+#define HUMAN_FLESH (FLESH_ID + 6)
+#define DOLPHIN_FLESH (FLESH_ID + 7)
+#define BEAR_FLESH (FLESH_ID + 8)
+#define WOLF_FLESH (FLESH_ID + 9)
+#define DOG_FLESH (FLESH_ID + 10)
+#define ENNER_BEAST_FLESH (FLESH_ID + 11)
+#define SPIDER_FLESH (FLESH_ID + 12)
+#define JACKAL_FLESH (FLESH_ID + 13)
+#define MUTANT_ASS_FLESH (FLESH_ID + 14)
+#define BAT_FLESH (FLESH_ID + 15)
+#define WERE_WOLF_FLESH (FLESH_ID + 16)
+#define KOBOLD_FLESH (FLESH_ID + 17)
+#define GIBBERLING_FLESH (FLESH_ID + 18)
+#define CAT_FLESH (FLESH_ID + 19)
+#define RAT_FLESH (FLESH_ID + 20)
+#define ANGEL_FLESH (FLESH_ID + 21)
+#define DWARF_FLESH (FLESH_ID + 22)
+#define DAEMON_FLESH (FLESH_ID + 23)
+#define MAMMOTH_FLESH (FLESH_ID + 24)
+#define BLACK_UNICORN_FLESH (FLESH_ID + 25)
+#define GRAY_UNICORN_FLESH (FLESH_ID + 26)
+#define WHITE_UNICORN_FLESH (FLESH_ID + 27)
+#define LION_FLESH (FLESH_ID + 28)
+#define BUFFALO_FLESH (FLESH_ID + 29)
+#define SNAKE_FLESH (FLESH_ID + 30)
+#define ORC_FLESH (FLESH_ID + 31)
+#define OSTRICH_FLESH (FLESH_ID + 32)
+#define CHAMELEON_FLESH (FLESH_ID + 33)
+#define FLOATING_EYE_FLESH (FLESH_ID + 34)
+#define MUSHROOM_FLESH (FLESH_ID + 35)
+#define MOOSE_FLESH (FLESH_ID + 36)
+#define MAGPIE_FLESH (FLESH_ID + 37)
+#define SKUNK_FLESH (FLESH_ID + 38)
+#define HEDGEHOG_FLESH (FLESH_ID + 39)
+#define MUTANT_BUNNY_FLESH (FLESH_ID + 40)
+#define HATTIFATTENER_FLESH (FLESH_ID + 41)
+#define BLINK_DOG_FLESH (FLESH_ID + 42)
+#define MAGIC_MUSHROOM_FLESH (FLESH_ID + 43)
+#define SICK_SPIDER_FLESH (FLESH_ID + 44)
+#define MIND_WORM_FLESH (FLESH_ID + 45)
+
+#define POWDER_ID (4096 * 6)
+
+#define GUN_POWDER (POWDER_ID + 1)
+#define SNOW (POWDER_ID + 2)
+#define SAND (POWDER_ID + 3)
+
+#define IRON_ALLOY_ID (4096 * 7)
+
+#define IRON (IRON_ALLOY_ID + 1)
+#define STEEL (IRON_ALLOY_ID + 2)
+#define METEORIC_STEEL (IRON_ALLOY_ID + 3)
+#define ADAMANT (IRON_ALLOY_ID + 4)
+
+#define UNARMED_ATTACK 0
+#define WEAPON_ATTACK 1
+#define KICK_ATTACK 2
+#define BITE_ATTACK 3
+
+#define USE_ARMS 1
+#define USE_LEGS 2
+#define USE_HEAD 4
+
+#define ATTRIBUTES 11
+#define BASE_ATTRIBUTES 7
+
+#define ENDURANCE 0
+#define PERCEPTION 1
+#define INTELLIGENCE 2
+#define WISDOM 3
+#define WILL_POWER 4
+#define CHARISMA 5
+#define MANA 6
+
+#define ARM_STRENGTH 7
+#define LEG_STRENGTH 8
+#define DEXTERITY 9
+#define AGILITY 10
+
+#define HELMET_INDEX 0
+#define AMULET_INDEX 1
+#define CLOAK_INDEX 2
+#define BODY_ARMOR_INDEX 3
+#define BELT_INDEX 4
+#define RIGHT_WIELDED_INDEX 5
+#define LEFT_WIELDED_INDEX 6
+#define RIGHT_RING_INDEX 7
+#define LEFT_RING_INDEX 8
+#define RIGHT_GAUNTLET_INDEX 9
+#define LEFT_GAUNTLET_INDEX 10
+#define RIGHT_BOOT_INDEX 11
+#define LEFT_BOOT_INDEX 12
+
+#define BROKEN 128
+#define WINDOW 1024
+
+#define LONG_SWORD 1
+#define TWO_HANDED_SWORD 2
+#define TWO_HANDED_SCIMITAR 3
+#define SPEAR 4
+#define AXE 5
+#define HALBERD 6
+#define MACE 7
+#define WAR_HAMMER 8
+#define SICKLE 9
+#define DAGGER 10
+#define SHORT_SWORD 11
+#define BASTARD_SWORD 12
+#define BATTLE_AXE 13
+#define SCYTHE 14
+#define QUARTER_STAFF 15
+#define HAMMER 16
+
+#define GOROVITS_HAMMER 1
+#define GOROVITS_SICKLE 2
+#define GOROVITS_SCIMITAR 3
+
+#define CHAIN_MAIL 1
+#define PLATE_MAIL 2
+#define ARMOR_OF_GREAT_HEALTH 3
+
+#define CHEAP 1
+#define EXPENSIVE 2
+
+#define WAND_OF_POLYMORPH 1
+#define WAND_OF_STRIKING 2
+#define WAND_OF_FIRE_BALLS 3
+#define WAND_OF_TELEPORTATION 4
+#define WAND_OF_HASTE 5
+#define WAND_OF_SLOW 6
+#define WAND_OF_RESURRECTION 7
+#define WAND_OF_DOOR_CREATION 8
+#define WAND_OF_INVISIBILITY 9
+#define WAND_OF_CLONING 10
+#define WAND_OF_LIGHTNING 11
+#define WAND_OF_ACID_RAIN 12
+#define WAND_OF_MIRRORING 13
+#define WAND_OF_NECROMANCY 14
+
+#define RUNED_WHIP 1
+
+#define BIG_MINE 1
+
+#define CLOAK_OF_INVISIBILITY 1
+#define CLOAK_OF_FIRE_RESISTANCE 2
+#define CLOAK_OF_ELECTRICITY_RESISTANCE 3
+#define CLOAK_OF_ACID_RESISTANCE 4
+
+#define BOOT_OF_STRENGTH 1
+#define BOOT_OF_AGILITY 2
+#define BOOT_OF_KICKING 3
+
+#define GAUNTLET_OF_STRENGTH 1
+#define GAUNTLET_OF_DEXTERITY 2
+
+#define RING_OF_FIRE_RESISTANCE 1
+#define RING_OF_POLYMORPH_CONTROL 2
+#define RING_OF_INFRA_VISION 3
+#define RING_OF_TELEPORTATION 4
+#define RING_OF_TELEPORT_CONTROL 5
+#define RING_OF_POLYMORPH 6
+#define RING_OF_POISON_RESISTANCE 7
+#define RING_OF_INVISIBILITY 8
+#define RING_OF_ELECTRICITY_RESISTANCE 9
+#define RING_OF_SEARCHING 10
+#define RING_OF_ACID_RESISTANCE 11
+
+#define AMULET_OF_LIFE_SAVING 1
+#define AMULET_OF_ESP 2
+#define AMULET_OF_WARDING 3
+
+#define FULL_HELMET 1
+#define HELM_OF_PERCEPTION 2
+#define HELM_OF_UNDERSTANDING 3
+#define HELM_OF_BRILLIANCE 4
+#define HELM_OF_ATTRACTIVITY 5
+#define GOROVITS_FAMILY_GAS_MASK 6
+
+#define BELT_OF_CARRYING 1
+#define BELT_OF_LEVITATION 2
+
+#define SMALL_CHEST 1
+#define CHEST 2
+#define LARGE_CHEST 3
+#define STRONG_BOX 4
+
+#define BRAVERY 1
+#define FEAR 2
+
+#define ROOKIE 1
+#define VETERAN 2
+#define EUNUCH 3
+#define PATROL 4
+#define SHOP 5
+#define ELITE 6
+#define MASTER 7
+#define GRAND_MASTER 8
+
+#define DARK 1
+#define GREATER_DARK 2
+#define GIANT_DARK 3
+#define LIGHT 4
+#define GREATER_LIGHT 5
+#define GIANT_LIGHT 6
+
+#define WARRIOR 1
+#define WAR_LORD 2
+
+#define BERSERKER 1
+#define BUTCHER 2
+#define PRINCE 3
+#define KING 4
+
+#define CONICAL 1
+#define FLAT 2
+
+#define LARGE 1
+#define GIANT 2
+
+#define BLACK_BEAR 1
+#define GRIZZLY_BEAR 2
+#define CAVE_BEAR 3
+#define POLAR_BEAR 4
+
+#define ZOMBIE_OF_KHAZ_ZADM 1
+
+#define TORTURING_CHIEF 1
+#define WHIP_CHAMPION 2
+#define WAR_LADY 3
+#define QUEEN 4
+
+#define CHIEFTAIN 1
+#define LORD 2
+#define PATRIARCH 3
+
+#define GREATER 1
+#define GIANT 2
+
+#define SLAUGHTERER 1
+#define SQUAD_LEADER 2
+#define OFFICER 3
+#define GENERAL 4
+#define MARSHAL 5
+
+#define APPRENTICE 1
+#define BATTLE_MAGE 2
+#define ELDER 3
+#define ARCH_MAGE 4
+
+/* Least significant bit defines sex */
+
+#define BABY_MALE 2
+#define BABY_FEMALE 3
+#define ADULT_MALE 4
+#define ADULT_FEMALE 5
+
+#define APPRENTICE_NECROMANCER 1
+#define MASTER_NECROMANCER 2
+
+#define HUSBAND 1
+#define WIFE 2
+#define CHILD 3
+
+#define LIGHT_ASIAN_SIREN 	1
+#define DARK_ASIAN_SIREN 	2
+#define CAUCASIAN_SIREN		3
+#define DARK_SIREN		4
+#define GREEN_SIREN		5
+
+
+#define HATCHLING 		1
+#define BOIL 			2
+
+#define PARQUET 1
+#define FLOOR 2
+#define GROUND 3
+#define GRASS_TERRAIN 4
+#define LANDING_SITE 5
+#define SNOW_TERRAIN 6
+#define DARK_GRASS_TERRAIN 7
+#define SAND_TERRAIN 8
+
+#define POOL 1
+#define UNDERGROUND_LAKE 2
+
+#define BRICK_FINE 1
+#define BRICK_PROPAGANDA 2
+#define BRICK_OLD 3
+#define BRICK_PRIMITIVE 4
+#define BRICK_PRIMITIVE_PROPAGANDA 5
+#define STONE_WALL 6
+#define ICE_WALL 7
+#define BROKEN_WALL 8
+
+#define PINE 1
+#define FIR 2
+#define HOLY_TREE 3
+#define CARPET 4
+#define COUCH 5
+#define DOUBLE_BED 6
+#define POOL_BORDER 7
+#define POOL_CORNER 8
+#define PALM 9
+#define SNOW_PINE 10
+#define SNOW_FIR 11
+#define ANVIL 12
+#define SHARD 13
+#define CACTUS 14
+#define OAK 15
+#define BIRCH 16
+#define TEAK 17
+#define DWARF_BIRCH 18
+
+#define SNOW_BOULDER 4
+
+#define STAIRS_UP 100
+#define STAIRS_DOWN 200
+#define OREE_LAIR_ENTRY 300
+#define OREE_LAIR_EXIT 400
+#define SUMO_ARENA_ENTRY 700
+#define SUMO_ARENA_EXIT 800
+#define FOUNTAIN 65535
+
+#define BOOK_CASE 1
+#define CHEST_OF_DRAWERS 2
+#define SHELF 3
+
+#define BROKEN_BARWALL 1
+
+#define BARDOOR 1
+#define SECRET_DOOR 2
+
+#define WORLD_MAP 255
+
+#define DEFAULT_TEAM 255
+
+/* Hard-coded teams */
+
+#define PLAYER_TEAM 0
+#define MONSTER_TEAM 1
+#define ATTNAM_TEAM 2
+#define SUMO_TEAM 3
+#define IVAN_TEAM 6
+#define NEW_ATTNAM_TEAM 7
+#define COLONIST_TEAM 8
+#define TOURIST_GUIDE_TEAM 9
+#define TOURIST_TEAM 10
+#define BETRAYED_TEAM 11
+
+#define NOT_WALKABLE 1
+#define HAS_CHARACTER 2
+#define IN_ROOM 4
+#define NOT_IN_ROOM 8
+#define ATTACHABLE (16|NOT_IN_ROOM) /* overrides IN_ROOM */
+#define HAS_NO_OTERRAIN 32
+
+#define RANDOM 0
+#define ELPURI_CAVE 1
+#define ATTNAM 2
+#define NEW_ATTNAM 3
+#define UNDER_WATER_TUNNEL 4
+#define UNDER_WATER_TUNNEL_EXIT 128
+
+#define VESANA_LEVEL 2
+#define CRYSTAL_LEVEL 3
+#define SPIDER_LEVEL 4
+#define ENNER_BEAST_LEVEL 4
+#define ZOMBIE_LEVEL 5
+#define IVAN_LEVEL 7
+#define DARK_LEVEL 8
+#define OREE_LAIR 12
+
+#define RECTANGLE 1
+#define ROUND_CORNERS 2
+
+#define VALPURUS 1
+#define LEGIFER 2
+#define ATAVUS 3
+#define DULCIS 4
+#define SEGES 5
+#define SOPHOS 6
+#define TERRA 7
+#define SILVA 7
+#define LORICATUS 8
+#define MELLIS 9
+#define CLEPTIA 10
+#define NEFAS 11
+#define SCABIES 12
+#define INFUSCOR 13
+#define CRUENTUS 14
+#define MORTIFER 15
+#define ATHEIST 16
+
+#define MAX_PRICE 2147483647
+
+#define ROOM_NORMAL 1
+#define ROOM_SHOP 2
+#define ROOM_CATHEDRAL 3
+#define ROOM_LIBRARY 4
+#define ROOM_BANANA_DROP_AREA 5
+#define ROOM_SUMO_ARENA 6
+
+#define BEAM_POLYMORPH 0
+#define BEAM_STRIKE 1
+#define BEAM_FIRE_BALL 2
+#define BEAM_TELEPORT 3
+#define BEAM_HASTE 4
+#define BEAM_SLOW 5
+#define BEAM_RESURRECT 6
+#define BEAM_INVISIBILITY 7
+#define BEAM_DUPLICATE 8
+#define BEAM_LIGHTNING 9
+#define BEAM_DOOR_CREATION 10
+#define BEAM_ACID_RAIN 11
+#define BEAM_NECROMANCY 12
+
+#define BEAM_STYLES 3
+
+#define PARTICLE_BEAM 0
+#define LIGHTNING_BEAM 1
+#define SHIELD_BEAM 2
+
+#define RANDOM_COLOR 65536
+
+#define NO_LIMIT 65535
+
+#define NO_BROKEN 1
+#define IGNORE_BROKEN_PRICE 2
+
+#define N_LOCK_ID 1024
+#define S_LOCK_ID 16384
+#define LOCK_DELTA 1024
+
+#define BROKEN_LOCK S_LOCK_ID
+
+/* Normal lock types, which can be randomized */
+
+#define ROUND_LOCK (N_LOCK_ID + LOCK_DELTA * 1)
+#define SQUARE_LOCK (N_LOCK_ID + LOCK_DELTA * 2)
+#define TRIANGULAR_LOCK (N_LOCK_ID + LOCK_DELTA * 3)
+
+/* Special lock types, which must be generated in the script */
+
+#define HEXAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 1)
+#define OCTAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 2)
+#define HEART_SHAPED_LOCK (S_LOCK_ID + LOCK_DELTA * 3)
+
+#define DESERT 1
+#define JUNGLE 2
+#define STEPPE 3
+#define LEAFY_FOREST 4
+#define EVERGREEN_FOREST 5
+#define TUNDRA 6
+#define GLACIER 7
+
+#define NO_MOVE 0
+#define WALK 1
+#define SWIM 2
+#define FLY  4
+#define ETHEREAL 8
+#define ANY_MOVE 15
+
+#define NOT_RUSTED 0
+#define SLIGHTLY_RUSTED 1
+#define RUSTED 2
+#define VERY_RUSTED 3
+
+#define SKIN_COLOR 1
+#define CAP_COLOR 2
+#define HAIR_COLOR 4
+#define EYE_COLOR 8
+#define TORSO_MAIN_COLOR 16
+#define BELT_COLOR 32
+#define BOOT_COLOR 64
+#define TORSO_SPECIAL_COLOR 128
+#define ARM_MAIN_COLOR 256
+#define GAUNTLET_COLOR 512
+#define ARM_SPECIAL_COLOR 1024
+#define LEG_MAIN_COLOR 2048
+#define LEG_SPECIAL_COLOR 4096
+#define CLOTH_COLOR (CAP_COLOR|TORSO_MAIN_COLOR|ARM_MAIN_COLOR|GAUNTLET_COLOR|LEG_MAIN_COLOR)
+
+/* contentscript<character> Flags */
+
+#define IS_LEADER 1
+#define IS_MASTER 2
+
+#define DEPENDS_ON_ATTRIBUTES 65535
+
+#define FOLLOW_PLAYER 1
+#define FLEE_FROM_ENEMIES 2
+#define DONT_CHANGE_EQUIPMENT 4
+#define DONT_CONSUME_ANYTHING_VALUABLE 8
+
+#define NO_PARAMETERS 255
+
+#define GRAY_FRACTAL 0
+#define RED_FRACTAL 1
+#define GREEN_FRACTAL 2
+#define BLUE_FRACTAL 3
+#define YELLOW_FRACTAL 4
+
+#define BLUNT 1
+#define SLASH 2
+#define PIERCE 4
+
+/*************************/
+/* Common DataBase flags */
+/*************************/
+
+/* CommonFlags */
+#define IS_ABSTRACT 1
+#define HAS_SECONDARY_MATERIAL 2
+#define CREATE_DIVINE_CONFIGURATIONS 4
+#define CAN_BE_WISHED 8
+#define CAN_BE_DESTROYED 16
+#define IS_VALUABLE 32
+#define CAN_BE_MIRRORED 64
+
+/* NameFlags */
+#define USE_AN 1
+#define USE_ADJECTIVE_AN 2
+#define NO_ARTICLE 4
+#define FORCE_THE 8
+#define SHOW_MATERIAL 16
+
+/***************************/
+/* Material DataBase flags */
+/***************************/
+
+/* CommonFlags */
+/* NameFlags (only USE_AN) */
+
+/* CategoryFlags */
+#define IS_METAL 1
+#define IS_BLOOD 2
+#define CAN_BE_TAILORED 4
+#define IS_SPARKLING 8
+#define IS_SCARY 16
+#define IS_GOLEM_MATERIAL 32
+#define IS_BEVERAGE 64
+
+/* BodyFlags */
+#define IS_ALIVE 1
+#define IS_WARM 2
+#define CAN_HAVE_PARASITE 4
+#define USE_MATERIAL_ATTRIBUTES 8
+#define CAN_REGENERATE 16
+
+/* InteractionFlags */
+#define CAN_BURN 1
+#define CAN_EXPLODE 2
+#define CAN_DISSOLVE 4
+#define AFFECT_INSIDE 8
+#define EFFECT_IS_GOOD 16
+#define IS_AFFECTED_BY_MUSTARD_GAS 32
+
+/*************************/
+/* End of DataBase flags */
+/*************************/
+
+#define BONUS_LIVES 0
+
+/* room flags */
+
+#define NO_MONSTER_GENERATION 1
+
+#define NO_TAMING -1
+
+; /* this line must be here */

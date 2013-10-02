@@ -1,0 +1,2878 @@
+------------------------------------------------------------------------------------
+
+>>> NOTICE!!! <<<
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+------------------------------------------------------------------------------------
+
+December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Kobolds tweaked
+	* Added Spoiler etc warning to ChangeLog
+
+December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Menu.pcx looks a bit clearer
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Outlook tweaks
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added a terrible gum solution to fix the unicorns kicking
+
+December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Sophos' bad pray effect changed (now works!)
+	* Dipping in frozen fountains no longer works
+	* Snakes are a bit slower
+	* Fixed last problems (I feel like an optimist) in makefile generation.
+	* NEWS updated
+	
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Overall difficulty lowered by 33%
+	* Fixed one typo
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Whips' durability descriptions are no longer shown in the inventory screen
+	* Price balancing
+	* Increased the force kicks give to items when sending them to flight
+	* Kicking chests now prints less "THUMP"s
+	* Tweaked the lock breaking algorithm of chests
+	* Corrected two bugs in the wand of locking code
+	* The game no longer crashes when Atavus or Cruentus destroys a chest
+	* Added some information about genetrix vesana's origin to Kaethos's replies
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Wishing for a (special) boot or gauntlet now yields a pair
+	* Loricatus can now change the material of two identical gauntlets/boots
+	  if they are placed to both hands simultaneously before praying
+	* Item-affecting scrolls now handle gauntlets/boots as pairs, so for
+	  example a scroll of enchant armor will give the +1 bonus to both items
+	* Zapping chargeless wands and bananas no longer trains perception, since
+	  this could be abused
+	* Valpurus's Justifier and the Shirt of the Golden Eagle can no longer be
+	  enchanted further under any circumstances (why wouldn't Petrus have done it
+	  already?)
+	* There is now a chance of failure if one tries to enchant items beyound +5
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Praying to Loricatus while wielding a corpse no longer crashes
+	* Added unique replies for patrol guards
+	* Patrol guards now use helmets of piercing perception and rings of infravision
+	* Moving is now 25% faster when panicked
+	* All guard and dark knight configurations look now different
+	* The graphics files of IVAN are now much cleaner
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bats' bite strength decreased a bit
+	* Snakes can no longer open doors
+	* ToHitValues of thrown items increased
+	* Food in cans (and cans made of food) no longer spoil
+	* Worthless food now spoils even in shops
+	* All food now spoils in abandonned shops
+	* Carnivorous plants now drop kiwis
+	* Increased the possibility of food items
+	* The camera now updates a little earlier on right and bottom borders
+	* README updated
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added license info to the main menu
+	* Corrected a bug in the ass corpse emitation
+	* BoolQuestion now doesn't interpret enter as "yes"
+	* Wisdom now increases your ability to deal with gods
+
+December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* README updated again
+
+December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* README updated
+
+December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Corrected fatal mistake in Makefile.am (thank Valpurus that I caught this before we release)
+	* Adjusted color of flaming sword.
+	* Added BoolQuestion confirmation for appling wands.
+	* License changed to GPL.
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Fixed the Foul Iron Penetrating Light of Death Bug
+	* Added "Please send bug report..." message to aborts
+	* Wands that have run out of charges are now worth nothing
+	* Corrected probably all gcc warnings
+	* Corrected a bug in innermost SpillFluid() function that caused fluid to
+	  appear on the ground with a slight delay
+	* Panicked monsters are now much better in escaping along long tunnels
+	* Dipping wielded items is now possible
+	* Corrected a typo in potions' break message
+	* Zombie flesh is now initially spoiled
+	* Pick-axes are now more sturdy
+	* Digging consumes henceforth more NP
+	* Floating eye picture added to char.pcx by Kahvi
+	* I had to decrease the ambient light of New Attnam, since otherwise lanterns
+	  would not have been visible there, which certainly would have looked like a bug
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Cloaks and rings of invisibility can no more be wished, since they were so
+	  much more powerful than any other wishable items
+	* Charisma now affects shop prices (both buying and selling)
+	* Dealing with shopkeepers now trains charisma
+	* Drinking ommel urine is now eeevil
+	* Go command is now disabled if confuse state is active
+	* Reading when confused is no longer very buggy and abusable
+	* Stethoscope info is now somewhat more useful
+	* Since killing the enner beast is so difficult, I added a horn of fear to its
+	  inventory as a reward for the trouble
+	* Petrus and priests can now cure poison
+	* Petrus's and angels' heal counters now work correctly even if the player is not
+	  always on the same level as they
+	* "Single weapon skills" have been renamed as "accustomizations"
+	* Bear traps now occasionally break
+	* Corrected a fatal bug that caused a crash if a monster killed by a bear trap was
+	  resurrected
+	* Polymorphing when caught in a bear trap no longer crashes when the polymorph ends
+	* Corrected a memory leak in the book shelf code
+	* Digging and exploding a book shelf now works a little more correctly
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed the Mega-Monstrous Equipment of Cursed Hands Bug Named IVAN's Doom -5
+	* Destroyed the Infamous Infralight Eating Bug Fiend Covered With Blood -3
+	* Corrected a memory leak in the wall breaking/stone creation code
+	* Petrus no longer starts slaughtering everyone in Attnam when a kamikaze dwarf
+	  explodes near him
+	* _Lots_ of smaller bugs fixed
+	* BoolQuestion now interprets enter as "yes", not as the default answer
+	* Corpses of unique monsters now use a definite article
+	* AskKeyPress is now called upon bear trap and mine activation
+	* Alignment is once again shown in the player name over the message panel
+	* High score entries now show if the player was killed by a polymorphed monster
+	* Reading now trains intelligence
+	* Legless people no longer step on splinters
+
+December 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Not walking (eg carnivorous plants) can't follow player to world map
+	* shopkeepers can no longer follow from level to level
+	* carnivorous plants, genies and bill's wills no longer spill blood 
+	* Bear trap + level change crashes corrected
+
+December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Confused people no longer try to move against walls; there is no message and
+	  no time penalty, so this was a very unclear reason not to accept a key press
+	* Increased nutrition given by Seges
+	* Increased nutrition given by life saving
+	* Seges can now heal the player or cure his poison state if needed
+	* Nefas can now confuse enemies and give the player a pet mistress
+	* Scabies can now polymorph the player
+	* Mithril can no longer be wished; equipment made of it made the game boring,
+	  since updating was virtually impossible
+	* Decreased phoenix feather's SV to make the choice between steel and it more interesting
+	* Corrected the possibilities of broken helmets
+	* Decreased the overall difficulty values in the game by 25%
+	* Doubled all monster generation intervals in the game
+	* Decreased (greater) dark frogs' danger modifier a bit
+	* AI will not try to chase enemies seen by ESP anymore (this made angels rather useless)
+	* Throw system remade
+	* Terrain damage system remade
+	* Newton no longer rolls in his grave
+	* Since it was odd that the player could kick down locked stone doors so easily, the doors
+	  in the underwater tunnel are now made of wood
+	* Gain all items cheat now drops the items to the ground under the player, so he doesn't
+	  have to drop a thousand items to be able to move
+	* Added a fast gum solution to remove the material description of "stone stones"
+
+December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* "THUMB" -> "THUMP". Somebody might think it's a funny and somebody might think it's a typo.
+	* Zombies Endurance raised and dextrity and agility lowered to indicate even less brain function
+
+December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Slightly adjusted helmets in favor of "normal" helmets. (it was far too easy to find special helmets and the normal ones were not really needed by player at any point of the game)
+	* Monsters in panic don't follow player from levels
+	* Vesana now leaves a 3 pineapples on the ground when it is killed
+
+December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* I mixed to gods in last entry, so now that is fixed...
+	* Cleptia now gives invisibility state if haste is already activated. If even invisibility is active, then it adds time to one of the activated states. 
+
+December 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	 * Infuscor's effect changed
+	 * Corrected bug with Beartraps and CheckDeath
+
+December 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a major bug in the score system
+	* Attacking civilians doesn't raise relations to evil gods anymore, but
+	  killing does
+	* Full helmets are now used by several monsters formely wearing a normal helmet
+
+December 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added parasitized state which increases food consumption, can be activated
+	  by eating spoiled flesh and cured by healing liquid, antidote and sometimes
+	  by vomiting
+	* Decreased poison's effect more
+	* Numerous devirtualizations
+	* Equipment screen now warns about low strength more often
+	* Added horn of bravery and horn of fear items
+	* Added vodka material
+	* Vodka and Valdemar are now explosive
+	* The mistress pain message Hex added (but did not mention) is now occasionally
+	  printed if she is hit by the enner beast's scream
+	* Corrected a fatal bug in the chameleon polymorph code
+	* Broken helmet pictures added to item.pcx by Kahvi added modified by me
+	* Ring picture in item.pcx remade by Kahvi
+	* Added full helmet
+	* Helmets can now break
+	* Added troll blood material which acts like weakened healing liquid
+	* Cruentus's pray effect is now better
+	* Shields' BCs have been decreased a bit
+	* Removed the smaller temples of Attnam
+	* Valpurus's pray effect is now a little less superior
+	* Show battle info is henceforth a WMode command
+
+December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* weapon and shield info verbalized
+	* Perception increase message changed
+	* Mellis's GoodPrayEffect adjusted to give more often gods
+
+December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* chests can now by unlocked from same square with key
+	* anvil added to smithy
+	* digging produces stones
+	
+December 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* "Chest's lock shatters to pieces" -> "The Chest's..."
+
+December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* There's some light in Attnam again
+	* Puppies now have 50% more HP
+	* Tried to optimize script instantiations without noteworthy success
+	* Corrected a bug that prevented NPCs from searching unseen enemies
+	* NPCs normally standing idle now usually return to their home positions after
+	  the dangers in the level are eliminated
+	* The smith now belongs to the same team as the other Attnamians
+	* Decreased snake's DangerModifier
+	* Wand of polymorph's effect time was way too low (probably a test I'd forgotten)
+	* Added chameleon which polymorphs all the time and in the rare normal form changes
+	  color all the time
+	* Added chameleon flesh which activates the polymorphing state
+	* Mutant ass flesh now also triggers the polymorphing state
+	* Kamikaze dwarves and chameleons now use a special generation system; they both
+	  start to appear rarely (frequency 1000) after the player reaches 80 HP
+	* Added IsExtraCoward character database boolean which allows easy adding of
+	  civilian AI which panics immediately when an enemy is seen
+	* Petrus's wives, housewives, female slaves/servants and chameleons in their normal
+	  form are now extra cowards
+	* Added a special message to Petrus's wives' and housewives' SpecialEnemySightedReaction()
+	* Decreased penalties for eating spoiled bananaflesh and other high NPModifier materials
+	* ESC now works in equipment selection screen correctly
+	* Genetrix vesana, mutant asses and their materials now radiate red light
+	* Corrected a problem that slowed down the game during most actions
+	* Go is no longer 10% slower than manual walking
+	* Added quick keys 'w' and 'W' for wielding items in the right and left arm
+	* Decreased poison's effect a bit
+	* Poison and sound can't sever bodyparts anymore
+	* Tripled healing liquid's effect
+	* Items now break somewhat less often
+	* Items in strong-boxes now take very little damage and almost nothing can break
+	  an item inside a strong-box inside another container
+	* Decreased the effect of haste and slow to balance boss battles
+
+December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal bug in the monster generation code
+	* Eating spoiled food now yields less messages
+	* Since palm branches are fundamental parts of female slaves/servants, their
+	  inhandspics are now drawn using a gum solution function, even though the general
+	  system doesn't currently exist
+
+December 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a design flaw in the state system that occasionally caused odd permanent
+	  states to be activated
+	* The counter of the confuse effect of spoiled items was usually rounded to zero so
+	  I increased the effect a bit
+	* Esc now works in scroll bar questions
+	* Area around Attnam is now revealed when the game begins and gloomy cave's
+	  environment is uncovered when the Elpuri quest is given
+	* Chameleon added to char.pcx by Kahvi
+	* Better helmet added to item.pcx by Kahvi and slightly made smaller by me
+	* Snake's agility decreased
+
+December 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* quit key changed from q to Q
+	
+November 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mommos don't leave corpses but just slime.
+	* Fixed effect for Loricatus.
+
+November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Decreased exp gain for being burdened/stressed
+	* Decreased endurance exp rate
+	* Loricatus now gives a steel hand instead of a mithril arm and Cruentus an iron one
+	  instead of a steel one
+	* Fainting from kobold flesh works again
+	* The game no longer crashes if character wearing a ring of infravision is polymorphed
+	* If needed, the game now asks whether the player wants to wield a weapon which he is
+	  too weak to use
+	* Inventory entries of weapons and shields are now more informative
+	* Gravel, moraine, grass and school food can no longer be wished
+	* Integrated Kahvi's new chest pictures
+	* Corrected a bug that sometimes allowed small spoiled corpses to trigger a permanent
+	  confused state
+
+November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Some bones and skulls added to the enner beast level
+	* Skulls severed from skeletons no longer weight eight kilograms
+	* A dying skeleton now always drops a skull if it has a head
+	* Removed the ambient light of Attnam
+	* Added 100 bananas to Hulbo's shop
+	* Reduced the possibility of people stepping on banana peels and the average damage
+	  caused by the fall
+	* Elpuri's lair and AI are now a little more interesting
+	* There is now a one-way magic portal in Elpuri's lair which leads to level 7 and
+	  is the only way to go for the seekers of the Shirt
+	* It was impossible to correct the bugs in the EnabledMember tracking structure of teams,
+	  so I remade the hole system differently
+	* Score calculation code rewritten
+	* High score list no longer behaves oddly if there are no entries
+	* Healing liquid, priests and wands of resurrection may no longer give angels or genies
+	  prohibited bodyparts
+	* Gods can again attach old bodyparts (Hex had forgotten the const tag after humanoid's
+	  CanCreateBodyPart())
+	* If a bodypart's HPs are at max when endurance is increased, its HPs are set to new max
+	* Killed the Hideous RAM Boulder Monster Spawn Error once and for all!
+	* Destroying a temple no longer *increases* relation to the divine owner
+	* Selling into and buying from chest on store floor works again
+	* The books and scrolls of the library are now inside the shelves
+	* The AI no longer eats spoiled food
+	* Items with different spoil levels are no longer piled together
+
+November 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bugs squashed:
+	-When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
+	-Carnivorous plants can be kicked around.
+	-"The kamikaze dwarf manages to free heself from the bear trap."
+	-slight problem with key msgs corrected
+	* Features added:
+	- Loricatus now changes the material of items that have a StrengthValue that is larger than the strengthvalue of steel
+	- if the item that the player is carrying is steel, then there is a 10 % that he will be rewarded a scroll of repair 
+
+November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Stats of summoned bodyparts are now more intelligent
+	* The dead are no longer counted when calculating population
+	* Anvil, broken bear trap, large chest and "small" chest added to item.pcx by Kahvi
+
+November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Totally weird and odd bug in charde.cpp.
+
+November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Bugs corrected:
+	- Headless player zombie + Chat.
+	- Seges and others may give genies and angels a groin and legs.
+	- Teleportation state works in the wilderness.
+	- "0 scrolls of wishing dropped"
+	- Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
+	- The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
+
+November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A lethal bug in the banana grower encourager's and a minor one in the ostriches'
+	  save code corrected
+	* Language fine tuning
+
+November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Decreased the amount of wolves Silva creates in towns
+	* The fly symbol is a bit clearer now
+	* Banana growers and ostriches now displace any movable creature on the landing
+	  platform; if it isn't possible (the creature is a plant or something), they'll
+	  attack it
+	* Added yet another silhouette color level; colors of old ones adjusted
+	* Dark frogs and rarely even greater ones appear in fountains (Hex forgot them)
+	* Added ice and snow materials
+	* Added snowy ground & pines and firs covered with snow
+	* Winter has arrived in Attnam
+	* Added new background story
+	* Corrected Decos's female servants' replies
+	* Richel Decos's and the banana growers' replies adjusted heavily
+	* Added new characters: banana grower encourager and Kaethos the village elder
+	* The banana grower encourager now occasionally whips or kicks the passing banana
+	  growers
+	* Added new quest artifact: encrypted scroll
+	* Finally added the new starting quest
+	* Elpuri's cave is now hidden until the Player finishes the starting quest
+	* All Petrus's replies rewritten
+	* The archaic English used by Petrus, Haathbar, priests and gods is now more correct
+
+November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Kahvi's levitation & fly symbol integrated
+	* Added more color levels to the silhouette
+
+November 23 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* poisoning and confusion can now be optained by consuming spoled items
+
+November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Level entering messages and death messages now show the description of the currect
+	  dungeon, too
+	* Dropping items in a shop while invisible no longer automatically donates the item
+	  but asks whether it should be done
+	* Corrected a bug in the auto reveal feature of New Attnam
+
+November 23 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* scroll of repairing added
+
+November 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* snakes, frogs and spiders sometimes appear from fountains
+	* confuse state
+	* reading activates random state when confused
+
+November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal script error that sometimes caused a crash when entering Oree's lair
+	* Hunters now carry bear traps
+	* Invisible New Attnam made almost visible by Kahvi
+	* Almost visible New Attnam made visible by me
+	* Sign's Text wasn't saved at all but now is
+	* The player now learns the layout of New Attnam without any exploration when he begins
+	  the game (he has lived there, after all)
+	* Removed the random factor of starting endurance, its effect was too great
+	* Added "none" option to equipment selection menu
+	* Added possibility to select target from equipment when reading item-affecting scrolls
+	* The holy banana of Liukas Vipro no longer spoils
+	* The former value of HasFeet() function comes now from the script
+	* Characters' flesh materials can now be defined in the script
+	* Death messages can now be defined in the script (it uses the same parser as replies)
+	* Reply and death message parser now understands pronouns
+	* Renamed little dog to puppy in order to reduce the Nethack-clone impression of the game
+	* Some devirtualizations
+	* Richel Decos's mansion is now prettier and better guarded
+	* Levitating ostrich picture modified somewhat by me
+	* Ostrich landing site picture added to glterrain.pcx by me
+	* New terrains added: holy tree and ostrich landing site
+	* Added levitating ostriches
+	* Added banana transportation AI for banana growers and levitating ostriches
+
+November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Water *really* makes gunpowder useless
+	* Selecting a pile in the eat menu doesn't open a scroll bar question
+	  anymore
+	* Corpse consumption is now more ergonomic
+	* Item weights are now correctly updated when eating
+	* The player now knows no gods when he begins the game
+
+November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The default answer of drop and pickup amount question is now the number
+	  of items, instead of one
+	* Merka is now the shopkeeper of the dungeon, not one of his guards
+	* AI sight code works (very) little better now
+	* The player can no longer fly over oceans if he has walking creatures
+	  in his team
+	* Broken (runed) whips are no longer generated; since the intact ones
+	  can't break, they were somewhat odd
+	* The possibilities that items explode or burn (if they can) now depend
+	  on the amount of fire/energy damage
+	* Monsters no longer attack the enner beast; its death this way wasn't fun
+	* Reduced the enner beast's damage somewhat
+	* Enner beast's scream now detonates activated mines
+	* Unicorn code is now simpler
+	* Wish parser now asks the player to be more precise if there are more than
+	  one equally good matches; this way typos like "wand of clonning" don't
+	  yield a wand of polymorph etc. just because NameSingular is correct
+	* It is now possible (and necessary) to specify material when polymorphing
+	  into a golem
+	* Leg pictures' MColor 3 is now allocated for boots
+	* Carnivorous plants' color have been adjusted: normal are green, greater blue
+	  and the mother is red
+	* Genetrix vesana no longer creates plants around dead members of the player
+	  team
+	* Magical whistle effect no longer attemps to teleport dead members of the
+	  party
+
+November 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Polymorph state causes polymorph less often (the frequency was ridiculous)
+	* Genetrix vesana level is now easier
+	* Shops are now bigger
+	* Nutrition values decreased
+	* Possibilities of broken bananas decreased greatly
+
+November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Monster amounts and generation intervals can now be defined in the script
+	* Decreased the monster generation values in the tunnel
+	* The middle level of the tunnel is now twice as long as before
+	* Corrected a fatal bug in the skeleton bodypart severing code
+	* Gcc warning corrections
+	* Fixed the Vicious Endless Dinner Time of Mad Slaves Bug
+	* ApplyExperience() is now called also during actions (I can't understand
+	  why there was an if-sentence disabling it...)
+	* Rounding error corrections
+	* More exp balancing
+
+November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Exp rates quadrupled
+	* Fixed a bug in the battle info screen: it didn't work correctly if a
+	  two-handed weapon was too heavy to be used
+	* Animated set of magic portal pictures added to OLTerrain.pcx by me
+	* Added magic portal olterrain
+	* Oree's lair can now only be entered through a magic portal in level 9 and
+	  exited via another portal which teleports the player straight to level
+	  one but can only be used if he has the Shirt
+	* Changed the layout of Oree's lair a little
+	* The game no longer crashes if the player tries to go down in tunnel end
+	  level while WMode is active
+	* Added level teleport WMode command ('|')
+	* Reading in WMode now takes only about one tick
+	* S&R done:
+	  * WizardModeActivated() -> WizardModeIsActive()
+	  * GetSeeWholeMapCheat() -> SeeWholeMapCheatIsActive()
+	  * GetGoThroughWallsCheat() -> GoThroughWallsCheatIsActive()
+	* Increased bone's strength value a little
+
+November 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Practically every battle algorithm has been rewritten
+	* *Lots* of attribute and equipment balancing
+	* Show battle info screen is now very (perhaps even too) informative
+	* Automatic dropping of banana peels via config option is now considered
+	  a dexterity action of difficulty one
+	* The smith no longer fixes broken bananas
+	* Gave the smith a mithril hammer, because without it he was completely useless
+	* The "What do you want me to fix?" menu of now shows valpurium swords etc.
+	  which cannot actually be fixed, so that the smith can verbally give the precise
+	  reason why he can't do it
+	* The smithy now fixes armor, too
+	* Added IsMetal database bool for materials
+	* The smithy now fixes only items made of metal
+	* Added a couple of random mines and bear traps in the artifact vault
+	* Corrected a bug in the code that prevented pets from eating the player's bodyparts
+	  that prevented *all* other monsters from eating *any* severed bodyparts
+	* To avoid accidents, an "Are you sure?" question is now asked if the player tries
+	  to eat his own severed limb
+	* Scroll of create monster is again destroyed after reading
+	* Magical whistles can no longer be piled
+	* Added summon monster WMode command ('&')
+	* Added runed whip to fill the gap between whip and whip of thievery
+	* Added festring::SearchAndReplace() which searches and replaces
+	* Character chat replies can now be defined from the script
+	* Added DefaultName character database attribute
+	* The following script-placed characters have been named:
+	  * Hulbo the shopkeeper (the one in Attnam)
+	  * Merka the shopkeeper (the one in Elpuri's Cave)
+	  * Haathbar the librarian
+	  * Ikiros the smith
+	  * Richel Decos the imperialist
+	* It is now possible to add unique monster which are generated at most once
+	* Added DangerModifier which allows monster designers to force certain creatures
+	  to be generated earlier or later than they normally would
+	* The following monsters are now unique and more powerful than monsters
+	  normally encountered at the time they are generated:
+	  * Rondol the kobold patriarch
+	  * Guugzamesh the goblin king
+	  * Xinroch the skeleton warlord
+	  * experiment ZQ-29 the spider silk golem (very rare)
+	  * Ur-Khan the orc marshal
+	  * Golgor Dhan the grand master dark knight
+	  * Sherarax the mistress queen
+	* Valpurium golems are now both rarer and more powerful when they are generated
+	* IsSolid material database boolean renamed as IsGolemMaterial
+	* CreateSolidMaterialConfigurations character database boolean renamed as
+	  CreateGolemMaterialConfigurations
+	* Added an alive material called magical air of which Bill's wills and genies are made;
+	  this solves the problem with their strengths
+	* Guards are now divided to rookie, veteran, shop and elite configurations
+	* Added Haedlac Galladon VII the master guard to the Cathedral
+	* Added Gorovits family hammer and Gorovits family sickle for Ivan
+	* The imperialist can again fight (he was just overloaded because of that 80 kg golden
+	  plate mail :)
+	* Added boot of kicking for the imperialist
+	* Added greater dark frogs, greater light frogs and greater carnivorous plants
+	* Genetrix vesana now has a 1/3 chance to create a greater carnivorous plant instead
+	  of a normal one
+	* Genetrix vesana's AI no longer crashes if one of the player team members is at the
+	  very edge of the level
+	* Greater frog, greater carnivorous plant and genetrix vesana pictures added
+	  to char.pcx by me
+	* Torso picture and head pictures for goblin prince and king added to humanoid.pcx
+	  by me
+	* All kobold, goblin and skeleton configurations now look different
+	* Elpuri's cave consists again of 10 levels; while balancing I realised it wasn't
+	  too long in the last version and now we have thrice as many monsters to meet and
+	  items to collect so I believe shortening was not justified
+	* Added pick-axe to level 9 (fan request)
+	* Displacing is no longer faster than normal moving
+	* Displacing creatures to terrain which they can't walk on is now not allowed
+	* Polymorphing is now a secret state
+	* The player will no longer become hungry if saved by WMode life saving
+	* Mammoths no longer gain insane amounts of endurance experience
+	* Decreased the healing rate of high endurance monsters
+	* Corrected a fatal bug in the armor breaking code
+	* Poison works again
+	* Added "peaballs" to insults
+	* The game now asks for keypress if a worn or wielded item is broken
+	* Messages are again splitted before sending them to history; this way panel
+	  scrolling works more conveniently and great amounts of very long messages
+	  no longer cause a crash when pressing 'M'
+	* Corrected a bug in the script reading functions that prevented the divide
+	  operator '/' from working correctly
+	* Corrected a fatal bug in Mjolak's and flaming sword's hit effects
+	* Added character attributes option to SecretKnowledge
+	* Removed bone support; it was realistic but not fun and slowed down the game
+	* Stacking system GUI improved even more
+
+November 12 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Stacking system's GUI improved
+
+November 7 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Linux version improvements (now seems to function like a proper program)
+	* Genedrix Vesana added to tunnel
+	* Shopkeeper now offers his remaining money if he doesn't afford the full price
+
+November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Belt of carrying added
+
+November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Pets shouldn't eat the player's bodyparts.
+	* Look stretch config option.
+	* If a mine in the inventory is active, it should be displayed somehow.
+	* Artifact vault.
+	* Stethoscope info now shows HP and MaxHP
+	* Daemon flesh is now poisones
+	* Strong box now looks like a strong box (also edited its graphics)
+	
+October 31 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item strength values are now somewhat more balanced
+	* A few gcc warnings corrected
+	* Many devirtualizations
+	* Kahvi's sign pic now uses only two m-colors, one for the text and another for the rest
+	* Optimized contentscript instantiations by removing the older optimizations that slowed
+	  them down
+	* Most inventory initializations are now script's responsibilities
+	* Armor breaks again
+	* Block capacity algorithm remade
+	* Added script support for random squares inside rooms
+
+October 29 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* fixed bug: (In Linux) push X-button, then cancel
+	* magical whistle now acts as a normal whistle if used less than 1000 ticks after last use.
+	* Smith added in Attnam
+	* Spoiler warnings to all script files added
+	* Snake corpses are poisones
+	* sign (says "under construction" and IS under construction)
+
+October 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The extremely uninformative battle information of the panel removed
+	* Added show battle info command ('B') which reveals them instead
+	* Item pictures are now shown when looking at people
+	* Worldmap generation is now faster
+	* Added armor of great health which increases endurance but is heavier, clumsier
+	  and weaker than plate mail
+	* Invisible monsters seen by infravision are again transparent
+	* Generation modifiers are no longer calculated for monsters that can't be generated
+	* Game balancing:
+	  * Body armor now increases head's AV somewhat (let's say it protects the neck)
+	  * Body armor's effect on limb AVs increased (now 3/4)
+	  * Damage needed for breaking items doubled
+	* New script features:
+	  * Items can now be added to character inventories both in dungeon.dat and char.dat
+	  * Items can be added to the ground much more conveniently
+	  * Chest contents can be defined in the script (even chests inside chests inside chests
+	    and so on are possible)
+	  * One can now define items in the script that have an arbitrary chance to occur in a
+	    given place (inventory, ground, equipment etc.)
+
+October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Original bodypart system is now a lot better
+	* Resurrection works again correctly
+
+October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Items in shops or on the cathedral floor no longer spoil
+	* Spoil level is now symbolized by Hex's fly effect
+	* Halved all spoil rates
+	* Fixed a bug that caused the pick up AI of limb-lacking monsters to crash
+	* Corrected a bug in the new random item code that created numerous ghost items
+	* Removed a fatal bug in the block code that resulted in a div by zero
+	* Killed a minor bug in the bodypart attachment code that prevented attribute
+	  bonuses from updating correctly
+	* Added flame effect for holy bananas
+	* Tweaked the shape of the jungle island a little
+
+October 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Weapon prices are now correct
+	* S&R:ed "omel" to "ommel"
+	* New materials added: hardened leather, troll hide, nymph hair, ommel hair,
+	  angel hair, phoenix feather, golden eagle feather, spider silk and kevlar
+	* Added many new material choices for cloaks, belts, gauntlets and boots
+	* Unarmed, kick and bite THVs decreased
+	* Corrected a problem with lamps that generated names like "oil iron lamp"
+	* Corrected a fatal bug in the spoil code
+	* Intact and broken morning star pictures added to item.pcx by Kahvi
+	* The old starting room moved to the tunnel
+	* Size of Elpuri's cave decreased by three levels
+	* Added scrolls of enchant weapon and armor as a reward to wolf room
+	* Added random item option to script
+	* Most items sold in shops and the library are now random
+
+October 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Inelastic armor now decreases dexterity and/or agility
+
+October 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The danger system now takes haste and slow into account
+	* Monster no longer panic when they die
+	* Weapon weights are now *much* more realistic
+	* New weapons added: hammer, sickle, dagger and short sword
+	* Names of the following weapons modified:
+	  * curved two-handed sword -> two-handed scimitar
+	  * poleaxe -> halberd
+	  * spiked mace -> mace
+	* Whips no longer break
+	* Possibility of enchantment scrolls increased
+	* Some search & replace errors corrected
+	* Messages printed out during a hit are now concatenated
+	* The game now aborts if an obligatory room cannot be placed during generation
+	* Game balance is now completely broken and most damage values insane
+
+October 16 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added ANTIDOTE effect
+	* Added antidote liquid
+	* "Omle" -> "Omel" because *CLASSIFIED*
+	* added treasure room to Valpuri's cathedral
+	* slightly increased the possiblity of bottles (to get about as much other potions with the new liquid..)  
+	
+October 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Sign added to olterrain.pcx by Kahvi
+	* Ostrich added finally to char.pcx by Kahvi! VICTORY!
+	* Strong-box added to item.pcx by Kahvi
+	* Flail head and broken flail added to item.pcx by Kahvi
+	  (he had done them months ago but I'd forgotten to commit them)
+	* Fix function added for items, though I didn't test it
+	* Added inline tool function template Recurse() to femath.h,
+	  which isn't and probably won't ever be used, but it's guru
+
+October 14 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Compiles again on linux
+	* added imperialist and banana grower classes
+	* added rough outline of New Attnam
+	* added boulder
+
+October 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Underscores now separate the words of all macros in the game
+	* The prices of the items added in the last commit are now sane
+
+October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Optimized the generation of characters somewhat by disallowing
+	  a few unnecessary cache recalculations
+	* Mana is now hidden
+	* Finally added a working equipment attribute bonus system
+	* Added gauntlets of strength and dexterity
+	* Added boots of strength
+	* Boots of speed replaced with boots of agility which increase
+	  the attribute instead of hasting the user; this way wands of
+	  haste and Cleptia are useful even if the boots are equipped
+	* Added helmets of piercing perception, understanding, brilliance
+	  and attractivity
+	* Added DefaultEnchantment database value for items
+	* The game now says "Entering level x" instead of "Generating
+	  level x"
+
+October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Using felist is now perhaps a bit easier
+	* Picking up multiple items is now more convenient
+	* Chest usage is now easier
+	* Chests' StorageVolumes now work correctly
+	* You can no longer earn money by putting things inside a chest
+	  in your *own* inventory in a shop
+	* Applying a chest now opens it
+	* Tweaked the placement of the jungle island a little
+	* The librarian now starts with some money so he can buy things
+	  from the player even if the latter hasn't yet bought anything
+	* Fixed a bug in New Attnam's entry pos
+
+October 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Support for round corners for rooms added
+	* Some rewriting of some really awful code in level.cpp, but not enough...
+	* Started New Attnam (1 % done now or something like that)
+
+September 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Gunpower can now get wet
+
+September 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Scabies' good effect now doesn't inflict damage upon friends and neutrals
+
+September 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Skull's weapon category changed from MISC to UNCATECORIZED;
+	  the former is not a weapon but an inventory category and caused
+	  a crash when the skull was wielded
+	* Sparkles and/or flies over transparent pictures are no longer
+	  themselves transparent
+	* Camera now works even if the area is smaller than the screen
+	* The underwater tunnel and New Attnam are now placed correctly
+	* worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself()
+	  and worldmap::SmoothAltitude() optimized somewhat
+	* Corrected the Mysterious Absence of Elpuri on the Busy Screen Bug
+
+September 26 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added lightning effect to bitmap
+	* Prevented digging with broken pick-axes
+
+September 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Now compiles on Linux again
+
+September 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Monster generation *might* be a bit better again
+	* Corrected a minor outlook bug in the equipment pictures around
+	  the silhouette
+	* Corrected a minor outlook bug in the equipment screen
+	* Added colored light effects for many monsters and items
+
+September 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added parentheses around several macros in ivandef.h
+	* Added MakeRGB24(), GetRed24(), GetGreen24() and GetBlue24() inline
+	  functions
+	* Renamed old color handling routines to MakeRGB16() etc.
+	* Added rgb24 function to script and renamed rgb to rgb16
+	* Emitation and luminance are 24 bit rgb values; lights may now be
+	  colored and they can be mixed dynamically
+	* Note: since rgb elements are in the range 0-255 instead of 0-511,
+	  old light values are converted to new ones like this:
+	  MakeRGB24(Light / 2, Light / 2, Light / 2)
+
+September 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Flies added
+	* Items inside chests carrid by player at death shown
+	* 3 configurations added to chests: small, normal, large
+	* GCC define added to configure.in
+	* StorageVolume moved to script for chests
+	* Added MaxGeneratedContainedItems for chests' parameters
+	* deactivated Scabies temporarily
+	* Fixed msg when trying to put chest into the same chest
+
+September 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Capitalization functions of festring are now more flexible
+	* Added festring::IgnoreCaseFind() which acts like std::string::find() except
+	  that it ignores case
+	* Wish parser is no longer case sensitive
+	* Added SoCM alias for scroll of change material
+	* Position script now allows one to select a random squares inside arbitrary
+	  rectangles
+	* Added owterrain classes and script entries for New Attnam and the underwater
+	  tunnel
+	* Added femath::CompareBits() which allows easy ordering of POD objects
+	  (but alignment of structure members must be disabled first!)
+	* The < operators of graphic_id and configid are now more elegant
+	* Saving and loading graphic_id and configid objects is now more elegant
+
+September 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Banana peal is now banana peel (why wasn't this typo noticed before?)
+	* Wands' inventory entry is now correct
+	* Corrected a fatal bug in the lump hit code
+	* Completely black carnivorous plants are no longer generated
+	* Interlevel transportation code is now a lot better
+	* Levels can now have multiple entrances which one may link without restrictions
+	* Names consisting only of spaces are now prohibited, and spaces at the end of
+	  names are now discarded
+
+September 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* The Price of cheap copies of Petrus lowered from 500 to 50. (They aren't THAT sacrate!)
+	* Bone changed from two handed weapon to one handed. I belive so, but might need debate.
+	* Skull added
+
+September 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected lots of warnings given by gcc compilation
+	* The game doesn't generate monsters that can't hurt the player nor can
+	  be themselves hurted, like a mammoth against an AV 60 enemy
+	* The same applies to monsters which deal a ton a damage but can also be
+	  killed really easily, like skeleton warriors
+	* Armies of monsters of single type are now a lot less common
+	* Attribute decrease due to negative exp is now four times slower than before
+	* Mammoth and buffalo stats tweaked a bit
+	* Attribute system balancing
+	* Valdemar added by Hex
+	* Omle urine is now more powerful
+	* Omle urine messages work now better
+	* Healing liquid doesn't work on non-living bodyparts anymore
+	* Healing liquid effect adjusted
+	* Healing liquid now prints a message when it grows new limbs
+	* Useful potions are now more common
+	* Enchantments can now be defined in the script
+	* Added lots of enchantments for the initial equipment of high level monsters
+	* Pictures of a native village and an entrance to an underwater tunnel added
+	  to WTerrain.pcx by Kahvi
+	* Picture of an imperialist added to Humanoid.pcx by Kahvi
+	* Wall with Petrus poster added to OLTerrain.pcx by me
+	* Added some Petrus posters around Attnam
+	* Probably something else, I was nine days without coding and my memory
+	  about what I did is dizzy
+
+September 07 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* The frequency of suicide dwarfs increased from 1000 to 10000
+	* Kicking locked chests can now shatter the lock
+	* The contained items of a chest now receive 50 % of the physical damaged inflicted to the chest 
+	* Chest's StorageVolume increased from 1000 to 5000 (even bottles couldn't fit inside before)
+
+August 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Whistle now sets the waypoint of some creatures to users pos
+	* Displacing monsters that are stuck no longer works
+	* Bug with braking bottles probably fixed
+	
+August 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Equipment is now dropped correctly after Sophos teleport a bodypart away
+	* Corrected a bug that caused dogs catching bones to crash
+	* Added "magic whistle" alias for magical whistle
+	* Magical whistle now prints a message when blown
+	* Removed rings of energy and acid resistance, as they were completely useless
+	* Doubled all block values (is this too much?)
+	* Scroll of change material reading can now be cancelled
+	* Bodypart healing is now faster
+	* Rest command cannot be used anymore if only non-alive bodyparts are hurt
+	* Rest command is now terminated if only non-alive bodyparts are hurt
+	* Female slaves again wield palm branches
+	* Sparkle effect time doesn't anymore need to equal 0 mod 16, and their
+	  position and timing varies depending on class instance
+	* SparklePos now prefers the middle parts of the picture, since clipping
+	  the sparkle isn't really aesthetic
+	* Unseen far away stacks can now be 'l'ooked at if SeeWholeMapCheat is active,
+	  and full information about their items is shown
+	* Corrected a fatal bug that caused the breaking of wielded potions to crash
+	* Added weapon and armor enchantments (the +x thing)
+	* Added scrolls of enchant weapon and enchant armor
+	* '?' screen is now easier to read in WMode
+	* Corrected a bug that caused incorrect SS levels to be printed in the inventory
+	* Horn and flail pictures added to Item.pcx by Kahvi
+
+August 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Sparkling now works with all items made of sparkling material
+	* Sparkle effect is now less frequent
+	* All prices are now more or less correct
+	* Valpurus now gives a valpurium two-handed sword, not a curved one
+	  (old effect was a bit too powerful...)
+	* Loricatus now changes things to steel, not mithril (same as above)
+	* UpdatePictures() is now not called when creating temporary monsters
+	  and equipment for danger calculations
+	* Iterative UpdatePictures() calls are now less common
+	* Reduced enner beast's damage by 99.99%
+	* Kicking works a bit better now
+	* Wand of locking works again
+	* Quest artifacts no longer spoil
+	* Adjusted bear trap damage a little
+	* Offer values now depend on price
+	* Cleptia now hastes/slows the player instead of increasing/decreasing
+	  his agility
+	* Name length is again limited
+	* Removed bodypart animation structures, as they weren't used and were
+	  already outdated
+	* The game crashes no more when an item spoils when it's currently being
+	  eaten
+	* Wolves are now easier
+	* The dungeon shop now appears before the wolf level
+	* The dungeon shop has now more useful items for sale
+	* Vomiting in the world map no longer crashes
+	* Digging doesn't destroy your weapon anymore if both hands are full
+	* Decreased difficulty in general
+	* Probably much that I have forgotten (night coder in a hurry has a poor
+	  memory)
+
+August 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Kamikaze dwarves now die in the initial explosion
+	* Kamikaze dwarves' bodyparts now fly to random directions in the explosion
+	* The game now prints a "You hear an explosion." message when a square
+	  outside LOS explodes
+	* Fixed many bugs in StepOnEffects
+	* Corrected a bug in bananas' volumes
+	* Experience and nutrion values balanced
+	* Using the whip of Cleptia is now an evil deed
+	* Flaming sword's hit message was fixed
+	* Vermis, Turox and the whip of Cleptia now use a definite article
+	* Adjusted new artifact weapons' volumes, materials and hit effects
+	* Hammer, sickle, short sword and dagger added to Item.pcx by Kahvi
+	* Broken pictures of the following items added to Item.pcx by Kahvi:
+	  hammer, sickle, short sword, dagger, chain mail, shield
+	* Chain mails and shields may now break
+	* Corrected an arithmetic error in the ReceiveDamage code
+	* Inactive mines no longer explode when stepped on
+	* Inactive mines no longer explode from physical damage, only from fire
+	  and energy
+	* Mines and bear traps are now automatically dropped upon activation
+	* Bill's wills and snakes no longer slip on banana peals
+	* Corrected a bug that caused the "you wake up" message after faint to be
+	  printed twice
+	* Cured a corpse bug that caused DrinkableSorter to crash
+	* Oree doesn't "look slower" when he dies and his boots of speed are
+	  dropped to the ground
+	* Corrected a typo in Oree's death message
+	* GetNearestFreeSquare calls no longer crash if no free square was found
+	  (usually RandomSquare is used instead)
+	* Vomit amount is no longer discarded
+	* Dipping works again
+	* Severed bodyparts and corpses now bleed for some time
+	* Weapon poisoning etc. is now only temporary
+	* Meleeweapons with special hit effects now call meleeweapon::HitEffect(), too
+	* Broken artifact weapons now don't cause special hit effects
+	* Whip of Cleptia must be made of material with > 5 flexibility to work
+	* Kahvi's stethoscope picture integrated
+	* Elpuri's head is again black
+	* "Your xxx bleeds (very badly)." message is now replaced with "Your xxx is in
+	  (very bad) condition." if the bodypart is not made of living material
+	* Golem corpses aren't bloody anymore
+	* The idol which an NPC wants to become when polymorphing with polycontrol
+	  active now depends on sex (undefined -> mammoth, male -> communist, female ->
+	  mistress queen)
+	* Polymorphed creatures now drop all equipment they can't use
+	* The dolphins can now be polymorphed
+	* AskForKeyPress() now automatically capitalizes its topic
+	* Starting a new game after drowning doesn't crash anymore
+	* Ocean's IsWalkable function did not take a const parameter,
+	  which caused seas to become walkable, but this is now fixed
+	* Corrected the "...it is worth 9085104 gold pieces!" message that appeared
+	  in shops because the price was read from a random RAM address
+	* The enner beast now screams every turn if panicked
+	* Fearless creatures panic no more when their bodyparts are severed, and almost
+	  fearless less often
+	* Block strengths are now shown correctly in the panel
+
+August 18 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added sparkle animation cycles
+	
+August 18 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Wand-system's code shortened by maybe 80 % 
+	* Wand of cloning added
+
+August 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added item piling
+	* Removed numerous tests forgotten in the last commit
+	* One can no longer see weights etc. when looking at far away stacks
+	* The Obscure Mithril-Handled Wooden Sword Bug corrected
+	* Fixed some warnings given by gcc compilation
+	* Corrected a database bug that caused non-living creatures to print
+	  odd messages when running a gcc-compiled binary
+	* Removed two other simultaneously found bugs concerning non-living
+	  creatures' attributes
+	* Weapon and armor prices are somewhat more correct now
+
+August 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* StringQuestion again shows a "Too short!" message when appropriate
+	* Names and descriptions of several gods changed
+	* Stack interface is now much simpler and its usage much easier,
+	  as in the following example:
+
+	  for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
+		{
+		  i->MemberFunctionOfItem();
+		  item* CurrentItem = *i;
+		}
+
+	* Corrected an enormous amount of bugs caused by the new item visibility
+	  system
+	* Added lsquare::GetSideStackOfAdjacentSquare() which allows much
+	  more convenient usage of side stacks
+	* Description of sidestacks is now shown on the squares above which
+	  they really are (because previously you could "see" lanterns through
+	  walls in lookmode)
+	* Level-leaving code now works little differently with ESP-monsters
+	  (they must now see the stairs before they can follow the player)
+	* Panel's level description is now always capitalized
+	* RaiseStats + ESP works correctly now
+	* Added "severed" adjective for severed bodyparts
+	* Item information shown in the inventory screen now depends on category
+	* festring is now a fully static class, not a namespace, since namespaces
+	  are evil
+	* festring::IntegerToChar() now calls festring::InstallIntegerMap()
+	  if it hasn't yet been done; manual initialization is thus no more necessary
+	* Added a couple of festring::SplitString() functions that make line
+	  cutting and chapter managing much easier
+	* felist now splits lines correctly
+	* Added ushort Marginal parameter for felist::AddEntry, which makes splitted
+	  lines occasionally better looking
+	* Corrected an outlook bug in the "You didn't get to the high score list" message
+	* Poison is now a lot less deadly
+	* Default outline colors may be a bit less ugly
+	* Lots of C-style casts converted to reinterpret_casts
+	* The whip of Cleptia is now derived from whip
+	* The player now starts with a copper spear and a leather helmet, so that
+	  he would suck a little less
+	* Stethoscope, skull and scalp pictures added to item.pcx by Kahvi
+	* Thief picture added to humanoid.pcx by Kahvi
+	* Critical hit message was not displayed correctly if the player was the hitter
+	  and this was fixed
+	* Created a more or less consistent system for broken items
+	* Integrated Kahvi's broken weapon pictures -> all normal weapons and bananas
+	  may now break both when blocking and hitting
+	* Changing material to air is now prohibited
+	* Bananas are now derived from meleeweapon so that they can be poisoned
+	* Food finally spoils
+	! Note: Due to spoil system, it is now illegal to send characters and items
+	  to hell in destructors, so be sure delete everything there
+	* Bone and bread are now organicsubstances so that they can spoil (albeit
+	  slower than other materials)
+	* Meleeweapons' name now shows if they are dipped into something
+	* Corrected a few small bugs in the Memorized and MemorizedDecription update
+	  request code
+	* Resurrection works again
+	* Prohibited unoriginal bodypart attachment during resurrection since limb
+	  images are not universally compatible
+	* Duplicating corpses now works
+
+August 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Monsters now panic more or less correctly
+	* Item info option added to Wizard mode's secret knowledge command
+	
+August 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* corrected funny (ok it's not very funny) spelling mistake. The text said before: "...ThOu HaSt SlAuGtHeReD pEtRuS..."
+	* Added panic. At the moment all monsters panic when their HPs reach 1 which will have to be tweaked.
+
+August 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added parameter IgnoreVisibility to all stack::DrawContents and their calls
+	* Tweaked the number of beartraps and mines in level (now 0-4 of each)
+
+August 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Carnivorous plants are now longer born inside walls nor over monsters
+	* StuckTo system works better now, maybe
+	* Added Duplicate() functions for character and item
+	* Gauntlets and boots are now generated in pairs
+	* Monsters pick up and use equipment again
+	* Added cloak of invisibility
+	* Invisibility is now taken into account when calculating danger
+
+August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Msgs of special items corrected
+	* Success of using Whip of Calamus now depends on players relations to Calamus.
+	* Wishing for "lamp" gives now an oil lamp
+ 	* Headless creatures don't screams
+	* Backpacks work (-> Suicide dwarfs work)
+	* GetDeathMessage functions changed to const
+	* Bug with bitmap::DrawFlames that did funny things to the RAND() function corrected
+	* Corrected a minor typo in chest
+	
+August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bug in poisoned fixed
+	
+August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mines and beartraps work well with the new system.
+
+August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Eating is no longer an evil deed
+
+August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added char* festring::IntegerToChar(long) which is a much faster
+	  variant of the nonstandard itoa
+
+August 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* SecretKnowledge's defence part now shows block info
+	* Player can no longer eat scrolls, silver stones etc.
+	* Eating is no more fatal
+
+August 3 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* CanBeSeen and IsVisible systems merged together to CanBeSeen.
+	* Added a lot of consts
+	* Mine and bear trap pretty much recoded.
+
+August 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Blocking is no longer possible when fainted
+	* Shields now affect RelativeDanger
+	* Blocking now increases weapon skills
+	* Added SHIELDS weapon skill category
+	* Added more parameters for hit effects
+	* Hit effects of gauntlets and boots now work
+	* Added system for special unarmed and kick effects
+	* Some S&R done:
+	  * SingleWeaponSkill -> SWeaponSkill
+	  * CategoryWeaponSkill -> CWeaponSkill
+	  * gweaponskill -> cweaponskill (where the dev/null did that g come from?)
+	* Single weapon skill is now removed correctly when an arm is severed
+
+July 31 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added whip of Calamus
+	* Tweaked items thrown at doors
+	* Possibly something else (sorry. Bad commit)
+
+July 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Mistress hair color now depends on configuration
+	* All orc configurations look different
+	* Orc's article is now correct
+
+July 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Hostile and neutral NPCs no longer forget weapon skills like the player and
+	  his team
+	* Corrected a lot of warnings given by the gcc compilation
+	* Gauntlets and boots now increase unarmed and kicking damage, respectively
+	* The AI now fights invisible enemies correctly if they have attacked first and
+	  have not moved anywhere
+	* DodgeValue is now doubled if the hitter can't see the dodger
+	* ToHitValue is likewise multiplied by two if the hitter is invisible to the
+	  dodger
+	* Added poison material that has an effect of activating the poisoned state
+	* RestoreBodyParts() doesn't crash anymore, I think
+	* Priests, gods, Petrus and angels now detect the original bodypart even if
+	  it is wielded
+	* Corrected many smaller bugs in Hex's bodypart healing codes
+	* Fixed a minor bug in the item drop code
+	* Bodyparts are now randomly rotated, flipped and/or mirrored when severed
+	* Macros transformed to inline functions:
+	  * GET_RED -> GetRed, GET_GREEN -> GetGreen, GET_BLUE -> GetBlue
+	  * MAKE_RGB -> MakeRGB
+	  * MAKE_SHADE_COL -> MakeShadeColor
+	* level::CollectCreatures() now test whether the monsters and pets can see
+	  the player, not vice versa like before, which was illogical and made
+	  leaving the dungeon nearly impossible if ESP was active
+	* Corrected the Colossal Giant of Seven League Legs Bug
+	* CarryingStrength has now a minimum of one so that effectively 2500 grams
+	  can be carried even without legs
+	* Blitting no longer crashes when width or height is <= zero after clipping
+	  (this happened occasionally if HP didn't fit onto the panel due to WMode
+	  cheating)
+	* colorizablebitmap::MaskedBlit() is now clipped, too
+	* Added move AP cost (MAPC) to the info panel
+	* Being burderned, stressed or overloaded no longer makes you move faster :)
+	* Added proper replies for orc and cossack
+	* Fixed a bug that allowed one to paralyze creatures by talking to them
+	* Emitation is again calculated correctly after load
+	* Added item pictures to the equipment menu
+
+July 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added orc, orc slaughterer, orc squad leader, orc officer and orc general
+	* Added cossack
+	* Goblins look slightly better over wooden parquet
+	* Skeletons look slightly better over marble floor
+	* Corrected a logical error that caused multiple attack style creatures like
+	  mammoths and unicorns to be considered less dangerous than they really were
+
+July 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Equipment screen now shows if a weapon is wielded with both hands
+	* It is now possible to define starting equipment of a character from the datafile
+	* Added rings of energy, acid and poison resistance
+	* Added "reload datafiles" WMode command: it is now possible to add characters,
+	  items, terrains and materials at run time!
+	* Added AttributeBonus character database value, which is a percental value
+	  added to or substracted from all attributes and very useful with configurations
+	* If a hit does no damage, the game now prints a special message
+	* Category and single weapon skills can now be set in the datafiles
+	* Panel and all info commands now show min and max damage instead of the
+	  incomprehensible "attack strength"
+	* Corrected the rounding errors of the weapon skill screen caused by floating
+	  point arithmetic
+	* Corrected a fatal bug in the corpse save code
+	* 17 new character configurations added:
+		* rookie, veteran, elite, master and grand master darkknight
+		* skeleton warrior and warlord
+		* goblin berserker, butcher, prince and king
+		* kobold chieftain and lord
+		* mistress torturing chief, whip champion, warlady and queen
+
+July 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added poleaxe named Mjolak 
+	* Added spear named Vermis 
+	* Both have currently _BAD_ messages. The system is not ready yet.
+
+July 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added system to estimate the danger of a monster relative to another
+	* Removed old danger system; it just didn't work
+	* Monsters generation is at least a little more balanced and less dynamic now
+	* Corrected a bug in the wizard mode activation code
+	* Config system is now much simpler
+	* Corrected a bug in std::map save code
+	* Added Limit(Value, Minimum, Maximum) inline function to femath.h, which limits Value
+	  to range [Minimum, Maximum] and returns it
+
+July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Zombies' and skeletons' heads are no longer vital
+	* Zombies are generated missing some bodyparts
+
+July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Doors stay closed if closed when broken
+	* Visual bugs with close in Linux with the X-button corrected
+	* Skeletons now drop bones instead of bodyparts
+
+July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A really bad memory leak corrected: materials were never destroyed. I'm bottomlessly
+	  ashamed!
+	* The Ferocius Luxification Bug fixed
+	* level::Luxify() renamed as level::FiatLux()
+	* Slot donations work again, maybe
+	* Danger system is really mad
+
+July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Flaming sword added
+
+July 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added special flame effect to bitmaps
+	* Added flames to bananas ;)
+
+July 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Single weapon skill's LevelDownMessage is now printed correctly when the item is
+	  wielded
+	* Doubled all dodge values
+	* Added "character defence values" option to SecretKnowledge
+	* SecretKnowledge now writes the shown information to a file afterwards
+	* Added CreateSolidMaterialConfigurations character database boolean that can be
+	  used to easily add golem-like monsters
+	* SecretKnowledge now shows all possible golems as separate entries
+	* Attack info of nonliving bodyparts is calculated correctly at last
+	* Strength no longer affects THV, as it made golems far too powerful
+	* Halved the AP cost of biting
+
+July 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* void globalwindowhandler::UpdateTick() changed to return Tick
+
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Wishing for "ring of teleport" now works
+	* The game now asks whether one wants to remove saves when quitting in WMode
+	* Real save is now removed and autosave is done when WMode is activated, to prevent
+	  the potential abuse of the latter
+
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The number of BodyParts and AllowedWeaponSkillCategories cached
+	* Some S&R done:
+	  * Description() -> GetDescription()
+	  * PersonalPronoun() -> GetPersonalPronoun()
+	  * PossessivePronoun() -> GetPossessivePronoun()
+	  * ObjectPronoun() -> GetObjectPronoun()
+	* There were some brackets missing in the attribute experience code, which caused them
+	  to be increased and decreased twice as fast as they should; but this has been fixed
+	* Nonhumanoids' StrengthExperience and AgilityExperience are now correctly initialized
+	  with zero during creation
+
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed some obsolete and commented code
+	* Dodge value is now cached
+	* Optimized weaponskills and regeneration a bit
+
+July 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* new Fountain effect: randomly activates a mode temporarily or permanently depending on luck.
+	* teleporting yourself in Attnam no longer makes all the citizens angry.
+
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* AnimationController now redraws only the equipment; stats and msg panel are left
+	  untouched
+
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* BurdenState and all non-trivial attack information is now cached
+	* Some recently added bugs in TemporaryStateIsActivated(), EquipmentStateIsActivated(),
+	  IsUsingArms(), IsUsingLegs() and IsUsingHead() fixed
+	* Corrected a fatal bug in the interlevel travel code born due to Hex's search & replace
+	* Fixed some odd block messages
+	* Many new bugs included
+
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Config screen now shows "disabled" as the autosave interval if it's zero and
+	  "1 turn" if it's one (not "1 turns")
+	* LOS is now updated immediately when perception is naturally increased;
+	  previously you had to move before the sight range was increased
+	* RaiseStats and LowerStats cheats now work correctly when one is polymorphed into
+	  a nonhumanoid
+	* Fixed an AP system bug that caused the AI of stationary monsters (most Attnamians
+	  and carnivorous plants) to be run each tick instead of each turn, thus slowing
+	  down the game considerably
+	* Corrected the Great Attnamian Blitzkrieg Bug added by the last commit
+
+July 21 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Consummos bad pray effect works.
+
+July 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* typeid calls replaced with GetClassId()s, thus making the script error messages of a
+	  gcc compiled binary a bit less bizarre
+	* Weight and Volume cache system remade
+	* Equipment no longer increases HP
+	* Corpses' weights now work
+	* Emitation cache system added
+	* Emitation updating is now handled correctly when items are wielded or worn
+	* Fixed some other light system related minor problems
+	* If reading is terminated because the light level drops, the game now prints a message
+	  explaining what has happened
+	* Scroll of create monster creates only one monster again (although I am not positively
+	  sure whether that horde of monsters appearing was a bug or feature...)
+	* Corrected a bug that caused that caused ESP-seen people on never seen squares to
+	  darken after they were 'l'ooked at
+	* HP and MaxHP of characters cached
+	* Master and MaxHP of bodyparts cached
+	* Added parentheses around the MAKE_RGB macro, because conditional expressions of the form
+	  if(Color == MAKE_RGB(R, G, B)) caused a syntax error without it
+	* Added a powerful colorized font cache system
+	* Optimized weaponskill::Tick(), Regenerate functions, MainMaterial handling routines,
+	  gear retrieval functions, and so on...
+
+July 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added rect struct to femath.h which can be easily used to define rectangles in 2D-space
+	* DO_FILLED_RECTANGLE macros replaced with loops going through a rectangle generated by
+	  femath::CalculateEnvironmentRectangle that uses the mentioned rect structure
+	* Many key functions (GetBodyPart() etc.) unvirtualized to gain speed
+	* Equally many small but often called functions moved to headers so that they can be inlined
+	  (though I had to bury my mission of preventing Main's headers from including other Main's
+	  headers)
+	* Continued Hex's crusade against long lines by adding character::GetStackUnder() and
+	  many xxx::GetNear(L)Square()s (shortcuts of xxx::GetArea/LevelUnder()->Get(L)Square()s)
+	* Replaced a few statements of the form RAND() % (2^n) with the somewhat faster equivalent
+	  RAND() & (2^n-1) (for instance, RAND() % 2 -> RAND() & 1)
+
+July 15 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* added LevelUnder() to item, character and lterrain
+	* Replaced code in item, character and lterrain and their derives to use LevelUnder().
+	* Added GetPos() function to item 
+	* Added stethoscope 
+	* Snake is now "lying" not "standin"
+	* You can no longer engrave when you cannot read.
+
+July 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Compiles again under gcc 3.04
+
+July 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* SecretKnowledge command now offers information about the attack capabilities of every character
+	* DO_FOR_SQUARES_AROUND macros have been replaced with loops using various GetNeighbourSquare()
+	  functions
+
+July 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Angels now carry a holy book of their divine master
+	* Decreased the brigthness of palette entry 151 by 5 in all m-colored graphics files,
+	  for it conflicted with the transparent color and caused problems with some image editors
+	* Configuration is now saved even if the game is terminated abnormally
+	* Corrected the remaining problems of the message history
+	* Animations now work correctly during faint, reading, digging and similiar automated actions
+	* Continent number and terrain height are again shown while looking on the world map when
+	  SeeWholeMapCheat is active
+	* Disabled the FOW on the world map, for IMO it doesn't make sense there (far away forests,
+	  towns and continents are not "seen", after all, they are known to be there, and the
+	  area revealed by moving around there is actually learnt from the natives' speeches etc.)
+	* LOS range in the wilderness doesn't depend on perception anymore, for reasons explained above
+	* Optimized the world map draw code greatly
+	* Modified dungeon LOS so that when walking in darkness, only one square in each direction is
+	  considered seen (it can be touched) and its memorized picture is updated. It was rather odd
+	  that you could "see" darkness really far away before
+
+July 13 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added teleport control, teleport randomly and polymorph randomly states
+	* Added rings for all these new states.
+
+July 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Oceans and the dolphin pool are now animated
+	* Decreased the global frame rate somewhat
+	* Macro system tweaks
+	* Corrected a bug in the temporary life saving code
+	* Reversed the order of the message history
+	* Corrected some bugs in the message history code, but not all of them
+	* Corrected a minor problem with database Aliases
+
+July 12 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected many warnings given by gcc 3.04 compilation
+	* Personal pronouns are now correct while looking at far away people while SeeWholeMapCheat is on
+	* Dolphins are now rotated and mirrored randomly every turn, which makes them seem more playful
+	* The second sentence of the kamikaze dwarf hymn message now starts correctly with an uppercase letter
+	* Macro system is yet again a bit shorter and more elegant
+	* Removed the unused function definitions of charde.h
+	* Bodypart pictures of farmers and housewives are again randomized correctly
+	* The flower color of the carnivorous plant is again randomized correctly
+	* Adjusted brightness levels of many bodyparts in humanoid.pcx
+	* Made some tiny corrections to the graphics in humanoid.pcx and char.pcx
+	  (for instance, enner beasts mouth is again black and white, not m-color 1 and white)
+	* Corrected all buggy bodypart BitmapPoses
+	* Fixed all IMO ugly bodypart colors
+	* There was also an attempt to optimize the level generation; as a result it's now somewhat slower
+	* Stretchblit is now masked (I needed this feature for IGOR 1.20 that now includes a CW-like draw queue system)
+	* Added colorizablebitmap::Roll(), which is able to simultaneously move the contents of a given rectangle
+	  by an arbitrary amount of pixels horizontally and/or vertically so that the clipped pixels appear on the
+	  opposite side (also needed for IGOR 1.20 as an option)
+	* Added #defines for the eight direction keys to felibdef.h
+	* Corrrected a typo in the monster polymorph message
+	* ESP no longer crashes in the world map
+	* Air is now transparent and thus are Bill's wills and the unclothed parts of genies, too
+	* Mommo configs can again be generated
+	* Added Flexibility material database value and removed the old IsFlexible boolean
+	  (non-living bodyparts now use this as their dexterity or agility and the FormModifiers of
+	  whips and belts are multiplied by it)
+	* The strengths and agilities of nonhumanoids made of non-living materials are now correct
+	* Characters with zero strength (eg. Bill's wills) can now move as long as they aren't carrying anything
+	* Skeletons are no longer considered as bone golems when calculating strengths, dexterity and agility,
+	  for IMO they draw their attributes from the necromantic magic that sustains them, not from the material
+	  (and, it seemed very odd that animated skeletons were thrice as strong as average humans with similiar
+	  skeletons inside them)
+	* Corrected an extremely fatal bug of utmost deep roots that allowed the player to enter the dolphin
+	  pool of the Cathedral by displacing a pet bat or angel flying over it, even though he couldn't swim
+	  nor float himself
+	* Added fiber material of which carnivorous plants are now made, instead of leaf (I firmly believe that the
+	  stem is more important than leaves. Someone with a deeper understanding of plant anatomy correct me
+	  if I'm wrong)
+	* A player controlled carnivorous plant can no longer move
+	* Banana peal golems are now allowed
+	* Forced Ivan's plate mail to be made of iron again
+	* Made a gum solution that allows angels and genies to have leg strengths and be able to carry things around
+	  despite the fact that they don't have legs
+	* Updated the Docs and moved the older files to the Obsolete directory
+	* Added some truly ancient files concerning the earliest incarnations of IVAN there, too,
+	  including even holydoc2.jpg, the legendary scanned documentation of RL1!
+	* Translated the Finnish entries of Small Ideas.txt and Great Ideas.txt.
+	  However, I did not touch Code Improvements.txt, since my English is not good enough to make them as
+	  cryptical and incomprehensible as they are now. There is a notice also in the beginning of the file
+	  explaining this. I didn't alter the entries of NextRelease.txt (former Remember2.txt) either,
+	  since that file is highly temporary and thus a translation would be a waste of time
+	* Added a bool character::StateIsSecret[] array that makes it possible to add secret states which
+	  are not shown on the panel
+	* Life saved and lycanthropy states are now secret
+
+July 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Poisoned state added
+	* spiders, school food and snakes to use the state
+
+July 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Now compiles under gcc 3.1
+
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* BodyParts() search & replaced with GetBodyParts()
+	* If SeeWholeMapCheat is active, character look info is now available even if the target can't be seen
+	* Name functions are now much faster
+	* New, *yet* faster techniques for string handling are available:
+	  * AddName(String, Case); which is much faster than String += GetName(Case);
+	  * String << AnotherString << Int << CString << Etc; which is much faster than
+	    String += AnotherString + Int + CString + Etc; (you must #include "stdover.h" though)
+	* Script generated altars again randomize their divine owner correctly
+	* Attnam's and level 10's altars are again owned correctly
+
+July 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* snake added (although it doesn't work)
+	* angel healing friends fixed.
+
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Chest and unicorn look better now
+	* Corrected The Unicorn of Godly Strength and Speed Spawning Bug
+	* Decreased the brightness of palette index 148 by seven in all materialcolorized
+	  graphics files (don't ask why)
+
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added CreateDivineConfigurations boolean datavalue to all databases, which can be used
+	  to add new god-dependent characters, items, materials and terrains very easily,
+	  and to define varying attributes and specialities for them. It is now used for
+	  angels, kamikaze dwarves, holy books and altars and reduces their overlapping code a lot,
+	  and unique holy waters for each god and other similiar wonderful features are
+	  a piece of cake with the new system
+	* Angel, golem and genie graphics have been converted to humanoids by me. (btw, Kahvi is a moron)
+	* All lterrains have been datafiled to glterra.dat and olterra.dat;
+	  it is now possible to add new terrains without modifying code and blaah blaah
+	* All glterrains have been converted as configurations of solidterrain and liquidterrain
+	* Most olterrains have been converted as configurations of wall, decoration and container
+	  (the latter holds the bookcase and is reserved for future use)
+	* Integrated Kahvi's older looking walls for dungeon rooms
+	* Finally integrated Kahvi's new chest picture
+	* AnimationController no longer crashes when a full screen DOS prompt is activated in Windows
+	* Cheated lookmode wilderness terrain descriptions don't disappear after the first glance anymore
+	* Added periods at the end of some of Hex's incomplete messages
+	* Corrected a memory leak in the fluid load code
+	* Removed the seemingly ever-lasting problems with item's SquareUnder by removing it.
+	  Instead, GetSquareUnder() now passes the request for position to Slot
+	* The game now aborts if an unrecognized datavalue is found in the datafiles
+	  (previously it just discarded it)
+	* All script and datafile aborts now print the line number of the respective error
+	* All low level inputfile aborts (like ReadNumber syntax errors) now print the file name and
+	  the line number of the error (the latter only if it's appropriate, as it isn't for instance
+	  in the case of an unexpected EOF error, since it always happens in the last line)
+	* If the player isn't able to use certain equipment (usually due to a lost limb),
+	  its slot isn't shown in the panel anymore even as an empty rectangle
+	* Mine's explosion power now depends on its ContainedMaterial
+	* Removed more than 1800 lines of obsolete code left commented all around the project
+	  (but I didn't delete anything I wasn't sure to be irrelevant)
+	* Angel and genie don't have legs nor a groin anymore (what a terrible fate)
+	* Animation controller loops are now not run while wieving menus
+
+July 6 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Poison state added.
+	* Now compiles under GCC 3.1. Again problems with typenames in proto.cpp
+
+July 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Temporary states whose counters are zero are now considered permanent intrinsics
+	* The character database value PermanentStates renamed as ClassStates
+	* The character data member PermanentState renamed as EquipmentState,
+	  and the associated function names updated as well
+	* Added BeginStateHandlers and EndStateHandlers that are called always when states
+	  (either temporary, intrinsic or controlled) are activated/deactivated
+	* Removed the old handler system used only when switching a temporary state on/off
+	* Simplified the inner structure of the code in such way that haste and slow can now be
+	  in effect simultaneously, but this is represented in the panel as if neither was active
+	* Added infravision and ESP states
+	* See invisible state removed, as infravision now confers the same benefits
+	* HasInfraVision character database value removed
+	* Added wand of invisibility
+	* Added ring of infravision
+	* Added amulet of ESP
+	* Draw system rewritten completely to make draw functions far more flexible and
+	  easier to use and to remove some duplicate code
+	* Added transparency effect for invisible creatures sensed by infravision or ESP
+	* Added object::MaxAlpha() function to make the adding of transparency effects again a bit easier
+	* Characters seen by infravision or ESP are no longer affected by varying luminance;
+	  instead they are always seen as if the light level was 256
+	* Corrected a recently-added bug which caused AlterLuminance not to update
+	  MemorizedDescription correctly when the first emitter was added
+	* Added item::IsVisible(), stack::GetVisibleItems() and stack::GetBottomVisibleItem()
+	  functions which allow the convenient use of hidden items
+	* Script generated land mines and bear traps are now correctly invisible
+	* Hidden items are now shown if SeeWholeMapCheat is on
+	* Added iosystem::ScrollBarQuestion which acts as a graphical version of the normal NumberQuestion
+	* Contrast can now be set with ScrollBarQuestion and the display is still updated constantly
+	* Removed the increase and decrease contrast ('b' and 'B') commands
+	* Separated the eat and drink ('e' and 'D') commands
+	* Redefined much of the keyboard layout
+	* Decreased reading times required when WMode is activated
+	* Skeleton's TotalVolume and FleshMaterial are now correct
+
+July 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Teleporting from a bear trap works ok
+	* Mine works (except is seen normally)
+
+July 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* SDL's key repeat activated
+	* Pressing a control key during action no longer stops the game until key press.
+	* Helmet added
+
+June 19 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Loricatus, Scabies, Cruentus fix players BodyParts (each with their own specialities of course)
+	* Angels also fix players bodyparts.
+	* Tweaked the healing methods for the other healing gods for slight elegance in code.
+	* Some small changes in proto.cpp to make it compile with gcc 3.1 (one typename added).
+
+June 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* AP system remade: it is now the actions' duty to decrease AP, not Be()'s
+	* Added read action, thus allowing reading times longer than one turn and
+	  read interupts
+	* Lookmode's messages and information keys work far better now
+	* Fixed a minor bug in the lookmode zoom code
+	* Removed the cursor from the zoom screen (exception: over the player it remains)
+	* Petrus's PostFix is now shown correctly
+	* Petrus's wife number 4 is now dumper than the others, since she's blond
+	* Invisibility and see invisible states added, but they don't work yet
+
+June 16 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Atavus, Seges and Silva now fix players BodyParts
+
+June 16 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Priests in altars now attach old arms and legs to their old places. 
+
+June 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added equipment pictures to panel
+	* The config system of items and characters works now correctly (I think).
+	  This means that one can add new equipment or monsters without touching code at all,
+	  using one of the existing classes as a base
+	* Converted almost all weapons to configurations of meleeweapon.
+	  Weapons not converted: pickaxe (special, can dig), whip (special, FormModifier depends on material),
+	  Valpurus's Justifier and Neerc Se-Ulb (artifacts, will get animation functions soon)
+	* Converted chain mail, amulets, rings and boots to configurations of their base classes
+	* Added possibility to specify config in script in brackets following a classname
+	  (example: Square, Pos 3,1; { Item = boot(BOOTOFSPEED); Times = 2; } adds two boots of speed to square at 3,1)
+	* Removed the former way to set it
+
+June 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added a new state system that allows both temporary and permanent states
+	* Added GearStates item database value that allows one to easily add equipment that activate permanent states
+	* Added PermanentStates character database value that makes it easy to add permanent states to certain races
+	* Added boot of speed that hastes the user (but you need to have two of them equipped!)
+	* Added a bug that activates permanent states when the user wields the right piece of equipment, like a boot of speed
+	  (by the way, this bug did already exist with amulets of life saving)
+	* Monsters are now polymorphed only temporarily in the same way as the player,
+	  so you don't have to kill yourself when that goblin zaps its WoP at your ultra-trained level 8 mistress
+	  (when it someday becomes wise enough to do it)
+	* Added lycanthropy state that occasionally polymorphs the character into a werewolf (wolf form)
+	* Werewolf flesh causes lycanthropy now
+	* Remade werewolf; it is now a human-like creature that is permanently lycanthropic
+	* Added wish functions for character and CanBeWished and Alias values to its database
+	* Added polymorph control state
+	* Added ring of polymorph control
+	* Added life saving state and made amulet of life saving use it
+	  (this allows very pleased gods to grant temporary life saving, for instance)
+	* Removed the code that allowed fatness (I just couldn't work out how a gold golem can carry itself)
+	* Nonhumanoids have now a chance to train their martial skills (unarmed combat, kicking or biting)
+	* Biting doesn't make bodyparts fly anymore
+	* Fixed a bug of temporarily hasted/slowed dogs crashing on world map
+	* The wish parser is again more intelligent as it chooses the item with most correctly specified name parts,
+	  so a wish for "that holy banana thingy" gives the holy banana of Liukas Vipro and not just a banana
+	* Fixed a bug that caused golems' bodypart materials to be randomized individually,
+	  thus creating fabric legged, stone armed and bone headed golems with wooden torsos etc.
+	* Hunters are once again one armed
+	* Added some new booleans to character database: CanUseEquipment, CanKick and CanTalk
+	* Amulet's article is now correct
+	* MColor 1 of amulets and cloaks is now used correctly
+	* Corrected a bug that caused a crash when a flying bodypart ought to hit a legless humanoid
+
+June 15 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added beartrap (which probably will need some more tweaking)
+
+June 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Pool and LOS codes optimized greatly and character AI (which takes most of the processor time now) somewhat.
+	  As a result running around Attnam with debug on is about 40% faster than before
+	* Added Roundness database value for items (on scale ]0, 100])
+	* It is now possible to block attacks with any item,
+	  the possibility depending on size, roundness and To Hit Value and effect depending on StrengthValue
+	* Shields work correctly: one cannot attack with them and their block chance is doubled
+	* Doors' LockTypes and BoobyTraps are now saved correctly
+	* The game doesn't crash anymore when fluid vanishes
+	* Fixed a bug that caused a delay before the tamed symbol appeared over charmed monsters
+	* Fixed a minor bug with walls' MemorizedDescriptions
+	* The key handler *might* be smoother in Linux now
+	* Gcc 3.1 *might* compile the game with less warnings
+	* Wand of door creation added
+	* Added the following bugs:
+	  * Equipment increases HP
+	  * Walls' luminances are not updated when a lantern flies by them
+
+June 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The New Attribute System is now working
+	* Most likely very badly
+	* Wishing works again and probably better than before, since the spelling rules have been relaxed.
+	  For instance, if one wishes (in WizardMode) for "the holy ultra-powerful broadsword
+	  named "Valpurus's Justifier" that this Perttu-dude carries", the game will instantly know you mean
+	  "holy broadsword "Valpurus's Justifier"", since the three key parts of the name exist somewhere in the wish string
+	* Also added an alias system that allows one to define alternative names for items used by the wish system
+	* Panel is now more informative
+	* Kicking works again
+	* If a character is armless, he kicks enemies, if also one- or zero-legged, bites them
+	* Added an AttackStyle attribute to characterdatabase that controls how monsters will attack (with arms, legs and/or head)
+	* Unicorns, mammoths and buffalos can now both kick and bite their enemies
+	* If a chest is locked, the chest::Open doesn't ask whether the player wants to put in or take from it
+	* Chest's contents are now deleted properly
+	* BoolQuestion's OtherKeyForTrue works again
+	* Doors can again be opened
+	* Chests can now be unlocked and locked (well, the latter was in theory sometimes possible before, but only in theory)
+	* The names of chests, doors and keys show their LockType verbally
+	* Petrus's face turns correctly red during the Final Battle
+	* Message history isn't drawn under highscores anymore
+	* Added a system to determine whether a bodypart is the character's original one
+	* Gear items emitate light correctly but updating still bugs
+	* The game asks for key press when a bodypart is severed
+	* Explosions sever bodyparts and spill blood more correctly
+	* Polymorphing items works correctly
+	* Decreased the characters' global possibility to hit weaker bodyparts
+	* Corrected a bug that caused lights falling during an explosion to crash
+	* Corrected a bug with doors that caused dummy boobytraps to spawn all the time
+	* Probably much else that I have forgotten...
+
+June 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Taking and putting things in chests is now handled correctly in special rooms.
+
+June 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added "show all item here" command to look mode.
+	* Also fixed some issues with polymorphing chests.
+
+June 04 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added mirroring, flipping and rotateing to items too.
+	
+June 02 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added chest. It seems to work probably but it can not be sold from a shop yet and the polymorph-code has not been tested, because of crashes in the polymorph code even without polymorphing a chest)
+	* Cans are now more or less disabled.
+	
+May 31 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Menu version description looks now better and is more informative
+	* Fade optimization
+	* DynArray finally eliminated
+	* Fixed a bug that crashed the game if one died of a food effect or an explosion of a digged door
+	* Attribute class added but not used yet
+
+May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Datafilezation checking
+	* IsPolymorphable added to item and char databases
+	* The Vile Dog Bulimia Bug of Ultimate Damage fixed
+
+May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the corpse creation code
+	* Color tweaks
+	* Added an alpha blend transparency effect for glass and liquids,
+	  although it's hard to see when objects are so small :(
+	  But if you lay a bottle over a flickering banana, you'll certainly notice it
+
+May 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Animations work in the lookmode
+	* Carpets are visible again
+
+May 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Key handler works smoother
+	* Corrected a bug in the material load code
+	* All name routines datafiled
+	* Material configurations datafiled
+	* Animations work in felists
+	* Lookmode and highscores are totally ugly and mad :(
+	* Hex's key code compiles
+	* MColor brigthnesses standardized with IGOR
+	* Lots of MColor checking done
+	* Wall tile graphics changed
+	* LTerrain divided into two
+	* Silhouette redrawn by Kahvi
+
+May 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added library room to Attnam
+	* Version number now shows in the menu
+
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Fountains and default materials work
+
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The game doesn't crash when you descend into the dungeon
+	* Applying a pick-axe to a monster asks whether you want to hit it
+
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bug with bodypart volumes corrected
+	* A minor bug with skin colors removed
+	* Örmöpium removed
+	* Wishing works somehow again
+	* Even dummies can read if SeeWholeMapCheat is on
+
+May 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added a lot of #include <string> s because this is somehow required by Linux's GCC.
+	* Added tin 
+	* Added whistle and magical whistle
+	* Changed Teleport() command to TeleportRandomly() in item, stack and character and made a function called Teleport(vector2d) to character.
+
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Database configuration system added
+	* Pertus's wives (almost) work now
+	* Added a new innovative super-powerful valuesystem that allows constants to be easily shared between code and script
+	* Deleted the new innovative super-powerful valuesystem that allowed constants to be easily shared between code and script and caused my gcc to run out of memory
+	  (this is what you get when you plan your code in a Swedish textbook margin)
+	* Instead added a global script define datafile which understands a format similiar to C/C++ preprocessor language:
+	  project's release compilation time decreased by about 5%
+	* Names and effects of materials datafiled
+	* Ultra major structural change problematic enough to become a source for a thousand heroic coding sagas:
+	  All materials converted as configurations of five bases, just for fun!
+	  This allows new materials to be added without changing code at all,
+	  and in addition, project's release compilation time was decreased by about 5%
+	* "Generating dungeon" messages changed to "Generating <level description>" (thanks to Will Riley for the idea)
+	* Much search & replace done with boolean variable retrieval names (GetIsPlayer() -> IsPlayer() etc.)
+	* Corrected the Excruciating All-Devastating Color Bug of Empty Bottles
+	* Prototype and database security tightened
+	* Database initialization code rewritten:
+	  project's release compilation time decreased by about 10%
+	* Most of StaticType()s removed so that Hex cannot make more gum solutions with them
+
+May 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Compilation optimizations that certainly didn't optimize anything
+
+May 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Major macro system change: database derivation now works
+	* Item and material datafilezation checked throughoutly
+
+May 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Compilation optimizations
+
+May 20 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Amulet of life saving added
+	* game.cpp: Zoom for PositionQuestion added
+
+May 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Macro system remade again for everything but character
+
+May 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Reading and seeing works again
+
+May 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* More character macro tweaks
+	* The game *might* compile now
+
+May 18 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Itemde.h converted largely to Script/item.dat
+	(The current version does NOT compile on Linux)
+
+May 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Character macro remade
+
+May 12 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Characters datafiled (mostly)
+	* The game is still mad
+
+May 12 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The game executes again
+	* The game is totally mad again
+	* Polymorph works again, and better than before
+	* Character database structures added
+	* Define headers added
+
+May 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Price added to item database structure
+
+May 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Copied the materials to Script/material.dat (however with some problems.)
+	* Added ring of fire resistance
+
+May 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Very lousy item database structures added
+	* The Ultimate Script Malfunction Error Bug of Underscore Conflict corrected, not maybe
+	* Many new bug adds
+
+May 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The Ultimate Script Malfunction Error Bug of Underscore Conflict corrected, maybe
+
+May 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bug corrections
+
+May 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Material database structures added
+
+May 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Wand of resurrection added
+
+May 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Animations work now with SDL
+	* Wand of locking added 
+
+May 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Animations work in the DOS port now
+
+May 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Heavily modified the material system
+	* Added animation engine
+	* Removed much commented outdated code
+	* Removed many useless string casts
+	* Added some new operator overloads fro string
+
+May 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* String and save routine optimizations
+
+May 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Most of script code structures and data reading routines remade
+	* Some template instantiation relocations committed
+	* Warning corrections
+
+May 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Some possible memory leaks prevented
+	* Eating corpses works again, I think
+	* The Great Optimized Inventory Bug corrected
+	* Other bug corrections
+
+2002-05-01  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Silhouette added to humanoids
+
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bug corrections
+
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Warning corrections
+
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Monsters can move again
+	* Some list tweaks
+
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Pentagram moved from menu to generation screen
+	* Proto and macro systems remade
+	* Some obviously shared virtual functions of proto-using classes made static
+	* Pool system tweaked
+	* Damage and material effect system remade
+	* Many outlook tweaks
+	* Message screen added to panel
+	* Remade all question systems (vector, boolquestion, positionquestion, strinquestion, numberquestion etc.)
+	* Felist tweaks (parameter adds etc.)
+	* Consume system remade
+	* Structural change: type removed
+	* Resistance system added
+	* Wizard info option to lookmode
+	* Weight system works correctly and no one can move anymore
+	* Gear drop on death and bodypart severing works may work correctly (I didn't test it)
+	* Corpse and death system remade, although special monsters probably bug
+	* Added a mass of bitmap blit functions with varying amounts of optional vector2d parameters
+	* More vector2d parameters added elsewhere too, but I don't remember exact places
+	* Added femath::WeightedRand and new material generation system
+	* Added ::ReadType that makes loading temporary variables easier
+	* Many gum solutions removed
+	* Numerous bugs added
+	* Regeneration may work (again, I didn't test it)
+	* etc. etc. etc. etc. etc.
+
+April 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Damage system revised
+	* The Great Ultimate Line of Sight Bug of Doomsday corrected
+
+2002-04-26  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.cpp/h: Added lion, buffalo and carnivorousplant
+	* charba.cpp, itemde.cpp: Added & marks to functions calls for xSorter functions. (didn't compile with gcc without them)
+
+April 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Equipment menu works somehow.
+
+April 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added new action system
+	* Added Stack sorting
+	* Remade dig & some other action systems
+	* Consume system temporarily disabled
+	* Some bugs corrected and many added
+
+2002-25-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.cpp: Added CheckKick(), GetLengthOfOpen(), CheckApply(), CheckOffer() to humanoid also added GetArms(), GetLegs() and GetAPMultiplier()
+	* charba.cpp: Added the above checks + relevant calls.
+	* charde.h: (added functions) and tweaked some colors
+	* charba.cpp: added functions
+
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charde.cpp/h: Petrus's "temporary" AddHitMessage finally removed
+	* felist.cpp: List order bug corrected
+
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* felist.cpp/h: Added AddEntryToPos
+	* message.cpp: Messages are now split correctly
+
+2002-04-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* AUTHORS: Fixed a small typo
+	
+2002-04-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.h: Tweaked bitmap positions and colors for Oree, goblin, skeleton, imp, gibberling, kobold, enner beast and dark knight
+
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* felist.cpp/h & files with felist calls: Added more parameters (pos and width etc.) for felits
+	* hscore.cpp: HScore draw uses felist now
+
+April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* All libraries united
+
+April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* bitmap.cpp/h, colorbit.cpp, graphics.cpp: Subbitmap support added
+	* colorbit.cpp/h, graphics.cpp: Text shading added
+	* felist.cpp/h: Added felist support for pictures, entry categories and arrow key selection
+	* hscore.cpp & all files with felist calls: List colors are now more consistent
+	* charba.cpp: Added icons for pray menu
+	* itemba.cpp/h, itemde.h, stack.cpp/h: Added icons and categories for items and added sorter support (which isn't yet used)
+	* itemde.cpp, slot.cpp, proto.h: Save works once again
+
+April 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* itemde.cpp/h, slot.cpp/h: gearslot added
+	* feio.cpp, igraph.cpp/h, main.cpp: New menu backround (by Kahvi) added
+	* charba.cpp/h, charde.cpp/h: Equipment screen addition prepared
+
+2002-04-20  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Include/charde.h: Changed all cordinates in bitmap to vector2ds
+	* Main/Source/charde.cpp: Some changes that relate to the above change
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* itemba.cpp/h, itemde.cpp/h, charba.cpp, charde.cpp: Stack parameter removed from Apply funcs
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charba.cpp/h, charde.cpp/h, itemde.cpp/h, stack.cpp, slot.cpp/h: Bodyparts are now correctly in characterslots
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charba.cpp/h, charde.cpp/h, itemba.cpp/h, itemde.cpp/h: Warning corrections
+	* game.cpp, stack.cpp/h: The game compiles again
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* stack.cpp: Inventory works again
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Everything changed.
+
+2002-04-18  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemde.h: Price of Avatar of Valpuri added. Also added boot, gauntlet, belt, ring and amulet 
+	* Main/Source/itemde.cpp: Added some generic functions for the added items
+	* Main/Source/lsquare.cpp: Added tame symbol
+
+2002-04-06 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+ 	* Main/Include/itemde.h: Added cloak and shield	(actually did this a week ago, but didn't commit)
+
+April 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Symbol.pcx: battle, tame, peaceful and hostile symbols added by Kahvi
+
+April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item.pcx: boot added and an error in cloak fixed by Kahvi
+	* Humanoid.pcx: mistress hair shortened by Kahvi
+
+2002-04-06 Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Source/itemde.cpp (pickaxe::Apply): Added new formula for calulation the length of digging
+	* FELL/Include/hscore.h: Add changed to return bool telling whether the score got to the list or not
+	* FELL/Source/hscore.cpp: Add changed to return bool telling whether the score got to the list or not. And if the player doesen't get to the list the result is not drawn in function Draw
+	* Main/Include/charba.h: Added #defines for hungerlevels and hunger states and added GetHungerState function
+	* Main/Source/charba.cpp: Added GetHungerState function and changed every reference to the old (bad) hunger level systems to use it.
+	* Main/Include/materde.h: deleted all CanBeDigged functions
+	* Main/Include/materba.h: 
+	* Main/Source/materba.cpp: CanBeDigged now examines the StrengthValues of the materials.
+	* Main/Source/game.cpp: DrawPanel now draws Satiated and Bloated hunger states also and all hungerstate are calculated by character's GetHungerState function
+
+
+April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item.pcx: shield, cloak, gauntlet, belt, amulet and ring added by Kahvi
+
+2002-04-01 (later) Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Include/itemba.h: #included lterrade (fountain), added function HasBeenDippedInFountain
+	* Main/Include/itemde.h: Added function HasBeenDippedInFountain and CanBeDipped to fountain
+	* Main/Include/lterraba.h: Added functions ReceiveDip and HasDipEffect
+	* Main/Include/lterrade.h: Added functions ReceiveDip and HasDipEffect to fountain
+	* Main/Include/roomba.h: Added functions Dip and HasDipHandler
+	* Main/Source/charba.cpp: Altered Dip function to ask wheter the player wants to dip into a square or to an item in his inventory 
+	* Main/Source/itemde.cpp: Added HasBeenDippedInFountain for potion
+	* Main/Source/lsquare.cpp: Put a GetIsPlayer checker on Apply (for the message "You cannot apply that on this"), added function ReceiveDip
+	* Main/Source/lterrade.cpp: Added ReceiveDip for fountain 
+	* Main/Source/roomde.cpp: Added Dip for cathedral
+
+
+2002-04-01 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Include/itemba.h: GetLockType() function added to item (returns 0 for everything else but key)
+	* Main/Include/itemde.h: Key added
+	* Main/Include/lterraba.h: Added function ReceiveApply to LTerrain
+	* Main/Include/lterrade.h: Added define NUMBER_OF_LOCK_TYPES and added lock type for class door
+	* Main/Include/materde.h: Added copper and bronze
+	* Main/Source/charde.cpp: *classified*
+	* Main/Source/itemde.cpp: Added Apply function for key
+	* Main/Include/lsquare.h:
+	* Main/Source/lsquare.cpp: Added function ReceiveApply
+	* Main/Source/lterrade.cpp: Added function ReceiveApply for door
+	
+
+2002-03-31 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Source/itemde.cpp:
+	* Main/Include/itemde.h: Added wandofhaste and wandofslow (and their needed funcitons: BeamEffect, Zap)
+	* Main/Source/charba.cpp: Added states SLOW and HASTE (and their functions: EndX, X
+	* Main/Include/charba.h: Added the defines for SLOW and HASTE (and upped the STATES counter by two)
+	
+2002-03-30  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Source/materde.cpp: healingliquid::EatEffect and HitEffect added
+	* Main/Include/materde.h: healingliquid added
+	* Main/Include/itemde.h: 
+	* Main/Source/itemde.cpp: added GeneratePotionMaterials() to bottle for generating half bottles with omle urine and half with healingliquid 
+
+March 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item.pcx: broken weapons (include banana), land mine and set & unset bear traps added by Kahvi
+
+March 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Char.pcx: mega-large mammoth added by Kahvi
+	* Item.pcx: tiny and mega-large corpses added by Kahvi
+
+2002-03-29 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemde.h: Added mine.
+	* Main/Source/itemde.cpp: Added functions for mine
+	* Main/Source/lsquare.cpp: Added a if clause for flying creatures in StepOn function. 	
+
+2002-03-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Include/lterraba.h: Added function CreateBoobyTrap that is really an empty function
+
+	* Main/Include/lterrade.h: Added function CreateBoobyTrap in door, which is actually used and functions CreateBoobyTrap, ActivateBoobyTrap (also to door)
+
+	* Main/Include/script.h (constructor... probably): Added support for AllowBoobyTraps
+
+	* Main/Source/script.cpp: Added support for AllowBoobyTraps
+
+	* Main/Source/itemde.cpp: Reduced randomness in wandoffireballs
+
+	* Main/Source/level.cpp: Boobytraps are now generated one per 5 locked doors
+
+	* Script/dungeon.dat: Added parameter AllowBoobyTraps to both dungeon and Attnam.
+
+2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
+
+	* Main/Include/charde.h: Changed ivan class to communist and assigned it the name "Ivan". Also changed Elpuri, Oree and Petrus to get their _name_ from AssignedName
+	* Main/Source/charba.cpp: character::Save Changed to save AssignedName
+	
+	* Main/Include/charba.h (class character): Added functions   Name(), Article() Adjective(), ShowClassName(), CanBeAssignedAName(). For the AssignedNames
+
+	* Main/Source/game.cpp: Added the function key to character's AssignName
+
+	* Main/Source/charba.cpp (AssignName): Function added
+	
+	* Main/Source/game.cpp (PositionQuestion): Function added.
+	
+2002-03-22  Heikki Sairanen  <hex@localhost.localdomain>
+
+	* Main/Source/charba.cpp (Look): Deleted odd GetIsPlayer() test
+
+2002-03-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* FELL/Include/felist.h (class felist): DrawDescription moved to .cpp to correct an odd Linux bug.
+	* FELL/Source/felist.cpp:
+
+March 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Humanoid.pcx: Some humanoids dismembered by Kahvi
+
+March 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* GetHitValue() of material and GetArmorValue() of material and item replaced by StrengthValue()
+	  * Modified files:
+	    * stack.cpp
+	    * itemba.cpp
+	      * ushort item::StrengthValue() const added
+	    * itemde.cpp
+	      * ushort bodypart::StrengthValue() const added
+	    * charba.cpp
+	    * charde.cpp
+	    * materba.h
+	      * ushort material::GetHitValue() const removed
+	      * ushort material::GetArmorValue() const removed
+	      * ushort material::StrengthValue() const added
+	    * materde.h
+	      * Numerous ushort xxx::GetHitValue() consts removed
+	      * Numerous ushort xxx::GetArmorValue() consts removed
+	      * Numerous ushort xxx::StrengthValue() consts added
+	    * itemba.h
+	      * uchar item::SurfaceMaterial() const added
+	    * itemde.h
+	      * Some ushort xxx::GetArmorValue() consts removed
+	* Master data member added to bodypart
+	  * Modified files:
+		* itemde.cpp
+	    * itemde.h
+	      * character* bodypart::GetMaster() const 
+	      * void bodypart::SetMaster(character* What)
+	* StrengthModifier attributes added to items
+	  * Modified files:
+		* itemba.cpp
+	    * itemba.h
+	      * ushort item::StrengthModifier() const added
+		* itemde.cpp
+	    * itemde.h
+	      * Numerous ushort xxx::StrengthModifier() const added
+	* IsAlive() attributes added to materials
+	  * Modified files:
+	    * itemde.cpp
+	    * materba.h
+	      * bool material::IsAlive() consts added
+	    * materde.h
+	      * Numerous bool xxx::IsAlive() consts added
+	* Secret knowledge command partially added
+	  * Modified files:
+	    * game.cpp
+	    * charba.h
+	    * charba.cpp
+	      * bool character::SecretKnowledge() added
+	    * itemba.h
+	      * bool item::AutoInitializable() const added
+	    * itemde.h
+	      * bool bodypart::AutoInitializable() const added
+
+March 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	 * Graphics/Makefile.am: Human.pcx changed to Humanoid.pcx
+
+March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charde.h: Bodypart color tweaks
+
+March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* New bodypart: groin
+	  * Modified files:
+	    * charde.cpp
+	      * ulong humanoid::GroinVolume() const added
+	      * void humanoid::CreateGroin() added
+	      * groin* humanoid::GetGroin() const added
+	      * void humanoid::SetGroin(groin* What) added
+	    * itemde.h
+	      * New class: groin
+	* Added SpecialType to graphicid. Arms, legs and groin are no more drawn multiple times.
+	  * Modified files:
+	    * worldmap.cpp
+	    * object.cpp
+	    * object.h
+	    * igraph.cpp
+	    * igraph.h
+	      * Some SpecialType definitions added
+	      * graphicid and handling functions updated
+	    * charde.cpp
+	      * return type of leftarm* humanoid::GetRightArm(), rightarm* humanoid::GetLeftArm(), rightleg* humanoid::GetRightLeg() and leftleg* humanoid::GetLeftLeg() changed
+	      * parameter type of humanoid::SetRightArm(rightarm* What), void humanoid::SetLeftArm(leftarm* What), void humanoid::SetRightLeg(rightleg* What) and void humanoid::SetLeftLeg(leftleg* What) changed
+	    * itemde.h
+	      * arm and leg are now abstract
+	      * New classes: rightarm, leftarm, rightleg, leftleg
+	      * virtual uchar xxx::GetSpecialType() consts overrided in rightarm, leftarm, groin, rightleg, leftleg
+	* Dwarf legs are now drawn correctly
+	  * Modified files:
+	    * itemba.cpp
+	      * void item::DrawToTileBuffer(vector2d Pos) const added
+	    * itemba.h
+	    * charde.cpp
+	      * void dwarf::DrawToTileBuffer() const added
+	* Werewolves are now drawn correctly
+	  * Modified files:
+	    * charde.cpp
+	      * void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture) added
+	      * void humanoid::UpdateHeadPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateTorsoPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateRightArmPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateGroinPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateRightLegPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture) added
+	    * charde.h
+	* charde.cpp: Bug in void humanoid::SetSize(ushort Size) fixed
+	* charde.h: Bodypart color tweaks
+	* lsquare.cpp: Extremely rare fatal bug in lsquare::CalculateEmitation() fixed
+
+March 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charde.h: Bodypart color tweaks
+	* Humanoid.pcx: Material color tweaks by Kahvi
+
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* charde.h: Bodypart color tweaks
+
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* bitmap.cpp: Added bool DrawSides parameter for bitmap::DrawPolygon
+
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Material colors added to humanoid bodyparts. All humanoids are now very ugly.
+	  * Modified files:
+	    * Human.pcx: renamed as Humanoid.pcx and converted to material colors by Kahvi
+	    * object.cpp:
+	      * ushort object::GetMaterialColor0() const added
+	      * ushort object::GetMaterialColor1() const added
+	      * ushort object::GetMaterialColor2() const added
+	      * ushort object::GetMaterialColor3() const added
+	      * Added argument for void object::UpdatePicture(bool RemoveOld), which determines whether old pic will be removed. The func now updates GraphicId based on the preceding functions.
+	    * object.h:
+	      * void object::ColorChangeSpeciality(uchar, bool) removed
+	    * lterrain.h:
+	      * void stairsdown::ColorChangeSpeciality(uchar, bool) removed
+	      * ushort stairsdown::GetMaterialColor1() const added
+	      * void stairsup::ColorChangeSpeciality(uchar, bool) removed
+	      * ushort stairsup::GetMaterialColor1() const added
+	    * itemde.cpp:
+	      * void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial) removed
+	      * void bodypart::Save(outputfile& SaveFile) const modified so that Colors are saved
+	      * void bodypart::Load(inputfile& SaveFile) const modified so that Colors are loaded
+	      * void torso::Save(outputfile& SaveFile) const removed
+	      * void torso::Load(inputfile& SaveFile) const removed
+	    * itemde.h:
+	      * torso divided into two childs classes: normaltorso and humanoidtorso
+	      * void bodypart::SetColor(ushort Index, ushort What) added
+	      * ushort xxx::GetMaterialColorxxx() const funcs added here and there
+	    * igraph.h:
+	      * humanoid is now raw type
+	    * charde.cpp:
+	      * All references to complexhumanoid removed
+	      * void humanoid::CreateTorso() added
+	      * All void humanoid::Create<some bodypart>() functions modified to init bodypart colors
+	      * void humanoid::DrawToTileBuffer() const added
+	    * charde.h:
+	      * All references to complexhumanoid removed
+	      * All SetLegType(xxx) and similiar function calls removed from SetDefaultStatses
+	      * uchar xxx::GetHeadType() const added to humanoid and all children
+	      * uchar xxx::GetTorsoType() const added to humanoid and all children
+	      * uchar humanoid::GetRightArmType() const added
+	      * uchar humanoid::GetLeftArmType() const added
+	      * uchar xxx::GetArmType() const added to humanoid and all children
+	      * uchar humanoid::GetRightLegType() added
+	      * uchar humanoid::GetLeftLegType() added
+	      * uchar xxx::GetLegType() const added to humanoid and all children
+	      * ushort humanoid::SkinColor() const added
+	      * ushort humanoid::CapColor() const added
+	      * ushort humanoid::HairColor() const  added
+	      * ushort humanoid::HeadSpecialColor() const added
+	      * ushort humanoid::TorsoMainColor() const added
+	      * ushort humanoid::BeltColor() const added
+	      * ushort humanoid::TorsoSpecialColor() const added
+	      * ushort humanoid::ArmMainColor() const added
+	      * ushort humanoid::ArmSpecialColor() const added
+	      * ushort humanoid::LegMainColor() const added
+	      * ushort humanoid::LegSpecialColor() const added
+	    * charba.cpp:
+	      * Removed argument from void character::CreateTorso(bool Humanoid) and modified it to init torso color
+	    * charba.h:
+	      * AllocBodyParts added as the fourth character constructor parameter
+	      * void character::AllocateBodyPartArray() added
+	* Ergonomic FeFile modifications:
+	  * save.cpp:
+	    * Fast-to-use long inputfile::ReadNumber() added (affect also config.cpp)
+	  * save.h:
+	    * typedef std::map<std::string, long> valuemap added (affects also script.h)
+	* godba.cpp: Fatal bug in god::Save and god::Load corrected
+	* IvanEdit removed from CVS
+	* LTerrain.pcx: desert, swamp, snow base terrains, three stunt trees, two rocks and boghole added by Kahvi
+
+March 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* gccblit.s: added alternative gcc asm func names with only one lowline
+
+Friday, March 08 2002 Heikki Sairanen <heikki.sairanen@phpoint.net> 
+	(however all changes actually coded by Mark Schreiber)
+
+	* FeDX/Source/graphics.cpp: ToggleFullScreen for USE_SDL added, 
+	* FeWin/Source/whandler.cpp: Function globalwindowhandler::ProcessMessage() funcion for SDL changed to call ToggeFullScreen when alt + enter pressed
+
+March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* itemde.cpp: Two unused parameter warnings corrected
+	* lterrade.cpp: Two unused parameter warnings corrected
+	* entity.cpp: Two unused parameter warnings corrected
+	* ivandj.mak: Added reference to new files
+	* ivanmgw.mak: Added reference to new files
+
+March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Unit class added
+	  * This class holds materials. It is derived from entity and is base for object and fluid.
+	  * Modified files:
+	    * object.cpp
+	    * object.h
+	    * fluid.cpp
+	    * fluid.h
+	    * entity.cpp
+	      * see unit.cpp
+	    * entity.h
+	      * see unit.h
+	  * Added files:
+	    * unit.cpp
+	      * unit::unit(bool AddToPool, bool HasBe) added
+	      * unit::~unit() added
+	      * void unit::Save(outputfile& SaveFile) const added
+	      * void unit::Load(inputfile& SaveFile) added
+	      * ushort unit::GetEmitation() const moved here from entity.cpp
+	      * void unit::PreserveMaterial(ushort Index) moved here from entity.cpp
+	      * material* unit::GetMaterial(ushort Index) const moved here from entity.cpp
+	      * ushort unit::GetMaterials() const moved here from entity.cpp
+	    * unit.h
+	      * material* unit::GetMaterial(ushort) const moved here from entity.h
+	      * ushort unit::GetEmitation() const moved here from entity.h
+	      * ushort unit::GetMaterials() const moved here from entity.h
+	      * bitmap* unit::GetPicture() const moved here from entity.h
+	      * void unit::PreserveMaterial(ushort) moved here from entity.h
+	* Bodyparts added
+	  * These are stored as an array of items in character, although they can't be severed yet :(
+	  * Character is not a unit and so contains materials no more; use bodypart materials from here on.
+	  * Modified files:
+	    * itemde.cpp
+	      * void bodypart::Save(outputfile& SaveFile) const added
+	      * void bodypart::Load(inputfile& SaveFile) added
+	      * void torso::Save(outputfile& SaveFile) const added
+	      * void torso::Load(inputfile& SaveFile) added
+	    * itemde.h
+	      * bodypart abstract class added
+	      * head class changed to bodypart child
+	      * torso class added
+	      * arm class added
+	      * leg class added
+	    * charba.cpp
+	      * void character::CreateBodyParts() added
+	      * material* character::CreateTorsoBone(ulong Volume) const added
+	      * void character::SetSize(ushort Size) added (this sets torso size)
+	      * ushort character::GetSize() const added
+	      * void character::CreateTorso(bool Humanoid) added
+	      * torso* character::GetTorso() const added
+	      * void character::SetTorso(torso* What) added
+	      * void character::SetMaterial(uchar Index, material* NewMaterial) added (this sets bodypart materials)
+	    * charba.h
+	      * see charba.cpp
+	      * character's base class changed to type + entity
+	      * bodypart* GetBodyPart(ushort Index) const added
+	      * void SetBodyPart(ushort Index, bodypart* What) added
+	      * uchar TorsoBonePercentile() const added
+	      * ulong TorsoVolume() const added
+	      * material* CreateTorsoFlesh(ulong) const = 0 added
+	      * ulong TotalVolume() const = 0 added (used by create functions to calculate bodypart volumes)
+	      * uchar BodyParts() const added
+	      * vector2d GetBitmapPos() const = 0 temporarily added
+	      * macro modifications, see charde.h
+	    * charde.cpp
+	      * void humanoid::SetSize(ushort Size) added (this sets bodypart sizes)
+	      * ushort humanoid::GetSize() const added (this calculates humanoid size based on bodypart sizes)
+	      * ulong humanoid::HeadVolume() const added (this and following are used only during construction)
+	      * ulong humanoid::TorsoVolume() const added
+	      * ulong humanoid::ArmVolume() const added
+	      * ulong humanoid::LegVolume() const added
+	      * void humanoid::CreateBodyParts() added
+	      * void humanoid::CreateHead() added
+	      * void humanoid::CreateRightArm() added
+	      * void humanoid::CreateLeftArm() added
+	      * void humanoid::CreateRightLeg() added
+	      * void humanoid::CreateLeftLeg() added
+	      * head* humanoid::GetHead() const added
+	      * void humanoid::SetHead(head* What) added
+	      * arm* humanoid::GetRightArm() const added
+	      * void humanoid::SetRightArm(arm* What) added
+	      * arm* humanoid::GetLeftArm() const added
+	      * void humanoid::SetLeftArm(arm* What) added
+	      * leg* humanoid::GetRightLeg() const added
+	      * void humanoid::SetRightLeg(leg* What) added
+	      * leg* humanoid::GetLeftLeg() added
+	      * void humanoid::SetLeftLeg(leg* What) added
+	    * charde.h
+	      * see charde.cpp
+	      * material* humanoid::CreateHeadFlesh(ulong Volume) const added
+	      * material* humanoid::CreateHeadBone(ulong Volume) const added
+	      * material* humanoid::CreateRightArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateRightArmBone(ulong Volume) const added
+	      * material* humanoid::CreateLeftArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLeftArmBone(ulong Volume) const added
+	      * material* humanoid::CreateArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateArmBone(ulong Volume) const added
+	      * material* humanoid::CreateRightLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateRightLegBone(ulong Volume) const added
+	      * material* humanoid::CreateLeftLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLeftLegBone(ulong Volume) const added
+	      * material* humanoid::CreateLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLegBone(ulong Volume) const added
+	      * material* humanoid::CreateTorsoFlesh(ulong Volume) const added
+	      * uchar humanoid::HeadBonePercentile() const added
+	      * uchar humanoid::TorsoBonePercentile() const added
+	      * uchar humanoid::RightArmBonePercentile() const added
+	      * uchar humanoid::LeftArmBonePercentile() const added
+	      * uchar humanoid::ArmBonePercentile() const added
+	      * uchar humanoid::RightLegBonePercentile() const added
+	      * uchar humanoid::LeftLegBonePercentile() const added
+	      * uchar humanoid::LegBonePercentile() const added
+	      * ulong humanoid::RightArmVolume() const added
+	      * ulong humanoid::LeftArmVolume() const added
+	      * ulong humanoid::RightLegVolume() const added
+	      * ulong humanoid::LeftLegVolume() const added
+	      * uchar humanoid::BodyParts() const added
+	      * nearly infinite amount of ulong xxx::GetDefaultVolume(ushort Index) consts removed
+	      * equally many respective ulong xxx:TotalVolume() consts added
+	      * InitMaterials line removed from macro and class definitions
+	      * nearly infinite amound of material* xxx::CreateTorsoFlesh(ulong Volume) consts added
+	* Gods prototyped
+	  * They now are derived from type and use the same macro system as characters, items etc.
+	  * Modified files:
+	    * game.cpp
+	      * void game::CreateGods() added
+	    * game.h
+	      * void game::SetGodNumber(uchar What) removed
+	      * uchar game::GetGodNumber() removed
+	      * uchar game::GetGods() added (note: this returns former GetGodNumber() + 1)
+	  * Removed files:
+	    * god.cpp
+	    * god.h
+	  * Added files:
+	    * godba.cpp
+	    * godba.h
+	      * these files are reserved for base god layer routines
+	    * godde.cpp
+	    * godde.h
+	      * these files are reserved for derived gods' routines
+	* Routine transportation
+	  * Some name routines moved temporarily from object to entity to make them available to the non-object character class
+	  * Routines:
+	    * std::string Name(uchar Case) const
+	    * std::string GetNameSingular() const
+	    * std::string GetNamePlural() const
+	    * std::string NameSingular() const
+	    * std::string NamePlural() const
+	    * std::string object::NameNormal(uchar Case, std::string Article, std::string Adjective) const
+	    * std::string object::NameProperNoun(uchar Case) const
+	  * Modified files:
+	    * object.cpp
+	    * object.h
+	    * entity.cpp
+	    * entity.h
+	* Name changes
+	  * Modifications:
+	    * typeable -> type
+	    * levelsquare -> lsquare
+	    * worldmapsquare -> wsquare
+	    * groundterrain -> gterrain
+	    * overterrain -> oterrain
+	    * levelterrain -> lterrain
+	    * worldmapterrain -> wterrain
+	    * groundlevelterrain -> glterrain
+	    * overlevelterrain -> olterrain
+	    * groundworldmapterrain -> gwterrain
+	    * overworldmapterrain -> owterrain
+	    * partially capitalized and fully capitalized versions of the preceding
+	    * changed igraph.h's graphics file #define prefixes from G to GR (e.g. GLTERRAIN -> GRLTERRAIN)
+	  * Modified files:
+	    * wterraba.cpp
+	    * wterraba.h
+	    * wterrade.cpp
+	    * wterrade.h
+	    * wsquare.cpp
+	    * wsquare.h
+	    * worldmap.cpp
+	    * worldmap.h
+	    * terra.cpp
+	    * terra.h
+	    * stack.cpp
+	    * stack.h
+	    * square.cpp
+	    * square.h
+	    * script.cpp
+	    * script.h
+	    * roomba.cpp
+	    * roomba.h
+	    * roomde.cpp
+	    * roomde.h
+	    * materba.cpp
+	    * materba.h
+	    * materde.cpp
+	    * lterraba.cpp
+	    * lterraba.h
+	    * lterrade.cpp
+	    * lterrade.h
+	    * level.cpp
+	    * level.h
+	    * itemba.cpp
+	    * itemba.h
+	    * itemde.cpp
+	    * itemde.h
+	    * igraph.h
+	    * game.cpp
+	    * entity.cpp
+	    * entity.h
+	    * cont.cpp
+	    * cont.h
+	    * charba.cpp
+	    * charba.h
+	    * charde.cpp
+	    * dungeon.dat
+	  * Removed files:
+	    * typeable.cpp
+	    * typeable.h
+	  * Added files:
+	    * type.cpp
+	    * type.h
+	* EntityID removed and ItemID added. Names changed everywhere.
+	  * Modified files:
+	    * itemba.h
+	    * itemba.cpp
+	    * game.h
+	    * game.cpp
+	    * entity.h
+	    * entity.cpp
+	* itemde.h: Genie possibility increased
+	* fluid.cpp: Fluid degeneration rate is now lower
+	* Symbol.pcx: mounted symbol added by Kahvi
+	* LTerrain.pcx: stunt trees added by Kahvi
+	* Human.pcx: Cossack added by Kahvi and mistress teared apart by Kahvi
+	* Char.pcx: raven, lion, carnivorous plant, bison, horse and dragon added by Kahvi
+
+Sunday, March 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemba.h: Teleport(stack*) function added
+	* Main/Include/itemde.h: Wand of Teleportation added
+	* Main/Include/roomba.h: TeleportSquare function added
+	* Main/Include/roomde.h: TeleportSquare function added to catedral and shop
+	* Main/Include/charba.h: Teleport function added
+	* Main/Include/lsquare.h: Added TeleportEverything
+	* Main/Source/stack.cpp: Teleport function added
+	* Main/Source/itemba.cpp: Teleport(stack*) function added, which currently uses Player's character to determine walkability of square. This probably should be still fixed.
+	* Main/Source/itemde.cpp: Wand of Teleportation added
+	* Main/Source/lsquare.cpp: Added TeleportEverything
+	* Main/Source/roomde.cpp: TeleportSquare function added to catedral and shop
+	* Main/Source/stack.cpp: Teleport function added
+
+Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Source/god.cpp: silva::PrayGoodEffect now also ImpactDamages all items in the level
+	* Main/Source/charba.cpp: character::Kick() added a burden state checker
+
+Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Source/charba.cpp: Added a burdenstate checker to Hit function 
+	* Main/Source/lterrade.cpp: Added private function Break() to door to reduce duplicated code.
+	* Main/Include/lterrade.h: Added function Break() to door
+
+Thursday, February 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemde.h: Added scroll of taming
+	* Main/Source/itemde.cpp: Added scroll of taming
+
+Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/Makefile.am: Added entity.h and fluid.h (somehow these changes have been lost from CVS)
+	* Main/Source/Makefile.am: Added entity.cpp and fluid.cpp (somehow these changes have been lost from CVS)
+	* Main/Source/itemde.cpp: bananapeals::GetStepOnEffect for fall effect, Wand of Striking added. All BeamEffect functions changed to returing bool that tells the Beam function wheter the beam continues after the square in question.
+	* Main/Include/lsquare.h: levelsquare::HasBeenHitBy added 
+	* Main/Source/lsquare.cpp: levelsquare::HasBeenHitBy added
+	* Main/Include/lterraba.h: overlevelterrain::HasBeenHitBy added
+	* Main/Include/lterrade.h: door::HasBeenHitBy, brokendoor::HasBeenHitBy added
+	* Main/Source/lterrade.cpp: door::HasBeenHitBy, brokendoor::HasBeenHitBy. That open or damage the door when an item hits it.
+	* Main/Include/itemde.h: Wand of strikings color changed from yellow to white. Added Wand of fireballs
+	* Main/Source/charba.cpp character::WizardMode changed so that the player now receives 5 scrolls of wishing also after activating the wizard mode.

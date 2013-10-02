@@ -1,0 +1,16 @@
+------------
+|          |
+| Changes  |
+|          |
+------------
+
+
+
+Date: 			3.12.01
+Files Changed: 		character.cc/h
+Functions Changed: 	Die, ChangeColorOfFace
+Things Added: 		Character Blushes if complimented.
+Bugs Corrected:		Beards don't burn when you eat rubber.
+Comments:		Beard r0xxxx
+
+	

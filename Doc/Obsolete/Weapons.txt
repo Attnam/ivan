@@ -1,0 +1,21 @@
+Kirves - kova l‰m‰, huono osuma, huono blokki
+Puunuija tms. - surkea l‰m‰, melko huono osuma, melko huono blokki
+Mace - melko kova l‰m‰, melko huono osuma, huono blokki
+Isot sotavasarat - kova l‰m‰, melko hyv‰ osuma, normaali blokki
+Puukko - huono l‰m‰, loistava osuma, itkett‰v‰n surkea blokki, rikkominen vaikeaa
+Miekka - normaali l‰m‰, melko hyv‰ osuma, hyv‰ blokki, rikkominen vaikeaa, kokemus t‰rke‰‰
+Kahdenk‰den miekka - melko kova l‰m‰, normaali osuma, hyv‰ blokki, rikkominen vaikeaa
+Poleaxe - melko kova l‰m‰, hyv‰ osuma, melko hyv‰ blokki, kokemus todella t‰rke‰‰
+Keih‰s - vaihteleva l‰m‰, melko hyv‰ osuma, melko huono blokki, helposti rikkoutuva
+
+Hillitˆn morning star - eritt‰in kova l‰m‰, eritt‰in huono osuma, surkea blokki.
+Pit‰‰ kiihdytt‰‰ ennen lyˆnti‰ special-n‰pp‰imest‰, kiihdytys vie vuoron. Pallon pit‰minen
+kiihdytettyn‰ kuluttaa np:t‰. Pallolla voi lyˆd‰ per‰kk‰isin‰ vuoroina, mutta osuessa on
+mahdollisuus ett‰ pallo pys‰htyy ja se pit‰‰ kiihdytett‰‰ uudelleen. Vaatii hahmon joka
+puolelle ruudun tyhj‰‰ tilaa (siis ei sein‰‰). Mik‰li hahmon ymp‰rill‰ useampia monsuja,
+osumamahdollisuus lasketaan jokaiseen monsuun, ja useampiin monsuihin voi tehd‰ l‰m‰‰ samalla
+vuorolla. Mik‰li rikkoontuu kiihdytettyn‰, pallo lent‰‰ satunnaiseen suuntaan ja aiheuttaa
+l‰m‰‰ tielle osuville.
+
+Pienempi morning star - hyvin kova l‰m‰, hyvin huono osuma, surkea blokki. Muuten sama kuin
+isompi veljens‰, paitsi: kiihdytettyn‰ pit‰minen vie v‰hemm‰n np:t‰, pys‰htyy helpommin.

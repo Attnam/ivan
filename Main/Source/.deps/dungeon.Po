@@ -1,0 +1,321 @@
+dungeon.o: dungeon.cpp ../../Main/Include/dungeon.h \
+  ../../FeLib/Include/v2.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstdlib \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/c++config.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/os_defines.h \
+  /usr/include/features.h /usr/include/sys/cdefs.h \
+  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+  /usr/include/gnu/stubs-64.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/cpu_defines.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstddef \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stddef.h \
+  /usr/include/stdlib.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stddef.h \
+  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+  /usr/include/endian.h /usr/include/bits/endian.h /usr/include/xlocale.h \
+  /usr/include/sys/types.h /usr/include/bits/types.h \
+  /usr/include/bits/typesizes.h /usr/include/time.h \
+  /usr/include/sys/select.h /usr/include/bits/select.h \
+  /usr/include/bits/sigset.h /usr/include/bits/time.h \
+  /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+  /usr/include/alloca.h ../../FeLib/Include/felibdef.h \
+  ../../FeLib/Include/typedef.h ../../FeLib/Include/pragmas.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstring \
+  /usr/include/string.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cmath \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/cpp_type_traits.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/type_traits.h \
+  /usr/include/math.h /usr/include/bits/huge_val.h \
+  /usr/include/bits/huge_valf.h /usr/include/bits/huge_vall.h \
+  /usr/include/bits/inf.h /usr/include/bits/nan.h \
+  /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/cmath.tcc \
+  ../../Main/Include/level.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/vector \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_algobase.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/functexcept.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/exception_defines.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/numeric_traits.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_pair.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_move.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/concept_check.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator_base_types.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator_base_funcs.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/debug/debug.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/allocator.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/c++allocator.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/new_allocator.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/new \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/exception \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_construct.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_uninitialized.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_vector.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_bvector.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/vector.tcc \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/queue \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/deque \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_deque.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/deque.tcc \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_heap.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_function.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/backward/binders.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_queue.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/set \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_tree.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_set.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_multiset.h \
+  ../../Main/Include/area.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/map \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_map.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_multimap.h \
+  ../../FeLib/Include/rect.h ../../FeLib/Include/v2.h \
+  ../../Main/Include/square.h ../../FeLib/Include/festring.h \
+  ../../Main/Include/ivandef.h ../../Main/Include/script.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/list \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_list.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/list.tcc \
+  ../../FeLib/Include/femath.h ../../FeLib/Include/rect.h \
+  ../../FeLib/Include/error.h ../../Main/Include/game.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ctime \
+  /usr/include/time.h ../../FeLib/Include/save.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstdio \
+  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
+  /usr/include/wchar.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stdarg.h \
+  /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
+  ../../FeLib/Include/error.h ../../FeLib/Include/festring.h \
+  ../../FeLib/Include/fearray.h ../../FeLib/Include/femath.h \
+  ../../FeLib/Include/bitmap.h
+
+../../Main/Include/dungeon.h:
+
+../../FeLib/Include/v2.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstdlib:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/c++config.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/os_defines.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/cpu_defines.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstddef:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stddef.h:
+
+/usr/include/stdlib.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stddef.h:
+
+/usr/include/bits/waitflags.h:
+
+/usr/include/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/time.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+../../FeLib/Include/felibdef.h:
+
+../../FeLib/Include/typedef.h:
+
+../../FeLib/Include/pragmas.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstring:
+
+/usr/include/string.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cmath:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/cpp_type_traits.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/type_traits.h:
+
+/usr/include/math.h:
+
+/usr/include/bits/huge_val.h:
+
+/usr/include/bits/huge_valf.h:
+
+/usr/include/bits/huge_vall.h:
+
+/usr/include/bits/inf.h:
+
+/usr/include/bits/nan.h:
+
+/usr/include/bits/mathdef.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/cmath.tcc:
+
+../../Main/Include/level.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/vector:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_algobase.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/functexcept.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/exception_defines.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/numeric_traits.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_pair.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_move.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/concept_check.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator_base_types.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator_base_funcs.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_iterator.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/debug/debug.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/allocator.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/x86_64-pc-linux-gnu/bits/c++allocator.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ext/new_allocator.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/new:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/exception:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_construct.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_uninitialized.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_vector.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_bvector.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/vector.tcc:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/queue:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/deque:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_deque.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/deque.tcc:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_heap.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_function.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/backward/binders.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_queue.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/set:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_tree.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_set.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_multiset.h:
+
+../../Main/Include/area.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/map:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_map.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_multimap.h:
+
+../../FeLib/Include/rect.h:
+
+../../FeLib/Include/v2.h:
+
+../../Main/Include/square.h:
+
+../../FeLib/Include/festring.h:
+
+../../Main/Include/ivandef.h:
+
+../../Main/Include/script.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/list:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/stl_list.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/bits/list.tcc:
+
+../../FeLib/Include/femath.h:
+
+../../FeLib/Include/rect.h:
+
+../../FeLib/Include/error.h:
+
+../../Main/Include/game.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/ctime:
+
+/usr/include/time.h:
+
+../../FeLib/Include/save.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/g++-v4/cstdio:
+
+/usr/include/stdio.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.3.1/include/stdarg.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+../../FeLib/Include/error.h:
+
+../../FeLib/Include/festring.h:
+
+../../FeLib/Include/fearray.h:
+
+../../FeLib/Include/femath.h:
+
+../../FeLib/Include/bitmap.h:

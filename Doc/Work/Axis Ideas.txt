@@ -1,0 +1,10 @@
+Possible alignment axes:
+
+good - evil
+egoism - altruism
+individualism - collectivism
+anarchism - totalitarianism
+conservatism - radicalism
+capitalism - communism
+ecologism - anthropocentrism
+magicism - anti-magicism

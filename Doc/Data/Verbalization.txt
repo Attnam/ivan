@@ -1,0 +1,21 @@
+THV
+
+0	unbelievably inaccurate
+1	inaccurate
+2	decently accurate
+3	accurate
+4	highly accurate
+5	extremely accurate
+6	can't miss
+
+
+SV:
+
+
+0-2	fragile
+3-4	rather sturdy
+5-7	sturdy
+8-10	durable
+11-15	very durable
+16-20	extremely durable
+20-	unbreakable

@@ -1,0 +1,3439 @@
+----------------------------------------------------------------------------
+
+     IvanDev, the Only True Socialist Game Development Party, presents
+
+  ***********************************************************************
+  *                                                                     *
+  * Collected conversations of Ivan Gorovits and the Leader of Citizens *
+  *                                                                     *
+  ***********************************************************************
+
+                                 Starring
+
+             Head Graphics Designer Tuukka Virtaperko as Ivan
+
+                                   and
+
+                Master Programmer Timo Kiviluoto as leader
+
+----------------------------------------------------------------------------
+
+Leader on March 3 2002
+----------------------
+
+Big leader guy ask Ivan make graphics. Ivan respect no big leader guy. Ivan
+make no graphics.
+
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+Big leader guy again ask Ivan make graphics. Ivan still make no graphics.
+
+Ivan never make graphics. No carnivorous plant. No Indiana. No graphics, no
+game.
+
+Ivan stupid head. Ivan no understand no game make big leader guy mad.
+
+Big leader guy reach knife and test bodypart code with Ivan.
+Big leader guy staple Ivan.
+Big leader guy vaporize Ivan.
+Big leader guy throw pepsi at Ivan.
+Big leader guy ping Ivan to death.
+Big leader guy throw old joystics at Ivan.
+Big leader guy mind control Ivan and make Ivan join NAMBLA.
+
+Then big leader guy make new game with ASCII-graphics. Ivan get no fame.
+
+Ivan regret Ivan made no graphics.
+
+Ivan on March 3 2002
+--------------------
+
+CVS not work when Ivan try commit.
+Ivan had not notice CVS saying "up yours" to Ivan, because Ivan been tired.
+Ivan kick CVS.
+CVS be softerware.
+
+Ivan now realize that ability to breath not be taken for granted.
+Ivan bow before mighty leader mister.
+Ivan humble.
+Ivan apologize arrogance.
+Ivan attempt to be better worker in future.
+Ivan attempt really really hard.
+Ivan pull himself together.
+Ivan submit.
+
+Ivan light cigarette.
+
+Leader on March 3 2002
+----------------------
+
+Ivan make good graphics.
+Big leader guy not mad anymore.
+Big leader guy just and merciful.
+But big leader guy still somewhat angry.
+Ivan draw dragon for big leader guy. Scary. Char.pcx, 48x48 pixels.
+Ivan be ready within 48 hours.
+Then big leader guy content.
+
+Ivan on March 4 2002
+--------------------
+
+The dragon spread its wings.
+
+Ivan report succes.
+Ivan ready and willing do additional work.
+
+Leader on March 4 2002
+----------------------
+
+Ivan make fine graphics before deadline.
+Big leader guy happy.
+Ivan good worker.
+
+Next Ivan make graphics for steppe:
+
+-a stunted tree
+-a bison for filthy capitalist steppes
+-a proud, mounted Russian Cossack for our steppes
+
+Again Ivan get 48 hours at most to fulfill his duty to the Party.
+
+Ivan on March 5 2002
+--------------------
+
+Ivan scratch head.
+Ivan look at job description.
+Ivan sweat vigorously.
+Do Ivan make horse separate in char.pcx and Cossack separate in human.pcx?
+
+Ivan light cigarette of weed.
+Ivan puff puff.
+Ivan fly.
+
+Ivan on March 5 2002
+--------------------
+
+Ivan recover from confusion.
+Ivan work what he can.
+Bison say moo.
+Ivan shoot bison and put bison horns on Lada hood with duct tape.
+Ivan impale slow drivers with horns.
+Ivan car now in Party colors.
+
+Ivan made stunt tree.
+Ivan made tree stunt tree
+Ivan made so many because stunt tree do funny tricks.
+
+Ivan also made picture of brick wall that Ivan mauled CVS against.
+Ivan now forgive CVS because it be GNU.
+But Ivan still not like CVS.
+
+Ivan suggest some system.
+System would indicate in graphic if person is mounted on horse or not.
+Same system also show if person mounted on boar, elephant, polar bear etc.
+Or if person mounted on ass.
+Ivan find mounting on ass funny.
+A pagan verse sing of Jesus man mounted on ass.
+Jesus be funny man.
+If humor can extends so much to think that be funny.
+Ivan not sure if and how system work.
+
+Leader on March 5 2002
+----------------------
+
+Big leader guy agree with Ivan.
+Ivan make Cossack in human.pcx.
+Then Ivan make mounted symbol in symbol.pcx. Like many items' symbol.
+Big leader guy then put symbol above Cossack.
+Cossack laugh and ride to battle.
+But if Cossack too drunk, Cossack fall off saddle.
+Ivan make horse without Cossack in char.pcx, too.
+
+Ivan on March 6 2002
+--------------------
+
+Ivan made stuff.
+Ivan also converted mistress to human.pcx-format.
+Ivan not sure if Cossack look correct.
+Ivan wait further opinion from boss man.
+
+Ivan is eager to do more.
+Ivan drink vodka and go sleep.
+Ivan dream of level 8 mistress.
+
+Leader on March 6 2002
+----------------------
+
+Big leader guy think Cossack good.
+Even though big leader guy not met many Cossacks.
+(Big leader guy prefer guerillas to cavalry.)
+
+Today Ivan get very important work.
+Big leader guy notice that human.pcx short of head space.
+Ivan can't be head graphics designer if no room for heads.
+Human.pcx also not support severed hands and legs.
+Ivan surely like break hands and legs from capitalists.
+Thus Ivan read instructions in file and convert human.pcx to new format.
+Ivan get 72 hours to finish task.
+
+Ivan on March 6 2002
+--------------------
+
+Ivan think.
+What if Ivan draw entire legs like usual, but certain area of leg graphics 
+will not be drawed to screen.
+Say a square from point 0,8 to 8,16 when left up corner be 0,0.
+Or prehaps this shaped thing:
+
+A
+| \
+|   \
+|     \
+|       \p
+|        |
+|        |
+|        |
+|        |
+|________|
+
+Only that angle A be 45 degree instead of coarse ascii presentation.
+Point p be in location 8,8.
+
+Ivan know this be less guru method.
+And maybe too much inflexible for big boss.
+But it make work easier for Ivan.
+It make non symmetric leg graphics easier and compacter.
+Ivan wait for comment.
+But Ivan feel keen to gib evil bourgeois persons.
+Ivan like gib.
+Ivan jump up and down because exitement.
+Ivan break chair.
+Ivan take chair gib. Sharp.
+Ivan go impale bourgeois.
+Ivan see no gibbys because Ivan made no graphic.
+Ivan go back to chair and wait assistance from big boss.
+Ivan caress pointy stick in hand and wait for it to see lot of action.
+
+Leader on March 7 2002
+----------------------
+
+Big leader guy think square probably bad idea.
+Shape could maybe work.
+Point p at 8,8 not good with pants now in human.pcx.
+Perhaps point A could be at 0,5 and point p at 7,12.
+Then most graphics now present seem to work.
+Party may well try this method.
+Ivan not stupid head at all.
+Of course, then Ivan can draw hands as they are now.
+Ivan must only convert everything to material colors.
+
+Ivan on March 7 2002
+--------------------
+
+Ivan full of pride for being of use to Party!
+Ivan happy!
+Ivan thirst to work and serve boss man even better!
+
+Ivan not sure how kamikaze dwarf like change.
+Dwarf have small legs.
+But clock say 0:05 and Ivan say time to call it a day for Ivan.
+Ivan see dwarf FEtomorrow, and start work, happy and enthusiastic.
+Ivan pull furry hat with red star on eyes.
+Ivan lay down in Ivan's work hut on big steppe and sleep happy dreams.
+
+Ivan wake up.
+Ivan uncertain.
+Ivan make severed body things as graphics in items.pcx?
+Oh, wait.
+Some be there all ready.
+Ivan see if they good, but not until FEtomorrow.
+
+Ivan snore.
+
+Ivan on March 9 2002
+--------------------
+
+Ivan report success.
+Ivan used more material colors than requested.
+Ivan bad.
+But Ivan think if idea of material color not fully implemented then 
+material color big trouble no use.
+Ivan wait for spank.
+
+Leader on March 9 2002
+----------------------
+
+More material colors mean more code difficulty.
+But perhaps it be worth it.
+Big leader guy not spank Ivan. Yet.
+Big leader guy make tests with graphics first.
+
+Next Ivan make all remaining wilderness lterrain graphics:
+
+base tile for snowy terrain
+big rock
+base tile for desert
+base tile for swamp
+boghole
+dead tree
+
+Btw. if humanoid sink in boghole, then perhaps we draw only his head.
+The same could even apply to swimming people.
+
+Ivan make pics before 48 hours pass.
+
+Ivan on March 11 2002
+---------------------
+
+Ivan report work complete.
+Ivan go into boghole.
+Ivan shoot all bogies in boghole.
+Boghole be now Ivanhole.
+Ivan stalk for meat in Ivanhole.
+Ivan wet and cold and muddy.
+Ivan feel comfortable.
+Ivan grap capitalist leg and drag into Ivanhole.
+Ivan eliminate capitalist.
+Ivan like idea of drawing only head of sunken humanoid.
+Capitalist head cannot be drawn now, because Ivan decapitate capitalist.
+Ivan find $800 in capitalist pocket.
+Ivan take fashionable capitalist design jacket and sell it in free market.
+Ivan have now $950.
+But Ivan no capitalist.
+Ivan buy barrel extension for AK from State Weapon Factory.
+Ivan buy special issue 75-round enlarged AK magazines from State Weapon 
+Factory.
+Ivan buy automatic AK clip reloading machine from State Weapon Factory.
+Ivan now ready to convert into Communism with improved AK.
+
+Leader on March 12 2002
+-----------------------
+
+Ivan true friend of Party.
+Big leader guy reward Ivan with work.
+Ivan used more material colors than asked in human.pcx.
+Party agree with most, but some must be made more consistent.
+Big leader guy write complete material color list:
+
+Heads
+1. skin
+2. main color of cap, helmet etc.
+3. all hair (including fur, beard etc.)
+4. special color
+
+Changes Ivan must make:
+
+All beards and hair must be m-color 3.
+Horns in helmet picture must be m-color 4.
+
+Torsos
+1. skin
+2. main color
+3. belt
+4. special color
+
+Changes:
+
+Third torso in first row: collar must be m-color 4.
+
+Fifth torso in second row: belt must be m-color 3.
+M-color 3 part in same picture should be m-color 1, 2 or 4.
+(big leader guy not exactly understand what it is)
+
+Arms
+1. skin
+2. main color
+3. reserved
+4. special color
+
+Party symbol on Ivan's hands: must be m-color 4.
+Few pixels on shoulders of orc hands in second row: must be m-color 4.
+But generally Ivan should avoid using only 1-3 pixels to m-color like in
+these pics.
+Most users have no cyber eyes like Ivan.
+They never notice color effects so small.
+
+Ivan mustn't use reserved m-color 3 yet.
+
+Legs
+1. skin
+2. main color
+3. reserved
+4. special color
+
+Some pants include belt, as do some torso pics.
+If such graphics are attached, two belts are drawn.
+In Party's opinion, belts belong to torsos.
+Ivan strips them from those legs that have them.
+
+Ivan mustn't use reserved m-color 3 yet.
+(it would be consistent to use it for hair also here, but maybe not yet)
+
+Shield
+1. main color
+2. reserved
+3. reserved
+4. special color
+
+All ok.
+
+Weapon
+1. edge
+2. handle
+3. reserved
+4. special color
+
+All ok.
+
+Ivan make these changes and be ready on Thursday evening.
+Then human.pcx perfect.
+Big leader guy happy, and laugh like uncle Lenin and uncle Ho Chi Minh.
+
+Leader on March 14 2002
+-----------------------
+
+Big leader guy hadn't noticed Ivan made eyes with m-color 3.
+Ivan convert eyes to m-color 4. No big task.
+M-color 4 should perhaps even be allocated for eyes only.
+If Ivan can live without special color for heads.
+
+Big leader guy notice this because Ivan's new bodypart pics now integrated.
+Still need tweaking though.
+For example Ivan removed one girl face which caused bug in game.
+Many headless women run around Attnam now.
+Big leader guy fix as always.
+
+Leader on March 15 2002
+-----------------------
+
+Ivan be little late.
+Big leader guy not-so-happy anymore.
+Still big leader guy forgive, since Ivan worked hard last week.
+
+Did Ivan even get orders of Party?
+Mail system may just be mad.
+Copy of all work in two letters below.
+
+Ivan on March 15 2002
+---------------------
+
+Headless women?
+Ivan confuse.
+Ivan not receive work order.
+Ivan start work vigorously now.
+
+Ivan on March 15 2002
+---------------------
+
+Ivan work with joy for gracious Party.
+Ivan deliver results of work.
+
+Leader on March 16 2002
+-----------------------
+
+Big leader guy now understand.
+Fault not Ivan's, but PHPOINT's.
+One day not allow access abroad, other day not send mail.
+PHPOY evil capitalist company run by wicked bourgeoisie who wish to bring
+down Party.
+But proletariate stronger than thousand PHPOYs.
+Our will be as unshakable as the iron of our hammers and sickles and might
+as great as Lenin's forehead.
+Ivan be true friend of strong Party when work as hard as today.
+Indeed, big leader guy blamed Ivan for no reason.
+Of course, leader not apologize, since he still always right.
+
+Next Ivan must find his machete and slice up a few humanoids.
+This way, their bodyparts can also be severed graphically.
+Bodyparts need NOT be compatible, albeit it would be even better so.
+It be most important that they look good together.
+List of humanoids in char.pcx that ought to be dismembered:
+
+Enner beast, skeleton, dark knight, goblin, Oree, golem, imp, angel,
+gibberling, kobold
+
+Ivan be ready within 48 hours.
+
+Ivan on March 19 2002
+---------------------
+
+Ivan been pulling too many ADSL cables.
+Ivan wrist now dysfunctional and wobbly wobbly.
+Ivan not able hold mouse.
+Ivan apologize many many times.
+Ivan try again after sunrise.
+
+Ivan on March 19 2002
+---------------------
+
+Ivan finish most of work.
+Ivan not submit angel.
+Angel require complete and utter redraw.
+Ivan have no time for redraw.
+Ivan must focus on other urgent matter.
+
+Leader on March 20 2002
+-----------------------
+
+Visible angel legs not imperative.
+Angel can well have bottom part of current hood as legs.
+If one leg broken, it just won't be shown, because hood still there.
+And wings can be part of torso.
+Hands and hair will just be drawn over them.
+Angel picture very good already.
+It would be pity if it needed to be redrawn for no reason.
+
+However big leader guy reserve human.pcx for some time now.
+Next Ivan feed mammoth with bourgeoisie and make it grow as large as 48x48
+pixels.
+Party also need new corpse pictures: small, medium, large and mega-large.
+Small corpse is used for dark frog corpses etc, medium for dogs and such,
+large for human-sized creatures (corpse now in item.pcx ok as large corpse)
+and mega-large for dragon and mammoth.
+Mega-large should be of size 48x48.
+
+Ivan be ready on Friday evening.
+Ivan has plenty of time to finish all urgent matters first.
+
+Leader on March 23 2002
+-----------------------
+
+Party need corpses.
+Ivan design corpse graphics.
+Otherwise Party use graphics designer corpse.
+
+Ivan on March 26 2002
+---------------------
+
+Ivan has been disobedient.
+Ivan bow before mighty leader man and seek reconciliation.
+Ivan submit some corpses.
+Only two, because Ivan out of bourgeois flesh.
+Ivan know. Ivan know. It not enough.
+Ivan go reap bourgeois with mighty knife.
+Ivan promise he return till next sunset.
+
+Leader on March 27 2002
+-----------------------
+
+Ivan read scroll of change material.
+Ivan pick "head" in target menu.
+Ivan wish for "wood".
+Ivan forget to make graphics.
+Is this how it happened?
+
+Just in case:
+Ivan should make tiny corpse, very large 32x32 corpse and mega-large 48x48
+corpse.
+Ivan also draw bigger mammoth in char.pcx.
+Ivan can choose whether to make it 32x32 or 48x48, no big deal actually.
+Ivan note that all three corpses must be made in either case.
+
+But if Ivan make no mega-large mammoth soon,
+Party send Ivan on mission to fight mega-large mammoth in Siberia.
+
+Ivan on March 29 2002
+---------------------
+
+Ivan dumb and disobedient.
+But Ivan submit now mammoth and dead mammoth.
+New corpses, by the way, might be able to rotate 90 degrees.
+It create variance.
+But Ivan work more fe-tomorrow.
+Ivan apologize mighty big boss with nerve staple amplifier switch.
+
+Leader on March 29 2002
+-----------------------
+
+Big leader thank for art but accept only one apology: more vigorous work.
+Party plan that weapons may break in game.
+Ivan make broken picture for each weapon of IVAN.
+Ivan use 48 hours at most.
+Not much, but Party schedule tight and Ivan used too much time with corpses.
+
+Ivan on March 29 2002
+---------------------
+
+Ivan stick weapons in capitalist torso.
+Capitalist torso full of acid because capitalist evil.
+Weapons say snap.
+Ivan put fist in capitalist torso.
+Fist not say snap.
+Torso say plop.
+Ivan leathery glove be now corroded.
+But capitalist have hole on torso.
+
+Leader on March 29 2002
+-----------------------
+
+Ivan faster than bourgeois fleeing from victorious Red Army!
+Though one thing Ivan forgot.
+Leader asked to make broken picture of all weapons.
+Banana say bang.
+Ivan draw broken banana too.
+
+Next Ivan draw bear trap and land mine in item.pcx.
+Capitalist step on mine.
+From then on, capitalist use wooden leg to kick workers.
+
+Ivan on March 29 2002
+---------------------
+
+Ivan make two bear traps: set and unset.
+Ivan install bear trap.
+Ivan go smoke cigarette.
+Ivan hear snap.
+Ivan take prey from bear trap.
+Bear trap caught one frosty.
+Ivan go drink what he got from bear trap.
+
+Leader on March 29 2002
+-----------------------
+
+Gut. With traps Party can protect its territory.
+Alas, so can capitalists.
+But Leader clever and send some lazy proles to trigger mines first.
+Party brigades can advance again.
+But Party soldiers must be well protected in close combat with bourgeoisie.
+Ivan draw wearable equipment for characters:
+shield, cloak, gauntlet, boot, belt, amulet and ring.
+Note that only one gauntlet and boot need to be made, not a pair.
+If hand is severed, character loses only one gauntlet with it.
+Party wait for glorious success.
+
+Ivan on April 5 2002
+--------------------
+
+Ivan complete graphic.
+If Party not happy, Party promptly e-mail.
+Ivan suspicious if some graphics will look good...
+
+Leader on April 6 2002
+----------------------
+
+Party integrate equipment today.
+Party then inform whether they ok or not.
+However, leader think Ivan forgot boot.
+Party proganda not work well if members walk barefooted.
+Beside boot, Ivan draw two symbols in symbol.pcx.
+They be of same size as many items and mounted symbol.
+First, tame symbol similiar to Nethack 3.4.0's pretty heart symbol.
+It be shown over tame creatures.
+Without it, it be e.g. hard to distinguish hostile mistress from tame, as
+both like to lash you.
+Second, Ivan draw battle symbol.
+It be shown in worldmap over towns and terrains where armies fight.
+Party use it once we add first government dynamics.
+If possible, Ivan make these pics today, in order to compensate idleness of
+last week.
+If not, tomorrow evening will be absolute deadline.
+Ivan not betray us for his own sake.
+
+Ivan on April 6 2002
+--------------------
+
+Ivan curse.
+Ivan spit blood.
+Ivan light akimbo cigarette.
+Ivan do work.
+Ivan think whole Attnam full of people with heart symbol be gay.
+So Ivan make graphic for alternative system: Small triangle in left upper 
+corner. If red, hostile, if blue, peaceful.
+And every time player enter a place, a text will appear: "This village be 
+hostile" or "This village be peaceful", depending on are there more hostile 
+or more peaceful creature in the place.
+If village peaceful, then every peaceful creature be non-marked and every 
+hostile be marked with red.
+If village hostile, then hostile creatures non-marked and peaceful blue-marked.
+Leader like?
+
+Leader on April 6 2002
+----------------------
+
+Idea might work, but heart symbol used nevertheless,
+because it not meant for 'peaceful' creatures.
+In IVAN, characters have four possible relations towards player:
+hostile (attacks), peaceful (don't care),
+friendly (attacks enemies of player) and tame (obeys player fully).
+Heart used for tame creatures, like player's dog.
+If blue triangle used for peaceful people and red for enemies,
+perhaps Ivan should make another triangle for friendly characters.
+
+Btw. cloak in item.pcx and mistress head in human.pcx both have error:
+one pixel outside the 16x16 tile boundary.
+These pixels should be moved inside tile.
+Leader can imagine this be an utmost difficult and dangerous task.
+
+After next release Party begin expanding world.
+First there be need for some Istour's character graphics:
+thief, grave digger and black mage.
+Ivan expand human.pcx downwards as needed.
+All characters must look as evil and gay as possible.
+
+Ivan be ready within 48 hours.
+
+Ivan on April 6 2002
+--------------------
+
+Ivan fight courageously.
+After hard work problem is fixed.
+Ivan sweaty like pig.
+
+Leader on May 4 2002
+--------------------
+
+Ivan make no gay folk for evil town.
+Ivan irresponsible, lazy and careless.
+Ivan smoke cigarette and drink vodka in his home cottage on boundless
+steppe.
+Ivan hear thumping of many feet.
+Ivan become suspicious.
+Ivan look out of window.
+Ivan notice cottage besieged by countless enraged IVAN fans wielding sharp
+objects.
+Ivan also catch sight of big leader swinging big axe at cottage door.
+It be then too late for Ivan to make graphics.
+
+Ivan on May 5 2002
+------------------
+
+Ivan be currently at Helsinki. Ivan examine way to bring down capitalist 
+town. Ivan examine in Helsinki until tuesday. Ivan make graphics by 
+wednesday evening. Ivan very sincere.
+Ivan apologize for Ivan's pursuit of personal interest. Ivan be sad and 
+bitter now that gay folk won Finland in ice hockey, and Ivan gain 
+additional artistic angst because of that. Ivan convert angst to graphics. 
+Ivan promise.
+
+Leader on May 14 2002
+---------------------
+
+Ivan work!
+It be miracle!
+It surely be due to Lenin's great guidance!
+We must together go thank and worship him!
+But mausoleum door locked.
+Ivan draw key.
+Tonight.
+
+Ivan on May 15 2002
+-------------------
+
+Ivan hope it be ok
+Ivan find out that new computer does not like deluxe paint
+It not work good
+Damn
+Must use old computer
+Ivan feel downgraded and slow
+Damn
+
+Leader on May 15 2002
+---------------------
+
+Do Ivan use some newer version of bad capitalist OS?
+They not like old programs.
+Old programs work well.
+Anything that work well object to capitalist plans.
+
+Ivan now done all items needed for next release. Gut.
+But yet Ivan must draw better silhouette to char.pcx attached.
+As Ivan see, upper part of figure must be in 64x64 rectangle at 0,64
+and bottom part in 64x64 rect at 64,64.
+Use same m-colors for bodyparts as in example.
+As leader said, Ivan can also use some sort of gradient in figure.
+Ivan be ready on fefriday evening.
+But if Ivan going somewhere on weekend,
+IVAN MAKE GRAPHIC BEFORE LEAVING.
+
+Leader on June 3 2002
+---------------------
+ 
+Now that Ivan has celebrated freedom's dawn enough,
+Ivan should convert genie and angel to humanoids.
+Leader deliver latest humanoid and char.pcx.
+Ivan be ready fetomorrow.
+
+Leader on June 15 2002
+----------------------
+
+If Ivan really is too kind-hearted to cut angel and genie to pieces,
+big leader can do it someday himself (poorly).
+It wasn't a particulary creative assignment after all.
+However, Party now needs a chest where we can lock insubordinate graphics
+designers in.
+Of course, big leader or Hex could also draw it as well as possible
+(extremely poorly).
+But that would be far too great a punishment for anyone inside.
+So Ivan draw it.
+
+Please?
+
+Ivan on June 16 2002
+--------------------
+
+Ivan is drunk of vodka currently. But that not matter. Ivan download gimp 
+rightaway and do the gfx. Wait.
+
+Ivan on June 16 2002
+--------------------
+
+Ivan awaken.
+There be no memory from the past.
+All memory vanished.
+Ivan remember nothing.
+Ivan not feel his body.
+Ivan try to regain his sense of universe.
+-
+Ivan open eyes.
+Dust and smoke in the air.
+Hear screams and gunfire.
+Ivan see house of Party.
+Party house in flames.
+Dead comrades on the ground.
+Their fingers be gripping the handles of their Kalashnikovs, of which some 
+are still warm and smoking.
+Ivan remember flash, and realize something.
+Ivan look at corpse. It have red ribbon on shoulder with hammer and sicle.
+A small, black pool of blood come out of corpse torse.
+Ivan remember Lenin. Ivan look at corpse.
+Ivan frown.
+Ivan slowly turn head.
+Sand fall off Ivan's furry hat.
+Neck feel sore.
+Kalashnikov resting on Ivan side.
+Ivan move hand toward Kalashnikov.
+Pieces of debris fall off Ivan sleeve.
+Leather glove grip wooden handle of Kalashnikov.
+It feel comfortable and reliable as ever.
+-
+Ivan still stunned.
+Ivan rest Kalashnikov on his chest.
+Ivan close eyes and think.
+Ivan be in cloud.
+All sounds be softer and different.
+Ivan feel the force of intuition.
+Ivan slowly reload Kalashnikov.
+Something warm and familiar move deep inside Ivan brain, but Ivan cannot 
+quite grasp it.
+Ivan stand up slowly.
+Ivan feel stiff.
+Ivan take a few steps.
+Shells on the ground.
+Shells say clickety-click under Ivan's combat boots.
+Now all return to Ivan's mind.
+-
+Ivan run.
+Ivan run towards office of Master.
+Ivan kick broken tables and debris out of his way.
+Gunshots appear louder.
+Ivan turn corner.
+Capitalist swine soldiers oppressing Master and his last allies in shelter 
+of Master.
+Ivan pull trigger.
+One long and sudden burst combine with one hand grenade clear capitalist 
+swine soldiers.
+Hallway now full of dead capitalists.
+Ivan walk to office.
+Ivan report to duty.
+Ivan apologize deeply for critical absence.
+Ivan submit some graphic.
+
+Leader on August 6 2002
+-----------------------
+
+Holiday has grown old.
+Ivan rested enough.
+Ivan draw stethoscope.
+Leader use stethoscope on bourgeois.
+Leader hear coins clinking inside.
+Leader order Ivan shoot bourgeois.
+Leader use stethoscope on bourgeois.
+Leader hear nothing.
+Good.
+ 
+Ivan be ready within two days.
+
+Ivan on August 9 2002
+---------------------
+
+Ivan obey.
+When dealing with bourgeois, only must clink AK mechanism.
+No other may clink.
+Ivan listen to sad music of CCCPians singing how poor they be.
+Ivan gather bitter attitude.
+Ivan stand up, take AK safety switch off.
+Vacation be over now.
+Ivan heed the call of Plains, work and bourgeois-eliminationing. 
+
+Leader on August 9 2002
+-----------------------
+
+Good. Bourgeois in multiple pieces be best beourgeois.
+Ivan may take capitalist scalp to his vast collection.
+When Ivan removed scalp, Ivan put skull to item.pcx.
+Leader send it to capitalist bosses as warning, along with personal insults.
+As bourgeois be very disgusting even as dead,
+Ivan is allowed to use two days for deed.
+
+Ivan on August 10 2002
+----------------------
+
+Ivan find subject bourgeois.
+Ivan load AK with rotating shuriken blade ammunition.
+Ivan click full auto.
+Ivan click trigger.
+Ivan make very minced meat.
+Skull fly out of vast blade limbo.
+But suddenly something hairy fly on the ground too.
+Ivan see.
+Ah, cleanly cut bourgeois scalp left undamaged.
+Ivan add scalp as a bonus to work file.
+
+Leader on August 10 2002
+------------------------
+
+Excellent.
+Next Ivan draw thief.
+Leader not mean bourgeois.
+Leader need thief who steals from bourgeoisie.
+With money thief buy stuff, put it in needle and make himself fly.
+Latest humanoid.pcx be attached.
+Ivan be ready on night after Monday at the latest.
+
+Ivan on August 15 2002
+----------------------
+
+Ivan agree!
+Ivan agree!
+Leader not mean bourgeois!
+Leader wise socialist.
+Leader not mean bourgeois. No, no.
+
+Ivan apologize humbly for being lazy.
+Ivan submit thief.
+Thief cut capitalist purse and run.
+Then capitalist be poor and ready for collective farm.
+
+Leader on August 16 2002
+------------------------
+
+Hmm. Ivan interpret leader sentence funny way.
+But now Ivan must work harder.
+Only then may leader accept apologize.
+But Ivan need tools.
+Ivan draw hammer and sickle to item.pcx.
+Ivan be ready to wield them ere Sunday dawn.
+
+Leader on August 18 2002
+------------------------
+
+Leader ask Ivan draw hammer and sickle.
+Ivan late.
+Leader suspicious.
+Ivan prove loyalty by being ready ASAP.
+
+Ivan on August 18 2002
+----------------------
+
+Ivan was away for construction work in collective farm far at Viitasaari!
+Ivan been unable to read e-mail.
+Ivan read his dealyed work assigment only today and work as fast could.
+Ivan submit two sections of holy emblem of the only True Party.
+
+Leader on August 19 2002
+------------------------
+
+Leader understand.
+Now Ivan has much work to do with new instruments of labour.
+Ivan begin making new armor for Red Army.
+But apart tools be not as eternal as the Party symbol they together make.
+Ivan be so eager and so strong that hammer break and sickle twist.
+Chain mail and shield Ivan was making be also broken and ruined.
+Scrap-iron be bad propaganda for Party.
+All four items must be hidden in item.pcx before Wednesday ends.
+
+Ivan on August 19 2002
+----------------------
+
+Biological scum gather on Ivan HD at frequent speed.
+Luckily Ivan use Eudora, so bourgeois plot at eradicate Ivan not success.
+Ivan take sicle and cut numerous sample of swarming biological goo mass.
+Ivan scan all specimen with F-Prot 3.12a.
+Ivan find following:
+
+W32/Klez.H@mm
+W32/Hybris.worm.B
+W32/Badtrans.B@mm
+W32/Hybris.worm.D
+And one mysterious which F-Prot 3.12a not identify, which be file class1.scr.
+
+Leader likely have some (prehaps all?) of them already, but Ivan send 
+anyway as he about to empty Eudora trash bin soon.
+
+But oh no! What grief and agony!
+Glorious sicle be corroded from bourgeois biological scum!
+Ivan rush to forge and attempt to regenerate the holy emblem of CCCP might 
+with sacred hammer named after Mighty Man Lenin.
+Red fire of forge be lit and mighty booming of hammer sound like thunder.
+But bourgeois be so sinister! Scum engulf sacred hammer and consume it!
+Hammer turn to poo.
+Ivan bitter.
+Ivan discard raped symbols of CCCP might to Item.pcx.
+
+Leader on August 19 2002
+------------------------
+
+Class1.scr maybe a new Klez variant, but Leader not yet able to verify.
+And Hybris.worm.D new.
+Leader very pleased with Ivan.
+
+Ivan remember thief trained last week?
+He better able to practise robbery profession if armed.
+Any who harm enemies of Party be friend of Party.
+Thus Ivan send thief dagger and short sword.
+Then thief stab bourgeois heart.
+Heart made of solid concrete and weapon say snap.
+Thief wait for Revolution in capitalist salt mine.
+But it be worth a try.
+Ivan put broken weapons to item.pcx, too.
+And be ready in night before Friday.
+
+Ivan on August 20 2002
+----------------------
+
+Ivan obey.
+Ivan now reveal his utter contempt toward GIMP.
+GIMP be not a fruit of hard work.
+GIMP be funny chunk of putrid excrement.
+Ivan yearn for DP.
+Ivan plan to start do graphics on old computer because of DP compatibility.
+
+Leader on August 21 2002
+------------------------
+
+GIMP socialist work.
+This good basis but it not guarantee quality.
+Good kolkhoz project need strong leader,
+unquestioned obedience of workers
+and alert execution officials to succeed.
+World better place if people remembered this.
+
+Next Ivan draw flail.
+This be experimental weapon proposed by Party scientists.
+Flail must have three separate heads.
+Ivan use m-color 1 for handle and m-colors 2-4 for heads.
+In game, some flails can be missing a head or two.
+If so, colorize system replace head's m-color with transparent color.
+More heads mean more damage.
+There may also be magical heads that have special effects,
+for instance fire damage or poisoning.
+Party try this and see if it's fun.
+
+Party also need picture of horn.
+This because in IVAN characters may now panic and flee.
+Party smiths forge horn of bravery and horn of fear that use this effect.
+Leader give them to Ivan and send him to lead guerilla squad
+against wicked bourgeois battalion.
+Bourgeoisie strong and Ivan's friends turn to retreat.
+But Ivan stay calm and blow horn of bravery.
+Allies feel Lenin be with them and fight furiously again.
+Then Ivan blow horn of fear.
+Capitalists realise futility of resisting Ivan's AK and run away.
+Victory be Party's as always.
+
+Ivan on August 26 2002
+----------------------
+
+Indeed must Ivan serve.
+Ivan travel in frozen land of CCCP plains.
+Bolt of AK mechanism covered in frost.
+Ivan furry hat white of snow.
+Blizzard go not through Ivan long coat.
+It be of CCCP quality.
+Manufactured in factory by brave workers who sew in name of Mighty Man Lenin
+and knit in name of Wisest Man Marx.
+True communist eager to sacrifice own well-being to rid bourgeois of world and
+make way to glorious worker.
+But what shineth in horizon?
+It be bourgeois limo with tractor on front to clear road long lost under snow.
+Ivan approach.
+Ivan put finger through finger hole in glove to permit AK trigger usage.
+Ivan crouch in snowy plain.
+Mother CCCP offer cover for Ivan once again.
+Ivan ammo detonate with latency because of super coldness.
+Bolt of AK mechanism temporarily melt of ice.
+Bourgeois down.
+Ivan throw bourgeois body out of car and give tractor driver address of nearest
+kolkhoz.
+Arrogant bourgeois limo not be of use in happy CCCP society.
+Ivan light bourgeois limo gas tank on fire.
+Gasoline nearly solid because of super cold, but it light nicely.
+Ivan have warm.
+Ivan clean AK and melt big block of ice that was in Ivan canteen and drink.
+Ivan fry sausages and remember old Lenin times.
+Ivan stay overnight on mighty CCCP plain near burned car.
+Ice ravens frolick in bourgeois corpse.
+Morning only snow bump remain of worthless bourgeois limo.
+Ivan continue journey.
+
+Leader on August 27 2002
+------------------------
+
+Mission success.
+Leader congratulate Ivan.
+But Ivan forget one thing.
+Bourgeois corpse be hazardous waste.
+CCCP ravens go ill in no time and their plumage fall.
+Besides, bourgeois stink.
+Corpse must soon buried soon, and deep.
+Ivan draw grave digger in humanoid.pcx.
+Dirty work must be accomplished within 48 hours.
+And next time Ivan be sure to burn capitalist pig along with limo.
+
+Leader on August 29 2002
+------------------------
+
+Bourgeois stench now insufferable.
+Grave digger needed immediately.
+If it difficult, Ivan draw clothes peg for leader first.
+When sticked to nose, it good temporary protection against foul rotting
+greenback smell.
+
+Btw, IVAN once again more or less playable.
+Would Ivan like to see how it now look?
+If CVS not like Ivan, leader could send code or even compiled executable.
+
+Leader on August 30 2002
+------------------------
+
+Grave digger not really grave enough.
+But time short and he will do for now.
+Next Ivan draw following two world map terrains: native village, which in
+game will be placed in deep jungle, and entrance to underwater tunnel.
+Oh, and note: LATEST WTERRAIN.PCX ATTACHED.
+Ivan make pictures before this month ends.
+Or grave digger dig pit for Ivan use.
+
+Btw, if Ivan find out that some graphics leader want already exist or can be
+assembled from old pieces, Ivan should tell this *before*, not two days
+*after* deadline.
+
+Ivan on September 3 2002
+------------------------
+
+Ivan read: "entrance to underwater tunnel".
+Ivan not certain what he supposed to do.
+Ivan scratch head vigorously.
+Alas, answer not become apparent.
+Ivan draw rocky hole.
+
+Leader on September 3 2002
+--------------------------
+
+Hole ok.
+It connect village island to Attnam area.
+Now Ivan draw imperialist to humanoid.pcx.
+Village folk serve white man.
+Otherwise he kick them.
+Ivan ready on feThursday.
+
+Leader on September 6 2002
+--------------------------
+
+Free imperialist dangerous.
+Ivan catch and put him to humanoid.pcx immediately.
+And be not too kind to him.
+
+Ivan on September 8 2002
+------------------------
+
+Ivan make imperialist, but he forget to send file.
+Ivan head very hollow.
+Ivan drink gun oil.
+
+Leader on September 8 2002
+--------------------------
+
+Oh.
+Leader finally understand why Ivan so forgetful.
+
+Leader had some fun whipping kulaks with flail Ivan made.
+Flail had flaw and broke.
+Ivan tidy up floor and put broken flail to item.pcx.
+Leader also expressed wish that fail could have additional heads.
+Therefore Ivan make also picture of single separate head.
+Ivan finish work within 48 hours.
+
+Ivan on September 11 2002
+-------------------------
+
+Ivan obey but hate GIMP deeply and force insert it to deepest rectal cavities
+of bourgeois.
+However now Ivan have no graphic facilities.
+Ivan wear glove and take GIMP out and wash with acid.
+Ivan have cuntlike feeling.
+
+Leader on September 12 2002
+---------------------------
+
+Good socialist no complain.
+But if Ivan morale really down,
+leader give unusual and exciting task to keep interest up.
+This great chance for originality and creative imagination.
+Ivan draw levitating ostrich.
+Latest char.pcx attached.
+Saturday would be fine deadline, but if Ivan busy, Sunday also do.
+
+Leader on September 17 2002
+---------------------------
+
+Ivan task yet unaccomplished.
+However, leader merciful and not demand Ivan exertion during test week.
+Drawing levitating ostrich no good for sense of reality.
+But on feFriday Ivan sketch pic or regret dearly.
+And if Ivan going somewhere, image ought to be completed ere departure.
+
+Ivan on September 21 2002
+-------------------------
+
+Oyster now levitate like bird of Mighty Man Lenin flying to the dawn.
+
+Leader on September 21 2002
+---------------------------
+
+Ivan finally made picture. Good.
+Leader already bought several cans of gasoline to burn Ivan atelier down.
+Now leader can save them and use next time Ivan disobedient.
+
+Although graphic little odd.
+Leader always thought ostrich have long neck and legs and they probably
+wouldn't use wings if could levitate.
+But leader of course no artist.
+
+Ivan planned lots of weaponry for Party lately.
+However, mere prototypes not too useful.
+Party must now establish working mass production.
+Ivan draw proud smith for new weapon factory.
+Cheka men come check Ivan progress on Tuesday.
+Ivan see that he ready by then.
+
+Ivan on September 21 2002
+-------------------------
+
+Ivan attempt spell leader previous work order.
+Ivan find something queer.
+Ivan take dictionary in hand.
+Ivan see.
+Ostrich and oyster different things.
+What embarrasment.
+Ivan draw ostrich later after he have eated glorious CCCP oat porridge.
+Ivan say smith already can be assembled from previous parts.
+Ivan see.
+Hmm. Existing hammer too big for smith unless smith forge glorious CCCP 
+I-beam or giant weapon.
+Ivan draw little hammer beneath the glorious AK.
+Also smith need new torso.
+Then Ivan say:
+Hands 5, row 1.
+Torso 13, row 2, color tan.
+Legs 18, row 1, color dark brown.
+Head 9, row 1, skin color greyish tan because of fiery forge, hair rather 
+dark brown. Or any colour. Master smith have white hair.
+Alternate head would be head 11, row 2.
+
+Ivan request leader send font file so Ivan can do cyrillic alphabet.
+
+Leader on September 21 2002
+---------------------------
+
+Leader appreciate smith construction recipe and attach font file.
+Color must be same, i.e. palette entry 200.
+Characters must fit inside 8x8 rectangles like old ones.
+Ivan can make new separate file in which old alphabets are replaced,
+or he can put new letters in lines 7 and 8.
+They seem to be unused even though they have space for 32 characters.
+Leader already eager to see remade ostrich and font.
+
+Leader on September 28 2002
+---------------------------
+
+Leader has question.
+Usually brilliant soviet mastermind perceives all answers in no time.
+But leader confess this one bad.
+Endless thinking bring no solution.
+When Ivan going to make new ostrich and cyrillic font?
+
+Leader on October 6 2002
+------------------------
+
+Ivan back from promised land.
+Ivan return to work.
+Leader repeat: Ivan should draw ostrich again.
+It not need look like levitating.
+Instead, Ivan draw little arrow facing upwards to symbol.pcx.
+It symbolize that creature flying or levitating.
+In addition people climbed in a tree could use this arrow.
+Arrow can also be flipped so that edge direction be reversed;
+this way it may show that person has dived in deep water.
+Latest symbol.pcx attached.
+
+Leader also certain Ivan now learned lot about Russian speech.
+Therefore cyrillic font not beyond Ivan ability.
+But it no obligatory task.
+
+Ivan on October 10 2002
+-----------------------
+
+Ivan eat grain.
+Ivan powaah.
+
+Leader on October 10 2002
+-------------------------
+
+Ivan heed the words of Only True Party, as new assignment follows.
+
+First Ivan required to draw sign.
+This mean terrain which can contain readable text.
+For instance state military areas may have signs
+warning that trespassers will immediately be sent to Siberia.
+
+Then leader want strong-box.
+This small metallic container that very hard to open.
+KGB use it to store important intelligence documents.
+
+Latest olterrain.pcx and item.pcx attached.
+
+Ivan on October 14 2002
+-----------------------
+
+Ivan be mighty worker with hammer in his hand and sicle in his other hand.
+Ivan obey with pleasure.
+
+Leader on October 15 2002
+-------------------------
+
+Party grateful for pictures.
+
+Leader notice morning star in rubbish on right side of item.pcx.
+Fourth last row to be exact.
+Leader fall instantly in love.
+Ivan convert weapon to material colors with haste.
+Leader then scratch back with it.
+In case leader not satisfied he detach ball and use it for bowling.
+Perhaps Ivan best make morning star that quite broken after leader use, too.
+Ivan deliver new items on feWednesday.
+
+Leader on October 24 2002
+-------------------------
+
+Ivan ask leader send reminder.
+This understandable.
+That how Party work:
+Leader duty-bound to command and Ivan duty-bound to obey.
+Leader enjoin Ivan make morning star.
+Both broken and intact.
+Hurry.
+
+Ivan on October 25 2002
+-----------------------
+
+Ivan curse gimp but admit own arrogance.
+Ivan idea.
+Ivan say: Ivan go get Virtual Machine.
+That be PC emulator.
+Ivan install DRDOS in Virtual Machine and use Deluxe Paint like in good old 
+days when Brezhnev and other asses no even born.
+
+Leader on November 19 2002
+--------------------------
+
+Ivan rested again enough.
+Jungle village camouflaged too well.
+Party can't put end to evil imperialist rule in town if it hidden.
+Ivan find village and make it bigger and visible to Party troops.
+Ivan ready on Thursday at the latest.
+
+Ivan on November 21 2002
+------------------------
+
+Ivan Ready, Rocking, and On Time.
+As always.
+Glory to Lenin!
+
+Leader on November 22 2002
+--------------------------
+
+Party smithies short of anvils.
+No anvils mean no scythes and no sickles.
+No kolkhoz equipment mean no harvest.
+No harvest mean no vodka ingredients.
+Ivan make sure this serious threat eliminated before week ends.
+
+Ivan on November 24 2002
+------------------------
+
+Ivan carve mold of anvil.
+Ivan rub ore between big Ivan hands.
+Ore melt. Ivan pour melten ore to mold.
+Ivan glare mold fiercely.
+Mold and ingredient freeze of terror.
+Ivan remove mold.
+Ivan present: hardended glorious CCCP anvil!
+
+Leader on November 24 2002
+--------------------------
+
+Ivan saved country again.
+Vodka once more produced.
+Leader like it cold.
+Leader make brilliant plan as always.
+Leader put spirits in chest Ivan made.
+Leader carry chest outside to cold tundra night.
+Leader lock chest tightly to prevent thivery.
+Very soon leader may enter confused state.
+But plan not work.
+Chest far too heavy for carrying.
+Ivan draw small and medium chest which easier to move.
+
+Leader also noticed problem in IVAN.
+Bear traps can be used to sever bodyparts from kamikaze dwarves.
+This not problem.
+This fun: fundamentalists have no place in good socialist society.
+Problem is, method too powerful.
+Bear traps should break eventually.
+Ivan draw broken picture for them.
+
+Ivan deliver graphics on Tuesday at the latest.
+
+Ivan on November 26 2002
+------------------------
+
+Ivan pridely announce improved and flexibleved vodka kontainer series!
+Ivan also introduce salvation for beer in the form of broke trap.
+Ivan sicle glitter like bourgeois golden tooth on floor after good punch!
+
+Leader on November 27 2002
+--------------------------
+
+Praised be Lenin who guide Ivan in his work of saving our weekends!
+Leader organize parade to honor Great Founder.
+Problem come up.
+Marching CCCP soldiers need impressive helmets.
+Ivan drawn only a bicycle cap.
+Ivan add new head protection fine enough for Lenin's army.
+Something like the one guard head wears in humanoid.pcx.
+Old picture may be used as weaker helmet, so Ivan not remove it.
+
+Leader also plan invite foreign VIP guests to watch parade.
+All world must understand socialist might and advancement.
+After Lenin celebration leader take visitors to admire State Zoo.
+Since Party can't really afford to feed many real animals,
+Ivan draw a chameleon, like in Nethack.
+Leader clone enough copies of it to fill one zoo section.
+Leader then make them polymorph to exotic and near-extinct animals.
+Full of pride leader present them to guests.
+When visitors seen one section of zoo, leader distract them for some time.
+Meanwhile someone move chameleons to another part of area.
+There they polymorph once more and leader again show them to foreigners.
+Guests full of awe and return home to tell tales of CCCP glory.
+
+Ivan ready on feFriday at the latest.
+
+Ivan on November 30 2002
+------------------------
+
+Clanking be the forge!
+Fiery be the hammer!
+Mauling meet the anvil!
+Ivan work in CCCP gold glory!
+
+Leader on December 2 2002
+-------------------------
+
+Leader grateful for work well done.
+However there be grave news.
+Yesterday Red Army practice Lenin commemoration.
+Final rehearsal end up in disaster.
+Suddenly one chameleon become 32x32 mammoth,
+kick down zoo wall and stamp batallion.
+Fortunately leader there.
+Leader gaze at mammoth in same deterring and will-melting way
+leader always look at Ivan when Ivan late.
+32x32 mammoth polymorph into a frightened ant.
+Leader stamp ant.
+Party not discouraged by minor setback.
+Celebration be held anyway.
+Leader order new soldiers quickly from Middle Asia to replace the flattened.
+But street leading to Lenin mausoleum now mess.
+Many glorious CCCP helmets, both new and old, lie everywhere badly mangled.
+Ivan clean them to item.pcx apace.
+When there, Ivan also fix ring picture.
+It not look as valuable as it could.
+Ivan ready tomorrow evening.
+
+Leader on December 4 2002
+-------------------------
+
+Party intelligence have job for Ivan.
+Leader currently suspicious of certain citizens' loyalty.
+But thought police already busy reading all letters and listening phone
+calls of our free folk.
+So Ivan draw floating eye to char.pcx.
+It cheap substitute for mikes and such.
+Floating eye swim in air through city and check all windows.
+In one house it discover capitalist sympathizer worshipping big picture of
+Adam Smith.
+Traitor notice giant pupil in window and freeze in horror.
+Next day he work in labour camp in Ural.
+Ivan ready on feSaturday.
+
+Ivan on December 7 2002
+-----------------------
+
+Ivan harvest muck from drive.
+Ivan find new form of capitalist sinisterity.
+Ivan send muck to processing.
+
+Also Ivan remove eyeball from prisoner #05512, condemned to Ivan use 
+because of suspicion to Party's omnipotence.
+Ivan punch eyeball.
+Eyeball swell.
+Ivan put eyeball to vacuum.
+Eyeball enlage.
+Ivan add some water with pipette, wrap in styrox and submit.
+
+Leader on December 9 2002
+-------------------------
+
+Ah! Young worm called Lentin.F among other aliases.
+Leader always like acquaint himself with new breeders.
+But name much better if it hadn't had the t-letter.
+Then it represented in concrete way the power of our fast-spreading
+Ideology.
+
+Next leader ask Ivan draw battle-axe.
+It like axe but has pair of curved edges on opposite sides of shaft.
+This not only useful in battle but also in forestry.
+Axe with two edges can hit a tree and immediately be pulled out of it and
+swinged at adjacent tree without changing direction.
+In other words it can chop two trees at once.
+When vast CCCP forests cut down with double efficiency,
+Party can print twice as many Pravdas.
+Indeed, leader plan to pose on the front cover of next publication.
+Leader shall be surrounded by diligent and happy forest workers and the
+first lumbering site using this ingenious double-edge technology shall loom
+on the idyllic background of the photograph.
+Since leader must show example for citizens, he wield brand new battle-axe
+in one hand and in other he hold great steel scythe sparkling in sunlight
+like Lenin's eyes when he content.
+Needless to say, Ivan draw the scythe, too.
+And broken pictures of both items.
+Ivan finish art within two days.
+
+Ivan on December 10 2002
+------------------------
+
+Scythe be of imperialist.
+Scythe be easy way of harvest. Wuss way.
+Sicle only. Scythe cheat.
+Ivan snap cheater trust imperialist bourgeois pagan scythe in two piece.
+
+Battle-ax of creat coolity tough.
+Ivan admire.
+Ivan see: it be equipment of maul!
+
+Leader on December 10 2002
+--------------------------
+
+Leader like new axe, too.
+Leader now filled with desire to broaden his weapon collection further.
+First leader ask for bastard sword.
+This crossbreed of long sword and two-handed sword.
+It can be wielded with both arms or strong people can use it in only one
+hand.
+Leader like think it manufactured by bastards in west so name very fit.
+Then Ivan make club.
+This been little out of fashion for some time but leader still like it.
+After all it very cheap and handy interrogation tool.
+It hurts lot but seldom injures permanently.
+Ivan add intact and broken versions of both on feFriday at the latest.
+
+Ivan on December 15 2002
+------------------------
+
+Ivan fuck
+
+Leader on December 17 2002
+--------------------------
+
+Leader has problem.
+Ghost of Brezhnev started to haunt Party headquarters lately.
+He think he still in power and demand everyone honour him when he passes.
+If someone say leader time better than his, he jump out of wall and say BOO.
+Ivan take vacuum cleaner and suck him out of house.
+Ivan then put ghost into char.pcx for safe-keeping.
+Ivan ready on feWednesday.
+
+Ivan on December 20 2002
+------------------------
+
+Ivan take soul and bring agony.
+Ivan go to fucking sleep.
+
+Leader on December 21 2002
+--------------------------
+
+Now leader want eddy in space-time continuum.
+This be creature, or rather thing, from great book of Douglas Adams.
+They teleport people around and create odd sofas.
+This perfect since Ivan already drawn usable couch.
+The Guide say not how eddy look like.
+Comrade Hex believe they be collection of small vortices.
+However, Ivan may be as creative as Ivan like.
+Ivan just make sure char.pcx contain eddy on feSunday.
+Deadline soon so Ivan not pressurized when Santa Claus come.
+Santa interesting guy.
+Live in place as cold as Siberia, dress in red and not use money.
+Also send little elves to spy on everyone and see if they good whole year.
+Santa very much like leader.
+
+Leader on December 26 2002
+--------------------------
+
+Now that Santa gone and Ivan thanked granny for new home-made kevlar underwear
+etc. enough, Ivan should return to work and make eddy in space-time continuum.
+
+Ivan on January 5 2003
+----------------------
+
+Ivan work unforgetful and unclouded by thought of else like always.
+Ivan think: space-time continuum not such place that happiness likely to occur.
+Ivan draw distressed and agonized Eddy.
+Leader much like Santa.
+Orwell spin in grave for thought of both you.
+Ivan put transmission belt around Orwell torso and use for sicle sharpener 
+power source.
+
+Leader on January 8 2003
+------------------------
+
+Eddy scream and make luxurious sofa materialize next to leader.
+Leader sit and happily uncork vodka bottle.
+But drinking not possible.
+Leader mansion so cold during CCCP winter that all liquid freeze.
+Leader annoyed.
+Luckily proud soviet nuclear submarine guarding mansion in nearby lake.
+Leader order engineers remove its reactor and install it in leader basement.
+Soon whole house and surrounding taiga as warm as steppes in south.
+Next day leader notice two-headed moose devouring giant mushrooms in forest.
+Leader taste, too.
+Three little Lenins dance on leader nose.
+Wow, great stuff.
+As reward for eddy, Ivan may also gather some.
+Ivan put one to char.pcx so chemists may analyze and clone it.
+Ivan also catch moose there so it won't eat all mushrooms.
+Ivan ready on feThursday.
+
+Leader on January 13 2003
+-------------------------
+
+Ivan should deliver two-headed moose soon. If finding one difficult, Ivan catch
+two one-headed animals, take head of other and attach it to other with glue.
+
+Ivan on January 14 2003
+-----------------------
+
+So mighty CCCP that Ivan again at work! Praise be of Lenin! Party overjoy 
+of achievment!
+Ivan not sure where to put extra moose head so alternatives made.
+Ivan also make monoheaded moose.
+Mushrooms of kaleidoscopic wisdom
+Kaleidoscopic wisdom worthless but funny.
+
+Ivan on February 12 2003
+------------------------
+
+Ivan nearly as reliable and workful as the System!
+Ivan not now how animation seem.
+Animation probably look bad. But Ivan will do more work when Ivan see 
+vortex in action.
+By the way where can Ivan download Igor, the little friend?
+Ivan hope Leader fastly check no chars are missing in char2.pcx, as there 
+is a chance of so due to accident.
+Accidents CCCP tradition.
+
+Leader on February 12 2003
+--------------------------
+
+Leader think eddy twirl as finely as tornado striking a capitalist port!
+Leader include IVAN with spinning eddy.
+To see it, Ivan activate WMode from 'X' and summon eddy from '&' cheat.
+Up-to-date graphics are all included, as well as IGOR.
+Ivan should enter "graphics" when it asks for art directory.
+Alas, IGOR poorly documented so Ivan need figure out himself how it work.
+Leader like to order, not to explain.
+IVAN and IGOR both executables for The Wicked Bourgeois OS.
+Ivan just ask if Ivan want some less lame port.
+Btw, Graphics/graphics.txt contain collected info about Party graphic files.
+It be created some time ago for certain people asking about them.
+Leader probably told Ivan everything in it already, but it may still be
+useful since Ivan head so often get spontaneously formatted.
+
+Leader not given much work for Ivan on last weeks.
+This because Ivan had already done all important tasks.
+Ivan may have guessed that when drawing mushrooms and multi-headed elks.
+Now Party noticed IVAN players powerful enough encounter only mammoths.
+This rather odd since they extinct.
+Party need more deadly enemies.
+Therefore Ivan add dark wizard to humanoid.pcx.
+Ivan think of swedish teacher when drawning and result will certainly look
+evil enough.
+And of course, pointy hat be a must.
+Ivan ready on feFriday.
+
+Leader on February 15 2003
+--------------------------
+
+Ivan not make graphics. Ivan understood System wrong. To lie be only leader
+duty.
+
+Ivan on February 16 2003
+------------------------
+
+Swedish teacher not have wizard quality. Swedish teacher evil indeed but 
+only brute instead of clever.
+Wizard not be nincompoop, or else he likely injure only self with spell 
+casting attempts.
+Ivan think of Rockefellers. That evil and intelligent.
+
+Ivan see eddy be whirling, thwirling, like a rotating blade ready to 
+mutilate idiot driving wide car!
+Ivan very impressed about animated enemies.
+Leader certainly very big-brained. He able to bring such utopy to life.
+Elks funny. Ivan like to receive low-priority poop graphics assingments if 
+they funny and absolutely nothing else to do.
+Ivan Linux not yet working. Ivan install Mandrake, but it broken and fat. 
+Ivan plan Redhat download now that Ivan possess ADSL.
+Ivan thank for addition of mechanical companion Igor.
+
+Ivan plan reset of nervous system next weekend for test week then over.
+Ivan not likely to function during and shortly before and after reset.
+
+Leader on February 16 2003
+--------------------------
+
+Leader thank for compliment.
+No amount of leader-worship ever bad for social system stability.
+Next Ivan draw more meaningless creatures to Party collection.
+First be hedgehog in estrus.
+It needed as interrogation device.
+Ivan not need to know more.
+Second be skunk.
+Kamikaze dwarf nation may use this as banned chemical weapon.
+Ivan put both to char.pcx within 48 hours.
+
+Leader on February 27 2003
+--------------------------
+
+Leader voice nerd curses mumble mumble! Let Ivan head break into prime factors!
+Let Ivan limbs be severed and xor themselves! Let Ivan torso fly to dev/null!
+Let Ivan groin be iconified!
+
+Ivan on February 27 2003
+------------------------
+
+Ivan make glorious CCCP animals of Soviet order: hedgehog and skunk!
+Hedgehog is almost as fast in running as Ivan in working!
+
+Leader on February 27 2003
+--------------------------
+
+Leader smell work completed successfully.
+Skunk stink so strong it will be represented by cloud of smoke in game.
+
+Next Ivan has more important task.
+Party run out of money.
+In CCCP this not problem.
+There be nothing to spend it on, anyway.
+But Party have some minor depts to neighbouring countries.
+State tried to print quadrillion roubles to pay them back.
+It enough only for monthly interest, so different approach needed.
+Leader make plan.
+First Party send free and happy workers to build roads in these nations.
+New traffic infrastructure keep them satisfied for some time.
+Then free and happy CCCP defenders come to test roads with tanks.
+Money lenders soon so free and happy they forget we owe anything.
+But, Ivan must first draw road prototypes to wterra.pcx.
+Road may enter or exit a tile from any corner or edge.
+It may do this multiple times in same tile, but the intersection point is
+always at the center.
+Paths should be quite curved so they look vivid.
+In theory two pictures would suffice: road from center to one edge and
+to one corner.
+Rotating and drawing these many times on one square should work,
+but leader think the result would be too simple and repeating.
+Therefore leader suggest eight tiles, of which each would contain road from
+center to one edge or corner, all twisting slightly differently.
+This not too much to ask.
+Leader just checked graphic files of Civ3 and they had 256 road pictures.
+Anyway, Ivan will be ready on feSunday.
+
+Ivan on March 14 2003
+---------------------
+
+Ivan pave road like caterpillar. The worm type.
+But now school pressure over for time creature, and Ivan ready for tasks.
+
+Leader on March 17 2003
+-----------------------
+
+CCCP road no CCCP road without tank.
+Ivan draw one.
+Char.pcx, size 32x32.
+As always, there be slight shortage of materials and tools though.
+Ivan only have steam engine and museum cannon to equip tank with.
+Still leader trust Ivan conjure up great icon of Party glory.
+
+Leader promised award for Ivan diligence.
+Of course, it Party custom that workers make their own rewards.
+Ivan put Gorovits family gas mask in item.pcx.
+Leader heard it passed down from father to eldest son for generations.
+It still block Ivan smell after two weeks on the steppes without shower.
+Not much else though.
+
+Ivan ready on feWednesday.
+
+Ivan on March 22 2003
+---------------------
+
+Ivan have very fat sicle.
+
+Leader on March 23 2003
+-----------------------
+
+Joy be of Ivan, as he reunited with the family relic!
+Leader attach latest version.
+Ivan probably not seen many of its other new elements.
+Ten new Ivan-drawn monsters have been added since last send.
+Lanterns now surrounded by pretty alpha halo and slimes use wave animations.
+Skunks, magical mushrooms, explosions and genies utilize new smoke fully.
+Best of all, player's representation on game screen depend on what he wear.
+Head graphics designer should check all look as it should.
+
+Then to next assignment.
+Leader somewhat ashamed.
+For ages leader known Ivan talented and celebrated bunny artist.
+Yet leader never requested even a tiny rabbit.
+This must be corrected.
+Ivan draw three versions to char.pcx:
+bunny, large bunny and Vladimir, the gigantic carnivorous mutant bunny.
+The latter should be 32x32.
+Ivan draw these whenever he may rest enough from other duties.
+Ivan try to be ready during the new week, however.
+
+Ivan on March 24 2003
+---------------------
+
+First Ivan annouce utter impressment to new IVAN. Leaders has done wonders 
+of might and glory! New graphic effects resemble utter CCCPness, and new 
+monsters of high viciosity!
+Ivan problem report as follows:
+Skunk perhaps too much of danger. Ivan have fought two skunks to find this 
+burden nearly non tolerable. Bad ass monsters make game fun indeed, but 
+skunk is furry not bad ass.
+Ivan also desire mine plant prompt, as in "Are you sure want to plant 
+mine?". This because Ivan accidentally have set explosive traps while 
+reaching for pick axe.
+For long time has an issue been buggering Ivan: hammer make more damage 
+than axe! This be of no logic, say Ivan, since hammer heavy and blunt but 
+axe heavy and sharp.
+Upon the seeal of smoke sprites, Ivan slight disappointment. Animation look 
+bad. Ivan need make more and better smoke sprite animation frames. Also 
+multiple smoke sprites seem repetitive and it not nice.
+Lamp aura make very impress to ivan! It be practical effect too. One issue 
+bother Ivan: aura go dark and light over and over again. However at the 
+darkest stage the aura be darker than rest of enviroment. This look werrid, 
+since lamp source of light any way.
+Also Ivan recognise that when wearing all leather armor, game player seem 
+like utter perv. This please Ivan.
+Mommo animations very impressive. Ivan like wobbly wobbly enemies. They 
+remind of porridge at siberia camp. Work men always have kill their 
+porridge before eatal.
+Ivan still of puzzle, since high difficulty to kill floating eye imminent. 
+Any advice?
+Also upon his journey Ivan see that mutilated but still alive mushrooms 
+panic. This possibly unintentional, but Ivan find funny. What do panicing 
+mushroom do? Perhaps it wobble or start to spin.
+Ivan also think too much food at Genetrix Vesana level. Excess food make it 
+worthy of experience camping, such as ghouls in old version of nethack, 
+except that ghoul possess no food of it self.
+It seem that although clothing be incorporated, Ivan still non able to see 
+wielded weapon on player.
+Ivan got strangest idea while writing this. Ivan think game lacks pipes and 
+magical herbs. Perhaps there could be green cave of gnome junkies smokeing 
+opium, staring at fountain/puddle and chanting.
+Also Ivan interested to see rooms of different shape than rectangle, and 
+some pre-scripted rooms with simple ornamental desing or even special function.
+Ivan say, highly exellent and encourageing work!
+Now school busies have gone out of Ivan way for time creature, thus Ivan 
+have more free time. School busies related of lazy math studies. Ivan 
+present math number row so far: 8, 9, 9, 4. The last number have cause work 
+load for repeat test. Luckily work load now over and succesfully enough, 
+repeat test turn out 8. Also big Finnish homework about angsty books of 
+Finnish writer Timo K. Mukka was late, but now has passed.
+Ivan anxious to get his hand to the bunnies. Also carrot be required.
+
+Ivan on March 24 2003
+---------------------
+
+Other Ivan crash due to mine explosion. Game crash immediately after 
+sentence: "Equipment broken! Press any key to continue."
+Also funny thing, game say: "You hear a faint thumb. Below you you see an 
+active mine"
+Fingers can be used for communicate, but rare with audio. Better word thus: 
+"thump" or "click" Ivan suggest.
+
+Leader on March 25 2003
+-----------------------
+
+Leader must admit Ivan been of irreplaceable help.
+With autosave, leader could trap the ferociously evil mine bug.
+Wand of teleportation in Ivan inventory broke and its effect crashed.
+Leader fix error and test again.
+Ivan die horribly because of mine and score 1512 points.
+Crash not made game too much shorter.
+
+Leader make some other changes to ameliorate Ivan gaming:
+
+Skunk now easier and kiwi amounts reduced. Ivan check if enough.
+
+Mine prompt now present.
+
+Axe damage now greater.
+Leader had thought hammer more as dwarven war hammer used to reshape orcs,
+whereas axe intended to be mere tool used to chop wood and nagging wives.
+However, they were not too useful so more damage mean advanced game balance.
+
+Leader added random flips to make smoke animations look less repetitive.
+Improvement not too great however, so Ivan could indeed draw more frames.
+Comrade Hex suggested though that Party used animated smoke border
+tiles to make big areas of gas continuous, just like in world map terrains.
+If Ivan want to experiment with idea, he draw some 48x48 smoke tiles
+somewhat like wterra.pcx graphics.
+
+Problems with lamp aura and panicking mushrooms now fixed.
+
+Floating eyes annoy leader, too, so their hp now halved.
+Nevertheless they still not very easy to kill.
+Leader usually carry daggers and short swords and throw them at eyes.
+Leader may also drop lantern and lead them to dark where he can't see them
+and therefore not faint.
+Gods may also help, and Dulcis be best.
+It fun to see stupid monsters faint when gazing at pet eye.
+
+Inhandspics not yet reintegrated, since Party short of them.
+Neither battle-axe, scythe nor sickle present.
+In fact lack of armor pics exist, too, since there no head wearing gas mask.
+Ivan should make these at some point, but leader not want to give every task
+at once unless Ivan desires so.
+
+Exercising math understandable reason for work delay.
+As great teacher said, calculating and playing trumpet be best man can do
+with pants on.
+Leader has final math test tomorrow and can't agree more.
+
+Ivan on March 26 2003
+---------------------
+
+Ivan repport strange journeys.
+Seem like there no way to put lantern off? Lantern not exist in tool menu.
+Also if player only weapon be pick axe, then pick axe not found when 
+pressing use or apply key. You first must dis arm pick axe to dig with it.
+Also seem like iron spear almost as good weapon as iron mace. That not very 
+realistic, say ivan. Spears perhaps need a one accuracy or damage level 
+down. Also spear be bit fragile, where as daggers, which considered now 
+very fragile, are in fact rather stury due the small size.
+Ivan prefer that wielded weapon and worn item also be shown in inventory. 
+Perhaps the text colour could be different, red for maybe.
+Last Ivan say that it be nice to see slight vary in the accuracy of weapons 
+of the same class. It would make some item feel unique. Weapon design ways 
+are different and some design be better than other.
+Ivan be of tired metal.
+Ivan go wash dirty black hair of floating eye gibs and then go to bed and slip.
+Retina very slippery.
+Ivan put eye ball retina in ice box and next morning he plan to use it for 
+a sponge bath.
+
+Leader on March 28 2003
+-----------------------
+
+Leader proud to announce IVAN 0.410 now conquering the gaming world.
+Alas, there were not enough time to integrate InHandsPics.
+But there be many other tweaks.
+For instance, dipping to corpses is now possible.
+One can use sword covered with mushroom to make enemies very confused.
+Also thrown potions break more often, and allies no longer dodge bottles
+containing healing liquid or vodka.
+This was very odd, as Ivan understand.
+Problem with pick-axe Ivan reported now corrected.
+Mace also better. It sucked.
+And dagger now harder.
+But why should wielded and worn items be shown in inventory?
+Equipment menu easy enough to use for leader.
+Ivan supply some arguments for wish before leader change anything.
+Weapon property variation very good idea.
+It will be implemented soon.
+Party allow putting off lantern when it uses fuel and dims if short of it.
+Then it practical to extinguish light to save fuel in light places.
+Before this it would only be tactical trick and would hurt game balance
+since floating eyes would no longer be of any risk.
+
+Ivan on March 31 2003
+---------------------
+
+Ivan make pitiful little bunny suitable for seat cushion purpose.
+Ivan make glorious large bunny suitable for roaming, hole digging and 
+mighty CCCP carrot eating.
+Ivan make also big arse Vladimir bunny bounce with mighty power muscle.
+It may be that Vladimir (Vile Lurking Agressive Devourer with Infernal 
+Muscles Intended to Rampage) look bit unclear.
+Leader opinion?
+Clarity increase with moderate ease by contrast increase.
+By the way Ivan note that tank graphic likely to look very unclear unless 
+second material colour be chosen a light colour.
+
+In the winter of CCCP...
+...bunnies bounce.
+Ivan attempt reload glory Soviet AK, but only thing that say clickety-click 
+be Ivan teeth.
+Night fall fast and food be of out.
+Ivan have but some coffee beans made in sweet plains of Ukraine.
+Ivan chew coffee beans and take wise Marxist book of chest pocket.
+It so dark that Ivan read in light of cigarette lighter.
+Lighter go out in shame; petrol ended.
+Ivan of despair.
+At sudden!  Flame of revolution light, snow melt from big diameter!
+Covers of mighty Marxist book turn into mouth, say Ivan: Thou excellent 
+servant! May CCCP heed your call!"
+Fleet of heavenly manna emerge from skies of glory CCCP taiga!
+Flame of Lenin Love light large pine, Ivan warm hand and thank Lord Lenin 
+of Highest Mercy!
+AK melt of Soviet Ice. Ivan run to the plain and shoot hundred thousand bunny!
+Then Ivan go back and feast with little vodka in pocket of great Lord 
+Lenin's Might!
+Ivan put tent and sleep in light of Lenin Fire.
+
+At this point reader wonder, why Ivan still eat bunny flesh in spite of 
+manna falling from taiga sky?
+Manna, of course, be of card board. Budget cuts.
+
+Leader on April 2 2003
+----------------------
+
+Leader glad to hear of Ivan miraculous rescue.
+Leader think Vladimir fine for now.
+Party start breeding bunnies immediately.
+Leader love them.
+They make great Red Army fur hats.
+But rabbits must grow big before being flayed.
+Ivan put carrot in item.pcx to feed them.
+
+Leader also desire inhandspics of all weapons smashed to pieces.
+Of course, it Party propaganda council tradition to erase everything broken
+from official CCCP photographs.
+But player can be capitalist arse, too, so there no need to hide lousy gear.
+Also head with gas mask required.
+Leader like walking incognito on streets wearing mask and scaring children.
+Ivan draw pics in humanoid.pcx during this week.
+
+Btw, leader report obsolete fep link on 'About me' page of Ivan homesite.
+Fep represented no honest socialism.
+There were suspicious rituals like voting and selling fep-cds.
+Therefore revolution renamed it as IvanDev.
+Voting still possible, though.
+But there always only one choice which leader decide alone.
+Ivan redirect link to IVAN homepage.
+
+Leader on April 18 2003
+-----------------------
+
+Leader apologize for not whipping Ivan to tough work lately.
+High school homepage say Ivan had test week and leader short of tasks.
+But this now corrected.
+
+First leader attach latest IVAN.
+Wielded items now shown correctly on game screen.
+They also animated if original thing be.
+Ivan try equipping lanterns, glittering items, spoiled items, outlined
+artifacts, thunder hammers, flaming swords and holy bananas.
+Leader especially like flaming sword.
+It really cool.
+Er. Warm.
+
+Ivan behold new outlook and report problems.
+There probably also numerous bugs.
+Last week leader debug ages one vile code ruiner which turn out to be in
+Microsoft's std::string class.
+Well, what else can be expected from bourgeoisie!
+Leader make new better string class and continue journey.
+
+Leader notice there no broken shield in humanoid.pcx.
+Ivan fix this by breaking one with his strong fingers.
+
+Leader also plan to add invisible stalker monster.
+They clouds of intelligent air mass which move hidden from all eyes.
+They make excellent KGB officials, indeed!
+However, with infravision they can be seen.
+Ivan check his cyber eye batteries recharged and add revealed stalker to
+char.pcx.
+
+Ivan ready on feMonday.
+
+Leader on April 26 2003
+-----------------------
+
+Leader delighted to not see stalker.
+But problem arise in no time.
+Leader never clean his room, so it filled by vast clouds of dust.
+Stalker step inside and quickly look like grey mummy.
+Leader annoyed.
+Visibility good reason for invisible stalker retirement.
+Leader decide to take vacuum cleaner and finally hoover his sanctum.
+Leader forget stalker so transparent because it made of air.
+Cleaner swallow new spy into its dirty inside.
+Leader very annoyed.
+Stalker useless and good old CCCP quality vacuum cleaner jammed.
+Ivan fix latter and put it to item.pcx with haste.
+And this time it not matter if result suck.
+That its purpose.
+
+Ivan report some smoke frames look no good, as do some wielded graphics.
+Ivan fix these simultaneously.
+
+Lack of war hammer picture also hazardous to economy.
+Forge hammers break easily in battle, leaving smiths nothing to work with.
+Ivan eliminate dearth of beating equipment ASAP.
+Or on feMonday at the latest.
+Release soon so there lots of last minute work.
+
+Ivan on May 4 2003
+------------------
+
+What utter goodness! Ivan hero of Work again!
+Ivan be master CCCP carpenter! Mighty be his saw and hammer, blessed under
+pleased eye of Lenin the Lord!
+Whoops. Ivan insert bourgeoisie to wood chipper! What mess!
+Lucky that glorious CCCP sewer rats ooze from holes in workshop floor and
+devour and clean bourgeois mess! Glory be Communism!
+
+Leader on May 6 2003
+--------------------
+
+Leader command Ivan test bonefiles.
+To do so, Ivan must die.
+It leader habit to delegate all tough tasks to citizens.
+Although kicking the bucket not so bad in IVAN due to wands of resurrection.
+Oh, if just one of them existed in real life!
+Uncle Lenin could finally return and lead country to glorious future.
+In fact leader already asked CCCP scientists research these but to no avail.
+They keep zapping stick made of bone at corpses and nothing happens.
+
+When Ivan done with task, he draw harp of charming.
+It used to tame creatures.
+Another item which leader like to have.
+Just a couple of tunes and all adjacent political enemies would become
+friendly and obedient.
+Indeed, they'd follow leader without question!
+And get stuck in corners a lot.
+
+Ivan ready on feThursday.
+
+Ivan on June 23 2003
+--------------------
+
+In name of mighty CCCP:ian ideal! I salute leaders who are the Vicarius 
+Lenin and invincible!
+
+Ivan have been to isolation in work camp at Viitasaari, Siberia. That 
+cause that Ivan unable to submit fruit of work to mighty leader men Above. 
+That why Ivan decide to add extra working to make up for lost time.
+
+Font file with the character system of the holy land have now generated. 
+Also scandick letters work. Ivan generate some Russian sentence that use 
+cyrillic Holy font later. Ivan also have attach nocturnal memo of deep 
+pondering.
+
+At this point Ivan wield lawn-mover. Ivan start lawn-mover. Ivan slice and 
+dice gimp the horrible swamp animal with utter vigour. Ivan make sure no 
+visible trace of intern organs left.
+At this point Ivan wield flame thorwer. Ivan start flame thorwer. Ivan 
+burn and flame bloody mess of gimp the horrible swamp animal with utter 
+vigour. Ivan make sure no trace of DNA left.
+At this point Ivan wield nuclear disintregration drill. Ivan start drill. 
+Ivan drill and mutilate dirty ashes of gimp the horrible swamp animal with 
+utmost vigour. Ivan make sure no carbon compound left.
+
+Leader on June 28 2003
+----------------------
+
+Leader spend summer holiday in Soviet Korea.
+Leader receive score of sumo wrestlers as gift from uncle Kim.
+These wondrous creatures great souvenir, indeed!
+Leader want Ivan put one on display in humanoid.pcx and show western
+journalists that citizens in CCCP of today eat extremely well.
+
+Ivan on July 5 2003
+-------------------
+
+Here be - Summo wretsler!
+Ivan seek forgivance for utter late being.
+
+Leader on July 5 2003
+---------------------
+
+In fact leader not furious angry berserker this time.
+Wrestler less late than Ivan graphics normally and not even too critical.
+But next task much more important.
+Multi-tile creature engine progress slowly but surely.
+When it completed, current bosses too tiny to be taken seriously.
+Ivan enlarge genetrix vesana and Elpuri to 32x32 size.
+Pics should be ready on feTuesday.
+
+Ivan on July 8 2003
+-------------------
+
+Where frostfrog frolicks in land of frost and spinning ether
+There walks Ivan ponderful in the mist
+Ice say crickety crick under weight of combat boot
+Never to fail, emblems of father Lenin shine in furry hat
+And AK gleaming in the space of airborn snow spirales
+
+Where bourgeois roam with fat car
+In the land of farmers, welders and factory-men, starved
+There Ivan tear through wall of mist and clouds
+Angels of CCCP rocketing below sun
+And bourgeois dwelling in sins trembles
+
+Father Lenin in the Sun
+Make mighty mountains into lowland valleys
+And look, the weight of expensive clothing is crushing the bourgeois
+The weight of worker blood
+And children of Lenin, look, your cup runneth over of Lenin grace
+
+Leader on July 11 2003
+----------------------
+
+Leader imitated Ivan even more.
+But here be test version finally:
+Vesana and Elpuri now 2x2 squares large.
+Border tiles have been added to earth.
+Enner beast now animated.
+Lyre of charm integrated.
+Strange side dungeon added to UT by foreigner named Corey.
+Many new bugs included.
+
+In fact leader planned to send this yesterday as birthday present to Ivan.
+However he did not expect to drive car accident and reduce two vehicles to
+scrap iron IRL yesterday.
+Stupid trafic rules.
+Leader already gathered a committee to plan new ones.
+Something like "§1, Thou shalt keep thyself at least 500 meters away from
+thy Leader, so thou won't disturb Him" would do fine.
+
+Ivan next assignment hattifattener.
+This creature from Tove Jansson's books store electricity of thunder.
+Leader plan to use it as backup power supply for his computer.
+Ivan catch one and put in char.pcx during weekend.
+Ivan also plant cactus or two in olterra.pcx by then.
+Leader's mistresses enjoy them.
+
+Ivan on July 15 2003
+--------------------
+
+Ivan furry hat spin in heat of combat
+Sweat mix with blood of minor hand wound
+Like hurricane Ivan rampage through bourgeois estate
+Paid wimpy mercenary guards fleeing one by one
+For the power that lie within dollars is infant compare to power that lie 
+within devotion
+And knowledge
+
+The land is of palm trees, sun and rivers flowing through jungle!
+Let the caterpillar come and utilize the fertile soil!
+A few years forwards, and here corn and rice flourish in endless field
+And a small kolkhoz hut with tractors in near the beach, where happy 
+workers make food and sleep with good conscience!
+
+Leader on August 2 2003
+-----------------------
+
+Hattifatteners crackle with electricity.
+Hedgehogs' spines so sharp they better not be attacked unarmed.
+AI now very cunning if monster intelligence greater or equal ten.
+Bunnies seek food and produce babies madly.
+Vladimir follow Ivan loyally and crush walls as he walk.
+Glory of new features so bewildering Ivan not notice angry grizzly bear
+charging at him.
+Bear manage to shred Red Army uniform before Ivan cut its neck with Gorovits
+family sickle.
+Ivan must find tailor to fix his outlook ere feTuesday.
+Ivan then order him to wait in humanoid.pcx for further assignments.
+Official release on Monday so Ivan also report any bugs ASAP.
+
+PS. Vladimir change color often as noted in Ivan diaries.
+However, he not yet get green stripes under aurora borealis.
+Leader implement this before IVAN v3.0.
+
+Leader on August 14 2003
+------------------------
+
+Leader forgot to send next assignment.
+Of course there can't be nothing wrong in this.
+After all leader embodiment of universal wisdom and justice.
+Nevertheless Ivan get small gift as compensation for the horrific torture of
+a few days' idleness.
+Leader rewrote Febot in C++ for fun and present result.
+In test he at least 5000 times faster than the old fossil.
+Now it finally possible to import really large files.
+Leader attach pagan old testament dictionary as vt.dic.
+This file prove the presumption that one can't make any distinction between
+Febot speech and the original book.
+Next leader feed him the Communist Manifesto.
+Party now has cheap source of infinite propaganda, in file cm.dic.
+Leader also take all emails Ivan has sent to him in English and vice versa.
+(They fun memories so leader always store them in text file.)
+This produce very comical files called ivan.dic and leader.dic.
+Ivan test the version works correctly and then draw necromancer.
+He ought to be really mad and frightening creature of the night,
+who summon skeletons and zombies to do his bidding.
+Leader help inspire Ivan by importing book of Vesa as vesa.dic.
+Should Ivan drink vodka, smoke cigarette of weed and read this, his
+imagination certainly able to summon the monstrous personification of
+Darkness needed.
+Ivan ready on feFriday.
+
+Ivan on August 18 2003
+----------------------
+
+Head col2 row9 mask white with slighlty yellow, eyes bright red
+Arms col2 row7 sleeve dark gray, armour gray/steel blue, glove yellowish brown
+Torso col2 row23 cloth dark gray, belt gray
+Feet col2 row11 cloth dark gray
+
+Ivan take artistic freedom and design bizarrh mask on necromancer. Mask be 
+actually crude illustration of the head of an wanker who come to horrify 
+Ivan in recent feverish nightmere.
+Ivan find that necromancer look heartless and obscure. He carry items of 
+dark magic and pervade grave of long fallen warrior with supernatural force.
+
+Ivan on August 19 2003
+----------------------
+
+Ivan furiously wield pipette and make inky outlines of droids in mind
+
+Leader on August 21 2003
+------------------------
+
+Necromancer laugh diabolically as he finally free.
+He begin collecting allies to spread havoc and terror amidst innocents.
+First he descend into hideous cave of malevolent spider army.
+But necromancer disappointed to see all spiders Ivan drawn small and puny.
+They scare no one.
+Ivan crossbreed tiny spider and Siberian tiger to create giant spider.
+Then it mate with mammoth and baby become mighty 32x32 spider queen.
+Both should be grown up and ready for rampage in char.pcx ere Monday dawn.
+Ivan also have them spin sample webs in effect.pcx.
+Necromancer then decide whether they worthy for his needs.
+
+Ivan on August 25 2003
+----------------------
+
+Here be spyder.
+Giant spyder not bigger than little spyder but more dangerousy-looking.
+
+Ivan on August 26 2003
+----------------------
+
+Ivan have sleep deprivation the size and weight of Ural. Ivan chew 
+Ukrainyan coffee bean and take dose from guerilla fighter stimulant pack. 
+Ivan roam in everlasting windy woods of Novosibirsk, where roam of AK clear 
+him way as snow melt to freeze again. Red star tank wrecked to middle of 
+field and smoking, but Ivan tighten fist embracing AK and proceed to drive 
+imperialists in peril. Life for Lenin!
+
+Leader on August 30 2003
+------------------------
+
+Leader gave Ivan some nights to sleep.
+If Ivan still near Novosibirsk he check its newest factory.
+It make shiny Ladas for loyal soviet citizens.
+Ivan park one in char.pcx so leader can check quality.
+32x32, deadline 2.9.
+
+Ivan on September 7 2003
+------------------------
+
+Ivan in state of UURGH due to hangover.
+UURGH good for doing crude work.
+Ivan present: Lada!
+
+Leader on September 9 2003
+--------------------------
+
+Leader must confess minor thing.
+Ivan recall leader trip to Korea last summer.
+One night leader drank vodka, played card game with Kim and lost.
+Vladivostok and next year's State budget, for instance.
+Former not too bad as CCCP so mighty no one notice one city missing.
+Latter however a problem.
+Leader forced to allow some foreign visitors the privilege of walking on
+holy CCCP soil.
+First tourists be fat American couple, both equipped with expensive cameras
+like in Nethack, and their 10 year old child.
+They arrive on feFriday.
+Ivan escort them to humanoid.pcx without delay and protect their wallets
+with his life.
+Party release them from the burden of evil capitalist money ASAP.
+
+Ivan on September 13 2003
+-------------------------
+
+Ivan carve icon of disgust
+A pseudo-god far away from Lenin
+
+where idiots dwell in land of green paper pieces
+and oppression
+there this icon exist exalted above thrones
+and healthy men and women fall with puddle of drool before it
+
+Far, oh Far is Lenin's light
+in eternal night of Sodom of the Dollar
+where torches flame and fattest man is king
+
+Ivan instruct leader in assembly of putrifious sculpture
+Bourgeois wife:
+Leg colour - pantyhose gray, shoe black
+Jacket, skirt and shirt colour - choose some and random. Skirt and 
+jacket preferabily darker and shirt lighter
+Skin colour - Vary between death grey and redneck red
+Head - use already existing versions
+
+Bourgeois man:
+Shirt - Hawaii shirt colours (pink, light green, light purple for example)
+Skin - carefully adjust skin tone to "wannabe-tanned"
+Short - jean blue or grey
+Shoe - light brown, or maybe tasteless like red or light gren
+
+Bourgeois brat:
+Cap and clothes - All annoying good, randomize
+
+Ivan on September 18 2003
+-------------------------
+
+Shame on them who profit on Master's tragic death!
+
+Skin: Pale yellow, light
+Hair and beard: Light, reddish
+Clothe: Dark gray (black)
+
+Leader on January 1 2004
+------------------------
+
+Leader been quiet for quite some time now.
+This be due to a minor disagreement within government.
+In Autumn leader managed to fill hole in CCCP budget by tourism income,
+but he could not hide the aforementioned loss of Vladivostok in poker game.
+Wicked capitalist sympathisers use this as excuse to revolt.
+They claim leader not fit for omnipotence.
+What rubbish!
+However, rebels highly influental and leader forced to temporarily leave the
+capital and his beloved glittering palaces, luxuriant gardens and vodka
+swimming pools behind.
+For the last months leader hide in a small cave in northern Ural,
+vowing for revenge all day and night.
+And soon its time will come!
+Leader has already formed alliances with several local Finno-Ugric native
+tribes and gathered an army of many hundred men armed with state-of-the-art
+sticks and stones, ready to take back Kreml at any moment.
+However, some slight additional power could still prove handy.
+This is where Ivan comes in the picture.
+Leader taken over a small nearby oil deposit and want to use the liquid as
+flame thrower fuel.
+Ivan build a prototype for leader troops and put it in item.pcx.
+To make victory absolutely certain, Ivan also add sling as a backup ranged
+weapon.
+Ivan ready in four days.
+
+In order to motivate Ivan, leader also present latest alpha for testing.
+It protentially buggy but still fun.
+The greatest chance in the dungeon is the new fluid model which rather
+detailed.
+Necromancers should also be quite interesting.
+New Attnam has quite a lot of new features which however have little
+practical value.
+(Btw, could Ivan tell which bodyparts are meant to belong to the tourist
+wife? Leader chose some but they seem a little ugly and thus most likely
+incorrect.)
+Ivan report any problems ASAP.
+
+Leader on January 1 2004
+------------------------
+
+Leader and comrade Hex tested the game through the night.
+Several bugs which made the game almost unplayable were found.
+Leader attach new executable.
+Ivan override the one in the last archive with it.
+
+Ivan on August 9 2004
+---------------------
+
+Ivan mind bend into facsinate shape. Quivering brain? Suddenly brain too 
+big to fit to Ivan skull of 8,2mm thick human bone. Thunder strucking as 
+brain part gush through Ivan left and right temple!
+Ivan left brain half involve logic, thus gush be rather small. Ivan 
+right brain half involve emotions, thus gush be even more small. But 
+behold and hearken! Spirit of party engulf Ivan brain and it gloriously 
+jump from other temple and assume massive 32x32 form with CCCP pride!
+Ivan now left with no brain but put mayonnaise in brain cavity and no 
+change apparent. As luck has it AK usage be in spine not brain.
+Mind worm now existent. Ivan recommend check that graphic file miss no 
+older graphic (due to long work pause - CURSE EDUCATION CCCP MEN OUGHT 
+FOR WORK).
+
+Also Ivan require newest version to avoind producting mistakes in Ivan's 
+work and for playing.
+
+Ivan on August 30 2004
+----------------------
+
+Ivan free from stench of GIMP the annoying smiling putrifier animal. 
+Ivan taste work with mitrhil Deluxe Paint 2 +3 (in both hands)! Gimp the 
+small wuss idiot animal become T-34 roadkill.
+
+Ivan on September 14 2004
+-------------------------
+
+Ivan perform damage with jolliness:
+
+Point increases chance of critical hit by +50%
+Cut and blunt damage simultaneous
+Long weakens against small enemies and improves against large, short 
+works inversely
+
+POINT CUT BLUNT | ACCURACY DURABILITY BLOCK | special
+
+Spear             P8 C0 B2 | A8 D1 Blo6 | long, 2hand, throw
+Quarterstaff      P3 C0 B2 | A6 D1 Blo6 | long, 2hand
+Bastard sword     P4 C6 B4 | A4 D7 Blo5 |
+Short sword       P6 C4 B2 | A6 D8 Blo7 | short, 1hand
+Longsword         P6 C5 B2 | A7 D6 Blo8 | 1hand
+2-handed sword    P1 C7 B7 | A4 D6 Blo6 | long, 2hand
+Axe               P0 C6 B5 | A2 D4 Blo4 |
+Battle-axe        P0 C7 B6 | A4 D6 Blo5 |
+Halberd           P7 C8 B8 | A4 D4 Blo5 | long, 2hand
+Poleaxe           P0 C8 B8 | A4 D4 Blo4 | long, 2hand
+Mace              P0 C0 B6 | A4 D4 Blo5 |
+Dagger            P6 C2 B0 | A8 D2 Blo1 | short, 1hand
+
+Ivan on September 21 2004
+-------------------------
+
+Somehow Ivan find such inspiration of given task that boundaries of 
+adequate behaviour now require to bend little. Leader observe that huge 
+analysis written mostly only because siren be nude:
+
+***COMMENCE ANALYSIS
+
+Because Siren be not overwhelmed with clotheing, Ivan design set of skin 
+colours and more info that be full of use.
+New set also may be appleyd to human characters that all ready exist.
+
+In name of clarity, Ivan define siren parts now:
+LEG 16,2
+TORSO 19,2
+HAND 16,2
+HEAD 24,2 25,2 26,2 26,1
+
+Informaton about siren:
+
+Head may have hair pin. Let this be yellow, red, purple, pink, black
+for ease rgb colour for pink be provide: 255,173,173
+
+Hand have some jewel or band. Let this be yellow, purple, gold, black or 
+dark brown
+
+Foot have sandal. Let this be:
+If siren be negro or darkish: black, dark green (0,70,0), dark red (70,0,0)
+If siren be european: orangy (255,75,0) – peach (255,140,0) – porno blue 
+(215,150,215) – pale peach (255,180,70) – yellowy (255,233,65)
+If siren be asian: take same as european but remove pale peach and 
+yellowy and insert pale pink (255,180,140)
+
+Torso have special colour for both nipple and pubic hair. Ivan 
+assumption that pubic hair colour correlate with hair colour. But not 
+only that; correlation with skin colour also necessary. Hair colours 
+probably already exist within leader system, so Ivan no look up for rgb 
+value in here. However suggestions:
+
+Negro and asian: allow only black, blackish and dark blown color for 
+both hair and nipple
+
+Asian: too red nipple not allowed
+
+Europoean: Lighter red hair color must only occur with skin that be 
+noticably pale and then nipple must too be noticeably reddish. Nipple 
+colour not allowed dark brown or black, and very light nipple colours 
+allowed only when skin also very light.
+
+In general, nipple colour is suppose to meet following requirement set:
+be a little darker than skin, of different tone than skin, or both
+to be not too dark (that distract visually)
+if tone (not darkness) of colour change, then it change to slightly more 
+red or brown
+
+Also, regarding pubic hair colour:
+If hair colour blonde, then pubic hair good to be slightly darker than 
+scalp hair
+
+Oh, asian skin colour probably not yet define in IVAN. Ivan indtoruse 
+asian skin colour. This skin color exist within follow range:
+R 254
+G 247
+B 183 - 208
+Blue be random in given area. If this not possible, then suggest make 
+darker asian and lighter asian in which amount of blue be first at the 
+lowest and then at highest, respectively.
+In asian skin set only black, brown and dark brown hair be allowed.
+
+Ivan also introduce peach skin, which be part of european skin family. 
+This skin colour associate with dark orange hair in particcular, but 
+allow also other type of hair.
+r 255
+g 178
+b 96
+
+Hmm. Come to think of it, sirens be magical beings! That mean skin 
+colour may also be bluish or purple or grey or anything. Suggestions:
+Purple 222,250,255, hair red, magenta, blue, dark violet
+Green 180, 255, 150, hair blue, dark green, dark violet
+Magenta 255, 180, 255, hair blue, magenta, dark violet
+Cyan 200,255,255 hair blue, red, dark violet
+(NOTICE: Ivan not very sure what be difference between magenta, violet 
+and purple. Do not ask.)
+Same nipple and pubic hair laws are apply to magical skins.
+
+Perhaps magical colours be reserved to sirens and new skin colours 
+aplyed only to ordinary humans. Ivan not sure at the moment. Some 
+testing needed.
+
+Ivan find that analysis be perhaps of unessential comlexity, but it was 
+unable to be avoided after Ivan discover enthusiasm of opportinity of 
+nipple definition
+
+***END ANALYSIS
+
+Ivan overjoy that a total of months of glorious cccp porn not go for 
+waste! Lenin smile in mausoleum for omnipresence of cccp ideal! Even 
+when dweller of lost cccp dwells in depths of dirt, father Lenin emerge 
+from red lights of porn district!
+
+Ivan also improvise new character inspired both by nudity and by current 
+decadence state of Motherland: bum!
+Bum:
+LEG: 17,2
+TOSRO: 19,1
+HAND: 13,2
+HEAD: 11,2
+Bum is to have light grey scalp- and pubic hair and wander naked in 
+Attnam complaining about social security issues. If possible, other 
+citizens have AI that attempt to stay at least one square away from bum! 
+When Attnam later be improved, bum be able to beg and then, if get any 
+money, he buy vodka from Attnam inn. When inn established, he perhaps 
+also sell all items he able to find to be able to invest more to passion 
+for vodka.
+
+Ivan have furniture add to olterrain. These incluse chair, table, desk, 
+luxury bed, bed. Also include fireplace (open and shut), stove (open and 
+shut) and oven (open and shut and 2 x partially open). Ivan not sure if 
+now be any application for open and shut graphic but they there for 
+future reference. Fire and heat sources of course luminant. Also mat. 
+colours 3 and 4 intent to glow like fire. Note also that window has been 
+altered to look naturaller.
+
+Ivan suggest that in future one can select the directon from which he 
+enter any city. This make easier access to many shop and building in the 
+border. Ivan still drawing new infrastructure for attnam.
+
+Ivan September 21 2004
+----------------------
+
+Ivan skyrocket from low plain to cccp clouds which highly float above. 
+There spirits gather around Ivan furry hat and whisper of interior 
+decoration tips!
+Ivan is yet to test beard growth.
+
+Ivan further improve Attnamian life: Drawer (open/closed), bench, 
+workbench, well
+Thing that appear like puddle be natural fountain, for why some one 
+erect something that look like decorative bourgois fancy fountain in the 
+deep dungeon?
+Ivan suggest that in darker dungeon levels there be fancy magical 
+fountains in whish mat1 is black and mat2 is purple. Drinking from these 
+cause similar effect than mushroom gas exposure. Ivan also hope for acid 
+fountain in Enner Beast level!
+Ivan propose following: Table, Workbench and Desk funiture be drawn ON 
+any 16x16 character that is on same square. That way shop keeper or 
+smith can sit behind him desk and thus look professional.
+As for furniture:
+Well - does not block movement (one must to stand above well if want 
+drop something to well, say, a rotting corpse. or drink from well)
+Bookshelf, drawer, stove, oven, fireplace - will block movement
+Bench, chair, table, desk, workbench - will not block
+Ivan suggest also that when finding altar, no god symbol be draw on it 
+before player been on it to recognize associated god.
+
+Ivan also suggest that if accidentally injure ally or neutral, following 
+rules apply:
+If ally really dumb, say Kenny, he never attack master
+If ally smarter, then possible to ask for forgiveness. But if player 
+injure same ally again within, say, 50 turns, no forgiveness be given.
+If  neutral been injured, he may forgive, or ask for money to forgive. 
+If injure again within, say, 500 turns, no forgiveness.
+
+Ivan have beta tester discovere. He give following feedback:
+<snip: Finnish irc log between J_Kahvi and vpjarvi>
+However he not have save files any more for crash.
+
+Ivan on September 23 2004
+-------------------------
+
+Ivan finish suggestion of Attnam. Suggestion crude to say a least. Ivan 
+should have millimetre paper or small square paper use. Too late. But 
+lot of detail and new thing:
+
+New:
+Carpenter - construct items of wood
+Apprentices - make -1 items for 1/3 or 1/2 of cost
+Bakery - produce and sell bread. maintain stock of 50 bread
+Healer - heals stuff
+Bar - interesting people and beer in bar. lot of poor and tough and 
+adventurous people.
+Brewery - right next to the bar. contain hidden altar of Nefas where 
+bartender sacrifice gold and beer! Five paid mercenary soldier guard 
+brewery and shut up about altar.
+Tomb of the unknown soldier - Guarded by two guard with fake mithril 
+armour and wood sword. Guard line: "This is the Tomb of the Unknown 
+Soldier! His name was Lamusius! Oops."
+Apprentice priest - no fuction yet
+Royal prison for trophy prisoners - Exotic prisoner collection of 
+different race and species!
+Obedience station - To keep all prisoner happy
+Punisher - Ivan plan smiley face mask graphic for punisher
+Garden - Nothing special but lot of plants
+Training dummy - Can be mauled to keep up weapon skill
+Entrance points - When entering, prompt: "From which direction do you 
+want to enter (N,E,S,W)? South recommended."
+
+Beds not included for every resident because in IVAN people no sleep 
+unless they get bump in head.
+In later version Attnam be several square big in world map, and there be 
+suburb and homes and farm in these other square?
+Oh, Ivan has forget windows on everywhere but garden. Leader add them as 
+he wish.
+If leader wish for a city wall, then one should include. However outside 
+city wall must be enough space to use wand of fireballs and have 100 
+gazillion super pets as allies.
+It may be that city square size have to be increase a bit.
+Lot of new graphic require. Ivan do some time.
+
+Map NOT as attachment because of hugeness. See 
+http://www.tuukkavirtaperko.net/attnam.png
+
+Leader on September 23 2004
+---------------------------
+
+Ivan represent fine ideas.
+Leader share some of his plans, too, and comment Ivan's.
+Attnam grow so large that it be bother for Petrus to decide everything.
+After all, he must have enough time to use wives and dolphins, too.
+He read 1984 and name four cardinals to aid in rule:
+Cardinal of Truth, who responsible for propaganda.
+Cardinal of Plenty, who responsible for tax collecting and treasury.
+Cardinal of Peace, new title of Sir Galladon, who responsible for guards and
+leading army to preemptive peacekeeping operations.
+Cardinal of Love, who head of Inquisition.
+Entrance to Cathedral can indeed be more more impressive, with tiled way
+leading inside.
+Red mat can as well be wider.
+However Leader suggest Cathedral remain in frog shape.
+This tradition after all.
+Obedience station be constructed underground.
+Cardinal of Love, two Inquisitors and a few law students
+(this be their summer job) interrogate prisoners there.
+Happy face mask brilliant idea for them all.
+Trophy prisoners also kept safe on this floor.
+This because in Ivan plan it too easy for clever enemy to drop kamikaze
+dwarves from hot-air balloon so they explode wall and release prisoners.
+Jail residents moved to ground level only on special occasions, for instance
+to entertain foreign VIP visitors.
+Guards' quarters also underground.
+Above ground level there another, smaller floor where Cardinal of Love place
+four telepaths so intelligent they detect mind of every thought criminal in
+town with their amulets of ESP.
+They avoid brewery, of course, since Petrus like to occasionally enter it
+incognito and examine Nefas's mistress or two throughoutly.
+"One must know one's enemy as well as himself" he explain if player
+recognize him.
+Since in future characters can avoid being telepathically detected by
+wearing tin foil as helmet, giant floating eye placed on top floor as added
+security measure.
+It rotate all the time, its gaze penetrating all hidden corners of Attnam,
+making enemies of Church despair.
+Training dummies can be on back yard whose access be easier.
+There also very hard wall against which prisoners condemned to capital
+punishment be led.
+There they shot by execution squad armed with wands of fireballs.
+North of it be graveyard.
+This be church after all.
+There well kept graves of numerous world famous, powerful, just and
+righteous Attnamese heroes who Cardinal of Truth invent.
+There be also gravedigger named Ummah.
+He genius mathematician who dig graves and play saxophone as hobby.
+Tomb of unknown soldier there as well.
+
+Town south of Cathedral can be as Ivan planned.
+Leader question usefulness of carpenter, though.
+Of course it fun when he ask "How much wood would a woodchuck chuck if a
+woodchuck could chuck wood?" but wooden equipment not very powerful in IVAN.
+Perhaps Ivan could invent a couple of interesting items he would himself be
+ready to buy from carpenter.
+Cathedral will not use windows because this forbidden in holy book of
+Valpurus. Windows is Evil.
+Other buildings may have them though.
+Mammoth-proof city wall good idea to protect Church property.
+Citizens, for example.
+
+Leader also satisfied with graphics Ivan send.
+It'd be great if some day Party could convert all graphics to 32x32 pictures
+and increase resolution.
+Leader like to see more detailed siren.
+And IVAN would truly be great playground for Ivan artistic ability.
+Alas such task would mean much graphics work.
+Party could of course make small program which do rough doubling and then
+smooth result, but Ivan still would have to check all graphics.
+If Ivan has much free time at some point in the future and want to try doing
+at least some part of conversion, he announce this to Leader.
+
+Leader distribute new furniture to citizens ASAP.
+Ivan idea of NPCs potentially forgiving hostile actions good, but it most
+likely won't make to this version.
+And bug comrade Vilho find fixed in current beta binary.
+
+Ivan on October 14 2004
+-----------------------
+
+Ivan too vital: what unpleasantity!
+Ivan stay up for 30 hours. Ivan like old man who have smoke billion 
+cigarette. Ivan not vital. Ivan feel urge to cccp! Ivan cccp and võila!! 
+Panda bear emerge fuzzily from scratch
+Ivan now very på*§n and go to sleep
+
+Leader on October 16 2004
+-------------------------
+
+Good!
+Next Ivan draw some happy soviet peasant children, eg. boy and girl head & a
+couple of randomizable cloth styles.
+They good for making Attnam's peasant houses more lively.
+Leader also let them all play with panda, pose with them and take a few
+pictures of group.
+They prove leader devoted friend of nature and youth.
+Appealing propaganda vital in these dire days.
+Ivan recall wicked capitalist sympathisers seize Kreml from leader year ago.
+But fortunately bold leader loyalists fare well in civil war now.
+Party already regained control of almost half of Kirghiz Soviet Socialist
+Republic!
+When Red Army make its destined return to Moscow Ivan rewarded amply for his
+services.
+Leader plan to erect giant statue of himself on Red Square, and Ivan can
+have his name carved on its left pinky toe!
+Ivan also get honor of high position in Citizen Purification Committee.
+This institution will be founded to reeducate those who cooperated with
+false government.
+Ivan should prepare for this long and tedious task by starting to recruit
+punishers immediately.
+Ivan put one in humanoid.pcx along with children.
+And he ought not forget happy mask.
+
+Leader on December 8 2004
+-------------------------
+
+Leader hope Ivan had pleasant and vodka-plenty Independence Day.
+It one day when all Finnish should recollect the munificence of Uncle Lenin,
+who graciously gave them their sovereignty!
+
+But Leader disappointed Ivan not submit any score to past IVAN competition.
+Leader order happy mask punisher beat Ivan to pulp.
+Happy mask punisher disobey since Ivan create him.
+Leader annoyed.
+Everyone disregard Leader these days.
+Just because Leader was overthrown and has unluckily failed in every attempt
+to regain power not mean people allowed to have different opinions than He!
+Some of latter become ridiculously outrageous lately.
+Last week Tajik newspaper call Leader "one stupid and predictable gay
+terrorist-supporting mass murderer".
+Leader lose temper completely after seeing article.
+Leader forced to stop strip poker match with Osama bin Laden and Mullah Omar
+and swear vengeance on spreaders of such blatant lies.
+Leader order his guerillas to march into Stalinabad and remove it from CCCP
+map with flamethrowers Ivan made.
+Alas, this trap of Enemy.
+When city burned, troops notice they surrounded by army of Emmanuel
+Goldstein, the malevolent mastermind of anti-Leader revolution.
+Leader loyalists engage in fierce flame war to defend socialist honor.
+But enemy numbers overwhelming and eventually gas reserves used up.
+Leader give order to use vodka as flamethrower fuel instead.
+This however minor miscalculation.
+Soon soldiers become sober, start to think and switch sides.
+Soviet cause suffer defeat and Uncle Lenin cry tears of blood deep in His
+mausoleum.
+
+Fortunately Leader still partying wildly with bin Laden and Omar and high
+enough not to become depressed by setback.
+After a rather exciting round of Twister Leader ask if they could invest a
+bit to Leader plan of retaliation against Goldstein.
+Osama scratch his masculine beard and say perhaps he indeed can fund Party
+with $100 million.
+It gift between friends so he want nothing in return.
+But 60 megaton Tsar Bomba or two would naturally make money appear sooner in
+Leader Swiss account.
+Unfortunately all these in enemy hands now.
+Leader recall Ivan unemployed so he have time to arrange one.
+Ivan just infiltrate the appropriate nuclear facility and smuggle bomb to
+item.pcx.
+To identify the toy, Leader provide crypted description at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Item_ideas#Misc
+
+under the codename 'thaumic bomb'.
+As additional recreational task Ivan design gas grenade in same file.
+This can be loaded with eg. sleeping, mustard or tear gas.
+Ivan has one week to fulfill duties.
+Then Leader has next strategic meeting with his muslim allies and their
+harems and Leader want to suprise all with some laughing gas grenades to
+provide proper mood for negotiations.
+
+Leader on December 8 2004
+-------------------------
+
+Ivan should not fail to keep in mind Great Deadline on Friday.
+This mean he should, if any way possible, be available on IRC in today and
+tomorrow evening, and preferably in moderately sane condition, too.
+Small but critical graphics checks and opinions about important game,
+homepage and marketing issues will most likely be needed.
+There also additional, longer term assignment Leader forget in last letter.
+Ivan express eagerness to add monster descriptions which seen if player
+press some help button, move cursor above monster and push another key.
+Or, alternatively, use some help command and write name of the monster.
+This open menu, where verbal description of monster's nature or quote from
+famous book relating to the creature, or something similiar, be shown, and
+below it some information which Party decide later.
+These could include normal or estimated stats, approximate danger or
+whatever, depending on a number of factors (whether the player has used a
+stethoscope on the monster, has killed many or few of them, or is more or
+less intelligent, could affect the data shown).
+This however too big a job to do in one session alone.
+Therefore Leader ask Ivan write eg. about ten descriptions in some file and
+deliver it to Leader.
+Entries should preferably range from 50 to 500 words.
+Ivan note he not need to describe every creature around, just each category.
+Id est he not pay attention to palm leaf golem, kamikaze dwarf of Nefas nor
+orc officer.
+Instead he consider general golems, kamikaze dwarves and orcs.
+Some good examples or quote-style entries (siren, mind worm) exist at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Monster_ideas
+
+Ivan not restricted to literature, movie, game, etc. quotes, though.
+He can conjure up frightening prosaic portraits of the creature's hideous
+nature.
+He can write poems that affect the unconscious depths of reader's mind,
+inspiring his subjective understanding of the complexities of the monster's
+inner spiritual self.
+He can design small tales which feature the respective being, thus giving
+additional insight into its lifestyle, habits, basic tactics, and so forth.
+In short, Ivan can write almost anything he like as long as it concerns the
+creature somehow and sounds good.
+
+Because Leader given Ivan so much work, he provide short list which Ivan
+ought to tattoo on his muscular arm so it in his mind all the time:
+
+--------------------------------------------------------------------------
+
+1. thaumic bomb in item.pcx, which looks like a nuclear bomb; this should be
+very big but have some space available for a magical halo caused by thaumic
+leakage (low priority)
+2. dwarven gas grenade in item.pcx (medium priority)
+3. verbal descriptions of about 10 monsters, for in-game reference (high
+priority)
+4. 16x16 -> 32x32 conversion of tiles in each file (low priority in short
+term, high in long term)
+5. advising Party in the myriad of critical questions which may arise before
+the Deadline at 10.12., 23:59 EET (ultra-high priority)
+
+--------------------------------------------------------------------------
+
+Ivan on December 8 2004
+-----------------------
+
+Ivan make bombs out of Grand Ire towards the capitalist pig bathing and 
+sweating in his pool of coins! Why has enemy wanted to disgrace the pure 
+red Stalinabad to obey their mindless, limiting and unjust dogma of 
+liberal society? Father Lenin is crestfallen, only because of the greed 
+of Goldstein and his fellow criminals! Let justice be! Ivan percent a 
+new thaumic bomb tool for the Party to make a "Just Adjustment". Let our 
+motto be: "Enemy may succeed in entering a city of ours, but they won't 
+succeed in leaving the city without three heads!"
+
+Ivan notice smell of chlorine. Oh no! Ivan must have left the light bulb 
+boiling! Then Ivan will QWERTYUIOP and MNBVCXZ. It seems like there is 
+faint leakage in thaumic bomb! Ivan rub a clock and leakage shuts. What 
+good luck!
+
+A note on gas grenades: Ivan make deflated and inflated graphic versions 
+of the device, so that user can pick desired gas type from the filling 
+station himself.
+
+Ivan now get keen on monster descriptions.
+
+Leader on December 9 2004
+-------------------------
+
+Great Day beginning.
+Leader ask following:
+
+Is broken gauntlet (item.pcx, 80:400) good-looking enough for IVAN?
+It not Ivan-drawn, since Leader needed it immediately the day it was 
+integrated in era long forgotten.
+Leader ripped intact one quickly to shreds and he not really proud of it.
+
+Ivan once complained about the outlook of certain game areas.
+Are these now better?
+Especially GC levels 6, 9, 10, 11 and 12 should be checked.
+
+Screenshots in game homepage horribly old.
+Leader ask Ivan look at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Screen_shots
+
+and choose, say ten, best pictures.
+Leader and comrade Hex will also choose their favourites.
+Out of these Party get very appealing propaganda poster collection.
+
+All these questions require answering ASAP.
+
+Ivan on 10 December 2004
+------------------------
+
+Ivan comprehend. Favourites of pictures are:
+screen 1 - main menu good to show because it create familiar feeling to game
+screen 7 - show the glory of combat! and illustrate fine equipment handling
+screen 8 - show what happen when shit hits the fan
+holyscreen 2 - show some fine city
+holyscreen 33 - show some totally trashed dungeon
+holyscreen 17 - show some fine magic gas and regular dungeon fighting
+holyscreen 23 - seeing items invigorate viewer
+holyscreen 30 - some new landscape
+holyscreen 28 - being able to buy pets is a rare priviledge in the 
+roguelike genre!
+
+ivan also pick joker extra bonus 11th picture!:
+holyscreen 39 - show lost limb!
+
+Gauntlet look completely fine in ivan eye, is seeming like a few metal 
+plate and screw or leather strip be loose, which is perfect.
+
+Ivan will now dig into dungeon levels and return with reports.
+
+Ivan on 10 December 2004
+------------------------
+
+Wait, Ivan incorrect. Gauntlet look rather clumsy. Ivan remind that 
+there have been a better-looking versio of gauntlet somewhere? Hmm.. 
+mystify. Ivan check hard drive and draw new if needed
+
+Ivan on 13 December 2004
+------------------------
+
+Ivan have been drink 900 bottles of CCCP vodka and so usage of IvanWiki 
+at the moment be terrifyingly inconvenient. Thus Ivan text submit to leader:
+
+Team Formations:
+Teams members can be arranged to formations. A dialog window opens, and
+in the window there is a matrix in which you can pick team members from
+a list and place them on it.
+
+Example: (j and x are some monsters, @ is player)
+
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | |x|j|x| | | | | |
+-----------------------
+| | |x|j|@|j|x| | | | |
+-----------------------
+| | | |x|j|x| | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+
+Team members will attempt to create the formation whenever the enviroment
+permits it. This means they will also attempt to copy players movements.
+Formation can be set to modes Strict (members try to stick in formation
+no matter what) or Loose (members will help each other in combat etc.).
+Perhaps the function would also require a certain INT from the members,
+otherwise it could not be performed. It might also require a certain INT
+from the player, and maybe higher INT would increase the maximum allowed
+size of the matrix?
+On the side of the dialog window there could be following buttons:
+Rotate formation 90 degrees to left
+Rotate formation 90 degrees to right
+Mirror formation (left/right)
+Flip formation (up/down)
+The function would be of importance, because having and controlling a team
+is essential in the harder levels of the game.
+Perhaps there could also be an Allow team rotation -switch, which, if set,
+would allow the team to try to adjust to the environment by rotating,
+mirroring or flipping itself.
+
+Ivan on 16 December 2004
+------------------------
+
+Ivan play and feed back:
+
+Iventories should seem like opened trees, so that you could see the 
+contents of chests like any other objects
+
+There should be a selectable default container, so that it would be 
+faster to use containers.
+
+There should be a button for Wear, so that Wearing items would be faster.
+
+Leader on 16 December 2004
+--------------------------
+
+Leader like tree-like inventory screen idea very much.
+Leader not think of it before.
+Default container idea also good, though it has been presented before and
+could perhaps be developed further.
+Perhaps player have inventory structure somewhat like this:
+
+player
+-helmet
+-amulet
+-etc.
+-right pocket
+--item
+--item
+-left pocket
+--item
+-sack
+--item
+--item
+--chest
+---item
+---strongbox
+----item
+----etc.
+---etc.
+--etc.
+
+Choosing default container work like this.
+When game start, player get sack which default container.
+Player push certain key.
+Screen opened.
+Player choose from:
+
+-right pocket
+-left pocket
+-sack
+--chest
+---strong box
+
+If container locked, it ignored.
+When player press comma, item go to default container.
+If default container full, player prompted with screen above to choose
+another container.
+Sack quite big, enough for most normal items but not for 10 ass corpses, for
+example.
+Pockets small, but they take almost no time to access, so a wand of teleport
+could be stored there.
+These like quick item slots in certain games.
+They only usable if player wear certain armours.
+There also command for emptying one container and putting its items to
+another.
+This usable when eg. changing sack.
+There waterproof, fireproof etc. different kinds of sacks.
+They can of course be nested in tree-structure for extra protection, but
+retrieving an item which is inside chest inside sack inside strong-box
+inside sack very slow, so basic sack usually quite important to upgrade.
+Also, there magical containers like bag of holding, which stores its
+contents in another dimension, so it can hold an enormous amount of things
+and still have constant weight.
+Of course, there could be some drawback, for instance if there thousand
+items stored in BoH, retrieving one would be very slow since the player
+wouldn't be able to find right one quickly.
+The time would depend on dexterity, perception and intelligence (if very
+intelligent, he remember where he put each item almost instantly).
+There could also be magical chest where time does not pass or does so very
+slowly.
+This perfect for storing food, but useless for lyre of charm, magic whistle,
+etc.
+
+By command for wearing, what does Ivan exactly mean?
+There no sense in opening menu where each equipment slot shown, since this
+almost identical to equipment screen.
+Perhaps key, which open inventory, and when player select for instance a
+cloak, the player chooses the only slot where cloak fits, ie. the cloak slot
+and empties it first, if necessary?
+If player choose gauntlet and there pair, both gaunlet slots emptied and
+gauntlets put in place.
+What would Ivan like to happen if he choose only one gauntlet?
+If only one gauntlet slot empty, it of course go there.
+But if two are available?
+Right arm?
+The arm which the game thinks more important, according to some formula?
+Or would there be question where player is prompted to choose either 'r'ight
+or 'l'eft gaunlet slot?
+
+Leader not commented team formations yet.
+First of all, Ivan idea imply displacement system has to be modified.
+If team moving in formation along a hallway like this
+
+#####
+.x@y.
+#####
+
+and player presses right arrow key, he should automatically wait for team
+member y to move eastward and then follow it.
+Now he displaces it or, worse yet, fails to displace it because it so
+stubborn.
+Ivan agree?
+In any case, IVAN AI code not very good and Ivan probably have to wait for
+formations for some time.
+
+Leader on 19 January 2005
+-------------------------
+
+Leader summon Ivan to front line in central Turkmenistan where he lead proud
+and determined soviet forces pushing west towards Ashgabat.
+In scorching desert heat Ivan hurry towards Leader command nexus.
+Above him traitor Tupolevs swarm like fireflies, lighting night of Karakum
+with a myriad of deadly missiles, turning battlefield into nightmarish rain
+of falling stars.
+Surrounded by deafening artillery fire Ivan arrive to destination.
+Ivan find Leader and his generals bathing in an oasis hidden amidst a
+graveyard of smoking tanks, drinking vodka and being creative by telling war
+stories of their past heroic victories.
+One officer currently barbequing a KIA Akhal-Teke horse in flame of burning
+petroleum pipeline.
+Leader grab towel and asks Ivan to have a bite with him.
+Mouth full of roasted horse meat he explain urgent intelligence mission
+waiting Ivan deep in enemy territory.
+Leader trust Ivan only one who can succeed in job.
+All other Leader subjects likely to defect to rebel side if allowed to go
+that far from watchful Leader eyes.
+Ivan ought to take 32x32 Lada and drive to Kiev ASAP.
+There he seek agent Fidel of Cuban intelligence service in Boryspil airport.
+Of course, Fidel do all he can to hide identity and not arouse suspicion of
+Goldstein's spies.
+Fidel choose role of American patriot, wear big cowboy hat, wave big flag of
+stars and stripes and loudly sing US national anthem.
+When Ivan locate him, he ask, "I have always wondered, what was the maiden
+name of the wife of the fourteenth president of your mighty nation?"
+If he answer, "I have no idea", Ivan know he Fidel.
+Every real American patriot would know answer.
+Then Fidel ask Ivan light his cigar.
+Ivan swap it with roll of tobacco Leader give him, and light it instead.
+After Fidel and Ivan part, Ivan put cigar to item.pcx and send it to Leader.
+No one suspect Leader just received important microfilm from comrade Castro!
+Leader wait for rapid success.
+
+Leader and Ivan on March 3 2005
+-------------------------------
+
+Leader: Leader need the magnificent ancient grenade relic soon to defeat enemies.
+Ivan: ah ok
+Ivan: getting to it
+Leader: When does ivan have big final tests btw? How many has he left?
+Ivan: work done
+Ivan: sent to timo.kiviluoto@mail.suomi.net
+Ivan: ivan complete english in autumn and result a puny E, but Party man not fond of schools, only work
+Ivan: spring ivan complete finnish
+Ivan: high school go tho 3,5 or 4 years
+Ivan: next autumn the Real and short mathetamics
+Leader: Leader see. And he glad to hear, as CCCP citizen ought not to know too much too soon, it often give but funny political thoughts.
+Ivan: indeed, liberal "intellectuals" twist concept of intelligence. itelligence involves shovel, hammer, sicle or firearm.
+Ivan: and paint brush for social realism
+Ivan: or to colour vast cccp flats with fabulous gray
+Leader: Besides, Leader himself has studied very slowly lately as well, only doing about half year's work in one and half. This due to too liberal academic society which not punish from being absent. This good proof that freedom only encourages laziness! CCCP men ought to be forced to work vigorously to be happy!
+Ivan: exact! liberality corrupt even most able soul!
+Ivan: ivan should in near future deticate a few day worth of work for 32x32 conversion
+Ivan: work begun but progress slow
+Ivan: ivan just wait for suitable winds
+Ivan: but Party men blow winds them selves
+Ivan: ivan yet to grasp this well
+Ivan: but now ivan momentarily retire to shoot "counter"-terrorists with ak47
+Leader: When Ivan return to work, here be next task: Leader noticed several elite guards of Cathedral quite athletic and virile and may arouse lust in weak women. He ask Ivan next draw chestity belt for Petrus's wives, to prevent accidents.
+Ivan: ah what pleasurability task!
+Ivan: ivan excess in uncomfortability design for honour of sexual frustration
+Leader: Excellent!
+Ivan: work done
+Leader: Good good. Now Petrus can sleep peacefully (eg. with guards' wives) knowing his beautiful possessions are safe from sinful temptations.
+Leader: Next Ivan build some interrogation devices for obedience officers to olterra.pcx.
+Leader: Ivan choose at least three machines which are easy to construct with his technical skills and efficient in the task.
+Leader: Suggestions include, but are not limited to, eg. red-hot coals, brazen bull, Judas Chair, rack, iron maiden and spanish boot.
+Ivan: hmm
+Ivan: investagating on topic
+
+Ivan on 3 March 2005
+--------------------
+
+Communism may have wipe out christian folly, but christian armament suit 
+even man of Party! Thrown in middle of bourgeois hall, fatty with cigar 
+exclaim: "oh joy! some one believe in static and sturdy value of God and 
+Church! It look precious too, maybe give me money!" Then ignite and 
+bourgois sent into clouds of sunset golden eastern sky, in graceless 
+gibs and splurts of blood. End of bourgeois; belief in things that false 
+make him new bed in red velvet horizon where he lay for rest of 
+eternity, rotten soul no more.
+
+Ivan on 3 March 2005
+--------------------
+
+Chastity belt covered in crude welding spots from inside to ensure pain 
+when whory thought make wife even touch groin and lust when belt finally 
+remove. Ivan also think idea of some sort of mouth gag to both prevent 
+oral sex with worthless trash humans but also reduce unnecessary 
+woman-talk of gossip, shallow topics and disgusting nagging.
+
+Leader on 18 March 2005
+-----------------------
+
+Two strings of footsteps stretch along a path leading up to the top of our
+world.
+Enormous white mountains pierce the serene azure sky above them, like
+ancient titans placed to guard the land from corrupted civilization.
+Here the glorious nature which gave birth to Marx and Lenin shows its true
+might.
+High above the footsteps dive in a small cave hidden in a Himalayan scene
+radiating beauty of Earth of yore, untouched by capitalist filth.
+Like a serpent, the tunnel twists and winds through endless masses of rock.
+Finally, the trails of feet reemerge in a heavenly valley, deeply happy to
+be isolated from the outside world, now so completely engulfed in a horrific
+war of men.
+The footsteps make their way downwards following two hooded figures like
+shadows.
+Slowly snow is beginning to disappear.
+Through a village full of marvellous far estern architecture, past
+glittering waterfalls and through gardens resembling paradise journey the
+two figures.
+They enter a tall and beautiful hexagonal manor surrounded by six finely
+carved statues of Buddha.
+In a large wooden hall with no furniture present they sit in front of an old
+monk emitting an aura of pure wisdom, spiced with razor-sharp intellect.
+The hoods are removed, revealing the respected and self-confident face of
+the Leader of Citizens and the huge, muscular body of his feared bodyguard
+Ivan Gorovits.
+"Welcome to my humble abode, brethren", the valley elder states.
+"Blessed be Lenin who guided us here and shielded us from rockslides,
+avalanches and enemy smart missiles! We've come to negotiate about the
+alliance, O elder of Shangri-La, mayor of Shambala, leader of Tralla La, the
+wisest man in Xanadu!"
+"Ah, so our anguish is not unfamiliar to you.
+For two millenia we lived in utmost joy, embracing the Wisdom of Buddha,
+until one fateful year recently.
+A wicked capitalist called Scrooge found our valley, entered and taught us
+how to use bottlecaps as money.
+We now presume he had deviced a malevolent plan to buy our valley with a
+billion bottlecaps and turn it into a theme park for western tourists!
+We were almost drowned in scrap iron until we drove the man out.
+We cursed capitalism forever and send explorers to search for an elixir to
+cure us from this terrific cancer.
+They brought back das Capital, the wisest book on Earth since Tripitaka!
+Soon everyone in the valley joined the Nepalese Maoist party and began to
+wage civil war against the evil bourgeois-sympathizing feudal monarch of the
+country in its ranks."
+"Leader know all too well.
+CCCP, our beloved homeland, was defiled by malicious capitalist named
+Goldstein just eighteen months ago.
+Its happy collective farms were abolished, our people driven to poverty,
+unemployment and despair.
+Dark influence of Enemy spreading like plague across our planet!
+We must strike back, we must srike together, we must srike hard!"
+"Indeed. We ought to work together.
+However, a chain is as strong as its weakest link.
+I must be assured you are a worthy ally.
+First I must test your wisdom.
+Tell me, how many Zen buddhists does it take to change a light bulb?"
+Leader smile.
+"Answer be naturally the cypress tree in the garden!"
+Elder nods and claps his hands.
+A novice monk enters the hall with a white cow.
+"Tell me, does this cow have Buddha-nature or not?", elder asks.
+Leader kick cow, who say "MU".
+"Correct. Last but not least I must ask you to describe the sure sign of a
+CCCP kolkhoz being founded in the middle of deep Siberian taiga."
+"Tree falling in the forest."
+"Praise Buddha! Russian communists are indeed as wise as I'm told", elder
+cries out in enthusiastic joy.
+"Great, then signing pact is but formality now?" Leader queries.
+"Not too fast my sons.
+Enlightenment is the most important trait of a man, but it alone won't win
+wars.
+Strength of body is needed also.
+As per tradition, you ought to solve a difficult and dangerous quest before
+the alliance becomes reality.
+A frightful monster has been pestering our village recently.
+It appears from the mountains, freezes everything it touches, extinguishes
+all fires by sitting on them, and according to legends is bound to the name
+Groke.
+I will quote its description from an ancient text:
+
+'On tienoo äkkiä niin hiljainen ja musta ja mörkö niin kuin vuori tuijottaa,
+ja jäinen maa on täynnä kammotusta, kun kuustakin pois värit putoaa. Ja
+Nyyti sanoi: helppoa ei tule olemaan!'
+
+Slay the beast, skin and stuff it and bring its body to character.pcx!"
+Leader sighs and whispers something briefly to Ivan.
+Ivan opens his backpack, takes his AK-47, rocket launcher, flame thrower,
+grenade collection, gas mask, armour, etc. etc. out of it.
+Swiftly he equips everything and strides to the door.
+Before disappearing in the refreshing Himalayan outdoor air he turns and
+states his grave farewell:
+"Ivan ready to hunt."
+
+Ivan on 12 April 2005
+---------------------
+
+Groke have been put into misery. Colour grayish phtalo blue - suggest 
+but not conclude to: (81,77,140)
+Colour 2 teeth colour - white with hint of yellow suggest (255,253,229)
+Teeth may not have sufficient contrast to resemble a grinning row of 
+teeth, in case this the case then Ivan fix.
+Colour 3 let be light grey or white for the time being.
+
+----------------------------------------------------------------------------
+
+End of document.

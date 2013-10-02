@@ -1,0 +1,39 @@
+----------------------------------------------------------------------------
+
+    How to create a new project in IVAN workspace, step by step tutorial
+
+----------------------------------------------------------------------------
+
+<project> == name of the new project
+
+1. Create a subfolder named "<project>" into the IVAN main directory.
+2. Create empty subfolders named "Source" and "Include" to the "<project>"
+   folder.
+3. Create the new project to IVAN workspace with VC++. Choose your IVAN
+   folder as the folder of the project, *not* IVAN/<project> as Visual
+   Studio suggests. If your project is a library, make it dependent of
+   "Main".
+4. Go to project settings.
+   4.1. In the "General" sheet, place "<project>/" in the beginning of
+	the text in "Intermediate files:" and "Output files:" textboxes.
+	Do this to both Debug and Release modes.
+   4.2. In the "C/C++" sheet, choose category "Preprocessor" and place
+	the following text into the "Additional include directories" text
+	box: "Include,Main/Include, <project>/Include", and after that all
+	Include directories of all projects currently in the workspace.
+   4.3. Add the "<project>/Include" into all other projects' Include
+	settings.
+   4.4. If your project is a library, switch to project settings of Main
+	Debug and add "<project>/Debug/<project>.lib" to "Link"->"General"->
+	"Object/library modules", and "<project>/Release/<project>.lib" to
+	the same place in Main Release. Do this also to all other
+	exe-producing projects, like LibTest, if they need your project.
+5. Add a folder named "Source" to the project, and choose file extensions
+   "c,cc,cpp". Do the same for "Include", with file extensions "h,hh,hpp".
+6. Add or create your needed files to the project. They will be
+   automatically placed into appropriate directories.
+7. Begin programming.
+
+----------------------------------------------------------------------------
+
+End of document.

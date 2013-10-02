@@ -1,0 +1,97 @@
+			weight	size	dam	volume		mw	fm	req
+
+fists											
+dagger			400	40	2,25	25/25		200	70	0	300
+short sword		1000	70	3,25	90/35		720	80	0	200
+long sword		1400	120	4	130/45		1040	100	3	100
+scimitar		1600	100	4,25	150/50		1200	105	3
+katana			1200	100	4,75	110/40		880	150	2
+!broadsword		2200	100	4,5	225/50		1800	90	6
+axe (t)			1800	60	3	200/400w	1600	45	1	750
+battle axe (t)		2400	110	4,5	275/400w	2200	85	9
+pick-axe (t)		2000	75	2,5	225/400w	1800	35	3	100
+morning star (t)	3750	55	4,5	450/300w	3600	65	5
+mace (t)		2650	70	4	300/500w	2400	65	4	500
+whip			420	210	1	800l/40w	400	7*f	1	50
+war hammer (t)		2250	60	3,5	250/500w	2000	55	2	500
+sickle			825	40	2,5	100/50w		800	45	0	50
+club (t)		1500	90	1,5	3000w		1500	35	2
+
+scythe (t)		2100	200	3	150/1800w	1200	50	24
+spear (t)		1800	190	3,5	100/2000w	800	85	16	1000
+bastard sword (t)	2600	130	5	225/100		1800	115	15
+two-handed sword (t)	4000	150	6	350/150		2800	135	50	50
+two-handed scimitar (t)	4400	140	6,25	400/150		3200	140	53	0
+halberd (t)		3900	170	5,75	375/1800w	3000	115	61	200
+war flail (t) 		-	160	?	200*h/2000w	1600*h	
+colossal m-star (t)	7500	140	6,5	750/3000w	6000	115	154
+quarterstaff (t)	2000	220	1,75	4000w		2000	40	27
+great axe (t)		4200	140	5,5	450/1000w	3600	100	48
+
+Justifier		900	125	12,25	200v/100v	600	300	0
+Neerc Se-ulb (t)	6500	100	12,75	800m/500m	4000	250	56
+Mjolak (t)		4000	180	9	400s/2000w	3000	225	69
+Vermis (t)		1250	220	7,75	100d/1800w	350	250	10
+Turox (t)		6300	90	10	800s/600w	6000	200	42
+whip of thievery	525	250	2	1000l/50w	500	225	2
+
+*chain mail		16000	75					15
+*leather armor		2000	75					15
+*plate mail		32000	75					15
+shirt			100	60					15
+robe			1800
+
+buckler			900	50?
+small shield		1350
+*iron shield		4000						15
+iron tower shield	6800
+*leather cloak		1500
+*leather boots		400
+*leather gauntlets	300
+*leather belt		150
+*iron helmet		1600
+
+PALMLEAF
+
+lantern			2500	30		1000		2500	20
+can			400	10		50		400	15
+lump			600	10		500		600	10
+banana			200	20		40/150		20	25
+banana peels		20	20		40		20	20
+water bottle		1650	30		60/1500		150	25
+broken bottle		150	10	1,1	60		150	50
+scroll			150	30		250		150	20
+nut			30	3		25		30	10
+bone			1000	50	1,1	500		1000	25
+loaf of beef		600	40		500		600	20
+iron wand		1000	30		125		1000	30
+kiwi			60	10		50		60	10
+pineapple		1200	20		1000		1200	10
+palmbranch		2000	80		4000		2000	15
+backpack (empty)	500	80		1000		500	10
+holy book		1200	25	0,75	2000		1200	20
+50 million roubles	500	20		1000		500	15
+oil lamp		3000	30	1,25	150		3000	20
+diamond stone		350	30		100		350	10
+mine (empty)		800	50		100		800	10
+key			120	10		15		120	30
+diamond ring		10	2		3		10	10
+diamond amulet		105	20		30		105	10
+whistle			290	50		40		290	25
+small chest (empty)	3750	50	1,25	7500		3750	15
+chest (empty)		30000	100		60000		30000	15
+large chest (empty)	240000	200		480000		240000	15
+bear trap		4000	50	3	500		4000	30
+stethoscope		400	40		200		400	10
+skull			1200	20	0,9	600		1200	15
+
+head									10
+torso									10
+arm									15
+groin									10
+leg									15
+
+holy banana		2000	30	1	400/1500	600	100	0
+left nut of Petrus	600	10	0,5	500		600	15	0
+Avatar of Valpurus	750	10	2,75	250		750	15	0
+head of Elpuri		60000	60	2,25	25000		60000	15	1728

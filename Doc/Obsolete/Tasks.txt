@@ -1,0 +1,477 @@
+RL5 työlista versiosta 0.21a alkaen.
+
+Vastaava organisaattori Timo Kiviluoto.
+
+<--- Termeistä --->
+
+Laajuus: arvioitu tarvittavan työn määrä varsin väljällä,
+lähinnä suuntaa-antavalla asteikolla nollasta viiteen.
+
+<--- A: Minityöt --->
+
+Niin pienet työt ettei plussia ja miinuksia ole mietitty.
+Kaikilla laajuus 0, ei vaatimuksia.
+
+0x0000:	Elmo urine lisäämään 2 hp:tä (DONE: Perttu)
+0x0001: Size näkyviin paneelissa (DONE: Perttu)
+0x0002: Inventorioruutua kauniimmaksi (DONE: Timo)
+0x0003: Tyhjiäkin pulloja maahan, joskin vähän (DONE: Timo)
+0x0004: Pullon pudotus juomisen jälkeen (DONE: Perttu)
+0x0005: Cheatterin nälkäkuoleman ergonomistus (DONE: Hex)
+0x0006:	Maasta syömisen ergonomistus (DONE: Hex)
+
+<--- B: Koodilliset uudistukset --->
+
+Ei näkyvää vaikutusta, sopivat erityisesti niille,
+jotka pitävät ohjelmointia itsearvona ja/tai
+joille projektin pitkän tähtäimen kehitys on tärkeintä.
+
+0x0000:	Tyyppien uudelleennimeäminen, laajuus 1
+	+ ei vaadi aivoja
+	- tylsää rutiinia
+	- low priority
+
+0x0001:	Funktionimien loogisuuden tarkistaminen, laajuus 1 (SUOSITUS: Timo)
+	+ luultavasti hyvin lyhyt työ
+	- vaatii rakenteen tuntemusta päällisin puolin
+
+0x0002:	Kaikenkattava esittelyjen uudelleenjärjesteleminen, laajuus 1 (SUOSITUS: Timo | Heikki)
+	+ ei vaadi aivoja
+	+ esteettinen ilo
+
+0x0003:	Characterin ja gamen julma paloitteleminen, laajuus 1
+	+ ei vaadi aivoja
+
+0x0004:	Helpottavat operaattorit, laajuus 1 (SUOSITUS: Timo)
+	+ gurua
+	- vaatii kohtuullisen syvällistä syntaksin tuntemista
+	- low priority
+
+0x0005:	Lyhennemakrot/-funktiot, laajuus 2 (SUOSITUS: Timo)
+	- vaatii struktuurin läpikotaista tuntemista
+
+0x0006:	Arean muokkaus skriptin vaatimaan funktioformaattiin, laajuus 2 (OSITTAIN DONE: Timo)
+	+ ohjelmoinnillis-looginen nautinto
+	- vaatimuksena perehtyminen generaatioon
+
+0x0007:	Dungeon-luokan konstruointi, laajuus 2 (SUOSITUS: Timo)
+	+ ohjelmoinnillis-looginen nautinto
+	- vaatii hyvin vahvaa strukturaalista päätöksentekokykyä
+
+0x0008:	Levelskripti, laajuus 3, vaatimus B/0x0006 (TYÖN ALLA: Ilari)
+	+ ohjelmoinnillis-looginen nautinto
+	- vaatii tiedostonhallinnan tuntemista ja kohtuullisia aivoja
+
+0x0009:	Olemassaolofunktioiden väsääminen objekteille, laajuus 1 (SUOSITUS: Timo | Heikki)
+									(Hex selittää kuolevaisille: "Funktio, 
+									joka aijetaan joka itemille joka tikki")
+									(Timo ihmettelee moista brutaalia ja
+									rahvaanomaista esitystapaa ja lisähuomattaa,
+									että funktio "aijetaan" myös joka karakterille
+									ja maastolle)
+	+ helppoa
+	- vaatii strukturaalista päätöksentekokykyä
+
+0x000A:	Karakterin atribuuttien niputus, laajuus 1 (PROHIBITIO: Timo)
+	+ erittäin helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+
+0x000B:	Rukoilun strukturaalinen osuus, laajuus 2 (DONE: Timo)
+	+ gurua
+	+ high priority versioon 0.22a
+	- vaatii hyvin vahvaa strukturaalista päätöksentekokykyä
+	- vaatii kohtuullista syntaksiperehtyneisyyttä
+
+0x000C:	<Koodin kaikenkattava dokumentaatio, siirretty osioon I>
+
+0x000D:	#includejen vapautus järjestysindepenteiksi, laajuus 1 (SUOSITUS: Timo ^ Heikki)
+	- vaatii kyvyn kylmänrauhallisesti tappaa lähes kaikki headerinlinefunktiot
+	  cut 'n pasten viiltävällä terällä
+
+0x000E:	Projektin kattavampi kirjastoihin pilkkominen, laajuus 2 (SUOSITUS: Timo)
+	+ selkeä, näkyväkin etu kääntökestoissa
+	- vaatii struktuurin ja toiminnan kohtuullisen tarkkaa tuntemista
+	- vaatii kohtuullista strukturaalista päätöksentekokykyä
+
+0x000F:	Virtuaalifunktioiden käyttöalueen laajentaminen luokkien sisälle, laajuus 2 (DONE: Heikki)
+	+ ei vaadi aivoja
+	- tylsää rutiinia
+
+0x0010:	Koodin porttaus Windozeen ja DirectX:lle, laajuus 4 (YRITETTY: Heikki)
+	- DirectX:n ymmärtäminen vaatii paljon aikaa ja epäloogisia aivoja
+	- vaatii sielun myymistä Billille
+
+0x0011:	Vektorin komponentit signediksi + muut merkkimuunnokset, laajuus 1 (SUOSITUS: Timo | Heikki)
+	- vaatii välttävät aivot
+	- tylsää rutiinia
+
+0x0012:	Objektin alaluokkien kattava makroittaminen, laajuus 2 (OSITTAIN DONE: Timo)
+	+ vähentää työtä tulevaisuudessa huomattavasti
+	+ preprosessorisyntaksin guru look
+	- vaatii makrojen toiminnan tuntemista
+	- paljon tylsää rutiinia
+
+<--- C: Optimointi --->
+
+Jokseenkin näkyvää (koneesta riippuen),
+sopii pelin struktuurin ja koneen sielunelämän
+hyvin tunteville matemaatikoille.
+
+0x0000:	Valojen optimointi, laajuus 3 (DONE: Timo)
+	+ ohjelmoinnillis-looginen nautinto
+	+ high priority
+	- vaatii hyvää ko. koodin tuntemista
+	- vaatii ihan oikeat aivot
+
+0x0001:	Piirron optimointi, laajuus 2 (DONE: Timo)
+	± samat kuin yllä
+
+0x0002:	Reitityskoodin optimointi, laajuus 2 (SUOSITUS: Timo)
+	+ vahva ohjelmoinnillis-looginen nautinto
+	- vaatii ihan oikeat aivot
+
+0x0003:	RAM-tasojen määrän rajaaminen naapurikenttiin, laajuus 1 (SUOSITUS: Timo | Heikki)
+	+ helppoa
+	- vaatii jonkin verran strukturaalista päätöksentekokykyä
+
+<--- D: Ominaisuuksien lisäykset --->
+
+Koko ajan näkyvä vaikutus,
+sopivat kaikentasoisille koodareille ja erityisesti niille,
+joille projektin lyhyen tähtäimen kehitys on tärkeintä.
+
+0x0000:	Uusien itemejen lisäys, laajuus 1, osittain vaatimus F/0x0000 (DONE: Heikki)
+	Tällä hetkellä listalla: (sword), two-handed sword, morning star, axe,
+	(shirt), halberd, bone
+	+ helppoa
+	+ pitää graafikon iloisena
+
+0x0001:	Uusien monsujen lisäys, laajuus 1, osittain vaatimus F/0x0001 (DONE: Heikki)
+	Tällä hetkellä listalla: wolf, dog ja golemit
+	+ samat kuin yllä
+
+0x0002:	Humanoidisuuslapsuksien likvidaatio, laajuus 1 (SUSTAINED: mietinnän alla)
+	+ helppoa
+	- sitaatti Pertulta: vaikea ymmärtää mitä otsikko tarkoittaa
+
+0x0003:	Aseiden ja monsujen tason korrekti painotus levelin mukaan, laajuus 2 (OSITTAIN DONE: Heikki)
+	- vaatii strukturaalista päätöksentekokykyä ja jonkinnäköiset aivot
+
+0x0004:	Monsujen dynaaminen generointi, laajuus 1 (DONE: Heikki)
+	- vaatii strukturaalista päätöksentekokykyä ja jonkinnäköiset aivot
+
+0x0005:	Ultimate Überpriest Victoryn monimutkaistaminen, laajuus 1 (DONE: Timo)
+	+ helppoa
+	+ erittäin hauskaa
+	- low priority
+
+0x0006:	Monsujen tekoälyn saattaminen remakejen 2-4 tasolle, laajuus 1 (DONE: Timo)
+	+ verrattain pieni työ
+	- vaatii jonkinnäköiset aivot
+
+0x0007:	Lemmikit, laajuus 2-3 tekoälyn tasosta riippuen, vaatimus D/0x0001 (SUOSITUS: Timo)
+	+ hauskaa
+	- täysin ääliö tekoäly vaatii välttävät aivot
+	- siedettävä tekoäly vaatii ihan oikeat aivot
+
+0x0008:	Ruumiinosien (ainakin pään ja muun ruumiin) erikseenkoodaus, laajuus 2, vaatimus D/0x0000 (SUOSITUS: Heikki)
+	- vaatii strukturaalista päätöksentekokykyä ja jonkinnäköiset aivot
+
+0x0009:	Osumapisteiden (ainakin pään ja muun ruumiin) sisäänkoodaus, laajuus 2, vaatimus D/0x0008 (SUOSITUS: Heikki)
+	+ tekee vastaamattoman graafikon iloiseksi
+	- vaatii jonkinnäköiset aivot
+	- vaatii kaavamuokkauksen balanssitajuntaa
+
+0x000A:	Itemkohtaiset ergonomiset muistijäljet, laajuus 1 (SUOSITUS: Heikki)
+	+ helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+	- vaatii kaavamuokkauksen balanssitajuntaa
+
+0x000B:	Perception atribuutiksi ja sille vaikutus LOS:iin, laajuus 1 (DONE: Timo)
+	+ lyhyt ja helppo työ
+	- vaatii strukturaalista tuntemusta
+
+0x000C:	Expanlähteitä lisää, laajuus 1 (DONE: Timo)
+	+ lyhyt ja helppo työ
+	- vaatii pikku hitusen balanssitajuntaa
+
+0x000D:	Veren koodillinen toteutus, laajuus 1 (DONE: Heikki)
+	+ helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+
+0x000E:	Ruumiitten pilaantuminen, laajuus 1, vaatimus B/0x0009 (PROHIBITIO: Timo)
+	+ lyhyt ja helppo työ
+
+0x000F:	Lihatarjonnan monipuolistaminen, laajuus 1 (DONE: Perttu)
+	+ helppo
+	- vaatii hitusen rakennetuntemusta
+
+0x0010:	Myrkyt, laajuus 1 (DONE: Heikki)
+	+ hauska, lyhyt ja helppo työ
+
+0x0011:	Canin automaaginen avaus ja tiputus, laajuus 1 (DONE: Perttu)
+	+ helppoa
+
+0x0012:	Yleiset containerit, laajuus 1 (PROHIBITIO: Timo)
+	+ helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+
+0x0013:	Ovien avauksen nopeuttaminen remaken 4 tapaan, laajuus 1 (DONE: Heikki)
+	+ äärimmäisen helppoa
+
+0x0014:	Pickupin nopeuttaminen stabiloimalla inventorioruutu, laajuus 1 (DONE: Heikki)
+	+ äärimmäisen helppoa
+
+0x0015:	Maasta nuoleminen (consumaamimen), laajuus 1 (DONE: Perttu)
+	+ äärimmäisen helppoa
+
+0x0016:	Näppäimet esille esim. ?:sta, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x0017:	Näppäimet vaihdettaviksi
+
+	Vaihtoehto 1: initiedosto, laajuus 1 (TYÖN ALLA: Niko)
+	+ helppo
+	- vaatii hitusen tiedostonkäsittelyosaamista
+
+	Vaihtoehto 2: menutyökalu, laajuus 2
+	- kunnollinen toteutus vaatii aivot
+
+0x0018:	Itemien päälle saapumisen verbaalinen ilmaisu, laajuus 1 (DONE: Niko)
+	+ äärimmäisen helppoa
+
+0x0019:	Engrave ja tekstin päälle astumisen message, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x001A:	Fontin dynaamisen värimuunnoksen tuki FeVesaan, laajuus 1 (SUOSITUS: Timo)
+	- vaatii FeVesan välttävää tuntemista
+
+0x001B:	Useampien fonttien tuki inventorioon, laajuus 1, vaatimus D/0x001A (PROHIBITIO: Timo)
+	+ helppoa
+
+0x001C:	Tarinaruudun tekstin keskitys, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x001D:	Lookmode, laajuus 1 (DONE: Niko & Perttu & Heikki & Timo)
+	+ helppoa
+
+0x001E:	Gammakorrektio, laajuus 2 (DONE: Timo)
+	+ luultavasti gurua
+	+ high priority
+	- vaatii luultavasti syvällistä Vesa-dokumentaatioiden selailua
+
+0x001F:	Rukoiluefektien teko, laajuus 2-5 kattavuudesta riippuen, vaatimus B/0x000B (DONE: Heikki & Timo)
+	+ erittäin hauskaa
+	± töitä useammalle henkilölle
+	± vaikeustaso vaihteleva
+	- low priority
+
+0x0020:	Wizard-moden toiminnot, laajuus 2 (DONE: Heikki)
+	Tällä hetkellä listalla: ei enää mitään.
+	+ yksittäisinä töinä hyvin helppoja
+	- vaatii struktuurin tuntemusta
+
+0x0021:	Save ja load, laajuus 5 (DONE: Timo)
+	+ high priority
+	- *paljon* työtä
+	- vaatii tiedostonhallinnan tuntemista ja kohtuullisia aivoja
+	- vaatii hyvin vahvaa strukturaalista päätöksentekokykyä
+	- vaatii struktuurin läpikotaisin tuntemista
+
+0x0022:	ASCII-grafiikka, laajuus 4 (SUOSITUS: Ilari & Niko)
+	+ orjien motivointi ja taas yhden työttömyystekosyyn eliminointi
+	+ tuo versatiilisuutta käyttäjäkohderyhmään
+	- kenties tylsää enemmän grafiikkatilasta pitäville
+	- vaatii kohtalaista strukturaalista päätöksentekokykyä
+	- vaatii välttävää struktuurin tuntemusta
+
+0x0023:	Saven viemän tilan pienentäminen
+
+	Perusremontti: mustien muistikuvien karsiminen, laajuus 1 (DONE: Timo)
+	+ helppoa
+
+	Lisäparannus: kompressio, laajuus 2 (SUOSITUS: Timo ^ Heikki)
+	+ oppimisen nautinto
+	- vaatii pakkausalgoritmien suodattamista netistä
+	- vaatii aivot
+
+0x0024:	Gamman yliajokertainen muistijälki, laajuus 1
+	+ helppoa
+	- vaatii tiedostojenhallinnan tuntemista
+
+0x0025:	Ennerin lyöntialgoritmin asetus riippuvaiseksi voimasta, laajuus 1 (DONE: Timo)
+	+ helppoa
+
+0x0026:	Bulimian prohibitio rankaisumenetelmiä kehittämällä, laajuus 1 (DONE: Perttu)
+	+ äärimmäisen helppoa
+
+0x0027:	Monsujen ovienavauksien verbaalinen ilmaisu, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x0028:	Esineporttikielto Pertun jalkojen väliin, laajuus 1 (DONE: Heikki)
+	+ äärimmäisen helppoa
+
+0x0029:	Monsujen nostamisvietin rationalisoiminen
+
+	Vaihtoehto 1: painon mukaan, laajuus 1 (DONE: Heikki)
+	+ helppoa
+	- melko aivoton tapa toteuttaa työ
+
+	Vaihtoehto 2: käyttökelpoisuuden mukaan, laajuus 2 (DONE: Heikki)
+	+ ominaisuutena varsin hieno
+	- kunnollinen toteutus vaatii jonkinnäköiset aivot
+	- vaatii jonkinnäköistä strukturaalista päätöksentekokykyä
+
+0x002A:	Pertun egoismin lieventäminen, laajuus 1 (DONE: Heikki)
+	+ varsin hauskaa
+	- vaatii jonkinnäköiset aivot
+	- vaatii välttävää struktuurin tuntemusta
+
+0x002B:	Luolaston laajennus uusien tasoporausten avulla, laajuus 1 (DONE: Heikki)
+	+ perustaltaan äärimmäisen helppo työ
+	+ voidaan tehdä haastavaksikin lisäämällä ominaisuuksia
+	  uusille leveleille
+
+0x002C:	Expotuksen estokeinot ja tarpeen vähentäminen, laajuus ?
+	- keinot vielä osittain epäselvät
+	+ ehdotuksia:
+	  * monsujen tason jatkuva vaikeutuminen (D/0x0003)
+	  * epäfataali korruptio
+	  * Elpurin tasokorjaus ja pelin helpotus yleensä
+
+0x002D:	Gamman softa-alternatiivin additio, laajuus 1 (DONE: Timo)
+	+ high priority
+	- vaatii FeVesan rajapinnan tuntemusta
+	- vaatii jonkinnäköistä struktuurin tuntemusta
+
+0x002E:	Golemien materiaalibonukset, laajuus 1 (DONE: Heikki)
+	+ pelillisesti mitä mukavin ominaisuus
+	- vaatii välttävää struktuurin tuntemusta
+
+0x002F:	Eri resoluutiot, laajuus 1 (SUOSITUS: Timo ^ Heikki)
+	+ työ tulee hetki hetkeltä vaikeammaksi, eli syytä tehdä kohtuu pian
+	- osa työstä aivotonta rutiinia
+	- osa vaatii jonkin verran syntaksiperehtyneisyyttä (ohjelma-argumentit alkuun)
+
+0x0030:	Hyypälle kasvamaan Parta pelin aikana, laajuus 1, vaatimus B/0x0009 (PROHIBITIO: Timo)
+	+ helppoa ja guruudessaan mieltäylentävää työtä
+	- vaatii hitusen struktuurin tuntemusta
+
+0x0031:	Pelaajan nimeäminen, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x0032:	Epäekvivalentit tallennusidentifikaattorit, laajuus 1, vaatimus D/0x0031 (DONE: Timo?)
+	+ helppoa
+
+0x0033:	Constant save (debug), laajuus 1 (DONE, Timo)
+	+ helppoa
+
+0x0034:	Crash save (debug), laajuus 1 (SUOSITUS: Timo)
+	± toimintaan saattaminen vaatii mitä guruimpia kikkoja
+	- vaatii hyvää FEEL:in tuntemusta
+
+0x0035:	Identify ja oheistyöt, laajuus 2 (SUOSITUS: Heikki)
+	- vaatii luultavasti rutiinityötä luokkien parissa
+	- vaatii jonkinnäköistä strukturaalista päätöksentekokykyä
+
+0x0036:	Toivominen, laajuus 1-2 (SUOSITUS: Heikki)
+	+ high priority niin pian kuin mahdollista
+	- mutta se ei ole vielä sitä
+	- laajuus ei aivan varma tässä vaiheessa, riippuu koodiparannuksista
+
+<--- E: Bugikorjaukset --->
+
+Näkyvää ja helpompaa kuin ominaisuuksien lisäys,
+lukuunottamatta harvinaisempia tapauksia,
+jossa kaikki on kirjoitettava uusiksi.
+Sopii niille, joille projektin keskipitkän
+tähtäimen kehitys on tärkeintä.
+
+0x0000:	Itsemurhakoodin korjaus (esim. hungerin alta), laajuus 2 (DONE: Timo)
+	- vaatii kattavia muutoksia kuolemisen toteutustapoihin
+	- vaatii strukturaalista päätöksentekokykyä
+
+0x0001:	Pertun tientukkimisbugin korjaus, laajuus 1, vaatimus B/0x0006 (!EXISTED)
+	+ helppoa
+	- low priority; bugi on lähinnä teoreettinen mahdollisuus
+       (+ mutta Murphyn laki on aina pidettävä mielessä...)
+
+0x0002:	Gear-objektien consume-bugin fiksaus, laajuus 1 (DONE: Perttu)
+	+ helppoa
+
+0x0003:	Päällepukemisen rajoittamattomuusongelman korjaus, laajuus 1 (DONE: Heikki)
+	+ helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+
+0x0004:	Kineettisen eliminoinnin probleemien deletointi, laajuus 1 (DONE: Timo)
+	+ luultavasti helppoa
+
+0x0005:	Ylikuormitetun teleportaation mahdollistaminen, laajuus 1 (DONE: Heikki)
+	+ helppoa
+
+0x0006:	Pertun kursoribugin poistaminen, laajuus 1 (DONE: Tuukka)
+	+ helppoa
+	- vaatii kuvakäsittelyohjelman avaamisen
+
+0x0007:	Billin mielten verenvuodon tukahduttaminen, laajuus 1 (DONE: Heikki)
+	+ helppoa
+	- vaatii hitusen strukturaalista päätöksentekokykyä
+
+<--- F: Grafiikka --->
+
+Näkyvää, tosin integraation tasosta riippuen.
+Sopii taiteellisesti lahjakkaille.
+
+0x0000:	Itemkuvia lisää, laajuus 1 (DONE: Tuukka)
+	Tällä hetkellä listalla: lihaa ja luuta
+	+ Ivan loves work, riippumatta mistään plussista ja miinuksista
+
+0x0001:	Monsukuvia lisää, laajuus 1 (DONE: Tuukka)
+	Tällä hetkellä listalla: golemit
+	+ sama kuin yllä
+
+0x0002:	Human.pcx:ään lisää armor- ja asekuvia, laajuus 1 (DONE: Tuukka)
+	Tällä hetkellä listalla: kaikki mikä puuttuu :)
+	+ sama kuin yllä
+
+0x0003:	DGRAY/LGRAY-ongelman korjaus item.pcx:ssä, laajuus 1 (DONE: Tuukka)
+	+ sama kuin yllä
+
+<--- G: Suunnittelu --->
+
+Ei vaadi välttämätöntä koodaustaitoa.
+Usein leppoisampaa kuin raakaa logiikkaa
+vaativa koodaus, mutta tietyssä pisteessä
+menee tylsähköksi rutiiniksi.
+Sopii luoville persoonille.
+
+0x0000:	Kattavan monsterilistan väsääminen, laajuus 2 (DONE: Niko)
+	+ helppoa, suurimman osanhan voi kopioida muualta
+	- kattavuus ja geneerisyys on syytä säilyttää; huumorille ei juuri sijaa
+
+<--- H: Edukaatio --->
+
+Sosiaalista ja hyvin kauskatseista toimintaa.
+Sopii ilmaisutaitoisille.
+
+0x0000:	Ohjelmointitaidon iskostaminen Graafikon cortexiin, laajuus 5 (TYÖN ALLA: Heikki)
+	+ helpottaa tulevaa työtä, ehkä
+	+ opettaja voi hoitaa muita töitä pupillin väsätessä harjoitustehtäviä
+	+ osa opiskelusta voidaan toteuttaa itse- tai etäopiskeluna
+	- vaatii paljon aikaa ja määrätöntä kärsivällisyyttä
+
+<--- I: Dokumentaatio --->
+
+Vaatii dokumentoitavan kohteen syvällistä tuntemusta,
+ja sitoutumista työn päivittämiseen tarpeen niin vaatiessa.
+Sopii erityisesti äidinkilen taitoisile.
+
+0x0000:	Koodin kaikenkattava dokumentointi, laajuus 4 (VARATTU: Timo)
+	+ oiva tilaisuus kirjoittaa mahdollisimman gurua ja epäselvää tekstiä
+	+ high priority, mikäli halutaan kunnollisia lisäohjelmoijia tiimiin
+	- paljon työtä, osa aivotonta sellaista
+	- vaatii struktuurin ja toiminnan läpikotaisin tuntemista
+
+0x0001:	Työlistan suomentaminen, laajuus 1 (PROHIBITIO: Heikki)
+	+ helpottaa työskentelyä tulevaisuudessa
+	- mitä ikävin työ; suorastaan huvinpilausta

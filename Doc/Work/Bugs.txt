@@ -1,0 +1,108 @@
+* high priority
+// fixed
+/ partly fixed or needs still testing
+(r) rejected
+(s) suspended
+(?) not understandable
+(initials +/-) reserved for the following coder, plusses or minuses indicate priority
+
+(s) Alt+Enter twice.
+(s) Alt+Enter in config screen.
+(s) The White Screen Bug.
+(s) Wishing for corpse or any bodypart in WMode crashes.
+(s) One cannot eat a can MADE of bananaflesh.
+Entering a dungeon and loading an autosave saves some time.
+(s) Bear trap in shop.
+(s) "Valpurus shall not carry more continents!"
+(s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
+(s) Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
+/Putting mines in Attnam is considered OK by guards.
+(s) Wielded items can't be eaten.
+(s) Throwing a potion of water at a wall in a shop makes the guards hostile.
+(s) If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.
+(s) The head of Ivan is left in bone levels.
+(s) Kamikaze dwarves die smiling even if headless.
+(s) Odd pentagram missing bug.
+(s) A puppy can polymorph into a puppy.
+(s) Do new bodyparts of player clones work properly? (no)
+Healing liquid penetrates chests.
+"You manage to hurt your left leg even more" (even though leg is not hurt)
+(s) While in read-mode player can find mines.
+Trying to resurrect a headless player of a bonefile when his ghost is the only light source doesn't
+ give the right message since the soul is temporarily sucked into the corpse and everything is dark.
+ Should this be so?
+AOGH can be abused.
+Border tiles aren't shown in the dark.
+Vladimir doesn't destroy walls on the turn when it is created.
+Mirage puppies.
+(s) Still some problems with bad edge tiles.
+If the whole level is full of monsters, the game won't work correctly.
+/ Better gentoo packages. No root should be needed.
+Petrus's AI goes rather insane (he just runs around his throne) if he is severely wounded.
+Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
+(hs) Golems can be poisoned at least by poison covered weapons.
+It seems to be possible to occasionally find traps by saveloading next to them.
+If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.
+If you hit someone with one hand and either one of you teleports, you can still hit the opponent with the other hand.
+(s) Border tile bug.
+Mirror + WorldMap.
+You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
+(d) "The kobold glows and transforms into an invisible stalker."
+Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
+"There is many items on the wall"
+Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
+Funny colors with dexterity etc when going to change equipment and then pressing esc.
+MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
+Light sources in glass chests don't work correctly.
+Digging walls with lanterns doesn't update memorized etc. correctly.
+//(hs) Shopkeepers/librarians can buy items even if unconsciouss.
+If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
+//(hs) You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
+One has no way to use stairs covered by sticky slime.
+//Typo in GPL notice
+(hs) Tailor doesn't fix straight from equipment
+//Spider corpses are not poisonous.
+Charmed guards often block hallways when guarding them and the player who can't displace them has to dig a path around them.
+Small chest X fits in small chest Y, even though Y fits in X as well.
+The patrol guard's AI works oddly if the player rests on one of his waypoints for a long time.
+(hs) Scroll of golem creation destroys chest contents.
+Danger sensed when a bunny panics.
+I think these might be a problem in bonefile names which could cause the eleventh+ bone of GC11/12 to appear in place of GC2.
+Do you get strength bonus for digging?
+(this problem verified only with windows version) Alt+tab then return to program and alt-enter screws things up.
+(hs) Should picking up items from chests require one useable hand?
+I think there *might* be a screen update problem when a non-animated monster, for instance a kobold, chokes itself in a spider web (the 'Z' symbol may not appear immediately).
+Changing resolutions, visiting programs that take control of the whole screen, etc. can sometimes cause IVAN's graphics system not to be able to open the window again, or fail to show anything on it.
+Earthquake always drops morraine, even though it may be incorrect in the respective level.
+No real need to correct this, but I'll mention because it's a bit funny: if a 1x1 water tile is surrounded by a massive continent in the world map, lookmode still shows "You see here ocean." as its description.
+"You feel very ill. Your right arm drops to the ground." while flying over an ocean.
+Blood on the floor, door closed -> blood on the door.
+Plants can vomit.
+Odd font graphics bug in gentoo.
+Several archangels with the same name can be generated.
+Several artifact weapons with the same name can be generated.
+Check: does Ivan break doors correctly?
+"Weak kick has no chance to affect door" even if the door is sometimes affected by a second kick.
+Earthquakes drop moraine in the level even if it's inappropriate.
+Check that detecting gunpowder works.
+ESC should undo material detection etc.
+Lumps of glass are considered food.
+"the corpse of dark frog is too important for you to sacrifice"
+Cloak and armor shouldn't protect from broken bottles. (from Ighalli)
+You can bite with an unusable head.
+Petrus says that they have witnessed you leaving the tunnel even if you got here by means of levitation. (from Z)
+Crash : During the reading of a scroll of repair. See forum.
+(hs) Leprosy + cathedral bug.
+(hs) Mines do not disappear in the cathedral.
+10000/100 HP bug.
+If you try to open a (closed) chest that stands on the place of open door, the game calls you idiot for no reason.
+Floating eyes can vomit.
+Selling activated holy grenades should be handled.
+The script seems not to accept '§' character.
+//Patheon book of Mellis etc.
+The Static Whore Insects of the Unholy Solar Eclipse.
+The Ultra-Difficult Hell-Freezing Death Exception Bug.
+Glittering slaves.
+Since "fainting" is a proportional alertion state of stamina, great increases in stamina may trigger it. Ie. wearing an AoGH may cause you to become fainting, although probably not to actually faint.
+"The levitating ostrich begins to float."
+There may be some bug in the full screen mode activation.

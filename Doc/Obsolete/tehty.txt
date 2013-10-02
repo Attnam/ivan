@@ -1,0 +1,25 @@
+A: ikkunan siirtoon, pienentämiseen, piilottamiseen ja sulkemiseen liittyvät ongelmat korjattu
+B: fullscreenin db-ongelmat korjattu
+C: saven viemää aikaa pienennetty rajusti, joskaan ei ihan tarpeeksi :(
+D: koodinparantelua viety eteenpäin: characterien ja itemien lisäys tarvitsee nyt tehdä vain *yhdessä* paikassa
+E: pcx-laturi tehty ja kuvat konvertoitu ko. formaattiin
+F: värisysteemi uusittu (vanha oli turhan monimutkainen)
+G: Kouluruokajumala- ja Inasmus-abuset tukittu
+H: Moninkertaisiin kuolemiin liittyvät bugit korjattu
+
+I: lisätty in-game näyttömoodin vaihto (näppäimestä F4)
+J: soft-gammaan liittyvät bugit korjattu
+K: lisätty paljon pisteitä messageihin, joiden lopusta moinen uupui
+L: korjattu oksennuksessa ollut messagebugi
+M: poistettu toinen receivehiteffect-systeemi (niitä oli jostain syystä kaksi (?))
+
+N: RememberedItemssiin liittyvät bugit korjattu
+O: LevelMsg:ihin liittyvät bugit korjattu
+P: poistettu uudempi prototyyppijärjestelmätesti, joka olisi selvästi vaikeuttanut koodaamistasi
+Q: korjattu bugi funktiossa game::TriggerQuestForMaakotkaShirt()
+R: korjattu bugi, joka salli lamppujen kiinnittymisen aukinaisiin oviin
+
+S: ikkunan pyyhkimisbugi korjattu
+
+T: SoW integroitu
+U: saven viemää tilaa pienennetty tarpeeksi

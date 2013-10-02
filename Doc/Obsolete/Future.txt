@@ -1,0 +1,34 @@
+Future plans:
+
+Version 0.301 alpha
+Release time: within some weeks
+
+Goals:
+
+-bugfixes
+-balancing issues
+-ergonomic modifications
+-DOS port (could be left to 0.31a if too difficult)
+-some in-code documentation
+
+Version 0.31 alpha
+Release time: before the end of the std::year
+
+Goals:
+
+-many new items and monsters
+-block AI system
+-renewed god system
+-fixing the Great Surface Destruction Bug by remaking FeDX
+-a second city that will act as a haven for chaotics
+-completely comprehensive in-code documentation
+
+Version 0.32 alpha
+Release time: winter 2002
+
+Goals:
+
+-identify system
+-genetic algorithms
+-magic system
+-random towns and dungeons (perhaps even *very* simple quests?)

@@ -1,0 +1,15 @@
+Every version must henceforth include one new feature
+from every one of these categories:
+
+fountain effects
+banana jokes
+special monsters
+special items
+special materials
+Monty Python jokes
+insults
+diseases
+
+every other version is ok for these:
+traps
+states other than diseases

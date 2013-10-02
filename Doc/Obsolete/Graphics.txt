@@ -1,0 +1,52 @@
+hp - high priority
+lp - low priority
+// - done
+(r) - rejected
+
+//Stethoscope. (hp)
+(r) Village Elder.
+//Thief.
+//Black Mage.
+//Grave digger.
+//Short sword + broken picture.
+//Dagger + broken picture.
+(r) Halberd + broken picture.
+//Hammer and sickle + broken pictures.
+//Broken shield.
+//Morning star + broken picture.
+//Flail + broken picture.
+//Quarterstaff + broken picture.
+//Battle axe + broken picture.
+//Scythe + broken picture.
+//Bastard sword + broken picture.
+//Skull.
+//Elpuri's head is of wrong color.
+//Broken chain mail.
+//Jackals on gravel floor.
+//Ring of teleportation + gravel floor.
+//Smith.
+//Anvil. (lp)
+//Levitating ostrich.
+//M-color for boots. (hp)
+//Animation for mommos.
+//Teleport.
+//Golden Eagle Shirt's animation is really gay.
+//Better helmet.
+//Ring of poison resistance, triangular key on a gravel floor.
+//Corpse of a black unicorn looks odd.
+//Iron dagger on a gravel floor.
+//Floating eye.
+//Bunny, large bunny and mega-large bunny.
+//Inhandspics of broken weapons. (lp)
+//Visible invisible stalker.
+//Vacuum cleaner.
+//Lada.
+//Web.
+
+//Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
+//Small, medium and large chests (one is probably already done...)
+//The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
+//Keys are hardly visible on wooden parquet
+//Broken axe is nearly invisible on gravel floor
+//Steel halberd on a gravel floor.
+//Steel scimitar on a gravel ground.

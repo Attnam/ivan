@@ -1,0 +1,516 @@
+------------------------------------------------------------------------------------
+
+>>> NOTICE!!! <<<
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+------------------------------------------------------------------------------------
+
+May 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a minor bug in the bodypart mutation code
+	* README, NEWS and INSTALL updated
+
+May 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Decreased old walls' HPs by 40%, so that the steel vault is easier to open
+	  with explosives
+	* Corrected a bug that caused the player to die on the first turn if he had
+	  starved in the world map at the end of the previous game
+	* Weaponskills now don't care whether the weapon is poisoned or not
+	* "X looks very agile." etc. messages are now only shown for pets (they were
+	  annoying for instance in Attnam)
+	* Ivan is now a lot tougher
+	* Forbade the Grisly Game-Reaping Abuse of Arbitrary Brain Weight
+	* The final battle against Petrus is now much more difficult
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Cloaks break less often now
+	* Ghosts are no longer normally generated
+	* Corrected a strange bug concerning partly eaten bodyparts
+	* Fixed a small bug in the original bodypart id code
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Reduced global difficulty values by 5-10 danger points
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the reload datafiles command which made it useless
+	* The locks of the cathedral have been changed, and the master guard holds the
+	  only key
+	* The secret equipment room of Attnam now contains more powerful items, if
+	  someone wants to steal them
+	* Removed a test in wskill.cpp which I had totally forgotten and which looked
+	  like a symptom of a really horrible bug
+	* Gravel is now somewhat brighter so steel weapons items are easier to see
+	* Adjusted various rings' materials so that they are more visible on gravel and
+	  marble floors
+	* Items on lower levels are now somewhat more valuable (the difference is not
+	  great since I don't want to ruin game balance now)
+	* Corrected a bug in the sizes of broken items generated on the ground that
+	  most likely had existed since v0.40
+	* Magical mushrooms teleport a little less often now
+	* Thunder hammer is bit less überpowerful now
+	* Bonefiles are loaded less often now
+
+May 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added possibility loafs by 25 % to improve the food situation.
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bonefiles aren't now *always* generated when it's possible
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a minor bug in the whip of thievery code
+	* Lowered orcs' danger modifier from 100 to 75
+	* Reduced NPC exp by 50% (it was a *bit* too high)
+
+May 9 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Primary and secondary wielded are highlighted in '@' menu
+	* Msg for no zappable items when zapping works now.
+	* New insults
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Magical whistle now teleports only up to 10 monsters
+	* NPC:s now get four times more exp
+	* All team members now follow from (New) Attnam if the town isn't hostile
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bill's wills' psi waves and ghosts' touches no longer damage armor
+	* Bill's wills are now immune to gas and can walk through walls
+	* Petrus now wears a cloak of electricity resistance and is intrinsically
+	  energy resistant
+	* Adjusted mages' inventories a little
+	* Healing now consumes NP
+
+May 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Banana growers no longer attack people 'g'oing on the landing platform
+	* Highscore now shows only 40 entries per page, to prevent felist crossing
+	  the screen borders
+	* Corrected a bug that allowed unarmed attackers to hit a floating eye with
+	  another arm even if they had been fainted
+	* Golems' bodyparts and corpses now vanish, because they were too expensive
+	* Gods are now more demanding
+
+May 8 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Action is terminated when life is saved
+
+May 8 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Go command stops when entering or leaving rooms
+	* Explosions don't destroy the edge tiles anymore.
+
+May 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Getting killed by an own thunder hammer or Turox now gives a unique message
+	* A voluntary action is now terminated if a mage attacks from long range
+	* Corrected a bug that caused bone to spoil way too fast
+
+May 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Documented 1 idea and 1 bug
+
+May 6 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Biting monsters now capture the severed bodyparts of the enemy
+	* Eddies are no longer charmable as this could be abused
+	* Corrected a small bug in the square memorized descriptions
+	* Cloned weapon accustomizations are now separated, so that using two
+	  cloned items doesn't increase one common sweaponskill but two
+	  (this was unbelievably difficult, so there might be obscure bugs)
+	* Cloaks now *really* can break
+	* Corrected a small bug concerning the handling of special monsters during
+	  bonefile creation
+	* Version updated to 0.420
+	* Removed lots of debug tests
+	* Corrected a fatal bug in the door booby trap code that occurred often
+	  after earthquakes
+	* The enner beast is now a little less insane
+	* Doubled the time bone needs to spoil
+
+May 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Hands no longer tingle when praying to Loricatus handless
+	* Monsters don't walk to smoke for fun
+	* Sickle and scythe are better with plants than other items
+
+May 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added version information to bone files
+	* Broken and intact war hammers, a torn cloak and a vacuum cleaner added to
+	  item.pcx by Kahvi
+	* Broken and intact war hammer wielded pictures added to humanoid.pcx by me
+	* Added hammer item (worse than war hammer)
+	* Ikiros now uses a normal hammer instead of war hammer
+	* Cloaks can now break
+	* Broken cloaks' and flexible armors' adjectives changed from "broken" to
+	  "torn"
+	* Broken items now have unique material configurations, which are usually
+	  much better than intact items'; this might make repairing techniques more
+	  important
+
+May 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Divided wood to the following materials: balsa, pine, fir, birch, oak, teak
+	  and ebony
+	* All walls in New Attnam and in the underwater tunnel are now made of balsa,
+	  and fir dominates the northern architecture
+	* Arcanite's density reduced from 4000 to 800 g/cm^3 to make it suitable for
+	  staves
+	* Added octiron, which is a light but extremely hard staff material
+	* Added staff of wondrous smells
+	* The dark archmage is no longer burdened
+	* Added cloaks of fire and electricity resistances
+	* Corrected a bug that allowed bonefiles to to be generated in levels where
+	  the player had already been
+	* Thunder hammer was perhaps little too good, so I increased its lightnings'
+	  range to 4, so that it will hit the player in some circumstances, which are
+	  however always easily recognisable and avoidable
+
+May 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a truly horrible bug in the sparkle position randomization code
+	  that only appeared when compiled with gcc
+	* Monster equipment choosing code now doesn't update pictures, lights, memorized
+	  bitmaps, descriptions and ground stack's weight and volume if the gear doesn't
+	  actually change -> suberb speed increase to monster equipping AI
+
+May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Fixed a few bugs added in the last commit
+	* Squashed a minor bug that caused messages to be concatenated oddly for some
+	  turns after the player had died and started immediately a new game
+	* Deleted a fatal bug that allowed polymorphed monsters to crash during the
+	  creation of bone files
+	* Object graphic creation system optimized yet more
+
+May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* colorbit.cpp and allocate.h are now cleaner
+	* Inline functions inside the material colorization routines have been
+	  expanded to increase non-optimized binary speed
+	* Corrected the Mischievous Memory Leak of Forbidden Knowledge
+	* Corrected the Sinister Memory Leak of Planetary Oblivion
+	* Corrected the Malign Memory Leak of Forgotten History
+	* Corrected the Perverse Memory Leak of Spiritual Weapon Skills
+	* Corrected the Ugly Memory Leak of Many Names
+	* Corrected the Nasty Memory Leak of Twisted Dungeons
+	* Corrected the Terrible Memory Leak of Sliced Sentences
+	* Decreased the RAM usage of IVAN by 1-2 megs by storing a tilemap iterator
+	  array in objects instead of graphicids
+	* Corrected a shameful bug in festring's loading routine
+	* Configuration indices are now stored in databases instead of objects
+	* Reload datafiles WMode command works again
+	* Fixed the Notorious Mirage Puppy Spawning Error
+	* Some graphic routine optimization
+	* Resurrected creatures no longer change team if they aren't charmable
+	* Invisible stalkers are now tougher
+	* Removed a fatal bug in the explosion code which occured if a monster
+	  polymorphed during an explosion
+	* Eliminated a fatal and extremely rare bug in zombie::SevereBodyPart()
+	* Added new material database booleans UseMaterialAttributes and
+	  CanRegenerate, whose effects are no longer determined by IsAlive();
+	  this removes numerous illogicalities like poisoned ghosts etc.
+	* Corrected a rare bug that allowed very chaotic and complex series of
+	  wand explosions to change the team of the player
+
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Wielded items can be zapped
+
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Fainted monsters no longer talk
+	
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Skeletons and other monster made from cold materials do not show in infravision
+
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bug in bodypart::SpillBlood(ushort) squashed
+	
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added invisible stalker
+	* Bone files work in Linux
+	
+April 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Slight improvements to makefiles
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Golems can now read
+	* Death message now shows if the player is polymorphed
+	* Flying items are no longer slowed by code if they can't be seen, which
+	  makes AI battles faster
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Ghosts with >= 100 HPs can no longer be polymorphed
+	* Carrots' weights and NP values are now more realistic
+	* Carrot flesh plate mails are no longer allowed since eating them gave 10
+	  perception
+	* Metal bodyparts are now resurrected correctly
+	* Potions shattering inside damaged chests now give a message
+	* Lanterns' weight decreased to 1 kg
+	* Stethoscope is again useless
+	* The player can no longer talk if he is a golem
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Vomiting on the altar of Valpurus in Attnam is now punished with death
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Ghosts now ignore sound damage
+	* Cloning a monster along with a stack now reduces the amount of copied items
+	  by one
+	* Corrected two small bugs in the lookmode code
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* BusyAnimations are now cached
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bonefiles are now working
+	* Mellis now changes 10 items instead of 5
+	* Replaced many Id-ending terms with *ID
+	* Corrected yet another many bugs in the bear trap code
+	* Panicked monsters no longer start eating or equipping things
+	* Resurrected creatures now always become members of the raiser's team
+	* Added Possess WMode command ('{') which allows one to control monsters
+	* Cloned items now share accustomizations of their mothers
+	* Accustomizations are now dependent on weight
+	* Corrected the Dreadful Crash of Forgetful Amateur Weapon Swingers
+	* The danger system is now a little more sane when throwing unique monsters
+	  at the player
+	* Stethoscope info now shows states and a verbal description of danger
+	* Corrected a minor problem in the block messages of invisible enemies
+	* Shop and elite guards and the master guard are now more powerful, because
+	  killing them was too easy a way to get excellent equipment
+	* Adjusted certain unique monsters' equipment
+	* Resting with the 'h'eal command is now twice as fast, to balance the fact
+	  that it yields no exp bonuses, like for instance 'g'o
+	* If the player can't heal more, rest asks how many turns to wait
+	* Corrected a small bug in ghosts' and bill's wills' hit messages
+	* The enner beast is now tougher on long range, like in good old times
+	* Lanterns' weight decreased from 2500 to 1500 grams
+	* Shields are now better
+	* Inline functions inside critical blit loops of bitmap.cpp have been
+	  converted to ugly macros which are enormously faster if optimizations
+	  are disabled
+
+April 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Hyper new great (even greater than great actually) feature: NOW COMPILES!
+
+April 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Fixing not alive bodyparts with scroll of repair is now possible
+	* Only monsters that can read can read engraved messages
+
+April 23 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	
+	* Now compiles in Linux. (some problems with festring)
+	* Engraved messages can be viewed in LookMode.
+	* Low dexterity characters can get caught in setting bear traps
+	* Cloning elpuri's head abuse prohibited
+	* Golems now engrave and don't chat
+	* Mellis gives just new bottles, that can be filled with other materials than ommel urine and banana flesh too.
+
+April 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Silva's boulders now destroy neither altars, stairs nor any other important
+	  terrain
+	* Eddies no longer spit couches over irreplacable terrain
+	* Decreased the HP requirement of every mage by 100 since they were so rare;
+	  this change's effect must be tested carefully in game
+	* Corpses made of precious materials now sparkle
+	* Removed the insult for pressing an unrecognized key
+	* Kicking now uses a random leg so that both legs are trained
+	* Hit order using two weapons or fists is now unpredictable
+	* Fixed a rounding error that freezed leg strength when burdened and doubled
+	  agility exp minus
+	* Hitting or blocking with a two-handed weapon now gives strength exp to both
+	  arms
+	* Reduced exp gained in battle to counterbalance these changes
+	* Being satiated (and not moving) again reduces agility exp; I don't know
+	  if this makes agility too difficult to train, but let's test it
+	* Nonhumanoids now gain strength exp from biting
+	* Kicking now gives no exp if there is no character in the kicked square,
+	  since this could be abused
+	* Added many new material configs for thunder hammers
+	* The holy banana of Oily Orpiv is now more accurate, does greater damage,
+	  burns enemies, shoots fireballs when zapped (that's "oily" after all)
+	  and explodes with the power of an atomic bomb when damaged, making it a
+	  fierce weapon of mass destruction
+	* The holy banana now emits bright light
+	* The holy banana now greatly trains all attributes when eaten
+	* Broken shield's wielded picture added to humanoid.pcx by Kahvi and
+	  later integrated
+	* Visible invisible stalker added to char.pcx by Kahvi
+
+April 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug that prevented floating eye avoiding AI from working
+	* Increased the difficulty penalty for being invisible by 25%
+	* Decreased the time needed to read a scroll of teleportation by 75%
+	* Decreased the range of thunder hammer's lightnings from 10 to 3 so they
+	  cannot hit the user (well, unless he is fighting a ghost inside a wall)
+	* Difficulty now cannot decrease even if the player becomes lousier than
+	  before, since this could be abused by running naked around locked rooms
+	  to cheat the monster generation code
+	* Quickdeath prevention system no longer affects unique monsters, and
+	  their danger modifiers have been decreased; these changes seem to make
+	  them appear roughly in the right time
+	* Added several new material configs for armors
+
+April 18 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Carrots now look better
+	* A wielded item is now animated if the original item is (ie. it is glittering,
+	  spoiled, outlined, flaming or shooting lightnings)
+	* Golems made of precious metals now sparkle, as do elite guards' and Haedlac's
+	  armor and the goblin king's crown
+	* Shining armor now sparkles on the game screen if worn by the player
+	* The player's head looks correct if he wears the Gorovits family gas mask
+
+April 16 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected many bugs in the bear trap code
+	* Slaves no longer carry encrypted scrolls
+	* Wielded items are again shown on the game screen
+
+April 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Arms are again shown correctly on the game screen
+	* Replaced std::string with festring, which is about twice as fast, compiles
+	  faster and doesn't crash randomly when compiled with VC++ 5.0
+	* Bill's wills and ghosts are no longer überpowerful in the DOS port
+	* Greater carnivorous plants are now tougher
+	* Key names again work correctly
+	* Magpies are now more intelligent
+
+April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added carrots
+
+April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Carrot added to item.pcx by Kahvi
+	* Broken InHandsPics and head with gas mask added to humanoid.pcx by Kahvi
+
+April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Automatic start pet naming works now. And I'm not kidding.
+
+April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Automatic start pet naming works now
+	
+April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Certain function added to hscore.cpp for Mihail
+	
+April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Setting the pet default name is now possible from conf
+	* This default is initialized to Kenny
+	* Puppies now have more replies
+
+April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Extremely powerful kickers like adamant golems can now kick down walls
+	* It is now possible to break lanterns on walls by kicking them
+	* The faster monster now gets a 25% bonus when calculating relative danger,
+	  since it can potentially flee from the battle
+	* Remade database.cpp
+	* Converted a lot of std::strings to const char*s in places where it decreased
+	  compile time
+	* Removed the ShowBattleInfo command which was nearly useless and took months
+	  to compile
+	* Compile time (full optimization) decreased by about 30-40%
+	* The game maybe compiles on machines with a lot less memory now
+	* Added WIZARD define without which wizard-mode commands are not compiled
+	* You can now feel walls around you even if you don't see them
+
+April 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Version updated to 0.411
+	* SeeWholeMapCheat is now more versatile
+	* Corrected a bug that prevented doors to be created on the right and left sides
+	  of a room, so they appeared only on the top and bottom (it's quite interesting
+	  that no one ever noticed)
+	* Fixed a strange bug that caused lanterns to be generated inside the walls of
+	  the starting room
+	* If less than four items are on the ground, stepping on them says "A few items
+	  are lying here" instead of "several"
+	* State information is again better categorized and documented
+	* Again corrected a bug in the messages after teleport (alas, this slowed down
+	  the game...)
+
+April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Docs have been cleaned up a bit
+	* _Lots_ of ideas added
+	* Value plan updated
+
+April 2 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* CanApply value added for monsters
+	* Werewolves' KillMessage corrected
+	* Go command no longer walks through smoke
+	* Probably something completely different...
+
+April 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a small abusable bug in the monster AI
+	* "Collected conversations of Ivan Gorovits and the Leader of Citizens" added
+	  to Doc/Data
+
+March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Severed bodyparts of humans look again correct
+	* The dificulty penalty for being invisible is now insane
+	* Wishing invisiblity-confering items is again allowed
+	* Reduced the penalty for eating frog flesh (it was worse than committing
+	  suicide)
+	* Bunny, large bunny and Vladimir (Vile Lurking Agressive Devourer with Infernal
+	  Muscles Intended to Rampage) the gigantic carnivorous mutant bunny added to
+	  char.pcx by Kahvi
+	* The game now compiles correctly on gcc 2.952 without special switches
+
+March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Gauntlet armor pictures are again shown correctly
+
+March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* State data has been structuralized to make it more readable
+	* Magical vapour no longer activates lycanthropy, I think
+
+March 30 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the banana growers' former profession system
+	* Fixed the "Overgrowth of square population!" error of Attnam
+	* Corrected a minor bug in the wand of door creation and earthquake codes
+	* Destroying or polymorphing items or using a wand of door creation in shops and
+	  in the Cathedral is now prohibited
+	* Kicking shop doors doesn't make shopkeepers mad anymore if you don't actually
+	  damage them
+	* Polymorphing the altar in Attnam no longer changes the divine owner of the
+	  whole Cathedral and make the priest say "Not currently implemented."
+	* The banana grower encourager no longer mutilates the village elder

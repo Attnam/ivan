@@ -1,0 +1,277 @@
+----------------------------------------------------------------------------
+
+	   Fatal Error DirectX Graphics Library (FeDX) documentation
+
+----------------------------------------------------------------------------
+
+Overview:
+---------
+
+Implements the Fatal Error Standard Graphics Interface (FESGI) using
+Microsoft DirectX 8.0a. As FESGI requires, it handles both resolution and
+colordepth changes as well as various bitmap handling routines.
+
+Classes:
+--------
+
+bitmap (bitmap.h)
+-----------------
+
+The basic bitmap structure. Includes all data of the bitmap in a DirectX
+surface, and various functions for its efficient usage.
+
+Functions:
+
+bitmap(const char* FileName)
+
+	Loads contents from specified file and creates a bitmap to hold
+	them. The file must use pcx-style RLE-compression.
+
+bitmap(ushort XSize, ushort YSize)
+
+	Creates a bitmap of specified size. Initial contents are
+	undefined, so you must fill it with data before using.
+
+bitmap(IDirectDrawSurface7* DDSurface)
+
+	Special constructor used only for the DoubleBuffer bitmap in Win32.
+
+~bitmap(void)
+
+	Destroys the bitmap object.
+
+Save(std::ofstream* SaveFile, ushort XPos, ushort YPos, ushort XSize,
+     ushort YSize)
+
+	Saves a rectangle specified by parameters to SaveFile as an
+	uncompressed bytestream.
+
+Load(std::ifstream* SaveFile, ushort XPos, ushort YPos, ushort XSize,
+     ushort YSize)
+
+	The reverse function of the preseding.
+
+Save(std::string FileName)
+
+	Saves the entire bitmap as a dib-format bmp-file.
+
+PutPixel(ushort X, ushort Y, ushort Color)
+
+	Quite self-explaining. Color must be in 16-bit format.
+
+ushort GetPixel(ushort X, ushort Y)
+
+	The reverse function of the preseding.
+
+ClearToColor(ushort Color = 0)
+
+	Fills the entire bitmap surface with the given color, which must
+	be in 16-bit format.
+
+ClearToColor(ushort DestX, ushort DestY, ushort SizeX, ushort SizeY,
+             ushort Color = 0)
+
+	Fills a rectancle bound by the parameters with the given 16b-color.
+
+Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort
+     DestY, ushort Width, ushort Height, uchar Flags = 0)
+
+	A bit block transfering procedure, which copies a source rectancle
+	from this to Bitmap. If Flags is zero, all pixels are overwritten
+	with their exact counterparts of the source. Otherwise if the
+	MIRROR (1) flag is set, the bitmap is mirrored (flipped over the
+	Y-axis), if FLIP (2) flag is set, it is flipped (over the X-axis),
+	if ROTATE_90 (4) flag is set, it is rotated by 90 degrees
+	clockwise. The Flags can be mixed in eight different combinations
+	(including zero) as wanted.
+
+	Warning: ensure that borders of both bitmaps are respected, or
+	the application may crash, since there's no clipping. This applies
+	also to all sister Blits.
+
+Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort
+     DestY, ushort Width, ushort Height, ushort Luminance)
+
+	As a luminated variant of the preseding, this function allows
+	lightning effects with the bit block transfer. Luminance must be in
+	the range of 0-511, and it is applied to all pixel color components
+	copied to the destination, according to the following formula:
+	ColorComponent += Luminance - 256. So 256 means the lightning level
+	is average, 0 that there's no light, and 511 is (almost) as brigth
+	as Valpuri Himself. Notice that there's no Flags, and so no
+	mirroring, flipping or rotating is possible with this method.
+
+	Example of usage:
+
+	bitmap Picture("Char.pcx");
+	Picture.Blit(DOUBLEBUFFER, 92, 128, 0, 0, 16, 16, 400);
+	graphics::BlitDBToScreen();
+
+	Result: A highly radioactive-looking Enner Beast is displayed in
+	the top left corner of the display.
+
+MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX,
+           ushort DestY, ushort Width, ushort Height, uchar Flags = 0)
+
+	Same as Blit of same parameters, except that transparent pixels
+	(those of brigth pink color 0xF81F) are not copied. This allows
+	non-rectangular sprites (characters, items etc.) to be displayed
+	on the screen on top of each other.
+
+MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX,
+           ushort DestY, ushort Width, ushort Height, ushort Luminance)
+
+	Same as above, except that Luminance is supported as in the
+	corresponding Blit. Notice that there's no Flags, and so no
+	mirroring, flipping or rotating is possible with this method.
+
+BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort
+         Width, ushort Height)
+BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort
+         Width, ushort Height, ushort Luminance)
+MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY,
+               ushort Width, ushort Height)
+MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY,
+               ushort Width, ushort Height, ushort Luminance)
+
+	All of these are equalent to calling the most similiar blit or
+	maskedblit with DOUBLEBUFFER as the first argument. Note:
+	you shouldn't use these functions anymore. They are provided
+	just for backwards compability.
+
+FastBlit(bitmap* Bitmap)
+
+	Just a raw fast blit to the destination bitmap without any luminance
+	or masking. The destination *must* be of same size, because although
+	FeDX doesn't crash if it isn't, the DOS-port of FESGI, FeVesa, does.
+
+FastMaskedBlit(bitmap* Bitmap)
+
+	Same as above, except that transparent pixels are again ignored.
+
+Printf(bitmap* Font, ushort X, ushort Y, const char* Format, ...)
+
+	Prints text to *this* bitmap, using Font as the font bitmap.
+	Font bitmap is a 246x216x16-bitmap containing ASCII-codes 32-255
+	as little 8x8-subbitmaps, 16 in every line, with 8 pixels of
+	empty space between each character and same amount between
+	each line. The string printed is generated using Format as
+	printf() does, and placed according to given X & Y coordinates.
+
+	Example of usage:
+
+	bitmap Font("Font.pcx");
+	DOUBLEBUFFER->Printf(&Font, 0, 0, "Oree has taken %d SWAT commandos
+	as gay-slaves.", 8);
+	graphics::BlitDBToScreen();
+
+	Result: "Oree has taken 8 SWAT commandos as gay-slaves." is printed
+	in the upper left corner of the screen.
+
+ReadFromDB(ushort X, ushort Y)
+
+	Obsolete function that copies contents of DOUBLEBUFFER to this.
+
+WriteToDB(ushort X, ushort Y)
+
+	Reverses the preseding.
+
+PrintfToDB(ushort X, ushort Y, const char* Format, ...)
+
+	Just calls DOUBLEBUFFER->Printf(this, X, Y, Format, ...).
+
+Backup(ushort X = 0, ushort Y = 0, bool DestroySurface = true)
+
+	Backups the contents of the DirectX surface into a bytestream
+	and releases the surface if DestroySurface is true. Used only by
+	graphics::SwitchMode().
+
+Restore(ushort X = 0, ushort Y = 0, bool CreateSurface = true)
+
+	Reverses the preseding. CreateSurface must be true if surface is
+	known to be destroyed. Used only by graphics::SwitchMode().
+
+AttachSurface(IDirectDrawSurface7* DDSurface)
+
+	Attaches the given surface to the bitmap. Used only by
+	graphics::SwitchMode().
+
+ushort GetXSize()
+ushort GetYSize()
+
+	Self-explanatory.
+
+CDisplay (ddutil.h) and CSurface (ddutil.h)
+-------------------------------------------
+
+Two wrapper classes copypasted from DirectX SDK samples :) More or less
+temporary, so no documentation is available.
+
+graphics (graphics.h)
+---------------------
+
+A purely static class that contains functions dealing with the doublebuffer
+and screen display mode.
+
+Functions:
+
+Init()
+DeInit()
+
+	Obsolete and do nothing.
+
+SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes,
+        ushort NewYRes, uchar NewColorDepth, bool FullScreen)
+
+	Calls globalwindowhandler::Init() and sets up a new display mode.
+	The first parameter is provided by Windows to WinMain, second
+	by FEEL to Main, so don't lose them if you plan to change modes.
+	Title is the text displayed on top of the window and at the
+	toolbar. Other parameters are self-explanatory.
+
+BlitDBToScreen()
+
+	Blits the DoubleBuffer to the screen surface, effectively to
+	be shown on the monitor display.
+
+ClearDBToColor(ushort Color = 0)
+
+	Just calls DOUBLEBUFFER->ClearToColor(Color);
+
+ClearDBToColor(ushort X, ushort Y, ushort XSize, ushort YSize,
+               ushort Color = 0)
+
+	A more sophisticated variant of the preseding.
+
+UpdateBounds()
+
+	Updates the Window bounds stored in the CDisplay class. Used
+	only by globalwindowhandler::WndProc(), when the window is resized
+	or moved.
+
+SwitchMode()
+
+	Switches between fullscreen and windowed modes.
+
+ushort CXRes(void)
+ushort CYRes(void)
+
+	Return the resolution width and height.
+
+bitmap* GetDoubleBuffer(void)
+
+	Return a pointer to the DoubleBuffer bitmap, which is attached
+	to the BackBuffer DirectX surface. All data must be blitted
+	or otherwise drawn to this bitmap in order to be shown on
+	the screen. This is a common function, so the macro DOUBLEBUFFER
+	is provided to ease usage.
+
+CDisplay* GetDXDisplay(void) { return DXDisplay; }
+
+	Returns the display structure. Used only by bitmap member functions.
+
+----------------------------------------------------------------------------
+
+End of document.
+
+

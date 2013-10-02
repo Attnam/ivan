@@ -1,0 +1,22 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+(r) Lion appearing on first level.
+//Bone helmet is too weak with 1 ap.
+//Banana peels can be abused.
+//Bats should be made more dangerous or easier
+//Snakes are too fast. (normal snakes can all be easily outrun by a human)
+//Halberd requires too much strength (weapons experts opinion).
+//Phoenix feather limbs may be too powerful. (I'm not sure, I just discovered they even are possible to gain)
+//Guy with beginning stats and no equipment in gloomy cave level 2 -> Ur-Khan the orc marshal appears. (I was in WMode, but still...)
+//There's a LOT of school food in the game.
+//People shouldn't get permanently confused from fountains!
+//Shields may be a little too weak.
+//Lanterns are too heavy.
+//Repeadatly reading and cancelling reading a scroll gives lots of wisdom
+//Selling silver golem limbs is too good business.
+//Horn of bravery is useless.
+//Wand of cloning is too frequent.

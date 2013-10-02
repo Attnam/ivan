@@ -1,0 +1,65 @@
+(The following document is valid with version 0.430 of IVAN.)
+
+This guide deals with the following issue
+
+What item to wish for?
+----------------------
+
+IVAN has a lot of items, but the following are extremely useful and so
+are a good idea to wish for.
+
+* scroll of change material: This is great way of improving your gear.
+  Phoenix feather and meteoric steel are the best wishable materials,
+  the former being more flexible (it causes less dexterity/agility
+  penalties) and the latter being harder.
+
+* scroll of taming: There is nothing like a good pet, but do not try to
+  use this on a quest monster.
+
+* wand of cloning: These by themselves are not useful, but if you do have
+  some other useful item to clone, this is worth its weight in gold. With
+  one charge you can clone a pile of five items. Note that certain items
+  like wands of cloning, scrolls of wishing or scrolls of charging cannot
+  be cloned because this could be abused. It is therefore sometimes wise
+  to drop more than five items in pile in case the game doesn't allow some
+  to be cloned. If you have a powerful pet like Ivan or a mammoth, you may
+  lure it above the items so it will be cloned, too. You can also stand
+  on the item pile and zap yourself, in which case you will be copied
+  along with the stack. Note that when cloning a pet or yourself, the
+  clone will be born without any equipment and only four items under
+  it will be copied.
+
+* wand of resurrection: If you have managed to get a unique monster as
+  a pet, this may be extremely useful. It may also be used to quickly
+  replace lost limbs.
+
+* cloak or ring of invisibility: Invisibility is a great tactical
+  advantage, but it also causes much more dangerous monsters to be
+  generated.
+
+* ring of polymorph control: Very useful if happen to have a way of
+  polymorphing. Note that being very powerful may cause tough monsters
+  like dark mages to spawn, which is not nice if you encounter them
+  after you have returned to your original form.
+
+* amulet of life saving: Basically gives you a second life. That's
+  a *lot*.
+
+* magical whistle: Handling more than two pets is almost impossible
+  without this.
+
+* Mjolak, Turox, Saal'thul, thunder hammer: Way more powerful than
+  normal weapons. Saal'thul also grants invisibility. It is sometimes
+  wiser to wish for a broken thunder hammer instead of an intact one,
+  since the game often generates better materials for broken items
+  to conpensate the need of repairing.
+
+* holy banana of Oily Orpiv: Has terrible explosive power which can
+  aid you in boss battles. Also trains all attributes when eaten.
+  Be sure to store this in a hard container like strong-box,
+  because if it explodes in your inventory, you're in BIG trouble.
+
+* armor of great health: If you have scrolls of enchant armor,
+  this gives a huge boost to your HPs. Again, a broken one may
+  have a better material, but usually you want to use a scroll
+  of change material for this one, anyway.

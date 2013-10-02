@@ -1,0 +1,484 @@
+-----------------------------------------------------------------------------
+
+ >>> NOTICE!!! <<<
+
+ This file contains SPOILERS, which might ruin your IVAN experience
+ totally. The file is provided AS IS and is probably completely unreadable.
+
+ Note also that the file contains only a fraction of the changes between
+ versions 0.430 and 0.50, since Timo Kiviluoto did not update ChangeLog
+ during the period between January and September 2004
+
+-----------------------------------------------------------------------------
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Corrected a bug in the genie hostility code
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * The annoying question "Do you want to ERASE..." whatever which appeared
+    after dying if the highscore file was empty or old is now less annoying
+    and doesn't appear unless it's really necessary
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: Very complex chain explosions caused by kicking could crash
+    the game
+  * BugFix: Polymorphing to Petrus in WMode crashed
+  * Great War in Attnam is inactive
+  * BugFix: Fleeing monsters using teleport control could try to teleport
+    outside the level, causing a crash
+  * You can no longer use your vital bodyparts for golem creation
+  * Invisible creatures can no longer block light
+  * BugFix: There was no way to use stairs covered by slime
+  * Flying creatures no longer get stuck to slime, at least if it's not
+    vomited at them
+  * You can give no more commands to unconscious pets
+  * BugFix: "Don't consume anything valuable" command flag wasn't activated
+    by default due to an obscure problem
+  * Increased Shirt of the Golden Eagle's AV from 35 to 40
+  * The player no longer autovomits on altars unless he has to or it
+    belongs to Scabies
+  * Removed the "temporary" comments that increased the probability of bone
+    files being created/loaded
+  * The veteran kamikaze dwarf of GC6 is no longer always on the downstairs;
+    this was too nasty for those players unfortunate enough to come up
+    from GC7 after being sucked there through a fountain
+  * An extra confirmation is needed before the game allows the player to
+    vomit at a neutral NPC; I've died too many times because of pressing
+    'V' instead of 'C'
+  * There are no doors in UT4 now; it is a natural cave
+  * The player is no more allowed to change the equipment of archangels
+  * Archangels are now less invincible
+  * Cut the time archangels exist to one tenth
+  * Added some extra monsters to Oree's lair
+  * It now rains blood in Oree's lair
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Broken gauntlet pic modified by Kahvi
+  * BugFix: Killing a unicorn could crash
+  * Great War in Attnam is active
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed some minor "problems" reported by Valgrind
+  * Thaumic bomb and empty/full dwarven gas grenades added to item.pcx
+    by Kahvi
+  * Adjusted the InElasticityPenaltyModifiers of broken items upwards
+  * BugFix: No message was printed when levitation was activated, except
+    if due to a BoL
+  * Decreased the possibility of attribute increase and polymorph
+    effects of fountains
+  * Groups of monsters can appear from a fountain, not just one;
+    the amount depends on the species and luck
+  * Removed some obsolete commented code
+
+December 03 2004 Heikki Sairanen <first.last@tut.fi>
+
+  * unconscious shopkeepers don't trade
+
+November 17 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Science talks can now require and train charisma
+  * Richel Decos has his own unique science talk particles
+
+November 15 2004 Heikki Sairanen <first.last@tut.fi>
+
+  * small typo corrected
+
+November 12 2004 Heikki Sairanen <first.last@tut.fi>
+
+  * the incompatability of old highscore files is handled like it should
+
+November 11 2004 Heikki Sairanen <first.last@tut.fi>
+
+  * old highscore files incompatable
+
+November 11 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * New death messages "beheaded by X" and "killed by X's dirty attack below
+    the belt" added
+  * Decreased the effect of TALENT_CLEVER; I hadn't taken into account the
+    true power of nonorganic limbs when defining it
+
+October 29 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Corrected an annoying bug in DoEvilDeed
+  * Every generated monster decreases the approximate monster generation
+    interval of the level slightly, so infinite exping on one area becomes
+    less effective over time
+  * More messages are now generated when teleporting
+  * BugFix: the weight of a mammoth's corpse was negative
+  * BugFix: mushrooms were able to grunt
+  * TypoFix: one space was missing from rusted golems' names
+  * Changed the basic terrain materials of GC levels 6, 9, 10 and 11
+    mainly for clarity reasons
+
+October 22 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: offering on the Silva's altar in UT4 crashed
+  * BugFix: endurance exp wasn't gained if the player had a non-living
+    bodypart and his binary was compiled with VC, due to a bug in
+    the latter
+  * Corrected many problems in bodypart special effect draw order
+  * Angels might be a little more intelligent now
+  * Gods may be a little wiser when choosing gift bodypart materials
+  * Probably fixed an additional bug or two which I can't quite recall now
+
+October 13 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Decreased the amount of Attnam's polar bears to one, because their
+    shadows had a noticable negative effect to performance
+  * BugFix: charming a tourist and leaving New Attnam crashed
+  * Halved the speed materials spoil
+  * Spoil and mirror item vanish messages are now more informative
+  * BugFix: equipment slots were shown in the panel when polymorphed into
+    a golem
+  * BugFix: removed the stairs to not-yet-done UT5
+  * Webs of giant spiders are a little weaker
+  * The big trap room of GC changed into a dwarven mine field
+  * Monsters are no longer generated in the mine field or vault rooms
+  * Corrected a bug in the lantern code which could prevent items on the
+    ground from being animated if the square once had a wall & attached
+    lantern
+  * Fixed many problems with messages
+
+October 8 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: items on the ground were sometimes not animated
+  * BugFix: armor pictures were not always updated correctly when
+    polymorphing
+  * BugFix: polymorphing into a nonhumanoid while wearing a belt of
+    levitation crashed
+  * Founders.jpg added to Doc/Data
+  * Hunters now have unique science talk particles
+  * The body of science talk msgs ("You have a rather pleasant chat...")
+    is now more vivid, having ten different forms
+  * Removed the scroll of create monster; it was never used for anything
+    sensible save abuse
+  * The game now displays more informative break/destroy msgs, eg.
+    "something on the ground explodes", "the slave's leather armor breaks",
+    etc.
+  * The game now says "xxx stabs/strikes/slashes" instead of "xxx hits"
+    if xxx is armed; the verb depends on the weapon
+  *  Some other msgs changed, but there are still problems with these
+
+October 3 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Some mind worms added to char.pcx by Kahvi
+  * Corrected a rather nasty bug, which eg. made infravision useless
+  * Enemies might retreat from invisible creatures a bit more effectively
+    (again, there's bugs in this also; I'll fix them later)
+
+September 31 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a typo in the anti-explosive magical field code
+  * Added distinct break messages for wands (this probably has bugs now,
+    I'll fix them later)
+
+September 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Corrected a minor bug in characters' special effect draw order
+
+September 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * My sincerest apologies for not updating ChangeLog for a loooooooooong
+    while. Henceforth, however, I wow to resume this healthful habit
+  * Mistresses and dogs now have unique random science talk particles
+  * For in-house testing sessions, there's now a BONUS_LIVES #define in
+    define.dat which determines how many bonus amulets of life saving
+    the player gets when he starts a game
+  * Disabled the time test in the panel
+  * Spiders' flesh and blood are now poisonous
+  * The game no longer crashes if an NPC wearing a belt of levitation steps
+    over another belt floating near the edge of a lake or pool
+  * Corrected some small problems in certain god effect messages
+  * Pets are now killed when generating bonefiles even if they have
+    lifesaving
+  * Corrected a typo in the standard file copyright notice (oops :)
+
+August 25 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Timing works. Although fetime:: is still a bit incomplete
+
+August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Monsters think webs are dangerous
+
+August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Sophos changed to also god of handicrafts
+
+August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * panel changes
+
+August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * more webs
+
+August 19 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * webs added... atleast some fraction of them
+
+August 17 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * smith and tailor work with equiped items now too.
+  * changed tailor replies
+
+August 6 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * blue color cursor for run mode
+  * some typo corrected
+  * bananapeels can be resurrected
+  * monster portal in Oree level
+  * X swimming here now ok
+
+August 5 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * bomb displacing energy field in Attnam
+
+August 5 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Food added to UT
+  * wskill with no exp that are used are shown on wskill screen
+
+July 14 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Vladimir works
+
+July 14 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Vladimir works better, but far from perfect  
+
+July 13 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Makefile corrections (couple of missing files)
+  * Moved Polymorph command in cpp to only wizard mode compiles..
+  
+July 8 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Minor correction to fountains...
+  
+July 8 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Added wizard mode command Polymorph (key '[')
+
+July 8 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Changed license notices a bit
+
+July 8 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * levitating plants and mushrooms move about
+  
+July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Vomit messages work...
+
+July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * "You look down. You see an active mine." in the dark. no more...
+  * Headless zombies can no longer vomit.
+  * ?,*,|,<,>,/,\,: are no longer acceptable for names (windows doesn't like them)
+  * ForcedVomit messages are different for mommos and dolphins
+  * 'If player tries to apply when he has no arms, the message says that there are no items to apply.' bug corrected.. 
+  * When you don't get to the highscore list your reason of death is shown
+  
+July 7 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Copyright notices added to sources, headers and script
+  
+Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * fountain test removed. sorry
+  
+Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Fountains can now throw player to other fountains in near levels or same level.
+  
+Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Leprosy improved a lot and is cureable
+  
+Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * aclocal.m4 updates or something strange like that anyway :)
+  
+<Many entries missing, sorry...>
+
+??? Timo Kiviluoto <firstname.lastname@kolumbus.fi>
+
+<entry incomplete>
+
+  * It is no longer possible to kick stones under walls
+  * It is no longer possible to detect traps by floating over them, dropping
+    items and checking if the total weight of the stack is greater than the
+    items' weights' sum
+
+January 6 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * Now compiles in linux. The corrections are _bad_ so checking them wouldn't be a bad idea.
+  
+January 1 2004 Timo Kiviluoto <firstname.lastname@hut.fi>
+
+  * Corrected a fatal bug in the cloning code
+  * Fixed a problem that caused the fluid system to run occasionally very slowly
+  * Decreased the banana peel trap damage a little
+  * Pressing ESC when choosing a teleport control target no longer crashes
+  * Prevented crystals from spawning over stairs in UT4
+
+January 1 2004 Timo Kiviluoto <firstname.lastname@hut.fi>
+
+  * Corrected an extremely fatal bug in the square destruction code (it may
+    have caused random crashes when changing levels)
+  * Fixed a harmless light update absence bug in the cloning code
+  * N simultaneously bought items in a shop can no longer cost more than N
+    times one item's price (formelly this was possible since all arithmetic
+    operations during the price calculations were rounded down)
+  * Monsters now avoid needlessly stepping on banana peels and broken bottles
+  * The nationality adjective "Attnamian" is now written "Attnamese"
+  * Gear pictures are now updated correctly when an equipped item spoils
+  * Adjusted the word order of sword names (based on our weapon expert Kahvi's
+    opinions)
+  * The game no longer enters an infinite loop when blood is spilled on an
+    enner beast's groin
+  * It is now possible to determine the leader of a team in the script
+  * It is now possible to determine how spoiled items are in the script
+  * Adding several identical items in the script is now more elegant
+  * Remade the consume system: the game now handles correctly situations
+    where the player eg. eats an iron sword with a banana flesh handle
+  * Ikiros can now remove rust from equipment
+  * Fixed two bugs in Loricatus's pray effect
+  * Optimized the generation of terrains and items somewhat
+  * Added many new features to New Attnam
+    * Banana shop for the hungry (the products start to spoil within a few
+      turns, though)
+    * Priestess of Silva who offers the same services as the priest in
+      Attnam but is cheaper
+    * Tourist family who follow Kaethos around the town
+    * Underground sumo wrestling arena, where the player can compete with
+      the local sumo champion Huang Ming Pong (I will not list all the
+      meticulous details of the associated events here)
+    * Added two new armors which the player gets after winning the sumo
+      fight
+    * The banana growers now feed the sumo wrestler regularily
+    * It now rains in the village occasionally
+  * Lowered the player's starting money
+  * Zombies raised by necromancers now inherit the attributes of their
+    past lives; also their names now depend on them
+  * Master necromancers can now sometimes raise Xinroch, if he hasn't
+    been generated yet
+  * Apprentice necromancers can now raise any corpse he sees as a zombie
+    (not just an adjacent one), and masters any corpse in the level
+  * Necromancers are now somewhat more intelligent
+
+December 16 2003 Timo Kiviluoto <firstname.lastname@hut.fi>
+
+  * Adjusted the colors of menus and lists so that the selected item is
+    more clearly visible on dark monitors
+  * Large spider, giant spider and Lada added to char.pcx by Kahvi
+  * Expensive camera and miniature mummy of Lenin added to item.pcx by Kahvi
+  * Necromancer, bourgeois tourist, his wife and child, and Lenin added to
+    humanoid.pcx by Kahvi
+  * Necromancer graphics integrated
+  * Two spider webs added to effect.pcx by Kahvi
+  * Remade felist entry picture drawing system; browsing an enormous inventory
+    (for instance after using the gain all items cheat) is now a lot faster
+  * A small typo in the look description of neutral panicked NPCs corrected
+  * Added a super-fast system for retrieving random pixels for which a certain
+    predicate (say, non-transparency) is true; I plan to use a similiar
+    algorithm for level::RandomSquare in the future
+  * Documented stack.h/cpp and fluid.h/cpp
+  * Added ironalloy material category which currently consists of iron, steel,
+    meteoric steel and adamant
+  * Iron alloys can now rust; names and strength values are affected
+  * Rusting is now displayed graphically as random brown pixels
+  * Added RustModifier material database member which determines the ability
+    to rust for liquids and how easily rusting happens for ironalloys
+  * Golems and terrains made of ironalloys can also rust
+  * Scroll of repair can now remove rust
+  * Renamed class human to playerkind
+  * Rewrote the player's armor drawing code; it was probably the most horrible
+    gum solution in the entire game
+  * Added several item database members to control which armor pictures
+    are to be drawn
+  * Added (half-accidentally) support for armor picture animations
+  * The Shirt of the Golden Eagle now gives the player an appropriate blue aura
+    when worn
+  * The priority map trickery which is used to determine the special effect
+    drawing order of humanoids is now completely incomprehensible
+  * Remade the whole fluid code: it now utilizes the full power of IVAN's
+    material system
+    * Liquids on ground can now cause effects to legs/other bodyparts
+    * An arbitrary number of fluids can now cover weapons, armor and
+      bodyparts; graphical effects added to item pictures
+    * Fluids can now affect the items and bodyparts they cover
+    * Removed the obsolete ContainedMaterial of weapons
+    * Fluid is now displayed over wielded, armor and bodypart graphics
+      for playerkinds; however I chose not to show them for other monsters
+      since it could cause many characters to be drawn very unclearly
+      from the user's perpective
+    * Added a dripping animation for all fluids not on ground
+    * Damaging a monster with a weapon now causes blood to be spilled
+      over the item used
+    * Dipping to solid materials is alas no longer possible; however, I
+      haven't done this since 0.311 so it isn't so great a loss
+    * Liquids can now exist on non-walkable terrain and affect them.
+      For instance you can destroy walls using acid (see below).
+      However, there is a small problem that liquids can be seen from
+      all sides of the terrain which can be strange if it is a part of a
+      long wall separating parallel tunnels
+    * Fluids can now emit light (but this feature is not yet used)
+  * A potion which breaks due to hitting an object now spills half of
+    its contents to the next square on its theoretical line of flight
+  * Fluids affected by paranormal gravitational distractions now land
+    correctly on the players face, if he/she/it has one
+  * Corpses now spill blood, not just severed bodyparts
+  * Added acid effects which are based on the Acidicity material database
+    member; acidous fluids cause items to break and can destroy very weak
+    broken items, and they also tend to be very rusting
+  * Added IsImmuneToAcid material database boolean
+  * Dark frog blood and pepsi are now acidous
+  * Remade the vomit system; the amount of liquid now depends on the body
+    volume of the character and it can be targeted to adjacent squares
+    and used as a very poor acid-based weapon
+  * Added BloodMaterial and VomitMaterial character database members
+  * Mommos now really attack by vomiting acidous slime, which also has
+    a high RustModifier
+  * Oree's vomit attack now really spills acidous blood over the player
+  * M-color 3 of arm pictures is henceforth allocated for gauntlets;
+    some humanoid graphics updated due to this
+  * Zombies now spoil
+
+November 8 2003 Heikki Sairanen <firstname.lastname@tut.fi>
+
+  * feio.cpp documented
+
+August 31 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+  
+  * Now compiles with gcc
+  * Added necromancers
+  * Mushrooms inherit their stats.
+  * Atavus gives player a banana at XMas. Banana should probably be changed to something else.
+
+August 14 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+  * Certain small changes to mihail so it know finds it's missing FeLib...
+
+  Added instructions to create symbolic link to FeLib, if it isn't distributed for the user.
+
+August 14 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+  * Added some comments to the Febot code
+  * Hex's new MIHAIL version added to CVS
+
+August 14 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+  * iosystem::StringQuestion now takes the destination string as an argument
+    and returns whether the user aborted the question or not
+  * Configuration system has been standardized and moved largely to FeLib
+  * Added Febot engine which can be used by the Oracle of the Holy Haven of Gurus
+    when the time comes

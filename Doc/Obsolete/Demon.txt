@@ -1,0 +1,101 @@
+/* Kommentit merkit‰‰n t‰ll‰ tavalla */
+
+Level 9;
+{
+	/* Mit‰ n‰ytet‰‰n alapalkissa */
+	Description=OreeLair;
+
+	/* Viesti, joka tulostetaan kun levelille ekan kerran tullaan */
+	LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
+
+	/* Mik‰ on kent‰n pohjamaasto */
+	FillSquare=floor, iron wall;
+
+	/* Montako huonetta levelille luodaan */
+	Rooms=1;
+
+	/* Luodaanko kent‰ss‰ pelin aikana satunnaisesti uusia monsuja */
+	GenerateMonsters=false;
+
+	/* Jos n‰m‰ on true, peli arpoo jonkun ruudun kent‰st‰, pist‰‰ siihen portaat ja vet‰‰ sinne tunnelin jostain ovesta */
+	/* Jos haluaa itse m‰‰ritt‰‰ portaiden paikan (kuten nyt), n‰m‰ asetetaan falseksi ja paikka pit‰‰ asettaa itse kuten alla */
+	GenerateUpStairs=false;
+	GenerateDownStairs=false;
+
+	/* Montako satunnaista itemi‰ levelille luodaan */
+	Items=0;
+
+	/* Kirjoitetaan huoneelle oma skripti. Muuten siit‰ tulisi samanlainen tyls‰ huone kuten kaikki muutkin */
+
+	Room 0;
+	{
+		/* Huoneen koko */
+		Size=7,7;
+
+		/* Voidaanko luoda satunnainen alttari */
+		AltarPossible=false;
+
+		/* Huoneen seinien ja lattian maasto */
+		WallSquare=floor, iron wall;
+		FloorSquare=parquet,empty;
+
+		/* Luodaanko satunnainen ovi */
+		GenerateDoor=false;
+
+		/* Jos huone on pyhitetty jollekin jumalalle, niin kelle */
+		/* Pyhitetyss‰ huoneessa ei voi rukoilla muille kuin "omistaja" jumalalle */
+		/* T‰m‰ on numeroilla toimiva tapa on tosin vanhentunut. Seuraavassa versiossa kirjoitetaan DivineOwner=erado; tms. */
+		DivineOwner=17;
+
+		/* Voidaanko luoda satunnainen suihkul‰hde */
+		GenerateFountains=false;
+
+		/* Asetetaan Oreen alle alttari. Alttari on pyhitetty samalle jumalalle kuin huonekin */
+
+		Square, Pos 3,1;
+		{
+			OTerrain = iron altar;
+		}
+
+		/* Pelaaja tulee kentt‰‰n t‰ss‰. Ei v‰ltt‰m‰tt‰ tarkoita, ett‰ ruudussa olisi portaat... */
+
+		Square, Pos 3,3;
+		{
+			IsUpStairs=true;
+		}
+
+		/* ...vaan oikeat portaat voivatkin olla esim. t‰ss‰ */
+
+		Square, Pos 3,5;
+		{
+			OTerrain=iron stairsup;
+		}
+
+		/* Jos haluaa visuaalisen k‰sityksen siit‰, mit‰ kentt‰‰n pist‰‰, voi k‰ytt‰‰ t‰llaista karttaa */
+		/* Ihan samoin onnistuisi myˆs ItemMap, OverTerrainMap yms. */
+
+		CharacterMap
+		{
+			/* Kartan yl‰kulman koordinaatit ja koko */
+			Pos=1,1;
+			Size=5,5;
+
+			/* T‰ss‰ m‰‰ritell‰‰n, mit‰ oliota vastaa mik‰kin kartan kirjain */
+			Types
+			{
+				O=oree;
+				B=darkknight;
+				G=blood golem;
+			}
+		}
+		{
+			/* Ja t‰ss‰ on itse kartta. Peli osaa lukea sen t‰llaisenaan */
+
+			..O..
+			.BBB.
+			GB.BG
+			.BBB.
+			..G..
+		}
+	}
+}

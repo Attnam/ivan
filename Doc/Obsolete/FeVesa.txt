@@ -1,0 +1,66 @@
+Fatal Error Vesa 2.0 graphics library, ohje:
+
+Linkitys:
+
+#include <vesa.h> & option -lvesa
+
+Installaatio:
+
+Staattinen graphics initialisoidaan automaattisesti.
+
+void graphics::SetMode(USI Mode)
+Initialisoi Vesa-näyttötilan Mode.
+
+Käyttö:
+
+bitmap::bitmap(USI XSize, USI YSize, USI BytesPerLine, ULI PhysicalAddress)
+Luo bittikartan BytesPerLine * YSize osoitteeseen PhysicalAddress. Vain guruille.
+
+bitmap::bitmap(USI XSize, USI YSize, UC BitsPerPixel)
+Varaa keosta bittikartan BytesPerLine * XSize * YSize.
+
+bitmap::bitmap(USI XSize, USI YSize)
+Varaa keosta bittikartan XSize * YSize nykyisellä värikoolla.
+
+bitmap::bitmap(void)
+Varaa keosta screenin specsit omaavan bittikartan.
+
+bitmap::bitmap(CC* FileName)
+Lataa pcx-kuvan ja varaa sille keosta tilan.
+
+bitmap::~bitmap(void)
+Tuhoaa bittikartan. Ajetaan deleten yhteydessä automaattisesti.
+
+void bitmap::PutPixel(USI X, USI Y, ULI Color)
+Piirtää pikselin kohtaan X:Y (tällä hetkellä toimii vain 16b-tilassa).
+
+void bitmap::ClearToColor(USI Color)
+Puhdistaa bittikartan väriin Color.
+
+void bitmap::Blit(bitmap* Target, USI SourceX, USI SourceY, USI DestX, USI DestY,
+                  USI XSize, USI Ysize)
+Blittaa bittikartaan Targettiin parametrien määrittemästä kohdasta parametrien
+määrittelemään kohtaan parametrien määrittämällä koolla.
+
+void bitmap::MaskedBlit(bitmap* Target, USI SourceX, USI SourceY, USI DestX, USI DestY,
+                        USI XSize, USI Ysize)
+Sama kuin edellinen, mutta jättää värin 255:0:255 transparentiksi.
+
+void bitmap::MaskedBlit(bitmap* Target, USI SourceX, USI SourceY, USI DestX, USI DestY,
+                        USI XSize, USI Ysize, USI Luminance)
+Sama kuin edellinen, mutta lisää clipaten jokaiseen värikomponenttiin arvon 256-Luminance.
+
+void bitmap::Printf(USI X, USI Y, CC* Format, ...)
+Analysoi formaattilauseen täydentäen sen optionaalisilla parametreilla ja maskedblittailee
+graphics::Fontista asiaankuuluvat karakterit (koko 8x8) bitmappiin alkaen kohdasta X:Y.
+
+Tärkeitä definitioita:
+
+#define SCREEN		graphics::GetScreenBitmap()	//näyttöbitmappi
+#define DOUBLEBUFFER	graphics::GetDoubleBuffer()	//tuplabufferi
+#define FONT		graphics::GetFont()		//default fontti
+#define XRES		graphics::CXRes()		//...
+#define YRES		graphics::CYRes()		//...
+#define BITSPERPIXEL	graphics::CBitsPerPixel()	//värimoodi käytännössä
+#define BYTESPERLINE	graphics::CBytesPerLine()	//rivin tavupituus (guruille)
+#define BUFFERSIZE	graphics::CBufferSize()		//bufferin koko (guruille)

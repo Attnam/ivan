@@ -1,0 +1,40 @@
+sapient pearwood			used to create items that magically follow their owner
+ommel flesh				beneficial effect (spoils)
+ommel skin				-||-
+ommel nail				-||-
+ommel spit				-||-
+ommel blood				-||-
+ommel bile				-||-
+ommel vomit				-||-
+ommel sperm				-||-
+emerald (green)				SV 200-350
+opal (light blue)			SV 200-350
+uranium					slowly causes mutations, D 18700
+bloat					poison which makes the victim increase his size and does great damage, like he was thrown into a vacuum
+stainless steel				doesn't rust
+ambrosia				food of gods; does something *really* good
+nectar					drink of gods; does something *really* good
+cursed water of Nyanneechuan		changes the gender of a male player
+orichalcum				copper-looking expensive material mentioned to be abundant in Atlantis by Plato
+thunderbird feather			lightning resistant
+sleeping gas
+tear gas
+mustard gas
+laughing gas
+arrow-proof glass
+electrum (yellowish-white)		the alloy of gold and silver (and maybe some copper)
+silicon carbide				SV 140-190, D 3100
+nephrite/jade (green)			SV 200-350
+tungsten carbide			SV 200-350, D 15700
+aluminium				SV 90, D 2650
+lead
+holy spirit
+elerium-115 (from xcom)			huge amount of energy
+wrapping paper				god = Atavus
+LSD
+werewolf skin				armors made of this cause lycanthropy
+testosterone				strength & beard growth
+estrogen				breast growth
+lots of ideas				http://en.wikipedia.org/wiki/Fictional_chemical_substance
+cedar wood				http://en.wikipedia.org/wiki/Cedar
+wax

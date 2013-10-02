@@ -1,0 +1,5 @@
+levelf.txt -- Level Format
+
+first two lines : x and y, player default start position.
+(I'm gonna remote this, when stairs and suchs is ready)
+then about tree thousand and 68? lines are level information

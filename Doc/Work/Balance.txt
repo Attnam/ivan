@@ -1,0 +1,22 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+Turox's price is too high.
+Dagger is "somewhat difficult to use" if one has 9 strength.
+Golems yield too much score.
+Phoenix feather shields may be too good.
+The patrol guard's helmet is too good considering how easily he can be tamed or killed by tricks.
+World map locations may be too far from each other.
+The amount of mithril etc. beartraps should be decreased.
+Staff of wondrous smells is useless.
+Limb weights may be incorrect.
+School food abuse!!!!
+Monster danger is adjusted too fast.
+It should be checked whether read times of scrolls used in emergency situations are short enough.
+Repairing special limbs in Attnam is too cheap.
+The mage room is too difficult.
+'.' should take less time.
+Legs made of ommel cerumen.

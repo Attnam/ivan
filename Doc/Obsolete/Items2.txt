@@ -1,0 +1,59 @@
+Name			Prim. material	HV	FM	Weight g	WeaponStrength	Damage	AV	Price
+
+nothing			-		-	-	-		1000		0-2	100	-
+
+banana			bananaflesh	5	50	200		316		0-1	-	?
+holybanana		bananaflesh	5	200	2000		2000		1-3	-	1000
+holybanana		mithril		5	200	3800		12329		9-16	-	1000
+lamp			glass		30	30	2500		1500		1-2	-	50
+can			iron		100	30	1150		1857		1-3	-	?
+can			iron		100	30	1000		1732		1-3	-	?
+empty can		iron		100	30	400		1095		0-2	-	-
+lump			bananaflesh	5	15	600		212		0-1	-	?
+lump			schoolfood	5	15	750		237		0-1	-	?
+*longsword		iron		100	150	20000		17321		12-22	-	259
+*twohandedsword		iron		100	175	46000		28372		21-36	-	496
+*twohandedsword		mithril		200	175	29500		32132		24-41	-	1124
+*curvedtwohandedsword	iron		100	200	46000		30331		22-38	-	606
+*curvedtwohandedsword	mithril		200	200	29500		34132		25-43	-	1347
+*curvedtwohandedsword	valpurium	200	200	18500		38470		28-49	-	3077
+valpurijustifier	valpurium	400	400	21000		57965		43-73	-	9274
+*axe			iron		100	150	12000		13416		10-17	-	189
+*axe			mithril		200	150	7800		15297		11-20	-	458
+pickaxe			iron		100	100	13000		11401		8-15	-	113
+pickaxe			mithril		200	100	8500		13038		9-17	-	260
+*spear			iron		100	200	2400		6928		5-9	-	138
+*spear			mithril		200	200	1800		8485		6-11	-	339
+platemail		iron		100	20	32000		8000		6-11	50	1600
+platemail		mithril		200	20	20000		8944		6-12	37	3948
+chainmail		iron		100	20	16000		5656		4-8	70	583
+chainmail		mithril		200	20	10000		6324		4-8	61	881
+maakotkashirt		cloth		5	20	100		100		0-1	10	200000
+elpuriflesh corpse	elpuriflesh	30	15	666000		17311		12-22	-	?
+mithril corpse		mithril		30	15	1387500		64517		48-81	-	?
+valpurium corpse	valpurium	400	15	300000		42426		31-54	-	?
+empty potion		glass		30	40	150		424		0-1	-	-
+Omle urine potion	glass		30	40	1650		1407		1-2	-	?
+bananapeals		bananapeal	10	70	20		118		0-1	-	-
+brokenbottle		glass		30	100	150		670		0-1	-	-
+scroll			parchment	15	40	150		300		0-1	-	20-2000
+head			humanflesh	10	20	2400		692		0-1	-	-
+headofelpuri		elpuriflesh	30	20	60000		6000		4-8	-	-
+nut			humanflesh	10	20	30		77		0-1	-	-
+leftnutofperttu		humanflesh	10	20	600		346		0-1	-	-
+abone			bone		30	70	3000		2509		1-4	-	-
+*poleaxe		iron		100	150	21000		17748		13-23	-	266
+*poleaxe		mithril		200	150	13500		20124		15-26	-	603
+*spikedmace		iron		100	125	41000		22638		16-29	-	282
+*spikedmace		mithril		200	125	26000		25495		19-32	-	637
+*neercseulb		mithril		200	150	93000		52820		39-67	-	1584
+loaf			pork/beef	10	30	600		489		0-1	-	?
+cheapnutcopy		glass		30	20	1250		866		0-2	-	500
+wand			glass		30	80	250		774		0-1	-	500
+wand			marble		50	80	300		1095		0-2	-	500
+arrow			wood		20	50	50		273		0-1	-	?
+headofennerbeast	ennerbeastflesh	30	20	9000		2323		1-3	-	100
+brokenlamp		glass		30	80	2500		2449		1-4	-	-
+avatarofvalpuri		valpurium	400	20	750		2449		1-4	-	-
+brokenplatemail		iron		100	30	32000		9797		7-13	-	-
+bow			wood		20	40	2000		1549		1-2	-	?

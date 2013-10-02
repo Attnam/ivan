@@ -1,0 +1,39 @@
+Attnam - city of order (totalitarianist city)
+terrain: evergreen forest
+alignment: order, death, self, man
+
+Hog - city of gurus (greece philosopher town)
+terrain: leafy forest
+alignment: order, life, others, nature
+
+Lunethia - elven city (somewhat like Lothl¢rien)
+terrain: leafy forest
+alignment: order, others, nature
+
+Mondedr - city of thieves and assassins (like Ankh-Morpork)
+terrain: swamp
+alignment: chaos, death, self, man
+
+Rihajab - desert city (like medieval Bagdad)
+terrain: desert
+alignment: order, man
+
+Kharaz-Arad - dwarven city (inside rock)
+terrain: mountains
+alignment: order, self, man
+
+Urok - city of barbarians
+terrain: steppe
+alignment: chaos, death, self, nature
+
+Athvalia - amazon city
+terrain: jungle
+alignment: order, death, nature
+
+Bazaria - trader city
+terrain: coast, river delta
+alignment: order, life, self, man
+
+Irinox - city of witches and shamans (like Kalevala's Pohjola)
+terrain: tundra
+alignment: order, death, self, nature

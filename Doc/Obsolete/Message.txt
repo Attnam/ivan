@@ -1,0 +1,22 @@
+A character hits something with his weapon, and the message is like the following:
+
+You slash at the goblin with your iron long sword.
+The goblin slashes at something with its bronze spear.
+etc.
+
+1. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", GetDescription(DEFINITE).c_str(), IsPlayer() ? "" : "es", Enemy->GetDescription(DEFINITE).c_str(), GetPossessivePronoun().c_str(), Weapon->GetDescription(UNARTICLED).c_str());
+2. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", GetDescription(DEFINITE).c_str(), VerbEnding("es").c_str(), Enemy->GetDescription(DEFINITE).c_str(), GetPossessivePronoun().c_str(), Weapon->GetDescription(UNARTICLED).c_str());
+3. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", CHARDESCRIPTION(DEFINITE), IsPlayer() ? "" : "es", Enemy->CHARDESCRIPTION(DEFINITE), GetPossessivePronoun().c_str(), Weapon->CHARDESCRIPTION(UNARTICLED));
+4. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", CHARDESCRIPTION(DEFINITE), VerbEnding("es").c_str(), Enemy->CHARDESCRIPTION(DEFINITE), GetPossessivePronoun().c_str(), Weapon->CHARDESCRIPTION(UNARTICLED));
+5. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", CHARDESCRIPTION(DEFINITE), CHARVERBENDING("es"), Enemy->CHARDESCRIPTION(DEFINITE), CHARPOSSESSIVEPRONOUN(), Weapon->CHARDESCRIPTION(UNARTICLED));
+6. msgsystem << msgcolor(RED) << GetDescription(DEFINITE) << " slash" << (IsPlayer() ? "" : "es") << " at " << Enemy->GetDescription(DEFINITE) << " with " << GetPossessivePronoun() << " " << Weapon->GetDescription(UNARTICLED) << "." << endmsg;
+7. msgsystem << msgcolor(RED) << GetDescription(DEFINITE) << " slash" << VerbEnding("es") << " at " << Enemy->GetDescription(DEFINITE) << " with " << GetPossessivePronoun() << " " << Weapon->GetDescription(UNARTICLED) << "." << endmsg;
+
+2. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", !GetDescription(DEFINITE), VerbEnding("es").c_str(), Enemy->GetDescription(DEFINITE).c_str(), GetPossessivePronoun().c_str(), Weapon->GetDescription(UNARTICLED).c_str());
+
+
+
+1. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", GetDescription(DEFINITE).c_str(), VerbEnding("es").c_str(), Enemy->GetDescription(DEFINITE).c_str(), GetPossessivePronoun().c_str(), Weapon->GetDescription(UNARTICLED).c_str());
+2. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", CHARDESCRIPTION(DEFINITE), CHARVERBENDING("es"), Enemy->CHARDESCRIPTION(DEFINITE), CHARPOSSESSIVEPRONOUN(), Weapon->CHARDESCRIPTION(UNARTICLED));
+3. ADD_MESSAGE(RED, "%s slash%s at %s with %s %s.", &GetDescription(DEFINITE), &VerbEnding("es"), &Enemy->GetDescription(DEFINITE), &GetPossessivePronoun(), &Weapon->GetDescription(UNARTICLED));
+4. msgsystem << msgcolor(RED) << GetDescription(DEFINITE) << " slash" << VerbEnding("es") << " at " << Enemy->GetDescription(DEFINITE) << " with " << GetPossessivePronoun() << " " << Weapon->GetDescription(UNARTICLED) << "." << endmsg;

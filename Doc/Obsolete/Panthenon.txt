@@ -1,0 +1,180 @@
+****<LIGHT SIDE>****
+
+G++	L++	King of Gods, Valpuri the Great Frog
+----------------------------------------------------
+
+Favours:
+-gives a valpurium two-handed sword
+-gives a wish
+-makes you radiate with holy light for some time
+
+Punishments:
+-smites with a small hammer
+-(sends Greater Ligth Frogs to hunt the player)
+
+G+	L+	Seges, light goddess of health and nutrition
+------------------------------------------------------------
+
+Favours:
+-heals when hurt
+-restores lost limbs
+-feeds when hungry, with pure nutrition or food items
+-(cure disease)
+-(cure poisoning)
+-trains endurance
+
+Punishments:
+-
+
+G+	B=	Atavus, light god of charity and munificence
+------------------------------------------------------------
+
+Favours:
+-gives random good items as gifts
+-
+
+Punishments:
+-removes a random item
+-if none, reduces gifts (attributes)
+
+G	B-	Dulcis, light goddess of love and art
+-----------------------------------------------------
+
+Favours:
+-charms monsters around
+-(increases charisma)
+
+Punishments:
+-(reduces charisma)
+-aggravates monsters
+
+G-	L+	Venius, light god of law and order
+--------------------------------------------------
+
+Favours:
+-rigtheous fire damages enemies around
+-gives a steel plate mail
+
+Punishments:
+-
+
+G-	B+	Consummo, light god of knowledge and magic
+----------------------------------------------------------
+
+Favours:
+-teleports the player elsewhere
+-teleports monsters elsewhere
+-gives a wand of polymorph
+-gives scrolls of teleportation
+-(increases intelligence)
+-(uncurses items)
+-gives a lamp
+
+Punishments:
+-
+
+****<NEUTRALS>****
+
+N+	C-	Silva, goddess of nature
+----------------------------------------
+
+Favours:
+-creates tame wolves
+-(increases wisdom)
+-causes earthquake
+-(plants herbs)
+
+Punishments:
+-creates hostile wolves
+-polymorphs the player into a lousy animal monster
+
+N=	L-	Loricatus, god of fire, machines and weaponry
+-------------------------------------------------------------
+
+Favours:
+-enchants wielded item's material
+-gives a scroll of change material
+
+Punishments:
+-changes wielded item's material to bananaflesh
+
+N-	L	Mellis, god of money, trade and politics
+--------------------------------------------------------
+
+Favours:
+-trades items
+-(increases charisma)
+
+Punishments:
+-spreads bad rumours about the player
+
+****<DARK SIDE>****
+
+E+	B-	Macellarius, chaos goddess of greed and forbidden pleasures
+---------------------------------------------------------------------------
+
+Favours:
+-gives Omle urine
+
+Punishments:
+-
+
+E+	C+	Infuscor, chaos god of wrong knowledge and vile magic
+---------------------------------------------------------------------
+
+Favours:
+-gives scrolls of teleportation
+-gives scrolls of create monster
+-gives a wand of striking
+-creates tame golems
+
+Punishments:
+-creates hostile golems
+
+E	C-	Calamus, chaos god of crime
+-------------------------------------------
+
+Favours:
+-trains agility
+-trains perception
+-teleports the player elsewhere
+-makes the player invisible
+
+Punishments:
+-steals a random item that is not in the gear
+
+E-	B+	Cruentus, chaos god of war and blood
+----------------------------------------------------
+
+Favours:
+-gives a steel two-handed scimitar, if player's weapon isn't great
+-trains strength
+-trains endurance
+-heals battle wounds
+
+Punishments:
+-sends dark knights to hunt the player
+-hurts the player a lot
+
+E-	C	Scabies, chaos goddess of mutations, deseases and famine
+------------------------------------------------------------------------
+
+Favours:
+-gives slightly spoiled food for the hungry
+-causes sickness to surrounding monsters
+-trains endurance
+
+Punishments:
+-sends mommo slimes to hunt the player
+-causes sickness
+-spoils random food items
+
+E--	C--	Destroyer of Worlds, Erado the Master Evil
+----------------------------------------------------------
+
+Favours:
+-gives H'taed Foneer Cse-ulb
+
+Punishments:
+-bolt of black energy
+-(sends Greater Dark Frogs and Bill's wills to hunt the player)

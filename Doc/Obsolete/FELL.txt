@@ -1,0 +1,128 @@
+----------------------------------------------------------------------------
+
+		Fatal Error Listing Library (FELL) documentation
+
+----------------------------------------------------------------------------
+
+Overview:
+---------
+
+A simple system for handing different types of list displays, like the
+inventory screen of the game or a high score list.
+
+Classes:
+--------
+
+highscore (hscore.h)
+--------------------
+
+A class that loads, saves and handles highscore files.
+
+highscore(std::string File = "HScore.dat")
+
+	Creates the class and loads a highscore file with specified
+	filename.
+
+Add(long NewScore, std::string NewEntry)
+
+	Adds a new score entry. The class automatically places the
+	current score to its appropriate position in the list and
+	resizes the list size to one hundred if its longer than that.
+	NewEntry should contain the name of player and the cause of
+	death/victory.
+
+	Example of usage:
+
+	highscore HScore;
+	HScore.Add(-1234, "Bill, died of bloodloss after Perttu ate his nuts");
+	HScore.Save();
+	HScore.Draw();
+
+	Result: Bill is (most likely) placed at the bottom of the score list
+	and the list is drawn onto the screen.
+
+Draw()
+
+	Draws the highscore list and waits for keypress.
+
+Save(std::string File)
+
+	Saves the highscore list.
+
+Load(std::string File)
+
+	Loads a highscore list. Normally called only by the constructor.
+
+list (list.h)
+-------------
+
+A simple list class containing list data and draw-to-screen functions.
+
+list()
+
+	Creates an empty list with no topic.
+
+list(std::string Topic)
+
+	Creates an empty list with topic Topic.
+
+AddString(std::string S)
+
+	Adds an element to the list.
+
+AddDescription(std::string S)
+
+	Adds a description to the list. Descriptions are drawn above other
+	list items and they cannot be selected by alphabet keys. Topic
+	counts as the first description.
+
+std::string GetString(ushort Index)
+
+	Returns a previously added element of the list.
+
+ushort Length()
+
+	Returns the total amount of previously added elements.
+
+dynarray<std::string>* CString()
+
+	Returns a pointer to the dynamic element array.
+
+ushort Draw(bool WillDrawNumbers)
+
+	Draws the list onto the screen above the current DoubleBuffer in
+	20 element sections and waits for keypress. WillDrawNumbers
+	determines whether individual alphabet letters are drawn before
+	every element. Pressing the key of element's letter causes the
+	function to terminate and return the index of the element selected,
+	or 0xFFFE if '-' was pressed, 0xFFFD if Escape was pressed and
+	0xFFFF if an illegal key (not of any element nor '-' or Esc) was
+	pressed.
+
+	Example of usage:
+
+	list List("Choose your lord:");
+	List.Add("Bill");
+	List.Add("Valpuri");
+	List.Add("Santa Claus");
+	if(List.Draw() == 0)
+	{
+		ADD_MESSAGE("Suddenly the dungeon just crashes.");
+		game::CPlayer()->CHP(-98);
+		game::CPlayer()->CheckDeath("crashed horribly");
+	}
+
+	Result: Guess twice.
+
+DrawDescription()
+
+	Draws the description strings. Only used by Draw().
+
+Empty()
+
+	Removes all previously added string elements from the list.
+	Descriptions, however, are not affected.
+
+----------------------------------------------------------------------------
+
+End of document.

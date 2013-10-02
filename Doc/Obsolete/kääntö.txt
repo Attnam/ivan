@@ -1,0 +1,19 @@
+vanhat:
+
+djgpp debug	10:45
+djgpp release	17:20
+
+vc debug	4:50
+vc release	5:20
+
+hex		16:00
+
+uudet:
+
+djgpp debug	4:20	-6:25	-60%
+djgpp release	11:05	-6:15	-36%
+
+vc debug	1:45	-3:05	-64%
+vc release	2:10	-3:10	-60%
+
+hex		6:40	-9:20	-58%

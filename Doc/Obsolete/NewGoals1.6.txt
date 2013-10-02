@@ -1,0 +1,15 @@
+Food spoiling and cooking.
+Bodyparts.
+Item stacking.
+Player races and classes.
+Relatively complete in-code documentation.
+
+Traps.
+Money item.
+Monster names.
+Panicking.
+
+/*
+ *
+ *
+ */

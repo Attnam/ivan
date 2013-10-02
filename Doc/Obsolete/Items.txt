@@ -1,0 +1,37 @@
+Item chart for RL5 by Fatal Error Productions 2001:
+
+item				default material	size	armor value	chance	volume		weigth	speed	fm	ws	dam	offerv
+banana				bananapeal, -flesh	20	-		50	30,150		195	72	25	221	0-1	1
+holy banana of Liukas Vipro	bananapeal, -flesh	30	-		1	40,300		380	51	35	365	0-1	40
+lamp				glass			30	-		10	850		2125	22	30	1383	0-1	1
+can				iron, school food	10	-		100	50,600		1300	28	20	1612	0-2	1/2
+lump				school food		10	-		0	600		900	33	10	212	0-1	1/2
+sword				iron, iron, -		150	-		0	2500,100,0	20800	7	100	14422	5-9	1/5
+two-handed sword		iron, iron, -		175	-		3	5500,250,0	46000	5	125	23979	8-16	1/5
+curved two-handed sword		iron, iron, -		175	-		1	5500,250,0	46000	5	150	26268	9-17	1/4
+Valpuri's Justifier		valpurium, valpurium, -	200	-		0	6500,300,0	20400	7	400	57131	20-35	1/4
+axe				iron, wood, -		125	-		25	450,900,0	4050	16	150	7794	1-3	1/2
+pick-axe			iron, wood, -		150	-		10	1000,1050,0	8525	11	150	11308	1-2	1/2
+spear				iron, wood, -		200	-		25	150,1500,0	1950	23	200	6245	0-1	1
+plate mail			iron			75	50		3	4000		32000	6	15	6928	2-5	1/2
+chain mail			iron			75	70		10	2000		16000	8	15	4899	1-4	1/2
+Maakotka shirt			cloth			60	20		0	1000		100	100	15	150	0-1	N/A
+corpse				-			-	-		0	-		-	-	20	-	-	1/100
+potion				glass, omle urine	30	-		10	50,1500		1625	25	40	1396	0-1	1/10
+banana peals			banana peal		20	-		25	30		16	250	20	40	0-1	0
+broken bottle			glass			10	-		25	50		125	89	60	474	0-1	0
+scroll of create monster	parchment		30	-		25	200		120	91	30	232	0-1	5
+scroll of teleport		parchment		30	-		25	200		120	91	30	232	0-1	5
+head				flesh			-	-		0	1500		1800	24	10	520	0-1	1/10
+head of Elpuri			elpuri's flesh		60	-		0	100000		240000	2	10	8485	0-2	N/A
+nut				flesh			-	-		0	-		-	-	10	-	-	10
+left nut of Perttu		human flesh		10	-		0	150		180	75	10	164		N/A
+bone				bone			50	-		50	2000		4000	16	50	2236		1/10
+poleaxe				iron, wood, -		225	-		15	1500,3000,0	13500	9	100	11619		1/4
+spikedmace			iron, wood, -		150	-		5	5000,3000,0	41500	5	75	17642		1/8
+H'taed Foneer Cse-ulb		mirthril, iron, -	200	-		0	15000,8000,1000	140500	3	100	53009		1/4
+loaf				pork			40	-		200	2000		2400	20	15	735		1/8
+
+Speed = 1000 * sqrt(1 / Weight)
+Weaponstrength = sqrt(Form Modifier * Material Strength * Weight);
+Damage = (5 * Weaponstrength) / 100

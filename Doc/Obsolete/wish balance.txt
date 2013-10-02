@@ -1,0 +1,18 @@
+orc general			27 27 18 35 32 36 435	polearms 1000
+mistress whip champion		26 26 51 52 26 39 165	whips 1000
+elite dark knight		36 36 13 18 26 30 301	lswords 1000
+polar bear			50 -  -  10 20 24 600	-		9-16
+communist			40 40 12 12 25 18 373	several
+mithril golem			200200 4  4  1 12 1000	-		14-24
+diamond golem			300300 2  2  1 12 2250	-		17-30
+phoenix fearher golem		80 80 60 60  1 12 157	-		9-16
+
+
+!ring of invisibility
+magic whistle
+scroll of change material
+amulet of life saving
+ring of infravision
+amulet of ESP
+ring of poison resistance
+armor of great health

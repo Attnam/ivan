@@ -1,0 +1,13 @@
+Type is an unsigned short int.
+
+Material types:		0x1000 + Index		game::LoadMaterial(ifstream*)
+
+Item types:		0x2000 + Index		game::LoadItem(ifstream*)
+
+Character types:	0x3000 + Index		game::LoadCharacter(ifstream*)
+
+Terrain types:
+L-G-Terrain:		0x4000 + Index		game::LoadLevelGroundTerrain(ifstream*)
+L-O-Terrain:		0x4400 + Index		game::LoadLevelOverTerrain(ifstream*)
+W-G-Terrain:		0x4800 + Index		game::LoadWorldMapGroundTerrain(ifstream*)
+W-O-Terrain:		0x4C00 + Index		game::LoadWorldMapOverTerrain(ifstream*)

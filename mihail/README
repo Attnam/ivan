@@ -1,0 +1,16 @@
+Merger of Ivan's High Achievement Information Lists version 0.91
+----------------------------------------------------------------
+
+To list scores in highscore file:
+    mihail -l [filename]
+
+To merge 2 files
+    mihail [1st input filename] [2nd input filename] [output filename]
+
+To give version number of highscore file
+    mihail -d [filename]
+Notice that first filename in merges gives also version number
+
+
+This software has been released under the GNU Public License. See COPYING
+for more details.

@@ -1,0 +1,23 @@
+Jokainen objekti on emittoija.
+Jos emittaatio on alle 64, se j‰tet‰‰n huomiotta.
+Ruudun emittaatio on sen suurin emittaatio. (dev/nulliin luonnonlait...)
+
+Emittoijan siirtyess‰ ruutuun tai poistuessa ruudusta tarkistetaan,
+muuttuuko ruudun emittaatio, jos se niin tekee, ajetaan emittaatiofunktio.
+
+Jokainen ruutu on luminaatioalue.
+Luminaatioalueella on emittoijalista,
+jossa luetellaan kaikki emittoijat, jotka vaikuttavat ruutuun.
+L‰pikuljettavan ruudun luminaatio on sen suurin luminaatio.
+L‰pikulkemattoman ruudun luminaatio on sen suurin luminaatio,
+jonka l‰hteeseen voidaan vet‰‰ suora viiva pelaajasta.
+
+Emittaatiofunktio levitt‰‰ valoisuuden ruudusta ulosp‰in
+ja p‰ivitt‰‰ emittoijaruudun tiedot luminaatioalueen emittoijalistassa,
+lis‰‰ itsens‰ sinne tai poistaa itsens‰ sielt‰.
+
+Mik‰li luminaatioalueen l‰pikuljettavuus muuttuu,
+sen kaikkien emittoijien emittaatiofunktiot ajetaan.
+L‰pikuljettavuuden vapautuessa emittaatiofunktio ajetaan suoraan.
+L‰pikuljettavuuden estyess‰ emittaatiofunktio ajetaan ensin nolla-arvolla
+ja estymisen aktivoitua suoraan.

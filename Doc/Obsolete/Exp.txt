@@ -1,0 +1,37 @@
+IVAN action experience chart
+
+		Strength	Endurance	Agility		Perception	NP	AP
+*Hit		50		0		25		0		-50	0
+*Scream		100		0		0		0		-100	0/+1000
+*Miss		0		0		25		0		-50	0
+*Dodge		0		0		50		25		-	-
+*Block		50		50		0		0		-	-
+*Move (base)	0		0		1		0		-10	0
+*Burden		1*		0		-1*		0		-1*	+
+*Overload	3*		0		-3*		0		-3*	+
+*Hungry		-1*		0		0		0		-	-
+*Faint		-3*		0		0		0		-	-
+*Open/Close	0		0		25		0		-10	-500
+*Up		50		0		0		0		-20	-1000
+*Down		0		0		25		0		-10	-1000
+*Regen		0		100		0		0		-	-
+*Dig		5*		0		-5*		0		-5*	-
+*Kick		25		0		50		0		-50	0
+*Look		0		0		0		1		-	+900
+Rest/NOP/Sit
+-couch		0		0		-2*		0		0	0
+-bed		0		0		-5*		0		0	0
+-normal		0		0		-1*		0		0	0
+*Throw		25		0		25		25		-50	0
+*Vomit		-50		50		0		0		-200-400 0
+*Zap		0		0		0		50		0	+500
+*Chat		0		0		0		0		0	0
+*Dip		0		0		0		0		0	0
+*Offer		0		0		0		0		0	0
+*Pray		0		0		0		0		0	0
+Read		0		0		0		0		0	?
+-poor light	0		0		0		-25		0	?
+Wear		0		0		0		0		0	-5000
+Wield		0		0		0		0		0	0
+
+* per tick

@@ -1,0 +1,82 @@
+
+			    IVAN deity chart
+
+		/----------------------------------------\
+		|  Valpurus  |	Atavus	   |   Dulcis    |
+		|  creator   |	charity    |   love	 |
+   altruism	|	     |		   |		 |
+		|  Seges     |	Sophos	   |   Verax     |
+		|  health    |	good magic |   truth	 |
+		|----------------------------------------|
+		|  Legifer   |		   |   Silva     |
+		|  law	     |		   |   nature	 |
+		|	     |		   |		 |
+		|  Loricatus |		   |   Cleptia   |
+		|  machines  |		   |   crime	 |
+		|----------------------------------------|
+		|  Mellis    |	Infuscor   |   Scabies   |
+		|  trade     |	dark magic |   disease	 |
+    egoism	|	     |		   |		 |
+		|  Cruentus  |	Nefas	   |   Mortifer  |
+		|  war       |	greed	   |   death	 |
+		\----------------------------------------/
+
+		    order		        chaos
+
+Perfect harmony:
+
+Two gods per alignment.
+Eight males, eight females.
+Each god has an arch enemy of opposite alignment.
+
+Enemies are:
+Valpurus - Mortifer
+Seges - Scabies
+Atavus - Nefas
+Sophos - Infuscor
+Dulcis - Cruentus
+Verax - Mellis
+Legifer - Cleptia
+Loricatus - Silva
+
+Working sets of worshipped gods (total 8 possibilities):
+
+Benevolent king/paladin (LG) set
+Friends: Valpurus, Seges, Atavus, Sophos, Legifer, Loricatus
+Neutrals: Dulcis, Verax, Mellis, Cruentus
+Enemies: Silva, Cleptia, Infuscor, Nefas, Scabies, Mortifer
+
+Paragon of good/Santa Claus/GNU coder (NG) set
+Friends: Valpurus, Seges, Atavus, Sophos, Dulcis, Verax
+Neutrals: Legifer, Loricatus, Silva, Cleptia
+Enemies: Mellis, Cruentus, Infuscor, Nefas, Scabies, Mortifer
+
+Robin Hood (CG) set
+Friends: Atavus, Sophos, Dulcis, Verax, Silva, Cleptia
+Neutrals: Valpurus, Seges, Scabies, Mortifer
+Enemies: Legifer, Loricatus, Mellis, Cruentus, Infuscor, Nefas
+
+Judge/sheriff (LN) set
+Friends: Valpurus, Seges, Legifer, Loricatus, Mellis, Cruentus
+Neutrals: Atavus, Sophos, Infuscor, Nefas
+Enemies: Dulcis, Verax, Silva, Cleptia, Scabies, Mortifer
+
+Druid/environmentalist/anarchist (CN) set
+Friends: Dulcis, Verax, Silva, Cleptia, Scabies, Mortifer
+Neutrals: Atavus, Sophos, Infuscor, Nefas
+Enemies: Valpurus, Seges, Legifer, Loricatus, Mellis, Cruentus
+
+Merchant/politician/diplomat (LE) set
+Friends: Legifer, Loricatus, Mellis, Cruentus, Infuscor, Nefas
+Neutrals: Valpurus, Seges, Scabies, Mortifer
+Enemies: Atavus, Sophos, Dulcis, Verax, Silva, Cleptia
+
+Evil warrior/necromancer (NE) set
+Friends: Mellis, Cruentus, Infuscor, Nefas, Scabies, Mortifer
+Neutrals: Legifer, Loricatus, Silva, Cleptia
+Enemies: Valpurus, Seges, Atavus, Sophos, Dulcis, Verax
+
+Evil bandit/terrorist (CE) set
+Friends: Silva, Cleptia, Infuscor, Nefas, Scabies, Mortifer
+Neutrals: Dulcis, Verax, Mellis, Cruentus
+Enemies: Valpurus, Seges, Atavus, Sophos, Legifer, Loricatus

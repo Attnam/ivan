@@ -1,0 +1,92 @@
+Material Hit Values:
+
+iron				70
+stone				60
+gravel				30
+wood				30
+schoolfood			20
+bananaflesh			10
+air				 0
+default				 0
+
+Weapon Strength Base Values:
+
+sword				0,234375 * MHV
+default				0
+
+True Values:
+
+melee				25
+iron sword			16
+any other item			 1
+
+Weigth:
+
+iron sword			2800 to 3199
+can of bf / sf			 170
+banana				 150
+lump of bf / sf			 150
+empty can			  25
+
+Size:
+
+lump of bf / sf			123
+iron sword			100 to 149
+banana				 20 to  29
+empty can			  7
+can of bf / sf			  7
+
+Strength:
+
+billswill			 70
+others				 20
+
+Agility:
+
+billswill			 90
+player				 20
+others				 10
+
+Size:
+
+ennerbeast			700		3
+human				700		3
+player				700		3
+darkfrog			 50		1
+billswill			 20		1
+
+Speed:
+
+billswill			 251 to 349  -> 100
+player & can			 151 to 249  -> 100
+all melee figthers		  51 to 149  ->  51 to 100
+player & other than can		 -49 to  49  ->   0 to  49
+
+Success:
+
+billswill			  90 to 139  ->  90 to 100
+player				  20 to  69  ->  20 to  69
+others				  10 to  59  ->  10 to  59
+
+Dodge:
+
+billswill         vs. anything	-198 to  60  ->   0 to  60
+player can        vs. anything	-169 to  79  ->   0 to  79
+player melee      vs. anything	-167 to 130  ->   0 to 100
+others            vs. anything	-157 to 140  ->   0 to 100
+player iron sword vs. anything	-117 to 180  ->   0 to 100
+
+Block:
+
+billswill         vs. 3		   0 to 498
+others            vs. 3		   0 to 398
+billswill         vs. 1		   0 to 298
+others            vs. 1		   0 to 198
+
+HPLoss:
+
+billswill         vs. anything	   0 to  12
+player melee      vs. anything	   0 to   8
+others            vs. anything	   0 to   8
+player iron sword vs. anything	   0 to   4
+player other      vs. anything	   0

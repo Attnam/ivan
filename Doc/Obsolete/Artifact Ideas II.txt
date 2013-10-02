@@ -1,0 +1,17 @@
+small swords
+
+dagger of venom - permanent poison
+incredibly sharp dagger named Mucro - bypass armor
+banshee sickle - screams, makes enemies panic
+
+large swords
+
+sword of giant slaying - double damage against monsters of > 250 size (bastard sword)
+
+axes
+
+mammoth battle axe - enormous damage, may bounce enemies, very heavy, very difficult to hit
+
+polearms
+
+scythe of undeath - raises all killed humanoids as temporary zombies

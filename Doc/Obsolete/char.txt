@@ -1,0 +1,278 @@
+----------------------------------------------------------------------------
+
+	    How to make a new character type, step-by-step tutorial
+
+----------------------------------------------------------------------------
+
+1. Choose whether you want to make an abstract character type, i.e. one that
+   is a base class for other character types but itself can't be
+   instantiated, like a "humanoid", or a concrete character like a "flat
+   mommo slime".
+2. Choose whether you want to place the code of the character's constructor
+   in a header file or a source file. You generally choose the latter only
+   when you want to add items into the creatures backpack during it's
+   creation process, like a six pack of pepsi for Oree the Pepsi Daemon King.
+3. If you chose concrete character with header constructor, goto 4.
+   If you chose abstract character with header constructor, goto 5.
+   If you chose concrete character with source constructor, goto 6.
+   If you chose abstract character with source constructor, goto 7.
+
+----------------------------------------------------------------------------
+
+4. Use a syntax like the following:
+
+	HEADER_CONSTRUCTED_CHARACTER(
+		name,
+		base,
+		cparameters,
+		bparameters,
+		dparameters,
+		constructor,
+		load,
+		type,
+		possibility,
+		data
+	);
+
+   4.01. Add this at the end of char.h.
+   4.02. Replace "name" with the code name of the new character. This is
+	 the character's true name written in lowercase without any spaces
+	 or special letters. You may also shorten it somewhat as long as
+	 it's clear whom you mean. I.e. "pure mass of Bill's will" could be
+	 in this syntax just "billswill".
+   4.03. Replace "base" with the code name of the base class, like
+	 "character", "humanoid" or "frog". The new class inherits all
+	 specialities of the base class.
+   4.04. Replace "cparameters" with "NORMAL_CHILD_PARAMETERS" if your
+	 class is not derived from "humanoid", "HUMANOID_CHILD_PARAMETERS"
+	 otherwise.
+   4.05. Replace "bparameters" with "NORMAL_BASE_PARAMETERS" or
+	"HUMANOID_BASE_PARAMETERS" as above.
+   4.06. Replace "dparameters" with the following:
+
+	 (
+	  NewMaterial(1, material),
+	  size,
+	  agility,
+	  strength,
+	  endurance,
+	  perception,
+	  relation
+	 )
+
+	4.6.1. Replace "material" with the correct material, like
+	       "new ennerbeastflesh(60000)".
+	4.6.2. Specify size, agility, strength, endurance and perception.
+	4.6.3. Specify the initial relation (0==hostile, 1==neutral,
+	       2==friend) to the player character. (usually this is 0)
+	4.6.4. If your character is derived from "humanoid", add the
+	       following parameters between perception and relation:
+	       index-of-arm-picture, index-of-head-picture,
+	       index-of-legs-picture, index-of-torso-picture.
+	       All indices refer to the order of pictures in human.pcx,
+	       of course.
+
+   4.07. Replace "constructor" with empty brackets, or optionally write
+	 some brief constructor code between them.
+   4.08. Replace "load" with empty brackets, or optionally write some brief
+	 loading code between them.
+   4.09. Look above your class. Pick the last concrete class declared there,
+	 and take its "type". Add one to this, and place the result to
+	 "type".
+   4.10. Replace "possibility" with 0 if you don't want these monster
+	 to appear randomly in the dungeon. Otherwise use any other
+	 number.
+   4.11. Place all the functions you want to overwrite to the "data"
+	 field. The essential functions are:
+
+	 NAME_SINGULAR RET(<name here>)
+	 NAME_PLURAL RET(<plural name here>)
+	 DANGER RET(<danger number here>)
+
+	 Which specify the name of the character and its danger level,
+	 which affects how strong the player must be for this character
+	 to start appearing in the dungeon.
+
+	 If your character is not a humanoid, you must also specify this
+	 function:
+
+	 C_BITMAP_POS RETV(x, y)
+
+	 Replace x and y with the coordinates of the character's
+	 picture in char.pcx.
+
+	 Add any other functions here you want, like CHARMABLE RET(false)
+	 or CAN_WIELD RET(true). If the function code is long, place
+	 semicolon (;) in the place of "RET(<something>)" and write
+	 your code to char.cpp instead.
+
+   4.12. Your character is ready!
+
+----------------------------------------------------------------------------
+
+5. Use a syntax like the following:
+
+	HEADER_CONSTRUCTED_BASE(
+		name,
+		base,
+		cparameters,
+		bparameters,
+		constructor,
+		load,
+		data
+	);
+
+   5.01. Add this at the end of char.h.
+   5.02. Replace "name" with the code name of this new base class.
+   5.03. Replace "base" with the code name of the base class of this base
+	 class, like "character" or "humanoid". The new base class and all
+	 its derived classes will inherit all specialities of the base.
+   5.04. Replace "cparameters" with "NORMAL_CHILD_PARAMETERS" if your class
+	 is not derived from "humanoid", "HUMANOID_CHILD_PARAMETERS" otherwise.
+   5.05. Replace "bparameters" with "NORMAL_BASE_PARAMETERS" or
+	"HUMANOID_BASE_PARAMETERS" as above.
+   5.06. Replace "constructor" with empty brackets, or optionally write
+	 some brief constructor code between them.
+   5.07. Replace "load" with empty brackets, or optionally write some brief
+	 loading code between them.
+   5.08. Place all the functions you want to overwrite to the "data"
+	 field. Add any functions here you want, like CHARMABLE RET(false)
+	 or CAN_WIELD RET(true). If the function code is long, place
+	 semicolon (;) in the place of "RET(<something>)" and write
+	 your code to char.cpp instead. All character classes derived
+	 from your base will inherit these functions.
+
+   5.09. Your new base class is ready!
+
+----------------------------------------------------------------------------
+
+6. Use a syntax like the following:
+
+	SOURCE_CONSTRUCTED_CHARACTER(
+		name,
+		base,
+		cparameters,
+		type,
+		possibility,
+		data
+	);
+
+   6.01. Add this at the end of char.h.
+   6.02. Replace "name" with the code name of the new character. This is
+	 the character's true name written in lowercase without any spaces
+	 or special letters. You may also shorten it somewhat as long as
+	 it's clear whom you mean. I.e. "pure mass of Bill's will" could be
+	 in this syntax just "billswill".
+   6.03. Replace "base" with the code name of the base class, like
+	 "character", "humanoid" or "frog". The new class inherits all
+	 specialities of the base class.
+   6.04. Replace "cparameters" with "NORMAL_CHILD_PARAMETERS" if your
+	 class is not derived from "humanoid", "HUMANOID_CHILD_PARAMETERS"
+	 otherwise.
+   6.05. Make your new non-default constructor to char.cpp. Use the
+	 following syntax if your character is not a humanoid:
+
+	 name::name(material** Material, vector BitmapPos, ushort Size,
+	 ushort Agility, ushort Strength, ushort Endurance,
+	 ushort Perception, uchar Relations) : base(Material, BitmapPos,
+	 Size, Agility, Strength, Endurance, Perception, Relations) {}
+
+	 If it is, use this:
+
+	 name::name(material** Material, vector BitmapPos, ushort Size,
+	 ushort Agility, ushort Strength, ushort Endurance,
+	 ushort Perception, uchar PArmType, uchar PHeadType, uchar PLegType,
+	 uchar PTorsoType, uchar Relations) : base(Material, BitmapPos, Size,
+	 Agility, Strength, Endurance, Perception, PArmType, PHeadType,
+	 PLegType, PTorsoType, Relations) {}
+
+	 Write your construction code between the empty brackets. Then make
+	 the new default constructor as follows:
+
+	 name::name(void) : base(dparameters) {}
+
+	 Refer to 4.06. for information about dparameters. Then copy your
+	 non-default constructor's code inside the brackets.
+
+   6.06. Look above your class. Pick the last concrete class declared there,
+	 and take its "type". Add one to this, and place the result to
+	 "type".
+   6.07. Replace "possibility" with 0 if you don't want these monster
+	 to appear randomly in the dungeon. Otherwise use any other
+	 number.
+   6.08. Place all the functions you want to overwrite to the "data"
+	 field. The essential functions are:
+
+	 NAME_SINGULAR RET(<name here>)
+	 NAME_PLURAL RET(<plural name here>)
+	 DANGER RET(<danger number here>)
+
+	 Which specify the name of the character, and its danger level,
+	 which affects how strong the player must be for this character
+	 to start appearing in the dungeon.
+
+	 If your character is not a humanoid, you must also specify this
+	 function:
+
+	 C_BITMAP_POS RETV(x, y)
+
+	 Replace x and y with the coordinates of the character's
+	 picture in char.pcx.
+
+	 Add any other functions here you want, like CHARMABLE RET(false)
+	 or CAN_WIELD RET(true). If the function code is long, place
+	 semicolon (;) in the place of "RET(<something>)" and write
+	 your code to char.cpp instead.
+
+   6.09. Your character is ready!
+
+----------------------------------------------------------------------------
+
+7. Use a syntax like the following:
+
+	SOURCE_CONSTRUCTED_BASE(
+		name,
+		base,
+		cparameters,
+		data
+	);
+
+   7.01. Add this at the end of char.h.
+   7.02. Replace "name" with the code name of this new base class.
+   7.03. Replace "base" with the code name of the base class of this base
+	 class, like "character" or "humanoid". The new base class and all
+	 its derived classes will inherit all specialities of the base.
+   7.04. Replace "cparameters" with "NORMAL_CHILD_PARAMETERS" if your
+	 class is not derived from "humanoid", "HUMANOID_CHILD_PARAMETERS"
+	 otherwise.
+   7.05. Make your new non-default constructor to char.cpp. Use the
+	 following syntax if your character is not a humanoid:
+
+	 name::name(material** Material, vector BitmapPos, ushort Size,
+	 ushort Agility, ushort Strength, ushort Endurance,
+	 ushort Perception, uchar Relations) : base(Material, BitmapPos,
+	 Size, Agility, Strength, Endurance, Perception, Relations) {}
+
+	 If it is, use this:
+
+	 name::name(material** Material, vector BitmapPos, ushort Size,
+	 ushort Agility, ushort Strength, ushort Endurance,
+	 ushort Perception, uchar PArmType, uchar PHeadType, uchar PLegType,
+	 uchar PTorsoType, uchar Relations) : base(Material, BitmapPos, Size,
+	 Agility, Strength, Endurance, Perception, PArmType, PHeadType,
+	 PLegType, PTorsoType, Relations) {}
+
+	 Write your construction code between the empty brackets.
+
+   7.06. Place all the functions you want to overwrite to the "data"
+	 field. Add any functions here you want, like CHARMABLE RET(false)
+	 or CAN_WIELD RET(true). If the function code is long, place
+	 semicolon (;) in the place of "RET(<something>)" and write
+	 your code to char.cpp instead. All character classes derived
+	 from your base will inherit these functions.
+
+   7.07. Your new base class is ready!
+
+----------------------------------------------------------------------------
+
+End of document.

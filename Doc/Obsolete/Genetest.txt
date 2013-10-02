@@ -1,0 +1,27 @@
+JOS pelaaja paikalla NIIN k‰y p‰‰lle
+
+JOS pelaaja ei paikalla mene satunnaiseen suuntaan
+
+
+1(void) = vihollinen paikalla
+2(x) = oma HP < x
+3(void) = vihollinen vuotaa
+4(x) = oma agility - vihollisen > x
+5(void) = vihollinen vieress‰
+6(void) = vihollinen pitk‰nmatkan aseen kantamalla ja ok suunnassa
+
+a = liiku kohti vihollisen
+b = liiku satunnaiseen suuntaan
+c = per‰‰nny
+d = ammu pitk‰nmatkan ase
+
+& = ja
+| = tai
+! = not
+
+if 
+if !4(0)|5 then b
+if 2(3) then a
+if !4(0)&!5 then d
+if !2(-3) then c
+if 6 then a

@@ -1,0 +1,27 @@
+Thief
+
+	TorsoBitmapPos = 48, 272;
+	HeadBitmapPos = 112, 272;
+	ArmBitmapPos = 80, 272;
+	LegBitmapPos = 0, 272;
+
+Grave digger
+
+	TorsoBitmapPos = 32, 80;
+	HeadBitmapPos = 112, 272;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 16;
+
+Imperialist
+
+	TorsoBitmapPos = 48, 240;
+	HeadBitmapPos = 96, 208;
+	ArmBitmapPos = 80, 112;
+	LegBitmapPos = 0, 0;
+
+Smith
+
+	TorsoBitmapPos = 48, 192; /* color tan */
+	HeadBitmapPos = 112, 160;
+	ArmBitmapPos = 64, 64;
+	LegBitmapPos = 0, 16; /* color dark brown */

@@ -1,0 +1,70 @@
+This file is written in Timo-dialect (a highly modified version
+of the Finnish language), since these tasks are not meant to be
+done nor understood by anyone else than the writer.
+
+* high priority
+// done
+/ partly done
+(r) rejected
+(s) suspended
+
+//*Funktioiden verkottaminen.
+(r) Assistenttioperaattorien integrointi? (<- osoitinluokat)
+//*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
+//Tilojen luokittaminen.
+//*Tuonpuoleisen prototyypitys.
+//*Tasovaihdosten funktionaalisuuden kohotus.
+//Syöntisallimusten liputtaminen.
+(r) Karakterin atribuuttien kollektivointi?
+(r) Karakterin atribuuttien luokitus.
+(r) Tarkkailijoiden tuhoaminen?
+//Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
+//Dynarrayn eliminaatio.
+(r) Osoitinluokat?
+//Skriptin perusdatatyyppien luokittaminen.
+Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
+(r) Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
+//Merkkijonoviittausten regularisoiminen.
+//Merkkitaulukoiden hävittäminen.
+//*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
+//Protopilkonta.
+//MS-koodin poisajo grafiikkakirjastosta (SDL myös Windozeen?).
+//Kirjastoniputus.
+(s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
+//*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
+//*Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
+//Kirjastorajapinnan organisointi systeemiriippumattomaksi.
+//*Projektin kattava kompleksisten datajäsenten cachaus.
+//*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
+Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
+//Värimakrojen sisärivittäminen.
+//Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
+//AP-hintojen negaatio.
+*Selitepohjainen ja itsetaipuva viestijärjestelmä. (<-nimivälimuisti)
+//Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
+*Nimivälimuisti.
+Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
+//Charba.cpp:n resplittaus (kontrollit erilleen?).
+Kirjallisen yliluonnollisuuden epäfunktioittaminen.
+//Säiliöluokat.
+//Piirron deasmaus.
+//Repliikkien datafilesaatio.
+Raajarajapinta.
+//Jumalten arrayttäminen.
+//Tiedostojen tekijätiedottaminen.
+Hyökkäyslajien olioiminen.
+Markkinatalouden yhdenmukaistaminen.
+Potentiaali konfiguraatioiden eksplisiittiseen periyttämiseen.
+//Eliöiden totuusjäsenten yhteensulauttaminen.
+(r) Vektoripakkaus?
+Leikisti aktiivin 1. partisiipissa olevien data-arvojen muokkaus kykylauseiksi.
+Hidastinten kirjastointi.
+//Litkujen materialisoiminen.
+(r) Massattomat maastot.
+//Metsästysvälineiden lokeroittaminen.
+//Artikkelien bitittäminen.
+//Inttien synninpäästö.
+Tehokkuustietojen välitys ruutuilmiöihin.
+Enumeraatiot barrikadeille.
+Keinosielujen uudelleenvaistoittaminen.
+Rotuspesialiteettien standardointi.

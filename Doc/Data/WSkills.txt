@@ -1,0 +1,59 @@
+The 15 main weapon skill categories are:
+
+Uncategorized
+*Unarmed Combat
+*Biting
+*Kicking
+Daggers
+Small Swords
+Large Swords
+Clubs
+Hammers
+Maces
+Flails
+Axes
+Halberds
+Spears
+Whips
+
+* Also available for nonhumanoids
+
+Category experience chart:
+
+Level	Successful hits	Unuse penalty	Idle Turns for	Bonus
+	needed				level minus	%
+						
+0	0		10/50000	-		0/0
+1	20		15/25000	50000		10/-5
+2	50		25/20000	40000		20/-10
+3	100		50/15000	30000		30/-15
+4	200		75/5000		20000		40/-20
+5	500		100/3000	15000		50/-25
+6	1000		200/2500	12500		60/-30
+7	2000		600/2000	10000		70/-35
+8	5000		1000/1500	7500		80/-40
+9	10000		2500/1250	5000		90/-45
+10	20000		3000/1000	10000		100/-50
+
+Hit limit is 50000. Skill level confers a bonus of +10% per level to damage
+and THV and -5% to AP cost.
+
+Single weapon experience chart:
+
+Level	Successful hits	Unuse penalty	Idle Turns for	Bonus
+	needed				level minus	%
+						
+0	0		5/10000		-		0/0
+1	5		5/10000		10000		15/-7
+2	10		5/4000		8000		20/-9
+3	20		15/3000		6000		25/-11
+4	50		25/2000		4000		30/-13
+5	100		50/1500		3000		35/-15
+6	200		150/1000	2000		40/-17
+7	500		250/750		1500		45/-19
+8	1000		500/500		1000		50/-21
+9	2000		1000/250	750		55/-23
+10	5000		1500/200	6000		60/-25
+
+Hit limit is 50000. Skill level confers a bonus of +15% to damage and THV
+and -7% to AP cost in the first level and +5%/-2% per level thereafter.

@@ -1,0 +1,84 @@
+Goals for IVAN version 0.40 alpha
+---------------------------------
+
+* = a high priority job
+? = a low priority job
+& = an annoying job
+/ = partly done
+// = done
+
+Great Jobs:
+
+/*&Gcc port.
+Block AI system.
+*Renewed god system.
+//*&Fixing the Great Surface Destruction Bug by remaking FeDX.
+*&Relatively complete in-code documentation.
+*Food spoiling and cooking.
+Many new items and monsters with special effects for each.
+Code improvements (see Code Improvements.txt).
+Traps.
+Cursed/uncursed/blessed statuses for items & the scroll of identify.
+Player races and classes.
+A second city that will act as a haven for chaotics.
+*Item stacking.
+*Reintegration of missile weapons.
+Manual.
+*Money item.
+Secret Knowledge Command.
+//*Manual rest/go termination.
+//Graphic effects for rays.
+//Dungeon shops.
+Smithy to Attnam.
+*Monster names.
+?Some random encounters in the wilderness.
+//*Various fountain effects & fountains to dungeons.
+Bodyparts.
+
+Smaller Jobs (see SourceForge for details):
+
+Bones in chaos gods' altars
+//Altar's owner change when polymorphed
+Heavy item throwing
+A tool for combining high score files
+Throwers want justice
+Message modes
+//?Wishing artifacts in WMode
+?Sitting worshippers
+Confuse
+//Exploding wands should be illegal
+//Strength requirement for opening things
+Money should weight something
+Chemical warfare from afar
+?Golems shouldn't talk
+Attacking Attnamians should be chaotic
+//*Alignment to panel
+//Possibility to break armor on criticals
+//*Some realism to lampfighting
+Prohibition of WoS vandalism
+Forbidding shop polypiles
+//Parchment should burn
+//*Verbal danger level to panel
+ADD_MESSAGE parameter suggestion
+Honey
+//*Pentagram safety
+Size levels for corpses
+?More versatile SeeWholeMapCheat
+The name of "a gold throne" is incorrect
+Household weaponry
+?Copulation command
+More realistic hungriness
+?Mutinous slaves
+//Roubles in Ivan's inventory
+Cats should have seven lives
+*Wand recharging
+Uses for the librarian
+//*Dolphin pools should be bigger
+Special eat effect for werewolf corpses
+//*"Times used" value to wand description
+//*Inventory weight should be shown
+Effect for critically hitting a golem
+Werewolves should gain exp
+//Cats should devour rats
+//Starting pet
+//*Polypile balancement

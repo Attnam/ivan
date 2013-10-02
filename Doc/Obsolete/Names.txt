@@ -1,0 +1,62 @@
+Täydellinen lista:
+
+mediosus		täynnä virheitä
+specus			luola
+sanctifico		teen pyhäksi
+infensus		hostiili *
+gladius			miekka
+arcus			jousi
+pro bono publico	yleisen hyvän vuoksi
+ultimatum		päätös
+in perpetuum		loputtomiin
+fatum			kohtalo
+iter			matka
+iter vehemens ad necem	väkivaltainen matka kohti kuolemaa, lyhenne IVAN
+occasio			mahdollisuus
+occidio			verilöyly
+omnis			kaikki
+oraculum		ennustus, oraakkeli
+origo/orsus/ortus	alku
+ostium			sisäänkäynti
+mundus			maailma, ihmiskunta
+via			tie
+vita			elämä
+liber			vapaa
+libertas		vapaus
+ad astra		tähtiin, voittoon
+bonum maximum		paras
+discipulus		oppilas
+immortalis		kuolematon
+pasta ex iecore anserum	hanhenmaksapasteija
+
+...ex machina		koneesta
+
++ yhdistelmät näistä (esim. via infensa)
+
+------------------------------------------------------------------------------------------
+
+Suuren Pääorganisaattorin Suositukset:
+
+Omnia ex Machina	Omnia tai OEM		Kaikki koneesta
+Mundi ex Machina	Mundi tai MEM		Koneesta maailmoja
+
+Hyvin mahtipontisia (ehkä vähän liioitellunkin), monikossa sen vuoksi, että yksiköitä
+omnis ja mundus ovat vaikea taivuttaa ainakin suomessa (vrt. pelataanpa omnista/omniaa,
+kumpi parempi?). Kirjainlyhenteet hauskoja.
+
+In Omnia Libera		Libera tai IOL		Kaikessa vapaa
+Vita Libera		Libera 			Elämä vapaa
+
+Ei niin mahtipontintisia, kuvaavat erittäin hyvin ideaamme pelaajan toimien vapaudesta. Lyhenne
+Libera eli vapaa sopii GNU-pelille.
+
+----------------------------------------------------------------------------------------
+
+Kolhoosiorja suosittelee:
+
+Infensus - järkevä sisältö ja kuulostaa hyvältä
+iter vehemens ad necem - ei ehkä nimeksi, mutta se pitää laittaa silti joksikin aliotsikoksi.
+infensus pasta ex iecore anserum ex machina
+
+infensus mundus
+...ultimatum

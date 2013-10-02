@@ -1,0 +1,24 @@
+small swords
+
+//short sword named Saal'thul - invisibility
+
+large swords
+
+//flaming sword - fire damage, glow, may burn enemy items
+//holy broadsword named Valpurus's Justifier - haste, infravision, esp, polymorph control, teleport control
+
+blunt weapons
+
+//mace named Turox - explosion
+//ancient mace named Neerc Se-ulb - great damage, hp drain
+//thunderbird hammer - lightning
+
+polearms
+
+//runed spear named Vermis - teleports enemy
+//unholy halberd named Mjolak - energy damage, evil thing to use
+
+whips
+
+//whip of thievery - steals weapon
+//chameleon whip - polymorphs enemy, depends on relation to Scabies

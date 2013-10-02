@@ -1,0 +1,8 @@
+Glacier - polar bear, mammoth
+Tundra - polar bear, mammoth
+Evergreen forest - wolf, goblin, spider, gibberling, bat, kobold
+Leafy forest - wolf, goblin, spider, gibberling, bat, kobold, unicorn
+Steppe - Cossack, bison, horse
+Swamp - dark knight, dark frog
+Desert - sand worm, nomad, Osama bin Laden
+Jungle - carnivorous plant, lion

@@ -1,0 +1,344 @@
+------------------------------------------------------------------------------------
+
+>>> NOTICE!!! <<<
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+------------------------------------------------------------------------------------
+
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Now compiles with gcc 2.952
+
+August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* No warnings with gcc anymore.
+	
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a bug in the bone player resurrection code
+	* More test removals
+
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Some frequency and danger modifier changes
+	* Test removals
+
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* UT3 is now a little easier
+	
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Polymorphing cloned multitiled items no longer crashes
+	* Vladimir can no longer be cloned
+	* Bear traps are no longer polymorphable, since this happening when they were
+	  trapping someone caused a crash
+	* Corrected two Yet Another Teleport on Mine, Polymorph and Crash Bugs
+	* Teleporting away from bear traps works again correctly
+	* Saving and loading while transporting Vladimir through the wilderness no
+	  longer crashes
+	* Highscores now store system time and a random 31-bit integer along with
+	  score information, which may be useful for MIHAIL
+	* Purified the source from a fatal bug which could cause removing of
+	  multitiled creatures from prescripted strategic locations to abort the game
+
+August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* When multi-squared monsters enters a square with a door. The door is destroyed.
+
+August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* typo corrected "blah are/is too large to big up" -> pick up
+
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Resurrecting monsters will now trigger StepOn effects under them
+	* Corrected a typo in Vladimir's description
+	* Vladimir can no longer be polymorphed
+
+August 4 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* The alternative key settings now work in felists, for instance inventory
+	* Imps are now immune to fire
+	* Gibberlings now gibber instead of grunting
+	* Ikiros can now fix any metal item even if it's harder than mithril; the
+	  former restriction was really unrealistic
+	* NEWS and AUTHORS updated
+	* Corrected a bug that could crash the game when placing multitiled characters
+	  in the script
+	* Attempting to kick or teleport multitiled corpses out of the level no longer
+	  crashes
+	* character::MoveRandomlyInRoom() no longer crashes near the level borders
+	* Corrected a fatal bug in all retreating AIs which occasionally caused a
+	  crash near level edges and a very rare bug that could cause them not to be
+	  able to escape near the right side of a level
+	* The same AIs are now somewhat more intelligent near unwalkable terrain
+	* Resurrecting the headless corpse of Elpuri no longer crashes
+	* Planting mines, creating doors etc. on the ostrich landing site is now
+	  prohibited
+	* Exiled the Bloodthirsty Killer Bug of the Shattered IvanDev Emblem
+	* Vladimir no longer flies
+	* Fixed a rare bug that could cause Elpuri's area attack to crash if
+	  he triggered item explosions which killed him and polymorphed his corpse
+	  before the attack was completed
+	* Wand of door creation can no longer be used to reach level borders in
+	  dungeons
+	* Defeated the Mysterious Chaos Bug of Game-Eating Ghost Items
+	* Squashed a fatal bug in the NodeMap initialization code that could cause
+	  multitiled monsters' pathfinding to crash
+	* Plugged a minor memory leak in the level destruction code
+
+August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Removed the obsolete character and item outline codes
+	* Corrected some gcc warnings
+	* Walls in GC are now made of stone, for variety
+
+August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a fatal bug in the bonefile code
+	* The holy banana's big explosion damage reduced to half
+	* Added some magic resistance to powerful named monsters
+	* The AI is now able to use teleport control
+	* The AI now uses ESP more efficiently
+	* Sherarax and Ischaldirh are again several times more insane
+	* Plants etc. again can't follow or be displaced
+	* Corrected a minor outlook bug in the explosion code
+	* Kamikaze dwarves and mines are now more powerful
+
+August 2 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Fly symbols are again displayed correctly
+
+August 1 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bunnies no longer can open doors
+	
+July 31 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Nobody can walk in dungeon to the edge tiles.
+	
+July 31 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Vladimir now changes color all the time
+	* The banana growers no longer defend Decos
+
+July 31 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Opening book cases is easier (just walk towards one)
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Adjusted Legifer's, Cleptia's, Nefas's and Infuscor's pray effects somewhat
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mistress' weaponskill increased
+	
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a fatal bug in the dig code
+	* Fixed a small bug in the consuming code which could create fleshless
+	  holy bananas
+	* Removed a tiny abusable bug in the teleport control code
+	* Broken thunder hammers no longer emit light
+	* Eliminated a minor bug in the clone experience behaviour
+	* Destroyed an ugly bug that occurred when teleporting vesana
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Stupidity in my bug correction (zombies eating headless) corrected
+	
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Entering Corey's dungeon is now more difficult
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Action system implemented in a slightly different way, which corrects
+	  some strange bugs appearing when eating multi-tiled corpses
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Temporary states (such as poisoned) are deactivated when monster is resurrected. 
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Pets and player killed monsters are no longer handled seperatly for score calculation
+	* Bug with digging earth tiles 
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Headless zombies can no longer eat or drink.
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Menu picture changed.
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Fixed a fatal bug in the character::PutNear()
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* StepOn effects are now applied when changing areas, too
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Added Vladimir the gigantic carnivorous mutant bunny, which is a loyal
+	  companion of Ivan and occupies 2x2 squares at once
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a bug which caused female cowards of Attnam to scream impolite
+	  personal pronouns if their pursuer wasn't seen by the player
+	* Hattifattener added to char.pcx by Kahvi
+	* Cactus added to item.pcx (a completely wrong place) by Kahvi
+	* New monsters added:
+	  * Giant dark frog, giant light frog, giant carnivorous plant, black bear,
+	    grizzly bear and cave bear
+	  * Hedgehog, of which spines do damage to unarmed attackers
+	  * Hattifattener, which walks around randomly and shoots lightning bolts at
+	    unexpectable directions and explodes in a large burst of electricity when dies
+	  * Adult male and female carnivorous mutant bunnies, which are generated in pairs,
+	    seek food and bunnies of opposite sex aggressively, mate and produce babies
+	  * Baby male and female carnivorous mutant bunnies, which find food to grow big
+	* level::FindRoute now uses real A-star pathfinding
+	* Sober monsters with intelligence of at least ten now use the new pathfinding
+	  when the old one isn't sufficient and are capable of some slight teamwork
+	  (ie. calling for nearby friends' attention if they detect an enemy)
+	* The AI will now kick down locked doors if it can and presumes an enemy is
+	  hiding behind them
+	* Genetrix vesana now spawns more and more powerful plants as time passes
+	* Decreased global danger values, monster amounts and and spawn rates considerably
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added CanBeSeen checks to Elpuri's code. 
+	* Added weird reference to Ivan's talk
+
+July 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Elpuri goes through walls and destroys them
+
+July 22 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Score system simplified
+
+July 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed some ambiguous material definitions
+	* Corrected a small bug in the olterrain changing code
+	* Earth pictures modified somewhat by Kahvi
+
+July 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Monster invisibility works again correctly
+	* Fixed a small border tile bug
+
+July 14 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bug related to multisquared characters corrected
+	* Now compiles with GCC again.
+
+July 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added border tiles to earth
+	* Wand of door creation no longer crashes
+	* Corey's level no longer crashes, I think
+
+July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* StepOn effects work again
+
+July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added support for multi-tile characters and items
+	* 32x32 genetrix vesana and Elpuri added to char.pcx by Kahvi
+	* Genetrix vesana, Elpuri and their corpses are now 2x2 squares large
+	* Earth with border tiles added to olterra.pcx by Kahvi
+	* Sumo wrestler added to humanoid.pcx by Kahvi
+	* Removed boots of the (Master) Porter
+	* Corrected a bug in the lock configuration creation code
+	* The enner beast is now quite funnily animated
+	* The holy banana can no longer be cloned
+	* Mages are now a little less insane opponents
+	* Corrected a highly abusable problem in the polymorph control code
+	* Added numerous bugs
+
+July 9 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Chests in inventory can be unlocked/locked.
+	* Possible abuse prohibited in key-code 
+
+	1 : unlock chest
+	2 : lock chest
+	3 : goto 1
+	(gives dex)
+
+July 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal bug in the level loading code
+
+July 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* No more funny snow covered boulders in weird places like New Attnam
+
+July 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A small bug in save.cpp corrected
+	* A great bug in rooms.cpp corrected
+	* You can now easily add new lock types
+	* Disabled several of Hex's tests
+	* 'K' now kicks instead of 'k'
+	* Lyre picture added to item.pcx by Kahvi
+	* Animated enner beast head and lyre's wielded picture added to humanoid.pcx
+	  by Kahvi
+	* Impenetrable jungle terrain + border tiles added to olterra.pcx by Kahvi
+	* Added lyre of charm which can tame weak monsters
+
+July 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Support for keyboards without number pad added
+	* Some keys changed (because of the above change). Probably very annoying.
+
+June 05 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Very basic worldmap tile types added. (much work needed still)
+
+May 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
+
+	* The new path-finding (or actually checking whether a path exists...) algorithm added
+	* Few spelling mistakes in char.dat corrected
+		
+May 21 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
+
+	* Dungeons work again.
+	* A pathfinding algorithm. (That is not yet finished)   
+	
+May 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added second version of Corey's crystal level
+	* Btw, this version doesn't work
+
+May 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added first version of Corey's crystal level
+	* Btw, Hex's code doesn't compile
+
+May 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Compiles with gcc 3.3
+	* Almost everything crashes. (started to make new world map idea)
+
+May 13 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* interupt -> interrupt. We suck in English. Thanks Tuukka!
+	* No more weird msgs from unseen bear traps.
+	* Bugs with many rooms and no-guy-who-is-responsable-for-the-attack fixed
+
+May 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Docs (especially bugs.txt) have been cleaned up a bit

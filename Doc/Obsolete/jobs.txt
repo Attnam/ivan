@@ -1,0 +1,70 @@
+//++++++kamikaze dwarf death
++++++low-gc balancing
+//+++++ommel bone/temporary sell
+//+++++selectfrompossessions bugs in smith
+//++++harden material + limbs
+//++++gods + harden material
+//++++mine field
+//++++fix odd hostilities
+//++++aslightly rusted
+//++++check hex's cathedral explosive code
+//++++don't consume valuable
+++++charisma/int req for taming
+//++++walls of GC10-11
+//++++slowing spoiling
+//++++pleasant/ etc.
+//++++petrus etc. should be immune to faint
+//++++priest should cure lycanthropy
+++++test oree
+//++++stab, slash, smash
+//++++sumo wrestler goes insane bug
+//++++acid name to death msg
+//++++moving sumo
+//++++shirt of the golden eagle av
+//++++charisma sparkle + blood bug
+//++++autovomit to Valpurus's altar
+//++++"swimming"
+//++++"killed accidentally by Legifer"
+//+++shops should be more difficult
+*+++slipping when running
+*+++blue poison face
+//+++"there's vomit on the wall"
++++making staff of wondrous smells better
+//*+++Breaking wand of mirroring
+//*+++character spill
++++lyre + charisma
+//+++vermis teleport state
++++rectangular amnesia
+//+++ommel bone values
+//+++day difficulty
+//+++ring/cloak of acid resistance
+//+++"slight tingling in your hands" even if none
+*+++weak kick has no chance
+*+++gc13 locks
+//++water border tiles
+//*++big spider
+++dipping to corpses
+//++science talk messages
+//++poisonous spider blood
+++vesana + giant plant animation
+//++mistress whips
+++readme/librarian spoiler
+++leprosy head drop
+//+archangel to petrus
++applying potions -> liquid to ground
++taming vesana
++getting Ivan
+*+gods give pets
++displacement priority
++optional: singing dwarves
+victory screen etc.
+//search \:b$
+
+
+check polymorph
+check vaults
+
+:screenshots - menu, map, new attnam, attnam, vesana, ut4, lights, explosion, bodypart lose, polymorph, high levels
+:thumbnails
+:readme
+:game description

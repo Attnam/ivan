@@ -1,0 +1,129 @@
+Description of values
+---------------------
+
+name		characteristics connecting creatures valuing it
+
+others		altruists
+self		egoists
+
+life		people who prefer to solve conflicts in peaceful and life-preserving ways
+death		will resort to violence when facing opposite opinions
+
+order		beings that believe in the power of ordered societies and laws
+chaos		individualists, anarchists and generally people who don't care about rules
+
+nature		those who see nature as value in itself
+man		those who see nature only as a resource to be exploided by man
+
+Gods of belonging to each value
+-------------------------------
+
+self		others
+Nefas		Atavus
+Mellis		Sophos
+Infuscor	Legifer
+
+life		death
+Terra		Mortifer
+Seges		Scabies
+Dulcis		Cruentus
+
+order		chaos
+Legifer		Cleptia
+Valpurus	Scabies
+Mellis		Infuscor
+
+nature		man
+Silva		Loricatus
+Sophos		Mellis
+Dulcis		Seges
+
+List of all gods
+----------------
+
+Valpurus 	the king of gods				order
+Legifer		god of truth, law and loyalty			others, order
+Atavus		god of charity and munificence			others
+Sophos		god of knowledge and magic			nature, others
+Terra		goddess of the earth				nature
+Silva		goddess of forests and wildlife			life, nature
+Dulcis		goddess of love and art				life
+Seges		goddess of health and agriculture		man, life
+Loricatus	god of fire, machines and smithing		man
+Mellis		god of money, trade and politics		self, man
+Nefas		goddess of greed and forbidden pleasures	self
+Infuscor	goddess of wrong knowledge and vile magic	chaos, self
+Cleptia		goddess of crime and rebellion			chaos
+Scabies		goddess of mutations, disease and famine	death, chaos
+Mortifer	god of death and destruction			death
+Cruentus	god of war and blood				order, death
+
+List of all possible alignment combinations
+-------------------------------------------
+
+Alignment: life order man others
+Friends: Valpurus Seges Atavus Dulcis Legifer Loricatus
+Enemies: Terra Sophos Silva Mellis Nefas Cruentus Cleptia Infuscor Scabies Mortifer
+
+Alignment: life order man self
+Friends: Valpurus Seges Dulcis Loricatus Mellis Nefas
+Enemies: Atavus Terra Sophos Silva Legifer Cruentus Cleptia Infuscor Scabies Mortifer
+
+Alignment: life order nature others
+Friends: Valpurus Atavus Terra Dulcis Sophos Silva Legifer
+Enemies: Seges Loricatus Mellis Nefas Cruentus Cleptia Infuscor Scabies Mortifer
+
+Alignment: death order nature others
+Friends: Valpurus Atavus Terra Sophos Legifer Cruentus Mortifer
+Enemies: Seges Dulcis Silva Loricatus Mellis Nefas Cleptia Infuscor Scabies
+
+Alignment: death order man others
+Friends: Valpurus Atavus Legifer Loricatus Cruentus Mortifer
+Enemies: Seges Terra Dulcis Sophos Silva Mellis Nefas Cleptia Infuscor Scabies
+
+Alignment: life order nature self
+Friends: Valpurus Terra Dulcis Silva Nefas
+Enemies: Seges Atavus Sophos Legifer Loricatus Mellis Cruentus Cleptia Infuscor Scabies Mortifer
+
+Alignment: death order nature self
+Friends: Valpurus Terra Nefas Cruentus Mortifer
+Enemies: Seges Atavus Dulcis Sophos Silva Legifer Loricatus Mellis Cleptia Infuscor Scabies
+
+Alignment: death order man self
+Friends: Valpurus Loricatus Mellis Nefas Cruentus Mortifer
+Enemies: Seges Atavus Terra Dulcis Sophos Silva Legifer Cleptia Infuscor Scabies
+
+Alignment: life chaos man others
+Friends: Seges Atavus Dulcis Loricatus Cleptia
+Enemies: Valpurus Terra Sophos Silva Legifer Mellis Nefas Cruentus Infuscor Scabies Mortifer
+
+Alignment: life chaos man self
+Friends: Seges Dulcis Loricatus Mellis Nefas Cleptia Infuscor
+Enemies: Valpurus Atavus Terra Sophos Silva Legifer Cruentus Scabies Mortifer
+
+Alignment: life chaos nature others
+Friends: Atavus Terra Dulcis Sophos Silva Cleptia
+Enemies: Valpurus Seges Legifer Loricatus Mellis Nefas Cruentus Infuscor Scabies Mortifer
+
+Alignment: death chaos nature others
+Friends: Atavus Terra Sophos Cleptia Scabies Mortifer
+Enemies: Valpurus Seges Dulcis Silva Legifer Loricatus Mellis Nefas Cruentus Infuscor
+
+Alignment: death chaos man others
+Friends: Atavus Loricatus Cleptia Scabies Mortifer
+Enemies: Valpurus Seges Terra Dulcis Sophos Silva Legifer Mellis Nefas Cruentus Infuscor
+
+Alignment: life chaos nature self
+Friends: Terra Dulcis Silva Nefas Cleptia Infuscor
+Enemies: Valpurus Seges Atavus Sophos Legifer Loricatus Mellis Cruentus Scabies Mortifer
+
+Alignment: death chaos nature self
+Friends: Terra Nefas Cleptia Infuscor Scabies Mortifer
+Enemies: Valpurus Seges Atavus Dulcis Sophos Silva Legifer Loricatus Mellis Cruentus
+
+Alignment: death chaos man self
+Friends: Loricatus Mellis Nefas Cleptia Infuscor Scabies Mortifer
+Enemies: Valpurus Seges Atavus Terra Dulcis Sophos Silva Legifer Cruentus
+
+End of document
+---------------

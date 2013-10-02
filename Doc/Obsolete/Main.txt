@@ -1,0 +1,2477 @@
+----------------------------------------------------------------------------
+
+	  Iter Vehemens ad Necem main executable source documentation
+
+----------------------------------------------------------------------------
+
+Classes:
+--------
+
+area (area.h)
+-------------
+
+Basic container of squares. In addition to square data, this hold FlagMap,
+a 2D-map containing flags used for level generation and Memorized, a bitmap
+with all memorized terrain blitted here for safekeeping. Base class for level
+and worldmap.
+
+Functions:
+
+area(ushort XSize, ushort YSize)
+
+	Creates a new area of given size. The squares are not initialized
+	in any way, however.
+
+~area()
+
+	Destroys the area and its components.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the area and its contents to a file as an uncompressed
+	bytesream.
+
+area(std::ifstream* SaveFile)
+
+	Creates a new area and loads its contents from a file.
+
+RemoveCharacter(vector Pos)
+
+	Removes a character from the square pointed by Pos.
+
+AddCharacter(vector Pos, character* Guy)
+
+	Adds Guy to square in Pos.
+
+vector RandomSquare(const bool Walkablility)
+
+	Returns coordinates of a random square with overterrain
+	of specified Walkability. Crashes horribly if one is not found.
+
+ushort CFlag(const vector Pos)
+
+	Return contents of FlagMap in position Pos. Used mainly
+	by level generation code.
+
+square* operator [] (vector Pos)
+square* CSquare(vector Pos)
+
+	Returns square in position Pos.
+
+ushort CXSize()
+ushort CYSize()
+
+	Return the width and height of the area map.
+
+bitmap* CMemorized()
+
+	Return a pointer to the Memorized bitmap.
+
+character (char.h)
+------------------
+
+The base class for all character types, derived from object.
+
+Functions:
+
+character(material** Material, vector BitmapPos, ushort Size,
+          ushort Agility, ushort Strength, ushort Endurance,
+          ushort Perception, uchar Relations);
+
+	Constructs the character. Material must point to a pointer to the
+	correct material. BitmapPos is discarded. Relations must be in
+	the range either HOSTILE (0), NEUTRAL (1) or FRIEND (2), for
+	it determines the initial relation to the player character.
+	Note: "character" is an abstract class. You must call this
+	constructor from derived concrete classes only!
+
+~character()
+
+	Destructs the character.
+
+character(std::ifstream* SaveFile, ushort MaterialQuantity = 1)
+
+	Loads a character from a savefile. MaterialQuantity is discarded.
+
+DrawToTileBuffer()
+
+	Draws the character to igraph's TileBuffer, from where it's
+	blitted to DOUBLEBUFFER once time is rigth.
+
+Act()
+
+	The basic command for character to do something. Called every
+	tick.
+
+bool Hit(character* Enemy)
+
+	Commands the character to hit someone. Normally called only by
+	TryMove(), when the character tries to move over someone.
+	Return false if hit was canceled by some reason.
+
+uchar TakeHit(ushort Speed, short Success, float WeaponStrength,
+              character* Enemy)
+
+	Called by Hit(). This determines the success of the hit and
+	damage caused based on parameters and characters' attributes.
+	Returns either HAS_HIT (0), HAS_BLOCKED (1), HAS_DODGED (2) or
+	HAS_DIED (3).
+
+bool Consume()
+
+	Called by GetPlayerCommand(), asks the player what he wants
+	to consume and such. Returns false if action was cancelled.
+
+Hunger()
+
+	Called by Act(), this function handles nutrition consuming,
+	"You are getting hungry." messages and starvation death.
+
+bool TryMove(vector MoveTo)
+
+	Tries to move somewhere or hit something. Returns false
+	on cancel.
+
+bool Drop()
+
+	Displays the drop dialog. Returns false if nothing was dropped.
+
+bool ConsumeItem(int ToBeEaten, stack* ItemsStack)
+
+	Tries to consume an item. Called by Consume(). False means cancel.
+
+Regenerate()
+
+	Called by Act(), this handles turnly HP regeneration.
+
+Move(vector MoveTo, bool TeleportMove = false)
+
+	An actual move, this handles lightning and LOS changes and
+	replacing the character. However this does nothing if
+	the character is overburdened and TeleportMove is false.
+
+bool ShowInventory()
+
+	Shows the inventory list. Always returns false.
+
+bool PickUp()
+
+	Shows the pickup dialog. Returns false on cancel.
+
+bool Quit()
+
+	Asks whether the player wishes to quit. If no, returns false.
+	If yes, exits to main menu.
+
+bool Wield()
+
+	Shows the wield dialog. Returns false on cancel.
+
+Die()
+
+	Drops all items, creates a corpse of the character, possibly
+	updates lights, sends the character to game::Hell and exits
+	if this == Player and no cheats prevent this. Does nothing
+	if character is already dead.
+
+bool OpenItem()
+
+	Shows the open item dialog. Returns false on cancel.
+
+ReceiveSound(char* Pointer, short Success, float ScreamStrength)
+
+	Adds string pointed by Pointer to messages if this == Player
+	and causes appropriate damage to the character based on the
+	parameters.
+
+item*  CWielded()
+
+	Return pointer to currently wielded item or 0 if character is in
+	melee mode.
+
+stack* CStack()
+
+	Return pointer to the character's inventory stack.
+
+ushort CEmitation()
+
+	Calculates the character's light emulation in range 0-511.
+
+vector CPos()
+
+	Returns the position of the square under the character. If such
+	doesn't exist, crashes terribly.
+
+bool CHasActed()
+
+	Has Act() of this character been called during this tick?
+
+ushort CStrength()
+ushort CAgility()
+ushort CEndurance()
+ushort CPerception()
+ushort CSize()
+
+	Returns the attribute in question.
+
+short CHP()
+long CNP()
+
+	Returns Hit Points and Nutrition Points (how far the character is
+	from starvation).
+
+SSquareUnder(square* Square)
+
+	Set SquareUnder to Square.
+
+SHasActed(bool HA)
+
+	HasActed determines whether the character has acted during this
+	tick. This sets it to HA.
+
+bool WearArmor()
+
+	Shows the wear armor dialog. Return false if not applicable
+	to the class or cancellation was detected.
+
+item* CTorsoArmor()
+
+	Return the item worn over torso, or 0 for nothing.
+
+bool ConsumeItemType(uchar Type)
+
+	Returns whether this individual character can consume an item
+	of consume type Type. (like MEAT etc.)
+
+ReceiveBulimiaDamage()
+
+	Calculates an NP limit based on character's size and causes
+	overeating damage based on how much NP value is over it.
+
+ReceiveNutrition(long SizeOfEffect)
+ReceiveFireDamage(long SizeOfEffect)
+ReceiveSchoolFoodEffect(long)
+ReceiveOmleUrineEffect(long)
+ReceivePepsiEffect(long SizeOfEffect)
+Darkness(long SizeOfEffect)
+
+	Various effect functions called from material::EatEffect().
+
+uchar CRelations()
+
+	Returns current relation towards the player character,
+	either HOSTILE (0), NEUTRAL (1) or FRIEND (2).
+
+AddBlockMessage(character* Enemy)
+
+	Adds a message that Enemy has blocked the this character's attack,
+	i.e. hit was successful but did zero damage.
+
+AddDodgeMessage(character* Enemy)
+
+	Adds a message explaining that Enemy has dodged this character's
+	attack, i.e. the character missed and did zero damage.
+
+AddHitMessage(character* Enemy, const bool Critical = false)
+
+	Adds a message informing the that this character has hit the
+	Enemy succesfully and did a positive amount of damage.
+	Critical must determine whether the hit was critical (double
+	damage, automatic hit) or not.
+
+uchar GetSex()
+
+	Returns whether character is MALE (1) of FEMALE (2), something
+	UNDEFINED (0), or something between the three like TRANSSEXUAL (3).
+
+BeTalkedTo(character* Talker)
+
+	Triggers an event tied to conversation between this character and
+	Talker.
+
+bool Talk()
+
+	The character is asked whom he/she/it wants to talk to and
+	perhaps calls BeTalkedTo. Called by GetPlayerCommand. False
+	as return means cancel.
+
+bool GoUp()
+bool GoDown()
+
+	Functions tied to '<' and '>'. False is returned if level
+	doesn't change.
+
+bool Open()
+bool Close()
+
+	The character is asked what he/she/it wants to open or
+	close. Called by GetPlayerCommand. False as return means cancel.
+
+bool NOP()
+
+	The player rests one turn, reducing nutrition consuming.
+	Always returns true.
+
+ushort CalculateArmorModifier()
+
+	Return a percentage number between 1-100 specifying how much damage
+	the character receives from hits.
+
+ApplyExperience()
+
+	Called by Act(). Checks whether the character has gained/lost
+	enough attributal experience to alter primary attributes,
+	and adjusts them if needed.
+
+bool HasHeadOfElpuri()
+bool HasPerttusNut()
+bool HasMaakotkaShirt()
+
+	Self-explanatory.
+
+bool Save()
+
+	Asks whether the character wants to save and quit. Called by
+	GetPlayerCommand. False as return means cancel.
+
+bool Read()
+
+	Shows the read dialog. False as return means cancel.
+
+bool ReadItem(int ToBeRead, stack* ItemsStack)
+
+	Called by bool Read(). Tries to read an item. Returns false on
+	unsuccess.
+
+uchar GetBurdenState(ulong Mass = 0)
+
+	Returns either UNBURDENED (3), BURDENED (2), STRESSED (1), or
+	OVERLOADED (0) based on Mass and character's strength. If
+	Mass is zero, uses character's current inventory weigth
+	instead.
+
+bool Dip()
+
+	Shows the dip dialog. Returns false on cancel.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the character's data to SaveFile.
+
+bool WizardMode()
+bool RaiseStats()
+bool LowerStats()
+bool SeeWholeMap()
+bool WalkThroughWalls()
+
+	Functions tied to corresponding Wizard Mode keys. False
+	means no effect took place.
+
+bool IncreaseGamma()
+bool DecreaseGamma()
+bool IncreaseSoftGamma()
+bool DecreaseSoftGamma()
+
+	Self-explanatory. Called by GetPlayerCommand. Always return
+	false.
+
+float CWeaponStrength()
+float CAttackStrength()
+
+	Returns the weaponstrength of melee attack or wielded item.
+	Functions are equal which is insane.
+
+bool ShowKeyLayout()
+bool Look()
+
+	Functions tied to '?' and 'l'. Always return false.
+
+long CStrengthExperience()
+long CEnduranceExperience()
+long CAgilityExperience()
+long CPerceptionExperience()
+ushort CRegenerationCounter()
+square* CSquareUnder()
+levelsquare* CLevelSquareUnder()
+long CAP()
+bool CFainted()
+long CAPsToBeEaten()
+
+	Return their corresponding data fields.
+
+float CDifficulty()
+
+	Calculates the current Difficulty of the player, used by monster
+	generation code.
+
+bool Engrave(std::string What)
+
+	Engraves What to the square under. Crashes horribly if one doesn't
+	exits. Returns true without exception.
+
+bool WhatToEngrave()
+
+	Function tied to 'E'. Always returns false which is terribly wrong.
+
+MoveRandomly()
+
+	AI function that moves the character randomly to any available
+	directions that aren't blocked, or alternatively sits still.
+
+SWielded(item* Something)
+
+SMaterial(ushort Where, material* What)
+
+SHP(short What)
+SStrengthExperience(long What)
+SAgilityExperience(long What)
+SEnduranceExperience(long What)
+SPerceptionExperience(long What)
+SAP(long What)
+SFainted(bool What)
+SNP(long What)
+SRelations(uchar What)
+SStrength(ushort What)
+SEndurance(ushort What)
+SAgility(ushort What)
+SPerception(ushort What)
+SRegenerationCounter(long What)
+SConsumingCurrently(ushort What)
+SAPsToBeEaten(long What)
+
+	Set their data fields to What.
+
+bool TestForPickup(item* ToBeTested)
+
+	AI function that tests whether the character would become burdened
+	or worse when picking ToBeTested up.
+
+bool CanWield()
+bool CanWear()
+
+	Self-explanatory.
+
+bool WearItem(item* ToBeWorn)
+
+	Tries to wear the item ToBeWorn. Returns false if unsuccessful.
+
+bool OpenPos(vector APos)
+
+	Called by bool Open(), this tries to open the overterrain in APos.
+	False means he/she/it cannot or wants not.
+
+bool Pray()
+
+	Shows the pray dialog. False is returned on cancel.
+
+SpillBlood(uchar HowMuch)
+
+	Spills blood on SquareUnder.
+
+HealFully(character* ToBeHealed)
+
+	AI function that heals ToBeHealed fully, if the character can.
+
+bool Kick()
+
+	Function tied to 'k'. Returns false if illegal key was pressed
+	when asking direction.
+
+bool ScreenShot()
+
+	Saves DOUBLEBUFFER to a dib-format bmp-file "Scrshot.bmp".
+	Returns false.
+
+bool Offer()
+
+	Shows the offer dialog. Returns false on cancellation,
+	sacrifice rejection and not doing this on an altar.
+
+ushort LOSRange()
+
+	Returns how far the character can see, in tiles, based on
+	perception.
+
+ushort LOSRangeLevelSquare()
+
+	Returns the square of the preseding.
+
+long Score()
+
+	Calculates the score of the player character.
+
+long AddScoreEntry(std::string Description, float Multiplier = 1)
+
+	Adds the player character to high score list. Description must
+	contain the cause of death. Score is multiplied by Multiplier,
+	which is used mainly on victorious games.
+
+bool CheckDeath(std::string Msg)
+
+	Kills the character if HP is low enough, and calls AddScoreEntry()
+	if this == game::CPlayer(). Returns true on death, false otherwise.
+
+ulong Danger()
+
+	Returns the danger level of the monster, used by monster generation
+	code.
+
+bool Charmable()
+
+	Returns whether the character can be charmed and turned to NEUTRAL
+	by MP3s and etc.
+
+bool CheckBulimia()
+
+	Returns whether the character has already surpassed his/her/its
+	NP limit, based on size.
+
+bool CheckIfConsumable(ushort Index)
+
+	Checks whether an item in character's inventory of index Index
+	is consumable.
+
+bool DrawMessageHistory()
+
+	Self-explanatory. Returns false.
+
+bool Throw()
+
+	Shows the throw dialog. False means cancellation.
+
+bool ThrowItem(uchar Direction, item* ToBeThrown)
+
+	Throws an item to Direction (0-7, index of direction vector).
+	Returns false if the item did not move anywhere for some reason.
+
+HasBeenHitByItem(item* Thingy, float Speed, bool CanBeSeen)
+
+	Called by item::HitCharacter(). Calculates damage the Thingy caused
+	and adds a message of the event if its position CanBeSeen.
+
+bool Catches(item* Thingy, float, bool CanBeSeen)
+
+	Called by item::HitCharacter(). The character tries to catch a
+	flying item, like a dog catching a bone. Returns true if
+	successful.
+
+bool DodgesFlyingItem(item*, float Speed, bool)
+
+	Called by item::HitCharacter(). Returns whether the character
+	can dodge an item flying at Speed.
+
+ulong CBloodColor()
+
+	Returns the color of character's blood.
+
+ContinueEating()
+
+	Called by Act every tick the character is eating. Handles
+	stopping consume after too much time etc.
+
+StopEating()
+
+	Stops eating something. Called by ContinueEating().
+
+Vomit(ushort HowMuch)
+
+	Forces the character to vomit as much as HowMuch.
+
+character* Clone()
+
+	Creates a clone of the character and returns a pointer to it.
+	Used by character generation system.
+
+character* Load(std::ifstream* SaveFile, ushort MaterialQuantity = 1)
+
+	Creates a character of this type and loads its data fields
+	from SaveFile via character(std::ifstream* SaveFile,
+	ushort MaterialQuantity). MaterialQuantity is discarded.
+
+ushort Possibility()
+
+	Returns whether it is possible for the character to appear
+	randomly in the dungeon. Zero means not, non-zero yes.
+
+bool Apply()
+
+	Shows the apply dialog.
+
+GetPlayerCommand()
+
+	Called by Act, this waits for the user's proper keypress and calls
+	the tied function, which returns either true or false. If true,
+	function returns, if false, it waits for another command.
+
+GetAICommand()
+
+	Basic AI function run each turn, called by Act.
+
+Charge(character* Target)
+
+	Commands the character to move towards the target or hit it
+	if they are adjacent to each other.
+
+float GetMeleeStrength()
+
+	Returns weaponstrength of hands, teeth, pepsi vomit, etc.
+	that is used if nothing is wielded.
+
+HostileAICommand()
+NeutralAICommand()
+FriendAICommand()
+
+	GetAICommand() calls the one associated with the current relation
+	to player character. Call things like Charge or HealFully etc.
+
+std::string ThirdPersonWeaponHitVerb(const bool Critical)
+std::string ThirdPersonMeleeHitVerb(const bool Critical)
+std::string FirstPersonHitVerb(character*, const bool Critical)
+std::string AICombatHitVerb(character*, const bool Critical)
+
+	Called by AddHitMessage as appropriate. See that function body
+	for more information.
+
+std::string NormalFirstPersonHitVerb(const bool Critical)
+std::string NormalThirdPersonHitVerb(const bool Critical)
+std::string FirstPersonBiteVerb(const bool Critical)
+std::string ThirdPersonBiteVerb(const bool Critical)
+std::string FirstPersonPSIVerb(const bool Critical)
+std::string ThirdPersonPSIVerb(const bool Critical)
+std::string FirstPersonBrownSlimeVerb(const bool Critical)
+std::string ThirdPersonBrownSlimeVerb(const bool Critical)
+std::string FirstPersonPepsiVerb(const bool Critical)
+std::string ThirdPersonPepsiVerb(const bool Critical)
+
+	Called by the preseding four functions, these handle different
+	hit messages based on character's type.
+
+derived characters (character.h)
+--------------------------------
+
+The actual character classes instantiated in the game, and their
+abstract bases such as humanoid. Functions are same as in character.
+
+command (command.h)
+-------------------
+
+A class that contains information of one command, including the key that
+triggers it and the character function that is tied to it.
+
+Functions:
+----------
+
+command(bool (character::*LinkedFunction)(void), std::string Description,
+        char Key)
+
+	Constructs the command. Description is the one that appears in
+	ShowKeyLayout list.
+
+bool (character::*CLinkedFunction(void))()
+std::string CDescription()
+char CKey()
+
+	Return the associated data components.
+
+game (game.h)
+-------------
+
+The garbage can of all global functions and variables. This holds class
+prototypes, message system, pointers to areas and player and many
+tiny key, string, god etc. routines that can't be put into any well-defined
+category.
+
+Functions:
+----------
+
+Init(std::string Name = "")
+
+	Inits the game. Called by Main and LoadMenu. Name is the player's
+	name used for loading, if it's empty, it is asked from user.
+
+DeInit()
+
+	Deinitializes the game and frees all memory allocated for levels
+	and player.
+
+Run()
+
+	The Main Loop of the game, called by Main and LoadMenu.
+
+const int Menu(std::string sMS)
+
+	Shows a menu like the main menu. sMS must contain all menu choices,
+	distinquished from each other by '\r' letter.
+
+int* CMoveCommandKey()
+
+	Returns a pointer to MoveCommandKey, which is an array containing
+	all eight direction keys.
+
+const vector* CMoveVector()
+
+	Returns a pointer to MoveVector, which is an array containing
+	all eight direction vectors in the same order as in MoveCommandKey.
+
+level* CCurrentLevel()
+
+	Self-explanatory.
+
+bool FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+
+	Used by LOS system. The LOS code draws lines beginning from player
+	and calls this function for each coordinate pair. CX and CY are
+	current coordinates, OX and OY the origo (player) coordnates.
+	This updates the pointed squares Flag (whether it can be seen)
+	and item memory. Returns false if the square is blocked and
+	linedrawing must be terminated.
+
+bool DoLine(int X1, int Y1, int X2, int Y2,
+            bool (*Proc)(ushort, ushort, ushort, ushort))
+
+	"Draws" a line from X1:Y1 to X2:Y2, that is, calculates the route
+	between them coordinate by coordinate and calls Proc() with each
+	coordinates as arguments. Proc is usually FlagHandler or alike.
+
+ushort*** CLuxTable()
+
+	Returns a pointer to the LuxTable. See "light.txt" for more
+	information.
+
+ushort* CLuxTableSize()
+
+	Return a pointer to LuxTableSize. See "light.txt" for more
+	information.
+
+Quit()
+
+	Quits the game, i.e. set the Running boolean, that determines
+	whether Run() will continue, to false.
+
+character* CPlayer()
+
+	Returns pointer to the player character. Probably the most
+	used function in the game, but there's no macro.
+
+SPlayer(character* NP)
+
+	Sets NP to be the new Player.
+
+vector CCamera()
+
+	Returns the Camera vector, i.e. vector that tells the coordinates of
+	the square at the top left corner of the display.
+
+UpDateCameraX()
+UpDateCameraY()
+
+	Updates the Camera vector based on Player's position. Called from
+	different places, so different functions.
+
+level* CLevel(ushort Index)
+
+	Returns level identified by Index.
+
+character* game::CreateMonster(ushort Index)
+item* game::CreateItem(ushort Index)
+
+	Creates a monster or item with Type() Index. Used by their "Balanced"
+	equalents and Load functions.
+
+InitLuxTable()
+DeInitLuxTable()
+
+	Create and free the LuxTable and LuxTableSize. DeInitLuxTable()
+	is called automatically on exit. For more information, see
+	"light.txt".
+
+character* BalancedCreateMonster()
+item* BalancedCreateItem()
+
+	The main character and item generation functions.
+
+const char* Insult()
+
+	Returns a pointer to a random insult string, like "navastater".
+
+bool BoolQuestion(std::string String, char DefaultAnswer = 0,
+                  int OtherKeyForTrue = 0, int (*Key)(void) = game::GetKey)
+
+	Displays a message String on the top bar, and waits for either 'y',
+	'Y', 'n' or 'N' to be pressed. If DefaultAnswer is zero, any
+	illegal key is interpreted as a rejection, if non-zero and non-two,
+	as an acceptance, if two, there's no default answer and so
+	the question is repeated until a proper answer is given.
+	If OtherKeyForTrue is pressed on any of these modes, it counts
+	as yes. Key is the getkey method used in the question. The function
+	return true if the answer was yes, false otherwise.
+
+const char* PersonalPronoun(uchar Index)
+const char* PossessivePronoun(uchar Index)
+
+	Pass either UNDEFINED (0), MALE (1) or FEMALE (2) to these
+	to get a proper pronoun suited for the sex, like "she" or "its".
+
+DrawEverything(bool EmptyMsg = true)
+DrawEverythingWithDebug(bool EmptyMsg = true)
+
+	In game, draw everything there is draw, like messages, game screen,
+	information panel etc. The second function is obsolete and does
+	the same as the first. If EmptyMsg is true, EMPTY_MESSAGES
+	is called after drawing the messages.
+
+DrawEverythingNoBlit(bool EmptyMsg = true)
+
+	Same as above, except graphics::BlitDBToScreen() is not called
+	afterwards.
+
+StoryScreen(const char* Text, bool GKey = true)
+
+	Displays Text in the center of a black screen, dividing it up into
+	lines if '\n' characters are present, and waits for keypress if
+	GKey is true.
+
+bool Save(std::string SaveName = game::SaveName())
+bool Load(std::string SaveName = game::SaveName())
+
+	Save and load the game from a set of files with a body SaveName.
+
+material* CreateRandomSolidMaterial(ulong Volume)
+
+	Self-explanatory. Mainly used for golems and such.
+
+material* CreateMaterial(ushort Index, ulong Volume)
+
+	Creates a material of Type() Index with volume Volume.
+
+groundterrain* LoadGroundTerrain(std::ifstream* SaveFile)
+overterrain* LoadOverTerrain(std::ifstream* SaveFile)
+material* LoadMaterial(std::ifstream* SaveFile)
+item* game::LoadItem(std::ifstream* SaveFile)
+character* game::LoadCharacter(std::ifstream* SaveFile)
+
+	Loading functions for various classes. Btw, three first are VERY
+	badly coded!
+
+bool CRunning()
+
+	Is the game still running...
+
+EnableWizardMode()
+SeeWholeMap()
+GoThroughWalls()
+
+	Enables the Wizard Mode or toggles the other two, without
+	questioning anything.
+
+bool CWizardMode()
+bool CSeeWholeMapCheat()
+bool CGoThroughWallsCheat()
+
+	Returns whether these modes are on or off.
+
+uchar EditGamma(short Value)
+
+	Adds Value to Gamma and corrects its boundaries. Hardware Gamma
+	isn't working now, so this is quite useless.
+
+bool EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+bool NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+
+	Handlers used with DoLine, mainly by the lighting system.
+	See "light.txt".
+
+int GetKey()
+int MonsGetKey()
+
+	Call getkey and return the result. Both are obsolete and were once
+	used for speed measurement correction.
+
+UpdateCameraXWithPos(ushort Coord)
+UpdateCameraYWithPos(ushort Coord)
+
+	Update camera coordinates with Coords. Never called simultaneously,
+	so different functions.
+
+std::string StringQuestion(const char* String, ushort MaxLetters)
+
+	Displays String on the screen and waits for the user to input
+	a string, which is returned once terminated by the Enter key.
+	The user is however not allowed to make the string longer
+	than MaxLetters. Calls DrawEverythingNoBlit() before doing
+	anything, so don't use before the game is surely initialized.
+
+bool KeyIsOK(char Key)
+
+	Return false if Key is a command key, true otherwise.
+
+SCurrent(ushort What)
+
+	Sets the index of current level to What. Make sure that the level
+	is loaded before using it though.
+
+ushort CCurrent()
+
+	Returns the index of the current level.
+
+ushort CLevels()
+
+	Returns the total amount of levels in game.
+
+int GetMoveCommandKey(vector A, vector B)
+
+	Return the key that is tied to a MoveVector equaling (A - B).
+	Returns 0xFF if such is not found.
+
+god* CGod(uchar Index)
+
+	Returns the god that has index of Index in the array of the
+	divine ones.
+
+std::string CAlignment(uchar Index)
+
+	Returns a string corresponding the Alignment Index. This must
+	be in the range of 0-10, 0 returning "L++" and 10 "C--".
+
+ApplyDivineTick()
+
+	Called every turn, this decreases the time one has to wait
+	until praying is possible (if its non-zero).
+
+ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good)
+
+	Called when a either sacrifising or praying to CompareTarget.
+	Adjusts the relation of other gods based on Alignment difference
+	and whether the deed was considered Good by CompareTarget.
+
+SendToHell(character* PassedAway)
+
+	Sends character to the Hell array. Called by character::Die().
+	(it cannot just delete the character, since other functions
+	concerning it may still be called during that tick)
+
+BurnHellsContents()
+
+	Deletes all contents of the Hell array. Called at the end of
+	tick and at the end of game.
+
+vector GetDirectionVectorForKey(ushort Key)
+
+	Returns the MoveVector associated with Key or vector(0,0)
+	if there is none.
+
+vector AskForDirectionVector()
+
+	Waits for a key and returns GetDirectionVectorForKey(PressedKey).
+
+std::string StringQuestionWithClear(std::string String, ushort MaxLetters)
+
+	Like StringQuestion, but clears the screen before asking anything
+	instead of calling DrawEverythingNoBlit().
+
+std::string CPlayerName()
+SPlayerName(std::string What)
+
+	Self-explanatory.
+
+std::string SaveName()
+
+	Returns the player's name, resized to eight letters if necessary,
+	with spaces replaced with '_' letters.
+
+bool EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+
+	Used with DoLine to determine if a ray of light can cross the
+	line without intervention.
+
+long GodScore()
+
+	Returns the highest relation value one has with any god.
+
+ShowLevelMessage()
+
+	Shows the message associated with CCurrentLevel(), and removes
+	it afterwards.
+
+float Difficulty()
+
+	Calculates the true difficulty level for monster generation
+	algorithm, based on Player's difficulty and the Current level.
+
+TriggerQuestForMaakotkaShirt()
+
+	Self-explanatory.
+
+CalculateGodNumber()
+
+	Calculates the total amount of gods in game.
+
+SGodNumber(uchar What)
+
+	Sets the amount of gods to What. Called by CalculateGodNumber().
+
+uchar CGodNumber()
+
+	Returns the total amount of gods in game, as calculated before.
+
+long CBaseScore()
+
+	At the beginning of the game, Player's initial score is saved
+	to BaseScore to be substracted from the final score. This
+	returns the value in question.
+
+Turn()
+
+	Increases the Turn counter by one.
+
+float CSoftGamma()
+
+	Returns SoftGamma, a value between 0-2, that is multiplied by
+	luminance before all lighted draws.
+
+EditSoftGamma(float E)
+
+	E is added to SoftGamma with a boundary check.
+
+WhatToLoadMenu()
+
+	Shows the load menu, and loads, runs and kills the game if a
+	savefile is actually chosen.
+
+ulong CTurns()
+
+	Returns the number of turns that have passed since the beginning
+	of the game.
+
+std::string CAutoSaveFileName()
+
+	Returns the default autosave filename body.
+
+uchar DirectionQuestion(std::string Topic, uchar DefaultAnswer = 8,
+                        bool RequireAnswer = true)
+
+	Displays Topic and waits for a keypress. If the pressed key
+	is a direction key, returns it's index in the MoveCommandKey
+	array. If it is not, and DefaultAnswer is a correct direction
+	key index, it returns DefaultAnswer. If it is not, and
+	RequireAnswer is false, it returns 0xFF. If it is not,
+	function will forcefully wait as long as a correct key
+	is received.
+
+command** CCommand()
+
+	Returns a pointer to the command map.
+
+const character* const CCharacterPrototype(const ushort Index)
+prototypecontainer<character>& CCharacterPrototype()
+const item* const CItemPrototype(const ushort Index)
+prototypecontainer<item>& CItemPrototype()
+
+	Various self-explanatory functions for accessing character and item
+	prototypes.
+
+SaveLevel(std::string SaveName = SaveName(), ushort Index = CCurrent(),
+          bool DeleteAfterwards = true)
+
+	Saves the level of Index to a file with name Savename + ".l" + Index,
+	and deletes it afterwards if wanted. Be sure the level actually
+	exists and is not deleted.
+
+LoadLevel(std::string SaveName = SaveName(), ushort Index = CCurrent())
+
+	Loads the level of Index from a file with name Savename + ".l" +
+	Index.
+
+RemoveSaves()
+
+	Removes all saves with SaveName() or AutoSaveName() as a filename
+	body.
+
+item* CreateItem(std::string What)
+
+	Tries to create an item of name What. If such doesn't exist
+	or cannot otherwise be created this way, returns 0.
+
+const unsigned int CountChars(const char cSF,std::string sSH)
+
+	Counts how many cSFs there are in sSH.
+
+game::globalmessagingsystem (game.h)
+------------------------------------
+
+Excluding error messages and such, this handles all messages from the game
+to the player, i.e. those displayed in the upper message bar of the game
+screen.
+
+Functions:
+
+globalmessagingsystem()
+
+	Initializes the system.
+
+AddMessage(const char* Format, ...)
+
+	Adds a message to the messagebuffer and to the message history.
+	The Format is processed equally like printf() does it. This is a
+	very common function, so a macro ADD_MESSAGE is provided for
+	convenience.
+
+Draw()
+
+	Draws messages to the message bar. Macro DRAW_MESSAGES is provided.
+
+Empty()
+
+	Empties the messagebuffer. Macro EMPTY_MESSAGES is provided.
+
+const char* CBuffer()
+
+	Returns a pointer to the buffer.
+
+DrawMessageHistory()
+
+	Self-explanatory.
+
+Format()
+
+	Cleans the message history.
+
+game::panel (game.h)
+--------------------
+
+A class containing routines (well, one routine ;) for handling the
+information panel on the bottom of the game display screen.
+
+Functions:
+
+Draw()
+
+	Self-explanatory.
+
+god (god.h)
+-----------
+
+The most divine of all classes, this holds relation to player,
+prayer timer, and praying functions, which are overloaded by derived
+gods to achieve most complicated and powerful effects.
+
+Functions:
+
+god()
+
+	Initializes the god.
+
+Pray()
+
+	Based on Timer and Relation, this determines whether the
+	the prayer has a good or bad effect, calls the proper
+	function and adjusts relations. Called by the pray dialog.
+
+std::string Name()
+
+	Returns the name of the god.
+
+std::string Description()
+
+	Returns a general description of god's profession.
+
+uchar Alignment()
+
+	Returns the alignment of the god, in range 0-10, 0 meaning L++
+	and 10 C--.
+
+std::string CompleteDescription()
+
+	Returns the complete description used by the pray dialog, including
+	alignment, name and profession.
+
+ApplyDivineTick()
+
+	Called by the game function of same name, this decreases Timer
+	by one if its above zero.
+
+AdjustRelation(god* Competitor, bool Good)
+
+	If Competitor is prayed upon or a sacrifice is made for Him/Her,
+	adjusts the relation of this god to player, based on whether the
+	deed was Good and Competitor was pleased by it, and the
+	alignment difference between Competitor and this. If it's
+	zero or very low and Good is true, relation is increased,
+	otherwise almost always decreased.
+
+AdjustRelation(short Amount)
+
+	Adds Amount to Relation, clipping the result to the range of
+	-1000 to +1000 if necessary.
+
+AdjustTimer(long Amount)
+
+	Adds Amount to timer, clipping the result to the range of
+	0 to 1000000000 if necessary.
+
+Save(std::ofstream* SaveFile)
+Load(std::ifstream* SaveFile)
+
+	Save and load the Relation and Timer fields.
+
+SRelation(short Value)
+STimer(long Value)
+
+	Sets Relation or Timer to Value without clipping.
+
+uchar BasicAlignment()
+
+	Returns either GOOD (0), NEUTRAL (1) or EVIL (2) in order to
+	determine material alignment bonuses/penalties applied while
+	sacrifying.
+
+short CRelation()
+
+	Returns Relation.
+
+PrintRelation()
+
+	Adds a message explaining how much the god likes you after
+	sacrifice.
+
+PrayGoodEffect()
+PrayBadEffect()
+
+	The fun ones, called by Pray(). All variants of these automatically
+	suspect that player is the object of their effects.
+
+bool ReceiveOffer(item* Sacrifice)
+
+	Called by the offer dialog, determines if the current god wants and
+	can receive Sacrifice. If so, calculates the effect, displays
+	appropriate messages and return true. Otherwise returns false.
+
+independency (independ.h)
+-------------------------
+
+The most fundamental base class for independent things, that is those
+classes which are not used only for containing others, like stack
+and level, and can be contained in a single square, like all objects
+and worldmap terrains. It holds the basic name, drawing and saving
+interface for all these.
+
+Functions:
+
+independency(void)
+independency(std::ifstream*)
+~independency(void)
+
+	Currently do nothing.
+
+std::string Name(uchar Case)
+
+	Returns the whole name of the independent being, according to
+	Case, which can be one of the following:
+
+	UNARTICLED (0)	no article is ever added
+	DEFINITE   (2)	"the" is (usually) added to the name
+	INDEFINITE (6)	"a" or "an" is (usually) added to the name
+
+	You can also specify the flag PLURAL (1) if you wish to. This
+	function is overridden by very numerous classes that don't want
+	to use the standard procedure.
+
+Save(std::ofstream* SaveFile)
+
+	The fundamental save, that outputs the result of Type() to SaveFile.
+
+std::string NameSingular(void)
+std::string NamePlural(void)
+
+	Protected procedures that return the plain body of the thing's name
+	and its plural name. Should be overloaded by every single derived
+	class unless there are very good reasons to do otherwise.
+
+std::string CNameSingular(void)
+std::string CNamePlural(void)
+
+	Just return the preseding in public.
+
+std::string NameNormal(uchar Case, std::string Article)
+std::string NameProperNoun(uchar Case)
+
+	Two basic name modes. The first is used for things like "a lamp",
+	the second for things like "Bill Gates the ElDeR cHaOs GoD".
+
+DrawToTileBuffer()
+
+	Self-explanatory.
+
+ushort Type()
+
+	Returns the numeric type of the independency. For save system usage
+	only! (it's quite evil, y' know)
+
+vector CBitmapPos()
+
+	Returns the coordinates of this thing's picture in its respective
+	graphics file.
+
+item (item.h)
+-------------
+
+The base class for all item types, derived from object.
+
+Functions:
+
+item(ushort Size2, bool CreateMaterials)
+
+	Constructs an item of size Size2. If CreateMaterials is false, item
+	doesn't initialize its own materials, that is, it must be a base
+	class
+	for some other item that does this by itself.
+
+item(std::ifstream* SaveFile, ushort MaterialQuantity = 1)
+
+	Creates and loads an item from SaveFile. MaterialQuantity is
+	discarded.
+
+PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+
+	A special DrawToTileBuffer, this is called by
+	stack::PositionedDrawToTileBuffer. It handles not only items that are
+	on the floor but those that hang from the wall. LevelSquarePosition
+	must be either DOWN (0), LEFT (1), UP (2), RIGHT (3) or CENTER (4),
+	determining the position where the item should be drawn and the picture
+	used for the draw.
+
+ulong CWeight()
+
+	Calculates the weigth of the item, based on its materials' CWeigths.
+
+bool CanBeRead(character* Reader)
+
+	Returns whether Reader can read this particular item.
+
+bool Consume(character* Consumer, float Amount = 100)
+
+	Forces Consumer to consume the item, at least its eatable parts.
+	If Amount is less than 100, only a percentage of eatable materials
+	specified by Amount is consumed. False means the item could not
+	be consumed.
+
+bool Read(character* Reader)
+
+	Triggers the event that is associated with reading this particlular
+	item. False as return means the item was not read for some reason.
+
+bool Consumable(character* Eater)
+
+	Returns whether the item is consumable by Eater.
+
+ushort CEmitation(void)
+
+	Returns the total emitation of the item. See "light.txt".
+
+short CalculateOfferValue(char GodAlignment)
+
+	Calculates the total offer value, based on GodAlignment,
+	which must be either GOOD (0), NEUTRAL (1) or EVIL (2).
+
+bool Destroyable(void)
+
+	Self-explanatory. Usually true for quest items.
+
+bool Fly(uchar Direction, ushort Force, stack* Start, bool Hostile = true)
+
+	Handles all aspects of getting an item up to the air from
+	the Start stack, flying it all the way in the specified
+	Direction as long as there's Force to hold it above
+	ground. If Hostile is true, any character that the item
+	passes during its flight will become hostile, even if not
+	hit. If the item flew to nowhere, i.e. it landed on the square
+	of former lift off, false is returned.
+
+bool HitCharacter(character* Dude, float Speed, bool CanBeSeen)
+
+	Called by Fly. This does not actually hit the character,
+	but test whether the item was catched, missed the character
+	or hit him/her/it, and calls respective character functions.
+	True is returned if the item's movement was stopped.
+
+ushort PrepareForConsuming(character* Consumer, stack* Stack)
+
+	Called before consuming items, this must return the index of
+	item-to-be-consumed in Stack, or 0xFFFF if it isn't there.
+
+float GetWeaponStrength()
+
+	Calculates the weaponstrength of the item based on its form
+	modifier and materials.
+
+DrawToTileBuffer()
+
+	Calls PositionedDrawToTileBuffer(CENTER).
+
+vector GetInHandsPic()
+
+	Retrieves the human.pcx coordinates of the picture that is
+	maskedblitted above any humanoid wielding that particular item.
+
+uchar GetConsumeType()
+
+	Returns its main material's consumetype.
+
+ushort TryToOpen(stack* Stack)
+
+	Tries to open the item, places whatever was removed from inside
+	it to Stack, and returns the index of the new item in it.
+
+ushort GetArmorValue()
+
+	Returns a number from 1-100, which is a percentage that any
+	damage caused to the creature wearing this item must be
+	multiplied by.
+
+bool IsHeadOfElpuri()
+bool IsPerttusNut()
+bool IsMaakotkaShirt()
+
+	Self-explanatory.
+
+ReceiveHitEffect(character* Enemy, character*)
+
+	Called after a succesful hit, this handles special effects
+	that occur when this item hits Enemy, excluding damage.
+
+bool CanBeDippedInto(item*)
+
+	Returns whether this item can be dipped into anything.
+
+DipInto(item* DipTo)
+
+	Dips this to DipTo.
+
+material* BeDippedInto()
+
+	Returns some dipping material for purposes of DipInto.
+
+bool CanBeDipped()
+
+	Can this item be dipped? Don't ask how it differs from
+	CanBeDippedInto, though ;)
+
+bool CanBeWorn()
+
+	Self-explanatory.
+
+SMaterial(ushort Where, material* What)
+
+	Sets material of index Where to What.
+
+item* BetterVersion()
+
+	Returns a better version of the item for magical
+	transformations.
+
+ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+
+	Function that is applied to the item itself when it hits something
+	solid, like a wall.
+
+float OfferModifier()
+
+	Value of all sacrifices of this type is multiplied by this number.
+
+long Score()
+
+	Bonus that is added to player's score when the game ends with this
+	item in his/her/its inventory (before victory modifiers).
+
+bool DogWillCatchAndConsume()
+
+	If thrown at it.
+
+uchar GetDipMaterialNumber()
+
+	Returns the index of dipping material. Currently not used.
+
+item* Clone()
+
+	Clones the item. Used by the prototype system.
+
+item* Load(std::ifstream* SaveFile)
+
+	Loads an item of same type from SaveFile. Used by the prototype
+	system.
+
+ushort Possibility()
+
+	Item's possibility to appear randomly in the dungeon. Zero for
+	none. The true possibility is this Possibility divided by
+	the total sum of Possibilities of all item types.
+
+bool CanBeWished()
+
+	Self-explanatory.
+
+item* CreateWishedItem()
+
+	If wishing this item will yield a different type item,
+	return it from here. If not, return zero.
+
+bool Apply(character* User)
+
+	Self-explanatory.
+
+ushort CFormModifier()
+
+	Multiplier applied when calculating weaponstrength of the item.
+
+level (level.h)
+---------------
+
+A basic dungeon level consisting of levelsquares, derived from area.
+
+Functions:
+
+level(ushort XSize, ushort YSize, ushort Index)
+
+	Creates an empty level of specified size. All squares are initialized
+	to dungeon wall squares. Index must be the level's index in game's
+	level array.
+
+~level()
+
+	Destroys the level and deletes all it's contents.
+
+ExpandPossibleRoute(const vector Origo, const vector Target,
+                    const bool XMode)
+
+	Used by the route system, this is a recursive function that sets the
+	ON_POSSIBLE_ROUTE flag for the Origo square, calculates the direction
+	where Target is from Origo's point of view, and calls itseld again
+	with that square as the Origo, if the ON_POSSIBLE_ROUTE and the
+	FORBIDDEN flag are NOT set on it. If either is, however, it tries
+	the closest direction, or not-so-closest if it is also blocked. If
+	all directions are blocked, it just returns. When calculating the
+	order of directions to be tried out, diagonal directions are always
+	ignored, directions changing the x-coordinate are preferred if XMode
+	is set, and vice versa. The process is terminated immediately when the
+	ON_POSSIBLE_ROUTE flag is set in Target square.
+
+ExpandStillPossibleRoute(const vector Origo, const vector Target,
+                         const bool XMode)
+
+	Same as above, except this toggles on the STILL_ON_POSSIBLE_ROUTE flag
+	for each square it touches, and ON_POSSIBLE_ROUTE must be set
+	and STILL_ON_POSSIBLE_ROUTE must not be set on all of these squares.
+
+GenerateTunnel(const vector From, const vector Target, const bool XMode)
+
+	Generates a tunnel from From to Target, in the following way:
+	First it calls ExpandPossibleRoute with From as the Origo,
+	and then goes through all squares with ON_POSSIBLE_ROUTE flag set,
+	removing the flag and trying if ExpandStillPossibleRoute()
+	still can reach the Target. Alluseless squares on the path are
+	removed and those that are essential changed to walkable floor.
+	This is a slow, but guaranteed way to reach the target. Target and
+	XMode are passed to all Expands called.
+
+PutStairs(const vector Pos)
+
+	Puts stairs to specified Pos and adds it to level's KeyPoint array.
+
+Generate()
+
+	Generates the level using the only currently implemented generation
+	algorithm. It creates a random amount of rooms via MakeRoom(),
+	attaches all KeyPoints to the main dungeon via AttachPos() and
+	randomizes the level's initial items.
+
+AttachPos(const vector What)
+
+	Attaches the square on coordinates What to the main dungeon
+	via GenerateTunnel().
+
+CreateRandomTunnel()
+
+	Creates a random tunnel, attached to the main dungeon but
+	ending to a completely random place (except rooms of course).
+	Currently not used by the generation code.
+
+CreateItems(const ushort Amount)
+
+	Self-explanatory. The items are generated via
+	game::BalancedCreateItem().
+
+CreateMonsters(const ushort Amount)
+
+	Self-explanatory. Currently not used.
+
+vector CreateDownStairs()
+
+	Creates downstairs to a random but sensible position, attaches
+	it, calls PutStairs on the level beneath, and returns the position
+	of these new stairs.
+
+bool MakeRoom(const vector Pos, const vector Size,
+              const bool AltarPossible = true, uchar DivineOwner = 0)
+
+	Creates a room to the level. Pos marks the upper left corner of the
+	room. Size includes walls, so smaller than (3,3) rooms are not made.
+	Function checks that it won't be too close to borders and is neither
+	above any other rooms, stairs, vital tunnels and such. When the room
+	is made, a door is created for it, added to the level's Door dynarray
+	and attached to some other random door. If AltarPossible is true,
+	an altar of random alignment may be created in the room. If
+	DivineOwner is non-zero, no prayer can be made in the room except
+	to the deity of that particular index. The function returns true
+	if the room was made successfuly.
+
+HandleCharacters()
+
+	Sends all squares a command to handle their characters.
+
+EmptyFlags()
+
+	Empties the Flag boolean of every square on the level.
+
+PutPlayer(const bool)
+
+	Puts player into a random, walkable position on the level.
+
+PutPlayerAround(vector Pos)
+
+	Puts player on a walkable position somewhere around Pos.
+
+Save(std::ofstream* SaveFile)
+
+	Self-explanatory.
+
+level(std::ifstream* SaveFile, ushort Index)
+
+	Creates a level and loads its contents from SaveFile. Index must be
+	the level's index in game's level array.
+
+Luxify()
+
+	Calls the Emitate function of all squares.
+
+FastAddCharacter(vector Pos, character* Guy)
+
+	Adds Guy to Pos, without updating lights.
+
+Draw()
+
+	Draws the level and it's contents. Or at least those that are not
+	outside the borders of the display screen.
+
+UpdateLOS()
+
+	When this is called, if any given square on the level is currently seen
+	by the player, its Flag is set to true, otherwise false.
+
+GenerateNewMonsters(ushort HowMany)
+
+	See CIdealPopulation(). Uses game::BalancedCreateMonster() as its
+	monster generator.
+
+levelsquare* CLevelSquare(vector Pos)
+
+	Self-explanatory.
+
+dynarray<vector, uchar>* CKeyPoint()
+
+	Returns a pointer to the KeyPoint dynarray.
+
+ushort CPopulation()
+
+	Returns roughly the total amount of character's on the level.
+
+ushort CIdealPopulation()
+
+	If CPopulation() is below this, GenerateNewMonsters() will advance
+	it towards this when called.
+
+bitmap* CFluidBuffer()
+
+	Returns a pointer to the FluidBuffer, where blood, vomit and such
+	are stored.
+
+levelsquare (lsquare.h)
+-----------------------
+
+A square that appears in levels only and has some special procedures
+like lighting that plain squares don't have a chance to enjoy of.
+Derived from square.
+
+Functions:
+
+levelsquare(level* MotherLevel, vector Pos)
+~levelsquare()
+
+	Construct and destruct the levelsquare. MotherLevel is the level
+	where the square is located and Pos is its position in it.
+
+HandleCharacters()
+
+	Command its Character to Act().
+
+SignalEmitationIncrease(ushort EmitationUpdate)
+SignalEmitationDecrease(ushort EmitationUpdate)
+ushort CalculateEmitation()
+Emitate()
+ReEmitate()
+Noxify()
+ForceEmitterNoxify()
+ForceEmitterEmitation()
+NoxifyEmitter()
+uchar CalculateBitMask(vector Dir)
+AlterLuminance(vector Dir, ushort AiL)
+ushort CLuminance()
+
+	See "light.txt".
+
+DrawToTileBuffer()
+
+	Draws everything on the square to the TileBuffer, with the
+	exception of the Character.
+
+UpdateMemorizedAndDraw()
+
+	Self-explanatory.
+
+bool Open(character* Opener)
+bool Close(character* Closer)
+
+	Pass these commands to overterrain, and return whatever the return.
+
+bool Save(std::ofstream* SaveFile)
+
+	Saves the square to SaveFile.
+
+levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos)
+
+	Creates and loads the levelsquare. See the normal constructor for
+	parameter info.
+
+SpillFluid(uchar Amount, ulong Color, ushort Lumpiness = 3,
+           ushort Variation = 32)
+
+	Spills some liquid substance to the square, creating little
+	puddles of specified Color to its position in MotherLevel's
+	FluidBuffer. Amount is the amount of these puddles, Lumpiness
+	influences their size (bigger means, roughly, bigger, but in
+	no occasion larger than 3x3), and Variation affects the color
+	variation across them.
+
+AddCharacter(character* Guy)
+
+	Adds Guy onto the square and updates lightning if necessary.
+
+FastAddCharacter(character* Guy)
+
+	Adds Guy onto the square but never updates lights.
+
+Clean()
+
+	Deletes the entire contents of the square's Stack and SideStacks.
+
+RemoveCharacter()
+
+	Removes the Character currently standing on the square, updating
+	light if necessary. (Character isn't deleted, just set to zero)
+
+UpdateItemMemory()
+
+	Updates RememberedItems, that is, a short text containing a
+	description of what is lying on the square, like "many items".
+
+CanBeSeen()
+
+	Returns whether this square can be seen by the player.
+
+Kick(ushort Strength, uchar KickWay)
+
+	Called when the contents of square is kicked. Forwards parameters
+	to Stack.
+
+bool CanBeSeenFrom(vector FromPos)
+
+	Self-explanatory.
+
+SRememberedItems(std::string What)
+std::string CRememberedItems()
+
+	Set RememberedItems (see UpdateItemMemory()) to What and
+	return them.
+
+bool Dig(character* DiggerCharacter, item* DiggerItem)
+
+	Called when DiggerCharacter tries to dig the square with
+	a pick-axe or similiar as DiggerItem. Returns whether
+	this was successful or not.
+
+char CanBeDigged(character* DiggerCharacter, item* DiggerItem)
+
+	Quite obvious. Returns zero or two if it isn't, one if it is.
+
+stack* CStack()
+
+	Returns a pointer to the square's primary stack.
+
+EmptyFlag()
+SetFlag()
+bool RetrieveFlag()
+
+	Flag handlers. Flag determines whether the player can
+	currently see the square.
+
+stack* CSideStack(uchar Index)
+
+	Returns a pointer to the wanted SideStack, that is a stack
+	attached to the side of an impassable square. Index must
+	be either DOWN (0), LEFT (1), UP (2) or RIGHT (3).
+
+ushort CEmitation()
+SEmitation(ushort What)
+
+	Returns and sets Emitation, which is used as a backup
+	emitation value from the last call to CalculateEmitation().
+	See "light.txt".
+
+std::string CEngraved()
+
+	Returns whatever is engraved here, or "" if there's nothing.
+
+bool Engrave(std::string What)
+
+	Sets the Engraved string to What and returns true.
+
+uchar CDivineOwner()
+SDivineOwner(uchar NDO)
+
+	Return and set the DivineOwner, which is the index of the owner
+	deity in the divine god array, or zero for none. No other
+	god can be prayed upon on this particular square.
+
+level* CMotherLevel()
+
+	Return a pointer to the level where the square is.
+
+levelsquare::emitter (lsquare.h)
+--------------------------------
+
+Emitter is a simple struct that contains information about an emitter,
+which is shedding light upon a particular levelsquare. See "light.txt"
+for more knowledge about emitters.
+
+Functions:
+
+emitter(vector Pos, ushort DilatedEmitation)
+
+	Creates a new emitter with the given attributes.
+
+emitter()
+
+	Creates an unitialized new emitter.
+
+bool operator==(emitter& AE)
+
+	Operator for comparing two emitters. Doesn't care about anything
+	else than the Pos vector.
+
+emitter& operator=(emitter& AE)
+
+	Copies all data from AE to the emitter.
+
+terrain (terrain.h)
+-------------------
+
+Terrain includes every terrain type from walls to altars. The class is divided
+to two larger sub-classes overterrain and groundterrain.
+
+Functions:
+
+bool CanBeDigged()
+
+	Returns true if the square can be digged.
+
+bool CanBeOffered()
+
+	Returns true if the terrain is capable of accepting offering.
+
+bool CanBeOpened()
+
+	Returns true if the terrain can be opened.
+
+levelsquare* CLevelSquareUnder()
+
+	Returns the levelsquareunder which currently means using CSquareUnder()
+	and converting the resulting pointer into a levelsquare pointer.
+
+bool Close(character* Closer)
+
+	Look at Open(character* Opener)
+
+vector CPos()
+
+	Returns the position of the terrain.
+
+square* CSquareUnder()
+
+	Returns the square under this particular terrain.
+
+uchar CVisualFlags()
+
+	Returns the Visual Flags
+
+terrain(material** Material2, vector)
+
+	Constructor of terrain. Material2 is the pointer to the pointer of
+	the material and vector is not used.
+
+SSquareUnder(square* Square)
+
+	Square is placed in SquareUnder
+
+bool Open(character* Opener)
+
+	Tries to open the terrain. The function return true if the square could
+	be opened and false if not. Opener is the pointer to the character that
+	is trying  to open the terrain.
+
+HandleVisualEffects()
+
+	Randomizes the plausible visual flags on.
+
+uchar OKVisualEffects()
+
+	Returns the Visual Flags that can be set for the current square.
+
+groundterrain (terrain.h)
+-------------------------
+
+Basic ground terrain, like a floor. Drawn below overterrain. Functions don't
+differ from terrain in any way.
+
+overterrain (terrain.h)
+-----------------------
+
+This is positioned above groundterrain during the draw. I will list
+differences to terrain.
+
+Functions:
+
+CIsWalkable()
+
+	Returns true if the square is walkable, else false.
+
+uchar COwnerGod()
+
+	Returns the index of the owning god.
+
+MakeNotWalkable()
+MakeWalkable()
+
+	Names of the functions tell everything.
+
+overterrain(material** Material, vector BitmapPos, bool IW)
+
+	Create the overterrain. Material is a pointer to the pointer of
+	the staring material, BitmapPos is discarded and IW tells whether
+	the square is walkable or not (true = walkable).
+
+ShowDigMessage(character* Who, item*)
+
+	Adds a message explaining the user if the terrain can be digged and
+	whether the digging is successful or not. Who is the digger and item*
+	is pointer to the item that is used for digging.
+
+square (square.h)
+-------------------
+
+A rectangular area on the level, the smallest indivisible place where
+individual terrains, characters and such can be contained.
+
+Functions:
+
+square(area* MotherArea, vector Pos)
+
+	Constructor for square. MotherArea is the area in which the square is 
+	created in. Position is the square's position.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the square to SafeFile.
+
+square(area* MotherArea, std::ifstream* SaveFile, vector Pos)
+
+	Constructor for square. MotherArea is the area in which the square is
+	created in. SaveFile is the file from which the square should be
+	loaded from. Pos is the square's position.
+
+DrawCheat()
+
+	Blits the square to the tilebuffer using the "see whole map" cheat.
+
+DrawMemorized()
+
+	Draws the square from the players "memory".
+
+AddCharacter(character* Guy)
+
+	Guy points to a character that should be added to the square. The
+	name of this function is slightly misleading, because a square
+	can currently have only 1 character.
+
+RemoveCharacter()
+
+	Removes the character in the square. (however the character is not 
+	deleted, the pointer is only set to 0)
+
+ChangeTerrain(groundterrain* NewGround, overterrain* NewOver)
+
+	Changes the terrains of the square.
+
+SCharacter(character* What )
+
+	Character is replaced with What.
+
+character* CCharacter(void)
+
+	Returns the Character currently standing (or whatever) on the square.
+	Zero means there is no one there.
+
+bool CKnown()
+
+	Returns true if the square is known to the player otherwise the
+	function return false. If Known is false, the square will not be
+	drawn on the screen.
+
+vector CPos(void)
+
+	Return the potion of the square as a vector.
+
+SKnown(bool What)
+
+	Changes the Known-status of the square to What. If Known is false,
+	the square will not be drawn on the screen.
+
+SOverTerrain(overterrain* What)
+
+	Changes the OverTerrain to What.
+
+ushort CPopulation(void)
+
+	Returns the amount of characters in the square. (currently 1 or 0)
+
+SGroundTerrain(groundterrain* What)
+
+	Changes the GroundTerrain to What.
+
+SOverTerrain(overterrain* What)
+
+	Changes the OverTerrain to What.
+
+area* CMotherArea(void)
+	Returns the pointer to the area where the square is.
+
+ushort CPopulation(void)
+	Returns the amount of characters in the square. (currently 1 or 0)
+
+material (material.h)
+---------------------
+
+Material is a class for handling effects that depend on the material type
+and amount of some part of an individual object.
+
+Functions:
+
+material(ulong Volume)
+
+	Constructor of material. Volume is volume of the material to be
+	created.
+
+material(std::ifstream* SaveFile)
+
+	Loads material's data from SaveFile. 
+
+uchar CFleshColor(void)
+
+	Returns the color of the material when it is used as flesh.
+
+uchar CItemColor(void)
+
+	Returns the color of the material when it is used as a material for
+	an item.
+
+std::string Name(uchar Case = 0)
+
+	Returns the whole name of the material, according to
+	Case, which can be either of the following:
+
+	UNARTICLED (0)	no article is ever added
+	INDEFINITE (6)	"a" or "an" is (usually) added to the name
+
+ushort GetHitValue()
+
+	Returns the hitvalue of the item, which increses the weaponstrength
+	of an item made of it.
+
+uchar CConsumeType()
+
+	Returns the consume type of the item.
+
+ulong CVolume()
+
+	Returns the volume of the material.
+
+ulong CWeight()
+
+	Returns the weight of the material.
+
+ushort GetDensity()
+
+	Returns the density of the material.
+
+uchar EffectType()
+
+	Returns the type of effect this material has on a character.
+
+ushort Type()
+
+	Return the type of the item. Note: this is evil, so don't use this
+	outside the save system if possible.
+
+ushort TakeDipVolumeAway()
+
+	Takes some of the volume of the item away and then returns
+	the volume of the material that has been taken away.
+
+void Save(std::ofstream* SaveFile)
+
+	Saves the material into SaveFile.
+
+ushort CArmorValue(void)
+
+	Returns the armor value of the material. See item::GetArmorValue().
+
+SVolume(ulong What)
+
+	Volume of the material is set to What.
+
+ushort CEmitation(void)
+
+	Returns the light emitation of the material. See "light.txt".
+
+ushort OfferValue(void)
+
+	The value of offering this material a gram.
+
+uchar Alignment(void)
+
+	Returns the alignment of this material. Affects value of offers.
+	Possible alignments are:
+		GOOD    (1)
+		NEUTRAL (2)
+		EVIL    (3)
+
+EatEffect(character* Eater, float Amount, float NPModifier)
+	Eater recives an eat effect of this material.
+	Amount is the percent of the whole Volume that 
+	the character has eaten. NPModifier is a number
+	that is used to multiply the actual amount, which
+	is used by some items.
+
+
+HitEffect(character* Enemy)
+
+	If the material somehow affects the Enemy then this function handles
+	it.
+
+short NutritionValue()
+
+	Returns the nutrion value of the item. The amount is
+	in NPs per 1000 grams. 
+
+MinusAmount(float Amount)
+	decreases the volume of the material by Amount percent.
+
+NormalFoodEffect(character* Eater, float Amount, float NPModifier)
+
+	Eater reseives the normal food effect. Amount is the percent of the
+	volume that is going to be eaten and NPModifier is floating point
+	number that is used to multiply this volume. NPModifier is used by
+	some items.
+
+prototypecontainer<class ProtoType> (proto.h)
+---------------------------------------------
+
+A template class that contains a prototype vector, an array of type
+ProtoType* including a pointer to each and every concrete class derived
+from ProtoType. The first and last elements must always be zero.
+Used by the game's generation and save systems.
+
+Functions:
+
+prototypecontainer()
+
+	Creates the container and sets its first element to zero.
+
+Add(const ushort Index, ProtoType* Proto)
+
+	Adds Proto to the position determined by Index, resizing the
+	array and setting its last element to zero if obligatory.
+
+const ProtoType* const Access(ushort Index) const
+const ProtoType* const operator [] (ushort Index) const
+
+	Returns the prototype of specified Index, so that inspectors
+	like cloning functions and such may be called through it.
+
+worldmapsquare (wsquare.h)
+--------------------------
+
+A square that appears on the worldmap only and WILL have some
+special routines like handling border tiles while drawing terrain
+etc. that its sister, levelsquare, doesn't have. Functions
+are so highly under construction that they won't be documented.
+
+stack (stack.h)
+---------------
+
+stack(square* SqureUnder)
+
+	Stack's constructor. SquareUnder is surprisingly the square
+	under the stack.
+
+stack(std::ifstream* SaveFile)
+
+	Saves the stack to SaveFile.
+
+PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+
+	Draws the stack to the right place on the TileBuffer.	
+	LevelSquarePosition is passed to item::PositionedDrawToTileBuffer().
+	Refer to it if you need to know what it does.
+
+ushort AddItem(item* ToBeAdded)
+
+	Adds ToBeAdded to the stack and then returns the index of ToBeAdded.
+	Updates lights if needed.
+
+ushort FastAddItem(item* ToBeAdded)
+
+	Same as the above, but does not update lights.
+
+item* RemoveItem(ushort Index)
+
+	Removes item number Index and then returns a pointer to that item.
+	Updates lights if needed.
+
+FastRemoveItem(ushort Index)
+
+	Just removes the number Index item and does not update lights.
+
+Clean()
+
+	Deletes all items of the stack.
+
+ushort MoveItem(ushort Index, stack* MoveTo)
+
+	Moves item number Index to the stack that MoveTo is pointing at.
+	Then returns the new index of the item in question. Updates
+	lights if needed.
+
+Optimize(ushort OptimizeBoundary)
+
+	Optimizes the stack if there are more than OptimizeBoundary
+	zero pointers. Optimizing means all of these are removed.
+	Note: The game does not support zero pointers correctly.
+	Use zero as the OptimizeBoundary always!
+
+ushort DrawContents(const char* Topic)
+
+	Draws the contents on the screen as a neatly organized list and
+	waits for keypress. The Topic is also displayed on the screen.
+	The list uses list::Draw and returns the same things as it does.
+
+ushort CEmitation()
+
+	Returns the total emitation of all the items in the stack.
+
+ulong stack::SumOfMasses()
+
+	Returns the sum of the masses in this stack.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the stack in SaveFile.
+
+stack::stack(std::ifstream* SaveFile)
+
+	Constructor of stack that loads itself from SaveFile.
+
+ushort SearchItem(item* ToBeSearched)
+
+	Searches for item ToBeSearched in the stack and then returns its
+	index, or 0xFFFF if it was not found.
+
+void stack::Move(levelsquare* To)
+
+	Moves the whole stack to levelsquare To and updates lights if
+	necessary.
+
+vector CPos(void)
+
+	Returns the position of the stack.
+
+ushort ConsumableItems(character* Eater)
+
+	Returns the number of consumable items (for Eater).
+
+ushort DrawConsumableContents(const char* Topic, character* Eater)
+
+	Makes a list out of the consumable items (for Eater) and then returns what ever
+	list::Draw() returns. 
+
+DeletePointers()
+
+	All pointers to items are set to 0
+
+ushort FindItem(item* ToBeSearched)
+
+	Returns the index of ToBeSearched, or 0xFFFF if it isn't found in the stack.
+
+Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
+
+	Strength is the strength of the kick. If ShowOnScreen is true kick messages are
+	displayed on screen. Direction is the vector in which direction the kick is going. 
+
+long Score()
+
+	Calculates the total score value of all the items in the stack.
+
+SSquareUnder(square* Square)
+
+	SquareUnder is set to Square.
+
+item** CItem()
+
+	A pointer to the item* array.
+
+item* CItem(ushort I)
+
+	Returns a pointer to the item which has the index of I.
+
+ushort CItems(void)
+
+	Returns the number of items in this stack.
+
+levelsquare* CLevelSquareUnder(void)
+
+	Returns the pointer to the levelsquare under the stack.
+
+SEmitation(ushort What)
+
+	Sets the Emitation to What.
+
+ushort CNonExistent()
+
+	Returns the amount of pointers (which is stored in NonExistent) that are 0.
+
+SNonExistent(ushort What)
+
+	Sets NonExistent to What.
+
+object (object.h)
+-----------------
+
+A basic object is build up from different materials. Derived from independency.
+
+Functions:
+
+object()
+
+	The default constructor which doesn't do anything.
+
+object(std::ifstream* SaveFile)
+
+	Creates and loads the object from SaveFile.
+
+Save(std::ofstream* SaveFile)
+
+	Saves the object to SaveFile.
+
+InitMaterials(ushort Materials, ...);
+
+	Initilizes Materials-amount of materials.
+
+	Example: InitMaterials(2, Material2, Material3)
+	where Material2 and Material3 are pointers to 
+	materials.
+
+InitMaterials(material* FirstMaterial)
+
+	Initilize only material FirstMaterial.
+
+ushort CEmitation()
+
+	Returns the emitation of the object.
+
+std::string NameArtifact(uchar Case, uchar DefaultMaterial)
+	
+	Returns the name of the item like an artifact type of item.
+	DefaultMaterial is the Index of the normal material from which 
+	this object is made up. If its made of something else,
+	the material name is shown, otherwise not.
+
+std::string NameWithMaterial(uchar Case)
+
+	Returns the name of the object with the name of Material[0]
+	attached. (Case works like case normally works.)
+
+std::string NameHandleDefaultMaterial(uchar Case, std::string Article,
+                                      uchar DefaultMaterial)
+
+	If the material is the DefaultMaterial this function returns what
+	ever NameNormal returns with Case and Article as parameters. If the
+	material is not the Default Material this function returns what
+	NameWithMaterial returns with Case as parameter.
+
+std::string object::NameContainer(uchar Case)
+
+	Returns the name of a container object (for example: cans). Case works
+	like case normally works.
+
+std::string NameSized(uchar Case, std::string Article, ushort LillaBorder, 
+                      ushort StoraBorder)
+
+	Returns the name of item with size categorizing adjectives. 
+	Case works like case normally works. Article is the article
+	for this. LillaBorder is the maximum size for the object
+	to be considered small. StoraBorder is the maximum size
+	for an object to be considered large.
+
+std::string NameThingsThatAreLikeLumps(uchar Case, std::string Article)
+
+	Case works like case normally works. Article is the possible article.
+
+EraseMaterials(void)
+
+	Deletes all materials from this object.
+
+material* CMaterial(ushort Index)
+
+	Returns the material that has the index of Index.
+
+ushort CSize()
+	
+	Returns the size of the object.
+
+ushort CMaterials(void)
+	
+	Returns the number of materials in this object.
+
+----------------------------------------------------------------------------
+
+End of document.
+
+

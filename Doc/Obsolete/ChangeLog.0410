@@ -1,0 +1,383 @@
+------------------------------------------------------------------------------------
+
+>>> NOTICE!!! <<<
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+------------------------------------------------------------------------------------
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Adventure information is now shown when the player wins, too
+
+March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Infravision added to magpie so that AI doesn't do stupid things when player is invisibile
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The slave is now better and his picture changes due to armor like the player's
+
+March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Unicorn sometimes teleport when they take hits (so that killing them when invisible isn't too easy)
+	
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Throwing healing liquid or some other good potion to people doesn't make them
+	  angry
+	* The holy banana of Liukas Vipro renamed as the holy banana of Oily Orpiv
+	* The cursor is now bigger
+	* Skeletons and jackals are now easier to see
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Metallic hands are again shown correctly on the game screen
+	* Corrected a bug in the messages after teleport
+	* Doors created by a wand of door creation are now sometimes open
+
+March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* bug corrected: If multiple chests are stacked, only the top one can be opened with key.
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* (u)longlong type is no longer used
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Slow is now a hostile action
+	* The encrypted scroll is now removed when the player talks to Petrus
+	* GC levels 8 and 9 are now more difficult
+	* The secret vault is now on a random level
+	* RestoreBodyParts() now handles genies and angels correctly
+	* Corrected a bug in the bodypart vanish code
+	* Bodyparts of polymorphed monsters now vanish when severed
+	* Being invisible to the enemy now doubles relative danger; this makes
+	  the state more balanced since generated enemies will be more powerful
+	* Weapons are now more balanced
+	* Corrected a fatal bug in the thunder hammer & Turox codes
+	* Fixed a horrible bug in the consuming code that could cause unreproducable
+	  crashes
+	* Damage types are now flagged
+	* Thrown potions now break easier
+	* Dipping to corpses is again possible
+	* Removed the strange item NPModifier gum solution which became abusable due
+	  to the latter (you got 100 times more NP by putting flesh first in potions)
+	* Battle-axe, scythe, sickle and halberd InHandsPics added to humanoid.pcx
+	  by Kahvi
+	* Wielded pick-axe can now be applied
+	* Planting traps in shops or in the cathedral is now a hostile action
+	* Mondedr removed temporarily from the script so it won't confuse players of
+	  v0.410
+
+March 24 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Talking now trains charisma a little
+	* Corrected a small bug in the lantern animation
+	* Mushrooms no longer panic
+	* Skunks are now a bit easier
+	* Corrected a typo in the mine discovery message ("thumb" -> "thump")
+	* Smokes are now a little less repetitive
+	* A problem in the attack interrupt message fixed
+	* Corrected a fatal bug in the wand of teleport's and polymorph's break code
+	* Reduced the amount of kiwis in level 3 to make exping more difficult
+
+March 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected some bugs concerning the new kill lists
+	* The massacre lists now show the total amounts of killed monsters in each
+	  category
+	* The player's representation on the game screen is now influenced by his armor
+	* Some graphics needed to make the latter possible added to humanoid.pcx by me
+	* Gas mask added to item.pcx by Kahvi
+	* Steam tank added to char.pcx by Kahvi
+	* Smokes are now in effect.pcx as they should
+	* Ivan now wears the Gorovits family gas mask
+	* Ivan now never willingly drops one of the family items and equips them always
+	  when they are taken from him and he founds them afterwards, even if he has
+	  got something better by then
+	* Corrected a small bug in the reply randomization system
+	* Added proper replies for player clones
+	* Reimplemented the old Mersenne Twister RNG with seed save ability
+	* Disabled Mondedr again
+	* Eddies and mommos are now animated in the SecretKnowledge screens, too
+	* The new powerful materials can no longer be wished, except for meteoric steel
+
+March 22 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a few gcc warnings
+	* Contents of containers in containers and etc. are now shown correctly upon
+	  death
+	* Lists of monsters killed by you, by pets and by other reasons during the
+	  adventure are now shown upon death
+	* Adventure information may now be shown when the player quits, too
+
+March 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Kicking mines no longer crashes
+	* Added CanBeConfused and CanAttack character database booleans
+	* Most special monsters can no longer be confused (this made them too easy)
+	* ESP-capable monsters are now more intelligent
+	* Only ESP-seen monsters, non-movable non-adjacent creatures and floating eyes
+	  no longer trigger action deactivation requests
+	* Spiders and Petrus's wife number 4 are no longer seen by ESP
+	* Offering an item to its AttachedGod is now especially pious
+	* Other offers are no less valuable, for balance
+	* Corrected a fatal bug in the gas loading code
+	* Polymorph targets are again more balanced
+	* Broken bear traps' names are now shown correctly
+	* Smoke is now shown in the lookmode
+	* Lookmode pile messages are now more informative
+	* Dropping is now more convenient
+	* Magic vapour and skunk smell work now a little better
+	* Fixed a terrible bug in the altar polymorph code
+	* Corrected a horrible error in the danger system initialization code
+	* Added Janne Miettinen's Mondedr to CVS
+	  * Added swamp terrain and prison doors
+	  * Added lava and swamp materials
+	  * Added a couple of temporary bad guys to the town
+	* Prison doors can now be seen through
+	* Dipping into an empty bottle no longer crashes
+	* It is no longer possible to dip a potion to the ice fountains of Attnam
+	* One may now dip potions to the dolphin pool and die
+	* Falling roofs now destroys smoke
+	* Earthquake now damages doors
+
+March 14 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Made skunk easier
+
+March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Mage tweaks
+
+March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Mushroom spawning rate tuned down
+	* Skunks no longer release their smell inside walls
+	* Step on pile messages are now more informative
+	* Random polymorph targets are now somewhat limited
+	* Flying monsters are now drawn over smoke
+
+March 13 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Floating eyes' attackwisdom limit changed from 10 to 8
+	* Ivan's wisdom from 5 to 6
+	* Added a puff of smoke to Genie creation
+
+March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Empty and atmosphere terrains have been removed; null pointers are used in
+	  their place
+	* Corrected a fatal bug caused by the flagization of team relations
+	* Fixed a fatal bug in the new explosion code
+	* Explosions now leave smoke
+	* Smoke now blocks light
+	* The patrol guard in the Cathedral's garden replaced by a floating eye
+	* Life saving now resets states
+	* It is now possible to wish for a holy book of a specific god
+	* Wish parser is now less annoying
+	* Go doesn't walk on traps anymore
+	* Added AskKeyPress to trap detection
+	* Balancing of new monsters
+	* New monsters now look somewhat better
+	* Zombies now pick up heads from corpses, too
+	* Frequency system works again correctly
+	* A fatal bug in the corpse cloning code fixed
+	* Exploding wands now cause their specific effect to a certain area instead of
+	  a dull fireball
+	* Staff pic added to item.pcx by me
+	* Added quarterstaff item
+	* Added meteoric steel, dragonhide, arcanite, illithium and adamant materials
+	* Added many new material configurations to weapons and armor etc.
+	* Dark wizard renamed as dark mage and divided to four configs: apprentice dark
+	  mage, dark battlemage, elder dark mage and dark archmage (unique)
+	* Added many new effects and more intelligence to dark mages
+	* Mushrooms reproduce in more interesting patterns
+	* Mutated mushroom renamed as magical mushroom
+	* Added raw magical vapour gas which activates random states when breathed
+	* Magical mushrooms now occasionally release raw magical vapour
+	* Eddys now occasionally engulf items under them and sometimes even themselves
+	* Moose messages work better now
+
+March 12 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added GAS_IMMUNITY state (for skunk)
+	
+March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bear traps snap shut when kicked. And sometimes even break
+
+March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Corrected brain-dead AddDeathExplanation() system
+
+March 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Skunk looks better
+	
+March 08 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Skunk added
+	* Smoke improved
+	
+March 08 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Smoke added 
+	
+March 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A terrible bug in the door breaking code fixed
+
+March 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Searching now works correctly
+	* Restrictions of permanent states activated by fountain updated
+
+March 07 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* added magpie
+	
+March 6 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Special monsters and items now determine their AttachedGod correctly
+	* Terrains now also have AttachedGods (mostly depends on material)
+	* Horn of fear is now much more powerful
+	* Many unfinished things which I do not remember
+
+February 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* When player is killed by something when he is fainting the death message now says "killed by a X while helpless".
+	
+February 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Polymorph question should default to the monster that the player last polymorphed to.
+
+February 26 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Zombies are more picky about the brains they want (atleast that's what they say now)
+	* Petrus's, angels' and genies' bodyparts disappear when severed.
+	* Zombies pick up and use heads if they lack one
+
+February 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added two-headed moose
+	
+February 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added ghosts
+
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi> and
+				 Heikki Sairanen<heikki.sairanen@phpoint.net>
+
+	* All items, characters and materials have been attached to some god
+
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added support for transparent non-walkable tiles
+	* Added support for monsters walking through walls
+	* Monster generation works now a little better (maybe)
+
+February 20 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added cans filled with mushroom flesh. 
+	
+February 17 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Dark wizards added 
+
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Gcc 3.2.1 now compiles the game correctly and without warnings
+	* Optimization
+	* Removed subbitmap support from FeLib; it was complicated and useless
+	* Added some info about materials to SecretKnowledge
+	* Diamond plate mails and other objects made of transparent materials now look
+	  better in inventory and panel
+
+February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A small bug in the key handling code fixed
+	* A fatal bug in the script code corrected
+
+February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A fatal bug added by the last commit corrected
+	* A fatal bug in Mellis's pray effect corrected (thanks to the anonymous
+	  SourceForge user who reported it)
+	* Created a much better way of handling random script variables; they are now
+	  presented in form "min:max" instead of "min + rand%(max-min+1)" and are
+	  calculated when needed instead of during the parsing
+	* Finally fixed the Ancient Mad Script Error of Invading Shopkeeper Clones
+	* Dark wizard added to humanoid.pcx by Kahvi
+
+February 17 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mushrooms added 
+	
+February 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the new C++ alpha blit code
+	* Added an alpha halo to lanterns
+	* Wave animations for both mommos added and integrated
+	* A new whistle drawn
+
+February 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed asm
+
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Configuration can again be saved
+
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the Igor's savefile code
+	* GetFlyAmount() S&R:ed by GetSpoilLevel()
+	* Eddies are now animated
+
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* New eddy animation added to char.pcx by Kahvi
+	* Added makefile for DJGPP port of Igor
+	* Igor now works if the graphics are in the same directory as the binary
+
+February 12 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Wrong version number in configure.in of igor corrected
+
+February 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected some bugs in Igor's Linux port
+	* Igor works again under Win32
+	* ESC now works in Igor's file menu
+	* Project line etc. stats updated
+
+February 9 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Monsters appearing from fountains are sometimes friendly.
+
+February 9 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Igor portated to Linux
+	* Igor added to CVS
+	* Graphics/ can now be in any directory on the machine with igor.
+	
+February 8 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Tweaked eddies in space-time continuum
+
+February 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Floors are now a bit brighter
+	* Added comprehensive graphics file format documentation to Doc/Data
+
+February 8 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Added eddies in space-time continuum
+	
+February 6 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Merged Miles Bader's patch to correct a bug that "prevents ivan from being built in a separate build directory".

@@ -1,0 +1,30 @@
+Humanoid.pcx:n uusi formaatti:
+
+Ruumiinosat tulee pystyriveille. Jokaisella rivill‰ on korkeintaan 32 kuvaa
+ja jokaiselle ruumiinosatyypille on varattu nelj‰ rivi‰. Vasemmassa reunassa
+ovat p‰‰t, sen j‰lkeen tulee torsot, sitten k‰det, sitten jalat, sitten
+kilvet ja oikeimpana inhandspicit.
+
+Normaalisti tiedostoon piirret‰‰n vain karakterin oikea k‰si ja jalka
+(piirt‰j‰st‰ katsottuna siis vasemmalla oleva). Se peilataan sitten
+toisellekin puolelle. N‰in siksi, ett‰ jos k‰si/jalka on irronnut, sit‰ ei
+piirret‰. Jaloissa t‰m‰ koskee vain lahjetta, housujen yl‰osan piirr‰t
+kokonaisena, koska muuten toisen jalan irrotessa strategiseen kohtaan
+tulisi pystysuora raja. Jos karakterin raajat ovat ep‰symmetriset, piirr‰
+molemmat niist‰ allekkain oikeina raajoina ja kerro meille, niin k‰yt‰mme
+vasempaan raajaan eri kuvaa kuin oikeaan.
+
+Ruumiinosat on materiaaliv‰ritettyj‰. Iho, aseiden ter‰t ja kilvet on aina
+m-v‰ri‰ 1. Vaatteiden p‰‰v‰rit ja aseiden k‰densijat on m-v‰ri‰ 2. Useimmat
+muut v‰rit kuten hiukset, vaatteiden koristukset yms. on perusv‰rej‰. T‰m‰
+itseasiassa helpottaa uusien ruumiinosien lis‰yst‰, koska esim. k‰si‰ ei
+yleens‰ tarvitse tehd‰ uudelleen, vaan useimmiten voidaan k‰ytt‰‰
+standardikuvaa, jossa k‰si on m-v‰ri‰ 1 ja hiha m-v‰ri‰ 2.
+
+CW ei pysty n‰ytt‰m‰‰n t‰m‰n formaatin kuvia, eik‰ tule niin tekem‰‰nk‰‰n.
+Sen sijaan olen m‰‰r‰nnyt toveri Heikin kehittelem‰‰n uutta
+kuvank‰sittelyohjelmaa nimelt‰ Ivan Graphics editOR eli IGOR. T‰m‰n
+ominaisuuksiin kuuluu mm. humanoidien kokoaminen n‰iden ohjeiden mukaan
+sek‰ tehokas materiaaliv‰ritysj‰rjestelm‰. Tarvitsemme kuitenkin uuteen
+formaattiin konvertoidun kuvan jo ennen IGOR:n valmistumista, joten se
+tulee helpottamaan vasta uusien kuvien lis‰yst‰.

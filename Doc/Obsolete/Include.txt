@@ -1,0 +1,162 @@
+----------------------------------------------------------------------------
+
+	       Documentation of miscellaneous shared include files
+
+----------------------------------------------------------------------------
+
+Overview:
+---------
+
+Located in IVAN/Include, these files contain some standard classes and
+small, convenient inline routines that are commonly used in every IvenDev
+project.
+
+Classes:
+--------
+
+dynarray<class Type, class SizeType = ushort>
+---------------------------------------------
+
+A class template that was a kind of substite for vector when IvanDev
+knew not how to use it :) Type is the type of one element, SizeType
+is the type in which the size of the array is measured.
+
+Functions:
+
+dynarray()
+
+	Creates a new, empty dynarray.
+
+dynarray(const dynarray<Type, SizeType>* Array)
+
+	Creates a new dynarray and copies its initial data from Array.
+
+~dynarray()
+
+	Detroys dynarray and its elements.
+
+Type& Access(SizeType Index)
+
+	Access element of Index. May crash if Index greater than or equal
+	to Length().
+
+SizeType Length()
+
+	Returns the current number of elements.
+
+Add(Type Element)
+
+	Adds Element to the end of dynarray.
+
+Add(const dynarray<Type, SizeType>* DynArray)
+
+	Adds the entire contents of DynArray to the end of dynarray.
+
+Put(Type Element, SizeType Position)
+
+	Makes Access[Position] henceforth return Element. All elements
+	beyound Position are pushed forward. May crash if Position
+	is greater than or equal to Length().
+
+Type Remove(SizeType Index)
+
+	Erases the Element of Index and returns it. All elements beyound
+	Index are pulled backwards.
+
+Type& operator [] (SizeType Index)
+
+	Same as Access().
+
+Type& operator << (Type& Element)
+
+	Same as Add().
+
+SizeType Search(Type Element)
+
+	If an element equal to Element is found in the dynarray, returns
+	its index, otherwise returns -1 converted to SizeType. Type
+	must support the logical == operator.
+
+Resize(SizeType NewSize)
+
+	Forces Length() henceforth return NewSize. All elements beyound
+	this length are erased. If Length() is less than NewSize, new
+	elements are filled with rubbish.
+
+vector (vector.h)
+-----------------
+
+The basic two-dimensional vector class, i.e. a mathematical object with
+scalar X and Y elements.
+
+Functions:
+
+vector()
+
+	Constructs a vector with undefined elements.
+
+vector(ushort X, ushort Y)
+
+	Constructs a vector with specified elements.
+
+vector	operator +  (const vector& H)
+vector&	operator += (const vector& H)
+vector&	operator =  (const vector& H)
+bool	operator == (const vector& H)
+bool	operator != (const vector& H)
+
+	Self-explanatory overloaded math operators.
+
+Globals:
+--------
+
+allocate.h:
+----------
+
+template <class Type> Type** Alloc2D(ulong XSize, ulong YSize)
+
+	Allocates a two-dimensional block of type Type and size of
+	XSize * YSize. The Block can be deleted via a simple delete []
+	operator, but it cannot be resized without reallocation.
+
+	Example of usage:
+
+	int** Map = Alloc2D<int>(3,4);
+	Map[2][3] = 666;
+	std::cout << Map[2][3] << std::endl;
+	delete [] Map;
+
+	Result: "666" is output.
+
+femath.h:
+----------
+
+template <class Type> Type GetHypotSquare(Type X, Type Y)
+
+	Returns the hypotenuse of a rigth-angle triangle of short sides
+	X & Y raised to the power of two, i.e. X*X + Y*Y.
+
+strover.h:
+----------
+
+std::string operator+ (std::string String, const int& Int)
+
+	Overloaded string operator that transforms numeric Int into
+	a string and adds it to String temporarily, returning the result.
+
+std::string& operator+= (std::string& String, const int& Int)
+
+	Transforms numeric Int into a string and adds it to String
+	permanently, returning the result.
+
+std::ofstream& operator+= (std::ofstream& File, const std::string& String)
+
+	Saves String into a File.
+
+std::string& operator-= (std::ifstream& File, std::string& String)
+
+	Loads String from a File.
+
+----------------------------------------------------------------------------
+
+End of document.

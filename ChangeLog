@@ -1,0 +1,308 @@
+-----------------------------------------------------------------------------
+
+ >>> NOTICE!!! <<<
+
+ This file contains SPOILERS, which might ruin your IVAN experience
+ totally. The file is provided AS IS and is probably completely unreadable.
+
+-----------------------------------------------------------------------------
+
+September 3 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added enner beast image by blob to GC5 entering screen
+
+August 24 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Small bugfixes
+  * The cursor is now shown properly if you are a 32x32 monster (not
+    possible in the real game though)
+  * Lines cut in rooms.cpp
+
+August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Coffin added to OLTerra.pcx by Kahvi
+  * Pregnant wife of Petrus torso added to Humanoid.pcx by Kahvi
+  * Fixed a bug in the weaponskill code
+
+August 22 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the dagger of venom code
+  * Fixed a fatal bug in the fly code
+  * Whip of thievery is now less powerful when thrown
+  * Some of the best monsters are now immune to thievery
+  * Lines cut in materia.cpp
+
+August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Corrected a crash which occurred while wearing a Decos ad shirt
+  * Ommel cerumen can no longer be wished
+
+August 21 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Children no longer spoil
+  * Items can now be hasted and slowed to speed or slow their spoiling
+  * Corrected a bug in the scroll of change material code
+
+August 17 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Implemented alcoholic guards
+
+August 17 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * A small bug correction in the lookmode
+
+August 17 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * You can now gift stuff to Petrus's wives
+  * Some small balancing
+
+August 16 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Added first-born sons and daughters
+	
+August 16 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added lots of new zombies, skeletons and ghosts
+
+August 15 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * The RAND_N function is now correct
+  * Monsters are now generated in the catacombs
+
+August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * added zombie of khaz-zadm
+
+August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * coffin (looks are bad) added to catacomb
+	
+August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Added can materials (now works)
+  * Added stairs to catacomb
+
+August 15 2006 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Added can materials
+	
+July 16 2006 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added a smiley to the "Unfortunately you died." screen
+
+July 25 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed an animation bug which occured over memorized stairs outside LOS
+  * Fixed a bug in the displacement code
+
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Sadism and masochism work quite well
+  * Fixed a fatal bug in the head shot code
+
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Humanoid.pcx modified, ready for Kahvi's addition of broken armor pics
+  * Sadism yet incomplete -> bugs
+
+July 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the death msg code
+
+July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added new abstraction for locked items
+  * Attnam's cellar is now smaller
+  * Attnam's cellar has lamps
+
+July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added Kahvi's map of Attnam's cellar partially
+
+July 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * punisher added	
+
+July 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * coffin added	
+
+July 23 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added some underground levels to Attnam
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed a bug in the equipment removal code
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Bug in taming corrected
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Charming is now more dependent on attributes etc.
+  * Animated bats, spiders & magpie added to char.pcx by Kahvi
+  * Mola Mola added to char.pcx by Kahvi
+  * Bats and spiders are now animated
+
+July 22 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Biting a large hedgehog now works correctly
+  * Big T and P work in container UI
+  * IVAN might work better on machines with a different graphics bitorder
+
+May 27 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Code works. But it is certain that the functionality of certain changed
+    functions from Timo's update on May 10 may not work.
+
+May 11 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Some code related to mind worms added. Sadly the code hardly functions.	
+
+May 11 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Gorovits family life-size copy of Lenin's mummy added
+	
+May 10 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * An additional abstract base template for trap items
+  * AI may be more intelligent when choosing whether to let another
+    character or player to displace itself
+  * Some typedefing and S&Ring from const <type> to c<type>, eg. const int
+    -> cint & const item* -> citem* etc.
+  * Added some code for an experience id system which would be a most
+    powerful tool when battling abuses, but it's still very incomplete
+  * The Groke added to item.pcx by Kahvi
+  * A frying pan, a rolling pin and a sausage added to item.pcx by Kahvi
+
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Added sirens	
+
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Engravings become gibberish if polymorphed	
+
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * checked acid shield's code and corrected some smallish mistakes.
+
+May 10 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * player now get a mysterious and large saga of the pantheon when he/she/it
+    finds about all the gods.	
+	
+May 7 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * added some features that will give player bonus when he finds all gods 
+    (not fully implemented yet)
+
+April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * shopkeepers cannot be fooled by primed holy handgrenades.
+
+April 23 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * integrated code from Atomic:
+  * acid shield
+  * weeping blade
+  * amulet of warding (may not actually function? OR?)	
+	
+April 6 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Corrected "if and ;" bug spotted by TheFallenOne222
+	
+April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: Mirror and clone crashed
+
+April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * fixes to look mode and holy handgrenade in the world map	
+
+April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * (some of these may refer to last commits)
+  * Holy handgranade
+  * gas grenades
+  * total weight of inventory to inventory
+
+April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Mustard gas works somehow
+
+April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added some antidote to priests' inventories
+  * Stairs and portals flash in look mode
+  * Reduced magical whistle's recharging time from 75 to 60 min, because
+    the latter is easier to remember
+  * Fixed a certain bug caused by the addition of willpower
+  * Fixed a memory leak in the scar code
+  * Golems' AGI, DEX and STRs are no longer affected by scars
+  * BugFix: Reading a scroll of repair with a corpse in the inventory crashed
+
+April 2 2005 Timo & Heikki
+
+  * Scars
+
+March 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * You now hear coins clinking inside imperialists
+  * Made some additional preparations for willpower and hiccups
+
+March 4 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Mind worms had somehow disappeared from char.pcx; they've been added
+    again
+  * The order of priests' limb attachment and leprosy curing services
+    has been reversed
+  * Bananas can now jam
+  * The Holy Hand Grenade, chastity belt, pear of anguish, weight
+    (for use with spanish donkey) added to item.pcx by Kahvi
+  * Judas chair, rotating drum, witch's spider, rack, wheel, logs for
+    hammering prior to wheel use, spanish donkey, spanish boot, iron maiden
+    (open and close) added to olterra.pcx by Kahvi
+  * Big T added as a 'being Tortured' symbol to symbol.pcx by Kahvi
+
+March 4 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * forgot a small test in the script. Now deleted.
+  * AUTHORS file now updated
+  * small bug fixes included
+
+March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Ighalli's god changed integrated. AUTHORS file may need tweaking in the future.
+
+March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * Now compiles :)
+
+February 28 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * kamikaze dwarfs sing hymns
+  * limbs cut off by leprosy go to the inventory not to the ground
+  * Carnivorous plants can now (probably) eat.
+  * some wands are teleported to kamikaze dwarfs in the cathedral (if they
+    are kamikaze weapons)
+
+February 11 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Rather a large doc update
+  * One typo fix
+
+January 14 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Small bug corrected in the stamina regeneration
+  * One typo fix
+
+December 15 2004 Heikki Sairanen <first.last@tut.fi>
+
+  * "magpie critically peck you" corrected
+
+December 14 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * History-related doc updates, especially in the Doc/Obsolete directory

@@ -1,0 +1,728 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+/* Numerical olterrain data loaded during game startup */
+
+/* Default values: */
+
+olterrain
+{
+  /* Obligatory: BitmapPos */
+  UsesLongArticle = false;
+  Adjective = "";
+  UsesLongAdjectiveArticle = false;
+  /* Obligatory: NameSingular */
+  /* NameSingular + "s" by default: NamePlural */
+  PostFix = "";
+  ArticleMode = 0;
+  /* Obligatory: MainMaterialConfig */
+  /* Obligatory: SecondaryMaterialConfig */
+  /* Obligatory if multiple material configurations defined: MaterialConfigChances */
+  IsAbstract = true; /* This is false by default and does not inherit! */
+  OKVisualEffects = NONE;
+  MaterialColorB = 0;
+  MaterialColorC = 0;
+  MaterialColorD = 0;
+  SitMessage = "You sit for some time. Nothing happens.";
+  /* Obligatory: DigMessage */
+  CanBeDestroyed = false;
+  RestModifier = 1;
+  RestMessage = "";
+  ShowMaterial = true;
+  IsUpLink = false;
+  CreateDivineConfigurations = false;
+  StorageVolume = 0;
+  HPModifier = 100;
+  IsSafeToCreateDoor = false;
+  AttachedGod = NONE;
+  CreateLockConfigurations = false; /* Can't be overridden by Configs */
+  Walkability = ANY_MOVE;
+  IsAlwaysTransparent = true;
+  UseBorderTiles = false;
+  BorderTilePriority = 0;
+  HasSecondaryMaterial = false;
+  CreateWindowConfigurations = false;
+  ShowThingsUnder = true;
+  IsWall = false;
+}
+
+wall
+{
+  IsAbstract = true;
+  CanBeDestroyed = true;
+  IsSafeToCreateDoor = true;
+  Walkability = ETHEREAL;
+  IsAlwaysTransparent = false;
+  BorderTilePriority = 100;
+  CreateWindowConfigurations = true;
+  MaterialColorC = rgb16(140, 96, 48);
+  MaterialColorD = rgb16(180, 180, 255);
+  ShowThingsUnder = false;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
+  IsWall = true;
+
+  Config BRICK_FINE;
+  {
+    DigMessage = "The wall is pretty hard, but you still manage to go through it.";
+    MainMaterialConfig == GRANITE;
+    NameSingular = "wall";
+    BitmapPos = 64, 272;
+    HPModifier = 150;
+    WindowBitmapPos = 96, 256;
+  }
+
+  Config BRICK_PROPAGANDA;
+  {
+    DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
+    MainMaterialConfig == GRANITE;
+    NameSingular = "wall";
+    PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamese Empire";
+    BitmapPos = 80, 272;
+    HPModifier = 150;
+  }
+
+  Config BRICK_OLD;
+  {
+    DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
+    MainMaterialConfig == GRANITE;
+    UsesLongAdjectiveArticle = true;
+    Adjective = "old";
+    NameSingular = "wall";
+    BitmapPos = 16, 256;
+    HPModifier = 75;
+  }
+
+  Config BRICK_PRIMITIVE;
+  {
+    DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
+    MainMaterialConfig == BALSA_WOOD;
+    Adjective = "primitive";
+    NameSingular = "wall";
+    BitmapPos = 48, 272;
+    HPModifier = 75;
+    WindowBitmapPos = 80, 256;
+  }
+
+  Config BRICK_PRIMITIVE_PROPAGANDA;
+  {
+    DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
+    MainMaterialConfig == BALSA_WOOD;
+    Adjective = "primitive";
+    NameSingular = "wall";
+    PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamese Empire";
+    BitmapPos = 96, 272;
+    HPModifier = 75;
+  }
+
+  Config STONE_WALL;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    DigMessage = "The ground is hard to dig.";
+    MainMaterialConfig == GRANITE;
+    MaterialColorB = rgb16(56, 56, 56);
+    NameSingular = "wall";
+    BitmapPos = 0, 32;
+    HPModifier = 100;
+  }
+
+  Config ICE_WALL;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    DigMessage = "The ice is pretty easy to dig.";
+    MainMaterialConfig == ICE;
+    NameSingular = "wall";
+    BitmapPos = 0, 32;
+    HPModifier = 40;
+  }
+  Config BROKEN_WALL;
+  {
+    OKVisualEffects = MIRROR|FLIP;
+    DigMessage = "The ground is easy to dig.";
+    MainMaterialConfig == GRANITE;
+    MaterialColorB = rgb16(56, 56, 56);
+    Adjective = "broken";
+    NameSingular = "wall";
+    BitmapPos = 48, 288;
+    HPModifier = 25;
+  }
+}
+
+decoration
+{
+  IsAbstract = true;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+
+  Config PINE;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == PINE_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 100, 32);
+    NameSingular = "pine";
+    BitmapPos = 16, 320;
+    HPModifier = 25;
+  }
+
+  Config FIR;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == FIR_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 100, 32);
+    NameSingular = "fir";
+    BitmapPos = 16, 352;
+    HPModifier = 25;
+    IsAlwaysTransparent = false;
+  }
+
+  Config PALM;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == BALSA_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 80, 32);
+    NameSingular = "palm";
+    BitmapPos = 16, 368;
+    HPModifier = 25;/*
+    IsAlwaysTransparent = false;*/
+  }
+
+  Config HOLY_TREE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You ruthlessly chop the beautiful tree down.";
+    MainMaterialConfig == GOLD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(224, 224, 0);
+    Adjective = "holy";
+    NameSingular = "tree";
+    BitmapPos = 32, 336;
+    ShowMaterial = true;
+    HPModifier = 25;
+    AttachedGod = SILVA;
+  }
+
+  Config CARPET;
+  {
+    DigMessage = "You can't force yourself to ruin this wonderful carpet.";
+    MainMaterialConfig == FABRIC;
+    NameSingular = "carpet";
+    BitmapPos = 0, 272;
+  }
+
+  Config COUCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "The destroy the couch and find some valuables dropped by its owners.";
+    MainMaterialConfig == FABRIC;
+    NameSingular = "couch";
+    BitmapPos = 0, 400;
+    RestModifier = 2;
+    MaterialColorB = rgb16(200, 200, 0);
+    SitMessage = "The couch is extremely soft and confortable. You relax well.";
+    RestMessage = "You rest well on the soft sofa.";
+    HPModifier = 25;
+    LeftOverItems == stone { Times = 1:2; }
+  }
+
+  Config DOUBLE_BED;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You smash the bed into pieces.";
+    MainMaterialConfig == FABRIC;
+    Adjective = "luxurious";
+    NameSingular = "double bed";
+    BitmapPos = 48, 304;
+    MaterialColorB = rgb16(200, 200, 0);
+    ShowMaterial = false;
+    RestModifier = 5;
+    SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
+    RestMessage = "You lay yourself on the confortable bed.";
+    HPModifier = 25;
+    LeftOverItems == 0;
+  }
+
+  Config POOL_BORDER;
+  {
+    DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
+    MainMaterialConfig == MARBLE;
+    NameSingular = "";
+    BitmapPos = 32, 320;
+  }
+
+  Config POOL_CORNER;
+  {
+    DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
+    MainMaterialConfig == MARBLE;
+    NameSingular = "";
+    BitmapPos = 48, 320;
+  }
+
+  Config SNOW_PINE;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == PINE_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(220, 220, 220);
+    NameSingular = "pine";
+    PostFix = "covered with snow";
+    BitmapPos = 16, 320;
+    HPModifier = 25;
+  }
+
+  Config SNOW_FIR;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == FIR_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(220, 220, 220);
+    NameSingular = "fir";
+    PostFix = "covered with snow";
+    BitmapPos = 16, 352;
+    HPModifier = 25;
+    IsAlwaysTransparent = false;
+  }
+
+  Config ANVIL;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You break the anvil.";
+    MainMaterialConfig == IRON;
+    NameSingular = "anvil";
+    BitmapPos = 16, 432;
+    HPModifier = 25;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
+  }
+
+  Config SHARD;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You shatter the crystal into pieces.";
+    NameSingular = "shard";
+    BitmapPos = 16, 416;
+    HPModifier = 5;
+    MainMaterialConfig = { 3, BLUE_CRYSTAL, PURPLE_CRYSTAL, GREEN_CRYSTAL; }
+    MaterialConfigChances = { 3, 100, 100, 100; }
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 100:200; } Times = 1:3; }
+  }
+
+  Config CACTUS;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the cactus down.";
+    MainMaterialConfig == PLANT_FIBER;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 100, 32);
+    NameSingular = "cactus";
+    NamePlural = "cactuses";
+    BitmapPos = 16, 352;
+    HPModifier = 20;
+    LeftOverItems == 0;
+  }
+
+  Config OAK;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You ruthlessly chop the tree down.";
+    MainMaterialConfig == OAK_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(0, 150, 0);
+    NameSingular = "oak tree";
+    BitmapPos = 32, 336;
+    ShowMaterial = true;
+    HPModifier = 25;
+    IsAlwaysTransparent = false;
+  }
+
+  Config BIRCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == BIRCH_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(125, 160, 80);
+    MaterialColorC = rgb16(220, 220, 220);
+    NameSingular = "birch tree";
+    BitmapPos = 80, 368;
+    HPModifier = 25;
+  }
+
+  Config TEAK;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You ruthlessly chop the tree down.";
+    MainMaterialConfig == TEAK_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(0, 220, 0);
+    NameSingular = "teak tree";
+    BitmapPos = 32, 336;
+    HPModifier = 25;
+  }
+
+  Config DWARF_BIRCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the dwarf birch down.";
+    MainMaterialConfig == BIRCH_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(125, 160, 80);
+    MaterialColorC = rgb16(220, 220, 220);
+    NameSingular = "dwarf birch";
+    BitmapPos = 32, 368;
+    HPModifier = 10;
+  }
+  Config DWARF_BIRCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the dwarf birch down.";
+    MainMaterialConfig == BIRCH_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(125, 160, 80);
+    MaterialColorC = rgb16(220, 220, 220);
+    NameSingular = "dwarf birch";
+    BitmapPos = 32, 368;
+    HPModifier = 10;
+  }
+}
+
+door /* olterrain-> */
+{
+  DigMessage = "You break the door.";
+  CanBeDestroyed = true;
+  MainMaterialConfig == FIR_WOOD;
+  NameSingular = "door";
+  BitmapPos = 0, 176;
+  OpenBitmapPos = 0, 48;
+  /* PostFix depends on LockType */
+  HPModifier = 20;
+  CreateLockConfigurations = true;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
+  IsAlwaysTransparent = false;
+  Config BARDOOR;
+  {
+	BitmapPos = 16, 96;    
+	IsAlwaysTransparent = true;
+  }
+  Config SECRET_DOOR;
+  {
+	BitmapPos = 16, 144;    
+        NameSingular = "door";
+        Adjective = "very secret";
+  }
+}
+
+stairs /* olterrain-> */
+{
+  IsAbstract = true;
+  DigMessage = "The stairs are too hard to dig.";
+  MainMaterialConfig == GRANITE;
+  MaterialColorB = rgb16(160, 64, 0);
+  NameSingular = "stairway";
+
+  Config STAIRS_UP;
+  {
+    PostFix = "upwards";
+    BitmapPos = 0, 192;
+    IsUpLink = true;
+  }
+
+  Config STAIRS_DOWN;
+  {
+    PostFix = "downwards";
+    BitmapPos = 0, 208;
+  }
+
+  Config SUMO_ARENA_ENTRY;
+  {
+    PostFix = "downwards";
+    BitmapPos = 0, 208;
+  }
+
+  Config SUMO_ARENA_EXIT;
+  {
+    PostFix = "upwards";
+    BitmapPos = 0, 192;
+    IsUpLink = true;
+  }
+}
+
+portal /* stairs -> */
+{
+  DigMessage = "The portal is magically protected from your feeble attack.";
+  MainMaterialConfig == GOLD;
+  MaterialColorB = rgb16(200, 0, 0);
+  NameSingular = "magic portal";
+  AttachedGod = MORTIFER;
+  /* BitmapPos overridden */
+
+  /* Config specialities hard-coded */
+
+  Config OREE_LAIR_ENTRY; { }
+  Config OREE_LAIR_EXIT; { }
+  Config DARK_LEVEL; { }
+}
+
+altar /* olterrain-> */
+{
+  DigMessage = "An invisible wall stops your feeble attempt.";
+  MainMaterialConfig == GRANITE;
+  UsesLongArticle = true;
+  NameSingular = "altar";
+  BitmapPos = 0, 368;
+  /* PostFix depends on Config */
+  CreateDivineConfigurations = true;
+  IsAbstract = true;
+}
+
+throne /* olterrain-> */
+{
+  DigMessage = "The throne resists.";
+  MainMaterialConfig == GOLD;
+  MaterialColorB = rgb16(200, 200, 0);
+  NameSingular = "throne";
+  BitmapPos = 0, 416;
+  AttachedGod = VALPURUS;
+}
+
+olterraincontainer /* olterrain->decoration-> */
+{
+  IsAbstract = true;
+  Walkability = ETHEREAL;
+  DigMessage = "You smash this piece of furniture into pieces.";
+
+  Config BOOK_CASE;
+  {
+    CanBeDestroyed = true;
+    MainMaterialConfig == FIR_WOOD;
+    NameSingular = "bookcase";
+    BitmapPos = 16, 272;
+    SitMessage = "The bookcase is very unconfortable to sit on.";
+    StorageVolume = 100000;
+    HPModifier = 20;
+    AttachedGod = SOPHOS;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+  }
+
+  Config CHEST_OF_DRAWERS;
+  {
+    CanBeDestroyed = true;
+    MainMaterialConfig == FIR_WOOD;
+    NameSingular = "chest of drawers";
+    BitmapPos = 0, 224;
+    SitMessage = "The chest of drawers is very unconfortable to sit on.";
+    StorageVolume = 50000;
+    HPModifier = 40;
+    AttachedGod = SOPHOS;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1000; } Times = 1:2; }
+  }
+  Config SHELF;
+  {
+    CanBeDestroyed = true;
+    MainMaterialConfig == FIR_WOOD;
+    NameSingular = "";
+    BitmapPos = 16, 128;
+    SitMessage = "The shelf is very unconfortable to sit on.";
+    StorageVolume = 80000;
+    HPModifier = 20;
+    AttachedGod = ATAVUS;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+    MaterialColorB = rgb16(200,200,200);
+  }
+}
+
+fountain /* olterrain-> */
+{
+  DigMessage = "The water splashes a bit."; /* Wrong if SecondaryMaterial != WATER. */
+  MainMaterialConfig == MARBLE;
+  SecondaryMaterialConfig == WATER;
+  /* Uses ContainerPostFix() */
+  /* Adjective depends on being dried out or not */
+  NameSingular = "fountain";
+  /* BitmapPos depends on being dried out or not */
+  HasSecondaryMaterial = true;
+}
+
+brokendoor /* olterrain->door-> */
+{
+  DigMessage = "You destroy the broken door.";
+  Adjective = "broken";
+  BitmapPos = 0, 160;
+  CreateLockConfigurations = true;
+  Config BARDOOR;
+  {
+    IsAlwaysTransparent = true;
+    BitmapPos = 32,96;
+  }
+  Config SECRET_DOOR;
+  {
+	BitmapPos = 16, 160;    
+        NameSingular = "door";
+        Adjective = "broken very secret";
+  }
+}
+
+boulder /* olterrain-> */
+{
+  DigMessage = "You smash the boulder to tiny bits.";
+  MainMaterialConfig == GRANITE;
+  NameSingular = "boulder";
+  SitMessage = "The boulder is rather hard to sit on.";
+  CanBeDestroyed = true;
+  IsAbstract = true;
+  HPModifier = 50;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+
+  Config 1;
+  {
+    BitmapPos = 64, 288;
+  }
+
+  Config 2;
+  {
+    BitmapPos = 64, 304;
+  }
+
+  Config 3;
+  {
+    BitmapPos = 64, 304; /* Should be checked */
+    HPModifier = 70;
+    Adjective = "large";
+    IsAlwaysTransparent = false;
+    Walkability = ETHEREAL;
+  }
+
+  Config SNOW_BOULDER;
+  {
+    MaterialColorB = rgb16(220, 220, 220);
+    BitmapPos = 80, 306;
+    Adjective = "snow-covered";
+  }
+}
+
+sign
+{
+  DigMessage = "You smash the sign to tiny bits.";
+  MainMaterialConfig == BALSA_WOOD;
+  MaterialColorB = rgb16(200,200,200);
+  /* Uses own postfix */
+  NameSingular = "sign";
+  BitmapPos = 16, 336;
+  SitMessage = "You feel very weird sitting on the sign.";
+  CanBeDestroyed = true;
+  MaterialColorB = rgb16(48, 48, 48);
+  HPModifier = 10;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:500; } }
+}
+
+earth
+{
+  CanBeDestroyed = true;
+  IsSafeToCreateDoor = true;
+  Walkability = ETHEREAL;
+  IsAlwaysTransparent = false;
+  OKVisualEffects = MIRROR|FLIP|ROTATE;
+  DigMessage = "The ground is fairly easy to dig.";
+  MainMaterialConfig == MORAINE;
+  UsesLongArticle = true;
+  NameSingular = "earth";
+  BitmapPos = 96, 416;
+  HPModifier = 50;
+  BorderTilePriority = 10;
+  UseBorderTiles = true;
+  ShowThingsUnder = false;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+  IsWall = true;
+}
+
+monsterportal
+{
+  DigMessage = "The portal is magically protected from your feeble attack.";
+  MainMaterialConfig == SILVER;
+  MaterialColorB = rgb16(0, 0, 90);
+  NameSingular = "magic portal";
+  AttachedGod = MORTIFER;
+}
+
+coffin /* olterrain->decoration->olterraincontainer */
+{
+  Walkability = ETHEREAL;
+  DigMessage = "You smash the coffin into pieces. The spirits are not happy.";
+  CanBeDestroyed = true;
+  MainMaterialConfig == FIR_WOOD;
+  NameSingular = "coffin";
+  BitmapPos = 16, 272;
+  SitMessage = "The coffin is cold  to sit on.";
+  StorageVolume = 100000;
+  AttachedGod = MORTIFER;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+}
+
+barwall
+{
+  CanBeDestroyed = true;
+  IsSafeToCreateDoor = true;
+  Walkability = ETHEREAL;
+  IsAlwaysTransparent = true;
+  BorderTilePriority = 100;
+  CreateWindowConfigurations = false;
+  MaterialColorC = rgb16(140, 96, 48);
+  MaterialColorD = rgb16(180, 180, 255);
+  ShowThingsUnder = true;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
+  IsWall = true;
+
+  DigMessage = "You break the bars.";
+  MainMaterialConfig == IRON;
+  NameSingular = "bars";
+  BitmapPos = 16, 112;
+  HPModifier = 25;
+  ShowThingsUnder = true;
+  AttachedGod = LEGIFER;
+  Config BROKEN_BARWALL;
+  {
+    BitmapPos = 32, 112;
+    Adjective = "broken";
+    Walkability = ANY_MOVE;
+  }
+}
+
+ironmaiden
+{
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }	 CanBeDestroyed = true;
+  DigMessage = "The iron maiden falls into pieces.";
+  MainMaterialConfig == IRON;
+  ShowMaterial = false;
+  NameSingular = "iron maiden";
+  HPModifier = 250;
+}

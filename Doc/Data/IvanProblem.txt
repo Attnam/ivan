@@ -1,0 +1,15 @@
+Ur-Khan the orc marshal has appeared way too early in GC level 6.
+The situation map:
+
+#### ####
+#### ####
+#### ####	# = moraine earth
+    G  U	@ = you
+####@####	G = your pet adamant golem
+#### ####	U = orc marshal
+#### ####
+
+You have a scroll of taming and all wands.
+Reading the scroll takes two turns.
+You cannot survive for more than one turn if Ur-Khan concentrates his attacks on you.
+How can you capture him?

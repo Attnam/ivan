@@ -1,0 +1,23 @@
+----------------------------------------------------------------------------
+
+		    General Information about IVAN source
+
+----------------------------------------------------------------------------
+
+The current version should be compiled with Microsoft Visual C++ compiler,
+version 5.0 or newer. The project is however designed to be very easily
+portable, and so most of these files' information would apply to any
+potential ports as well.
+
+The current projects included in the workspace (IVAN.dsw):
+
+Fatal Error Exception Library (FEEL.dsp)
+Fatal Error DirectX Graphics Library (FeDX.dsp)
+Fatal Error Window Operator Library (FeWin.dsp)
+Fatal Error Listing Library (FELL.dsp)
+Fatal Error Library Test (LibTest.dsp)
+Iter Vehemens ad Necem main project (Main.dsp)
+
+----------------------------------------------------------------------------
+
+End of document.

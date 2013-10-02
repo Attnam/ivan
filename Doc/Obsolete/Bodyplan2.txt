@@ -1,0 +1,91 @@
+//Potkiminen onnistuu vain kahdella jalalla.
+//Jos molemmat k‰det on poissa, voi vain purra.
+//Liikkuminen on 3 kertaa hitaampaa jos on vain yksi jalka.
+//Liikkuminen on 10 kertaa hitaampaa jos ei ole jalkoja.
+//Dodgaus on vaikeampaa jos on v‰hemm‰n jalkoja.
+Oven avaaminen/sulkeminen on 3 kertaa hitaampaa ilman k‰si‰.
+Diggaaminen vaatii k‰den.
+Heitt‰minen vaatii k‰den.
+Zappaaminen vaatii k‰den.
+Dippaaminen vaatii k‰den.
+Uhraaminen vaatii k‰den.
+//Wieldaaminen vaatii k‰den.
+
+//Wieldattuja tavaroita on kaksi: oikea ja vasen.
+Osumistarkkuus k‰rsii jos kaksi asetta on wieldattuna; se puolitetaan.
+T‰t‰ voi myˆhemmin parantaa two weapon style skillill‰.
+Kilvill‰kin on category "weapon" skill ja single weapon skill.
+Single weapon skillit on k‰siss‰.
+
+(suspended) Asetaidot parantaa to hit valueta, dodge valueta ja damagea.
+(suspended) Bonukset riippuu kategoriasta.
+
+//Materiaalit on joko el‰vi‰ tai elottomia.
+//Itemin SV = StrengthModifier * MaterialSV / 1000.
+//Bodypartin SV on itemin SV, jos se on eloton.
+//Jos se on el‰v‰, k‰ytet‰‰n kaavaa StrengthModifier * Endurance / 1000.
+/P‰‰ll‰ olevan itemin SV sek‰ bodypartin SV v‰hennet‰‰n vahingosta.
+//Critical hit tekee kuitenkin v‰hint‰‰n 1 dam.
+(suspended) Mahdollisuus rikkoutua iskusta on (Dam / SV - 1) * 10%.
+(suspended) T‰m‰ p‰tee myˆs bodyparteille. HP:n on kuitenkin silloin oltava < HP/3.
+(suspended) Aseeseen kohdistuu vahinko, joka on yht‰ suuri kuin jos sen lyˆj‰ lˆisi sit‰ vihollisen ruumiinosalla tai armorilla.
+(suspended) Artifakti voi s‰rky‰ vain jos toinen artifakti osuu siihen.
+Tietyt iskut, kuten huuto, penetroi armorin. Se voi rikkoa samalla armorin.
+//Bodypartin HP lasketaan kaavalla Volume * Endurance / 1000 tai elottomilla Volume * MaterialSV / 1000.
+//Kun HP <= 0, bodypart irtoaa.
+//T‰ss‰ on poikkeuksena p‰‰, joka ei voi irrota ensimm‰isell‰ iskulla, ts. kun se on max hp:ssa, jos se on > 1. Silloin hp asetaan yhteen.
+Jos p‰‰ saa damagea, olento menee tajuttomaksi.
+//Jos irtoava bodypart on vitaali, ihmisell‰ p‰‰, torso tai groin, olio kuolee.
+Vain elolliset bodypartit healaa.
+P‰‰kallo lasketaan armoriksi.
+//Normaalitilassa mahdollisuus osua bodypartiin jakautuu volumejen suhteessa.
+//To hit value lis‰‰ ja dodgevalue v‰hent‰‰ mahdollisuutta osua kriittiseen ruumiinosaan (suora verrannollisuus).
+
+Ways to cure lost limbs:
+
+Temples.
+Gods.
+Potion.
+Smithy.
+Angels.
+Petrus?
+
+StrengthModifiereita:
+
+Aseet ja raajat 50
+Chain mail 100
+Groin 100
+P‰‰ 150
+Plate mail 200
+Torso 250
+
+HP:t:
+
+human 60000 * 10 / 10000 = 60
+head 4000 * 10 / 10000 = 4
+arm/groin 5600 * 10 / 10000 = 5
+leg 7466 * 10 / 10000 = 7
+torso 24268 * 10 / 10000 = 24
+
+high level human 80000 * 30 / 10000 = 240
+head 4000 * 30 / 10000 = 12
+arm/groin 7600 * 30 / 10000 = 22
+leg 10133 * 30 / 10000 = 30
+torso 32934 * 30 / 10000 = 98
+
+valpurium golem 100000 * 400 / 10000 = 4000
+
+mammoth 5000000 * 10 / 10000 = 5000
+
+darknight 110000 * 30 / 10000 = 330
+
+ArmorSV:t:
+
+iron chain mail 100 * 100 / 1000 = 10
+mithril chain mail 100 * 200 / 1000 = 20
+diamond chain mail 100 * 300 / 1000 = 30
+iron plate mail 200 * 100 / 1000 = 20
+mithril plate mail 200 * 200 / 1000 = 40
+diamond plate mail 200 * 300 / 1000 = 60
+valpurium plate mail 200 * 400 / 1000 = 80
+Shirt of the Golden Eagle 100

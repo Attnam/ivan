@@ -1,0 +1,32 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+//Fountains should never give permanent lycanthropy-state.
+//Nefas shouldn't confuse plants. (maybe they should hit randomly characters around them)
+//Healing should be terminated if player enters faint state.
+//Atavus' bodypart fix doesn't work
+(r) Odd message: "The greater carnivorous plant looks faster"
+Entering a dungeon and loading an autosave saves some time.
+Skeletons are probably seen by infravision.
+?Messages after teleport.
+"Valpurus shall not carry more continents!"
+//Golden plate mails are worth less than iron ones.
+//Wishing improvements.
+It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+//Remove the 3 letter limit for names.
+//Amulet of Life saving generates high score entry.
+//Explosions should be stopped by walls.
+//Remove the WMode options.
+//School food thingy.
+//Mondedr.
+//Chameleon + invisibility.
+//Ommel urine + damaged metal hand.
+//Golem trouble.
+//Quitting in Win.
+//"Angel of Atavus is crawling here."
+//Horn of bravery and horn of fear.
+//Poison + golems.
+//When two boots are lying in the same square as player the game should say "there are 2 iron boots" here NOT "there are several items here".

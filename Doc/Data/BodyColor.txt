@@ -1,0 +1,35 @@
+Heads
+1. skin
+2. main color of cap, helmet etc.
+3. all hair (including fur, beard etc.)
+4. special color
+
+Torso
+1. skin
+2. main color
+3. belt
+4. special color
+
+Arms
+1. skin
+2. main color
+3. reserved
+4. special color
+
+Legs
+1. skin
+2. main color
+3. boots
+4. special color
+
+Shield
+1. main color
+2. reserved
+3. reserved
+4. special color
+
+Weapon
+1. edge
+2. handle
+3. reserved
+4. special color

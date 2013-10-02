@@ -1,0 +1,23 @@
+****<LIGHT SIDE>****
+L++King of Gods, Valpuri the Great Frog
+
+L+ Sd'Lavrot Sun-il, light god of paladins and holy fire.
+L+ Ikk'upu Luojäh'yp, light god of gifts.
+L  Neno Sokokin, light goddess of music.
+L  Neno T'lepasev, light goddess of prophecies and dreams.
+L- Otou Livik-omit, light god of knowledge, wisdom and understanding.
+
+****<NEUTRALS>****
+N= Okkuu'lu T'trep, Father Nature.
+N= Nenitra Akirali, god of fire, machines and weaponry.
+N- Nenaria Si'kkieh, god of money, trade and politics.
+N- Okrepatri Vakkuut, god of assasins, thieves and other secretive activities.
+
+****<DARK SIDE>****
+C  Nenaria Senner, chaos god of pain, misery and annoying noise.
+C  Reml Labevets, chaos god of greed and forbidden pleasures.
+C  Irasse Vukkris, chaos goddess of mutations and deseases.
+C- Swodniwt-fo Sorcim, chaos goddess of wrong knowledge and vile magic.
+C- Rerolp Xetenretni, chaos god of war and blood.
+
+C--Destroyer of worlds, Seta Gl'lib

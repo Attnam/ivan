@@ -1,0 +1,150 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+Long range weapons.
+Tutorial.
+(r) Sid Meier.
+Santa Claus. (from Renne)
+Mouse control.
+//Day and night.
+Seasons.
+//Multi-tiled creatures.
+Smithing.
+Ghost-Überpriests.
+Thougth Control.
+(r) Microwave oven.
+Different types of item enchantments. (like what?)
+(r) Random gods.
+Ego monsters.
+Monster, item and god memories.
+The Saveloader.
+Random fellow adventurers.
+Indiana Jones.
+Fake gods.
+Capitalists.
+//Material color editor.
+Graphical script editor.
+The Holy Haven of Gurus.
+Febot the Oracle.
+Undead states, for example zombie-state and vampirism.
+Snow White and the Seven Kamikaze Dwarves.
+Castle generator.
+Sight direction.
+Spreading fire.
+Burial.
+Wars.
+Homes.
+Family. And lost siblings that can be found by digging on the World Map.
+(r) Diapers which can be applied to babies to prevent them from spilling
+    yellow and brown fluids to the floor.
+The Reaper.
+Script event system.
+Intergame pets.
+Player god.
+Different holy water effects for each god.
+Camera.
+Monolith.
+Elevator.
+Plaque epidemic.
+AK-47.
+Swedish educator.
+Summon Pelzar spell.
+Flying asses (donkeys).
+//Levitating ostrichs which export bananas from the jungle colony.
+Space suit.
+//Colored lights.
+Timo should increase his commit frequency.
+Antilight.
+Sleeping.
+Dreams.
+Prophet.
+Theologists.
+Olympic games.
+Unique angels for each god, for instance giant frogs for Valpurus.
+Fallout-like perks.
+Flaming bushes.
+Global warming.
+Specialities for highest SWSkills like unwield prohibition and Stormbringer
+    effect.
+Game saga.
+Pregnancy state for female players.
+Storks. (alternative for the last one)
+One day, the dolphins in the cathedral should vanish, leaving behind only a
+    glass bowl.
+Inquisition in Attnam.
+Random ruins in the wilderness.
+Random artifacts.
+Random demigods.
+On the world map, there should be a sign in the middle of nowhere with text
+    "All your base are belong to us."
+Graphical statistics of kills per 100 turns etc. to endgame.
+Player-creatable magic.
+Nobility ranks.
+Pyramids.
+Temperatures.
+"Saveload" spell.
+Master Mind Lemming.
+Out-of-body experience spell.
+Proletarian revolution.
+Tengwar font.
+Quest to save the prince frog.
+"We apologize for the inconvenience." somewhere in the worldmap.
+Rainbows.
+Tabernae vagantes.
+Shackles.
+Telephats in each town which would handle long distance communication.
+Gradual stoning/freezing system.
+Steam-powered vodka flame thrower.
+//Stamina.
+Winds.
+Undead disko where multicolored lights flicker and skeletons sing "Hip bone
+    is connected to the leg bone..."
+Sampo.
+Avalanches & landslides.
+Strange drool jokes.
+Languages.
+Moksa state.
+Smells that could be used for tracking monsters.
+Leprosy asylums.
+Breaking TryMove() to parts.
+Richel Decos should have a mistress in his closet.
+Halfling village where a number of hobbits carry tomatoes (eg) from their
+    vegetable fields to be transported away by levitating ostriches.
+    Officially a colony of Attnam, but led ruthlessly by Mrs Fortuna
+    Decos, the wife of Richel, who has an athlete lover in her closet.
+There's a two-headed moose in the game; therefore it should be possible to
+    eat radioactive materials and get another head for the player, too.
+    This would behave like any other bodypart, but would have a very
+    annoying personality, make stupid comments all the time, panic
+    easily, disagree with about every decision you make and occasionally
+    give irrational commands to your body, for instance he could eat
+    mutant bunnies so that both of you gain polymorphing state.
+A female missionary in New Attnam, who teaches children that learning
+    Attnamese and reading the holy book of Valpurus equals food.
+Organs. It'd be fun to dissect a tourist child and eat his liver.
+Mr Decos' Amazing Funeral Home where you would be resurrected as a zombie
+    if you have prepaid a _HUGE_ sum before your death and you die in a
+    way that leaves a corpse.
+Siamese twins who can have up to fourteen bodyparts.
+Replay to enner beast kill.
+Brain surgeon who offers to cure your gullibility. Operations have random
+    effects to mental stats, may cause insanity as a side effect, and
+    naturally cost a hell.
+Every day of Attnamese military and clergy classes should begin with a
+    Two Minutes Hate, where they loathe Elpuri collectively.
+    (funny thing, I noticed later that the latter was *exactly the 1984th
+    line* written in ivan/Doc/Work! This Has To Be A Sign! ;)
+McDonalds in New Attnam. (from Henri Kiviluoto)
+It should be possible for a tourist in a swimsuit to appear from a fountain.
+Friction.
+Team formations.
+After the 16x16 -> 32x32 conversion, the old graphics could be used for
+    midgets.
+Petrus should be able to divide the sea in two when he travels abroad.
+Some sorta obscure reference to the Founders' legendary Lego realm back
+    in '92-93.
+Plastic surgeon.
+Adult filter config option.

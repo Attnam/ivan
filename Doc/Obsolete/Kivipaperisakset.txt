@@ -1,0 +1,16 @@
+IVAN taisteluturnaus, osanottajat:
+
+A: keskiverto osuminen, kova lämä, tosi kova armori, mutta pää suojaton
+B: tosi huono osuminen, tosi kova lämä, keskiverto armori, ei heikkoja kohtia
+C: tosi kova osuminen, huono lämä, kova armori, ei heikkoja kohtia
+
+A tekee vahinkoa B:hen, mutta B ei pysty läpäisemään A:n armoria eikä osu päähän.
+-> A voittaa B:n.
+
+B tekee vahinkoa C:hen, mutta C ei pysty läpäisemään B:n armoria.
+-> B voittaa C:n.
+
+A ei pysty läpäisemään C:n armoria, eikä C A:n. C kuitenkin helposti osuu A:ta tappavasti päähän.
+-> C voittaa A:n.
+
+Kenellä on oltava korkein danger level?

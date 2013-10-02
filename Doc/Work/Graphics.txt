@@ -1,0 +1,43 @@
+hp - high priority
+lp - low priority
+// - done
+(r) - rejected
+
+Hit symbol.
+Scimitar + broken picture.
+Katana + broken picture.
+Broadsword + broken picture.
+Club + broken picture.
+Colossal morning star + broken picture.
+Great axe + broken picture.
+Forge.
+Several types of key pictures. (lp)
+Harp.
+Nuts shouldn't be peeled.
+Jungle bays.
+Robe.
+Mouse.
+//Torturing devices.
+Rolling pin.
+Frying pan.
+Clothes peg.
+Showel.
+//Sausage.
+Fungi.
+Nomad.
+Cactus.
+Oterrain border tiles.
+Skis.
+Female character.
+//Tailor.
+M-colored explosions.
+//Iron maiden.
+Victory screen background, etc.
+Tentacle limbs.
+Piano.
+
+Bronze hammer on gravel floor is not very clear.
+Goblin berserker on grassy ground is really NOT visible.
+Visible invisible stalker is too invisible.
+Machete
+Bunnies are difficult to see.

@@ -1,0 +1,13 @@
+?LTerrain should be divided.
+//Battle symbol.
+Hit symbol.
+/Small, medium, large, very large and mega-large corpses.
+/Broken items.
+Broken inhandspics.
+//Shield items.
+//48x48 mammoth.
+?Bodypart items
+//Tame symbol.
+Silhouettes.
+Angel and genie splitting.
+Key item.

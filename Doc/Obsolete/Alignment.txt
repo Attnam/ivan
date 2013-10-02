@@ -1,0 +1,66 @@
+Alignment is a combination of two factors: morals (lawful, neutral and chaotic)
+and ethics (good, neutral and evil). The player, NPC:s and gods each have their
+own alignment.
+
+Relations between alignemnt combinations:
+
+	LG	NG	CG	LN	NN	CN	LE	NE	CE
+LG	+++								
+NG	++	+++							
+CG	+	++	+++						
+LN	+	=	--	++					
+NN	=	=	=	=	=				
+CN	--	=	+	--	=	++			
+LE	-	--	---	+	=	--	+++		
+NE	--	--	--	=	=	=	++	+++	
+CE	---	--	-	--	=	+	+	++	+++
+
+Alignments of gods are as follows:
+
+L	G	Valpurus, the King of Gods
+L	G	Seges, goddess of health and nutrition
+N	G	Atavus, god of charity and munificence
+N	G	Sophos, god of knowledge and magic
+C	G	Dulcis, goddess of love and art
+C	G	Silva, goddess of nature
+L	N	Legifer, god of law and order
+L	N	Loricatus, god of fire, machines and weaponry
+C	N	Nefas, goddess of forbidden pleasures
+C	N	Cleptia, goddess of assassins and thieves
+L	E	Mellis, god of money, trade and politics
+L	E	Cruentus, god of war and blood
+N	E	Infuscor, god of wrong knowledge and vile magic
+C	E	Scabies, goddess of mutations, disease and famine
+C	E	Mortifer, the Destroyer of Worlds
+
+Working sets of worshipped gods:
+
+Benevolent king (LG) set
+Friend gods: Valpurus, Seges, Atavus, Sophos, Legifer, Loricatus
+Neutral gods: Dulcis, Silva
+Enemy gods: all else
+
+Good druid/ranger (NG) set
+Friend gods: Valpurus, Seges, Atavus, Sophos, Dulcis, Silva
+Neutral gods: Legifer, Loricatus
+Enemy gods: all else
+
+Robin Hood (CG/CN) set
+Friend gods: Atavus, Sophos, Dulcis, Silva, Cleptia, Nefas
+Neutral gods: none
+Enemy gods: all else
+
+Merchant (LE/LN) set
+Friend gods: Legifer, Loricatus, Mellis, Cruentus, Infuscor
+Neutral gods: none
+Enemy gods: all else
+
+Evil warrior (NE) set
+Friend gods: Mortifer, Scabies, Infuscor, Cruentus, Mellis
+Neutral gods: Nefas, Cleptia
+Enemy gods: all else
+
+Evil bandit (CE) set
+Friend gods: Mortifer, Scabies, Infuscor, Cleptia, Nefas
+Neutral gods: Mellis, Cruentus
+Enemy gods: all else

@@ -1,0 +1,71 @@
+*heal the hurt
+*feed the hungry
+uncurse items
+give an item
+*-weapon
+*-armor
+-offensive potion/wand/spellbook/scroll
+-defensive potion/wand/spellbook/scroll
+-utility potion/wand/spellbook/scroll
+-food
+-utility artifact
+-money
+*cure disease
+*cure poisoning
+*change item material
+give hints
+*damage/kill enemies
+*charm enemies (temporarily?)
+*create (temporary?) pets
+teleport the fateful
+*-elsewhere in the level
+-to another level
+-out of the dungeon
+teleport enemies
+*-elsewhere in the level
+-to another level
+*trade items
+*give attribute
+*-strength
+*-agility
+*-endurance
+*-perception
+*-intelligence
+*-wisdom
+*-charisma
+temporarily increase attribute
+polymorph the faithful into a powerful monster
+*earthquake (open new passages & damage enemies)
+enchant an item
+identify items
+*give a wish, under very special conditions
+recommend the faithful to a friend deity
+increase chances of success for the next command (*)
+*plant herbs onto the ground
+give a special quest (perhaps teleport the hero to a special dungeon to complete it?)
+cast a special spell like Locate Monsters
+give a beneficial intrinsic
+remove a dangerous intrinsic
+make the level collapse completely and teleport the player out, under very special conditions
+bless a new altar for use? (you must build an unaligned altar first)
+convert the altar under (**)
+bless items on the altar under
+restore mana points
+*make you radiate holy light for a certain period
+sterilize fast breeders and self-cloning monsters on the level
+crown the faithful as his/her champion
+
+(*)  Some people use to pray for their deity in real life when it is left for fortune to decide
+     the success of important events. This would be a similiar command, and it would be separated
+     from the normal praying. It is done silently and so the deity often doesn't notice it,
+     but chances for angering gods by overusing it would also be very low.
+(**) We can't use the old sacrifice & convert system unmodified, since the player has many friend
+     gods and only one can receive the altar. I propose this: normaly you cannot pray in an altar
+     room to anyone else than the owner. However, when the command is selected directly over the
+     altar, you are asked whether you want to try to convert the altar. If you don't, you will pray
+     to the owner with some special bonuses (you are on the deity's altar, anyway). If you do, you
+     must make a sacrifice to another god you select. If he/she thinks it's worthy enough, he/she
+     will figth the owner of the altar room for it's control.
+     This could also be an independent command, since receiving altar bonuses when praying may
+     become a habit for some players, and so the "Do you want to convert the altar?" prompt would
+     become quite annoying.

@@ -1,0 +1,14 @@
+Outlook tweaks:
+
+
+
+//Fountain.
+//Starting pet.
+//Angel possibility should be increased.
+//Ivan should be moved.
+//Dungeon shop.
+//Kamikaze dwarf.
+//Holy books.
+Bonefiles.
+//Fixing the door abuse.
+//Broken & locked doors.

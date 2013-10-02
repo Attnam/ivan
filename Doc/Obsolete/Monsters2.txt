@@ -1,0 +1,64 @@
+Name		Size	Agil.	Str.	End.	Perc.	Real HP	MelStr.	Weapon		WStr.	Damage	ToHit	Dodge	Danger
+human		150-200	15-25	10-15	10-15	10-15	20-30	1000	hands		1000	0-2	36-60	10-19	61-234
+Perttu		225	75	75	75/0.2	75	750	20000	Justifier	57965	163-272	27	53	2526911
+farmer		170	10	10	10	12	20	1000	axe		13416	5-9	4	8	295
+cityguard	180	20	20	20/0.7	21	55	1000	poleaxe		17748	13-23	7	15	4259
+shopkeeper	160	10	30	30	30	60	2000	pickaxe		11401	12-22	7	12	2975
+Oree		225	50	30	30/0.1	30	600	30000	pepsi vomit	30000	33-57	120	32	545400
+swatcommando	200	30	20	30/0.5	30	120	5000	twohandedsword	28372	21-36	6	21	19406
+Enner Beast	150	10	10	25	12	50	50000	scream		100000	18-32	-	9	-
+darkfrog	15	30	5	5	18	10	20000	teeth		20000	3-7	65	67	810
+Elpuri		300	10	30	50/0.1	30	1000	20000	teeth		10000	22-37	40	9	177000
+billswill	100	40	5	20	27	40	20000	psi		20000	3-7	87	34	3220
+fallenvalpurist	150	10	5	10	15	20	1000	pickaxe		11401	2-4	4	8	125
+fallenvalpurist	150	10	5	10	15	20	1000	axe		13416	2-5	4	8	147
+fallenvalpurist	200	15	18	15	15	30	1000	spikedmace	22638	15-26	4	11	1833
+froggoblin	100	15	10	15	18	30	2000	spear		6928	2-5	15	15	467
+froggoblin	100	15	10	15	18	30	2000	poleaxe		17748	6-12	5	15	931
+conicalmommo	100	2	4	50	9	100	20000	slime vomit	20000	3-6	7	3	480
+flatmommo	50	4	2	25	9	50	20000	slime vomit	20000	1-3	10	5	190
+cloth golem	250	5	20	20	12	40	750	hands		750	0-1	22	2	87
+iron golem	250	5	20	20/0.25	12	160	15000	hands		15000	11-19	22	2	6960
+mithril golem	250	5	20	20/0.1	12	400	30000	hands		30000	22-38	22	2	34800
+valpurium golem	250	5	20	20/0.1	12	400	60000	hands		60000	39-66	22	2	69600
+wolf		100	20	10	10	24	12	7500	teeth		7500	2-5	49	19	660
+dog		70	15	8	8	21	16	5000	teeth		5000	1-3	32	17	204
+spider		10	5	2	1	9	2	10000	teeth		10000	0-2	14	17	7
+jackal		80	10	5	5	18	10	5000	teeth		5000	0-2	25	11	57
+donkey		150	5	10	10	15	20	1000	teeth		1000	0-1	16	5	26
+
+Danger = Strength * Endurance * WeaponStrength * (ToHit + Dodge + Agility) / Armor / 1000;
+
+/5!
+
+20-12-12-12, axe/spear/other, exp 1.0, dam 5-10, th 7.5, dg 10, av 100, rhp 25
+spider, jackal, donkey, dog, cloth golem
+danger 50 (405,8) 100
+
+25-15-20-12, mithril axe/spear/poleaxe, exp 1.25, chain mail, dam 10-20, th 15, dg 17.5, av 70, rhp 50
+darkfrog, froggoblin, fallenvalpurist, wolf
+danger 150 (5000,30) 1000
+
+30-20-25-12, two-handed sword/spiked mace/mithril poleaxe, exp 1.5, mithril chain mail, dam 20-40, th 10, dg 20, av 61, rhp 75
+billswill, flatmommo, conicalmommo
+danger 500-1000 (20000,20) 5000
+
+35-25-30-12, mithril two-handed sword/mithril spiked mace, exp 1.75, plate mail, dam 40-70, th 15, dg 25, av 50, rhp 125
+swatcommando, iron golem, Enner Beast
+danger 10000 (60000,6) 10000
+
+40-30-35-12, mithril curved two-handed sword, exp 2.0, mithril plate mail, dam 70-110, th 20, dg 30, av 37, rhp 175
+Elpuri, mithril golem
+danger 30000 (150000,5) 50000
+
+45-35-40-12, valpurium curved two-handed sword, exp 2.5, mithril plate mail, dam 110-190, th 30, dg 32.5, av 37, rhp 225
+valpurium golem
+danger 70000 (350000,5) 100000
+
+50-40-45-12, Neerc Se-Ulb, exp 2.0, mithril plate mail, dam 150-250, th 15, dg 35, av 37, rhp 250
+Oree
+danger 500000
+
+55-45-50-12, Neerc Se-Ulb, exp 2.5, Maakotka Shirt, dam 210-350, th 20, dg 40, av 10, rhp 1000
+Perttu
+danger 2500000

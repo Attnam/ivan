@@ -1,0 +1,16 @@
+item.h
+
+NUMBER_OF_ITEM_TYPES++
+
+#define T_ITEM ++
+
+item.c
+
+item_tile_posx = x kuvatiedostossa
+item_tile_posy = y kuvatiedostossa
+
+name
+
+generate_items -> eka for ++
+
+mahdollisesti randomi

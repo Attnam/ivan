@@ -1,0 +1,812 @@
+The longest if sentence ever written in IVAN
+--------------------------------------------
+
+void square::AlterLuminance(vector Dir, USI AL)
+{
+	#define WMACRO(X, Y) if(!game::CCurrentArea()->CSquare(vector(X, Y))->COverTerrain()->CIsWalkable()) return;
+
+	vector Player = game::CPlayer()->CPos();
+
+	if(!OverTerrain->CIsWalkable())
+	{
+		if(Player.X < Pos.X)
+		{
+			if(Player.Y < Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* Dxxxx
+					   xPxxx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xPxxx
+				   	   xDTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xPxxx
+				   	   xxTxx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xPDxx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xPxxx
+				   	   xxDxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xPxxx
+				   	   xxTxx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xPxDx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xPxxx
+				   	   xxTDx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xPxxx
+				   	   xxTxx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						return;
+				}
+			}
+
+			if(Player.Y == Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xPTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   DPTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xPTxx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xPTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xPDxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xPTxx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xPTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xxxxx
+				   	   xPTDx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						return;
+
+					/* xxxxx
+					   xxxxx
+				   	   xPTxx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+				}
+			}
+
+			if(Player.Y > Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xxTxx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xDTxx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xPxxx
+					   xDxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xxTxx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxDxx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xPDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xxTxx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						return;
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTDx
+				           xPxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xPxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+				}
+			}
+		}
+
+		if(Player.X == Pos.X)
+		{
+			if(Player.Y < Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDPxx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xDTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xxTxx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxDxx
+					   xxPxx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xxDxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xxTxx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						return;
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxPDx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xxTDx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxPxx
+				   	   xxTxx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+				}
+			}
+
+			if(Player.Y == Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xxPxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xDPxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxPxx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xxPxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxQxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxPxx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xxPxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxPDx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxPxx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+			}
+
+			if(Player.Y > Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xxTxx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X - 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xDTxx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xDPxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xxTxx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						return;
+
+					/* xxxxx
+					   xxxxx
+				   	   xxDxx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xxPxx
+					   xxDxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xxTxx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTDx
+				           xxPxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xxPDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+			}
+		}
+
+		if(Player.X > Pos.X)
+		{
+			if(Player.Y < Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxPx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xxxPx
+				   	   xDTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xxxPx
+				   	   xxTxx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						return;
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDPx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxPx
+				   	   xxDxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxPx
+				   	   xxTxx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxD
+					   xxxPx
+				   	   xxTxx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxPx
+				   	   xxTDx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxPx
+				   	   xxTxx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+				}
+			}
+
+			if(Player.Y == Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xxTPx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X, Pos.Y - 1)
+
+					/* xxxxx
+					   xxxxx
+				   	   xDTPx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						return;
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTPx
+				           xDxxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xxTPx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxDPx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTPx
+				           xxDxx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xxTPx
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTPD
+				           xxxxx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTPx
+				           xxxDx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+			}
+
+			if(Player.Y > Pos.Y)
+			{
+				if(Dir.X < Pos.X)
+				{
+					/* xxxxx
+					   xDxxx
+				   	   xxTxx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						return;
+
+					/* xxxxx
+					   xxxxx
+				   	   xDTxx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xDxPx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y)
+						WMACRO(Pos.X, Pos.Y + 1)
+				}
+
+				if(Dir.X == Pos.X)
+				{
+					/* xxxxx
+					   xxDxx
+				   	   xxTxx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxDxx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xxDPx
+					   xxxxx */
+
+					if(Dir.Y >  Pos.Y);
+				}
+
+				if(Dir.X > Pos.X)
+				{
+					/* xxxxx
+					   xxxDx
+				   	   xxTxx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y <  Pos.Y)
+						WMACRO(Pos.X + 1, Pos.Y)
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTDx
+				           xxxPx
+					   xxxxx */
+
+					if(Dir.Y == Pos.Y);
+
+					/* xxxxx
+					   xxxxx
+				   	   xxTxx
+				           xxxPx
+					   xxxxD */
+
+					if(Dir.Y >  Pos.Y);
+				}
+			}
+		}
+	}
+
+	if(AL > Luminance)
+		Luminance = AL;
+}

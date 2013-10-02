@@ -1,0 +1,43 @@
+----------------------------------------------------------------------------
+
+	    Fatal Error Window Operator Library (FeWin) documentation
+
+----------------------------------------------------------------------------
+
+Overview:
+---------
+
+A Win32 library designed to handle various window-bound routines, mainly
+creating it and getting input through it.
+
+Classes:
+--------
+
+globalwindowhandler (whandler.h)
+--------------------------------
+
+All routines of the project are stored here as static members.
+
+Functions:
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM
+                         wParam, LPARAM lParam)
+
+	Windows calls this function every time it wants to say something
+	concerning the window, like when the user presses a key while it's
+	focused or resizes it and etc. Not to be called from anywhere
+	else!
+
+int GetKey()
+
+	Waits for a keypress and return it once detected as an ASCII-code
+	like standard getkey() does.
+
+Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
+
+	Creates a window and initializes the keyhandler. Not to be called
+	from anywhere else than graphics::SetMode()!
+
+----------------------------------------------------------------------------
+
+End of document.

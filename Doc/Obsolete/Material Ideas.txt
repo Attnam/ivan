@@ -1,0 +1,12 @@
+//dragonhide				flexible and strong, each type should confer some resistance
+//meteoric steel (darker than steel)	stronger than steel, weaker than spider silk
+//arcanite (orange)			between meteoric steel and mithril
+//illithium (white)			between mithril and sapphire/ruby
+//adamant (adj: adamantine) (white)	between diamond and valpurium
+//octiron (black)			very magical
+//ommel bone				-||- (spoils)
+//ommel tooth				-||- (spoils)
+//ommel tears				-||-
+//ommel sweat				-||-
+//ommel cerumen				-||-
+//ommel snot				-||-

@@ -1,0 +1,83 @@
+New goals for version 0.30 alpha:
+
+-fixing all known bugs except the Great Surface Destruction Bug
+D-single weapon's name not updated (Timo)
+D-eating weapons made of an eatable material (Hex)
+D-wrath of Seges (Timo)
+D-score bug with polymorph (Timo)
+D-money is temporarily lost in polymorph (Timo)
+D-altar of level 10 bugs (Timo)
+D-you can identify monsters in the dark by chatting with them (Timo)
+D-lamps on walls break incorrectly (Timo)
+D-highlightion is incorrect when the score entry is discarded (Timo)
+D-the Great Name Bug which Perttu once found and which we probably forgot to fix (Timo)
+ -others that may be found (Hex or Timo)
+
+-adding new essential features
+D-adding question to leaving city (Hex)
+D-fixing the message of wishing forbidden items (Hex)
+D-making fluid spill from breaking potions (Hex)
+D-adding more blood in criticals (Hex)
+D-making monsters think what they eat (Hex)
+D-making rest stop when the player is hungry (Timo)
+D-making weapon experience and money affect score and NP not affect it (Timo)
+D-making kicking increase the unarmed weapon skill (Hex)
+D-reimplementating higher victory types (Timo)
+D-adding pray effects for Silva (Timo)
+D-making Venius burn only hostile creatures (Hex)
+D-making Mellis fill also intact empty bottles and empty cans (Hex)
+D-making Loricatus fix broken plate mails (Hex)
+D-adding relation effect limits to cannibalism and navastating (Timo)
+D-adding Banana and Pick-axe logo to menu (Timo)
+D-adding "Name too short!" message (Hex)
+D-adding grass, pines and spruces to Attnam once the pics are available (Timo)
+D-removing the polymorph feature that multiplies items (Timo)
+D-adding autosave interval option (Timo)
+D-making plate mails much less fragile when they are kicked (Hex)
+D-adding infravision to some monsters (Timo)
+D-prohibiting the saveload possibility caused by the nature of the corner X (Timo)
+D-adding "there is something leading downwards here" message (Hex)
+D-adding death in the dark messages (Timo)
+D-adding information of death level to hscore (Timo)
+
+-fixing buggy graphics that are buggy due to code
+D-can (Timo)
+D-fallen valpurist (Timo)
+D-Oree (Timo)
+D-froggoblin (Timo)
+D-earth (Hex)
+D-seats (Hex)
+D-stairs (Timo)
+D-corpse (Timo)
+ -others that may be found (Timo)
+
+-fixing buggy graphics that are buggy due to overuse of material colors
+D-many items and some terrains (Tuukka)
+D-open can (Tuukka)
+
+-fixing buggy graphics due to other reasons
+D-frog (Tuukka)
+
+-creating new graphics (to make Attnam a little less ugly)
+D-grass (Tuukka)
+D-pine and spruce (Tuukka)
+D-librarian (Tuukka)
+D-bookcase (Tuukka)
+D-concubine (Tuukka)
+D-housewife (Tuukka)
+D-slave (Tuukka)
+D-fountain (Tuukka)
+D-bed (Tuukka)
+D-tome (Tuukka)
+D-broken lamp on wall (Tuukka)
+ -others that may be needed (Tuukka)
+
+-a lot of testing (everyone that can be forced to do it)
+
+-other, non-executable related jobs
+ -creating the homepage (Ikki)
+ -finding a good screenshot for the homepage (Hex or Timo)
+ -collecting a list of best features IVAN 0.30a has to offer
+  (lighting system, weapon skills, script etc.) for the homepage (Hex or Timo)
+ -writing a new readme file (Hex and Timo)
+ -marketing IVAN to public (Hex)

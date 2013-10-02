@@ -1,0 +1,488 @@
+// done
+/ partly done or needs testing/balancing
+(r) rejected
+
+//Genie
+
+	The sprit that lives in a bottle. When freed grants a wish. When the Genie becomes hostile it makes a wish and wishes for a plate mail.
+
+/Mammoth
+	
+	Pretty normal creatures except that when they die they drop an ivory horn. 
+
+Gremlin
+	
+	These creatures multiply when they touch water and die when see bright lights.
+
+Dwarf
+
+	Dwarfs are a pretty generic character. Except that they carry pick-axes and dig through walls. They should also have more mithril and other precious metals than normal monsters. You should also be able to bribe them to your side with gold.
+
+Hobbit
+
+	A Tolkien cliche, but don't mind about that. Maybe these creatures could carry more rings (especially rings of invisiblity)
+
+Gnome
+
+//Floating eye (or Beholder)
+
+	 When you hit this monster you will fall asleep (a la Nethack)
+
+Titan
+Giant
+
+Scorpion
+
+	Poisons.
+
+Lich
+
+	Preferably like in BG2.
+
+Cyclops
+Vampire
+	
+	Should be damaged by bright lights.
+
+Minotaur
+
+Kerberus
+
+	Bites with three heads.
+
+Light Bugs (work in progress-name)
+      
+	These creatures normally are drawn towards light sources.
+
+Dark Bugs (work in progress-name)
+     
+	These creatures normally are drawn towards darkness.
+
+//Necromancer
+
+	Should raise corpses as skeletons and zombies.
+
+Mutant tentacle
+
+	Purple skin. Low agility, but very high intelligence. Can use humanoid weapons.
+
+//unnamed (maybe xorn or ghost)
+	
+	Can go through walls
+
+Huge firefly
+     
+	Flying. Emits light (might be a useful pet).
+
+Shaman
+
+	Curses at you and so lowers the echantment level of a randomly picked item in your equipment or stack.
+
+Monkey
+
+	(a la Nethack) Fights a short time and then steals one of your items and then tries to run away.
+
+//Eddies in space-time continuum
+
+       These horrible "creatures" teleport the player randomly around and sometimes create weird couches.
+
+Mutated giant mushroom
+	
+	Most of the time stand idle and sometimes teleport from place to place. Sometimes shoot spores at player. Sometimes the spores could grow to be mushrooms. (not too often though, so the level wouldn't be filled with mushrooms.)
+
+//Skunk
+
+	Smells really bad.
+
+//Hedgehog
+
+	Monster appearing in level 1 which causes damage to the attacker if he doesn't use a weapon.
+
+?
+
+	Guy who severs bodyparts from any corpse he encounters and laughs diabolically.
+
+Butterfly of storms
+
+	Causes small tornadoes and thunderstorms around the level by flapping its wings.
+
+//Hattifattener
+
+	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings. (always moving through the land without caring about other monsters that may or may not be on their way)
+
+Grid feature
+
+	Zaps people.
+
+Mad cow
+
+	Eating makes the player mad, too.
+
+Pikachu
+
+	Lightning attack. Stats from pokemon.com: size 40 cm, weight 6 kg. Sometimes shouts, "The Primary Main
+	Objective is to destroy the Evil Power!"
+
+King Kong
+
+	An ape standing six meters tall.
+
+Mimic
+
+	Like in Nethack.
+
+Ent (or treant)
+
+	Like in LotR.
+
+Hydra
+
+	Attacks everyone around, like Elpuri.
+
+Wumpus
+
+	Appears randomly for a short time on mountanous areas. Pays you something if you catch it.
+
+Mummy
+
+	With the wrapping.
+
+Spider queen
+
+	Named.
+
+//Sumo wrestler
+
+	Very fat.
+
+The Monster guarding the Cave of Caerbannog
+
+	(quote from Monthy Python & Holy Grail)
+    
+	"But follow only if you are men of valor. For the entrance to this cave
+	is guarded by a monster, a creature so foul and cruel that no man yet
+	has fought with it and lived. Bones of full fifty men lie strewn about
+	its lair ... therefore sweet knights if you may doubt your strength or
+	courage come no further, for death awaits you all with nasty pointy
+	teeth."
+
+	Looks like a rabbit, but in reality, deadly.
+
+Philosopher's stone golem
+
+	Turns everything it hits to gold.
+
+Deep sea blowfish (Singularis minutia gigantica)
+
+	Protects itself from enemies by inflating itself to many times
+	its normal size. The bloat poison can be extracted from its body.
+
+Flying squirrel
+
+Mountain troll
+
+	A mountain who is a troll.
+
+Exploding mushrooms
+
+High-level thieves
+
+Monster which engulfs others
+
+Basilisk or cockatrice
+
+	Petrifies.
+
+Carpenter 
+
+	Sells wood stuff and asks the player: "How much wood would a 
+	wood-chuck chuck if a wood-chuck could chuck wood?"
+
+Troll
+
+	Regenerates at enormous rate, and its blood heals the enemy if spilled
+	over him -> unusually long battles, good pets.
+
+Mola Mola
+
+	Gigantic hybrid of a perch and an octopus whose eyes shine with
+	ugly green ligth. Carnivorous and sentient. Uses almost all
+	of her energy in rapidly making new muscles and fins, may grow
+	twenty feet tall, and can shut down her life supporting systems
+	for days and still recover in full strength. More intelligent
+	than enner beasts.
+
+Nuas
+
+	According to a Valpuristic legend, a sea monster which gave birth
+	to Mola Mola and numerous other demons. Similiar to the biblical
+	Leviathan.
+
+Flying asses
+
+	Shoot lightnings and use chemical weapons.
+
+Knight of Ni
+
+	Says "Ni". At higher levels learns to say
+	"Ekky-ekky-ekky-ekky-z'Bang, zoom-Boing, z'nourrrwringmm".
+
+Airavata
+
+	Giant white war elephant with four tusks like mountains
+	(mounted by Indra, the Hindu god of weather and war)
+
+Varaha
+
+	Divine warrior boar
+	(avatar of Vishnu which defeated the demon Hiranyakshyap,
+	brother of Hiranyakashipu)
+
+Narasimha
+
+	Powerful man-lion with deadly nails
+	(avatar of Vishnu which defeated the demon Hiranyakashipu,
+	brother of Hiranyakshyap)
+
+Leviathan or Tiamat
+
+	Giant demonic multi-headed sea monster or whale
+	(Leviathan is the biblical version, Tiamat Babylonian)
+
+Behemoth
+
+	Unimaginably powerful amphibious monster, with a body
+	probably resembling that of a giant hippo
+	(mentioned in the Book of Job, 40:15)
+
+Ziz
+
+	Gigantic bird monster
+	(the Jewish mythology states that its meat will be served
+	along with Behemoth and Leviathan after the Armageddon)
+
+
+Sirens
+
+	'So far so good,' said she, when I had ended my story, 'and now pay
+	attention to what I am about to tell you- heaven itself, indeed,
+	will recall it to your recollection. First you will come to the Sirens
+	who enchant all who come near them. If any one unwarily draws in too
+	close and hears the singing of the Sirens, his wife and children
+	will never welcome him home again, for they sit in a green field and
+	warble him to death with the sweetness of their song. There is a great
+	heap of dead men's bones lying all around, with the flesh still
+	rotting off them. Therefore pass these Sirens by, and stop your
+	men's ears with wax that none of them may hear; but if you like you
+	can listen yourself, for you may get the men to bind you as you
+	stand upright on a cross-piece half way up the mast, and they must
+	lash the rope's ends to the mast itself, that you may have the
+	pleasure of listening. If you beg and pray the men to unloose you,
+	then they must bind you faster.'
+	(The Odyssey, by Homer)
+
+
+Scylla
+
+	'Of these two rocks the one reaches heaven and its peak is lost
+	in a dark cloud. This never leaves it, so that the top is never
+	clear not even in summer and early autumn. No man though he had twenty
+	hands and twenty feet could get a foothold on it and climb it, for
+	it runs sheer up, as smooth as though it had been polished. In the
+	middle of it there is a large cavern, looking West and turned
+	towards Erebus; you must take your ship this way, but the cave is so
+	high up that not even the stoutest archer could send an arrow into it.
+	Inside it Scylla sits and yelps with a voice that you might take to be
+	that of a young hound, but in truth she is a dreadful monster and no
+	one- not even a god- could face her without being terror-struck. She
+	has twelve mis-shapen feet, and six necks of the most prodigious
+	length; and at the end of each neck she has a frightful head with
+	three rows of teeth in each, all set very close together, so that they
+	would crunch any one to death in a moment, and she sits deep within
+	her shady cell thrusting out her heads and peering all round the rock,
+	fishing for dolphins or dogfish or any larger monster that she can
+	catch, of the thousands with which Amphitrite teems. No ship ever
+	yet got past her without losing some men, for she shoots out all her
+	heads at once, and carries off a man in each mouth'
+	(The Odyssey, by Homer)
+
+Charybdis
+
+	'You will find the other rocks lie lower, but they are so close
+	together that there is not more than a bowshot between them. A
+	large fig tree in full leaf grows upon it, and under it lies the
+	sucking whirlpool of Charybdis. Three times in the day does she
+	vomit forth her waters, and three times she sucks them down again; see
+	that you be not there when she is sucking, for if you are, Neptune
+	himself could not save you; you must hug the Scylla side and drive
+	ship by as fast as you can, for you had better lose six men than
+	your whole crew.'
+	(The Odyssey, by Homer)
+
+Tennyo
+
+	Beautiful female angelic creature with magical powers. Wears a
+	a feathered robe called amano hagoromo which allows her to fly and
+	cross the border between heaven and earth. If the robe is stolen,
+	the tennyo will become a servant of the thief in order to retrieve it.
+	(japanese mythological being)
+
+Briareos
+
+	Giant with one hundred arms and fifty heads. The glare of his
+	hundred eyes makes everyone panic automatically.
+	(in Greek mythology, one of the numerous sons of Gaia and Ouranos,
+	earth and sky. His nephew Zeus called him to scare away Hera and her
+	allies who were about to rebel)
+
+Tooth fairy
+
+Miniature black hole
+
+	Zero-intelligence "monster" which sucks items, fluids, gases,
+	characters and terrains inside it, never to be seen again.
+	Immune to all weapons, but can be destroyed by magic (thaumic
+	particles are not affected by gravity).
+
+Game abuser
+
+	Stupid monster who has a lair on a secret level where he uses
+	mushrooms, banana peels, broken bottles, gods etc. to gain infinite
+	exp.
+
+Panda
+
+Mind worm
+
+	'As the writhing, teeming mass of Mind Worms swarmed over the outer
+	perimeter, we saw the defenders recoil in horror. "Stay calm! Use
+	your flame guns!" shouted the commander, but to no avail. It is well
+	known that the Mind Worm Boil uses psychic terror to paralyze its
+	prey, and then carefully implants ravenous larvae in the brains of
+	its still-conscious victims. Even with the best weapons, only the
+	most disciplined troops can resist this horrific attack.
+
+		-- Lady Deirdre Skye,
+		"Our Secret War"'
+
+	(from Sid Meier's Alpha Centauri)
+
+Monster which can eat metals
+
+Snowman
+
+	Melts in the summer and leaves a carrot.
+
+The Groke (suggested by Henri Kiviluoto)
+
+	A dark, mound-shaped creature with staring eyes; everything she
+	touches dies, and the ground freezes wherever she sits. Appears
+	in Tove Jansson's books, for instance "Who Will Comfort Toffle?"
+	and the Moomin series.
+
+Smurfs
+
+	Devout communists.
+
+Brainsucker
+
+	Jumps on one's head and sucks brains. Can be used as a helmet.
+	Is shot from a special launcher.
+
+Splitting monsters
+
+Monsters which release other monsters from their body when they die
+
+Bees
+
+Golden Eagle
+
+	Hyper-powerful.
+
+Nightingale
+
+Babel fish
+
+	"The Babel fish is small, yellow, leechlike, and probably the oddest
+	thing in the Universe. It feeds on brainwave energy received not from
+	its own carrier but from those around it. It absorbs all unconscious
+	mental frequencies from this brainwave energy to nourish itself with.
+	It then excretes into the mind of its carrier a telepathic matrix
+	formed by combining the conscious thought frequencies with nerve
+	signals picked up from the speech centers of the brain which has
+	supplied them. The practical upshot of all this is that if you stick
+	a Babel fish in your ear you can instantly understand anything said
+	to you in any form of language. The speech patterns you actually hear
+	decode the brainwave matrix which has been fed into your mind by your
+	Babel fish."
+	(The Hitchhiker's Guide to the Galaxy, by Douglas Adams)
+
+Mutant turtle (suggested by Henri Kiviluoto)
+
+	Very good in martial arts.
+
+Poison dart frog (Dendrobates terribilis)
+
+	A frog whose skin contains deadly neuro-toxin. Used by the natives
+	of South America in production of poison arrows.
+
+Reef stonefish (Synanceia verrucosa)
+
+	A quite poisonous species that is camouflaged so it looks like a
+	rock, and its spines inject venom to anyone unfortunate to step
+	on one.
+	(I recall seeing one in the Seattle Aquarium and it looked...
+	stony - holybanana)
+
+Black mamba (Dendroaspis polylepis)
+
+	Very dangerous snake up to 4.5m long, which can outrun a human,
+	crawling at speed of 20 km/h, and kill him easily with a large
+	dose of powerful toxin which paralyzes and kills him rapidly.
+
+Octopus
+
+	Very challenging for the bodypart engine.
+
+Piranha
+
+	Expert at devouring swimmers alive.
+
+IVAN developer
+
+	Can alter reality in the entire Universe as he wishes and is therefore
+	beyond gods in strength (he could also be named "a Creator").
+
+Banana Slug
+
+	http://en.wikipedia.org/wiki/Banana_slug
+
+	example:
+
+	Salt is harmful to all slugs; it causes the slug to dehydrate.
+	Blood rushes to the surface of the skin to dilute the salt. This
+	process is only effective with small quantities of salt.
+
+Monkey, version II
+
+	Engraves sequences of random characters in the ground. Occasionally
+	produces Shakespeare quotes.
+
+Giant anteater (Myrmecophaga tridactyla)
+
+	Eats ants. See Wikipedia for the boring details.
+
+Mog
+
+Chocobo
+
+	Can be catched and mounted.
+
+Cow
+
+	Not the brightest creature around, but by far the wisest above Valpurus.
+	After all, it has integrated Zen-Buddhism deep in its enlightened life style,
+	answering "MU" to every question you can think of.
+	(Again, an idea which the gods blessed me with in a dream; There was
+	a female shaman who could understand animal talk and she was walking
+	a leashed cow - holybanana)

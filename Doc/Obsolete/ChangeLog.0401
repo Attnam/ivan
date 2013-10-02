@@ -1,0 +1,267 @@
+------------------------------------------------------------------------------------
+
+>>> NOTICE!!! <<<
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+------------------------------------------------------------------------------------
+
+February 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Rewizarded '%' and '9'
+	* Angels and genies no longer crawl
+
+February 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Spiders cannot lock doors anymore
+
+February 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed the silly console window from the MinGW port
+	* Reduced floating eyes' effect a bit to reduce the possibility of insta deaths
+
+February 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* FeLib interface is finally OS independent
+	* Ivan now compiles on MinGW and DJGPP environments correctly
+	* Ctrl + Print Screen now takes a screenshot in the DOS port
+	* Print Screen works again correctly in both Win32 ports
+	* Ctrl + Alt + E is now interpreted as a euro symbol in all SDL ports
+	* Corrected many bugs in game::HandleQuitMessage()
+	* Many new files added to Doc/Obsolete and Doc/Work
+
+February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Hitting a non-polymorphed chameleon no longer crashes
+
+February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected an abusable bug in the item polymorph code
+	* Polypiling may no longer create scrolls of charging
+	* Wands of polymorph may no longer be cloned
+	* Being satiated no longer abuses agility, since even the minimum effect was way
+	  too strong; however, bloated and overfed effects remain unchanged
+	* Bone now spoils slower
+	* Disabled Mondedr
+	* The library is now better protected
+	* Experiment ZQ-29 and blood golems no longer appears in the golem room
+	* Added ConsumeWisdomLimit material database value which prevents monsters with
+	  enough wisdom to avoid eating the specified material (this replaces the
+	  IsBadFoodForAI value)
+	* Monsters with >= 10 wisdom will not attack a floating eye anymore
+	* Monsters with >= 15 wisdom will not wear rings of teleport/polymorph
+	* Elpuri can no longer faint
+	* Corrected a memory leak in Mellis's pray effect
+	* Skeletons, Bill's wills, golems, imps and floating eyes no longer eat nor get
+	  hungry
+	* Eating and drinking items in the player's inventory is again allowed in the
+	  cathedral and shops
+	* Dark frog flesh's effect decreased somewhat
+	* Poison no longer affects non-living bodyparts
+	* Completely non-living monsters can no longer be paratisitized
+	* Ommel urine + damaged non-living bodyparts works now correctly
+
+February 02 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Space is also accepted as enter-key in scroll bar questions
+	* . = keypads 5 in direction questions
+
+February 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mellis now exchanges maximum of 5 items
+
+January 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Chests can be offered now
+
+January 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected an odd bug caused by RNG inlining
+	* Atavus's pray effect tweaked a little
+
+January 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Small typo in elite guard's talk corrected.
+	* Atavus healing bodyparts works now
+	
+January 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Shattering bottles with poison cause less damage to player.  
+	* Healing potions give always one random missing bodypart.
+	
+January 23 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Eating in cathedral and shop prohibited again (I found or made and found this bug)
+	* Kicking items in certain rooms requires saying Yes to a bool question. 
+
+January 19 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Explosions are now stopped by walls
+	* Added PLAYER macro which expands to game::GetPlayer()
+	* Removed the 3 letter limit of DefaultName, too
+
+January 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Fountains should never give permanent lycanthropy-state.
+	* Nefas shouldn't confuse plants. (maybe they should hit randomly characters around them)
+	* Healing should be terminated if player enters faint state.
+	* Remove the 3 letter limit for names.
+	* Amulet of Life saving generates high score entry.
+	
+January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Lycanthropy cannot be randomly activated anymore. 
+	
+January 18 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected some bugs in the Win SDL port
+	* The DOS port compiles again
+	* Compiling is now twice as fast as before
+	* Monoheaded and two two-headed mooses and two giant mushrooms added to char.pcx
+	  by Kahvi
+	* Breaking and fixing an item no longer destroys accustomization
+	* Something that I forgot
+
+January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Smith now fixes damaged bodyparts if they are made from a metal
+	* Bug with highscores corrected (makefiles)
+	* CanThrow added to script
+	* Handling Home,save and data directories changed
+	* chameleon whip added
+	* whip of thievery can be cloned
+
+January 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Fixed a bug that sometimes prevented Haedlac from being teleported to aid
+	  Petrus ere the final battle
+	* Removed bulimia damage type
+	* Greatly optimized the creation of sparkling and lightning-shooting objects
+	* IVAN's total RAM usage on my system reduced from 30 Mb to 10 Mb
+	* Binary initialization speeded up by 25%
+	* The script now supports cumulative comments
+
+January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Player can no longer choke on his/her food
+
+January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A floating eye can't make enemies faint if the they don't see it
+	* Corrected a rounding error bug in the LOS code
+	* Endurance changes affect current HP a little differently
+
+January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Lookmode now shows if a monster has panicked. (now works)
+	
+January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Lookmode now shows if a monster has panicked.
+
+January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Intact and broken battle-axe, bastard sword, scythe and club pictures added
+	  to item.pcx by Kahvi
+	* Ghost of Brezhnev added to char.pcx by Kahvi
+	* New basic weapons added: bastard sword, battle-axe and scythe
+	* Implemented an AD&D style weapon categorization, which I found much more
+	  balanced than our old one
+	* If the handle of a weapon is made of same material as the edge, SoCM alters
+	  it, too
+	* Added a gum solution to prevent whips of thievery from stealing the
+	  Justifier; this was a too easy way to get rid of Petrus
+	* For clarity, polymorphed monsters now leave the corpse of the original form
+	* Seges and Petrus no longer cure non-living bodyparts
+	* Gods, Petrus and angels no longer put back non-living bodyparts
+	* When trying to use a stethoscope without hands, the game now behaves a
+	  little less idiotically
+	* Restructured all wand code: beam colors and beam effect & style indices now
+	  come from the script and the actual effect code is located in level.cpp and
+	  lsquare.cpp
+	* All wand specializations are now configurations of wand
+	* Removed wands of locking; they were completely useless
+	* Wand of invisibility's beam is now invisible
+	* Wand of polymorph's beam now changes color all the time
+	* Wand of door creation can now create doors to walls
+	* Added wand of lightning which uses a special lightning beam which bounces
+	  from walls
+	* Rewrote the (formelly unused) lightning animation code
+	* Added thunder hammer which uses lightning animation and occasionally shoots
+	  lightning bolts
+	* Added ring of electricity resistance
+	* Removed several unused and useless resistances like bulimia resistance
+	* Added drain and electricity damage types
+	* Neerc Se-ulb now drains HPs from living enemies every now and then
+	* Removed most magical benefits from broken items
+	* Added short sword named Saal'thul which makes its master invisible
+	* Pet floating eyes now follow the player correctly
+	* Floating eyes no longer crash on world map or on level borders
+	* Floating eyes now "levitate", not "stand"
+	* Saving dead script-generated monsters no longer crashes
+	* Golems' agilities and dexterities doubled
+	* Modified hit chance constants in favour of low accuracy hits
+	* Decreased weight's effect on weapon accuracy
+	* Script optimizations
+	* Boolean value retrieval functions of script now honor the IvanDev Naming
+	  Standard
+	* Changed RAND() algorithm from Nishimura's & Mashumoto's mammoth function
+	  to a simpler linear congruential RNG; I know Hex doesn't like these so
+	  I feel I must present a few arguments to justify my decision:
+	  * I ensured that it doesn't have the low-order bit problems abundant in the
+	    32-bit versions by using a 64-bit seed and discarding the possibly cycling
+		bits
+	  * It is easier to understand
+	  * It is a one line function so it can be inlined
+	  * It is three times faster
+	  * It's seed can be retrieved unlike the old one's
+	  * No independent observer did notice any positive effect on gameplay when
+	    we switched the RNG in ancient times (well, there weren't any players :)
+	  * I dare to suspect that Nishimura's & Mashumoto's RNG may be responsible
+	    for the odd improbabilities happening all the time in item generation,
+		increasing the gameplay's dependance on luck considerably
+	* Corrected many gcc warnings given by -pedantic
+	* Shortened the names of terrain graphics files because the old ones were
+	  too long for the DOS version
+	* Decreased AoGH's InElasticityPenaltyModifier and Possibility
+	* Broken items' inventory entries no longer show durability
+	* Corrected a fatal bug in the high score display code
+
+December 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Eating Floating eye corpses gives ESP
+	* Headless creatures no longer hit their head on walls
+	* Creatures with no legs don't stand in look mode anymore 
+	
+December 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added floating eye
+
+December 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Teleport control is now more user-friendly
+	* Halved the strength required to use two-handed weapons
+	* Gcc 2.9x now compiles the game correctly
+
+December 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Doubled nutrition level limits
+	* Increased NP values by 50%
+	* Adjusted the probability distribution of kiwi amounts
+	* Further decreased the amount of wolves in the special level
+	* Decreased gauntlets' InElasticityPenaltyModifier from 30% to 20%
+	* Severed zombie bodyparts are now initially spoiled like the corpse
+	* Plants no longer stand but are rooted
+	* Tweaked the danger algorithm so that monsters value helmets more
+	* Added two random pieces of armor to UT level 2
+	* Greater carnivorous plants are now a bit easier
+	* Torso must now be in bad condition before head or groin can be destroyed
+
+December 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal bug in the door breaking code
+	* Legs swapped
+	* Fixed the Evil Boulder Bug of the Insane Environmentalist once and for all
+	* You can no longer 'l'ook at walls to see if they contain jewels
+	* Kobolds are little less ugly now

@@ -1,0 +1,45 @@
+Jumalaehdotukset
+
+Formaatti:
+selite - vanha nimi, vanhan nimen suku m/f/n (suomennos), nimiehdotus 1, suku (suomennos), nimehdotus 2, suku (suomennos) ...
+
+King of Gods - Valpurus, m, Valpuri, n
+goddess of health and nutrition - !*Seges, f (viljapelto), Salus, f (terveys), *Salubris, f (terve), Viva, f (elävä), Culina, f (ruoka/keittiö)
+god of charity and munificence - !Atavus, m (isoisoisoisä), Donum, n (lahja), *Beneficus, m (hyväntekeväinen/antelias)
+goddess of love and art - !*Dulcis, n (ihana), Decora, f (kauneus/kunnia/arvokuus), Artifex, n (taiteilija), *Amatrix, f (rakastajatar)
+god of law and order - Venius, m (ei tarkoita mitään?), Iustitia, f (oikeus), Iudex, m (tuomari/valamies), !*Legifer, n (lakia lukeva)
+god of knowledge and magic - Consummo, n (saan valmiiksi), Magus, m (taikuri/viisas mies/astrologi), !*Sophos, m (viisas mies)
+
+goddess of nature - !*Silva, f (metsä), Nux, f (pähkinä), *Florea, f (kukkainen), Ver, n (kevät)
+god of fire, machines and weaponry - Loricatus, m (rintahaarniskaa pukeva), Incus, f (alasin), Ignipotens, n (tulen herra), *Ignigena, m (tulesta syntynyt), *Faber, m (työntekijä, seppä)
+god of money, trade and politics - !Mellis, n (hunaja, maukkuus), Mercator, m (kauppias), Auraria, f (kultakaivos), Leguleius, m (kieroileva lakimies), Pactio, f (sopimus/kauppa)
+
+goddess of greed and forbidden pleasures - Macellarius, m (elintarvikekauppias?), !*Nefas, n (synti/jumalaisen lain rikkomus)
+chaos god of wrong knowledge and vile magic - !Infuscor, n (pimentää/lahjoa/turmella), Sinistra, f (vasen käsi/väärä/pahaenteinen), Veneficus, m (myrkyttäjä/taikuri), *Lamia, f (noita, vampyyri), Praecantrix, f (noita)
+god of crime - Calamus, m (oksa/sivuhaara/keppi/vapa/me kutsumme/me irrotamme/yms.), Noxia, f (rikos/virhe), *Fraus, f (huijaus/temppu/rikos), Sicarius, m (salamurhaaja), Furtum, n (varkaus), *Latro, m (maantierosvo)
+god of war and blood - !*Cruentus, m (verinen)
+goddess of mutations, deseases and famine - !Scabies, f (syyhy/kutina), *Vomica, f (haava/rutto/kirous), Fames, f (nälkä), *Pestilentia, f (rutto)
+Destroyer of Worlds - Erado, n (minä raavin pois/ajan partaa?), Perditor, m (tuhoaja), Sepelio, n (minä hautaan/hajotan), Trucido, n (minä teurastan/joukkomurhaan), Nex, f (kuolema), !*Mortifer, n (tappava, tuhoava)
+
+Valpurus m
+Seges f
+Atavus m
+Dulcis f
+Legifer m
+Sophos m
+Silva f
+Loricatus m
+Mellis m
+Nefas m
+Infuscor f 
+Calamus?
+Scabies f
+Cruentus m
+Mortifer m
+
+Pugio (tikari)
+Vira (myrkyt)
+Proditor (petturi)
+Furax (varasteleva)
+Cleptor/Cleptes (varas)
+Cleptia (varkaus?)

@@ -1,0 +1,19 @@
+std::string legifer::GetPriestMessage() const
+{
+  return "\"" + GetName() + " is the Great Protector of all Law and Order. Prayed upon, He may burn thy enemies with the Fire of Justice, if thou art worthy.\"";
+}
+
+std::string dulcis::GetPriestMessage() const
+{
+  return "\"" + GetName() + " is the Creator of everything we call Art and Beauty. When thou prayest for Her help, She may calm thy worst enemies with Her love. But beware! There are villains that may resist even Her call!\"";
+}
+
+std::string seges::GetPriestMessage() const
+{
+  return "\"" + GetName() + " brings Life, Health and Nutrition to all who follow Her. When thou callest upon Her with an empty stomach, a miracle may indeed fill it.";
+}
+
+std::string sophos::GetPriestMessage() const
+{
+  return "\"The Wise bow before " + GetName() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou mayst find thyself in an even worse situation!\"";
+}

@@ -1,0 +1,29 @@
+----------------------------------------------------------------------------
+
+		Fatal Error Library Test (LibTest) documentation
+
+----------------------------------------------------------------------------
+
+Overview:
+---------
+
+A low-level program designed to view the capabilities of project libraries
+and to detect possible bugs in them with ease.
+
+Classes:
+--------
+
+None.
+
+Globals:
+--------
+
+int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine,
+	 int nCmdShow)
+
+	The only function of the project, called by FEEL's WinMain. All
+	testing code should be placed here.
+
+----------------------------------------------------------------------------
+
+End of document.

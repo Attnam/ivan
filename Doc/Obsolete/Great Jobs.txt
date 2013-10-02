@@ -1,0 +1,25 @@
+The greatest tasks that need to be done, in order of priority:
+
+For version 0.301a:
+
+1.  Gcc port.
+2.  In-code documentation.
+
+For version 0.310a:
+
+3.  Block AI system and genetic AI algorithms.
+4.  Renewed god system.
+5.  Traps.
+6.  Identify system.
+7.  Player races and classes.
+
+For versions after that:
+
+8.  Bodyparts.
+9.  Wishing parser.
+10. Skill system.
+11. Magic system.
+12. Dungeon water tiles and swimming.
+13. Wilderness encounters and other similiar events.
+14. Random towns, dungeons and quests.
+15. Intercontinental transportation.

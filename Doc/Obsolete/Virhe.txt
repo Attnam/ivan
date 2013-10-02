@@ -1,0 +1,8 @@
+Konvertoitujen kuvien kartan avaimessa on datajäsen, joka osoittaa dynaamisesti
+varattuun muistipaikkaan, joka sisältää kuvan materiaalivärit. Minä tyhmyyksissäni
+alustin sen kuvaa ekaa kertaa luotaessa luontipyynnön lähettäjän toimittamalla
+värijonon osoittimella. Kun kyseinen objekti sitten kerran tuhottiin, avaimen
+värijäsen alkoi osoittaa deletoituun sontaan. Se ei kuitenkaan kaatunut niitä
+haettaessa vaan joskus myöhemmin, kun ensin oli luotu yksi uusi sen tyypin kuva
+ja sitten tuhottu vanhempi samanlainen, jolloin uusi kuva alkoi osoittaa saastaan
+ja draw kaatui.

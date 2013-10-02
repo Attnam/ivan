@@ -1,0 +1,31 @@
+----------------------------------------------------------------------------
+
+		Iter Vehemens ad Necem source code documentation
+
+			 for Windows version 0.240 alpha
+
+		   Copyright (C) Fatal Error Productions 2001
+
+----------------------------------------------------------------------------
+
+This directory includes or at least it should include:
+
+char.txt - How to make a new character type tutorial
+FeDX.txt - Fatal Error DirectX Graphics Library (FeDX) documentation
+FEEL.txt - Fatal Error Exception Library (FEEL) documentation
+FELL.txt - Fatal Error Listing Library (FELL) documentation
+FeWin.txt - Fatal Error Window Operator Library (FeWin) documentation
+files.txt - this file
+general.txt - General Information about IVAN source
+Include.txt - Documentation of miscellaneous shared include files
+item.txt - How to make a new item type tutorial
+LibTest.txt - Fatal Error Library Test (LibTest) documentation
+light.txt - IVAN lighting system documentation
+Main.txt - Iter Vehemens ad Necem main executable source documentation
+project.txt - How to create a new project in IVAN workspace tutorial
+
+----------------------------------------------------------------------------
+
+End of document.
+
+

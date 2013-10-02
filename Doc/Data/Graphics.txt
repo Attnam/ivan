@@ -1,0 +1,333 @@
+Iter Vehemens ad Necem graphics documentation
+---------------------------------------------
+
+The material color system
+-------------------------
+
+Most IVAN graphics use special palette indices to mark areas whose
+color may vary depending eg. on material, on skin color or on special
+magical effects. These are called material colors or m-colors. Up to
+four m-colors may be used in one picture and each may exist in 16
+different brightness levels. The palette indices attached to each
+m-color are:
+
+m-color 1:	192-207
+m-color 2:	208-223
+m-color 3:	224-239
+m-color 4:	240-255
+
+When objects and beings are created, IVAN first determines which
+actual colors are to appear in place of m-colors. It breaks these
+colors into RGB components and analyzes the tile pixel by pixel.
+If it encounters an m-color, the components of the color appearing
+at that place in game are determined as follows:
+
+[component in game]
+= [requested component]
+* ([palette index] - [lowest index of that particular m-color])
+/ 8
+
+rounded down, or 255, whichever is smaller.
+
+Example: a mithril spear is generated. The game knows that the edge
+is always drawn using m-color 1 and the handle/shaft using m-color
+2. (see file descriptions below for more info about when a particular
+m-color should be used) Mithril's and wood's RGB values are found
+in material.dat and equal 224:224:224 and 140:96:48. While scanning
+the spear tile, suppose index 202 is encountered. It belongs to
+m-color 1 gradient. The color appearing in the game (under normal
+light conditions) will be
+
+Red = min(224 * (202-192) / 8 = 280, 255) = 255
+Green = min(224 * (202-192) / 8 = 280, 255) = 255
+Blue = min(224 * (202-192) / 8 = 280, 255) = 255
+
+i.e. pure white. Next suppose index 214 is encountered. The
+resulting color is
+
+Red = min(140 * (214 - 208) / 8 = 105, 255) = 105
+Green = min(96 * (214 - 208) / 8 = 72, 255) = 72
+Blue = min(48 * (214 - 208) / 8 = 36, 255) = 36
+
+which is slightly darker than the requested color.
+
+Note that you don't have to understand this formula to make
+good-looking graphics. Use the same m-colors as the other tiles
+in the particular file and you'll do fine.
+
+Indices 0-190 are called regular colors or r-colors and they appear
+in each picture in the same way. Graphics designers may change the
+RGB values of r-colors as needed, but they should be careful not
+to ruin existing pictures by doing so.
+
+Index 191 is used for the transparent color and its RGB value must
+be 255:0:255. Areas filled with this index will not be drawn in the
+game.
+
+Graphics files
+--------------
+
+(*) uses m-colors
+
+char.pcx (*)		non-humanoid character graphics
+cursor.pcx		the cursor
+font.pcx (*)		the default font
+fow.pcx			the fog of war tile
+glterra.pcx (*)		ground terrain graphics
+humanoid.pcx (*)	humanoid bodypart graphics
+icon.bmp		the banana and pick-axe icon
+item.pcx (*)		item graphics
+menu.pcx		the main menu background
+olterra.pcx (*)		over terrain graphics
+symbol.pcx		symbols and explosions
+wterra.pcx		world map terrain graphics
+
+char.pcx
+--------
+
+All graphics of non-humanoid characters (those that don't have
+severable bodyparts) are contained herein. They must be 16x16,
+although these exists two 32x32 pictures which are reserved for
+future. The actual colors are defined in char.dat but may be
+overridden in the code. The m-colors which may be used are:
+
+m-color		char.dat value
+1		SkinColor
+2		TorsoMainColor
+4		TorsoSpecialColor
+
+M-color 1 should always be the main color of the picture. Others
+are used only in certain pictures like carnivorous plants, which
+have varying flower colors. Indices 195-200, 211-216 and 243-248
+tend to be the best choices; beyond that the colors are often too
+dark or bright in the game.
+
+The character silhouette used in the game panel is also located
+here. The format should be pretty obvious, except that it is a
+mirror image, i.e. that the right leg and the right arm are on the
+left and vice versa, because they are that way in the silhouette's
+view (it is thought to look at the user's direction).
+
+Btw. that guy on the right side of the pcx file is our head
+graphics designer being tortured for missing yet another
+deadline.
+
+cursor.pcx
+----------
+
+The cursor shown over the player or in the lookmode etc. Size
+must be 16x16. Index 255 is used for the transparent color.
+It must be 255:0:255.
+
+font.pcx
+--------
+
+This file contains the character set used for the text in the game.
+It should include ascii-characters 32-255. Each or the 14 lines
+should have 16 characters. All characters should be m-color 1,
+located in distinct 16x16 pixel blocks but using only an 8x8 area.
+In the game the pixels are material colorized and little shades are
+added to them, so that they actually use a 9x9 area in the picture.
+
+fow.pcx
+-------
+
+The fog of war tile, which is masked blitted over tiles not seen
+but vaguely memorized. Size must be 16x16. Index 0 is used for the
+transparent color. It must be 0:0:0. The reason for the odd color
+is optimization; if a completely dark square is added to the
+player's fow area, this picture is blitted in the memory instead
+of creating a black tile and masked blitting fow.pcx onto it.
+
+glterra.pcx
+-----------
+
+Ground terrains, for instance grass and floors are located here.
+They must be 16x16. M-color 1 depends on the material. Other
+colors are defined in glterra.dat as follows:
+
+m-color		glterra.dat value
+2		MaterialColorB
+3		MaterialColorC
+4		MaterialColorD
+
+M-color 1 should always be the main color of the picture.
+The tiles should be quite bright so that eg. a stone golem on a
+stone floor can be seen easily. Indices 198-201, 214-217, 230-233
+and 246-249 seem to be the best. For obvious reasons, the
+transparent color may not be used.
+
+humanoid.pcx
+------------
+
+All humanoid bodypart pictures are contained herein. They must be
+16x16. The first two vertical lines are allocated for leg/groin
+pics, the next two for torsos, the next for arms and the next for
+heads. The four columns on the right are for "in hands pictures"
+which aren't currently used, so ignore them. Humanoid pictures
+are build up from these bodyparts, and if the character loses for
+example a limb, its graphic is removed from his/her tile and the
+severed limb item will use it instead.
+
+The leg/groin pictures actually contain three different bodyparts:
+right leg, left leg and groin. Only the six last lines in the
+16x16 tiles are used, and the pixels allocated for each bodypart
+are shown in the following map:
+
+rrrrrgggggglllll
+rrrrrrggggllllll	r = right leg
+rrrrrrrgglllllll	g = groin
+rrrrrrrrllllllll	l = left leg
+rrrrrrrrllllllll
+rrrrrrrrllllllll
+
+Note that the right leg is on the left and vice versa, because
+it is that way in the character's view (he/she always looks at
+the user's direction).
+
+The arm picture contains both left and right arms. The left half
+of the picture is allocated for the right arm and vice versa,
+for the reason above.
+
+The actual colors are defined in char.dat but may be overridden
+in the code. The m-colors which may be used are:
+
+Leg/groin pictures:
+
+m-color		char.dat value
+1		SkinColor
+2		LegMainColor (clothes)
+3		BootColor
+4		LegSpecialColor
+
+Torso pictures:
+
+m-color		char.dat value
+1		SkinColor
+2		TorsoMainColor (clothes)
+3		BeltColor
+4		TorsoSpecialColor
+
+Arm pictures:
+
+m-color		char.dat value
+1		SkinColor
+2		ArmMainColor (clothes)
+3		- (reserved for future)
+4		ArmSpecialColor
+
+Head pictures:
+
+m-color		char.dat value
+1		SkinColor
+2		CapColor
+3		HairColor
+4		EyeColor
+
+Defining the ClothColor value in char.dat sets LegMainColor,
+TorsoMainColor, ArmMainColor and CapColor all at once.
+
+Preferable material color indices are the same as those in char.pcx.
+
+icon.bmp
+--------
+
+The window icon. Must be 32x32. Index 255 is used for the
+transparent color. It must be 255:255:255.
+
+item.pcx
+--------
+
+All item graphics are stored here, with the exception of severed
+bodyparts, which use the tiles in humanoid.pcx. They must be 16x16,
+although one 32x32 pictures exists which is reserved for future.
+The colors depend on the material as follows:
+
+Weapons:
+
+m-color		depends on
+1		edge material
+2		handle/shaft material
+
+Containers (cans, bottles, etc.):
+
+m-color		depends on
+1		container material
+2		contained material
+
+Other items:
+
+m-color		depends on
+1		material
+
+Other m-colors must be overridden in the source code for each
+item. M-color indices 197-203, 213-219 and 229-235 seem to
+look best in the game.
+
+menu.pcx
+--------
+
+The main menu background. Must currently be 800x600.
+
+olterra.pcx
+-----------
+
+Over terrains, for instance walls and decorations are located
+here. They must be 16x16. M-color 1 depends on the material.
+Other colors are defined in olterra.dat as follows:
+
+m-color		olterra.dat value
+2		MaterialColorB
+3		MaterialColorC
+4		MaterialColorD
+
+Fountain is an exception, since its m-color 2 depends on
+contained material (water, for example). Indices 197-199,
+213-215, 229-231 and 245-247 seem to be the best for outlook.
+
+symbol.pcx
+----------
+
+Collection of miscellaneous symbols used in the game. Sizes
+must be 16x16. Index 255 is used for the transparent color.
+It must be 255:0:255.
+
+Explosions are also currently stored here. They should be square-
+shaped and their sides should be an odd number times 16 in length.
+
+wterra.pcx
+----------
+
+All world map graphics are contained here. Index 255 is used for
+the transparent color, and it must be 255:0:255.
+
+Ground terrains dominate the upper part of the file and they are
+stored in 48x48 squares so that the middle 16x16 square is the
+actual tile and the others are so called border tiles which may
+be drawn over lower terrain to make forest borders etc. look
+much better.
+
+Here's an exact explanation of how this happens. Each pair of
+(vertically, horizantally or diagonally) adjacent squares on
+the world map is scanned, and their terrains are compared based
+on a priority value which been attached to all terrains and is
+determined solely by outlook factors. If the values are the equal,
+i.e. the terrains are the same, no borders will be drawn,
+otherwise a suitable border tile of the terrain with the higher
+priority is drawn over the other. Note that of all terrains,
+water has the least priority, so it doesn't need border tiles.
+Instead, it has 16 wave animation frames which make it look more
+vivid in the game.
+
+Care must be taken that each side of a tile fits correctly
+to the opposide side and to the attached border tile. Note
+also that multiple border tiles may be drawn over a tile and
+even over each other and they still must look good.
+
+Beneath the ground terrain tiles are the over terrains. They
+are much easier to draw, since one 16x16 tile is enough. Also
+a nice smiley is included, just to make all people making
+graphics happy.
+
+End of document
+---------------

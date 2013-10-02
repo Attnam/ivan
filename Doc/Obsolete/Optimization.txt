@@ -1,0 +1,11 @@
+//datamember<type>::GetMember()
+//continent::GetRandomMember
+//protosystem::BalancedCreateMonster
+//map databases (speed N -> log N)
+//panel is drawn maybe too often?
+//Removing air.
+//Limits in bitmap.cpp
+//AI equipment selection calls UpdatePictures() too often.
+//igraph::RemoveUser()
+//Cache ability to block light
+//AlterLuminance

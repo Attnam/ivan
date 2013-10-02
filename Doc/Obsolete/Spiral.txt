@@ -1,0 +1,45 @@
+#define DO_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRight, ClipBottom, Radius, DoWhat)\
+{\
+  long	Left    = (CenterX) - (Radius),\
+	Top     = (CenterY) - (Radius),\
+	Right   = (CenterX) + (Radius),\
+	Bottom  = (CenterY) + (Radius);\
+  \
+  if(Left   < (ClipLeft))   Left   = (ClipLeft);\
+  if(Top    < (ClipTop))    Top    = (ClipTop);\
+  if(Right  > (ClipRight))  Right  = (ClipRight);\
+  if(Bottom > (ClipBottom)) Bottom = (ClipBottom);\
+  \
+  long XPointer, YPointer;\
+  \
+  if((CenterY) >= (ClipTop) + (Radius))\
+    for(XPointer = Left, YPointer = Top; XPointer < Right; ++XPointer)\
+      {\
+	DoWhat;\
+      }\
+  \
+  if((CenterX) + (Radius) <= (ClipRight))\
+    for(XPointer = Right, YPointer = Top; YPointer < Bottom; ++YPointer)\
+      {\
+	DoWhat;\
+      }\
+  \
+  if((CenterY) + (Radius) <= (ClipBottom))\
+    for(XPointer = Right, YPointer = Bottom; XPointer > Left; --XPointer)\
+      {\
+	DoWhat;\
+      }\
+  \
+  if((CenterX) >= (ClipLeft) + (Radius))\
+    for(XPointer = Left, YPointer = Bottom; YPointer > Top; --YPointer)\
+      {\
+	DoWhat;\
+      }\
+}
+
+  for(; Radius; --Radius)
+    DO_RECTANGLE(PosX, PosY, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
+    {
+      if(Map[XPointer][YPointer]->GetLastSeen() != LOSTurns && GetHypotSquare(PosX - XPointer, PosY - YPointer) <= RadiusSquare)
+	femath::DoLine(PosX, PosY, XPointer, YPointer, LOSHandler);
+    });

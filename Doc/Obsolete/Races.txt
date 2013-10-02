@@ -1,0 +1,32 @@
+human
+
+elf
++great mana
++high intelligence
++great wisdom
+
+drow elf
++great mana
++great intelligence
++high wisdom
+
+gnome
++high mana
++great intelligence
+
+
+hobbit
+
+troll
++superior arm and leg strength
++superior endurance
+-low perception
+-inferior agility and dexterity
+-inferior charisma
+-inferior intelligence and wisdom
+-inferior mana
+-can't read
+
+orc
++good arm and leg strength
++good endurance

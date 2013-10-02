@@ -1,0 +1,38 @@
+Compiling IVAN under different systems
+--------------------------------------
+
+Under Linux, type:
+
+./configure
+make
+make install
+
+--------------------------------------
+
+Under DOS:
+
+If you have DJGPP 2.03+ and gcc 2.952+
+installed, type:
+
+make -f ivandj.mak
+
+--------------------------------------
+
+Under Win32:
+
+If you have MinGW 1.1+ and gcc
+2.95.3-6+ installed, type:
+
+make -f ivanmgw.mak
+
+If you have VC++ 5.0+ installed,
+just open IVAN.dsw and build the
+Main project.
+
+For both compilers you need to
+install SDL development libraries,
+which can be downloaded from:
+
+http://www.libsdl.org/
+
+--------------------------------------

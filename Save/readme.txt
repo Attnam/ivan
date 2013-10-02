@@ -1,0 +1,1 @@
+This folder is here for savefile storage.

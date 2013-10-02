@@ -1,0 +1,553 @@
+* high priority
+// done
+/ partly done or needs testing/balancing
+(r) rejected
+(s) suspended
+(d) double entry
+(initials +/-) reserved for the following coder, plusses or minuses indicate priority
+
+Lowscore.
+Altering the attributes of monsters according to the player's level.
+Write msgbuffer to a file command.
+(hs) Date to highscores.
+It should be possible to sort highscores according to date.
+Blood could flow around.
+/Gods should have more than two effects.
+We should give more thought to the role of the gods.
+Maybe some keys other than Alt+Enter and Print Screen should also work during getkey?
+Double-sized draw of the tiles as a switch.
+Size of player should increase from eating.
+Pickup all.
+Some way of writing a word on a different colour with ADD_MESSAGE().
+Blindness.
+One should be able to summon tame Bill's Wills from Windoze keys in WMode.
+Teleport disabling.
+Teleport should bounce back from valpurium.
+It should be possible to determine line height as a felist draw function argument. (comment: why?)
+Intelligent monsters should read scrolls and use wands.
+Several types of critical hits (e.g. one that throws the opponent one square backwards).
+Highscores should be crypted somehow.
+Script should be crypted or precompiled.
+Golems should be able to eat things made of their material to increase size and stats.
+Prepare bug-report function that would make bug-reporting easier.
+Bill's wills should bloat with rising temperature according to Gay-Lussac's law.
+A program which would translate a pcx file into a script content map.
+Some variety to monster death messages, e.g. some messages influenced by the cause of death.
+Script should have an initial blood level of square option.
+Full backpacks should decrease AV, but they would also increase the chance of item damage.
+Explosion animation.
+Cube-like screenshot system.
+Gurus.
+Meditation command.
+Opening a banana should remove its peel.
+Fire should do extra damage to parchment golems.
+As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpurus carries the Earth, what orbit is he talking about?)
+Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
+Drugs.
+Karateka.
+Monsters should pray and occasionaly be punished by the gods for praying too often.
+("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer's head is severed off. The farmer dies without a sound.")
+Special "enemy sighted" reactions. (like what?)
+Vampires should be able to polymorph into a bat.
+(s) Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
+Throw remake using linear extrapolation.
+Throw flipping.
+Throw speed to conf.
+Pets that resurrect the player.
+Compressed savefiles.
+Crash save.
+Cats and dogs should attack each other even if team comrades.
+Lanterns should dim over time. (from Antti)
+Oil lamps should use oil as their fuel.
+Oil could have other uses as well.
+Fungi that grow around the player and paralyze him.
+Stat point based character generation? (from Antti)
+Guilds. (from Tapani Tiilikainen)
+Option to change the size of font. (from sturmkoenig2k)
+Elemental damage. (from JM)
+Zombies should lose weight when they drop lumps of flesh.
+Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
+Fix wear-time AV inconsistency. (very difficult)
+Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
+Fluid should handle melded metals.
+In-game manual.
+In-game credits.
+Valpurus's altar rooms should be frog-shaped.
+When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into an ass.")
+Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
+Intelligent polymorphed monsters should have unique replies?
+Hirelings. (from JM)
+Books of <skill>. (from JM)
+Fighting tactics. (from JM)
+Attack magic scrolls. (from JM)
+Socketed items. (from JM)
+Gambling. (from JM)
+Inns. (from JM)
+Thief monsters. (from JM)
+If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack anymore.
+One should be able to buy better bodyparts somewhere in the game.
+Gems should increase score.
+Non-fatal battles like robberies.
+Angels as enemies.
+Amputation.
+Beard item.
+Monsters that eat other monsters alive, like Nethack's purple worm.
+Explosion level.
+Mirages.
+Mirrors.
+Something special should happen if the player is polymorphed into a chicken and loses his head.
+Allergies.
+Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
+Potion effect from fountain.
+Bananas should have black dots when spoiled.
+High level priests should be able to summon angels.
+Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
+Pet priest. (from JM)
+Sword of Fire/Frost/Lightning. (from JM)
+Frozen state to monsters. (from JM)
+Dialogs. (from JM)
+A way to steal from the weapon vault of the Cathedral. (key to secret door?) (from JM)
+Hunters should ask the player to aid them in a quest battle against a goblin king/mammoth. (from JM)
+Pits with sticks. (from JM)
+Acid pits. (from JM)
+Flying monsters should be more difficult to hit. (from JM)
+Flying monsters should occasionally be displaced.
+Additional heads for flails. (from JM)
+Desperado attacks like in FFs. (from JM)
+Secret doors that can be opened by whistling. (from JM)
+Heads on walls that can be talked to. (from JM)
+Scribe scroll skill. (from JM)
+Deathblow that penetrates armor. (from JM)
+Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
+Money to humanoid monsters. (from JM)
+Stores specialized on potions or scrolls. (from JM)
+In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
+Bananas should act as boomerangs when thrown.
+Kicking bodyparts and corpses on the ground should spill blood.
+One must be able to use a stethoscope on doors.
+Kamikaze dwarfs should sometimes have gunpowder golems as pets.
+Mutant monster that would have totally random bodyparts from any humanoid in game.
+Continue menu could show some additional info, eg. dungeon level.
+Dipping to oceans.
+If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
+Moving diagonally should use sqrt(2) times more AP.
+Msghistory max length to conf.
+Opening a can should be more difficult with less hands.
+Fly function for character.
+Item category "rubbish" which would contain bananapeels and roubles.
+Wand levels.
+Possibility to override keys that felist accepts.
+Angels should become hostile if the player's relation to their DivineMaster drops radically.
+Explosions could be m-colored: this way magical explosions could look different.
+WoDC should clone its own material to created doors.
+Wishing for "corpse" should give something.
+Poison should spread from bodypart to bodypart. (from JM)
+Titles and bonuses. (from JM)
+Informative pictures to message panel. (from JM)
+If one the player mounts an ass and has a carrot in the inventory, it should be held automatically in front of the "vehicle" to increase speed.
+An amulet of life saving worn by a skeleton or zombie should either kill it or transform it into a living human.
+Healing liquid should severely damage undead.
+In my (Timo's) opinion, we should add some powerful undead monsters and maybe a boss soon after the latter is done, as dipping a weapon into healing liquid then becomes rather a useful tactic.
+Wand of resurrection should behave correctly when zapped at undead.
+Werewolves (wolf form) should maybe be nonhumanoids.
+One should be also able to wish for terrains, like an altar of Valpurus.
+It should be possible to specify the material when wishing for items.
+Allow animate and allow alpha blend options to configuration.
+Draw during automated action as an option.
+We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
+Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
+Handling flying bear traps.
+Punishing people kicking bear traps.
+Whips should sometimes remove the helmet of the target.
+Page up should work correctly in felists.
+If a melee hit is blocked with a weapon, the attacking arm should take damage.
+Some monsters should be generated in groups.
+Monsters with multiple configs should advance in levels.
+Wings should be bodyparts.
+It shouldn't be possible to mutate nor resurrect non-living bodyparts.
+(hs--) A special message should be printed when zapping a WoR at a bone or a skull.
+"There is no door to close, silly."
+Bodypart state system.
+Poisoned bodypart state.
+Bleeding bodypart state.
+It should be possible for a critical hit to sever a lump flesh.
+It should be possible to dig the ground to create a hole through which you could fall to the next level.
+Physical damage should be divided to slashing, blunt, piercing etc. damage. (from Atte Aholainen)
+More info about players' old games in highscore list (maybe a sub menu).
+Stressed state should slowly decrease player's size.
+Being satiated or bloated should decrease move ease.
+If HP == MaxHP, healing liquid should increase MaxHP a bit.
+Metal should look different from other materials: the lighter parts should be even lighter and darker parts slightly darker to increase the contrast.
+Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
+Lick command.
+It should be possible to slip on a bloody floor.
+Reading holy books should aggravate certain monsters.
+(hs---) Prohibit vomiting over the Avatar.
+Monster that only sees in red, green or blue light.
+Page up, page down, home and end should work with message panel.
+If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him and scream "NOOOOOOOOOH!"
+Monsters that have died of poisoning should be poisoned when eaten.
+Eat, drink and offer selection should accept multiple items.
+If something inside a chest explodes, the container should be completely destroyed.
+Fly system should be remade (with the ability of having two or more items in the air at the same time).
+Picking up VERY heavy items should be prohibited.
+If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
+In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.
+When picking up many items the overall weight of the items should be displayed.   
+The smith of Attnam should have a golden statue of a woman in his closet. (A Kalevala reference)
+Wishing for a plate mail shouldn't yield a leather armor.
+Money unit and its plural and symbol should be possible to define from config.
+Broken bananas should spoil faster than intact ones.
+Coconuts falling from palms.
+Changing keyboard layout (some people don't seem to like numpad).
+Reflecting items (mirror and shield of reflection).
+Mellis could act as a small shop when prayed to.
+Some monster types should taunt the player.
+Some way of level teleportation.
+Once implemented, the game saga should show how many times the player has polymorphed.
+Getting knowledge of all gods should be rewarded somehow.
+If a fireball beam doesn't hit anything, it should still explode at the end of its range.
+SWeaponskills for gauntlets and boots.
+The Cathedral should employ a gardener whose duty is take care of the firs around the building.
+An environmentalist character who would protest outside the Cathedral against the imprisonment of the dolphins.
+Monsters shouldn't drink antidote liquid if they don't need it.
+Monsters should drink antidote liquid if they need it.
+Ask for auto wear for picked up items.
+The spirit appearing in fountains should have a picture.
+Town portal scroll or something similiar.
+Small shadows for items. (one pixel right and down from the items graphic)
+"Select the direction you wish to enter Attnam from".
+Petrus should offer a small meal for player when he first visits him.
+Unlike their colleagues, Nefas's angels should have a groin.
+Priests, Petrus and angels should be able to resurrect dead pets.
+Movement mode: stealth.
+"No load" mode (if weight of stack < 1 kg)
+Flaming sword should burn the player if he doesn't have gauntlets. 
+Items inside shelves should take damage from explosions.
+Lanterns inside glass chests should still emit light.
+Axes should also be used for going through doors. (a la Shining)
+Finding Attnam in the map can be difficult if the distance is long.
+Zapping food with wand of slow/haste should slow/fasten the spoiling time.
+Enchantments should increase thunder hammer's lightning possibility or lightning damage.
+One should be able to fix non-living bodyparts with a scroll of repair.
+Vodka should increase or decrease wisdom. (probably determined randomly) 
+(hs) Monsters that can eat already spoiled food without damage. (eg zombie)
+Lightning and metal items should interact somehow.
+Footprints.
+Town hit by "zombie-plague".
+Panicking should be more probable when friends around the character have panicked.
+If the player has enough wisdom, the game should warn about obviously damaging food.
+Invisible creatures carrying a light source should be revealed.
+IVAN's linux version should be distributed in rpm form, too.
+There should be more ways to put back or summon missing bodyparts of pets.
+It should be possible to change materials of golems and other monsters.
+One should be able to wish for a new limb.
+Ring of conflict should cause two-headed mooses to kill themselves.
+Confused two-headed mooses should occasionally bite themselves.
+Cigarettes.
+You should be able to kick an eating dog to teach it not to eat that thing again.
+Guillotine terrain.
+Eating only unspoiled food should require a bit of wisdom.
+Monsters with ESP should be seen from a longer distance with ESP.
+Pets should also be seen from a longer distance with ESP.
+Rings of teleportation on the ground should occasionally teleport around the level.
+Characters wearing bright colored cloaks should be more visible in the dark.
+(hs) When showing inventory at the endgame, equipment should also be displayed.
+If the player has a floating eye in his team and has ESP, the eye's field of vision should be added to the player's LOS.
+Options for sorting massacre history.
+Shops should replenish their inventory frequently. (from JM)
+Exploding potions (other than vodka). (from JM)
+/Disease. (from JM)
+Different kinds of jewels. (from JM)
+Monsters that are afraid of fire. (from JM)
+Pipes.
+Magical herbs.
+More shapes for rooms.
+Slight variation to weapon properties.
+Slipping on ice. (from JM)
+Bridges. (from JM)
+Outposts. (from JM)
+Berries in forests. (from JM)
+Game in forest. (from JM)
+Bandits. (from JM)
+Camp fires. (from JM)
+Digging potatoes. (from JM)
+Whirlpools. (from JM)
+Marketplaces. (from JM)
+Fish. (from JM)
+Floods. (from JM)
+Wand's explosive effect strength should depend on its charges.
+Alpha halos to some other items, too.
+Shirt of the Golden Eagle shouldn't emit light unless it's worn.
+Using the lookmode while polymorphed into a floating eye should have a special effect.
+Raining frogs.
+Zombies transporting vodka.
+(hs) Gods shouldn't like spoiled corpses.
+Teleport trap.
+Poisoned food.
+A wand which could penetrate walls.
+Mjolak should do more energy damage if the player has good relation with Cruentus.
+Very high damage should sometimes leave permanent scars, which would decrease charisma.
+Number of turns in high score list.
+Ghost and Bill's wills should be able to change level anywhere.
+Nymph hair should burn.
+If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
+Mistresses should sometimes kick male players in the groin.
+(hs---) Banana peels should become bananas if zapped with a wand of resurrection.
+Skeletons should throw bones at dogs.
+Uses for engraving. (random magic word?)
+One should get some score for pets.
+If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
+Unarmed accustomization.
+(example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable).
+The game should ask player whether to unlock a door or chest with a key or not.
+Thunder hammer's power should be proportional to relation with Loricatus.
+The smith should repair pet golems.
+Golems should pick up and read scrolls of repair.
+Rabbits should be brown in summer and white in winter, as in real life.
+Houses floating in water.
+Fountain of youth.
+Sometimes when taking (really bad) damage the player might receive permanent wounds (or in other words loose a couple of points from the MaxHP of the bodypart taking damage.)
+If one monster can see an invisible player, then it should reveal his location his comrades, too.
+Cave paintings.
+List of dead friends.
+Carnivorous plants should be carnivorous, not anorectic.
+(hs) There should be an option to display weapon skills at the end of the game.
+Kiss command.
+Cloak of fire resistance should protect items in the inventory from fire.
+Eyeglasses.
+[IGOR] Reload option.
+[IGOR] Copy picture.
+Shift + direction should act as go command.
+Flying monsters can fly over jungle...
+Jussi The tenant farmer wielding a hoe on some swamp.
+Snow pines should change to regular pines when kicked a few times.
+Wand of change material (change everything in wand path to material of the wand).
+Ability to absorb specific elemental damage.
+Corpse which makes you sober.
+Ivan should buy vodka from player.
+//(hs) Big t and p should work when controlling containers.
+There could be possibility to revive a pet by praying (from shvagier (?))
+(hs-) One armed characters should get discounts in Attnamian stores.
+Confuse should affect throwing also.
+There should be a special effect for selling empty potions.
+(hs-) Polymorph beam should change engraved messages to random gibberish.
+(hs) Breaking a staff of wondrous smells should result in a lot of erupting gas.
+Leather should have several possible colors. For instance mistress should wear black leather.
+Drinking and surviving a potion of poison should give some permanent poison resistance.
+'.' in battle should act as a defend command, which would double the chance of blocking.
+Fortune cookies.
+Doing evil/good deeds should have greater effect on the god on whose altar room the deed is done.
+Mutant limbs should be of different color (maybe even have a different picture?), they should emitate light and drip odd liquid occasionally.
+Randomly generated bonefiles.
+(hs) Faster scrolling for look mode. (maybe when shift is pressed)
+(hs--) Petrus' birthday (petrus gives player 1 banana).
+When an earthquake is shaking the level, the game screen should randomly shift position by a pixel or two every second or so.
+The player shouldn't be able to pick up infinitely many infinitely big items. Its rather odd that a spider can have a large chest in its inventory (it can't move it, but IMHO it shouldn't even be able to pick it up).
+(hs) Graphical effect for Mjolak's energy attack.
+How much a monster can eat should depend on its volume (pet rats eat exactly as much as mammoths before they become bloated and stop).
+When seasons are integrated, bears should hibernate through winter.
+(hs) Loricatus should change weak golems to steel.
+(hs+) Statistics about the real time spent on a game and the average spend on a turn.
+Living mud.
+New snake types.
+Blink dog drool should blink and teleport around.
+Shops and some other places should close for the night.
+Creation of magpies depends on dangervalues. (maybe a problem)
+(hs) Maybe players with 0 points shouldn't be recorded in highscores.
+(hs-) Drinking vodka (maybe just getting confused) should improve relations with Nefas.
+Items in bonefiles should spoil a bit before player enters again. 
+Equipment weight to inventory.
+(d) Offering many items at the same time.
+Running and levitating.
+Wands show "times used" even if they come from a bone file. This shouldn't be so.
+Hunter (hunts with bear traps).
+Taxidermy.
+Hunters should carry stuffed heads of random animals.
+Pets should be able to drink from fountains.
+(hs) There should be a possibility to examine an item (show materials etc.) in the inventory screen.
+Goblins should be generated tame if goblin king belongs to the player team.
+If the player is poisoned, he should be able to slow the poison's effect by standing still. (from Henri Kiviluoto)
+He should be also able to call 112/911.  (from Henri Kiviluoto)
+The pictures of mirrored creatures should also be mirrored and their limbs swapped.
+Things less dense than a liquid should float in a square full of that liquid.
+Simple protection for changing highscore files. Needed if list of best scores is done.
+If a creature has lost all its limbs, leprosy should drop its head.
+Good NPCs should try not to use ommel bone/tooth weapons.
+Death message for team member killing each other while confused should be "X killed by confused Y".
+Lair of the Loser Kamikaze Dwarf somewhere below Dark Level (he destroys half of the level with him, if he somehow manages to light his megaexplosives).
+Geysirs.
+Damaged bodyparts should work less well. (ie. when arms are damaged armstrength should go down)
+Wand of Polymorph to X (where X is a monster)
+Magic hassel which causes invisibility. (from Henri Kiviluoto)
+Stickiness value for materials.
+Detecting spider silk should identify webs in the level.
+Eddies should teleport smoke, fluids and webs around.
+Spilling blood on Seges' altar should anger Her.
+Altars should have special features like healing on Seges' altar.
+Golems' wisdom shouldn't rise.
+System should be more intuitive so that people wouldn't be confuse wielding and wearing.
+If the player has a giant beard, Richel Decos shouldn't pay him for wearing the ad shirt, since the banana logo can't be seen by anyone.
+There should be a possibility that Vermis teleports away bodyparts it hits. It is not very useful as it is now.
+Boulders should cast small shadows in sunlight.
+Explosions should break pineapples and kiwis, leaving only some juice to the ground.
+A frog should be able to use its long, sticky tongue as a ranged weapon and catch small creatures up to three squares away so it may digest them afterwards. Elpuri should also be able to catch man-sized creatures who would find themselves in its acidous stomach, like they would have been engulfed by a purple worm in Nethack.
+Every 10000th new game or so IVAN should make a Nethack level 1 represented by ASCII characters and show it instead of the real one, print the standard Amulet of Yendor story, ask for key press, then print "Oh gosh. Wrong game, sorry!" and continue the original game.
+Go back -function to menus like ?-key.
+When there is vomit stuck to character, its charisma should be lowered.
+Mommos should follow the player more agressively; as of now they are useless as pets.
+"Sulphuric acid is raining here." to look mode when appropriate.
+If the player is confused or has bad relations to Dulcis, using a magical whistle should sometimes fail, teleporting all monsters in the level around the player.
+When confused, stethoscope should produce very inaccurate results.
+There should be a way of getting a verbal hint whether a god's pray timer allows praying without relation penalties; maybe the relation description printed upon offering could be modified, or a special msg could be given when reading a holy book.
+There could be a more interesting effect for trying to teleport over a monster; perhaps the player's and the monster's souls could be swapped (ie. they would polymorph into each other for some time) or their bodyparts could get randomly mixed.
+Drinkin _lots_ of water should maybe help poisonings.
+Shopkeepers should dislike Cleptia. (for example they shouldn't buy or sell holy books of cleptia)
+Petrus's wives should wear chastity belts.
+SmileyWorm should be a hidden minigame somewhere in IVAN.
+Popup ads of Decos Bananas Co. in some areas of the game.
+Wait for yourself to calm done command instead of "You are too scared to rest"
+When confused, the player should occasionally zap the wrong wand or drink the wrong potion.
+If the player is very intelligent, he should be able to decrypt the encrypted scroll.
+Spilling blood on chaotic altars should better relationships with those gods.
+Quicksand traps. (from Henri Kiviluoto)
+Toys for Attnam's peasant children. (from Henri Kiviluoto)
+You shouldn't be able to go upstairs when overloaded.
+Priest should perhaps be able to remove parasites.
+It should be possible to name individual items.
+You should be able to change level anywhere if WalkThroughWalls cheat is on.
+Getting hit in the head should sometimes cause the player to forget a god's praying rituals.
+Using teleport control / polymorph control should train either intelligence or willpower.
+Bears shouldn't attack you if you play dead.
+Dog drool should freeze in Attnam.
+woodpecker. Does double damage against wooden golems.
+Reading should be faster in Sophos's altar rooms.
+Applying potions should empty them.
+Watering carnivorous plants or feeding them flesh should tame them.
+Watering Vesana or feeding her flesh should make her peaceful, so she'll let the player pass.
+Untrapping oneself should yield DEX & AGI exp.
+Displacement priority.
+How much you need to eat should depend on volume.
+Lobh-Se the spider queen.
+Enchantment should affect electricity resistance.
+Weapons that attack every creature around the player, or several lined in front of him.
+Wind magic that throws enemies away.
+Carnivorous plants should attack everyone in UT3.
+Wands of invisibility should make walls invisible.
+Mages should generate eddies.
+It should be possible to beg money from tourists.
+//"You hear coins clinking inside." when stethoscope is applied to the imperialist.
+Eating hedgehogs should cause damage to the throat and stomach.
+Monsters should avoid stepping on banana peels when they are moving randomly.
+Zulko should buy pineapples and kiwis; Decos doesn't have a monopoly in their production.
+Petrus should mirror himself during the final battle.
+If you have high intelligence, ESP and telecontrol, you should sometimes be able to prevent monsters from telecontrolling near you.
+It should be possible to use bladed weapons for amputation purposes.
+Light frog blood should do something beneficial, since it's the opposite of acicid dark frog blood.
+There should be a special symbol for mirrored items.
+There should be a gold golem in Petrus's treasure room.
+The priestess of New Attnam should change her replies after the revolution.
+There should be a one day warranty for the slave: if he dies you can resurrect him in the shop, or perhaps the shopkeeper gives you a resurrection coupon which you can give to the priest so he resurrects the slave for free.
+Healing liquid should train endurance; currently there is little sense in drinking it since you lose valuable end exp.
+Water splashing on the player should remove some of the acid over him.
+It should be possible to dip oneself, for instance by applying a potion in the square where one stands.
+Some of the liquid that is over the player should occasionally drop on the ground, not just disappear.
+Zombies raised from a spesific corpse should retain their old heads.
+/Kamikaze dwarves should loudly sing hymns which would warn about their presense in the level.
+The player's avatar should reflect the broken/intact state of his armours.
+There should be a hint of direction in the enner beast yell msg.
+Different confuse effects for scrolls.
+Taming special named monsters should require some INT etc. because they are so great compared to anything else you can get as a pet.
+If you are poisoned, your face should turn blue.
+Lyre of charm's effect should depend on charisma and the relation to Dulcis.
+Amnesia should use different shapes to blur memory, for instance remove some rectangular areas from one's map.
+Maybe vesana could be animated somehow?
+There should be more savescumming detection, at least hidden data in highscores we could use.
+HP-based monster generation of special monsters shouldn't consider HPs of polymorph forms.
+When wishing for "a mithril chain mail +5", the game should ask "Do you mean 'chain mail'? [y/n]".
+Damage source IDs.
+Ultraviolet light which causes the disease skin cancer.
+MIHAIL should something sensible if one tries to merge a file which doesn't exist.
+MIHAIL --version could say its version.
+INT requirements for certain other replies.
+If the player has very low INT, he shouldn't be able to say anything else than "Ugh." to NPCs.
+Commented insults to savescummers above RemoveSaves() in the code.
+Installer to the Win32 version.
+A way to define default attack mode (melee/bite/kick).
+Water trap.
+New fountain effect: lots of water is splashed over the player.
+Altar rooms should somehow react to player's alignment, for instance you shouldn't be able to take a god's stuff from his/her altar room.
+Vomiting should decrease poisoning.
+Autopickup kiwis option. (from DA)
+Wield menu should only show sensible choices as default. (from DA)
+Open/close commands should be much more intelligent. (from DA)
+The screen allocation is maybe a bit wasteful considering much of it isn't used for anything except in special occasions. (from DA)
+Limbs should be shown in an extended inventory screen. Special materials are often important to know.
+You should get a bonus to your carrying capacity equal to your arms' weight (or some similiar gum), so that detached arms would be roughly as easy to carry as attached, which is imho logical.
+More funny and strange features, less swift and deadly ways to die. (from Timofei Shatrov)
+Extra blood mode.
+Code improvement: char.cpp could be split in two.
+Aligned monsters could occasionally be generated on an altar.
+Spam scrolls in dungeons.
+Carpenter, stoneworker & jeweller in Attnam.
+Maybe the item's volume could be accounted when determining SoCM intelligence requirement?
+Trapped chests.
+"Are you sure you want to step on the mine?"/"Allow stepping on discovered mines?"
+Ways to cure pet leprosy.
+Previous games should affect the world more, for instance top 10 statues could be hidden somewhere.
+Mellis could transport his worshippers to a divine bazaar.
+//"What is this 'ommel'?" to extremely frequently asked questions.
+Healing should decrease panic counter somewhat. It is annoying that you must wait years for panic to wear off after drinking a potion of healing.
+//Vodka should cure panic.
+You should be able to cut down balsa walls with an axe.
+Anyone named 'Captain Action' should encounter completely impossible monsters starting from the first level.
+A tin foil hat should make you immune to ESP.
+HP-based monster generation should use HP averages over long periods of time instead of current max HP.
+Butcher in Attnam - converts pets to cans of flesh.
+Tailor and smith should be able to make items from raw materials.
+Two rings of searching should have more effect than one.
+Canning food from lumps and corpses.
+Wearing equipment of a god's material should make Him/Her slightly more favourable.
+Playing musical instruments should increase relation to Dulcis somewhat.
+Holy books could have several parts.
+Random stories could be generated to describe what the player reads from a holy book.
+Newspaper stand in Attnam where you can buy newspapers with randomized headlines and lots of religious propaganda are sold.
+Tentacle limbs.
+An infinite dungeon.
+An ancient battlefield where skeleton warriors constantly rise up and blattle each other and the player.
+The strength value of half spoiled ommel bone/tooth should be lower than normally.
+Dead sea lake.
+There should be a toggle whether wish, SoCM etc. limitations are disabled in WMode or not.
+More logical error checking in the script.
+The effect of the danger system could be made more obvious by eg. a message "Valpurus sees that you are very strong. Prepare for a test."
+Some way to disarm mines.
+You should only be able to wish for materials which you have seen.
+Bleeding could detract from your health even further.
+On April 1st, the game should occasionally generate a valpurium plate mail +5, which would disappear with a msg "April Fool!" when picked up.
+Eating a kamikaze dwarf's head should reveal his god's rituals.
+The eyes of certain characters should shine in the dark.
+Walking on blood etc. should spill the liquid to boots/legs.
+Cloth category that can be colored dynamically.
+Peeping through keyholes. (maybe using Ivan3D)
+Doublewield information to silhouette.
+Mistresses with lots of experience should have lots of scars.
+Certain weapons (maybe mithril ones?) should shine blue in the presence of orcs.
+A mine planter dwarf sitting on a throne in the middle of the mine field and repeating "It's mine! All mine!".
+Fairy tooth should sometimes offer to exchange ommel tooth items to gold.
+Eating lots of solid food when starving should cause considerable damage.
+Destroying walls should be a difficult action even for Vladimir; it should use stamina and he should be forced to rest between periods of crunching. The A* algorithm should be modified to handle this.
+Being bloated or starving should be displayed in the player graphics.
+If the player is in the bloated state, the child tourist should say "Wow! You're fatter than daddy, too! What a village!"
+Sword of mana absorption - regenerates mana when blocks hits.
+Silva's branch - replaces the palm branches in the Cathedral, regenerates HP and stamina of friendly characters.
+Attnam should be surrounded by barbed wire to make it more difficult for citizens to escape.
+The most dextrous/strongest arm could be shown with a different color in the equipment screen.
+A crutch - decreases the penalty for having just one leg.
+A fountain could give temporary or "permanent" (lasting until the next death) life saving - very easy to implement.
+Again something revealed to me in a dream: There nine thaums, the basic particles of magic (kinda like the six quarks); four thaums have an antithaum except the E-thaum, short for Existence, whose antithaum is Non-Existence, which doesn't exist.
+Teleporting version of magpie. Really annoying.
+Polymorph grenade.
+It should be easier to define secondary colors of items.
+Doors of shops shouldn't be locked.
+You should be able to break chests with a pick-axe of sufficient strength value.
+Vegetarian hunters.

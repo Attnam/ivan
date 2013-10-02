@@ -1,0 +1,165 @@
+----------------------------------------------------------------------------
+
+		      IVAN lighting system documentation
+
+----------------------------------------------------------------------------
+
+The lighting system in IVAN is a quite complex one and extends to numerous
+different files and so it is rather difficult to understand it just by
+looking at the source. This file explains it's mechanisms throughoutly.
+
+All light is divided into two categories: emitation and luminance.
+The former is light shed by a light-producing object like a lamp,
+the latter is how much actual light there is on an object's surface.
+Emitation is a natural attribute of an object, luminance a calculated
+value shared by all objects on the same square, determined by present
+emitating objects and their distance from the luminanced object. Both
+emitation and luminance are of type ushort and are measured in a scale
+from zero to five hundred and eleven, minimum meaning no light and maximum
+meaning the ultimate edge of brigthness.
+
+Class levelsquare is the basic light emitter of IVAN. The amount of light
+it sheds is directly calculated in levelsquare::CalculateEmitation()
+by going through all instances of class object's derived classes
+(characters, items, terrains) currently on the levelsquare, calling their
+CEmitation() functions and picking up the largest returned value of all of
+them. Most of these classes use material::CEmitation() to consult their
+materials in order to retrieve the emitation value, other classes like
+the lamp just override their own CEmitation() with a constant value.
+Choosing always the highest value instead of a sum of values is not very
+realistic, but it works fine.
+
+When a level is generated and initialized to be playable, a function
+named levelsquare::Emitate() is called for every tile. If emitation
+is greater than or equal to 160, it creates a virtual square of tiles with
+a diameter of 4 * sqrt(Emitation / 5 - 32) + 1 (*) centered on the current
+square. Then via game::DoLine() it "draws" lines beginning from the center
+to each square on the edges, calls game::EmitationHandler on each square on
+the line, which adds the source square to the "emitation list" of that
+particular square. If a tile with an overterrain impassable for light is
+detected, the line stops and no further emitation lists are updated until
+next line is begun.
+
+Of course applying the former formula with the square root for every
+square would be slow, so the wanted number is precalculated when the
+game begins in game::InitLuxTable() and stored in class game, where it can
+be retrieved with game::CLuxTableSize()[Emitation], where Emitation
+is the emitation of the source levelsquare.
+
+EmitationHandler adds the emitator to the emitation list of the
+current square via levelsquare::AlterLuminance(vector(OX, OY), Emit),
+where OX and OY are the coordinates of the emitator and Emit is
+the emitation. Of course, at this point it is not the same emitation
+as in the origo of the emitation square. As the laws of physics show,
+luminance is inverse to the square of distance. However this would
+produce a division by zero on the origo square, so IVAN uses a bit
+more complicated formula: Emitation / (Distance^2 / 128 + 1).
+Of course this calculation cannot be made for every square, so it is
+precalculated in the formely mentioned game::InitLuxTable() and
+can be retrieved by the following call:
+
+game::CLuxTable()[Emitation]
+[long(CX) - long(OX) + (game::CLuxTableSize()[Emitation] >> 1)]
+[long(CY) - long(OY) + (game::CLuxTableSize()[Emitation] >> 1)]
+
+Where CX and CY are current coordinates, OX and OY emitator coordinates
+and Emitation the emitation of the emitator.
+
+The emitation list of levelsquare is stored in a dynarray of type emitter
+named Emitter, which contains both coordinate vectors and emitation values.
+It is used by ushort levelsquare::CLuminance() to determine the actual
+luminance of the square, which is the highest emitation value of the list.
+Of course, AlterLuminance discards all emitation values less than 160,
+the minimum luminance possible.
+
+Emitate is not called only at the beginning of the level. When light
+level of some square changes, it or its sister functions may need to
+be recalled.
+
+Function levelsquare::CalculateEmitation() is may be rather slow if
+for example a hundred items are lying on the square, so it cannot be
+used to detect lighting level changes. For this there are two other
+functions: If an emitating object is removed from the square,
+levelsquare::SignalEmitationDecrease(ushort EmitationUpdate)
+is called, and levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
+is called if the opposite event happens. The value of the last
+CalculateEmitation() is stored in an ushort named levelsquare::Emitation,
+so SignalEmitationIncrease() and SignalEmitationDecrease() can very easily
+detect the need to Emitate or ReEmitate, respectively.
+
+To call Emitate again is safe, since AlterLuminance can detect whether
+the emitator is already in the emitator list, and only update its
+emitation value. So there's no fear it'll bloat over time.
+
+ReEmitate differs from emitate only by the fact that the old emitation
+is used to determine the emitation range instead of the new one.
+So AlterLuminance is run for also those squares that are not in the
+new range, and a number less than 160 is passed to it as a parameter.
+This causes AlterLuminance to actually remove the origo square from the
+emitator list.
+
+But what happens if a square becomes impassable and an emitator is shedding
+light on it? Most obviously the emitator's Emitate must be run again.
+But that doesn't affect squares beyound the new impenetrable square.
+So before the square is made impassable, it is imperative that
+levelsquare::ForceEmitterNoxify() is called for that square. It in turn
+calls levelsquare::Noxify() for all squares on its emitter list,
+which is a kind of ReEmitate of value zero. So the emitter's emitation value
+is set to zero in all emitator lists it is currently, including those beyond
+the square about to be blocked, but it is NOT removed from them. This is
+achieved by using a whole different line routine, game::NoxifyHandler(),
+which calls a different variant of AlterLuminance named NoxifyEmitter().
+Then the square must change its OverTerrain's Walkability value swiftly and
+call levelsquare::ForceEmitterEmitation(), which forces all emitters (with
+a temporary emitter value of zero) to Emitate themselves across the dungeon.
+Zero emitations are replaced by correct ones, except beyond the impassable
+square, where they are left for the time being but have no effect on the
+luminance.
+
+If a square loses its impassability, only ForceEmitterEmitation() needs
+to be called after the square has opened for light.
+
+That's all about emitation. Lumination is far simpler, since in walkable
+squares it is calculated in simply by picking the highest emitation in the
+emitter list. In non-walkable squares, each emitator must pass one test
+before its emitation can be taken into account: Player must be able to
+see at least one side of this impassable block that can be seen from
+the emitator also. Function named levelsquare::CalculateBitMask(vector Dir)
+returns a bitmask that describes those sides that can be seen from Dir,
+although no-one remembers accurately how this works. These two bitmask
+are just logically anded, and if any bit is set in the result, the
+process continues.
+
+Result of all this is the max light shed on the square, and it is used
+for drawing the square. Both bitmap::Blit and bitmap::MaskedBlit have
+variants that support the 0-511 leveled luminance in the following
+way: Luminance - 256 is added to each color component and the result
+is bound to the range 0-255. This means that an item on a square with
+256 luminance is shown on the screen as it appears in item.pcx.
+Zero would mean the item is night black, and 511 that it is tooth
+white.
+
+These blits are slower than their normal counterparts, however, so
+they are only used twice per square: once when blitting the
+igraph::TileBuffer to Memorized and once blitting it to the DOUBLEBUFFER.
+Software gamma corrections and such are applied before the blitting,
+and in that calculation the luminance value takes its final form
+after a long journey.
+
+----------------------------------------------------------------------------
+
+(*)	Since 160 is the minimum luminance border for square to be drawn,
+	minimum needed distance from the center can be calculated with
+	the following formula (e is emitation, r is radius):
+
+	e / (r^2 / 128 + 1) >= 160
+	e >= 1.25 * r^2 + 160
+	e - 160 >= 1.25 * r^2
+	r <= 2 * sqrt(e / 5 - 32)
+
+	This is the minimum radius. So the diameter of the square needs not
+	to be more than 4 * sqrt(e / 5 - 32) + 1.
+
+----------------------------------------------------------------------------
+
+End of document.

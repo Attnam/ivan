@@ -1,0 +1,39 @@
+Material chart for RL5 by Fatal Error Productions 2001:
+
+material	density		strength	offer		alignm		NV
+iron		8000		100		10		N		0
+valpurium	3000		400		100		L		0
+stone		3000		60		5		N		0
+bananaflesh	1200		5		10		N		0.175
+gravel		2500		40		1		N		0
+moraine		2500		20		2		N		0
+schoolfood	1500		5		20		E		0.075
+air		1		0		0		N		0
+wood		500		30		5		N		0
+flesh		1200		10		15		N		0.05
+goblinoidflesh	1200		10		10		N		0.05
+pork		1200		10		20		N		0.5
+beef		1200		10		20		N		0.5
+bone		2000		30		5		N		0
+darkfrogflesh	1200		10		50		E		0.05
+elpurisflesh	2400		30		1		N		0.05
+glass		2500		30		5		N		0
+elmourine	1000		1		100		N		0.05
+bananapeal	500		10		1		N		0
+parchment	600		15		5		N		0
+cloth		100		5		5		N		0
+humanflesh	1200		10		30		E		0.05
+slime		400		2		1		N		0.01
+brownslime	400		2		1		N		0.01
+wolfflesh	1200		10		15		N		0.05
+dogflesh	1200		10		15		E		0.05
+ennerbeastflesh	1800		30		5		N		0.05
+pepsi		1500		200		50		E		0.1
+mithril		5000		200		25		N		0
+spiderflesh	1200		10
+jackalflesh	1200		10
+donkeyflesh	1200		10
+marble		3000		50
+gold		20000		30
+grass		100		2
+leather		500		10

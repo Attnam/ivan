@@ -1,0 +1,44 @@
+B/0x0010 ? Koodin porttaus Windozeen ja DirectX:lle, laajuus 4 Heikki
+D/0x0003 Aseiden ja monsujen tason korrekti painotus levelin mukaan, laajuus 2 Heikki
+D/0x0000 Uusien itemejen lisäys, laajuus 1 Heikki ym.
+
+D/0x001F Rukoiluefektien teko, laajuus 2-5 usealle
+
+D/0x0026 Bulimian prohibitio rankaisumenetelmiä kehittämällä, laajuus 1 Perttu?
+
+B/0x000C Koodin kaikenkattava dokumentointi, laajuus 4 (huom! englanniksi) Timo
+B/0x0005 Lyhennemakrot/-funktiot, laajuus 2 Timo
+B/0x000F Virtuaalifunktioiden käyttöalueen laajentaminen luokkien sisälle, laajuus 2 Timo?
+D/0x000B Perception atribuutiksi ja sille vaikutus LOS:iin, laajuus 1 Timo
+B/0x0002 Kaikenkattava esittelyjen uudelleenjärjesteleminen, laajuus 1 Timo
+B/0x0003 Characterin ja gamen julma paloitteleminen, laajuus 1 Timo
+B/0x0004 Helpottavat operaattorit, laajuus 1 Timo
+B/0x000D #includejen vapautus järjestysindepenteiksi, laajuus 1 Timo
+B/0x0009 Olemassaolofunktioiden väsääminen objekteille, laajuus 1 Timo
+D/0x0006 Monsujen tekoälyn saattaminen remakejen 2-4 tasolle, laajuus 1 Timo
+
+*B/0x0012:	Objektin alaluokkien kattava makroittaminen, laajuus 2 (TYÖN ALLA: Timo)
+*B/0x000B:	Rukoilun strukturaalinen osuus, laajuus 2 (VARATTU: Timo)
+-B/0x0006:	Arean muokkaus skriptin vaatimaan funktioformaattiin, laajuus 2 (SUOSITUS: Timo)
+*E/0xXXXX:	Kaikki bugit pois, useita
++D/0x001F:	Rukoiluefektien teko, laajuus 2-5 kattavuudesta riippuen, vaatimus B/0x000B (SUOSITUS: Kaikki)
+*B/0x000F:	Virtuaalifunktioiden käyttöalueen laajentaminen luokkien sisälle, laajuus 2 (SUOSITUS: Timo ^ Heikki)
+*D/0x0000:	Uusien itemejen lisäys, laajuus 1, osittain vaatimus F/0x0000 (PROHIBITIO: Timo)
+*D/0x0006:	Monsujen tekoälyn saattaminen remakejen 2-4 tasolle, laajuus 1
+*F/0x0000:	Itemkuvia lisää, laajuus 1 (OSITTAIN DONE: Tuukka)
+*D/0x002B:	Luolaston laajennus uusien tasoporausten avulla, laajuus 1
+*A/0x0006:	Maasta syömisen ergonomistus
+-D/0x000A:	Itemkohtaiset ergonomiset muistijäljet, laajuus 1 (SUOSITUS: Heikki)
+-D/0x002F:	Eri resoluutiot, laajuus 1 (SUOSITUS: Timo ^ Heikki)
+*D/0x002E:	Golemien materiaalibonukset, laajuus 1 (OSITTAIN DONE: Heikki)
+*D/0x0029:	Monsujen nostamisvietin rationalisoiminen
+*D/0x0028:	Esineporttikielto Pertun jalkojen väliin, laajuus 1 (PROHIBITIO: Timo)
+oD/0x002A:	Pertun egoismin lieventäminen, laajuus 1 (PROHIBITIO: Timo)
+*D/0x0027:	Monsujen ovienavauksien verbaalinen ilmaisu, laajuus 1 (PROHIBITIO: Timo)
+*D/0x001D:	Lookmode, laajuus 1 (OSITTAIN DONE: Niko & Perttu)
+*D/0x0014:	Pickupin nopeuttaminen stabiloimalla inventorioruutu, laajuus 1 (PROHIBITIO: Timo)
+*D/0x0013:	Ovien avauksen nopeuttaminen remaken 4 tapaan, laajuus 1 (PROHIBITIO: Timo)
+*D/0x000F:	Lihatarjonnan monipuolistaminen, laajuus 1 (OSITTAIN DONE: Perttu)
++D/0x000B:	Perception atribuutiksi ja sille vaikutus LOS:iin, laajuus 1
+-B/0x000D:	#includejen vapautus järjestysindepenteiksi, laajuus 1 (SUOSITUS: Timo ^ Heikki)
+*		InHandsPiccejä lisää

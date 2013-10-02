@@ -1,0 +1,213 @@
+* high priority
+// fixed
+/ partly fixed or needs still testing
+(r) rejected
+(s) suspended
+(?) not understandable
+
+(r) Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+//Item's GetSquareUnder() doesn't work.
+//Picking sale items after polymorphing and killing the shopkeeper crashes.
+//Shopkeeper + levelchange?
+(r) WMode bug. (what was this?)
+//Screenshots don't work in the DOS port. (do they in Linux?)
+//DarkLevel monsters.
+//Bats get damage from splinters.
+//Potion name bugs.
+//Do slimes slip down on banana peals? Or bats?
+//Hex's buggy messages.
+//Pressing esc in stringquestion crashes game!!!
+//Background problem with config screen.
+//Dos-prompt bug.
+//Walls & moving light.
+//The volume bug.
+//*Boot of speed in hand.
+//Can a player controlled carnivorous plant move?
+//If an Attnamian severs a bodypart which hits the player, the city shouldn't become mad!
+//Multiple message boxes.
+//Petrus's wives' corpses use indefinite article.
+//ESP + Wmode look bugs.
+//Wishing for ring of teleport bugs.
+//Teleportation in Attnam bugs.
+//Corpse + loricatus.
+//Visual bugs with close in Linux with the X-button.
+//Unicorns can eat silver stones.
+//Exp is gained even if bodypart is non-living, even though it affects nothing.
+//One can kick mines.
+//new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
+//Doors close when they break.
+//Can one block when fainted?
+//Wand of resurrection doesn't work
+//DonateSlotTo bugs.
+//RestoreBodyParts() may crash.
+//AddScoreEntry bugs.
+//When bear traps become visible, Memorized isn't updated.
+//"You are hit by the explosion!" "You are not hurt." "Your torso bleeds."
+//StuckTo bugs; it isn't cleared at least when the bodypart is severed, and saving crashes afterwards.
+//Lamps can be seen through walls in lookmode.
+//Oree dies. Oree looks slower.
+//Digging doors doesn't work.
+//Eating kobolds is evil.
+//(2x) you wake up.
+//Your weak kick has no effect.
+//Memorized doesn't update correctly.
+//Splinter message has incorrect order.
+//Kamikaze dwarves don't use backpacks correctly.
+//Highscore of no entries doesn't work properly.
+//Carnivorous plants inside walls!
+//Scroll of charging ("no items to charge")
+//Alpha + rotate doesn't work.
+//Beartraps + groinless creatures.
+//Zapping is possible without arms.
+//Hit effects of flying items.
+//Head of Elpuri, Shirt of the Golden Eagle and the Left Nut of Petrus aren't recognized by the storyline if they are equipped.
+//Consummo message.
+//Picking up a bear trap.
+//Turox etc. + poison  doesn't work.
+//Bear trap + displace.
+(?) Attnam + Elpuri.
+//Headless player zombie + Chat.
+//Panic + vital bodypart.
+//Poison + poison resistance message.
+(?) "(7x) the werewolf resists."
+//Bloated monster eat AI.
+//Omle urine doesn't really work.
+//*Infravision range.
+//Carnivorous plants spill blood.
+//Oree's blood golems' HPs' are incorrect.
+//(In Linux) push X-button, then cancel
+//Skeletons' health bugs. Some have over 20000 hps.
+//Going down from underwater tunnel level 3 in WMode crashes.
+//"Stone stones"
+//Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.
+//Consuming chests probably crashes the game.
+//Go seems to be slower than manual walking.
+//Bear trap + level change crashes.
+//Polymorphing while wearing a ring of infravision crashes.
+//Message history may crash if many many very long messages are successively printed.
+//Unicorns kicking items in shop.
+//Seges and others may give genies and angels a groin and legs.
+//You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
+  (doesn't exists and hasn't; changing only works in WMode)
+//Teleportation state works in the wilderness.
+//Golden plate mails are worth less than iron ones.
+//The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
+//When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
+//Skulls are insanely heavy (8 kg).
+//Carnivorous plants can be kicked around.
+//Merka's money amount bugs?
+//The dead are counted when calculating population.
+//"The kamikaze dwarf manages to free heself from the bear trap."
+//Pet plants are able to follow the player to the world map.
+//It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more precise" since there are many configurations with same name. (low priority)
+//"0 scrolls of wishing dropped."
+//Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
+//The Hideous RAM Boulder Monster Spawn Error.
+//"The severed right leg of Petrus's wife number 6 hits the open, locked iron door with a triangular lock and the open, locked iron door with a triangular lock opens."
+//Polymorphed into a mistress warlady and wielding the Justifier, I attacked Attnam. After killing a dozen citizens inside
+  and outside the Cathedral, I noticed odd lagging, activated the see whole map cheat and discovered Petrus had gone mad
+  and was killing everyone. I suppose some item kicked by guard hit him and he thought Attnam's folk had started a rebellion?
+  A funny side note: a kamikaze dwarf had just blown up his wives, which would perhaps be a humane reason for his actions :)
+//Lanterns put inside itemcontainers still emit light.
+//Digging book shelves probably doesn't work correctly.
+//Can angry Atavus or Cruentus destroy a quest artifact inside a container?
+//Items left on shop floor do not spoil even if the shopkeeper is dead.
+//"A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
+//Wand of locking doesn't update memorized description correctly.
+//The three letter player name minimum can be avoided by adding extra spaces which will eventually be discarded.
+//You can fill a potion with ice.
+//The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
+//Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
+//Amulet of Life saving generates high score entry.
+//Offering chests in prohibited. (They are too important according to the game)
+//Spiders can lock doors.
+//If multiple chests are stacked, only the top one can be opened with key.
+//Odd monsters seem to be able to apply.
+//Dipping to corpses doesn't work.
+//Guards in the library.
+//(example) Even though the golem is not seen the message "The attack of the glass golem interrupts you." is displayed
+//(might be a feature... But probably isn't even thought Timo may say so) Merka the shopkeeper walking around in the dungeon. 
+//Dark wizards are too hard.
+//TOO MANY KAMIKAZE DWARFS.
+//"XXXX, killed by a werewolf polymorphed into a werewolf"
+//Go-command shouldn't walk to squares with smoke.
+//Skeletons are probably seen by infravision.
+//It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+//Skeletons can be poisoned.
+//Does using a two-handed weapon yield exp to only one arm?
+//I think one can get a score of hundreds of thousands by cloning vast amounts of wands of resurrection and repeatedly killing and resurrecting Elpuri and collecting the dropped heads, each worth 2000p.
+//'G'oing on the the ostrich landing site and interrupting a banana grower may sometimes make New Attnam hostile.
+//Highscores don't always fit to the screen.
+//It is possible to chat with fainted creatures.
+//AI monsters don't mind about smokes.
+//Panicking monsters can eat.
+//Pet ghosts don't gain any strength exp.
+//Ghosts can be poisoned.
+//"You hit something! Something manages to block the attack with its steel sword +1!"
+//It is not possible to zap a wielded item.
+//"You faint. You hit the floating eye! It is not hurt."
+//"You feel a slight tingling in your hands." when armless.
+//Mirage dogs.
+//Magical air and bone are shown by infravision.
+//Sophos doesn't accept parchment golem corpses.
+//Using a wand of door creation in shops is allowed.
+//Do psi waves damage armor?
+//Pickaxes can't dig squares on the edges but explosions can destroy them. 
+//It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
+//Strength bonus is shown in the battle info screen even for Bill's wills.
+//The player often becomes burdened, stressed or overloaded when he eats big corpses.
+//The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
+//The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
+//Chests in inventory cannot be unlocked.
+//Mistresses like shields and jewels more than their whips.
+//Headless zombies can eat.
+//Broken thunder hammer emits light.
+//Squares near should be redrawn when digged. (bad edge tiles)
+//Creating doors doesn't update the lookmode description.
+//Teleported, activated mines can be seen by player.
+//Angels shouldn't eat
+//Squares near should be redrawn when digged. (bad edge tiles)
+//Creating doors doesn't update the lookmode description.
+//Dying + being resurrected doesn't eliminate poison.
+//Teleport control can be used to detect walls.
+//RED ommel urine ALERT!
+//Displacing plants is again allowed.
+//(hs) "You look down. You see an active mine." in the dark.
+//(hs+) NetBSD and trailing slash.
+//Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
+//(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
+// (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
+// (hs) Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
+//(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
+//(hs) Headless zombies can vomit.
+// (hs) Mushrooms can be kicked around.
+//Carnivorous plants can move by displacing pets.
+//EditAttribute() probably doesn't update all caches correctly.
+//Polymorph default bugs if the string is very long.
+//Leprosy can cause player to become overloaded in world map and there is no way to drop items.
+//Lyre of charm works on monsters that don't hear. (like headless zombie)
+//(hs-) If player tries to apply when he has no arms, the message says that there are no items to apply.
+//Leprosy can cause player to become overloaded in world map and there is no way to drop items.
+// (hs) Can you see the cause of death if you don't get to highscore list?
+//You can sell mirrored items.
+//Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
+// (hs) Smith not repairing equiped items.
+//Graphics bug in vesana corpse.
+//(hs) Shopkeepers/librarians can buy items even if unconsciouss.
+//If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
+//One has no way to use stairs covered by sticky slime.
+//Typo in GPL notice
+//(hs) Tailor doesn't fix straight from equipment
+//Spider corpses are not poisonous.
+//Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
+//Invisible golems block light.
+//You can create a human flesh golem from your head, without even dying.
+//Then you can pray to a god and and get a new head made of eg. marble :-0
+//You get stuck to slime even when flying.
+//You can probably give commands to unconscious monsters.
+//"The magic mushroom grunts happily."
+//Mammoth's corpse's weight is negative.
+//Damaged gear shouldn't rise dexterity but lower it. (think about it. At least this is the most probable outcome)
+//Are the angels supposed to leave the items in a bonefile? (stupid me. They just disappear)
+//"You sense danger message" seen after genie comes up and wish is made.
+//Messages after teleport.
