@@ -314,8 +314,6 @@ humanoid
   WillCarryItems = true;
   DisplacePriority = 0;
   UndeadVersions = true;
-  KnownCWeaponSkills == UNARMED;
-  CWeaponSkillHits == 19000;
 }
 
 nonhumanoid
