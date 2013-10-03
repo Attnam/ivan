@@ -210,14 +210,14 @@ inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
   return SaveFile;
 }
 
-RAW_SAVE_LOAD(long);
-RAW_SAVE_LOAD(ulong);
-RAW_SAVE_LOAD(int);
-RAW_SAVE_LOAD(uint);
-RAW_SAVE_LOAD(double);
-RAW_SAVE_LOAD(packv2);
-RAW_SAVE_LOAD(v2);
-RAW_SAVE_LOAD(rect);
+RAW_SAVE_LOAD(long)
+RAW_SAVE_LOAD(ulong)
+RAW_SAVE_LOAD(int)
+RAW_SAVE_LOAD(uint)
+RAW_SAVE_LOAD(double)
+RAW_SAVE_LOAD(packv2)
+RAW_SAVE_LOAD(v2)
+RAW_SAVE_LOAD(rect)
 
 outputfile& operator<<(outputfile&, cfestring&);
 inputfile& operator>>(inputfile&, festring&);

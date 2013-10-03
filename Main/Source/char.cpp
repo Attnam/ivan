@@ -9781,7 +9781,7 @@ int character::CheckForBlock(character* Enemy, item* Weapon,
 			     int Success, int Type)
 {
   return Damage; 
-};
+}
 
 void character::ApplyAllGodsKnownBonus() 
 {

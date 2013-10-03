@@ -60,7 +60,7 @@ inline bool expid::operator<(expid E) const
   return ActID != E.ActID ? ActID < E.ActID : SrcID < E.SrcID;
 }
 
-RAW_SAVE_LOAD(expid);
+RAW_SAVE_LOAD(expid)
 
 typedef std::map<expid, double> expmodifiermap;
 

@@ -33,7 +33,7 @@ struct damageid
   int SrcID, Amount;
 };
 
-RAW_SAVE_LOAD(damageid);
+RAW_SAVE_LOAD(damageid)
 
 ITEM(bodypart, item)
 {
