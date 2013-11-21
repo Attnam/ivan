@@ -10057,5 +10057,5 @@ void character::Slow()
 {
   doforbodyparts()(this, &bodypart::Slow);
   doforequipments()(this, &item::Slow);
-  BeginTemporaryState(HASTE, 500 + RAND() % 1000);
+  BeginTemporaryState(SLOW, 500 + RAND() % 1000);
 }
