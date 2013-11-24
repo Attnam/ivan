@@ -8001,11 +8001,13 @@ void character::DonateEquipmentTo(character* Character)
 }
 
 void character::ReceivePeaSoup(long)
-{
-  lsquare* Square = GetLSquareUnder();
+{					      // don't spawn fart smoke on the world map (smoke objects only have functions for lsquares, not wsquares)
+  if(!game::IsInWilderness() || !IsPlayer()){ // not sure if the AI eats while the player's on the world map, but smoke should still spawn in the dungeon if they do
+    lsquare* Square = GetLSquareUnder();
 
-  if(Square->IsFlyable())
-    Square->AddSmoke(gas::Spawn(FART, 250));
+    if(Square->IsFlyable())
+      Square->AddSmoke(gas::Spawn(FART, 250));
+  }
 }
 
 void character::AddPeaSoupConsumeEndMessage() const
