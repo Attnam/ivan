@@ -2927,7 +2927,7 @@ void level::AddSpecialCursors()
       Map[x][y]->AddSpecialCursors();
 }
 
-void level::GasExplosion(gas* GasMaterial, lsquare* Square) 
+void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist) 
 {
   for(int d = 0; d < 9; ++d)
   {
@@ -2935,5 +2935,13 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square)
 
     if(Neighbour && Neighbour->IsFlyable())
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
+			
+		if(Neighbour)
+    {
+      character* Victim = Neighbour->GetCharacter();
+
+      if(Victim)
+				Terrorist->Hostility(Victim);
+    }
   } 
 }

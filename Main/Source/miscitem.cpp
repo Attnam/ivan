@@ -2693,11 +2693,11 @@ truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
      (Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(10 / Damage + 1)))))
   {
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
-      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+			ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
-    material* GasMaterial = GetSecondaryMaterial();
-    GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder());
-    RemoveFromSlot();
+		material* GasMaterial = GetSecondaryMaterial();
+    GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
+		RemoveFromSlot();
     SendToHell();
     return true;
   }

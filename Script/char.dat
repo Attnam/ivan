@@ -343,7 +343,7 @@ playerkind
   NameSingular = "human";
   AttachedGod = SEGES;
   DisplacePriority = 2;
-  Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; }
+  /*Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; }*/
   UndeadVersions = false;
 }
 
@@ -614,6 +614,7 @@ guard
     RightSWeaponSkillHits = 50;
     LeftSWeaponSkillHits = 50;
     PanicLevel = 10;
+		TamingDifficulty = 30;
     TotalVolume = 80000;
     ClothColor = rgb16(220, 220, 220);
     NaturalSparkleFlags = CLOTH_COLOR;

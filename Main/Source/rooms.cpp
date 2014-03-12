@@ -709,7 +709,7 @@ truth bananadroparea::DropItem(character* Dropper, item* Item, int)
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
 {
-  if(AllowKick(Kicker, Square) && Kicker->IsPlayer()
+  if(!AllowKick(Kicker, Square) && Kicker->IsPlayer()
      && game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam())
      != HOSTILE)
   {
@@ -787,7 +787,7 @@ truth library::AllowKick(ccharacter* Char, const lsquare* LSquare) const
   return (!LSquare->GetStack()->GetItems()
 	  || !MasterIsActive() || Char == GetMaster()
 	  || GetMaster()->GetRelation(Char) == HOSTILE
-	  || LSquare->CanBeSeenBy(GetMaster()));
+	  || !LSquare->CanBeSeenBy(GetMaster()));
 }
 
 truth bananadroparea::AllowKick(ccharacter* Char, const lsquare*) const

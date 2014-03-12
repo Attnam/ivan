@@ -2608,7 +2608,9 @@ truth game::PrepareRandomBone(int LevelIndex)
 
       if(Name == PlayerName)
 	ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");
-      else
+      else if(Player && Player->StateIsActivated(GAS_IMMUNITY))
+	ADD_MESSAGE("You feel the cool breeze of death.");
+			else
 	ADD_MESSAGE("You smell the stench of death.");
 
       break;

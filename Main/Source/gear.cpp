@@ -1045,7 +1045,7 @@ void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weap
 void wondersmellstaff::Break(character* Who, int Much)
 {
     material* GasMaterial = GetSecondaryMaterial();
-    GetLevel()->GasExplosion(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100), GetLSquareUnder());
+    GetLevel()->GasExplosion(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100), GetLSquareUnder(), 0);
 
     if(CanBeSeenByPlayer())
     {
