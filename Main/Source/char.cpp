@@ -9222,7 +9222,7 @@ truth character::TryToTalkAboutScience()
     ADD_MESSAGE("%s reveals a number of %s insightful views of %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
     break;
    case 3:
-    ADD_MESSAGE("You exhange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You exchange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
     break;
    case 4:
     ADD_MESSAGE("You engage in a pretty intriguing conversation about %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
