@@ -324,10 +324,12 @@ void silva::PrayGoodEffect()
     PLAYER->SetNP(SATIATED_LEVEL);
   }
 
-  if(!game::GetCurrentLevel()->IsOnGround() && !game::GetCurrentLevel()->GetLevelScript()->IsZombieLevel())
+  if(!game::GetCurrentLevel()->IsOnGround())
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
+    if (game::GetCurrentLevel()->GetLevelScript()->IsZombieLevel()) 
+		Tunnels = 0;
 
     for(c = 0; c < Tunnels; ++c)
       game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
