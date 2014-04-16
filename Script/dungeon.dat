@@ -458,6 +458,7 @@ Dungeon ELPURI_CAVE;
   Level ZOMBIE_LEVEL;
   {
     Rooms = 1;
+	IsZombieLevel = true;
     IgnoreDefaultSpecialSquares = true;
     MonsterAmountBase = 20;
     LOSModifier = 24;
