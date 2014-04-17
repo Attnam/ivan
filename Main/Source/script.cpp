@@ -878,7 +878,6 @@ void levelscript::InitDataMap()
   INIT_ENTRY(IsCatacomb);
   INIT_ENTRY(EnterImage);
   INIT_ENTRY(EnterTextDisplacement);
-  INIT_ENTRY(IsZombieLevel);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)
