@@ -5274,7 +5274,7 @@ void character::TeleportHandler()
 void character::PrintBeginPolymorphMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("An unconfortable uncertainty of who you really are overwhelms you.");
+    ADD_MESSAGE("An uncomfortable uncertainty of who you really are overwhelms you.");
 }
 
 void character::PrintEndPolymorphMessage() const

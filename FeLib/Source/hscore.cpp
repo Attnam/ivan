@@ -75,7 +75,7 @@ void highscore::Draw() const
 
   if(GetVersion() != HIGH_SCORE_VERSION)
   {
-    iosystem::TextScreen(CONST_S("The highscore file is for an other version of IVAN."));
+    iosystem::TextScreen(CONST_S("The highscore file is for another version of IVAN."));
     return;
   }
 
