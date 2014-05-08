@@ -1082,6 +1082,7 @@ class character : public entity, public id
   truth CanTameWithDulcis(const character*) const;
   truth CanTameWithLyre(const character*) const;
   truth CanTameWithScroll(const character*) const;
+  truth CanTameWithResurrection(const character*) const;
   truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
   truth CheckSadism();
   virtual truth HasSadistAttackMode() const { return IsUsingLegs(); }
