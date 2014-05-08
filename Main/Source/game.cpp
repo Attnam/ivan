@@ -50,8 +50,8 @@
 #include "balance.h"
 #include "confdef.h"
 
-#define SAVE_FILE_VERSION 119 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 106 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 120 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 107 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -95,6 +95,7 @@ liquid* game::GlobalRainLiquid;
 v2 game::GlobalRainSpeed;
 long game::GlobalRainTimeModifier;
 truth game::PlayerSumoChampion;
+truth game::TouristHasSpider;
 ulong game::SquarePartEmitationTick = 0;
 long game::Turn;
 truth game::PlayerRunning;
@@ -361,6 +362,7 @@ truth game::Init(cfestring& Name)
       SumoWrestling = false;
       GlobalRainTimeModifier = 2048 - (RAND() & 4095);
       PlayerSumoChampion = false;
+      TouristHasSpider = false;
       protosystem::InitCharacterDataBaseFlags();
       memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
       PlayerRunning = false;
@@ -805,7 +807,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
   SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NextTrapID << NecroCounter;
-  SaveFile << SumoWrestling << PlayerSumoChampion << GlobalRainTimeModifier;
+  SaveFile << SumoWrestling << PlayerSumoChampion << TouristHasSpider << GlobalRainTimeModifier;
   long Seed = RAND();
   femath::SetSeed(Seed);
   SaveFile << Seed;
@@ -870,7 +872,7 @@ int game::Load(cfestring& SaveName)
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
   SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID >> NextTrapID >> NecroCounter;
-  SaveFile >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
+  SaveFile >> SumoWrestling >> PlayerSumoChampion >> TouristHasSpider >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<long>(SaveFile));
   SaveFile >> AveragePlayerArmStrengthExperience;
   SaveFile >> AveragePlayerLegStrengthExperience;

@@ -607,6 +607,7 @@ CHARACTER(sumowrestler, humanoid)
 CHARACTER(tourist, humanoid)
 {
  public:
+  virtual void BeTalkedTo();
   virtual character* GetLeader() const;
  protected:
   virtual void GetAICommand();

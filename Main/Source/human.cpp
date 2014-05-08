@@ -817,6 +817,75 @@ void hunter::BeTalkedTo()
     character::BeTalkedTo();
 }
 
+void tourist::BeTalkedTo()
+{
+	
+  if(GetConfig() == CHILD) {
+  	
+	  character* Spider = 0;
+	  
+	  //check all enabled members of PLAYER_TEAM	
+  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
+   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider() 
+			&& ((*i)->GetConfig() != LARGE && (*i)->GetConfig() != GIANT)) // check for lobh-se first
+      		Spider = *i;
+     
+	  if (!Spider) { // lobh-se not found		
+  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
+   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider()) // check for any spider
+      		Spider = *i; 
+      }
+      		
+	  static long Said;
+	  	
+	  if(GetRelation(PLAYER) == HOSTILE) // hostile response
+	  {
+	    ADD_MESSAGE("\"Daddy!!! Hit this man!!! He teases me!!!\"");
+	    return;
+	  }
+	  
+	  else if(Spider && !game::ChildTouristHasSpider()) {//implement truthquestion + proper dialogue  // quest fulfilled
+	    ADD_MESSAGE("\"Wow, what a cool spider!!! Can I have it mister? Can I?\"");
+		festring GiveSpider = CONST_S("Will you give " ) + Spider->CHAR_NAME(DEFINITE) + 
+			CONST_S(" to ") + CHAR_NAME(DEFINITE) + CONST_S("? [y/N]");
+		if (game::TruthQuestion(GiveSpider)){ 
+			ADD_MESSAGE("\"Thanks a lot mister!!! Here, you can have this.\"");
+		    item* Reward = 0;						  //create gift item
+								  
+			
+
+			if (Spider->GetConfig() != LARGE && Spider->GetConfig() != GIANT){ // must be lobh-se
+			Reward = scrollofwishing::Spawn();
+    		}
+			else if (Spider->GetConfig() == LARGE || Spider->GetConfig() == GIANT) { // other spider
+			Reward = stick::Spawn();
+			Reward->InitMaterials(MAKE_MATERIAL(BALSA_WOOD)); // balsa stick
+			}
+			else
+			ABORT("Man, this ain't my spider; this is a cell phone!");
+			
+			PLAYER->GetStack()->AddItem(Reward);					//add gift to player's inventory
+			ADD_MESSAGE("%s hands you %s.", CHAR_NAME(DEFINITE), Reward->CHAR_NAME(INDEFINITE)); 
+		    team* Team = game::GetTeam(TOURIST_TEAM);
+			Spider->ChangeTeam(Team); 						     	//change spider to tourist team
+			game::SetTouristHasSpider(); //sets game::TouristHasSpider to true
+			}
+		else
+			ADD_MESSAGE("\"Aw... you're no fun!!!\"");
+		}
+	  
+	  else if (!Spider && !game::ChildTouristHasSpider()) // kid does not have spider; normal chat
+	  	ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
+	  else if (game::ChildTouristHasSpider() && !(RAND() % 4))
+	  	 ADD_MESSAGE("\"My friends back home will be so jealous of my new pet spider!!!\"");
+	  else // kid has spider; normal chat (no spider request)
+	  	ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
+	}
+	
+  else // not child tourist; normal chat
+    character::BeTalkedTo();
+}
+
 void slave::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)

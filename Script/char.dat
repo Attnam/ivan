@@ -5162,14 +5162,13 @@ tourist
     LegMainColor = rgb16(50, 100, 132);
     CapColor = rgb16(40, 40, 40);
     AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
-    HostileReplies == "\"Daddy!!! Hit this man!!! He teases me!!!\"";
     FriendlyReplies =
     {
       4,
       "\"A real native!!! Can I touch him, mommy? Can I? Can I?\"",
       "\"I wanna see you sacrifice someone to tree gods!!!\"",
-      "\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"",
-      "\"Did you see that Pong person? He's fatter than daddy!!! I can't believe it!!!\"";
+      "\"Did you see that Pong person? He's fatter than daddy!!! I can't believe it!!!\"",
+	  "\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"";
     }
   }
 }
@@ -5472,7 +5471,7 @@ lobhse
   DefaultName = "Lobh-Se";
   TorsoBitmapPos = 192, 64;
   TotalVolume = 500000;
-  TamingDifficulty = NO_TAMING;
+  TamingDifficulty = 50;
   IsNameable = false;
   IsUnique = true;
   TotalSize = 200;
