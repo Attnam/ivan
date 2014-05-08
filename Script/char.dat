@@ -662,7 +662,7 @@ guard
     {
       5,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
-      "\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
+      "\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
       "\"The house of Galladon has served Petrus ever since he took over.\"";
@@ -3770,7 +3770,7 @@ bananagrower
     "\"I was @pd before Attnam invaded our peaceful land.\"",
     "@Dd glances thoughtfully to the sky: \"Our climate is truly optimal for bananas. It rains all the time here. Damn.\"",
     "\"1 + 1 = 3. I still don't believe it.\"",
-    "@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought the nature brings us no good!\"",
+    "@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought that nature brings us no good!\"",
     "@Dd seems irritated. \"Go away! I know you can leave and I can't, and I'd prefer to forget that fact.\"";
     "@Dd seems very joyful. \"I can finally be @pd again!\"",
     "\"I knew you would come to save us!\"",
@@ -4025,7 +4025,7 @@ elder
     "\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",
     "@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
     "\"For a decade I served this Decos lad as a banana grower like everyone else, but then an elephant stepped on my toe and my leg was amputated. I couldn't climb trees anymore so they made me a tourist guide.\"",
-    "\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven feet wings and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
+    "\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven foot wingspans, and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
     "\"Previously we could use donkeys to carry the bananas. Then one day Attnamese tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
     "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"";
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
@@ -5042,7 +5042,7 @@ sumowrestler
     "\"The ancient rules of this traditional martial art were designed by Mr. Decos himself, so don't complain about them.\"",
     "\"My real name is Alfred, but the viceroy said it wasn't exotic enough for this job.\"",
     "@Dd is in a buoyant mood. \"I love the new rule! Before the invasion, my wife always complained about my weight. Now she doesn't, since she's a slave in Attnam.\"",
-    "@Dd seems to be recalling sorrowful memories. \"When Tweraif was still sovereign, I tried to run a restaurant for a while. It ended in a bankrupt since I ate all the food myself.\"",
+    "@Dd seems to be recalling sorrowful memories. \"When Tweraif was still sovereign, I tried to run a restaurant for a while. It ended in bankruptcy since I ate all the food myself.\"",
     "@Dd winks at you: \"A belt of levitation is really useful for large people.\"",
     "@Dd looks almost panicked. \"Hey, why aren't people bringing me bananas anymore! I'm hungry! Help! Don't let me starve!\"",
     "\"If you attack Attnam, too, please don't liberate my wife. She'll force me to commence a merciless diet for sure!\"",
@@ -5096,7 +5096,7 @@ tourist
       "\"Don't you barbarians really eat anything but fruits? I need some greasy sausages badly!\"",
       "\"We're from Bazaria, the great trader nation, where every coin has equal rights. Richel Decos was our fellow countryman before he bought this town from the Attnamese.\"",
       "\"Back home I plan commercials acted during theatre play breaks.\"",
-      "\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and wellfare it has.\"",
+      "\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and welfare it has.\"",
       "\"I couldn't believe my eyes when the travel agent showed me the extraordinary low prices of Decos Paradise Tours Inc. I believed they were a joke until he revealed the ingenious travel method: customers levitate over the ocean after consuming magical mushrooms! Needless to say, our holiday plans were immediately decided.\"",
       "\"I presume you backward aborigines still boil people alive and eat them. Any chance of me seeing a young, gorgeous maiden facing this horrible destiny? Just for cultural education, you know.\"";
     }
