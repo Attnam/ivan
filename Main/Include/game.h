@@ -438,6 +438,7 @@ class game
   static int CurrentDungeonIndex;
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
+  static cint MoveNetHackCommandKey[];
   static cv2 MoveVector[];
   static cv2 RelativeMoveVector[];
   static cv2 BasicMoveVector[];

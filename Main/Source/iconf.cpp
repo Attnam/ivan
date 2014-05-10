@@ -50,9 +50,9 @@ truthoption ivanconfig::AutoDropLeftOvers( "AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(	  "LookZoom",
 					  "zoom feature in look mode",
 					  false);
-truthoption ivanconfig::UseAlternativeKeys("UseAlternativeKeys",
-					   "use alternative direction keys",
-					   false);
+cycleoption ivanconfig::DirectionKeyMap("DirectionKeyMap",
+					   "Movement control scheme",
+					   DIR_NORM);
 truthoption ivanconfig::BeNice(		  "BeNice",
 					  "be nice to pets",
 					  true);
@@ -198,7 +198,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
-  configsystem::AddOption(&UseAlternativeKeys);
+  configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&BeNice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);

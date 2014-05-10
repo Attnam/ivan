@@ -124,6 +124,7 @@ god** game::God;
 
 cint game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 cint game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
+cint game::MoveNetHackCommandKey[] = { 'y','k','u','h','l','b','j','n','.' };
 
 cv2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
 cv2 game::RelativeMoveVector[] = { v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
@@ -2690,10 +2691,14 @@ character* game::CreateGhost()
 
 int game::GetMoveCommandKey(int I)
 {
-  if(!ivanconfig::GetUseAlternativeKeys())
+  switch(ivanconfig::GetDirectionKeyMap()){
+  case DIR_NORM: 
     return MoveNormalCommandKey[I];
-  else
+  case DIR_ALT:
     return MoveAbnormalCommandKey[I];
+  case DIR_HACK: 
+	return MoveNetHackCommandKey[I];
+  }
 }
 
 long game::GetScore()

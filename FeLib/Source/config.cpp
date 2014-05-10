@@ -26,6 +26,8 @@ void configsystem::NormalNumberChanger(numberoption* O, long What)
 { O->Value = What; }
 void configsystem::NormalTruthChanger(truthoption* O, truth What)
 { O->Value = What; }
+void configsystem::NormalCycleChanger(cycleoption* O, long What)
+{ O->Value = What; }
 
 configoption::configoption(cchar* Name, cchar* Description)
 : Name(Name), Description(Description) { }
@@ -68,6 +70,18 @@ truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
 			 void (*ValueDisplayer)(const truthoption*, festring&),
 			 truth (*ChangeInterface)(truthoption*),
 			 void (*ValueChanger)(truthoption*, truth))
+: configoption(Name, Desc),
+  Value(Value), ValueDisplayer(ValueDisplayer),
+  ChangeInterface(ChangeInterface),
+  ValueChanger(ValueChanger) { }
+
+cycleoption::cycleoption(cchar* Name, cchar* Desc,
+			   long Value,
+			   void (*ValueDisplayer)(const cycleoption*,
+						  festring&),
+			   truth (*ChangeInterface)(cycleoption*),
+			   void (*ValueChanger)(cycleoption*,
+						long))
 : configoption(Name, Desc),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
@@ -179,6 +193,22 @@ void configsystem::NormalTruthDisplayer(const truthoption* O,
   Entry << (O->Value ? "yes" : "no");
 }
 
+void configsystem::NormalCycleDisplayer(const cycleoption* O,
+					 festring& Entry)
+{
+  switch(O->Value){
+  case DIR_NORM:
+    Entry << CONST_S("Normal");
+	break;
+  case DIR_ALT:
+    Entry << CONST_S("Alternative");
+	break;
+  case DIR_HACK:
+    Entry << CONST_S("NetHack");
+	break;
+	}
+}
+
 truth configsystem::NormalTruthChangeInterface(truthoption* O)
 {
   O->ChangeValue(!O->Value);
@@ -206,6 +236,11 @@ truth configsystem::NormalNumberChangeInterface(numberoption* O)
   return false;
 }
 
+truth configsystem::NormalCycleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue((O->Value+1)% 3);
+  return true;
+}
 void stringoption::SaveValue(std::ofstream& SaveFile) const
 {
   SaveFile << '\"' << Value.CStr() << '\"';
@@ -226,4 +261,9 @@ void numberoption::LoadValue(inputfile& SaveFile)
 void truthoption::SaveValue(std::ofstream& SaveFile) const
 { SaveFile << Value; }
 void truthoption::LoadValue(inputfile& SaveFile)
+{ Value = SaveFile.ReadNumber(); }
+
+void cycleoption::SaveValue(std::ofstream& SaveFile) const
+{ SaveFile << Value; }
+void cycleoption::LoadValue(inputfile& SaveFile)
 { Value = SaveFile.ReadNumber(); }
