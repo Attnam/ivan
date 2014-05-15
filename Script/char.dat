@@ -567,7 +567,7 @@ guard
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
-      "\"Again I'm all white! The master guard doesn't like me bringing snow in the barracks...\"";
+      "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
   }
@@ -4019,7 +4019,7 @@ elder
   FriendlyReplies =
   {
     10,
-    "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. Good luck.\"",
+    "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
     "\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
     "\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",

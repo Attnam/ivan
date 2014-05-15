@@ -1004,7 +1004,7 @@ void cruentus::PrayGoodEffect()
     potion* Bottle = potion::Spawn(0, NO_MATERIALS);
     Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));
     PLAYER->GetGiftStack()->AddItem(Bottle);
-    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(INDEFINITE));
   }
   else
   {
