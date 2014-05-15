@@ -8690,11 +8690,28 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
   truth EquipmentChanged = false;
   felist List(CONST_S("Equipment menu [ESC exits]"));
   festring Entry;
-
+  long TotalEquippedWeight;
+  
   for(;;)
   {
     List.Empty();
-    List.EmptyDescription();
+	List.EmptyDescription();
+	
+	TotalEquippedWeight = 0;
+	  
+	for (int c = 0; c < GetEquipments(); ++c){ // if equipment exists, add to TotalEquippedWeight
+		item* Equipment = GetEquipment(c);
+		TotalEquippedWeight += (Equipment) ? Equipment->GetWeight() : 0;
+	}
+	 
+	if (IsPlayer()) {
+		festring Total("Total weight: ");
+		Total << TotalEquippedWeight;
+		Total << "g";
+		
+		List.AddDescription(CONST_S(""));
+		List.AddDescription(Total);
+	}
 
     if(!IsPlayer())
     {
