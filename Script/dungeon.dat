@@ -643,6 +643,8 @@ Dungeon ELPURI_CAVE;
   {
     LevelMessage = "You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
     FillSquare = solidterrain(GROUND), QUARTZITE earth;
+	EnterImage = "IVlad.pcx";
+	EnterTextDisplacement = 260, 0;
 
     RoomDefault
     {
