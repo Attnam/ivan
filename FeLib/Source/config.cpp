@@ -76,14 +76,15 @@ truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
   ValueChanger(ValueChanger) { }
 
 cycleoption::cycleoption(cchar* Name, cchar* Desc,
-			   long Value,
+			   long Value, long CycleCount,
 			   void (*ValueDisplayer)(const cycleoption*,
 						  festring&),
 			   truth (*ChangeInterface)(cycleoption*),
 			   void (*ValueChanger)(cycleoption*,
 						long))
 : configoption(Name, Desc),
-  Value(Value), ValueDisplayer(ValueDisplayer),
+  Value(Value), CycleCount(CycleCount),
+  ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
@@ -196,17 +197,7 @@ void configsystem::NormalTruthDisplayer(const truthoption* O,
 void configsystem::NormalCycleDisplayer(const cycleoption* O,
 					 festring& Entry)
 {
-  switch(O->Value){
-  case DIR_NORM:
-    Entry << CONST_S("Normal");
-	break;
-  case DIR_ALT:
-    Entry << CONST_S("Alternative");
-	break;
-  case DIR_HACK:
-    Entry << CONST_S("NetHack");
-	break;
-	}
+  Entry << O->Value;
 }
 
 truth configsystem::NormalTruthChangeInterface(truthoption* O)
@@ -238,7 +229,7 @@ truth configsystem::NormalNumberChangeInterface(numberoption* O)
 
 truth configsystem::NormalCycleChangeInterface(cycleoption* O)
 {
-  O->ChangeValue((O->Value+1)% 3);
+  O->ChangeValue((O->Value+1) % O->CycleCount);
   return true;
 }
 void stringoption::SaveValue(std::ofstream& SaveFile) const

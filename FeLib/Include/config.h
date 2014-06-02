@@ -23,8 +23,7 @@ struct configoption;
 struct stringoption;
 struct numberoption;
 struct truthoption;
-struct cycleoption; /*to be used primarily for cycling control schemes (Normal, Alternative, or NetHack)*/
-					/*Note that creating other cyclical menu options may require some restructuring*/
+struct cycleoption;
 
 class configsystem
 {
@@ -144,7 +143,7 @@ struct truthoption : public configoption
 
 struct cycleoption : public configoption
 {
-	cycleoption(cchar*, cchar*, long,
+  cycleoption(cchar*, cchar*, long, long,
 			void (*)(const cycleoption*, festring&)
 	       = &configsystem::NormalCycleDisplayer,
 	       truth (*)(cycleoption*)
@@ -158,6 +157,7 @@ struct cycleoption : public configoption
   virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
   void ChangeValue(long What) { ValueChanger(this, What); }
   long Value;
+  long CycleCount; // Number of options to cycle through
   void (*ValueDisplayer)(const cycleoption*, festring&);
   truth (*ChangeInterface)(cycleoption*);
   void (*ValueChanger)(cycleoption*, long);

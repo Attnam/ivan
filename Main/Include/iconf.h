@@ -45,6 +45,7 @@ class ivanconfig
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void ContrastDisplayer(const numberoption*, festring&);
+  static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);

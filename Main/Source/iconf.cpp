@@ -52,7 +52,8 @@ truthoption ivanconfig::LookZoom(	  "LookZoom",
 					  false);
 cycleoption ivanconfig::DirectionKeyMap("DirectionKeyMap",
 					   "Movement control scheme",
-					   DIR_NORM);
+					   DIR_NORM, 3, // {default value, number of options to cycle through}
+					   &DirectionKeyMapDisplayer);
 truthoption ivanconfig::BeNice(		  "BeNice",
 					  "be nice to pets",
 					  true);
@@ -85,6 +86,21 @@ void ivanconfig::AutoSaveIntervalDisplayer(const numberoption* O, festring& Entr
 void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << "/100";
+}
+
+void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
+{
+	switch(O->Value){
+	  case DIR_NORM:
+		Entry << CONST_S("Normal");
+		break;
+	  case DIR_ALT:
+		Entry << CONST_S("Alternative");
+		break;
+	  case DIR_HACK:
+		Entry << CONST_S("NetHack");
+		break;
+	}
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
