@@ -592,7 +592,7 @@ guard
       "@Dd says gravely: \"You don't have a life. Get it as a shop guard.\"",
       "@Dd seems very suspicious. \"Don't even think of stealing anything.\"",
       "\"Yes, this is a dangerous place to work, but our boss pays us well.\"",
-      "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do any rash moves here.\"",
+      "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't make any rash moves here.\"",
       "\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"";
     }
   }
@@ -622,8 +622,8 @@ guard
     {
       5,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
-      "\"Don't believe Haedlac if he boasts with that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
-      "@Dd shouts excited: \"Attnam victoor!\"",
+      "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
+      "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
@@ -1325,7 +1325,7 @@ billswill
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilited.\"";
+  HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilated.\"";
   FriendlyReplies == "\"Praise the Corporation!\"";
   Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
   PanicLevel = 0;
@@ -1377,7 +1377,7 @@ skeleton
   RightSWeaponSkillHits = 10;
   PanicLevel = 0;
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
-  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"";
+  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
   FleshMaterial = BONE;
   DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
   SpillsBlood = false;
@@ -4179,7 +4179,8 @@ eddy
   SkinColor = rgb16(200, 200, 112);
   NameSingular = "eddy";
   NamePlural = "eddies";
-  PostFix = "in space-time continuum";
+  PostFix = "in the space-time continuum";
+  UsesLongArticle = true;
   CanBeGenerated = true;
   HasEyes = false;
   HasHead = false;

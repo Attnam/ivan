@@ -858,7 +858,7 @@ void scabies::PrayGoodEffect()
 	    Char->GainIntrinsic(LEPROSY);
 	}
 
-    ADD_MESSAGE("You feel a a horrible disease spreading.");
+    ADD_MESSAGE("You feel a horrible disease spreading.");
     return;
   }
 
