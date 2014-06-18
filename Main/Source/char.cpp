@@ -9858,7 +9858,7 @@ void character::ReceiveSirenSong(character* Siren)
       }
       else
       {
-	ADD_MESSAGE("%s is persuated to give %s to %s because of %s beautiful singing.", 
+	ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.", 
 		    CHAR_NAME(DEFINITE), 
 		    What->CHAR_NAME(INDEFINITE), 
 		    Siren->CHAR_NAME(DEFINITE),

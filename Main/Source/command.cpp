@@ -446,7 +446,7 @@ truth commandsystem::PickUp(character* Char)
 
 truth commandsystem::Quit(character* Char)
 {
-  if(game::TruthQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Your quest is not yet completed! Really quit? [y/N]")))
   {
     Char->ShowAdventureInfo();
     festring Msg = CONST_S("cowardly quit the game");

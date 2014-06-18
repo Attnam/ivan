@@ -726,7 +726,7 @@ shopkeeper
       4,
       "\"Welcome to the cheapest banana shop in the world!\"",
       "@Dd sighs: \"It's depressing that the locals have so little purchasing power... But Mellis bless the tourists!\"",
-      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so much magic potions into the soil that nothing here will go bad before you buy it.\"",
+      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
       "\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
     }
     AutomaticallySeen = true;
@@ -1116,7 +1116,7 @@ frog
     4,
     "@Dd frolics in religious ecstasy.",
     "@Dd croaks with pious joy.",
-    "@Dd jumps up and down in enlightened trance.",
+    "@Dd jumps up and down in an enlightened trance.",
     "@Dd goes \"Ribbit! Ribbit!\" full of transcendent delight.";
   }
   NameSingular = "frog";
@@ -4129,8 +4129,8 @@ floatingeye
   DefaultMana = 0;
   CanOpen = false;
   TotalVolume = 30000;
-  HostileReplies == "@du stares at you.";
-  FriendlyReplies == "@du stares at you.";
+  HostileReplies == "@Dd stares at you.";
+  FriendlyReplies == "@Dd stares at you.";
   TotalSize = 40;
   Adjective = "floating";
   NameSingular = "eye";
@@ -4173,8 +4173,8 @@ eddy
   DefaultMana = 10;
   TotalVolume = 150000; /* most of it is in some other dimension */
   TorsoBitmapPos = 64, 32;
-  HostileReplies == "The @du twirls angrily.";
-  FriendlyReplies == "The @du twirls faster for a moment.";
+  HostileReplies == "@Dd twirls angrily.";
+  FriendlyReplies == "@Dd twirls faster for a moment.";
   TotalSize = 100;
   SkinColor = rgb16(200, 200, 112);
   NameSingular = "eddy";

@@ -600,17 +600,17 @@ void scrolloftaming::FinishReading(character* Reader)
     if(Reader->IsPlayer())
     {
       if(ToBeTamed->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHAR_NAME(INDEFINITE));
+	ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHAR_NAME(DEFINITE));
       else
 	ADD_MESSAGE("You notice no effect.");
     }
     else if(Reader->CanBeSeenByPlayer())
     {
       if(ToBeTamed->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHAR_NAME(INDEFINITE), Reader->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHAR_NAME(DEFINITE), Reader->CHAR_NAME(DEFINITE));
     }
     else if(ToBeTamed->CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHAR_NAME(INDEFINITE));
+      ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHAR_NAME(DEFINITE));
   }
 
   RemoveFromSlot();
@@ -1635,7 +1635,7 @@ void scrollofrepair::FinishReading(character* Reader)
       if(Item.size() == 1)
 	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
       else
-	ADD_MESSAGE("As you read the scroll, %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
+	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
 
       for(uint c = 0; c < Item.size(); ++c)
       {

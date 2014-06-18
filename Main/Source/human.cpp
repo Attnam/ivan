@@ -737,7 +737,7 @@ void priest::BeTalkedTo()
 
     if(PLAYER->GetMoney() >= Price)
     {
-      ADD_MESSAGE("\"You seem to have contracted the vile disease of leprosy. I could give you a small dose of medicince for %ld gold pieces.\"", Price);
+      ADD_MESSAGE("\"You seem to have contracted the vile disease of leprosy. I could give you a small dose of medicine for %ld gold pieces.\"", Price);
 
       if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
       {

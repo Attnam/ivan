@@ -45,7 +45,7 @@ class fluid : public entity
   void AddLiquidAndVolume(long);
   virtual void SignalVolumeAndWeightChange();
   void SetMotherItem(item*);
-  static void AddFluidInfo(const fluid*, festring&);
+  static truth AddFluidInfo(const fluid*, festring&);
   void CheckGearPicture(v2, int, truth);
   void DrawGearPicture(blitdata&, int) const;
   truth FadePictures();

@@ -2176,8 +2176,14 @@ void lsquare::DisplayFluidInfo(festring& Msg) const
 {
   if(Fluid)
   {
-    Msg << ". There is ";
-    fluid::AddFluidInfo(Fluid, Msg);
+    festring TempMsg;
+
+	if (fluid::AddFluidInfo(Fluid, TempMsg)) //AddFluidInfo returns true in case 'are' should be used over 'is'
+		Msg << ". There are ";
+	else
+		Msg << ". There is ";
+	
+	Msg << TempMsg;
     AddLocationDescription(Msg);
   }
 }
