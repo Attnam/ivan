@@ -414,15 +414,19 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
   if(ID.first)
   {
     item* Item = ID.first->Spawn(ID.second);
-    festring Q = "Do you want to wish for ";
-    Item->AddName(Q, INDEFINITE|STRIPPED);
-    Q << "? [y/N]";
-
-    if(!game::TruthQuestion(Q))
+    if(game::WizardModeIsActive())
+	// If WizMode prompt player to confirm wish
     {
-      delete Item;
-      return 0;
-    }
+        festring Q = "Do you want to wish for ";
+	    Item->AddName(Q, INDEFINITE|STRIPPED);
+	    Q << "? [y/N]";
+	
+	    if(!game::TruthQuestion(Q))
+	    {
+	      delete Item;
+	      return 0;
+	    }
+	}
 
     return Item;
   }
