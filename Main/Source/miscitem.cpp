@@ -1128,6 +1128,29 @@ truth stethoscope::Apply(character* Doctor)
   return true;
 }
 
+truth stick::Apply(character* Applier)
+{
+  if(Applier->IsPlayer())
+	{
+    ADD_MESSAGE("You light %s.", CHAR_NAME(DEFINITE));
+		//ADD_MESSAGE("Burning is %d", Burning);
+		//ADD_MESSAGE("IsBurning is %d", IsBurning());
+	}
+
+	//if(!IsBurning())
+		//{
+			SetIsBurning(true);
+			SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+			UpdatePictures();
+			ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+			//ADD_MESSAGE("Burning is %d", Burning);
+			//ADD_MESSAGE("IsBurning is %d", IsBurning());
+			return true;
+		//}
+	
+	//return false;
+}
+
 void itemcontainer::CalculateVolumeAndWeight()
 {
   item::CalculateVolumeAndWeight();

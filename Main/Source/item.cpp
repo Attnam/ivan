@@ -740,7 +740,8 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
 	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
 	  && !Fluid && !Item->Fluid
-	  && !LifeExpectancy == !Item->LifeExpectancy);
+	  && !LifeExpectancy == !Item->LifeExpectancy
+	  && !IsBurning() == !Item->IsBurning());
 }
 
 void item::Break(character* Breaker, int)

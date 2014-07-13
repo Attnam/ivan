@@ -28,7 +28,7 @@ v2 LeftLegSparkleValidityArray[45];
 v2 NormalSparkleValidityArray[256];
 v2 PossibleSparkleBuffer[256];
 
-object::object() : entity(0), MainMaterial(0) { }
+object::object() : entity(0), MainMaterial(0), Burning(0) { }
 int object::GetSpecialFlags() const { return ST_NORMAL; }
 col16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
 cbitmap*const* object::GetPicture() const { return GraphicData.Picture; }
@@ -218,6 +218,11 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   truth Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   v2 BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
+	
+  if(IsBurning()) //is burning is sometimes initially filled with crap, so Burning should be initialised to zero
+  {
+	  SpecialFlags |= ST_FLAMES;
+  }
 
   if(!(SpecialFlags & (ST_FLAMES|ST_LIGHTNING)))
   {
@@ -447,6 +452,9 @@ void object::CalculateEmitation()
 
   if(MainMaterial)
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
+	
+	if(IsBurning())
+    game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
 }
 
 truth object::CalculateHasBe() const

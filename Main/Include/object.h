@@ -61,6 +61,8 @@ class object : public entity, public id
   virtual truth DetectMaterial(cmaterial*) const;
   virtual int GetSparkleFlags() const;
   virtual void SignalMaterialChange() { }
+	virtual void SetIsBurning(int What) {Burning = What;}
+	virtual int IsBurning() const { return Burning; }
  protected:
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);
@@ -101,6 +103,7 @@ class object : public entity, public id
   graphicdata GraphicData;
   material* MainMaterial;
   int VisualEffects;
+	int Burning;
 };
 
 #endif

@@ -539,6 +539,9 @@ ITEM(scrollofdetectmaterial, scroll)
 
 ITEM(stick, item)
 {
+ public:
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(ccharacter*) const { return true; }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
