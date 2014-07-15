@@ -1625,14 +1625,26 @@ whip /* meleeweapon-> */
   MaterialConfigChances = { 4, 75, 50, 25, 10; }
   Roundness = 2;
   FormModifier = 10; /* this is multiplied by MainMaterial's flexibility */
-  CanBeBroken = false;
+  CanBeBroken = true;
   AttachedGod = NEFAS;
   WieldedBitmapPos = 160, 224;
   EnchantmentPlusChance = 30;
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
-
+  
+  
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 32, 256;
+    WieldedBitmapPos = 176, 208;
+	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 3, 75, 50, 25,}
+    EnchantmentPlusChance = 60;
+  }
+  
+  
   Config RUNED_WHIP;
   {
     DefaultSize = 230;
@@ -1644,6 +1656,18 @@ whip /* meleeweapon-> */
     FormModifier = 20;
     EnchantmentPlusChance = 20;
   }
+  
+    Config BROKEN|RUNED_WHIP;
+  {
+    Possibility = 3;
+    BitmapPos = 32, 256;
+    WieldedBitmapPos = 176, 208;
+	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 3, 75, 50, 25,}
+    EnchantmentPlusChance = 40;
+  }
+  
+  
 }
 
 backpack /* materialcontainer-> */
@@ -3151,6 +3175,16 @@ whipofthievery /* meleeweapon->whip-> */
   Price = 500;
   AttachedGod = CLEPTIA;
   EnchantmentPlusChance = 10;
+  
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 32, 256;
+    WieldedBitmapPos = 176, 208;
+	Price = 250;
+    EnchantmentPlusChance = 20;
+  }
+  
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -3412,6 +3446,16 @@ chameleonwhip /* meleeweapon->whip-> */
   WieldedBitmapPos = 160, 224;
   EnchantmentMinusChance = 50;
   EnchantmentPlusChance = 50;
+  
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 32, 256;
+    WieldedBitmapPos = 176, 208;
+	Price = 250;
+	EnchantmentMinusChance = 25;
+    EnchantmentPlusChance = 100;
+  }
 }
 
 carrot
