@@ -304,7 +304,7 @@ truth whipofthievery::HitEffect(character* Enemy, character* Hitter, v2 HitPos, 
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(Enemy->IsEnabled() && Hitter && CleptiaHelps(Enemy, Hitter))
+  if(!IsBroken() && Enemy->IsEnabled() && Hitter && CleptiaHelps(Enemy, Hitter))
   {
     if(Hitter->IsPlayer())
     {
