@@ -114,7 +114,6 @@ truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
 void solid::PostConstruct()
 {
   BurnCounter = BurnCheckCounter = Burning = 0;
-	//initialise burn data to zero here?
   //BurnCounter = (RAND() % GetBurnModifier()) >> 5;
 }
 
@@ -154,7 +153,7 @@ void organic::Be(ulong Flags)
     SpoilCheckCounter = 0;
   }
 	
-	//solid::Be(Flags);
+	solid::Be(Flags);
 }
 
 void organic::Save(outputfile& SaveFile) const
