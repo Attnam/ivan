@@ -47,6 +47,7 @@ ITEM(meleeweapon, item)
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual void TryToRust(long);
+	//virtual void TryToBurn(long);
   virtual material* GetConsumeMaterial(ccharacter*, materialpredicate = TrueMaterialPredicate) const;
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   virtual material* RemoveMaterial(material*);
@@ -69,6 +70,7 @@ ITEM(meleeweapon, item)
   virtual col16 GetMaterialColorC(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
+	//virtual int GetBurnDataB() const;
   virtual col16 GetDripColor() const;
   virtual truth AllowRegularColors() const;
   material* SecondaryMaterial;

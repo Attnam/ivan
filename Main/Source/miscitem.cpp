@@ -1140,6 +1140,7 @@ truth stick::Apply(character* Applier)
 	//if(!IsBurning())
 		//{
 			SetIsBurning(true);
+			MainMaterial->SetIsBurning(true);
 			SignalEmitationIncrease(MakeRGB24(150, 120, 90));
 			UpdatePictures();
 			ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));

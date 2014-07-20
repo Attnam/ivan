@@ -82,6 +82,7 @@ class object : public entity, public id
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const { return 255; }
   virtual truth AddRustLevelDescription(festring&, truth) const;
+	virtual truth AddBurnLevelDescription(festring&, truth) const;
   virtual truth AddMaterialDescription(festring&, truth) const;
   int RandomizeMaterialConfiguration();
   virtual int GetClassAnimationFrames() const { return 1; }

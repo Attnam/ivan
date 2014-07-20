@@ -380,6 +380,11 @@ truth object::AddRustLevelDescription(festring& String, truth Articled) const
   return MainMaterial->AddRustLevelDescription(String, Articled);
 }
 
+truth object::AddBurnLevelDescription(festring& String, truth Articled) const
+{
+  return MainMaterial->AddBurnLevelDescription(String, Articled);
+}
+
 truth object::AddMaterialDescription(festring& String, truth Articled) const
 {
   MainMaterial->AddName(String, Articled);
@@ -451,10 +456,11 @@ void object::CalculateEmitation()
   Emitation = GetBaseEmitation();
 
   if(MainMaterial)
+	{
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
-	
-	if(IsBurning())
-    game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
+		if(MainMaterial->IsBurning())
+			game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
+	}
 }
 
 truth object::CalculateHasBe() const
