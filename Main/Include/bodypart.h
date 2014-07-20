@@ -526,6 +526,7 @@ ITEM(corpse, item)
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
+	virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;

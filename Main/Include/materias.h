@@ -19,6 +19,33 @@ class lterrain;
 
 MATERIAL(solid, material)
 {
+ public:
+  solid() : BurnData(NOT_BURNT) { }
+  virtual void SetBurnLevel(int);
+  //virtual int GetStrengthValue() const;
+  virtual void Be(ulong);
+  virtual truth HasBe() const { return true; }
+  virtual void Save(outputfile&) const; //common
+  virtual void Load(inputfile&); //common
+	//virtual truth IsSparkling() const; //not ready
+  virtual int GetBurnData() const { return BurnData; }
+  //virtual truth TryToBurn(long, long = 0); //not necessary?
+  virtual truth AddBurnLevelDescription(festring&, truth) const;
+  //virtual truth IsVeryCloseToBurn() const { return BurnLevel == 8; } //not ready
+  virtual int GetBurnLevel() const { return BurnData & 3; } //common
+  //virtual void ResetBurning(); //not ready
+  //virtual void SetBurnCounter(int); //provisionally not necessary
+  //virtual truth CanBurn() const { return true; } //not ready
+  //virtual int GetBurnPercentage() const; //not necessary?
+  //virtual truth Burns() const { return true; } // the material only burns if it can burn
+	//virtual void SetIsBurning(int What) {Burning = What;} // now appears in materia.h
+	//virtual int IsBurning() const { return Burning; } // now appears in materia.h
+ protected:
+  virtual void PostConstruct();
+  ushort BurnCounter;
+  uchar BurnCheckCounter;
+  int BurnData;
+	//int Burning; // now appears in materia.h
 };
 
 MATERIAL(organic, solid)

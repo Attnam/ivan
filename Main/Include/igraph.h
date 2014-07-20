@@ -50,6 +50,7 @@ struct graphicid
   uchar FlyAmount NO_ALIGNMENT;
   v2 Position NO_ALIGNMENT;
   uchar RustData[4] NO_ALIGNMENT;
+	//uchar BurnData[4] NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
   uchar WobbleData NO_ALIGNMENT;
 };
