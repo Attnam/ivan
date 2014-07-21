@@ -737,6 +737,7 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 	  && MainMaterial->IsSameAs(Item->MainMaterial)
 	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
 	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+	  && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
 	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
 	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
 	  && !Fluid && !Item->Fluid
@@ -1138,6 +1139,13 @@ void item::DonateIDTo(item* Item)
 }
 
 void item::SignalRustLevelChange()
+{
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
+void item::SignalBurnLevelChange()
 {
   SignalVolumeAndWeightChange();
   UpdatePictures();

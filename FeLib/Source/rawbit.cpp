@@ -235,7 +235,7 @@ cachedfont* rawbitmap::Colorize(cpackcol16* Color, alpha BaseAlpha, cpackalpha* 
   return Bitmap;
 }
 
-bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha, cuchar* RustData, truth AllowReguralColors) const
+bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha, cuchar* RustData, cuchar* BurnData, truth AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Border);
   v2 TargetPos(0, 0);
@@ -297,6 +297,17 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
     RustSeed[3] = (RustData[3] & 0xFC) >> 2;
   }
 
+  truth Burnt = BurnData && (BurnData[0] || BurnData[1] || BurnData[2] || BurnData[3]);
+  ulong BurnSeed[4];
+
+  if(Burnt)
+  {
+    BurnSeed[0] = (BurnData[0] & 0xFC) >> 2;
+    BurnSeed[1] = (BurnData[1] & 0xFC) >> 2;
+    BurnSeed[2] = (BurnData[2] & 0xFC) >> 2;
+    BurnSeed[3] = (BurnData[3] & 0xFC) >> 2;
+  }
+
   for(int y = 0; y < Border.Y; ++y)
   {
     for(int x = 0; x < Border.X; ++x)
@@ -322,6 +333,16 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
 	    Green = ((Green << 1) + Green) >> 2;
 	    Blue >>= 1;
 	  }
+
+    if(Burnt && BurnData[ColorIndex]
+       && (BurnData[ColorIndex] & 3UL)
+       > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
+    {
+		//ABORT("This is being tested!");
+      Red = 0x38; //gum
+      Green = 0x3C; //gum
+      Blue = 0x38; //gum
+    }
 
 	  if(Red > 0x7FF)
 	    Red = 0x7FF;

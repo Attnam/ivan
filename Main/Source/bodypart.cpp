@@ -2590,6 +2590,11 @@ int corpse::GetRustDataA() const
   return Deceased->GetTorso()->GetMainMaterial()->GetRustData();
 }
 
+int corpse::GetBurnDataA() const
+{
+  return Deceased->GetTorso()->GetMainMaterial()->GetBurnData();
+}
+
 void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, int SpecialFlags, v2 (item::*Retriever)(int) const, truth BodyArmor) const
 {
   if(Armor && Master)

@@ -70,7 +70,7 @@ ITEM(meleeweapon, item)
   virtual col16 GetMaterialColorC(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
-	//virtual int GetBurnDataB() const;
+  virtual int GetBurnDataB() const;
   virtual col16 GetDripColor() const;
   virtual truth AllowRegularColors() const;
   material* SecondaryMaterial;

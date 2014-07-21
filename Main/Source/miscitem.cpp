@@ -2274,6 +2274,11 @@ int materialcontainer::GetRustDataB() const
   return SecondaryMaterial ? SecondaryMaterial->GetRustData() : GetRustDataA();
 }
 
+int materialcontainer::GetBurnDataB() const
+{
+  return SecondaryMaterial ? SecondaryMaterial->GetBurnData() : GetBurnDataA();
+}
+
 void backpack::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
 {
   if(!Liquid->IsExplosive())

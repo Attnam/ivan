@@ -324,6 +324,10 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   GI.RustData[1] = GetRustDataB();
   GI.RustData[2] = GetRustDataC();
   GI.RustData[3] = GetRustDataD();
+  GI.BurnData[0] = GetBurnDataA();
+  GI.BurnData[1] = GetBurnDataB();
+  GI.BurnData[2] = GetBurnDataC();
+  GI.BurnData[3] = GetBurnDataD();
   GI.WobbleData = WobbleData;
 
   for(c = 0; c < AnimationFrames; ++c)
@@ -521,6 +525,11 @@ void object::InitSparkleValidityArrays()
 int object::GetRustDataA() const
 {
   return MainMaterial->GetRustData();
+}
+
+int object::GetBurnDataA() const
+{
+  return MainMaterial->GetBurnData();
 }
 
 truth object::DetectMaterial(cmaterial* Material) const

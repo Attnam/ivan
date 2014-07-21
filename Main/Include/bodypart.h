@@ -539,6 +539,7 @@ ITEM(corpse, item)
   virtual int GetSize() const;
   virtual int GetArticleMode() const;
   virtual int GetRustDataA() const;
+  virtual int GetBurnDataA() const;
   virtual truth AddStateDescription(festring&, truth) const;
   character* Deceased;
 };

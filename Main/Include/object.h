@@ -96,6 +96,10 @@ class object : public entity, public id
   virtual int GetRustDataB() const { return NOT_RUSTED; }
   virtual int GetRustDataC() const { return NOT_RUSTED; }
   virtual int GetRustDataD() const { return NOT_RUSTED; }
+  virtual int GetBurnDataA() const;
+  virtual int GetBurnDataB() const { return NOT_BURNT; }
+  virtual int GetBurnDataC() const { return NOT_BURNT; }
+  virtual int GetBurnDataD() const { return NOT_BURNT; }
   virtual col16 GetDripColor() const { return 0; }
   virtual truth AllowSparkling() const { return true; }
   virtual truth AllowRegularColors() const { return true; }

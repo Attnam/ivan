@@ -510,7 +510,7 @@ class item : public object
   virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
-	//virtual void SignalBurnLevelChange();
+  virtual void SignalBurnLevelChange();
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }

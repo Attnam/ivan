@@ -208,10 +208,10 @@ class material
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
   truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
-	virtual void SetIsBurning(int What) {Burning = What;}
-	virtual int IsBurning() const { return Burning; }
-	virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
-	virtual void SetBurnLevel(int) { }
+  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual int IsBurning() const { return Burning; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual void SetBurnLevel(int) { }
   virtual int GetBurnData() const { return NOT_BURNT; }
   virtual int GetBurnLevel() const { return NOT_BURNT; }
  protected:

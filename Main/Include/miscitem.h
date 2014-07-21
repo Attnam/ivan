@@ -50,6 +50,7 @@ ITEM(materialcontainer, item)
   virtual col16 GetMaterialColorB(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
+  virtual int GetBurnDataB() const;
   material* SecondaryMaterial;
 };
 

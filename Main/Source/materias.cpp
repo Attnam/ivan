@@ -70,8 +70,8 @@ void solid::SetBurnLevel(int What)
     else
       BurnData = BurnData & 0xFC | What;
 
-    //if(MotherEntity)
-    //  MotherEntity->SignalBurnLevelChange(); //not working yet
+    if(MotherEntity)
+      MotherEntity->SignalBurnLevelChange();
   }
 }
 

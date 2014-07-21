@@ -818,6 +818,11 @@ int meleeweapon::GetRustDataB() const
   return SecondaryMaterial->GetRustData();
 }
 
+int meleeweapon::GetBurnDataB() const
+{
+  return SecondaryMaterial->GetBurnData();
+}
+
 void meleeweapon::TryToRust(long LiquidModifier)
 {
   item::TryToRust(LiquidModifier);
