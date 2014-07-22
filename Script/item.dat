@@ -1617,7 +1617,7 @@ whip /* meleeweapon-> */
   WeaponCategory = WHIPS;
   DefaultMainVolume = 500;
   DefaultSecondaryVolume = 20;
-  StrengthModifier = 10;
+  StrengthModifier = 70;
   BitmapPos = 32, 0;
   NameSingular = "whip";
   MainMaterialConfig = { 4, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
@@ -1651,7 +1651,7 @@ whip /* meleeweapon-> */
     Possibility = 25;
     DefaultMainVolume = 750;
     DefaultSecondaryVolume = 50;
-    StrengthModifier = 20;
+    StrengthModifier = 80;
     Adjective = "runed";
     FormModifier = 20;
     EnchantmentPlusChance = 20;
@@ -3165,7 +3165,7 @@ whipofthievery /* meleeweapon->whip-> */
   Possibility = 10;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
-  StrengthModifier = 30;
+  StrengthModifier = 100;
   NameSingular = "whip";
   PostFix = "of thievery";
   MainMaterialConfig == NYMPH_HAIR;
@@ -3435,7 +3435,7 @@ chameleonwhip /* meleeweapon->whip-> */
   Possibility = 10;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
-  StrengthModifier = 30;
+  StrengthModifier = 100;
   NameSingular = "chameleon whip";
   MainMaterialConfig == OMMEL_HAIR;
   SecondaryMaterialConfig == RUBY;
