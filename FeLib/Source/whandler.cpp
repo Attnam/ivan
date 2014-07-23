@@ -256,12 +256,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
      case SDLK_SYSREQ:
      case SDLK_PRINT:
-#ifdef WIN32
+
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
-#else
-      DOUBLE_BUFFER->Save(festring(getenv("HOME")) + festring(ScrshotNameHandler()));
-#endif
       return;
+	  
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
 	 && (Event->key.keysym.mod & KMOD_LCTRL
@@ -304,7 +302,11 @@ festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be u
 		ScrshotNum << ScrshotCount;
 	
 	festring ScrshotName;
+	#ifdef WIN32
 	ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
+	#else
+	ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
+	#endif
 	
 	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
 	if (Scrshot) {
