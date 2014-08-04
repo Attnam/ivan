@@ -1892,7 +1892,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> TemporaryStateCounter[c];
 
   if(SaveFile.Get())
-    SetTeam(game::GetTeam(ReadType<int>(SaveFile)));
+    SetTeam(game::GetTeam(ReadType<ulong>(SaveFile)));
 
   if(SaveFile.Get())
     GetTeam()->SetLeader(this);
