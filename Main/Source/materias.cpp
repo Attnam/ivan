@@ -117,6 +117,21 @@ void solid::PostConstruct()
   //BurnCounter = (RAND() % GetBurnModifier()) >> 5;
 }
 
+int solid::GetStrengthValue() const
+{
+  int Base = material::GetStrengthValue();
+
+  switch(GetBurnLevel())
+  {
+   case NOT_BURNT: return Base;
+   case SLIGHTLY_BURNT: return ((Base << 3) + Base) / 10;
+   case MODERATELY_BURNT: return ((Base << 1) + Base) >> 2;
+   case HEAVILY_BURNT: return Base >> 1;
+  }
+
+  return 0; /* not possible */
+}
+
 void organic::Be(ulong Flags)
 {
   if(SpoilCheckCounter++ >= 50)

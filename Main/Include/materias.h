@@ -22,7 +22,7 @@ MATERIAL(solid, material)
  public:
   solid() : BurnData(NOT_BURNT) { }
   virtual void SetBurnLevel(int);
-  //virtual int GetStrengthValue() const;
+  virtual int GetStrengthValue() const;
   virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const; //common
