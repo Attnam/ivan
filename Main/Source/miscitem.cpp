@@ -1139,7 +1139,7 @@ truth stick::Apply(character* Applier)
 
   //if(!IsBurning())
     //{
-      SetIsBurning(true);
+      //SetIsBurning(true);
       MainMaterial->SetIsBurning(true);
       SignalEmitationIncrease(MakeRGB24(150, 120, 90));
       UpdatePictures();

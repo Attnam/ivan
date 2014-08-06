@@ -460,11 +460,11 @@ void object::CalculateEmitation()
   Emitation = GetBaseEmitation();
 
   if(MainMaterial)
-	{
+  {
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
-		if(MainMaterial->IsBurning())
-			game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
-	}
+    if(MainMaterial->IsBurning())
+      game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
+  }
 }
 
 truth object::CalculateHasBe() const
@@ -530,6 +530,16 @@ int object::GetRustDataA() const
 int object::GetBurnDataA() const
 {
   return MainMaterial->GetBurnData();
+}
+
+int object::IsBurning() const
+{
+  if(MainMaterial)
+  {
+    return MainMaterial->IsBurning() ? 1 : 0;
+  }
+  else
+    return 0;
 }
 
 truth object::DetectMaterial(cmaterial* Material) const

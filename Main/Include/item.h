@@ -583,6 +583,7 @@ class item : public object
   void Haste();
   void Slow();
   void SendMemorizedUpdateRequest() const;
+  virtual void Ignite();
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

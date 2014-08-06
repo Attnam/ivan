@@ -1310,12 +1310,34 @@ void item::TryToRust(long LiquidModifier)
 void item::TestActivationEnergy(int Damage)
 {
   if(MainMaterial)
-    if(Damage >= (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
+  {
+    int molamola = (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) );
+    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+  }
+
+  if(MainMaterial)
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
     {
       if(CanBeSeenByPlayer())
-        ADD_MESSAGE("%s catches fire! Damage was %d", CHAR_NAME(DEFINITE), Damage);
-      //ignite();
+      {
+        ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+        Ignite();
+      }
     }
+}
+
+void item::Ignite(/*character* Applier*/)
+{
+  //if(!IsBurning())
+    //{
+      MainMaterial->SetIsBurning(true);
+      SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+      UpdatePictures();
+      ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+      //return true;
+    //}
+  
+  //return false;
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
