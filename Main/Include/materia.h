@@ -65,6 +65,7 @@ struct materialdatabase : public databasebase
   int IntelligenceRequirement;
   int Stickiness;
   truth DisablesPanicWhenConsumed;
+  int FireResistance;
 };
 
 class materialprototype
@@ -208,6 +209,7 @@ class material
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
   truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
+  DATA_BASE_VALUE(int, FireResistance);
   virtual void SetIsBurning(int What) {Burning = What;}
   virtual int IsBurning() const { return Burning; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }

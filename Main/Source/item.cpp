@@ -39,6 +39,7 @@ lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
 truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
+truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
@@ -641,6 +642,11 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
+  if(!IsBurning() && Type & FIRE)
+  {
+    TestActivationEnergy(Damage);
+  }
+
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -1299,6 +1305,17 @@ void item::TryToRust(long LiquidModifier)
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
   }
+}
+
+void item::TestActivationEnergy(int Damage)
+{
+  if(MainMaterial)
+    if(Damage >= (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s catches fire! Damage was %d", CHAR_NAME(DEFINITE), Damage);
+      //ignite();
+    }
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)

@@ -292,7 +292,7 @@ class item : public object
   virtual truth IsWeapon(ccharacter*) const { return false; }
   virtual truth IsArmor(ccharacter*) const { return false; }
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
-	virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); } //this line below
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); } //this line below
   //virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
@@ -518,6 +518,7 @@ class item : public object
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
+  virtual void TestActivationEnergy(int);
 	//virtual void TryToBurn(long);
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, festring, int, truth);
@@ -534,7 +535,7 @@ class item : public object
   virtual truth AllowFluidBe() const { return true; }
   virtual truth IsRusted() const;
   virtual void RemoveRust();
-	//virtual truth IsBurnt() const;
+  virtual truth IsBurnt() const;
   //virtual void RemoveBurns();
   virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);

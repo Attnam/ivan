@@ -56,6 +56,7 @@ material
   InteractionFlags = CAN_DISSOLVE;
   Stickiness = 0;
   DisablesPanicWhenConsumed = false;
+  FireResistance = 0;
 }
 
 solid
@@ -424,6 +425,7 @@ solid
     IntelligenceRequirement = 35;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|CAN_BE_TAILORED;
+    FireResistance = 10;
   }
 
   Config OMMEL_HAIR;
@@ -456,6 +458,7 @@ solid
     HardenedMaterial = TROLL_HIDE;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
     InteractionFlags = CAN_BURN;
+    FireResistance = 5;
   }
 
   Config TROLL_HIDE;
@@ -471,6 +474,7 @@ solid
     IntelligenceRequirement = 5;
     CategoryFlags = Base|CAN_BE_TAILORED;
     InteractionFlags = CAN_BURN;
+    FireResistance = 10;
   }
 
   Config NYMPH_HAIR;
@@ -502,6 +506,7 @@ solid
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|CAN_BE_TAILORED;
     InteractionFlags = CAN_BURN&~CAN_DISSOLVE;
+    FireResistance = 20;
   }
 
   Config PHOENIX_FEATHER;
@@ -517,6 +522,7 @@ solid
     IntelligenceRequirement = 20;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
+    FireResistance = 15;
   }
 
   Config GOLDEN_EAGLE_FEATHER;
@@ -532,6 +538,7 @@ solid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|CAN_BE_TAILORED;
     InteractionFlags = Base&~CAN_DISSOLVE;
+    FireResistance = 30;
   }
 
   Config ICE;
@@ -561,6 +568,7 @@ solid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
+    FireResistance = 60;
   }
 
   Config ARCANITE;
@@ -692,6 +700,7 @@ solid
     CommonFlags = Base|IS_VALUABLE;
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    FireResistance = 10;
   }
 
   Config OCTIRON;
@@ -1819,6 +1828,7 @@ flesh
   PriceModifier = 60;
   BodyFlags = Base|IS_ALIVE|IS_WARM|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
+  FireResistance = 20;
 
   Config GOBLINOID_FLESH;
   {
@@ -1876,6 +1886,7 @@ flesh
     NameFlags = Base|USE_AN;
     BodyFlags = Base&~IS_WARM;
     InteractionFlags = Base&~CAN_DISSOLVE;
+    FireResistance = 100;
   }
 
   Config HUMAN_FLESH;
@@ -1993,6 +2004,7 @@ flesh
   {
     NameStem = "angel flesh";
     AttachedGod = MORTIFER;
+    FireResistance = 50;
   }
 
   Config DWARF_FLESH;
@@ -2010,6 +2022,7 @@ flesh
     ConsumeWisdomLimit = 8;
     AttachedGod = MORTIFER;
     InteractionFlags = Base&~CAN_DISSOLVE;
+    FireResistance = 100;
   }
 
   Config MAMMOTH_FLESH;
