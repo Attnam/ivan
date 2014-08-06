@@ -50,8 +50,8 @@
 #include "balance.h"
 #include "confdef.h"
 
-#define SAVE_FILE_VERSION 119 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 106 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 120 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 107 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -95,6 +95,7 @@ liquid* game::GlobalRainLiquid;
 v2 game::GlobalRainSpeed;
 long game::GlobalRainTimeModifier;
 truth game::PlayerSumoChampion;
+truth game::TouristHasSpider;
 ulong game::SquarePartEmitationTick = 0;
 long game::Turn;
 truth game::PlayerRunning;
@@ -123,6 +124,7 @@ god** game::God;
 
 cint game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 cint game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
+cint game::MoveNetHackCommandKey[] = { 'y','k','u','h','l','b','j','n','.' };
 
 cv2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
 cv2 game::RelativeMoveVector[] = { v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
@@ -361,6 +363,7 @@ truth game::Init(cfestring& Name)
       SumoWrestling = false;
       GlobalRainTimeModifier = 2048 - (RAND() & 4095);
       PlayerSumoChampion = false;
+      TouristHasSpider = false;
       protosystem::InitCharacterDataBaseFlags();
       memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
       PlayerRunning = false;
@@ -805,7 +808,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
   SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NextTrapID << NecroCounter;
-  SaveFile << SumoWrestling << PlayerSumoChampion << GlobalRainTimeModifier;
+  SaveFile << SumoWrestling << PlayerSumoChampion << TouristHasSpider << GlobalRainTimeModifier;
   long Seed = RAND();
   femath::SetSeed(Seed);
   SaveFile << Seed;
@@ -870,7 +873,7 @@ int game::Load(cfestring& SaveName)
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
   SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID >> NextTrapID >> NecroCounter;
-  SaveFile >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
+  SaveFile >> SumoWrestling >> PlayerSumoChampion >> TouristHasSpider >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<long>(SaveFile));
   SaveFile >> AveragePlayerArmStrengthExperience;
   SaveFile >> AveragePlayerLegStrengthExperience;
@@ -2688,10 +2691,14 @@ character* game::CreateGhost()
 
 int game::GetMoveCommandKey(int I)
 {
-  if(!ivanconfig::GetUseAlternativeKeys())
+  switch(ivanconfig::GetDirectionKeyMap()){
+  case DIR_NORM: 
     return MoveNormalCommandKey[I];
-  else
+  case DIR_ALT:
     return MoveAbnormalCommandKey[I];
+  case DIR_HACK: 
+	return MoveNetHackCommandKey[I];
+  }
 }
 
 long game::GetScore()

@@ -453,7 +453,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
 
   AddContentsToList(Contents, Viewer, ThisDesc, Flags, CENTER, SorterFunction);
   static cchar* WallDescription[] = { "western", "southern",
-					   "nothern", "eastern" };
+					   "northern", "eastern" };
 
   for(c = 0; c < 4; ++c)
     if(AdjacentStack[c])

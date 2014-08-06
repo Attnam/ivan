@@ -26,7 +26,7 @@ class ivanconfig
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
-  static truth GetUseAlternativeKeys() { return UseAlternativeKeys.Value; }
+  static truth GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetBeNice() { return BeNice.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -45,6 +45,7 @@ class ivanconfig
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void ContrastDisplayer(const numberoption*, festring&);
+  static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
@@ -63,7 +64,7 @@ class ivanconfig
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
-  static truthoption UseAlternativeKeys;
+  static cycleoption DirectionKeyMap;
   static truthoption BeNice;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;

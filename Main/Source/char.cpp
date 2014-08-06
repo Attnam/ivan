@@ -1892,7 +1892,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> TemporaryStateCounter[c];
 
   if(SaveFile.Get())
-    SetTeam(game::GetTeam(ReadType<int>(SaveFile)));
+    SetTeam(game::GetTeam(ReadType<ulong>(SaveFile)));
 
   if(SaveFile.Get())
     GetTeam()->SetLeader(this);
@@ -5274,7 +5274,7 @@ void character::TeleportHandler()
 void character::PrintBeginPolymorphMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("An unconfortable uncertainty of who you really are overwhelms you.");
+    ADD_MESSAGE("An uncomfortable uncertainty of who you really are overwhelms you.");
 }
 
 void character::PrintEndPolymorphMessage() const
@@ -8690,11 +8690,28 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
   truth EquipmentChanged = false;
   felist List(CONST_S("Equipment menu [ESC exits]"));
   festring Entry;
-
+  long TotalEquippedWeight;
+  
   for(;;)
   {
     List.Empty();
-    List.EmptyDescription();
+	List.EmptyDescription();
+	
+	TotalEquippedWeight = 0;
+	  
+	for (int c = 0; c < GetEquipments(); ++c){ // if equipment exists, add to TotalEquippedWeight
+		item* Equipment = GetEquipment(c);
+		TotalEquippedWeight += (Equipment) ? Equipment->GetWeight() : 0;
+	}
+	 
+	if (IsPlayer()) {
+		festring Total("Total weight: ");
+		Total << TotalEquippedWeight;
+		Total << "g";
+		
+		List.AddDescription(CONST_S(""));
+		List.AddDescription(Total);
+	}
 
     if(!IsPlayer())
     {
@@ -9222,7 +9239,7 @@ truth character::TryToTalkAboutScience()
     ADD_MESSAGE("%s reveals a number of %s insightful views of %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
     break;
    case 3:
-    ADD_MESSAGE("You exhange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You exchange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
     break;
    case 4:
     ADD_MESSAGE("You engage in a pretty intriguing conversation about %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
@@ -9841,7 +9858,7 @@ void character::ReceiveSirenSong(character* Siren)
       }
       else
       {
-	ADD_MESSAGE("%s is persuated to give %s to %s because of %s beautiful singing.", 
+	ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.", 
 		    CHAR_NAME(DEFINITE), 
 		    What->CHAR_NAME(INDEFINITE), 
 		    Siren->CHAR_NAME(DEFINITE),
@@ -10002,6 +10019,20 @@ truth character::CanTameWithScroll(const character* Tamer) const
 	      || Tamer->GetAttribute(INTELLIGENCE) * 4
 	      + Tamer->GetAttribute(CHARISMA)
 	      >= TamingDifficulty * 5));
+}
+
+truth character::CanTameWithResurrection(const character* Tamer) const
+{
+	int TamingDifficulty = GetTamingDifficulty();
+	
+	if (TamingDifficulty == NO_TAMING)
+		return false;
+	if (TamingDifficulty == 0)
+		return true;
+	
+	return (Tamer->GetAttribute(CHARISMA) >= TamingDifficulty/2);
+	//	|| Tamer->GetAttribute(CHARISMA) + WisIntAvg >= (2*TamingDifficulty)/3);
+		//Alternate formula 2/3 * TamingDifficulty <= CHA + (WIS+INT)/2
 }
 
 truth character::CheckSadism()

@@ -238,19 +238,19 @@ truth throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt be a Our Champion first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt be Our Champion first!\"");
     return true;
   }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt wear Our shining armor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt wear Our shining armor first!\"");
     return true;
   }
 
   if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
     return true;
   }
 

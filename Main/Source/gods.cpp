@@ -328,6 +328,8 @@ void silva::PrayGoodEffect()
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
+    if (game::GetCurrentLevelIndex() == ZOMBIE_LEVEL) 
+		Tunnels = 0;
 
     for(c = 0; c < Tunnels; ++c)
       game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
@@ -692,6 +694,7 @@ void mellis::PrayBadEffect()
 
 void valpurus::Pray()
 {
+  LastPray = 0;
   if(!Timer && Relation == 1000)
   {
     ADD_MESSAGE("You feel %s is very pleased.", GetName());
@@ -730,6 +733,7 @@ void valpurus::Pray()
 
 void mortifer::Pray()
 {
+  LastPray = 0;
   if(!Timer && Relation == 1000)
   {
     ADD_MESSAGE("You feel %s is very pleased.", GetName());
@@ -854,7 +858,7 @@ void scabies::PrayGoodEffect()
 	    Char->GainIntrinsic(LEPROSY);
 	}
 
-    ADD_MESSAGE("You feel a a horrible disease spreading.");
+    ADD_MESSAGE("You feel a horrible disease spreading.");
     return;
   }
 
@@ -1000,7 +1004,7 @@ void cruentus::PrayGoodEffect()
     potion* Bottle = potion::Spawn(0, NO_MATERIALS);
     Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));
     PLAYER->GetGiftStack()->AddItem(Bottle);
-    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(INDEFINITE));
   }
   else
   {

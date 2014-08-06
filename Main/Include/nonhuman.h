@@ -128,6 +128,8 @@ CHARACTER(dog, canine)
 
 CHARACTER(spider, nonhumanoid)
 {
+ public:
+  virtual truth IsSpider() const { return true; }
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
   virtual void GetAICommand();
@@ -459,6 +461,8 @@ CHARACTER(mysticfrog, frog)
 
 CHARACTER(lobhse, largecreature)
 {
+ public:
+  virtual truth IsSpider() const { return true; }
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
   virtual void GetAICommand();

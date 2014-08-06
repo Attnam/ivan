@@ -40,6 +40,7 @@ class globalwindowhandler
   static void EnableControlLoops() { ControlLoopsEnabled = true; }
   static void DisableControlLoops() { ControlLoopsEnabled = false; }
   static truth ShiftIsDown();
+  static festring ScrshotNameHandler(); // Number successive screenshots based on existing filenames
 #ifdef USE_SDL
   static void Init();
   static void SetQuitMessageHandler(truth (*What)())

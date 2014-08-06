@@ -567,7 +567,7 @@ guard
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
-      "\"Again I'm all white! The master guard doesn't like me bringing snow in the barracks...\"";
+      "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
   }
@@ -592,7 +592,7 @@ guard
       "@Dd says gravely: \"You don't have a life. Get it as a shop guard.\"",
       "@Dd seems very suspicious. \"Don't even think of stealing anything.\"",
       "\"Yes, this is a dangerous place to work, but our boss pays us well.\"",
-      "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do any rash moves here.\"",
+      "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't make any rash moves here.\"",
       "\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"";
     }
   }
@@ -622,8 +622,8 @@ guard
     {
       5,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
-      "\"Don't believe Haedlac if he boasts with that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
-      "@Dd shouts excited: \"Attnam victoor!\"",
+      "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
+      "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
@@ -662,7 +662,7 @@ guard
     {
       5,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
-      "\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
+      "\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
       "\"The house of Galladon has served Petrus ever since he took over.\"";
@@ -726,7 +726,7 @@ shopkeeper
       4,
       "\"Welcome to the cheapest banana shop in the world!\"",
       "@Dd sighs: \"It's depressing that the locals have so little purchasing power... But Mellis bless the tourists!\"",
-      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so much magic potions into the soil that nothing here will go bad before you buy it.\"",
+      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
       "\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
     }
     AutomaticallySeen = true;
@@ -1116,7 +1116,7 @@ frog
     4,
     "@Dd frolics in religious ecstasy.",
     "@Dd croaks with pious joy.",
-    "@Dd jumps up and down in enlightened trance.",
+    "@Dd jumps up and down in an enlightened trance.",
     "@Dd goes \"Ribbit! Ribbit!\" full of transcendent delight.";
   }
   NameSingular = "frog";
@@ -1325,7 +1325,7 @@ billswill
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilited.\"";
+  HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilated.\"";
   FriendlyReplies == "\"Praise the Corporation!\"";
   Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
   PanicLevel = 0;
@@ -1377,7 +1377,7 @@ skeleton
   RightSWeaponSkillHits = 10;
   PanicLevel = 0;
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
-  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"";
+  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
   FleshMaterial = BONE;
   DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
   SpillsBlood = false;
@@ -1870,7 +1870,7 @@ spider
     TotalVolume = 5000;
     TotalSize = 50;
     HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
-    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
+    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
   }
 }
 
@@ -3770,7 +3770,7 @@ bananagrower
     "\"I was @pd before Attnam invaded our peaceful land.\"",
     "@Dd glances thoughtfully to the sky: \"Our climate is truly optimal for bananas. It rains all the time here. Damn.\"",
     "\"1 + 1 = 3. I still don't believe it.\"",
-    "@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought the nature brings us no good!\"",
+    "@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought that nature brings us no good!\"",
     "@Dd seems irritated. \"Go away! I know you can leave and I can't, and I'd prefer to forget that fact.\"";
     "@Dd seems very joyful. \"I can finally be @pd again!\"",
     "\"I knew you would come to save us!\"",
@@ -4019,13 +4019,13 @@ elder
   FriendlyReplies =
   {
     10,
-    "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. Good luck.\"",
+    "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
     "\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
     "\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",
     "@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
     "\"For a decade I served this Decos lad as a banana grower like everyone else, but then an elephant stepped on my toe and my leg was amputated. I couldn't climb trees anymore so they made me a tourist guide.\"",
-    "\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven feet wings and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
+    "\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven foot wingspans, and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
     "\"Previously we could use donkeys to carry the bananas. Then one day Attnamese tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
     "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"";
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
@@ -4129,8 +4129,8 @@ floatingeye
   DefaultMana = 0;
   CanOpen = false;
   TotalVolume = 30000;
-  HostileReplies == "@du stares at you.";
-  FriendlyReplies == "@du stares at you.";
+  HostileReplies == "@Dd stares at you.";
+  FriendlyReplies == "@Dd stares at you.";
   TotalSize = 40;
   Adjective = "floating";
   NameSingular = "eye";
@@ -4173,13 +4173,14 @@ eddy
   DefaultMana = 10;
   TotalVolume = 150000; /* most of it is in some other dimension */
   TorsoBitmapPos = 64, 32;
-  HostileReplies == "The @du twirls angrily.";
-  FriendlyReplies == "The @du twirls faster for a moment.";
+  HostileReplies == "@Dd twirls angrily.";
+  FriendlyReplies == "@Dd twirls faster for a moment.";
   TotalSize = 100;
   SkinColor = rgb16(200, 200, 112);
   NameSingular = "eddy";
   NamePlural = "eddies";
-  PostFix = "in space-time continuum";
+  PostFix = "in the space-time continuum";
+  UsesLongArticle = true;
   CanBeGenerated = true;
   HasEyes = false;
   HasHead = false;
@@ -5042,7 +5043,7 @@ sumowrestler
     "\"The ancient rules of this traditional martial art were designed by Mr. Decos himself, so don't complain about them.\"",
     "\"My real name is Alfred, but the viceroy said it wasn't exotic enough for this job.\"",
     "@Dd is in a buoyant mood. \"I love the new rule! Before the invasion, my wife always complained about my weight. Now she doesn't, since she's a slave in Attnam.\"",
-    "@Dd seems to be recalling sorrowful memories. \"When Tweraif was still sovereign, I tried to run a restaurant for a while. It ended in a bankrupt since I ate all the food myself.\"",
+    "@Dd seems to be recalling sorrowful memories. \"When Tweraif was still sovereign, I tried to run a restaurant for a while. It ended in bankruptcy since I ate all the food myself.\"",
     "@Dd winks at you: \"A belt of levitation is really useful for large people.\"",
     "@Dd looks almost panicked. \"Hey, why aren't people bringing me bananas anymore! I'm hungry! Help! Don't let me starve!\"",
     "\"If you attack Attnam, too, please don't liberate my wife. She'll force me to commence a merciless diet for sure!\"",
@@ -5096,7 +5097,7 @@ tourist
       "\"Don't you barbarians really eat anything but fruits? I need some greasy sausages badly!\"",
       "\"We're from Bazaria, the great trader nation, where every coin has equal rights. Richel Decos was our fellow countryman before he bought this town from the Attnamese.\"",
       "\"Back home I plan commercials acted during theatre play breaks.\"",
-      "\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and wellfare it has.\"",
+      "\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and welfare it has.\"",
       "\"I couldn't believe my eyes when the travel agent showed me the extraordinary low prices of Decos Paradise Tours Inc. I believed they were a joke until he revealed the ingenious travel method: customers levitate over the ocean after consuming magical mushrooms! Needless to say, our holiday plans were immediately decided.\"",
       "\"I presume you backward aborigines still boil people alive and eat them. Any chance of me seeing a young, gorgeous maiden facing this horrible destiny? Just for cultural education, you know.\"";
     }
@@ -5162,14 +5163,13 @@ tourist
     LegMainColor = rgb16(50, 100, 132);
     CapColor = rgb16(40, 40, 40);
     AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
-    HostileReplies == "\"Daddy!!! Hit this man!!! He teases me!!!\"";
     FriendlyReplies =
     {
       4,
       "\"A real native!!! Can I touch him, mommy? Can I? Can I?\"",
       "\"I wanna see you sacrifice someone to tree gods!!!\"",
-      "\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"",
-      "\"Did you see that Pong person? He's fatter than daddy!!! I can't believe it!!!\"";
+      "\"Did you see that Pong person? He's fatter than daddy!!! I can't believe it!!!\"",
+	  "\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"";
     }
   }
 }
@@ -5472,7 +5472,7 @@ lobhse
   DefaultName = "Lobh-Se";
   TorsoBitmapPos = 192, 64;
   TotalVolume = 500000;
-  TamingDifficulty = NO_TAMING;
+  TamingDifficulty = 50;
   IsNameable = false;
   IsUnique = true;
   TotalSize = 200;

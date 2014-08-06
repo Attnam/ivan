@@ -33,9 +33,23 @@
 #include "proto.h"
 #endif
 
-command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, truth UsableInWilderness, truth WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
+command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, 
+									char Key3, truth UsableInWilderness, truth WizardModeFunction) 
+		: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), 
+						UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) 
+{
+}
 
-char command::GetKey() const { return !ivanconfig::GetUseAlternativeKeys() ? Key1 : Key2; }
+char command::GetKey() const {
+ switch(ivanconfig::GetDirectionKeyMap()){
+ case DIR_NORM: //Normal
+	return Key1;
+ case DIR_ALT: //Alternative
+	return Key2;
+ case DIR_HACK: //Nethack
+	return Key3;
+ }
+} 
 
 command* commandsystem::Command[] =
 {
@@ -43,68 +57,68 @@ command* commandsystem::Command[] =
 
   /* Sort according to description */
 
-  new command(&Apply, "apply", 'a', 'a', false),
-  new command(&Talk, "chat", 'C', 'C', false),
-  new command(&Close, "close", 'c', 'c', false),
-  new command(&Dip, "dip", '!', '!', false),
-  new command(&Drink, "drink", 'D', 'D', true),
-  new command(&Drop, "drop", 'd', 'd', true),
-  new command(&Eat, "eat", 'e', 'e', true),
-  new command(&WhatToEngrave, "engrave", 'G', 'G', false),
-  new command(&EquipmentScreen, "equipment menu", 'E', 'E', true),
-  new command(&Go, "go", 'g', 'g', false),
-  new command(&GoDown, "go down/enter area", '>', '>', true),
-  new command(&GoUp, "go up", '<', '<', true),
-  new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', false),
-  new command(&Kick, "kick", 'k', 'K', false),
-  new command(&Look, "look", 'l', 'L', true),
-  new command(&AssignName, "name", 'n', 'n', false),
-  new command(&Offer, "offer", 'O', 'f', false),
-  new command(&Open, "open", 'o', 'O', false),
-  new command(&PickUp, "pick up", ',', ',', false),
-  new command(&Pray, "pray", 'p', 'p', false),
-  new command(&Quit, "quit", 'Q', 'Q', true),
-  new command(&Read, "read", 'r', 'r', false),
-  new command(&Rest, "rest/heal", 'h', 'h', true),
-  new command(&Save, "save game", 'S', 'S', true),
-  new command(&ScrollMessagesDown, "scroll messages down", '+', '+', true),
-  new command(&ScrollMessagesUp, "scroll messages up", '-', '-', true),
-  new command(&ShowConfigScreen, "show config screen", '\\', '\\', true),
-  new command(&ShowInventory, "show inventory", 'i', 'i', true),
-  new command(&ShowKeyLayout, "show key layout", '?', '?', true),
-  new command(&DrawMessageHistory, "show message history", 'M', 'M', true),
-  new command(&ShowWeaponSkills, "show weapon skills", '@', '@', true),
-  new command(&Search, "search", 's', 's', false),
-  new command(&Sit, "sit", '_', '_', false),
-  new command(&Throw, "throw", 't', 't', false),
-  new command(&ToggleRunning, "toggle running", 'u', 'U', true),
-  new command(&ForceVomit, "vomit", 'V', 'V', false),
-  new command(&NOP, "wait", '.', '.', true),
-  new command(&WieldInRightArm, "wield in right arm", 'w', 'w', true),
-  new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', true),
+  new command(&Apply, "apply", 'a', 'a', 'a', false),
+  new command(&Talk, "chat", 'C', 'C', 'C', false),
+  new command(&Close, "close", 'c', 'c', 'c', false),
+  new command(&Dip, "dip", '!', '!', '!', false),
+  new command(&Drink, "drink", 'D', 'D', 'D', true),
+  new command(&Drop, "drop", 'd', 'd', 'd', true),
+  new command(&Eat, "eat", 'e', 'e',' e', true),
+  new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
+  new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
+  new command(&Go, "go", 'g', 'g', 'g', false),
+  new command(&GoDown, "go down/enter area", '>', '>', '>', true),
+  new command(&GoUp, "go up", '<', '<', '<', true),
+  new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
+  new command(&Kick, "kick", 'k', 'K', 'K', false),
+  new command(&Look, "look", 'l', 'L', 'L',true),
+  new command(&AssignName, "name", 'n', 'n', 'N',false),
+  new command(&Offer, "offer", 'O', 'f', 'O', false),
+  new command(&Open, "open", 'o', 'O', 'o', false),
+  new command(&PickUp, "pick up", ',', ',', ',', false),
+  new command(&Pray, "pray", 'p', 'p', 'p',false),
+  new command(&Quit, "quit", 'Q', 'Q', 'Q', true),
+  new command(&Read, "read", 'r', 'r', 'r', false),
+  new command(&Rest, "rest/heal", 'h', 'h', 'H', true),
+  new command(&Save, "save game", 'S', 'S', 'S', true),
+  new command(&ScrollMessagesDown, "scroll messages down", '+', '+', '+', true),
+  new command(&ScrollMessagesUp, "scroll messages up", '-', '-', '-', true),
+  new command(&ShowConfigScreen, "show config screen", '\\', '\\', '\\', true),
+  new command(&ShowInventory, "show inventory", 'i', 'i', 'i', true),
+  new command(&ShowKeyLayout, "show key layout", '?', '?', '?', true),
+  new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
+  new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
+  new command(&Search, "search", 's', 's', 's', false),
+  new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&Throw, "throw", 't', 't', 't', false),
+  new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
+  new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
+  new command(&NOP, "wait", '.', '.', '.', true),
+  new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
+  new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', 'X', true),
+  new command(&WizardMode, "wizard mode activation", 'X', 'X', 'X', true),
 #endif
-  new command(&Zap, "zap", 'z', 'z', false),
+  new command(&Zap, "zap", 'z', 'z', 'z', false),
 
 #ifdef WIZARD
 
   /* Sort according to key */
 
-  new command(&RaiseStats, "raise stats", '1', '1', true, true),
-  new command(&LowerStats, "lower stats", '2', '2', true, true),
-  new command(&SeeWholeMap, "see whole map", '3', '3', true, true),
-  new command(&WalkThroughWalls, "toggle walk through walls mode", '4', '4', true, true),
-  new command(&RaiseGodRelations, "raise your relations to the gods", '5', '5', true, true),
-  new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
-  new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
-  new command(&GainAllItems, "gain all items", '$', '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, false),
-  new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
-  new command(&SummonMonster, "summon monster", '&', '&', false, true),
-  new command(&LevelTeleport, "level teleport", '|', '|', false, true),
-  new command(&Possess, "possess creature", '{', '{', false, true),
-  new command(&Polymorph, "polymorph", '[', '[', true, true),
+  new command(&RaiseStats, "raise stats", '1', '1', '1', true, true),
+  new command(&LowerStats, "lower stats", '2', '2', '2', true, true),
+  new command(&SeeWholeMap, "see whole map", '3', '3', '3', true, true),
+  new command(&WalkThroughWalls, "toggle walk through walls mode", '4', '4', '4', true, true),
+  new command(&RaiseGodRelations, "raise your relations to the gods", '5', '5', '5', true, true),
+  new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', '6', true, true),
+  new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', '\"', true, true),
+  new command(&GainAllItems, "gain all items", '$', '$', '$', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', '*', true, true),
+  new command(&DetachBodyPart, "detach a limb", '0', '0', '0', true, true),
+  new command(&SummonMonster, "summon monster", '&', '&', '&', false, true),
+  new command(&LevelTeleport, "level teleport", '|', '|', '|', false, true),
+  new command(&Possess, "possess creature", '{', '{', '{', false, true),
+  new command(&Polymorph, "polymorph", '[', '[', '[', true, true),
 
 #endif
 
@@ -432,7 +446,7 @@ truth commandsystem::PickUp(character* Char)
 
 truth commandsystem::Quit(character* Char)
 {
-  if(game::TruthQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
+  if(game::TruthQuestion(CONST_S("Your quest is not yet completed! Really quit? [y/N]")))
   {
     Char->ShowAdventureInfo();
     festring Msg = CONST_S("cowardly quit the game");
@@ -1541,7 +1555,7 @@ truth commandsystem::ToggleRunning(character* Char)
      && PLAYER->StateIsActivated(PANIC)
      && PLAYER->GetTirednessState() != FAINTING)
   {
-    ADD_MESSAGE("You are too scared to move at normal pace.");
+    ADD_MESSAGE("You are too scared to move at a normal pace.");
     return false;
   }
 

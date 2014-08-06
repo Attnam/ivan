@@ -85,7 +85,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
     if(Key == K_Control_Print)
     {
-      DOUBLE_BUFFER->Save("Scrshot.bmp");
+      DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       Key = 0;
     }
   }
@@ -256,12 +256,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
      case SDLK_SYSREQ:
      case SDLK_PRINT:
-#ifdef WIN32
-      DOUBLE_BUFFER->Save("Scrshot.bmp");
-#else
-      DOUBLE_BUFFER->Save(festring(getenv("HOME")) + "/Scrshot.bmp");
-#endif
+
+      DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
+	  
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
 	 && (Event->key.keysym.mod & KMOD_LCTRL
@@ -290,6 +288,36 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 truth globalwindowhandler::ShiftIsDown() {
   return false;
 
+}
+
+festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be used for screenshot
+	static int ScrshotCount = 0;
+	
+	festring ScrshotNum;
+	if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
+		ScrshotNum << "00" << ScrshotCount;
+	else if (ScrshotCount < 100)
+		ScrshotNum << "0" << ScrshotCount;
+	else
+		ScrshotNum << ScrshotCount;
+	
+	festring ScrshotName;
+	#ifdef WIN32
+	ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
+	#else
+	ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
+	#endif
+	
+	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
+	if (Scrshot) {
+    // file exists; close file and increment ScrshotCount
+		fclose(Scrshot);
+		++ScrshotCount;
+		return ScrshotNameHandler();
+	} 
+
+    // if file doesn't exist; we can use this filename
+	return ScrshotName;
 }
 #endif
 

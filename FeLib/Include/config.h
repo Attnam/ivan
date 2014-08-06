@@ -23,6 +23,7 @@ struct configoption;
 struct stringoption;
 struct numberoption;
 struct truthoption;
+struct cycleoption;
 
 class configsystem
 {
@@ -34,12 +35,15 @@ class configsystem
   static void NormalStringDisplayer(const stringoption*, festring&);
   static void NormalNumberDisplayer(const numberoption*, festring&);
   static void NormalTruthDisplayer(const truthoption*, festring&);
+  static void NormalCycleDisplayer(const cycleoption*, festring&);
   static truth NormalStringChangeInterface(stringoption*);
   static truth NormalNumberChangeInterface(numberoption*);
   static truth NormalTruthChangeInterface(truthoption*);
+  static truth NormalCycleChangeInterface(cycleoption*);
   static void NormalStringChanger(stringoption*, cfestring&);
   static void NormalNumberChanger(numberoption*, long);
   static void NormalTruthChanger(truthoption*, truth);
+  static void NormalCycleChanger(cycleoption*, long);
   static void SetConfigFileName(cfestring& What)
   { ConfigFileName = What; }
  private:
@@ -135,6 +139,28 @@ struct truthoption : public configoption
   void (*ValueDisplayer)(const truthoption*, festring&);
   truth (*ChangeInterface)(truthoption*);
   void (*ValueChanger)(truthoption*, truth);
+};
+
+struct cycleoption : public configoption
+{
+  cycleoption(cchar*, cchar*, long, long,
+			void (*)(const cycleoption*, festring&)
+	       = &configsystem::NormalCycleDisplayer,
+	       truth (*)(cycleoption*)
+	       = &configsystem::NormalCycleChangeInterface,
+	       void (*)(cycleoption*, long)
+	       = &configsystem::NormalCycleChanger);
+  virtual void SaveValue(std::ofstream&) const;
+  virtual void LoadValue(inputfile&);
+  virtual void DisplayeValue(festring& Entry) const
+  { ValueDisplayer(this, Entry); }
+  virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
+  void ChangeValue(long What) { ValueChanger(this, What); }
+  long Value;
+  long CycleCount; // Number of options to cycle through
+  void (*ValueDisplayer)(const cycleoption*, festring&);
+  truth (*ChangeInterface)(cycleoption*);
+  void (*ValueChanger)(cycleoption*, long);
 };
 
 #endif

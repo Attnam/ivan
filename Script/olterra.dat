@@ -243,7 +243,7 @@ decoration
     BitmapPos = 0, 400;
     RestModifier = 2;
     MaterialColorB = rgb16(200, 200, 0);
-    SitMessage = "The couch is extremely soft and confortable. You relax well.";
+    SitMessage = "The couch is extremely soft and comfortable. You relax well.";
     RestMessage = "You rest well on the soft sofa.";
     HPModifier = 25;
     LeftOverItems == stone { Times = 1:2; }
@@ -261,7 +261,7 @@ decoration
     ShowMaterial = false;
     RestModifier = 5;
     SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
-    RestMessage = "You lay yourself on the confortable bed.";
+    RestMessage = "You lay yourself on the comfortable bed.";
     HPModifier = 25;
     LeftOverItems == 0;
   }
@@ -527,7 +527,7 @@ olterraincontainer /* olterrain->decoration-> */
     MainMaterialConfig == FIR_WOOD;
     NameSingular = "bookcase";
     BitmapPos = 16, 272;
-    SitMessage = "The bookcase is very unconfortable to sit on.";
+    SitMessage = "The bookcase is very uncomfortable to sit on.";
     StorageVolume = 100000;
     HPModifier = 20;
     AttachedGod = SOPHOS;
@@ -540,7 +540,7 @@ olterraincontainer /* olterrain->decoration-> */
     MainMaterialConfig == FIR_WOOD;
     NameSingular = "chest of drawers";
     BitmapPos = 0, 224;
-    SitMessage = "The chest of drawers is very unconfortable to sit on.";
+    SitMessage = "The chest of drawers is very uncomfortable to sit on.";
     StorageVolume = 50000;
     HPModifier = 40;
     AttachedGod = SOPHOS;
@@ -552,7 +552,7 @@ olterraincontainer /* olterrain->decoration-> */
     MainMaterialConfig == FIR_WOOD;
     NameSingular = "";
     BitmapPos = 16, 128;
-    SitMessage = "The shelf is very unconfortable to sit on.";
+    SitMessage = "The shelf is very uncomfortable to sit on.";
     StorageVolume = 80000;
     HPModifier = 20;
     AttachedGod = ATAVUS;

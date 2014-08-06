@@ -2940,7 +2940,7 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
     {
       character* Victim = Neighbour->GetCharacter();
 
-      if(Victim)
+      if(Victim && Terrorist)
 				Terrorist->Hostility(Victim);
     }
   } 

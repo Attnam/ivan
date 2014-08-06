@@ -3696,7 +3696,8 @@ pantheonbook /* holybook-> */
   BitmapPos = 32, 32;
   FormModifier = 20;
   Adjective = "large and mysterious";
-  NameSingular = "saga of the pantheon";
+  NameSingular = "saga"; 
+  PostFix = "of the pantheon";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == PARCHMENT;
   Price = 500;

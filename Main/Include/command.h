@@ -20,7 +20,7 @@ typedef truth (item::*sorter)(ccharacter*) const;
 class command
 {
  public:
-  command(truth (*)(character*), cchar*, char, char, truth, truth = false);
+  command(truth (*)(character*), cchar*, char, char, char, truth, truth = false);
   truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   cchar* GetDescription() const { return Description; }
   char GetKey() const;
@@ -31,6 +31,7 @@ class command
   cchar* Description;
   char Key1;
   char Key2;
+  char Key3;
   truth UsableInWilderness;
   truth WizardModeFunction;
 };

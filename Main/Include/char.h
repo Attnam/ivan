@@ -911,6 +911,7 @@ class character : public entity, public id
   virtual truth CheckIfSatiated() { return GetNP() > SATIATED_LEVEL; }
   virtual void SignalNaturalGeneration() { }
   virtual truth IsBunny() const { return false; }
+  virtual truth IsSpider() const { return false; }
   void SetConfig(int, int = 0);
   bodypartslot* GetBodyPartSlot(int I) { return &BodyPartSlot[I]; }
   virtual truth CheckConsume(cfestring&) const;
@@ -1081,6 +1082,7 @@ class character : public entity, public id
   truth CanTameWithDulcis(const character*) const;
   truth CanTameWithLyre(const character*) const;
   truth CanTameWithScroll(const character*) const;
+  truth CanTameWithResurrection(const character*) const;
   truth IsCharmable() const { return GetTamingDifficulty() != NO_TAMING; }
   truth CheckSadism();
   virtual truth HasSadistAttackMode() const { return IsUsingLegs(); }

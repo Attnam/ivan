@@ -383,6 +383,8 @@ class game
   static void SetGlobalRainLiquid(liquid* What) { GlobalRainLiquid = What; }
   static void SetGlobalRainSpeed(v2 What) { GlobalRainSpeed = What; }
   static truth PlayerIsSumoChampion() { return PlayerSumoChampion; }
+  static truth ChildTouristHasSpider() { return TouristHasSpider; }
+  static void SetTouristHasSpider() { TouristHasSpider = true; }
   static v2 GetSunLightDirectionVector();
   static int CalculateMinimumEmitationRadius(col24);
   static ulong IncreaseSquarePartEmitationTicks();
@@ -436,6 +438,7 @@ class game
   static int CurrentDungeonIndex;
   static cint MoveNormalCommandKey[];
   static cint MoveAbnormalCommandKey[];
+  static cint MoveNetHackCommandKey[];
   static cv2 MoveVector[];
   static cv2 RelativeMoveVector[];
   static cv2 BasicMoveVector[];
@@ -511,6 +514,7 @@ class game
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
+  static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];
   static long Turn;

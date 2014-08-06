@@ -2343,6 +2343,9 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 
 void lobhse::GetAICommand()
 {
+  SeekLeader(GetLeader()); //will follow if tamed
+  if(FollowLeader(GetLeader()))
+  	return;
   if(MoveRandomly())
     return;
 
