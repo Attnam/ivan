@@ -22,36 +22,36 @@ truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRust
 
 void solid::Be(ulong Flags)
 {
-	if(BurnCheckCounter++ >= 50)
+  if(BurnCheckCounter++ >= 50)
   {
     //if(MotherEntity->AllowBurn())
-		if(IsBurning())
+    if(IsBurning())
     {
       if(Flags & HASTE)
-				BurnCounter += 125;
+        BurnCounter += 125;
       else if(Flags & SLOW)
-				BurnCounter += 5;
+        BurnCounter += 5;
       else
-				BurnCounter += 25;
+        BurnCounter += 25;
 
       if(BurnCounter < 1000) //GetBurnModifier() = 1000 for now
       {
-				if(BurnCounter << 1 >= 1000)//GetBurnModifier() = 1000
-				{
-					int NewBurnLevel = (6 * BurnCounter / 1000) - 2; //GetBurnModifier() = 1000
+        if(BurnCounter << 1 >= 1000)//GetBurnModifier() = 1000
+        {
+          int NewBurnLevel = (6 * BurnCounter / 1000) - 2; //GetBurnModifier() = 1000
 
-					if(NewBurnLevel != GetBurnLevel())
-					{
-						SetBurnLevel(GetBurnLevel() + 1);
-						//MotherEntity->SignalBurnLevelChange(this); //use this to signal to the player that the item burns more (use TryToRust() as example)
-					}
-				}
+          if(NewBurnLevel != GetBurnLevel())
+          {
+            SetBurnLevel(GetBurnLevel() + 1);
+            //MotherEntity->SignalBurnLevelChange(this); //use this to signal to the player that the item burns more (use TryToRust() as example)
+          }
+        }
       }
       else
       {
-				//SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
-				//MotherEntity->SignalBurn(this); //this is where it gets completely destroyed, so items miscitems etc will need a SignalSpoil
-				//destroy the burning object, else it will remained charred indefinitely
+        //SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
+        //MotherEntity->SignalBurn(this); //this is where it gets completely destroyed, so items miscitems etc will need a SignalSpoil
+        //destroy the burning object, else it will remained charred indefinitely
       }
     }
 
@@ -139,42 +139,42 @@ void organic::Be(ulong Flags)
     if(MotherEntity->AllowSpoil())
     {
       if(Flags & HASTE)
-				SpoilCounter += 125;
+        SpoilCounter += 125;
       else if(Flags & SLOW)
-				SpoilCounter += 5;
+        SpoilCounter += 5;
       else
-				SpoilCounter += 25;
+        SpoilCounter += 25;
 
       if(SpoilCounter < GetSpoilModifier())
       {
-				if(SpoilCounter << 1 >= GetSpoilModifier())
-				{
-					int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+        if(SpoilCounter << 1 >= GetSpoilModifier())
+        {
+          int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-					if(NewSpoilLevel != SpoilLevel)
-					{
-						SpoilLevel = NewSpoilLevel;
-						MotherEntity->SignalSpoilLevelChange(this);
-					}
-				}
+          if(NewSpoilLevel != SpoilLevel)
+          {
+            SpoilLevel = NewSpoilLevel;
+            MotherEntity->SignalSpoilLevelChange(this);
+          }
+        }
       }
       else
       {
-				SpoilLevel = 8;
-				MotherEntity->SignalSpoil(this);
+        SpoilLevel = 8;
+        MotherEntity->SignalSpoil(this);
       }
     }
 
     SpoilCheckCounter = 0;
   }
-	
-	solid::Be(Flags);
+  
+  solid::Be(Flags);
 }
 
 void organic::Save(outputfile& SaveFile) const
 {
   //material::Save(SaveFile);
-	solid::Save(SaveFile);
+  solid::Save(SaveFile);
   SaveFile << SpoilCounter << SpoilCheckCounter << SpoilLevel;
 }
 
@@ -182,14 +182,14 @@ void organic::Load(inputfile& SaveFile)
 {
   //material::Load(SaveFile);
   solid::Load(SaveFile);
-	SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
+  SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
 }
 
 void organic::PostConstruct()
 {
   SpoilLevel = SpoilCheckCounter = 0;
   SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
-	solid::PostConstruct();
+  solid::PostConstruct();
 }
 
 void flesh::PostConstruct()
@@ -352,14 +352,14 @@ truth ironalloy::AddRustLevelDescription(festring& Name, truth Articled) const
 void ironalloy::Save(outputfile& SaveFile) const
 {
   //material::Save(SaveFile);
-	solid::Save(SaveFile);
+  solid::Save(SaveFile);
   SaveFile << RustData;
 }
 
 void ironalloy::Load(inputfile& SaveFile)
 {
   //material::Load(SaveFile);
-	solid::Load(SaveFile);
+  solid::Load(SaveFile);
   SaveFile >> RustData;
 }
 
