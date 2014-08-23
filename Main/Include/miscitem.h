@@ -43,6 +43,7 @@ ITEM(materialcontainer, item)
   virtual void CalculateEmitation();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual int GetSparkleFlags() const;
+  virtual void SignalBurn(material*);
  protected:
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;

@@ -394,6 +394,30 @@ void meleeweapon::SignalSpoil(material* Material)
   }
 }
 
+void meleeweapon::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(Material == MainMaterial)
+  {
+    if(CanBeSeenByPlayer())
+      if(SecondaryMaterial->GetVolume())
+	ADD_MESSAGE("The edge of %s burns away.", GetExtendedDescription().CStr());
+      else
+	ADD_MESSAGE("%s burns away.", GetExtendedDescription().CStr());
+
+    RemoveMainMaterial();
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The handle of %s burns away", GetExtendedDescription().CStr());
+
+    delete RemoveSecondaryMaterial();
+  }
+}
+
 void meleeweapon::AddPostFix(festring& String, int Case) const
 {
   item::AddPostFix(String, Case);

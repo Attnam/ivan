@@ -1348,6 +1348,27 @@ void materialcontainer::SignalSpoil(material* Material)
   }
 }
 
+void materialcontainer::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(Material == MainMaterial)
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s becomes so burnt that it cannot hold its contents anymore.", CHAR_NAME(DEFINITE));
+
+    RemoveMainMaterial();
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The contents of %s burns completely.", CHAR_NAME(DEFINITE));
+
+    delete RemoveSecondaryMaterial();
+  }
+}
+
 truth materialcontainer::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   if(!item::CanBePiledWith(Item, Viewer))

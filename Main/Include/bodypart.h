@@ -155,6 +155,7 @@ ITEM(bodypart, item)
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
+  virtual void SignalBurn(material*);
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -526,7 +527,8 @@ ITEM(corpse, item)
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
-	virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual void SignalBurn(material*);
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;

@@ -43,7 +43,7 @@ void id::AddName(festring& Name, int Case) const
     if(AddRustLevelDescription(Name, Articled))
       Articled = false;
 
-		if(AddBurnLevelDescription(Name, Articled))
+    if(AddBurnLevelDescription(Name, Articled))
       Articled = false;
 
     if(AddStateDescription(Name, Articled))

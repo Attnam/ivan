@@ -34,6 +34,7 @@ ITEM(meleeweapon, item)
   virtual int GetMaterials() const { return 2; }
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual void SignalSpoil(material*);
+  virtual void SignalBurn(material*);
   virtual void Be();
   virtual truth IsWeapon(ccharacter*) const { return true; }
   virtual int GetEnchantment() const { return Enchantment; }

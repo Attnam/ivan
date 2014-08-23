@@ -723,6 +723,21 @@ void item::SignalSpoil(material*)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
+void item::SignalBurn(material*)
+{
+  if(!Exists())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns away completely.", GetExtendedDescription().CStr());
+
+  truth Equipped = PLAYER->Equips(this);
+  Disappear();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+}
+
 item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 {
   item* Duplicated = Duplicate(Flags);
@@ -859,6 +874,11 @@ void item::DonateSlotTo(item* Item)
 int item::GetSpoilLevel() const
 {
   return MainMaterial->GetSpoilLevel();
+}
+
+int item::GetBurnLevel() const
+{
+  return MainMaterial->GetBurnLevel();
 }
 
 void item::SignalSpoilLevelChange(material*)
@@ -1153,6 +1173,10 @@ void item::SignalRustLevelChange()
 
 void item::SignalBurnLevelChange()
 {
+  if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
+    for(int c = 0; c < SquaresUnder; ++c)
+      GetSquareUnder(c)->IncStaticAnimatedEntities();
+  
   SignalVolumeAndWeightChange();
   UpdatePictures();
   SendNewDrawAndMemorizedUpdateRequest();
@@ -1311,12 +1335,12 @@ void item::TestActivationEnergy(int Damage)
 {
   if(MainMaterial)
   {
-    int molamola = (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) );
+    int molamola = (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) );
     ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
   }
 
   if(MainMaterial)
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= (2 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
     {
       if(CanBeSeenByPlayer())
       {
@@ -1500,6 +1524,15 @@ truth item::IsVeryCloseToSpoiling() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToSpoiling())
+      return false;
+
+  return true;
+}
+
+truth item::IsVeryCloseToBurning() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToBurning())
       return false;
 
   return true;

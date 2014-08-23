@@ -49,8 +49,8 @@ void solid::Be(ulong Flags)
       }
       else
       {
-        //SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
-        //MotherEntity->SignalBurn(this); //this is where it gets completely destroyed, so items miscitems etc will need a SignalSpoil
+        SetBurnLevel(HEAVILY_BURNT);//SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
+        MotherEntity->SignalBurn(this); //this is where it gets completely destroyed, so items miscitems etc will need a SignalSpoil
         //destroy the burning object, else it will remained charred indefinitely
       }
     }

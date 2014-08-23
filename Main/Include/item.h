@@ -470,6 +470,7 @@ class item : public object
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
+  virtual int GetBurnLevel() const;
   void ResetSpoiling();
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
@@ -511,6 +512,7 @@ class item : public object
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();
+  virtual void SignalBurn(material*);
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }
@@ -557,6 +559,7 @@ class item : public object
   int NeedsBe() const { return LifeExpectancy; }
   truth IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   truth IsVeryCloseToSpoiling() const;
+  truth IsVeryCloseToBurning() const;
   virtual truth IsValuable() const;
   virtual truth Necromancy(character*) { return false; }
   virtual void CalculateEnchantment() { }

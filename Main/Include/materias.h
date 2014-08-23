@@ -27,7 +27,7 @@ MATERIAL(solid, material)
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const; //common
   virtual void Load(inputfile&); //common
-	//virtual truth IsSparkling() const; //not ready
+  //virtual truth IsSparkling() const; //not ready
   virtual int GetBurnData() const { return BurnData; }
   //virtual truth TryToBurn(long, long = 0); //not necessary?
   virtual truth AddBurnLevelDescription(festring&, truth) const;
@@ -38,14 +38,15 @@ MATERIAL(solid, material)
   //virtual truth CanBurn() const { return true; } //not ready
   //virtual int GetBurnPercentage() const; //not necessary?
   //virtual truth Burns() const { return true; } // the material only burns if it can burn
-	//virtual void SetIsBurning(int What) {Burning = What;} // now appears in materia.h
-	//virtual int IsBurning() const { return Burning; } // now appears in materia.h
+  //virtual void SetIsBurning(int What) {Burning = What;} // now appears in materia.h
+  //virtual int IsBurning() const { return Burning; } // now appears in materia.h
+  virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
  protected:
   virtual void PostConstruct();
   ushort BurnCounter;
   uchar BurnCheckCounter;
   int BurnData;
-	//int Burning; // now appears in materia.h
+  //int Burning; // now appears in materia.h
 };
 
 MATERIAL(organic, solid)

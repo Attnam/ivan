@@ -6030,6 +6030,14 @@ void character::SignalSpoil()
     Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
+void character::SignalBurn()
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->SignalBurn(0);
+  else
+    Disappear(0, "burn", &item::IsVeryCloseToBurning);
+}
+
 truth character::CanHeal() const
 {
   for(int c = 0; c < BodyParts; ++c)

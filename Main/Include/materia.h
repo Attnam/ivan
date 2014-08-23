@@ -166,6 +166,7 @@ class material
   truth IsTransparent() const { return GetAlpha() != 255; }
   virtual long GetTotalNutritionValue() const;
   virtual truth IsVeryCloseToSpoiling() const { return false; }
+  virtual truth IsVeryCloseToBurning() const { return false; }
   virtual void AddWetness(long) { }
   virtual int GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }

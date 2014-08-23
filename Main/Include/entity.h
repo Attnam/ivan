@@ -49,8 +49,8 @@ class entity
   virtual truth IsOnGround() const = 0;
   virtual truth AllowContentEmitation() const { return true; }
   virtual void SignalRustLevelChange() { }
-	//virtual void SignalBurn(material*) { } //how to do this??
-	virtual void SignalBurnLevelChange() { }
+  virtual void SignalBurn(material*) { }
+  virtual void SignalBurnLevelChange() { }
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
   virtual void SignalDisappearance() { }

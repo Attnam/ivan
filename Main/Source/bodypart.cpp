@@ -1687,6 +1687,19 @@ void corpse::SignalSpoil(material*)
   GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
+void bodypart::SignalBurn(material* Material)
+{
+  if(Master)
+    Master->SignalBurn();
+  else
+    item::SignalBurn(Material);
+}
+
+void corpse::SignalBurn(material*)
+{
+  GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
+}
+
 void corpse::SignalDisappearance()
 {
   GetDeceased()->Disappear(this, "disappear", &item::IsVeryCloseToDisappearance);
