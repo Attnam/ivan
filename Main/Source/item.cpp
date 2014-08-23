@@ -1335,12 +1335,12 @@ void item::TestActivationEnergy(int Damage)
 {
   if(MainMaterial)
   {
-    int molamola = (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) );
+    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
     ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
   }
 
   if(MainMaterial)
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       if(CanBeSeenByPlayer())
       {

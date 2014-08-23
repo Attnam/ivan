@@ -614,6 +614,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Alpha);
   ADD_MEMBER(Flexibility);
   ADD_MEMBER(SpoilModifier);
+  ADD_MEMBER(BurnModifier);
   ADD_MEMBER(EffectStrength);
   ADD_MEMBER(DigProductMaterial);
   ADD_MEMBER(ConsumeWisdomLimit);

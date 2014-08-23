@@ -34,11 +34,11 @@ void solid::Be(ulong Flags)
       else
         BurnCounter += 25;
 
-      if(BurnCounter < 1000) //GetBurnModifier() = 1000 for now
+      if(BurnCounter < GetBurnModifier())
       {
-        if(BurnCounter << 1 >= 1000)//GetBurnModifier() = 1000
+        if(BurnCounter << 1 >= GetBurnModifier())
         {
-          int NewBurnLevel = (6 * BurnCounter / 1000) - 2; //GetBurnModifier() = 1000
+          int NewBurnLevel = (6 * BurnCounter / GetBurnModifier()) - 2;
 
           if(NewBurnLevel != GetBurnLevel())
           {
@@ -57,6 +57,15 @@ void solid::Be(ulong Flags)
 
     BurnCheckCounter = 0;
   }
+}
+
+int solid::GetBurnModifier() const
+{
+  int Str = material::GetStrengthValue();
+  int FR = material::GetFireResistance();
+  int Den = material::GetDensity();
+  
+  return (500 + Den + ((Str * FR) >> 1));
 }
 
 void solid::SetBurnLevel(int What)

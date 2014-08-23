@@ -23,6 +23,7 @@ MATERIAL(solid, material)
   solid() : BurnData(NOT_BURNT) { }
   virtual void SetBurnLevel(int);
   virtual int GetStrengthValue() const;
+  virtual int GetBurnModifier() const;
   virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const; //common
@@ -38,15 +39,12 @@ MATERIAL(solid, material)
   //virtual truth CanBurn() const { return true; } //not ready
   //virtual int GetBurnPercentage() const; //not necessary?
   //virtual truth Burns() const { return true; } // the material only burns if it can burn
-  //virtual void SetIsBurning(int What) {Burning = What;} // now appears in materia.h
-  //virtual int IsBurning() const { return Burning; } // now appears in materia.h
   virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
  protected:
   virtual void PostConstruct();
   ushort BurnCounter;
   uchar BurnCheckCounter;
   int BurnData;
-  //int Burning; // now appears in materia.h
 };
 
 MATERIAL(organic, solid)
