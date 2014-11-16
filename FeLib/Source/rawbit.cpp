@@ -325,12 +325,14 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
 	  int Red = (ThisColor >> 8 & 0xF8) * Index;
 	  int Green = (ThisColor >> 3 & 0xFC) * Index;
 	  int Blue = (ThisColor << 3 & 0xF8) * Index;
+          int Max = (Red > Green ? Red : Green);
+          Max = (Max > Blue ? Max : Blue);
 
 	  if(Rusted && RustData[ColorIndex]
 	     && (RustData[ColorIndex] & 3UL)
 	     > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
 	  {
-	    Green = ((Green << 1) + Green) >> 2;
+            Green = ((Green << 1) + Green) >> 2;
 	    Blue >>= 1;
 	  }
 
@@ -338,9 +340,13 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
        && (BurnData[ColorIndex] & 3UL)
        > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
     {
-      Red = 0x38; //gum
-      Green = 0x3C; //gum
-      Blue = 0x38; //gum
+      //Red = 0x38; //gum
+      //Green = 0x3C; //gum
+      //Blue = 0x38; //gum
+      Max >>= 2;
+      Red = Max + (Red >> 3);
+      Green = Max + (Green >> 3);
+      Blue = Max + (Blue >> 3);
     }
 
 	  if(Red > 0x7FF)
