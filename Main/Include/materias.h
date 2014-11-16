@@ -23,6 +23,7 @@ MATERIAL(solid, material)
   solid() : BurnData(NOT_BURNT) { }
   virtual void SetBurnLevel(int);
   virtual int GetStrengthValue() const;
+  virtual int GetBurnModifier() const;
   virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const; //common
@@ -31,22 +32,18 @@ MATERIAL(solid, material)
   virtual int GetBurnData() const { return BurnData; }
   //virtual truth TryToBurn(long, long = 0); //not necessary?
   virtual truth AddBurnLevelDescription(festring&, truth) const;
-  //virtual truth IsVeryCloseToBurn() const { return BurnLevel == 8; } //not ready
   virtual int GetBurnLevel() const { return BurnData & 3; } //common
-  //virtual void ResetBurning(); //not ready
+  virtual void ResetBurning();
   //virtual void SetBurnCounter(int); //provisionally not necessary
   //virtual truth CanBurn() const { return true; } //not ready
   //virtual int GetBurnPercentage() const; //not necessary?
   //virtual truth Burns() const { return true; } // the material only burns if it can burn
-  //virtual void SetIsBurning(int What) {Burning = What;} // now appears in materia.h
-  //virtual int IsBurning() const { return Burning; } // now appears in materia.h
   virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
  protected:
   virtual void PostConstruct();
   ushort BurnCounter;
   uchar BurnCheckCounter;
   int BurnData;
-  //int Burning; // now appears in materia.h
 };
 
 MATERIAL(organic, solid)
@@ -74,6 +71,7 @@ MATERIAL(organic, solid)
 
 MATERIAL(gas, material)
 {
+  virtual int IsBurning() const { return 0; }
 };
 
 MATERIAL(liquid, material)
@@ -85,6 +83,7 @@ MATERIAL(liquid, material)
   void TouchEffect(character*, int);
   void TouchEffect(lterrain*);
   liquid* SpawnMoreLiquid(long Volume) const { return static_cast<liquid*>(SpawnMore(Volume)); }
+  virtual int IsBurning() const { return 0; }
 };
 
 MATERIAL(flesh, organic)

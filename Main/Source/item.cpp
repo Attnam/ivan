@@ -642,11 +642,14 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
-  if(!IsBurning() && Type & FIRE)
+  if(MainMaterial)
   {
-    TestActivationEnergy(Damage);
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
   }
-
+  
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -1335,12 +1338,12 @@ void item::TestActivationEnergy(int Damage)
 {
   if(MainMaterial)
   {
-    int molamola = (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) );
+    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
     ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
   }
 
   if(MainMaterial)
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= (1 * GetMainMaterial()->GetStrengthValue() + 10 * (MainMaterial->GetFireResistance() + GetResistance(FIRE)) ))
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       if(CanBeSeenByPlayer())
       {
@@ -1352,16 +1355,20 @@ void item::TestActivationEnergy(int Damage)
 
 void item::Ignite(/*character* Applier*/)
 {
-  //if(!IsBurning())
-    //{
       MainMaterial->SetIsBurning(true);
       SignalEmitationIncrease(MakeRGB24(150, 120, 90));
       UpdatePictures();
       ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
-      //return true;
-    //}
-  
-  //return false;
+}
+
+void item::Extinguish(/*character* Applier*/)
+{
+  MainMaterial->SetIsBurning(false);
+  //SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90)/*ToBeRemoved->GetEmitation()*/);
+  UpdatePictures();
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("The flames on the burning %s are now extinguished.", CHAR_NAME(DEFINITE));
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)

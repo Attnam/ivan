@@ -66,6 +66,7 @@ struct materialdatabase : public databasebase
   int Stickiness;
   truth DisablesPanicWhenConsumed;
   int FireResistance;
+  int BurnModifier;
 };
 
 class materialprototype
@@ -143,6 +144,7 @@ class material
   DATA_BASE_VALUE(alpha, Alpha);
   DATA_BASE_VALUE(int, Flexibility);
   DATA_BASE_VALUE(int, SpoilModifier);
+  DATA_BASE_VALUE(int, BurnModifier);
   DATA_BASE_VALUE(int, EffectStrength);
   DATA_BASE_VALUE(int, DigProductMaterial);
   DATA_BASE_VALUE(int, ConsumeWisdomLimit);

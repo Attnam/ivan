@@ -64,6 +64,7 @@ class object : public entity, public id
   virtual void SetIsBurning(int What) {Burning = What;}
   //virtual int IsBurning() const { return Burning; }
   virtual int IsBurning() const;
+  //virtual int IsBurning() const { return 0; }
  protected:
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);

@@ -13,6 +13,7 @@
 /* Compiled through materset.cpp */
 
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
+void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0); }
 
 cchar* liquid::GetConsumeVerb() const { return "drinking"; }
 
@@ -34,29 +35,42 @@ void solid::Be(ulong Flags)
       else
         BurnCounter += 25;
 
-      if(BurnCounter < 1000) //GetBurnModifier() = 1000 for now
+      if(BurnCounter < GetBurnModifier())
       {
-        if(BurnCounter << 1 >= 1000)//GetBurnModifier() = 1000
+        if(BurnCounter << 1 >= GetBurnModifier())
         {
-          int NewBurnLevel = (6 * BurnCounter / 1000) - 2; //GetBurnModifier() = 1000
+          int NewBurnLevel = (6 * BurnCounter / GetBurnModifier()) - 2;
 
           if(NewBurnLevel != GetBurnLevel())
           {
             SetBurnLevel(GetBurnLevel() + 1);
-            //MotherEntity->SignalBurnLevelChange(this); //use this to signal to the player that the item burns more (use TryToRust() as example)
           }
         }
       }
       else
       {
         SetBurnLevel(HEAVILY_BURNT);//SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
-        MotherEntity->SignalBurn(this); //this is where it gets completely destroyed, so items miscitems etc will need a SignalSpoil
-        //destroy the burning object, else it will remained charred indefinitely
+        if(!(GetInteractionFlags() & RISES_FROM_ASHES))
+          MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
+        else
+        {
+          ResetBurning();
+          MotherEntity->Extinguish();
+        }
       }
     }
 
     BurnCheckCounter = 0;
   }
+}
+
+int solid::GetBurnModifier() const
+{
+  int Str = material::GetStrengthValue();
+  int FR = material::GetFireResistance();
+  int Den = material::GetDensity();
+  
+  return (500 + Den + ((Str * FR) >> 1));
 }
 
 void solid::SetBurnLevel(int What)

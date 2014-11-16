@@ -156,6 +156,7 @@ ITEM(bodypart, item)
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
   virtual void SignalBurn(material*);
+  virtual void Extinguish();
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -529,6 +530,7 @@ ITEM(corpse, item)
   virtual truth CanBeHardened(ccharacter*) const { return false; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SignalBurn(material*);
+  virtual void Extinguish();
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;

@@ -1695,9 +1695,22 @@ void bodypart::SignalBurn(material* Material)
     item::SignalBurn(Material);
 }
 
+void bodypart::Extinguish()
+{
+  if(Master)
+    Master->Extinguish();
+  else
+    item::Extinguish();
+}
+
 void corpse::SignalBurn(material*)
 {
   GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
+}
+
+void corpse::Extinguish()
+{
+  GetDeceased()->Extinguish();
 }
 
 void corpse::SignalDisappearance()

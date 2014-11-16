@@ -338,7 +338,6 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
        && (BurnData[ColorIndex] & 3UL)
        > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
     {
-		//ABORT("This is being tested!");
       Red = 0x38; //gum
       Green = 0x3C; //gum
       Blue = 0x38; //gum

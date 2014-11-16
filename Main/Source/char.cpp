@@ -6038,6 +6038,14 @@ void character::SignalBurn()
     Disappear(0, "burn", &item::IsVeryCloseToBurning);
 }
 
+void character::Extinguish()
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->Extinguish();
+  else
+    Extinguish();
+}
+
 truth character::CanHeal() const
 {
   for(int c = 0; c < BodyParts; ++c)

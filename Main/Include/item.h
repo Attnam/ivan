@@ -128,6 +128,7 @@ struct itemdatabase : public databasebase
   truth IsKamikazeWeapon;
   truth FlexibilityIsEssential;
   truth CanBeBroken;
+  truth CanBeBurned;
   truth CanBePiled;
   long Category;
   int FireResistance;
@@ -292,7 +293,7 @@ class item : public object
   virtual truth IsWeapon(ccharacter*) const { return false; }
   virtual truth IsArmor(ccharacter*) const { return false; }
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
-  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); } //this line below
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
   //virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
@@ -348,6 +349,7 @@ class item : public object
   DATA_BASE_VALUE(long, GearStates);
   DATA_BASE_TRUTH(IsTwoHanded);
   DATA_BASE_TRUTH(CanBeBroken);
+  DATA_BASE_TRUTH(CanBeBurned);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, WallBitmapPos, int);
   DATA_BASE_VALUE(cfestring&, FlexibleNameSingular);
   DATA_BASE_TRUTH(CanBePiled);
@@ -587,6 +589,7 @@ class item : public object
   void Slow();
   void SendMemorizedUpdateRequest() const;
   virtual void Ignite();
+  virtual void Extinguish();
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
