@@ -4772,7 +4772,7 @@ void character::LycanthropyHandler()
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
-       && !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")))
+       && (IsPlayer() ? !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")):false))
       return;
 
     Polymorph(werewolfwolf::Spawn(), 1000 + RAND() % 2000);
