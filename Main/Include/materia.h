@@ -219,6 +219,8 @@ class material
   virtual void SetBurnLevel(int) { }
   virtual int GetBurnData() const { return NOT_BURNT; }
   virtual int GetBurnLevel() const { return NOT_BURNT; }
+  virtual void AddToThermalEnergy(int) { }
+  virtual void RemoveFromThermalEnergy(int) { }
  protected:
   virtual void PostConstruct() { }
   void Initialize(int, long, truth);

@@ -23,11 +23,23 @@ truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRust
 
 void solid::Be(ulong Flags)
 {
+  if(IsBurning() && SteadyStateThermalEnergy <= 0)
+  {
+    MotherEntity->Extinguish();
+    SteadyStateThermalEnergy = 0;
+    TransientThermalEnergy = 0;
+  }
+  
+  if(TransientThermalEnergy > 0) //decrement the transient thermal energy  with the Be() function
+    --TransientThermalEnergy;
+  else
+    TransientThermalEnergy = 0;
+  
   if(BurnCheckCounter++ >= 50)
   {
-    //if(MotherEntity->AllowBurn())
     if(IsBurning())
     {
+      ADD_MESSAGE("(TTE is now %d)", TransientThermalEnergy);
       if(Flags & HASTE)
         BurnCounter += 125;
       else if(Flags & SLOW)
@@ -49,13 +61,15 @@ void solid::Be(ulong Flags)
       }
       else
       {
-        SetBurnLevel(HEAVILY_BURNT);//SpoilLevel = 8; // need a good way of testing this condition, because there are only four burn levels with no overflow
+        SetBurnLevel(HEAVILY_BURNT);
         if(!(GetInteractionFlags() & RISES_FROM_ASHES))
           MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
         else
         {
-          ResetBurning();
+          ResetBurning(); // only do this for phoenix feather!
           MotherEntity->Extinguish();
+          SteadyStateThermalEnergy = 0;
+          TransientThermalEnergy = 0;
         }
       }
     }
@@ -127,7 +141,7 @@ truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
 
 void solid::PostConstruct()
 {
-  BurnCounter = BurnCheckCounter = Burning = 0;
+  BurnCounter = BurnCheckCounter = Burning = TransientThermalEnergy = SteadyStateThermalEnergy = 0;
   //BurnCounter = (RAND() % GetBurnModifier()) >> 5;
 }
 
@@ -204,6 +218,20 @@ void organic::PostConstruct()
   SpoilLevel = SpoilCheckCounter = 0;
   SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
   solid::PostConstruct();
+}
+
+void solid::AddToThermalEnergy(int Damage)
+{
+  TransientThermalEnergy += Damage;
+  SteadyStateThermalEnergy += Damage;
+  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy);
+}
+
+void solid::RemoveFromThermalEnergy(int Amount)
+{
+  TransientThermalEnergy -= Amount;
+  SteadyStateThermalEnergy -= Amount;
+  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy);
 }
 
 void flesh::PostConstruct()
@@ -384,6 +412,9 @@ void liquid::TouchEffect(item* Item, cfestring& LocationName)
 
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
+
+  if(Item->IsBurning())
+    Item->FightFire(this, LocationName, Volume);
 
   character* Char = Item->GetBodyPartMaster();
 

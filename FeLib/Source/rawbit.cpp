@@ -333,16 +333,13 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
 	     > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
 	  {
             Green = ((Green << 1) + Green) >> 2;
-	    Blue >>= 1;
+            Blue >>= 1;
 	  }
 
     if(Burnt && BurnData[ColorIndex]
        && (BurnData[ColorIndex] & 3UL)
        > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
     {
-      //Red = 0x38; //gum
-      //Green = 0x3C; //gum
-      //Blue = 0x38; //gum
       Max >>= 2;
       Red = Max + (Red >> 3);
       Green = Max + (Green >> 3);

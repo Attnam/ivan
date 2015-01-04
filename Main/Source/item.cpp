@@ -648,6 +648,8 @@ truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     {
       TestActivationEnergy(Damage);
     }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
   }
   
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
@@ -1349,6 +1351,7 @@ void item::TestActivationEnergy(int Damage)
       {
         ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
         Ignite();
+        GetMainMaterial()->AddToThermalEnergy(Damage);
       }
     }
 }
@@ -1368,7 +1371,7 @@ void item::Extinguish(/*character* Applier*/)
   SignalEmitationDecrease(MakeRGB24(150, 120, 90)/*ToBeRemoved->GetEmitation()*/);
   UpdatePictures();
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("The flames on the burning %s are now extinguished.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
@@ -1412,6 +1415,12 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
       ReceiveDamage(0, Damage, ACID);
     }
   }
+}
+
+void item::FightFire(material*, cfestring&, long Volume)
+{
+  int Amount = Volume / 10;
+  GetMainMaterial()->RemoveFromThermalEnergy(Amount);
 }
 
 void item::DonateFluidsTo(item* Item)

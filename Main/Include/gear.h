@@ -193,6 +193,8 @@ ITEM(armor, item)
   virtual void CalculateEnchantment();
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
+  virtual void DipInto(liquid*, character*);
+  virtual truth IsDippable(ccharacter*) const;
  protected:
   virtual void AddPostFix(festring&, int) const;
   virtual void PostConstruct();

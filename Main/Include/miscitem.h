@@ -454,6 +454,9 @@ ITEM(beartrap, itemtrap<item>)
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void DonateSlotTo(item*);
+  virtual void DipInto(liquid*, character*);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
  protected:
   virtual truth AddAdjective(festring&, truth) const;
   truth IsStuck() const { return TrapData.VictimID; }
