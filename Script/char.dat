@@ -5526,7 +5526,6 @@ siren
     SkinColor = rgb16(254, 247, 208);
     HairColor = rgb16(80, 48, 32);
     TorsoMainColor = rgb16(70, 40, 25);	
-    NameSingular = "test1";
   }
 
   Config DARK_ASIAN_SIREN;
@@ -5534,7 +5533,6 @@ siren
     SkinColor = rgb16(254, 247, 183);
     HairColor = rgb16(64, 48, 32);
     TorsoMainColor = rgb16(50, 40, 28);
-    NameSingular = "test2";
   }  
 
   Config CAUCASIAN_SIREN;
