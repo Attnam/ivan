@@ -710,7 +710,7 @@ void lsquare::UpdateMemorizedDescription(truth Cheat)
     {
       MemorizedDescription.Empty();
 
-      if(!OLTerrain || (OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder()))
+      if(!OLTerrain || (OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder() && !OLTerrain->IsWall()))
       {
 	truth Anything = false;
 
