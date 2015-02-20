@@ -1,7 +1,7 @@
 ivan
 ====
 
-This is a fan continuation of Iter Vehemens ad Necem continuation by members of Attnam.com
+This is a fan continuation of Iter Vehemens ad Necem by members of Attnam.com
 
 ## Contributing
 
