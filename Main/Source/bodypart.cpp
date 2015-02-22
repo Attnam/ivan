@@ -3413,9 +3413,15 @@ void bodypart::RemoveRust()
   RestoreHP();
 }
 
+void bodypart::RemoveBurns()
+{
+  item::RemoveBurns();
+  RestoreHP();
+}
+
 long bodypart::GetFixPrice() const
 {
-  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25;
+  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25 + GetMainMaterial()->GetBurnLevel() * 25;
 }
 
 truth bodypart::IsFixableBySmith(ccharacter*) const

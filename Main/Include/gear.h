@@ -35,7 +35,6 @@ ITEM(meleeweapon, item)
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual void SignalSpoil(material*);
   virtual void SignalBurn(material*);
-  /*virtual void Extinguish();*/
   virtual void Be();
   virtual truth IsWeapon(ccharacter*) const { return true; }
   virtual int GetEnchantment() const { return Enchantment; }
@@ -43,13 +42,12 @@ ITEM(meleeweapon, item)
   virtual void EditEnchantment(int);
   virtual int GetStrengthValue() const;
   virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken() || IsBurnt(); }
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual void TryToRust(long);
-	//virtual void TryToBurn(long);
   virtual material* GetConsumeMaterial(ccharacter*, materialpredicate = TrueMaterialPredicate) const;
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   virtual material* RemoveMaterial(material*);
@@ -188,7 +186,7 @@ ITEM(armor, item)
   virtual int GetInElasticityPenalty(int) const;
   virtual int GetCarryingBonus() const;
   virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken() || IsBurnt(); }
   virtual truth AllowFluids() const { return true; }
   virtual void CalculateEnchantment();
   virtual double GetTHVBonus() const;

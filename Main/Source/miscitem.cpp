@@ -51,8 +51,6 @@ col16 itemcontainer::GetMaterialColorB(int) const { return MakeRGB16(80, 80, 80)
 truth mine::AddAdjective(festring& String, truth Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
 truth beartrap::AddAdjective(festring& String, truth Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
-//col16 beartrap::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
-truth beartrap::IsDippable(ccharacter*) const { return !Fluid; }
 
 col16 carrot::GetMaterialColorB(int) const { return MakeRGB16(80, 100, 16); }
 
@@ -261,15 +259,6 @@ void potion::DipInto(liquid* Liquid, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-void beartrap::DipInto(liquid* Liquid, character* Dipper)
-{
-  if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
-
-  SpillFluid(Dipper, Liquid);
-  Dipper->DexterityAction(10);
-}
-
 void lantern::SignalSquarePositionChange(int SquarePosition)
 {
   item::SignalSquarePositionChange(SquarePosition);
@@ -392,6 +381,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
+truth scroll::IsDippable(ccharacter*) const { return !IsBurning() && !Fluid; }
+
 truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
 {
   if(Type & FIRE && Damage
@@ -399,15 +390,37 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial)
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
 }
+
+void scroll::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
+}
+
+truth holybook::IsDippable(ccharacter*) const { return !IsBurning() && !Fluid; }
 
 truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
 {
@@ -416,14 +429,34 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial)
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
+}
+
+void holybook::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
 }
 
 truth oillamp::Apply(character* Applier)
@@ -1023,25 +1056,6 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     }
   }
 
-  if(Fluid)
-  {
-    truth Success = false;
-    fluidvector FluidVector;
-    FillFluidVector(FluidVector);
-    
-    int TrappedBodyPart = Victim->RandomizeHurtBodyPart(TrapData.BodyParts);
-    
-    //if(TrappedBodyPart != NONE_INDEX)
-    //  ADD_MESSAGE("Your %s is stuck in the trap and should be affected by liquid.", Victim->GetBodyPartName(TrappedBodyPart).CStr());
-    
-    if(TrappedBodyPart != NONE_INDEX)
-      for(uint c = 0; c < FluidVector.size(); ++c)
-        if(FluidVector[c]->Exists() && FluidVector[c]->GetLiquid()->HitEffect(Victim, Victim->GetBodyPart(TrappedBodyPart)))
-	  Success = true;
-        
-      //ADD_MESSAGE("Success is %d", Success);
-  }
-
   if(Victim->IsPlayer())
     ADD_MESSAGE("You are unable to escape from %s.", CHAR_NAME(DEFINITE));
 
@@ -1101,25 +1115,6 @@ void beartrap::StepOnEffect(character* Stepper)
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
     Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
-    
-    if(Fluid)
-    {
-      truth Success = false;
-      fluidvector FluidVector;
-      FillFluidVector(FluidVector);
-      
-      int TrappedBodyPart = Stepper->RandomizeHurtBodyPart(TrapData.BodyParts);
-      
-      //if(TrappedBodyPart != NONE_INDEX)
-      //  ADD_MESSAGE("Your %s is stuck in the trap and should be affected by liquid.", Stepper->GetBodyPartName(TrappedBodyPart).CStr());
-      
-      if(TrappedBodyPart != NONE_INDEX)
-        for(uint c = 0; c < FluidVector.size(); ++c)
-          if(FluidVector[c]->Exists() && FluidVector[c]->GetLiquid()->HitEffect(Stepper, Stepper->GetBodyPart(TrappedBodyPart)))
-	    Success = true;
-        
-      //ADD_MESSAGE("Success is %d", Success);
-    }
     Stepper->CheckDeath(CONST_S("died by stepping into ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
   }
 }
@@ -1175,30 +1170,6 @@ truth stethoscope::Apply(character* Doctor)
 
   Char->DisplayStethoscopeInfo(Doctor);
   return true;
-}
-
-truth stick::Apply(character* Applier)
-{
-  if(Applier->IsPlayer())
-  {
-    ADD_MESSAGE("You light %s.", CHAR_NAME(DEFINITE));
-    //ADD_MESSAGE("Burning is %d", Burning);
-    //ADD_MESSAGE("IsBurning is %d", IsBurning());
-  }
-
-  //if(!IsBurning())
-    //{
-      //SetIsBurning(true);
-      MainMaterial->SetIsBurning(true);
-      SignalEmitationIncrease(MakeRGB24(150, 120, 90));
-      UpdatePictures();
-      ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
-      //ADD_MESSAGE("Burning is %d", Burning);
-      //ADD_MESSAGE("IsBurning is %d", IsBurning());
-      return true;
-    //}
-  
-  //return false;
 }
 
 void itemcontainer::CalculateVolumeAndWeight()
@@ -1727,13 +1698,14 @@ void scrollofrepair::FinishReading(character* Reader)
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
+	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "appears in every way as good as new");
       else
-	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
+	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "appear in every way as good as new");
 
       for(uint c = 0; c < Item.size(); ++c)
       {
 	Item[c]->RemoveRust();
+        Item[c]->RemoveBurns();
 	Item[c]->Fix();
       }
 

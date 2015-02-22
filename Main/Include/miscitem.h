@@ -44,7 +44,6 @@ ITEM(materialcontainer, item)
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual int GetSparkleFlags() const;
   virtual void SignalBurn(material*);
-/*  virtual void Extinguish();*/
  protected:
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;
@@ -178,6 +177,9 @@ ITEM(scroll, item)
   virtual truth CanBeRead(character*) const;
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
 };
 
 ITEM(scrollofteleportation, scroll)
@@ -298,6 +300,9 @@ ITEM(holybook, item)
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual void FinishReading(character*);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
  protected:
   virtual col16 GetMaterialColorA(int) const;
   virtual truth ShowMaterial() const { return false; }
@@ -454,8 +459,6 @@ ITEM(beartrap, itemtrap<item>)
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void DonateSlotTo(item*);
-  virtual void DipInto(liquid*, character*);
-  virtual truth IsDippable(ccharacter*) const;
   virtual truth AllowFluids() const { return true; }
  protected:
   virtual truth AddAdjective(festring&, truth) const;
@@ -545,9 +548,6 @@ ITEM(scrollofdetectmaterial, scroll)
 
 ITEM(stick, item)
 {
- public:
-  virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }

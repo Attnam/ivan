@@ -143,6 +143,7 @@ ITEM(bodypart, item)
   virtual int GetSparkleFlags() const;
   virtual truth MaterialIsChangeable(ccharacter*) const;
   virtual void RemoveRust();
+  virtual void RemoveBurns();
   virtual item* Fix();
   virtual long GetFixPrice() const;
   virtual truth IsFixableBySmith(ccharacter*) const;

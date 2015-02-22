@@ -26,18 +26,13 @@ MATERIAL(solid, material)
   virtual int GetBurnModifier() const;
   virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
-  virtual void Save(outputfile&) const; //common
-  virtual void Load(inputfile&); //common
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   //virtual truth IsSparkling() const; //not ready
   virtual int GetBurnData() const { return BurnData; }
-  //virtual truth TryToBurn(long, long = 0); //not necessary?
   virtual truth AddBurnLevelDescription(festring&, truth) const;
-  virtual int GetBurnLevel() const { return BurnData & 3; } //common
+  virtual int GetBurnLevel() const { return BurnData & 3; }
   virtual void ResetBurning();
-  //virtual void SetBurnCounter(int); //provisionally not necessary
-  //virtual truth CanBurn() const { return true; } //not ready
-  //virtual int GetBurnPercentage() const; //not necessary?
-  //virtual truth Burns() const { return true; } // the material only burns if it can burn
   virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
   virtual void AddToThermalEnergy(int);
   virtual void RemoveFromThermalEnergy(int);

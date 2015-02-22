@@ -37,7 +37,7 @@ square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
-truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
+truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()) || (IsBurning()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
 truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
@@ -1338,6 +1338,7 @@ void item::TryToRust(long LiquidModifier)
 
 void item::TestActivationEnergy(int Damage)
 {
+// <CLEANUP>
   if(MainMaterial)
   {
     int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
@@ -1354,9 +1355,10 @@ void item::TestActivationEnergy(int Damage)
         GetMainMaterial()->AddToThermalEnergy(Damage);
       }
     }
+  // </CLEANUP>
 }
 
-void item::Ignite(/*character* Applier*/)
+void item::Ignite(/*character* Arsonist*/)
 {
       MainMaterial->SetIsBurning(true);
       SignalEmitationIncrease(MakeRGB24(150, 120, 90));
@@ -1364,11 +1366,10 @@ void item::Ignite(/*character* Applier*/)
       ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
 }
 
-void item::Extinguish(/*character* Applier*/)
+void item::Extinguish(/*character* FireFighter*/)
 {
   MainMaterial->SetIsBurning(false);
-  //SignalEmitationIncrease(MakeRGB24(150, 120, 90));
-  SignalEmitationDecrease(MakeRGB24(150, 120, 90)/*ToBeRemoved->GetEmitation()*/);
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
   UpdatePictures();
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
@@ -1460,6 +1461,13 @@ void item::RemoveRust()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->SetRustLevel(NOT_RUSTED);
+}
+
+void item::RemoveBurns()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->SetBurnLevel(NOT_BURNT);
 }
 
 void item::SetSpoilPercentage(int Value)
@@ -1593,6 +1601,7 @@ long item::GetFixPrice() const
   item* Clone = GetProtoType()->Clone(this);
   Clone = Clone->Fix();
   Clone->RemoveRust();
+  Clone->RemoveBurns();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
   return Max(long(3.5 * sqrt(FixPrice)), 10L);

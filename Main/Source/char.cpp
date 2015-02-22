@@ -1733,6 +1733,13 @@ truth character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
   {
+    int LocalReadDifficulty = ToBeRead->GetBurnLevel() * sqrt(abs(ToBeRead->GetReadDifficulty())) / 2;
+    if(GetAttribute(INTELLIGENCE) < LocalReadDifficulty)
+    {
+      ADD_MESSAGE("%s is completely unreadable.", ToBeRead->CHAR_NAME(DEFINITE));
+      return false;
+    }
+
     if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheatMode())
     {
       if(StateIsActivated(CONFUSED) && !(RAND() & 7))

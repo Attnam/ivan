@@ -62,9 +62,7 @@ class object : public entity, public id
   virtual int GetSparkleFlags() const;
   virtual void SignalMaterialChange() { }
   virtual void SetIsBurning(int What) {Burning = What;}
-  //virtual int IsBurning() const { return Burning; }
   virtual int IsBurning() const;
-  //virtual int IsBurning() const { return 0; }
  protected:
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);
@@ -84,7 +82,7 @@ class object : public entity, public id
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const { return 255; }
   virtual truth AddRustLevelDescription(festring&, truth) const;
-	virtual truth AddBurnLevelDescription(festring&, truth) const;
+  virtual truth AddBurnLevelDescription(festring&, truth) const;
   virtual truth AddMaterialDescription(festring&, truth) const;
   int RandomizeMaterialConfiguration();
   virtual int GetClassAnimationFrames() const { return 1; }
@@ -110,7 +108,7 @@ class object : public entity, public id
   graphicdata GraphicData;
   material* MainMaterial;
   int VisualEffects;
-	int Burning;
+  int Burning;
 };
 
 #endif

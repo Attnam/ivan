@@ -293,8 +293,7 @@ class item : public object
   virtual truth IsWeapon(ccharacter*) const { return false; }
   virtual truth IsArmor(ccharacter*) const { return false; }
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
-  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
-  //virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
   virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
@@ -523,7 +522,6 @@ class item : public object
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
   virtual void TestActivationEnergy(int);
-	//virtual void TryToBurn(long);
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, festring, int, truth);
   virtual truth IsAnimated() const;
@@ -541,7 +539,7 @@ class item : public object
   virtual truth IsRusted() const;
   virtual void RemoveRust();
   virtual truth IsBurnt() const;
-  //virtual void RemoveBurns();
+  virtual void RemoveBurns();
   virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
@@ -572,7 +570,6 @@ class item : public object
   virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsKamikazeWeapon, ccharacter*);
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
-	//int GetMainMaterialBurnLevel() const;
   truth HasID(ulong What) const { return ID == What; }
   virtual truth Spoils() const;
   int GetMaxSpoilPercentage() const;

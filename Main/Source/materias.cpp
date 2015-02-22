@@ -39,7 +39,7 @@ void solid::Be(ulong Flags)
   {
     if(IsBurning())
     {
-      ADD_MESSAGE("(TTE is now %d)", TransientThermalEnergy);
+      ADD_MESSAGE("(TTE is now %d)", TransientThermalEnergy); // CLEANUP
       if(Flags & HASTE)
         BurnCounter += 125;
       else if(Flags & SLOW)
@@ -142,7 +142,6 @@ truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
 void solid::PostConstruct()
 {
   BurnCounter = BurnCheckCounter = Burning = TransientThermalEnergy = SteadyStateThermalEnergy = 0;
-  //BurnCounter = (RAND() % GetBurnModifier()) >> 5;
 }
 
 int solid::GetStrengthValue() const
@@ -167,29 +166,29 @@ void organic::Be(ulong Flags)
     if(MotherEntity->AllowSpoil())
     {
       if(Flags & HASTE)
-        SpoilCounter += 125;
+       SpoilCounter += 125;
       else if(Flags & SLOW)
-        SpoilCounter += 5;
+       SpoilCounter += 5;
       else
-        SpoilCounter += 25;
+       SpoilCounter += 25;
 
       if(SpoilCounter < GetSpoilModifier())
       {
-        if(SpoilCounter << 1 >= GetSpoilModifier())
-        {
-          int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+       if(SpoilCounter << 1 >= GetSpoilModifier())
+       {
+         int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-          if(NewSpoilLevel != SpoilLevel)
-          {
-            SpoilLevel = NewSpoilLevel;
-            MotherEntity->SignalSpoilLevelChange(this);
-          }
-        }
+         if(NewSpoilLevel != SpoilLevel)
+         {
+           SpoilLevel = NewSpoilLevel;
+           MotherEntity->SignalSpoilLevelChange(this);
+         }
+       }
       }
       else
       {
-        SpoilLevel = 8;
-        MotherEntity->SignalSpoil(this);
+       SpoilLevel = 8;
+       MotherEntity->SignalSpoil(this);
       }
     }
 
@@ -201,14 +200,12 @@ void organic::Be(ulong Flags)
 
 void organic::Save(outputfile& SaveFile) const
 {
-  //material::Save(SaveFile);
   solid::Save(SaveFile);
   SaveFile << SpoilCounter << SpoilCheckCounter << SpoilLevel;
 }
 
 void organic::Load(inputfile& SaveFile)
 {
-  //material::Load(SaveFile);
   solid::Load(SaveFile);
   SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
 }
@@ -224,14 +221,14 @@ void solid::AddToThermalEnergy(int Damage)
 {
   TransientThermalEnergy += Damage;
   SteadyStateThermalEnergy += Damage;
-  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy);
+  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
 }
 
 void solid::RemoveFromThermalEnergy(int Amount)
 {
   TransientThermalEnergy -= Amount;
   SteadyStateThermalEnergy -= Amount;
-  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy);
+  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
 }
 
 void flesh::PostConstruct()
