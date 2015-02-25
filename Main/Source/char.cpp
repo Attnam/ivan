@@ -4279,49 +4279,30 @@ void character::DrawPanel(truth AnimationDraw) const
     if(!(StateData[c].Flags & SECRET) && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
       FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateData[c].Description);
 
-  /* Make this more elegant!!! */
+  static cchar* HungerStateStrings[] = { "Starving", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
+  static cpackcol16 HungerStateColors[] = { RED, BLUE, BLUE, 0, WHITE, WHITE, WHITE };
+  int HungerState = GetHungerState();
+  if(HungerState != NOT_HUNGRY)
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), HungerStateColors[HungerState], HungerStateStrings[HungerState]);
 
-  if(GetHungerState() == STARVING)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), RED, "Starving");
-  else if(GetHungerState() == VERY_HUNGRY)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), BLUE, "Very hungry");
-  else if(GetHungerState() == HUNGRY)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), BLUE, "Hungry");
-  else  if(GetHungerState() == SATIATED)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Satiated");
-  else if(GetHungerState() == BLOATED)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Bloated");
-  else if(GetHungerState() == OVER_FED)
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Overfed!");
+  static cchar* BurdenStateStrings[] = { "Overload!", "Stressed", "Burdened" };
+  static cpackcol16 BurdenStateColors[] = { RED, BLUE, BLUE };
+  int BurdenState = GetBurdenState();
+  if(BurdenState != UNBURDENED)
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), BurdenStateColors[BurdenState], BurdenStateStrings[BurdenState]);
 
-  switch(GetBurdenState())
-  {
-   case OVER_LOADED:
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), RED, "Overload!");
-    break;
-   case STRESSED:
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), BLUE, "Stressed");
-    break;
-   case BURDENED:
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), BLUE, "Burdened");
-  }
-
-  switch(GetTirednessState())
-  {
-   case FAINTING:
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), RED, "Fainting");
-    break;
-   case EXHAUSTED:
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Exhausted");
-    break;
-  }
+  static cchar* TirednessStateStrings[] = { "Fainting", "Exhausted" };
+  static cpackcol16 TirednessStateColors[] = { RED, WHITE };
+  int TirednessState = GetTirednessState();
+  if (TirednessState != UNTIRED)
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), TirednessStateColors[TirednessState], TirednessStateStrings[TirednessState]);
 
   if(game::PlayerIsRunning())
   {
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, GetRunDescriptionLine(0));
     cchar* SecondLine = GetRunDescriptionLine(1);
 
-    if(strlen(SecondLine))
+    if(SecondLine[0] != '\0')
       FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, SecondLine);
   }
 }
@@ -4779,7 +4760,7 @@ void character::LycanthropyHandler()
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
-       && !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")))
+       && (IsPlayer() ? !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")):false))
       return;
 
     Polymorph(werewolfwolf::Spawn(), 1000 + RAND() % 2000);

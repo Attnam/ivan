@@ -379,7 +379,7 @@ truth game::Init(cfestring& Name)
       {
 	item* Present = banana::Spawn();
 	Player->GetStack()->AddItem(Present);
-	ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
+	ADD_MESSAGE("Atavus is happy today! He gives you a %s.", Present->CHAR_NAME(INDEFINITE));
       }
 
       return true;
