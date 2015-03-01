@@ -381,7 +381,7 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
-truth scroll::IsDippable(ccharacter*) const { return !IsBurning() && !Fluid; }
+truth scroll::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
 
 truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
 {
@@ -420,7 +420,7 @@ void scroll::DipInto(liquid* Liquid, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-truth holybook::IsDippable(ccharacter*) const { return !IsBurning() && !Fluid; }
+truth holybook::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
 
 truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
 {

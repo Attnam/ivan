@@ -1338,24 +1338,23 @@ void item::TryToRust(long LiquidModifier)
 
 void item::TestActivationEnergy(int Damage)
 {
-// <CLEANUP>
-  if(MainMaterial)
-  {
-    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
-    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
-  }
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
 
   if(MainMaterial)
     if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       if(CanBeSeenByPlayer())
       {
-        ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+        ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+        //ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
         Ignite();
         GetMainMaterial()->AddToThermalEnergy(Damage);
       }
     }
-  // </CLEANUP>
 }
 
 void item::Ignite(/*character* Arsonist*/)
@@ -1369,6 +1368,7 @@ void item::Ignite(/*character* Arsonist*/)
 void item::Extinguish(/*character* FireFighter*/)
 {
   MainMaterial->SetIsBurning(false);
+  MainMaterial->ResetThermalEnergies();
   SignalEmitationDecrease(MakeRGB24(150, 120, 90));
   UpdatePictures();
   if(CanBeSeenByPlayer())

@@ -24,11 +24,12 @@ MATERIAL(solid, material)
   virtual void SetBurnLevel(int);
   virtual int GetStrengthValue() const;
   virtual int GetBurnModifier() const;
+  virtual void ResetThermalEnergies();
   virtual void Be(ulong);
   virtual truth HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  //virtual truth IsSparkling() const; //not ready
+  virtual truth IsSparkling() const;
   virtual int GetBurnData() const { return BurnData; }
   virtual truth AddBurnLevelDescription(festring&, truth) const;
   virtual int GetBurnLevel() const { return BurnData & 3; }

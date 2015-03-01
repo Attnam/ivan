@@ -6026,7 +6026,7 @@ void character::SignalBurn()
     Disappear(0, "burn", &item::IsVeryCloseToBurning);
 }
 
-void character::Extinguish()
+void character::Extinguish() // so obviously not finished yet
 {
   if(GetMotherEntity())
     GetMotherEntity()->Extinguish();

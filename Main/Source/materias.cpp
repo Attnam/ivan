@@ -21,13 +21,20 @@ truth powder::IsExplosive() const { return !Wetness && material::IsExplosive(); 
 
 truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
 
+truth solid::IsSparkling() const { return material::IsSparkling() && GetBurnLevel() == NOT_BURNT; }
+
+void solid::ResetThermalEnergies()
+{
+  SteadyStateThermalEnergy = 0;
+  TransientThermalEnergy = 0;
+}
+
 void solid::Be(ulong Flags)
 {
   if(IsBurning() && SteadyStateThermalEnergy <= 0)
   {
     MotherEntity->Extinguish();
-    SteadyStateThermalEnergy = 0;
-    TransientThermalEnergy = 0;
+    ResetThermalEnergies();
   }
   
   if(TransientThermalEnergy > 0) //decrement the transient thermal energy  with the Be() function
@@ -39,7 +46,6 @@ void solid::Be(ulong Flags)
   {
     if(IsBurning())
     {
-      ADD_MESSAGE("(TTE is now %d)", TransientThermalEnergy); // CLEANUP
       if(Flags & HASTE)
         BurnCounter += 125;
       else if(Flags & SLOW)
@@ -68,8 +74,7 @@ void solid::Be(ulong Flags)
         {
           ResetBurning(); // only do this for phoenix feather!
           MotherEntity->Extinguish();
-          SteadyStateThermalEnergy = 0;
-          TransientThermalEnergy = 0;
+          ResetThermalEnergies();
         }
       }
     }
@@ -221,14 +226,14 @@ void solid::AddToThermalEnergy(int Damage)
 {
   TransientThermalEnergy += Damage;
   SteadyStateThermalEnergy += Damage;
-  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
+  //ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
 }
 
 void solid::RemoveFromThermalEnergy(int Amount)
 {
   TransientThermalEnergy -= Amount;
   SteadyStateThermalEnergy -= Amount;
-  ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
+  //ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
 }
 
 void flesh::PostConstruct()
