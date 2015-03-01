@@ -46,7 +46,7 @@ class rawbitmap
   bitmap* Colorize(v2, v2, v2,
 		   cpackcol16*, alpha = 255,
 		   cpackalpha* = 0,
-		   cuchar* = 0, truth = true) const;
+		   cuchar* = 0, cuchar* = 0, truth = true) const;
   v2 GetSize() const { return Size; }
 
   void AlterGradient(v2, v2, int, int, truth);

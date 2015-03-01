@@ -1089,6 +1089,8 @@ class character : public entity, public id
   truth CheckForBeverage();
   void Haste();
   void Slow();
+  void SignalBurn();
+  void Extinguish();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

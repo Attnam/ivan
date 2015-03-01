@@ -18,7 +18,7 @@ void meleeweapon::InitMaterials(material* M1, material* M2, truth CUP) { ObjectI
 double meleeweapon::GetTHVBonus() const { return Enchantment * .5; }
 double meleeweapon::GetDamageBonus() const { return Enchantment; }
 col16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
-truth meleeweapon::IsDippable(ccharacter*) const { return !Fluid; }
+truth meleeweapon::IsDippable(ccharacter*) const { return !Fluid || (!IsBurning() && !Fluid); }
 truth meleeweapon::AllowRegularColors() const { return SecondaryMaterial->GetVolume(); }
 v2 meleeweapon::GetWieldedBitmapPos(int I) const { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
 void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP) { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
@@ -36,6 +36,7 @@ int thunderhammer::GetSpecialFlags() const { return !IsBroken() ? meleeweapon::G
 int armor::GetCarryingBonus() const { return Enchantment << 1; }
 double armor::GetTHVBonus() const { return Enchantment * .5; }
 double armor::GetDamageBonus() const { return Enchantment; }
+truth armor::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 truth bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
@@ -94,6 +95,15 @@ truth meleeweapon::HitEffect(character* Enemy, character*, v2, int BodyPartIndex
 }
 
 void meleeweapon::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
+}
+
+void armor::DipInto(liquid* Liquid, character* Dipper)
 {
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
@@ -394,6 +404,30 @@ void meleeweapon::SignalSpoil(material* Material)
   }
 }
 
+void meleeweapon::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(Material == MainMaterial)
+  {
+    if(CanBeSeenByPlayer())
+      if(SecondaryMaterial->GetVolume())
+	ADD_MESSAGE("The edge of %s burns away.", GetExtendedDescription().CStr());
+      else
+	ADD_MESSAGE("%s burns away.", GetExtendedDescription().CStr());
+
+    RemoveMainMaterial();
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The handle of %s burns away", GetExtendedDescription().CStr());
+
+    delete RemoveSecondaryMaterial();
+  }
+}
+
 void meleeweapon::AddPostFix(festring& String, int Case) const
 {
   item::AddPostFix(String, Case);
@@ -402,6 +436,11 @@ void meleeweapon::AddPostFix(festring& String, int Case) const
   {
     String << " covered with ";
     fluid::AddFluidInfo(Fluid[0], String);
+  }
+
+  if(IsBurning())
+  {
+    String << " (on fire)";
   }
 
   if(Enchantment > 0)
@@ -591,6 +630,11 @@ void armor::AddPostFix(festring& String, int Case) const
   {
     String << " covered with ";
     fluid::AddFluidInfo(Fluid[0], String);
+  }
+
+  if(IsBurning())
+  {
+    String << " (on fire)";
   }
 
   if(Enchantment > 0)
@@ -816,6 +860,11 @@ truth cloak::AddAdjective(festring& String, truth Articled) const
 int meleeweapon::GetRustDataB() const
 {
   return SecondaryMaterial->GetRustData();
+}
+
+int meleeweapon::GetBurnDataB() const
+{
+  return SecondaryMaterial->GetBurnData();
 }
 
 void meleeweapon::TryToRust(long LiquidModifier)

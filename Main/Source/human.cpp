@@ -4735,6 +4735,12 @@ void tailor::BeTalkedTo()
       return;
     }
 
+    if(Item->GetMainMaterial()->IsBurning())
+    {
+      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you. \"");
+      return;
+    }
+
     /** update messages */
 
     long FixPrice = Item->GetFixPrice();
@@ -4749,6 +4755,7 @@ void tailor::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
     {
+      Item->RemoveBurns();
       Item->Fix();
       PLAYER->EditMoney(-FixPrice);
       ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));

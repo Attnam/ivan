@@ -128,6 +128,7 @@ struct itemdatabase : public databasebase
   truth IsKamikazeWeapon;
   truth FlexibilityIsEssential;
   truth CanBeBroken;
+  truth CanBeBurned;
   truth CanBePiled;
   long Category;
   int FireResistance;
@@ -292,7 +293,7 @@ class item : public object
   virtual truth IsWeapon(ccharacter*) const { return false; }
   virtual truth IsArmor(ccharacter*) const { return false; }
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
-  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
   virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
@@ -347,6 +348,7 @@ class item : public object
   DATA_BASE_VALUE(long, GearStates);
   DATA_BASE_TRUTH(IsTwoHanded);
   DATA_BASE_TRUTH(CanBeBroken);
+  DATA_BASE_TRUTH(CanBeBurned);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, WallBitmapPos, int);
   DATA_BASE_VALUE(cfestring&, FlexibleNameSingular);
   DATA_BASE_TRUTH(CanBePiled);
@@ -469,6 +471,7 @@ class item : public object
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
+  virtual int GetBurnLevel() const;
   void ResetSpoiling();
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
@@ -509,6 +512,8 @@ class item : public object
   virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
+  virtual void SignalBurn(material*);
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }
@@ -516,6 +521,7 @@ class item : public object
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
+  virtual void TestActivationEnergy(int);
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, festring, int, truth);
   virtual truth IsAnimated() const;
@@ -525,12 +531,15 @@ class item : public object
   void CheckFluidGearPictures(v2, int, truth);
   void DrawFluids(blitdata&) const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void FightFire(material*, cfestring&, long);
   virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
   void Destroy(character*, int);
   virtual truth AllowFluidBe() const { return true; }
   virtual truth IsRusted() const;
   virtual void RemoveRust();
+  virtual truth IsBurnt() const;
+  virtual void RemoveBurns();
   virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
@@ -551,6 +560,7 @@ class item : public object
   int NeedsBe() const { return LifeExpectancy; }
   truth IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   truth IsVeryCloseToSpoiling() const;
+  truth IsVeryCloseToBurning() const;
   virtual truth IsValuable() const;
   virtual truth Necromancy(character*) { return false; }
   virtual void CalculateEnchantment() { }
@@ -576,6 +586,8 @@ class item : public object
   void Haste();
   void Slow();
   void SendMemorizedUpdateRequest() const;
+  virtual void Ignite();
+  virtual void Extinguish();
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

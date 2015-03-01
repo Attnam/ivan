@@ -1180,7 +1180,7 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, long VolumeModifier)
       long ItemVolume = ItemVector[c]->GetVolume();
       double Root = sqrt(ItemVolume);
 
-      if(Root > RAND() % 200 || Root > RAND() % 200)
+      if(ItemVector[c]->IsBurning() || Root > RAND() % 200 || Root > RAND() % 200) // in this loop, we need to increase the odds with which something on fire can receive a spilled fluid
       {
 	long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
 

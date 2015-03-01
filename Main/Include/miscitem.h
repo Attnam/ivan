@@ -43,6 +43,7 @@ ITEM(materialcontainer, item)
   virtual void CalculateEmitation();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual int GetSparkleFlags() const;
+  virtual void SignalBurn(material*);
  protected:
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;
@@ -50,6 +51,7 @@ ITEM(materialcontainer, item)
   virtual col16 GetMaterialColorB(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
+  virtual int GetBurnDataB() const;
   material* SecondaryMaterial;
 };
 
@@ -175,6 +177,9 @@ ITEM(scroll, item)
   virtual truth CanBeRead(character*) const;
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
 };
 
 ITEM(scrollofteleportation, scroll)
@@ -295,6 +300,9 @@ ITEM(holybook, item)
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual void FinishReading(character*);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
  protected:
   virtual col16 GetMaterialColorA(int) const;
   virtual truth ShowMaterial() const { return false; }
@@ -451,6 +459,7 @@ ITEM(beartrap, itemtrap<item>)
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void DonateSlotTo(item*);
+  virtual truth AllowFluids() const { return true; }
  protected:
   virtual truth AddAdjective(festring&, truth) const;
   truth IsStuck() const { return TrapData.VictimID; }

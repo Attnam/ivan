@@ -37,8 +37,9 @@ square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
-truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
+truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()) || (IsBurning()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
+truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
@@ -641,6 +642,16 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
+  if(MainMaterial)
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+  }
+  
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -717,6 +728,21 @@ void item::SignalSpoil(material*)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
+void item::SignalBurn(material*)
+{
+  if(!Exists())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns away completely.", GetExtendedDescription().CStr());
+
+  truth Equipped = PLAYER->Equips(this);
+  Disappear();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+}
+
 item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 {
   item* Duplicated = Duplicate(Flags);
@@ -737,10 +763,12 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 	  && MainMaterial->IsSameAs(Item->MainMaterial)
 	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
 	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+	  && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
 	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
 	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
 	  && !Fluid && !Item->Fluid
-	  && !LifeExpectancy == !Item->LifeExpectancy);
+	  && !LifeExpectancy == !Item->LifeExpectancy
+	  && !IsBurning() == !Item->IsBurning());
 }
 
 void item::Break(character* Breaker, int)
@@ -851,6 +879,11 @@ void item::DonateSlotTo(item* Item)
 int item::GetSpoilLevel() const
 {
   return MainMaterial->GetSpoilLevel();
+}
+
+int item::GetBurnLevel() const
+{
+  return MainMaterial->GetBurnLevel();
 }
 
 void item::SignalSpoilLevelChange(material*)
@@ -1143,6 +1176,17 @@ void item::SignalRustLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
+void item::SignalBurnLevelChange()
+{
+  if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
+    for(int c = 0; c < SquaresUnder; ++c)
+      GetSquareUnder(c)->IncStaticAnimatedEntities();
+  
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
 const rawbitmap* item::GetRawPicture() const
 {
   return igraph::GetRawGraphic(GetGraphicsContainerIndex());
@@ -1292,6 +1336,45 @@ void item::TryToRust(long LiquidModifier)
   }
 }
 
+void item::TestActivationEnergy(int Damage)
+{
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
+
+  if(MainMaterial)
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    {
+      if(CanBeSeenByPlayer())
+      {
+        ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+        //ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+        Ignite();
+        GetMainMaterial()->AddToThermalEnergy(Damage);
+      }
+    }
+}
+
+void item::Ignite(/*character* Arsonist*/)
+{
+      MainMaterial->SetIsBurning(true);
+      SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+      UpdatePictures();
+      ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+}
+
+void item::Extinguish(/*character* FireFighter*/)
+{
+  MainMaterial->SetIsBurning(false);
+  MainMaterial->ResetThermalEnergies();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
+  UpdatePictures();
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
+}
+
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
 {
   if(Fluid)
@@ -1335,6 +1418,12 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
   }
 }
 
+void item::FightFire(material*, cfestring&, long Volume)
+{
+  int Amount = Volume / 10;
+  GetMainMaterial()->RemoveFromThermalEnergy(Amount);
+}
+
 void item::DonateFluidsTo(item* Item)
 {
   if(Fluid)
@@ -1372,6 +1461,13 @@ void item::RemoveRust()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->SetRustLevel(NOT_RUSTED);
+}
+
+void item::RemoveBurns()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->SetBurnLevel(NOT_BURNT);
 }
 
 void item::SetSpoilPercentage(int Value)
@@ -1457,6 +1553,15 @@ truth item::IsVeryCloseToSpoiling() const
   return true;
 }
 
+truth item::IsVeryCloseToBurning() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToBurning())
+      return false;
+
+  return true;
+}
+
 truth item::IsValuable() const
 {
   if(DataBase->IsValuable)
@@ -1496,6 +1601,7 @@ long item::GetFixPrice() const
   item* Clone = GetProtoType()->Clone(this);
   Clone = Clone->Fix();
   Clone->RemoveRust();
+  Clone->RemoveBurns();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
   return Max(long(3.5 * sqrt(FixPrice)), 10L);
