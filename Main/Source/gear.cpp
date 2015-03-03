@@ -304,7 +304,7 @@ truth whipofthievery::HitEffect(character* Enemy, character* Hitter, v2 HitPos, 
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(Enemy->IsEnabled() && Hitter && CleptiaHelps(Enemy, Hitter))
+  if(!IsBroken() && Enemy->IsEnabled() && Hitter && CleptiaHelps(Enemy, Hitter))
   {
     if(Hitter->IsPlayer())
     {
@@ -357,7 +357,7 @@ void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, tr
     Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
-    if(!IsBroken() && !IsWhip())
+    if(!IsBroken())
       Entry << ", " << GetStrengthValueDescription();
 
     int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
