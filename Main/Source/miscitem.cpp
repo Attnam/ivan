@@ -2801,9 +2801,10 @@ truth holyhandgrenade::CalculateHasBe() const
   return PinPulledTick;
 }
 
-void holyhandgrenade::Be() {
+void holyhandgrenade::Be()
+{
   item::Be();
-  if(3 * (game::GetTick() - PinPulledTick) > Count * 100) 
+  if(PinPulledTick && (3 * (game::GetTick() - PinPulledTick) > Count * 100))
   {
     ++Count;
     festring Msg = "A voice loudly declares: \"";

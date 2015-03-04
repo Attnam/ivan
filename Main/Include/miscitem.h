@@ -596,7 +596,7 @@ ITEM(holyhandgrenade, item)
 	virtual truth IsKamikazeWeapon(ccharacter*) const { return CalculateHasBe(); }
  protected:
   ulong PinPulledTick;
-  int Count;
+  ulong Count;
   ulong PinPullerID;
 };
 
