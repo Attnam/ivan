@@ -593,7 +593,8 @@ ITEM(holyhandgrenade, item)
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual col16 GetMaterialColorB(int) const;
   virtual bool WillExplodeSoon() const;
-	virtual truth IsKamikazeWeapon(ccharacter*) const { return CalculateHasBe(); }
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return CalculateHasBe(); }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
  protected:
   ulong PinPulledTick;
   ulong Count;
