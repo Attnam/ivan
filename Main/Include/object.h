@@ -61,6 +61,8 @@ class object : public entity, public id
   virtual truth DetectMaterial(cmaterial*) const;
   virtual int GetSparkleFlags() const;
   virtual void SignalMaterialChange() { }
+  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual int IsBurning() const;
  protected:
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);
@@ -80,6 +82,7 @@ class object : public entity, public id
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const { return 255; }
   virtual truth AddRustLevelDescription(festring&, truth) const;
+  virtual truth AddBurnLevelDescription(festring&, truth) const;
   virtual truth AddMaterialDescription(festring&, truth) const;
   int RandomizeMaterialConfiguration();
   virtual int GetClassAnimationFrames() const { return 1; }
@@ -93,6 +96,10 @@ class object : public entity, public id
   virtual int GetRustDataB() const { return NOT_RUSTED; }
   virtual int GetRustDataC() const { return NOT_RUSTED; }
   virtual int GetRustDataD() const { return NOT_RUSTED; }
+  virtual int GetBurnDataA() const;
+  virtual int GetBurnDataB() const { return NOT_BURNT; }
+  virtual int GetBurnDataC() const { return NOT_BURNT; }
+  virtual int GetBurnDataD() const { return NOT_BURNT; }
   virtual col16 GetDripColor() const { return 0; }
   virtual truth AllowSparkling() const { return true; }
   virtual truth AllowRegularColors() const { return true; }
@@ -101,6 +108,7 @@ class object : public entity, public id
   graphicdata GraphicData;
   material* MainMaterial;
   int VisualEffects;
+  int Burning;
 };
 
 #endif

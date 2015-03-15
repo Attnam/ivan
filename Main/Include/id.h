@@ -34,6 +34,7 @@ class id
   virtual cfestring& GetNamePlural() const = 0;
   virtual truth UsesLongArticle() const = 0;
   virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual truth AddStateDescription(festring&, truth) const { return false; }
   virtual truth AddAdjective(festring&, truth) const;
   virtual cfestring& GetAdjective() const = 0;

@@ -381,6 +381,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
+truth scroll::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
+
 truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
 {
   if(Type & FIRE && Damage
@@ -388,15 +390,37 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial)
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
 }
+
+void scroll::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
+}
+
+truth holybook::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
 
 truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
 {
@@ -405,14 +429,34 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial)
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
+}
+
+void holybook::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
 }
 
 truth oillamp::Apply(character* Applier)
@@ -1071,7 +1115,7 @@ void beartrap::StepOnEffect(character* Stepper)
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
     Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
-    Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
+    Stepper->CheckDeath(CONST_S("died by stepping into ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
   }
 }
 
@@ -1319,6 +1363,27 @@ void materialcontainer::SignalSpoil(material* Material)
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
+
+    delete RemoveSecondaryMaterial();
+  }
+}
+
+void materialcontainer::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(Material == MainMaterial)
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s becomes so burnt that it cannot hold its contents anymore.", CHAR_NAME(DEFINITE));
+
+    RemoveMainMaterial();
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The contents of %s burns completely.", CHAR_NAME(DEFINITE));
 
     delete RemoveSecondaryMaterial();
   }
@@ -1633,13 +1698,14 @@ void scrollofrepair::FinishReading(character* Reader)
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
+	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "appears in every way as good as new");
       else
-	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
+	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "appear in every way as good as new");
 
       for(uint c = 0; c < Item.size(); ++c)
       {
 	Item[c]->RemoveRust();
+        Item[c]->RemoveBurns();
 	Item[c]->Fix();
       }
 
@@ -2250,6 +2316,11 @@ int materialcontainer::GetRustDataB() const
   return SecondaryMaterial ? SecondaryMaterial->GetRustData() : GetRustDataA();
 }
 
+int materialcontainer::GetBurnDataB() const
+{
+  return SecondaryMaterial ? SecondaryMaterial->GetBurnData() : GetBurnDataA();
+}
+
 void backpack::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
 {
   if(!Liquid->IsExplosive())
@@ -2730,9 +2801,10 @@ truth holyhandgrenade::CalculateHasBe() const
   return PinPulledTick;
 }
 
-void holyhandgrenade::Be() {
+void holyhandgrenade::Be()
+{
   item::Be();
-  if(3 * (game::GetTick() - PinPulledTick) > Count * 100) 
+  if(PinPulledTick && (3 * (game::GetTick() - PinPulledTick) > Count * 100))
   {
     ++Count;
     festring Msg = "A voice loudly declares: \"";

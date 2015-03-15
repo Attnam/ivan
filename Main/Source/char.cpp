@@ -1733,6 +1733,13 @@ truth character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
   {
+    int LocalReadDifficulty = ToBeRead->GetBurnLevel() * sqrt(abs(ToBeRead->GetReadDifficulty())) / 2;
+    if(GetAttribute(INTELLIGENCE) < LocalReadDifficulty)
+    {
+      ADD_MESSAGE("%s is completely unreadable.", ToBeRead->CHAR_NAME(DEFINITE));
+      return false;
+    }
+
     if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheatMode())
     {
       if(StateIsActivated(CONFUSED) && !(RAND() & 7))
@@ -6009,6 +6016,22 @@ void character::SignalSpoil()
     GetMotherEntity()->SignalSpoil(0);
   else
     Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
+}
+
+void character::SignalBurn()
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->SignalBurn(0);
+  else
+    Disappear(0, "burn", &item::IsVeryCloseToBurning);
+}
+
+void character::Extinguish() // so obviously not finished yet
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->Extinguish();
+  else
+    Extinguish();
 }
 
 truth character::CanHeal() const

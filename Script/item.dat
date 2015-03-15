@@ -66,6 +66,7 @@ item
   ForcedVisualEffects = 0;
   CanBeCloned = true;
   CanBeBroken = false;
+  CanBeBurned = true;
   MinCharges = 0;
   MaxCharges = 0;
   CanBePiled = true;
@@ -3035,6 +3036,7 @@ flamingsword /* meleeweapon-> */
   WieldedBitmapPos = 160, 16;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  CanBeBurned = false;
 
   Config BROKEN;
   {

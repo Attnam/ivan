@@ -1687,6 +1687,32 @@ void corpse::SignalSpoil(material*)
   GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
+void bodypart::SignalBurn(material* Material)
+{
+  if(Master)
+    Master->SignalBurn();
+  else
+    item::SignalBurn(Material);
+}
+
+void bodypart::Extinguish()
+{
+  if(Master)
+    Master->Extinguish();
+  else
+    item::Extinguish();
+}
+
+void corpse::SignalBurn(material*)
+{
+  GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
+}
+
+void corpse::Extinguish()
+{
+  GetDeceased()->Extinguish();
+}
+
 void corpse::SignalDisappearance()
 {
   GetDeceased()->Disappear(this, "disappear", &item::IsVeryCloseToDisappearance);
@@ -2591,6 +2617,11 @@ int corpse::GetRustDataA() const
   return Deceased->GetTorso()->GetMainMaterial()->GetRustData();
 }
 
+int corpse::GetBurnDataA() const
+{
+  return Deceased->GetTorso()->GetMainMaterial()->GetBurnData();
+}
+
 void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, int SpecialFlags, v2 (item::*Retriever)(int) const, truth BodyArmor) const
 {
   if(Armor && Master)
@@ -3382,9 +3413,15 @@ void bodypart::RemoveRust()
   RestoreHP();
 }
 
+void bodypart::RemoveBurns()
+{
+  item::RemoveBurns();
+  RestoreHP();
+}
+
 long bodypart::GetFixPrice() const
 {
-  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25;
+  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25 + GetMainMaterial()->GetBurnLevel() * 25;
 }
 
 truth bodypart::IsFixableBySmith(ccharacter*) const

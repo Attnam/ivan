@@ -143,6 +143,7 @@ ITEM(bodypart, item)
   virtual int GetSparkleFlags() const;
   virtual truth MaterialIsChangeable(ccharacter*) const;
   virtual void RemoveRust();
+  virtual void RemoveBurns();
   virtual item* Fix();
   virtual long GetFixPrice() const;
   virtual truth IsFixableBySmith(ccharacter*) const;
@@ -155,6 +156,8 @@ ITEM(bodypart, item)
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
+  virtual void SignalBurn(material*);
+  virtual void Extinguish();
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -526,6 +529,9 @@ ITEM(corpse, item)
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual void SignalBurn(material*);
+  virtual void Extinguish();
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;
@@ -538,6 +544,7 @@ ITEM(corpse, item)
   virtual int GetSize() const;
   virtual int GetArticleMode() const;
   virtual int GetRustDataA() const;
+  virtual int GetBurnDataA() const;
   virtual truth AddStateDescription(festring&, truth) const;
   character* Deceased;
 };
