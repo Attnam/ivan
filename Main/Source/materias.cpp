@@ -13,12 +13,156 @@
 /* Compiled through materset.cpp */
 
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
+void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0); }
 
 cchar* liquid::GetConsumeVerb() const { return "drinking"; }
 
 truth powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 
 truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
+
+truth solid::IsSparkling() const { return material::IsSparkling() && GetBurnLevel() == NOT_BURNT; }
+
+void solid::ResetThermalEnergies()
+{
+  SteadyStateThermalEnergy = 0;
+  TransientThermalEnergy = 0;
+}
+
+void solid::Be(ulong Flags)
+{
+  if(IsBurning() && SteadyStateThermalEnergy <= 0)
+  {
+    MotherEntity->Extinguish();
+    ResetThermalEnergies();
+  }
+  
+  if(TransientThermalEnergy > 0) //decrement the transient thermal energy  with the Be() function
+    --TransientThermalEnergy;
+  else
+    TransientThermalEnergy = 0;
+  
+  if(BurnCheckCounter++ >= 50)
+  {
+    if(IsBurning())
+    {
+      if(Flags & HASTE)
+        BurnCounter += 125;
+      else if(Flags & SLOW)
+        BurnCounter += 5;
+      else
+        BurnCounter += 25;
+
+      if(BurnCounter < GetBurnModifier())
+      {
+        if(BurnCounter << 1 >= GetBurnModifier())
+        {
+          int NewBurnLevel = (6 * BurnCounter / GetBurnModifier()) - 2;
+
+          if(NewBurnLevel != GetBurnLevel())
+          {
+            SetBurnLevel(GetBurnLevel() + 1);
+          }
+        }
+      }
+      else
+      {
+        SetBurnLevel(HEAVILY_BURNT);
+        if(!(GetInteractionFlags() & RISES_FROM_ASHES))
+          MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
+        else
+        {
+          ResetBurning(); // only do this for phoenix feather!
+          MotherEntity->Extinguish();
+          ResetThermalEnergies();
+        }
+      }
+    }
+
+    BurnCheckCounter = 0;
+  }
+}
+
+int solid::GetBurnModifier() const
+{
+  int Str = material::GetStrengthValue();
+  int FR = material::GetFireResistance();
+  int Den = material::GetDensity();
+  
+  return (500 + Den + ((Str * FR) >> 1));
+}
+
+void solid::SetBurnLevel(int What)
+{
+  if(GetBurnLevel() != What)
+  {
+    if(!BurnData)
+      BurnData = RAND() & 0xFC | What;
+    else if(!What)
+      BurnData = 0;
+    else
+      BurnData = BurnData & 0xFC | What;
+
+    if(MotherEntity)
+      MotherEntity->SignalBurnLevelChange();
+  }
+}
+
+void solid::Save(outputfile& SaveFile) const
+{
+  material::Save(SaveFile);
+  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning;
+}
+
+void solid::Load(inputfile& SaveFile)
+{
+  material::Load(SaveFile);
+  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning;
+}
+
+truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
+{
+  if(GetBurnLevel() == NOT_BURNT)
+    return false;
+
+  if(Articled)
+    Name << "a ";
+
+  switch(GetBurnLevel())
+  {
+   case SLIGHTLY_BURNT:
+    Name << "slightly burnt ";
+    break;
+   case MODERATELY_BURNT:
+    Name << "moderately burnt ";
+    break;
+   case HEAVILY_BURNT:
+    Name << "heavily burnt ";
+    break;
+  }
+
+  return true;
+}
+
+void solid::PostConstruct()
+{
+  BurnCounter = BurnCheckCounter = Burning = TransientThermalEnergy = SteadyStateThermalEnergy = 0;
+}
+
+int solid::GetStrengthValue() const
+{
+  int Base = material::GetStrengthValue();
+
+  switch(GetBurnLevel())
+  {
+   case NOT_BURNT: return Base;
+   case SLIGHTLY_BURNT: return ((Base << 3) + Base) / 10;
+   case MODERATELY_BURNT: return ((Base << 1) + Base) >> 2;
+   case HEAVILY_BURNT: return Base >> 1;
+  }
+
+  return 0; /* not possible */
+}
 
 void organic::Be(ulong Flags)
 {
@@ -27,45 +171,47 @@ void organic::Be(ulong Flags)
     if(MotherEntity->AllowSpoil())
     {
       if(Flags & HASTE)
-	SpoilCounter += 125;
+       SpoilCounter += 125;
       else if(Flags & SLOW)
-	SpoilCounter += 5;
+       SpoilCounter += 5;
       else
-	SpoilCounter += 25;
+       SpoilCounter += 25;
 
       if(SpoilCounter < GetSpoilModifier())
       {
-	if(SpoilCounter << 1 >= GetSpoilModifier())
-	{
-	  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+       if(SpoilCounter << 1 >= GetSpoilModifier())
+       {
+         int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-	  if(NewSpoilLevel != SpoilLevel)
-	  {
-	    SpoilLevel = NewSpoilLevel;
-	    MotherEntity->SignalSpoilLevelChange(this);
-	  }
-	}
+         if(NewSpoilLevel != SpoilLevel)
+         {
+           SpoilLevel = NewSpoilLevel;
+           MotherEntity->SignalSpoilLevelChange(this);
+         }
+       }
       }
       else
       {
-	SpoilLevel = 8;
-	MotherEntity->SignalSpoil(this);
+       SpoilLevel = 8;
+       MotherEntity->SignalSpoil(this);
       }
     }
 
     SpoilCheckCounter = 0;
   }
+  
+  solid::Be(Flags);
 }
 
 void organic::Save(outputfile& SaveFile) const
 {
-  material::Save(SaveFile);
+  solid::Save(SaveFile);
   SaveFile << SpoilCounter << SpoilCheckCounter << SpoilLevel;
 }
 
 void organic::Load(inputfile& SaveFile)
 {
-  material::Load(SaveFile);
+  solid::Load(SaveFile);
   SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
 }
 
@@ -73,6 +219,21 @@ void organic::PostConstruct()
 {
   SpoilLevel = SpoilCheckCounter = 0;
   SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
+  solid::PostConstruct();
+}
+
+void solid::AddToThermalEnergy(int Damage)
+{
+  TransientThermalEnergy += Damage;
+  SteadyStateThermalEnergy += Damage;
+  //ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
+}
+
+void solid::RemoveFromThermalEnergy(int Amount)
+{
+  TransientThermalEnergy -= Amount;
+  SteadyStateThermalEnergy -= Amount;
+  //ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
 }
 
 void flesh::PostConstruct()
@@ -234,13 +395,15 @@ truth ironalloy::AddRustLevelDescription(festring& Name, truth Articled) const
 
 void ironalloy::Save(outputfile& SaveFile) const
 {
-  material::Save(SaveFile);
+  //material::Save(SaveFile);
+  solid::Save(SaveFile);
   SaveFile << RustData;
 }
 
 void ironalloy::Load(inputfile& SaveFile)
 {
-  material::Load(SaveFile);
+  //material::Load(SaveFile);
+  solid::Load(SaveFile);
   SaveFile >> RustData;
 }
 
@@ -251,6 +414,9 @@ void liquid::TouchEffect(item* Item, cfestring& LocationName)
 
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
+
+  if(Item->IsBurning())
+    Item->FightFire(this, LocationName, Volume);
 
   character* Char = Item->GetBodyPartMaster();
 

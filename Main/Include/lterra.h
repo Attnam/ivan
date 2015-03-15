@@ -96,6 +96,7 @@ class lterrain : public object
   virtual truth IsOnGround() const { return true; }
   room* GetRoom() const;
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
   virtual void TryToRust(long);
   virtual void ReceiveAcid(material*, long) { }
   void InitMaterials(material*, truth = true);
@@ -322,6 +323,7 @@ class olterrain : public lterrain, public oterrain
   virtual void BeDestroyed() { Break(); }
   virtual void ReceiveAcid(material*, long);
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
   virtual truth IsFountainWithWater() const { return false; }
   truth ShowThingsUnder() const;
   truth WillBeDestroyedBy(ccharacter*) const;

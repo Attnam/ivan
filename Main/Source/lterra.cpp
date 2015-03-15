@@ -473,9 +473,22 @@ void lterrain::SignalRustLevelChange()
   GetLSquareUnder()->SendNewDrawRequest();
 }
 
+void lterrain::SignalBurnLevelChange()
+{
+  UpdatePictures();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SendNewDrawRequest();
+}
+
 void olterrain::SignalRustLevelChange()
 {
   lterrain::SignalRustLevelChange();
+  HP = Min(HP, CalculateMaxHP());
+}
+
+void olterrain::SignalBurnLevelChange()
+{
+  lterrain::SignalBurnLevelChange();
   HP = Min(HP, CalculateMaxHP());
 }
 

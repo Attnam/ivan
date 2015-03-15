@@ -29,7 +29,7 @@
 
 #include "v2.h"
 
-#define IVAN_VERSION "0.50"
+#define IVAN_VERSION "0.51a"
 
 class item;
 class material;
@@ -696,6 +696,11 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define RUSTED 2
 #define VERY_RUSTED 3
 
+#define NOT_BURNT 0
+#define SLIGHTLY_BURNT 1
+#define MODERATELY_BURNT 2
+#define HEAVILY_BURNT 3
+
 #define HUMAN_BODY_ARMOR_PIXELS 68
 
 #define ARMOR_OUTLINE_PRIORITY ((7 << 4) + 7)
@@ -1085,6 +1090,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define AFFECT_INSIDE 8
 #define EFFECT_IS_GOOD 16
 #define IS_AFFECTED_BY_MUSTARD_GAS 32
+#define RISES_FROM_ASHES 64
 
 /*************************/
 /* End of DataBase flags */
