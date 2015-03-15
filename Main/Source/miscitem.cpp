@@ -2796,6 +2796,21 @@ truth holyhandgrenade::Apply(character* Applier)
   return true;
 }
 
+void holyhandgrenade::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, DEFINITE);
+
+  if(ShowSpecialInfo)
+  {
+    Entry << " [" << GetWeight() << "g";
+
+    if(!!WillExplodeSoon())
+      Entry << ", " << "(armed)";
+
+    Entry << ']';
+  }
+}
+
 truth holyhandgrenade::CalculateHasBe() const
 {
   return PinPulledTick;
