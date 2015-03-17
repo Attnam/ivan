@@ -1365,12 +1365,15 @@ void item::Ignite(/*character* Arsonist*/)
       ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
 }
 
+/*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
 void item::Extinguish(/*character* FireFighter*/)
 {
   MainMaterial->SetIsBurning(false);
   MainMaterial->ResetThermalEnergies();
   SignalEmitationDecrease(MakeRGB24(150, 120, 90));
   UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
 }

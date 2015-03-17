@@ -72,9 +72,8 @@ void solid::Be(ulong Flags)
           MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
         else
         {
-          ResetBurning(); // only do this for phoenix feather!
           MotherEntity->Extinguish();
-          ResetThermalEnergies();
+          ResetBurning(); // only do this for phoenix feather!
         }
       }
     }
