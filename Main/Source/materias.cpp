@@ -110,13 +110,13 @@ void solid::SetBurnLevel(int What)
 void solid::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
-  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning;
+  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning << SteadyStateThermalEnergy << TransientThermalEnergy;
 }
 
 void solid::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
-  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning;
+  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning >> SteadyStateThermalEnergy >> TransientThermalEnergy;
 }
 
 truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
