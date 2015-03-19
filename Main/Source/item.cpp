@@ -1359,10 +1359,20 @@ void item::TestActivationEnergy(int Damage)
 
 void item::Ignite(/*character* Arsonist*/)
 {
-      MainMaterial->SetIsBurning(true);
-      SignalEmitationIncrease(MakeRGB24(150, 120, 90));
-      UpdatePictures();
-      ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+  truth WasAnimated = IsAnimated();
+
+  MainMaterial->SetIsBurning(true);
+  SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+  UpdatePictures();
+  ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->IncStaticAnimatedEntities();
+
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
 }
 
 /*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
