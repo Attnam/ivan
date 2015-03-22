@@ -100,6 +100,7 @@ ITEM(bodypart, item)
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
+  virtual void SignalBurnLevelChange();
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth DamageArmor(character*, int, int) { return false; }
   truth CanBeSevered(int) const;
@@ -528,6 +529,7 @@ ITEM(corpse, item)
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
+  virtual truth IsBurnt() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SignalBurn(material*);

@@ -443,6 +443,7 @@ class character : public entity, public id
   void AddOmmelBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
+  virtual void IgniteBodyPart(int, int);
   virtual truth TryToRiseFromTheDead();
   virtual truth RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
@@ -771,6 +772,7 @@ class character : public entity, public id
   character* DuplicateToNearestSquare(character*, ulong = 0);
   void SignalSpoil();
   void SignalSpoilLevelChange();
+  void SignalBurnLevelChange();
   virtual truth UseMaterialAttributes() const = 0;
   truth IsPolymorphed() const { return Flags & C_POLYMORPHED; }
   truth IsInBadCondition() const { return HP * 3 < MaxHP; }
@@ -857,6 +859,7 @@ class character : public entity, public id
   virtual void AddAttackInfo(felist&) const = 0;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual void SetFireToBodyPart();
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
@@ -1090,7 +1093,7 @@ class character : public entity, public id
   void Haste();
   void Slow();
   void SignalBurn();
-  void Extinguish();
+  //void Extinguish();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

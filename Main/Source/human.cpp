@@ -3612,6 +3612,44 @@ void humanoid::DetachBodyPart()
   CheckDeath(CONST_S("removed one of his vital bodyparts"), 0);
 }
 
+void humanoid::SetFireToBodyPart()
+{
+  int ToBeSetFireTo;
+
+  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
+  {
+   case 'l':
+    ToBeSetFireTo = LEFT_ARM_INDEX;
+    break;
+   case 'r':
+    ToBeSetFireTo = RIGHT_ARM_INDEX;
+    break;
+   case 'L':
+    ToBeSetFireTo = LEFT_LEG_INDEX;
+    break;
+   case 'R':
+    ToBeSetFireTo = RIGHT_LEG_INDEX;
+    break;
+   case 'h':
+    ToBeSetFireTo = HEAD_INDEX;
+    break;
+   default:
+    return;
+  }
+
+  if(GetBodyPart(ToBeSetFireTo))
+  {
+    IgniteBodyPart(ToBeSetFireTo, game::NumberQuestion(CONST_S("How much fire damage?"), PINK));
+    SendNewDrawRequest();
+
+    ADD_MESSAGE("Bodypart ignited!");
+  }
+  else
+    ADD_MESSAGE("That bodypart has previously been detached.");
+
+  CheckDeath(CONST_S("burnt off one of his vital bodyparts"), 0);
+}
+
 #else
 
 void humanoid::AddAttributeInfo(festring&) const { }

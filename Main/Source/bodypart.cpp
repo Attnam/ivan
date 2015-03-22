@@ -244,7 +244,7 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
+truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
 {
   if(Master)
   {
@@ -297,6 +297,8 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
 
     SignalPossibleUsabilityChange();
   }
+  else
+    return item::ReceiveDamage(Damager, Damage, Type, Direction);
 
   return false;
 }
@@ -1689,8 +1691,29 @@ void corpse::SignalSpoil(material*)
 
 void bodypart::SignalBurn(material* Material)
 {
+  //bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+  int BodyPartIndex = GetBodyPartIndex();
+  
   if(Master)
-    Master->SignalBurn();
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("Your %s burns away completely!", /*BodyPart->*/GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s %s burns away completely!", Owner->GetPossessivePronoun().CStr(), /*BodyPart->*/GetBodyPartName().CStr());
+
+    /*GetBodyPart(BodyPartIndex)->*/DropEquipment(!game::IsInWilderness() ? Owner->GetStackUnder() : Owner->GetStack());
+    /*item* Burnt = */Owner->SevereBodyPart(BodyPartIndex, true);
+/* // create lumps of (charred?) flesh... (note, remove 'true' from item* Burnt = SevereBodyPart(BodyPartIndex, true);
+    if(Burnt)
+      Burnt->DestroyBodyPart(!game::IsInWilderness() ? GetStackUnder() : GetStack());
+*/
+    Owner->SendNewDrawRequest();
+
+    if(Owner->IsPlayer())
+      game::AskForKeyPress(CONST_S("Bodypart destroyed! [press any key to continue]"));
+  }
   else
     item::SignalBurn(Material);
 }
@@ -1698,7 +1721,7 @@ void bodypart::SignalBurn(material* Material)
 void bodypart::Extinguish()
 {
   if(Master)
-    Master->Extinguish();
+    item::Extinguish(); //Master->Extinguish();
   else
     item::Extinguish();
 }
@@ -1775,8 +1798,8 @@ void bodypart::Be()
 
       SpillBloodCounter = 0;
     }
-
-    if(Master->AllowSpoil() || !Master->IsEnabled())
+// Organics can have an active Be() function, if they are burning... they will normally burn completely before they spoil
+    if(Master->AllowSpoil() || !Master->IsEnabled() || !!IsBurning())
       MainMaterial->Be(ItemFlags);
 
     if(Exists() && LifeExpectancy)
@@ -2040,6 +2063,14 @@ void bodypart::SignalSpoilLevelChange(material* Material)
     Master->SignalSpoilLevelChange();
   else
     item::SignalSpoilLevelChange(Material);
+}
+
+void bodypart::SignalBurnLevelChange()
+{
+//  if(Master)
+//    Master->SignalBurnLevelChange();
+//  else
+    item::SignalBurnLevelChange();
 }
 
 truth head::DamageArmor(character* Damager, int Damage, int Type)

@@ -3327,6 +3327,16 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
       return 0;
     }
 
+  if(BodyPart->GetMainMaterial())
+  {
+    if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning() && Type & FIRE)
+    {
+      BodyPart->TestActivationEnergy(Damage);
+    }
+    else if(BodyPart->IsBurning() && Type & FIRE)
+      BodyPart->GetMainMaterial()->AddToThermalEnergy(Damage);
+  }
+
   if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness())
   {
     BodyPart->SpillBlood(2 + (RAND() & 1));
@@ -3447,6 +3457,12 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
     RemoveTraps(BodyPartIndex);
     return BodyPart;
   }
+}
+
+void character::IgniteBodyPart(int BodyPartIndex, int Damage)
+{
+  bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+  BodyPart->TestActivationEnergy(Damage);
 }
 
 /* The second int is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
@@ -6017,7 +6033,7 @@ void character::SignalSpoil()
   else
     Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
 }
-
+// never call this function, it is bunkum
 void character::SignalBurn()
 {
   if(GetMotherEntity())
@@ -6025,7 +6041,7 @@ void character::SignalBurn()
   else
     Disappear(0, "burn", &item::IsVeryCloseToBurning);
 }
-
+/*
 void character::Extinguish() // so obviously not finished yet
 {
   if(GetMotherEntity())
@@ -6033,7 +6049,7 @@ void character::Extinguish() // so obviously not finished yet
   else
     Extinguish();
 }
-
+*/
 truth character::CanHeal() const
 {
   for(int c = 0; c < BodyParts; ++c)
@@ -6224,6 +6240,14 @@ void character::SignalSpoilLevelChange()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoilLevelChange(0);
   else
+    UpdatePictures();
+}
+
+void character::SignalBurnLevelChange()
+{
+//  if(GetMotherEntity())
+//    GetMotherEntity()->SignalBurnLevelChange();
+//  else
     UpdatePictures();
 }
 
@@ -6969,6 +6993,11 @@ void character::AddDefenceInfo(felist& List) const
 }
 
 void character::DetachBodyPart()
+{
+  ADD_MESSAGE("You haven't got any extra bodyparts.");
+}
+
+void character::SetFireToBodyPart()
 {
   ADD_MESSAGE("You haven't got any extra bodyparts.");
 }

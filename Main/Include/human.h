@@ -137,6 +137,7 @@ CHARACTER(humanoid, character)
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual void SetFireToBodyPart();
   virtual int GetRandomApplyBodyPart() const;
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, citem*);
   virtual int GetSumOfAttributes() const;

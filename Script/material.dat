@@ -1197,6 +1197,7 @@ organic /* substances that spoil but are not flesh */
     HardenedMaterial = OMMEL_BONE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     NaturalForm = bone;
+    InteractionFlags = CAN_BURN;
   }
 
   Config BREAD;

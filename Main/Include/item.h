@@ -557,7 +557,7 @@ class item : public object
   virtual void DestroyBodyPart(stack*) { SendToHell(); }
   int GetLifeExpectancy() const { return LifeExpectancy; }
   virtual void SetLifeExpectancy(int, int);
-  int NeedsBe() const { return LifeExpectancy; }
+  int NeedsBe() const { return LifeExpectancy || !!IsBurning(); }
   truth IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   truth IsVeryCloseToSpoiling() const;
   truth IsVeryCloseToBurning() const;
