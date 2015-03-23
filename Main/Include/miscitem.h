@@ -210,6 +210,8 @@ ITEM(bone, item)
 {
  public:
   virtual truth DogWillCatchAndConsume(ccharacter*) const;
+  virtual truth IsABone() const { return true; }
+  virtual truth Necromancy(character*);
 };
 
 ITEM(loaf, item)
@@ -488,6 +490,8 @@ ITEM(scrollofenchantarmor, scroll)
 
 ITEM(skull, item)
 {
+ public:
+  virtual truth IsASkull() const { return true; }
 };
 
 ITEM(scrollofrepair, scroll)
