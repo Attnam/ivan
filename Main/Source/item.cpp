@@ -642,7 +642,7 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
-  if(MainMaterial)
+  if(MainMaterial && IsDestroyable(Damager))
   {
     if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
     {
@@ -1365,7 +1365,7 @@ void item::Ignite(/*character* Arsonist*/)
   MainMaterial->SetIsBurning(true);
   SignalEmitationIncrease(MakeRGB24(150, 120, 90));
   UpdatePictures();
-  ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+  //ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
 
   if(Slot[0])
   {

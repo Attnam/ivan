@@ -1689,6 +1689,36 @@ void corpse::SignalSpoil(material*)
   GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
+void bodypart::TestActivationEnergy(int Damage)
+{
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
+  character* Owner = GetMaster();
+  
+  if(Owner)
+    if(Owner->BodyPartIsVital(GetBodyPartIndex()))
+      return;
+  
+  if(MainMaterial)
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    {
+      Ignite();
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+      
+      if(Owner)
+      {
+        if(Owner->IsPlayer())
+          ADD_MESSAGE("Your %s catches fire!", GetBodyPartName().CStr());
+        else if(Owner->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s %s catches fire!", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      }
+       //ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+    }
+}
+
 void bodypart::SignalBurn(material* Material)
 {
   //bodypart* BodyPart = GetBodyPart(BodyPartIndex);
