@@ -85,6 +85,14 @@ void smoke::Be()
 
   if(Char && !Char->StateIsActivated(GAS_IMMUNITY))
     Gas->BreatheEffect(Char);
+
+  if(Char && Char->HasFire())
+    if(Gas->ExplosiveEffect(Char))
+    {
+      LSquareUnder->RemoveSmoke(this);
+      SendToHell();
+      return;
+    }
 }
 
 void smoke::Draw(blitdata& BlitData) const

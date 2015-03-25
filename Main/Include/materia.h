@@ -176,6 +176,8 @@ class material
   virtual void SetSpoilCounter(int) { }
   DATA_BASE_VALUE(cfestring&, BreatheMessage);
   truth BreatheEffect(character*);
+  truth CauseExplosion(character*, long);
+  truth ExplosiveEffect(character*);
   virtual truth SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(truth) { }
   DATA_BASE_VALUE(int, StepInWisdomLimit);

@@ -673,6 +673,7 @@ class character : public entity, public id
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
   truth HasAllBodyParts() const;
+  truth HasFire() const;
   bodypart* FindRandomOwnBodyPart(truth) const;
   bodypart* GenerateRandomBodyPart();
   void PrintBeginPoisonedMessage() const;

@@ -1401,6 +1401,7 @@ gas
     AttachedGod = SILVA;
     BreatheMessage = "Ugh. It smells horrible here.";
     CategoryFlags = Base|IS_SCARY;
+    InteractionFlags = Base|CAN_EXPLODE;
   }
 
   Config MUSTARD_GAS;

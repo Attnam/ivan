@@ -5088,6 +5088,23 @@ truth character::HasAllBodyParts() const
   return true;
 }
 
+truth character::HasFire() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsBurning())
+      return true;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(BodyPart)
+      if(BodyPart->IsBurning())
+        return true;
+  }
+
+  return false;
+}
+
 bodypart* character::GenerateRandomBodyPart()
 {
   int NeededBodyPart[MAX_BODYPARTS];
