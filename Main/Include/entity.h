@@ -51,6 +51,7 @@ class entity
   virtual void SignalRustLevelChange() { }
   virtual void SignalBurn(material*) { }
   virtual void Extinguish() { }
+  virtual void AddSpecialExtinguishMessageForPF() { }
   virtual void SignalBurnLevelChange() { }
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }

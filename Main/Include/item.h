@@ -516,6 +516,7 @@ class item : public object
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();
   virtual void SignalBurn(material*);
+  virtual void AddSpecialExtinguishMessageForPF();
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }

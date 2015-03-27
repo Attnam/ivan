@@ -1721,7 +1721,6 @@ void bodypart::TestActivationEnergy(int Damage)
 
 void bodypart::SignalBurn(material* Material)
 {
-  //bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   int BodyPartIndex = GetBodyPartIndex();
   
   if(Master)
@@ -1729,9 +1728,9 @@ void bodypart::SignalBurn(material* Material)
     character* Owner = GetMaster();
     
     if(Owner->IsPlayer())
-      ADD_MESSAGE("Your %s burns away completely!", /*BodyPart->*/GetBodyPartName().CStr());
+      ADD_MESSAGE("Your %s burns away completely!", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s %s burns away completely!", Owner->GetPossessivePronoun().CStr(), /*BodyPart->*/GetBodyPartName().CStr());
+      ADD_MESSAGE("%s %s burns away completely!", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
 
     /*GetBodyPart(BodyPartIndex)->*/DropEquipment(!game::IsInWilderness() ? Owner->GetStackUnder() : Owner->GetStack());
     /*item* Burnt = */Owner->SevereBodyPart(BodyPartIndex, true);
@@ -1759,6 +1758,23 @@ void bodypart::Extinguish()
 void corpse::SignalBurn(material*)
 {
   GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
+}
+
+void bodypart::AddSpecialExtinguishMessageForPF()
+{
+  int BodyPartIndex = GetBodyPartIndex();
+  
+  if(Master)
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("Your %s burns away completely. But even as it does so, bright rays of light shine forth from your %s and is made new by some innate virtue.", GetBodyPartName().CStr(), GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s %s burns away completely. But even as it does so, bright rays of light shine forth from %s %s and is made new by some innate virtue.", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr(), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+  }
+  else
+    item::AddSpecialExtinguishMessageForPF();
 }
 
 void corpse::Extinguish()

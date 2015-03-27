@@ -728,7 +728,7 @@ void item::SignalSpoil(material*)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
-void item::SignalBurn(material*)
+void item::SignalBurn(material* Material)
 {
   if(!Exists())
     return;
@@ -1387,6 +1387,13 @@ void item::Extinguish(/*character* FireFighter*/)
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
+}
+
+//This is for anything made from phoenix feather
+void item::AddSpecialExtinguishMessageForPF(/*character* FireFighter*/)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns away completely. But even as it does so, bright rays of light shine forth from %s and is made new by some innate virtue.", CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)

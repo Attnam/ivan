@@ -160,6 +160,7 @@ ITEM(bodypart, item)
   int CalculateScarAttributePenalty(int) const;
   virtual void SignalBurn(material*);
   virtual void Extinguish();
+  virtual void AddSpecialExtinguishMessageForPF();
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
