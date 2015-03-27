@@ -674,6 +674,7 @@ class character : public entity, public id
   void AttachBodyPart(bodypart*);
   truth HasAllBodyParts() const;
   truth HasFire() const;
+  truth IsBurning() const;
   bodypart* FindRandomOwnBodyPart(truth) const;
   bodypart* GenerateRandomBodyPart();
   void PrintBeginPoisonedMessage() const;
@@ -1203,6 +1204,7 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
+  virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

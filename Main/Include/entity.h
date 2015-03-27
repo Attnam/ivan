@@ -52,7 +52,9 @@ class entity
   virtual void SignalBurn(material*) { }
   virtual void Extinguish() { }
   virtual void AddSpecialExtinguishMessageForPF() { }
+  virtual void AddExtinguishMessage() { }
   virtual void SignalBurnLevelChange() { }
+  virtual void SignalBurnLevelTransitionMessage() { }
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
   virtual void SignalDisappearance() { }

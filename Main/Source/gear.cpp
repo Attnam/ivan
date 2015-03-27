@@ -438,11 +438,6 @@ void meleeweapon::AddPostFix(festring& String, int Case) const
     fluid::AddFluidInfo(Fluid[0], String);
   }
 
-  if(IsBurning())
-  {
-    String << " (on fire)";
-  }
-
   if(Enchantment > 0)
     String << " +" << Enchantment;
   else if(Enchantment < 0)
@@ -630,11 +625,6 @@ void armor::AddPostFix(festring& String, int Case) const
   {
     String << " covered with ";
     fluid::AddFluidInfo(Fluid[0], String);
-  }
-
-  if(IsBurning())
-  {
-    String << " (on fire)";
   }
 
   if(Enchantment > 0)

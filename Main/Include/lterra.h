@@ -113,6 +113,7 @@ class lterrain : public object
   virtual void PostConstruct() { }
   virtual void InstallDataBase(int) = 0;
   lsquare* LSquareUnder;
+  virtual truth NeedsBurningPostFix() const { return false; }
 };
 
 struct glterraindatabase : public lterraindatabase

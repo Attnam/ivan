@@ -101,6 +101,7 @@ ITEM(bodypart, item)
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
   virtual void SignalBurnLevelChange();
+  virtual void SignalBurnLevelTransitionMessage();
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth DamageArmor(character*, int, int) { return false; }
   truth CanBeSevered(int) const;
@@ -161,6 +162,7 @@ ITEM(bodypart, item)
   virtual void SignalBurn(material*);
   virtual void Extinguish();
   virtual void AddSpecialExtinguishMessageForPF();
+  virtual void AddExtinguishMessage();
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }

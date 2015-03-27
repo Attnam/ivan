@@ -45,6 +45,7 @@ class id
   virtual int GetArticleMode() const { return 0; }
   virtual truth ShowMaterial() const { return false; }
   virtual truth AddActiveAdjective(festring&, truth) const;
+  virtual truth NeedsBurningPostFix() const = 0;
 };
 
 #endif

@@ -1176,6 +1176,15 @@ void item::SignalRustLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
+void item::SignalBurnLevelTransitionMessage()
+{
+  if(CanBeSeenByPlayer())
+    if(MainMaterial->GetBurnLevel() == NOT_BURNT)
+      ADD_MESSAGE("%s burns.", GetExtendedDescription().CStr());
+    else
+      ADD_MESSAGE("%s burns more.", GetExtendedDescription().CStr());
+}
+
 void item::SignalBurnLevelChange()
 {
   if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
@@ -1386,14 +1395,19 @@ void item::Extinguish(/*character* FireFighter*/)
   SendNewDrawAndMemorizedUpdateRequest();
 
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("The flames on %s are now extinguished.", CHAR_NAME(DEFINITE));
+    AddExtinguishMessage();
+}
+
+void item::AddExtinguishMessage()
+{
+      ADD_MESSAGE("The flames on %s die away.", GetExtendedDescription().CStr());
 }
 
 //This is for anything made from phoenix feather
-void item::AddSpecialExtinguishMessageForPF(/*character* FireFighter*/)
+void item::AddSpecialExtinguishMessageForPF()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s burns away completely. But even as it does so, bright rays of light shine forth from %s and is made new by some innate virtue.", CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes peel away from %s and it is made new by some innate virtue.", CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)

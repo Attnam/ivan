@@ -515,8 +515,10 @@ class item : public object
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();
+  virtual void SignalBurnLevelTransitionMessage();
   virtual void SignalBurn(material*);
   virtual void AddSpecialExtinguishMessageForPF();
+  virtual void AddExtinguishMessage();
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }
@@ -615,6 +617,7 @@ class item : public object
   int SquaresUnder;
   int LifeExpectancy;
   ulong ItemFlags;
+  virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

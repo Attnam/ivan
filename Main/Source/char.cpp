@@ -3049,7 +3049,11 @@ int character::RandomizeReply(long& Said, int Replies)
 void character::DisplayInfo(festring& Msg)
 {
   if(IsPlayer())
+  {
     Msg << " You are " << GetStandVerb() << " here.";
+    if(IsBurning())
+      Msg << " You are on fire.";
+  }
   else
   {
     Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is " << GetStandVerb() << " here. " << GetPersonalPronoun().CapitalizeCopy();
@@ -5105,6 +5109,18 @@ truth character::HasFire() const
   return false;
 }
 
+truth character::IsBurning() const
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(BodyPart)
+      if(BodyPart->IsBurning())
+        return true;
+  }
+  return false;
+}
+
 bodypart* character::GenerateRandomBodyPart()
 {
   int NeededBodyPart[MAX_BODYPARTS];
@@ -6050,7 +6066,7 @@ void character::SignalSpoil()
   else
     Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
 }
-// never call this function, it is bunkum
+// never call this function!
 void character::SignalBurn()
 {
   if(GetMotherEntity())
@@ -6059,7 +6075,7 @@ void character::SignalBurn()
     Disappear(0, "burn", &item::IsVeryCloseToBurning);
 }
 /*
-void character::Extinguish() // so obviously not finished yet
+void character::Extinguish() // so obviously not finished yet, might need this for god effects...
 {
   if(GetMotherEntity())
     GetMotherEntity()->Extinguish();

@@ -1760,26 +1760,40 @@ void corpse::SignalBurn(material*)
   GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
 }
 
-void bodypart::AddSpecialExtinguishMessageForPF()
+void bodypart::AddExtinguishMessage()
 {
-  int BodyPartIndex = GetBodyPartIndex();
-  
   if(Master)
   {
     character* Owner = GetMaster();
     
     if(Owner->IsPlayer())
-      ADD_MESSAGE("Your %s burns away completely. But even as it does so, bright rays of light shine forth from your %s and is made new by some innate virtue.", GetBodyPartName().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("The flames on your %s die away.", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s %s burns away completely. But even as it does so, bright rays of light shine forth from %s %s and is made new by some innate virtue.", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr(), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("The flames on %s %s die away.", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+  }
+  else
+    item::AddExtinguishMessage();
+}
+
+void bodypart::AddSpecialExtinguishMessageForPF()
+{
+  if(Master)
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes peel away from your %s and it is made new by some innate virtue!", CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s %s burns even more! But lo', even as it does so, the ashes peel away from %s %s and it is made new by some innate virtue!", Owner->GetPossessivePronoun().CStr(), CHAR_NAME(UNARTICLED), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
   }
   else
     item::AddSpecialExtinguishMessageForPF();
 }
 
+// interesting...
 void corpse::Extinguish()
 {
-  GetDeceased()->Extinguish();
+  GetDeceased()->Extinguish(); // this will blow up because there is no character::Extinguish yet
 }
 
 void corpse::SignalDisappearance()
@@ -2117,6 +2131,23 @@ void bodypart::SignalBurnLevelChange()
 //    Master->SignalBurnLevelChange();
 //  else
     item::SignalBurnLevelChange();
+}
+
+void bodypart::SignalBurnLevelTransitionMessage()
+{
+cchar* MoreMsg = MainMaterial->GetBurnLevel() == NOT_BURNT ? "" : " more";
+
+  if(Master)
+  {
+    if(Master->IsPlayer())
+      ADD_MESSAGE("Your %s burns%s.", CHAR_NAME(UNARTICLED), MoreMsg);
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The %s of %s burns%s.", CHAR_NAME(UNARTICLED), Master->CHAR_NAME(DEFINITE), MoreMsg);
+  }
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns%s.", CHAR_NAME(DEFINITE), MoreMsg);
+  else
+    item::SignalBurnLevelTransitionMessage();
 }
 
 truth head::DamageArmor(character* Damager, int Damage, int Type)

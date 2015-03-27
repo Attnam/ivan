@@ -67,7 +67,7 @@ void solid::Be(ulong Flags)
       }
       else
       {
-        SetBurnLevel(HEAVILY_BURNT);
+        //SetBurnLevel(HEAVILY_BURNT);
         if(!(GetInteractionFlags() & RISES_FROM_ASHES))
           MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
         else
@@ -94,13 +94,20 @@ int solid::GetBurnModifier() const
 
 void solid::SetBurnLevel(int What)
 {
+  truth Transitioned = true;
+  if(!What)
+    Transitioned = false;
+  
+  if(MotherEntity && Transitioned) // if you want to burn carnivorous plants in future, you had better make sure there are the right functions in char.cpp
+    MotherEntity->SignalBurnLevelTransitionMessage();
+  
   if(GetBurnLevel() != What)
   {
-    if(!BurnData)
+    if(!BurnData) // if it is initially not burnt, then increment burn level, seeding the flame graphics
       BurnData = RAND() & 0xFC | What;
-    else if(!What)
+    else if(!What) // if burn level is to be set to NOT_BURNT, then do this
       BurnData = 0;
-    else
+    else // otherwise continue incrementing burn level (not necessary to re-seed the flame graphics)
       BurnData = BurnData & 0xFC | What;
 
     if(MotherEntity)
