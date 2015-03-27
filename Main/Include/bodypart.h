@@ -528,6 +528,7 @@ ITEM(corpse, item)
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
+  virtual truth IsBurnt() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SignalBurn(material*);
