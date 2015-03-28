@@ -1191,9 +1191,29 @@ void item::SignalBurnLevelChange()
     for(int c = 0; c < SquaresUnder; ++c)
       GetSquareUnder(c)->IncStaticAnimatedEntities();
   
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // completely remove previously applied emitation increases
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // apply an emitation increase according to the current burn level
+  
   SignalVolumeAndWeightChange();
   UpdatePictures();
   SendNewDrawAndMemorizedUpdateRequest();
+}
+
+/* emitation slowly ramps down with increasing item BurnLevel, in the beginning the light is bright, with light decreasing in intensity as the item gets more burnt */
+col24 item::GetEmitationDueToBurnLevel()
+{
+  if(MainMaterial)
+  {
+    int CurrentBurnLevel = GetBurnLevel();
+    
+    int Red = 150 - 10 * CurrentBurnLevel;
+    int Green = 120 - 8 * CurrentBurnLevel;
+    int Blue = 90 - 6 * CurrentBurnLevel;
+    //ADD_MESSAGE("Emitation due to BurnLevel: R%d G%d B%d", Red, Green, Blue); // por debug
+    return MakeRGB24(Red, Green, Blue);
+  }
+  else
+    return MakeRGB24(0, 0, 0);
 }
 
 const rawbitmap* item::GetRawPicture() const
@@ -1372,7 +1392,7 @@ void item::Ignite(/*character* Arsonist*/)
   truth WasAnimated = IsAnimated();
 
   MainMaterial->SetIsBurning(true);
-  SignalEmitationIncrease(MakeRGB24(150, 120, 90));
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // kick this off by applying an emitation increase proportional to the burn level of the item
   UpdatePictures();
   //ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
 

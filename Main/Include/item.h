@@ -433,6 +433,7 @@ class item : public object
   long GetWeight() const { return Weight; }
   virtual void SignalEmitationIncrease(col24);
   virtual void SignalEmitationDecrease(col24);
+  col24 GetEmitationDueToBurnLevel();
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
   virtual truth IsDangerous(ccharacter*) const { return false; }

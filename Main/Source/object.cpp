@@ -463,7 +463,10 @@ void object::CalculateEmitation()
   {
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
     if(MainMaterial->IsBurning())
-      game::CombineLights(Emitation, MakeRGB24(150, 120, 90)); //ADDED: for now use a fixed value of emitation (that of flamingsword), but later relate this to intensity of burning
+    {
+      int CurrentBurnLevel = MainMaterial->GetBurnLevel();
+      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); //Use a value of emitation related to the burn level of the object
+    }
   }
 }
 
