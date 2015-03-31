@@ -1900,14 +1900,14 @@ truth blinkdog::SpecialEnemySightedReaction(character*)
 
   if(!(RAND() & 31))
   {
-    MonsterTeleport("playful bark");
+    MonsterTeleport("a playful bark");
     return true;
   }
 
   if((!(RAND() & 3) && StateIsActivated(PANIC))
      || (!(RAND() & 7) && IsInBadCondition()))
   {
-    MonsterTeleport("frightened howl");
+    MonsterTeleport("a frightened howl");
     return true;
   }
 
@@ -1917,9 +1917,9 @@ truth blinkdog::SpecialEnemySightedReaction(character*)
 void blinkdog::MonsterTeleport(cchar* BarkMsg)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("You hear a %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("You hear %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
   else
-    ADD_MESSAGE("You hear a %s inside your head.", BarkMsg);
+    ADD_MESSAGE("You hear %s inside your head.", BarkMsg);
 
   v2 Pos = GetPos();
   rect Border(Pos + v2(-5, -5), Pos + v2(5, 5));
@@ -1961,7 +1961,7 @@ int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
     if((RAND() & 1 && StateIsActivated(PANIC))
        || (!(RAND() & 3) && IsInBadCondition())
        || !(RAND() & 15))
-    MonsterTeleport("terrified yelp");
+    MonsterTeleport("a terrified yelp");
   }
 
   return Return;
