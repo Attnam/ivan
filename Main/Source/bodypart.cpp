@@ -1703,10 +1703,13 @@ void bodypart::TestActivationEnergy(int Damage)
       return;
   
   if(MainMaterial)
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+  {
+    int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
+    GetMainMaterial()->AddToTransientThermalEnergy(Damage);
+    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       Ignite();
-      GetMainMaterial()->AddToThermalEnergy(Damage);
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
       
       if(Owner)
       {
@@ -1715,8 +1718,9 @@ void bodypart::TestActivationEnergy(int Damage)
         else if(Owner->CanBeSeenByPlayer())
           ADD_MESSAGE("%s %s catches fire!", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
       }
-       //ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+      //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
     }
+  }
 }
 
 void bodypart::SignalBurn(material* Material)

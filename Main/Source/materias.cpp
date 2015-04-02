@@ -74,6 +74,7 @@ void solid::Be(ulong Flags)
         {
           MotherEntity->AddSpecialExtinguishMessageForPF();
           MotherEntity->Extinguish();
+          ResetThermalEnergy();
           ResetBurning(); // only do this for phoenix feather!
           MotherEntity->SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // gum solution related to PF
         }
@@ -235,6 +236,18 @@ void solid::AddToThermalEnergy(int Damage)
   TransientThermalEnergy += Damage;
   SteadyStateThermalEnergy += Damage;
   //ADD_MESSAGE("(TTE is now %d, SSTE is %d)", TransientThermalEnergy, SteadyStateThermalEnergy); // CLEANUP
+}
+
+void solid::AddToSteadyStateThermalEnergy(int Damage)
+{
+  SteadyStateThermalEnergy += Damage;
+  //ADD_MESSAGE("(SSTE is %d)", SteadyStateThermalEnergy); // CLEANUP
+}
+
+void solid::AddToTransientThermalEnergy(int Damage)
+{
+  TransientThermalEnergy += Damage;
+  //ADD_MESSAGE("(TTE is now %d)", TransientThermalEnergy); // CLEANUP
 }
 
 void solid::RemoveFromThermalEnergy(int Amount)

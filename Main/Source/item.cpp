@@ -1381,17 +1381,21 @@ void item::TestActivationEnergy(int Damage)
 //  }
 
   if(MainMaterial)
-    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+  {
+    int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
+    GetMainMaterial()->AddToTransientThermalEnergy(Damage);
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       Ignite();
-      GetMainMaterial()->AddToThermalEnergy(Damage);
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
       
       if(CanBeSeenByPlayer())
       {
         ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
-        //ADD_MESSAGE("%s catches fire! (Damage was %d)", CHAR_NAME(DEFINITE), Damage);
+        //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
       }
     }
+  }
 }
 
 void item::Ignite(/*character* Arsonist*/)

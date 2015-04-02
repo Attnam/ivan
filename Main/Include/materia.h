@@ -223,8 +223,11 @@ class material
   virtual int GetBurnData() const { return NOT_BURNT; }
   virtual int GetBurnLevel() const { return NOT_BURNT; }
   virtual void AddToThermalEnergy(int) { }
+  virtual void AddToSteadyStateThermalEnergy(int) { }
+  virtual void AddToTransientThermalEnergy(int) { }
   virtual void RemoveFromThermalEnergy(int) { }
   virtual void ResetThermalEnergies() { }
+  virtual int GetTransientThermalEnergy() const { return 0; }
  protected:
   virtual void PostConstruct() { }
   void Initialize(int, long, truth);

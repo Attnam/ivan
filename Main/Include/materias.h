@@ -31,11 +31,14 @@ MATERIAL(solid, material)
   virtual void Load(inputfile&);
   virtual truth IsSparkling() const;
   virtual int GetBurnData() const { return BurnData; }
+  virtual int GetTransientThermalEnergy() const { return TransientThermalEnergy; }
   virtual truth AddBurnLevelDescription(festring&, truth) const;
   virtual int GetBurnLevel() const { return BurnData & 3; }
   virtual void ResetBurning();
   virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
   virtual void AddToThermalEnergy(int);
+  virtual void AddToSteadyStateThermalEnergy(int);
+  virtual void AddToTransientThermalEnergy(int);
   virtual void RemoveFromThermalEnergy(int);
  protected:
   virtual void PostConstruct();
