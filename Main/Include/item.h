@@ -476,6 +476,7 @@ class item : public object
   virtual void SignalSpoilLevelChange(material*);
   virtual int GetBurnLevel() const;
   void ResetSpoiling();
+  void ResetBurning();
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }

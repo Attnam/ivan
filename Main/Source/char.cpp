@@ -7642,6 +7642,11 @@ void character::ResetSpoiling()
   doforbodyparts()(this, &bodypart::ResetSpoiling);
 }
 
+void character::ResetBurning()
+{
+  doforbodyparts()(this, &bodypart::ResetBurning);
+}
+
 item* character::SearchForItem(ccharacter* Char, sorter Sorter) const
 {
   item* Equipment = findequipment<ccharacter*>()(this, Sorter, Char);

@@ -13,7 +13,7 @@
 /* Compiled through materset.cpp */
 
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
-void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0); }
+void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0, false); }
 
 cchar* liquid::GetConsumeVerb() const { return "drinking"; }
 
@@ -61,13 +61,13 @@ void solid::Be(ulong Flags)
 
           if(NewBurnLevel != GetBurnLevel())
           {
-            SetBurnLevel(GetBurnLevel() + 1);
+            SetBurnLevel(GetBurnLevel() + 1, true);
           }
         }
       }
       else
       {
-        //SetBurnLevel(HEAVILY_BURNT);
+        //SetBurnLevel(HEAVILY_BURNT, false);
         if(!(GetInteractionFlags() & RISES_FROM_ASHES))
           MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
         else
@@ -93,13 +93,13 @@ int solid::GetBurnModifier() const
   return (500 + Den + ((Str * FR) >> 1));
 }
 
-void solid::SetBurnLevel(int What)
+void solid::SetBurnLevel(int What, truth SendMessages)
 {
   truth Transitioned = true;
   if(!What)
     Transitioned = false;
   
-  if(MotherEntity && Transitioned) // if you want to burn carnivorous plants in future, you had better make sure there are the right functions in char.cpp
+  if(MotherEntity && Transitioned && SendMessages) // if you want to burn carnivorous plants in future, you had better make sure there are the right functions in char.cpp
     MotherEntity->SignalBurnLevelTransitionMessage();
   
   if(GetBurnLevel() != What)

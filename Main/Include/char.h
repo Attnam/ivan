@@ -936,6 +936,7 @@ class character : public entity, public id
   virtual truth AllowSpoil() const { return false; }
   void Disappear(corpse*, cchar*, truth (item::*)() const);
   void ResetSpoiling();
+  void ResetBurning();
   virtual character* GetLeader() const;
   int GetMoveType() const;
   virtual truth IsSumoWrestler() const { return false; }

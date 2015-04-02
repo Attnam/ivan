@@ -2500,6 +2500,7 @@ torso /* bodypart-> */
   IsAbstract = true;
   Roundness = 60;
   WieldedBitmapPos = 160, 144;
+  CanBeBurned = false;
 }
 
 normaltorso /* bodypart->torso-> */
@@ -2537,6 +2538,7 @@ groin /* bodypart-> */
   NameSingular = "groin";
   Roundness = 40;
   WieldedBitmapPos = 160, 128;
+  CanBeBurned = false;
 }
 
 leg /* bodypart-> */
@@ -2601,6 +2603,7 @@ corpse
   WieldedBitmapPos = 160, 144;
   /* BitmapPos overridden */
   IsValuable = false;
+  CanBeBurned = false;
 }
 
 eddytorso /* normaltorso-> */

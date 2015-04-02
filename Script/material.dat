@@ -1842,7 +1842,7 @@ flesh
   PriceModifier = 60;
   BodyFlags = Base|IS_ALIVE|IS_WARM|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
-  FireResistance = 20;
+  FireResistance = 0;
 
   Config GOBLINOID_FLESH;
   {
@@ -1851,6 +1851,7 @@ flesh
     NutritionValue = 15;
     PriceModifier = 40;
     AttachedGod = MORTIFER;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config PORK;
@@ -1908,6 +1909,7 @@ flesh
     NameStem = "human flesh";
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DOLPHIN_FLESH;
@@ -1982,6 +1984,7 @@ flesh
     EffectStrength = 10;
     ConsumeWisdomLimit = 10;
     AttachedGod = MORTIFER;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config KOBOLD_FLESH;
@@ -1994,12 +1997,14 @@ flesh
     HitMessage = HM_KOBOLD_FLESH;
     PriceModifier = 0;
     AttachedGod = MORTIFER;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config GIBBERLING_FLESH;
   {
     NameStem = "gibberling flesh";
     AttachedGod = MORTIFER;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config CAT_FLESH;
@@ -2025,6 +2030,7 @@ flesh
   {
     NameStem = "dwarf flesh";
     AttachedGod = MORTIFER;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config DAEMON_FLESH;
@@ -2107,6 +2113,7 @@ flesh
     AttachedGod = MORTIFER;
     NutritionValue = 15;
     ConsumeWisdomLimit = 15;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config OSTRICH_FLESH;
@@ -2145,6 +2152,7 @@ flesh
     EffectStrength = 20;
     PriceModifier = 100;
     BodyFlags = Base&~IS_WARM;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config MOOSE_FLESH;
@@ -2209,6 +2217,7 @@ flesh
     EffectStrength = 20;
     PriceModifier = 150;
     BodyFlags = Base&~IS_WARM;
+    InteractionFlags = Base|CAN_BURN;
   }
 
   Config SICK_SPIDER_FLESH;

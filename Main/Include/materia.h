@@ -172,6 +172,7 @@ class material
   virtual void AddWetness(long) { }
   virtual int GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
+  virtual void ResetBurning() { }
   truth CanBeEatenByAI(ccharacter*) const;
   virtual void SetSpoilCounter(int) { }
   DATA_BASE_VALUE(cfestring&, BreatheMessage);
@@ -218,7 +219,7 @@ class material
   virtual void SetIsBurning(int What) {Burning = What;}
   virtual int IsBurning() const { return Burning; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
-  virtual void SetBurnLevel(int) { }
+  virtual void SetBurnLevel(int, truth) { }
   virtual int GetBurnData() const { return NOT_BURNT; }
   virtual int GetBurnLevel() const { return NOT_BURNT; }
   virtual void AddToThermalEnergy(int) { }

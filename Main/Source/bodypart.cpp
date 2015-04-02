@@ -1699,7 +1699,7 @@ void bodypart::TestActivationEnergy(int Damage)
   character* Owner = GetMaster();
   
   if(Owner)
-    if(Owner->BodyPartIsVital(GetBodyPartIndex()))
+    if(Owner->BodyPartIsVital(GetBodyPartIndex()) || !CanBeBurned())
       return;
   
   if(MainMaterial)

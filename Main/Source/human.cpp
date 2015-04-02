@@ -1731,7 +1731,13 @@ truth humanoid::TryToRiseFromTheDead()
 
     if(BodyPart)
     {
-      BodyPart->ResetSpoiling();
+      if(BodyPart->IsBurning())
+      {
+        BodyPart->Extinguish();
+        BodyPart->ResetBurning();
+        BodyPart->ResetSpoiling();
+        BodyPart->SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // gum solution
+      }
 
       if(BodyPart->CanRegenerate() || BodyPart->GetHP() < 1)
 	BodyPart->SetHP(1);

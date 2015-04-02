@@ -21,7 +21,7 @@ MATERIAL(solid, material)
 {
  public:
   solid() : BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0)  { } //Transient is for storing the energy in an explosion so that mutliple explosions accumulate, SteadyState is to store the energy to be decremented only by the application of liquids
-  virtual void SetBurnLevel(int);
+  virtual void SetBurnLevel(int, truth);
   virtual int GetStrengthValue() const;
   virtual int GetBurnModifier() const;
   virtual void ResetThermalEnergies();

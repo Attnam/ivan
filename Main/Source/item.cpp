@@ -915,6 +915,13 @@ void item::ResetSpoiling()
       GetMaterial(c)->ResetSpoiling();
 }
 
+void item::ResetBurning()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetBurning();
+}
+
 cchar* item::GetBaseToHitValueDescription() const
 {
   if(GetBaseToHitValue() < 10)
@@ -1374,7 +1381,7 @@ void item::TestActivationEnergy(int Damage)
 //  }
 
   if(MainMaterial)
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && Damage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
       Ignite();
       GetMainMaterial()->AddToThermalEnergy(Damage);
@@ -1522,7 +1529,7 @@ void item::RemoveBurns()
 {
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      GetMaterial(c)->SetBurnLevel(NOT_BURNT);
+      GetMaterial(c)->SetBurnLevel(NOT_BURNT, true);
 }
 
 void item::SetSpoilPercentage(int Value)
