@@ -63,7 +63,7 @@ command* commandsystem::Command[] =
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
-  new command(&Eat, "eat", 'e', 'e',' e', true),
+  new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
   new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
   new command(&Go, "go", 'g', 'g', 'g', false),
