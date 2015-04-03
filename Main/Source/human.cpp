@@ -3648,7 +3648,6 @@ void humanoid::SetFireToBodyPart()
     IgniteBodyPart(ToBeSetFireTo, game::NumberQuestion(CONST_S("How much fire damage?"), PINK));
     SendNewDrawRequest();
 
-    ADD_MESSAGE("Bodypart ignited!");
   }
   else
     ADD_MESSAGE("That bodypart has previously been detached.");

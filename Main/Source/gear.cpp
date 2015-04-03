@@ -75,9 +75,9 @@ col16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
 
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
-truth meleeweapon::HitEffect(character* Enemy, character*, v2, int BodyPartIndex, int, truth BlockedByArmour)
+truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  if(!BlockedByArmour && Fluid)
+  if(!BlockedByArmour && Fluid && !IsBurning())
   {
     truth Success = false;
     fluidvector FluidVector;
@@ -89,6 +89,19 @@ truth meleeweapon::HitEffect(character* Enemy, character*, v2, int BodyPartIndex
 	Success = true;
 
     return Success;
+  }
+  else if(IsBurning() && Enemy->IsEnabled() && (RAND() & 1))
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s %s burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));   }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The %s burns %s.", CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 2), FIRE, BodyPartIndex, Direction)/* || BaseSuccess*/;
   }
   else
     return false;

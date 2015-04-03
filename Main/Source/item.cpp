@@ -1419,11 +1419,20 @@ void item::Ignite(/*character* Arsonist*/)
 /*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
 void item::Extinguish(/*character* FireFighter*/)
 {
+  truth WasAnimated = IsAnimated();
+
   MainMaterial->SetIsBurning(false);
   MainMaterial->ResetThermalEnergies();
   SignalEmitationDecrease(MakeRGB24(150, 120, 90));
   UpdatePictures();
-  SendNewDrawAndMemorizedUpdateRequest();
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->IncStaticAnimatedEntities();
+
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
 
   if(CanBeSeenByPlayer())
     AddExtinguishMessage();
