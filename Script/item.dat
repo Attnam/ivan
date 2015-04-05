@@ -810,6 +810,7 @@ justifier /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
+  CanBeBurned = false;
   BaseEnchantment = 16;
   CanBeEnchanted = false;
   GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
@@ -845,6 +846,7 @@ neercseulb /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
+  CanBeBurned = false;
   BaseEnchantment = 6;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 192;
@@ -1036,6 +1038,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
   CanBeBroken = false;
+  CanBeBurned = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   BaseEnchantment = 10;
@@ -1188,6 +1191,7 @@ leftnutofpetrus /* nut-> */
   AttachedGod = VALPURUS;
   IsQuestItem = true;
   IsValuable = true;
+  CanBeBurned = false;
 }
 
 bone
@@ -1288,6 +1292,7 @@ wand
   BreakEffectRangeSquare = 2;
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 1000;
+  CanBeBurned = false;
 
   Config WAND_OF_POLYMORPH;
   {
@@ -1554,6 +1559,7 @@ avatarofvalpurus
   AttachedGod = VALPURUS;
   WieldedBitmapPos = 160, 128;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 kiwi
@@ -1756,6 +1762,7 @@ oillamp
   WeaponCategory = BLUNT_WEAPONS;
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 128;
+  CanBeBurned = false;
 }
 
 stone
@@ -1834,6 +1841,7 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
+  CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
@@ -2298,6 +2306,7 @@ ring
   IsAbstract = true;
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
+  CanBeBurned = false;
 
   Config RING_OF_FIRE_RESISTANCE;
   {
@@ -2432,6 +2441,7 @@ amulet
   IsAbstract = true;
   WieldedBitmapPos = 160, 112;
   HasNormalPictureDirection = false;
+  CanBeBurned = false;
 
   Config AMULET_OF_LIFE_SAVING;
   {
@@ -2583,6 +2593,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   AttachedGod = SCABIES;
   WieldedBitmapPos = 160, 144;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 corpse
@@ -2674,6 +2685,7 @@ whistle
   Price = 25;
   AttachedGod = DULCIS;
   WieldedBitmapPos = 160, 368;
+  CanBeBurned = false;
 }
 
 magicalwhistle /* whistle-> */
@@ -2704,6 +2716,7 @@ itemcontainer
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 144;
   CreateLockConfigurations = true;
+  CanBeBurned = false;
 
   Config SMALL_CHEST;
   {
@@ -2780,6 +2793,7 @@ beartrap
   Price = 25;
   CanBePiled = false;
   CanBeBroken = true;
+  CanBeBurned = false;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
   IsPolymorphable = false;
@@ -3015,6 +3029,7 @@ stethoscope
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 128;
   HasNormalPictureDirection = false;
+  CanBeBurned = false;
 }
 
 flamingsword /* meleeweapon-> */
@@ -3238,6 +3253,7 @@ gorovitsweapon
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
   IsAbstract = true;
+  CanBeBurned = false;
 
   Config GOROVITS_HAMMER;
   {
@@ -3326,6 +3342,7 @@ encryptedscroll /* scroll-> */
   CanBeCloned = false;
   AttachedGod = MELLIS;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 horn
@@ -3346,6 +3363,7 @@ horn
   AttachedGod = DULCIS;
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 500;
+  CanBeBurned = false;
 
   Config BRAVERY;
   {
@@ -3533,6 +3551,7 @@ charmlyre
   CanBePiled = false;
   AttachedGod = DULCIS;
   WieldedBitmapPos = 176, 352;
+  CanBeBurned = false;
 }
 
 ennerhead /* head-> */
@@ -3640,6 +3659,7 @@ holyhandgrenade
   Adjective = "holy";
   Alias == "gas grenade";
   CanBePiled = false;
+  CanBeBurned = false;
 }
 
 daggerofvenom
@@ -3777,6 +3797,7 @@ gorovitscopyoflenin /* item-> */
   Possibility = 0;
   Price = 50;
   Alias == "Lenin";
+  CanBeBurned = false;
 }
 
 chastitybelt
@@ -3817,6 +3838,7 @@ firstbornchild
   IsAbstract = true;
   Adjective = "first-born";    
   AttachedGod = SILVA;
+  CanBeBurned = false;
 
   Config MALE;
   {
