@@ -160,7 +160,7 @@ ITEM(bodypart, item)
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
   virtual void SignalBurn(material*);
-  virtual void Extinguish();
+  virtual void Extinguish(truth);
   virtual void AddSpecialExtinguishMessageForPF();
   virtual void AddExtinguishMessage();
  protected:
@@ -537,7 +537,7 @@ ITEM(corpse, item)
   virtual truth CanBeHardened(ccharacter*) const { return false; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SignalBurn(material*);
-  virtual void Extinguish();
+  virtual void Extinguish(truth);
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;

@@ -594,7 +594,7 @@ class item : public object
   void Slow();
   void SendMemorizedUpdateRequest() const;
   virtual void Ignite();
-  virtual void Extinguish();
+  virtual void Extinguish(truth);
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

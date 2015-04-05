@@ -1751,12 +1751,15 @@ void bodypart::SignalBurn(material* Material)
     item::SignalBurn(Material);
 }
 
-void bodypart::Extinguish()
+void bodypart::Extinguish(truth SendMessages)
 {
   if(Master)
-    item::Extinguish(); //Master->Extinguish();
+  {
+    item::Extinguish(SendMessages); //Master->Extinguish();
+    Master->UpdatePictures();
+  }
   else
-    item::Extinguish();
+    item::Extinguish(SendMessages);
 }
 
 void corpse::SignalBurn(material*)
@@ -1794,10 +1797,9 @@ void bodypart::AddSpecialExtinguishMessageForPF()
     item::AddSpecialExtinguishMessageForPF();
 }
 
-// interesting...
-void corpse::Extinguish()
+void corpse::Extinguish(truth SendMessages)
 {
-  GetDeceased()->Extinguish(); // this will blow up because there is no character::Extinguish yet
+  GetDeceased()->Extinguish(SendMessages);
 }
 
 void corpse::SignalDisappearance()
@@ -3473,7 +3475,7 @@ void bodypart::SetSparkleFlags(int What)
 
 truth arm::IsAnimated() const
 {
-  return WieldedGraphicData.AnimationFrames > 1;
+  return (WieldedGraphicData.AnimationFrames > 1) || IsBurning();
 }
 
 void bodypart::SignalAnimationStateChange(truth WasAnimated)

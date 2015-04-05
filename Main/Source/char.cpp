@@ -1414,6 +1414,11 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       {
 	RestoreBodyParts();
 	ResetSpoiling();
+        if(IsBurning())
+        {
+          doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+          doforbodyparts()(this, &bodypart::ResetBurning);
+        }
 	RestoreHP();
 	RestoreStamina();
 	ResetStates();
@@ -1427,6 +1432,12 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     ProcessAndAddMessage(GetDeathMessage());
   else if(DeathFlags & FORCE_MSG)
     ADD_MESSAGE("You sense the death of something.");
+
+  if(IsBurning()) // do this anyway, it stops the corpse from emitating and continuing to propagate weirdness
+  {
+    doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+    doforbodyparts()(this, &bodypart::ResetBurning);
+  }
 
   if(!(DeathFlags & FORBID_REINCARNATION))
   {
@@ -3080,6 +3091,12 @@ void character::DisplayInfo(festring& Msg)
     if(StateIsActivated(PANIC))
     {
       Msg << Separator1 << " panicked";
+      Separator2 = " and";
+    }
+
+    if(IsBurning())
+    {
+      Msg << Separator1 << " is on fire";
       Separator2 = " and";
     }
 
@@ -6074,15 +6091,12 @@ void character::SignalBurn()
   else
     Disappear(0, "burn", &item::IsVeryCloseToBurning);
 }
-/*
-void character::Extinguish() // so obviously not finished yet, might need this for god effects...
+
+void character::Extinguish(truth SendMessages)
 {
-  if(GetMotherEntity())
-    GetMotherEntity()->Extinguish();
-  else
-    Extinguish();
+  doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, SendMessages);
 }
-*/
+
 truth character::CanHeal() const
 {
   for(int c = 0; c < BodyParts; ++c)

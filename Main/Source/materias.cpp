@@ -33,7 +33,7 @@ void solid::Be(ulong Flags)
 {
   if(IsBurning() && SteadyStateThermalEnergy <= 0)
   {
-    MotherEntity->Extinguish();
+    MotherEntity->Extinguish(true);
     ResetThermalEnergies();
   }
   
@@ -73,7 +73,7 @@ void solid::Be(ulong Flags)
         else
         {
           MotherEntity->AddSpecialExtinguishMessageForPF();
-          MotherEntity->Extinguish();
+          MotherEntity->Extinguish(true);
           ResetThermalEnergies();
           ResetBurning(); // only do this for phoenix feather!
           MotherEntity->SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // gum solution related to PF

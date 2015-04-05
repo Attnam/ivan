@@ -920,6 +920,7 @@ void item::ResetBurning()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->ResetBurning();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
 }
 
 cchar* item::GetBaseToHitValueDescription() const
@@ -1417,25 +1418,27 @@ void item::Ignite(/*character* Arsonist*/)
 }
 
 /*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
-void item::Extinguish(/*character* FireFighter*/)
+void item::Extinguish(/*character* FireFighter, */truth SendMessages)
 {
   truth WasAnimated = IsAnimated();
+  truth WasSeen = CanBeSeenByPlayer();
 
   MainMaterial->SetIsBurning(false);
   MainMaterial->ResetThermalEnergies();
   SignalEmitationDecrease(MakeRGB24(150, 120, 90));
-  UpdatePictures();
 
   if(Slot[0])
   {
     if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
-      GetSquareUnder()->IncStaticAnimatedEntities();
-
-    SendNewDrawAndMemorizedUpdateRequest();
+      GetSquareUnder()->DecStaticAnimatedEntities();
   }
 
-  if(CanBeSeenByPlayer())
+  if(WasSeen && SendMessages) // by now it is dark...
     AddExtinguishMessage();
+
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
 }
 
 void item::AddExtinguishMessage()

@@ -1096,7 +1096,7 @@ class character : public entity, public id
   void Haste();
   void Slow();
   void SignalBurn();
-  //void Extinguish();
+  void Extinguish(truth);
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1205,7 +1205,7 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
-  virtual truth NeedsBurningPostFix() const { return IsBurning(); }
+  virtual truth NeedsBurningPostFix() const { return false; }
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

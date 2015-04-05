@@ -50,7 +50,7 @@ class entity
   virtual truth AllowContentEmitation() const { return true; }
   virtual void SignalRustLevelChange() { }
   virtual void SignalBurn(material*) { }
-  virtual void Extinguish() { }
+  virtual void Extinguish(truth) { }
   virtual void AddSpecialExtinguishMessageForPF() { }
   virtual void AddExtinguishMessage() { }
   virtual void SignalBurnLevelChange() { }
