@@ -572,7 +572,7 @@ solid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
     InteractionFlags = Base|CAN_BURN&~CAN_DISSOLVE;
-    FireResistance = 10;
+    FireResistance = 50;
   }
 
   Config ARCANITE;
