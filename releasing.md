@@ -3,12 +3,12 @@ To do for each release
 
 ###Things to change around in the code:
 
- - Search for "0.50" in the project files and set this to 0.51a
+ - Search for "0.50" in the project files and set this to 0.50.1 etcetera, depending on what the next verison is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles etc
 
 ###Include the following files in a zip folder for each release:
 
-**Folder: IvanWin051a**
+**Folder: IvanWin0511**
 
 **Files = 10**
 
