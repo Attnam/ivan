@@ -1422,6 +1422,7 @@ void item::Extinguish(/*character* FireFighter, */truth SendMessages)
 {
   truth WasAnimated = IsAnimated();
   truth WasSeen = CanBeSeenByPlayer();
+  truth WasBurning = IsBurning();
 
   MainMaterial->SetIsBurning(false);
   MainMaterial->ResetThermalEnergies();
@@ -1433,7 +1434,7 @@ void item::Extinguish(/*character* FireFighter, */truth SendMessages)
       GetSquareUnder()->DecStaticAnimatedEntities();
   }
 
-  if(WasSeen && SendMessages) // by now it is dark...
+  if(WasBurning && WasSeen && SendMessages) // by now it is dark...
     AddExtinguishMessage();
 
   SignalVolumeAndWeightChange();
@@ -1498,7 +1499,7 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
 
 void item::FightFire(material*, cfestring&, long Volume)
 {
-  int Amount = Volume / 10;
+  int Amount = sqrt(Volume);
   GetMainMaterial()->RemoveFromThermalEnergy(Amount);
 }
 

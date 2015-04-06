@@ -179,7 +179,39 @@ void legifer::PrayBadEffect()
 
 void dulcis::PrayGoodEffect()
 {
-  ADD_MESSAGE("A beautiful melody echoes around you.");
+  truth HasHelped = false;
+
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  {
+    square* Square = PLAYER->GetNeighbourSquare(d);
+
+    if(Square)
+    {
+      character* Char = Square->GetCharacter();
+
+      if(Char)
+        if(Char->IsBurning())
+          if(Char->GetTeam() == PLAYER->GetTeam())
+          {
+            Char->Extinguish(true);
+            HasHelped = true;
+          }
+    }
+  }
+  if(PLAYER->IsBurning())
+  {
+    PLAYER->Extinguish(true);
+    if(HasHelped)
+      ADD_MESSAGE("Dulcis helps you and your companions to put out the flames.");
+    else
+      ADD_MESSAGE("Dulcis helps you to put out the flames.");
+
+    HasHelped = true;
+  }
+  if(HasHelped)
+    return;
+  else
+    ADD_MESSAGE("A beautiful melody echoes around you.");
 
   for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
   {
@@ -324,7 +356,22 @@ void silva::PrayGoodEffect()
     PLAYER->SetNP(SATIATED_LEVEL);
   }
 
-  if(!game::GetCurrentLevel()->IsOnGround())
+  if(PLAYER->IsBurning() || PLAYER->PossessesItem(&item::IsOnFire))
+  {
+    beamdata Beam
+    (
+      0,
+      CONST_S("drowned by the showers of ") + GetName(),
+      YOURSELF,
+      0
+    );
+
+    lsquare* Square = PLAYER->GetLSquareUnder();
+
+    Square->WaterRain(Beam);
+    ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
+  }
+  else if(!game::GetCurrentLevel()->IsOnGround())
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;

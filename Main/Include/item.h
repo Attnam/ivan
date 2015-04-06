@@ -470,6 +470,7 @@ class item : public object
   virtual int GetInElasticityPenalty(int) const { return 0; }
   virtual truth IsFixableBySmith(ccharacter*) const { return false; }
   virtual truth IsFixableByTailor(ccharacter*) const { return false; }
+  virtual truth IsOnFire(ccharacter*) const { return !!IsBurning(); }
   virtual long GetFixPrice() const;
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
