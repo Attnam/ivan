@@ -125,6 +125,7 @@ ITEM(can, materialcontainer)
 ITEM(lump, item)
 {
  protected:
+  void AddLumpyPostFix(festring&) const;
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }
@@ -553,6 +554,7 @@ ITEM(scrollofdetectmaterial, scroll)
 ITEM(stick, item)
 {
  protected:
+  virtual truth AddAdjective(festring&, truth) const;
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }

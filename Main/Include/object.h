@@ -89,6 +89,7 @@ class object : public entity, public id
   void AddContainerPostFix(festring&) const;
   void AddLumpyPostFix(festring&) const;
   truth AddEmptyAdjective(festring&, truth) const;
+  truth AddBurningAdjective(festring&, truth) const;
   virtual v2 GetBitmapPos(int) const = 0;
   void RandomizeVisualEffects();
   virtual void ModifyAnimationFrames(int&) const { }

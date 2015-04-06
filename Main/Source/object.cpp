@@ -455,6 +455,17 @@ truth object::AddEmptyAdjective(festring& String, truth Articled) const
   }
 }
 
+truth object::AddBurningAdjective(festring& String, truth Articled) const
+{
+  if(!IsBurning())
+    return false;
+  else
+  {
+    String << (Articled ? "a burning " : "burning ");
+    return true;
+  }
+}
+
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();

@@ -33,6 +33,8 @@ truth potion::AddAdjective(festring& String, truth Articled) const { return AddE
 truth potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
+truth stick::AddAdjective(festring& String, truth Articled) const { return AddBurningAdjective(String, Articled); }
+
 truth bananapeels::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
 
 truth brokenbottle::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
@@ -3055,4 +3057,9 @@ truth bone::Necromancy(character* Necromancer)
 
     return false;
   }
+}
+
+void lump::AddLumpyPostFix(festring& String) const
+{
+  MainMaterial->AddName(String << " of " << (!IsBurning() ? "" : "burning "), false, false);
 }
