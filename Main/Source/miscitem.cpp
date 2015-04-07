@@ -1707,7 +1707,10 @@ void scrollofrepair::FinishReading(character* Reader)
       for(uint c = 0; c < Item.size(); ++c)
       {
 	Item[c]->RemoveRust();
-        Item[c]->RemoveBurns();
+        Item[c]->RemoveBurns(); //restores HP for burnt artificial limbs as well
+        if(!Item[c]->IsBurning())
+          Item[c]->ResetThermalEnergies();
+        Item[c]->ResetBurning();
 	Item[c]->Fix();
       }
 

@@ -923,6 +923,14 @@ void item::ResetBurning()
   SignalEmitationDecrease(MakeRGB24(150, 120, 90));
 }
 
+/* be careful calling this function, it will also cause flames to extinguish */
+void item::ResetThermalEnergies()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetThermalEnergies();
+}
+
 cchar* item::GetBaseToHitValueDescription() const
 {
   if(GetBaseToHitValue() < 10)
@@ -1373,8 +1381,9 @@ void item::TryToRust(long LiquidModifier)
   }
 }
 
-void item::TestActivationEnergy(int Damage)
+truth item::TestActivationEnergy(int Damage)
 {
+  truth Success = false;
 //  if(MainMaterial)
 //  {
 //    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
@@ -1387,16 +1396,17 @@ void item::TestActivationEnergy(int Damage)
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
     if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
-      Ignite();
-      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
-      
       if(CanBeSeenByPlayer())
       {
         ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
         //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
       }
+      Ignite();
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
+      Success = true;
     }
   }
+  return Success;
 }
 
 void item::Ignite(/*character* Arsonist*/)

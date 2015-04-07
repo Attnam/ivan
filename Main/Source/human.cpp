@@ -1735,6 +1735,7 @@ truth humanoid::TryToRiseFromTheDead()
       {
         BodyPart->Extinguish(false);
         BodyPart->ResetBurning();
+        BodyPart->ResetThermalEnergies();
         BodyPart->ResetSpoiling();
         BodyPart->SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // gum solution
       }
@@ -4799,6 +4800,8 @@ void tailor::BeTalkedTo()
     if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
     {
       Item->RemoveBurns();
+      Item->ResetThermalEnergies(); // OK because the item shouldn't be burning in the first place
+      Item->ResetBurning();
       Item->Fix();
       PLAYER->EditMoney(-FixPrice);
       ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));

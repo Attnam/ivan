@@ -129,7 +129,7 @@ ITEM(bodypart, item)
   virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
-  virtual void TestActivationEnergy(int);
+  virtual truth TestActivationEnergy(int);
   virtual truth AllowFluidBe() const;
   virtual material* RemoveMaterial(material*);
   virtual void CopyAttributes(const bodypart*) { }

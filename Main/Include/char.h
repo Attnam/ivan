@@ -937,6 +937,9 @@ class character : public entity, public id
   void Disappear(corpse*, cchar*, truth (item::*)() const);
   void ResetSpoiling();
   void ResetBurning();
+  void ResetLivingBurning();
+  void RemoveBurns();
+  void ResetThermalEnergies();
   virtual character* GetLeader() const;
   int GetMoveType() const;
   virtual truth IsSumoWrestler() const { return false; }
@@ -1097,6 +1100,7 @@ class character : public entity, public id
   void Slow();
   void SignalBurn();
   void Extinguish(truth);
+  truth IsBurnt() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

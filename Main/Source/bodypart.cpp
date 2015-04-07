@@ -1689,7 +1689,7 @@ void corpse::SignalSpoil(material*)
   GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
-void bodypart::TestActivationEnergy(int Damage)
+truth bodypart::TestActivationEnergy(int Damage)
 {
 //  if(MainMaterial)
 //  {
@@ -1697,30 +1697,32 @@ void bodypart::TestActivationEnergy(int Damage)
 //    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
 //  }
   character* Owner = GetMaster();
+  truth Success = false;
   
   if(Owner)
     if(Owner->BodyPartIsVital(GetBodyPartIndex()) || !CanBeBurned())
-      return;
+      return Success;
   
   if(MainMaterial)
   {
     int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
-    if(GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
     {
-      Ignite();
-      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
-      
       if(Owner)
       {
         if(Owner->IsPlayer())
           ADD_MESSAGE("Your %s catches fire!", GetBodyPartName().CStr());
         else if(Owner->CanBeSeenByPlayer())
-          ADD_MESSAGE("%s %s catches fire!", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+          ADD_MESSAGE("%s's %s catches fire!", Owner->CHAR_NAME(DEFINITE), GetBodyPartName().CStr());
       }
       //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
+      Ignite();
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
+      Success = true;
     }
   }
+  return Success;
 }
 
 void bodypart::SignalBurn(material* Material)
@@ -1734,7 +1736,7 @@ void bodypart::SignalBurn(material* Material)
     if(Owner->IsPlayer())
       ADD_MESSAGE("Your %s burns away completely!", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s %s burns away completely!", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("%s's %s burns away completely!", Owner->CHAR_NAME(DEFINITE), GetBodyPartName().CStr());
 
     /*GetBodyPart(BodyPartIndex)->*/DropEquipment(!game::IsInWilderness() ? Owner->GetStackUnder() : Owner->GetStack());
     /*item* Burnt = */Owner->SevereBodyPart(BodyPartIndex, true);
@@ -2490,7 +2492,7 @@ void corpse::FinalProcessForBone()
 
 truth bodypart::IsRepairable(ccharacter*) const
 {
-  return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted());
+  return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted() || IsBurnt());
 }
 
 truth corpse::SuckSoul(character* Soul, character* Summoner)

@@ -478,6 +478,7 @@ class item : public object
   virtual int GetBurnLevel() const;
   void ResetSpoiling();
   void ResetBurning();
+  void ResetThermalEnergies();
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
@@ -529,7 +530,7 @@ class item : public object
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
-  virtual void TestActivationEnergy(int);
+  virtual truth TestActivationEnergy(int);
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, festring, int, truth);
   virtual truth IsAnimated() const;

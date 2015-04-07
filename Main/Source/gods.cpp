@@ -279,6 +279,16 @@ void seges::PrayGoodEffect()
     return;
   }
 
+  if(PLAYER->IsBurnt())
+  {
+    ADD_MESSAGE("%s heals your burns.", GetName());
+    //PLAYER->RemoveBurns(); // removes the burns and restores HP
+    if(!PLAYER->IsBurning()) // the player would do well to put the flames out himself first
+      PLAYER->ResetThermalEnergies();
+    PLAYER->ResetLivingBurning(); // In keeping with Seges' au natural theme. Does roughly the same as RemoveBurns(), only without the message(?) and it resets the burn level counter
+    return;
+  }
+
   if(PLAYER->GetStamina() < PLAYER->GetMaxStamina() >> 1)
   {
     ADD_MESSAGE("You don't feel a bit tired anymore.");
@@ -532,6 +542,14 @@ void loricatus::PrayGoodEffect()
 
   if(MainWielded)
   {
+    if(PLAYER->GetLSquareUnder()->IsDark() && (MainWielded->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && MainWielded->CanBeBurned())
+    {
+      if(MainWielded->TestActivationEnergy(int(GetRelation() / 2)))
+      {
+        ADD_MESSAGE("\"Behold, a light in the dark places!\"");
+        return;
+      }
+    }
     if(MainWielded->IsMaterialChangeable() && MainWielded->GetMainMaterial()->GetAttachedGod() == GetType())
     {
       int Config = MainWielded->GetMainMaterial()->GetHardenedMaterial(MainWielded);
@@ -590,6 +608,21 @@ void loricatus::PrayGoodEffect()
     {
       ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
       Equipment->Fix();
+      return;
+    }
+  }
+
+  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+  {
+    item* Equipment = PLAYER->GetEquipment(c);
+
+    if(Equipment && Equipment->IsBurnt())
+    {
+      ADD_MESSAGE("%s repairs the burns on your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+      Equipment->RemoveBurns();
+      if(!Equipment->IsBurning())
+        Equipment->ResetThermalEnergies();
+      Equipment->ResetBurning();
       return;
     }
   }

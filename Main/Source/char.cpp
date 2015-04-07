@@ -1417,6 +1417,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
         if(IsBurning())
         {
           doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+          doforbodyparts()(this, &bodypart::ResetThermalEnergies);
           doforbodyparts()(this, &bodypart::ResetBurning);
         }
 	RestoreHP();
@@ -1436,6 +1437,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
   if(IsBurning()) // do this anyway, it stops the corpse from emitating and continuing to propagate weirdness
   {
     doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+    doforbodyparts()(this, &bodypart::ResetThermalEnergies);
     doforbodyparts()(this, &bodypart::ResetBurning);
   }
 
@@ -3296,6 +3298,20 @@ void character::RestoreLivingHP()
       HP += BodyPart->GetHP();
     }
   }
+}
+
+truth character::IsBurnt() const
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart && BodyPart->IsBurnt())
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 truth character::AllowDamageTypeBloodSpill(int Type)
@@ -7659,6 +7675,29 @@ void character::ResetSpoiling()
 void character::ResetBurning()
 {
   doforbodyparts()(this, &bodypart::ResetBurning);
+}
+
+void character::ResetLivingBurning()
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart && BodyPart->CanRegenerate())
+    {
+      BodyPart->ResetBurning();
+    }
+  }
+}
+
+void character::RemoveBurns()
+{
+  doforbodyparts()(this, &bodypart::RemoveBurns);
+}
+
+void character::ResetThermalEnergies()
+{
+  doforbodyparts()(this, &bodypart::ResetThermalEnergies);
 }
 
 item* character::SearchForItem(ccharacter* Char, sorter Sorter) const
