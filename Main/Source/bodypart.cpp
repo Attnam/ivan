@@ -1347,6 +1347,7 @@ void bodypart::CalculateMaxHP(ulong Flags)
 {
   int HPDelta = MaxHP - HP, OldMaxHP = MaxHP;
   MaxHP = 0;
+  int BurnLevel = 0;
 
   if(Master)
   {
@@ -1357,6 +1358,12 @@ void bodypart::CalculateMaxHP(ulong Flags)
 
       for(int c = 0; c < Scar.size(); ++c)
 	DoubleHP *= (100. - Scar[c].Severity * 4) / 100;
+
+      if(MainMaterial)
+      {
+        BurnLevel = MainMaterial->GetBurnLevel();
+        DoubleHP *= 1. * (4 - BurnLevel) / 4;
+      }
 
       MaxHP = int(DoubleHP);
     }
@@ -2028,6 +2035,9 @@ void arm::CalculateAttributeBonuses()
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH, false));
     DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY, false)) ; 
+
+    StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(ARM_STRENGTH, false));
+    DexterityBonus -= CalculateBurnAttributePenalty(GetAttribute(DEXTERITY, false));
   }
 }
 
@@ -2055,6 +2065,9 @@ void leg::CalculateAttributeBonuses()
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH, false));
     AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY, false)) ; 
+
+    StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(LEG_STRENGTH, false));
+    AgilityBonus -= CalculateBurnAttributePenalty(GetAttribute(AGILITY, false));
   }
 }
 
@@ -3648,6 +3661,20 @@ int bodypart::CalculateScarAttributePenalty(int Attribute) const
     DoubleAttribute *= (100. - Scar[c].Severity * 4) / 100;
 
   return Min(Attribute - int(DoubleAttribute), Attribute - 1);
+}
+
+int bodypart::CalculateBurnAttributePenalty(int Attribute) const
+{
+  int BurnLevel = 0;
+  double DoubleAttribute = Attribute;
+
+  if(MainMaterial)
+  {
+    BurnLevel = MainMaterial->GetBurnLevel();
+    DoubleAttribute *= 1. * (4 - BurnLevel) / 4;
+  }
+
+  return BurnLevel ? Min(Attribute - int(DoubleAttribute), Attribute - 1) : 0;
 }
 
 bodypart::~bodypart()

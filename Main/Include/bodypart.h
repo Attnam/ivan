@@ -159,6 +159,7 @@ ITEM(bodypart, item)
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
+  int CalculateBurnAttributePenalty(int) const;
   virtual void SignalBurn(material*);
   virtual void Extinguish(truth);
   virtual void AddSpecialExtinguishMessageForPF();
