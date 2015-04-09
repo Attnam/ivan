@@ -1696,6 +1696,9 @@ truth bodypart::TestActivationEnergy(int Damage)
 //    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
 //    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
 //  }
+  if(Damage <= 0)
+    return false;
+
   character* Owner = GetMaster();
   truth Success = false;
   

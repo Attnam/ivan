@@ -1383,6 +1383,9 @@ void item::TryToRust(long LiquidModifier)
 
 truth item::TestActivationEnergy(int Damage)
 {
+  if(Damage <= 0)
+      return false;
+
   truth Success = false;
 //  if(MainMaterial)
 //  {

@@ -544,7 +544,7 @@ void loricatus::PrayGoodEffect()
   {
     if(PLAYER->GetLSquareUnder()->IsDark() && (MainWielded->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && MainWielded->CanBeBurned())
     {
-      if(MainWielded->TestActivationEnergy(int(GetRelation() / 2)))
+      if(MainWielded->TestActivationEnergy(int(260 + GetRelation() / 2)))
       {
         ADD_MESSAGE("\"Behold, a light in the dark places!\"");
         return;
@@ -852,6 +852,29 @@ void mortifer::Pray()
 
 void infuscor::PrayBadEffect()
 {
+  truth Success = false;
+  if(GetRelation() < -200)
+  {
+    uint c;
+
+    for(c = 1; c < uint(PLAYER->GetBodyParts()); ++c) // annoying :(
+    {
+      bodypart* BodyPart = PLAYER->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsDestroyable(PLAYER))
+        if(BodyPart->GetMainMaterial())
+          if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning())
+          {
+            if(BodyPart->TestActivationEnergy(50))
+            {
+                Success = true;
+            }
+          }
+    }
+    if(Success)
+      ADD_MESSAGE("\"I'm going to enjoy watching you burn, insolent mortal!\"");
+  }
+
   ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
@@ -1000,7 +1023,47 @@ void scabies::PrayBadEffect()
 
 void infuscor::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s helps you.", GetName());
+  truth Success = false;
+  if(GetRelation() >= 0)
+  {
+    for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = PLAYER->GetNeighbourLSquare(d);
+
+      if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
+      {
+        uint c;
+
+        for(c = 1; c < uint(Square->GetCharacter()->GetBodyParts()); ++c) // annoying :(
+        {
+          bodypart* BodyPart = Square->GetCharacter()->GetBodyPart(c);
+
+          if(BodyPart && BodyPart->IsDestroyable(Square->GetCharacter()))
+            if(BodyPart->GetMainMaterial())
+              if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning())
+              {
+                if(BodyPart->TestActivationEnergy(20 + GetRelation() / 10))
+                {
+                  if(GetRelation() >= 200)
+                    Success = true;
+                  else
+                  {
+                    ADD_MESSAGE("%s sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+                    return;
+                  }
+                }
+              }
+        }
+        if(Success)
+        {
+          ADD_MESSAGE("%s savagely sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+          return;
+        }
+      }
+    }
+  }
+  else
+    ADD_MESSAGE("%s helps you.", GetName());
 
   if(!PLAYER->StateIsActivated(ESP))
   {
