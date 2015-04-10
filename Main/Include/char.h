@@ -831,6 +831,7 @@ class character : public entity, public id
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(int) const { return 0; }
   bodypart* HealHitPoint();
+  void HealBurntBodyParts(long);
   void CreateHomeData();
   room* GetHomeRoom() const;
   truth HomeDataIsValid() const;

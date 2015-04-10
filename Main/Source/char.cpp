@@ -4056,6 +4056,9 @@ void character::ReceiveHeal(long Amount)
 {
   int c;
 
+  if(IsBurnt())
+    HealBurntBodyParts(Amount);
+
   for(c = 0; c < Amount / 10; ++c)
     if(!HealHitPoint())
       break;
@@ -6752,6 +6755,34 @@ bodypart* character::HealHitPoint()
     return 0;
 }
 
+void character::HealBurntBodyParts(long Amount)
+{
+  if(!Amount)
+    return;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(Amount > 0)
+    {
+      if(BodyPart && BodyPart->CanRegenerate() && BodyPart->IsBurnt())
+      {
+        if(IsPlayer())
+          ADD_MESSAGE("Your %s is healed of its burns.", BodyPart->GetBodyPartName().CStr());
+        else if(CanBeSeenByPlayer())
+          ADD_MESSAGE("The %s's %s is healed of its burns.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().CStr());
+
+        BodyPart->GetMainMaterial()->ResetBurning();
+        Amount = Amount - 250;
+      }
+    }
+    else
+      break;
+  }
+  return;
+}
+
 void character::CreateHomeData()
 {
   HomeData = new homedata;
@@ -7683,9 +7714,9 @@ void character::ResetLivingBurning()
   {
     bodypart* BodyPart = GetBodyPart(c);
 
-    if(BodyPart && BodyPart->CanRegenerate())
+    if(BodyPart && BodyPart->CanRegenerate() && BodyPart->GetMainMaterial())
     {
-      BodyPart->ResetBurning();
+      BodyPart->GetMainMaterial()->ResetBurning();
     }
   }
 }
