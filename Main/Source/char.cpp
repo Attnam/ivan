@@ -6771,7 +6771,7 @@ void character::HealBurntBodyParts(long Amount)
         if(IsPlayer())
           ADD_MESSAGE("Your %s is healed of its burns.", BodyPart->GetBodyPartName().CStr());
         else if(CanBeSeenByPlayer())
-          ADD_MESSAGE("The %s's %s is healed of its burns.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().CStr());
+          ADD_MESSAGE("The %s of %s is healed of its burns.", BodyPart->GetBodyPartName().CStr(), CHAR_NAME(DEFINITE));
 
         BodyPart->GetMainMaterial()->ResetBurning();
         Amount = Amount - 250;

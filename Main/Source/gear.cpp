@@ -95,7 +95,8 @@ truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2, int BodyPa
     if(Hitter)
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-        ADD_MESSAGE("%s %s burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));   }
+        ADD_MESSAGE("%s %s burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, CHAR_NAME(UNARTICLED), Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
     else
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())

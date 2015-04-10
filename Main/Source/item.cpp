@@ -1464,7 +1464,7 @@ void item::AddExtinguishMessage()
 void item::AddSpecialExtinguishMessageForPF()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes peel away from %s and it is made new by some innate virtue.", CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes peel away from it and it is made new by some innate virtue.", GetExtendedDescription().CStr());
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)

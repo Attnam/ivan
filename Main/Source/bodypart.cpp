@@ -1724,9 +1724,9 @@ truth bodypart::TestActivationEnergy(int Damage)
         if(Owner->IsPlayer())
           ADD_MESSAGE("Your %s catches fire!", GetBodyPartName().CStr());
         else if(Owner->CanBeSeenByPlayer())
-          ADD_MESSAGE("%s's %s catches fire!", Owner->CHAR_NAME(DEFINITE), GetBodyPartName().CStr());
+          ADD_MESSAGE("The %s of %s catches fire!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
       }
-      //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
+      //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage); //CLEANUP
       Ignite();
       GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
       Success = true;
@@ -1746,7 +1746,7 @@ void bodypart::SignalBurn(material* Material)
     if(Owner->IsPlayer())
       ADD_MESSAGE("Your %s burns away completely!", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s's %s burns away completely!", Owner->CHAR_NAME(DEFINITE), GetBodyPartName().CStr());
+      ADD_MESSAGE("The %s of %s burns away completely!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
 
     /*GetBodyPart(BodyPartIndex)->*/DropEquipment(!game::IsInWilderness() ? Owner->GetStackUnder() : Owner->GetStack());
     /*item* Burnt = */Owner->SevereBodyPart(BodyPartIndex, true);
@@ -1788,7 +1788,7 @@ void bodypart::AddExtinguishMessage()
     if(Owner->IsPlayer())
       ADD_MESSAGE("The flames on your %s die away.", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("The flames on %s %s die away.", Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("The flames on the %s of %s die away.", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
   }
   else
     item::AddExtinguishMessage();
@@ -1803,7 +1803,7 @@ void bodypart::AddSpecialExtinguishMessageForPF()
     if(Owner->IsPlayer())
       ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes peel away from your %s and it is made new by some innate virtue!", CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s %s burns even more! But lo', even as it does so, the ashes peel away from %s %s and it is made new by some innate virtue!", Owner->GetPossessivePronoun().CStr(), CHAR_NAME(UNARTICLED), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("The %s of %s burns even more! But lo', even as it does so, the ashes peel away from %s %s and it is made new by some innate virtue!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
   }
   else
     item::AddSpecialExtinguishMessageForPF();
