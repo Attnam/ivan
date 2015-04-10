@@ -398,7 +398,7 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
     SendToHell();
     return true;
   }
-  else if(MainMaterial)
+  else if(MainMaterial && !(RAND() % 2))
   {
     if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
     {
@@ -437,7 +437,7 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
     SendToHell();
     return true;
   }
-  else if(MainMaterial)
+  else if(MainMaterial && !(RAND() % 2))
   {
     if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
     {
