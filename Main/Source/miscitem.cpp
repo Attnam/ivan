@@ -3017,6 +3017,8 @@ truth bone::Necromancy(character* Necromancer)
 
     return false;
   }
+  else
+    NumberOfBones = 5;
 
   humanoid* Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
   //character* Skeleton = skeleton::CreateSkeleton(Necromancer);
@@ -3029,16 +3031,17 @@ truth bone::Necromancy(character* Necromancer)
     //then remove the bones, and the skull from the floor
     for(uint c = 0; c < ItemVector.size(); ++c)
     {
-      if(ItemVector[c]->IsABone())
+      if(ItemVector[c]->IsABone() && (NumberOfBones > 0))
       {
-        NumberOfBones++;
         ItemVector[c]->RemoveFromSlot();
         ItemVector[c]->SendToHell();
+        --NumberOfBones;
       }
       else if(ItemVector[c]->IsASkull() && HasSkull)
       {
         ItemVector[c]->RemoveFromSlot();
         ItemVector[c]->SendToHell();
+        HasSkull = false;
       }
     }
 
