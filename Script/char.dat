@@ -119,7 +119,7 @@ character
   DefaultCommandFlags = FOLLOW_PLAYER|DONT_CONSUME_ANYTHING_VALUABLE;
   ConstantCommandFlags = 0;
   WillCarryItems = false;
-  ForceVomitMessage = "You push your fingers down to your throat and vomit.";
+  ForceVomitMessage = "You vomit.";
   SweatMaterial = SWEAT;
   Sweats = true;
   IsImmuneToItemTeleport = false;
@@ -312,6 +312,7 @@ humanoid
   CanApply = true;
   IsImmuneToLeprosy = false;
   WillCarryItems = true;
+  ForceVomitMessage = "You push your fingers down to your throat and vomit.";
   DisplacePriority = 0;
   UndeadVersions = true;
 }
