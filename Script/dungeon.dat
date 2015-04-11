@@ -292,8 +292,8 @@ Dungeon ELPURI_CAVE;
       DivineMaster = MELLIS;
       Type = ROOM_SHOP;
       GenerateFountains = false;
-			AllowLockedDoors = false;
-			AllowBoobyTrappedDoors = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
 
       CharacterMap
       {

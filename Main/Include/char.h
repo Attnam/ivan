@@ -443,6 +443,7 @@ class character : public entity, public id
   void AddOmmelBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
+  virtual void IgniteBodyPart(int, int);
   virtual truth TryToRiseFromTheDead();
   virtual truth RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
@@ -672,6 +673,8 @@ class character : public entity, public id
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
   truth HasAllBodyParts() const;
+  truth HasFire() const;
+  truth IsBurning() const;
   bodypart* FindRandomOwnBodyPart(truth) const;
   bodypart* GenerateRandomBodyPart();
   void PrintBeginPoisonedMessage() const;
@@ -771,6 +774,7 @@ class character : public entity, public id
   character* DuplicateToNearestSquare(character*, ulong = 0);
   void SignalSpoil();
   void SignalSpoilLevelChange();
+  void SignalBurnLevelChange();
   virtual truth UseMaterialAttributes() const = 0;
   truth IsPolymorphed() const { return Flags & C_POLYMORPHED; }
   truth IsInBadCondition() const { return HP * 3 < MaxHP; }
@@ -827,6 +831,7 @@ class character : public entity, public id
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(int) const { return 0; }
   bodypart* HealHitPoint();
+  void HealBurntBodyParts(long);
   void CreateHomeData();
   room* GetHomeRoom() const;
   truth HomeDataIsValid() const;
@@ -857,6 +862,7 @@ class character : public entity, public id
   virtual void AddAttackInfo(felist&) const = 0;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual void SetFireToBodyPart();
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
@@ -931,6 +937,10 @@ class character : public entity, public id
   virtual truth AllowSpoil() const { return false; }
   void Disappear(corpse*, cchar*, truth (item::*)() const);
   void ResetSpoiling();
+  void ResetBurning();
+  void ResetLivingBurning();
+  void RemoveBurns();
+  void ResetThermalEnergies();
   virtual character* GetLeader() const;
   int GetMoveType() const;
   virtual truth IsSumoWrestler() const { return false; }
@@ -1089,6 +1099,9 @@ class character : public entity, public id
   truth CheckForBeverage();
   void Haste();
   void Slow();
+  void SignalBurn();
+  void Extinguish(truth);
+  truth IsBurnt() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1197,6 +1210,7 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
+  virtual truth NeedsBurningPostFix() const { return false; }
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

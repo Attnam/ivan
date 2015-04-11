@@ -33,6 +33,8 @@ truth potion::AddAdjective(festring& String, truth Articled) const { return AddE
 truth potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
+truth stick::AddAdjective(festring& String, truth Articled) const { return AddBurningAdjective(String, Articled); }
+
 truth bananapeels::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
 
 truth brokenbottle::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
@@ -381,6 +383,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
+truth scroll::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
+
 truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
 {
   if(Type & FIRE && Damage
@@ -388,15 +392,37 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial && !(RAND() % 2))
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
 }
+
+void scroll::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
+}
+
+truth holybook::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
 
 truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
 {
@@ -405,14 +431,34 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s instantly burns away!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
     return true;
   }
+  else if(MainMaterial && !(RAND() % 2))
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+
+    return true;
+  }
 
   return false;
+}
+
+void holybook::DipInto(liquid* Liquid, character* Dipper)
+{
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  SpillFluid(Dipper, Liquid);
+  Dipper->DexterityAction(10);
 }
 
 truth oillamp::Apply(character* Applier)
@@ -1071,7 +1117,7 @@ void beartrap::StepOnEffect(character* Stepper)
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
     Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
-    Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
+    Stepper->CheckDeath(CONST_S("died by stepping into ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
   }
 }
 
@@ -1319,6 +1365,27 @@ void materialcontainer::SignalSpoil(material* Material)
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
+
+    delete RemoveSecondaryMaterial();
+  }
+}
+
+void materialcontainer::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(Material == MainMaterial)
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s becomes so burnt that it cannot hold its contents anymore.", CHAR_NAME(DEFINITE));
+
+    RemoveMainMaterial();
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The contents of %s burns completely.", CHAR_NAME(DEFINITE));
 
     delete RemoveSecondaryMaterial();
   }
@@ -1633,13 +1700,17 @@ void scrollofrepair::FinishReading(character* Reader)
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
+	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "appears in every way as good as new");
       else
-	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
+	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "appear in every way as good as new");
 
       for(uint c = 0; c < Item.size(); ++c)
       {
 	Item[c]->RemoveRust();
+        Item[c]->RemoveBurns(); //restores HP for burnt artificial limbs as well
+        if(!Item[c]->IsBurning())
+          Item[c]->ResetThermalEnergies();
+        Item[c]->ResetBurning();
 	Item[c]->Fix();
       }
 
@@ -2250,6 +2321,11 @@ int materialcontainer::GetRustDataB() const
   return SecondaryMaterial ? SecondaryMaterial->GetRustData() : GetRustDataA();
 }
 
+int materialcontainer::GetBurnDataB() const
+{
+  return SecondaryMaterial ? SecondaryMaterial->GetBurnData() : GetBurnDataA();
+}
+
 void backpack::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
 {
   if(!Liquid->IsExplosive())
@@ -2725,14 +2801,30 @@ truth holyhandgrenade::Apply(character* Applier)
   return true;
 }
 
+void holyhandgrenade::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, DEFINITE);
+
+  if(ShowSpecialInfo)
+  {
+    Entry << " [" << GetWeight() << "g";
+
+    if(!!WillExplodeSoon())
+      Entry << ", " << "(armed)";
+
+    Entry << ']';
+  }
+}
+
 truth holyhandgrenade::CalculateHasBe() const
 {
   return PinPulledTick;
 }
 
-void holyhandgrenade::Be() {
+void holyhandgrenade::Be()
+{
   item::Be();
-  if(3 * (game::GetTick() - PinPulledTick) > Count * 100) 
+  if(PinPulledTick && (3 * (game::GetTick() - PinPulledTick) > Count * 100))
   {
     ++Count;
     festring Msg = "A voice loudly declares: \"";
@@ -2895,3 +2987,85 @@ bool firstbornchild::SpecialOfferEffect(int GodNumber) {
 }
 
 col16 firstbornchild::GetMaterialColorB(int) const { return MakeRGB16(160, 160, 160); }
+
+truth bone::Necromancy(character* Necromancer)
+{
+  int NumberOfBones = 0;
+  truth HasSkull = false;
+  lsquare* LSquareUnder = GetLSquareUnder();
+  
+  itemvector ItemVector;
+  LSquareUnder->GetStack()->FillItemVector(ItemVector);
+
+// First count the number of bones, and find a skull
+  for(uint c = 0; c < ItemVector.size(); ++c)
+  {
+    if(ItemVector[c]->IsABone())
+    {
+      NumberOfBones++;
+    }
+    else if(ItemVector[c]->IsASkull() && !HasSkull)
+    {
+      HasSkull = true;
+    }
+  }
+  // if we don't have the requisite number of bones, nor a skull then get out of here
+  if(NumberOfBones < 5 || HasSkull == false)
+  {
+    if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s vibrates for some time.", CHAR_NAME(DEFINITE));
+
+    return false;
+  }
+  else
+    NumberOfBones = 5;
+
+  humanoid* Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
+  //character* Skeleton = skeleton::CreateSkeleton(Necromancer);
+
+  if(Skeleton)
+  {
+    Skeleton->ChangeTeam(Necromancer ? Necromancer->GetTeam() : game::GetTeam(MONSTER_TEAM));
+    Skeleton->PutToOrNear(GetPos());
+  
+    //then remove the bones, and the skull from the floor
+    for(uint c = 0; c < ItemVector.size(); ++c)
+    {
+      if(ItemVector[c]->IsABone() && (NumberOfBones > 0))
+      {
+        ItemVector[c]->RemoveFromSlot();
+        ItemVector[c]->SendToHell();
+        --NumberOfBones;
+      }
+      else if(ItemVector[c]->IsASkull() && HasSkull)
+      {
+        ItemVector[c]->RemoveFromSlot();
+        ItemVector[c]->SendToHell();
+        HasSkull = false;
+      }
+    }
+
+    if(Skeleton->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s rises from the ground.", Skeleton->CHAR_DESCRIPTION(INDEFINITE));
+    
+    if(Necromancer && Necromancer->IsPlayer())
+      game::DoEvilDeed(50);
+
+    Skeleton->GetLSquareUnder()->DrawParticles(RED);
+
+    Skeleton->SignalStepFrom(0);
+    return true;
+  }
+  else
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s vibrates for some time.", CHAR_NAME(DEFINITE));
+
+    return false;
+  }
+}
+
+void lump::AddLumpyPostFix(festring& String) const
+{
+  MainMaterial->AddName(String << " of " << (!IsBurning() ? "" : "burning "), false, false);
+}

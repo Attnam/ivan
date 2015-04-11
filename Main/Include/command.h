@@ -92,6 +92,7 @@ class commandsystem
   static truth GainAllItems(character*);
   static truth SecretKnowledge(character*);
   static truth DetachBodyPart(character*);
+  static truth SetFireToBodyPart(character*);
   static truth SummonMonster(character*);
   static truth LevelTeleport(character*);
   static truth Possess(character*);

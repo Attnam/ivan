@@ -43,6 +43,7 @@ ITEM(materialcontainer, item)
   virtual void CalculateEmitation();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual int GetSparkleFlags() const;
+  virtual void SignalBurn(material*);
  protected:
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;
@@ -50,6 +51,7 @@ ITEM(materialcontainer, item)
   virtual col16 GetMaterialColorB(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
+  virtual int GetBurnDataB() const;
   material* SecondaryMaterial;
 };
 
@@ -123,6 +125,7 @@ ITEM(can, materialcontainer)
 ITEM(lump, item)
 {
  protected:
+  void AddLumpyPostFix(festring&) const;
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }
@@ -175,6 +178,9 @@ ITEM(scroll, item)
   virtual truth CanBeRead(character*) const;
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
 };
 
 ITEM(scrollofteleportation, scroll)
@@ -205,6 +211,8 @@ ITEM(bone, item)
 {
  public:
   virtual truth DogWillCatchAndConsume(ccharacter*) const;
+  virtual truth IsABone() const { return true; }
+  virtual truth Necromancy(character*);
 };
 
 ITEM(loaf, item)
@@ -295,6 +303,9 @@ ITEM(holybook, item)
   virtual truth IsReadable(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual void FinishReading(character*);
+  virtual truth IsDippable(ccharacter*) const;
+  virtual truth AllowFluids() const { return true; }
+  virtual void DipInto(liquid*, character*);
  protected:
   virtual col16 GetMaterialColorA(int) const;
   virtual truth ShowMaterial() const { return false; }
@@ -451,6 +462,7 @@ ITEM(beartrap, itemtrap<item>)
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void DonateSlotTo(item*);
+  virtual truth AllowFluids() const { return true; }
  protected:
   virtual truth AddAdjective(festring&, truth) const;
   truth IsStuck() const { return TrapData.VictimID; }
@@ -479,6 +491,8 @@ ITEM(scrollofenchantarmor, scroll)
 
 ITEM(skull, item)
 {
+ public:
+  virtual truth IsASkull() const { return true; }
 };
 
 ITEM(scrollofrepair, scroll)
@@ -540,6 +554,7 @@ ITEM(scrollofdetectmaterial, scroll)
 ITEM(stick, item)
 {
  protected:
+  virtual truth AddAdjective(festring&, truth) const;
   virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }
@@ -584,10 +599,11 @@ ITEM(holyhandgrenade, item)
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual col16 GetMaterialColorB(int) const;
   virtual bool WillExplodeSoon() const;
-	virtual truth IsKamikazeWeapon(ccharacter*) const { return CalculateHasBe(); }
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return CalculateHasBe(); }
+  virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
  protected:
   ulong PinPulledTick;
-  int Count;
+  ulong Count;
   ulong PinPullerID;
 };
 

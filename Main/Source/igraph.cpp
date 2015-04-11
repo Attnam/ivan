@@ -207,7 +207,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       RawPos.X = RawPos.Y = 0;
     }
 
-    bitmap* Bitmap = RawBitmap->Colorize(RawPos, TILE_V2, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
+    bitmap* Bitmap = RawBitmap->Colorize(RawPos, TILE_V2, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, GI.BurnData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
     Bitmap->ActivateFastFlag();
 
     if(BodyPartFlags)

@@ -1731,7 +1731,14 @@ truth humanoid::TryToRiseFromTheDead()
 
     if(BodyPart)
     {
-      BodyPart->ResetSpoiling();
+      if(BodyPart->IsBurning())
+      {
+        BodyPart->Extinguish(false);
+        BodyPart->ResetBurning();
+        BodyPart->ResetThermalEnergies();
+        BodyPart->ResetSpoiling();
+        BodyPart->SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // gum solution
+      }
 
       if(BodyPart->CanRegenerate() || BodyPart->GetHP() < 1)
 	BodyPart->SetHP(1);
@@ -3612,6 +3619,43 @@ void humanoid::DetachBodyPart()
   CheckDeath(CONST_S("removed one of his vital bodyparts"), 0);
 }
 
+void humanoid::SetFireToBodyPart()
+{
+  int ToBeSetFireTo;
+
+  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
+  {
+   case 'l':
+    ToBeSetFireTo = LEFT_ARM_INDEX;
+    break;
+   case 'r':
+    ToBeSetFireTo = RIGHT_ARM_INDEX;
+    break;
+   case 'L':
+    ToBeSetFireTo = LEFT_LEG_INDEX;
+    break;
+   case 'R':
+    ToBeSetFireTo = RIGHT_LEG_INDEX;
+    break;
+   case 'h':
+    ToBeSetFireTo = HEAD_INDEX;
+    break;
+   default:
+    return;
+  }
+
+  if(GetBodyPart(ToBeSetFireTo))
+  {
+    IgniteBodyPart(ToBeSetFireTo, game::NumberQuestion(CONST_S("How much fire damage?"), PINK));
+    SendNewDrawRequest();
+
+  }
+  else
+    ADD_MESSAGE("That bodypart has previously been detached.");
+
+  CheckDeath(CONST_S("burnt off one of his vital bodyparts"), 0);
+}
+
 #else
 
 void humanoid::AddAttributeInfo(festring&) const { }
@@ -4735,6 +4779,12 @@ void tailor::BeTalkedTo()
       return;
     }
 
+    if(Item->GetMainMaterial()->IsBurning())
+    {
+      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you. \"");
+      return;
+    }
+
     /** update messages */
 
     long FixPrice = Item->GetFixPrice();
@@ -4749,6 +4799,9 @@ void tailor::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
     {
+      Item->RemoveBurns();
+      Item->ResetThermalEnergies(); // OK because the item shouldn't be burning in the first place
+      Item->ResetBurning();
       Item->Fix();
       PLAYER->EditMoney(-FixPrice);
       ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));

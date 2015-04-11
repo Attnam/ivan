@@ -115,6 +115,7 @@ command* commandsystem::Command[] =
   new command(&GainAllItems, "gain all items", '$', '$', '$', true, true),
   new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', '*', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', '0', '0', true, true),
+  new command(&SetFireToBodyPart, "set fire to a limb", ']', ']', ']', true, true),
   new command(&SummonMonster, "summon monster", '&', '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', '|', false, true),
   new command(&Possess, "possess creature", '{', '{', '{', false, true),
@@ -1478,6 +1479,12 @@ truth commandsystem::SecretKnowledge(character* Char)
 truth commandsystem::DetachBodyPart(character* Char)
 {
   Char->DetachBodyPart();
+  return false;
+}
+
+truth commandsystem::SetFireToBodyPart(character* Char)
+{
+  Char->SetFireToBodyPart();
   return false;
 }
 

@@ -37,8 +37,9 @@ square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
-truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
+truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()) || (IsBurning()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
+truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
@@ -641,6 +642,16 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
+  if(MainMaterial && IsDestroyable(Damager))
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+  }
+  
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -717,6 +728,21 @@ void item::SignalSpoil(material*)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
+void item::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns away completely.", GetExtendedDescription().CStr());
+
+  truth Equipped = PLAYER->Equips(this);
+  Disappear();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+}
+
 item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 {
   item* Duplicated = Duplicate(Flags);
@@ -737,10 +763,12 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 	  && MainMaterial->IsSameAs(Item->MainMaterial)
 	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
 	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+	  && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
 	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
 	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
 	  && !Fluid && !Item->Fluid
-	  && !LifeExpectancy == !Item->LifeExpectancy);
+	  && !LifeExpectancy == !Item->LifeExpectancy
+	  && !IsBurning() == !Item->IsBurning());
 }
 
 void item::Break(character* Breaker, int)
@@ -853,6 +881,11 @@ int item::GetSpoilLevel() const
   return MainMaterial->GetSpoilLevel();
 }
 
+int item::GetBurnLevel() const
+{
+  return MainMaterial->GetBurnLevel();
+}
+
 void item::SignalSpoilLevelChange(material*)
 {
   if(!IsAnimated() && GetSpoilLevel() && Slot[0] && Slot[0]->IsVisible())
@@ -880,6 +913,22 @@ void item::ResetSpoiling()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
+}
+
+void item::ResetBurning()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetBurning();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
+}
+
+/* be careful calling this function, it will also cause flames to extinguish */
+void item::ResetThermalEnergies()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetThermalEnergies();
 }
 
 cchar* item::GetBaseToHitValueDescription() const
@@ -1143,6 +1192,46 @@ void item::SignalRustLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
+void item::SignalBurnLevelTransitionMessage()
+{
+  if(CanBeSeenByPlayer())
+    if(MainMaterial->GetBurnLevel() == NOT_BURNT)
+      ADD_MESSAGE("%s burns.", GetExtendedDescription().CStr());
+    else
+      ADD_MESSAGE("%s burns more.", GetExtendedDescription().CStr());
+}
+
+void item::SignalBurnLevelChange()
+{
+  if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
+    for(int c = 0; c < SquaresUnder; ++c)
+      GetSquareUnder(c)->IncStaticAnimatedEntities();
+  
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // completely remove previously applied emitation increases
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // apply an emitation increase according to the current burn level
+  
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
+/* emitation slowly ramps down with increasing item BurnLevel, in the beginning the light is bright, with light decreasing in intensity as the item gets more burnt */
+col24 item::GetEmitationDueToBurnLevel()
+{
+  if(MainMaterial)
+  {
+    int CurrentBurnLevel = GetBurnLevel();
+    
+    int Red = 150 - 10 * CurrentBurnLevel;
+    int Green = 120 - 8 * CurrentBurnLevel;
+    int Blue = 90 - 6 * CurrentBurnLevel;
+    //ADD_MESSAGE("Emitation due to BurnLevel: R%d G%d B%d", Red, Green, Blue); // por debug
+    return MakeRGB24(Red, Green, Blue);
+  }
+  else
+    return MakeRGB24(0, 0, 0);
+}
+
 const rawbitmap* item::GetRawPicture() const
 {
   return igraph::GetRawGraphic(GetGraphicsContainerIndex());
@@ -1292,6 +1381,92 @@ void item::TryToRust(long LiquidModifier)
   }
 }
 
+truth item::TestActivationEnergy(int Damage)
+{
+  if(Damage <= 0)
+      return false;
+
+  truth Success = false;
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
+
+  if(MainMaterial)
+  {
+    int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
+    GetMainMaterial()->AddToTransientThermalEnergy(Damage);
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    {
+      if(CanBeSeenByPlayer())
+      {
+        ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+        //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
+      }
+      Ignite();
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
+      Success = true;
+    }
+  }
+  return Success;
+}
+
+void item::Ignite(/*character* Arsonist*/)
+{
+  truth WasAnimated = IsAnimated();
+
+  MainMaterial->SetIsBurning(true);
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // kick this off by applying an emitation increase proportional to the burn level of the item
+  UpdatePictures();
+  //ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->IncStaticAnimatedEntities();
+
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
+}
+
+/*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
+void item::Extinguish(/*character* FireFighter, */truth SendMessages)
+{
+  truth WasAnimated = IsAnimated();
+  truth WasSeen = CanBeSeenByPlayer();
+  truth WasBurning = IsBurning();
+
+  MainMaterial->SetIsBurning(false);
+  MainMaterial->ResetThermalEnergies();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->DecStaticAnimatedEntities();
+  }
+
+  if(WasBurning && WasSeen && SendMessages) // by now it is dark...
+    AddExtinguishMessage();
+
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
+void item::AddExtinguishMessage()
+{
+      ADD_MESSAGE("The flames on %s die away.", GetExtendedDescription().CStr());
+}
+
+//This is for anything made from phoenix feather
+void item::AddSpecialExtinguishMessageForPF()
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes peel away from it and it is made new by some innate virtue.", GetExtendedDescription().CStr());
+}
+
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
 {
   if(Fluid)
@@ -1335,6 +1510,12 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
   }
 }
 
+void item::FightFire(material*, cfestring&, long Volume)
+{
+  int Amount = sqrt(Volume);
+  GetMainMaterial()->RemoveFromThermalEnergy(Amount);
+}
+
 void item::DonateFluidsTo(item* Item)
 {
   if(Fluid)
@@ -1372,6 +1553,13 @@ void item::RemoveRust()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->SetRustLevel(NOT_RUSTED);
+}
+
+void item::RemoveBurns()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->SetBurnLevel(NOT_BURNT, true);
 }
 
 void item::SetSpoilPercentage(int Value)
@@ -1457,6 +1645,15 @@ truth item::IsVeryCloseToSpoiling() const
   return true;
 }
 
+truth item::IsVeryCloseToBurning() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToBurning())
+      return false;
+
+  return true;
+}
+
 truth item::IsValuable() const
 {
   if(DataBase->IsValuable)
@@ -1496,6 +1693,7 @@ long item::GetFixPrice() const
   item* Clone = GetProtoType()->Clone(this);
   Clone = Clone->Fix();
   Clone->RemoveRust();
+  Clone->RemoveBurns();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
   return Max(long(3.5 * sqrt(FixPrice)), 10L);
