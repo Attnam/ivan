@@ -28,7 +28,7 @@ v2 LeftLegSparkleValidityArray[45];
 v2 NormalSparkleValidityArray[256];
 v2 PossibleSparkleBuffer[256];
 
-object::object() : entity(0), MainMaterial(0) { }
+object::object() : entity(0), MainMaterial(0), Burning(0) { }
 int object::GetSpecialFlags() const { return ST_NORMAL; }
 col16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
 cbitmap*const* object::GetPicture() const { return GraphicData.Picture; }
@@ -218,6 +218,11 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   truth Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   v2 BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
+	
+  if(IsBurning()) //is burning is sometimes initially filled with crap, so Burning should be initialised to zero
+  {
+	  SpecialFlags |= ST_FLAMES;
+  }
 
   if(!(SpecialFlags & (ST_FLAMES|ST_LIGHTNING)))
   {
@@ -319,6 +324,10 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   GI.RustData[1] = GetRustDataB();
   GI.RustData[2] = GetRustDataC();
   GI.RustData[3] = GetRustDataD();
+  GI.BurnData[0] = GetBurnDataA();
+  GI.BurnData[1] = GetBurnDataB();
+  GI.BurnData[2] = GetBurnDataC();
+  GI.BurnData[3] = GetBurnDataD();
   GI.WobbleData = WobbleData;
 
   for(c = 0; c < AnimationFrames; ++c)
@@ -373,6 +382,11 @@ col16 object::GetMaterialColorA(int) const
 truth object::AddRustLevelDescription(festring& String, truth Articled) const
 {
   return MainMaterial->AddRustLevelDescription(String, Articled);
+}
+
+truth object::AddBurnLevelDescription(festring& String, truth Articled) const
+{
+  return MainMaterial->AddBurnLevelDescription(String, Articled);
 }
 
 truth object::AddMaterialDescription(festring& String, truth Articled) const
@@ -441,12 +455,30 @@ truth object::AddEmptyAdjective(festring& String, truth Articled) const
   }
 }
 
+truth object::AddBurningAdjective(festring& String, truth Articled) const
+{
+  if(!IsBurning())
+    return false;
+  else
+  {
+    String << (Articled ? "a burning " : "burning ");
+    return true;
+  }
+}
+
 void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
 
   if(MainMaterial)
+  {
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
+    if(MainMaterial->IsBurning())
+    {
+      int CurrentBurnLevel = MainMaterial->GetBurnLevel();
+      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); //Use a value of emitation related to the burn level of the object
+    }
+  }
 }
 
 truth object::CalculateHasBe() const
@@ -507,6 +539,21 @@ void object::InitSparkleValidityArrays()
 int object::GetRustDataA() const
 {
   return MainMaterial->GetRustData();
+}
+
+int object::GetBurnDataA() const
+{
+  return MainMaterial->GetBurnData();
+}
+
+int object::IsBurning() const
+{
+  if(MainMaterial)
+  {
+    return MainMaterial->IsBurning() ? 1 : 0;
+  }
+  else
+    return 0;
 }
 
 truth object::DetectMaterial(cmaterial* Material) const

@@ -339,6 +339,34 @@ truth material::BreatheEffect(character* Enemy)
   return Effect(Enemy, TORSO_INDEX, Max<long>(GetVolume() / 10, 50));
 }
 
+truth material::CauseExplosion(character* Idiot, long Damage)
+{
+  lsquare* Square = Idiot->GetLSquareUnder();
+
+  if(!Damage)
+    return false;
+
+  if(IsExplosive())
+  {
+    if(Idiot->IsPlayer())
+        ADD_MESSAGE("Suddenly you are engulfed in flames!");
+    else if(Idiot->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s steps in %s.", Idiot->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
+    else if(Square->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("Something explodes!");
+    
+    Square->GetLevel()->Explosion(0, "killed in a gas explosion", Square->GetPos(), Damage);
+    return true;
+  }
+
+  return false;
+}
+
+truth material::ExplosiveEffect(character* Enemy)
+{
+  return CauseExplosion(Enemy, Max<long>(GetVolume() / 6, 10));
+}
+
 const materialdatabase* material::GetDataBase(int Config)
 {
   const prototype* Proto = 0;

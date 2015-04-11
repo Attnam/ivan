@@ -244,7 +244,7 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
+truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
 {
   if(Master)
   {
@@ -297,6 +297,8 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
 
     SignalPossibleUsabilityChange();
   }
+  else
+    return item::ReceiveDamage(Damager, Damage, Type, Direction);
 
   return false;
 }
@@ -1345,6 +1347,7 @@ void bodypart::CalculateMaxHP(ulong Flags)
 {
   int HPDelta = MaxHP - HP, OldMaxHP = MaxHP;
   MaxHP = 0;
+  int BurnLevel = 0;
 
   if(Master)
   {
@@ -1355,6 +1358,12 @@ void bodypart::CalculateMaxHP(ulong Flags)
 
       for(int c = 0; c < Scar.size(); ++c)
 	DoubleHP *= (100. - Scar[c].Severity * 4) / 100;
+
+      if(MainMaterial)
+      {
+        BurnLevel = MainMaterial->GetBurnLevel();
+        DoubleHP *= 1. * (4 - BurnLevel) / 4;
+      }
 
       MaxHP = int(DoubleHP);
     }
@@ -1687,6 +1696,124 @@ void corpse::SignalSpoil(material*)
   GetDeceased()->Disappear(this, "spoil", &item::IsVeryCloseToSpoiling);
 }
 
+truth bodypart::TestActivationEnergy(int Damage)
+{
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
+  if(Damage <= 0)
+    return false;
+
+  character* Owner = GetMaster();
+  truth Success = false;
+  
+  if(Owner)
+    if(Owner->BodyPartIsVital(GetBodyPartIndex()) || !CanBeBurned())
+      return Success;
+  
+  if(MainMaterial)
+  {
+    int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
+    GetMainMaterial()->AddToTransientThermalEnergy(Damage);
+    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    {
+      if(Owner)
+      {
+        if(Owner->IsPlayer())
+          ADD_MESSAGE("Your %s catches fire!", GetBodyPartName().CStr());
+        else if(Owner->CanBeSeenByPlayer())
+          ADD_MESSAGE("The %s of %s catches fire!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
+      }
+      //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage); //CLEANUP
+      Ignite();
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
+      Success = true;
+    }
+  }
+  return Success;
+}
+
+void bodypart::SignalBurn(material* Material)
+{
+  int BodyPartIndex = GetBodyPartIndex();
+  
+  if(Master)
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("Your %s burns away completely!", GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("The %s of %s burns away completely!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
+
+    /*GetBodyPart(BodyPartIndex)->*/DropEquipment(!game::IsInWilderness() ? Owner->GetStackUnder() : Owner->GetStack());
+    /*item* Burnt = */Owner->SevereBodyPart(BodyPartIndex, true);
+/* // create lumps of (charred?) flesh... (note, remove 'true' from item* Burnt = SevereBodyPart(BodyPartIndex, true);
+    if(Burnt)
+      Burnt->DestroyBodyPart(!game::IsInWilderness() ? GetStackUnder() : GetStack());
+*/
+    Owner->SendNewDrawRequest();
+
+    if(Owner->IsPlayer())
+      game::AskForKeyPress(CONST_S("Bodypart destroyed! [press any key to continue]"));
+  }
+  else
+    item::SignalBurn(Material);
+}
+
+void bodypart::Extinguish(truth SendMessages)
+{
+  if(Master)
+  {
+    item::Extinguish(SendMessages); //Master->Extinguish();
+    Master->UpdatePictures();
+  }
+  else
+    item::Extinguish(SendMessages);
+}
+
+void corpse::SignalBurn(material*)
+{
+  GetDeceased()->Disappear(this, "burn", &item::IsVeryCloseToBurning);
+}
+
+void bodypart::AddExtinguishMessage()
+{
+  if(Master)
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("The flames on your %s die away.", GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("The flames on the %s of %s die away.", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE));
+  }
+  else
+    item::AddExtinguishMessage();
+}
+
+void bodypart::AddSpecialExtinguishMessageForPF()
+{
+  if(Master)
+  {
+    character* Owner = GetMaster();
+    
+    if(Owner->IsPlayer())
+      ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes peel away from your %s and it is made new by some innate virtue!", CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
+    else if(Owner->CanBeSeenByPlayer())
+      ADD_MESSAGE("The %s of %s burns even more! But lo', even as it does so, the ashes peel away from %s %s and it is made new by some innate virtue!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+  }
+  else
+    item::AddSpecialExtinguishMessageForPF();
+}
+
+void corpse::Extinguish(truth SendMessages)
+{
+  GetDeceased()->Extinguish(SendMessages);
+}
+
 void corpse::SignalDisappearance()
 {
   GetDeceased()->Disappear(this, "disappear", &item::IsVeryCloseToDisappearance);
@@ -1749,8 +1876,8 @@ void bodypart::Be()
 
       SpillBloodCounter = 0;
     }
-
-    if(Master->AllowSpoil() || !Master->IsEnabled())
+// Organics can have an active Be() function, if they are burning... they will normally burn completely before they spoil
+    if(Master->AllowSpoil() || !Master->IsEnabled() || !!IsBurning())
       MainMaterial->Be(ItemFlags);
 
     if(Exists() && LifeExpectancy)
@@ -1908,6 +2035,9 @@ void arm::CalculateAttributeBonuses()
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH, false));
     DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY, false)) ; 
+
+    StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(ARM_STRENGTH, false));
+    DexterityBonus -= CalculateBurnAttributePenalty(GetAttribute(DEXTERITY, false));
   }
 }
 
@@ -1935,6 +2065,9 @@ void leg::CalculateAttributeBonuses()
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH, false));
     AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY, false)) ; 
+
+    StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(LEG_STRENGTH, false));
+    AgilityBonus -= CalculateBurnAttributePenalty(GetAttribute(AGILITY, false));
   }
 }
 
@@ -2014,6 +2147,31 @@ void bodypart::SignalSpoilLevelChange(material* Material)
     Master->SignalSpoilLevelChange();
   else
     item::SignalSpoilLevelChange(Material);
+}
+
+void bodypart::SignalBurnLevelChange()
+{
+//  if(Master)
+//    Master->SignalBurnLevelChange();
+//  else
+    item::SignalBurnLevelChange();
+}
+
+void bodypart::SignalBurnLevelTransitionMessage()
+{
+cchar* MoreMsg = MainMaterial->GetBurnLevel() == NOT_BURNT ? "" : " more";
+
+  if(Master)
+  {
+    if(Master->IsPlayer())
+      ADD_MESSAGE("Your %s burns%s.", CHAR_NAME(UNARTICLED), MoreMsg);
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The %s of %s burns%s.", CHAR_NAME(UNARTICLED), Master->CHAR_NAME(DEFINITE), MoreMsg);
+  }
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns%s.", CHAR_NAME(DEFINITE), MoreMsg);
+  else
+    item::SignalBurnLevelTransitionMessage();
 }
 
 truth head::DamageArmor(character* Damager, int Damage, int Type)
@@ -2350,7 +2508,7 @@ void corpse::FinalProcessForBone()
 
 truth bodypart::IsRepairable(ccharacter*) const
 {
-  return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted());
+  return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted() || IsBurnt());
 }
 
 truth corpse::SuckSoul(character* Soul, character* Summoner)
@@ -2589,6 +2747,11 @@ liquid* bodypart::CreateBlood(long Volume) const
 int corpse::GetRustDataA() const
 {
   return Deceased->GetTorso()->GetMainMaterial()->GetRustData();
+}
+
+int corpse::GetBurnDataA() const
+{
+  return Deceased->GetTorso()->GetMainMaterial()->GetBurnData();
 }
 
 void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, int SpecialFlags, v2 (item::*Retriever)(int) const, truth BodyArmor) const
@@ -3330,7 +3493,7 @@ void bodypart::SetSparkleFlags(int What)
 
 truth arm::IsAnimated() const
 {
-  return WieldedGraphicData.AnimationFrames > 1;
+  return (WieldedGraphicData.AnimationFrames > 1) || IsBurning();
 }
 
 void bodypart::SignalAnimationStateChange(truth WasAnimated)
@@ -3382,9 +3545,15 @@ void bodypart::RemoveRust()
   RestoreHP();
 }
 
+void bodypart::RemoveBurns()
+{
+  item::RemoveBurns();
+  RestoreHP();
+}
+
 long bodypart::GetFixPrice() const
 {
-  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25;
+  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25 + GetMainMaterial()->GetBurnLevel() * 25;
 }
 
 truth bodypart::IsFixableBySmith(ccharacter*) const
@@ -3492,6 +3661,20 @@ int bodypart::CalculateScarAttributePenalty(int Attribute) const
     DoubleAttribute *= (100. - Scar[c].Severity * 4) / 100;
 
   return Min(Attribute - int(DoubleAttribute), Attribute - 1);
+}
+
+int bodypart::CalculateBurnAttributePenalty(int Attribute) const
+{
+  int BurnLevel = 0;
+  double DoubleAttribute = Attribute;
+
+  if(MainMaterial)
+  {
+    BurnLevel = MainMaterial->GetBurnLevel();
+    DoubleAttribute *= 1. * (4 - BurnLevel) / 4;
+  }
+
+  return BurnLevel ? Min(Attribute - int(DoubleAttribute), Attribute - 1) : 0;
 }
 
 bodypart::~bodypart()

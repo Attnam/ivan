@@ -470,6 +470,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeMirrored);
   ADD_MEMBER(BeamRange);
   ADD_MEMBER(CanBeBroken);
+  ADD_MEMBER(CanBeBurned);
   ADD_MEMBER(WallBitmapPos);
   ADD_MEMBER(FlexibleNameSingular);
   ADD_MEMBER(MaxCharges);
@@ -614,6 +615,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Alpha);
   ADD_MEMBER(Flexibility);
   ADD_MEMBER(SpoilModifier);
+  ADD_MEMBER(BurnModifier);
   ADD_MEMBER(EffectStrength);
   ADD_MEMBER(DigProductMaterial);
   ADD_MEMBER(ConsumeWisdomLimit);
@@ -627,6 +629,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(Stickiness);
   ADD_MEMBER(DisablesPanicWhenConsumed);
+  ADD_MEMBER(FireResistance);
 }
 
 #define ADD_BASE_VALUE(name)\

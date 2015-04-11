@@ -1414,6 +1414,12 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       {
 	RestoreBodyParts();
 	ResetSpoiling();
+        if(IsBurning())
+        {
+          doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+          doforbodyparts()(this, &bodypart::ResetThermalEnergies);
+          doforbodyparts()(this, &bodypart::ResetBurning);
+        }
 	RestoreHP();
 	RestoreStamina();
 	ResetStates();
@@ -1427,6 +1433,13 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     ProcessAndAddMessage(GetDeathMessage());
   else if(DeathFlags & FORCE_MSG)
     ADD_MESSAGE("You sense the death of something.");
+
+  if(IsBurning()) // do this anyway, it stops the corpse from emitating and continuing to propagate weirdness
+  {
+    doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, false);
+    doforbodyparts()(this, &bodypart::ResetThermalEnergies);
+    doforbodyparts()(this, &bodypart::ResetBurning);
+  }
 
   if(!(DeathFlags & FORBID_REINCARNATION))
   {
@@ -1733,6 +1746,13 @@ truth character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
   {
+    int LocalReadDifficulty = ToBeRead->GetBurnLevel() * sqrt(abs(ToBeRead->GetReadDifficulty())) / 2;
+    if(GetAttribute(INTELLIGENCE) < LocalReadDifficulty)
+    {
+      ADD_MESSAGE("%s is completely unreadable.", ToBeRead->CHAR_NAME(DEFINITE));
+      return false;
+    }
+
     if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheatMode())
     {
       if(StateIsActivated(CONFUSED) && !(RAND() & 7))
@@ -3042,7 +3062,11 @@ int character::RandomizeReply(long& Said, int Replies)
 void character::DisplayInfo(festring& Msg)
 {
   if(IsPlayer())
+  {
     Msg << " You are " << GetStandVerb() << " here.";
+    if(IsBurning())
+      Msg << " You are on fire.";
+  }
   else
   {
     Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is " << GetStandVerb() << " here. " << GetPersonalPronoun().CapitalizeCopy();
@@ -3069,6 +3093,12 @@ void character::DisplayInfo(festring& Msg)
     if(StateIsActivated(PANIC))
     {
       Msg << Separator1 << " panicked";
+      Separator2 = " and";
+    }
+
+    if(IsBurning())
+    {
+      Msg << Separator1 << " is on fire";
       Separator2 = " and";
     }
 
@@ -3270,6 +3300,20 @@ void character::RestoreLivingHP()
   }
 }
 
+truth character::IsBurnt() const
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart && BodyPart->IsBurnt())
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 truth character::AllowDamageTypeBloodSpill(int Type)
 {
   switch(Type&0xFFF)
@@ -3319,6 +3363,16 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 
       return 0;
     }
+
+  if(BodyPart->GetMainMaterial())
+  {
+    if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning() && Type & FIRE)
+    {
+      BodyPart->TestActivationEnergy(Damage);
+    }
+    else if(BodyPart->IsBurning() && Type & FIRE)
+      BodyPart->GetMainMaterial()->AddToThermalEnergy(Damage);
+  }
 
   if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness())
   {
@@ -3440,6 +3494,12 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
     RemoveTraps(BodyPartIndex);
     return BodyPart;
   }
+}
+
+void character::IgniteBodyPart(int BodyPartIndex, int Damage)
+{
+  bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+  BodyPart->TestActivationEnergy(Damage);
 }
 
 /* The second int is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
@@ -3995,6 +4055,9 @@ truth character::TeleportNear(character* Caller)
 void character::ReceiveHeal(long Amount)
 {
   int c;
+
+  if(IsBurnt())
+    HealBurntBodyParts(Amount);
 
   for(c = 0; c < Amount / 10; ++c)
     if(!HealHitPoint())
@@ -5065,6 +5128,35 @@ truth character::HasAllBodyParts() const
   return true;
 }
 
+truth character::HasFire() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsBurning())
+      return true;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(BodyPart)
+      if(BodyPart->IsBurning())
+        return true;
+  }
+
+  return false;
+}
+
+truth character::IsBurning() const
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(BodyPart)
+      if(BodyPart->IsBurning())
+        return true;
+  }
+  return false;
+}
+
 bodypart* character::GenerateRandomBodyPart()
 {
   int NeededBodyPart[MAX_BODYPARTS];
@@ -6010,6 +6102,19 @@ void character::SignalSpoil()
   else
     Disappear(0, "spoil", &item::IsVeryCloseToSpoiling);
 }
+// never call this function!
+void character::SignalBurn()
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->SignalBurn(0);
+  else
+    Disappear(0, "burn", &item::IsVeryCloseToBurning);
+}
+
+void character::Extinguish(truth SendMessages)
+{
+  doforbodypartswithparam<truth>()(this, &bodypart::Extinguish, SendMessages);
+}
 
 truth character::CanHeal() const
 {
@@ -6201,6 +6306,14 @@ void character::SignalSpoilLevelChange()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoilLevelChange(0);
   else
+    UpdatePictures();
+}
+
+void character::SignalBurnLevelChange()
+{
+//  if(GetMotherEntity())
+//    GetMotherEntity()->SignalBurnLevelChange();
+//  else
     UpdatePictures();
 }
 
@@ -6642,6 +6755,34 @@ bodypart* character::HealHitPoint()
     return 0;
 }
 
+void character::HealBurntBodyParts(long Amount)
+{
+  if(!Amount)
+    return;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(Amount > 0)
+    {
+      if(BodyPart && BodyPart->CanRegenerate() && BodyPart->IsBurnt())
+      {
+        if(IsPlayer())
+          ADD_MESSAGE("Your %s is healed of its burns.", BodyPart->GetBodyPartName().CStr());
+        else if(CanBeSeenByPlayer())
+          ADD_MESSAGE("The %s of %s is healed of its burns.", BodyPart->GetBodyPartName().CStr(), CHAR_NAME(DEFINITE));
+
+        BodyPart->GetMainMaterial()->ResetBurning();
+        Amount = Amount - 250;
+      }
+    }
+    else
+      break;
+  }
+  return;
+}
+
 void character::CreateHomeData()
 {
   HomeData = new homedata;
@@ -6946,6 +7087,11 @@ void character::AddDefenceInfo(felist& List) const
 }
 
 void character::DetachBodyPart()
+{
+  ADD_MESSAGE("You haven't got any extra bodyparts.");
+}
+
+void character::SetFireToBodyPart()
 {
   ADD_MESSAGE("You haven't got any extra bodyparts.");
 }
@@ -7555,6 +7701,34 @@ truth character::IsAlly(ccharacter* Char) const
 void character::ResetSpoiling()
 {
   doforbodyparts()(this, &bodypart::ResetSpoiling);
+}
+
+void character::ResetBurning()
+{
+  doforbodyparts()(this, &bodypart::ResetBurning);
+}
+
+void character::ResetLivingBurning()
+{
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart && BodyPart->CanRegenerate() && BodyPart->GetMainMaterial())
+    {
+      BodyPart->GetMainMaterial()->ResetBurning();
+    }
+  }
+}
+
+void character::RemoveBurns()
+{
+  doforbodyparts()(this, &bodypart::RemoveBurns);
+}
+
+void character::ResetThermalEnergies()
+{
+  doforbodyparts()(this, &bodypart::ResetThermalEnergies);
 }
 
 item* character::SearchForItem(ccharacter* Char, sorter Sorter) const

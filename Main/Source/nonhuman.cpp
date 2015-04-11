@@ -2310,6 +2310,7 @@ truth largecat::SpecialSaveLife()
 
   RestoreBodyParts();
   ResetSpoiling();
+  ResetBurning();
   RestoreHP();
   RestoreStamina();
   ResetStates();

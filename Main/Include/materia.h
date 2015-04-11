@@ -65,6 +65,8 @@ struct materialdatabase : public databasebase
   int IntelligenceRequirement;
   int Stickiness;
   truth DisablesPanicWhenConsumed;
+  int FireResistance;
+  int BurnModifier;
 };
 
 class materialprototype
@@ -142,6 +144,7 @@ class material
   DATA_BASE_VALUE(alpha, Alpha);
   DATA_BASE_VALUE(int, Flexibility);
   DATA_BASE_VALUE(int, SpoilModifier);
+  DATA_BASE_VALUE(int, BurnModifier);
   DATA_BASE_VALUE(int, EffectStrength);
   DATA_BASE_VALUE(int, DigProductMaterial);
   DATA_BASE_VALUE(int, ConsumeWisdomLimit);
@@ -165,13 +168,17 @@ class material
   truth IsTransparent() const { return GetAlpha() != 255; }
   virtual long GetTotalNutritionValue() const;
   virtual truth IsVeryCloseToSpoiling() const { return false; }
+  virtual truth IsVeryCloseToBurning() const { return false; }
   virtual void AddWetness(long) { }
   virtual int GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
+  virtual void ResetBurning() { }
   truth CanBeEatenByAI(ccharacter*) const;
   virtual void SetSpoilCounter(int) { }
   DATA_BASE_VALUE(cfestring&, BreatheMessage);
   truth BreatheEffect(character*);
+  truth CauseExplosion(character*, long);
+  truth ExplosiveEffect(character*);
   virtual truth SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(truth) { }
   DATA_BASE_VALUE(int, StepInWisdomLimit);
@@ -208,6 +215,19 @@ class material
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
   truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
+  DATA_BASE_VALUE(int, FireResistance);
+  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual int IsBurning() const { return Burning; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual void SetBurnLevel(int, truth) { }
+  virtual int GetBurnData() const { return NOT_BURNT; }
+  virtual int GetBurnLevel() const { return NOT_BURNT; }
+  virtual void AddToThermalEnergy(int) { }
+  virtual void AddToSteadyStateThermalEnergy(int) { }
+  virtual void AddToTransientThermalEnergy(int) { }
+  virtual void RemoveFromThermalEnergy(int) { }
+  virtual void ResetThermalEnergies() { }
+  virtual int GetTransientThermalEnergy() const { return 0; }
  protected:
   virtual void PostConstruct() { }
   void Initialize(int, long, truth);
@@ -216,6 +236,7 @@ class material
   const database* DataBase;
   entity* MotherEntity;
   long Volume;
+	int Burning;
 };
 
 template <class type, class base>

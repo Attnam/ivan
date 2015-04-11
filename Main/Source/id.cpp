@@ -43,6 +43,9 @@ void id::AddName(festring& Name, int Case) const
     if(AddRustLevelDescription(Name, Articled))
       Articled = false;
 
+    if(AddBurnLevelDescription(Name, Articled))
+      Articled = false;
+
     if(AddStateDescription(Name, Articled))
       Articled = false;
   }
@@ -112,6 +115,9 @@ void id::AddPostFix(festring& String, int) const
 {
   if(GetPostFix().GetSize())
     String << ' ' << GetPostFix();
+  
+  if(NeedsBurningPostFix())
+    String << " (on fire)";
 }
 
 truth id::AddActiveAdjective(festring& String, truth Articled) const

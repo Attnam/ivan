@@ -2601,6 +2601,27 @@ truth lsquare::AcidRain(const beamdata& Beam)
   return false;
 }
 
+truth lsquare::WaterRain(const beamdata& Beam)
+{
+  if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
+  {
+    int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
+    lsquare** Stack = GetLevel()->GetSquareStack();
+    v2 Speed = v2(512, 512);
+    int Team = Beam.Owner ? Beam.Owner->GetTeam()->GetID() : MONSTER_TEAM;
+
+    for(int c = 0; c < StackSize; ++c)
+    {
+      Stack[c]->AddRain(liquid::Spawn(WATER, 1000), Speed, Team, true);
+      Stack[c]->Flags &= ~IN_SQUARE_STACK;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 truth lsquare::DetectMaterial(cmaterial* Material) const
 {
   if(GLTerrain->DetectMaterial(Material)

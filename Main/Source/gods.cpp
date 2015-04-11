@@ -179,7 +179,39 @@ void legifer::PrayBadEffect()
 
 void dulcis::PrayGoodEffect()
 {
-  ADD_MESSAGE("A beautiful melody echoes around you.");
+  truth HasHelped = false;
+
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  {
+    square* Square = PLAYER->GetNeighbourSquare(d);
+
+    if(Square)
+    {
+      character* Char = Square->GetCharacter();
+
+      if(Char)
+        if(Char->IsBurning())
+          if(Char->GetTeam() == PLAYER->GetTeam())
+          {
+            Char->Extinguish(true);
+            HasHelped = true;
+          }
+    }
+  }
+  if(PLAYER->IsBurning())
+  {
+    PLAYER->Extinguish(true);
+    if(HasHelped)
+      ADD_MESSAGE("Dulcis helps you and your companions to put out the flames.");
+    else
+      ADD_MESSAGE("Dulcis helps you to put out the flames.");
+
+    HasHelped = true;
+  }
+  if(HasHelped)
+    return;
+  else
+    ADD_MESSAGE("A beautiful melody echoes around you.");
 
   for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
   {
@@ -244,6 +276,16 @@ void seges::PrayGoodEffect()
   {
     ADD_MESSAGE("Your stomach feels full again.");
     PLAYER->SetNP(BLOATED_LEVEL);
+    return;
+  }
+
+  if(PLAYER->IsBurnt())
+  {
+    ADD_MESSAGE("%s heals your burns.", GetName());
+    //PLAYER->RemoveBurns(); // removes the burns and restores HP
+    if(!PLAYER->IsBurning()) // the player would do well to put the flames out himself first
+      PLAYER->ResetThermalEnergies();
+    PLAYER->ResetLivingBurning(); // In keeping with Seges' au natural theme. Does roughly the same as RemoveBurns(), only without the message(?) and it resets the burn level counter
     return;
   }
 
@@ -324,7 +366,22 @@ void silva::PrayGoodEffect()
     PLAYER->SetNP(SATIATED_LEVEL);
   }
 
-  if(!game::GetCurrentLevel()->IsOnGround())
+  if(PLAYER->IsBurning() || PLAYER->PossessesItem(&item::IsOnFire))
+  {
+    beamdata Beam
+    (
+      0,
+      CONST_S("drowned by the showers of ") + GetName(),
+      YOURSELF,
+      0
+    );
+
+    lsquare* Square = PLAYER->GetLSquareUnder();
+
+    Square->WaterRain(Beam);
+    ADD_MESSAGE("Silva allows a little spell of gentle rain to pour down from above.");
+  }
+  else if(!game::GetCurrentLevel()->IsOnGround())
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
@@ -485,6 +542,14 @@ void loricatus::PrayGoodEffect()
 
   if(MainWielded)
   {
+    if(PLAYER->GetLSquareUnder()->IsDark() && (MainWielded->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && MainWielded->CanBeBurned())
+    {
+      if(MainWielded->TestActivationEnergy(int(260 + GetRelation() / 2)))
+      {
+        ADD_MESSAGE("\"Behold, a light in the dark places!\"");
+        return;
+      }
+    }
     if(MainWielded->IsMaterialChangeable() && MainWielded->GetMainMaterial()->GetAttachedGod() == GetType())
     {
       int Config = MainWielded->GetMainMaterial()->GetHardenedMaterial(MainWielded);
@@ -543,6 +608,21 @@ void loricatus::PrayGoodEffect()
     {
       ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
       Equipment->Fix();
+      return;
+    }
+  }
+
+  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+  {
+    item* Equipment = PLAYER->GetEquipment(c);
+
+    if(Equipment && Equipment->IsBurnt())
+    {
+      ADD_MESSAGE("%s repairs the burns on your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+      Equipment->RemoveBurns();
+      if(!Equipment->IsBurning())
+        Equipment->ResetThermalEnergies();
+      Equipment->ResetBurning();
       return;
     }
   }
@@ -772,6 +852,29 @@ void mortifer::Pray()
 
 void infuscor::PrayBadEffect()
 {
+  truth Success = false;
+  if(GetRelation() < -200)
+  {
+    uint c;
+
+    for(c = 1; c < uint(PLAYER->GetBodyParts()); ++c) // annoying :(
+    {
+      bodypart* BodyPart = PLAYER->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsDestroyable(PLAYER))
+        if(BodyPart->GetMainMaterial())
+          if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning())
+          {
+            if(BodyPart->TestActivationEnergy(50))
+            {
+                Success = true;
+            }
+          }
+    }
+    if(Success)
+      ADD_MESSAGE("\"I'm going to enjoy watching you burn, insolent mortal!\"");
+  }
+
   ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
@@ -920,7 +1023,47 @@ void scabies::PrayBadEffect()
 
 void infuscor::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s helps you.", GetName());
+  truth Success = false;
+  if(GetRelation() >= 0)
+  {
+    for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = PLAYER->GetNeighbourLSquare(d);
+
+      if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
+      {
+        uint c;
+
+        for(c = 1; c < uint(Square->GetCharacter()->GetBodyParts()); ++c) // annoying :(
+        {
+          bodypart* BodyPart = Square->GetCharacter()->GetBodyPart(c);
+
+          if(BodyPart && BodyPart->IsDestroyable(Square->GetCharacter()))
+            if(BodyPart->GetMainMaterial())
+              if(BodyPart->CanBeBurned() && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && !BodyPart->IsBurning())
+              {
+                if(BodyPart->TestActivationEnergy(20 + GetRelation() / 10))
+                {
+                  if(GetRelation() >= 200)
+                    Success = true;
+                  else
+                  {
+                    ADD_MESSAGE("%s sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+                    return;
+                  }
+                }
+              }
+        }
+        if(Success)
+        {
+          ADD_MESSAGE("%s savagely sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+          return;
+        }
+      }
+    }
+  }
+  else
+    ADD_MESSAGE("%s helps you.", GetName());
 
   if(!PLAYER->StateIsActivated(ESP))
   {
