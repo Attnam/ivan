@@ -42,7 +42,7 @@ void solid::Be(ulong Flags)
   else
     TransientThermalEnergy = 0;
   
-  if(BurnCheckCounter++ >= 50)
+  if(BurnCheckCounter++ >= (50 + RAND_N(6)))
   {
     if(IsBurning())
     {
