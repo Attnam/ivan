@@ -1900,14 +1900,14 @@ truth blinkdog::SpecialEnemySightedReaction(character*)
 
   if(!(RAND() & 31))
   {
-    MonsterTeleport("playful bark");
+    MonsterTeleport("a playful bark");
     return true;
   }
 
   if((!(RAND() & 3) && StateIsActivated(PANIC))
      || (!(RAND() & 7) && IsInBadCondition()))
   {
-    MonsterTeleport("frightened howl");
+    MonsterTeleport("a frightened howl");
     return true;
   }
 
@@ -1916,10 +1916,12 @@ truth blinkdog::SpecialEnemySightedReaction(character*)
 
 void blinkdog::MonsterTeleport(cchar* BarkMsg)
 {
-  if(CanBeSeenByPlayer())
-    ADD_MESSAGE("You hear a %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
+  if(IsPlayer())
+    ADD_MESSAGE("You vanish.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("You hear %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
   else
-    ADD_MESSAGE("You hear a %s inside your head.", BarkMsg);
+    ADD_MESSAGE("You hear %s inside your head.", BarkMsg);
 
   v2 Pos = GetPos();
   rect Border(Pos + v2(-5, -5), Pos + v2(5, 5));
@@ -1930,7 +1932,9 @@ void blinkdog::MonsterTeleport(cchar* BarkMsg)
 
   Move(Pos, true);
 
-  if(CanBeSeenByPlayer())
+  if(IsPlayer())
+    ADD_MESSAGE("You materialize.");
+  else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s materializes from nowhere!", CHAR_NAME(INDEFINITE));
 
   EditAP(-1000);
@@ -1944,7 +1948,7 @@ int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2
      && (StateIsActivated(PANIC)
 	 || (RAND() & 1 && IsInBadCondition())
 	 || !(RAND() & 7)))
-    MonsterTeleport("neighs in terror");
+    MonsterTeleport(" in terror");
 
   return Return;
 }
@@ -1961,20 +1965,24 @@ int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
     if((RAND() & 1 && StateIsActivated(PANIC))
        || (!(RAND() & 3) && IsInBadCondition())
        || !(RAND() & 15))
-    MonsterTeleport("terrified yelp");
+    MonsterTeleport("a terrified yelp");
   }
 
   return Return;
 }
 
-void unicorn::MonsterTeleport(cchar* NeighMsg)
+void unicorn::MonsterTeleport(cchar* NeighDescription)
 {
-  if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s %s and disappears!", CHAR_NAME(DEFINITE), NeighMsg);
+  if(IsPlayer())
+    ADD_MESSAGE("You neigh%s and disappear.", NeighDescription);
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s neighs%s and disappears!", CHAR_NAME(DEFINITE), NeighDescription);
 
   Move(GetLevel()->GetRandomSquare(this), true);
 
-  if(CanBeSeenByPlayer())
+  if(IsPlayer())
+    ADD_MESSAGE("You reappear.");
+  else if(CanBeSeenByPlayer())
     ADD_MESSAGE("Suddenly %s appears from nothing!", CHAR_NAME(INDEFINITE));
 
   EditAP(-1000);

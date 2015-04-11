@@ -8168,12 +8168,7 @@ void character::ReceivePeaSoup(long)
 void character::AddPeaSoupConsumeEndMessage() const
 {
   if(IsPlayer())
-  {
-    if(CanHear())
-      ADD_MESSAGE("Mmmh! The soup is very tasty. You hear a small puff.");
-    else
-      ADD_MESSAGE("Mmmh! The soup is very tasty.");
-  }
+    ADD_MESSAGE("Mmmh! The soup is very tasty.%s", CanHear() ? " You hear a small puff." : "");
   else if(CanBeSeenByPlayer() && PLAYER->CanHear()) // change someday
     ADD_MESSAGE("You hear a small puff.");
 }
