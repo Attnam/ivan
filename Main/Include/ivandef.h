@@ -29,7 +29,7 @@
 
 #include "v2.h"
 
-#define IVAN_VERSION "0.51a"
+#define IVAN_VERSION "0.50.2"
 
 class item;
 class material;
