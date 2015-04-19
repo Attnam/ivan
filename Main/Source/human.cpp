@@ -3662,6 +3662,7 @@ void humanoid::AddAttributeInfo(festring&) const { }
 void humanoid::AddAttackInfo(felist&) const { }
 void humanoid::AddDefenceInfo(felist&) const { }
 void humanoid::DetachBodyPart() { }
+void humanoid::SetFireToBodyPart() { }
 
 #endif
 
