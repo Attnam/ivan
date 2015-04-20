@@ -83,7 +83,13 @@ int Main(int argc, char** argv)
     return 0;
   }
 
-  std::cout << "\nTo list scores in highscore file:\n    mihail -l [filename] \n\nTo merge 2 files\n    mihail [1st input filename] [2nd input filename] [output filename] \n\nTo give version number of highscore file\n    mihail -d [filename]\nNotice that first filename in merges gives also version number\n";
+  std::cout << "\nTo list scores in highscore file:\n"
+               "    mihail -l [filename]"
+               "\n\nTo merge 2 files\n"
+               "    mihail [1st input filename] [2nd input filename] [output filename]"
+               "\n\nTo give version number of highscore file\n"
+               "    mihail -d [filename]\n"
+               "Notice that first filename in merges gives also version number\n";
   return 1;
 }
 
