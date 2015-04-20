@@ -4553,7 +4553,7 @@ void character::BeginTemporaryState(long State, int Counter)
       break;
 
   if(Index == STATES)
-    ABORT("BeginTemporaryState works only when State == 2 ^ n!");
+    ABORT("BeginTemporaryState works only when State == 2 ^ n!");
 
   if(TemporaryStateIsActivated(State))
   {
@@ -8399,7 +8399,7 @@ void character::DecreaseStateCounter(long State, int Counter)
       break;
 
   if(Index == STATES)
-    ABORT("DecreaseTemporaryStateCounter works only when State == 2 ^ n!");
+    ABORT("DecreaseTemporaryStateCounter works only when State == 2 ^ n!");
 
   if(TemporaryState & State)
   {

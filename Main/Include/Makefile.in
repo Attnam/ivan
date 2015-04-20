@@ -144,7 +144,7 @@ DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.in Makefile.am
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  Main/Include/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
