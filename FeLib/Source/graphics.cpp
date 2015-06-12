@@ -29,7 +29,10 @@
 void (*graphics::SwitchModeHandler)();
 
 #ifdef USE_SDL
-SDL_Surface* graphics::Screen;
+//SDL_Surface* graphics::Screen;
+SDL_Window* graphics::Window;
+SDL_Renderer* graphics::Renderer;
+SDL_Texture* graphics::Texture;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 SDL_Surface* graphics::TempSurface;
 #endif
@@ -98,9 +101,10 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
-    SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
+    SDL_SetColorKey(Icon, /*SDL_SRCCOLORKEY,*/ SDL_TRUE,
 		    SDL_MapRGB(Icon->format, 255, 255, 255));
-    SDL_WM_SetIcon(Icon, NULL);
+    //SDL_WM_SetIcon(Icon, NULL);
+    SDL_SetWindowIcon(Window, Icon); /*FIXSDL2*/
   }
 
   ulong Flags = SDL_SWSURFACE;
@@ -108,15 +112,31 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(FullScreen)
   {
     SDL_ShowCursor(SDL_DISABLE);
-    Flags |= SDL_FULLSCREEN;
+    // Flags |= SDL_FULLSCREEN;
+    Flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
   }
 
-  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
-
-  if(!Screen)
+  printf("NewRes.X %d / NewRes.Y %d\n", NewRes.X, NewRes.Y);
+  //Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
+  Window = SDL_CreateWindow(Title, 
+			  SDL_WINDOWPOS_UNDEFINED,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          NewRes.X, NewRes.Y, Flags);
+  if(!Window)
     ABORT("Couldn't set video mode.");
 
-  SDL_WM_SetCaption(Title, 0);
+  Renderer = SDL_CreateRenderer(Window, -1, 0);
+  if(!Renderer)
+    ABORT("Couldn't set renderer mode.");
+
+  Texture = SDL_CreateTexture(Renderer,
+         SDL_PIXELFORMAT_RGB565,
+         SDL_TEXTUREACCESS_STREAMING,
+	 NewRes.X, NewRes.Y);
+         //640, 480);
+
+  //SDL_WM_SetCaption(Title, 0);
+  SDL_SetWindowTitle(NULL, Title); /* FIXSDL2 */
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
   Res = NewRes;
@@ -142,6 +162,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
 void graphics::BlitDBToScreen()
 {
+/*
   SDL_LockSurface(TempSurface);
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
   packcol16* DestPtr = static_cast<packcol16*>(TempSurface->pixels);
@@ -156,16 +177,21 @@ void graphics::BlitDBToScreen()
   SDL_BlitSurface(S, NULL, Screen, NULL);
   SDL_FreeSurface(S);
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
+*/
+  SDL_UpdateTexture(sdlTexture, NULL, myPixels, 640 * sizeof (Uint32));
 }
 
 #else
 
 void graphics::BlitDBToScreen()
 {
+/*
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
+*/
 
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
+/*
   packcol16* DestPtr = static_cast<packcol16*>(Screen->pixels);
   ulong ScreenYMove = (Screen->pitch >> 1);
   ulong LineSize = Res.X << 1;
@@ -177,12 +203,20 @@ void graphics::BlitDBToScreen()
     SDL_UnlockSurface(Screen);
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
+*/
+printf("=> Res.Y = %d / Res.X = %d\n", Res.Y, Res.X);
+  SDL_UpdateTexture(Texture, NULL, SrcPtr, Res.X * sizeof(packcol16));
+  SDL_RenderClear(Renderer);
+  SDL_RenderCopy(Renderer, Texture, NULL, NULL);
+  SDL_RenderPresent(Renderer);
+
 }
 
 #endif
 
 void graphics::SwitchMode()
 {
+/* FIXSDL2
   ulong Flags;
 
   if(Screen->flags & SDL_FULLSCREEN)
@@ -205,6 +239,13 @@ void graphics::SwitchMode()
     ABORT("Couldn't toggle fullscreen mode.");
 
   BlitDBToScreen();
+*/
+   ulong Flags = SDL_GetWindowFlags(Window);
+   if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+      SDL_SetWindowFullscreen(NULL, 0);
+   } else {
+      SDL_SetWindowFullscreen(NULL, SDL_WINDOW_FULLSCREEN_DESKTOP);
+   }
 }
 
 #endif

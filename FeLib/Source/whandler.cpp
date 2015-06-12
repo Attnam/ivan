@@ -109,8 +109,8 @@ truth (*globalwindowhandler::QuitMessageHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
-  SDL_EnableUNICODE(1);
-  SDL_EnableKeyRepeat(500, 30);
+  //SDL_EnableUNICODE(1);
+  //FIXSDL2 SDL_EnableKeyRepeat(500, 30);
 }
 
 int globalwindowhandler::GetKey(truth EmptyBuffer)
@@ -143,7 +143,8 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 	ProcessMessage(&Event);
       else
       {
-	if(SDL_GetAppState() & SDL_APPACTIVE
+	//if(SDL_GetAppState() & SDL_APPACTIVE
+        if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) 
 	   && Controls && ControlLoopsEnabled)
 	{
 	  static ulong LastTick = 0;
@@ -177,7 +178,8 @@ int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
 	memset(&Event,0,sizeof(SDL_Event));
-  if(SDL_GetAppState() & SDL_APPACTIVE)
+  // if(SDL_GetAppState() & SDL_APPACTIVE)
+  if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
   {
     while(SDL_PollEvent(&Event))
       ProcessMessage(&Event);
@@ -195,10 +197,14 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed;
 
-  switch(Event->active.type)
+  switch(Event->type)
+  //switch(Event->active.type)
   {
-   case SDL_VIDEOEXPOSE:
-    graphics::BlitDBToScreen();
+   case SDL_WINDOWEVENT:
+   //case SDL_VIDEOEXPOSE:
+    if (Event->window.event == SDL_WINDOWEVENT_SHOWN || Event->window.event == SDL_WINDOWEVENT_RESTORED) {
+      graphics::BlitDBToScreen();
+    }
     break;
    case SDL_QUIT:
     if(!QuitMessageHandler || QuitMessageHandler())
@@ -220,42 +226,42 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
       break;
      case SDLK_DOWN:
-     case SDLK_KP2:
+     case SDLK_KP_2:
       KeyPressed = KEY_DOWN + 0xE000;
       break;
      case SDLK_UP:
-     case SDLK_KP8:
+     case SDLK_KP_8:
       KeyPressed = KEY_UP + 0xE000;
       break;
      case SDLK_RIGHT:
-     case SDLK_KP6:
+     case SDLK_KP_6:
       KeyPressed = KEY_RIGHT + 0xE000;
       break;
      case SDLK_LEFT:
-     case SDLK_KP4:
+     case SDLK_KP_4:
       KeyPressed = KEY_LEFT + 0xE000;
       break;
      case SDLK_HOME:
-     case SDLK_KP7:
+     case SDLK_KP_7:
       KeyPressed = KEY_HOME + 0xE000;
       break;
      case SDLK_END:
-     case SDLK_KP1:
+     case SDLK_KP_1:
       KeyPressed = KEY_END + 0xE000;
       break;
      case SDLK_PAGEUP:
-     case SDLK_KP9:
+     case SDLK_KP_9:
       KeyPressed = KEY_PAGE_UP + 0xE000;
       break;
-     case SDLK_KP3:
+     case SDLK_KP_3:
      case SDLK_PAGEDOWN:
       KeyPressed = KEY_PAGE_DOWN + 0xE000;
       break;
-     case SDLK_KP5:
+     case SDLK_KP_5:
       KeyPressed = '.';
       break;
      case SDLK_SYSREQ:
-     case SDLK_PRINT:
+     case SDLK_PRINTSCREEN:
 
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
@@ -269,7 +275,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	break;
       }
      default:
-      KeyPressed = Event->key.keysym.unicode;
+      //KeyPressed = Event->key.keysym.unicode;
+      // FIXSDL2
 
       if(!KeyPressed)
 	return;

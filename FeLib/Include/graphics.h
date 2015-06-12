@@ -47,14 +47,17 @@ class graphics
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)())
   { SwitchModeHandler = What; }
- private:
-  static void (*SwitchModeHandler)();
 #ifdef USE_SDL
-  static SDL_Surface* Screen;
+  //static SDL_Surface* Screen;
+  static SDL_Window* Window;
+  static SDL_Renderer *Renderer;
+  static SDL_Texture *Texture;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
   static SDL_Surface* TempSurface;
 #endif
 #endif
+ private:
+  static void (*SwitchModeHandler)();
 #ifdef __DJGPP__
   static ulong BufferSize;
   static ushort ScreenSelector;
