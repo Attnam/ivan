@@ -29,12 +29,15 @@
 void (*graphics::SwitchModeHandler)();
 
 #ifdef USE_SDL
-//SDL_Surface* graphics::Screen;
+#ifdef SDL_MAJOR_VERSION == 1
+SDL_Surface* graphics::Screen;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+SDL_Surface* graphics::TempSurface;
+#endif
+#else
 SDL_Window* graphics::Window;
 SDL_Renderer* graphics::Renderer;
 SDL_Texture* graphics::Texture;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-SDL_Surface* graphics::TempSurface;
 #endif
 #endif
 
@@ -77,8 +80,10 @@ void graphics::DeInit()
   DefaultFont = 0;
 
 #ifdef USE_SDL
+#ifdef SDL_MAJOR_VERSION == 1
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
   SDL_FreeSurface(TempSurface);
+#endif
 #endif
   SDL_Quit();
 #endif
@@ -101,10 +106,15 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
-    SDL_SetColorKey(Icon, /*SDL_SRCCOLORKEY,*/ SDL_TRUE,
+#if SDL_MAJOR_VERSION == 1
+    SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
 		    SDL_MapRGB(Icon->format, 255, 255, 255));
-    //SDL_WM_SetIcon(Icon, NULL);
-    SDL_SetWindowIcon(Window, Icon); /*FIXSDL2*/
+    SDL_WM_SetIcon(Icon, NULL);
+#else
+    SDL_SetColorKey(Icon, SDL_TRUE,
+		    SDL_MapRGB(Icon->format, 255, 255, 255));
+    SDL_SetWindowIcon(Window, Icon);
+#endif
   }
 
   ulong Flags = SDL_SWSURFACE;
@@ -117,8 +127,14 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   }
 
   printf("NewRes.X %d / NewRes.Y %d\n", NewRes.X, NewRes.Y);
-  //Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
-  Window = SDL_CreateWindow(Title, 
+#if SDL_MAJOR_VERSION == 1
+  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
+  if(!Screen)
+    ABORT("Couldn't set video mode.");
+
+  SDL_WM_SetCaption(Title, 0);
+#else
+  Window = SDL_CreateWindow(Title,
 			  SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
                           NewRes.X, NewRes.Y, Flags);
@@ -133,15 +149,14 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
          SDL_PIXELFORMAT_RGB565,
          SDL_TEXTUREACCESS_STREAMING,
 	 NewRes.X, NewRes.Y);
-         //640, 480);
+#endif
 
-  //SDL_WM_SetCaption(Title, 0);
-  SDL_SetWindowTitle(NULL, Title); /* FIXSDL2 */
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
   Res = NewRes;
   ColorDepth = 16;
 
+#if SDL_MAJOR_VERSION == 1
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
   Uint32 rmask, gmask, bmask;
@@ -156,13 +171,14 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
       ABORT("CreateRGBSurface failed: %s\n", SDL_GetError());
 
 #endif
+#endif
 }
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 void graphics::BlitDBToScreen()
 {
-/*
+#ifdef SDL_MAJOR_VERSION == 1
   SDL_LockSurface(TempSurface);
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
   packcol16* DestPtr = static_cast<packcol16*>(TempSurface->pixels);
@@ -177,21 +193,22 @@ void graphics::BlitDBToScreen()
   SDL_BlitSurface(S, NULL, Screen, NULL);
   SDL_FreeSurface(S);
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
-*/
+#else
+  assert(0);
   SDL_UpdateTexture(sdlTexture, NULL, myPixels, 640 * sizeof (Uint32));
+#endif
 }
 
 #else
 
 void graphics::BlitDBToScreen()
 {
-/*
+#ifdef SDL_MAJOR_VERSION == 1
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
-*/
 
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
-/*
+
   packcol16* DestPtr = static_cast<packcol16*>(Screen->pixels);
   ulong ScreenYMove = (Screen->pitch >> 1);
   ulong LineSize = Res.X << 1;
@@ -203,20 +220,20 @@ void graphics::BlitDBToScreen()
     SDL_UnlockSurface(Screen);
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
-*/
-printf("=> Res.Y = %d / Res.X = %d\n", Res.Y, Res.X);
+#else
+  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
   SDL_UpdateTexture(Texture, NULL, SrcPtr, Res.X * sizeof(packcol16));
   SDL_RenderClear(Renderer);
   SDL_RenderCopy(Renderer, Texture, NULL, NULL);
   SDL_RenderPresent(Renderer);
-
+#endif
 }
 
 #endif
 
 void graphics::SwitchMode()
 {
-/* FIXSDL2
+#if SDL_MAJOR_VERSION == 1
   ulong Flags;
 
   if(Screen->flags & SDL_FULLSCREEN)
@@ -239,13 +256,15 @@ void graphics::SwitchMode()
     ABORT("Couldn't toggle fullscreen mode.");
 
   BlitDBToScreen();
-*/
+#else
+  assert(0);
    ulong Flags = SDL_GetWindowFlags(Window);
    if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
       SDL_SetWindowFullscreen(NULL, 0);
    } else {
       SDL_SetWindowFullscreen(NULL, SDL_WINDOW_FULLSCREEN_DESKTOP);
    }
+#endif
 }
 
 #endif

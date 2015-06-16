@@ -16,6 +16,21 @@
 #include "bitmap.h"
 #include "festring.h"
 
+#if SDL_MAJOR_RELEASE == 1
+/* redefine SDL2 to SDL1 */
+#define SDL_VIDEOEXPOSE SDL_WINDOWEVENT
+#define SDLK_KP_0 SDLK_KP0
+#define SDLK_KP_1 SDLK_KP1
+#define SDLK_KP_2 SDLK_KP2
+#define SDLK_KP_3 SDLK_KP3
+#define SDLK_KP_4 SDLK_KP4
+#define SDLK_KP_5 SDLK_KP5
+#define SDLK_KP_6 SDLK_KP6
+#define SDLK_KP_7 SDLK_KP7
+#define SDLK_KP_8 SDLK_KP8
+#define SDLK_KP_9 SDLK_KP9
+#endif
+
 truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
@@ -109,8 +124,12 @@ truth (*globalwindowhandler::QuitMessageHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
-  //SDL_EnableUNICODE(1);
+#if SDL_MAJOR_RELEASE == 1
+  SDL_EnableUNICODE(1);
+  SDL_EnableKeyRepeat(500, 30);
+#else
   //FIXSDL2 SDL_EnableKeyRepeat(500, 30);
+#endif
 }
 
 int globalwindowhandler::GetKey(truth EmptyBuffer)
@@ -132,44 +151,47 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
       KeyBuffer.erase(KeyBuffer.begin());
 
       if(Key > 0xE000)
-	return Key - 0xE000;
+        return Key - 0xE000;
 
       if(Key && Key < 0x81)
-	return Key;
+        return Key;
     }
     else
     {
       if(SDL_PollEvent(&Event))
-	ProcessMessage(&Event);
+        ProcessMessage(&Event);
       else
       {
-	//if(SDL_GetAppState() & SDL_APPACTIVE
+#if SDL_MAJOR_RELEASE == 1
+        if(SDL_GetAppState() & SDL_APPACTIVE
+#else
         if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) 
 	   && Controls && ControlLoopsEnabled)
-	{
-	  static ulong LastTick = 0;
-	  UpdateTick();
+#endif
+        {
+          static ulong LastTick = 0;
+          UpdateTick();
 
-	  if(LastTick != Tick)
-	  {
-	    LastTick = Tick;
-	    truth Draw = false;
+          if(LastTick != Tick)
+          {
+            LastTick = Tick;
+            truth Draw = false;
 
-	    for(int c = 0; c < Controls; ++c)
-	      if(ControlLoop[c]())
-		Draw = true;
+            for(int c = 0; c < Controls; ++c)
+              if(ControlLoop[c]())
+                Draw = true;
 
-	    if(Draw)
-	      graphics::BlitDBToScreen();
-	  }
+            if(Draw)
+              graphics::BlitDBToScreen();
+          }
 
-	  SDL_Delay(10);
-	}
-	else
-	{
-	  SDL_WaitEvent(&Event);
-	  ProcessMessage(&Event);
-	}
+          SDL_Delay(10);
+        }
+        else
+        {
+          SDL_WaitEvent(&Event);
+          ProcessMessage(&Event);
+        }
       }
     }
 }
@@ -177,9 +199,12 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
-	memset(&Event,0,sizeof(SDL_Event));
-  // if(SDL_GetAppState() & SDL_APPACTIVE)
+  memset(&Event,0,sizeof(SDL_Event));
+#if SDL_MAJOR_RELEASE == 1
+  if(SDL_GetAppState() & SDL_APPACTIVE)
+#else
   if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+#endif
   {
     while(SDL_PollEvent(&Event))
       ProcessMessage(&Event);
@@ -197,11 +222,13 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed;
 
+#if SDL_MAJOR_RELEASE == 1
+  switch(Event->active.type)
+#else
   switch(Event->type)
-  //switch(Event->active.type)
+#endif
   {
-   case SDL_WINDOWEVENT:
-   //case SDL_VIDEOEXPOSE:
+   case SDL_VIDEOEXPOSE:
     if (Event->window.event == SDL_WINDOWEVENT_SHOWN || Event->window.event == SDL_WINDOWEVENT_RESTORED) {
       graphics::BlitDBToScreen();
     }
@@ -218,11 +245,11 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
      case SDLK_KP_ENTER:
       if(Event->key.keysym.mod & KMOD_ALT)
       {
-	graphics::SwitchMode();
-	return;
+        graphics::SwitchMode();
+        return;
       }
       else
-	KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
+        KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
 
       break;
      case SDLK_DOWN:
@@ -265,21 +292,24 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
-	  
+
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
 	 && (Event->key.keysym.mod & KMOD_LCTRL
 	     || Event->key.keysym.mod & KMOD_RCTRL))
       {
-	KeyPressed = '\177';
-	break;
+        KeyPressed = '\177';
+        break;
       }
      default:
-      //KeyPressed = Event->key.keysym.unicode;
-      // FIXSDL2
+#if SDL_MAJOR_RELEASE == 1
+      KeyPressed = Event->key.keysym.unicode;
+#else
+      // FIXSDL2 !!!
+#endif
 
       if(!KeyPressed)
-	return;
+        return;
     }
 
     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
