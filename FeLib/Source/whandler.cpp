@@ -16,9 +16,10 @@
 #include "bitmap.h"
 #include "festring.h"
 
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
 /* redefine SDL2 to SDL1 */
-#define SDL_VIDEOEXPOSE SDL_WINDOWEVENT
+#define SDL_WINDOWEVENT SDL_VIDEOEXPOSE
+#define SDLK_PRINTSCREEN SDLK_PRINT
 #define SDLK_KP_0 SDLK_KP0
 #define SDLK_KP_1 SDLK_KP1
 #define SDLK_KP_2 SDLK_KP2
@@ -124,7 +125,7 @@ truth (*globalwindowhandler::QuitMessageHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(500, 30);
 #else
@@ -162,12 +163,12 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         ProcessMessage(&Event);
       else
       {
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
 #else
-        if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) 
-	   && Controls && ControlLoopsEnabled)
+        if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
 #endif
+	   && Controls && ControlLoopsEnabled)
         {
           static ulong LastTick = 0;
           UpdateTick();
@@ -200,7 +201,7 @@ int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
   memset(&Event,0,sizeof(SDL_Event));
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
   if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
@@ -220,18 +221,23 @@ int globalwindowhandler::ReadKey()
 
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
-  int KeyPressed;
+  int KeyPressed = 0;
 
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
   switch(Event->active.type)
 #else
   switch(Event->type)
 #endif
   {
+#if SDL_MAJOR_VERSION == 1
    case SDL_VIDEOEXPOSE:
+    graphics::BlitDBToScreen();
+#else
+   case SDL_WINDOWEVENT:
     if (Event->window.event == SDL_WINDOWEVENT_SHOWN || Event->window.event == SDL_WINDOWEVENT_RESTORED) {
       graphics::BlitDBToScreen();
     }
+#endif
     break;
    case SDL_QUIT:
     if(!QuitMessageHandler || QuitMessageHandler())
@@ -292,6 +298,14 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
+#if SDL_MAJOR_VERSION == 2
+     /* event are now splitted between SDL_KEYDOWN and SDL_TEXTINPUT,
+        all managed events must be explicited */
+     case SDLK_ESCAPE:
+     case SDLK_BACKSPACE:
+      KeyPressed = Event->key.keysym.sym;
+      break;
+#endif
 
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
@@ -302,21 +316,24 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
         break;
       }
      default:
-#if SDL_MAJOR_RELEASE == 1
+#if SDL_MAJOR_VERSION == 1
       KeyPressed = Event->key.keysym.unicode;
-#else
-      // FIXSDL2 !!!
 #endif
 
       if(!KeyPressed)
         return;
     }
-
     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
        == KeyBuffer.end())
       KeyBuffer.push_back(KeyPressed);
-
     break;
+#if SDL_MAJOR_VERSION == 2
+   case SDL_TEXTINPUT:
+     KeyPressed = Event->text.text[0];
+     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
+        == KeyBuffer.end())
+       KeyBuffer.push_back(KeyPressed);
+#endif
   }
 }
 
@@ -329,7 +346,7 @@ truth globalwindowhandler::ShiftIsDown() {
 
 festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be used for screenshot
 	static int ScrshotCount = 0;
-	
+
 	festring ScrshotNum;
 	if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
 		ScrshotNum << "00" << ScrshotCount;

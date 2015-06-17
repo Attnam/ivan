@@ -29,7 +29,7 @@
 void (*graphics::SwitchModeHandler)();
 
 #ifdef USE_SDL
-#ifdef SDL_MAJOR_VERSION == 1
+#if SDL_MAJOR_VERSION == 1
 SDL_Surface* graphics::Screen;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 SDL_Surface* graphics::TempSurface;
@@ -80,7 +80,7 @@ void graphics::DeInit()
   DefaultFont = 0;
 
 #ifdef USE_SDL
-#ifdef SDL_MAJOR_VERSION == 1
+#if SDL_MAJOR_VERSION == 1
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
   SDL_FreeSurface(TempSurface);
 #endif
@@ -122,11 +122,13 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(FullScreen)
   {
     SDL_ShowCursor(SDL_DISABLE);
-    // Flags |= SDL_FULLSCREEN;
+#if SDL_MAJOR_VERSION == 1
+    Flags |= SDL_FULLSCREEN;
+#else
     Flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
   }
 
-  printf("NewRes.X %d / NewRes.Y %d\n", NewRes.X, NewRes.Y);
 #if SDL_MAJOR_VERSION == 1
   Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
   if(!Screen)
@@ -178,7 +180,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
 void graphics::BlitDBToScreen()
 {
-#ifdef SDL_MAJOR_VERSION == 1
+#if SDL_MAJOR_VERSION == 1
   SDL_LockSurface(TempSurface);
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
   packcol16* DestPtr = static_cast<packcol16*>(TempSurface->pixels);
@@ -194,7 +196,6 @@ void graphics::BlitDBToScreen()
   SDL_FreeSurface(S);
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
-  assert(0);
   SDL_UpdateTexture(sdlTexture, NULL, myPixels, 640 * sizeof (Uint32));
 #endif
 }
@@ -203,7 +204,7 @@ void graphics::BlitDBToScreen()
 
 void graphics::BlitDBToScreen()
 {
-#ifdef SDL_MAJOR_VERSION == 1
+#if SDL_MAJOR_VERSION == 1
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
 
@@ -257,13 +258,13 @@ void graphics::SwitchMode()
 
   BlitDBToScreen();
 #else
-  assert(0);
    ulong Flags = SDL_GetWindowFlags(Window);
    if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
-      SDL_SetWindowFullscreen(NULL, 0);
+      SDL_SetWindowFullscreen(Window, 0);
    } else {
-      SDL_SetWindowFullscreen(NULL, SDL_WINDOW_FULLSCREEN_DESKTOP);
+      SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
    }
+  BlitDBToScreen();
 #endif
 }
 
