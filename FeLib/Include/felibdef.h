@@ -141,7 +141,11 @@ inline int GetMinColor24(col24 Color)
 
 #define NORMAL_LUMINANCE 0x808080
 
+#ifndef __APPLE__
 #define KEY_BACK_SPACE 0x08
+#else
+#define KEY_BACK_SPACE 0x7F
+#endif
 #define KEY_ESC 0x1B
 #define KEY_ENTER 0x0D
 #define KEY_UP 0x148
