@@ -17,7 +17,7 @@
 #include "error.h"
 
 char** festring::IntegerMap = 0;
-char* festring::EmptyString = "";
+cchar* festring::EmptyString = "";
 festring::csizetype festring::NPos = festring::sizetype(-1);
 
 festring& festring::Append(cchar* CStr, sizetype N)

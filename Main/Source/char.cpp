@@ -25,7 +25,7 @@
 
 struct statedata
 {
-  char* Description;
+  cchar* Description;
   int Flags;
   void (character::*PrintBeginMessage)() const;
   void (character::*PrintEndMessage)() const;
