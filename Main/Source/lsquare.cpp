@@ -202,7 +202,7 @@ void lsquare::UpdateStaticContentCache(col24 Luminance) const
 		 { 0, 0 },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 { Luminance },
+		 { static_cast<int>(Luminance) },
 		 0,
 		 0 };
 

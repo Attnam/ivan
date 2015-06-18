@@ -2820,7 +2820,7 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 void game::GodEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 {
   blitdata B = { Bitmap,
-		 { I << 4, 0 },
+		 { static_cast<int>(I << 4), 0 },
 		 { Pos.X, Pos.Y },
 		 { TILE_SIZE, TILE_SIZE },
 		 { 0 },

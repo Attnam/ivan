@@ -123,7 +123,7 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
 			{ 0, 0 },
 			{ Pos.X, Pos.Y },
 			{ TILE_SIZE, TILE_SIZE },
-			{ ivanconfig::GetContrastLuminance() },
+			{ static_cast<int>(ivanconfig::GetContrastLuminance()) },
 			TRANSPARENT_COLOR,
 			0 };
 
@@ -456,11 +456,11 @@ void igraph::UnLoadMenu()
 void igraph::CreateSilhouetteCaches()
 {
   int BodyPartSilhouetteMColorIndex[HUMANOID_BODYPARTS] = { 3, 0, 1, 2, 1, 2, 3 };
-  col24 ConditionColor[CONDITION_COLORS] = { MakeRGB16(48, 48, 48),
-					     MakeRGB16(120, 0, 0),
-					     MakeRGB16(180, 0, 0),
-					     MakeRGB16(180, 120, 120),
-					     MakeRGB16(180, 180, 180) };
+  col24 ConditionColor[CONDITION_COLORS] = { static_cast<col24>(MakeRGB16(48, 48, 48)),
+					     static_cast<col24>(MakeRGB16(120, 0, 0)),
+					     static_cast<col24>(MakeRGB16(180, 0, 0)),
+					     static_cast<col24>(MakeRGB16(180, 120, 120)),
+					     static_cast<col24>(MakeRGB16(180, 180, 180)) };
   v2 V(8, 64);
 
   for(int c1 = 0; c1 < HUMANOID_BODYPARTS; ++c1)
