@@ -504,12 +504,12 @@ fluid::imagedata::~imagedata()
 
 void fluid::imagedata::Save(outputfile& SaveFile) const
 {
-  SaveFile << Picture << AlphaSum << ShadowPos << (int)SpecialFlags;
+  SaveFile << Picture << AlphaSum << ShadowPos << SpecialFlags;
 }
 
 void fluid::imagedata::Load(inputfile& SaveFile)
 {
-  SaveFile >> Picture >> AlphaSum >> ShadowPos >> (int&)SpecialFlags;
+  SaveFile >> Picture >> AlphaSum >> ShadowPos >> SpecialFlags;
 }
 
 /* Shadow and this->ShadowPos specify the location of the raw image of

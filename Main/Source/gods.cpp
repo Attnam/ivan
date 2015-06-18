@@ -544,7 +544,7 @@ void loricatus::PrayGoodEffect()
   {
     if(PLAYER->GetLSquareUnder()->IsDark() && (MainWielded->GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && MainWielded->CanBeBurned())
     {
-      if(MainWielded->TestActivationEnergy(int(260 + GetRelation() / 2)))
+      if(MainWielded->TestActivationEnergy(260 + GetRelation() / 2))
       {
         ADD_MESSAGE("\"Behold, a light in the dark places!\"");
         return;

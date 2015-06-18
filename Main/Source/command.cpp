@@ -1459,9 +1459,9 @@ truth commandsystem::SecretKnowledge(character* Char)
       Entry.Resize(40);
       Entry << Material[c]->GetStrengthValue();
       Entry.Resize(55);
-      Entry << int(Material[c]->GetFlexibility());
+      Entry << Material[c]->GetFlexibility();
       Entry.Resize(70);
-      Entry << int(Material[c]->GetDensity());
+      Entry << Material[c]->GetDensity();
       List.AddEntry(Entry, Material[c]->GetColor());
     }
 

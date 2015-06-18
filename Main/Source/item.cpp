@@ -1009,9 +1009,9 @@ void item::AddAttackInfo(felist& List) const
   festring Entry(40, ' ');
   Entry << int(GetWeight());
   Entry.Resize(50);
-  Entry << int(GetSize());
+  Entry << GetSize();
   Entry.Resize(60);
-  Entry << int(GetStrengthRequirement());
+  Entry << GetStrengthRequirement();
   Entry.Resize(70);
   Entry << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);

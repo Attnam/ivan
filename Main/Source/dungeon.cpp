@@ -46,7 +46,7 @@ void dungeon::Initialize()
     DungeonScript = &DungeonIterator->second;
   else
   {
-    ABORT("Unknown dungeon #%d requested!", int(Index));
+    ABORT("Unknown dungeon #%d requested!", Index);
     return;
   }
 

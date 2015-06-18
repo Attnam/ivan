@@ -84,12 +84,12 @@ int sweaponskill::GetUnusePenaltyMap(int I) const
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
-  SaveFile << (int)Level << (int)Hits << (int)HitCounter;
+  SaveFile << Level << Hits << (int)HitCounter;
 }
 
 void weaponskill::Load(inputfile& SaveFile)
 {
-  SaveFile >> (int&)Level >> (int&)Hits >> (int&)HitCounter;
+  SaveFile >> Level >> Hits >> (int&)HitCounter;
 }
 
 truth weaponskill::AddHit(int AddHits)
@@ -158,13 +158,13 @@ void sweaponskill::AddLevelDownMessage(cchar* WeaponName) const
 void sweaponskill::Save(outputfile& SaveFile) const
 {
   weaponskill::Save(SaveFile);
-  SaveFile << ID << Weight << (int)Config;
+  SaveFile << ID << Weight << Config;
 }
 
 void sweaponskill::Load(inputfile& SaveFile)
 {
   weaponskill::Load(SaveFile);
-  SaveFile >> ID >> Weight >> (int&)Config;
+  SaveFile >> ID >> Weight >> Config;
 }
 
 truth weaponskill::Tick()

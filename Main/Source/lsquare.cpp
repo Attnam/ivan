@@ -588,7 +588,7 @@ void lsquare::Save(outputfile& SaveFile) const
   SaveFile << Emitation << Engraved << Luminance;
   SaveFile << SmokeAlphaSum << (uchar)Flags << Memorized;
   SaveFile << SecondarySunLightEmitation;
-  SaveFile << (uchar)RoomIndex;
+  SaveFile << RoomIndex;
   SaveFile << SunLightLuminance;
   SaveLinkedList(SaveFile, Fluid);
   SaveLinkedList(SaveFile, Smoke);

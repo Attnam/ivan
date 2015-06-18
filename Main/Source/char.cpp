@@ -3348,7 +3348,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
   if(!PenetrateResistance)
     Damage -= (BodyPart->GetTotalResistance(Type) >> 1) + RAND() % ((BodyPart->GetTotalResistance(Type) >> 1) + 1);
 
-  if(int(Damage) < 1)
+  if(Damage < 1)
     if(Critical)
       Damage = 1;
     else

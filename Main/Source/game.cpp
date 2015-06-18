@@ -441,8 +441,8 @@ void game::Run()
 	{
 	  Pos = GetCurrentLevel()->GetRandomSquare(Char);
 
-	  if(abs(int(Pos.X) - Player->GetPos().X) > 20
-	     || abs(int(Pos.Y) - Player->GetPos().Y) > 20)
+	  if(abs(Pos.X - Player->GetPos().X) > 20
+	     || abs(Pos.Y - Player->GetPos().Y) > 20)
 	    break;
 	}
 
@@ -804,7 +804,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 truth game::Save(cfestring& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
-  SaveFile << int(SAVE_FILE_VERSION);
+  SaveFile << SAVE_FILE_VERSION;
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
   SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NextTrapID << NecroCounter;
@@ -2562,7 +2562,7 @@ void game::CreateBone()
     {
       festring BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
       outputfile BoneFile(BoneName);
-      BoneFile << int(BONE_FILE_VERSION) << PlayerName << CurrentLevel;
+      BoneFile << BONE_FILE_VERSION << PlayerName << CurrentLevel;
     }
   }
 }

@@ -836,7 +836,7 @@ long festring::GetCheckSum() const
   long Counter = 0;
 
   for(ushort c = 0; c < GetSize(); ++c)
-    Counter = long(Data[c]);
+    Counter = Data[c];
 
   return Counter;
 }

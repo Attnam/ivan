@@ -56,13 +56,13 @@ void object::CopyMaterial(material* const& Source, material*& Dest)
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << GraphicData << (int)VisualEffects;
+  SaveFile << GraphicData << VisualEffects;
   SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  SaveFile >> GraphicData >> (int&)VisualEffects;
+  SaveFile >> GraphicData >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
 }
 

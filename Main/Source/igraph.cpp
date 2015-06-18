@@ -346,7 +346,7 @@ graphicdata::~graphicdata()
 
 void graphicdata::Save(outputfile& SaveFile) const
 {
-  SaveFile << (int)AnimationFrames;
+  SaveFile << AnimationFrames;
 
   for(int c = 0; c < AnimationFrames; ++c)
     SaveFile << GraphicIterator[c]->first;
@@ -354,7 +354,7 @@ void graphicdata::Save(outputfile& SaveFile) const
 
 void graphicdata::Load(inputfile& SaveFile)
 {
-  SaveFile >> (int&)AnimationFrames;
+  SaveFile >> AnimationFrames;
 
   if(AnimationFrames)
   {

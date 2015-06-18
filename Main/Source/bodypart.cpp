@@ -189,14 +189,14 @@ int leg::GetTotalResistance(int Type) const
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << (int)BaseBiteStrength;
+  SaveFile << BaseBiteStrength;
   SaveFile << HelmetSlot << AmuletSlot;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> (int&)BaseBiteStrength;
+  SaveFile >> BaseBiteStrength;
   SaveFile >> HelmetSlot >> AmuletSlot;
 }
 
@@ -215,7 +215,7 @@ void humanoidtorso::Load(inputfile& SaveFile)
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << (int)BaseUnarmedStrength;
+  SaveFile << BaseUnarmedStrength;
   SaveFile << StrengthExperience << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
   SaveFile << WieldedGraphicData;
@@ -224,7 +224,7 @@ void arm::Save(outputfile& SaveFile) const
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> (int&)BaseUnarmedStrength;
+  SaveFile >> BaseUnarmedStrength;
   SaveFile >> StrengthExperience >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
   SaveFile >> WieldedGraphicData;
