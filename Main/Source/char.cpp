@@ -1822,7 +1822,7 @@ void character::CalculateBurdenState()
 
 void character::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   Stack->Save(SaveFile);
   SaveFile << ID;
   int c;
@@ -1836,7 +1836,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
   SaveFile << HomeData << BlocksSinceLastTurn << CommandFlags;
-  SaveFile << WarnFlags << (ushort)Flags;
+  SaveFile << WarnFlags << static_cast<ushort>(Flags);
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1865,7 +1865,7 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile << CWeaponSkill[c];
 
-  SaveFile << (ushort)GetConfig();
+  SaveFile << static_cast<ushort>(GetConfig());
 }
 
 void character::Load(inputfile& SaveFile)

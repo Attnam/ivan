@@ -112,7 +112,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, const 
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& Class)
 {
   int Type = 0;
-  SaveFile >> (ushort&)Type;
+  SaveFile >> reinterpret_cast<ushort&>(Type);
   Class = Type ? protocontainer<type>::GetProto(Type)->SpawnAndLoad(SaveFile) : 0;
   return SaveFile;
 }

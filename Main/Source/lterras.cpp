@@ -417,16 +417,16 @@ truth fountain::Drink(character* Drinker)
 	  switch(RAND_N(5))
 	  {
 	   case 0:
-	    Spawner = (characterspawner)(&snake::Spawn);
+	    Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
 	    AddChance = 66;
 	    break;
 	   case 1:
-	    Spawner = (characterspawner)(&mommo::Spawn);
+	    Spawner = reinterpret_cast<characterspawner>(&mommo::Spawn);
 	    Config = RAND_2 ? CONICAL : FLAT;
 	    AddChance = 50;
 	    break;
 	   case 2:
-	    Spawner = (characterspawner)(&spider::Spawn);
+	    Spawner = reinterpret_cast<characterspawner>(&spider::Spawn);
 
 	    if(RAND_4)
 	    {
@@ -443,19 +443,19 @@ truth fountain::Drink(character* Drinker)
 	   case 3:
 	    if(!RAND_N(50))
 	    {
-	      Spawner = (characterspawner)(&dolphin::Spawn);
+	      Spawner = reinterpret_cast<characterspawner>(&dolphin::Spawn);
 	      AddChance = 75;
 	      ForceAdjacency = true;
 	    }
 	    else if(!RAND_N(50))
 	    {
-	      Spawner = (characterspawner)(&mysticfrog::Spawn);
+	      Spawner = reinterpret_cast<characterspawner>(&mysticfrog::Spawn);
 	      Config = DARK;
 	      AddChance = 1;
 	    }
 	    else
 	    {
-	      Spawner = (characterspawner)(&frog::Spawn);
+	      Spawner = reinterpret_cast<characterspawner>(&frog::Spawn);
 
 	      if(RAND_N(5))
 	      {
@@ -476,7 +476,7 @@ truth fountain::Drink(character* Drinker)
 
 	    break;
 	   case 4:
-	    Spawner = (characterspawner)(&largerat::Spawn);
+	    Spawner = reinterpret_cast<characterspawner>(&largerat::Spawn);
 	    AddChance = 90;
 	    break;
 	  }

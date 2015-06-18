@@ -104,7 +104,7 @@ class owterrain : public wterrain, public oterrain
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 #define WTERRAIN_PROTO(name, protobase)\
 template<> const protobase##prototype\
-  name##sysbase::ProtoType((protobase##spawner)(&name##sysbase::Spawn),\
+  name##sysbase::ProtoType(reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
 			   #name);
 #else
 #define WTERRAIN_PROTO(name, protobase)

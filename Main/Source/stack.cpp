@@ -185,7 +185,7 @@ void stack::Save(outputfile& SaveFile) const
     if(i1->IsMainSlot(&i1.GetSlot()))
       ++SavedItems;
 
-  SaveFile << (ushort)SavedItems;
+  SaveFile << static_cast<ushort>(SavedItems);
 
   /* Save multitiled items only to one stack */
 
@@ -197,7 +197,7 @@ void stack::Save(outputfile& SaveFile) const
 void stack::Load(inputfile& SaveFile)
 {
   int SavedItems = 0;
-  SaveFile >> (ushort&)SavedItems;
+  SaveFile >> reinterpret_cast<ushort&>(SavedItems);
 
   for(int c = 0; c < SavedItems; ++c)
   {

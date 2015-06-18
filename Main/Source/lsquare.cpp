@@ -586,7 +586,7 @@ void lsquare::Save(outputfile& SaveFile) const
   SaveFile << GLTerrain << OLTerrain;
   SaveFile << Emitter << SunEmitter;
   SaveFile << Emitation << Engraved << Luminance;
-  SaveFile << SmokeAlphaSum << (uchar)Flags << Memorized;
+  SaveFile << SmokeAlphaSum << static_cast<uchar>(Flags) << Memorized;
   SaveFile << SecondarySunLightEmitation;
   SaveFile << RoomIndex;
   SaveFile << SunLightLuminance;
@@ -604,7 +604,7 @@ void lsquare::Load(inputfile& SaveFile)
   SaveFile >> GLTerrain >> OLTerrain;
   SaveFile >> Emitter >> SunEmitter;
   SaveFile >> Emitation >> Engraved >> Luminance;
-  SaveFile >> SmokeAlphaSum >> (uchar&)Flags >> Memorized;
+  SaveFile >> SmokeAlphaSum >> reinterpret_cast<uchar&>(Flags) >> Memorized;
   Flags &= INSIDE|DESCRIPTION_CHANGE; //only these flags are loaded
   Flags |= MEMORIZED_UPDATE_REQUEST;
   SecondarySunLightEmitation = ReadType<col24>(SaveFile);

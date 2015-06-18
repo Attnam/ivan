@@ -84,12 +84,12 @@ int sweaponskill::GetUnusePenaltyMap(int I) const
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
-  SaveFile << Level << Hits << (int)HitCounter;
+  SaveFile << Level << Hits << static_cast<int>(HitCounter);
 }
 
 void weaponskill::Load(inputfile& SaveFile)
 {
-  SaveFile >> Level >> Hits >> (int&)HitCounter;
+  SaveFile >> Level >> Hits >> reinterpret_cast<int&>(HitCounter);
 }
 
 truth weaponskill::AddHit(int AddHits)

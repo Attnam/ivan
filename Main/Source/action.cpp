@@ -22,7 +22,7 @@ void action::Terminate(truth)
 
 void action::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType() << Flags;
+  SaveFile << static_cast<ushort>(GetType()) << Flags;
 }
 
 void action::Load(inputfile& SaveFile)

@@ -292,10 +292,10 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
 
 void item::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   object::Save(SaveFile);
-  SaveFile << (ushort)GetConfig();
-  SaveFile << (ushort)Flags;
+  SaveFile << static_cast<ushort>(GetConfig());
+  SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
   SaveLinkedList(SaveFile, CloneMotherID);
 

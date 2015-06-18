@@ -351,7 +351,7 @@ class olterrain : public lterrain, public oterrain
 #define LTERRAIN_PROTO(name, base, protobase)\
 template<> const protobase##prototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   (protobase##spawner)(&name##sysbase::Spawn),\
+			   reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
 			   #name);
 #else
 #define LTERRAIN_PROTO(name, base, protobase)

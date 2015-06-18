@@ -101,7 +101,7 @@ class room
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
 #define ROOM_PROTO(name)\
 template<> const roomprototype\
-  name##sysbase::ProtoType((roomspawner)(&name##sysbase::Spawn), #name);
+  name##sysbase::ProtoType(reinterpret_cast<roomspawner>(&name##sysbase::Spawn), #name);
 #else
 #define ROOM_PROTO(name)
 #endif
