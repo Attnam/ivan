@@ -155,6 +155,30 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   SDL_RenderSetLogicalSize(Renderer, NewRes.X, NewRes.Y);
 
+  /* The following code will determine whether to use nearest neighbor or
+   * linear interpolation when scaling the game in fullscreen mode. */
+
+  SDL_DisplayMode VirtualDisplayMode;
+  if(SDL_GetDesktopDisplayMode(0, &VirtualDisplayMode) == 0)
+  {
+    v2 ActualWindowRes; // On high-DPI displays this is greater than NewRes.
+    SDL_GL_GetDrawableSize(Window, &ActualWindowRes.X, &ActualWindowRes.Y);
+    v2 ActualDisplayRes(ActualWindowRes.X / NewRes.X * VirtualDisplayMode.w,
+                        ActualWindowRes.Y / NewRes.Y * VirtualDisplayMode.h);
+
+    if((ActualDisplayRes.Y % NewRes.Y == 0
+       && ActualDisplayRes.X >= ActualDisplayRes.Y / NewRes.Y * NewRes.X)
+       || (ActualDisplayRes.X % NewRes.X == 0
+       && ActualDisplayRes.Y >= ActualDisplayRes.X / NewRes.X * NewRes.Y))
+      /* In-game pixels can be safely mapped one-on-one to rectangular
+       * units consisting of one or more on-screen pixels. */
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    else
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+  }
+  else
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
   Texture = SDL_CreateTexture(Renderer,
          SDL_PIXELFORMAT_RGB565,
          SDL_TEXTUREACCESS_STREAMING,
