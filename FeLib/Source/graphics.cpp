@@ -149,6 +149,8 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(!Renderer)
     ABORT("Couldn't set renderer mode.");
 
+  SDL_RenderSetLogicalSize(Renderer, NewRes.X, NewRes.Y);
+
   Texture = SDL_CreateTexture(Renderer,
          SDL_PIXELFORMAT_RGB565,
          SDL_TEXTUREACCESS_STREAMING,
