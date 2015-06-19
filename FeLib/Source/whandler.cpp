@@ -234,8 +234,13 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     graphics::BlitDBToScreen();
 #else
    case SDL_WINDOWEVENT:
-    if (Event->window.event == SDL_WINDOWEVENT_SHOWN || Event->window.event == SDL_WINDOWEVENT_RESTORED) {
+    switch(Event->window.event)
+    {
+     case SDL_WINDOWEVENT_SHOWN:
+     case SDL_WINDOWEVENT_RESIZED:
+     case SDL_WINDOWEVENT_RESTORED:
       graphics::BlitDBToScreen();
+      break;
     }
 #endif
     break;
