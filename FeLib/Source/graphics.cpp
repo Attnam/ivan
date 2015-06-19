@@ -252,9 +252,6 @@ void graphics::SwitchMode()
     Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
   }
 
-  if(SwitchModeHandler)
-    SwitchModeHandler();
-
   Screen = SDL_SetVideoMode(Res.X, Res.Y, ColorDepth, Flags);
 
   if(!Screen)
@@ -270,6 +267,9 @@ void graphics::SwitchMode()
    }
   BlitDBToScreen();
 #endif
+
+  if(SwitchModeHandler)
+    SwitchModeHandler();
 }
 
 #endif
