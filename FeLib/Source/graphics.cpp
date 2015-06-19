@@ -103,19 +103,15 @@ void graphics::DeInit()
 void graphics::SetMode(cchar* Title, cchar* IconName,
 		       v2 NewRes, truth FullScreen)
 {
+#if SDL_MAJOR_VERSION == 1
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
-#if SDL_MAJOR_VERSION == 1
     SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
 		    SDL_MapRGB(Icon->format, 255, 255, 255));
     SDL_WM_SetIcon(Icon, NULL);
-#else
-    SDL_SetColorKey(Icon, SDL_TRUE,
-		    SDL_MapRGB(Icon->format, 255, 255, 255));
-    SDL_SetWindowIcon(Window, Icon);
-#endif
   }
+#endif
 
   ulong Flags = SDL_SWSURFACE;
 
@@ -144,6 +140,16 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
                           NewRes.X, NewRes.Y, Flags);
   if(!Window)
     ABORT("Couldn't set video mode.");
+
+#if SDL_MAJOR_VERSION == 2
+  if(IconName)
+  {
+    SDL_Surface* Icon = SDL_LoadBMP(IconName);
+    SDL_SetColorKey(Icon, SDL_TRUE,
+                    SDL_MapRGB(Icon->format, 255, 255, 255));
+    SDL_SetWindowIcon(Window, Icon);
+  }
+#endif
 
   Renderer = SDL_CreateRenderer(Window, -1, 0);
   if(!Renderer)
