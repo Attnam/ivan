@@ -261,8 +261,10 @@ void graphics::SwitchMode()
 #else
    ulong Flags = SDL_GetWindowFlags(Window);
    if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+      SDL_ShowCursor(SDL_ENABLE);
       SDL_SetWindowFullscreen(Window, 0);
    } else {
+      SDL_ShowCursor(SDL_DISABLE);
       SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
    }
   BlitDBToScreen();
