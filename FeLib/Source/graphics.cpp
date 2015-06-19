@@ -141,7 +141,6 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(!Window)
     ABORT("Couldn't set video mode.");
 
-#if SDL_MAJOR_VERSION == 2
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
@@ -149,7 +148,6 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
                     SDL_MapRGB(Icon->format, 255, 255, 255));
     SDL_SetWindowIcon(Window, Icon);
   }
-#endif
 
   Renderer = SDL_CreateRenderer(Window, -1, 0);
   if(!Renderer)
