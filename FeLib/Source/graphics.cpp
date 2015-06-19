@@ -125,7 +125,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 #if SDL_MAJOR_VERSION == 1
     Flags |= SDL_FULLSCREEN;
 #else
-    Flags |= SDL_WINDOW_FULLSCREEN;
+    Flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 #endif
   }
 
@@ -259,10 +259,10 @@ void graphics::SwitchMode()
   BlitDBToScreen();
 #else
    ulong Flags = SDL_GetWindowFlags(Window);
-   if (Flags & SDL_WINDOW_FULLSCREEN) {
+   if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
       SDL_SetWindowFullscreen(Window, 0);
    } else {
-      SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN);
+      SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
    }
   BlitDBToScreen();
 #endif
