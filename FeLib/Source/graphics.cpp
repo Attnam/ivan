@@ -161,17 +161,10 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   SDL_DisplayMode VirtualDisplayMode;
   if(SDL_GetDesktopDisplayMode(0, &VirtualDisplayMode) == 0)
   {
-#if SDL_MINOR_VERSION == 0 && SDL_PATCHLEVEL < 4
     v2 ActualWindowRes; // On high-DPI displays this is greater than NewRes.
     SDL_GL_GetDrawableSize(Window, &ActualWindowRes.X, &ActualWindowRes.Y);
     v2 ActualDisplayRes(ActualWindowRes.X / NewRes.X * VirtualDisplayMode.w,
                         ActualWindowRes.Y / NewRes.Y * VirtualDisplayMode.h);
-#else
-    /* SDL 2.0.4 changes behavior of SDL_GL_GetDrawableSize() to return the
-     * actual resolution of the display. */
-    v2 ActualDisplayRes;
-    SDL_GL_GetDrawableSize(Window, &ActualDisplayRes.X, &ActualDisplayRes.Y);
-#endif
 
     if((ActualDisplayRes.Y % NewRes.Y == 0
        && ActualDisplayRes.X >= ActualDisplayRes.Y / NewRes.Y * NewRes.X)
