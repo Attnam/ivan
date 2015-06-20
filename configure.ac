@@ -10,16 +10,26 @@ AC_PROG_CC
 
 AC_PROG_CXX
 
-dnl Check for SDL
-SDL_VERSION=1.2.0
-AM_PATH_SDL($SDL_VERSION,
+
+dnl Check for SDL2
+SDL2_VERSION=2.0.0
+AM_PATH_SDL2($SDL2_VERSION,
             :,
-            AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+            AC_MSG_WARN([*** SDL2 version $SDL2_VERSION not found!])
 )
 
+if test "$SDL2_CONFIG" = "no"; then
+	dnl Check for SDL
+	SDL_VERSION=1.2.0
+	AM_PATH_SDL($SDL_VERSION,
+		    :,
+		    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+	)
+fi
+
 CFLAGS="$CFLAGS $SDL_CFLAGS "
-LIBS="$LIBS $SDL_LIBS"
-CPPFLAGS="$SDL_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$sharedstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC"
+LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$sharedstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC"
 
 AC_PROG_INSTALL
 
