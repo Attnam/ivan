@@ -39,3 +39,11 @@ config.log
 Makefile
 .deps
 autom4te.cache
+
+# Folders and misc stuff like f. ex. save folders :)
+/IVAN.exe
+Bones
+CMakeFiles
+ivan
+/HScore.dat
+/Save
