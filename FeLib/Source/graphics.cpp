@@ -163,8 +163,13 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   {
     v2 ActualWindowRes; // On high-DPI displays this is greater than NewRes.
     SDL_GL_GetDrawableSize(Window, &ActualWindowRes.X, &ActualWindowRes.Y);
-    v2 ActualDisplayRes(ActualWindowRes.X / NewRes.X * VirtualDisplayMode.w,
-                        ActualWindowRes.Y / NewRes.Y * VirtualDisplayMode.h);
+
+    v2 ActualDisplayRes;
+    if(SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+      ActualDisplayRes = ActualWindowRes;
+    else
+      ActualDisplayRes = v2(ActualWindowRes.X / NewRes.X * VirtualDisplayMode.w,
+                            ActualWindowRes.Y / NewRes.Y * VirtualDisplayMode.h);
 
     if((ActualDisplayRes.Y % NewRes.Y == 0
        && ActualDisplayRes.X >= ActualDisplayRes.Y / NewRes.Y * NewRes.X)
