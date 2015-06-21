@@ -103,19 +103,15 @@ void graphics::DeInit()
 void graphics::SetMode(cchar* Title, cchar* IconName,
 		       v2 NewRes, truth FullScreen)
 {
+#if SDL_MAJOR_VERSION == 1
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
-#if SDL_MAJOR_VERSION == 1
     SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
 		    SDL_MapRGB(Icon->format, 255, 255, 255));
     SDL_WM_SetIcon(Icon, NULL);
-#else
-    SDL_SetColorKey(Icon, SDL_TRUE,
-		    SDL_MapRGB(Icon->format, 255, 255, 255));
-    SDL_SetWindowIcon(Window, Icon);
-#endif
   }
+#endif
 
   ulong Flags = SDL_SWSURFACE;
 
@@ -136,6 +132,8 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   SDL_WM_SetCaption(Title, 0);
 #else
+  Flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
   Window = SDL_CreateWindow(Title,
 			  SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
@@ -143,9 +141,48 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   if(!Window)
     ABORT("Couldn't set video mode.");
 
+  if(IconName)
+  {
+    SDL_Surface* Icon = SDL_LoadBMP(IconName);
+    SDL_SetColorKey(Icon, SDL_TRUE,
+                    SDL_MapRGB(Icon->format, 255, 255, 255));
+    SDL_SetWindowIcon(Window, Icon);
+  }
+
   Renderer = SDL_CreateRenderer(Window, -1, 0);
   if(!Renderer)
     ABORT("Couldn't set renderer mode.");
+
+  SDL_RenderSetLogicalSize(Renderer, NewRes.X, NewRes.Y);
+
+  /* The following code will determine whether to use nearest neighbor or
+   * linear interpolation when scaling the game in fullscreen mode. */
+
+  SDL_DisplayMode VirtualDisplayMode;
+  if(SDL_GetDesktopDisplayMode(0, &VirtualDisplayMode) == 0)
+  {
+    v2 ActualWindowRes; // On high-DPI displays this is greater than NewRes.
+    SDL_GL_GetDrawableSize(Window, &ActualWindowRes.X, &ActualWindowRes.Y);
+
+    v2 ActualDisplayRes;
+    if(SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+      ActualDisplayRes = ActualWindowRes;
+    else
+      ActualDisplayRes = v2(ActualWindowRes.X / NewRes.X * VirtualDisplayMode.w,
+                            ActualWindowRes.Y / NewRes.Y * VirtualDisplayMode.h);
+
+    if((ActualDisplayRes.Y % NewRes.Y == 0
+       && ActualDisplayRes.X >= ActualDisplayRes.Y / NewRes.Y * NewRes.X)
+       || (ActualDisplayRes.X % NewRes.X == 0
+       && ActualDisplayRes.Y >= ActualDisplayRes.X / NewRes.X * NewRes.Y))
+      /* In-game pixels can be safely mapped one-on-one to rectangular
+       * units consisting of one or more on-screen pixels. */
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    else
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+  }
+  else
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   Texture = SDL_CreateTexture(Renderer,
          SDL_PIXELFORMAT_RGB565,
@@ -248,9 +285,6 @@ void graphics::SwitchMode()
     Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
   }
 
-  if(SwitchModeHandler)
-    SwitchModeHandler();
-
   Screen = SDL_SetVideoMode(Res.X, Res.Y, ColorDepth, Flags);
 
   if(!Screen)
@@ -260,12 +294,17 @@ void graphics::SwitchMode()
 #else
    ulong Flags = SDL_GetWindowFlags(Window);
    if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+      SDL_ShowCursor(SDL_ENABLE);
       SDL_SetWindowFullscreen(Window, 0);
    } else {
+      SDL_ShowCursor(SDL_DISABLE);
       SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
    }
   BlitDBToScreen();
 #endif
+
+  if(SwitchModeHandler)
+    SwitchModeHandler();
 }
 
 #endif
