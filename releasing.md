@@ -3,13 +3,13 @@ To do for each release
 
 ###Things to change around in the code:
 
- - Search for "0.50.2" in the project files and set this to 0.50.3 etcetera, depending on what the next verison is
+ - Search for "0.50.3" in the project files and set this to 0.50.4 etcetera, depending on what the next verison is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
 ###Include the following files in a zip folder for each release:
 
-**Folder: IvanWin0503**
+**Folder: IvanWin0504**
 
 **Files = 10**
 
@@ -22,7 +22,7 @@ To do for each release
   - NEWS
   - README
   - README.md
-  - SDL.dll
+  - SDL2.dll
 
 **Subfolder: Graphics**
 
