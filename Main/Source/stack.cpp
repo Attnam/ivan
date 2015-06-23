@@ -227,13 +227,9 @@ v2 stack::GetPos() const
 
 truth stack::SortedItems(ccharacter* Viewer, sorter SorterFunction) const
 {
-  if(Items)
-    for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-      if((SorterFunction == 0 || ((*i)->*SorterFunction)(Viewer))
-	 && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
-	return true;
-
-  return false;
+  itemvector SortedItems;
+  FillItemVectorSorted(SortedItems, Viewer, SorterFunction, 1);
+  return !SortedItems.empty();
 }
 
 void stack::BeKicked(character* Kicker, int KickDamage, int Direction)
@@ -352,6 +348,25 @@ void stack::FillItemVector(itemvector& ItemVector) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     ItemVector.push_back(*i);
+}
+
+/* ItemVector receives all items satisfying the sorter or all visible items
+   if the sorter is zero. MaxItemsToAdd < 1 implies no maximum. */
+
+void stack::FillItemVectorSorted(itemvector& ItemVector, ccharacter* Viewer,
+                                 sorter SorterFunction, int MaxItemsToAdd) const
+{
+  int ItemsAdded = 0;
+
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if((SorterFunction == 0 || ((*i)->*SorterFunction)(Viewer))
+       && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
+    {
+      ItemVector.push_back(*i);
+
+      if(++ItemsAdded == MaxItemsToAdd)
+        return;
+    }
 }
 
 /* Don't use; this function is only for gum solutions */
@@ -627,14 +642,20 @@ truth stack::TryKey(item* Key, character* Applier)
   if(!Applier->IsPlayer())
     return false;
 
-  item* ToBeOpened = DrawContents(Applier,
-				  CONST_S("Where do you wish to use the key?"),
-				  0, &item::HasLock);
+  itemvector ItemsWithLock;
+  FillItemVectorSorted(ItemsWithLock, Applier, &item::HasLock, 2);
 
-  if(!ToBeOpened)
+  if(ItemsWithLock.empty())
     return false;
-
-  return ToBeOpened->TryKey(Key, Applier);
+  else if(ItemsWithLock.size() == 1)
+    return ItemsWithLock[0]->TryKey(Key, Applier);
+  else
+  {
+    item* ToBeOpened = DrawContents(Applier,
+                                    CONST_S("Where do you wish to use the key?"),
+                                    0, &item::HasLock);
+    return ToBeOpened ? ToBeOpened->TryKey(Key, Applier) : 0;
+  }
 }
 
 /* Returns false if the Applier didn't try to open anything */
@@ -644,9 +665,19 @@ truth stack::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-  item* ToBeOpened = DrawContents(Opener, CONST_S("What do you wish to open?"),
-				  0, &item::IsOpenable);
-  return ToBeOpened ? ToBeOpened->Open(Opener) : false;
+  itemvector OpenableItems;
+  FillItemVectorSorted(OpenableItems, Opener, &item::IsOpenable, 2);
+
+  if(OpenableItems.empty())
+    return false;
+  else if(OpenableItems.size() == 1)
+    return OpenableItems[0]->Open(Opener);
+  else
+  {
+    item* ToBeOpened = DrawContents(Opener, CONST_S("What do you wish to open?"),
+                                    0, &item::IsOpenable);
+    return ToBeOpened ? ToBeOpened->Open(Opener) : 0;
+  }
 }
 
 int stack::GetSideItems(int RequiredSquarePosition) const
