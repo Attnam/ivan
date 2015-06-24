@@ -727,19 +727,76 @@ truth key::Apply(character* User)
       ADD_MESSAGE("This monster type cannot use keys.");
       return false;
     }
-    int Key;
-    truth OpenableItems = User->GetStack()->SortedItems(User, &item::HasLock);
 
-    if(OpenableItems)
-      Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? [press a direction key, space or i]"));
-    else
-      Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? [press a direction key or space]"));
+    itemvector OpenableItemsInInventory;
+    itemvector OpenableItemsOnGround;
+    std::vector<olterrain*> OpenableOLTerrains;
+    std::vector<olterrain*> OpenDoors;
+    stack* StackWithOpenableItems;
+    
+    User->GetStack()->FillItemVectorSorted(OpenableItemsInInventory,
+                                           User, &item::HasLock, 1);
 
-    if(Key == 'i' && OpenableItems)
+    for(int d = 0; d < User->GetExtendedNeighbourSquares(); ++d)
     {
-      item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want to lock or unlock?"), 0, &item::IsOpenable);
-      return Item && Item->TryKey(this, User);
+      lsquare* Square = User->GetNeighbourLSquare(d);
+
+      if(Square)
+      {
+        Square->GetStack()->FillItemVectorSorted(OpenableItemsOnGround,
+                                                 User, &item::HasLock, 2);
+        if(OpenableItemsOnGround.size() > 1)
+        {
+          StackWithOpenableItems = Square->GetStack();
+          break;
+        }
+
+        if(Square->GetOLTerrain())
+        {
+          if(Square->GetOLTerrain()->HasKeyHole())
+            OpenableOLTerrains.push_back(Square->GetOLTerrain());
+          else if(Square->GetOLTerrain()->IsDoor())
+            OpenDoors.push_back(Square->GetOLTerrain());
+        }
+      }
     }
+
+    int Key;
+
+    if(!OpenableItemsInInventory.empty())
+    {
+      if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+        Key = 'i';
+      else
+        Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? "
+                                           "[press a direction key, space or i]"));
+
+      if(Key == 'i')
+      {
+        item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want "
+                                                                  "to lock or unlock?"),
+                                                    0, &item::HasLock);
+        return Item && Item->TryKey(this, User);
+      }
+    }
+    else if(OpenableItemsOnGround.size() == 1 && OpenableOLTerrains.empty())
+      return OpenableItemsOnGround[0]->TryKey(this, User);
+    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.size() == 1)
+      return OpenableOLTerrains[0]->TryKey(this, User);
+    else if(OpenableItemsOnGround.size() > 1 && OpenableOLTerrains.empty())
+      return StackWithOpenableItems->TryKey(this, User);
+    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+    {
+      if(!OpenDoors.empty())
+        ADD_MESSAGE("You might want to close the door first.");
+      else
+        ADD_MESSAGE("You notice you haven't got anything to lock or unlock.");
+
+      return false;
+    }
+    else
+      Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? "
+                                         "[press a direction key or space]"));
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 

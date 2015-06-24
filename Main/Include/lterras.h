@@ -34,6 +34,8 @@ OLTERRAIN(door, olterrain)
  public:
   virtual truth Open(character*);
   virtual truth Close(character*);
+  virtual truth IsCloseable() const { return true; }
+  virtual truth IsOpen() const { return Opened; }
   virtual truth CanBeOpened() const { return !Opened; }
   virtual void BeKicked(character*, int, int);
   virtual void SetIsOpened(truth What) { Opened = What; }
@@ -249,6 +251,8 @@ OLTERRAIN(ironmaiden, olterrain)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual truth Open(character*);
+  virtual truth IsCloseable() const { return true; }
+  virtual truth IsOpen() const { return Opened; }
   virtual truth CanBeOpened() const { return !Opened; }
   virtual truth Close(character*);
  protected:
