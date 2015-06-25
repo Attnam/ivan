@@ -3465,9 +3465,9 @@ truth game::CommandAll()
 
     ulong OldC = Char->GetCommandFlags();
     ulong ConstC = Char->GetConstantCommandFlags();
-    ulong ThisC = NewFlags
+    ulong ThisC = (NewFlags
 		  & Char->GetPossibleCommandFlags()
-		  & ~(ConstC|VaryFlags)
+		  & ~(ConstC|VaryFlags))
 		  | (OldC & (ConstC|VaryFlags));
 
     if(ThisC != OldC)

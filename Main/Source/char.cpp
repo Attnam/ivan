@@ -139,7 +139,7 @@ statedata StateData[STATES] =
     &character::PoisonedSituationDangerModifier
   }, {
     "Teleporting",
-    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginTeleportMessage,
     &character::PrintEndTeleportMessage,
     0,
@@ -149,7 +149,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorphing",
-    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginPolymorphMessage,
     &character::PrintEndPolymorphMessage,
     0,
@@ -179,7 +179,7 @@ statedata StateData[STATES] =
     &character::PanicSituationDangerModifier
   }, {
     "Confused",
-    SECRET|RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD)),
     &character::PrintBeginConfuseMessage,
     &character::PrintEndConfuseMessage,
     0,
@@ -189,7 +189,7 @@ statedata StateData[STATES] =
     &character::ConfusedSituationDangerModifier
   }, {
     "Parasitized",
-    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
     0,
@@ -209,7 +209,7 @@ statedata StateData[STATES] =
     0
   }, {
     "GasImmunity",
-    SECRET|RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL),
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
     0,
@@ -229,7 +229,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Leprosy",
-    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginLeprosyMessage,
     &character::PrintEndLeprosyMessage,
     &character::BeginLeprosy,
@@ -1237,8 +1237,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
     else if(Pets)
       return false;
 
-    if(CanMove()
-       && CanMoveOn(MoveToSquare[0])
+    if((CanMove() && CanMoveOn(MoveToSquare[0]))
        || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
     {
       Move(MoveTo, false, Run);
@@ -9630,7 +9629,7 @@ void character::PrintAttribute(cchar* Desc, int I, int PanelPosX, int PanelPosY)
 
   if(Attribute != NoBonusAttribute)
   {
-    int Where = PanelPosX + (String.GetSize() + 1 << 3);
+    int Where = PanelPosX + ((String.GetSize() + 1) << 3);
     FONT->Printf(DOUBLE_BUFFER, v2(Where, PanelPosY * 10), LIGHT_GRAY,
 		 "%d", NoBonusAttribute);
   }

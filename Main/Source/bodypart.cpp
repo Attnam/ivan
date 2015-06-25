@@ -3488,7 +3488,7 @@ void bodypart::SetIsInfectedByLeprosy(truth What)
 void bodypart::SetSparkleFlags(int What)
 {
   cint S = SPARKLING_B|SPARKLING_C|SPARKLING_D;
-  Flags = Flags & ~(S << BODYPART_SPARKLE_SHIFT) | ((What & S) << BODYPART_SPARKLE_SHIFT);
+  Flags = (Flags & ~(S << BODYPART_SPARKLE_SHIFT)) | ((What & S) << BODYPART_SPARKLE_SHIFT);
 }
 
 truth arm::IsAnimated() const

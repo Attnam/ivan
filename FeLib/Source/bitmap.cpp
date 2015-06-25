@@ -2056,7 +2056,7 @@ void cachedfont::PrintCharacter(cblitdata B) const
     ulong* DestPtr = reinterpret_cast<ulong*>(*DestLine + B.Dest.X);
 
     for(; FontPtr != EndPtr; ++DestPtr, ++MaskPtr, ++FontPtr)
-      *DestPtr = *DestPtr & *MaskPtr | *FontPtr;
+      *DestPtr = (*DestPtr & *MaskPtr) | *FontPtr;
   }
 }
 

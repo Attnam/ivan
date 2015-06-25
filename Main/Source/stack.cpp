@@ -904,8 +904,8 @@ item* stack::GetBottomSideItem(ccharacter* Char,
 			       truth ForceIgnoreVisibility) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->GetSquarePosition() == RequiredSquarePosition
-       && (Flags & HIDDEN) || ForceIgnoreVisibility || i->CanBeSeenBy(Char))
+    if((i->GetSquarePosition() == RequiredSquarePosition
+       && (Flags & HIDDEN)) || ForceIgnoreVisibility || i->CanBeSeenBy(Char))
       return *i;
 
   return 0;

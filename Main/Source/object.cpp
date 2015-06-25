@@ -362,8 +362,8 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
     }
 
     GI.Frame = !c || FrameNeeded
-	       || SpecialFlags & ST_LIGHTNING && !((c + 1) & 7)
-	       || WobbleData & WOBBLE && !(c & WobbleMask)
+	       || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
+	       || (WobbleData & WOBBLE && !(c & WobbleMask))
 	       ? c : 0;
 
     GI.OutlineColor = GetOutlineColor(c);
@@ -417,7 +417,7 @@ void object::RandomizeVisualEffects()
   int AcceptedFlags = GetOKVisualEffects();
 
   if(AcceptedFlags)
-    SetVisualEffects(RAND() & 0x7 & AcceptedFlags | GetForcedVisualEffects());
+    SetVisualEffects((RAND() & 0x7 & AcceptedFlags) | GetForcedVisualEffects());
   else
     SetVisualEffects(GetForcedVisualEffects());
 }

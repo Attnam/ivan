@@ -361,8 +361,8 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
     }
 
     cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
-    Square->SquarePartEmitationTick = Square->SquarePartEmitationTick
-				      & ~SquarePartTickMask[SquarePartIndex]
+    Square->SquarePartEmitationTick = (Square->SquarePartEmitationTick
+				      & ~SquarePartTickMask[SquarePartIndex])
 				      | ShiftedTick[SquarePartIndex];
 
     return false;
@@ -383,7 +383,7 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
     }
     else
     {
-      Square->Flags = SquareFlags & ~ALLOW_EMITATION_CONTINUE | PERFECTLY_QUADRI_HANDLED;
+      Square->Flags = (SquareFlags & ~ALLOW_EMITATION_CONTINUE) | PERFECTLY_QUADRI_HANDLED;
       return false;
     }
   }
@@ -2625,9 +2625,9 @@ truth lsquare::WaterRain(const beamdata& Beam)
 truth lsquare::DetectMaterial(cmaterial* Material) const
 {
   if(GLTerrain->DetectMaterial(Material)
-     || OLTerrain && OLTerrain->DetectMaterial(Material)
+     || (OLTerrain && OLTerrain->DetectMaterial(Material))
      || Stack->DetectMaterial(Material)
-     || Character && Character->DetectMaterial(Material))
+     || (Character && Character->DetectMaterial(Material)))
     return true;
 
   for(const fluid* F = Fluid; F; F = F->Next)
