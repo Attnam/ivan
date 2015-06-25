@@ -199,10 +199,9 @@ truth commandsystem::Open(character* Char)
 {
   if(Char->CanOpen())
   {
-    itemvector OpenableItemsOnGround;
+    std::vector<lsquare*> SquaresWithOpenableItems;
     std::vector<olterrain*> OpenableOLTerrains;
     std::vector<olterrain*> AlreadyOpenOLTerrains;
-    stack* StackWithOpenableItems;
 
     for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
     {
@@ -210,11 +209,8 @@ truth commandsystem::Open(character* Char)
 
       if(Square)
       {
-        if(OpenableItemsOnGround.size() > 1)
-        {
-          StackWithOpenableItems = Square->GetStack();
-          break;
-        }
+        if(Square->GetStack()->SortedItems(Char, &item::IsOpenable))
+          SquaresWithOpenableItems.push_back(Square);
 
         if(Square->GetOLTerrain())
         {
@@ -230,7 +226,7 @@ truth commandsystem::Open(character* Char)
 
     if(Char->GetStack()->SortedItems(Char, &item::IsOpenable))
     {
-      if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+      if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
         Key = 'i';
       else
         Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
@@ -244,13 +240,11 @@ truth commandsystem::Open(character* Char)
         return Item && Item->Open(Char);
       }
     }
-    else if(OpenableItemsOnGround.size() == 1 && OpenableOLTerrains.empty())
-      return OpenableItemsOnGround[0]->Open(Char);
-    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.size() == 1)
+    else if(SquaresWithOpenableItems.size() == 1 && OpenableOLTerrains.empty())
+      return SquaresWithOpenableItems[0]->Open(Char);
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.size() == 1)
       return OpenableOLTerrains[0]->Open(Char);
-    else if(OpenableItemsOnGround.size() > 1 && OpenableOLTerrains.empty())
-      return StackWithOpenableItems->Open(Char);
-    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
     {
       if(!AlreadyOpenOLTerrains.empty())
         return AlreadyOpenOLTerrains[0]->Open(Char);

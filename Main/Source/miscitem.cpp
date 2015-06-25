@@ -728,10 +728,9 @@ truth key::Apply(character* User)
       return false;
     }
 
-    itemvector OpenableItemsOnGround;
+    std::vector<lsquare*> SquaresWithOpenableItems;
     std::vector<olterrain*> OpenableOLTerrains;
     std::vector<olterrain*> OpenDoors;
-    stack* StackWithOpenableItems;
 
     for(int d = 0; d < User->GetExtendedNeighbourSquares(); ++d)
     {
@@ -739,11 +738,8 @@ truth key::Apply(character* User)
 
       if(Square)
       {
-        if(OpenableItemsOnGround.size() > 1)
-        {
-          StackWithOpenableItems = Square->GetStack();
-          break;
-        }
+        if(Square->GetStack()->SortedItems(User, &item::HasLock))
+          SquaresWithOpenableItems.push_back(Square);
 
         if(Square->GetOLTerrain())
         {
@@ -759,7 +755,7 @@ truth key::Apply(character* User)
 
     if(User->GetStack()->SortedItems(User, &item::HasLock))
     {
-      if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+      if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
         Key = 'i';
       else
         Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? "
@@ -773,13 +769,11 @@ truth key::Apply(character* User)
         return Item && Item->TryKey(this, User);
       }
     }
-    else if(OpenableItemsOnGround.size() == 1 && OpenableOLTerrains.empty())
-      return OpenableItemsOnGround[0]->TryKey(this, User);
-    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.size() == 1)
+    else if(SquaresWithOpenableItems.size() == 1 && OpenableOLTerrains.empty())
+      return SquaresWithOpenableItems[0]->TryKey(this, User);
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.size() == 1)
       return OpenableOLTerrains[0]->TryKey(this, User);
-    else if(OpenableItemsOnGround.size() > 1 && OpenableOLTerrains.empty())
-      return StackWithOpenableItems->TryKey(this, User);
-    else if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
     {
       if(!OpenDoors.empty())
         ADD_MESSAGE("You might want to close the door first.");
