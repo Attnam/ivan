@@ -7453,7 +7453,7 @@ truth character::CreateRoute()
 
 	if(Char->IsEnabled()
 	   && !Char->Route.empty()
-	   && Char->GetMoveType() & GetMoveType() == Char->GetMoveType())
+	   && (Char->GetMoveType() & GetMoveType()) == Char->GetMoveType())
 	{
 	  v2 CharGoingTo = Char->Route[0];
 	  v2 iPos = Char->Route.back();
