@@ -55,9 +55,9 @@ class rawbitmap
 
   void CreateFontCache(packcol16);
   static truth IsMaterialColor(int Color) { return Color >= 192; }
-  static int GetMaterialColorIndex(int Color) { return Color - 192 >> 4; }
+  static int GetMaterialColorIndex(int Color) { return (Color - 192) >> 4; }
   int GetMaterialColorIndex(int X, int Y) const
-  { return PaletteBuffer[Y][X] - 192 >> 4; }
+  { return (PaletteBuffer[Y][X] - 192) >> 4; }
   truth IsTransparent(v2) const;
   truth IsMaterialColor1(v2) const;
   v2 RandomizeSparklePos(cv2*, v2*, v2, v2, int, int) const;

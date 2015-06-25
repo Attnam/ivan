@@ -80,7 +80,7 @@ void rawbitmap::Save(cfestring& FileName)
 {
   char PCXHeader[128];
   memset(PCXHeader, 0, 128);
-  *((ulong*)PCXHeader) = 0x0801050A;
+  *reinterpret_cast<ulong*>(PCXHeader) = 0x0801050A;
   PCXHeader[65] = 0x01;
   PCXHeader[66] = Size.X & 0xFF;
   PCXHeader[67] = (Size.X >> 8) & 0xFF;

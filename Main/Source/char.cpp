@@ -25,7 +25,7 @@
 
 struct statedata
 {
-  char* Description;
+  cchar* Description;
   int Flags;
   void (character::*PrintBeginMessage)() const;
   void (character::*PrintEndMessage)() const;
@@ -139,7 +139,7 @@ statedata StateData[STATES] =
     &character::PoisonedSituationDangerModifier
   }, {
     "Teleporting",
-    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginTeleportMessage,
     &character::PrintEndTeleportMessage,
     0,
@@ -149,7 +149,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorphing",
-    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
     &character::PrintBeginPolymorphMessage,
     &character::PrintEndPolymorphMessage,
     0,
@@ -179,7 +179,7 @@ statedata StateData[STATES] =
     &character::PanicSituationDangerModifier
   }, {
     "Confused",
-    SECRET|RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD),
+    SECRET|(RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD)),
     &character::PrintBeginConfuseMessage,
     &character::PrintEndConfuseMessage,
     0,
@@ -189,7 +189,7 @@ statedata StateData[STATES] =
     &character::ConfusedSituationDangerModifier
   }, {
     "Parasitized",
-    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
     0,
@@ -209,7 +209,7 @@ statedata StateData[STATES] =
     0
   }, {
     "GasImmunity",
-    SECRET|RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL),
+    SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
     0,
@@ -229,7 +229,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Leprosy",
-    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginLeprosyMessage,
     &character::PrintEndLeprosyMessage,
     &character::BeginLeprosy,
@@ -1237,8 +1237,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
     else if(Pets)
       return false;
 
-    if(CanMove()
-       && CanMoveOn(MoveToSquare[0])
+    if((CanMove() && CanMoveOn(MoveToSquare[0]))
        || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
     {
       Move(MoveTo, false, Run);
@@ -1822,7 +1821,7 @@ void character::CalculateBurdenState()
 
 void character::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   Stack->Save(SaveFile);
   SaveFile << ID;
   int c;
@@ -1836,7 +1835,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
   SaveFile << HomeData << BlocksSinceLastTurn << CommandFlags;
-  SaveFile << WarnFlags << (ushort)Flags;
+  SaveFile << WarnFlags << static_cast<ushort>(Flags);
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1865,7 +1864,7 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile << CWeaponSkill[c];
 
-  SaveFile << (ushort)GetConfig();
+  SaveFile << static_cast<ushort>(GetConfig());
 }
 
 void character::Load(inputfile& SaveFile)
@@ -3348,7 +3347,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
   if(!PenetrateResistance)
     Damage -= (BodyPart->GetTotalResistance(Type) >> 1) + RAND() % ((BodyPart->GetTotalResistance(Type) >> 1) + 1);
 
-  if(int(Damage) < 1)
+  if(Damage < 1)
     if(Critical)
       Damage = 1;
     else
@@ -7453,7 +7452,7 @@ truth character::CreateRoute()
 
 	if(Char->IsEnabled()
 	   && !Char->Route.empty()
-	   && Char->GetMoveType() & GetMoveType() == Char->GetMoveType())
+	   && (Char->GetMoveType() & GetMoveType()) == Char->GetMoveType())
 	{
 	  v2 CharGoingTo = Char->Route[0];
 	  v2 iPos = Char->Route.back();
@@ -9630,7 +9629,7 @@ void character::PrintAttribute(cchar* Desc, int I, int PanelPosX, int PanelPosY)
 
   if(Attribute != NoBonusAttribute)
   {
-    int Where = PanelPosX + (String.GetSize() + 1 << 3);
+    int Where = PanelPosX + ((String.GetSize() + 1) << 3);
     FONT->Printf(DOUBLE_BUFFER, v2(Where, PanelPosY * 10), LIGHT_GRAY,
 		 "%d", NoBonusAttribute);
   }
@@ -9980,7 +9979,8 @@ void character::ReceiveSirenSong(character* Siren)
       ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", 
 		  Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.");
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
+                  Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
     Stamina -= (1 + RAND_N(4)) * 10000;
     return;

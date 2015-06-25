@@ -106,11 +106,11 @@ void solid::SetBurnLevel(int What, truth SendMessages)
   if(GetBurnLevel() != What)
   {
     if(!BurnData) // if it is initially not burnt, then increase the burn level, seeding the flame graphics
-      BurnData = RAND() & 0xFC | What;
+      BurnData = (RAND() & 0xFC) | What;
     else if(!What) // if burn level is to be set to NOT_BURNT, then do this
       BurnData = 0;
     else // otherwise continue increasing burn level (not necessary to re-seed the flame graphics)
-      BurnData = BurnData & 0xFC | What;
+      BurnData = (BurnData & 0xFC) | What;
 
     if(MotherEntity)
       MotherEntity->SignalBurnLevelChange();
@@ -364,11 +364,11 @@ void ironalloy::SetRustLevel(int What)
   if(GetRustLevel() != What)
   {
     if(!RustData)
-      RustData = RAND() & 0xFC | What;
+      RustData = (RAND() & 0xFC) | What;
     else if(!What)
       RustData = 0;
     else
-      RustData = RustData & 0xFC | What;
+      RustData = (RustData & 0xFC) | What;
 
     if(MotherEntity)
       MotherEntity->SignalRustLevelChange();

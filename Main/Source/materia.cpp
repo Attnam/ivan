@@ -61,9 +61,9 @@ material* material::TakeDipVolumeAway()
 
 void material::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   SaveFile << Volume;
-  SaveFile << (ushort)GetConfig();
+  SaveFile << static_cast<ushort>(GetConfig());
 }
 
 void material::Load(inputfile& SaveFile)

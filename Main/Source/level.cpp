@@ -2452,7 +2452,7 @@ void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemitter
 
     for(sunemittervector::const_iterator i = SunEmitter.begin(); i != SunEmitter.end(); ++i)
     {
-      ulong ID = *i & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS) | RE_SUN_EMITATED, SourceFlags;
+      ulong ID = (*i & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS)) | RE_SUN_EMITATED, SourceFlags;
       int X, Y;
 
       if(ID & ID_X_COORDINATE)
@@ -2498,8 +2498,8 @@ struct loscontroller : public tickcontroller, public stackcontroller
     }
 
     cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
-    Square->SquarePartLastSeen = Square->SquarePartLastSeen
-				 & ~SquarePartTickMask[SquarePartIndex]
+    Square->SquarePartLastSeen = (Square->SquarePartLastSeen
+				 & ~SquarePartTickMask[SquarePartIndex])
 				 | ShiftedTick[SquarePartIndex];
     return false;
   }

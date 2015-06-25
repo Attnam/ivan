@@ -23,7 +23,7 @@ trap::~trap()
 
 void trap::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
 }
 
 void trap::Load(inputfile&)

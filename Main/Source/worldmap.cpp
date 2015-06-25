@@ -704,6 +704,6 @@ void worldmap::UpdateLOS()
 
   for(int x = Rect.X1; x <= Rect.X2; ++x)
     for(int y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(long(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+      if(HypotSquare(Pos.X - x, Pos.Y - y) <= RadiusSquare)
 	Map[x][y]->SignalSeen();
 }

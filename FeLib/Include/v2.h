@@ -70,7 +70,7 @@ struct v2
   truth Is0() const { return X == 0 && Y == 0; }
   operator packv2() const
   {
-    packv2 V = { X, Y };
+    packv2 V = { static_cast<short>(X), static_cast<short>(Y) };
     return V;
   }
   operator podv2() const

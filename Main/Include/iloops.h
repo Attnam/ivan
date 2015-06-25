@@ -96,7 +96,7 @@ struct doforequipmentswithparam : public doforelementswithparam<ccharacter, item
   }
   void operator()(ccharacter* C, void (item::*F)(param) const, param P) const
   {
-    base::operator()(C, &character::GetEquipment, (typename base::routine)(F), P, C->GetEquipments());
+    base::operator()(C, &character::GetEquipment, reinterpret_cast<typename base::routine>(F), P, C->GetEquipments());
   }
 };
 

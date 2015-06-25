@@ -292,10 +292,10 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
 
 void item::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   object::Save(SaveFile);
-  SaveFile << (ushort)GetConfig();
-  SaveFile << (ushort)Flags;
+  SaveFile << static_cast<ushort>(GetConfig());
+  SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
   SaveLinkedList(SaveFile, CloneMotherID);
 
@@ -1009,9 +1009,9 @@ void item::AddAttackInfo(felist& List) const
   festring Entry(40, ' ');
   Entry << int(GetWeight());
   Entry.Resize(50);
-  Entry << int(GetSize());
+  Entry << GetSize();
   Entry.Resize(60);
-  Entry << int(GetStrengthRequirement());
+  Entry << GetStrengthRequirement();
   Entry.Resize(70);
   Entry << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);

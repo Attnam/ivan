@@ -441,8 +441,8 @@ void game::Run()
 	{
 	  Pos = GetCurrentLevel()->GetRandomSquare(Char);
 
-	  if(abs(int(Pos.X) - Player->GetPos().X) > 20
-	     || abs(int(Pos.Y) - Player->GetPos().Y) > 20)
+	  if(abs(Pos.X - Player->GetPos().X) > 20
+	     || abs(Pos.Y - Player->GetPos().Y) > 20)
 	    break;
 	}
 
@@ -723,9 +723,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
 
-  int c;
-
-  for(c = 0; c < SpecialCursorPos.size(); ++c)
+  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
       CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
@@ -780,7 +778,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
     else
     {
-      for(c = 0; c < Player->GetSquaresUnder(); ++c)
+      for(int c = 0; c < Player->GetSquaresUnder(); ++c)
       {
 	v2 Pos = Player->GetPos(c);
 
@@ -792,7 +790,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       }
     }
 
-  for(c = 0; c < SpecialCursorPos.size(); ++c)
+  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
     {
       v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
@@ -804,7 +802,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 truth game::Save(cfestring& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
-  SaveFile << int(SAVE_FILE_VERSION);
+  SaveFile << SAVE_FILE_VERSION;
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
   SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NextTrapID << NecroCounter;
@@ -2562,7 +2560,7 @@ void game::CreateBone()
     {
       festring BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
       outputfile BoneFile(BoneName);
-      BoneFile << int(BONE_FILE_VERSION) << PlayerName << CurrentLevel;
+      BoneFile << BONE_FILE_VERSION << PlayerName << CurrentLevel;
     }
   }
 }
@@ -2820,7 +2818,7 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 void game::GodEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 {
   blitdata B = { Bitmap,
-		 { I << 4, 0 },
+		 { static_cast<int>(I << 4), 0 },
 		 { Pos.X, Pos.Y },
 		 { TILE_SIZE, TILE_SIZE },
 		 { 0 },
@@ -3467,9 +3465,9 @@ truth game::CommandAll()
 
     ulong OldC = Char->GetCommandFlags();
     ulong ConstC = Char->GetConstantCommandFlags();
-    ulong ThisC = NewFlags
+    ulong ThisC = (NewFlags
 		  & Char->GetPossibleCommandFlags()
-		  & ~(ConstC|VaryFlags)
+		  & ~(ConstC|VaryFlags))
 		  | (OldC & (ConstC|VaryFlags));
 
     if(ThisC != OldC)

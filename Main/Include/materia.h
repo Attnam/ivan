@@ -259,8 +259,8 @@ class materialsysbase : public base
 #define MATERIAL_PROTO(name, base)\
 template<> const materialprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   (materialspawner)(&name##sysbase::Spawn),\
-			   (materialcloner)(&name##sysbase::Clone), #name);
+			   reinterpret_cast<materialspawner>(&name##sysbase::Spawn),\
+			   reinterpret_cast<materialcloner>(&name##sysbase::Clone), #name);
 #else
 #define MATERIAL_PROTO(name, base)
 #endif

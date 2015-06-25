@@ -1596,7 +1596,7 @@ truth itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int
     if(IsLocked() && Damage > SV && RAND() % (100 * Damage / SV) >= 100)
     {
       SetIsLocked(false);
-      SetConfig(GetConfig()&~LOCK_BITS|BROKEN_LOCK);
+      SetConfig((GetConfig()&~LOCK_BITS)|BROKEN_LOCK);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().CStr());

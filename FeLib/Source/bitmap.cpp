@@ -1019,7 +1019,7 @@ void bitmap::DrawPolygon(int CenterX, int CenterY, int Radius, int NumberOfSides
     {
       for(c = 0; c < NumberOfSides; ++c)
 	for(int a = 0; a < NumberOfSides; ++a)
-	  if((int(c - a) > 1 || int(a - c) > 1) && (a || c != NumberOfSides - 1) && (c || a != NumberOfSides - 1))
+	  if((c - a > 1 || a - c > 1) && (a || c != NumberOfSides - 1) && (c || a != NumberOfSides - 1))
 	    DrawLine(Point[c].X, Point[c].Y, Point[a].X, Point[a].Y, Color, true);
     }
   }
@@ -2056,7 +2056,7 @@ void cachedfont::PrintCharacter(cblitdata B) const
     ulong* DestPtr = reinterpret_cast<ulong*>(*DestLine + B.Dest.X);
 
     for(; FontPtr != EndPtr; ++DestPtr, ++MaskPtr, ++FontPtr)
-      *DestPtr = *DestPtr & *MaskPtr | *FontPtr;
+      *DestPtr = (*DestPtr & *MaskPtr) | *FontPtr;
   }
 }
 

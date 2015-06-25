@@ -82,7 +82,7 @@ void id::AddName(festring& Name, int Case, int Amount) const
       Name << "the ";
 
     Name << Amount << ' ';
-    AddName(Name, Case&~ARTICLE_BIT|PLURAL);
+    AddName(Name, (Case&~ARTICLE_BIT)|PLURAL);
   }
 }
 

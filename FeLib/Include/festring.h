@@ -107,7 +107,7 @@ class festring
   void SlowAppend(char);
   void SlowAppend(cchar*, sizetype);
   static char** IntegerMap;
-  static char* EmptyString;
+  static cchar* EmptyString;
   char* Data;
   sizetype Size;
   sizetype OwnsData : 1;

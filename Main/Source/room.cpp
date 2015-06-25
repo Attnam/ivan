@@ -16,7 +16,7 @@ roomprototype::roomprototype(roomspawner Spawner, cchar* ClassID) : Spawner(Spaw
 
 void room::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   SaveFile << Pos << Size << Index << DivineMaster << MasterID;
 }
 

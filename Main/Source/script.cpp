@@ -263,14 +263,14 @@ material* materialscript::Instantiate() const
 void materialscript::Save(outputfile& SaveFile) const
 {
   script::Save(SaveFile);
-  SaveFile << (ushort)Config;
+  SaveFile << static_cast<ushort>(Config);
 }
 
 void materialscript::Load(inputfile& SaveFile)
 {
   script::Load(SaveFile);
   Config = 0;
-  SaveFile >> (ushort&)Config;
+  SaveFile >> reinterpret_cast<ushort&>(Config);
 }
 
 void basecontentscript::InitDataMap()

@@ -152,7 +152,7 @@ void rain::Be()
 
 void rain::Save(outputfile& SaveFile) const
 {
-  SaveFile << Liquid << Speed << (uchar)Team;
+  SaveFile << Liquid << Speed << static_cast<uchar>(Team);
 }
 
 void rain::Load(inputfile& SaveFile)

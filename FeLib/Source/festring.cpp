@@ -17,7 +17,7 @@
 #include "error.h"
 
 char** festring::IntegerMap = 0;
-char* festring::EmptyString = "";
+cchar* festring::EmptyString = "";
 festring::csizetype festring::NPos = festring::sizetype(-1);
 
 festring& festring::Append(cchar* CStr, sizetype N)
@@ -836,7 +836,7 @@ long festring::GetCheckSum() const
   long Counter = 0;
 
   for(ushort c = 0; c < GetSize(); ++c)
-    Counter = long(Data[c]);
+    Counter = Data[c];
 
   return Counter;
 }
