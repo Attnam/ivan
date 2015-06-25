@@ -9980,7 +9980,8 @@ void character::ReceiveSirenSong(character* Siren)
       ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", 
 		  Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.");
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
+                  Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
     Stamina -= (1 + RAND_N(4)) * 10000;
     return;
