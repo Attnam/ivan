@@ -167,7 +167,7 @@ truth wsquare::SignalSeen()
 
 void wsquare::CalculateLuminance()
 {
-  double T = log(1. + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.);
+  double T = log(1. + abs(GetWorldMap()->GetAltitude(Pos)) / 500.);
   int Element = Min((128 - int(37.5 * T)), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
