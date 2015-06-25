@@ -723,9 +723,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
 
-  int c;
-
-  for(c = 0; c < SpecialCursorPos.size(); ++c)
+  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
       CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
@@ -780,7 +778,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
     else
     {
-      for(c = 0; c < Player->GetSquaresUnder(); ++c)
+      for(int c = 0; c < Player->GetSquaresUnder(); ++c)
       {
 	v2 Pos = Player->GetPos(c);
 
@@ -792,7 +790,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       }
     }
 
-  for(c = 0; c < SpecialCursorPos.size(); ++c)
+  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
     {
       v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);

@@ -1356,7 +1356,7 @@ void bodypart::CalculateMaxHP(ulong Flags)
       long Endurance = Master->GetAttribute(ENDURANCE);
       double DoubleHP = GetBodyPartVolume() * Endurance * Endurance / 200000;
 
-      for(int c = 0; c < Scar.size(); ++c)
+      for(size_t c = 0; c < Scar.size(); ++c)
 	DoubleHP *= (100. - Scar[c].Severity * 4) / 100;
 
       if(MainMaterial)
@@ -3627,7 +3627,7 @@ void bodypart::GenerateScar(int Damage, int Type)
 
 void bodypart::DrawScars(cblitdata& B) const
 {
-  for(int c = 0; c < Scar.size(); ++c)
+  for(size_t c = 0; c < Scar.size(); ++c)
   {
     if(!Scar[c].PanelBitmap)
     {
@@ -3657,7 +3657,7 @@ int bodypart::CalculateScarAttributePenalty(int Attribute) const
 {
   double DoubleAttribute = Attribute;
 
-  for(int c = 0; c < Scar.size(); ++c)
+  for(size_t c = 0; c < Scar.size(); ++c)
     DoubleAttribute *= (100. - Scar[c].Severity * 4) / 100;
 
   return Min(Attribute - int(DoubleAttribute), Attribute - 1);
@@ -3679,13 +3679,13 @@ int bodypart::CalculateBurnAttributePenalty(int Attribute) const
 
 bodypart::~bodypart()
 {
-  for(int c = 0; c < Scar.size(); ++c)
+  for(size_t c = 0; c < Scar.size(); ++c)
     delete Scar[c].PanelBitmap;
 }
 
 bodypart::bodypart(const bodypart& B) : mybase(B), OwnerDescription(B.OwnerDescription), Master(B.Master), CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume), BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD), SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP), BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial), SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
 {
-  for(int c = 0; c < Scar.size(); ++c)
+  for(size_t c = 0; c < Scar.size(); ++c)
     if(Scar[c].PanelBitmap)
       Scar[c].PanelBitmap = new bitmap(Scar[c].PanelBitmap);
 }
