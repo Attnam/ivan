@@ -728,14 +728,10 @@ truth key::Apply(character* User)
       return false;
     }
 
-    itemvector OpenableItemsInInventory;
     itemvector OpenableItemsOnGround;
     std::vector<olterrain*> OpenableOLTerrains;
     std::vector<olterrain*> OpenDoors;
     stack* StackWithOpenableItems;
-    
-    User->GetStack()->FillItemVectorSorted(OpenableItemsInInventory,
-                                           User, &item::HasLock, 1);
 
     for(int d = 0; d < User->GetExtendedNeighbourSquares(); ++d)
     {
@@ -743,8 +739,6 @@ truth key::Apply(character* User)
 
       if(Square)
       {
-        Square->GetStack()->FillItemVectorSorted(OpenableItemsOnGround,
-                                                 User, &item::HasLock, 2);
         if(OpenableItemsOnGround.size() > 1)
         {
           StackWithOpenableItems = Square->GetStack();
@@ -763,7 +757,7 @@ truth key::Apply(character* User)
 
     int Key;
 
-    if(!OpenableItemsInInventory.empty())
+    if(User->GetStack()->SortedItems(User, &item::HasLock))
     {
       if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
         Key = 'i';

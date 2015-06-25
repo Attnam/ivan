@@ -199,14 +199,10 @@ truth commandsystem::Open(character* Char)
 {
   if(Char->CanOpen())
   {
-    itemvector OpenableItemsInInventory;
     itemvector OpenableItemsOnGround;
     std::vector<olterrain*> OpenableOLTerrains;
     std::vector<olterrain*> AlreadyOpenOLTerrains;
     stack* StackWithOpenableItems;
-    
-    Char->GetStack()->FillItemVectorSorted(OpenableItemsInInventory,
-                                           Char, &item::IsOpenable, 1);
 
     for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
     {
@@ -214,8 +210,6 @@ truth commandsystem::Open(character* Char)
 
       if(Square)
       {
-        Square->GetStack()->FillItemVectorSorted(OpenableItemsOnGround,
-                                                 Char, &item::IsOpenable, 2);
         if(OpenableItemsOnGround.size() > 1)
         {
           StackWithOpenableItems = Square->GetStack();
@@ -234,7 +228,7 @@ truth commandsystem::Open(character* Char)
 
     int Key;
 
-    if(!OpenableItemsInInventory.empty())
+    if(Char->GetStack()->SortedItems(Char, &item::IsOpenable))
     {
       if(OpenableItemsOnGround.empty() && OpenableOLTerrains.empty())
         Key = 'i';
