@@ -199,19 +199,64 @@ truth commandsystem::Open(character* Char)
 {
   if(Char->CanOpen())
   {
-    int Key;
-    truth OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
+    std::vector<lsquare*> SquaresWithOpenableItems;
+    std::vector<olterrain*> OpenableOLTerrains;
+    std::vector<olterrain*> AlreadyOpenOLTerrains;
 
-    if(OpenableItems)
-      Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key, space or i]"));
-    else
-      Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key or space]"));
-
-    if(Key == 'i' && OpenableItems)
+    for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
     {
-      item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
-      return Item && Item->Open(Char);
+      lsquare* Square = Char->GetNeighbourLSquare(d);
+
+      if(Square)
+      {
+        if(Square->GetStack()->SortedItems(Char, &item::IsOpenable))
+          SquaresWithOpenableItems.push_back(Square);
+
+        if(Square->GetOLTerrain())
+        {
+          if(Square->GetOLTerrain()->CanBeOpened())
+            OpenableOLTerrains.push_back(Square->GetOLTerrain());
+          else if(Square->GetOLTerrain()->IsOpen())
+            AlreadyOpenOLTerrains.push_back(Square->GetOLTerrain());
+        }
+      }
     }
+
+    int Key;
+
+    if(Char->GetStack()->SortedItems(Char, &item::IsOpenable))
+    {
+      if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
+        Key = 'i';
+      else
+        Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                           "[press a direction key, space or i]"));
+
+      if(Key == 'i')
+      {
+        item* Item = Char->GetStack()->DrawContents(Char,
+                                                    CONST_S("What do you want to open?"),
+                                                    0, &item::IsOpenable);
+        return Item && Item->Open(Char);
+      }
+    }
+    else if(SquaresWithOpenableItems.size() == 1 && OpenableOLTerrains.empty())
+      return SquaresWithOpenableItems[0]->Open(Char);
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.size() == 1)
+      return OpenableOLTerrains[0]->Open(Char);
+    else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
+    {
+      if(!AlreadyOpenOLTerrains.empty())
+        return AlreadyOpenOLTerrains[0]->Open(Char);
+      else
+      {
+        ADD_MESSAGE("Find something to open first, %s.", game::Insult());
+        return false;
+      }
+    }
+    else
+      Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                         "[press a direction key or space]"));
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
@@ -228,10 +273,52 @@ truth commandsystem::Close(character* Char)
 {
   if(Char->CanOpen())
   {
-    int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+    /* See if there's only a single open door nearby, otherwise ask for a direction */
 
-    if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
-      return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
+    int ThingsToClose = 0;
+    int ThingsAlreadyClosed = 0;
+    lsquare* SquareWithThingToClose;
+    lsquare* SquareWithThingAlreadyClosed;
+
+    for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
+    {
+      lsquare* Square = Char->GetNeighbourLSquare(d);
+
+      if(!Square || !Square->GetOLTerrain())
+        continue;
+
+      if(Square->GetOLTerrain()->IsOpen())
+      {
+        ++ThingsToClose;
+
+        if(ThingsToClose > 1)
+          break;
+
+        SquareWithThingToClose = Square;
+      }
+      else if(Square->GetOLTerrain()->IsCloseable())
+      {
+        ++ThingsAlreadyClosed;
+        SquareWithThingAlreadyClosed = Square;
+      }
+    }
+
+    if(ThingsToClose == 0)
+    {
+      if(ThingsAlreadyClosed == 0)
+        ADD_MESSAGE("Find something to close first, %s.", game::Insult());
+      else
+        SquareWithThingAlreadyClosed->Close(Char);
+    }
+    else if(ThingsToClose == 1)
+      return SquareWithThingToClose->Close(Char);
+    else
+    {
+      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+
+      if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+        return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
+    }
   }
   else
     ADD_MESSAGE("This monster type cannot close anything.");

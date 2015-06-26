@@ -1382,6 +1382,8 @@ truth ironmaiden::Close(character* Closer)
 
   Opened = false;
   UpdatePictures();  
+  GetLSquareUnder()->SendNewDrawRequest();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
 }

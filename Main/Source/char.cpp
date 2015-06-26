@@ -1288,12 +1288,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	      }
 	    }
 	    else
-	    {
-	      if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
-		return MoveToSquare[c]->Open(this);
-	      else
-		return false;
-	    }
+              return MoveToSquare[c]->Open(this);
 	  }
 	  else
 	  {

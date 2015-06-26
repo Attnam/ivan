@@ -71,6 +71,8 @@ class lterrain : public object
   virtual truth Open(character*) { return false; }
   virtual truth Close(character*) { return false; }
   v2 GetPos() const;
+  virtual truth IsCloseable() const { return false; }
+  virtual truth IsOpen() const { return false; }
   virtual truth CanBeOpened() const { return false; }
   virtual truth AcceptsOffers() const { return false; }
   virtual truth ReceiveVomit(character*, liquid*) { return false; }

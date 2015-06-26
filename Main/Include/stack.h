@@ -99,6 +99,7 @@ class stack
   void ReceiveDamage(character*, int, int, int = YOURSELF);
   void TeleportRandomly(uint = 0xFFFF);
   void FillItemVector(itemvector&) const;
+  void FillItemVectorSorted(itemvector&, ccharacter*, sorter, int = 0) const;
   truth IsOnGround() const;
   truth RaiseTheDead(character*);
   truth TryKey(item*, character*);

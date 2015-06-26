@@ -574,7 +574,10 @@ truth lsquare::Close(character* Closer)
     return OLTerrain && OLTerrain->Close(Closer);
   else
   {
-    ADD_MESSAGE("There's something in the way...");
+    if(Character == Closer)
+      ADD_MESSAGE("Move out of the way first...");
+    else
+      ADD_MESSAGE("There's something in the way...");
     return false;
   }
 }
