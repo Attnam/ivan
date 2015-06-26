@@ -141,7 +141,7 @@ inline int GetMinColor24(col24 Color)
 
 #define NORMAL_LUMINANCE 0x808080
 
-#ifndef __APPLE__
+#if SDL_MAJOR_VERSION == 2 || !defined(__APPLE__)
 #define KEY_BACK_SPACE 0x08
 #else
 #define KEY_BACK_SPACE 0x7F
