@@ -210,6 +210,7 @@ class game
   static v2 GetDirectionVectorForKey(int);
   static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
+  static void ShowNoBoneSaveMessage();
   static double GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();

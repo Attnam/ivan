@@ -409,6 +409,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(squarescript, FillSquare);
   SCRIPT_MEMBER_WITH_BASE(squarescript, TunnelSquare);
   SCRIPT_MEMBER_WITH_BASE(festring, LevelMessage);
+  SCRIPT_MEMBER_WITH_BASE(festring, NoBoneSaveMessage);
   SCRIPT_MEMBER_WITH_BASE(v2, Size);
   SCRIPT_MEMBER_WITH_BASE(interval, Items);
   SCRIPT_MEMBER_WITH_BASE(interval, Rooms);

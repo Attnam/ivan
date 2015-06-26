@@ -662,7 +662,7 @@ void level::Save(outputfile& SaveFile) const
     for(int y = 0; y < YSize; ++y)
       Map[x][y]->Save(SaveFile);
 
-  SaveFile << Door << LevelMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
+  SaveFile << Door << LevelMessage << NoBoneSaveMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
   SaveFile << SunLightEmitation << SunLightDirection << AmbientLuminance << NightAmbientLuminance;
 }
 
@@ -695,7 +695,7 @@ void level::Load(inputfile& SaveFile)
       Map[x][y]->CalculateNeighbourLSquares();
     }
 
-  SaveFile >> Door >> LevelMessage >> IdealPopulation >> MonsterGenerationInterval >> Difficulty;
+  SaveFile >> Door >> LevelMessage >> NoBoneSaveMessage >> IdealPopulation >> MonsterGenerationInterval >> Difficulty;
   SaveFile >> SunLightEmitation >> SunLightDirection >> AmbientLuminance >> NightAmbientLuminance;
   Alloc2D(NodeMap, XSize, YSize);
   Alloc2D(WalkabilityMap, XSize, YSize);
@@ -1777,9 +1777,13 @@ void level::FinalProcessForBone()
 void level::GenerateDungeon(int Index)
 {
   cfestring* Msg = LevelScript->GetLevelMessage();
+  cfestring* BonMsg = LevelScript->GetNoBoneSaveMessage();
 
   if(Msg)
     LevelMessage = *Msg;
+
+  if(BonMsg)
+    NoBoneSaveMessage = *BonMsg;
 
   if(*LevelScript->GenerateMonsters())
   {
