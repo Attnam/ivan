@@ -169,6 +169,7 @@ class level : public area
   void SetLevelMessage(cfestring& What) { LevelMessage = What; }
   void SetLevelScript(const levelscript* What) { LevelScript = What; }
   truth IsOnGround() const;
+  truth EarthquakesAffectTunnels() const;
   const levelscript* GetLevelScript() const { return LevelScript; }
   int GetLOSModifier() const;
   room* GetRoom(int) const;

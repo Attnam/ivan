@@ -414,6 +414,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(interval, Rooms);
   SCRIPT_TRUTH_WITH_BASE(GenerateMonsters);
   SCRIPT_TRUTH_WITH_BASE(IsOnGround);
+  SCRIPT_TRUTH_WITH_BASE(EarthquakesAffectTunnels);
   SCRIPT_MEMBER_WITH_BASE(int, TeamDefault);
   SCRIPT_MEMBER_WITH_BASE(festring, Description);
   SCRIPT_MEMBER_WITH_BASE(int, LOSModifier);

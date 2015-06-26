@@ -385,8 +385,8 @@ void silva::PrayGoodEffect()
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
-    if (game::GetCurrentLevelIndex() == ZOMBIE_LEVEL) 
-		Tunnels = 0;
+    if (!game::GetCurrentLevel()->EarthquakesAffectTunnels()) 
+      Tunnels = 0;
 
     for(c = 0; c < Tunnels; ++c)
       game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));

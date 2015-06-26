@@ -841,6 +841,11 @@ truth level::IsOnGround() const
   return *LevelScript->IsOnGround();
 }
 
+truth level::EarthquakesAffectTunnels() const
+{
+  return *LevelScript->EarthquakesAffectTunnels();
+}
+
 int level::GetLOSModifier() const
 {
   return *LevelScript->GetLOSModifier();

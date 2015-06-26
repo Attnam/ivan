@@ -854,6 +854,7 @@ void levelscript::InitDataMap()
   INIT_ENTRY(Rooms);
   INIT_ENTRY(GenerateMonsters);
   INIT_ENTRY(IsOnGround);
+  INIT_ENTRY(EarthquakesAffectTunnels);
   INIT_ENTRY(TeamDefault);
   INIT_ENTRY(Description);
   INIT_ENTRY(LOSModifier);

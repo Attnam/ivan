@@ -128,6 +128,7 @@ Dungeon ELPURI_CAVE;
     EnchantmentPlusChanceDelta = 5;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
 
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {
@@ -462,6 +463,7 @@ Dungeon ELPURI_CAVE;
     MonsterAmountBase = 20;
     LOSModifier = 24;
     FillSquare = FLINT solidterrain(GROUND), GNEISS earth;
+    EarthquakesAffectTunnels = false;
 
     Room
     {
@@ -1328,6 +1330,7 @@ Dungeon ATTNAM;
     MonsterAmountDelta = 5;
     MonsterGenerationIntervalBase = 150;
     MonsterGenerationIntervalDelta = -25;
+    EarthquakesAffectTunnels = true;
 
     RoomDefault
     {
@@ -2151,6 +2154,7 @@ Dungeon ATTNAM;
     BackGroundType = GRAY_FRACTAL;
     FillSquare = solidterrain(GROUND), MORAINE earth;
     TunnelSquare = solidterrain(GROUND), 0;
+    EarthquakesAffectTunnels = false;
 
     Room
     {
@@ -2392,6 +2396,7 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
+    EarthquakesAffectTunnels = true;
 
     RoomDefault
     {
@@ -2857,6 +2862,7 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
+    EarthquakesAffectTunnels = false;
 
     Room
     {
@@ -2958,6 +2964,7 @@ Dungeon UNDER_WATER_TUNNEL;
     EnchantmentPlusChanceDelta = 1;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
 
     Square, Random;
     {
