@@ -849,6 +849,7 @@ void levelscript::InitDataMap()
   INIT_ENTRY(FillSquare);
   INIT_ENTRY(TunnelSquare);
   INIT_ENTRY(LevelMessage);
+  INIT_ENTRY(NoBoneSaveMessage);
   INIT_ENTRY(Size);
   INIT_ENTRY(Items);
   INIT_ENTRY(Rooms);

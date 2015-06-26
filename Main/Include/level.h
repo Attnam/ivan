@@ -167,6 +167,8 @@ class level : public area
   void ParticleTrail(v2, v2);
   festring GetLevelMessage() { return LevelMessage; }
   void SetLevelMessage(cfestring& What) { LevelMessage = What; }
+  festring GetNoBoneSaveMessage() { return NoBoneSaveMessage; }
+  void SetNoBoneSaveMessage(cfestring& What) { NoBoneSaveMessage = What; }
   void SetLevelScript(const levelscript* What) { LevelScript = What; }
   truth IsOnGround() const;
   truth EarthquakesAffectTunnels() const;
@@ -250,6 +252,7 @@ class level : public area
   lsquare*** Map;
   const levelscript* LevelScript;
   festring LevelMessage;
+  festring NoBoneSaveMessage;
   std::vector<v2> Door;
   std::vector<room*> Room;
   int IdealPopulation;

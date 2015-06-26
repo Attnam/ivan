@@ -1026,6 +1026,14 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
+void game::ShowNoBoneSaveMessage()
+{
+  if(CurrentLevel->GetNoBoneSaveMessage().GetSize())
+    ADD_MESSAGE(CurrentLevel->GetNoBoneSaveMessage().CStr());
+
+  CurrentLevel->SetNoBoneSaveMessage("");
+}
+
 int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
 {
   for(;;)
@@ -1933,6 +1941,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     if(New && AutoReveal && *AutoReveal)
       GetCurrentLevel()->Reveal();
 
+    ShowNoBoneSaveMessage();
     ShowLevelMessage();
     SendLOSUpdateRequest();
     UpdateCamera();
