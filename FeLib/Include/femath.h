@@ -41,8 +41,9 @@ class femath
   static long Rand();
   static void SetSeed(ulong);
   static long RandN(long N) { return long(double(N) * Rand() / 0x80000000); }
-  static long RandGood(long N)
-  { return long(double(N) * Rand() / 0x80000000); }
+  static long RandGood(long N) { return long(double(N) * Rand() / 0x80000000); }
+  static double RandReal(double N = 1.) { return Rand() * (1. / 0x80000000) * N; }
+  static double NormalDistributedRand(double StandardDeviation = 1.);
   static int WeightedRand(long*, long);
   static int WeightedRand(const std::vector<long>&, long);
   static double CalculateAngle(v2);

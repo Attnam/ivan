@@ -124,6 +124,23 @@ long femath::Rand()
   return y & 0x7FFFFFFF;
 }
 
+double femath::NormalDistributedRand(double StandardDeviation)
+{
+  static double z0, z1;
+  static bool Generate = false;
+
+  if ((Generate = !Generate))
+  {
+    double u1 = sqrt(-2 * log(RandReal()));
+    double u2 = 2 * FPI * RandReal();
+    z0 = u1 * cos(u2);
+    z1 = u1 * sin(u2);
+    return z0 * StandardDeviation;
+  }
+  else
+    return z1 * StandardDeviation;
+}
+
 int femath::WeightedRand(long* Possibility, long TotalPossibility)
 {
   long Rand = RAND() % TotalPossibility, PartialSum = 0;
