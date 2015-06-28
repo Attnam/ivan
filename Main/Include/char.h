@@ -1168,6 +1168,7 @@ class character : public entity, public id
   int TemporaryStateCounter[STATES];
   team* Team;
   v2 GoingTo;
+  double RandomMoveDir;
   long Money;
   std::list<character*>::iterator TeamIterator;
   bodypartslot* BodyPartSlot;

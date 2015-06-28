@@ -388,8 +388,9 @@ contentscript<item> characterdatabase::* EquipmentDataPtr[EQUIPMENT_DATAS] =
 character::character(ccharacter& Char)
 : entity(Char), id(Char), NP(Char.NP), AP(Char.AP),
   TemporaryState(Char.TemporaryState&~POLYMORPHED),
-  Team(Char.Team), GoingTo(ERROR_V2), Money(0),
-  AssignedName(Char.AssignedName), Action(0),
+  Team(Char.Team), GoingTo(ERROR_V2),
+  RandomMoveDir(femath::RandReal(8)),
+  Money(0), AssignedName(Char.AssignedName), Action(0),
   DataBase(Char.DataBase), MotherEntity(0),
   PolymorphBackup(0), EquipmentState(0), SquareUnder(0),
   AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories),
@@ -449,9 +450,9 @@ character::character(ccharacter& Char)
 
 character::character()
 : entity(HAS_BE), NP(50000), AP(0), TemporaryState(0), Team(0),
-  GoingTo(ERROR_V2), Money(0), Action(0), MotherEntity(0),
-  PolymorphBackup(0), EquipmentState(0), SquareUnder(0),
-  RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0),
+  GoingTo(ERROR_V2), RandomMoveDir(femath::RandReal(8)),
+  Money(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0),
+  SquareUnder(0), RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0),
   BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER),
   WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0)
 {
@@ -1934,9 +1935,23 @@ truth character::MoveRandomly()
   if(!IsEnabled())
     return false;
 
-  for(int c = 0; c < 10; ++c)
+  double DirChange = femath::NormalDistributedRand(0.03);
+  RandomMoveDir += DirChange;
+  WrapFRef(RandomMoveDir, 0., 8.);
+
+  int Unit = Sign(DirChange);
+  if(!Unit) Unit = RAND_2 ? 1 : -1;
+
+  int Aim;
+  if(femath::RandReal(1) < RandomMoveDir - floor(RandomMoveDir))
+    Aim = floor(RandomMoveDir);
+  else
+    Aim = Wrap(static_cast<int>(ceil(RandomMoveDir)), 0, 8);
+
+  for(int Delta = 0; abs(Delta) <= 4;)
   {
-    v2 ToTry = game::GetMoveVector(RAND() & 7);
+    int Dir = Wrap(Aim + Delta, 0, 8);
+    v2 ToTry = game::GetClockwiseMoveVector(Dir);
 
     if(GetLevel()->IsValidPos(GetPos() + ToTry))
     {
@@ -1945,10 +1960,21 @@ truth character::MoveRandomly()
       if(!Square->IsDangerous(this)
 	 && !Square->IsScary(this)
 	 && TryMove(ToTry, false, false))
-	return true;
+      {
+        if(Delta)
+          RandomMoveDir = Dir;
+
+        return true;
+      }
     }
+
+    Delta = -Delta;
+
+    if(!Sign(Delta) || Sign(Delta) == Unit)
+      Delta += Unit;
   }
 
+  RandomMoveDir = femath::RandReal(8);
   return false;
 }
 
