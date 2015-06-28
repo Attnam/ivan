@@ -95,6 +95,17 @@ inline void WrapRef(type& Value, type Minimum, type Maximum)
 }
 
 template <class type>
+inline type WrapF(type Value, type Minimum, type Maximum)
+{
+  Value = fmod(Value - Minimum, Maximum - Minimum);
+  return Value >= 0. ? Value + Minimum : Value + Maximum;
+}
+
+template <class type>
+inline void WrapFRef(type& Value, type Minimum, type Maximum)
+{ Value = WrapF(Value, Minimum, Maximum); }
+
+template <class type>
 inline double WrapAverage(type X, type Y, type WrapLimit)
 {
   type Minimum = Min(X, Y);
