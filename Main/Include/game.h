@@ -173,6 +173,7 @@ class game
   static void Run();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
+  static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
   static cv2 GetRelativeMoveVector(int I) { return RelativeMoveVector[I]; }
   static cv2 GetBasicMoveVector(int I) { return BasicMoveVector[I]; }
   static cv2 GetLargeMoveVector(int I) { return LargeMoveVector[I]; }
@@ -440,6 +441,7 @@ class game
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
   static cv2 MoveVector[];
+  static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
   static cv2 BasicMoveVector[];
   static cv2 LargeMoveVector[];

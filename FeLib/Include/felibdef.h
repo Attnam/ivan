@@ -48,6 +48,9 @@ culong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 #endif
 
 template <class type>
+inline type Sign(type X) { return X > 0 ? 1 : X < 0 ? -1 : 0; }
+
+template <class type>
 inline type Max(type X, type Y) { return X >= Y ? X : Y; }
 
 template <class type>
@@ -75,6 +78,46 @@ inline void LimitRef(type& Value, type Minimum, type Maximum)
     Value = Minimum;
   else if(Value >= Maximum)
     Value = Maximum;
+}
+
+template <class type>
+inline type Wrap(type Value, type Minimum, type Maximum)
+{
+  Value = (Value - Minimum) % (Maximum - Minimum);
+  return (Value >= 0 ? Minimum : Maximum) + Value;
+}
+
+template <class type>
+inline void WrapRef(type& Value, type Minimum, type Maximum)
+{
+  Value = (Value - Minimum) % (Maximum - Minimum);
+  Value += (Value >= 0 ? Minimum : Maximum);
+}
+
+template <class type>
+inline type WrapF(type Value, type Minimum, type Maximum)
+{
+  Value = fmod(Value - Minimum, Maximum - Minimum);
+  return Value >= 0. ? Value + Minimum : Value + Maximum;
+}
+
+template <class type>
+inline void WrapFRef(type& Value, type Minimum, type Maximum)
+{ Value = WrapF(Value, Minimum, Maximum); }
+
+template <class type>
+inline double WrapAverage(type X, type Y, type WrapLimit)
+{
+  type Minimum = Min(X, Y);
+  type Maximum = Max(X, Y);
+
+  if(Maximum - Minimum > WrapLimit / 2)
+  {
+    double Avg = (Minimum + Maximum + WrapLimit) / 2.;
+    return Avg >= WrapLimit ? Avg - WrapLimit : Avg;
+  }
+  else
+    return (X + Y) / 2.;
 }
 
 template <class type>
