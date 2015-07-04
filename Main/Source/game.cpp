@@ -2271,15 +2271,7 @@ festring game::GetHomeDir()
 
 festring game::GetSaveDir()
 {
-#ifdef LINUX
-  festring Dir;
-  Dir << getenv("HOME") << "/.ivan/Save/";
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Save/";
-#endif
+  return GetHomeDir() + "Save/";
 }
 
 festring game::GetGameDir()
