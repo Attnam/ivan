@@ -255,6 +255,7 @@ truth game::Init(cfestring& Name)
 
 #ifdef LINUX
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
