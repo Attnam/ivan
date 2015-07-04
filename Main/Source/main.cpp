@@ -55,6 +55,11 @@ int Main(int argc, char **argv)
   igraph::Init();
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+#if defined(WIN32) || defined(__DJGPP__)
+  globalwindowhandler::SetScrshotDirectory("Scrshot/");
+#elif defined(LINUX)
+  globalwindowhandler::SetScrshotDirectory(festring(getenv("HOME")) << "/.ivan/Scrshot/");
+#endif
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
