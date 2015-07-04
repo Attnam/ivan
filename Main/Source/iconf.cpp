@@ -222,7 +222,7 @@ void ivanconfig::Initialize()
 #if defined(WIN32) || defined(__DJGPP__)
   configsystem::SetConfigFileName("ivan.cfg");
 #else
-  configsystem::SetConfigFileName(festring(getenv("HOME")) + "/.ivan.conf");
+  configsystem::SetConfigFileName(festring(getenv("HOME")) + "/.ivan/ivan.conf");
 #endif
   configsystem::Load();
   CalculateContrastLuminance();

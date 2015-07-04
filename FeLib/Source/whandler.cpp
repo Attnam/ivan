@@ -364,7 +364,7 @@ festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be u
 	#ifdef WIN32
 	ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
 	#else
-	ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
+	ScrshotName << festring(getenv("HOME")) << "/.ivan/Scrshot/Scrshot" << ScrshotNum << ".bmp";
 	#endif
 	
 	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");

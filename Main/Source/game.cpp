@@ -2259,7 +2259,7 @@ festring game::GetHomeDir()
 {
 #ifdef LINUX
   festring Dir;
-  Dir << getenv("HOME") << '/';
+  Dir << getenv("HOME") << "/.ivan/";
   return Dir;
 #endif
 
@@ -2272,7 +2272,7 @@ festring game::GetSaveDir()
 {
 #ifdef LINUX
   festring Dir;
-  Dir << getenv("HOME") << "/IvanSave/";
+  Dir << getenv("HOME") << "/.ivan/Save/";
   return Dir;
 #endif
 
