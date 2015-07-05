@@ -317,7 +317,7 @@ class game
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetHomeDir();
   static festring GetSaveDir();
-  static festring GetGameDir();
+  static festring GetDataDir();
   static festring GetBoneDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
   static void SetPlayerWasHurtByExplosion(truth What) { PlayerHurtByExplosion = What; }

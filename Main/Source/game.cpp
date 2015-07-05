@@ -222,7 +222,7 @@ void game::ClearCharacterDrawVector() { CharacterDrawVector.clear(); }
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(GetDataDir() + "Script/dungeon.dat", &GlobalValueMap);
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
@@ -1578,7 +1578,7 @@ truth game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GetGameDir() + "Script/define.dat", &GlobalValueMap);
+  inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
   festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -2274,7 +2274,7 @@ festring game::GetSaveDir()
   return GetHomeDir() + "Save/";
 }
 
-festring game::GetGameDir()
+festring game::GetDataDir()
 {
 #ifdef LINUX
   return DATADIR "/ivan/";

@@ -51,13 +51,13 @@ void igraph::Init()
   {
     AlreadyInstalled = true;
     graphics::Init();
-    graphics::SetMode("IVAN " IVAN_VERSION, festring(game::GetGameDir() + "Graphics/Icon.bmp").CStr(), v2(800, 600), ivanconfig::GetFullScreenMode());
+    graphics::SetMode("IVAN " IVAN_VERSION, festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(), v2(800, 600), ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
 #ifndef __DJGPP__
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
-    graphics::LoadDefaultFont(game::GetGameDir() + "Graphics/Font.pcx");
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.pcx");
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
     felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
@@ -66,11 +66,11 @@ void igraph::Init()
     int c;
 
     for(c = 0; c < RAW_TYPES; ++c)
-      RawGraphic[c] = new rawbitmap(game::GetGameDir() + RawGraphicFileName[c]);
+      RawGraphic[c] = new rawbitmap(game::GetDataDir() + RawGraphicFileName[c]);
 
     for(c = 0; c < GRAPHIC_TYPES; ++c)
     {
-      Graphic[c] = new bitmap(game::GetGameDir() + GraphicFileName[c]);
+      Graphic[c] = new bitmap(game::GetDataDir() + GraphicFileName[c]);
       Graphic[c]->ActivateFastFlag();
     }
 
@@ -445,7 +445,7 @@ void igraph::CreateBodyBitmapValidityMaps()
 
 void igraph::LoadMenu()
 {
-  Menu = new bitmap(game::GetGameDir() + "Graphics/Menu.pcx");
+  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.pcx");
 }
 
 void igraph::UnLoadMenu()
