@@ -245,11 +245,13 @@ truth game::Init(cfestring& Name)
 
 #ifdef WIN32
   _mkdir("Save");
+  _mkdir("Scrshot");
   _mkdir("Bones");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
+  mkdir("Scrshot", S_IRUSR|S_IWUSR);
   mkdir("Bones", S_IWUSR);
 #endif
 
