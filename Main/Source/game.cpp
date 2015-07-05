@@ -256,6 +256,7 @@ truth game::Init(cfestring& Name)
 #ifdef LINUX
   mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
@@ -2273,6 +2274,11 @@ festring game::GetHomeDir()
 festring game::GetSaveDir()
 {
   return GetHomeDir() + "Save/";
+}
+
+festring game::GetScrshotDir()
+{
+  return GetHomeDir() + "Scrshot/";
 }
 
 festring game::GetDataDir()
