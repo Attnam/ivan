@@ -254,6 +254,7 @@ truth game::Init(cfestring& Name)
 #endif
 
 #ifdef LINUX
+  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
