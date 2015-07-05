@@ -3,7 +3,7 @@ SUBDIRS = FeLib Main Script Graphics
 EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING .customs.emacs
 
 install-data-local:
-	-./mkinstalldirs -p $(localstatedir) $(bindir) $(datadir)/ivan/Script/ $(datadir)/ivan/Graphics/ $(localstatedir)/ivan/Bones/
+	-./mkinstalldirs -p $(localstatedir)/ivan $(localstatedir)/ivan/Bones/
 	-touch $(localstatedir)/ivan/ivan-highscore.scores
 	-chmod 666 $(localstatedir)/ivan/ivan-highscore.scores
 	-chmod -R u=rwx $(localstatedir)/ivan/Bones/
