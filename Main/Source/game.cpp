@@ -1199,12 +1199,14 @@ void game::CreateTeams()
 
 /* v2 Pos should be removed from xxxQuestion()s? */
 
-festring game::StringQuestion(cfestring& Topic, col16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, truth AllowExit, stringkeyhandler KeyHandler)
+/* If AllowExit is true the user can abort with the esc-key. The function returns ABORTED
+   (when user aborts with esc) or NORMAL_EXIT. */
+
+int game::StringQuestion(festring& Answer, cfestring& Topic, col16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, truth AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23)); // pos may be incorrect!
-  festring Return;
-  iosystem::StringQuestion(Return, Topic, v2(16, 6), Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
+  int Return = iosystem::StringQuestion(Answer, Topic, v2(16, 6), Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
   return Return;
 }
@@ -3081,12 +3083,15 @@ ulong game::IncreaseSquarePartEmitationTicks()
   return SquarePartEmitationTick;
 }
 
-void game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair)
+int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
   for(;;)
   {
-    festring Temp = DefaultQuestion(CONST_S("What do you want to wish for?"),
-				    DefaultWish);
+    festring Temp;
+
+    if(DefaultQuestion(Temp, CONST_S("What do you want to wish for?"), DefaultWish, AllowExit) == ABORTED)
+      return ABORTED;
+
     item* TempItem = protosystem::CreateItem(Temp, Wisher->IsPlayer());
 
     if(TempItem)
@@ -3099,12 +3104,12 @@ void game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair)
       else
 	ADD_MESSAGE(MsgSingle, TempItem->CHAR_NAME(INDEFINITE));
 
-      return;
+      return NORMAL_EXIT;
     }
   }
 }
 
-festring game::DefaultQuestion(festring Topic, festring& Default, stringkeyhandler KeyHandler)
+int game::DefaultQuestion(festring& Answer, festring Topic, festring& Default, truth AllowExit, stringkeyhandler KeyHandler)
 {
   festring ShortDefault = Default;
 
@@ -3117,12 +3122,15 @@ festring game::DefaultQuestion(festring Topic, festring& Default, stringkeyhandl
   if(!Default.IsEmpty())
     Topic << " [" << ShortDefault << ']';
 
-  festring Answer = StringQuestion(Topic, WHITE, 0, 80, false, KeyHandler);
+  if(StringQuestion(Answer, Topic, WHITE, 0, 80, AllowExit, KeyHandler) == ABORTED)
+    return ABORTED;
 
   if(Answer.IsEmpty())
     Answer = Default;
+  else
+    Default = Answer;
 
-  return Default = Answer;
+  return NORMAL_EXIT;
 }
 
 void game::GetTime(ivantime& Time)
