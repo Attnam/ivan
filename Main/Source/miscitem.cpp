@@ -110,9 +110,11 @@ void wand::Load(inputfile& SaveFile)
 
 void scrollofwishing::FinishReading(character* Reader)
 {
-  game::Wish(Reader,
-	     "%s appears from nothing and the scroll burns!",
-	     "Two %s appear from nothing and the scroll burns!");
+  while(game::Wish(Reader,
+                   "%s appears from nothing and the scroll burns!",
+                   "Two %s appear from nothing and the scroll burns!", true) == ABORTED)
+    if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
 
   RemoveFromSlot();
   SendToHell();
@@ -151,8 +153,15 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	continue;
     }
 
-    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to wish for?"),
-					  game::GetDefaultChangeMaterial());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to wish for?"),
+                             game::GetDefaultChangeMaterial(), true) == ABORTED)
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+        return;
+      else
+        continue;
+
     material* TempMaterial = protosystem::CreateMaterial(Temp);
 
     if(!TempMaterial)
@@ -509,7 +518,7 @@ truth oillamp::Apply(character* Applier)
 	    ADD_MESSAGE("You may wish for an item.");
 	    game::Wish(Applier,
 		       "%s appears from nothing and the genie flies happily away!",
-		       "Two %s appear from nothing and the genie flies happily away!");
+		       "Two %s appear from nothing and the genie flies happily away!", false);
 
 	    Genie->Remove();
 	    delete Genie;
@@ -2500,8 +2509,15 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
 
   for(;;)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to detect?"),
-					  game::GetDefaultDetectMaterial());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to detect?"),
+                             game::GetDefaultDetectMaterial(), true) == ABORTED)
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+        return;
+      else
+        continue;
+
     TempMaterial = protosystem::CreateMaterial(Temp);
 
     if(TempMaterial)

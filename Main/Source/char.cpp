@@ -9024,9 +9024,17 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
 
   while(!NewForm)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '?' for a list]"),
-					  game::GetDefaultPolymorphTo(),
-					  &game::PolymorphControlKeyHandler);
+    festring Temp;
+    int Return = game::DefaultQuestion(Temp, CONST_S("What do you want to become? [press '?' for a list]"),
+                                       game::GetDefaultPolymorphTo(), true,
+                                       &game::PolymorphControlKeyHandler);
+    if(Return == ABORTED)
+    {
+      ADD_MESSAGE("You choose not to polymorph.");
+      NewForm = this;
+      return false;
+    }
+    
     NewForm = protosystem::CreateMonster(Temp);
 
     if(NewForm)
@@ -9197,9 +9205,9 @@ void character::TryToName()
   else
   {
     festring Topic = CONST_S("What name will you give to ") + GetName(DEFINITE) + '?';
-    festring Name = game::StringQuestion(Topic, WHITE, 0, 80, true);
+    festring Name;
 
-    if(Name.GetSize())
+    if(game::StringQuestion(Name, Topic, WHITE, 0, 80, true) == NORMAL_EXIT && Name.GetSize())
       SetAssignedName(Name);
   }
 }

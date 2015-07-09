@@ -243,7 +243,7 @@ class game
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static festring StringQuestion(cfestring&, col16, festring::sizetype, festring::sizetype, truth, stringkeyhandler = 0);
+  static int StringQuestion(festring&, cfestring&, col16, festring::sizetype, festring::sizetype, truth, stringkeyhandler = 0);
   static long NumberQuestion(cfestring&, int, truth = false);
   static ulong IncreaseLOSTick();
   static ulong GetLOSTick() { return LOSTick; }
@@ -390,8 +390,8 @@ class game
   static int CalculateMinimumEmitationRadius(col24);
   static ulong IncreaseSquarePartEmitationTicks();
   static cint GetLargeMoveDirection(int I) { return LargeMoveDirection[I]; }
-  static void Wish(character*, cchar*, cchar*);
-  static festring DefaultQuestion(festring, festring&, stringkeyhandler = 0);
+  static int Wish(character*, cchar*, cchar*, truth);
+  static int DefaultQuestion(festring&, festring, festring&, truth, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
   static void IncreaseTurn() { ++Turn; }

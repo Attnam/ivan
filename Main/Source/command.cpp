@@ -767,7 +767,11 @@ truth commandsystem::WhatToEngrave(character* Char)
     return false;
   }
 
-  Char->GetNearLSquare(Char->GetPos())->Engrave(game::StringQuestion(CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true));
+  festring What;
+
+  if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
+    Char->GetNearLSquare(Char->GetPos())->Engrave(What);
+
   return false;
 }
 
@@ -1581,8 +1585,11 @@ truth commandsystem::SummonMonster(character* Char)
 
   while(!Summoned)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("Summon which monster?"),
-					  game::GetDefaultSummonMonster());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("Summon which monster?"), game::GetDefaultSummonMonster(), true) == ABORTED)
+      return false;
+
     Summoned = protosystem::CreateMonster(Temp);
   }
 
