@@ -474,7 +474,7 @@ ITEM(stethoscope, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; };
+  virtual truth IsAppliable(ccharacter*) const { return true; }
 };
 
 ITEM(scrollofenchantweapon, scroll)
