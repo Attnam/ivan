@@ -1029,7 +1029,7 @@ truth olterraincontainer::Open(character* Opener)
   return Success;
 }
 
-void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
+void olterraincontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 

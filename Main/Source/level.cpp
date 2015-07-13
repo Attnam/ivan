@@ -514,7 +514,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   if(ItemMap)
   {
     v2 ItemPos(Pos + *ItemMap->GetPos());
-    const fearray<contentscript<item> >* ItemScript;
+    const fearray<contentscript<item>>* ItemScript;
 
     for(int x = 0; x < ItemMap->GetSize()->X; ++x)
     {

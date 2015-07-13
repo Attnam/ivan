@@ -24,7 +24,7 @@ class bitmap;
 class cachedfont;
 class festring;
 
-typedef std::map<col16, std::pair<cachedfont*, cachedfont*> > fontcache;
+typedef std::map<col16, std::pair<cachedfont*, cachedfont*>> fontcache;
 
 class rawbitmap
 {

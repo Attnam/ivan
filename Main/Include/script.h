@@ -237,7 +237,7 @@ class contentscript<item> : public contentscripttemplate<item>
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual cchar* GetClassID() const;
   static datamap DataMap;
-  SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(fearray<contentscript<item>>, ItemsInside);
   SCRIPT_MEMBER(interval, Times);
   SCRIPT_MEMBER(interval, LifeExpectancy);
   FAST_SCRIPT_MEMBER(ulong, Category);
@@ -252,7 +252,7 @@ class contentscript<item> : public contentscripttemplate<item>
   FAST_SCRIPT_TRUTH(IsActive);
 };
 
-truth IsValidScript(const fearray<contentscript<item> >*);
+truth IsValidScript(const fearray<contentscript<item>>*);
 
 template <>
 class contentscript<character> : public contentscripttemplate<character>
@@ -266,7 +266,7 @@ class contentscript<character> : public contentscripttemplate<character>
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual cchar* GetClassID() const;
   static datamap DataMap;
-  SCRIPT_MEMBER(fearray<contentscript<item> >, Inventory);
+  SCRIPT_MEMBER(fearray<contentscript<item>>, Inventory);
   SCRIPT_MEMBER(fearray<packv2>, WayPoint);
   FAST_SCRIPT_MEMBER(uchar, Team);
   FAST_SCRIPT_MEMBER(uchar, Flags);
@@ -298,7 +298,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   virtual cchar* GetClassID() const;
-  SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(fearray<contentscript<item>>, ItemsInside);
   SCRIPT_MEMBER(festring, Text);
   FAST_SCRIPT_MEMBER(uchar, VisualEffects);
   FAST_SCRIPT_MEMBER(uchar, AttachedArea);
@@ -317,7 +317,7 @@ class squarescript : public script
   static datamap DataMap;
   SCRIPT_MEMBER(posscript, Position);
   SCRIPT_MEMBER(contentscript<character>, Character);
-  SCRIPT_MEMBER(fearray<contentscript<item> >, Items);
+  SCRIPT_MEMBER(fearray<contentscript<item>>, Items);
   SCRIPT_MEMBER(contentscript<glterrain>, GTerrain);
   SCRIPT_MEMBER(contentscript<olterrain>, OTerrain);
   SCRIPT_MEMBER(interval, Times);
@@ -325,7 +325,7 @@ class squarescript : public script
   FAST_SCRIPT_TRUTH(AttachRequired);
 };
 
-template <class type, class contenttype = contentscript<type> > class contentmap : public script
+template <class type, class contenttype = contentscript<type>> class contentmap : public script
 {
  public:
   typedef contentmap scripttype;
@@ -345,7 +345,7 @@ template <class type, class contenttype = contentscript<type> > class contentmap
   SCRIPT_MEMBER(v2, Pos);
 };
 
-typedef contentmap<item, fearray<contentscript<item> > > itemcontentmap;
+typedef contentmap<item, fearray<contentscript<item>>> itemcontentmap;
 typedef contentmap<character> charactercontentmap;
 typedef contentmap<glterrain> glterraincontentmap;
 typedef contentmap<olterrain> olterraincontentmap;
@@ -457,7 +457,7 @@ class dungeonscript : public script
  protected:
   static datamap DataMap;
   std::map<int, levelscript> Level;
-  std::list<std::pair<interval, levelscript> > RandomLevel;
+  std::list<std::pair<interval, levelscript>> RandomLevel;
   SCRIPT_MEMBER(levelscript, LevelDefault);
   SCRIPT_MEMBER(int, Levels);
   SCRIPT_MEMBER(festring, Description);
@@ -469,14 +469,14 @@ class teamscript : public script
  public:
   typedef teamscript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::vector<std::pair<int, int> >& GetRelation() const;
+  const std::vector<std::pair<int, int>>& GetRelation() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  std::vector<std::pair<int, int> > Relation;
+  std::vector<std::pair<int, int>> Relation;
   SCRIPT_MEMBER(int, KillEvilness);
 };
 
@@ -485,7 +485,7 @@ class gamescript : public script
  public:
   typedef gamescript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::list<std::pair<int, teamscript> >& GetTeam() const;
+  const std::list<std::pair<int, teamscript>>& GetTeam() const;
   const std::map<int, dungeonscript>& GetDungeon() const;
   void RandomizeLevels();
   virtual void Save(outputfile&) const;
@@ -494,7 +494,7 @@ class gamescript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  std::list<std::pair<int, teamscript> > Team;
+  std::list<std::pair<int, teamscript>> Team;
   std::map<int, dungeonscript> Dungeon;
   SCRIPT_MEMBER(int, Dungeons);
   SCRIPT_MEMBER(int, Teams);

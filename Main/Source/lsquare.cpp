@@ -960,7 +960,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
       Room->SetMasterID(Char->GetID());
   }
 
-  const fearray<contentscript<item> >* Items = SquareScript->GetItems();
+  const fearray<contentscript<item>>* Items = SquareScript->GetItems();
 
   if(Items)
     for(uint c1 = 0; c1 < Items->Size; ++c1)

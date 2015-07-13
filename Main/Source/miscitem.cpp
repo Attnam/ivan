@@ -1690,7 +1690,7 @@ int materialcontainer::GetSpoilLevel() const
   return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
 }
 
-void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
+void itemcontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 

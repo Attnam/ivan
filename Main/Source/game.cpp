@@ -1183,9 +1183,9 @@ void game::CreateTeams()
     if(c != 1)
       Team[1]->SetRelation(Team[c], HOSTILE);
 
-  const std::list<std::pair<int, teamscript> >& TeamScript = GetGameScript()->GetTeam();
+  const std::list<std::pair<int, teamscript>>& TeamScript = GetGameScript()->GetTeam();
 
-  for(std::list<std::pair<int, teamscript> >::const_iterator i = TeamScript.begin(); i != TeamScript.end(); ++i)
+  for(std::list<std::pair<int, teamscript>>::const_iterator i = TeamScript.begin(); i != TeamScript.end(); ++i)
   {
     for(uint c = 0; c < i->second.GetRelation().size(); ++c)
       GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);

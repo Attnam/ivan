@@ -95,7 +95,7 @@ INST_SCRIPT_MEMBER(squarescript);
 INST_SCRIPT_MEMBER(roomscript);
 INST_SCRIPT_MEMBER(levelscript);
 INST_SCRIPT_MEMBER(contentscript<character>);
-INST_SCRIPT_MEMBER(fearray<contentscript<item> >);
+INST_SCRIPT_MEMBER(fearray<contentscript<item>>);
 INST_SCRIPT_MEMBER(contentscript<glterrain>);
 INST_SCRIPT_MEMBER(contentscript<olterrain>);
 INST_SCRIPT_MEMBER(charactercontentmap);
@@ -483,7 +483,7 @@ character* contentscript<character>::Instantiate(int SpecialFlags) const
   if(GetTeam() != DEFAULT_TEAM)
     Instance->SetTeam(game::GetTeam(GetTeam()));
 
-  const fearray<contentscript<item> >* Inventory = GetInventory();
+  const fearray<contentscript<item>>* Inventory = GetInventory();
 
   if(Inventory)
     Instance->AddToInventory(*Inventory, SpecialFlags);
@@ -567,7 +567,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   if(GetEnchantment() != 0)
     Instance->SetEnchantment(GetEnchantment());
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -578,7 +578,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   return Instance;
 }
 
-truth IsValidScript(const fearray<contentscript<item> >* Array)
+truth IsValidScript(const fearray<contentscript<item>>* Array)
 {
   for(uint c = 0; c < Array->Size; ++c)
     if(IsValidScript(&Array->Data[c]))
@@ -631,7 +631,7 @@ olterrain* contentscript<olterrain>::Instantiate(int SpecialFlags) const
   if(Text)
     Instance->SetText(*Text);
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -1058,7 +1058,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 
 void dungeonscript::RandomizeLevels()
 {
-  for(std::list<std::pair<interval, levelscript> >::iterator i = RandomLevel.begin(); i != RandomLevel.end(); ++i)
+  for(std::list<std::pair<interval, levelscript>>::iterator i = RandomLevel.begin(); i != RandomLevel.end(); ++i)
   {
     int Index = i->first.Randomize();
     Level[Index].Combine(i->second);
@@ -1084,12 +1084,12 @@ void dungeonscript::Load(inputfile& SaveFile)
     for(std::map<int, levelscript>::iterator i1 = Level.begin(); i1 != Level.end(); ++i1)
       i1->second.SetBase(LevelDefault);
 
-    for(std::list<std::pair<interval, levelscript> >::iterator i2 = RandomLevel.begin(); i2 != RandomLevel.end(); ++i2)
+    for(std::list<std::pair<interval, levelscript>>::iterator i2 = RandomLevel.begin(); i2 != RandomLevel.end(); ++i2)
       i2->second.SetBase(LevelDefault);
   }
 }
 
-const std::vector<std::pair<int, int> >& teamscript::GetRelation() const { return Relation; }
+const std::vector<std::pair<int, int>>& teamscript::GetRelation() const { return Relation; }
 
 void teamscript::InitDataMap()
 {
@@ -1131,7 +1131,7 @@ void teamscript::Load(inputfile& SaveFile)
   SaveFile >> Relation;
 }
 
-const std::list<std::pair<int, teamscript> >& gamescript::GetTeam() const { return Team; }
+const std::list<std::pair<int, teamscript>>& gamescript::GetTeam() const { return Team; }
 const std::map<int, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
 
 void gamescript::InitDataMap()

@@ -6348,7 +6348,7 @@ void character::AddOriginalBodyPartID(int I, ulong What)
   }
 }
 
-void character::AddToInventory(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
+void character::AddToInventory(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)
 {
   for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
     if(ItemArray[c1].IsValid())
