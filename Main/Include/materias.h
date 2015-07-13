@@ -42,11 +42,11 @@ MATERIAL(solid, material)
   virtual void RemoveFromThermalEnergy(int);
  protected:
   virtual void PostConstruct();
-  ushort BurnCounter;
-  uchar BurnCheckCounter;
   int BurnData;
   int TransientThermalEnergy;
   int SteadyStateThermalEnergy;
+  ushort BurnCounter;
+  uchar BurnCheckCounter;
 };
 
 MATERIAL(organic, solid)

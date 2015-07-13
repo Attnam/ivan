@@ -14,7 +14,7 @@
 
 godprototype::godprototype(godspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
-god::god() : Relation(0), Timer(0), Known(false), LastPray(-1) { }
+god::god() : Relation(0), LastPray(-1), Timer(0), Known(false) { }
 int god::GetBasicAlignment() const { return NEUTRAL; }
 
 void god::Pray()
