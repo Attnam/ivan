@@ -47,8 +47,6 @@ febot::wordchain* febot::CreateWordChain(const febot::wordchain* WordChain, cfes
 
 void febot::Save(outputfile& SaveFile) const
 {
-
-
   /*SaveFile << ulong(WordChainSet.size());
     fwordset::const_iterator i1;*/
 

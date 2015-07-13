@@ -200,7 +200,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
-  memset(&Event,0,sizeof(SDL_Event));
+  memset(&Event, 0, sizeof(SDL_Event));
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
@@ -334,49 +334,50 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:
-     KeyPressed = Event->text.text[0];
-     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-        == KeyBuffer.end())
-       KeyBuffer.push_back(KeyPressed);
+    KeyPressed = Event->text.text[0];
+    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
+       == KeyBuffer.end())
+      KeyBuffer.push_back(KeyPressed);
 #endif
   }
 }
 
 // returns true if shift is being pressed
 // else false
-truth globalwindowhandler::ShiftIsDown() {
+truth globalwindowhandler::ShiftIsDown()
+{
   return false;
-
 }
 
-festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be used for screenshot
-	static int ScrshotCount = 0;
+festring globalwindowhandler::ScrshotNameHandler() // returns filename to be used for screenshot
+{
+  static int ScrshotCount = 0;
 
-	festring ScrshotNum;
-	if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
-		ScrshotNum << "00" << ScrshotCount;
-	else if (ScrshotCount < 100)
-		ScrshotNum << "0" << ScrshotCount;
-	else
-		ScrshotNum << ScrshotCount;
-	
-	festring ScrshotName;
-	#ifdef WIN32
-	ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
-	#else
-	ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
-	#endif
-	
-	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
-	if (Scrshot) {
-    // file exists; close file and increment ScrshotCount
-		fclose(Scrshot);
-		++ScrshotCount;
-		return ScrshotNameHandler();
-	} 
+  festring ScrshotNum;
+  if(ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
+    ScrshotNum << "00" << ScrshotCount;
+  else if(ScrshotCount < 100)
+    ScrshotNum << "0" << ScrshotCount;
+  else
+    ScrshotNum << ScrshotCount;
 
-    // if file doesn't exist; we can use this filename
-	return ScrshotName;
-}
+  festring ScrshotName;
+#ifdef WIN32
+  ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
+#else
+  ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
 #endif
 
+  FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
+  if(Scrshot)
+  {
+    // file exists; close file and increment ScrshotCount
+    fclose(Scrshot);
+    ++ScrshotCount;
+    return ScrshotNameHandler();
+  }
+
+  // if file doesn't exist; we can use this filename
+  return ScrshotName;
+}
+#endif

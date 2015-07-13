@@ -218,8 +218,8 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   truth Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   v2 BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
-	
-  if(IsBurning()) //is burning is sometimes initially filled with crap, so Burning should be initialised to zero
+
+  if(IsBurning()) // is burning is sometimes initially filled with crap, so Burning should be initialised to zero
   {
 	  SpecialFlags |= ST_FLAMES;
   }
@@ -476,7 +476,7 @@ void object::CalculateEmitation()
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
-      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); //Use a value of emitation related to the burn level of the object
+      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); // Use a value of emitation related to the burn level of the object
     }
   }
 }

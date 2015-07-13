@@ -123,8 +123,8 @@ cchar* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+
 god** game::God;
 
 cint game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
-cint game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
-cint game::MoveNetHackCommandKey[] = { 'y','k','u','h','l','b','j','n','.' };
+cint game::MoveAbnormalCommandKey[] = { '7', '8', '9', 'u', 'o', 'j', 'k', 'l', '.' };
+cint game::MoveNetHackCommandKey[] = { 'y', 'k', 'u', 'h', 'l', 'b', 'j', 'n', '.' };
 
 cv2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
 cv2 game::ClockwiseMoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(1, 0), v2(1, 1), v2(0, 1), v2(-1, 1), v2(-1, 0), v2(0, 0) };
@@ -170,17 +170,20 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
-void game::AddCharacterID(character* Char, ulong ID) {
+void game::AddCharacterID(character* Char, ulong ID)
+{
   if(CharacterIDMap.find(ID) != CharacterIDMap.end())
     int esko = esko = 2;
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
-void game::RemoveCharacterID(ulong ID) {
+void game::RemoveCharacterID(ulong ID)
+{
   if(CharacterIDMap.find(ID) == CharacterIDMap.end())
     int esko = esko = 2;
   CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
-void game::AddItemID(item* Item, ulong ID) {
+void game::AddItemID(item* Item, ulong ID)
+{
   if(ItemIDMap.find(ID) != ItemIDMap.end())
     int esko = esko = 2;
   ItemIDMap.insert(std::make_pair(ID, Item));
@@ -192,12 +195,14 @@ void game::RemoveItemID(ulong ID)
 
   if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
 }
-void game::UpdateItemID(item* Item, ulong ID) {
+void game::UpdateItemID(item* Item, ulong ID)
+{
   if(ItemIDMap.find(ID) == ItemIDMap.end())
     int esko = esko = 2;
   ItemIDMap.find(ID)->second = Item;
 }
-void game::AddTrapID(entity* Trap, ulong ID) {
+void game::AddTrapID(entity* Trap, ulong ID)
+{
   if(TrapIDMap.find(ID) != TrapIDMap.end())
     int esko = esko = 2;
 
@@ -211,7 +216,8 @@ void game::RemoveTrapID(ulong ID)
 
   if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
 }
-void game::UpdateTrapID(entity* Trap, ulong ID) {
+void game::UpdateTrapID(entity* Trap, ulong ID)
+{
   if(TrapIDMap.find(ID) == TrapIDMap.end())
     int esko = esko = 2;
   TrapIDMap.find(ID)->second = Trap;
@@ -275,36 +281,36 @@ truth game::Init(cfestring& Name)
     }
    case NEW_GAME:
     {
-      iosystem::TextScreen(CONST_S( "You couldn't possibly have guessed this day would differ from any other.\n"
-				    "It began just as always. You woke up at dawn and drove off the giant spider\n"
-				    "resting on your face. On your way to work you had serious trouble avoiding\n"
-				    "the lions and pythons roaming wild around the village. After getting kicked\n"
-				    "by colony masters for being late you performed your twelve-hour routine of\n"
-				    "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
-				    "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
-				    "and trying to look happy when real food was distributed.\n\n"
-				    "Finally you were about to enjoy your free time by taking a quick dip in the\n"
-				    "nearby crocodile bay. However, at this point something unusual happened.\n"
-				    "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
-				    "colony, and were led directly to him."));
+      iosystem::TextScreen(CONST_S("You couldn't possibly have guessed this day would differ from any other.\n"
+				   "It began just as always. You woke up at dawn and drove off the giant spider\n"
+				   "resting on your face. On your way to work you had serious trouble avoiding\n"
+				   "the lions and pythons roaming wild around the village. After getting kicked\n"
+				   "by colony masters for being late you performed your twelve-hour routine of\n"
+				   "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
+				   "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
+				   "and trying to look happy when real food was distributed.\n\n"
+				   "Finally you were about to enjoy your free time by taking a quick dip in the\n"
+				   "nearby crocodile bay. However, at this point something unusual happened.\n"
+				   "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
+				   "colony, and were led directly to him."));
 
-      iosystem::TextScreen(CONST_S( "\"I have a task for you, citizen\", said the viceroy picking his golden\n"
-				    "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
-				    "central government is about to raise taxes. I have sent appeals to high\n"
-				    "priest Petrus but received no response. I fear my enemies in Attnam are\n"
-				    "plotting against me and intercepting my messages before they reach him!\"\n\n"
-				    "\"That is why you must travel to Attnam with a letter I'll give you and\n"
-				    "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
-				    "between. Because it's winter, all Attnamese ships are trapped by ice and\n"
-				    "I have none. Therefore you must venture through the small underwater tunnel\n"
-				    "connecting our islands. It is infested with monsters, but since you have\n"
-				    "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
-				    "You have never been so happy! According to the mansion's traveling\n"
-				    "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
-				    "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
-				    "like the diamonds of the imperial treasury. Not that you would believe a\n"
-				    "word. The point is that tomorrow you can finally forget your home and\n"
-				    "face the untold adventures ahead."));
+      iosystem::TextScreen(CONST_S("\"I have a task for you, citizen\", said the viceroy picking his golden\n"
+				   "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
+				   "central government is about to raise taxes. I have sent appeals to high\n"
+				   "priest Petrus but received no response. I fear my enemies in Attnam are\n"
+				   "plotting against me and intercepting my messages before they reach him!\"\n\n"
+				   "\"That is why you must travel to Attnam with a letter I'll give you and\n"
+				   "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
+				   "between. Because it's winter, all Attnamese ships are trapped by ice and\n"
+				   "I have none. Therefore you must venture through the small underwater tunnel\n"
+				   "connecting our islands. It is infested with monsters, but since you have\n"
+				   "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
+				   "You have never been so happy! According to the mansion's traveling\n"
+				   "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
+				   "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
+				   "like the diamonds of the imperial treasury. Not that you would believe a\n"
+				   "word. The point is that tomorrow you can finally forget your home and\n"
+				   "face the untold adventures ahead."));
 
       globalwindowhandler::InstallControlLoop(AnimationController);
       SetIsRunning(true);
@@ -2702,12 +2708,13 @@ character* game::CreateGhost()
 
 int game::GetMoveCommandKey(int I)
 {
-  switch(ivanconfig::GetDirectionKeyMap()){
-  case DIR_NORM: 
+  switch(ivanconfig::GetDirectionKeyMap())
+  {
+  case DIR_NORM:
     return MoveNormalCommandKey[I];
   case DIR_ALT:
     return MoveAbnormalCommandKey[I];
-  case DIR_HACK: 
+  case DIR_HACK:
 	return MoveNetHackCommandKey[I];
   }
 }
@@ -3622,7 +3629,7 @@ double game::GetGameSituationDanger()
 
 long game::GetTimeSpent()
 {
-  return time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
+  return time::TimeAdd(time::TimeDifference(time(0), LastLoad), TimePlayedBeforeLastLoad);
 }
 
 outputfile& operator<<(outputfile& SaveFile, const massacreid& MI)
@@ -3693,7 +3700,7 @@ void game::ShowDeathSmiley(bitmap* Buffer, truth)
 			TRANSPARENT_COLOR,
 			0 };
 
-  int Tick = globalwindowhandler::UpdateTick();  
+  int Tick = globalwindowhandler::UpdateTick();
 
   if(((Tick >> 1) & 31) == 1)
     B.Src.X = 48;

@@ -608,7 +608,7 @@ void lsquare::Load(inputfile& SaveFile)
   SaveFile >> Emitter >> SunEmitter;
   SaveFile >> Emitation >> Engraved >> Luminance;
   SaveFile >> SmokeAlphaSum >> reinterpret_cast<uchar&>(Flags) >> Memorized;
-  Flags &= INSIDE|DESCRIPTION_CHANGE; //only these flags are loaded
+  Flags &= INSIDE|DESCRIPTION_CHANGE; // only these flags are loaded
   Flags |= MEMORIZED_UPDATE_REQUEST;
   SecondarySunLightEmitation = ReadType<col24>(SaveFile);
   RoomIndex = ReadType<uchar>(SaveFile);
@@ -1475,7 +1475,7 @@ truth lsquare::Polymorph(const beamdata& Beam)
 
     Character->PolymorphRandomly(1, 999999, 5000 + RAND() % 5000);
   }
-  
+
   if(Engraved)
   {
     for(int c = 0; Engraved[c] != '\0'; ++c)
@@ -1641,11 +1641,11 @@ truth lsquare::Lightning(const beamdata& Beam)
 truth lsquare::DoorCreation(const beamdata& Beam)
 {
   if((!GetOLTerrain()
-      ||  GetOLTerrain()->IsSafeToCreateDoor())
+      || GetOLTerrain()->IsSafeToCreateDoor())
      && !GetCharacter()
      && (GetLevel()->IsOnGround()
 	 || (Pos.X > 0 && Pos.Y > 0
-	     &&  Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
+	     && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
   {
     if(Beam.Owner && GetRoom())
       GetRoom()->HostileAction(Beam.Owner);
@@ -2187,12 +2187,12 @@ void lsquare::DisplayFluidInfo(festring& Msg) const
   {
     festring TempMsg;
 
-	if (fluid::AddFluidInfo(Fluid, TempMsg)) //AddFluidInfo returns true in case 'are' should be used over 'is'
-		Msg << ". There are ";
-	else
-		Msg << ". There is ";
-	
-	Msg << TempMsg;
+    if(fluid::AddFluidInfo(Fluid, TempMsg)) // AddFluidInfo returns true in case 'are' should be used over 'is'
+      Msg << ". There are ";
+    else
+      Msg << ". There is ";
+
+    Msg << TempMsg;
     AddLocationDescription(Msg);
   }
 }

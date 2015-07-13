@@ -135,9 +135,9 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   Flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
   Window = SDL_CreateWindow(Title,
-			  SDL_WINDOWPOS_UNDEFINED,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          NewRes.X, NewRes.Y, Flags);
+                            SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED,
+                            NewRes.X, NewRes.Y, Flags);
   if(!Window)
     ABORT("Couldn't set video mode.");
 
@@ -185,9 +185,9 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   Texture = SDL_CreateTexture(Renderer,
-         SDL_PIXELFORMAT_RGB565,
-         SDL_TEXTUREACCESS_STREAMING,
-	 NewRes.X, NewRes.Y);
+                              SDL_PIXELFORMAT_RGB565,
+                              SDL_TEXTUREACCESS_STREAMING,
+                              NewRes.X, NewRes.Y);
 #endif
 
   globalwindowhandler::Init();
@@ -207,7 +207,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 				     rmask, gmask, bmask, 0);
 
   if(!TempSurface)
-      ABORT("CreateRGBSurface failed: %s\n", SDL_GetError());
+    ABORT("CreateRGBSurface failed: %s\n", SDL_GetError());
 
 #endif
 #endif
@@ -292,14 +292,17 @@ void graphics::SwitchMode()
 
   BlitDBToScreen();
 #else
-   ulong Flags = SDL_GetWindowFlags(Window);
-   if (Flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
-      SDL_ShowCursor(SDL_ENABLE);
-      SDL_SetWindowFullscreen(Window, 0);
-   } else {
-      SDL_ShowCursor(SDL_DISABLE);
-      SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-   }
+  ulong Flags = SDL_GetWindowFlags(Window);
+  if(Flags & SDL_WINDOW_FULLSCREEN_DESKTOP)
+  {
+    SDL_ShowCursor(SDL_ENABLE);
+    SDL_SetWindowFullscreen(Window, 0);
+  }
+  else
+  {
+    SDL_ShowCursor(SDL_DISABLE);
+    SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+  }
   BlitDBToScreen();
 #endif
 

@@ -542,10 +542,10 @@ bitmap* igraph::GenerateScarBitmap(int BodyPart, int Severity, int Color)
   bitmap* Scar = new bitmap(SILHOUETTE_SIZE, 0);
 
   v2 StartPos;
-  while(true) 
+  while(true)
   {
-    StartPos = v2(RAND_N(SILHOUETTE_SIZE.X),RAND_N(SILHOUETTE_SIZE.Y));
-    if(CacheBitmap->GetPixel(StartPos) != 0) 
+    StartPos = v2(RAND_N(SILHOUETTE_SIZE.X), RAND_N(SILHOUETTE_SIZE.Y));
+    if(CacheBitmap->GetPixel(StartPos) != 0)
       break;
   }
 

@@ -154,9 +154,9 @@ material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
-  if(Amount && Volume) 
+  if(Amount && Volume)
   {
-    if(DisablesPanicWhenConsumed() && Eater->TemporaryStateIsActivated(PANIC)) 
+    if(DisablesPanicWhenConsumed() && Eater->TemporaryStateIsActivated(PANIC))
     {
       if(Eater->IsPlayer())
       {
@@ -164,7 +164,7 @@ material* material::EatEffect(character* Eater, long Amount)
       }
       else if(Eater->CanBeSeenByPlayer())
       {
-	ADD_MESSAGE("%s relaxes a bit.", Eater->CHAR_NAME(DEFINITE));	
+	ADD_MESSAGE("%s relaxes a bit.", Eater->CHAR_NAME(DEFINITE));
       }
       Eater->DeActivateTemporaryState(PANIC);
     }
@@ -356,7 +356,7 @@ truth material::CauseExplosion(character* Idiot, long Damage)
       ADD_MESSAGE("%s steps in %s.", Idiot->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
     else if(Square->CanBeSeenByPlayer(true))
       ADD_MESSAGE("Something explodes!");
-    
+
     Square->GetLevel()->Explosion(0, "killed in a gas explosion", Square->GetPos(), Damage);
     return true;
   }

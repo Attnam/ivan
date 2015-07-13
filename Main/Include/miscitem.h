@@ -572,7 +572,6 @@ ITEM(scrollofgolemcreation, scroll)
   virtual void FinishReading(character*);
 };
 
-
 ITEM(gasgrenade, materialcontainer)
 {
  protected:

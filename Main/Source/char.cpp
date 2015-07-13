@@ -103,7 +103,7 @@ statedata StateData[STATES] =
     RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
     &character::PrintBeginInvisibilityMessage,
     &character::PrintEndInvisibilityMessage,
-    &character::BeginInvisibility,  &character::EndInvisibility,
+    &character::BeginInvisibility, &character::EndInvisibility,
     0,
     0,
     0
@@ -1877,7 +1877,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseExperience[c];
 
   SaveFile >> ExpModifierMap;
-  SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks 
+  SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks
 	   >> CounterToMindWormHatch;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
@@ -4380,7 +4380,7 @@ void character::DrawPanel(truth AnimationDraw) const
   static cchar* TirednessStateStrings[] = { "Fainting", "Exhausted" };
   static cpackcol16 TirednessStateColors[] = { RED, WHITE };
   int TirednessState = GetTirednessState();
-  if (TirednessState != UNTIRED)
+  if(TirednessState != UNTIRED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), TirednessStateColors[TirednessState], TirednessStateStrings[TirednessState]);
 
   if(game::PlayerIsRunning())
@@ -4471,8 +4471,8 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 
       Blocker->WeaponSkillHit(Enemy->CalculateWeaponSkillHits(this));
       Blocker->ReceiveDamage(this, Damage, PHYSICAL_DAMAGE);
-   
-      Blocker->BlockEffect(this, Enemy, Weapon, Type);    
+
+      Blocker->BlockEffect(this, Enemy, Weapon, Type);
 
       if(Weapon)
 	Weapon->ReceiveDamage(Enemy, Damage - NewDamage, PHYSICAL_DAMAGE);
@@ -4850,7 +4850,7 @@ void character::LycanthropyHandler()
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
-       && (IsPlayer() ? !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")):false))
+       && (IsPlayer() ? !game::TruthQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")) : false))
       return;
 
     Polymorph(werewolfwolf::Spawn(), 1000 + RAND() % 2000);
@@ -6675,7 +6675,6 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
 					 NONE_AS_CHOICE|NO_MULTI_SELECT,
 					 Sorter);
 
-
     if(Return == ESCAPED)
     {
       if(OldEquipment)
@@ -8198,8 +8197,9 @@ void character::DonateEquipmentTo(character* Character)
 }
 
 void character::ReceivePeaSoup(long)
-{					      // don't spawn fart smoke on the world map (smoke objects only have functions for lsquares, not wsquares)
-  if(!game::IsInWilderness() || !IsPlayer()){ // not sure if the AI eats while the player's on the world map, but smoke should still spawn in the dungeon if they do
+{					     // don't spawn fart smoke on the world map (smoke objects only have functions for lsquares, not wsquares)
+  if(!game::IsInWilderness() || !IsPlayer()) // not sure if the AI eats while the player's on the world map, but smoke should still spawn in the dungeon if they do
+  {
     lsquare* Square = GetLSquareUnder();
 
     if(Square->IsFlyable())
@@ -8891,24 +8891,26 @@ truth character::EquipmentScreen(stack* MainStack, stack* SecStack)
   felist List(CONST_S("Equipment menu [ESC exits]"));
   festring Entry;
   long TotalEquippedWeight;
-  
+
   for(;;)
   {
     List.Empty();
 	List.EmptyDescription();
-	
+
 	TotalEquippedWeight = 0;
-	  
-	for (int c = 0; c < GetEquipments(); ++c){ // if equipment exists, add to TotalEquippedWeight
+
+	for(int c = 0; c < GetEquipments(); ++c) // if equipment exists, add to TotalEquippedWeight
+        {
 		item* Equipment = GetEquipment(c);
 		TotalEquippedWeight += (Equipment) ? Equipment->GetWeight() : 0;
 	}
-	 
-	if (IsPlayer()) {
+
+	if(IsPlayer())
+        {
 		festring Total("Total weight: ");
 		Total << TotalEquippedWeight;
 		Total << "g";
-		
+
 		List.AddDescription(CONST_S(""));
 		List.AddDescription(Total);
 	}
@@ -9064,7 +9066,7 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
       NewForm = this;
       return false;
     }
-    
+
     NewForm = protosystem::CreateMonster(Temp);
 
     if(NewForm)
@@ -10007,10 +10009,10 @@ int character::CheckForBlock(character* Enemy, item* Weapon,
 			     double ToHitValue, int Damage,
 			     int Success, int Type)
 {
-  return Damage; 
+  return Damage;
 }
 
-void character::ApplyAllGodsKnownBonus() 
+void character::ApplyAllGodsKnownBonus()
 {
   stack* AddPlace = GetStackUnder();
 
@@ -10023,7 +10025,7 @@ void character::ApplyAllGodsKnownBonus()
   AddPlace->AddItem(NewBook);
 
   ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA\"");
-  ADD_MESSAGE("%s materializes near your feet.", 
+  ADD_MESSAGE("%s materializes near your feet.",
 	      NewBook->CHAR_NAME(INDEFINITE));
 }
 
@@ -10035,7 +10037,7 @@ void character::ReceiveSirenSong(character* Siren)
   if(!RAND_N(4))
   {
     if(IsPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", 
+      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.",
 		  Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
@@ -10048,7 +10050,7 @@ void character::ReceiveSirenSong(character* Siren)
   if(!IsPlayer() && IsCharmable() && !RAND_N(5))
   {
     ChangeTeam(Siren->GetTeam());
-    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), 
+    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE),
 		Siren->CHAR_NAME(DEFINITE));
     return;
   }
@@ -10061,15 +10063,15 @@ void character::ReceiveSirenSong(character* Siren)
     {
       if(IsPlayer())
       {
-	ADD_MESSAGE("%s music persuades you to give %s to %s as a present.", 
-		    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), 
+	ADD_MESSAGE("%s music persuades you to give %s to %s as a present.",
+		    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE),
 		    Siren->CHAR_OBJECT_PRONOUN);
       }
       else
       {
-	ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.", 
-		    CHAR_NAME(DEFINITE), 
-		    What->CHAR_NAME(INDEFINITE), 
+	ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.",
+		    CHAR_NAME(DEFINITE),
+		    What->CHAR_NAME(INDEFINITE),
 		    Siren->CHAR_NAME(DEFINITE),
 		    Siren->CHAR_OBJECT_PRONOUN);
 
@@ -10139,7 +10141,7 @@ void character::ReceiveItemAsPresent(item* Present)
     GetStack()->AddItem(Present);
   else
     GetStackUnder()->AddItem(Present);
-} 
+}
 
 /* returns 0 if no enemies in sight */
 
@@ -10237,15 +10239,15 @@ truth character::CanTameWithScroll(const character* Tamer) const
 truth character::CanTameWithResurrection(const character* Tamer) const
 {
 	int TamingDifficulty = GetTamingDifficulty();
-	
+
 	if (TamingDifficulty == NO_TAMING)
 		return false;
 	if (TamingDifficulty == 0)
 		return true;
-	
-	return (Tamer->GetAttribute(CHARISMA) >= TamingDifficulty/2);
-	//	|| Tamer->GetAttribute(CHARISMA) + WisIntAvg >= (2*TamingDifficulty)/3);
-		//Alternate formula 2/3 * TamingDifficulty <= CHA + (WIS+INT)/2
+
+	return (Tamer->GetAttribute(CHARISMA) >= TamingDifficulty / 2);
+	//	|| Tamer->GetAttribute(CHARISMA) + WisIntAvg >= (2 * TamingDifficulty) / 3);
+		// Alternate formula 2/3 * TamingDifficulty <= CHA + (WIS + INT) / 2
 }
 
 truth character::CheckSadism()

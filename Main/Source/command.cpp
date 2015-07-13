@@ -33,23 +33,25 @@
 #include "proto.h"
 #endif
 
-command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, 
-									char Key3, truth UsableInWilderness, truth WizardModeFunction) 
-		: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), 
-						UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) 
+command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2,
+									char Key3, truth UsableInWilderness, truth WizardModeFunction)
+		: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+						UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
 }
 
-char command::GetKey() const {
- switch(ivanconfig::GetDirectionKeyMap()){
- case DIR_NORM: //Normal
-	return Key1;
- case DIR_ALT: //Alternative
-	return Key2;
- case DIR_HACK: //Nethack
-	return Key3;
- }
-} 
+char command::GetKey() const
+{
+  switch(ivanconfig::GetDirectionKeyMap())
+  {
+   case DIR_NORM: // Normal
+    return Key1;
+   case DIR_ALT: // Alternative
+    return Key2;
+   case DIR_HACK: // Nethack
+    return Key3;
+  }
+}
 
 command* commandsystem::Command[] =
 {
@@ -71,12 +73,12 @@ command* commandsystem::Command[] =
   new command(&GoUp, "go up", '<', '<', '<', true),
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
-  new command(&Look, "look", 'l', 'L', 'L',true),
-  new command(&AssignName, "name", 'n', 'n', 'N',false),
+  new command(&Look, "look", 'l', 'L', 'L', true),
+  new command(&AssignName, "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&PickUp, "pick up", ',', ',', ',', false),
-  new command(&Pray, "pray", 'p', 'p', 'p',false),
+  new command(&Pray, "pray", 'p', 'p', 'p', false),
   new command(&Quit, "quit", 'Q', 'Q', 'Q', true),
   new command(&Read, "read", 'r', 'r', 'r', false),
   new command(&Rest, "rest/heal", 'h', 'h', 'H', true),
@@ -750,7 +752,7 @@ truth commandsystem::Look(character* Char)
   festring Msg;
   if(!game::IsInWilderness())
     Char->GetLevel()->AddSpecialCursors();
-  
+
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
   else

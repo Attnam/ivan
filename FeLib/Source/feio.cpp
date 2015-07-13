@@ -129,7 +129,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
 		   col16 Color, cfestring& SmallText1,
 		   cfestring& SmallText2)
 {
-  if(CountChars('\r',sMS) < 1)
+  if(CountChars('\r', sMS) < 1)
     return (-1);
 
   truth bReady = false;
@@ -159,7 +159,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       festring::sizetype RPos = sCopyOfMS.Find('\r');
       VeryUnGuruPrintf = sCopyOfMS;
       VeryUnGuruPrintf.Resize(RPos);
-      sCopyOfMS.Erase(0,RPos+1);
+      sCopyOfMS.Erase(0, RPos + 1);
       v2 PrintPos(Pos.X - (VeryUnGuruPrintf.GetSize() << 2),
 		  Pos.Y - 30 - (CountChars('\r', Topic)
 				+ CountChars('\r', sMS)) * 25 + i * 25);
@@ -173,7 +173,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       festring::sizetype RPos = sCopyOfMS.Find('\r');
       VeryUnGuruPrintf = sCopyOfMS;
       VeryUnGuruPrintf.Resize(RPos);
-      sCopyOfMS.Erase(0,RPos+1);
+      sCopyOfMS.Erase(0, RPos + 1);
       int XPos = Pos.X - ((VeryUnGuruPrintf.GetSize() + 3) << 2);
       int YPos = Pos.Y - CountChars('\r', sMS) * 25 + i * 50;
       Buffer.Fill(XPos, YPos, ((VeryUnGuruPrintf.GetSize() + 3) << 3), 9, 0);
@@ -194,7 +194,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       festring::sizetype RPos = sCopyOfMS.Find('\r');
       VeryUnGuruPrintf = sCopyOfMS;
       VeryUnGuruPrintf.Resize(RPos);
-      sCopyOfMS.Erase(0,RPos+1);
+      sCopyOfMS.Erase(0, RPos + 1);
       v2 PrintPos(3, RES.Y - CountChars('\r', SmallText1) * 10 + i * 10);
       FONT->Printf(&Buffer, PrintPos, Color, "%s", VeryUnGuruPrintf.CStr());
 
@@ -207,7 +207,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       festring::sizetype RPos = sCopyOfMS.Find('\r');
       VeryUnGuruPrintf = sCopyOfMS;
       VeryUnGuruPrintf.Resize(RPos);
-      sCopyOfMS.Erase(0,RPos+1);
+      sCopyOfMS.Erase(0, RPos + 1);
       v2 PrintPos(RES.X - (VeryUnGuruPrintf.GetSize() << 3) - 2,
 		  RES.Y - CountChars('\r', SmallText2) * 10 + i * 10);
       FONT->Printf(&Buffer, PrintPos, Color, "%s", VeryUnGuruPrintf.CStr());
@@ -233,7 +233,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
     }
     else
     {
-		//FONT->Printf(&Buffer, v2(100,100), Color, "%s","NUKES IS HERE!");
+		//FONT->Printf(&Buffer, v2(100, 100), Color, "%s", "NUKES IS HERE!");
       Buffer.FastBlit(DOUBLE_BUFFER);
       graphics::BlitDBToScreen();
       k = GET_KEY(false);
@@ -245,11 +245,11 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       if(iSelected > 0)
 	--iSelected;
       else
-	iSelected = (CountChars('\r',sMS)-1);
+	iSelected = (CountChars('\r', sMS)-1);
       break;
 
      case KEY_DOWN:
-      if(iSelected < (CountChars('\r',sMS)-1))
+      if(iSelected < (CountChars('\r', sMS)-1))
 	++iSelected;
       else
 	iSelected = 0;
@@ -260,7 +260,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       break;
 
      default:
-      if(k > 0x30 && k < 0x31 + CountChars('\r',sMS))
+      if(k > 0x30 && k < 0x31 + CountChars('\r', sMS))
 	return k - 0x31;
     }
   }

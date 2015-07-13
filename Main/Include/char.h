@@ -1079,7 +1079,7 @@ class character : public entity, public id
   void ReceiveMustardGasLiquid(int, long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
-  truth ForgetRandomThing(); 
+  truth ForgetRandomThing();
   void ApplyAllGodsKnownBonus();
   item* GiveMostExpensiveItem(character*);
   void ReceiveItemAsPresent(item*);

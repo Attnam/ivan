@@ -1443,7 +1443,7 @@ void bitmap::CreateFlies(ulong Seed, int Frame, int FlyAmount)
 
     v2 Where;
     Where.X = int(StartPos.X + sin(Constant + Temp) * 3);
-    Where.Y = int(StartPos.Y + sin(2*(Constant + Temp)) * 3);
+    Where.Y = int(StartPos.Y + sin(2 * (Constant + Temp)) * 3);
     PowerPutPixel(Where.X, Where.Y, MakeRGB16(40, 40, 60), 255, FLY_PRIORITY);
   }
 
@@ -2053,7 +2053,7 @@ void cachedfont::PrintCharacter(cblitdata B) const
   {
     culong* FontPtr = reinterpret_cast<culong*>(*SrcLine + B.Src.X);
 	// I don't know how correct this is, but longs are 64 bit on 64 bit.
-    culong* EndPtr = FontPtr + (20/sizeof(ulong));
+    culong* EndPtr = FontPtr + (20 / sizeof(ulong));
     culong* MaskPtr = reinterpret_cast<culong*>(*SrcMaskLine + B.Src.X);
     ulong* DestPtr = reinterpret_cast<ulong*>(*DestLine + B.Dest.X);
 

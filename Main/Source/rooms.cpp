@@ -189,10 +189,10 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;
     }
-    
+
     if(ForSale->WillExplodeSoon())
     {
-      ADD_MESSAGE("\"Hey that %s is primed! Take it out! OUT, I SAY!\"", 
+      ADD_MESSAGE("\"Hey that %s is primed! Take it out! OUT, I SAY!\"",
 		  ForSale->CHAR_NAME(UNARTICLED));
       return false;
     }
@@ -917,7 +917,7 @@ void cathedral::AddItemEffect(item* Dropped)
     /* position is in kamikaze dwarf room */
 
     Dropped->RemoveFromSlot();
-    game::GetCurrentLevel()->GetLSquare(18,21)
+    game::GetCurrentLevel()->GetLSquare(18, 21)
       ->GetStack()->AddItem(Dropped, false);
 
     if(Dropped->CanBeSeenByPlayer())

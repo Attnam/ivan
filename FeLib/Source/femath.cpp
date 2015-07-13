@@ -129,7 +129,7 @@ double femath::NormalDistributedRand(double StandardDeviation)
   static double z0, z1;
   static bool Generate = false;
 
-  if ((Generate = !Generate))
+  if((Generate = !Generate))
   {
     double u1 = sqrt(-2 * log(RandReal()));
     double u2 = 2 * FPI * RandReal();
@@ -153,7 +153,6 @@ int femath::WeightedRand(long* Possibility, long TotalPossibility)
       return c;
   }
 }
-
 
 int femath::WeightedRand(const std::vector<long>& Possibility,
 			 long TotalPossibility)

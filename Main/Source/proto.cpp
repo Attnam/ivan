@@ -422,7 +422,7 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
         festring Q = "Do you want to wish for ";
 	    Item->AddName(Q, INDEFINITE|STRIPPED);
 	    Q << "? [y/N]";
-	
+
 	    if(!game::TruthQuestion(Q))
 	    {
 	      delete Item;

@@ -216,7 +216,7 @@ class material
   truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
   DATA_BASE_VALUE(int, FireResistance);
-  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual void SetIsBurning(int What) { Burning = What; }
   virtual int IsBurning() const { return Burning; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SetBurnLevel(int, truth) { }

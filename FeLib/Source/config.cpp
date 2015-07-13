@@ -65,7 +65,6 @@ scrollbaroption::scrollbaroption(cchar* Name,
 	       ChangeInterface, ValueChanger),
   BarHandler(BarHandler) { }
 
-
 truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
 			 void (*ValueDisplayer)(const truthoption*, festring&),
 			 truth (*ChangeInterface)(truthoption*),
@@ -229,7 +228,7 @@ truth configsystem::NormalNumberChangeInterface(numberoption* O)
 
 truth configsystem::NormalCycleChangeInterface(cycleoption* O)
 {
-  O->ChangeValue((O->Value+1) % O->CycleCount);
+  O->ChangeValue((O->Value + 1) % O->CycleCount);
   return true;
 }
 void stringoption::SaveValue(std::ofstream& SaveFile) const

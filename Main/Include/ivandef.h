@@ -172,7 +172,6 @@ const name##prototype name::ProtoType
 #define PSI 512
 #define THROW 32768
 
-
 #define UNDEFINED 0
 #define MALE 1
 #define FEMALE 2
@@ -674,7 +673,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define NO_MOVE 0
 #define WALK 1
 #define SWIM 2
-#define FLY  4
+#define FLY 4
 #define ETHEREAL 8
 #define ANY_MOVE 15
 

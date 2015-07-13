@@ -534,10 +534,10 @@ void petrus::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]"), REQUIRES_ANSWER))
     {
-      game::TextScreen(CONST_S( "The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
-				"Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
-				"receive a small dukedom in the middle of tundra where you rule with justice till\n"
-				"the end of your content life.\n\nYou are victorious!"));
+      game::TextScreen(CONST_S("The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
+                               "Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
+                               "receive a small dukedom in the middle of tundra where you rule with justice till\n"
+                               "the end of your content life.\n\nYou are victorious!"));
 
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
@@ -819,69 +819,71 @@ void hunter::BeTalkedTo()
 
 void tourist::BeTalkedTo()
 {
-	
-  if(GetConfig() == CHILD) {
-  	
-	  character* Spider = 0;
-	  
-	  //check all enabled members of PLAYER_TEAM	
-  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider() 
-			&& ((*i)->GetConfig() != LARGE && (*i)->GetConfig() != GIANT)) // check for lobh-se first
-      		Spider = *i;
-     
-	  if (!Spider) { // lobh-se not found		
-  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider()) // check for any spider
-      		Spider = *i; 
-      }
-      		
-	  static long Said;
-	  	
-	  if(GetRelation(PLAYER) == HOSTILE) // hostile response
-	  {
-	    ADD_MESSAGE("\"Daddy!!! Hit this man!!! He teases me!!!\"");
-	    return;
-	  }
-	  
-	  else if(Spider && !game::ChildTouristHasSpider()) {//implement truthquestion + proper dialogue  // quest fulfilled
-	    ADD_MESSAGE("\"Wow, what a cool spider!!! Can I have it mister? Can I?\"");
-		festring GiveSpider = CONST_S("Will you give " ) + Spider->CHAR_NAME(DEFINITE) + 
-			CONST_S(" to ") + CHAR_NAME(DEFINITE) + CONST_S("? [y/N]");
-		if (game::TruthQuestion(GiveSpider)){ 
-			ADD_MESSAGE("\"Thanks a lot mister!!! Here, you can have this.\"");
-		    item* Reward = 0;						  //create gift item
-								  
-			
 
-			if (Spider->GetConfig() != LARGE && Spider->GetConfig() != GIANT){ // must be lobh-se
-			Reward = scrollofwishing::Spawn();
-    		}
-			else if (Spider->GetConfig() == LARGE || Spider->GetConfig() == GIANT) { // other spider
-			Reward = stick::Spawn();
-			Reward->InitMaterials(MAKE_MATERIAL(BALSA_WOOD)); // balsa stick
-			}
-			else
-			ABORT("Man, this ain't my spider; this is a cell phone!");
-			
-			PLAYER->GetStack()->AddItem(Reward);					//add gift to player's inventory
-			ADD_MESSAGE("%s hands you %s.", CHAR_NAME(DEFINITE), Reward->CHAR_NAME(INDEFINITE)); 
-		    team* Team = game::GetTeam(TOURIST_TEAM);
-			Spider->ChangeTeam(Team); 						     	//change spider to tourist team
-			game::SetTouristHasSpider(); //sets game::TouristHasSpider to true
-			}
-		else
-			ADD_MESSAGE("\"Aw... you're no fun!!!\"");
-		}
-	  
-	  else if (!Spider && !game::ChildTouristHasSpider()) // kid does not have spider; normal chat
-	  	ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
-	  else if (game::ChildTouristHasSpider() && !(RAND() % 4))
-	  	 ADD_MESSAGE("\"My friends back home will be so jealous of my new pet spider!!!\"");
-	  else // kid has spider; normal chat (no spider request)
-	  	ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
-	}
-	
+  if(GetConfig() == CHILD)
+  {
+
+    character* Spider = 0;
+
+    // check all enabled members of PLAYER_TEAM
+    for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
+      if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider()
+         && ((*i)->GetConfig() != LARGE && (*i)->GetConfig() != GIANT)) // check for lobh-se first
+        Spider = *i;
+
+    if(!Spider) // lobh-se not found
+    {
+      for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
+        if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider()) // check for any spider
+          Spider = *i;
+    }
+
+    static long Said;
+
+    if(GetRelation(PLAYER) == HOSTILE) // hostile response
+    {
+      ADD_MESSAGE("\"Daddy!!! Hit this man!!! He teases me!!!\"");
+      return;
+    }
+
+    else if(Spider && !game::ChildTouristHasSpider()) // implement truthquestion + proper dialogue  // quest fulfilled
+    {
+      ADD_MESSAGE("\"Wow, what a cool spider!!! Can I have it mister? Can I?\"");
+      festring GiveSpider = CONST_S("Will you give ") + Spider->CHAR_NAME(DEFINITE) +
+                            CONST_S(" to ") + CHAR_NAME(DEFINITE) + CONST_S("? [y/N]");
+      if(game::TruthQuestion(GiveSpider))
+      {
+        ADD_MESSAGE("\"Thanks a lot mister!!! Here, you can have this.\"");
+        item* Reward = 0; // create gift item
+
+        if(Spider->GetConfig() != LARGE && Spider->GetConfig() != GIANT) // must be lobh-se
+        {
+          Reward = scrollofwishing::Spawn();
+        }
+        else if(Spider->GetConfig() == LARGE || Spider->GetConfig() == GIANT) // other spider
+        {
+          Reward = stick::Spawn();
+          Reward->InitMaterials(MAKE_MATERIAL(BALSA_WOOD)); // balsa stick
+        }
+        else
+          ABORT("Man, this ain't my spider; this is a cell phone!");
+
+        PLAYER->GetStack()->AddItem(Reward); // add gift to player's inventory
+        ADD_MESSAGE("%s hands you %s.", CHAR_NAME(DEFINITE), Reward->CHAR_NAME(INDEFINITE));
+        team* Team = game::GetTeam(TOURIST_TEAM);
+        Spider->ChangeTeam(Team); // change spider to tourist team
+        game::SetTouristHasSpider(); // sets game::TouristHasSpider to true
+      }
+      else
+        ADD_MESSAGE("\"Aw... you're no fun!!!\"");
+    }
+    else if(!Spider && !game::ChildTouristHasSpider()) // kid does not have spider; normal chat
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
+    else if(game::ChildTouristHasSpider() && !(RAND() % 4))
+      ADD_MESSAGE("\"My friends back home will be so jealous of my new pet spider!!!\"");
+    else // kid has spider; normal chat (no spider request)
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
+  }
   else // not child tourist; normal chat
     character::BeTalkedTo();
 }
@@ -1194,9 +1196,9 @@ void kamikazedwarf::GetAICommand()
 {
   if(GetHomeRoom())
     StandIdleAI();
-  else 
+  else
   {
-    if(!RAND_N(50)) 
+    if(!RAND_N(50))
     {
       SingRandomSong();
       return;
@@ -2388,7 +2390,7 @@ col16 kamikazedwarf::GetLegMainColor() const
 
 col16 housewife::GetHairColor() const
 {
-  static col16 HouseWifeHairColor[] = { MakeRGB16(48, 40, 8), MakeRGB16(60, 48, 24),  MakeRGB16(200, 0, 0) };
+  static col16 HouseWifeHairColor[] = { MakeRGB16(48, 40, 8), MakeRGB16(60, 48, 24), MakeRGB16(200, 0, 0) };
   return HouseWifeHairColor[RAND() % 3];
 }
 
@@ -2502,7 +2504,7 @@ void zombie::CreateBodyParts(int SpecialFlags)
   if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM)
   {
     Anyway = true;
-  } // Khaz-Zadm needs his hands... 
+  } // Khaz-Zadm needs his hands...
 
   for(int c = 0; c < BodyParts; ++c)
     if(Anyway || BodyPartIsVital(c) || RAND_N(3) || (c == HEAD_INDEX && !RAND_N(3)))
@@ -3581,7 +3583,7 @@ void humanoid::DetachBodyPart()
 {
   int ToBeDetached;
 
-  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
+  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l', 'r', 'L', 'R', 'h'))
   {
    case 'l':
     ToBeDetached = LEFT_ARM_INDEX;
@@ -3625,7 +3627,7 @@ void humanoid::SetFireToBodyPart()
 {
   int ToBeSetFireTo;
 
-  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
+  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l', 'r', 'L', 'R', 'h'))
   {
    case 'l':
     ToBeSetFireTo = LEFT_ARM_INDEX;
@@ -5126,7 +5128,7 @@ cchar* humanoid::GetNormalDeathMessage() const
     return "killed @k";
 }
 
-void kamikazedwarf::SingRandomSong()  
+void kamikazedwarf::SingRandomSong()
 {
   festring Song;
   festring God = GetMasterGod()->GetName();
@@ -5138,11 +5140,11 @@ void kamikazedwarf::SingRandomSong()
 
     switch(RAND_N(3))
     {
-     case 0: 
+     case 0:
       Bodypart = "palm";
       break;
 
-     case 1: 
+     case 1:
       Bodypart = "forehead";
       break;
 
@@ -5163,7 +5165,7 @@ void kamikazedwarf::SingRandomSong()
     Song = festring("Hark the herald angels sing. Glory to ") + God + "!";
     break;
    case 3:
-    Song = festring("O ") + God 
+    Song = festring("O ") + God
 	   + ", You are so big, So absolutely huge, Gosh, "
 	   "we're all really impressed down here, I can tell You.";
     break;
@@ -5185,7 +5187,7 @@ void kamikazedwarf::SingRandomSong()
     Song = festring("O ") + God + ", please don't simmer us in stock";
     break;
   }
-  
+
   EditAP(-1000);
 
   if(CanBeSeenByPlayer())
@@ -5200,7 +5202,7 @@ void imperialist::DisplayStethoscopeInfo(character*) const
   ADD_MESSAGE("You hear coins clinking inside.");
 }
 
-void humanoid::ApplySpecialAttributeBonuses() 
+void humanoid::ApplySpecialAttributeBonuses()
 {
   if(GetHead())
   {
@@ -5221,7 +5223,7 @@ void siren::GetAICommand()
 
 truth siren::TryToSing()
 {
-  truth Success=false;
+  truth Success = false;
   for(int d = 0; d < GetNeighbourSquares(); ++d)
   {
     lsquare* Square = GetNeighbourLSquare(d);

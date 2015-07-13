@@ -78,7 +78,7 @@ template <class type> struct scriptmember : public scriptmemberbase
 {
   virtual ~scriptmember() { delete Member; }
   scriptmember() : Member(0) { }
-  scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) { }
   scriptmember& operator=(const scriptmember&);
   virtual void ReadFrom(inputfile&);
   virtual void Replace(scriptmemberbase&);

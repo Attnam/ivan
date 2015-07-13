@@ -651,7 +651,7 @@ truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     else if(IsBurning() && Type & FIRE)
       GetMainMaterial()->AddToThermalEnergy(Damage);
   }
-  
+
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -1210,10 +1210,10 @@ void item::SignalBurnLevelChange()
   if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
     for(int c = 0; c < SquaresUnder; ++c)
       GetSquareUnder(c)->IncStaticAnimatedEntities();
-  
+
   SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // completely remove previously applied emitation increases
   SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // apply an emitation increase according to the current burn level
-  
+
   SignalVolumeAndWeightChange();
   UpdatePictures();
   SendNewDrawAndMemorizedUpdateRequest();
@@ -1225,7 +1225,7 @@ col24 item::GetEmitationDueToBurnLevel()
   if(MainMaterial)
   {
     int CurrentBurnLevel = GetBurnLevel();
-    
+
     int Red = 150 - 10 * CurrentBurnLevel;
     int Green = 120 - 8 * CurrentBurnLevel;
     int Blue = 90 - 6 * CurrentBurnLevel;
@@ -1395,7 +1395,7 @@ truth item::TestActivationEnergy(int Damage)
   truth Success = false;
 //  if(MainMaterial)
 //  {
-//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE));
 //    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
 //  }
 
@@ -1403,7 +1403,7 @@ truth item::TestActivationEnergy(int Damage)
   {
     int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
-    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
     {
       if(CanBeSeenByPlayer())
       {
@@ -1463,10 +1463,10 @@ void item::Extinguish(/*character* FireFighter, */truth SendMessages)
 
 void item::AddExtinguishMessage()
 {
-      ADD_MESSAGE("The flames on %s die away.", GetExtendedDescription().CStr());
+  ADD_MESSAGE("The flames on %s die away.", GetExtendedDescription().CStr());
 }
 
-//This is for anything made from phoenix feather
+// This is for anything made from phoenix feather
 void item::AddSpecialExtinguishMessageForPF()
 {
   if(CanBeSeenByPlayer())
@@ -1811,7 +1811,7 @@ const character* item::GetWearer() const
 {
   if(!GetSlot()->IsGearSlot())
     return 0;
-  
+
   return FindCarrier();
 }
 

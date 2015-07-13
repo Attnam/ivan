@@ -1018,7 +1018,8 @@ truth itemcontainer::Open(character* Opener)
 void itemcontainer::Save(outputfile& SaveFile) const
 {
   lockableitem::Save(SaveFile);
-  Contained->Save(SaveFile);}
+  Contained->Save(SaveFile);
+}
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
@@ -1214,7 +1215,7 @@ truth stethoscope::Apply(character* Doctor)
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
-  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);
+  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false, true);
 
   if(Dir == DIR_ERROR)
     return false;
@@ -1765,7 +1766,7 @@ void scrollofrepair::FinishReading(character* Reader)
       for(uint c = 0; c < Item.size(); ++c)
       {
 	Item[c]->RemoveRust();
-        Item[c]->RemoveBurns(); //restores HP for burnt artificial limbs as well
+        Item[c]->RemoveBurns(); // restores HP for burnt artificial limbs as well
         if(!Item[c]->IsBurning())
           Item[c]->ResetThermalEnergies();
         Item[c]->ResetBurning();
@@ -2838,15 +2839,15 @@ void itemcontainer::Disappear()
 
 truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if(Type & THROW || 
+  if(Type & THROW ||
      (Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(10 / Damage + 1)))))
   {
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
-			ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
-		material* GasMaterial = GetSecondaryMaterial();
+    material* GasMaterial = GetSecondaryMaterial();
     GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
-		RemoveFromSlot();
+    RemoveFromSlot();
     SendToHell();
     return true;
   }
@@ -2854,7 +2855,7 @@ truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
-truth holyhandgrenade::Apply(character* Applier) 
+truth holyhandgrenade::Apply(character* Applier)
 {
   if(PinPulledTick)
   {
@@ -2862,9 +2863,8 @@ truth holyhandgrenade::Apply(character* Applier)
     return false;
   }
 
-  if(Applier->IsPlayer()) {
+  if(Applier->IsPlayer())
     ADD_MESSAGE("You pull the pin off the grenade.");
-  }
 
   PinPulledTick = game::GetTick();
   Count = 0;
@@ -2915,15 +2915,15 @@ void holyhandgrenade::Be()
     }
     Msg << "\".";
     ADD_MESSAGE(Msg.CStr());
-    if(Count == 3) {
+    if(Count == 3)
       Explode();
-    }
   }
 }
 
 void holyhandgrenade::Explode()
 {
-  if(game::IsInWilderness()) {
+  if(game::IsInWilderness())
+  {
     ADD_MESSAGE("You manage to dispose of %s.", CHAR_NAME(DEFINITE));
     RemoveFromSlot();
     SendToHell();
@@ -2942,7 +2942,7 @@ void holyhandgrenade::Explode()
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
-  Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 300);  
+  Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 300);
 }
 
 v2 holyhandgrenade::GetBitmapPos(int Frame) const
@@ -2950,9 +2950,9 @@ v2 holyhandgrenade::GetBitmapPos(int Frame) const
   return PinPulledTick ? v2(96, 64) : v2(96, 32);
 }
 
-int holyhandgrenade::GetClassAnimationFrames() const 
-{ 
-  return 32; 
+int holyhandgrenade::GetClassAnimationFrames() const
+{
+  return 32;
 }
 
 alpha holyhandgrenade::GetOutlineAlpha(int Frame) const
@@ -2964,8 +2964,8 @@ alpha holyhandgrenade::GetOutlineAlpha(int Frame) const
 }
 
 col16 holyhandgrenade::GetOutlineColor(int) const
-{ 
-  return MakeRGB16(0, 255, 0); 
+{
+  return MakeRGB16(0, 255, 0);
 }
 
 void holyhandgrenade::Save(outputfile& SaveFile) const
@@ -2996,9 +2996,9 @@ void holyhandgrenade::PostConstruct()
   PinPullerID = 0;
 }
 
-col16 holyhandgrenade::GetMaterialColorB(int) const 
-{ 
-  return MakeRGB16(200, 10, 10); 
+col16 holyhandgrenade::GetMaterialColorB(int) const
+{
+  return MakeRGB16(200, 10, 10);
 }
 
 bool holyhandgrenade::WillExplodeSoon() const
@@ -3022,7 +3022,7 @@ void pantheonbook::FinishReading(character* Reader)
 
 col16 pantheonbook::GetMaterialColorA(int) const
 {
-  return MakeRGB16(200, 200, 200); 
+  return MakeRGB16(200, 200, 200);
 }
 
 col16 gorovitscopyoflenin::GetMaterialColorB(int) const
@@ -3030,31 +3030,28 @@ col16 gorovitscopyoflenin::GetMaterialColorB(int) const
   return MakeRGB16(30, 30, 30);
 }
 
-bool firstbornchild::SpecialOfferEffect(int GodNumber) {
+bool firstbornchild::SpecialOfferEffect(int GodNumber)
+{
   god* Receiver = game::GetGod(GodNumber);
   Receiver->AdjustRelation(2000); // to the max
 
   int AmountOfAngelAppears = false;
-  for(int c = 0; c < 10; ++c) {
-    character* Angel = Receiver->CreateAngel(PLAYER->GetTeam(), 1000); 
-    if(Angel) 
-    {
+  for(int c = 0; c < 10; ++c)
+  {
+    character* Angel = Receiver->CreateAngel(PLAYER->GetTeam(), 1000);
+    if(Angel)
       ++AmountOfAngelAppears;
-    }
   }
 
-  if(AmountOfAngelAppears == 0) {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased.", 
+  if(AmountOfAngelAppears == 0)
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased.",
 		CHAR_NAME(DEFINITE), Receiver->GetName());
-  } 
-  else if(AmountOfAngelAppears == 1) {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An angel appears! ", 
+  else if(AmountOfAngelAppears == 1)
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An angel appears! ",
 		CHAR_NAME(DEFINITE), Receiver->GetName());
-  } 
-  else {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An army of angels appears! ", 
+  else
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An army of angels appears! ",
 		CHAR_NAME(DEFINITE), Receiver->GetName());
-  }
 
   return true;
 }
@@ -3066,7 +3063,7 @@ truth bone::Necromancy(character* Necromancer)
   int NumberOfBones = 0;
   truth HasSkull = false;
   lsquare* LSquareUnder = GetLSquareUnder();
-  
+
   itemvector ItemVector;
   LSquareUnder->GetStack()->FillItemVector(ItemVector);
 
@@ -3094,14 +3091,14 @@ truth bone::Necromancy(character* Necromancer)
     NumberOfBones = 5;
 
   humanoid* Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
-  //character* Skeleton = skeleton::CreateSkeleton(Necromancer);
+  // character* Skeleton = skeleton::CreateSkeleton(Necromancer);
 
   if(Skeleton)
   {
     Skeleton->ChangeTeam(Necromancer ? Necromancer->GetTeam() : game::GetTeam(MONSTER_TEAM));
     Skeleton->PutToOrNear(GetPos());
-  
-    //then remove the bones, and the skull from the floor
+
+    // then remove the bones, and the skull from the floor
     for(uint c = 0; c < ItemVector.size(); ++c)
     {
       if(ItemVector[c]->IsABone() && (NumberOfBones > 0))
@@ -3120,7 +3117,7 @@ truth bone::Necromancy(character* Necromancer)
 
     if(Skeleton->CanBeSeenByPlayer())
       ADD_MESSAGE("%s rises from the ground.", Skeleton->CHAR_DESCRIPTION(INDEFINITE));
-    
+
     if(Necromancer && Necromancer->IsPlayer())
       game::DoEvilDeed(50);
 

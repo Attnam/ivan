@@ -49,7 +49,7 @@ long cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice
 truth cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
 col16 cloak::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
 cchar* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
-truth cloak::ReceiveDamage(character* Damager, int Damage,  int Type, int Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
+truth cloak::ReceiveDamage(character* Damager, int Damage, int Type, int Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
@@ -130,7 +130,7 @@ truth pickaxe::Apply(character* User)
 {
   if(IsBroken())
   {
-    ADD_MESSAGE("%s is totally broken.",CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s is totally broken.", CHAR_NAME(DEFINITE));
     return false;
   }
 
@@ -597,7 +597,7 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, "  << GetBaseBlockValueDescription();
+    Entry << " [" << GetWeight() << "g, " << GetBaseBlockValueDescription();
 
     if(!IsBroken())
       Entry << ", " << GetStrengthValueDescription();
@@ -1028,7 +1028,7 @@ void daggerofvenom::Be()
 {
   meleeweapon::Be();
 
-  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot()  && !RAND_N(10))
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
   {
     fluidvector FluidVector;
     FillFluidVector(FluidVector);
@@ -1037,7 +1037,7 @@ void daggerofvenom::Be()
     for(uint c = 0; c < FluidVector.size(); ++c)
     {
       liquid* L = FluidVector[c]->GetLiquid();
-      Volume += L->GetVolume();      //I imagine that there is a function I don't know to do this...
+      Volume += L->GetVolume(); // I imagine that there is a function I don't know to do this...
     }
 
     if(Volume < 90)
@@ -1051,11 +1051,11 @@ truth weepblade::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int B
 
   if(Enemy->IsEnabled() && !(RAND_N(3)))
   {
-    if(Enemy->IsPlayer() || Hitter->IsPlayer() 
+    if(Enemy->IsPlayer() || Hitter->IsPlayer()
        || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s weeping blade spills acid on %s.", 
+      ADD_MESSAGE("%s weeping blade spills acid on %s.",
 		  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
-    Enemy->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 25+RAND()%25));
+    Enemy->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 25));
     return BaseSuccess;
   }
   else
@@ -1064,50 +1064,47 @@ truth weepblade::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int B
 
 void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
 {
-   int CheckAttackType = 0;
-   if(!IsBroken())
-   {
-      if(!RAND_N(400))
+  int CheckAttackType = 0;
+  if(!IsBroken())
+  {
+    if(!RAND_N(400))
+    {
+      if(Weapon)
       {
-	if(Weapon)
-	{
-	  Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 200 + RAND() % 51));
-	  ADD_MESSAGE("%s is completely doused in sulpheric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
-	  return;
-	}
+        Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 200 + RAND() % 51));
+        ADD_MESSAGE("%s is completely doused in sulpheric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+        return;
       }
+    }
 
-      if(RAND_2 && Weapon)
-      {
-	Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 20 + RAND() % 41));
-	ADD_MESSAGE("%s weapon is splashed with acid from the shield!", Attacker->CHAR_POSSESSIVE_PRONOUN);
-      }
+    if(RAND_2 && Weapon)
+    {
+      Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 20 + RAND() % 41));
+      ADD_MESSAGE("%s weapon is splashed with acid from the shield!", Attacker->CHAR_POSSESSIVE_PRONOUN);
+    }
 
-      if(!RAND_N(5))
-      {
-	Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 5 + RAND() % 11));
-	ADD_MESSAGE("%s is splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
-	return;
-      }
+    if(!RAND_N(5))
+    {
+      Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 5 + RAND() % 11));
+      ADD_MESSAGE("%s is splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+      return;
+    }
 
-      if(RAND_2)
-      {
-	Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 26));
-	ADD_MESSAGE("%s is splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE));
-      }
-   }
-} 
-
+    if(RAND_2)
+    {
+      Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 26));
+      ADD_MESSAGE("%s is splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+    }
+  }
+}
 
 void wondersmellstaff::Break(character* Who, int Much)
 {
-    material* GasMaterial = GetSecondaryMaterial();
-    GetLevel()->GasExplosion(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100), GetLSquareUnder(), 0);
+  material* GasMaterial = GetSecondaryMaterial();
+  GetLevel()->GasExplosion(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100), GetLSquareUnder(), 0);
 
-    if(CanBeSeenByPlayer())
-    {
-      ADD_MESSAGE("%s unleashes a puff of a wonderous gas.", CHAR_NAME(DEFINITE));
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s unleashes a puff of a wonderous gas.", CHAR_NAME(DEFINITE));
 
-    }
-    meleeweapon::Break(Who,Much);
+  meleeweapon::Break(Who, Much);
 }

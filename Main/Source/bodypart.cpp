@@ -841,7 +841,7 @@ truth corpse::RaiseTheDead(character* Summoner)
     RemoveFromSlot();
     GetDeceased()->SetMotherEntity(0);
 
-    if(Summoner && GetDeceased()->CanTameWithResurrection(Summoner) 
+    if(Summoner && GetDeceased()->CanTameWithResurrection(Summoner)
 		&& !GetDeceased()->IsPlayer())
       GetDeceased()->ChangeTeam(Summoner->GetTeam());
 
@@ -1523,9 +1523,9 @@ double bodypart::GetTimeToDie(int Damage, double ToHitValue, double DodgeValue, 
   int Damage3 = (Damage << 1) + Damage;
   int Damage5 = (Damage << 2) + Damage;
   int TrueDamage = (19 * (Max((Damage3 >> 2) - TotalResistance, 0)
-			  +  Max((Damage5 >> 2) + 1 - (TotalResistance >> 1), 0))
+			  + Max((Damage5 >> 2) + 1 - (TotalResistance >> 1), 0))
 		    + (Max(((Damage3 + (Damage3 >> 1)) >> 2) - TotalResistance, 0)
-		       +  Max(((Damage5 + (Damage5 >> 1)) >> 2) + 3 - (TotalResistance >> 1), 0))) / 40;
+		       + Max(((Damage5 + (Damage5 >> 1)) >> 2) + 3 - (TotalResistance >> 1), 0))) / 40;
 
   int HP = UseMaxHP ? GetMaxHP() : GetHP();
 
@@ -1702,7 +1702,7 @@ truth bodypart::TestActivationEnergy(int Damage)
 {
 //  if(MainMaterial)
 //  {
-//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) );
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE));
 //    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
 //  }
   if(Damage <= 0)
@@ -1710,16 +1710,16 @@ truth bodypart::TestActivationEnergy(int Damage)
 
   character* Owner = GetMaster();
   truth Success = false;
-  
+
   if(Owner)
     if(Owner->BodyPartIsVital(GetBodyPartIndex()) || !CanBeBurned())
       return Success;
-  
+
   if(MainMaterial)
   {
     int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
-    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE) ))
+    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
     {
       if(Owner)
       {
@@ -1740,11 +1740,11 @@ truth bodypart::TestActivationEnergy(int Damage)
 void bodypart::SignalBurn(material* Material)
 {
   int BodyPartIndex = GetBodyPartIndex();
-  
+
   if(Master)
   {
     character* Owner = GetMaster();
-    
+
     if(Owner->IsPlayer())
       ADD_MESSAGE("Your %s burns away completely!", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
@@ -1786,7 +1786,7 @@ void bodypart::AddExtinguishMessage()
   if(Master)
   {
     character* Owner = GetMaster();
-    
+
     if(Owner->IsPlayer())
       ADD_MESSAGE("The flames on your %s die away.", GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
@@ -1801,7 +1801,7 @@ void bodypart::AddSpecialExtinguishMessageForPF()
   if(Master)
   {
     character* Owner = GetMaster();
-    
+
     if(Owner->IsPlayer())
       ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes peel away from your %s and it is made new by some innate virtue!", CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
@@ -1878,7 +1878,7 @@ void bodypart::Be()
 
       SpillBloodCounter = 0;
     }
-// Organics can have an active Be() function, if they are burning... they will normally burn completely before they spoil
+    // Organics can have an active Be() function, if they are burning... they will normally burn completely before they spoil
     if(Master->AllowSpoil() || !Master->IsEnabled() || !!IsBurning())
       MainMaterial->Be(ItemFlags);
 
@@ -2038,7 +2038,7 @@ void arm::CalculateAttributeBonuses()
   if(!UseMaterialAttributes())
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH, false));
-    DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY, false)) ; 
+    DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY, false));
 
     StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(ARM_STRENGTH, false));
     DexterityBonus -= CalculateBurnAttributePenalty(GetAttribute(DEXTERITY, false));
@@ -2068,7 +2068,7 @@ void leg::CalculateAttributeBonuses()
   if(!UseMaterialAttributes())
   {
     StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH, false));
-    AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY, false)) ; 
+    AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY, false));
 
     StrengthBonus -= CalculateBurnAttributePenalty(GetAttribute(LEG_STRENGTH, false));
     AgilityBonus -= CalculateBurnAttributePenalty(GetAttribute(AGILITY, false));
@@ -3481,7 +3481,7 @@ void bodypart::SetIsUnique(truth What)
   if(What)
     Flags |= UNIQUE;
   else
-    Flags &=  ~UNIQUE;
+    Flags &= ~UNIQUE;
 }
 
 void bodypart::SetIsInfectedByLeprosy(truth What)
@@ -3606,17 +3606,17 @@ truth bodypart::DamageTypeCanScar(int Type)
   return !(Type == POISON || Type == DRAIN);
 }
 
-void bodypart::GenerateScar(int Damage, int Type) 
+void bodypart::GenerateScar(int Damage, int Type)
 {
   Scar.push_back(scar());
   scar& NewScar = Scar.back();
   NewScar.Severity = 1 + RAND_N(1 + 5 * Damage / GetMaxHP());
-  
-  if(GetMaster()->IsPlayer()) 
+
+  if(GetMaster()->IsPlayer())
   {
     int ScarColor = MakeShadeColor(GetMainMaterial()->GetColor());
     NewScar.PanelBitmap = igraph::GenerateScarBitmap(GetBodyPartIndex(),
-						     NewScar.Severity, 
+						     NewScar.Severity,
 						     ScarColor);
     ADD_MESSAGE("Your %s is scarred.", CHAR_NAME(UNARTICLED));
   }
@@ -3637,7 +3637,7 @@ void bodypart::DrawScars(cblitdata& B) const
     {
       int ScarColor = MakeShadeColor(GetMainMaterial()->GetColor());
       Scar[c].PanelBitmap = igraph::GenerateScarBitmap(GetBodyPartIndex(),
-						       Scar[c].Severity, 
+						       Scar[c].Severity,
 						       ScarColor);
     }
 
@@ -3657,7 +3657,7 @@ inputfile& operator>>(inputfile& SaveFile, scar& Scar)
   return SaveFile;
 }
 
-int bodypart::CalculateScarAttributePenalty(int Attribute) const 
+int bodypart::CalculateScarAttributePenalty(int Attribute) const
 {
   double DoubleAttribute = Attribute;
 

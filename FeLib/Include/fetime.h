@@ -21,8 +21,8 @@ class time
 {
  public:
   static time_t GetZeroTime();
-  static time_t TimeAdd(time_t,time_t);
-  static time_t TimeDifference(time_t,time_t);
+  static time_t TimeAdd(time_t, time_t);
+  static time_t TimeDifference(time_t, time_t);
   static festring VerbalizeAsTimeSpent(time_t);
   static festring VerbalizeAsCalenderTime(time_t);
 };

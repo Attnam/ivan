@@ -119,7 +119,7 @@ void id::AddPostFix(festring& String, int) const
 {
   if(GetPostFix().GetSize())
     String << ' ' << GetPostFix();
-  
+
   if(NeedsBurningPostFix())
     String << " (on fire)";
 }

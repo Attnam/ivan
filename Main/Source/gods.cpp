@@ -371,12 +371,12 @@ void silva::PrayGoodEffect()
   if(PLAYER->IsBurning() || PLAYER->PossessesItem(&item::IsOnFire))
   {
     beamdata Beam
-    (
-      0,
-      CONST_S("drowned by the showers of ") + GetName(),
-      YOURSELF,
-      0
-    );
+      (
+        0,
+        CONST_S("drowned by the showers of ") + GetName(),
+        YOURSELF,
+        0
+      );
 
     lsquare* Square = PLAYER->GetLSquareUnder();
 
@@ -387,7 +387,7 @@ void silva::PrayGoodEffect()
   {
     ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
     int c, Tunnels = 2 + RAND() % 3;
-    if (!game::GetCurrentLevel()->EarthquakesAffectTunnels()) 
+    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
       Tunnels = 0;
 
     for(c = 0; c < Tunnels; ++c)

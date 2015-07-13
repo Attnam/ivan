@@ -424,7 +424,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
       ABORT("The Doors - You are strange.");
 
     v2 InsideDoorPos = OKForDoor[RAND() % OKForDoor.size()]; // this door
-    olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
+    olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); // Bug! Wrong room!
 
     if(Door && !(RAND() % 5) && *RoomScript->AllowLockedDoors())
     {
@@ -923,7 +923,7 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
 
 truth level::DrawExplosion(const explosion* Explosion) const
 {
-  static v2 StrengthPicPos[7] = { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32),v2(0, 32) };
+  static v2 StrengthPicPos[7] = { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32), v2(0, 32) };
   v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4, (6 - Explosion->Size) << 4);
   v2 SizeVect(16 + ((6 - Explosion->Size) << 5), 16 + ((6 - Explosion->Size) << 5));
   v2 OldSizeVect = SizeVect;
@@ -1223,8 +1223,8 @@ v2 level::GetEntryPos(ccharacter* Char, int I) const
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
       {
-	if(GetLSquare(x,y)->GetOLTerrain() && GetLSquare(x,y)->GetOLTerrain()->IsFountainWithWater())
-	  Fountains.push_back(v2(x,y));
+	if(GetLSquare(x, y)->GetOLTerrain() && GetLSquare(x, y)->GetOLTerrain()->IsFountainWithWater())
+	  Fountains.push_back(v2(x, y));
       }
 
     if(Fountains.empty())
@@ -1341,7 +1341,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
       if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
       {
 	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
-	Inside.push_back(v2(x,y));
+	Inside.push_back(v2(x, y));
       }
     }
 }
@@ -1751,9 +1751,9 @@ truth level::PreProcessForBone()
   int DungeonIndex = GetDungeon()->GetIndex();
 
   return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 5)
-			 &&  (game::GetQuestMonstersFound()
+			 && (game::GetQuestMonstersFound()
 			      || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
-				  &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
+				  && (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
 }
 
 truth level::PostProcessForBone()
@@ -1884,7 +1884,7 @@ void level::GenerateDungeon(int Index)
 
 void level::GenerateJungle()
 {
-  int x,y;
+  int x, y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -1920,7 +1920,7 @@ void level::GenerateJungle()
 	StartPos = v2(RAND_N(XSize), RAND_N(YSize));
       }
 
-      CreateTunnelNetwork(1,4,20, 120, StartPos);
+      CreateTunnelNetwork(1, 4, 20, 120, StartPos);
     }
 
     for(x = 0; x < XSize; ++x)
@@ -2097,7 +2097,7 @@ void level::GenerateTundra()
 
 void level::GenerateGlacier()
 {
-  int x,y;
+  int x, y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -2113,8 +2113,8 @@ void level::GenerateGlacier()
 
   for(;;)
   {
-    CreateTunnelNetwork(1,4,20, 120, v2(0,YSize / 2));
-    CreateTunnelNetwork(1,4,20, 120, v2(XSize - 1,YSize / 2));
+    CreateTunnelNetwork(1, 4, 20, 120, v2(0, YSize / 2));
+    CreateTunnelNetwork(1, 4, 20, 120, v2(XSize - 1, YSize / 2));
 
     for(int c = 0; c < 20; ++c)
     {
@@ -2138,7 +2138,7 @@ void level::GenerateGlacier()
 	StartPos = v2(RAND_N(XSize), RAND_N(YSize));
       }
 
-      CreateTunnelNetwork(1,4,20, 120, StartPos);
+      CreateTunnelNetwork(1, 4, 20, 120, StartPos);
     }
 
     for(x = 0; x < XSize; ++x)
@@ -2159,7 +2159,7 @@ void level::GenerateGlacier()
 
 	  for(int d = 0; d < 8; ++d)
 	  {
-	    v2 Pos = v2(x,y) + game::GetMoveVector(d);
+	    v2 Pos = v2(x, y) + game::GetMoveVector(d);
 	    if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
 	    {
 	      ++SquaresAround;
@@ -2181,9 +2181,9 @@ void level::GenerateGlacier()
 	if(!(FlagMap[x][y] & PREFERRED))
 	{
 	  if(FlagMap[x][y] & ICE_TERRAIN)
-	    GetLSquare(x,y)->ChangeOLTerrain(wall::Spawn(ICE_WALL));
+	    GetLSquare(x, y)->ChangeOLTerrain(wall::Spawn(ICE_WALL));
 	  else
-	    GetLSquare(x,y)->ChangeOLTerrain(wall::Spawn(STONE_WALL));
+	    GetLSquare(x, y)->ChangeOLTerrain(wall::Spawn(STONE_WALL));
 	}
 
     break; // Doesn't yet check path in any way
@@ -2875,7 +2875,7 @@ olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
     {
-      OLTerrain = GetLSquare(x,y)->GetOLTerrain();
+      OLTerrain = GetLSquare(x, y)->GetOLTerrain();
       if(OLTerrain && OLTerrain != Except && OLTerrain->IsFountainWithWater())
 	Found.push_back(OLTerrain);
     }
@@ -2940,7 +2940,7 @@ void level::AddSpecialCursors()
       Map[x][y]->AddSpecialCursors();
 }
 
-void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist) 
+void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist)
 {
   for(int d = 0; d < 9; ++d)
   {
@@ -2948,7 +2948,7 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
 
     if(Neighbour && Neighbour->IsFlyable())
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
-			
+
 		if(Neighbour)
     {
       character* Victim = Neighbour->GetCharacter();
@@ -2956,5 +2956,5 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
       if(Victim && Terrorist)
 				Terrorist->Hostility(Victim);
     }
-  } 
+  }
 }

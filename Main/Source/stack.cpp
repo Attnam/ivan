@@ -488,7 +488,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
   if(Flags & REMEMBER_SELECTED)
     Contents.SetSelected(GetSelected());
 
-  game::DrawEverythingNoBlit(); //doesn't prevent mirage puppies
+  game::DrawEverythingNoBlit(); // doesn't prevent mirage puppies
   int Chosen = Contents.Draw();
   game::ClearItemDrawVector();
 

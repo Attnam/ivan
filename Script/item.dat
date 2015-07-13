@@ -1639,19 +1639,17 @@ whip /* meleeweapon-> */
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
-  
-  
+
   Config BROKEN;
   {
     Possibility = 5;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
-	MaterialConfigChances = { 3, 75, 50, 25,}
+    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 60;
   }
-  
-  
+
   Config RUNED_WHIP;
   {
     DefaultSize = 230;
@@ -1663,18 +1661,16 @@ whip /* meleeweapon-> */
     FormModifier = 20;
     EnchantmentPlusChance = 20;
   }
-  
-    Config BROKEN|RUNED_WHIP;
+
+  Config BROKEN|RUNED_WHIP;
   {
     Possibility = 3;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
-	MaterialConfigChances = { 3, 75, 50, 25,}
+    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 40;
   }
-  
-  
 }
 
 backpack /* materialcontainer-> */
@@ -2476,7 +2472,7 @@ amulet
     ElectricityResistance = 30;
     AcidResistance = 5;
     PoisonResistance = 5;
-  } 
+  }
 }
 
 bodypart
@@ -3195,16 +3191,15 @@ whipofthievery /* meleeweapon->whip-> */
   Price = 500;
   AttachedGod = CLEPTIA;
   EnchantmentPlusChance = 10;
-  
+
   Config BROKEN;
   {
     Possibility = 1;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	Price = 250;
+    Price = 250;
     EnchantmentPlusChance = 20;
   }
-  
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -3469,14 +3464,14 @@ chameleonwhip /* meleeweapon->whip-> */
   WieldedBitmapPos = 160, 224;
   EnchantmentMinusChance = 50;
   EnchantmentPlusChance = 50;
-  
+
   Config BROKEN;
   {
     Possibility = 1;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	Price = 250;
-	EnchantmentMinusChance = 25;
+    Price = 250;
+    EnchantmentMinusChance = 25;
     EnchantmentPlusChance = 100;
   }
 }
@@ -3626,7 +3621,7 @@ scrollofgolemcreation /* scroll-> */
   ReadDifficulty = 1000;
 }
 
-gasgrenade 
+gasgrenade
 {
   DefaultSize = 15;
   Category = MISC;
@@ -3644,7 +3639,7 @@ gasgrenade
   Alias == "gas grenade";
 }
 
-holyhandgrenade 
+holyhandgrenade
 {
   DefaultSize = 15;
   Category = MISC;
@@ -3742,7 +3737,7 @@ acidshield /* armor ->*/
   CanBeBroken = true;
   WieldedBitmapPos = 128, 32;
   AttachedGod = SCABIES;
- 
+
   Config BROKEN;
   {
     Possibility = 3;
@@ -3759,14 +3754,14 @@ acidshield /* armor ->*/
 pantheonbook /* holybook-> */
 {
   DefaultSize = 30;
-  Possibility = 1; 
+  Possibility = 1;
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
   BitmapPos = 32, 32;
   FormModifier = 20;
   Adjective = "large and mysterious";
-  NameSingular = "saga"; 
+  NameSingular = "saga";
   PostFix = "of the pantheon";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == PARCHMENT;
@@ -3785,7 +3780,7 @@ gorovitscopyoflenin /* item-> */
   Category = MISC;
   DefaultMainVolume = 80000;
   DefaultSecondaryVolume = 100; /* clothes */
-  MainMaterialConfig == LEAD; 
+  MainMaterialConfig == LEAD;
   SecondaryMaterialConfig == FABRIC;
   Adjective = "Gorovits family life-size";
   NameSingular = "copy";
@@ -3836,14 +3831,14 @@ firstbornchild
   CanBeBroken = false;
   DamageFlags = BLUNT;
   IsAbstract = true;
-  Adjective = "first-born";    
+  Adjective = "first-born";
   AttachedGod = SILVA;
   CanBeBurned = false;
 
   Config MALE;
   {
     NameSingular = "son";
-  } 
+  }
   Config FEMALE;
   {
     NameSingular = "daughter";

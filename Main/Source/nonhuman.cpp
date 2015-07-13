@@ -2050,7 +2050,7 @@ void carnivorousplant::GetAICommand()
   if(AttackAdjacentEnemyAI())
     return;
 
-  if(CheckForUsefulItemsOnGround()) 
+  if(CheckForUsefulItemsOnGround())
     return;
 
   if(MoveRandomly())
@@ -2354,9 +2354,9 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 
 void lobhse::GetAICommand()
 {
-  SeekLeader(GetLeader()); //will follow if tamed
+  SeekLeader(GetLeader()); // will follow if tamed
   if(FollowLeader(GetLeader()))
-  	return;
+    return;
   if(MoveRandomly())
     return;
 
@@ -2371,7 +2371,6 @@ void lobhse::CreateCorpse(lsquare* Square)
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
-
 
   if(NeighbourEnemy && NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead()
   && !NeighbourEnemy->IsInfectedByMindWorm())
@@ -2401,12 +2400,12 @@ void mindworm::TryToImplantLarvae(character* Victim)
     Victim->SetCounterToMindWormHatch(100);
     if(Victim->IsPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.", 
+      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.",
 		  CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     else if(Victim->CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.", 
+      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.",
 		  CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     MoveRandomly();
@@ -2423,7 +2422,6 @@ void mindworm::PsiAttack(character* Victim)
   {
     ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
   }
-
 
   Victim->ReceiveDamage(this, 1 + RAND_N(5), PSI, ALL, 8, false, false, false, false);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);

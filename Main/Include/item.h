@@ -588,7 +588,7 @@ class item : public object
   truth IsEquipped() const;
   festring GetExtendedDescription() const;
   virtual ccharacter* FindCarrier() const;
-  virtual void BlockEffect(character*, character*, item*, int type) { } 
+  virtual void BlockEffect(character*, character*, item*, int type) { }
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
   virtual bool SpecialOfferEffect(int) { return false; }

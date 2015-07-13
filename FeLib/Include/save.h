@@ -50,7 +50,7 @@ class outputfile
   void Put(char What) { fputc(What, Buffer); }
   void Write(cchar* Offset, long Size)
   { fwrite(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
+  truth IsOpen() { return Buffer != 0; }
   void Close() { fclose(Buffer); }
   void Flush() { fflush(Buffer); }
   void ReOpen();
@@ -72,7 +72,7 @@ class inputfile
   rect ReadRect();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
+  truth IsOpen() { return Buffer != 0; }
   truth Eof() { return feof(Buffer); }
   void ClearFlags() { clearerr(Buffer); }
   void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }

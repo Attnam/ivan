@@ -249,7 +249,7 @@ truth fluid::FadePictures()
    several types of blood in the list, they are counted as one. */
 
 truth fluid::AddFluidInfo(const fluid* Fluid, festring& String)
-/*returns truth Are, indicating to lsquare::DisplayFluidInfo whether or not to use Is or Are as verb*/
+/* returns truth Are, indicating to lsquare::DisplayFluidInfo whether or not to use Is or Are as verb */
 {
   liquid* LiquidStack[4];
   liquid** Show = LiquidStack + 1;
@@ -295,22 +295,24 @@ truth fluid::AddFluidInfo(const fluid* Fluid, festring& String)
   {
     if(!Blood || OneBlood)
       String << Show[0]->GetName(false, false);
-    else {
+    else
+    {
       String << "different types of blood";
-	  Are = true;
-	 }
+      Are = true;
+    }
 
     if(Index == 2)
       String << " and " << Show[1]->GetName(false, false);
     else if(Index == 3)
       String << ", " << Show[1]->GetName(false, false) << ", and " << Show[2]->GetName(false, false);
   }
-  else {
+  else
+  {
     String << "a lot of liquids";
-	Are = true;
+    Are = true;
   }
-	
-  return Are; //See note at top of function
+
+  return Are; // See note at top of function
 }
 
 /* Used only when loading fluids. Correcting RandMap here is somewhat a gum

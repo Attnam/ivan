@@ -484,7 +484,7 @@ truth fountain::Drink(character* Drinker)
 	  }
 
 	  int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
-	  team* Team =  game::GetTeam(TeamIndex);
+	  team* Team = game::GetTeam(TeamIndex);
 	  int Amount = 1 + femath::LoopRoll(AddChance, 7);
 	  spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
 
@@ -1256,7 +1256,6 @@ truth coffin::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-
   if(!game::TruthQuestion(
 	 CONST_S("Disturbing the dead might not be wise... Continue? [y/N]")))
     return false;
@@ -1287,7 +1286,6 @@ void coffin::Break()
   }
   olterraincontainer::Break();
 }
-
 
 void coffin::GenerateGhost(lsquare* Square)
 {
@@ -1335,14 +1333,14 @@ void ironmaiden::Load(inputfile& SaveFile)
 
 v2 ironmaiden::GetBitmapPos(int) const
 {
-  return Opened ? v2(48,64) : v2(32,64);
+  return Opened ? v2(48, 64) : v2(32, 64);
 }
 
 truth ironmaiden::Open(character* Opener)
 {
   if(!Opened)
   {
-    truth WasSeenByPlayer = CanBeSeenByPlayer(); 
+    truth WasSeenByPlayer = CanBeSeenByPlayer();
     Opened = true;
     UpdatePictures();
     GetLSquareUnder()->SendNewDrawRequest();
@@ -1362,7 +1360,7 @@ truth ironmaiden::Open(character* Opener)
   else
   {
     if(Opener->IsPlayer())
-      ADD_MESSAGE("%s is already open, %s.", CHAR_NAME(DEFINITE), 
+      ADD_MESSAGE("%s is already open, %s.", CHAR_NAME(DEFINITE),
 		  game::Insult());
 
     return false;
@@ -1388,7 +1386,7 @@ truth ironmaiden::Close(character* Closer)
   }
 
   Opened = false;
-  UpdatePictures();  
+  UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
