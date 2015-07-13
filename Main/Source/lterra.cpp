@@ -497,10 +497,12 @@ void lterrain::TryToRust(long LiquidModifier)
   if(MainMaterial->TryToRust(LiquidModifier * 10, 10000))
   {
     if(CanBeSeenByPlayer())
+    {
       if(MainMaterial->GetRustLevel() == NOT_RUSTED)
 	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
       else
 	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+    }
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
   }

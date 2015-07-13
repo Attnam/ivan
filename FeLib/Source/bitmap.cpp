@@ -1058,6 +1058,7 @@ truth bitmap::Fade(long& AlphaSum, packalpha& AlphaAverage, int Amount)
     packalpha* AlphaPtr = &AlphaMap[0][c];
 
     if(*AlphaPtr)
+    {
       if(*AlphaPtr > Amount)
       {
 	*AlphaPtr -= Amount;
@@ -1073,6 +1074,7 @@ truth bitmap::Fade(long& AlphaSum, packalpha& AlphaAverage, int Amount)
 	if(RandMap)
 	  UpdateRandMap(c, false);
       }
+    }
   }
 
   AlphaSum = NewAlphaSum;

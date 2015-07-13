@@ -464,6 +464,7 @@ truth commandsystem::PickUp(character* Char)
   }
 
   if(PileVector.size() == 1)
+  {
     if(PileVector[0][0]->CanBePickedUp())
     {
       int Amount = PileVector[0].size();
@@ -493,6 +494,7 @@ truth commandsystem::PickUp(character* Char)
       ADD_MESSAGE("%s too large to pick up!", PileVector[0].size() == 1 ? "It is" : "They are");
       return false;
     }
+  }
 
   truth Success = false;
   stack::SetSelected(0);

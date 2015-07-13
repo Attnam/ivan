@@ -222,6 +222,7 @@ void dulcis::PrayGoodEffect()
       character* Char = Square->GetCharacter();
 
       if(Char)
+      {
 	if(Char->CanHear())
 	  if(Char->CanTameWithDulcis(PLAYER))
 	  {
@@ -238,6 +239,7 @@ void dulcis::PrayGoodEffect()
 	    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_DESCRIPTION(DEFINITE));
 	else
 	  ADD_MESSAGE("%s seems not affected.", Char->CHAR_DESCRIPTION(DEFINITE));
+      }
     }
   }
 }

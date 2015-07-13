@@ -70,11 +70,13 @@ void fluid::AddLiquid(long Volume)
       Image.AddLiquidToPicture(MotherItem->GetRawPicture(), Pixels, 225, Col, Pred);
 
       if(GearImage)
+      {
 	if(Flags & HAS_BODY_ARMOR_PICTURES)
 	  for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
 	    GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS, Image.AlphaAverage, Col, Pred);
 	else
 	  GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Col, Pred);
+      }
     }
     else
       Image.AddLiquidToPicture(0, Pixels, 225, Col, 0);
@@ -92,6 +94,7 @@ void fluid::Be()
   long Rand = RAND();
 
   if(!(Rand & 7))
+  {
     if(MotherItem)
     {
       if(MotherItem->Exists() && MotherItem->AllowFluidBe())
@@ -107,6 +110,7 @@ void fluid::Be()
       if(LSquareUnder->GetCharacter())
 	LSquareUnder->GetCharacter()->StayOn(Liquid);
     }
+  }
 
   if(MotherItem ? !(Rand & 15) && MotherItem->Exists() && MotherItem->AllowFluidBe() : !(Rand & 63))
   {
@@ -217,10 +221,12 @@ void fluid::SignalVolumeAndWeightChange()
   long Volume = Liquid->GetVolume();
 
   if(UseImage())
+  {
     if(Volume < Image.AlphaSum >> 6)
       while(FadePictures() && Volume < Image.AlphaSum >> 6);
     else
       AddLiquid(Volume - (Image.AlphaSum >> 6));
+  }
 }
 
 truth fluid::FadePictures()
@@ -610,11 +616,13 @@ void fluid::Redistribute()
   Image.Clear(InitRandMap);
 
   if(GearImage)
+  {
     if(Flags & HAS_BODY_ARMOR_PICTURES)
       for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
 	GearImage[c].Clear(InitRandMap);
     else
       GearImage->Clear(InitRandMap);
+  }
 
   AddLiquid(Liquid->GetVolume());
 }

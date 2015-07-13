@@ -84,6 +84,7 @@ void consume::Handle()
   character* Actor = GetActor();
 
   if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
+  {
     if(Actor->IsPlayer())
     {
       ADD_MESSAGE("You have a really hard time getting all this down your throat.");
@@ -101,6 +102,7 @@ void consume::Handle()
       Terminate(false);
       return;
     }
+  }
 
   if(!Actor->IsPlayer() && !Consuming->CanBeEatenByAI(Actor)) // item may be spoiled after action was started
   {

@@ -1209,6 +1209,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	  return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
       }
       else if(Neutrals)
+      {
 	if(IsPlayer())
 	{
 	  int Index = RAND() % Neutrals;
@@ -1216,6 +1217,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	}
 	else
 	  return false;
+      }
 
       if(!IsPlayer())
 	for(int c = 0; c < Squares; ++c)
@@ -2168,10 +2170,12 @@ void character::GetPlayerCommand()
 	game::AskForKeyPress(CONST_S("You are horrified by your situation! [press any key to continue]"));
       }
       else if(ivanconfig::GetWarnAboutDanger())
+      {
 	if(game::GetDangerFound() > 50.)
 	  game::AskForKeyPress(CONST_S("You sense great danger! [press any key to continue]"));
 	else
 	  game::AskForKeyPress(CONST_S("You sense danger! [press any key to continue]"));
+      }
 
       game::SetDangerFound(0);
     }
@@ -2677,6 +2681,7 @@ truth character::FollowLeader(character* Leader)
 void character::SeekLeader(ccharacter* Leader)
 {
   if(Leader && Leader != this)
+  {
     if(Leader->CanBeSeenBy(this) && (Leader->SquareUnderCanBeSeenBy(this, true) || !IsGoingSomeWhere()))
     {
       if(CommandFlags & FOLLOW_LEADER)
@@ -2704,6 +2709,7 @@ void character::SeekLeader(ccharacter* Leader)
 	  }
 	}
     }
+  }
 }
 
 int character::GetMoveEase() const
@@ -3369,6 +3375,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
     Damage -= (BodyPart->GetTotalResistance(Type) >> 1) + RAND() % ((BodyPart->GetTotalResistance(Type) >> 1) + 1);
 
   if(Damage < 1)
+  {
     if(Critical)
       Damage = 1;
     else
@@ -3383,6 +3390,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 
       return 0;
     }
+  }
 
   if(BodyPart->GetMainMaterial())
   {
@@ -3724,6 +3732,7 @@ void character::Regenerate()
   RegenerationBonus *= (50 + GetAttribute(ENDURANCE));
 
   if(Action && Action->IsRest())
+  {
     if(SquaresUnder == 1)
       RegenerationBonus *= GetSquareUnder()->GetRestModifier() << 1;
     else
@@ -3740,6 +3749,7 @@ void character::Regenerate()
 
       RegenerationBonus *= Lowest << 1;
     }
+  }
 
   RegenerationCounter += RegenerationBonus;
 
@@ -4714,19 +4724,23 @@ void character::PrintEndInvisibilityMessage() const
 void character::PrintBeginInfraVisionMessage() const
 {
   if(IsPlayer())
+  {
     if(StateIsActivated(INVISIBLE) && IsWarm() && !(StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
       ADD_MESSAGE("You reappear.");
     else
       ADD_MESSAGE("You feel your perception being magically altered.");
+  }
 }
 
 void character::PrintEndInfraVisionMessage() const
 {
   if(IsPlayer())
+  {
     if(StateIsActivated(INVISIBLE) && IsWarm() && !(StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
       ADD_MESSAGE("You disappear.");
     else
       ADD_MESSAGE("You feel your perception returning to normal.");
+  }
 }
 
 void character::PrintBeginESPMessage() const
@@ -7802,19 +7816,23 @@ truth character::CheckIfTooScaredToHit(ccharacter* Enemy) const
 void character::PrintBeginLevitationMessage() const
 {
   if(!IsFlying())
+  {
     if(IsPlayer())
       ADD_MESSAGE("You rise into the air like a small hot-air balloon.");
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s begins to float.", CHAR_NAME(DEFINITE));
+  }
 }
 
 void character::PrintEndLevitationMessage() const
 {
   if(!IsFlying())
+  {
     if(IsPlayer())
       ADD_MESSAGE("You descend gently onto the ground.");
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s drops onto the ground.", CHAR_NAME(DEFINITE));
+  }
 }
 
 truth character::IsLimbIndex(int I)
@@ -7915,20 +7933,24 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       PlayerMsg = "You feel very confident of your social skills.";
 
       if(IsPet())
+      {
 	if(GetAttribute(CHARISMA) <= 15)
 	  NPCMsg = "%s looks less ugly.";
 	else
 	  NPCMsg = "%s looks more attractive.";
+      }
     }
     else
     {
       PlayerMsg = "You feel somehow disliked.";
 
       if(IsPet())
+      {
 	if(GetAttribute(CHARISMA) < 15)
 	  NPCMsg = "%s looks more ugly.";
 	else
 	  NPCMsg = "%s looks less attractive.";
+      }
     }
 
     if(IsPlayerKind())
@@ -8519,12 +8541,14 @@ void character::Disappear(corpse* Corpse, cchar* Verb, truth (item::*ClosePredic
   if((GetTorso()->*ClosePredicate)())
   {
     if(CanBeSeen)
+    {
       if(Corpse)
 	ADD_MESSAGE("%s %ss.", Corpse->CHAR_NAME(DEFINITE), Verb);
       else if(IsPlayer())
 	ADD_MESSAGE("You %s.", Verb);
       else
 	ADD_MESSAGE("%s %ss.", CHAR_NAME(DEFINITE), Verb);
+    }
 
     TorsoDisappeared = true;
 
@@ -8555,13 +8579,16 @@ void character::Disappear(corpse* Corpse, cchar* Verb, truth (item::*ClosePredic
     bodypart* BodyPart = GetBodyPart(c);
 
     if(BodyPart)
+    {
       if((BodyPart->*ClosePredicate)())
       {
 	if(!TorsoDisappeared && CanBeSeen)
+        {
 	  if(IsPlayer())
 	    ADD_MESSAGE("Your %s %ss.", GetBodyPartName(c).CStr(), Verb);
 	  else
 	    ADD_MESSAGE("The %s of %s %ss.", GetBodyPartName(c).CStr(), CHAR_NAME(DEFINITE), Verb);
+        }
 
 	BodyPart->DropEquipment();
 	item* BodyPart = SevereBodyPart(c);
@@ -8575,13 +8602,16 @@ void character::Disappear(corpse* Corpse, cchar* Verb, truth (item::*ClosePredic
 	item* BodyPart = SevereBodyPart(c);
 
 	if(BodyPart)
+        {
 	  if(Corpse)
 	    Corpse->GetSlot()->AddFriendItem(BodyPart);
 	  else if(!game::IsInWilderness())
 	    GetStackUnder()->AddItem(BodyPart);
 	  else
 	    BodyPart->SendToHell();
+        }
       }
+    }
   }
 
   if(TorsoDisappeared)
@@ -10164,11 +10194,13 @@ truth character::CanTameWithDulcis(const character* Tamer) const
     Modifier += 50;
 
   if(TamingDifficulty == 0)
+  {
     if(!IgnoreDanger())
       TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
       TamingDifficulty = 10 * GetHPRequirementForGeneration()
 			 / Max(Tamer->GetHP(), 1);
+  }
 
   return Modifier >= TamingDifficulty * 3;
 }
@@ -10181,11 +10213,13 @@ truth character::CanTameWithLyre(const character* Tamer) const
     return false;
 
   if(TamingDifficulty == 0)
+  {
     if(!IgnoreDanger())
       TamingDifficulty = int(10 * GetRelativeDanger(Tamer));
     else
       TamingDifficulty = 10 * GetHPRequirementForGeneration()
 			 / Max(Tamer->GetHP(), 1);
+  }
 
   return Tamer->GetAttribute(CHARISMA) >= TamingDifficulty;
 }

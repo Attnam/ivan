@@ -503,10 +503,12 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
   int Pos = 0;
 
   if(Flags & NONE_AS_CHOICE)
+  {
     if(!Selected)
       return 0;
     else
       ++Pos;
+  }
 
   if(MergeStack)
   {
@@ -596,6 +598,7 @@ int stack::SearchChosen(itemvector& ReturnVector,
 
   for(uint p = 0; p < PileVector.size(); ++p)
     if(Pos++ == Chosen)
+    {
       if(Flags & NO_MULTI_SELECT)
       {
 	int Amount = (Flags & SELECT_PAIR
@@ -619,6 +622,7 @@ int stack::SearchChosen(itemvector& ReturnVector,
 	ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	return -1;
       }
+    }
 
   return Pos;
 }

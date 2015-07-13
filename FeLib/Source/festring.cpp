@@ -253,10 +253,12 @@ void festring::Resize(sizetype N, char C)
   else
   {
     if(OwnsData && OldPtr)
+    {
       if(!REFS(OldPtr))
 	return;
       else
 	--REFS(OldPtr);
+    }
 
     Reserved = N|FESTRING_PAGE;
     NewPtr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];

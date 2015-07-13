@@ -552,11 +552,13 @@ void worldmap::CalculateContinents()
 	      if(ThisCont)
 	      {
 		if(ThisCont != NearCont)
+                {
 		  if(Continent[ThisCont]->GetSize()
 		     < Continent[NearCont]->GetSize())
 		    Continent[ThisCont]->AttachTo(Continent[NearCont]);
 		  else
 		    Continent[NearCont]->AttachTo(Continent[ThisCont]);
+                }
 	      }
 	      else
 		Continent[NearCont]->Add(v2(x, y));
@@ -592,6 +594,7 @@ void worldmap::RemoveEmptyContinents()
 {
   for(uint c = 1; c < Continent.size(); ++c)
     if(!Continent[c]->GetSize())
+    {
       for(uint i = Continent.size() - 1; i >= c; i--)
 	if(Continent[i]->GetSize())
 	{
@@ -605,6 +608,7 @@ void worldmap::RemoveEmptyContinents()
 	  delete Continent[i];
 	  Continent.pop_back();
 	}
+    }
 }
 
 void worldmap::Draw(truth) const

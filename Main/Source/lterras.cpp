@@ -87,6 +87,7 @@ truth door::Open(character* Opener)
 truth door::Close(character* Closer)
 {
   if(Closer->IsPlayer())
+  {
     if(Opened)
     {
       if(RAND() % 20 < Closer->GetAttribute(ARM_STRENGTH))
@@ -102,6 +103,7 @@ truth door::Close(character* Closer)
       ADD_MESSAGE("The door is already closed, %s.", game::Insult());
       return false;
     }
+  }
 
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
@@ -903,6 +905,7 @@ truth stairs::Enter(truth DirectionUp) const
   }
 
   if(GetConfig() == OREE_LAIR_EXIT)
+  {
     if(PLAYER->HasGoldenEagleShirt())
     {
       ADD_MESSAGE("Somehow you get the feeling you cannot return.");
@@ -916,6 +919,7 @@ truth stairs::Enter(truth DirectionUp) const
       PLAYER->EditAP(-1000);
       return true;
     }
+  }
 
   if(GetConfig() == DARK_LEVEL)
   {
@@ -1075,10 +1079,12 @@ void door::ReceiveDamage(character* Villain, int Damage, int)
     if(HP <= 0)
     {
       if(CanBeSeenByPlayer())
+      {
 	if(LockBreaks)
 	  ADD_MESSAGE("The door breaks and its lock is destroyed.");
 	else
 	  ADD_MESSAGE("The door breaks.");
+      }
 
       room* Room = GetRoom();
       Break();
@@ -1368,6 +1374,7 @@ truth ironmaiden::Open(character* Opener)
 truth ironmaiden::Close(character* Closer)
 {
   if(Closer->IsPlayer())
+  {
     if(Opened)
     {
       ADD_MESSAGE("You close %s.", CHAR_NAME(DEFINITE));
@@ -1378,7 +1385,7 @@ truth ironmaiden::Close(character* Closer)
 		  game::Insult());
       return false;
     }
-
+  }
 
   Opened = false;
   UpdatePictures();  

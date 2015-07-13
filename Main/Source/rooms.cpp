@@ -15,18 +15,22 @@
 void shop::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
+  {
     if(MasterIsActive())
     {
       if(GetMaster()->GetRelation(Customer) != HOSTILE
 	 && Customer->CanBeSeenBy(GetMaster()))
+      {
 	if(GetMaster()->CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s welcomes you warmly to the shop.",
 		      GetMaster()->CHAR_NAME(DEFINITE));
 	else
 	  ADD_MESSAGE("Something welcomes you warmly to the shop.");
+      }
     }
     else
       ADD_MESSAGE("The shop appears to be deserted.");
+  }
 }
 
 /* item* ForSale can also be in chest or other container, so don't assume
@@ -53,15 +57,18 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
 		      / (100 + Customer->GetAttribute(CHARISMA)) + 1);
 
     if(GetMaster()->GetConfig() == NEW_ATTNAM)
+    {
       if(ForSale->IsBanana())
 	Price = (Price >> 2) + 1;
       else if(ForSale->IsEatable(GetMaster()))
 	Price <<= 2;
       else
 	Price = 0;
+    }
   }
 
   if(!Customer->IsPlayer())
+  {
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
     {
       if(Price)
@@ -77,6 +84,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
@@ -157,6 +165,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
 	       * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
+  {
     if(Price && Customer->CanBeSeenByPlayer()
        && GetMaster()->GetMoney() >= Price)
     {
@@ -169,6 +178,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
@@ -454,10 +464,12 @@ cathedral::cathedral()
 void library::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
+  {
     if(MasterIsActive())
     {
       if(GetMaster()->GetRelation(Customer) != HOSTILE
 	 && Customer->CanBeSeenBy(GetMaster()))
+      {
 	if(GetMaster()->CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s looks at you suspiciously. "
 		      "\"Feel free to open the shelves, "
@@ -466,9 +478,11 @@ void library::Enter(character* Customer)
 		      GetMaster()->GetPersonalPronoun().CStr());
 	else
 	  ADD_MESSAGE("You feel somebody staring at you.");
+      }
     }
     else
       ADD_MESSAGE("The library appears to be deserted.");
+  }
 }
 
 truth library::PickupItem(character* Customer, item* ForSale, int Amount)
@@ -574,6 +588,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
 	       * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
+  {
     if(Price && Customer->CanBeSeenByPlayer()
        && GetMaster()->GetMoney() >= Price)
     {
@@ -586,6 +601,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {

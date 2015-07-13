@@ -993,10 +993,12 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
     ChangeGLTerrain(GLTerrainScript->Instantiate());
 
     if(GLTerrainScript->IsInside())
+    {
       if(*GLTerrainScript->IsInside())
 	Flags |= INSIDE;
       else
 	Flags &= ~INSIDE;
+    }
   }
 
   const contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain();
@@ -1708,10 +1710,12 @@ void lsquare::GetHitByExplosion(const explosion* Explosion)
   int Damage = Explosion->Strength / (DistanceSquare + 1);
 
   if(Character && (Explosion->HurtNeutrals || (Explosion->Terrorist && Character->GetRelation(Explosion->Terrorist) == HOSTILE)))
+  {
     if(Character->IsPlayer())
       game::SetPlayerWasHurtByExplosion(true);
     else
       Character->GetHitByExplosion(Explosion, Damage);
+  }
 
   GetStack()->ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE);
   GetStack()->ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
@@ -1843,10 +1847,12 @@ int lsquare::GetDivineMaster() const
 void lsquare::DisplaySmokeInfo(festring& Msg) const
 {
   if(Smoke)
+  {
     if(!Smoke->Next)
       Msg << " A cloud of " << Smoke->GetGas()->GetName(false, false) << " surrounds the square.";
     else
       Msg << " A lot of gases hover over the square.";
+  }
 }
 
 void lsquare::ReceiveEarthQuakeDamage()
@@ -2549,10 +2555,12 @@ void lsquare::CalculateSunLightLuminance(ulong SeenBitMask)
 
     for(int c = 0; c < 4; ++c, ShadowFlag <<= 1, SquarePartFlag <<= 1)
       if(SeenBitMask & *i & SquarePartFlag)
+      {
 	if(*i & ShadowFlag)
 	  ++S;
 	else
 	  ++L;
+      }
   }
 
   if(!L)

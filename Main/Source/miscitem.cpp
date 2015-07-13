@@ -134,10 +134,12 @@ void scrollofchangematerial::FinishReading(character* Reader)
     }
 
     if(Item.empty())
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
       else
 	continue;
+    }
 
     if(!Item[0]->IsMaterialChangeable())
     {
@@ -157,10 +159,12 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
     if(game::DefaultQuestion(Temp, CONST_S("What material do you want to wish for?"),
                              game::GetDefaultChangeMaterial(), true) == ABORTED)
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
         return;
       else
         continue;
+    }
 
     material* TempMaterial = protosystem::CreateMaterial(Temp);
 
@@ -2314,6 +2318,7 @@ truth charmlyre::Apply(character* Charmer)
 	character* Char = Square->GetCharacter();
 
 	if(Char)
+        {
 	  if(Char->CanHear())
 	  {
 	    if(Char->CanTameWithLyre(Charmer))
@@ -2332,6 +2337,7 @@ truth charmlyre::Apply(character* Charmer)
 	  }
 	  else
 	    ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
+        }
       }
     }
   }
@@ -2513,10 +2519,12 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
 
     if(game::DefaultQuestion(Temp, CONST_S("What material do you want to detect?"),
                              game::GetDefaultDetectMaterial(), true) == ABORTED)
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
         return;
       else
         continue;
+    }
 
     TempMaterial = protosystem::CreateMaterial(Temp);
 
@@ -2576,10 +2584,12 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     }
 
     if(Item.empty())
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
 	return;
       else
 	continue;
+    }
 
     if(!Item[0]->IsMaterialChangeable())
     {
@@ -2725,10 +2735,12 @@ void scrollofgolemcreation::FinishReading(character* Reader)
       }
 
       if(MainPossible && SecPossible)
+      {
 	if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
 	  SecPossible = false;
 	else
 	  MainPossible = false;
+      }
 
       int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
       golem* Golem = golem::Spawn(MaterialConfig);

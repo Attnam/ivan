@@ -713,16 +713,20 @@ truth game::OnScreen(v2 Pos)
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
   if(LOSUpdateRequested && Player->IsEnabled())
+  {
     if(!IsInWilderness())
       GetCurrentLevel()->UpdateLOS();
     else
       GetWorldMap()->UpdateLOS();
+  }
 
   if(OnScreen(CursorPos))
+  {
     if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || GetSeeWholeMapCheatMode())
       CurrentArea->GetSquare(CursorPos)->SendStrongNewDrawRequest();
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
+  }
 
   for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
@@ -767,6 +771,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   }
 
   if(Player->IsEnabled())
+  {
     if(Player->IsSmall())
     {
       v2 Pos = Player->GetPos();
@@ -790,6 +795,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 	}
       }
     }
+  }
 
   for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
     if(OnScreen(SpecialCursorPos[c]))
@@ -1548,10 +1554,12 @@ void game::LookHandler(v2 CursorPos)
       LSquare->DisplaySmokeInfo(Msg);
 
       if(LSquare->HasEngravings() && LSquare->IsTransparent())
+      {
 	if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
 	  LSquare->DisplayEngravedInfo(Msg);
 	else
 	  Msg << " Something has been engraved here.";
+      }
     }
   }
   else
@@ -1647,6 +1655,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
   {
    case 'i':
     if(!IsInWilderness())
+    {
       if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
       {
 	lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
@@ -1659,6 +1668,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
       }
       else
 	ADD_MESSAGE("You should perhaps move a bit closer.");
+    }
 
     break;
    case 'c':

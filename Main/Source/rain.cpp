@@ -139,6 +139,7 @@ void rain::Be()
       LSquareUnder->SpillFluid(Team == PLAYER_TEAM ? PLAYER : 0, Liquid->SpawnMoreLiquid(DropVolume), true, OwnLiquid);
 
       if(OwnLiquid)
+      {
 	if(Volume == DropVolume)
 	{
 	  LSquareUnder->RemoveRain(this);
@@ -146,6 +147,7 @@ void rain::Be()
 	}
 	else
 	  Liquid->EditVolume(-DropVolume);
+      }
     }
   }
 }

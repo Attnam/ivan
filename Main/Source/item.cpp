@@ -801,6 +801,7 @@ void item::Be()
   MainMaterial->Be(ItemFlags);
 
   if(Exists() && LifeExpectancy)
+  {
     if(LifeExpectancy == 1)
     {
       if(CanBeSeenByPlayer())
@@ -814,6 +815,7 @@ void item::Be()
     }
     else
       --LifeExpectancy;
+  }
 }
 
 int item::GetOfferValue(int Receiver) const
@@ -1195,10 +1197,12 @@ void item::SignalRustLevelChange()
 void item::SignalBurnLevelTransitionMessage()
 {
   if(CanBeSeenByPlayer())
+  {
     if(MainMaterial->GetBurnLevel() == NOT_BURNT)
       ADD_MESSAGE("%s burns.", GetExtendedDescription().CStr());
     else
       ADD_MESSAGE("%s burns more.", GetExtendedDescription().CStr());
+  }
 }
 
 void item::SignalBurnLevelChange()
@@ -1372,10 +1376,12 @@ void item::TryToRust(long LiquidModifier)
   if(MainMaterial->TryToRust(LiquidModifier))
   {
     if(CanBeSeenByPlayer())
+    {
       if(MainMaterial->GetRustLevel() == NOT_RUSTED)
 	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
       else
 	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+    }
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
   }

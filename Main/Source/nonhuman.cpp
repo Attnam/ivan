@@ -811,10 +811,12 @@ void floatingeye::GetAICommand()
   if(WayPoints.size() && !IsGoingSomeWhere())
   {
     if(GetPos() == WayPoints[NextWayPoint])
+    {
       if(NextWayPoint < WayPoints.size() - 1)
 	++NextWayPoint;
       else
 	NextWayPoint = 0;
+    }
 
     GoingTo = WayPoints[NextWayPoint];
   }

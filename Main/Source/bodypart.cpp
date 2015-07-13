@@ -274,6 +274,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
       GenerateScar(Damage, Type);
 
     if(Master->IsPlayer())
+    {
       if(HP == 1 && BHP > 1)
       {
 	if(IsAlive())
@@ -294,6 +295,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
 	if(Master->BodyPartIsVital(GetBodyPartIndex()))
 	  game::AskForKeyPress(CONST_S("Vital bodypart in danger! [press any key to continue]"));
       }
+    }
 
     SignalPossibleUsabilityChange();
   }
@@ -1881,10 +1883,12 @@ void bodypart::Be()
       MainMaterial->Be(ItemFlags);
 
     if(Exists() && LifeExpectancy)
+    {
       if(LifeExpectancy == 1)
 	Master->SignalDisappearance();
       else
 	--LifeExpectancy;
+    }
   }
   else
   {

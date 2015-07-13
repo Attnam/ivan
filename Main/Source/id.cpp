@@ -18,10 +18,12 @@
 void id::AddNameSingular(festring& String, truth Articled) const
 {
   if(Articled)
+  {
     if(UsesLongArticle())
       String << "an ";
     else
       String << "a ";
+  }
 
   String << GetNameSingular();
 }
@@ -99,10 +101,12 @@ truth id::AddAdjective(festring& String, truth Articled) const
   if(GetAdjective().GetSize())
   {
     if(Articled)
+    {
       if(UsesLongAdjectiveArticle())
 	String << "an ";
       else
 	String << "a ";
+    }
 
     String << GetAdjective() << ' ';
     return true;

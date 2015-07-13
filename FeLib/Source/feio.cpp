@@ -88,11 +88,13 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
   }
 
   if(GKey)
+  {
     if(BitmapEditor)
       while(!READ_KEY())
 	BitmapEditor(DOUBLE_BUFFER, false);
     else
       GET_KEY();
+  }
 }
 
 /* Returns amount of chars cSF in string sSH */
@@ -359,6 +361,7 @@ int iosystem::StringQuestion(festring& Input,
     }
 
     if(LastKey == KEY_ENTER)
+    {
       if(Input.GetSize() >= MinLetters)
 	break;
       else
@@ -366,6 +369,7 @@ int iosystem::StringQuestion(festring& Input,
 	TooShort = true;
 	continue;
       }
+    }
 
     if(LastKey >= 0x20 && Input.GetSize() < MaxLetters
        && (LastKey != ' ' || !Input.IsEmpty()))

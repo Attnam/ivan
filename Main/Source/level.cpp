@@ -564,10 +564,12 @@ truth level::MakeRoom(const roomscript* RoomScript)
 	  Square->ChangeGLTerrain(GTerrainScript->Instantiate());
 
 	  if(GTerrainScript->IsInside())
+          {
 	    if(*GTerrainScript->IsInside())
 	      Square->Flags |= INSIDE;
 	    else
 	      Square->Flags &= ~INSIDE;
+          }
 	}
     }
   }
@@ -928,6 +930,7 @@ truth level::DrawExplosion(const explosion* Explosion) const
   v2 PicPos = StrengthPicPos[Explosion->Size];
 
   if(BPos.X < 0)
+  {
     if(BPos.X + SizeVect.X <= 0)
       return false;
     else
@@ -936,8 +939,10 @@ truth level::DrawExplosion(const explosion* Explosion) const
       SizeVect.X += BPos.X;
       BPos.X = 0;
     }
+  }
 
   if(BPos.Y < 0)
+  {
     if(BPos.Y + SizeVect.Y <= 0)
       return false;
     else
@@ -946,6 +951,7 @@ truth level::DrawExplosion(const explosion* Explosion) const
       SizeVect.Y += BPos.Y;
       BPos.Y = 0;
     }
+  }
 
   if(BPos.X >= RES.X || BPos.Y >= RES.Y)
     return false;
@@ -1021,10 +1027,12 @@ int level::TriggerExplosions(int MinIndex)
   }
 
   if(NotSeen)
+  {
     if(NotSeen == 1)
       ADD_MESSAGE("You hear an explosion.");
     else
       ADD_MESSAGE("You hear explosions.");
+  }
 
   game::DrawEverythingNoBlit();
   truth Drawn = false;
