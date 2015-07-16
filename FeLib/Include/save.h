@@ -101,6 +101,8 @@ template <class type> inline type ReadType(inputfile& SaveFile)
   return Variable;
 }
 
+inline void ReadData(truth& Type, inputfile& SaveFile)
+{ Type = SaveFile.ReadNumber(); }
 inline void ReadData(char& Type, inputfile& SaveFile)
 { Type = SaveFile.ReadNumber(); }
 inline void ReadData(uchar& Type, inputfile& SaveFile)
@@ -156,6 +158,18 @@ inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %ld!",
 	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, truth Value)
+{
+  SaveFile.Put(Value);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, truth& Value)
+{
+  Value = SaveFile.Get();
+  return SaveFile;
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, char Value)
