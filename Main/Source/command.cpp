@@ -1410,11 +1410,10 @@ truth commandsystem::SecretKnowledge(character* Char)
     charactervector& Character = game::GetCharacterDrawVector();
     int TeamSize = 0;
 
-    for(std::list<character*>::const_iterator i = Char->GetTeam()->GetMember().begin();
-	i != Char->GetTeam()->GetMember().end(); ++i)
-      if((*i)->IsEnabled())
+    for(character* p : Char->GetTeam()->GetMember())
+      if(p->IsEnabled())
       {
-	Character.push_back(*i);
+	Character.push_back(p);
 	++TeamSize;
       }
 

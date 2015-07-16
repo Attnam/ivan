@@ -2484,15 +2484,15 @@ void character::ActionAutoTermination()
 
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled()
-	   && (*i)->CanBeSeenBy(this, false, true)
-	   && ((*i)->CanMove() || (*i)->GetPos().IsAdjacent(Pos))
-	   && (*i)->CanAttack())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled()
+	   && p->CanBeSeenBy(this, false, true)
+	   && (p->CanMove() || p->GetPos().IsAdjacent(Pos))
+	   && p->CanAttack())
 	{
 	  if(IsPlayer())
 	  {
-	    ADD_MESSAGE("%s seems to be hostile.", (*i)->CHAR_NAME(DEFINITE));
+	    ADD_MESSAGE("%s seems to be hostile.", p->CHAR_NAME(DEFINITE));
 
 	    if(game::TruthQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 	      GetAction()->ActivateInDNDMode();
@@ -2518,20 +2518,20 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
 
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled() && GetAttribute(WISDOM) < p->GetAttackWisdomLimit())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 
 	  if(ThisDistance <= GetLOSRangeSquare())
 	    HostileCharsNear = true;
 
 	  if((ThisDistance < NearestDistance
 	      || (ThisDistance == NearestDistance && !(RAND() % 3)))
-	     && (*i)->CanBeSeenBy(this, false, IsGoingSomeWhere())
-	     && (!IsGoingSomeWhere() || HasClearRouteTo((*i)->GetPos())))
+	     && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+	     && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
 	  {
-	    NearestChar = *i;
+	    NearestChar = p;
 	    NearestDistance = ThisDistance;
 	  }
 	}
@@ -2686,15 +2686,14 @@ void character::SeekLeader(ccharacter* Leader)
     {
       team* Team = GetTeam();
 
-      for(std::list<character*>::const_iterator i = Team->GetMember().begin();
-	  i != Team->GetMember().end(); ++i)
-	if((*i)->IsEnabled()
-	   && (*i)->GetID() != GetID()
+      for(character* p : Team->GetMember())
+	if(p->IsEnabled()
+	   && p->GetID() != GetID()
 	   && (CommandFlags & FOLLOW_LEADER)
-	   == ((*i)->CommandFlags & FOLLOW_LEADER)
-	   && (*i)->CanBeSeenBy(this))
+	   == (p->CommandFlags & FOLLOW_LEADER)
+	   && p->CanBeSeenBy(this))
 	{
-	  v2 Pos = (*i)->GetPos();
+	  v2 Pos = p->GetPos();
 	  v2 Distance = GetPos() - Pos;
 
 	  if(abs(Distance.X) > 2 && abs(Distance.Y) > 2)
@@ -5197,9 +5196,9 @@ bodypart* character::FindRandomOwnBodyPart(truth AllowNonLiving) const
 
   for(int c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c))
-      for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end(); ++i)
+      for(ulong ID : OriginalBodyPartID[c])
       {
-	bodypart* Found = static_cast<bodypart*>(SearchForItem(*i));
+	bodypart* Found = static_cast<bodypart*>(SearchForItem(ID));
 
 	if(Found && (AllowNonLiving || Found->CanRegenerate()))
 	  LostAndFound.push_back(Found);
@@ -6063,9 +6062,9 @@ void character::UpdateESPLOS() const
 {
   if(StateIsActivated(ESP) && !game::IsInWilderness())
     for(int c = 0; c < game::GetTeams(); ++c)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	  (*i)->SendNewDrawRequest();
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
+	  p->SendNewDrawRequest();
 }
 
 int character::GetCWeaponSkillLevel(citem* Item) const
@@ -7467,10 +7466,8 @@ truth character::CreateRoute()
     node* Node;
 
     for(int c = 0; c < game::GetTeams(); ++c)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      for(character* Char : game::GetTeam(c)->GetMember())
       {
-	character* Char = *i;
-
 	if(Char->IsEnabled()
 	   && !Char->Route.empty()
 	   && (Char->GetMoveType() & GetMoveType()) == Char->GetMoveType())
@@ -8462,12 +8459,11 @@ void character::LeprosyHandler()
 
 bodypart* character::SearchForOriginalBodyPart(int I) const
 {
-  for(stackiterator i1 = GetStackUnder()->GetBottom(); i1.HasItem(); ++i1)
+  for(stackiterator i = GetStackUnder()->GetBottom(); i.HasItem(); ++i)
   {
-    for(std::list<ulong>::iterator i2 = OriginalBodyPartID[I].begin();
-	i2 != OriginalBodyPartID[I].end(); ++i2)
-      if(i1->GetID() == *i2)
-	return static_cast<bodypart*>(*i1);
+    for(ulong ID : OriginalBodyPartID[I])
+      if(i->GetID() == ID)
+	return static_cast<bodypart*>(*i);
   }
 
   return 0;
@@ -10122,17 +10118,17 @@ character* character::GetNearestEnemy() const
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X),
-					abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X),
+					abs(p->GetPos().Y - Pos.Y));
 
 	  if((ThisDistance < NearestEnemyDistance
 	      || (ThisDistance == NearestEnemyDistance && !(RAND() % 3)))
-	     && (*i)->CanBeSeenBy(this))
+	     && p->CanBeSeenBy(this))
 	  {
-	    NearestEnemy = *i;
+	    NearestEnemy = p;
 	    NearestEnemyDistance = ThisDistance;
 	  }
 	}

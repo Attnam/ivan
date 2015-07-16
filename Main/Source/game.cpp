@@ -1185,15 +1185,15 @@ void game::CreateTeams()
 
   const std::list<std::pair<int, teamscript>>& TeamScript = GetGameScript()->GetTeam();
 
-  for(std::list<std::pair<int, teamscript>>::const_iterator i = TeamScript.begin(); i != TeamScript.end(); ++i)
+  for(const std::pair<int, teamscript>& p : TeamScript)
   {
-    for(uint c = 0; c < i->second.GetRelation().size(); ++c)
-      GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);
+    for(uint c = 0; c < p.second.GetRelation().size(); ++c)
+      GetTeam(p.second.GetRelation()[c].first)->SetRelation(GetTeam(p.first), p.second.GetRelation()[c].second);
 
-    cint* KillEvilness = i->second.GetKillEvilness();
+    cint* KillEvilness = p.second.GetKillEvilness();
 
     if(KillEvilness)
-      GetTeam(i->first)->SetKillEvilness(*KillEvilness);
+      GetTeam(p.first)->SetKillEvilness(*KillEvilness);
   }
 }
 
@@ -1810,12 +1810,11 @@ void game::CalculateNextDanger()
   if(DataBase && DangerIterator != DangerMap.end())
   {
     character* Char = Proto->Spawn(DataBase->Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-    std::list<character*>::const_iterator i;
     double DangerSum = Player->GetRelativeDanger(Char, true);
 
-    for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
-      if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
-	DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+    for(character* p : Team->GetMember())
+      if(p->IsEnabled() && !p->IsTemporary() && !RAND_N(10))
+	DangerSum += p->GetRelativeDanger(Char, true) / 4;
 
     double CurrentDanger = 1 / DangerSum;
     double NakedDanger = DangerIterator->second.NakedDanger;
@@ -1827,9 +1826,9 @@ void game::CalculateNextDanger()
     Char = Proto->Spawn(DataBase->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
     DangerSum = Player->GetRelativeDanger(Char, true);
 
-    for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
-      if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
-	DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+    for(character* p : Team->GetMember())
+      if(p->IsEnabled() && !p->IsTemporary() && !RAND_N(10))
+	DangerSum += p->GetRelativeDanger(Char, true) / 4;
 
     CurrentDanger = 1 / DangerSum;
     double EquippedDanger = DangerIterator->second.EquippedDanger;
@@ -2141,13 +2140,13 @@ void game::CallForAttention(v2 Pos, int RangeSquare)
   for(int c = 0; c < GetTeams(); ++c)
   {
     if(GetTeam(c)->HasEnemy())
-      for(std::list<character*>::const_iterator i = GetTeam(c)->GetMember().begin(); i != GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+      for(character* p : GetTeam(c)->GetMember())
+	if(p->IsEnabled())
 	{
-	  long ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
+	  long ThisDistance = HypotSquare(long(p->GetPos().X) - Pos.X, long(p->GetPos().Y) - Pos.Y);
 
-	  if(ThisDistance <= RangeSquare && !(*i)->IsGoingSomeWhere())
-	    (*i)->SetGoingTo(Pos);
+	  if(ThisDistance <= RangeSquare && !p->IsGoingSomeWhere())
+	    p->SetGoingTo(Pos);
 	}
   }
 }
@@ -2398,15 +2397,15 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
   truth First = true;
   charactervector GraveYard;
 
-  for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
+  for(const massacremap::value_type& p : MassacreMap)
   {
-    character* Victim = protocontainer<character>::GetProto(i1->first.Type)->Spawn(i1->first.Config);
-    Victim->SetAssignedName(i1->first.Name);
+    character* Victim = protocontainer<character>::GetProto(p.first.Type)->Spawn(p.first.Config);
+    Victim->SetAssignedName(p.first.Name);
     massacresetentry Entry;
     GraveYard.push_back(Victim);
     Entry.ImageKey = AddToCharacterDrawVector(Victim);
 
-    if(i1->second.Amount == 1)
+    if(p.second.Amount == 1)
     {
       Victim->AddName(Entry.Key, UNARTICLED);
       Victim->AddName(Entry.String, INDEFINITE);
@@ -2414,7 +2413,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
     else
     {
       Victim->AddName(Entry.Key, PLURAL);
-      Entry.String << i1->second.Amount << ' ' << Entry.Key;
+      Entry.String << p.second.Amount << ' ' << Entry.Key;
     }
 
     if(First)
@@ -2423,7 +2422,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
       First = false;
     }
 
-    const std::vector<killreason>& Reason = i1->second.Reason;
+    const std::vector<killreason>& Reason = p.second.Reason;
     std::vector<festring>& Details = Entry.Details;
 
     if(Reason.size() == 1)
@@ -2489,10 +2488,9 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
   List.AddDescription(SideTopic);
   List.AddDescription(CONST_S(""));
   List.AddDescription("Choose a type of creatures to browse death details.");
-  std::set<massacresetentry>::const_iterator i2;
 
-  for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
-    List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->ImageKey);
+  for(const massacresetentry& MSE : MassacreSet)
+    List.AddEntry(MSE.String, LIGHT_GRAY, 0, MSE.ImageKey);
 
   for(;;)
   {
@@ -2506,14 +2504,17 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
     SubList.SetPageLength(20);
     int Counter = 0;
 
-    for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2, ++Counter)
+    for(const massacresetentry& MSE : MassacreSet)
+    {
       if(Counter == Chosen)
       {
-	for(uint c = 0; c < i2->Details.size(); ++c)
-	  SubList.AddEntry(i2->Details[c], LIGHT_GRAY);
+	for(uint c = 0; c < MSE.Details.size(); ++c)
+	  SubList.AddEntry(MSE.Details[c], LIGHT_GRAY);
 
 	break;
       }
+      ++Counter;
+    }
 
     SubList.Draw();
   }
@@ -2705,21 +2706,20 @@ int game::GetMoveCommandKey(int I)
 long game::GetScore()
 {
   double Counter = 0;
-  massacremap::const_iterator i;
   massacremap SumMap = PlayerMassacreMap;
 
-  for(i = PetMassacreMap.begin(); i != PetMassacreMap.end(); ++i)
+  for(const massacremap::value_type& p : PetMassacreMap)
   {
-    killdata& KillData = SumMap[i->first];
-    KillData.Amount += i->second.Amount;
-    KillData.DangerSum += i->second.DangerSum;
+    killdata& KillData = SumMap[p.first];
+    KillData.Amount += p.second.Amount;
+    KillData.DangerSum += p.second.DangerSum;
   }
 
-  for(i = SumMap.begin(); i != SumMap.end(); ++i)
+  for(const massacremap::value_type& p : SumMap)
   {
-    character* Char = protocontainer<character>::GetProto(i->first.Type)->Spawn(i->first.Config);
+    character* Char = protocontainer<character>::GetProto(p.first.Type)->Spawn(p.first.Config);
     int SumOfAttributes = Char->GetSumOfAttributes();
-    Counter += sqrt(i->second.DangerSum / DEFAULT_GENERATION_DANGER) * SumOfAttributes * SumOfAttributes;
+    Counter += sqrt(p.second.DangerSum / DEFAULT_GENERATION_DANGER) * SumOfAttributes * SumOfAttributes;
     delete Char;
   }
 
@@ -2730,8 +2730,8 @@ long game::GetScore()
 
 truth game::TweraifIsFree()
 {
-  for(std::list<character*>::const_iterator i = GetTeam(COLONIST_TEAM)->GetMember().begin(); i != GetTeam(COLONIST_TEAM)->GetMember().end(); ++i)
-    if((*i)->IsEnabled())
+  for(character* p : GetTeam(COLONIST_TEAM)->GetMember())
+    if(p->IsEnabled())
       return false;
 
   return true;
@@ -3242,10 +3242,9 @@ truth game::FillPetVector(cchar* Verb)
   PetVector.clear();
   team* Team = GetTeam(PLAYER_TEAM);
 
-  for(std::list<character*>::const_iterator i = Team->GetMember().begin();
-      i != Team->GetMember().end(); ++i)
-    if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->CanBeSeenByPlayer())
-      PetVector.push_back(*i);
+  for(character* p : Team->GetMember())
+    if(p->IsEnabled() && !p->IsPlayer() && p->CanBeSeenByPlayer())
+      PetVector.push_back(p);
 
   if(PetVector.empty())
   {
@@ -3547,11 +3546,8 @@ double game::GetGameSituationDanger()
 
   for(int c1 = 0; c1 < GetTeams(); ++c1)
     if(GetTeam(c1)->GetRelation(GetTeam(PLAYER_TEAM)) == HOSTILE)
-      for(std::list<character*>::const_iterator i1 = GetTeam(c1)->GetMember().begin();
-	  i1 != GetTeam(c1)->GetMember().end(); ++i1)
+      for(character* Enemy : GetTeam(c1)->GetMember())
       {
-	character* Enemy = *i1;
-
 	if(Enemy->IsEnabled() && Enemy->CanAttack()
 	   && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
 	{
@@ -3567,11 +3563,8 @@ double game::GetGameSituationDanger()
 
 	  for(int c2 = 0; c2 < GetTeams(); ++c2)
 	    if(GetTeam(c2)->GetRelation(GetTeam(c1)) == HOSTILE)
-	      for(std::list<character*>::const_iterator i2 = GetTeam(c2)->GetMember().begin();
-		  i2 != GetTeam(c2)->GetMember().end(); ++i2)
+              for(character* Friend : GetTeam(c2)->GetMember())
 	      {
-		character* Friend = *i2;
-
 		if(Friend->IsEnabled() && !Friend->IsPlayer() && Friend->CanAttack()
 		   && (Friend->CanMove() || Friend->GetPos().IsAdjacent(EnemyPos)))
 		{

@@ -511,13 +511,11 @@ void lsquare::Noxify(col24 Emitation, ulong IDFlags)
 
 truth lsquare::NoxifyEmitter(ulong ID)
 {
-  emittervector::iterator i, End = Emitter.end();
-
-  for(i = Emitter.begin(); i != End; ++i)
-    if(!((i->ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
+  for(emitter& e : Emitter)
+    if(!((e.ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
     {
-      RemoveLuminance(i->Emitation);
-      Swap(*i, Emitter.back());
+      RemoveLuminance(e.Emitation);
+      Swap(e, Emitter.back());
       Emitter.pop_back();
       return true;
     }
@@ -527,16 +525,14 @@ truth lsquare::NoxifyEmitter(ulong ID)
 
 void lsquare::AlterLuminance(ulong ID, col24 NewLuminance)
 {
-  emittervector::iterator i, End = Emitter.end();
-
   if(!(ID & FORCE_ADD))
-    for(i = Emitter.begin(); i != End; ++i)
-      if(!((i->ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
+    for(emitter& e : Emitter)
+      if(!((e.ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
       {
-	i->ID |= ID;
+	e.ID |= ID;
 
-	if(i->Emitation != NewLuminance)
-	  ChangeLuminance(i->Emitation, NewLuminance);
+	if(e.Emitation != NewLuminance)
+	  ChangeLuminance(e.Emitation, NewLuminance);
 
 	return;
       }
@@ -547,16 +543,14 @@ void lsquare::AlterLuminance(ulong ID, col24 NewLuminance)
 
 void lsquare::AddSunLightEmitter(ulong ID)
 {
-  sunemittervector::iterator i, End = SunEmitter.end();
-
-  for(i = SunEmitter.begin(); i != End; ++i)
-    if(!((*i ^ ID) & EMITTER_IDENTIFIER_BITS))
+  for(sunemittervector::value_type& SE : SunEmitter)
+    if(!((SE ^ ID) & EMITTER_IDENTIFIER_BITS))
     {
-      if(ID & ~*i & RE_SUN_EMITATED)
-	*i &= ~EMITTER_SHADOW_BITS;
+      if(ID & ~SE & RE_SUN_EMITATED)
+	SE &= ~EMITTER_SHADOW_BITS;
 
-      *i |= ID;
-      Swap(*i, SunEmitter.front());
+      SE |= ID;
+      Swap(SE, SunEmitter.front());
       return;
     }
 
@@ -639,14 +633,13 @@ void lsquare::Load(inputfile& SaveFile)
 void lsquare::CalculateLuminance()
 {
   Luminance = AmbientLuminance;
-  emittervector::const_iterator i, End = Emitter.end();
 
   if(Flags & IS_TRANSPARENT)
   {
     game::CombineLights(Luminance, SunLightLuminance);
 
-    for(i = Emitter.begin(); i != End; ++i)
-      game::CombineLights(Luminance, i->Emitation);
+    for(const emitter& e : Emitter)
+      game::CombineLights(Luminance, e.Emitation);
   }
   else
   {
@@ -659,9 +652,9 @@ void lsquare::CalculateLuminance()
     CalculateSunLightLuminance(BitMask);
     game::CombineLights(Luminance, SunLightLuminance);
 
-    for(i = Emitter.begin(); i != End; ++i)
-      if(BitMask & i->ID)
-	game::CombineLights(Luminance, i->Emitation);
+    for(const emitter& e : Emitter)
+      if(BitMask & e.ID)
+	game::CombineLights(Luminance, e.Emitation);
   }
 }
 
@@ -2516,10 +2509,8 @@ void lsquare::SendSunLightSignals()
 
 void lsquare::ZeroReSunEmitatedFlags()
 {
-  sunemittervector::iterator i, End = SunEmitter.end();
-
-  for(i = SunEmitter.begin(); i != End; ++i)
-    *i &= ~RE_SUN_EMITATED;
+  for(sunemittervector::value_type& SE : SunEmitter)
+    SE &= ~RE_SUN_EMITATED;
 }
 
 truth lsquare::CalculateIsTransparent()
@@ -2539,17 +2530,16 @@ truth lsquare::CalculateIsTransparent()
 
 void lsquare::CalculateSunLightLuminance(ulong SeenBitMask)
 {
-  sunemittervector::const_iterator i, SunEnd = SunEmitter.end();
   int S = 0, L = 0;
 
-  for(i = SunEmitter.begin(); i != SunEnd; ++i)
+  for(const sunemittervector::value_type& SE : SunEmitter)
   {
     ulong ShadowFlag = 1 << EMITTER_SHADOW_SHIFT;
     ulong SquarePartFlag = 1 << EMITTER_SQUARE_PART_SHIFT;
 
     for(int c = 0; c < 4; ++c, ShadowFlag <<= 1, SquarePartFlag <<= 1)
-      if(SeenBitMask & *i & SquarePartFlag)
-	if(*i & ShadowFlag)
+      if(SeenBitMask & SE & SquarePartFlag)
+	if(SE & ShadowFlag)
 	  ++S;
 	else
 	  ++L;

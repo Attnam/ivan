@@ -67,10 +67,10 @@ rawbitmap::~rawbitmap()
   delete [] Palette;
   delete [] PaletteBuffer;
 
-  for(fontcache::iterator i = FontCache.begin(); i != FontCache.end(); ++i)
+  for(fontcache::value_type& p : FontCache)
   {
-    delete i->second.first;
-    delete i->second.second;
+    delete p.second.first;
+    delete p.second.second;
   }
 }
 

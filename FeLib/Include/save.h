@@ -294,9 +294,8 @@ inline outputfile& operator<<(outputfile& SaveFile,
 {
   SaveFile << ulong(List.size());
 
-  for(typename std::list<type>::const_iterator i = List.begin();
-      i != List.end(); ++i)
-    SaveFile << *i;
+  for(const type& Element : List)
+    SaveFile << Element;
 
   return SaveFile;
 }
@@ -307,9 +306,8 @@ inline inputfile& operator>>(inputfile& SaveFile,
 {
   List.resize(ReadType<ulong>(SaveFile), type());
 
-  for(typename std::list<type>::iterator i = List.begin();
-      i != List.end(); ++i)
-    SaveFile >> *i;
+  for(type& Element : List)
+    SaveFile >> Element;
 
   return SaveFile;
 }
@@ -320,9 +318,8 @@ inline outputfile& operator<<(outputfile& SaveFile,
 {
   SaveFile << ulong(Map.size());
 
-  for(typename std::map<type1, type2>::const_iterator i = Map.begin();
-      i != Map.end(); ++i)
-    SaveFile << i->first << i->second;
+  for(const typename std::map<type1, type2>::value_type& Pair : Map)
+    SaveFile << Pair.first << Pair.second;
 
   return SaveFile;
 }
@@ -353,9 +350,8 @@ inline outputfile& operator<<(outputfile& SaveFile,
 {
   SaveFile << ulong(Set.size());
 
-  for(typename std::set<type>::const_iterator i = Set.begin();
-      i != Set.end(); ++i)
-    SaveFile << *i;
+  for(const typename std::set<type>::value_type& Element : Set)
+    SaveFile << Element;
 
   return SaveFile;
 }
