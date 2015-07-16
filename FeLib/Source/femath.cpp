@@ -215,7 +215,11 @@ void femath::CalculateEnvironmentRectangle(rect& Rect,
     Rect.Y2 = MotherRect.Y2;
 }
 
-truth femath::Clip(int& SourceX, int& SourceY, int& DestX, int& DestY, int& Width, int& Height, int XSize, int YSize, int DestXSize, int DestYSize)
+truth femath::Clip(int& SourceX, int& SourceY,
+                   int& DestX, int& DestY,
+                   int& Width, int& Height,
+                   int XSize, int YSize,
+                   int DestXSize, int DestYSize)
 {
   /* This sentence is usually true */
 

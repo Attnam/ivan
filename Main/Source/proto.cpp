@@ -118,7 +118,8 @@ character* protosystem::BalancedCreateMonster()
   return 0;
 }
 
-item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory, int SpecialFlags, int ConfigFlags, int RequiredGod, truth Polymorph)
+item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory,
+                                      int SpecialFlags, int ConfigFlags, int RequiredGod, truth Polymorph)
 {
   typedef item::database database;
   database** PossibleCategory[ITEM_CATEGORIES];
@@ -269,7 +270,8 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 	  {
 	    const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 	    double RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
-	    int Danger = int(DataBase->DangerModifier == 100 ? RawDanger * 1000 : RawDanger * 100000 / DataBase->DangerModifier);
+	    int Danger = int(DataBase->DangerModifier == 100 ?
+                             RawDanger * 1000 : RawDanger * 100000 / DataBase->DangerModifier);
 
 	    if(Danger < MinDanger || Danger > MaxDanger)
 	      continue;
@@ -296,7 +298,8 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
   return Monster;
 }
 
-template <class type> std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, cfestring& Identifier)
+template <class type>
+std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, cfestring& Identifier)
 {
   std::pair<int, int> Result(0, 0);
 
@@ -309,13 +312,15 @@ template <class type> std::pair<int, int> CountCorrectNameLetters(const typename
   if(!DataBase->Adjective.IsEmpty())
     ++Result.second;
 
-  if(DataBase->Adjective.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ') != festring::NPos)
+  if(DataBase->Adjective.GetSize()
+     && festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ') != festring::NPos)
     Result.first += DataBase->Adjective.GetSize();
 
   if(!DataBase->PostFix.IsEmpty())
     ++Result.second;
 
-  if(DataBase->PostFix.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ') != festring::NPos)
+  if(DataBase->PostFix.GetSize()
+     && festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ') != festring::NPos)
     Result.first += DataBase->PostFix.GetSize();
 
   for(uint c = 0; c < DataBase->Alias.Size; ++c)

@@ -12,6 +12,9 @@
 
 /* Compiled through materset.cpp */
 
+solid::solid()
+: BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0), BurnCounter(0), BurnCheckCounter(0) { }
+
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0, false); }
 
@@ -100,7 +103,8 @@ void solid::SetBurnLevel(int What, truth SendMessages)
   if(!What)
     Transitioned = false;
 
-  if(MotherEntity && Transitioned && SendMessages) // if you want to burn carnivorous plants in future, you had better make sure there are the right functions in char.cpp
+  if(MotherEntity && Transitioned && SendMessages) // if you want to burn carnivorous plants in future, you had
+                                                   // better make sure there are the right functions in char.cpp
     MotherEntity->SignalBurnLevelTransitionMessage();
 
   if(GetBurnLevel() != What)
@@ -120,13 +124,15 @@ void solid::SetBurnLevel(int What, truth SendMessages)
 void solid::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
-  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning << SteadyStateThermalEnergy << TransientThermalEnergy;
+  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning
+           << SteadyStateThermalEnergy << TransientThermalEnergy;
 }
 
 void solid::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
-  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning >> SteadyStateThermalEnergy >> TransientThermalEnergy;
+  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning
+           >> SteadyStateThermalEnergy >> TransientThermalEnergy;
 }
 
 truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const

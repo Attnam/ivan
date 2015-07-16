@@ -108,7 +108,8 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"), GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+  if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"),
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   if(game::IsRunning())
@@ -121,7 +122,8 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"), GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+  if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"),
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   if(game::IsRunning())
@@ -132,7 +134,8 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 
 truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"), GetQuestionPos(), WHITE, !game::IsRunning()));
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
 
   if(game::IsRunning())
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
@@ -142,7 +145,10 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 
 truth ivanconfig::ContrastChangeInterface(numberoption* O)
 {
-  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY, game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX), !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));

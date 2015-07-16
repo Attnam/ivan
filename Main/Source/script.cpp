@@ -333,7 +333,8 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     if(ContentType || Word == "0")
       SaveFile.ReadWord(Word);
     else
-      ABORT("Odd script term %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+      ABORT("Odd script term %s encountered in %s content script, file %s line %ld!",
+            Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
   }
 
   if(Word == "(")
@@ -348,11 +349,13 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script, file %s line %ld!",
+              Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
     }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %ld!",
+            Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 scriptmemberbase* basecontentscript::GetData(cchar* String)
@@ -698,10 +701,12 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
-    ABORT("Illegal %s content map redefinition on line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Illegal %s content map redefinition on line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Bracket missing in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   SymbolMap.insert(std::pair<int, contenttype>('.', contenttype()));
   static festring Word1, Word2;
@@ -711,7 +716,8 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
     if(Word1 == "Types")
     {
       if(SaveFile.ReadWord() != "{")
-	ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+	ABORT("Missing bracket in %s content map script line %ld!",
+              protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word2); Word2 != "}"; Word2 = SaveFile.ReadWord())
       {
@@ -720,21 +726,24 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	if(Return.second)
 	  ReadData(Return.first->second, SaveFile);
 	else
-	  ABORT("Symbol %c defined again in %s content map script line %ld!", Word2[0], protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+	  ABORT("Symbol %c defined again in %s content map script line %ld!", Word2[0],
+                protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
       }
 
       continue;
     }
 
     if(!ReadMember(SaveFile, Word1))
-      ABORT("Odd script term %s encountered in %s content script line %ld!", Word1.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+      ABORT("Odd script term %s encountered in %s content script line %ld!", Word1.CStr(),
+            protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
   }
 
   v2 Size = *GetSize();
   Alloc2D(ContentMap, Size.X, Size.Y);
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   for(int y = 0; y < Size.Y; ++y)
     for(int x = 0; x < Size.X; ++x)
@@ -745,11 +754,13 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
       if(i != SymbolMap.end())
 	ContentMap[x][y] = std::make_pair(Char, &i->second);
       else
-	ABORT("Illegal content %c in %s content map line %ld!", Char, protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+	ABORT("Illegal content %c in %s content map line %ld!", Char,
+              protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
     }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::Save(outputfile& SaveFile) const

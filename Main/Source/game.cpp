@@ -122,15 +122,21 @@ festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 cchar* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 god** game::God;
 
-cint game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+cint game::MoveNormalCommandKey[] =
+{ KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 cint game::MoveAbnormalCommandKey[] = { '7', '8', '9', 'u', 'o', 'j', 'k', 'l', '.' };
 cint game::MoveNetHackCommandKey[] = { 'y', 'k', 'u', 'h', 'l', 'b', 'j', 'n', '.' };
 
-cv2 game::MoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
-cv2 game::ClockwiseMoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(1, 0), v2(1, 1), v2(0, 1), v2(-1, 1), v2(-1, 0), v2(0, 0) };
-cv2 game::RelativeMoveVector[] = { v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
+cv2 game::MoveVector[] =
+{ v2(-1, -1), v2(0, -1), v2(1, -1), v2(-1, 0), v2(1, 0), v2(-1, 1), v2(0, 1), v2(1, 1), v2(0, 0) };
+cv2 game::ClockwiseMoveVector[] =
+{ v2(-1, -1), v2(0, -1), v2(1, -1), v2(1, 0), v2(1, 1), v2(0, 1), v2(-1, 1), v2(-1, 0), v2(0, 0) };
+cv2 game::RelativeMoveVector[] =
+{ v2(-1, -1), v2(1, 0), v2(1, 0), v2(-2, 1), v2(2, 0), v2(-2, 1), v2(1, 0), v2(1, 0), v2(-1, -1) };
 cv2 game::BasicMoveVector[] = { v2(-1, 0), v2(1, 0), v2(0, -1), v2(0, 1) };
-cv2 game::LargeMoveVector[] = { v2(-1, -1), v2(0, -1), v2(1, -1), v2(2, -1), v2(-1, 0), v2(2, 0), v2(-1, 1), v2(2, 1), v2(-1, 2), v2(0, 2), v2(1, 2), v2(2, 2), v2(0, 0), v2(1, 0), v2(0, 1), v2(1, 1) };
+cv2 game::LargeMoveVector[] =
+{ v2(-1, -1), v2(0, -1), v2(1, -1), v2(2, -1), v2(-1, 0), v2(2, 0), v2(-1, 1), v2(2, 1),
+  v2(-1, 2), v2(0, 2), v2(1, 2), v2(2, 2), v2(0, 0), v2(1, 0), v2(0, 1), v2(1, 1) };
 cint game::LargeMoveDirection[] = { 0, 1, 1, 2, 3, 4, 3, 4, 5, 6, 6, 7, 8, 8, 8, 8 };
 
 truth game::LOSUpdateRequested = false;
@@ -241,7 +247,9 @@ truth game::Init(cfestring& Name)
     {
       PlayerName.Empty();
 
-      if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"), v2(30, 46), WHITE, 1, 20, true, true) == ABORTED || PlayerName.IsEmpty())
+      if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
+                                  v2(30, 46), WHITE, 1, 20, true, true) == ABORTED
+         || PlayerName.IsEmpty())
 	return false;
     }
     else
@@ -315,7 +323,8 @@ truth game::Init(cfestring& Name)
       globalwindowhandler::InstallControlLoop(AnimationController);
       SetIsRunning(true);
       InWilderness = true;
-      iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &BusyAnimation);
+      iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."),
+                           ZERO_V2, WHITE, false, true, &BusyAnimation);
       igraph::CreateBackGround(GRAY_FRACTAL);
       NextCharacterID = 1;
       NextItemID = 1;
@@ -380,7 +389,8 @@ truth game::Init(cfestring& Name)
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
       bool PlayerHasReceivedAllGodsKnownBonus = false;
-      ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
+      ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
+                  "move, '>' to enter an area and '?' to view other commands.");
 
       if(IsXMas())
       {
@@ -713,7 +723,8 @@ void game::DrawEverything()
 
 truth game::OnScreen(v2 Pos)
 {
-  return Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
+  return Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y
+      && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
 void game::DrawEverythingNoBlit(truth AnimationDraw)
@@ -875,7 +886,9 @@ int game::Load(cfestring& SaveName)
 
   if(Version != SAVE_FILE_VERSION)
   {
-    if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1), CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+    if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                       CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
+                       CONST_S("Yes\rNo\r"), LIGHT_GRAY))
       return NEW_GAME;
     else
       return BACK;
@@ -1214,7 +1227,9 @@ void game::CreateTeams()
 /* If AllowExit is true the user can abort with the esc-key. The function returns ABORTED
    (when user aborts with esc) or NORMAL_EXIT. */
 
-int game::StringQuestion(festring& Answer, cfestring& Topic, col16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, truth AllowExit, stringkeyhandler KeyHandler)
+int game::StringQuestion(festring& Answer, cfestring& Topic, col16 Color,
+                         festring::sizetype MinLetters, festring::sizetype MaxLetters,
+                         truth AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23)); // pos may be incorrect!
@@ -1232,11 +1247,14 @@ long game::NumberQuestion(cfestring& Topic, col16 Color, truth ReturnZeroOnEsc)
   return Return;
 }
 
-long game::ScrollBarQuestion(cfestring& Topic, long BeginValue, long Step, long Min, long Max, long AbortValue, col16 TopicColor, col16 Color1, col16 Color2, void (*Handler)(long))
+long game::ScrollBarQuestion(cfestring& Topic, long BeginValue, long Step, long Min, long Max, long AbortValue,
+                             col16 TopicColor, col16 Color1, col16 Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
-  long Return = iosystem::ScrollBarQuestion(Topic, v2(16, 6), BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX), GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
+  long Return = iosystem::ScrollBarQuestion(Topic, v2(16, 6), BeginValue, Step, Min, Max, AbortValue,
+                                            TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX),
+                                            GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
   igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
   return Return;
 }
@@ -1266,7 +1284,9 @@ truth game::HandleQuitMessage()
   {
     if(IsInGetCommand())
     {
-      switch(Menu(0, v2(RES.X >> 1, RES.Y >> 1), CONST_S("Do you want to save your game before quitting?\r"), CONST_S("Yes\rNo\rCancel\r"), LIGHT_GRAY))
+      switch(Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                  CONST_S("Do you want to save your game before quitting?\r"),
+                  CONST_S("Yes\rNo\rCancel\r"), LIGHT_GRAY))
       {
        case 0:
 	Save();
@@ -1284,7 +1304,9 @@ truth game::HandleQuitMessage()
       }
     }
     else
-      if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1), CONST_S("You can't save at this point. Are you sure you still want to do this?\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+      if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+               CONST_S("You can't save at this point. Are you sure you still want to do this?\r"),
+               CONST_S("Yes\rNo\r"), LIGHT_GRAY))
 	RemoveSaves();
       else
       {
@@ -1451,7 +1473,8 @@ int game::AskForKeyPress(cfestring& Topic)
  * KeyHandler is called when the key has NOT been identified as a movement key
  * Both can be deactivated by passing 0 as parameter */
 
-v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2), positionkeyhandler KeyHandler, truth Zoom)
+v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
+                          positionkeyhandler KeyHandler, truth Zoom)
 {
   int Key = 0;
   SetDoZoom(Zoom);
@@ -1465,7 +1488,9 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2), p
   {
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
-    if(!Square->HasBeenSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheatMode())
+    if(!Square->HasBeenSeen()
+       && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer())
+       && !GetSeeWholeMapCheatMode())
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, BLACK);
     else
       GetCurrentArea()->GetSquare(CursorPos)->SendStrongNewDrawRequest();
@@ -1545,7 +1570,9 @@ void game::LookHandler(v2 CursorPos)
 
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
-    if(!IsInWilderness() && !Square->CanBeSeenByPlayer() && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
+    if(!IsInWilderness()
+       && !Square->CanBeSeenByPlayer()
+       && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
       Msg = CONST_S("You feel here ");
     else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
       Msg = CONST_S("You see here ");
@@ -1606,7 +1633,8 @@ void game::InitGlobalValueMap()
   }
 }
 
-void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color, truth GKey, truth Fade, bitmapeditor BitmapEditor)
+void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
+                      truth GKey, truth Fade, bitmapeditor BitmapEditor)
 {
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
@@ -1770,7 +1798,8 @@ int game::CalculateRoughDirection(v2 Vector)
     return 4;
 }
 
-int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS, col16 Color, cfestring& SmallText1, cfestring& SmallText2)
+int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS,
+               col16 Color, cfestring& SmallText1, cfestring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
   int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
@@ -2141,14 +2170,18 @@ void game::UpdatePlayerAttributeAverage()
 
   if(Arms)
   {
-    AveragePlayerArmStrengthExperience = (49 * AveragePlayerArmStrengthExperience + PlayerArmStrengthExperience / Arms) / 50;
-    AveragePlayerDexterityExperience = (49 * AveragePlayerDexterityExperience + PlayerDexterityExperience / Arms) / 50;
+    AveragePlayerArmStrengthExperience = (49 * AveragePlayerArmStrengthExperience
+                                          + PlayerArmStrengthExperience / Arms) / 50;
+    AveragePlayerDexterityExperience = (49 * AveragePlayerDexterityExperience
+                                        + PlayerDexterityExperience / Arms) / 50;
   }
 
   if(Legs)
   {
-    AveragePlayerLegStrengthExperience = (49 * AveragePlayerLegStrengthExperience + PlayerLegStrengthExperience / Legs) / 50;
-    AveragePlayerAgilityExperience = (49 * AveragePlayerAgilityExperience + PlayerAgilityExperience / Legs) / 50;
+    AveragePlayerLegStrengthExperience = (49 * AveragePlayerLegStrengthExperience
+                                          + PlayerLegStrengthExperience / Legs) / 50;
+    AveragePlayerAgilityExperience = (49 * AveragePlayerAgilityExperience
+                                      + PlayerAgilityExperience / Legs) / 50;
   }
 }
 
@@ -2157,7 +2190,8 @@ void game::CallForAttention(v2 Pos, int RangeSquare)
   for(int c = 0; c < GetTeams(); ++c)
   {
     if(GetTeam(c)->HasEnemy())
-      for(std::list<character*>::const_iterator i = GetTeam(c)->GetMember().begin(); i != GetTeam(c)->GetMember().end(); ++i)
+      for(std::list<character*>::const_iterator i = GetTeam(c)->GetMember().begin();
+          i != GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	{
 	  long ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
@@ -2586,7 +2620,9 @@ void game::CreateBone()
 
 truth game::PrepareRandomBone(int LevelIndex)
 {
-  if(WizardModeIsActive() || GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+  if(WizardModeIsActive()
+     || GetCurrentDungeon()->IsGenerated(LevelIndex)
+     || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
     return false;
 
   int BoneIndex;
@@ -2747,7 +2783,8 @@ long game::GetScore()
 
 truth game::TweraifIsFree()
 {
-  for(std::list<character*>::const_iterator i = GetTeam(COLONIST_TEAM)->GetMember().begin(); i != GetTeam(COLONIST_TEAM)->GetMember().end(); ++i)
+  for(std::list<character*>::const_iterator i = GetTeam(COLONIST_TEAM)->GetMember().begin();
+      i != GetTeam(COLONIST_TEAM)->GetMember().end(); ++i)
     if((*i)->IsEnabled())
       return false;
 
@@ -2890,7 +2927,10 @@ truth game::TryToEnterSumoArena()
     return false;
   }
 
-  ADD_MESSAGE("\"So you want to compete? Okay, I'll explain the rules. First, I'll make a mirror image out of us both. We'll enter the arena and fight till one is knocked out. Use of any equipment is not allowed. Note that we will not gain experience from fighting as a mirror image, but won't get really hurt, either. However, controlling the image is exhausting and you can get hungry very quickly.\"");
+  ADD_MESSAGE("\"So you want to compete? Okay, I'll explain the rules. First, I'll make a mirror image out of us "
+              "both. We'll enter the arena and fight till one is knocked out. Use of any equipment is not allowed. "
+              "Note that we will not gain experience from fighting as a mirror image, but won't get really hurt, "
+              "either. However, controlling the image is exhausting and you can get hungry very quickly.\"");
 
   if(!TruthQuestion("Do you want to challenge him? [y/N]"))
     return false;
@@ -3010,7 +3050,8 @@ truth game::EndSumoWrestling(int Result)
     PlayerSumoChampion = true;
     character* Sumo = GetSumo();
     festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
-    Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun() << " says and hands you a belt of levitation.\n\"";
+    Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun()
+        << " says and hands you a belt of levitation.\n\"";
     (belt::Spawn(BELT_OF_LEVITATION))->MoveTo(Player->GetStack());
     Msg << "Allow me to also teach you a few nasty martial art tricks the years have taught me.\"";
     Player->GetCWeaponSkill(UNARMED)->AddHit(100000);
@@ -3126,7 +3167,8 @@ int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowE
   }
 }
 
-int game::DefaultQuestion(festring& Answer, festring Topic, festring& Default, truth AllowExit, stringkeyhandler KeyHandler)
+int game::DefaultQuestion(festring& Answer, festring Topic, festring& Default,
+                          truth AllowExit, stringkeyhandler KeyHandler)
 {
   festring ShortDefault = Default;
 
@@ -3287,7 +3329,8 @@ truth game::CommandQuestion()
   else
   {
     v2 Pos = PetVector[0]->GetPos();
-    Pos = PositionQuestion(CONST_S("Whom do you wish to command? [direction keys/'+'/'-'/'a'll/space/esc]"), Pos, &PetHandler, &CommandKeyHandler);
+    Pos = PositionQuestion(CONST_S("Whom do you wish to command? [direction keys/'+'/'-'/'a'll/space/esc]"),
+                           Pos, &PetHandler, &CommandKeyHandler);
 
     if(Pos == ERROR_V2)
       return false;
@@ -3327,7 +3370,8 @@ void game::NameQuestion()
   if(PetVector.size() == 1)
     PetVector[0]->TryToName();
   else
-    PositionQuestion(CONST_S("Who do you want to name? [direction keys/'+'/'-'/'n'ame/esc]"), PetVector[0]->GetPos(), &PetHandler, &NameKeyHandler);
+    PositionQuestion(CONST_S("Who do you want to name? [direction keys/'+'/'-'/'n'ame/esc]"),
+                     PetVector[0]->GetPos(), &PetHandler, &NameKeyHandler);
 }
 
 void game::PetHandler(v2 CursorPos)

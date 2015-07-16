@@ -12,10 +12,30 @@
 
 /* Compiled through itemset.cpp */
 
-cchar* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
-cchar* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
+cchar* ToHitValueDescription[] =
+{
+  "unbelievably inaccurate",
+  "extremely inaccurate",
+  "inaccurate",
+  "decently accurate",
+  "accurate",
+  "highly accurate",
+  "extremely accurate",
+  "unbelievably accurate"
+};
+cchar* StrengthValueDescription[] =
+{
+  "fragile",
+  "rather sturdy",
+  "sturdy",
+  "strong",
+  "very strong",
+  "extremely strong",
+  "almost unbreakable"
+};
 
-itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, cchar* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
@@ -44,12 +64,17 @@ truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
+void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
+{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
+{ InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
+item::item(citem& Item)
+: object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight),
+  Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
@@ -118,7 +143,9 @@ void item::Fly(character* Thrower, int Direction, int Force)
   {
     int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 1000;
     BaseDamage = sqrt(5e-12 * GetWeaponStrength() * Force / Range) * Bonus;
-    BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+    BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase()
+                     / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY)
+                     * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
   }
   else
   {
@@ -841,7 +868,10 @@ void item::SignalEnchantmentChange()
 
 long item::GetEnchantedPrice(int Enchantment) const
 {
-  return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max<int>(item::GetPrice() * Enchantment * Enchantment, 0);
+  if(!PriceIsProportionalToEnchantment())
+    return item::GetPrice();
+  else
+    return Max<int>(item::GetPrice() * Enchantment * Enchantment, 0);
 }
 
 item* item::Fix()
@@ -1219,7 +1249,8 @@ void item::SignalBurnLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
-/* emitation slowly ramps down with increasing item BurnLevel, in the beginning the light is bright, with light decreasing in intensity as the item gets more burnt */
+/* emitation slowly ramps down with increasing item BurnLevel, in the beginning the
+   light is bright, with light decreasing in intensity as the item gets more burnt */
 col24 item::GetEmitationDueToBurnLevel()
 {
   if(MainMaterial)
@@ -1403,7 +1434,9 @@ truth item::TestActivationEnergy(int Damage)
   {
     int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
-    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN
+       && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1)
+                         + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
     {
       if(CanBeSeenByPlayer())
       {
@@ -1436,7 +1469,8 @@ void item::Ignite(/*character* Arsonist*/)
   }
 }
 
-/*This causes the main material to stop burning, resets the thermal energies and does a picture update on the level, as well as wielded pictures*/
+/* This causes the main material to stop burning, resets the thermal energies
+   and does a picture update on the level, as well as wielded pictures */
 void item::Extinguish(/*character* FireFighter, */truth SendMessages)
 {
   truth WasAnimated = IsAnimated();
@@ -1470,7 +1504,8 @@ void item::AddExtinguishMessage()
 void item::AddSpecialExtinguishMessageForPF()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes peel away from it and it is made new by some innate virtue.", GetExtendedDescription().CStr());
+    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes "
+                "peel away from it and it is made new by some innate virtue.", GetExtendedDescription().CStr());
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
@@ -1877,7 +1912,8 @@ truth itemlock::TryKey(item* Key, character* Applier)
     if(Applier->IsPlayer())
       ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
     else if(Applier->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.",
+                  Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
   }
 
   return true;

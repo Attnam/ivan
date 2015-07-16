@@ -108,7 +108,8 @@ void rawbitmap::Save(cfestring& FileName)
 
 void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Src, v2 Dest, v2 Border, packcol16* Color) const
 {
-  if(!femath::Clip(Src.X, Src.Y, Dest.X, Dest.Y, Border.X, Border.Y, Size.X, Size.Y, Bitmap->GetSize().X, Bitmap->GetSize().Y))
+  if(!femath::Clip(Src.X, Src.Y, Dest.X, Dest.Y, Border.X, Border.Y,
+                   Size.X, Size.Y, Bitmap->GetSize().X, Bitmap->GetSize().Y))
     return;
 
   paletteindex* Buffer = &PaletteBuffer[Src.Y][Src.X];
@@ -235,7 +236,8 @@ cachedfont* rawbitmap::Colorize(cpackcol16* Color, alpha BaseAlpha, cpackalpha* 
   return Bitmap;
 }
 
-bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha, cuchar* RustData, cuchar* BurnData, truth AllowReguralColors) const
+bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha,
+                            cuchar* RustData, cuchar* BurnData, truth AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Border);
   v2 TargetPos(0, 0);
@@ -599,7 +601,8 @@ void rawbitmap::CreateFontCache(packcol16 Color)
 
 /* returns ERROR_V2 if fails find Pos else returns pos */
 
-v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border, int ValidityArraySize, int SparkleFlags) const
+v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border,
+                                  int ValidityArraySize, int SparkleFlags) const
 {
   if(!SparkleFlags)
     return ERROR_V2;

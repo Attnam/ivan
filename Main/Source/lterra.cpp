@@ -12,8 +12,10 @@
 
 /* Compiled through levelset.cpp */
 
-glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
-olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
+glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
+olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
 
 square* lterrain::GetSquareUnderEntity(int) const { return LSquareUnder; }
 level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
@@ -288,7 +290,11 @@ god* olterrain::GetMasterGod() const
 
 truth olterrain::CanBeDestroyed() const
 {
-  return DataBase->CanBeDestroyed && ((GetPos().X && GetPos().Y && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
+  return DataBase->CanBeDestroyed
+         && ((GetPos().X && GetPos().Y
+              && GetPos().X != GetLevel()->GetXSize() - 1
+              && GetPos().Y != GetLevel()->GetYSize() - 1)
+             || GetLevel()->IsOnGround());
 }
 
 //extern itemprototype key_ProtoType;
@@ -561,7 +567,8 @@ truth olterrain::ShowThingsUnder() const
 
 truth olterrain::WillBeDestroyedBy(ccharacter* Char) const
 {
-  return IsWall() && CanBeDestroyed() && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
+  return IsWall() && CanBeDestroyed()
+         && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
 }
 
 v2 glterrain::GetBitmapPos(int I) const

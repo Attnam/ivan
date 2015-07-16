@@ -15,7 +15,8 @@
 smoke::smoke() : entity(HAS_BE), Next(0) { }
 square* smoke::GetSquareUnderEntity(int) const { return LSquareUnder; }
 
-smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
+smoke::smoke(gas* Gas, lsquare* LSquareUnder)
+: entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
   Gas->SetMotherEntity(this);
   Picture.resize(16);

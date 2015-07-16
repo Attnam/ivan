@@ -66,7 +66,9 @@ void object::Load(inputfile& SaveFile)
   LoadMaterial(SaveFile, MainMaterial);
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, long FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, long SecondDefaultVolume, truth CallUpdatePictures)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, long FirstDefaultVolume,
+                                 material*& SecondMaterial, material* SecondNewMaterial, long SecondDefaultVolume,
+                                 truth CallUpdatePictures)
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
@@ -147,10 +149,12 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
 void object::UpdatePictures()
 {
   static cv2 ZeroPos(0, 0);
-  UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(),
+                 GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulong SeedBase, int SpecialFlags, int GraphicsContainerIndex) const
+truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulong SeedBase,
+                                  int SpecialFlags, int GraphicsContainerIndex) const
 {
   static int SeedModifier = 1;
   femath::SaveSeed();
@@ -193,7 +197,9 @@ truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulo
     ValidityArraySize = 256;
   }
 
-  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, TILE_V2, ValidityArraySize, GetSparkleFlags());
+  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer,
+                                                                                  BPos, TILE_V2, ValidityArraySize,
+                                                                                  GetSparkleFlags());
 
   if(SparklePos != ERROR_V2)
   {
@@ -208,7 +214,8 @@ truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulo
   }
 }
 
-void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFlags, alpha MaxAlpha, int GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
+void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFlags, alpha MaxAlpha,
+                            int GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
 {
   int AnimationFrames = GetClassAnimationFrames();
   v2 SparklePos;
@@ -476,7 +483,10 @@ void object::CalculateEmitation()
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
-      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); // Use a value of emitation related to the burn level of the object
+      // Use a value of emitation related to the burn level of the object
+      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel,
+                                               120 - 8 * CurrentBurnLevel,
+                                               90 - 6 * CurrentBurnLevel));
     }
   }
 }

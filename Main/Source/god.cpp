@@ -12,7 +12,8 @@
 
 /* Compiled through godset.cpp */
 
-godprototype::godprototype(godspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
+godprototype::godprototype(godspawner Spawner, cchar* ClassID)
+: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
 god::god() : Relation(0), LastPray(-1), Timer(0), Known(false) { }
 int god::GetBasicAlignment() const { return NEUTRAL; }
@@ -64,7 +65,8 @@ void god::Pray()
 	  else
 	    Gift->EditEnchantment(1);
 
-	  ADD_MESSAGE("You notice %s in your inventory which you don't recall picking up anywhere.", Gift->CHAR_NAME(INDEFINITE));
+	  ADD_MESSAGE("You notice %s in your inventory which you don't recall picking up anywhere.",
+                      Gift->CHAR_NAME(INDEFINITE));
 	}
       }
     }
@@ -194,13 +196,15 @@ truth god::PlayerVomitedOnAltar(liquid* Liquid)
 {
   if(PLAYER->GetVirtualHead())
   {
-    ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
+    ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity "
+                "changes its direction. The vomit lands on your face.");
     PLAYER->GetVirtualHead()->SpillFluid(0, Liquid);
     PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
   }
   else
   {
-    ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands all over you.");
+    ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity "
+                "changes its direction. The vomit lands all over you.");
     PLAYER->SpillFluid(0, Liquid);
     PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID);
   }
@@ -469,7 +473,9 @@ truth god::TryToHardenBodyPart(character* Char)
 	 && !RAND_N(Max(Material->GetIntelligenceRequirement() - 15, 1)))
       {
 	BodyPart->ChangeMainMaterial(Material->SpawnMore());
-	ADD_MESSAGE("%s changes your %s to %s.", GetName(), BodyPart->GetBodyPartName().CStr(), Material->GetName(false, false).CStr());
+	ADD_MESSAGE("%s changes your %s to %s.",
+                    GetName(), BodyPart->GetBodyPartName().CStr(),
+                    Material->GetName(false, false).CStr());
 	Changed = true;
 	break;
       }

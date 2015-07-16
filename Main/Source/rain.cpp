@@ -12,7 +12,9 @@
 
 /* Compiled through materset.cpp */
 
-rain::rain(liquid* Liquid, lsquare* LSquareUnder, v2 Speed, int Team, truth OwnLiquid) : entity(OwnLiquid ? HAS_BE : 0), Next(0), Drop(0), Liquid(Liquid), LSquareUnder(LSquareUnder), Speed(Speed), SpeedAbs(long(sqrt(Speed.GetLengthSquare()))), Drops(0), OwnLiquid(OwnLiquid), Team(Team)
+rain::rain(liquid* Liquid, lsquare* LSquareUnder, v2 Speed, int Team, truth OwnLiquid)
+: entity(OwnLiquid ? HAS_BE : 0), Next(0), Drop(0), Liquid(Liquid), LSquareUnder(LSquareUnder),
+  Speed(Speed), SpeedAbs(long(sqrt(Speed.GetLengthSquare()))), Drops(0), OwnLiquid(OwnLiquid), Team(Team)
 {
   Emitation = Liquid->GetEmitation();
   BeCounter = RAND_N(50);

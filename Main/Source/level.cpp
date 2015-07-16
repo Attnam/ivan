@@ -19,7 +19,9 @@
 #define ICE_TERRAIN 16
 #define STONE_TERRAIN 32
 
-level::level() : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0), AmbientLuminance(0), SquareStack(0), NightAmbientLuminance(0) { }
+level::level()
+: Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0),
+  AmbientLuminance(0), SquareStack(0), NightAmbientLuminance(0) { }
 void level::SetRoom(int I, room* What) { Room[I] = What; }
 void level::AddToAttachQueue(v2 Pos) { AttachQueue.push_back(Pos); }
 
@@ -472,7 +474,8 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
     if(!*RoomScript->GenerateTunnel())
     {
-      Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
+      Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(),
+                                                RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
       Map[DoorPos.X][DoorPos.Y]->Clean();
     }
   }
@@ -903,7 +906,8 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
 
       for(c = Explosions; c < NewExplosions; ++c)
 	if(PlayerHurt[c] && PLAYER->IsEnabled())
-	  PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
+	  PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength
+                                    / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
 
       Explosions = NewExplosions;
     }
@@ -923,8 +927,10 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
 
 truth level::DrawExplosion(const explosion* Explosion) const
 {
-  static v2 StrengthPicPos[7] = { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32), v2(0, 32) };
-  v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4, (6 - Explosion->Size) << 4);
+  static v2 StrengthPicPos[7] =
+  { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32), v2(0, 32) };
+  v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4,
+                                                                  (6 - Explosion->Size) << 4);
   v2 SizeVect(16 + ((6 - Explosion->Size) << 5), 16 + ((6 - Explosion->Size) << 5));
   v2 OldSizeVect = SizeVect;
   v2 PicPos = StrengthPicPos[Explosion->Size];
@@ -1093,7 +1099,8 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
+            i != game::GetTeam(c)->GetMember().end(); ++i)
 	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i)
 	     && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
 	  {
@@ -1113,7 +1120,8 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
+          i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled() && *i != Leader
 	   && (TakeAll
 	       || (Leader->CanBeSeenBy(*i)
@@ -1236,7 +1244,8 @@ v2 level::GetEntryPos(ccharacter* Char, int I) const
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
 
-void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>& Inside, std::vector<v2>& Border, const roomscript* RoomScript, room* RoomClass, v2 Pos, v2 Size)
+void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>& Inside, std::vector<v2>& Border,
+                                    const roomscript* RoomScript, room* RoomClass, v2 Pos, v2 Size)
 {
   const contentscript<glterrain>* GTerrain;
   const contentscript<olterrain>* OTerrain;
@@ -1338,7 +1347,9 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     {
       /* if not in the corner */
 
-      if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
+      if(!(Shape == ROUND_CORNERS
+           && (x == Pos.X + 1 || x == Pos.X + Size.X - 2)
+           && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
       {
 	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
 	Inside.push_back(v2(x, y));
@@ -1630,7 +1641,8 @@ v2 level::FreeSquareSeeker(ccharacter* Char, v2 StartPos, v2 Prohibited, int Max
   {
     v2 Pos = StartPos + game::GetMoveVector(c);
 
-    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && Pos != Prohibited && (AllowStartPos || !Char->PlaceIsIllegal(Pos, Prohibited)))
+    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos))
+       && Pos != Prohibited && (AllowStartPos || !Char->PlaceIsIllegal(Pos, Prohibited)))
       return Pos;
   }
 
@@ -1667,7 +1679,8 @@ v2 level::GetNearestFreeSquare(ccharacter* Char, v2 StartPos, truth AllowStartPo
   {
     v2 Pos = StartPos + game::GetMoveVector(c);
 
-    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && (AllowStartPos || !Char->PlaceIsIllegal(Pos, StartPos)))
+    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos))
+       && (AllowStartPos || !Char->PlaceIsIllegal(Pos, StartPos)))
       return Pos;
   }
 
@@ -1707,7 +1720,8 @@ v2 level::GetFreeAdjacentSquare(ccharacter* Char, v2 StartPos, truth AllowCharac
 
 void (level::*level::GetBeamEffectVisualizer(int I))(const fearray<lsquare*>&, col16) const
 {
-  static void (level::*Visualizer[BEAM_STYLES])(const fearray<lsquare*>&, col16) const = { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
+  static void (level::*Visualizer[BEAM_STYLES])(const fearray<lsquare*>&, col16) const =
+  { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
   return Visualizer[I];
 }
 
@@ -1751,9 +1765,9 @@ truth level::PreProcessForBone()
   int DungeonIndex = GetDungeon()->GetIndex();
 
   return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 5)
-			 && (game::GetQuestMonstersFound()
-			      || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
-				  && (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
+    && (game::GetQuestMonstersFound() || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
+                                          && (DungeonIndex != ELPURI_CAVE
+                                              || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
 }
 
 truth level::PostProcessForBone()
@@ -1791,13 +1805,18 @@ void level::GenerateDungeon(int Index)
 
   if(*LevelScript->GenerateMonsters())
   {
-    MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
-    IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
+    MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase()
+                              + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
+    IdealPopulation = *LevelScript->GetMonsterAmountBase()
+                    + *LevelScript->GetMonsterAmountDelta() * Index;
   }
 
-  Difficulty = 0.001 * (*LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index);
-  EnchantmentMinusChance = *LevelScript->GetEnchantmentMinusChanceBase() + *LevelScript->GetEnchantmentMinusChanceDelta() * Index;
-  EnchantmentPlusChance = *LevelScript->GetEnchantmentPlusChanceBase() + *LevelScript->GetEnchantmentPlusChanceDelta() * Index;
+  Difficulty = 0.001 * (*LevelScript->GetDifficultyBase()
+                      + *LevelScript->GetDifficultyDelta() * Index);
+  EnchantmentMinusChance = *LevelScript->GetEnchantmentMinusChanceBase()
+                         + *LevelScript->GetEnchantmentMinusChanceDelta() * Index;
+  EnchantmentPlusChance = *LevelScript->GetEnchantmentPlusChanceBase()
+                        + *LevelScript->GetEnchantmentPlusChanceDelta() * Index;
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   long Counter = 0;
@@ -2214,7 +2233,9 @@ void node::CalculateNextNodes()
     {
       node* Node = NodeMap[NodePos.X][NodePos.Y];
 
-      if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanTheoreticallyMoveOn(Node->Square)) || NodePos == To))
+      if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y])
+                              || (SpecialMover && SpecialMover->CanTheoreticallyMoveOn(Node->Square))
+                              || NodePos == To))
       {
 	Node->Processed = true;
 	Node->Distance = Distance + 1;
@@ -2442,7 +2463,9 @@ void level::ForceEmitterNoxify(const emittervector& Emitter) const
   }
 }
 
-void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemittervector& SunEmitter, ulong IDFlags) const
+void level::ForceEmitterEmitation(const emittervector& Emitter,
+                                  const sunemittervector& SunEmitter,
+                                  ulong IDFlags) const
 {
   for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
   {
@@ -2545,7 +2568,8 @@ void level::UpdateLOS()
 
   if(PLAYER->StateIsActivated(INFRA_VISION))
     for(int c = 0; c < game::GetTeams(); ++c)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
+          i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	  (*i)->SendNewDrawRequest();
 }

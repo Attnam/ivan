@@ -99,15 +99,21 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
 	game::SetEnterImage(EnterImage);
 	v2 Displacement = *LevelScript->GetEnterTextDisplacement();
 	game::SetEnterTextDisplacement(Displacement);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), Displacement, WHITE, false, true, &game::BusyAnimation);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nPress any key to continue."), Displacement, WHITE, true, false, &game::BusyAnimation);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         Displacement, WHITE, false, true, &game::BusyAnimation);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nPress any key to continue."),
+                         Displacement, WHITE, true, false, &game::BusyAnimation);
 	game::SetEnterImage(0);
 	delete EnterImage;
       }
       else
 	  {
 	game::SetEnterTextDisplacement(ZERO_V2);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         ZERO_V2, WHITE, false, true, &game::BusyAnimation);
       }
 	}
 

@@ -18,10 +18,13 @@ truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 col16 bodypart::GetMaterialColorA(int) const { return GetMainMaterial()->GetSkinColor(); }
 truth bodypart::IsWarm() const { return MainMaterial->GetBodyFlags() & IS_WARM; }
-truth bodypart::UseMaterialAttributes() const { return MainMaterial->GetBodyFlags() & USE_MATERIAL_ATTRIBUTES || !Master || Master->AlwaysUseMaterialAttributes(); }
+truth bodypart::UseMaterialAttributes() const
+{ return MainMaterial->GetBodyFlags() & USE_MATERIAL_ATTRIBUTES || !Master || Master->AlwaysUseMaterialAttributes(); }
 truth bodypart::CanRegenerate() const { return MainMaterial->GetBodyFlags() & CAN_REGENERATE; }
-square* bodypart::GetSquareUnder(int I) const { return Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder(); }
-lsquare* bodypart::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
+square* bodypart::GetSquareUnder(int I) const
+{ return Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder(); }
+lsquare* bodypart::GetLSquareUnder(int I) const
+{ return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
 item* bodypart::GetExternalBodyArmor() const { return GetHumanoidMaster()->GetBodyArmor(); }
 item* bodypart::GetExternalCloak() const { return GetHumanoidMaster()->GetCloak(); }
 truth bodypart::AllowFluidBe() const { return !Master || !Master->IsPolymorphed(); }
@@ -62,7 +65,8 @@ head* corpse::Behead() { return Deceased->Behead(); }
 truth corpse::CanBeCloned() const { return GetDeceased()->CanBeCloned(); }
 int corpse::GetAttachedGod() const { return GetDeceased()->GetTorso()->GetAttachedGod(); }
 
-v2 ennerhead::GetBitmapPos(int Frame) const { return Frame & 16 ? head::GetBitmapPos(Frame) : head::GetBitmapPos(Frame) + v2(16, 0); }
+v2 ennerhead::GetBitmapPos(int Frame) const
+{ return Frame & 16 ? head::GetBitmapPos(Frame) : head::GetBitmapPos(Frame) + v2(16, 0); }
 
 alpha blinkdogtorso::GetAlphaA(int Frame) const { return (Frame & 31) != 31 ? 255 : 0; }
 
@@ -354,7 +358,8 @@ double arm::GetUnarmedToHitValue() const
 
 long arm::GetUnarmedAPCost() const
 {
-  return long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(UNARMED)->GetBonus()));
+  return long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase()
+                              * Master->GetCWeaponSkill(UNARMED)->GetBonus()));
 }
 
 void arm::CalculateDamage()
@@ -483,7 +488,9 @@ long arm::GetWieldedAPCost() const
   if(HitStrength <= 0)
     return 0;
 
-  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (GetCurrentSWeaponSkillBonus() * Min(HitStrength, 10))));
+  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase()
+                   * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus()
+                   * (GetCurrentSWeaponSkillBonus() * Min(HitStrength, 10))));
 }
 
 void head::CalculateDamage()
@@ -499,7 +506,8 @@ void head::CalculateToHitValue()
   if(!Master)
     return;
 
-  BiteToHitValue = Master->GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 1000000;
+  BiteToHitValue = Master->GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION))
+                   * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 1000000;
 }
 
 void head::CalculateAPCost()
@@ -507,7 +515,8 @@ void head::CalculateAPCost()
   if(!Master)
     return;
 
-  BiteAPCost = Max(long(10000000000. / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus())), 100L);
+  BiteAPCost = Max(long(10000000000. / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase()
+                                        * Master->GetCWeaponSkill(BITE)->GetBonus())), 100L);
 }
 
 void leg::CalculateDamage()
@@ -553,7 +562,8 @@ void leg::CalculateAPCost()
   if(!Master)
     return;
 
-  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus())), 100L);
+  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase()
+                                        * Master->GetCWeaponSkill(KICK)->GetBonus())), 100L);
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -598,7 +608,8 @@ int corpse::GetOfferValue(int Receiver) const
 
 double corpse::GetWeaponStrength() const
 {
-  return GetFormModifier() * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() * sqrt(GetDeceased()->GetTorso()->GetMainMaterial()->GetWeight());
+  return GetFormModifier() * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue()
+         * sqrt(GetDeceased()->GetTorso()->GetMainMaterial()->GetWeight());
 }
 
 truth corpse::CanBeEatenByAI(ccharacter* Eater) const
@@ -637,7 +648,11 @@ alpha corpse::GetAlphaA(int) const
 col16 corpse::GetMaterialColorB(int) const
 {
   torso* Torso = GetDeceased()->GetTorso();
-  return Torso->IsAlive() ? material::GetDataBase(GetDeceased()->GetBloodMaterial())->Color : Torso->GetMainMaterial()->GetColor();
+
+  if(Torso->IsAlive())
+    return material::GetDataBase(GetDeceased()->GetBloodMaterial())->Color;
+  else
+    return Torso->GetMainMaterial()->GetColor();
 }
 
 alpha corpse::GetAlphaB(int) const
@@ -909,7 +924,9 @@ void arm::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
     THW = TwoHandWieldIsActive();
   }
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), Flags & SADIST_HIT))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy),
+                        GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK,
+                        Direction, !(RAND() % Master->GetCriticalModifier()), Flags & SADIST_HIT))
   {
    case HAS_HIT:
    case HAS_BLOCKED:
@@ -1516,7 +1533,8 @@ truth arm::TwoHandWieldIsActive() const
     return false;
 }
 
-double bodypart::GetTimeToDie(int Damage, double ToHitValue, double DodgeValue, truth AttackIsBlockable, truth UseMaxHP) const
+double bodypart::GetTimeToDie(int Damage, double ToHitValue, double DodgeValue,
+                              truth AttackIsBlockable, truth UseMaxHP) const
 {
   double Durability;
   int TotalResistance = GetTotalResistance(PHYSICAL_DAMAGE);
@@ -1575,7 +1593,8 @@ double bodypart::GetTimeToDie(int Damage, double ToHitValue, double DodgeValue, 
 
 double bodypart::GetRoughChanceToHit(double ToHitValue, double DodgeValue) const
 {
-  return GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume() / ((DodgeValue / ToHitValue + 1) * DodgeValue * Master->GetBodyVolume() * 100);
+  return GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume()
+         / ((DodgeValue / ToHitValue + 1) * DodgeValue * Master->GetBodyVolume() * 100);
 }
 
 double torso::GetRoughChanceToHit(double ToHitValue, double DodgeValue) const
@@ -1607,7 +1626,9 @@ int arm::GetBlockCapability() const
   if(HitStrength <= 0)
     return 0;
 
-  return Min(HitStrength, 10) * Wielded->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * (*GetCurrentSWeaponSkill())->GetBonus() / 10000000;
+  return Min(HitStrength, 10) * Wielded->GetStrengthValue()
+         * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus()
+         * (*GetCurrentSWeaponSkill())->GetBonus() / 10000000;
 }
 
 void arm::WieldedSkillHit(int Hits)
@@ -1647,7 +1668,11 @@ humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : mybase(Torso)
   BeltSlot.Init(this, BELT_INDEX);
 }
 
-arm::arm(const arm& Arm) : mybase(Arm), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
+arm::arm(const arm& Arm)
+: mybase(Arm),
+  StrengthExperience(Arm.StrengthExperience),
+  DexterityExperience(Arm.DexterityExperience),
+  BaseUnarmedStrength(Arm.BaseUnarmedStrength)
 {
 }
 
@@ -1665,7 +1690,11 @@ leftarm::leftarm(const leftarm& Arm) : mybase(Arm)
   RingSlot.Init(this, LEFT_RING_INDEX);
 }
 
-leg::leg(const leg& Leg) : mybase(Leg), StrengthExperience(Leg.StrengthExperience), AgilityExperience(Leg.AgilityExperience), BaseKickStrength(Leg.BaseKickStrength)
+leg::leg(const leg& Leg)
+: mybase(Leg),
+  StrengthExperience(Leg.StrengthExperience),
+  AgilityExperience(Leg.AgilityExperience),
+  BaseKickStrength(Leg.BaseKickStrength)
 {
 }
 
@@ -1702,7 +1731,8 @@ truth bodypart::TestActivationEnergy(int Damage)
 {
 //  if(MainMaterial)
 //  {
-//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE));
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1)
+//                    + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE));
 //    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
 //  }
   if(Damage <= 0)
@@ -1719,7 +1749,9 @@ truth bodypart::TestActivationEnergy(int Damage)
   {
     int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
     GetMainMaterial()->AddToTransientThermalEnergy(Damage);
-    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN) && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
+    if((GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+       && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1)
+                         + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
     {
       if(Owner)
       {
@@ -1803,9 +1835,14 @@ void bodypart::AddSpecialExtinguishMessageForPF()
     character* Owner = GetMaster();
 
     if(Owner->IsPlayer())
-      ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes peel away from your %s and it is made new by some innate virtue!", CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
+      ADD_MESSAGE("Your %s burns even more! But lo', even as it does so, the ashes "
+                  "peel away from your %s and it is made new by some innate virtue!",
+                  CHAR_NAME(UNARTICLED), GetBodyPartName().CStr());
     else if(Owner->CanBeSeenByPlayer())
-      ADD_MESSAGE("The %s of %s burns even more! But lo', even as it does so, the ashes peel away from %s %s and it is made new by some innate virtue!", GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE), Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
+      ADD_MESSAGE("The %s of %s burns even more! But lo', even as it does so, the "
+                  "ashes peel away from %s %s and it is made new by some innate virtue!",
+                  GetBodyPartName().CStr(), Owner->CHAR_NAME(DEFINITE),
+                  Owner->GetPossessivePronoun().CStr(), GetBodyPartName().CStr());
   }
   else
     item::AddSpecialExtinguishMessageForPF();
@@ -1878,7 +1915,8 @@ void bodypart::Be()
 
       SpillBloodCounter = 0;
     }
-    // Organics can have an active Be() function, if they are burning... they will normally burn completely before they spoil
+    // Organics can have an active Be() function, if they are burning...
+    // they will normally burn completely before they spoil
     if(Master->AllowSpoil() || !Master->IsEnabled() || !!IsBurning())
       MainMaterial->Be(ItemFlags);
 
@@ -1909,13 +1947,19 @@ void bodypart::Be()
 
 void bodypart::SpillBlood(int HowMuch, v2 Pos)
 {
-  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
+  if(HowMuch
+     && (!Master || Master->SpillsBlood())
+     && (IsAlive() || MainMaterial->IsLiquid())
+     && !game::IsInWilderness())
     GetNearLSquare(Pos)->SpillFluid(0, CreateBlood(long(HowMuch * sqrt(BodyPartVolume) / 2)), false, false);
 }
 
 void bodypart::SpillBlood(int HowMuch)
 {
-  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
+  if(HowMuch
+     && (!Master || Master->SpillsBlood())
+     && (IsAlive() || MainMaterial->IsLiquid())
+     && !game::IsInWilderness())
     for(int c = 0; c < GetSquaresUnder(); ++c)
       if(GetLSquareUnder(c))
 	GetLSquareUnder(c)->SpillFluid(0, CreateBlood(long(HowMuch * sqrt(BodyPartVolume) / 2)), false, false);
@@ -2289,13 +2333,17 @@ truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
     if(HitStrength - Requirement < 10)
     {
       if(HitStrength <= Requirement)
-	ADD_MESSAGE("%s cannot use %s. Wielding it with two hands requires %d strength.", Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, (Requirement >> 1) + 1);
+	ADD_MESSAGE("%s cannot use %s. Wielding it with two hands requires %d strength.",
+                    Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, (Requirement >> 1) + 1);
       else if(HitStrength - Requirement < 4)
-	ADD_MESSAGE("Using %s even with two hands is extremely difficult for %s.", WeaponDescription, Master->CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("Using %s even with two hands is extremely difficult for %s.",
+                    WeaponDescription, Master->CHAR_DESCRIPTION(DEFINITE));
       else if(HitStrength - Requirement < 7)
-	ADD_MESSAGE("%s %s much trouble using %s even with two hands.", Master->CHAR_DESCRIPTION(DEFINITE), Master->IsPlayer() ? "have" : "has", WeaponDescription);
+	ADD_MESSAGE("%s %s much trouble using %s even with two hands.",
+                    Master->CHAR_DESCRIPTION(DEFINITE), Master->IsPlayer() ? "have" : "has", WeaponDescription);
       else
-	ADD_MESSAGE("It is somewhat difficult for %s to use %s even with two hands.", Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription);
+	ADD_MESSAGE("It is somewhat difficult for %s to use %s even with two hands.",
+                    Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription);
 
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
@@ -2316,13 +2364,19 @@ truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
       }
 
       if(HitStrength <= Requirement)
-	ADD_MESSAGE("%s%s cannot use %s. Wielding it%s requires %d strength.", OtherHandInfo.CStr(), Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(), WeaponDescription, HandInfo, Requirement + 1);
+	ADD_MESSAGE("%s%s cannot use %s. Wielding it%s requires %d strength.", OtherHandInfo.CStr(),
+                    Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(),
+                    WeaponDescription, HandInfo, Requirement + 1);
       else if(HitStrength - Requirement < 4)
-	ADD_MESSAGE("%sUsing %s%s is extremely difficult for %s.", OtherHandInfo.CStr(), WeaponDescription, HandInfo, Master->CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%sUsing %s%s is extremely difficult for %s.", OtherHandInfo.CStr(),
+                    WeaponDescription, HandInfo, Master->CHAR_DESCRIPTION(DEFINITE));
       else if(HitStrength - Requirement < 7)
-	ADD_MESSAGE("%s%s %s much trouble using %s%s.", OtherHandInfo.CStr(), Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(), Master->IsPlayer() ? "have" : "has", WeaponDescription, HandInfo);
+	ADD_MESSAGE("%s%s %s much trouble using %s%s.", OtherHandInfo.CStr(),
+                    Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(),
+                    Master->IsPlayer() ? "have" : "has", WeaponDescription, HandInfo);
       else
-	ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(), Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
+	ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(),
+                    Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
 
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
@@ -2758,7 +2812,8 @@ int corpse::GetBurnDataA() const
   return Deceased->GetTorso()->GetMainMaterial()->GetBurnData();
 }
 
-void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, int SpecialFlags, v2 (item::*Retriever)(int) const, truth BodyArmor) const
+void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, int SpecialFlags,
+                                  v2 (item::*Retriever)(int) const, truth BodyArmor) const
 {
   if(Armor && Master)
   {
@@ -2837,7 +2892,9 @@ void head::UpdateHeadArmorPictures(graphicdata& HelmetGraphicData) const
   }
 }
 
-void humanoidtorso::UpdateTorsoArmorPictures(graphicdata& TorsoArmorGraphicData, graphicdata& CloakGraphicData, graphicdata& BeltGraphicData) const
+void humanoidtorso::UpdateTorsoArmorPictures(graphicdata& TorsoArmorGraphicData,
+                                             graphicdata& CloakGraphicData,
+                                             graphicdata& BeltGraphicData) const
 {
   if(!Master || !Master->PictureUpdatesAreForbidden())
   {
@@ -2857,14 +2914,17 @@ void humanoidtorso::UpdateTorsoArmorPictures(graphicdata& TorsoArmorGraphicData,
   }
 }
 
-void arm::UpdateArmArmorPictures(graphicdata& ArmArmorGraphicData, graphicdata& GauntletGraphicData, int SpecialFlags) const
+void arm::UpdateArmArmorPictures(graphicdata& ArmArmorGraphicData,
+                                 graphicdata& GauntletGraphicData,
+                                 int SpecialFlags) const
 {
   if(!Master || !Master->PictureUpdatesAreForbidden())
   {
     UpdateArmorPicture(ArmArmorGraphicData,
 		       Master ? GetExternalBodyArmor() : 0,
 		       SpecialFlags,
-		       GetAttribute(ARM_STRENGTH, false) >= 20 ? &item::GetAthleteArmArmorBitmapPos : &item::GetArmArmorBitmapPos,
+		       GetAttribute(ARM_STRENGTH, false) >= 20 ?
+                         &item::GetAthleteArmArmorBitmapPos : &item::GetArmArmorBitmapPos,
 		       true);
     UpdateArmorPicture(GauntletGraphicData,
 		       GetGauntlet(),
@@ -2885,7 +2945,9 @@ void groin::UpdateGroinArmorPictures(graphicdata& GroinArmorGraphicData) const
   }
 }
 
-void leg::UpdateLegArmorPictures(graphicdata& LegArmorGraphicData, graphicdata& BootGraphicData, int SpecialFlags) const
+void leg::UpdateLegArmorPictures(graphicdata& LegArmorGraphicData,
+                                 graphicdata& BootGraphicData,
+                                 int SpecialFlags) const
 {
   if(!Master || !Master->PictureUpdatesAreForbidden())
   {
@@ -3310,7 +3372,10 @@ void bodypart::SpecialEatEffect(character* Eater, int Amount)
 {
   Amount >>= 6;
 
-  if(Amount && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
+  if(Amount
+     && (!Master || Master->SpillsBlood())
+     && (IsAlive() || MainMaterial->IsLiquid())
+     && !game::IsInWilderness())
   {
     if(Eater->GetVirtualHead())
       Eater->GetVirtualHead()->SpillFluid(Eater, CreateBlood(Amount));
@@ -3687,7 +3752,13 @@ bodypart::~bodypart()
     delete Scar[c].PanelBitmap;
 }
 
-bodypart::bodypart(const bodypart& B) : mybase(B), OwnerDescription(B.OwnerDescription), Master(B.Master), CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume), BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD), SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP), BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial), SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
+bodypart::bodypart(const bodypart& B)
+: mybase(B), OwnerDescription(B.OwnerDescription), Master(B.Master),
+  CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume),
+  BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD),
+  SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP),
+  BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial),
+  SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
 {
   for(size_t c = 0; c < Scar.size(); ++c)
     if(Scar[c].PanelBitmap)

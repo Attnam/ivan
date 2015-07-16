@@ -26,8 +26,23 @@ rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
-cchar* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx", "Graphics/Cursor.pcx" };
-cchar* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx", "Graphics/Smiley.pcx" };
+cchar* igraph::RawGraphicFileName[] =
+{
+  "Graphics/GLTerra.pcx",
+  "Graphics/OLTerra.pcx",
+  "Graphics/Item.pcx",
+  "Graphics/Char.pcx",
+  "Graphics/Humanoid.pcx",
+  "Graphics/Effect.pcx",
+  "Graphics/Cursor.pcx"
+};
+cchar* igraph::GraphicFileName[] =
+{
+  "Graphics/WTerra.pcx",
+  "Graphics/FOW.pcx",
+  "Graphics/Symbol.pcx",
+  "Graphics/Smiley.pcx"
+};
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
@@ -51,7 +66,9 @@ void igraph::Init()
   {
     AlreadyInstalled = true;
     graphics::Init();
-    graphics::SetMode("IVAN " IVAN_VERSION, festring(game::GetGameDir() + "Graphics/Icon.bmp").CStr(), v2(800, 600), ivanconfig::GetFullScreenMode());
+    graphics::SetMode("IVAN " IVAN_VERSION,
+                      festring(game::GetGameDir() + "Graphics/Icon.bmp").CStr(),
+                      v2(800, 600), ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
 #ifndef __DJGPP__
@@ -207,14 +224,16 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       RawPos.X = RawPos.Y = 0;
     }
 
-    bitmap* Bitmap = RawBitmap->Colorize(RawPos, TILE_V2, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, GI.BurnData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
+    bitmap* Bitmap = RawBitmap->Colorize(RawPos, TILE_V2, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha,
+                                         GI.RustData, GI.BurnData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
     Bitmap->ActivateFastFlag();
 
     if(BodyPartFlags)
       Bitmap->InitPriorityMap(SpecialFlags & ST_CLOAK ? CLOAK_PRIORITY : AVERAGE_PRIORITY);
 
     if(GI.OutlineColor != TRANSPARENT_COLOR)
-      Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha, BodyPartFlags != ST_WIELDED ? ARMOR_OUTLINE_PRIORITY : AVERAGE_PRIORITY);
+      Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha,
+                      BodyPartFlags != ST_WIELDED ? ARMOR_OUTLINE_PRIORITY : AVERAGE_PRIORITY);
 
     if(SparklePos.X != SPARKLE_POS_X_ERROR)
       Bitmap->CreateSparkle(SparklePos + GI.Position, GI.SparkleFrame);

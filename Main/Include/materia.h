@@ -101,7 +101,8 @@ class material
   friend class databasecreator<material>;
   typedef materialprototype prototype;
   typedef materialdatabase database;
-  material(int NewConfig, long InitVolume = 0, truth Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
+  material(int NewConfig, long InitVolume = 0, truth Load = false)
+  : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material() : MotherEntity(0) { }
   virtual ~material() { }
   void AddName(festring&, truth = false, truth = true) const;

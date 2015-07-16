@@ -229,7 +229,9 @@ void altar::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer() && !GetMasterGod()->IsKnown())
   {
-    ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
+    ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is "
+                "dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity "
+                "via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
     game::LearnAbout(GetMasterGod());
   }
 }
@@ -240,25 +242,30 @@ truth throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt be Our Champion first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt be Our Champion first!\"");
     return true;
   }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt wear Our shining armor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt wear Our shining armor first!\"");
     return true;
   }
 
   if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt surpass thy predecessor first!\"");
     return true;
   }
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
+    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
+                             "\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\n"
+                             "We hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
     game::GetCurrentArea()->SendNewDrawRequest();
     game::DrawEverything();
     PLAYER->ShowAdventureInfo();
@@ -536,7 +543,8 @@ truth fountain::Drink(character* Drinker)
 
 	    if(Found && RAND_N(3))
 	    {
-	      ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+	      ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                          "of tunnels and end up coming out from an other fountain.");
 	      Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
 	      Drinker->Move(Found->GetPos(), true);
 	    }
@@ -553,9 +561,12 @@ truth fountain::Drink(character* Drinker)
 	      olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
 
 	      if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
-		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                            "of tunnels and end up coming out from an other fountain.");
 	      else
-		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
+		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                            "of tunnels. Suddenly the wall of the tunnel bursts open and "
+                            "you fly out with the water.");
 	    }
 
 	    Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
@@ -725,7 +736,8 @@ void door::ActivateBoobyTrap()
       ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
 
     BoobyTrap = 0;
-    GetLevel()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
+    GetLevel()->Explosion(0, "killed by an exploding booby trapped door",
+                          GetPos(), 20 + RAND() % 5 - RAND() % 5);
     break;
    case 0:
     break;
@@ -898,7 +910,8 @@ truth stairs::Enter(truth DirectionUp) const
 
   if(GetConfig() == OREE_LAIR_ENTRY)
   {
-    ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
+    ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you "
+                "shouldn't wander any further. On the other hand you have little choice.");
 
     if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
@@ -923,7 +936,8 @@ truth stairs::Enter(truth DirectionUp) const
 
   if(GetConfig() == DARK_LEVEL)
   {
-    ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
+    ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely "
+                "dangerous on the other side. You feel you should think twice before entering.");
 
     if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
@@ -935,7 +949,10 @@ truth stairs::Enter(truth DirectionUp) const
   if(GetConfig() == SUMO_ARENA_EXIT && !game::TryToExitSumoArena())
     return false;
 
-  return game::TryTravel(game::GetCurrentDungeonIndex(), GetAttachedArea(), GetAttachedEntry(), GetAttachedArea() != WORLD_MAP);
+  return game::TryTravel(game::GetCurrentDungeonIndex(),
+                         GetAttachedArea(),
+                         GetAttachedEntry(),
+                         GetAttachedArea() != WORLD_MAP);
 }
 
 void stairs::StepOn(character* Stepper)
@@ -1013,7 +1030,9 @@ truth olterraincontainer::Open(character* Opener)
 
   truth Success;
 
-  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or (p)ut something in this container? [t,p]"), KEY_ESC, 3, 't', 'p', KEY_ESC))
+  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or "
+                                   "(p)ut something in this container? [t,p]"),
+                           KEY_ESC, 3, 't', 'p', KEY_ESC))
   {
    case 't':
    case 'T':
@@ -1209,7 +1228,8 @@ truth fountain::IsFountainWithWater() const
 
 void liquidterrain::SurviveEffect(character* Survivor)
 {
-  Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);
+  Survivor->GetLSquareUnder()->SpillFluid(Survivor,
+    static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);
 }
 
 monsterportal::monsterportal()

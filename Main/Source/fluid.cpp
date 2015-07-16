@@ -19,7 +19,9 @@ const long fluid::BodyArmorPartPixels[] = { 34, 7, 7, 8, 6, 6 };
 
 fluid::fluid() : entity(HAS_BE), Next(0), MotherItem(0), GearImage(0) { }
 
-fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(LSquareUnder), MotherItem(0), Image(false), GearImage(0), Flags(0)
+fluid::fluid(liquid* Liquid, lsquare* LSquareUnder)
+: entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(LSquareUnder),
+  MotherItem(0), Image(false), GearImage(0), Flags(0)
 {
   TrapData.TrapID = game::CreateNewTrapID(this);
   TrapData.VictimID = 0;
@@ -29,7 +31,9 @@ fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), L
   AddLiquid(Liquid->GetVolume());
 }
 
-fluid::fluid(liquid* Liquid, item* MotherItem, cfestring& LocationName, truth IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
+fluid::fluid(liquid* Liquid, item* MotherItem, cfestring& LocationName, truth IsInside)
+: entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem),
+  Image(false), GearImage(0), Flags(0), LocationName(LocationName)
 {
   TrapData.TrapID = 0;
 
@@ -73,7 +77,9 @@ void fluid::AddLiquid(long Volume)
       {
 	if(Flags & HAS_BODY_ARMOR_PICTURES)
 	  for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
-	    GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS, Image.AlphaAverage, Col, Pred);
+	    GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(),
+                                            Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS,
+                                            Image.AlphaAverage, Col, Pred);
 	else
 	  GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Col, Pred);
       }
@@ -527,7 +533,8 @@ void fluid::imagedata::Load(inputfile& SaveFile)
    to determine whether pixels of the Shadow are allowed to be covered
    by the fluid. It is not used if Shadow == 0. */
 
-void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, long AlphaSuggestion, col16 Color, pixelpredicate PixelPredicate)
+void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, long AlphaSuggestion,
+                                          col16 Color, pixelpredicate PixelPredicate)
 {
   if(ShadowPos == ERROR_V2)
     return;
@@ -682,7 +689,10 @@ void fluid::AddTrapName(festring& String, int) const
 truth fluid::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
-  int Sum = Victim->GetAttribute(ARM_STRENGTH) + Victim->GetAttribute(LEG_STRENGTH) + Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(AGILITY);
+  int Sum = Victim->GetAttribute(ARM_STRENGTH)
+          + Victim->GetAttribute(LEG_STRENGTH)
+          + Victim->GetAttribute(DEXTERITY)
+          + Victim->GetAttribute(AGILITY);
   int Modifier = Liquid->GetStickiness() * Liquid->GetVolume() / (Max(Sum, 1) * 500);
 
   if(!RAND_N(Max(Modifier, 2)))
@@ -693,7 +703,8 @@ truth fluid::TryToUnStick(character* Victim, v2)
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to unstick yourself from the %s.", Liquid->GetName(false, false).CStr());
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s manages to unstick %sself from the %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+      ADD_MESSAGE("%s manages to unstick %sself from the %s.",
+                  Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
 
     Victim->EditAP(-250);
     return true;
@@ -711,9 +722,11 @@ truth fluid::TryToUnStick(character* Victim, v2)
       Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You fail to free yourself from the %s and your %s is stuck in it in the attempt.", Liquid->GetName(false, false).CStr(), Victim->GetBodyPartName(VictimBodyPart).CStr());
+	ADD_MESSAGE("You fail to free yourself from the %s and your %s is stuck in it in the attempt.",
+                    Liquid->GetName(false, false).CStr(), Victim->GetBodyPartName(VictimBodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tries to free %sself from the %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+	ADD_MESSAGE("%s tries to free %sself from the %s but is stuck more tightly in it in the attempt.",
+                    Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
 
       Victim->EditAP(-1000);
       return true;
@@ -742,9 +755,11 @@ void fluid::StepOnEffect(character* Stepper)
   Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("Your %s is stuck to %s.", Stepper->GetBodyPartName(StepperBodyPart).CStr(), Liquid->GetName(false, false).CStr());
+    ADD_MESSAGE("Your %s is stuck to %s.", Stepper->GetBodyPartName(StepperBodyPart).CStr(),
+                Liquid->GetName(false, false).CStr());
   else if(Stepper->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s gets stuck to %s.", Stepper->CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+    ADD_MESSAGE("%s gets stuck to %s.", Stepper->CHAR_NAME(DEFINITE),
+                Liquid->GetName(false, false).CStr());
 }
 
 void fluid::PreProcessForBone()

@@ -36,7 +36,8 @@ void tickcontroller::PrepareShiftedTick()
   }
 }
 
-truth lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
+truth lsquare::IsDipDestination() const
+{ return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
 
 lsquare::lsquare(level* LevelUnder, v2 Pos)
 : square(LevelUnder, Pos),
@@ -819,13 +820,15 @@ void lsquare::GetSideItemDescription(festring& String, truth Cheat) const
   }
 }
 
-truth lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double KickDamage, double KickToHitValue, int Success, int Direction, truth Critical, truth ForceHit)
+truth lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double KickDamage, double KickToHitValue,
+                        int Success, int Direction, truth Critical, truth ForceHit)
 {
   truth Return;
 
   if(GetCharacter())
   {
-    GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
+    GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue,
+                             Success, Direction, Critical, ForceHit);
     Return = true;
   }
   else
@@ -844,7 +847,10 @@ truth lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double Kic
 
 truth lsquare::CanBeDug() const
 {
-  if((!GetPos().X || !GetPos().Y || GetPos().X == GetLevel()->GetXSize() - 1 || GetPos().Y == GetLevel()->GetYSize() - 1) && !*GetLevel()->GetLevelScript()->IsOnGround())
+  if((!GetPos().X || !GetPos().Y
+      || GetPos().X == GetLevel()->GetXSize() - 1
+      || GetPos().Y == GetLevel()->GetYSize() - 1)
+     && !*GetLevel()->GetLevelScript()->IsOnGround())
   {
     ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
     return false;
@@ -1207,7 +1213,8 @@ truth lsquare::DipInto(item* Thingy, character* Dipper)
     if(Room && Room->HasDipHandler() && !Room->Dip(Dipper))
       return false;
 
-    return (GLTerrain->IsDipDestination() && GLTerrain->DipInto(Thingy, Dipper)) || (OLTerrain && OLTerrain->IsDipDestination() && OLTerrain->DipInto(Thingy, Dipper));
+    return (GLTerrain->IsDipDestination() && GLTerrain->DipInto(Thingy, Dipper))
+        || (OLTerrain && OLTerrain->IsDipDestination() && OLTerrain->DipInto(Thingy, Dipper));
   }
   else
   {
@@ -1709,7 +1716,8 @@ void lsquare::GetHitByExplosion(const explosion* Explosion)
 
   int Damage = Explosion->Strength / (DistanceSquare + 1);
 
-  if(Character && (Explosion->HurtNeutrals || (Explosion->Terrorist && Character->GetRelation(Explosion->Terrorist) == HOSTILE)))
+  if(Character && (Explosion->HurtNeutrals
+                   || (Explosion->Terrorist && Character->GetRelation(Explosion->Terrorist) == HOSTILE)))
   {
     if(Character->IsPlayer())
       game::SetPlayerWasHurtByExplosion(true);
@@ -1965,7 +1973,10 @@ truth lsquare::IsScaryToBreathe(ccharacter* Who) const
 
 struct groundborderpartner
 {
-  truth operator<(const groundborderpartner& P) const { return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority(); }
+  truth operator<(const groundborderpartner& P) const
+  {
+    return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority();
+  }
   glterrain* Terrain;
   int SquareIndex;
 };
@@ -2033,7 +2044,10 @@ void lsquare::CalculateGroundBorderPartners()
 
 struct overborderpartner
 {
-  truth operator<(const overborderpartner& P) const { return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority(); }
+  truth operator<(const overborderpartner& P) const
+  {
+    return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority();
+  }
   olterrain* Terrain;
   int SquareIndex;
 };
@@ -2223,10 +2237,12 @@ void lsquare::SpillFluid(character* Spiller, liquid* Liquid, truth ForceHit, tru
 	if(SpillVolume)
 	{
 	  if(ShowMsg && (GetCharacter()->IsPlayer() || GetCharacter()->CanBeSeenByPlayer()))
-	    ADD_MESSAGE("%s is spilled all over %s.", Liquid->GetName(false, false).CStr(), GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+	    ADD_MESSAGE("%s is spilled all over %s.", Liquid->GetName(false, false).CStr(),
+                        GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
 
 	  Liquid->EditVolume(-SpillVolume);
-	  GetCharacter()->SpillFluid(Spiller, Liquid->SpawnMoreLiquid(SpillVolume), GetCharacter()->GetSquareIndex(GetPos()));
+	  GetCharacter()->SpillFluid(Spiller, Liquid->SpawnMoreLiquid(SpillVolume),
+                                     GetCharacter()->GetSquareIndex(GetPos()));
 	}
       }
     }

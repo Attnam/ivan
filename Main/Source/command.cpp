@@ -33,10 +33,10 @@
 #include "proto.h"
 #endif
 
-command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2,
-									char Key3, truth UsableInWilderness, truth WizardModeFunction)
-		: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
-						UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
+command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
+                 truth UsableInWilderness, truth WizardModeFunction)
+: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+  UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
 }
 
@@ -430,7 +430,8 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
   festring Question = CONST_S("What do you wish to ") + ConsumeVerb + '?';
 
   if(!game::IsInWilderness() && StackUnder->SortedItems(Char, Sorter))
-    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"), CONST_S("Items on the ground"), CONST_S(""), 0, NO_MULTI_SELECT, Sorter);
+    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"),
+                            CONST_S("Items on the ground"), CONST_S(""), 0, NO_MULTI_SELECT, Sorter);
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
@@ -472,7 +473,8 @@ truth commandsystem::PickUp(character* Char)
       int Amount = PileVector[0].size();
 
       if(Amount > 1)
-	Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?',
+                                         Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
       if(!Amount)
 	return false;
@@ -679,9 +681,11 @@ truth commandsystem::Dip(character* Char)
 
   if(Item)
   {
-    if(!HasDipDestination || (DipDestinationNear && game::TruthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
+    if(!HasDipDestination
+       || (DipDestinationNear && game::TruthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
     {
-      int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
+      int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE)
+                                        + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
@@ -832,7 +836,8 @@ truth commandsystem::Pray(character* Char)
     {
       if(!Select)
       {
-	if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
+	if(game::TruthQuestion(CONST_S("Do you really wish to pray to ")
+                               + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
 	  game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->Pray();
 	else
 	  return false;
@@ -842,7 +847,8 @@ truth commandsystem::Pray(character* Char)
     }
     else
     {
-      if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Do you really wish to pray to ")
+                             + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
       {
 	if(Char->StateIsActivated(CONFUSED) && !(RAND() & 7))
 	{
@@ -852,9 +858,11 @@ truth commandsystem::Pray(character* Char)
 	      Index = 1 + RAND() % GODS);
 
 	  if(game::GetGod(Index)->IsKnown())
-	    ADD_MESSAGE("You feel something went wrong in the rituals. You have accidentally prayed to %s!", game::GetGod(Index)->GetName());
+	    ADD_MESSAGE("You feel something went wrong in the rituals. You have accidentally prayed to %s!",
+                        game::GetGod(Index)->GetName());
 	  else
-	    ADD_MESSAGE("Your rituals were seriously incorrect. You have accidentally prayed to an unknown god, but have no idea how!");
+	    ADD_MESSAGE("Your rituals were seriously incorrect. You have accidentally "
+                        "prayed to an unknown god, but have no idea how!");
 
 	  game::GetGod(Index)->Pray();
 	}
@@ -896,7 +904,8 @@ truth commandsystem::Kick(character* Char)
 
   character* Enemy = Square->GetCharacter();
 
-  if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE
+     && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   /*if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
@@ -969,7 +978,8 @@ truth commandsystem::Throw(character* Char)
 
   if(Item)
   {
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  [press a direction key]"), false);
+    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
+                                                 "[press a direction key]"), false);
 
     if(Answer == DIR_ERROR)
       return false;
@@ -1055,7 +1065,8 @@ truth commandsystem::Zap(character* Char)
 
   if(Item)
   {
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  [press a direction key or '.']"), false, true);
+    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
+                                                 "[press a direction key or '.']"), false, true);
 
     if(Answer == DIR_ERROR)
       return false;
@@ -1114,7 +1125,9 @@ truth commandsystem::Rest(character* Char)
       return false;
   }
 
-  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"), Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"),
+                                          Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0,
+                                          WHITE, LIGHT_GRAY, DARK_GRAY);
 
   if(HPToRest <= Char->GetHP())
   {
@@ -1480,7 +1493,8 @@ truth commandsystem::SecretKnowledge(character* Char)
 	Entry.Resize(47);
 	Entry << int(Character[c]->GetRelativeDanger(Char, true) * 1000);
 	Entry.Resize(57);
-	const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
+	const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(),
+                                                                Character[c]->GetConfig()))->second;
 	Entry << int(DI.NakedDanger * 1000);
 	Entry.Resize(67);
 	Entry << int(DI.EquippedDanger * 1000);

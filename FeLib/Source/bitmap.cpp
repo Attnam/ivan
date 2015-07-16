@@ -350,7 +350,8 @@ void bitmap::NormalBlit(cblitdata& BlitData) const
     if(B.Flags & ROTATE && B.Border.X != B.Border.Y)
       ABORT("Blit error: FeLib supports only square rotating!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -516,7 +517,8 @@ void bitmap::LuminanceBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -555,7 +557,8 @@ void bitmap::NormalMaskedBlit(cblitdata& BlitData) const
     if(B.Flags & ROTATE && B.Border.X != B.Border.Y)
       ABORT("MaskedBlit error: FeLib supports only square rotating!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -734,7 +737,8 @@ void bitmap::LuminanceMaskedBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap masked blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -819,7 +823,8 @@ void bitmap::AlphaMaskedBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap alpha blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -851,9 +856,12 @@ void bitmap::AlphaMaskedBlit(cblitdata& BlitData) const
   }
 }
 
-void bitmap::DrawLine(v2 From, int ToX, int ToY, col16 Color, truth Wide) { DrawLine(From.X, From.Y, ToX, ToY, Color, Wide); }
-void bitmap::DrawLine(int FromX, int FromY, v2 To, col16 Color, truth Wide) { DrawLine(FromX, FromY, To.X, To.Y, Color, Wide); }
-void bitmap::DrawLine(v2 From, v2 To, col16 Color, truth Wide) { DrawLine(From.X, From.Y, To.X, To.Y, Color, Wide); }
+void bitmap::DrawLine(v2 From, int ToX, int ToY, col16 Color, truth Wide)
+{ DrawLine(From.X, From.Y, ToX, ToY, Color, Wide); }
+void bitmap::DrawLine(int FromX, int FromY, v2 To, col16 Color, truth Wide)
+{ DrawLine(FromX, FromY, To.X, To.Y, Color, Wide); }
+void bitmap::DrawLine(v2 From, v2 To, col16 Color, truth Wide)
+{ DrawLine(From.X, From.Y, To.X, To.Y, Color, Wide); }
 
 void bitmap::DrawLine(int OrigFromX, int OrigFromY, int OrigToX, int OrigToY, col16 Color, truth Wide)
 {
@@ -991,7 +999,8 @@ void bitmap::DrawHorizontalLine(int OrigFromX, int OrigToX, int OrigY, col16 Col
   }
 }
 
-void bitmap::DrawPolygon(int CenterX, int CenterY, int Radius, int NumberOfSides, col16 Color, truth DrawSides, truth DrawDiameters, double Rotation)
+void bitmap::DrawPolygon(int CenterX, int CenterY, int Radius, int NumberOfSides,
+                         col16 Color, truth DrawSides, truth DrawDiameters, double Rotation)
 {
   if(!DrawSides && !DrawDiameters)
     return;
@@ -1199,7 +1208,8 @@ void bitmap::StretchBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap stretch blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -1278,9 +1288,12 @@ inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
   return SaveFile;
 }
 
-void bitmap::DrawRectangle(v2 TopLeft, int Right, int Bottom, col16 Color, truth Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, Right, Bottom, Color, Wide); }
-void bitmap::DrawRectangle(int Left, int Top, v2 BottomRight, col16 Color, truth Wide) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
-void bitmap::DrawRectangle(v2 TopLeft, v2 BottomRight, col16 Color, truth Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
+void bitmap::DrawRectangle(v2 TopLeft, int Right, int Bottom, col16 Color, truth Wide)
+{ DrawRectangle(TopLeft.X, TopLeft.Y, Right, Bottom, Color, Wide); }
+void bitmap::DrawRectangle(int Left, int Top, v2 BottomRight, col16 Color, truth Wide)
+{ DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
+void bitmap::DrawRectangle(v2 TopLeft, v2 BottomRight, col16 Color, truth Wide)
+{ DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
 
 void bitmap::DrawRectangle(int Left, int Top, int Right, int Bottom, col16 Color, truth Wide)
 {
@@ -1311,7 +1324,8 @@ void bitmap::AlphaLuminanceBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap alpha blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
@@ -1539,7 +1553,8 @@ truth bitmap::CreateLightning(v2 StartPos, v2 Direction, int MaxLength, col16 Co
     LimitRef(Move.X, -StartPos.X, Size.X - StartPos.X - 1);
     LimitRef(Move.Y, -StartPos.Y, Size.X - StartPos.Y - 1);
 
-    if(Counter < 10 && ((!Move.Y && !LastMove.Y) || (Move.Y && LastMove.Y && (Move.X << 10) / Move.Y == (LastMove.X << 10) / LastMove.Y)))
+    if(Counter < 10 && ((!Move.Y && !LastMove.Y)
+                        || (Move.Y && LastMove.Y && (Move.X << 10) / Move.Y == (LastMove.X << 10) / LastMove.Y)))
     {
       ++Counter;
       continue;
@@ -1565,7 +1580,8 @@ truth bitmap::CreateLightning(v2 StartPos, v2 Direction, int MaxLength, col16 Co
     StartPos += Move;
     LastMove = Move;
 
-    if((Direction.X && (!StartPos.X || StartPos.X == Size.X - 1)) || (Direction.Y && (!StartPos.Y || StartPos.Y == Size.X - 1)))
+    if((Direction.X && (!StartPos.X || StartPos.X == Size.X - 1))
+       || (Direction.Y && (!StartPos.Y || StartPos.Y == Size.X - 1)))
     {
       PixelVector.clear();
       return false;
@@ -1857,7 +1873,8 @@ void bitmap::AlphaPriorityBlit(cblitdata& BlitData) const
     if(!B.Border.X || !B.Border.Y)
       ABORT("Zero-sized bitmap alpha priority blit attempt detected!");
 
-    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y, Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
+    if(!femath::Clip(B.Src.X, B.Src.Y, B.Dest.X, B.Dest.Y, B.Border.X, B.Border.Y,
+                     Size.X, Size.Y, B.Bitmap->Size.X, B.Bitmap->Size.Y))
       return;
   }
 
