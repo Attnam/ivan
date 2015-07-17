@@ -220,9 +220,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&FullScreenMode);
 #endif
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName("ivan.cfg");
+  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(festring(getenv("HOME")) + "/.ivan.conf");
+  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
   configsystem::Load();
   CalculateContrastLuminance();

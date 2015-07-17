@@ -95,7 +95,7 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
     {
       if(LevelScript->GetEnterImage())
       {
-	cbitmap* EnterImage = new bitmap(game::GetGameDir() + "Graphics/" + *LevelScript->GetEnterImage());
+	cbitmap* EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
 	game::SetEnterImage(EnterImage);
 	v2 Displacement = *LevelScript->GetEnterTextDisplacement();
 	game::SetEnterTextDisplacement(Displacement);

@@ -36,6 +36,7 @@ truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
+festring globalwindowhandler::ScrshotDirectoryName = "";
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
@@ -99,7 +100,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
     Key = getkey();
 
-    if(Key == K_Control_Print)
+    if(Key == K_Control_Print && !ScrshotDirectoryName.IsEmpty())
     {
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       Key = 0;
@@ -300,8 +301,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
      case SDLK_SYSREQ:
      case SDLK_PRINTSCREEN:
-
-      DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
+      if(!ScrshotDirectoryName.IsEmpty())
+        DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
 #if SDL_MAJOR_VERSION == 2
      /* event are now splitted between SDL_KEYDOWN and SDL_TEXTINPUT,
@@ -361,11 +362,7 @@ festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be u
 		ScrshotNum << ScrshotCount;
 	
 	festring ScrshotName;
-	#ifdef WIN32
-	ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
-	#else
-	ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
-	#endif
+	ScrshotName << ScrshotDirectoryName << "Scrshot" << ScrshotNum << ".bmp";
 	
 	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
 	if (Scrshot) {

@@ -55,6 +55,7 @@ int Main(int argc, char **argv)
   igraph::Init();
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+  globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();

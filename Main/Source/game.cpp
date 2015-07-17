@@ -222,7 +222,7 @@ void game::ClearCharacterDrawVector() { CharacterDrawVector.clear(); }
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(GetDataDir() + "Script/dungeon.dat", &GlobalValueMap);
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
@@ -245,16 +245,21 @@ truth game::Init(cfestring& Name)
 
 #ifdef WIN32
   _mkdir("Save");
+  _mkdir("Scrshot");
   _mkdir("Bones");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
+  mkdir("Scrshot", S_IRUSR|S_IWUSR);
   mkdir("Bones", S_IWUSR);
 #endif
 
 #ifdef LINUX
+  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
@@ -1579,7 +1584,7 @@ truth game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GetGameDir() + "Script/define.dat", &GlobalValueMap);
+  inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
   festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -2261,7 +2266,7 @@ festring game::GetHomeDir()
 {
 #ifdef LINUX
   festring Dir;
-  Dir << getenv("HOME") << '/';
+  Dir << getenv("HOME") << "/.ivan/";
   return Dir;
 #endif
 
@@ -2272,18 +2277,15 @@ festring game::GetHomeDir()
 
 festring game::GetSaveDir()
 {
-#ifdef LINUX
-  festring Dir;
-  Dir << getenv("HOME") << "/IvanSave/";
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Save/";
-#endif
+  return GetHomeDir() + "Save/";
 }
 
-festring game::GetGameDir()
+festring game::GetScrshotDir()
+{
+  return GetHomeDir() + "Scrshot/";
+}
+
+festring game::GetDataDir()
 {
 #ifdef LINUX
   return DATADIR "/ivan/";
