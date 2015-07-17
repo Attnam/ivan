@@ -744,29 +744,29 @@ void databasesystem::Initialize()
   {
     /* Must be before character */
 
-    inputfile ScriptFile(game::GetGameDir() + "Script/material.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/material.dat", &game::GetGlobalValueMap());
     databasecreator<material>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/char.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/char.dat", &game::GetGlobalValueMap());
     databasecreator<character>::ReadFrom(ScriptFile);
   }
 
   {
     /* Must be before olterrain */
 
-    inputfile ScriptFile(game::GetGameDir() + "Script/item.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/item.dat", &game::GetGlobalValueMap());
     databasecreator<item>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
     databasecreator<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
     databasecreator<olterrain>::ReadFrom(ScriptFile);
   }
 }

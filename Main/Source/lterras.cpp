@@ -387,7 +387,7 @@ truth fountain::Drink(character* Drinker)
 	  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
 	  game::Wish(Drinker,
 		     "%s appears from nothing and the spirit flies happily away!",
-		     "Two %s appear from nothing and the spirit flies happily away!");
+		     "Two %s appear from nothing and the spirit flies happily away!", false);
 	}
 	else
 	  DryOut();

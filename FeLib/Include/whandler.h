@@ -23,6 +23,7 @@
 #endif
 
 #include "felibdef.h"
+#include "festring.h"
 
 #define GET_KEY globalwindowhandler::GetKey
 #define READ_KEY globalwindowhandler::ReadKey
@@ -40,6 +41,8 @@ class globalwindowhandler
   static void EnableControlLoops() { ControlLoopsEnabled = true; }
   static void DisableControlLoops() { ControlLoopsEnabled = false; }
   static truth ShiftIsDown();
+  static void SetScrshotDirectory(cfestring& DirectoryName)
+  { ScrshotDirectoryName = DirectoryName; }
   static festring ScrshotNameHandler(); // Number successive screenshots based on existing filenames
 #ifdef USE_SDL
   static void Init();
@@ -62,6 +65,7 @@ class globalwindowhandler
   static int Controls;
   static ulong Tick;
   static truth ControlLoopsEnabled;
+  static festring ScrshotDirectoryName;
 };
 
 #endif
