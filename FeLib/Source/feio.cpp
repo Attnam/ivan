@@ -286,12 +286,12 @@ int iosystem::StringQuestion(festring& Input,
 			     truth Fade, truth AllowExit,
 			     stringkeyhandler StringKeyHandler)
 {
-  v2 V(RES.X, 9); ///???????????
+  v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
 		 { Pos.X, Pos.Y + 10 },
 		 { 0, 0 },
-		 { static_cast<int>((MaxLetters << 3) + 9), 9 },
+		 { static_cast<int>((MaxLetters << 3) + 9), 10 },
 		 { 0 },
 		 0,
 		 0 };
@@ -301,7 +301,7 @@ int iosystem::StringQuestion(festring& Input,
     bitmap Buffer(RES, 0);
     Buffer.ActivateFastFlag();
     FONT->Printf(&Buffer, Pos, Color, "%s", Topic.CStr());
-    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 10), Color, "%s_", Input.CStr());
+    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 10), Color, "%s", Input.CStr());
     Buffer.FadeToScreen();
   }
   else
@@ -311,12 +311,14 @@ int iosystem::StringQuestion(festring& Input,
   FONT->Printf(DOUBLE_BUFFER, Pos, Color, "%s", Topic.CStr());
   Swap(B.Src, B.Dest);
 
-  for(int LastKey = 0;; LastKey = 0)
+  for(int LastKey = 0, CursorPos = Input.GetSize();; LastKey = 0)
   {
     B.Bitmap = DOUBLE_BUFFER;
     BackUp.NormalBlit(B);
     FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 10),
-		 Color, "%s_", Input.CStr());
+                 Color, "%s", Input.CStr());
+    FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 11),
+                 Color, "%*c", CursorPos + 1, '_');
 
     if(TooShort)
     {
@@ -352,8 +354,8 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(!Input.IsEmpty())
-	Input.Resize(Input.GetSize() - 1);
+      if(CursorPos)
+        Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
     }
@@ -367,9 +369,27 @@ int iosystem::StringQuestion(festring& Input,
 	continue;
       }
 
+    if(LastKey == KEY_LEFT)
+    {
+      if(CursorPos)
+        --CursorPos;
+
+      continue;
+    }
+
+    if(LastKey == KEY_RIGHT)
+    {
+      if(CursorPos < static_cast<int>(Input.GetSize()))
+        ++CursorPos;
+
+      continue;
+    }
+
     if(LastKey >= 0x20 && Input.GetSize() < MaxLetters
-       && (LastKey != ' ' || !Input.IsEmpty()))
-      Input << char(LastKey);
+       && (LastKey != ' ' || !Input.IsEmpty())
+       && LastKey != KEY_UP && LastKey != KEY_DOWN)
+      Input.Insert(static_cast<festring::sizetype>(CursorPos++),
+                   static_cast<char>(LastKey));
   }
 
   /* Delete all the trailing spaces */
@@ -395,12 +415,12 @@ int iosystem::StringQuestion(festring& Input,
 long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 			      truth Fade, truth ReturnZeroOnEsc)
 {
-  v2 V(RES.X, 9); ///???????????
+  v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
 		 { Pos.X, Pos.Y + 10 },
 		 { 0, 0 },
-		 { 105, 9 },
+		 { 105, 10 },
 		 { 0 },
 		 0,
 		 0 };
@@ -410,7 +430,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
     bitmap Buffer(RES, 0);
     Buffer.ActivateFastFlag();
     FONT->Printf(&Buffer, Pos, Color, "%s", Topic.CStr());
-    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 10), Color, "_");
+    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 11), Color, "_");
     Buffer.FadeToScreen();
   }
   else
@@ -420,23 +440,26 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
   FONT->Printf(DOUBLE_BUFFER, Pos, Color, "%s", Topic.CStr());
   Swap(B.Src, B.Dest);
 
-  for(int LastKey = 0;; LastKey = 0)
+  for(int LastKey = 0, CursorPos = 0;; LastKey = 0)
   {
     B.Bitmap = DOUBLE_BUFFER;
     BackUp.NormalBlit(B);
     FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 10),
-		 Color, "%s_", Input.CStr());
+                 Color, "%s", Input.CStr());
+    FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 11),
+                 Color, "%*c", CursorPos + 1, '_');
     graphics::BlitDBToScreen();
 
     while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE
 	  && LastKey != KEY_ENTER && LastKey != KEY_ESC
+          && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
 	  && (LastKey != '-' || !Input.IsEmpty()))
       LastKey = GET_KEY(false);
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(!Input.IsEmpty())
-	Input.Resize(Input.GetSize() - 1);
+      if(CursorPos)
+        Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
     }
@@ -452,8 +475,25 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
       break;
     }
 
+    if(LastKey == KEY_LEFT)
+    {
+      if(CursorPos)
+        --CursorPos;
+
+      continue;
+    }
+
+    if(LastKey == KEY_RIGHT)
+    {
+      if(CursorPos < static_cast<int>(Input.GetSize()))
+        ++CursorPos;
+
+      continue;
+    }
+
     if(Input.GetSize() < 12)
-      Input << char(LastKey);
+      Input.Insert(static_cast<festring::sizetype>(CursorPos++),
+                   static_cast<char>(LastKey));
   }
 
   return atoi(Input.CStr());
@@ -583,8 +623,9 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 
     while(!isdigit(LastKey) && LastKey != KEY_ESC
 	  && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER
-	  && LastKey != KEY_SPACE && LastKey != '<'
-	  && LastKey != '>' && LastKey != RightKey && LastKey != LeftKey)
+	  && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>'
+          && LastKey != RightKey && LastKey != LeftKey
+          && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
       LastKey = GET_KEY(false);
 
     if(LastKey == KEY_ESC)
@@ -604,7 +645,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
     if(LastKey == KEY_ENTER || LastKey == KEY_SPACE)
       break;
 
-    if(LastKey == '<' || LastKey == LeftKey)
+    if(LastKey == '<' || LastKey == LeftKey || LastKey == KEY_LEFT)
     {
       BarValue -= Step;
 
@@ -616,7 +657,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
       continue;
     }
 
-    if(LastKey == '>' || LastKey == RightKey)
+    if(LastKey == '>' || LastKey == RightKey || LastKey == KEY_RIGHT)
     {
       BarValue += Step;
 

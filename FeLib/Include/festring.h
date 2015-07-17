@@ -73,6 +73,8 @@ class festring
   sizetype FindLast(const festring& S, sizetype Pos = NPos) const
   { return FindLast(S.Data, Pos, S.Size); }
   void Erase(sizetype, sizetype);
+  void Insert(sizetype Pos, char C)
+  { char Buffer[] = " "; Insert(Pos, &(Buffer[0] = C), 1); }
   void Insert(sizetype Pos, cchar* CStr)
   { Insert(Pos, CStr, strlen(CStr)); }
   void Insert(sizetype, cchar*, sizetype);
