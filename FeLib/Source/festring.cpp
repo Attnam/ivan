@@ -302,7 +302,7 @@ festring::sizetype festring::Find(cchar* CStr,
 	if(!Result)
 	  return NPos;
 
-	if(!memcmp(Result, CStr, N))
+	if(!strncmp(Result, CStr, N))
 	  return Result - Ptr;
 	else
 	  Pos = Result - Ptr + 1;
