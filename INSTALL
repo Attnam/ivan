@@ -1,7 +1,7 @@
 Compiling IVAN under different systems
 --------------------------------------
 
-Under Linux, type:
+Under Linux and OS X, type:
 
 ./configure
 make
