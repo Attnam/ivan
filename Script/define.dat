@@ -28,7 +28,7 @@
 
 #define RED 63488
 #define GREEN 2016
-#define BLUE 31
+#define BLUE 10943
 
 #define YELLOW 65504
 #define PINK 61470
