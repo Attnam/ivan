@@ -172,7 +172,7 @@ inline int GetMinColor24(col24 Color)
 
 #define RED 0xF800
 #define GREEN 0x07E0
-#define BLUE 0x001F
+#define BLUE 0x2ABF
 
 #define YELLOW 0xFFE0
 #define PINK 0xF01E
