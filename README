@@ -18,8 +18,8 @@ For news and updates view our homepage at ivan.sourceforge.net.
 1. Description
 
 Iter Vehemens ad Necem (IVAN) is a graphical roguelike game, which currently
-runs in Windows, DOS and Linux. It features advanced bodypart and material
-handling, multi-colored lighting and, above all, deep gameplay.
+runs in Windows, DOS, Linux and OS X. It features advanced bodypart and
+material handling, multi-colored lighting and, above all, deep gameplay.
 
 -----------------------------
 
@@ -38,9 +38,14 @@ We recommend that you use at least a:
    Vesa 2.0 compatible video card
 
    or:
-	
-   Linux with 
-   (SDL library version 1.2.0 or higher)
+
+   Linux with
+   SDL library version 1.2.0 or higher
+
+   or:
+
+   OS X with
+   SDL library version 1.2.0 or higher
 
 -----------------------------
 
@@ -159,9 +164,9 @@ Q: How can I compile IVAN source code?
 
 A: See INSTALL.
 
-Q: I am a Linux user. Why can't I access the wizard (cheat) mode?
+Q: I am a Linux / OS X user. Why can't I access the wizard (cheat) mode?
 
-A: The wizard mode functions aren't compiled by default. In Linux change
+A: The wizard mode functions aren't compiled by default. Change
    the environment variable CXXFLAGS to -DWIZARD and recompile.
 
 Q: I am a DOS user. When I try to run IVAN, I get the message "Load error:
