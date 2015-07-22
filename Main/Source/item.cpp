@@ -1927,10 +1927,10 @@ void item::SendMemorizedUpdateRequest() const
 
 truth item::AddStateDescription(festring& Name, truth Articled) const
 {
-  if(!Spoils())
+  if(!Spoils() || !(ItemFlags & (HASTE|SLOW)))
     return false;
 
-  if((ItemFlags & (HASTE|SLOW)) && Articled)
+  if(Articled)
     Name << "a ";
 
   if(ItemFlags & HASTE)
