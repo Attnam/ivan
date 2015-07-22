@@ -25,7 +25,7 @@ class festring;
 class dungeon
 {
  public:
-  dungeon();
+  dungeon() = default;
   dungeon(int);
   ~dungeon();
   truth PrepareLevel(int, truth = true);

@@ -12,8 +12,6 @@
 
 /* Compiled through areaset.cpp */
 
-area::area() { }
-
 area::area(int InitXSize, int InitYSize)
 {
   Initialize(InitXSize, InitYSize);

@@ -20,7 +20,7 @@
 ITEM(materialcontainer, item)
 {
  public:
-  materialcontainer() { }
+  materialcontainer() = default;
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }

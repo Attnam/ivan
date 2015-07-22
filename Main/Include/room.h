@@ -45,7 +45,7 @@ class room
  public:
   typedef roomprototype prototype;
   room() : LastMasterSearchTick(0), MasterID(0) { }
-  virtual ~room() { }
+  virtual ~room() = default; 
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Enter(character*) { }

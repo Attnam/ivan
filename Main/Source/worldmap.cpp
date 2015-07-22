@@ -24,7 +24,6 @@
 int DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
-worldmap::worldmap() { }
 continent* worldmap::GetContinentUnder(v2 Pos) const
 { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
 v2 worldmap::GetEntryPos(ccharacter*, int I) const

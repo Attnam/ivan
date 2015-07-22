@@ -63,7 +63,7 @@ inputfile& operator>>(inputfile& SaveFile, felistentry*& Entry)
 
 struct felistdescription
 {
-  felistdescription() { }
+  felistdescription() = default;
   felistdescription(cfestring& String, col16 Color)
   : String(String), Color(Color) { }
   festring String;

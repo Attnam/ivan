@@ -67,7 +67,7 @@ class inputfile;
 
 struct scriptmemberbase
 {
-  virtual ~scriptmemberbase() { }
+  virtual ~scriptmemberbase() = default;
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile&) const = 0;
   virtual void Load(inputfile&) = 0;
@@ -112,7 +112,7 @@ template <class type> inline scriptmember<type>& scriptmember<type>::operator=(c
 
 template <class type> struct fastscriptmember : public scriptmemberbase
 {
-  fastscriptmember() { }
+  fastscriptmember() = default;
   fastscriptmember(type Member) : Member(Member) { }
   virtual void ReadFrom(inputfile&);
   virtual void Replace(scriptmemberbase&);
@@ -125,7 +125,7 @@ class script
 {
  public:
   typedef std::map<cchar*, scriptmemberbase script::*, charcomparer> datamap;
-  virtual ~script() { }
+  virtual ~script() = default;
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile& SaveFile) const { SaveDataMap(GetDataMap(), SaveFile); }
   virtual void Load(inputfile& SaveFile) { LoadDataMap(GetDataMap(), SaveFile); }
@@ -445,8 +445,8 @@ class dungeonscript : public script
 {
  public:
   typedef dungeonscript scripttype;
-  dungeonscript();
-  virtual ~dungeonscript();
+  dungeonscript() = default;
+  virtual ~dungeonscript() = default;
   virtual void ReadFrom(inputfile&);
   const std::map<int, levelscript>& GetLevel() const;
   void RandomizeLevels();

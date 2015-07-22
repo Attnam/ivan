@@ -995,8 +995,6 @@ void levelscript::Load(inputfile& SaveFile)
       RoomScript.SetBase(RoomDefault);
 }
 
-dungeonscript::dungeonscript() { }
-dungeonscript::~dungeonscript() { }
 const std::map<int, levelscript>& dungeonscript::GetLevel() const { return Level; }
 
 void dungeonscript::InitDataMap()
