@@ -82,7 +82,7 @@ void owterrain::Draw(blitdata& BlitData) const
 
 void wterrain::Load(inputfile&)
 {
-  WSquareUnder = dynamic_cast<wsquare*>(game::GetSquareInLoad());
+  WSquareUnder = static_cast<wsquare*>(game::GetSquareInLoad());
 }
 
 void gwterrain::Save(outputfile& SaveFile) const

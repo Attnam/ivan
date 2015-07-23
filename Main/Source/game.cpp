@@ -1740,23 +1740,23 @@ int game::CalculateRoughDirection(v2 Vector)
   double Angle = femath::CalculateAngle(Vector);
 
   if(Angle < FPI / 8)
-    return 4;
+    return EAST;
   else if(Angle < 3 * FPI / 8)
-    return 7;
+    return SOUTHEAST;
   else if(Angle < 5 * FPI / 8)
-    return 6;
+    return SOUTH;
   else if(Angle < 7 * FPI / 8)
-    return 5;
+    return SOUTHWEST;
   else if(Angle < 9 * FPI / 8)
-    return 3;
+    return WEST;
   else if(Angle < 11 * FPI / 8)
-    return 0;
+    return NORTHWEST;
   else if(Angle < 13 * FPI / 8)
-    return 1;
+    return NORTH;
   else if(Angle < 15 * FPI / 8)
-    return 2;
+    return NORTHEAST;
   else
-    return 4;
+    return EAST;
 }
 
 int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS, col16 Color, cfestring& SmallText1, cfestring& SmallText2)
