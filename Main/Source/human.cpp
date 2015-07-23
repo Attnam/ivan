@@ -4782,7 +4782,7 @@ void tailor::BeTalkedTo()
 
     if(Item->GetMainMaterial()->IsBurning())
     {
-      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you. \"");
+      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you.\"");
       return;
     }
 
