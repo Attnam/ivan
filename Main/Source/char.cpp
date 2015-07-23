@@ -6890,6 +6890,10 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
     Explosion->Terrorist->Hostility(this);
 
   GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
+
+  if(DamageDirection == RANDOM_DIR)
+    DamageDirection = RAND() & 7;
+
   v2 SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
 
   if(GetArea()->IsValidPos(SpillPos))
