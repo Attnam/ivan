@@ -171,49 +171,30 @@ cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
 void game::AddCharacterID(character* Char, ulong ID) {
-  if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-    int esko = esko = 2;
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID) {
-  if(CharacterIDMap.find(ID) == CharacterIDMap.end())
-    int esko = esko = 2;
   CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID) {
-  if(ItemIDMap.find(ID) != ItemIDMap.end())
-    int esko = esko = 2;
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 void game::RemoveItemID(ulong ID)
 {
-  if(ID && ItemIDMap.find(ID) == ItemIDMap.end())
-    int esko = esko = 2;
-
   if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
 }
 void game::UpdateItemID(item* Item, ulong ID) {
-  if(ItemIDMap.find(ID) == ItemIDMap.end())
-    int esko = esko = 2;
   ItemIDMap.find(ID)->second = Item;
 }
 void game::AddTrapID(entity* Trap, ulong ID) {
-  if(TrapIDMap.find(ID) != TrapIDMap.end())
-    int esko = esko = 2;
-
   if(ID)
     TrapIDMap.insert(std::make_pair(ID, Trap));
 }
 void game::RemoveTrapID(ulong ID)
 {
-  if(ID && TrapIDMap.find(ID) == TrapIDMap.end())
-    int esko = esko = 2;
-
   if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
 }
 void game::UpdateTrapID(entity* Trap, ulong ID) {
-  if(TrapIDMap.find(ID) == TrapIDMap.end())
-    int esko = esko = 2;
   TrapIDMap.find(ID)->second = Trap;
 }
 const dangermap& game::GetDangerMap() { return DangerMap; }
@@ -2184,10 +2165,6 @@ inputfile& operator>>(inputfile& SaveFile, homedata*& HomeData)
 ulong game::CreateNewCharacterID(character* NewChar)
 {
   ulong ID = NextCharacterID++;
-
-  if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-    int esko = esko = 2;
-
   CharacterIDMap.insert(std::make_pair(ID, NewChar));
   return ID;
 }
@@ -2195,9 +2172,6 @@ ulong game::CreateNewCharacterID(character* NewChar)
 ulong game::CreateNewItemID(item* NewItem)
 {
   ulong ID = NextItemID++;
-
-  if(ItemIDMap.find(ID) != ItemIDMap.end())
-    int esko = esko = 2;
 
   if(NewItem)
     ItemIDMap.insert(std::make_pair(ID, NewItem));
@@ -2208,9 +2182,6 @@ ulong game::CreateNewItemID(item* NewItem)
 ulong game::CreateNewTrapID(entity* NewTrap)
 {
   ulong ID = NextTrapID++;
-
-  if(TrapIDMap.find(ID) != TrapIDMap.end())
-    int esko = esko = 2;
 
   if(NewTrap)
     TrapIDMap.insert(std::make_pair(ID, NewTrap));
