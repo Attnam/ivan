@@ -220,7 +220,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
 			    { 0, 0 },
 			    { 0, 0 },
 			    { RES.X, RES.Y },
-			    { static_cast<int>(MakeRGB24(Element, Element, Element)) },
+			    { MakeRGB24(Element, Element, Element) },
 			    0,
 			    0 };
       Backup.LuminanceMaskedBlit(BlitData);

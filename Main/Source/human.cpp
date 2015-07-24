@@ -1626,7 +1626,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 		  { 0, 0 },
 		  { 0, 0 },
 		  { TILE_SIZE, TILE_SIZE },
-		  { static_cast<int>(ivanconfig::GetContrastLuminance()) },
+		  { ivanconfig::GetContrastLuminance() },
 		  TRANSPARENT_COLOR,
 		  ALLOW_ANIMATE };
 
