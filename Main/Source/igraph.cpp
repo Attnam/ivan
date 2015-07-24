@@ -123,7 +123,7 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
 			{ 0, 0 },
 			{ Pos.X, Pos.Y },
 			{ TILE_SIZE, TILE_SIZE },
-			{ static_cast<int>(ivanconfig::GetContrastLuminance()) },
+			{ ivanconfig::GetContrastLuminance() },
 			TRANSPARENT_COLOR,
 			0 };
 
