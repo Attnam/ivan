@@ -644,30 +644,32 @@ void game::UpdateCameraCoordinate(int& Coordinate, int Center, int Size, int Scr
     GetCurrentArea()->SendNewDrawRequest();
 }
 
-cchar* game::Insult() // convert to array
+cchar* game::Insult()
 {
-  switch(RAND_N(18))
+  static cchar*const Insult[] =
   {
-   case 0  : return "moron";
-   case 1  : return "silly";
-   case 2  : return "idiot";
-   case 3  : return "airhead";
-   case 4  : return "jerk";
-   case 5  : return "dork";
-   case 6  : return "Mr. Mole";
-   case 7  : return "navastater";
-   case 8  : return "potatoes-for-eyes";
-   case 9  : return "lamer";
-   case 10 : return "mommo-for-brains";
-   case 11 : return "pinhead";
-   case 12 : return "stupid-headed person";
-   case 13 : return "software abuser";
-   case 14 : return "loser";
-   case 15 : return "peaballs";
-   case 16 : return "person-with-problems";
-   case 17 : return "unimportant user";
-   default : return "hugger-mugger";
-  }
+    "moron",
+    "silly",
+    "idiot",
+    "airhead",
+    "jerk",
+    "dork",
+    "Mr. Mole",
+    "navastater",
+    "potatoes-for-eyes",
+    "lamer",
+    "mommo-for-brains",
+    "pinhead",
+    "stupid-headed person",
+    "software abuser",
+    "loser",
+    "peaballs",
+    "person-with-problems",
+    "unimportant user",
+    "hugger-mugger"
+  };
+
+  return Insult[RAND_N(sizeof(Insult) / sizeof(Insult[0]))];
 }
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
