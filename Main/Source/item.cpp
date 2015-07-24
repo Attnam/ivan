@@ -1058,9 +1058,6 @@ void item::PostProcessForBone()
   }
   else
   {
-    if(game::SearchItem(BI->second))
-      int esko = esko = 2;
-
     ID = BI->second;
     game::AddItemID(this, ID);
   }

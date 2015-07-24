@@ -202,7 +202,7 @@ void lsquare::UpdateStaticContentCache(col24 Luminance) const
 		 { 0, 0 },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 { static_cast<int>(Luminance) },
+		 { Luminance },
 		 0,
 		 0 };
 
@@ -1330,10 +1330,10 @@ stack* lsquare::GetStackOfAdjacentSquare(int I) const
 
   switch(I)
   {
-   case LEFT:  Square = NeighbourLSquare[3]; break;
-   case DOWN:  Square = NeighbourLSquare[6]; break;
-   case UP:    Square = NeighbourLSquare[1]; break;
-   case RIGHT: Square = NeighbourLSquare[4]; break;
+   case LEFT:  Square = NeighbourLSquare[WEST]; break;
+   case DOWN:  Square = NeighbourLSquare[SOUTH]; break;
+   case UP:    Square = NeighbourLSquare[NORTH]; break;
+   case RIGHT: Square = NeighbourLSquare[EAST]; break;
   }
 
   return Square ? Square->Stack : 0;
@@ -1392,10 +1392,10 @@ v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere
      || !CanBeSeenByPlayer(true))
     switch(Direction)
     {
-     case 1: return v2(RAND() & 15, 15);
-     case 3: return v2(15, RAND() & 15);
-     case 4: return v2(0, RAND() & 15);
-     case 6: return v2(RAND() & 15, 0);
+     case NORTH: return v2(RAND() & 15, 15);
+     case WEST: return v2(15, RAND() & 15);
+     case EAST: return v2(0, RAND() & 15);
+     case SOUTH: return v2(RAND() & 15, 0);
      default: return StartPos;
     }
 
@@ -1413,14 +1413,14 @@ v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere
 
     switch(Direction)
     {
-     case 0: EndPos = v2(0, 0); break;
-     case 1: EndPos = v2(RAND() & 15, 0); StartPos = v2(EndPos.X, 15); break;
-     case 2: EndPos = v2(15, 0); break;
-     case 3: EndPos = v2(0, RAND() & 15); StartPos = v2(15, EndPos.Y); break;
-     case 4: EndPos = v2(15, RAND() & 15); StartPos = v2(0, EndPos.Y); break;
-     case 5: EndPos = v2(0, 15); break;
-     case 6: EndPos = v2(RAND() & 15, 15); StartPos = v2(EndPos.X, 0); break;
-     case 7: EndPos = v2(15, 15); break;
+     case NORTHWEST: EndPos = v2(0, 0); break;
+     case NORTH: EndPos = v2(RAND() & 15, 0); StartPos = v2(EndPos.X, 15); break;
+     case NORTHEAST: EndPos = v2(15, 0); break;
+     case WEST: EndPos = v2(0, RAND() & 15); StartPos = v2(15, EndPos.Y); break;
+     case EAST: EndPos = v2(15, RAND() & 15); StartPos = v2(0, EndPos.Y); break;
+     case SOUTHWEST: EndPos = v2(0, 15); break;
+     case SOUTH: EndPos = v2(RAND() & 15, 15); StartPos = v2(EndPos.X, 0); break;
+     case SOUTHEAST: EndPos = v2(15, 15); break;
     }
 
     while(!Empty.CreateLightning(EndPos, -game::GetMoveVector(Direction), NO_LIMIT, Color));
@@ -2091,9 +2091,6 @@ void lsquare::CalculateOverBorderPartners()
   }
 
   OverBorderPartnerInfo |= Index << 24;
-
-  if(OverBorderPartnerInfo & BORDER_PARTNER_ANIMATED)
-    int esko = esko = 2;
 }
 
 void lsquare::RequestForGroundBorderPartnerUpdates()

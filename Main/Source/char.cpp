@@ -3027,9 +3027,6 @@ void character::GoOn(go* Go, truth FirstStep)
 
 void character::SetTeam(team* What)
 {
-  if(Team)
-    int esko = esko = 2;
-
   Team = What;
   SetTeamIterator(What->Add(this));
 }
@@ -6890,6 +6887,10 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
     Explosion->Terrorist->Hostility(this);
 
   GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
+
+  if(DamageDirection == RANDOM_DIR)
+    DamageDirection = RAND() & 7;
+
   v2 SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
 
   if(GetArea()->IsValidPos(SpillPos))
@@ -9466,9 +9467,6 @@ truth character::TryToUnStickTraps(v2 Dir)
     {
       entity* Trap = game::SearchTrap(TrapVector[c].TrapID);
 
-      if(!Trap->Exists())
-	int esko = esko = 2;
-
       if(Trap->GetVictimID() == GetID() && Trap->TryToUnStick(this, Dir))
 	break;
     }
@@ -9623,15 +9621,7 @@ int character::RandomizeHurtBodyPart(ulong BodyParts) const
 
   for(int c = 0; c < GetBodyParts(); ++c)
     if(1 << c & BodyParts)
-    {
-      if(!GetBodyPart(c))
-	int esko = esko = 2;
-
       BodyPartIndex[Index++] = c;
-    }
-
-  if(!Index)
-    int esko = esko = 2;
 
   return BodyPartIndex[RAND_N(Index)];
 }

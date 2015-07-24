@@ -245,12 +245,7 @@ void stack::BeKicked(character* Kicker, int KickDamage, int Direction)
       Item1->Fly(Kicker, Direction, KickDamage * 3);
 
       if(Item2)
-      {
-	if(!Item2->Exists() || Item2->GetPos() != GetPos())
-	  int esko = esko = 2;
-
 	Item2->Fly(Kicker, Direction, KickDamage * 3);
-      }
     }
   }
   else if(Kicker->IsPlayer() && GetNativeVisibleItems(Kicker))
@@ -1280,14 +1275,14 @@ truth stack::AllowDamage(int Direction, int SquarePosition)
 
   switch(Direction)
   {
-   case 0: return SquarePosition == DOWN || SquarePosition == RIGHT;
-   case 1: return SquarePosition == DOWN;
-   case 2: return SquarePosition == DOWN || SquarePosition == LEFT;
-   case 3: return SquarePosition == RIGHT;
-   case 4: return SquarePosition == LEFT;
-   case 5: return SquarePosition == UP || SquarePosition == RIGHT;
-   case 6: return SquarePosition == UP;
-   case 7: return SquarePosition == UP || SquarePosition == LEFT;
+   case NORTHWEST: return SquarePosition == DOWN || SquarePosition == RIGHT;
+   case NORTH: return SquarePosition == DOWN;
+   case NORTHEAST: return SquarePosition == DOWN || SquarePosition == LEFT;
+   case WEST: return SquarePosition == RIGHT;
+   case EAST: return SquarePosition == LEFT;
+   case SOUTHWEST: return SquarePosition == UP || SquarePosition == RIGHT;
+   case SOUTH: return SquarePosition == UP;
+   case SOUTHEAST: return SquarePosition == UP || SquarePosition == LEFT;
   }
 
   return true;

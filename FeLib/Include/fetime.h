@@ -24,7 +24,7 @@ class time
   static time_t TimeAdd(time_t,time_t);
   static time_t TimeDifference(time_t,time_t);
   static festring VerbalizeAsTimeSpent(time_t);
-  static festring VerbalizeAsCalenderTime(time_t);
+  static festring VerbalizeAsCalendarTime(time_t);
 };
 
 #endif
