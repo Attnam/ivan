@@ -41,9 +41,10 @@
 /* Shouldn't be initialized here! */
 
 cchar* globalerrorhandler::BugMsg
-= "\n\nPlease send bug report to ivan-users@sourceforge.net\n"
+= "\n\nPlease send bug report to ivan-support@googlegroups.com\n"
 "including a brief description of what you did, what version\n"
-"you are running and which kind of system you are using.";
+"you are running and which kind of system you are using.\n"
+"Or submit on our forum at http://attnam.com";
 
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
