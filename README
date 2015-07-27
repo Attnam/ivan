@@ -1,7 +1,7 @@
 Iter Vehems ad Necem v0.50
 ---------------------------
 
-For news and updates view our homepage at ivan.sourceforge.net.
+For news and updates visit our unofficial homepage at http://attnam.com
 
 --------------------------
 
@@ -55,8 +55,8 @@ IVAN works pretty much in the same way as other roguelikes. The player
 controls a character, which moves and attacks from the direction keys.
 All other commands can be found by pressing ?-key in the game.
 
-Additional help can be obtained from the offical site at 
-http://ivan.sourceforge.net/.
+Additional help can be obtained from the unofficial site at
+http://attnam.com
 
 -----------------------------
 
@@ -178,28 +178,28 @@ Q: I am a DOS user. When I try to run IVAN, I get the message "Load error:
 
 Q: I've found a bug. What should I do?
 
-A: Write a small description on how the bug occured and if possible even
+A: Write a small description on how the bug occurred and if possible even
    how we could replicate it, and send this information by email to
-   ivan-users@lists.sourceforge.net. If you are a SourceForge user, you can
-   also report this bug at Ivan's SourceForge project page:
+   ivan-support@googlegroups.com. You can also report this bug on our
+   forum:
 
-   http://sourceforge.net/projects/ivan
+   http://attnam.com
 
    You should mention your full name so we can credit you at the end of the
    AUTHORS file, if you are the first to discover this bug.
 
 Q: I've got a great idea to make IVAN better! What should I do?
 
-A: Describe the idea to us by sending it to ivan-users@lists.sourceforge.net
-   or report it at Ivan's SourceForge project page (see above). You will be
-   credited if we implement the feature, it's non-trivial, and you're first
-   to suggest it.
+A: Describe the idea to us by sending it to ivan-support@googlegroups.com
+   or report it on our forum (see above). You will be credited if we
+   implement the feature, it's non-trivial, and you're first to suggest it.
 
 Q: I'm a programmer willing to help you. What should I do?
 
-A: Code and then send us (e-mail: ivan-devel@lists.sourceforge.net)
-   your diff. If we like your code we will integrate it to the next
-   release. You will of course be credited for your code.
+A: Join us on Github! https://github.com/Attnam/ivan
+   Contributions are welcome. Fork the repository and then once you have
+   made and tested your changes, submit a pull request. It will be reviewed
+   by one of the admins as soon as possible.
 
    See .customs.emacs file for the official Ivan C++ Programming
    Style. 
