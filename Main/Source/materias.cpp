@@ -61,7 +61,17 @@ void solid::Be(ulong Flags)
 
           if(NewBurnLevel != GetBurnLevel())
           {
+            truth NaturallyExtinguish = false;
+            if(((RAND() % 4) - GetBurnLevel()) <= 0)
+              NaturallyExtinguish = true;
+
             SetBurnLevel(GetBurnLevel() + 1, true);
+
+            if(NaturallyExtinguish)
+            {
+              MotherEntity->Extinguish(true);
+              ResetThermalEnergies();
+            }
           }
         }
       }
