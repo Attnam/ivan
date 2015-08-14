@@ -178,7 +178,6 @@ CHARACTER(humanoid, character)
   virtual long GetBodyPartVolume(int) const;
   virtual bodypart* MakeBodyPart(int) const;
   virtual cfestring& GetDeathMessage() const;
-  virtual v2 GetDrawDisplacement(int) const { return ZERO_V2; }
   truth HasAUsableArm() const;
   truth HasAUsableLeg() const;
   truth HasTwoUsableLegs() const;
@@ -498,7 +497,6 @@ CHARACTER(kamikazedwarf, humanoid)
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;
   virtual int GetLegMainColor() const;
-  virtual v2 GetDrawDisplacement(int) const;
   virtual int GetWSkillHits() const { return 10000; }
   virtual truth IsElite() const { return false; }
 };
