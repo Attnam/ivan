@@ -178,7 +178,6 @@ CHARACTER(humanoid, character)
   virtual long GetBodyPartVolume(int) const;
   virtual bodypart* MakeBodyPart(int) const;
   virtual cfestring& GetDeathMessage() const;
-  virtual v2 GetDrawDisplacement(int) const { return ZERO_V2; }
   truth HasAUsableArm() const;
   truth HasAUsableLeg() const;
   truth HasTwoUsableLegs() const;

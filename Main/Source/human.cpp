@@ -2335,13 +2335,9 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
     bodypart* BodyPart = GetBodyPart(DrawOrder[c]);
 
     if(BodyPart)
-    {
-      B.Dest = GetDrawDisplacement(c);
       BodyPart->Draw(B);
-    }
   }
 
-  B.Dest.X = B.Dest.Y = 0;
   arm* LeftArm = GetLeftArm();
 
   if(LeftArm)
