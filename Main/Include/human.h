@@ -498,7 +498,6 @@ CHARACTER(kamikazedwarf, humanoid)
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;
   virtual int GetLegMainColor() const;
-  virtual v2 GetDrawDisplacement(int) const;
   virtual int GetWSkillHits() const { return 10000; }
   virtual truth IsElite() const { return false; }
 };

@@ -2355,12 +2355,6 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
   TileBuffer->FastBlit(RealBitmap, BlitData.Dest);
 }
 
-v2 kamikazedwarf::GetDrawDisplacement(int I) const
-{
-  static v2 DrawDisplacement[] = { v2(0, 0), v2(0, 1), v2(0, -1), v2(0, -1), v2(0, -1), v2(0, 0), v2(0, 0) };
-  return DrawDisplacement[I];
-}
-
 col16 angel::GetTorsoMainColor() const
 {
   return GetMasterGod()->GetColor();
