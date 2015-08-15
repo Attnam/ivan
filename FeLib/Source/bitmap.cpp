@@ -163,11 +163,8 @@ bitmap::bitmap(cfestring& FileName)
 }
 
 bitmap::bitmap(cbitmap* Bitmap, int Flags, truth CopyAlpha)
-: Size(Bitmap->Size), XSizeTimesYSize(Bitmap->XSizeTimesYSize),
-  FastFlag(0), PriorityMap(0), RandMap(0)
+: bitmap(Bitmap->Size)
 {
-  Alloc2D(Image, Size.Y, Size.X);
-
   if(CopyAlpha && Bitmap->AlphaMap)
   {
     Alloc2D(AlphaMap, Size.Y, Size.X);
@@ -175,8 +172,6 @@ bitmap::bitmap(cbitmap* Bitmap, int Flags, truth CopyAlpha)
   }
   else
   {
-    AlphaMap = 0;
-
     if(!Flags)
       Bitmap->FastBlit(this);
     else
@@ -192,10 +187,8 @@ bitmap::bitmap(v2 Size)
 }
 
 bitmap::bitmap(v2 Size, col16 Color)
-: Size(Size), XSizeTimesYSize(Size.X * Size.Y),
-  FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0)
+: bitmap(Size)
 {
-  Alloc2D(Image, Size.Y, Size.X);
   ClearToColor(Color);
 }
 

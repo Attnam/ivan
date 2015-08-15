@@ -918,13 +918,12 @@ void magicalwhistle::BlowEffect(character* Whistler)
   else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear a strange tune playing.");
 
-  const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
   std::vector<distancepair> ToSort;
   v2 Pos = Whistler->GetPos();
 
-  for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
-    if((*i)->IsEnabled() && Whistler != *i)
-      ToSort.push_back(distancepair((Pos - (*i)->GetPos()).GetLengthSquare(), *i));
+  for(character* p : Whistler->GetTeam()->GetMember())
+    if(p->IsEnabled() && Whistler != p)
+      ToSort.push_back(distancepair((Pos - p->GetPos()).GetLengthSquare(), p));
 
   if(ToSort.size() > 5)
     std::sort(ToSort.begin(), ToSort.end());
@@ -1690,7 +1689,7 @@ int materialcontainer::GetSpoilLevel() const
   return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
 }
 
-void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
+void itemcontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 

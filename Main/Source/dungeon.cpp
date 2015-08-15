@@ -19,8 +19,6 @@
 #include "femath.h"
 #include "bitmap.h"
 
-dungeon::dungeon() { }
-
 dungeon::dungeon(int Index) : Index(Index)
 {
   Initialize();

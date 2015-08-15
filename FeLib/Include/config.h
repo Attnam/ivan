@@ -58,7 +58,7 @@ class configsystem
 struct configoption
 {
   configoption(cchar*, cchar*);
-  virtual ~configoption() { }
+  virtual ~configoption() = default;
   virtual void SaveValue(std::ofstream&) const = 0;
   virtual void LoadValue(inputfile&) = 0;
   virtual truth ActivateChangeInterface() = 0;

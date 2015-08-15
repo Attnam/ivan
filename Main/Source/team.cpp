@@ -129,8 +129,8 @@ int team::GetEnabledMembers() const
 {
   int Amount = 0;
 
-  for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
-    if((*i)->IsEnabled())
+  for(character* p : Member)
+    if(p->IsEnabled())
       ++Amount;
 
   return Amount;
@@ -151,16 +151,16 @@ inputfile& operator>>(inputfile& SaveFile, team*& Team)
 
 void team::MoveMembersTo(charactervector& CVector)
 {
-  for(std::list<character*>::iterator i = Member.begin(); i != Member.end(); ++i)
-    if((*i)->IsEnabled())
+  for(character* p : Member)
+    if(p->IsEnabled())
     {
-      if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
-	(*i)->GetAction()->Terminate(false);
+      if(p->GetAction() && p->GetAction()->IsVoluntary())
+	p->GetAction()->Terminate(false);
 
-      if(!(*i)->GetAction())
+      if(!p->GetAction())
       {
-	CVector.push_back(*i);
-	(*i)->Remove();
+	CVector.push_back(p);
+	p->Remove();
       }
     }
 }

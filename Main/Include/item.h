@@ -479,7 +479,7 @@ class item : public object
   void ResetSpoiling();
   void ResetBurning();
   void ResetThermalEnergies();
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }

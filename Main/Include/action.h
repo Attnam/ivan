@@ -41,7 +41,7 @@ class action
  public:
   typedef actionprototype prototype;
   action()  : Actor(0), Flags(0) { }
-  virtual ~action() { }
+  virtual ~action() = default;
   virtual void Handle() = 0;
   virtual void Terminate(truth);
   character* GetActor() const { return Actor; }

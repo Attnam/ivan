@@ -953,11 +953,9 @@ void scabies::PrayGoodEffect()
   {
     for(int c = 0; c < game::GetTeams(); ++c)
       if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+        for(character* Char : game::GetTeam(c)->GetMember())
 	{
-	  character* Char = *i;
-
-	  if((*i)->IsEnabled() && !Char->IsImmuneToLeprosy())
+	  if(Char->IsEnabled() && !Char->IsImmuneToLeprosy())
 	    Char->GainIntrinsic(LEPROSY);
 	}
 

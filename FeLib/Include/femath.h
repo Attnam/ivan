@@ -285,7 +285,7 @@ inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY,
     controller::Handler((OrigoX << 1) + basequadricontroller::OrigoDeltaX[c],
 			(OrigoY << 1) + basequadricontroller::OrigoDeltaY[c]);
 
-  mapmath<quadricontroller<controller> >::DoArea();
+  mapmath<quadricontroller<controller>>::DoArea();
 }
 
 /* Chance for n < Max to be returned is (1-CC)*CC^n,

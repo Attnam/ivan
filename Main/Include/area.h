@@ -26,7 +26,7 @@ class inputfile;
 class area
 {
  public:
-  area();
+  area() = default;
   area(int, int);
   virtual ~area();
   virtual void Draw(truth) const = 0;

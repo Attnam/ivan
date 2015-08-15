@@ -18,7 +18,7 @@
 ITEM(meleeweapon, item)
 {
  public:
-  meleeweapon() { }
+  meleeweapon() = default; 
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
   virtual truth HitEffect(character*, character*, v2, int, int, truth);

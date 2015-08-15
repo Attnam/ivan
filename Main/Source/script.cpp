@@ -95,7 +95,7 @@ INST_SCRIPT_MEMBER(squarescript);
 INST_SCRIPT_MEMBER(roomscript);
 INST_SCRIPT_MEMBER(levelscript);
 INST_SCRIPT_MEMBER(contentscript<character>);
-INST_SCRIPT_MEMBER(fearray<contentscript<item> >);
+INST_SCRIPT_MEMBER(fearray<contentscript<item>>);
 INST_SCRIPT_MEMBER(contentscript<glterrain>);
 INST_SCRIPT_MEMBER(contentscript<olterrain>);
 INST_SCRIPT_MEMBER(charactercontentmap);
@@ -159,14 +159,14 @@ scriptmemberbase* script::GetDataFromMap(const datamap& DataMap, cchar* Identifi
 
 void script::SaveDataMap(const datamap& DataMap, outputfile& SaveFile) const
 {
-  for(datamap::const_iterator i = DataMap.begin(); i != DataMap.end(); ++i)
-    (this->*i->second).Save(SaveFile);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Save(SaveFile);
 }
 
 void script::LoadDataMap(const datamap& DataMap, inputfile& SaveFile)
 {
-  for(datamap::const_iterator i = DataMap.begin(); i != DataMap.end(); ++i)
-    (this->*i->second).Load(SaveFile);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Load(SaveFile);
 }
 
 template <class scriptmemberptr> void InitMember(script::datamap& DataMap, cchar* Identifier, scriptmemberptr DataMember)
@@ -483,7 +483,7 @@ character* contentscript<character>::Instantiate(int SpecialFlags) const
   if(GetTeam() != DEFAULT_TEAM)
     Instance->SetTeam(game::GetTeam(GetTeam()));
 
-  const fearray<contentscript<item> >* Inventory = GetInventory();
+  const fearray<contentscript<item>>* Inventory = GetInventory();
 
   if(Inventory)
     Instance->AddToInventory(*Inventory, SpecialFlags);
@@ -567,7 +567,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   if(GetEnchantment() != 0)
     Instance->SetEnchantment(GetEnchantment());
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -578,7 +578,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   return Instance;
 }
 
-truth IsValidScript(const fearray<contentscript<item> >* Array)
+truth IsValidScript(const fearray<contentscript<item>>* Array)
 {
   for(uint c = 0; c < Array->Size; ++c)
     if(IsValidScript(&Array->Data[c]))
@@ -631,7 +631,7 @@ olterrain* contentscript<olterrain>::Instantiate(int SpecialFlags) const
   if(Text)
     Instance->SetText(*Text);
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -954,11 +954,11 @@ void levelscript::Combine(levelscript& Script)
   Square.splice(Square.end(), Script.Square);
   Room.splice(Room.end(), Script.Room);
 
-  for(std::list<roomscript>::iterator i1 = Room.begin(); i1 != Room.end(); ++i1)
-    i1->SetBase(GetRoomDefault());
+  for(roomscript& RoomScript : Room)
+    RoomScript.SetBase(GetRoomDefault());
 
-  for(datamap::const_iterator i2 = DataMap.begin(); i2 != DataMap.end(); ++i2)
-    (this->*i2->second).Replace(Script.*i2->second);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Replace(Script.*p.second);
 }
 
 void levelscript::SetBase(const scriptwithbase* What)
@@ -971,8 +971,8 @@ void levelscript::SetBase(const scriptwithbase* What)
     roomscript* ThisRoomDefault = RoomDefaultHolder.Member;
 
     if(!ThisRoomDefault)
-      for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
-	i->SetBase(BaseRoomDefault);
+      for(roomscript& RoomScript : Room)
+	RoomScript.SetBase(BaseRoomDefault);
     else
       ThisRoomDefault->SetBase(BaseRoomDefault);
   }
@@ -991,12 +991,10 @@ void levelscript::Load(inputfile& SaveFile)
   const roomscript* RoomDefault = GetRoomDefault();
 
   if(RoomDefault)
-    for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
-      i->SetBase(RoomDefault);
+    for(roomscript& RoomScript : Room)
+      RoomScript.SetBase(RoomDefault);
 }
 
-dungeonscript::dungeonscript() { }
-dungeonscript::~dungeonscript() { }
 const std::map<int, levelscript>& dungeonscript::GetLevel() const { return Level; }
 
 void dungeonscript::InitDataMap()
@@ -1058,10 +1056,10 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 
 void dungeonscript::RandomizeLevels()
 {
-  for(std::list<std::pair<interval, levelscript> >::iterator i = RandomLevel.begin(); i != RandomLevel.end(); ++i)
+  for(std::pair<interval, levelscript>& p : RandomLevel)
   {
-    int Index = i->first.Randomize();
-    Level[Index].Combine(i->second);
+    int Index = p.first.Randomize();
+    Level[Index].Combine(p.second);
   }
 
   RandomLevel.clear();
@@ -1081,15 +1079,15 @@ void dungeonscript::Load(inputfile& SaveFile)
 
   if(LevelDefault)
   {
-    for(std::map<int, levelscript>::iterator i1 = Level.begin(); i1 != Level.end(); ++i1)
-      i1->second.SetBase(LevelDefault);
+    for(std::pair<const int, levelscript>& p : Level)
+      p.second.SetBase(LevelDefault);
 
-    for(std::list<std::pair<interval, levelscript> >::iterator i2 = RandomLevel.begin(); i2 != RandomLevel.end(); ++i2)
-      i2->second.SetBase(LevelDefault);
+    for(std::pair<interval, levelscript>& p : RandomLevel)
+      p.second.SetBase(LevelDefault);
   }
 }
 
-const std::vector<std::pair<int, int> >& teamscript::GetRelation() const { return Relation; }
+const std::vector<std::pair<int, int>>& teamscript::GetRelation() const { return Relation; }
 
 void teamscript::InitDataMap()
 {
@@ -1131,7 +1129,7 @@ void teamscript::Load(inputfile& SaveFile)
   SaveFile >> Relation;
 }
 
-const std::list<std::pair<int, teamscript> >& gamescript::GetTeam() const { return Team; }
+const std::list<std::pair<int, teamscript>>& gamescript::GetTeam() const { return Team; }
 const std::map<int, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
 
 void gamescript::InitDataMap()
@@ -1174,8 +1172,8 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 
 void gamescript::RandomizeLevels()
 {
-  for(std::map<int, dungeonscript>::iterator i = Dungeon.begin(); i != Dungeon.end(); ++i)
-    i->second.RandomizeLevels();
+  for(std::pair<const int, dungeonscript>& p : Dungeon)
+    p.second.RandomizeLevels();
 }
 
 void gamescript::Save(outputfile& SaveFile) const

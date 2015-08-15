@@ -39,11 +39,9 @@ culong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 
 #ifdef GCC
 #define NO_ALIGNMENT __attribute__ ((packed))
-#define NO_RETURN __attribute__ ((noreturn))
 #define LIKE_PRINTF(p1, p2) __attribute__ ((format(printf, p1, p2)))
 #else
 #define NO_ALIGNMENT
-#define NO_RETURN
 #define LIKE_PRINTF(p1, p2)
 #endif
 

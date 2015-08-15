@@ -922,11 +922,9 @@ character* cathedral::FindRandomExplosiveReceiver() const
 {
   std::vector<character*> ListOfDwarfs;
 
-  for(std::list<character*>::const_iterator i
-	= game::GetTeam(ATTNAM_TEAM)->GetMember().begin();
-      i != game::GetTeam(ATTNAM_TEAM)->GetMember().end(); ++i)
-    if((*i)->IsEnabled() && (*i)->IsKamikazeDwarf())
-      ListOfDwarfs.push_back(*i);
+  for(character* p : game::GetTeam(ATTNAM_TEAM)->GetMember())
+    if(p->IsEnabled() && p->IsKamikazeDwarf())
+      ListOfDwarfs.push_back(p);
 
   if(ListOfDwarfs.empty())
     return 0;

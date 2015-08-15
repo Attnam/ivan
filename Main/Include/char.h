@@ -38,7 +38,7 @@ struct homedata;
 struct trapdata;
 struct blitdata;
 
-typedef std::vector<std::pair<double, int> > blockvector;
+typedef std::vector<std::pair<double, int>> blockvector;
 typedef truth (item::*sorter)(ccharacter*) const;
 typedef truth (character::*petmanagementfunction)();
 typedef character* (*characterspawner)(int, int);
@@ -198,7 +198,7 @@ struct characterdatabase : public databasebase
   int RightSWeaponSkillHits;
   int LeftSWeaponSkillHits;
   int PanicLevel;
-  fearray<contentscript<item> > Inventory;
+  fearray<contentscript<item>> Inventory;
   int DangerModifier;
   festring DefaultName;
   fearray<festring> FriendlyReplies;
@@ -790,7 +790,7 @@ class character : public entity, public id
   void AddAntidoteConsumeEndMessage() const;
   truth IsDead() const;
   void AddOriginalBodyPartID(int, ulong);
-  void AddToInventory(const fearray<contentscript<item> >&, int);
+  void AddToInventory(const fearray<contentscript<item>>&, int);
   truth HasHadBodyPart(citem*) const;
   void ProcessAndAddMessage(festring) const;
   virtual truth CheckZap();

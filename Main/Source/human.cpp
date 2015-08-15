@@ -138,18 +138,18 @@ void humanoid::Load(inputfile& SaveFile)
   SaveFile >> SWeaponSkill;
 
   if(GetRightWielded())
-    for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if((*i)->IsSkillOf(GetRightWielded()))
+    for(sweaponskill* p : SWeaponSkill)
+      if(p->IsSkillOf(GetRightWielded()))
       {
-	SetCurrentRightSWeaponSkill(*i);
+	SetCurrentRightSWeaponSkill(p);
 	break;
       }
 
   if(GetLeftWielded())
-    for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if((*i)->IsSkillOf(GetLeftWielded()))
+    for(sweaponskill* p : SWeaponSkill)
+      if(p->IsSkillOf(GetLeftWielded()))
       {
-	SetCurrentLeftSWeaponSkill(*i);
+	SetCurrentLeftSWeaponSkill(p);
 	break;
       }
 }
@@ -252,9 +252,9 @@ truth petrus::HealFully(character* ToBeHealed)
     {
       bodypart* BodyPart = 0;
 
-      for(std::list<ulong>::const_iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
+      for(ulong ID : ToBeHealed->GetOriginalBodyPartID(c))
       {
-	BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItem(*i));
+	BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItem(ID));
 
 	if(BodyPart)
 	  break;
@@ -655,9 +655,9 @@ void priest::BeTalkedTo()
     {
       truth HasOld = false;
 
-      for(std::list<ulong>::const_iterator i = PLAYER->GetOriginalBodyPartID(c).begin(); i != PLAYER->GetOriginalBodyPartID(c).end(); ++i)
+      for(ulong ID : PLAYER->GetOriginalBodyPartID(c))
       {
-	bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItem(*i));
+	bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItem(ID));
 
 	if(OldBodyPart)
 	{
@@ -792,14 +792,9 @@ void communist::BeTalkedTo()
   {
     ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
 
-    for(std::list<character*>::const_iterator i = GetTeam()->GetMember().begin(); i != GetTeam()->GetMember().end();)
-      if(*i != this)
-      {
-	character* Char = *i++;
+    for(character* Char : GetTeam()->GetMember())
+      if(Char != this)
 	Char->ChangeTeam(PLAYER->GetTeam());
-      }
-      else
-	++i;
 
     ChangeTeam(PLAYER->GetTeam());
   }
@@ -825,15 +820,15 @@ void tourist::BeTalkedTo()
 	  character* Spider = 0;
 	  
 	  //check all enabled members of PLAYER_TEAM	
-  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider() 
-			&& ((*i)->GetConfig() != LARGE && (*i)->GetConfig() != GIANT)) // check for lobh-se first
-      		Spider = *i;
+  	  for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+   		 if(p->IsEnabled() && !p->IsPlayer() && p->IsSpider()
+			&& (p->GetConfig() != LARGE && p->GetConfig() != GIANT)) // check for lobh-se first
+      		Spider = p;
      
 	  if (!Spider) { // lobh-se not found		
-  	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-   		 if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->IsSpider()) // check for any spider
-      		Spider = *i; 
+  	  for(character* p : game::GetTeam(PLAYER_TEAM)->GetMember())
+   		 if(p->IsEnabled() && !p->IsPlayer() && p->IsSpider()) // check for any spider
+      		Spider = p;
       }
       		
 	  static long Said;
@@ -2610,11 +2605,10 @@ item* humanoid::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 humanoid::humanoid(const humanoid& Humanoid) : mybase(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
 {
   SWeaponSkill.resize(Humanoid.SWeaponSkill.size());
-  std::list<sweaponskill*>::iterator i1 = SWeaponSkill.begin();
   std::list<sweaponskill*>::const_iterator i2 = Humanoid.SWeaponSkill.begin();
 
-  for(; i1 != SWeaponSkill.end(); ++i1, ++i2)
-    *i1 = new sweaponskill(**i2);
+  for(sweaponskill*& p : SWeaponSkill)
+    p = new sweaponskill(**i2++);
 }
 
 cfestring& humanoid::GetDeathMessage() const
@@ -2625,16 +2619,14 @@ cfestring& humanoid::GetDeathMessage() const
 
 int humanoid::GetSWeaponSkillLevel(citem* Item) const
 {
-  std::list<sweaponskill*>::const_iterator i;
-
-  for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-    if((*i)->IsSkillOf(Item))
-      return (*i)->GetLevel();
+  for(sweaponskill* p : SWeaponSkill)
+    if(p->IsSkillOf(Item))
+      return p->GetLevel();
 
   for(idholder* I = Item->GetCloneMotherID(); I; I = I->Next)
-    for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if((*i)->IsSkillOfCloneMother(Item, I->ID))
-	return (*i)->GetLevel();
+    for(sweaponskill* p : SWeaponSkill)
+      if(p->IsSkillOfCloneMother(Item, I->ID))
+	return p->GetLevel();
 
   return 0;
 }
@@ -3216,23 +3208,23 @@ void darkmage::GetAICommand()
   {
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 
-	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && p->CanBeSeenBy(this))
 	  {
-	    NearestEnemy = *i;
+	    NearestEnemy = p;
 	    NearestEnemyDistance = ThisDistance;
 	  }
 	}
     }
     else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
-	  Friend.push_back(*i);
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled() && p->CanBeSeenBy(this))
+	  Friend.push_back(p);
     }
   }
 
@@ -3668,8 +3660,8 @@ truth communist::MustBeRemovedFromBone() const
 
 truth humanoid::PreProcessForBone()
 {
-  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-    (*i)->PreProcessForBone();
+  for(sweaponskill* p : SWeaponSkill)
+    p->PreProcessForBone();
 
   return character::PreProcessForBone();
 }
@@ -3871,20 +3863,18 @@ void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, citem* W
       if(Skill)
 	EnsureCurrentSWeaponSkillIsCorrect(Skill, 0);
 
-      std::list<sweaponskill*>::iterator i;
-
-      for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-	if((*i)->IsSkillOf(Wielded))
+      for(sweaponskill* p : SWeaponSkill)
+	if(p->IsSkillOf(Wielded))
 	{
-	  Skill = *i;
+	  Skill = p;
 	  return;
 	}
 
       for(idholder* I = Wielded->GetCloneMotherID(); I; I = I->Next)
-	for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-	  if((*i)->IsSkillOfCloneMother(Wielded, I->ID))
+	for(sweaponskill* p : SWeaponSkill)
+	  if(p->IsSkillOfCloneMother(Wielded, I->ID))
 	  {
-	    Skill = new sweaponskill(**i);
+	    Skill = new sweaponskill(*p);
 	    Skill->SetID(Wielded->GetID());
 	    SWeaponSkill.push_back(Skill);
 	    return;
@@ -3911,8 +3901,8 @@ void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, citem* W
 
 humanoid::~humanoid()
 {
-  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-    delete *i;
+  for(sweaponskill* p : SWeaponSkill)
+    delete p;
 }
 
 truth petrus::MoveTowardsHomePos()
@@ -4012,14 +4002,14 @@ void necromancer::GetAICommand()
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 
-	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && p->CanBeSeenBy(this))
 	  {
-	    NearestEnemy = *i;
+	    NearestEnemy = p;
 	    NearestEnemyDistance = ThisDistance;
 	  }
 	}
@@ -4123,14 +4113,13 @@ void necromancer::GetAICommand()
 truth necromancer::TryToRaiseZombie()
 {
   for(int c = 0; c < game::GetTeams(); ++c)
-    for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
-	i != game::GetTeam(c)->GetMember().end(); ++i)
-      if(!(*i)->IsEnabled() && (*i)->GetMotherEntity()
-	 && (*i)->GetMotherEntity()->Exists()
+    for(character* p : game::GetTeam(c)->GetMember())
+      if(!p->IsEnabled() && p->GetMotherEntity()
+	 && p->GetMotherEntity()->Exists()
 	 && (GetConfig() == MASTER_NECROMANCER
-	     || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
+	     || p->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
       {
-	character* Zombie = (*i)->GetMotherEntity()->TryNecromancy(this);
+	character* Zombie = p->GetMotherEntity()->TryNecromancy(this);
 
 	if(Zombie)
 	{
@@ -4436,11 +4425,10 @@ character* humanoid::CreateZombie() const
     Zombie->CWeaponSkill[c] = CWeaponSkill[c];
 
   Zombie->SWeaponSkill.resize(SWeaponSkill.size());
-  std::list<sweaponskill*>::iterator i1 = Zombie->SWeaponSkill.begin();
-  std::list<sweaponskill*>::const_iterator i2 = SWeaponSkill.begin();
+  std::list<sweaponskill*>::iterator i = Zombie->SWeaponSkill.begin();
 
-  for(; i2 != SWeaponSkill.end(); ++i1, ++i2)
-    *i1 = new sweaponskill(**i2);
+  for(sweaponskill* p2 : SWeaponSkill)
+    *i++ = new sweaponskill(*p2);
 
   memcpy(Zombie->BaseExperience,
 	 BaseExperience,
