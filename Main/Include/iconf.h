@@ -26,7 +26,7 @@ class ivanconfig
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
-  static truth GetDirectionKeyMap() { return DirectionKeyMap.Value; }
+  static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetBeNice() { return BeNice.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
