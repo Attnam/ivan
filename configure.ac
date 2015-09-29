@@ -30,7 +30,7 @@ fi
 localstatedir=/var/lib
 CFLAGS="$CFLAGS $SDL_CFLAGS "
 LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
-CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
 
 AC_PROG_INSTALL
 
