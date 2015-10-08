@@ -80,8 +80,8 @@ inline long ivanconfig::ApplyContrastTo(long L)
     return L;
   else
     return MakeRGB24(41 * GetRed24(L) * C >> 12,
-		     41 * GetGreen24(L) * C >> 12,
-		     41 * GetBlue24(L) * C >> 12);
+                     41 * GetGreen24(L) * C >> 12,
+                     41 * GetBlue24(L) * C >> 12);
 }
 
 #endif

@@ -43,7 +43,7 @@ truth door::Open(character* Opener)
     if(IsLocked())
     {
       if(Opener->IsPlayer())
-	ADD_MESSAGE("The door is locked.");
+        ADD_MESSAGE("The door is locked.");
 
       return false;
     }
@@ -53,21 +53,21 @@ truth door::Open(character* Opener)
       MakeWalkable();
 
       if(Opener->IsPlayer())
-	ADD_MESSAGE("You open the door.");
+        ADD_MESSAGE("You open the door.");
       else if(WasSeenByPlayer)
       {
-	if(Opener->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s opens the door.", Opener->CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("Something opens the door.");
+        if(Opener->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s opens the door.", Opener->CHAR_NAME(DEFINITE));
+        else
+          ADD_MESSAGE("Something opens the door.");
       }
     }
     else
     {
       if(Opener->IsPlayer())
-	ADD_MESSAGE("The door resists.");
+        ADD_MESSAGE("The door resists.");
       else if(CanBeSeenByPlayer() && Opener->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s fails to open the door.", Opener->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s fails to open the door.", Opener->CHAR_NAME(DEFINITE));
 
       ActivateBoobyTrap();
     }
@@ -87,21 +87,23 @@ truth door::Open(character* Opener)
 truth door::Close(character* Closer)
 {
   if(Closer->IsPlayer())
+  {
     if(Opened)
     {
       if(RAND() % 20 < Closer->GetAttribute(ARM_STRENGTH))
       {
-	ADD_MESSAGE("You close the door.");
-	MakeNotWalkable();
+        ADD_MESSAGE("You close the door.");
+        MakeNotWalkable();
       }
       else
-	ADD_MESSAGE("The door resists!");
+        ADD_MESSAGE("The door resists!");
     }
     else
     {
       ADD_MESSAGE("The door is already closed, %s.", game::Insult());
       return false;
     }
+  }
 
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
@@ -122,7 +124,7 @@ void door::BeKicked(character* Kicker, int KickDamage, int)
     if(!IsLocked() && KickDamage > (RAND() & 3))
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The door opens.");
+        ADD_MESSAGE("The door opens.");
 
       MakeWalkable();
       return;
@@ -131,7 +133,7 @@ void door::BeKicked(character* Kicker, int KickDamage, int)
     if(KickDamage <= GetStrengthValue())
     {
       if(CanBeSeenByPlayer() && (Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer()))
-	ADD_MESSAGE("%s weak kick has no chance to affect this door.", Kicker->CHAR_POSSESSIVE_PRONOUN);
+        ADD_MESSAGE("%s weak kick has no chance to affect this door.", Kicker->CHAR_POSSESSIVE_PRONOUN);
 
       return;
     }
@@ -147,29 +149,29 @@ void door::BeKicked(character* Kicker, int KickDamage, int)
     {
       if(CanBeSeenByPlayer())
       {
-	if(LockBreaks)
-	  ADD_MESSAGE("The lock breaks and the door is damaged.");
-	else
-	  ADD_MESSAGE("The door is damaged.");
+        if(LockBreaks)
+          ADD_MESSAGE("The lock breaks and the door is damaged.");
+        else
+          ADD_MESSAGE("The door is damaged.");
       }
 
       room* Room = GetRoom();
       Break();
 
       if(Room)
-	Room->DestroyTerrain(Kicker);
+        Room->DestroyTerrain(Kicker);
     }
     else if(CanBeSeenByPlayer())
     {
       if(LockBreaks)
       {
-	ADD_MESSAGE("The lock breaks.");
+        ADD_MESSAGE("The lock breaks.");
 
-	if(GetRoom())
-	  GetRoom()->DestroyTerrain(Kicker);
+        if(GetRoom())
+          GetRoom()->DestroyTerrain(Kicker);
       }
       else if(Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer())
-	ADD_MESSAGE("The door won't budge!");
+        ADD_MESSAGE("The door won't budge!");
     }
 
     // The door may have been destroyed here, so don't do anything!
@@ -196,7 +198,7 @@ void door::MakeWalkable()
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLevel()->ForceEmitterEmitation(GetLSquareUnder()->GetEmitter(),
-				    GetLSquareUnder()->GetSunEmitter());
+                                    GetLSquareUnder()->GetSunEmitter());
   GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTick())
@@ -215,8 +217,8 @@ void door::MakeNotWalkable()
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLevel()->ForceEmitterEmitation(EmitterBackup,
-				    GetLSquareUnder()->GetSunEmitter(),
-				    FORCE_ADD);
+                                    GetLSquareUnder()->GetSunEmitter(),
+                                    FORCE_ADD);
   GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTick())
@@ -227,7 +229,9 @@ void altar::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer() && !GetMasterGod()->IsKnown())
   {
-    ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
+    ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is "
+                "dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity "
+                "via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
     game::LearnAbout(GetMasterGod());
   }
 }
@@ -238,25 +242,30 @@ truth throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() != 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt be Our Champion first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt be Our Champion first!\"");
     return true;
   }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt wear Our shining armor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt wear Our shining armor first!\"");
     return true;
   }
 
   if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
+    ADD_MESSAGE("You have a strange vision of yourself becoming a great ruler. The daydream fades in a whisper: "
+                "\"Thou shalt surpass thy predecessor first!\"");
     return true;
   }
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
-    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
+    game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
+                             "\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\n"
+                             "We hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
     game::GetCurrentArea()->SendNewDrawRequest();
     game::DrawEverything();
     PLAYER->ShowAdventureInfo();
@@ -349,11 +358,11 @@ truth fountain::Drink(character* Drinker)
       room* Room = GetRoom();
 
       if(Room && Room->HasDrinkHandler() && !Room->Drink(Drinker))
-	return false;
+        return false;
       else
       {
-	if(!game::TruthQuestion(CONST_S("Do you want to drink from the fountain? [y/N]")))
-	  return false;
+        if(!game::TruthQuestion(CONST_S("Do you want to drink from the fountain? [y/N]")))
+          return false;
       }
 
       Drinker->EditAP(-1000);
@@ -361,209 +370,213 @@ truth fountain::Drink(character* Drinker)
       switch(RAND() % 12)
       {
        case 0:
-	if(RAND_N(3))
-	{
-	  ADD_MESSAGE("The water is contaminated!");
-	  Drinker->EditNP(100);
+        if(RAND_N(3))
+        {
+          ADD_MESSAGE("The water is contaminated!");
+          Drinker->EditNP(100);
 
-	  if(!RAND_4)
-	    Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
-	  else
-	  {
-	    Drinker->ChangeRandomAttribute(-1);
-	    Drinker->CheckDeath(CONST_S("died of contaminated water"));
-	  }
+          if(!RAND_4)
+            Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
+          else
+          {
+            Drinker->ChangeRandomAttribute(-1);
+            Drinker->CheckDeath(CONST_S("died of contaminated water"));
+          }
 
-	  break;
-	}
+          break;
+        }
        case 1:
-	ADD_MESSAGE("The water tasted very good.");
-	Drinker->EditNP(2500);
-	Drinker->ChangeRandomAttribute(1);
-	break;
+        ADD_MESSAGE("The water tasted very good.");
+        Drinker->EditNP(2500);
+        Drinker->ChangeRandomAttribute(1);
+        break;
        case 2:
-	if(!(RAND() % 15))
-	{
-	  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
-	  game::Wish(Drinker,
-		     "%s appears from nothing and the spirit flies happily away!",
-		     "Two %s appear from nothing and the spirit flies happily away!", false);
-	}
-	else
-	  DryOut();
+        if(!(RAND() % 15))
+        {
+          ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
+          game::Wish(Drinker,
+                     "%s appears from nothing and the spirit flies happily away!",
+                     "Two %s appear from nothing and the spirit flies happily away!", false);
+        }
+        else
+          DryOut();
 
-	break;
+        break;
        case 4:
-	if(RAND() & 7)
-	{
-	  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
-	  Drinker->ActivateRandomState(SRC_FOUNTAIN, 10000 + RAND() % 20000);
-	}
-	else
-	{
-	  ADD_MESSAGE("This water tastes very odd.");
+        if(RAND() & 7)
+        {
+          ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
+          Drinker->ActivateRandomState(SRC_FOUNTAIN, 10000 + RAND() % 20000);
+        }
+        else
+        {
+          ADD_MESSAGE("This water tastes very odd.");
 
-	  if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
-	    ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
-	}
+          if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
+            ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
+        }
 
-	break;
+        break;
        case 5:
-	{
-	  characterspawner Spawner = 0;
-	  int Config = 0, AddChance = 0;
-	  truth ForceAdjacency = false;
+        {
+          characterspawner Spawner = 0;
+          int Config = 0, AddChance = 0;
+          truth ForceAdjacency = false;
 
-	  switch(RAND_N(5))
-	  {
-	   case 0:
-	    Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
-	    AddChance = 66;
-	    break;
-	   case 1:
-	    Spawner = reinterpret_cast<characterspawner>(&mommo::Spawn);
-	    Config = RAND_2 ? CONICAL : FLAT;
-	    AddChance = 50;
-	    break;
-	   case 2:
-	    Spawner = reinterpret_cast<characterspawner>(&spider::Spawn);
+          switch(RAND_N(5))
+          {
+           case 0:
+            Spawner = reinterpret_cast<characterspawner>(&snake::Spawn);
+            AddChance = 66;
+            break;
+           case 1:
+            Spawner = reinterpret_cast<characterspawner>(&mommo::Spawn);
+            Config = RAND_2 ? CONICAL : FLAT;
+            AddChance = 50;
+            break;
+           case 2:
+            Spawner = reinterpret_cast<characterspawner>(&spider::Spawn);
 
-	    if(RAND_4)
-	    {
-	      Config = LARGE;
-	      AddChance = 90;
-	    }
-	    else
-	    {
-	      Config = GIANT;
-	      AddChance = 75;
-	    }
+            if(RAND_4)
+            {
+              Config = LARGE;
+              AddChance = 90;
+            }
+            else
+            {
+              Config = GIANT;
+              AddChance = 75;
+            }
 
-	    break;
-	   case 3:
-	    if(!RAND_N(50))
-	    {
-	      Spawner = reinterpret_cast<characterspawner>(&dolphin::Spawn);
-	      AddChance = 75;
-	      ForceAdjacency = true;
-	    }
-	    else if(!RAND_N(50))
-	    {
-	      Spawner = reinterpret_cast<characterspawner>(&mysticfrog::Spawn);
-	      Config = DARK;
-	      AddChance = 1;
-	    }
-	    else
-	    {
-	      Spawner = reinterpret_cast<characterspawner>(&frog::Spawn);
+            break;
+           case 3:
+            if(!RAND_N(50))
+            {
+              Spawner = reinterpret_cast<characterspawner>(&dolphin::Spawn);
+              AddChance = 75;
+              ForceAdjacency = true;
+            }
+            else if(!RAND_N(50))
+            {
+              Spawner = reinterpret_cast<characterspawner>(&mysticfrog::Spawn);
+              Config = DARK;
+              AddChance = 1;
+            }
+            else
+            {
+              Spawner = reinterpret_cast<characterspawner>(&frog::Spawn);
 
-	      if(RAND_N(5))
-	      {
-		Config = DARK;
-		AddChance = 10;
-	      }
-	      else if(RAND_N(5))
-	      {
-		Config = GREATER_DARK;
-		AddChance = 5;
-	      }
-	      else
-	      {
-		Config = GIANT_DARK;
-		AddChance = 2;
-	      }
-	    }
+              if(RAND_N(5))
+              {
+                Config = DARK;
+                AddChance = 10;
+              }
+              else if(RAND_N(5))
+              {
+                Config = GREATER_DARK;
+                AddChance = 5;
+              }
+              else
+              {
+                Config = GIANT_DARK;
+                AddChance = 2;
+              }
+            }
 
-	    break;
-	   case 4:
-	    Spawner = reinterpret_cast<characterspawner>(&largerat::Spawn);
-	    AddChance = 90;
-	    break;
-	  }
+            break;
+           case 4:
+            Spawner = reinterpret_cast<characterspawner>(&largerat::Spawn);
+            AddChance = 90;
+            break;
+          }
 
-	  int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
-	  team* Team =  game::GetTeam(TeamIndex);
-	  int Amount = 1 + femath::LoopRoll(AddChance, 7);
-	  spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
+          int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
+          team* Team = game::GetTeam(TeamIndex);
+          int Amount = 1 + femath::LoopRoll(AddChance, 7);
+          spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
 
-	  msgsystem::EnterBigMessageMode();
+          msgsystem::EnterBigMessageMode();
 
-	  if(SR.Seen == 1)
-	  {
-	    ADD_MESSAGE("%s appears from the fountain!", SR.Pioneer->CHAR_NAME(INDEFINITE));
+          if(SR.Seen == 1)
+          {
+            ADD_MESSAGE("%s appears from the fountain!", SR.Pioneer->CHAR_NAME(INDEFINITE));
 
-	    if(TeamIndex == PLAYER_TEAM)
-	      ADD_MESSAGE("%s seems to be friendly.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
+            if(TeamIndex == PLAYER_TEAM)
+              ADD_MESSAGE("%s seems to be friendly.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
 
-	    if(Amount > SR.Seen)
-	      ADD_MESSAGE("Somehow you also sense %s isn't alone.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
-	  }
-	  else if(SR.Seen)
-	  {
-	    ADD_MESSAGE("%s appear from the fountain!", SR.Pioneer->GetName(PLURAL, SR.Seen).CStr());
+            if(Amount > SR.Seen)
+              ADD_MESSAGE("Somehow you also sense %s isn't alone.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
+          }
+          else if(SR.Seen)
+          {
+            ADD_MESSAGE("%s appear from the fountain!", SR.Pioneer->GetName(PLURAL, SR.Seen).CStr());
 
-	    if(TeamIndex == PLAYER_TEAM)
-	      ADD_MESSAGE("They seem to be friendly.");
+            if(TeamIndex == PLAYER_TEAM)
+              ADD_MESSAGE("They seem to be friendly.");
 
-	    if(Amount > SR.Seen)
-	      ADD_MESSAGE("Somehow you also sense you haven't yet seen all of them.");
-	  }
-	  else
-	    ADD_MESSAGE("You feel something moving near you.");
+            if(Amount > SR.Seen)
+              ADD_MESSAGE("Somehow you also sense you haven't yet seen all of them.");
+          }
+          else
+            ADD_MESSAGE("You feel something moving near you.");
 
-	  msgsystem::LeaveBigMessageMode();
-	  break;
-	}
+          msgsystem::LeaveBigMessageMode();
+          break;
+        }
        case 6:
-	if(!RAND_N(5))
-	{
-	  item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
-	  GetLSquareUnder()->AddItem(ToBeCreated);
+        if(!RAND_N(5))
+        {
+          item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
+          GetLSquareUnder()->AddItem(ToBeCreated);
 
-	  if(ToBeCreated->CanBeSeenByPlayer())
-	    ADD_MESSAGE("There's something sparkling in the water.");
+          if(ToBeCreated->CanBeSeenByPlayer())
+            ADD_MESSAGE("There's something sparkling in the water.");
 
-	  break;
-	}
+          break;
+        }
        case 7:
-	{
-	  if(!RAND_N(2))
-	  {
-	    olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
-	    Drinker->RemoveTraps();
+        {
+          if(!RAND_N(2))
+          {
+            olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
+            Drinker->RemoveTraps();
 
-	    if(Found && RAND_N(3))
-	    {
-	      ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
-	      Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
-	      Drinker->Move(Found->GetPos(), true);
-	    }
-	    else
-	    {
-	      int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
-	      int From = GetLevel()->GetIndex();
+            if(Found && RAND_N(3))
+            {
+              ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                          "of tunnels and end up coming out from an other fountain.");
+              Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
+              Drinker->Move(Found->GetPos(), true);
+            }
+            else
+            {
+              int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
+              int From = GetLevel()->GetIndex();
 
-	      if(To == From)
-		game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);
-	      else
-		game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
+              if(To == From)
+                game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);
+              else
+                game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
 
-	      olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
+              olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
 
-	      if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
-		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
-	      else
-		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
-	    }
+              if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
+                ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                            "of tunnels and end up coming out from an other fountain.");
+              else
+                ADD_MESSAGE("The fountain sucks you in. You are thrown through a network "
+                            "of tunnels. Suddenly the wall of the tunnel bursts open and "
+                            "you fly out with the water.");
+            }
 
-	    Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
-	    break;
-	  }
-	}
+            Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
+            break;
+          }
+        }
        default:
-	ADD_MESSAGE("The water tastes good.");
-	Drinker->EditNP(500);
-	break;
+        ADD_MESSAGE("The water tastes good.");
+        Drinker->EditNP(500);
+        break;
       }
 
       // fountain might have dried out: don't do anything here.
@@ -602,7 +615,7 @@ void brokendoor::BeKicked(character* Kicker, int KickDamage, int)
     if(!IsLocked() && KickDamage > (RAND() & 3))
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The broken door opens.");
+        ADD_MESSAGE("The broken door opens.");
 
       MakeWalkable();
       return;
@@ -614,23 +627,23 @@ void brokendoor::BeKicked(character* Kicker, int KickDamage, int)
 
       if(KickDamage > SV && RAND() % (100 * KickDamage / SV) >= 100)
       {
-	if(RAND() & 1)
-	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("The broken door opens from the force of the kick.");
+        if(RAND() & 1)
+        {
+          if(CanBeSeenByPlayer())
+            ADD_MESSAGE("The broken door opens from the force of the kick.");
 
-	  MakeWalkable();
-	}
-	else if(CanBeSeenByPlayer())
-	{
-	  ADD_MESSAGE("The lock breaks from the force of the kick.");
+          MakeWalkable();
+        }
+        else if(CanBeSeenByPlayer())
+        {
+          ADD_MESSAGE("The lock breaks from the force of the kick.");
 
-	  if(GetRoom())
-	    GetRoom()->DestroyTerrain(Kicker);
-	}
+          if(GetRoom())
+            GetRoom()->DestroyTerrain(Kicker);
+        }
 
-	SetIsLocked(false);
-	return;
+        SetIsLocked(false);
+        return;
       }
     }
 
@@ -682,7 +695,7 @@ truth altar::SitOn(character* Sitter)
       character* Angel = GetMasterGod()->CreateAngel(PLAYER->GetTeam());
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 
       GetMasterGod()->AdjustRelation(50);
       game::ApplyDivineAlignmentBonuses(GetMasterGod(), 10, true);
@@ -723,7 +736,8 @@ void door::ActivateBoobyTrap()
       ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
 
     BoobyTrap = 0;
-    GetLevel()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
+    GetLevel()->Explosion(0, "killed by an exploding booby trapped door",
+                          GetPos(), 20 + RAND() % 5 - RAND() % 5);
     break;
    case 0:
     break;
@@ -779,20 +793,20 @@ void door::PostConstruct()
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID))
-	++NormalLockTypes;
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID))
+        ++NormalLockTypes;
 
     int ChosenLock = RAND() % NormalLockTypes;
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID)
-	 && !ChosenLock--)
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID)
+         && !ChosenLock--)
       {
-	SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
-	break;
+        SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+        break;
       }
   }
 
@@ -816,16 +830,16 @@ truth door::TryKey(item* Thingy, character* Applier)
     if(Applier->IsPlayer())
     {
       if(IsLocked())
-	ADD_MESSAGE("You unlock the door.");
+        ADD_MESSAGE("You unlock the door.");
       else
-	ADD_MESSAGE("You lock the door.");
+        ADD_MESSAGE("You lock the door.");
     }
     else if(Applier->CanBeSeenByPlayer())
     {
       if(IsLocked())
-	ADD_MESSAGE("%s unlocks the door.", Applier->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s unlocks the door.", Applier->CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s locks the door.", Applier->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s locks the door.", Applier->CHAR_NAME(DEFINITE));
     }
 
     SetIsLocked(!IsLocked());
@@ -845,12 +859,12 @@ void fountain::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       0);
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               0);
   const fearray<long>& SMC = GetSecondaryMaterialConfig();
   InitMaterial(SecondaryMaterial,
-	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
-	       0);
+               MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
+               0);
 }
 
 truth fountain::AddAdjective(festring& String, truth Articled) const
@@ -896,19 +910,21 @@ truth stairs::Enter(truth DirectionUp) const
 
   if(GetConfig() == OREE_LAIR_ENTRY)
   {
-    ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
+    ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you "
+                "shouldn't wander any further. On the other hand you have little choice.");
 
     if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
   }
 
   if(GetConfig() == OREE_LAIR_EXIT)
+  {
     if(PLAYER->HasGoldenEagleShirt())
     {
       ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
       if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
-	return false;
+        return false;
     }
     else
     {
@@ -916,10 +932,12 @@ truth stairs::Enter(truth DirectionUp) const
       PLAYER->EditAP(-1000);
       return true;
     }
+  }
 
   if(GetConfig() == DARK_LEVEL)
   {
-    ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
+    ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely "
+                "dangerous on the other side. You feel you should think twice before entering.");
 
     if(!game::TruthQuestion(CONST_S("Continue? [y/N]")))
       return false;
@@ -931,7 +949,10 @@ truth stairs::Enter(truth DirectionUp) const
   if(GetConfig() == SUMO_ARENA_EXIT && !game::TryToExitSumoArena())
     return false;
 
-  return game::TryTravel(game::GetCurrentDungeonIndex(), GetAttachedArea(), GetAttachedEntry(), GetAttachedArea() != WORLD_MAP);
+  return game::TryTravel(game::GetCurrentDungeonIndex(),
+                         GetAttachedArea(),
+                         GetAttachedEntry(),
+                         GetAttachedArea() != WORLD_MAP);
 }
 
 void stairs::StepOn(character* Stepper)
@@ -1009,7 +1030,9 @@ truth olterraincontainer::Open(character* Opener)
 
   truth Success;
 
-  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or (p)ut something in this container? [t,p]"), KEY_ESC, 3, 't', 'p', KEY_ESC))
+  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or "
+                                   "(p)ut something in this container? [t,p]"),
+                           KEY_ESC, 3, 't', 'p', KEY_ESC))
   {
    case 't':
    case 'T':
@@ -1041,13 +1064,13 @@ void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& Ite
 
       for(int c2 = 0; c2 < Times; ++c2)
       {
-	item* Item = ItemArray[c1].Instantiate(SpecialFlags);
+        item* Item = ItemArray[c1].Instantiate(SpecialFlags);
 
-	if(Item)
-	{
-	  Contained->AddItem(Item);
-	  Item->SpecialGenerationHandler();
-	}
+        if(Item)
+        {
+          Contained->AddItem(Item);
+          Item->SpecialGenerationHandler();
+        }
       }
     }
 }
@@ -1075,23 +1098,25 @@ void door::ReceiveDamage(character* Villain, int Damage, int)
     if(HP <= 0)
     {
       if(CanBeSeenByPlayer())
-	if(LockBreaks)
-	  ADD_MESSAGE("The door breaks and its lock is destroyed.");
-	else
-	  ADD_MESSAGE("The door breaks.");
+      {
+        if(LockBreaks)
+          ADD_MESSAGE("The door breaks and its lock is destroyed.");
+        else
+          ADD_MESSAGE("The door breaks.");
+      }
 
       room* Room = GetRoom();
       Break();
 
       if(Room)
-	Room->DestroyTerrain(Villain);
+        Room->DestroyTerrain(Villain);
     }
     else if(LockBreaks && CanBeSeenByPlayer())
     {
       ADD_MESSAGE("The door's lock is shattered.");
 
       if(GetRoom())
-	GetRoom()->DestroyTerrain(Villain);
+        GetRoom()->DestroyTerrain(Villain);
     }
   }
 }
@@ -1119,20 +1144,20 @@ void brokendoor::ReceiveDamage(character* Villain, int Damage, int)
     if(HP <= 0)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The broken door is completely destroyed.");
+        ADD_MESSAGE("The broken door is completely destroyed.");
 
       room* Room = GetRoom();
       Break();
 
       if(Room)
-	Room->DestroyTerrain(Villain);
+        Room->DestroyTerrain(Villain);
     }
     else if(LockBreaks && CanBeSeenByPlayer())
     {
       ADD_MESSAGE("The broken door's lock is shattered.");
 
       if(GetRoom())
-	GetRoom()->DestroyTerrain(Villain);
+        GetRoom()->DestroyTerrain(Villain);
     }
   }
 }
@@ -1203,7 +1228,8 @@ truth fountain::IsFountainWithWater() const
 
 void liquidterrain::SurviveEffect(character* Survivor)
 {
-  Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);
+  Survivor->GetLSquareUnder()->SpillFluid(Survivor,
+    static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);
 }
 
 monsterportal::monsterportal()
@@ -1250,9 +1276,8 @@ truth coffin::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-
   if(!game::TruthQuestion(
-	 CONST_S("Disturbing the dead might not be wise... Continue? [y/N]")))
+         CONST_S("Disturbing the dead might not be wise... Continue? [y/N]")))
     return false;
   truth Success = olterraincontainer::Open(Opener);
   if(Success)
@@ -1262,7 +1287,7 @@ truth coffin::Open(character* Opener)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
-	GenerateGhost(GetLevel()->GetLSquare(Pos));
+        GenerateGhost(GetLevel()->GetLSquare(Pos));
     }
   }
   return Success;
@@ -1281,7 +1306,6 @@ void coffin::Break()
   }
   olterraincontainer::Break();
 }
-
 
 void coffin::GenerateGhost(lsquare* Square)
 {
@@ -1329,14 +1353,14 @@ void ironmaiden::Load(inputfile& SaveFile)
 
 v2 ironmaiden::GetBitmapPos(int) const
 {
-  return Opened ? v2(48,64) : v2(32,64);
+  return Opened ? v2(48, 64) : v2(32, 64);
 }
 
 truth ironmaiden::Open(character* Opener)
 {
   if(!Opened)
   {
-    truth WasSeenByPlayer = CanBeSeenByPlayer(); 
+    truth WasSeenByPlayer = CanBeSeenByPlayer();
     Opened = true;
     UpdatePictures();
     GetLSquareUnder()->SendNewDrawRequest();
@@ -1347,20 +1371,21 @@ truth ironmaiden::Open(character* Opener)
     else if(WasSeenByPlayer)
     {
       if(Opener->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s opens %s.", Opener->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s opens %s.", Opener->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("Something opens %s.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("Something opens %s.", CHAR_NAME(DEFINITE));
     }
     return true;
   }
   else
   {
     if(Opener->IsPlayer())
-      ADD_MESSAGE("%s is already open, %s.", CHAR_NAME(DEFINITE), 
-		  game::Insult());
+      ADD_MESSAGE("%s is already open, %s.", CHAR_NAME(DEFINITE),
+                  game::Insult());
 
     return false;
   }
+
   Opener->DexterityAction(Opener->OpenMultiplier() * 5);
   return true;
 }
@@ -1368,6 +1393,7 @@ truth ironmaiden::Open(character* Opener)
 truth ironmaiden::Close(character* Closer)
 {
   if(Closer->IsPlayer())
+  {
     if(Opened)
     {
       ADD_MESSAGE("You close %s.", CHAR_NAME(DEFINITE));
@@ -1375,13 +1401,13 @@ truth ironmaiden::Close(character* Closer)
     else
     {
       ADD_MESSAGE("%s is already closed, %s.", CHAR_NAME(DEFINITE),
-		  game::Insult());
+                  game::Insult());
       return false;
     }
-
+  }
 
   Opened = false;
-  UpdatePictures();  
+  UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);

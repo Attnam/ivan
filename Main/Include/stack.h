@@ -27,8 +27,8 @@ typedef std::vector<itemvector> itemvectorvector;
 
    for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
    {
-   item* Item = *i;
-   i->ItemMemberFunction();
+     item* Item = *i;
+     i->ItemMemberFunction();
    }
 
    or using a temporary vector:
@@ -38,8 +38,8 @@ typedef std::vector<itemvector> itemvectorvector;
 
    for(int c = 0; c < ItemVector.size(); ++c)
    {
-   item* Item = ItemVector[c];
-   ItemVector[c]->ItemMemberFunction();
+     item* Item = ItemVector[c];
+     ItemVector[c]->ItemMemberFunction();
    }
 
    The former is faster and should be used if items can't be removed nor

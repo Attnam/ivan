@@ -571,8 +571,8 @@ inline truth game::IsDark(col24 Light)
 {
   return !Light
     || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
-	&& (Light & 0x00FF00) < (LIGHT_BORDER << 8)
-	&& (Light & 0x0000FF) < LIGHT_BORDER);
+        && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+        && (Light & 0x0000FF) < LIGHT_BORDER);
 }
 
 inline int game::CompareLights(col24 L1, col24 L2)
@@ -584,8 +584,8 @@ inline int game::CompareLights(col24 L1, col24 L2)
        || (L1 & 0x0000FF) > (L2 & 0x0000FF))
       return 1;
     else if((L1 & 0xFF0000) == (L2 & 0xFF0000)
-	    || (L1 & 0x00FF00) == (L2 & 0x00FF00)
-	    || (L1 & 0x0000FF) == (L2 & 0x0000FF))
+            || (L1 & 0x00FF00) == (L2 & 0x00FF00)
+            || (L1 & 0x0000FF) == (L2 & 0x0000FF))
       return 0;
     else
       return -1;

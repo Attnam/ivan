@@ -307,9 +307,9 @@ inline truth lsquare::IsDark() const
   col24 Light = Luminance;
 
   return (!Light
-	  || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
-	      && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
-	      && (Light & 0x0000FF) < LIGHT_BORDER));
+          || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
+              && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+              && (Light & 0x0000FF) < LIGHT_BORDER));
 }
 
 inline truth eyecontroller::Handler(int x, int y)

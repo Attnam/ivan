@@ -50,7 +50,7 @@ class outputfile
   void Put(char What) { fputc(What, Buffer); }
   void Write(cchar* Offset, long Size)
   { fwrite(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
+  truth IsOpen() { return Buffer != 0; }
   void Close() { fclose(Buffer); }
   void Flush() { fflush(Buffer); }
   void ReOpen();
@@ -72,7 +72,7 @@ class inputfile
   rect ReadRect();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
+  truth IsOpen() { return Buffer != 0; }
   truth Eof() { return feof(Buffer); }
   void ClearFlags() { clearerr(Buffer); }
   void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
@@ -144,7 +144,7 @@ inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   typedef typename fearray<type>::sizetype sizetype;
   sizetype Size = SaveFile.ReadNumber();
@@ -155,7 +155,7 @@ inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, char Value)
@@ -226,7 +226,7 @@ inputfile& operator>>(inputfile&, char*&);
 
 template <class type1, class type2>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::pair<type1, type2>& Pair)
+                              const std::pair<type1, type2>& Pair)
 {
   SaveFile << Pair.first << Pair.second;
   return SaveFile;
@@ -234,7 +234,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type1, class type2>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::pair<type1, type2>& Pair)
+                             std::pair<type1, type2>& Pair)
 {
   SaveFile >> Pair.first >> Pair.second;
   return SaveFile;
@@ -242,7 +242,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::vector<type>& Vector)
+                              const std::vector<type>& Vector)
 {
   SaveFile << ulong(Vector.size());
 
@@ -254,7 +254,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::vector<type>& Vector)
+                             std::vector<type>& Vector)
 {
   Vector.resize(ReadType<ulong>(SaveFile), type());
 
@@ -266,7 +266,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::deque<type>& Deque)
+                              const std::deque<type>& Deque)
 {
   SaveFile << ulong(Deque.size());
 
@@ -278,7 +278,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::deque<type>& Deque)
+                             std::deque<type>& Deque)
 {
   Deque.resize(ReadType<ulong>(SaveFile), type());
 
@@ -290,7 +290,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::list<type>& List)
+                              const std::list<type>& List)
 {
   SaveFile << ulong(List.size());
 
@@ -303,7 +303,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::list<type>& List)
+                             std::list<type>& List)
 {
   List.resize(ReadType<ulong>(SaveFile), type());
 
@@ -316,7 +316,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type1, class type2>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::map<type1, type2>& Map)
+                              const std::map<type1, type2>& Map)
 {
   SaveFile << ulong(Map.size());
 
@@ -329,7 +329,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type1, class type2>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::map<type1, type2>& Map)
+                             std::map<type1, type2>& Map)
 {
   Map.clear();
   type1 First;
@@ -349,7 +349,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::set<type>& Set)
+                              const std::set<type>& Set)
 {
   SaveFile << ulong(Set.size());
 
@@ -362,7 +362,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::set<type>& Set)
+                             std::set<type>& Set)
 {
   Set.clear();
   ulong Size;
@@ -380,7 +380,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const fearray<type>& Array)
+                              const fearray<type>& Array)
 {
   typename fearray<type>::sizetype c, Size = Array.Size;
   SaveFile << Size;
@@ -393,7 +393,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     fearray<type>& Array)
+                             fearray<type>& Array)
 {
   typename fearray<type>::sizetype c, Size;
   SaveFile >> Size;
@@ -407,7 +407,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& SaveLinkedList(outputfile& SaveFile,
-				  const type* Element)
+                                  const type* Element)
 {
   for(const type* E = Element; E; E = E->Next)
     {
@@ -421,7 +421,7 @@ inline outputfile& SaveLinkedList(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& LoadLinkedList(inputfile& SaveFile,
-				 type*& Element)
+                                 type*& Element)
 {
   if(SaveFile.Get())
   {
@@ -441,7 +441,7 @@ inline inputfile& LoadLinkedList(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& SaveArray(outputfile& SaveFile,
-			     const type* Array, int Count)
+                             const type* Array, int Count)
 {
   for(int c = 0; c < Count; ++c)
     SaveFile << Array[c];
@@ -451,7 +451,7 @@ inline outputfile& SaveArray(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& LoadArray(inputfile& SaveFile,
-			    type* Array, int Count)
+                            type* Array, int Count)
 {
   for(int c = 0; c < Count; ++c)
     SaveFile >> Array[c];

@@ -85,11 +85,11 @@ class festring
   static csizetype NPos;
   static void SplitString(festring&, festring&, sizetype);
   static int SplitString(cfestring&, std::vector<festring>&,
-			 sizetype, sizetype = 0);
+                         sizetype, sizetype = 0);
   static sizetype IgnoreCaseFind(cfestring&,
-				 cfestring&, sizetype = 0);
+                                 cfestring&, sizetype = 0);
   static void SearchAndReplace(festring&, cfestring&,
-			       cfestring&, sizetype = 0);
+                               cfestring&, sizetype = 0);
   static bool IgnoreCaseCompare(cfestring&, cfestring&);
   truth IsEmpty() const { return !Size; }
   /* HORRIBLE ERROR!!!! */
@@ -150,7 +150,7 @@ inline festring::festring(cfestring& Str)
 inline festring::festring(sizetype N)
 : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];
+  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
   REFS(Ptr) = 0;
   Data = Ptr;
 }
@@ -158,7 +158,7 @@ inline festring::festring(sizetype N)
 inline festring::festring(sizetype N, char C)
 : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];
+  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
   REFS(Ptr) = 0;
   Data = Ptr;
   memset(Ptr, C, N);
@@ -183,7 +183,7 @@ inline bool festring::operator<(cfestring& Str) const
   if(ThisSize && StrSize)
   {
     int Comp = memcmp(Data, Str.Data,
-		      StrSize > ThisSize ? ThisSize : StrSize);
+                      StrSize > ThisSize ? ThisSize : StrSize);
     return Comp < 0 || (!Comp && StrSize > ThisSize);
   }
   else
@@ -225,7 +225,7 @@ inline int festring::Compare(cfestring& Str) const
   if(ThisSize && StrSize)
   {
     int Comp = memcmp(Data, Str.Data,
-		      StrSize > ThisSize ? ThisSize : StrSize);
+                      StrSize > ThisSize ? ThisSize : StrSize);
 
     if(Comp)
       return Comp;

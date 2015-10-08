@@ -61,7 +61,7 @@ class object : public entity, public id
   virtual truth DetectMaterial(cmaterial*) const;
   virtual int GetSparkleFlags() const;
   virtual void SignalMaterialChange() { }
-  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual void SetIsBurning(int What) { Burning = What; }
   virtual int IsBurning() const;
  protected:
   void CopyMaterial(material* const&, material*&);

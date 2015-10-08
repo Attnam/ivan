@@ -19,7 +19,7 @@
 class humanoid;
 class sweaponskill;
 
-struct scar 
+struct scar
 {
   int Severity;
   mutable bitmap* PanelBitmap;

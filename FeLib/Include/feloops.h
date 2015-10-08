@@ -27,7 +27,7 @@ struct combinepredicates
       elementtype* E = (O->*X)(c);
 
       if(E && !(E->*F)() == !OrBit)
-	return OrBit;
+        return OrBit;
     }
 
     return !OrBit;
@@ -46,7 +46,7 @@ struct combinepredicateswithparam
       elementtype* E = (O->*X)(c);
 
       if(E && !(E->*F)(P) == !OrBit)
-	return OrBit;
+        return OrBit;
     }
 
     return !OrBit;
@@ -65,7 +65,7 @@ struct doforelements
       elementtype* E = (O->*X)(c);
 
       if(E)
-	(E->*F)();
+        (E->*F)();
     }
   }
 };
@@ -76,14 +76,14 @@ struct doforelementswithparam
   typedef elementtype* (objecttype::*extractor)(int) const;
   typedef void (elementtype::*routine)(param);
   void operator()(objecttype* O, extractor X,
-			  routine F, param P, int A) const
+                          routine F, param P, int A) const
   {
     for(int c = 0; c < A; ++c)
     {
       elementtype* E = (O->*X)(c);
 
       if(E)
-	(E->*F)(P);
+        (E->*F)(P);
     }
   }
 };
@@ -102,7 +102,7 @@ struct sumproperties
       elementtype* E = (O->*X)(c);
 
       if(E)
-	Sum += (E->*F)();
+        Sum += (E->*F)();
     }
 
     return Sum;
@@ -115,14 +115,14 @@ struct findelement
   typedef elementtype* (objecttype::*extractor)(int) const;
   typedef truth (elementtype::*routine)(param) const;
   elementtype* operator()(objecttype* O, extractor X,
-			   routine F, param P, int A) const
+                           routine F, param P, int A) const
   {
     for(int c = 0; c < A; ++c)
     {
       elementtype* E = (O->*X)(c);
 
       if(E && (E->*F)(P))
-	return E;
+        return E;
     }
 
     return 0;

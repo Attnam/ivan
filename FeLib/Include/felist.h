@@ -33,7 +33,7 @@ class felist
   felist(cfestring&, col16 = WHITE, uint = 0);
   ~felist();
   void AddEntry(cfestring&, col16, uint = 0,
-		uint = NO_IMAGE, truth = true);
+                uint = NO_IMAGE, truth = true);
   void AddDescription(cfestring&, col16 = WHITE);
   uint Draw();
   void QuickDraw(bitmap*, uint) const;

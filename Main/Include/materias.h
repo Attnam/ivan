@@ -20,7 +20,7 @@ class lterrain;
 MATERIAL(solid, material)
 {
  public:
-  solid() : BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0), BurnCounter(0), BurnCheckCounter(0)  { } //Transient is for storing the energy in an explosion so that mutliple explosions accumulate, SteadyState is to store the energy to be decremented only by the application of liquids
+  solid() : BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0), BurnCounter(0), BurnCheckCounter(0) { }
   virtual void SetBurnLevel(int, truth);
   virtual int GetStrengthValue() const;
   virtual int GetBurnModifier() const;
@@ -42,11 +42,13 @@ MATERIAL(solid, material)
   virtual void RemoveFromThermalEnergy(int);
  protected:
   virtual void PostConstruct();
+  int BurnData;
+  int TransientThermalEnergy; // Transient is for storing the energy in an explosion so that
+                              // mutliple explosions accumulate, SteadyState is to store the
+                              // energy to be decremented only by the application of liquids
+  int SteadyStateThermalEnergy;
   ushort BurnCounter;
   uchar BurnCheckCounter;
-  int BurnData;
-  int TransientThermalEnergy;
-  int SteadyStateThermalEnergy;
 };
 
 MATERIAL(organic, solid)

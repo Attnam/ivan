@@ -12,8 +12,10 @@
 
 /* Compiled through levelset.cpp */
 
-glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
-olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, cchar* ClassID) : Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
+glterrainprototype::glterrainprototype(const glterrainprototype* Base, glterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
+olterrainprototype::olterrainprototype(const olterrainprototype* Base, olterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<olterrain>::Add(this); }
 
 square* lterrain::GetSquareUnderEntity(int) const { return LSquareUnder; }
 level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
@@ -97,13 +99,13 @@ void olterrain::Break()
 
       for(int c2 = 0; c2 < Times; ++c2)
       {
-	item* Item = ItemArray[c1].InstantiateBasedOnMaterial(GetMainMaterial()->GetDigProductMaterial());
+        item* Item = ItemArray[c1].InstantiateBasedOnMaterial(GetMainMaterial()->GetDigProductMaterial());
 
-	if(Item)
-	{
-	  Square->AddItem(Item);
-	  Item->SpecialGenerationHandler();
-	}
+        if(Item)
+        {
+          Square->AddItem(Item);
+          Item->SpecialGenerationHandler();
+        }
       }
     }
 
@@ -150,7 +152,7 @@ void lterrain::Initialize(int NewConfig, int SpecialFlags)
       CalculateAll();
 
       if(!(SpecialFlags & NO_PIC_UPDATE))
-	UpdatePictures();
+        UpdatePictures();
     }
   }
 }
@@ -224,7 +226,7 @@ void olterrain::ReceiveDamage(character* Villain, int Damage, int)
       Break();
 
       if(Room)
-	Room->DestroyTerrain(Villain);
+        Room->DestroyTerrain(Villain);
     }
   }
 }
@@ -240,12 +242,12 @@ void olterrain::BeKicked(character* Kicker, int Damage, int)
       room* Room = GetRoom();
 
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is shattered.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s is shattered.", CHAR_NAME(DEFINITE));
 
       Break();
 
       if(Room)
-	Room->DestroyTerrain(Kicker);
+        Room->DestroyTerrain(Kicker);
     }
   }
   else if(Kicker->IsPlayer())
@@ -288,7 +290,11 @@ god* olterrain::GetMasterGod() const
 
 truth olterrain::CanBeDestroyed() const
 {
-  return DataBase->CanBeDestroyed && ((GetPos().X && GetPos().Y && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
+  return DataBase->CanBeDestroyed
+         && ((GetPos().X && GetPos().Y
+              && GetPos().X != GetLevel()->GetXSize() - 1
+              && GetPos().Y != GetLevel()->GetYSize() - 1)
+             || GetLevel()->IsOnGround());
 }
 
 //extern itemprototype key_ProtoType;
@@ -312,28 +318,28 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
     for(int c1 = 0; c1 < OldConfigs; ++c1)
       if(!TempConfig[c1]->IsAbstract)
       {
-	int BaseConfig = TempConfig[c1]->Config;
-	int NewConfig = BaseConfig | BROKEN_LOCK;
-	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
-	ConfigDataBase->InitDefaults(this, NewConfig);
-	ConfigDataBase->PostFix << "with a broken lock";
-	TempConfig[Configs++] = ConfigDataBase;
+        int BaseConfig = TempConfig[c1]->Config;
+        int NewConfig = BaseConfig | BROKEN_LOCK;
+        olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
+        ConfigDataBase->InitDefaults(this, NewConfig);
+        ConfigDataBase->PostFix << "with a broken lock";
+        TempConfig[Configs++] = ConfigDataBase;
 
-	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
-	{
-	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-	  ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
-	  ConfigDataBase->InitDefaults(this, NewConfig);
-	  ConfigDataBase->PostFix << "with ";
+        for(int c2 = 0; c2 < KeyConfigSize; ++c2)
+        {
+          NewConfig = BaseConfig | KeyConfigData[c2]->Config;
+          ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
+          ConfigDataBase->InitDefaults(this, NewConfig);
+          ConfigDataBase->PostFix << "with ";
 
-	  if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
-	    ConfigDataBase->PostFix << "an ";
-	  else
-	    ConfigDataBase->PostFix << "a ";
+          if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
+            ConfigDataBase->PostFix << "an ";
+          else
+            ConfigDataBase->PostFix << "a ";
 
-	  ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
-	  TempConfig[Configs++] = ConfigDataBase;
-	}
+          ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
+          TempConfig[Configs++] = ConfigDataBase;
+        }
       }
   }
 
@@ -344,13 +350,13 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
     for(int c1 = 0; c1 < OldConfigs; ++c1)
       if(!TempConfig[c1]->IsAbstract)
       {
-	int NewConfig = TempConfig[c1]->Config | WINDOW;
-	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
-	ConfigDataBase->InitDefaults(this, NewConfig);
-	ConfigDataBase->PostFix << "with a window";
-	ConfigDataBase->IsAlwaysTransparent = true;
-	ConfigDataBase->BitmapPos = ConfigDataBase->WindowBitmapPos;
-	TempConfig[Configs++] = ConfigDataBase;
+        int NewConfig = TempConfig[c1]->Config | WINDOW;
+        olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
+        ConfigDataBase->InitDefaults(this, NewConfig);
+        ConfigDataBase->PostFix << "with a window";
+        ConfigDataBase->IsAlwaysTransparent = true;
+        ConfigDataBase->BitmapPos = ConfigDataBase->WindowBitmapPos;
+        TempConfig[Configs++] = ConfigDataBase;
       }
   }
 
@@ -497,10 +503,12 @@ void lterrain::TryToRust(long LiquidModifier)
   if(MainMaterial->TryToRust(LiquidModifier * 10, 10000))
   {
     if(CanBeSeenByPlayer())
+    {
       if(MainMaterial->GetRustLevel() == NOT_RUSTED)
-	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+    }
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
   }
@@ -534,8 +542,8 @@ void lterrain::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       0);
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               0);
 }
 
 void glterraindatabase::InitDefaults(const glterrainprototype* NewProtoType, int NewConfig)
@@ -559,7 +567,8 @@ truth olterrain::ShowThingsUnder() const
 
 truth olterrain::WillBeDestroyedBy(ccharacter* Char) const
 {
-  return IsWall() && CanBeDestroyed() && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
+  return IsWall() && CanBeDestroyed()
+         && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
 }
 
 v2 glterrain::GetBitmapPos(int I) const

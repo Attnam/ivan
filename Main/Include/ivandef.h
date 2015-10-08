@@ -172,7 +172,6 @@ const name##prototype name::ProtoType
 #define PSI 512
 #define THROW 32768
 
-
 #define UNDEFINED 0
 #define MALE 1
 #define FEMALE 2
@@ -531,14 +530,14 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 /* stack::DrawContents flags */
 
-#define NO_SELECT 1	      // only show items
+#define NO_SELECT 1           // only show items
 #define NO_MULTI_SELECT 2     // select only one item
 #define NO_SPECIAL_INFO 4     // show only name and amount
 #define REMEMBER_SELECTED 8   // if DrawContents will be called multiple times,
-			      // remember the selected item
+                              // remember the selected item
 #define NONE_AS_CHOICE 16     // "none" is a choice, for instance when wielding
-#define SELECT_PAIR 32	      // if NO_MULTI_SELECT is on, selects a pair if
-			      // appropriate
+#define SELECT_PAIR 32        // if NO_MULTI_SELECT is on, selects a pair if
+                              // appropriate
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
@@ -682,7 +681,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define NO_MOVE 0
 #define WALK 1
 #define SWIM 2
-#define FLY  4
+#define FLY 4
 #define ETHEREAL 8
 #define ANY_MOVE 15
 
@@ -776,10 +775,10 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define LEG_MAIN_COLOR 2048
 #define LEG_SPECIAL_COLOR 4096
 #define CLOTH_COLOR (CAP_COLOR\
-		    |TORSO_MAIN_COLOR\
-		    |ARM_MAIN_COLOR\
-		    |GAUNTLET_COLOR\
-		    |LEG_MAIN_COLOR)
+                    |TORSO_MAIN_COLOR\
+                    |ARM_MAIN_COLOR\
+                    |GAUNTLET_COLOR\
+                    |LEG_MAIN_COLOR)
 
 /* contentscript<character> flags */
 

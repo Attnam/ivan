@@ -12,7 +12,8 @@
 
 /* Compiled through actset.cpp */
 
-actionprototype::actionprototype(actionspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
+actionprototype::actionprototype(actionspawner Spawner, cchar* ClassID)
+: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
 
 void action::Terminate(truth)
 {

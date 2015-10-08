@@ -81,21 +81,21 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     while(!kbhit())
       if(Controls && ControlLoopsEnabled)
       {
-	static ulong LastTick = 0;
-	UpdateTick();
+        static ulong LastTick = 0;
+        UpdateTick();
 
-	if(LastTick != Tick)
-	{
-	  LastTick = Tick;
-	  truth Draw = false;
+        if(LastTick != Tick)
+        {
+          LastTick = Tick;
+          truth Draw = false;
 
-	  for(int c = 0; c < Controls; ++c)
-	    if(ControlLoop[c]())
-	      Draw = true;
+          for(int c = 0; c < Controls; ++c)
+            if(ControlLoop[c]())
+              Draw = true;
 
-	  if(Draw)
-	    graphics::BlitDBToScreen();
-	}
+          if(Draw)
+            graphics::BlitDBToScreen();
+        }
       }
 
     Key = getkey();
@@ -169,7 +169,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 #else
         if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
 #endif
-	   && Controls && ControlLoopsEnabled)
+           && Controls && ControlLoopsEnabled)
         {
           static ulong LastTick = 0;
           UpdateTick();
@@ -315,8 +315,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
-	 && (Event->key.keysym.mod & KMOD_LCTRL
-	     || Event->key.keysym.mod & KMOD_RCTRL))
+         && (Event->key.keysym.mod & KMOD_LCTRL
+             || Event->key.keysym.mod & KMOD_RCTRL))
       {
         KeyPressed = '\177';
         break;
@@ -335,45 +335,49 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:
-     KeyPressed = Event->text.text[0];
-     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-        == KeyBuffer.end())
-       KeyBuffer.push_back(KeyPressed);
+    KeyPressed = Event->text.text[0];
+    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
+       == KeyBuffer.end())
+      KeyBuffer.push_back(KeyPressed);
 #endif
   }
 }
 
 // returns true if shift is being pressed
 // else false
-truth globalwindowhandler::ShiftIsDown() {
+truth globalwindowhandler::ShiftIsDown()
+{
   return false;
-
 }
 
-festring globalwindowhandler::ScrshotNameHandler() { // returns filename to be used for screenshot
-	static int ScrshotCount = 0;
+// returns filename to be used for screenshot
+festring globalwindowhandler::ScrshotNameHandler()
+{
+  static int ScrshotCount = 0;
 
-	festring ScrshotNum;
-	if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
-		ScrshotNum << "00" << ScrshotCount;
-	else if (ScrshotCount < 100)
-		ScrshotNum << "0" << ScrshotCount;
-	else
-		ScrshotNum << ScrshotCount;
-	
-	festring ScrshotName;
-	ScrshotName << ScrshotDirectoryName << "Scrshot" << ScrshotNum << ".bmp";
-	
-	FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
-	if (Scrshot) {
+  festring ScrshotNum;
+  if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
+    ScrshotNum << "00" << ScrshotCount;
+  else if (ScrshotCount < 100)
+    ScrshotNum << "0" << ScrshotCount;
+  else
+    ScrshotNum << ScrshotCount;
+
+  festring ScrshotName;
+  ScrshotName << ScrshotDirectoryName << "Scrshot" << ScrshotNum << ".bmp";
+
+  FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
+
+  if (Scrshot)
+  {
     // file exists; close file and increment ScrshotCount
-		fclose(Scrshot);
-		++ScrshotCount;
-		return ScrshotNameHandler();
-	} 
+    fclose(Scrshot);
+    ++ScrshotCount;
+    return ScrshotNameHandler();
+  }
 
-    // if file doesn't exist; we can use this filename
-	return ScrshotName;
+  // if file doesn't exist; we can use this filename
+  return ScrshotName;
 }
-#endif
 
+#endif /* USE_SDL */
