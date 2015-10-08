@@ -1090,9 +1090,6 @@ void item::PostProcessForBone()
   }
   else
   {
-    if(game::SearchItem(BI->second))
-      int esko = esko = 2;
-
     ID = BI->second;
     game::AddItemID(this, ID);
   }
@@ -1969,10 +1966,10 @@ void item::SendMemorizedUpdateRequest() const
 
 truth item::AddStateDescription(festring& Name, truth Articled) const
 {
-  if(!Spoils())
+  if(!Spoils() || !(ItemFlags & (HASTE|SLOW)))
     return false;
 
-  if((ItemFlags & (HASTE|SLOW)) && Articled)
+  if(Articled)
     Name << "a ";
 
   if(ItemFlags & HASTE)

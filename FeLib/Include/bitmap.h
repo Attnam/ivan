@@ -31,8 +31,8 @@ struct blitdata
   podv2 Border;
   union
   {
-    int Flags, Stretch;
     col24 Luminance;
+    int Flags, Stretch;
   };
   col16 MaskColor;
   ulong CustomData;
@@ -176,7 +176,7 @@ inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
                  { 0, 0 },
                  { 0, 0 },
                  { Size.X, Size.Y },
-                 { Flags },
+                 { static_cast<col24>(Flags) }, // stupid union initialization rules...
                  0,
                  0 };
   NormalBlit(B);

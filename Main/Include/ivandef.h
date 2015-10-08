@@ -196,6 +196,14 @@ const name##prototype name::ProtoType
 
 #define DIRECTION_COMMAND_KEYS 8
 #define EXTENDED_DIRECTION_COMMAND_KEYS 9
+#define NORTHWEST 0
+#define NORTH 1
+#define NORTHEAST 2
+#define WEST 3
+#define EAST 4
+#define SOUTHWEST 5
+#define SOUTH 6
+#define SOUTHEAST 7
 #define YOURSELF 8
 #define RANDOM_DIR 9
 

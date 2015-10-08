@@ -178,54 +178,34 @@ v2 game::EnterTextDisplacement;
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
-  if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-    int esko = esko = 2;
   CharacterIDMap.insert(std::make_pair(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID)
 {
-  if(CharacterIDMap.find(ID) == CharacterIDMap.end())
-    int esko = esko = 2;
   CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID)
 {
-  if(ItemIDMap.find(ID) != ItemIDMap.end())
-    int esko = esko = 2;
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
 void game::RemoveItemID(ulong ID)
 {
-  if(ID && ItemIDMap.find(ID) == ItemIDMap.end())
-    int esko = esko = 2;
-
   if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
 }
 void game::UpdateItemID(item* Item, ulong ID)
 {
-  if(ItemIDMap.find(ID) == ItemIDMap.end())
-    int esko = esko = 2;
   ItemIDMap.find(ID)->second = Item;
 }
 void game::AddTrapID(entity* Trap, ulong ID)
 {
-  if(TrapIDMap.find(ID) != TrapIDMap.end())
-    int esko = esko = 2;
-
-  if(ID)
-    TrapIDMap.insert(std::make_pair(ID, Trap));
+  if(ID) TrapIDMap.insert(std::make_pair(ID, Trap));
 }
 void game::RemoveTrapID(ulong ID)
 {
-  if(ID && TrapIDMap.find(ID) == TrapIDMap.end())
-    int esko = esko = 2;
-
   if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
 {
-  if(TrapIDMap.find(ID) == TrapIDMap.end())
-    int esko = esko = 2;
   TrapIDMap.find(ID)->second = Trap;
 }
 const dangermap& game::GetDangerMap() { return DangerMap; }
@@ -234,7 +214,7 @@ void game::ClearCharacterDrawVector() { CharacterDrawVector.clear(); }
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(GetDataDir() + "Script/dungeon.dat", &GlobalValueMap);
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
@@ -261,16 +241,21 @@ truth game::Init(cfestring& Name)
 
 #ifdef WIN32
   _mkdir("Save");
+  _mkdir("Scrshot");
   _mkdir("Bones");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
+  mkdir("Scrshot", S_IRUSR|S_IWUSR);
   mkdir("Bones", S_IWUSR);
 #endif
 
 #ifdef LINUX
+  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
@@ -398,7 +383,7 @@ truth game::Init(cfestring& Name)
       {
         item* Present = banana::Spawn();
         Player->GetStack()->AddItem(Present);
-        ADD_MESSAGE("Atavus is happy today! He gives you a %s.", Present->CHAR_NAME(INDEFINITE));
+        ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
       }
 
       return true;
@@ -676,30 +661,32 @@ void game::UpdateCameraCoordinate(int& Coordinate, int Center, int Size, int Scr
     GetCurrentArea()->SendNewDrawRequest();
 }
 
-cchar* game::Insult() // convert to array
+cchar* game::Insult()
 {
-  switch(RAND_N(18))
+  static cchar*const Insult[] =
   {
-   case 0  : return "moron";
-   case 1  : return "silly";
-   case 2  : return "idiot";
-   case 3  : return "airhead";
-   case 4  : return "jerk";
-   case 5  : return "dork";
-   case 6  : return "Mr. Mole";
-   case 7  : return "navastater";
-   case 8  : return "potatoes-for-eyes";
-   case 9  : return "lamer";
-   case 10 : return "mommo-for-brains";
-   case 11 : return "pinhead";
-   case 12 : return "stupid-headed person";
-   case 13 : return "software abuser";
-   case 14 : return "loser";
-   case 15 : return "peaballs";
-   case 16 : return "person-with-problems";
-   case 17 : return "unimportant user";
-   default : return "hugger-mugger";
-  }
+    "moron",
+    "silly",
+    "idiot",
+    "airhead",
+    "jerk",
+    "dork",
+    "Mr. Mole",
+    "navastater",
+    "potatoes-for-eyes",
+    "lamer",
+    "mommo-for-brains",
+    "pinhead",
+    "stupid-headed person",
+    "software abuser",
+    "loser",
+    "peaballs",
+    "person-with-problems",
+    "unimportant user",
+    "hugger-mugger"
+  };
+
+  return Insult[RAND_N(sizeof(Insult) / sizeof(Insult[0]))];
 }
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
@@ -1622,7 +1609,7 @@ truth game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GetGameDir() + "Script/define.dat", &GlobalValueMap);
+  inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
   festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -1781,23 +1768,23 @@ int game::CalculateRoughDirection(v2 Vector)
   double Angle = femath::CalculateAngle(Vector);
 
   if(Angle < FPI / 8)
-    return 4;
+    return EAST;
   else if(Angle < 3 * FPI / 8)
-    return 7;
+    return SOUTHEAST;
   else if(Angle < 5 * FPI / 8)
-    return 6;
+    return SOUTH;
   else if(Angle < 7 * FPI / 8)
-    return 5;
+    return SOUTHWEST;
   else if(Angle < 9 * FPI / 8)
-    return 3;
+    return WEST;
   else if(Angle < 11 * FPI / 8)
-    return 0;
+    return NORTHWEST;
   else if(Angle < 13 * FPI / 8)
-    return 1;
+    return NORTH;
   else if(Angle < 15 * FPI / 8)
-    return 2;
+    return NORTHEAST;
   else
-    return 4;
+    return EAST;
 }
 
 int game::Menu(bitmap* BackGround, v2 Pos, cfestring& Topic, cfestring& sMS,
@@ -2231,10 +2218,6 @@ inputfile& operator>>(inputfile& SaveFile, homedata*& HomeData)
 ulong game::CreateNewCharacterID(character* NewChar)
 {
   ulong ID = NextCharacterID++;
-
-  if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-    int esko = esko = 2;
-
   CharacterIDMap.insert(std::make_pair(ID, NewChar));
   return ID;
 }
@@ -2242,9 +2225,6 @@ ulong game::CreateNewCharacterID(character* NewChar)
 ulong game::CreateNewItemID(item* NewItem)
 {
   ulong ID = NextItemID++;
-
-  if(ItemIDMap.find(ID) != ItemIDMap.end())
-    int esko = esko = 2;
 
   if(NewItem)
     ItemIDMap.insert(std::make_pair(ID, NewItem));
@@ -2255,9 +2235,6 @@ ulong game::CreateNewItemID(item* NewItem)
 ulong game::CreateNewTrapID(entity* NewTrap)
 {
   ulong ID = NextTrapID++;
-
-  if(TrapIDMap.find(ID) != TrapIDMap.end())
-    int esko = esko = 2;
 
   if(NewTrap)
     TrapIDMap.insert(std::make_pair(ID, NewTrap));
@@ -2313,7 +2290,7 @@ festring game::GetHomeDir()
 {
 #ifdef LINUX
   festring Dir;
-  Dir << getenv("HOME") << '/';
+  Dir << getenv("HOME") << "/.ivan/";
   return Dir;
 #endif
 
@@ -2324,18 +2301,15 @@ festring game::GetHomeDir()
 
 festring game::GetSaveDir()
 {
-#ifdef LINUX
-  festring Dir;
-  Dir << getenv("HOME") << "/IvanSave/";
-  return Dir;
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Save/";
-#endif
+  return GetHomeDir() + "Save/";
 }
 
-festring game::GetGameDir()
+festring game::GetScrshotDir()
+{
+  return GetHomeDir() + "Scrshot/";
+}
+
+festring game::GetDataDir()
 {
 #ifdef LINUX
   return DATADIR "/ivan/";

@@ -1424,14 +1424,14 @@ void level::LightningBeam(beamdata& Beam)
 
   switch(Beam.Direction)
   {
-   case 0: StartPos = v2(15, 15); break;
-   case 1: StartPos = v2(RAND() & 15, 15); break;
-   case 2: StartPos = v2(0, 15); break;
-   case 3: StartPos = v2(15, RAND() & 15); break;
-   case 4: StartPos = v2(0, RAND() & 15); break;
-   case 5: StartPos = v2(15, 0); break;
-   case 6: StartPos = v2(RAND() & 15, 0); break;
-   case 7: StartPos = v2(0, 0); break;
+   case NORTHWEST: StartPos = v2(15, 15); break;
+   case NORTH: StartPos = v2(RAND() & 15, 15); break;
+   case NORTHEAST: StartPos = v2(0, 15); break;
+   case WEST: StartPos = v2(15, RAND() & 15); break;
+   case EAST: StartPos = v2(0, RAND() & 15); break;
+   case SOUTHWEST: StartPos = v2(15, 0); break;
+   case SOUTH: StartPos = v2(RAND() & 15, 0); break;
+   case SOUTHEAST: StartPos = v2(0, 0); break;
   }
 
   for(int Length = 0; Length < Beam.Range; ++Length)
@@ -1452,79 +1452,79 @@ void level::LightningBeam(beamdata& Beam)
 
       switch(Beam.Direction)
       {
-       case 0:
+       case NORTHWEST:
         W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
         W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
 
         if(W1 == W2)
-          Beam.Direction = 7;
+          Beam.Direction = SOUTHEAST;
         else if(W1)
         {
           ++CurrentPos.Y;
-          Beam.Direction = 2;
+          Beam.Direction = NORTHEAST;
         }
         else
         {
           ++CurrentPos.X;
-          Beam.Direction = 5;
+          Beam.Direction = SOUTHWEST;
         }
 
         break;
-       case 1: Beam.Direction = 6; StartPos.Y = 0; break;
-       case 2:
+       case NORTH: Beam.Direction = SOUTH; StartPos.Y = 0; break;
+       case NORTHEAST:
         W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
         W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
 
         if(W1 == W2)
-          Beam.Direction = 5;
+          Beam.Direction = SOUTHWEST;
         else if(W1)
         {
           ++CurrentPos.Y;
-          Beam.Direction = 0;
+          Beam.Direction = NORTHWEST;
         }
         else
         {
           --CurrentPos.X;
-          Beam.Direction = 7;
+          Beam.Direction = SOUTHEAST;
         }
 
         break;
-       case 3: Beam.Direction = 4; StartPos.X = 0; break;
-       case 4: Beam.Direction = 3; StartPos.X = 15; break;
-       case 5:
+       case WEST: Beam.Direction = EAST; StartPos.X = 0; break;
+       case EAST: Beam.Direction = WEST; StartPos.X = 15; break;
+       case SOUTHWEST:
         W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
         W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
 
         if(W1 == W2)
-          Beam.Direction = 2;
+          Beam.Direction = NORTHEAST;
         else if(W1)
         {
           --CurrentPos.Y;
-          Beam.Direction = 7;
+          Beam.Direction = SOUTHEAST;
         }
         else
         {
           ++CurrentPos.X;
-          Beam.Direction = 0;
+          Beam.Direction = NORTHWEST;
         }
 
         break;
-       case 6: Beam.Direction = 1; StartPos.Y = 15; break;
-       case 7:
+       case SOUTH: Beam.Direction = NORTH; StartPos.Y = 15; break;
+       case SOUTHEAST:
         W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
         W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
 
         if(W1 == W2)
-          Beam.Direction = 0;
+          Beam.Direction = NORTHWEST;
         else if(W1)
         {
           --CurrentPos.Y;
-          Beam.Direction = 5;
+          Beam.Direction = SOUTHWEST;
         }
         else
         {
           --CurrentPos.X;
-          Beam.Direction = 2;
+          Beam.Direction = NORTHEAST;
         }
 
         break;
@@ -1532,10 +1532,10 @@ void level::LightningBeam(beamdata& Beam)
 
       switch(Beam.Direction)
       {
-       case 0: StartPos = v2(15, 15); break;
-       case 2: StartPos = v2(0, 15); break;
-       case 5: StartPos = v2(15, 0); break;
-       case 7: StartPos = v2(0, 0); break;
+       case NORTHWEST: StartPos = v2(15, 15); break;
+       case NORTHEAST: StartPos = v2(0, 15); break;
+       case SOUTHWEST: StartPos = v2(15, 0); break;
+       case SOUTHEAST: StartPos = v2(0, 0); break;
       }
     }
     else
@@ -1554,47 +1554,47 @@ void level::ShieldBeam(beamdata& Beam)
 
   switch(Beam.Direction)
   {
-   case 0:
+   case NORTHWEST:
     Pos[0] = v2(-1, 0);
     Pos[1] = v2(-1, -1);
     Pos[2] = v2(0, -1);
     break;
-   case 1:
+   case NORTH:
     Pos[0] = v2(-1, -1);
     Pos[1] = v2(0, -1);
     Pos[2] = v2(1, -1);
     break;
-   case 2:
+   case NORTHEAST:
     Pos[0] = v2(0, -1);
     Pos[1] = v2(1, -1);
     Pos[2] = v2(1, 0);
     break;
-   case 3:
+   case WEST:
     Pos[0] = v2(-1, 1);
     Pos[1] = v2(-1, 0);
     Pos[2] = v2(-1, -1);
     break;
-   case 4:
+   case EAST:
     Pos[0] = v2(1, -1);
     Pos[1] = v2(1, 0);
     Pos[2] = v2(1, 1);
     break;
-   case 5:
+   case SOUTHWEST:
     Pos[0] = v2(0, 1);
     Pos[1] = v2(-1, 1);
     Pos[2] = v2(-1, 0);
     break;
-   case 6:
+   case SOUTH:
     Pos[0] = v2(1, 1);
     Pos[1] = v2(0, 1);
     Pos[2] = v2(-1, 1);
     break;
-   case 7:
+   case SOUTHEAST:
     Pos[0] = v2(1, 0);
     Pos[1] = v2(1, 1);
     Pos[2] = v2(0, 1);
     break;
-   case 8:
+   case YOURSELF:
     GetLSquare(Beam.StartPos)->DrawParticles(Beam.BeamColor);
     (GetLSquare(Beam.StartPos)->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
     return;

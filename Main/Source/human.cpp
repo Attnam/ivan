@@ -1677,7 +1677,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
                   { 0, 0 },
                   { 0, 0 },
                   { TILE_SIZE, TILE_SIZE },
-                  { static_cast<int>(ivanconfig::GetContrastLuminance()) },
+                  { ivanconfig::GetContrastLuminance() },
                   TRANSPARENT_COLOR,
                   ALLOW_ANIMATE };
 
@@ -2402,13 +2402,9 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
     bodypart* BodyPart = GetBodyPart(DrawOrder[c]);
 
     if(BodyPart)
-    {
-      B.Dest = GetDrawDisplacement(c);
       BodyPart->Draw(B);
-    }
   }
 
-  B.Dest.X = B.Dest.Y = 0;
   arm* LeftArm = GetLeftArm();
 
   if(LeftArm)
@@ -2420,12 +2416,6 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
     RightArm->DrawWielded(B);
 
   TileBuffer->FastBlit(RealBitmap, BlitData.Dest);
-}
-
-v2 kamikazedwarf::GetDrawDisplacement(int I) const
-{
-  static v2 DrawDisplacement[] = { v2(0, 0), v2(0, 1), v2(0, -1), v2(0, -1), v2(0, -1), v2(0, 0), v2(0, 0) };
-  return DrawDisplacement[I];
 }
 
 col16 angel::GetTorsoMainColor() const
@@ -4904,7 +4894,7 @@ void tailor::BeTalkedTo()
 
     if(Item->GetMainMaterial()->IsBurning())
     {
-      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you. \"");
+      ADD_MESSAGE("\"Hey I'm no fire fighter! Put those flames out and then I might be able to do something for you.\"");
       return;
     }
 

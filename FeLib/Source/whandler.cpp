@@ -36,6 +36,7 @@ truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
+festring globalwindowhandler::ScrshotDirectoryName = "";
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
@@ -99,7 +100,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
     Key = getkey();
 
-    if(Key == K_Control_Print)
+    if(Key == K_Control_Print && !ScrshotDirectoryName.IsEmpty())
     {
       DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       Key = 0;
@@ -200,7 +201,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
-  memset(&Event, 0, sizeof(SDL_Event));
+
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
@@ -300,8 +301,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
      case SDLK_SYSREQ:
      case SDLK_PRINTSCREEN:
-
-      DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
+      if(!ScrshotDirectoryName.IsEmpty())
+        DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
       return;
 #if SDL_MAJOR_VERSION == 2
      /* event are now splitted between SDL_KEYDOWN and SDL_TEXTINPUT,
@@ -349,27 +350,25 @@ truth globalwindowhandler::ShiftIsDown()
   return false;
 }
 
-festring globalwindowhandler::ScrshotNameHandler() // returns filename to be used for screenshot
+// returns filename to be used for screenshot
+festring globalwindowhandler::ScrshotNameHandler()
 {
   static int ScrshotCount = 0;
 
   festring ScrshotNum;
-  if(ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
+  if (ScrshotCount < 10) // prepend 0s so that files are properly sorted in browser (up to 999 at least).
     ScrshotNum << "00" << ScrshotCount;
-  else if(ScrshotCount < 100)
+  else if (ScrshotCount < 100)
     ScrshotNum << "0" << ScrshotCount;
   else
     ScrshotNum << ScrshotCount;
 
   festring ScrshotName;
-#ifdef WIN32
-  ScrshotName << "Scrshot/Scrshot" << ScrshotNum << ".bmp";
-#else
-  ScrshotName << festring(getenv("HOME")) << "/IvanScrshot/Scrshot" << ScrshotNum << ".bmp";
-#endif
+  ScrshotName << ScrshotDirectoryName << "Scrshot" << ScrshotNum << ".bmp";
 
   FILE* Scrshot = fopen(ScrshotName.CStr(), "r");
-  if(Scrshot)
+
+  if (Scrshot)
   {
     // file exists; close file and increment ScrshotCount
     fclose(Scrshot);
@@ -380,4 +379,5 @@ festring globalwindowhandler::ScrshotNameHandler() // returns filename to be use
   // if file doesn't exist; we can use this filename
   return ScrshotName;
 }
-#endif
+
+#endif /* USE_SDL */
