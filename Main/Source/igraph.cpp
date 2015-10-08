@@ -52,9 +52,9 @@ rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(TILE_V2), new rawbitmap(T
 bitmap* igraph::Cursor[CURSOR_TYPES];
 bitmap* igraph::BigCursor[CURSOR_TYPES];
 col16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(40, 40, 40),
-					    MakeRGB16(255, 0, 0),
-					    MakeRGB16(100, 100, 255),
-					    MakeRGB16(200, 200, 0) };
+                                            MakeRGB16(255, 0, 0),
+                                            MakeRGB16(100, 100, 255),
+                                            MakeRGB16(200, 200, 0) };
 bitmap* igraph::BackGround;
 int igraph::CurrentColorType = -1;
 
@@ -137,12 +137,12 @@ void igraph::DrawCursor(v2 Pos, int CursorData, int Index)
   /* Inefficient gum solution */
 
   blitdata BlitData = { DOUBLE_BUFFER,
-			{ 0, 0 },
-			{ Pos.X, Pos.Y },
-			{ TILE_SIZE, TILE_SIZE },
-			{ static_cast<int>(ivanconfig::GetContrastLuminance()) },
-			TRANSPARENT_COLOR,
-			0 };
+                        { 0, 0 },
+                        { Pos.X, Pos.Y },
+                        { TILE_SIZE, TILE_SIZE },
+                        { static_cast<int>(ivanconfig::GetContrastLuminance()) },
+                        TRANSPARENT_COLOR,
+                        0 };
 
   bitmap* CursorBitmap;
   int SrcX = 0;
@@ -211,9 +211,9 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 
       if(RotateFlags)
       {
-	ColorizeBuffer[1]->Clear();
-	SparklePos = RotateTile(RawBitmap, ColorizeBuffer[1], RawPos, SparklePos, RotateFlags);
-	RawBitmap = ColorizeBuffer[1];
+        ColorizeBuffer[1]->Clear();
+        SparklePos = RotateTile(RawBitmap, ColorizeBuffer[1], RawPos, SparklePos, RotateFlags);
+        RawBitmap = ColorizeBuffer[1];
       }
     }
     else if(RotateFlags)
@@ -250,7 +250,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       int WobbleMask = 7 >> Freq << (6 - Speed);
 
       if(!(Frame & WobbleMask))
-	Bitmap->Wobble(Frame & ((1 << (6 - Speed)) - 1), Speed, WobbleData & WOBBLE_HORIZONTALLY_BIT);
+        Bitmap->Wobble(Frame & ((1 << (6 - Speed)) - 1), Speed, WobbleData & WOBBLE_HORIZONTALLY_BIT);
     }
 
     if(SpecialFlags & ST_FLAMES)
@@ -280,7 +280,7 @@ void igraph::EditBodyPartTile(rawbitmap* Source, rawbitmap* Dest, v2 Pos, int Bo
 
     for(V.Y = 10, i = 0; V.Y < 13; ++V.Y)
       for(V.X = V.Y - 5; V.X < 20 - V.Y; ++V.X)
-	Dest->PutPixel(V, Source->GetPixel(Pos + V));
+        Dest->PutPixel(V, Source->GetPixel(Pos + V));
   }
   else if(BodyPartFlags == ST_RIGHT_LEG)
   {
@@ -476,10 +476,10 @@ void igraph::CreateSilhouetteCaches()
 {
   int BodyPartSilhouetteMColorIndex[HUMANOID_BODYPARTS] = { 3, 0, 1, 2, 1, 2, 3 };
   col24 ConditionColor[CONDITION_COLORS] = { static_cast<col24>(MakeRGB16(48, 48, 48)),
-					     static_cast<col24>(MakeRGB16(120, 0, 0)),
-					     static_cast<col24>(MakeRGB16(180, 0, 0)),
-					     static_cast<col24>(MakeRGB16(180, 120, 120)),
-					     static_cast<col24>(MakeRGB16(180, 180, 180)) };
+                                             static_cast<col24>(MakeRGB16(120, 0, 0)),
+                                             static_cast<col24>(MakeRGB16(180, 0, 0)),
+                                             static_cast<col24>(MakeRGB16(180, 120, 120)),
+                                             static_cast<col24>(MakeRGB16(180, 180, 180)) };
   v2 V(8, 64);
 
   for(int c1 = 0; c1 < HUMANOID_BODYPARTS; ++c1)
@@ -494,10 +494,10 @@ void igraph::CreateSilhouetteCaches()
 
       for(int c3 = 0; c3 < SILHOUETTE_TYPES; ++c3)
       {
-	SilhouetteCache[c1][c2][c3] = new bitmap(SILHOUETTE_SIZE, 0);
-	RawGraphic[GR_CHARACTER]->MaskedBlit(SilhouetteCache[c1][c2][c3],
-					     V, ZERO_V2,
-					     SILHOUETTE_SIZE, Color);
+        SilhouetteCache[c1][c2][c3] = new bitmap(SILHOUETTE_SIZE, 0);
+        RawGraphic[GR_CHARACTER]->MaskedBlit(SilhouetteCache[c1][c2][c3],
+                                             V, ZERO_V2,
+                                             SILHOUETTE_SIZE, Color);
       }
 
       SilhouetteCache[c1][c2][SILHOUETTE_INTER_LACED]->InterLace();
@@ -545,12 +545,12 @@ col16 igraph::GetBackGroundColor(int Element)
 void igraph::BlitBackGround(v2 Pos, v2 Border)
 {
   blitdata B = { DOUBLE_BUFFER,
-		  { Pos.X, Pos.Y },
-		  { Pos.X, Pos.Y },
-		  { Border.X, Border.Y },
-		  { 0 },
-		  0,
-		  0 };
+                  { Pos.X, Pos.Y },
+                  { Pos.X, Pos.Y },
+                  { Border.X, Border.Y },
+                  { 0 },
+                  0,
+                  0 };
 
   BackGround->NormalBlit(B);
 }

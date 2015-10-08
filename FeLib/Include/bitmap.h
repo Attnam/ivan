@@ -173,12 +173,12 @@ inline void bitmap::FastBlit(bitmap* Bitmap, v2 Pos) const
 inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
 {
   blitdata B = { Bitmap,
-		 { 0, 0 },
-		 { 0, 0 },
-		 { Size.X, Size.Y },
-		 { Flags },
-		 0,
-		 0 };
+                 { 0, 0 },
+                 { 0, 0 },
+                 { Size.X, Size.Y },
+                 { Flags },
+                 0,
+                 0 };
   NormalBlit(B);
 }
 

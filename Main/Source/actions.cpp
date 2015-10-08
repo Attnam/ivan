@@ -90,11 +90,11 @@ void consume::Handle()
       ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
       if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
-	ActivateInDNDMode();
+        ActivateInDNDMode();
       else
       {
-	Terminate(false);
-	return;
+        Terminate(false);
+        return;
       }
     }
     else
@@ -171,8 +171,8 @@ void rest::Load(inputfile& SaveFile)
 void rest::Handle()
 {
   if((GoalHP && (GetActor()->GetHP() >= GoalHP
-		 || GetActor()->GetHP() == GetActor()->GetMaxHP()
-		 || !GetActor()->CanHeal()))
+                 || GetActor()->GetHP() == GetActor()->GetMaxHP()
+                 || !GetActor()->CanHeal()))
      || (MinToStop && game::GetTotalMinutes() >= MinToStop))
     Terminate(true);
   else

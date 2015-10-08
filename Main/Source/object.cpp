@@ -109,8 +109,8 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
      && NewMaterial && NewMaterial->HasBe())
     Enable();
   else if(OldMaterial && OldMaterial->HasBe()
-	  && (!NewMaterial || !NewMaterial->HasBe())
-	  && !CalculateHasBe())
+          && (!NewMaterial || !NewMaterial->HasBe())
+          && !CalculateHasBe())
     Disable();
 
   if(NewMaterial)
@@ -118,11 +118,11 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
     if(!NewMaterial->GetVolume())
     {
       if(OldMaterial)
-	NewMaterial->SetVolume(OldMaterial->GetVolume());
+        NewMaterial->SetVolume(OldMaterial->GetVolume());
       else if(DefaultVolume)
-	NewMaterial->SetVolume(DefaultVolume);
+        NewMaterial->SetVolume(DefaultVolume);
       else
-	ABORT("Singularity spawn detected!");
+        ABORT("Singularity spawn detected!");
     }
 
     NewMaterial->SetMotherEntity(this);
@@ -228,7 +228,7 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
 
   if(IsBurning()) // is burning is sometimes initially filled with crap, so Burning should be initialised to zero
   {
-	  SpecialFlags |= ST_FLAMES;
+          SpecialFlags |= ST_FLAMES;
   }
 
   if(!(SpecialFlags & (ST_FLAMES|ST_LIGHTNING)))
@@ -238,14 +238,14 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
       int SparkleFlags = GetSparkleFlags();
 
       if(SparkleFlags
-	 && RandomizeSparklePos(SparklePos, BPos, SparkleTime,
-				BPos.X + BPos.Y + GetMaterialColorA(0),
-				SpecialFlags, GraphicsContainerIndex))
+         && RandomizeSparklePos(SparklePos, BPos, SparkleTime,
+                                BPos.X + BPos.Y + GetMaterialColorA(0),
+                                SpecialFlags, GraphicsContainerIndex))
       {
-	Sparkling = true;
+        Sparkling = true;
 
-	if(AnimationFrames <= 256)
-	  AnimationFrames = 256;
+        if(AnimationFrames <= 256)
+          AnimationFrames = 256;
       }
     }
 
@@ -255,7 +255,7 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
       FrameNeeded = true;
 
       if(AnimationFrames <= 32)
-	AnimationFrames = 32;
+        AnimationFrames = 32;
     }
   }
   else if(SpecialFlags & ST_FLAMES)
@@ -369,9 +369,9 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
     }
 
     GI.Frame = !c || FrameNeeded
-	       || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
-	       || (WobbleData & WOBBLE && !(c & WobbleMask))
-	       ? c : 0;
+               || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
+               || (WobbleData & WOBBLE && !(c & WobbleMask))
+               ? c : 0;
 
     GI.OutlineColor = GetOutlineColor(c);
     GI.OutlineAlpha = GetOutlineAlpha(c);
@@ -530,14 +530,14 @@ void object::InitSparkleValidityArrays()
   for(y = 10; y < 16; ++y)
     for(x = 0; x < 8; ++x)
       if((y != 10 || x < 5) && (y != 11 || x < 6) && (y != 12 || x < 7))
-	RightLegSparkleValidityArray[Index++] = v2(x, y);
+        RightLegSparkleValidityArray[Index++] = v2(x, y);
 
   Index = 0;
 
   for(y = 10; y < 16; ++y)
     for(x = 8; x < 16; ++x)
       if((y != 10 || x > 9) && (y != 11 || x > 8))
-	LeftLegSparkleValidityArray[Index++] = v2(x, y);
+        LeftLegSparkleValidityArray[Index++] = v2(x, y);
 
   Index = 0;
 

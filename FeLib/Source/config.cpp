@@ -33,54 +33,54 @@ configoption::configoption(cchar* Name, cchar* Description)
 : Name(Name), Description(Description) { }
 
 stringoption::stringoption(cchar* Name, cchar* Desc,
-			   cfestring& Value,
-			   void (*ValueDisplayer)(const stringoption*,
-						  festring&),
-			   truth (*ChangeInterface)(stringoption*),
-			   void (*ValueChanger)(stringoption*,
-						cfestring&))
+                           cfestring& Value,
+                           void (*ValueDisplayer)(const stringoption*,
+                                                  festring&),
+                           truth (*ChangeInterface)(stringoption*),
+                           void (*ValueChanger)(stringoption*,
+                                                cfestring&))
 : configoption(Name, Desc),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
 numberoption::numberoption(cchar* Name, cchar* Desc, long Value,
-			   void (*ValueDisplayer)(const numberoption*,
-						  festring&),
-			   truth (*ChangeInterface)(numberoption*),
-			   void (*ValueChanger)(numberoption*, long))
+                           void (*ValueDisplayer)(const numberoption*,
+                                                  festring&),
+                           truth (*ChangeInterface)(numberoption*),
+                           void (*ValueChanger)(numberoption*, long))
 : configoption(Name, Desc),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
 scrollbaroption::scrollbaroption(cchar* Name,
-				 cchar* Desc, long Value,
-				 void (*ValueDisplayer)(const numberoption*,
-							festring&),
-				 truth (*ChangeInterface)(numberoption*),
-				 void (*ValueChanger)(numberoption*, long),
-				 void (*BarHandler)(long))
+                                 cchar* Desc, long Value,
+                                 void (*ValueDisplayer)(const numberoption*,
+                                                        festring&),
+                                 truth (*ChangeInterface)(numberoption*),
+                                 void (*ValueChanger)(numberoption*, long),
+                                 void (*BarHandler)(long))
 : numberoption(Name, Desc, Value, ValueDisplayer,
-	       ChangeInterface, ValueChanger),
+               ChangeInterface, ValueChanger),
   BarHandler(BarHandler) { }
 
 truthoption::truthoption(cchar* Name, cchar* Desc, truth Value,
-			 void (*ValueDisplayer)(const truthoption*, festring&),
-			 truth (*ChangeInterface)(truthoption*),
-			 void (*ValueChanger)(truthoption*, truth))
+                         void (*ValueDisplayer)(const truthoption*, festring&),
+                         truth (*ChangeInterface)(truthoption*),
+                         void (*ValueChanger)(truthoption*, truth))
 : configoption(Name, Desc),
   Value(Value), ValueDisplayer(ValueDisplayer),
   ChangeInterface(ChangeInterface),
   ValueChanger(ValueChanger) { }
 
 cycleoption::cycleoption(cchar* Name, cchar* Desc,
-			   long Value, long CycleCount,
-			   void (*ValueDisplayer)(const cycleoption*,
-						  festring&),
-			   truth (*ChangeInterface)(cycleoption*),
-			   void (*ValueChanger)(cycleoption*,
-						long))
+                           long Value, long CycleCount,
+                           void (*ValueDisplayer)(const cycleoption*,
+                                                  festring&),
+                           truth (*ChangeInterface)(cycleoption*),
+                           void (*ValueChanger)(cycleoption*,
+                                                long))
 : configoption(Name, Desc),
   Value(Value), CycleCount(CycleCount),
   ValueDisplayer(ValueDisplayer),
@@ -121,15 +121,15 @@ truth configsystem::Load()
 
     for(int c = 0; c < Options; ++c)
       if(Word == Option[c]->Name)
-	Option[c]->LoadValue(SaveFile);
+        Option[c]->LoadValue(SaveFile);
   }
 
   return true;
 }
 
 void configsystem::Show(void (*BackGroundDrawer)(),
-			void (*ListAttributeInitializer)(felist&),
-			truth SlaveScreen)
+                        void (*ListAttributeInitializer)(felist&),
+                        truth SlaveScreen)
 {
   int Chosen;
   truth TruthChange = false;
@@ -158,7 +158,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       ListAttributeInitializer(List);
 
     List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)
-		  |(!SlaveScreen && !TruthChange ? FADE : 0));
+                  |(!SlaveScreen && !TruthChange ? FADE : 0));
     Chosen = List.Draw();
     festring String;
 
@@ -173,7 +173,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
 }
 
 void configsystem::NormalStringDisplayer(const stringoption* O,
-					 festring& Entry)
+                                         festring& Entry)
 {
   if(!O->Value.IsEmpty())
     Entry << O->Value;
@@ -182,19 +182,19 @@ void configsystem::NormalStringDisplayer(const stringoption* O,
 }
 
 void configsystem::NormalNumberDisplayer(const numberoption* O,
-					 festring& Entry)
+                                         festring& Entry)
 {
   Entry << O->Value;
 }
 
 void configsystem::NormalTruthDisplayer(const truthoption* O,
-					festring& Entry)
+                                        festring& Entry)
 {
   Entry << (O->Value ? "yes" : "no");
 }
 
 void configsystem::NormalCycleDisplayer(const cycleoption* O,
-					 festring& Entry)
+                                         festring& Entry)
 {
   Entry << O->Value;
 }
@@ -210,9 +210,9 @@ truth configsystem::NormalStringChangeInterface(stringoption* O)
   festring String;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new ")
-			      + O->Description + ':',
-			      v2(30, 30), WHITE, 0, 80,
-			      true, true) == NORMAL_EXIT)
+                              + O->Description + ':',
+                              v2(30, 30), WHITE, 0, 80,
+                              true, true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   return false;
@@ -221,8 +221,8 @@ truth configsystem::NormalStringChangeInterface(stringoption* O)
 truth configsystem::NormalNumberChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new ")
-					  + O->Description + ':',
-					  v2(30, 30), WHITE, true));
+                                          + O->Description + ':',
+                                          v2(30, 30), WHITE, true));
   return false;
 }
 

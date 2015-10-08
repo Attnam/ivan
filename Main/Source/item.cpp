@@ -103,9 +103,9 @@ item::~item()
     for(int c = 0; c < SquaresUnder; ++c)
       for(fluid* F = FP[c]; F;)
       {
-	fluid* ToDel = F;
-	F = F->Next;
-	delete ToDel;
+        fluid* ToDel = F;
+        F = F->Next;
+        delete ToDel;
       }
 
     delete [] FP;
@@ -177,23 +177,23 @@ void item::Fly(character* Thrower, int Direction, int Force)
       truth Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
 
       if(Draw)
-	game::DrawEverything();
+        game::DrawEverything();
 
       if(JustHit->GetCharacter())
       {
-	int Damage = int(BaseDamage * sqrt(RangeLeft));
-	double ToHitValue = BaseToHitValue * RangeLeft;
-	int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
+        int Damage = int(BaseDamage * sqrt(RangeLeft));
+        double ToHitValue = BaseToHitValue * RangeLeft;
+        int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
 
-	if(Returned == HIT)
-	  Breaks = true;
+        if(Returned == HIT)
+          Breaks = true;
 
-	if(Returned != MISSED)
-	  break;
+        if(Returned != MISSED)
+          break;
       }
 
       if(Draw)
-	while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
+        while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
     }
   }
 
@@ -258,7 +258,7 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
       room* Room = GetRoom();
 
       if(Room)
-	Room->HostileAction(Polymorpher);
+        Room->HostileAction(Polymorpher);
     }
 
     if(GetSquarePosition() != CENTER)
@@ -266,7 +266,7 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
       stack* Stack = CurrentStack->GetLSquareUnder()->GetStackOfAdjacentSquare(GetSquarePosition());
 
       if(Stack)
-	CurrentStack = Stack;
+        CurrentStack = Stack;
     }
 
     CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true));
@@ -311,8 +311,8 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
   material* ConsumeMaterial = GetConsumeMaterial(Eater);
 
   return (!Eater->IsPet()
-	  || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
-	  || !IsValuable())
+          || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
+          || !IsValuable())
     && IsConsumable()
     && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
@@ -359,7 +359,7 @@ void item::Load(inputfile& SaveFile)
       LoadLinkedList(SaveFile, Fluid[c]);
 
       for(fluid* F = Fluid[c]; F; F = F->Next)
-	F->SetMotherItem(this);
+        F->SetMotherItem(this);
     }
   }
 }
@@ -388,12 +388,12 @@ void item::RemoveFromSlot()
     {
       try
       {
-	Slot[c]->Empty();
+        Slot[c]->Empty();
       }
       catch(quitrequest)
       {
-	SendToHell();
-	throw;
+        SendToHell();
+        throw;
       }
 
       Slot[c] = 0;
@@ -577,7 +577,7 @@ void item::SignalEmitationIncrease(col24 EmitationUpdate)
 
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
-	Slot[c]->SignalEmitationIncrease(EmitationUpdate);
+        Slot[c]->SignalEmitationIncrease(EmitationUpdate);
   }
 }
 
@@ -590,8 +590,8 @@ void item::SignalEmitationDecrease(col24 EmitationUpdate)
 
     if(Backup != Emitation)
       for(int c = 0; c < SquaresUnder; ++c)
-	if(Slot[c])
-	  Slot[c]->SignalEmitationDecrease(EmitationUpdate);
+        if(Slot[c])
+          Slot[c]->SignalEmitationDecrease(EmitationUpdate);
   }
 }
 
@@ -615,18 +615,18 @@ item* item::Duplicate(ulong Flags)
 {
   if(!(Flags & IGNORE_PROHIBITIONS)
      && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
-	 || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
-				      || (MainMaterial
-					  && !(MainMaterial->GetCommonFlags() & CAN_BE_MIRRORED))
-				      || (GetSecondaryMaterial()
-					  && !(GetSecondaryMaterial()->GetCommonFlags() & CAN_BE_MIRRORED))))))
+         || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
+                                      || (MainMaterial
+                                          && !(MainMaterial->GetCommonFlags() & CAN_BE_MIRRORED))
+                                      || (GetSecondaryMaterial()
+                                          && !(GetSecondaryMaterial()->GetCommonFlags() & CAN_BE_MIRRORED))))))
     return 0;
 
   item* Clone = GetProtoType()->Clone(this);
 
   if(Flags & MIRROR_IMAGE)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
-			     Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
+                             Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
   idholder* I = new idholder(ID);
   I->Next = CloneMotherID;
@@ -661,7 +661,7 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
     for(int c = 0; c < Configs; ++c)
       if(TempConfig[c]->Config == ConfigNumber)
-	return TempConfig[c];
+        return TempConfig[c];
 
     return *TempConfig;
   }
@@ -784,18 +784,18 @@ item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   return (GetType() == Item->GetType()
-	  && GetConfig() == Item->GetConfig()
-	  && ItemFlags == Item->ItemFlags
-	  && (WeightIsIrrelevant() || Weight == Item->Weight)
-	  && MainMaterial->IsSameAs(Item->MainMaterial)
-	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
-	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
-	  && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
-	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
-	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
-	  && !Fluid && !Item->Fluid
-	  && !LifeExpectancy == !Item->LifeExpectancy
-	  && !IsBurning() == !Item->IsBurning());
+          && GetConfig() == Item->GetConfig()
+          && ItemFlags == Item->ItemFlags
+          && (WeightIsIrrelevant() || Weight == Item->Weight)
+          && MainMaterial->IsSameAs(Item->MainMaterial)
+          && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
+          && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+          && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
+          && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
+          && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
+          && !Fluid && !Item->Fluid
+          && !LifeExpectancy == !Item->LifeExpectancy
+          && !IsBurning() == !Item->IsBurning());
 }
 
 void item::Break(character* Breaker, int)
@@ -832,13 +832,13 @@ void item::Be()
     if(LifeExpectancy == 1)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s disappears.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("%s disappears.", GetExtendedDescription().CStr());
 
       truth Equipped = PLAYER->Equips(this);
       Disappear();
 
       if(Equipped)
-	game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+        game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
     }
     else
       --LifeExpectancy;
@@ -902,8 +902,8 @@ void item::DonateSlotTo(item* Item)
     for(int c = 1; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	Slot[c]->Empty();
-	Slot[c] = 0;
+        Slot[c]->Empty();
+        Slot[c] = 0;
       }
   }
 }
@@ -1145,30 +1145,30 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
     for(int c1 = 0; c1 < OldConfigs; ++c1)
       if(!TempConfig[c1]->IsAbstract)
       {
-	int BaseConfig = TempConfig[c1]->Config;
-	int NewConfig = BaseConfig | BROKEN_LOCK;
-	itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);
-	ConfigDataBase->InitDefaults(this, NewConfig);
-	ConfigDataBase->PostFix << "with a broken lock";
-	ConfigDataBase->Possibility = 0;
-	TempConfig[Configs++] = ConfigDataBase;
+        int BaseConfig = TempConfig[c1]->Config;
+        int NewConfig = BaseConfig | BROKEN_LOCK;
+        itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);
+        ConfigDataBase->InitDefaults(this, NewConfig);
+        ConfigDataBase->PostFix << "with a broken lock";
+        ConfigDataBase->Possibility = 0;
+        TempConfig[Configs++] = ConfigDataBase;
 
-	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
-	{
-	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-	  ConfigDataBase = new itemdatabase(*TempConfig[c1]);
-	  ConfigDataBase->InitDefaults(this, NewConfig);
-	  ConfigDataBase->PostFix << "with ";
+        for(int c2 = 0; c2 < KeyConfigSize; ++c2)
+        {
+          NewConfig = BaseConfig | KeyConfigData[c2]->Config;
+          ConfigDataBase = new itemdatabase(*TempConfig[c1]);
+          ConfigDataBase->InitDefaults(this, NewConfig);
+          ConfigDataBase->PostFix << "with ";
 
-	  if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
-	    ConfigDataBase->PostFix << "an ";
-	  else
-	    ConfigDataBase->PostFix << "a ";
+          if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
+            ConfigDataBase->PostFix << "an ";
+          else
+            ConfigDataBase->PostFix << "a ";
 
-	  ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
-	  ConfigDataBase->Possibility = 0;
-	  TempConfig[Configs++] = ConfigDataBase;
-	}
+          ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
+          ConfigDataBase->Possibility = 0;
+          TempConfig[Configs++] = ConfigDataBase;
+        }
       }
   }
 
@@ -1288,11 +1288,11 @@ void item::RemoveFluid(fluid* ToBeRemoved)
       fluid* LF = F;
 
       for(F = F->Next; F; LF = F, F = F->Next)
-	if(F == ToBeRemoved)
-	{
-	  LF->Next = F->Next;
-	  break;
-	}
+        if(F == ToBeRemoved)
+        {
+          LF->Next = F->Next;
+          break;
+        }
     }
 
     if(Fluid[c])
@@ -1330,15 +1330,15 @@ void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, t
 
       do
       {
-	if(ToBeAdded->IsSameAs(F->GetLiquid()))
-	{
-	  F->AddLiquidAndVolume(ToBeAdded->GetVolume());
-	  delete ToBeAdded;
-	  return;
-	}
+        if(ToBeAdded->IsSameAs(F->GetLiquid()))
+        {
+          F->AddLiquidAndVolume(ToBeAdded->GetVolume());
+          delete ToBeAdded;
+          return;
+        }
 
-	LF = F;
-	F = F->Next;
+        LF = F;
+        F = F->Next;
       }
       while(F);
 
@@ -1371,9 +1371,9 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	lsquare* Square = GetLSquareUnder(c);
-	Square->SendNewDrawRequest();
-	Square->SendMemorizedUpdateRequest();
+        lsquare* Square = GetLSquareUnder(c);
+        Square->SendNewDrawRequest();
+        Square->SendMemorizedUpdateRequest();
       }
 }
 
@@ -1384,7 +1384,7 @@ void item::CalculateEmitation()
   if(Fluid)
     for(int c = 0; c < SquaresUnder; ++c)
       for(const fluid* F = Fluid[c]; F; F = F->Next)
-	game::CombineLights(Emitation, F->GetEmitation());
+        game::CombineLights(Emitation, F->GetEmitation());
 }
 
 void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const
@@ -1409,9 +1409,9 @@ void item::TryToRust(long LiquidModifier)
     if(CanBeSeenByPlayer())
     {
       if(MainMaterial->GetRustLevel() == NOT_RUSTED)
-	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
     }
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
@@ -1563,8 +1563,8 @@ void item::DonateFluidsTo(item* Item)
     for(int c = 0; c < GetSquaresUnder(); ++c)
       for(fluid* F = Fluid[c]; F; F = F->Next)
       {
-	liquid* Liquid = F->GetLiquid();
-	Item->AddFluid(Liquid->SpawnMoreLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
+        liquid* Liquid = F->GetLiquid();
+        Item->AddFluid(Liquid->SpawnMoreLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
       }
 }
 
@@ -1619,7 +1619,7 @@ void item::RedistributeFluids()
   if(Fluid)
     for(int c = 0; c < GetSquaresUnder(); ++c)
       for(fluid* F = Fluid[c]; F; F = F->Next)
-	F->Redistribute();
+        F->Redistribute();
 }
 
 material* item::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
@@ -1650,8 +1650,8 @@ void item::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultMainVolume());
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultMainVolume());
 }
 
 void item::SignalSquarePositionChange(int Position)
@@ -1862,20 +1862,20 @@ void itemlock::PostConstruct()
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID))
-	++NormalLockTypes;
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID))
+        ++NormalLockTypes;
 
     int ChosenLock = RAND() % NormalLockTypes;
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID)
-	 && !ChosenLock--)
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID)
+         && !ChosenLock--)
       {
-	SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
-	break;
+        SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+        break;
       }
   }
 }
@@ -1893,16 +1893,16 @@ truth itemlock::TryKey(item* Key, character* Applier)
     if(Locked)
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
     else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
 
     Locked = !Locked;
@@ -1962,8 +1962,8 @@ void item::SendMemorizedUpdateRequest() const
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	lsquare* Square = GetLSquareUnder(c);
-	Square->SendMemorizedUpdateRequest();
+        lsquare* Square = GetLSquareUnder(c);
+        Square->SendMemorizedUpdateRequest();
       }
 }
 

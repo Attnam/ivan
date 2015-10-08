@@ -12,9 +12,6 @@
 
 /* Compiled through materset.cpp */
 
-solid::solid()
-: BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0), BurnCounter(0), BurnCheckCounter(0) { }
-
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 void solid::ResetBurning() { BurnCounter = 0; SetBurnLevel(0, false); }
 
@@ -356,8 +353,8 @@ void organic::SetSpoilCounter(int What)
 
       if(NewSpoilLevel != SpoilLevel)
       {
-	SpoilLevel = NewSpoilLevel;
-	MotherEntity->SignalSpoilLevelChange(this);
+        SpoilLevel = NewSpoilLevel;
+        MotherEntity->SignalSpoilLevelChange(this);
       }
     }
   }

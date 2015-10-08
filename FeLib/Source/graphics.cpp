@@ -101,14 +101,14 @@ void graphics::DeInit()
 #ifdef USE_SDL
 
 void graphics::SetMode(cchar* Title, cchar* IconName,
-		       v2 NewRes, truth FullScreen)
+                       v2 NewRes, truth FullScreen)
 {
 #if SDL_MAJOR_VERSION == 1
   if(IconName)
   {
     SDL_Surface* Icon = SDL_LoadBMP(IconName);
     SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
-		    SDL_MapRGB(Icon->format, 255, 255, 255));
+                    SDL_MapRGB(Icon->format, 255, 255, 255));
     SDL_WM_SetIcon(Icon, NULL);
   }
 #endif
@@ -138,6 +138,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             NewRes.X, NewRes.Y, Flags);
+
   if(!Window)
     ABORT("Couldn't set video mode.");
 
@@ -204,7 +205,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   bmask = 0x1F;
 
   TempSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, Res.X, Res.Y, 16,
-				     rmask, gmask, bmask, 0);
+                                     rmask, gmask, bmask, 0);
 
   if(!TempSurface)
     ABORT("CreateRGBSurface failed: %s\n", SDL_GetError());
@@ -360,7 +361,7 @@ void graphics::SetMode(cchar*, cchar*, v2 NewRes, truth)
 void graphics::BlitDBToScreen()
 {
   movedata(_my_ds(), ulong(DoubleBuffer->GetImage()[0]),
-	   ScreenSelector, 0, BufferSize);
+           ScreenSelector, 0, BufferSize);
 }
 
 void graphics::vesainfo::Retrieve()

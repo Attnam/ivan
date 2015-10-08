@@ -103,9 +103,9 @@ truth id::AddAdjective(festring& String, truth Articled) const
     if(Articled)
     {
       if(UsesLongAdjectiveArticle())
-	String << "an ";
+        String << "an ";
       else
-	String << "a ";
+        String << "a ";
     }
 
     String << GetAdjective() << ' ';

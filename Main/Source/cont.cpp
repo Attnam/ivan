@@ -71,7 +71,7 @@ v2 continent::GetRandomMember(int Type)
       TypeContainer[Index++] = Member[c];
 
       if(Index == GetGTerrainAmount(Type))
-	break;
+        break;
     }
 
   v2 Return = TypeContainer[RAND() % Index];

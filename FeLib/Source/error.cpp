@@ -99,7 +99,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
   MessageBox(NULL, Buffer, "Program aborted!",
-	     MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
+             MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
 #endif
 #ifdef LINUX
   std::cout << Buffer << std::endl;
@@ -119,7 +119,7 @@ int globalerrorhandler::NewHandler(size_t)
 #endif
 {
   cchar* Msg = "Fatal Error: Memory depleted.\n"
-		    "Get more RAM and hard disk space.";
+                    "Get more RAM and hard disk space.";
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
   MessageBox(NULL, Msg, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);

@@ -13,9 +13,9 @@
 /* Compiled through materset.cpp */
 
 materialprototype::materialprototype(const materialprototype* Base,
-				     materialspawner Spawner,
-				     materialcloner Cloner,
-				     cchar* ClassID)
+                                     materialspawner Spawner,
+                                     materialcloner Cloner,
+                                     cchar* ClassID)
 : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID)
 { Index = protocontainer<material>::Add(this); }
 
@@ -104,7 +104,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount,
-				Volume % 250 + Pos.X + Pos.Y + 1);
+                                Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_TRAIN_PERCEPTION:
@@ -115,14 +115,14 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_EVIL, Amount,
-				Volume % 250 + Pos.X + Pos.Y + 1);
+                                Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_GOOD, Amount,
-				Volume % 250 + Pos.X + Pos.Y + 1);
+                                Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_PEA_SOUP: Char->ReceivePeaSoup(Amount); break;
@@ -134,7 +134,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
       Char->ActivateRandomState(SRC_MUSHROOM, Amount,
-				Volume % 250 + Pos.X + Pos.Y + 1);
+                                Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_OMMEL_CERUMEN: Char->ReceiveOmmelCerumen(Amount); break;
@@ -160,11 +160,11 @@ material* material::EatEffect(character* Eater, long Amount)
     {
       if(Eater->IsPlayer())
       {
-	ADD_MESSAGE("You relax a bit.");
+        ADD_MESSAGE("You relax a bit.");
       }
       else if(Eater->CanBeSeenByPlayer())
       {
-	ADD_MESSAGE("%s relaxes a bit.", Eater->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s relaxes a bit.", Eater->CHAR_NAME(DEFINITE));
       }
       Eater->DeActivateTemporaryState(PANIC);
     }
@@ -178,12 +178,12 @@ material* material::EatEffect(character* Eater, long Amount)
     if(Head && Amount >= 8)
     {
       Head->AddFluid(static_cast<liquid*>(SpawnMore(Amount >> 3)),
-		     CONST_S("throat"), 0, true);
+                     CONST_S("throat"), 0, true);
       NewAmount -= Amount >> 3;
     }
 
     Eater->GetTorso()->AddFluid(static_cast<liquid*>(SpawnMore(NewAmount)),
-				CONST_S("stomach"), 0, true);
+                                CONST_S("stomach"), 0, true);
   }
   else
   {
@@ -191,8 +191,8 @@ material* material::EatEffect(character* Eater, long Amount)
 
     if(IsLiquid())
       Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina()
-			     / Eater->GetBodyVolume()),
-			 false);
+                             / Eater->GetBodyVolume()),
+                         false);
   }
 
   if(Volume != Amount)
@@ -230,7 +230,7 @@ truth material::HitEffect(character* Enemy, bodypart* BodyPart)
     if(BodyPart)
     {
       BodyPart->AddFluid(static_cast<liquid*>(SpawnMore(Amount)),
-			 CONST_S(""), 0, true);
+                         CONST_S(""), 0, true);
       Success = true;
     }
     else
@@ -302,7 +302,7 @@ material* material::MakeMaterial(int Config, long Volume)
   }
 
   ABORT("Odd material configuration number %d of volume %ld requested!",
-	Config, Volume);
+        Config, Volume);
   return 0;
 }
 
@@ -332,8 +332,8 @@ long material::GetTotalNutritionValue() const
 truth material::CanBeEatenByAI(ccharacter* Eater) const
 {
   return ((Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit()
-	   || (Eater->IsAlcoholic() && (GetCategoryFlags() & IS_BEVERAGE)))
-	  && !GetSpoilLevel() && !Eater->CheckCannibalism(this));
+           || (Eater->IsAlcoholic() && (GetCategoryFlags() & IS_BEVERAGE)))
+          && !GetSpoilLevel() && !Eater->CheckCannibalism(this));
 }
 
 truth material::BreatheEffect(character* Enemy)
@@ -412,7 +412,7 @@ void materialdatabase::InitDefaults(const materialprototype* NewProtoType, int N
 item* material::CreateNaturalForm(int Config, long Volume)
 {
   item* Item = GetDataBase(Config)->NaturalForm.Instantiate(NO_MATERIALS
-							    |NO_PIC_UPDATE);
+                                                            |NO_PIC_UPDATE);
   Item->InitMaterials(MAKE_MATERIAL(Config, Volume));
   return Item;
 }

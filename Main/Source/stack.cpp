@@ -27,7 +27,7 @@ square* stack::GetSquareUnder() const
 /* Modifies the square index bits of BlitData.CustomData */
 
 void stack::Draw(ccharacter* Viewer, blitdata& BlitData,
-		 int RequiredSquarePosition) const
+                 int RequiredSquarePosition) const
 {
   if(!Items)
     return;
@@ -56,12 +56,12 @@ void stack::Draw(ccharacter* Viewer, blitdata& BlitData,
       BlitData.Src.Y = 16;
 
       if(PlusSymbol)
-	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+        igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
 
       if(Dangerous)
       {
-	BlitData.Src.X = 160;
-	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+        BlitData.Src.X = 160;
+        igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
       }
 
       BlitData.Src.X = BlitData.Src.Y = 0; /// check
@@ -154,7 +154,7 @@ void stack::Clean(truth LastClean)
       lsquare* Square = GetLSquareTrulyUnder(Item->GetSquarePosition());
 
       if(Square)
-	Square->DecStaticAnimatedEntities();
+        Square->DecStaticAnimatedEntities();
     }
 
     if(LastClean && Item->GetSquaresUnder() == 1)
@@ -246,10 +246,10 @@ void stack::BeKicked(character* Kicker, int KickDamage, int Direction)
 
       if(Item2)
       {
-	if(!Item2->Exists() || Item2->GetPos() != GetPos())
-	  int esko = esko = 2;
+        if(!Item2->Exists() || Item2->GetPos() != GetPos())
+          int esko = esko = 2;
 
-	Item2->Fly(Kicker, Direction, KickDamage * 3);
+        Item2->Fly(Kicker, Direction, KickDamage * 3);
       }
     }
   }
@@ -281,7 +281,7 @@ void stack::CheckForStepOnEffect(character* Stepper)
       ItemVector[c]->StepOnEffect(Stepper);
 
       if(!Stepper->IsEnabled())
-	return;
+        return;
     }
 }
 
@@ -315,7 +315,7 @@ lsquare* stack::GetLSquareTrulyUnder(int SquarePosition) const
 }
 
 void stack::ReceiveDamage(character* Damager, int Damage,
-			  int Type, int Direction)
+                          int Type, int Direction)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);
@@ -335,8 +335,8 @@ void stack::TeleportRandomly(uint Amount)
     if(ItemVector[c]->Exists())
     {
       if(ItemVector[c]->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s disappears!",
-		    ItemVector[c]->GetExtendedDescription().CStr());
+        ADD_MESSAGE("%s disappears!",
+                    ItemVector[c]->GetExtendedDescription().CStr());
 
       ItemVector[c]->TeleportRandomly();
     }
@@ -400,31 +400,31 @@ int stack::SearchItem(item* ToBeSearched) const
    otherwise (see felibdef.h) */
 
 item* stack::DrawContents(ccharacter* Viewer, cfestring& Topic,
-			  int Flags, sorter SorterFunction) const
+                          int Flags, sorter SorterFunction) const
 {
   itemvector ReturnVector;
   DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""),
-	       CONST_S(""), 0, Flags|NO_MULTI_SELECT, SorterFunction);
+               CONST_S(""), 0, Flags|NO_MULTI_SELECT, SorterFunction);
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
 int stack::DrawContents(itemvector& ReturnVector,
-			ccharacter* Viewer,
-			cfestring& Topic, int Flags,
-			sorter SorterFunction) const
+                        ccharacter* Viewer,
+                        cfestring& Topic, int Flags,
+                        sorter SorterFunction) const
 {
   return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""),
-		      CONST_S(""), CONST_S(""), 0, Flags, SorterFunction);
+                      CONST_S(""), CONST_S(""), 0, Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when
    there are items on the ground and in the character's stack */
 
 int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
-			ccharacter* Viewer, cfestring& Topic,
-			cfestring& ThisDesc, cfestring& ThatDesc,
-			cfestring& SpecialDesc, col16 SpecialDescColor,
-			int Flags, sorter SorterFunction) const
+                        ccharacter* Viewer, cfestring& Topic,
+                        cfestring& ThisDesc, cfestring& ThatDesc,
+                        cfestring& SpecialDesc, col16 SpecialDescColor,
+                        int Flags, sorter SorterFunction) const
 {
   felist Contents(Topic);
   lsquare* Square = GetLSquareUnder();
@@ -464,18 +464,18 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
 
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc,
-				  Flags, CENTER, SorterFunction);
+                                  Flags, CENTER, SorterFunction);
 
   AddContentsToList(Contents, Viewer, ThisDesc, Flags, CENTER, SorterFunction);
   static cchar* WallDescription[] = { "western", "southern",
-					   "northern", "eastern" };
+                                           "northern", "eastern" };
 
   for(c = 0; c < 4; ++c)
     if(AdjacentStack[c])
       AdjacentStack[c]->AddContentsToList(Contents, Viewer,
-					  CONST_S("Items on the ")
-					  + WallDescription[c] + " wall:",
-					  Flags, 3 - c, SorterFunction);
+                                          CONST_S("Items on the ")
+                                          + WallDescription[c] + " wall:",
+                                          Flags, 3 - c, SorterFunction);
 
   game::SetStandardListAttributes(Contents);
   Contents.SetPageLength(12);
@@ -513,14 +513,14 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
   if(MergeStack)
   {
     Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected,
-				   Flags, CENTER, SorterFunction);
+                                   Flags, CENTER, SorterFunction);
 
     if(!ReturnVector.empty())
       return 0;
   }
 
   Pos = SearchChosen(ReturnVector, Viewer, Pos, Selected,
-		     Flags, CENTER, SorterFunction);
+                     Flags, CENTER, SorterFunction);
 
   if(!ReturnVector.empty())
     return 0;
@@ -529,10 +529,10 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
     if(AdjacentStack[c])
     {
       AdjacentStack[c]->SearchChosen(ReturnVector, Viewer, Pos, Selected,
-				     Flags, 3 - c, SorterFunction);
+                                     Flags, 3 - c, SorterFunction);
 
       if(!ReturnVector.empty())
-	break;
+        break;
     }
 
   return 0;
@@ -541,9 +541,9 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
 /* Internal function to fill Contents list */
 
 void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
-			      cfestring& Desc, int Flags,
-			      int RequiredSquarePosition,
-			      sorter SorterFunction) const
+                              cfestring& Desc, int Flags,
+                              int RequiredSquarePosition,
+                              sorter SorterFunction) const
 {
   itemvectorvector PileVector;
   Pile(PileVector, Viewer, RequiredSquarePosition, SorterFunction);
@@ -557,7 +557,7 @@ void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
     if(DrawDesc)
     {
       if(!Contents.IsEmpty())
-	Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
+        Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
 
       Contents.AddEntry(Desc, WHITE, 0, NO_IMAGE, false);
       Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
@@ -570,12 +570,12 @@ void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
     {
       LastCategory = Item->GetCategory();
       Contents.AddEntry(item::GetItemCategoryName(LastCategory),
-			LIGHT_GRAY, 0, NO_IMAGE, false);
+                        LIGHT_GRAY, 0, NO_IMAGE, false);
     }
 
     Entry.Empty();
     Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(),
-			    !(Flags & NO_SPECIAL_INFO));
+                            !(Flags & NO_SPECIAL_INFO));
     int ImageKey = game::AddToItemDrawVector(PileVector[p]);
     Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
   }
@@ -586,10 +586,10 @@ void stack::AddContentsToList(felist& Contents, ccharacter* Viewer,
    input about item amount. */
 
 int stack::SearchChosen(itemvector& ReturnVector,
-			ccharacter* Viewer,
-			int Pos, int Chosen, int Flags,
-			int RequiredSquarePosition,
-			sorter SorterFunction) const
+                        ccharacter* Viewer,
+                        int Pos, int Chosen, int Flags,
+                        int RequiredSquarePosition,
+                        sorter SorterFunction) const
 {
   /* Not really efficient... :( */
 
@@ -601,26 +601,26 @@ int stack::SearchChosen(itemvector& ReturnVector,
     {
       if(Flags & NO_MULTI_SELECT)
       {
-	int Amount = (Flags & SELECT_PAIR
-		      && PileVector[p][0]->HandleInPairs()
-		      && PileVector[p].size() >= 2
-		      ? 2 : 1);
-	ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
-	return -1;
+        int Amount = (Flags & SELECT_PAIR
+                      && PileVector[p][0]->HandleInPairs()
+                      && PileVector[p].size() >= 2
+                      ? 2 : 1);
+        ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
+        return -1;
       }
       else
       {
-	int Amount = PileVector[p].size();
+        int Amount = PileVector[p].size();
 
-	if(Amount > 1)
-	  Amount = game::ScrollBarQuestion(CONST_S("How many ")
-					   + PileVector[p][0]->GetName(PLURAL)
-					   + '?',
-					   Amount, 1, 0, Amount, 0, WHITE,
-					   LIGHT_GRAY, DARK_GRAY);
+        if(Amount > 1)
+          Amount = game::ScrollBarQuestion(CONST_S("How many ")
+                                           + PileVector[p][0]->GetName(PLURAL)
+                                           + '?',
+                                           Amount, 1, 0, Amount, 0, WHITE,
+                                           LIGHT_GRAY, DARK_GRAY);
 
-	ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
-	return -1;
+        ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
+        return -1;
       }
     }
 
@@ -731,7 +731,7 @@ int stack::GetNativeVisibleItems(ccharacter* Viewer) const
 }
 
 int stack::GetVisibleSideItems(ccharacter* Viewer,
-			       int RequiredSquarePosition) const
+                               int RequiredSquarePosition) const
 {
   int VisibleItems = 0;
 
@@ -775,12 +775,12 @@ void stack::CalculateVolumeAndWeight()
 }
 
 void stack::SignalEmitationIncrease(int ItemSquarePosition,
-				    col24 EmitationUpdate)
+                                    col24 EmitationUpdate)
 {
   if(ItemSquarePosition < CENTER)
   {
     stack* Stack = GetLSquareUnder()
-		   ->GetStackOfAdjacentSquare(ItemSquarePosition);
+                   ->GetStackOfAdjacentSquare(ItemSquarePosition);
 
     if(Stack)
       Stack->SignalEmitationIncrease(CENTER, EmitationUpdate);
@@ -795,7 +795,7 @@ void stack::SignalEmitationIncrease(int ItemSquarePosition,
     if(MotherEntity)
     {
       if(MotherEntity->AllowContentEmitation())
-	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+        MotherEntity->SignalEmitationIncrease(EmitationUpdate);
     }
     else
       GetLSquareUnder()->SignalEmitationIncrease(EmitationUpdate);
@@ -803,12 +803,12 @@ void stack::SignalEmitationIncrease(int ItemSquarePosition,
 }
 
 void stack::SignalEmitationDecrease(int ItemSquarePosition,
-				    col24 EmitationUpdate)
+                                    col24 EmitationUpdate)
 {
   if(ItemSquarePosition < CENTER)
   {
     stack* Stack = GetLSquareUnder()
-		   ->GetStackOfAdjacentSquare(ItemSquarePosition);
+                   ->GetStackOfAdjacentSquare(ItemSquarePosition);
 
     if(Stack)
       Stack->SignalEmitationDecrease(CENTER, EmitationUpdate);
@@ -826,11 +826,11 @@ void stack::SignalEmitationDecrease(int ItemSquarePosition,
     {
       if(MotherEntity)
       {
-	if(MotherEntity->AllowContentEmitation())
-	  MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+        if(MotherEntity->AllowContentEmitation())
+          MotherEntity->SignalEmitationDecrease(EmitationUpdate);
       }
       else
-	GetLSquareUnder()->SignalEmitationDecrease(EmitationUpdate);
+        GetLSquareUnder()->SignalEmitationDecrease(EmitationUpdate);
     }
   }
 }
@@ -926,7 +926,7 @@ void stack::MoveItemsTo(slot* Slot)
 }
 
 item* stack::GetBottomItem(ccharacter* Char,
-			   truth ForceIgnoreVisibility) const
+                           truth ForceIgnoreVisibility) const
 {
   if((Flags & HIDDEN) || ForceIgnoreVisibility)
     return Bottom ? **Bottom : 0;
@@ -935,8 +935,8 @@ item* stack::GetBottomItem(ccharacter* Char,
 }
 
 item* stack::GetBottomSideItem(ccharacter* Char,
-			       int RequiredSquarePosition,
-			       truth ForceIgnoreVisibility) const
+                               int RequiredSquarePosition,
+                               truth ForceIgnoreVisibility) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if((i->GetSquarePosition() == RequiredSquarePosition
@@ -956,7 +956,7 @@ truth CategorySorter(const itemvector& V1, const itemvector& V2)
    4 bananas */
 
 void stack::Pile(itemvectorvector& PileVector, ccharacter* Viewer,
-		 int RequiredSquarePosition, sorter SorterFunction) const
+                 int RequiredSquarePosition, sorter SorterFunction) const
 {
   if(!Items)
     return;
@@ -980,14 +980,14 @@ void stack::Pile(itemvectorvector& PileVector, ccharacter* Viewer,
       std::list<item*>::iterator j = i;
 
       for(++j; j != List.end();)
-	if((*j)->CanBePiled() && (*i)->CanBePiledWith(*j, Viewer))
-	{
-	  Pile.push_back(*j);
-	  std::list<item*>::iterator Dirt = j++;
-	  List.erase(Dirt);
-	}
-	else
-	  ++j;
+        if((*j)->CanBePiled() && (*i)->CanBePiledWith(*j, Viewer))
+        {
+          Pile.push_back(*j);
+          std::list<item*>::iterator Dirt = j++;
+          List.erase(Dirt);
+        }
+        else
+          ++j;
     }
   }
 
@@ -1010,7 +1010,7 @@ long stack::GetTruePrice() const
    Returns whether anything was done. */
 
 truth stack::TakeSomethingFrom(character* Opener,
-			       cfestring& ContainerName)
+                               cfestring& ContainerName)
 {
   if(!GetItems())
   {
@@ -1027,9 +1027,9 @@ truth stack::TakeSomethingFrom(character* Opener,
     itemvector ToTake;
     game::DrawEverythingNoBlit();
     DrawContents(ToTake, Opener,
-		 CONST_S("What do you want to take from ")
-		 + ContainerName + '?',
-		 REMEMBER_SELECTED);
+                 CONST_S("What do you want to take from ")
+                 + ContainerName + '?',
+                 REMEMBER_SELECTED);
 
     if(ToTake.empty())
       break;
@@ -1038,11 +1038,11 @@ truth stack::TakeSomethingFrom(character* Opener,
        || Room->PickupItem(Opener, ToTake[0], ToTake.size()))
     {
       for(uint c = 0; c < ToTake.size(); ++c)
-	ToTake[c]->MoveTo(Opener->GetStack());
+        ToTake[c]->MoveTo(Opener->GetStack());
 
       ADD_MESSAGE("You take %s from %s.",
-		  ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr(),
-		  ContainerName.CStr());
+                  ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr(),
+                  ContainerName.CStr());
       Success = true;
     }
   }
@@ -1054,7 +1054,7 @@ truth stack::TakeSomethingFrom(character* Opener,
    the container isn't an item). Returns whether anything was done. */
 
 truth stack::PutSomethingIn(character* Opener, cfestring& ContainerName,
-			    long StorageVolume, ulong ContainerID)
+                            long StorageVolume, ulong ContainerID)
 {
   if(!Opener->GetStack()->GetItems())
   {
@@ -1071,9 +1071,9 @@ truth stack::PutSomethingIn(character* Opener, cfestring& ContainerName,
     itemvector ToPut;
     game::DrawEverythingNoBlit();
     Opener->GetStack()->DrawContents(ToPut, Opener,
-				     CONST_S("What do you want to put in ")
-				     + ContainerName + '?',
-				     REMEMBER_SELECTED);
+                                     CONST_S("What do you want to put in ")
+                                     + ContainerName + '?',
+                                     REMEMBER_SELECTED);
 
     if(ToPut.empty())
       break;
@@ -1085,35 +1085,35 @@ truth stack::PutSomethingIn(character* Opener, cfestring& ContainerName,
     }
 
     uint Amount = Min<uint>((StorageVolume - GetVolume())
-			    / ToPut[0]->GetVolume(),
-			    ToPut.size());
+                            / ToPut[0]->GetVolume(),
+                            ToPut.size());
 
     if(!Amount)
     {
       if(ToPut.size() == 1)
-	ADD_MESSAGE("%s doesn't fit in %s.",
-		    ToPut[0]->CHAR_NAME(DEFINITE),
-		    ContainerName.CStr());
+        ADD_MESSAGE("%s doesn't fit in %s.",
+                    ToPut[0]->CHAR_NAME(DEFINITE),
+                    ContainerName.CStr());
       else
-	ADD_MESSAGE("None of the %d %s fit in %s.", int(ToPut.size()),
-		    ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
+        ADD_MESSAGE("None of the %d %s fit in %s.", int(ToPut.size()),
+                    ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
 
       continue;
     }
 
     if(Amount != ToPut.size())
       ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount,
-		  int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL),
-		  Amount == 1 ? "s" : "", ContainerName.CStr());
+                  int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL),
+                  Amount == 1 ? "s" : "", ContainerName.CStr());
 
     if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
     {
       for(uint c = 0; c < Amount; ++c)
-	ToPut[c]->MoveTo(this);
+        ToPut[c]->MoveTo(this);
 
       ADD_MESSAGE("You put %s in %s.",
-		  ToPut[0]->GetName(DEFINITE, Amount).CStr(),
-		  ContainerName.CStr());
+                  ToPut[0]->GetName(DEFINITE, Amount).CStr(),
+                  ContainerName.CStr());
       Success = true;
     }
   }
@@ -1219,18 +1219,18 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, long VolumeModifier)
 
       if(ItemVector[c]->IsBurning() || Root > RAND() % 200 || Root > RAND() % 200)
       {
-	long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
+        long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
 
-	if(SpillVolume)
-	{
-	  Liquid->EditVolume(-Max(SpillVolume, Liquid->GetVolume()));
-	  ItemVector[c]->SpillFluid(Spiller,
-				    Liquid->SpawnMoreLiquid(SpillVolume),
-				    ItemVector[c]->GetSquareIndex(GetPos()));
+        if(SpillVolume)
+        {
+          Liquid->EditVolume(-Max(SpillVolume, Liquid->GetVolume()));
+          ItemVector[c]->SpillFluid(Spiller,
+                                    Liquid->SpawnMoreLiquid(SpillVolume),
+                                    ItemVector[c]->GetSquareIndex(GetPos()));
 
-	  if(!Liquid->GetVolume())
-	    return;
-	}
+          if(!Liquid->GetVolume())
+            return;
+        }
       }
     }
 }
@@ -1264,12 +1264,12 @@ void stack::DropSideItems()
     {
       if(i->IsAnimated())
       {
-	lsquare* Square = GetLSquareTrulyUnder(SquarePosition);
+        lsquare* Square = GetLSquareTrulyUnder(SquarePosition);
 
-	if(Square)
-	  Square->DecStaticAnimatedEntities();
+        if(Square)
+          Square->DecStaticAnimatedEntities();
 
-	GetLSquareUnder()->IncStaticAnimatedEntities();
+        GetLSquareUnder()->IncStaticAnimatedEntities();
       }
 
       i->SignalSquarePositionChange(CENTER);

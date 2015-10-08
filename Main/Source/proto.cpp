@@ -34,58 +34,58 @@ character* protosystem::BalancedCreateMonster()
 
       for(int c = 0; c < ConfigSize; ++c)
       {
-	const character::database* DataBase = ConfigData[c];
+        const character::database* DataBase = ConfigData[c];
 
-	if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
-	{
-	  if(DataBase->IsUnique
-	     && DataBase->Flags & HAS_BEEN_GENERATED)
-	    continue;
+        if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
+        {
+          if(DataBase->IsUnique
+             && DataBase->Flags & HAS_BEEN_GENERATED)
+            continue;
 
-	  truth IsCatacomb = *game::GetCurrentLevel()->GetLevelScript()->IsCatacomb();
+          truth IsCatacomb = *game::GetCurrentLevel()->GetLevelScript()->IsCatacomb();
 
-	  if((IsCatacomb && !DataBase->IsCatacombCreature)
-	     || (!IsCatacomb && DataBase->CanBeGeneratedOnlyInTheCatacombs))
-	    continue;
+          if((IsCatacomb && !DataBase->IsCatacombCreature)
+             || (!IsCatacomb && DataBase->CanBeGeneratedOnlyInTheCatacombs))
+            continue;
 
-	  configid ConfigID(Type, ConfigData[c]->Config);
+          configid ConfigID(Type, ConfigData[c]->Config);
 
-	  if(c >= 100)
-	  {
-	    Possible.push_back(ConfigID);
-	    continue;
-	  }
+          if(c >= 100)
+          {
+            Possible.push_back(ConfigID);
+            continue;
+          }
 
-	  const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+          const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 
-	  if(!DataBase->IgnoreDanger)
-	  {
-	    double Danger = DangerID.EquippedDanger;
+          if(!DataBase->IgnoreDanger)
+          {
+            double Danger = DangerID.EquippedDanger;
 
-	    if(Danger > 99.0
-	       || Danger < 0.0011
-	       || (DataBase->IsUnique && Danger < 3.5))
-	      continue;
+            if(Danger > 99.0
+               || Danger < 0.0011
+               || (DataBase->IsUnique && Danger < 3.5))
+              continue;
 
-	    double DangerModifier
-	      = DataBase->DangerModifier == 100
-	      ? Danger
-	      : Danger * 100 / DataBase->DangerModifier;
+            double DangerModifier
+              = DataBase->DangerModifier == 100
+              ? Danger
+              : Danger * 100 / DataBase->DangerModifier;
 
-	    if(DangerModifier < MinDifficulty
-	       || DangerModifier > MaxDifficulty)
-	      continue;
-	  }
+            if(DangerModifier < MinDifficulty
+               || DangerModifier > MaxDifficulty)
+              continue;
+          }
 
-	  ivantime Time;
-	  game::GetTime(Time);
+          ivantime Time;
+          game::GetTime(Time);
 
-	  if(PLAYER->GetMaxHP() < DataBase->HPRequirementForGeneration
-	     && Time.Day < DataBase->DayRequirementForGeneration)
-	    continue;
+          if(PLAYER->GetMaxHP() < DataBase->HPRequirementForGeneration
+             && Time.Day < DataBase->DayRequirementForGeneration)
+            continue;
 
-	  Possible.push_back(ConfigID);
-	}
+          Possible.push_back(ConfigID);
+        }
       }
     }
 
@@ -99,17 +99,17 @@ character* protosystem::BalancedCreateMonster()
       character* Monster = Proto->Spawn(Chosen.Config);
 
       if(c >= 100
-	 || ((Monster->GetFrequency() == 10000
-	      || Monster->GetFrequency() > RAND_GOOD(10000))
-	     && (Monster->IsUnique()
-		 || (Monster->GetTimeToKill(PLAYER, true) > 5000
-		     && PLAYER->GetTimeToKill(Monster, true) < 200000))))
+         || ((Monster->GetFrequency() == 10000
+              || Monster->GetFrequency() > RAND_GOOD(10000))
+             && (Monster->IsUnique()
+                 || (Monster->GetTimeToKill(PLAYER, true) > 5000
+                     && PLAYER->GetTimeToKill(Monster, true) < 200000))))
       {
-	Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-	return Monster;
+        Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+        return Monster;
       }
       else
-	delete Monster;
+        delete Monster;
     }
   }
 
@@ -145,11 +145,11 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
     for(long CategoryIndex = 0, Category = 1; CategoryIndex < ITEM_CATEGORIES; ++CategoryIndex, Category <<= 1)
       if(Category & RequiredCategory)
       {
-	PossibleCategory[PossibleCategories] = ItemCategoryData[CategoryIndex];
-	PossibleCategorySize[PossibleCategories] = ItemCategorySize[CategoryIndex];
-	TotalPossibility += ItemCategoryPossibility[CategoryIndex];
-	PartialCategoryPossibilitySum[PossibleCategories] = TotalPossibility;
-	++PossibleCategories;
+        PossibleCategory[PossibleCategories] = ItemCategoryData[CategoryIndex];
+        PossibleCategorySize[PossibleCategories] = ItemCategorySize[CategoryIndex];
+        TotalPossibility += ItemCategoryPossibility[CategoryIndex];
+        PartialCategoryPossibilitySum[PossibleCategories] = TotalPossibility;
+        ++PossibleCategories;
       }
   }
 
@@ -161,74 +161,74 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
       int Category;
 
       if(RequiredCategory == ANY_CATEGORY)
-	Category = 0;
+        Category = 0;
       else
       {
-	for(int c2 = 0;; ++c2)
-	  if(PartialCategoryPossibilitySum[c2] > Rand)
-	  {
-	    Category = c2;
-	    break;
-	  }
+        for(int c2 = 0;; ++c2)
+          if(PartialCategoryPossibilitySum[c2] > Rand)
+          {
+            Category = c2;
+            break;
+          }
 
-	if(Category)
-	  Rand -= PartialCategoryPossibilitySum[Category - 1];
+        if(Category)
+          Rand -= PartialCategoryPossibilitySum[Category - 1];
       }
 
       const database*const* ChosenCategory = PossibleCategory[Category];
       const database* ChosenDataBase;
 
       if(ChosenCategory[0]->PartialCategoryPossibilitySum > Rand)
-	ChosenDataBase = ChosenCategory[0];
+        ChosenDataBase = ChosenCategory[0];
       else
       {
-	long A = 0;
-	long B = PossibleCategorySize[Category] - 1;
+        long A = 0;
+        long B = PossibleCategorySize[Category] - 1;
 
-	for(;;)
-	{
-	  long C = (A + B) >> 1;
+        for(;;)
+        {
+          long C = (A + B) >> 1;
 
-	  if(A != C)
-	  {
-	    if(ChosenCategory[C]->*PartialPossibilitySumPtr > Rand)
-	      B = C;
-	    else
-	      A = C;
-	  }
-	  else
-	  {
-	    ChosenDataBase = ChosenCategory[B];
-	    break;
-	  }
-	}
+          if(A != C)
+          {
+            if(ChosenCategory[C]->*PartialPossibilitySumPtr > Rand)
+              B = C;
+            else
+              A = C;
+          }
+          else
+          {
+            ChosenDataBase = ChosenCategory[B];
+            break;
+          }
+        }
       }
 
       int Config = ChosenDataBase->Config;
 
       if((!(ConfigFlags & NO_BROKEN)
-	  || !(Config & BROKEN))
-	 && (!Polymorph
-	     || ChosenDataBase->IsPolymorphSpawnable))
+          || !(Config & BROKEN))
+         && (!Polymorph
+             || ChosenDataBase->IsPolymorphSpawnable))
       {
-	item* Item = ChosenDataBase->ProtoType->Spawn(Config, SpecialFlags);
-	truth GodOK = !RequiredGod || Item->GetAttachedGod() == RequiredGod;
+        item* Item = ChosenDataBase->ProtoType->Spawn(Config, SpecialFlags);
+        truth GodOK = !RequiredGod || Item->GetAttachedGod() == RequiredGod;
 
-	/* Optimization, GetTruePrice() may be rather slow */
+        /* Optimization, GetTruePrice() may be rather slow */
 
-	if(((MinPrice == 0 && MaxPrice == MAX_PRICE)
-	    || (Config & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE)) && GodOK)
-	  return Item;
+        if(((MinPrice == 0 && MaxPrice == MAX_PRICE)
+            || (Config & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE)) && GodOK)
+          return Item;
 
-	long Price = Item->GetTruePrice();
+        long Price = Item->GetTruePrice();
 
-	if(Item->HandleInPairs())
-	  Price <<= 1;
+        if(Item->HandleInPairs())
+          Price <<= 1;
 
-	if(Price >= MinPrice && Price <= MaxPrice && GodOK)
-	  return Item;
+        if(Price >= MinPrice && Price <= MaxPrice && GodOK)
+          return Item;
 
-	delete Item;
+        delete Item;
       }
     }
 
@@ -255,30 +255,30 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 
       for(int c = 0; c < ConfigSize; ++c)
       {
-	const character::database* DataBase = ConfigData[c];
+        const character::database* DataBase = ConfigData[c];
 
-	if(!DataBase->IsAbstract
-	   && DataBase->CanBeGenerated
-	   && DataBase->CanBeWished
-	   && !DataBase->IsUnique
-	   && (DataBase->Frequency == 10000
-	       || DataBase->Frequency > RAND_GOOD(10000)))
-	{
-	  configid ConfigID(Type, DataBase->Config);
+        if(!DataBase->IsAbstract
+           && DataBase->CanBeGenerated
+           && DataBase->CanBeWished
+           && !DataBase->IsUnique
+           && (DataBase->Frequency == 10000
+               || DataBase->Frequency > RAND_GOOD(10000)))
+        {
+          configid ConfigID(Type, DataBase->Config);
 
-	  if((MinDanger > 0 || MaxDanger < 1000000) && c < 25)
-	  {
-	    const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-	    double RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
-	    int Danger = int(DataBase->DangerModifier == 100 ?
+          if((MinDanger > 0 || MaxDanger < 1000000) && c < 25)
+          {
+            const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+            double RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
+            int Danger = int(DataBase->DangerModifier == 100 ?
                              RawDanger * 1000 : RawDanger * 100000 / DataBase->DangerModifier);
 
-	    if(Danger < MinDanger || Danger > MaxDanger)
-	      continue;
-	  }
+            if(Danger < MinDanger || Danger > MaxDanger)
+              continue;
+          }
 
-	  Possible.push_back(ConfigID);
-	}
+          Possible.push_back(ConfigID);
+        }
       }
     }
 
@@ -350,26 +350,26 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
     for(int c = 0; c < ConfigSize; ++c)
       if(!ConfigData[c]->IsAbstract)
       {
-	truth BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
+        truth BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
 
-	if(BrokenRequested == !(ConfigData[c]->Config & BROKEN))
-	  continue;
+        if(BrokenRequested == !(ConfigData[c]->Config & BROKEN))
+          continue;
 
-	std::pair<int, int> Correct = CountCorrectNameLetters<type>(ConfigData[c], Identifier);
+        std::pair<int, int> Correct = CountCorrectNameLetters<type>(ConfigData[c], Identifier);
 
-	if(Correct == Best)
-	  Conflict = true;
-	else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
+        if(Correct == Best)
+          Conflict = true;
+        else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
         {
-	  if(ConfigData[c]->CanBeWished || game::WizardModeIsActive())
-	  {
-	    ID.first = Proto;
-	    ID.second = ConfigData[c]->Config;
-	    Best = Correct;
-	    Conflict = false;
-	  }
-	  else
-	    Illegal = true;
+          if(ConfigData[c]->CanBeWished || game::WizardModeIsActive())
+          {
+            ID.first = Proto;
+            ID.second = ConfigData[c]->Config;
+            Best = Correct;
+            Conflict = false;
+          }
+          else
+            Illegal = true;
         }
       }
   }
@@ -379,9 +379,9 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
     if(!Best.first)
     {
       if(Illegal)
-	ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+        ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
       else
-	ADD_MESSAGE("What a strange wish!");
+        ADD_MESSAGE("What a strange wish!");
     }
     else if(Conflict)
     {
@@ -422,18 +422,18 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
   {
     item* Item = ID.first->Spawn(ID.second);
     if(game::WizardModeIsActive())
-	// If WizMode prompt player to confirm wish
+        // If WizMode prompt player to confirm wish
     {
         festring Q = "Do you want to wish for ";
-	    Item->AddName(Q, INDEFINITE|STRIPPED);
-	    Q << "? [y/N]";
+            Item->AddName(Q, INDEFINITE|STRIPPED);
+            Q << "? [y/N]";
 
-	    if(!game::TruthQuestion(Q))
-	    {
-	      delete Item;
-	      return 0;
-	    }
-	}
+            if(!game::TruthQuestion(Q))
+            {
+              delete Item;
+              return 0;
+            }
+        }
 
     return Item;
   }
@@ -452,14 +452,14 @@ material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output
     for(int c2 = 1; c2 < ConfigSize; ++c2)
       if(ConfigData[c2]->NameStem == What)
       {
-	if(ConfigData[c2]->CommonFlags & CAN_BE_WISHED
-	   || game::WizardModeIsActive())
-	  return ConfigData[c2]->ProtoType->Spawn(ConfigData[c2]->Config, Volume);
-	else if(Output)
-	{
-	  ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-	  return 0;
-	}
+        if(ConfigData[c2]->CommonFlags & CAN_BE_WISHED
+           || game::WizardModeIsActive())
+          return ConfigData[c2]->ProtoType->Spawn(ConfigData[c2]->Config, Volume);
+        else if(Output)
+        {
+          ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+          return 0;
+        }
       }
   }
 
@@ -481,7 +481,7 @@ void protosystem::CreateEveryCharacter(charactervector& Character)
 
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract)
-	Character.push_back(Proto->Spawn(ConfigData[c2]->Config));
+        Character.push_back(Proto->Spawn(ConfigData[c2]->Config));
   }
 }
 
@@ -495,7 +495,7 @@ void protosystem::CreateEveryItem(itemvectorvector& Item)
 
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->IsAutoInitializable)
-	Item.push_back(itemvector(1, Proto->Spawn(ConfigData[c2]->Config)));
+        Item.push_back(itemvector(1, Proto->Spawn(ConfigData[c2]->Config)));
   }
 }
 
@@ -524,9 +524,9 @@ void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
 
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract
-	 && !ConfigData[c2]->IsUnique
-	 && ConfigData[c2]->CanBeGenerated)
-	EnemyVector.push_back(Proto->Spawn(ConfigData[c2]->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
+         && !ConfigData[c2]->IsUnique
+         && ConfigData[c2]->CanBeGenerated)
+        EnemyVector.push_back(Proto->Spawn(ConfigData[c2]->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
   }
 }
 
@@ -576,9 +576,9 @@ void protosystem::Initialize()
 
       if(DataBase->Category == Category)
       {
-	DataBaseBuffer[CSize++] = DataBase;
-	TotalPossibility += DataBase->Possibility;
-	DataBase->PartialCategoryPossibilitySum = TotalPossibility;
+        DataBaseBuffer[CSize++] = DataBase;
+        TotalPossibility += DataBase->Possibility;
+        DataBase->PartialCategoryPossibilitySum = TotalPossibility;
       }
     }
 
@@ -608,9 +608,9 @@ void protosystem::InitCharacterDataBaseFlags()
 
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->AutomaticallySeen)
-	ConfigData[c2]->Flags = 0;
+        ConfigData[c2]->Flags = 0;
       else
-	ConfigData[c2]->Flags = HAS_BEEN_SEEN;
+        ConfigData[c2]->Flags = HAS_BEEN_SEEN;
   }
 }
 
@@ -651,9 +651,9 @@ void protosystem::CreateEverySeenCharacter(charactervector& Character)
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->Flags & HAS_BEEN_SEEN)
       {
-	character* Char = Proto->Spawn(ConfigData[c2]->Config);
-	Char->SetAssignedName("");
-	Character.push_back(Char);
+        character* Char = Proto->Spawn(ConfigData[c2]->Config);
+        Char->SetAssignedName("");
+        Character.push_back(Char);
       }
   }
 }
@@ -668,6 +668,6 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const go
 
     for(int c2 = 1; c2 < ConfigSize; ++c2)
       if(God->LikesMaterial(ConfigData[c2], Char))
-	Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
+        Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
   }
 }

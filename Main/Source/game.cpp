@@ -243,6 +243,7 @@ void game::InitScript()
 truth game::Init(cfestring& Name)
 {
   if(Name.IsEmpty())
+  {
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
@@ -250,10 +251,11 @@ truth game::Init(cfestring& Name)
       if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
                                   v2(30, 46), WHITE, 1, 20, true, true) == ABORTED
          || PlayerName.IsEmpty())
-	return false;
+        return false;
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+  }
   else
     PlayerName = Name;
 
@@ -290,35 +292,35 @@ truth game::Init(cfestring& Name)
    case NEW_GAME:
     {
       iosystem::TextScreen(CONST_S("You couldn't possibly have guessed this day would differ from any other.\n"
-				   "It began just as always. You woke up at dawn and drove off the giant spider\n"
-				   "resting on your face. On your way to work you had serious trouble avoiding\n"
-				   "the lions and pythons roaming wild around the village. After getting kicked\n"
-				   "by colony masters for being late you performed your twelve-hour routine of\n"
-				   "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
-				   "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
-				   "and trying to look happy when real food was distributed.\n\n"
-				   "Finally you were about to enjoy your free time by taking a quick dip in the\n"
-				   "nearby crocodile bay. However, at this point something unusual happened.\n"
-				   "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
-				   "colony, and were led directly to him."));
+                                   "It began just as always. You woke up at dawn and drove off the giant spider\n"
+                                   "resting on your face. On your way to work you had serious trouble avoiding\n"
+                                   "the lions and pythons roaming wild around the village. After getting kicked\n"
+                                   "by colony masters for being late you performed your twelve-hour routine of\n"
+                                   "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
+                                   "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
+                                   "and trying to look happy when real food was distributed.\n\n"
+                                   "Finally you were about to enjoy your free time by taking a quick dip in the\n"
+                                   "nearby crocodile bay. However, at this point something unusual happened.\n"
+                                   "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
+                                   "colony, and were led directly to him."));
 
       iosystem::TextScreen(CONST_S("\"I have a task for you, citizen\", said the viceroy picking his golden\n"
-				   "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
-				   "central government is about to raise taxes. I have sent appeals to high\n"
-				   "priest Petrus but received no response. I fear my enemies in Attnam are\n"
-				   "plotting against me and intercepting my messages before they reach him!\"\n\n"
-				   "\"That is why you must travel to Attnam with a letter I'll give you and\n"
-				   "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
-				   "between. Because it's winter, all Attnamese ships are trapped by ice and\n"
-				   "I have none. Therefore you must venture through the small underwater tunnel\n"
-				   "connecting our islands. It is infested with monsters, but since you have\n"
-				   "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
-				   "You have never been so happy! According to the mansion's traveling\n"
-				   "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
-				   "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
-				   "like the diamonds of the imperial treasury. Not that you would believe a\n"
-				   "word. The point is that tomorrow you can finally forget your home and\n"
-				   "face the untold adventures ahead."));
+                                   "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
+                                   "central government is about to raise taxes. I have sent appeals to high\n"
+                                   "priest Petrus but received no response. I fear my enemies in Attnam are\n"
+                                   "plotting against me and intercepting my messages before they reach him!\"\n\n"
+                                   "\"That is why you must travel to Attnam with a letter I'll give you and\n"
+                                   "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
+                                   "between. Because it's winter, all Attnamese ships are trapped by ice and\n"
+                                   "I have none. Therefore you must venture through the small underwater tunnel\n"
+                                   "connecting our islands. It is infested with monsters, but since you have\n"
+                                   "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
+                                   "You have never been so happy! According to the mansion's traveling\n"
+                                   "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
+                                   "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
+                                   "like the diamonds of the imperial treasury. Not that you would believe a\n"
+                                   "word. The point is that tomorrow you can finally forget your home and\n"
+                                   "face the untold adventures ahead."));
 
       globalwindowhandler::InstallControlLoop(AnimationController);
       SetIsRunning(true);
@@ -339,10 +341,10 @@ truth game::Init(cfestring& Name)
 
       for(int c = 0; c < ATTRIBUTES; ++c)
       {
-	if(c != ENDURANCE)
-	  Player->EditAttribute(c, (RAND() & 1) - (RAND() & 1));
+        if(c != ENDURANCE)
+          Player->EditAttribute(c, (RAND() & 1) - (RAND() & 1));
 
-	Player->EditExperience(c, 500, 1 << 11);
+        Player->EditExperience(c, 500, 1 << 11);
       }
 
       Player->SetMoney(Player->GetMoney() + RAND() % 11);
@@ -394,9 +396,9 @@ truth game::Init(cfestring& Name)
 
       if(IsXMas())
       {
-	item* Present = banana::Spawn();
-	Player->GetStack()->AddItem(Present);
-	ADD_MESSAGE("Atavus is happy today! He gives you a %s.", Present->CHAR_NAME(INDEFINITE));
+        item* Present = banana::Spawn();
+        Player->GetStack()->AddItem(Present);
+        ADD_MESSAGE("Atavus is happy today! He gives you a %s.", Present->CHAR_NAME(INDEFINITE));
       }
 
       return true;
@@ -443,156 +445,156 @@ void game::Run()
 
       if(++Counter == 10)
       {
-	CurrentLevel->GenerateMonsters();
-	Counter = 0;
+        CurrentLevel->GenerateMonsters();
+        Counter = 0;
       }
 
       if(CurrentDungeonIndex == ELPURI_CAVE
-	 && CurrentLevelIndex == ZOMBIE_LEVEL
-	 && !RAND_N(1000 + NecroCounter))
+         && CurrentLevelIndex == ZOMBIE_LEVEL
+         && !RAND_N(1000 + NecroCounter))
       {
-	character* Char = necromancer::Spawn(RAND_N(4) ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
-	v2 Pos;
+        character* Char = necromancer::Spawn(RAND_N(4) ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+        v2 Pos;
 
-	for(int c2 = 0; c2 < 30; ++c2)
-	{
-	  Pos = GetCurrentLevel()->GetRandomSquare(Char);
+        for(int c2 = 0; c2 < 30; ++c2)
+        {
+          Pos = GetCurrentLevel()->GetRandomSquare(Char);
 
-	  if(abs(Pos.X - Player->GetPos().X) > 20
-	     || abs(Pos.Y - Player->GetPos().Y) > 20)
-	    break;
-	}
+          if(abs(Pos.X - Player->GetPos().X) > 20
+             || abs(Pos.Y - Player->GetPos().Y) > 20)
+            break;
+        }
 
-	if(Pos != ERROR_V2)
-	{
-	  Char->SetTeam(GetTeam(MONSTER_TEAM));
-	  Char->PutTo(Pos);
-	  Char->SetGenerationDanger(GetCurrentLevel()->GetDifficulty());
-	  Char->SignalGeneration();
-	  Char->SignalNaturalGeneration();
-	  ivantime Time;
-	  GetTime(Time);
-	  int Modifier = Time.Day - EDIT_ATTRIBUTE_DAY_MIN;
+        if(Pos != ERROR_V2)
+        {
+          Char->SetTeam(GetTeam(MONSTER_TEAM));
+          Char->PutTo(Pos);
+          Char->SetGenerationDanger(GetCurrentLevel()->GetDifficulty());
+          Char->SignalGeneration();
+          Char->SignalNaturalGeneration();
+          ivantime Time;
+          GetTime(Time);
+          int Modifier = Time.Day - EDIT_ATTRIBUTE_DAY_MIN;
 
-	  if(Modifier > 0)
-	    Char->EditAllAttributes(Modifier >> EDIT_ATTRIBUTE_DAY_SHIFT);
+          if(Modifier > 0)
+            Char->EditAllAttributes(Modifier >> EDIT_ATTRIBUTE_DAY_SHIFT);
 
-	  NecroCounter += 50;
-	}
-	else
-	  delete Char;
+          NecroCounter += 50;
+        }
+        else
+          delete Char;
       }
 
       if(!(GetTick() % 1000))
-	CurrentLevel->CheckSunLight();
+        CurrentLevel->CheckSunLight();
 
       if((CurrentDungeonIndex == NEW_ATTNAM
-	  || CurrentDungeonIndex == ATTNAM)
-	 && CurrentLevelIndex == 0)
+          || CurrentDungeonIndex == ATTNAM)
+         && CurrentLevelIndex == 0)
       {
-	long OldVolume = GlobalRainLiquid->GetVolume();
-	long NewVolume = Max(long(sin((Tick + GlobalRainTimeModifier) * 0.0003) * 300 - 150), 0L);
+        long OldVolume = GlobalRainLiquid->GetVolume();
+        long NewVolume = Max(long(sin((Tick + GlobalRainTimeModifier) * 0.0003) * 300 - 150), 0L);
 
-	if(NewVolume && !OldVolume)
-	  CurrentLevel->EnableGlobalRain();
-	else if(!NewVolume && OldVolume)
-	  CurrentLevel->DisableGlobalRain();
+        if(NewVolume && !OldVolume)
+          CurrentLevel->EnableGlobalRain();
+        else if(!NewVolume && OldVolume)
+          CurrentLevel->DisableGlobalRain();
 
-	GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
+        GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	/*{
-	  item* Item;
+        /*{
+          item* Item;
 
-	  if(!RAND_N(2))
-	  Item = wand::Spawn(1 + RAND_N(12));
-	  else if(!RAND_N(2))
-	  {
-	  Item = beartrap::Spawn();
-	  Item->SetIsActive(true);
-	  Item->SetTeam(MONSTER_TEAM);
-	  }
-	  else if(!RAND_N(2))
-	  {
-	  Item = mine::Spawn();
-	  Item->SetIsActive(true);
-	  Item->SetTeam(MONSTER_TEAM);
-	  }
-	  else
-	  Item = holybanana::Spawn();
+          if(!RAND_N(2))
+          Item = wand::Spawn(1 + RAND_N(12));
+          else if(!RAND_N(2))
+          {
+          Item = beartrap::Spawn();
+          Item->SetIsActive(true);
+          Item->SetTeam(MONSTER_TEAM);
+          }
+          else if(!RAND_N(2))
+          {
+          Item = mine::Spawn();
+          Item->SetIsActive(true);
+          Item->SetTeam(MONSTER_TEAM);
+          }
+          else
+          Item = holybanana::Spawn();
 
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(Item);
-	  }
+          CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(Item);
+          }
 
-	  if(!RAND_N(10))
-	  {
-	  character* Char = protosystem::CreateMonster(0, 1000000);
-	  Char->ChangeTeam(GetTeam(RAND() % Teams));
-	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  }
+          if(!RAND_N(10))
+          {
+          character* Char = protosystem::CreateMonster(0, 1000000);
+          Char->ChangeTeam(GetTeam(RAND() % Teams));
+          Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+          }
 
-	  if(!RAND_N(5))
-	  {
-	  character* Char;
-	  if(!RAND_N(5))
-	  Char = spider::Spawn(GIANT);
-	  else if(!RAND_N(5))
-	  Char = darkmage::Spawn(1 + RAND_N(4));
-	  else if(!RAND_N(5))
-	  Char = necromancer::Spawn(1 + RAND_N(2));
-	  else if(!RAND_N(5))
-	  Char = chameleon::Spawn();
-	  else if(!RAND_N(5))
-	  Char = kamikazedwarf::Spawn(1 + RAND_N(GODS));
-	  else if(!RAND_N(5))
-	  Char = mommo::Spawn(1 + RAND_N(2));
-	  else if(!RAND_N(3))
-	  Char = bunny::Spawn(RAND_2 ? ADULT_MALE : ADULT_FEMALE);
-	  else if(!RAND_N(3))
-	  Char = eddy::Spawn();
-	  else if(!RAND_N(3))
-	  Char = magicmushroom::Spawn();
-	  else if(!RAND_N(5))
-	  Char = mushroom::Spawn();
-	  else if(!RAND_N(3))
-	  Char = blinkdog::Spawn();
-	  else if(!RAND_N(5))
-	  Char = tourist::Spawn(1 + RAND_N(3));
-	  else if(!RAND_N(5))
-	  Char = hattifattener::Spawn();
-	  else if(!RAND_N(5))
-	  Char = genetrixvesana::Spawn();
-	  else if(!RAND_N(5))
-	  Char = skunk::Spawn();
-	  else if(!RAND_N(5))
-	  Char = ennerbeast::Spawn();
-	  else if(!RAND_N(5))
-	  Char = werewolfhuman::Spawn();
-	  else if(!RAND_N(5))
-	  Char = unicorn::Spawn(1 + RAND_N(3));
-	  else if(!RAND_N(5))
-	  Char = floatingeye::Spawn();
-	  else if(!RAND_N(5))
-	  Char = zombie::Spawn();
-	  else if(!RAND_N(5))
-	  Char = magpie::Spawn();
-	  else if(!RAND_N(5))
-	  Char = elpuri::Spawn();
-	  else if(!RAND_N(5))
-	  Char = vladimir::Spawn();
-	  else if(!RAND_N(5))
-	  Char = billswill::Spawn();
-	  else if(!RAND_N(5))
-	  Char = ghost::Spawn();
-	  else if(!RAND_N(5))
-	  Char = dolphin::Spawn();
-	  else if(!RAND_N(5))
-	  Char = cossack::Spawn();
-	  else
-	  Char = invisiblestalker::Spawn();
+          if(!RAND_N(5))
+          {
+          character* Char;
+          if(!RAND_N(5))
+          Char = spider::Spawn(GIANT);
+          else if(!RAND_N(5))
+          Char = darkmage::Spawn(1 + RAND_N(4));
+          else if(!RAND_N(5))
+          Char = necromancer::Spawn(1 + RAND_N(2));
+          else if(!RAND_N(5))
+          Char = chameleon::Spawn();
+          else if(!RAND_N(5))
+          Char = kamikazedwarf::Spawn(1 + RAND_N(GODS));
+          else if(!RAND_N(5))
+          Char = mommo::Spawn(1 + RAND_N(2));
+          else if(!RAND_N(3))
+          Char = bunny::Spawn(RAND_2 ? ADULT_MALE : ADULT_FEMALE);
+          else if(!RAND_N(3))
+          Char = eddy::Spawn();
+          else if(!RAND_N(3))
+          Char = magicmushroom::Spawn();
+          else if(!RAND_N(5))
+          Char = mushroom::Spawn();
+          else if(!RAND_N(3))
+          Char = blinkdog::Spawn();
+          else if(!RAND_N(5))
+          Char = tourist::Spawn(1 + RAND_N(3));
+          else if(!RAND_N(5))
+          Char = hattifattener::Spawn();
+          else if(!RAND_N(5))
+          Char = genetrixvesana::Spawn();
+          else if(!RAND_N(5))
+          Char = skunk::Spawn();
+          else if(!RAND_N(5))
+          Char = ennerbeast::Spawn();
+          else if(!RAND_N(5))
+          Char = werewolfhuman::Spawn();
+          else if(!RAND_N(5))
+          Char = unicorn::Spawn(1 + RAND_N(3));
+          else if(!RAND_N(5))
+          Char = floatingeye::Spawn();
+          else if(!RAND_N(5))
+          Char = zombie::Spawn();
+          else if(!RAND_N(5))
+          Char = magpie::Spawn();
+          else if(!RAND_N(5))
+          Char = elpuri::Spawn();
+          else if(!RAND_N(5))
+          Char = vladimir::Spawn();
+          else if(!RAND_N(5))
+          Char = billswill::Spawn();
+          else if(!RAND_N(5))
+          Char = ghost::Spawn();
+          else if(!RAND_N(5))
+          Char = dolphin::Spawn();
+          else if(!RAND_N(5))
+          Char = cossack::Spawn();
+          else
+          Char = invisiblestalker::Spawn();
 
-	  Char->SetTeam(GetTeam(RAND() % Teams));
-	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  }*/
+          Char->SetTeam(GetTeam(RAND() % Teams));
+          Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+          }*/
       }
     }
 
@@ -621,11 +623,11 @@ void game::InitLuxTable()
 
     for(int c = 0; c < 0x100; ++c)
       for(int x = 0; x < 33; ++x)
-	for(int y = 0; y < 33; ++y)
-	{
-	  int X = x - 16, Y = y - 16;
-	  LuxTable[c][x][y] = int(c / (double(X * X + Y * Y) / 128 + 1));
-	}
+        for(int y = 0; y < 33; ++y)
+        {
+          int X = x - 16, Y = y - 16;
+          LuxTable[c][x][y] = int(c / (double(X * X + Y * Y) / 128 + 1));
+        }
 
     atexit(DeInitLuxTable);
   }
@@ -760,19 +762,19 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   {
     v2 ScreenCoord = CalculateScreenCoordinates(CursorPos);
     blitdata B = { DOUBLE_BUFFER,
-		   { 0, 0 },
-		   { ScreenCoord.X, ScreenCoord.Y },
-		   { TILE_SIZE, TILE_SIZE },
-		   { 0 },
-		   TRANSPARENT_COLOR,
-		   ALLOW_ANIMATE|ALLOW_ALPHA };
+                   { 0, 0 },
+                   { ScreenCoord.X, ScreenCoord.Y },
+                   { TILE_SIZE, TILE_SIZE },
+                   { 0 },
+                   TRANSPARENT_COLOR,
+                   ALLOW_ANIMATE|ALLOW_ALPHA };
 
     if(!IsInWilderness() && !GetSeeWholeMapCheatMode())
     {
       lsquare* Square = CurrentLSquareMap[CursorPos.X][CursorPos.Y];
 
       if(Square->GetLastSeen() != GetLOSTick())
-	Square->DrawMemorized(B);
+        Square->DrawMemorized(B);
     }
 
     if(DoZoom())
@@ -795,21 +797,21 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
       if(OnScreen(Pos))
       {
-	v2 ScreenCoord = CalculateScreenCoordinates(Pos);
-	igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
+        v2 ScreenCoord = CalculateScreenCoordinates(Pos);
+        igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
       }
     }
     else
     {
       for(int c = 0; c < Player->GetSquaresUnder(); ++c)
       {
-	v2 Pos = Player->GetPos(c);
+        v2 Pos = Player->GetPos(c);
 
-	if(OnScreen(Pos))
-	{
-	  v2 ScreenCoord = CalculateScreenCoordinates(Pos);
-	  igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
-	}
+        if(OnScreen(Pos))
+        {
+          v2 ScreenCoord = CalculateScreenCoordinates(Pos);
+          igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
+        }
       }
     }
   }
@@ -1063,7 +1065,7 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
 
     for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == GetMoveCommandKey(c))
-	return c;
+        return c;
 
     if(!RequireAnswer)
       return DIR_ERROR;
@@ -1093,7 +1095,7 @@ void game::RemoveSaves(truth RealSavesAlso)
       File << c;
 
       if(RealSavesAlso)
-	remove(File.CStr());
+        remove(File.CStr());
 
       File = AutoSaveFileName + '.' + i;
       File << c;
@@ -1135,29 +1137,29 @@ void game::DoEvilDeed(int Amount)
     if(!IsInWilderness() && Player->GetLSquareUnder()->GetDivineMaster() == c)
       if(GetGod(c)->GetRelation() - (Change << 1) < -750)
       {
-	if(GetGod(c)->GetRelation() > -750)
-	  GetGod(c)->SetRelation(-750);
+        if(GetGod(c)->GetRelation() > -750)
+          GetGod(c)->SetRelation(-750);
       }
       else if(GetGod(c)->GetRelation() - (Change << 1) > 750)
       {
-	if(GetGod(c)->GetRelation() < 750)
-	  GetGod(c)->SetRelation(750);
+        if(GetGod(c)->GetRelation() < 750)
+          GetGod(c)->SetRelation(750);
       }
       else
-	GetGod(c)->SetRelation(GetGod(c)->GetRelation() - (Change << 1));
+        GetGod(c)->SetRelation(GetGod(c)->GetRelation() - (Change << 1));
     else
       if(GetGod(c)->GetRelation() - Change < -500)
       {
-	if(GetGod(c)->GetRelation() > -500)
-	  GetGod(c)->SetRelation(-500);
+        if(GetGod(c)->GetRelation() > -500)
+          GetGod(c)->SetRelation(-500);
       }
       else if(GetGod(c)->GetRelation() - Change > 500)
       {
-	if(GetGod(c)->GetRelation() < 500)
-	  GetGod(c)->SetRelation(500);
+        if(GetGod(c)->GetRelation() < 500)
+          GetGod(c)->SetRelation(500);
       }
       else
-	GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change);
+        GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change);
   }
 }
 
@@ -1289,30 +1291,30 @@ truth game::HandleQuitMessage()
                   CONST_S("Yes\rNo\rCancel\r"), LIGHT_GRAY))
       {
        case 0:
-	Save();
-	RemoveSaves(false);
-	break;
+        Save();
+        RemoveSaves(false);
+        break;
        case 2:
-	GetCurrentArea()->SendNewDrawRequest();
-	DrawEverything();
-	return false;
+        GetCurrentArea()->SendNewDrawRequest();
+        DrawEverything();
+        return false;
        default:
-	festring Msg = CONST_S("cowardly quit the game");
-	Player->AddScoreEntry(Msg, 0.75);
-	End(Msg, true, false);
-	break;
+        festring Msg = CONST_S("cowardly quit the game");
+        Player->AddScoreEntry(Msg, 0.75);
+        End(Msg, true, false);
+        break;
       }
     }
     else
       if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1),
                CONST_S("You can't save at this point. Are you sure you still want to do this?\r"),
                CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-	RemoveSaves();
+        RemoveSaves();
       else
       {
-	GetCurrentArea()->SendNewDrawRequest();
-	DrawEverything();
-	return false;
+        GetCurrentArea()->SendNewDrawRequest();
+        DrawEverything();
+        return false;
       }
   }
 
@@ -1379,19 +1381,19 @@ void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
   static clock_t LastTime = 0;
   static int Frame = 0;
   static blitdata B1 = { 0,
-			 { 0, 0 },
-			 { 0, 0 },
-			 { RES.X, RES.Y },
-			 { 0 },
-			 0,
-			 0 };
+                         { 0, 0 },
+                         { 0, 0 },
+                         { RES.X, RES.Y },
+                         { 0 },
+                         0,
+                         0 };
   static blitdata B2 = { 0,
-			 { 0, 0 },
-			 { (RES.X >> 1) - 100, (RES.Y << 1) / 3 - 100 },
-			 { 200, 200 },
-			 { 0 },
-			 0,
-			 0 };
+                         { 0, 0 },
+                         { (RES.X >> 1) - 100, (RES.Y << 1) / 3 - 100 },
+                         { 200, 200 },
+                         { 0 },
+                         0,
+                         0 };
 
   if(ForceDraw || clock() - LastTime > CLOCKS_PER_SEC / 25)
   {
@@ -1430,20 +1432,20 @@ void game::CreateBusyAnimationCache()
     Circle.DrawPolygon(100, 100, 95 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
 
   blitdata B1 = { 0,
-		  { 0, 0 },
-		  { 92, 92 },
-		  { TILE_SIZE, TILE_SIZE },
-		  { 0 },
-		  TRANSPARENT_COLOR,
-		  0 };
+                  { 0, 0 },
+                  { 92, 92 },
+                  { TILE_SIZE, TILE_SIZE },
+                  { 0 },
+                  TRANSPARENT_COLOR,
+                  0 };
 
   blitdata B2 = { 0,
-		  { 0, 0 },
-		  { 0, 0 },
-		  { 200, 200 },
-		  { 0 },
-		  TRANSPARENT_COLOR,
-		  0 };
+                  { 0, 0 },
+                  { 0, 0 },
+                  { 200, 200 },
+                  { 0 },
+                  TRANSPARENT_COLOR,
+                  0 };
 
   for(int c = 0; c < 32; ++c)
   {
@@ -1519,7 +1521,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
       if(CursorPos.Y < 0) CursorPos.Y = GetCurrentArea()->GetYSize() - 1;
 
       if(Handler)
-	Handler(CursorPos);
+        Handler(CursorPos);
     }
     else if(KeyHandler)
     {
@@ -1527,8 +1529,8 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
 
       if(CursorPos == ERROR_V2 || CursorPos == ABORT_V2)
       {
-	Return = CursorPos;
-	break;
+        Return = CursorPos;
+        break;
       }
     }
 
@@ -1588,10 +1590,10 @@ void game::LookHandler(v2 CursorPos)
 
       if(LSquare->HasEngravings() && LSquare->IsTransparent())
       {
-	if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
-	  LSquare->DisplayEngravedInfo(Msg);
-	else
-	  Msg << " Something has been engraved here.";
+        if(LSquare->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
+          LSquare->DisplayEngravedInfo(Msg);
+        else
+          Msg << " Something has been engraved here.";
       }
     }
   }
@@ -1668,8 +1670,8 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
     for(int c = 0; c < KeyNumber; ++c)
       if(Key[c] == k)
       {
-	Return = k;
-	break;
+        Return = k;
+        break;
       }
 
     if(!Return && DefaultAnswer != REQUIRES_ANSWER)
@@ -1692,16 +1694,16 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
       {
-	lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
-	stack* Stack = LSquare->GetStack();
+        lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
+        stack* Stack = LSquare->GetStack();
 
-	if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
-	  Stack->DrawContents(Player, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
-	else
-	  ADD_MESSAGE("You see no items here.");
+        if(LSquare->IsTransparent() && Stack->GetVisibleItems(Player))
+          Stack->DrawContents(Player, "Items here", NO_SELECT|(GetSeeWholeMapCheatMode() ? 0 : NO_SPECIAL_INFO));
+        else
+          ADD_MESSAGE("You see no items here.");
       }
       else
-	ADD_MESSAGE("You should perhaps move a bit closer.");
+        ADD_MESSAGE("You should perhaps move a bit closer.");
     }
 
     break;
@@ -1711,9 +1713,9 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
       character* Char = Square->GetCharacter();
 
       if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
-	Char->PrintInfo();
+        Char->PrintInfo();
       else
-	ADD_MESSAGE("You see no one here.");
+        ADD_MESSAGE("You see no one here.");
     }
     else
       ADD_MESSAGE("You should perhaps move a bit closer.");
@@ -1757,7 +1759,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
     if(HScore.LastAddFailed())
     {
       iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
-			   + GetPlayerName() + ", " + DeathMessage + "\nRIP");
+                           + GetPlayerName() + ", " + DeathMessage + "\nRIP");
     }
     else
       HScore.Draw();
@@ -1821,22 +1823,22 @@ void game::InitDangerMap()
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract)
       {
-	int Config = ConfigData[c2]->Config;
+        int Config = ConfigData[c2]->Config;
 
-	if(First)
-	{
-	  NextDangerIDType = c1;
-	  NextDangerIDConfigIndex = c2;
-	  First = false;
-	}
+        if(First)
+        {
+          NextDangerIDType = c1;
+          NextDangerIDConfigIndex = c2;
+          First = false;
+        }
 
-	character* Char = Proto->Spawn(Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-	double NakedDanger = Char->GetRelativeDanger(Player, true);
-	delete Char;
-	Char = Proto->Spawn(Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-	double EquippedDanger = Char->GetRelativeDanger(Player, true);
-	delete Char;
-	DangerMap[configid(c1, Config)] = dangerid(NakedDanger, EquippedDanger);
+        character* Char = Proto->Spawn(Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+        double NakedDanger = Char->GetRelativeDanger(Player, true);
+        delete Char;
+        Char = Proto->Spawn(Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+        double EquippedDanger = Char->GetRelativeDanger(Player, true);
+        delete Char;
+        DangerMap[configid(c1, Config)] = dangerid(NakedDanger, EquippedDanger);
       }
   }
 }
@@ -1860,7 +1862,7 @@ void game::CalculateNextDanger()
 
     for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
       if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
-	DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+        DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
 
     double CurrentDanger = 1 / DangerSum;
     double NakedDanger = DangerIterator->second.NakedDanger;
@@ -1874,7 +1876,7 @@ void game::CalculateNextDanger()
 
     for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
       if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
-	DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+        DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
 
     CurrentDanger = 1 / DangerSum;
     double EquippedDanger = DangerIterator->second.EquippedDanger;
@@ -1889,18 +1891,18 @@ void game::CalculateNextDanger()
     for(;;)
     {
       if(++NextDangerIDType >= protocontainer<character>::GetSize())
-	NextDangerIDType = 1;
+        NextDangerIDType = 1;
 
       Proto = protocontainer<character>::GetProto(NextDangerIDType);
       ConfigData = Proto->GetConfigData();
       int ConfigSize = Proto->GetConfigSize();
 
       for(int c = 0; c < ConfigSize; ++c)
-	if(!ConfigData[c]->IsAbstract)
-	{
-	  NextDangerIDConfigIndex = c;
-	  return;
-	}
+        if(!ConfigData[c]->IsAbstract)
+        {
+          NextDangerIDConfigIndex = c;
+          return;
+        }
     }
   }
   else
@@ -1970,7 +1972,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       v2 NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
 
       if(NPCPos == ERROR_V2)
-	NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
+        NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
 
       Group[c]->PutTo(NPCPos);
     }
@@ -2192,13 +2194,13 @@ void game::CallForAttention(v2 Pos, int RangeSquare)
     if(GetTeam(c)->HasEnemy())
       for(std::list<character*>::const_iterator i = GetTeam(c)->GetMember().begin();
           i != GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	{
-	  long ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
+        if((*i)->IsEnabled())
+        {
+          long ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
 
-	  if(ThisDistance <= RangeSquare && !(*i)->IsGoingSomeWhere())
-	    (*i)->SetGoingTo(Pos);
-	}
+          if(ThisDistance <= RangeSquare && !(*i)->IsGoingSomeWhere())
+            (*i)->SetGoingTo(Pos);
+        }
   }
 }
 
@@ -2413,8 +2415,8 @@ void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMs
     for(c = 0; c < Reason.size(); ++c)
       if(Reason[c].String == DeathMsg)
       {
-	++Reason[c].Amount;
-	break;
+        ++Reason[c].Amount;
+        break;
       }
 
     if(c == Reason.size())
@@ -2481,18 +2483,18 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
       festring Begin;
 
       if(Reason[0].Amount == 1)
-	Begin = "";
+        Begin = "";
       else if(Reason[0].Amount == 2)
-	Begin = "both ";
+        Begin = "both ";
       else
-	Begin = "all ";
+        Begin = "all ";
 
       Details.push_back(Begin + Reason[0].String);
     }
     else
     {
       for(uint c = 0; c < Reason.size(); ++c)
-	Details.push_back(CONST_S("") + Reason[c].Amount + ' ' + Reason[c].String);
+        Details.push_back(CONST_S("") + Reason[c].Amount + ' ' + Reason[c].String);
 
       std::sort(Details.begin(), Details.end(), ignorecaseorderer());
     }
@@ -2559,10 +2561,10 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, cchar* Reason, lo
     for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2, ++Counter)
       if(Counter == Chosen)
       {
-	for(uint c = 0; c < i2->Details.size(); ++c)
-	  SubList.AddEntry(i2->Details[c], LIGHT_GRAY);
+        for(uint c = 0; c < i2->Details.size(); ++c)
+          SubList.AddEntry(i2->Details[c], LIGHT_GRAY);
 
-	break;
+        break;
       }
 
     SubList.Draw();
@@ -2606,7 +2608,7 @@ void game::CreateBone()
       inputfile BoneFile(BoneName, 0, false);
 
       if(!BoneFile.IsOpen())
-	break;
+        break;
     }
 
     if(BoneIndex != 1000)
@@ -2637,9 +2639,9 @@ truth game::PrepareRandomBone(int LevelIndex)
     {
       if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
       {
-	BoneFile.Close();
-	remove(BoneName.CStr());
-	continue;
+        BoneFile.Close();
+        remove(BoneName.CStr());
+        continue;
       }
 
       festring Name;
@@ -2648,10 +2650,10 @@ truth game::PrepareRandomBone(int LevelIndex)
 
       if(!NewLevel->PostProcessForBone())
       {
-	delete NewLevel;
-	GetBoneItemIDMap().clear();
-	GetBoneCharacterIDMap().clear();
-	continue;
+        delete NewLevel;
+        GetBoneItemIDMap().clear();
+        GetBoneCharacterIDMap().clear();
+        continue;
       }
 
       NewLevel->FinalProcessForBone();
@@ -2663,11 +2665,11 @@ truth game::PrepareRandomBone(int LevelIndex)
       GetCurrentDungeon()->SetIsGenerated(LevelIndex, true);
 
       if(Name == PlayerName)
-	ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");
+        ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");
       else if(Player && Player->StateIsActivated(GAS_IMMUNITY))
-	ADD_MESSAGE("You feel the cool breeze of death.");
-			else
-	ADD_MESSAGE("You smell the stench of death.");
+        ADD_MESSAGE("You feel the cool breeze of death.");
+                        else
+        ADD_MESSAGE("You smell the stench of death.");
 
       break;
     }
@@ -2711,11 +2713,11 @@ double game::CalculateAverageDangerOfAllNormalEnemies()
 
     for(int c2 = 0; c2 < ConfigSize; ++c2)
       if(!ConfigData[c2]->IsAbstract
-	 && !ConfigData[c2]->IsUnique
-	 && ConfigData[c2]->CanBeGenerated)
+         && !ConfigData[c2]->IsUnique
+         && ConfigData[c2]->CanBeGenerated)
       {
-	DangerSum += DangerMap.find(configid(c1, ConfigData[c2]->Config))->second.EquippedDanger;
-	++Enemies;
+        DangerSum += DangerMap.find(configid(c1, ConfigData[c2]->Config))->second.EquippedDanger;
+        ++Enemies;
       }
   }
 
@@ -2751,7 +2753,7 @@ int game::GetMoveCommandKey(int I)
   case DIR_ALT:
     return MoveAbnormalCommandKey[I];
   case DIR_HACK:
-	return MoveNetHackCommandKey[I];
+        return MoveNetHackCommandKey[I];
   }
 }
 
@@ -2814,12 +2816,12 @@ v2 ItemDisplacement[3][3] =
 void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 {
   blitdata B = { Bitmap,
-		 { 0, 0 },
-		 { 0, 0 },
-		 { TILE_SIZE, TILE_SIZE },
-		 { NORMAL_LUMINANCE },
-		 TRANSPARENT_COLOR,
-		 ALLOW_ANIMATE };
+                 { 0, 0 },
+                 { 0, 0 },
+                 { TILE_SIZE, TILE_SIZE },
+                 { NORMAL_LUMINANCE },
+                 TRANSPARENT_COLOR,
+                 ALLOW_ANIMATE };
 
   itemvector ItemVector = ItemDrawVector[I];
   int Amount = Min<int>(ItemVector.size(), 3);
@@ -2861,12 +2863,12 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
   if(CharacterDrawVector[I])
   {
     blitdata B = { Bitmap,
-		   { 0, 0 },
-		   { Pos.X, Pos.Y },
-		   { TILE_SIZE, TILE_SIZE },
-		   { NORMAL_LUMINANCE },
-		   TRANSPARENT_COLOR,
-		   ALLOW_ANIMATE|ALLOW_ALPHA };
+                   { 0, 0 },
+                   { Pos.X, Pos.Y },
+                   { TILE_SIZE, TILE_SIZE },
+                   { NORMAL_LUMINANCE },
+                   TRANSPARENT_COLOR,
+                   ALLOW_ANIMATE|ALLOW_ALPHA };
 
     CharacterDrawVector[I]->DrawBodyParts(B);
   }
@@ -2875,12 +2877,12 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 void game::GodEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 {
   blitdata B = { Bitmap,
-		 { static_cast<int>(I << 4), 0 },
-		 { Pos.X, Pos.Y },
-		 { TILE_SIZE, TILE_SIZE },
-		 { 0 },
-		 TRANSPARENT_COLOR,
-		 0 };
+                 { static_cast<int>(I << 4), 0 },
+                 { Pos.X, Pos.Y },
+                 { TILE_SIZE, TILE_SIZE },
+                 { 0 },
+                 TRANSPARENT_COLOR,
+                 0 };
 
   igraph::GetSymbolGraphic()->NormalMaskedBlit(B);
 }
@@ -2991,7 +2993,7 @@ truth game::TryToExitSumoArena()
       character* Sumo = GetSumo();
 
       if(Sumo && Sumo->GetRelation(Player) != HOSTILE && Player->CanBeSeenBy(Sumo))
-	ADD_MESSAGE("\"Don't leave anything there, please.\"");
+        ADD_MESSAGE("\"Don't leave anything there, please.\"");
     }
 
     v2 PlayerPos = Player->GetPos();
@@ -3065,14 +3067,14 @@ truth game::EndSumoWrestling(int Result)
       Imperialist->Remove();
       Imperialist->PutTo(Pos);
       Msg << "\n\nSuddenly you notice " << Imperialist->GetName(DEFINITE) << " has also entered.\n"
-	"\"I see we have a promising fighter among us. I had already heard of your\n"
-	"adventures outside the village, but hardly could I believe that one day you\n"
-	"would defeat even the mighty Huang Ming Pong! A hero such as you is bound\n"
-	"to become world famous, and can earn a fortune if wealthy sponsors are behind\n"
-	"him. May I therefore propose a mutually profitable contract: I'll give you this\n"
-	"nice shirt with my company's ad, and you'll wear it as you journey bravely to\n"
-	"the unknown and fight epic battles against the limitless minions of evil. I'll\n"
-	"reward you well when you return, depending on how much you have used it.\"";
+        "\"I see we have a promising fighter among us. I had already heard of your\n"
+        "adventures outside the village, but hardly could I believe that one day you\n"
+        "would defeat even the mighty Huang Ming Pong! A hero such as you is bound\n"
+        "to become world famous, and can earn a fortune if wealthy sponsors are behind\n"
+        "him. May I therefore propose a mutually profitable contract: I'll give you this\n"
+        "nice shirt with my company's ad, and you'll wear it as you journey bravely to\n"
+        "the unknown and fight epic battles against the limitless minions of evil. I'll\n"
+        "reward you well when you return, depending on how much you have used it.\"";
       Player->GetStack()->AddItem(decosadshirt::Spawn());
     }
 
@@ -3102,24 +3104,24 @@ v2 game::GetSunLightDirectionVector()
      any possible level L for any P belonging to L. */
 
   static int XTable[48] = {     0,  1000,  1000,  1000,  1000,  1000,
-				1000,  1303,  1732,  2414,  3732,  7596,
-				1000,  7596,  3732,  2414,  1732,  1303,
-				1000,  1000,  1000,  1000,  1000,  1000,
-			        0, -1000, -1000, -1000, -1000, -1000,
-				-1000, -1303, -1732, -2414, -3732, -7596,
-				-1000, -7596, -3732, -2414, -1732, -1303,
-				-1000, -1000, -1000, -1000, -1000, -1000 };
+                                1000,  1303,  1732,  2414,  3732,  7596,
+                                1000,  7596,  3732,  2414,  1732,  1303,
+                                1000,  1000,  1000,  1000,  1000,  1000,
+                                0, -1000, -1000, -1000, -1000, -1000,
+                                -1000, -1303, -1732, -2414, -3732, -7596,
+                                -1000, -7596, -3732, -2414, -1732, -1303,
+                                -1000, -1000, -1000, -1000, -1000, -1000 };
 
   /* Should have the same sign as -cos(PI * Index / 24) */
 
   static int YTable[48] = { -1000, -7596, -3732, -2414, -1732, -1303,
-			    -1000, -1000, -1000, -1000, -1000, -1000,
-			    0,  1000,  1000,  1000,  1000,  1000,
-			    1000,  1303,  1732,  2414,  3732,  7596,
-			    1000,  7596,  3732,  2414,  1732,  1303,
-			    1000,  1000,  1000,  1000,  1000,  1000,
-			    0, -1000, -1000, -1000, -1000, -1000,
-			    -1000, -1303, -1732, -2414, -3732, -7596 };
+                            -1000, -1000, -1000, -1000, -1000, -1000,
+                            0,  1000,  1000,  1000,  1000,  1000,
+                            1000,  1303,  1732,  2414,  3732,  7596,
+                            1000,  7596,  3732,  2414,  1732,  1303,
+                            1000,  1000,  1000,  1000,  1000,  1000,
+                            0, -1000, -1000, -1000, -1000, -1000,
+                            -1000, -1303, -1732, -2414, -3732, -7596 };
 
   return v2(XTable[Index], YTable[Index]);
 }
@@ -3158,9 +3160,9 @@ int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowE
       TempItem->SpecialGenerationHandler();
 
       if(TempItem->HandleInPairs())
-	ADD_MESSAGE(MsgPair, TempItem->CHAR_NAME(PLURAL));
+        ADD_MESSAGE(MsgPair, TempItem->CHAR_NAME(PLURAL));
       else
-	ADD_MESSAGE(MsgSingle, TempItem->CHAR_NAME(INDEFINITE));
+        ADD_MESSAGE(MsgSingle, TempItem->CHAR_NAME(INDEFINITE));
 
       return NORMAL_EXIT;
     }
@@ -3225,19 +3227,19 @@ truth game::PolymorphControlKeyHandler(int Key, festring& String)
 
       if(Char->CanBeWished())
       {
-	festring Entry;
-	Char->AddName(Entry, UNARTICLED);
-	StringVector.push_back(Entry);
-	int Req = Char->GetPolymorphIntelligenceRequirement();
+        festring Entry;
+        Char->AddName(Entry, UNARTICLED);
+        StringVector.push_back(Entry);
+        int Req = Char->GetPolymorphIntelligenceRequirement();
 
-	if(Char->IsSameAs(Player)
-	   || (Player->GetPolymorphBackup()
-	       && Player->GetPolymorphBackup()->IsSameAs(Char)))
-	  Req = 0;
+        if(Char->IsSameAs(Player)
+           || (Player->GetPolymorphBackup()
+               && Player->GetPolymorphBackup()->IsSameAs(Char)))
+          Req = 0;
 
-	Entry << " (" << Req << ')';
-	int Int = Player->GetAttribute(INTELLIGENCE);
-	List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
+        Entry << " (" << Req << ')';
+        int Int = Player->GetAttribute(INTELLIGENCE);
+        List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
       }
     }
 
@@ -3404,11 +3406,11 @@ truth game::SelectPet(int Key)
     for(uint c = 0; c < PetVector.size(); ++c)
       if(PetVector[c] == LastPetUnderCursor)
       {
-	if(++c == PetVector.size())
-	  c = 0;
+        if(++c == PetVector.size())
+          c = 0;
 
-	LastPetUnderCursor = PetVector[c];
-	return true;
+        LastPetUnderCursor = PetVector[c];
+        return true;
       }
   }
   else if(Key == '-')
@@ -3416,11 +3418,11 @@ truth game::SelectPet(int Key)
     for(uint c = 0; c < PetVector.size(); ++c)
       if(PetVector[c] == LastPetUnderCursor)
       {
-	if(!c)
-	  c = PetVector.size();
+        if(!c)
+          c = PetVector.size();
 
-	LastPetUnderCursor = PetVector[--c];
-	return true;
+        LastPetUnderCursor = PetVector[--c];
+        return true;
       }
   }
 
@@ -3450,26 +3452,26 @@ void game::CommandScreen(cfestring& Topic, ulong PossibleFlags, ulong ConstantFl
     for(c = 0; c < COMMAND_FLAGS; ++c)
       if(1 << c & PossibleFlags)
       {
-	truth Changeable = !(1 << c & ConstantFlags);
-	festring Entry;
+        truth Changeable = !(1 << c & ConstantFlags);
+        festring Entry;
 
-	if(Changeable)
-	{
-	  Entry = CommandDescription[c];
-	  Entry.Resize(60);
-	}
-	else
-	{
-	  Entry << "   " << CommandDescription[c];
-	  Entry.Resize(63);
-	}
+        if(Changeable)
+        {
+          Entry = CommandDescription[c];
+          Entry.Resize(60);
+        }
+        else
+        {
+          Entry << "   " << CommandDescription[c];
+          Entry.Resize(63);
+        }
 
-	if(1 << c & VaryFlags)
-	  Entry << "varies";
-	else
-	  Entry << (1 << c & Flags ? "yes" : "no");
+        if(1 << c & VaryFlags)
+          Entry << "varies";
+        else
+          Entry << (1 << c & Flags ? "yes" : "no");
 
-	List.AddEntry(Entry, Changeable ? LIGHT_GRAY : DARK_GRAY, 0, NO_IMAGE, Changeable);
+        List.AddEntry(Entry, Changeable ? LIGHT_GRAY : DARK_GRAY, 0, NO_IMAGE, Changeable);
       }
 
     int Chosen = List.Draw();
@@ -3480,15 +3482,15 @@ void game::CommandScreen(cfestring& Topic, ulong PossibleFlags, ulong ConstantFl
     for(c = 0, i = 0; c < COMMAND_FLAGS; ++c)
       if(1 << c & PossibleFlags && !(1 << c & ConstantFlags) && i++ == Chosen)
       {
-	if(1 << c & VaryFlags)
-	{
-	  VaryFlags &= ~(1 << c);
-	  Flags |= 1 << c;
-	}
-	else
-	  Flags ^= 1 << c;
+        if(1 << c & VaryFlags)
+        {
+          VaryFlags &= ~(1 << c);
+          Flags |= 1 << c;
+        }
+        else
+          Flags ^= 1 << c;
 
-	break;
+        break;
       }
 
     List.Empty();
@@ -3509,8 +3511,8 @@ truth game::CommandAll()
 
     for(c2 = 0; c2 < COMMAND_FLAGS; ++c2)
       if(1 << c2 & PossibleFlags & ThisPossible
-	 && (1 << c2 & C) != (1 << c2 & OldFlags))
-	VaryFlags |= 1 << c2;
+         && (1 << c2 & C) != (1 << c2 & OldFlags))
+        VaryFlags |= 1 << c2;
 
     PossibleFlags |= ThisPossible;
     OldFlags |= C & ThisPossible;
@@ -3536,9 +3538,9 @@ truth game::CommandAll()
     ulong OldC = Char->GetCommandFlags();
     ulong ConstC = Char->GetConstantCommandFlags();
     ulong ThisC = (NewFlags
-		  & Char->GetPossibleCommandFlags()
-		  & ~(ConstC|VaryFlags))
-		  | (OldC & (ConstC|VaryFlags));
+                  & Char->GetPossibleCommandFlags()
+                  & ~(ConstC|VaryFlags))
+                  | (OldC & (ConstC|VaryFlags));
 
     if(ThisC != OldC)
       Change = true;
@@ -3609,55 +3611,55 @@ double game::GetGameSituationDanger()
   for(int c1 = 0; c1 < GetTeams(); ++c1)
     if(GetTeam(c1)->GetRelation(GetTeam(PLAYER_TEAM)) == HOSTILE)
       for(std::list<character*>::const_iterator i1 = GetTeam(c1)->GetMember().begin();
-	  i1 != GetTeam(c1)->GetMember().end(); ++i1)
+          i1 != GetTeam(c1)->GetMember().end(); ++i1)
       {
-	character* Enemy = *i1;
+        character* Enemy = *i1;
 
-	if(Enemy->IsEnabled() && Enemy->CanAttack()
-	   && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
-	{
-	  truth EnemyStuck = Enemy->IsStuck();
-	  v2 EnemyPos = Enemy->GetPos();
-	  truth Sees = TruePlayer->CanBeSeenBy(Enemy);
-	  character* TrueEnemy = Enemy;
+        if(Enemy->IsEnabled() && Enemy->CanAttack()
+           && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
+        {
+          truth EnemyStuck = Enemy->IsStuck();
+          v2 EnemyPos = Enemy->GetPos();
+          truth Sees = TruePlayer->CanBeSeenBy(Enemy);
+          character* TrueEnemy = Enemy;
 
-	  if(EnemyStuck)
-	    Enemy = Enemy->Duplicate(IGNORE_PROHIBITIONS);
+          if(EnemyStuck)
+            Enemy = Enemy->Duplicate(IGNORE_PROHIBITIONS);
 
-	  double PlayerTeamDanger = 1 / Enemy->GetSituationDanger(Player, EnemyPos, PlayerPos, Sees);
+          double PlayerTeamDanger = 1 / Enemy->GetSituationDanger(Player, EnemyPos, PlayerPos, Sees);
 
-	  for(int c2 = 0; c2 < GetTeams(); ++c2)
-	    if(GetTeam(c2)->GetRelation(GetTeam(c1)) == HOSTILE)
-	      for(std::list<character*>::const_iterator i2 = GetTeam(c2)->GetMember().begin();
-		  i2 != GetTeam(c2)->GetMember().end(); ++i2)
-	      {
-		character* Friend = *i2;
+          for(int c2 = 0; c2 < GetTeams(); ++c2)
+            if(GetTeam(c2)->GetRelation(GetTeam(c1)) == HOSTILE)
+              for(std::list<character*>::const_iterator i2 = GetTeam(c2)->GetMember().begin();
+                  i2 != GetTeam(c2)->GetMember().end(); ++i2)
+              {
+                character* Friend = *i2;
 
-		if(Friend->IsEnabled() && !Friend->IsPlayer() && Friend->CanAttack()
-		   && (Friend->CanMove() || Friend->GetPos().IsAdjacent(EnemyPos)))
-		{
-		  v2 FriendPos = Friend->GetPos();
-		  truth Sees = TrueEnemy->CanBeSeenBy(Friend);
+                if(Friend->IsEnabled() && !Friend->IsPlayer() && Friend->CanAttack()
+                   && (Friend->CanMove() || Friend->GetPos().IsAdjacent(EnemyPos)))
+                {
+                  v2 FriendPos = Friend->GetPos();
+                  truth Sees = TrueEnemy->CanBeSeenBy(Friend);
 
-		  if(Friend->IsStuck())
-		  {
-		    Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);
-		    PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees) * .2;
-		    delete Friend;
-		  }
-		  else
-		    PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees);
-		}
-	      }
+                  if(Friend->IsStuck())
+                  {
+                    Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);
+                    PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees) * .2;
+                    delete Friend;
+                  }
+                  else
+                    PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees);
+                }
+              }
 
-	  if(EnemyStuck)
-	  {
-	    PlayerTeamDanger *= 5;
-	    delete Enemy;
-	  }
+          if(EnemyStuck)
+          {
+            PlayerTeamDanger *= 5;
+            delete Enemy;
+          }
 
-	  SituationDanger += 1 / PlayerTeamDanger;
-	}
+          SituationDanger += 1 / PlayerTeamDanger;
+        }
       }
 
   Player->ModifySituationDanger(SituationDanger);
@@ -3737,12 +3739,12 @@ void game::AdjustRelationsToAllGods(int Amount)
 void game::ShowDeathSmiley(bitmap* Buffer, truth)
 {
   static blitdata B = { 0,
-			{ 0, 0 },
-			{ (RES.X >> 1) - 24, RES.Y * 4 / 7 - 24 },
-			{ 48, 48 },
-			{ 0 },
-			TRANSPARENT_COLOR,
-			0 };
+                        { 0, 0 },
+                        { (RES.X >> 1) - 24, RES.Y * 4 / 7 - 24 },
+                        { 48, 48 },
+                        { 0 },
+                        TRANSPARENT_COLOR,
+                        0 };
 
   int Tick = globalwindowhandler::UpdateTick();
 

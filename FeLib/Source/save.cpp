@@ -35,8 +35,8 @@ void outputfile::ReOpen()
 }
 
 inputfile::inputfile(cfestring& FileName,
-		     const valuemap* ValueMap,
-		     truth AbortOnErr)
+                     const valuemap* ValueMap,
+                     truth AbortOnErr)
 : Buffer(fopen(FileName.CStr(), "rb")),
   FileName(FileName), ValueMap(ValueMap)
 {
@@ -73,42 +73,42 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
 
       if(Char == '*')
       {
-	long StartPos = TellPos();
-	int OldChar = 0, CommentLevel = 1;
+        long StartPos = TellPos();
+        int OldChar = 0, CommentLevel = 1;
 
-	for(;;)
-	{
-	  if(feof(Buffer))
-	    ABORT("Unterminated comment in file %s, beginning at line %ld!",
-		  FileName.CStr(), TellLineOfPos(StartPos));
+        for(;;)
+        {
+          if(feof(Buffer))
+            ABORT("Unterminated comment in file %s, beginning at line %ld!",
+                  FileName.CStr(), TellLineOfPos(StartPos));
 
-	  Char = fgetc(Buffer);
+          Char = fgetc(Buffer);
 
-	  if(OldChar != '*' || Char != '/')
-	  {
-	    if(OldChar != '/' || Char != '*')
-	      OldChar = Char;
-	    else
-	    {
-	      ++CommentLevel;
-	      OldChar = 0;
-	    }
-	  }
-	  else
-	  {
-	    if(!--CommentLevel)
-	      break;
-	    else
-	      OldChar = 0;
-	  }
-	}
+          if(OldChar != '*' || Char != '/')
+          {
+            if(OldChar != '/' || Char != '*')
+              OldChar = Char;
+            else
+            {
+              ++CommentLevel;
+              OldChar = 0;
+            }
+          }
+          else
+          {
+            if(!--CommentLevel)
+              break;
+            else
+              OldChar = 0;
+          }
+        }
 
-	return PUNCT_CONTINUE;
+        return PUNCT_CONTINUE;
       }
       else
       {
-	ungetc(Char, Buffer);
-	clearerr(Buffer);
+        ungetc(Char, Buffer);
+        clearerr(Buffer);
       }
     }
 
@@ -134,23 +134,23 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
     for(;;)
     {
       if(feof(Buffer))
-	ABORT("Unterminated string in file %s, beginning at line %ld!",
-	      FileName.CStr(), TellLineOfPos(StartPos));
+        ABORT("Unterminated string in file %s, beginning at line %ld!",
+              FileName.CStr(), TellLineOfPos(StartPos));
 
       Char = fgetc(Buffer);
 
       if(Char != '"')
       {
-	String << char(Char);
-	OldChar = Char;
+        String << char(Char);
+        OldChar = Char;
       }
       else if(OldChar == '\\')
       {
-	String[String.GetSize() - 1] = '"';
-	OldChar = 0;
+        String[String.GetSize() - 1] = '"';
+        OldChar = 0;
       }
       else
-	return PUNCT_RETURN;
+        return PUNCT_RETURN;
     }
   }
 
@@ -168,11 +168,11 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
     if(isalpha(Char) || Char == '_')
     {
       if(!Mode)
-	Mode = MODE_WORD;
+        Mode = MODE_WORD;
       else if(Mode == MODE_NUMBER)
       {
-	ungetc(Char, Buffer);
-	return;
+        ungetc(Char, Buffer);
+        return;
       }
 
       String << char(Char);
@@ -182,11 +182,11 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
     if(isdigit(Char))
     {
       if(!Mode)
-	Mode = MODE_NUMBER;
+        Mode = MODE_NUMBER;
       else if(Mode == MODE_WORD)
       {
-	ungetc(Char, Buffer);
-	return;
+        ungetc(Char, Buffer);
+        return;
       }
 
       String << char(Char);
@@ -218,50 +218,50 @@ char inputfile::ReadLetter(truth AbortOnEOF)
     {
       if(Char == '/')
       {
-	if(!feof(Buffer))
-	{
-	  Char = fgetc(Buffer);
+        if(!feof(Buffer))
+        {
+          Char = fgetc(Buffer);
 
-	  if(Char == '*')
-	  {
-	    long StartPos = TellPos();
-	    int OldChar = 0, CommentLevel = 1;
+          if(Char == '*')
+          {
+            long StartPos = TellPos();
+            int OldChar = 0, CommentLevel = 1;
 
-	    for(;;)
-	    {
-	      if(feof(Buffer))
-		ABORT("Unterminated comment in file %s, "
-		      "beginning at line %ld!",
-		      FileName.CStr(), TellLineOfPos(StartPos));
+            for(;;)
+            {
+              if(feof(Buffer))
+                ABORT("Unterminated comment in file %s, "
+                      "beginning at line %ld!",
+                      FileName.CStr(), TellLineOfPos(StartPos));
 
-	      Char = fgetc(Buffer);
+              Char = fgetc(Buffer);
 
-	      if(OldChar != '*' || Char != '/')
-	      {
-		if(OldChar != '/' || Char != '*')
-		  OldChar = Char;
-		else
-		{
-		  ++CommentLevel;
-		  OldChar = 0;
-		}
-	      }
-	      else
-	      {
-		if(!--CommentLevel)
-		  break;
-		else
-		  OldChar = 0;
-	      }
-	    }
+              if(OldChar != '*' || Char != '/')
+              {
+                if(OldChar != '/' || Char != '*')
+                  OldChar = Char;
+                else
+                {
+                  ++CommentLevel;
+                  OldChar = 0;
+                }
+              }
+              else
+              {
+                if(!--CommentLevel)
+                  break;
+                else
+                  OldChar = 0;
+              }
+            }
 
-	    continue;
-	  }
-	  else
-	    ungetc(Char, Buffer);
-	}
+            continue;
+          }
+          else
+            ungetc(Char, Buffer);
+        }
 
-	return '/';
+        return '/';
       }
 
       return Char;
@@ -299,43 +299,43 @@ long inputfile::ReadNumber(int CallLevel, truth PreserveTerminator)
     {
       if(First == ';' || First == ',' || First == ':')
       {
-	if(CallLevel != HIGHEST || PreserveTerminator)
-	  ungetc(First, Buffer);
+        if(CallLevel != HIGHEST || PreserveTerminator)
+          ungetc(First, Buffer);
 
-	return Value;
+        return Value;
       }
 
       if(First == ')')
       {
-	if((CallLevel != HIGHEST && CallLevel != 4) || PreserveTerminator)
-	  ungetc(')', Buffer);
+        if((CallLevel != HIGHEST && CallLevel != 4) || PreserveTerminator)
+          ungetc(')', Buffer);
 
-	return Value;
+        return Value;
       }
 
       if(First == '~')
       {
-	Value = ~ReadNumber(4);
-	NumberCorrect = true;
-	continue;
+        Value = ~ReadNumber(4);
+        NumberCorrect = true;
+        continue;
       }
 
       /* Convert this into an inline function! */
 
 #define CHECK_OP(op, cl)\
-	  if(First == #op[0])\
+          if(First == #op[0])\
           {\
-	    if(cl < CallLevel)\
-	      {\
-		Value op##= ReadNumber(cl);\
-		NumberCorrect = true;\
-		continue;\
-	      }\
-	    else\
-	      {\
-		ungetc(#op[0], Buffer);\
-		return Value;\
-	      }\
+            if(cl < CallLevel)\
+              {\
+                Value op##= ReadNumber(cl);\
+                NumberCorrect = true;\
+                continue;\
+              }\
+            else\
+              {\
+                ungetc(#op[0], Buffer);\
+                return Value;\
+              }\
           }
 
       CHECK_OP(&, 1); CHECK_OP(|, 1); CHECK_OP(^, 1);
@@ -344,68 +344,68 @@ long inputfile::ReadNumber(int CallLevel, truth PreserveTerminator)
 
       if(First == '<')
       {
-	char Next = Get();
+        char Next = Get();
 
-	if(Next == '<')
-	  if(1 < CallLevel)
-	  {
-	    Value <<= ReadNumber(1);
-	    NumberCorrect = true;
-	    continue;
-	  }
-	  else
-	  {
-	    ungetc('<', Buffer);
-	    ungetc('<', Buffer);
-	    return Value;
-	  }
-	else
-	  ungetc(Next, Buffer);
+        if(Next == '<')
+          if(1 < CallLevel)
+          {
+            Value <<= ReadNumber(1);
+            NumberCorrect = true;
+            continue;
+          }
+          else
+          {
+            ungetc('<', Buffer);
+            ungetc('<', Buffer);
+            return Value;
+          }
+        else
+          ungetc(Next, Buffer);
       }
 
       if(First == '>')
       {
-	char Next = Get();
+        char Next = Get();
 
-	if(Next == '>')
-	  if(1 < CallLevel)
-	  {
-	    Value >>= ReadNumber(1);
-	    NumberCorrect = true;
-	    continue;
-	  }
-	  else
-	  {
-	    ungetc('>', Buffer);
-	    ungetc('>', Buffer);
-	    return Value;
-	  }
-	else
-	  ungetc(Next, Buffer);
+        if(Next == '>')
+          if(1 < CallLevel)
+          {
+            Value >>= ReadNumber(1);
+            NumberCorrect = true;
+            continue;
+          }
+          else
+          {
+            ungetc('>', Buffer);
+            ungetc('>', Buffer);
+            return Value;
+          }
+        else
+          ungetc(Next, Buffer);
       }
 
       if(First == '(')
       {
-	if(NumberCorrect)
-	{
-	  ungetc('(', Buffer);
-	  return Value;
-	}
-	else
-	{
-	  Value = ReadNumber(4);
-	  NumberCorrect = false;
-	  continue;
-	}
+        if(NumberCorrect)
+        {
+          ungetc('(', Buffer);
+          return Value;
+        }
+        else
+        {
+          Value = ReadNumber(4);
+          NumberCorrect = false;
+          continue;
+        }
       }
 
       if(First == '=' && CallLevel == HIGHEST)
-	continue;
+        continue;
 
       if(First == '#') // for #defines
       {
-	ungetc('#', Buffer);
-	return Value;
+        ungetc('#', Buffer);
+        return Value;
       }
     }
 
@@ -415,21 +415,21 @@ long inputfile::ReadNumber(int CallLevel, truth PreserveTerminator)
 
       if(Bits == 16)
       {
-	int Red = ReadNumber();
-	int Green = ReadNumber();
-	int Blue = ReadNumber();
-	Value = MakeRGB16(Red, Green, Blue);
+        int Red = ReadNumber();
+        int Green = ReadNumber();
+        int Blue = ReadNumber();
+        Value = MakeRGB16(Red, Green, Blue);
       }
       else if(Bits == 24)
       {
-	int Red = ReadNumber();
-	int Green = ReadNumber();
-	int Blue = ReadNumber();
-	Value = MakeRGB24(Red, Green, Blue);
+        int Red = ReadNumber();
+        int Green = ReadNumber();
+        int Blue = ReadNumber();
+        Value = MakeRGB24(Red, Green, Blue);
       }
       else
-	ABORT("Illegal RGB bit size %d in file %s, line %ld!",
-	      Bits, FileName.CStr(), TellLine());
+        ABORT("Illegal RGB bit size %d in file %s, line %ld!",
+              Bits, FileName.CStr(), TellLine());
 
       NumberCorrect = true;
       continue;
@@ -455,14 +455,14 @@ long inputfile::ReadNumber(int CallLevel, truth PreserveTerminator)
 
       if(Iterator != ValueMap->end())
       {
-	Value = Iterator->second;
-	NumberCorrect = true;
-	continue;
+        Value = Iterator->second;
+        NumberCorrect = true;
+        continue;
       }
     }
 
     ABORT("Odd numeric value \"%s\" encountered in file %s, line %ld!",
-	  Word.CStr(), FileName.CStr(), TellLine());
+          Word.CStr(), FileName.CStr(), TellLine());
   }
 }
 
@@ -572,7 +572,7 @@ void ReadData(fearray<long>& Array, inputfile& SaveFile)
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   fearray<long>::sizetype Size = SaveFile.ReadNumber();
   Array.Allocate(Size);
@@ -582,9 +582,9 @@ void ReadData(fearray<long>& Array, inputfile& SaveFile)
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" "
-	  "encountered in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(),
-	  SaveFile.TellLine());
+          "encountered in file %s, line %ld!",
+          Word.CStr(), SaveFile.GetFileName().CStr(),
+          SaveFile.TellLine());
 }
 
 void ReadData(fearray<festring>& Array, inputfile& SaveFile)
@@ -603,14 +603,14 @@ void ReadData(fearray<festring>& Array, inputfile& SaveFile)
 
     if(SaveFile.ReadWord() != ";")
       ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	    Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+            Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
     return;
   }
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   fearray<festring>::sizetype Size = SaveFile.ReadNumber();
   Array.Allocate(Size);
@@ -622,14 +622,14 @@ void ReadData(fearray<festring>& Array, inputfile& SaveFile)
 
     if(Word != "," && Word != ";")
       ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	    Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+            Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
   }
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" "
-	  "encountered in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(),
-	  SaveFile.TellLine());
+          "encountered in file %s, line %ld!",
+          Word.CStr(), SaveFile.GetFileName().CStr(),
+          SaveFile.TellLine());
 }
 
 ulong inputfile::TellLineOfPos(long Pos)

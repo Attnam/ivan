@@ -80,21 +80,21 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     while(!kbhit())
       if(Controls && ControlLoopsEnabled)
       {
-	static ulong LastTick = 0;
-	UpdateTick();
+        static ulong LastTick = 0;
+        UpdateTick();
 
-	if(LastTick != Tick)
-	{
-	  LastTick = Tick;
-	  truth Draw = false;
+        if(LastTick != Tick)
+        {
+          LastTick = Tick;
+          truth Draw = false;
 
-	  for(int c = 0; c < Controls; ++c)
-	    if(ControlLoop[c]())
-	      Draw = true;
+          for(int c = 0; c < Controls; ++c)
+            if(ControlLoop[c]())
+              Draw = true;
 
-	  if(Draw)
-	    graphics::BlitDBToScreen();
-	}
+          if(Draw)
+            graphics::BlitDBToScreen();
+        }
       }
 
     Key = getkey();
@@ -168,7 +168,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 #else
         if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
 #endif
-	   && Controls && ControlLoopsEnabled)
+           && Controls && ControlLoopsEnabled)
         {
           static ulong LastTick = 0;
           UpdateTick();
@@ -314,8 +314,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
      case SDLK_e:
       if(Event->key.keysym.mod & KMOD_ALT
-	 && (Event->key.keysym.mod & KMOD_LCTRL
-	     || Event->key.keysym.mod & KMOD_RCTRL))
+         && (Event->key.keysym.mod & KMOD_LCTRL
+             || Event->key.keysym.mod & KMOD_RCTRL))
       {
         KeyPressed = '\177';
         break;

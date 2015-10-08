@@ -628,8 +628,8 @@ class item : public object
 #define ITEM_PROTO(name, base)\
 template<> const itemprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   reinterpret_cast<itemspawner>(&name##sysbase::Spawn),\
-			   reinterpret_cast<itemcloner>(&name##sysbase::Clone), #name);
+                           reinterpret_cast<itemspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<itemcloner>(&name##sysbase::Clone), #name);
 #else
 #define ITEM_PROTO(name, base)
 #endif

@@ -237,7 +237,7 @@ class material
   const database* DataBase;
   entity* MotherEntity;
   long Volume;
-	int Burning;
+        int Burning;
 };
 
 template <class type, class base>
@@ -260,8 +260,8 @@ class materialsysbase : public base
 #define MATERIAL_PROTO(name, base)\
 template<> const materialprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   reinterpret_cast<materialspawner>(&name##sysbase::Spawn),\
-			   reinterpret_cast<materialcloner>(&name##sysbase::Clone), #name);
+                           reinterpret_cast<materialspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<materialcloner>(&name##sysbase::Clone), #name);
 #else
 #define MATERIAL_PROTO(name, base)
 #endif

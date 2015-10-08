@@ -45,9 +45,9 @@ void rain::Draw(blitdata& BlitData) const
 
     for(c = 0; c < Drops; ++c)
       if(OldDrop[c].MaxAge)
-	Drop[c] = OldDrop[c];
+        Drop[c] = OldDrop[c];
       else
-	RandomizeDropPos(c);
+        RandomizeDropPos(c);
 
     delete [] OldDrop;
 
@@ -58,7 +58,7 @@ void rain::Draw(blitdata& BlitData) const
   {
     for(c = 0; c < DropMax; ++c)
       if(!Drop[c].MaxAge)
-	RandomizeDropPos(c);
+        RandomizeDropPos(c);
 
     for(; Drops > DropMax && !Drop[Drops - 1].MaxAge; --Drops);
 
@@ -80,16 +80,16 @@ void rain::Draw(blitdata& BlitData) const
 
       if(Age > Drop[c].MaxAge)
       {
-	Drop[c].MaxAge = 0;
-	continue;
+        Drop[c].MaxAge = 0;
+        continue;
       }
 
       v2 DropPos = v2(Drop[c].StartPos) + (Speed * int(Age) >> 8);
 
       if(DropPos.X < 0 || DropPos.Y < 0 || DropPos.X >= 16 || DropPos.Y >= 16)
       {
-	Drop[c].MaxAge = 0;
-	continue;
+        Drop[c].MaxAge = 0;
+        continue;
       }
 
       BlitData.Bitmap->AlphaPutPixel(DropPos + BlitData.Dest, Color, BlitData.Luminance, 255);
@@ -142,13 +142,13 @@ void rain::Be()
 
       if(OwnLiquid)
       {
-	if(Volume == DropVolume)
-	{
-	  LSquareUnder->RemoveRain(this);
-	  SendToHell();
-	}
-	else
-	  Liquid->EditVolume(-DropVolume);
+        if(Volume == DropVolume)
+        {
+          LSquareUnder->RemoveRain(this);
+          SendToHell();
+        }
+        else
+          Liquid->EditVolume(-DropVolume);
       }
     }
   }

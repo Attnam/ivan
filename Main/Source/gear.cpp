@@ -98,8 +98,8 @@ truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2,
 
     for(uint c = 0; c < FluidVector.size(); ++c)
       if(FluidVector[c]->Exists()
-	 && FluidVector[c]->GetLiquid()->HitEffect(Enemy, Enemy->GetBodyPart(BodyPartIndex)))
-	Success = true;
+         && FluidVector[c]->GetLiquid()->HitEffect(Enemy, Enemy->GetBodyPart(BodyPartIndex)))
+        Success = true;
 
     return Success;
   }
@@ -169,19 +169,19 @@ truth pickaxe::Apply(character* User)
     if(Terrain->CanBeDestroyed())
       if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
       {
-	int RoomNumber = Square->GetRoomIndex();
+        int RoomNumber = Square->GetRoomIndex();
 
-	if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
-	{
-	  User->SwitchToDig(this, ToBeDug);
-	  User->DexterityAction(5);
-	  return true;
-	}
-	else
-	  return false;
+        if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
+        {
+          User->SwitchToDig(this, ToBeDug);
+          User->DexterityAction(5);
+          return true;
+        }
+        else
+          return false;
       }
       else
-	ADD_MESSAGE("%s is too hard to dig with %s.",
+        ADD_MESSAGE("%s is too hard to dig with %s.",
                     Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
     else
       ADD_MESSAGE(Terrain->GetDigMessage().CStr());
@@ -249,12 +249,12 @@ truth flamingsword::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(Hitter)
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
     else
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The sword burns %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("The sword burns %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
@@ -273,16 +273,16 @@ truth mjolak::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(Hitter)
     {
       if(Hitter->IsPlayer())
-	game::DoEvilDeed(10);
+        game::DoEvilDeed(10);
 
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.",
+        ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.",
                     Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
     else
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("A burst of Mjolak's unholy energy fries %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("A burst of Mjolak's unholy energy fries %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
@@ -301,13 +301,13 @@ truth vermis::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(Hitter)
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.",
+        ADD_MESSAGE("%s Vermis sends %s on a sudden journey.",
                     Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
     else
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("Vermis sends %s on a sudden journey.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("Vermis sends %s on a sudden journey.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
 
     Enemy->TeleportRandomly();
@@ -327,13 +327,13 @@ truth turox::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(Hitter)
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s smash%s %s with the full force of Turox.",
+        ADD_MESSAGE("%s smash%s %s with the full force of Turox.",
                     Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
     else
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("Turox is smashed against %s with full force.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("Turox is smashed against %s with full force.", Enemy->CHAR_DESCRIPTION(DEFINITE));
     }
 
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
@@ -430,9 +430,9 @@ void meleeweapon::SignalSpoil(material* Material)
     if(CanBeSeenByPlayer())
     {
       if(SecondaryMaterial->GetVolume())
-	ADD_MESSAGE("The edge of %s spoils.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("The edge of %s spoils.", GetExtendedDescription().CStr());
       else
-	ADD_MESSAGE("%s spoils.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("%s spoils.", GetExtendedDescription().CStr());
     }
 
     RemoveMainMaterial();
@@ -456,9 +456,9 @@ void meleeweapon::SignalBurn(material* Material)
     if(CanBeSeenByPlayer())
     {
       if(SecondaryMaterial->GetVolume())
-	ADD_MESSAGE("The edge of %s burns away.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("The edge of %s burns away.", GetExtendedDescription().CStr());
       else
-	ADD_MESSAGE("%s burns away.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("%s burns away.", GetExtendedDescription().CStr());
     }
 
     RemoveMainMaterial();
@@ -575,14 +575,14 @@ truth thunderhammer::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 
     beamdata Beam
       (
-	Hitter,
-	CONST_S("electrocuted @bkp thunder hammer"),
-	Hitter->GetPos(),
-	WHITE,
-	BEAM_LIGHTNING,
-	Direction,
-	4,
-	0
+        Hitter,
+        CONST_S("electrocuted @bkp thunder hammer"),
+        Hitter->GetPos(),
+        WHITE,
+        BEAM_LIGHTNING,
+        Direction,
+        4,
+        0
       );
 
     GetLevel()->LightningBeam(Beam);
@@ -715,12 +715,12 @@ void meleeweapon::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultMainVolume());
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultMainVolume());
   const fearray<long>& SMC = GetSecondaryMaterialConfig();
   InitMaterial(SecondaryMaterial,
-	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultSecondaryVolume());
+               MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultSecondaryVolume());
 }
 
 truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
@@ -827,19 +827,19 @@ truth wondersmellstaff::HitEffect(character* Enemy, character* Hitter, v2 HitPos
 
       for(int c = 0; c < Enemy->GetSquaresUnder(); ++c)
       {
-	lsquare* Square = Enemy->GetLSquareUnder(c);
+        lsquare* Square = Enemy->GetLSquareUnder(c);
 
-	if(Square->IsFlyable())
-	{
-	  Square->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, Amount));
+        if(Square->IsFlyable())
+        {
+          Square->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, Amount));
 
-	  if(!Seen && Square->CanBeSeenByPlayer())
-	    Seen = true;
-	}
+          if(!Seen && Square->CanBeSeenByPlayer())
+            Seen = true;
+        }
       }
 
       if(Seen)
-	ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+        ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
     }
     else
     {
@@ -849,10 +849,10 @@ truth wondersmellstaff::HitEffect(character* Enemy, character* Hitter, v2 HitPos
 
       if(Square->IsFlyable())
       {
-	if(Square->CanBeSeenByPlayer())
-	  ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+        if(Square->CanBeSeenByPlayer())
+          ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
 
-	Square->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
+        Square->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
       }
     }
 
@@ -997,8 +997,8 @@ truth meleeweapon::CalculateHasBe() const
   return LifeExpectancy
     || (MainMaterial && MainMaterial->HasBe())
     || (SecondaryMaterial
-	&& SecondaryMaterial->GetVolume()
-	&& SecondaryMaterial->HasBe());
+        && SecondaryMaterial->GetVolume()
+        && SecondaryMaterial->HasBe());
 }
 
 void decosadshirt::Be()
@@ -1090,7 +1090,7 @@ truth weepblade::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     if(Enemy->IsPlayer() || Hitter->IsPlayer()
        || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
       ADD_MESSAGE("%s weeping blade spills acid on %s.",
-		  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+                  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
     Enemy->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 25));
     return BaseSuccess;
   }
