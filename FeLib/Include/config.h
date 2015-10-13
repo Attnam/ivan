@@ -144,12 +144,12 @@ struct truthoption : public configoption
 struct cycleoption : public configoption
 {
   cycleoption(cchar*, cchar*, long, long,
-                        void (*)(const cycleoption*, festring&)
-               = &configsystem::NormalCycleDisplayer,
-               truth (*)(cycleoption*)
-               = &configsystem::NormalCycleChangeInterface,
-               void (*)(cycleoption*, long)
-               = &configsystem::NormalCycleChanger);
+              void (*)(const cycleoption*, festring&)
+              = &configsystem::NormalCycleDisplayer,
+              truth (*)(cycleoption*)
+              = &configsystem::NormalCycleChangeInterface,
+              void (*)(cycleoption*, long)
+              = &configsystem::NormalCycleChanger);
   virtual void SaveValue(std::ofstream&) const;
   virtual void LoadValue(inputfile&);
   virtual void DisplayeValue(festring& Entry) const

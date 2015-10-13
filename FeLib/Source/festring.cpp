@@ -304,7 +304,7 @@ festring::sizetype festring::Find(cchar* CStr,
         if(!Result)
           return NPos;
 
-        if(!memcmp(Result, CStr, N))
+        if(!strncmp(Result, CStr, N))
           return Result - Ptr;
         else
           Pos = Result - Ptr + 1;
@@ -640,7 +640,9 @@ int festring::SplitString(cfestring& Source,
 }
 
 char Capitalize(char Char)
-{ return Char > 0x60 && Char < 0x7B ? Char ^ 0x20 : Char; }
+{
+  return Char > 0x60 && Char < 0x7B ? Char ^ 0x20 : Char;
+}
 
 /* Returns the position of the first occurance of What in Where
    starting at Begin or after it, ignoring the case of letters.

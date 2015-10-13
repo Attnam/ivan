@@ -216,13 +216,13 @@ truth quadricontroller<controller>::Handler(int x, int y)
 }
 
 cint ChangeXArray[4][3] = { { -1,  0, -1 },
-                                 {  0,  1,  1 },
-                                 { -1, -1,  0 },
-                                 {  1,  0,  1 } };
+                            {  0,  1,  1 },
+                            { -1, -1,  0 },
+                            {  1,  0,  1 } };
 cint ChangeYArray[4][3] = { { -1, -1,  0 },
-                                 { -1, -1,  0 },
-                                 {  0,  1,  1 },
-                                 {  0,  1,  1 } };
+                            { -1, -1,  0 },
+                            {  0,  1,  1 },
+                            {  0,  1,  1 } };
 
 template <class controller>
 inline void mapmath<controller>::DoArea()

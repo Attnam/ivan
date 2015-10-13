@@ -76,7 +76,7 @@ struct doforelementswithparam
   typedef elementtype* (objecttype::*extractor)(int) const;
   typedef void (elementtype::*routine)(param);
   void operator()(objecttype* O, extractor X,
-                          routine F, param P, int A) const
+                  routine F, param P, int A) const
   {
     for(int c = 0; c < A; ++c)
     {
@@ -115,7 +115,7 @@ struct findelement
   typedef elementtype* (objecttype::*extractor)(int) const;
   typedef truth (elementtype::*routine)(param) const;
   elementtype* operator()(objecttype* O, extractor X,
-                           routine F, param P, int A) const
+                          routine F, param P, int A) const
   {
     for(int c = 0; c < A; ++c)
     {
