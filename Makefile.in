@@ -771,7 +771,7 @@ uninstall-am:
 
 
 install-data-local:
-	-./mkinstalldirs -p $(localstatedir)/ivan $(localstatedir)/ivan/Bones/
+	-./mkinstalldirs $(localstatedir)/ivan $(localstatedir)/ivan/Bones/
 	-touch $(localstatedir)/ivan/ivan-highscore.scores
 	-chmod 666 $(localstatedir)/ivan/ivan-highscore.scores
 	-chmod -R u=rwx $(localstatedir)/ivan/Bones/
