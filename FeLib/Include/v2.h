@@ -68,7 +68,7 @@ struct v2
     return V;
   }
 
-  //  v2 Randomize() const; Would be a good idea.
+  // v2 Randomize() const; Would be a good idea.
   int X, Y;
 };
 

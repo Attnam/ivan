@@ -12,7 +12,8 @@
 
 /* Compiled through dataset.cpp */
 
-int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray, long* TempTableInfo, int Type, int Configs, int TempTables)
+int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray,
+                      long* TempTableInfo, int Type, int Configs, int TempTables)
 {
   memset(ConfigTable, 0, CONFIG_TABLE_SIZE * sizeof(databasebase**));
 
@@ -31,7 +32,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
       int Conflicts = (TempTableInfo[Hash] & 0xFFFF0000) >> 16;
 
       if(Conflicts == TempTables)
-	TempTable[TempTables++] = new databasebase*[CONFIG_TABLE_SIZE];
+        TempTable[TempTables++] = new databasebase*[CONFIG_TABLE_SIZE];
 
       TempTable[Conflicts][Hash] = ConfigArray[c];
       TempTableInfo[Hash] += 0x10000;
@@ -45,7 +46,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
       ConfigTable[c1] = new databasebase*[Entries + 1];
 
       for(int c2 = 0; c2 < Entries; ++c2)
-	ConfigTable[c1][c2] = TempTable[c2][c1];
+        ConfigTable[c1][c2] = TempTable[c2][c1];
 
       ConfigTable[c1][Entries] = 0;
     }
@@ -71,7 +72,8 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
     int Type = protocontainer<type>::SearchCodeName(Word);
 
     if(!Type)
-      ABORT("Odd term %s encountered in %s datafile line %ld!", Word.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+      ABORT("Odd term %s encountered in %s datafile line %ld!",
+            Word.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
     prototype* Proto = protocontainer<type>::GetProtoData()[Type];
     database* DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
@@ -80,30 +82,34 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
     int Configs = 1;
 
     if(SaveFile.ReadWord() != "{")
-      ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+      ABORT("Bracket missing in %s datafile line %ld!",
+            protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(Word == "Config")
       {
-	int ConfigNumber = SaveFile.ReadNumber();
-	database* ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
-	ConfigDataBase->InitDefaults(Proto, ConfigNumber);
-	TempConfig[Configs++] = ConfigDataBase;
+        int ConfigNumber = SaveFile.ReadNumber();
+        database* ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
+        ConfigDataBase->InitDefaults(Proto, ConfigNumber);
+        TempConfig[Configs++] = ConfigDataBase;
 
-	if(SaveFile.ReadWord() != "{")
-	  ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+        if(SaveFile.ReadWord() != "{")
+          ABORT("Bracket missing in %s datafile line %ld!",
+                protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
-	for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-	  if(!AnalyzeData(SaveFile, Word, *ConfigDataBase))
-	    ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
+        for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
+          if(!AnalyzeData(SaveFile, Word, *ConfigDataBase))
+            ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!",
+                  Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
 
-	ConfigDataBase->PostProcess();
-	continue;
+        ConfigDataBase->PostProcess();
+        continue;
       }
 
       if(!AnalyzeData(SaveFile, Word, *DataBase))
-	ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
+        ABORT("Illegal datavalue %s found while building up %s, line %ld!",
+              Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
     }
 
     DataBase->PostProcess();
@@ -125,10 +131,10 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
       if(Proto->ConfigSize != Configs)
       {
-	delete [] Proto->ConfigData;
-	Proto->ConfigData = new database*[Configs];
-	Proto->ConfigSize = Configs;
-	memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
+        delete [] Proto->ConfigData;
+        Proto->ConfigData = new database*[Configs];
+        Proto->ConfigSize = Configs;
+        memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
       }
     }
 
@@ -138,9 +144,9 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
     TempTables =
       CreateConfigTable(reinterpret_cast<databasebase***>(Proto->ConfigTable),
-			TempTable,
-			reinterpret_cast<databasebase**>(Proto->ConfigData),
-			TempTableInfo, c1, Proto->ConfigSize, TempTables);
+                        TempTable,
+                        reinterpret_cast<databasebase**>(Proto->ConfigData),
+                        TempTableInfo, c1, Proto->ConfigSize, TempTables);
   }
 
   for(c1 = 1; c1 < TempTables; ++c1)
@@ -149,7 +155,8 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
   GetDataBaseMemberMap().clear();
 }
 
-template <class type> int databasecreator<type>::CreateDivineConfigurations(const prototype* Proto, database** TempConfig, int Configs)
+template <class type>
+int databasecreator<type>::CreateDivineConfigurations(const prototype* Proto, database** TempConfig, int Configs)
 {
   int OldConfigs = Configs;
 
@@ -163,7 +170,7 @@ template <class type> int databasecreator<type>::CreateDivineConfigurations(cons
       ConfigDataBase = TempConfig[c2];
 
       if(ConfigDataBase->Config == c1)
-	break;
+        break;
     }
 
     truth Created = false;
@@ -196,7 +203,8 @@ template <class database, class member> struct databasemember : public databasem
   member Member;
 };
 
-template <class database, class member> void AddMember(std::map<festring, databasememberbase<database>*>& Map, cchar* Str, member Member)
+template <class database, class member>
+void AddMember(std::map<festring, databasememberbase<database>*>& Map, cchar* Str, member Member)
 {
   Map.insert(std::pair<festring, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
 }
@@ -204,7 +212,8 @@ template <class database, class member> void AddMember(std::map<festring, databa
 /* Explicit instantiations seem to increase compile speed greatly here... */
 
 #define INST_ADD_MEMBER(type, member)\
-template void AddMember<type##database, member type##database::*>(std::map<festring, databasememberbase<type##database>*>&, cchar*, member type##database::*)
+template void AddMember<type##database, member type##database::*>\
+(std::map<festring, databasememberbase<type##database>*>&, cchar*, member type##database::*)
 
 INST_ADD_MEMBER(character, int);
 INST_ADD_MEMBER(character, long);
@@ -640,7 +649,9 @@ if(Word == #name)\
 template <class type>
 void databasecreator<type>::SetBaseValue(cfestring&, databasememberbase<database>*, database&) { }
 
-template<> void databasecreator<material>::SetBaseValue(cfestring& Word, databasememberbase<materialdatabase>* Data, materialdatabase& DataBase)
+template<> void databasecreator<material>::SetBaseValue(cfestring& Word,
+                                                        databasememberbase<materialdatabase>* Data,
+                                                        materialdatabase& DataBase)
 {
   ADD_BASE_VALUE(CommonFlags);
   ADD_BASE_VALUE(NameFlags);
@@ -771,7 +782,9 @@ void databasesystem::Initialize()
   }
 }
 
-template <class type> inline void databasecreator<type>::FindDataBase(const database*& DataBase, const prototype* Proto, int Config)
+template <class type> inline void databasecreator<type>::FindDataBase(const database*& DataBase,
+                                                                      const prototype* Proto,
+                                                                      int Config)
 {
   database** Table = Proto->ConfigTable[Config >> 8 ^ Config & 0xFF];
 
@@ -784,11 +797,11 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
     }
     else
       for(++Table; *Table; ++Table)
-	if((*Table)->Config == Config)
-	{
-	  DataBase = *Table;
-	  return;
-	}
+        if((*Table)->Config == Config)
+        {
+          DataBase = *Table;
+          return;
+        }
   }
 
   DataBase = 0;

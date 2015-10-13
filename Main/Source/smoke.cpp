@@ -15,7 +15,8 @@
 smoke::smoke() : entity(HAS_BE), Next(0) { }
 square* smoke::GetSquareUnderEntity(int) const { return LSquareUnder; }
 
-smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
+smoke::smoke(gas* Gas, lsquare* LSquareUnder)
+: entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
   Gas->SetMotherEntity(this);
   Picture.resize(16);
@@ -39,11 +40,11 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas
       Correct = true;
 
       for(int i = 0; i < c; ++i)
-	if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
-	{
-	  Correct = false;
-	  break;
-	}
+        if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
+        {
+          Correct = false;
+          break;
+        }
     }
 
     igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, v2(Frame[c] << 4, 32), ZERO_V2, TILE_V2, &Color);
@@ -146,11 +147,11 @@ void smoke::Merge(gas* OtherGas)
 truth smoke::IsDangerousToBreathe(ccharacter* Who) const
 {
   return (!Who->StateIsActivated(GAS_IMMUNITY)
-	  && Who->GetAttribute(WISDOM) >= Gas->GetStepInWisdomLimit());
+          && Who->GetAttribute(WISDOM) >= Gas->GetStepInWisdomLimit());
 }
 
 truth smoke::IsScaryToBreathe(ccharacter* Who) const
 {
   return (!Who->StateIsActivated(GAS_IMMUNITY)
-	  && Gas->GetCategoryFlags() & IS_SCARY);
+          && Gas->GetCategoryFlags() & IS_SCARY);
 }

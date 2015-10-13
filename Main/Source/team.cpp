@@ -59,44 +59,44 @@ void team::Hostility(team* Enemy)
     {
       if(Enemy->ID == ATTNAM_TEAM)
       {
-	/* This is a gum solution. The message should come from the script. */
-	if(PLAYER->CanHear())
-	  ADD_MESSAGE("You hear an alarm ringing.");
+        /* This is a gum solution. The message should come from the script. */
+        if(PLAYER->CanHear())
+          ADD_MESSAGE("You hear an alarm ringing.");
 
-	if(game::GetStoryState() != 2)
-	{
-	  v2 AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : v2(28, 20);
-	  int Seen = 0;
-	  angel* Angel;
+        if(game::GetStoryState() != 2)
+        {
+          v2 AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : v2(28, 20);
+          int Seen = 0;
+          angel* Angel;
 
-	  for(int c = 0; c < 3; ++c)
-	  {
-	    if(!c)
-	      Angel = archangel::Spawn(VALPURUS);
-	    else
-	      Angel = angel::Spawn(VALPURUS);
+          for(int c = 0; c < 3; ++c)
+          {
+            if(!c)
+              Angel = archangel::Spawn(VALPURUS);
+            else
+              Angel = angel::Spawn(VALPURUS);
 
-	    v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
+            v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
 
-	    if(Where == ERROR_V2)
-	      Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
+            if(Where == ERROR_V2)
+              Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
 
-	    Angel->SetTeam(Enemy);
-	    Angel->PutTo(Where);
+            Angel->SetTeam(Enemy);
+            Angel->PutTo(Where);
 
-	    if(Angel->CanBeSeenByPlayer())
-	      ++Seen;
-	  }
+            if(Angel->CanBeSeenByPlayer())
+              ++Seen;
+          }
 
-	  if(Seen == 1)
-	    ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
-	  else if(Seen == 2)
-	    ADD_MESSAGE("Two %s materialize.", Angel->CHAR_NAME(PLURAL));
-	  else if(Seen == 3)
-	    ADD_MESSAGE("Three %s materialize.", Angel->CHAR_NAME(PLURAL));
+          if(Seen == 1)
+            ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
+          else if(Seen == 2)
+            ADD_MESSAGE("Two %s materialize.", Angel->CHAR_NAME(PLURAL));
+          else if(Seen == 3)
+            ADD_MESSAGE("Three %s materialize.", Angel->CHAR_NAME(PLURAL));
 
-	  ADD_MESSAGE("\"We will defend the Holy Order!\"");
-	}
+          ADD_MESSAGE("\"We will defend the Holy Order!\"");
+        }
       }
 
       ADD_MESSAGE("You have a feeling this wasn't a good idea...");
@@ -155,12 +155,12 @@ void team::MoveMembersTo(charactervector& CVector)
     if(p->IsEnabled())
     {
       if(p->GetAction() && p->GetAction()->IsVoluntary())
-	p->GetAction()->Terminate(false);
+        p->GetAction()->Terminate(false);
 
       if(!p->GetAction())
       {
-	CVector.push_back(p);
-	p->Remove();
+        CVector.push_back(p);
+        p->Remove();
       }
     }
 }

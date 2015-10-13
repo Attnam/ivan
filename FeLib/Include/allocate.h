@@ -28,7 +28,7 @@ inline void Alloc2D(type**& Map, int XSize, int YSize)
 
 template <class type>
 inline void Alloc2D(type**& Map, int XSize, int YSize,
-		    const type& Initializer)
+                    const type& Initializer)
 {
   cint Size = XSize * (sizeof(type*) + YSize * sizeof(type));
   Map = reinterpret_cast<type**>(new char[Size]);
@@ -47,8 +47,8 @@ template <class type>
 inline void Alloc3D(type***& Map, int XSize, int YSize, int ZSize)
 {
   cint Size = XSize * (sizeof(type**)
-		       + YSize * (sizeof(type*)
-				  + ZSize * sizeof(type)));
+                       + YSize * (sizeof(type*)
+                                  + ZSize * sizeof(type)));
   Map = reinterpret_cast<type***>(new char[Size]);
   type** XPointer = reinterpret_cast<type**>(Map + XSize);
   type* YPointer = reinterpret_cast<type*>(XPointer + XSize * YSize);
@@ -64,11 +64,11 @@ inline void Alloc3D(type***& Map, int XSize, int YSize, int ZSize)
 
 template <class type>
 inline void Alloc3D(type***& Map, int XSize, int YSize,
-		    int ZSize, const type& Initializer)
+                    int ZSize, const type& Initializer)
 {
   cint Size = XSize * (sizeof(type**)
-		       + YSize * (sizeof(type*)
-				  + ZSize * sizeof(type)));
+                       + YSize * (sizeof(type*)
+                                  + ZSize * sizeof(type)));
   Map = reinterpret_cast<type***>(new char[Size]);
   type** XPointer = reinterpret_cast<type**>(Map + XSize);
   type* YPointer = reinterpret_cast<type*>(XPointer + XSize * YSize);
@@ -82,7 +82,7 @@ inline void Alloc3D(type***& Map, int XSize, int YSize,
       Map[x][y] = YPointer;
 
       for(int z = 0; z < ZSize; ++z)
-	Map[x][y][z] = Initializer;
+        Map[x][y][z] = Initializer;
     }
   }
 }

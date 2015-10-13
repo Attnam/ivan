@@ -247,7 +247,7 @@ OLTERRAIN(barwall, olterrain)
 OLTERRAIN(ironmaiden, olterrain)
 {
  public:
-  ironmaiden() : Opened(false) {}
+  ironmaiden() : Opened(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual truth Open(character*);

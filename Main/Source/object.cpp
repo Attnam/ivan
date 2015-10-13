@@ -66,7 +66,9 @@ void object::Load(inputfile& SaveFile)
   LoadMaterial(SaveFile, MainMaterial);
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, long FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, long SecondDefaultVolume, truth CallUpdatePictures)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, long FirstDefaultVolume,
+                                 material*& SecondMaterial, material* SecondNewMaterial, long SecondDefaultVolume,
+                                 truth CallUpdatePictures)
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
@@ -107,8 +109,8 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
      && NewMaterial && NewMaterial->HasBe())
     Enable();
   else if(OldMaterial && OldMaterial->HasBe()
-	  && (!NewMaterial || !NewMaterial->HasBe())
-	  && !CalculateHasBe())
+          && (!NewMaterial || !NewMaterial->HasBe())
+          && !CalculateHasBe())
     Disable();
 
   if(NewMaterial)
@@ -116,11 +118,11 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
     if(!NewMaterial->GetVolume())
     {
       if(OldMaterial)
-	NewMaterial->SetVolume(OldMaterial->GetVolume());
+        NewMaterial->SetVolume(OldMaterial->GetVolume());
       else if(DefaultVolume)
-	NewMaterial->SetVolume(DefaultVolume);
+        NewMaterial->SetVolume(DefaultVolume);
       else
-	ABORT("Singularity spawn detected!");
+        ABORT("Singularity spawn detected!");
     }
 
     NewMaterial->SetMotherEntity(this);
@@ -147,10 +149,12 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
 void object::UpdatePictures()
 {
   static cv2 ZeroPos(0, 0);
-  UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(),
+                 GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulong SeedBase, int SpecialFlags, int GraphicsContainerIndex) const
+truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulong SeedBase,
+                                  int SpecialFlags, int GraphicsContainerIndex) const
 {
   static int SeedModifier = 1;
   femath::SaveSeed();
@@ -193,7 +197,9 @@ truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulo
     ValidityArraySize = 256;
   }
 
-  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, TILE_V2, ValidityArraySize, GetSparkleFlags());
+  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer,
+                                                                                  BPos, TILE_V2, ValidityArraySize,
+                                                                                  GetSparkleFlags());
 
   if(SparklePos != ERROR_V2)
   {
@@ -208,7 +214,8 @@ truth object::RandomizeSparklePos(v2& SparklePos, v2 BPos, int& SparkleTime, ulo
   }
 }
 
-void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFlags, alpha MaxAlpha, int GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
+void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFlags, alpha MaxAlpha,
+                            int GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
 {
   int AnimationFrames = GetClassAnimationFrames();
   v2 SparklePos;
@@ -218,10 +225,10 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   truth Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   v2 BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
-	
-  if(IsBurning()) //is burning is sometimes initially filled with crap, so Burning should be initialised to zero
+
+  if(IsBurning()) // is burning is sometimes initially filled with crap, so Burning should be initialised to zero
   {
-	  SpecialFlags |= ST_FLAMES;
+          SpecialFlags |= ST_FLAMES;
   }
 
   if(!(SpecialFlags & (ST_FLAMES|ST_LIGHTNING)))
@@ -231,14 +238,14 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
       int SparkleFlags = GetSparkleFlags();
 
       if(SparkleFlags
-	 && RandomizeSparklePos(SparklePos, BPos, SparkleTime,
-				BPos.X + BPos.Y + GetMaterialColorA(0),
-				SpecialFlags, GraphicsContainerIndex))
+         && RandomizeSparklePos(SparklePos, BPos, SparkleTime,
+                                BPos.X + BPos.Y + GetMaterialColorA(0),
+                                SpecialFlags, GraphicsContainerIndex))
       {
-	Sparkling = true;
+        Sparkling = true;
 
-	if(AnimationFrames <= 256)
-	  AnimationFrames = 256;
+        if(AnimationFrames <= 256)
+          AnimationFrames = 256;
       }
     }
 
@@ -248,7 +255,7 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
       FrameNeeded = true;
 
       if(AnimationFrames <= 32)
-	AnimationFrames = 32;
+        AnimationFrames = 32;
     }
   }
   else if(SpecialFlags & ST_FLAMES)
@@ -362,9 +369,9 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
     }
 
     GI.Frame = !c || FrameNeeded
-	       || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
-	       || (WobbleData & WOBBLE && !(c & WobbleMask))
-	       ? c : 0;
+               || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
+               || (WobbleData & WOBBLE && !(c & WobbleMask))
+               ? c : 0;
 
     GI.OutlineColor = GetOutlineColor(c);
     GI.OutlineAlpha = GetOutlineAlpha(c);
@@ -476,7 +483,10 @@ void object::CalculateEmitation()
     if(MainMaterial->IsBurning())
     {
       int CurrentBurnLevel = MainMaterial->GetBurnLevel();
-      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel, 120 - 8 * CurrentBurnLevel, 90 - 6 * CurrentBurnLevel)); //Use a value of emitation related to the burn level of the object
+      // Use a value of emitation related to the burn level of the object
+      game::CombineLights(Emitation, MakeRGB24(150 - 10 * CurrentBurnLevel,
+                                               120 - 8 * CurrentBurnLevel,
+                                               90 - 6 * CurrentBurnLevel));
     }
   }
 }
@@ -520,14 +530,14 @@ void object::InitSparkleValidityArrays()
   for(y = 10; y < 16; ++y)
     for(x = 0; x < 8; ++x)
       if((y != 10 || x < 5) && (y != 11 || x < 6) && (y != 12 || x < 7))
-	RightLegSparkleValidityArray[Index++] = v2(x, y);
+        RightLegSparkleValidityArray[Index++] = v2(x, y);
 
   Index = 0;
 
   for(y = 10; y < 16; ++y)
     for(x = 8; x < 16; ++x)
       if((y != 10 || x > 9) && (y != 11 || x > 8))
-	LeftLegSparkleValidityArray[Index++] = v2(x, y);
+        LeftLegSparkleValidityArray[Index++] = v2(x, y);
 
   Index = 0;
 
