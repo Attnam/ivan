@@ -101,7 +101,8 @@ class material
   friend class databasecreator<material>;
   typedef materialprototype prototype;
   typedef materialdatabase database;
-  material(int NewConfig, long InitVolume = 0, truth Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
+  material(int NewConfig, long InitVolume = 0, truth Load = false)
+  : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material() : MotherEntity(0) { }
   virtual ~material() = default; 
   void AddName(festring&, truth = false, truth = true) const;
@@ -216,7 +217,7 @@ class material
   truth IsStuckTo(ccharacter*) const;
   DATA_BASE_TRUTH(DisablesPanicWhenConsumed);
   DATA_BASE_VALUE(int, FireResistance);
-  virtual void SetIsBurning(int What) {Burning = What;}
+  virtual void SetIsBurning(int What) { Burning = What; }
   virtual int IsBurning() const { return Burning; }
   virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
   virtual void SetBurnLevel(int, truth) { }
@@ -236,7 +237,7 @@ class material
   const database* DataBase;
   entity* MotherEntity;
   long Volume;
-	int Burning;
+        int Burning;
 };
 
 template <class type, class base>
@@ -259,8 +260,8 @@ class materialsysbase : public base
 #define MATERIAL_PROTO(name, base)\
 template<> const materialprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   reinterpret_cast<materialspawner>(&name##sysbase::Spawn),\
-			   reinterpret_cast<materialcloner>(&name##sysbase::Clone), #name);
+                           reinterpret_cast<materialspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<materialcloner>(&name##sysbase::Clone), #name);
 #else
 #define MATERIAL_PROTO(name, base)
 #endif

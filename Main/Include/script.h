@@ -78,7 +78,7 @@ template <class type> struct scriptmember : public scriptmemberbase
 {
   virtual ~scriptmember() { delete Member; }
   scriptmember() : Member(0) { }
-  scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) { }
   scriptmember& operator=(const scriptmember&);
   virtual void ReadFrom(inputfile&);
   virtual void Replace(scriptmemberbase&);
@@ -87,7 +87,9 @@ template <class type> struct scriptmember : public scriptmemberbase
   type* Member;
 };
 
-template <class type, class scripttype> inline const type* GetMemberOf(const scriptmember<type>& Data, const scriptwithbase* Base, const type* (scripttype::*MemberRetriever)() const)
+template <class type, class scripttype>
+inline const type* GetMemberOf(const scriptmember<type>& Data, const scriptwithbase* Base,
+                               const type* (scripttype::*MemberRetriever)() const)
 {
   return Data.Member ? Data.Member : Base ? (static_cast<const scripttype*>(Base)->*MemberRetriever)() : 0;
 }

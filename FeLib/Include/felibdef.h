@@ -138,8 +138,8 @@ inline col16 MakeRGB16(int Red, int Green, int Blue)
 inline col16 MakeShadeColor(col16 Color)
 {
   return MakeRGB16(GetRed16(Color) / 3,
-		   GetGreen16(Color) / 3,
-		   GetBlue16(Color) / 3);
+                   GetGreen16(Color) / 3,
+                   GetBlue16(Color) / 3);
 }
 
 inline col24 GetRed24(col24 Color) { return Color >> 16 & 0xFF; }

@@ -5093,7 +5093,6 @@ rm -f core conftest.err conftest.$ac_objext \
      SDL2_LIBS=""
      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** SDL2 version $SDL2_VERSION not found!" >&5
 $as_echo "$as_me: WARNING: *** SDL2 version $SDL2_VERSION not found!" >&2;}
-
   fi
 
 
@@ -5101,7 +5100,7 @@ $as_echo "$as_me: WARNING: *** SDL2 version $SDL2_VERSION not found!" >&2;}
 
 
 if test "$SDL2_CONFIG" = "no"; then
-		SDL_VERSION=1.2.0
+        SDL_VERSION=1.2.0
 
 # Check whether --with-sdl-prefix was given.
 if test "${with_sdl_prefix+set}" = set; then :
@@ -5343,7 +5342,6 @@ rm -f core conftest.err conftest.$ac_objext \
      SDL_CFLAGS=""
      SDL_LIBS=""
      as_fn_error $? "*** SDL version $SDL_VERSION not found!" "$LINENO" 5
-
   fi
 
 

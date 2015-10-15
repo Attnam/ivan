@@ -63,57 +63,57 @@ int Main(int argc, char **argv)
   for(;;)
   {
     int Select = iosystem::Menu(igraph::GetMenuGraphic(),
-				v2(RES.X / 2, RES.Y / 2 - 20),
-				CONST_S("\r"),
-				CONST_S("Start Game\rContinue Game\r"
-					"Configuration\rHighscores\r"
-					"Quit\r"),
-				LIGHT_GRAY,
-				CONST_S("Released under the GNU\r"
-					"General Public License\r"
-					"More info: see COPYING\r"),
-				CONST_S("IVAN v" IVAN_VERSION "\r"));
+                                v2(RES.X / 2, RES.Y / 2 - 20),
+                                CONST_S("\r"),
+                                CONST_S("Start Game\rContinue Game\r"
+                                        "Configuration\rHighscores\r"
+                                        "Quit\r"),
+                                LIGHT_GRAY,
+                                CONST_S("Released under the GNU\r"
+                                        "General Public License\r"
+                                        "More info: see COPYING\r"),
+                                CONST_S("IVAN v" IVAN_VERSION "\r"));
 
     switch(Select)
     {
      case 0:
       if(game::Init())
       {
-	igraph::UnLoadMenu();
+        igraph::UnLoadMenu();
 
-	game::Run();
-	game::DeInit();
-	igraph::LoadMenu();
+        game::Run();
+        game::DeInit();
+        igraph::LoadMenu();
       }
 
       break;
      case 1:
       {
-	festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
 
-	if(LoadName.GetSize())
-	{
-	  LoadName.Resize(LoadName.GetSize() - 4);
+        if(LoadName.GetSize())
+        {
+          LoadName.Resize(LoadName.GetSize() - 4);
 
-	  if(game::Init(LoadName))
-	  {
-	    igraph::UnLoadMenu();
-	    game::Run();
-	    game::DeInit();
-	    igraph::LoadMenu();
-	  }
-	}
+          if(game::Init(LoadName))
+          {
+            igraph::UnLoadMenu();
+            game::Run();
+            game::DeInit();
+            igraph::LoadMenu();
+          }
+        }
 
-	break;
+        break;
       }
      case 2:
       ivanconfig::Show();
       break;
      case 3:
       {
-	highscore HScore;
-	HScore.Draw();
-	break;
+        highscore HScore;
+        HScore.Draw();
+        break;
       }
      case 4:
 

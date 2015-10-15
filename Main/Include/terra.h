@@ -28,7 +28,7 @@ class terrain
   virtual cchar* MonsterDeathVerb() const;
   virtual cchar* ScoreEntry() const;
   virtual truth IsFatalToStay() const { return false; }
-  virtual void SurviveEffect(character*) { };
+  virtual void SurviveEffect(character*) { }
 };
 
 class gterrain : public terrain

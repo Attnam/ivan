@@ -18,10 +18,12 @@
 void id::AddNameSingular(festring& String, truth Articled) const
 {
   if(Articled)
+  {
     if(UsesLongArticle())
       String << "an ";
     else
       String << "a ";
+  }
 
   String << GetNameSingular();
 }
@@ -99,10 +101,12 @@ truth id::AddAdjective(festring& String, truth Articled) const
   if(GetAdjective().GetSize())
   {
     if(Articled)
+    {
       if(UsesLongAdjectiveArticle())
-	String << "an ";
+        String << "an ";
       else
-	String << "a ";
+        String << "a ";
+    }
 
     String << GetAdjective() << ' ';
     return true;
@@ -115,7 +119,7 @@ void id::AddPostFix(festring& String, int) const
 {
   if(GetPostFix().GetSize())
     String << ' ' << GetPostFix();
-  
+
   if(NeedsBurningPostFix())
     String << " (on fire)";
 }

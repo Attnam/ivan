@@ -36,12 +36,12 @@ void solid::Be(ulong Flags)
     MotherEntity->Extinguish(true);
     ResetThermalEnergies();
   }
-  
-  if(TransientThermalEnergy > 0) //decrement the transient thermal energy  with the Be() function
+
+  if(TransientThermalEnergy > 0) // decrement the transient thermal energy with the Be() function
     --TransientThermalEnergy;
   else
     TransientThermalEnergy = 0;
-  
+
   if(BurnCheckCounter++ >= (50 + RAND_N(6)))
   {
     if(IsBurning())
@@ -79,7 +79,7 @@ void solid::Be(ulong Flags)
       {
         //SetBurnLevel(HEAVILY_BURNT, false);
         if(!(GetInteractionFlags() & RISES_FROM_ASHES))
-          MotherEntity->SignalBurn(this); //this is where it gets completely destroyed
+          MotherEntity->SignalBurn(this); // this is where it gets completely destroyed
         else
         {
           MotherEntity->AddSpecialExtinguishMessageForPF();
@@ -100,7 +100,7 @@ int solid::GetBurnModifier() const
   int Str = material::GetStrengthValue();
   int FR = material::GetFireResistance();
   int Den = material::GetDensity();
-  
+
   return (500 + Den + ((Str * FR) >> 1));
 }
 
@@ -109,10 +109,11 @@ void solid::SetBurnLevel(int What, truth SendMessages)
   truth Transitioned = true;
   if(!What)
     Transitioned = false;
-  
-  if(MotherEntity && Transitioned && SendMessages) // if you want to burn carnivorous plants in future, you had better make sure there are the right functions in char.cpp
+
+  if(MotherEntity && Transitioned && SendMessages) // if you want to burn carnivorous plants in future, you had
+                                                   // better make sure there are the right functions in char.cpp
     MotherEntity->SignalBurnLevelTransitionMessage();
-  
+
   if(GetBurnLevel() != What)
   {
     if(!BurnData) // if it is initially not burnt, then increase the burn level, seeding the flame graphics
@@ -130,13 +131,15 @@ void solid::SetBurnLevel(int What, truth SendMessages)
 void solid::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
-  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning << SteadyStateThermalEnergy << TransientThermalEnergy;
+  SaveFile << BurnCounter << BurnCheckCounter << BurnData << Burning
+           << SteadyStateThermalEnergy << TransientThermalEnergy;
 }
 
 void solid::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
-  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning >> SteadyStateThermalEnergy >> TransientThermalEnergy;
+  SaveFile >> BurnCounter >> BurnCheckCounter >> BurnData >> Burning
+           >> SteadyStateThermalEnergy >> TransientThermalEnergy;
 }
 
 truth solid::AddBurnLevelDescription(festring& Name, truth Articled) const
@@ -190,35 +193,35 @@ void organic::Be(ulong Flags)
     if(MotherEntity->AllowSpoil())
     {
       if(Flags & HASTE)
-       SpoilCounter += 125;
+        SpoilCounter += 125;
       else if(Flags & SLOW)
-       SpoilCounter += 5;
+        SpoilCounter += 5;
       else
-       SpoilCounter += 25;
+        SpoilCounter += 25;
 
       if(SpoilCounter < GetSpoilModifier())
       {
-       if(SpoilCounter << 1 >= GetSpoilModifier())
-       {
-         int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+        if(SpoilCounter << 1 >= GetSpoilModifier())
+        {
+          int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-         if(NewSpoilLevel != SpoilLevel)
-         {
-           SpoilLevel = NewSpoilLevel;
-           MotherEntity->SignalSpoilLevelChange(this);
-         }
-       }
+          if(NewSpoilLevel != SpoilLevel)
+          {
+            SpoilLevel = NewSpoilLevel;
+            MotherEntity->SignalSpoilLevelChange(this);
+          }
+        }
       }
       else
       {
-       SpoilLevel = 8;
-       MotherEntity->SignalSpoil(this);
+        SpoilLevel = 8;
+        MotherEntity->SignalSpoil(this);
       }
     }
 
     SpoilCheckCounter = 0;
   }
-  
+
   solid::Be(Flags);
 }
 
@@ -360,8 +363,8 @@ void organic::SetSpoilCounter(int What)
 
       if(NewSpoilLevel != SpoilLevel)
       {
-	SpoilLevel = NewSpoilLevel;
-	MotherEntity->SignalSpoilLevelChange(this);
+        SpoilLevel = NewSpoilLevel;
+        MotherEntity->SignalSpoilLevelChange(this);
       }
     }
   }
