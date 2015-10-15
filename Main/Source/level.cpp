@@ -514,7 +514,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   if(ItemMap)
   {
     v2 ItemPos(Pos + *ItemMap->GetPos());
-    const fearray<contentscript<item> >* ItemScript;
+    const fearray<contentscript<item>>* ItemScript;
 
     for(int x = 0; x < ItemMap->GetSize()->X; ++x)
     {
@@ -592,29 +592,26 @@ truth level::MakeRoom(const roomscript* RoomScript)
     }
   }
 
-  const std::list<squarescript> Square = RoomScript->GetSquare();
-
-  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+  for(const squarescript& Script : RoomScript->GetSquare())
   {
     game::BusyAnimation();
-    const squarescript* Script = &*i;
-    const interval* ScriptTimes = Script->GetTimes();
+    const interval* ScriptTimes = Script.GetTimes();
     int Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
     for(int t = 0; t < Times; ++t)
     {
       v2 SquarePos;
 
-      if(Script->GetPosition()->GetRandom())
+      if(Script.GetPosition()->GetRandom())
       {
-	const rect* ScriptBorders = Script->GetPosition()->GetBorders();
+	const rect* ScriptBorders = Script.GetPosition()->GetBorders();
 	rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - v2(1, 1));
-	SquarePos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), &Borders);
+	SquarePos = GetRandomSquare(0, Script.GetPosition()->GetFlags(), &Borders);
       }
       else
-	SquarePos = Pos + Script->GetPosition()->GetVector();
+	SquarePos = Pos + Script.GetPosition()->GetVector();
 
-      Map[SquarePos.X][SquarePos.Y]->ApplyScript(Script, RoomClass);
+      Map[SquarePos.X][SquarePos.Y]->ApplyScript(&Script, RoomClass);
     }
   }
 
@@ -1085,9 +1082,9 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i)
-	     && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
+        for(character* p : game::GetTeam(c)->GetMember())
+	  if(p->IsEnabled() && Leader->CanBeSeenBy(p)
+	     && Leader->SquareUnderCanBeSeenBy(p, true) && p->CanFollow())
 	  {
 	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	    return false;
@@ -1105,22 +1102,22 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled() && p != Leader
 	   && (TakeAll
-	       || (Leader->CanBeSeenBy(*i)
-		   && Leader->SquareUnderCanBeSeenBy(*i, true)))
-	   && (*i)->CanFollow()
-	   && (*i)->GetCommandFlags() & FOLLOW_LEADER)
+	       || (Leader->CanBeSeenBy(p)
+		   && Leader->SquareUnderCanBeSeenBy(p, true)))
+	   && p->CanFollow()
+	   && p->GetCommandFlags() & FOLLOW_LEADER)
 	{
-	  if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
-	    (*i)->GetAction()->Terminate(false);
+	  if(p->GetAction() && p->GetAction()->IsVoluntary())
+	    p->GetAction()->Terminate(false);
 
-	  if(!(*i)->GetAction())
+	  if(!p->GetAction())
 	  {
-	    ADD_MESSAGE("%s follows you.", (*i)->CHAR_NAME(DEFINITE));
-	    CharacterArray.push_back(*i);
-	    (*i)->Remove();
+	    ADD_MESSAGE("%s follows you.", p->CHAR_NAME(DEFINITE));
+	    CharacterArray.push_back(p);
+	    p->Remove();
 	  }
 	}
 
@@ -1841,23 +1838,17 @@ void level::GenerateDungeon(int Index)
     const levelscript* LevelBase = static_cast<const levelscript*>(LevelScript->GetBase());
 
     if(LevelBase)
-    {
-      const std::list<squarescript>& Square = LevelBase->GetSquare();
-
-      for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+      for(const squarescript& Script : LevelBase->GetSquare())
       {
 	game::BusyAnimation();
-	ApplyLSquareScript(&*i);
+	ApplyLSquareScript(&Script);
       }
-    }
   }
 
-  const std::list<squarescript>& Square = LevelScript->GetSquare();
-
-  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+  for(const squarescript& Script : LevelScript->GetSquare())
   {
     game::BusyAnimation();
-    ApplyLSquareScript(&*i);
+    ApplyLSquareScript(&Script);
   }
 
   for(c = 0; c < AttachQueue.size(); ++c)
@@ -2422,9 +2413,9 @@ truth sunbeamcontroller::ReSunEmitation;
 
 void level::ForceEmitterNoxify(const emittervector& Emitter) const
 {
-  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+  for(const emitter& e : Emitter)
   {
-    ulong ID = i->ID;
+    ulong ID = e.ID;
     lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
 
     if(ID & SECONDARY_SUN_LIGHT)
@@ -2436,9 +2427,9 @@ void level::ForceEmitterNoxify(const emittervector& Emitter) const
 
 void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemittervector& SunEmitter, ulong IDFlags) const
 {
-  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+  for(const emitter& e : Emitter)
   {
-    ulong ID = i->ID;
+    ulong ID = e.ID;
     lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
 
     if(ID & SECONDARY_SUN_LIGHT)
@@ -2455,9 +2446,9 @@ void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemitter
     stackcontroller::LevelYSize = YSize;
     sunbeamcontroller::ReSunEmitation = true;
 
-    for(sunemittervector::const_iterator i = SunEmitter.begin(); i != SunEmitter.end(); ++i)
+    for(sunemittervector::value_type SE : SunEmitter)
     {
-      ulong ID = (*i & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS)) | RE_SUN_EMITATED, SourceFlags;
+      ulong ID = (SE & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS)) | RE_SUN_EMITATED, SourceFlags;
       int X, Y;
 
       if(ID & ID_X_COORDINATE)
@@ -2537,9 +2528,9 @@ void level::UpdateLOS()
 
   if(PLAYER->StateIsActivated(INFRA_VISION))
     for(int c = 0; c < game::GetTeams(); ++c)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	  (*i)->SendNewDrawRequest();
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
+	  p->SendNewDrawRequest();
 }
 
 void level::EnableGlobalRain()

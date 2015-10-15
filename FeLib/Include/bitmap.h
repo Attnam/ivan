@@ -26,9 +26,9 @@ typedef void (*bitmapeditor)(bitmap*, truth);
 struct blitdata
 {
   bitmap* Bitmap;
-  podv2 Src;
-  podv2 Dest;
-  podv2 Border;
+  v2 Src;
+  v2 Dest;
+  v2 Border;
   union
   {
     col24 Luminance;

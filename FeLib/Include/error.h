@@ -26,7 +26,7 @@ class globalerrorhandler
  public:
   static void Install();
   static void DeInstall();
-  static void NO_RETURN LIKE_PRINTF(1, 2) Abort(cchar*, ...);
+  [[noreturn]] static void LIKE_PRINTF(1, 2) Abort(cchar*, ...);
   static cchar* GetBugMsg() { return BugMsg; }
  private:
   static cchar* BugMsg;

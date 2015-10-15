@@ -30,8 +30,7 @@ class festring
   festring() : Data(0), Size(0), OwnsData(false) { }
   explicit festring(sizetype);
   festring(sizetype, char);
-  festring(cchar* CStr)
-  : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
+  festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
   festring(cchar* CStr, sizetype N)
   : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
   festring(cfestring&);
@@ -156,12 +155,9 @@ inline festring::festring(sizetype N)
 }
 
 inline festring::festring(sizetype N, char C)
-: Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
+: festring(N)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];
-  REFS(Ptr) = 0;
-  Data = Ptr;
-  memset(Ptr, C, N);
+  memset(Data, C, N);
 }
 
 inline festring::~festring()

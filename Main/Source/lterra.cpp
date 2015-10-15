@@ -87,7 +87,7 @@ truth lterrain::SitOn(character* Sitter)
 void olterrain::Break()
 {
   lsquare* Square = GetLSquareUnder();
-  const fearray<contentscript<item> >& ItemArray = GetLeftOverItems();
+  const fearray<contentscript<item>>& ItemArray = GetLeftOverItems();
 
   for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
     if(ItemArray[c1].IsValid())

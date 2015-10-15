@@ -73,7 +73,7 @@ inputfile& operator>>(inputfile&, homedata*&);
 
 struct configid
 {
-  configid() { }
+  configid() = default;
   configid(int Type, int Config) : Type(Type), Config(Config) { }
   bool operator<(const configid& CI) const { return memcmp(this, &CI, sizeof(configid)) < 0; }
   int Type NO_ALIGNMENT;
@@ -89,7 +89,7 @@ inputfile& operator>>(inputfile&, configid&);
 
 struct dangerid
 {
-  dangerid() { }
+  dangerid() = default;
   dangerid(double NakedDanger, double EquippedDanger) : NakedDanger(NakedDanger), EquippedDanger(EquippedDanger) { }
   double NakedDanger;
   double EquippedDanger;
@@ -107,7 +107,7 @@ struct ivantime
 
 struct massacreid
 {
-  massacreid() { }
+  massacreid() = default;
   massacreid(int Type, int Config, cfestring& Name)
   : Type(Type), Config(Config), Name(Name) { }
   bool operator<(const massacreid&) const;
@@ -132,7 +132,7 @@ inputfile& operator>>(inputfile&, massacreid&);
 
 struct killreason
 {
-  killreason() { }
+  killreason() = default;
   killreason(cfestring& String, int Amount) : String(String), Amount(Amount) { }
   festring String;
   int Amount;

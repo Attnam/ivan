@@ -235,7 +235,7 @@ INST_ADD_MEMBER(olterrain, long);
 INST_ADD_MEMBER(olterrain, v2);
 INST_ADD_MEMBER(olterrain, festring);
 INST_ADD_MEMBER(olterrain, fearray<long>);
-INST_ADD_MEMBER(olterrain, fearray<contentscript<item> >);
+INST_ADD_MEMBER(olterrain, fearray<contentscript<item>>);
 
 INST_ADD_MEMBER(material, int);
 INST_ADD_MEMBER(material, long);

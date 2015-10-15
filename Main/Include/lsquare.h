@@ -41,7 +41,7 @@ typedef truth (item::*sorter)(ccharacter*) const;
 struct emitter
 {
   emitter(ulong ID, col24 Emitation) : ID(ID), Emitation(Emitation) { }
-  explicit emitter() { }
+  explicit emitter() = default;
   ulong ID;
   col24 Emitation;
 };

@@ -561,10 +561,14 @@ void genetrixvesana::GetAICommand()
     {
       for(int c2 = 0; c2 < game::GetTeams() && NumberOfPlants; ++c2)
 	if(GetTeam()->GetRelation(game::GetTeam(c2)) == HOSTILE)
-	  for(std::list<character*>::const_iterator i = game::GetTeam(c2)->GetMember().begin(); i != game::GetTeam(c2)->GetMember().end() && NumberOfPlants; ++i)
-	    if((*i)->IsEnabled())
+          for(character* p : game::GetTeam(c2)->GetMember())
+          {
+            if(!NumberOfPlants)
+              break;
+
+	    if(p->IsEnabled())
 	    {
-	      lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() % GetNeighbourSquares());
+	      lsquare* LSquare = p->GetNeighbourLSquare(RAND() % GetNeighbourSquares());
 
 	      if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
 	      {
@@ -588,15 +592,16 @@ void genetrixvesana::GetAICommand()
 
 		if(NewPlant->CanBeSeenByPlayer())
 		{
-		  if((*i)->IsPlayer())
+		  if(p->IsPlayer())
 		    ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(INDEFINITE));
-		  else if((*i)->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(INDEFINITE), (*i)->CHAR_NAME(DEFINITE));
+		  else if(p->CanBeSeenByPlayer())
+		    ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(INDEFINITE), p->CHAR_NAME(DEFINITE));
 		  else
 		    ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(INDEFINITE));
 		}
 	      }
 	    }
+          }
     }
 
     EditAP(-2000);
@@ -1707,14 +1712,14 @@ truth bunny::CheckForMatePartner()
 
     for(int c = 0; c < game::GetTeams(); ++c)
       if(GetTeam()->GetRelation(game::GetTeam(c)) != HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && (*i)->IsBunny() && (*i)->GetConfig() == ADULT_FEMALE && (*i)->GetNP() > SATIATED_LEVEL)
+        for(character* p : game::GetTeam(c)->GetMember())
+	  if(p->IsEnabled() && p->IsBunny() && p->GetConfig() == ADULT_FEMALE && p->GetNP() > SATIATED_LEVEL)
 	  {
-	    double Danger = (*i)->GetRelativeDanger(this, true);
+	    double Danger = p->GetRelativeDanger(this, true);
 
 	    if(Danger > BestPartnerDanger)
 	    {
-	      BestPartner = *i;
+	      BestPartner = p;
 	      BestPartnerDanger = Danger;
 	    }
 	  }
@@ -2075,24 +2080,24 @@ void mysticfrog::GetAICommand()
   {
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled())
 	{
 	  Enemies = true;
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 
-	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && p->CanBeSeenBy(this))
 	  {
-	    NearestEnemy = *i;
+	    NearestEnemy = p;
 	    NearestEnemyDistance = ThisDistance;
 	  }
 	}
     }
     else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
-	  Friend.push_back(*i);
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled() && p->CanBeSeenBy(this))
+	  Friend.push_back(p);
     }
   }
 
@@ -2230,19 +2235,18 @@ void spider::GetAICommand()
 
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
-	  i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+      for(character* p : game::GetTeam(c)->GetMember())
+	if(p->IsEnabled() && GetAttribute(WISDOM) < p->GetAttackWisdomLimit())
 	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	  long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 	  ++Hostiles;
 
 	  if((ThisDistance < NearestDistance
 	      || (ThisDistance == NearestDistance && !(RAND() % 3)))
-	     && (*i)->CanBeSeenBy(this, false, IsGoingSomeWhere())
-	     && (!IsGoingSomeWhere() || HasClearRouteTo((*i)->GetPos())))
+	     && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+	     && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
 	  {
-	    NearestChar = *i;
+	    NearestChar = p;
 	    NearestDistance = ThisDistance;
 	  }
 	}
