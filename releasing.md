@@ -61,6 +61,10 @@ To do for each release
   - material.dat
   - olterra.dat
 
+**Folder: Scrshot**
+
+**Files = 0**
+
 ###Then commit changes, with the release tag v0505
 Tag can be appended to latest commit
 
