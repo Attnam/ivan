@@ -73,7 +73,7 @@ inputfile& operator>>(inputfile&, homedata*&);
 
 struct configid
 {
-  configid() { }
+  configid() = default;
   configid(int Type, int Config) : Type(Type), Config(Config) { }
   bool operator<(const configid& CI) const { return memcmp(this, &CI, sizeof(configid)) < 0; }
   int Type NO_ALIGNMENT;
@@ -89,7 +89,7 @@ inputfile& operator>>(inputfile&, configid&);
 
 struct dangerid
 {
-  dangerid() { }
+  dangerid() = default;
   dangerid(double NakedDanger, double EquippedDanger) : NakedDanger(NakedDanger), EquippedDanger(EquippedDanger) { }
   double NakedDanger;
   double EquippedDanger;
@@ -107,7 +107,7 @@ struct ivantime
 
 struct massacreid
 {
-  massacreid() { }
+  massacreid() = default;
   massacreid(int Type, int Config, cfestring& Name)
   : Type(Type), Config(Config), Name(Name) { }
   bool operator<(const massacreid&) const;
@@ -132,7 +132,7 @@ inputfile& operator>>(inputfile&, massacreid&);
 
 struct killreason
 {
-  killreason() { }
+  killreason() = default;
   killreason(cfestring& String, int Amount) : String(String), Amount(Amount) { }
   festring String;
   int Amount;
@@ -173,6 +173,7 @@ class game
   static void Run();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
+  static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
   static cv2 GetRelativeMoveVector(int I) { return RelativeMoveVector[I]; }
   static cv2 GetBasicMoveVector(int I) { return BasicMoveVector[I]; }
   static cv2 GetLargeMoveVector(int I) { return LargeMoveVector[I]; }
@@ -242,7 +243,7 @@ class game
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static festring StringQuestion(cfestring&, col16, festring::sizetype, festring::sizetype, truth, stringkeyhandler = 0);
+  static int StringQuestion(festring&, cfestring&, col16, festring::sizetype, festring::sizetype, truth, stringkeyhandler = 0);
   static long NumberQuestion(cfestring&, int, truth = false);
   static ulong IncreaseLOSTick();
   static ulong GetLOSTick() { return LOSTick; }
@@ -316,7 +317,8 @@ class game
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetHomeDir();
   static festring GetSaveDir();
-  static festring GetGameDir();
+  static festring GetScrshotDir();
+  static festring GetDataDir();
   static festring GetBoneDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
   static void SetPlayerWasHurtByExplosion(truth What) { PlayerHurtByExplosion = What; }
@@ -389,8 +391,8 @@ class game
   static int CalculateMinimumEmitationRadius(col24);
   static ulong IncreaseSquarePartEmitationTicks();
   static cint GetLargeMoveDirection(int I) { return LargeMoveDirection[I]; }
-  static void Wish(character*, cchar*, cchar*);
-  static festring DefaultQuestion(festring, festring&, stringkeyhandler = 0);
+  static int Wish(character*, cchar*, cchar*, truth);
+  static int DefaultQuestion(festring&, festring, festring&, truth, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
   static void IncreaseTurn() { ++Turn; }
@@ -440,6 +442,7 @@ class game
   static cint MoveAbnormalCommandKey[];
   static cint MoveNetHackCommandKey[];
   static cv2 MoveVector[];
+  static cv2 ClockwiseMoveVector[];
   static cv2 RelativeMoveVector[];
   static cv2 BasicMoveVector[];
   static cv2 LargeMoveVector[];
@@ -568,8 +571,8 @@ inline truth game::IsDark(col24 Light)
 {
   return !Light
     || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
-	&& (Light & 0x00FF00) < (LIGHT_BORDER << 8)
-	&& (Light & 0x0000FF) < LIGHT_BORDER);
+        && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+        && (Light & 0x0000FF) < LIGHT_BORDER);
 }
 
 inline int game::CompareLights(col24 L1, col24 L2)
@@ -581,8 +584,8 @@ inline int game::CompareLights(col24 L1, col24 L2)
        || (L1 & 0x0000FF) > (L2 & 0x0000FF))
       return 1;
     else if((L1 & 0xFF0000) == (L2 & 0xFF0000)
-	    || (L1 & 0x00FF00) == (L2 & 0x00FF00)
-	    || (L1 & 0x0000FF) == (L2 & 0x0000FF))
+            || (L1 & 0x00FF00) == (L2 & 0x00FF00)
+            || (L1 & 0x0000FF) == (L2 & 0x0000FF))
       return 0;
     else
       return -1;

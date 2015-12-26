@@ -20,7 +20,7 @@
 ITEM(materialcontainer, item)
 {
  public:
-  materialcontainer() { }
+  materialcontainer() = default;
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
@@ -414,7 +414,7 @@ ITEM(itemcontainer, lockableitem)
   virtual void DrawContents(ccharacter*);
   virtual truth Apply(character* Applier) { return Open(Applier); }
   virtual truth IsAppliable(ccharacter*) const { return true; }
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int);
   virtual truth AllowContentEmitation() const { return false; }
   virtual truth IsDestroyable(ccharacter*) const;
   virtual int GetOfferValue(int) const;
@@ -474,7 +474,7 @@ ITEM(stethoscope, item)
 {
  public:
   virtual truth Apply(character*);
-  virtual truth IsAppliable(ccharacter*) const { return true; };
+  virtual truth IsAppliable(ccharacter*) const { return true; }
 };
 
 ITEM(scrollofenchantweapon, scroll)
@@ -571,7 +571,6 @@ ITEM(scrollofgolemcreation, scroll)
  public:
   virtual void FinishReading(character*);
 };
-
 
 ITEM(gasgrenade, materialcontainer)
 {

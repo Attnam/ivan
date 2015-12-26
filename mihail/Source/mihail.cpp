@@ -32,12 +32,12 @@ int Main(int argc, char** argv)
       highscore Input(argv[2]);
 
       if(!Input.GetSize()) {
-	std::cout << "No games. No winners.\n";
+        std::cout << "No games. No winners.\n";
       }
       std::cout << std::endl;
 
       for(festring::sizetype c = 0; c < Input.GetSize(); ++c)
-	std::cout << c + 1 << " " << Input.GetEntry(c).CStr() << " " << Input.GetScore(c) << "\n";
+        std::cout << c + 1 << " " << Input.GetEntry(c).CStr() << " " << Input.GetScore(c) << "\n";
 
       return 0;
     } else if(Arg == "-h")
@@ -48,8 +48,8 @@ int Main(int argc, char** argv)
     {
       if(!DebugDraw(argv[2]))
       {
-	std::cout << "\nProblem showing version number\n";
-	return 1;
+        std::cout << "\nProblem showing version number\n";
+        return 1;
       }
       return 0;
     }

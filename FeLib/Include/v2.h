@@ -25,17 +25,11 @@ struct packv2
   short X, Y;
 };
 
-struct podv2
-{
-  operator v2() const;
-  int X, Y;
-};
-
 /* Standard structure for representing positions */
 
 struct v2
 {
-  v2() { }
+  v2() = default;
   v2(int X, int Y) : X(X), Y(Y) { }
   v2 operator+(v2 V) const { return v2(X + V.X, Y + V.Y); }
   v2& operator+=(v2 V) { X += V.X; Y += V.Y; return *this; }
@@ -73,18 +67,12 @@ struct v2
     packv2 V = { static_cast<short>(X), static_cast<short>(Y) };
     return V;
   }
-  operator podv2() const
-  {
-    podv2 V = { X, Y };
-    return V;
-  }
 
-  //  v2 Randomize() const; Would be a good idea.
+  // v2 Randomize() const; Would be a good idea.
   int X, Y;
 };
 
 inline packv2::operator v2() const { return v2(X, Y); }
-inline podv2::operator v2() const { return v2(X, Y); }
 
 /*
  * Rotates a position Vect of a square map of size

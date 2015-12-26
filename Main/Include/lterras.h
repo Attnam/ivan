@@ -124,7 +124,7 @@ OLTERRAIN(olterraincontainer, olterrain)
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int);
   virtual void Break();
   virtual truth AllowContentEmitation() const { return false; }
   virtual void PreProcessForBone();
@@ -247,7 +247,7 @@ OLTERRAIN(barwall, olterrain)
 OLTERRAIN(ironmaiden, olterrain)
 {
  public:
-  ironmaiden() : Opened(false) {}
+  ironmaiden() : Opened(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual truth Open(character*);

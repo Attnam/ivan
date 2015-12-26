@@ -16,7 +16,6 @@ uchar** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;
 
-continent::continent() { }
 continent::continent(int Index) : Index(Index) { }
 long continent::GetSize() const { return Member.size(); }
 int continent::GetGTerrainAmount(int Type) const { return GTerrainAmount[Type]; }
@@ -71,7 +70,7 @@ v2 continent::GetRandomMember(int Type)
       TypeContainer[Index++] = Member[c];
 
       if(Index == GetGTerrainAmount(Type))
-	break;
+        break;
     }
 
   v2 Return = TypeContainer[RAND() % Index];

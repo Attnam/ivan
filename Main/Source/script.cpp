@@ -95,7 +95,7 @@ INST_SCRIPT_MEMBER(squarescript);
 INST_SCRIPT_MEMBER(roomscript);
 INST_SCRIPT_MEMBER(levelscript);
 INST_SCRIPT_MEMBER(contentscript<character>);
-INST_SCRIPT_MEMBER(fearray<contentscript<item> >);
+INST_SCRIPT_MEMBER(fearray<contentscript<item>>);
 INST_SCRIPT_MEMBER(contentscript<glterrain>);
 INST_SCRIPT_MEMBER(contentscript<olterrain>);
 INST_SCRIPT_MEMBER(charactercontentmap);
@@ -159,14 +159,14 @@ scriptmemberbase* script::GetDataFromMap(const datamap& DataMap, cchar* Identifi
 
 void script::SaveDataMap(const datamap& DataMap, outputfile& SaveFile) const
 {
-  for(datamap::const_iterator i = DataMap.begin(); i != DataMap.end(); ++i)
-    (this->*i->second).Save(SaveFile);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Save(SaveFile);
 }
 
 void script::LoadDataMap(const datamap& DataMap, inputfile& SaveFile)
 {
-  for(datamap::const_iterator i = DataMap.begin(); i != DataMap.end(); ++i)
-    (this->*i->second).Load(SaveFile);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Load(SaveFile);
 }
 
 template <class scriptmemberptr> void InitMember(script::datamap& DataMap, cchar* Identifier, scriptmemberptr DataMember)
@@ -307,7 +307,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     if(i != game::GetGlobalValueMap().end())
     {
       if(!GetSecondaryMaterial())
-	SecondaryMaterialHolder.Member = new materialscript;
+        SecondaryMaterialHolder.Member = new materialscript;
 
       SecondaryMaterialHolder.Member->SetConfig(i->second);
       SaveFile.ReadWord(Word);
@@ -333,7 +333,8 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     if(ContentType || Word == "0")
       SaveFile.ReadWord(Word);
     else
-      ABORT("Odd script term %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+      ABORT("Odd script term %s encountered in %s content script, file %s line %ld!",
+            Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
   }
 
   if(Word == "(")
@@ -348,11 +349,13 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+        ABORT("Odd script term %s encountered in %s content script, file %s line %ld!",
+              Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
     }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script, file %s line %ld!", Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %ld!",
+            Word.CStr(), GetClassID(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 scriptmemberbase* basecontentscript::GetData(cchar* String)
@@ -397,15 +400,15 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(int Sp
 
       if(DataBase->AllowRandomInstantiation())
       {
-	if(!(SpecialFlags & NO_MATERIALS)
-	   && MainMaterial
-	   && (!DataBase->HasSecondaryMaterial || SecondaryMaterial))
-	{
-	  SpecialFlags |= NO_MATERIALS;
-	  UseOverriddenMaterials = true;
-	}
+        if(!(SpecialFlags & NO_MATERIALS)
+           && MainMaterial
+           && (!DataBase->HasSecondaryMaterial || SecondaryMaterial))
+        {
+          SpecialFlags |= NO_MATERIALS;
+          UseOverriddenMaterials = true;
+        }
 
-	Instance = Proto->Spawn(DataBase->Config, SpecialFlags|NO_PIC_UPDATE);
+        Instance = Proto->Spawn(DataBase->Config, SpecialFlags|NO_PIC_UPDATE);
       }
     }
   }
@@ -483,7 +486,7 @@ character* contentscript<character>::Instantiate(int SpecialFlags) const
   if(GetTeam() != DEFAULT_TEAM)
     Instance->SetTeam(game::GetTeam(GetTeam()));
 
-  const fearray<contentscript<item> >* Inventory = GetInventory();
+  const fearray<contentscript<item>>* Inventory = GetInventory();
 
   if(Inventory)
     Instance->AddToInventory(*Inventory, SpecialFlags);
@@ -534,7 +537,7 @@ item* contentscript<item>::InstantiateBasedOnMaterial(int MaterialConfig, int Sp
   {
     const materialscript* MainMaterial = GetMainMaterial();
     long Volume = MainMaterial && MainMaterial->GetVolume()
-		  ? MainMaterial->GetVolume()->Randomize() : 0;
+                  ? MainMaterial->GetVolume()->Randomize() : 0;
     return material::CreateNaturalForm(MaterialConfig, Volume);
   }
   else
@@ -567,7 +570,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   if(GetEnchantment() != 0)
     Instance->SetEnchantment(GetEnchantment());
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -578,7 +581,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
   return Instance;
 }
 
-truth IsValidScript(const fearray<contentscript<item> >* Array)
+truth IsValidScript(const fearray<contentscript<item>>* Array)
 {
   for(uint c = 0; c < Array->Size; ++c)
     if(IsValidScript(&Array->Data[c]))
@@ -631,7 +634,7 @@ olterrain* contentscript<olterrain>::Instantiate(int SpecialFlags) const
   if(Text)
     Instance->SetText(*Text);
 
-  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item>>* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -670,7 +673,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in square script line %ld!", Word.CStr(), SaveFile.TellLine());
+        ABORT("Odd script term %s encountered in square script line %ld!", Word.CStr(), SaveFile.TellLine());
   }
   else
   {
@@ -698,10 +701,12 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
-    ABORT("Illegal %s content map redefinition on line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Illegal %s content map redefinition on line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Bracket missing in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   SymbolMap.insert(std::pair<int, contenttype>('.', contenttype()));
   static festring Word1, Word2;
@@ -711,30 +716,34 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
     if(Word1 == "Types")
     {
       if(SaveFile.ReadWord() != "{")
-	ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+        ABORT("Missing bracket in %s content map script line %ld!",
+              protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word2); Word2 != "}"; Word2 = SaveFile.ReadWord())
       {
-	std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<int, contenttype>(Word2[0], contenttype()));
+        std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<int, contenttype>(Word2[0], contenttype()));
 
-	if(Return.second)
-	  ReadData(Return.first->second, SaveFile);
-	else
-	  ABORT("Symbol %c defined again in %s content map script line %ld!", Word2[0], protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+        if(Return.second)
+          ReadData(Return.first->second, SaveFile);
+        else
+          ABORT("Symbol %c defined again in %s content map script line %ld!", Word2[0],
+                protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
       }
 
       continue;
     }
 
     if(!ReadMember(SaveFile, Word1))
-      ABORT("Odd script term %s encountered in %s content script line %ld!", Word1.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+      ABORT("Odd script term %s encountered in %s content script line %ld!", Word1.CStr(),
+            protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
   }
 
   v2 Size = *GetSize();
   Alloc2D(ContentMap, Size.X, Size.Y);
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
   for(int y = 0; y < Size.Y; ++y)
     for(int x = 0; x < Size.X; ++x)
@@ -743,13 +752,15 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
       typename std::map<int, contenttype>::iterator i = SymbolMap.find(Char);
 
       if(i != SymbolMap.end())
-	ContentMap[x][y] = std::make_pair(Char, &i->second);
+        ContentMap[x][y] = std::make_pair(Char, &i->second);
       else
-	ABORT("Illegal content %c in %s content map line %ld!", Char, protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+        ABORT("Illegal content %c in %s content map line %ld!", Char,
+              protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
     }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Missing bracket in %s content map script line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %ld!",
+          protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::Save(outputfile& SaveFile) const
@@ -914,7 +925,7 @@ void levelscript::ReadFrom(inputfile& SaveFile)
       const roomscript* RoomDefault = GetRoomDefault();
 
       if(RoomDefault)
-	Room.back().SetBase(RoomDefault);
+        Room.back().SetBase(RoomDefault);
 
       Room.back().ReadFrom(SaveFile);
       continue;
@@ -954,11 +965,11 @@ void levelscript::Combine(levelscript& Script)
   Square.splice(Square.end(), Script.Square);
   Room.splice(Room.end(), Script.Room);
 
-  for(std::list<roomscript>::iterator i1 = Room.begin(); i1 != Room.end(); ++i1)
-    i1->SetBase(GetRoomDefault());
+  for(roomscript& RoomScript : Room)
+    RoomScript.SetBase(GetRoomDefault());
 
-  for(datamap::const_iterator i2 = DataMap.begin(); i2 != DataMap.end(); ++i2)
-    (this->*i2->second).Replace(Script.*i2->second);
+  for(const datamap::value_type& p : DataMap)
+    (this->*p.second).Replace(Script.*p.second);
 }
 
 void levelscript::SetBase(const scriptwithbase* What)
@@ -971,8 +982,8 @@ void levelscript::SetBase(const scriptwithbase* What)
     roomscript* ThisRoomDefault = RoomDefaultHolder.Member;
 
     if(!ThisRoomDefault)
-      for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
-	i->SetBase(BaseRoomDefault);
+      for(roomscript& RoomScript : Room)
+        RoomScript.SetBase(BaseRoomDefault);
     else
       ThisRoomDefault->SetBase(BaseRoomDefault);
   }
@@ -991,12 +1002,10 @@ void levelscript::Load(inputfile& SaveFile)
   const roomscript* RoomDefault = GetRoomDefault();
 
   if(RoomDefault)
-    for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
-      i->SetBase(RoomDefault);
+    for(roomscript& RoomScript : Room)
+      RoomScript.SetBase(RoomDefault);
 }
 
-dungeonscript::dungeonscript() { }
-dungeonscript::~dungeonscript() { }
 const std::map<int, levelscript>& dungeonscript::GetLevel() const { return Level; }
 
 void dungeonscript::InitDataMap()
@@ -1023,16 +1032,16 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 
       if(Return.second)
       {
-	levelscript& LS = Return.first->second;
-	const levelscript* LevelDefault = GetLevelDefault();
+        levelscript& LS = Return.first->second;
+        const levelscript* LevelDefault = GetLevelDefault();
 
-	if(LevelDefault)
-	  LS.SetBase(LevelDefault);
+        if(LevelDefault)
+          LS.SetBase(LevelDefault);
 
-	LS.ReadFrom(SaveFile);
+        LS.ReadFrom(SaveFile);
       }
       else
-	ABORT("Level #%d defined again in dungeon script line %ld!", Index, SaveFile.TellLine());
+        ABORT("Level #%d defined again in dungeon script line %ld!", Index, SaveFile.TellLine());
 
       continue;
     }
@@ -1045,7 +1054,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
       const levelscript* LevelDefault = GetLevelDefault();
 
       if(LevelDefault)
-	RandomLevel.back().second.SetBase(LevelDefault);
+        RandomLevel.back().second.SetBase(LevelDefault);
 
       RandomLevel.back().second.ReadFrom(SaveFile);
       continue;
@@ -1058,10 +1067,10 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 
 void dungeonscript::RandomizeLevels()
 {
-  for(std::list<std::pair<interval, levelscript> >::iterator i = RandomLevel.begin(); i != RandomLevel.end(); ++i)
+  for(std::pair<interval, levelscript>& p : RandomLevel)
   {
-    int Index = i->first.Randomize();
-    Level[Index].Combine(i->second);
+    int Index = p.first.Randomize();
+    Level[Index].Combine(p.second);
   }
 
   RandomLevel.clear();
@@ -1081,15 +1090,15 @@ void dungeonscript::Load(inputfile& SaveFile)
 
   if(LevelDefault)
   {
-    for(std::map<int, levelscript>::iterator i1 = Level.begin(); i1 != Level.end(); ++i1)
-      i1->second.SetBase(LevelDefault);
+    for(std::pair<const int, levelscript>& p : Level)
+      p.second.SetBase(LevelDefault);
 
-    for(std::list<std::pair<interval, levelscript> >::iterator i2 = RandomLevel.begin(); i2 != RandomLevel.end(); ++i2)
-      i2->second.SetBase(LevelDefault);
+    for(std::pair<interval, levelscript>& p : RandomLevel)
+      p.second.SetBase(LevelDefault);
   }
 }
 
-const std::vector<std::pair<int, int> >& teamscript::GetRelation() const { return Relation; }
+const std::vector<std::pair<int, int>>& teamscript::GetRelation() const { return Relation; }
 
 void teamscript::InitDataMap()
 {
@@ -1131,7 +1140,7 @@ void teamscript::Load(inputfile& SaveFile)
   SaveFile >> Relation;
 }
 
-const std::list<std::pair<int, teamscript> >& gamescript::GetTeam() const { return Team; }
+const std::list<std::pair<int, teamscript>>& gamescript::GetTeam() const { return Team; }
 const std::map<int, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
 
 void gamescript::InitDataMap()
@@ -1152,9 +1161,9 @@ void gamescript::ReadFrom(inputfile& SaveFile)
       std::pair<std::map<int, dungeonscript>::iterator, bool> Return = Dungeon.insert(std::make_pair(Index, dungeonscript()));
 
       if(Return.second)
-	Return.first->second.ReadFrom(SaveFile);
+        Return.first->second.ReadFrom(SaveFile);
       else
-	ABORT("Dungeon #%d defined again in game script line %ld!", Index, SaveFile.TellLine());
+        ABORT("Dungeon #%d defined again in game script line %ld!", Index, SaveFile.TellLine());
 
       continue;
     }
@@ -1174,8 +1183,8 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 
 void gamescript::RandomizeLevels()
 {
-  for(std::map<int, dungeonscript>::iterator i = Dungeon.begin(); i != Dungeon.end(); ++i)
-    i->second.RandomizeLevels();
+  for(std::pair<const int, dungeonscript>& p : Dungeon)
+    p.second.RandomizeLevels();
 }
 
 void gamescript::Save(outputfile& SaveFile) const

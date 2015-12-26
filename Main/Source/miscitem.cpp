@@ -12,10 +12,15 @@
 
 /* Compiled through itemset.cpp */
 
-void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void materialcontainer::InitMaterials(material* M1, material* M2, truth CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
-void materialcontainer::InitMaterials(const materialscript* M, const materialscript* C, truth CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
+void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags)
+{ SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags)
+{ ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+void materialcontainer::InitMaterials(material* M1, material* M2, truth CUP)
+{ ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(),
+                      SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
+void materialcontainer::InitMaterials(const materialscript* M, const materialscript* C, truth CUP)
+{ InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
 int holybanana::GetSpecialFlags() const { return ST_FLAME_1; }
 
@@ -30,7 +35,8 @@ truth can::IsDipDestination(ccharacter*) const { return SecondaryMaterial && Sec
 
 truth potion::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
 truth potion::AddAdjective(festring& String, truth Articled) const { return AddEmptyAdjective(String, Articled); }
-truth potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
+truth potion::EffectIsGood() const
+{ return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
 truth stick::AddAdjective(festring& String, truth Articled) const { return AddBurningAdjective(String, Articled); }
@@ -42,7 +48,8 @@ truth brokenbottle::IsDangerous(ccharacter* Stepper) const { return Stepper->Has
 long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
 truth backpack::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
-long backpack::GetTotalExplosivePower() const { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
+long backpack::GetTotalExplosivePower() const
+{ return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
@@ -50,9 +57,12 @@ col16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
 col16 itemcontainer::GetMaterialColorB(int) const { return MakeRGB16(80, 80, 80); }
 
-truth mine::AddAdjective(festring& String, truth Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
+truth mine::AddAdjective(festring& String, truth Articled) const
+{ return IsActive() && AddActiveAdjective(String, Articled); }
 
-truth beartrap::AddAdjective(festring& String, truth Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
+truth beartrap::AddAdjective(festring& String, truth Articled) const
+{ return (IsActive() && AddActiveAdjective(String, Articled))
+     || (!IsActive() && item::AddAdjective(String, Articled)); }
 
 col16 carrot::GetMaterialColorB(int) const { return MakeRGB16(80, 100, 16); }
 
@@ -80,13 +90,15 @@ void scrollofteleportation::FinishReading(character* Reader)
 
 truth wand::Apply(character* Terrorist)
 {
-  if(Terrorist->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]"))
+  if(Terrorist->IsPlayer()
+     && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   if(Terrorist->IsPlayer())
     ADD_MESSAGE("You bend %s with all your strength.", CHAR_NAME(DEFINITE));
   else if(Terrorist->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
+    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE),
+                CHAR_NAME(INDEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
 
   if(Terrorist->IsPlayer() || Terrorist->CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetBreakMsg().CStr());
@@ -110,9 +122,11 @@ void wand::Load(inputfile& SaveFile)
 
 void scrollofwishing::FinishReading(character* Reader)
 {
-  game::Wish(Reader,
-	     "%s appears from nothing and the scroll burns!",
-	     "Two %s appear from nothing and the scroll burns!");
+  while(game::Wish(Reader,
+                   "%s appears from nothing and the scroll burns!",
+                   "Two %s appear from nothing and the scroll burns!", true) == ABORTED)
+    if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
 
   RemoveFromSlot();
   SendToHell();
@@ -125,21 +139,25 @@ void scrollofchangematerial::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR, &item::MaterialIsChangeable))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::MaterialIsChangeable))
     {
       ADD_MESSAGE("You notice you haven't got anything to alter.");
       return;
     }
 
     if(Item.empty())
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
+        return;
       else
-	continue;
+        continue;
+    }
 
     if(!Item[0]->IsMaterialChangeable())
     {
-      ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+      ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!",
+                  Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
       break;
     }
 
@@ -148,11 +166,20 @@ void scrollofchangematerial::FinishReading(character* Reader)
       ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
 
       if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	continue;
+        continue;
     }
 
-    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to wish for?"),
-					  game::GetDefaultChangeMaterial());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to wish for?"),
+                             game::GetDefaultChangeMaterial(), true) == ABORTED)
+    {
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+        return;
+      else
+        continue;
+    }
+
     material* TempMaterial = protosystem::CreateMaterial(Temp);
 
     if(!TempMaterial)
@@ -168,9 +195,11 @@ void scrollofchangematerial::FinishReading(character* Reader)
     else
       ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames.", Item[0]->CHAR_NAME(PLURAL));
 
-    if(TempMaterial->GetIntelligenceRequirement() + 5 > Reader->GetAttribute(INTELLIGENCE) && !game::WizardModeIsActive())
+    if(TempMaterial->GetIntelligenceRequirement() + 5 > Reader->GetAttribute(INTELLIGENCE)
+       && !game::WizardModeIsActive())
     {
-      ADD_MESSAGE("But your mind is not yet strong enough to summon enough %s for the change.", TempMaterial->GetName(false, false).CStr());
+      ADD_MESSAGE("But your mind is not yet strong enough to summon enough %s for the change.",
+                  TempMaterial->GetName(false, false).CStr());
       delete TempMaterial;
       msgsystem::LeaveBigMessageMode();
       continue;
@@ -183,33 +212,33 @@ void scrollofchangematerial::FinishReading(character* Reader)
     {
       if(!MainMaterial->IsSameAs(TempMaterial))
       {
-	ADD_MESSAGE("As the fire dies out it looks greatly altered.");
+        ADD_MESSAGE("As the fire dies out it looks greatly altered.");
 
-	if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-	  Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+        if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+          Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
 
-	Item[0]->ChangeMainMaterial(TempMaterial);
+        Item[0]->ChangeMainMaterial(TempMaterial);
       }
       else
-	ADD_MESSAGE("As the fire dies out it looks unchanged.");
+        ADD_MESSAGE("As the fire dies out it looks unchanged.");
     }
     else
     {
       if(!MainMaterial->IsSameAs(TempMaterial))
       {
-	ADD_MESSAGE("As the fire dies out they look greatly altered.");
+        ADD_MESSAGE("As the fire dies out they look greatly altered.");
 
-	if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-	  for(uint c = 0; c < Item.size(); ++c)
-	    Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+        if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+          for(uint c = 0; c < Item.size(); ++c)
+            Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
 
-	Item[0]->ChangeMainMaterial(TempMaterial);
+        Item[0]->ChangeMainMaterial(TempMaterial);
 
-	for(uint c = 1; c < Item.size(); ++c)
-	  Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
+        for(uint c = 1; c < Item.size(); ++c)
+          Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
       }
       else
-	ADD_MESSAGE("As the fire dies out they look unchanged.");
+        ADD_MESSAGE("As the fire dies out they look unchanged.");
     }
 
     msgsystem::LeaveBigMessageMode();
@@ -297,7 +326,9 @@ truth backpack::Apply(character* Terrorist)
     RemoveFromSlot();
     SendToHell();
     Terrorist->DexterityAction(5);
-    Terrorist->GetLevel()->Explosion(Terrorist, CONST_S("kamikazed @k"), Terrorist->GetLSquareUnder()->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Terrorist->GetLevel()->Explosion(Terrorist, CONST_S("kamikazed @k"),
+                                     Terrorist->GetLSquareUnder()->GetPos(),
+                                     GetSecondaryMaterial()->GetTotalExplosivePower());
     return true;
   }
   else if(Terrorist->IsPlayer())
@@ -326,9 +357,9 @@ void holybook::FinishReading(character* Reader)
 
       if(!(RAND() % 3))
       {
-	ADD_MESSAGE("But then it disappears.");
-	RemoveFromSlot();
-	SendToHell();
+        ADD_MESSAGE("But then it disappears.");
+        RemoveFromSlot();
+        SendToHell();
       }
     }
     else
@@ -376,7 +407,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
     SendToHell();
-    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(),
+                                  GetSecondaryMaterial()->GetTotalExplosivePower());
     return true;
   }
 
@@ -483,12 +515,14 @@ truth oillamp::Apply(character* Applier)
     {
       TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-      if(GetArea()->IsValidPos(TryToCreate) && Genie->CanMoveOn(GetNearLSquare(TryToCreate)) && Genie->IsFreeForMe(GetNearLSquare(TryToCreate)))
+      if(GetArea()->IsValidPos(TryToCreate)
+         && Genie->CanMoveOn(GetNearLSquare(TryToCreate))
+         && Genie->IsFreeForMe(GetNearLSquare(TryToCreate)))
       {
-	Genie->PutTo(TryToCreate);
-	FoundPlace = true;
-	SetInhabitedByGenie(false);
-	break;
+        Genie->PutTo(TryToCreate);
+        FoundPlace = true;
+        SetInhabitedByGenie(false);
+        break;
       }
     }
 
@@ -497,37 +531,44 @@ truth oillamp::Apply(character* Applier)
       Genie->GetLSquareUnder()->AddSmoke(gas::Spawn(SMOKE, 1000));
 
       if(!Genie->IsPet())
-	ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
+        ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned "
+                    "in this lamp. But at last you have freed me! As a reward, I will kill you.\"",
+                    Genie->CHAR_NAME(INDEFINITE));
       else
       {
-	if(Applier->IsPlayer())
-	{
-	  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
+        if(Applier->IsPlayer())
+        {
+          ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned "
+                      "in this lamp. But at last you have freed me! I am deeply grateful. You deserve "
+                      "a generous reward. I may serve you for 1001 nights or grant you a wish. It's your "
+                      "choice.\"", Genie->CHAR_NAME(INDEFINITE));
 
-	  if(game::TruthQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
-	  {
-	    ADD_MESSAGE("You may wish for an item.");
-	    game::Wish(Applier,
-		       "%s appears from nothing and the genie flies happily away!",
-		       "Two %s appear from nothing and the genie flies happily away!");
+          if(game::TruthQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
+          {
+            ADD_MESSAGE("You may wish for an item.");
+            game::Wish(Applier,
+                       "%s appears from nothing and the genie flies happily away!",
+                       "Two %s appear from nothing and the genie flies happily away!", false);
 
-	    Genie->Remove();
-	    delete Genie;
-	    Applier->EditAP(-1000);
-	    return true;
-	  }
-	}
+            Genie->Remove();
+            delete Genie;
+            Applier->EditAP(-1000);
+            return true;
+          }
+        }
       }
 
       meleeweapon* Weapon = meleeweapon::Spawn(TWO_HANDED_SCIMITAR, NO_MATERIALS);
       Weapon->InitMaterials(MAKE_MATERIAL(ARCANITE), MAKE_MATERIAL(ARCANITE), true);
       Genie->SetRightWielded(Weapon);
-      ADD_MESSAGE("%s wishes for a two-handed scimitar. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s wishes for a two-handed scimitar. Suddenly %s appears from nothing and %s wields it.",
+                  Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE),
+                  Genie->CHAR_NAME(DEFINITE));
     }
     else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You feel that it is warmer.");
+        ADD_MESSAGE("You feel that it is warmer.");
 
       delete Genie;
     }
@@ -563,7 +604,8 @@ void scrollofcharging::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsChargeable))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::IsChargeable))
     {
       ADD_MESSAGE("You notice you haven't got anything to charge.");
       return;
@@ -573,16 +615,17 @@ void scrollofcharging::FinishReading(character* Reader)
     {
       if(Item[0]->HandleInPairs() && Item.size() == 1)
       {
-	ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	  continue;
+        if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+          continue;
       }
 
       for(uint c = 0; c < Item.size(); ++c)
-	Item[c]->ChargeFully(Reader);
+        Item[c]->ChargeFully(Reader);
 
-      ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+      ADD_MESSAGE("You charge %s and the scroll burns.",
+                  Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
       break;
     }
     else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
@@ -627,7 +670,7 @@ void scrolloftaming::FinishReading(character* Reader)
       character* Char = GetNearSquare(Test)->GetCharacter();
 
       if(Char && Char->CanTameWithScroll(Reader) && Char->GetTeam() != Reader->GetTeam())
-	CharacterNear[Index++] = Char;
+        CharacterNear[Index++] = Char;
     }
   }
 
@@ -646,17 +689,19 @@ void scrolloftaming::FinishReading(character* Reader)
     if(Reader->IsPlayer())
     {
       if(ToBeTamed->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("You notice no effect.");
+        ADD_MESSAGE("You notice no effect.");
     }
     else if(Reader->CanBeSeenByPlayer())
     {
       if(ToBeTamed->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHAR_NAME(DEFINITE), Reader->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s seems to like %s far more.",
+                    ToBeTamed->CHAR_NAME(DEFINITE), Reader->CHAR_NAME(DEFINITE));
     }
     else if(ToBeTamed->CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.",
+                  ToBeTamed->CHAR_NAME(DEFINITE));
   }
 
   RemoveFromSlot();
@@ -666,7 +711,8 @@ void scrolloftaming::FinishReading(character* Reader)
 
 truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
+  if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
+     || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
   {
     festring DeathMsg = CONST_S("killed by an explosion of ");
     AddName(DeathMsg, INDEFINITE);
@@ -680,7 +726,8 @@ truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
     SendToHell();
-    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(),
+                                  GetSecondaryMaterial()->GetTotalExplosivePower());
     return true;
   }
 
@@ -715,7 +762,8 @@ void mine::StepOnEffect(character* Stepper)
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
-  Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+  Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(),
+                                GetSecondaryMaterial()->GetTotalExplosivePower());
 }
 
 truth key::Apply(character* User)
@@ -864,7 +912,8 @@ void whistle::BlowEffect(character* Whistler)
   else if(Whistler->CanBeSeenByPlayer())
   {
     if(PLAYER->CanHear())
-      ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s blows %s and produces an interesting sound.",
+                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     else
       ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   }
@@ -902,20 +951,20 @@ void magicalwhistle::BlowEffect(character* Whistler)
   else if(Whistler->CanBeSeenByPlayer())
   {
     if(PLAYER->CanHear())
-      ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s blows %s and produces a peculiar sound.",
+                  Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     else
       ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   }
   else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear a strange tune playing.");
 
-  const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
   std::vector<distancepair> ToSort;
   v2 Pos = Whistler->GetPos();
 
-  for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
-    if((*i)->IsEnabled() && Whistler != *i)
-      ToSort.push_back(distancepair((Pos - (*i)->GetPos()).GetLengthSquare(), *i));
+  for(character* p : Whistler->GetTeam()->GetMember())
+    if(p->IsEnabled() && Whistler != p)
+      ToSort.push_back(distancepair((Pos - p->GetPos()).GetLengthSquare(), p));
 
   if(ToSort.size() > 5)
     std::sort(ToSort.begin(), ToSort.end());
@@ -961,12 +1010,12 @@ void materialcontainer::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultMainVolume());
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultMainVolume());
   const fearray<long>& SMC = GetSecondaryMaterialConfig();
   InitMaterial(SecondaryMaterial,
-	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultSecondaryVolume());
+               MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultSecondaryVolume());
 }
 
 /* Returns true if container opens fine else false */
@@ -979,7 +1028,8 @@ truth itemcontainer::Open(character* Opener)
     return false;
   }
 
-  festring Question = CONST_S("Do you want to (t)ake something from or (p)ut something in this container? [t,p]");
+  festring Question = CONST_S("Do you want to (t)ake something from or "
+                              "(p)ut something in this container? [t,p]");
   truth Success;
 
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
@@ -1005,7 +1055,8 @@ truth itemcontainer::Open(character* Opener)
 void itemcontainer::Save(outputfile& SaveFile) const
 {
   lockableitem::Save(SaveFile);
-  Contained->Save(SaveFile);}
+  Contained->Save(SaveFile);
+}
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
@@ -1034,8 +1085,8 @@ beartrap::beartrap(const beartrap& Trap) : mybase(Trap)
 truth beartrap::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = GetBaseTrapDamage() * 40 / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
-
+  int Modifier = GetBaseTrapDamage() * 40
+                 / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
   if(!RAND_N(Max(Modifier, 2)))
   {
     Victim->RemoveTrap(TrapID);
@@ -1044,7 +1095,8 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to free yourself from %s.", CHAR_NAME(DEFINITE));
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE),
+                  Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
     Victim->EditAP(-500);
     return true;
@@ -1074,9 +1126,12 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).CStr());
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE),
+                  Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(),
+                  CHAR_NAME(DEFINITE));
 
-    Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
+    Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage(), PHYSICAL_DAMAGE,
+                                  BodyPart, YOURSELF, false, false, false);
     Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
     Victim->EditAP(-1000);
     return false;
@@ -1092,12 +1147,16 @@ truth beartrap::TryToUnStick(character* Victim, v2)
       Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You fail to free yourself from %s and your %s is stuck in it in the attempt.", CHAR_NAME(DEFINITE), Victim->GetBodyPartName(VictimBodyPart).CStr());
+        ADD_MESSAGE("You fail to free yourself from %s and your %s is stuck in it in the attempt.",
+                    CHAR_NAME(DEFINITE), Victim->GetBodyPartName(VictimBodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tries to free %sself from %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s tries to free %sself from %s but is stuck more tightly in it in the attempt.",
+                    Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, VictimBodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
+      Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE,
+                                    VictimBodyPart, YOURSELF, false, false, false);
+      Victim->CheckDeath(CONST_S("died while trying to escape from ")
+                         + GetName(INDEFINITE), 0, IGNORE_TRAPS);
       Victim->EditAP(-1000);
       return true;
     }
@@ -1151,7 +1210,8 @@ void beartrap::StepOnEffect(character* Stepper)
     Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
     if(Stepper->IsPlayer())
-      ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).CStr());
+      ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE),
+                  Stepper->GetBodyPartName(StepperBodyPart).CStr());
     else if(Stepper->CanBeSeenByPlayer())
       ADD_MESSAGE("%s is trapped in %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
@@ -1161,7 +1221,8 @@ void beartrap::StepOnEffect(character* Stepper)
     if(Stepper->IsPlayer())
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-    Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
+    Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE,
+                                   StepperBodyPart, YOURSELF, false, false, false);
     Stepper->CheckDeath(CONST_S("died by stepping into ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
   }
 }
@@ -1201,7 +1262,7 @@ truth stethoscope::Apply(character* Doctor)
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
-  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);
+  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false, true);
 
   if(Dir == DIR_ERROR)
     return false;
@@ -1238,7 +1299,8 @@ truth itemcontainer::ContentsCanBeSeenBy(ccharacter* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ")
+                                              + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1286,9 +1348,11 @@ truth beartrap::Apply(character* User)
     int UserBodyPart = User->GetRandomApplyBodyPart();
 
     if(User->IsPlayer())
-      ADD_MESSAGE("Somehow you manage to trap your %s in %s.", User->GetBodyPartName(UserBodyPart).CStr(), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("Somehow you manage to trap your %s in %s.",
+                  User->GetBodyPartName(UserBodyPart).CStr(), CHAR_NAME(DEFINITE));
     else if(User->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s somehow traps %sself in %s.", User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s somehow traps %sself in %s.",
+                  User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
     RemoveFromSlot();
     User->GetStackUnder()->AddItem(this);
@@ -1332,7 +1396,8 @@ v2 beartrap::GetBitmapPos(int Frame) const
 
 truth mine::WillExplode(ccharacter* Stepper) const
 {
-  return IsActive() && GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 5000);
+  return IsActive() && GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive()
+         && (!Stepper || Stepper->GetWeight() > 5000);
 }
 
 materialcontainer::materialcontainer(const materialcontainer& MC) : mybase(MC)
@@ -1489,9 +1554,9 @@ void potion::Break(character* Breaker, int Dir)
 
       if(Remains->GetLevel()->IsValidPos(Pos))
       {
-	long HalfVolume = GetSecondaryMaterial()->GetVolume() >> 1;
-	Liquid->EditVolume(-HalfVolume);
-	Remains->GetNearLSquare(Pos)->SpillFluid(Breaker, Liquid->SpawnMoreLiquid(HalfVolume));
+        long HalfVolume = GetSecondaryMaterial()->GetVolume() >> 1;
+        Liquid->EditVolume(-HalfVolume);
+        Remains->GetNearLSquare(Pos)->SpillFluid(Breaker, Liquid->SpawnMoreLiquid(HalfVolume));
       }
     }
 
@@ -1523,7 +1588,8 @@ void scrollofenchantweapon::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsWeapon))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::IsWeapon))
     {
       ADD_MESSAGE("You notice you haven't got anything to enchant.");
       return;
@@ -1533,35 +1599,38 @@ void scrollofenchantweapon::FinishReading(character* Reader)
     {
       if(!Item[0]->CanBeEnchanted())
       {
-	ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-	break;
+        ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!",
+                    Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+        break;
       }
 
       if(Item[0]->HandleInPairs() && Item.size() == 1)
       {
-	ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	  continue;
+        if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+          continue;
       }
 
       if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
       {
-	if(Item.size() == 1)
-	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
+        if(Item.size() == 1)
+          ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!",
+                      Item[0]->CHAR_NAME(DEFINITE));
+        else
+          ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!",
+                      Item[0]->CHAR_NAME(DEFINITE|PLURAL));
 
-	break;
+        break;
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
       else
-	ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+        ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
 
       for(uint c = 0; c < Item.size(); ++c)
-	Item[c]->EditEnchantment(1);
+        Item[c]->EditEnchantment(1);
 
       break;
     }
@@ -1580,7 +1649,8 @@ void scrollofenchantarmor::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsArmor))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::IsArmor))
     {
       ADD_MESSAGE("You notice you haven't got anything to enchant.");
       return;
@@ -1590,35 +1660,38 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     {
       if(!Item[0]->CanBeEnchanted())
       {
-	ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-	break;
+        ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!",
+                    Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+        break;
       }
 
       if(Item[0]->HandleInPairs() && Item.size() == 1)
       {
-	ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	  continue;
+        if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+          continue;
       }
 
       if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
       {
-	if(Item.size() == 1)
-	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
+        if(Item.size() == 1)
+          ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!",
+                      Item[0]->CHAR_NAME(DEFINITE));
+        else
+          ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!",
+                      Item[0]->CHAR_NAME(DEFINITE|PLURAL));
 
-	break;
+        break;
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
       else
-	ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+        ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
 
       for(uint c = 0; c < Item.size(); ++c)
-	Item[c]->EditEnchantment(1);
+        Item[c]->EditEnchantment(1);
 
       break;
     }
@@ -1644,7 +1717,7 @@ truth itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int
       SetConfig((GetConfig()&~LOCK_BITS)|BROKEN_LOCK);
 
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().CStr());
+        ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().CStr());
 
       return true;
     }
@@ -1681,7 +1754,7 @@ int materialcontainer::GetSpoilLevel() const
   return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
 }
 
-void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
+void itemcontainer::SetItemsInside(const fearray<contentscript<item>>& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 
@@ -1693,13 +1766,13 @@ void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArra
 
       for(int c2 = 0; c2 < Times; ++c2)
       {
-	item* Item = ItemArray[c1].Instantiate(SpecialFlags);
+        item* Item = ItemArray[c1].Instantiate(SpecialFlags);
 
-	if(Item)
-	{
-	  Contained->AddItem(Item);
-	  Item->SpecialGenerationHandler();
-	}
+        if(Item)
+        {
+          Contained->AddItem(Item);
+          Item->SpecialGenerationHandler();
+        }
       }
     }
 }
@@ -1715,7 +1788,8 @@ truth mine::CheckPickUpEffect(character*)
 
     RemoveFromSlot();
     SendToHell();
-    Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(),
+                                  GetSecondaryMaterial()->GetTotalExplosivePower());
     return false;
   }
 
@@ -1728,7 +1802,8 @@ void scrollofrepair::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsRepairable))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::IsRepairable))
     {
       ADD_MESSAGE("You notice you haven't got anything to repair.");
       return;
@@ -1738,25 +1813,27 @@ void scrollofrepair::FinishReading(character* Reader)
     {
       if(Item[0]->HandleInPairs() && Item.size() == 1)
       {
-	ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
+        ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	  continue;
+        if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+          continue;
       }
 
       if(Item.size() == 1)
-	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "appears in every way as good as new");
+        ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE),
+                    Item[0]->IsBroken() ? "fixes itself" : "appears in every way as good as new");
       else
-	ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "appear in every way as good as new");
+        ADD_MESSAGE("As you read the scroll, the %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL),
+                    Item[0]->IsBroken() ? "fix themselves" : "appear in every way as good as new");
 
       for(uint c = 0; c < Item.size(); ++c)
       {
-	Item[c]->RemoveRust();
-        Item[c]->RemoveBurns(); //restores HP for burnt artificial limbs as well
+        Item[c]->RemoveRust();
+        Item[c]->RemoveBurns(); // restores HP for burnt artificial limbs as well
         if(!Item[c]->IsBurning())
           Item[c]->ResetThermalEnergies();
         Item[c]->ResetBurning();
-	Item[c]->Fix();
+        Item[c]->Fix();
       }
 
       break;
@@ -1806,16 +1883,17 @@ truth horn::Apply(character* Blower)
     if(Blower->IsPlayer())
     {
       if(Blower->CanHear())
-	ADD_MESSAGE("You produce a %s sound.", SoundDescription);
+        ADD_MESSAGE("You produce a %s sound.", SoundDescription);
       else
-	ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
     }
     else if(Blower->CanBeSeenByPlayer())
     {
       if(PLAYER->CanHear())
-	ADD_MESSAGE("%s blows %s and produces a %s sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
+        ADD_MESSAGE("%s blows %s and produces a %s sound.", Blower->CHAR_NAME(DEFINITE),
+                    CHAR_NAME(DEFINITE), SoundDescription);
       else
-	ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     }
     else if(PLAYER->CanHear())
       ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
@@ -1826,24 +1904,24 @@ truth horn::Apply(character* Blower)
     for(int x = Rect.X1; x <= Rect.X2; ++x)
       for(int y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	character* Audience = GetNearSquare(x, y)->GetCharacter();
+        character* Audience = GetNearSquare(x, y)->GetCharacter();
 
-	if(Audience)
-	{
-	  if(GetConfig() == BRAVERY && Audience->CanHear() && Audience->TemporaryStateIsActivated(PANIC)
-	     && Blower->IsAlly(Audience))
-	  {
-	    if(Audience->IsPlayer())
-	      ADD_MESSAGE("You calm down.");
-	    else if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
+        if(Audience)
+        {
+          if(GetConfig() == BRAVERY && Audience->CanHear() && Audience->TemporaryStateIsActivated(PANIC)
+             && Blower->IsAlly(Audience))
+          {
+            if(Audience->IsPlayer())
+              ADD_MESSAGE("You calm down.");
+            else if(CanBeSeenByPlayer())
+              ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
 
-	    Audience->DeActivateTemporaryState(PANIC);
-	  }
-	  else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
-		  && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
-	    Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
-	}
+            Audience->DeActivateTemporaryState(PANIC);
+          }
+          else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
+                  && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
+            Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+        }
       }
 
   }
@@ -1852,16 +1930,16 @@ truth horn::Apply(character* Blower)
     if(Blower->IsPlayer())
     {
       if(Blower->CanHear())
-	ADD_MESSAGE("You produce a mighty sound.");
+        ADD_MESSAGE("You produce a mighty sound.");
       else
-	ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
     }
     else if(Blower->CanBeSeenByPlayer())
     {
       if(PLAYER->CanHear())
-	ADD_MESSAGE("%s blows %s and produces a mighty sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s blows %s and produces a mighty sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     }
     else if(PLAYER->CanHear())
       ADD_MESSAGE("You hear a horn being blown.");
@@ -1958,7 +2036,7 @@ void banana::SignalSpoil(material* Material)
 truth bone::DogWillCatchAndConsume(ccharacter* Doggie) const
 {
   return GetConsumeMaterial(Doggie)->GetConfig() == BONE
-						  && !GetConsumeMaterial(Doggie)->GetSpoilLevel();
+                                                  && !GetConsumeMaterial(Doggie)->GetSpoilLevel();
 }
 
 int itemcontainer::GetOfferValue(int Receiver) const
@@ -2008,7 +2086,12 @@ void itemcontainer::SortAllItems(const sortdata& SortData) const
 
 int materialcontainer::GetAttachedGod() const
 {
-  return DataBase->AttachedGod ? DataBase->AttachedGod : SecondaryMaterial ? SecondaryMaterial->GetAttachedGod() : MainMaterial->GetAttachedGod();
+  if(DataBase->AttachedGod)
+    return DataBase->AttachedGod;
+  else if(SecondaryMaterial)
+    return SecondaryMaterial->GetAttachedGod();
+  else
+    return MainMaterial->GetAttachedGod();
 }
 
 void wand::BreakEffect(character* Terrorist, cfestring& DeathMsg)
@@ -2054,12 +2137,12 @@ truth beartrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
     {
       if(IsActive())
       {
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
 
-	SetIsActive(false);
-	SendNewDrawAndMemorizedUpdateRequest();
-	return true;
+        SetIsActive(false);
+        SendNewDrawAndMemorizedUpdateRequest();
+        return true;
       }
     }
   }
@@ -2083,7 +2166,8 @@ truth potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
     SendToHell();
-    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(),
+                                  GetSecondaryMaterial()->GetTotalExplosivePower());
     return true;
   }
 
@@ -2121,7 +2205,8 @@ void can::DipInto(liquid* Liquid, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-truth holybanana::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+truth holybanana::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                            int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
   truth BaseSuccess = banana::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
@@ -2145,14 +2230,14 @@ truth holybanana::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	Zapper,
-	CONST_S("killed by ") + GetName(INDEFINITE),
-	Zapper->GetPos(),
-	YELLOW,
-	BEAM_FIRE_BALL,
-	Direction,
-	50,
-	0
+        Zapper,
+        CONST_S("killed by ") + GetName(INDEFINITE),
+        Zapper->GetPos(),
+        YELLOW,
+        BEAM_FIRE_BALL,
+        Direction,
+        50,
+        0
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -2264,16 +2349,17 @@ truth charmlyre::Apply(character* Charmer)
     if(Charmer->IsPlayer())
     {
       if(Charmer->CanHear())
-	ADD_MESSAGE("You produce a highly alluring sound.");
+        ADD_MESSAGE("You produce a highly alluring sound.");
       else
-	ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
     }
     else if(Charmer->CanBeSeenByPlayer())
     {
       if(PLAYER->CanHear())
-	ADD_MESSAGE("%s plays %s and produces a highly alluring sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s plays %s and produces a highly alluring sound.",
+                    Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     }
     else if(PLAYER->CanHear())
       ADD_MESSAGE("You hear a lyre playing.");
@@ -2284,16 +2370,16 @@ truth charmlyre::Apply(character* Charmer)
     if(Charmer->IsPlayer())
     {
       if(Charmer->CanHear())
-	ADD_MESSAGE("You produce a mesmerizing sound.");
+        ADD_MESSAGE("You produce a mesmerizing sound.");
       else
-	ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
     }
     else if(Charmer->CanBeSeenByPlayer())
     {
       if(PLAYER->CanHear())
-	ADD_MESSAGE("%s plays %s and produces a mesmerizing sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s plays %s and produces a mesmerizing sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     }
 
     for(int d = 0; d < Charmer->GetNeighbourSquares(); ++d)
@@ -2302,27 +2388,29 @@ truth charmlyre::Apply(character* Charmer)
 
       if(Square)
       {
-	character* Char = Square->GetCharacter();
+        character* Char = Square->GetCharacter();
 
-	if(Char)
-	  if(Char->CanHear())
-	  {
-	    if(Char->CanTameWithLyre(Charmer))
-	    {
-	      if(Char->GetTeam() == Charmer->GetTeam())
-		ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
-	      else if(Char->GetRelation(Charmer) == HOSTILE)
-		ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
-	      else
-		ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
+        if(Char)
+        {
+          if(Char->CanHear())
+          {
+            if(Char->CanTameWithLyre(Charmer))
+            {
+              if(Char->GetTeam() == Charmer->GetTeam())
+                ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
+              else if(Char->GetRelation(Charmer) == HOSTILE)
+                ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
+              else
+                ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
 
-	      Char->ChangeTeam(Charmer->GetTeam());
-	    }
-	    else
-	      ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
-	  }
-	  else
-	    ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
+              Char->ChangeTeam(Charmer->GetTeam());
+            }
+            else
+              ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
+          }
+          else
+            ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
+        }
       }
     }
   }
@@ -2358,7 +2446,7 @@ void charmlyre::FinalProcessForBone()
 truth carrot::BunnyWillCatchAndConsume(ccharacter* Bunny) const
 {
   return GetConsumeMaterial(Bunny)->GetConfig() == CARROT_FLESH
-						 && !GetConsumeMaterial(Bunny)->GetSpoilLevel();
+                                                 && !GetConsumeMaterial(Bunny)->GetSpoilLevel();
 }
 
 int materialcontainer::GetRustDataB() const
@@ -2484,8 +2572,8 @@ truth materialcontainer::CalculateHasBe() const
 v2 lantern::GetBitmapPos(int Frame) const
 {
   return GetSquarePosition() == CENTER
-			      ? item::GetBitmapPos(Frame)
-			      : item::GetWallBitmapPos(Frame);
+                              ? item::GetBitmapPos(Frame)
+                              : item::GetWallBitmapPos(Frame);
 }
 
 long materialcontainer::GetMaterialPrice() const
@@ -2500,8 +2588,17 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
 
   for(;;)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to detect?"),
-					  game::GetDefaultDetectMaterial());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to detect?"),
+                             game::GetDefaultDetectMaterial(), true) == ABORTED)
+    {
+      if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+        return;
+      else
+        continue;
+    }
+
     TempMaterial = protosystem::CreateMaterial(Temp);
 
     if(TempMaterial)
@@ -2517,7 +2614,8 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
 
   if(Squares > Reader->GetAttribute(INTELLIGENCE) * (25 + RAND() % 51))
   {
-    ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
+    ADD_MESSAGE("An enormous burst of geographical information overwhelms your "
+                "consciousness. Your mind cannot cope with it and your memories blur.");
     Level->BlurMemory();
     Reader->BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
     Reader->EditExperience(INTELLIGENCE, -100, 1 << 12);
@@ -2530,7 +2628,8 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   else
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
-    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), Reader->GetPos(), 0, 0, false);
+    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"),
+                           Reader->GetPos(), 0, 0, false);
     Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
   }
 
@@ -2553,21 +2652,25 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"), NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"),
+                                      NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened))
     {
       ADD_MESSAGE("You notice you haven't got anything to harden.");
       return;
     }
 
     if(Item.empty())
+    {
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
+        return;
       else
-	continue;
+        continue;
+    }
 
     if(!Item[0]->IsMaterialChangeable())
     {
-      ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+      ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!",
+                  Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
       break;
     }
 
@@ -2576,7 +2679,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
 
       if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	continue;
+        continue;
     }
 
     msgsystem::EnterBigMessageMode();
@@ -2593,9 +2696,9 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       /* Should not be possible */
 
       if(Item.size() == 1)
-	ADD_MESSAGE("But it is already as hard as it can get.");
+        ADD_MESSAGE("But it is already as hard as it can get.");
       else
-	ADD_MESSAGE("But they are already as hard as they can get.");
+        ADD_MESSAGE("But they are already as hard as they can get.");
 
       msgsystem::LeaveBigMessageMode();
       break;
@@ -2613,19 +2716,19 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     }
 
     for(int NewConfig = TempMaterial->GetHardenedMaterial(Item[0]), c = 1;
-	NewConfig;
-	NewConfig = TempMaterial->GetHardenedMaterial(Item[0]), ++c)
+        NewConfig;
+        NewConfig = TempMaterial->GetHardenedMaterial(Item[0]), ++c)
     {
       material* NewMaterial = MAKE_MATERIAL(NewConfig);
 
       if(NewMaterial->GetIntelligenceRequirement()
-	 <= Intelligence - c * 5)
+         <= Intelligence - c * 5)
       {
-	delete TempMaterial;
-	TempMaterial = NewMaterial;
+        delete TempMaterial;
+        TempMaterial = NewMaterial;
       }
       else
-	break;
+        break;
     }
 
     material* MainMaterial = Item[0]->GetMainMaterial();
@@ -2636,7 +2739,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       ADD_MESSAGE("As the fire dies out it looks much harder.");
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-	Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+        Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
 
       Item[0]->ChangeMainMaterial(TempMaterial);
     }
@@ -2645,13 +2748,13 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       ADD_MESSAGE("As the fire dies out they look much harder.");
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-	for(uint c = 0; c < Item.size(); ++c)
-	  Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+        for(uint c = 0; c < Item.size(); ++c)
+          Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
 
       Item[0]->ChangeMainMaterial(TempMaterial);
 
       for(uint c = 1; c < Item.size(); ++c)
-	Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
+        Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
     }
 
     msgsystem::LeaveBigMessageMode();
@@ -2687,7 +2790,8 @@ void scrollofgolemcreation::FinishReading(character* Reader)
   {
     itemvector Item;
 
-    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to use for golem creation?"), NO_MULTI_SELECT, &item::IsDestroyable))
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to use for golem creation?"),
+                                      NO_MULTI_SELECT, &item::IsDestroyable))
     {
       ADD_MESSAGE("You notice you haven't got anything to change into a golem.");
       return;
@@ -2699,26 +2803,28 @@ void scrollofgolemcreation::FinishReading(character* Reader)
       material* Sec = Item[0]->GetSecondaryMaterial();
       truth MainPossible = Main->GetCategoryFlags() & IS_GOLEM_MATERIAL;
       truth SecPossible = Sec && Sec->GetVolume()
-			  && Sec->GetCategoryFlags() & IS_GOLEM_MATERIAL
-			  && !Sec->IsSameAs(Main);
+                          && Sec->GetCategoryFlags() & IS_GOLEM_MATERIAL
+                          && !Sec->IsSameAs(Main);
 
       if(!MainPossible && !SecPossible)
       {
-	ADD_MESSAGE("You can't use that for golem creation.");
-	continue;
+        ADD_MESSAGE("You can't use that for golem creation.");
+        continue;
       }
 
       if(MainPossible && SecPossible)
-	if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
-	  SecPossible = false;
-	else
-	  MainPossible = false;
+      {
+        if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
+          SecPossible = false;
+        else
+          MainPossible = false;
+      }
 
       int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
       golem* Golem = golem::Spawn(MaterialConfig);
       long Volume = MainPossible ? Sec && Sec->IsSameAs(Main)
-		    ? Main->GetVolume() + Sec->GetVolume()
-		    : Main->GetVolume() : Sec->GetVolume();
+                    ? Main->GetVolume() + Sec->GetVolume()
+                    : Main->GetVolume() : Sec->GetVolume();
       Golem->SetItemVolume(Volume);
       v2 Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
       Item[0]->RemoveFromSlot();
@@ -2726,19 +2832,21 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
       if(Where == ERROR_V2)
       {
-	ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex, but nothing happens.", Item[0]->CHAR_NAME(DEFINITE));
-	delete Golem;
+        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex, but nothing happens.",
+                    Item[0]->CHAR_NAME(DEFINITE));
+        delete Golem;
       }
       else
       {
-	ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex.", Item[0]->CHAR_NAME(DEFINITE));
-	Golem->SetTeam(Reader->GetTeam());
-	Golem->PutTo(Where);
+        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex.",
+                    Item[0]->CHAR_NAME(DEFINITE));
+        Golem->SetTeam(Reader->GetTeam());
+        Golem->PutTo(Where);
 
-	if(Golem->CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
+        if(Golem->CanBeSeenByPlayer())
+          ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
 
-	Golem->GetLSquareUnder()->DrawParticles(RED);
+        Golem->GetLSquareUnder()->DrawParticles(RED);
       }
 
       break;
@@ -2810,15 +2918,15 @@ void itemcontainer::Disappear()
 
 truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if(Type & THROW || 
+  if(Type & THROW ||
      (Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(10 / Damage + 1)))))
   {
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
-			ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
-		material* GasMaterial = GetSecondaryMaterial();
+    material* GasMaterial = GetSecondaryMaterial();
     GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
-		RemoveFromSlot();
+    RemoveFromSlot();
     SendToHell();
     return true;
   }
@@ -2826,7 +2934,7 @@ truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
-truth holyhandgrenade::Apply(character* Applier) 
+truth holyhandgrenade::Apply(character* Applier)
 {
   if(PinPulledTick)
   {
@@ -2834,9 +2942,8 @@ truth holyhandgrenade::Apply(character* Applier)
     return false;
   }
 
-  if(Applier->IsPlayer()) {
+  if(Applier->IsPlayer())
     ADD_MESSAGE("You pull the pin off the grenade.");
-  }
 
   PinPulledTick = game::GetTick();
   Count = 0;
@@ -2887,15 +2994,15 @@ void holyhandgrenade::Be()
     }
     Msg << "\".";
     ADD_MESSAGE(Msg.CStr());
-    if(Count == 3) {
+    if(Count == 3)
       Explode();
-    }
   }
 }
 
 void holyhandgrenade::Explode()
 {
-  if(game::IsInWilderness()) {
+  if(game::IsInWilderness())
+  {
     ADD_MESSAGE("You manage to dispose of %s.", CHAR_NAME(DEFINITE));
     RemoveFromSlot();
     SendToHell();
@@ -2914,7 +3021,7 @@ void holyhandgrenade::Explode()
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
-  Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 300);  
+  Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 300);
 }
 
 v2 holyhandgrenade::GetBitmapPos(int Frame) const
@@ -2922,9 +3029,9 @@ v2 holyhandgrenade::GetBitmapPos(int Frame) const
   return PinPulledTick ? v2(96, 64) : v2(96, 32);
 }
 
-int holyhandgrenade::GetClassAnimationFrames() const 
-{ 
-  return 32; 
+int holyhandgrenade::GetClassAnimationFrames() const
+{
+  return 32;
 }
 
 alpha holyhandgrenade::GetOutlineAlpha(int Frame) const
@@ -2936,8 +3043,8 @@ alpha holyhandgrenade::GetOutlineAlpha(int Frame) const
 }
 
 col16 holyhandgrenade::GetOutlineColor(int) const
-{ 
-  return MakeRGB16(0, 255, 0); 
+{
+  return MakeRGB16(0, 255, 0);
 }
 
 void holyhandgrenade::Save(outputfile& SaveFile) const
@@ -2968,9 +3075,9 @@ void holyhandgrenade::PostConstruct()
   PinPullerID = 0;
 }
 
-col16 holyhandgrenade::GetMaterialColorB(int) const 
-{ 
-  return MakeRGB16(200, 10, 10); 
+col16 holyhandgrenade::GetMaterialColorB(int) const
+{
+  return MakeRGB16(200, 10, 10);
 }
 
 bool holyhandgrenade::WillExplodeSoon() const
@@ -2994,7 +3101,7 @@ void pantheonbook::FinishReading(character* Reader)
 
 col16 pantheonbook::GetMaterialColorA(int) const
 {
-  return MakeRGB16(200, 200, 200); 
+  return MakeRGB16(200, 200, 200);
 }
 
 col16 gorovitscopyoflenin::GetMaterialColorB(int) const
@@ -3002,31 +3109,28 @@ col16 gorovitscopyoflenin::GetMaterialColorB(int) const
   return MakeRGB16(30, 30, 30);
 }
 
-bool firstbornchild::SpecialOfferEffect(int GodNumber) {
+bool firstbornchild::SpecialOfferEffect(int GodNumber)
+{
   god* Receiver = game::GetGod(GodNumber);
   Receiver->AdjustRelation(2000); // to the max
 
   int AmountOfAngelAppears = false;
-  for(int c = 0; c < 10; ++c) {
-    character* Angel = Receiver->CreateAngel(PLAYER->GetTeam(), 1000); 
-    if(Angel) 
-    {
+  for(int c = 0; c < 10; ++c)
+  {
+    character* Angel = Receiver->CreateAngel(PLAYER->GetTeam(), 1000);
+    if(Angel)
       ++AmountOfAngelAppears;
-    }
   }
 
-  if(AmountOfAngelAppears == 0) {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased.", 
-		CHAR_NAME(DEFINITE), Receiver->GetName());
-  } 
-  else if(AmountOfAngelAppears == 1) {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An angel appears! ", 
-		CHAR_NAME(DEFINITE), Receiver->GetName());
-  } 
-  else {
-    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An army of angels appears! ", 
-		CHAR_NAME(DEFINITE), Receiver->GetName());
-  }
+  if(AmountOfAngelAppears == 0)
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased.",
+                CHAR_NAME(DEFINITE), Receiver->GetName());
+  else if(AmountOfAngelAppears == 1)
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An angel appears! ",
+                CHAR_NAME(DEFINITE), Receiver->GetName());
+  else
+    ADD_MESSAGE("You sacrifice %s. %s is very pleased. An army of angels appears! ",
+                CHAR_NAME(DEFINITE), Receiver->GetName());
 
   return true;
 }
@@ -3038,7 +3142,7 @@ truth bone::Necromancy(character* Necromancer)
   int NumberOfBones = 0;
   truth HasSkull = false;
   lsquare* LSquareUnder = GetLSquareUnder();
-  
+
   itemvector ItemVector;
   LSquareUnder->GetStack()->FillItemVector(ItemVector);
 
@@ -3066,14 +3170,14 @@ truth bone::Necromancy(character* Necromancer)
     NumberOfBones = 5;
 
   humanoid* Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
-  //character* Skeleton = skeleton::CreateSkeleton(Necromancer);
+  // character* Skeleton = skeleton::CreateSkeleton(Necromancer);
 
   if(Skeleton)
   {
     Skeleton->ChangeTeam(Necromancer ? Necromancer->GetTeam() : game::GetTeam(MONSTER_TEAM));
     Skeleton->PutToOrNear(GetPos());
-  
-    //then remove the bones, and the skull from the floor
+
+    // then remove the bones, and the skull from the floor
     for(uint c = 0; c < ItemVector.size(); ++c)
     {
       if(ItemVector[c]->IsABone() && (NumberOfBones > 0))
@@ -3092,7 +3196,7 @@ truth bone::Necromancy(character* Necromancer)
 
     if(Skeleton->CanBeSeenByPlayer())
       ADD_MESSAGE("%s rises from the ground.", Skeleton->CHAR_DESCRIPTION(INDEFINITE));
-    
+
     if(Necromancer && Necromancer->IsPlayer())
       game::DoEvilDeed(50);
 

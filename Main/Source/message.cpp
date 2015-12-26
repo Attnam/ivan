@@ -139,12 +139,12 @@ void msgsystem::Draw()
   v2 Size = QuickDrawCache->GetSize();
   int Y = RES.Y - 122;
   blitdata B = { DOUBLE_BUFFER,
-		 { 0, 0 },
-		 { 13, Y },
-		 { Size.X, Size.Y },
-		 { 0 },
-		 0,
-		 0 };
+                 { 0, 0 },
+                 { 13, Y },
+                 { Size.X, Size.Y },
+                 { 0 },
+                 0,
+                 0 };
 
   QuickDrawCache->NormalBlit(B);
   igraph::BlitBackGround(v2(13, Y), v2(1, 1));

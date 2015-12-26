@@ -38,7 +38,7 @@ struct homedata;
 struct trapdata;
 struct blitdata;
 
-typedef std::vector<std::pair<double, int> > blockvector;
+typedef std::vector<std::pair<double, int>> blockvector;
 typedef truth (item::*sorter)(ccharacter*) const;
 typedef truth (character::*petmanagementfunction)();
 typedef character* (*characterspawner)(int, int);
@@ -198,7 +198,7 @@ struct characterdatabase : public databasebase
   int RightSWeaponSkillHits;
   int LeftSWeaponSkillHits;
   int PanicLevel;
-  fearray<contentscript<item> > Inventory;
+  fearray<contentscript<item>> Inventory;
   int DangerModifier;
   festring DefaultName;
   fearray<festring> FriendlyReplies;
@@ -790,7 +790,7 @@ class character : public entity, public id
   void AddAntidoteConsumeEndMessage() const;
   truth IsDead() const;
   void AddOriginalBodyPartID(int, ulong);
-  void AddToInventory(const fearray<contentscript<item> >&, int);
+  void AddToInventory(const fearray<contentscript<item>>&, int);
   truth HasHadBodyPart(citem*) const;
   void ProcessAndAddMessage(festring) const;
   virtual truth CheckZap();
@@ -1079,7 +1079,7 @@ class character : public entity, public id
   void ReceiveMustardGasLiquid(int, long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
-  truth ForgetRandomThing(); 
+  truth ForgetRandomThing();
   void ApplyAllGodsKnownBonus();
   item* GiveMostExpensiveItem(character*);
   void ReceiveItemAsPresent(item*);
@@ -1168,6 +1168,7 @@ class character : public entity, public id
   int TemporaryStateCounter[STATES];
   team* Team;
   v2 GoingTo;
+  double RandomMoveDir;
   long Money;
   std::list<character*>::iterator TeamIterator;
   bodypartslot* BodyPartSlot;
@@ -1217,8 +1218,8 @@ class character : public entity, public id
 #define CHARACTER_PROTO(name, base)\
 template<> const characterprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   reinterpret_cast<characterspawner>(&name##sysbase::Spawn),\
-			   reinterpret_cast<charactercloner>(&name##sysbase::Clone), #name);
+                           reinterpret_cast<characterspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<charactercloner>(&name##sysbase::Clone), #name);
 #else
 #define CHARACTER_PROTO(name, base)
 #endif

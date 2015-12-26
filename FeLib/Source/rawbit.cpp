@@ -49,7 +49,7 @@ rawbitmap::rawbitmap(cfestring& FileName)
       int Char2 = File.Get();
 
       for(; Char1 > 192; Char1--)
-	*Buffer++ = Char2;
+        *Buffer++ = Char2;
     }
     else
       *Buffer++ = Char1;
@@ -67,10 +67,10 @@ rawbitmap::~rawbitmap()
   delete [] Palette;
   delete [] PaletteBuffer;
 
-  for(fontcache::iterator i = FontCache.begin(); i != FontCache.end(); ++i)
+  for(fontcache::value_type& p : FontCache)
   {
-    delete i->second.first;
-    delete i->second.second;
+    delete p.second.first;
+    delete p.second.second;
   }
 }
 
@@ -108,7 +108,8 @@ void rawbitmap::Save(cfestring& FileName)
 
 void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Src, v2 Dest, v2 Border, packcol16* Color) const
 {
-  if(!femath::Clip(Src.X, Src.Y, Dest.X, Dest.Y, Border.X, Border.Y, Size.X, Size.Y, Bitmap->GetSize().X, Bitmap->GetSize().Y))
+  if(!femath::Clip(Src.X, Src.Y, Dest.X, Dest.Y, Border.X, Border.Y,
+                   Size.X, Size.Y, Bitmap->GetSize().X, Bitmap->GetSize().Y))
     return;
 
   paletteindex* Buffer = &PaletteBuffer[Src.Y][Src.X];
@@ -124,32 +125,32 @@ void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Src, v2 Dest, v2 Border, packcol16
 
       if(PaletteElement >= 192)
       {
-	int ThisColor = Color[(PaletteElement - 192) >> 4];
-	int Index = PaletteElement & 15;
-	int Red = (ThisColor >> 8 & 0xF8) * Index;
-	int Green = (ThisColor >> 3 & 0xFC) * Index;
-	int Blue = (ThisColor << 3 & 0xF8) * Index;
+        int ThisColor = Color[(PaletteElement - 192) >> 4];
+        int Index = PaletteElement & 15;
+        int Red = (ThisColor >> 8 & 0xF8) * Index;
+        int Green = (ThisColor >> 3 & 0xFC) * Index;
+        int Blue = (ThisColor << 3 & 0xF8) * Index;
 
-	if(Red > 0x7FF)
-	  Red = 0x7FF;
+        if(Red > 0x7FF)
+          Red = 0x7FF;
 
-	if(Green > 0x7FF)
-	  Green = 0x7FF;
+        if(Green > 0x7FF)
+          Green = 0x7FF;
 
-	if(Blue > 0x7FF)
-	  Blue = 0x7FF;
+        if(Blue > 0x7FF)
+          Blue = 0x7FF;
 
-	DestBuffer[x] = (Red << 5 & 0xF800) | (Green & 0x7E0) | (Blue >> 6 & 0x1F);
+        DestBuffer[x] = (Red << 5 & 0xF800) | (Green & 0x7E0) | (Blue >> 6 & 0x1F);
       }
       else
       {
-	int PaletteIndex = PaletteElement + (PaletteElement << 1);
-	int ThisColor = ((Palette[PaletteIndex] & 0xFFF8) << 8)
-			| ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
-			|  (Palette[PaletteIndex + 2] >> 3);
+        int PaletteIndex = PaletteElement + (PaletteElement << 1);
+        int ThisColor = ((Palette[PaletteIndex] & 0xFFF8) << 8)
+                        | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
+                        |  (Palette[PaletteIndex + 2] >> 3);
 
-	if(ThisColor != TRANSPARENT_COLOR)
-	  DestBuffer[x] = ThisColor;
+        if(ThisColor != TRANSPARENT_COLOR)
+          DestBuffer[x] = ThisColor;
       }
     }
 
@@ -189,41 +190,41 @@ cachedfont* rawbitmap::Colorize(cpackcol16* Color, alpha BaseAlpha, cpackalpha* 
 
       if(PaletteElement >= 192)
       {
-	int ColorIndex = (PaletteElement - 192) >> 4;
-	int ThisColor = Color[ColorIndex];
+        int ColorIndex = (PaletteElement - 192) >> 4;
+        int ThisColor = Color[ColorIndex];
 
-	if(ThisColor != TRANSPARENT_COLOR)
-	{
-	  int Index = PaletteElement & 15;
-	  int Red = (ThisColor >> 8 & 0xF8) * Index;
-	  int Green = (ThisColor >> 3 & 0xFC) * Index;
-	  int Blue = (ThisColor << 3 & 0xF8) * Index;
+        if(ThisColor != TRANSPARENT_COLOR)
+        {
+          int Index = PaletteElement & 15;
+          int Red = (ThisColor >> 8 & 0xF8) * Index;
+          int Green = (ThisColor >> 3 & 0xFC) * Index;
+          int Blue = (ThisColor << 3 & 0xF8) * Index;
 
-	  if(Red > 0x7FF)
-	    Red = 0x7FF;
+          if(Red > 0x7FF)
+            Red = 0x7FF;
 
-	  if(Green > 0x7FF)
-	    Green = 0x7FF;
+          if(Green > 0x7FF)
+            Green = 0x7FF;
 
-	  if(Blue > 0x7FF)
-	    Blue = 0x7FF;
+          if(Blue > 0x7FF)
+            Blue = 0x7FF;
 
-	  DestBuffer[x] = (Red << 5 & 0xF800)
-			  | (Green & 0x7E0)
-			  | (Blue >> 6 & 0x1F);
+          DestBuffer[x] = (Red << 5 & 0xF800)
+                          | (Green & 0x7E0)
+                          | (Blue >> 6 & 0x1F);
 
-	  if(UseAlpha)
-	    AlphaMap[x] = Alpha[ColorIndex];
-	}
-	else
-	  DestBuffer[x] = TRANSPARENT_COLOR;
+          if(UseAlpha)
+            AlphaMap[x] = Alpha[ColorIndex];
+        }
+        else
+          DestBuffer[x] = TRANSPARENT_COLOR;
       }
       else
       {
-	int PaletteIndex = PaletteElement + (PaletteElement << 1);
-	DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
-			| ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
-			|  (Palette[PaletteIndex + 2] >> 3);
+        int PaletteIndex = PaletteElement + (PaletteElement << 1);
+        DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
+                        | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
+                        |  (Palette[PaletteIndex + 2] >> 3);
       }
     }
 
@@ -235,7 +236,8 @@ cachedfont* rawbitmap::Colorize(cpackcol16* Color, alpha BaseAlpha, cpackalpha* 
   return Bitmap;
 }
 
-bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha, cuchar* RustData, cuchar* BurnData, truth AllowReguralColors) const
+bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha BaseAlpha, cpackalpha* Alpha,
+                            cuchar* RustData, cuchar* BurnData, truth AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Border);
   v2 TargetPos(0, 0);
@@ -316,25 +318,25 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
 
       if(PaletteElement >= 192)
       {
-	int ColorIndex = (PaletteElement - 192) >> 4;
-	int ThisColor = Color[ColorIndex];
+        int ColorIndex = (PaletteElement - 192) >> 4;
+        int ThisColor = Color[ColorIndex];
 
-	if(ThisColor != TRANSPARENT_COLOR)
-	{
-	  int Index = PaletteElement & 15;
-	  int Red = (ThisColor >> 8 & 0xF8) * Index;
-	  int Green = (ThisColor >> 3 & 0xFC) * Index;
-	  int Blue = (ThisColor << 3 & 0xF8) * Index;
+        if(ThisColor != TRANSPARENT_COLOR)
+        {
+          int Index = PaletteElement & 15;
+          int Red = (ThisColor >> 8 & 0xF8) * Index;
+          int Green = (ThisColor >> 3 & 0xFC) * Index;
+          int Blue = (ThisColor << 3 & 0xF8) * Index;
           int Max = (Red > Green ? Red : Green);
           Max = (Max > Blue ? Max : Blue);
 
-	  if(Rusted && RustData[ColorIndex]
-	     && (RustData[ColorIndex] & 3UL)
-	     > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
-	  {
+          if(Rusted && RustData[ColorIndex]
+             && (RustData[ColorIndex] & 3UL)
+             > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
+          {
             Green = ((Green << 1) + Green) >> 2;
             Blue >>= 1;
-	  }
+          }
 
     if(Burnt && BurnData[ColorIndex]
        && (BurnData[ColorIndex] & 3UL)
@@ -346,34 +348,34 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
       Blue = Max + (Blue >> 3);
     }
 
-	  if(Red > 0x7FF)
-	    Red = 0x7FF;
+          if(Red > 0x7FF)
+            Red = 0x7FF;
 
-	  if(Green > 0x7FF)
-	    Green = 0x7FF;
+          if(Green > 0x7FF)
+            Green = 0x7FF;
 
-	  if(Blue > 0x7FF)
-	    Blue = 0x7FF;
+          if(Blue > 0x7FF)
+            Blue = 0x7FF;
 
-	  DestBuffer[x] = (Red << 5 & 0xF800)
-			  | (Green & 0x7E0)
-			  | (Blue >> 6 & 0x1F);
+          DestBuffer[x] = (Red << 5 & 0xF800)
+                          | (Green & 0x7E0)
+                          | (Blue >> 6 & 0x1F);
 
-	  if(UseAlpha)
-	    AlphaMap[x] = Alpha[ColorIndex];
-	}
-	else
-	  DestBuffer[x] = TRANSPARENT_COLOR;
+          if(UseAlpha)
+            AlphaMap[x] = Alpha[ColorIndex];
+        }
+        else
+          DestBuffer[x] = TRANSPARENT_COLOR;
       }
       else if(AllowReguralColors)
       {
-	int PaletteIndex = PaletteElement + (PaletteElement << 1);
-	DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
-			| ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
-			|  (Palette[PaletteIndex + 2] >> 3);
+        int PaletteIndex = PaletteElement + (PaletteElement << 1);
+        DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
+                        | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
+                        |  (Palette[PaletteIndex + 2] >> 3);
       }
       else
-	DestBuffer[x] = TRANSPARENT_COLOR;
+        DestBuffer[x] = TRANSPARENT_COLOR;
     }
 
     DestBuffer += BitmapXSize;
@@ -402,7 +404,7 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, .
     for(int c = 0; Buffer[c]; ++c)
     {
       v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
-	  //printf("X=%4d -- Y=%d\n",F.X,F.Y);
+          //printf("X=%4d -- Y=%d\n", F.X, F.Y);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3) + 1, Pos.Y + 1), v2(8, 8), &ShadeCol);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2(8, 8), &Color);
     }
@@ -411,18 +413,18 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* Format, .
   {
     const cachedfont* Font = Iterator->second.first;
     blitdata B = { Bitmap,
-		   { 0, 0 },
-		   { Pos.X, Pos.Y },
-		   { 9, 9 },
-		   { 0 },
-		   TRANSPARENT_COLOR,
-		   0 };
+                   { 0, 0 },
+                   { Pos.X, Pos.Y },
+                   { 9, 9 },
+                   { 0 },
+                   TRANSPARENT_COLOR,
+                   0 };
 
     for(int c = 0; Buffer[c]; ++c, B.Dest.X += 8)
     {
       B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
       B.Src.Y = (Buffer[c] - 0x20) & 0xF0;
-	  //printf("'%c' -> X=%5d -- Y=%5d\n",Buffer[c],B.Src.X,B.Src.Y);
+          //printf("'%c' -> X=%5d -- Y=%5d\n", Buffer[c], B.Src.X, B.Src.Y);
       Font->PrintCharacter(B);
     }
   }
@@ -451,12 +453,12 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, cchar* F
   {
     const cachedfont* Font = Iterator->second.second;
     blitdata B = { Bitmap,
-		   { 0, 0 },
-		   { Pos.X, Pos.Y },
-		   { 9, 9 },
-		   { 0 },
-		   TRANSPARENT_COLOR,
-		   0 };
+                   { 0, 0 },
+                   { Pos.X, Pos.Y },
+                   { 9, 9 },
+                   { 0 },
+                   TRANSPARENT_COLOR,
+                   0 };
 
     for(int c = 0; Buffer[c]; ++c, B.Dest.X += 8)
     {
@@ -477,20 +479,20 @@ void rawbitmap::AlterGradient(v2 Pos, v2 Border, int MColor, int Amount, truth C
     for(int x = Pos.X; x < Pos.X + Border.X; ++x)
       for(int y = Pos.Y; y < Pos.Y + Border.Y; ++y)
       {
-	int Pixel = PaletteBuffer[y][x];
+        int Pixel = PaletteBuffer[y][x];
 
-	if(Pixel >= ColorMin && Pixel <= ColorMax)
-	{
-	  int NewPixel = Pixel + Amount;
+        if(Pixel >= ColorMin && Pixel <= ColorMax)
+        {
+          int NewPixel = Pixel + Amount;
 
-	  if(NewPixel < ColorMin)
-	    NewPixel = ColorMin;
+          if(NewPixel < ColorMin)
+            NewPixel = ColorMin;
 
-	  if(NewPixel > ColorMax)
-	    NewPixel = ColorMax;
+          if(NewPixel > ColorMax)
+            NewPixel = ColorMax;
 
-	  PaletteBuffer[y][x] = NewPixel;
-	}
+          PaletteBuffer[y][x] = NewPixel;
+        }
       }
   }
   else
@@ -500,27 +502,27 @@ void rawbitmap::AlterGradient(v2 Pos, v2 Border, int MColor, int Amount, truth C
     for(x = Pos.X; x < Pos.X + Border.X; ++x)
       for(int y = Pos.Y; y < Pos.Y + Border.Y; ++y)
       {
-	int Pixel = PaletteBuffer[y][x];
+        int Pixel = PaletteBuffer[y][x];
 
-	if(Pixel >= ColorMin && Pixel <= ColorMax)
-	{
-	  int NewPixel = Pixel + Amount;
+        if(Pixel >= ColorMin && Pixel <= ColorMax)
+        {
+          int NewPixel = Pixel + Amount;
 
-	  if(NewPixel < ColorMin)
-	    return;
+          if(NewPixel < ColorMin)
+            return;
 
-	  if(NewPixel > ColorMax)
-	    return;
-	}
+          if(NewPixel > ColorMax)
+            return;
+        }
       }
 
     for(x = Pos.X; x < Pos.X + Border.X; ++x)
       for(int y = Pos.Y; y < Pos.Y + Border.Y; ++y)
       {
-	int Pixel = PaletteBuffer[y][x];
+        int Pixel = PaletteBuffer[y][x];
 
-	if(Pixel >= ColorMin && Pixel <= ColorMax)
-	  PaletteBuffer[y][x] = Pixel + Amount;
+        if(Pixel >= ColorMin && Pixel <= ColorMax)
+          PaletteBuffer[y][x] = Pixel + Amount;
       }
   }
 }
@@ -536,9 +538,9 @@ void rawbitmap::SwapColors(v2 Pos, v2 Border, int Color1, int Color2)
       paletteindex& Pixel = PaletteBuffer[y][x];
 
       if(Pixel >= 192 + (Color1 << 4) && Pixel <= 207 + (Color1 << 4))
-	Pixel += (Color2 - Color1) << 4;
+        Pixel += (Color2 - Color1) << 4;
       else if(Pixel >= 192 + (Color2 << 4) && Pixel <= 207 + (Color2 << 4))
-	Pixel += (Color1 - Color2) << 4;
+        Pixel += (Color1 - Color2) << 4;
     }
 }
 
@@ -554,16 +556,16 @@ void rawbitmap::Roll(v2 Pos, v2 Border, v2 Move, paletteindex* TempBuffer)
       int XPos = x + Move.X, YPos = y + Move.Y;
 
       if(XPos < Pos.X)
-	XPos += Border.X;
+        XPos += Border.X;
 
       if(YPos < Pos.Y)
-	YPos += Border.Y;
+        YPos += Border.Y;
 
       if(XPos >= Pos.X + Border.X)
-	XPos -= Border.X;
+        XPos -= Border.X;
 
       if(YPos >= Pos.Y + Border.Y)
-	YPos -= Border.Y;
+        YPos -= Border.Y;
 
       TempBuffer[(YPos - Pos.Y) * Border.X + XPos - Pos.X] = PaletteBuffer[y][x];
     }
@@ -584,12 +586,12 @@ void rawbitmap::CreateFontCache(packcol16 Color)
   cachedfont* UnshadedFont = Colorize(&Color);
 
   blitdata B = { Font,
-		 { 0, 0 },
-		 { 0, 0 },
-		 { Size.X, Size.Y },
-		 { 0 },
-		 TRANSPARENT_COLOR,
-		 0 };
+                 { 0, 0 },
+                 { 0, 0 },
+                 { Size.X, Size.Y },
+                 { 0 },
+                 TRANSPARENT_COLOR,
+                 0 };
 
   UnshadedFont->NormalMaskedBlit(B);
   Font->CreateMaskMap();
@@ -599,7 +601,8 @@ void rawbitmap::CreateFontCache(packcol16 Color)
 
 /* returns ERROR_V2 if fails find Pos else returns pos */
 
-v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border, int ValidityArraySize, int SparkleFlags) const
+v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos, v2 Border,
+                                  int ValidityArraySize, int SparkleFlags) const
 {
   if(!SparkleFlags)
     return ERROR_V2;
@@ -627,21 +630,21 @@ v2 rawbitmap::RandomizeSparklePos(cv2* ValidityArray, v2* PossibleBuffer, v2 Pos
       int MinDist = 0x7FFF;
 
       if(V.X < Pos.X + 4)
-	MinDist = Min(V.X - Pos.X, MinDist);
+        MinDist = Min(V.X - Pos.X, MinDist);
 
       if(V.X >= XMax - 4)
-	MinDist = Min(XMax - V.X - 1, MinDist);
+        MinDist = Min(XMax - V.X - 1, MinDist);
 
       if(V.Y < Pos.Y + 4)
-	MinDist = Min(V.Y - Pos.Y, MinDist);
+        MinDist = Min(V.Y - Pos.Y, MinDist);
 
       if(V.Y >= YMax - 4)
-	MinDist = Min(YMax - V.Y - 1, MinDist);
+        MinDist = Min(YMax - V.Y - 1, MinDist);
 
       if(MinDist >= 4)
-	PreferredPossible[Preferred++] = V;
+        PreferredPossible[Preferred++] = V;
       else
-	BadPossible[MinDist][Bad[MinDist]++] = V;
+        BadPossible[MinDist][Bad[MinDist]++] = V;
     }
   }
 
@@ -694,13 +697,13 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
    case NONE:
     {
       if(Size.X == Bitmap->Size.X && Size.Y == Bitmap->Size.Y)
-	memcpy(DestBuffer[0], SrcBuffer[0], Size.X * Size.Y * sizeof(paletteindex));
+        memcpy(DestBuffer[0], SrcBuffer[0], Size.X * Size.Y * sizeof(paletteindex));
       else
       {
-	cint Bytes = Border.X * sizeof(paletteindex);
+        cint Bytes = Border.X * sizeof(paletteindex);
 
-	for(int y = 0; y < Border.Y; ++y)
-	  memcpy(&DestBuffer[Dest.Y + y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
+        for(int y = 0; y < Border.Y; ++y)
+          memcpy(&DestBuffer[Dest.Y + y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
       }
 
       break;
@@ -712,12 +715,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = &DestBuffer[Dest.Y + y][Dest.X];
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = &DestBuffer[Dest.Y + y][Dest.X];
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
+          *DestPtr = *SrcPtr;
       }
 
       break;
@@ -729,7 +732,7 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
       cint Bytes = Border.X * sizeof(paletteindex);
 
       for(int y = 0; y < Border.Y; ++y)
-	memcpy(&DestBuffer[Dest.Y - y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
+        memcpy(&DestBuffer[Dest.Y - y][Dest.X], &SrcBuffer[Src.Y + y][Src.X], Bytes);
 
       break;
     }
@@ -741,12 +744,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = &DestBuffer[Dest.Y - y][Dest.X];
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = &DestBuffer[Dest.Y - y][Dest.X];
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, --DestPtr)
+          *DestPtr = *SrcPtr;
       }
 
       break;
@@ -760,12 +763,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = DestBase - y;
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = DestBase - y;
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
+          *DestPtr = *SrcPtr;
       }
 
       break;
@@ -778,12 +781,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = DestBase + y;
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = DestBase + y;
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr += TrueDestXMove)
+          *DestPtr = *SrcPtr;
       }
 
       break;
@@ -798,12 +801,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = DestBase - y;
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = DestBase - y;
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)
+          *DestPtr = *SrcPtr;
       }
 
       break;
@@ -817,12 +820,12 @@ void rawbitmap::NormalBlit(rawbitmap* Bitmap, v2 Src, v2 Dest, v2 Border, int Fl
 
       for(int y = 0; y < Border.Y; ++y)
       {
-	cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
-	cpaletteindex* EndPtr = SrcPtr + Border.X;
-	paletteindex* DestPtr = DestBase + y;
+        cpaletteindex* SrcPtr = &SrcBuffer[Src.Y + y][Src.X];
+        cpaletteindex* EndPtr = SrcPtr + Border.X;
+        paletteindex* DestPtr = DestBase + y;
 
-	for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)
-	  *DestPtr = *SrcPtr;
+        for(; SrcPtr != EndPtr; ++SrcPtr, DestPtr -= TrueDestXMove)
+          *DestPtr = *SrcPtr;
       }
 
       break;

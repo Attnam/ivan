@@ -35,7 +35,7 @@ festring time::VerbalizeAsTimeSpent(time_t)
   return "mur";
 }
 
-festring time::VerbalizeAsCalenderTime(time_t)
+festring time::VerbalizeAsCalendarTime(time_t)
 {
   return "murimuri";
 }

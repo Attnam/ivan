@@ -26,7 +26,7 @@ class worldmap : public area
 {
  public:
   worldmap(int, int);
-  worldmap();
+  worldmap() = default;
   virtual ~worldmap();
   void Generate();
   void Save(outputfile&) const;

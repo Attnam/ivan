@@ -19,8 +19,6 @@
 #include "femath.h"
 #include "bitmap.h"
 
-dungeon::dungeon() { }
-
 dungeon::dungeon(int Index) : Index(Index)
 {
   Initialize();
@@ -95,21 +93,27 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
     {
       if(LevelScript->GetEnterImage())
       {
-	cbitmap* EnterImage = new bitmap(game::GetGameDir() + "Graphics/" + *LevelScript->GetEnterImage());
-	game::SetEnterImage(EnterImage);
-	v2 Displacement = *LevelScript->GetEnterTextDisplacement();
-	game::SetEnterTextDisplacement(Displacement);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), Displacement, WHITE, false, true, &game::BusyAnimation);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nPress any key to continue."), Displacement, WHITE, true, false, &game::BusyAnimation);
-	game::SetEnterImage(0);
-	delete EnterImage;
+        cbitmap* EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
+        game::SetEnterImage(EnterImage);
+        v2 Displacement = *LevelScript->GetEnterTextDisplacement();
+        game::SetEnterTextDisplacement(Displacement);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         Displacement, WHITE, false, true, &game::BusyAnimation);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nPress any key to continue."),
+                         Displacement, WHITE, true, false, &game::BusyAnimation);
+        game::SetEnterImage(0);
+        delete EnterImage;
       }
       else
-	  {
-	game::SetEnterTextDisplacement(ZERO_V2);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+      {
+        game::SetEnterTextDisplacement(ZERO_V2);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         ZERO_V2, WHITE, false, true, &game::BusyAnimation);
       }
-	}
+    }
 
     NewLevel->Generate(Index);
     game::SetCurrentLSquareMap(NewLevel->GetMap());
@@ -223,14 +227,14 @@ int dungeon::GetLevelTeleportDestination(int From) const
       To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
 
       if(To > DARK_LEVEL)
-	To = From;
+        To = From;
     }
     else
     {
       To = From - RAND_2 - RAND_2 - RAND_2 - RAND_2 - 1;
 
       if(To < 0)
-	To = 0;
+        To = 0;
     }
 
     return To;

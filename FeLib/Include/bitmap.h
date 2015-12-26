@@ -26,13 +26,13 @@ typedef void (*bitmapeditor)(bitmap*, truth);
 struct blitdata
 {
   bitmap* Bitmap;
-  podv2 Src;
-  podv2 Dest;
-  podv2 Border;
+  v2 Src;
+  v2 Dest;
+  v2 Border;
   union
   {
-    int Flags, Stretch;
     col24 Luminance;
+    int Flags, Stretch;
   };
   col16 MaskColor;
   ulong CustomData;
@@ -173,12 +173,12 @@ inline void bitmap::FastBlit(bitmap* Bitmap, v2 Pos) const
 inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
 {
   blitdata B = { Bitmap,
-		 { 0, 0 },
-		 { 0, 0 },
-		 { Size.X, Size.Y },
-		 { Flags },
-		 0,
-		 0 };
+                 { 0, 0 },
+                 { 0, 0 },
+                 { Size.X, Size.Y },
+                 { static_cast<col24>(Flags) }, // stupid union initialization rules...
+                 0,
+                 0 };
   NormalBlit(B);
 }
 

@@ -1410,7 +1410,7 @@ gas
     NameStem = "mustard gas";
     Alpha = 200;
     AttachedGod = CRUENTUS;
-    BreatheMessage = "It smells like mustard here."; 
+    BreatheMessage = "It smells like mustard here.";
     Effect = EFFECT_MUSTARD_GAS;
     StepInWisdomLimit = 8;
   }

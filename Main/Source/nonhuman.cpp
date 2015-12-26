@@ -29,7 +29,8 @@ cchar* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
 cchar* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
 int billswill::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
-int mommo::GetBodyPartWobbleData(int) const { return (GetConfig() == CONICAL ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
+int mommo::GetBodyPartWobbleData(int) const
+{ return (GetConfig() == CONICAL ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
 
 bodypart* dog::MakeBodyPart(int) const { return dogtorso::Spawn(0, NO_MATERIALS); }
 
@@ -65,13 +66,15 @@ lsquare* largecreature::GetNeighbourLSquare(int I) const { return static_cast<ls
 wsquare* largecreature::GetNeighbourWSquare(int I) const { return static_cast<wsquare*>(GetNeighbourSquare(I)); }
 
 int hattifattener::GetSpecialBodyPartFlags(int) const { return ST_LIGHTNING; }
-int hattifattener::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(1 << WOBBLE_FREQ_SHIFT); }
+int hattifattener::GetBodyPartWobbleData(int) const
+{ return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(1 << WOBBLE_FREQ_SHIFT); }
 
 col16 vladimir::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
 bodypart* blinkdog::MakeBodyPart(int) const { return blinkdogtorso::Spawn(0, NO_MATERIALS); }
 
-int mysticfrog::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(3 << WOBBLE_FREQ_SHIFT); }
+int mysticfrog::GetBodyPartWobbleData(int) const
+{ return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(3 << WOBBLE_FREQ_SHIFT); }
 bodypart* mysticfrog::MakeBodyPart(int) const { return mysticfrogtorso::Spawn(0, NO_MATERIALS); }
 
 bodypart* lobhse::MakeBodyPart(int) const { return lobhsetorso::Spawn(0, NO_MATERIALS); }
@@ -91,25 +94,26 @@ truth elpuri::Hit(character* Enemy, v2, int, int Flags)
 
       if(Square)
       {
-	character* ByStander = Square->GetCharacter();
+        character* ByStander = Square->GetCharacter();
 
-	if(ByStander && (ByStander == Enemy || GetRelation(ByStander) == HOSTILE))
-	{
-	  truth Abort = false;
+        if(ByStander && (ByStander == Enemy || GetRelation(ByStander) == HOSTILE))
+        {
+          truth Abort = false;
 
-	  for(int c = 0; c < EnemiesHit; ++c)
-	    if(EnemyHit[c] == ByStander)
-	      Abort = true;
+          for(int c = 0; c < EnemiesHit; ++c)
+            if(EnemyHit[c] == ByStander)
+              Abort = true;
 
-	  if(!Abort)
-	  {
-	    nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, Flags);
-	    ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
-	    EnemyHit[EnemiesHit++] = ByStander;
-	  }
-	}
+          if(!Abort)
+          {
+            nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, Flags);
+            ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
+            EnemyHit[EnemiesHit++] = ByStander;
+          }
+        }
 
-	Square->GetStack()->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE, game::GetLargeMoveDirection(d));
+        Square->GetStack()->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE,
+                                          game::GetLargeMoveDirection(d));
       }
     }
 
@@ -124,13 +128,13 @@ truth dog::Catches(item* Thingy)
     if(ConsumeItem(Thingy, CONST_S("eating")))
     {
       if(IsPlayer())
-	ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
       else
       {
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	ChangeTeam(PLAYER->GetTeam());
+        ChangeTeam(PLAYER->GetTeam());
       }
     }
     else if(IsPlayer())
@@ -178,47 +182,56 @@ void nonhumanoid::Load(inputfile& SaveFile)
 
 void nonhumanoid::CalculateUnarmedDamage()
 {
-  UnarmedDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH)) * GetBaseUnarmedStrength() * GetCWeaponSkill(UNARMED)->GetBonus();
+  UnarmedDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH))
+                  * GetBaseUnarmedStrength() * GetCWeaponSkill(UNARMED)->GetBonus();
 }
 
 void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  UnarmedToHitValue = GetAttribute(DEXTERITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetBonus() * GetMoveEase() / 500000;
+  UnarmedToHitValue = GetAttribute(DEXTERITY) * sqrt(2.5 * GetAttribute(PERCEPTION))
+                      * GetCWeaponSkill(UNARMED)->GetBonus() * GetMoveEase() / 500000;
 }
 
 void nonhumanoid::CalculateUnarmedAPCost()
 {
-  UnarmedAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(UNARMED)->GetBonus())), 100L);
+  UnarmedAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase()
+                                           * GetCWeaponSkill(UNARMED)->GetBonus())), 100L);
 }
 
 void nonhumanoid::CalculateKickDamage()
 {
-  KickDamage = sqrt(5e-12 * GetAttribute(LEG_STRENGTH)) * GetBaseKickStrength() * GetCWeaponSkill(KICK)->GetBonus();
+  KickDamage = sqrt(5e-12 * GetAttribute(LEG_STRENGTH))
+               * GetBaseKickStrength() * GetCWeaponSkill(KICK)->GetBonus();
 }
 
 void nonhumanoid::CalculateKickToHitValue()
 {
-  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetBonus() * GetMoveEase() / 1000000;
+  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION))
+                   * GetCWeaponSkill(KICK)->GetBonus() * GetMoveEase() / 1000000;
 }
 
 void nonhumanoid::CalculateKickAPCost()
 {
-  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY)) * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus())), 1000L);
+  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY))
+                                        * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus())), 1000L);
 }
 
 void nonhumanoid::CalculateBiteDamage()
 {
-  BiteDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH)) * GetBaseBiteStrength() * GetCWeaponSkill(BITE)->GetBonus();
+  BiteDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH))
+               * GetBaseBiteStrength() * GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void nonhumanoid::CalculateBiteToHitValue()
 {
-  BiteToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetBonus() * GetMoveEase() / 1000000;
+  BiteToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION))
+                   * GetCWeaponSkill(BITE)->GetBonus() * GetMoveEase() / 1000000;
 }
 
 void nonhumanoid::CalculateBiteAPCost()
 {
-  BiteAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus())), 100L);
+  BiteAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY))
+                                        * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus())), 100L);
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -236,7 +249,8 @@ void nonhumanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHi
   EditExperience(ARM_STRENGTH, 75, 1 << 8);
   EditExperience(AGILITY, 150, 1 << 8);
   EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
-  Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
+  Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26,
+                 BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
 void nonhumanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
@@ -245,7 +259,8 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
   EditAP(-GetKickAPCost());
   EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
 
-  if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
+  if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26,
+                      Direction, !(RAND() % GetCriticalModifier()), ForceHit))
   {
     EditExperience(LEG_STRENGTH, 150, 1 << 8);
     EditExperience(AGILITY, 75, 1 << 8);
@@ -259,7 +274,8 @@ truth nonhumanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
   if(IsPlayer())
   {
-    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE
+       && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
   }
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -332,7 +348,9 @@ void nonhumanoid::UnarmedHit(character* Enemy, v2 HitPos, int Direction, truth F
   EditAP(-GetUnarmedAPCost());
   EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
 
-  switch(Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(),
+                        RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction,
+                        !(RAND() % GetCriticalModifier()), ForceHit))
   {
    case HAS_HIT:
    case HAS_BLOCKED:
@@ -353,19 +371,22 @@ double nonhumanoid::GetTimeToKill(ccharacter* Enemy, truth UseMaxHP) const
 
   if(IsUsingArms())
   {
-    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetUnarmedDamage()) + 1, GetUnarmedToHitValue(), AttackIsBlockable(UNARMED_ATTACK), UseMaxHP) * GetUnarmedAPCost());
+    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetUnarmedDamage()) + 1, GetUnarmedToHitValue(),
+                                            AttackIsBlockable(UNARMED_ATTACK), UseMaxHP) * GetUnarmedAPCost());
     ++AttackStyles;
   }
 
   if(IsUsingLegs())
   {
-    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetKickDamage()) + 1, GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * GetKickAPCost());
+    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetKickDamage()) + 1, GetKickToHitValue(),
+                                            AttackIsBlockable(KICK_ATTACK), UseMaxHP) * GetKickAPCost());
     ++AttackStyles;
   }
 
   if(IsUsingHead())
   {
-    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetBiteDamage()) + 1, GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetBiteAPCost());
+    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(GetBiteDamage()) + 1, GetBiteToHitValue(),
+                                            AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetBiteAPCost());
     ++AttackStyles;
   }
 
@@ -430,20 +451,20 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
     if(!UseMaterialAttributes())
     {
       int Change = RawEditExperience(StrengthExperience,
-				     GetNaturalExperience(ARM_STRENGTH),
-				     Value, Speed / 2);
+                                     GetNaturalExperience(ARM_STRENGTH),
+                                     Value, Speed / 2);
 
       if(Change)
       {
-	cchar* Adj = Change > 0 ? "stronger" : "weaker";
+        cchar* Adj = Change > 0 ? "stronger" : "weaker";
 
-	if(IsPlayer())
-	  ADD_MESSAGE("Your feel %s!", Adj);
-	else if(IsPet() && CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
+        if(IsPlayer())
+          ADD_MESSAGE("Your feel %s!", Adj);
+        else if(IsPet() && CanBeSeenByPlayer())
+          ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
 
-	CalculateBurdenState();
-	CalculateBattleInfo();
+        CalculateBurdenState();
+        CalculateBattleInfo();
       }
     }
   }
@@ -452,19 +473,19 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
     if(!UseMaterialAttributes())
     {
       int Change = RawEditExperience(AgilityExperience,
-				     GetNaturalExperience(AGILITY),
-				     Value, Speed / 2);
+                                     GetNaturalExperience(AGILITY),
+                                     Value, Speed / 2);
 
       if(Change)
       {
-	cchar* Adj = Change > 0 ? "very agile" : "sluggish";
+        cchar* Adj = Change > 0 ? "very agile" : "sluggish";
 
-	if(IsPlayer())
-	  ADD_MESSAGE("Your feel %s!", Adj);
-	else if(IsPet() && CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
+        if(IsPlayer())
+          ADD_MESSAGE("Your feel %s!", Adj);
+        else if(IsPet() && CanBeSeenByPlayer())
+          ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
 
-	CalculateBattleInfo();
+        CalculateBattleInfo();
       }
     }
   }
@@ -522,9 +543,9 @@ void dog::BeTalkedTo()
       cchar* Reply;
 
       if(GetHP() << 1 > GetMaxHP())
-	Reply = Last ? "barks happily" : "wags its tail happily";
+        Reply = Last ? "barks happily" : "wags its tail happily";
       else
-	Reply = Last ? "yelps" : "howls";
+        Reply = Last ? "yelps" : "howls";
 
       ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), Reply);
       Last = !Last;
@@ -560,43 +581,48 @@ void genetrixvesana::GetAICommand()
     for(int c1 = 0; c1 < 50 && NumberOfPlants; ++c1)
     {
       for(int c2 = 0; c2 < game::GetTeams() && NumberOfPlants; ++c2)
-	if(GetTeam()->GetRelation(game::GetTeam(c2)) == HOSTILE)
-	  for(std::list<character*>::const_iterator i = game::GetTeam(c2)->GetMember().begin(); i != game::GetTeam(c2)->GetMember().end() && NumberOfPlants; ++i)
-	    if((*i)->IsEnabled())
-	    {
-	      lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() % GetNeighbourSquares());
+        if(GetTeam()->GetRelation(game::GetTeam(c2)) == HOSTILE)
+          for(character* p : game::GetTeam(c2)->GetMember())
+          {
+            if(!NumberOfPlants)
+              break;
 
-	      if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
-	      {
-		character* NewPlant;
-		long RandomValue = RAND() % TurnsExisted;
+            if(p->IsEnabled())
+            {
+              lsquare* LSquare = p->GetNeighbourLSquare(RAND() % GetNeighbourSquares());
 
-		if(RandomValue < 250)
-		  NewPlant = carnivorousplant::Spawn();
-		else if(RandomValue < 1500)
-		  NewPlant = carnivorousplant::Spawn(GREATER);
-		else
-		  NewPlant = carnivorousplant::Spawn(GIANT);
+              if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
+              {
+                character* NewPlant;
+                long RandomValue = RAND() % TurnsExisted;
 
-		for(int c = 3; c < TurnsExisted / 500; ++c)
-		  NewPlant->EditAllAttributes(1);
+                if(RandomValue < 250)
+                  NewPlant = carnivorousplant::Spawn();
+                else if(RandomValue < 1500)
+                  NewPlant = carnivorousplant::Spawn(GREATER);
+                else
+                  NewPlant = carnivorousplant::Spawn(GIANT);
 
-		NewPlant->SetGenerationDanger(GetGenerationDanger());
-		NewPlant->SetTeam(GetTeam());
-		NewPlant->PutTo(LSquare->GetPos());
-		--NumberOfPlants;
+                for(int c = 3; c < TurnsExisted / 500; ++c)
+                  NewPlant->EditAllAttributes(1);
 
-		if(NewPlant->CanBeSeenByPlayer())
-		{
-		  if((*i)->IsPlayer())
-		    ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(INDEFINITE));
-		  else if((*i)->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(INDEFINITE), (*i)->CHAR_NAME(DEFINITE));
-		  else
-		    ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(INDEFINITE));
-		}
-	      }
-	    }
+                NewPlant->SetGenerationDanger(GetGenerationDanger());
+                NewPlant->SetTeam(GetTeam());
+                NewPlant->PutTo(LSquare->GetPos());
+                --NumberOfPlants;
+
+                if(NewPlant->CanBeSeenByPlayer())
+                {
+                  if(p->IsPlayer())
+                    ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(INDEFINITE));
+                  else if(p->CanBeSeenByPlayer())
+                    ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(INDEFINITE), p->CHAR_NAME(DEFINITE));
+                  else
+                    ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(INDEFINITE));
+                }
+              }
+            }
+          }
     }
 
     EditAP(-2000);
@@ -751,10 +777,13 @@ void elpuri::GetAICommand()
   }
 }
 
-int elpuri::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex, int Direction, truth PenetrateResistance, truth Critical, truth ShowNoDamageMsg, truth CaptureBodyPart)
+int elpuri::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+                                  int Direction, truth PenetrateResistance, truth Critical,
+                                  truth ShowNoDamageMsg, truth CaptureBodyPart)
 {
   Active = true;
-  return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
+  return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
+                                          PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
 }
 
 void mommo::CreateCorpse(lsquare* Square)
@@ -772,7 +801,9 @@ void mommo::CreateCorpse(lsquare* Square)
 
 void carnivorousplant::CreateCorpse(lsquare* Square)
 {
-  int Amount = !GetConfig() ? (RAND() % 7 ? 0 : 1) : GetConfig() == GREATER ? (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3))) : (!(RAND() % 3) ? 0 : (RAND() % 3 ? 1 : (RAND() % 3 ? 2 : 3)));
+  int Amount = !GetConfig() ? (RAND() % 7 ? 0 : 1) : GetConfig() == GREATER ?
+               (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3))) :
+               (!(RAND() % 3) ? 0 : (RAND() % 3 ? 1 : (RAND() % 3 ? 2 : 3)));
 
   for(int c = 0; c < Amount; ++c)
     Square->AddItem(kiwi::Spawn());
@@ -811,10 +842,12 @@ void floatingeye::GetAICommand()
   if(WayPoints.size() && !IsGoingSomeWhere())
   {
     if(GetPos() == WayPoints[NextWayPoint])
+    {
       if(NextWayPoint < WayPoints.size() - 1)
-	++NextWayPoint;
+        ++NextWayPoint;
       else
-	NextWayPoint = 0;
+        NextWayPoint = 0;
+    }
 
     GoingTo = WayPoints[NextWayPoint];
   }
@@ -844,9 +877,12 @@ truth floatingeye::Hit(character* Enemy, v2, int, int)
   return true;
 }
 
-int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
+int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart,
+                         v2 HitPos, double Damage, double ToHitValue, int Success,
+                         int Type, int Direction, truth Critical, truth ForceHit)
 {
-  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->LoseConsciousness(150 + RAND_N(150))) /* Changes for fainting 2 out of 3 */
+  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3
+     && Enemy->LoseConsciousness(150 + RAND_N(150))) /* Changes for fainting 2 out of 3 */
   {
     if(!Enemy->IsPlayer())
       Enemy->EditExperience(WISDOM, 75, 1 << 13);
@@ -854,7 +890,8 @@ int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart
     return HAS_FAILED;
   }
   else
-    return nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+    return nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
+                                Success, Type, Direction, Critical, ForceHit);
 }
 
 void elpuri::CreateCorpse(lsquare* Square)
@@ -897,9 +934,11 @@ truth chameleon::SpecialEnemySightedReaction(character*)
   return false;
 }
 
-int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
+int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
+                       double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
 {
-  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
+                                    Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
   {
@@ -914,7 +953,8 @@ truth eddy::Hit(character* Enemy, v2, int, int)
 {
   if(IsPlayer())
   {
-    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE
+       && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
   }
 
@@ -969,16 +1009,17 @@ void mushroom::GetAICommand()
 
       if(Square)
       {
-	character* Char = Square->GetCharacter();
+        character* Char = Square->GetCharacter();
 
-	if(Char && Char->IsMushroom())
-	  ++MushroomsNear;
+        if(Char && Char->IsMushroom())
+          ++MushroomsNear;
 
-	SpoiledItems += Square->GetSpoiledItems();
+        SpoiledItems += Square->GetSpoiledItems();
       }
     }
 
-    if((SpoiledItems && MushroomsNear < 5 && !RAND_N(50)) || (MushroomsNear < 3 && !RAND_N((1 + MushroomsNear) * 100)))
+    if((SpoiledItems && MushroomsNear < 5 && !RAND_N(50))
+       || (MushroomsNear < 3 && !RAND_N((1 + MushroomsNear) * 100)))
     {
       mushroom* Child = static_cast<mushroom*>(GetProtoType()->Spawn(GetConfig()));
       Child->SetSpecies(Species);
@@ -987,10 +1028,10 @@ void mushroom::GetAICommand()
       Child->PutTo(CradleSquare->GetPos());
 
       for(int c = 0; c < BASE_ATTRIBUTES; ++c)
-	Child->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] * 4);
+        Child->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] * 4);
 
       if(Child->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
+        ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
     }
   }
 
@@ -1030,7 +1071,7 @@ void magicmushroom::GetAICommand()
     if(Square && Square->IsFlyable())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s releases odd-looking gas.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s releases odd-looking gas.", CHAR_NAME(DEFINITE));
 
       Square->AddSmoke(gas::Spawn(MAGIC_VAPOUR, 1000));
       EditAP(-1000);
@@ -1053,7 +1094,8 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
   if(IsPlayer())
   {
-    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE
+       && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
   }
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -1084,8 +1126,8 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
       if(Enemy && GetRelation(Enemy) == HOSTILE && GetAttribute(WISDOM) < Enemy->GetAttackWisdomLimit())
       {
-	Pos[Index] = LSquare->GetPos();
-	Char[Index++] = Enemy;
+        Pos[Index] = LSquare->GetPos();
+        Char[Index++] = Enemy;
       }
     }
   }
@@ -1093,7 +1135,8 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
   if(Index)
   {
     int ChosenIndex = RAND() % Index;
-    Bite(Char[ChosenIndex], Pos[ChosenIndex], game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), Flags & SADIST_HIT);
+    Bite(Char[ChosenIndex], Pos[ChosenIndex],
+         game::GetDirectionForVector(Pos[ChosenIndex] - GetPos()), Flags & SADIST_HIT);
   }
 
   msgsystem::LeaveBigMessageMode();
@@ -1124,21 +1167,21 @@ void magpie::GetAICommand()
 
       for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
       {
-	if((*i)->GetSparkleFlags() && !MakesBurdened((*i)->GetWeight()))
-	  Sparkling.push_back(*i);
+        if((*i)->GetSparkleFlags() && !MakesBurdened((*i)->GetWeight()))
+          Sparkling.push_back(*i);
       }
 
       if(!Sparkling.empty())
       {
-	item* ToSteal = Sparkling[RAND() % Sparkling.size()];
-	ToSteal->RemoveFromSlot();
-	GetStack()->AddItem(ToSteal);
+        item* ToSteal = Sparkling[RAND() % Sparkling.size()];
+        ToSteal->RemoveFromSlot();
+        GetStack()->AddItem(ToSteal);
 
-	if(Char->IsPlayer())
-	  ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+        if(Char->IsPlayer())
+          ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
 
-	EditAP(-500);
-	return;
+        EditAP(-500);
+        return;
       }
     }
   }
@@ -1193,24 +1236,24 @@ void skunk::GetAICommand()
 
       if(Char)
       {
-	int Amount = 500 / Char->GetSquaresUnder();
-	truth Success = false;
+        int Amount = 500 / Char->GetSquaresUnder();
+        truth Success = false;
 
-	for(int c = 0; c < Char->GetSquaresUnder(); ++c)
-	  if(Char->GetLSquareUnder(c)->IsFlyable())
-	  {
-	    Success = true;
-	    Char->GetLSquareUnder(c)->AddSmoke(gas::Spawn(SKUNK_SMELL, Amount));
-	  }
+        for(int c = 0; c < Char->GetSquaresUnder(); ++c)
+          if(Char->GetLSquareUnder(c)->IsFlyable())
+          {
+            Success = true;
+            Char->GetLSquareUnder(c)->AddSmoke(gas::Spawn(SKUNK_SMELL, Amount));
+          }
 
-	if(Success)
-	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
+        if(Success)
+        {
+          if(CanBeSeenByPlayer())
+            ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
 
-	  EditAP(-1000);
-	  return;
-	}
+          EditAP(-1000);
+          return;
+        }
       }
     }
   }
@@ -1233,9 +1276,9 @@ truth elpuri::TryToRiseFromTheDead()
     for(stackiterator i = GetLSquareUnder(c)->GetStack()->GetBottom(); i.HasItem(); ++i)
       if(i->IsHeadOfElpuri())
       {
-	i->SendToHell();
-	i->RemoveFromSlot();
-	return true;
+        i->SendToHell();
+        i->RemoveFromSlot();
+        return true;
       }
 
   if(CanBeSeenByPlayer())
@@ -1256,9 +1299,9 @@ truth nonhumanoid::EditAllAttributes(int Amount)
   LimitRef(AgilityExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
   return character::EditAllAttributes(Amount)
     || (Amount < 0
-	&& (StrengthExperience != MIN_EXP || AgilityExperience != MIN_EXP))
+        && (StrengthExperience != MIN_EXP || AgilityExperience != MIN_EXP))
     || (Amount > 0
-	&& (StrengthExperience != MAX_EXP || AgilityExperience != MAX_EXP));
+        && (StrengthExperience != MAX_EXP || AgilityExperience != MAX_EXP));
 }
 
 #ifdef WIZARD
@@ -1322,12 +1365,18 @@ void nonhumanoid::AddAttackInfo(felist&) const { }
 
 truth elpuri::MustBeRemovedFromBone() const
 {
-  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE || GetLevel()->GetIndex() != DARK_LEVEL;
+  return !IsEnabled()
+         || GetTeam()->GetID() != MONSTER_TEAM
+         || GetDungeon()->GetIndex() != ELPURI_CAVE
+         || GetLevel()->GetIndex() != DARK_LEVEL;
 }
 
 truth genetrixvesana::MustBeRemovedFromBone() const
 {
-  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL || GetLevel()->GetIndex() != VESANA_LEVEL;
+  return !IsEnabled()
+         || GetTeam()->GetID() != MONSTER_TEAM
+         || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL
+         || GetLevel()->GetIndex() != VESANA_LEVEL;
 }
 
 void ghost::AddName(festring& String, int Case) const
@@ -1370,12 +1419,15 @@ truth ghost::RaiseTheDead(character* Summoner)
   return false;
 }
 
-int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex, int Direction, truth PenetrateResistance, truth Critical, truth ShowNoDamageMsg, truth CaptureBodyPart)
+int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+                                 int Direction, truth PenetrateResistance, truth Critical,
+                                 truth ShowNoDamageMsg, truth CaptureBodyPart)
 {
   if(Type != SOUND)
   {
     Active = true;
-    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
+    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
+                                            PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
   }
   else
     return 0;
@@ -1434,7 +1486,9 @@ truth largecreature::IsFreeForMe(square* Square) const
   {
     v2 SquarePos = Pos + game::GetLargeMoveVector(12 + c);
 
-    if(!Area->IsValidPos(SquarePos) || (Area->GetSquare(SquarePos)->GetCharacter() && Area->GetSquare(SquarePos)->GetCharacter() != static_cast<ccharacter*>(this)))
+    if(!Area->IsValidPos(SquarePos)
+       || (Area->GetSquare(SquarePos)->GetCharacter()
+           && Area->GetSquare(SquarePos)->GetCharacter() != static_cast<ccharacter*>(this)))
       return false;
   }
 
@@ -1522,12 +1576,16 @@ void largecreature::CreateCorpse(lsquare* Square)
 void largecreature::LoadSquaresUnder()
 {
   for(int c = 0; c < 4; ++c)
-    SquareUnder[c] = game::GetSquareInLoad()->GetArea()->GetSquare(game::GetSquareInLoad()->GetPos() + game::GetLargeMoveVector(12 + c));
+    SquareUnder[c] = game::GetSquareInLoad()->GetArea()->GetSquare(game::GetSquareInLoad()->GetPos()
+                                                                   + game::GetLargeMoveVector(12 + c));
 }
 
 truth vladimir::MustBeRemovedFromBone() const
 {
-  return !IsEnabled() || GetTeam()->GetID() != IVAN_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE|| GetLevel()->GetIndex() != IVAN_LEVEL;
+  return !IsEnabled()
+         || GetTeam()->GetID() != IVAN_TEAM
+         || GetDungeon()->GetIndex() != ELPURI_CAVE
+         || GetLevel()->GetIndex() != IVAN_LEVEL;
 }
 
 void hattifattener::GetAICommand()
@@ -1539,14 +1597,14 @@ void hattifattener::GetAICommand()
 
     beamdata Beam
       (
-	this,
-	"killed by a hattifattener's lightning",
-	GetPos(),
-	WHITE,
-	BEAM_LIGHTNING,
-	RAND() & 7,
-	1 + (RAND() & 7),
-	0
+        this,
+        "killed by a hattifattener's lightning",
+        GetPos(),
+        WHITE,
+        BEAM_LIGHTNING,
+        RAND() & 7,
+        1 + (RAND() & 7),
+        0
       );
 
     GetLevel()->LightningBeam(Beam);
@@ -1582,10 +1640,10 @@ void hattifattener::CreateCorpse(lsquare* Square)
   {
     beamdata Beam
       (
-	this,
-	CONST_S("killed by electricity released by a dying hattifattener"),
-	YOURSELF,
-	0
+        this,
+        CONST_S("killed by electricity released by a dying hattifattener"),
+        YOURSELF,
+        0
       );
 
     Stack[c]->Lightning(Beam);
@@ -1603,7 +1661,8 @@ void hedgehog::SpecialBodyDefenceEffect(character* Enemy, bodypart* BodyPart, in
     else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
       ADD_MESSAGE("%s spines jab %s!", CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_NAME(DEFINITE));
 
-    Enemy->ReceiveBodyPartDamage(this, 1 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart->GetBodyPartIndex(), YOURSELF, false, false, true, false);
+    Enemy->ReceiveBodyPartDamage(this, 1 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart->GetBodyPartIndex(),
+                                 YOURSELF, false, false, true, false);
     Enemy->CheckDeath(CONST_S("killed by the pointy spines of ") + GetName(INDEFINITE), this);
   }
 }
@@ -1631,8 +1690,8 @@ truth largecreature::CreateRoute()
     if(Node)
       while(Node->Last)
       {
-	Route.push_back(Node->Pos);
-	Node = Node->Last;
+        Route.push_back(Node->Pos);
+        Node = Node->Last;
       }
     else
       TerminateGoingTo();
@@ -1707,17 +1766,17 @@ truth bunny::CheckForMatePartner()
 
     for(int c = 0; c < game::GetTeams(); ++c)
       if(GetTeam()->GetRelation(game::GetTeam(c)) != HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && (*i)->IsBunny() && (*i)->GetConfig() == ADULT_FEMALE && (*i)->GetNP() > SATIATED_LEVEL)
-	  {
-	    double Danger = (*i)->GetRelativeDanger(this, true);
+        for(character* p : game::GetTeam(c)->GetMember())
+          if(p->IsEnabled() && p->IsBunny() && p->GetConfig() == ADULT_FEMALE && p->GetNP() > SATIATED_LEVEL)
+          {
+            double Danger = p->GetRelativeDanger(this, true);
 
-	    if(Danger > BestPartnerDanger)
-	    {
-	      BestPartner = *i;
-	      BestPartnerDanger = Danger;
-	    }
-	  }
+            if(Danger > BestPartnerDanger)
+            {
+              BestPartner = p;
+              BestPartnerDanger = Danger;
+            }
+          }
 
     if(BestPartner && !GetPos().IsAdjacent(BestPartner->GetPos()))
     {
@@ -1735,65 +1794,66 @@ truth bunny::CheckForMatePartner()
 
       if(Square)
       {
-	character* Father = Square->GetCharacter();
+        character* Father = Square->GetCharacter();
 
-	if(Father && Father->IsBunny() && Father->GetConfig() == ADULT_MALE && GetRelation(Father) != HOSTILE)
-	{
-	  if(CanBeSeenByPlayer())
-	  {
-	    if(Father->IsPlayer())
-	      ADD_MESSAGE("You have much fun with %s.", CHAR_NAME(DEFINITE));
-	    else if(Father->CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s and %s seem to have much fun together.", Father->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    else
-	      ADD_MESSAGE("%s seems to have much fun.", CHAR_NAME(DEFINITE));
-	  }
-	  else
-	  {
-	    if(Father->IsPlayer())
-	      ADD_MESSAGE("You have much fun with something.");
-	    else if(Father->CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s seems to have much fun.", Father->CHAR_NAME(DEFINITE));
-	  }
+        if(Father && Father->IsBunny() && Father->GetConfig() == ADULT_MALE && GetRelation(Father) != HOSTILE)
+        {
+          if(CanBeSeenByPlayer())
+          {
+            if(Father->IsPlayer())
+              ADD_MESSAGE("You have much fun with %s.", CHAR_NAME(DEFINITE));
+            else if(Father->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s and %s seem to have much fun together.",
+                          Father->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+            else
+              ADD_MESSAGE("%s seems to have much fun.", CHAR_NAME(DEFINITE));
+          }
+          else
+          {
+            if(Father->IsPlayer())
+              ADD_MESSAGE("You have much fun with something.");
+            else if(Father->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s seems to have much fun.", Father->CHAR_NAME(DEFINITE));
+          }
 
-	  bunny* Baby = bunny::Spawn(BABY_MALE + (RAND() & 1));
-	  Baby->StrengthExperience = RandomizeBabyExperience(StrengthExperience + static_cast<bunny*>(Father)->StrengthExperience);
-	  Baby->AgilityExperience = RandomizeBabyExperience(AgilityExperience + static_cast<bunny*>(Father)->AgilityExperience);
+          bunny* Baby = bunny::Spawn(BABY_MALE + (RAND() & 1));
+          Baby->StrengthExperience = RandomizeBabyExperience(StrengthExperience + static_cast<bunny*>(Father)->StrengthExperience);
+          Baby->AgilityExperience = RandomizeBabyExperience(AgilityExperience + static_cast<bunny*>(Father)->AgilityExperience);
 
-	  if(Baby->GetConfig() == BABY_MALE)
-	  {
-	    Baby->StrengthExperience *= 4;
-	    Baby->AgilityExperience *= 4;
-	  }
-	  else
-	  {
-	    Baby->StrengthExperience *= 2;
-	    Baby->AgilityExperience *= 6;
-	  }
+          if(Baby->GetConfig() == BABY_MALE)
+          {
+            Baby->StrengthExperience *= 4;
+            Baby->AgilityExperience *= 4;
+          }
+          else
+          {
+            Baby->StrengthExperience *= 2;
+            Baby->AgilityExperience *= 6;
+          }
 
-	  Baby->StrengthExperience /= 3;
-	  Baby->AgilityExperience /= 5;
+          Baby->StrengthExperience /= 3;
+          Baby->AgilityExperience /= 5;
 
-	  for(int c = 0; c < BASE_ATTRIBUTES; ++c)
-	    Baby->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] + static_cast<bunny*>(Father)->BaseExperience[c]);
+          for(int c = 0; c < BASE_ATTRIBUTES; ++c)
+            Baby->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] + static_cast<bunny*>(Father)->BaseExperience[c]);
 
-	  Baby->CalculateAll();
-	  Baby->RestoreHP();
-	  Baby->RestoreStamina();
-	  Baby->SetTeam(GetTeam());
-	  Baby->SetGenerationDanger(GetGenerationDanger());
-	  Baby->PutNear(GetPos());
+          Baby->CalculateAll();
+          Baby->RestoreHP();
+          Baby->RestoreStamina();
+          Baby->SetTeam(GetTeam());
+          Baby->SetGenerationDanger(GetGenerationDanger());
+          Baby->PutNear(GetPos());
 
-	  if(Baby->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s is born.", Baby->CHAR_NAME(INDEFINITE));
+          if(Baby->CanBeSeenByPlayer())
+            ADD_MESSAGE("%s is born.", Baby->CHAR_NAME(INDEFINITE));
 
-	  EditNP(-10000);
-	  Father->EditAP(-3000);
-	  EditAP(-5000);
-	  EditStamina(-GetMaxStamina() >> 1, true);
-	  Father->EditStamina(-(Father->GetMaxStamina() << 2) / 5, true);
-	  return true;
-	}
+          EditNP(-10000);
+          Father->EditAP(-3000);
+          EditAP(-5000);
+          EditStamina(-GetMaxStamina() >> 1, true);
+          Father->EditStamina(-(Father->GetMaxStamina() << 2) / 5, true);
+          return true;
+        }
       }
     }
   }
@@ -1808,13 +1868,13 @@ truth bunny::Catches(item* Thingy)
     if(ConsumeItem(Thingy, CONST_S("eating")))
     {
       if(IsPlayer())
-	ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
       else
       {
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	ChangeTeam(PLAYER->GetTeam());
+        ChangeTeam(PLAYER->GetTeam());
       }
     }
     else if(IsPlayer())
@@ -1844,7 +1904,8 @@ truth mommo::Hit(character* Enemy, v2 Pos, int, int)
 
   if(IsPlayer())
   {
-    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    if(!(Enemy->IsMasochist() && GetRelation(Enemy) == FRIEND) && GetRelation(Enemy) != HOSTILE
+       && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
       return false;
   }
   else if(GetAttribute(WISDOM) >= Enemy->GetAttackWisdomLimit())
@@ -1940,22 +2001,26 @@ void blinkdog::MonsterTeleport(cchar* BarkMsg)
   EditAP(-1000);
 }
 
-int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
+int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
+                     double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
 {
-  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
+                                    Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED
      && (StateIsActivated(PANIC)
-	 || (RAND() & 1 && IsInBadCondition())
-	 || !(RAND() & 7)))
+         || (RAND() & 1 && IsInBadCondition())
+         || !(RAND() & 7)))
     MonsterTeleport(" in terror");
 
   return Return;
 }
 
-int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
+int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
+                      double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
 {
-  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
+                                    Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
   {
@@ -2048,7 +2113,7 @@ void carnivorousplant::GetAICommand()
   if(AttackAdjacentEnemyAI())
     return;
 
-  if(CheckForUsefulItemsOnGround()) 
+  if(CheckForUsefulItemsOnGround())
     return;
 
   if(MoveRandomly())
@@ -2075,24 +2140,24 @@ void mysticfrog::GetAICommand()
   {
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	{
-	  Enemies = true;
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled())
+        {
+          Enemies = true;
+          long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
 
-	  if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
-	  {
-	    NearestEnemy = *i;
-	    NearestEnemyDistance = ThisDistance;
-	  }
-	}
+          if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && p->CanBeSeenBy(this))
+          {
+            NearestEnemy = p;
+            NearestEnemyDistance = ThisDistance;
+          }
+        }
     }
     else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
     {
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
-	  Friend.push_back(*i);
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled() && p->CanBeSeenBy(this))
+          Friend.push_back(p);
     }
   }
 
@@ -2106,7 +2171,7 @@ void mysticfrog::GetAICommand()
     else if(!(RAND() & 3))
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
 
       TeleportRandomly(true);
       EditAP(-GetSpellAPCost());
@@ -2169,7 +2234,8 @@ void mysticfrog::GetAICommand()
     }
 
     if(CanBeSeenByPlayer())
-      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE) + CONST_S(" interrupts you."));
+      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE)
+                                              + CONST_S(" interrupts you."));
     else
       NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
 
@@ -2209,7 +2275,7 @@ truth largecreature::PartCanMoveOn(const lsquare* LSquare) const
       room* Room = LSquare->GetRoom();
 
       if(!Room || Room->IsOKToDestroyWalls(this))
-	return true;
+        return true;
     }
   }
 
@@ -2230,22 +2296,21 @@ void spider::GetAICommand()
 
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
-	  i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
-	{
-	  long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
-	  ++Hostiles;
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled() && GetAttribute(WISDOM) < p->GetAttackWisdomLimit())
+        {
+          long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
+          ++Hostiles;
 
-	  if((ThisDistance < NearestDistance
-	      || (ThisDistance == NearestDistance && !(RAND() % 3)))
-	     && (*i)->CanBeSeenBy(this, false, IsGoingSomeWhere())
-	     && (!IsGoingSomeWhere() || HasClearRouteTo((*i)->GetPos())))
-	  {
-	    NearestChar = *i;
-	    NearestDistance = ThisDistance;
-	  }
-	}
+          if((ThisDistance < NearestDistance
+              || (ThisDistance == NearestDistance && !(RAND() % 3)))
+             && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+             && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
+          {
+            NearestChar = p;
+            NearestDistance = ThisDistance;
+          }
+        }
 
   if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
   {
@@ -2255,7 +2320,7 @@ void spider::GetAICommand()
     if(GetLSquareUnder()->AddTrap(Web))
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s spins a web.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s spins a web.", CHAR_NAME(DEFINITE));
 
       EditAP(-1000);
       return;
@@ -2336,7 +2401,10 @@ truth largecat::SpecialSaveLife()
 
 truth lobhse::MustBeRemovedFromBone() const
 {
-  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL || GetLevel()->GetIndex() != SPIDER_LEVEL;
+  return !IsEnabled()
+         || GetTeam()->GetID() != MONSTER_TEAM
+         || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL
+         || GetLevel()->GetIndex() != SPIDER_LEVEL;
 }
 
 truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
@@ -2352,9 +2420,11 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 
 void lobhse::GetAICommand()
 {
-  SeekLeader(GetLeader()); //will follow if tamed
+  SeekLeader(GetLeader()); // will follow if tamed
+
   if(FollowLeader(GetLeader()))
-  	return;
+    return;
+
   if(MoveRandomly())
     return;
 
@@ -2369,7 +2439,6 @@ void lobhse::CreateCorpse(lsquare* Square)
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
-
 
   if(NeighbourEnemy && NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead()
   && !NeighbourEnemy->IsInfectedByMindWorm())
@@ -2399,13 +2468,13 @@ void mindworm::TryToImplantLarvae(character* Victim)
     Victim->SetCounterToMindWormHatch(100);
     if(Victim->IsPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.", 
-		  CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
+      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.",
+                  CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     else if(Victim->CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.", 
-		  CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
+      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.",
+                  CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     MoveRandomly();
   }
@@ -2421,7 +2490,6 @@ void mindworm::PsiAttack(character* Victim)
   {
     ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
   }
-
 
   Victim->ReceiveDamage(this, 1 + RAND_N(5), PSI, ALL, 8, false, false, false, false);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);

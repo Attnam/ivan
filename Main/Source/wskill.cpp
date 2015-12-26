@@ -133,26 +133,26 @@ truth weaponskill::SubHit(int SubHits)
 void cweaponskill::AddLevelUpMessage(int Category) const
 {
   ADD_MESSAGE("You advance to skill level %d with %s!",
-	      Level, CWeaponSkillName[Category]);
+              Level, CWeaponSkillName[Category]);
 }
 
 void cweaponskill::AddLevelDownMessage(int Category) const
 {
   ADD_MESSAGE("You have not practised enough with %s lately. "
-	      "Your skill level is reduced to %d!",
-	      CWeaponSkillName[Category], Level);
+              "Your skill level is reduced to %d!",
+              CWeaponSkillName[Category], Level);
 }
 
 void sweaponskill::AddLevelUpMessage(cchar* WeaponName) const
 {
   ADD_MESSAGE("You advance to skill level %d with your %s!",
-	      Level, WeaponName);
+              Level, WeaponName);
 }
 
 void sweaponskill::AddLevelDownMessage(cchar* WeaponName) const
 {
   ADD_MESSAGE("You have not practised enough with your %s lately. "
-	      "Your skill level is reduced to %d!", WeaponName, Level);
+              "Your skill level is reduced to %d!", WeaponName, Level);
 }
 
 void sweaponskill::Save(outputfile& SaveFile) const
@@ -183,13 +183,13 @@ truth weaponskill::Tick()
 truth sweaponskill::IsSkillOf(citem* Item) const
 {
   return (ID == Item->GetID()
-	  && Weight == Item->GetWeight()
-	  && Config == Item->GetConfig());
+          && Weight == Item->GetWeight()
+          && Config == Item->GetConfig());
 }
 
 truth sweaponskill::IsSkillOfCloneMother(citem* Item, ulong CMID) const
 {
   return (ID == CMID
-	  && Weight == Item->GetWeight()
-	  && Config == Item->GetConfig());
+          && Weight == Item->GetWeight()
+          && Config == Item->GetConfig());
 }

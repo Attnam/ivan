@@ -211,7 +211,7 @@ struct olterraindatabase : public lterraindatabase
   int HPModifier;
   v2 OpenBitmapPos;
   v2 WindowBitmapPos;
-  fearray<contentscript<item> > LeftOverItems;
+  fearray<contentscript<item>> LeftOverItems;
   truth CreateDivineConfigurations;
   truth CanBeDestroyed;
   truth IsUpLink;
@@ -307,13 +307,13 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_TRUTH(IsAlwaysTransparent);
   DATA_BASE_TRUTH(CreateWindowConfigurations);
   DATA_BASE_VALUE(v2, WindowBitmapPos);
-  DATA_BASE_VALUE(const fearray<contentscript<item> >&, LeftOverItems);
+  DATA_BASE_VALUE(const fearray<contentscript<item>>&, LeftOverItems);
   DATA_BASE_TRUTH(IsWall);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
   virtual void SetText(cfestring&) { }
   virtual festring GetText() const;
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int) { }
   int GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { HP = CalculateMaxHP(); }
   int CalculateMaxHP();
@@ -353,8 +353,8 @@ class olterrain : public lterrain, public oterrain
 #define LTERRAIN_PROTO(name, base, protobase)\
 template<> const protobase##prototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
-			   #name);
+                           reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
+                           #name);
 #else
 #define LTERRAIN_PROTO(name, base, protobase)
 #endif

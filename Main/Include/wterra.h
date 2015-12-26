@@ -25,7 +25,7 @@ class wterrain
 {
  public:
   wterrain() : WSquareUnder(0), AnimationFrames(1) { }
-  virtual ~wterrain() { }
+  virtual ~wterrain() = default;
   virtual void Load(inputfile&);
   v2 GetPos() const { return WSquareUnder->GetPos(); }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
@@ -105,7 +105,7 @@ class owterrain : public wterrain, public oterrain
 #define WTERRAIN_PROTO(name, protobase)\
 template<> const protobase##prototype\
   name##sysbase::ProtoType(reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
-			   #name);
+                           #name);
 #else
 #define WTERRAIN_PROTO(name, protobase)
 #endif

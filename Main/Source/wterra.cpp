@@ -13,11 +13,11 @@
 /* Compiled through wmapset.cpp */
 
 gwterrainprototype::gwterrainprototype(gwterrainspawner Spawner,
-				       cchar* ClassID)
+                                       cchar* ClassID)
 : Spawner(Spawner), ClassID(ClassID)
 { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrainspawner Spawner,
-				       cchar* ClassID)
+                                       cchar* ClassID)
 : Spawner(Spawner), ClassID(ClassID)
 { Index = protocontainer<owterrain>::Add(this); }
 
@@ -32,17 +32,17 @@ void wterrain::AddName(festring& String, int Case) const
       String << GetNameStem();
     else
       if(!(Case & INDEFINE_BIT))
-	String << "the " << GetNameStem();
+        String << "the " << GetNameStem();
       else
-	String << (UsesLongArticle() ? "an " : "a ") << GetNameStem();
+        String << (UsesLongArticle() ? "an " : "a ") << GetNameStem();
   else
     if(!(Case & ARTICLE_BIT))
       String << GetNameStem() << " terrains";
     else
       if(!(Case & INDEFINE_BIT))
-	String << "the " << GetNameStem() << " terrains";
+        String << "the " << GetNameStem() << " terrains";
       else
-	String << GetNameStem() << " terrains";
+        String << GetNameStem() << " terrains";
 }
 
 festring wterrain::GetName(int Case) const
@@ -57,7 +57,7 @@ void gwterrain::Draw(blitdata& BlitData) const
 {
   cint AF = AnimationFrames;
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
-		? 0 : GET_TICK() & (AF - 1);
+                ? 0 : GET_TICK() & (AF - 1);
   BlitData.Src = GetBitmapPos(F);
   igraph::GetWTerrainGraphic()->LuminanceBlit(BlitData);
 
@@ -74,7 +74,7 @@ void owterrain::Draw(blitdata& BlitData) const
 {
   cint AF = AnimationFrames;
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1
-		? 0 : GET_TICK() & (AF - 1);
+                ? 0 : GET_TICK() & (AF - 1);
   BlitData.Src = GetBitmapPos(F);
   igraph::GetWTerrainGraphic()->LuminanceMaskedBlit(BlitData);
   BlitData.Src.X = BlitData.Src.Y = 0;
@@ -82,7 +82,7 @@ void owterrain::Draw(blitdata& BlitData) const
 
 void wterrain::Load(inputfile&)
 {
-  WSquareUnder = dynamic_cast<wsquare*>(game::GetSquareInLoad());
+  WSquareUnder = static_cast<wsquare*>(game::GetSquareInLoad());
 }
 
 void gwterrain::Save(outputfile& SaveFile) const
@@ -110,7 +110,7 @@ owterrain* owterrainprototype::SpawnAndLoad(inputfile& SaveFile) const
 }
 
 truth DrawOrderer(const std::pair<v2, int>& Pair1,
-		  const std::pair<v2, int>& Pair2)
+                  const std::pair<v2, int>& Pair2)
 {
   return Pair1.second < Pair2.second;
 }
@@ -133,10 +133,10 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 
       if(NeighbourPriority > Priority)
       {
-	Neighbour[Index].first = DoNeighbour->GetBitmapPos(0)
-				 - (game::GetMoveVector(d) << 4);
-	Neighbour[Index].second = NeighbourPriority;
-	++Index;
+        Neighbour[Index].first = DoNeighbour->GetBitmapPos(0)
+                                 - (game::GetMoveVector(d) << 4);
+        Neighbour[Index].second = NeighbourPriority;
+        ++Index;
       }
     }
   }
@@ -153,7 +153,7 @@ truth owterrain::Enter(truth DirectionUp) const
   {
     if(!PLAYER->IsFlying())
       ADD_MESSAGE("You jump into the air. For some "
-		  "reason you don't get too far above.");
+                  "reason you don't get too far above.");
     else
       ADD_MESSAGE("You fly around for some time.");
 
@@ -161,6 +161,6 @@ truth owterrain::Enter(truth DirectionUp) const
   }
 
   return game::TryTravel(GetAttachedDungeon(),
-			 GetAttachedArea(),
-			 GetAttachedEntry());
+                         GetAttachedArea(),
+                         GetAttachedEntry());
 }

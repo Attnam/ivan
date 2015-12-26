@@ -18,7 +18,7 @@
 ITEM(meleeweapon, item)
 {
  public:
-  meleeweapon() { }
+  meleeweapon() = default; 
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
@@ -355,12 +355,11 @@ protected:
   virtual truth CalculateHasBe() const { return true; }
 };
 
-
 ITEM(acidshield, shield)
 {
  public:
   virtual void BlockEffect(character*, character*, item*, int Type);
-}; 
+};
 
 ITEM(chastitybelt, lockablebelt)
 {

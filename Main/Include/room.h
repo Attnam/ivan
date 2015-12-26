@@ -45,7 +45,7 @@ class room
  public:
   typedef roomprototype prototype;
   room() : LastMasterSearchTick(0), MasterID(0) { }
-  virtual ~room() { }
+  virtual ~room() = default; 
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Enter(character*) { }
@@ -83,7 +83,7 @@ class room
   virtual truth AllowFoodSearch() const { return true; }
   virtual void ReceiveVomit(character*) { }
   virtual truth IsOKToDestroyWalls(ccharacter*) const;
-  virtual void AddItemEffect(item*) { };
+  virtual void AddItemEffect(item*) { }
   void FinalProcessForBone();
   void SetFlags(ulong What) { Flags = What; }
   truth DontGenerateMonsters() const { return Flags & NO_MONSTER_GENERATION; }

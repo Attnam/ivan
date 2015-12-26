@@ -25,7 +25,7 @@ class continent
 {
  public:
   friend class worldmap;
-  continent();
+  continent() = default;
   continent(int);
   void AttachTo(continent*);
   void Add(v2);

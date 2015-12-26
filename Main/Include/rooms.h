@@ -28,7 +28,7 @@ ROOM(shop, room)
   virtual truth AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual truth AllowSpoil(citem*) const;
-  virtual truth AllowKick(ccharacter*,const lsquare*) const;
+  virtual truth AllowKick(ccharacter*, const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual truth AllowFoodSearch() const { return false; }
   virtual void ReceiveVomit(character*);
@@ -54,7 +54,7 @@ ROOM(cathedral, room)
   virtual void TeleportSquare(character*, lsquare*);
   virtual truth AllowSpoil(citem*) const { return false; }
   virtual int GetGodRelationAdjustment() const { return -150; }
-  virtual truth AllowKick(ccharacter*,const lsquare*) const;
+  virtual truth AllowKick(ccharacter*, const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual truth AllowAltarPolymorph() const { return false; }
   virtual truth AllowFoodSearch() const { return false; }

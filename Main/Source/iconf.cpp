@@ -18,52 +18,52 @@
 #include "bitmap.h"
 #include "igraph.h"
 
-stringoption ivanconfig::DefaultName(	  "DefaultName",
-					  "player's default name",
-					  "",
-					  &configsystem::NormalStringDisplayer,
-					  &DefaultNameChangeInterface);
+stringoption ivanconfig::DefaultName(     "DefaultName",
+                                          "player's default name",
+                                          "",
+                                          &configsystem::NormalStringDisplayer,
+                                          &DefaultNameChangeInterface);
 stringoption ivanconfig::DefaultPetName(  "DefaultPetName",
-					  "starting pet's default name",
-					  CONST_S("Kenny"),
-					  &configsystem::NormalStringDisplayer,
-					  &DefaultPetNameChangeInterface);
+                                          "starting pet's default name",
+                                          CONST_S("Kenny"),
+                                          &configsystem::NormalStringDisplayer,
+                                          &DefaultPetNameChangeInterface);
 numberoption ivanconfig::AutoSaveInterval("AutoSaveInterval",
-					  "autosave interval",
-					  100,
-					  &AutoSaveIntervalDisplayer,
-					  &AutoSaveIntervalChangeInterface,
-					  &AutoSaveIntervalChanger);
-scrollbaroption ivanconfig::Contrast(	  "Contrast",
-					  "contrast",
-					  100,
-					  &ContrastDisplayer,
-					  &ContrastChangeInterface,
-					  &ContrastChanger,
-					  &ContrastHandler);
-truthoption ivanconfig::WarnAboutDanger(	  "WarnAboutVeryDangerousMonsters",
-						  "Warn about very dangerous monsters",
-						  true);
-truthoption ivanconfig::AutoDropLeftOvers( "AutoDropLeftOvers",
-					   "drop food leftovers automatically",
-					   true);
-truthoption ivanconfig::LookZoom(	  "LookZoom",
-					  "zoom feature in look mode",
-					  false);
-cycleoption ivanconfig::DirectionKeyMap("DirectionKeyMap",
-					   "Movement control scheme",
-					   DIR_NORM, 3, // {default value, number of options to cycle through}
-					   &DirectionKeyMapDisplayer);
-truthoption ivanconfig::BeNice(		  "BeNice",
-					  "be nice to pets",
-					  true);
+                                          "autosave interval",
+                                          100,
+                                          &AutoSaveIntervalDisplayer,
+                                          &AutoSaveIntervalChangeInterface,
+                                          &AutoSaveIntervalChanger);
+scrollbaroption ivanconfig::Contrast(     "Contrast",
+                                          "contrast",
+                                          100,
+                                          &ContrastDisplayer,
+                                          &ContrastChangeInterface,
+                                          &ContrastChanger,
+                                          &ContrastHandler);
+truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
+                                          "Warn about very dangerous monsters",
+                                          true);
+truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
+                                          "drop food leftovers automatically",
+                                          true);
+truthoption ivanconfig::LookZoom(         "LookZoom",
+                                          "zoom feature in look mode",
+                                          false);
+cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
+                                          "Movement control scheme",
+                                          DIR_NORM, 3, // {default value, number of options to cycle through}
+                                          &DirectionKeyMapDisplayer);
+truthoption ivanconfig::BeNice(           "BeNice",
+                                          "be nice to pets",
+                                          true);
 #ifndef __DJGPP__
-truthoption ivanconfig::FullScreenMode(	  "FullScreenMode",
-					  "run the game in full screen mode",
-					  false,
-					  &configsystem::NormalTruthDisplayer,
-					  &configsystem::NormalTruthChangeInterface,
-					  &FullScreenModeChanger);
+truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
+                                          "run the game in full screen mode",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &FullScreenModeChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 
@@ -90,24 +90,26 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
-	switch(O->Value){
-	  case DIR_NORM:
-		Entry << CONST_S("Normal");
-		break;
-	  case DIR_ALT:
-		Entry << CONST_S("Alternative");
-		break;
-	  case DIR_HACK:
-		Entry << CONST_S("NetHack");
-		break;
-	}
+        switch(O->Value)
+        {
+          case DIR_NORM:
+                Entry << CONST_S("Normal");
+                break;
+          case DIR_ALT:
+                Entry << CONST_S("Alternative");
+                break;
+          case DIR_HACK:
+                Entry << CONST_S("NetHack");
+                break;
+        }
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"), GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+  if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"),
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   if(game::IsRunning())
@@ -120,7 +122,8 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"), GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+  if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"),
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   if(game::IsRunning())
@@ -131,7 +134,8 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 
 truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"), GetQuestionPos(), WHITE, !game::IsRunning()));
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
 
   if(game::IsRunning())
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
@@ -141,7 +145,10 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 
 truth ivanconfig::ContrastChangeInterface(numberoption* O)
 {
-  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY, game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX), !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
@@ -220,9 +227,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&FullScreenMode);
 #endif
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName("ivan.cfg");
+  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(festring(getenv("HOME")) + "/.ivan.conf");
+  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
   configsystem::Load();
   CalculateContrastLuminance();

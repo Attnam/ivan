@@ -15,18 +15,22 @@
 void shop::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
+  {
     if(MasterIsActive())
     {
       if(GetMaster()->GetRelation(Customer) != HOSTILE
-	 && Customer->CanBeSeenBy(GetMaster()))
-	if(GetMaster()->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s welcomes you warmly to the shop.",
-		      GetMaster()->CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("Something welcomes you warmly to the shop.");
+         && Customer->CanBeSeenBy(GetMaster()))
+      {
+        if(GetMaster()->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s welcomes you warmly to the shop.",
+                      GetMaster()->CHAR_NAME(DEFINITE));
+        else
+          ADD_MESSAGE("Something welcomes you warmly to the shop.");
+      }
     }
     else
       ADD_MESSAGE("The shop appears to be deserted.");
+  }
 }
 
 /* item* ForSale can also be in chest or other container, so don't assume
@@ -41,7 +45,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
   if(ForSale->IsLanternOnWall())
   {
     ADD_MESSAGE("\"I'd appreciate it if you left my "
-		"light sources alone, thank you!\"");
+                "light sources alone, thank you!\"");
     return false;
   }
 
@@ -50,33 +54,37 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
   if(Price)
   {
     Price = Amount * (Price * 100
-		      / (100 + Customer->GetAttribute(CHARISMA)) + 1);
+                      / (100 + Customer->GetAttribute(CHARISMA)) + 1);
 
     if(GetMaster()->GetConfig() == NEW_ATTNAM)
+    {
       if(ForSale->IsBanana())
-	Price = (Price >> 2) + 1;
+        Price = (Price >> 2) + 1;
       else if(ForSale->IsEatable(GetMaster()))
-	Price <<= 2;
+        Price <<= 2;
       else
-	Price = 0;
+        Price = 0;
+    }
   }
 
   if(!Customer->IsPlayer())
+  {
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
     {
       if(Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE),
-		    ForSale->GetName(INDEFINITE, Amount).CStr());
-	Customer->EditMoney(-Price);
-	GetMaster()->EditMoney(Price);
-	Customer->EditDealExperience(Price);
+        ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE),
+                    ForSale->GetName(INDEFINITE, Amount).CStr());
+        Customer->EditMoney(-Price);
+        GetMaster()->EditMoney(Price);
+        Customer->EditDealExperience(Price);
       }
 
       return true;
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
@@ -97,41 +105,41 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
     if(Customer->GetMoney() >= Price)
     {
       if(Amount == 1)
-	ADD_MESSAGE("\"Ah! That %s costs %ld gold pieces. "
-		    "No haggling, please.\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"Ah! That %s costs %ld gold pieces. "
+                    "No haggling, please.\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold pieces. "
-		    "No haggling, please.\"",
-		    Amount, ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold pieces. "
+                    "No haggling, please.\"",
+                    Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
       if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
-	Customer->EditMoney(-Price);
-	GetMaster()->EditMoney(+Price);
-	Customer->EditDealExperience(Price);
-	return true;
+        Customer->EditMoney(-Price);
+        GetMaster()->EditMoney(+Price);
+        Customer->EditDealExperience(Price);
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
     {
       if(Amount == 1)
-	ADD_MESSAGE("\"Don't touch that %s, beggar! "
-		    "It is worth %ld gold pieces!\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"Don't touch that %s, beggar! "
+                    "It is worth %ld gold pieces!\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"Don't touch those %s, beggar! "
-		    "They are worth %ld gold pieces!\"",
-		    ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"Don't touch those %s, beggar! "
+                    "They are worth %ld gold pieces!\"",
+                    ForSale->CHAR_NAME(PLURAL), Price);
 
       return false;
     }
   }
   else
     if(game::TruthQuestion(CONST_S("Are you sure you want to "
-				   "commit this thievery? [y/N]")))
+                                   "commit this thievery? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -149,19 +157,20 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
   if(GetMaster()->GetConfig() == NEW_ATTNAM)
   {
     ADD_MESSAGE("\"Sorry, I'm only allowed to buy from "
-		"Decos Bananas Co. if I wish to stay here.\"");
+                "Decos Bananas Co. if I wish to stay here.\"");
     return false;
   }
 
   long Price = ForSale->GetTruePrice() * Amount
-	       * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+               * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
+  {
     if(Price && Customer->CanBeSeenByPlayer()
        && GetMaster()->GetMoney() >= Price)
     {
       ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE),
-		  ForSale->GetName(INDEFINITE, Amount).CStr());
+                  ForSale->GetName(INDEFINITE, Amount).CStr());
       Customer->EditMoney(Price);
       GetMaster()->EditMoney(-Price);
       Customer->EditDealExperience(Price);
@@ -169,6 +178,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
@@ -179,62 +189,62 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;
     }
-    
+
     if(ForSale->WillExplodeSoon())
     {
-      ADD_MESSAGE("\"Hey that %s is primed! Take it out! OUT, I SAY!\"", 
-		  ForSale->CHAR_NAME(UNARTICLED));
+      ADD_MESSAGE("\"Hey that %s is primed! Take it out! OUT, I SAY!\"",
+                  ForSale->CHAR_NAME(UNARTICLED));
       return false;
     }
 
     if(!Price)
     {
       ADD_MESSAGE("\"Hah! I wouldn't take %s even "
-		  "if you paid me for it!\"",
-		  Amount == 1 ? "that" : "those");
+                  "if you paid me for it!\"",
+                  Amount == 1 ? "that" : "those");
       return false;
     }
 
     if(GetMaster()->GetMoney())
     {
       if(GetMaster()->GetMoney() < Price)
-	Price = GetMaster()->GetMoney();
+        Price = GetMaster()->GetMoney();
 
       if(Amount == 1)
-	ADD_MESSAGE("\"What a fine %s. I'll pay "
-		    "%ld gold pieces for it.\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"What a fine %s. I'll pay "
+                    "%ld gold pieces for it.\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"What a fine pile of %d %s. I'll "
-		    "pay %ld gold pieces for them.\"",
-		    Amount, ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"What a fine pile of %d %s. I'll "
+                    "pay %ld gold pieces for them.\"",
+                    Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
       if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
-	Customer->SetMoney(Customer->GetMoney() + Price);
-	GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
-	Customer->EditDealExperience(Price);
-	return true;
+        Customer->SetMoney(Customer->GetMoney() + Price);
+        GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
+        Customer->EditDealExperience(Price);
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
     {
       ADD_MESSAGE("\"I would pay you %ld gold pieces "
-		  "for %s, but I'm temporarily "
-		  "short of cash. Sorry.\"",
-		  Price, Amount == 1 ? "it" : "them");
+                  "for %s, but I'm temporarily "
+                  "short of cash. Sorry.\"",
+                  Price, Amount == 1 ? "it" : "them");
       return false;
     }
   }
   else
   {
     ADD_MESSAGE("The shopkeeper doesn't see you, "
-		"so you cannot trade with him.");
+                "so you cannot trade with him.");
     return game::TruthQuestion(CONST_S("Still drop ")
-			       + (Amount == 1 ? "this item" : "these items")
-			       + "? [y/N]");
+                               + (Amount == 1 ? "this item" : "these items")
+                               + "? [y/N]");
   }
 }
 
@@ -262,7 +272,7 @@ truth shop::ConsumeItem(character* Customer, item*, int)
   }
   else
     if(game::TruthQuestion(CONST_S("It's illegal to eat property "
-				   "of others. Are you sure you sure? [y/N]")))
+                                   "of others. Are you sure you sure? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -276,7 +286,7 @@ void cathedral::Enter(character* Visitor)
   if(Visitor->IsPlayer() && !Entered)
   {
     ADD_MESSAGE("The majestetic Cathedral of Valpurus looms "
-		"before you. You watch it with utter respect.");
+                "before you. You watch it with utter respect.");
     Entered = true;
   }
 }
@@ -321,12 +331,12 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
        || Item->IsEncryptedScroll())
     {
       ADD_MESSAGE("Donating this to the Cathedral wouldn't "
-		  "be wise. You may still need it.");
+                  "be wise. You may still need it.");
       return false;
     }
 
     if(game::TruthQuestion(CONST_S("Do you wish to donate this "
-				   "item to the Cathedral? [y/N]")))
+                                   "item to the Cathedral? [y/N]")))
       return true;
   }
 
@@ -348,7 +358,7 @@ truth cathedral::ConsumeItem(character* HungryMan, item*, int)
 {
   if(game::GetStoryState() == 2
      || (game::GetTeam(ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam())
-	 == HOSTILE))
+         == HOSTILE))
     return true;
 
   if(HungryMan->IsPlayer())
@@ -413,13 +423,13 @@ void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
 {
   if(game::GetStoryState() == 2 || !Teleporter
      || (game::GetTeam(ATTNAM_TEAM)->GetRelation(Teleporter->GetTeam())
-	 == HOSTILE))
+         == HOSTILE))
     return;
 
   if(Teleporter->IsPlayer() && Square->GetStack()->GetItems())
   {
     ADD_MESSAGE("You have done unnatural things to "
-		"the property of the Cathedral!");
+                "the property of the Cathedral!");
     Teleporter->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
   }
 }
@@ -454,21 +464,25 @@ cathedral::cathedral()
 void library::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
+  {
     if(MasterIsActive())
     {
       if(GetMaster()->GetRelation(Customer) != HOSTILE
-	 && Customer->CanBeSeenBy(GetMaster()))
-	if(GetMaster()->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s looks at you suspiciously. "
-		      "\"Feel free to open the shelves, "
-		      "but be quiet in the library!\" %s whispers.",
-		      GetMaster()->CHAR_NAME(DEFINITE),
-		      GetMaster()->GetPersonalPronoun().CStr());
-	else
-	  ADD_MESSAGE("You feel somebody staring at you.");
+         && Customer->CanBeSeenBy(GetMaster()))
+      {
+        if(GetMaster()->CanBeSeenByPlayer())
+          ADD_MESSAGE("%s looks at you suspiciously. "
+                      "\"Feel free to open the shelves, "
+                      "but be quiet in the library!\" %s whispers.",
+                      GetMaster()->CHAR_NAME(DEFINITE),
+                      GetMaster()->GetPersonalPronoun().CStr());
+        else
+          ADD_MESSAGE("You feel somebody staring at you.");
+      }
     }
     else
       ADD_MESSAGE("The library appears to be deserted.");
+  }
 }
 
 truth library::PickupItem(character* Customer, item* ForSale, int Amount)
@@ -480,19 +494,19 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
   if(ForSale->IsLanternOnWall())
   {
     ADD_MESSAGE("\"I'd appreciate it if you left my "
-		"light sources alone, thank you!\"");
+                "light sources alone, thank you!\"");
     return false;
   }
 
   long Price = ForSale->GetTruePrice() * Amount
-	       * 100 / (100 + Customer->GetAttribute(CHARISMA));
+               * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
   {
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
     {
       ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE),
-		  ForSale->GetName(INDEFINITE, Amount).CStr());
+                  ForSale->GetName(INDEFINITE, Amount).CStr());
       Customer->EditMoney(-Price);
       GetMaster()->EditMoney(Price);
       Customer->EditDealExperience(Price);
@@ -521,41 +535,41 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
     if(Customer->GetMoney() >= Price)
     {
       if(Amount == 1)
-	ADD_MESSAGE("\"Ah! That %s costs %ld gold "
-		    "pieces. No haggling, please.\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"Ah! That %s costs %ld gold "
+                    "pieces. No haggling, please.\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold "
-		    "pieces. No haggling, please.\"",
-		    Amount, ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"Ah! Those %d %s cost %ld gold "
+                    "pieces. No haggling, please.\"",
+                    Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
       if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
       {
-	Customer->EditMoney(-Price);
-	GetMaster()->EditMoney(Price);
-	Customer->EditDealExperience(Price);
-	return true;
+        Customer->EditMoney(-Price);
+        GetMaster()->EditMoney(Price);
+        Customer->EditDealExperience(Price);
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
     {
       if(Amount == 1)
-	ADD_MESSAGE("\"Don't touch that %s, beggar! "
-		    "It is worth %ld gold pieces!\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"Don't touch that %s, beggar! "
+                    "It is worth %ld gold pieces!\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"Don't touch those %s, beggar! "
-		    "They are worth %ld gold pieces!\"",
-		    ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"Don't touch those %s, beggar! "
+                    "They are worth %ld gold pieces!\"",
+                    ForSale->CHAR_NAME(PLURAL), Price);
 
       return false;
     }
   }
   else
     if(game::TruthQuestion(CONST_S("Are you sure you want to "
-				   "commit this thievery? [y/N]")))
+                                   "commit this thievery? [y/N]")))
     {
       Customer->Hostility(GetMaster());
       return true;
@@ -571,14 +585,15 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
     return true;
 
   long Price = ForSale->GetTruePrice() * Amount
-	       * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+               * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
+  {
     if(Price && Customer->CanBeSeenByPlayer()
        && GetMaster()->GetMoney() >= Price)
     {
       ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE),
-		  ForSale->GetName(INDEFINITE, Amount).CStr());
+                  ForSale->GetName(INDEFINITE, Amount).CStr());
       Customer->SetMoney(Customer->GetMoney() + Price);
       GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
       Customer->EditDealExperience(Price);
@@ -586,6 +601,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
     }
     else
       return false;
+  }
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
@@ -600,51 +616,51 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
     if(!Price || !ForSale->CanBeSoldInLibrary(GetMaster()))
     {
       ADD_MESSAGE("\"Sorry, but I don't think %s into my collection.\"",
-		  Amount == 1 ? "that fits" : "those fit");
+                  Amount == 1 ? "that fits" : "those fit");
       return false;
     }
 
     if(GetMaster()->GetMoney())
     {
       if(GetMaster()->GetMoney() < Price)
-	Price = GetMaster()->GetMoney();
+        Price = GetMaster()->GetMoney();
 
       if(Amount == 1)
-	ADD_MESSAGE("\"What an interesting %s. I'll "
-		    "pay %ld gold pieces for it.\"",
-		    ForSale->CHAR_NAME(UNARTICLED), Price);
+        ADD_MESSAGE("\"What an interesting %s. I'll "
+                    "pay %ld gold pieces for it.\"",
+                    ForSale->CHAR_NAME(UNARTICLED), Price);
       else
-	ADD_MESSAGE("\"What an interesting collection of %d "
-		    "%s. I'll pay %ld gold pieces for it.\"",
-		    Amount, ForSale->CHAR_NAME(PLURAL), Price);
+        ADD_MESSAGE("\"What an interesting collection of %d "
+                    "%s. I'll pay %ld gold pieces for it.\"",
+                    Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
       if(game::TruthQuestion(CONST_S("Do you want to sell ")
-			     + (Amount == 1 ? "this item" : "these items")
-			     + "? [y/N]"))
+                             + (Amount == 1 ? "this item" : "these items")
+                             + "? [y/N]"))
       {
-	Customer->EditMoney(Price);
-	GetMaster()->EditMoney(-Price);
-	Customer->EditDealExperience(Price);
-	return true;
+        Customer->EditMoney(Price);
+        GetMaster()->EditMoney(-Price);
+        Customer->EditDealExperience(Price);
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
     {
       ADD_MESSAGE("\"I would pay you %ld gold pieces for %s, "
-		  "but I'm temporarily short of cash. Sorry.\"",
-		  Price, Amount == 1 ? "it" : "them");
+                  "but I'm temporarily short of cash. Sorry.\"",
+                  Price, Amount == 1 ? "it" : "them");
       return false;
     }
   }
   else
   {
     ADD_MESSAGE("The librarian doesn't see you, "
-		"so you cannot trade with him.");
+                "so you cannot trade with him.");
     return game::TruthQuestion(CONST_S("Still drop ")
-			       + (Amount == 1 ? "this item" : "these items")
-			       + "? [y/N]");
+                               + (Amount == 1 ? "this item" : "these items")
+                               + "? [y/N]");
   }
 }
 
@@ -699,12 +715,12 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 truth bananadroparea::DropItem(character* Dropper, item* Item, int)
 {
   return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam())
-	  == HOSTILE
-	  || (Dropper->IsPlayer()
-	      && ((!Item->IsBanana() && !Item->IsLanternOnWall())
-		  || game::TruthQuestion(CONST_S("Do you wish to "
-						 "donate this item "
-						 "to the town? [y/N]")))));
+          == HOSTILE
+          || (Dropper->IsPlayer()
+              && ((!Item->IsBanana() && !Item->IsLanternOnWall())
+                  || game::TruthQuestion(CONST_S("Do you wish to "
+                                                 "donate this item "
+                                                 "to the town? [y/N]")))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
@@ -716,9 +732,9 @@ void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
     for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
       if(i->IsBanana() || i->IsLanternOnWall())
       {
-	ADD_MESSAGE("You have harmed the property of the town!");
-	Kicker->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
-	return;
+        ADD_MESSAGE("You have harmed the property of the town!");
+        Kicker->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+        return;
       }
   }
 }
@@ -772,29 +788,29 @@ truth shop::AllowSpoil(citem* Item) const
 truth shop::AllowKick(ccharacter* Char, const lsquare* LSquare) const
 {
   return (!LSquare->GetStack()->GetItems() || !MasterIsActive()
-	  || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE
-	  || !LSquare->CanBeSeenBy(GetMaster()));
+          || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE
+          || !LSquare->CanBeSeenBy(GetMaster()));
 }
 
 truth cathedral::AllowKick(ccharacter* Char, const lsquare* LSquare) const
 {
   return (game::GetTeam(ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE
-	  || !LSquare->GetStack()->GetItems());
+          || !LSquare->GetStack()->GetItems());
 }
 
 truth library::AllowKick(ccharacter* Char, const lsquare* LSquare) const
 {
   return (!LSquare->GetStack()->GetItems()
-	  || !MasterIsActive() || Char == GetMaster()
-	  || GetMaster()->GetRelation(Char) == HOSTILE
-	  || !LSquare->CanBeSeenBy(GetMaster()));
+          || !MasterIsActive() || Char == GetMaster()
+          || GetMaster()->GetRelation(Char) == HOSTILE
+          || !LSquare->CanBeSeenBy(GetMaster()));
 }
 
 truth bananadroparea::AllowKick(ccharacter* Char, const lsquare*) const
 {
   return (!Char->IsPlayer()
-	  || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam())
-	      == HOSTILE));
+          || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam())
+              == HOSTILE));
 }
 
 void shop::HostileAction(character* Guilty) const
@@ -885,13 +901,13 @@ void cathedral::AddItemEffect(item* Dropped)
     if(KamikazeDwarf->CanBeSeenByPlayer())
     {
       if(SeenBeforeTeleport)
-	ADD_MESSAGE("%s disappears and reappears in %s's inventory.",
-		    Dropped->GetName(DEFINITE).CStr(),
-		    KamikazeDwarf->GetName(DEFINITE).CStr());
+        ADD_MESSAGE("%s disappears and reappears in %s's inventory.",
+                    Dropped->GetName(DEFINITE).CStr(),
+                    KamikazeDwarf->GetName(DEFINITE).CStr());
       else
-	ADD_MESSAGE("%s appears in %s's inventory.",
-		    Dropped->GetName(DEFINITE).CStr(),
-		    KamikazeDwarf->GetName(DEFINITE).CStr());
+        ADD_MESSAGE("%s appears in %s's inventory.",
+                    Dropped->GetName(DEFINITE).CStr(),
+                    KamikazeDwarf->GetName(DEFINITE).CStr());
     }
     else if(SeenBeforeTeleport)
       ADD_MESSAGE("%s disappears.", Dropped->GetName(DEFINITE).CStr());
@@ -901,17 +917,17 @@ void cathedral::AddItemEffect(item* Dropped)
     /* position is in kamikaze dwarf room */
 
     Dropped->RemoveFromSlot();
-    game::GetCurrentLevel()->GetLSquare(18,21)
+    game::GetCurrentLevel()->GetLSquare(18, 21)
       ->GetStack()->AddItem(Dropped, false);
 
     if(Dropped->CanBeSeenByPlayer())
     {
       if(SeenBeforeTeleport)
-	ADD_MESSAGE("%s disappears and reappears in the kamikaze dwarf room.",
-		    Dropped->GetName(DEFINITE).CStr());
+        ADD_MESSAGE("%s disappears and reappears in the kamikaze dwarf room.",
+                    Dropped->GetName(DEFINITE).CStr());
       else
-	ADD_MESSAGE("%s appears in the kamikaze dwarf room.",
-		    Dropped->GetName(DEFINITE).CStr());
+        ADD_MESSAGE("%s appears in the kamikaze dwarf room.",
+                    Dropped->GetName(DEFINITE).CStr());
     }
     else if(SeenBeforeTeleport)
       ADD_MESSAGE("%s disappears.", Dropped->GetNameSingular().CStr());
@@ -922,11 +938,9 @@ character* cathedral::FindRandomExplosiveReceiver() const
 {
   std::vector<character*> ListOfDwarfs;
 
-  for(std::list<character*>::const_iterator i
-	= game::GetTeam(ATTNAM_TEAM)->GetMember().begin();
-      i != game::GetTeam(ATTNAM_TEAM)->GetMember().end(); ++i)
-    if((*i)->IsEnabled() && (*i)->IsKamikazeDwarf())
-      ListOfDwarfs.push_back(*i);
+  for(character* p : game::GetTeam(ATTNAM_TEAM)->GetMember())
+    if(p->IsEnabled() && p->IsKamikazeDwarf())
+      ListOfDwarfs.push_back(p);
 
   if(ListOfDwarfs.empty())
     return 0;
