@@ -1,6 +1,8 @@
 To do for each release
 ----------------------
 
+###Pull from master
+
 ###Things to change around in the code:
 
  - Search for "0.50.4" in the project files and set this to 0.50.5 etcetera, depending on what the next verison is
@@ -58,3 +60,8 @@ To do for each release
   - item.dat
   - material.dat
   - olterra.dat
+
+###Then commit changes, with the release tag v0505
+Tag can be appended to latest commit
+
+###Push changes
