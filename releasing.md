@@ -3,13 +3,15 @@ To do for each release
 
 ###Things to change around in the code:
 
- - Search for "0.50.3" in the project files and set this to 0.50.4 etcetera, depending on what the next verison is
- - Search for "increment" in the project files and increment the number associated with the bone files, savefiles etc
+ - Search for "0.50.4" in the project files and set this to 0.50.5 etcetera, depending on what the next verison is
+ - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
+
+###Compile the game
 
 ###Include the following files in a zip folder for each release:
 
-**Folder: IvanWin0504**
+**Folder: IvanWin0505**
 
 **Files = 10**
 
