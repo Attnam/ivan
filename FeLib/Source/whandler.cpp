@@ -10,6 +10,14 @@
  *
  */
 
+#if defined(LINUX) || defined(__DJGPP__)
+#include <sys/stat.h>
+#endif
+
+#ifdef WIN32
+#include <direct.h>
+#endif
+
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
@@ -102,7 +110,8 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
     if(Key == K_Control_Print && !ScrshotDirectoryName.IsEmpty())
     {
-      DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
+      mkdir(ScrshotDirectoryName.CStr(), S_IRUSR|S_IWUSR);
+      DOUBLE_BUFFER->Save(ScrshotNameHandler());
       Key = 0;
     }
   }
@@ -302,7 +311,15 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
      case SDLK_SYSREQ:
      case SDLK_PRINTSCREEN:
       if(!ScrshotDirectoryName.IsEmpty())
-        DOUBLE_BUFFER->Save(festring(ScrshotNameHandler()));
+      {
+#ifdef WIN32
+        _mkdir(ScrshotDirectoryName.CStr());
+#endif
+#ifdef LINUX
+        mkdir(ScrshotDirectoryName.CStr(), S_IRWXU|S_IRWXG);
+#endif
+        DOUBLE_BUFFER->Save(ScrshotNameHandler());
+      }
       return;
 #if SDL_MAJOR_VERSION == 2
      /* event are now splitted between SDL_KEYDOWN and SDL_TEXTINPUT,
