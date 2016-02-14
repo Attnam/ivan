@@ -1568,6 +1568,56 @@ void potion::Break(character* Breaker, int Dir)
     game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
 }
 
+void lantern::Break(character* Breaker, int Dir)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shatters to pieces.", GetExtendedDescription().CStr());
+  else if(PLAYER->CanHear())
+    ADD_MESSAGE("You hear something shattering.");
+
+  if(Breaker && IsOnGround())
+  {
+    room* Room = GetRoom();
+
+    if(Room)
+      Room->HostileAction(Breaker);
+  }
+
+  item* Broken = GetProtoType()->Clone(this);
+  Broken->SetConfig(GetConfig() | BROKEN);
+  Broken->SetSize(Broken->GetSize() >> 1);
+  DonateFluidsTo(Broken);
+  DonateIDTo(Broken);
+  DonateSlotTo(Broken);
+  SendToHell();
+
+
+  if(Broken->Exists()) {
+    lsquare* Square = Broken->GetLSquareUnder();
+    stack* Stack = Square->GetStack();
+
+    for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
+    {
+      item* Item = *i;
+      i->ReceiveDamage(Breaker, 100, FIRE, Dir);
+    }
+    game::AskForKeyPress("LANTERN: terrain exists?");
+    if(Square->GetOLTerrain()) {
+      game::AskForKeyPress("LANTERN: burning the terrain");
+      Square->GetOLTerrain()->ReceiveDamage(Breaker, 100, FIRE);
+    }
+    game::AskForKeyPress("LANTERN: character in square?");
+    if(Square->GetCharacter()) {
+      game::AskForKeyPress("LANTERN: burning the character");
+      game::AskForKeyPress(Square->GetCharacter()->GetDescription(DEFINITE));
+      Square->GetCharacter()->ReceiveDamage(Breaker, 100, FIRE, ALL, Dir, true, false, false, false);
+    }
+  }
+
+  if(PLAYER->Equips(Broken))
+    game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
+}
+
 void materialcontainer::Be()
 {
   item::Be();

@@ -92,6 +92,7 @@ ITEM(lantern, item)
   virtual truth AllowAlphaEverywhere() const { return true; }
   virtual int GetSpecialFlags() const;
   virtual truth IsLanternOnWall() const { return GetSquarePosition() != CENTER; }
+  virtual void Break(character*, int);
  protected:
   virtual int GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
   virtual col16 GetMaterialColorA(int) const;
