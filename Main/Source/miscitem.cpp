@@ -1585,7 +1585,6 @@ void lantern::Break(character* Breaker, int Dir)
 
   item* Broken = GetProtoType()->Clone(this);
   Broken->SetConfig(GetConfig() | BROKEN);
-  Broken->SetSize(Broken->GetSize() >> 1);
   DonateFluidsTo(Broken);
   DonateIDTo(Broken);
   DonateSlotTo(Broken);
