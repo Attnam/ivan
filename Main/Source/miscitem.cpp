@@ -1594,6 +1594,19 @@ void lantern::Break(character* Breaker, int Dir)
 
   if(Broken->Exists()) {
     lsquare* Square = Broken->GetLSquareUnder();
+
+    festring DeathMsg = CONST_S("killed by the fire from ");
+    AddName(DeathMsg, INDEFINITE);
+
+    if(Breaker)
+      DeathMsg << " caused @bk";
+
+    if(Square->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("Flames erupt from %s!", GetExtendedDescription().CStr());
+
+    Square->GetLevel()->Explosion(Breaker, DeathMsg, Square->GetPos(), 5, true, true);
+
+    /*
     stack* Stack = Square->GetStack();
 
     for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
@@ -1612,6 +1625,7 @@ void lantern::Break(character* Breaker, int Dir)
       game::AskForKeyPress(Square->GetCharacter()->GetDescription(DEFINITE));
       Square->GetCharacter()->ReceiveDamage(Breaker, 100, FIRE, ALL, Dir, true, false, false, false);
     }
+    */
   }
 
   if(PLAYER->Equips(Broken))

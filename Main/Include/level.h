@@ -91,6 +91,7 @@ struct explosion
   int RadiusSquare;
   int Size;
   truth HurtNeutrals;
+  truth FireOnly;
 };
 
 struct beamdata
@@ -175,7 +176,7 @@ class level : public area
   room* GetRoom(int) const;
   void SetRoom(int, room*);
   void AddRoom(room*);
-  void Explosion(character*, cfestring&, v2, int, truth = true);
+  void Explosion(character*, cfestring&, v2, int, truth = true, truth = false);
   truth CollectCreatures(charactervector&, character*, truth);
   void ApplyLSquareScript(const squarescript*);
   virtual void Draw(truth) const;

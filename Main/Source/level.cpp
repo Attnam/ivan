@@ -867,7 +867,7 @@ room* level::GetRoom(int I) const
   return Room[I];
 }
 
-void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals)
+void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals, truth FireOnly)
 {
   static int StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   uint c;
@@ -890,6 +890,7 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
   Exp->RadiusSquare = (8 - Size) * (8 - Size);
   Exp->Size = Size;
   Exp->HurtNeutrals = HurtNeutrals;
+  Exp->FireOnly = FireOnly;
   ExplosionQueue.push_back(Exp);
 
   if(ExplosionQueue.size() == 1)

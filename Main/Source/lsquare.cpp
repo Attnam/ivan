@@ -1524,7 +1524,7 @@ truth lsquare::FireBall(const beamdata& Beam)
     if(CanBeSeenByPlayer(true))
       ADD_MESSAGE("A magical explosion is triggered!");
 
-    GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
+    GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25, true, true);
     return true;
   }
 
