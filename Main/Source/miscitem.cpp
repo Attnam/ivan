@@ -1588,7 +1588,6 @@ void lantern::Break(character* Breaker, int Dir)
   DonateFluidsTo(Broken);
   DonateIDTo(Broken);
   DonateSlotTo(Broken);
-  SendToHell();
 
 
   if(Broken->Exists()) {
@@ -1605,6 +1604,8 @@ void lantern::Break(character* Breaker, int Dir)
 
     Square->GetLevel()->Explosion(Breaker, DeathMsg, Square->GetPos(), 5, true, true);
   }
+
+  SendToHell();
 
   if(PLAYER->Equips(Broken))
     game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
