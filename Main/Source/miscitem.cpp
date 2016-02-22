@@ -1568,6 +1568,49 @@ void potion::Break(character* Breaker, int Dir)
     game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
 }
 
+void lantern::Break(character* Breaker, int Dir)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shatters to pieces.", GetExtendedDescription().CStr());
+  else if(PLAYER->CanHear())
+    ADD_MESSAGE("You hear something shattering.");
+
+  if(Breaker && IsOnGround())
+  {
+    room* Room = GetRoom();
+
+    if(Room)
+      Room->HostileAction(Breaker);
+  }
+
+  item* Broken = GetProtoType()->Clone(this);
+  Broken->SetConfig(GetConfig() | BROKEN);
+  DonateFluidsTo(Broken);
+  DonateIDTo(Broken);
+  DonateSlotTo(Broken);
+
+
+  if(Broken->Exists()) {
+    lsquare* Square = Broken->GetLSquareUnder();
+
+    festring DeathMsg = CONST_S("killed by the fire from ");
+    AddName(DeathMsg, INDEFINITE);
+
+    if(Breaker)
+      DeathMsg << " caused @bk";
+
+    if(Square->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("Flames erupt from %s!", GetExtendedDescription().CStr());
+
+    Square->GetLevel()->Explosion(Breaker, DeathMsg, Square->GetPos(), 5, true, true);
+  }
+
+  SendToHell();
+
+  if(PLAYER->Equips(Broken))
+    game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
+}
+
 void materialcontainer::Be()
 {
   item::Be();

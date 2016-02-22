@@ -6985,30 +6985,45 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
   if(!IsPet() && Explosion->Terrorist && Explosion->Terrorist->IsPet())
     Explosion->Terrorist->Hostility(this);
 
-  GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
+  if(!Explosion->FireOnly)
+    GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
 
   if(DamageDirection == RANDOM_DIR)
     DamageDirection = RAND() & 7;
 
   v2 SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
 
-  if(GetArea()->IsValidPos(SpillPos))
+  if(GetArea()->IsValidPos(SpillPos) && !Explosion->FireOnly)
     GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
-  if(IsPlayer())
-    ADD_MESSAGE("You are hit by the explosion!");
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s is hit by the explosion.", CHAR_NAME(DEFINITE));
-
   truth WasUnconscious = GetAction() && GetAction()->IsUnconsciousness();
-  ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
+  truth Burned = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? Damage : (Damage >> 1),
+                               FIRE, ALL, DamageDirection, true, false, false, false);
+  truth Pummeled = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? 0 : (Damage >> 1),
+                                 PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
+
+  festring Msg;
+  if(IsPlayer())
+    Msg << "You are ";
+  else
+    Msg << CHAR_NAME(DEFINITE) << " is ";
+
+  if (Burned && Pummeled)
+    Msg << "blasted ";
+  else if (Burned)
+    Msg << "burned ";
+  else if (Pummeled)
+    Msg << "pummeled ";
+  else
+    Msg << "unharmed ";
+
+  Msg << "by the " << (Explosion->FireOnly ? "fireball" : "explosion") << "!";
+
+  if(IsPlayer() || CanBeSeenByPlayer())
+    ADD_MESSAGE(Msg.CStr());
 
   if(IsEnabled())
-  {
-    ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE,
-                  ALL, DamageDirection, true, false, false, false);
     CheckDeath(Explosion->DeathMsg, Explosion->Terrorist, !WasUnconscious ? IGNORE_UNCONSCIOUSNESS : 0);
-  }
 }
 
 void character::SortAllItems(const sortdata& SortData)
