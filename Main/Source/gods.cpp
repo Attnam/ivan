@@ -1193,8 +1193,10 @@ void cruentus::PrayGoodEffect()
   if(!Weapon || !Weapon->IsWeapon(PLAYER))
     Weapon = PLAYER->GetSecondaryWielded();
 
+  int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+
   if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted()
-     && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
+     && (EnchDiff <= 1 || !RAND_N(EnchDiff)))
   {
     ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
     Weapon->EditEnchantment(1);
