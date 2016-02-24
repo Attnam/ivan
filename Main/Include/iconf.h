@@ -27,6 +27,7 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
+  static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -65,6 +66,7 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static cycleoption DirectionKeyMap;
+  static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;

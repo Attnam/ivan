@@ -54,6 +54,9 @@ cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
                                           &DirectionKeyMapDisplayer);
+truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
+                                          "smart open/close/apply behavior",
+                                          true);
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
@@ -222,6 +225,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&DirectionKeyMap);
+  configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
