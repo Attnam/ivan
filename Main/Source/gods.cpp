@@ -964,23 +964,34 @@ void nefas::PrayGoodEffect()
       }
   }
 
-  mistress* Mistress = mistress::Spawn(RAND() & 7 ? 0 : TORTURING_CHIEF);
-  v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+  if((GetRelation() > 200) && RAND_N(5)) {
+    int Chief = 3000/GetRelation();
 
-  if(Where == ERROR_V2)
-  {
-    if(PLAYER->CanHear())
-      ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+    mistress* Mistress = mistress::Spawn(RAND_N(Chief) ? 0 : TORTURING_CHIEF);
+    v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+
+    if(Where == ERROR_V2)
+    {
+      if(PLAYER->CanHear())
+        ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+      else
+        ADD_MESSAGE("You feel the air vibrating.");
+
+      delete Mistress;
+    }
     else
-      ADD_MESSAGE("You feel the air vibrating.");
-
-    delete Mistress;
+    {
+      Mistress->SetTeam(PLAYER->GetTeam());
+      Mistress->PutTo(Where);
+      ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+    }
   }
-  else
-  {
-    Mistress->SetTeam(PLAYER->GetTeam());
-    Mistress->PutTo(Where);
-    ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+  else {
+    ADD_MESSAGE("You hear a sweet voice inside your head: \"Enjoy, mortal!\".");
+    potion* Bottle = potion::Spawn(0, NO_MATERIALS);
+    Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(VODKA));
+    PLAYER->GetGiftStack()->AddItem(Bottle);
+    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(INDEFINITE));
   }
 }
 
