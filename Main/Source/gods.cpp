@@ -1224,16 +1224,22 @@ void cruentus::PrayGoodEffect()
 
   item* Weapon = PLAYER->GetMainWielded();
 
-  if(!Weapon || !Weapon->IsWeapon(PLAYER))
-    Weapon = PLAYER->GetSecondaryWielded();
-
-  if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted()
-     && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
+  for(int i = 0; i < 2; i++)
   {
-    ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
-    Weapon->EditEnchantment(1);
+    if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
+    {
+      int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+      if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+      {
+        ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
+        Weapon->EditEnchantment(1);
+        return;
+      }
+    }
+    Weapon = PLAYER->GetSecondaryWielded();
   }
-  else if(RAND() & 3)
+
+  if(RAND() & 3)
   {
     potion* Bottle = potion::Spawn(0, NO_MATERIALS);
     Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));
