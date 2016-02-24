@@ -212,6 +212,8 @@ void dulcis::PrayGoodEffect()
 
     HasHelped = true;
   }
+  else if(HasHelped)
+    ADD_MESSAGE("Dulcis helps your companions to put out the flames.");
   if(HasHelped)
     return;
   else
@@ -233,18 +235,36 @@ void dulcis::PrayGoodEffect()
             if(Char->GetTeam() == PLAYER->GetTeam())
               ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_DESCRIPTION(DEFINITE));
             else if(Char->GetRelation(PLAYER) == HOSTILE)
+            {
               ADD_MESSAGE("%s stops fighting.", Char->CHAR_DESCRIPTION(DEFINITE));
+              HasHelped = true;
+            }
             else
               ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_DESCRIPTION(DEFINITE));
 
             Char->ChangeTeam(PLAYER->GetTeam());
           }
           else
+          {
             ADD_MESSAGE("%s resists its charming call.", Char->CHAR_DESCRIPTION(DEFINITE));
+            if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+          }
         else
+        {
           ADD_MESSAGE("%s seems not affected.", Char->CHAR_DESCRIPTION(DEFINITE));
+          if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+        }
       }
     }
+  }
+  if(HasHelped)
+    return;
+  if (GetRelation()>1)
+  {
+     ADD_MESSAGE("%s you feel the music resonate within you.", GetName());
+     PLAYER->EditExperience(CHARISMA, GetRelation()/2, 1 << 10);
   }
 }
 
