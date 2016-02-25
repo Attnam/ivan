@@ -261,10 +261,11 @@ void dulcis::PrayGoodEffect()
   }
   if(HasHelped)
     return;
-  if (GetRelation()>1)
+  if (GetRelation() >= 50)
   {
-     ADD_MESSAGE("%s you feel the music resonate within you.", GetName());
-     PLAYER->EditExperience(CHARISMA, GetRelation()/2, 1 << 10);
+     ADD_MESSAGE("You feel the music resonate within you.", GetName());
+     int Experience = Min(200, Max(75, GetRelation()/4));
+     PLAYER->EditExperience(CHARISMA, Experience, 33335);
   }
 }
 
