@@ -169,9 +169,79 @@ void valpurus::PrayBadEffect()
 
 void legifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
-                                     PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 3);
+  truth AudiencePresent = false;
+
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
+  {
+    for(int y = Rect.Y1; y <= Rect.Y2; ++y)
+    {
+      character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+      if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(CONFUSED)
+         && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
+      {
+        AudiencePresent = true;
+        break;
+      }
+    }
+
+    if(AudiencePresent)
+      break;
+  }
+
+  if(AudiencePresent)
+  {
+    ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
+    game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
+                                       PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  }
+  else
+  {
+    item* Enchantable;
+    item* PairEnchantable;
+    int LowEnchant = 99;
+    truth Pair = false;
+
+    for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+    {
+      item* Equipment = PLAYER->GetEquipment(c);
+
+      if(Equipment && Equipment->CanBeEnchanted() && !Equipment->IsWeapon(PLAYER)
+          && (Equipment->GetEnchantment() < LowEnchant))
+      {
+        Enchantable = Equipment;
+        LowEnchant = Enchantable->GetEnchantment();
+        Pair = false;
+        continue;
+      }
+
+      if(Enchantable && Equipment && Equipment->HandleInPairs()
+          && Equipment->CanBePiledWith(Enchantable, PLAYER))
+      {
+        Pair = true;
+        PairEnchantable = Equipment;
+      }
+    }
+    if(LowEnchant < 99)
+    {
+      int EnchDiff = (Enchantable->GetEnchantment()*250 - GetRelation()) / 50;
+      if(EnchDiff<=1 || !RAND_N(EnchDiff)) {
+        if(Pair)
+        {
+          ADD_MESSAGE("Your %s glows briefly blue. They feels very warm now.", Enchantable->CHAR_NAME(PLURAL));
+          Enchantable->EditEnchantment(1);
+          PairEnchantable->EditEnchantment(1);
+        }
+        else
+        {
+          ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Enchantable->CHAR_NAME(UNARTICLED));
+          Enchantable->EditEnchantment(1);
+        }
+      }
+    }
+  }
 }
 
 void legifer::PrayBadEffect()
