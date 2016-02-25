@@ -6993,14 +6993,14 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
 
   v2 SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
 
-  if(GetArea()->IsValidPos(SpillPos) && !Explosion->FireOnly)
-    GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
-
   truth WasUnconscious = GetAction() && GetAction()->IsUnconsciousness();
   truth Burned = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? Damage : (Damage >> 1),
                                FIRE, ALL, DamageDirection, true, false, false, false);
   truth Pummeled = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? 0 : (Damage >> 1),
                                  PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
+
+  if(Pummeled && GetArea()->IsValidPos(SpillPos))
+    GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
   festring Msg;
   if(IsPlayer())
