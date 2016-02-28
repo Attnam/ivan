@@ -60,8 +60,8 @@ void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) {
 truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()) || (IsBurning()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
 truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
-truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
-truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
+truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable() && !IsBurning(); }
+truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable() && !IsBurning(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
