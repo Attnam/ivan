@@ -17,7 +17,7 @@ int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
 truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE; }
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 col16 bodypart::GetMaterialColorA(int) const { return GetMainMaterial()->GetSkinColor(); }
-truth bodypart::IsWarm() const { return MainMaterial->GetBodyFlags() & IS_WARM; }
+truth bodypart::IsWarm() const { return MainMaterial->GetBodyFlags() & IS_WARM || IsBurning(); }
 truth bodypart::UseMaterialAttributes() const
 { return MainMaterial->GetBodyFlags() & USE_MATERIAL_ATTRIBUTES || !Master || Master->AlwaysUseMaterialAttributes(); }
 truth bodypart::CanRegenerate() const { return MainMaterial->GetBodyFlags() & CAN_REGENERATE; }
