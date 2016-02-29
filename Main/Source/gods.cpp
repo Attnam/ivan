@@ -898,7 +898,7 @@ void infuscor::PrayBadEffect()
       ADD_MESSAGE("\"I'm going to enjoy watching you burn, insolent mortal!\"");
   }
 
-  ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
+  ADD_MESSAGE("Vile and evil knowledge pumps into your brain. It's too much for you to handle; you faint.");
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
