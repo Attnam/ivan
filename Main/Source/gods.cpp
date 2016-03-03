@@ -169,9 +169,79 @@ void valpurus::PrayBadEffect()
 
 void legifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
-                                     PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 3);
+  truth AudiencePresent = false;
+
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
+  {
+    for(int y = Rect.Y1; y <= Rect.Y2; ++y)
+    {
+      character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+      if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(CONFUSED)
+         && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
+      {
+        AudiencePresent = true;
+        break;
+      }
+    }
+
+    if(AudiencePresent)
+      break;
+  }
+
+  if(AudiencePresent)
+  {
+    ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
+    game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
+                                       PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  }
+  else
+  {
+    item* Enchantable;
+    item* PairEnchantable;
+    int LowEnchant = 99;
+    truth Pair = false;
+
+    for(int c = 0; c < PLAYER->GetEquipments(); ++c)
+    {
+      item* Equipment = PLAYER->GetEquipment(c);
+
+      if(Equipment && Equipment->CanBeEnchanted() && !Equipment->IsWeapon(PLAYER)
+          && (Equipment->GetEnchantment() < LowEnchant))
+      {
+        Enchantable = Equipment;
+        LowEnchant = Enchantable->GetEnchantment();
+        Pair = false;
+        continue;
+      }
+
+      if(Enchantable && Equipment && Equipment->HandleInPairs()
+          && Equipment->CanBePiledWith(Enchantable, PLAYER))
+      {
+        Pair = true;
+        PairEnchantable = Equipment;
+      }
+    }
+    if(LowEnchant < 99)
+    {
+      int EnchDiff = (Enchantable->GetEnchantment()*250 - GetRelation()) / 50;
+      if(EnchDiff<=1 || !RAND_N(EnchDiff)) {
+        if(Pair)
+        {
+          ADD_MESSAGE("Your %s glows briefly blue. They feels very warm now.", Enchantable->CHAR_NAME(PLURAL));
+          Enchantable->EditEnchantment(1);
+          PairEnchantable->EditEnchantment(1);
+        }
+        else
+        {
+          ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Enchantable->CHAR_NAME(UNARTICLED));
+          Enchantable->EditEnchantment(1);
+        }
+      }
+    }
+  }
 }
 
 void legifer::PrayBadEffect()
@@ -212,6 +282,8 @@ void dulcis::PrayGoodEffect()
 
     HasHelped = true;
   }
+  else if(HasHelped)
+    ADD_MESSAGE("Dulcis helps your companions to put out the flames.");
   if(HasHelped)
     return;
   else
@@ -233,18 +305,37 @@ void dulcis::PrayGoodEffect()
             if(Char->GetTeam() == PLAYER->GetTeam())
               ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_DESCRIPTION(DEFINITE));
             else if(Char->GetRelation(PLAYER) == HOSTILE)
+            {
               ADD_MESSAGE("%s stops fighting.", Char->CHAR_DESCRIPTION(DEFINITE));
+              HasHelped = true;
+            }
             else
               ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_DESCRIPTION(DEFINITE));
 
             Char->ChangeTeam(PLAYER->GetTeam());
           }
           else
+          {
             ADD_MESSAGE("%s resists its charming call.", Char->CHAR_DESCRIPTION(DEFINITE));
+            if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+          }
         else
+        {
           ADD_MESSAGE("%s seems not affected.", Char->CHAR_DESCRIPTION(DEFINITE));
+          if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+        }
       }
     }
+  }
+  if(HasHelped)
+    return;
+  if (GetRelation() >= 50)
+  {
+     ADD_MESSAGE("You feel the music resonate within you.", GetName());
+     int Experience = Min(200, Max(75, GetRelation()/4));
+     PLAYER->EditExperience(CHARISMA, Experience, 33335);
   }
 }
 
@@ -944,23 +1035,34 @@ void nefas::PrayGoodEffect()
       }
   }
 
-  mistress* Mistress = mistress::Spawn(RAND() & 7 ? 0 : TORTURING_CHIEF);
-  v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+  if((GetRelation() > 200) && RAND_N(5)) {
+    int Chief = 3000/GetRelation();
 
-  if(Where == ERROR_V2)
-  {
-    if(PLAYER->CanHear())
-      ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+    mistress* Mistress = mistress::Spawn(RAND_N(Chief) ? 0 : TORTURING_CHIEF);
+    v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+
+    if(Where == ERROR_V2)
+    {
+      if(PLAYER->CanHear())
+        ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+      else
+        ADD_MESSAGE("You feel the air vibrating.");
+
+      delete Mistress;
+    }
     else
-      ADD_MESSAGE("You feel the air vibrating.");
-
-    delete Mistress;
+    {
+      Mistress->SetTeam(PLAYER->GetTeam());
+      Mistress->PutTo(Where);
+      ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+    }
   }
-  else
-  {
-    Mistress->SetTeam(PLAYER->GetTeam());
-    Mistress->PutTo(Where);
-    ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+  else {
+    ADD_MESSAGE("You hear a sweet voice inside your head: \"Enjoy, mortal!\".");
+    potion* Bottle = potion::Spawn(0, NO_MATERIALS);
+    Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(VODKA));
+    PLAYER->GetGiftStack()->AddItem(Bottle);
+    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(INDEFINITE));
   }
 }
 
@@ -1162,8 +1264,10 @@ void cruentus::PrayGoodEffect()
   if(!Weapon || !Weapon->IsWeapon(PLAYER))
     Weapon = PLAYER->GetSecondaryWielded();
 
+  int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+
   if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted()
-     && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
+     && (EnchDiff <= 1 || !RAND_N(EnchDiff)))
   {
     ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
     Weapon->EditEnchantment(1);
