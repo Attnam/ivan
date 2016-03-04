@@ -151,6 +151,7 @@ CHARACTER(humanoid, character)
   virtual void LeprosyHandler();
   virtual void DropRandomNonVitalBodypart();
   virtual void DropBodyPart(int);
+//  virtual character* CreateSpirit() const;
   virtual void DuplicateEquipment(character*, ulong);
   virtual int GetAttributeAverage() const;
   virtual truth CanVomit() const;
@@ -431,6 +432,23 @@ CHARACTER(zombie, humanoid)
   virtual void GetAICommand();
   virtual truth AllowExperience() const { return false; }
   festring Description;
+};
+
+CHARACTER(spirit, humanoid)
+{
+ public:
+//  virtual void BeTalkedTo();
+//  virtual truth BodyPartIsVital(int) const;
+//  virtual void CreateBodyParts(int);
+//  void SetDescription(cfestring What) { Description = What; }
+//  virtual void Save(outputfile&) const;
+//  virtual void Load(inputfile&);
+//  virtual festring GetZombieDescription() const;
+ protected:
+//  virtual void AddPostFix(festring&, int) const;
+//  virtual void GetAICommand();
+  virtual truth AllowExperience() const { return false; }
+//  festring Description;
 };
 
 CHARACTER(imp, humanoid)

@@ -1414,6 +1414,15 @@ gas
     Effect = EFFECT_MUSTARD_GAS;
     StepInWisdomLimit = 8;
   }
+  
+  Config SPIRIT;
+  {
+    Color = rgb16(255, 255, 255);
+    NameStem = "ghost";
+    Alpha = 150;
+    AttachedGod = MORTIFER;
+    BodyFlags = Base|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
+  }
 }
 
 liquid

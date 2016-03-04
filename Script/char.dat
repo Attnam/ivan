@@ -2590,6 +2590,60 @@ zombie
   }
 }
 
+spirit
+{
+  DefaultArmStrength = 8;
+  DefaultLegStrength = 10;
+  DefaultDexterity = 10;
+  DefaultAgility = 8;
+  DefaultEndurance = 8;
+  DefaultPerception = 24;
+  DefaultIntelligence = 15;
+  DefaultWisdom = 10;
+  DefaultCharisma = 10;
+  DefaultMana = 15;
+  /*TorsoBitmapPos = 32, 416;*/
+  /*LegBitmapPos = 0, 416;*/
+  TotalVolume = 80000;
+  TotalSize = 175;
+  /*TotalVolume = 300000;
+  TorsoBitmapPos = 112, 16;
+  TotalSize = 100;*/
+  Frequency = 5000;
+  StandVerb = "hovering";
+  NameSingular = "spirit";
+  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
+  BaseEmitation = rgb24(110, 110, 110);
+  HostileReplies == "\"Boo!\"";
+  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
+  PanicLevel = 0;
+  /*HasALeg = false;*/
+  FleshMaterial = SPIRIT;
+  DeathMessage = "@Dd is sucked into hell.";
+  SpillsBlood = false;
+  Sweats = false;
+  UsesNutrition = false;
+  AttachedGod = MORTIFER;
+  BodyPartsDisappearWhenSevered = true;
+  /*AttackStyle = USE_HEAD;*/
+  MoveType = ETHEREAL;
+  CanChoke = false;
+  IsImmuneToStickiness = true;
+  /*KnownCWeaponSkills == BITE;*/
+  /*CWeaponSkillHits == 100;*/
+  /*BaseBiteStrength = 1000;
+  AttackStyle = USE_HEAD;*/
+  BiteCapturesBodyPart = false;
+  CreateUndeadConfigurations = true;
+  UndeadAttributeModifier = 75;
+  UndeadCopyMaterials = false;
+  CanBeGenerated = true;
+  CanBeGeneratedOnlyInTheCatacombs = true;
+  IsCatacombCreature = true;
+  /*WieldedPosition = -1, -2;*/
+  UndeadVersions = false;
+}
+
 imp
 {
   DefaultPerception = 15;
