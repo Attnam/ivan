@@ -151,7 +151,7 @@ CHARACTER(humanoid, character)
   virtual void LeprosyHandler();
   virtual void DropRandomNonVitalBodypart();
   virtual void DropBodyPart(int);
-  virtual character* CreateSpirit() const;
+  //virtual character* CreateSpirit() const;
   virtual void DuplicateEquipment(character*, ulong);
   virtual int GetAttributeAverage() const;
   virtual truth CanVomit() const;
@@ -437,17 +437,36 @@ CHARACTER(zombie, humanoid)
 CHARACTER(spirit, humanoid)
 {
  public:
+  spirit() : Active(true) { }
 //  virtual void BeTalkedTo();
   virtual truth BodyPartIsVital(int) const;
   virtual void CreateBodyParts(int); // in case some body parts are missing
   void SetDescription(cfestring What) { Description = What; }
-//  virtual void Save(outputfile&) const;
-//  virtual void Load(inputfile&);
   virtual festring GetSpiritDescription() const;
+  virtual void AddName(festring&, int) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
+  virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
+  //virtual truth RaiseTheDead(character*);
+  //virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
+  virtual truth SpecialEnemySightedReaction(character*);
+  void SetIsActive(truth What) { Active = What; }
+  virtual truth IsPolymorphable() const { return MaxHP < 100; }
  protected:
 //  virtual void AddPostFix(festring&, int) const;
 //  virtual void GetAICommand();
   virtual truth AllowExperience() const { return false; }
+  //virtual int GetBodyPartWobbleData(int) const;
+  //virtual cchar* FirstPersonBiteVerb() const;
+  //virtual cchar* FirstPersonCriticalBiteVerb() const;
+  //virtual cchar* ThirdPersonBiteVerb() const;
+  //virtual cchar* ThirdPersonCriticalBiteVerb() const;
+  virtual truth AttackIsBlockable(int) const { return false; }
+  virtual truth AttackMayDamageArmor() const { return false; }
+  virtual void GetAICommand();
+  festring OwnerSoul;
+  truth Active;
   festring Description;
 };
 

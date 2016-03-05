@@ -54,6 +54,8 @@ material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MA
 
 truth sumowrestler::EquipmentIsAllowed(int I) const { return I == BELT_INDEX; }
 
+truth spirit::SpecialEnemySightedReaction(character*) { return !(Active = true); }
+
 petrus::~petrus()
 {
   game::SetPetrus(0);
@@ -2568,6 +2570,73 @@ void spirit::CreateBodyParts(int SpecialFlags)
     bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
 }
 
+void spirit::AddName(festring& String, int Case) const
+{
+  if(OwnerSoul.IsEmpty() || Case & PLURAL)
+    character::AddName(String, Case);
+  else
+  {
+    character::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
+    String << " of " << OwnerSoul;
+  }
+}
+
+void spirit::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << OwnerSoul << Active << Description;
+}
+
+void spirit::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> OwnerSoul >> Active >> Description;
+}
+/*
+truth ghost::RaiseTheDead(character* Summoner)
+{
+  itemvector ItemVector;
+  GetStackUnder()->FillItemVector(ItemVector);
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->SuckSoul(this, Summoner))
+      return true;
+
+  if(IsPlayer())
+    ADD_MESSAGE("You shudder.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
+
+  return false;
+}*/
+/*
+int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+                                 int Direction, truth PenetrateResistance, truth Critical,
+                                 truth ShowNoDamageMsg, truth CaptureBodyPart)
+{
+  if(Type != SOUND)
+  {
+    Active = true;
+    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
+                                            PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
+  }
+  else
+    return 0;
+}*/
+
+void spirit::GetAICommand()
+{
+  if(Active)
+    character::GetAICommand();
+  else
+  {
+    if(CheckForEnemies(false, false, false))
+      return;
+
+    EditAP(-1000);
+  }
+}
+
 void humanoid::AddSpecialEquipmentInfo(festring& String, int I) const
 {
   if((I == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) ||
@@ -4582,7 +4651,7 @@ void zombie::Load(inputfile& SaveFile)
   humanoid::Load(SaveFile);
   SaveFile >> Description;
 }
-
+/*
 character* humanoid::CreateSpirit() const
 {
   if(!TorsoIsAlive()) // what does this do?
@@ -4627,7 +4696,7 @@ character* humanoid::CreateSpirit() const
         SpiritBodyPart->RemoveFromSlot();
         SpiritBodyPart->SendToHell();
       }
-    }*/
+    }
   }
 /*
   for(c = 0; c < Zombie->AllowedWeaponSkillCategories; ++c)
@@ -4638,7 +4707,7 @@ character* humanoid::CreateSpirit() const
 
   for(sweaponskill* p2 : SWeaponSkill)
     *i++ = new sweaponskill(*p2);
-*/
+
   memcpy(Spirit->BaseExperience,
          BaseExperience,
          BASE_ATTRIBUTES * sizeof(*BaseExperience));
@@ -4649,7 +4718,7 @@ character* humanoid::CreateSpirit() const
   static_cast<spirit*>(Spirit)->SetDescription(GetSpiritDescription());
   Spirit->GenerationDanger = GenerationDanger;
   return Spirit;
-}
+}*/
 
 int darkknight::ModifyBodyPartHitPreference(int I, int Modifier) const
 {
