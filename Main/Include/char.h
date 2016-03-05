@@ -243,6 +243,7 @@ struct characterdatabase : public databasebase
   int UndeadAttributeModifier;
   int UndeadVolumeModifier;
   truth UndeadCopyMaterials;
+  truth GhostCopyMaterials;
   truth CanBeGeneratedOnlyInTheCatacombs;
   truth IsAlcoholic;
   truth IsImmuneToWhipOfThievery;
@@ -597,6 +598,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, UndeadAttributeModifier);
   DATA_BASE_VALUE(int, UndeadVolumeModifier);
   DATA_BASE_TRUTH(UndeadCopyMaterials);
+  DATA_BASE_TRUTH(GhostCopyMaterials);
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   DATA_BASE_TRUTH(IsAlcoholic);
   DATA_BASE_TRUTH(IsImmuneToWhipOfThievery);
@@ -949,6 +951,7 @@ class character : public entity, public id
   virtual character* CreateZombie() const { return 0; }
   virtual festring GetZombieDescription() const;
   virtual character* CreateSpirit() const { return 0; }
+  virtual festring GetSpiritDescription() const;
   virtual truth CanAttack() const { return true; }
   truth DetectMaterial(cmaterial*) const;
   truth CheckIfTooScaredToHit(ccharacter*) const;

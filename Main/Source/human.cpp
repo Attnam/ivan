@@ -43,6 +43,9 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
+truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+festring spirit::GetSpiritDescription() const { return Description; }
+
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
 truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
@@ -2559,6 +2562,12 @@ void zombie::CreateBodyParts(int SpecialFlags)
     }
 }
 
+void spirit::CreateBodyParts(int SpecialFlags)
+{
+  for(int c = 0; c < BodyParts; ++c)
+    bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
+}
+
 void humanoid::AddSpecialEquipmentInfo(festring& String, int I) const
 {
   if((I == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) ||
@@ -4572,6 +4581,74 @@ void zombie::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> Description;
+}
+
+character* humanoid::CreateSpirit() const
+{
+  if(!TorsoIsAlive()) // what does this do?
+    return 0;
+
+  humanoid* Spirit = spirit::Spawn();
+  int c;
+
+  for(c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(!BodyPart)
+    {
+      BodyPart = SearchForOriginalBodyPart(c); // searches the stack below for zombie bodyparts. this will need to work differently
+
+      if(BodyPart)
+      {
+        BodyPart->RemoveFromSlot();
+        BodyPart->SendToHell();
+      }
+    }
+
+    if(BodyPart)
+    {
+      bodypart* SpiritBodyPart = Spirit->GetBodyPart(c);
+
+      if(!SpiritBodyPart)
+        SpiritBodyPart = Spirit->CreateBodyPart(c);
+
+      material* M = MAKE_MATERIAL(SPIRIT);//BodyPart->GetMainMaterial()->Duplicate();
+      //M->SetSkinColor(Spirit->GetSkinColor()); // depends on material, so don't need?
+      SpiritBodyPart->ChangeMainMaterial(M->SpawnMore()); // change to ghost flesh
+      SpiritBodyPart->CopyAttributes(BodyPart); // keep? Ghosts should not be leprous...
+    }/*
+    else if(!Spirit->BodyPartIsVital(c)) // if it's a non vital body part and it doesn't show up, then don't add it to the zombie? Causes default zombie arms and legs!!
+    {
+      bodypart* SpiritBodyPart = Spirit->GetBodyPart(c);
+
+      if(SpiritBodyPart)
+      {
+        SpiritBodyPart->RemoveFromSlot();
+        SpiritBodyPart->SendToHell();
+      }
+    }*/
+  }
+/*
+  for(c = 0; c < Zombie->AllowedWeaponSkillCategories; ++c)
+    Zombie->CWeaponSkill[c] = CWeaponSkill[c];
+
+  Zombie->SWeaponSkill.resize(SWeaponSkill.size());
+  std::list<sweaponskill*>::iterator i = Zombie->SWeaponSkill.begin();
+
+  for(sweaponskill* p2 : SWeaponSkill)
+    *i++ = new sweaponskill(*p2);
+*/
+  memcpy(Spirit->BaseExperience,
+         BaseExperience,
+         BASE_ATTRIBUTES * sizeof(*BaseExperience));
+  Spirit->CalculateAll();
+  Spirit->RestoreHP();
+  Spirit->RestoreStamina();
+  //Spirit->SetMainMaterial(MAKE_MATERIAL(SPIRIT));
+  static_cast<spirit*>(Spirit)->SetDescription(GetSpiritDescription());
+  Spirit->GenerationDanger = GenerationDanger;
+  return Spirit;
 }
 
 int darkknight::ModifyBodyPartHitPreference(int I, int Modifier) const

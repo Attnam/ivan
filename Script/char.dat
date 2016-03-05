@@ -283,6 +283,7 @@ character
   UndeadAttributeModifier = 100;
   UndeadVolumeModifier = 100;
   UndeadCopyMaterials = true;
+  GhostCopyMaterials = false;
   CanBeGeneratedOnlyInTheCatacombs = false;
   IsAlcoholic = false;
   IsImmuneToWhipOfThievery = false;
@@ -2602,13 +2603,13 @@ spirit
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 15;
-  /*TorsoBitmapPos = 32, 416;*/
-  /*LegBitmapPos = 0, 416;*/
+  /*HeadBitmapPos = 112, 112;  body parts are zombie type */
+  /*TorsoBitmapPos = 32, 224;*/
+  /*ArmBitmapPos = 64, 224;*/
+  /*LegBitmapPos = 0, 160;*/
+  ClothColor = rgb16(200, 200, 200);
   TotalVolume = 80000;
   TotalSize = 175;
-  /*TotalVolume = 300000;
-  TorsoBitmapPos = 112, 16;
-  TotalSize = 100;*/
   Frequency = 5000;
   StandVerb = "hovering";
   NameSingular = "spirit";
@@ -2637,11 +2638,13 @@ spirit
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
   UndeadCopyMaterials = false;
+  GhostCopyMaterials = true;
   CanBeGenerated = true;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
   /*WieldedPosition = -1, -2;*/
   UndeadVersions = false;
+  IsAbstract = true;
 }
 
 imp
