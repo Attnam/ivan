@@ -570,9 +570,6 @@
 #define BRAVERY 1
 #define FEAR 2
 
-#define HUMANKIND 1
-#define GHOSTKIND 2
-
 #define ROOKIE 1
 #define VETERAN 2
 #define EUNUCH 3

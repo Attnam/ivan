@@ -347,46 +347,6 @@ playerkind
   DisplacePriority = 2;
   /*Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; }*/
   UndeadVersions = false;
-  IsAbstract = true;
-  /*
-  Config HUMANKIND;
-  {
-  }
-  */
-  Config GHOSTKIND;
-  {
-    /*DefaultArmStrength = 5;
-    DefaultAgility = 8;
-    DefaultEndurance = 8;
-    DefaultPerception = 24;
-    DefaultIntelligence = 15;
-    DefaultWisdom = 10;
-    DefaultCharisma = 10;
-    DefaultMana = 15;
-    StandVerb = "hovering";
-    Frequency = 5000;
-    TotalVolume = 300000;
-    TorsoBitmapPos = 112, 16;
-    TotalSize = 100;*/
-    NameSingular = "ghost";
-    ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
-    BaseEmitation = rgb24(110, 110, 110);
-    HostileReplies == "\"Boo!\"";
-    FriendlyReplies == "\"A very good Boo to you, my friend.\"";
-    PanicLevel = 0;
-    /*HasALeg = false;*/
-    FleshMaterial = GHOST;
-    DeathMessage = "@Dd is sucked into hell.";
-    SpillsBlood = false;
-    Sweats = false;
-    UsesNutrition = false;
-    AttachedGod = MORTIFER;
-    BodyPartsDisappearWhenSevered = true;
-    /*AttackStyle = USE_HEAD;*/
-    MoveType = ETHEREAL;
-    CanChoke = false;
-    IsImmuneToStickiness = true;
-  }
 }
 
 petrus

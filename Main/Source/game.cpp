@@ -316,8 +316,7 @@ truth game::Init(cfestring& Name)
       InitScript();
       CreateTeams();
       CreateGods();
-      //SetPlayer(playerkind::Spawn());
-      SetPlayer(playerkind::Spawn(GHOSTKIND));
+      SetPlayer(playerkind::Spawn());
       Player->SetAssignedName(PlayerName);
       Player->SetTeam(GetTeam(0));
       Player->SetNP(SATIATED_LEVEL);
