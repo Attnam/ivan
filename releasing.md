@@ -6,6 +6,7 @@ To do for each release
 ###Things to change around in the code:
 
  - Search for "0.50.4" in the project files and set this to 0.50.5 etcetera, depending on what the next verison is
+ - Run `./autogen.sh` to generate the Autotools build system with the updated version number
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 

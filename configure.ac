@@ -1,4 +1,4 @@
-AC_INIT([Iter Vehemens ad Necem], [0.50.2],
+AC_INIT([Iter Vehemens ad Necem], [0.50.4],
         [http://github.com/Attnam/ivan/issues],
         [ivan], [http://github.com/Attnam/ivan])
 AC_CONFIG_SRCDIR([Main/Source/main.cpp])
