@@ -85,6 +85,7 @@
 #define DARK_GRASS (SOLID_ID + 64)
 #define LEAD (SOLID_ID + 65)
 #define BLACK_GRANITE (SOLID_ID + 66)
+#define TITANIUM (SOLID_ID + 67)
 
 #define ORGANIC_ID (2 << 12)
 
