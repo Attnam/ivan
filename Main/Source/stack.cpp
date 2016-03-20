@@ -947,7 +947,7 @@ truth CategorySorter(const itemvector& V1, const itemvector& V2)
 }
 
 /* Slow function which sorts the stack's contents to a vector of piles
-   (itemvectors) of which elements are similiar to each other, for instance
+   (itemvectors) of which elements are similar to each other, for instance
    4 bananas */
 
 void stack::Pile(itemvectorvector& PileVector, ccharacter* Viewer,
