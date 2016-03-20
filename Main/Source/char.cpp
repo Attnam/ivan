@@ -4418,7 +4418,7 @@ void character::DrawPanel(truth AnimationDraw) const
        && (1 << c != HASTE || !StateIsActivated(SLOW))
        && (1 << c != SLOW || !StateIsActivated(HASTE)))
       FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
-                   (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE,
+                   (1 << c) & EquipmentState || TemporaryStateCounter[c] >= PERMANENT ? BLUE : WHITE,
                    "%s", StateData[c].Description);
 
   static cchar* HungerStateStrings[] = { "Starving", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
