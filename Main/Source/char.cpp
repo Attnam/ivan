@@ -8145,7 +8145,7 @@ void characterdatabase::PostProcess()
 
 void character::EditDealExperience(long Price)
 {
-  EditExperience(CHARISMA, sqrt(Price) / 5, 1 << 9);
+  EditExperience(CHARISMA, sqrt(Price) * 10, 15000);
 }
 
 void character::PrintBeginLeprosyMessage() const
