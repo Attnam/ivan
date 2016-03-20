@@ -1622,7 +1622,7 @@ void lantern::Break(character* Breaker, int Dir)
       DeathMsg << " caused @bk";
 
     if(Square->CanBeSeenByPlayer(true))
-      ADD_MESSAGE("Flames erupt from %s!", GetExtendedDescription().CStr());
+      ADD_MESSAGE("Flames erupt from %s!", Broken->GetExtendedDescription().CStr());
 
     Square->GetLevel()->Explosion(Breaker, DeathMsg, Square->GetPos(), 5, true, true);
   }
