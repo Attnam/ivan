@@ -412,7 +412,7 @@ class item : public object
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
-  truth IsSimiliarTo(item*) const;
+  truth IsSimilarTo(item*) const;
   virtual truth IsPickable(character*) const { return true; }
   truth CanBeSeenByPlayer() const;
   virtual truth CanBeSeenBy(ccharacter*) const;
