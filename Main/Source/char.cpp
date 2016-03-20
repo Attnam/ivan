@@ -1110,7 +1110,11 @@ truth character::MoveTowardsTarget(truth Run)
 
   v2 ModifiedMoveTo = ApplyStateModification(MoveTo[0]);
 
-  if(TryMove(ModifiedMoveTo, true, Run)) return true;
+  if(TryMove(ModifiedMoveTo, true, Run))
+  {
+    RandomMoveDir = femath::RandReal(8);
+    return true;
+  }
 
   int L = (Pos - TPos).GetManhattanLength();
 
