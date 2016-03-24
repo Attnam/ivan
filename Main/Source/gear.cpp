@@ -149,10 +149,12 @@ truth pickaxe::Apply(character* User)
   }
 
   int Dir = game::DirectionQuestion(CONST_S("What direction do you want to dig? [press a direction key]"), false);
+  if(Dir == DIR_ERROR)
+    return false;
 
   v2 Temp = game::GetMoveVector(Dir);
   v2 ToBeDug = User->GetPos() + Temp;
-  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(ToBeDug))
+  if(!GetArea()->IsValidPos(ToBeDug))
     return false;
 
   lsquare* Square = GetNearLSquare(ToBeDug);
