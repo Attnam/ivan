@@ -261,7 +261,16 @@ void graphics::BlitDBToScreen()
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
-  SDL_UpdateTexture(Texture, NULL, SrcPtr, Res.X * sizeof(packcol16));
+  void* DestPtr;
+  int Pitch;
+
+  if (SDL_LockTexture(Texture, NULL, &DestPtr, &Pitch) < 0)
+    ABORT("Can't lock texture");
+
+  memcpy(DestPtr, SrcPtr, Res.Y * Pitch);
+
+  SDL_UnlockTexture(Texture);
+
   SDL_RenderClear(Renderer);
   SDL_RenderCopy(Renderer, Texture, NULL, NULL);
   SDL_RenderPresent(Renderer);
