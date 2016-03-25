@@ -31,6 +31,7 @@ web::web()
 
 web::~web()
 {
+  delete Picture;
   game::RemoveTrapID(TrapData.TrapID);
 }
 

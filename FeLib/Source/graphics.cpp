@@ -84,6 +84,15 @@ void graphics::DeInit()
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
   SDL_FreeSurface(TempSurface);
 #endif
+#else
+  if(Texture)
+    SDL_DestroyTexture(Texture);
+
+  if(Renderer)
+    SDL_DestroyRenderer(Renderer);
+
+  if(Window)
+    SDL_DestroyWindow(Window);
 #endif
   SDL_Quit();
 #endif
@@ -148,6 +157,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
     SDL_SetColorKey(Icon, SDL_TRUE,
                     SDL_MapRGB(Icon->format, 255, 255, 255));
     SDL_SetWindowIcon(Window, Icon);
+    SDL_FreeSurface(Icon);
   }
 
   Renderer = SDL_CreateRenderer(Window, -1, 0);
