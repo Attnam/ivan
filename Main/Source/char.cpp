@@ -9647,7 +9647,9 @@ struct trapidcomparer
 void character::RemoveTrap(ulong ID)
 {
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
+  trapdata* ToDel = T;
   T = T->Next;
+  delete ToDel;
   doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 

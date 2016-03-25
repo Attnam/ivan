@@ -152,6 +152,9 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
   for(c1 = 1; c1 < TempTables; ++c1)
     delete [] TempTable[c1];
 
+  for(auto& Pair : GetDataBaseMemberMap())
+    delete Pair.second;
+
   GetDataBaseMemberMap().clear();
 }
 

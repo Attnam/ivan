@@ -110,6 +110,13 @@ item::~item()
 
     delete [] FP;
   }
+
+  for(idholder* I = CloneMotherID; I;)
+  {
+    idholder* ToDel = I;
+    I = I->Next;
+    delete ToDel;
+  }
 }
 
 void item::Fly(character* Thrower, int Direction, int Force)

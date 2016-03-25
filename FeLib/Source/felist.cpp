@@ -554,4 +554,9 @@ void felist::PrintToFile(cfestring& FileName)
 }
 
 void felist::EmptyDescription()
-{ Description.resize(1); }
+{
+  for(uint c = 1; c < Description.size(); ++c)
+    delete Description[c];
+
+  Description.resize(1);
+}
