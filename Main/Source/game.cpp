@@ -2695,12 +2695,12 @@ double game::CalculateAverageDangerOfAllNormalEnemies()
   return DangerSum / Enemies;
 }
 
-character* game::CreateGhost()
+bonesghost* game::CreateGhost()
 {
   double AverageDanger = CalculateAverageDangerOfAllNormalEnemies();
   charactervector EnemyVector;
   protosystem::CreateEveryNormalEnemy(EnemyVector);
-  ghost* Ghost = ghost::Spawn();
+  bonesghost* Ghost = bonesghost::Spawn();
   Ghost->SetTeam(GetTeam(MONSTER_TEAM));
   Ghost->SetGenerationDanger(CurrentLevel->GetDifficulty());
   Ghost->SetOwnerSoul(PlayerName);

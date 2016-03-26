@@ -49,6 +49,7 @@ class liquid;
 class entity;
 class olterrain;
 struct explosion;
+class bonesghost;
 
 typedef std::map<festring, long> valuemap;
 typedef truth (*stringkeyhandler)(int, festring&);
@@ -356,7 +357,7 @@ class game
   static boneidmap& GetBoneCharacterIDMap() { return BoneCharacterIDMap; }
   static double CalculateAverageDanger(const charactervector&, character*);
   static double CalculateAverageDangerOfAllNormalEnemies();
-  static character* CreateGhost();
+  static bonesghost* CreateGhost();
   static truth TooGreatDangerFound() { return TooGreatDangerFoundTruth; }
   static void SetTooGreatDangerFound(truth What) { TooGreatDangerFoundTruth = What; }
   static void CreateBusyAnimationCache();

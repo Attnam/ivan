@@ -430,6 +430,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(UndeadAttributeModifier);
   ADD_MEMBER(UndeadVolumeModifier);
   ADD_MEMBER(UndeadCopyMaterials);
+  ADD_MEMBER(GhostCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
   ADD_MEMBER(IsImmuneToWhipOfThievery);

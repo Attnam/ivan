@@ -433,6 +433,56 @@ CHARACTER(zombie, humanoid)
   festring Description;
 };
 
+CHARACTER(spirit, humanoid)
+{
+ public:
+  spirit() : Active(true) { }
+  virtual truth BodyPartIsVital(int) const;
+  virtual truth BodyPartCanBeSevered(int) const;
+//  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
+  void SetDescription(cfestring What) { Description = What; }
+  virtual festring GetSpiritDescription() const;
+  virtual void AddName(festring&, int) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
+  virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
+  virtual truth RaiseTheDead(character*);
+  virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
+  virtual truth SpecialEnemySightedReaction(character*);
+  void SetIsActive(truth What) { Active = What; }
+  virtual truth IsPolymorphable() const { return MaxHP < 100; }
+ protected:
+  virtual truth AllowExperience() const { return false; }
+  virtual cchar* FirstPersonUnarmedHitVerb() const;
+  virtual cchar* FirstPersonCriticalUnarmedHitVerb() const;
+  virtual cchar* ThirdPersonUnarmedHitVerb() const;
+  virtual cchar* ThirdPersonCriticalUnarmedHitVerb() const;
+  virtual truth AttackIsBlockable(int) const { return false; }
+  virtual truth AttackMayDamageArmor() const { return false; }
+  virtual void GetAICommand();
+  festring OwnerSoul;
+  truth Active;
+  festring Description;
+};
+
+CHARACTER(bonesghost, spirit)
+{
+ public:
+  virtual col16 GetHairColor() const { return HairColor; }
+  virtual col16 GetEyeColor() const { return EyeColor; }
+  virtual v2 GetHeadBitmapPos() const;
+  virtual v2 GetRightArmBitmapPos() const;
+  virtual v2 GetLeftArmBitmapPos() const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void PostConstruct();
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  col16 HairColor;
+  col16 EyeColor;
+};
+
 CHARACTER(imp, humanoid)
 {
 };

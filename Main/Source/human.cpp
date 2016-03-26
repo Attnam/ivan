@@ -43,6 +43,16 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
+truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+truth spirit::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX && I != HEAD_INDEX && I != RIGHT_ARM_INDEX && I != LEFT_ARM_INDEX && I != RIGHT_LEG_INDEX && I != LEFT_LEG_INDEX; }
+festring spirit::GetSpiritDescription() const { return Description; }
+cchar* spirit::FirstPersonUnarmedHitVerb() const { return "touch"; }
+cchar* spirit::FirstPersonCriticalUnarmedHitVerb() const
+{ return "critically touch"; }
+cchar* spirit::ThirdPersonUnarmedHitVerb() const { return "touches"; }
+cchar* spirit::ThirdPersonCriticalUnarmedHitVerb() const
+{ return "critically touches"; }
+
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
 truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
@@ -50,6 +60,8 @@ truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD
 material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
 
 truth sumowrestler::EquipmentIsAllowed(int I) const { return I == BELT_INDEX; }
+
+truth spirit::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
 petrus::~petrus()
 {
@@ -2557,6 +2569,85 @@ void zombie::CreateBodyParts(int SpecialFlags)
       bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
       BodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND_N(1000));
     }
+}
+
+void spirit::AddName(festring& String, int Case) const
+{
+  if(OwnerSoul.IsEmpty() || Case & PLURAL)
+    character::AddName(String, Case);
+  else
+  {
+    character::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
+    String << " of " << OwnerSoul;
+  }
+}
+
+void spirit::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << OwnerSoul << Active << Description;
+}
+
+void spirit::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> OwnerSoul >> Active >> Description;
+}
+
+void bonesghost::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << OwnerSoul << Active << Description << EyeColor << HairColor;
+}
+
+void bonesghost::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> OwnerSoul >> Active >> Description >> EyeColor >> HairColor;
+}
+
+truth spirit::RaiseTheDead(character* Summoner)
+{
+  itemvector ItemVector;
+  GetStackUnder()->FillItemVector(ItemVector);
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->SuckSoul(this, Summoner))
+      return true;
+
+  if(IsPlayer())
+    ADD_MESSAGE("You shudder.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
+
+  return false;
+}
+
+int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+                                 int Direction, truth PenetrateResistance, truth Critical,
+                                 truth ShowNoDamageMsg, truth CaptureBodyPart)
+{
+  if(Type != SOUND)
+  {
+    Active = true;
+    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
+                                            PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
+  }
+  else
+    return 0;
+}
+
+void spirit::GetAICommand()
+{
+  if(Active)
+    character::GetAICommand();
+  else
+  {
+    if(CheckForEnemies(false, false, false))
+      return;
+
+    EditAP(-1000);
+  }
 }
 
 void humanoid::AddSpecialEquipmentInfo(festring& String, int I) const
@@ -5193,6 +5284,41 @@ double playerkind::GetNaturalExperience(int Identifier) const
     NE /= TalentBonusOfAttribute[Identifier];
 
   return NE;
+}
+
+v2 bonesghost::GetHeadBitmapPos() const
+{
+  int Sum = GetAttribute(INTELLIGENCE, false) + GetAttribute(WISDOM, false);
+  // Bonesghosts have their attributes lowered upon generation, hence these lowered thresholds. Should be mathematically correct.
+  if(Sum >= 52)
+    return v2(96, 480);
+  else if(Sum >= 32)
+    return v2(96, 464);
+  else
+    return v2(96, 416);
+}
+
+v2 bonesghost::GetRightArmBitmapPos() const
+{
+  if(GetRightArm()->GetAttribute(ARM_STRENGTH, false) >= 16)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+v2 bonesghost::GetLeftArmBitmapPos() const
+{
+  if(GetLeftArm()->GetAttribute(ARM_STRENGTH, false) >= 16)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+void bonesghost::PostConstruct()
+{
+  // This seems strange, but it works because the player is still alive when a bonesghost is created.
+  HairColor = PLAYER->GetHairColor();
+  EyeColor = PLAYER->GetEyeColor();
 }
 
 cchar* humanoid::GetRunDescriptionLine(int I) const
