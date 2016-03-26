@@ -283,6 +283,7 @@ character
   UndeadAttributeModifier = 100;
   UndeadVolumeModifier = 100;
   UndeadCopyMaterials = true;
+  GhostCopyMaterials = false;
   CanBeGeneratedOnlyInTheCatacombs = false;
   IsAlcoholic = false;
   IsImmuneToWhipOfThievery = false;
@@ -2550,6 +2551,66 @@ zombie
   }
 }
 
+spirit
+{
+  DefaultArmStrength = 8;
+  DefaultLegStrength = 10;
+  DefaultDexterity = 10;
+  DefaultAgility = 8;
+  DefaultEndurance = 8;
+  DefaultPerception = 24;
+  DefaultIntelligence = 15;
+  DefaultWisdom = 10;
+  DefaultCharisma = 10;
+  DefaultMana = 15;
+  TorsoBitmapPos = 32, 416;
+  LegBitmapPos = 0, 416;
+  ClothColor = rgb16(100, 100, 100);
+  TotalVolume = 80000;
+  TotalSize = 175;
+  Frequency = 5000;
+  StandVerb = "hovering";
+  NameSingular = "ghost";
+  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
+  BaseEmitation = rgb24(110, 110, 130);
+  HostileReplies == "\"Boo!\"";
+  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
+  PanicLevel = 0;
+  /*HasALeg = false;*/
+  FleshMaterial = GHOST;
+  DeathMessage = "@Dd is sucked into hell.";
+  SpillsBlood = false;
+  Sweats = false;
+  UsesNutrition = false;
+  AttachedGod = MORTIFER;
+  BodyPartsDisappearWhenSevered = true;
+  MoveType = ETHEREAL;
+  CanChoke = false;
+  IsImmuneToStickiness = true;
+  BiteCapturesBodyPart = false;
+  CreateUndeadConfigurations = true;
+  UndeadAttributeModifier = 75;
+  UndeadCopyMaterials = false;
+  GhostCopyMaterials = true;
+  CanBeGenerated = true;
+  CanBeGeneratedOnlyInTheCatacombs = true;
+  IsCatacombCreature = true;
+  UndeadVersions = false;
+  IsAbstract = true;
+  CanUseEquipment = false;
+}
+
+bonesghost
+{
+  CreateUndeadConfigurations = false;
+  CanBeGenerated = false;
+  CanBeGeneratedOnlyInTheCatacombs = false;
+  IsCatacombCreature = false;
+  UndeadVersions = false;
+  IsAbstract = false;
+  CanUseEquipment = false;
+}
+
 imp
 {
   DefaultPerception = 15;
@@ -4503,7 +4564,7 @@ ghost
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
   UndeadCopyMaterials = false;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
 }

@@ -1266,7 +1266,7 @@ sweaponskill** leftarm::GetCurrentSWeaponSkill() const
 
 alpha bodypart::GetMaxAlpha() const
 {
-  if(Master && Master->StateIsActivated(INVISIBLE))
+  if(Master && (Master->StateIsActivated(INVISIBLE) || !!Master->GhostCopyMaterials()))
     return 150;
   else
     return 255;

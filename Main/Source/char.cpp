@@ -352,6 +352,8 @@ truth character::HasBeenSeen() const
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
 cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
+festring character::GetSpiritDescription() const
+{ return " of " + GetName(INDEFINITE); }
 
 int characterdatabase::* ExpPtr[ATTRIBUTES] =
 {
@@ -1472,7 +1474,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     RemoveLifeSavers();
 
   Flags |= C_IN_NO_MSG_MODE;
-  character* Ghost = 0;
+  bonesghost* Ghost = 0;
 
   if(IsPlayer())
   {
@@ -5845,6 +5847,18 @@ int characterprototype::CreateSpecialConfigurations(characterdatabase** TempConf
             ConfigDataBase->BloodMaterial = CharacterDataBase->BloodMaterial;
             ConfigDataBase->VomitMaterial = CharacterDataBase->VomitMaterial;
             ConfigDataBase->SweatMaterial = CharacterDataBase->SweatMaterial;
+          }
+
+          if(TempConfig[0]->GhostCopyMaterials)
+          {
+            ConfigDataBase->HeadBitmapPos = CharacterDataBase->HeadBitmapPos;
+            ConfigDataBase->RightArmBitmapPos = CharacterDataBase->RightArmBitmapPos;
+            ConfigDataBase->LeftArmBitmapPos = CharacterDataBase->LeftArmBitmapPos;
+            ConfigDataBase->TorsoBitmapPos = CharacterDataBase->TorsoBitmapPos;
+            ConfigDataBase->RightLegBitmapPos = CharacterDataBase->RightLegBitmapPos;
+            ConfigDataBase->LeftLegBitmapPos = CharacterDataBase->LeftLegBitmapPos;
+            ConfigDataBase->HairColor = CharacterDataBase->HairColor;
+            ConfigDataBase->EyeColor = CharacterDataBase->EyeColor;
           }
 
           ConfigDataBase->KnownCWeaponSkills = CharacterDataBase->KnownCWeaponSkills;

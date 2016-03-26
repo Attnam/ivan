@@ -1354,7 +1354,7 @@ gas
 
   Config GHOST;
   {
-    Color = rgb16(255, 255, 255);
+    Color = rgb16(200, 200, 255);
     NameStem = "ghost";
     Alpha = 150;
     AttachedGod = MORTIFER;
