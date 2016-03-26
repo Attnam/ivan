@@ -232,10 +232,16 @@ OLTERRAIN(monsterportal, olterrain)
 OLTERRAIN(coffin, olterraincontainer)
 {
  public:
+  coffin() : Opened(false) { }
   virtual truth Open(character*);
   virtual void Break();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
+  virtual v2 GetBitmapPos(int Frame) const
+  { return Opened ? GetOpenBitmapPos(Frame) : olterraincontainer::GetBitmapPos(Frame); }
   virtual void GenerateGhost(lsquare*);
+  truth Opened;
 };
 
 OLTERRAIN(barwall, olterrain)

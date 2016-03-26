@@ -1271,6 +1271,18 @@ void stairs::AddSpecialCursors()
   game::AddSpecialCursor(GetPos(), YELLOW_CURSOR|CURSOR_TARGET);
 }
 
+void coffin::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  SaveFile << Opened;
+}
+
+void coffin::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  SaveFile >> Opened;
+}
+
 truth coffin::Open(character* Opener)
 {
   if(!Opener->IsPlayer())
@@ -1279,6 +1291,11 @@ truth coffin::Open(character* Opener)
   if(!game::TruthQuestion(
          CONST_S("Disturbing the dead might not be wise... Continue? [y/N]")))
     return false;
+
+  Opened = true;
+  UpdatePictures();
+  GetLSquareUnder()->SendNewDrawRequest();
+
   truth Success = olterraincontainer::Open(Opener);
   if(Success)
   {
@@ -1290,6 +1307,11 @@ truth coffin::Open(character* Opener)
         GenerateGhost(GetLevel()->GetLSquare(Pos));
     }
   }
+
+  Opened = false;
+  UpdatePictures();
+  GetLSquareUnder()->SendNewDrawRequest();
+
   return Success;
 }
 
