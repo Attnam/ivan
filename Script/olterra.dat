@@ -681,8 +681,9 @@ coffin /* olterrain->decoration->olterraincontainer */
   CanBeDestroyed = true;
   MainMaterialConfig == FIR_WOOD;
   NameSingular = "coffin";
-  BitmapPos = 16, 272;
-  SitMessage = "The coffin is cold  to sit on.";
+  BitmapPos = 32, 144;
+  OpenBitmapPos = 32, 160;
+  SitMessage = "The coffin is cold to sit on.";
   StorageVolume = 100000;
   AttachedGod = MORTIFER;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
