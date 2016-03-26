@@ -2563,37 +2563,30 @@ spirit
   DefaultWisdom = 10;
   DefaultCharisma = 10;
   DefaultMana = 15;
-  /*HeadBitmapPos = 112, 112;  body parts are zombie type */
-  /*TorsoBitmapPos = 32, 224;*/
-  /*ArmBitmapPos = 64, 224;*/
-  /*LegBitmapPos = 0, 160;*/
-  ClothColor = rgb16(200, 200, 200);
+  TorsoBitmapPos = 32, 416;
+  LegBitmapPos = 0, 416;
+  ClothColor = rgb16(100, 100, 100);
   TotalVolume = 80000;
   TotalSize = 175;
   Frequency = 5000;
   StandVerb = "hovering";
-  NameSingular = "spirit";
+  NameSingular = "ghost";
   ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
-  BaseEmitation = rgb24(110, 110, 110);
+  BaseEmitation = rgb24(110, 110, 130);
   HostileReplies == "\"Boo!\"";
   FriendlyReplies == "\"A very good Boo to you, my friend.\"";
   PanicLevel = 0;
   /*HasALeg = false;*/
-  FleshMaterial = SPIRIT;
+  FleshMaterial = GHOST;
   DeathMessage = "@Dd is sucked into hell.";
   SpillsBlood = false;
   Sweats = false;
   UsesNutrition = false;
   AttachedGod = MORTIFER;
   BodyPartsDisappearWhenSevered = true;
-  /*AttackStyle = USE_HEAD;*/
   MoveType = ETHEREAL;
   CanChoke = false;
   IsImmuneToStickiness = true;
-  /*KnownCWeaponSkills == BITE;*/
-  /*CWeaponSkillHits == 100;*/
-  /*BaseBiteStrength = 1000;
-  AttackStyle = USE_HEAD;*/
   BiteCapturesBodyPart = false;
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
@@ -2602,9 +2595,20 @@ spirit
   CanBeGenerated = true;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
-  /*WieldedPosition = -1, -2;*/
   UndeadVersions = false;
   IsAbstract = true;
+  CanUseEquipment = false;
+}
+
+bonesghost
+{
+  CreateUndeadConfigurations = false;
+  CanBeGenerated = false;
+  CanBeGeneratedOnlyInTheCatacombs = false;
+  IsCatacombCreature = false;
+  UndeadVersions = false;
+  IsAbstract = false;
+  CanUseEquipment = false;
 }
 
 imp
@@ -4560,7 +4564,7 @@ ghost
   CreateUndeadConfigurations = true;
   UndeadAttributeModifier = 75;
   UndeadCopyMaterials = false;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   CanBeGeneratedOnlyInTheCatacombs = true;
   IsCatacombCreature = true;
 }

@@ -44,7 +44,14 @@ truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TOR
 festring zombie::GetZombieDescription() const { return Description; }
 
 truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+truth spirit::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX && I != HEAD_INDEX && I != RIGHT_ARM_INDEX && I != LEFT_ARM_INDEX && I != RIGHT_LEG_INDEX && I != LEFT_LEG_INDEX; }
 festring spirit::GetSpiritDescription() const { return Description; }
+cchar* spirit::FirstPersonUnarmedHitVerb() const { return "touch"; }
+cchar* spirit::FirstPersonCriticalUnarmedHitVerb() const
+{ return "critically touch"; }
+cchar* spirit::ThirdPersonUnarmedHitVerb() const { return "touches"; }
+cchar* spirit::ThirdPersonCriticalUnarmedHitVerb() const
+{ return "critically touches"; }
 
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
@@ -2564,12 +2571,6 @@ void zombie::CreateBodyParts(int SpecialFlags)
     }
 }
 
-void spirit::CreateBodyParts(int SpecialFlags)
-{
-  for(int c = 0; c < BodyParts; ++c)
-    bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
-}
-
 void spirit::AddName(festring& String, int Case) const
 {
   if(OwnerSoul.IsEmpty() || Case & PLURAL)
@@ -2592,8 +2593,20 @@ void spirit::Load(inputfile& SaveFile)
   humanoid::Load(SaveFile);
   SaveFile >> OwnerSoul >> Active >> Description;
 }
-/*
-truth ghost::RaiseTheDead(character* Summoner)
+
+void bonesghost::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << OwnerSoul << Active << Description << EyeColor << HairColor;
+}
+
+void bonesghost::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> OwnerSoul >> Active >> Description >> EyeColor >> HairColor;
+}
+
+truth spirit::RaiseTheDead(character* Summoner)
 {
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
@@ -2608,8 +2621,8 @@ truth ghost::RaiseTheDead(character* Summoner)
     ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
 
   return false;
-}*/
-/*
+}
+
 int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
                                  int Direction, truth PenetrateResistance, truth Critical,
                                  truth ShowNoDamageMsg, truth CaptureBodyPart)
@@ -2622,7 +2635,7 @@ int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int 
   }
   else
     return 0;
-}*/
+}
 
 void spirit::GetAICommand()
 {
@@ -4651,74 +4664,6 @@ void zombie::Load(inputfile& SaveFile)
   humanoid::Load(SaveFile);
   SaveFile >> Description;
 }
-/*
-character* humanoid::CreateSpirit() const
-{
-  if(!TorsoIsAlive()) // what does this do?
-    return 0;
-
-  humanoid* Spirit = spirit::Spawn();
-  int c;
-
-  for(c = 0; c < BodyParts; ++c)
-  {
-    bodypart* BodyPart = GetBodyPart(c);
-
-    if(!BodyPart)
-    {
-      BodyPart = SearchForOriginalBodyPart(c); // searches the stack below for zombie bodyparts. this will need to work differently
-
-      if(BodyPart)
-      {
-        BodyPart->RemoveFromSlot();
-        BodyPart->SendToHell();
-      }
-    }
-
-    if(BodyPart)
-    {
-      bodypart* SpiritBodyPart = Spirit->GetBodyPart(c);
-
-      if(!SpiritBodyPart)
-        SpiritBodyPart = Spirit->CreateBodyPart(c);
-
-      material* M = MAKE_MATERIAL(SPIRIT);//BodyPart->GetMainMaterial()->Duplicate();
-      //M->SetSkinColor(Spirit->GetSkinColor()); // depends on material, so don't need?
-      SpiritBodyPart->ChangeMainMaterial(M->SpawnMore()); // change to ghost flesh
-      SpiritBodyPart->CopyAttributes(BodyPart); // keep? Ghosts should not be leprous...
-    }/*
-    else if(!Spirit->BodyPartIsVital(c)) // if it's a non vital body part and it doesn't show up, then don't add it to the zombie? Causes default zombie arms and legs!!
-    {
-      bodypart* SpiritBodyPart = Spirit->GetBodyPart(c);
-
-      if(SpiritBodyPart)
-      {
-        SpiritBodyPart->RemoveFromSlot();
-        SpiritBodyPart->SendToHell();
-      }
-    }
-  }
-/*
-  for(c = 0; c < Zombie->AllowedWeaponSkillCategories; ++c)
-    Zombie->CWeaponSkill[c] = CWeaponSkill[c];
-
-  Zombie->SWeaponSkill.resize(SWeaponSkill.size());
-  std::list<sweaponskill*>::iterator i = Zombie->SWeaponSkill.begin();
-
-  for(sweaponskill* p2 : SWeaponSkill)
-    *i++ = new sweaponskill(*p2);
-
-  memcpy(Spirit->BaseExperience,
-         BaseExperience,
-         BASE_ATTRIBUTES * sizeof(*BaseExperience));
-  Spirit->CalculateAll();
-  Spirit->RestoreHP();
-  Spirit->RestoreStamina();
-  //Spirit->SetMainMaterial(MAKE_MATERIAL(SPIRIT));
-  static_cast<spirit*>(Spirit)->SetDescription(GetSpiritDescription());
-  Spirit->GenerationDanger = GenerationDanger;
-  return Spirit;
-}*/
 
 int darkknight::ModifyBodyPartHitPreference(int I, int Modifier) const
 {
@@ -5339,6 +5284,41 @@ double playerkind::GetNaturalExperience(int Identifier) const
     NE /= TalentBonusOfAttribute[Identifier];
 
   return NE;
+}
+
+v2 bonesghost::GetHeadBitmapPos() const
+{
+  int Sum = GetAttribute(INTELLIGENCE, false) + GetAttribute(WISDOM, false);
+  // Bonesghosts have their attributes lowered upon generation, hence these lowered thresholds. Should be mathematically correct.
+  if(Sum >= 52)
+    return v2(96, 480);
+  else if(Sum >= 32)
+    return v2(96, 464);
+  else
+    return v2(96, 416);
+}
+
+v2 bonesghost::GetRightArmBitmapPos() const
+{
+  if(GetRightArm()->GetAttribute(ARM_STRENGTH, false) >= 16)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+v2 bonesghost::GetLeftArmBitmapPos() const
+{
+  if(GetLeftArm()->GetAttribute(ARM_STRENGTH, false) >= 16)
+    return v2(64, 448);
+  else
+    return v2(64, 416);
+}
+
+void bonesghost::PostConstruct()
+{
+  // This seems strange, but it works because the player is still alive when a bonesghost is created.
+  HairColor = PLAYER->GetHairColor();
+  EyeColor = PLAYER->GetEyeColor();
 }
 
 cchar* humanoid::GetRunDescriptionLine(int I) const

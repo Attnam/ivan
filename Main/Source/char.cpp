@@ -1470,7 +1470,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     RemoveLifeSavers();
 
   Flags |= C_IN_NO_MSG_MODE;
-  character* Ghost = 0;
+  bonesghost* Ghost = 0;
 
   if(IsPlayer())
   {

@@ -950,7 +950,6 @@ class character : public entity, public id
   item* SearchForItem(ccharacter*, sorter) const;
   virtual character* CreateZombie() const { return 0; }
   virtual festring GetZombieDescription() const;
-//  virtual character* CreateSpirit() const { return 0; }
   virtual festring GetSpiritDescription() const;
   virtual truth CanAttack() const { return true; }
   truth DetectMaterial(cmaterial*) const;

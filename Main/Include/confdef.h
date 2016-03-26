@@ -115,7 +115,6 @@
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 #define FART (GAS_ID + 9)
 #define MUSTARD_GAS (GAS_ID + 10)
-#define SPIRIT (GAS_ID + 11)
 
 #define LIQUID_ID (4 << 12)
 
