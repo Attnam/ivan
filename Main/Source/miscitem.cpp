@@ -2891,6 +2891,10 @@ void scrollofgolemcreation::FinishReading(character* Reader)
                     : Main->GetVolume() : Sec->GetVolume();
       Golem->SetItemVolume(Volume);
       v2 Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
+
+      if (itemcontainer* Container = dynamic_cast<itemcontainer*>(Item[0]))
+        Container->GetContained()->MoveItemsTo(Reader->GetStack());
+
       Item[0]->RemoveFromSlot();
       Item[0]->SendToHell();
 
