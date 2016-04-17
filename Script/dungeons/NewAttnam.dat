@@ -1,0 +1,583 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon NEW_ATTNAM;
+{
+  Levels = 2;
+
+  Level 0;
+  {
+    LevelMessage = "You hear someone shouting: \"Faster! Faster! The Empire wants yer bananas!\"";
+    Description = "New Attnam";
+    ShortDescription = "New Attnam";
+    FillSquare = solidterrain(GRASS_TERRAIN), 0;
+    Size = 55, 55;
+    GenerateMonsters = false;
+    Rooms = 6:10;
+    Items = 0;
+    IsOnGround = true;
+    TeamDefault = NEW_ATTNAM_TEAM;
+    LOSModifier = 48;
+    IgnoreDefaultSpecialSquares = false;
+    AutoReveal = true;
+    CanGenerateBone = false;
+    DifficultyBase = 50;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = -15;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GREEN_FRACTAL;
+    EarthquakesAffectTunnels = true;
+
+    RoomDefault
+    {
+      Pos = 2:36,2:36;
+      Size = 4:6,4:6;
+      AltarPossible = false;
+      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
+      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
+      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = ROUND_CORNERS;
+      IsInside = true;
+      GenerateWindows = true;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+
+    Room
+    {
+      Type = ROOM_BANANA_DROP_AREA;
+      Pos = 4,4;
+      Size = 17,19;
+      WallSquare = solidterrain(GRASS_TERRAIN), EBONY_WOOD wall(BRICK_FINE);
+      FloorSquare = BALSA_WOOD solidterrain(PARQUET), 0;
+      GenerateDoor = false;
+      DivineMaster = SILVA;
+      GenerateLanterns = false;
+      GenerateWindows = false;
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 17,19;
+        Types
+        {
+          _ = 0;
+          # = 0;
+          p = GOLD wall(BRICK_PROPAGANDA);
+          $ = GOLD wall(BRICK_FINE);
+          ^ = decoration(HOLY_TREE);
+          c = decoration(COUCH);
+          d = EBONY_WOOD door;
+          o = EBONY_WOOD wall(BRICK_FINE|WINDOW);
+        }
+      }
+      {
+        .#o##o##o##o##o#.
+        ##.............##
+        o...............o
+        #.....$$p$$.....#
+        #...$$$___$$$...#
+        #..$$_______$$..#
+        o..$____c____$..o
+        #..$___^_^___$..#
+        #..$_________$..#
+        o..$$_______$$..o
+        #...$$_____$$...#
+        #....$$___$$....#
+        o.....$___$.....o
+        #.....$___$.....#
+        #.....$___$.....#
+        #.....$___$.....#
+        o...............o
+        ##.............##
+        .#o##o##d##o##o#.
+      }
+
+      CharacterMap
+      {
+        Pos = 3,3;
+        Size = 11,13;
+        Types
+        {
+          _ = 0;
+          # = 0;
+          I = imperialist { Team = COLONIST_TEAM; Flags = IS_MASTER; }
+          g = guard(ROOKIE) { Team = COLONIST_TEAM; }
+          f = femaleslave(NEW_ATTNAM) { Team = NEW_ATTNAM_TEAM; }
+        }
+      }
+      {
+        ...#####...
+        .###_g_###.
+        ##_______##
+        #g__fIf__g#
+        #_________#
+        #g_______g#
+        ##_______##
+        .##_____##.
+        ..##g_g##..
+        ...#___#...
+        ...#___#...
+        ...#___#...
+        ...#g_g#...
+      }
+
+      GTerrainMap
+      {
+        Pos = 3,3;
+        Size = 11,16;
+        Types
+        {
+          # = SILVER solidterrain(FLOOR);
+          _ = SILVER solidterrain(FLOOR);
+          - = BALSA_WOOD solidterrain(PARQUET);
+        }
+      }
+      {
+        ...#####...
+        .###___###.
+        ##_______##
+        #_________#
+        #_________#
+        #_________#
+        ##_______##
+        .##_____##.
+        ..##___##..
+        ...#___#...
+        ...#___#...
+        ...#___#...
+        ...#___#...
+        ...........
+        ...........
+        .....-.....
+      }
+
+      ItemMap
+      {
+        Pos = 3,3;
+        Size = 11,13;
+        Types
+        {
+          # == 0;
+          _ == 0;
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+        }
+      }
+      {
+        ...#2#2#...
+        .###___###.
+        ##_______##
+        #_________#
+        3_________4
+        #_________#
+        #3_______4#
+        .##_____##.
+        ..##___##..
+        ...#___#...
+        ...#___#...
+        ...#___#...
+        ...2___2...
+      }
+    }
+
+    Room
+    {
+      Type = ROOM_BANANA_DROP_AREA;
+      Size = 3, 3;
+      Pos = 44, 44;
+      AltarPossible = false;
+      WallSquare = solidterrain(GRASS_TERRAIN), decoration(PALM);
+      FloorSquare = solidterrain(LANDING_SITE), 0;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateWindows = false;
+      Shape = RECTANGLE;
+
+      Square, Pos 1, 1;
+      {
+        Items == banana { Times = 10; }
+      }
+    }
+
+    Room
+    {
+      Size = 4, 4;
+      Pos = 25, 35;
+      GenerateDoor = false;
+      Type = ROOM_BANANA_DROP_AREA;
+      FloorSquare = solidterrain(FLOOR), 0;
+      GenerateWindows = false;
+
+      Square, Pos 1, 1;
+      {
+        Character = sumowrestler { Flags = IS_MASTER; }
+      }
+
+      Square, Pos 2, 1;
+      {
+        OTerrain = stairs(SUMO_ARENA_ENTRY) { AttachedArea = 1; AttachedEntry = STAIRS_UP; }
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Pos 1, 3;
+      {
+        GTerrain = solidterrain(FLOOR);
+      }
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 4,4;
+        Types
+        {
+          # = 0;
+          p = wall(BRICK_PRIMITIVE_PROPAGANDA);
+          o = wall(BRICK_PRIMITIVE|WINDOW);
+          d = BALSA_WOOD door(BROKEN_LOCK);
+        }
+      }
+      {
+        #p##
+        #..#
+        #..#
+        #do#
+      }
+    }
+
+    Room
+    {
+      Pos = 9,33;
+      Size = 7,7;
+      WallSquare = solidterrain(GRASS_TERRAIN), TEAK_WOOD wall(BRICK_PRIMITIVE);
+      FloorSquare = solidterrain(FLOOR), 0;
+      GenerateDoor = false;
+      DivineMaster = MELLIS;
+      Type = ROOM_SHOP;
+      GenerateWindows = false;
+
+      Square, Pos 3, 3;
+      {
+        Character = shopkeeper(NEW_ATTNAM) { Team = COLONIST_TEAM; Flags = IS_MASTER; }
+      }
+
+      Square, Pos 3, 6;
+      {
+        GTerrain = solidterrain(FLOOR);
+      }
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 7,7;
+        Types
+        {
+          # = 0;
+          p = TEAK_WOOD wall(BRICK_PRIMITIVE_PROPAGANDA);
+          o = TEAK_WOOD wall(BRICK_PRIMITIVE|WINDOW);
+          d = TEAK_WOOD door;
+        }
+      }
+      {
+        .##p##.
+        ##...##
+        #.....#
+        o.....o
+        #.....#
+        ##...##
+        .##d##.
+      }
+
+      ItemMap
+      {
+        Pos = 0,0;
+        Size = 7,7;
+        Types
+        {
+          # == 0;
+          b == banana { Chance = 50; SpoilPercentage = 49; Times = 10; }
+          k == kiwi { Times = 10; }
+          p == pineapple { Times = 3; }
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+        }
+      }
+      {
+        .##2##.
+        ##bbb##
+        #bbbbb#
+        #bk.pb#
+        3bbbbb4
+        ##bbb##
+        .#####.
+      }
+    }
+
+    Room
+    {
+      Pos = 25,20;
+      Size = 4,3;
+      GenerateDoor = false;
+      DivineMaster = SILVA;
+      GenerateWindows = false;
+
+      Square, Pos 2, 1;
+      {
+        Character = priest(SILVA) { Flags = IS_MASTER; }
+      }
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 4,3;
+        Types
+        {
+          # = 0;
+          p = wall(BRICK_PRIMITIVE_PROPAGANDA);
+          o = wall(BRICK_PRIMITIVE|WINDOW);
+          d = BALSA_WOOD door;
+        }
+      }
+      {
+        #p##
+        #..o
+        #d##
+      }
+    }
+
+    Square, Pos 0, 33;
+    {
+      EntryIndex = STAIRS_UP;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(1);
+      Times = 10;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(2);
+      Times = 10;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(PALM);
+      Times = 100;
+    }
+
+    Square, Pos 20, 44;
+    {
+      Character = encourager { Team = COLONIST_TEAM; }
+    }
+
+    Square, Pos 0, 45;
+    {
+      Character = bananagrower;
+    }
+
+    Square, Pos 10, 45;
+    {
+      Character = bananagrower;
+    }
+
+    Square, Pos 20, 45;
+    {
+      Character = bananagrower;
+    }
+
+    Square, Pos 30, 45;
+    {
+      Character = bananagrower;
+    }
+
+    Square, Pos 40, 45;
+    {
+      Character = bananagrower;
+    }
+
+    Square, Pos 45, 0;
+    {
+      Character = ostrich;
+    }
+
+    Square, Pos 45, 15;
+    {
+      Character = ostrich;
+    }
+
+    Square, Pos 45, 30;
+    {
+      Character = ostrich;
+    }
+
+    Square, Pos 12, 50;
+    {
+      Character = elder { Team = TOURIST_GUIDE_TEAM; Flags = IS_LEADER; }
+    }
+
+    Square, Pos 10, 50;
+    {
+      Character = tourist(HUSBAND) { Team = TOURIST_TEAM; }
+    }
+
+    Square, Pos 14, 50;
+    {
+      Character = tourist(WIFE) { Team = TOURIST_TEAM; Flags = IS_LEADER; }
+    }
+
+    Square, Pos 12, 52;
+    {
+      Character = tourist(CHILD) { Team = TOURIST_TEAM; }
+    }
+
+    Square, Pos 11, 23;
+    {
+      OTerrain = sign { Text = "The mansion of Viceroy Richel Decos, formerly a temple of nature."; }
+    }
+
+    Square, Pos 11, 40;
+    {
+      OTerrain = sign { Text = "Zulko's wholesale banana market. We offer quality bananas straight from the jungle at a bargain price and even some other exotic fruits for most demanding customers."; }
+    }
+
+    Square, Pos 25, 39;
+    {
+      OTerrain = sign { Text = "The home of Huang Ming Pong, the guardian of the natives' sacred and mysterious sumo fighting techniques."; }
+    }
+
+    Square, Pos 25, 23;
+    {
+      OTerrain = sign { Text = "The village's new temple of nature."; }
+    }
+
+    Square, Pos 43, 43;
+    {
+      OTerrain = sign { Text = "New Attnam's main ostrich landing site. The delicious fruits of Decos Bananas Co. are gathered here by native professionals and then distributed aerially all over the civilized world."; }
+    }
+  }
+
+  Level 1;
+  {
+    Description = "New Attnam's sumo wrestling arena";
+    ShortDescription = "SumoArena";
+    FillSquare = solidterrain(GROUND), MORAINE earth;
+    Size = 55, 55;
+    Rooms = 1;
+    Items = 0;
+    GenerateMonsters = false;
+    IsOnGround = false;
+    TeamDefault = NEW_ATTNAM_TEAM;
+    LOSModifier = 32;
+    IgnoreDefaultSpecialSquares = false;
+    CanGenerateBone = false;
+    DifficultyBase = 50;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = -15;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GREEN_FRACTAL;
+    EarthquakesAffectTunnels = false;
+
+    Room
+    {
+      Pos = 19,12;
+      Size = 13,13;
+      WallSquare = solidterrain(GROUND), BALSA_WOOD wall(BRICK_FINE);
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      DivineMaster = ATHEIST;
+      GenerateLanterns = false;
+      Type = ROOM_SUMO_ARENA;
+      GenerateFountains = false;
+      AltarPossible = false;
+      Shape = RECTANGLE;
+      GenerateTunnel = false;
+      GenerateWindows = false;
+      IsInside = true;
+      UseFillSquareWalls = false;
+      Flags = 0;
+
+      Square, Pos 6, 6;
+      {
+        OTerrain = stairs(SUMO_ARENA_EXIT) { AttachedArea = 0; AttachedEntry = STAIRS_DOWN; }
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Pos 6, 0;
+      {
+        OTerrain = wall(BRICK_PRIMITIVE_PROPAGANDA);
+        Items == lantern { SquarePosition = DOWN; }
+      }
+
+      Square, Pos 0, 6;
+      {
+        Items == lantern { SquarePosition = RIGHT; }
+      }
+
+      Square, Pos 12, 6;
+      {
+        Items == lantern { SquarePosition = LEFT; }
+      }
+
+      Square, Pos 6, 12;
+      {
+        Items == lantern { SquarePosition = UP; }
+      }
+
+      OTerrainMap
+      {
+        Pos = 3, 3;
+        Size = 7, 7;
+        Types
+        {
+          # = GLASS wall(BRICK_FINE);
+        }
+      }
+      {
+        #######
+        #.....#
+        #.....#
+        #.....#
+        #.....#
+        #.....#
+        #######
+      }
+    }
+  }
+}
