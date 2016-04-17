@@ -1149,9 +1149,9 @@ void gamescript::InitDataMap()
   INIT_ENTRY(Teams);
 }
 
-void gamescript::ReadFrom(inputfile& SaveFile)
+void gamescript::ReadFrom(inputfile &SaveFile)
 {
-  static festring Word;
+  festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
   {
@@ -1176,6 +1176,23 @@ void gamescript::ReadFrom(inputfile& SaveFile)
       continue;
     }
 
+    if(Word == "Include")
+    {
+      Word = SaveFile.ReadWord();
+      if (SaveFile.ReadWord() != ";")
+        ABORT("Invalid terminator at line %ld!", SaveFile.TellLine());
+      inputfile incf(game::GetDataDir()+"Script/"+Word, &game::GetGlobalValueMap());
+      ReadFrom(incf);
+      continue;
+    }
+    if(Word == "Message")
+    {
+      Word = SaveFile.ReadWord();
+      if(SaveFile.ReadWord() != ";")
+        ABORT("Invalid terminator at line %ld!", SaveFile.TellLine());
+      fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
+      continue;
+    }
     if(!ReadMember(SaveFile, Word))
       ABORT("Odd script term %s encountered in game script line %ld!", Word.CStr(), SaveFile.TellLine());
   }

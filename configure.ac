@@ -35,7 +35,7 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 
 AC_CONFIG_FILES(Makefile FeLib/Makefile FeLib/Include/Makefile
-                FeLib/Source/Makefile Script/Makefile Graphics/Makefile
+                FeLib/Source/Makefile Script/Makefile Script/dungeons/Makefile Graphics/Makefile
                 Main/Makefile Main/Include/Makefile Main/Resource/Makefile
                 Main/Source/Makefile)
 AC_OUTPUT

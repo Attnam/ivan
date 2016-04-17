@@ -51,7 +51,7 @@ class outputfile
   void Write(cchar* Offset, long Size)
   { fwrite(Offset, 1, Size, Buffer); }
   truth IsOpen() { return Buffer != 0; }
-  void Close() { fclose(Buffer); }
+  void Close() { fclose(Buffer);  Buffer = 0; }
   void Flush() { fflush(Buffer); }
   void ReOpen();
  private:
@@ -68,6 +68,7 @@ class inputfile
   void ReadWord(festring&, truth = true);
   char ReadLetter(truth = true);
   long ReadNumber(int = 0xFF, truth = false);
+  festring ReadStringOrNumber (long *num, truth *isString, truth PreserveTerminator=false);
   v2 ReadVector2d();
   rect ReadRect();
   int Get() { return fgetc(Buffer); }
@@ -82,12 +83,14 @@ class inputfile
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
   cfestring& GetFileName() const { return FileName; }
-  void Close() { fclose(Buffer); }
+  void Close() { fclose(Buffer); Buffer = 0; }
  private:
+  festring ReadNumberIntr (int CallLevel, long *num, truth *isString, truth allowStr, truth PreserveTerminator);
   int HandlePunct(festring&, int, int);
   FILE* Buffer;
   festring FileName;
   const valuemap* ValueMap;
+  truth lastWordWasString;
 };
 
 /* Reads a binary form variable of type type and returns it.
