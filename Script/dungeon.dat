@@ -21,7 +21,7 @@
 
 /* Team and dungeon data for the game */
 
-Dungeons = 4;
+/*Dungeons = 4;*/
 Teams = 12;
 
 /*
