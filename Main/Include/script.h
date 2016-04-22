@@ -493,14 +493,13 @@ class gamescript : public script
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
-  const int *GetDungeons () const { mDungeons = (int)Dungeon.size(); return &mDungeons; }
+  const int *GetDungeons() const { DungeonCount = (int)Dungeon.size(); return &DungeonCount; }
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   std::list<std::pair<int, teamscript>> Team;
   std::map<int, dungeonscript> Dungeon;
-  mutable int mDungeons;
-  //SCRIPT_MEMBER(int, Dungeons);
+  mutable int DungeonCount;
   SCRIPT_MEMBER(int, Teams);
 };
 
