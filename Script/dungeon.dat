@@ -95,7 +95,4 @@ Team BETRAYED_TEAM;
   KillEvilness = 10;
 }
 
-Include "dungeons/Attnam.dat";
-Include "dungeons/GloomyCaves.dat";
-Include "dungeons/NewAttnam.dat";
-Include "dungeons/UnderwaterTunnel.dat";
+Include "dungeons/";
