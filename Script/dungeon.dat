@@ -19,9 +19,8 @@
  * proceed at your own risk!
  */
 
-/* Team and dungeon data for the game */
+/* Team data for the game */
 
-Dungeons = 4;
 Teams = 12;
 
 /*
@@ -94,6 +93,8 @@ Team BETRAYED_TEAM;
   Relation 0, HOSTILE;
   KillEvilness = 10;
 }
+
+/* Dungeons to be included in the game */
 
 Include "dungeons/Attnam.dat";
 Include "dungeons/GloomyCaves.dat";
