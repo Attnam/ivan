@@ -82,9 +82,13 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
         Word = inFile->ReadWord();
         if (inFile->ReadWord() != ";")
           ABORT("Invalid terminator at line %ld!", inFile->TellLine());
-        inputfile *incf = new inputfile(game::GetDataDir()+"Script/"+Word, &game::GetGlobalValueMap());
-        infStack.push(inFile);
-        inFile = incf;
+
+        for(cfestring& FileName : ListFiles(game::GetDataDir() + "Script/" + Word, ".dat"))
+        {
+          inputfile *incf = new inputfile(FileName, &game::GetGlobalValueMap());
+          infStack.push(inFile);
+          inFile = incf;
+        }
         continue;
       }
       if (Word == "Message")

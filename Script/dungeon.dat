@@ -96,7 +96,4 @@ Team BETRAYED_TEAM;
 
 /* Dungeons to be included in the game */
 
-Include "dungeons/Attnam.dat";
-Include "dungeons/GloomyCaves.dat";
-Include "dungeons/NewAttnam.dat";
-Include "dungeons/UnderwaterTunnel.dat";
+Include "dungeons/";
