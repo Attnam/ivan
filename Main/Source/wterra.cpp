@@ -12,14 +12,14 @@
 
 /* Compiled through wmapset.cpp */
 
-gwterrainprototype::gwterrainprototype(gwterrainspawner Spawner,
-                                       cchar* ClassID)
-: Spawner(Spawner), ClassID(ClassID)
-{ Index = protocontainer<gwterrain>::Add(this); }
-owterrainprototype::owterrainprototype(owterrainspawner Spawner,
-                                       cchar* ClassID)
-: Spawner(Spawner), ClassID(ClassID)
-{ Index = protocontainer<owterrain>::Add(this); }
+gwterrainprototype::gwterrainprototype(const gwterrainprototype* Base, gwterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
+
+owterrainprototype::owterrainprototype(const owterrainprototype* Base, owterrainspawner Spawner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
+
+void gwterrain::InstallDataBase(int NewConfig) { databasecreator<gwterrain>::InstallDataBase(this, NewConfig); }
+void owterrain::InstallDataBase(int NewConfig) { databasecreator<owterrain>::InstallDataBase(this, NewConfig); }
 
 int gwterrain::GetWalkability() const { return ANY_MOVE&~SWIM; }
 int owterrain::GetWalkability() const { return ANY_MOVE; }
@@ -80,33 +80,72 @@ void owterrain::Draw(blitdata& BlitData) const
   BlitData.Src.X = BlitData.Src.Y = 0;
 }
 
+void wterrain::Save(outputfile& SaveFile) const
+{
+
+}
+
 void wterrain::Load(inputfile&)
 {
   WSquareUnder = static_cast<wsquare*>(game::GetSquareInLoad());
 }
-
+/*
 void gwterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());
 }
+*/
+void gwterrain::Save(outputfile& SaveFile) const
+{
+  SaveFile << static_cast<ushort>(GetType());
+  wterrain::Save(SaveFile);
+  SaveFile << static_cast<ushort>(GetConfig());
+}
 
+void gwterrain::Load(inputfile& SaveFile)
+{
+  wterrain::Load(SaveFile);
+  databasecreator<gwterrain>::InstallDataBase(this, ReadType<ushort>(SaveFile));
+}
+/*
 void owterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());
 }
+*/
+void owterrain::Save(outputfile& SaveFile) const
+{
+  SaveFile << static_cast<ushort>(GetType());
+  wterrain::Save(SaveFile);
+  SaveFile << static_cast<ushort>(GetConfig());
+}
+
+void owterrain::Load(inputfile& SaveFile)
+{
+  wterrain::Load(SaveFile);
+  databasecreator<owterrain>::InstallDataBase(this, ReadType<ushort>(SaveFile));
+}
 
 gwterrain* gwterrainprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  gwterrain* Terrain = Spawner();
+  gwterrain* Terrain = Spawner(0, LOAD);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
 owterrain* owterrainprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  owterrain* Terrain = Spawner();
+  owterrain* Terrain = Spawner(0, LOAD);
   Terrain->Load(SaveFile);
   return Terrain;
+}
+
+void wterrain::Initialize(int NewConfig, int SpecialFlags)
+{
+  if(!(SpecialFlags & LOAD))
+  {
+    InstallDataBase(NewConfig);
+  }
 }
 
 truth DrawOrderer(const std::pair<v2, int>& Pair1,
@@ -163,4 +202,28 @@ truth owterrain::Enter(truth DirectionUp) const
   return game::TryTravel(GetAttachedDungeon(),
                          GetAttachedArea(),
                          GetAttachedEntry());
+}
+
+void gwterraindatabase::InitDefaults(const gwterrainprototype* NewProtoType, int NewConfig)
+{
+  IsAbstract = false;
+  ProtoType = NewProtoType;
+  Config = NewConfig;
+}
+
+void owterraindatabase::InitDefaults(const owterrainprototype* NewProtoType, int NewConfig)
+{
+  IsAbstract = false;
+  ProtoType = NewProtoType;
+  Config = NewConfig;
+}
+
+v2 gwterrain::GetBitmapPos(int) const
+{
+  return DataBase->BitmapPos;
+}
+
+v2 owterrain::GetBitmapPos(int) const
+{
+  return DataBase->BitmapPos;
 }

@@ -1,0 +1,1237 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+/*
+WorldTerrainData LOCALE05;
+{
+  BitmapPos = 16, 64;
+  NameStem = "pet graveyard filled with gravestones named Kenny";
+  AttachedArea = 0;
+  HasExit = false;
+  ExitAttachedArea = 0;
+  ExitBitmapPos = 16, 64;
+  ExitNameStem = "pet graveyard exit";
+  UsesLongArticle = false;
+  Walkability = ALL;
+}
+*/
+Dungeon LOCALE05;
+{
+  Levels = 13;
+  Description = "pet graveyard";
+  ShortDescription = "PG";
+
+  LevelDefault
+  {
+    FillSquare = solidterrain(GROUND), GNEISS earth;
+    TunnelSquare = solidterrain(GROUND), 0;
+    Size = 64, 36;
+    Rooms = 10:30;
+    Items = 25:50;
+    GenerateMonsters = true;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    DifficultyBase = 50;
+    DifficultyDelta = 10;
+    MonsterAmountBase = 10;
+    MonsterAmountDelta = 2;
+    MonsterGenerationIntervalBase = 140;
+    MonsterGenerationIntervalDelta = -10;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 20;
+    ItemMinPriceDelta = 10;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 5;
+    EnchantmentPlusChanceDelta = 5;
+    BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
+
+    Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+    {
+      Items == stone;
+      Times = 25:50;
+    }
+
+    Square, Random;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:11,4:11;
+      AltarPossible = true;
+      WallSquare = solidterrain(GROUND), GRANITE wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), GRANITE door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  Level 0;
+  {
+    FillSquare = solidterrain(GROUND), MORAINE earth;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      WallSquare = solidterrain(GROUND), FIR_WOOD wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), FIR_WOOD door;
+    }
+  }
+
+  RandomLevel 1:3;
+  {
+    Size = 80, 60;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 10:20,10:20;
+    }
+
+    Room
+    {
+      AltarPossible = false;
+      Size = 30,30;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random;
+      {
+        OTerrain = STEEL sign { Text = "Experimental dwarven mine field. Thank you for participating in testing!"; }
+      }
+
+      Square, Random;
+      {
+        Items == Random { MinPrice = 100; Chance = 50; }
+        Times = 20;
+      }
+
+      Square, Random;
+      {
+        Items == Random { MinPrice = 500; Chance = 50; }
+        Times = 4;
+      }
+
+      Square, Random;
+      {
+        Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
+        Times = 40;
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
+        Times = 20;
+      }
+
+      Square, Random;
+      {
+        Items == backpack { Chance = 25; }
+        Times = 4;
+      }
+    }
+  }
+
+  RandomLevel 1:2;
+  {
+    LevelMessage = "You hear many wolves howling. You shiver.";
+
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          w = wolf;
+          W = werewolfhuman { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+        }
+      }
+      {
+        .www.
+        wwWww
+        wwwww
+        .www.
+      }
+    }
+  }
+
+  RandomLevel 1:3;
+  {
+    CanGenerateBone = false;
+
+    Room
+    {
+      Size = 5,9;
+      AltarPossible = false;
+      DivineMaster = MELLIS;
+      Type = ROOM_SHOP;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+
+      CharacterMap
+      {
+        Pos = 1, 1;
+        Size = 3, 7;
+
+        Types
+        {
+          g = guard(SHOP) { Team = 5; }
+          s = shopkeeper(ELPURI_CAVE) { Team = 5; Flags = IS_MASTER; }
+        }
+      }
+      {
+        g.g
+        ...
+        ...
+        .s.
+        ...
+        ...
+        g.g
+      }
+
+      ItemMap
+      {
+        Pos = 1,1;
+        Size = 3,7;
+
+        Types
+        {
+          g == Random { MinPrice = 100; MaxPrice = 10000; Category = GAUNTLET|BOOT; }
+          b == Random { MinPrice = 100; MaxPrice = 10000; Category = GAUNTLET|BOOT; }
+          a == Random { MinPrice = 500; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+          d == Random { MinPrice = 200; MaxPrice = 10000; Category = RING|AMULET; }
+          w == Random { MinPrice = 500; MaxPrice = 10000; Category = WEAPON|SHIELD; }
+          e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
+          u == Random { MinPrice = 200; MaxPrice = 10000; Category = WAND|TOOL; }
+          r == Random { MinPrice = 200; MaxPrice = 10000; Category = SCROLL|BOOK; }
+          s == wand(WAND_OF_STRIKING);
+        }
+      }
+      {
+        .g.
+        ddb
+        err
+        e.w
+        auw
+        auw
+        .s.
+      }
+    }
+  }
+
+  RandomLevel 0:11;
+  {
+    /* I'm Evil, Bwahaha */
+
+    Square, Random;
+    {
+      Items == VALPURIUM VALPURIUM flamingsword { Enchantment = 10; LifeExpectancy = 1000:10000; Chance = 5; }
+    }
+  }
+
+  RandomLevel 0:11;
+  {
+    /* I'm Evil, Bwahaha */
+
+    Square, Random;
+    {
+      Items == itemcontainer(LARGE_CHEST) { LifeExpectancy = 100:10000; Chance = 5; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }
+    }
+  }
+
+  RandomLevel 1:4;
+  {
+    CanGenerateBone = false;
+
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+
+      OTerrainMap
+      {
+        Size = 3,3;
+        Pos = 3,3;
+        Types
+        {
+          # = METEORIC_STEEL wall(BRICK_OLD);
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 4,4;
+      {
+        Items = { 2, MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { MinPrice = 1250; Times = 2; } } }
+      }
+    }
+  }
+
+  Level ENNER_BEAST_LEVEL;
+  {
+    LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
+    IgnoreDefaultSpecialSquares = true;
+    Items = 35:70;
+    EnterImage = "Enner.pcx";
+    EnterTextDisplacement = -150, 0;
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+    }
+
+    Square, Random;
+    {
+      Items == METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+    {
+      Items == stone;
+      Times = 25:50;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random;
+    {
+      Items == bone;
+      Times = 20;
+    }
+
+    Square, Random;
+    {
+      Items == skull;
+      Times = 5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerbeast;
+    }
+  }
+
+  Level ZOMBIE_LEVEL;
+  {
+    Rooms = 1;
+    IgnoreDefaultSpecialSquares = true;
+    MonsterAmountBase = 20;
+    LOSModifier = 24;
+    FillSquare = FLINT solidterrain(GROUND), GNEISS earth;
+    EarthquakesAffectTunnels = false;
+
+    Room
+    {
+      Pos = 2,2;
+      Size = 60,32;
+      AltarPossible = false;
+      WallSquare = FLINT solidterrain(GROUND), 0;
+      FloorSquare = FLINT solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+
+      Square, BoundedRandom 1, 1, 25, 58, HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_UP);
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, BoundedRandom 35, 1, 58, 58, HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, BoundedRandom 35, 1, 58, 58, 0;
+      {
+        Character = veterankamikazedwarf;
+      }
+    }
+
+    Square, Random;
+    {
+      Character = zombie;
+      Times = 30;
+    }
+  }
+
+  RandomLevel 1:4;
+  {
+    Room /* vault */
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = IRON wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+      }
+
+      Square, Random;
+      {
+        Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 2;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 2,  Random { MinPrice = 1250; Times = 2; },
+                              stone { Chance = 75; Times = 3; } }
+        }
+      }
+    }
+  }
+
+  Level 6;
+  {
+    IgnoreDefaultSpecialSquares = true;
+    FillSquare = solidterrain(GROUND), QUARTZITE earth;
+
+    RoomDefault
+    {
+      WallSquare = solidterrain(GROUND), COPPER wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), COPPER door;
+    }
+
+    Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+    {
+      Items == stone;
+      Times = 25:50;
+    }
+
+    Square, Random;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+    }
+
+    Square, Random;
+    {
+      Items == METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 7,7;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      WallSquare = solidterrain(GROUND),IRON wall(BRICK_OLD);
+      FloorSquare = IRON solidterrain(PARQUET), 0;
+      DoorSquare = IRON solidterrain(PARQUET),IRON door { Parameters = LOCKED; }
+
+      Square, Pos 3,6;
+      {
+        GTerrain = solidterrain(PARQUET);
+        OTerrain = IRON door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Pos 3,3;
+      {
+        Character = mysticfrog(DARK);
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Random;
+      {
+        Character = frog(GREATER_DARK);
+        Times = 2;
+      }
+
+      Square, Random;
+      {
+        Character = frog(DARK);
+        Times = 4;
+      }
+    }
+  }
+
+  Level IVAN_LEVEL;
+  {
+    LevelMessage = "You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
+    FillSquare = solidterrain(GROUND), QUARTZITE earth;
+    EnterImage = "IVlad.pcx";
+    EnterTextDisplacement = 260, 0;
+
+    RoomDefault
+    {
+      WallSquare = solidterrain(GROUND), BRONZE wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), BRONZE door;
+    }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = communist { Team = IVAN_TEAM; Flags = IS_LEADER; }
+    }
+
+    Square, Random;
+    {
+      Character = vladimir { Team = IVAN_TEAM; }
+    }
+  }
+
+  RandomLevel 6:8;
+  {
+    Room /* vault */
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = STEEL wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
+      }
+
+      Square, Random;
+      {
+        Items == OCTIRON beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 4;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside == Random { MinPrice = 2000; Times = 2; }
+        }
+      }
+    }
+  }
+
+  Level DARK_LEVEL;
+  {
+    Description = "dark level";
+    ShortDescription = "DarkLevel";
+    LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+    FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
+    TunnelSquare = STEEL solidterrain(FLOOR), 0;
+    Items = 0;
+    IgnoreDefaultSpecialSquares = true;
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 1:3;
+    }
+
+    RoomDefault
+    {
+      AltarPossible = false;
+      FloorSquare = STEEL solidterrain(PARQUET), 0;
+      WallSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
+      DoorSquare = STEEL solidterrain(PARQUET), STEEL door;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+    }
+
+    Room
+    {
+      Size = 11, 11;
+      DivineMaster = SCABIES;
+
+      Square, Pos 5, 5;
+      {
+        OTerrain = portal(DARK_LEVEL) { AttachedArea = DARK_LEVEL + 1; AttachedEntry = STAIRS_UP; }
+        Character = elpuri;
+      }
+
+      Square, Random;
+      {
+        Character = frog(DARK);
+        Times = 8;
+      }
+
+      Square, Random;
+      {
+        Character = frog(GREATER_DARK);
+        Times = 4;
+      }
+
+      Square, Random;
+      {
+        Character = frog(GIANT_DARK);
+        Times = 2;
+      }
+
+      Square, Random;
+      {
+        Character = mysticfrog(DARK);
+      }
+
+      Square, Random;
+      {
+        Items == HUMAN_FLESH lump;
+        Times = 5;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 10;
+      }
+
+      Square, Random;
+      {
+        Items == skull;
+        Times = 5;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+  }
+
+  RandomLevel 6:10;
+  {
+    Room
+    {
+      Size = 7,7;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+
+        Types
+        {
+          G = golem;
+          V = golem(VALPURIUM) { Inventory = { 2, scrollofgolemcreation, scrollofgolemcreation { Chance = 10; Times = 4; } } }
+        }
+      }
+      {
+        .GGG.
+        GGGGG
+        GGVGG
+        GGGGG
+        .GGG.
+      }
+    }
+  }
+
+  RandomLevel 6:10;
+  {
+    Room
+    {
+      Size = 9,7;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,5;
+
+        Types
+        {
+          G = orc(GENERAL) { Inventory = { 2, Random { MinPrice = 100; Category = POTION; Times = 4; }, Random { MinPrice = 200; Category = POTION; Times = 2; } } }
+          O = orc(OFFICER) { Inventory == Random { MinPrice = 100; Category = POTION; Times = 2; } }
+          S = orc(SQUAD_LEADER);
+          s = orc(SLAUGHTERER);
+          o = orc;
+        }
+      }
+      {
+        .ooooo.
+        osSOSso
+        ossGsso
+        osSOSso
+        .ooooo.
+      }
+    }
+  }
+
+  RandomLevel 10:11;
+  {
+    Room
+    {
+      Size = 5,12;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      FloorSquare = ARCANITE solidterrain(PARQUET), 0;
+      WallSquare = ARCANITE solidterrain(FLOOR), OCTIRON wall(BRICK_OLD);
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 3,10;
+
+        Types
+        {
+          E = darkmage(ELDER) { Inventory == Random { MinPrice = 750; Category = WAND|SCROLL; } }
+          B = darkmage(BATTLE_MAGE);
+          A = darkmage(APPRENTICE);
+          M = mysticfrog(DARK);
+          N = necromancer(MASTER_NECROMANCER);
+          n = necromancer(APPRENTICE_NECROMANCER);
+          a = golem(ARCANITE);
+          O = golem(OCTIRON);
+        }
+      }
+      {
+        aOa
+        nnn
+        AAA
+        BMB
+        NEN
+        NEN
+        BMB
+        AAA
+        nnn
+        aOa
+      }
+
+      Square, Pos 2, 0;
+      {
+        GTerrain = ARCANITE solidterrain(PARQUET);
+        OTerrain = OCTIRON door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Pos 2, 11;
+      {
+        GTerrain = ARCANITE solidterrain(PARQUET);
+        OTerrain = OCTIRON door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+    }
+  }
+
+  Level 9;
+  {
+    Size = 20, 100;
+    IgnoreDefaultSpecialSquares = true;
+    DifficultyBase = 60;
+    MonsterAmountBase = 12;
+    ItemMinPriceBase = 30;
+    Rooms = 20:40;
+    FillSquare = MILKY_QUARTZ solidterrain(GROUND), ROCK_CRYSTAL earth;
+    TunnelSquare = MILKY_QUARTZ solidterrain(GROUND), 0;
+    BackGroundType = RED_FRACTAL;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 3:5,3:5;
+      WallSquare = ROSE_QUARTZ solidterrain(GROUND), ROSE_QUARTZ wall(BRICK_OLD);
+      FloorSquare = ROSE_QUARTZ solidterrain(GROUND), 0;
+      DoorSquare = ROSE_QUARTZ solidterrain(GROUND), ROSE_QUARTZ door;
+    }
+
+    Room
+    {
+      Pos = 2:XSize-5, 2:YSize/4-5;
+
+      Square, Random;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+    }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, BoundedRandom 1, YSize * 3 / 4, XSize - 2, YSize - 2, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 10;
+  {
+    Size = 20, 100;
+    IgnoreDefaultSpecialSquares = true;
+    DifficultyBase = 70;
+    MonsterAmountBase = 14;
+    ItemMinPriceBase = 40;
+    Rooms = 20:40;
+    Items = 35:70;
+    FillSquare = MILKY_QUARTZ solidterrain(GROUND), ROCK_CRYSTAL earth;
+    TunnelSquare = MILKY_QUARTZ solidterrain(GROUND), 0;
+    BackGroundType = BLUE_FRACTAL;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 3:5,3:5;
+      WallSquare = AMETHYST solidterrain(GROUND), AMETHYST wall(BRICK_OLD);
+      FloorSquare = AMETHYST solidterrain(GROUND), 0;
+      DoorSquare = AMETHYST solidterrain(GROUND), AMETHYST door;
+    }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, BoundedRandom 1, YSize * 3 / 4, XSize - 2, YSize - 2, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom 1, 1, XSize - 2, YSize/4 - 2, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 11;
+  {
+    Size = 64,36;
+    IgnoreDefaultSpecialSquares = true;
+    DifficultyBase = 80;
+    MonsterAmountBase = 50;
+    MonsterAmountDelta = 0;
+    ItemMinPriceBase = 50;
+    Items = 45:90;
+    FillSquare = ARCANITE solidterrain(GROUND), ARCANITE earth;
+    TunnelSquare = ARCANITE solidterrain(GROUND), 0;
+    BackGroundType = YELLOW_FRACTAL;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 6:20,6:20;
+      WallSquare = ARCANITE solidterrain(GROUND), OCTIRON wall(BRICK_OLD);
+      FloorSquare = ARCANITE solidterrain(PARQUET), 0;
+      DoorSquare = ARCANITE solidterrain(PARQUET), OCTIRON door;
+    }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 21,21;
+      GenerateFountains = false;
+      AltarPossible = false;
+
+      Square, Pos 10,10;
+      {
+        OTerrain = portal(OREE_LAIR_ENTRY) { AttachedArea = OREE_LAIR; AttachedEntry = STAIRS_UP; }
+      }
+
+      Square, Pos 10,10;
+      {
+        EntryIndex = STAIRS_DOWN;
+      }
+    }
+
+    Square, Random;
+    {
+      Items == pickaxe;
+    }
+
+    Room /* vault */
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = ADAMANT wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
+        Times = 3;
+      }
+
+      Square, Random;
+      {
+        Items == ADAMANT beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
+        Times = 4;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside == Random { MinPrice = 3000; Times = 2; }
+        }
+      }
+    }
+  }
+
+  Level OREE_LAIR;
+  {
+    Description = "Oree's lair";
+    ShortDescription = "OreeLair";
+    LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
+    FillSquare = BLOOD liquidterrain(UNDERGROUND_LAKE), 0;
+    TunnelSquare = solidterrain(GROUND), 0;
+    Rooms = 5;
+    GenerateMonsters = false;
+    Items = 0;
+    IgnoreDefaultSpecialSquares = true;
+    CanGenerateBone = false;
+    DifficultyBase = 90;
+    BackGroundType = RED_FRACTAL;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 5:7,5:7;
+      WallSquare = RUBY solidterrain(PARQUET), RUBY wall(BRICK_FINE);
+      FloorSquare = RUBY solidterrain(PARQUET), 0;
+      DoorSquare = RUBY solidterrain(PARQUET), RUBY door(OCTAGONAL_LOCK);
+      Shape = ROUND_CORNERS;
+      AltarPossible = false;
+      DivineMaster = CRUENTUS;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      AllowLockedDoors = false;
+      IsInside = false;
+    }
+
+    Room
+    {
+      Size = 9,9;
+      GenerateDoor = false;
+
+      Square, Pos 4,0;
+      {
+        OTerrain = RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Pos 4,4;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,7;
+
+        Types
+        {
+          B = darkknight(ELITE);
+          G = golem(ACIDOUS_BLOOD);
+        }
+      }
+      {
+        ..G.G..
+        .......
+        G..B..G
+        ..B.B..
+        G..B..G
+        .......
+        ..G.G..
+      }
+    }
+
+    Room
+    {
+      Size = 9,9;
+      DivineMaster = CRUENTUS;
+
+      Square, Pos 4,1;
+      {
+        OTerrain = STEEL altar(CRUENTUS);
+      }
+
+      Square, Pos 1,4;
+      {
+        OTerrain = portal(OREE_LAIR_EXIT) { AttachedArea = 0; AttachedEntry = RANDOM; }
+      }
+
+      Square, Pos 7,4;
+      {
+        OTerrain = monsterportal;
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,7;
+
+        Types
+        {
+          O = oree;
+          A = angel(CRUENTUS);
+        }
+      }
+      {
+        ..O.A..
+        .......
+        .......
+        .......
+        .......
+        .......
+        .......
+      }
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkknight(ELITE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = frog(GIANT_DARK);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = mysticfrog(DARK);
+      Times = 1;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(APPRENTICE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(BATTLE_MAGE);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(ELDER);
+      Times = 1;
+    }
+  }
+}

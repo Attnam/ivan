@@ -1,0 +1,60 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+/* Numerical owterrain data loaded during game startup */
+
+/* Default values: */
+
+owterrain
+{
+  /* Obligatory: BitmapPos */
+  IsAbstract = true; /* This is false by default and does not inherit! */
+}
+
+attnam
+{
+  BitmapPos = 0, 48;
+}
+
+elpuricave
+{
+  BitmapPos = 16, 48;
+}
+
+newattnam
+{
+  BitmapPos = 0, 64;
+}
+
+underwatertunnel
+{
+  BitmapPos = 32, 64;
+}
+
+underwatertunnelexit
+{
+  BitmapPos = 32, 64;
+}
+
+locale
+{
+  BitmapPos = 16, 64;
+}

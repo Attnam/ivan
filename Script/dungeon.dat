@@ -21,7 +21,7 @@
 
 /* Team and dungeon data for the game */
 
-Dungeons = 4;
+Dungeons = 5;
 Teams = 12;
 
 /*
@@ -99,3 +99,4 @@ Include "dungeons/Attnam.dat";
 Include "dungeons/GloomyCaves.dat";
 Include "dungeons/NewAttnam.dat";
 Include "dungeons/UnderwaterTunnel.dat";
+Include "dungeons/PetGraveyard.dat";

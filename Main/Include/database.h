@@ -40,6 +40,7 @@ template <class type> class databasecreator
   static truth AnalyzeData(inputfile&, cfestring&, database&);
   static void CheckDefaults(cfestring&, database&);
   static void CreateLTerrainDataBaseMemberMap();
+  static void CreateWTerrainDataBaseMemberMap();
   static void SetBaseValue(cfestring&, databasememberbase<database>*, database&);
   static databasemembermap& GetDataBaseMemberMap();
 };
