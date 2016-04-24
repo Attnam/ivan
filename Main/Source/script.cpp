@@ -1180,8 +1180,12 @@ void gamescript::ReadFrom(inputfile &SaveFile)
       Word = SaveFile.ReadWord();
       if (SaveFile.ReadWord() != ";")
         ABORT("Invalid terminator at line %ld!", SaveFile.TellLine());
-      inputfile incf(game::GetDataDir()+"Script/"+Word, &game::GetGlobalValueMap());
-      ReadFrom(incf);
+
+      for(cfestring& FileName : ListFiles(game::GetDataDir() + "Script/" + Word, ".dat"))
+      {
+        inputfile incf(FileName, &game::GetGlobalValueMap());
+        ReadFrom(incf);
+      }
       continue;
     }
     if(Word == "Message")

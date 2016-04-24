@@ -12,6 +12,12 @@
 
 #include <cctype>
 
+#ifdef WIN32
+#include <Windows.h>
+#else
+#include <dirent.h>
+#endif
+
 #include "save.h"
 #include "femath.h"
 
@@ -683,4 +689,49 @@ ulong inputfile::TellLineOfPos(long Pos)
     SeekPosBegin(BackupPos);
 
   return Line;
+}
+
+/* Returns a vector of absolute file paths referring to files inside Directory
+ * with the given Extension. */
+
+std::vector<festring> ListFiles(festring Directory, cfestring& Extension)
+{
+  std::vector<festring> Files;
+  if(Directory[Directory.GetSize() - 1] != '/')
+    Directory << '/';
+
+#ifdef WIN32
+  festring SearchPath = Directory + "*" + Extension;
+  WIN32_FIND_DATA fd;
+  HANDLE hFind = ::FindFirstFile(SearchPath.CStr(), &fd);
+  if(hFind == INVALID_HANDLE_VALUE)
+    ABORT("Cannot open directory %s", Directory.CStr());
+
+  do
+  {
+    if(!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+      Files.push_back(Directory + fd.cFileName);
+  }
+  while(::FindNextFile(hFind, &fd));
+  ::FindClose(hFind);
+#else
+#ifdef __DJGPP__
+#error "ListFiles() not implemented on DOS!"
+#else
+  DIR* dirp = opendir(Directory.CStr());
+  if(!dirp)
+    ABORT("Cannot open directory %s", Directory.CStr());
+
+  dirent* dp;
+  while((dp = readdir(dirp)) != nullptr)
+  {
+    cint ExtIndex = strlen(dp->d_name) - Extension.GetSize();
+    if(ExtIndex < 0) continue;
+    if(strcmp(dp->d_name + ExtIndex, Extension.CStr()) == 0)
+      Files.push_back(Directory + dp->d_name);
+  }
+  closedir(dirp);
+#endif
+#endif
+  return Files;
 }
