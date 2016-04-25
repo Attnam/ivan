@@ -41,7 +41,7 @@ elpuricave
 
 newattnam
 {
-  BitmapPos = 0, 64;
+  BitmapPos = 16, 64;
 }
 
 underwatertunnel
@@ -52,9 +52,4 @@ underwatertunnel
 underwatertunnelexit
 {
   BitmapPos = 32, 64;
-}
-
-locale
-{
-  BitmapPos = 16, 64;
 }

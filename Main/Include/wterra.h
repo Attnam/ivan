@@ -54,7 +54,6 @@ class wterrain
   wsquare* WSquareUnder;
   int AnimationFrames;
   void Initialize(int, int);
-  //virtual void PostConstruct() { } //?
   virtual void InstallDataBase(int) = 0;
 };
 
@@ -120,9 +119,6 @@ struct owterraindatabase : public wterraindatabase
   typedef owterrainprototype prototype;
   void InitDefaults(const prototype*, int);
   const prototype* ProtoType;
-//  int GWTerrainType;
-//  int WalkabilityType;
-//  festring LocationDescription;
 };
 
 class owterrainprototype
@@ -195,25 +191,3 @@ class name : public name##sysbase
 #define OWTERRAIN(name, base) WTERRAIN(name, base, owterrain)
 
 #endif
-/*
- //OLD
-#ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
-#define WTERRAIN_PROTO(name, protobase)\
-template<> const protobase##prototype\
-  name##sysbase::ProtoType(reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
-                           #name);
-#else
-#define WTERRAIN_PROTO(name, protobase)
-#endif
-
-#define WTERRAIN(name, base, protobase)\
-class name;\
-typedef simplesysbase<name, base, protobase##prototype> name##sysbase;\
-WTERRAIN_PROTO(name, protobase)\
-class name : public name##sysbase
-
-#define GWTERRAIN(name, base) WTERRAIN(name, base, gwterrain)
-#define OWTERRAIN(name, base) WTERRAIN(name, base, owterrain)
-
-#endif
-*/

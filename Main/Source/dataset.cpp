@@ -18,7 +18,7 @@
 #include "database.h"
 #include "save.h"
 #include "god.h"
-#include "wterra.h" //possibly evil, check that a higher level file can be used...
+#include "wterra.h"
 
 #include "proto.cpp"
 #include "database.cpp"

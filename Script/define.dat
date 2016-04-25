@@ -741,14 +741,6 @@
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
 #define UNDER_WATER_TUNNEL_EXIT 128
-#define LOCALE05 5
-#define LOCALE06 6
-#define LOCALE07 7
-#define LOCALE08 8
-#define LOCALE09 9
-#define LOCALE10 10
-#define LOCALE11 11
-#define LOCALE12 12
 
 #define VESANA_LEVEL 2
 #define CRYSTAL_LEVEL 3

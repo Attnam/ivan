@@ -89,12 +89,7 @@ void wterrain::Load(inputfile&)
 {
   WSquareUnder = static_cast<wsquare*>(game::GetSquareInLoad());
 }
-/*
-void gwterrain::Save(outputfile& SaveFile) const
-{
-  SaveFile << static_cast<ushort>(GetType());
-}
-*/
+
 void gwterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());
@@ -107,12 +102,7 @@ void gwterrain::Load(inputfile& SaveFile)
   wterrain::Load(SaveFile);
   databasecreator<gwterrain>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 }
-/*
-void owterrain::Save(outputfile& SaveFile) const
-{
-  SaveFile << static_cast<ushort>(GetType());
-}
-*/
+
 void owterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());

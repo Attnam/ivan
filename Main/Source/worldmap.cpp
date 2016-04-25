@@ -76,7 +76,7 @@ void worldmap::Save(outputfile& SaveFile) const
                  XSizeTimesYSize * sizeof(short));
   SaveFile.Write(reinterpret_cast<char*>(ContinentBuffer[0]),
                  XSizeTimesYSize * sizeof(uchar));
-/* //FIXTHIS!*/
+
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
@@ -133,14 +133,13 @@ void worldmap::Generate()
     for(uint c = 1; c < Continent.size(); ++c)
       if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
          && Continent[c]->GetGTerrainAmount(EGForestType)
-         && Continent[c]->GetGTerrainAmount(SnowType)
-         && Continent[c]->GetGTerrainAmount(LForestType)) // this needs to be hacked
+         && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
 
     if(!PerfectForAttnam.size())
       continue;
 
-    v2 AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit, LocalePos; // hack this asap
+    v2 AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
     truth Correct = false;
     continent* PetrusLikes;
 
@@ -150,7 +149,6 @@ void worldmap::Generate()
       PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
       AttnamPos = PetrusLikes->GetRandomMember(EGForestType);
       ElpuriCavePos = PetrusLikes->GetRandomMember(SnowType);
-      LocalePos = PetrusLikes->GetRandomMember(LForestType); //hack this please - worst part of the code
 
       for(int c2 = 1; c2 < 50; ++c2)
       {
@@ -299,8 +297,6 @@ void worldmap::Generate()
     SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
     GetWSquare(TunnelExit)->ChangeOWTerrain(underwatertunnelexit::Spawn());
     SetEntryPos(UNDER_WATER_TUNNEL_EXIT, TunnelExit);
-    GetWSquare(LocalePos)->ChangeOWTerrain(locale::Spawn()); //hack these two lines of course
-    SetEntryPos(LOCALE05, LocalePos);
     PLAYER->PutTo(NewAttnamPos);
     CalculateLuminances();
     CalculateNeighbourBitmapPoses();
