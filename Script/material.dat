@@ -67,7 +67,7 @@ solid
     StrengthValue = 400;
     ConsumeType = CT_METAL;
     Density = 3000;
-    Color = rgb16(220, 220, 0);
+    Color = rgb16(46, 224, 56);
     Emitation = rgb24(150, 150, 150);
     PriceModifier = 50000;
     NameStem = "valpurium";
