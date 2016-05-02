@@ -307,6 +307,18 @@ INST_ADD_MEMBER(olterrain, festring);
 INST_ADD_MEMBER(olterrain, fearray<long>);
 INST_ADD_MEMBER(olterrain, fearray<contentscript<item>>);
 
+INST_ADD_MEMBER(gwterrain, int);
+INST_ADD_MEMBER(gwterrain, long);
+INST_ADD_MEMBER(gwterrain, v2);
+INST_ADD_MEMBER(gwterrain, festring);
+INST_ADD_MEMBER(gwterrain, fearray<long>);
+
+INST_ADD_MEMBER(owterrain, int);
+INST_ADD_MEMBER(owterrain, long);
+INST_ADD_MEMBER(owterrain, v2);
+INST_ADD_MEMBER(owterrain, festring);
+INST_ADD_MEMBER(owterrain, fearray<long>);
+
 INST_ADD_MEMBER(material, int);
 INST_ADD_MEMBER(material, long);
 INST_ADD_MEMBER(material, col24);
@@ -661,6 +673,26 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsWall);
 }
 
+template <class type>
+void databasecreator<type>::CreateWTerrainDataBaseMemberMap()
+{
+  databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(BitmapPos);
+  ADD_MEMBER(IsAbstract);
+}
+
+template<> void databasecreator<gwterrain>::CreateDataBaseMemberMap()
+{
+  CreateWTerrainDataBaseMemberMap();
+  databasemembermap& Map = GetDataBaseMemberMap();
+}
+
+template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
+{
+  CreateWTerrainDataBaseMemberMap();
+  databasemembermap& Map = GetDataBaseMemberMap();
+}
+
 template<> void databasecreator<material>::CreateDataBaseMemberMap()
 {
   databasemembermap& Map = GetDataBaseMemberMap();
@@ -804,6 +836,14 @@ template<> void databasecreator<olterrain>::CheckDefaults(cfestring& Word, olter
     DataBase.MaterialConfigChanceSum = femath::SumArray(DataBase.MaterialConfigChances);
 }
 
+template<> void databasecreator<gwterrain>::CheckDefaults(cfestring& Word, gwterrain::database& DataBase)
+{
+}
+
+template<> void databasecreator<owterrain>::CheckDefaults(cfestring& Word, owterrain::database& DataBase)
+{
+}
+
 template<> void databasecreator<material>::CheckDefaults(cfestring& Word, material::database& DataBase)
 {
   if(Word == "NameStem")
@@ -841,6 +881,16 @@ void databasesystem::Initialize()
   {
     inputfile ScriptFile(game::GetDataDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
     databasecreator<olterrain>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(game::GetDataDir() + "Script/gwterra.dat", &game::GetGlobalValueMap());
+    databasecreator<gwterrain>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(game::GetDataDir() + "Script/owterra.dat", &game::GetGlobalValueMap());
+    databasecreator<owterrain>::ReadFrom(ScriptFile);
   }
 }
 
@@ -889,3 +939,5 @@ INST_INSTALL_DATABASE(character);
 INST_INSTALL_DATABASE(item);
 INST_INSTALL_DATABASE(glterrain);
 INST_INSTALL_DATABASE(olterrain);
+INST_INSTALL_DATABASE(gwterrain);
+INST_INSTALL_DATABASE(owterrain);
