@@ -1,4 +1,4 @@
-Iter Vehems ad Necem
+Iter Vehemens ad Necem
 ==========================
 
 Iter Vehemens ad Necem (IVAN) is a graphical roguelike game, which currently
