@@ -31,6 +31,8 @@ struct wterraindatabase : public databasebase
   void PostProcess() { }
   truth IsAbstract;
   v2 BitmapPos;
+  festring NameStem;
+  truth UsesLongArticle;
 };
 
 class wterrain
@@ -47,10 +49,10 @@ class wterrain
   festring GetName(int) const;
   truth IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(int What) { AnimationFrames = What; }
-  virtual cchar* GetNameStem() const = 0;
  protected:
   virtual truth UsesLongArticle() const { return false; }
   virtual v2 GetBitmapPos(int) const = 0;
+  virtual cfestring& GetNameStem() const = 0;
   wsquare* WSquareUnder;
   int AnimationFrames;
   void Initialize(int, int);
@@ -62,6 +64,7 @@ struct gwterraindatabase : public wterraindatabase
   typedef gwterrainprototype prototype;
   void InitDefaults(const prototype*, int);
   const prototype* ProtoType;
+  int Priority;
 };
 
 class gwterrainprototype
@@ -78,6 +81,7 @@ class gwterrainprototype
   const gwterraindatabase* ChooseBaseForConfig(gwterraindatabase** TempConfig, int, int) { return *TempConfig; }
   const gwterraindatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }
+  virtual int GetPriority() const { return 0; }
  private:
   int Index;
   const gwterrainprototype* Base;
@@ -101,15 +105,17 @@ class gwterrain : public wterrain, public gterrain
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
   void Draw(blitdata&) const;
-  virtual int GetPriority() const = 0;
   virtual int GetEntryDifficulty() const { return 10; }
   void CalculateNeighbourBitmapPoses();
   virtual int GetWalkability() const;
+  DATA_BASE_TRUTH(UsesLongArticle);
+  DATA_BASE_VALUE(int, Priority);
  protected:
   std::pair<v2, int> Neighbour[8];
   virtual void InstallDataBase(int);
   virtual const prototype* FindProtoType() const { return &ProtoType; }
   virtual v2 GetBitmapPos(int) const;
+  virtual cfestring& GetNameStem() const;
   static const prototype ProtoType;
   const database* DataBase;
 };
@@ -119,6 +125,8 @@ struct owterraindatabase : public wterraindatabase
   typedef owterrainprototype prototype;
   void InitDefaults(const prototype*, int);
   const prototype* ProtoType;
+  int AttachedDungeon;
+  int AttachedArea;
 };
 
 class owterrainprototype
@@ -135,6 +143,8 @@ class owterrainprototype
   const owterraindatabase* ChooseBaseForConfig(owterraindatabase** TempConfig, int, int) { return *TempConfig; }
   const owterraindatabase*const* GetConfigData() const { return ConfigData; }
   int GetConfigSize() const { return ConfigSize; }
+  virtual int GetAttachedDungeon() const { return 0; }
+  virtual int GetAttachedArea() const { return 0; }
  private:
   int Index;
   const owterrainprototype* Base;
@@ -155,16 +165,18 @@ class owterrain : public wterrain, public oterrain
   virtual void Load(inputfile&);
   void Draw(blitdata&) const;
   int GetType() const { return GetProtoType()->GetIndex(); }
-  virtual int GetAttachedDungeon() const { return 0; }
-  virtual int GetAttachedArea() const { return 0; }
   virtual int GetAttachedEntry() const;
   virtual truth Enter(truth) const;
   virtual int GetWalkability() const;
   const database* GetDataBase() const { return DataBase; }
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
+  DATA_BASE_TRUTH(UsesLongArticle);
+  DATA_BASE_VALUE(int, AttachedDungeon);
+  DATA_BASE_VALUE(int, AttachedArea);
  protected:
   virtual v2 GetBitmapPos(int) const;
+  virtual cfestring& GetNameStem() const;
   virtual void InstallDataBase(int);
   virtual const prototype* FindProtoType() const { return &ProtoType; }
   static const prototype ProtoType;
