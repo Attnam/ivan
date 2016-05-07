@@ -831,8 +831,13 @@ void communist::BeTalkedTo()
                 CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
 
     for(character* Char : GetTeam()->GetMember())
+    {
       if(Char != this)
         Char->ChangeTeam(PLAYER->GetTeam());
+      
+      if(GetTeam()->GetMembers() == 1) // Only Ivan left in Party
+        break;
+    }
 
     ChangeTeam(PLAYER->GetTeam());
   }
