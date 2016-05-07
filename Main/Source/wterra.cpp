@@ -217,3 +217,13 @@ v2 owterrain::GetBitmapPos(int) const
 {
   return DataBase->BitmapPos;
 }
+
+cfestring& gwterrain::GetNameStem() const
+{
+  return DataBase->NameStem;
+}
+
+cfestring& owterrain::GetNameStem() const
+{
+  return DataBase->NameStem;
+}

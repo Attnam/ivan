@@ -26,45 +26,65 @@
 gwterrain
 {
   /* Obligatory: BitmapPos */
+  NameStem = "";
   IsAbstract = true; /* This is false by default and does not inherit! */
+  UsesLongArticle = false;
+  Priority = 50;
 }
 
 ocean
 {
-/*  BitmapPos overridden in wterras.cpp = 0, 48;*/
+  /* BitmapPos overridden in wterras.cpp = 0, 48; */
+  NameStem = "ocean";
+  UsesLongArticle = true;
+  Priority = 10;
 }
 
 glacier
 {
   BitmapPos = 16, 16;
+  NameStem = "glacier";
+  Priority = 90;
 }
 
 desert
 {
   BitmapPos = 64, 16;
+  NameStem = "desert";
+  Priority = 20;
 }
 
 snow
 {
   BitmapPos = 112, 16;
+  NameStem = "tundra";
+  Priority = 80;
 }
 
 jungle
 {
   BitmapPos = 208, 16;
+  NameStem = "jungle";
+  Priority = 50;
 }
 
 leafyforest
 {
   BitmapPos = 304, 16;
+  NameStem = "leafy forest";
+  Priority = 60;
 }
 
 evergreenforest
 {
   BitmapPos = 352, 16;
+  NameStem = "evergreen forest";
+  Priority = 70;
 }
 
 steppe
 {
   BitmapPos = 160, 16;
+  NameStem = "steppe";
+  Priority = 30;
 }

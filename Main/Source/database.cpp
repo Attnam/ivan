@@ -679,18 +679,23 @@ void databasecreator<type>::CreateWTerrainDataBaseMemberMap()
   databasemembermap& Map = GetDataBaseMemberMap();
   ADD_MEMBER(BitmapPos);
   ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(NameStem);
+  ADD_MEMBER(UsesLongArticle);
 }
 
 template<> void databasecreator<gwterrain>::CreateDataBaseMemberMap()
 {
   CreateWTerrainDataBaseMemberMap();
   databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(Priority);
 }
 
 template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
 {
   CreateWTerrainDataBaseMemberMap();
   databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(AttachedDungeon);
+  ADD_MEMBER(AttachedArea);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

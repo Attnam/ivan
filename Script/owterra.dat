@@ -26,30 +26,49 @@
 owterrain
 {
   /* Obligatory: BitmapPos */
+  NameStem = "";
   IsAbstract = true; /* This is false by default and does not inherit! */
+  UsesLongArticle = false;
+  AttachedArea = 0;
 }
 
 attnam
 {
   BitmapPos = 0, 48;
+  NameStem = "mighty cathedral reaching the clouds";
+  UsesLongArticle = false;
+  AttachedDungeon = ATTNAM;
 }
 
 elpuricave
 {
   BitmapPos = 16, 48;
+  NameStem = "hideous cave entry radiating pure evil";
+  UsesLongArticle = false;
+  AttachedDungeon = ELPURI_CAVE;
 }
 
 newattnam
 {
   BitmapPos = 16, 64;
+  NameStem = "primitive village";
+  UsesLongArticle = false;
+  AttachedDungeon = NEW_ATTNAM;
 }
 
 underwatertunnel
 {
   BitmapPos = 32, 64;
+  NameStem = "entrance to an underwater tunnel";
+  UsesLongArticle = true;
+  AttachedDungeon = UNDER_WATER_TUNNEL;
 }
 
 underwatertunnelexit
 {
   BitmapPos = 32, 64;
+  NameStem = "exit from an underwater tunnel";
+  UsesLongArticle = true;
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 2; /*underwater tunnel level 3*/
 }
