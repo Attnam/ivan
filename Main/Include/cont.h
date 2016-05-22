@@ -42,6 +42,7 @@ class continent
   static uchar** TypeBuffer;
   static short** AltitudeBuffer;
   static uchar** ContinentBuffer;
+  static uchar** PossibleLocationBuffer;
   festring Name;
   std::vector<v2> Member;
   std::vector<long> GTerrainAmount;

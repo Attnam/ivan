@@ -12,6 +12,12 @@
 
 /* Compiled through wmapset.cpp */
 
+/* get rid of these */
+#include <fstream>
+#include <iterator>
+#include <string>
+#include <vector>
+
 #define MAX_TEMPERATURE   27            // increase for a warmer world
 #define LATITUDE_EFFECT   40            // increase for more effect
 #define ALTITUDE_EFFECT   0.02
@@ -47,9 +53,11 @@ worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
   Alloc2D(TypeBuffer, XSize, YSize);
   Alloc2D(AltitudeBuffer, XSize, YSize);
   Alloc2D(ContinentBuffer, XSize, YSize);
+  Alloc2D(PossibleLocationBuffer, XSize, YSize);
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
+  continent::PossibleLocationBuffer = PossibleLocationBuffer;
 }
 
 worldmap::~worldmap()
@@ -57,6 +65,7 @@ worldmap::~worldmap()
   delete [] TypeBuffer;
   delete [] AltitudeBuffer;
   delete [] ContinentBuffer;
+  delete [] PossibleLocationBuffer;
 
   uint c;
 
@@ -76,6 +85,8 @@ void worldmap::Save(outputfile& SaveFile) const
                  XSizeTimesYSize * sizeof(short));
   SaveFile.Write(reinterpret_cast<char*>(ContinentBuffer[0]),
                  XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Write(reinterpret_cast<char*>(PossibleLocationBuffer[0]),
+                 XSizeTimesYSize * sizeof(uchar));
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
@@ -90,15 +101,19 @@ void worldmap::Load(inputfile& SaveFile)
   Alloc2D(TypeBuffer, XSize, YSize);
   Alloc2D(AltitudeBuffer, XSize, YSize);
   Alloc2D(ContinentBuffer, XSize, YSize);
+  Alloc2D(PossibleLocationBuffer, XSize, YSize);
   SaveFile.Read(reinterpret_cast<char*>(TypeBuffer[0]),
                 XSizeTimesYSize * sizeof(uchar));
   SaveFile.Read(reinterpret_cast<char*>(AltitudeBuffer[0]),
                 XSizeTimesYSize * sizeof(short));
   SaveFile.Read(reinterpret_cast<char*>(ContinentBuffer[0]),
                 XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Read(reinterpret_cast<char*>(PossibleLocationBuffer[0]),
+                XSizeTimesYSize * sizeof(uchar));
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
+  continent::PossibleLocationBuffer = PossibleLocationBuffer;
   int x, y;
 
   for(x = 0; x < XSize; ++x)
@@ -129,6 +144,8 @@ void worldmap::Generate()
     SmoothClimate();
     CalculateContinents();
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
+
+    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
 
     for(uint c = 1; c < Continent.size(); ++c)
       if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
@@ -286,6 +303,12 @@ void worldmap::Generate()
 
     if(!Correct)
       continue;
+
+    // Do some damage
+    for(int x1 = 0; x1 < XSize; ++x1)
+      for(int y1 = 0; y1 < YSize; ++y1)
+        if(PossibleLocationBuffer[x1][y1] == true)
+          GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
 
     GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
     SetEntryPos(ATTNAM, AttnamPos);
@@ -710,3 +733,187 @@ void worldmap::UpdateLOS()
       if(HypotSquare(Pos.X - x, Pos.Y - y) <= RadiusSquare)
         Map[x][y]->SignalSeen();
 }
+
+/*
+void worldmap::RandomPDSample()
+{
+  if(SampleSize == 0)
+  {
+    XPos = RAND() % XSize;
+    YPos = RAND() % YSize;
+    self.set_point( x, y ) //
+  }
+  
+  while(QueueSize)
+      x_idx = int(RAND() % QueueSize) //
+      s = self.queue[ x_idx ] //
+      for y_idx in range( self.n ):
+          a = 2 * np.pi * random()
+          b = np.sqrt( self.A * random() + self.r2 )
+          x = s[0] + b*np.cos( a )
+          y = s[1] + b*np.sin( a )
+          if( x >= 0 )and( x < self.w ):
+              if( y >= 0 )and( y < self.h ):
+                  if( self.distance( x, y ) ):
+                      self.set_point( x, y )
+      del self.queue[x_idx]
+      QueueSize -= 1
+  sample = list( filter( None, self.grid ) )
+  sample = np.asfarray( sample )
+  return sample
+}
+*/
+
+void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius, int TestPoints)
+{
+  //game::BusyAnimation();
+
+  //maybe make a struct called PoissonDiskSampler with all these initializations in it
+
+  // Check all this against integer representation
+  long RadiusSquared = Radius * Radius;
+  long A = 3*RadiusSquared;
+  double CellSize = Radius / sqrt(2);
+  
+  // Grid cell width and height
+  int GridCellWidth = int(XSize / CellSize);
+  int GridCellHeight = int(YSize / CellSize);
+  
+  bool CheckDistance = true;
+  
+  // Need to allocate a grid and a queue, maybe just use a Map
+  memset(PossibleLocationBuffer[0], 0, XSizeTimesYSize * sizeof(uchar));
+  std::vector<v2> Grid(GridCellWidth*GridCellHeight, v2(0, 0));
+  //std::vector<double> vector2(length, 0.0);
+  //Grid.reserve(GridCellWidth*GridCellHeight); // more efficient?
+//  memset(PossibleLocationGrid[0], 0, XSizeTimesYSize * sizeof(uchar));
+  std::vector<v2> Queue;
+  
+  int QueueSize = 0; //??
+  int SampleSize = 0; //??
+  
+  //RVS function
+//  if(SampleSize == 0)
+//  {
+    //initial random point ?
+    int XPos = RAND() % XSize;
+    int YPos = RAND() % YSize;
+    
+    // Do the SetPoint function
+    v2 Sample = v2(XPos, YPos);
+    Queue.push_back(Sample); //PossibleLocationBuffer.push_back(Sample); // was self.queue.append( s )
+    // find where (x,y) sits in the grid
+    int XIndex = int(XPos / CellSize);
+    int YIndex = int(YPos / CellSize);
+    int Step = GridCellWidth*YIndex + XIndex;
+    //PossibleLocationBuffer[Step] = Sample; // was: self.grid[ Step ] = s // ??
+    //PossibleLocationBuffer[Sample.X][Sample.Y] = true;
+    Grid[Step] = Sample;
+    QueueSize += 1;
+    SampleSize += 1;
+    //return Sample;
+//  }
+  while(QueueSize)
+  {
+    int XIdx = int((RAND() % 100 / 100.0) * QueueSize);
+    //Sample = self.queue[ XIdx ] // ??
+    Sample = Queue[XIdx];
+    for(int YIdx = 0; YIdx < TestPoints; YIdx++) // was: for y_idx in range( self.n ):
+    {
+      double Angle = 2 * FPI * (RAND() % 100) / 100.0;
+      double Hypotenuse = sqrt( A * (RAND() % 100) / 100.0 + RadiusSquared);
+      int XPos = int(Sample.X + Hypotenuse*cos(Angle));
+      int YPos = int(Sample.Y + Hypotenuse*sin(Angle));
+      if((XPos >= 0) && (XPos < XSize))
+      {
+        if((YPos >= 0) && (YPos < YSize))
+        {
+          //bool CheckDistance(int x, int y)
+          // find where (x,y) sits in the grid
+          int x_idx = int(XPos / CellSize);
+          int y_idx = int(YPos / CellSize);
+          // determine a neighborhood of cells around (x,y)
+          int x0 = Max(x_idx - 2, 0);
+          int y0 = Max(y_idx - 2, 0);
+          int x1 = Max(x_idx - 3, GridCellWidth);
+          int y1 = Max(y_idx - 3, GridCellHeight);
+          // search around (x,y)
+          for(int i = Min(y0, y1); i < Max(y0, y1); i++)
+          {
+            for(int j = Min(x0, x1); j < Max(x0, x1); j++)
+            {
+              int Step1 = i*GridCellWidth + j;
+              // if the sample point exists on the grid
+              // was: if self.grid[ Step ]:
+              if((Grid[Step1] != v2(0, 0)))
+              //if(!(Grid[Step1] == v2(0, 0)))
+              {
+                v2 Sample1 = Grid[Step1];
+                int dx = (Sample1.X - XPos)*(Sample1.X - XPos);
+                int dy = (Sample1.Y - YPos)*(Sample1.Y - YPos);
+                // and it is too close 
+                if((dx + dy) < RadiusSquared)
+                {
+                  CheckDistance = false;
+                  goto herel;
+                }
+//                else
+//                  CheckDistance = true;
+              }
+//              else
+//                CheckDistance = true;
+            }
+          }
+          CheckDistance = true;
+          herel:
+          if(CheckDistance)
+          {
+            // Do the SetPoint function
+            v2 Sample2 = v2(XPos, YPos);
+            Queue.push_back(Sample2);
+            // find where (x,y) sits in the grid
+            int XIndex2 = int(XPos / CellSize);
+            int YIndex2 = int(YPos / CellSize);
+            int Step2 = GridCellWidth*YIndex2 + XIndex2;
+            Grid[Step2] = Sample2;
+            QueueSize += 1;
+            SampleSize += 1;
+            //return Sample; //std::vector<v2> Member; // use this
+          }
+//          else
+//            CheckDistance = true;
+        }
+      }
+    }
+    Queue.erase(Queue.begin() + XIdx);
+    //Queue.pop_back(); //was: delete self.queue[XIdx] //??
+    //delete Queue[XIdx]; //?? does this work as expected?
+    QueueSize -= 1;
+    if(QueueSize > 1000)
+      ABORT("Overfull QueueSize");
+  }
+  
+  for(int c = 0; c < Grid.size(); ++c)
+    PossibleLocationBuffer[Grid[c].X][Grid[c].Y] = true;
+  
+  ADD_MESSAGE("Grid size is %d long", Grid.size());
+  ADD_MESSAGE("Sample size is %d long", SampleSize);
+  
+  //PossibleLocationBuffer = Grid; //somehow
+}
+
+//example stuff
+/*
+void continent::AttachTo(continent* Continent)
+{
+  for(ulong c = 0; c < Member.size(); ++c)
+    ContinentBuffer[Member[c].X][Member[c].Y] = Continent->Index;
+
+  if(!Continent->Member.size())
+    Continent->Member.swap(Member);
+  else
+  {
+    Continent->Member.insert(Continent->Member.end(), Member.begin(), Member.end());
+    Member.clear();
+  }
+}*/

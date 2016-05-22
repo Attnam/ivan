@@ -51,6 +51,7 @@ class worldmap : public area
   wsquare* GetNeighbourWSquare(v2, int) const;
   v2 GetEntryPos(ccharacter*, int) const;
   void RevealEnvironment(v2, int);
+  void AllocateGlobalPossibleLocations(int, int, int, int);
   void SafeSmooth(int, int);
   void FastSmooth(int, int);
   wsquare*** GetMap() const { return Map; }
@@ -63,6 +64,8 @@ class worldmap : public area
   short** AltitudeBuffer;
   short** OldAltitudeBuffer;
   uchar** ContinentBuffer;
+  uchar** PossibleLocationBuffer;
+  double** PossibleLocationGrid;
   charactervector PlayerGroup;
 };
 
