@@ -65,7 +65,6 @@ class worldmap : public area
   short** OldAltitudeBuffer;
   uchar** ContinentBuffer;
   uchar** PossibleLocationBuffer;
-  double** PossibleLocationGrid;
   charactervector PlayerGroup;
 };
 
