@@ -33,6 +33,33 @@ int worldmap::GetAltitude(v2 Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 charactervector& worldmap::GetPlayerGroup() { return PlayerGroup; }
 character* worldmap::GetPlayerGroupMember(int c) { return PlayerGroup[c]; }
 
+struct location
+{
+  v2 Position;
+  int GTerrainType;
+  int ContinentIndex;
+  int DistanceToAttnam;
+
+  location(v2 p, int t, int i, int d/*, int k*/) : Position(p), GTerrainType(t), ContinentIndex(i), DistanceToAttnam(d){}
+};
+
+struct distancetoattnam
+{
+    inline bool operator() (const location& loc1, const location& loc2)
+    {
+        return (loc1.DistanceToAttnam < loc2.DistanceToAttnam);
+    }
+};
+
+struct place
+{
+  int Type;
+  int Config;
+  int NativeGTerrainType;
+
+  place(int t, int c, int n) : Type(t), Config(c), NativeGTerrainType(n){}
+};
+
 worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
 {
   Map = reinterpret_cast<wsquare***>(area::Map);
@@ -139,10 +166,8 @@ void worldmap::Generate()
     CalculateContinents();
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
-    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
-
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
+      if(Continent[c]->GetSize() > 400 && Continent[c]->GetSize() < 800
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -298,11 +323,145 @@ void worldmap::Generate()
     if(!Correct)
       continue;
 
-    // Do some damage
-    for(int x1 = 0; x1 < XSize; ++x1)
-      for(int y1 = 0; y1 < YSize; ++y1)
-        if(PossibleLocationBuffer[x1][y1] == true)
-          GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
+    if(Correct)
+    {
+
+      AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
+/*
+      // Pick out all the locations above ground as valid candidate locations
+      for(int x1 = 0; x1 < XSize; ++x1)
+        for(int y1 = 0; y1 < YSize; ++y1)
+          if((PossibleLocationBuffer[x1][y1] == true) && (AltitudeBuffer[x1][y1] > 0))
+            GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
+      */
+      // Create a vector of location data structures from the available locations
+      std::vector <location> AvailablePositions;
+      
+      // Pick out all the locations above ground as valid candidate locations
+      for(int x1 = 0; x1 < XSize; ++x1)
+        for(int y1 = 0; y1 < YSize; ++y1)
+          if((PossibleLocationBuffer[x1][y1] == true) && (AltitudeBuffer[x1][y1] > 0))
+          {
+            AvailablePositions.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()/*, DistanceToAttnamRank*/));
+            GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
+          }
+      
+      // Sort the vector of global available positions according to distance to attnam. Closest places are first.
+      std::sort(AvailablePositions.begin(), AvailablePositions.end(), distancetoattnam());
+      
+      ADD_MESSAGE("AvailablePositions are %d long", AvailablePositions.size());
+
+      // Make up a vector of locations from the script that need to be placed
+      std::vector<place> ToBePlaced;
+      // Pick out only the ones that can be generated, and get their native ground terrain type
+      for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
+      {
+        const owterrain::prototype* Proto = protocontainer<owterrain>::GetProto(Type);
+        const owterrain::database*const* ConfigData = Proto->GetConfigData();
+        int ConfigSize = Proto->GetConfigSize();
+
+        for(int c = 0; c < ConfigSize; ++c)
+        {
+          const owterrain::database* DataBase = ConfigData[c];
+
+          if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
+          {
+            place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType);
+            ToBePlaced.push_back(ConfigID);
+            
+            
+          }
+        }
+      }
+      
+      
+      ADD_MESSAGE("ToBePlaced is %d long", ToBePlaced.size());
+
+      // Go through each available location on the first continent (PetrusLikes)
+      // For each available location, choose a random ToBePlaced with the same type
+      // Put that place in the location
+      // delete the place and the occupied location from their respective vectors
+      
+      // Next available location
+      
+      // If available locations on the continent are empty, then go to the next nearest continent
+      // If ToBePlaced is empty, then stop. Inherently successful.
+      // If run out of available locations, then stop. Maybe check for success?
+      
+      // Get each available position on the first continent
+      std::vector<location> AvailablePositionsOnPetrusLikes;
+      
+      for(int i = 0; i < AvailablePositions.size(); i++)
+      {
+        if(AvailablePositions[i].ContinentIndex == PetrusLikes->GetIndex())
+        {
+          AvailablePositionsOnPetrusLikes.push_back(AvailablePositions[i]);
+          // AvailablePositions.erase(AvailablePositions.begin() + i); // don't use this line here!
+        }
+      }
+      
+      ADD_MESSAGE("AvailablePositions is %d long", AvailablePositions.size());
+      ADD_MESSAGE("AvailablePositionsOnPetrusLikes is %d long", AvailablePositionsOnPetrusLikes.size());
+      
+      // Print available terrain statistics
+      int t = 0, s = 0, d = 0, e = 0, l = 0, g = 0, j = 0;
+      for(int i = 0; i < AvailablePositions.size(); i++)
+      {
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(TUNDRA))
+          t++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(STEPPE))
+          s++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(DESERT))
+          d++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(EVERGREEN_FOREST))
+          e++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(LEAFY_FOREST))
+          l++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(GLACIER))
+          g++;
+        if(AvailablePositions[i].GTerrainType == GetTypeOfNativeGTerrainType(JUNGLE))
+          j++;
+      }
+      ADD_MESSAGE("Total snow tiles is %d", t);
+      ADD_MESSAGE("Total steppe tiles is %d", s);
+      ADD_MESSAGE("Total desert tiles is %d", d);
+      ADD_MESSAGE("Total evergreen forest tiles is %d", e);
+      ADD_MESSAGE("Total leafy forest tiles is %d", l);
+      ADD_MESSAGE("Total glacier tiles is %d", g);
+      ADD_MESSAGE("Total jungle tiles is %d", j);
+      
+      for(int k = 0; k < ToBePlaced.size(); k++)
+      {
+        // For later: loop through ToBePlaced
+        place Chosen = ToBePlaced[k];
+        
+        std::vector<location> AvailablePositionsOnPetrusLikesWithCorrectTerrain;
+        
+        // Find a location by NativeGTerrainType
+        for(int i = 0; i < AvailablePositionsOnPetrusLikes.size(); i++)
+        {
+          if(AvailablePositionsOnPetrusLikes[i].GTerrainType == GetTypeOfNativeGTerrainType(Chosen.NativeGTerrainType))
+          {
+            AvailablePositionsOnPetrusLikesWithCorrectTerrain.push_back(AvailablePositionsOnPetrusLikes[i]);
+            // AvailablePositions.erase(AvailablePositions.begin() + i); // don't use this line here!
+          }
+        }
+        
+        if(AvailablePositionsOnPetrusLikesWithCorrectTerrain.size())
+        {
+          owterrain* NewPlace = protocontainer<owterrain>::GetProto(Chosen.Type)->Spawn();
+          
+          // Choose a random member from AvailablePositionsOnPetrusLikesWithCorrectTerrain
+          int Idx = RAND_GOOD(AvailablePositionsOnPetrusLikesWithCorrectTerrain.size());
+
+          v2 NewPos = AvailablePositionsOnPetrusLikesWithCorrectTerrain[Idx].Position;
+          GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
+          SetEntryPos(NewPlace->GetAttachedDungeon(), NewPos);
+          //AvailablePositionsOnPetrusLikesWithCorrectTerrain.erase(AvailablePositionsOnPetrusLikesWithCorrectTerrain.begin() + Idx);
+          ADD_MESSAGE("Success! Found %d possible members", AvailablePositionsOnPetrusLikesWithCorrectTerrain.size());
+        }
+      }
+    }
 
     GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
     SetEntryPos(ATTNAM, AttnamPos);
@@ -843,4 +1002,41 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   ADD_MESSAGE("Grid size is %d long", Grid.size());
   ADD_MESSAGE("Sample size is %d long", SampleSize);
 */
+}
+
+int worldmap::GetTypeOfNativeGTerrainType(int Type) const
+{
+  int Return;
+
+  switch(Type)
+  {
+   case 0:
+    Return = ocean::ProtoType.GetIndex();
+    break;
+   case DESERT:
+    Return = desert::ProtoType.GetIndex();
+    break;
+   case JUNGLE:
+    Return = jungle::ProtoType.GetIndex();
+    break;
+   case STEPPE:
+    Return = steppe::ProtoType.GetIndex();
+    break;
+   case LEAFY_FOREST:
+    Return = leafyforest::ProtoType.GetIndex();
+    break;
+   case EVERGREEN_FOREST:
+    Return = evergreenforest::ProtoType.GetIndex();
+    break;
+   case TUNDRA:
+    Return = snow::ProtoType.GetIndex();
+    break;
+   case GLACIER:
+    Return = glacier::ProtoType.GetIndex();
+    break;
+   default:
+    ABORT("You are a pest. Please stop creating wterrains that are stupid.");
+  }
+
+  return Return;
 }

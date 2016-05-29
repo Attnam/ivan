@@ -56,6 +56,7 @@ class worldmap : public area
   void FastSmooth(int, int);
   wsquare*** GetMap() const { return Map; }
   void UpdateLOS();
+  virtual int GetTypeOfNativeGTerrainType(int) const;
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

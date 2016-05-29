@@ -38,6 +38,7 @@ class continent
   int GetGTerrainAmount(int) const;
   v2 GetRandomMember(int);
   v2 GetMember(int) const;
+  int GetIndex() { return Index; }
  private:
   static uchar** TypeBuffer;
   static short** AltitudeBuffer;

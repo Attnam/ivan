@@ -77,4 +77,20 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(locationAA, owterrain)
+{
+};
+
+OWTERRAIN(locationAB, owterrain)
+{
+};
+
+OWTERRAIN(locationAC, owterrain)
+{
+};
+
+OWTERRAIN(locationAD, owterrain)
+{
+};
+
 #endif

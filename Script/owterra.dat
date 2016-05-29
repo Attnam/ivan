@@ -30,6 +30,8 @@ owterrain
   IsAbstract = true; /* This is false by default and does not inherit! */
   UsesLongArticle = false;
   AttachedArea = 0;
+  CanBeGenerated = false;
+  NativeGTerrainType = 0;
 }
 
 attnam
@@ -38,6 +40,8 @@ attnam
   NameStem = "mighty cathedral reaching the clouds";
   UsesLongArticle = false;
   AttachedDungeon = ATTNAM;
+  CanBeGenerated = false; /* Overridden by the world map generator */
+  NativeGTerrainType = EVERGREEN_FOREST;
 }
 
 elpuricave
@@ -46,6 +50,8 @@ elpuricave
   NameStem = "hideous cave entry radiating pure evil";
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
+  CanBeGenerated = false; /* Overridden by the world map generator */
+  NativeGTerrainType = TUNDRA;
 }
 
 newattnam
@@ -54,6 +60,8 @@ newattnam
   NameStem = "primitive village";
   UsesLongArticle = false;
   AttachedDungeon = NEW_ATTNAM;
+  CanBeGenerated = false; /* Overridden by the world map generator */
+  NativeGTerrainType = JUNGLE;
 }
 
 underwatertunnel
@@ -62,6 +70,8 @@ underwatertunnel
   NameStem = "entrance to an underwater tunnel";
   UsesLongArticle = true;
   AttachedDungeon = UNDER_WATER_TUNNEL;
+  CanBeGenerated = false; /* Overridden by the world map generator */
+  NativeGTerrainType = JUNGLE;
 }
 
 underwatertunnelexit
@@ -71,4 +81,46 @@ underwatertunnelexit
   UsesLongArticle = true;
   AttachedDungeon = UNDER_WATER_TUNNEL;
   AttachedArea = 2; /*underwater tunnel level 3*/
+  CanBeGenerated = false; /* Overridden by the world map generator */
+  NativeGTerrainType = JUNGLE;
+}
+
+locationAA
+{
+  BitmapPos = 0, 64;
+  NameStem = "house in the snow";
+  AttachedDungeon = BOBS_PLACE;
+  AttachedArea = 1; /* bob's place level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+locationAB
+{
+  BitmapPos = 0, 64;
+  NameStem = "house in the forest";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+locationAC
+{
+  BitmapPos = 0, 64;
+  NameStem = "house on the glacier";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+locationAD
+{
+  BitmapPos = 0, 64;
+  NameStem = "house on the tundra";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
 }
