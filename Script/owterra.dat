@@ -88,39 +88,119 @@ underwatertunnelexit
 locationAA
 {
   BitmapPos = 0, 64;
-  NameStem = "house in the snow";
+  NameStem = "house of Aaron";
   AttachedDungeon = BOBS_PLACE;
   AttachedArea = 1; /* bob's place level 2*/
   CanBeGenerated = true;
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainType = TUNDRA;
 }
 
 locationAB
 {
   BitmapPos = 0, 64;
-  NameStem = "house in the forest";
+  NameStem = "house of Bob";
   AttachedDungeon = UNDER_WATER_TUNNEL;
   AttachedArea = 1; /*underwater tunnel level 2*/
   CanBeGenerated = true;
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
 locationAC
 {
   BitmapPos = 0, 64;
-  NameStem = "house on the glacier";
+  NameStem = "house of Clancy";
   AttachedDungeon = UNDER_WATER_TUNNEL;
   AttachedArea = 1; /*underwater tunnel level 2*/
   CanBeGenerated = true;
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainType = DESERT;/*JUNGLE;*/
 }
 
 locationAD
 {
   BitmapPos = 0, 64;
-  NameStem = "house on the tundra";
+  NameStem = "house of Derrek";
   AttachedDungeon = UNDER_WATER_TUNNEL;
   AttachedArea = 1; /*underwater tunnel level 2*/
   CanBeGenerated = true;
-  NativeGTerrainType = EVERGREEN_FOREST;
+  NativeGTerrainType = DESERT;/*TUNDRA;*/
+}
+
+locationAE
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Errol";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*JUNGLE;*/
+}
+
+locationAF
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Frederick";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*TUNDRA;*/
+}
+
+locationAG
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Grant";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*TUNDRA;*/
+}
+
+locationAH
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Harold";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*STEPPE;*/
+}
+
+locationAI
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Ignatius";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*STEPPE;*/
+}
+
+locationAJ
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Joanne";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*LEAFY_FOREST;*/
+}
+
+locationAK
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Katherine";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;
+}
+
+locationAL
+{
+  BitmapPos = 0, 64;
+  NameStem = "house of Lorelei";
+  AttachedDungeon = UNDER_WATER_TUNNEL;
+  AttachedArea = 1; /*underwater tunnel level 2*/
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;/*GLACIER;*/
 }

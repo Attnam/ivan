@@ -93,4 +93,37 @@ OWTERRAIN(locationAD, owterrain)
 {
 };
 
+OWTERRAIN(locationAE, owterrain)
+{
+};
+
+OWTERRAIN(locationAF, owterrain)
+{
+};
+
+OWTERRAIN(locationAG, owterrain)
+{
+};
+
+OWTERRAIN(locationAH, owterrain)
+{
+};
+
+OWTERRAIN(locationAI, owterrain)
+{
+};
+
+OWTERRAIN(locationAJ, owterrain)
+{
+};
+
+
+OWTERRAIN(locationAK, owterrain)
+{
+};
+
+OWTERRAIN(locationAL, owterrain)
+{
+};
+
 #endif
