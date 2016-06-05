@@ -182,7 +182,9 @@ void worldmap::Generate()
     continent* PetrusLikes;
 
     // Store this before we start making islands which have no continent number.
-    NoIslandAltitudeBuffer = AltitudeBuffer;
+    for(int x = 0; x < XSize; ++x)
+      for(int y = 0; y < YSize; ++y)
+        NoIslandAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
 
     for(int c1 = 0; c1 < 25; ++c1)
     {
