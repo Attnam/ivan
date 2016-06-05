@@ -341,10 +341,8 @@ void worldmap::Generate()
         if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
         {
           AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()));
-          GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
+//          GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
         }
-
-    ADD_MESSAGE("AvailableLocations was %d long", AvailableLocations.size());
 
     // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
     std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit, AttnamPos, ElpuriCavePos};
@@ -360,8 +358,6 @@ void worldmap::Generate()
 
     // Sort the vector of global available positions according to distance to attnam. Closest places are first.
     std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
-    
-    ADD_MESSAGE("AvailableLocations are %d long", AvailableLocations.size());
 
     // Make up a vector of locations from the script that need to be placed
     std::vector<place> ToBePlaced;
@@ -502,12 +498,12 @@ void worldmap::Generate()
       if(ToBePlaced.empty())
         break;
     }
-
+/*
     if(!ToBePlaced.empty())
       ADD_MESSAGE("There were %d leftover places", ToBePlaced.size());// Too many places (Overflow)
     if(!AvailableLocations.empty())
       ADD_MESSAGE("There were %d leftover positions", AvailableLocations.size());// Too many locations (Underflow - not a critical case)
-
+*/
     GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
     SetEntryPos(ATTNAM, AttnamPos);
     RevealEnvironment(AttnamPos, 1);

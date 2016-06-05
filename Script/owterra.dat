@@ -88,119 +88,350 @@ underwatertunnelexit
 locationAA
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Aaron";
-  AttachedDungeon = BOBS_PLACE;
-  AttachedArea = 1; /* bob's place level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = TUNDRA;
+  NativeGTerrainType = JUNGLE;
 }
 
 locationAB
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Bob";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = LEAFY_FOREST;
+  NativeGTerrainType = JUNGLE;
 }
 
 locationAC
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Clancy";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*JUNGLE;*/
+  NativeGTerrainType = JUNGLE;
 }
 
 locationAD
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Derrek";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*TUNDRA;*/
+  NativeGTerrainType = JUNGLE;
 }
 
 locationAE
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Errol";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*JUNGLE;*/
+  NativeGTerrainType = GLACIER;
 }
 
 locationAF
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Frederick";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*TUNDRA;*/
+  NativeGTerrainType = GLACIER;
 }
 
 locationAG
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Grant";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*TUNDRA;*/
+  NativeGTerrainType = GLACIER;
 }
 
 locationAH
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Harold";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*STEPPE;*/
+  NativeGTerrainType = GLACIER;
 }
 
 locationAI
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Ignatius";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*STEPPE;*/
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
 locationAJ
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Joanne";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "a house";
+  AttachedDungeon = 0;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*LEAFY_FOREST;*/
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
 locationAK
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Katherine";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;
+  NativeGTerrainType = LEAFY_FOREST;
 }
 
 locationAL
 {
   BitmapPos = 0, 64;
-  NameStem = "house of Lorelei";
-  AttachedDungeon = UNDER_WATER_TUNNEL;
-  AttachedArea = 1; /*underwater tunnel level 2*/
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
   CanBeGenerated = true;
-  NativeGTerrainType = DESERT;/*GLACIER;*/
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
+locationAM
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
+locationAN
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+locationAO
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+locationAP
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;
+}
+
+locationAQ
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = DESERT;
+}
+
+locationAR
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = STEPPE;
+}
+
+locationAS
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = STEPPE;
+}
+
+locationAT
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = STEPPE;
+}
+
+locationAU
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = STEPPE;
+}
+
+locationAV
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = STEPPE;
+}
+
+locationAW
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationAX
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationAY
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationAZ
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBA
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBB
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBC
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBD
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBE
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
+}
+
+locationBF
+{
+  BitmapPos = 0, 64;
+  NameStem = "empty area";
+  UsesLongArticle = true;
+  AttachedDungeon = EMPTY_AREA;
+  AttachedArea = 0;
+  CanBeGenerated = true;
+  NativeGTerrainType = TUNDRA;
 }
