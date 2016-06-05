@@ -328,7 +328,9 @@ void worldmap::Generate()
     if(!Correct)
       continue;
 
-    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
+    // Use a Poisson disc sampler to find random nicely-spaced points on the world map
+    // Thrid argument is radius. Radius = 6 produces circa 120 positions, Radius = 5 produces circa 200 positions
+    AllocateGlobalPossibleLocations(XSize, YSize, 5, 10);
 
     // Create a vector of location data structures from the available locations
     std::vector <location> AvailableLocations;
@@ -338,7 +340,7 @@ void worldmap::Generate()
       for(int y1 = 0; y1 < YSize; ++y1)
         if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
         {
-          AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength(), false));
+          AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()));
           GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
         }
 
@@ -524,6 +526,7 @@ void worldmap::Generate()
 
   delete [] OldAltitudeBuffer;
   delete [] OldTypeBuffer;
+  delete [] NoIslandAltitudeBuffer;
 }
 
 void worldmap::RandomizeAltitude()
@@ -930,10 +933,41 @@ void worldmap::UpdateLOS()
         Map[x][y]->SignalSeen();
 }
 
+truth worldmap::PoissonDiscSamplerCheckDistance(int XPos, int YPos, double CellSize, int GridCellWidth, int GridCellHeight, long RadiusSquared, std::vector<v2> Grid)
+{
+  int x = int(XPos / CellSize);
+  int y = int(YPos / CellSize);
+  // Determine a neighborhood of cells around (x,y)
+  int x0 = Max(x - 2, 0);
+  int y0 = Max(y - 2, 0);
+  int x1 = Max(x - 3, GridCellWidth);
+  int y1 = Max(y - 3, GridCellHeight);
+  // Search around (x,y)
+  for(int i = Min(y0, y1); i < Max(y0, y1); i++)
+  {
+    for(int j = Min(x0, x1); j < Max(x0, x1); j++)
+    {
+      int Step = i*GridCellWidth + j;
+      // If the sample point exists on the grid
+      if((Grid[Step] != v2(0, 0)))
+      {
+        v2 Sample = Grid[Step];
+        int dx = (Sample.X - XPos)*(Sample.X - XPos);
+        int dy = (Sample.Y - YPos)*(Sample.Y - YPos);
+        // If the sample is too close 
+        if((dx + dy) < RadiusSquared)
+        {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius, int TestPoints)
 {
-  //maybe make a struct called PoissonDiskSampler with all these initializations in it
-
+  // Disc metrics
   long RadiusSquared = Radius * Radius;
   long A = 3*RadiusSquared;
   double CellSize = Radius / sqrt(2);
@@ -941,11 +975,9 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   // Grid cell width and height
   int GridCellWidth = int(XSize / CellSize);
   int GridCellHeight = int(YSize / CellSize);
-  
-  bool CheckDistance = true;
 
   // Allocate a grid and a queue
-  memset(PossibleLocationBuffer[0], 0, XSizeTimesYSize * sizeof(uchar)); // replace with a vector type in future?
+  memset(PossibleLocationBuffer[0], 0, XSizeTimesYSize * sizeof(uchar));
   std::vector<v2> Grid(GridCellWidth*GridCellHeight, v2(0, 0));
 
   std::vector<v2> Queue;
@@ -953,8 +985,8 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   int QueueSize = 0;
   int SampleSize = 0;
 
-  //RVS function
-  //initial random point
+  // RVS function
+  // Initial random point
   int XPos = RAND() % XSize;
   int YPos = RAND() % YSize;
   
@@ -984,47 +1016,16 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
       {
         if((YPos >= 0) && (YPos < YSize))
         {
-          // Find where (x,y) sits in the grid
-          int x_idx = int(XPos / CellSize);
-          int y_idx = int(YPos / CellSize);
-          // Determine a neighborhood of cells around (x,y)
-          int x0 = Max(x_idx - 2, 0);
-          int y0 = Max(y_idx - 2, 0);
-          int x1 = Max(x_idx - 3, GridCellWidth);
-          int y1 = Max(y_idx - 3, GridCellHeight);
-          // Search around (x,y)
-          for(int i = Min(y0, y1); i < Max(y0, y1); i++)
-          {
-            for(int j = Min(x0, x1); j < Max(x0, x1); j++)
-            {
-              int Step1 = i*GridCellWidth + j;
-              // If the sample point exists on the grid
-              if((Grid[Step1] != v2(0, 0)))
-              {
-                v2 Sample1 = Grid[Step1];
-                int dx = (Sample1.X - XPos)*(Sample1.X - XPos);
-                int dy = (Sample1.Y - YPos)*(Sample1.Y - YPos);
-                // If the sample is too close 
-                if((dx + dy) < RadiusSquared)
-                {
-                  CheckDistance = false;
-                  goto here; // get rid of this goto!
-                }
-              }
-            }
-          }
-          CheckDistance = true;
-          here:
-          if(CheckDistance)
+          if(PoissonDiscSamplerCheckDistance(XPos, YPos, CellSize, GridCellWidth, GridCellHeight, RadiusSquared, Grid))
           {
             // Do the SetPoint function
-            v2 Sample2 = v2(XPos, YPos);
-            Queue.push_back(Sample2);
-            // find where (x,y) sits in the grid
-            int XIndex2 = int(XPos / CellSize);
-            int YIndex2 = int(YPos / CellSize);
-            int Step2 = GridCellWidth*YIndex2 + XIndex2;
-            Grid[Step2] = Sample2;
+            v2 NewSample = v2(XPos, YPos);
+            Queue.push_back(NewSample);
+            // Find where (x,y) sits in the grid
+            XIndex = int(XPos / CellSize);
+            YIndex = int(YPos / CellSize);
+            Step = GridCellWidth*YIndex + XIndex;
+            Grid[Step] = NewSample;
             QueueSize += 1;
             SampleSize += 1;
           }
@@ -1032,19 +1033,13 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
       }
     }
     Queue.erase(Queue.begin() + XIdx);
-    //Queue.pop_back(); //was: delete self.queue[XIdx] //??
-    //delete Queue[XIdx]; //?? does this work as expected?
     QueueSize -= 1;
     if(QueueSize > 1000)
       ABORT("Overfull QueueSize");
   }
-  
+
   for(int c = 0; c < Grid.size(); ++c)
     PossibleLocationBuffer[Grid[c].X][Grid[c].Y] = true;
-/*
-  ADD_MESSAGE("Grid size is %d long", Grid.size());
-  ADD_MESSAGE("Sample size is %d long", SampleSize);
-*/
 }
 
 int worldmap::GetTypeOfNativeGTerrainType(int Type) const

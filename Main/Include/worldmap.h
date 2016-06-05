@@ -57,6 +57,7 @@ class worldmap : public area
   wsquare*** GetMap() const { return Map; }
   void UpdateLOS();
   virtual int GetTypeOfNativeGTerrainType(int) const;
+  truth PoissonDiscSamplerCheckDistance(int, int, double, int, int, long, std::vector<v2>);
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;
@@ -66,6 +67,7 @@ class worldmap : public area
   short** OldAltitudeBuffer;
   uchar** ContinentBuffer;
   uchar** PossibleLocationBuffer;
+  short** NoIslandAltitudeBuffer;
   charactervector PlayerGroup;
 };
 
