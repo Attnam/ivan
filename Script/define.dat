@@ -740,6 +740,7 @@
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
+#define EMPTY_AREA 5
 #define UNDER_WATER_TUNNEL_EXIT 128
 
 #define VESANA_LEVEL 2

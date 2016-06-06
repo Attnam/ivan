@@ -696,6 +696,9 @@ template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
   databasemembermap& Map = GetDataBaseMemberMap();
   ADD_MEMBER(AttachedDungeon);
   ADD_MEMBER(AttachedArea);
+  ADD_MEMBER(CanBeGenerated);
+  ADD_MEMBER(NativeGTerrainType);
+  ADD_MEMBER(RevealEnvironmentInitially);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

@@ -77,4 +77,133 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(locationAA, owterrain)
+{
+};
+
+OWTERRAIN(locationAB, owterrain)
+{
+};
+
+OWTERRAIN(locationAC, owterrain)
+{
+};
+
+OWTERRAIN(locationAD, owterrain)
+{
+};
+
+OWTERRAIN(locationAE, owterrain)
+{
+};
+
+OWTERRAIN(locationAF, owterrain)
+{
+};
+
+OWTERRAIN(locationAG, owterrain)
+{
+};
+
+OWTERRAIN(locationAH, owterrain)
+{
+};
+
+OWTERRAIN(locationAI, owterrain)
+{
+};
+
+OWTERRAIN(locationAJ, owterrain)
+{
+};
+
+
+OWTERRAIN(locationAK, owterrain)
+{
+};
+
+OWTERRAIN(locationAL, owterrain)
+{
+};
+
+OWTERRAIN(locationAM, owterrain)
+{
+};
+
+OWTERRAIN(locationAN, owterrain)
+{
+};
+
+OWTERRAIN(locationAO, owterrain)
+{
+};
+
+OWTERRAIN(locationAP, owterrain)
+{
+};
+
+OWTERRAIN(locationAQ, owterrain)
+{
+};
+
+OWTERRAIN(locationAR, owterrain)
+{
+};
+
+OWTERRAIN(locationAS, owterrain)
+{
+};
+
+OWTERRAIN(locationAT, owterrain)
+{
+};
+
+OWTERRAIN(locationAU, owterrain)
+{
+};
+
+OWTERRAIN(locationAV, owterrain)
+{
+};
+
+OWTERRAIN(locationAW, owterrain)
+{
+};
+
+OWTERRAIN(locationAX, owterrain)
+{
+};
+
+OWTERRAIN(locationAY, owterrain)
+{
+};
+
+OWTERRAIN(locationAZ, owterrain)
+{
+};
+
+OWTERRAIN(locationBA, owterrain)
+{
+};
+
+OWTERRAIN(locationBB, owterrain)
+{
+};
+
+OWTERRAIN(locationBC, owterrain)
+{
+};
+
+OWTERRAIN(locationBD, owterrain)
+{
+};
+
+OWTERRAIN(locationBE, owterrain)
+{
+};
+
+OWTERRAIN(locationBF, owterrain)
+{
+};
+
 #endif

@@ -15,6 +15,7 @@
 uchar** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;
+uchar** continent::PossibleLocationBuffer;
 
 continent::continent(int Index) : Index(Index) { }
 long continent::GetSize() const { return Member.size(); }
