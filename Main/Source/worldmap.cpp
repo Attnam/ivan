@@ -45,10 +45,10 @@ struct location
 
 struct distancetoattnam
 {
-    inline bool operator() (const location& loc1, const location& loc2)
-    {
-        return (loc1.DistanceToAttnam < loc2.DistanceToAttnam);
-    }
+  inline bool operator() (const location& loc1, const location& loc2)
+  {
+      return (loc1.DistanceToAttnam < loc2.DistanceToAttnam);
+  }
 };
 
 struct place
@@ -169,7 +169,7 @@ void worldmap::Generate()
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 200 && Continent[c]->GetSize() < 800
+      if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -331,8 +331,8 @@ void worldmap::Generate()
       continue;
 
     // Use a Poisson disc sampler to find random nicely-spaced points on the world map
-    // Thrid argument is radius. Radius = 6 produces circa 120 positions, Radius = 5 produces circa 200 positions
-    AllocateGlobalPossibleLocations(XSize, YSize, 5, 10);
+    // Third argument is radius. Radius = 6 produces circa 120 positions (more spaced-out), Radius = 5 produces circa 200 positions (closer together)
+    AllocateGlobalPossibleLocations(XSize, YSize, 6, 10);
 
     // Create a vector of location data structures from the available locations
     std::vector <location> AvailableLocations;
@@ -343,7 +343,6 @@ void worldmap::Generate()
         if((PossibleLocationBuffer[x1][y1] == true) && (NoIslandAltitudeBuffer[x1][y1] > 0))
         {
           AvailableLocations.push_back(location(v2(x1, y1), TypeBuffer[x1][y1], GetContinentUnder(v2(x1, y1))->GetIndex(), (AttnamPos - v2(x1, y1)).GetManhattanLength()));
-//          GetWSquare(v2(x1, y1))->ChangeOWTerrain(newattnam::Spawn());
         }
 
     // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
@@ -358,12 +357,12 @@ void worldmap::Generate()
         AvailableLocations.end());
     }
 
-    // Sort the vector of global available positions according to distance to attnam. Closest places are first.
+    // Sort the vector of global available locations according to distance to attnam. Closest places are first.
     std::sort(AvailableLocations.begin(), AvailableLocations.end(), distancetoattnam());
 
-    // Make up a vector of locations from the script that need to be placed
+    // Make up a vector of places from the script that need to be placed
     std::vector<place> ToBePlaced;
-    // Pick out only the ones that can be generated, and get their native ground terrain type
+    // Pick out only the places that can be generated, and get their native ground terrain type
     for(int Type = 1; Type < protocontainer<owterrain>::GetSize(); ++Type)
     {
       const owterrain::prototype* Proto = protocontainer<owterrain>::GetProto(Type);
@@ -382,74 +381,19 @@ void worldmap::Generate()
       }
     }
 
-    // Terrain type analytics:
-    ADD_MESSAGE("ToBePlaced is %d long", ToBePlaced.size());
-    ADD_MESSAGE("AvailableLocations is %d long", AvailableLocations.size());
-    // Collect available terrain statistics
-    int t1 = 0, s1 = 0, d1 = 0, e1 = 0, l1 = 0, g1 = 0, j1 = 0;
-    for(uint i = 0; i < AvailableLocations.size(); i++)
-    {
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(TUNDRA))
-        t1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(STEPPE))
-        s1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(DESERT))
-        d1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(EVERGREEN_FOREST))
-        e1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(LEAFY_FOREST))
-        l1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(GLACIER))
-        g1++;
-      if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(JUNGLE))
-        j1++;
-    }
-    ADD_MESSAGE("Total snow tiles is %d", t1);
-    ADD_MESSAGE("Total steppe tiles is %d", s1);
-    ADD_MESSAGE("Total desert tiles is %d", d1);
-    ADD_MESSAGE("Total evergreen forest tiles is %d", e1);
-    ADD_MESSAGE("Total leafy forest tiles is %d", l1);
-    ADD_MESSAGE("Total glacier tiles is %d", g1);
-    ADD_MESSAGE("Total jungle tiles is %d", j1);
-    
-    // Collect ToBePlaced terrain statistics
-    int t2 = 0, s2 = 0, d2 = 0, e2 = 0, l2 = 0, g2 = 0, j2 = 0;
-    for(uint i = 0; i < ToBePlaced.size(); i++)
-    {
-      if(ToBePlaced[i].NativeGTerrainType == TUNDRA)
-        t2++;
-      if(ToBePlaced[i].NativeGTerrainType == STEPPE)
-        s2++;
-      if(ToBePlaced[i].NativeGTerrainType == DESERT)
-        d2++;
-      if(ToBePlaced[i].NativeGTerrainType == EVERGREEN_FOREST)
-        e2++;
-      if(ToBePlaced[i].NativeGTerrainType == LEAFY_FOREST)
-        l2++;
-      if(ToBePlaced[i].NativeGTerrainType == GLACIER)
-        g2++;
-      if(ToBePlaced[i].NativeGTerrainType == JUNGLE)
-        j2++;
-    }
-
-    if((t1 < t2) || (s1 < s2) || (d1 < d2) || (e1 < e2) || (l1 < l2) || (g1 < g2) || (j1 < j2))
-    {
-      ADD_MESSAGE("Warning: Too few available terrains for locations to be placed...");
-    }
-
     // Re-order the places so they appear in random order:
     std::random_shuffle(ToBePlaced.begin(), ToBePlaced.end());
 
     // Do this for as many times as there are number of continents.
     for(uint c = 1; c < Continent.size(); ++c)
     {
-      // Get the next nearest continent index by looking at the top of the available positions.
+      // Get the next nearest continent index by looking at the top of the available locations.
       int ThisContinent = AvailableLocations[0].ContinentIndex;
       
-      // Get each available position on the first continent.
+      // Get each available location on the first continent.
       std::vector<location> AvailableLocationsOnThisContinent;
       
-      // Collect all remaining available positions on this continent.
+      // Collect all remaining available locations on this continent.
       for(uint i = 0; i < AvailableLocations.size(); i++)
       {
         if(AvailableLocations[i].ContinentIndex == ThisContinent)
@@ -476,7 +420,7 @@ void worldmap::Generate()
             break;
           }
         }
-        // Remove any places that have been placed, so we don't try to place them again.
+        // Remove any places that have been placed, so we don't try to pick them out of our vector again.
         ToBePlaced.erase(
           std::remove_if(
             ToBePlaced.begin(),
@@ -484,7 +428,7 @@ void worldmap::Generate()
             [](place vec) -> truth {return vec.HasBeenPlaced;}),
           ToBePlaced.end());
       }
-      // Remove the positions on the continent we have just examined. Whether or not they populate with places, they will not be re-visited.
+      // Remove the locations on the continent we have just examined. Whether or not they populate with places, they will not be re-visited.
       AvailableLocations.erase(
         std::remove_if(
           AvailableLocations.begin(),
@@ -501,12 +445,7 @@ void worldmap::Generate()
       if(ToBePlaced.empty())
         break;
     }
-/*
-    if(!ToBePlaced.empty())
-      ADD_MESSAGE("There were %d leftover places", ToBePlaced.size());// Too many places (Overflow)
-    if(!AvailableLocations.empty())
-      ADD_MESSAGE("There were %d leftover positions", AvailableLocations.size());// Too many locations (Underflow - not a critical case)
-*/
+
     GetWSquare(AttnamPos)->ChangeOWTerrain(attnam::Spawn());
     SetEntryPos(ATTNAM, AttnamPos);
     RevealEnvironment(AttnamPos, 1);
@@ -988,7 +927,7 @@ void worldmap::AllocateGlobalPossibleLocations(int XSize, int YSize, int Radius,
   // Initial random point
   int XPos = RAND() % XSize;
   int YPos = RAND() % YSize;
-  
+
   // Do the SetPoint function
   v2 Sample = v2(XPos, YPos);
   Queue.push_back(Sample);

@@ -32,7 +32,7 @@ owterrain
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = 0;
-  RevealEnvironmentInitially = false;
+  RevealEnvironmentInitially = false; /* Overridden by the world map generator for core locations */
 }
 
 attnam
@@ -93,9 +93,8 @@ locationAA
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
-  RevealEnvironmentInitially = true;
 }
 
 locationAB
@@ -105,9 +104,8 @@ locationAB
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
-  RevealEnvironmentInitially = true;
 }
 
 locationAC
@@ -117,9 +115,8 @@ locationAC
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
-  RevealEnvironmentInitially = true;
 }
 
 locationAD
@@ -129,7 +126,7 @@ locationAD
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
 }
 
@@ -140,7 +137,7 @@ locationAE
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = GLACIER;
 }
 
@@ -151,7 +148,7 @@ locationAF
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = GLACIER;
 }
 
@@ -162,7 +159,7 @@ locationAG
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = GLACIER;
 }
 
@@ -173,7 +170,7 @@ locationAH
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = GLACIER;
 }
 
@@ -184,7 +181,7 @@ locationAI
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -194,7 +191,7 @@ locationAJ
   NameStem = "a house";
   AttachedDungeon = 0;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -205,7 +202,7 @@ locationAK
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -216,7 +213,7 @@ locationAL
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -227,7 +224,7 @@ locationAM
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -238,7 +235,7 @@ locationAN
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = EVERGREEN_FOREST;
 }
 
@@ -249,7 +246,7 @@ locationAO
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = EVERGREEN_FOREST;
 }
 
@@ -260,7 +257,7 @@ locationAP
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = DESERT;
 }
 
@@ -271,7 +268,7 @@ locationAQ
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = DESERT;
 }
 
@@ -282,7 +279,7 @@ locationAR
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = STEPPE;
 }
 
@@ -293,7 +290,7 @@ locationAS
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = STEPPE;
 }
 
@@ -304,7 +301,7 @@ locationAT
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = STEPPE;
 }
 
@@ -315,7 +312,7 @@ locationAU
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = STEPPE;
 }
 
@@ -326,7 +323,7 @@ locationAV
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = STEPPE;
 }
 
@@ -337,7 +334,7 @@ locationAW
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -348,7 +345,7 @@ locationAX
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -359,7 +356,7 @@ locationAY
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -370,7 +367,7 @@ locationAZ
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -381,7 +378,7 @@ locationBA
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -392,7 +389,7 @@ locationBB
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -403,7 +400,7 @@ locationBC
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -414,7 +411,7 @@ locationBD
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -425,7 +422,7 @@ locationBE
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
 
@@ -436,6 +433,6 @@ locationBF
   UsesLongArticle = true;
   AttachedDungeon = EMPTY_AREA;
   AttachedArea = 0;
-  CanBeGenerated = true;
+  CanBeGenerated = false;
   NativeGTerrainType = TUNDRA;
 }
