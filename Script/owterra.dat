@@ -32,6 +32,7 @@ owterrain
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = 0;
+  RevealEnvironmentInitially = false;
 }
 
 attnam
@@ -94,6 +95,7 @@ locationAA
   AttachedArea = 0;
   CanBeGenerated = true;
   NativeGTerrainType = JUNGLE;
+  RevealEnvironmentInitially = true;
 }
 
 locationAB
@@ -105,6 +107,7 @@ locationAB
   AttachedArea = 0;
   CanBeGenerated = true;
   NativeGTerrainType = JUNGLE;
+  RevealEnvironmentInitially = true;
 }
 
 locationAC
@@ -116,6 +119,7 @@ locationAC
   AttachedArea = 0;
   CanBeGenerated = true;
   NativeGTerrainType = JUNGLE;
+  RevealEnvironmentInitially = true;
 }
 
 locationAD

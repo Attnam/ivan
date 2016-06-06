@@ -348,7 +348,7 @@ void worldmap::Generate()
 
     // Remove those positions that have already been taken up by core places, plus the origin. Theoretically, New Attnam and Tunnel Entry need not be checked.
     std::vector<v2> ForbiddenPositions = {v2(0, 0), NewAttnamPos, TunnelEntry, TunnelExit, AttnamPos, ElpuriCavePos};
-    for(int i = 0; i < ForbiddenPositions.size(); i++)
+    for(uint i = 0; i < ForbiddenPositions.size(); i++)
     {
       AvailableLocations.erase(
         std::remove_if(
@@ -387,7 +387,7 @@ void worldmap::Generate()
     ADD_MESSAGE("AvailableLocations is %d long", AvailableLocations.size());
     // Collect available terrain statistics
     int t1 = 0, s1 = 0, d1 = 0, e1 = 0, l1 = 0, g1 = 0, j1 = 0;
-    for(int i = 0; i < AvailableLocations.size(); i++)
+    for(uint i = 0; i < AvailableLocations.size(); i++)
     {
       if(AvailableLocations[i].GTerrainType == GetTypeOfNativeGTerrainType(TUNDRA))
         t1++;
@@ -414,7 +414,7 @@ void worldmap::Generate()
     
     // Collect ToBePlaced terrain statistics
     int t2 = 0, s2 = 0, d2 = 0, e2 = 0, l2 = 0, g2 = 0, j2 = 0;
-    for(int i = 0; i < ToBePlaced.size(); i++)
+    for(uint i = 0; i < ToBePlaced.size(); i++)
     {
       if(ToBePlaced[i].NativeGTerrainType == TUNDRA)
         t2++;
@@ -450,7 +450,7 @@ void worldmap::Generate()
       std::vector<location> AvailableLocationsOnThisContinent;
       
       // Collect all remaining available positions on this continent.
-      for(int i = 0; i < AvailableLocations.size(); i++)
+      for(uint i = 0; i < AvailableLocations.size(); i++)
       {
         if(AvailableLocations[i].ContinentIndex == ThisContinent)
         {
@@ -458,10 +458,10 @@ void worldmap::Generate()
         }
       }
       // Go through all the locations on the continent. These are always in order of distance to Attnam, closest at the top.
-      for(int i = 0; i < AvailableLocationsOnThisContinent.size(); i++)
+      for(uint i = 0; i < AvailableLocationsOnThisContinent.size(); i++)
       {
         // Go through all remaining places. These are always in a random order :)
-        for(int j = 0; j < ToBePlaced.size(); j++)
+        for(uint j = 0; j < ToBePlaced.size(); j++)
         {
           // If the terrain type of the available location matches that of the place, then put the place there.
           if(AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType))
@@ -471,7 +471,8 @@ void worldmap::Generate()
             GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
             SetEntryPos(NewPlace->GetAttachedDungeon(), NewPos);
             ToBePlaced[j].HasBeenPlaced = true;
-            RevealEnvironment(NewPos, 1);
+            if(NewPlace->RevealEnvironmentInitially())
+              RevealEnvironment(NewPos, 1);
             break;
           }
         }
