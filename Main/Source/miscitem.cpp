@@ -2900,13 +2900,13 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
       if(Where == ERROR_V2)
       {
-        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex, but nothing happens.",
+        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-colored magical vortex, but nothing happens.",
                     Item[0]->CHAR_NAME(DEFINITE));
         delete Golem;
       }
       else
       {
-        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex.",
+        ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-colored magical vortex.",
                     Item[0]->CHAR_NAME(DEFINITE));
         Golem->SetTeam(Reader->GetTeam());
         Golem->PutTo(Where);
