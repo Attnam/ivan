@@ -50,8 +50,8 @@
 #include "balance.h"
 #include "confdef.h"
 
-#define SAVE_FILE_VERSION 126 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 112 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 127 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 113 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
