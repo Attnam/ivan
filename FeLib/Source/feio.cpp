@@ -269,11 +269,11 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
 }
 
 /* Asks the user a question requiring a string answer. The answer is saved
-   to Input. Input can also already have a default something retyped for
-   the user. Topic is the question or other topic for the question. Pos the
-   cordinates of where the question is printed on the screen. Color is the
+   to Input. Input can also already have a default something pretyped for
+   the user. Topic is the question or other topic for the question. Pos is the
+   coordinates of where the question is printed on the screen. Color is the
    col of all the fonts in this function. Enter is only accepted when the
-   answers length is between MinLetters and MaxLetters. If Fade is true the
+   answer's length is between MinLetters and MaxLetters. If Fade is true the
    question is asked on a black background and the transition to that is a
    fade. If AllowExit is true the user can abort with the esc-key.
 
@@ -428,8 +428,8 @@ int iosystem::StringQuestion(festring& Input,
 }
 
 /* Ask a question defined by Topic. This function only accepts numbers.
-   The question is drawn to cordinates given by Pos. All fonts are Color
-   coled. If Fade is true the question is asked on a black background
+   The question is drawn to coordinates given by Pos. All fonts are Color
+   colored. If Fade is true the question is asked on a black background
    and the transition to that is a fade. */
 
 long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
