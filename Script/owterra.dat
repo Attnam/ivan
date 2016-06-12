@@ -330,11 +330,11 @@ locationAV
 locationAW
 {
   BitmapPos = 0, 64;
-  NameStem = "empty area";
-  UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  NameStem = "sombre and forbidding mausoleum";
+  UsesLongArticle = false;
+  AttachedDungeon = XINROCH_TOMB;
   AttachedArea = 0;
-  CanBeGenerated = false;
+  CanBeGenerated = true;
   NativeGTerrainType = TUNDRA;
 }
 
