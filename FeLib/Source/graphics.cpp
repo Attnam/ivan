@@ -64,6 +64,9 @@ void graphics::Init()
 #ifdef USE_SDL
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
       ABORT("Can't initialize SDL.");
+#if SDL_MAJOR_VERSION == 2
+  SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+#endif
 #endif
 
 #ifdef __DJGPP__
