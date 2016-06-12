@@ -1,0 +1,563 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon XINROCH_TOMB;
+{
+  Levels = 10;
+  Description = "Tomb of Xinroch";
+  ShortDescription = "TX";
+
+  LevelDefault
+  {
+    FillSquare = solidterrain(GROUND), GNEISS earth;
+    TunnelSquare = solidterrain(GROUND), 0;
+    Size = 64, 36;
+    Rooms = 10:30;
+    Items = 35:50;
+    GenerateMonsters = true;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    DifficultyBase = 40;
+    DifficultyDelta = 15;
+    MonsterAmountBase = 12;
+    MonsterAmountDelta = 3;
+    MonsterGenerationIntervalBase = 128;
+    MonsterGenerationIntervalDelta = -8;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 40;
+    ItemMinPriceDelta = 10;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 5;
+    EnchantmentPlusChanceDelta = 10;
+    BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
+
+    Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+    {
+      Items == bone;
+      Times = 25:50;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 3:9,3:9;
+      AltarPossible = true;
+      WallSquare = solidterrain(GROUND), GRANITE wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), GRANITE door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  Level 0; /* Outside the tomb ??*/
+  {
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  RandomLevel 0:1; /* Paradise room */
+  {
+    Room /* Paradise Room */
+    {
+      Size = 14,14;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = SAND solidterrain(GROUND), SAND_STONE earth;
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+      
+      Square, Pos 0,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 7,13;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 12,12;
+        Types
+        {
+          # = 0;
+          B = SAND_STONE earth;
+          t = BALSA_WOOD decoration(PALM);
+        }
+      }
+      {
+      	####BBBBBBB#
+      	##########BB
+      	###########B
+      	###########B
+      	######t####B
+      	###########B
+      	#######t###B
+      	###########B
+      	###t#######B
+      	############
+      	#####t####t#
+      	############
+      }
+
+      GTerrainMap
+      {
+        Pos = 1,1;
+        Size = 12,12;
+        Types
+        {
+          $ = SAND solidterrain(GRASS_TERRAIN);
+          # = 0;
+          w = WATER liquidterrain(POOL);
+          G = GRAVEL solidterrain(GRASS_TERRAIN);
+        }
+      }
+      {
+        #$$$########
+        $$$wwwwGGG##
+        $$wwwwwwwGG#
+        $$wwwwwwwww#
+        $$www$$wwww#
+        $$www$$$www#
+        $$wwww$$www#
+        $$ww$wwwwww#
+        $$w$$$wwwww#
+        $$$$$$$$ww$$
+        $$$$$$$$$$$$
+        #$$$$$$$$$$#
+      }
+    }
+  }
+
+  RandomLevel 1:2; /* Lesser maze room ? */
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+    }
+  }
+
+  RandomLevel 3:4; /* Kitchen */
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+
+      Square, Random;
+      {
+        OTerrain = FIR_WOOD sign { Text = "Kitchen"; }
+      }
+    }
+  }
+
+  RandomLevel 3:5; /* Dwarven gas chambers */
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+
+      Square, Random;
+      {
+        OTerrain = FIR_WOOD sign { Text = "Dwarven gas chambers"; }
+      }
+    }
+  }
+
+  RandomLevel 4:5; /* Experimental necro-chamber */
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+
+      Square, Random;
+      {
+        OTerrain = FIR_WOOD sign { Text = "Experimental necro-chamber"; }
+      }
+    }
+  }
+
+  Level 1;
+  {
+    Room /* stylish little underground confluence */
+    {
+      Size = 7,7;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = solidterrain(GROUND), GNEISS earth;
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; }
+      EntryIndex = STAIRS_DOWN + 1;
+      AttachRequired = true;
+    }
+
+    Room /* To get into the Ice Level */
+    {
+      Size = 11,7;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = GNEISS solidterrain(GROUND), GNEISS earth;
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 3,1;
+        Size = 5,3;
+        Types
+        {
+          # = GNEISS earth;
+        }
+      }
+      {
+        ##.##
+        .###.
+        ..#..
+      }
+
+      Square, Pos 5,1;
+      {
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 2; }
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Pos 5,6; /*the door to the room!*/
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  Level 2; /*ice cave*/
+  {
+    Rooms = 15:30;
+    Size = 64, 36;
+    LevelMessage = "It is deathly cold in here...";
+    FillSquare = ICE solidterrain(GROUND), ICE earth;
+    TunnelSquare = ICE solidterrain(GROUND), 0;
+    BackGroundType = BLUE_FRACTAL;
+
+    RoomDefault
+    {
+      Size = 8:17,8:17;
+      Pos = 2:XSize-5,2:YSize-5;
+      GenerateLanterns = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = ICE solidterrain(GROUND), ICE earth;
+      FloorSquare = ICE solidterrain(GROUND), 0;
+      DoorSquare = ICE solidterrain(GROUND), 0;
+      AltarPossible = false;
+    }
+
+    Room
+    {
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      {
+          OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; }
+          EntryIndex = STAIRS_UP;
+      }
+    }
+
+    Room
+    {
+      DivineMaster = TERRA;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = ICE altar(TERRA);
+      }
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE decoration(SHARD);
+      Times = 10:30;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE boulder(1);
+      Times = 5:15;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE boulder(2);
+      Times = 5:15;
+    }
+
+    Square, Random;
+    {
+      Items == ICE stone;
+      Times = 0:10;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(BLUE_CRYSTAL);
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(ICE);
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(BLUE_CRYSTAL);
+    }
+
+    Square, Random;
+    {
+      Character = spider(LARGE);
+      Times = 15;
+    }
+  }
+
+  Level 3;
+  {
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP) {AttachedArea = 1; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 4;
+  {
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 5;
+  {
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 6;  /* Dual enner beast level (??) */
+  {
+    Items = 45:60;
+    Size = 80, 26;
+    ItemMinPriceBase = 60;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 7;  /* Tactical level */
+  {
+    Items = 20:40;
+    Size = 42, 26;
+    EnchantmentMinusChanceBase = 5;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    LOSModifier = 48;
+    ItemMinPriceBase = 70;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 8; /* Gravekeeper level */
+  {
+    Size = 24, 80;
+    EnchantmentMinusChanceBase = 10;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 80;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+
+      Square, Random;
+      {
+        OTerrain = FIR_WOOD sign { Text = "Greater maze room in here"; }
+      }
+    }
+  }
+
+  Level 9; /* Final boss level */
+  {
+    Items = 5:10;
+    EnchantmentMinusChanceBase = 15;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 90;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+  }
+}
