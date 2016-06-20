@@ -262,6 +262,60 @@ void level::GenerateTunnel(int FromX, int FromY, int TargetX, int TargetY, truth
       FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
+
+maze::maze(uint width, uint height)
+: MazeXSize(width), MazeYSize(height) { MazeVector.resize(MazeXSize * MazeYSize); }
+/*
+maze::~maze()
+{
+  delete MazeVector;
+  delete width;
+  delete height;
+  delete MazeXSize;
+  delete MazeYSize;
+}
+*/
+void maze::CreateMaze()
+{
+  InitializeMaze();
+  CarveMaze(2, 2);
+}
+
+void maze::InitializeMaze()
+{
+  std::fill(MazeVector.begin(), MazeVector.end(), false);
+
+  for(unsigned x = 0; x < MazeXSize; x++)
+  {
+    MazeVector[x] = true;
+    MazeVector[(MazeYSize - 1) * MazeXSize + x] = true;
+  }
+  for(unsigned y = 0; y < MazeYSize; y++)
+  {
+    MazeVector[y * MazeXSize] = true;
+    MazeVector[y * MazeXSize + MazeXSize - 1] = true;
+  }
+}
+
+void maze::CarveMaze(int x, int y)
+{
+  MazeVector[y * MazeXSize + x] = true;
+  const unsigned d = std::rand();
+  for(unsigned i = 0; i < 4; i++)
+  {
+    const int dirs[] = { 1, -1, 0, 0 };
+    const int dx = dirs[(i + d + 0) % 4];
+    const int dy = dirs[(i + d + 2) % 4];
+    const int x1 = x + dx, y1 = y + dy;
+    const int x2 = x1 + dx, y2 = y1 + dy;
+    if(!MazeVector[y1 * MazeXSize + x1] && !MazeVector[y2 * MazeXSize + x2])
+    {
+      MazeVector[y1 * MazeXSize + x1] = true;
+      CarveMaze(x2, y2);
+    }
+  }
+}
+
 void level::Generate(int Index)
 {
   game::BusyAnimation();
@@ -1268,6 +1322,15 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
   if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
     Shape = RECTANGLE;
 
+  maze MazeRoom(Size.X + 2, Size.Y + 2);
+//  maze MazeRoom(Size.X, Size.Y);
+  MazeRoom.InitializeMaze();
+
+  if(Shape == MAZE_ROOM)
+  {
+    MazeRoom.CreateMaze();
+  }
+
   for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)
   {
     if(Shape == ROUND_CORNERS)
@@ -1294,7 +1357,8 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y + Size.Y - 1, Room, Flags);
 
     if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
-       || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
+       || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2)
+       || (Shape == MAZE_ROOM && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
     {
       OKForDoor.push_back(v2(x, Pos.Y));
       OKForDoor.push_back(v2(x, Pos.Y + Size.Y - 1));
@@ -1317,7 +1381,9 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room, Flags);
     CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room, Flags);
 
-    if(Shape == RECTANGLE || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
+    if(Shape == RECTANGLE
+       || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2)
+       || (Shape == MAZE_ROOM && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
     {
       OKForDoor.push_back(v2(Pos.X, y));
       OKForDoor.push_back(v2(Pos.X + Size.X - 1, y));
@@ -1333,6 +1399,20 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     Border.push_back(v2(Pos.X + Size.X - 1, y));
   }
 
+  ADD_MESSAGE("MazeVector is %d long", MazeRoom.MazeVector.size());
+
+  std::vector<truth> Walls;
+
+  for(uint y1 = 2; y1 < MazeRoom.MazeYSize - 2; y1++)
+  {
+    for(uint x1 = 2; x1 < MazeRoom.MazeXSize - 2; x1++)
+    {
+      //if((y1 != 0 && y1 != Size.Y - 1) || (x1 != 0 && x1 != Size.X - 1))
+      Walls.push_back(MazeRoom.MazeVector[(y1) * (MazeRoom.MazeYSize) + (x1)]);
+    }
+  }
+  ADD_MESSAGE("Walls are %d long", Walls.size());
+
   GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
   OTerrain = RoomScript->GetFloorSquare()->GetOTerrain();
   Counter = 0;
@@ -1343,7 +1423,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     {
       /* if not in the corner */
 
-      if(!(Shape == ROUND_CORNERS
+      if(!(Shape == MAZE_ROOM) && !(Shape == ROUND_CORNERS
            && (x == Pos.X + 1 || x == Pos.X + Size.X - 2)
            && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
       {
@@ -1351,6 +1431,39 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
         Inside.push_back(v2(x, y));
       }
     }
+// Maze rooms only
+  for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y)
+    for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x, ++Counter)
+    {
+      // If there is a wall here, then put a wall here. Don't put it "inside".
+      if((Shape == MAZE_ROOM) && !Walls[(y - Pos.Y - 1) * (Size.Y - 2) + (x - Pos.X - 1)])
+      //if((Shape == MAZE_ROOM) && !MazeRoom.MazeVector[(y - Pos.Y + 1) * (Size.Y) + (x - Pos.X + 1)])
+      {
+        if(*RoomScript->UseFillSquareWalls())
+        {
+          GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
+          OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
+        }
+        else
+        {
+          GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
+          OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
+        }
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
+        //Inside.push_back(v2(x, y));
+      }
+      else if((Shape == MAZE_ROOM) && Walls[(y - Pos.Y - 1) * (Size.Y - 2) + (x - Pos.X - 1)]) // Put in a floor:
+      //else if((Shape == MAZE_ROOM) && MazeRoom.MazeVector[(y - Pos.Y + 1) * (Size.Y) + (x - Pos.X + 1)]) // Put in a floor:
+      {
+        GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
+        OTerrain = RoomScript->GetFloorSquare()->GetOTerrain();
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
+        Inside.push_back(v2(x, y));
+      }
+    }
+
+// Here we need to check which maze room entries are ok for walls
+
 }
 
 void level::Reveal()

@@ -129,10 +129,20 @@ Dungeon XINROCH_TOMB;
       Flags = 0;
     }
 
-    Square, Pos 21,21;
+    Square, Pos 31,31;
     {
       OTerrain = stairs(STAIRS_DOWN);
       EntryIndex = STAIRS_DOWN;
+    }
+
+    Room
+    {
+      Pos = 4,4;
+      Size = 21,21;
+      GenerateFountains = true;
+      GenerateWindows = false;
+      Shape = MAZE_ROOM;
+      DivineMaster = INFUSCOR;
     }
   }
 
@@ -239,8 +249,10 @@ Dungeon XINROCH_TOMB;
   {
     Room
     {
-      Size = 7,6;
+      Size = 11,11;
       AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
     }
   }
 

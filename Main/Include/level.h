@@ -142,6 +142,19 @@ Range(Range),
 SpecialParameters(SpecialParameters)
 { }
 
+class maze
+{
+ public:
+  maze(uint width, uint height);
+  void CreateMaze();
+  void InitializeMaze();
+  std::vector<truth> MazeVector;
+  const uint MazeXSize;
+  const uint MazeYSize;
+ private:
+  void CarveMaze(int x, int y);
+};
+
 class level : public area
 {
  public:

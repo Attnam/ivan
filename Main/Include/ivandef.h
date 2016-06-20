@@ -541,6 +541,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 /* Gods, 0 == none */
 

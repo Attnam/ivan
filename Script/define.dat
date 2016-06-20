@@ -755,6 +755,7 @@
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 #define VALPURUS 1
 #define LEGIFER 2
