@@ -142,17 +142,18 @@ Range(Range),
 SpecialParameters(SpecialParameters)
 { }
 
-class maze
+struct maze
 {
- public:
-  maze(uint width, uint height);
+  maze(int x, int y) : MazeXSize(x + 2), MazeYSize(y + 2) { MazeVector.resize(MazeXSize * MazeYSize); }
   void CreateMaze();
   void InitializeMaze();
-  std::vector<truth> MazeVector;
-  const uint MazeXSize;
-  const uint MazeYSize;
+  std::vector<truth> MazeKernel; // returns only the mazey bit in the middle (the kernel), without the exterior walls. The kernel size is the input size of maze - 2 for each dimension.
+  void CarveMaze(int, int); // Carves the maze
+  void StripMazeHusk(); // Removes the husk (skin and shell), and populates MazeKernel with the kernel.
+  const uint MazeXSize; // XSize of the MazeVector
+  const uint MazeYSize; // YSize of the MazeVector
  private:
-  void CarveMaze(int x, int y);
+  std::vector<truth> MazeVector; // Consists of the outer buffer (empty, called the skin) and the shell wall (next layer in, all full). Together they comprise the husk.
 };
 
 class level : public area
