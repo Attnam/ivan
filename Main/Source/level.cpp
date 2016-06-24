@@ -306,13 +306,11 @@ void maze::CarveMaze(int x, int y)
 
 void maze::StripMazeHusk()
 {
-  std::vector<truth> Walls;
-
   for(uint y1 = 2; y1 < MazeYSize - 2; y1++)
   {
     for(uint x1 = 2; x1 < MazeXSize - 2; x1++)
     {
-      MazeKernel.push_back(MazeVector[(y1) * (MazeYSize) + (x1)]);
+      MazeKernel.push_back(MazeVector[(y1) * (MazeXSize) + (x1)]);
     }
   }
 }
@@ -1322,7 +1320,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
   int Shape = *RoomScript->GetShape();
   int Flags = (GTerrain->IsInside() ? *GTerrain->IsInside() : *RoomScript->IsInside()) ? INSIDE : 0;
 
-  if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
+  if((Shape == ROUND_CORNERS || Shape == MAZE_ROOM) && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
     Shape = RECTANGLE;
 
   maze MazeRoom(Size.X, Size.Y);
@@ -1423,7 +1421,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x, ++Counter)
     {
       // If there is a wall here, then put a wall here. Don't put it "inside".
-      if((Shape == MAZE_ROOM) && !MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.Y - 2) + (x - Pos.X - 1)])
+      if((Shape == MAZE_ROOM) && !MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.X - 2) + (x - Pos.X - 1)])
       {
         if(*RoomScript->UseFillSquareWalls())
         {
@@ -1437,7 +1435,7 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
         }
         CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
       }
-      else if((Shape == MAZE_ROOM) && MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.Y - 2) + (x - Pos.X - 1)]) // Put in a floor:
+      else if((Shape == MAZE_ROOM) && MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.X - 2) + (x - Pos.X - 1)]) // Put in a floor:
       {
         GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
         OTerrain = RoomScript->GetFloorSquare()->GetOTerrain();
