@@ -32,7 +32,7 @@ Dungeon XINROCH_TOMB;
     BackGroundType = GRAY_FRACTAL;
     Size = 64, 36;
     Rooms = 10:30;
-    Items = 35:50;
+    Items = 20:40;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -45,12 +45,12 @@ Dungeon XINROCH_TOMB;
     MonsterGenerationIntervalBase = 128;
     MonsterGenerationIntervalDelta = -8;
     CanGenerateBone = true;
-    ItemMinPriceBase = 40;
+    ItemMinPriceBase = 10;
     ItemMinPriceDelta = 10;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 5;
-    EnchantmentPlusChanceDelta = 10;
+    EnchantmentPlusChanceDelta = 5;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
 
@@ -165,19 +165,19 @@ Dungeon XINROCH_TOMB;
 
   RandomLevel 1:2; /* Paradise room */
   {
-    Room /* Paradise Room */
+    Room
     {
       Size = 14,14;
       AllowLockedDoors = true;
       AllowBoobyTrappedDoors = true;
       GenerateFountains = false;
       Shape = ROUND_CORNERS;
-      WallSquare = SAND solidterrain(GROUND), SAND_STONE earth;
       FloorSquare = solidterrain(GROUND), 0;
       GenerateDoor = false;
       GenerateLanterns = false;
       AltarPossible = false;
       Flags = NO_MONSTER_GENERATION;
+      UseFillSquareWalls = true;
       
       Square, Pos 0,6;
       {
@@ -189,6 +189,18 @@ Dungeon XINROCH_TOMB;
         OTerrain = 0;
         AttachRequired = true;
       }
+      Square, Pos 7,6;
+      {
+        Items == itemcontainer(LARGE_CHEST);/* { LifeExpectancy = 100:10000; Chance = 5; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }*/
+      }
+      Square, Pos 8, 6;
+      {
+        Character = veterankamikazedwarf(INFUSCOR);
+      }
+      Square, Pos 10, 3;
+      {
+        Character = veterankamikazedwarf(INFUSCOR);
+      }
 
       OTerrainMap
       {
@@ -197,7 +209,7 @@ Dungeon XINROCH_TOMB;
         Types
         {
           # = 0;
-          B = SAND_STONE earth;
+          B = GRAVEL earth;
           t = BALSA_WOOD decoration(PALM);
         }
       }
@@ -229,15 +241,15 @@ Dungeon XINROCH_TOMB;
         }
       }
       {
-        #$$$########
-        $$$wwwwGGG##
-        $$wwwwwwwGG#
-        $$wwwwwwwww#
-        $$www$$wwww#
-        $$www$$$www#
-        $$wwww$$www#
-        $$ww$wwwwww#
-        $$w$$$wwwww#
+        #$$$GGGGGGG#
+        $$$wwwwGGGGG
+        $$wwwwwwwGGG
+        $$wwwwwwwwwG
+        $$www$$wwwwG
+        $$www$$$wwwG
+        $$wwww$$wwwG
+        $$ww$wwwwwwG
+        $$w$$$wwwwwG
         $$$$$$$$ww$$
         $$$$$$$$$$$$
         #$$$$$$$$$$#
@@ -536,6 +548,7 @@ Dungeon XINROCH_TOMB;
   {
     FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
+    EnchantmentPlusChanceBase = 10;
 
     RoomDefault
     {
@@ -563,6 +576,7 @@ Dungeon XINROCH_TOMB;
   {
     FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
+    EnchantmentPlusChanceDelta = 10;
 
     RoomDefault
     {
@@ -571,9 +585,9 @@ Dungeon XINROCH_TOMB;
       DoorSquare = FIR_WOOD solidterrain(PARQUET), METEORIC_STEEL door;
     }
 
-    Items = 45:60;
+    Items = 40:50;
     Size = 80, 26;
-    ItemMinPriceBase = 60;
+    ItemMinPriceBase = 20;
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {
@@ -602,13 +616,12 @@ Dungeon XINROCH_TOMB;
       DoorSquare = TEAK_WOOD solidterrain(PARQUET), SAPPHIRE door;
     }
 
-    Items = 20:40;
     Size = 42, 26;
     EnchantmentMinusChanceBase = 5;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
     LOSModifier = 48;
-    ItemMinPriceBase = 70;
+    ItemMinPriceBase = 30;
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {
@@ -641,7 +654,7 @@ Dungeon XINROCH_TOMB;
     EnchantmentMinusChanceBase = 10;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
-    ItemMinPriceBase = 80;
+    ItemMinPriceBase = 40;
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {
@@ -675,7 +688,7 @@ Dungeon XINROCH_TOMB;
     EnchantmentMinusChanceBase = 15;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
-    ItemMinPriceBase = 90;
+    ItemMinPriceBase = 50;
     FillSquare = OBSIDIAN solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = OBSIDIAN solidterrain(GROUND), 0;
 
