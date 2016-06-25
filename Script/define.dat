@@ -603,6 +603,7 @@
 #define GRIZZLY_BEAR 2
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
+#define MUTANT_BEAR 5
 
 #define ZOMBIE_OF_KHAZ_ZADM 1
 
