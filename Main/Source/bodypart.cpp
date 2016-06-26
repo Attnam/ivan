@@ -3740,7 +3740,7 @@ int bodypart::CalculateBurnAttributePenalty(int Attribute) const
   if(MainMaterial)
   {
     BurnLevel = MainMaterial->GetBurnLevel();
-    DoubleAttribute *= 1. * (4 - BurnLevel) / 4;
+    DoubleAttribute *= (1. - BurnLevel * 0.05);
   }
 
   return BurnLevel ? Min(Attribute - int(DoubleAttribute), Attribute - 1) : 0;
