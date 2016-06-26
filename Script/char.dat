@@ -779,6 +779,30 @@ shopkeeper
       "\"The monsters don't attack me, because of our mutually profitable contract.\"";
     }
   }
+
+  Config XINROCH_TOMB;
+  {
+    NameSingular = "quartermaster";
+    AttributeBonus = 25;
+    Helmet = MITHRIL helmet { Enchantment = 1; }
+    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+    BodyArmor = IRON bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+    Belt = NYMPH_HAIR belt { Enchantment = 1; }
+    RightWielded = RUBY pickaxe { Enchantment = -1; }
+    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+    RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
+    KnownCWeaponSkills == AXES;
+    CWeaponSkillHits == 1000;
+    RightSWeaponSkillHits = 500;
+    DefaultName = "Fry";
+    Inventory == lantern;
+    FriendlyReplies =
+    {
+      2,
+      "\"Normally these provisions are for the consumption of the tomb guards. But I'll allow you some comestibles, for a price of course...\"",
+      "@Dd smiles: \"A drink at the fountain is free my friend. Just watch out for the residents.\"";
+    }
+  }
 }
 
 priest
@@ -2172,6 +2196,18 @@ bear
     AttributeBonus = 15;
     IsEnormous = true;
   }
+
+  Config MUTANT_BEAR;
+  {
+    Adjective = "mutant";
+    SkinColor = rgb16(120, 160, 100);
+    TotalVolume = 300000;
+    TotalSize = 350;
+    AttributeBonus = 20;
+    IsEnormous = true;
+    TorsoSpecialColor = rgb16(255, 128, 128); /* EyeColor */
+    BloodMaterial = GLOWING_BLOOD;
+  }
 }
 
 dolphin
@@ -2193,7 +2229,7 @@ dolphin
   FriendlyReplies == "@Dd peeps passionately to you.";
   TotalSize = 300;
   SkinColor = rgb16(144, 144, 144);
-  EyeColor = rgb16(100, 100, 255);
+  TorsoSpecialColor = rgb16(100, 100, 255); /* EyeColor */
   Adjective = "female";
   NameSingular = "dolphin";
   PostFix = "in season";

@@ -603,6 +603,7 @@
 #define GRIZZLY_BEAR 2
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
+#define MUTANT_BEAR 5
 
 #define ZOMBIE_OF_KHAZ_ZADM 1
 
@@ -755,6 +756,7 @@
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 #define VALPURUS 1
 #define LEGIFER 2
