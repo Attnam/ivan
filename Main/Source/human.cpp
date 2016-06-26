@@ -668,7 +668,7 @@ void priest::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)
   {
-    ADD_MESSAGE("\"Sinner! My hands shall pour Dinive Wrath upon thee!\"");
+    ADD_MESSAGE("\"Sinner! My hands shall pour Divine Wrath upon thee!\"");
     return;
   }
 
