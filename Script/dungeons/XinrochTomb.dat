@@ -852,7 +852,7 @@ Dungeon XINROCH_TOMB;
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {
-      OTerrain = stairs(STAIRS_UP) {AttachedArea = 1; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
+      OTerrain = stairs(STAIRS_UP) {AttachedArea = 2; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
