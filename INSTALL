@@ -7,6 +7,12 @@ Under Linux and OS X, type:
 make
 make install
 
+Note: Wizard Mode is disabled by default. To enable it run:
+
+./configure CXXFLAGS="-O0 -DWIZARD"
+make
+make install
+
 --------------------------------------
 
 Under DOS:
