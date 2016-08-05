@@ -18,11 +18,14 @@
 #include <direct.h>
 #endif
 
+#include <cstdio>
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
 #include "festring.h"
+
+#include "audio.h"
 
 #if SDL_MAJOR_VERSION == 1
 /* redefine SDL2 to SDL1 */
@@ -182,6 +185,8 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         {
           static ulong LastTick = 0;
           UpdateTick();
+
+
 
           if(LastTick != Tick)
           {
