@@ -229,6 +229,9 @@ inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
   return SaveFile;
 }
 
+
+RAW_SAVE_LOAD(long long)
+RAW_SAVE_LOAD(unsigned long long)
 RAW_SAVE_LOAD(long)
 RAW_SAVE_LOAD(ulong)
 RAW_SAVE_LOAD(int)
