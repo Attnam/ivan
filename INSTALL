@@ -3,14 +3,14 @@ Compiling IVAN under different systems
 
 Under Linux and OS X, type:
 
-./configure
-make
+cmake .
+make -j
 make install
 
 Note: Wizard Mode is disabled by default. To enable it run:
 
-./configure CXXFLAGS="-O0 -DWIZARD"
-make
+cmake -D CMAKE_CXX_FLAGS=-DWIZARD .
+make -j
 make install
 
 --------------------------------------
