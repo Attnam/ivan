@@ -141,9 +141,30 @@ int audio::Loop(void *ptr)
       int randomIndex = rand() % Tracks.size();
       PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
    }
-
-
    return 0;
+}
+
+
+
+
+int audio::GetMIDIOutputDevices(std::vector<std::string>& deviceNames)
+{
+   int nPorts = midiout->getPortCount();
+   std::string portName;
+
+   for ( unsigned int i=0; i<nPorts; i++ ) {
+     try {
+       portName = midiout->getPortName(i);
+
+     }
+     catch (RtMidiError &error) {
+       error.printMessage();
+       ABORT("MIDI Out Error");
+     }
+     deviceNames.push_back(portName);
+   }
+
+   return nPorts;
 }
 
 
