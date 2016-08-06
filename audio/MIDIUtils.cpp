@@ -1,25 +1,24 @@
-/****************************************Copyright (c)****************************************************
-**                                      
-**                                 http://www.powermcu.com
-**
-**--------------File Info---------------------------------------------------------------------------------
-** File name:               TouchPanel.c
-** Descriptions:            The TouchPanel application function
-**
-**--------------------------------------------------------------------------------------------------------
-** Created by:              AVRman
-** Created date:            2010-11-7
-** Version:                 v1.0
-** Descriptions:            The original version
-**
-**--------------------------------------------------------------------------------------------------------
-** Modified by:             
-** Modified date:           
-** Version:                 
-** Descriptions: Lighting subsystem to interface with MIDI data and output it to the LED array / lighting system
-** It is possible that each MIDI Channel will have it's own colour.
-** Or that Velocity will control the colour of the LED.
-*********************************************************************************************************/
+/*
+    MIDIUtils : Utilities for looking up MIDI names, keys and octaves
+    Copyright (c) 2004-2016 Adrian M. Gin
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License v2 as published by
+    the Free Software Foundation;
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
