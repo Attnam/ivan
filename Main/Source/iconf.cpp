@@ -125,18 +125,18 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
 {
-        switch(O->Value)
-        {
-          case DIR_NORM:
-                Entry << CONST_S("MIDI output device 1");
-                break;
-          case DIR_ALT:
-                Entry << CONST_S("MIDI output device 2");
-                break;
-          case DIR_HACK:
-                Entry << CONST_S("MIDI output device 3");
-                break;
-        }
+  switch(O->Value)
+  {
+    case DIR_NORM:
+          Entry << CONST_S("MIDI output device 1");
+          break;
+    case DIR_ALT:
+          Entry << CONST_S("MIDI output device 2");
+          break;
+    case DIR_HACK:
+          Entry << CONST_S("MIDI output device 3");
+          break;
+  }
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
@@ -252,6 +252,17 @@ void ivanconfig::ContrastHandler(long Value)
   }
 }
 
+void ivanconfig::VolumeHandler(long Value)
+{
+  VolumeChanger(&Volume, Value);
+
+  if(game::IsRunning())
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
+}
+
 #ifndef __DJGPP__
 
 void ivanconfig::SwitchModeHandler()
@@ -280,6 +291,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
+  configsystem::AddOption(&Volume);
+  configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
 #endif
