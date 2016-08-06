@@ -1,0 +1,206 @@
+#ifdef USE_SDL
+#include "SDL.h"
+#include "SDL_thread.h"
+#include "SDL_timer.h"
+
+
+#endif
+
+#include "audio.h"
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include "message.h"
+#include "midiplayback.h"
+
+
+
+musicfile::musicfile(char* filename, int LowThreshold, int HighThreshold) :
+      LowThreshold(LowThreshold), HighThreshold(HighThreshold)
+{
+   isPlaying = false;
+   Filename = new char[strlen(filename) + 1];
+   memcpy(Filename, filename, strlen(filename) + 1);
+}
+
+musicfile::~musicfile()
+{
+   delete[] Filename;
+}
+
+int audio::Volume;
+int audio::Intensity;
+bool audio::isInit;
+std::vector<musicfile*> audio::Tracks;
+RtMidiOut* audio::midiout = 0;
+
+void audio::Init()
+{
+   int audio_rate, audio_channels;
+   unsigned short audio_format;
+   int bits;
+
+   int nPorts;
+   std::string portName;
+   std::vector<unsigned char> message;
+
+   // RtMidiOut constructor
+   try
+   {
+      midiout = new RtMidiOut();
+   } catch (RtMidiError &error)
+   {
+      error.printMessage();
+      ABORT("MIDI Out Error");
+   }
+
+   // Check outputs.
+   nPorts = midiout->getPortCount();
+   std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
+   for ( unsigned int i=0; i<nPorts; i++ ) {
+     try {
+       portName = midiout->getPortName(i);
+     }
+     catch (RtMidiError &error) {
+       error.printMessage();
+       ABORT("MIDI Out Error");
+     }
+     std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
+   }
+   std::cout << '\n';
+
+   midiout->openPort(0);
+
+   LoadMIDIFile("Track1.mid", 0, 100);
+   LoadMIDIFile("Track2.mid", 0, 100);
+
+   SetVolumeLevel(128);
+
+   SDL_Thread *thread;
+   int         threadReturnValue;
+
+   // Simply create a thread
+   thread = SDL_CreateThread( audio::Loop, "AudioThread", (void *)NULL);
+
+   isInit = true;
+   atexit(audio::DeInit);
+
+}
+
+void audio::DeInit(void)
+{
+   isInit = false;
+
+   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
+   {
+      delete *it;
+   }
+
+   if( midiout )
+   {
+      delete midiout;
+   }
+
+   Tracks.erase(Tracks.begin(), Tracks.end());
+
+}
+
+int audio::Loop(void *ptr)
+{
+   bool trackIsPlaying = false;
+
+
+   std::vector<unsigned char> message;
+   // Note On: 144, 64, 90
+
+   while(1)
+   {
+      int randomIndex = rand() % Tracks.size();
+      PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
+   }
+
+
+   return 0;
+}
+
+
+int audio::PlayMIDIFile(char* filename, int32_t loops)
+{
+   std::vector<unsigned char> message;
+   MIDI_HEADER_CHUNK_t MIDIHdr;
+
+   MPB_PlayMIDIFile(&MIDIHdr, filename);
+
+   int usPerTick = MPB_SetTickRate(MIDIHdr.currentState.BPM, MIDIHdr.PPQ);
+
+   int cumulativeWait = 0;
+   for (uint32_t i = 0; i < loops; i++)
+   {
+      MPB_RePosition(&MIDIHdr, 0, MPB_PB_ALL_ON);
+      for(;;)
+      {
+         cumulativeWait += usPerTick;
+         if( cumulativeWait >= 1000 )
+         {
+            SDL_Delay(cumulativeWait / 1000);
+            cumulativeWait = cumulativeWait - ((cumulativeWait / 1000)*1000);
+         }
+
+         MIDIHdr.masterClock += 1;
+         if (MPB_ContinuePlay(&MIDIHdr, MPB_PB_ALL_ON) == MPB_FILE_FINISHED)
+         {
+            MPB_PausePlayback(&MIDIHdr);
+            break;
+         }
+      }
+   }
+
+   MPB_CloseFile();
+
+   return 0;
+}
+
+
+void audio::SetVolumeLevel(int vol)
+{
+   Volume = vol;
+   //Mix_VolumeMusic(Volume);
+}
+
+int audio::GetVolumeLevel(void)
+{
+   return Volume;
+}
+
+void audio::IntensityLevel(int intensity)
+{
+   Intensity = intensity;
+
+   /* Do a check to see if we change / cue MIDI file */
+}
+
+void audio::LoadMIDIFile(char* filename, int intensitylow, int intensityhigh)
+{
+   musicfile* mf = new musicfile(filename, intensitylow, intensityhigh);
+   Tracks.push_back(mf);
+}
+
+
+
+void audio::SendMIDIEvent(std::vector<unsigned char>* message)
+{
+   midiout->sendMessage( message );
+}
+
+
+
+void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
+{
+   std::vector<unsigned char> message;
+   message.push_back(event->eventType);
+   message.push_back(event->parameter1);
+   message.push_back(event->parameter2);
+   audio::SendMIDIEvent( &message );
+}
+
+
