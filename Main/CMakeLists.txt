@@ -1,30 +1,19 @@
 file(GLOB IVAN_HEADERS Include/*.h)
-set(IVAN_SOURCES
-    Source/actset.cpp
-    Source/areaset.cpp
-    Source/charset.cpp
-    Source/charsset.cpp
-    Source/command.cpp
-    Source/coreset.cpp
-    Source/dataset.cpp
-    Source/dungeon.cpp
-    Source/game.cpp
-    Source/godset.cpp
-    Source/iconf.cpp
-    Source/id.cpp
-    Source/igraph.cpp
-    Source/itemset.cpp
-    Source/levelset.cpp
-    Source/main.cpp
-    Source/materset.cpp
-    Source/message.cpp
-    Source/object.cpp
-    Source/roomset.cpp
-    Source/script.cpp
-    Source/slotset.cpp
-    Source/trapset.cpp
-    Source/wmapset.cpp
-    Source/wskill.cpp)
+file(GLOB IVAN_SOURCES Source/*.cpp)
+# The following files are #included from other .cpp files and so shouldn't be
+# compiled directly. Setting the HEADER_FILE_ONLY property to TRUE prevents it.
+set_source_files_properties(
+    Source/action.cpp Source/actions.cpp Source/area.cpp Source/bodypart.cpp
+    Source/char.cpp Source/cont.cpp Source/database.cpp Source/entity.cpp
+    Source/fluid.cpp Source/gear.cpp Source/god.cpp Source/gods.cpp
+    Source/human.cpp Source/item.cpp Source/level.cpp Source/lsquare.cpp
+    Source/lterra.cpp Source/lterras.cpp Source/materia.cpp Source/materias.cpp
+    Source/miscitem.cpp Source/nonhuman.cpp Source/pool.cpp Source/proto.cpp
+    Source/rain.cpp Source/room.cpp Source/rooms.cpp Source/slot.cpp
+    Source/smoke.cpp Source/square.cpp Source/stack.cpp Source/team.cpp
+    Source/terra.cpp Source/trap.cpp Source/traps.cpp Source/worldmap.cpp
+    Source/wsquare.cpp Source/wterra.cpp Source/wterras.cpp
+    PROPERTIES HEADER_FILE_ONLY TRUE)
 
 add_executable(ivan ${IVAN_HEADERS} ${IVAN_SOURCES})
 target_include_directories(ivan PUBLIC Include ../Felib/Include)
