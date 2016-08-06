@@ -27,6 +27,8 @@
 *.out
 *.app
 ivan
+igor/igor
+mihail/mihail
 
 # Editor backup/swap files
 *~
