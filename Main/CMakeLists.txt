@@ -18,3 +18,7 @@ set_source_files_properties(
 add_executable(ivan ${IVAN_HEADERS} ${IVAN_SOURCES})
 target_include_directories(ivan PUBLIC Include ../Felib/Include)
 target_link_libraries(ivan FeLib)
+
+if(NOT WIN32)
+  install(TARGETS ivan DESTINATION "${CMAKE_INSTALL_BINDIR}")
+endif()
