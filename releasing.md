@@ -5,8 +5,7 @@ To do for each release
 
 ###Things to change around in the code:
 
- - Search for "0.50.6" in the project files and set this to 0.50.7 etcetera, depending on what the next verison is
- - Run `./autogen.sh` to generate the Autotools build system with the updated version number
+ - Update the IVAN version number in the root CMakeLists.txt from 0.50.6 to 0.50.7, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
