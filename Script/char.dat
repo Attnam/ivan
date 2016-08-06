@@ -435,7 +435,7 @@ farmer
   {
     4,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
-    "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
+    "@Dd seems suspicious. \"You look like one from Luppliva! Go away! 0000000000000000000000000012345678123456781200000000000000000000000000123456781234567812\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
@@ -495,7 +495,7 @@ guard
     FriendlyReplies =
     {
       4,
-      "@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got transferred?\"",
+      "@Dd says sadly: \"Back then I used to love bananas. One day the master guard sl\"",
       "\"Lions killed a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
       "\"This place's as hot as the elemental plane of fire! I want back home.\"",
       "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
