@@ -10,7 +10,7 @@ extern "C" {
 #ifndef MIDI_PARSER_H
 #define MIDI_PARSER_H
 
-
+#include <stddef.h>
 #include <stdint.h>
 #include "MIDICodes.h"
 

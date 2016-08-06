@@ -63,7 +63,10 @@ truthoption ivanconfig::BeNice(           "BeNice",
 scrollbaroption ivanconfig::Volume(     "Volume",
                                           "volume",
                                           100,
-                                          &VolumeDisplayer);
+                                          &VolumeDisplayer,
+                                          &VolumeChangeInterface,
+                                          &VolumeChanger,
+                                          &VolumeHandler);
 cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           "select MIDI output device",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -99,6 +102,11 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
   Entry << O->Value << "/100";
 }
 
+void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/100";
+}
+
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
         switch(O->Value)
@@ -111,6 +119,22 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
                 break;
           case DIR_HACK:
                 Entry << CONST_S("NetHack");
+                break;
+        }
+}
+
+void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
+{
+        switch(O->Value)
+        {
+          case DIR_NORM:
+                Entry << CONST_S("MIDI output device 1");
+                break;
+          case DIR_ALT:
+                Entry << CONST_S("MIDI output device 2");
+                break;
+          case DIR_HACK:
+                Entry << CONST_S("MIDI output device 3");
                 break;
         }
 }
@@ -167,6 +191,19 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::VolumeChangeInterface(numberoption* O)
+{
+  iosystem::ScrollBarQuestion(CONST_S("Set new volume value (0-100, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 100, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+
+  if(game::IsRunning())
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+
+  return false;
+}
+
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
 {
   if(What < 0) What = 0;
@@ -180,6 +217,14 @@ void ivanconfig::ContrastChanger(numberoption* O, long What)
   if(What > 200) What = 200;
   O->Value = What;
   CalculateContrastLuminance();
+}
+
+void ivanconfig::VolumeChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 100) What = 100;
+  O->Value = What;
+//  CalculateContrastLuminance();
 }
 
 #ifndef __DJGPP__
