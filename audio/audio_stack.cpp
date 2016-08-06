@@ -21,13 +21,10 @@
 */
 
 
+#include <audio_stack.h>
+#include <audio_stack.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "stack.h"
-
-
-/* Ring buffer implementation */
-
 #include "stack.h"
 
 
