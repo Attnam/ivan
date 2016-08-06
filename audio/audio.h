@@ -66,6 +66,8 @@ public:
 
    static int GetMIDIOutputDevices(std::vector<std::string>& deviceNames);
 
+   static int ChangeMIDIOutputDevice(std::string portName);
+
    /**
     * @param vol 0 - 128
     */

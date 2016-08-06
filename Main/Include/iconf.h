@@ -77,7 +77,6 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
-  int NumberOfMIDIOutputDevices;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;
 #endif

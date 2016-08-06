@@ -97,7 +97,7 @@ void audio::Init()
    LoadMIDIFile("Track1.mid", 0, 100);
    LoadMIDIFile("Track2.mid", 0, 100);
 
-   SetVolumeLevel(128);
+   SetVolumeLevel(127);
 
    SDL_Thread *thread;
    int         threadReturnValue;
@@ -145,7 +145,23 @@ int audio::Loop(void *ptr)
 }
 
 
+int audio::ChangeMIDIOutputDevice(std::string portName)
+{
+   std::vector<std::string> devicenames;
+   audio::GetMIDIOutputDevices(devicenames);
 
+   midiout->closePort();
+
+   for (int i = 0; i < devicenames.size(); ++i)
+   {
+      if( portName.compare( devicenames[i] ) == 0 )
+      {
+         midiout->openPort(i);
+      }
+   }
+
+   return 0;
+}
 
 int audio::GetMIDIOutputDevices(std::vector<std::string>& deviceNames)
 {
@@ -180,7 +196,7 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
    int cumulativeWait = 0;
    for (uint32_t i = 0; i < loops; i++)
    {
-      MPB_RePosition(&MIDIHdr, 0, MPB_PB_ALL_ON);
+      MPB_RePosition(&MIDIHdr, 0, MPB_PB_NO_VOL);
       for(;;)
       {
          cumulativeWait += usPerTick;
@@ -191,7 +207,7 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
          }
 
          MIDIHdr.masterClock += 1;
-         if (MPB_ContinuePlay(&MIDIHdr, MPB_PB_ALL_ON) == MPB_FILE_FINISHED)
+         if (MPB_ContinuePlay(&MIDIHdr, MPB_PB_NO_VOL) == MPB_FILE_FINISHED)
          {
             MPB_PausePlayback(&MIDIHdr);
             break;
@@ -208,6 +224,20 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
 void audio::SetVolumeLevel(int vol)
 {
    Volume = vol;
+
+   MIDI_CHAN_EVENT_t newVolume;
+   newVolume.eventType = MIDI_CONTROL_CHANGE;
+   newVolume.parameter1 = CHANNEL_VOLUME;
+   newVolume.parameter2 = vol;
+
+   for(int i = 0 ; i < MIDI_MAX_CHANNELS; ++i )
+   {
+      newVolume.eventType = MIDI_CONTROL_CHANGE | i;
+      ::SendMIDIEvent(&newVolume);
+   }
+
+
+
    //Mix_VolumeMusic(Volume);
 }
 

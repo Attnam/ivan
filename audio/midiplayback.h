@@ -50,6 +50,7 @@ enum
 typedef enum
 {
     MPB_PB_ALL_ON = 0,
+    MPB_PB_NO_VOL,
     MPB_PB_NO_NOTES, //no notes and no lyrics too
     MPB_PB_SAVE_MIDI_STATUS,
     MPB_PB_ALL_OFF,

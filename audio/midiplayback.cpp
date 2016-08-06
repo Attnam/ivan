@@ -789,6 +789,15 @@ case MIDI_META_MSG:
 default:
    //MIDI_PrintEventInfo(event);
 
+   if( mode == MPB_PB_NO_VOL )
+   {
+      if (((event->event.eventType & 0xF0) == MIDI_CONTROL_CHANGE) && ((event->event.chanEvent.parameter1 & 0x7F) == CHANNEL_VOLUME))
+      {
+         break;
+      }
+   }
+
+
    if (mode == MPB_PB_NO_NOTES)
    {
       if (((event->event.eventType & 0xF0) == MIDI_NOTE_ON) || ((event->event.eventType & 0xF0) == MIDI_NOTE_OFF))

@@ -70,7 +70,7 @@ scrollbaroption ivanconfig::Volume(     "Volume",
                                           &VolumeHandler);
 cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           "select MIDI output device",
-                                          0, NumberOfMIDIOutputDevices, // {default value, number of options to cycle through}
+                                          0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
@@ -127,31 +127,23 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
 {
   std::vector<std::string> devicenames;
-  audio::GetMIDIOutputDevices(&devicenames);
+  audio::GetMIDIOutputDevices(devicenames);
   
-  if(!devicenames.size())
+  if( O->Value && devicenames.size() )
   {
-    Entry << CONST_S("none");
-    return;
+     const char *cstr = devicenames[O->Value - 1].c_str();
+     Entry << cstr;
+     audio::ChangeMIDIOutputDevice(devicenames[O->Value - 1]);
+  }
+  else
+  {
+     audio::ChangeMIDIOutputDevice( std::string(""));
+     Entry << CONST_S("No output Device");
   }
 
-  for(int i = 0; i < devicenames.size(); ++i)
-  {
-    Entry << devicenames[i];
-  }
 
-  switch(O->Value)
-  {
-    case DIR_NORM:
-          Entry << CONST_S("MIDI output device 1");
-          break;
-    case DIR_ALT:
-          Entry << CONST_S("MIDI output device 2");
-          break;
-    case DIR_HACK:
-          Entry << CONST_S("MIDI output device 3");
-          break;
-  }
+
+
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
@@ -239,6 +231,9 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   if(What < 0) What = 0;
   if(What > 127) What = 127;
   O->Value = What;
+
+  audio::SetVolumeLevel(What);
+
 //  CalculateContrastLuminance();
 }
 
@@ -308,9 +303,13 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&Volume);
   
-  std::vector<std::string> devicenames;
-  audio::GetMIDIOutputDevices(&devicenames);
-  NumberOfMIDIOutputDevices = devicenames.size();
+
+  std::vector<std::string> DeviceNames;
+  int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
+
+  MIDIOutputDevice.Value = 0;
+  MIDIOutputDevice.CycleCount = NumDevices+1;
+
   configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
