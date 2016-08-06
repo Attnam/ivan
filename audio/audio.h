@@ -64,6 +64,8 @@ public:
 
    static void SendMIDIEvent(std::vector<unsigned char>* message);
 
+   static int GetMIDIOutputDevices(std::vector<std::string>& deviceNames);
+
    /**
     * @param vol 0 - 128
     */

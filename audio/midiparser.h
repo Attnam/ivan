@@ -33,6 +33,7 @@ extern "C" {
 
 
 #include <stdint.h>
+#include <stddef.h>
 #include "MIDICodes.h"
 
 #define MIDI_HEADER_STRING   "MThd"
