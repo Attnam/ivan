@@ -18,6 +18,7 @@
 #include <direct.h>
 #endif
 
+#include <cstdio>
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"

@@ -29,6 +29,8 @@
 #include "message.h"
 #include "proto.h"
 
+#include "audio.h"
+
 int Main(int argc, char **argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
@@ -59,6 +61,8 @@ int Main(int argc, char **argv)
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
+
+  audio::Init();
 
   for(;;)
   {
