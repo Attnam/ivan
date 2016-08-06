@@ -60,6 +60,14 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
+scrollbaroption ivanconfig::Volume(     "Volume",
+                                          "volume",
+                                          100,
+                                          &VolumeDisplayer);
+cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
+                                          "select MIDI output device",
+                                          DIR_NORM, 3, // {default value, number of options to cycle through}
+                                          &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",

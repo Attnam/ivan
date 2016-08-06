@@ -29,6 +29,7 @@ class ivanconfig
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
+  static long GetVolume() { return Volume.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
@@ -68,6 +69,7 @@ class ivanconfig
   static cycleoption DirectionKeyMap;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
+  static scrollbaroption Volume;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;
 #endif
