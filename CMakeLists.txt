@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(ivan VERSION 0.50.6)
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 
 if(NOT WIN32)
