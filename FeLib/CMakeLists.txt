@@ -1,11 +1,10 @@
-file(GLOB FELIB_HEADERS Include/*.h)
-file(GLOB FELIB_SOURCES Source/*.cpp)
+file(GLOB FELIB_SOURCES Include/*.h Source/*.cpp)
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   add_definitions(-DGCC) # TODO: Use __GNUC__ in the code instead.
 endif()
 
-add_library(FeLib ${FELIB_HEADERS} ${FELIB_SOURCES})
+add_library(FeLib ${FELIB_SOURCES})
 
 find_package(SDL2)
 if(SDL2_FOUND)
