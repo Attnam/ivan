@@ -186,8 +186,6 @@ int audio::ChangeMIDIOutputDevice(int newPort)
       }
    }
 
-
-
    return 0;
 }
 
@@ -222,9 +220,14 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
 
    int usPerTick = MPB_SetTickRate(MIDIHdr.currentState.BPM, MIDIHdr.PPQ);
    int cumulativeWait = 0;
-   int position = CurrentPosition;
+   int position = 0;
 
-   for (uint32_t i = 0; i < loops; i++)
+   if( PlaybackState == PAUSED )
+   {
+      position = CurrentPosition;
+   }
+
+   for (int32_t i = 0; i < loops; i++)
    {
       MPB_RePosition(&MIDIHdr, position, MPB_PB_NO_VOL);
       for(;;)
@@ -246,6 +249,16 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
          {
             CurrentPosition = MIDIHdr.masterClock;
             MPB_PausePlayback(&MIDIHdr);
+            MPB_ResetMIDI();
+            MPB_CloseFile();
+            return 0;
+         }
+
+         if( PlaybackState == STOPPED )
+         {
+            CurrentPosition = 0;
+            MPB_PausePlayback(&MIDIHdr);
+            MPB_ResetMIDI();
             MPB_CloseFile();
             return 0;
          }
@@ -302,7 +315,7 @@ void audio::IntensityLevel(int intensity)
 void audio::SetPlaybackStatus(eAudioPlaybackStates_t newState)
 {
    PlaybackState = newState;
-   if( newState == PAUSED )
+   if( (newState == PAUSED) || (newState == STOPPED))
    {
       //Wait until the track has finished playing
       while(isTrackPlaying)
