@@ -79,7 +79,7 @@ void audio::Init()
    std::string portName;
    std::vector<unsigned char> message;
 
-   PlaybackState = DISABLED;
+   PlaybackState = audio::RESUME_SONG;
    CurrentMIDIOutPort = -1;
    // RtMidiOut constructor
    try
@@ -105,7 +105,7 @@ void audio::Init()
    // Simply create a thread
    thread = SDL_CreateThread( audio::Loop, "AudioThread", (void *)NULL);
 
-   PlaybackState = STOPPED;
+   PlaybackState = 0x00;
 
    isInit = true;
    isTrackPlaying = false;
@@ -139,10 +139,9 @@ int audio::Loop(void *ptr)
 
    while(1)
    {
-      if( Tracks.size() && (PlaybackState == PLAYING) )
+      if( Tracks.size() && (PlaybackState & PLAYING) )
       {
          isTrackPlaying = true;
-//         PlaybackState = PLAYING;
          int randomIndex = rand() % Tracks.size();
          PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
       }
@@ -164,8 +163,7 @@ int audio::ChangeMIDIOutputDevice(int newPort)
 {
    if( newPort != CurrentMIDIOutPort)
    {
-      audio::SetPlaybackStatus(audio::PAUSED);
-
+      audio::SetPlaybackStatus(0x00);
       try {
          if( midiout->isPortOpen() )
          {
@@ -175,7 +173,7 @@ int audio::ChangeMIDIOutputDevice(int newPort)
          if( newPort != 0)
          {
             midiout->openPort(newPort-1);
-            audio::SetPlaybackStatus(audio::PLAYING);
+            audio::SetPlaybackStatus(audio::PLAYING | audio::RESUME_SONG);
          }
          CurrentMIDIOutPort = newPort;
 
@@ -220,11 +218,11 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
 
    int usPerTick = MPB_SetTickRate(MIDIHdr.currentState.BPM, MIDIHdr.PPQ);
    int cumulativeWait = 0;
-   int position = 0;
+   int position = CurrentPosition;
 
-   if( PlaybackState == PAUSED )
+   if( !(PlaybackState & RESUME_SONG) )
    {
-      position = CurrentPosition;
+      position = 0;
    }
 
    for (int32_t i = 0; i < loops; i++)
@@ -239,29 +237,19 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
             cumulativeWait = cumulativeWait - ((cumulativeWait / 1000)*1000);
          }
 
-         if( PlaybackState == PLAYING )
+         if( PlaybackState & PLAYING )
          {
             MIDIHdr.masterClock += 1;
             CurrentPosition = MIDIHdr.masterClock;
          }
-
-         if( PlaybackState == PAUSED )
+         else
          {
-            CurrentPosition = MIDIHdr.masterClock;
             MPB_PausePlayback(&MIDIHdr);
             MPB_ResetMIDI();
             MPB_CloseFile();
             return 0;
          }
 
-         if( PlaybackState == STOPPED )
-         {
-            CurrentPosition = 0;
-            MPB_PausePlayback(&MIDIHdr);
-            MPB_ResetMIDI();
-            MPB_CloseFile();
-            return 0;
-         }
 
          if (MPB_ContinuePlay(&MIDIHdr, MPB_PB_NO_VOL) == MPB_FILE_FINISHED)
          {
@@ -312,10 +300,10 @@ void audio::IntensityLevel(int intensity)
 }
 
 
-void audio::SetPlaybackStatus(eAudioPlaybackStates_t newState)
+void audio::SetPlaybackStatus(uint8_t newStateBitmap)
 {
-   PlaybackState = newState;
-   if( (newState == PAUSED) || (newState == STOPPED))
+   PlaybackState = newStateBitmap;
+   if( !(PlaybackState & PLAYING))
    {
       //Wait until the track has finished playing
       while(isTrackPlaying)

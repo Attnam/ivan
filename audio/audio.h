@@ -56,13 +56,11 @@ class audio
 {
 public:
 
+   /** Bitmap for different states*/
    typedef enum
    {
-      DISABLED,
-      PLAYING,
-      PAUSED,
-      FADEOUT,
-      STOPPED,
+      PLAYING       = 0x01,
+      RESUME_SONG  = 0x02,
    } eAudioPlaybackStates_t ;
 
 
@@ -104,7 +102,7 @@ public:
 
    static int IsPlaybackStopped(void);
 
-   static void SetPlaybackStatus(eAudioPlaybackStates_t newState);
+   static void SetPlaybackStatus(uint8_t newStateBitmap);
 
 private:
 

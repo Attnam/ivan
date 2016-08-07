@@ -140,7 +140,7 @@ void dungeon::PrepareMusic(int Index)
 // pass each one to audio::LoadMIDIFile()
 // Activate audio ramp-up?? 
 
-  audio::SetPlaybackStatus(audio::STOPPED);
+  audio::SetPlaybackStatus(0);
   audio::ClearMIDIPlaylist();
 
   for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
