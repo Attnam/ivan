@@ -17,7 +17,7 @@
 #include <io.h>
 #endif
 
-#ifdef LINUX
+#ifdef UNIX
 #include <dirent.h>
 #include <stddef.h>
 #include <cstdio>
@@ -738,7 +738,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   return List.GetEntry(Check);
 #endif
 
-#ifdef LINUX
+#ifdef UNIX
   DIR* dp;
   struct dirent* ep;
   festring Buffer;

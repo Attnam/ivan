@@ -5,8 +5,8 @@ project(ivan VERSION 0.50.6)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 
-if(NOT WIN32)
-  add_definitions(-DLINUX) # FIXME: Not all non-Windows platforms are Linux.
+if(UNIX)
+  add_definitions(-DUNIX)
   include(GNUInstallDirs)
   install(DIRECTORY Graphics Script DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
   add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
