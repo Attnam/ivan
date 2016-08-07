@@ -46,6 +46,7 @@ class dungeon
   truth IsGenerated(int I) const { return Generated[I]; }
   void SetIsGenerated(int I, truth What) { Generated[I] = What; }
   int GetLevelTeleportDestination(int) const;
+  void PrepareMusic(int);
  private:
   void Initialize();
   const dungeonscript* DungeonScript;

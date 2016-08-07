@@ -18,6 +18,7 @@
 #include "save.h"
 #include "femath.h"
 #include "bitmap.h"
+#include "message.h"
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -125,6 +126,14 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
 
     return false;
   }
+}
+
+void dungeon::PrepareMusic(int Index)
+{
+  const levelscript* LevelScript = GetLevelScript(Index);
+  festring Music = LevelScript->GetAudioPlayList()->GetRandomElement();
+
+  ADD_MESSAGE("Play %s", Music.CStr());
 }
 
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)

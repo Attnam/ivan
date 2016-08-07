@@ -1952,6 +1952,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
     GetCurrentArea()->SendNewDrawRequest();
     v2 Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
+    GetCurrentDungeon()->PrepareMusic(Area);
 
     if(Player)
     {
