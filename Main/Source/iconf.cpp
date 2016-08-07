@@ -329,6 +329,6 @@ void ivanconfig::Initialize()
   configsystem::Load();
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
-
+  audio::SetVolumeLevel(Volume.Value);
 
 }
