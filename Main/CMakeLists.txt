@@ -1,5 +1,4 @@
-file(GLOB IVAN_HEADERS Include/*.h)
-file(GLOB IVAN_SOURCES Source/*.cpp)
+file(GLOB IVAN_SOURCES Include/*.h Source/*.cpp)
 # The following files are #included from other .cpp files and so shouldn't be
 # compiled directly. Setting the HEADER_FILE_ONLY property to TRUE prevents it.
 set_source_files_properties(
@@ -15,7 +14,7 @@ set_source_files_properties(
     Source/wsquare.cpp Source/wterra.cpp Source/wterras.cpp
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
-add_executable(ivan ${IVAN_HEADERS} ${IVAN_SOURCES})
+add_executable(ivan ${IVAN_SOURCES})
 target_include_directories(ivan PUBLIC Include ../Felib/Include)
 target_link_libraries(ivan FeLib)
 
