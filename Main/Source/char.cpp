@@ -799,6 +799,8 @@ int character::ChooseBodyPartToReceiveHit(double ToHitValue,
   return 0;
 }
 
+#include "audio.h"
+
 void character::Be()
 {
   if(game::ForceJumpToPlayerBe())
@@ -841,6 +843,28 @@ void character::Be()
 
       if(!Action || Action->AllowFoodConsumption())
         Hunger();
+
+
+      int MinHPPercent = 128;
+      for(int c = 0; c < BodyParts; ++c)
+      {
+         int tempHpPercent;
+        bodypart* BodyPart = GetBodyPart(c);
+
+        if(BodyPart)
+        {
+           tempHpPercent = (BodyPart->GetHP() * audio::MAX_INTENSITY_VOLUME) / BodyPart->GetMaxHP();
+           if(tempHpPercent < MinHPPercent )
+           {
+              MinHPPercent = tempHpPercent;
+           }
+
+
+        }
+      }
+      audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
+
+
     }
 
     if(Stamina != MaxStamina)

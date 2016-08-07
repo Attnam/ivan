@@ -51,7 +51,7 @@ musicfile::~musicfile()
    delete[] Filename;
 }
 
-int audio::Volume;
+int audio::MasterVolume;
 int audio::Intensity;
 bool audio::isInit;
 
@@ -63,6 +63,15 @@ int audio::CurrentMIDIOutPort;
 
 std::vector<musicfile*> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
+
+/** For each increase in intensity, the respective MIDI channel changes by the following amount */
+int  audio::DeltaVolumePerIntensity[MAX_MIDI_CHANNELS] = {0, 0, 0, 0, 0, -1, -1, -1, -1, 0, -1, 1, 1, 1, 1, 1};
+int  audio::IntensityVolume[MAX_MIDI_CHANNELS];
+
+int  audio::InitialIntensityVolume[MAX_MIDI_CHANNELS] = {MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME,
+                                                         MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME, MAX_INTENSITY_VOLUME,
+                                                         MAX_INTENSITY_VOLUME, 0, 0, 0, 0, 0};
+
 
 void audio::error(RtMidiError::Type type, const std::string &errorText, void *userData )
 {
@@ -81,6 +90,9 @@ void audio::Init()
 
    PlaybackState = audio::RESUME_SONG;
    CurrentMIDIOutPort = -1;
+   Intensity = 0;
+   MasterVolume = 0;
+
    // RtMidiOut constructor
    try
    {
@@ -97,7 +109,7 @@ void audio::Init()
    //LoadMIDIFile("Track1.mid", 0, 100);
    //LoadMIDIFile("Track2.mid", 0, 100);
 
-   SetVolumeLevel(127);
+
 
    SDL_Thread *thread;
    int         threadReturnValue;
@@ -271,16 +283,30 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
 
 void audio::SetVolumeLevel(int vol)
 {
-   Volume = vol;
+   MasterVolume = vol;
 
    MIDI_CHAN_EVENT_t newVolume;
-   newVolume.eventType = MIDI_CONTROL_CHANGE;
-   newVolume.parameter1 = CHANNEL_VOLUME;
-   newVolume.parameter2 = vol;
 
-   for(int i = 0 ; i < MIDI_MAX_CHANNELS; ++i )
+   CalculateChannelVolumes(Intensity, &DeltaVolumePerIntensity[0]);
+
+   for(int i = 0 ; i < MAX_MIDI_CHANNELS; ++i )
    {
       newVolume.eventType = MIDI_CONTROL_CHANGE | i;
+      newVolume.parameter1 = CHANNEL_VOLUME;
+
+      int midivolume  = (IntensityVolume[i] * MasterVolume) / MAX_MASTER_VOLUME;
+      if( midivolume >= MAX_MASTER_VOLUME )
+      {
+         midivolume = MAX_MASTER_VOLUME;
+      }
+
+      if( midivolume <= 0 )
+      {
+         midivolume = 0;
+      }
+      newVolume.parameter2 = midivolume;
+
+
       ::SendMIDIEvent(&newVolume);
    }
 
@@ -289,13 +315,16 @@ void audio::SetVolumeLevel(int vol)
 
 int audio::GetVolumeLevel(void)
 {
-   return Volume;
+   return MasterVolume;
 }
 
 void audio::IntensityLevel(int intensity)
 {
-   Intensity = intensity;
-
+   if( intensity != Intensity )
+   {
+      Intensity = intensity;
+      SetVolumeLevel(MasterVolume);
+   }
    /* Do a check to see if we change / cue MIDI file */
 }
 
@@ -337,6 +366,29 @@ void audio::SendMIDIEvent(std::vector<unsigned char>* message)
 }
 
 
+void audio::CalculateChannelVolumes(int intensity, int* deltaIntensity)
+{
+   for(int i = 0 ; i < MAX_MIDI_CHANNELS; ++i)
+   {
+      IntensityVolume[i] = InitialIntensityVolume[i] + (deltaIntensity[i] * intensity);
+      if(IntensityVolume[i] >= MAX_INTENSITY_VOLUME)
+      {
+         IntensityVolume[i]  = MAX_INTENSITY_VOLUME;
+      }
+
+      if( IntensityVolume[i] <= 0 )
+      {
+         IntensityVolume[i] = 0;
+      }
+
+
+   }
+
+
+
+}
+
+
 
 void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
 {
@@ -346,5 +398,6 @@ void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
    message.push_back(event->parameter2);
    audio::SendMIDIEvent( &message );
 }
+
 
 

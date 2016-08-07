@@ -63,6 +63,16 @@ public:
       RESUME_SONG  = 0x02,
    } eAudioPlaybackStates_t ;
 
+   enum
+   {
+      MAX_MIDI_CHANNELS = 16
+   };
+
+   enum
+   {
+      MAX_MASTER_VOLUME  = 127,
+      MAX_INTENSITY_VOLUME = 127
+   };
 
    static void error(RtMidiError::Type type, const std::string &errorText, void *userData );
 
@@ -104,11 +114,18 @@ public:
 
    static void SetPlaybackStatus(uint8_t newStateBitmap);
 
+   static void CalculateChannelVolumes(int intensity, int* deltaIntensity);
+
 private:
 
 
    static bool isInit;
-   static int  Volume;
+   static int  MasterVolume; /** 0 - 127 */
+   static int  IntensityVolume[MAX_MIDI_CHANNELS];
+
+   static int  InitialIntensityVolume[MAX_MIDI_CHANNELS];
+   static int  DeltaVolumePerIntensity[MAX_MIDI_CHANNELS];
+
    static int  Intensity;
 
    static bool isTrackPlaying;
