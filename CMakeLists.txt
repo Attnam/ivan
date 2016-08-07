@@ -11,6 +11,8 @@ if(UNIX)
   install(DIRECTORY Graphics Script DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
   add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
                   -DLOCAL_STATE_DIR="${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
+elseif(WIN32)
+  add_definitions(-DWIN32)
 endif()
 
 add_subdirectory(FeLib)
