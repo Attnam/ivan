@@ -133,6 +133,11 @@ void dungeon::PrepareMusic(int Index)
   const levelscript* LevelScript = GetLevelScript(Index);
   festring Music = LevelScript->GetAudioPlayList()->GetRandomElement();
 
+// Loop through strings
+// clear audio
+// pass each one to audio::LoadMIDIFile()
+// Activate audio ramp-up?? 
+
   ADD_MESSAGE("Play %s", Music.CStr());
 }
 
