@@ -18,7 +18,7 @@
 
 #include "festring.h"
 
-#ifdef LINUX
+#ifdef UNIX
 #define HIGH_SCORE_FILENAME LOCAL_STATE_DIR "/ivan-highscore.scores"
 #endif
 
