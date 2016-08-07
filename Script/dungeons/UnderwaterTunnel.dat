@@ -52,6 +52,12 @@ Dungeon UNDER_WATER_TUNNEL;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      2,
+      "Track1.mid",
+      "Track2.mid";
+    }
 
     Square, Random;
     {

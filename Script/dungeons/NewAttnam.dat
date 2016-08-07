@@ -47,6 +47,12 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      2,
+      "Track1.mid",
+      "Track2.mid";
+    }
 
     RoomDefault
     {
@@ -513,6 +519,13 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = false;
+    /* maybe some sumo music here */
+    AudioPlayList =
+    {
+      2,
+      "Track1.mid", 
+      "Track2.mid";
+    }
 
     Room
     {

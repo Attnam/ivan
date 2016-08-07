@@ -51,6 +51,12 @@ Dungeon ATTNAM;
     MonsterGenerationIntervalBase = 150;
     MonsterGenerationIntervalDelta = -25;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      2,
+      "Track1.mid",
+      "Track2.mid";
+    }
 
     RoomDefault
     {

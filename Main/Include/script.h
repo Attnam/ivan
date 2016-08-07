@@ -441,6 +441,7 @@ class levelscript : public scriptwithbase
   SCRIPT_TRUTH_WITH_BASE(IsCatacomb);
   SCRIPT_MEMBER_WITH_BASE(festring, EnterImage);
   SCRIPT_MEMBER_WITH_BASE(v2, EnterTextDisplacement);
+  SCRIPT_MEMBER_WITH_BASE(fearray<festring>, AudioPlayList);
 };
 
 class dungeonscript : public script
