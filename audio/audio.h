@@ -55,6 +55,19 @@ private:
 class audio
 {
 public:
+
+   typedef enum
+   {
+      DISABLED,
+      PLAYING,
+      PAUSED,
+      FADEOUT,
+      STOPPED,
+   } eAudioPlaybackStates_t ;
+
+
+   static void error(RtMidiError::Type type, const std::string &errorText, void *userData );
+
    static void Init();
    static void DeInit(void);
 
@@ -66,7 +79,7 @@ public:
 
    static int GetMIDIOutputDevices(std::vector<std::string>& deviceNames);
 
-   static int ChangeMIDIOutputDevice(std::string portName);
+   static int ChangeMIDIOutputDevice(int newPort);
 
    /**
     * @param vol 0 - 128
@@ -86,6 +99,13 @@ public:
     */
    static void LoadMIDIFile(char* filename, int intensitylow, int intensityhigh);
 
+
+   static void ClearMIDIPlaylist(void);
+
+   static int IsPlaybackStopped(void);
+
+   static void SetPlaybackStatus(eAudioPlaybackStates_t newState);
+
 private:
 
 
@@ -93,9 +113,16 @@ private:
    static int  Volume;
    static int  Intensity;
 
+   static bool isTrackPlaying;
+
+   static int CurrentPosition;
+
+   static int  PlaybackState;
+
    static std::vector<musicfile*> Tracks;
 
    static RtMidiOut* midiout;
+   static int CurrentMIDIOutPort;
 
 };
 

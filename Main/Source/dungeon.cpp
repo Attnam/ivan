@@ -20,6 +20,8 @@
 #include "bitmap.h"
 #include "message.h"
 
+#include "audio.h"
+
 dungeon::dungeon(int Index) : Index(Index)
 {
   Initialize();
@@ -131,14 +133,24 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
 void dungeon::PrepareMusic(int Index)
 {
   const levelscript* LevelScript = GetLevelScript(Index);
-  festring Music = LevelScript->GetAudioPlayList()->GetRandomElement();
+
 
 // Loop through strings
 // clear audio
 // pass each one to audio::LoadMIDIFile()
 // Activate audio ramp-up?? 
 
-  ADD_MESSAGE("Play %s", Music.CStr());
+  audio::SetPlaybackStatus(audio::PAUSED);
+  audio::ClearMIDIPlaylist();
+
+  for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+  {
+     festring Music = LevelScript->GetAudioPlayList()->Data[i];
+     audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+     ADD_MESSAGE("Adding %s", Music.CStr());
+  }
+
+  audio::SetPlaybackStatus(audio::PLAYING);
 }
 
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)

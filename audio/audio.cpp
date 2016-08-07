@@ -54,8 +54,20 @@ musicfile::~musicfile()
 int audio::Volume;
 int audio::Intensity;
 bool audio::isInit;
+
+int audio::PlaybackState;
+bool audio::isTrackPlaying;
+
+int audio::CurrentPosition;
+int audio::CurrentMIDIOutPort;
+
 std::vector<musicfile*> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
+
+void audio::error(RtMidiError::Type type, const std::string &errorText, void *userData )
+{
+
+}
 
 void audio::Init()
 {
@@ -67,6 +79,8 @@ void audio::Init()
    std::string portName;
    std::vector<unsigned char> message;
 
+   PlaybackState = DISABLED;
+   CurrentMIDIOutPort = -1;
    // RtMidiOut constructor
    try
    {
@@ -77,25 +91,11 @@ void audio::Init()
       ABORT("MIDI Out Error");
    }
 
-   // Check outputs.
-   nPorts = midiout->getPortCount();
-   std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
-   for ( unsigned int i=0; i<nPorts; i++ ) {
-     try {
-       portName = midiout->getPortName(i);
-     }
-     catch (RtMidiError &error) {
-       error.printMessage();
-       ABORT("MIDI Out Error");
-     }
-     std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
-   }
-   std::cout << '\n';
 
-   midiout->openPort(0);
+   midiout->setErrorCallback(audio::error);
 
-   LoadMIDIFile("Track1.mid", 0, 100);
-   LoadMIDIFile("Track2.mid", 0, 100);
+   //LoadMIDIFile("Track1.mid", 0, 100);
+   //LoadMIDIFile("Track2.mid", 0, 100);
 
    SetVolumeLevel(127);
 
@@ -105,7 +105,10 @@ void audio::Init()
    // Simply create a thread
    thread = SDL_CreateThread( audio::Loop, "AudioThread", (void *)NULL);
 
+   PlaybackState = STOPPED;
+
    isInit = true;
+   isTrackPlaying = false;
    atexit(audio::DeInit);
 
 }
@@ -130,35 +133,60 @@ void audio::DeInit(void)
 
 int audio::Loop(void *ptr)
 {
-   bool trackIsPlaying = false;
-
 
    std::vector<unsigned char> message;
    // Note On: 144, 64, 90
 
    while(1)
    {
-      int randomIndex = rand() % Tracks.size();
-      PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
+      if( Tracks.size() && (PlaybackState == PLAYING) )
+      {
+         isTrackPlaying = true;
+//         PlaybackState = PLAYING;
+         int randomIndex = rand() % Tracks.size();
+         PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
+      }
+
+      isTrackPlaying = false;
+      SDL_Delay(1);
+
    }
    return 0;
 }
 
-
-int audio::ChangeMIDIOutputDevice(std::string portName)
+/*int audio::GetCurrentOutputDevice(void)
 {
-   std::vector<std::string> devicenames;
-   audio::GetMIDIOutputDevices(devicenames);
+   return midiout->isPortOpen();
+}*/
 
-   midiout->closePort();
-
-   for (int i = 0; i < devicenames.size(); ++i)
+/* Port0 is NULL, and disabled. */
+int audio::ChangeMIDIOutputDevice(int newPort)
+{
+   if( newPort != CurrentMIDIOutPort)
    {
-      if( portName.compare( devicenames[i] ) == 0 )
-      {
-         midiout->openPort(i);
+      audio::SetPlaybackStatus(audio::PAUSED);
+
+      try {
+         if( midiout->isPortOpen() )
+         {
+            midiout->closePort();
+         }
+
+         if( newPort != 0)
+         {
+            midiout->openPort(newPort-1);
+            audio::SetPlaybackStatus(audio::PLAYING);
+         }
+         CurrentMIDIOutPort = newPort;
+
+      }
+      catch (RtMidiError &error) {
+        error.printMessage();
+        ABORT("MIDI Out Error");
       }
    }
+
+
 
    return 0;
 }
@@ -189,14 +217,16 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
    std::vector<unsigned char> message;
    MIDI_HEADER_CHUNK_t MIDIHdr;
 
+
    MPB_PlayMIDIFile(&MIDIHdr, filename);
 
    int usPerTick = MPB_SetTickRate(MIDIHdr.currentState.BPM, MIDIHdr.PPQ);
-
    int cumulativeWait = 0;
+   int position = CurrentPosition;
+
    for (uint32_t i = 0; i < loops; i++)
    {
-      MPB_RePosition(&MIDIHdr, 0, MPB_PB_NO_VOL);
+      MPB_RePosition(&MIDIHdr, position, MPB_PB_NO_VOL);
       for(;;)
       {
          cumulativeWait += usPerTick;
@@ -206,13 +236,30 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
             cumulativeWait = cumulativeWait - ((cumulativeWait / 1000)*1000);
          }
 
-         MIDIHdr.masterClock += 1;
+         if( PlaybackState == PLAYING )
+         {
+            MIDIHdr.masterClock += 1;
+            CurrentPosition = MIDIHdr.masterClock;
+         }
+
+         if( PlaybackState == PAUSED )
+         {
+            CurrentPosition = MIDIHdr.masterClock;
+            MPB_PausePlayback(&MIDIHdr);
+            MPB_CloseFile();
+            return 0;
+         }
+
          if (MPB_ContinuePlay(&MIDIHdr, MPB_PB_NO_VOL) == MPB_FILE_FINISHED)
          {
             MPB_PausePlayback(&MIDIHdr);
             break;
          }
       }
+
+      //Reset playback pointer
+      position = 0;
+      CurrentPosition = 0;
    }
 
    MPB_CloseFile();
@@ -236,8 +283,6 @@ void audio::SetVolumeLevel(int vol)
       ::SendMIDIEvent(&newVolume);
    }
 
-
-
    //Mix_VolumeMusic(Volume);
 }
 
@@ -251,6 +296,30 @@ void audio::IntensityLevel(int intensity)
    Intensity = intensity;
 
    /* Do a check to see if we change / cue MIDI file */
+}
+
+
+void audio::SetPlaybackStatus(eAudioPlaybackStates_t newState)
+{
+   PlaybackState = newState;
+   if( newState == PAUSED )
+   {
+      //Wait until the track has finished playing
+      while(isTrackPlaying)
+      {
+
+      }
+   }
+}
+
+
+void audio::ClearMIDIPlaylist(void)
+{
+   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
+   {
+      delete *it;
+   }
+   Tracks.erase(Tracks.begin(), Tracks.end());
 }
 
 void audio::LoadMIDIFile(char* filename, int intensitylow, int intensityhigh)

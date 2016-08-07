@@ -127,17 +127,20 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
 {
   std::vector<std::string> devicenames;
-  audio::GetMIDIOutputDevices(devicenames);
+  int NumDevices = audio::GetMIDIOutputDevices(devicenames);
+  MIDIOutputDevice.CycleCount = NumDevices+1;
   
   if( O->Value && devicenames.size() )
   {
      const char *cstr = devicenames[O->Value - 1].c_str();
      Entry << cstr;
-     audio::ChangeMIDIOutputDevice(devicenames[O->Value - 1]);
+
+     audio::ChangeMIDIOutputDevice(O->Value);
+     VolumeChanger(&Volume, GetVolume());
   }
   else
   {
-     audio::ChangeMIDIOutputDevice( std::string(""));
+     audio::ChangeMIDIOutputDevice(0);
      Entry << CONST_S("No output Device");
   }
 
@@ -233,8 +236,6 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   O->Value = What;
 
   audio::SetVolumeLevel(What);
-
-//  CalculateContrastLuminance();
 }
 
 #ifndef __DJGPP__
@@ -304,11 +305,17 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&Volume);
   
 
+
+
   std::vector<std::string> DeviceNames;
   int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
-
   MIDIOutputDevice.Value = 0;
+  if( NumDevices )
+  {
+     MIDIOutputDevice.Value = 1;
+  }
   MIDIOutputDevice.CycleCount = NumDevices+1;
+
 
   configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__
@@ -321,4 +328,7 @@ void ivanconfig::Initialize()
 #endif
   configsystem::Load();
   CalculateContrastLuminance();
+  audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
+
+
 }
