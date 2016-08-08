@@ -323,13 +323,173 @@ Dungeon ELPURI_CAVE;
     }
   }
 
-  Level ENNER_BEAST_LEVEL;
+Level ENNER_BEAST_LEVEL;
   {
+  
     LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
     IgnoreDefaultSpecialSquares = true;
     Items = 35:70;
     EnterImage = "Enner.pcx";
     EnterTextDisplacement = -150, 0;
+
+	Room
+    {
+    Pos = 52,1;
+    Size = 10,33;
+	  Type = ROOM_NORMAL;
+	  WallSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+    FloorSquare = liquidterrain(UNDERGROUND_LAKE), 0;
+	  GenerateDoor = false;
+	  AllowLockedDoors = false;
+	  AllowBoobyTrappedDoors = false;
+	  GenerateLanterns = false;
+	  GenerateFountains = false;
+	  GenerateTunnel = true;
+	  AltarPossible = false;
+
+	Square, Pos 4, 16;
+    	{
+	    Character = ennerbeast;
+    	}
+	Square, Pos -1, 22;
+    	{
+	    AttachRequired = true;
+    	}
+	Square, Pos 8, 0;
+    	{
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+    	}
+	Square, Pos 0, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 1, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 2, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 3, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 4, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 5, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 6, -1;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 2, 34;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 3, 34;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 4, 34;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 5, 34;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 6, 34;
+      {
+      OTerrain = 0;
+      }
+	Square, Pos 2, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+	Square, Pos 3, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+	Square, Pos 4, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+	Square, Pos 5, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+	Square, Pos 6, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+	Square, Pos 7, 33;
+      {
+      GTerrain = liquidterrain(UNDERGROUND_LAKE);
+      OTerrain = 0;
+      }
+
+	GTerrainMap
+      {
+        Pos = 0,-1;
+        Size = 10,36;
+        Types
+        {
+  # = WATER liquidterrain(UNDERGROUND_LAKE);
+	_ = GRAVEL solidterrain(GROUND);
+	~ = SAND solidterrain(GROUND);
+	x = FIR_WOOD solidterrain(PARQUET);
+        }
+      }
+      {
+    	#####~~~~_
+			~#####~~__
+			~~#####~__
+			__######~_
+			__~#####~_
+			__~#####~_
+			__~####___
+			_~~#####~~
+			__#######~
+			_~######~~
+			_######~~~
+			_#######~_
+			~~######~_
+			_#####~___
+			_#####~~__
+			__#####~~_
+			_~######__
+			__xxxxxxx~
+			__~#####~~
+			___######~
+			__######~~
+			_#######~~
+			__#######~
+			__######~~
+			_~######~~
+			~~~######~
+			__#######~
+			__######~~
+			_~~######~
+			_~~#####~~
+			__#######~
+			_~######~~
+			_######~~~
+			_#######~_
+			~~######~_
+			__#####~~_	  	
+      }
+    }
 
     Square, Random;
     {
@@ -348,18 +508,11 @@ Dungeon ELPURI_CAVE;
       Times = 25:50;
     }
 
-    Square, Random NOT_WALKABLE|ATTACHABLE;
+   Square, BoundedRandom 1, 1, 14, 34, NOT_WALKABLE|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
-      AttachRequired = true;
-    }
-
-    Square, Random NOT_WALKABLE|ATTACHABLE;
-    {
-      OTerrain = stairs(STAIRS_DOWN);
-      EntryIndex = STAIRS_DOWN;
-      AttachRequired = true;
+	    AttachRequired = true;
     }
 
     Square, Random;
@@ -372,11 +525,6 @@ Dungeon ELPURI_CAVE;
     {
       Items == skull;
       Times = 5;
-    }
-
-    Square, Random NOT_IN_ROOM;
-    {
-      Character = ennerbeast;
     }
   }
 
