@@ -94,6 +94,7 @@ class inputfile
 };
 
 std::vector<festring> ListFiles(festring, cfestring&);
+void MakePath(cfestring&);
 
 /* Reads a binary form variable of type type and returns it.
  * An inputfile template member function would be far more elegant,

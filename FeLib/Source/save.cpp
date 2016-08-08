@@ -29,11 +29,7 @@ outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
   // Make sure the directory exists first.
   festring DirectoryPath = FileName;
   DirectoryPath.Resize(FileName.FindLast('/'));
-#ifdef WIN32
-  _mkdir(DirectoryPath.CStr());
-#else
-  mkdir(DirectoryPath.CStr(), S_IRWXU|S_IRWXG);
-#endif
+  MakePath(DirectoryPath);
 
   Buffer = fopen(FileName.CStr(), "wb");
 
@@ -747,4 +743,21 @@ std::vector<festring> ListFiles(festring Directory, cfestring& Extension)
 #endif
 #endif
   return Files;
+}
+
+/* Postcondition: Path exists and is a directory. */
+
+void MakePath(cfestring& Path)
+{
+  for(festring::sizetype Pos = 0; Pos != Path.GetSize();)
+  {
+    Pos = Path.Find('/', Pos + 1);
+    if (Pos == festring::NPos) Pos = Path.GetSize();
+    cfestring DirectoryPath = festring(Path.CStr(), Pos) + '\0';
+#ifdef WIN32
+    _mkdir(DirectoryPath.CStr());
+#else
+    mkdir(DirectoryPath.CStr(), S_IRWXU|S_IRWXG);
+#endif
+  }
 }
