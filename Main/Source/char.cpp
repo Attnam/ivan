@@ -1359,6 +1359,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
     {
       if(HasPetrussNut() && !HasGoldenEagleShirt())
       {
+        game::PlayVictoryMusic();
         game::TextScreen(CONST_S("An undead and sinister voice greets you as you leave the city behind:\n\n"
                                  "\"MoRtAl! ThOu HaSt SlAuGhTeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, "
                                  "ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!"));
@@ -1566,6 +1567,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
+    game::PlayDefeatMusic();
     ShowAdventureInfo();
 
     if(!game::IsInWilderness())
@@ -1611,7 +1613,6 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       Ghost->Enable();
       game::CreateBone();
     }
-
     game::TextScreen(CONST_S("Unfortunately you died."), ZERO_V2, WHITE, true, true, &game::ShowDeathSmiley);
     game::End(Msg);
   }
