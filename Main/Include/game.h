@@ -335,6 +335,8 @@ class game
   static void DisplayMassacreLists();
   static void DisplayMassacreList(const massacremap&, cchar*, long);
   static truth MassacreListsEmpty();
+  static void PlayVictoryMusic();
+  static void PlayDefeatMusic();
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
