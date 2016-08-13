@@ -395,7 +395,10 @@ void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
    std::vector<unsigned char> message;
    message.push_back(event->eventType);
    message.push_back(event->parameter1);
-   message.push_back(event->parameter2);
+   if( ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_PROGRAM_CHANGE) && ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_CHANNEL_PRESSURE))
+   {
+	   message.push_back(event->parameter2);
+   }
    audio::SendMIDIEvent( &message );
 }
 

@@ -789,6 +789,13 @@ case MIDI_META_MSG:
 default:
    //MIDI_PrintEventInfo(event);
 
+    if ((event->event.eventType & 0xF0) == MIDI_PROGRAM_CHANGE)
+    {
+    	printf("Progchange: %X %X %X\n", event->event.chanEvent.eventType, event->event.chanEvent.parameter1, event->event.chanEvent.parameter2);
+
+    }
+
+
    if( mode == MPB_PB_NO_VOL )
    {
       if (((event->event.eventType & 0xF0) == MIDI_CONTROL_CHANGE) && ((event->event.chanEvent.parameter1 & 0x7F) == CHANNEL_VOLUME))
