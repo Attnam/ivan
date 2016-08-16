@@ -48,7 +48,7 @@ Either use cmake-gui, or:
 
 mkdir vs2015
 cd vs2015
-cmake -G "Visual Studio 14 2015 Win64" ..
+cmake -G "Visual Studio 14 2015" ..
 
 Now open vs2015/ivan.sln in VS2015 IDE.
 
