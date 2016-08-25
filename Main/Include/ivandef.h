@@ -517,6 +517,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
+#define EMPTY_AREA 5
+#define XINROCH_TOMB 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -527,6 +529,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define IVAN_LEVEL 7
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
+
+#define DUAL_ENNER_BEAST_LEVEL 7
 
 /* stack::DrawContents flags */
 

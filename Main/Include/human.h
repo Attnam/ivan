@@ -314,6 +314,18 @@ CHARACTER(ennerbeast, humanoid)
   virtual truth AttackIsBlockable(int) const { return false; }
 };
 
+CHARACTER(ennerchild, humanoid)
+{
+ public:
+  virtual truth Hit(character*, v2, int, int = 0);
+  virtual truth MustBeRemovedFromBone() const;
+  virtual truth ReceiveDamage(character*, int, int, int = ALL, int = 8, truth = false, truth = false, truth = false, truth = true);
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
+  virtual truth AttackIsBlockable(int) const { return false; }
+};
+
 CHARACTER(skeleton, humanoid)
 {
  public:
