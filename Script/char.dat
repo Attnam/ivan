@@ -1134,6 +1134,79 @@ ennerbeast
   BiteCapturesBodyPart = false;
 }
 
+ennerchild
+{
+  DefaultArmStrength = 7;
+  DefaultLegStrength = 8;
+  DefaultDexterity = 14;
+  DefaultAgility = 14;
+  DefaultEndurance = 14;
+  DefaultPerception = 14;
+  DefaultIntelligence = 1;
+  DefaultWisdom = 1;
+  DefaultCharisma = 40;
+  DefaultMana = 0;
+  CanOpen = false;
+  CanApply = false;
+  TotalVolume = 42000;
+  TotalSize = 100;
+  Adjective = "enner";
+  UsesLongAdjectiveArticle = true;
+  IsPolymorphable = false;
+  AttackStyle = USE_HEAD;
+  BaseBiteStrength = 5000;
+  CanUseEquipment = false;
+  CanBeWished = false;
+  LegBitmapPos = 16, 48;
+  TorsoBitmapPos = 32, 48;
+  ArmBitmapPos = 64, 48;
+  HeadBitmapPos = 96, 320;
+  HairColor = rgb16(64, 20, 0);
+  ClothColor = rgb16(0, 0, 100);
+  BootColor = rgb16(90, 50, 10);
+  LegMainColor = rgb16(64, 20, 0);
+  PanicLevel = 75;
+  FleshMaterial = ENNER_BEAST_FLESH;
+  DeathMessage = "@Dd dies and the world is finally freed from this terrible child.";
+  /*IsUnique = true;*/
+  HostileReplies == "Aighee!";
+  AttachedGod = SCABIES;
+  BiteCapturesBodyPart = false;
+  IsAbstract = true;
+
+  Config BOY;
+  {
+    Sex = MALE;
+    NameSingular = "boy";
+    FriendlyReplies =
+    {
+      4,
+      "\"Fishing is fun! Do you fish?\"",
+      "\"And then Papa got that perch weighing fifty stones...\"",
+      "\"My big sister is around here somewhere. I'm hiding from her, so don't tell her I'm here!\"",
+      "\"Can you help me find my Papa?\"";
+    }
+  }
+
+  Config GIRL;
+  {
+    DefaultDexterity = 15;
+    DefaultAgility = 15;
+    DefaultEndurance = 15;
+    DefaultPerception = 16;
+    Sex = FEMALE;
+    NameSingular = "girl";
+    FriendlyReplies =
+    {
+      4,
+      "\"Fishing is fun! Do you fish?\"",
+      "\"And then Papa got that perch weighing fifty stones...\"",
+      "\"My little brat brother is hiding here somewhere. You haven't seen him have you?\"",
+      "\"Can you help me find my Papa?\"";
+    }
+  }
+}
+
 frog
 {
   HostileReplies == "@Dd croaks angrily.";

@@ -371,6 +371,9 @@
 #define WIFE 2
 #define CHILD 3
 
+#define BOY 1
+#define GIRL 2
+
 #define PARQUET 1
 #define FLOOR 2
 #define GROUND 3

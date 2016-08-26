@@ -852,7 +852,7 @@ Dungeon XINROCH_TOMB;
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {
-      OTerrain = stairs(STAIRS_UP) {AttachedArea = 1; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
+      OTerrain = stairs(STAIRS_UP) {AttachedArea = 2; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
@@ -920,12 +920,12 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 7;  /* Dual enner beast level (??) */
+  Level DUAL_ENNER_BEAST_LEVEL;
   {
     FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
     EnchantmentPlusChanceDelta = 10;
-    LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
+    LevelMessage = "You hear some high, wailing screams in the distance. Enner children must dwell in the level!";
 
     RoomDefault
     {
@@ -937,6 +937,16 @@ Dungeon XINROCH_TOMB;
     Items = 40:70;
     Size = 80, 26;
     ItemMinPriceBase = 20;
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(BOY);
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(GIRL);
+    }
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
     {

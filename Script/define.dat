@@ -644,6 +644,9 @@
 #define WIFE 2
 #define CHILD 3
 
+#define BOY 1
+#define GIRL 2
+
 #define LIGHT_ASIAN_SIREN 1
 #define DARK_ASIAN_SIREN 2
 #define CAUCASIAN_SIREN 3
@@ -753,6 +756,8 @@
 #define IVAN_LEVEL 7
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
+
+#define DUAL_ENNER_BEAST_LEVEL 7
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
