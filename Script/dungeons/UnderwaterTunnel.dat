@@ -54,9 +54,8 @@ Dungeon UNDER_WATER_TUNNEL;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      2,
-      "Track1.mid",
-      "Track2.mid";
+      1,
+      "Dungeon.mid";
     }
 
     Square, Random;

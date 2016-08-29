@@ -53,9 +53,8 @@ Dungeon ATTNAM;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      2,
-      "Track1.mid",
-      "Track2.mid";
+      1,
+      "Cathedral.mid";
     }
 
     RoomDefault
