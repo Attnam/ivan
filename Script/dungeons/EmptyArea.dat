@@ -48,9 +48,8 @@ Dungeon EMPTY_AREA;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      2,
-      "Track1.mid",
-      "Track2.mid";
+      1,
+      "Empty.mid";
     }
 
     Square, Random;
