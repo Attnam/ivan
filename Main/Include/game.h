@@ -321,6 +321,7 @@ class game
   static festring GetScrshotDir();
   static festring GetDataDir();
   static festring GetBoneDir();
+  static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
   static void SetPlayerWasHurtByExplosion(truth What) { PlayerHurtByExplosion = What; }
   static void SetCurrentArea(area* What) { CurrentArea = What; }

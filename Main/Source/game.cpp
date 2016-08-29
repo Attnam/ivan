@@ -2381,6 +2381,17 @@ festring game::GetBoneDir()
 #endif
 }
 
+festring game::GetMusicDir()
+{
+#ifdef LINUX
+  return LOCAL_STATE_DIR "/Music/";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "Music/";
+#endif
+}
+
 level* game::GetLevel(int I)
 {
   return GetCurrentDungeon()->GetLevel(I);
