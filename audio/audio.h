@@ -74,6 +74,11 @@ public:
       MAX_INTENSITY_VOLUME = 127
    };
 
+   enum
+   {
+      US_PER_VOLUME_CHANGE  = 15000
+   };
+
    static void error(RtMidiError::Type type, const std::string &errorText, void *userData );
 
    static void Init();
@@ -95,6 +100,8 @@ public:
    static void SetVolumeLevel(int vol);
 
    static int GetVolumeLevel(void);
+
+   static int SendVolumeMessage(int targetVolume);
 
    /**
     * @param intensity 0 - 100
@@ -120,13 +127,15 @@ private:
 
 
    static bool isInit;
+   static bool volumeChangeRequest;
    static int  MasterVolume; /** 0 - 127 */
    static int  IntensityVolume[MAX_MIDI_CHANNELS];
 
    static int  InitialIntensityVolume[MAX_MIDI_CHANNELS];
    static int  DeltaVolumePerIntensity[MAX_MIDI_CHANNELS];
 
-   static int  Intensity;
+   static int  TargetIntensity;
+   static int  CurrentIntensity;
 
    static bool isTrackPlaying;
 

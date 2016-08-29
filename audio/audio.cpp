@@ -51,12 +51,17 @@ musicfile::~musicfile()
    delete[] Filename;
 }
 
+
+
 int audio::MasterVolume;
-int audio::Intensity;
+int audio::TargetIntensity;
+int audio::CurrentIntensity;
 bool audio::isInit;
 
 int audio::PlaybackState;
 bool audio::isTrackPlaying;
+
+bool audio::volumeChangeRequest;
 
 int audio::CurrentPosition;
 int audio::CurrentMIDIOutPort;
@@ -90,8 +95,10 @@ void audio::Init()
 
    PlaybackState = audio::RESUME_SONG;
    CurrentMIDIOutPort = -1;
-   Intensity = 0;
+   CurrentIntensity = 0;
    MasterVolume = 0;
+   TargetIntensity = 0;
+   volumeChangeRequest = false;
 
    // RtMidiOut constructor
    try
@@ -220,6 +227,35 @@ int audio::GetMIDIOutputDevices(std::vector<std::string>& deviceNames)
 }
 
 
+int audio::SendVolumeMessage(int targetVolume)
+{
+   MIDI_CHAN_EVENT_t newVolume;
+
+
+   for(int i = 0 ; i < MAX_MIDI_CHANNELS; ++i )
+   {
+      newVolume.eventType = MIDI_CONTROL_CHANGE | i;
+      newVolume.parameter1 = CHANNEL_VOLUME;
+
+      int midivolume  = (IntensityVolume[i] * targetVolume) / MAX_MASTER_VOLUME;
+      if( midivolume >= MAX_MASTER_VOLUME )
+      {
+         midivolume = MAX_MASTER_VOLUME;
+      }
+
+      if( midivolume <= 0 )
+      {
+         midivolume = 0;
+      }
+      newVolume.parameter2 = midivolume;
+
+
+      ::SendMIDIEvent(&newVolume);
+   }
+
+}
+
+
 int audio::PlayMIDIFile(char* filename, int32_t loops)
 {
    std::vector<unsigned char> message;
@@ -232,6 +268,9 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
    int cumulativeWait = 0;
    int position = CurrentPosition;
 
+   int volumeChangeDelay = US_PER_VOLUME_CHANGE;
+
+
    if( !(PlaybackState & RESUME_SONG) )
    {
       position = 0;
@@ -243,10 +282,37 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
       for(;;)
       {
          cumulativeWait += usPerTick;
+         volumeChangeDelay -= cumulativeWait;
+
          if( cumulativeWait >= 1000 )
          {
             SDL_Delay(cumulativeWait / 1000);
             cumulativeWait = cumulativeWait - ((cumulativeWait / 1000)*1000);
+         }
+
+         if( (volumeChangeDelay < 0) || volumeChangeRequest)
+         {
+            volumeChangeDelay = US_PER_VOLUME_CHANGE;
+            if( (CurrentIntensity != TargetIntensity) || volumeChangeRequest )
+            {
+               if( TargetIntensity > CurrentIntensity )
+               {
+                  CurrentIntensity++;
+               }
+
+               if( CurrentIntensity > TargetIntensity )
+               {
+                  CurrentIntensity--;
+               }
+               CalculateChannelVolumes(CurrentIntensity, &DeltaVolumePerIntensity[0]);
+               SendVolumeMessage(MasterVolume);
+
+               if( volumeChangeRequest )
+               {
+                  volumeChangeRequest = false;
+               }
+
+            }
          }
 
          if( PlaybackState & PLAYING )
@@ -284,33 +350,7 @@ int audio::PlayMIDIFile(char* filename, int32_t loops)
 void audio::SetVolumeLevel(int vol)
 {
    MasterVolume = vol;
-
-   MIDI_CHAN_EVENT_t newVolume;
-
-   CalculateChannelVolumes(Intensity, &DeltaVolumePerIntensity[0]);
-
-   for(int i = 0 ; i < MAX_MIDI_CHANNELS; ++i )
-   {
-      newVolume.eventType = MIDI_CONTROL_CHANGE | i;
-      newVolume.parameter1 = CHANNEL_VOLUME;
-
-      int midivolume  = (IntensityVolume[i] * MasterVolume) / MAX_MASTER_VOLUME;
-      if( midivolume >= MAX_MASTER_VOLUME )
-      {
-         midivolume = MAX_MASTER_VOLUME;
-      }
-
-      if( midivolume <= 0 )
-      {
-         midivolume = 0;
-      }
-      newVolume.parameter2 = midivolume;
-
-
-      ::SendMIDIEvent(&newVolume);
-   }
-
-   //Mix_VolumeMusic(Volume);
+   volumeChangeRequest = true;
 }
 
 int audio::GetVolumeLevel(void)
@@ -320,10 +360,9 @@ int audio::GetVolumeLevel(void)
 
 void audio::IntensityLevel(int intensity)
 {
-   if( intensity != Intensity )
+   if( intensity != TargetIntensity )
    {
-      Intensity = intensity;
-      SetVolumeLevel(MasterVolume);
+      TargetIntensity = intensity;
    }
    /* Do a check to see if we change / cue MIDI file */
 }
@@ -395,7 +434,10 @@ void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
    std::vector<unsigned char> message;
    message.push_back(event->eventType);
    message.push_back(event->parameter1);
-   message.push_back(event->parameter2);
+   if( ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_PROGRAM_CHANGE) && ((event->eventType & MIDI_MSG_TYPE_MASK) != MIDI_CHANNEL_PRESSURE))
+   {
+	   message.push_back(event->parameter2);
+   }
    audio::SendMIDIEvent( &message );
 }
 
