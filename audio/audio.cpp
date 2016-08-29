@@ -35,7 +35,7 @@
 #include <cstring>
 #include "message.h"
 #include "midiplayback.h"
-
+#include "game.h"
 
 
 musicfile::musicfile(char* filename, int LowThreshold, int HighThreshold) :
@@ -393,11 +393,12 @@ void audio::ClearMIDIPlaylist(void)
 
 void audio::LoadMIDIFile(char* filename, int intensitylow, int intensityhigh)
 {
-   musicfile* mf = new musicfile(filename, intensitylow, intensityhigh);
-   Tracks.push_back(mf);
+  festring MusDir = game::GetMusicDir();
+  festring MusFile = MusDir + festring(filename);
+
+  musicfile* mf = new musicfile((char*) MusFile.CStr(), intensitylow, intensityhigh);
+  Tracks.push_back(mf);
 }
-
-
 
 void audio::SendMIDIEvent(std::vector<unsigned char>* message)
 {
