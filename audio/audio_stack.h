@@ -1,5 +1,5 @@
 /*
-    MIDIDebug : Debug interface for accompanying MIDI parser and player
+    stack: generic c stack and fifo list routines
     Copyright (c) 2004-2016 Adrian M. Gin
 
     This program is free software; you can redistribute it and/or modify
@@ -20,13 +20,33 @@
 
 */
 
-#include <stdio.h>
+
+#ifndef __STACK_H
+#define __STACK_H
+
 #include <stdint.h>
-#include "MIDIDebug.h"
 
+#define STACK_OVERFLOW	(NULL)
 
-void MIDI_Printf(const char* string, uint32_t data)
+/* Size has to be a size of power of 2 */
+typedef struct
 {
-   //printf("%s%d\n", string, data);
-}
+    void** memPtrArray; //memPtrsArray = uint8_t array[sizeof(void*) * 10];
+    volatile uint16_t readPtr;
+    volatile uint16_t writePtr;
+    volatile uint8_t size;
+} STACK_t;
+
+void* FIFO_PeekData(STACK_t* stack);
+void* LIFO_PopData(STACK_t* stack);
+void* FIFO_PopData(STACK_t* stack);
+uint8_t STACK_PushData(STACK_t* stack, void* data);
+
+uint8_t STACK_Len(STACK_t* stack);
+uint8_t STACK_isEmpty(STACK_t* stack);
+void    STACK_Clear(STACK_t* stack);
+
+
+#endif
+
 

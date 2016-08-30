@@ -103,6 +103,7 @@ INST_SCRIPT_MEMBER(itemcontentmap);
 INST_SCRIPT_MEMBER(glterraincontentmap);
 INST_SCRIPT_MEMBER(olterraincontentmap);
 INST_SCRIPT_MEMBER(fearray<packv2>);
+INST_SCRIPT_MEMBER(fearray<festring>);
 
 template <class type> void fastscriptmember<type>::ReadFrom(inputfile& SaveFile)
 {
@@ -890,6 +891,7 @@ void levelscript::InitDataMap()
   INIT_ENTRY(IsCatacomb);
   INIT_ENTRY(EnterImage);
   INIT_ENTRY(EnterTextDisplacement);
+  INIT_ENTRY(AudioPlayList);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)

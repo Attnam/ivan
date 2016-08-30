@@ -47,6 +47,11 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      1,
+      "Empty.mid";
+    }
 
     RoomDefault
     {
@@ -513,6 +518,12 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = false;
+    /* Sumo music here */
+    AudioPlayList =
+    {
+      1,
+      "Japan.mid";
+    }
 
     Room
     {

@@ -48,6 +48,8 @@ int Main(int argc, char **argv)
 
 #endif /* __DJGPP__ */
 
+  audio::Init();
+
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
   scriptsystem::Initialize();
@@ -62,7 +64,11 @@ int Main(int argc, char **argv)
   protosystem::Initialize();
   igraph::LoadMenu();
 
-  audio::Init();
+  /* Set off the main menu music */
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+  audio::LoadMIDIFile("mainmenu.mid", 0, 100);
+  audio::SetPlaybackStatus(audio::PLAYING);
 
   for(;;)
   {

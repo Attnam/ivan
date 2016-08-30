@@ -799,6 +799,8 @@ int character::ChooseBodyPartToReceiveHit(double ToHitValue,
   return 0;
 }
 
+#include "audio.h"
+
 void character::Be()
 {
   if(game::ForceJumpToPlayerBe())
@@ -841,6 +843,28 @@ void character::Be()
 
       if(!Action || Action->AllowFoodConsumption())
         Hunger();
+
+
+      int MinHPPercent = 128;
+      for(int c = 0; c < BodyParts; ++c)
+      {
+         int tempHpPercent;
+        bodypart* BodyPart = GetBodyPart(c);
+
+        if(BodyPart)
+        {
+           tempHpPercent = (BodyPart->GetHP() * audio::MAX_INTENSITY_VOLUME) / BodyPart->GetMaxHP();
+           if(tempHpPercent < MinHPPercent )
+           {
+              MinHPPercent = tempHpPercent;
+           }
+
+
+        }
+      }
+      audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
+
+
     }
 
     if(Stamina != MaxStamina)
@@ -1335,6 +1359,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
     {
       if(HasPetrussNut() && !HasGoldenEagleShirt())
       {
+        game::PlayVictoryMusic();
         game::TextScreen(CONST_S("An undead and sinister voice greets you as you leave the city behind:\n\n"
                                  "\"MoRtAl! ThOu HaSt SlAuGhTeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, "
                                  "ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!"));
@@ -1542,6 +1567,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
+    game::PlayDefeatMusic();
     ShowAdventureInfo();
 
     if(!game::IsInWilderness())
@@ -1587,7 +1613,6 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       Ghost->Enable();
       game::CreateBone();
     }
-
     game::TextScreen(CONST_S("Unfortunately you died."), ZERO_V2, WHITE, true, true, &game::ShowDeathSmiley);
     game::End(Msg);
   }

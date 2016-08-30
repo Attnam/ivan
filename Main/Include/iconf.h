@@ -29,6 +29,8 @@ class ivanconfig
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
+  static long GetVolume() { return Volume.Value; }
+  static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
@@ -53,10 +55,15 @@ class ivanconfig
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void ContrastChanger(numberoption*, long);
+  static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
+  static void VolumeDisplayer(const numberoption*, festring&);
+  static truth VolumeChangeInterface(numberoption*);
+  static void VolumeChanger(numberoption*, long);
 #ifndef __DJGPP__
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
+  static void VolumeHandler(long);
   static void BackGroundDrawer();
   static stringoption DefaultName;
   static stringoption DefaultPetName;
@@ -68,6 +75,8 @@ class ivanconfig
   static cycleoption DirectionKeyMap;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
+  static scrollbaroption Volume;
+  static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;
 #endif
