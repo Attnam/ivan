@@ -293,7 +293,7 @@ truth game::Init(cfestring& Name)
       audio::ClearMIDIPlaylist();
       audio::LoadMIDIFile("newgame.mid", 0, 100);
       audio::SetPlaybackStatus(audio::PLAYING);
-      
+
       iosystem::TextScreen(CONST_S("You couldn't possibly have guessed this day would differ from any other.\n"
                                    "It began just as always. You woke up at dawn and drove off the giant spider\n"
                                    "resting on your face. On your way to work you had serious trouble avoiding\n"
@@ -2384,7 +2384,7 @@ festring game::GetBoneDir()
 festring game::GetMusicDir()
 {
 #ifdef LINUX
-  return LOCAL_STATE_DIR "/Music/";
+  return GetDataDir() + "Music/";
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
