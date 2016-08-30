@@ -1,4 +1,4 @@
-SUBDIRS = FeLib Main Script Graphics
+SUBDIRS = FeLib audio Main Script Graphics
 
 EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING .customs.emacs
 
