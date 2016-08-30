@@ -36,7 +36,7 @@ AC_PROG_RANLIB
 
 AC_CONFIG_FILES(Makefile FeLib/Makefile FeLib/Include/Makefile
                 FeLib/Source/Makefile audio/Makefile
-                Script/Makefile Script/dungeons/Makefile Graphics/Makefile
+                Script/Makefile Script/dungeons/Makefile Graphics/Makefile Music/Makefile
                 Main/Makefile Main/Include/Makefile Main/Resource/Makefile
                 Main/Source/Makefile)
 AC_OUTPUT
