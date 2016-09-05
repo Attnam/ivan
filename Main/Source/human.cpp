@@ -2622,7 +2622,12 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
   if(!ForceDisappearance)
   {
     if(BodyPartIndex == HEAD_INDEX)
-      Bone = skull::Spawn(0, NO_MATERIALS);
+    {
+      if(GetConfig() == WAR_LORD)
+        Bone = skullofxinroch::Spawn(0, NO_MATERIALS);
+      else
+        Bone = skull::Spawn(0, NO_MATERIALS);
+    }
     else
       Bone = bone::Spawn(0, NO_MATERIALS);
 

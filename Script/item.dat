@@ -3240,6 +3240,35 @@ skull
   IsValuable = false;
 }
 
+skullofxinroch
+{
+  StrengthModifier = 100;
+  FormModifier = 15;
+  Roundness = 65;
+  DefaultSize = 20;
+  Possibility = 0;
+  DefaultMainVolume = 800;
+  BitmapPos = 48, 112;
+  Category = MISC;
+  NameSingular = "skull";
+  PostFix = "of Xinroch the skeleton warlord";
+  Alias == "skull of Xinroch";
+  MainMaterialConfig == BONE;
+  IsTwoHanded = true;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 128;
+  IsValuable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBeWished = false;
+  ArticleMode = FORCE_THE;
+  IsQuestItem = true;
+}
+
 gorovitsweapon
 {
   Adjective = "Gorovits family";
