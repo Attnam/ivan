@@ -25,10 +25,20 @@ if test "$SDL2_CONFIG" = "no"; then
                 AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 fi
 
+
+dnl Set flags for RtMidi
+AS_CASE([$target_os],
+        [darwin*],
+        [
+            RTMIDI_CPPFLAGS="-D__MACOSX_CORE__"
+            RTMIDI_LDFLAGS="-framework CoreMIDI -framework CoreAudio -framework CoreFoundation"
+        ])
+
+
 localstatedir=/var/lib
 CFLAGS="$CFLAGS $SDL_CFLAGS "
-LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
-CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
+LIBS="$LIBS $SDL_LIBS $SDL2_LIBS $RTMIDI_LDFLAGS"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS $RTMIDI_CPPFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
 
 AC_PROG_INSTALL
 

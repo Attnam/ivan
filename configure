@@ -5349,10 +5349,22 @@ rm -f core conftest.err conftest.$ac_objext \
 
 fi
 
+
+case $target_os in #(
+  darwin*) :
+
+            RTMIDI_CPPFLAGS="-D__MACOSX_CORE__"
+            RTMIDI_LDFLAGS="-framework CoreMIDI -framework CoreAudio -framework CoreFoundation"
+         ;; #(
+  *) :
+     ;;
+esac
+
+
 localstatedir=/var/lib
 CFLAGS="$CFLAGS $SDL_CFLAGS "
-LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
-CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
+LIBS="$LIBS $SDL_LIBS $SDL2_LIBS $RTMIDI_LDFLAGS"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS $RTMIDI_CPPFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
 
 
 
