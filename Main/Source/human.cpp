@@ -4408,6 +4408,12 @@ void necromancer::GetAICommand()
       return;
   }
 
+  if(GetConfig() == IMPRISONED_NECROMANCER && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    humanoid::MoveTowardsHomePos();
+    return;
+  }
+
   if(CheckForDoors())
     return;
 

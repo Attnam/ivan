@@ -247,6 +247,15 @@ statedata StateData[STATES] =
     &character::HiccupsHandler,
     0,
     &character::HiccupsSituationDangerModifier
+  }, {
+    "Ethereal",
+    NO_FLAGS,
+    &character::PrintBeginEtherealityMessage,
+    &character::PrintEndEtherealityMessage,
+    &character::BeginEthereality, &character::EndEthereality,
+    0,
+    0,
+    0
   }
 };
 
@@ -341,9 +350,12 @@ truth character::MustBeRemovedFromBone() const
 truth character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 character* character::GetLeader() const { return GetTeam()->GetLeader(); }
 int character::GetMoveType() const
-{ return (!StateIsActivated(LEVITATION)
+{ return ((!StateIsActivated(LEVITATION)
           ? DataBase->MoveType
-          : DataBase->MoveType | FLY); }
+          : DataBase->MoveType | FLY) |
+          (!StateIsActivated(ETHEREAL_MOVING)
+          ? DataBase->MoveType
+          : DataBase->MoveType | ETHEREAL)); }
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -4789,6 +4801,22 @@ void character::PrintEndInvisibilityMessage() const
   }
 }
 
+void character::PrintBeginEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel like many miscible droplets of ether.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s melds into the surroundings.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You drop out of the firmament, feeling suddenly quite dense.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s displaces the air with a puff.", CHAR_NAME(INDEFINITE));
+}
+
 void character::PrintBeginInfraVisionMessage() const
 {
   if(IsPlayer())
@@ -5357,6 +5385,10 @@ void character::BeginESP()
     GetArea()->SendNewDrawRequest();
 }
 
+void character::BeginEthereality()
+{
+}
+
 void character::EndInvisibility()
 {
   UpdatePictures();
@@ -5374,6 +5406,10 @@ void character::EndESP()
 {
   if(IsPlayer() && IsEnabled())
     GetArea()->SendNewDrawRequest();
+}
+
+void character::EndEthereality()
+{
 }
 
 void character::Draw(blitdata& BlitData) const

@@ -5171,6 +5171,59 @@ necromancer
     ScienceTalkIntelligenceRequirement = 20;
     ScienceTalkWisdomRequirement = 10;
   }
+
+  Config IMPRISONED_NECROMANCER;
+  {
+    HeadBitmapPos = 112, 128;
+    TorsoBitmapPos = 48, 352;
+    ArmBitmapPos = 80, 96;
+    LegBitmapPos = 16, 160;
+    ClothColor = rgb16(122, 60, 60);
+    EyeColor = rgb16(190, 250, 0);
+    ArmSpecialColor = rgb16(170, 82, 82);
+    CapColor = rgb16(120, 50, 50);
+    GauntletColor = rgb16(182, 64, 64);
+    CanBeGenerated = false;
+    /* Replies overridden */
+    DefaultArmStrength = 15;
+    DefaultLegStrength = 15;
+    DefaultDexterity = 22;
+    DefaultAgility = 12;
+    DefaultEndurance = 18;
+    DefaultPerception = 22;
+    DefaultIntelligence = 36;
+    DefaultWisdom = 20;
+    DefaultCharisma = 9;
+    DefaultMana = 50;
+    UsesLongAdjectiveArticle = true;
+    Adjective = "imprisoned";
+    TotalVolume = 80000;
+    TotalSize = 180;
+    Cloak = HARDENED_LEATHER cloak { Enchantment = 3; }
+    RightWielded = EBONY_WOOD EBONY_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 5; }
+    Frequency = 0;
+    PanicLevel = 0;
+    CWeaponSkillHits == 500;
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    /*Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }*/
+    ScienceTalkPossibility = 0;
+    TamingDifficulty = NO_TAMING;
+    IsNameable = false;
+    IsUnique = true;
+    CanRead = true;
+    IsPolymorphable = false;
+    PanicLevel = 0;
+    CanBeCloned = false;
+    BodyPartsDisappearWhenSevered = true;
+    CanBeConfused = false;
+    EnergyResistance = 50;
+    IsImmuneToLeprosy = true;
+    IsImmuneToItemTeleport = true;
+    AllowUnconsciousness = false;
+    DisplacePriority = 10;
+    UndeadVersions = false;
+  }
 }
 
 sumowrestler

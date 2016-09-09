@@ -2007,6 +2007,44 @@ cloak /* armor-> */
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
   }
+
+  Config CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    GearStates = ETHEREAL_MOVING;
+    Price = 2500;
+    MainMaterialConfig == GHOST;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    NameSingular = "shadow veil";
+    AttachedGod = INFUSCOR;
+    CanBeBroken = true;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+  }
+
+  Config BROKEN|CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    Price = 2500;
+    GearStates = 0;
+    EnchantmentPlusChance = 0;
+    CloakBitmapPos = 48, 496;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+  }
 }
 
 boot /* armor-> */
@@ -3061,6 +3099,46 @@ flamingsword /* meleeweapon-> */
     SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 4;
+  }
+
+  Config LOST_RUBY_FLAMING_SWORD;
+  {
+    Possibility = 0;
+    BitmapPos = 32, 208;
+    WieldedBitmapPos = 176, 80;
+    MainMaterialConfig == RUBY;
+    SecondaryMaterialConfig == RUBY;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    Adjective = "long lost ruby flaming";
+    AttachedGod = INFUSCOR;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+  }
+
+  Config BROKEN|LOST_RUBY_FLAMING_SWORD;
+  {
+    Possibility = 0;
+    BitmapPos = 32, 208;
+    WieldedBitmapPos = 176, 80;
+    MainMaterialConfig == RUBY;
+    SecondaryMaterialConfig == RUBY;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    Adjective = "long lost ruby flaming";
+    AttachedGod = INFUSCOR;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
   }
 }
 

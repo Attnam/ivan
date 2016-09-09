@@ -124,7 +124,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 21
+#define STATES 22
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -147,6 +147,7 @@ const name##prototype name::ProtoType
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
+#define ETHEREAL_MOVING (1 << 21)
 
 #define TORSO 1
 #define HEAD 2
