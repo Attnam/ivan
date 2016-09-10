@@ -497,7 +497,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 1:2; /* Paradise room */
+  RandomLevel 1; /* Paradise room */
   {
     Room
     {
@@ -591,15 +591,14 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 2; /* Lesser maze room */
+  RandomLevel 2:3; /* Lesser maze room */
   {
     Room
     {
       Size = 13,13;
       AltarPossible = true;
       GenerateFountains = true;
-      /*Shape = MAZE_ROOM;*/
-      Shape = RECTANGLE;
+      Shape = MAZE_ROOM;
     }
   }
 
@@ -1028,8 +1027,7 @@ Dungeon XINROCH_TOMB;
       Size = 13,13;
       AltarPossible = true;
       GenerateFountains = true;
-      /*Shape = MAZE_ROOM;*/
-      Shape = RECTANGLE;
+      Shape = MAZE_ROOM;
     }
 
     Room
@@ -1214,9 +1212,18 @@ Dungeon XINROCH_TOMB;
 
   Level 8;  /* Tactical level */
   {
+    Rooms = 1;
+    Size = 42, 26;
     FillSquare = GNEISS solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = GNEISS solidterrain(GROUND), 0;
     CanGenerateBone = false;
+    EarthquakesAffectTunnels = false;
+    LOSModifier = 48;
+    EnchantmentMinusChanceBase = 5;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 30;
+    IgnoreDefaultSpecialSquares = true;
 
     RoomDefault
     {
@@ -1225,29 +1232,114 @@ Dungeon XINROCH_TOMB;
       DoorSquare = TEAK_WOOD solidterrain(PARQUET), SAPPHIRE door;
     }
 
-    Size = 42, 26;
-    EnchantmentMinusChanceBase = 5;
-    EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
-    LOSModifier = 48;
-    ItemMinPriceBase = 30;
-
-    Square, Random NOT_WALKABLE|ATTACHABLE;
+    Room
     {
-      OTerrain = stairs(STAIRS_UP);
-      EntryIndex = STAIRS_UP;
-      AttachRequired = true;
-    }
+      Pos = 2, 2;
+      Size = 38, 22;
+      AltarPossible = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
 
-    Square, Random NOT_WALKABLE|ATTACHABLE;
-    {
-      OTerrain = stairs(STAIRS_DOWN);
-      EntryIndex = STAIRS_DOWN;
-      AttachRequired = true;
+      Square, Pos 1,20;
+      {
+        OTerrain = stairs(STAIRS_UP);
+      }
+
+      Square, Pos 1,20;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Pos 1,1;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+      }
+
+      Square, Pos 1,1;
+      {
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      OTerrainMap
+      {
+        Size = 36, 20;
+        Pos = 1, 1;
+        Types
+        {
+          # = OCTIRON wall(BRICK_FINE);
+          d = SAPPHIRE door(OCTAGONAL_LOCK);
+          D = SAPPHIRE door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        }
+      }
+      {
+        ....................................
+        ###D############################d##.
+        ....................................
+        ....................................
+        ..##################################
+        ..##################################
+        ....................................
+        ....................................
+        ##d#############################....
+        #....###....###..###....###....#....
+        #....###....###..###....###....#....
+        #############################d##....
+        ....................................
+        ....................................
+        ..##################################
+        ..##################################
+        ....................................
+        ....................................
+        ###D############################d##.
+        ....................................
+      }
+      CharacterMap
+      {
+        Size = 36, 20;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          D = darkknight(GRAVE_KEEPER);
+          d = darkknight(TEMPLAR);
+          n = necromancer(APPRENTICE_NECROMANCER);
+          b = darkmage(BATTLE_MAGE);
+          a = darkmage(APPRENTICE);
+          m = mysticfrog(DARK);
+          r = darkknight(ROOKIE);
+          v = darkknight(VETERAN);
+          N = necromancer(MASTER_NECROMANCER);
+        }
+      }
+      {
+        ........D...........................
+        ###################################.
+        .........r...............d..........
+        .................................N..
+        ..##################################
+        ..##################################
+        ......n................v............
+        ....................................
+        ################################....
+        #.b..###....###.m###....###.d..#....
+        #....###....###..###..a.###....#....
+        ################################....
+        ............................n.......
+        ..............r.....................
+        ..##################################
+        ..##################################
+        ....v........................n......
+        ....................................
+        ###################################.
+        ..........................r.........
+      }
     }
   }
 
-  Level 9; /* Gravekeeper level (?) */
+  Level 9; /* Xinroch's Ghost level */
   {
     FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = SLATE solidterrain(GROUND), 0;
@@ -1273,8 +1365,7 @@ Dungeon XINROCH_TOMB;
       Size = 21,39;
       AltarPossible = true;
       GenerateFountains = true;
-      /*Shape = MAZE_ROOM;*/
-      Shape = RECTANGLE;
+      Shape = MAZE_ROOM;
     }
 
     Square, BoundedRandom 1, 1, XSize - 2, YSize * 1 / 5, NOT_WALKABLE|ATTACHABLE;
@@ -1292,7 +1383,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 10; /* Final boss level */
+  Level 10; /* Penultimate level, ha ha */
   {
     Items = 5:10;
     EnchantmentMinusChanceBase = 15;
