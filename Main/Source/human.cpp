@@ -4529,7 +4529,7 @@ void necromancer::BeTalkedTo()
       game::SetXinrochTombStoryState(2);
   /*
       PLAYER->ShowAdventureInfo();
-      festring Msg = CONST_S("defeated Elpuri and continued to further adventures");
+      festring Msg = CONST_S("delivered the Shadow Veil to the Necromancer and continued to further adventures");
       AddScoreEntry(Msg, 2, false);
       game::End(Msg);
   */
@@ -5801,4 +5801,17 @@ void guard::BeTalkedTo()
     Item[c]->RemoveFromSlot();
     GetStack()->AddItem(Item[c]);
   }
+}
+
+void xinrochghost::GetAICommand()
+{
+/*
+  if(!RAND_N(50))
+    CallForMonsters();
+*/
+  humanoid::GetAICommand();
+}
+
+void xinrochghost::CallForMonsters()
+{
 }

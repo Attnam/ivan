@@ -2026,6 +2026,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
+    ArticleMode = FORCE_THE;
   }
 
   Config BROKEN|CLOAK_OF_SHADOWS;
@@ -3104,8 +3105,8 @@ flamingsword /* meleeweapon-> */
   Config LOST_RUBY_FLAMING_SWORD;
   {
     Possibility = 0;
-    BitmapPos = 32, 208;
-    WieldedBitmapPos = 176, 80;
+    BitmapPos = 16, 336;
+    WieldedBitmapPos = 160, 16;
     MainMaterialConfig == RUBY;
     SecondaryMaterialConfig == RUBY;
     MaterialConfigChances == 100;
@@ -3119,26 +3120,9 @@ flamingsword /* meleeweapon-> */
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
-  }
-
-  Config BROKEN|LOST_RUBY_FLAMING_SWORD;
-  {
-    Possibility = 0;
-    BitmapPos = 32, 208;
-    WieldedBitmapPos = 176, 80;
-    MainMaterialConfig == RUBY;
-    SecondaryMaterialConfig == RUBY;
-    MaterialConfigChances == 100;
-    EnchantmentPlusChance = 0;
-    Adjective = "long lost ruby flaming";
-    AttachedGod = INFUSCOR;
-    CanBeWished = false;
-    IsDestroyable = false;
-    IsMaterialChangeable = false;
-    IsPolymorphable = false;
-    CanBeCloned = false;
-    IsQuestItem = true;
-    CanBeBurned = false;
+    CanBeBroken = false;
+    BaseEnchantment = 0;
+    CanBeEnchanted = false;
   }
 }
 

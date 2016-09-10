@@ -577,7 +577,9 @@
 #define VETERAN 2
 #define EUNUCH 3
 #define PATROL 4
+#define TEMPLAR 4
 #define SHOP 5
+#define GRAVE_KEEPER 5
 #define ELITE 6
 #define MASTER 7
 #define GRAND_MASTER 8

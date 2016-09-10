@@ -495,6 +495,16 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
+CHARACTER(xinrochghost, spirit)
+{
+ public:
+  virtual truth IsNameable() const { return false; }
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  virtual void GetAICommand();
+  void CallForMonsters();
+};
+
 CHARACTER(imp, humanoid)
 {
 };

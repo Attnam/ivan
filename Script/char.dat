@@ -1020,6 +1020,55 @@ darkknight
     GauntletColor = rgb16(50, 50, 50);
   }
 
+  Config TEMPLAR; /*Same as elite*/
+  {
+    AttributeBonus = 20;
+    Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = STEEL boot { Enchantment = 2; }
+    PostFix = "templar";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 1000;
+    RightSWeaponSkillHits = 500;
+    PanicLevel = 5;
+    TotalVolume = 90000;
+    ClothColor = rgb16(120, 20, 20);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    BootColor = rgb16(128, 128, 128);
+    CanBeGenerated = false;
+    HostileReplies == "@Dd yells: \"For Infuscor I shall slay you!\"";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config GRAVE_KEEPER; /*Tougher than elite*/
+  {
+    AttributeBonus = 25;
+    Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = METEORIC_STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = METEORIC_STEEL boot { Enchantment = 2; }
+    Adjective = "Xinroch's";
+    NameSingular = "grave keeper";
+    ArticleMode = NO_ARTICLE;
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 1000;
+    RightSWeaponSkillHits = 500;
+    PanicLevel = 5;
+    TotalVolume = 90000;
+    ClothColor = rgb16(80, 20, 20);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    BootColor = rgb16(128, 128, 128);
+    IsUnique = true;
+    CanBeGenerated = false;
+    HostileReplies == "@Dd yells: \"Who dares disturb the slumber of the lord Xinroch?\"";
+    AttachedGod = INFUSCOR;
+  }
+
   Config ELITE;
   {
     AttributeBonus = 20;
@@ -1081,6 +1130,55 @@ darkknight
     DisplacePriority = 8;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
+  }
+
+  Config MASTER;
+  {
+    AttributeBonus = 50;
+    TotalVolume = 120000;
+    Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+    BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
+    Cloak = DRAGON_HIDE cloak { Enchantment = 4; }
+    Belt = RUBY belt { Enchantment = 4; }
+    LeftWielded = RUBY RUBY flamingsword(LOST_RUBY_FLAMING_SWORD);
+    LeftRing = ring(RING_OF_TELEPORT_CONTROL);
+    RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
+    RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
+    Adjective = "elder grand master";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 5000;
+    LeftSWeaponSkillHits = 2000;
+    PanicLevel = 0;
+    TamingDifficulty = NO_TAMING;
+    IsUnique = true;
+    CanBeWished = true;
+    DefaultName = "Xinroch";
+    DangerModifier = 1800;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
+    LegBitmapPos = 0, 96;
+    ClothColor = rgb16(80, 0, 20);
+    EyeColor = rgb16(200, 0, 0);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 48, 80;
+    BeltColor = rgb16(180, 0, 0);
+    CapColor = rgb16(160, 160, 160);
+    HairColor = rgb16(180, 0, 32);
+    GauntletColor = rgb16(200, 200, 0);
+    BootColor = rgb16(160, 160, 160);
+    CanBeConfused = false;
+    FireResistance = 30;
+    ElectricityResistance = 30;
+    EnergyResistance = 30;
+    IsImmuneToItemTeleport = true;
+    IsExtraFragile = false;
+    AllowUnconsciousness = false;
+    DisplacePriority = 8;
+    UndeadVersions = false;
+    IsImmuneToWhipOfThievery = true;
+    AttachedGod = INFUSCOR;
   }
 }
 
@@ -2718,6 +2816,77 @@ bonesghost
   UndeadVersions = false;
   IsAbstract = false;
   CanUseEquipment = false;
+}
+
+xinrochghost
+{
+  DefaultArmStrength = 30;
+  DefaultLegStrength = 30;
+  DefaultDexterity = 26;
+  DefaultAgility = 28;
+  DefaultEndurance = 30;
+  DefaultPerception = 36;
+  DefaultIntelligence = 25;
+  DefaultWisdom = 20;
+  DefaultCharisma = 20;
+  DefaultMana = 30;
+  TotalVolume = 100000;
+  TotalSize = 120;
+  ArmBitmapPos = 80, 176;
+  LegBitmapPos = 0, 96;
+  HeadBitmapPos = 96, 112;
+  TorsoBitmapPos = 48, 80;
+  HairColor = rgb16(180, 0, 32);
+  EyeColor = rgb16(200, 0, 0);
+  Inventory == cloak(CLOAK_OF_SHADOWS);
+  RightWielded = METEORIC_STEEL EBONY_WOOD meleeweapon(LONG_SWORD);
+  KnownCWeaponSkills == LARGE_SWORDS;
+  CWeaponSkillHits == 200;
+  RightSWeaponSkillHits = 200;
+  Frequency = 0;
+  TamingDifficulty = NO_TAMING;
+  IsNameable = false;
+  IsUnique = true;
+  CanRead = true;
+  PanicLevel = 0;
+  CanBeWished = true;
+  DangerModifier = 800;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  FireResistance = 30;
+  ElectricityResistance = 30;
+  EnergyResistance = 30;
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
+  DisplacePriority = 8;
+  IsImmuneToWhipOfThievery = true;
+  CreateUndeadConfigurations = false;
+  CanBeGenerated = false;
+  CanBeGeneratedOnlyInTheCatacombs = false;
+  IsCatacombCreature = false;
+  UndeadVersions = false;
+  IsAbstract = false;
+  CanUseEquipment = true;
+  StandVerb = "hovering";
+  NameSingular = "ghost";
+  PostFix = "of Xinroch";
+  AttachedGod = INFUSCOR;
+  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION|TELEPORT_CONTROL;
+  BaseEmitation = rgb24(110, 110, 160);
+  HostileReplies == "\"Who dares disturb my eternal slumber?\"";
+  FriendlyReplies == "\"Boo!\"";
+  DeathMessage = "@Dd is finally sucked into hell, leaving a shimmering cowl behind on the floor.";
+  ArticleMode = FORCE_THE;
+  FleshMaterial = GHOST;
+  SpillsBlood = false;
+  Sweats = false;
+  UsesNutrition = false;
+  BodyPartsDisappearWhenSevered = true;
+  MoveType = ETHEREAL;
+  CanChoke = false;
+  IsImmuneToStickiness = true;
+  BiteCapturesBodyPart = false;
 }
 
 imp
