@@ -336,7 +336,7 @@ locationAW
   AttachedArea = 0;
   CanBeGenerated = true;
   NativeGTerrainType = TUNDRA;
-  RevealEnvironmentInitially = true;
+  RevealEnvironmentInitially = false;
 }
 
 locationAX

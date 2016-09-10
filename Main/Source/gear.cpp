@@ -61,6 +61,13 @@ cchar* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() 
 truth cloak::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
+truth cloak::IsShadowVeil() const
+{
+  if(GetConfig() == CLOAK_OF_SHADOWS)
+    return true;
+  else
+    return false;
+}
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }

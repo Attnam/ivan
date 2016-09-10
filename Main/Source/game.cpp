@@ -79,6 +79,7 @@ double game::AveragePlayerAgilityExperience;
 int game::Teams;
 int game::Dungeons;
 int game::StoryState;
+int game::XinrochTombStoryState;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -356,6 +357,7 @@ truth game::Init(cfestring& Name)
       Turn = 0;
       InitPlayerAttributeAverage();
       StoryState = 0;
+      XinrochTombStoryState = 0;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -837,7 +839,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning;
+  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -902,7 +904,7 @@ int game::Load(cfestring& SaveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning;
+  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);

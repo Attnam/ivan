@@ -299,8 +299,11 @@ class character : public entity, public id
   truth TryMove(v2, truth, truth);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
+  truth HasEncryptedScroll() const;
   truth HasPetrussNut() const;
   truth RemoveEncryptedScroll();
+  truth HasShadowVeil() const;
+  truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
   truth Engrave(cfestring&);
   void AddScoreEntry(cfestring&, double = 1., truth = true) const;

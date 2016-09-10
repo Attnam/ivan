@@ -649,6 +649,7 @@ CHARACTER(necromancer, humanoid)
  public:
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;

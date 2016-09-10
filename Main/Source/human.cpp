@@ -4492,6 +4492,141 @@ void necromancer::RaiseSkeleton()
   EditAP(-GetSpellAPCost());
 }
 
+void necromancer::BeTalkedTo()
+{
+  if(GetConfig() != IMPRISONED_NECROMANCER)
+  {
+    humanoid::BeTalkedTo();
+    return;
+  }
+
+  /* From here we are talking to the necromancer in the attnamese catacombs */
+  if(GetRelation(PLAYER) == HOSTILE)
+  {
+    ADD_MESSAGE("I will bury you in the catacombs with all the others!");
+    return;
+  }
+
+  if(PLAYER->HasShadowVeil() && (game::GetXinrochTombStoryState() == 1))
+  {
+    if(PLAYER->RemoveShadowVeil())
+    {
+      game::TextScreen(CONST_S("The Necromancer takes the Shadow Veil.\n"
+                               "\"At last I can make my escape from Petrus' wretched clutches!\"\n"
+                               "\n"
+                               "The necromancer looks up \n"
+                               "\"Oh, you are still here. Good. Pray tell me, what did you find in the Tomb?\n"
+                               "A portal? Did you traverse it? Of course! You can't do so bodily,\n"
+                               "unless you were... changed in some way.\"\n"));
+
+      game::TextScreen(CONST_S("You feel a cold, tingling sensation in the middle of your forehead.\n"
+                               "\n\n"
+                               "\"Here, I give you the seal of the undead. You will be able to traverse\n"
+                               "the portal without the use of the shadow veil. Go forth!\""));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"You can still retrieve the lost flaming ruby sword. If you go beyond the portal, you will find the one who carries this lost sword. But be warned, he is a terrible foe!\"");
+      game::SetXinrochTombStoryState(2);
+  /*
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("defeated Elpuri and continued to further adventures");
+      AddScoreEntry(Msg, 2, false);
+      game::End(Msg);
+  */
+    }
+    return;
+  }
+/*
+  if(PLAYER->HasRubySword())
+  {
+    ADD_MESSAGE("The necromancer exclaims: \"What are you still doing down here? That sword belongs to the Champion of Infuscor!\"");
+    return;
+  }
+  else if(game::GetXinrochTombStoryState() == 2)
+    ADD_MESSAGE("The necromancer asks: \"Have you found that flaming ruby sword yet?\"");
+*/
+  if(game::GetXinrochTombStoryState() == 1)
+  {
+    ADD_MESSAGE("The necromancer says: \"Bring me the shadow veil and we'll talk.\"");
+    return;
+  }
+
+  if(PLAYER->HasEncryptedScroll() && !game::GetXinrochTombStoryState())
+  {
+    ADD_MESSAGE("The necromancer looks up. \"Have you got the encrypted scroll?\"");
+
+    if(game::TruthQuestion(CONST_S("Will you give the encrypted scroll to the necromancer? [y/n]"), REQUIRES_ANSWER))
+    {
+      if(PLAYER->RemoveEncryptedScroll())
+      {
+        game::TextScreen(CONST_S("The necromancer takes the scroll and mutters an incantation in a low voice.\n"
+                                 "To your surprise, the words rearrange themselves on the page,\n"
+                                 "revealing a previously inscrutable message.\n"
+                                 "The necromancer scans the page from left to right several times. His face contorts:\n"
+                                 "\"Bah! A canticle of Saint Petrus the Lion-Hearted!\"\n"
+                                 "He continues down the page. His eye's widen:\n"
+                                 "\"O ho! 10000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
+                                 "\n"
+                                 "The necromancer allows the scroll to burn the ashes wither away in his hands.\n"
+                                 "\"Alas, no news about my trial. But thank you for sharing.\"\n"
+                                 "\n"
+                                 "\"What am I doing here you ask? You could say I spent some time arranging things\n"
+                                 "in the catacombs below. I was the undertaker for the city of Attnam, you see.\n"
+                                 "Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
+                                 "223 years later, and I'm still down here, drinking blood, eating bones, and generally \n"
+                                 "trying all the old life-extension tricks. Finally I got caught out by that meddling Haedlac.\n"
+                                 "He's got nothing better to do these days. Sent me here to the cells, never too far away\n"
+                                 "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
+                                 "every now and again to check up on me.\"\n"));
+
+        game::TextScreen(CONST_S("\"I can relate the history of dark knighthood to you. Long ago, there lived a\n"
+                                 "powerful warrior, Xinroch, who rose up the ranks of the fearsome order of the\n"
+                                 "dark knights, to become grand master dark knight. \n\n"
+                                 "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
+                                 "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
+                                 "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
+                                 "of their legendary master, they may obstruct your entry to the tomb. Little do they know\n"
+                                 "that in order for their master to be reborn, his spirit must be freed from the place.\n"
+                                 "Of course, disturbing such a restless soul would be dangerous. You may need to subdue it\n"
+                                 "by force to gain what you need. Legend has it Xinroch's spirit is able to wield weapons,\n"
+                                 "and possesses a cloak of unimaginable usefulness: The Shadow Veil.\""));
+
+        game::TextScreen(CONST_S("The necromancer suddenly looks at you intently.\n"
+                                 "\"Tell you what, I think you can help me out. But first I'll need proof of your abilities.\n"
+                                 "It will take all your wits to survive the powers of the Tomb of Xinroch to the very end.\"\n\n"
+                                 "Bring me this shadow veil, and I might be able to help you in a lasting way. I need the\n"
+                                 "shadow veil to help make my escape from Attnam. It has certain properties conducive to\n"
+                                 "getting away unnoticed.\"\n\n"
+                                 "\"There is also the matter of Xinroch's lost sword. Its power lies in its symbolism.\n"
+                                 "If you were to gain it somehow, then I imagine most believers would be convinced that\n"
+                                 "you were Xinroch himself, returned to the flesh. Although you would need to prove this\n"
+                                 "with the help of our god, Infuscor... ...it might require some offering, or exchange?\n"
+                                 "I cannot say what trial would await you to retrieve the lost sword.\""));
+
+        game::LoadWorldMap();
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        game::SaveWorldMap();
+        GetArea()->SendNewDrawRequest();
+        ADD_MESSAGE("\"By the way, if you find anything belonging to Xinroch, then don't lose it! I have a feeling it will help you greatly in your quest.\"");
+        game::SetXinrochTombStoryState(1);
+        return;
+      }
+    }
+    else
+    {
+      ADD_MESSAGE("The necromancer looks downcast. "
+                  "\"I see. I guess I shall have to wait for another adventurer then.\"");
+      return;
+    }
+  }
+  else if(!game::GetXinrochTombStoryState()) /* XinrochTombStoryState == 0 */
+    ADD_MESSAGE("The necromancer says: \"Bring me the encrypted scroll and we'll talk.\"");
+
+  return;
+}
+
 void humanoid::StayOn(liquid* Liquid)
 {
   if(IsFlying())

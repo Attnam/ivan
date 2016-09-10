@@ -1749,6 +1749,24 @@ truth character::HasGoldenEagleShirt() const
   return combineequipmentpredicates()(this, &item::IsGoldenEagleShirt, 1);
 }
 
+truth character::HasEncryptedScroll() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsEncryptedScroll())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsEncryptedScroll, 1);
+}
+
+truth character::HasShadowVeil() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsShadowVeil, 1);
+}
+
 truth character::RemoveEncryptedScroll()
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -1765,6 +1783,32 @@ truth character::RemoveEncryptedScroll()
     item* Item = GetEquipment(c);
 
     if(Item && Item->IsEncryptedScroll())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::RemoveShadowVeil()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsShadowVeil())
     {
       Item->RemoveFromSlot();
       Item->SendToHell();
