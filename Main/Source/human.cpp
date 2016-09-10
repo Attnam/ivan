@@ -4536,15 +4536,15 @@ void necromancer::BeTalkedTo()
     }
     return;
   }
-/*
-  if(PLAYER->HasRubySword())
+
+  if(PLAYER->HasLostRubyFlamingSword())
   {
     ADD_MESSAGE("The necromancer exclaims: \"What are you still doing down here? That sword belongs to the Champion of Infuscor!\"");
     return;
   }
   else if(game::GetXinrochTombStoryState() == 2)
-    ADD_MESSAGE("The necromancer asks: \"Have you found that flaming ruby sword yet?\"");
-*/
+    ADD_MESSAGE("The necromancer says: \"I am just preparing to leave. Have you found that flaming ruby sword yet?\"");
+
   if(game::GetXinrochTombStoryState() == 1)
   {
     ADD_MESSAGE("The necromancer says: \"Bring me the shadow veil and we'll talk.\"");

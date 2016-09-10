@@ -3111,7 +3111,8 @@ flamingsword /* meleeweapon-> */
     SecondaryMaterialConfig == RUBY;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
-    Adjective = "long lost ruby flaming";
+    Adjective = "lost ruby flaming";
+    PostFix = "of Xinroch";
     AttachedGod = INFUSCOR;
     CanBeWished = false;
     IsDestroyable = false;
@@ -3123,6 +3124,7 @@ flamingsword /* meleeweapon-> */
     CanBeBroken = false;
     BaseEnchantment = 0;
     CanBeEnchanted = false;
+    ArticleMode = FORCE_THE;
   }
 }
 

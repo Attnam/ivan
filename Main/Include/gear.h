@@ -118,6 +118,7 @@ ITEM(flamingsword, meleeweapon)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual int GetSpecialFlags() const;
+  virtual truth IsLostRubyFlamingSword() const;
 };
 
 ITEM(mjolak, meleeweapon)

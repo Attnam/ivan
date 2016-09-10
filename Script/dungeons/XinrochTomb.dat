@@ -21,7 +21,7 @@
 
 Dungeon XINROCH_TOMB;
 {
-  Levels = 11;
+  Levels = 12;
   Description = "Tomb of Xinroch";
   ShortDescription = "TX";
 
@@ -1375,7 +1375,51 @@ Dungeon XINROCH_TOMB;
       AttachRequired = true;
     }
 
-    Square, BoundedRandom 1, YSize - YSize * 1 / 5, XSize - 2, YSize - 2, NOT_WALKABLE|ATTACHABLE;
+    Room
+    {
+      Pos = 2: XSize/3 + 2, 77;
+      Size = 11, 11;
+      DivineMaster = INFUSCOR;
+
+      Square, Pos 5, 5;
+      {
+        OTerrain = portal(XINROCH_TOMB_ENTRANCE) { AttachedArea = 10; AttachedEntry = RANDOM; }
+        Character = xinrochghost;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 10;
+      }
+
+      Square, Random;
+      {
+        Items == skull;
+        Times = 5;
+      }
+    }
+  }
+
+  Level 10;
+  {
+    Items = 10:20;
+    EnchantmentMinusChanceBase = 15;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 50;
+    FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
+    TunnelSquare = SLATE solidterrain(GROUND), 0;
+    CanGenerateBone = false;
+
+    RoomDefault
+    {
+      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
+      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_DOWN);
       EntryIndex = STAIRS_DOWN;
@@ -1383,13 +1427,13 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 10; /* Penultimate level, ha ha */
+  Level 11; /* Ultimate level! */
   {
     Items = 5:10;
-    EnchantmentMinusChanceBase = 15;
+    EnchantmentMinusChanceBase = 20;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
-    ItemMinPriceBase = 50;
+    ItemMinPriceBase = 60;
     FillSquare = OBSIDIAN solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = OBSIDIAN solidterrain(GROUND), 0;
     CanGenerateBone = false;
@@ -1398,7 +1442,7 @@ Dungeon XINROCH_TOMB;
     {
       WallSquare = OBSIDIAN solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
       FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = EBONY_WOOD solidterrain(PARQUET), RUBY door;
+      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
     }
 
     Square, Random NOT_WALKABLE|ATTACHABLE;

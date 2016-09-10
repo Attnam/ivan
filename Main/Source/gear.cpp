@@ -34,6 +34,13 @@ col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
+truth flamingsword::IsLostRubyFlamingSword() const
+{
+  if(GetConfig() == LOST_RUBY_FLAMING_SWORD)
+    return true;
+  else
+    return false;
+}
 
 col16 gorovitsweapon::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 

@@ -1767,6 +1767,15 @@ truth character::HasShadowVeil() const
   return combineequipmentpredicates()(this, &item::IsShadowVeil, 1);
 }
 
+truth character::HasLostRubyFlamingSword() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsLostRubyFlamingSword())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsLostRubyFlamingSword, 1);
+}
+
 truth character::RemoveEncryptedScroll()
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)

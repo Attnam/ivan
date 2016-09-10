@@ -908,6 +908,24 @@ truth stairs::Enter(truth DirectionUp) const
 
   /* "Temporary" gum solutions */
 
+  if(GetConfig() == XINROCH_TOMB_ENTRANCE)
+  {
+    if((game::GetXinrochTombStoryState() == 2) || (PLAYER->GetMoveType() & ETHEREAL))
+    {
+      ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely "
+                  "dangerous on the other side. You feel you should think twice before entering.");
+
+      if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
+        return false;
+    }
+    else
+    {
+      ADD_MESSAGE("An unknown magical force pushes you back.");
+      PLAYER->EditAP(-1000);
+      return true;
+    }
+  }
+
   if(GetConfig() == OREE_LAIR_ENTRY)
   {
     ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you "

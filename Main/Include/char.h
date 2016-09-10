@@ -303,6 +303,7 @@ class character : public entity, public id
   truth HasPetrussNut() const;
   truth RemoveEncryptedScroll();
   truth HasShadowVeil() const;
+  truth HasLostRubyFlamingSword() const;
   truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
   truth Engrave(cfestring&);
