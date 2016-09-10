@@ -29,7 +29,7 @@ http://www.libsdl.org/
 
 --------------------------------------
 
-Under Win32:
+Under Windows - Visual Studio:
 
 
 Install SDL2
@@ -37,9 +37,13 @@ Install SDL2
 Download SDL2-devel-2.0.4-VC.zip from http://www.libsdl.org/
 and install somewhere in system, e.g. D:\Apps\SDL2-2.0.4
 
-Set environment variable SDL2DIR to "D:\Apps\SDL2-2.0.4".
 
-Make sure to open command prompt after that (so this variable is taken into account
+Set system environment variable SDL2DIR to "D:\Apps\SDL2-2.0.4".
+Make sure to open command prompt after that (so this variable is taken into account).
+
+Alternatively set it just in current command prompt:
+
+set SDL2DIR=D:\Apps\SDL2-2.0.4
 
 
 Compile IVAN
@@ -53,3 +57,29 @@ cmake -G "Visual Studio 14 2015" ..
 Now open vs2015/ivan.sln in VS2015 IDE.
 
 --------------------------------------
+
+Under Windows - MinGW:
+
+
+Install SDL2
+
+Download SDL2-devel-2.0.4-mingw.tar.gz from http://www.libsdl.org/
+and install somewhere in system, e.g. D:\Apps\SDL2-devel-2.0.4-mingw
+
+Set environment variable SDL2DIR to "D:\Apps\SDL2-devel-2.0.4-mingw\SDL2-2.0.4\i686-w64-mingw32\".
+Make sure to open command prompt after that (so this variable is taken into account).
+
+Alternatively set it just in current command prompt:
+
+set SDL2DIR=D:\Apps\SDL2-devel-2.0.4-mingw\SDL2-2.0.4\i686-w64-mingw32\
+
+Use command line to generate MinGW makefiles in IVAN source directory:
+
+mkdir mingw
+cd mingw
+cmake .. -G "MinGW Makefiles"
+
+Now you can compile from command line:
+
+mingw32-make -j4
+
