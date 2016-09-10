@@ -43,18 +43,20 @@ Make sure to open command prompt after that (so this variable is taken into acco
 
 Alternatively set it just in current command prompt:
 
-set SDL2DIR=D:\Apps\SDL2-2.0.4
+D:\buildy\ivan>set SDL2DIR=D:\Apps\SDL2-2.0.4
 
 
 Compile IVAN
 
-Either use cmake-gui, or:
+Either use cmake-gui if system environment variable was set, or:
 
-mkdir vs2015
-cd vs2015
-cmake -G "Visual Studio 14 2015" ..
+D:\buildy\ivan>mkdir vs2015
+D:\buildy\ivan>cd vs2015
+D:\buildy\ivan\vs2015>cmake -G "Visual Studio 14 2015" .. -DCMAKE_INSTALL_PREFIX=D:/buildy/ivan/inst_vs2015
 
-Now open vs2015/ivan.sln in VS2015 IDE.
+Now open and compile D:\buildy\ivan\vs2015\ivan.sln in VS2015 IDE.
+
+Now you can run ivan from D:/buildy/ivan/inst_vs2015/ivan/ directory.
 
 --------------------------------------
 
@@ -75,11 +77,13 @@ set SDL2DIR=D:\Apps\SDL2-devel-2.0.4-mingw\SDL2-2.0.4\i686-w64-mingw32\
 
 Use command line to generate MinGW makefiles in IVAN source directory:
 
-mkdir mingw
-cd mingw
-cmake .. -G "MinGW Makefiles"
+D:\buildy\ivan>mkdir mingw
+D:\buildy\ivan>cd mingw
+D:\buildy\ivan\mingw2>cmake .. -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=D:/buildy/ivan/inst_mingw
 
 Now you can compile from command line:
 
-mingw32-make -j4
+D:\buildy\ivan\mingw2>mingw32-make -j4 install
+
+Now you can run ivan from D:/buildy/ivan/inst_mingw/ivan/ directory.
 
