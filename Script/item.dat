@@ -2027,6 +2027,7 @@ cloak /* armor-> */
     IsQuestItem = true;
     CanBeBurned = false;
     ArticleMode = FORCE_THE;
+    CanBeEnchanted = false;
   }
 
   Config BROKEN|CLOAK_OF_SHADOWS;
@@ -2045,6 +2046,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
+    CanBeEnchanted = false;
   }
 }
 
@@ -3123,7 +3125,7 @@ flamingsword /* meleeweapon-> */
     CanBeBurned = false;
     CanBeBroken = false;
     BaseEnchantment = 0;
-    CanBeEnchanted = false;
+    CanBeEnchanted = true;
     ArticleMode = FORCE_THE;
   }
 }

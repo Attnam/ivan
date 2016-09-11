@@ -63,7 +63,7 @@ Dungeon XINROCH_TOMB;
     Square, Random HAS_NO_OTERRAIN;
     {
       Items == skull;
-      Times = 2:4;
+      Times = 4:8;
     }
 
     Square, Random HAS_NO_OTERRAIN;
@@ -147,13 +147,13 @@ Dungeon XINROCH_TOMB;
       Flags = 0;
     }
 
-    Square, Random |HAS_NO_OTERRAIN;
+    Square, Random HAS_NO_OTERRAIN;
     {
       Items == bone;
       Times = 12:24;
     }
 
-    Square, Random |HAS_NO_OTERRAIN;
+    Square, Random HAS_NO_OTERRAIN;
     {
       Items == skull;
       Times = 2:4;
@@ -173,7 +173,6 @@ Dungeon XINROCH_TOMB;
       GenerateDoor = false;
       DivineMaster = INFUSCOR;
       GenerateLanterns = false;
-      /*Type = ROOM_CATHEDRAL;*/
       IsInside = false;
       GenerateWindows = false;
 
@@ -516,7 +515,13 @@ Dungeon XINROCH_TOMB;
       }
       Square, Pos 7,6;
       {
-        Items == itemcontainer(LARGE_CHEST);/* { LifeExpectancy = 100:10000; Chance = 5; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }*/
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 3,  Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; },
+                              Random { Chance = 75; MinPrice = 750; Times = 2; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; },
+                              Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; }}
+        }
       }
       Square, Pos 8, 6;
       {
@@ -624,9 +629,21 @@ Dungeon XINROCH_TOMB;
       {
         Character = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_SHOP_TEAM;}
       }
-      Square, Pos 2,2;
+      Square, Pos 3,2;
       {
         OTerrain = fountain;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 3:6;
+      }
+
+      Square, Random;
+      {
+        Items == skull;
+        Times = 0:2;
       }
 
       OTerrainMap
@@ -790,37 +807,45 @@ Dungeon XINROCH_TOMB;
           G = STEEL door(BARDOOR) { Parameters = LOCKED; }
           B = STEEL brokendoor(BARDOOR) { Parameters = LOCKED; }
           A = GREEN_CRYSTAL altar(INFUSCOR);
+          S = STEEL sign { Text = "Mutant bear - Experimental result: Particularly dangerous!"; }
+          s = STEEL sign { Text = "Skeleton warrior - Experimental result: Typical."; }
+          z = STEEL sign { Text = "Enner children - Experimental status: On hiatus; specimens have escaped!"; }
+          Z = STEEL sign { Text = "Cave bear - Experimental status: Next candidate for mutation trials."; }
         }
       }
       {
         ...#...#...#...
         ...#...#...#...
         #G###G###B%##G#
-        ...............
+        ..S...s.z...Z..
         ...............
         ......A........
         ...............
         ...............
       }
-
-      Square, Pos 2, 2;
+      CharacterMap
       {
-        Character = bear(MUTANT_BEAR);
+        Size = 15, 8;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          B = bear(MUTANT_BEAR);
+          S = skeleton(WARRIOR);
+          b = bear(CAVE_BEAR);
+          N = necromancer(MASTER_NECROMANCER) { Team = 5; Flags = IS_MASTER; } /* Elpuri dungeon shop team, change this later */
+          g = guard(TOMB_ENTRY) { Team = 5; } /* Elpuri dungeon shop team, change this later */
+        }
       }
-
-      Square, Pos 6, 2;
       {
-        Character = skeleton(WARRIOR);
-      }
-
-      Square, Pos 14, 2;
-      {
-        Character = bear(CAVE_BEAR);
-      }
-
-      Square, Pos 9, 6;
-      {
-        Character = necromancer(MASTER_NECROMANCER) { Team = 5; Flags = IS_MASTER; } /* Shop team, change this later */
+        .B.#.S.#...#.b.
+        ...#...#...#...
+        #########..####
+        g.............g
+        ...............
+        ......#.N......
+        ...............
+        g.............g
       }
 
       Square, Pos 0, 6;
@@ -1055,7 +1080,7 @@ Dungeon XINROCH_TOMB;
     Square, Random;
     {
       Items == ICE stone;
-      Times = 0:10;
+      Times = 5:10;
     }
 
     Square, Random IN_ROOM;
@@ -1345,6 +1370,7 @@ Dungeon XINROCH_TOMB;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
     ItemMinPriceBase = 40;
+    CanGenerateBone = false;
 
     RoomDefault
     {
@@ -1355,7 +1381,7 @@ Dungeon XINROCH_TOMB;
       Size = 3:6,3:6;
     }
 
-    Room /* Greater maze room */
+    Room /* Giant maze room */
     {
       Pos = 2, YSize/4:YSize/4 + 10;
       Size = 21,39;
@@ -1638,7 +1664,7 @@ Dungeon XINROCH_TOMB;
       GenerateFountains = true;
       Shape = MAZE_ROOM;
     }
-/*
+
     Room
     {
       Size = 13,13;
@@ -1688,6 +1714,5 @@ Dungeon XINROCH_TOMB;
       Character = darkmage(ELDER);
       Times = 1;
     }
-*/
   }
 }

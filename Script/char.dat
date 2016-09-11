@@ -864,8 +864,9 @@ shopkeeper
     Inventory == lantern;
     FriendlyReplies =
     {
-      2,
+      3,
       "\"Normally these provisions are for the consumption of the tomb guards. But I'll allow you some comestibles, for a price of course...\"",
+      "\"The bones on the floor? Heh, sometimes we need to throw something to the monsters.\"",
       "@Dd smiles: \"A drink at the fountain is free my friend. Just watch out for the residents.\"";
     }
   }

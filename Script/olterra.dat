@@ -560,7 +560,7 @@ olterraincontainer /* olterrain->decoration-> */
   {
     CanBeDestroyed = true;
     MainMaterialConfig == FIR_WOOD;
-    NameSingular = "";
+    NameSingular = "shelf";
     BitmapPos = 16, 128;
     SitMessage = "The shelf is very uncomfortable to sit on.";
     StorageVolume = 80000;
