@@ -518,10 +518,11 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      4,
+      5,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "\"Don't even think of breaking rules.\"",
       "\"The high priest is my idol. I would want a sword as big as his!\"",
+      "\"Don't talk to the prisoners in the Cellar, or you might end up amongst them.\"",
       "@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
     }
   }
@@ -695,7 +696,7 @@ guard
       "@Dd says helplessly: \"I know, right? Purple. It had to be Infuscor's favourite color.\"",
       "\"Don't even think of disturbing the Tomb.\"",
       "\"They say Xinroch's restless soul dwells below. I heard it guards a portal to another dimension. I wouldn't be caught dead going through there.\"",
-      "@Dd mutters. \"Hundreds of year guarding this Tomb. I wish those necromancers would get on with it!\"";
+      "@Dd mutters. \"Hundreds of years guarding this Tomb. I wish those necromancers would get on with it!\"";
     }
   }
 

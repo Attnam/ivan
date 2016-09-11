@@ -4569,7 +4569,7 @@ void necromancer::BeTalkedTo()
                                  "Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
                                  "223 years later, and I'm still down here, drinking blood, eating bones, and generally \n"
                                  "trying all the old life-extension tricks. Finally I got caught out by that meddling Haedlac.\n"
-                                 "He's got nothing better to do these days. Sent me here to the cells, never too far away\n"
+                                 "He's got nothing better to do these days. Sent me here to the Cellar, never too far away\n"
                                  "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
                                  "every now and again to check up on me.\"\n"));
 
