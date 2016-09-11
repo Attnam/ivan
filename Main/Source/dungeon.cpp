@@ -18,6 +18,9 @@
 #include "save.h"
 #include "femath.h"
 #include "bitmap.h"
+#include "message.h"
+
+#include "audio.h"
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -127,6 +130,22 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
 }
 
+void dungeon::PrepareMusic(int Index)
+{
+  const levelscript* LevelScript = GetLevelScript(Index);
+
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+
+  for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+  {
+     festring Music = LevelScript->GetAudioPlayList()->Data[i];
+     audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+  }
+
+  audio::SetPlaybackStatus(audio::PLAYING);
+}
+
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + '.' + Index + Number);
@@ -213,6 +232,8 @@ level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
   Level[Number]->SetDungeon(this);
   Level[Number]->SetIndex(Number);
   Level[Number]->SetLevelScript(GetLevelScript(Number));
+  PrepareMusic(Number);
+
   return Level[Number];
 }
 

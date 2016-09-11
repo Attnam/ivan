@@ -3,7 +3,7 @@ AC_INIT([Iter Vehemens ad Necem], [0.50.4],
         [ivan], [http://github.com/Attnam/ivan])
 AC_CONFIG_SRCDIR([Main/Source/main.cpp])
 
-AM_PROG_AS 
+AM_PROG_AS
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 AC_PROG_CC
@@ -25,17 +25,28 @@ if test "$SDL2_CONFIG" = "no"; then
                 AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 fi
 
+
+dnl Set flags for RtMidi
+AS_CASE([$target_os],
+        [darwin*],
+        [
+            RTMIDI_CPPFLAGS="-D__MACOSX_CORE__"
+            RTMIDI_LDFLAGS="-framework CoreMIDI -framework CoreAudio -framework CoreFoundation"
+        ])
+
+
 localstatedir=/var/lib
 CFLAGS="$CFLAGS $SDL_CFLAGS "
-LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
-CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
+LIBS="$LIBS $SDL_LIBS $SDL2_LIBS $RTMIDI_LDFLAGS"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS $RTMIDI_CPPFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
 
 AC_PROG_INSTALL
 
 AC_PROG_RANLIB
 
 AC_CONFIG_FILES(Makefile FeLib/Makefile FeLib/Include/Makefile
-                FeLib/Source/Makefile Script/Makefile Script/dungeons/Makefile Graphics/Makefile
+                FeLib/Source/Makefile audio/Makefile
+                Script/Makefile Script/dungeons/Makefile Graphics/Makefile Music/Makefile
                 Main/Makefile Main/Include/Makefile Main/Resource/Makefile
                 Main/Source/Makefile)
 AC_OUTPUT

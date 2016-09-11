@@ -17,6 +17,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "igraph.h"
+#include "audio.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -60,6 +61,17 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
+scrollbaroption ivanconfig::Volume(     "Volume",
+                                          "volume",
+                                          127,
+                                          &VolumeDisplayer,
+                                          &VolumeChangeInterface,
+                                          &VolumeChanger,
+                                          &VolumeHandler);
+cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
+                                          "select MIDI output device",
+                                          0, 0, // {default value, number of options to cycle through}
+                                          &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",
@@ -91,6 +103,11 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
   Entry << O->Value << "/100";
 }
 
+void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << "/127";
+}
+
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
 {
         switch(O->Value)
@@ -105,6 +122,31 @@ void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
                 Entry << CONST_S("NetHack");
                 break;
         }
+}
+
+void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry)
+{
+  std::vector<std::string> devicenames;
+  int NumDevices = audio::GetMIDIOutputDevices(devicenames);
+  MIDIOutputDevice.CycleCount = NumDevices+1;
+  
+  if( O->Value && devicenames.size() )
+  {
+     const char *cstr = devicenames[O->Value - 1].c_str();
+     Entry << cstr;
+
+     audio::ChangeMIDIOutputDevice(O->Value);
+     VolumeChanger(&Volume, GetVolume());
+  }
+  else
+  {
+     audio::ChangeMIDIOutputDevice(0);
+     Entry << CONST_S("No output Device");
+  }
+
+
+
+
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
@@ -159,6 +201,19 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::VolumeChangeInterface(numberoption* O)
+{
+  iosystem::ScrollBarQuestion(CONST_S("Set new volume value (0-127, '<' and '>' move the slider):"),
+                              GetQuestionPos(), O->Value, 5, 0, 127, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY,
+                              game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
+                              !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
+
+  if(game::IsRunning())
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+
+  return false;
+}
+
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
 {
   if(What < 0) What = 0;
@@ -172,6 +227,15 @@ void ivanconfig::ContrastChanger(numberoption* O, long What)
   if(What > 200) What = 200;
   O->Value = What;
   CalculateContrastLuminance();
+}
+
+void ivanconfig::VolumeChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 127) What = 127;
+  O->Value = What;
+
+  audio::SetVolumeLevel(What);
 }
 
 #ifndef __DJGPP__
@@ -191,6 +255,17 @@ void ivanconfig::Show()
 void ivanconfig::ContrastHandler(long Value)
 {
   ContrastChanger(&Contrast, Value);
+
+  if(game::IsRunning())
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
+}
+
+void ivanconfig::VolumeHandler(long Value)
+{
+  VolumeChanger(&Volume, Value);
 
   if(game::IsRunning())
   {
@@ -227,6 +302,22 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
+  configsystem::AddOption(&Volume);
+  
+
+
+
+  std::vector<std::string> DeviceNames;
+  int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
+  MIDIOutputDevice.Value = 0;
+  if( NumDevices )
+  {
+     MIDIOutputDevice.Value = 1;
+  }
+  MIDIOutputDevice.CycleCount = NumDevices+1;
+
+
+  configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
 #endif
@@ -237,4 +328,7 @@ void ivanconfig::Initialize()
 #endif
   configsystem::Load();
   CalculateContrastLuminance();
+  audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
+  audio::SetVolumeLevel(Volume.Value);
+
 }

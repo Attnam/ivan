@@ -29,6 +29,8 @@
 #include "message.h"
 #include "proto.h"
 
+#include "audio.h"
+
 int Main(int argc, char **argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
@@ -46,6 +48,8 @@ int Main(int argc, char **argv)
 
 #endif /* __DJGPP__ */
 
+  audio::Init();
+
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
   scriptsystem::Initialize();
@@ -59,6 +63,12 @@ int Main(int argc, char **argv)
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
+
+  /* Set off the main menu music */
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+  audio::LoadMIDIFile("mainmenu.mid", 0, 100);
+  audio::SetPlaybackStatus(audio::PLAYING);
 
   for(;;)
   {

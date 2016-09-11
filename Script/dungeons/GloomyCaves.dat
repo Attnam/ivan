@@ -53,6 +53,11 @@ Dungeon ELPURI_CAVE;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      1,
+      "Dungeon.mid";
+    }
 
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {

@@ -5349,10 +5349,22 @@ rm -f core conftest.err conftest.$ac_objext \
 
 fi
 
+
+case $target_os in #(
+  darwin*) :
+
+            RTMIDI_CPPFLAGS="-D__MACOSX_CORE__"
+            RTMIDI_LDFLAGS="-framework CoreMIDI -framework CoreAudio -framework CoreFoundation"
+         ;; #(
+  *) :
+     ;;
+esac
+
+
 localstatedir=/var/lib
 CFLAGS="$CFLAGS $SDL_CFLAGS "
-LIBS="$LIBS $SDL_LIBS $SDL2_LIBS"
-CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
+LIBS="$LIBS $SDL_LIBS $SDL2_LIBS $RTMIDI_LDFLAGS"
+CPPFLAGS="$SDL_CFLAGS $SDL2_CFLAGS $RTMIDI_CPPFLAGS -DLINUX -DLOCAL_STATE_DIR=\\\"$localstatedir/ivan\\\" -DDATADIR=\\\"$datadir\\\" -DUSE_SDL -DGCC -std=c++11"
 
 
 
@@ -5449,7 +5461,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile FeLib/Makefile FeLib/Include/Makefile FeLib/Source/Makefile Script/Makefile Script/dungeons/Makefile Graphics/Makefile Main/Makefile Main/Include/Makefile Main/Resource/Makefile Main/Source/Makefile"
+ac_config_files="$ac_config_files Makefile FeLib/Makefile FeLib/Include/Makefile FeLib/Source/Makefile audio/Makefile Script/Makefile Script/dungeons/Makefile Graphics/Makefile Music/Makefile Main/Makefile Main/Include/Makefile Main/Resource/Makefile Main/Source/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -6206,9 +6218,11 @@ do
     "FeLib/Makefile") CONFIG_FILES="$CONFIG_FILES FeLib/Makefile" ;;
     "FeLib/Include/Makefile") CONFIG_FILES="$CONFIG_FILES FeLib/Include/Makefile" ;;
     "FeLib/Source/Makefile") CONFIG_FILES="$CONFIG_FILES FeLib/Source/Makefile" ;;
+    "audio/Makefile") CONFIG_FILES="$CONFIG_FILES audio/Makefile" ;;
     "Script/Makefile") CONFIG_FILES="$CONFIG_FILES Script/Makefile" ;;
     "Script/dungeons/Makefile") CONFIG_FILES="$CONFIG_FILES Script/dungeons/Makefile" ;;
     "Graphics/Makefile") CONFIG_FILES="$CONFIG_FILES Graphics/Makefile" ;;
+    "Music/Makefile") CONFIG_FILES="$CONFIG_FILES Music/Makefile" ;;
     "Main/Makefile") CONFIG_FILES="$CONFIG_FILES Main/Makefile" ;;
     "Main/Include/Makefile") CONFIG_FILES="$CONFIG_FILES Main/Include/Makefile" ;;
     "Main/Resource/Makefile") CONFIG_FILES="$CONFIG_FILES Main/Resource/Makefile" ;;

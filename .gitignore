@@ -44,3 +44,5 @@ autom4te.cache
 Bones
 /HScore.dat
 Save
+/Debug/
+/Linux/

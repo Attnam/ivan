@@ -46,6 +46,11 @@ Dungeon EMPTY_AREA;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      1,
+      "Empty.mid";
+    }
 
     Square, Random;
     {

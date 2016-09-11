@@ -312,7 +312,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = FeLib Main Script Graphics
+SUBDIRS = FeLib audio Main Script Graphics Music
 EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING .customs.emacs
 all: all-recursive
 

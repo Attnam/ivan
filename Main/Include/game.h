@@ -321,6 +321,7 @@ class game
   static festring GetScrshotDir();
   static festring GetDataDir();
   static festring GetBoneDir();
+  static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
   static void SetPlayerWasHurtByExplosion(truth What) { PlayerHurtByExplosion = What; }
   static void SetCurrentArea(area* What) { CurrentArea = What; }
@@ -335,6 +336,8 @@ class game
   static void DisplayMassacreLists();
   static void DisplayMassacreList(const massacremap&, cchar*, long);
   static truth MassacreListsEmpty();
+  static void PlayVictoryMusic();
+  static void PlayDefeatMusic();
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }

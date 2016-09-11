@@ -555,6 +555,7 @@ void petrus::BeTalkedTo()
 
     if(game::TruthQuestion(CONST_S("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]"), REQUIRES_ANSWER))
     {
+      game::PlayVictoryMusic();
       game::TextScreen(CONST_S("The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
                                "Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
                                "receive a small dukedom in the middle of tundra where you rule with justice till\n"
@@ -587,6 +588,7 @@ void petrus::BeTalkedTo()
 
   if(PLAYER->HasHeadOfElpuri())
   {
+    game::PlayVictoryMusic();
     game::TextScreen(CONST_S("You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
                              "You spend the next months in Attnam as an honored hero and when the\n"
                              "sea finally melts, you board the first ship, leaving your past forever\n"

@@ -50,6 +50,8 @@
 #include "balance.h"
 #include "confdef.h"
 
+#include "audio.h"
+
 #define SAVE_FILE_VERSION 127 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 113 // Increment this if changes make bonefiles incompatible
 
@@ -286,6 +288,12 @@ truth game::Init(cfestring& Name)
     }
    case NEW_GAME:
     {
+      /* New game music */
+      audio::SetPlaybackStatus(0);
+      audio::ClearMIDIPlaylist();
+      audio::LoadMIDIFile("newgame.mid", 0, 100);
+      audio::SetPlaybackStatus(audio::PLAYING);
+
       iosystem::TextScreen(CONST_S("You couldn't possibly have guessed this day would differ from any other.\n"
                                    "It began just as always. You woke up at dawn and drove off the giant spider\n"
                                    "resting on your face. On your way to work you had serious trouble avoiding\n"
@@ -395,6 +403,12 @@ truth game::Init(cfestring& Name)
         Player->GetStack()->AddItem(Present);
         ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
       }
+
+      /* Set off the worldmap music */
+      audio::SetPlaybackStatus(0);
+      audio::ClearMIDIPlaylist();
+      audio::LoadMIDIFile("world.mid", 0, 100);
+      audio::SetPlaybackStatus(audio::PLAYING);
 
       return true;
     }
@@ -1766,8 +1780,30 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   {
     /* This prevents monster movement etc. after death. */
 
+    /* Set off the main menu music */
+    audio::SetPlaybackStatus(0);
+    audio::ClearMIDIPlaylist();
+    audio::LoadMIDIFile("mainmenu.mid", 0, 100);
+    audio::SetPlaybackStatus(audio::PLAYING);
+
     throw quitrequest();
   }
+}
+
+void game::PlayVictoryMusic()
+{
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+  audio::LoadMIDIFile("victory.mid", 0, 100);
+  audio::SetPlaybackStatus(audio::PLAYING);
+}
+
+void game::PlayDefeatMusic()
+{
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+  audio::LoadMIDIFile("defeat.mid", 0, 100);
+  audio::SetPlaybackStatus(audio::PLAYING);
 }
 
 int game::CalculateRoughDirection(v2 Vector)
@@ -1952,6 +1988,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
     GetCurrentArea()->SendNewDrawRequest();
     v2 Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
+    GetCurrentDungeon()->PrepareMusic(Area);
 
     if(Player)
     {
@@ -2030,6 +2067,11 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     SendLOSUpdateRequest();
     UpdateCamera();
     GetWorldMap()->UpdateLOS();
+
+    audio::SetPlaybackStatus(0);
+    audio::ClearMIDIPlaylist();
+    audio::LoadMIDIFile("world.mid", 0, 100);
+    audio::SetPlaybackStatus(audio::PLAYING);
 
     if(ivanconfig::GetAutoSaveInterval())
       Save(GetAutoSaveFileName().CStr());
@@ -2336,6 +2378,17 @@ festring game::GetBoneDir()
 
 #if defined(WIN32) || defined(__DJGPP__)
   return "Bones/";
+#endif
+}
+
+festring game::GetMusicDir()
+{
+#ifdef LINUX
+  return GetDataDir() + "Music/";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "Music/";
 #endif
 }
 

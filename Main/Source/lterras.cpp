@@ -263,6 +263,7 @@ truth throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(VALPURUS)->GetRelation() == 1000)
   {
+    game::PlayVictoryMusic();
     game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n"
                              "\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\n"
                              "We hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
