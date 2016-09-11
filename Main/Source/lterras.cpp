@@ -680,6 +680,39 @@ truth altar::SitOn(character* Sitter)
 {
   ADD_MESSAGE("You kneel down and worship %s for a moment.", GetMasterGod()->GetName());
 
+  if((GetMasterGod()->GetType() == INFUSCOR) && (game::GetCurrentDungeonIndex() == XINROCH_TOMB) && (game::GetCurrentLevelIndex() == 0))
+  {
+    if(Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() != 1000)
+    {
+      ADD_MESSAGE("You have a horrid vision of yourself becoming a master dark knight. The nightmare fades in a whisper: "
+                  "\"Thou shalt be My Champion first!\"");
+      return true;
+    }
+
+    if(!Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a horrid vision of yourself becoming a master dark knight. The nightmare fades in a whisper: "
+                  "\"Thou shalt bring Me the lost ruby flaming sword first!\"");
+      return true;
+    }
+
+    if(Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() == 1000)
+    {
+      game::TextScreen(CONST_S("A ghastly red light emanates upward from the altar, and all eyes in \n"
+                               "the temple are turned thither. A booming voice fills the air:\n\n"
+                               "\"mORtAl! Thou hast supplanted Xinroch and proven your devotion to Me! Therefore,\n"
+                               "I knight you, and hereby promote you to Master Dark Knight of the Unholy Order of Infuscor!\"\n\n"
+                               "You are victorious!"));
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("became the new Master Dark Knight of the Unholy Order of Infuscor");
+      PLAYER->AddScoreEntry(Msg, 4, false);
+      game::End(Msg);
+      return true;
+    }
+  }
+
   if(GetMasterGod()->GetRelation() < 500)
   {
     if(!(RAND() % 20))
@@ -914,6 +947,23 @@ truth stairs::Enter(truth DirectionUp) const
     {
       ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely "
                   "dangerous on the other side. You feel you should think twice before entering.");
+
+      if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
+        return false;
+    }
+    else
+    {
+      ADD_MESSAGE("An unknown magical force pushes you back.");
+      PLAYER->EditAP(-1000);
+      return true;
+    }
+  }
+
+  if(GetConfig() == XINROCH_TOMB_EXIT)
+  {
+    if(PLAYER->HasLostRubyFlamingSword())
+    {
+      ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
       if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
         return false;

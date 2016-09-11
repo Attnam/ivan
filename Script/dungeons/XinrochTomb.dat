@@ -176,12 +176,7 @@ Dungeon XINROCH_TOMB;
       /*Type = ROOM_CATHEDRAL;*/
       IsInside = false;
       GenerateWindows = false;
-/*
-      Square, Pos 1, 1;
-      {
-        Character = floatingeye { WayPoint = { 4, 11, 11, 49, 11, 49, 50, 11, 50; } }
-      }
-*/
+
       Square, Pos 19, 40;
       {
         OTerrain = 0;
@@ -359,7 +354,6 @@ Dungeon XINROCH_TOMB;
           - = 0;
           | = 0;
           % = 0;
-          X = skeleton(WAR_LORD);
           g = guard(VETERAN);
           E = guard(ELITE);
           /*p = priest(VALPURUS);*/
@@ -393,7 +387,7 @@ Dungeon XINROCH_TOMB;
         .##-------%|||||||||||%-------##.
         ..#-------%D|||||||||D%-------#..
         ..#g------%%|||||||||%%------g#..
-        ..##-------%%|y|X|y|%%-------##..
+        ..##-------%%|y|||y|%%-------##..
         ...#--------%%%|E|%%%--------#...
         ...#g---------%%e%%---------g#...
         ...##----------%%%----------##...
@@ -1410,7 +1404,7 @@ Dungeon XINROCH_TOMB;
     ItemMinPriceBase = 50;
     FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = SLATE solidterrain(GROUND), 0;
-    CanGenerateBone = false;
+    CanGenerateBone = true;
 
     RoomDefault
     {
@@ -1425,10 +1419,150 @@ Dungeon XINROCH_TOMB;
       EntryIndex = STAIRS_DOWN;
       AttachRequired = true;
     }
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Room /* Medium maze room in the middle */
+    {
+      Pos = 21, 7;
+      Size = 21, 21;
+      AltarPossible = true;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+      FloorSquare = SLATE solidterrain(PARQUET), 0;
+    }
+
+    Room
+    {
+      Pos = 2: XSize/2 - 7, YSize/2 : YSize - 7; /*lower left quadrant*/
+      Size = 5,5;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
+      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+
+        Types
+        {
+          E = darkmage(ELDER) { Inventory == Random { MinPrice = 350; Category = WAND|SCROLL; } }
+          B = darkmage(BATTLE_MAGE);
+          A = darkmage(APPRENTICE);
+          N = necromancer(MASTER_NECROMANCER);
+          n = necromancer(APPRENTICE_NECROMANCER);
+        }
+      }
+      {
+        AnA
+        nEn
+        NBN
+      }
+
+      Square, Pos 2, 4;
+      {
+        GTerrain = EBONY_WOOD solidterrain(PARQUET);
+        OTerrain = OCTIRON door(OCTAGONAL_LOCK);
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Pos = XSize/2 : XSize - 7, 2 : YSize/2 - 7; /*upper right quadrant*/
+      Size = 5,5;
+      AltarPossible = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
+      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+
+        Types
+        {
+          B = darkmage(BATTLE_MAGE);
+          A = darkmage(APPRENTICE);
+          N = necromancer(MASTER_NECROMANCER);
+          n = necromancer(APPRENTICE_NECROMANCER);
+          M = mysticfrog(DARK);
+        }
+      }
+      {
+        NBN
+        nMn
+        ABA
+      }
+
+      Square, Pos 2, 0;
+      {
+        GTerrain = EBONY_WOOD solidterrain(PARQUET);
+        OTerrain = OCTIRON door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Pos = 2 : XSize/2 - 11, 2 : YSize/2 - 11; /*upper left quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
+      FloorSquare = SLATE solidterrain(PARQUET), 0;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem;
+        Times = 6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem(OCTIRON);
+      }
+    }
+
+    Room
+    {
+      Pos = XSize/2 : XSize - 11, YSize/2 : YSize - 11; /*lower right quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
+      FloorSquare = SLATE solidterrain(PARQUET), 0;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = darkknight(TEMPLAR);
+        Times = 6;
+      }
+    }
   }
 
   Level 11; /* Ultimate level! */
   {
+    LevelMessage = "\"HA HA HA! I'm ALIVE! Prepare to die mortal!\"";
     Items = 5:10;
     EnchantmentMinusChanceBase = 20;
     EnchantmentPlusChanceBase = 0;
@@ -1437,9 +1571,13 @@ Dungeon XINROCH_TOMB;
     FillSquare = OBSIDIAN solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = OBSIDIAN solidterrain(GROUND), 0;
     CanGenerateBone = false;
+    IgnoreDefaultSpecialSquares = true;
+    Rooms = 8:10;
 
     RoomDefault
     {
+      Pos = 2:XSize-2,2:YSize-2;
+      Size = 6:9,6:9;
       WallSquare = OBSIDIAN solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
       FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
       DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
@@ -1451,5 +1589,103 @@ Dungeon XINROCH_TOMB;
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
+
+    Room
+    {
+      Size = 9,9;
+      DivineMaster = INFUSCOR;
+      GenerateFountains = false;
+
+      Square, Pos 4,4;
+      {
+        OTerrain = METEORIC_STEEL altar(INFUSCOR);
+      }
+
+      Square, Pos 4,1;
+      {
+        OTerrain = portal(XINROCH_TOMB_EXIT) { AttachedArea = 3; AttachedEntry = RANDOM; }
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,7;
+
+        Types
+        {
+          X = darkknight(MASTER);
+          A = angel(INFUSCOR);
+          k = darkknight(ELITE);
+        }
+      }
+      {
+        .......
+        .......
+        ..X.A..
+        .k...k.
+        .......
+        ...k...
+        .......
+      }
+    }
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = true;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+    }
+/*
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = true;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkknight(ELITE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = necromancer(APPRENTICE_NECROMANCER);
+      Times = 6;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = mysticfrog(DARK);
+      Times = 1;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = darkmage(APPRENTICE);
+      Times = 4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = necromancer(MASTER_NECROMANCER);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(BATTLE_MAGE);
+      Times = 2;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = darkmage(ELDER);
+      Times = 1;
+    }
+*/
   }
 }

@@ -4515,9 +4515,9 @@ void necromancer::BeTalkedTo()
                                "\"At last I can make my escape from Petrus' wretched clutches!\"\n"
                                "\n"
                                "The necromancer looks up \n"
-                               "\"Oh, you are still here. Good. Pray tell me, what did you find in the Tomb?\n"
+                               "\"Oh, you are still here. Good! Pray tell me, what did you find in the Tomb?\n"
                                "A portal? Did you traverse it? Of course! You can't do so bodily,\n"
-                               "unless you were... changed in some way.\"\n"));
+                               "unless you were... ...changed in some way?\"\n"));
 
       game::TextScreen(CONST_S("You feel a cold, tingling sensation in the middle of your forehead.\n"
                                "\n\n"
@@ -4527,12 +4527,6 @@ void necromancer::BeTalkedTo()
       GetArea()->SendNewDrawRequest();
       ADD_MESSAGE("\"You can still retrieve the lost flaming ruby sword. If you go beyond the portal, you will find the one who carries this lost sword. But be warned, he is a terrible foe!\"");
       game::SetXinrochTombStoryState(2);
-  /*
-      PLAYER->ShowAdventureInfo();
-      festring Msg = CONST_S("delivered the Shadow Veil to the Necromancer and continued to further adventures");
-      AddScoreEntry(Msg, 2, false);
-      game::End(Msg);
-  */
     }
     return;
   }
@@ -5805,13 +5799,123 @@ void guard::BeTalkedTo()
 
 void xinrochghost::GetAICommand()
 {
-/*
-  if(!RAND_N(50))
-    CallForMonsters();
-*/
-  humanoid::GetAICommand();
+  if(GetHomeRoom())
+    StandIdleAI();
+  else
+    humanoid::GetAICommand();
 }
 
-void xinrochghost::CallForMonsters()
+void xinrochghost::CreateCorpse(lsquare* Square)
 {
+  SendToHell();
+/*This needs to be a function someday*/
+  if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
+    ADD_MESSAGE("You hear an eerie scream: \"Ahh! Free at last! FREE TO BE REBORN!\"");
+    int c, Tunnels = 2 + RAND() % 3;
+    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
+      Tunnels = 0;
+
+    for(c = 0; c < Tunnels; ++c)
+      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
+
+    int ToEmpty = 10 + RAND() % 11;
+
+    for(c = 0; c < ToEmpty; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+        truth Correct = false;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(Square && Square->IsFlyable())
+          {
+            Correct = true;
+            break;
+          }
+        }
+
+        if(Correct)
+        {
+          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
+          break;
+        }
+      }
+
+    int ToGround = 20 + RAND() % 21;
+
+    for(c = 0; c < ToGround; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+        if(Pos == ERROR_V2)
+          continue;
+
+        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+        character* Char = Square->GetCharacter();
+
+        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+          continue;
+
+        int Walkables = 0;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(NearSquare && NearSquare->IsFlyable())
+            ++Walkables;
+        }
+
+        if(Walkables > 6)
+        {
+          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
+
+          if(Char)
+          {
+            if(Char->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
+
+            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
+          }
+
+          Square->KickAnyoneStandingHereAway();
+          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+          break;
+        }
+      }
+
+    // Generate a few boulders in the level
+
+    int BoulderNumber = 10 + RAND() % 10;
+
+    for(c = 0; c < BoulderNumber; ++c)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+      character* MonsterHere = Square->GetCharacter();
+
+      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
+      {
+        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
+
+        if(MonsterHere)
+          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
+      }
+    }
+
+    // Damage to items in the level
+
+    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+  }
 }

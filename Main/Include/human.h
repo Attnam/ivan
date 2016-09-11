@@ -502,7 +502,7 @@ CHARACTER(xinrochghost, spirit)
   virtual truth IsPolymorphable() const { return false; }
  protected:
   virtual void GetAICommand();
-  void CallForMonsters();
+  virtual void CreateCorpse(lsquare*);
 };
 
 CHARACTER(imp, humanoid)

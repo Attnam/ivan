@@ -491,9 +491,15 @@ portal /* stairs -> */
   Config OREE_LAIR_ENTRY; { }
   Config OREE_LAIR_EXIT; { }
   Config DARK_LEVEL; { }
+
   Config XINROCH_TOMB_ENTRANCE;
   {
     MaterialColorB = rgb16(0, 200, 0);
+  }
+
+  Config XINROCH_TOMB_EXIT;
+  {
+    MaterialColorB = rgb16(140, 240, 255);
   }
 }
 

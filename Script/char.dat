@@ -1020,26 +1020,26 @@ darkknight
     GauntletColor = rgb16(50, 50, 50);
   }
 
-  Config TEMPLAR; /*Same as elite*/
+  Config TEMPLAR; /* Tougher than veteran */
   {
-    AttributeBonus = 20;
+    AttributeBonus = 10;
     Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
-    RightBoot = STEEL boot { Enchantment = 2; }
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 1; }
+    RightBoot = STEEL boot { Enchantment = 1; }
     PostFix = "templar";
     KnownCWeaponSkills == LARGE_SWORDS;
-    CWeaponSkillHits == 1000;
-    RightSWeaponSkillHits = 500;
+    CWeaponSkillHits == 500;
+    RightSWeaponSkillHits = 300;
     PanicLevel = 5;
-    TotalVolume = 90000;
+    TotalVolume = 85000;
     ClothColor = rgb16(120, 20, 20);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
     BootColor = rgb16(128, 128, 128);
     CanBeGenerated = false;
-    HostileReplies == "@Dd yells: \"For Infuscor I shall slay you!\"";
+    HostileReplies == "@Dd yells: \"Who dares disturb the slumber of the lord Xinroch?\"";
     AttachedGod = INFUSCOR;
   }
 
@@ -1065,7 +1065,7 @@ darkknight
     BootColor = rgb16(128, 128, 128);
     IsUnique = true;
     CanBeGenerated = false;
-    HostileReplies == "@Dd yells: \"Who dares disturb the slumber of the lord Xinroch?\"";
+    HostileReplies == "@Dd exclaims: \"None shall pass.\"";
     AttachedGod = INFUSCOR;
   }
 
@@ -1135,6 +1135,16 @@ darkknight
   Config MASTER;
   {
     AttributeBonus = 50;
+    LegBitmapPos = 0, 96;
+    ClothColor = rgb16(80, 0, 20);
+    EyeColor = rgb16(200, 0, 0);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 48, 80;
+    BeltColor = rgb16(180, 0, 0);
+    CapColor = rgb16(160, 160, 160);
+    HairColor = rgb16(180, 0, 32);
+    GauntletColor = rgb16(200, 200, 0);
+    BootColor = rgb16(160, 160, 160);
     TotalVolume = 120000;
     Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
@@ -1158,16 +1168,7 @@ darkknight
     CanBeCloned = false;
     IsPolymorphable = false;
     HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
-    LegBitmapPos = 0, 96;
-    ClothColor = rgb16(80, 0, 20);
-    EyeColor = rgb16(200, 0, 0);
-    HeadBitmapPos = 96, 112;
-    TorsoBitmapPos = 48, 80;
-    BeltColor = rgb16(180, 0, 0);
-    CapColor = rgb16(160, 160, 160);
-    HairColor = rgb16(180, 0, 32);
-    GauntletColor = rgb16(200, 200, 0);
-    BootColor = rgb16(160, 160, 160);
+    DeathMessage = "@Dd dies screaming, and the world is finally rid of this menace.";
     CanBeConfused = false;
     FireResistance = 30;
     ElectricityResistance = 30;
@@ -1179,6 +1180,7 @@ darkknight
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
     AttachedGod = INFUSCOR;
+    BodyPartsDisappearWhenSevered = true;
   }
 }
 
@@ -5375,7 +5377,6 @@ necromancer
     CWeaponSkillHits == 500;
     RightSWeaponSkillHits = 50;
     LeftSWeaponSkillHits = 50;
-    /*Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }*/
     ScienceTalkPossibility = 0;
     TamingDifficulty = NO_TAMING;
     IsNameable = false;
