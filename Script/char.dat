@@ -674,6 +674,72 @@ guard
     DisplacePriority = 4;
     UndeadVersions = false;
   }
+
+  Config TOMB_ENTRY;
+  {
+    AttributeBonus = 20;
+    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = IRON bodyarmor(PLATE_MAIL);
+    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = IRON shield;
+    Adjective = "tomb";
+    CWeaponSkillHits = { 2, 100, 100; }
+    RightSWeaponSkillHits = 10;
+    LeftSWeaponSkillHits = 10;
+    PanicLevel = 25;
+    ClothColor = rgb16(64, 0, 128);
+    UndeadVersions = false;
+    FriendlyReplies =
+    {
+      4,
+      "@Dd says helplessly: \"I know, right? Purple. It had to be Infuscor's favourite color.\"",
+      "\"Don't even think of disturbing the Tomb.\"",
+      "\"They say Xinroch's restless soul dwells below. I heard it guards a portal to another dimension. I wouldn't be caught dead going through there.\"",
+      "@Dd mutters. \"Hundreds of year guarding this Tomb. I wish those necromancers would get on with it!\"";
+    }
+  }
+
+  Config TOMB_ENTRY_MASTER;
+  {
+    AttributeBonus = 50;
+    TotalVolume = 120000;
+    Helmet = GOLD helmet(FULL_HELMET) { Enchantment = 2; }
+    Amulet = amulet(AMULET_OF_LIFE_SAVING);
+    BodyArmor = ARCANITE bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE);
+    RightWielded = ILLITHIUM OCTIRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = OCTIRON shield { Enchantment = 2; }
+    RightRing = ring(RING_OF_FIRE_RESISTANCE);
+    LeftRing = ring(RING_OF_POISON_RESISTANCE);
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = ILLITHIUM boot { Enchantment = 2; }
+    Adjective = "master tomb";
+    CWeaponSkillHits = { 2, 2000, 2000; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 5;
+    TamingDifficulty = NO_TAMING;
+    IsUnique = true;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    ClothColor = rgb16(130, 0, 0);
+    CanBeConfused = false;
+    NaturalSparkleFlags = CLOTH_COLOR;
+    FriendlyReplies =
+    {
+      5,
+      "\"This temple served the dark knights during Xinroch's leadership, when he brought the forces of Infuscor and Cruentus together for the first time.\"",
+      "\"We await the return of Xinroch to lead the forces of darkness into battle against the High Priest of Valpurus!\"",
+      "\"Since Xinroch was lord, all the Master dark knights have come here to kneel at the altar of Infuscor. The next Master dark knight would be chosen by Infuscor herself.\"",
+      "\"The amulet? Heh, good insurance policies are hard to come by.\"",
+      "\"Be careful when entering the Tomb to pay homage. If you encounter the Templars, they do not like disturbances!\"";
+    }
+    IsImmuneToItemTeleport = true;
+    AllowUnconsciousness = false;
+    DisplacePriority = 4;
+    UndeadVersions = false;
+  }
 }
 
 shopkeeper

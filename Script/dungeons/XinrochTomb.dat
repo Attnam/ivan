@@ -112,7 +112,7 @@ Dungeon XINROCH_TOMB;
     Rooms = 5:8;
     Items = 0;
     IsOnGround = true;
-    TeamDefault = ATTNAM_TEAM;
+    TeamDefault = XINROCH_TOMB_ENTRY_TEAM;
     LOSModifier = 48;
     IgnoreDefaultSpecialSquares = true;
     CanGenerateBone = false;
@@ -354,44 +354,41 @@ Dungeon XINROCH_TOMB;
           - = 0;
           | = 0;
           % = 0;
-          g = guard(VETERAN);
-          E = guard(ELITE);
-          /*p = priest(VALPURUS);*/
+          g = guard(TOMB_ENTRY);
+          E = guard(TOMB_ENTRY_MASTER);
           y = mysticfrog(DARK);
           k = kamikazedwarf(INFUSCOR);
           K = veterankamikazedwarf(INFUSCOR);
-          d = darkmage(APPRENTICE);
-          b = darkmage(BATTLE_MAGE);
-          e = darkmage(ELDER) { Flags = IS_MASTER; }
+          d = darkknight(VETERAN);
           D = darkknight(ELITE);
         }
       }
       {
         ...............###...............
-        .............###K###.............
+        .............###y###.............
         ...........###-----###...........
         ..........##---------##..........
-        .........##-----------##.........
+        .........##---g---g---##.........
         .......###g-----------g###.......
-        ......##-----------------##......
-        .....##-------------------##.....
+        ......##-----------d-----##......
+        .....##----d----E---------##.....
         ...###d-------------------d###...
-        ..##-------------------------##..
-        ###-----------E---E-----------###
-        #E----------%%%%|%%%%----------E#
-        #----------b%|E|||E|%b----------#
-        #K---------%%|||||||%%---------K#
-        ##---------%|||||||||%---------##
-        .#---------%E|||||||E%---------#.
-        .#g-------%%|||||||||%%-------g#.
+        ..##------------------d------##..
+        ###-----------g---g-----------###
+        #g----d-----%%%%|%%%%----------g#
+        #----------k%g|||||g%k----------#
+        #K---------%%|||||||%%----d----K#
+        ##---------%||D|||D||%---------##
+        .#---d----k%|||||||||%k--------#.
+        .#g-------%%g|||||||g%%-------g#.
         .##-------%|||||||||||%-------##.
         ..#-------%D|||||||||D%-------#..
         ..#g------%%|||||||||%%------g#..
-        ..##-------%%|y|||y|%%-------##..
-        ...#--------%%%|E|%%%--------#...
-        ...#g---------%%e%%---------g#...
+        ..##------k%%g||D||g%%k------##..
+        ...#--------%%%|g|%%%--------#...
+        ...#g---------%%y%%---------g#...
         ...##----------%%%----------##...
-        ....#-----------------------#....
+        ....#-----------k-----------#....
         ....#g---------------------g#....
         ....##---------------------##....
         .....#---------------------#.....
@@ -621,7 +618,11 @@ Dungeon XINROCH_TOMB;
       }
       Square, Pos 1,1;
       {
-        Character = shopkeeper(XINROCH_TOMB) { Team = 5; Flags = IS_MASTER; }
+        Character = shopkeeper(XINROCH_TOMB) { Team = XINROCH_TOMB_SHOP_TEAM; Flags = IS_MASTER; }
+      }
+      Square, Pos 1,4;
+      {
+        Character = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_SHOP_TEAM;}
       }
       Square, Pos 2,2;
       {
@@ -748,7 +749,7 @@ Dungeon XINROCH_TOMB;
         Types
         {
           # = 0;
-          k = kamikazedwarf(INFUSCOR){ Team = 5; } /* Shop team, change this later*/
+          k = kamikazedwarf(INFUSCOR){ Team = XINROCH_TOMB_KAMIKAZE_DWARF_TEAM; }
         }
       }
       {
@@ -1065,6 +1066,7 @@ Dungeon XINROCH_TOMB;
     Square, Random IN_ROOM;
     {
       Character = golem(ICE);
+      Times = 2:5;
     }
 
     Square, Random IN_ROOM;
