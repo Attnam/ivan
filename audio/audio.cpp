@@ -69,6 +69,8 @@ int audio::CurrentMIDIOutPort;
 std::vector<musicfile*> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
 
+char* audio::CurrentTrack;
+
 /** For each increase in intensity, the respective MIDI channel changes by the following amount */
 int  audio::DeltaVolumePerIntensity[MAX_MIDI_CHANNELS] = {0, 0, 0, 0, 0, -1, -1, -1, -1, 0, -1, 1, 1, 1, 1, 1};
 int  audio::IntensityVolume[MAX_MIDI_CHANNELS];
@@ -99,6 +101,7 @@ void audio::Init()
    MasterVolume = 0;
    TargetIntensity = 0;
    volumeChangeRequest = false;
+   CurrentTrack = 0;
 
    // RtMidiOut constructor
    try
@@ -162,15 +165,25 @@ int audio::Loop(void *ptr)
       {
          isTrackPlaying = true;
          int randomIndex = rand() % Tracks.size();
-         PlayMIDIFile(Tracks[randomIndex]->GetFilename(), 1);
-      }
+         CurrentTrack = Tracks[randomIndex]->GetFilename();
 
+         festring MusDir = game::GetMusicDir();
+         festring MusFile = MusDir + festring(CurrentTrack);
+
+         PlayMIDIFile( (char*)MusFile.CStr(), 1);
+      }
       isTrackPlaying = false;
       SDL_Delay(1);
-
    }
    return 0;
 }
+
+
+char* audio::GetCurrentlyPlayedFile(void)
+{
+   return CurrentTrack;
+}
+
 
 /*int audio::GetCurrentOutputDevice(void)
 {
@@ -382,21 +395,38 @@ void audio::SetPlaybackStatus(uint8_t newStateBitmap)
 }
 
 
-void audio::ClearMIDIPlaylist(void)
+void audio::ClearMIDIPlaylist(char* exceptFilename)
+{
+   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); )
+   {
+      musicfile* p = *it;
+      if( exceptFilename && strcmp(exceptFilename, p->GetFilename() ) == 0 )
+      {
+         ++it;
+      }
+      else
+      {
+         Tracks.erase(it);
+      }
+   }
+}
+
+void audio::RemoveMIDIFile(char* filename)
 {
    for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
    {
-      delete *it;
+      musicfile* p = *it;
+      if( strcmp(filename, p->GetFilename() ) == 0 )
+      {
+         Tracks.erase(it);
+      }
    }
-   Tracks.erase(Tracks.begin(), Tracks.end());
+
 }
 
 void audio::LoadMIDIFile(char* filename, int intensitylow, int intensityhigh)
 {
-  festring MusDir = game::GetMusicDir();
-  festring MusFile = MusDir + festring(filename);
-
-  musicfile* mf = new musicfile((char*) MusFile.CStr(), intensitylow, intensityhigh);
+  musicfile* mf = new musicfile(filename, intensitylow, intensityhigh);
   Tracks.push_back(mf);
 }
 

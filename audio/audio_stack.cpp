@@ -21,8 +21,7 @@
 */
 
 
-#include <audio_stack.h>
-#include <audio_stack.h>
+
 #include <stdint.h>
 #include <stdlib.h>
 #include "audio_stack.h"

@@ -65,8 +65,8 @@ int Main(int argc, char **argv)
   igraph::LoadMenu();
 
   /* Set off the main menu music */
-  audio::SetPlaybackStatus(0);
-  audio::ClearMIDIPlaylist();
+  audio::SetPlaybackStatus(audio::STOPPED);
+  audio::ClearMIDIPlaylist(0);
   audio::LoadMIDIFile("mainmenu.mid", 0, 100);
   audio::SetPlaybackStatus(audio::PLAYING);
 
