@@ -10,14 +10,6 @@
  *
  */
 
-#if defined(LINUX) || defined(__DJGPP__)
-#include <sys/stat.h>
-#endif
-
-#ifdef WIN32
-#include <direct.h>
-#endif
-
 #include <cstdio>
 #include "whandler.h"
 #include "graphics.h"
@@ -313,12 +305,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
      case SDLK_PRINTSCREEN:
       if(!ScrshotDirectoryName.IsEmpty())
       {
-#ifdef WIN32
-        _mkdir(ScrshotDirectoryName.CStr());
-#endif
-#ifdef LINUX
-        mkdir(ScrshotDirectoryName.CStr(), S_IRWXU|S_IRWXG);
-#endif
         DOUBLE_BUFFER->Save(ScrshotNameHandler());
       }
       return;

@@ -14,16 +14,29 @@
 
 #ifdef WIN32
 #include <Windows.h>
+#include <direct.h> // for _mkdir
 #else
 #include <dirent.h>
+#include <sys/stat.h> // for mkdir
 #endif
 
 #include "save.h"
 #include "femath.h"
 
 outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
-: Buffer(fopen(FileName.CStr(), "wb")), FileName(FileName)
+: FileName(FileName)
 {
+  // Make sure the directory exists first.
+  festring DirectoryPath = FileName;
+  DirectoryPath.Resize(FileName.FindLast('/'));
+#ifdef WIN32
+  _mkdir(DirectoryPath.CStr());
+#else
+  mkdir(DirectoryPath.CStr(), S_IRWXU|S_IRWXG);
+#endif
+
+  Buffer = fopen(FileName.CStr(), "wb");
+
   if(AbortOnErr && !IsOpen())
     ABORT("Can't open %s for output!", FileName.CStr());
 }

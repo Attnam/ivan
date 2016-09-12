@@ -26,7 +26,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/audio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/{ProjName/SDL2-2.0.4/include}"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.415330665" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -43,10 +43,10 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1995781458" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.1479584335" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/audio}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FeLib/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Main/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/audio}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1407132300" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
