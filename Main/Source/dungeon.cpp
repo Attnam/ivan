@@ -133,17 +133,51 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
 void dungeon::PrepareMusic(int Index)
 {
   const levelscript* LevelScript = GetLevelScript(Index);
+  bool hasCurrentTrack = false;
+  char* CurrentTrack = audio::GetCurrentlyPlayedFile();
 
-  audio::SetPlaybackStatus(0);
-  audio::ClearMIDIPlaylist();
 
   for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
   {
      festring Music = LevelScript->GetAudioPlayList()->Data[i];
-     audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+     if( strcmp(CurrentTrack, (char*) Music.CStr()) == 0 )
+     {
+        hasCurrentTrack = true;
+        break;
+     }
   }
 
-  audio::SetPlaybackStatus(audio::PLAYING);
+  if( hasCurrentTrack == true )
+  {
+     audio::ClearMIDIPlaylist(CurrentTrack);
+     for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+     {
+        festring Music = LevelScript->GetAudioPlayList()->Data[i];
+        if( strcmp(CurrentTrack, (char*) Music.CStr()) == 0 )
+        {
+        }
+        else
+        {
+           audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+        }
+     }
+  }
+
+  if( hasCurrentTrack == false )
+  {
+     audio::SetPlaybackStatus(audio::STOPPED);
+     audio::ClearMIDIPlaylist(0);
+     for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+     {
+        festring Music = LevelScript->GetAudioPlayList()->Data[i];
+        audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+     }
+     audio::SetPlaybackStatus(audio::PLAYING);
+  }
+
+
+
+
 }
 
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)

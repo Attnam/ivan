@@ -59,6 +59,7 @@ public:
    /** Bitmap for different states*/
    typedef enum
    {
+      STOPPED       = 0x00,
       PLAYING       = 0x01,
       RESUME_SONG  = 0x02,
    } eAudioPlaybackStates_t ;
@@ -94,6 +95,8 @@ public:
 
    static int ChangeMIDIOutputDevice(int newPort);
 
+   static char* GetCurrentlyPlayedFile(void);
+
    /**
     * @param vol 0 - 128
     */
@@ -108,6 +111,8 @@ public:
     */
    static void IntensityLevel(int intensity);
 
+   static void RemoveMIDIFile(char* filename);
+
    /**
     * @param filename MIDI file location
     * @param intensitylow
@@ -115,7 +120,7 @@ public:
    static void LoadMIDIFile(char* filename, int intensitylow, int intensityhigh);
 
 
-   static void ClearMIDIPlaylist(void);
+   static void ClearMIDIPlaylist(char* exceptFilename = 0);
 
    static int IsPlaybackStopped(void);
 
@@ -142,6 +147,7 @@ private:
    static int CurrentPosition;
 
    static int  PlaybackState;
+   static char* CurrentTrack;
 
    static std::vector<musicfile*> Tracks;
 
