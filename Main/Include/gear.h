@@ -118,6 +118,7 @@ ITEM(flamingsword, meleeweapon)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual int GetSpecialFlags() const;
+  virtual truth IsLostRubyFlamingSword() const;
 };
 
 ITEM(mjolak, meleeweapon)
@@ -238,6 +239,7 @@ ITEM(cloak, armor)
   virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
   virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsShadowVeil() const;
  protected:
   virtual int GetSpecialFlags() const;
   virtual cchar* GetBreakVerb() const;

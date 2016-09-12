@@ -495,6 +495,16 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
+CHARACTER(xinrochghost, spirit)
+{
+ public:
+  virtual truth IsNameable() const { return false; }
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+};
+
 CHARACTER(imp, humanoid)
 {
 };
@@ -649,6 +659,7 @@ CHARACTER(necromancer, humanoid)
  public:
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;

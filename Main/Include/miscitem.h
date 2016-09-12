@@ -496,6 +496,17 @@ ITEM(skull, item)
   virtual truth IsASkull() const { return true; }
 };
 
+ITEM(skullofxinroch, item)
+{
+ public:
+  virtual truth IsASkull() const { return true; }
+  virtual void Be() { }
+ protected:
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 ITEM(scrollofrepair, scroll)
 {
  public:

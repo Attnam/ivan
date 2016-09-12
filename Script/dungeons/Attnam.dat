@@ -1038,6 +1038,11 @@ Dungeon ATTNAM;
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
     }
+
+    Square, Pos 21,20;
+    {
+      Character = necromancer(IMPRISONED_NECROMANCER);
+    }
   }
 
   Level 2;

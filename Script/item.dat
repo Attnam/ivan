@@ -2007,6 +2007,47 @@ cloak /* armor-> */
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
   }
+
+  Config CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    GearStates = ETHEREAL_MOVING;
+    Price = 2500;
+    MainMaterialConfig == GHOST;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    NameSingular = "shadow veil";
+    AttachedGod = INFUSCOR;
+    CanBeBroken = true;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    ArticleMode = FORCE_THE;
+    CanBeEnchanted = false;
+  }
+
+  Config BROKEN|CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    Price = 2500;
+    GearStates = 0;
+    EnchantmentPlusChance = 0;
+    CloakBitmapPos = 48, 496;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    CanBeEnchanted = false;
+  }
 }
 
 boot /* armor-> */
@@ -3062,6 +3103,31 @@ flamingsword /* meleeweapon-> */
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 4;
   }
+
+  Config LOST_RUBY_FLAMING_SWORD;
+  {
+    Possibility = 0;
+    BitmapPos = 16, 336;
+    WieldedBitmapPos = 160, 16;
+    MainMaterialConfig == RUBY;
+    SecondaryMaterialConfig == RUBY;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    Adjective = "lost ruby flaming";
+    PostFix = "of Xinroch";
+    AttachedGod = INFUSCOR;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    CanBeBroken = false;
+    BaseEnchantment = 0;
+    CanBeEnchanted = true;
+    ArticleMode = FORCE_THE;
+  }
 }
 
 mjolak /* meleeweapon-> */
@@ -3238,6 +3304,35 @@ skull
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
+}
+
+skullofxinroch
+{
+  StrengthModifier = 100;
+  FormModifier = 15;
+  Roundness = 65;
+  DefaultSize = 20;
+  Possibility = 0;
+  DefaultMainVolume = 800;
+  BitmapPos = 48, 112;
+  Category = MISC;
+  NameSingular = "skull";
+  PostFix = "of Xinroch the skeleton warlord";
+  Alias == "skull of Xinroch";
+  MainMaterialConfig == BONE;
+  IsTwoHanded = true;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 128;
+  IsValuable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBeWished = false;
+  ArticleMode = FORCE_THE;
+  IsQuestItem = true;
 }
 
 gorovitsweapon

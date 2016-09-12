@@ -57,8 +57,9 @@ struct place
   int Config;
   int NativeGTerrainType;
   truth HasBeenPlaced;
+  truth CanBeOnAnyTerrain;
 
-  place(int t, int c, int n, truth p) : Type(t), Config(c), NativeGTerrainType(n), HasBeenPlaced(p){}
+  place(int t, int c, int n, truth p, truth a) : Type(t), Config(c), NativeGTerrainType(n), HasBeenPlaced(p), CanBeOnAnyTerrain(a) {}
 };
 
 worldmap::worldmap(int XSize, int YSize) : area(XSize, YSize)
@@ -169,7 +170,7 @@ void worldmap::Generate()
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
+      if(Continent[c]->GetSize() > 250 && Continent[c]->GetSize() < 750
          && Continent[c]->GetGTerrainAmount(EGForestType)
          && Continent[c]->GetGTerrainAmount(SnowType))
         PerfectForAttnam.push_back(Continent[c]);
@@ -375,7 +376,7 @@ void worldmap::Generate()
 
         if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
         {
-          place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType, false);
+          place ConfigID(Type, DataBase->Config, DataBase->NativeGTerrainType, false, DataBase->CanBeOnAnyTerrain);
           ToBePlaced.push_back(ConfigID);
         }
       }
@@ -408,7 +409,7 @@ void worldmap::Generate()
         for(uint j = 0; j < ToBePlaced.size(); j++)
         {
           // If the terrain type of the available location matches that of the place, then put the place there.
-          if(AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType))
+          if((AvailableLocationsOnThisContinent[i].GTerrainType == GetTypeOfNativeGTerrainType(ToBePlaced[j].NativeGTerrainType)) || (ToBePlaced[j].CanBeOnAnyTerrain))
           {
             owterrain* NewPlace = protocontainer<owterrain>::GetProto(ToBePlaced[j].Type)->Spawn();
             v2 NewPos = AvailableLocationsOnThisContinent[i].Position;

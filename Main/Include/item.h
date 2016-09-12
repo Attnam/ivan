@@ -483,6 +483,8 @@ class item : public object
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
+  virtual truth IsShadowVeil() const { return false; }
+  virtual truth IsLostRubyFlamingSword() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;

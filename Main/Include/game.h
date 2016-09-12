@@ -314,6 +314,8 @@ class game
   static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
+  static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
+  static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetHomeDir();
@@ -485,6 +487,7 @@ class game
   static int Teams;
   static int Dungeons;
   static int StoryState;
+  static int XinrochTombStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;

@@ -34,6 +34,13 @@ col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
+truth flamingsword::IsLostRubyFlamingSword() const
+{
+  if(GetConfig() == LOST_RUBY_FLAMING_SWORD)
+    return true;
+  else
+    return false;
+}
 
 col16 gorovitsweapon::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
@@ -61,6 +68,13 @@ cchar* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() 
 truth cloak::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
+truth cloak::IsShadowVeil() const
+{
+  if(GetConfig() == CLOAK_OF_SHADOWS)
+    return true;
+  else
+    return false;
+}
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }

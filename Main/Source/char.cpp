@@ -247,6 +247,15 @@ statedata StateData[STATES] =
     &character::HiccupsHandler,
     0,
     &character::HiccupsSituationDangerModifier
+  }, {
+    "Ethereal",
+    NO_FLAGS,
+    &character::PrintBeginEtherealityMessage,
+    &character::PrintEndEtherealityMessage,
+    &character::BeginEthereality, &character::EndEthereality,
+    0,
+    0,
+    0
   }
 };
 
@@ -341,9 +350,12 @@ truth character::MustBeRemovedFromBone() const
 truth character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 character* character::GetLeader() const { return GetTeam()->GetLeader(); }
 int character::GetMoveType() const
-{ return (!StateIsActivated(LEVITATION)
+{ return ((!StateIsActivated(LEVITATION)
           ? DataBase->MoveType
-          : DataBase->MoveType | FLY); }
+          : DataBase->MoveType | FLY) |
+          (!StateIsActivated(ETHEREAL_MOVING)
+          ? DataBase->MoveType
+          : DataBase->MoveType | ETHEREAL)); }
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -1579,7 +1591,14 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 
   if(IsPlayer())
   {
-    AddScoreEntry(Msg);
+    if(game::GetXinrochTombStoryState() == 2)
+    {
+      festring MsgBut = CONST_S("delivered the Shadow Veil to the Necromancer and continued to further adventures, but was ");
+      festring NewMsg = MsgBut << Msg;
+      AddScoreEntry(NewMsg, 2, true);
+    }
+    else
+      AddScoreEntry(Msg);
 
     if(!game::IsInWilderness())
     {
@@ -1737,6 +1756,33 @@ truth character::HasGoldenEagleShirt() const
   return combineequipmentpredicates()(this, &item::IsGoldenEagleShirt, 1);
 }
 
+truth character::HasEncryptedScroll() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsEncryptedScroll())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsEncryptedScroll, 1);
+}
+
+truth character::HasShadowVeil() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsShadowVeil, 1);
+}
+
+truth character::HasLostRubyFlamingSword() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsLostRubyFlamingSword())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsLostRubyFlamingSword, 1);
+}
+
 truth character::RemoveEncryptedScroll()
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -1753,6 +1799,32 @@ truth character::RemoveEncryptedScroll()
     item* Item = GetEquipment(c);
 
     if(Item && Item->IsEncryptedScroll())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::RemoveShadowVeil()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsShadowVeil())
     {
       Item->RemoveFromSlot();
       Item->SendToHell();
@@ -4789,6 +4861,22 @@ void character::PrintEndInvisibilityMessage() const
   }
 }
 
+void character::PrintBeginEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel like many miscible droplets of ether.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s melds into the surroundings.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You drop out of the firmament, feeling suddenly quite dense.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s displaces the air with a puff.", CHAR_NAME(INDEFINITE));
+}
+
 void character::PrintBeginInfraVisionMessage() const
 {
   if(IsPlayer())
@@ -5357,6 +5445,10 @@ void character::BeginESP()
     GetArea()->SendNewDrawRequest();
 }
 
+void character::BeginEthereality()
+{
+}
+
 void character::EndInvisibility()
 {
   UpdatePictures();
@@ -5374,6 +5466,10 @@ void character::EndESP()
 {
   if(IsPlayer() && IsEnabled())
     GetArea()->SendNewDrawRequest();
+}
+
+void character::EndEthereality()
+{
 }
 
 void character::Draw(blitdata& BlitData) const
