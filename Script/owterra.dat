@@ -33,6 +33,7 @@ owterrain
   CanBeGenerated = false;
   NativeGTerrainType = 0;
   RevealEnvironmentInitially = false; /* Overridden by the world map generator for core locations */
+  CanBeOnAnyTerrain = false;
 }
 
 attnam
@@ -337,6 +338,7 @@ locationAW
   CanBeGenerated = true;
   NativeGTerrainType = TUNDRA;
   RevealEnvironmentInitially = false;
+  CanBeOnAnyTerrain = true;
 }
 
 locationAX

@@ -130,6 +130,7 @@ struct owterraindatabase : public wterraindatabase
   truth CanBeGenerated;
   int NativeGTerrainType;
   truth RevealEnvironmentInitially;
+  truth CanBeOnAnyTerrain;
 };
 
 class owterrainprototype
@@ -150,6 +151,7 @@ class owterrainprototype
   virtual int GetAttachedArea() const { return 0; }
   virtual int GetNativeGTerrainType() const { return 0; }
   virtual truth RevealEnvironmentInitially() const { return false; }
+  virtual truth CanBeOnAnyTerrain() const { return false; }
  private:
   int Index;
   const owterrainprototype* Base;
@@ -182,6 +184,7 @@ class owterrain : public wterrain, public oterrain
   DATA_BASE_TRUTH(CanBeGenerated);
   DATA_BASE_VALUE(int, NativeGTerrainType);
   DATA_BASE_TRUTH(RevealEnvironmentInitially);
+  DATA_BASE_TRUTH(CanBeOnAnyTerrain);
  protected:
   virtual v2 GetBitmapPos(int) const;
   virtual cfestring& GetNameStem() const;
