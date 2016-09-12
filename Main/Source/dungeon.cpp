@@ -134,12 +134,6 @@ void dungeon::PrepareMusic(int Index)
 {
   const levelscript* LevelScript = GetLevelScript(Index);
 
-
-// Loop through strings
-// clear audio
-// pass each one to audio::LoadMIDIFile()
-// Activate audio ramp-up?? 
-
   audio::SetPlaybackStatus(0);
   audio::ClearMIDIPlaylist();
 
@@ -147,7 +141,6 @@ void dungeon::PrepareMusic(int Index)
   {
      festring Music = LevelScript->GetAudioPlayList()->Data[i];
      audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
-     ADD_MESSAGE("Adding %s", Music.CStr());
   }
 
   audio::SetPlaybackStatus(audio::PLAYING);

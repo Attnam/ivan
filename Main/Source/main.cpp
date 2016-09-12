@@ -64,7 +64,11 @@ int Main(int argc, char **argv)
   protosystem::Initialize();
   igraph::LoadMenu();
 
-
+  /* Set off the main menu music */
+  audio::SetPlaybackStatus(0);
+  audio::ClearMIDIPlaylist();
+  audio::LoadMIDIFile("mainmenu.mid", 0, 100);
+  audio::SetPlaybackStatus(audio::PLAYING);
 
   for(;;)
   {
