@@ -675,6 +675,7 @@ void priest::BeTalkedTo()
   }
 
   for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
+  {
     if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
     {
       truth HasOld = false;
@@ -741,6 +742,46 @@ void priest::BeTalkedTo()
                     "but my Divine Employer is not a communist and you need %ldgp first.\"",
                     PLAYER->GetBodyPartName(c).CStr(), Price);
     }
+
+    if(PLAYER->GetBodyPart(c))
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart->CanRegenerate() && BodyPart->IsBurnt() || BodyPart->IsBurning())
+      {
+        long Price = GetConfig() == VALPURUS ? 25 : 5;
+
+        if(PLAYER->GetMoney() >= Price)
+        {
+          if(BodyPart->IsBurning())
+            ADD_MESSAGE("\"Good God, you're on fire!  Quick, hand over %ld gold!\"", Price);
+          else
+            ADD_MESSAGE("\"I could cure the burns on your %s in exchange for %ld gold.\"",
+                        PLAYER->GetBodyPartName(c).CStr(), Price);
+
+          if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+          {
+            if(BodyPart->IsBurning())
+              PLAYER->Extinguish(true);
+            else
+              BodyPart->ResetBurning();
+            PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+            SetMoney(GetMoney() + Price);
+            return;
+          }
+        }
+        else
+          if(BodyPart->IsBurning())
+          {
+            ADD_MESSAGE("\"Good God, you're on fire!  Quick, go find %ld gold so that I can help!\"",
+                Price);
+            return;
+          }
+          ADD_MESSAGE("\"Your %s is burned. Bring me %ld gold pieces and I'll make it all better.\"",
+                      PLAYER->GetBodyPartName(c).CStr(), Price);
+      }
+    }
+  }
 
   if(PLAYER->TemporaryStateIsActivated(POISONED))
   {

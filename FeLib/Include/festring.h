@@ -167,10 +167,7 @@ inline festring::~festring()
     char* Ptr = Data;
 
     if(Ptr && !(REFS(Ptr)--))
-    {
-       delete [] &REFS(Ptr);
-    }
-
+      delete [] &REFS(Ptr);
   }
 }
 

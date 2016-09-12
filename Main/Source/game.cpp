@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cstdarg>
 
-#if defined(UNIX) || defined(__DJGPP__)
+#if defined(LINUX) || defined(__DJGPP__)
 #include <sys/stat.h>
 #endif
 
@@ -264,7 +264,7 @@ truth game::Init(cfestring& Name)
   mkdir("Bones", S_IWUSR);
 #endif
 
-#ifdef UNIX
+#ifdef LINUX
   mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
@@ -293,7 +293,7 @@ truth game::Init(cfestring& Name)
       audio::ClearMIDIPlaylist();
       audio::LoadMIDIFile("newgame.mid", 0, 100);
       audio::SetPlaybackStatus(audio::PLAYING);
-      
+
       iosystem::TextScreen(CONST_S("You couldn't possibly have guessed this day would differ from any other.\n"
                                    "It began just as always. You woke up at dawn and drove off the giant spider\n"
                                    "resting on your face. On your way to work you had serious trouble avoiding\n"
@@ -2338,7 +2338,7 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 festring game::GetHomeDir()
 {
-#ifdef UNIX
+#ifdef LINUX
   festring Dir;
   Dir << getenv("HOME") << "/.ivan/";
   return Dir;
@@ -2361,7 +2361,7 @@ festring game::GetScrshotDir()
 
 festring game::GetDataDir()
 {
-#ifdef UNIX
+#ifdef LINUX
   return DATADIR "/ivan/";
 #endif
 
@@ -2372,7 +2372,7 @@ festring game::GetDataDir()
 
 festring game::GetBoneDir()
 {
-#ifdef UNIX
+#ifdef LINUX
   return LOCAL_STATE_DIR "/Bones/";
 #endif
 
@@ -2384,7 +2384,7 @@ festring game::GetBoneDir()
 festring game::GetMusicDir()
 {
 #ifdef LINUX
-  return LOCAL_STATE_DIR "/Music/";
+  return GetDataDir() + "Music/";
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
