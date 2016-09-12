@@ -61,6 +61,7 @@
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
+#define ETHEREAL_MOVING (1 << 21)
 
 #define HEAD 1
 #define TORSO 2
@@ -527,6 +528,9 @@
 #define CLOAK_OF_FIRE_RESISTANCE 2
 #define CLOAK_OF_ELECTRICITY_RESISTANCE 3
 #define CLOAK_OF_ACID_RESISTANCE 4
+#define CLOAK_OF_SHADOWS 5
+
+#define LOST_RUBY_FLAMING_SWORD 2
 
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
@@ -573,10 +577,14 @@
 #define VETERAN 2
 #define EUNUCH 3
 #define PATROL 4
+#define TEMPLAR 4
 #define SHOP 5
+#define GRAVE_KEEPER 5
 #define ELITE 6
 #define MASTER 7
 #define GRAND_MASTER 8
+#define TOMB_ENTRY 9
+#define TOMB_ENTRY_MASTER 10
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -603,6 +611,7 @@
 #define GRIZZLY_BEAR 2
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
+#define MUTANT_BEAR 5
 
 #define ZOMBIE_OF_KHAZ_ZADM 1
 
@@ -638,10 +647,14 @@
 
 #define APPRENTICE_NECROMANCER 1
 #define MASTER_NECROMANCER 2
+#define IMPRISONED_NECROMANCER 9
 
 #define HUSBAND 1
 #define WIFE 2
 #define CHILD 3
+
+#define BOY 1
+#define GIRL 2
 
 #define LIGHT_ASIAN_SIREN 1
 #define DARK_ASIAN_SIREN 2
@@ -700,6 +713,8 @@
 #define OREE_LAIR_EXIT 400
 #define SUMO_ARENA_ENTRY 700
 #define SUMO_ARENA_EXIT 800
+#define XINROCH_TOMB_ENTRANCE 900
+#define XINROCH_TOMB_EXIT 1000
 #define FOUNTAIN 65535
 
 #define BOOK_CASE 1
@@ -727,6 +742,9 @@
 #define TOURIST_GUIDE_TEAM 9
 #define TOURIST_TEAM 10
 #define BETRAYED_TEAM 11
+#define XINROCH_TOMB_ENTRY_TEAM 12
+#define XINROCH_TOMB_SHOP_TEAM 13
+#define XINROCH_TOMB_KAMIKAZE_DWARF_TEAM 14
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2
@@ -741,6 +759,7 @@
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
 #define EMPTY_AREA 5
+#define XINROCH_TOMB 6
 #define UNDER_WATER_TUNNEL_EXIT 128
 
 #define VESANA_LEVEL 2
@@ -752,8 +771,11 @@
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
 
+#define DUAL_ENNER_BEAST_LEVEL 7
+
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 #define VALPURUS 1
 #define LEGIFER 2

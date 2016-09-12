@@ -114,6 +114,72 @@ truth ennerbeast::Hit(character* Enemy, v2, int, int)
   return true;
 }
 
+truth ennerchild::Hit(character* Enemy, v2, int, int)
+{
+  if(CheckIfTooScaredToHit(Enemy))
+    return false;
+
+  if(RAND() & 1)
+    ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHAR_DESCRIPTION(DEFINITE));
+  else
+    ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHAR_DESCRIPTION(DEFINITE));
+
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 30);
+
+  // Enner girl is older
+  int BaseScreamStrength = 50;
+
+  if(GetConfig() == BOY)
+    BaseScreamStrength = 40;
+
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
+    for(int y = Rect.Y1; y <= Rect.Y2; ++y)
+    {
+      int ScreamStrength = int(BaseScreamStrength / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
+
+      if(ScreamStrength)
+      {
+        character* Char = GetNearSquare(x, y)->GetCharacter();
+
+        if(Char && Char != this)
+        {
+          msgsystem::EnterBigMessageMode();
+
+          if(Char->IsPlayer())
+            ADD_MESSAGE("You are hit by the horrible waves of high sound.");
+          else if(Char->CanBeSeenByPlayer())
+            ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
+
+          Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
+          Char->CheckDeath(CONST_S("killed @bkp scream"), this);
+          msgsystem::LeaveBigMessageMode();
+        }
+
+        GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
+      }
+    }
+
+  EditNP(-100);
+  EditAP(-1000000 / GetCWeaponSkill(BITE)->GetBonus());
+  EditStamina(-1000, false);
+  return true;
+}
+
+truth ennerchild::ReceiveDamage(character* Damager, int Damage, int Type, int TargetFlags, int Direction,
+                              truth Divide, truth PenetrateArmor, truth Critical, truth ShowMsg)
+{
+  truth Success = false;
+
+  if(Type != SOUND)
+  {
+    Success = humanoid::ReceiveDamage(Damager, Damage, Type, TargetFlags, Direction,
+                                          Divide, PenetrateArmor, Critical, ShowMsg);
+  }
+
+  return Success;
+}
+
 void skeleton::CreateCorpse(lsquare* Square)
 {
   if(GetHead())
@@ -180,6 +246,25 @@ truth golem::MoveRandomly()
 }
 
 void ennerbeast::GetAICommand()
+{
+  SeekLeader(GetLeader());
+
+  if(StateIsActivated(PANIC) || !(RAND() % 3))
+    Hit(0, ZERO_V2, YOURSELF);
+
+  if(CheckForEnemies(false, false, true))
+    return;
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}
+
+void ennerchild::GetAICommand()
 {
   SeekLeader(GetLeader());
 
@@ -2580,7 +2665,12 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
   if(!ForceDisappearance)
   {
     if(BodyPartIndex == HEAD_INDEX)
-      Bone = skull::Spawn(0, NO_MATERIALS);
+    {
+      if(GetConfig() == WAR_LORD)
+        Bone = skullofxinroch::Spawn(0, NO_MATERIALS);
+      else
+        Bone = skull::Spawn(0, NO_MATERIALS);
+    }
     else
       Bone = bone::Spawn(0, NO_MATERIALS);
 
@@ -3889,6 +3979,14 @@ truth ennerbeast::MustBeRemovedFromBone() const
     || GetLevel()->GetIndex() != ENNER_BEAST_LEVEL;
 }
 
+truth ennerchild::MustBeRemovedFromBone() const
+{
+  return !IsEnabled()
+    || GetTeam()->GetID() != MONSTER_TEAM
+    || GetDungeon()->GetIndex() != XINROCH_TOMB
+    || GetLevel()->GetIndex() != DUAL_ENNER_BEAST_LEVEL;
+}
+
 truth communist::MustBeRemovedFromBone() const
 {
   return !IsEnabled()
@@ -4194,6 +4292,14 @@ bodypart* ennerbeast::MakeBodyPart(int I) const
     return humanoid::MakeBodyPart(I);
 }
 
+bodypart* ennerchild::MakeBodyPart(int I) const
+{
+  if(I == HEAD_INDEX)
+    return ennerhead::Spawn(0, NO_MATERIALS);
+  else
+    return humanoid::MakeBodyPart(I);
+}
+
 int humanoid::GetSumOfAttributes() const
 {
   return character::GetSumOfAttributes() + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
@@ -4345,6 +4451,12 @@ void necromancer::GetAICommand()
       return;
   }
 
+  if(GetConfig() == IMPRISONED_NECROMANCER && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    humanoid::MoveTowardsHomePos();
+    return;
+  }
+
   if(CheckForDoors())
     return;
 
@@ -4421,6 +4533,135 @@ void necromancer::RaiseSkeleton()
 
   Skeleton->SetGenerationDanger(GetGenerationDanger());
   EditAP(-GetSpellAPCost());
+}
+
+void necromancer::BeTalkedTo()
+{
+  if(GetConfig() != IMPRISONED_NECROMANCER)
+  {
+    humanoid::BeTalkedTo();
+    return;
+  }
+
+  /* From here we are talking to the necromancer in the attnamese catacombs */
+  if(GetRelation(PLAYER) == HOSTILE)
+  {
+    ADD_MESSAGE("I will bury you in the catacombs with all the others!");
+    return;
+  }
+
+  if(PLAYER->HasShadowVeil() && (game::GetXinrochTombStoryState() == 1))
+  {
+    if(PLAYER->RemoveShadowVeil())
+    {
+      game::TextScreen(CONST_S("The Necromancer takes the Shadow Veil.\n"
+                               "\"At last I can make my escape from Petrus' wretched clutches!\"\n"
+                               "\n"
+                               "The necromancer looks up \n"
+                               "\"Oh, you are still here. Good! Pray tell me, what did you find in the Tomb?\n"
+                               "A portal? Did you traverse it? Of course! You can't do so bodily,\n"
+                               "unless you were... ...changed in some way?\"\n"));
+
+      game::TextScreen(CONST_S("You feel a cold, tingling sensation in the middle of your forehead.\n"
+                               "\n\n"
+                               "\"Here, I give you the seal of the undead. You will be able to traverse\n"
+                               "the portal without the use of the shadow veil. Go forth!\""));
+
+      GetArea()->SendNewDrawRequest();
+      ADD_MESSAGE("\"You can still retrieve the lost flaming ruby sword. If you go beyond the portal, you will find the one who carries this lost sword. But be warned, he is a terrible foe!\"");
+      game::SetXinrochTombStoryState(2);
+    }
+    return;
+  }
+
+  if(PLAYER->HasLostRubyFlamingSword())
+  {
+    ADD_MESSAGE("The necromancer exclaims: \"What are you still doing down here? That sword belongs to the Champion of Infuscor!\"");
+    return;
+  }
+  else if(game::GetXinrochTombStoryState() == 2)
+    ADD_MESSAGE("The necromancer says: \"I am just preparing to leave. Have you found that flaming ruby sword yet?\"");
+
+  if(game::GetXinrochTombStoryState() == 1)
+  {
+    ADD_MESSAGE("The necromancer says: \"Bring me the shadow veil and we'll talk.\"");
+    return;
+  }
+
+  if(PLAYER->HasEncryptedScroll() && !game::GetXinrochTombStoryState())
+  {
+    ADD_MESSAGE("The necromancer looks up. \"Have you got the encrypted scroll?\"");
+
+    if(game::TruthQuestion(CONST_S("Will you give the encrypted scroll to the necromancer? [y/n]"), REQUIRES_ANSWER))
+    {
+      if(PLAYER->RemoveEncryptedScroll())
+      {
+        game::TextScreen(CONST_S("The necromancer takes the scroll and mutters an incantation in a low voice.\n"
+                                 "To your surprise, the words rearrange themselves on the page,\n"
+                                 "revealing a previously inscrutable message.\n"
+                                 "The necromancer scans the page from left to right several times. His face contorts:\n"
+                                 "\"Bah! A canticle of Saint Petrus the Lion-Hearted!\"\n"
+                                 "He continues down the page. His eye's widen:\n"
+                                 "\"O ho! 10000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
+                                 "\n"
+                                 "The necromancer allows the scroll to burn the ashes wither away in his hands.\n"
+                                 "\"Alas, no news about my trial. But thank you for sharing.\"\n"
+                                 "\n"
+                                 "\"What am I doing here you ask? You could say I spent some time arranging things\n"
+                                 "in the catacombs below. I was the undertaker for the city of Attnam, you see.\n"
+                                 "Well, curiosity got the better of me and I admit I dabbled in some necromancy.\n"
+                                 "223 years later, and I'm still down here, drinking blood, eating bones, and generally \n"
+                                 "trying all the old life-extension tricks. Finally I got caught out by that meddling Haedlac.\n"
+                                 "He's got nothing better to do these days. Sent me here to the Cellar, never too far away\n"
+                                 "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
+                                 "every now and again to check up on me.\"\n"));
+
+        game::TextScreen(CONST_S("\"I can relate the history of dark knighthood to you. Long ago, there lived a\n"
+                                 "powerful warrior, Xinroch, who rose up the ranks of the fearsome order of the\n"
+                                 "dark knights, to become grand master dark knight. \n\n"
+                                 "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
+                                 "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
+                                 "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
+                                 "of their legendary master, they may obstruct your entry to the tomb. Little do they know\n"
+                                 "that in order for their master to be reborn, his spirit must be freed from the place.\n"
+                                 "Of course, disturbing such a restless soul would be dangerous. You may need to subdue it\n"
+                                 "by force to gain what you need. Legend has it Xinroch's spirit is able to wield weapons,\n"
+                                 "and possesses a cloak of unimaginable usefulness: The Shadow Veil.\""));
+
+        game::TextScreen(CONST_S("The necromancer suddenly looks at you intently.\n"
+                                 "\"Tell you what, I think you can help me out. But first I'll need proof of your abilities.\n"
+                                 "It will take all your wits to survive the powers of the Tomb of Xinroch to the very end.\"\n\n"
+                                 "Bring me this shadow veil, and I might be able to help you in a lasting way. I need the\n"
+                                 "shadow veil to help make my escape from Attnam. It has certain properties conducive to\n"
+                                 "getting away unnoticed.\"\n\n"
+                                 "\"There is also the matter of Xinroch's lost sword. Its power lies in its symbolism.\n"
+                                 "If you were to gain it somehow, then I imagine most believers would be convinced that\n"
+                                 "you were Xinroch himself, returned to the flesh. Although you would need to prove this\n"
+                                 "with the help of our god, Infuscor... ...it might require some offering, or exchange?\n"
+                                 "I cannot say what trial would await you to retrieve the lost sword.\""));
+
+        game::LoadWorldMap();
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        game::SaveWorldMap();
+        GetArea()->SendNewDrawRequest();
+        ADD_MESSAGE("\"By the way, if you find anything belonging to Xinroch, then don't lose it! I have a feeling it will help you greatly in your quest.\"");
+        game::SetXinrochTombStoryState(1);
+        return;
+      }
+    }
+    else
+    {
+      ADD_MESSAGE("The necromancer looks downcast. "
+                  "\"I see. I guess I shall have to wait for another adventurer then.\"");
+      return;
+    }
+  }
+  else if(!game::GetXinrochTombStoryState()) /* XinrochTombStoryState == 0 */
+    ADD_MESSAGE("The necromancer says: \"Bring me the encrypted scroll and we'll talk.\"");
+
+  return;
 }
 
 void humanoid::StayOn(liquid* Liquid)
@@ -5596,5 +5837,128 @@ void guard::BeTalkedTo()
   {
     Item[c]->RemoveFromSlot();
     GetStack()->AddItem(Item[c]);
+  }
+}
+
+void xinrochghost::GetAICommand()
+{
+  if(GetHomeRoom())
+    StandIdleAI();
+  else
+    humanoid::GetAICommand();
+}
+
+void xinrochghost::CreateCorpse(lsquare* Square)
+{
+  SendToHell();
+/*This needs to be a function someday*/
+  if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
+    ADD_MESSAGE("You hear an eerie scream: \"Ahh! Free at last! FREE TO BE REBORN!\"");
+    int c, Tunnels = 2 + RAND() % 3;
+    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
+      Tunnels = 0;
+
+    for(c = 0; c < Tunnels; ++c)
+      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
+
+    int ToEmpty = 10 + RAND() % 11;
+
+    for(c = 0; c < ToEmpty; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+        truth Correct = false;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(Square && Square->IsFlyable())
+          {
+            Correct = true;
+            break;
+          }
+        }
+
+        if(Correct)
+        {
+          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
+          break;
+        }
+      }
+
+    int ToGround = 20 + RAND() % 21;
+
+    for(c = 0; c < ToGround; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+        if(Pos == ERROR_V2)
+          continue;
+
+        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+        character* Char = Square->GetCharacter();
+
+        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+          continue;
+
+        int Walkables = 0;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(NearSquare && NearSquare->IsFlyable())
+            ++Walkables;
+        }
+
+        if(Walkables > 6)
+        {
+          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
+
+          if(Char)
+          {
+            if(Char->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
+
+            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
+          }
+
+          Square->KickAnyoneStandingHereAway();
+          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+          break;
+        }
+      }
+
+    // Generate a few boulders in the level
+
+    int BoulderNumber = 10 + RAND() % 10;
+
+    for(c = 0; c < BoulderNumber; ++c)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+      character* MonsterHere = Square->GetCharacter();
+
+      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
+      {
+        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
+
+        if(MonsterHere)
+          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
+      }
+    }
+
+    // Damage to items in the level
+
+    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
   }
 }

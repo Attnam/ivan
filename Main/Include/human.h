@@ -314,6 +314,18 @@ CHARACTER(ennerbeast, humanoid)
   virtual truth AttackIsBlockable(int) const { return false; }
 };
 
+CHARACTER(ennerchild, humanoid)
+{
+ public:
+  virtual truth Hit(character*, v2, int, int = 0);
+  virtual truth MustBeRemovedFromBone() const;
+  virtual truth ReceiveDamage(character*, int, int, int = ALL, int = 8, truth = false, truth = false, truth = false, truth = true);
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
+  virtual truth AttackIsBlockable(int) const { return false; }
+};
+
 CHARACTER(skeleton, humanoid)
 {
  public:
@@ -483,6 +495,16 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
+CHARACTER(xinrochghost, spirit)
+{
+ public:
+  virtual truth IsNameable() const { return false; }
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+};
+
 CHARACTER(imp, humanoid)
 {
 };
@@ -637,6 +659,7 @@ CHARACTER(necromancer, humanoid)
  public:
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;

@@ -124,7 +124,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 21
+#define STATES 22
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -147,6 +147,7 @@ const name##prototype name::ProtoType
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
+#define ETHEREAL_MOVING (1 << 21)
 
 #define TORSO 1
 #define HEAD 2
@@ -517,6 +518,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
+#define EMPTY_AREA 5
+#define XINROCH_TOMB 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -527,6 +530,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define IVAN_LEVEL 7
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
+
+#define DUAL_ENNER_BEAST_LEVEL 7
 
 /* stack::DrawContents flags */
 
@@ -541,6 +546,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 /* Gods, 0 == none */
 
