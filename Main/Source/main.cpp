@@ -28,10 +28,9 @@
 #include "script.h"
 #include "message.h"
 #include "proto.h"
-
 #include "audio.h"
 
-int Main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
   {

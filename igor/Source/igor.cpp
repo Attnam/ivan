@@ -14,7 +14,7 @@
 #define TILE_SIZE 16
 cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
-int Main(int, char**)
+int main(int, char**)
 {
   festring OldDirectory;
   std::ifstream IConfigFile("igor.cfg");
