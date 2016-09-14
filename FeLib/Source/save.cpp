@@ -26,10 +26,14 @@
 outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
 : FileName(FileName)
 {
-  // Make sure the directory exists first.
-  festring DirectoryPath = FileName;
-  DirectoryPath.Resize(FileName.FindLast('/'));
-  MakePath(DirectoryPath);
+  // If FileName contains a directory, make sure the directory exists first.
+  festring::csizetype LastPathSeparatorPos = FileName.FindLast('/');
+  if(LastPathSeparatorPos != festring::NPos)
+  {
+    festring DirectoryPath = FileName;
+    DirectoryPath.Resize(LastPathSeparatorPos);
+    MakePath(DirectoryPath);
+  }
 
   Buffer = fopen(FileName.CStr(), "wb");
 
