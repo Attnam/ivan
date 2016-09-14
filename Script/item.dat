@@ -2017,7 +2017,7 @@ cloak /* armor-> */
     EnchantmentPlusChance = 0;
     NameSingular = "shadow veil";
     AttachedGod = INFUSCOR;
-    CanBeBroken = true;
+    CanBeBroken = false;
     CanBeWished = false;
     IsDestroyable = false;
     IsMaterialChangeable = false;
@@ -2026,25 +2026,6 @@ cloak /* armor-> */
     IsQuestItem = true;
     CanBeBurned = false;
     ArticleMode = FORCE_THE;
-    CanBeEnchanted = false;
-  }
-
-  Config BROKEN|CLOAK_OF_SHADOWS;
-  {
-    Possibility = 0;
-    BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 40;
-    Price = 2500;
-    GearStates = 0;
-    EnchantmentPlusChance = 0;
-    CloakBitmapPos = 48, 496;
-    CanBeWished = false;
-    IsDestroyable = false;
-    IsMaterialChangeable = false;
-    IsPolymorphable = false;
-    CanBeCloned = false;
-    IsQuestItem = true;
-    CanBeBurned = false;
     CanBeEnchanted = false;
   }
 }
