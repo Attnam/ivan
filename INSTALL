@@ -85,5 +85,8 @@ Now you can compile from command line:
 
 D:\buildy\ivan\mingw2>mingw32-make -j4 install
 
+If you get a lot of weird compilation errors, try invoking cmake again with
+-DCMAKE_CXX_FLAGS='-std=gnu++11' as a workaround.
+
 Now you can run ivan from D:/buildy/ivan/inst_mingw/ivan/ directory.
 
