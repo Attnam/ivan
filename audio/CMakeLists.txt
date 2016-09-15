@@ -2,6 +2,12 @@ file(GLOB FEAUDIO_SOURCES *.h *.cpp)
 
 add_library(FeAudio ${FEAUDIO_SOURCES})
 
+# Add RtMidi dependencies on Windows
+if(WIN32)
+  add_definitions(-D__WINDOWS_MM__)
+  set(RTMIDI_DEPENDENCIES winmm)
+endif()
+
 # Add RtMidi dependencies on Mac
 if(APPLE)
   add_definitions(-D__MACOSX_CORE__)
