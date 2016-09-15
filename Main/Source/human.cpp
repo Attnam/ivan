@@ -44,7 +44,6 @@ truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TOR
 festring zombie::GetZombieDescription() const { return Description; }
 
 truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
-truth spirit::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX && I != HEAD_INDEX && I != RIGHT_ARM_INDEX && I != LEFT_ARM_INDEX && I != RIGHT_LEG_INDEX && I != LEFT_LEG_INDEX; }
 festring spirit::GetSpiritDescription() const { return Description; }
 cchar* spirit::FirstPersonUnarmedHitVerb() const { return "touch"; }
 cchar* spirit::FirstPersonCriticalUnarmedHitVerb() const
