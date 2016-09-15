@@ -765,7 +765,7 @@ void priest::BeTalkedTo()
 
     if(PLAYER->GetMoney() >= Price)
     {
-      ADD_MESSAGE("\"Good %s, you're on fire!  Quick, hand over %ld gold!\"", GetMasterGod()->GetName(), Price);
+      ADD_MESSAGE("\"Good %s, you're on fire! Quick, hand over %ld gold!\"", GetMasterGod()->GetName(), Price);
 
       if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
       {
@@ -776,7 +776,7 @@ void priest::BeTalkedTo()
       }
     }
     else 
-      ADD_MESSAGE("\"Good %s, you're on fire!  Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
+      ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
   for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
