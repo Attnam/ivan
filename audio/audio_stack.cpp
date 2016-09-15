@@ -21,8 +21,6 @@
 */
 
 
-#include <audio_stack.h>
-#include <audio_stack.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include "audio_stack.h"
@@ -88,10 +86,9 @@ uint8_t STACK_PushData(STACK_t* stack, void* data)
         //update size info
         stack->writePtr = (stack->writePtr + 1) & bufferMask;
         return STACK_Len(stack);
-    } 
+    }
 
     return STACK_OVERFLOW;
-    
 }
 
 uint8_t STACK_Len(STACK_t* stack)
@@ -114,4 +111,3 @@ void STACK_Clear(STACK_t* stack)
     stack->readPtr = 0;
     stack->writePtr = 0;
 }
-
