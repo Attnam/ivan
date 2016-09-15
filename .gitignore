@@ -45,6 +45,7 @@ Makefile
 
 # Folders and misc stuff like f. ex. save folders :)
 Bones
+/ivan.cfg
 /HScore.dat
 Save
 /Debug/
