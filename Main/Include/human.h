@@ -450,7 +450,6 @@ CHARACTER(spirit, humanoid)
  public:
   spirit() : Active(true) { }
   virtual truth BodyPartIsVital(int) const;
-  virtual truth BodyPartCanBeSevered(int) const;
 //  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
   void SetDescription(cfestring What) { Description = What; }
   virtual festring GetSpiritDescription() const;
