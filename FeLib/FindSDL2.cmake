@@ -126,7 +126,7 @@ ENDIF(NOT APPLE)
 # It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -lmwindows
 # (Actually on second look, I think it only needs one of the m* libraries.)
 IF(MINGW)
-	SET(MINGW32_LIBRARY mingw32 CACHE STRING "mwindows for MinGW")
+	SET(MINGW32_LIBRARY mingw32 "-mwindows" CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
 
 IF(SDL2_LIBRARY_TEMP)
