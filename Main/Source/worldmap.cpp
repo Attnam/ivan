@@ -413,11 +413,16 @@ void worldmap::Generate()
           {
             owterrain* NewPlace = protocontainer<owterrain>::GetProto(ToBePlaced[j].Type)->Spawn();
             v2 NewPos = AvailableLocationsOnThisContinent[i].Position;
-            GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
+
+            if(!NewPlace->HideLocationInitially())
+              GetWSquare(NewPos)->ChangeOWTerrain(NewPlace);
+
             SetEntryPos(NewPlace->GetAttachedDungeon(), NewPos);
             ToBePlaced[j].HasBeenPlaced = true;
+
             if(NewPlace->RevealEnvironmentInitially())
               RevealEnvironment(NewPos, 1);
+
             break;
           }
         }
