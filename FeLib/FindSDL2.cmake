@@ -78,7 +78,7 @@ SET(SDL2_SEARCH_PATHS
 
 # CPU architecture detection for MSVC
 if( CMAKE_SIZEOF_VOID_P MATCHES 8 )
-    set(CPU_ARCH "x64") 
+    set(CPU_ARCH "x64")
 else()
     set(CPU_ARCH "x86")
 endif()
@@ -122,9 +122,8 @@ IF(NOT APPLE)
 	FIND_PACKAGE(Threads)
 ENDIF(NOT APPLE)
 
-# MinGW needs an additional library, mwindows
-# It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -lmwindows
-# (Actually on second look, I think it only needs one of the m* libraries.)
+# MinGW needs an additional link flag, -mwindows
+# It's total link flags should look like -lmingw32 -lSDL2main -lSDL2 -mwindows
 IF(MINGW)
 	SET(MINGW32_LIBRARY mingw32 "-mwindows" CACHE STRING "mwindows for MinGW")
 ENDIF(MINGW)
