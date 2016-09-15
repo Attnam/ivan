@@ -8,6 +8,13 @@ if(WIN32)
   set(RTMIDI_DEPENDENCIES winmm)
 endif()
 
+# Add RtMidi dependencies on Linux
+if(LINUX)
+  add_definitions(-D__LINUX_ALSA__)
+  find_package(ALSA)
+  set(RTMIDI_DEPENDENCIES ${ALSA_LIBRARY} pthread)
+endif()
+
 # Add RtMidi dependencies on Mac
 if(APPLE)
   add_definitions(-D__MACOSX_CORE__)
