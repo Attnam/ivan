@@ -759,6 +759,26 @@ void priest::BeTalkedTo()
     return;
   }
 
+  if(PLAYER->IsBurning())
+  {
+    long Price = GetConfig() == VALPURUS ? 25 : 5;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Good %s, you're on fire!  Quick, hand over %ld gold!\"", GetMasterGod()->GetName(), Price);
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        PLAYER->Extinguish(true);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else 
+      ADD_MESSAGE("\"Good %s, you're on fire!  Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
+  }
+
   for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
   {
     if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
@@ -830,41 +850,33 @@ void priest::BeTalkedTo()
 
     if(PLAYER->GetBodyPart(c))
     {
-      bodypart* BodyPart = GetBodyPart(c);
+      bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
-      if(BodyPart->CanRegenerate() && BodyPart->IsBurnt() || BodyPart->IsBurning())
+      if(BodyPart->CanRegenerate() && BodyPart->IsBurnt())
       {
         long Price = GetConfig() == VALPURUS ? 25 : 5;
 
         if(PLAYER->GetMoney() >= Price)
         {
-          if(BodyPart->IsBurning())
-            ADD_MESSAGE("\"Good God, you're on fire!  Quick, hand over %ld gold!\"", Price);
-          else
             ADD_MESSAGE("\"I could cure the burns on your %s in exchange for %ld gold.\"",
                         PLAYER->GetBodyPartName(c).CStr(), Price);
 
           if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
           {
-            if(BodyPart->IsBurning())
-              PLAYER->Extinguish(true);
-            else
-              BodyPart->ResetBurning();
+            BodyPart->ResetBurning();
             PLAYER->SetMoney(PLAYER->GetMoney() - Price);
             SetMoney(GetMoney() + Price);
             return;
           }
         }
         else
-          if(BodyPart->IsBurning())
-          {
-            ADD_MESSAGE("\"Good God, you're on fire!  Quick, go find %ld gold so that I can help!\"",
-                Price);
-            return;
-          }
-          ADD_MESSAGE("\"Your %s is burned. Bring me %ld gold pieces and I'll make it all better.\"",
+          ADD_MESSAGE("\"Your %s is burnt. Bring me %ld gold pieces and I'll make it all better.\"",
                       PLAYER->GetBodyPartName(c).CStr(), Price);
       }
+      else if(!BodyPart->CanRegenerate() && BodyPart->IsBurnt())
+        ADD_MESSAGE("\"Sorry, I cannot heal bodyparts made of %s, not even your burnt %s.\"",
+                          BodyPart->GetMainMaterial()->GetName(false, false).CStr(),
+                          PLAYER->GetBodyPartName(c).CStr());
     }
   }
 
