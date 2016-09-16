@@ -9,7 +9,7 @@ if(WIN32)
 endif()
 
 # Add RtMidi dependencies on Linux
-if(LINUX)
+if(UNIX AND NOT APPLE)
   add_definitions(-D__LINUX_ALSA__)
   find_package(ALSA)
   set(RTMIDI_DEPENDENCIES ${ALSA_LIBRARY} pthread)
