@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cstdarg>
 
-#if defined(LINUX) || defined(__DJGPP__)
+#if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
 #endif
 
@@ -265,7 +265,7 @@ truth game::Init(cfestring& Name)
   mkdir("Bones", S_IWUSR);
 #endif
 
-#ifdef LINUX
+#ifdef UNIX
   mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
@@ -2340,7 +2340,7 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 festring game::GetHomeDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   festring Dir;
   Dir << getenv("HOME") << "/.ivan/";
   return Dir;
@@ -2363,7 +2363,7 @@ festring game::GetScrshotDir()
 
 festring game::GetDataDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return DATADIR "/ivan/";
 #endif
 
@@ -2374,7 +2374,7 @@ festring game::GetDataDir()
 
 festring game::GetBoneDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return LOCAL_STATE_DIR "/Bones/";
 #endif
 
@@ -2385,7 +2385,7 @@ festring game::GetBoneDir()
 
 festring game::GetMusicDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return GetDataDir() + "Music/";
 #endif
 

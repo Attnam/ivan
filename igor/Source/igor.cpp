@@ -14,7 +14,7 @@
 #define TILE_SIZE 16
 cv2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
-int Main(int, char**)
+int main(int, char**)
 {
   festring OldDirectory;
   std::ifstream IConfigFile("igor.cfg");
@@ -85,7 +85,10 @@ int Main(int, char**)
   v2 Cursor(0, 0);
   int k = 0;
   Selected = 0;
-  packcol16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
+  packcol16 Color[4] = { static_cast<packcol16>(MakeRGB16(47, 131, 95)),
+                         static_cast<packcol16>(MakeRGB16(123, 0, 127)),
+                         static_cast<packcol16>(MakeRGB16(0, 131, 131)),
+                         static_cast<packcol16>(MakeRGB16(175, 131, 0)) };
   std::vector<v2> DrawQueue;
   uchar TempBuffer[256];
   blitdata B1 = { DOUBLE_BUFFER,
@@ -237,4 +240,3 @@ int Main(int, char**)
 
   return 1;
 }
-

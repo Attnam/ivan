@@ -14,16 +14,29 @@
 
 #ifdef WIN32
 #include <Windows.h>
+#include <direct.h> // for _mkdir
 #else
 #include <dirent.h>
+#include <sys/stat.h> // for mkdir
 #endif
 
 #include "save.h"
 #include "femath.h"
 
 outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
-: Buffer(fopen(FileName.CStr(), "wb")), FileName(FileName)
+: FileName(FileName)
 {
+  // If FileName contains a directory, make sure the directory exists first.
+  festring::csizetype LastPathSeparatorPos = FileName.FindLast('/');
+  if(LastPathSeparatorPos != festring::NPos)
+  {
+    festring DirectoryPath = FileName;
+    DirectoryPath.Resize(LastPathSeparatorPos);
+    MakePath(DirectoryPath);
+  }
+
+  Buffer = fopen(FileName.CStr(), "wb");
+
   if(AbortOnErr && !IsOpen())
     ABORT("Can't open %s for output!", FileName.CStr());
 }
@@ -734,4 +747,21 @@ std::vector<festring> ListFiles(festring Directory, cfestring& Extension)
 #endif
 #endif
   return Files;
+}
+
+/* Postcondition: Path exists and is a directory. */
+
+void MakePath(cfestring& Path)
+{
+  for(festring::sizetype Pos = 0; Pos != Path.GetSize();)
+  {
+    Pos = Path.Find('/', Pos + 1);
+    if (Pos == festring::NPos) Pos = Path.GetSize();
+    cfestring DirectoryPath = festring(Path.CStr(), Pos) + '\0';
+#ifdef WIN32
+    _mkdir(DirectoryPath.CStr());
+#else
+    mkdir(DirectoryPath.CStr(), S_IRWXU|S_IRWXG);
+#endif
+  }
 }
