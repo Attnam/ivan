@@ -9,6 +9,11 @@ To do for each release
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
+###Things to change around on the web:
+
+ - Announce the release on the RogueBasin main page at www.roguebasin.com.
+ - Update the [IVAN wiki page at RogueBasin](http://www.roguebasin.com/index.php?title=IVAN) with the new version number and release date.
+
 ###Compile the game
 
 ###Include the following files in a zip folder for each release:
