@@ -4615,7 +4615,7 @@ void necromancer::BeTalkedTo()
                                  "He continues down the page. His eye's widen:\n"
                                  "\"O ho! 10000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
                                  "\n"
-                                 "The necromancer allows the scroll to burn the ashes wither away in his hands.\n"
+                                 "The necromancer allows the scroll to burn and the ashes wither away in his hands.\n"
                                  "\"Alas, no news about my trial. But thank you for sharing.\"\n"
                                  "\n"
                                  "\"What am I doing here you ask? You could say I spent some time arranging things\n"
