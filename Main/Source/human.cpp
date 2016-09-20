@@ -4613,9 +4613,9 @@ void necromancer::BeTalkedTo()
                                  "The necromancer scans the page from left to right several times. His face contorts:\n"
                                  "\"Bah! A canticle of Saint Petrus the Lion-Hearted!\"\n"
                                  "He continues down the page. His eye's widen:\n"
-                                 "\"O ho! 10000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
+                                 "\"O ho! 10 000 bananas? It sounds bad out in the colonies. I'm sorry to hear about it.\"\n"
                                  "\n"
-                                 "The necromancer allows the scroll to burn the ashes wither away in his hands.\n"
+                                 "The necromancer allows the scroll to to ashes in his hands.\n"
                                  "\"Alas, no news about my trial. But thank you for sharing.\"\n"
                                  "\n"
                                  "\"What am I doing here you ask? You could say I spent some time arranging things\n"
@@ -4629,7 +4629,7 @@ void necromancer::BeTalkedTo()
 
         game::TextScreen(CONST_S("\"I can relate the history of dark knighthood to you. Long ago, there lived a\n"
                                  "powerful warrior, Xinroch, who rose up the ranks of the fearsome order of the\n"
-                                 "dark knights, to become grand master dark knight. \n\n"
+                                 "dark knights, to become the grand master dark knight. \n\n"
                                  "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
                                  "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
                                  "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
@@ -4640,7 +4640,7 @@ void necromancer::BeTalkedTo()
                                  "and possesses a cloak of unimaginable usefulness: The Shadow Veil.\""));
 
         game::TextScreen(CONST_S("The necromancer suddenly looks at you intently.\n"
-                                 "\"Tell you what, I think you can help me out. But first I'll need proof of your abilities.\n"
+                                 "\"Tell you what, I think you can help me out. But first I'll need a proof of your abilities.\n"
                                  "It will take all your wits to survive the powers of the Tomb of Xinroch to the very end.\"\n\n"
                                  "Bring me this shadow veil, and I might be able to help you in a lasting way. I need the\n"
                                  "shadow veil to help make my escape from Attnam. It has certain properties conducive to\n"
