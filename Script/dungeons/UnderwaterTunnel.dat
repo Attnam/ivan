@@ -1,0 +1,410 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon UNDER_WATER_TUNNEL;
+{
+  Levels = 4;
+  Description = "underwater tunnel";
+  ShortDescription = "UT";
+
+  LevelDefault
+  {
+    FillSquare = solidterrain(GROUND), SAND_STONE earth;
+    TunnelSquare = solidterrain(GROUND), 0;
+    Size = 80, 20;
+    Rooms = 5:10;
+    Items = 15:30;
+    GenerateMonsters = true;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    DifficultyBase = 5;
+    DifficultyDelta = 15;
+    MonsterAmountDelta = 0;
+    MonsterGenerationIntervalBase = 200;
+    MonsterGenerationIntervalDelta = -25;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 0;
+    ItemMinPriceDelta = 5;
+    EnchantmentMinusChanceBase = 10;
+    EnchantmentMinusChanceDelta = -5;
+    EnchantmentPlusChanceBase = 1;
+    EnchantmentPlusChanceDelta = 1;
+    BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      2,
+      "Dungeon.mid",
+      "Dungeon2.mid";
+    }
+
+    Square, Random;
+    {
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == Random { Category = FOOD; }
+      Times = 1:2;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:11,4:11;
+      AltarPossible = true;
+      WallSquare = solidterrain(GROUND), BALSA_WOOD wall(BRICK_OLD);
+      FloorSquare = BALSA_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = BALSA_WOOD solidterrain(PARQUET), BALSA_WOOD door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  Level 0;
+  {
+    IgnoreDefaultSpecialSquares = true;
+    MonsterAmountBase = 5;
+    CanGenerateBone = false;
+
+    RoomDefault
+    {
+      AltarPossible = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+    }
+
+    Square, Random;
+    {
+      Character = spider(LARGE);
+      Times = 2;
+    }
+
+    Square, Random;
+    {
+      Character = kobold;
+      Times = 2;
+    }
+
+    Square, Random;
+    {
+      Character = zombie;
+      Times = 2;
+    }
+
+    Square, Random;
+    {
+      Character = carnivorousplant;
+      Times = 2;
+    }
+
+    Square, Random;
+    {
+      Character = hedgehog;
+      Times = 2;
+    }
+
+    Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Pos = 2:XSize/4-5,2:YSize-5;
+      Size = 5,5;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = ROUND_CORNERS;
+
+      Square, Pos 2,2;
+      {
+        OTerrain = stairs(STAIRS_UP);
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Pos 2,1;
+      {
+        Items == lantern;
+      }
+    }
+
+  }
+
+  Level 1;
+  {
+    Size = 160, 20;
+    MonsterAmountBase = 15;
+    Items = 20:40;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+    }
+
+    Square, Random;
+    {
+      Items == Random { MinPrice = 50; MaxPrice = 500; Category = BODY_ARMOR; }
+    }
+
+    Square, Random;
+    {
+      Items == Random { MinPrice = 50; MaxPrice = 500; Category = HELMET|CLOAK|BELT|BOOT|GAUNTLET; }
+    }
+
+    Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom 141, 1, 158, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP) { AttachedArea = 2; }
+      EntryIndex = STAIRS_UP + 1;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 11,11;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = solidterrain(GROUND), SAND_STONE earth;
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      OTerrainMap
+      {
+        Pos = 3,3;
+        Size = 5,5;
+        Types
+        {
+          # = SAND_STONE earth;
+        }
+      }
+      {
+        ..#..
+        .###.
+        ##.##
+        .###.
+        ..#..
+      }
+
+      Square, Pos 5,5;
+      {
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; }
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Pos 5,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  Level VESANA_LEVEL;
+  {
+    MonsterAmountBase = 10;
+    LevelMessage = "This level seems to be somehow alive. You feel you want to leave it as soon as possible.";
+    FillSquare = solidterrain(GROUND), LIME_STONE earth;
+
+    Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 6,6;
+      Pos = 3*XSize/4:XSize/4-5,2:YSize-5;
+      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
+      GenerateFountains = false;
+      AltarPossible = false;
+      GenerateLanterns = false;
+      GenerateDoor = false;
+
+      Square, Pos 3,3;
+      {
+        OTerrain = stairs(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Pos 0,1;
+      {
+        GTerrain = BALSA_WOOD solidterrain(PARQUET);
+        OTerrain = BALSA_WOOD door;
+        AttachRequired = true;
+      }
+
+      CharacterMap
+      {
+        Size = 4,4;
+        Pos = 1,1;
+        Types
+        {
+          c = carnivorousplant(GREATER);
+          g = genetrixvesana;
+        }
+      }
+      {
+        .cc.
+        cg.c
+        c..c
+        .cc.
+      }
+    }
+  }
+
+  Level CRYSTAL_LEVEL;
+  {
+    Rooms = 17:30;
+    Size = 64, 36;
+    LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
+    FillSquare = solidterrain(DARK_GRASS_TERRAIN), BASALT earth;
+    TunnelSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
+    DifficultyBase = 100;
+    DifficultyDelta = 0;
+    MonsterAmountBase = 25;
+    MonsterGenerationIntervalBase = 60;
+    MonsterGenerationIntervalDelta = 0;
+    ItemMinPriceBase = 70;
+    ItemMinPriceDelta = 0;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 40;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = BLUE_FRACTAL;
+
+    RoomDefault
+    {
+      Size = 8:17,8:17;
+      Pos = 2:XSize-5,2:YSize-5;
+      GenerateLanterns = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = solidterrain(DARK_GRASS_TERRAIN), BASALT earth;
+      FloorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
+      AltarPossible = false;
+    }
+
+    Room
+    {
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; }
+        EntryIndex = STAIRS_UP;
+      }
+
+      /*Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }*/
+    }
+
+    Room
+    {
+      DivineMaster = TERRA;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = BASALT altar(TERRA);
+      }
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(SHARD);
+      Times = 10:30;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(1);
+      Times = 5:15;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(2);
+      Times = 5:15;
+    }
+
+    Square, Random;
+    {
+      Items == stone;
+      Times = 0:10;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(BLUE_CRYSTAL);
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(PURPLE_CRYSTAL);
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(GREEN_CRYSTAL);
+    }
+
+    Square, Random;
+    {
+      Character = spider(LARGE);
+      Times = 15;
+    }
+  }
+
+  /*Level SPIDER_LEVEL;
+  {
+  }*/
+}

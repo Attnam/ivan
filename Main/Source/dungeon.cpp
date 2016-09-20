@@ -18,8 +18,9 @@
 #include "save.h"
 #include "femath.h"
 #include "bitmap.h"
+#include "message.h"
 
-dungeon::dungeon() { }
+#include "audio.h"
 
 dungeon::dungeon(int Index) : Index(Index)
 {
@@ -46,7 +47,7 @@ void dungeon::Initialize()
     DungeonScript = &DungeonIterator->second;
   else
   {
-    ABORT("Unknown dungeon #%d requested!", int(Index));
+    ABORT("Unknown dungeon #%d requested!", Index);
     return;
   }
 
@@ -95,21 +96,27 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
     {
       if(LevelScript->GetEnterImage())
       {
-	cbitmap* EnterImage = new bitmap(game::GetGameDir() + "Graphics/" + *LevelScript->GetEnterImage());
-	game::SetEnterImage(EnterImage);
-	v2 Displacement = *LevelScript->GetEnterTextDisplacement();
-	game::SetEnterTextDisplacement(Displacement);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), Displacement, WHITE, false, true, &game::BusyAnimation);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nPress any key to continue."), Displacement, WHITE, true, false, &game::BusyAnimation);
-	game::SetEnterImage(0);
-	delete EnterImage;
+        cbitmap* EnterImage = new bitmap(game::GetDataDir() + "Graphics/" + *LevelScript->GetEnterImage());
+        game::SetEnterImage(EnterImage);
+        v2 Displacement = *LevelScript->GetEnterTextDisplacement();
+        game::SetEnterTextDisplacement(Displacement);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         Displacement, WHITE, false, true, &game::BusyAnimation);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nPress any key to continue."),
+                         Displacement, WHITE, true, false, &game::BusyAnimation);
+        game::SetEnterImage(0);
+        delete EnterImage;
       }
       else
-	  {
-	game::SetEnterTextDisplacement(ZERO_V2);
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), ZERO_V2, WHITE, false, true, &game::BusyAnimation);
+      {
+        game::SetEnterTextDisplacement(ZERO_V2);
+        game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index)
+                         + CONST_S("...\n\nThis may take some time, please wait."),
+                         ZERO_V2, WHITE, false, true, &game::BusyAnimation);
       }
-	}
+    }
 
     NewLevel->Generate(Index);
     game::SetCurrentLSquareMap(NewLevel->GetMap());
@@ -121,6 +128,56 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
 
     return false;
   }
+}
+
+void dungeon::PrepareMusic(int Index)
+{
+  const levelscript* LevelScript = GetLevelScript(Index);
+  bool hasCurrentTrack = false;
+  char* CurrentTrack = audio::GetCurrentlyPlayedFile();
+
+
+  for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+  {
+     festring Music = LevelScript->GetAudioPlayList()->Data[i];
+     if( strcmp(CurrentTrack, (char*) Music.CStr()) == 0 )
+     {
+        hasCurrentTrack = true;
+        break;
+     }
+  }
+
+  if( hasCurrentTrack == true )
+  {
+     audio::ClearMIDIPlaylist(CurrentTrack);
+     for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+     {
+        festring Music = LevelScript->GetAudioPlayList()->Data[i];
+        if( strcmp(CurrentTrack, (char*) Music.CStr()) == 0 )
+        {
+        }
+        else
+        {
+           audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+        }
+     }
+  }
+
+  if( hasCurrentTrack == false )
+  {
+     audio::SetPlaybackStatus(audio::STOPPED);
+     audio::ClearMIDIPlaylist(0);
+     for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
+     {
+        festring Music = LevelScript->GetAudioPlayList()->Data[i];
+        audio::LoadMIDIFile( (char*) Music.CStr(), 0, 100);
+     }
+     audio::SetPlaybackStatus(audio::PLAYING);
+  }
+
+
+
+
 }
 
 void dungeon::SaveLevel(cfestring& SaveName, int Number, truth DeleteAfterwards)
@@ -209,6 +266,8 @@ level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
   Level[Number]->SetDungeon(this);
   Level[Number]->SetIndex(Number);
   Level[Number]->SetLevelScript(GetLevelScript(Number));
+  PrepareMusic(Number);
+
   return Level[Number];
 }
 
@@ -223,14 +282,14 @@ int dungeon::GetLevelTeleportDestination(int From) const
       To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
 
       if(To > DARK_LEVEL)
-	To = From;
+        To = From;
     }
     else
     {
       To = From - RAND_2 - RAND_2 - RAND_2 - RAND_2 - 1;
 
       if(To < 0)
-	To = 0;
+        To = 0;
     }
 
     return To;

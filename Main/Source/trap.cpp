@@ -12,7 +12,8 @@
 
 /* Compiled through trapset.cpp */
 
-trapprototype::trapprototype(trapspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<trap>::Add(this); }
+trapprototype::trapprototype(trapspawner Spawner, cchar* ClassID)
+: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<trap>::Add(this); }
 
 trap::trap() : entity(HAS_BE), Next(0) { }
 square* trap::GetSquareUnderEntity(int) const { return LSquareUnder; }
@@ -23,7 +24,7 @@ trap::~trap()
 
 void trap::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
 }
 
 void trap::Load(inputfile&)
@@ -83,7 +84,10 @@ void itemtrapbase::Search(ccharacter* Char, int Perception)
 {
   int ViewerTeam = Char->GetTeam()->GetID();
 
-  if(Active && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
+  if(Active
+     && ViewerTeam != Team
+     && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end()
+     && !RAND_N(200 / Perception))
   {
     DiscoveredByTeam.insert(ViewerTeam);
     SendNewDrawAndMemorizedUpdateRequest();

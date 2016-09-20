@@ -50,8 +50,8 @@ class outputfile
   void Put(char What) { fputc(What, Buffer); }
   void Write(cchar* Offset, long Size)
   { fwrite(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
-  void Close() { fclose(Buffer); }
+  truth IsOpen() { return Buffer != 0; }
+  void Close() { fclose(Buffer);  Buffer = 0; }
   void Flush() { fflush(Buffer); }
   void ReOpen();
  private:
@@ -68,11 +68,12 @@ class inputfile
   void ReadWord(festring&, truth = true);
   char ReadLetter(truth = true);
   long ReadNumber(int = 0xFF, truth = false);
+  festring ReadStringOrNumber (long *num, truth *isString, truth PreserveTerminator=false);
   v2 ReadVector2d();
   rect ReadRect();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer!=0; }
+  truth IsOpen() { return Buffer != 0; }
   truth Eof() { return feof(Buffer); }
   void ClearFlags() { clearerr(Buffer); }
   void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
@@ -82,13 +83,18 @@ class inputfile
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
   cfestring& GetFileName() const { return FileName; }
-  void Close() { fclose(Buffer); }
+  void Close() { fclose(Buffer); Buffer = 0; }
  private:
+  festring ReadNumberIntr (int CallLevel, long *num, truth *isString, truth allowStr, truth PreserveTerminator);
   int HandlePunct(festring&, int, int);
   FILE* Buffer;
   festring FileName;
   const valuemap* ValueMap;
+  truth lastWordWasString;
 };
+
+std::vector<festring> ListFiles(festring, cfestring&);
+void MakePath(cfestring&);
 
 /* Reads a binary form variable of type type and returns it.
  * An inputfile template member function would be far more elegant,
@@ -101,6 +107,8 @@ template <class type> inline type ReadType(inputfile& SaveFile)
   return Variable;
 }
 
+inline void ReadData(truth& Type, inputfile& SaveFile)
+{ Type = SaveFile.ReadNumber(); }
 inline void ReadData(char& Type, inputfile& SaveFile)
 { Type = SaveFile.ReadNumber(); }
 inline void ReadData(uchar& Type, inputfile& SaveFile)
@@ -144,7 +152,7 @@ inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   typedef typename fearray<type>::sizetype sizetype;
   sizetype Size = SaveFile.ReadNumber();
@@ -155,7 +163,19 @@ inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %ld!",
-	  Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+          Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, truth Value)
+{
+  SaveFile.Put(Value);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, truth& Value)
+{
+  Value = SaveFile.Get();
+  return SaveFile;
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, char Value)
@@ -226,7 +246,7 @@ inputfile& operator>>(inputfile&, char*&);
 
 template <class type1, class type2>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::pair<type1, type2>& Pair)
+                              const std::pair<type1, type2>& Pair)
 {
   SaveFile << Pair.first << Pair.second;
   return SaveFile;
@@ -234,7 +254,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type1, class type2>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::pair<type1, type2>& Pair)
+                             std::pair<type1, type2>& Pair)
 {
   SaveFile >> Pair.first >> Pair.second;
   return SaveFile;
@@ -242,7 +262,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::vector<type>& Vector)
+                              const std::vector<type>& Vector)
 {
   SaveFile << ulong(Vector.size());
 
@@ -254,7 +274,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::vector<type>& Vector)
+                             std::vector<type>& Vector)
 {
   Vector.resize(ReadType<ulong>(SaveFile), type());
 
@@ -266,7 +286,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::deque<type>& Deque)
+                              const std::deque<type>& Deque)
 {
   SaveFile << ulong(Deque.size());
 
@@ -278,7 +298,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::deque<type>& Deque)
+                             std::deque<type>& Deque)
 {
   Deque.resize(ReadType<ulong>(SaveFile), type());
 
@@ -290,46 +310,43 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::list<type>& List)
+                              const std::list<type>& List)
 {
   SaveFile << ulong(List.size());
 
-  for(typename std::list<type>::const_iterator i = List.begin();
-      i != List.end(); ++i)
-    SaveFile << *i;
+  for(const type& Element : List)
+    SaveFile << Element;
 
   return SaveFile;
 }
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::list<type>& List)
+                             std::list<type>& List)
 {
   List.resize(ReadType<ulong>(SaveFile), type());
 
-  for(typename std::list<type>::iterator i = List.begin();
-      i != List.end(); ++i)
-    SaveFile >> *i;
+  for(type& Element : List)
+    SaveFile >> Element;
 
   return SaveFile;
 }
 
 template <class type1, class type2>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::map<type1, type2>& Map)
+                              const std::map<type1, type2>& Map)
 {
   SaveFile << ulong(Map.size());
 
-  for(typename std::map<type1, type2>::const_iterator i = Map.begin();
-      i != Map.end(); ++i)
-    SaveFile << i->first << i->second;
+  for(const typename std::map<type1, type2>::value_type& Pair : Map)
+    SaveFile << Pair.first << Pair.second;
 
   return SaveFile;
 }
 
 template <class type1, class type2>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::map<type1, type2>& Map)
+                             std::map<type1, type2>& Map)
 {
   Map.clear();
   type1 First;
@@ -349,20 +366,19 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const std::set<type>& Set)
+                              const std::set<type>& Set)
 {
   SaveFile << ulong(Set.size());
 
-  for(typename std::set<type>::const_iterator i = Set.begin();
-      i != Set.end(); ++i)
-    SaveFile << *i;
+  for(const typename std::set<type>::value_type& Element : Set)
+    SaveFile << Element;
 
   return SaveFile;
 }
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     std::set<type>& Set)
+                             std::set<type>& Set)
 {
   Set.clear();
   ulong Size;
@@ -380,7 +396,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& operator<<(outputfile& SaveFile,
-			      const fearray<type>& Array)
+                              const fearray<type>& Array)
 {
   typename fearray<type>::sizetype c, Size = Array.Size;
   SaveFile << Size;
@@ -393,7 +409,7 @@ inline outputfile& operator<<(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& operator>>(inputfile& SaveFile,
-			     fearray<type>& Array)
+                             fearray<type>& Array)
 {
   typename fearray<type>::sizetype c, Size;
   SaveFile >> Size;
@@ -407,7 +423,7 @@ inline inputfile& operator>>(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& SaveLinkedList(outputfile& SaveFile,
-				  const type* Element)
+                                  const type* Element)
 {
   for(const type* E = Element; E; E = E->Next)
     {
@@ -421,7 +437,7 @@ inline outputfile& SaveLinkedList(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& LoadLinkedList(inputfile& SaveFile,
-				 type*& Element)
+                                 type*& Element)
 {
   if(SaveFile.Get())
   {
@@ -441,7 +457,7 @@ inline inputfile& LoadLinkedList(inputfile& SaveFile,
 
 template <class type>
 inline outputfile& SaveArray(outputfile& SaveFile,
-			     const type* Array, int Count)
+                             const type* Array, int Count)
 {
   for(int c = 0; c < Count; ++c)
     SaveFile << Array[c];
@@ -451,7 +467,7 @@ inline outputfile& SaveArray(outputfile& SaveFile,
 
 template <class type>
 inline inputfile& LoadArray(inputfile& SaveFile,
-			    type* Array, int Count)
+                            type* Array, int Count)
 {
   for(int c = 0; c < Count; ++c)
     SaveFile >> Array[c];

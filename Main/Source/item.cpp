@@ -12,16 +12,36 @@
 
 /* Compiled through itemset.cpp */
 
-cchar* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
-cchar* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
+cchar* ToHitValueDescription[] =
+{
+  "unbelievably inaccurate",
+  "extremely inaccurate",
+  "inaccurate",
+  "decently accurate",
+  "accurate",
+  "highly accurate",
+  "extremely accurate",
+  "unbelievably accurate"
+};
+cchar* StrengthValueDescription[] =
+{
+  "fragile",
+  "rather sturdy",
+  "sturdy",
+  "strong",
+  "very strong",
+  "extremely strong",
+  "almost unbreakable"
+};
 
-itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, cchar* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, cchar* ClassID)
+: Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
 item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0) { }
 truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
-truth item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
+truth item::IsSimilarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 double item::GetBaseDamage() const { return sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus(); }
 int item::GetBaseMinDamage() const { return int(GetBaseDamage() * 0.75); }
 int item::GetBaseMaxDamage() const { return int(GetBaseDamage() * 1.25) + 1; }
@@ -37,18 +57,24 @@ square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
-truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()); }
+truth item::IsAnimated() const { return GraphicData.AnimationFrames > 1 || (Fluid && ShowFluids()) || (IsBurning()); }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
-truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
-truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
+truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
+truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable() && !IsBurning(); }
+truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable() && !IsBurning(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
+void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
+{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
+{ InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(citem& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
+item::item(citem& Item)
+: object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight),
+  Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
@@ -77,12 +103,19 @@ item::~item()
     for(int c = 0; c < SquaresUnder; ++c)
       for(fluid* F = FP[c]; F;)
       {
-	fluid* ToDel = F;
-	F = F->Next;
-	delete ToDel;
+        fluid* ToDel = F;
+        F = F->Next;
+        delete ToDel;
       }
 
     delete [] FP;
+  }
+
+  for(idholder* I = CloneMotherID; I;)
+  {
+    idholder* ToDel = I;
+    I = I->Next;
+    delete ToDel;
   }
 }
 
@@ -117,7 +150,9 @@ void item::Fly(character* Thrower, int Direction, int Force)
   {
     int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 1000;
     BaseDamage = sqrt(5e-12 * GetWeaponStrength() * Force / Range) * Bonus;
-    BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+    BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase()
+                     / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY)
+                     * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
   }
   else
   {
@@ -149,23 +184,23 @@ void item::Fly(character* Thrower, int Direction, int Force)
       truth Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
 
       if(Draw)
-	game::DrawEverything();
+        game::DrawEverything();
 
       if(JustHit->GetCharacter())
       {
-	int Damage = int(BaseDamage * sqrt(RangeLeft));
-	double ToHitValue = BaseToHitValue * RangeLeft;
-	int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
+        int Damage = int(BaseDamage * sqrt(RangeLeft));
+        double ToHitValue = BaseToHitValue * RangeLeft;
+        int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
 
-	if(Returned == HIT)
-	  Breaks = true;
+        if(Returned == HIT)
+          Breaks = true;
 
-	if(Returned != MISSED)
-	  break;
+        if(Returned != MISSED)
+          break;
       }
 
       if(Draw)
-	while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
+        while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
     }
   }
 
@@ -230,7 +265,7 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
       room* Room = GetRoom();
 
       if(Room)
-	Room->HostileAction(Polymorpher);
+        Room->HostileAction(Polymorpher);
     }
 
     if(GetSquarePosition() != CENTER)
@@ -238,7 +273,7 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
       stack* Stack = CurrentStack->GetLSquareUnder()->GetStackOfAdjacentSquare(GetSquarePosition());
 
       if(Stack)
-	CurrentStack = Stack;
+        CurrentStack = Stack;
     }
 
     CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true));
@@ -283,18 +318,18 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
   material* ConsumeMaterial = GetConsumeMaterial(Eater);
 
   return (!Eater->IsPet()
-	  || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
-	  || !IsValuable())
+          || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
+          || !IsValuable())
     && IsConsumable()
     && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
 
 void item::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   object::Save(SaveFile);
-  SaveFile << (ushort)GetConfig();
-  SaveFile << (ushort)Flags;
+  SaveFile << static_cast<ushort>(GetConfig());
+  SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
   SaveLinkedList(SaveFile, CloneMotherID);
 
@@ -331,7 +366,7 @@ void item::Load(inputfile& SaveFile)
       LoadLinkedList(SaveFile, Fluid[c]);
 
       for(fluid* F = Fluid[c]; F; F = F->Next)
-	F->SetMotherItem(this);
+        F->SetMotherItem(this);
     }
   }
 }
@@ -360,12 +395,12 @@ void item::RemoveFromSlot()
     {
       try
       {
-	Slot[c]->Empty();
+        Slot[c]->Empty();
       }
       catch(quitrequest)
       {
-	SendToHell();
-	throw;
+        SendToHell();
+        throw;
       }
 
       Slot[c] = 0;
@@ -549,7 +584,7 @@ void item::SignalEmitationIncrease(col24 EmitationUpdate)
 
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
-	Slot[c]->SignalEmitationIncrease(EmitationUpdate);
+        Slot[c]->SignalEmitationIncrease(EmitationUpdate);
   }
 }
 
@@ -562,8 +597,8 @@ void item::SignalEmitationDecrease(col24 EmitationUpdate)
 
     if(Backup != Emitation)
       for(int c = 0; c < SquaresUnder; ++c)
-	if(Slot[c])
-	  Slot[c]->SignalEmitationDecrease(EmitationUpdate);
+        if(Slot[c])
+          Slot[c]->SignalEmitationDecrease(EmitationUpdate);
   }
 }
 
@@ -587,18 +622,18 @@ item* item::Duplicate(ulong Flags)
 {
   if(!(Flags & IGNORE_PROHIBITIONS)
      && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
-	 || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
-				      || (MainMaterial
-					  && !(MainMaterial->GetCommonFlags() & CAN_BE_MIRRORED))
-				      || (GetSecondaryMaterial()
-					  && !(GetSecondaryMaterial()->GetCommonFlags() & CAN_BE_MIRRORED))))))
+         || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
+                                      || (MainMaterial
+                                          && !(MainMaterial->GetCommonFlags() & CAN_BE_MIRRORED))
+                                      || (GetSecondaryMaterial()
+                                          && !(GetSecondaryMaterial()->GetCommonFlags() & CAN_BE_MIRRORED))))))
     return 0;
 
   item* Clone = GetProtoType()->Clone(this);
 
   if(Flags & MIRROR_IMAGE)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
-			     Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
+                             Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
   idholder* I = new idholder(ID);
   I->Next = CloneMotherID;
@@ -633,7 +668,7 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
     for(int c = 0; c < Configs; ++c)
       if(TempConfig[c]->Config == ConfigNumber)
-	return TempConfig[c];
+        return TempConfig[c];
 
     return *TempConfig;
   }
@@ -641,6 +676,16 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
 
 truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
+  if(MainMaterial && IsDestroyable(Damager))
+  {
+    if(CanBeBurned() && (MainMaterial->GetInteractionFlags() & CAN_BURN) && !IsBurning() && Type & FIRE)
+    {
+      TestActivationEnergy(Damage);
+    }
+    else if(IsBurning() && Type & FIRE)
+      GetMainMaterial()->AddToThermalEnergy(Damage);
+  }
+
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
   {
     int StrengthValue = GetStrengthValue();
@@ -717,6 +762,21 @@ void item::SignalSpoil(material*)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
+void item::SignalBurn(material* Material)
+{
+  if(!Exists())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns away completely.", GetExtendedDescription().CStr());
+
+  truth Equipped = PLAYER->Equips(this);
+  Disappear();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+}
+
 item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 {
   item* Duplicated = Duplicate(Flags);
@@ -731,16 +791,18 @@ item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 {
   return (GetType() == Item->GetType()
-	  && GetConfig() == Item->GetConfig()
-	  && ItemFlags == Item->ItemFlags
-	  && (WeightIsIrrelevant() || Weight == Item->Weight)
-	  && MainMaterial->IsSameAs(Item->MainMaterial)
-	  && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
-	  && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
-	  && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
-	  && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
-	  && !Fluid && !Item->Fluid
-	  && !LifeExpectancy == !Item->LifeExpectancy);
+          && GetConfig() == Item->GetConfig()
+          && ItemFlags == Item->ItemFlags
+          && (WeightIsIrrelevant() || Weight == Item->Weight)
+          && MainMaterial->IsSameAs(Item->MainMaterial)
+          && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
+          && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+          && MainMaterial->GetBurnLevel() == Item->MainMaterial->GetBurnLevel()
+          && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
+          && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
+          && !Fluid && !Item->Fluid
+          && !LifeExpectancy == !Item->LifeExpectancy
+          && !IsBurning() == !Item->IsBurning());
 }
 
 void item::Break(character* Breaker, int)
@@ -773,19 +835,21 @@ void item::Be()
   MainMaterial->Be(ItemFlags);
 
   if(Exists() && LifeExpectancy)
+  {
     if(LifeExpectancy == 1)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s disappears.", GetExtendedDescription().CStr());
+        ADD_MESSAGE("%s disappears.", GetExtendedDescription().CStr());
 
       truth Equipped = PLAYER->Equips(this);
       Disappear();
 
       if(Equipped)
-	game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+        game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
     }
     else
       --LifeExpectancy;
+  }
 }
 
 int item::GetOfferValue(int Receiver) const
@@ -811,7 +875,10 @@ void item::SignalEnchantmentChange()
 
 long item::GetEnchantedPrice(int Enchantment) const
 {
-  return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max<int>(item::GetPrice() * Enchantment * Enchantment, 0);
+  if(!PriceIsProportionalToEnchantment())
+    return item::GetPrice();
+  else
+    return Max<int>(item::GetPrice() * Enchantment * Enchantment, 0);
 }
 
 item* item::Fix()
@@ -842,8 +909,8 @@ void item::DonateSlotTo(item* Item)
     for(int c = 1; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	Slot[c]->Empty();
-	Slot[c] = 0;
+        Slot[c]->Empty();
+        Slot[c] = 0;
       }
   }
 }
@@ -851,6 +918,11 @@ void item::DonateSlotTo(item* Item)
 int item::GetSpoilLevel() const
 {
   return MainMaterial->GetSpoilLevel();
+}
+
+int item::GetBurnLevel() const
+{
+  return MainMaterial->GetBurnLevel();
 }
 
 void item::SignalSpoilLevelChange(material*)
@@ -880,6 +952,22 @@ void item::ResetSpoiling()
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
+}
+
+void item::ResetBurning()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetBurning();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
+}
+
+/* be careful calling this function, it will also cause flames to extinguish */
+void item::ResetThermalEnergies()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetThermalEnergies();
 }
 
 cchar* item::GetBaseToHitValueDescription() const
@@ -960,9 +1048,9 @@ void item::AddAttackInfo(felist& List) const
   festring Entry(40, ' ');
   Entry << int(GetWeight());
   Entry.Resize(50);
-  Entry << int(GetSize());
+  Entry << GetSize();
   Entry.Resize(60);
-  Entry << int(GetStrengthRequirement());
+  Entry << GetStrengthRequirement();
   Entry.Resize(70);
   Entry << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);
@@ -1009,9 +1097,6 @@ void item::PostProcessForBone()
   }
   else
   {
-    if(game::SearchItem(BI->second))
-      int esko = esko = 2;
-
     ID = BI->second;
     game::AddItemID(this, ID);
   }
@@ -1064,30 +1149,30 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
     for(int c1 = 0; c1 < OldConfigs; ++c1)
       if(!TempConfig[c1]->IsAbstract)
       {
-	int BaseConfig = TempConfig[c1]->Config;
-	int NewConfig = BaseConfig | BROKEN_LOCK;
-	itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);
-	ConfigDataBase->InitDefaults(this, NewConfig);
-	ConfigDataBase->PostFix << "with a broken lock";
-	ConfigDataBase->Possibility = 0;
-	TempConfig[Configs++] = ConfigDataBase;
+        int BaseConfig = TempConfig[c1]->Config;
+        int NewConfig = BaseConfig | BROKEN_LOCK;
+        itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);
+        ConfigDataBase->InitDefaults(this, NewConfig);
+        ConfigDataBase->PostFix << "with a broken lock";
+        ConfigDataBase->Possibility = 0;
+        TempConfig[Configs++] = ConfigDataBase;
 
-	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
-	{
-	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-	  ConfigDataBase = new itemdatabase(*TempConfig[c1]);
-	  ConfigDataBase->InitDefaults(this, NewConfig);
-	  ConfigDataBase->PostFix << "with ";
+        for(int c2 = 0; c2 < KeyConfigSize; ++c2)
+        {
+          NewConfig = BaseConfig | KeyConfigData[c2]->Config;
+          ConfigDataBase = new itemdatabase(*TempConfig[c1]);
+          ConfigDataBase->InitDefaults(this, NewConfig);
+          ConfigDataBase->PostFix << "with ";
 
-	  if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
-	    ConfigDataBase->PostFix << "an ";
-	  else
-	    ConfigDataBase->PostFix << "a ";
+          if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
+            ConfigDataBase->PostFix << "an ";
+          else
+            ConfigDataBase->PostFix << "a ";
 
-	  ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
-	  ConfigDataBase->Possibility = 0;
-	  TempConfig[Configs++] = ConfigDataBase;
-	}
+          ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
+          ConfigDataBase->Possibility = 0;
+          TempConfig[Configs++] = ConfigDataBase;
+        }
       }
   }
 
@@ -1143,6 +1228,49 @@ void item::SignalRustLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
+void item::SignalBurnLevelTransitionMessage()
+{
+  if(CanBeSeenByPlayer())
+  {
+    if(MainMaterial->GetBurnLevel() == NOT_BURNT)
+      ADD_MESSAGE("%s burns.", GetExtendedDescription().CStr());
+    else
+      ADD_MESSAGE("%s burns more.", GetExtendedDescription().CStr());
+  }
+}
+
+void item::SignalBurnLevelChange()
+{
+  if(!IsAnimated() && GetBurnLevel() && Slot[0] && Slot[0]->IsVisible())
+    for(int c = 0; c < SquaresUnder; ++c)
+      GetSquareUnder(c)->IncStaticAnimatedEntities();
+
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90)); // completely remove previously applied emitation increases
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // apply an emitation increase according to the current burn level
+
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
+/* emitation slowly ramps down with increasing item BurnLevel, in the beginning the
+   light is bright, with light decreasing in intensity as the item gets more burnt */
+col24 item::GetEmitationDueToBurnLevel()
+{
+  if(MainMaterial)
+  {
+    int CurrentBurnLevel = GetBurnLevel();
+
+    int Red = 150 - 10 * CurrentBurnLevel;
+    int Green = 120 - 8 * CurrentBurnLevel;
+    int Blue = 90 - 6 * CurrentBurnLevel;
+    //ADD_MESSAGE("Emitation due to BurnLevel: R%d G%d B%d", Red, Green, Blue); // por debug
+    return MakeRGB24(Red, Green, Blue);
+  }
+  else
+    return MakeRGB24(0, 0, 0);
+}
+
 const rawbitmap* item::GetRawPicture() const
 {
   return igraph::GetRawGraphic(GetGraphicsContainerIndex());
@@ -1164,11 +1292,11 @@ void item::RemoveFluid(fluid* ToBeRemoved)
       fluid* LF = F;
 
       for(F = F->Next; F; LF = F, F = F->Next)
-	if(F == ToBeRemoved)
-	{
-	  LF->Next = F->Next;
-	  break;
-	}
+        if(F == ToBeRemoved)
+        {
+          LF->Next = F->Next;
+          break;
+        }
     }
 
     if(Fluid[c])
@@ -1206,15 +1334,15 @@ void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, t
 
       do
       {
-	if(ToBeAdded->IsSameAs(F->GetLiquid()))
-	{
-	  F->AddLiquidAndVolume(ToBeAdded->GetVolume());
-	  delete ToBeAdded;
-	  return;
-	}
+        if(ToBeAdded->IsSameAs(F->GetLiquid()))
+        {
+          F->AddLiquidAndVolume(ToBeAdded->GetVolume());
+          delete ToBeAdded;
+          return;
+        }
 
-	LF = F;
-	F = F->Next;
+        LF = F;
+        F = F->Next;
       }
       while(F);
 
@@ -1247,9 +1375,9 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	lsquare* Square = GetLSquareUnder(c);
-	Square->SendNewDrawRequest();
-	Square->SendMemorizedUpdateRequest();
+        lsquare* Square = GetLSquareUnder(c);
+        Square->SendNewDrawRequest();
+        Square->SendMemorizedUpdateRequest();
       }
 }
 
@@ -1260,7 +1388,7 @@ void item::CalculateEmitation()
   if(Fluid)
     for(int c = 0; c < SquaresUnder; ++c)
       for(const fluid* F = Fluid[c]; F; F = F->Next)
-	game::CombineLights(Emitation, F->GetEmitation());
+        game::CombineLights(Emitation, F->GetEmitation());
 }
 
 void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const
@@ -1283,13 +1411,105 @@ void item::TryToRust(long LiquidModifier)
   if(MainMaterial->TryToRust(LiquidModifier))
   {
     if(CanBeSeenByPlayer())
+    {
       if(MainMaterial->GetRustLevel() == NOT_RUSTED)
-	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+        ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+    }
 
     MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
   }
+}
+
+truth item::TestActivationEnergy(int Damage)
+{
+  if(Damage <= 0)
+      return false;
+
+  truth Success = false;
+//  if(MainMaterial)
+//  {
+//    int molamola = ((GetMainMaterial()->GetStrengthValue() >> 1) + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE));
+//    ADD_MESSAGE("%s is being tested (Damage is %d, AE is %d)", CHAR_NAME(DEFINITE), Damage, molamola);
+//  }
+
+  if(MainMaterial)
+  {
+    int TestDamage = Damage + MainMaterial->GetTransientThermalEnergy();
+    GetMainMaterial()->AddToTransientThermalEnergy(Damage);
+    if(CanBeBurned() && GetMainMaterial()->GetInteractionFlags() & CAN_BURN
+       && TestDamage >= ((GetMainMaterial()->GetStrengthValue() >> 1)
+                         + 5 * MainMaterial->GetFireResistance() + GetResistance(FIRE)))
+    {
+      if(CanBeSeenByPlayer())
+      {
+        ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+        //ADD_MESSAGE("%s catches fire! (TestDamage was %d)", CHAR_NAME(DEFINITE), TestDamage);
+      }
+      Ignite();
+      GetMainMaterial()->AddToSteadyStateThermalEnergy(Damage);
+      Success = true;
+    }
+  }
+  return Success;
+}
+
+void item::Ignite(/*character* Arsonist*/)
+{
+  truth WasAnimated = IsAnimated();
+
+  MainMaterial->SetIsBurning(true);
+  SignalEmitationIncrease(GetEmitationDueToBurnLevel()); // kick this off by applying an emitation increase proportional to the burn level of the item
+  UpdatePictures();
+  //ADD_MESSAGE("The %s now burns brightly.", CHAR_NAME(DEFINITE));
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->IncStaticAnimatedEntities();
+
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
+}
+
+/* This causes the main material to stop burning, resets the thermal energies
+   and does a picture update on the level, as well as wielded pictures */
+void item::Extinguish(/*character* FireFighter, */truth SendMessages)
+{
+  truth WasAnimated = IsAnimated();
+  truth WasSeen = CanBeSeenByPlayer();
+  truth WasBurning = IsBurning();
+
+  MainMaterial->SetIsBurning(false);
+  MainMaterial->ResetThermalEnergies();
+  SignalEmitationDecrease(MakeRGB24(150, 120, 90));
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->DecStaticAnimatedEntities();
+  }
+
+  if(WasBurning && WasSeen && SendMessages) // by now it is dark...
+    AddExtinguishMessage();
+
+  SignalVolumeAndWeightChange();
+  UpdatePictures();
+  SendNewDrawAndMemorizedUpdateRequest();
+}
+
+void item::AddExtinguishMessage()
+{
+  ADD_MESSAGE("The flames on %s die away.", GetExtendedDescription().CStr());
+}
+
+// This is for anything made from phoenix feather
+void item::AddSpecialExtinguishMessageForPF()
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s burns even more! But lo', even as it does so, the ashes "
+                "peel away from it and it is made new by some innate virtue.", GetExtendedDescription().CStr());
 }
 
 void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
@@ -1335,14 +1555,20 @@ void item::ReceiveAcid(material*, cfestring&, long Modifier)
   }
 }
 
+void item::FightFire(material*, cfestring&, long Volume)
+{
+  int Amount = sqrt(Volume);
+  GetMainMaterial()->RemoveFromThermalEnergy(Amount);
+}
+
 void item::DonateFluidsTo(item* Item)
 {
   if(Fluid)
     for(int c = 0; c < GetSquaresUnder(); ++c)
       for(fluid* F = Fluid[c]; F; F = F->Next)
       {
-	liquid* Liquid = F->GetLiquid();
-	Item->AddFluid(Liquid->SpawnMoreLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
+        liquid* Liquid = F->GetLiquid();
+        Item->AddFluid(Liquid->SpawnMoreLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
       }
 }
 
@@ -1374,6 +1600,13 @@ void item::RemoveRust()
       GetMaterial(c)->SetRustLevel(NOT_RUSTED);
 }
 
+void item::RemoveBurns()
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->SetBurnLevel(NOT_BURNT, true);
+}
+
 void item::SetSpoilPercentage(int Value)
 {
   for(int c = 0; c < GetMaterials(); ++c)
@@ -1390,7 +1623,7 @@ void item::RedistributeFluids()
   if(Fluid)
     for(int c = 0; c < GetSquaresUnder(); ++c)
       for(fluid* F = Fluid[c]; F; F = F->Next)
-	F->Redistribute();
+        F->Redistribute();
 }
 
 material* item::GetConsumeMaterial(ccharacter* Consumer, materialpredicate Predicate) const
@@ -1421,8 +1654,8 @@ void item::GenerateMaterials()
   int Chosen = RandomizeMaterialConfiguration();
   const fearray<long>& MMC = GetMainMaterialConfig();
   InitMaterial(MainMaterial,
-	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultMainVolume());
+               MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+               GetDefaultMainVolume());
 }
 
 void item::SignalSquarePositionChange(int Position)
@@ -1452,6 +1685,15 @@ truth item::IsVeryCloseToSpoiling() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToSpoiling())
+      return false;
+
+  return true;
+}
+
+truth item::IsVeryCloseToBurning() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToBurning())
       return false;
 
   return true;
@@ -1496,6 +1738,7 @@ long item::GetFixPrice() const
   item* Clone = GetProtoType()->Clone(this);
   Clone = Clone->Fix();
   Clone->RemoveRust();
+  Clone->RemoveBurns();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
   return Max(long(3.5 * sqrt(FixPrice)), 10L);
@@ -1607,7 +1850,7 @@ const character* item::GetWearer() const
 {
   if(!GetSlot()->IsGearSlot())
     return 0;
-  
+
   return FindCarrier();
 }
 
@@ -1623,20 +1866,20 @@ void itemlock::PostConstruct()
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID))
-	++NormalLockTypes;
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID))
+        ++NormalLockTypes;
 
     int ChosenLock = RAND() % NormalLockTypes;
 
     for(c = 0; c < ConfigSize; ++c)
       if(ConfigData[c]->Config & LOCK_BITS
-	 && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
-	 && !(ConfigData[c]->Config & S_LOCK_ID)
-	 && !ChosenLock--)
+         && (ConfigData[c]->Config & ~LOCK_BITS) == GetVirtualConfig()
+         && !(ConfigData[c]->Config & S_LOCK_ID)
+         && !ChosenLock--)
       {
-	SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
-	break;
+        SetVirtualConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
+        break;
       }
   }
 }
@@ -1654,16 +1897,16 @@ truth itemlock::TryKey(item* Key, character* Applier)
     if(Locked)
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("You unlock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
     else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+        ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
     }
 
     Locked = !Locked;
@@ -1673,7 +1916,8 @@ truth itemlock::TryKey(item* Key, character* Applier)
     if(Applier->IsPlayer())
       ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
     else if(Applier->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s tries to fit %s in the lock, but fails.",
+                  Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
   }
 
   return true;
@@ -1722,17 +1966,17 @@ void item::SendMemorizedUpdateRequest() const
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
       {
-	lsquare* Square = GetLSquareUnder(c);
-	Square->SendMemorizedUpdateRequest();
+        lsquare* Square = GetLSquareUnder(c);
+        Square->SendMemorizedUpdateRequest();
       }
 }
 
 truth item::AddStateDescription(festring& Name, truth Articled) const
 {
-  if(!Spoils())
+  if(!Spoils() || !(ItemFlags & (HASTE|SLOW)))
     return false;
 
-  if((ItemFlags & (HASTE|SLOW)) && Articled)
+  if(Articled)
     Name << "a ";
 
   if(ItemFlags & HASTE)

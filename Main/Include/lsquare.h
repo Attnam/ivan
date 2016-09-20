@@ -41,7 +41,7 @@ typedef truth (item::*sorter)(ccharacter*) const;
 struct emitter
 {
   emitter(ulong ID, col24 Emitation) : ID(ID), Emitation(Emitation) { }
-  explicit emitter() { }
+  explicit emitter() = default;
   ulong ID;
   col24 Emitation;
 };
@@ -180,6 +180,7 @@ class lsquare : public square
   truth DoorCreation(const beamdata&);
   truth AcidRain(const beamdata&);
   truth Necromancy(const beamdata&);
+  truth WaterRain(const beamdata&);
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
@@ -306,9 +307,9 @@ inline truth lsquare::IsDark() const
   col24 Light = Luminance;
 
   return (!Light
-	  || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
-	      && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
-	      && (Light & 0x0000FF) < LIGHT_BORDER));
+          || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
+              && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+              && (Light & 0x0000FF) < LIGHT_BORDER));
 }
 
 inline truth eyecontroller::Handler(int x, int y)

@@ -169,7 +169,7 @@ class trap : public entity
 #ifdef __FILE_OF_STATIC_TRAP_PROTOTYPE_DEFINITIONS__
 #define TRAP_PROTO(name)\
 template<> const trapprototype\
-  name##sysbase::ProtoType((trapspawner)(&name##sysbase::Spawn), #name);
+  name##sysbase::ProtoType(reinterpret_cast<trapspawner>(&name##sysbase::Spawn), #name);
 #else
 #define TRAP_PROTO(name)
 #endif

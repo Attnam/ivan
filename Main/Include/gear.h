@@ -18,7 +18,7 @@
 ITEM(meleeweapon, item)
 {
  public:
-  meleeweapon() { }
+  meleeweapon() = default; 
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
@@ -34,6 +34,7 @@ ITEM(meleeweapon, item)
   virtual int GetMaterials() const { return 2; }
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const;
   virtual void SignalSpoil(material*);
+  virtual void SignalBurn(material*);
   virtual void Be();
   virtual truth IsWeapon(ccharacter*) const { return true; }
   virtual int GetEnchantment() const { return Enchantment; }
@@ -41,7 +42,7 @@ ITEM(meleeweapon, item)
   virtual void EditEnchantment(int);
   virtual int GetStrengthValue() const;
   virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken() || IsBurnt(); }
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
@@ -69,6 +70,7 @@ ITEM(meleeweapon, item)
   virtual col16 GetMaterialColorC(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
+  virtual int GetBurnDataB() const;
   virtual col16 GetDripColor() const;
   virtual truth AllowRegularColors() const;
   material* SecondaryMaterial;
@@ -116,6 +118,7 @@ ITEM(flamingsword, meleeweapon)
  public:
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
   virtual int GetSpecialFlags() const;
+  virtual truth IsLostRubyFlamingSword() const;
 };
 
 ITEM(mjolak, meleeweapon)
@@ -184,11 +187,13 @@ ITEM(armor, item)
   virtual int GetInElasticityPenalty(int) const;
   virtual int GetCarryingBonus() const;
   virtual truth IsFixableBySmith(ccharacter*) const { return IsBroken() || IsRusted(); }
-  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken(); }
+  virtual truth IsFixableByTailor(ccharacter*) const { return IsBroken() || IsBurnt(); }
   virtual truth AllowFluids() const { return true; }
   virtual void CalculateEnchantment();
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
+  virtual void DipInto(liquid*, character*);
+  virtual truth IsDippable(ccharacter*) const;
  protected:
   virtual void AddPostFix(festring&, int) const;
   virtual void PostConstruct();
@@ -234,6 +239,7 @@ ITEM(cloak, armor)
   virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
   virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsShadowVeil() const;
  protected:
   virtual int GetSpecialFlags() const;
   virtual cchar* GetBreakVerb() const;
@@ -351,12 +357,11 @@ protected:
   virtual truth CalculateHasBe() const { return true; }
 };
 
-
 ITEM(acidshield, shield)
 {
  public:
   virtual void BlockEffect(character*, character*, item*, int Type);
-}; 
+};
 
 ITEM(chastitybelt, lockablebelt)
 {

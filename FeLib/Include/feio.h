@@ -26,20 +26,20 @@ class iosystem
  public:
   static festring ContinueMenu(col16, col16, cfestring&);
   static int StringQuestion(festring&, cfestring&, v2, col16,
-			    festring::sizetype, festring::sizetype,
-			    truth, truth, stringkeyhandler = 0);
+                            festring::sizetype, festring::sizetype,
+                            truth, truth, stringkeyhandler = 0);
   static long NumberQuestion(cfestring&, v2, col16,
-			     truth, truth = false);
+                             truth, truth = false);
   static long ScrollBarQuestion(cfestring&, v2, long, long, long,
-				long, long, col16, col16, col16, int,
-				int, truth, void (*)(long) = 0);
+                                long, long, col16, col16, col16, int,
+                                int, truth, void (*)(long) = 0);
   static int Menu(cbitmap*, v2, cfestring&,
-		  cfestring&, col16,
-		  cfestring& = CONST_S(""),
-		  cfestring& = CONST_S(""));
+                  cfestring&, col16,
+                  cfestring& = CONST_S(""),
+                  cfestring& = CONST_S(""));
   static void TextScreen(cfestring&, v2 Disp = ZERO_V2,
-			 col16 = 0xFFFF, truth = true,
-			 truth = true, bitmapeditor = 0);
+                         col16 = 0xFFFF, truth = true,
+                         truth = true, bitmapeditor = 0);
   static truth IsAcceptableForStringQuestion(char);
 };
 

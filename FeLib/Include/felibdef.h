@@ -39,13 +39,14 @@ culong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 
 #ifdef GCC
 #define NO_ALIGNMENT __attribute__ ((packed))
-#define NO_RETURN __attribute__ ((noreturn))
 #define LIKE_PRINTF(p1, p2) __attribute__ ((format(printf, p1, p2)))
 #else
 #define NO_ALIGNMENT
-#define NO_RETURN
 #define LIKE_PRINTF(p1, p2)
 #endif
+
+template <class type>
+inline type Sign(type X) { return X > 0 ? 1 : X < 0 ? -1 : 0; }
 
 template <class type>
 inline type Max(type X, type Y) { return X >= Y ? X : Y; }
@@ -78,6 +79,46 @@ inline void LimitRef(type& Value, type Minimum, type Maximum)
 }
 
 template <class type>
+inline type Wrap(type Value, type Minimum, type Maximum)
+{
+  Value = (Value - Minimum) % (Maximum - Minimum);
+  return (Value >= 0 ? Minimum : Maximum) + Value;
+}
+
+template <class type>
+inline void WrapRef(type& Value, type Minimum, type Maximum)
+{
+  Value = (Value - Minimum) % (Maximum - Minimum);
+  Value += (Value >= 0 ? Minimum : Maximum);
+}
+
+template <class type>
+inline type WrapF(type Value, type Minimum, type Maximum)
+{
+  Value = fmod(Value - Minimum, Maximum - Minimum);
+  return Value >= 0. ? Value + Minimum : Value + Maximum;
+}
+
+template <class type>
+inline void WrapFRef(type& Value, type Minimum, type Maximum)
+{ Value = WrapF(Value, Minimum, Maximum); }
+
+template <class type>
+inline double WrapAverage(type X, type Y, type WrapLimit)
+{
+  type Minimum = Min(X, Y);
+  type Maximum = Max(X, Y);
+
+  if(Maximum - Minimum > WrapLimit / 2)
+  {
+    double Avg = (Minimum + Maximum + WrapLimit) / 2.;
+    return Avg >= WrapLimit ? Avg - WrapLimit : Avg;
+  }
+  else
+    return (X + Y) / 2.;
+}
+
+template <class type>
 inline void Swap(type& X, type& Y)
 {
   const type T = X;
@@ -97,8 +138,8 @@ inline col16 MakeRGB16(int Red, int Green, int Blue)
 inline col16 MakeShadeColor(col16 Color)
 {
   return MakeRGB16(GetRed16(Color) / 3,
-		   GetGreen16(Color) / 3,
-		   GetBlue16(Color) / 3);
+                   GetGreen16(Color) / 3,
+                   GetBlue16(Color) / 3);
 }
 
 inline col24 GetRed24(col24 Color) { return Color >> 16 & 0xFF; }
@@ -129,7 +170,7 @@ inline int GetMinColor24(col24 Color)
 
 #define RED 0xF800
 #define GREEN 0x07E0
-#define BLUE 0x001F
+#define BLUE 0x2ABF
 
 #define YELLOW 0xFFE0
 #define PINK 0xF01E
@@ -141,7 +182,11 @@ inline int GetMinColor24(col24 Color)
 
 #define NORMAL_LUMINANCE 0x808080
 
+#if SDL_MAJOR_VERSION == 2 || !defined(__APPLE__)
 #define KEY_BACK_SPACE 0x08
+#else
+#define KEY_BACK_SPACE 0x7F
+#endif
 #define KEY_ESC 0x1B
 #define KEY_ENTER 0x0D
 #define KEY_UP 0x148

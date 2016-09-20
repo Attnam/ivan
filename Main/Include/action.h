@@ -40,8 +40,8 @@ class action
 {
  public:
   typedef actionprototype prototype;
-  action()  : Actor(0), Flags(0) { }
-  virtual ~action() { }
+  action() : Actor(0), Flags(0) { }
+  virtual ~action() = default;
   virtual void Handle() = 0;
   virtual void Terminate(truth);
   character* GetActor() const { return Actor; }
@@ -85,7 +85,7 @@ class actionsysbase : public base
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
 #define ACTION_PROTO(name)\
 template<> const actionprototype\
-  name##sysbase::ProtoType((actionspawner)(&name##sysbase::Spawn), #name);
+  name##sysbase::ProtoType(reinterpret_cast<actionspawner>(&name##sysbase::Spawn), #name);
 #else
 #define ACTION_PROTO(name)
 #endif

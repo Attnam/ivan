@@ -12,7 +12,8 @@
 
 /* Compiled through actset.cpp */
 
-actionprototype::actionprototype(actionspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
+actionprototype::actionprototype(actionspawner Spawner, cchar* ClassID)
+: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
 
 void action::Terminate(truth)
 {
@@ -22,7 +23,7 @@ void action::Terminate(truth)
 
 void action::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType() << Flags;
+  SaveFile << static_cast<ushort>(GetType()) << Flags;
 }
 
 void action::Load(inputfile& SaveFile)

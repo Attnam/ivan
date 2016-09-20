@@ -128,6 +128,7 @@ struct itemdatabase : public databasebase
   truth IsKamikazeWeapon;
   truth FlexibilityIsEssential;
   truth CanBeBroken;
+  truth CanBeBurned;
   truth CanBePiled;
   long Category;
   int FireResistance;
@@ -235,6 +236,8 @@ class item : public object
   virtual truth IsHeadOfElpuri() const { return false; }
   virtual truth IsPetrussNut() const { return false; }
   virtual truth IsGoldenEagleShirt() const { return false; }
+  virtual truth IsABone() const { return false; }
+  virtual truth IsASkull() const { return false; }
   virtual truth CanBeRead(character*) const { return false; }
   virtual truth Read(character*);
   virtual void FinishReading(character*) { }
@@ -292,7 +295,7 @@ class item : public object
   virtual truth IsWeapon(ccharacter*) const { return false; }
   virtual truth IsArmor(ccharacter*) const { return false; }
   virtual truth IsEnchantable(ccharacter*) const { return CanBeEnchanted(); }
-  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
   virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
@@ -347,6 +350,7 @@ class item : public object
   DATA_BASE_VALUE(long, GearStates);
   DATA_BASE_TRUTH(IsTwoHanded);
   DATA_BASE_TRUTH(CanBeBroken);
+  DATA_BASE_TRUTH(CanBeBurned);
   DATA_BASE_VALUE_WITH_PARAMETER(v2, WallBitmapPos, int);
   DATA_BASE_VALUE(cfestring&, FlexibleNameSingular);
   DATA_BASE_TRUTH(CanBePiled);
@@ -408,7 +412,7 @@ class item : public object
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
-  truth IsSimiliarTo(item*) const;
+  truth IsSimilarTo(item*) const;
   virtual truth IsPickable(character*) const { return true; }
   truth CanBeSeenByPlayer() const;
   virtual truth CanBeSeenBy(ccharacter*) const;
@@ -429,6 +433,7 @@ class item : public object
   long GetWeight() const { return Weight; }
   virtual void SignalEmitationIncrease(col24);
   virtual void SignalEmitationDecrease(col24);
+  col24 GetEmitationDueToBurnLevel();
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
   virtual truth IsDangerous(ccharacter*) const { return false; }
@@ -465,15 +470,21 @@ class item : public object
   virtual int GetInElasticityPenalty(int) const { return 0; }
   virtual truth IsFixableBySmith(ccharacter*) const { return false; }
   virtual truth IsFixableByTailor(ccharacter*) const { return false; }
+  virtual truth IsOnFire(ccharacter*) const { return !!IsBurning(); }
   virtual long GetFixPrice() const;
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
+  virtual int GetBurnLevel() const;
   void ResetSpoiling();
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
+  void ResetBurning();
+  void ResetThermalEnergies();
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
+  virtual truth IsShadowVeil() const { return false; }
+  virtual truth IsLostRubyFlamingSword() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;
@@ -509,6 +520,11 @@ class item : public object
   virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
+  virtual void SignalBurnLevelTransitionMessage();
+  virtual void SignalBurn(material*);
+  virtual void AddSpecialExtinguishMessageForPF();
+  virtual void AddExtinguishMessage();
   virtual void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
   int GetSquaresUnder() const { return SquaresUnder; }
@@ -516,6 +532,7 @@ class item : public object
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
+  virtual truth TestActivationEnergy(int);
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, festring, int, truth);
   virtual truth IsAnimated() const;
@@ -525,12 +542,15 @@ class item : public object
   void CheckFluidGearPictures(v2, int, truth);
   void DrawFluids(blitdata&) const;
   virtual void ReceiveAcid(material*, cfestring&, long);
+  virtual void FightFire(material*, cfestring&, long);
   virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
   void Destroy(character*, int);
   virtual truth AllowFluidBe() const { return true; }
   virtual truth IsRusted() const;
   virtual void RemoveRust();
+  virtual truth IsBurnt() const;
+  virtual void RemoveBurns();
   virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
@@ -548,9 +568,10 @@ class item : public object
   virtual void DestroyBodyPart(stack*) { SendToHell(); }
   int GetLifeExpectancy() const { return LifeExpectancy; }
   virtual void SetLifeExpectancy(int, int);
-  int NeedsBe() const { return LifeExpectancy; }
+  int NeedsBe() const { return LifeExpectancy || !!IsBurning(); }
   truth IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   truth IsVeryCloseToSpoiling() const;
+  truth IsVeryCloseToBurning() const;
   virtual truth IsValuable() const;
   virtual truth Necromancy(character*) { return false; }
   virtual void CalculateEnchantment() { }
@@ -569,13 +590,15 @@ class item : public object
   truth IsEquipped() const;
   festring GetExtendedDescription() const;
   virtual ccharacter* FindCarrier() const;
-  virtual void BlockEffect(character*, character*, item*, int type) { } 
+  virtual void BlockEffect(character*, character*, item*, int type) { }
   virtual bool WillExplodeSoon() const { return false; }
   virtual const character* GetWearer() const;
   virtual bool SpecialOfferEffect(int) { return false; }
   void Haste();
   void Slow();
   void SendMemorizedUpdateRequest() const;
+  virtual void Ignite();
+  virtual void Extinguish(truth);
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
@@ -600,14 +623,15 @@ class item : public object
   int SquaresUnder;
   int LifeExpectancy;
   ulong ItemFlags;
+  virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 #define ITEM_PROTO(name, base)\
 template<> const itemprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   (itemspawner)(&name##sysbase::Spawn),\
-			   (itemcloner)(&name##sysbase::Clone), #name);
+                           reinterpret_cast<itemspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<itemcloner>(&name##sysbase::Clone), #name);
 #else
 #define ITEM_PROTO(name, base)
 #endif

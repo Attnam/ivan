@@ -32,7 +32,7 @@ class festring;
 
 struct graphicid
 {
-  graphicid() { }
+  graphicid() = default;
   bool operator<(const graphicid&) const;
   ushort BitmapPosX NO_ALIGNMENT;
   ushort BitmapPosY NO_ALIGNMENT;
@@ -50,6 +50,7 @@ struct graphicid
   uchar FlyAmount NO_ALIGNMENT;
   v2 Position NO_ALIGNMENT;
   uchar RustData[4] NO_ALIGNMENT;
+  uchar BurnData[4] NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
   uchar WobbleData NO_ALIGNMENT;
 };
@@ -68,7 +69,7 @@ inputfile& operator>>(inputfile&, graphicid&);
 
 struct tile
 {
-  tile() { }
+  tile() = default;
   tile(bitmap* Bitmap) : Bitmap(Bitmap), Users(1) { }
   bitmap* Bitmap;
   long Users;

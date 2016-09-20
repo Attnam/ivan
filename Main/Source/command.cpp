@@ -33,23 +33,25 @@
 #include "proto.h"
 #endif
 
-command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, 
-									char Key3, truth UsableInWilderness, truth WizardModeFunction) 
-		: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3), 
-						UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) 
+command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
+                 truth UsableInWilderness, truth WizardModeFunction)
+: LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
+  UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
 }
 
-char command::GetKey() const {
- switch(ivanconfig::GetDirectionKeyMap()){
- case DIR_NORM: //Normal
-	return Key1;
- case DIR_ALT: //Alternative
-	return Key2;
- case DIR_HACK: //Nethack
-	return Key3;
- }
-} 
+char command::GetKey() const
+{
+  switch(ivanconfig::GetDirectionKeyMap())
+  {
+   case DIR_NORM: // Normal
+    return Key1;
+   case DIR_ALT: // Alternative
+    return Key2;
+   case DIR_HACK: // Nethack
+    return Key3;
+  }
+}
 
 command* commandsystem::Command[] =
 {
@@ -63,7 +65,7 @@ command* commandsystem::Command[] =
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
-  new command(&Eat, "eat", 'e', 'e',' e', true),
+  new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
   new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
   new command(&Go, "go", 'g', 'g', 'g', false),
@@ -71,12 +73,12 @@ command* commandsystem::Command[] =
   new command(&GoUp, "go up", '<', '<', '<', true),
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
-  new command(&Look, "look", 'l', 'L', 'L',true),
-  new command(&AssignName, "name", 'n', 'n', 'N',false),
+  new command(&Look, "look", 'l', 'L', 'L', true),
+  new command(&AssignName, "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&PickUp, "pick up", ',', ',', ',', false),
-  new command(&Pray, "pray", 'p', 'p', 'p',false),
+  new command(&Pray, "pray", 'p', 'p', 'p', false),
   new command(&Quit, "quit", 'Q', 'Q', 'Q', true),
   new command(&Read, "read", 'r', 'r', 'r', false),
   new command(&Rest, "rest/heal", 'h', 'h', 'H', true),
@@ -115,6 +117,7 @@ command* commandsystem::Command[] =
   new command(&GainAllItems, "gain all items", '$', '$', '$', true, true),
   new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', '*', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', '0', '0', true, true),
+  new command(&SetFireToBodyPart, "set fire to a limb", ']', ']', ']', true, true),
   new command(&SummonMonster, "summon monster", '&', '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', '|', false, true),
   new command(&Possess, "possess creature", '{', '{', '{', false, true),
@@ -141,9 +144,9 @@ truth commandsystem::GoUp(character* Char)
     if(game::IsInWilderness())
     {
       if(!Char->IsFlying())
-	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+        ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
       else
-	ADD_MESSAGE("You fly around for some time.");
+        ADD_MESSAGE("You fly around for some time.");
     }
     else
       ADD_MESSAGE("You can't go up.");
@@ -199,17 +202,84 @@ truth commandsystem::Open(character* Char)
   if(Char->CanOpen())
   {
     int Key;
-    truth OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
 
-    if(OpenableItems)
-      Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key, space or i]"));
-    else
-      Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key or space]"));
-
-    if(Key == 'i' && OpenableItems)
+    if(ivanconfig::GetSmartOpenCloseApply())
     {
-      item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
-      return Item && Item->Open(Char);
+      std::vector<lsquare*> SquaresWithOpenableItems;
+      std::vector<olterrain*> OpenableOLTerrains;
+      std::vector<olterrain*> AlreadyOpenOLTerrains;
+
+      for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
+      {
+        lsquare* Square = Char->GetNeighbourLSquare(d);
+
+        if(Square)
+        {
+          if(Square->GetStack()->SortedItems(Char, &item::IsOpenable))
+            SquaresWithOpenableItems.push_back(Square);
+
+          if(Square->GetOLTerrain())
+          {
+            if(Square->GetOLTerrain()->CanBeOpened())
+              OpenableOLTerrains.push_back(Square->GetOLTerrain());
+            else if(Square->GetOLTerrain()->IsOpen())
+              AlreadyOpenOLTerrains.push_back(Square->GetOLTerrain());
+          }
+        }
+      }
+
+      if(Char->GetStack()->SortedItems(Char, &item::IsOpenable))
+      {
+        if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
+          Key = 'i';
+        else
+          Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                             "[press a direction key, space or i]"));
+
+        if(Key == 'i')
+        {
+          item* Item = Char->GetStack()->DrawContents(Char,
+                                                      CONST_S("What do you want to open?"),
+                                                      0, &item::IsOpenable);
+          return Item && Item->Open(Char);
+        }
+      }
+      else if(SquaresWithOpenableItems.size() == 1 && OpenableOLTerrains.empty())
+        return SquaresWithOpenableItems[0]->Open(Char);
+      else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.size() == 1)
+        return OpenableOLTerrains[0]->Open(Char);
+      else if(SquaresWithOpenableItems.empty() && OpenableOLTerrains.empty())
+      {
+        if(!AlreadyOpenOLTerrains.empty())
+          return AlreadyOpenOLTerrains[0]->Open(Char);
+        else
+        {
+          ADD_MESSAGE("Find something to open first, %s.", game::Insult());
+          return false;
+        }
+      }
+      else
+        Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                           "[press a direction key or space]"));
+    }
+    else
+    {
+      truth OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
+
+      if(OpenableItems)
+        Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                           "[press a direction key, space or i]"));
+      else
+        Key = game::AskForKeyPress(CONST_S("What do you wish to open? "
+                                           "[press a direction key or space]"));
+
+      if(Key == 'i' && OpenableItems)
+      {
+        item* Item = Char->GetStack()->DrawContents(Char,
+                                                    CONST_S("What do you want to open?"),
+                                                    0, &item::IsOpenable);
+        return Item && Item->Open(Char);
+      }
     }
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
@@ -227,10 +297,62 @@ truth commandsystem::Close(character* Char)
 {
   if(Char->CanOpen())
   {
-    int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+    if(ivanconfig::GetSmartOpenCloseApply())
+    {
+      /* See if there's only a single open door nearby, otherwise ask for a direction */
 
-    if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
-      return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
+      int ThingsToClose = 0;
+      int ThingsAlreadyClosed = 0;
+      lsquare* SquareWithThingToClose;
+      lsquare* SquareWithThingAlreadyClosed;
+
+      for(int d = 0; d < Char->GetExtendedNeighbourSquares(); ++d)
+      {
+        lsquare* Square = Char->GetNeighbourLSquare(d);
+
+        if(!Square || !Square->GetOLTerrain())
+          continue;
+
+        if(Square->GetOLTerrain()->IsOpen())
+        {
+          ++ThingsToClose;
+
+          if(ThingsToClose > 1)
+            break;
+
+          SquareWithThingToClose = Square;
+        }
+        else if(Square->GetOLTerrain()->IsCloseable())
+        {
+          ++ThingsAlreadyClosed;
+          SquareWithThingAlreadyClosed = Square;
+        }
+      }
+
+      if(ThingsToClose == 0)
+      {
+        if(ThingsAlreadyClosed == 0)
+          ADD_MESSAGE("Find something to close first, %s.", game::Insult());
+        else
+          SquareWithThingAlreadyClosed->Close(Char);
+      }
+      else if(ThingsToClose == 1)
+        return SquareWithThingToClose->Close(Char);
+      else
+      {
+        int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+
+        if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+          return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
+      }
+    }
+    else
+    {
+      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+
+      if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+        return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
+    }
   }
   else
     ADD_MESSAGE("This monster type cannot close anything.");
@@ -262,14 +384,14 @@ truth commandsystem::Drop(character* Char)
     {
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
-	if(game::TruthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
-			       + " again! [y/N]"))
-	{
+        if(game::TruthQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
+                               + " again! [y/N]"))
+        {
 
-	  ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
-	  ToDrop[c]->RemoveFromSlot();
-	  ToDrop[c]->SendToHell();
-	}
+          ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
+          ToDrop[c]->RemoveFromSlot();
+          ToDrop[c]->SendToHell();
+        }
       }
     }
     else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
@@ -277,7 +399,7 @@ truth commandsystem::Drop(character* Char)
       ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).CStr());
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
-	ToDrop[c]->MoveTo(Char->GetStackUnder());
+        ToDrop[c]->MoveTo(Char->GetStackUnder());
       }
       Success = true;
     }
@@ -340,7 +462,8 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
   festring Question = CONST_S("What do you wish to ") + ConsumeVerb + '?';
 
   if(!game::IsInWilderness() && StackUnder->SortedItems(Char, Sorter))
-    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"), CONST_S("Items on the ground"), CONST_S(""), 0, NO_MULTI_SELECT, Sorter);
+    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"),
+                            CONST_S("Items on the ground"), CONST_S(""), 0, NO_MULTI_SELECT, Sorter);
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
@@ -376,35 +499,38 @@ truth commandsystem::PickUp(character* Char)
   }
 
   if(PileVector.size() == 1)
+  {
     if(PileVector[0][0]->CanBePickedUp())
     {
       int Amount = PileVector[0].size();
 
       if(Amount > 1)
-	Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+        Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?',
+                                         Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
       if(!Amount)
-	return false;
+        return false;
 
       if((!PileVector[0][0]->GetRoom()
-	  || PileVector[0][0]->GetRoom()->PickupItem(Char, PileVector[0][0], Amount))
-	 && PileVector[0][0]->CheckPickUpEffect(Char))
+          || PileVector[0][0]->GetRoom()->PickupItem(Char, PileVector[0][0], Amount))
+         && PileVector[0][0]->CheckPickUpEffect(Char))
       {
-	for(int c = 0; c < Amount; ++c)
-	  PileVector[0][c]->MoveTo(Char->GetStack());
+        for(int c = 0; c < Amount; ++c)
+          PileVector[0][c]->MoveTo(Char->GetStack());
 
-	ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
-	Char->DexterityAction(2);
-	return true;
+        ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
+        Char->DexterityAction(2);
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
     {
       ADD_MESSAGE("%s too large to pick up!", PileVector[0].size() == 1 ? "It is" : "They are");
       return false;
     }
+  }
 
   truth Success = false;
   stack::SetSelected(0);
@@ -421,14 +547,14 @@ truth commandsystem::PickUp(character* Char)
     if(ToPickup[0]->CanBePickedUp())
     {
       if((!ToPickup[0]->GetRoom()
-	  || ToPickup[0]->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size()))
-	 && ToPickup[0]->CheckPickUpEffect(Char))
+          || ToPickup[0]->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size()))
+         && ToPickup[0]->CheckPickUpEffect(Char))
       {
-	for(uint c = 0; c < ToPickup.size(); ++c)
-	  ToPickup[c]->MoveTo(Char->GetStack());
+        for(uint c = 0; c < ToPickup.size(); ++c)
+          ToPickup[c]->MoveTo(Char->GetStack());
 
-	ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
-	Success = true;
+        ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
+        Success = true;
       }
     }
     else
@@ -476,8 +602,8 @@ truth commandsystem::Talk(character* Char)
 
       if(Dude)
       {
-	ToTalk = Dude;
-	++Characters;
+        ToTalk = Dude;
+        ++Characters;
       }
     }
   }
@@ -587,13 +713,15 @@ truth commandsystem::Dip(character* Char)
 
   if(Item)
   {
-    if(!HasDipDestination || (DipDestinationNear && game::TruthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
+    if(!HasDipDestination
+       || (DipDestinationNear && game::TruthQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
     {
-      int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
+      int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE)
+                                        + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
-	return false;
+        return false;
 
       return Char->GetNearLSquare(Pos)->DipInto(Item, Char);
     }
@@ -603,14 +731,14 @@ truth commandsystem::Dip(character* Char)
 
       if(DipTo)
       {
-	if(Item == DipTo)
-	{
-	  ADD_MESSAGE("Very funny...");
-	  return false;
-	}
+        if(Item == DipTo)
+        {
+          ADD_MESSAGE("Very funny...");
+          return false;
+        }
 
-	Item->DipInto(DipTo->CreateDipLiquid(), Char);
-	return true;
+        Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        return true;
       }
     }
   }
@@ -643,10 +771,10 @@ truth commandsystem::ShowKeyLayout(character*)
     for(int c = 1; GetCommand(c); ++c)
       if(GetCommand(c)->IsWizardModeFunction())
       {
-	Buffer.Empty();
-	Buffer << GetCommand(c)->GetKey();
-	Buffer.Resize(10);
-	List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
+        Buffer.Empty();
+        Buffer << GetCommand(c)->GetKey();
+        Buffer.Resize(10);
+        List.AddEntry(Buffer + GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
   }
 
@@ -660,7 +788,7 @@ truth commandsystem::Look(character* Char)
   festring Msg;
   if(!game::IsInWilderness())
     Char->GetLevel()->AddSpecialCursors();
-  
+
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
   else
@@ -679,7 +807,11 @@ truth commandsystem::WhatToEngrave(character* Char)
     return false;
   }
 
-  Char->GetNearLSquare(Char->GetPos())->Engrave(game::StringQuestion(CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true));
+  festring What;
+
+  if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
+    Char->GetNearLSquare(Char->GetPos())->Engrave(What);
+
   return false;
 }
 
@@ -702,8 +834,8 @@ truth commandsystem::Pray(character* Char)
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
-	Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
-	Known[Index++] = c;
+        Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
+        Known[Index++] = c;
       }
   }
   else
@@ -736,37 +868,41 @@ truth commandsystem::Pray(character* Char)
     {
       if(!Select)
       {
-	if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
-	  game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->Pray();
-	else
-	  return false;
+        if(game::TruthQuestion(CONST_S("Do you really wish to pray to ")
+                               + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
+          game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->Pray();
+        else
+          return false;
       }
       else
-	return false;
+        return false;
     }
     else
     {
-      if(game::TruthQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
+      if(game::TruthQuestion(CONST_S("Do you really wish to pray to ")
+                             + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
       {
-	if(Char->StateIsActivated(CONFUSED) && !(RAND() & 7))
-	{
-	  int Index;
-	  for(Index = 1 + RAND() % GODS;
-	      Index == Known[Select];
-	      Index = 1 + RAND() % GODS);
+        if(Char->StateIsActivated(CONFUSED) && !(RAND() & 7))
+        {
+          int Index;
+          for(Index = 1 + RAND() % GODS;
+              Index == Known[Select];
+              Index = 1 + RAND() % GODS);
 
-	  if(game::GetGod(Index)->IsKnown())
-	    ADD_MESSAGE("You feel something went wrong in the rituals. You have accidentally prayed to %s!", game::GetGod(Index)->GetName());
-	  else
-	    ADD_MESSAGE("Your rituals were seriously incorrect. You have accidentally prayed to an unknown god, but have no idea how!");
+          if(game::GetGod(Index)->IsKnown())
+            ADD_MESSAGE("You feel something went wrong in the rituals. You have "
+                        "accidentally prayed to %s!", game::GetGod(Index)->GetName());
+          else
+            ADD_MESSAGE("Your rituals were seriously incorrect. You have accidentally "
+                        "prayed to an unknown god, but have no idea how!");
 
-	  game::GetGod(Index)->Pray();
-	}
-	else
-	  game::GetGod(Known[Select])->Pray();
+          game::GetGod(Index)->Pray();
+        }
+        else
+          game::GetGod(Known[Select])->Pray();
       }
       else
-	return false;
+        return false;
     }
 
     Char->EditAP(-1000);
@@ -800,7 +936,8 @@ truth commandsystem::Kick(character* Char)
 
   character* Enemy = Square->GetCharacter();
 
-  if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+  if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE
+     && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   /*if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
@@ -835,13 +972,13 @@ truth commandsystem::Offer(character* Char)
     {
       if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
       {
-	Item->RemoveFromSlot();
-	Item->SendToHell();
-	Char->DexterityAction(5); /** C **/
-	return true;
+        Item->RemoveFromSlot();
+        Item->SendToHell();
+        Char->DexterityAction(5); /** C **/
+        return true;
       }
       else
-	return false;
+        return false;
     }
     else
       return false;
@@ -873,7 +1010,8 @@ truth commandsystem::Throw(character* Char)
 
   if(Item)
   {
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  [press a direction key]"), false);
+    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
+                                                 "[press a direction key]"), false);
 
     if(Answer == DIR_ERROR)
       return false;
@@ -923,18 +1061,18 @@ truth commandsystem::ForceVomit(character* Char)
 
       if(Char->GetArea()->IsValidPos(VomitPos))
       {
-	ccharacter* Other = Char->GetArea()->GetSquare(VomitPos)->GetCharacter();
+        ccharacter* Other = Char->GetArea()->GetSquare(VomitPos)->GetCharacter();
 
-	if(Other && Other->GetTeam() != Char->GetTeam()
-	   && Other->GetRelation(Char) != HOSTILE
-	   && Other->CanBeSeenBy(Char)
-	   && !game::TruthQuestion("Do you really want to vomit at " + Other->GetObjectPronoun() + "? [y/N]"))
-	   return false;
+        if(Other && Other->GetTeam() != Char->GetTeam()
+           && Other->GetRelation(Char) != HOSTILE
+           && Other->CanBeSeenBy(Char)
+           && !game::TruthQuestion("Do you really want to vomit at " + Other->GetObjectPronoun() + "? [y/N]"))
+           return false;
 
-	ADD_MESSAGE(Char->GetForceVomitMessage().CStr());
-	Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500, false);
-	Char->EditAP(-1000);
-	return true;
+        ADD_MESSAGE(Char->GetForceVomitMessage().CStr());
+        Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500, false);
+        Char->EditAP(-1000);
+        return true;
       }
     }
   }
@@ -959,7 +1097,8 @@ truth commandsystem::Zap(character* Char)
 
   if(Item)
   {
-    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  [press a direction key or '.']"), false, true);
+    int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
+                                                 "[press a direction key or '.']"), false, true);
 
     if(Answer == DIR_ERROR)
       return false;
@@ -1006,7 +1145,7 @@ truth commandsystem::Rest(character* Char)
       oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
 
       if(Terrain)
-	Terrain->ShowRestMessage(Char);
+        Terrain->ShowRestMessage(Char);
 
       rest* Rest = rest::Spawn(Char);
       Rest->SetMinToStop(game::GetTotalMinutes() + MinutesToRest);
@@ -1018,7 +1157,9 @@ truth commandsystem::Rest(character* Char)
       return false;
   }
 
-  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"), Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"),
+                                          Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0,
+                                          WHITE, LIGHT_GRAY, DARK_GRAY);
 
   if(HPToRest <= Char->GetHP())
   {
@@ -1123,22 +1264,22 @@ truth commandsystem::ShowWeaponSkills(character* Char)
       Buffer.Resize(50);
 
       if(Skill->GetLevel() != 20)
-	Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits()) / 100;
+        Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits()) / 100;
       else
-	Buffer << '-';
+        Buffer << '-';
 
       Buffer.Resize(60);
       Buffer << '+' << (Skill->GetBonus() - 1000) / 10;
 
       if(Skill->GetBonus() % 10)
-	Buffer << '.' << Skill->GetBonus() % 10;
+        Buffer << '.' << Skill->GetBonus() % 10;
 
       Buffer << '%';
 
       if(Char->IsUsingWeaponOfCategory(c))
-	List.AddEntry(Buffer, WHITE);
+        List.AddEntry(Buffer, WHITE);
       else
-	List.AddEntry(Buffer, LIGHT_GRAY);
+        List.AddEntry(Buffer, LIGHT_GRAY);
 
       Something = true;
     }
@@ -1203,18 +1344,28 @@ truth commandsystem::WizardMode(character* Char)
 
       if(game::IsInWilderness())
       {
-	v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-	game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
-	game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-	game::GetWorldMap()->SendNewDrawRequest();
+        v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+        game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+        
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        
+        game::GetWorldMap()->SendNewDrawRequest();
       }
       else
       {
-	game::LoadWorldMap();
-	v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-	game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
-	game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-	game::SaveWorldMap();
+        game::LoadWorldMap();
+        v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+        game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
+        game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+        
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        
+        game::SaveWorldMap();
       }
 
       game::Save();
@@ -1318,12 +1469,11 @@ truth commandsystem::SecretKnowledge(character* Char)
     charactervector& Character = game::GetCharacterDrawVector();
     int TeamSize = 0;
 
-    for(std::list<character*>::const_iterator i = Char->GetTeam()->GetMember().begin();
-	i != Char->GetTeam()->GetMember().end(); ++i)
-      if((*i)->IsEnabled())
+    for(character* p : Char->GetTeam()->GetMember())
+      if(p->IsEnabled())
       {
-	Character.push_back(*i);
-	++TeamSize;
+        Character.push_back(p);
+        ++TeamSize;
       }
 
     protosystem::CreateEveryCharacter(Character);
@@ -1336,10 +1486,10 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Character.size(); ++c)
       {
-	Entry.Empty();
-	Character[c]->AddName(Entry, UNARTICLED);
-	Character[c]->AddAttributeInfo(Entry);
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c);
+        Entry.Empty();
+        Character[c]->AddName(Entry, UNARTICLED);
+        Character[c]->AddAttributeInfo(Entry);
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c);
       }
 
       List.SetPageLength(15);
@@ -1349,10 +1499,10 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Character.size(); ++c)
       {
-	Entry.Empty();
-	Character[c]->AddName(Entry, UNARTICLED);
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c);
-	Character[c]->AddAttackInfo(List);
+        Entry.Empty();
+        Character[c]->AddName(Entry, UNARTICLED);
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c);
+        Character[c]->AddAttackInfo(List);
       }
 
       List.SetPageLength(20);
@@ -1362,14 +1512,14 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Character.size(); ++c)
       {
-	Entry.Empty();
-	Character[c]->AddName(Entry, UNARTICLED);
-	Entry.Resize(47);
-	Entry << int(Character[c]->GetDodgeValue());
-	Entry.Resize(57);
-	Entry << Character[c]->GetMaxHP();
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c);
-	Character[c]->AddDefenceInfo(List);
+        Entry.Empty();
+        Character[c]->AddName(Entry, UNARTICLED);
+        Entry.Resize(47);
+        Entry << int(Character[c]->GetDodgeValue());
+        Entry.Resize(57);
+        Entry << Character[c]->GetMaxHP();
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c);
+        Character[c]->AddDefenceInfo(List);
       }
 
       List.SetPageLength(25);
@@ -1379,16 +1529,17 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Character.size(); ++c)
       {
-	Entry.Empty();
-	Character[c]->AddName(Entry, UNARTICLED);
-	Entry.Resize(47);
-	Entry << int(Character[c]->GetRelativeDanger(Char, true) * 1000);
-	Entry.Resize(57);
-	const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
-	Entry << int(DI.NakedDanger * 1000);
-	Entry.Resize(67);
-	Entry << int(DI.EquippedDanger * 1000);
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c);
+        Entry.Empty();
+        Character[c]->AddName(Entry, UNARTICLED);
+        Entry.Resize(47);
+        Entry << int(Character[c]->GetRelativeDanger(Char, true) * 1000);
+        Entry.Resize(57);
+        const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(),
+                                                                Character[c]->GetConfig()))->second;
+        Entry << int(DI.NakedDanger * 1000);
+        Entry.Resize(67);
+        Entry << int(DI.EquippedDanger * 1000);
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c);
       }
 
       List.SetPageLength(15);
@@ -1416,10 +1567,10 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Item.size(); ++c)
       {
-	Entry.Empty();
-	Item[c][0]->AddName(Entry, UNARTICLED);
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
-	Item[c][0]->AddAttackInfo(List);
+        Entry.Empty();
+        Item[c][0]->AddName(Entry, UNARTICLED);
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
+        Item[c][0]->AddAttackInfo(List);
       }
 
       break;
@@ -1428,10 +1579,10 @@ truth commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Item.size(); ++c)
       {
-	Entry.Empty();
-	Item[c][0]->AddName(Entry, UNARTICLED);
-	List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
-	Item[c][0]->AddMiscellaneousInfo(List);
+        Entry.Empty();
+        Item[c][0]->AddName(Entry, UNARTICLED);
+        List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
+        Item[c][0]->AddMiscellaneousInfo(List);
       }
 
       break;
@@ -1458,9 +1609,9 @@ truth commandsystem::SecretKnowledge(character* Char)
       Entry.Resize(40);
       Entry << Material[c]->GetStrengthValue();
       Entry.Resize(55);
-      Entry << int(Material[c]->GetFlexibility());
+      Entry << Material[c]->GetFlexibility();
       Entry.Resize(70);
-      Entry << int(Material[c]->GetDensity());
+      Entry << Material[c]->GetDensity();
       List.AddEntry(Entry, Material[c]->GetColor());
     }
 
@@ -1481,14 +1632,23 @@ truth commandsystem::DetachBodyPart(character* Char)
   return false;
 }
 
+truth commandsystem::SetFireToBodyPart(character* Char)
+{
+  Char->SetFireToBodyPart();
+  return false;
+}
+
 truth commandsystem::SummonMonster(character* Char)
 {
   character* Summoned = 0;
 
   while(!Summoned)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("Summon which monster?"),
-					  game::GetDefaultSummonMonster());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("Summon which monster?"), game::GetDefaultSummonMonster(), true) == ABORTED)
+      return false;
+
     Summoned = protosystem::CreateMonster(Temp);
   }
 

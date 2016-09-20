@@ -14,8 +14,10 @@
 
 #include "proto.h"
 #include "wterra.h"
+#include "database.h"
 
-SYSTEM_SPECIALIZATIONS(gwterrain) SYSTEM_SPECIALIZATIONS(owterrain)
+EXTENDED_SYSTEM_SPECIALIZATIONS(gwterrain)(0, 0, "gwterrain");
+EXTENDED_SYSTEM_SPECIALIZATIONS(owterrain)(0, 0, "owterrain");
 
 #include "wterras.h"
 

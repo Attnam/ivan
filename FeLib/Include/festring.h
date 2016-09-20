@@ -30,8 +30,7 @@ class festring
   festring() : Data(0), Size(0), OwnsData(false) { }
   explicit festring(sizetype);
   festring(sizetype, char);
-  festring(cchar* CStr)
-  : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
+  festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
   festring(cchar* CStr, sizetype N)
   : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
   festring(cfestring&);
@@ -73,6 +72,8 @@ class festring
   sizetype FindLast(const festring& S, sizetype Pos = NPos) const
   { return FindLast(S.Data, Pos, S.Size); }
   void Erase(sizetype, sizetype);
+  void Insert(sizetype Pos, char C)
+  { char Buffer[] = " "; Insert(Pos, &(Buffer[0] = C), 1); }
   void Insert(sizetype Pos, cchar* CStr)
   { Insert(Pos, CStr, strlen(CStr)); }
   void Insert(sizetype, cchar*, sizetype);
@@ -83,11 +84,11 @@ class festring
   static csizetype NPos;
   static void SplitString(festring&, festring&, sizetype);
   static int SplitString(cfestring&, std::vector<festring>&,
-			 sizetype, sizetype = 0);
+                         sizetype, sizetype = 0);
   static sizetype IgnoreCaseFind(cfestring&,
-				 cfestring&, sizetype = 0);
+                                 cfestring&, sizetype = 0);
   static void SearchAndReplace(festring&, cfestring&,
-			       cfestring&, sizetype = 0);
+                               cfestring&, sizetype = 0);
   static bool IgnoreCaseCompare(cfestring&, cfestring&);
   truth IsEmpty() const { return !Size; }
   /* HORRIBLE ERROR!!!! */
@@ -107,7 +108,7 @@ class festring
   void SlowAppend(char);
   void SlowAppend(cchar*, sizetype);
   static char** IntegerMap;
-  static char* EmptyString;
+  static cchar* EmptyString;
   char* Data;
   sizetype Size;
   sizetype OwnsData : 1;
@@ -148,18 +149,15 @@ inline festring::festring(cfestring& Str)
 inline festring::festring(sizetype N)
 : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];
+  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
   REFS(Ptr) = 0;
   Data = Ptr;
 }
 
 inline festring::festring(sizetype N, char C)
-: Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
+: festring(N)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*)+1];
-  REFS(Ptr) = 0;
-  Data = Ptr;
-  memset(Ptr, C, N);
+  memset(Data, C, N);
 }
 
 inline festring::~festring()
@@ -181,7 +179,7 @@ inline bool festring::operator<(cfestring& Str) const
   if(ThisSize && StrSize)
   {
     int Comp = memcmp(Data, Str.Data,
-		      StrSize > ThisSize ? ThisSize : StrSize);
+                      StrSize > ThisSize ? ThisSize : StrSize);
     return Comp < 0 || (!Comp && StrSize > ThisSize);
   }
   else
@@ -223,7 +221,7 @@ inline int festring::Compare(cfestring& Str) const
   if(ThisSize && StrSize)
   {
     int Comp = memcmp(Data, Str.Data,
-		      StrSize > ThisSize ? ThisSize : StrSize);
+                      StrSize > ThisSize ? ThisSize : StrSize);
 
     if(Comp)
       return Comp;

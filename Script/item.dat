@@ -66,6 +66,7 @@ item
   ForcedVisualEffects = 0;
   CanBeCloned = true;
   CanBeBroken = false;
+  CanBeBurned = true;
   MinCharges = 0;
   MaxCharges = 0;
   CanBePiled = true;
@@ -809,6 +810,7 @@ justifier /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
+  CanBeBurned = false;
   BaseEnchantment = 16;
   CanBeEnchanted = false;
   GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
@@ -844,6 +846,7 @@ neercseulb /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
+  CanBeBurned = false;
   BaseEnchantment = 6;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 192;
@@ -1035,6 +1038,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
   CanBeBroken = false;
+  CanBeBurned = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   BaseEnchantment = 10;
@@ -1187,6 +1191,7 @@ leftnutofpetrus /* nut-> */
   AttachedGod = VALPURUS;
   IsQuestItem = true;
   IsValuable = true;
+  CanBeBurned = false;
 }
 
 bone
@@ -1287,6 +1292,7 @@ wand
   BreakEffectRangeSquare = 2;
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 1000;
+  CanBeBurned = false;
 
   Config WAND_OF_POLYMORPH;
   {
@@ -1553,6 +1559,7 @@ avatarofvalpurus
   AttachedGod = VALPURUS;
   WieldedBitmapPos = 160, 128;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 kiwi
@@ -1632,19 +1639,17 @@ whip /* meleeweapon-> */
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
-  
-  
+
   Config BROKEN;
   {
     Possibility = 5;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
-	MaterialConfigChances = { 3, 75, 50, 25,}
+    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 60;
   }
-  
-  
+
   Config RUNED_WHIP;
   {
     DefaultSize = 230;
@@ -1656,18 +1661,16 @@ whip /* meleeweapon-> */
     FormModifier = 20;
     EnchantmentPlusChance = 20;
   }
-  
-    Config BROKEN|RUNED_WHIP;
+
+  Config BROKEN|RUNED_WHIP;
   {
     Possibility = 3;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
-	MaterialConfigChances = { 3, 75, 50, 25,}
+    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 40;
   }
-  
-  
 }
 
 backpack /* materialcontainer-> */
@@ -1702,7 +1705,6 @@ holybook
   FormModifier = 20;
   Adjective = "holy";
   NameSingular = "book";
-  ArticleMode = FORCE_THE;
   MainMaterialConfig == PARCHMENT;
   Price = 200;
   Roundness = 70;
@@ -1755,6 +1757,7 @@ oillamp
   WeaponCategory = BLUNT_WEAPONS;
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 128;
+  CanBeBurned = false;
 }
 
 stone
@@ -1833,6 +1836,7 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
+  CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
@@ -2001,6 +2005,28 @@ cloak /* armor-> */
     MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
+  }
+
+  Config CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    GearStates = ETHEREAL_MOVING;
+    Price = 2500;
+    MainMaterialConfig == GHOST;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    NameSingular = "shadow veil";
+    AttachedGod = INFUSCOR;
+    CanBeBroken = false;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    ArticleMode = FORCE_THE;
+    CanBeEnchanted = false;
   }
 }
 
@@ -2297,6 +2323,7 @@ ring
   IsAbstract = true;
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
+  CanBeBurned = false;
 
   Config RING_OF_FIRE_RESISTANCE;
   {
@@ -2431,6 +2458,7 @@ amulet
   IsAbstract = true;
   WieldedBitmapPos = 160, 112;
   HasNormalPictureDirection = false;
+  CanBeBurned = false;
 
   Config AMULET_OF_LIFE_SAVING;
   {
@@ -2465,7 +2493,7 @@ amulet
     ElectricityResistance = 30;
     AcidResistance = 5;
     PoisonResistance = 5;
-  } 
+  }
 }
 
 bodypart
@@ -2499,6 +2527,7 @@ torso /* bodypart-> */
   IsAbstract = true;
   Roundness = 60;
   WieldedBitmapPos = 160, 144;
+  CanBeBurned = false;
 }
 
 normaltorso /* bodypart->torso-> */
@@ -2536,6 +2565,7 @@ groin /* bodypart-> */
   NameSingular = "groin";
   Roundness = 40;
   WieldedBitmapPos = 160, 128;
+  CanBeBurned = false;
 }
 
 leg /* bodypart-> */
@@ -2580,6 +2610,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   AttachedGod = SCABIES;
   WieldedBitmapPos = 160, 144;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 corpse
@@ -2600,6 +2631,7 @@ corpse
   WieldedBitmapPos = 160, 144;
   /* BitmapPos overridden */
   IsValuable = false;
+  CanBeBurned = false;
 }
 
 eddytorso /* normaltorso-> */
@@ -2670,6 +2702,7 @@ whistle
   Price = 25;
   AttachedGod = DULCIS;
   WieldedBitmapPos = 160, 368;
+  CanBeBurned = false;
 }
 
 magicalwhistle /* whistle-> */
@@ -2700,6 +2733,7 @@ itemcontainer
   AttachedGod = ATAVUS;
   WieldedBitmapPos = 160, 144;
   CreateLockConfigurations = true;
+  CanBeBurned = false;
 
   Config SMALL_CHEST;
   {
@@ -2776,6 +2810,7 @@ beartrap
   Price = 25;
   CanBePiled = false;
   CanBeBroken = true;
+  CanBeBurned = false;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
   IsPolymorphable = false;
@@ -3011,6 +3046,7 @@ stethoscope
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 128;
   HasNormalPictureDirection = false;
+  CanBeBurned = false;
 }
 
 flamingsword /* meleeweapon-> */
@@ -3035,6 +3071,7 @@ flamingsword /* meleeweapon-> */
   WieldedBitmapPos = 160, 16;
   EnchantmentPlusChance = 2;
   DamageFlags = SLASH|PIERCE;
+  CanBeBurned = false;
 
   Config BROKEN;
   {
@@ -3045,6 +3082,31 @@ flamingsword /* meleeweapon-> */
     SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 4;
+  }
+
+  Config LOST_RUBY_FLAMING_SWORD;
+  {
+    Possibility = 0;
+    BitmapPos = 16, 336;
+    WieldedBitmapPos = 160, 16;
+    MainMaterialConfig == RUBY;
+    SecondaryMaterialConfig == RUBY;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    Adjective = "lost ruby flaming";
+    PostFix = "of Xinroch";
+    AttachedGod = INFUSCOR;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    CanBeBroken = false;
+    BaseEnchantment = 0;
+    CanBeEnchanted = true;
+    ArticleMode = FORCE_THE;
   }
 }
 
@@ -3175,16 +3237,15 @@ whipofthievery /* meleeweapon->whip-> */
   Price = 500;
   AttachedGod = CLEPTIA;
   EnchantmentPlusChance = 10;
-  
+
   Config BROKEN;
   {
     Possibility = 1;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	Price = 250;
+    Price = 250;
     EnchantmentPlusChance = 20;
   }
-  
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -3225,6 +3286,35 @@ skull
   IsValuable = false;
 }
 
+skullofxinroch
+{
+  StrengthModifier = 100;
+  FormModifier = 15;
+  Roundness = 65;
+  DefaultSize = 20;
+  Possibility = 0;
+  DefaultMainVolume = 800;
+  BitmapPos = 48, 112;
+  Category = MISC;
+  NameSingular = "skull";
+  PostFix = "of Xinroch the skeleton warlord";
+  Alias == "skull of Xinroch";
+  MainMaterialConfig == BONE;
+  IsTwoHanded = true;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 128;
+  IsValuable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBeWished = false;
+  ArticleMode = FORCE_THE;
+  IsQuestItem = true;
+}
+
 gorovitsweapon
 {
   Adjective = "Gorovits family";
@@ -3233,6 +3323,7 @@ gorovitsweapon
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
   IsAbstract = true;
+  CanBeBurned = false;
 
   Config GOROVITS_HAMMER;
   {
@@ -3321,6 +3412,7 @@ encryptedscroll /* scroll-> */
   CanBeCloned = false;
   AttachedGod = MELLIS;
   IsQuestItem = true;
+  CanBeBurned = false;
 }
 
 horn
@@ -3341,6 +3433,7 @@ horn
   AttachedGod = DULCIS;
   WieldedBitmapPos = 160, 352;
   TeleportPriority = 500;
+  CanBeBurned = false;
 
   Config BRAVERY;
   {
@@ -3446,14 +3539,14 @@ chameleonwhip /* meleeweapon->whip-> */
   WieldedBitmapPos = 160, 224;
   EnchantmentMinusChance = 50;
   EnchantmentPlusChance = 50;
-  
+
   Config BROKEN;
   {
     Possibility = 1;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-	Price = 250;
-	EnchantmentMinusChance = 25;
+    Price = 250;
+    EnchantmentMinusChance = 25;
     EnchantmentPlusChance = 100;
   }
 }
@@ -3528,6 +3621,7 @@ charmlyre
   CanBePiled = false;
   AttachedGod = DULCIS;
   WieldedBitmapPos = 176, 352;
+  CanBeBurned = false;
 }
 
 ennerhead /* head-> */
@@ -3602,7 +3696,7 @@ scrollofgolemcreation /* scroll-> */
   ReadDifficulty = 1000;
 }
 
-gasgrenade 
+gasgrenade
 {
   DefaultSize = 15;
   Category = MISC;
@@ -3620,7 +3714,7 @@ gasgrenade
   Alias == "gas grenade";
 }
 
-holyhandgrenade 
+holyhandgrenade
 {
   DefaultSize = 15;
   Category = MISC;
@@ -3634,6 +3728,8 @@ holyhandgrenade
   MainMaterialConfig == VALPURIUM;
   Adjective = "holy";
   Alias == "gas grenade";
+  CanBePiled = false;
+  CanBeBurned = false;
 }
 
 daggerofvenom
@@ -3716,7 +3812,7 @@ acidshield /* armor ->*/
   CanBeBroken = true;
   WieldedBitmapPos = 128, 32;
   AttachedGod = SCABIES;
- 
+
   Config BROKEN;
   {
     Possibility = 3;
@@ -3733,14 +3829,14 @@ acidshield /* armor ->*/
 pantheonbook /* holybook-> */
 {
   DefaultSize = 30;
-  Possibility = 1; 
+  Possibility = 1;
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
   BitmapPos = 32, 32;
   FormModifier = 20;
   Adjective = "large and mysterious";
-  NameSingular = "saga"; 
+  NameSingular = "saga";
   PostFix = "of the pantheon";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == PARCHMENT;
@@ -3759,7 +3855,7 @@ gorovitscopyoflenin /* item-> */
   Category = MISC;
   DefaultMainVolume = 80000;
   DefaultSecondaryVolume = 100; /* clothes */
-  MainMaterialConfig == LEAD; 
+  MainMaterialConfig == LEAD;
   SecondaryMaterialConfig == FABRIC;
   Adjective = "Gorovits family life-size";
   NameSingular = "copy";
@@ -3771,6 +3867,7 @@ gorovitscopyoflenin /* item-> */
   Possibility = 0;
   Price = 50;
   Alias == "Lenin";
+  CanBeBurned = false;
 }
 
 chastitybelt
@@ -3809,16 +3906,16 @@ firstbornchild
   CanBeBroken = false;
   DamageFlags = BLUNT;
   IsAbstract = true;
-  Adjective = "first-born";    
+  Adjective = "first-born";
   AttachedGod = SILVA;
+  CanBeBurned = false;
 
   Config MALE;
   {
     NameSingular = "son";
-  } 
+  }
   Config FEMALE;
   {
     NameSingular = "daughter";
   }
 }
-

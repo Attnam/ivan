@@ -71,6 +71,8 @@ class lterrain : public object
   virtual truth Open(character*) { return false; }
   virtual truth Close(character*) { return false; }
   v2 GetPos() const;
+  virtual truth IsCloseable() const { return false; }
+  virtual truth IsOpen() const { return false; }
   virtual truth CanBeOpened() const { return false; }
   virtual truth AcceptsOffers() const { return false; }
   virtual truth ReceiveVomit(character*, liquid*) { return false; }
@@ -96,6 +98,7 @@ class lterrain : public object
   virtual truth IsOnGround() const { return true; }
   room* GetRoom() const;
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
   virtual void TryToRust(long);
   virtual void ReceiveAcid(material*, long) { }
   void InitMaterials(material*, truth = true);
@@ -112,6 +115,7 @@ class lterrain : public object
   virtual void PostConstruct() { }
   virtual void InstallDataBase(int) = 0;
   lsquare* LSquareUnder;
+  virtual truth NeedsBurningPostFix() const { return false; }
 };
 
 struct glterraindatabase : public lterraindatabase
@@ -207,7 +211,7 @@ struct olterraindatabase : public lterraindatabase
   int HPModifier;
   v2 OpenBitmapPos;
   v2 WindowBitmapPos;
-  fearray<contentscript<item> > LeftOverItems;
+  fearray<contentscript<item>> LeftOverItems;
   truth CreateDivineConfigurations;
   truth CanBeDestroyed;
   truth IsUpLink;
@@ -303,13 +307,13 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_TRUTH(IsAlwaysTransparent);
   DATA_BASE_TRUTH(CreateWindowConfigurations);
   DATA_BASE_VALUE(v2, WindowBitmapPos);
-  DATA_BASE_VALUE(const fearray<contentscript<item> >&, LeftOverItems);
+  DATA_BASE_VALUE(const fearray<contentscript<item>>&, LeftOverItems);
   DATA_BASE_TRUTH(IsWall);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
   virtual void SetText(cfestring&) { }
   virtual festring GetText() const;
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int) { }
   int GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { HP = CalculateMaxHP(); }
   int CalculateMaxHP();
@@ -322,6 +326,7 @@ class olterrain : public lterrain, public oterrain
   virtual void BeDestroyed() { Break(); }
   virtual void ReceiveAcid(material*, long);
   virtual void SignalRustLevelChange();
+  virtual void SignalBurnLevelChange();
   virtual truth IsFountainWithWater() const { return false; }
   truth ShowThingsUnder() const;
   truth WillBeDestroyedBy(ccharacter*) const;
@@ -348,8 +353,8 @@ class olterrain : public lterrain, public oterrain
 #define LTERRAIN_PROTO(name, base, protobase)\
 template<> const protobase##prototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   (protobase##spawner)(&name##sysbase::Spawn),\
-			   #name);
+                           reinterpret_cast<protobase##spawner>(&name##sysbase::Spawn),\
+                           #name);
 #else
 #define LTERRAIN_PROTO(name, base, protobase)
 #endif

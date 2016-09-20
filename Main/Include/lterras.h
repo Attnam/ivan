@@ -34,6 +34,8 @@ OLTERRAIN(door, olterrain)
  public:
   virtual truth Open(character*);
   virtual truth Close(character*);
+  virtual truth IsCloseable() const { return true; }
+  virtual truth IsOpen() const { return Opened; }
   virtual truth CanBeOpened() const { return !Opened; }
   virtual void BeKicked(character*, int, int);
   virtual void SetIsOpened(truth What) { Opened = What; }
@@ -122,7 +124,7 @@ OLTERRAIN(olterraincontainer, olterrain)
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
+  virtual void SetItemsInside(const fearray<contentscript<item>>&, int);
   virtual void Break();
   virtual truth AllowContentEmitation() const { return false; }
   virtual void PreProcessForBone();
@@ -230,10 +232,16 @@ OLTERRAIN(monsterportal, olterrain)
 OLTERRAIN(coffin, olterraincontainer)
 {
  public:
+  coffin() : Opened(false) { }
   virtual truth Open(character*);
   virtual void Break();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
+  virtual v2 GetBitmapPos(int Frame) const
+  { return Opened ? GetOpenBitmapPos(Frame) : olterraincontainer::GetBitmapPos(Frame); }
   virtual void GenerateGhost(lsquare*);
+  truth Opened;
 };
 
 OLTERRAIN(barwall, olterrain)
@@ -245,10 +253,12 @@ OLTERRAIN(barwall, olterrain)
 OLTERRAIN(ironmaiden, olterrain)
 {
  public:
-  ironmaiden() : Opened(false) {}
+  ironmaiden() : Opened(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual truth Open(character*);
+  virtual truth IsCloseable() const { return true; }
+  virtual truth IsOpen() const { return Opened; }
   virtual truth CanBeOpened() const { return !Opened; }
   virtual truth Close(character*);
  protected:

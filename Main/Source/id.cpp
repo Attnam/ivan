@@ -18,10 +18,12 @@
 void id::AddNameSingular(festring& String, truth Articled) const
 {
   if(Articled)
+  {
     if(UsesLongArticle())
       String << "an ";
     else
       String << "a ";
+  }
 
   String << GetNameSingular();
 }
@@ -41,6 +43,9 @@ void id::AddName(festring& Name, int Case) const
   if(!(Case & STRIPPED))
   {
     if(AddRustLevelDescription(Name, Articled))
+      Articled = false;
+
+    if(AddBurnLevelDescription(Name, Articled))
       Articled = false;
 
     if(AddStateDescription(Name, Articled))
@@ -79,7 +84,7 @@ void id::AddName(festring& Name, int Case, int Amount) const
       Name << "the ";
 
     Name << Amount << ' ';
-    AddName(Name, Case&~ARTICLE_BIT|PLURAL);
+    AddName(Name, (Case&~ARTICLE_BIT)|PLURAL);
   }
 }
 
@@ -96,10 +101,12 @@ truth id::AddAdjective(festring& String, truth Articled) const
   if(GetAdjective().GetSize())
   {
     if(Articled)
+    {
       if(UsesLongAdjectiveArticle())
-	String << "an ";
+        String << "an ";
       else
-	String << "a ";
+        String << "a ";
+    }
 
     String << GetAdjective() << ' ';
     return true;
@@ -112,6 +119,9 @@ void id::AddPostFix(festring& String, int) const
 {
   if(GetPostFix().GetSize())
     String << ' ' << GetPostFix();
+
+  if(NeedsBurningPostFix())
+    String << " (on fire)";
 }
 
 truth id::AddActiveAdjective(festring& String, truth Articled) const

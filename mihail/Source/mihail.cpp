@@ -21,7 +21,7 @@
 truth DebugDraw(festring Filename);
 int OutputHTML(festring);
 
-int Main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   if(argc == 3)
   {
@@ -32,12 +32,12 @@ int Main(int argc, char** argv)
       highscore Input(argv[2]);
 
       if(!Input.GetSize()) {
-	std::cout << "No games. No winners.\n";
+        std::cout << "No games. No winners.\n";
       }
       std::cout << std::endl;
 
       for(festring::sizetype c = 0; c < Input.GetSize(); ++c)
-	std::cout << c + 1 << " " << Input.GetEntry(c).CStr() << " " << Input.GetScore(c) << "\n";
+        std::cout << c + 1 << " " << Input.GetEntry(c).CStr() << " " << Input.GetScore(c) << "\n";
 
       return 0;
     } else if(Arg == "-h")
@@ -48,8 +48,8 @@ int Main(int argc, char** argv)
     {
       if(!DebugDraw(argv[2]))
       {
-	std::cout << "\nProblem showing version number\n";
-	return 1;
+        std::cout << "\nProblem showing version number\n";
+        return 1;
       }
       return 0;
     }
@@ -83,7 +83,13 @@ int Main(int argc, char** argv)
     return 0;
   }
 
-  std::cout << "\nTo list scores in highscore file:\n    mihail -l [filename] \n\nTo merge 2 files\n    mihail [1st input filename] [2nd input filename] [output filename] \n\nTo give version number of highscore file\n    mihail -d [filename]\nNotice that first filename in merges gives also version number\n";
+  std::cout << "\nTo list scores in highscore file:\n"
+               "    mihail -l [filename]"
+               "\n\nTo merge 2 files\n"
+               "    mihail [1st input filename] [2nd input filename] [output filename]"
+               "\n\nTo give version number of highscore file\n"
+               "    mihail -d [filename]\n"
+               "Notice that first filename in merges gives also version number\n";
   return 1;
 }
 

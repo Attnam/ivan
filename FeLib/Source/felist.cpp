@@ -40,7 +40,7 @@ struct felistentry
 };
 
 felistentry::felistentry(cfestring& String, col16 Color,
-			 uint Marginal, uint ImageKey, truth Selectable)
+                         uint Marginal, uint ImageKey, truth Selectable)
 : String(String), Color(Color), Marginal(Marginal),
   ImageKey(ImageKey), Selectable(Selectable)
 {
@@ -49,7 +49,7 @@ felistentry::felistentry(cfestring& String, col16 Color,
 outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
 {
   SaveFile << Entry->String << Entry->Color
-	   << Entry->Marginal << Entry->Selectable;
+           << Entry->Marginal << Entry->Selectable;
   return SaveFile;
 }
 
@@ -57,13 +57,13 @@ inputfile& operator>>(inputfile& SaveFile, felistentry*& Entry)
 {
   Entry = new felistentry;
   SaveFile >> Entry->String >> Entry->Color
-	   >> Entry->Marginal >> Entry->Selectable;
+           >> Entry->Marginal >> Entry->Selectable;
   return SaveFile;
 }
 
 struct felistdescription
 {
-  felistdescription() { }
+  felistdescription() = default;
   felistdescription(cfestring& String, col16 Color)
   : String(String), Color(Color) { }
   festring String;
@@ -162,11 +162,11 @@ uint felist::Draw()
     {
       if(JustSelectMove)
       {
-	Buffer->FastBlit(DOUBLE_BUFFER);
-	graphics::BlitDBToScreen();
+        Buffer->FastBlit(DOUBLE_BUFFER);
+        graphics::BlitDBToScreen();
       }
       else
-	Buffer->FadeToScreen();
+        Buffer->FadeToScreen();
 
       JustSelectMove = false;
     }
@@ -195,31 +195,31 @@ uint felist::Draw()
     {
       if(Selected)
       {
-	--Selected;
+        --Selected;
 
-	if(Selected < PageBegin)
-	{
-	  BackGround.FastBlit(Buffer);
-	  PageBegin -= PageLength;
-	}
-	else
-	  JustSelectMove = true;
+        if(Selected < PageBegin)
+        {
+          BackGround.FastBlit(Buffer);
+          PageBegin -= PageLength;
+        }
+        else
+          JustSelectMove = true;
       }
       else
       {
-	for(c = 0, Selected = 0; c < Entry.size(); ++c)
-	  if(Entry[c]->Selectable)
-	    ++Selected;
+        for(c = 0, Selected = 0; c < Entry.size(); ++c)
+          if(Entry[c]->Selectable)
+            ++Selected;
 
-	--Selected;
+        --Selected;
 
-	if(PageBegin == Selected - Selected % PageLength)
-	  JustSelectMove = true;
-	else
-	{
-	  BackGround.FastBlit(Buffer);
-	  PageBegin = Selected - Selected % PageLength;
-	}
+        if(PageBegin == Selected - Selected % PageLength)
+          JustSelectMove = true;
+        else
+        {
+          BackGround.FastBlit(Buffer);
+          PageBegin = Selected - Selected % PageLength;
+        }
       }
 
       continue;
@@ -229,24 +229,24 @@ uint felist::Draw()
     {
       if(!AtTheEnd || Selected != Selectables - 1)
       {
-	++Selected;
+        ++Selected;
 
-	if(Selected > PageBegin + PageLength - 1)
-	{
-	  BackGround.FastBlit(Buffer);
-	  PageBegin += PageLength;
-	}
-	else
-	  JustSelectMove = true;
+        if(Selected > PageBegin + PageLength - 1)
+        {
+          BackGround.FastBlit(Buffer);
+          PageBegin += PageLength;
+        }
+        else
+          JustSelectMove = true;
       }
       else
       {
-	if(!PageBegin)
-	  JustSelectMove = true;
-	else
-	  BackGround.FastBlit(Buffer);
+        if(!PageBegin)
+          JustSelectMove = true;
+        else
+          BackGround.FastBlit(Buffer);
 
-	Selected = PageBegin = 0;
+        Selected = PageBegin = 0;
       }
 
       continue;
@@ -275,12 +275,12 @@ uint felist::Draw()
       BackGround.FastBlit(Buffer);
 
       if(Flags & INVERSE_MODE)
-	PageBegin -= PageLength;
+        PageBegin -= PageLength;
       else
-	PageBegin += PageLength;
+        PageBegin += PageLength;
 
       if(Flags & SELECTABLE)
-	Selected = PageBegin;
+        Selected = PageBegin;
     }
   }
 
@@ -332,67 +332,67 @@ truth felist::DrawPage(bitmap* Buffer) const
     {
       if(Str.GetSize() <= (Width - 50) >> 3)
       {
-	Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 
-	if(EntryDrawer)
-	  EntryDrawer(Buffer,
-		      v2(Pos.X + 13, LastFillBottom),
-		      Entry[c]->ImageKey);
+        if(EntryDrawer)
+          EntryDrawer(Buffer,
+                      v2(Pos.X + 13, LastFillBottom),
+                      Entry[c]->ImageKey);
 
-	if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-	  FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 5),
-			       WHITE, "%s", Str.CStr());
-	else
-	  FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom + 4),
-		       Entry[c]->Color, "%s", Str.CStr());
+        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+          FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 5),
+                               WHITE, "%s", Str.CStr());
+        else
+          FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom + 4),
+                       Entry[c]->Color, "%s", Str.CStr());
 
-	LastFillBottom += 20;
+        LastFillBottom += 20;
       }
       else
       {
-	uint ChapterSize = festring::SplitString(Str, Chapter,
-						 (Width - 50) >> 3,
-						 Marginal);
-	uint PictureTop = LastFillBottom + ChapterSize * 5 - 9;
+        uint ChapterSize = festring::SplitString(Str, Chapter,
+                                                 (Width - 50) >> 3,
+                                                 Marginal);
+        uint PictureTop = LastFillBottom + ChapterSize * 5 - 9;
 
-	for(uint l = 0; l < ChapterSize; ++l)
-	{
-	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+        for(uint l = 0; l < ChapterSize; ++l)
+        {
+          Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-	  if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-	    FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
-				 WHITE, "%s", Chapter[l].CStr());
-	  else
-	    FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom),
-			 Entry[c]->Color, "%s", Chapter[l].CStr());
+          if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+            FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
+                                 WHITE, "%s", Chapter[l].CStr());
+          else
+            FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom),
+                         Entry[c]->Color, "%s", Chapter[l].CStr());
 
-	  LastFillBottom += 10;
-	}
+          LastFillBottom += 10;
+        }
 
-	if(EntryDrawer)
-	  EntryDrawer(Buffer,
-		      v2(Pos.X + 13, PictureTop),
-		      Entry[c]->ImageKey);
+        if(EntryDrawer)
+          EntryDrawer(Buffer,
+                      v2(Pos.X + 13, PictureTop),
+                      Entry[c]->ImageKey);
       }
     }
     else
     {
       uint ChapterSize = festring::SplitString(Str, Chapter,
-					       (Width - 26) >> 3,
-					       Marginal);
+                                               (Width - 26) >> 3,
+                                               Marginal);
 
       for(uint l = 0; l < ChapterSize; ++l)
       {
-	Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-	if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-	  FONT->PrintfUnshaded(Buffer, v2(Pos.X + 14, LastFillBottom + 1),
-			       WHITE, "%s", Chapter[l].CStr());
-	else
-	  FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom),
-		       Entry[c]->Color, "%s", Chapter[l].CStr());
+        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+          FONT->PrintfUnshaded(Buffer, v2(Pos.X + 14, LastFillBottom + 1),
+                               WHITE, "%s", Chapter[l].CStr());
+        else
+          FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom),
+                       Entry[c]->Color, "%s", Chapter[l].CStr());
 
-	LastFillBottom += 10;
+        LastFillBottom += 10;
       }
     }
 
@@ -400,21 +400,21 @@ truth felist::DrawPage(bitmap* Buffer) const
        || c == Entry.size() - 1)
     {
       if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1)
-	 || (Flags & INVERSE_MODE && PageBegin))
+         || (Flags & INVERSE_MODE && PageBegin))
       {
-	Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
-	FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-		     "- Press SPACE to continue, ESC to exit -");
-	LastFillBottom += 30;
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
+        FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
+                     "- Press SPACE to continue, ESC to exit -");
+        LastFillBottom += 30;
       }
       else
       {
-	Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
-	LastFillBottom += 10;
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+        LastFillBottom += 10;
       }
 
       Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2,
-			    LastFillBottom + 1, DARK_GRAY, true);
+                            LastFillBottom + 1, DARK_GRAY, true);
       break;
     }
 
@@ -433,11 +433,11 @@ void felist::DrawDescription(bitmap* Buffer) const
   {
     Buffer->Fill(Pos.X + 3, Pos.Y + 13 + c * 10, Width - 6, 10, BackColor);
     FONT->Printf(Buffer, v2(Pos.X + 13, Pos.Y + 13 + c * 10),
-		 Description[c]->Color, Description[c]->String.CStr());
+                 Description[c]->Color, Description[c]->String.CStr());
   }
 
   Buffer->Fill(Pos.X + 3, Pos.Y + 13 + Description.size() * 10,
-	       Width - 6, 10, BackColor);
+               Width - 6, 10, BackColor);
 }
 
 /* We suppose InverseMode != false here */
@@ -448,8 +448,8 @@ void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
   uint Width = Bitmap->GetSize().X;
   Bitmap->Fill(3, 3, Width - 6, 20 + PageLength * 10, 0);
   Bitmap->DrawRectangle(1, 1, Width - 2,
-			24 + PageLength * 10,
-			DARK_GRAY, true);
+                        24 + PageLength * 10,
+                        DARK_GRAY, true);
   uint LineSize = (Width - 26) >> 3;
 
   uint Index = 0;
@@ -459,45 +459,45 @@ void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
   {
     const felistentry* CurrentEntry = Entry[Selected - c1];
     uint ChapterSize = festring::SplitString(CurrentEntry->String,
-					     Chapter, LineSize,
-					     CurrentEntry->Marginal);
+                                             Chapter, LineSize,
+                                             CurrentEntry->Marginal);
 
     for(uint c2 = 0; c2 < ChapterSize; ++c2)
     {
       col16 Color = CurrentEntry->Color;
       Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3
-					    * Index / PageLength) >> 2),
-			GetGreen16(Color) - ((GetGreen16(Color) * 3
-					      * Index / PageLength) >> 2),
-			GetBlue16(Color) - ((GetBlue16(Color) * 3
-					     * Index / PageLength) >> 2));
+                                            * Index / PageLength) >> 2),
+                        GetGreen16(Color) - ((GetGreen16(Color) * 3
+                                              * Index / PageLength) >> 2),
+                        GetBlue16(Color) - ((GetBlue16(Color) * 3
+                                             * Index / PageLength) >> 2));
       FONT->Printf(Bitmap, v2(13, Bottom), Color, "%s",
-		   Chapter[ChapterSize - c2 - 1].CStr());
+                   Chapter[ChapterSize - c2 - 1].CStr());
       Bottom -= 10;
 
       if(++Index == PageLength)
-	return;
+        return;
     }
   }
 }
 
 void felist::CreateQuickDrawFontCaches(rawbitmap* Font,
-				       col16 Color,
-				       uint PageLength)
+                                       col16 Color,
+                                       uint PageLength)
 {
   if(PageLength < 2)
     return;
 
   for(uint c = 0; c < PageLength; ++c)
     Font->CreateFontCache(MakeRGB16(GetRed16(Color)
-				    - ((GetRed16(Color) * 3
-					* c / PageLength) >> 2),
-				    GetGreen16(Color)
-				    - ((GetGreen16(Color) * 3
-					* c / PageLength) >> 2),
-				    GetBlue16(Color)
-				    - ((GetBlue16(Color) * 3
-					* c / PageLength) >> 2)));
+                                    - ((GetRed16(Color) * 3
+                                        * c / PageLength) >> 2),
+                                    GetGreen16(Color)
+                                    - ((GetGreen16(Color) * 3
+                                        * c / PageLength) >> 2),
+                                    GetBlue16(Color)
+                                    - ((GetBlue16(Color) * 3
+                                        * c / PageLength) >> 2)));
 }
 
 void felist::Empty()
@@ -509,7 +509,7 @@ void felist::Empty()
 }
 
 void felist::AddEntry(cfestring& Str, col16 Color,
-		      uint Marginal, uint Key, truth Selectable)
+                      uint Marginal, uint Key, truth Selectable)
 {
   Entry.push_back(new felistentry(Str, Color, Marginal, Key, Selectable));
 
@@ -554,4 +554,9 @@ void felist::PrintToFile(cfestring& FileName)
 }
 
 void felist::EmptyDescription()
-{ Description.resize(1); }
+{
+  for(uint c = 1; c < Description.size(); ++c)
+    delete Description[c];
+
+  Description.resize(1);
+}

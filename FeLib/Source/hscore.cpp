@@ -17,7 +17,7 @@
 #include "femath.h"
 
 /* Increment this if changes make highscores incompatible */
-#define HIGH_SCORE_VERSION 121
+#define HIGH_SCORE_VERSION 127
 
 cfestring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
@@ -26,7 +26,7 @@ long highscore::GetSize() const { return Entry.size(); }
 highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION) { Load(File); }
 
 truth highscore::Add(long NewScore, cfestring& NewEntry,
-		     time_t NewTime, long NewRandomID)
+                     time_t NewTime, long NewRandomID)
 {
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -38,10 +38,10 @@ truth highscore::Add(long NewScore, cfestring& NewEntry,
 
       if(Score.size() > MAX_HIGHSCORES)
       {
-	Entry.resize(MAX_HIGHSCORES, festring());
-	Score.resize(MAX_HIGHSCORES);
-	Time.resize(MAX_HIGHSCORES);
-	RandomID.resize(MAX_HIGHSCORES);
+        Entry.resize(MAX_HIGHSCORES, festring());
+        Score.resize(MAX_HIGHSCORES);
+        Time.resize(MAX_HIGHSCORES);
+        RandomID.resize(MAX_HIGHSCORES);
       }
 
       LastAdd = c;
@@ -69,7 +69,7 @@ void highscore::Draw() const
   if(Score.empty())
   {
     iosystem::TextScreen(CONST_S("There are no entries yet. "
-				 "Play a game to correct this."));
+                                 "Play a game to correct this."));
     return;
   }
 
@@ -108,7 +108,7 @@ void highscore::Save(cfestring& File) const
   }
 
   HighScore << ushort(HIGH_SCORE_VERSION) << Score
-	    << Entry << Time << RandomID << LastAdd << CheckSum;
+            << Entry << Time << RandomID << LastAdd << CheckSum;
 }
 
 /* This function needs much more error handling */
@@ -154,7 +154,7 @@ truth highscore::Add(long NewScore, cfestring& NewEntry)
    from the right entry, 0 = not found */
 
 int highscore::Find(long AScore, cfestring& AEntry,
-		    time_t ATime, long ARandomID)
+                    time_t ATime, long ARandomID)
 {
   for(uint c = 0; c < Score.size(); ++c)
   {

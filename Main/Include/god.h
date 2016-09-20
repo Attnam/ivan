@@ -92,7 +92,7 @@ class god
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 #define GOD_PROTO(name)\
 template<> const godprototype\
-  name##sysbase::ProtoType((godspawner)(&name##sysbase::Spawn), #name);
+  name##sysbase::ProtoType(reinterpret_cast<godspawner>(&name##sysbase::Spawn), #name);
 #else
 #define GOD_PROTO(name)
 #endif

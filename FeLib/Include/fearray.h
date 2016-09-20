@@ -87,7 +87,7 @@ template <class type> inline void fearray<type>::Clear()
     if(!REFS(Ptr)--)
     {
       for(sizetype c = 0; c < Size; ++c)
-	Ptr[c].~type();
+        Ptr[c].~type();
 
       delete [] &REFS(Ptr);
     }
@@ -125,15 +125,15 @@ template <class type> inline void fearray<type>::Add(const type& Type)
     {
       for(sizetype c = 0; c < Size; ++c)
       {
-	new(&NewData[c]) type(Ptr[c]);
-	Ptr[c].~type();
+        new(&NewData[c]) type(Ptr[c]);
+        Ptr[c].~type();
       }
 
       delete [] &REFS(Ptr);
     }
     else
       for(sizetype c = 0; c < Size; ++c)
-	new(&NewData[c]) type(Ptr[c]);
+        new(&NewData[c]) type(Ptr[c]);
 
     Data = NewData;
     new(&NewData[Size]) type(Type);
@@ -150,7 +150,7 @@ template <class type> inline void fearray<type>::Add(const type& Type)
 
 template <class type1, class type2>
 inline void ArrayToVector(const fearray<type1>& Array,
-			  std::vector<type2>& Vect)
+                          std::vector<type2>& Vect)
 {
   Vect.resize(Array.Size, type2());
 

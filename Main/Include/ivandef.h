@@ -29,8 +29,6 @@
 
 #include "v2.h"
 
-#define IVAN_VERSION "0.50"
-
 class item;
 class material;
 class character;
@@ -124,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 21
+#define STATES 22
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -147,6 +145,7 @@ const name##prototype name::ProtoType
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
+#define ETHEREAL_MOVING (1 << 21)
 
 #define TORSO 1
 #define HEAD 2
@@ -172,7 +171,6 @@ const name##prototype name::ProtoType
 #define PSI 512
 #define THROW 32768
 
-
 #define UNDEFINED 0
 #define MALE 1
 #define FEMALE 2
@@ -197,6 +195,14 @@ const name##prototype name::ProtoType
 
 #define DIRECTION_COMMAND_KEYS 8
 #define EXTENDED_DIRECTION_COMMAND_KEYS 9
+#define NORTHWEST 0
+#define NORTH 1
+#define NORTHEAST 2
+#define WEST 3
+#define EAST 4
+#define SOUTHWEST 5
+#define SOUTH 6
+#define SOUTHEAST 7
 #define YOURSELF 8
 #define RANDOM_DIR 9
 
@@ -510,6 +516,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
+#define EMPTY_AREA 5
+#define XINROCH_TOMB 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -521,19 +529,22 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
 
+#define DUAL_ENNER_BEAST_LEVEL 7
+
 /* stack::DrawContents flags */
 
-#define NO_SELECT 1	      // only show items
+#define NO_SELECT 1           // only show items
 #define NO_MULTI_SELECT 2     // select only one item
 #define NO_SPECIAL_INFO 4     // show only name and amount
 #define REMEMBER_SELECTED 8   // if DrawContents will be called multiple times,
-			      // remember the selected item
+                              // remember the selected item
 #define NONE_AS_CHOICE 16     // "none" is a choice, for instance when wielding
-#define SELECT_PAIR 32	      // if NO_MULTI_SELECT is on, selects a pair if
-			      // appropriate
+#define SELECT_PAIR 32        // if NO_MULTI_SELECT is on, selects a pair if
+                              // appropriate
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 /* Gods, 0 == none */
 
@@ -674,7 +685,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define NO_MOVE 0
 #define WALK 1
 #define SWIM 2
-#define FLY  4
+#define FLY 4
 #define ETHEREAL 8
 #define ANY_MOVE 15
 
@@ -695,6 +706,11 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define SLIGHTLY_RUSTED 1
 #define RUSTED 2
 #define VERY_RUSTED 3
+
+#define NOT_BURNT 0
+#define SLIGHTLY_BURNT 1
+#define MODERATELY_BURNT 2
+#define HEAVILY_BURNT 3
 
 #define HUMAN_BODY_ARMOR_PIXELS 68
 
@@ -763,10 +779,10 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define LEG_MAIN_COLOR 2048
 #define LEG_SPECIAL_COLOR 4096
 #define CLOTH_COLOR (CAP_COLOR\
-		    |TORSO_MAIN_COLOR\
-		    |ARM_MAIN_COLOR\
-		    |GAUNTLET_COLOR\
-		    |LEG_MAIN_COLOR)
+                    |TORSO_MAIN_COLOR\
+                    |ARM_MAIN_COLOR\
+                    |GAUNTLET_COLOR\
+                    |LEG_MAIN_COLOR)
 
 /* contentscript<character> flags */
 
@@ -1085,6 +1101,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define AFFECT_INSIDE 8
 #define EFFECT_IS_GOOD 16
 #define IS_AFFECTED_BY_MUSTARD_GAS 32
+#define RISES_FROM_ASHES 64
 
 /*************************/
 /* End of DataBase flags */

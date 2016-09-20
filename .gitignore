@@ -1,0 +1,52 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+ivan
+igor/igor
+mihail/mihail
+
+# Editor backup/swap files
+*~
+*.swp
+*.swap
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Folders and misc stuff like f. ex. save folders :)
+Bones
+/ivan.cfg
+/HScore.dat
+Save
+/Debug/
+/Linux/

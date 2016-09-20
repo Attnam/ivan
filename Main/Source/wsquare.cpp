@@ -50,7 +50,7 @@ void wsquare::Draw(blitdata& BlitData)
     {
       BlitData.Luminance = ivanconfig::GetContrastLuminance();
       BlitData.CustomData = Character->GetSquareIndex(Pos)
-			    |ALLOW_ANIMATE|ALLOW_ALPHA;
+                            |ALLOW_ANIMATE|ALLOW_ALPHA;
       Character->Draw(BlitData);
     }
 
@@ -136,12 +136,12 @@ void wsquare::UpdateMemorizedDescription(truth Cheat)
       festring Continent;
 
       if(GetWorldMap()->GetContinentUnder(Pos))
-	Continent << ", continent "
-		  << GetWorldMap()->GetContinentUnder(Pos)->GetName();
+        Continent << ", continent "
+                  << GetWorldMap()->GetContinentUnder(Pos)->GetName();
 
       MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y
-			   << Continent << ", height "
-			   << GetWorldMap()->GetAltitude(Pos) << " m)";
+                           << Continent << ", height "
+                           << GetWorldMap()->GetAltitude(Pos) << " m)";
     }
 
     Flags &= ~DESCRIPTION_CHANGE;
@@ -167,7 +167,7 @@ truth wsquare::SignalSeen()
 
 void wsquare::CalculateLuminance()
 {
-  double T = log(1. + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.);
+  double T = log(1. + abs(GetWorldMap()->GetAltitude(Pos)) / 500.);
   int Element = Min((128 - int(37.5 * T)), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
@@ -175,8 +175,8 @@ void wsquare::CalculateLuminance()
 int wsquare::GetWalkability() const
 {
   return (OWTerrain
-	  ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability()
-	  : GWTerrain->GetWalkability());
+          ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability()
+          : GWTerrain->GetWalkability());
 }
 
 truth wsquare::CanBeSeenByPlayer(truth) const

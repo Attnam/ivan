@@ -12,7 +12,10 @@
 
 /* Compiled through dataset.cpp */
 
-int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray, long* TempTableInfo, int Type, int Configs, int TempTables)
+#include <stack>
+
+int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, databasebase** ConfigArray,
+                      long* TempTableInfo, int Type, int Configs, int TempTables)
 {
   memset(ConfigTable, 0, CONFIG_TABLE_SIZE * sizeof(databasebase**));
 
@@ -31,7 +34,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
       int Conflicts = (TempTableInfo[Hash] & 0xFFFF0000) >> 16;
 
       if(Conflicts == TempTables)
-	TempTable[TempTables++] = new databasebase*[CONFIG_TABLE_SIZE];
+        TempTable[TempTables++] = new databasebase*[CONFIG_TABLE_SIZE];
 
       TempTable[Conflicts][Hash] = ConfigArray[c];
       TempTableInfo[Hash] += 0x10000;
@@ -45,7 +48,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
       ConfigTable[c1] = new databasebase*[Entries + 1];
 
       for(int c2 = 0; c2 < Entries; ++c2)
-	ConfigTable[c1][c2] = TempTable[c2][c1];
+        ConfigTable[c1][c2] = TempTable[c2][c1];
 
       ConfigTable[c1][Entries] = 0;
     }
@@ -65,52 +68,113 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
   TempTable[0] = FirstTempTable;
   memset(TempTableInfo, 0, CONFIG_TABLE_SIZE * sizeof(long));
   CreateDataBaseMemberMap();
-
-  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
+//
+  std::stack<inputfile *> infStack;
+  infStack.push(&SaveFile);
+  while (!infStack.empty()) 
   {
-    int Type = protocontainer<type>::SearchCodeName(Word);
-
-    if(!Type)
-      ABORT("Odd term %s encountered in %s datafile line %ld!", Word.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
-
-    prototype* Proto = protocontainer<type>::GetProtoData()[Type];
-    database* DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
-    DataBase->InitDefaults(Proto, 0);
-    TempConfig[0] = DataBase;
-    int Configs = 1;
-
-    if(SaveFile.ReadWord() != "{")
-      ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
-
-    for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
+    inputfile *inFile = infStack.top();
+    infStack.pop();
+    for (inFile->ReadWord(Word, false); !inFile->Eof(); inFile->ReadWord(Word, false))
     {
-      if(Word == "Config")
+      if (Word == "Include")
       {
-	int ConfigNumber = SaveFile.ReadNumber();
-	database* ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
-	ConfigDataBase->InitDefaults(Proto, ConfigNumber);
-	TempConfig[Configs++] = ConfigDataBase;
+        Word = inFile->ReadWord();
+        if (inFile->ReadWord() != ";")
+          ABORT("Invalid terminator at line %ld!", inFile->TellLine());
 
-	if(SaveFile.ReadWord() != "{")
-	  ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
-
-	for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-	  if(!AnalyzeData(SaveFile, Word, *ConfigDataBase))
-	    ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
-
-	ConfigDataBase->PostProcess();
-	continue;
+        for(cfestring& FileName : ListFiles(game::GetDataDir() + "Script/" + Word, ".dat"))
+        {
+          inputfile *incf = new inputfile(FileName, &game::GetGlobalValueMap());
+          infStack.push(inFile);
+          inFile = incf;
+        }
+        continue;
       }
-
-      if(!AnalyzeData(SaveFile, Word, *DataBase))
-	ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
+      if (Word == "Message")
+      {
+        Word = inFile->ReadWord();
+        if (inFile->ReadWord() != ";")
+          ABORT("Invalid terminator at line %ld!", inFile->TellLine());
+        fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
+        continue;
+      }
+      int Type = protocontainer<type>::SearchCodeName(Word);
+      if (!Type) ABORT("Odd term <%s> encountered in %s datafile line %ld!", Word.CStr(), protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      prototype *Proto = protocontainer<type>::GetProtoData()[Type];
+      if (!Proto) ABORT("Something weird with <%s>!", Word.CStr());
+      if (Proto->Base && !Proto->Base->ConfigData)
+      {
+        ABORT("Database has no description of <%s>!", Proto->Base->GetClassID());
+      }
+      database *DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
+      DataBase->InitDefaults(Proto, 0);
+      TempConfig[0] = DataBase;
+      int Configs = 1;
+      if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      //for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
+      for (;;)
+      {
+        inFile->ReadWord(Word, false);
+        if (Word == "" && inFile->Eof())
+        {
+          if (infStack.empty()) ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+          delete inFile;
+          inFile = infStack.top();
+          infStack.pop();
+          continue;
+        }
+        //fprintf(stderr, "D: %d; <%s>\n", (int)infStack.size(), Word.CStr());
+        if (Word == "}") break;
+        //
+        if (Word == "Config")
+        {
+          long ConfigNumber = -1;
+          truth isString = false;
+          festring fname;
+          fname = inFile->ReadStringOrNumber(&ConfigNumber, &isString);
+          if (isString)
+          {
+            // include file
+            //Word = inFile->ReadWord();
+            //if (Word != ";") ABORT("Invalid terminator at line %ld!", inFile->TellLine());
+            //fprintf(stderr, "INCLUDE: [%s]\n", fname.CStr());
+            inputfile *incf = new inputfile(game::GetDataDir()+"Script/"+fname, &game::GetGlobalValueMap());
+            infStack.push(inFile);
+            inFile = incf;
+          }
+          else
+          {
+            //int ConfigNumber = inFile->ReadNumber();
+            //fprintf(stderr, "CFG: <%d>\n", (int)ConfigNumber);
+            database *ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
+            ConfigDataBase->InitDefaults(Proto, ConfigNumber);
+            TempConfig[Configs++] = ConfigDataBase;
+            if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+            for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word)) 
+            {
+              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
+            }
+            ConfigDataBase->PostProcess();
+          }
+          continue;
+        }
+        else if (Word == "Message")
+        {
+          Word = inFile->ReadWord();
+          if (inFile->ReadWord() != ";") ABORT("Invalid terminator at line %ld!", inFile->TellLine());
+          fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
+          continue;
+        }
+        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), inFile->TellLine());
+      }
+      DataBase->PostProcess();
+      //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
+      Proto->ConfigData = new database *[Configs];
+      Proto->ConfigSize = Configs;
+      memcpy(Proto->ConfigData, TempConfig, Configs*sizeof(database *));
     }
-
-    DataBase->PostProcess();
-    //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
-    Proto->ConfigData = new database*[Configs];
-    Proto->ConfigSize = Configs;
-    memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
+    if (!infStack.empty()) delete inFile;
   }
 
   int c1;
@@ -125,10 +189,10 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
       if(Proto->ConfigSize != Configs)
       {
-	delete [] Proto->ConfigData;
-	Proto->ConfigData = new database*[Configs];
-	Proto->ConfigSize = Configs;
-	memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
+        delete [] Proto->ConfigData;
+        Proto->ConfigData = new database*[Configs];
+        Proto->ConfigSize = Configs;
+        memcpy(Proto->ConfigData, TempConfig, Configs * sizeof(database*));
       }
     }
 
@@ -138,18 +202,22 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
     TempTables =
       CreateConfigTable(reinterpret_cast<databasebase***>(Proto->ConfigTable),
-			TempTable,
-			reinterpret_cast<databasebase**>(Proto->ConfigData),
-			TempTableInfo, c1, Proto->ConfigSize, TempTables);
+                        TempTable,
+                        reinterpret_cast<databasebase**>(Proto->ConfigData),
+                        TempTableInfo, c1, Proto->ConfigSize, TempTables);
   }
 
   for(c1 = 1; c1 < TempTables; ++c1)
     delete [] TempTable[c1];
 
+  for(auto& Pair : GetDataBaseMemberMap())
+    delete Pair.second;
+
   GetDataBaseMemberMap().clear();
 }
 
-template <class type> int databasecreator<type>::CreateDivineConfigurations(const prototype* Proto, database** TempConfig, int Configs)
+template <class type>
+int databasecreator<type>::CreateDivineConfigurations(const prototype* Proto, database** TempConfig, int Configs)
 {
   int OldConfigs = Configs;
 
@@ -163,7 +231,7 @@ template <class type> int databasecreator<type>::CreateDivineConfigurations(cons
       ConfigDataBase = TempConfig[c2];
 
       if(ConfigDataBase->Config == c1)
-	break;
+        break;
     }
 
     truth Created = false;
@@ -196,7 +264,8 @@ template <class database, class member> struct databasemember : public databasem
   member Member;
 };
 
-template <class database, class member> void AddMember(std::map<festring, databasememberbase<database>*>& Map, cchar* Str, member Member)
+template <class database, class member>
+void AddMember(std::map<festring, databasememberbase<database>*>& Map, cchar* Str, member Member)
 {
   Map.insert(std::pair<festring, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
 }
@@ -204,7 +273,8 @@ template <class database, class member> void AddMember(std::map<festring, databa
 /* Explicit instantiations seem to increase compile speed greatly here... */
 
 #define INST_ADD_MEMBER(type, member)\
-template void AddMember<type##database, member type##database::*>(std::map<festring, databasememberbase<type##database>*>&, cchar*, member type##database::*)
+template void AddMember<type##database, member type##database::*>\
+(std::map<festring, databasememberbase<type##database>*>&, cchar*, member type##database::*)
 
 INST_ADD_MEMBER(character, int);
 INST_ADD_MEMBER(character, long);
@@ -235,7 +305,19 @@ INST_ADD_MEMBER(olterrain, long);
 INST_ADD_MEMBER(olterrain, v2);
 INST_ADD_MEMBER(olterrain, festring);
 INST_ADD_MEMBER(olterrain, fearray<long>);
-INST_ADD_MEMBER(olterrain, fearray<contentscript<item> >);
+INST_ADD_MEMBER(olterrain, fearray<contentscript<item>>);
+
+INST_ADD_MEMBER(gwterrain, int);
+INST_ADD_MEMBER(gwterrain, long);
+INST_ADD_MEMBER(gwterrain, v2);
+INST_ADD_MEMBER(gwterrain, festring);
+INST_ADD_MEMBER(gwterrain, fearray<long>);
+
+INST_ADD_MEMBER(owterrain, int);
+INST_ADD_MEMBER(owterrain, long);
+INST_ADD_MEMBER(owterrain, v2);
+INST_ADD_MEMBER(owterrain, festring);
+INST_ADD_MEMBER(owterrain, fearray<long>);
 
 INST_ADD_MEMBER(material, int);
 INST_ADD_MEMBER(material, long);
@@ -418,6 +500,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(UndeadAttributeModifier);
   ADD_MEMBER(UndeadVolumeModifier);
   ADD_MEMBER(UndeadCopyMaterials);
+  ADD_MEMBER(GhostCopyMaterials);
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
@@ -470,6 +553,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeMirrored);
   ADD_MEMBER(BeamRange);
   ADD_MEMBER(CanBeBroken);
+  ADD_MEMBER(CanBeBurned);
   ADD_MEMBER(WallBitmapPos);
   ADD_MEMBER(FlexibleNameSingular);
   ADD_MEMBER(MaxCharges);
@@ -589,6 +673,36 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsWall);
 }
 
+template <class type>
+void databasecreator<type>::CreateWTerrainDataBaseMemberMap()
+{
+  databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(BitmapPos);
+  ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(NameStem);
+  ADD_MEMBER(UsesLongArticle);
+}
+
+template<> void databasecreator<gwterrain>::CreateDataBaseMemberMap()
+{
+  CreateWTerrainDataBaseMemberMap();
+  databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(Priority);
+}
+
+template<> void databasecreator<owterrain>::CreateDataBaseMemberMap()
+{
+  CreateWTerrainDataBaseMemberMap();
+  databasemembermap& Map = GetDataBaseMemberMap();
+  ADD_MEMBER(AttachedDungeon);
+  ADD_MEMBER(AttachedArea);
+  ADD_MEMBER(CanBeGenerated);
+  ADD_MEMBER(NativeGTerrainType);
+  ADD_MEMBER(RevealEnvironmentInitially);
+  ADD_MEMBER(HideLocationInitially);
+  ADD_MEMBER(CanBeOnAnyTerrain);
+}
+
 template<> void databasecreator<material>::CreateDataBaseMemberMap()
 {
   databasemembermap& Map = GetDataBaseMemberMap();
@@ -614,6 +728,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Alpha);
   ADD_MEMBER(Flexibility);
   ADD_MEMBER(SpoilModifier);
+  ADD_MEMBER(BurnModifier);
   ADD_MEMBER(EffectStrength);
   ADD_MEMBER(DigProductMaterial);
   ADD_MEMBER(ConsumeWisdomLimit);
@@ -627,6 +742,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(Stickiness);
   ADD_MEMBER(DisablesPanicWhenConsumed);
+  ADD_MEMBER(FireResistance);
 }
 
 #define ADD_BASE_VALUE(name)\
@@ -637,7 +753,9 @@ if(Word == #name)\
 template <class type>
 void databasecreator<type>::SetBaseValue(cfestring&, databasememberbase<database>*, database&) { }
 
-template<> void databasecreator<material>::SetBaseValue(cfestring& Word, databasememberbase<materialdatabase>* Data, materialdatabase& DataBase)
+template<> void databasecreator<material>::SetBaseValue(cfestring& Word,
+                                                        databasememberbase<materialdatabase>* Data,
+                                                        materialdatabase& DataBase)
 {
   ADD_BASE_VALUE(CommonFlags);
   ADD_BASE_VALUE(NameFlags);
@@ -728,6 +846,14 @@ template<> void databasecreator<olterrain>::CheckDefaults(cfestring& Word, olter
     DataBase.MaterialConfigChanceSum = femath::SumArray(DataBase.MaterialConfigChances);
 }
 
+template<> void databasecreator<gwterrain>::CheckDefaults(cfestring& Word, gwterrain::database& DataBase)
+{
+}
+
+template<> void databasecreator<owterrain>::CheckDefaults(cfestring& Word, owterrain::database& DataBase)
+{
+}
+
 template<> void databasecreator<material>::CheckDefaults(cfestring& Word, material::database& DataBase)
 {
   if(Word == "NameStem")
@@ -741,34 +867,46 @@ void databasesystem::Initialize()
   {
     /* Must be before character */
 
-    inputfile ScriptFile(game::GetGameDir() + "Script/material.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/material.dat", &game::GetGlobalValueMap());
     databasecreator<material>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/char.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/char.dat", &game::GetGlobalValueMap());
     databasecreator<character>::ReadFrom(ScriptFile);
   }
 
   {
     /* Must be before olterrain */
 
-    inputfile ScriptFile(game::GetGameDir() + "Script/item.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/item.dat", &game::GetGlobalValueMap());
     databasecreator<item>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
     databasecreator<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(game::GetGameDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetDataDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
     databasecreator<olterrain>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(game::GetDataDir() + "Script/gwterra.dat", &game::GetGlobalValueMap());
+    databasecreator<gwterrain>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(game::GetDataDir() + "Script/owterra.dat", &game::GetGlobalValueMap());
+    databasecreator<owterrain>::ReadFrom(ScriptFile);
   }
 }
 
-template <class type> inline void databasecreator<type>::FindDataBase(const database*& DataBase, const prototype* Proto, int Config)
+template <class type> inline void databasecreator<type>::FindDataBase(const database*& DataBase,
+                                                                      const prototype* Proto,
+                                                                      int Config)
 {
   database** Table = Proto->ConfigTable[Config >> 8 ^ Config & 0xFF];
 
@@ -781,11 +919,11 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
     }
     else
       for(++Table; *Table; ++Table)
-	if((*Table)->Config == Config)
-	{
-	  DataBase = *Table;
-	  return;
-	}
+        if((*Table)->Config == Config)
+        {
+          DataBase = *Table;
+          return;
+        }
   }
 
   DataBase = 0;
@@ -811,3 +949,5 @@ INST_INSTALL_DATABASE(character);
 INST_INSTALL_DATABASE(item);
 INST_INSTALL_DATABASE(glterrain);
 INST_INSTALL_DATABASE(olterrain);
+INST_INSTALL_DATABASE(gwterrain);
+INST_INSTALL_DATABASE(owterrain);

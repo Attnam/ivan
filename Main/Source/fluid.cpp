@@ -19,7 +19,9 @@ const long fluid::BodyArmorPartPixels[] = { 34, 7, 7, 8, 6, 6 };
 
 fluid::fluid() : entity(HAS_BE), Next(0), MotherItem(0), GearImage(0) { }
 
-fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(LSquareUnder), MotherItem(0), Image(false), GearImage(0), Flags(0)
+fluid::fluid(liquid* Liquid, lsquare* LSquareUnder)
+: entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(LSquareUnder),
+  MotherItem(0), Image(false), GearImage(0), Flags(0)
 {
   TrapData.TrapID = game::CreateNewTrapID(this);
   TrapData.VictimID = 0;
@@ -29,7 +31,9 @@ fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), L
   AddLiquid(Liquid->GetVolume());
 }
 
-fluid::fluid(liquid* Liquid, item* MotherItem, cfestring& LocationName, truth IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
+fluid::fluid(liquid* Liquid, item* MotherItem, cfestring& LocationName, truth IsInside)
+: entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem),
+  Image(false), GearImage(0), Flags(0), LocationName(LocationName)
 {
   TrapData.TrapID = 0;
 
@@ -70,11 +74,15 @@ void fluid::AddLiquid(long Volume)
       Image.AddLiquidToPicture(MotherItem->GetRawPicture(), Pixels, 225, Col, Pred);
 
       if(GearImage)
-	if(Flags & HAS_BODY_ARMOR_PICTURES)
-	  for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
-	    GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS, Image.AlphaAverage, Col, Pred);
-	else
-	  GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Col, Pred);
+      {
+        if(Flags & HAS_BODY_ARMOR_PICTURES)
+          for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
+            GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(),
+                                            Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS,
+                                            Image.AlphaAverage, Col, Pred);
+        else
+          GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Col, Pred);
+      }
     }
     else
       Image.AddLiquidToPicture(0, Pixels, 225, Col, 0);
@@ -92,21 +100,23 @@ void fluid::Be()
   long Rand = RAND();
 
   if(!(Rand & 7))
+  {
     if(MotherItem)
     {
       if(MotherItem->Exists() && MotherItem->AllowFluidBe())
-	Liquid->TouchEffect(MotherItem, LocationName);
+        Liquid->TouchEffect(MotherItem, LocationName);
     }
     else
     {
       Liquid->TouchEffect(LSquareUnder->GetGLTerrain());
 
       if(LSquareUnder->GetOLTerrain())
-	Liquid->TouchEffect(LSquareUnder->GetOLTerrain());
+        Liquid->TouchEffect(LSquareUnder->GetOLTerrain());
 
       if(LSquareUnder->GetCharacter())
-	LSquareUnder->GetCharacter()->StayOn(Liquid);
+        LSquareUnder->GetCharacter()->StayOn(Liquid);
     }
+  }
 
   if(MotherItem ? !(Rand & 15) && MotherItem->Exists() && MotherItem->AllowFluidBe() : !(Rand & 63))
   {
@@ -217,10 +227,12 @@ void fluid::SignalVolumeAndWeightChange()
   long Volume = Liquid->GetVolume();
 
   if(UseImage())
+  {
     if(Volume < Image.AlphaSum >> 6)
       while(FadePictures() && Volume < Image.AlphaSum >> 6);
     else
       AddLiquid(Volume - (Image.AlphaSum >> 6));
+  }
 }
 
 truth fluid::FadePictures()
@@ -243,7 +255,7 @@ truth fluid::FadePictures()
    several types of blood in the list, they are counted as one. */
 
 truth fluid::AddFluidInfo(const fluid* Fluid, festring& String)
-/*returns truth Are, indicating to lsquare::DisplayFluidInfo whether or not to use Is or Are as verb*/
+/* returns truth Are, indicating to lsquare::DisplayFluidInfo whether or not to use Is or Are as verb */
 {
   liquid* LiquidStack[4];
   liquid** Show = LiquidStack + 1;
@@ -260,28 +272,28 @@ truth fluid::AddFluidInfo(const fluid* Fluid, festring& String)
     {
       if(Index < 3)
       {
-	if(LiquidBlood)
-	{
-	  --Show;
-	  Show[0] = Liquid;
-	  ++Index;
-	}
-	else
-	  Show[Index++] = Liquid;
+        if(LiquidBlood)
+        {
+          --Show;
+          Show[0] = Liquid;
+          ++Index;
+        }
+        else
+          Show[Index++] = Liquid;
       }
       else
       {
-	++Index;
-	break;
+        ++Index;
+        break;
       }
     }
 
     if(LiquidBlood)
     {
       if(Blood)
-	OneBlood = false;
+        OneBlood = false;
       else
-	Blood = true;
+        Blood = true;
     }
   }
 
@@ -289,22 +301,24 @@ truth fluid::AddFluidInfo(const fluid* Fluid, festring& String)
   {
     if(!Blood || OneBlood)
       String << Show[0]->GetName(false, false);
-    else {
+    else
+    {
       String << "different types of blood";
-	  Are = true;
-	 }
+      Are = true;
+    }
 
     if(Index == 2)
       String << " and " << Show[1]->GetName(false, false);
     else if(Index == 3)
       String << ", " << Show[1]->GetName(false, false) << ", and " << Show[2]->GetName(false, false);
   }
-  else {
+  else
+  {
     String << "a lot of liquids";
-	Are = true;
+    Are = true;
   }
-	
-  return Are; //See note at top of function
+
+  return Are; // See note at top of function
 }
 
 /* Used only when loading fluids. Correcting RandMap here is somewhat a gum
@@ -357,15 +371,15 @@ void fluid::CheckGearPicture(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
 
     if(GearImage)
       if(GearImage[Index].ShadowPos != ShadowPos)
-	GearImage[Index].Clear(false);
+        GearImage[Index].Clear(false);
       else
-	return; // the picture already exists and is correct
+        return; // the picture already exists and is correct
     else
     {
       GearImage = new imagedata[BODY_ARMOR_PARTS];
 
       for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
-	new(&GearImage[c]) imagedata(false);
+        new(&GearImage[c]) imagedata(false);
     }
 
     ImagePtr = &GearImage[Index];
@@ -375,9 +389,9 @@ void fluid::CheckGearPicture(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
   {
     if(GearImage)
       if(GearImage->ShadowPos != ShadowPos)
-	GearImage->Clear(false);
+        GearImage->Clear(false);
       else
-	return; // the picture already exists and is correct
+        return; // the picture already exists and is correct
     else
     {
       GearImage = new imagedata[1];
@@ -395,10 +409,10 @@ void fluid::CheckGearPicture(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
 
   if(Pixels)
     ImagePtr->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(),
-				 Pixels,
-				 Image.AlphaAverage,
-				 Liquid->GetColor(),
-				 MotherItem->GetFluidPixelAllowedPredicate());
+                                 Pixels,
+                                 Image.AlphaAverage,
+                                 Liquid->GetColor(),
+                                 MotherItem->GetFluidPixelAllowedPredicate());
 }
 
 void fluid::DrawGearPicture(blitdata& BlitData, int SpecialFlags) const
@@ -504,12 +518,12 @@ fluid::imagedata::~imagedata()
 
 void fluid::imagedata::Save(outputfile& SaveFile) const
 {
-  SaveFile << Picture << AlphaSum << ShadowPos << (int)SpecialFlags;
+  SaveFile << Picture << AlphaSum << ShadowPos << SpecialFlags;
 }
 
 void fluid::imagedata::Load(inputfile& SaveFile)
 {
-  SaveFile >> Picture >> AlphaSum >> ShadowPos >> (int&)SpecialFlags;
+  SaveFile >> Picture >> AlphaSum >> ShadowPos >> SpecialFlags;
 }
 
 /* Shadow and this->ShadowPos specify the location of the raw image of
@@ -519,7 +533,8 @@ void fluid::imagedata::Load(inputfile& SaveFile)
    to determine whether pixels of the Shadow are allowed to be covered
    by the fluid. It is not used if Shadow == 0. */
 
-void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, long AlphaSuggestion, col16 Color, pixelpredicate PixelPredicate)
+void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, long AlphaSuggestion,
+                                          col16 Color, pixelpredicate PixelPredicate)
 {
   if(ShadowPos == ERROR_V2)
     return;
@@ -533,9 +548,9 @@ void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, 
   {
     for(int x = 1; x < 14; ++x)
       for(int y = 1; y < 14; ++y)
-	if(ValidityMap[x] & (1 << y)
-	   && !(Shadow->*PixelPredicate)(ShadowPos + v2(x, y)))
-	  PixelAllowed[PixelsAllowed++] = v2(x, y);
+        if(ValidityMap[x] & (1 << y)
+           && !(Shadow->*PixelPredicate)(ShadowPos + v2(x, y)))
+          PixelAllowed[PixelsAllowed++] = v2(x, y);
 
     if(!PixelsAllowed)
       return;
@@ -571,24 +586,24 @@ void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, 
     {
       if(Pixels > RAND() % RoomForPixels)
       {
-	v2 Pos = Cords + game::GetMoveVector(d);
+        v2 Pos = Cords + game::GetMoveVector(d);
 
-	if(!Shadow || (!(Shadow->*PixelPredicate)(ShadowPos + Pos)
-		       && ValidityMap[Pos.X] & (1 << Pos.Y)))
-	{
-	  --Pixels;
-	  Picture->PutPixel(Pos, MakeRGB16(Limit<int>(Red - 25 + RAND() % 51, 0, 0xFF),
-					   Limit<int>(Green - 25 + RAND() % 51, 0, 0xFF),
-					   Limit<int>(Blue - 25 + RAND() % 51, 0, 0xFF)));
+        if(!Shadow || (!(Shadow->*PixelPredicate)(ShadowPos + Pos)
+                       && ValidityMap[Pos.X] & (1 << Pos.Y)))
+        {
+          --Pixels;
+          Picture->PutPixel(Pos, MakeRGB16(Limit<int>(Red - 25 + RAND() % 51, 0, 0xFF),
+                                           Limit<int>(Green - 25 + RAND() % 51, 0, 0xFF),
+                                           Limit<int>(Blue - 25 + RAND() % 51, 0, 0xFF)));
 
-	  long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
-	  AlphaSum += Alpha - Picture->GetAlpha(Pos);
-	  Picture->SetAlpha(Pos, Alpha);
-	  Picture->SafeUpdateRandMap(Pos, true);
+          long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
+          AlphaSum += Alpha - Picture->GetAlpha(Pos);
+          Picture->SetAlpha(Pos, Alpha);
+          Picture->SafeUpdateRandMap(Pos, true);
 
-	  if(!Pixels) // implies c + 1 == Lumps
-	    break;
-	}
+          if(!Pixels) // implies c + 1 == Lumps
+            break;
+        }
       }
 
       --RoomForPixels;
@@ -610,11 +625,13 @@ void fluid::Redistribute()
   Image.Clear(InitRandMap);
 
   if(GearImage)
+  {
     if(Flags & HAS_BODY_ARMOR_PICTURES)
       for(int c = 0; c < BODY_ARMOR_PARTS; ++c)
-	GearImage[c].Clear(InitRandMap);
+        GearImage[c].Clear(InitRandMap);
     else
       GearImage->Clear(InitRandMap);
+  }
 
   AddLiquid(Liquid->GetVolume());
 }
@@ -672,7 +689,10 @@ void fluid::AddTrapName(festring& String, int) const
 truth fluid::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
-  int Sum = Victim->GetAttribute(ARM_STRENGTH) + Victim->GetAttribute(LEG_STRENGTH) + Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(AGILITY);
+  int Sum = Victim->GetAttribute(ARM_STRENGTH)
+          + Victim->GetAttribute(LEG_STRENGTH)
+          + Victim->GetAttribute(DEXTERITY)
+          + Victim->GetAttribute(AGILITY);
   int Modifier = Liquid->GetStickiness() * Liquid->GetVolume() / (Max(Sum, 1) * 500);
 
   if(!RAND_N(Max(Modifier, 2)))
@@ -683,7 +703,8 @@ truth fluid::TryToUnStick(character* Victim, v2)
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to unstick yourself from the %s.", Liquid->GetName(false, false).CStr());
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s manages to unstick %sself from the %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+      ADD_MESSAGE("%s manages to unstick %sself from the %s.",
+                  Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
 
     Victim->EditAP(-250);
     return true;
@@ -701,9 +722,11 @@ truth fluid::TryToUnStick(character* Victim, v2)
       Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You fail to free yourself from the %s and your %s is stuck in it in the attempt.", Liquid->GetName(false, false).CStr(), Victim->GetBodyPartName(VictimBodyPart).CStr());
+        ADD_MESSAGE("You fail to free yourself from the %s and your %s is stuck in it in the attempt.",
+                    Liquid->GetName(false, false).CStr(), Victim->GetBodyPartName(VictimBodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tries to free %sself from the %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+        ADD_MESSAGE("%s tries to free %sself from the %s but is stuck more tightly in it in the attempt.",
+                    Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
 
       Victim->EditAP(-1000);
       return true;
@@ -732,9 +755,11 @@ void fluid::StepOnEffect(character* Stepper)
   Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("Your %s is stuck to %s.", Stepper->GetBodyPartName(StepperBodyPart).CStr(), Liquid->GetName(false, false).CStr());
+    ADD_MESSAGE("Your %s is stuck to %s.", Stepper->GetBodyPartName(StepperBodyPart).CStr(),
+                Liquid->GetName(false, false).CStr());
   else if(Stepper->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s gets stuck to %s.", Stepper->CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+    ADD_MESSAGE("%s gets stuck to %s.", Stepper->CHAR_NAME(DEFINITE),
+                Liquid->GetName(false, false).CStr());
 }
 
 void fluid::PreProcessForBone()

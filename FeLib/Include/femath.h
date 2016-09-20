@@ -41,8 +41,9 @@ class femath
   static long Rand();
   static void SetSeed(ulong);
   static long RandN(long N) { return long(double(N) * Rand() / 0x80000000); }
-  static long RandGood(long N)
-  { return long(double(N) * Rand() / 0x80000000); }
+  static long RandGood(long N) { return long(double(N) * Rand() / 0x80000000); }
+  static double RandReal(double N = 1.) { return Rand() * (1. / 0x80000000) * N; }
+  static double NormalDistributedRand(double StandardDeviation = 1.);
   static int WeightedRand(long*, long);
   static int WeightedRand(const std::vector<long>&, long);
   static double CalculateAngle(v2);
@@ -93,7 +94,7 @@ template <class controller> class mapmath
 
 template <class controller>
 inline truth mapmath<controller>::DoLine(int X1, int Y1,
-					 int X2, int Y2, int Flags)
+                                         int X2, int Y2, int Flags)
 {
   if(!(Flags & SKIP_FIRST))
     controller::Handler(X1, Y1);
@@ -118,12 +119,12 @@ inline truth mapmath<controller>::DoLine(int X1, int Y1,
 
       if(c >= DoubleDeltaX)
       {
-	c -= DoubleDeltaX;
-	y += YChange;
+        c -= DoubleDeltaX;
+        y += YChange;
       }
 
       if(!controller::Handler(x, y))
-	return x == End && !(Flags & ALLOW_END_FAILURE);
+        return x == End && !(Flags & ALLOW_END_FAILURE);
     }
   }
   else
@@ -138,12 +139,12 @@ inline truth mapmath<controller>::DoLine(int X1, int Y1,
 
       if(c >= DoubleDeltaY)
       {
-	c -= DoubleDeltaY;
-	x += XChange;
+        c -= DoubleDeltaY;
+        x += XChange;
       }
 
       if(!controller::Handler(x, y))
-	return y == End && !(Flags & ALLOW_END_FAILURE);
+        return y == End && !(Flags & ALLOW_END_FAILURE);
     }
   }
 
@@ -189,24 +190,24 @@ truth quadricontroller<controller>::Handler(int x, int y)
 
     if((SquareTick & Mask) < controller::ShiftedTick[SquarePartIndex])
     {
-      SquareTick = SquareTick & ~Mask
-		   | controller::ShiftedQuadriTick[SquarePartIndex];
+      SquareTick = (SquareTick & ~Mask)
+                   | controller::ShiftedQuadriTick[SquarePartIndex];
       int DeltaX = OrigoX - HalfX, DeltaY = OrigoY - HalfY;
 
       if(DeltaX * DeltaX + DeltaY * DeltaY <= RadiusSquare)
       {
-	if(SectorCompletelyClear)
-	{
-	  if(controller::Handler(x, y))
-	    return true;
-	  else
-	    SectorCompletelyClear = false;
-	}
-	else
-	  return mapmath<controller>::DoLine(StartX, StartY,
-					     x, y,
-					     SKIP_FIRST
-					     |ALLOW_END_FAILURE);
+        if(SectorCompletelyClear)
+        {
+          if(controller::Handler(x, y))
+            return true;
+          else
+            SectorCompletelyClear = false;
+        }
+        else
+          return mapmath<controller>::DoLine(StartX, StartY,
+                                             x, y,
+                                             SKIP_FIRST
+                                             |ALLOW_END_FAILURE);
       }
     }
   }
@@ -215,13 +216,13 @@ truth quadricontroller<controller>::Handler(int x, int y)
 }
 
 cint ChangeXArray[4][3] = { { -1,  0, -1 },
-				 {  0,  1,  1 },
-				 { -1, -1,  0 },
-				 {  1,  0,  1 } };
+                            {  0,  1,  1 },
+                            { -1, -1,  0 },
+                            {  1,  0,  1 } };
 cint ChangeYArray[4][3] = { { -1, -1,  0 },
-				 { -1, -1,  0 },
-				 {  0,  1,  1 },
-				 {  0,  1,  1 } };
+                            { -1, -1,  0 },
+                            {  0,  1,  1 },
+                            {  0,  1,  1 } };
 
 template <class controller>
 inline void mapmath<controller>::DoArea()
@@ -248,16 +249,16 @@ inline void mapmath<controller>::DoArea()
     {
       while(OldStackPos)
       {
-	OldStackPos -= 2;
-	cint X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
+        OldStackPos -= 2;
+        cint X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
 
-	if(controller::Handler(X, Y))
-	  for(int c2 = 0; c2 < 3; ++c2)
-	  {
-	    NewStack[NewStackPos] = X + ChangeX[c2];
-	    NewStack[NewStackPos + 1] = Y + ChangeY[c2];
-	    NewStackPos += 2;
-	  }
+        if(controller::Handler(X, Y))
+          for(int c2 = 0; c2 < 3; ++c2)
+          {
+            NewStack[NewStackPos] = X + ChangeX[c2];
+            NewStack[NewStackPos + 1] = Y + ChangeY[c2];
+            NewStackPos += 2;
+          }
       }
 
       OldStackPos = NewStackPos;
@@ -271,8 +272,8 @@ inline void mapmath<controller>::DoArea()
 
 template <class controller>
 inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY,
-					      int RadiusSquare,
-					      int XSize, int YSize)
+                                              int RadiusSquare,
+                                              int XSize, int YSize)
 {
   basequadricontroller::OrigoX = OrigoX;
   basequadricontroller::OrigoY = OrigoY;
@@ -282,9 +283,9 @@ inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY,
 
   for(int c = 0; c < 4; ++c)
     controller::Handler((OrigoX << 1) + basequadricontroller::OrigoDeltaX[c],
-			(OrigoY << 1) + basequadricontroller::OrigoDeltaY[c]);
+                        (OrigoY << 1) + basequadricontroller::OrigoDeltaY[c]);
 
-  mapmath<quadricontroller<controller> >::DoArea();
+  mapmath<quadricontroller<controller>>::DoArea();
 }
 
 /* Chance for n < Max to be returned is (1-CC)*CC^n,

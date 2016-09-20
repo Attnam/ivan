@@ -19,6 +19,36 @@ class lterrain;
 
 MATERIAL(solid, material)
 {
+ public:
+  solid() : BurnData(NOT_BURNT), TransientThermalEnergy(0), SteadyStateThermalEnergy(0), BurnCounter(0), BurnCheckCounter(0) { }
+  virtual void SetBurnLevel(int, truth);
+  virtual int GetStrengthValue() const;
+  virtual int GetBurnModifier() const;
+  virtual void ResetThermalEnergies();
+  virtual void Be(ulong);
+  virtual truth HasBe() const { return true; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual truth IsSparkling() const;
+  virtual int GetBurnData() const { return BurnData; }
+  virtual int GetTransientThermalEnergy() const { return TransientThermalEnergy; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const;
+  virtual int GetBurnLevel() const { return BurnData & 3; }
+  virtual void ResetBurning();
+  virtual truth IsVeryCloseToBurning() const { return (BurnData & 3) == HEAVILY_BURNT; }
+  virtual void AddToThermalEnergy(int);
+  virtual void AddToSteadyStateThermalEnergy(int);
+  virtual void AddToTransientThermalEnergy(int);
+  virtual void RemoveFromThermalEnergy(int);
+ protected:
+  virtual void PostConstruct();
+  int BurnData;
+  int TransientThermalEnergy; // Transient is for storing the energy in an explosion so that
+                              // mutliple explosions accumulate, SteadyState is to store the
+                              // energy to be decremented only by the application of liquids
+  int SteadyStateThermalEnergy;
+  ushort BurnCounter;
+  uchar BurnCheckCounter;
 };
 
 MATERIAL(organic, solid)
@@ -46,6 +76,7 @@ MATERIAL(organic, solid)
 
 MATERIAL(gas, material)
 {
+  virtual int IsBurning() const { return 0; }
 };
 
 MATERIAL(liquid, material)
@@ -57,6 +88,7 @@ MATERIAL(liquid, material)
   void TouchEffect(character*, int);
   void TouchEffect(lterrain*);
   liquid* SpawnMoreLiquid(long Volume) const { return static_cast<liquid*>(SpawnMore(Volume)); }
+  virtual int IsBurning() const { return 0; }
 };
 
 MATERIAL(flesh, organic)

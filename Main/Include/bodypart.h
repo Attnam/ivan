@@ -19,7 +19,7 @@
 class humanoid;
 class sweaponskill;
 
-struct scar 
+struct scar
 {
   int Severity;
   mutable bitmap* PanelBitmap;
@@ -100,6 +100,8 @@ ITEM(bodypart, item)
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
+  virtual void SignalBurnLevelChange();
+  virtual void SignalBurnLevelTransitionMessage();
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth DamageArmor(character*, int, int) { return false; }
   truth CanBeSevered(int) const;
@@ -127,6 +129,7 @@ ITEM(bodypart, item)
   virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
+  virtual truth TestActivationEnergy(int);
   virtual truth AllowFluidBe() const;
   virtual material* RemoveMaterial(material*);
   virtual void CopyAttributes(const bodypart*) { }
@@ -143,6 +146,7 @@ ITEM(bodypart, item)
   virtual int GetSparkleFlags() const;
   virtual truth MaterialIsChangeable(ccharacter*) const;
   virtual void RemoveRust();
+  virtual void RemoveBurns();
   virtual item* Fix();
   virtual long GetFixPrice() const;
   virtual truth IsFixableBySmith(ccharacter*) const;
@@ -155,6 +159,11 @@ ITEM(bodypart, item)
   static truth DamageTypeCanScar(int);
   void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
+  int CalculateBurnAttributePenalty(int) const;
+  virtual void SignalBurn(material*);
+  virtual void Extinguish(truth);
+  virtual void AddSpecialExtinguishMessageForPF();
+  virtual void AddExtinguishMessage();
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -485,7 +494,7 @@ ITEM(leftleg, leg)
 ITEM(corpse, item)
 {
  public:
-  corpse() { }
+  corpse() = default;
   corpse(const corpse&);
   virtual ~corpse();
   virtual int GetOfferValue(int) const;
@@ -525,7 +534,11 @@ ITEM(corpse, item)
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
   virtual truth IsRusted() const { return false; }
+  virtual truth IsBurnt() const { return false; }
   virtual truth CanBeHardened(ccharacter*) const { return false; }
+  virtual truth AddBurnLevelDescription(festring&, truth) const { return false; }
+  virtual void SignalBurn(material*);
+  virtual void Extinguish(truth);
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;
@@ -538,6 +551,7 @@ ITEM(corpse, item)
   virtual int GetSize() const;
   virtual int GetArticleMode() const;
   virtual int GetRustDataA() const;
+  virtual int GetBurnDataA() const;
   virtual truth AddStateDescription(festring&, truth) const;
   character* Deceased;
 };
@@ -583,7 +597,7 @@ ITEM(ennerhead, head)
 ITEM(playerkindhead, head)
 {
  public:
-  playerkindhead() { }
+  playerkindhead() = default;
   playerkindhead(const playerkindhead& Head) : mybase(Head) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -598,7 +612,7 @@ ITEM(playerkindhead, head)
 ITEM(playerkindtorso, humanoidtorso)
 {
  public:
-  playerkindtorso() { }
+  playerkindtorso() = default;
   playerkindtorso(const playerkindtorso& Torso) : mybase(Torso) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -616,7 +630,7 @@ ITEM(playerkindtorso, humanoidtorso)
 ITEM(playerkindrightarm, rightarm)
 {
  public:
-  playerkindrightarm() { }
+  playerkindrightarm() = default;
   playerkindrightarm(const playerkindrightarm& Arm) : mybase(Arm) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -632,7 +646,7 @@ ITEM(playerkindrightarm, rightarm)
 ITEM(playerkindleftarm, leftarm)
 {
  public:
-  playerkindleftarm() { }
+  playerkindleftarm() = default;
   playerkindleftarm(const playerkindleftarm& Arm) : mybase(Arm) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -648,7 +662,7 @@ ITEM(playerkindleftarm, leftarm)
 ITEM(playerkindgroin, groin)
 {
  public:
-  playerkindgroin() { }
+  playerkindgroin() = default;
   playerkindgroin(const playerkindgroin& Groin) : mybase(Groin) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -663,7 +677,7 @@ ITEM(playerkindgroin, groin)
 ITEM(playerkindrightleg, rightleg)
 {
  public:
-  playerkindrightleg() { }
+  playerkindrightleg() = default;
   playerkindrightleg(const playerkindrightleg& Leg) : mybase(Leg) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -679,7 +693,7 @@ ITEM(playerkindrightleg, rightleg)
 ITEM(playerkindleftleg, leftleg)
 {
  public:
-  playerkindleftleg() { }
+  playerkindleftleg() = default;
   playerkindleftleg(const playerkindleftleg& Leg) : mybase(Leg) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

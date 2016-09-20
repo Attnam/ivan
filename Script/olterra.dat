@@ -431,14 +431,14 @@ door /* olterrain-> */
   IsAlwaysTransparent = false;
   Config BARDOOR;
   {
-	BitmapPos = 16, 96;    
-	IsAlwaysTransparent = true;
+    BitmapPos = 16, 96;
+    IsAlwaysTransparent = true;
   }
   Config SECRET_DOOR;
   {
-	BitmapPos = 16, 144;    
-        NameSingular = "door";
-        Adjective = "very secret";
+    BitmapPos = 16, 144;
+    NameSingular = "door";
+    Adjective = "very secret";
   }
 }
 
@@ -491,6 +491,16 @@ portal /* stairs -> */
   Config OREE_LAIR_ENTRY; { }
   Config OREE_LAIR_EXIT; { }
   Config DARK_LEVEL; { }
+
+  Config XINROCH_TOMB_ENTRANCE;
+  {
+    MaterialColorB = rgb16(0, 200, 0);
+  }
+
+  Config XINROCH_TOMB_EXIT;
+  {
+    MaterialColorB = rgb16(140, 240, 255);
+  }
 }
 
 altar /* olterrain-> */
@@ -550,7 +560,7 @@ olterraincontainer /* olterrain->decoration-> */
   {
     CanBeDestroyed = true;
     MainMaterialConfig == FIR_WOOD;
-    NameSingular = "";
+    NameSingular = "shelf";
     BitmapPos = 16, 128;
     SitMessage = "The shelf is very uncomfortable to sit on.";
     StorageVolume = 80000;
@@ -586,9 +596,9 @@ brokendoor /* olterrain->door-> */
   }
   Config SECRET_DOOR;
   {
-	BitmapPos = 16, 160;    
-        NameSingular = "door";
-        Adjective = "broken very secret";
+    BitmapPos = 16, 160;
+    NameSingular = "door";
+    Adjective = "broken very secret";
   }
 }
 
@@ -681,8 +691,9 @@ coffin /* olterrain->decoration->olterraincontainer */
   CanBeDestroyed = true;
   MainMaterialConfig == FIR_WOOD;
   NameSingular = "coffin";
-  BitmapPos = 16, 272;
-  SitMessage = "The coffin is cold  to sit on.";
+  BitmapPos = 32, 144;
+  OpenBitmapPos = 32, 160;
+  SitMessage = "The coffin is cold to sit on.";
   StorageVolume = 100000;
   AttachedGod = MORTIFER;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
@@ -719,7 +730,8 @@ barwall
 
 ironmaiden
 {
-  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }	 CanBeDestroyed = true;
+  LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+  CanBeDestroyed = true;
   DigMessage = "The iron maiden falls into pieces.";
   MainMaterialConfig == IRON;
   ShowMaterial = false;

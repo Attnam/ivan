@@ -12,11 +12,12 @@
 
 /* Compiled through roomset.cpp */
 
-roomprototype::roomprototype(roomspawner Spawner, cchar* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
+roomprototype::roomprototype(roomspawner Spawner, cchar* ClassID)
+: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
 
 void room::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType();
+  SaveFile << static_cast<ushort>(GetType());
   SaveFile << Pos << Size << Index << DivineMaster << MasterID;
 }
 

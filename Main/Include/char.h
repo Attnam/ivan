@@ -38,7 +38,7 @@ struct homedata;
 struct trapdata;
 struct blitdata;
 
-typedef std::vector<std::pair<double, int> > blockvector;
+typedef std::vector<std::pair<double, int>> blockvector;
 typedef truth (item::*sorter)(ccharacter*) const;
 typedef truth (character::*petmanagementfunction)();
 typedef character* (*characterspawner)(int, int);
@@ -198,7 +198,7 @@ struct characterdatabase : public databasebase
   int RightSWeaponSkillHits;
   int LeftSWeaponSkillHits;
   int PanicLevel;
-  fearray<contentscript<item> > Inventory;
+  fearray<contentscript<item>> Inventory;
   int DangerModifier;
   festring DefaultName;
   fearray<festring> FriendlyReplies;
@@ -243,6 +243,7 @@ struct characterdatabase : public databasebase
   int UndeadAttributeModifier;
   int UndeadVolumeModifier;
   truth UndeadCopyMaterials;
+  truth GhostCopyMaterials;
   truth CanBeGeneratedOnlyInTheCatacombs;
   truth IsAlcoholic;
   truth IsImmuneToWhipOfThievery;
@@ -298,8 +299,12 @@ class character : public entity, public id
   truth TryMove(v2, truth, truth);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
+  truth HasEncryptedScroll() const;
   truth HasPetrussNut() const;
   truth RemoveEncryptedScroll();
+  truth HasShadowVeil() const;
+  truth HasLostRubyFlamingSword() const;
+  truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
   truth Engrave(cfestring&);
   void AddScoreEntry(cfestring&, double = 1., truth = true) const;
@@ -443,6 +448,7 @@ class character : public entity, public id
   void AddOmmelBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
+  virtual void IgniteBodyPart(int, int);
   virtual truth TryToRiseFromTheDead();
   virtual truth RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
@@ -596,6 +602,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, UndeadAttributeModifier);
   DATA_BASE_VALUE(int, UndeadVolumeModifier);
   DATA_BASE_TRUTH(UndeadCopyMaterials);
+  DATA_BASE_TRUTH(GhostCopyMaterials);
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   DATA_BASE_TRUTH(IsAlcoholic);
   DATA_BASE_TRUTH(IsImmuneToWhipOfThievery);
@@ -656,6 +663,8 @@ class character : public entity, public id
   void EndInfraVision();
   void EndESP();
   void HiccupsHandler();
+  void BeginEthereality();
+  void EndEthereality();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
   void StartReading(item*, long);
@@ -668,10 +677,14 @@ class character : public entity, public id
   void PrintEndInfraVisionMessage() const;
   void PrintBeginESPMessage() const;
   void PrintEndESPMessage() const;
+  void PrintBeginEtherealityMessage() const;
+  void PrintEndEtherealityMessage() const;
   truth CanBeSeenByPlayer(truth = false, truth = false) const;
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
   truth HasAllBodyParts() const;
+  truth HasFire() const;
+  truth IsBurning() const;
   bodypart* FindRandomOwnBodyPart(truth) const;
   bodypart* GenerateRandomBodyPart();
   void PrintBeginPoisonedMessage() const;
@@ -771,6 +784,7 @@ class character : public entity, public id
   character* DuplicateToNearestSquare(character*, ulong = 0);
   void SignalSpoil();
   void SignalSpoilLevelChange();
+  void SignalBurnLevelChange();
   virtual truth UseMaterialAttributes() const = 0;
   truth IsPolymorphed() const { return Flags & C_POLYMORPHED; }
   truth IsInBadCondition() const { return HP * 3 < MaxHP; }
@@ -786,7 +800,7 @@ class character : public entity, public id
   void AddAntidoteConsumeEndMessage() const;
   truth IsDead() const;
   void AddOriginalBodyPartID(int, ulong);
-  void AddToInventory(const fearray<contentscript<item> >&, int);
+  void AddToInventory(const fearray<contentscript<item>>&, int);
   truth HasHadBodyPart(citem*) const;
   void ProcessAndAddMessage(festring) const;
   virtual truth CheckZap();
@@ -827,6 +841,7 @@ class character : public entity, public id
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(int) const { return 0; }
   bodypart* HealHitPoint();
+  void HealBurntBodyParts(long);
   void CreateHomeData();
   room* GetHomeRoom() const;
   truth HomeDataIsValid() const;
@@ -857,6 +872,7 @@ class character : public entity, public id
   virtual void AddAttackInfo(felist&) const = 0;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual void SetFireToBodyPart();
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
@@ -931,6 +947,10 @@ class character : public entity, public id
   virtual truth AllowSpoil() const { return false; }
   void Disappear(corpse*, cchar*, truth (item::*)() const);
   void ResetSpoiling();
+  void ResetBurning();
+  void ResetLivingBurning();
+  void RemoveBurns();
+  void ResetThermalEnergies();
   virtual character* GetLeader() const;
   int GetMoveType() const;
   virtual truth IsSumoWrestler() const { return false; }
@@ -938,6 +958,7 @@ class character : public entity, public id
   item* SearchForItem(ccharacter*, sorter) const;
   virtual character* CreateZombie() const { return 0; }
   virtual festring GetZombieDescription() const;
+  virtual festring GetSpiritDescription() const;
   virtual truth CanAttack() const { return true; }
   truth DetectMaterial(cmaterial*) const;
   truth CheckIfTooScaredToHit(ccharacter*) const;
@@ -1069,7 +1090,7 @@ class character : public entity, public id
   void ReceiveMustardGasLiquid(int, long);
   truth IsBadPath(v2) const;
   double& GetExpModifierRef(expid);
-  truth ForgetRandomThing(); 
+  truth ForgetRandomThing();
   void ApplyAllGodsKnownBonus();
   item* GiveMostExpensiveItem(character*);
   void ReceiveItemAsPresent(item*);
@@ -1089,6 +1110,9 @@ class character : public entity, public id
   truth CheckForBeverage();
   void Haste();
   void Slow();
+  void SignalBurn();
+  void Extinguish(truth);
+  truth IsBurnt() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1155,6 +1179,7 @@ class character : public entity, public id
   int TemporaryStateCounter[STATES];
   team* Team;
   v2 GoingTo;
+  double RandomMoveDir;
   long Money;
   std::list<character*>::iterator TeamIterator;
   bodypartslot* BodyPartSlot;
@@ -1197,14 +1222,15 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
+  virtual truth NeedsBurningPostFix() const { return false; }
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 #define CHARACTER_PROTO(name, base)\
 template<> const characterprototype\
   name##sysbase::ProtoType(&base::ProtoType,\
-			   (characterspawner)(&name##sysbase::Spawn),\
-			   (charactercloner)(&name##sysbase::Clone), #name);
+                           reinterpret_cast<characterspawner>(&name##sysbase::Spawn),\
+                           reinterpret_cast<charactercloner>(&name##sysbase::Clone), #name);
 #else
 #define CHARACTER_PROTO(name, base)
 #endif

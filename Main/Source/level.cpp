@@ -19,7 +19,9 @@
 #define ICE_TERRAIN 16
 #define STONE_TERRAIN 32
 
-level::level() : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0), AmbientLuminance(0), SquareStack(0), NightAmbientLuminance(0) { }
+level::level()
+: Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0),
+  AmbientLuminance(0), SquareStack(0), NightAmbientLuminance(0) { }
 void level::SetRoom(int I, room* What) { Room[I] = What; }
 void level::AddToAttachQueue(v2 Pos) { AttachQueue.push_back(Pos); }
 
@@ -68,69 +70,69 @@ void level::ExpandPossibleRoute(int OrigoX, int OrigoY, int TargetX, int TargetY
   {
     if(TargetX < OrigoX)
       if(CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetX > OrigoX)
       if(CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetY < OrigoY)
       if(CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetY > OrigoY)
       if(CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetX <= OrigoX)
       if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetX >= OrigoX)
       if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetY <= OrigoY)
       if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetY >= OrigoY)
       if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
   }
   else
   {
     if(TargetY < OrigoY)
       if(CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetY > OrigoY)
       if(CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetX < OrigoX)
       if(CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetX > OrigoX)
       if(CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetY <= OrigoY)
       if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetY >= OrigoY)
       if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetX <= OrigoX)
       if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetX >= OrigoX)
       if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
   }
 
 #undef CHECK
@@ -156,69 +158,69 @@ void level::ExpandStillPossibleRoute(int OrigoX, int OrigoY, int TargetX, int Ta
   {
     if(TargetX < OrigoX)
       if(CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetX > OrigoX)
       if(CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetY < OrigoY)
       if(CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetY > OrigoY)
       if(CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetX <= OrigoX)
       if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetX >= OrigoX)
       if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetY <= OrigoY)
       if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetY >= OrigoY)
       if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
   }
   else
   {
     if(TargetY < OrigoY)
       if(CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetY > OrigoY)
       if(CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetX < OrigoX)
       if(CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
 
     if(TargetX > OrigoX)
       if(CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetY <= OrigoY)
       if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
-	CALL_EXPAND(OrigoX, OrigoY + 1);
+        CALL_EXPAND(OrigoX, OrigoY + 1);
 
     if(TargetY >= OrigoY)
       if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
-	CALL_EXPAND(OrigoX, OrigoY - 1);
+        CALL_EXPAND(OrigoX, OrigoY - 1);
 
     if(TargetX <= OrigoX)
       if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
-	CALL_EXPAND(OrigoX + 1, OrigoY);
+        CALL_EXPAND(OrigoX + 1, OrigoY);
 
     if(TargetX >= OrigoX)
       if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
-	CALL_EXPAND(OrigoX - 1, OrigoY);
+        CALL_EXPAND(OrigoX - 1, OrigoY);
   }
 
 #undef CHECK
@@ -236,28 +238,81 @@ void level::GenerateTunnel(int FromX, int FromY, int TargetX, int TargetY, truth
   if(FlagMap[TargetX][TargetY] & ON_POSSIBLE_ROUTE)
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
-	if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE
-	   && !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
-	{
-	  FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
-	  FlagMap[FromX][FromY] |= STILL_ON_POSSIBLE_ROUTE;
-	  ExpandStillPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
+        if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE
+           && !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
+        {
+          FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
+          FlagMap[FromX][FromY] |= STILL_ON_POSSIBLE_ROUTE;
+          ExpandStillPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
 
-	  if(!(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE))
-	  {
-	    FlagMap[x][y] |= ON_POSSIBLE_ROUTE|PREFERRED;
-	    Map[x][y]->ChangeGLTerrain(GTerrain->Instantiate());
-	    Map[x][y]->ChangeOLTerrain(OTerrain->Instantiate());
-	  }
+          if(!(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE))
+          {
+            FlagMap[x][y] |= ON_POSSIBLE_ROUTE|PREFERRED;
+            Map[x][y]->ChangeGLTerrain(GTerrain->Instantiate());
+            Map[x][y]->ChangeOLTerrain(OTerrain->Instantiate());
+          }
 
-	  for(int X = 0; X < XSize; ++X)
-	    for(int Y = 0; Y < YSize; ++Y)
-	      FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
-	}
+          for(int X = 0; X < XSize; ++X)
+            for(int Y = 0; Y < YSize; ++Y)
+              FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
+        }
 
   for(int x = 1; x < XSize - 1; ++x)
     for(int y = 1; y < YSize - 1; ++y)
       FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
+}
+
+void maze::CreateMaze()
+{
+  InitializeMaze();
+  CarveMaze(2, 2);
+  StripMazeHusk();
+}
+
+void maze::InitializeMaze()
+{
+  std::fill(MazeVector.begin(), MazeVector.end(), false);
+
+  for(unsigned x = 0; x < MazeXSize; x++)
+  {
+    MazeVector[x] = true;
+    MazeVector[(MazeYSize - 1) * MazeXSize + x] = true;
+  }
+  for(unsigned y = 0; y < MazeYSize; y++)
+  {
+    MazeVector[y * MazeXSize] = true;
+    MazeVector[y * MazeXSize + MazeXSize - 1] = true;
+  }
+}
+
+void maze::CarveMaze(int x, int y)
+{
+  MazeVector[y * MazeXSize + x] = true;
+  const unsigned d = RAND();
+  for(unsigned i = 0; i < 4; i++)
+  {
+    const int dirs[] = { 1, -1, 0, 0 };
+    const int dx = dirs[(i + d + 0) % 4];
+    const int dy = dirs[(i + d + 2) % 4];
+    const int x1 = x + dx, y1 = y + dy;
+    const int x2 = x1 + dx, y2 = y1 + dy;
+    if(!MazeVector[y1 * MazeXSize + x1] && !MazeVector[y2 * MazeXSize + x2])
+    {
+      MazeVector[y1 * MazeXSize + x1] = true;
+      CarveMaze(x2, y2);
+    }
+  }
+}
+
+void maze::StripMazeHusk()
+{
+  for(uint y1 = 2; y1 < MazeYSize - 2; y1++)
+  {
+    for(uint x1 = 2; x1 < MazeXSize - 2; x1++)
+    {
+      MazeKernel.push_back(MazeVector[(y1) * (MazeXSize) + (x1)]);
+    }
+  }
 }
 
 void level::Generate(int Index)
@@ -390,7 +445,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   for(x = Pos.X - 1; x <= Pos.X + Size.X; ++x)
     for(y = Pos.Y - 1; y <= Pos.Y + Size.Y; ++y)
       if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
-	return false;
+        return false;
 
   room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Spawn();
   RoomClass->SetPos(Pos);
@@ -424,12 +479,12 @@ truth level::MakeRoom(const roomscript* RoomScript)
       ABORT("The Doors - You are strange.");
 
     v2 InsideDoorPos = OKForDoor[RAND() % OKForDoor.size()]; // this door
-    olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
+    olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); // Bug! Wrong room!
 
     if(Door && !(RAND() % 5) && *RoomScript->AllowLockedDoors())
     {
       if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
-	Door->CreateBoobyTrap();
+        Door->CreateBoobyTrap();
 
       Door->Lock();
     }
@@ -445,7 +500,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
     if(Door && !(RAND() % 5) && *RoomScript->AllowLockedDoors())
     {
       if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
-	Door->CreateBoobyTrap();
+        Door->CreateBoobyTrap();
 
       Door->Lock();
     }
@@ -472,8 +527,28 @@ truth level::MakeRoom(const roomscript* RoomScript)
 
     if(!*RoomScript->GenerateTunnel())
     {
-      Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
+      Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(),
+                                                RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
       Map[DoorPos.X][DoorPos.Y]->Clean();
+    }
+  }
+  // Make second door for a maze room. If the room has even-numbered dimension, then it will be a rectangular room with two doors...
+  if(*RoomScript->GenerateDoor() && (*RoomScript->GetShape() == MAZE_ROOM))
+  {
+    game::BusyAnimation();
+    v2 DoorPos;
+
+    if(!OKForDoor.empty())
+    {
+      DoorPos = OKForDoor[OKForDoor.size() - 1];
+      Door.push_back(DoorPos);
+
+      if(!*RoomScript->GenerateTunnel())
+      {
+        Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(),
+                                                  RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
+        Map[DoorPos.X][DoorPos.Y]->Clean();
+      }
     }
   }
 
@@ -489,23 +564,23 @@ truth level::MakeRoom(const roomscript* RoomScript)
       game::BusyAnimation();
 
       for(y = 0; y < CharacterMap->GetSize()->Y; ++y)
-	if(IsValidScript(CharacterScript = CharacterMap->GetContentScript(x, y)))
-	{
-	  character* Char = CharacterScript->Instantiate();
-	  Char->SetGenerationDanger(Difficulty);
+        if(IsValidScript(CharacterScript = CharacterMap->GetContentScript(x, y)))
+        {
+          character* Char = CharacterScript->Instantiate();
+          Char->SetGenerationDanger(Difficulty);
 
-	  if(!Char->GetTeam())
-	    Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
+          if(!Char->GetTeam())
+            Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
-	  if(CharacterScript->GetFlags() & IS_LEADER)
-	    Char->GetTeam()->SetLeader(Char);
+          if(CharacterScript->GetFlags() & IS_LEADER)
+            Char->GetTeam()->SetLeader(Char);
 
-	  Char->PutTo(CharPos + v2(x, y));
-	  Char->CreateHomeData();
+          Char->PutTo(CharPos + v2(x, y));
+          Char->CreateHomeData();
 
-	  if(CharacterScript->GetFlags() & IS_MASTER)
-	    RoomClass->SetMasterID(Char->GetID());
-	}
+          if(CharacterScript->GetFlags() & IS_MASTER)
+            RoomClass->SetMasterID(Char->GetID());
+        }
     }
   }
 
@@ -514,35 +589,35 @@ truth level::MakeRoom(const roomscript* RoomScript)
   if(ItemMap)
   {
     v2 ItemPos(Pos + *ItemMap->GetPos());
-    const fearray<contentscript<item> >* ItemScript;
+    const fearray<contentscript<item>>* ItemScript;
 
     for(int x = 0; x < ItemMap->GetSize()->X; ++x)
     {
       game::BusyAnimation();
 
       for(y = 0; y < ItemMap->GetSize()->Y; ++y)
-	if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
-	  for(uint c1 = 0; c1 < ItemScript->Size; ++c1)
-	  {
-	    const interval* TimesPtr = ItemScript->Data[c1].GetTimes();
-	    int Times = TimesPtr ? TimesPtr->Randomize() : 1;
+        if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
+          for(uint c1 = 0; c1 < ItemScript->Size; ++c1)
+          {
+            const interval* TimesPtr = ItemScript->Data[c1].GetTimes();
+            int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
-	    for(int c2 = 0; c2 < Times; ++c2)
-	    {
-	      item* Item = ItemScript->Data[c1].Instantiate();
+            for(int c2 = 0; c2 < Times; ++c2)
+            {
+              item* Item = ItemScript->Data[c1].Instantiate();
 
-	      if(Item)
-	      {
-		int SquarePosition = ItemScript->Data[c1].GetSquarePosition();
+              if(Item)
+              {
+                int SquarePosition = ItemScript->Data[c1].GetSquarePosition();
 
-		if(SquarePosition != CENTER)
-		  Item->SignalSquarePositionChange(SquarePosition);
+                if(SquarePosition != CENTER)
+                  Item->SignalSquarePositionChange(SquarePosition);
 
-		Map[ItemPos.X + x][ItemPos.Y + y]->GetStack()->AddItem(Item);
-		Item->SpecialGenerationHandler();
-	      }
-	    }
-	  }
+                Map[ItemPos.X + x][ItemPos.Y + y]->GetStack()->AddItem(Item);
+                Item->SpecialGenerationHandler();
+              }
+            }
+          }
     }
   }
 
@@ -558,17 +633,19 @@ truth level::MakeRoom(const roomscript* RoomScript)
       game::BusyAnimation();
 
       for(y = 0; y < GTerrainMap->GetSize()->Y; ++y)
-	if(IsValidScript(GTerrainScript = GTerrainMap->GetContentScript(x, y)))
-	{
-	  lsquare* Square = Map[GTerrainPos.X + x][GTerrainPos.Y + y];
-	  Square->ChangeGLTerrain(GTerrainScript->Instantiate());
+        if(IsValidScript(GTerrainScript = GTerrainMap->GetContentScript(x, y)))
+        {
+          lsquare* Square = Map[GTerrainPos.X + x][GTerrainPos.Y + y];
+          Square->ChangeGLTerrain(GTerrainScript->Instantiate());
 
-	  if(GTerrainScript->IsInside())
-	    if(*GTerrainScript->IsInside())
-	      Square->Flags |= INSIDE;
-	    else
-	      Square->Flags &= ~INSIDE;
-	}
+          if(GTerrainScript->IsInside())
+          {
+            if(*GTerrainScript->IsInside())
+              Square->Flags |= INSIDE;
+            else
+              Square->Flags &= ~INSIDE;
+          }
+        }
     }
   }
 
@@ -584,37 +661,34 @@ truth level::MakeRoom(const roomscript* RoomScript)
       game::BusyAnimation();
 
       for(y = 0; y < OTerrainMap->GetSize()->Y; ++y)
-	if(IsValidScript(OTerrainScript = OTerrainMap->GetContentScript(x, y)))
-	{
-	  olterrain* Terrain = OTerrainScript->Instantiate();
-	  Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
-	}
+        if(IsValidScript(OTerrainScript = OTerrainMap->GetContentScript(x, y)))
+        {
+          olterrain* Terrain = OTerrainScript->Instantiate();
+          Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
+        }
     }
   }
 
-  const std::list<squarescript> Square = RoomScript->GetSquare();
-
-  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+  for(const squarescript& Script : RoomScript->GetSquare())
   {
     game::BusyAnimation();
-    const squarescript* Script = &*i;
-    const interval* ScriptTimes = Script->GetTimes();
+    const interval* ScriptTimes = Script.GetTimes();
     int Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
     for(int t = 0; t < Times; ++t)
     {
       v2 SquarePos;
 
-      if(Script->GetPosition()->GetRandom())
+      if(Script.GetPosition()->GetRandom())
       {
-	const rect* ScriptBorders = Script->GetPosition()->GetBorders();
-	rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - v2(1, 1));
-	SquarePos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), &Borders);
+        const rect* ScriptBorders = Script.GetPosition()->GetBorders();
+        rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - v2(1, 1));
+        SquarePos = GetRandomSquare(0, Script.GetPosition()->GetFlags(), &Borders);
       }
       else
-	SquarePos = Pos + Script->GetPosition()->GetVector();
+        SquarePos = Pos + Script.GetPosition()->GetVector();
 
-      Map[SquarePos.X][SquarePos.Y]->ApplyScript(Script, RoomClass);
+      Map[SquarePos.X][SquarePos.Y]->ApplyScript(&Script, RoomClass);
     }
   }
 
@@ -704,7 +778,7 @@ void level::Load(inputfile& SaveFile)
     for(y = 0; y < YSize; ++y)
     {
       if(!Map[x][y]->IsInside())
-	Map[x][y]->AmbientLuminance = AmbientLuminance;
+        Map[x][y]->AmbientLuminance = AmbientLuminance;
 
       NodeMap[x][y] = new node(x, y, Map[x][y]);
       WalkabilityMap[x][y] = Map[x][y]->GetTheoreticalWalkability();
@@ -744,15 +818,15 @@ void level::GenerateNewMonsters(int HowMany, truth ConsiderPlayer)
       Pos = GetRandomSquare(Char);
 
       if(Pos == ERROR_V2)
-	break;
+        break;
 
       lsquare* Square = GetLSquare(Pos);
 
       if((!Square->GetRoomIndex()
-	  || !Square->GetRoom()->DontGenerateMonsters())
-	 && (!ConsiderPlayer
-	     || (Pos - PLAYER->GetPos()).GetManhattanLength() > 6))
-	break;
+          || !Square->GetRoom()->DontGenerateMonsters())
+         && (!ConsiderPlayer
+             || (Pos - PLAYER->GetPos()).GetManhattanLength() > 6))
+        break;
     }
 
     if(Pos != ERROR_V2)
@@ -766,7 +840,7 @@ void level::GenerateNewMonsters(int HowMany, truth ConsiderPlayer)
       int Modifier = Time.Day - EDIT_ATTRIBUTE_DAY_MIN;
 
       if(Modifier > 0)
-	Char->EditAllAttributes(Modifier >> EDIT_ATTRIBUTE_DAY_SHIFT);
+        Char->EditAllAttributes(Modifier >> EDIT_ATTRIBUTE_DAY_SHIFT);
     }
     else
       delete Char;
@@ -841,6 +915,11 @@ truth level::IsOnGround() const
   return *LevelScript->IsOnGround();
 }
 
+truth level::EarthquakesAffectTunnels() const
+{
+  return *LevelScript->EarthquakesAffectTunnels();
+}
+
 int level::GetLOSModifier() const
 {
   return *LevelScript->GetLOSModifier();
@@ -860,7 +939,7 @@ room* level::GetRoom(int I) const
   return Room[I];
 }
 
-void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals)
+void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Strength, truth HurtNeutrals, truth FireOnly)
 {
   static int StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   uint c;
@@ -883,6 +962,7 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
   Exp->RadiusSquare = (8 - Size) * (8 - Size);
   Exp->Size = Size;
   Exp->HurtNeutrals = HurtNeutrals;
+  Exp->FireOnly = FireOnly;
   ExplosionQueue.push_back(Exp);
 
   if(ExplosionQueue.size() == 1)
@@ -895,8 +975,9 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
       uint NewExplosions = c;
 
       for(c = Explosions; c < NewExplosions; ++c)
-	if(PlayerHurt[c] && PLAYER->IsEnabled())
-	  PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
+        if(PlayerHurt[c] && PLAYER->IsEnabled())
+          PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength
+                                    / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
 
       Explosions = NewExplosions;
     }
@@ -910,19 +991,22 @@ void level::Explosion(character* Terrorist, cfestring& DeathMsg, v2 Pos, int Str
 
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
-	Map[x][y]->LastExplosionID = 0;
+        Map[x][y]->LastExplosionID = 0;
   }
 }
 
 truth level::DrawExplosion(const explosion* Explosion) const
 {
-  static v2 StrengthPicPos[7] = { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32),v2(0, 32) };
-  v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4, (6 - Explosion->Size) << 4);
+  static v2 StrengthPicPos[7] =
+  { v2(176, 176), v2(0, 144), v2(256, 32), v2(144, 32), v2(64, 32), v2(16, 32), v2(0, 32) };
+  v2 BPos = game::CalculateScreenCoordinates(Explosion->Pos) - v2((6 - Explosion->Size) << 4,
+                                                                  (6 - Explosion->Size) << 4);
   v2 SizeVect(16 + ((6 - Explosion->Size) << 5), 16 + ((6 - Explosion->Size) << 5));
   v2 OldSizeVect = SizeVect;
   v2 PicPos = StrengthPicPos[Explosion->Size];
 
   if(BPos.X < 0)
+  {
     if(BPos.X + SizeVect.X <= 0)
       return false;
     else
@@ -931,8 +1015,10 @@ truth level::DrawExplosion(const explosion* Explosion) const
       SizeVect.X += BPos.X;
       BPos.X = 0;
     }
+  }
 
   if(BPos.Y < 0)
+  {
     if(BPos.Y + SizeVect.Y <= 0)
       return false;
     else
@@ -941,6 +1027,7 @@ truth level::DrawExplosion(const explosion* Explosion) const
       SizeVect.Y += BPos.Y;
       BPos.Y = 0;
     }
+  }
 
   if(BPos.X >= RES.X || BPos.Y >= RES.Y)
     return false;
@@ -953,12 +1040,12 @@ truth level::DrawExplosion(const explosion* Explosion) const
 
   int Flags = RAND() & 7;
   blitdata BlitData = { 0,
-			{ PicPos.X, PicPos.Y },
-			{ 0, 0 },
-			{ SizeVect.X, SizeVect.Y },
-			{ 0 },
-			TRANSPARENT_COLOR,
-			0 };
+                        { PicPos.X, PicPos.Y },
+                        { 0, 0 },
+                        { SizeVect.X, SizeVect.Y },
+                        { 0 },
+                        TRANSPARENT_COLOR,
+                        0 };
 
   if(!Flags || SizeVect != OldSizeVect)
   {
@@ -1016,10 +1103,12 @@ int level::TriggerExplosions(int MinIndex)
   }
 
   if(NotSeen)
+  {
     if(NotSeen == 1)
       ADD_MESSAGE("You hear an explosion.");
     else
       ADD_MESSAGE("You hear explosions.");
+  }
 
   game::DrawEverythingNoBlit();
   truth Drawn = false;
@@ -1080,13 +1169,13 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i)
-	     && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
-	  {
-	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
-	    return false;
-	  }
+        for(character* p : game::GetTeam(c)->GetMember())
+          if(p->IsEnabled() && Leader->CanBeSeenBy(p)
+             && Leader->SquareUnderCanBeSeenBy(p, true) && p->CanFollow())
+          {
+            ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
+            return false;
+          }
 
   truth TakeAll = true;
 
@@ -1100,24 +1189,24 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
 
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader
-	   && (TakeAll
-	       || (Leader->CanBeSeenBy(*i)
-		   && Leader->SquareUnderCanBeSeenBy(*i, true)))
-	   && (*i)->CanFollow()
-	   && (*i)->GetCommandFlags() & FOLLOW_LEADER)
-	{
-	  if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
-	    (*i)->GetAction()->Terminate(false);
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled() && p != Leader
+           && (TakeAll
+               || (Leader->CanBeSeenBy(p)
+                   && Leader->SquareUnderCanBeSeenBy(p, true)))
+           && p->CanFollow()
+           && p->GetCommandFlags() & FOLLOW_LEADER)
+        {
+          if(p->GetAction() && p->GetAction()->IsVoluntary())
+            p->GetAction()->Terminate(false);
 
-	  if(!(*i)->GetAction())
-	  {
-	    ADD_MESSAGE("%s follows you.", (*i)->CHAR_NAME(DEFINITE));
-	    CharacterArray.push_back(*i);
-	    (*i)->Remove();
-	  }
-	}
+          if(!p->GetAction())
+          {
+            ADD_MESSAGE("%s follows you.", p->CHAR_NAME(DEFINITE));
+            CharacterArray.push_back(p);
+            p->Remove();
+          }
+        }
 
   return true;
 }
@@ -1130,12 +1219,12 @@ void level::Draw(truth AnimationDraw) const
   cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
   culong LOSTick = game::GetLOSTick();
   blitdata BlitData = { DOUBLE_BUFFER,
-			{ 0, 0 },
-			{ 0, 0 },
-			{ TILE_SIZE, TILE_SIZE },
-			{ 0 },
-			TRANSPARENT_COLOR,
-			ALLOW_ANIMATE|ALLOW_ALPHA };
+                        { 0, 0 },
+                        { 0, 0 },
+                        { TILE_SIZE, TILE_SIZE },
+                        { 0 },
+                        TRANSPARENT_COLOR,
+                        ALLOW_ANIMATE|ALLOW_ALPHA };
 
   if(!game::GetSeeWholeMapCheatMode())
   {
@@ -1143,49 +1232,49 @@ void level::Draw(truth AnimationDraw) const
     {
       for(int x = XMin; x < XMax; ++x)
       {
-	BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
-	lsquare** SquarePtr = &Map[x][YMin];
+        BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
+        lsquare** SquarePtr = &Map[x][YMin];
 
-	for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
-	{
-	  const lsquare* Square = *SquarePtr;
-	  culong LastSeen = Square->LastSeen;
+        for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
+        {
+          const lsquare* Square = *SquarePtr;
+          culong LastSeen = Square->LastSeen;
 
-	  if(LastSeen == LOSTick)
-	    Square->Draw(BlitData);
-	  else if(Square->Flags & STRONG_BIT || LastSeen == LOSTick - 2)
-	    Square->DrawMemorized(BlitData);
-	}
+          if(LastSeen == LOSTick)
+            Square->Draw(BlitData);
+          else if(Square->Flags & STRONG_BIT || LastSeen == LOSTick - 2)
+            Square->DrawMemorized(BlitData);
+        }
       }
     }
     else
     {
       for(int x = XMin; x < XMax; ++x)
       {
-	BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
-	lsquare** SquarePtr = &Map[x][YMin];
+        BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
+        lsquare** SquarePtr = &Map[x][YMin];
 
-	for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
-	{
-	  const lsquare* Square = *SquarePtr;
+        for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
+        {
+          const lsquare* Square = *SquarePtr;
 
-	  if(Square->LastSeen == LOSTick)
-	    Square->Draw(BlitData);
-	  else if(Square->Flags & STRONG_BIT)
-	    Square->DrawMemorized(BlitData);
-	  else
-	  {
-	    ccharacter* C = Square->Character;
+          if(Square->LastSeen == LOSTick)
+            Square->Draw(BlitData);
+          else if(Square->Flags & STRONG_BIT)
+            Square->DrawMemorized(BlitData);
+          else
+          {
+            ccharacter* C = Square->Character;
 
-	    if(C)
-	    {
-	      if(C->CanBeSeenByPlayer())
-		Square->DrawMemorizedCharacter(BlitData);
-	      else
-		Square->DrawMemorized(BlitData);
-	    }
-	  }
-	}
+            if(C)
+            {
+              if(C->CanBeSeenByPlayer())
+                Square->DrawMemorizedCharacter(BlitData);
+              else
+                Square->DrawMemorized(BlitData);
+            }
+          }
+        }
       }
     }
   }
@@ -1197,7 +1286,7 @@ void level::Draw(truth AnimationDraw) const
       lsquare** SquarePtr = &Map[x][YMin];
 
       for(int y = YMin; y < YMax; ++y, ++SquarePtr, BlitData.Dest.Y += TILE_SIZE)
-	(*SquarePtr)->Draw(BlitData);
+        (*SquarePtr)->Draw(BlitData);
     }
   }
 }
@@ -1210,8 +1299,8 @@ v2 level::GetEntryPos(ccharacter* Char, int I) const
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
       {
-	if(GetLSquare(x,y)->GetOLTerrain() && GetLSquare(x,y)->GetOLTerrain()->IsFountainWithWater())
-	  Fountains.push_back(v2(x,y));
+        if(GetLSquare(x, y)->GetOLTerrain() && GetLSquare(x, y)->GetOLTerrain()->IsFountainWithWater())
+          Fountains.push_back(v2(x, y));
       }
 
     if(Fountains.empty())
@@ -1223,7 +1312,8 @@ v2 level::GetEntryPos(ccharacter* Char, int I) const
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
 
-void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>& Inside, std::vector<v2>& Border, const roomscript* RoomScript, room* RoomClass, v2 Pos, v2 Size)
+void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>& Inside, std::vector<v2>& Border,
+                                    const roomscript* RoomScript, room* RoomClass, v2 Pos, v2 Size)
 {
   const contentscript<glterrain>* GTerrain;
   const contentscript<olterrain>* OTerrain;
@@ -1247,8 +1337,18 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
   int Shape = *RoomScript->GetShape();
   int Flags = (GTerrain->IsInside() ? *GTerrain->IsInside() : *RoomScript->IsInside()) ? INSIDE : 0;
 
-  if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
+  if((Shape == ROUND_CORNERS || Shape == MAZE_ROOM) && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
     Shape = RECTANGLE;
+
+  if((Shape == MAZE_ROOM) && (!(Size.X % 2) || !(Size.Y % 2))) /* Alas, no even numbered maze rooms allowed. */
+    Shape = RECTANGLE;
+
+  maze MazeRoom(Size.X, Size.Y);
+
+  if(Shape == MAZE_ROOM)
+  {
+    MazeRoom.CreateMaze();
+  }
 
   for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)
   {
@@ -1256,19 +1356,19 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     {
       if(x == Pos.X)
       {
-	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room, Flags);
-	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room, Flags);
-	Border.push_back(v2(x + 1, Pos.Y + 1));
-	Border.push_back(v2(x + 1, Pos.Y + Size.Y - 2));
-	continue;
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room, Flags);
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room, Flags);
+        Border.push_back(v2(x + 1, Pos.Y + 1));
+        Border.push_back(v2(x + 1, Pos.Y + Size.Y - 2));
+        continue;
       }
       else if(x == Pos.X + Size.X - 1)
       {
-	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room, Flags);
-	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room, Flags);
-	Border.push_back(v2(x - 1, Pos.Y + 1));
-	Border.push_back(v2(x - 1, Pos.Y + Size.Y - 2));
-	continue;
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room, Flags);
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room, Flags);
+        Border.push_back(v2(x - 1, Pos.Y + 1));
+        Border.push_back(v2(x - 1, Pos.Y + Size.Y - 2));
+        continue;
       }
     }
 
@@ -1282,10 +1382,10 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
       OKForDoor.push_back(v2(x, Pos.Y + Size.Y - 1));
 
       if((!AllowLanterns || !GenerateLanterns(x, Pos.Y, DOWN)) && AllowWindows)
-	GenerateWindows(x, Pos.Y);
+        GenerateWindows(x, Pos.Y);
 
       if((!AllowLanterns || !GenerateLanterns(x, Pos.Y + Size.Y - 1, UP)) && AllowWindows)
-	GenerateWindows(x, Pos.Y + Size.Y - 1);
+        GenerateWindows(x, Pos.Y + Size.Y - 1);
     }
 
     Border.push_back(v2(x, Pos.Y));
@@ -1299,20 +1399,47 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room, Flags);
     CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room, Flags);
 
-    if(Shape == RECTANGLE || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
+    if(Shape == RECTANGLE
+       || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
     {
       OKForDoor.push_back(v2(Pos.X, y));
       OKForDoor.push_back(v2(Pos.X + Size.X - 1, y));
 
       if((!AllowLanterns || !GenerateLanterns(Pos.X, y, RIGHT)) && AllowWindows)
-	GenerateWindows(Pos.X, y);
+        GenerateWindows(Pos.X, y);
 
       if((!AllowLanterns || !GenerateLanterns(Pos.X + Size.X - 1, y, LEFT)) && AllowWindows)
-	GenerateWindows(Pos.X + Size.X - 1, y);
+        GenerateWindows(Pos.X + Size.X - 1, y);
     }
 
     Border.push_back(v2(Pos.X, y));
     Border.push_back(v2(Pos.X + Size.X - 1, y));
+  }
+  // Maze rooms only: put in the doors, in the corners. 
+  if(Shape == MAZE_ROOM)
+  {
+    int MazeDoors = RAND() % 4;
+    switch(MazeDoors)
+    {
+     case 0:
+      OKForDoor.push_back(v2(Pos.X, Pos.Y + 1));
+      OKForDoor.push_back(v2(Pos.X + Size.X - 1, Pos.Y + Size.Y - 2));
+      break;
+     case 1:
+      OKForDoor.push_back(v2(Pos.X + 1, Pos.Y));
+      OKForDoor.push_back(v2(Pos.X + Size.X - 2, Pos.Y + Size.Y - 1));
+      break;
+     case 2:
+      OKForDoor.push_back(v2(Pos.X + 1, Pos.Y + Size.Y - 1));
+      OKForDoor.push_back(v2(Pos.X + Size.X - 2, Pos.Y));
+      break;
+     case 3:
+      OKForDoor.push_back(v2(Pos.X, Pos.Y + Size.Y - 2));
+      OKForDoor.push_back(v2(Pos.X + Size.X - 1, Pos.Y + 1));
+      break;
+     default:
+      break;
+    }
   }
 
   GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
@@ -1325,10 +1452,39 @@ void level::GenerateRectangularRoom(std::vector<v2>& OKForDoor, std::vector<v2>&
     {
       /* if not in the corner */
 
-      if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
+      if(!(Shape == MAZE_ROOM) && !(Shape == ROUND_CORNERS
+           && (x == Pos.X + 1 || x == Pos.X + Size.X - 2)
+           && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
       {
-	CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
-	Inside.push_back(v2(x,y));
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
+        Inside.push_back(v2(x, y));
+      }
+    }
+  // Maze rooms only: put in the internal walls.
+  for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y)
+    for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x, ++Counter)
+    {
+      // If there is a wall here, then put a wall here. Don't the square "inside" (forbids oterrains like fountains from generating in the wall(?)).
+      if((Shape == MAZE_ROOM) && !MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.X - 2) + (x - Pos.X - 1)])
+      {
+        if(*RoomScript->UseFillSquareWalls())
+        {
+          GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
+          OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
+        }
+        else
+        {
+          GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
+          OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
+        }
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
+      }
+      else if((Shape == MAZE_ROOM) && MazeRoom.MazeKernel[(y - Pos.Y - 1) * (Size.X - 2) + (x - Pos.X - 1)]) // Put in a floor:
+      {
+        GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
+        OTerrain = RoomScript->GetFloorSquare()->GetOTerrain();
+        CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
+        Inside.push_back(v2(x, y));
       }
     }
 }
@@ -1353,21 +1509,21 @@ void level::ParticleBeam(beamdata& Beam)
       CurrentPos += game::GetMoveVector(Beam.Direction);
 
       if(!IsValidPos(CurrentPos))
-	break;
+        break;
 
       lsquare* CurrentSquare = GetLSquare(CurrentPos);
 
       if(!CurrentSquare->IsFlyable())
       {
-	(CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
-	break;
+        (CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
+        break;
       }
       else
       {
-	CurrentSquare->DrawParticles(Beam.BeamColor);
+        CurrentSquare->DrawParticles(Beam.BeamColor);
 
-	if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
-	  break;
+        if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
+          break;
       }
     }
   }
@@ -1400,14 +1556,14 @@ void level::LightningBeam(beamdata& Beam)
 
   switch(Beam.Direction)
   {
-   case 0: StartPos = v2(15, 15); break;
-   case 1: StartPos = v2(RAND() & 15, 15); break;
-   case 2: StartPos = v2(0, 15); break;
-   case 3: StartPos = v2(15, RAND() & 15); break;
-   case 4: StartPos = v2(0, RAND() & 15); break;
-   case 5: StartPos = v2(15, 0); break;
-   case 6: StartPos = v2(RAND() & 15, 0); break;
-   case 7: StartPos = v2(0, 0); break;
+   case NORTHWEST: StartPos = v2(15, 15); break;
+   case NORTH: StartPos = v2(RAND() & 15, 15); break;
+   case NORTHEAST: StartPos = v2(0, 15); break;
+   case WEST: StartPos = v2(15, RAND() & 15); break;
+   case EAST: StartPos = v2(0, RAND() & 15); break;
+   case SOUTHWEST: StartPos = v2(15, 0); break;
+   case SOUTH: StartPos = v2(RAND() & 15, 0); break;
+   case SOUTHEAST: StartPos = v2(0, 0); break;
   }
 
   for(int Length = 0; Length < Beam.Range; ++Length)
@@ -1422,96 +1578,96 @@ void level::LightningBeam(beamdata& Beam)
     if(!CurrentSquare->IsFlyable())
     {
       if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
-	break;
+        break;
 
       truth W1, W2;
 
       switch(Beam.Direction)
       {
-       case 0:
-	W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
-	W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
+       case NORTHWEST:
+        W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
+        W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
 
-	if(W1 == W2)
-	  Beam.Direction = 7;
-	else if(W1)
-	{
-	  ++CurrentPos.Y;
-	  Beam.Direction = 2;
-	}
-	else
-	{
-	  ++CurrentPos.X;
-	  Beam.Direction = 5;
-	}
+        if(W1 == W2)
+          Beam.Direction = SOUTHEAST;
+        else if(W1)
+        {
+          ++CurrentPos.Y;
+          Beam.Direction = NORTHEAST;
+        }
+        else
+        {
+          ++CurrentPos.X;
+          Beam.Direction = SOUTHWEST;
+        }
 
-	break;
-       case 1: Beam.Direction = 6; StartPos.Y = 0; break;
-       case 2:
-	W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
-	W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
+        break;
+       case NORTH: Beam.Direction = SOUTH; StartPos.Y = 0; break;
+       case NORTHEAST:
+        W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
+        W2 = GetLSquare(CurrentPos + v2(0, 1))->IsFlyable();
 
-	if(W1 == W2)
-	  Beam.Direction = 5;
-	else if(W1)
-	{
-	  ++CurrentPos.Y;
-	  Beam.Direction = 0;
-	}
-	else
-	{
-	  --CurrentPos.X;
-	  Beam.Direction = 7;
-	}
+        if(W1 == W2)
+          Beam.Direction = SOUTHWEST;
+        else if(W1)
+        {
+          ++CurrentPos.Y;
+          Beam.Direction = NORTHWEST;
+        }
+        else
+        {
+          --CurrentPos.X;
+          Beam.Direction = SOUTHEAST;
+        }
 
-	break;
-       case 3: Beam.Direction = 4; StartPos.X = 0; break;
-       case 4: Beam.Direction = 3; StartPos.X = 15; break;
-       case 5:
-	W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
-	W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
+        break;
+       case WEST: Beam.Direction = EAST; StartPos.X = 0; break;
+       case EAST: Beam.Direction = WEST; StartPos.X = 15; break;
+       case SOUTHWEST:
+        W1 = GetLSquare(CurrentPos + v2(1, 0))->IsFlyable();
+        W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
 
-	if(W1 == W2)
-	  Beam.Direction = 2;
-	else if(W1)
-	{
-	  --CurrentPos.Y;
-	  Beam.Direction = 7;
-	}
-	else
-	{
-	  ++CurrentPos.X;
-	  Beam.Direction = 0;
-	}
+        if(W1 == W2)
+          Beam.Direction = NORTHEAST;
+        else if(W1)
+        {
+          --CurrentPos.Y;
+          Beam.Direction = SOUTHEAST;
+        }
+        else
+        {
+          ++CurrentPos.X;
+          Beam.Direction = NORTHWEST;
+        }
 
-	break;
-       case 6: Beam.Direction = 1; StartPos.Y = 15; break;
-       case 7:
-	W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
-	W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
+        break;
+       case SOUTH: Beam.Direction = NORTH; StartPos.Y = 15; break;
+       case SOUTHEAST:
+        W1 = GetLSquare(CurrentPos + v2(-1, 0))->IsFlyable();
+        W2 = GetLSquare(CurrentPos + v2(0, -1))->IsFlyable();
 
-	if(W1 == W2)
-	  Beam.Direction = 0;
-	else if(W1)
-	{
-	  --CurrentPos.Y;
-	  Beam.Direction = 5;
-	}
-	else
-	{
-	  --CurrentPos.X;
-	  Beam.Direction = 2;
-	}
+        if(W1 == W2)
+          Beam.Direction = NORTHWEST;
+        else if(W1)
+        {
+          --CurrentPos.Y;
+          Beam.Direction = SOUTHWEST;
+        }
+        else
+        {
+          --CurrentPos.X;
+          Beam.Direction = NORTHEAST;
+        }
 
-	break;
+        break;
       }
 
       switch(Beam.Direction)
       {
-       case 0: StartPos = v2(15, 15); break;
-       case 2: StartPos = v2(0, 15); break;
-       case 5: StartPos = v2(15, 0); break;
-       case 7: StartPos = v2(0, 0); break;
+       case NORTHWEST: StartPos = v2(15, 15); break;
+       case NORTHEAST: StartPos = v2(0, 15); break;
+       case SOUTHWEST: StartPos = v2(15, 0); break;
+       case SOUTHEAST: StartPos = v2(0, 0); break;
       }
     }
     else
@@ -1519,7 +1675,7 @@ void level::LightningBeam(beamdata& Beam)
       StartPos = CurrentSquare->DrawLightning(StartPos, Beam.BeamColor, Beam.Direction);
 
       if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
-	break;
+        break;
     }
   }
 }
@@ -1530,47 +1686,47 @@ void level::ShieldBeam(beamdata& Beam)
 
   switch(Beam.Direction)
   {
-   case 0:
+   case NORTHWEST:
     Pos[0] = v2(-1, 0);
     Pos[1] = v2(-1, -1);
     Pos[2] = v2(0, -1);
     break;
-   case 1:
+   case NORTH:
     Pos[0] = v2(-1, -1);
     Pos[1] = v2(0, -1);
     Pos[2] = v2(1, -1);
     break;
-   case 2:
+   case NORTHEAST:
     Pos[0] = v2(0, -1);
     Pos[1] = v2(1, -1);
     Pos[2] = v2(1, 0);
     break;
-   case 3:
+   case WEST:
     Pos[0] = v2(-1, 1);
     Pos[1] = v2(-1, 0);
     Pos[2] = v2(-1, -1);
     break;
-   case 4:
+   case EAST:
     Pos[0] = v2(1, -1);
     Pos[1] = v2(1, 0);
     Pos[2] = v2(1, 1);
     break;
-   case 5:
+   case SOUTHWEST:
     Pos[0] = v2(0, 1);
     Pos[1] = v2(-1, 1);
     Pos[2] = v2(-1, 0);
     break;
-   case 6:
+   case SOUTH:
     Pos[0] = v2(1, 1);
     Pos[1] = v2(0, 1);
     Pos[2] = v2(-1, 1);
     break;
-   case 7:
+   case SOUTHEAST:
     Pos[0] = v2(1, 0);
     Pos[1] = v2(1, 1);
     Pos[2] = v2(0, 1);
     break;
-   case 8:
+   case YOURSELF:
     GetLSquare(Beam.StartPos)->DrawParticles(Beam.BeamColor);
     (GetLSquare(Beam.StartPos)->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
     return;
@@ -1617,7 +1773,8 @@ v2 level::FreeSquareSeeker(ccharacter* Char, v2 StartPos, v2 Prohibited, int Max
   {
     v2 Pos = StartPos + game::GetMoveVector(c);
 
-    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && Pos != Prohibited && (AllowStartPos || !Char->PlaceIsIllegal(Pos, Prohibited)))
+    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos))
+       && Pos != Prohibited && (AllowStartPos || !Char->PlaceIsIllegal(Pos, Prohibited)))
       return Pos;
   }
 
@@ -1628,13 +1785,13 @@ v2 level::FreeSquareSeeker(ccharacter* Char, v2 StartPos, v2 Prohibited, int Max
 
       if(IsValidPos(Pos))
       {
-	if(Char->CanMoveOn(GetLSquare(Pos)) && Pos != Prohibited)
-	{
-	  Pos = FreeSquareSeeker(Char, Pos, Prohibited, MaxDistance - 1, AllowStartPos);
+        if(Char->CanMoveOn(GetLSquare(Pos)) && Pos != Prohibited)
+        {
+          Pos = FreeSquareSeeker(Char, Pos, Prohibited, MaxDistance - 1, AllowStartPos);
 
-	  if(Pos != ERROR_V2)
-	    return Pos;
-	}
+          if(Pos != ERROR_V2)
+            return Pos;
+        }
       }
     }
 
@@ -1654,7 +1811,8 @@ v2 level::GetNearestFreeSquare(ccharacter* Char, v2 StartPos, truth AllowStartPo
   {
     v2 Pos = StartPos + game::GetMoveVector(c);
 
-    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && (AllowStartPos || !Char->PlaceIsIllegal(Pos, StartPos)))
+    if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos))
+       && (AllowStartPos || !Char->PlaceIsIllegal(Pos, StartPos)))
       return Pos;
   }
 
@@ -1665,10 +1823,10 @@ v2 level::GetNearestFreeSquare(ccharacter* Char, v2 StartPos, truth AllowStartPo
 
       if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)))
       {
-	Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist, AllowStartPos);
+        Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist, AllowStartPos);
 
-	if(Pos != ERROR_V2)
-	  return Pos;
+        if(Pos != ERROR_V2)
+          return Pos;
       }
     }
 
@@ -1694,7 +1852,8 @@ v2 level::GetFreeAdjacentSquare(ccharacter* Char, v2 StartPos, truth AllowCharac
 
 void (level::*level::GetBeamEffectVisualizer(int I))(const fearray<lsquare*>&, col16) const
 {
-  static void (level::*Visualizer[BEAM_STYLES])(const fearray<lsquare*>&, col16) const = { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
+  static void (level::*Visualizer[BEAM_STYLES])(const fearray<lsquare*>&, col16) const =
+  { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
   return Visualizer[I];
 }
 
@@ -1738,9 +1897,9 @@ truth level::PreProcessForBone()
   int DungeonIndex = GetDungeon()->GetIndex();
 
   return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 5)
-			 &&  (game::GetQuestMonstersFound()
-			      || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
-				  &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
+    && (game::GetQuestMonstersFound() || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
+                                          && (DungeonIndex != ELPURI_CAVE
+                                              || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
 }
 
 truth level::PostProcessForBone()
@@ -1778,13 +1937,18 @@ void level::GenerateDungeon(int Index)
 
   if(*LevelScript->GenerateMonsters())
   {
-    MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
-    IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
+    MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase()
+                              + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
+    IdealPopulation = *LevelScript->GetMonsterAmountBase()
+                    + *LevelScript->GetMonsterAmountDelta() * Index;
   }
 
-  Difficulty = 0.001 * (*LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index);
-  EnchantmentMinusChance = *LevelScript->GetEnchantmentMinusChanceBase() + *LevelScript->GetEnchantmentMinusChanceDelta() * Index;
-  EnchantmentPlusChance = *LevelScript->GetEnchantmentPlusChanceBase() + *LevelScript->GetEnchantmentPlusChanceDelta() * Index;
+  Difficulty = 0.001 * (*LevelScript->GetDifficultyBase()
+                      + *LevelScript->GetDifficultyDelta() * Index);
+  EnchantmentMinusChance = *LevelScript->GetEnchantmentMinusChanceBase()
+                         + *LevelScript->GetEnchantmentMinusChanceDelta() * Index;
+  EnchantmentPlusChance = *LevelScript->GetEnchantmentPlusChanceBase()
+                        + *LevelScript->GetEnchantmentPlusChanceDelta() * Index;
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   long Counter = 0;
@@ -1809,11 +1973,11 @@ void level::GenerateDungeon(int Index)
       int i;
 
       for(i = 0; i < 1000; ++i)
-	if(MakeRoom(&*Iterator))
-	  break;
+        if(MakeRoom(&*Iterator))
+          break;
 
       if(i == 1000)
-	ABORT("Failed to place special room #%d!", c);
+        ABORT("Failed to place special room #%d!", c);
 
       ++Iterator;
     }
@@ -1822,8 +1986,8 @@ void level::GenerateDungeon(int Index)
       const roomscript* RoomScript = LevelScript->GetRoomDefault();
 
       for(int i = 0; i < 50; ++i)
-	if(MakeRoom(RoomScript))
-	  break;
+        if(MakeRoom(RoomScript))
+          break;
     }
   }
 
@@ -1836,23 +2000,17 @@ void level::GenerateDungeon(int Index)
     const levelscript* LevelBase = static_cast<const levelscript*>(LevelScript->GetBase());
 
     if(LevelBase)
-    {
-      const std::list<squarescript>& Square = LevelBase->GetSquare();
-
-      for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+      for(const squarescript& Script : LevelBase->GetSquare())
       {
-	game::BusyAnimation();
-	ApplyLSquareScript(&*i);
+        game::BusyAnimation();
+        ApplyLSquareScript(&Script);
       }
-    }
   }
 
-  const std::list<squarescript>& Square = LevelScript->GetSquare();
-
-  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+  for(const squarescript& Script : LevelScript->GetSquare())
   {
     game::BusyAnimation();
-    ApplyLSquareScript(&*i);
+    ApplyLSquareScript(&Script);
   }
 
   for(c = 0; c < AttachQueue.size(); ++c)
@@ -1871,7 +2029,7 @@ void level::GenerateDungeon(int Index)
 
 void level::GenerateJungle()
 {
-  int x,y;
+  int x, y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -1892,22 +2050,22 @@ void level::GenerateJungle()
       switch(RAND_N(5))
       {
        case 0:
-	StartPos = v2(RAND_N(XSize), 0);
-	break;
+        StartPos = v2(RAND_N(XSize), 0);
+        break;
        case 1:
-	StartPos = v2(RAND_N(XSize), YSize - 1);
-	break;
+        StartPos = v2(RAND_N(XSize), YSize - 1);
+        break;
        case 2:
-	StartPos = v2(0, RAND_N(YSize));
-	break;
+        StartPos = v2(0, RAND_N(YSize));
+        break;
        case 3:
-	StartPos = v2(XSize - 1, RAND_N(YSize));
-	break;
+        StartPos = v2(XSize - 1, RAND_N(YSize));
+        break;
        case 4:
-	StartPos = v2(RAND_N(XSize), RAND_N(YSize));
+        StartPos = v2(RAND_N(XSize), RAND_N(YSize));
       }
 
-      CreateTunnelNetwork(1,4,20, 120, StartPos);
+      CreateTunnelNetwork(1, 4, 20, 120, StartPos);
     }
 
     for(x = 0; x < XSize; ++x)
@@ -1916,10 +2074,10 @@ void level::GenerateJungle()
 
       for(y = 0; y < YSize; ++y)
       {
-	if(FlagMap[x][y] != PREFERRED)
-	  Map[x][y]->ChangeOLTerrain(wall::Spawn(BRICK_PROPAGANDA));
-	else if(RAND_2)
-	  Map[x][y]->ChangeOLTerrain(decoration::Spawn(PALM));
+        if(FlagMap[x][y] != PREFERRED)
+          Map[x][y]->ChangeOLTerrain(wall::Spawn(BRICK_PROPAGANDA));
+        else if(RAND_2)
+          Map[x][y]->ChangeOLTerrain(decoration::Spawn(PALM));
       }
     }
   }
@@ -1941,15 +2099,15 @@ void level::CreateTunnelNetwork(int MinLength, int MaxLength, int MinNodes, int 
     {
       if(IsValidPos(Direction + Pos))
       {
-	Pos += Direction;
-	FlagMap[Pos.X][Pos.Y] = PREFERRED;
+        Pos += Direction;
+        FlagMap[Pos.X][Pos.Y] = PREFERRED;
       }
       else
       {
-	if(c1 >= MinNodes)
-	  return;
+        if(c1 >= MinNodes)
+          return;
 
-	break;
+        break;
       }
     }
   }
@@ -2006,24 +2164,24 @@ void level::GenerateLeafyForest()
       switch(RAND_4)
       {
        case 0:
-	if(RAND_8)
-	  OLTerrain = decoration::Spawn(OAK);
-	else
-	  OLTerrain = decoration::Spawn(TEAK);
-	break;
+        if(RAND_8)
+          OLTerrain = decoration::Spawn(OAK);
+        else
+          OLTerrain = decoration::Spawn(TEAK);
+        break;
        case 1:
-	OLTerrain = decoration::Spawn(BIRCH);
-	break;
+        OLTerrain = decoration::Spawn(BIRCH);
+        break;
        case 2:
-	OLTerrain = 0;
-	if(!RAND_4)
-	  OLTerrain = boulder::Spawn(1 + RAND_2);
+        OLTerrain = 0;
+        if(!RAND_4)
+          OLTerrain = boulder::Spawn(1 + RAND_2);
 
-	if(!RAND_4)
-	  OLTerrain = boulder::Spawn(3);
-	break;
+        if(!RAND_4)
+          OLTerrain = boulder::Spawn(3);
+        break;
        default:
-	OLTerrain = 0;
+        OLTerrain = 0;
       }
 
       Map[x][y]->SetLTerrain(solidterrain::Spawn(GRASS_TERRAIN), OLTerrain);
@@ -2041,19 +2199,19 @@ void level::GenerateEvergreenForest()
       switch(RAND_4)
       {
        case 0:
-	if(RAND_2)
-	  OLTerrain = decoration::Spawn(PINE);
-	break;
+        if(RAND_2)
+          OLTerrain = decoration::Spawn(PINE);
+        break;
        case 1:
-	OLTerrain = decoration::Spawn(FIR);
-	break;
+        OLTerrain = decoration::Spawn(FIR);
+        break;
        case 2:
-	if(!RAND_4)
-	  OLTerrain = boulder::Spawn(1 + RAND_2);
+        if(!RAND_4)
+          OLTerrain = boulder::Spawn(1 + RAND_2);
 
-	if(!RAND_4)
-	  OLTerrain = boulder::Spawn(3);
-	break;
+        if(!RAND_4)
+          OLTerrain = boulder::Spawn(3);
+        break;
       }
 
       Map[x][y]->SetLTerrain(solidterrain::Spawn(GRASS_TERRAIN), OLTerrain);
@@ -2084,7 +2242,7 @@ void level::GenerateTundra()
 
 void level::GenerateGlacier()
 {
-  int x,y;
+  int x, y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -2100,8 +2258,8 @@ void level::GenerateGlacier()
 
   for(;;)
   {
-    CreateTunnelNetwork(1,4,20, 120, v2(0,YSize / 2));
-    CreateTunnelNetwork(1,4,20, 120, v2(XSize - 1,YSize / 2));
+    CreateTunnelNetwork(1, 4, 20, 120, v2(0, YSize / 2));
+    CreateTunnelNetwork(1, 4, 20, 120, v2(XSize - 1, YSize / 2));
 
     for(int c = 0; c < 20; ++c)
     {
@@ -2110,28 +2268,28 @@ void level::GenerateGlacier()
       switch(RAND_N(5))
       {
        case 0:
-	StartPos = v2(RAND_N(XSize), 0);
-	break;
+        StartPos = v2(RAND_N(XSize), 0);
+        break;
        case 1:
-	StartPos = v2(RAND_N(XSize), YSize - 1);
-	break;
+        StartPos = v2(RAND_N(XSize), YSize - 1);
+        break;
        case 2:
-	StartPos = v2(0, RAND_N(YSize));
-	break;
+        StartPos = v2(0, RAND_N(YSize));
+        break;
        case 3:
-	StartPos = v2(XSize - 1, RAND_N(YSize));
-	break;
+        StartPos = v2(XSize - 1, RAND_N(YSize));
+        break;
        case 4:
-	StartPos = v2(RAND_N(XSize), RAND_N(YSize));
+        StartPos = v2(RAND_N(XSize), RAND_N(YSize));
       }
 
-      CreateTunnelNetwork(1,4,20, 120, StartPos);
+      CreateTunnelNetwork(1, 4, 20, 120, StartPos);
     }
 
     for(x = 0; x < XSize; ++x)
       for(y = 0; y < YSize; ++y)
-	if(FlagMap[x][y] != PREFERRED)
-	  FlagMap[x][y] |= RAND_2 ? ICE_TERRAIN : STONE_TERRAIN;
+        if(FlagMap[x][y] != PREFERRED)
+          FlagMap[x][y] |= RAND_2 ? ICE_TERRAIN : STONE_TERRAIN;
 
     for(x = 0; x < XSize; ++x)
     {
@@ -2139,39 +2297,39 @@ void level::GenerateGlacier()
 
       for(y = 0; y < YSize; ++y)
       {
-	if(!(FlagMap[x][y] & PREFERRED))
-	{
-	  int SquaresAround = 0;
-	  int IceAround = 0;
+        if(!(FlagMap[x][y] & PREFERRED))
+        {
+          int SquaresAround = 0;
+          int IceAround = 0;
 
-	  for(int d = 0; d < 8; ++d)
-	  {
-	    v2 Pos = v2(x,y) + game::GetMoveVector(d);
-	    if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-	    {
-	      ++SquaresAround;
-	      if(FlagMap[Pos.X][Pos.Y] & ICE_TERRAIN)
-		++IceAround;
-	    }
-	  }
+          for(int d = 0; d < 8; ++d)
+          {
+            v2 Pos = v2(x, y) + game::GetMoveVector(d);
+            if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
+            {
+              ++SquaresAround;
+              if(FlagMap[Pos.X][Pos.Y] & ICE_TERRAIN)
+                ++IceAround;
+            }
+          }
 
-	  if(IceAround > SquaresAround / 2)
-	    FlagMap[x][y] = ICE_TERRAIN;
-	  else
-	    FlagMap[x][y] = STONE_TERRAIN;
-	}
+          if(IceAround > SquaresAround / 2)
+            FlagMap[x][y] = ICE_TERRAIN;
+          else
+            FlagMap[x][y] = STONE_TERRAIN;
+        }
       }
     }
 
     for(x = 0; x < XSize; ++x)
       for(y = 0; y < YSize; ++y)
-	if(!(FlagMap[x][y] & PREFERRED))
-	{
-	  if(FlagMap[x][y] & ICE_TERRAIN)
-	    GetLSquare(x,y)->ChangeOLTerrain(wall::Spawn(ICE_WALL));
-	  else
-	    GetLSquare(x,y)->ChangeOLTerrain(wall::Spawn(STONE_WALL));
-	}
+        if(!(FlagMap[x][y] & PREFERRED))
+        {
+          if(FlagMap[x][y] & ICE_TERRAIN)
+            GetLSquare(x, y)->ChangeOLTerrain(wall::Spawn(ICE_WALL));
+          else
+            GetLSquare(x, y)->ChangeOLTerrain(wall::Spawn(STONE_WALL));
+        }
 
     break; // Doesn't yet check path in any way
   }
@@ -2201,34 +2359,36 @@ void node::CalculateNextNodes()
     {
       node* Node = NodeMap[NodePos.X][NodePos.Y];
 
-      if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanTheoreticallyMoveOn(Node->Square)) || NodePos == To))
+      if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y])
+                              || (SpecialMover && SpecialMover->CanTheoreticallyMoveOn(Node->Square))
+                              || NodePos == To))
       {
-	Node->Processed = true;
-	Node->Distance = Distance + 1;
-	Node->Diagonals = Diagonals;
+        Node->Processed = true;
+        Node->Distance = Distance + 1;
+        Node->Diagonals = Diagonals;
 
-	if(d >= 4)
-	  ++Node->Diagonals;
+        if(d >= 4)
+          ++Node->Diagonals;
 
-	Node->Last = this;
+        Node->Last = this;
 
-	/* We use the heuristic max(abs(distance.x), abs(distance.y)) here,
-	   which is exact in the current geometry if the path is open */
+        /* We use the heuristic max(abs(distance.x), abs(distance.y)) here,
+           which is exact in the current geometry if the path is open */
 
-	long Remaining = To.X - NodePos.X;
+        long Remaining = To.X - NodePos.X;
 
-	if(Remaining < NodePos.X - To.X)
-	  Remaining = NodePos.X - To.X;
+        if(Remaining < NodePos.X - To.X)
+          Remaining = NodePos.X - To.X;
 
-	if(Remaining < NodePos.Y - To.Y)
-	  Remaining = NodePos.Y - To.Y;
+        if(Remaining < NodePos.Y - To.Y)
+          Remaining = NodePos.Y - To.Y;
 
-	if(Remaining < To.Y - NodePos.Y)
-	  Remaining = To.Y - NodePos.Y;
+        if(Remaining < To.Y - NodePos.Y)
+          Remaining = To.Y - NodePos.Y;
 
-	Node->Remaining = Remaining;
-	Node->TotalDistanceEstimate = Node->Distance + Node->Remaining;
-	NodeQueue->push(nodepointerstorer(Node));
+        Node->Remaining = Remaining;
+        Node->TotalDistanceEstimate = Node->Distance + Node->Remaining;
+        NodeQueue->push(nodepointerstorer(Node));
       }
     }
   }
@@ -2293,8 +2453,8 @@ void level::CollectEverything(itemvector& IVector, charactervector& CVector)
 
       if(C && !C->IsPlayer())
       {
-	C->Remove();
-	CVector.push_back(C);
+        C->Remove();
+        CVector.push_back(C);
       }
     }
 }
@@ -2307,7 +2467,7 @@ void level::CreateGlobalRain(liquid* Liquid, v2 Speed)
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
       if(!Map[x][y]->IsInside())
-	Map[x][y]->AddRain(Liquid, Speed, MONSTER_TEAM, false);
+        Map[x][y]->AddRain(Liquid, Speed, MONSTER_TEAM, false);
 }
 
 void level::CheckSunLight()
@@ -2417,9 +2577,9 @@ truth sunbeamcontroller::ReSunEmitation;
 
 void level::ForceEmitterNoxify(const emittervector& Emitter) const
 {
-  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+  for(const emitter& e : Emitter)
   {
-    ulong ID = i->ID;
+    ulong ID = e.ID;
     lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
 
     if(ID & SECONDARY_SUN_LIGHT)
@@ -2429,11 +2589,13 @@ void level::ForceEmitterNoxify(const emittervector& Emitter) const
   }
 }
 
-void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemittervector& SunEmitter, ulong IDFlags) const
+void level::ForceEmitterEmitation(const emittervector& Emitter,
+                                  const sunemittervector& SunEmitter,
+                                  ulong IDFlags) const
 {
-  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+  for(const emitter& e : Emitter)
   {
-    ulong ID = i->ID;
+    ulong ID = e.ID;
     lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
 
     if(ID & SECONDARY_SUN_LIGHT)
@@ -2450,22 +2612,22 @@ void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemitter
     stackcontroller::LevelYSize = YSize;
     sunbeamcontroller::ReSunEmitation = true;
 
-    for(sunemittervector::const_iterator i = SunEmitter.begin(); i != SunEmitter.end(); ++i)
+    for(sunemittervector::value_type SE : SunEmitter)
     {
-      ulong ID = *i & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS) | RE_SUN_EMITATED, SourceFlags;
+      ulong ID = (SE & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS)) | RE_SUN_EMITATED, SourceFlags;
       int X, Y;
 
       if(ID & ID_X_COORDINATE)
       {
-	X = (ID & EMITTER_IDENTIFIER_BITS) - (XSize << 3);
-	Y = ID & ID_BEGIN ? -1 : YSize;
-	SourceFlags = ID & ID_BEGIN ? SP_BOTTOM : SP_TOP;
+        X = (ID & EMITTER_IDENTIFIER_BITS) - (XSize << 3);
+        Y = ID & ID_BEGIN ? -1 : YSize;
+        SourceFlags = ID & ID_BEGIN ? SP_BOTTOM : SP_TOP;
       }
       else
       {
-	X = ID & ID_BEGIN ? -1 : XSize;
-	Y = (ID & EMITTER_IDENTIFIER_BITS) - (YSize << 3);
-	SourceFlags = ID & ID_BEGIN ? SP_RIGHT : SP_LEFT;
+        X = ID & ID_BEGIN ? -1 : XSize;
+        Y = (ID & EMITTER_IDENTIFIER_BITS) - (YSize << 3);
+        SourceFlags = ID & ID_BEGIN ? SP_RIGHT : SP_LEFT;
       }
 
       EmitSunBeam(v2(X, Y), ID, SourceFlags);
@@ -2498,9 +2660,9 @@ struct loscontroller : public tickcontroller, public stackcontroller
     }
 
     cint SquarePartIndex = (x & 1) + ((y & 1) << 1);
-    Square->SquarePartLastSeen = Square->SquarePartLastSeen
-				 & ~SquarePartTickMask[SquarePartIndex]
-				 | ShiftedTick[SquarePartIndex];
+    Square->SquarePartLastSeen = (Square->SquarePartLastSeen
+                                 & ~SquarePartTickMask[SquarePartIndex])
+                                 | ShiftedTick[SquarePartIndex];
     return false;
   }
   static ulong& GetTickReference(int X, int Y)
@@ -2526,15 +2688,15 @@ void level::UpdateLOS()
 
   for(int c = 0; c < PLAYER->GetSquaresUnder(); ++c)
     mapmath<loscontroller>::DoQuadriArea(PLAYER->GetPos(c).X, PLAYER->GetPos(c).Y,
-					 Radius * Radius, XSize, YSize);
+                                         Radius * Radius, XSize, YSize);
 
   loscontroller::ProcessStack();
 
   if(PLAYER->StateIsActivated(INFRA_VISION))
     for(int c = 0; c < game::GetTeams(); ++c)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	  (*i)->SendNewDrawRequest();
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled())
+          p->SendNewDrawRequest();
 }
 
 void level::EnableGlobalRain()
@@ -2692,8 +2854,8 @@ truth sunbeamcontroller::Handler(int x, int y)
   else
   {
     ulong Flags = ((1 << EMITTER_SQUARE_PART_SHIFT)
-		   | (1 << EMITTER_SHADOW_SHIFT))
-		      << SquarePartIndex;
+                   | (1 << EMITTER_SHADOW_SHIFT))
+                      << SquarePartIndex;
 
     Square->AddSunLightEmitter(ID | Flags);
   }
@@ -2711,8 +2873,8 @@ truth sunbeamcontroller::Handler(int x, int y)
 
       if(Neighbour && !(Neighbour->Flags & IN_SQUARE_STACK))
       {
-	Neighbour->Flags |= IN_SQUARE_STACK;
-	Stack[StackIndex++] = Neighbour;
+        Neighbour->Flags |= IN_SQUARE_STACK;
+        Stack[StackIndex++] = Neighbour;
       }
     }
   }
@@ -2738,7 +2900,7 @@ void sunbeamcontroller::ProcessStack()
     if(Square->Flags & CHECK_SUN_LIGHT_NEEDED)
     {
       if(Square->Flags & IS_TRANSPARENT)
-	Square->CalculateSunLightLuminance(EMITTER_SQUARE_PART_BITS);
+        Square->CalculateSunLightLuminance(EMITTER_SQUARE_PART_BITS);
 
       Square->SendSunLightSignals();
       Square->ZeroReSunEmitatedFlags();
@@ -2763,8 +2925,8 @@ int level::DetectMaterial(cmaterial* Material)
 
       if(Square->DetectMaterial(Material))
       {
-	Square->Reveal(Tick, true);
-	++Squares;
+        Square->Reveal(Tick, true);
+        ++Squares;
       }
     }
 
@@ -2781,7 +2943,7 @@ void level::BlurMemory()
       lsquare* Square = Map[x][y];
 
       if(Square->HasNoBorderPartners())
-	SquareStack[SquareStackSize++] = Square;
+        SquareStack[SquareStackSize++] = Square;
     }
 
   for(x = 0; x < XSize; ++x)
@@ -2789,15 +2951,15 @@ void level::BlurMemory()
     {
       lsquare* Square = Map[x][y];
       Square->Flags |= STRONG_NEW_DRAW_REQUEST
-		       | MEMORIZED_UPDATE_REQUEST
-		       | DESCRIPTION_CHANGE;
+                       | MEMORIZED_UPDATE_REQUEST
+                       | DESCRIPTION_CHANGE;
 
       if(Square->HasNoBorderPartners()
-	 && RAND() & 1
-	 && SquareStackSize)
-	Square->SwapMemorized(SquareStack[RAND() % SquareStackSize]);
+         && RAND() & 1
+         && SquareStackSize)
+        Square->SwapMemorized(SquareStack[RAND() % SquareStackSize]);
       else if(RAND() & 1)
-	Square->DestroyMemorized();
+        Square->DestroyMemorized();
     }
 }
 
@@ -2809,7 +2971,7 @@ void level::CalculateLuminances()
       lsquare* Square = Map[x][y];
       Square->CalculateLuminance();
       Square->Flags |= MEMORIZED_UPDATE_REQUEST
-		       | DESCRIPTION_CHANGE;
+                       | DESCRIPTION_CHANGE;
     }
 }
 
@@ -2824,9 +2986,9 @@ struct areacontroller : public stackcontroller
 
       if(!(Square->Flags & IN_SQUARE_STACK))
       {
-	Stack[StackIndex++] = Square;
-	Square->Flags |= IN_SQUARE_STACK;
-	return Square->IsFlyable();
+        Stack[StackIndex++] = Square;
+        Square->Flags |= IN_SQUARE_STACK;
+        return Square->IsFlyable();
       }
     }
 
@@ -2862,9 +3024,9 @@ olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
     {
-      OLTerrain = GetLSquare(x,y)->GetOLTerrain();
+      OLTerrain = GetLSquare(x, y)->GetOLTerrain();
       if(OLTerrain && OLTerrain != Except && OLTerrain->IsFountainWithWater())
-	Found.push_back(OLTerrain);
+        Found.push_back(OLTerrain);
     }
 
   if(Found.empty())
@@ -2882,11 +3044,11 @@ void level::Amnesia(int Percentile)
 
       if(Square->HasNoBorderPartners() && RAND_N(100) < Percentile)
       {
-	Square->Flags |= STRONG_NEW_DRAW_REQUEST
-			 | MEMORIZED_UPDATE_REQUEST
-			 | DESCRIPTION_CHANGE;
+        Square->Flags |= STRONG_NEW_DRAW_REQUEST
+                         | MEMORIZED_UPDATE_REQUEST
+                         | DESCRIPTION_CHANGE;
 
-	Square->DestroyMemorized();
+        Square->DestroyMemorized();
       }
     }
 }
@@ -2894,8 +3056,8 @@ void level::Amnesia(int Percentile)
 /* Returns how many of the monsters were seen */
 
 spawnresult level::SpawnMonsters(characterspawner Spawner, team* Team,
-				 v2 Pos, int Config, int Amount,
-				 truth IgnoreWalkability)
+                                 v2 Pos, int Config, int Amount,
+                                 truth IgnoreWalkability)
 {
   spawnresult SR = { 0, 0 };
 
@@ -2927,7 +3089,7 @@ void level::AddSpecialCursors()
       Map[x][y]->AddSpecialCursors();
 }
 
-void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist) 
+void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist)
 {
   for(int d = 0; d < 9; ++d)
   {
@@ -2935,13 +3097,13 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square, character* Terrorist
 
     if(Neighbour && Neighbour->IsFlyable())
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
-			
-		if(Neighbour)
+
+                if(Neighbour)
     {
       character* Victim = Neighbour->GetCharacter();
 
       if(Victim && Terrorist)
-				Terrorist->Hostility(Victim);
+                                Terrorist->Hostility(Victim);
     }
-  } 
+  }
 }

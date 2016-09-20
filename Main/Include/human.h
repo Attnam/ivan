@@ -137,6 +137,7 @@ CHARACTER(humanoid, character)
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual void SetFireToBodyPart();
   virtual int GetRandomApplyBodyPart() const;
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, citem*);
   virtual int GetSumOfAttributes() const;
@@ -177,7 +178,6 @@ CHARACTER(humanoid, character)
   virtual long GetBodyPartVolume(int) const;
   virtual bodypart* MakeBodyPart(int) const;
   virtual cfestring& GetDeathMessage() const;
-  virtual v2 GetDrawDisplacement(int) const { return ZERO_V2; }
   truth HasAUsableArm() const;
   truth HasAUsableLeg() const;
   truth HasTwoUsableLegs() const;
@@ -314,6 +314,18 @@ CHARACTER(ennerbeast, humanoid)
   virtual truth AttackIsBlockable(int) const { return false; }
 };
 
+CHARACTER(ennerchild, humanoid)
+{
+ public:
+  virtual truth Hit(character*, v2, int, int = 0);
+  virtual truth MustBeRemovedFromBone() const;
+  virtual truth ReceiveDamage(character*, int, int, int = ALL, int = 8, truth = false, truth = false, truth = false, truth = true);
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
+  virtual truth AttackIsBlockable(int) const { return false; }
+};
+
 CHARACTER(skeleton, humanoid)
 {
  public:
@@ -433,6 +445,65 @@ CHARACTER(zombie, humanoid)
   festring Description;
 };
 
+CHARACTER(spirit, humanoid)
+{
+ public:
+  spirit() : Active(true) { }
+  virtual truth BodyPartIsVital(int) const;
+//  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
+  void SetDescription(cfestring What) { Description = What; }
+  virtual festring GetSpiritDescription() const;
+  virtual void AddName(festring&, int) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
+  virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
+  virtual truth RaiseTheDead(character*);
+  virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
+  virtual truth SpecialEnemySightedReaction(character*);
+  void SetIsActive(truth What) { Active = What; }
+  virtual truth IsPolymorphable() const { return MaxHP < 100; }
+ protected:
+  virtual truth AllowExperience() const { return false; }
+  virtual cchar* FirstPersonUnarmedHitVerb() const;
+  virtual cchar* FirstPersonCriticalUnarmedHitVerb() const;
+  virtual cchar* ThirdPersonUnarmedHitVerb() const;
+  virtual cchar* ThirdPersonCriticalUnarmedHitVerb() const;
+  virtual truth AttackIsBlockable(int) const { return false; }
+  virtual truth AttackMayDamageArmor() const { return false; }
+  virtual void GetAICommand();
+  festring OwnerSoul;
+  truth Active;
+  festring Description;
+};
+
+CHARACTER(bonesghost, spirit)
+{
+ public:
+  virtual col16 GetHairColor() const { return HairColor; }
+  virtual col16 GetEyeColor() const { return EyeColor; }
+  virtual v2 GetHeadBitmapPos() const;
+  virtual v2 GetRightArmBitmapPos() const;
+  virtual v2 GetLeftArmBitmapPos() const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void PostConstruct();
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  col16 HairColor;
+  col16 EyeColor;
+};
+
+CHARACTER(xinrochghost, spirit)
+{
+ public:
+  virtual truth IsNameable() const { return false; }
+  virtual truth IsPolymorphable() const { return false; }
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+};
+
 CHARACTER(imp, humanoid)
 {
 };
@@ -497,7 +568,6 @@ CHARACTER(kamikazedwarf, humanoid)
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;
   virtual int GetLegMainColor() const;
-  virtual v2 GetDrawDisplacement(int) const;
   virtual int GetWSkillHits() const { return 10000; }
   virtual truth IsElite() const { return false; }
 };
@@ -588,6 +658,7 @@ CHARACTER(necromancer, humanoid)
  public:
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;
@@ -640,7 +711,6 @@ CHARACTER(tailor, humanoid)
   virtual void GetAICommand() { StandIdleAI(); }
 };
 
-
 CHARACTER(siren, humanoid)
 {
  public:
@@ -649,9 +719,8 @@ CHARACTER(siren, humanoid)
   virtual truth TryToSing();
 };
 
-
 CHARACTER(punisher, humanoid)
 {
-
 };
+
 #endif
