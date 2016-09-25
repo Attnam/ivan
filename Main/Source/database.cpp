@@ -504,6 +504,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
+  ADD_MEMBER(AllowedDungeons);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -614,6 +615,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(FlexibilityIsEssential);
   ADD_MEMBER(BreakMsg);
   ADD_MEMBER(IsSadistWeapon);
+  ADD_MEMBER(AllowedDungeons);
 }
 
 template <class type>

@@ -122,6 +122,7 @@ item
   IsKamikazeWeapon = false;
   FlexibilityIsEssential = false;
   IsSadistWeapon = false;
+  AllowedDungeons == ALL_DUNGEONS; /* example: AllowedDungeons = {2, UNDER_WATER_TUNNEL, ELPURI_CAVE; } */
 }
 
 materialcontainer

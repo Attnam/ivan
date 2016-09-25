@@ -12,6 +12,8 @@
 
 /* Compiled through dataset.cpp */
 
+#include "confdef.h"
+
 itemdatabase** protosystem::ItemConfigData;
 int protosystem::ItemConfigDataSize;
 itemdatabase** protosystem::ItemCategoryData[ITEM_CATEGORIES];
@@ -38,6 +40,19 @@ character* protosystem::BalancedCreateMonster()
 
         if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
         {
+          truth Allowed = false;
+          const fearray<int> &dlist = DataBase->AllowedDungeons;
+          for (uint f = 0; f < dlist.Size; ++f)
+          {
+            if ((dlist[f] == ALL_DUNGEONS) || (dlist[f] == game::GetCurrentDungeonIndex()))
+            {
+              Allowed = true;
+              break;
+            }
+          }
+          if (!Allowed)
+            continue;
+
           if(DataBase->IsUnique
              && DataBase->Flags & HAS_BEEN_GENERATED)
             continue;
@@ -211,6 +226,20 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
          && (!Polymorph
              || ChosenDataBase->IsPolymorphSpawnable))
       {
+        // Check allowed dungeons
+          truth Allowed = false;
+          const fearray<int> &dlist = ChosenDataBase->AllowedDungeons;
+          for (uint f = 0; f < dlist.Size; ++f)
+          {
+            if (dlist[f] == ALL_DUNGEONS || dlist[f] == game::GetCurrentDungeonIndex())
+            {
+              Allowed = true;
+              break;
+            }
+          }
+          if (!Allowed)
+            continue;
+
         item* Item = ChosenDataBase->ProtoType->Spawn(Config, SpecialFlags);
         truth GodOK = !RequiredGod || Item->GetAttachedGod() == RequiredGod;
 
