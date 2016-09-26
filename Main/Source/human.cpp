@@ -481,6 +481,11 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       break;
     }
 
+  if(StateIsActivated(VAMPIRISM) && !(RAND() % 2))
+    {
+      Chosen = USE_HEAD;
+    }
+
   switch(Chosen)
   {
    case USE_ARMS:
@@ -946,6 +951,31 @@ void priest::BeTalkedTo()
     else
       ADD_MESSAGE("\"You seem to be lycanthropic. I might be able to do something "
                   "for that but I need %ldgp for the ritual materials first.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"You seem to have an addiction to drinking blood. Well, everyone has right to "
+                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray "
+                  "%s to remove your vampiric urges, just so you don't victimize our besotted youth.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(VAMPIRISM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to be vampiric. I might be able to do something for that but "
+                  "I need %ldgp for the ritual materials first.\"", Price);
   }
 
   humanoid::BeTalkedTo();
@@ -4755,6 +4785,41 @@ void oree::Bite(character* Enemy, v2 HitPos, int, truth)
     ADD_MESSAGE("%s vomits acidous blood at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
   Vomit(HitPos, 500 + RAND() % 500, false);
+}
+
+truth vampire::SpecialBiteEffect(character* Char, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  if(!BlockedByArmour && !(RAND() % 2) && Char->IsWarm())
+  {
+    if(Char->IsHumanoid())
+      Char->BeginTemporaryState(VAMPIRISM, 1500 + RAND_N(2000));
+    if(Char->IsPlayer() || IsPlayer() || Char->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_DESCRIPTION(DEFINITE));
+
+    return Char->ReceiveBodyPartDamage(this, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction);
+  }
+  else
+    return false;
+}
+
+truth humanoid::SpecialBiteEffect(character* Char, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  if(StateIsActivated(VAMPIRISM))
+  {
+    if(!BlockedByArmour && Char->IsWarm() && !(RAND() % 2))
+    {
+      if(Char->IsHumanoid())
+        Char->BeginTemporaryState(VAMPIRISM, 1000 + RAND_N(500));
+      if(Char->IsPlayer() || IsPlayer() || Char->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_DESCRIPTION(DEFINITE));
+
+      return Char->ReceiveBodyPartDamage(this, 8 + (RAND() % 9), DRAIN, BodyPartIndex, Direction);
+    }
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 void sumowrestler::GetAICommand()
