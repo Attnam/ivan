@@ -144,6 +144,7 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_OMMEL_BONE: Char->ReceiveOmmelBone(Amount); break;
    case EFFECT_MUSTARD_GAS: Char->ReceiveMustardGas(BodyPart, Amount); break;
    case EFFECT_MUSTARD_GAS_LIQUID: Char->ReceiveMustardGasLiquid(BodyPart, Amount); break;
+   case EFFECT_VAMPIRISM: Char->BeginTemporaryState(VAMPIRISM, Amount); break;
    default: return false;
   }
 

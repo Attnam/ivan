@@ -653,6 +653,8 @@ class character : public entity, public id
   void PrintEndSearchingMessage() const;
   void PrintBeginHiccupsMessage() const;
   void PrintEndHiccupsMessage() const;
+  void PrintBeginVampirismMessage() const;
+  void PrintEndVampirismMessage() const;
   void EndPolymorph();
   character* ForceEndPolymorph();
   void LycanthropyHandler();
@@ -667,6 +669,7 @@ class character : public entity, public id
   void HiccupsHandler();
   void BeginEthereality();
   void EndEthereality();
+  void VampirismHandler();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
   void StartReading(item*, long);
@@ -1052,6 +1055,7 @@ class character : public entity, public id
   void ParasitizedSituationDangerModifier(double&) const;
   void LeprosySituationDangerModifier(double&) const;
   void HiccupsSituationDangerModifier(double&) const;
+  void VampirismSituationDangerModifier(double&) const;
   truth TryToTalkAboutScience();
   truth IsUsingWeaponOfCategory(int) const;
   virtual truth IsKamikazeDwarf() const { return false; }

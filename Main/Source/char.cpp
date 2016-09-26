@@ -256,6 +256,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Vampirism",
+    DUR_FLAGS,
+    &character::PrintBeginVampirismMessage,
+    &character::PrintEndVampirismMessage,
+    0,
+    0,
+    &character::VampirismHandler,
+    0,
+    &character::VampirismSituationDangerModifier
   }
 };
 
@@ -4848,6 +4858,18 @@ void character::PrintEndLycanthropyMessage() const
     ADD_MESSAGE("You feel the wolf inside you has had enough of your bad habits.");
 }
 
+void character::PrintBeginVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly decide you have always hated garlic.");
+}
+
+void character::PrintEndVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam. You are a vampire no longer.");
+}
+
 void character::PrintBeginInvisibilityMessage() const
 {
   if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm())
@@ -8682,6 +8704,7 @@ void character::ReceiveWhiteUnicorn(long Amount)
   DecreaseStateCounter(POISONED, -Amount / 100);
   DecreaseStateCounter(PARASITIZED, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
+  DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
 
 /* Counter should be negative. Removes intrinsics. */
@@ -8736,6 +8759,14 @@ void character::LeprosyHandler()
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
   CheckDeath(CONST_S("killed by leprosy"));
+}
+
+void character::VampirismHandler()
+{
+  EditExperience(CHARISMA, -25, 1 << 1);
+  EditExperience(WISDOM, -25, 1 << 1);
+  EditExperience(INTELLIGENCE, -25, 1 << 1);
+  CheckDeath(CONST_S("killed by vampirism"));
 }
 
 bodypart* character::SearchForOriginalBodyPart(int I) const
@@ -9554,6 +9585,14 @@ void character::LycanthropySituationDangerModifier(double& Danger) const
   double DangerToWolf = GetRelativeDanger(Wolf);
   Danger *= pow(DangerToWolf, 0.1);
   delete Wolf;
+}
+
+void character::VampirismSituationDangerModifier(double& Danger) const
+{
+  character* Vampire = vampire::Spawn();
+  double DangerToVampire = GetRelativeDanger(Vampire);
+  Danger *= pow(DangerToVampire, 0.1);
+  delete Vampire;
 }
 
 void character::PoisonedSituationDangerModifier(double& Danger) const

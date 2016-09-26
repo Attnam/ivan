@@ -2007,6 +2007,13 @@ flesh
     InteractionFlags = Base|CAN_BURN;
   }
 
+  Config VAMPIRE_FLESH;
+  {
+    NameStem = "vampire flesh";
+    ConsumeWisdomLimit = 10;
+    AttachedGod = MORTIFER;
+  }
+
   Config CAT_FLESH;
   {
     NameStem = "cat flesh";

@@ -3301,6 +3301,53 @@ werewolfwolf
   UndeadVersions = false;
 }
 
+vampire
+{
+  DefaultArmStrength = 20;
+  DefaultLegStrength = 20;
+  DefaultDexterity = 24;
+  DefaultAgility = 24;
+  DefaultEndurance = 15;
+  DefaultPerception = 24;
+  DefaultIntelligence = 20;
+  DefaultWisdom = 20;
+  DefaultCharisma = 20;
+  DefaultMana = 20;
+  TotalVolume = 70000;
+  EyeColor = rgb16(180, 0, 0);
+  HairColor = rgb16(5, 5, 5);
+  ClothColor = rgb16(75, 95, 75);
+  SkinColor = rgb16(208, 164, 0);
+  BeltColor = rgb16(15, 15, 15);
+  BootColor = rgb16(5, 5, 5);
+  TorsoSpecialColor = rgb16(187, 7, 7);
+  ArmSpecialColor = rgb16(187, 7, 7);
+  HeadBitmapPos = 96, 0;
+  TorsoBitmapPos = 32, 416;
+  LegBitmapPos = 0, 416;
+  ArmBitmapPos = 80, 176;
+  HostileReplies == "@Dd roars angrily.";
+  FriendlyReplies == "@Dd capers cheerfully.";
+  TotalSize = 170;
+  NameSingular = "vampire";
+  AttackStyle = USE_HEAD;
+  KnownCWeaponSkills == BITE;
+  CWeaponSkillHits == 200;
+  Sex = MALE;
+  BaseBiteStrength = 800;
+  CanBeWished = false;
+  ClassStates = HASTE|INFRA_VISION|VAMPIRISM;
+  PanicLevel = 0;
+  FleshMaterial = VAMPIRE_FLESH;
+  AttachedGod = MORTIFER;
+  WillCarryItems = true;
+  UndeadVersions = false;
+  CanUseEquipment = false;
+  CanBeGenerated = true;
+  CanRead = true;
+  UndeadVersions = false;
+}
+
 kobold
 {
   DefaultArmStrength = 6;
