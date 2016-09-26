@@ -1249,6 +1249,7 @@ darkknight
     IsImmuneToWhipOfThievery = true;
     AttachedGod = INFUSCOR;
     BodyPartsDisappearWhenSevered = true;
+    CanBeGenerated = false;
   }
 }
 
