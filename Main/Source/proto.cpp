@@ -41,10 +41,10 @@ character* protosystem::BalancedCreateMonster()
         if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
         {
           truth Allowed = false;
-          const fearray<int> &dlist = DataBase->AllowedDungeons;
-          for (uint f = 0; f < dlist.Size; ++f)
+          const fearray<int> &DungeonList = DataBase->AllowedDungeons;
+          for (uint f = 0; f < DungeonList.Size; ++f)
           {
-            if ((dlist[f] == ALL_DUNGEONS) || (dlist[f] == game::GetCurrentDungeonIndex()))
+            if ((DungeonList[f] == ALL_DUNGEONS) || (DungeonList[f] == game::GetCurrentDungeonIndex()))
             {
               Allowed = true;
               break;
@@ -228,10 +228,10 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
       {
         // Check allowed dungeons
           truth Allowed = false;
-          const fearray<int> &dlist = ChosenDataBase->AllowedDungeons;
-          for (uint f = 0; f < dlist.Size; ++f)
+          const fearray<int> &DungeonList = ChosenDataBase->AllowedDungeons;
+          for (uint f = 0; f < DungeonList.Size; ++f)
           {
-            if (dlist[f] == ALL_DUNGEONS || dlist[f] == game::GetCurrentDungeonIndex())
+            if (DungeonList[f] == ALL_DUNGEONS || DungeonList[f] == game::GetCurrentDungeonIndex())
             {
               Allowed = true;
               break;
