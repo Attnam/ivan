@@ -530,7 +530,7 @@ void rawbitmap::AlterGradient(v2 Pos, v2 Border, int MColor, int Amount, truth C
 void rawbitmap::SwapColors(v2 Pos, v2 Border, int Color1, int Color2)
 {
   if(Color1 > 3 || Color2 > 3)
-    ABORT("Illgal col swap!");
+    ABORT("Illegal col swap!");
 
   for(int x = Pos.X; x < Pos.X + Border.X; ++x)
     for(int y = Pos.Y; y < Pos.Y + Border.Y; ++y)
