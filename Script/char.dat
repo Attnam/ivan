@@ -949,11 +949,14 @@ priest
     RightSWeaponSkillHits = 20;
     FriendlyReplies =
     {
-      4,
+      7, /* 4 first are used before revolution */
       "\"Silva is the goddess of nature, who protects all living things. Her earthly manifestation, located in the elven nation of Lunethia, is a giant holy tree which reaches the clouds.\"",
       "\"In the old temple we had a marvellous altar carved from a branch of Silva Herself, but Decos made firewood out of it.\"",
       "\"You cannot contact any god unless you know the right rituals. Alas, I'm unable to teach you any, since after the invasion the Attnamese forbade us to officially worship any god save Valpurus. I can therefore only help you as a healer.\"",
-      "\"With my holy powers, I'm capable of reattaching severed limbs and removing various diseases and poisons. For a price, of course. Should I not bring enough income to the colony, the occupiers would make me a banana grower, too.\"";
+      "\"With my holy powers, I'm capable of reattaching severed limbs and removing various diseases and poisons. For a price, of course. Should I not bring enough income to the colony, the occupiers would make me a banana grower, too.\"",
+      "\"Truly, you must have been sent by Silva herself! We can finally rebuild the old temple and our lives.\"",
+      "\"I cannot thank you enough for freeing us, but I'm afraid I must continue to charge for my services.\"",
+      "\"Do not forget us, fair hero. It is a matter of time before word reaches the High Priest and I'm afraid of what he may do in his displeasure.\"";
     }
     AutomaticallySeen = true;
   }
