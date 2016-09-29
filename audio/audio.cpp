@@ -38,7 +38,7 @@
 #include "game.h"
 
 
-musicfile::musicfile(char* filename, int LowThreshold, int HighThreshold) :
+musicfile::musicfile(cchar* filename, int LowThreshold, int HighThreshold) :
       LowThreshold(LowThreshold), HighThreshold(HighThreshold)
 {
    isPlaying = false;
@@ -424,7 +424,7 @@ void audio::RemoveMIDIFile(char* filename)
 
 }
 
-void audio::LoadMIDIFile(char* filename, int intensitylow, int intensityhigh)
+void audio::LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh)
 {
   musicfile* mf = new musicfile(filename, intensitylow, intensityhigh);
   Tracks.push_back(mf);
@@ -471,6 +471,3 @@ void SendMIDIEvent(MIDI_CHAN_EVENT_t* event)
    }
    audio::SendMIDIEvent( &message );
 }
-
-
-
