@@ -34,6 +34,8 @@ if(MINGW)
   get_filename_component(sdl_lib_dir "${sdl_lib_dir}" DIRECTORY)
   message("sdl_lib_dir ${sdl_lib_dir}")
   install(FILES "${sdl_lib_dir}/../bin/SDL2.dll" DESTINATION "ivan")
+
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
 endif()
 
 target_include_directories(FeLib PUBLIC Include)
