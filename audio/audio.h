@@ -104,7 +104,7 @@ public:
 
    static int GetVolumeLevel(void);
 
-   static int SendVolumeMessage(int targetVolume);
+   static void SendVolumeMessage(int targetVolume);
 
    /**
     * @param intensity 0 - 100

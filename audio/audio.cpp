@@ -240,7 +240,7 @@ int audio::GetMIDIOutputDevices(std::vector<std::string>& deviceNames)
 }
 
 
-int audio::SendVolumeMessage(int targetVolume)
+void audio::SendVolumeMessage(int targetVolume)
 {
    MIDI_CHAN_EVENT_t newVolume;
 
