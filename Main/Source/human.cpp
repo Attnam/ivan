@@ -4346,18 +4346,6 @@ void femaleslave::BeTalkedTo()
     ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
 }
 
-void priestess::BeTalkedTo()
-{
-  static long Said;
-
-  if(GetConfig() != NEW_ATTNAM || GetRelation(PLAYER) == HOSTILE)
-    humanoid::BeTalkedTo();
-  else if(!game::TweraifIsFree())
-    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 4)]);
-  else
-    ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
-}
-
 void necromancer::GetAICommand()
 {
   SeekLeader(GetLeader());
