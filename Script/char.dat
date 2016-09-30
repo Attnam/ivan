@@ -5332,6 +5332,7 @@ necromancer
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
+  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
   HostileReplies == "@Dd yells: \"Death! Death!\"";
   FriendlyReplies == "\"I see dead people.\"";
   IgnoreDanger = true;
