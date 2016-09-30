@@ -325,7 +325,7 @@ void MPB_FastFwd_TestEvent(MIDI_HEADER_CHUNK_t* MIDIHdr, MIDI_EVENT_t* event)
 
    if (event->event.eventType >= MIDI_NOTE_OFF && event->event.eventType <= MIDI_PITCH_CHANGE)
    {
-      if ((fastFwd_Event->eventType == event->event.chanEvent.eventType))
+      if (fastFwd_Event->eventType == event->event.chanEvent.eventType)
       {
          fastFwd_Status->foundEventStatus = FAST_FWD_FIND_COMMAND;
 
@@ -398,7 +398,7 @@ uint8_t MPB_ContinuePlay(MIDI_HEADER_CHUNK_t* MIDIHdr, MIDI_PB_MODE mode)
          while (1)
          {
             ret = MPB_PlayTrack(MIDIHdr, &MIDIHdr->Track[i], mode);
-            if ((ret == MPB_REPOSITION_EVENT))
+            if (ret == MPB_REPOSITION_EVENT)
             {
                break;
             }
@@ -1022,4 +1022,3 @@ void _MIDI_readbuf(uint8_t* position, uint8_t* buf, uint16_t size)
    fseek(midifile, (long long) position, 0);
    fread(buf, 1, size, midifile);
 }
-

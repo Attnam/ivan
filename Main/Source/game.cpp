@@ -2792,7 +2792,10 @@ int game::GetMoveCommandKey(int I)
   case DIR_ALT:
     return MoveAbnormalCommandKey[I];
   case DIR_HACK:
-        return MoveNetHackCommandKey[I];
+    return MoveNetHackCommandKey[I];
+  default:
+    ABORT("This is not Emacs!");
+    return MoveNormalCommandKey[I];
   }
 }
 

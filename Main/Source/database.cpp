@@ -22,7 +22,7 @@ int CreateConfigTable(databasebase*** ConfigTable, databasebase*** TempTable, da
   for(int c = 0; c < Configs; ++c)
   {
     int Config = ConfigArray[c]->Config;
-    int Hash = Config >> 8 ^ Config & 0xFF;
+    int Hash = Config >> 8 ^ (Config & 0xFF);
 
     if((TempTableInfo[Hash] & 0xFFFF) != Type)
     {
@@ -504,6 +504,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeGeneratedOnlyInTheCatacombs);
   ADD_MEMBER(IsAlcoholic);
   ADD_MEMBER(IsImmuneToWhipOfThievery);
+  ADD_MEMBER(AllowedDungeons);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -614,6 +615,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(FlexibilityIsEssential);
   ADD_MEMBER(BreakMsg);
   ADD_MEMBER(IsSadistWeapon);
+  ADD_MEMBER(AllowedDungeons);
 }
 
 template <class type>
@@ -908,7 +910,7 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
                                                                       const prototype* Proto,
                                                                       int Config)
 {
-  database** Table = Proto->ConfigTable[Config >> 8 ^ Config & 0xFF];
+  database** Table = Proto->ConfigTable[Config >> 8 ^ (Config & 0xFF)];
 
   if(Table)
   {
