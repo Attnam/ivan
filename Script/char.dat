@@ -6060,11 +6060,10 @@ punisher
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
-  HeadBitmapPos = 96, 352;
+  HeadBitmapPos = 96, 0;
   TorsoBitmapPos = 48, 48;
   ArmBitmapPos = 64, 256;
   LegBitmapPos = 0, 48;
-  CapColor = rgb16(200, 200, 10);
   TorsoMainColor = rgb16(30, 30, 30);
   LegMainColor = rgb16(30,30,30);
   SkinColor = rgb16(255, 222, 202);
@@ -6083,4 +6082,26 @@ punisher
   AttachedGod = CRUENTUS;
   FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
   IsSadist = true;
+
+  Config MASTER_TORTURER;
+  {
+    AttributeBonus = 50;
+    HeadBitmapPos = 96, 64;
+    CapColor = rgb16(50, 50, 50);
+    Helmet = BLACK_LEATHER helmet { Enchantment = 2; }
+    BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    RightWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 2; }
+    NameSingular = "master torturer";
+    DefaultName = "Migel Decos";
+    FriendlyReplies =
+    {
+      5,
+      "@Dd smiles. It's much better when he's frowning.",
+      "@Dd sighs: \"Why don't the prisoners understand it's for their own good?\"",
+      "@Dd looks smug. \"I'm the head of the Citizen Purification Committee.\"",
+      "\"I would love to break your arms, one bone at a time.\"",
+      "\"I was tasked with re-educating anyone who would cooperate with La Resistance by mighty Petrus himself!\"";
+    }
+    Inventory == key;
+  }
 }

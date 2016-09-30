@@ -892,7 +892,7 @@ Dungeon ATTNAM;
       DivineMaster = VALPURUS;
       GenerateTunnel = false;
       GenerateLanterns = false;
-      Type = ROOM_NORMAL;
+      Type = ROOM_CATHEDRAL;
       GenerateFountains = false;
       AllowLockedDoors = false;
       AllowBoobyTrappedDoors = false;
@@ -1049,6 +1049,8 @@ Dungeon ATTNAM;
           # = 0;
           G = guard(VETERAN);
           N = necromancer(IMPRISONED_NECROMANCER);
+          P = punisher;
+          T = punisher(MASTER_TORTURER) { Flags = IS_MASTER; }
         }
       }
       {
@@ -1091,10 +1093,10 @@ Dungeon ATTNAM;
         **********************###.#####********
         ************************#.#************
         **********************###.###**********
-        **********************#...G.#**********
-        **********************#.G...#**********
-        **********************#.....#**********
-        **********************#...G.#**********
+        **********************#...P.#**********
+        **********************#.P...#**********
+        **********************#....P#**********
+        **********************#..T..#**********
         **********************#######**********
       }
     }
