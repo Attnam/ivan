@@ -16,6 +16,9 @@ else()
   message(STATUS "Using SDL1")
 endif()
 
+# libcurl, for sending/fetching high-scores to/from a global high-score server.
+find_package(CURL)
+
 if(MSVC)
   # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.
   message("SDL2_LIBRARY ${SDL2_LIBRARY}")
@@ -39,5 +42,5 @@ if(MINGW)
 endif()
 
 target_include_directories(FeLib PUBLIC Include)
-target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(FeLib ${SDL2_LIBRARY})
+target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} ${CURL_INCLUDE_DIRS})
+target_link_libraries(FeLib ${SDL2_LIBRARY} ${CURL_LIBRARIES})

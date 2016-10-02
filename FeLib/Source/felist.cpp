@@ -252,9 +252,14 @@ uint felist::Draw()
       continue;
     }
 
-    if(Flags & SELECTABLE && Pressed == KEY_ENTER)
+    if(Pressed == KEY_ENTER)
     {
-      Return = Selected;
+      if(Flags & SELECTABLE)
+        Return = Selected;
+      else
+        // Used by the hall of fame to toggle between local and global scores.
+        Return = UNSELECTABLE_SELECT;
+
       break;
     }
 

@@ -10,14 +10,25 @@
  *
  */
 
+#include <curl/curl.h>
+
 #include "hscore.h"
 #include "save.h"
 #include "felist.h"
 #include "feio.h"
 #include "femath.h"
 
+static truth RetrieveHighScoresFromServer(std::vector<festring>&,
+                                          std::vector<long>&,
+                                          std::vector<time_t>&);
+static void SubmitHighScoreToServer(long, cfestring&, time_t, long);
+
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 128
+
+#define HIGH_SCORE_SERVER "http://localhost:3332"
+
+highscoreview highscore::View = LOCAL;
 
 cfestring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
@@ -28,6 +39,8 @@ highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSIO
 truth highscore::Add(long NewScore, cfestring& NewEntry,
                      time_t NewTime, long NewRandomID)
 {
+  SubmitHighScoreToServer(NewScore, NewEntry, NewTime, NewRandomID);
+
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
     {
@@ -64,7 +77,7 @@ truth highscore::Add(long NewScore, cfestring& NewEntry,
   }
 }
 
-void highscore::Draw() const
+void highscore::Draw()
 {
   if(Score.empty())
   {
@@ -79,23 +92,61 @@ void highscore::Draw() const
     return;
   }
 
-  felist List(CONST_S("Adventurers' Hall of Fame"));
-  festring Desc;
-
-  for(uint c = 0; c < Score.size(); ++c)
+  for(;;)
   {
-    Desc.Empty();
-    Desc << c + 1;
-    Desc.Resize(5, ' ');
-    Desc << Score[c];
-    Desc.Resize(13, ' ');
-    Desc << Entry[c];
-    List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
-  }
+    festring Title;
+    if(View == LOCAL)
+      Title = CONST_S("Adventurers' Hall of Fame                                "
+                      "Press ENTER to view global highscores");
+    else if(View == GLOBAL)
+      Title = CONST_S("Global Adventurers' Hall of Fame                          "
+                      "Press ENTER to view local highscores");
 
-  List.SetFlags(FADE);
-  List.SetPageLength(40);
-  List.Draw();
+    felist List(Title);
+    festring Desc;
+
+    if(View == LOCAL)
+      for(uint c = 0; c < Score.size(); ++c)
+      {
+        Desc.Empty();
+        Desc << c + 1;
+        Desc.Resize(5, ' ');
+        Desc << Score[c];
+        Desc.Resize(13, ' ');
+        Desc << Entry[c];
+        List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
+      }
+    else if(View == GLOBAL)
+    {
+      RetrieveHighScoresFromServer(GlobalEntry, GlobalScore, GlobalTime);
+
+      for(uint c = 0; c < GlobalScore.size(); ++c)
+      {
+        Desc.Empty();
+        Desc << c + 1;
+        Desc.Resize(5, ' ');
+        Desc << GlobalScore[c];
+        Desc.Resize(13, ' ');
+        Desc << GlobalEntry[c];
+        List.AddEntry(Desc, LIGHT_GRAY, 13);
+      }
+    }
+
+    List.SetFlags(FADE);
+    List.SetPageLength(40);
+
+    cuint DrawResult = List.Draw();
+
+    if(DrawResult == UNSELECTABLE_SELECT) // Enter was pressed.
+      ToggleBetweenLocalAndGlobalView();
+    else if(DrawResult == LIST_WAS_EMPTY)
+    {
+      iosystem::TextScreen(CONST_S("Couldn't fetch global highscores from the server."));
+      View = LOCAL;
+    }
+    else
+      break;
+  }
 }
 
 void highscore::Save(cfestring& File) const
@@ -182,4 +233,94 @@ void highscore::Clear()
 truth highscore::CheckVersion() const
 {
   return Version == HIGH_SCORE_VERSION;
+}
+
+static void ParseHighScoresFromCSV(cfestring& CSV,
+                                   std::vector<festring>& GlobalEntry,
+                                   std::vector<long>& GlobalScore,
+                                   std::vector<time_t>& GlobalTime)
+{
+  for(festring::sizetype LastIndex = 0;;)
+  {
+    festring::csizetype ScoreIndex = CSV.Find("\n", LastIndex) + 1;
+    if(!ScoreIndex || ScoreIndex == festring::NPos) return;
+    GlobalScore.push_back(atol(CSV.CStr() + ScoreIndex));
+    festring::csizetype EntryIndex = CSV.Find("\"", ScoreIndex) + 1;
+    festring::csizetype EntryLength = CSV.Find("\"", EntryIndex) - EntryIndex;
+    GlobalEntry.push_back(festring(CSV.CStr() + EntryIndex, EntryLength) + '\0');
+    GlobalTime.push_back(0); // TODO
+    LastIndex = EntryIndex + EntryLength;
+  }
+}
+
+static size_t WriteMemoryCallback(char* Contents, size_t Size, size_t Count, void* UserData)
+{
+  const size_t RealSize = Size * Count;
+  *static_cast<festring*>(UserData) << cfestring(Contents, RealSize);
+  return RealSize;
+}
+
+static truth RetrieveHighScoresFromServer(std::vector<festring>& GlobalEntry,
+                                          std::vector<long>& GlobalScore,
+                                          std::vector<time_t>& GlobalTime)
+{
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return false;
+
+  truth Success = false;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    festring RetrievedData;
+
+    curl_easy_setopt(Curl, CURLOPT_URL, HIGH_SCORE_SERVER "/highscores");
+    curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
+    curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
+    curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &RetrievedData);
+
+    if(curl_easy_perform(Curl) == CURLE_OK)
+    {
+      GlobalEntry.clear();
+      GlobalScore.clear();
+      GlobalTime.clear();
+      ParseHighScoresFromCSV(RetrievedData, GlobalEntry, GlobalScore, GlobalTime);
+      Success = true;
+    }
+
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
+  return Success;
+}
+
+static void SubmitHighScoreToServer(long NewScore, cfestring& NewEntry,
+                                    time_t NewTime, long NewRandomID)
+{
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    curl_slist* const Headers = curl_slist_append(nullptr, "Content-Type: application/json");
+
+    festring Json;
+    Json <<
+    "{"
+      "\"score\": " << NewScore << ","
+      "\"entry\": \"" << NewEntry << "\""
+    "}";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, HIGH_SCORE_SERVER "/submit_score");
+    curl_easy_setopt(Curl, CURLOPT_POST, 1);
+    curl_easy_setopt(Curl, CURLOPT_HTTPHEADER, Headers);
+    curl_easy_setopt(Curl, CURLOPT_POSTFIELDS, Json.CStr());
+
+    curl_easy_perform(Curl);
+
+    curl_slist_free_all(Headers);
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
 }

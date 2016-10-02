@@ -28,12 +28,18 @@
 
 class festring;
 
+enum highscoreview
+{
+  LOCAL,
+  GLOBAL
+};
+
 class highscore
 {
  public:
   highscore(cfestring& = HIGH_SCORE_FILENAME);
   truth Add(long, cfestring&);
-  void Draw() const;
+  void Draw();
   void Save(cfestring& = HIGH_SCORE_FILENAME) const;
   void Load(cfestring& = HIGH_SCORE_FILENAME);
   truth LastAddFailed() const;
@@ -48,12 +54,17 @@ class highscore
   truth CheckVersion() const;
  private:
   truth Add(long, cfestring&, time_t, long);
+  void ToggleBetweenLocalAndGlobalView() { View = static_cast<highscoreview>(!View); }
   std::vector<festring> Entry;
   std::vector<long> Score;
   std::vector<time_t> Time;
   std::vector<long> RandomID;
+  std::vector<festring> GlobalEntry;
+  std::vector<long> GlobalScore;
+  std::vector<time_t> GlobalTime;
   int LastAdd;
   ushort Version;
+  static highscoreview View;
 };
 
 #endif
