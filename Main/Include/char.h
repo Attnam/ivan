@@ -693,6 +693,7 @@ class character : public entity, public id
   void PrintBeginPoisonedMessage() const;
   void PrintEndPoisonedMessage() const;
   truth IsWarm() const;
+  truth IsWarmBlooded() const;
   void CalculateEquipmentState();
   void Draw(blitdata&) const;
   virtual void DrawBodyParts(blitdata&) const;
@@ -771,8 +772,8 @@ class character : public entity, public id
   virtual void CreateBlockPossibilityVector(blockvector&, double) const { }
   virtual truth SpecialUnarmedEffect(character*, v2, int, int, truth) { return false; }
   virtual truth SpecialKickEffect(character*, v2, int, int, truth) { return false; }
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth) { return false; }
-  truth HitEffect(character*, item*, v2, int, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int) { return false; }
+  truth HitEffect(character*, item*, v2, int, int, int, truth, truth, int);
   void WeaponSkillHit(item*, int, int);
   character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }

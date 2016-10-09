@@ -900,7 +900,7 @@ void elpuri::CreateCorpse(lsquare* Square)
   Square->AddItem(headofelpuri::Spawn());
 }
 
-truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
@@ -911,7 +911,7 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
     return false;
 }
 
-truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
@@ -2407,7 +2407,7 @@ truth lobhse::MustBeRemovedFromBone() const
          || GetLevel()->GetIndex() != SPIDER_LEVEL;
 }
 
-truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {

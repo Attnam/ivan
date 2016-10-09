@@ -111,6 +111,7 @@ ITEM(bodypart, item)
   virtual int GetSpecialFlags() const;
   virtual truth IsRepairable(ccharacter*) const;
   truth IsWarm() const;
+  truth IsWarmBlooded() const;
   truth UseMaterialAttributes() const;
   truth CanRegenerate() const;
   virtual square* GetSquareUnder(int = 0) const;

@@ -1095,6 +1095,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define CAN_HAVE_PARASITE 4
 #define USE_MATERIAL_ATTRIBUTES 8
 #define CAN_REGENERATE 16
+#define IS_WARM_BLOODED 32
 
 /* InteractionFlags */
 #define CAN_BURN 1

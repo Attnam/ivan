@@ -481,9 +481,15 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       break;
     }
 
+  // Convert 1/3 unarmed attacks into biting under vampirism:
   if(StateIsActivated(VAMPIRISM) && !(RAND() % 2))
     {
-      Chosen = USE_HEAD;
+      if(Chosen == USE_ARMS && CanAttackWithAnArm())
+        if(!GetRightWielded() && !GetLeftWielded())
+          Chosen = USE_HEAD;
+
+      if(Chosen == USE_LEGS && HasTwoUsableLegs())
+        Chosen = USE_HEAD;
     }
 
   switch(Chosen)
@@ -4787,33 +4793,59 @@ void oree::Bite(character* Enemy, v2 HitPos, int, truth)
   Vomit(HitPos, 500 + RAND() % 500, false);
 }
 
-truth vampire::SpecialBiteEffect(character* Char, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+truth vampire::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
-  if(!BlockedByArmour && !(RAND() % 2) && Char->IsWarm())
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
   {
-    if(Char->IsHumanoid())
-      Char->BeginTemporaryState(VAMPIRISM, 1500 + RAND_N(2000));
-    if(Char->IsPlayer() || IsPlayer() || Char->CanBeSeenByPlayer() || CanBeSeenByPlayer())
-      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_DESCRIPTION(DEFINITE));
+    if(IsPlayer())
+      ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+    else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
 
-    return Char->ReceiveBodyPartDamage(this, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction);
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM))
+      Victim->BeginTemporaryState(VAMPIRISM, 1000 + RAND_N(2000));
+
+    // HP recieved is about half the damage done
+    int DrainDamage = (DoneDamage >> 1) + 1;
+
+ADD_MESSAGE("Damage was %d HP!", DoneDamage);
+ADD_MESSAGE("Recieved %d HP!", DrainDamage);
+
+    if(IsPlayer())
+      game::DoEvilDeed(10);
+
+    return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
   }
   else
     return false;
 }
 
-truth humanoid::SpecialBiteEffect(character* Char, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(StateIsActivated(VAMPIRISM))
   {
-    if(!BlockedByArmour && Char->IsWarm() && !(RAND() % 2))
+    if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 3) || Critical) && !Victim->AllowSpoil())
     {
-      if(Char->IsHumanoid())
-        Char->BeginTemporaryState(VAMPIRISM, 1000 + RAND_N(500));
-      if(Char->IsPlayer() || IsPlayer() || Char->CanBeSeenByPlayer() || CanBeSeenByPlayer())
-        ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_DESCRIPTION(DEFINITE));
+      if(IsPlayer())
+        ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+      else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
 
-      return Char->ReceiveBodyPartDamage(this, 8 + (RAND() % 9), DRAIN, BodyPartIndex, Direction);
+      if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM))
+        Victim->BeginTemporaryState(VAMPIRISM, 1000 + RAND_N(500));
+
+      // HP recieved is about half the damage done
+      int DrainDamage = (DoneDamage >> 1) + 1;
+
+ADD_MESSAGE("Damage was %d HP!", DoneDamage);
+ADD_MESSAGE("Recieved %d HP!", DrainDamage);
+
+      // To perpetuate vampirism, simply keep doing drain attacks
+      BeginTemporaryState(VAMPIRISM, 50*DrainDamage);
+      if(IsPlayer())
+        game::DoEvilDeed(10);
+
+      return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
     }
     else
       return false;
