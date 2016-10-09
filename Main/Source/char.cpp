@@ -724,7 +724,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
                                          && Enemy->BiteCapturesBodyPart());
   truth Succeeded = (GetBodyPart(BodyPart)
                      && HitEffect(Enemy, Weapon, HitPos, Type,
-                                  BodyPart, Dir, !DoneDamage))
+                                  BodyPart, Dir, !DoneDamage, Critical, DoneDamage))
                     || DoneDamage;
 
   if(Succeeded)
@@ -2264,7 +2264,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK,
-                                                        BodyPart, Direction, !DoneDamage)) || DoneDamage;
+                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage), false, DoneDamage) || DoneDamage;
 
   if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
@@ -5473,6 +5473,11 @@ truth character::IsWarm() const
   return combinebodypartpredicates()(this, &bodypart::IsWarm, 1);
 }
 
+truth character::IsWarmBlooded() const
+{
+  return combinebodypartpredicates()(this, &bodypart::IsWarmBlooded, 1);
+}
+
 void character::BeginInvisibility()
 {
   UpdatePictures();
@@ -6126,7 +6131,7 @@ truth character::ContentsCanBeSeenBy(ccharacter* Viewer) const
 }
 
 truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
-                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+                           int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(Weapon)
     return Weapon->HitEffect(this, Enemy, HitPos, BodyPartIndex, Direction, BlockedByArmour);
@@ -6138,7 +6143,7 @@ truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
    case KICK_ATTACK:
     return Enemy->SpecialKickEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
    case BITE_ATTACK:
-    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour, Critical, DoneDamage);
   }
 
   return false;
@@ -8763,9 +8768,7 @@ void character::LeprosyHandler()
 
 void character::VampirismHandler()
 {
-  EditExperience(CHARISMA, -25, 1 << 1);
   EditExperience(WISDOM, -25, 1 << 1);
-  EditExperience(INTELLIGENCE, -25, 1 << 1);
   CheckDeath(CONST_S("killed by vampirism"));
 }
 

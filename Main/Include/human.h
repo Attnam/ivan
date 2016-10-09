@@ -169,7 +169,7 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   virtual truth HasSadistAttackMode() const;
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
   virtual col16 GetBodyPartColorC(int, truth = false) const;
@@ -530,7 +530,7 @@ CHARACTER(werewolfwolf, humanoid)
 CHARACTER(vampire, humanoid)
 {
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(kobold, humanoid)
