@@ -5038,6 +5038,9 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(StateIsActivated(POLYMORPH_LOCK))
+    return;
+
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
@@ -9606,7 +9609,7 @@ void character::PoisonedSituationDangerModifier(double& Danger) const
 
 void character::PolymorphingSituationDangerModifier(double& Danger) const
 {
-  if(!StateIsActivated(POLYMORPH_CONTROL))
+  if((!StateIsActivated(POLYMORPH_CONTROL)) && (!StateIsActivated(POLYMORPH_LOCK)))
     Danger *= 1.5;
 }
 
