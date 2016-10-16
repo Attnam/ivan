@@ -2451,6 +2451,7 @@ ring
     GearStates = POLYMORPH_LOCK;
     Price = 250;
     AttachedGod = SOPHOS;
+    TeleportPriority = 1000;
   }
 }
 
