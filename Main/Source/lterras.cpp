@@ -785,7 +785,7 @@ void door::CreateBoobyTrap()
 
 truth fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(100)), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(500)), Who);
   return true;
 }
 
