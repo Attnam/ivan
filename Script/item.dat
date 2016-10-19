@@ -1075,6 +1075,16 @@ potion /* materialcontainer-> */
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   TeleportPriority = 200;
+  Config VIAL;
+  {
+    DefaultSize = 10;
+    NameSingular = "vial";
+    DefaultMainVolume = 10;
+    DefaultSecondaryVolume = 100;
+    TeleportPriority = 20;
+    SecondaryMaterialConfig = { 9, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, ANTIDOTE_LIQUID, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
+    MaterialConfigChances = { 9, 75, 50, 5, 50, 30, 25, 5, 5, 25; }
+  }
 }
 
 bananapeels
@@ -1115,6 +1125,10 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
   IsValuable = false;
   DamageFlags = PIERCE;
   IsSadistWeapon = true;
+  Config VIAL;
+  {
+    NameSingular = "vial";
+  }
 }
 
 scroll

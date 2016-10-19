@@ -522,6 +522,8 @@
 
 #define RUNED_WHIP 1
 
+#define VIAL 1
+
 #define BIG_MINE 1
 
 #define CLOAK_OF_INVISIBILITY 1

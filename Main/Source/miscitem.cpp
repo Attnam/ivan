@@ -1567,7 +1567,7 @@ void potion::Break(character* Breaker, int Dir)
       Room->HostileAction(Breaker);
   }
 
-  item* Remains = brokenbottle::Spawn(0, NO_MATERIALS);
+  item* Remains = brokenbottle::Spawn(GetConfig(), NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->SpawnMore());
   DonateFluidsTo(Remains);
   DonateIDTo(Remains);
@@ -1921,7 +1921,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
 item* brokenbottle::Fix()
 {
-  potion* Potion = potion::Spawn(0, NO_MATERIALS);
+  potion* Potion = potion::Spawn(GetConfig(), NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
   DonateFluidsTo(Potion);
   DonateIDTo(Potion);
