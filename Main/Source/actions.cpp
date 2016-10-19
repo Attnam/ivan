@@ -113,13 +113,15 @@ void consume::Handle()
   /* Note: if backupped Actor has died of food effect,
      Action is deleted automatically, so we mustn't Terminate it */
 
-  if(Consuming->Consume(Actor, 500) && Actor->GetAction() == this && Actor->IsEnabled())
+  if(Consuming->Consume(Actor, 100) && Actor->GetAction() == this && Actor->IsEnabled())
     Terminate(true);
   else if(Actor->GetHungerState() == OVER_FED)
   {
     Actor->DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
     Actor->Vomit(Actor->GetPos(), 500 + RAND() % 500);
   }
+  else if(Actor->GetAction() == this && IsNibbling())
+    Terminate(true);
 }
 
 void consume::Terminate(truth Finished)

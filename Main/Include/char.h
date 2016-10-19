@@ -410,7 +410,7 @@ class character : public entity, public id
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   int GetHungerState() const;
-  truth ConsumeItem(item*, cfestring&);
+  truth ConsumeItem(item*, cfestring&, truth = false);
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }

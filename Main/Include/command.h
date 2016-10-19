@@ -45,6 +45,7 @@ class commandsystem
   static truth Close(character*);
   static truth Eat(character*);
   static truth Drink(character*);
+  static truth Taste(character*);
   static truth Dip(character*);
   static truth DrawMessageHistory(character*);
   static truth Drop(character*);
@@ -79,7 +80,7 @@ class commandsystem
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
   static truth Search(character*);
-  static truth Consume(character*, cchar*, sorter);
+  static truth Consume(character*, cchar*, sorter, truth = false);
 #ifdef WIZARD
   static truth WizardMode(character*);
   static truth RaiseStats(character*);
