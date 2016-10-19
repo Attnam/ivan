@@ -244,7 +244,7 @@ class item : public object
   virtual void FinishReading(character*) { }
   virtual truth HitEffect(character*, character*, v2, int, int, truth) { return false; }
   virtual void DipInto(liquid*, character*) { }
-  virtual liquid* CreateDipLiquid() { return 0; }
+  virtual liquid* CreateDipLiquid(long MaxVolume = 500) { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual int GetOfferValue(int) const;
   virtual void Fly(character*, int, int);
@@ -533,6 +533,7 @@ class item : public object
   virtual void CalculateEmitation();
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
+  virtual long DipIntoVolume() const { return 500; }
   virtual void TryToRust(long);
   virtual truth TestActivationEnergy(int);
   void RemoveFluid(fluid*);

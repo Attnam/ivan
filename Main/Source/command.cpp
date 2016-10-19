@@ -757,7 +757,7 @@ truth commandsystem::Dip(character* Char)
           return false;
         }
 
-        Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        Item->DipInto(DipTo->CreateDipLiquid(Item->DipIntoVolume()), Char);
         return true;
       }
     }

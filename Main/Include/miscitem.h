@@ -113,10 +113,11 @@ ITEM(can, materialcontainer)
   virtual void DipInto(liquid*, character*);
   virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
   virtual truth IsDipDestination(ccharacter*) const;
-  virtual liquid* CreateDipLiquid();
+  virtual liquid* CreateDipLiquid(long);
   virtual truth AllowSpoil() const { return false; } // temporary
   virtual truth Spoils() const { return false; } // temporary
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual long DipIntoVolume() const { return GetDefaultSecondaryVolume(); }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
@@ -137,7 +138,7 @@ ITEM(potion, materialcontainer)
  public:
   virtual item* BetterVersion() const;
   virtual void DipInto(liquid*, character*);
-  virtual liquid* CreateDipLiquid();
+  virtual liquid* CreateDipLiquid(long);
   virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
   virtual void Break(character*, int);
   virtual truth IsDipDestination(ccharacter*) const;
@@ -146,6 +147,7 @@ ITEM(potion, materialcontainer)
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
   virtual truth EffectIsGood() const;
   virtual truth IsKamikazeWeapon(ccharacter*) const { return IsExplosive(); }
+  virtual long DipIntoVolume() const { return GetDefaultSecondaryVolume(); }
  protected:
   virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
