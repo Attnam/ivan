@@ -339,17 +339,50 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  if(!Timer && Relation > 500 + RAND_N(500))
+  item* Enchantable;
+  item* PairEnchantable;
+  int LowEnchant = 99;
+  truth Pair = false;
+
+  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
   {
-    item* Reward = bodyarmor::Spawn(PLATE_MAIL, NO_MATERIALS);
-    Reward->InitMaterials(MAKE_MATERIAL(ARCANITE));
-    ADD_MESSAGE("%s materializes before you.", Reward->CHAR_NAME(INDEFINITE));
-    PLAYER->GetGiftStack()->AddItem(Reward);
-    AdjustTimer(45000);
-    AdjustRelation(-300);
+    item* Equipment = PLAYER->GetEquipment(c);
+
+    if(Equipment && Equipment->CanBeEnchanted() && !Equipment->IsWeapon(PLAYER)
+        && (Equipment->GetEnchantment() < LowEnchant))
+    {
+      Enchantable = Equipment;
+      LowEnchant = Enchantable->GetEnchantment();
+      Pair = false;
+      continue;
+    }
+
+    if(Enchantable && Equipment && Equipment->HandleInPairs()
+        && Equipment->CanBePiledWith(Enchantable, PLAYER))
+    {
+      Pair = true;
+      PairEnchantable = Equipment;
+    }
   }
-  else
-    ADD_MESSAGE("Nothing happens.");
+  if(LowEnchant < 99)
+  {
+    int EnchDiff = ((Enchantable->GetEnchantment()+2)*250 - GetRelation()) / 50;
+    if(EnchDiff <= 1 || !RAND_N(EnchDiff)) {
+      if(Pair)
+      {
+        ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Enchantable->CHAR_NAME(PLURAL));
+        Enchantable->EditEnchantment(1);
+        PairEnchantable->EditEnchantment(1);
+      }
+      else
+      {
+        ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Enchantable->CHAR_NAME(UNARTICLED));
+        Enchantable->EditEnchantment(1);
+      }
+      return;
+    }
+  }
+  ADD_MESSAGE("You feel that %s is watching your actions closely.", GetName());
 }
 
 void atavus::PrayBadEffect()
