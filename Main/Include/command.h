@@ -80,7 +80,7 @@ class commandsystem
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
   static truth Search(character*);
-  static truth Consume(character*, cchar*, sorter, truth = false);
+  static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
 #ifdef WIZARD
   static truth WizardMode(character*);
   static truth RaiseStats(character*);

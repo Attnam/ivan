@@ -431,7 +431,7 @@ truth commandsystem::Eat(character* Char)
       return true;
   }
 
-  return Consume(Char, "eat", &item::IsEatable);
+  return Consume(Char, "eat", "eating", &item::IsEatable);
 }
 
 truth commandsystem::Drink(character* Char)
@@ -447,7 +447,7 @@ truth commandsystem::Drink(character* Char)
       return true;
   }
 
-  return Consume(Char, "drink", &item::IsDrinkable);
+  return Consume(Char, "drink", "drinking", &item::IsDrinkable);
 }
 
 truth commandsystem::Taste(character* Char)
@@ -463,10 +463,11 @@ truth commandsystem::Taste(character* Char)
       return true;
   }
 
-  return Consume(Char, "sip", &item::IsDrinkable, true);
+  return Consume(Char, "sip", "sipping", &item::IsDrinkable, true);
 }
 
-truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter, truth nibbling)
+truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, cchar* ConsumeVerbPresentParticiple,
+                             sorter Sorter, truth nibbling)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -487,7 +488,7 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter,
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
-  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerb + CONST_S("ing"), nibbling) : false;
+  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerbPresentParticiple, nibbling) : false;
 }
 
 truth commandsystem::ShowInventory(character* Char)
