@@ -20,7 +20,7 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake -G "Unix Makefiles" -DCMAKE_CXX_FLAGS=$CXXFLAGS ..
+  - cmake -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security $CXXFLAGS" ..
   - make
   - make igor
   - make mihail
@@ -28,5 +28,5 @@ script:
 
 env:
   matrix:
-    - CXXFLAGS=""
-    - CXXFLAGS="-DWIZARD"
+    - CXXFLAGS=
+    - CXXFLAGS=-DWIZARD
