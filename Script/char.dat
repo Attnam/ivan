@@ -465,7 +465,7 @@ farmer
     FriendlyReplies =
     {
       3,
-      "\"Let’s just say that Petrus‘ wife No. 3 was beautiful and I wasn’t careful.\"",
+      "\"LetÂ’'s just say that PetrusÂ‘' wife No. 3 was beautiful and I wasn'Â’t careful.\"",
       "\"Would you have a nut to spare?\"",
       "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
     }
@@ -2412,7 +2412,7 @@ hunter
     FriendlyReplies =
     {
       5,
-      "\"Where’s my arm? Gah, ask the master torturer!\"",
+      "\"WhereÂ’'s my arm? Gah, ask the master torturer!\"",
       "\"I'm innocent! That guy ran onto my spear! Twenty seven times. From behind.\"",
       "\"I was the Great White Hunter. Oh, how I miss the old days of ceaseless slaughter! Eh-heh heh.\"",
       "\"It wasn't my fault. That bastard had it coming. He should have remembered the rules: No kill stealing!\"",
@@ -2780,7 +2780,7 @@ femaleslave
     {
       2,
       "\"Never say no to Petrus. Ever!\"",
-      "\"And I thought Richel Decos was bad with his whips…\"";
+      "\"And I thought Richel Decos was bad with his whips...Â…\"";
     }
   }
 }
@@ -2897,9 +2897,9 @@ zombie
     FriendlyReplies =
     {
       3,
-      "\"Mighty Petrus said: ‘Eating brainz is bad.‘\"",
-      "\"I got off lightly – only three life sentences!\"",
-      "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now I’m a prisoner.\"";
+      "\"Mighty Petrus said: 'Â‘Eating brainz is bad.'Â‘\"",
+      "\"I got off lightly Â–- only three life sentences!\"",
+      "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now IÂ’m a prisoner.\"";
     }
   }
 }
