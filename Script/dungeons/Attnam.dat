@@ -747,114 +747,6 @@ Dungeon ATTNAM;
       WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
       DoorSquare = solidterrain(FLOOR), door;
     }
-
-    /*Square, Random;
-    {
-      Character = communist { Team = IVAN_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = vladimir { Team = IVAN_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = imperialist { Team = ATTNAM_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = mistress(QUEEN) { Team = ATTNAM_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = genetrixvesana { Team = ATTNAM_TEAM; }
-      Times = 10;
-    }
-
-    Square, Random;
-    {
-      Character = golem(VALPURIUM) { Team = ATTNAM_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = kobold(PATRIARCH) { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = goblin(KING) { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = ennerbeast { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = eddy { Team = MONSTER_TEAM; }
-      Times = 25;
-    }
-
-    Square, Random;
-    {
-      Character = skunk { Team = MONSTER_TEAM; }
-      Times = 50;
-    }
-
-    Square, Random;
-    {
-      Character = orc(MARSHAL) { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = darkknight(GRAND_MASTER) { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = oree { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = elpuri { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = darkmage(ARCH_MAGE) { Team = MONSTER_TEAM; }
-      Times = 10;
-    }
-
-    Square, Random;
-    {
-      Character = skeleton(WAR_LORD) { Team = MONSTER_TEAM; }
-      Times = 3;
-    }
-
-    Square, Random;
-    {
-      Character = spider { Team = MONSTER_TEAM; }
-      Times = 3;
-    }*/
   }
 
   Level 1;
@@ -913,6 +805,7 @@ Dungeon ATTNAM;
           @ = IRON barwall;
           $ = IRON barwall(BROKEN_BARWALL);
           % = MARBLE door(BARDOOR);
+          L = MARBLE door(BARDOOR) { Parameters = LOCKED; }
           B = MARBLE brokendoor(BARDOOR);
           D = MARBLE door;
           e = MARBLE wall(BRICK_OLD);
@@ -931,28 +824,28 @@ Dungeon ATTNAM;
       }
       {
         ************#######################XX##
-        ************X...X..@....X....@....$...#
-        ************#......@....#....@@B@@@...#
-        ************#......@@B@@#@@%@@b...%...#
-        ************X...#.................XX###
-        ************#######..#.##X...#XX#.%...#
-        ******************#>.#***#..bX**X.@...#
-        ******************####***#NNN#**#.$...X
-        ************************##...##*#.#XXX#
+        ************X...@..@....X....#....$...#
+        ************#...@..@....#....#@B@@@...#
+        ************#...L..@@B@@#@@%@#b...%...#
+        ************X...@............S....XX###
+        ************#######..#.##X@B@#XX#.%...#
+        ******************#..#b**#...X**X.@...#
+        ******************####*>*#...#**#.$...X
+        ************************##NNN##*#.#XXX#
         ************************#.....#*#.%...X
         #########################.....#*#.@...#
         #.............................#*#.@...#
         #.............................#*#S#####
-        #@%@###@%@###@%@###@%@###.....#*#.WW#**
+        #@L@###@%@###@L@###@%@###.....#*#.WW#**
         #...#*#...#*#...#*#...#*#.....#*#..W#**
         #...#*#...#*#...#*#...#*#.....#*#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
         *************************#...#**#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
         #...#*#...#*#...#*#...#*#.....#*#.WW#**
-        #...#*#...#*#...#*#...#*#.....#*#.###**
-        #@%@###@%@###@%@###@%@###.....#*#.#****
-        #.............................###.##***
+        #...#*#...#*#...#*#...#*#.....#*#D###**
+        #@L@###@%@###@%@###@%@###.....#*#.#****
+        #.............................###D##***
         #.............................D.D..#***
         #########################.....###..#***
         ************************#.....#*#..#***
@@ -995,7 +888,7 @@ Dungeon ATTNAM;
       {
         ************###########################
         ************#..b#..#....#....#....#...#
-        ************3....r.#....#....##.###...#
+        ************#....r.#....#....##.###...#
         ************#......##.#####.##........#
         ************#..b#...............b.#####
         ************#######..#r###...####.....#
@@ -1048,33 +941,37 @@ Dungeon ATTNAM;
           * = 0;
           # = 0;
           G = guard(VETERAN);
-          N = necromancer(IMPRISONED_NECROMANCER);
+          N = necromancer(IMPRISONED_NECROMANCER) { Team = 15; }
           P = punisher;
           T = punisher(MASTER_TORTURER) { Flags = IS_MASTER; }
+          1 = farmer(IMPRISONED_FARMER) { Team = 15; }
+          2 = hunter(IMPRISONED_HUNTER) { Team = 15; }
+          3 = femaleslave(IMPRISONED_FEMALE) { Team = 15; }
+          4 = zombie(IMPRISONED_ZOMBIE) { Team = 15; }
         }
       }
       {
         ************###########################
         ************#...#..#....#....#....#...#
-        ************#......#....#....##.###...#
+        ************#.4....#....#....##.###...#
         ************#......##.#####.##........#
         ************#...#.................#####
         ************#######..#.###...####.....#
-        ******************#..#***#...#**#.#...#
-        ******************####***#...#**#.#...#
-        ************************##...##*#.#####
-        ************************#.....#*#.....#
+        ******************#..#.**#...#**#.#...#
+        ******************####*.*#...#**#.#...#
+        ************************#######*#.#####
+        ************************#...G.#*#.....#
         #########################.....#*#.#...#
         #.............................#*#.#...#
         #.............................#*#######
         ##.#####.#####.#####.####.....#*#...#**
         #...#*#...#*#...#*#...#*#.....#*#...#**
-        #...#*#...#*#...#*#...#*#.....#*#...#**
+        #1..#*#...#*#2..#*#...#*#.....#*#...#**
         #####*#####*#####*#####*##...##*#...#**
         *************************#...#**#...#**
         #####*#####*#####*#####*##...##*#...#**
         #...#*#...#*#...#*#N..#*#.....#*#...#**
-        #...#*#...#*#...#*#...#*#.....#*#.###**
+        #..3#*#...#*#...#*#...#*#.....#*#.###**
         ##.#####.#####.#####.####.....#*#.#****
         #.............................###.##***
         #..................................#***

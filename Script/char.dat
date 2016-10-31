@@ -453,6 +453,23 @@ farmer
     "herbalism", "plants", "breeding", "snow", "forestry";
   }
   DisplacePriority = -2;
+
+  Config IMPRISONED_FARMER;
+  {
+    UsesLongAdjectiveArticle = true;    
+    Adjective = "eunuch";
+    CanBeGenerated = false;
+    AttributeBonus = -10;
+    RightWielded = 0;
+    HostileReplies == "\"You don't have the balls to kill me!\"";
+    FriendlyReplies =
+    {
+      3,
+      "\"Let’s just say that Petrus‘ wife No. 3 was beautiful and I wasn’t careful.\"",
+      "\"Would you have a nut to spare?\"",
+      "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
+    }
+  }
 }
 
 guard
@@ -2378,6 +2395,30 @@ hunter
   ScienceTalkIntelligenceRequirement = 6;
   ScienceTalkWisdomRequirement = 3;
   IsSadist = true;
+
+  Config IMPRISONED_HUNTER;
+  {
+    UsesLongAdjectiveArticle = true;    
+    Adjective = "imprisoned";
+    CanBeGenerated = false;
+    AttributeBonus = -10;
+    TotalVolume = 72000;
+    Helmet = 0;
+    BodyArmor = 0;
+    RightWielded = 0;
+    KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
+    Inventory == bone;
+    HostileReplies == "\"Prison, torture and starvation didn't kill me, neither will you!\"";
+    FriendlyReplies =
+    {
+      5,
+      "\"Where’s my arm? Gah, ask the master torturer!\"",
+      "\"I'm innocent! That guy ran onto my spear! Twenty seven times. From behind.\"",
+      "\"I was the Great White Hunter. Oh, how I miss the old days of ceaseless slaughter! Eh-heh heh.\"",
+      "\"It wasn't my fault. That bastard had it coming. He should have remembered the rules: No kill stealing!\"",
+      "\"I miss hunting. Sometimes I tear open my own flesh, just to see the vivid red of blood on my hands again. Eh-heh heh heh.\"";
+    }
+  }
 }
 
 bear
@@ -2728,6 +2769,20 @@ femaleslave
     }
     AutomaticallySeen = true;
   }
+
+  Config IMPRISONED_FEMALE;
+  {   
+    NameSingular = "prisoner";
+    CanBeGenerated = false;
+    AttachedGod = DULCIS;
+    RightWielded = 0;
+    FriendlyReplies =
+    {
+      2,
+      "\"Never say no to Petrus. Ever!\"",
+      "\"And I thought Richel Decos was bad with his whips…\"";
+    }
+  }
 }
 
 librarian
@@ -2824,12 +2879,28 @@ zombie
     DefaultIntelligence = 7;
     DefaultWisdom = 5;
     DefaultCharisma = 5;
-    RightWielded = VALPURIUM meleeweapon(HAMMER);
+    RightWielded = VALPURIUM meleeweapon(AXE);
     ClassStates = LEPROSY;
     Sex = MALE;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
     CreateUndeadConfigurations = false;
+  }
+
+  Config IMPRISONED_ZOMBIE;
+  {
+    PostFix = "prisoner";
+    Sex = MALE;
+    IsImmuneToLeprosy = true;
+    CanBeGenerated = false;
+    CreateUndeadConfigurations = false;
+    FriendlyReplies =
+    {
+      3,
+      "\"Mighty Petrus said: ‘Eating brainz is bad.‘\"",
+      "\"I got off lightly – only three life sentences!\"",
+      "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now I’m a prisoner.\"";
+    }
   }
 }
 
@@ -6082,7 +6153,7 @@ punisher
   TamingDifficulty = NO_TAMING;
   HostileReplies == "\"You are now about to enter a world of pain!\"";
   AttachedGod = CRUENTUS;
-  FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
+  FriendlyReplies == "\"Hey, I'm also from New Attnam!\"";
   IsSadist = true;
 
   Config MASTER_TORTURER;
@@ -6092,13 +6163,17 @@ punisher
     CapColor = rgb16(50, 50, 50);
     Helmet = BLACK_LEATHER helmet { Enchantment = 2; }
     BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-    RightWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 2; }
+    RightWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
+    LeftWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
+    CWeaponSkillHits = { 2, 500, 500; }
+    RightSWeaponSkillHits = 500;
+    LeftSWeaponSkillHits = 500;
     NameSingular = "master torturer";
     DefaultName = "Migel Decos";
     FriendlyReplies =
     {
       5,
-      "@Dd smiles. It's much better when he's frowning.",
+      "@Dd smiles. It's terrifying.",
       "@Dd sighs: \"Why don't the prisoners understand it's for their own good?\"",
       "@Dd looks smug. \"I'm the head of the Citizen Purification Committee.\"",
       "\"I would love to break your arms, one bone at a time.\"",

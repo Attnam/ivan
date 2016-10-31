@@ -573,6 +573,8 @@
 #define BRAVERY 1
 #define FEAR 2
 
+#define IMPRISONED_FARMER 1
+
 #define ROOKIE 1
 #define VETERAN 2
 #define EUNUCH 3
@@ -607,13 +609,18 @@
 #define LARGE 1
 #define GIANT 2
 
+#define IMPRISONED_HUNTER 1
+
 #define BLACK_BEAR 1
 #define GRIZZLY_BEAR 2
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
 #define MUTANT_BEAR 5
 
+#define IMPRISONED_FEMALE 1
+
 #define ZOMBIE_OF_KHAZ_ZADM 1
+#define IMPRISONED_ZOMBIE 2
 
 #define TORTURING_CHIEF 1
 #define WHIP_CHAMPION 2
@@ -747,6 +754,7 @@
 #define XINROCH_TOMB_ENTRY_TEAM 12
 #define XINROCH_TOMB_SHOP_TEAM 13
 #define XINROCH_TOMB_KAMIKAZE_DWARF_TEAM 14
+#define PRISONER_TEAM 15
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2
