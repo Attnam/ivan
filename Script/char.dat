@@ -2879,7 +2879,7 @@ zombie
     DefaultIntelligence = 7;
     DefaultWisdom = 5;
     DefaultCharisma = 5;
-    RightWielded = VALPURIUM meleeweapon(AXE);
+    RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
     ClassStates = LEPROSY;
     Sex = MALE;
     IsImmuneToLeprosy = true;
@@ -5403,7 +5403,7 @@ necromancer
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
-  ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
+  ConsumeFlags = CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE; /* Necromancers eat vegetarians, not vegetables! */
   HostileReplies == "@Dd yells: \"Death! Death!\"";
   FriendlyReplies == "\"I see dead people.\"";
   IgnoreDanger = true;

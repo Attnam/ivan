@@ -32,7 +32,7 @@ Dungeon ATTNAM;
     Rooms = 10;
     Items = 0;
     IsOnGround = false;
-    TeamDefault = ATTNAM_TEAM;
+    TeamDefault = MONSTER_TEAM;
     LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
     CanGenerateBone = false;
@@ -1005,6 +1005,44 @@ Dungeon ATTNAM;
     }
   }
 
+  RandomLevel 2:3;
+  {
+    Room
+    {
+      Size = 6,6;
+
+      Square, Random;
+      {
+        Items == Random { Category = RING|SCROLL|WAND; }
+        Times == 1;
+      }
+
+      Square, Random;
+      {
+        Items == METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Times == 3;
+      }
+
+      Square, Random;
+      {
+        Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Times == 2;
+      }
+
+      Square, Random;
+      {
+        Items == OCTIRON beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Times == 1;
+      }
+
+      Square, Random;
+      {
+        Items == ADAMANT beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Times == 1;
+      }
+    }
+  }
+
   Level 2;
   {
     Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -1020,7 +1058,13 @@ Dungeon ATTNAM;
       EntryIndex = STAIRS_DOWN;
       AttachRequired = true;
     }
+
+    Square, Random;
+    {
+      Character = skeleton(WARRIOR);
+    }
   }
+
   Level 3;
   {
     Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -1037,17 +1081,104 @@ Dungeon ATTNAM;
       AttachRequired = true;
     }
   }
+
   Level 4;
   {
-    Square, Random NOT_WALKABLE|ATTACHABLE;
+    LevelMessage = "You hear rhythmic chanting of some profane ritual: 'Ia! Ia! Khaz-zadm fhtagn!'";
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
-    Square, Random IN_ROOM;
+
+    Room
     {
-      OTerrain = coffin;
+      Size = 11, 11;
+      DoorSquare = GRANITE solidterrain(GROUND),IRON door;
+      AltarPossible = false;
+      DivineMaster = MORTIFER;
+      GenerateDoor = true;
+      GenerateTunnel = true;
+      GenerateLanterns = false;
+      AllowLockedDoors = true;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Size = 9, 9;
+        Pos = 1, 1;
+
+        Types
+        {
+          b = 0;
+          s = 0;
+          C = coffin {ItemsInside == Random {Times = 1:3; } }
+         }
+      }
+      {
+        .........
+        ...bbb...
+        ..s...s..
+        .b.....b.
+        .b..C..b.
+        .b.....b.
+        ..s...s..
+        ...bbb...
+        .........
+      }
+
+      ItemMap
+      {
+        Size = 9, 9;
+        Pos = 1, 1;
+
+        Types
+        {
+          b == bone { Times = 1:4; }
+          s == skull;
+          C == 0;
+         }
+      }
+      {
+        .........
+        ...bbb...
+        ..s...s..
+        .b.....b.
+        .b..C..b.
+        .b.....b.
+        ..s...s..
+        ...bbb...
+        .........
+      }
+
+      CharacterMap
+      {
+        Size = 9, 9;
+        Pos = 1, 1;
+
+        Types
+        {
+          b = 0;
+          s = 0;
+          C = 0;
+          N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, PURPLE_CRYSTAL skull, wand(WAND_OF_NECROMANCY); } }
+          Z = zombie(ZOMBIE_OF_KHAZ_ZADM);
+         }
+      }
+      {
+        .........
+        ...bbb...
+        ..s...s..
+        .b.N...b.
+        .b..C..b.
+        .b...Z.b.
+        ..s...s..
+        ...bbb...
+        .........
+      }
     }
   }
 }
