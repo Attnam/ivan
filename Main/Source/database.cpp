@@ -395,6 +395,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BaseUnarmedStrength);
   ADD_MEMBER(BaseBiteStrength);
   ADD_MEMBER(BaseKickStrength);
+  ADD_MEMBER(BonusBiteStrength);
   ADD_MEMBER(AttackStyle);
   ADD_MEMBER(CanUseEquipment);
   ADD_MEMBER(CanKick);

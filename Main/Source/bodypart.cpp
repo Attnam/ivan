@@ -194,14 +194,14 @@ int leg::GetTotalResistance(int Type) const
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BaseBiteStrength;
+  SaveFile << BaseBiteStrength << BonusBiteStrength;
   SaveFile << HelmetSlot << AmuletSlot;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BaseBiteStrength;
+  SaveFile >> BaseBiteStrength >> BonusBiteStrength;
   SaveFile >> HelmetSlot >> AmuletSlot;
 }
 
@@ -499,7 +499,10 @@ void head::CalculateDamage()
   if(!Master)
     return;
 
-  BiteDamage = 7.07e-6 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  if(Master->StateIsActivated(VAMPIRISM))
+    BiteDamage = 7.07e-6 * (GetBaseBiteStrength() + GetBonusBiteStrength()) * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  else
+    BiteDamage = 7.07e-6 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void head::CalculateToHitValue()
@@ -1172,6 +1175,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 void head::InitSpecialAttributes()
 {
   BaseBiteStrength = Master->GetBaseBiteStrength();
+  BonusBiteStrength = Master->GetBonusBiteStrength();
 }
 
 void arm::InitSpecialAttributes()
@@ -1656,7 +1660,7 @@ void arm::WieldedSkillHit(int Hits)
   }
 }
 
-head::head(const head& Head) : mybase(Head), BaseBiteStrength(Head.BaseBiteStrength)
+head::head(const head& Head) : mybase(Head), BaseBiteStrength(Head.BaseBiteStrength), BonusBiteStrength(Head.BonusBiteStrength)
 {
   HelmetSlot.Init(this, HELMET_INDEX);
   AmuletSlot.Init(this, AMULET_INDEX);

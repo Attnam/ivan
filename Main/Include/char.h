@@ -176,6 +176,7 @@ struct characterdatabase : public databasebase
   int BaseUnarmedStrength;
   int BaseBiteStrength;
   int BaseKickStrength;
+  int BonusBiteStrength;
   int AttackStyle;
   long ClassStates;
   fearray<festring> Alias;
@@ -521,6 +522,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, BaseUnarmedStrength);
   DATA_BASE_VALUE(int, BaseBiteStrength);
   DATA_BASE_VALUE(int, BaseKickStrength);
+  DATA_BASE_VALUE(int, BonusBiteStrength);
   DATA_BASE_VALUE(int, AttackStyle);
   DATA_BASE_TRUTH(CanUseEquipment);
   DATA_BASE_TRUTH(CanKick);

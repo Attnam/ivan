@@ -229,6 +229,8 @@ ITEM(head, bodypart)
   virtual int GetEquipments() const { return 2; }
   int GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(long What) { BaseBiteStrength = What; }
+  int GetBonusBiteStrength() const { return BonusBiteStrength; }
+  void SetBonusBiteStrength(long What) { BonusBiteStrength = What; }
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
@@ -241,6 +243,7 @@ ITEM(head, bodypart)
   gearslot HelmetSlot;
   gearslot AmuletSlot;
   int BaseBiteStrength;
+  int BonusBiteStrength;
   double BiteToHitValue;
   double BiteDamage;
   long BiteAPCost;
