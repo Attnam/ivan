@@ -68,6 +68,7 @@ character
   BaseUnarmedStrength = 0;
   BaseBiteStrength = 0; /* Defaults to BaseUnarmedStrength / 2 */
   BaseKickStrength = 0; /* Defaults to BaseUnarmedStrength * 2 */
+  BonusBiteStrength = 0; /* For when you are a vampire */
   AttackStyle = USE_ARMS;
   CanUseEquipment = false;
   CanKick = false;
@@ -317,6 +318,7 @@ humanoid
   ForceVomitMessage = "You push your fingers down to your throat and vomit.";
   DisplacePriority = 0;
   UndeadVersions = true;
+  BonusBiteStrength = 375;
 }
 
 nonhumanoid
@@ -3346,6 +3348,7 @@ vampire
   CanBeGenerated = true;
   CanRead = true;
   UndeadVersions = false;
+  BonusBiteStrength = 0; /* Doesn't need to be more powerful */
 }
 
 kobold
