@@ -732,6 +732,7 @@ guard
     LeftRing = ring(RING_OF_POISON_RESISTANCE);
     RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = ILLITHIUM boot { Enchantment = 2; }
+    DefaultName = "High Lord Kauhistuttava";
     Adjective = "master tomb";
     CWeaponSkillHits = { 2, 2000, 2000; }
     RightSWeaponSkillHits = 200;
@@ -879,7 +880,7 @@ shopkeeper
     KnownCWeaponSkills == AXES;
     CWeaponSkillHits == 1000;
     RightSWeaponSkillHits = 500;
-    DefaultName = "Fry";
+    DefaultName = "Fryndal";
     Inventory == lantern;
     FriendlyReplies =
     {
@@ -920,6 +921,7 @@ priest
     LegBitmapPos = 0, 32;
     TotalVolume = 100000;
     TotalSize = 180;
+    DefaultName = "Verax";
     AttachedGod = VALPURUS;
     PostFix = "of Valpurus";
     Helmet = MITHRIL helmet { Enchantment = 2; }
@@ -956,6 +958,7 @@ priest
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     AttachedGod = SILVA;
+    DefaultName = "Florea";
     NameSingular = "priestess";
     PostFix = "of Silva";
     Sex = FEMALE;
@@ -5509,7 +5512,7 @@ necromancer
     DefaultWisdom = 20;
     DefaultCharisma = 9;
     DefaultMana = 50;
-    UsesLongAdjectiveArticle = true;
+    DefaultName = "Anmah";
     Adjective = "imprisoned";
     TotalVolume = 80000;
     TotalSize = 180;
