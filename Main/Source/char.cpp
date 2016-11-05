@@ -9629,8 +9629,6 @@ void character::AddRandomScienceName(festring& String) const
       Prefix.Empty();
   }
 
-  int L = Prefix.GetSize();
-
   if(!NoAttrib && !NoSecondAdjective == !RAND_GOOD(3))
   {
     int S1 = NoSecondAdjective ? 0 : GetScienceTalkAdjectiveAttribute().Size;
