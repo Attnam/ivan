@@ -3290,7 +3290,7 @@ werewolfwolf
   BaseBiteStrength = 1200;
   CanUseEquipment = false;
   CanBeWished = false;
-  ClassStates = INFRA_VISION;
+  ClassStates = INFRA_VISION|LYCANTHROPY;
   PanicLevel = 0;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
