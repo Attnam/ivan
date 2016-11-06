@@ -4835,16 +4835,12 @@ truth vampire::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex
       ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
 
     if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY))
-      Victim->BeginTemporaryState(VAMPIRISM, 65535 + RAND_N(2000));
-      //Victim->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500));
+      Victim->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500));
 
       // HP recieved is about half the damage done; against werewolves this is full
       int DrainDamage = (DoneDamage >> 1) + 1;
       if(Victim->StateIsActivated(LYCANTHROPY))
         DrainDamage = DoneDamage + 1;
-
-ADD_MESSAGE("Damage was %d HP!", DoneDamage);
-ADD_MESSAGE("Recieved %d HP!", DrainDamage);
 
     if(IsPlayer())
       game::DoEvilDeed(10);
@@ -4867,16 +4863,12 @@ truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartInde
         ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
 
       if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY))
-        Victim->BeginTemporaryState(VAMPIRISM, 65535 + RAND_N(2000));
-        //Victim->BeginTemporaryState(VAMPIRISM, 2000 + RAND_N(100));
+        Victim->BeginTemporaryState(VAMPIRISM, 2000 + RAND_N(500));
 
       // HP recieved is about half the damage done; against werewolves this is full
       int DrainDamage = (DoneDamage >> 1) + 1;
       if(Victim->StateIsActivated(LYCANTHROPY))
         DrainDamage = DoneDamage + 1;
-
-ADD_MESSAGE("Damage was %d HP!", DoneDamage);
-ADD_MESSAGE("Recieved %d HP!", DrainDamage);
 
       // To perpetuate vampirism, simply keep doing drain attacks
       BeginTemporaryState(VAMPIRISM, 50*DrainDamage);
