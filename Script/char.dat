@@ -3343,12 +3343,12 @@ vampire
   FleshMaterial = VAMPIRE_FLESH;
   AttachedGod = MORTIFER;
   WillCarryItems = true;
-  UndeadVersions = false;
   CanUseEquipment = false;
   CanBeGenerated = true;
   CanRead = true;
   UndeadVersions = false;
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
+  AllowedDungeons == XINROCH_TOMB;
 }
 
 kobold
