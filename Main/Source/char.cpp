@@ -8758,6 +8758,8 @@ truth character::IsImmuneToLeprosy() const
 
 void character::LeprosyHandler()
 {
+  if(!(RAND() % 1000) && IsPlayer())
+    ADD_MESSAGE("You notice you're covered in sores!");
   EditExperience(ARM_STRENGTH, -25, 1 << 1);
   EditExperience(LEG_STRENGTH, -25, 1 << 1);
   EditExperience(DEXTERITY, -25, 1 << 1);
@@ -9671,11 +9673,6 @@ void character::AddRandomScienceName(festring& String) const
     if(!Prefix.IsEmpty() && Science.Find(Prefix) != festring::NPos)
       Prefix.Empty();
   }
-
-  int L = Prefix.GetSize();
-
-  if(L && Prefix[L - 1] == Science[0])
-    Science.Erase(0, 1);
 
   if(!NoAttrib && !NoSecondAdjective == !RAND_GOOD(3))
   {

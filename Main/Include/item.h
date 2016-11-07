@@ -193,6 +193,7 @@ struct itemdatabase : public databasebase
   int DamageFlags;
   festring BreakMsg;
   truth IsSadistWeapon;
+  fearray<int> AllowedDungeons;
 };
 
 class itemprototype
@@ -409,6 +410,7 @@ class item : public object
   DATA_BASE_TRUTH(FlexibilityIsEssential);
   DATA_BASE_VALUE(cfestring&, BreakMsg);
   DATA_BASE_TRUTH(IsSadistWeapon);
+  DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;

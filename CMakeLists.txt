@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12.2)
 
-project(ivan CXX)
+project(ivan CXX C)
 set(PROJECT_VERSION 0.50.7)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")

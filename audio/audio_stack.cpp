@@ -88,7 +88,7 @@ uint8_t STACK_PushData(STACK_t* stack, void* data)
         return STACK_Len(stack);
     }
 
-    return STACK_OVERFLOW;
+    return 0;
 }
 
 uint8_t STACK_Len(STACK_t* stack)

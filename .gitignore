@@ -50,3 +50,6 @@ Bones
 Save
 /Debug/
 /Linux/
+
+# OS / IDE files
+.DS_Store

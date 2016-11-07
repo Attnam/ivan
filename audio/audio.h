@@ -34,7 +34,7 @@
 class musicfile
 {
 public:
-   musicfile(char* filename, int LowThreshold, int HighThreshold);
+   musicfile(cchar* filename, int LowThreshold, int HighThreshold);
    ~musicfile();
 
    inline bool IsPlaying(void) { return isPlaying; }
@@ -104,7 +104,7 @@ public:
 
    static int GetVolumeLevel(void);
 
-   static int SendVolumeMessage(int targetVolume);
+   static void SendVolumeMessage(int targetVolume);
 
    /**
     * @param intensity 0 - 100
@@ -117,7 +117,7 @@ public:
     * @param filename MIDI file location
     * @param intensitylow
     */
-   static void LoadMIDIFile(char* filename, int intensitylow, int intensityhigh);
+   static void LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh);
 
 
    static void ClearMIDIPlaylist(char* exceptFilename = 0);

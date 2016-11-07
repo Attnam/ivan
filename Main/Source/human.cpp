@@ -985,6 +985,14 @@ void priest::BeTalkedTo()
   }
 
   humanoid::BeTalkedTo();
+  static long Said;
+
+  if(GetConfig() != SILVA)
+    humanoid::BeTalkedTo();
+  else if(!game::TweraifIsFree())
+    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 4)]);
+  else
+    ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
 }
 
 void skeleton::BeTalkedTo()

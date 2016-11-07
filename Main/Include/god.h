@@ -43,6 +43,7 @@ class god
  public:
   typedef godprototype prototype;
   god();
+  virtual ~god() = default;
   virtual void Pray();
   virtual cchar* GetName() const = 0;
   virtual cchar* GetDescription() const = 0;

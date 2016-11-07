@@ -248,6 +248,7 @@ struct characterdatabase : public databasebase
   truth CanBeGeneratedOnlyInTheCatacombs;
   truth IsAlcoholic;
   truth IsImmuneToWhipOfThievery;
+  fearray<int> AllowedDungeons;
 };
 
 class characterprototype
@@ -608,6 +609,7 @@ class character : public entity, public id
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   DATA_BASE_TRUTH(IsAlcoholic);
   DATA_BASE_TRUTH(IsImmuneToWhipOfThievery);
+  DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
