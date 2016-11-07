@@ -2264,7 +2264,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK,
-                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage), false, DoneDamage) || DoneDamage;
+                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage)) || DoneDamage;
 
   if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
