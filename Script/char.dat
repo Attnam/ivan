@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
@@ -6136,7 +6136,7 @@ punisher
   DefaultWisdom = 7;
   DefaultCharisma = 10;
   DefaultMana = 0;
-  HeadBitmapPos = 96, 0;
+  HeadBitmapPos = 96, 352;
   TorsoBitmapPos = 48, 48;
   ArmBitmapPos = 64, 256;
   LegBitmapPos = 0, 48;
@@ -6156,7 +6156,12 @@ punisher
   TamingDifficulty = NO_TAMING;
   HostileReplies == "\"You are now about to enter a world of pain!\"";
   AttachedGod = CRUENTUS;
-  FriendlyReplies == "\"Hey, I'm also from New Attnam!\"";
+  FriendlyReplies =
+  {
+    2,
+    "\"Hey, I'm also from New Attnam!\"",
+    "\"Gah, that mask itches! But Mr. Decos says we have to wear it to keep the morale of prisoners up.\"";
+  }
   IsSadist = true;
 
   Config MASTER_TORTURER;
@@ -6175,12 +6180,13 @@ punisher
     DefaultName = "Migel Decos";
     FriendlyReplies =
     {
-      5,
+      6,
       "@Dd smiles. It's terrifying.",
       "@Dd sighs: \"Why don't the prisoners understand it's for their own good?\"",
       "@Dd looks smug. \"I'm the head of the Citizen Purification Committee.\"",
       "\"I would love to break your arms, one bone at a time.\"",
-      "\"I was tasked with re-educating anyone who would cooperate with La Resistance by mighty Petrus himself!\"";
+      "\"New Attnam? Yes, my brother is a viceroy there.\"",
+      "\"I was tasked with re-educating thought-criminals by mighty Petrus himself!\"";
     }
     Inventory == key;
   }
