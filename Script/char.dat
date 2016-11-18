@@ -461,6 +461,7 @@ farmer
     CanBeGenerated = false;
     AttributeBonus = -10;
     RightWielded = 0;
+    IsMasochist = true;
     HostileReplies == "\"You don't have the balls to kill me!\"";
     FriendlyReplies =
     {
@@ -2411,6 +2412,7 @@ hunter
     RightWielded = 0;
     KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
     Inventory == bone;
+    IsMasochist = true;
     HostileReplies == "\"Prison, torture and starvation didn't kill me, neither will you!\"";
     FriendlyReplies =
     {
@@ -2779,6 +2781,7 @@ femaleslave
     CanBeGenerated = false;
     AttachedGod = DULCIS;
     RightWielded = 0;
+    IsMasochist = true;
     FriendlyReplies =
     {
       2,
@@ -2897,6 +2900,7 @@ zombie
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
     CreateUndeadConfigurations = false;
+    IsMasochist = true;
     FriendlyReplies =
     {
       3,
@@ -6140,6 +6144,7 @@ punisher
   TorsoBitmapPos = 48, 48;
   ArmBitmapPos = 64, 256;
   LegBitmapPos = 0, 48;
+  CapColor = rgb16(200, 200, 10);
   TorsoMainColor = rgb16(30, 30, 30);
   LegMainColor = rgb16(30,30,30);
   SkinColor = rgb16(255, 222, 202);
@@ -6153,16 +6158,15 @@ punisher
   CWeaponSkillHits = { 2, 200, 200; }
   RightSWeaponSkillHits = 200;
   AttackStyle = USE_ARMS|USE_LEGS;
-  TamingDifficulty = NO_TAMING;
   HostileReplies == "\"You are now about to enter a world of pain!\"";
   AttachedGod = CRUENTUS;
+  IsSadist = true;
   FriendlyReplies =
   {
     2,
     "\"Hey, I'm also from New Attnam!\"",
     "\"Gah, that mask itches! But Mr. Decos says we have to wear it to keep the morale of prisoners up.\"";
   }
-  IsSadist = true;
 
   Config MASTER_TORTURER;
   {
@@ -6189,5 +6193,6 @@ punisher
       "\"I was tasked with re-educating thought-criminals by mighty Petrus himself!\"";
     }
     Inventory == key;
+    TamingDifficulty = NO_TAMING;
   }
 }
