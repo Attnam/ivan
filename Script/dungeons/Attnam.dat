@@ -210,19 +210,21 @@ Dungeon ATTNAM;
 
       GTerrainMap
       {
-        Pos = 4,4;
-        Size = 33,34;
+        Pos = 4,3;
+        Size = 33,35;
         Types
         {
           # = MARBLE solidterrain(FLOOR) { IsInside = true; }
           - = MARBLE solidterrain(FLOOR) { IsInside = true; }
           ~ = liquidterrain(POOL) { IsInside = true; }
+          = = liquidterrain(POOL);
         }
       }
       {
-        ............#########............
-        ............#-------#............
-        ####......###-------###......####
+        ........................====.....
+        ............#########...=====....
+        ............#-------#....===.....
+        ####......###-------###...==.####
         #--#......#-----------#......#--#
         #--#....###-----------###....#--#
         #--#....#---------------#....#--#
@@ -244,7 +246,7 @@ Dungeon ATTNAM;
         .#---~~~#-#-----------#-#------#.
         .##--~~~#-#-----------#-#-----##.
         ..##-~~~#-#-----------#-#----##..
-        ...##~~~#-######-######-#---##...
+        ...##~~~#-######-######-###-##...
         ....#~~~#---------------#---#....
         ....#~~~#---------------#---#....
         ...#######---###-###---#######...
@@ -282,45 +284,53 @@ Dungeon ATTNAM;
           f = fountain { SecondaryMaterial = ICE; }
           d = decoration(DOUBLE_BED);
           B = GOLD boulder(1);
+          _ = decoration(BENCH);
+          - = decoration(DESK);
+          = = decoration(ARM_CHAIR);
+          ~ = decoration(EXPENSIVE_BED);
+          [ = decoration(OVEN);
+          t = decoration(TABLE);
+          x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, FABRIC cloak, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } } }
+          X = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; } } }
         }
       }
       {
         b.b.b.b.b.b.b.b.b.b.b.b.b.b.b.b.b.b.b.b
         .......................................
-        b...b...b..b...b.b.b.b.b...b..b...b...b
+        b...b...b..b...b.b.b.b.b..........b...b
         ..b...b........#########........b...b..
         b....b.......bb#.......#bb.......b....b
         ...####b..b..###.......###..b..b####...
-        b.b#..#.b....#...........#....b.#.B#b.b
-        ...#..#....###...........###....#..#...
+        b.b#..#.b....#...........#....b.#=.#b.b
+        ...#..#....###...........###....#-.#...
         b.b#..#b..b#...............#b..b#..#b.b
         ...#..###..#.....T...T.....#..###.B#...
         b.b#....#.b#.......|.......#b.#....#b.b
         ...#....#..#.......|.......#..#B...#...
         b.b###..#b.###.....|.....###.b#..###b.b
         ....b#..#@#.b#.....|.....#b.#@#.B#b....
-        b....#....#..#.....|.....#..#..B.#....b
+        b....#....#_.#.....|.....#..#..B.#....b
         ..bb.###..####.....|.....####..###.bb..
         b.....b#.....#.....|.....#...B.#b.....b
         .b..b..#.....#.....|.....#.B...#..b..b.
         b..b...####..#.....|.....#..####...b..b
         b....b....#..#.....|.....#.B#....b....b
-        .b.b....b###D#.....|.....#D###b....b.b.
+        .b.b....b###D#.....|.....#L###b....b.b.
         b...b#####.#.#.....|.....#.#.#####b.b.b
-        ....##.....D.#.....|.....#.D.....##....
-        b..b#.s.152#.#.....|.....#.#......#b..b
-        .b..#...8.6#.#.....|.....#.#..A...#..b.
-        b...##..8.6#.#.....|.....#.#.....##...b
-        ....b##.8.6#.#...........#.#....##b....
-        b.b..b##8.6#.######D######.#...##b..b.b
-        .......#8.6#...............#...#.......
-        b...b.b#473#...............#...#b.b...b
+        ....##s....D.#.....|.....#.D.....##....
+        b..b#X..152#.#.....|.....#.#......#b..b
+        .b..#X..8.6#.#.....|.....#.#..A...#..b.
+        b...##.=8.6#.#.....|.....#.#.....##...b
+        ....b##-8.6#.#...........#.#....##b....
+        b.b..b##8.6#.######D######.###L##b..b.b
+        .......#8.6#...............#~..#.......
+        b...b.b#473#...............#x=-#b.b...b
         .b....##@####...###D###...####@##....b.
-        b..####.s.s.D...#.b.b.#...D.....####..b
-        ..b#.d......#####.f.f.#####........#b..
-        b..#....s.s.#b..b.....b..b#........#..b
+        b..####.s.s.D...#.b.b.#...D..[.[####..b
+        ..b#.d......#####.f.f.#####.....[.[#b..
+        b..#....s.s.#b..b.....b..b#tttt....#..b
         .b.##...#####.bb..b.b..bb.#####...##.b.
-        b..b##s.#b.b......f.f......b.b#..##b..b
+        b..b##xx#b.b......f.f......b.b#..##b..b
         ....b####....b...........b....####b....
         b.b...b...b.......b.b.......b...b...b.b
         ...............bb.f.f.bb...............
@@ -362,14 +372,15 @@ Dungeon ATTNAM;
           w == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           c == Random { MinPrice = 700; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }
           m == Random { MinPrice = 350; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; Enchantment = 1; }
+          X == itemcontainer(CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
         }
       }
       {
         ............##2###2##............
         ............#.......#............
         ####......###.......###......####
-        #..#......#...........#......#r.#
-        #..#....###...........###....#gi#
+        #..#......#...........#......#..4
+        #..#....###...........###....#.i#
         #..#....#...r.......r...#....#hC#
         #..###..#.........a.....#..###I.#
         #...e#..#......b.b......#..#EOLF#
@@ -389,15 +400,15 @@ Dungeon ATTNAM;
         .#......#.3.i..p.p..i.4.#......#.
         .##.....4.#....b.b....#.3.....##.
         ..##....#.#...........#.#....##..
-        ...##...#.##2###.###2##.#...##...
-        ....#...4...............3...#....
+        ...##...#.##2###.###2##.###.##...
+        ....#...4...............#...4....
         ....#...#...............#...#....
         ...###2###...##2.2##...###2###...
         ####.........#.....#.........####
         #........#####.....#####........#
         #........#.............#........#
         ##...#####.............#####...##
-        .##..#.....................#..##.
+        .##..#.....................#XX##.
         ..####.....................####..
       }
 
@@ -431,7 +442,7 @@ Dungeon ATTNAM;
         }
       }
       {
-        ............#########............
+        ............#########....d.......
         ............#g.....g#............
         ####......###..ymy..###......####
         #.K#......#g....l....g#......#..#
@@ -455,7 +466,7 @@ Dungeon ATTNAM;
         .#....d.#.#...........#.#......#.
         .##...d.#.#...........#.#.....##.
         ..##.d.d#.#g.........g#.#....##..
-        ...##.d.#.######.######.#...##...
+        ...##.d.#.######.######.###.##...
         ....#.d.#......g.g......#...#....
         ....#...#...............#...#....
         ...#######...###.###...#######...
@@ -468,7 +479,7 @@ Dungeon ATTNAM;
       }
     }
 
-    Square, Pos 44,44;
+    Square, Pos 44,45;
     {
       OTerrain = stairs(STAIRS_DOWN);
       EntryIndex = STAIRS_DOWN;
@@ -506,6 +517,11 @@ Dungeon ATTNAM;
       Square, Pos 5, 1;
       {
         Character = shopkeeper(ATTNAM) { Flags = IS_MASTER; }
+      }
+
+      Square, Pos 5, 1;
+      {
+        OTerrain = decoration(CHAIR);
       }
 
       Square, Pos 3, 0;
@@ -569,6 +585,11 @@ Dungeon ATTNAM;
       Square, Pos 3, 3;
       {
         Character = librarian { Flags = IS_MASTER; }
+      }
+
+      Square, Pos 3, 3;
+      {
+        OTerrain = decoration(CHAIR);
       }
 
       Square, Pos 3, 0;
@@ -666,6 +687,16 @@ Dungeon ATTNAM;
       {
         OTerrain = decoration(ANVIL);
       }
+
+      Square, Pos 1, 1;
+      {
+        OTerrain = decoration(FORGE);
+      }
+
+      Square, Pos 5, 1;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
     }
 
     Room
@@ -682,7 +713,7 @@ Dungeon ATTNAM;
 
       Square, Pos 3, 5;
       {
-        GTerrain = solidterrain(PARQUET);
+        GTerrain = OAK_WOOD solidterrain(PARQUET);
         OTerrain = door;
       }
 
@@ -725,6 +756,16 @@ Dungeon ATTNAM;
       {
         Character = tailor { Flags = IS_MASTER; }
       }
+
+      Square, Pos 3, 3;
+      {
+        OTerrain = decoration(WORK_BENCH);
+      }
+
+      Square, Pos 1, 2;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
     }
 
     Room
@@ -732,6 +773,16 @@ Dungeon ATTNAM;
       FloorSquare = solidterrain(FLOOR), 0;
       WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
       DoorSquare = solidterrain(FLOOR), door;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
+      }
     }
 
     Room
@@ -739,6 +790,21 @@ Dungeon ATTNAM;
       FloorSquare = solidterrain(FLOOR), 0;
       WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
       DoorSquare = solidterrain(FLOOR), door;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHAIR);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TABLE);
+      }
     }
 
     Room
@@ -746,6 +812,11 @@ Dungeon ATTNAM;
       FloorSquare = solidterrain(FLOOR), 0;
       WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
       DoorSquare = solidterrain(FLOOR), door;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHEAP_BED);
+      }
     }
   }
 
@@ -820,29 +891,32 @@ Dungeon ATTNAM;
             ItemsInside = { 1, potion { Times = 3:5; SecondaryMaterial = VODKA; } }
           }
           I = ironmaiden;
+          w = decoration(WOODEN_HORSE);
+          t = decoration(TORTURE_RACK);
+          s = decoration(SHACKLES);
         }
       }
       {
         ************#######################XX##
-        ************X...@..@....X....#....$...#
+        ************X.s.@..@...sX....#...s$...#
         ************#...@..@....#....#@B@@@...#
-        ************#...L..@@B@@#@@%@#b...%...#
+        ************#s..L..@@B@@#@@%@#b...%...#
         ************X...@............S....XX###
-        ************#######..#.##X@B@#XX#.%...#
-        ******************#..#b**#...X**X.@...#
-        ******************####*>*#...#**#.$...X
+        ************#######..#X##X@B@#XX#.%..s#
+        *****************b...#***#...X**X.@...#
+        ***************>.*####***#.s.#**#.$...X
         ************************##NNN##*#.#XXX#
         ************************#.....#*#.%...X
-        #########################.....#*#.@...#
+        #########################.....#*#.@.s.#
         #.............................#*#.@...#
         #.............................#*#S#####
         #@L@###@%@###@L@###@%@###.....#*#.WW#**
         #...#*#...#*#...#*#...#*#.....#*#..W#**
-        #...#*#...#*#...#*#...#*#.....#*#.WW#**
+        #..s#*#.s.#*#.s.#*#...#*#.....#*#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
         *************************#...#**#.WW#**
         #####*#####*#####*#####*##...##*#..W#**
-        #...#*#...#*#...#*#...#*#.....#*#.WW#**
+        #..s#*#...#*#s..#*#.s.#*#.....#*#.WW#**
         #...#*#...#*#...#*#...#*#.....#*#D###**
         #@L@###@%@###@%@###@%@###.....#*#.#****
         #.............................###D##***
@@ -855,9 +929,9 @@ Dungeon ATTNAM;
         **********************#.......#*####***
         **********************#.I.....#********
         **********************#.......#********
-        **********************#.......#********
-        **********************#.......#********
-        **********************#.......#********
+        **********************#.....w.#********
+        **********************#.t.....#********
+        **********************#.....w.#********
         **********************#.......#********
         **********************###D#####********
         ************************#.#************
@@ -891,9 +965,9 @@ Dungeon ATTNAM;
         ************#....r.#....#....##.###...#
         ************#......##.#####.##........#
         ************#..b#...............b.#####
-        ************#######..#r###...####.....#
-        ******************#.b#***#...#**#.#...#
-        ******************####***#...#**#.#...#
+        ************#######..#####...####.....#
+        *****************.r.b#***#...#**#.#...#
+        ***************..*####***#...#**#.#...#
         ************************##...##*#.#####
         ************************#.....#*#.....#
         ##2#####2#####2#####2###3.....#*#.#...#
@@ -1003,6 +1077,12 @@ Dungeon ATTNAM;
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
     }
+
+    Square, Pos 17,9;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+    }
   }
 
   RandomLevel 2:3;
@@ -1010,35 +1090,33 @@ Dungeon ATTNAM;
     Room
     {
       Size = 6,6;
+      Flags = NO_MONSTER_GENERATION;
 
       Square, Random;
       {
-        Items == Random { Category = RING|SCROLL|WAND; }
-        Times == 1;
+        Items == Random { Category = RING|SCROLL|WAND;  MaxPrice = 500; }
       }
 
       Square, Random;
       {
-        Items == METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Items == METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; LifeExpectancy = 1000:10000; }
         Times == 3;
       }
 
       Square, Random;
       {
-        Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+        Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; LifeExpectancy = 1000:10000; }
         Times == 2;
       }
 
       Square, Random;
       {
-        Items == OCTIRON beartrap { Team = MONSTER_TEAM; IsActive = true; }
-        Times == 1;
+        Items == OCTIRON beartrap { Team = MONSTER_TEAM; IsActive = true; LifeExpectancy = 1000:10000; }
       }
 
       Square, Random;
       {
-        Items == ADAMANT beartrap { Team = MONSTER_TEAM; IsActive = true; }
-        Times == 1;
+        Items == ADAMANT beartrap { Team = MONSTER_TEAM; IsActive = true; LifeExpectancy = 1000:10000; }
       }
     }
   }
@@ -1084,7 +1162,7 @@ Dungeon ATTNAM;
 
   Level 4;
   {
-    LevelMessage = "You hear rhythmic chanting of some profane ritual: 'Ia! Ia! Khaz-zadm fhtagn!'";
+    LevelMessage = "You hear rhythmic chanting of some profane ritual: \"Ia! Ia! Khaz-zadm fhtagn!\"";
 
     Square, Random NOT_IN_ROOM|ATTACHABLE;
     {

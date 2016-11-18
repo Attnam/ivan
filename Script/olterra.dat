@@ -515,6 +515,8 @@ decoration
     DigMessage = "You break the forge.";
     MainMaterialConfig == BASALT;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
     Walkability = ETHEREAL;
     NameSingular = "forge";
@@ -528,6 +530,8 @@ decoration
     DigMessage = "You break the furnace.";
     MainMaterialConfig == BASALT;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
     Walkability = ETHEREAL;
     NameSingular = "furnace";
@@ -541,6 +545,8 @@ decoration
     DigMessage = "You break the oven.";
     MainMaterialConfig == COPPER;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
     Walkability = ETHEREAL;
     NameSingular = "oven";
@@ -555,6 +561,7 @@ decoration
     DigMessage = "You break the wooden horse.";
     MainMaterialConfig == FIR_WOOD;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(100, 50, 30);
     ShowMaterial = false;
     SitMessage = "Ouch! What did you think? It's painful to sit on the wooden horse.";
     NameSingular = "wooden horse";
@@ -568,6 +575,7 @@ decoration
     DigMessage = "You break the torture rack.";
     MainMaterialConfig == LEATHER;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(100, 50, 30);
     ShowMaterial = false;
     RestMessage = "As long as you're not strapped here, it's nice to rest on the torture rack.";
     NameSingular = "torture rack";
@@ -581,6 +589,7 @@ decoration
     DigMessage = "You break the writing desk.";
     MainMaterialConfig == FIR_WOOD;
     MaterialColorB = rgb16(210, 210, 210);
+    MaterialColorC = rgb16(100, 50, 30);
     SitMessage = "You sit on the desk.";
     RestMessage = "You take a nap on the desk.";
     NameSingular = "writing desk";
@@ -594,6 +603,7 @@ decoration
     DigMessage = "You break the workbench.";
     MainMaterialConfig == FIR_WOOD;
     MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(124, 50, 16);
     SitMessage = "You sit on the workbench.";
     RestMessage = "You take a nap on the workbench.";
     NameSingular = "workbench";
@@ -619,6 +629,7 @@ decoration
     DigMessage = "You stop digging as you nearly fall in the well.";
     MainMaterialConfig == GRANITE;
     MaterialColorB = rgb16(140, 96, 48);
+    MaterialColorC = rgb16(100, 50, 30);
     ShowMaterial = false;
     SitMessage = "You sit beside the well.";
     NameSingular = "well";
@@ -770,6 +781,7 @@ olterraincontainer /* olterrain->decoration-> */
   {
     CanBeDestroyed = true;
     MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(124, 50, 16);
     NameSingular = "chest of drawers";
     BitmapPos = 0, 224;
     SitMessage = "The chest of drawers is very uncomfortable to sit on.";

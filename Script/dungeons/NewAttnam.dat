@@ -250,6 +250,11 @@ Dungeon NEW_ATTNAM;
         Character = sumowrestler { Flags = IS_MASTER; }
       }
 
+      Square, Pos 1, 1;
+      {
+        OTerrain = decoration(CHEAP_BED);
+      }
+
       Square, Pos 2, 1;
       {
         OTerrain = stairs(SUMO_ARENA_ENTRY) { AttachedArea = 1; AttachedEntry = STAIRS_UP; }
@@ -295,6 +300,11 @@ Dungeon NEW_ATTNAM;
       Square, Pos 3, 3;
       {
         Character = shopkeeper(NEW_ATTNAM) { Team = COLONIST_TEAM; Flags = IS_MASTER; }
+      }
+
+      Square, Pos 3, 3;
+      {
+        OTerrain = decoration(CHAIR);
       }
 
       Square, Pos 3, 6;
@@ -403,6 +413,11 @@ Dungeon NEW_ATTNAM;
     {
       OTerrain = decoration(PALM);
       Times = 100;
+    }
+
+    Square, BoundedRandom 1, 46, 44, 53, HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(WELL);
     }
 
     Square, Pos 20, 44;
