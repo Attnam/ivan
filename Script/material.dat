@@ -1840,7 +1840,7 @@ flesh
   Flexibility = 5;
   SpoilModifier = 10000;
   PriceModifier = 60;
-  BodyFlags = Base|IS_ALIVE|IS_WARM|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
+  BodyFlags = Base|IS_ALIVE|IS_WARM|IS_WARM_BLOODED|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
   FireResistance = 0;
 
@@ -1851,6 +1851,7 @@ flesh
     NutritionValue = 15;
     PriceModifier = 40;
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -1861,7 +1862,7 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 8000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~CAN_HAVE_PARASITE;
+    BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1872,7 +1873,7 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 8000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~CAN_HAVE_PARASITE;
+    BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1884,6 +1885,7 @@ flesh
     HitMessage = HM_FROG_FLESH;
     NameStem = "frog flesh";
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
     InteractionFlags = Base&~CAN_DISSOLVE;
   }
 
@@ -1899,7 +1901,7 @@ flesh
     Color = rgb16(60, 60, 60);
     AttachedGod = MORTIFER;
     NameFlags = Base|USE_AN;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base&~CAN_DISSOLVE;
     FireResistance = 100;
   }
@@ -1910,35 +1912,30 @@ flesh
     AttachedGod = MORTIFER;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base|CAN_BURN;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config DOLPHIN_FLESH;
   {
     NameStem = "dolphin flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config BEAR_FLESH;
   {
     NameStem = "raw bear flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config WOLF_FLESH;
   {
     NameStem = "wolf flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config DOG_FLESH;
   {
     NameStem = "dog flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config ENNER_BEAST_FLESH;
@@ -1949,7 +1946,6 @@ flesh
     NameStem = "enner beast flesh";
     AttachedGod = DULCIS;
     NameFlags = Base|USE_AN;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config SPIDER_FLESH;
@@ -1959,13 +1955,13 @@ flesh
     Effect = EFFECT_POISON;
     EffectStrength = 100;
     ConsumeWisdomLimit = 3;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config JACKAL_FLESH;
   {
     NameStem = "jackal flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config MUTANT_ASS_FLESH;
@@ -1976,14 +1972,12 @@ flesh
     Emitation = rgb24(140, 100, 100);
     ConsumeWisdomLimit = 8;
     AttachedGod = SCABIES;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config BAT_FLESH;
   {
     NameStem = "bat flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config WERE_WOLF_FLESH;
@@ -1994,7 +1988,6 @@ flesh
     ConsumeWisdomLimit = 10;
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config KOBOLD_FLESH;
@@ -2008,6 +2001,7 @@ flesh
     PriceModifier = 0;
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config GIBBERLING_FLESH;
@@ -2015,7 +2009,7 @@ flesh
     NameStem = "gibberling flesh";
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
-    BodyFlags = Base|IS_WARM_BLOODED;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config VAMPIRE_FLESH;
@@ -2023,21 +2017,18 @@ flesh
     NameStem = "vampire flesh";
     ConsumeWisdomLimit = 10;
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config CAT_FLESH;
   {
     NameStem = "cat flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config RAT_FLESH;
   {
     NameStem = "rat flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config ANGEL_FLESH;
@@ -2045,7 +2036,6 @@ flesh
     NameStem = "angel flesh";
     AttachedGod = MORTIFER;
     FireResistance = 50;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config DWARF_FLESH;
@@ -2053,7 +2043,6 @@ flesh
     NameStem = "dwarf flesh";
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config DAEMON_FLESH;
@@ -2066,14 +2055,12 @@ flesh
     AttachedGod = MORTIFER;
     InteractionFlags = Base&~CAN_DISSOLVE;
     FireResistance = 100;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config MAMMOTH_FLESH;
   {
     NameStem = "mammoth flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config BLACK_UNICORN_FLESH;
@@ -2086,7 +2073,7 @@ flesh
     ConsumeEndMessage = CEM_BLACK_UNICORN_FLESH;
     ConsumeWisdomLimit = 10;
     CommonFlags = Base|IS_VALUABLE;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
   }
 
   Config GRAY_UNICORN_FLESH;
@@ -2098,7 +2085,6 @@ flesh
     Effect = EFFECT_GRAY_UNICORN_FLESH;
     ConsumeEndMessage = CEM_GRAY_UNICORN_FLESH;
     CommonFlags = Base|IS_VALUABLE;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config WHITE_UNICORN_FLESH;
@@ -2110,21 +2096,18 @@ flesh
     Effect = EFFECT_WHITE_UNICORN_FLESH;
     ConsumeEndMessage = CEM_WHITE_UNICORN_FLESH;
     CommonFlags = Base|IS_VALUABLE;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config LION_FLESH;
   {
     NameStem = "lion flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config BUFFALO_FLESH;
   {
     NameStem = "buffalo flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config SNAKE_FLESH;
@@ -2134,6 +2117,7 @@ flesh
     EffectStrength = 15;
     ConsumeWisdomLimit = 3;
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config ORC_FLESH;
@@ -2143,14 +2127,12 @@ flesh
     NutritionValue = 15;
     ConsumeWisdomLimit = 15;
     InteractionFlags = Base|CAN_BURN;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config OSTRICH_FLESH;
   {
     NameStem = "ostrich flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config CHAMELEON_FLESH;
@@ -2160,6 +2142,7 @@ flesh
     PriceModifier = 50;
     ConsumeWisdomLimit = 7;
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config FLOATING_EYE_FLESH;
@@ -2171,6 +2154,7 @@ flesh
     PriceModifier = 120;
     CommonFlags = Base|IS_VALUABLE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config MUSHROOM_FLESH;
@@ -2182,7 +2166,7 @@ flesh
     AttachedGod = NEFAS;
     EffectStrength = 20;
     PriceModifier = 100;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -2190,14 +2174,12 @@ flesh
   {
     NameStem = "moose flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config MAGPIE_FLESH;
   {
     NameStem = "magpie flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config SKUNK_FLESH;
@@ -2207,14 +2189,12 @@ flesh
     Effect = EFFECT_POISON;
     EffectStrength = 5;
     ConsumeWisdomLimit = 4;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config HEDGEHOG_FLESH;
   {
     NameStem = "hedgehog flesh";
     AttachedGod = MORTIFER;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config MUTANT_BUNNY_FLESH;
@@ -2225,13 +2205,13 @@ flesh
     Emitation = rgb24(140, 100, 100);
     ConsumeWisdomLimit = 8;
     AttachedGod = SCABIES;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config HATTIFATTENER_FLESH;
   {
     NameStem = "hattifattener flesh";
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config BLINK_DOG_FLESH;
@@ -2241,7 +2221,6 @@ flesh
     Effect = EFFECT_TELEPORT_CONTROL;
     PriceModifier = 120;
     CommonFlags = Base|IS_VALUABLE;
-    BodyFlags = Base|IS_WARM_BLOODED;
   }
 
   Config MAGIC_MUSHROOM_FLESH;
@@ -2253,7 +2232,7 @@ flesh
     AttachedGod = NEFAS;
     EffectStrength = 20;
     PriceModifier = 150;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -2261,12 +2240,14 @@ flesh
   {
     NameStem = "sick spider flesh";
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config MIND_WORM_FLESH;
   {
-    NameStem = "sick spider flesh";
+    NameStem = "mind worm flesh";
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 }
 
