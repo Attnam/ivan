@@ -265,7 +265,7 @@ statedata StateData[STATES] =
     0,
     &character::VampirismHandler,
     0,
-    &character::VampirismSituationDangerModifier
+    0
   }
 };
 
@@ -4867,7 +4867,7 @@ void character::PrintBeginVampirismMessage() const
 void character::PrintEndVampirismMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam. You are a vampire no longer.");
+    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
 }
 
 void character::PrintBeginInvisibilityMessage() const
@@ -9591,14 +9591,6 @@ void character::LycanthropySituationDangerModifier(double& Danger) const
   double DangerToWolf = GetRelativeDanger(Wolf);
   Danger *= pow(DangerToWolf, 0.1);
   delete Wolf;
-}
-
-void character::VampirismSituationDangerModifier(double& Danger) const
-{
-  character* Vampire = vampire::Spawn();
-  double DangerToVampire = GetRelativeDanger(Vampire);
-  Danger *= pow(DangerToVampire, 0.1);
-  delete Vampire;
 }
 
 void character::PoisonedSituationDangerModifier(double& Danger) const

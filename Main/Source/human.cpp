@@ -481,7 +481,6 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       break;
     }
 
-  // Convert 1/3 unarmed attacks into biting under vampirism:
   if(StateIsActivated(VAMPIRISM) && !(RAND() % 2))
     {
       if(Chosen == USE_ARMS && CanAttackWithAnArm())

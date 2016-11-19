@@ -1058,7 +1058,6 @@ class character : public entity, public id
   void ParasitizedSituationDangerModifier(double&) const;
   void LeprosySituationDangerModifier(double&) const;
   void HiccupsSituationDangerModifier(double&) const;
-  void VampirismSituationDangerModifier(double&) const;
   truth TryToTalkAboutScience();
   truth IsUsingWeaponOfCategory(int) const;
   virtual truth IsKamikazeDwarf() const { return false; }
