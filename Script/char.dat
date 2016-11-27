@@ -3015,6 +3015,7 @@ bat
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
+  TorsoSpecialColor = rgb16(220, 220, 0); /* EyeColor */
   StandVerb = "flying";
   CanOpen = false;
   TotalVolume = 1000;
@@ -3022,7 +3023,7 @@ bat
   HostileReplies == "@Dd squeaks evilly.";
   FriendlyReplies == "@Dd squeaks happily.";
   TotalSize = 20;
-  SkinColor = rgb16(64, 64, 64);
+  SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
@@ -3036,6 +3037,20 @@ bat
   BiteCapturesBodyPart = false;
   MoveType = FLY;
   IsCatacombCreature = true;
+}
+
+vampirebat
+{
+  DefaultArmStrength = 4;
+  TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
+  PanicLevel = 100;
+  DefaultEndurance = 10;
+  DefaultIntelligence = 10;
+  TotalVolume = 1200;
+  TotalSize = 30;
+  SkinColor = rgb16(64, 64, 96);
+  NameSingular = "vampire bat";
+  AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
 }
 
 mistress

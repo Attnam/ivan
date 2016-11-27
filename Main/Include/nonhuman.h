@@ -161,6 +161,12 @@ CHARACTER(bat, nonhumanoid)
   virtual bodypart* MakeBodyPart(int) const;
 };
 
+CHARACTER(vampirebat, bat)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+};
+
 CHARACTER(largecat, nonhumanoid)
 {
  public:
