@@ -866,6 +866,7 @@ shopkeeper
     RightSWeaponSkillHits = 500;
     DefaultName = "Fry";
     Inventory == lantern;
+    UndeadVersions = false;
     FriendlyReplies =
     {
       3,
@@ -1115,6 +1116,7 @@ darkknight
     CanBeGenerated = false;
     HostileReplies == "@Dd yells: \"Who dares disturb the slumber of the lord Xinroch?\"";
     AttachedGod = INFUSCOR;
+    UndeadVersions = false;
   }
 
   Config GRAVE_KEEPER; /*Tougher than elite*/
@@ -1141,6 +1143,7 @@ darkknight
     CanBeGenerated = false;
     HostileReplies == "@Dd exclaims: \"None shall pass.\"";
     AttachedGod = INFUSCOR;
+    UndeadVersions = false;
   }
 
   Config ELITE;
@@ -1722,6 +1725,7 @@ skeleton
     IsExtraFragile = false;
     TamingDifficulty = NO_TAMING;
     CreateUndeadConfigurations = false;
+    AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
   }
 }
 
