@@ -606,69 +606,82 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 4:5; /* Kitchen */
+  RandomLevel 1:2;
   {
-    CanGenerateBone = false;
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          v = vampirebat;
+          V = vampire { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+        }
+      }
+      {
+        .vvv.
+        vvVvv
+        vvvvv
+        .vvv.
+      }
+    }
+  }
+
+  RandomLevel 1:2;
+  {
 
     Room
     {
       Size = 7,6;
       AltarPossible = false;
-      GenerateFountains = false;
-      GenerateDoor = false;
-      DivineMaster = SEGES;
-      GenerateLanterns = false;
-      Type = ROOM_SHOP;
-      AllowLockedDoors = false;
-      AllowBoobyTrappedDoors = false;
-      Flags = NO_MONSTER_GENERATION;
+      Shape = ROUND_CORNERS;
 
-      Square, Pos 3, 5;
-      {
-        GTerrain = solidterrain(PARQUET);
-        OTerrain = door;
-        AttachRequired = true;
-      }
-      Square, Pos 1,1;
-      {
-        Character = shopkeeper(XINROCH_TOMB) { Team = XINROCH_TOMB_SHOP_TEAM; Flags = IS_MASTER; }
-      }
-      Square, Pos 1,4;
-      {
-        Character = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_SHOP_TEAM;}
-      }
-      Square, Pos 3,2;
-      {
-        OTerrain = fountain;
-      }
-
-      Square, Random;
-      {
-        Items == bone;
-        Times = 3:6;
-      }
-
-      Square, Random;
-      {
-        Items == skull;
-        Times = 0:2;
-      }
-
-      OTerrainMap
+      CharacterMap
       {
         Pos = 1,1;
         Size = 5,4;
+
         Types
         {
-          = = olterraincontainer(SHELF) { ItemsInside = { 2, Random { MinPrice = 50; MaxPrice = 100; Category = FOOD; }, Random { MinPrice = 100; Category = POTION; } } }
-          % = olterraincontainer(SHELF) { ItemsInside = { 2, Random { MinPrice = 40; MaxPrice = 100; Category = FOOD; }, Random { MinPrice = 20; MaxPrice = 100; Category = FOOD; } } }
+          z = zombie;
+          d = zombie { Inventory == nut { Times = 2; } }
+          b = zombie { Inventory == can { SecondaryMaterial = BANANA_FLESH; } }
+          p = zombie { Inventory == can { SecondaryMaterial = PINEAPPLE_FLESH; } }
+          c = zombie { Inventory == carrot; }
+          Z = zombie { Inventory == pineapple { Times = 2; } }
         }
       }
       {
-        ....%
-        ....=
-        ....%
-        ....%
+        .zbz.
+        zpdbz
+        dbzcd
+        .zZz.
+      }
+
+      ItemMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          o == can;
+          c == can { SecondaryMaterial = BANANA_FLESH; }
+          A == bodyarmor(ARMOR_OF_GREAT_HEALTH);
+        }
+      }
+      {
+        ..Ao.
+        .A.Ao
+        oA.A.
+        .oA..
       }
     }
   }
