@@ -38,8 +38,8 @@ Dungeon XINROCH_TOMB;
     TeamDefault = MONSTER_TEAM;
     LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
-    DifficultyBase = 40;
-    DifficultyDelta = 15;
+    DifficultyBase = 70;
+    DifficultyDelta = 20;
     MonsterAmountBase = 12;
     MonsterAmountDelta = 3;
     MonsterGenerationIntervalBase = 128;
@@ -1264,6 +1264,22 @@ Dungeon XINROCH_TOMB;
     Items = 40:70;
     Size = 80, 26;
     ItemMinPriceBase = 20;
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+    }
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+    }
 
     Square, Random NOT_IN_ROOM;
     {
