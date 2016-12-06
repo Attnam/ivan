@@ -21,7 +21,7 @@
 
 Dungeon XINROCH_TOMB;
 {
-  Levels = 12;
+  Levels = 11;
   Description = "Tomb of Xinroch";
   ShortDescription = "TX";
 
@@ -1520,185 +1520,14 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 10;
+  Level 10; /* Ultimate level! */
   {
-    Items = 10:20;
+    LevelMessage = "\"HA HA HA! I'm ALIVE! Prepare to die mortal!\"";
+    Items = 5:10;
     EnchantmentMinusChanceBase = 15;
     EnchantmentPlusChanceBase = 0;
     EnchantmentPlusChanceDelta = 0;
     ItemMinPriceBase = 50;
-    FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
-    TunnelSquare = SLATE solidterrain(GROUND), 0;
-    CanGenerateBone = true;
-
-    RoomDefault
-    {
-      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
-      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
-    }
-
-    Square, Random NOT_WALKABLE|ATTACHABLE;
-    {
-      OTerrain = stairs(STAIRS_DOWN);
-      EntryIndex = STAIRS_DOWN;
-      AttachRequired = true;
-    }
-
-    Square, Random;
-    {
-      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
-      Times = 2:6;
-    }
-
-    Square, Random;
-    {
-      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
-      Times = 2:6;
-    }
-
-    Room /* Medium maze room in the middle */
-    {
-      Pos = 21, 7;
-      Size = 21, 21;
-      AltarPossible = false;
-      GenerateFountains = true;
-      Shape = MAZE_ROOM;
-      FloorSquare = SLATE solidterrain(PARQUET), 0;
-      WallSquare = SLATE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
-      DoorSquare = SLATE solidterrain(PARQUET), OCTIRON door;
-    }
-
-    Room
-    {
-      Pos = 2: XSize/2 - 7, YSize/2 : YSize - 7; /*lower left quadrant*/
-      Size = 5,5;
-      AltarPossible = false;
-      GenerateFountains = false;
-      GenerateDoor = false;
-      GenerateTunnel = false;
-      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
-      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
-
-      CharacterMap
-      {
-        Pos = 1,1;
-        Size = 3,3;
-
-        Types
-        {
-          E = darkmage(ELDER) { Inventory == Random { MinPrice = 350; Category = WAND|SCROLL; } }
-          B = darkmage(BATTLE_MAGE);
-          A = darkmage(APPRENTICE);
-          N = necromancer(MASTER_NECROMANCER);
-          n = necromancer(APPRENTICE_NECROMANCER);
-        }
-      }
-      {
-        AnA
-        nEn
-        NBN
-      }
-
-      Square, Pos 2, 4;
-      {
-        GTerrain = EBONY_WOOD solidterrain(PARQUET);
-        OTerrain = OCTIRON door(OCTAGONAL_LOCK);
-        AttachRequired = true;
-      }
-    }
-
-    Room
-    {
-      Pos = XSize/2 : XSize - 7, 2 : YSize/2 - 7; /*upper right quadrant*/
-      Size = 5,5;
-      AltarPossible = false;
-      GenerateFountains = false;
-      GenerateDoor = false;
-      GenerateTunnel = false;
-      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
-      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON door;
-
-      CharacterMap
-      {
-        Pos = 1,1;
-        Size = 3,3;
-
-        Types
-        {
-          B = darkmage(BATTLE_MAGE);
-          A = darkmage(APPRENTICE);
-          N = necromancer(MASTER_NECROMANCER);
-          n = necromancer(APPRENTICE_NECROMANCER);
-          M = mysticfrog(DARK);
-        }
-      }
-      {
-        NBN
-        nMn
-        ABA
-      }
-
-      Square, Pos 2, 0;
-      {
-        GTerrain = EBONY_WOOD solidterrain(PARQUET);
-        OTerrain = OCTIRON door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
-        AttachRequired = true;
-      }
-    }
-
-    Room
-    {
-      Pos = 2 : XSize/2 - 11, 2 : YSize/2 - 11; /*upper left quadrant*/
-      Size = 9,9;
-      AltarPossible = false;
-      GenerateFountains = false;
-      Shape = MAZE_ROOM;
-      FloorSquare = SLATE solidterrain(PARQUET), 0;
-      WallSquare = SLATE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
-      DoorSquare = SLATE solidterrain(PARQUET), OCTIRON door;
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = golem;
-        Times = 6;
-      }
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = golem(OCTIRON);
-      }
-    }
-
-    Room
-    {
-      Pos = XSize/2 : XSize - 11, YSize/2 : YSize - 11; /*lower right quadrant*/
-      Size = 9,9;
-      AltarPossible = false;
-      GenerateFountains = false;
-      Shape = MAZE_ROOM;
-      FloorSquare = SLATE solidterrain(PARQUET), 0;
-      WallSquare = SLATE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
-      DoorSquare = SLATE solidterrain(PARQUET), OCTIRON door;
-
-      Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = darkknight(TEMPLAR);
-        Times = 6;
-      }
-    }
-  }
-
-  Level 11; /* Ultimate level! */
-  {
-    LevelMessage = "\"HA HA HA! I'm ALIVE! Prepare to die mortal!\"";
-    Items = 5:10;
-    EnchantmentMinusChanceBase = 20;
-    EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
-    ItemMinPriceBase = 60;
     FillSquare = BONE solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
     CanGenerateBone = false;
@@ -1712,13 +1541,6 @@ Dungeon XINROCH_TOMB;
       WallSquare = BONE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
       FloorSquare = BONE solidterrain(PARQUET), 0;
       DoorSquare = BONE solidterrain(PARQUET), OCTIRON door;
-    }
-
-    Square, Random NOT_WALKABLE|ATTACHABLE;
-    {
-      OTerrain = stairs(STAIRS_UP);
-      EntryIndex = STAIRS_UP;
-      AttachRequired = true;
     }
 
     Room
