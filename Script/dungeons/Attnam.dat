@@ -348,7 +348,7 @@ Dungeon ATTNAM;
           2 == lantern { SquarePosition = DOWN; }
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
-          C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, GOLD helmet, stone { Times = 10; }, GOLD banana; } }
+          C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, meleeweapon(GRAND_STOLLEN_KNIFE), stone { Times = 10; }, GOLD banana; } }
           F == ring(RING_OF_FIRE_RESISTANCE);
           I == ring(RING_OF_INVISIBILITY);
           E == amulet(AMULET_OF_ESP);
