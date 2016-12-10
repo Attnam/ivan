@@ -372,7 +372,7 @@ Dungeon ATTNAM;
           w == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           c == Random { MinPrice = 700; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }
           m == Random { MinPrice = 350; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; Enchantment = 1; }
-          X == itemcontainer(CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
+          X == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
         }
       }
       {

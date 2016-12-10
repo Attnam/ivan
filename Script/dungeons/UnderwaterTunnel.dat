@@ -360,6 +360,8 @@ Dungeon UNDER_WATER_TUNNEL;
 
     Room
     {
+      Flags = NO_MONSTER_GENERATION;
+
       Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; }
@@ -376,6 +378,7 @@ Dungeon UNDER_WATER_TUNNEL;
     Room
     {
       DivineMaster = TERRA;
+      Flags = NO_MONSTER_GENERATION;
 
       Square, Random HAS_NO_OTERRAIN;
       {
@@ -459,25 +462,25 @@ Dungeon UNDER_WATER_TUNNEL;
     Square, Random;
     {
       Character = bear(BLACK_BEAR);
-      Times = 0:5;
+      Times = 0:3;
     }
 
     Square, Random;
     {
       Character = bear(GRIZZLY_BEAR);
-      Times = 0:5;
+      Times = 0:3;
     }
 
     Square, Random;
     {
       Character = bear(CAVE_BEAR);
-      Times = 0:5;
+      Times = 0:3;
     }
 
     Square, Random;
     {
       Character = buffalo;
-      Times = 0:5;
+      Times = 0:2;
     }
 
     Square, Random;
@@ -489,7 +492,7 @@ Dungeon UNDER_WATER_TUNNEL;
     Square, Random;
     {
       Character = skunk;
-      Times = 0:10;
+      Times = 0:5;
     }
 
     Square, Random;
@@ -502,12 +505,6 @@ Dungeon UNDER_WATER_TUNNEL;
     {
       Character = lion;
       Times = 0:5;
-    }
-
-    Square, Random;
-    {
-      Character = mammoth;
-      Times = 0:1;
     }
   }
 
