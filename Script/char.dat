@@ -2221,6 +2221,26 @@ spider
     HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
     FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
   }
+
+  Config ARANEA;
+  {
+    DefaultArmStrength = 20;
+    DefaultAgility = 26;
+    DefaultEndurance = 18;
+    DefaultPerception = 26;
+    DefaultIntelligence = 4;
+    DefaultWisdom = 4;
+    DefaultCharisma = 5;
+    Adjective = "aranea";
+    TorsoBitmapPos = 256, 0;
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 50;
+    TotalVolume = 5000;
+    TotalSize = 50;
+    Frequency = 0;
+    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
+    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
+  }
 }
 
 jackal
