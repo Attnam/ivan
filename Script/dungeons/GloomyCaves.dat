@@ -496,7 +496,7 @@ Dungeon ELPURI_CAVE;
         {
           # = WATER liquidterrain(UNDERGROUND_LAKE);
           _ = GRAVEL solidterrain(GROUND);
-          ~ = SAND solidterrain(GROUND);
+          ~ = SAND solidterrain(SAND_TERRAIN);
           x = FIR_WOOD solidterrain(PARQUET);
         }
       }
