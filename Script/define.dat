@@ -640,6 +640,8 @@
 #define GENERAL 4
 #define MARSHAL 5
 
+#define MASTER_TORTURER 1
+
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
 #define ELDER 3
@@ -671,8 +673,6 @@
 
 #define HATCHLING 1
 #define BOIL 2
-
-#define MASTER_TORTURER 1
 
 #define PARQUET 1
 #define FLOOR 2
