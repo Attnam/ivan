@@ -1017,7 +1017,7 @@ Dungeon ATTNAM;
           G = guard(VETERAN);
           N = necromancer(IMPRISONED_NECROMANCER) { Team = 15; }
           P = punisher;
-          T = punisher(MASTER_TORTURER) { Flags = IS_MASTER; }
+          T = imperialist(MASTER_TORTURER) { Flags = IS_MASTER; }
           1 = farmer(IMPRISONED_FARMER) { Team = 15; }
           2 = hunter(IMPRISONED_HUNTER) { Team = 15; }
           3 = femaleslave(IMPRISONED_FEMALE) { Team = 15; }
