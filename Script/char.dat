@@ -1819,7 +1819,8 @@ goblin
   Config BERSERKER;
   {
     AttributeBonus = 25;
-    RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
+    RightWielded = BRONZE BRONZE meleeweapon(TWO_HANDED_SWORD);
+    KnownCWeaponSkills == LARGE_SWORDS;
     CWeaponSkillHits == 20;
     RightSWeaponSkillHits = 10;
     NameSingular = "goblin berserker";
@@ -3007,14 +3008,14 @@ zombie
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 7;
-    DefaultWisdom = 5;
+    DefaultWisdom = 15;
     DefaultCharisma = 5;
     RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
     ClassStates = LEPROSY;
     IsExtraFragile = false;
     Sex = FEMALE;
-    FireResistance = 40;
-    ElectricityResistance = 25;
+    FireResistance = 25;
+    ElectricityResistance = 15;
     EnergyResistance = 15;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;

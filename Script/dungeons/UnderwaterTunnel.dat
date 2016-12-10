@@ -95,6 +95,30 @@ Dungeon UNDER_WATER_TUNNEL;
     }
   }
 
+  RandomLevel 0:1;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHAIR);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(ANVIL);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(FORGE);
+      }
+    }
+  }
+
   Level 0;
   {
     IgnoreDefaultSpecialSquares = true;

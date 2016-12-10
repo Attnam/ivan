@@ -329,6 +329,30 @@ Dungeon ELPURI_CAVE;
     }
   }
 
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TABLE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
+      }
+    }
+  }
+
   Level ENNER_BEAST_LEVEL;
   {
     LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";

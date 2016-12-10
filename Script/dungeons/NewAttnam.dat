@@ -400,7 +400,7 @@ Dungeon NEW_ATTNAM;
     Room
     {
       Size = 4, 4;
-      Pos = 50, 1;
+      Pos = 49, 2;
       GenerateDoor = false;
       GenerateWindows = false;
       FloorSquare = solidterrain(FLOOR), 0;
