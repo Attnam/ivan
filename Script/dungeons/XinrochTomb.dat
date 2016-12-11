@@ -1610,7 +1610,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Pos 5, 5;
       {
-        OTerrain = portal(XINROCH_TOMB_ENTRANCE) { AttachedArea = 10; AttachedEntry = RANDOM; }
+        OTerrain = portal(XINROCH_TOMB_ENTRANCE) { AttachedArea = 10; AttachedEntry = STAIRS_UP; }
         Character = xinrochghost;
       }
 
@@ -1655,6 +1655,16 @@ Dungeon XINROCH_TOMB;
 
     Room
     {
+      Pos = 2:XSize-5, 2:YSize-5;
+
+      Square, Random;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+    }
+
+    Room
+    {
       Size = 9,9;
       DivineMaster = INFUSCOR;
 
@@ -1665,7 +1675,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Pos 4,1;
       {
-        OTerrain = portal(XINROCH_TOMB_EXIT) { AttachedArea = 3; AttachedEntry = RANDOM; }
+        OTerrain = portal(XINROCH_TOMB_EXIT) { AttachedArea = 3; AttachedEntry = STAIRS_UP; }
       }
 
       CharacterMap
