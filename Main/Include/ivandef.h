@@ -531,7 +531,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
 
-#define DUAL_ENNER_BEAST_LEVEL 7
+#define DUAL_ENNER_BEAST_LEVEL 5
 
 /* stack::DrawContents flags */
 

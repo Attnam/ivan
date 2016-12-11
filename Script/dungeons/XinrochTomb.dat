@@ -31,7 +31,7 @@ Dungeon XINROCH_TOMB;
     TunnelSquare = GRAVEL solidterrain(GROUND), 0;
     BackGroundType = GRAY_FRACTAL;
     Size = 64, 36;
-    Rooms = 10:30;
+    Rooms = 8:15;
     Items = 20:40;
     GenerateMonsters = true;
     IsOnGround = false;
@@ -429,75 +429,6 @@ Dungeon XINROCH_TOMB;
 
     Room
     {
-      Size = 7,7;
-      GenerateFountains = false;
-      Shape = ROUND_CORNERS;
-      FloorSquare = solidterrain(GROUND), 0;
-      UseFillSquareWalls = true;
-      GenerateDoor = false;
-      GenerateLanterns = false;
-      AltarPossible = false;
-
-      Square, Pos 3,0;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 0,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 6,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 3,6;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-    }
-
-    Room
-    {
-      Size = 7,7;
-      GenerateFountains = false;
-      Shape = ROUND_CORNERS;
-      FloorSquare = solidterrain(GROUND), 0;
-      UseFillSquareWalls = true;
-      GenerateDoor = false;
-      GenerateLanterns = false;
-      AltarPossible = false;
-
-      Square, Pos 3,0;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 0,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 6,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 3,6;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-    }
-  }
-
-  RandomLevel 1; /* Paradise room */
-  {
-    Room
-    {
       Size = 14,14;
       AllowLockedDoors = true;
       AllowBoobyTrappedDoors = true;
@@ -593,26 +524,82 @@ Dungeon XINROCH_TOMB;
         #$$$$$$$$$$#
       }
     }
-  }
 
-  RandomLevel 2:3; /* Lesser maze room */
-  {
     Room
     {
-      Size = 13,13;
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
       AltarPossible = false;
-      GenerateFountains = true;
-      Shape = MAZE_ROOM;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
     }
   }
 
-  RandomLevel 1:2;
+  RandomLevel 1:2; /* Vampire room */
   {
     Room
     {
       Size = 7,6;
       AltarPossible = false;
       Shape = ROUND_CORNERS;
+      AllowLockedDoors = false;
 
       CharacterMap
       {
@@ -634,14 +621,14 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 1:2;
+  RandomLevel 2:3;
   {
-
     Room
     {
       Size = 7,6;
       AltarPossible = false;
       Shape = ROUND_CORNERS;
+      AllowLockedDoors = false;
 
       CharacterMap
       {
@@ -673,7 +660,6 @@ Dungeon XINROCH_TOMB;
         Types
         {
           o == can;
-          c == can { SecondaryMaterial = BANANA_FLESH; }
           A == bodyarmor(ARMOR_OF_GREAT_HEALTH);
         }
       }
@@ -683,6 +669,11 @@ Dungeon XINROCH_TOMB;
         oA.A.
         .oA..
       }
+
+      Square, Pos 4, 3;
+      {
+        OTerrain = olterraincontainer(SHELF) { ItemsInside == can { MinPrice = 50; Times = 4; } }
+      }
     }
   }
 
@@ -690,8 +681,8 @@ Dungeon XINROCH_TOMB;
   {
     Room
     {
-      Size = 10,27;
-      Pos = XSize/2-10:XSize/2+10,2:6;
+      Size = 10,17;
+      /*Pos = XSize+2:XSize/2+15,4:YSize-20;*/
       AltarPossible = false;
       GenerateDoor = false;
       AllowLockedDoors = true;
@@ -702,7 +693,7 @@ Dungeon XINROCH_TOMB;
       FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
       DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
 
-      Square, Random;
+      Square, Random HAS_NO_OTERRAIN;
       {
         OTerrain = STEEL sign { Text = "Dwarven gas chambers. Welcome!"; }
       }
@@ -719,13 +710,13 @@ Dungeon XINROCH_TOMB;
         OTerrain = STEEL door { Parameters = LOCKED; }
         AttachRequired = true;
       }
-      Square, Pos 4, 26;
+      Square, Pos 4, 16;
       {
         GTerrain = solidterrain(PARQUET);
         OTerrain = STEEL door { Parameters = LOCKED; }
         AttachRequired = true;
       }
-      Square, Pos 5, 26;
+      Square, Pos 5, 16;
       {
         GTerrain = solidterrain(PARQUET);
         OTerrain = STEEL door { Parameters = LOCKED; }
@@ -738,25 +729,25 @@ Dungeon XINROCH_TOMB;
         Times = 8;
       }
 
-      Square, BoundedRandom 1, 11, 8, 13, HAS_NO_OTERRAIN;
+      Square, BoundedRandom 1, 6, 8, 8, HAS_NO_OTERRAIN;
       {
         Items == Random { MinPrice = 200; Category = POTION; Chance = 50; }
         Times = 5;
       }
 
-      Square, Random;
+      Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
         Times = 12;
       }
 
-      Square, Random;
+      Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
         Times = 8;
       }
 
-      Square, Random;
+      Square, Random HAS_NO_OTERRAIN;
       {
         Items == gasgrenade { Chance = 50; }
         Times = 12;
@@ -764,7 +755,7 @@ Dungeon XINROCH_TOMB;
 
       OTerrainMap
       {
-        Size = 8, 25;
+        Size = 8, 15;
         Pos = 1, 1;
         Types
         {
@@ -787,33 +778,18 @@ Dungeon XINROCH_TOMB;
         ........
         ..#..#..
         ###..###
-        ###..###
-        ..#..#..
-        ........
-        ..#..#..
-        ###..###
-        ###..###
-        ..#..#..
-        ........
-        ..#..#..
-        ###..###
       }
       CharacterMap
       {
-        Size = 8, 25;
+        Size = 8, 15;
         Pos = 1, 1;
         Types
         {
           # = 0;
-          k = kamikazedwarf(INFUSCOR){ Team = XINROCH_TOMB_KAMIKAZE_DWARF_TEAM; }
+          k = kamikazedwarf(SEGES){ Team = XINROCH_TOMB_KAMIKAZE_DWARF_TEAM; }
         }
       }
       {
-        ###..###
-        ..#..#..
-        ........
-        ..#..#..
-        ###..###
         ###..###
         ..#..#..
         ........
@@ -829,128 +805,15 @@ Dungeon XINROCH_TOMB;
         ........
         ..#..#..
         ###..###
-        ###..###
-        ..#..#..
-        ........
-        ..#..#..
-        ###..###
-      }
-    }
-  }
-
-  RandomLevel 5:6; /* Experimental necro-chamber */
-  {
-    Room
-    {
-      Size = 17,10;
-      AltarPossible = false;
-      WallSquare = EBONY_WOOD solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
-      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
-      GenerateDoor = false;
-      GenerateLanterns = false;
-      Flags = NO_MONSTER_GENERATION;
-
-      OTerrainMap
-      {
-        Size = 15, 8;
-        Pos = 1, 1;
-        Types
-        {
-          # = STEEL barwall;
-          % = STEEL barwall(BROKEN_BARWALL);
-          G = STEEL door(BARDOOR) { Parameters = LOCKED; }
-          B = STEEL brokendoor(BARDOOR) { Parameters = LOCKED; }
-          A = GREEN_CRYSTAL altar(INFUSCOR);
-          S = STEEL sign { Text = "Mutant bear - Experimental result: Particularly dangerous!"; }
-          s = STEEL sign { Text = "Skeleton warrior - Experimental result: Typical."; }
-          z = STEEL sign { Text = "Enner children - Experimental status: On hiatus; specimens have escaped!"; }
-          Z = STEEL sign { Text = "Cave bear - Experimental status: Next candidate for mutation trials."; }
-        }
-      }
-      {
-        ...#...#...#...
-        ...#...#...#...
-        #G###G###B%##G#
-        ..S...s.z...Z..
-        ...............
-        ......A........
-        ...............
-        ...............
-      }
-      CharacterMap
-      {
-        Size = 15, 8;
-        Pos = 1, 1;
-        Types
-        {
-          # = 0;
-          B = bear(MUTANT_BEAR);
-          S = skeleton(WARRIOR);
-          b = bear(CAVE_BEAR);
-          g = guard(TOMB_ENTRY) { Team = 5; } /* Elpuri dungeon shop team, change this later */
-        }
-      }
-      {
-        .B.#.S.#...#.b.
-        ...#...#...#...
-        #########..####
-        g.............g
-        ...............
-        ......#........
-        ...............
-        g.............g
-      }
-
-      Square, Pos 0, 6;
-      {
-        OTerrain = METEORIC_STEEL door;
-        AttachRequired = true;
-      }
-
-      Square, Pos 16, 6;
-      {
-        OTerrain = METEORIC_STEEL door;
-        AttachRequired = true;
       }
     }
   }
 
   Level 2;
   {
+    Size = 72,36;
+
     Room /* stylish little underground confluences */
-    {
-      Size = 7,7;
-      GenerateFountains = true;
-      Shape = ROUND_CORNERS;
-      FloorSquare = solidterrain(GROUND), 0;
-      UseFillSquareWalls = true;
-      GenerateDoor = false;
-      GenerateLanterns = false;
-      AltarPossible = false;
-
-      Square, Pos 3,0;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 0,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 6,3;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-      Square, Pos 3,6;
-      {
-        OTerrain = 0;
-        AttachRequired = true;
-      }
-    }
-
-    Room
     {
       Size = 7,7;
       GenerateFountains = true;
@@ -1099,7 +962,7 @@ Dungeon XINROCH_TOMB;
     {
       Size = 13,13;
       AltarPossible = false;
-      GenerateFountains = true;
+      GenerateFountains = false;
       Shape = MAZE_ROOM;
     }
 
@@ -1144,11 +1007,6 @@ Dungeon XINROCH_TOMB;
 
     Square, Random IN_ROOM;
     {
-      Character = golem(BLUE_CRYSTAL);
-    }
-
-    Square, Random IN_ROOM;
-    {
       Character = golem(ICE);
       Times = 2:5;
     }
@@ -1156,6 +1014,13 @@ Dungeon XINROCH_TOMB;
     Square, Random IN_ROOM;
     {
       Character = golem(BLUE_CRYSTAL);
+      Times = 2;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = bear(POLAR_BEAR);
+      Times = 2;
     }
 
     Square, Random;
@@ -1167,14 +1032,48 @@ Dungeon XINROCH_TOMB;
 
   Level 4;
   {
+    Size = 56,36;
     FillSquare = BONE solidterrain(GROUND), BASALT earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
+    Rooms = 8;
 
     RoomDefault
     {
-      WallSquare = BONE solidterrain(GROUND), BLACK_GRANITE wall(BRICK_OLD);
+      WallSquare = FIR_WOOD solidterrain(PARQUET), BLACK_GRANITE wall(BRICK_OLD);
       FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
       DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+    }
+
+    Room
+    {
+      Size = 7, 7;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem;
+        Times = 5;
+      }
+    }
+
+    Room
+    {
+      Size = 7, 7;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(APPRENTICE_NECROMANCER);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = darkmage(APPRENTICE);
+      }
     }
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -1192,26 +1091,39 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 5;
+  Level DUAL_ENNER_BEAST_LEVEL;
   {
     FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
+    LevelMessage = "You hear some high, wailing screams in the distance. Enner children must dwell in the level!";
 
     RoomDefault
     {
-      WallSquare = BONE solidterrain(GROUND), OBSIDIAN wall(BRICK_OLD);
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
       FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
       DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
     }
 
-    Square, Random NOT_WALKABLE|ATTACHABLE;
+    Size = 72, 32;
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(BOY);
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(GIRL);
+    }
+
+    Square, BoundedRandom 7*XSize/8, 1, XSize-2, YSize-2, NOT_WALKABLE|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
       AttachRequired = true;
     }
 
-    Square, Random NOT_WALKABLE|ATTACHABLE;
+    Square,  BoundedRandom 1, 1, XSize/8, YSize-2, NOT_WALKABLE|ATTACHABLE;
     {
       OTerrain = stairs(STAIRS_DOWN);
       EntryIndex = STAIRS_DOWN;
@@ -1227,9 +1139,83 @@ Dungeon XINROCH_TOMB;
 
     RoomDefault
     {
-      WallSquare = BONE solidterrain(GROUND), OBSIDIAN wall(BRICK_OLD);
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
       FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
       DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+    }
+
+    Room /* Experimental necro-chamber */
+    {
+      Size = 17,10;
+      AltarPossible = false;
+      WallSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Size = 15, 8;
+        Pos = 1, 1;
+        Types
+        {
+          # = STEEL barwall;
+          % = STEEL barwall(BROKEN_BARWALL);
+          G = STEEL door(BARDOOR) { Parameters = LOCKED; }
+          B = STEEL brokendoor(BARDOOR) { Parameters = LOCKED; }
+          A = GREEN_CRYSTAL altar(INFUSCOR);
+          S = STEEL sign { Text = "Mutant bear - Experimental result: Particularly dangerous!"; }
+          s = STEEL sign { Text = "Skeleton warrior - Experimental result: Typical."; }
+          z = STEEL sign { Text = "Enner children - Experimental status: On hiatus; specimens have escaped!"; }
+          Z = STEEL sign { Text = "Cave bear - Experimental status: Next candidate for mutation trials."; }
+        }
+      }
+      {
+        ...#...#...#...
+        ...#...#...#...
+        #G###G###B%##G#
+        ..S...s.z...Z..
+        ...............
+        ......A........
+        ...............
+        ...............
+      }
+      CharacterMap
+      {
+        Size = 15, 8;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          B = bear(MUTANT_BEAR);
+          S = skeleton(WARRIOR);
+          b = bear(CAVE_BEAR);
+          g = guard(TOMB_ENTRY) { Team = 5; } /* Elpuri dungeon shop team, change this later */
+        }
+      }
+      {
+        .B.#.S.#...#.b.
+        ...#...#...#...
+        #########..####
+        g.............g
+        ...............
+        ......#........
+        ...............
+        g.............g
+      }
+
+      Square, Pos 0, 6;
+      {
+        OTerrain = METEORIC_STEEL door;
+        AttachRequired = true;
+      }
+
+      Square, Pos 16, 6;
+      {
+        OTerrain = METEORIC_STEEL door;
+        AttachRequired = true;
+      }
     }
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -1247,48 +1233,116 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level DUAL_ENNER_BEAST_LEVEL;
+  Level 7;
   {
-    FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
-    TunnelSquare = BONE solidterrain(GROUND), 0;
+    FillSquare = GNEISS solidterrain(GROUND), OBSIDIAN earth; /*use gneiss ground and floors?*/
+    TunnelSquare = GNEISS solidterrain(GROUND), 0;
     EnchantmentPlusChanceDelta = 10;
-    LevelMessage = "You hear some high, wailing screams in the distance. Enner children must dwell in the level!";
+    Rooms = 10;
 
     RoomDefault
     {
-      WallSquare = BONE solidterrain(GROUND), OBSIDIAN wall(BRICK_OLD);
-      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = FIR_WOOD solidterrain(PARQUET), METEORIC_STEEL door;
+      WallSquare = GNEISS solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
+      FloorSquare = GNEISS solidterrain(PARQUET), 0;
+      DoorSquare = GNEISS solidterrain(PARQUET), METEORIC_STEEL door;
     }
 
     Items = 40:70;
-    Size = 80, 26;
     ItemMinPriceBase = 20;
 
-    Room
+    Square, Random;
     {
-      Size = 13,13;
-      AltarPossible = false;
-      GenerateFountains = true;
-      Shape = MAZE_ROOM;
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
     }
 
     Room
     {
-      Size = 13,13;
+      /*Pos = 2: XSize/2 - 7, YSize/2 : YSize - 9;*/ /*lower left quadrant*/
+      Size = 5,5;
       AltarPossible = false;
-      GenerateFountains = true;
+      GenerateFountains = false;
+      WallSquare = GNEISS solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+
+        Types
+        {
+          N = necromancer(MASTER_NECROMANCER) { Inventory == Random { Times = 2; MinPrice = 350; Category = WAND|SCROLL; } }
+          n = necromancer(APPRENTICE_NECROMANCER);
+        }
+      }
+      {
+        .N.
+        ...
+        n.n
+      }
+    }
+
+    Room
+    {
+      /*Pos = XSize/2+2 : XSize - 9, 2 : YSize/2 - 7;*/ /*upper right quadrant*/
+      Size = 5,5;
+      AltarPossible = false;
+      GenerateFountains = false;
+      WallSquare = GNEISS solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = darkknight(TEMPLAR);
+        Times = 6;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        {
+          ItemsInside = { 5,  Random { MinPrice = 150; Category = CLOAK; },
+                              Random { MinPrice = 750; Category = HELMET; },
+                              Random { MinPrice = 750; Category = WEAPON; },
+                              Random { Times = 6; MinPrice = 120; Category = FOOD; },
+                              Random { Times = 4; MinPrice = 50; Category = POTION; }}
+        }
+      }
+    }
+
+    Room
+    {
+      /*Pos = 2 : XSize/2 - 11, 2 : YSize/2 - 11;*/ /*upper left quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
       Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = vampire;
+        Times = 6;
+      }
     }
 
-    Square, Random NOT_IN_ROOM;
+    Room
     {
-      Character = ennerchild(BOY);
-    }
+      /*Pos = XSize/2+2 : XSize - 13, YSize/2 : YSize - 13;*/ /*lower right quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
 
-    Square, Random NOT_IN_ROOM;
-    {
-      Character = ennerchild(GIRL);
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = werewolfhuman;
+        Times = 6;
+      }
     }
 
     Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -1324,8 +1378,9 @@ Dungeon XINROCH_TOMB;
     RoomDefault
     {
       WallSquare = GNEISS solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
-      FloorSquare = TEAK_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = TEAK_WOOD solidterrain(PARQUET), SAPPHIRE door;
+      FloorSquare = GNEISS solidterrain(PARQUET), 0;
+      DoorSquare = GNEISS solidterrain(PARQUET), RUBY door;
+      GenerateFountains = false;
     }
 
     Room
@@ -1336,7 +1391,6 @@ Dungeon XINROCH_TOMB;
       GenerateDoor = false;
       GenerateTunnel = false;
       GenerateLanterns = false;
-      GenerateFountains = false;
       AllowLockedDoors = false;
 
       Square, Pos 1,20;
@@ -1366,8 +1420,8 @@ Dungeon XINROCH_TOMB;
         Types
         {
           # = OCTIRON wall(BRICK_FINE);
-          d = SAPPHIRE door(OCTAGONAL_LOCK);
-          D = SAPPHIRE door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+          d = RUBY door(OCTAGONAL_LOCK);
+          D = RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
         }
       }
       {
@@ -1481,26 +1535,60 @@ Dungeon XINROCH_TOMB;
     EnchantmentPlusChanceDelta = 0;
     ItemMinPriceBase = 40;
     CanGenerateBone = false;
+    Items = 0;
 
     RoomDefault
     {
-      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_OLD);
+      WallSquare = TEAK_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_OLD);
       FloorSquare = TEAK_WOOD solidterrain(PARQUET), 0;
       DoorSquare = TEAK_WOOD solidterrain(PARQUET), OCTIRON door;
       Pos = 2:XSize-5,2:YSize-5;
       Size = 3:6,3:6;
+      GenerateFountains = false;
     }
 
     Room /* Giant maze room */
     {
-      Pos = 2, YSize/4:YSize/4 + 10;
+      Pos = 2, YSize/4+5;
       Size = 21,39;
+      GenerateDoor = false;
       AltarPossible = false;
-      GenerateFountains = true;
+      AllowLockedDoors = false;
       Shape = MAZE_ROOM;
       WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_OLD);
       FloorSquare = SLATE solidterrain(GROUND), 0;
       DoorSquare = SLATE solidterrain(GROUND), OCTIRON door;
+
+      Square, Random;
+      {
+        Items == Random { MinPrice = 130; }
+        Times = 20:40;
+      }
+
+      Square, Pos 1, 0;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 19, 0;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 1, 38;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 19, 38;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
     }
 
     Square, BoundedRandom 1, 1, XSize - 2, YSize * 1 / 5, NOT_WALKABLE|ATTACHABLE;
@@ -1515,6 +1603,7 @@ Dungeon XINROCH_TOMB;
       Pos = 2: XSize/3 + 2, 77;
       Size = 11, 11;
       DivineMaster = INFUSCOR;
+      AltarPossible = false;
 
       Square, Pos 5, 5;
       {
@@ -1554,16 +1643,17 @@ Dungeon XINROCH_TOMB;
     {
       Pos = 2:XSize-2,2:YSize-2;
       Size = 6:9,6:9;
-      WallSquare = BONE solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
+      WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
       FloorSquare = BONE solidterrain(PARQUET), 0;
       DoorSquare = BONE solidterrain(PARQUET), OCTIRON door;
+      AltarPossible = false;
+      GenerateFountains = false;
     }
 
     Room
     {
       Size = 9,9;
       DivineMaster = INFUSCOR;
-      GenerateFountains = false;
 
       Square, Pos 4,4;
       {
@@ -1602,7 +1692,6 @@ Dungeon XINROCH_TOMB;
     {
       Size = 13,13;
       AltarPossible = false;
-      GenerateFountains = true;
       Shape = MAZE_ROOM;
       FloorSquare = BONE solidterrain(PARQUET), 0;
       WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
@@ -1613,7 +1702,6 @@ Dungeon XINROCH_TOMB;
     {
       Size = 13,13;
       AltarPossible = false;
-      GenerateFountains = true;
       Shape = MAZE_ROOM;
       FloorSquare = BONE solidterrain(PARQUET), 0;
       WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
