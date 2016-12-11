@@ -1193,8 +1193,8 @@ Dungeon XINROCH_TOMB;
           B = bear(MUTANT_BEAR);
           S = skeleton(WARRIOR);
           b = bear(CAVE_BEAR);
-          g = guard(TOMB_ENTRY) { Team = 5; } /* Elpuri dungeon shop team, change this later */
-          P = priest(INFUSCOR) { Team = 5; }
+          g = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_NECRO_TEAM; }
+          P = priest(INFUSCOR) { Team = XINROCH_TOMB_NECRO_TEAM; }
         }
       }
       {
