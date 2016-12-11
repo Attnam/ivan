@@ -532,6 +532,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define OREE_LAIR 12
 
 #define DUAL_ENNER_BEAST_LEVEL 5
+#define NECRO_CHAMBER_LEVEL 6
 
 /* stack::DrawContents flags */
 

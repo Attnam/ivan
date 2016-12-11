@@ -1136,6 +1136,7 @@ Dungeon XINROCH_TOMB;
     FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
     TunnelSquare = BONE solidterrain(GROUND), 0;
     EnchantmentPlusChanceBase = 10;
+    CanGenerateBone = false;
 
     RoomDefault
     {
@@ -1169,6 +1170,7 @@ Dungeon XINROCH_TOMB;
           s = STEEL sign { Text = "Skeleton warrior - Experimental result: Typical."; }
           z = STEEL sign { Text = "Enner children - Experimental status: On hiatus; specimens have escaped!"; }
           Z = STEEL sign { Text = "Cave bear - Experimental status: Next candidate for mutation trials."; }
+          P = GREEN_CRYSTAL monsterportal;
         }
       }
       {
@@ -1177,7 +1179,7 @@ Dungeon XINROCH_TOMB;
         #G###G###B%##G#
         ..S...s.z...Z..
         ...............
-        ......A........
+        ......A.P......
         ...............
         ...............
       }
@@ -1192,6 +1194,7 @@ Dungeon XINROCH_TOMB;
           S = skeleton(WARRIOR);
           b = bear(CAVE_BEAR);
           g = guard(TOMB_ENTRY) { Team = 5; } /* Elpuri dungeon shop team, change this later */
+          P = priest(INFUSCOR) { Team = 5; }
         }
       }
       {
@@ -1200,7 +1203,7 @@ Dungeon XINROCH_TOMB;
         #########..####
         g.............g
         ...............
-        ......#........
+        ......#P#......
         ...............
         g.............g
       }

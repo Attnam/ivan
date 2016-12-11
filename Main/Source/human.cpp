@@ -5513,6 +5513,65 @@ void oree::CallForMonsters()
   delete ToBeCalled;
 }
 
+void priest::GetAICommand()
+{
+  if(GetConfig() == INFUSCOR)
+  {
+    if(!RAND_N(50))
+      CallForMonsters();
+  }
+
+  StandIdleAI();
+}
+
+void priest::CallForMonsters()
+{
+  if(GetDungeon()->GetIndex() != XINROCH_TOMB || GetLevel()->GetIndex() != NECRO_CHAMBER_LEVEL)
+    return;
+
+  character* ToBeCalled = 0;
+
+  switch(RAND_N(6))
+  {
+   case 0:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 1:
+    ToBeCalled = zombie::Spawn();
+    break;
+   case 2:
+    ToBeCalled = frog::Spawn(DARK);
+    break;
+   case 3:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 4:
+    ToBeCalled = zombie::Spawn();
+    break;
+   case 5:
+    ToBeCalled = necromancer::Spawn(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+    break;
+  }
+
+  v2 TryToCreate;
+
+  for(int c = 0; c < 100; ++c)
+  {
+    TryToCreate = game::GetMonsterPortal()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+    if(GetArea()->IsValidPos(TryToCreate)
+       && ToBeCalled->CanMoveOn(GetNearLSquare(TryToCreate))
+       && ToBeCalled->IsFreeForMe(GetNearLSquare(TryToCreate)))
+    {
+      ToBeCalled->SetTeam(game::GetTeam(MONSTER_TEAM));
+      ToBeCalled->PutTo(TryToCreate);
+      return;
+    }
+  }
+
+  delete ToBeCalled;
+}
+
 int humanoid::RandomizeTryToUnStickBodyPart(ulong PossibleBodyParts) const
 {
   int Possible = 0, PossibleArray[3];
