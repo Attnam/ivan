@@ -277,8 +277,9 @@ CHARACTER(shopkeeper, humanoid)
 CHARACTER(priest, humanoid)
 {
  protected:
-  virtual void GetAICommand() { StandIdleAI(); }
+  virtual void GetAICommand();
   virtual void BeTalkedTo();
+  void CallForMonsters();
 };
 
 CHARACTER(oree, humanoid)

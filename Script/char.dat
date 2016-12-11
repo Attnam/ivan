@@ -963,6 +963,46 @@ priest
     }
     AutomaticallySeen = true;
   }
+
+  Config INFUSCOR;
+  {
+    DefaultArmStrength = 20;
+    DefaultLegStrength = 20;
+    DefaultDexterity = 16;
+    DefaultAgility = 16;
+    DefaultEndurance = 14;
+    DefaultPerception = 24;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 25;
+    DefaultCharisma = 20;
+    DefaultMana = 25;
+    TotalVolume = 60000;
+    TotalSize = 170;
+    HeadBitmapPos = 112, 0;
+    TorsoBitmapPos = 32, 208;
+    ArmBitmapPos = 64, 208;
+    LegBitmapPos = 0, 144;
+    SkinColor = rgb16(64, 0, 128);
+    HairColor = rgb16(64, 0, 64);
+    EyeColor = rgb16(128, 0, 64);
+    AttachedGod = INFUSCOR;
+    NameSingular = "priestess";
+    PostFix = "of Infuscor";
+    Sex = FEMALE;
+    Helmet = METEORIC_STEEL helmet { Enchantment = 2; }
+    BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+    Cloak = OMMEL_HAIR cloak { Enchantment = 2; }
+    Belt = OMMEL_HAIR belt { Enchantment = 2; }
+    RightWielded = EBONY_WOOD wondersmellstaff { Enchantment = 3; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = OMMEL_HAIR boot { Enchantment = 2; }
+    Inventory == wand(WAND_OF_NECROMANCY);
+    KnownCWeaponSkills == BLUNT_WEAPONS;
+    CWeaponSkillHits == 50;
+    RightSWeaponSkillHits = 20;
+    FriendlyReplies == "@Dd speaks: \"Can't you see I'm busy, infidel? One of these days I'll summon Him back, and Chaos will reign forever!\"";
+    UndeadVersions = false;
+  }
 }
 
 oree
