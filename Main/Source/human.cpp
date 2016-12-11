@@ -4583,7 +4583,7 @@ void necromancer::RaiseSkeleton()
   databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
   skeleton* Skeleton;
 
-  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
+  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(game::GetCurrentDungeonIndex() == XINROCH_TOMB) && !(RAND() % 250))
   {
     Skeleton = skeleton::Spawn(WAR_LORD);
     Skeleton->SetTeam(GetTeam());
