@@ -154,6 +154,12 @@ Dungeon XINROCH_TOMB;
       Flags = 0;
     }
 
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(SNOW_FIR);
+      Times = 200;
+    }
+
     Square, Random HAS_NO_OTERRAIN;
     {
       Items == bone;
@@ -254,7 +260,7 @@ Dungeon XINROCH_TOMB;
           # = OBSIDIAN wall(BRICK_OLD);
           A = BLACK_GRANITE altar(INFUSCOR);
           D = OCTIRON door(HEXAGONAL_LOCK);
-          b = decoration(SNOW_PINE);
+          b = decoration(SNOW_FIR);
           f = fountain { SecondaryMaterial = GLOWING_BLOOD; }
         }
       }
