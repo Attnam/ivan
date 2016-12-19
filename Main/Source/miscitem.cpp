@@ -3294,3 +3294,16 @@ void lump::AddLumpyPostFix(festring& String) const
 {
   MainMaterial->AddName(String << " of " << (!IsBurning() ? "" : "burning "), false, false);
 }
+
+bool skullofxinroch::SpecialOfferEffect(int GodNumber)
+{
+  if(GodNumber == INFUSCOR)
+  {
+    god* Receiver = game::GetGod(GodNumber);
+    Receiver->AdjustRelation(500);
+    ADD_MESSAGE("You sacrifice %s. %s appreciates your generous offer truly.", CHAR_NAME(DEFINITE), Receiver->GetName());
+    return true;
+  }
+  else
+    return false;
+}
