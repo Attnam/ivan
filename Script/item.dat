@@ -3111,7 +3111,7 @@ flamingsword /* meleeweapon-> */
     IsQuestItem = true;
     CanBeBurned = false;
     CanBeBroken = false;
-    BaseEnchantment = 0;
+    BaseEnchantment = 13;
     CanBeEnchanted = true;
     ArticleMode = FORCE_THE;
   }

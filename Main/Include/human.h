@@ -298,6 +298,9 @@ CHARACTER(oree, humanoid)
 
 CHARACTER(darkknight, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+  virtual truth CheckForUsefulItemsOnGround(truth = true);
  protected:
   virtual int ModifyBodyPartHitPreference(int, int) const;
   virtual int ModifyBodyPartToHitChance(int, int) const;
@@ -501,6 +504,7 @@ CHARACTER(xinrochghost, spirit)
  public:
   virtual truth IsNameable() const { return false; }
   virtual truth IsPolymorphable() const { return false; }
+  virtual truth CheckForUsefulItemsOnGround(truth = true) { return false; }
  protected:
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);

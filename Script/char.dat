@@ -1264,6 +1264,7 @@ darkknight
     BootColor = rgb16(160, 160, 160);
     TotalVolume = 120000;
     Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+    Amulet = amulet(AMULET_OF_LIFE_SAVING);
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
     Cloak = DRAGON_HIDE cloak { Enchantment = 4; }
     Belt = RUBY belt { Enchantment = 4; }
@@ -1272,9 +1273,10 @@ darkknight
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
     RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
     Adjective = "elder grand master";
-    KnownCWeaponSkills == LARGE_SWORDS;
-    CWeaponSkillHits == 5000;
+    KnownCWeaponSkills = { 2, LARGE_SWORDS, KICK; }
+    CWeaponSkillHits = { 2, 5000, 2000; }
     LeftSWeaponSkillHits = 2000;
+    BaseKickStrength = 2500;
     PanicLevel = 0;
     TamingDifficulty = NO_TAMING;
     IsUnique = true;
@@ -1299,6 +1301,7 @@ darkknight
     AttachedGod = INFUSCOR;
     BodyPartsDisappearWhenSevered = true;
     CanBeGenerated = false;
+    ClassStates = HASTE|GAS_IMMUNITY;
   }
 }
 

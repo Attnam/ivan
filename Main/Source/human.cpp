@@ -5106,18 +5106,39 @@ void darkknight::SpecialBodyPartSeverReaction()
 {
   if(!IsPlayer())
   {
-    if(IsUsingHead())
-      ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
-    else if(!(RAND() % 5))
-      switch(RAND() % 3)
+    if(!(GetConfig() == MASTER))
+    {
+      if(IsUsingHead())
+        ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
+      else if(!(RAND() % 5))
+        switch(RAND() % 3)
+        {
+         case 0:
+          ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 1:
+          ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 2:
+          ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        }
+    }
+    else if((GetConfig() == MASTER) && HasHead())
+    {
+      character* Called = 0;
+      Called = darkknight::Spawn(ELITE);
+      Called->SetTeam(GetTeam());
+      Called->PutNear(GetPos());
+      Called->SignalGeneration();
+
+      if(CanBeSeenByPlayer())
       {
-       case 0:
-        ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 1:
-        ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 2:
-        ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        ADD_MESSAGE("%s screams a profane incantation to Infuscor before disappearing.", CHAR_NAME(DEFINITE));
+        TeleportRandomly(true);
       }
+      if(Called->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the shadows.", Called->CHAR_NAME(INDEFINITE));
+      }
+      else
+        ADD_MESSAGE("You feel the sudden presence of a violent enemy nearby.");
   }
 }
 
@@ -6158,4 +6179,47 @@ void xinrochghost::CreateCorpse(lsquare* Square)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
   }
+}
+
+truth darkknight::SpecialEnemySightedReaction(character*)
+{
+  if((GetConfig() == MASTER))
+  {
+    const database* WarLordDataBase;
+    databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
+    skeleton* Skeleton;
+
+    if(!(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 5))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+      Skeleton = skeleton::Spawn(WAR_LORD);
+      Skeleton->SetTeam(GetTeam());
+      Skeleton->PutNear(GetPos());
+      Skeleton->SignalGeneration();
+
+      if(Skeleton->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the ground.", Skeleton->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s casts a powerful spell which makes the whole area tremble.", CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You feel the presence of an ancient evil being awakened from its long slumber. You shiver.");
+      
+      Skeleton->SetGenerationDanger(GetGenerationDanger());
+      return true;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+truth darkknight::CheckForUsefulItemsOnGround(truth CheckFood)
+{
+  if(GetConfig() == MASTER)
+    return false;
+  else
+    return character::CheckForUsefulItemsOnGround(CheckFood);
 }
