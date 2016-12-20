@@ -1373,7 +1373,9 @@ truth coffin::Open(character* Opener)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
-        GenerateGhost(GetLevel()->GetLSquare(Pos));
+      {
+        //GenerateGhost(GetLevel()->GetLSquare(Pos)); // This function awaits repair
+      }
     }
   }
 
@@ -1392,7 +1394,7 @@ void coffin::Break()
 
     if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
     {
-      GenerateGhost(Neighbour);
+      //GenerateGhost(Neighbour); // This function awaits repair
     }
   }
   olterraincontainer::Break();
@@ -1401,7 +1403,7 @@ void coffin::Break()
 void coffin::GenerateGhost(lsquare* Square)
 {
   v2 Pos = Square->GetPos();
-  character* Char = ghost::Spawn();
+  character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
   if((!Square->GetRoomIndex()
       || !Square->GetRoom()->DontGenerateMonsters()))
