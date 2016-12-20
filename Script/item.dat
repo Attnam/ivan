@@ -2477,6 +2477,17 @@ ring
     AttachedGod = LORICATUS;
     TeleportPriority = 1000;
   }
+
+  Config RING_OF_POLYMORPH_LOCK;
+  {
+    Possibility = 1;
+    PostFix = "of unchanging";
+    MainMaterialConfig == ICE;
+    GearStates = POLYMORPH_LOCK;
+    Price = 250;
+    AttachedGod = SOPHOS;
+    TeleportPriority = 1000;
+  }
 }
 
 amulet

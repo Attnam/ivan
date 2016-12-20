@@ -256,6 +256,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "PolymorphLocked",
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD)),
+    &character::PrintBeginPolymorphLockMessage,
+    &character::PrintEndPolymorphLockMessage,
+    0,
+    0,
+    &character::PolymorphLockHandler,
+    0,
+    0
   }
 };
 
@@ -5028,6 +5038,9 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(StateIsActivated(POLYMORPH_LOCK))
+    return;
+
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
@@ -5097,6 +5110,12 @@ void character::SaveLife()
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 {
   character* NewForm = 0;
+
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return NewForm;
+  }
 
   if(StateIsActivated(POLYMORPH_CONTROL))
   {
@@ -5589,6 +5608,28 @@ void character::PolymorphHandler()
 {
   if(!(RAND() % 1500))
     PolymorphRandomly(1, 999999, 200 + RAND() % 800);
+}
+
+void character::PrintBeginPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel incredibly stubborn about who you are.");
+}
+
+void character::PrintEndPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel more open to new ideas.");
+}
+
+void character::PolymorphLockHandler()
+{
+  if (TemporaryStateIsActivated(POLYMORPHED))
+  {
+      EditTemporaryStateCounter(POLYMORPHED, 1);
+      if (GetTemporaryStateCounter(POLYMORPHED) < 1000)
+        EditTemporaryStateCounter(POLYMORPHED, 1);
+  }
 }
 
 void character::PrintBeginTeleportControlMessage() const
@@ -9311,6 +9352,12 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
   festring Topic, Temp;
   NewForm = 0;
 
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return false;
+  }
+
   while(!NewForm)
   {
     festring Temp;
@@ -9564,7 +9611,7 @@ void character::PoisonedSituationDangerModifier(double& Danger) const
 
 void character::PolymorphingSituationDangerModifier(double& Danger) const
 {
-  if(!StateIsActivated(POLYMORPH_CONTROL))
+  if((!StateIsActivated(POLYMORPH_CONTROL)) && (!StateIsActivated(POLYMORPH_LOCK)))
     Danger *= 1.5;
 }
 

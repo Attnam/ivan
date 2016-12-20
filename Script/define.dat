@@ -62,6 +62,7 @@
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
 #define ETHEREAL_MOVING (1 << 21)
+#define POLYMORPH_LOCK (1 << 22)
 
 #define HEAD 1
 #define TORSO 2
@@ -551,6 +552,7 @@
 #define RING_OF_ELECTRICITY_RESISTANCE 9
 #define RING_OF_SEARCHING 10
 #define RING_OF_ACID_RESISTANCE 11
+#define RING_OF_POLYMORPH_LOCK 12
 
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
