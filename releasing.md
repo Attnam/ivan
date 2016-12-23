@@ -5,7 +5,7 @@ To do for each release
 
 ###Things to change around in the code:
 
- - Update the IVAN version number in the root CMakeLists.txt from 0.50.7 to 0.50.8, depending on what the next version is
+ - Update the IVAN version number in the root CMakeLists.txt from 0.50.8 to 0.50.9, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
@@ -18,7 +18,7 @@ To do for each release
 
 ###Include the following files in a zip folder for each release:
 
-**Folder: IvanWin0508**
+**Folder: IvanWin0509**
 
 **Files = 10**
 
@@ -32,21 +32,6 @@ To do for each release
   - README
   - README.md
   - SDL2.dll
-
-**Subfolder: Music**
-
-**Files = 10**
-
-  - Cathedral.mid
-  - defeat.mid
-  - Dungeon.mid
-  - Dungeon2.mid
-  - Empty.mid
-  - Japan.mid
-  - mainmenu.mid
-  - newgame.mid
-  - victory.mid
-  - world.mid
 
 **Subfolder: Graphics**
 
@@ -69,6 +54,21 @@ To do for each release
   - Symbol.pcx
   - WTerra.pcx
 
+**Subfolder: Music**
+
+**Files = 10**
+
+  - Cathedral.mid
+  - defeat.mid
+  - Dungeon.mid
+  - Dungeon2.mid
+  - Empty.mid
+  - Japan.mid
+  - mainmenu.mid
+  - newgame.mid
+  - victory.mid
+  - world.mid
+
 **Subfolder: Script**
 
 **Files = 9**
@@ -86,9 +86,9 @@ To do for each release
 
 **Subfolder: Script\dungeon**
 
-**Leave only dungeon data files in here***
+**Leave only dungeon data files in here**
 
-###Then commit changes, with the release tag v0508
+###Then commit changes, with the release tag v0509
 Tag can be appended to latest commit
 
 ###Push changes
