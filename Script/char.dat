@@ -68,6 +68,7 @@ character
   BaseUnarmedStrength = 0;
   BaseBiteStrength = 0; /* Defaults to BaseUnarmedStrength / 2 */
   BaseKickStrength = 0; /* Defaults to BaseUnarmedStrength * 2 */
+  BonusBiteStrength = 0; /* For when you are a vampire */
   AttackStyle = USE_ARMS;
   CanUseEquipment = false;
   CanKick = false;
@@ -317,6 +318,7 @@ humanoid
   ForceVomitMessage = "You push your fingers down to your throat and vomit.";
   DisplacePriority = 0;
   UndeadVersions = true;
+  BonusBiteStrength = 375;
 }
 
 nonhumanoid
@@ -864,6 +866,7 @@ shopkeeper
     RightSWeaponSkillHits = 500;
     DefaultName = "Fry";
     Inventory == lantern;
+    UndeadVersions = false;
     FriendlyReplies =
     {
       3,
@@ -959,6 +962,46 @@ priest
       "\"Do not forget us, fair hero. It is a matter of time before word reaches the High Priest and I'm afraid of what he may do in his displeasure.\"";
     }
     AutomaticallySeen = true;
+  }
+
+  Config INFUSCOR;
+  {
+    DefaultArmStrength = 20;
+    DefaultLegStrength = 20;
+    DefaultDexterity = 16;
+    DefaultAgility = 16;
+    DefaultEndurance = 14;
+    DefaultPerception = 24;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 25;
+    DefaultCharisma = 20;
+    DefaultMana = 25;
+    TotalVolume = 60000;
+    TotalSize = 170;
+    HeadBitmapPos = 112, 0;
+    TorsoBitmapPos = 32, 208;
+    ArmBitmapPos = 64, 208;
+    LegBitmapPos = 0, 144;
+    SkinColor = rgb16(64, 0, 128);
+    HairColor = rgb16(64, 0, 64);
+    EyeColor = rgb16(128, 0, 64);
+    AttachedGod = INFUSCOR;
+    NameSingular = "priestess";
+    PostFix = "of Infuscor";
+    Sex = FEMALE;
+    Helmet = METEORIC_STEEL helmet { Enchantment = 2; }
+    BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+    Cloak = OMMEL_HAIR cloak { Enchantment = 2; }
+    Belt = OMMEL_HAIR belt { Enchantment = 2; }
+    RightWielded = EBONY_WOOD wondersmellstaff { Enchantment = 3; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = OMMEL_HAIR boot { Enchantment = 2; }
+    Inventory == wand(WAND_OF_NECROMANCY);
+    KnownCWeaponSkills == BLUNT_WEAPONS;
+    CWeaponSkillHits == 50;
+    RightSWeaponSkillHits = 20;
+    FriendlyReplies == "@Dd speaks: \"Can't you see I'm busy, infidel? One of these days I'll summon Him back, and Chaos will reign forever!\"";
+    UndeadVersions = false;
   }
 }
 
@@ -1113,6 +1156,7 @@ darkknight
     CanBeGenerated = false;
     HostileReplies == "@Dd yells: \"Who dares disturb the slumber of the lord Xinroch?\"";
     AttachedGod = INFUSCOR;
+    UndeadVersions = false;
   }
 
   Config GRAVE_KEEPER; /*Tougher than elite*/
@@ -1139,6 +1183,7 @@ darkknight
     CanBeGenerated = false;
     HostileReplies == "@Dd exclaims: \"None shall pass.\"";
     AttachedGod = INFUSCOR;
+    UndeadVersions = false;
   }
 
   Config ELITE;
@@ -1219,6 +1264,7 @@ darkknight
     BootColor = rgb16(160, 160, 160);
     TotalVolume = 120000;
     Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
+    Amulet = amulet(AMULET_OF_LIFE_SAVING);
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
     Cloak = DRAGON_HIDE cloak { Enchantment = 4; }
     Belt = RUBY belt { Enchantment = 4; }
@@ -1227,9 +1273,10 @@ darkknight
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
     RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
     Adjective = "elder grand master";
-    KnownCWeaponSkills == LARGE_SWORDS;
-    CWeaponSkillHits == 5000;
+    KnownCWeaponSkills = { 2, LARGE_SWORDS, KICK; }
+    CWeaponSkillHits = { 2, 5000, 2000; }
     LeftSWeaponSkillHits = 2000;
+    BaseKickStrength = 2500;
     PanicLevel = 0;
     TamingDifficulty = NO_TAMING;
     IsUnique = true;
@@ -1254,6 +1301,7 @@ darkknight
     AttachedGod = INFUSCOR;
     BodyPartsDisappearWhenSevered = true;
     CanBeGenerated = false;
+    ClassStates = HASTE|GAS_IMMUNITY;
   }
 }
 
@@ -1720,6 +1768,7 @@ skeleton
     IsExtraFragile = false;
     TamingDifficulty = NO_TAMING;
     CreateUndeadConfigurations = false;
+    AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
   }
 }
 
@@ -3009,6 +3058,7 @@ bat
   DefaultWisdom = 5;
   DefaultCharisma = 5;
   DefaultMana = 0;
+  TorsoSpecialColor = rgb16(220, 220, 0); /* EyeColor */
   StandVerb = "flying";
   CanOpen = false;
   TotalVolume = 1000;
@@ -3016,7 +3066,7 @@ bat
   HostileReplies == "@Dd squeaks evilly.";
   FriendlyReplies == "@Dd squeaks happily.";
   TotalSize = 20;
-  SkinColor = rgb16(64, 64, 64);
+  SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
@@ -3030,6 +3080,20 @@ bat
   BiteCapturesBodyPart = false;
   MoveType = FLY;
   IsCatacombCreature = true;
+}
+
+vampirebat
+{
+  DefaultArmStrength = 4;
+  TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
+  PanicLevel = 100;
+  DefaultEndurance = 10;
+  DefaultIntelligence = 10;
+  TotalVolume = 1200;
+  TotalSize = 30;
+  SkinColor = rgb16(64, 64, 96);
+  NameSingular = "vampire bat";
+  AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
 }
 
 mistress
@@ -3293,12 +3357,60 @@ werewolfwolf
   BaseBiteStrength = 1200;
   CanUseEquipment = false;
   CanBeWished = false;
-  ClassStates = INFRA_VISION;
+  ClassStates = INFRA_VISION|LYCANTHROPY;
   PanicLevel = 0;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
   WillCarryItems = true;
   UndeadVersions = false;
+}
+
+vampire
+{
+  DefaultArmStrength = 20;
+  DefaultLegStrength = 20;
+  DefaultDexterity = 24;
+  DefaultAgility = 24;
+  DefaultEndurance = 15;
+  DefaultPerception = 24;
+  DefaultIntelligence = 20;
+  DefaultWisdom = 20;
+  DefaultCharisma = 20;
+  DefaultMana = 20;
+  TotalVolume = 70000;
+  EyeColor = rgb16(180, 0, 0);
+  HairColor = rgb16(8, 8, 8);
+  ClothColor = rgb16(32, 0, 0);
+  SkinColor = rgb16(208, 164, 164);
+  BeltColor = rgb16(8, 8, 8);
+  BootColor = rgb16(8, 8, 8);
+  TorsoSpecialColor = rgb16(108, 108, 0);
+  GauntletColor = rgb16(208, 164, 164);
+  HeadBitmapPos = 96, 528;
+  TorsoBitmapPos = 32, 304;
+  LegBitmapPos = 0, 48;
+  ArmBitmapPos = 80, 176;
+  HostileReplies == "@Dd roars angrily.";
+  FriendlyReplies == "@Dd capers cheerfully.";
+  TotalSize = 170;
+  NameSingular = "vampire";
+  AttackStyle = USE_HEAD;
+  KnownCWeaponSkills == BITE;
+  CWeaponSkillHits == 200;
+  Sex = MALE;
+  BaseBiteStrength = 800;
+  CanBeWished = false;
+  ClassStates = HASTE|INFRA_VISION|VAMPIRISM;
+  PanicLevel = 0;
+  FleshMaterial = VAMPIRE_FLESH;
+  AttachedGod = MORTIFER;
+  WillCarryItems = true;
+  CanUseEquipment = false;
+  CanBeGenerated = true;
+  CanRead = true;
+  UndeadVersions = false;
+  BonusBiteStrength = 0; /* Doesn't need to be more powerful */
+  AllowedDungeons == XINROCH_TOMB;
 }
 
 kobold

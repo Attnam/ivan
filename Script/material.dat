@@ -1840,7 +1840,7 @@ flesh
   Flexibility = 5;
   SpoilModifier = 10000;
   PriceModifier = 60;
-  BodyFlags = Base|IS_ALIVE|IS_WARM|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
+  BodyFlags = Base|IS_ALIVE|IS_WARM|IS_WARM_BLOODED|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
   FireResistance = 0;
 
@@ -1851,6 +1851,7 @@ flesh
     NutritionValue = 15;
     PriceModifier = 40;
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -1861,7 +1862,7 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 8000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~CAN_HAVE_PARASITE;
+    BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1872,7 +1873,7 @@ flesh
     SpoilModifier = 20000;
     PriceModifier = 8000;
     AttachedGod = SEGES;
-    BodyFlags = Base&~CAN_HAVE_PARASITE;
+    BodyFlags = Base&~CAN_HAVE_PARASITE&~IS_WARM_BLOODED;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1884,6 +1885,7 @@ flesh
     HitMessage = HM_FROG_FLESH;
     NameStem = "frog flesh";
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
     InteractionFlags = Base&~CAN_DISSOLVE;
   }
 
@@ -1899,7 +1901,7 @@ flesh
     Color = rgb16(60, 60, 60);
     AttachedGod = MORTIFER;
     NameFlags = Base|USE_AN;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base&~CAN_DISSOLVE;
     FireResistance = 100;
   }
@@ -1953,6 +1955,7 @@ flesh
     Effect = EFFECT_POISON;
     EffectStrength = 100;
     ConsumeWisdomLimit = 3;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config JACKAL_FLESH;
@@ -1998,6 +2001,7 @@ flesh
     PriceModifier = 0;
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config GIBBERLING_FLESH;
@@ -2005,6 +2009,14 @@ flesh
     NameStem = "gibberling flesh";
     AttachedGod = MORTIFER;
     InteractionFlags = Base|CAN_BURN;
+    BodyFlags = Base&~IS_WARM_BLOODED;
+  }
+
+  Config VAMPIRE_FLESH;
+  {
+    NameStem = "vampire flesh";
+    ConsumeWisdomLimit = 10;
+    AttachedGod = MORTIFER;
   }
 
   Config CAT_FLESH;
@@ -2061,7 +2073,7 @@ flesh
     ConsumeEndMessage = CEM_BLACK_UNICORN_FLESH;
     ConsumeWisdomLimit = 10;
     CommonFlags = Base|IS_VALUABLE;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
   }
 
   Config GRAY_UNICORN_FLESH;
@@ -2105,6 +2117,7 @@ flesh
     EffectStrength = 15;
     ConsumeWisdomLimit = 3;
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config ORC_FLESH;
@@ -2129,6 +2142,7 @@ flesh
     PriceModifier = 50;
     ConsumeWisdomLimit = 7;
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config FLOATING_EYE_FLESH;
@@ -2140,6 +2154,7 @@ flesh
     PriceModifier = 120;
     CommonFlags = Base|IS_VALUABLE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config MUSHROOM_FLESH;
@@ -2151,7 +2166,7 @@ flesh
     AttachedGod = NEFAS;
     EffectStrength = 20;
     PriceModifier = 100;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -2196,6 +2211,7 @@ flesh
   {
     NameStem = "hattifattener flesh";
     AttachedGod = MORTIFER;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config BLINK_DOG_FLESH;
@@ -2216,7 +2232,7 @@ flesh
     AttachedGod = NEFAS;
     EffectStrength = 20;
     PriceModifier = 150;
-    BodyFlags = Base&~IS_WARM;
+    BodyFlags = Base&~IS_WARM&~IS_WARM_BLOODED;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -2224,12 +2240,14 @@ flesh
   {
     NameStem = "sick spider flesh";
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
   Config MIND_WORM_FLESH;
   {
-    NameStem = "sick spider flesh";
+    NameStem = "mind worm flesh";
     AttachedGod = SCABIES;
+    BodyFlags = Base&~IS_WARM_BLOODED;
   }
 }
 

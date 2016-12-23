@@ -169,6 +169,7 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   virtual truth HasSadistAttackMode() const;
  protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
   virtual col16 GetBodyPartColorC(int, truth = false) const;
@@ -276,8 +277,9 @@ CHARACTER(shopkeeper, humanoid)
 CHARACTER(priest, humanoid)
 {
  protected:
-  virtual void GetAICommand() { StandIdleAI(); }
+  virtual void GetAICommand();
   virtual void BeTalkedTo();
+  void CallForMonsters();
 };
 
 CHARACTER(oree, humanoid)
@@ -296,6 +298,9 @@ CHARACTER(oree, humanoid)
 
 CHARACTER(darkknight, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+  virtual truth CheckForUsefulItemsOnGround(truth = true);
  protected:
   virtual int ModifyBodyPartHitPreference(int, int) const;
   virtual int ModifyBodyPartToHitChance(int, int) const;
@@ -499,6 +504,7 @@ CHARACTER(xinrochghost, spirit)
  public:
   virtual truth IsNameable() const { return false; }
   virtual truth IsPolymorphable() const { return false; }
+  virtual truth CheckForUsefulItemsOnGround(truth = true) { return false; }
  protected:
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
@@ -524,6 +530,14 @@ CHARACTER(werewolfwolf, humanoid)
 {
  public:
   virtual festring GetKillName() const;
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+};
+
+CHARACTER(vampire, humanoid)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(kobold, humanoid)

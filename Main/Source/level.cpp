@@ -330,6 +330,9 @@ void level::Generate(int Index)
      || (Index == 0 && GetDungeon()->GetIndex() == ATTNAM))
     NightAmbientLuminance = MakeRGB24(95, 95, 95);
 
+  if((Index == 0) && (GetDungeon()->GetIndex() == XINROCH_TOMB))
+    NightAmbientLuminance = MakeRGB24(105, 95, 95);
+
   int x, y;
 
   for(x = 0; x < XSize; ++x)
@@ -2497,6 +2500,22 @@ void level::CheckSunLight()
       int E = int(100 + (Cos - 0.40) * 40);
       SunLightEmitation = MakeRGB24(E, E, E);
       AmbientLuminance = MakeRGB24(E - 8, E - 8, E - 8);
+    }
+    else
+    {
+      SunLightEmitation = 0;
+      AmbientLuminance = NightAmbientLuminance;
+    }
+  }
+  else if(Index == 0 && GetDungeon()->GetIndex() == XINROCH_TOMB)
+  {
+    double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+    if(Cos > 0.51)
+    {
+      int E = int(100 + (Cos - 0.50) * 20);
+      SunLightEmitation = MakeRGB24(E + 20, E, E);
+      AmbientLuminance = MakeRGB24(E + 15, E - 5, E - 5);
     }
     else
     {

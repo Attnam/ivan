@@ -501,6 +501,9 @@ ITEM(skullofxinroch, item)
  public:
   virtual truth IsASkull() const { return true; }
   virtual void Be() { }
+  virtual bool SpecialOfferEffect(int);
+  virtual truth AllowSpoil() const { return false; }
+  virtual truth Spoils() const { return false; }
  protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual col16 GetOutlineColor(int) const;

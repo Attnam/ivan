@@ -237,7 +237,7 @@ class material
   const database* DataBase;
   entity* MotherEntity;
   long Volume;
-        int Burning;
+  int Burning;
 };
 
 template <class type, class base>
