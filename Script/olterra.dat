@@ -738,3 +738,21 @@ ironmaiden
   NameSingular = "iron maiden";
   HPModifier = 250;
 }
+
+christmastree
+{
+  OKVisualEffects = MIRROR;
+  CanBeDestroyed = true;
+  DigMessage = "You chop the tree down.";
+  MainMaterialConfig == SNOW;
+  ShowMaterial = false;
+  MaterialColorB = rgb16(32, 100, 32);
+  MaterialColorC = rgb16(0, 180, 80);
+  MaterialColorD = rgb16(180, 20, 0);
+  NameSingular = "fir";
+  PostFix = "covered with snow";
+  /* BitmapPos overridden */
+  HPModifier = 25;
+  IsAlwaysTransparent = false;
+  LeftOverItems == stick { MainMaterial = FIR_WOOD { Volume = 500:1500; } Times = 1:4; }
+}
