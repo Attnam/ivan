@@ -266,4 +266,13 @@ OLTERRAIN(ironmaiden, olterrain)
   truth Opened;
 };
 
+OLTERRAIN(christmastree, olterrain)
+{
+ public:
+  virtual int GetSparkleFlags() const;
+ protected:
+  virtual int GetClassAnimationFrames() const;
+  virtual v2 GetBitmapPos(int) const;
+};
+
 #endif
