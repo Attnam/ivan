@@ -312,6 +312,41 @@ meleeweapon
     EnchantmentPlusChance = 10;
   }
 
+  Config GRAND_STOLLEN_KNIFE;
+  {
+    DefaultSize = 200;
+    Possibility = 0;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 650;
+    DefaultSecondaryVolume = 175;
+    StrengthModifier = 200;
+    BitmapPos = 0, 16;
+    FormModifier = 180;
+    CanBeWished = false;
+    NameSingular = "stollen knife";
+    Adjective = "grand";
+    PostFix = "of Attnam";
+    ArticleMode = FORCE_THE;
+    MainMaterialConfig == GOLD;
+    SecondaryMaterialConfig == SILVER;
+    IsPolymorphable = false;
+    Roundness = 20;
+    IsTwoHanded = true;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    BaseEnchantment = 0;
+    CanBeEnchanted = true;
+    AttachedGod = ATAVUS;
+    WieldedBitmapPos = 176, 112;
+    DamageFlags = SLASH|BLUNT;
+  }
+
+  Config BROKEN|GRAND_STOLLEN_KNIFE;
+  {
+    BitmapPos = 32, 96;
+    WieldedBitmapPos = 176, 80;
+  }
+
   Config SPEAR;
   {
     DefaultSize = 190;
