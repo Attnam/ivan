@@ -277,8 +277,11 @@ static truth RetrieveHighScoresFromServer(std::vector<festring>& GlobalEntry,
     curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
     curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &RetrievedData);
+    CURLcode Res = curl_easy_perform(Curl);
+    long ResponseCode;
+    curl_easy_getinfo(Curl, CURLINFO_RESPONSE_CODE, &ResponseCode);
 
-    if(curl_easy_perform(Curl) == CURLE_OK)
+    if(Res == CURLE_OK && ResponseCode == 200)
     {
       GlobalEntry.clear();
       GlobalScore.clear();
