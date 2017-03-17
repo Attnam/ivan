@@ -26,7 +26,9 @@ static void SubmitHighScoreToServer(long, cfestring&, time_t, long);
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 128
 
-#define HIGH_SCORE_SERVER "http://localhost:3332"
+#ifndef HIGH_SCORE_SERVER
+#define HIGH_SCORE_SERVER "https://ivan-hall-of-fame.herokuapp.com"
+#endif
 
 highscoreview highscore::View = LOCAL;
 
