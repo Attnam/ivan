@@ -18,17 +18,14 @@
 #include "feio.h"
 #include "femath.h"
 
-static truth RetrieveHighScoresFromServer(std::vector<festring>&,
+static truth RetrieveHighScoresFromServer(cfestring&,
+                                          std::vector<festring>&,
                                           std::vector<long>&,
                                           std::vector<time_t>&);
-static void SubmitHighScoreToServer(long, cfestring&, time_t, long);
+static void SubmitHighScoreToServer(cfestring&, long, cfestring&, time_t, long);
 
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 128
-
-#ifndef HIGH_SCORE_SERVER
-#define HIGH_SCORE_SERVER "https://ivan-hall-of-fame.herokuapp.com"
-#endif
 
 highscoreview highscore::View = LOCAL;
 
@@ -38,10 +35,12 @@ long highscore::GetSize() const { return Entry.size(); }
 
 highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION) { Load(File); }
 
-truth highscore::Add(long NewScore, cfestring& NewEntry,
-                     time_t NewTime, long NewRandomID)
+truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
+                     long NewRandomID, cfestring& HighScoreServerURL)
 {
-  SubmitHighScoreToServer(NewScore, NewEntry, NewTime, NewRandomID);
+  if (!HighScoreServerURL.IsEmpty())
+    SubmitHighScoreToServer(HighScoreServerURL, NewScore, NewEntry,
+                            NewTime, NewRandomID);
 
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -79,7 +78,7 @@ truth highscore::Add(long NewScore, cfestring& NewEntry,
   }
 }
 
-void highscore::Draw()
+void highscore::Draw(cfestring& HighScoreServerURL)
 {
   if(Score.empty())
   {
@@ -120,7 +119,8 @@ void highscore::Draw()
       }
     else if(View == GLOBAL)
     {
-      RetrieveHighScoresFromServer(GlobalEntry, GlobalScore, GlobalTime);
+      RetrieveHighScoresFromServer(HighScoreServerURL, GlobalEntry,
+                                   GlobalScore, GlobalTime);
 
       for(uint c = 0; c < GlobalScore.size(); ++c)
       {
@@ -191,16 +191,17 @@ truth highscore::MergeToFile(highscore* To) const
   for(uint c = 0; c < Score.size(); ++c)
     if(!To->Find(Score[c], Entry[c], Time[c], RandomID[c]))
     {
-      To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
+      To->Add(Score[c], Entry[c], Time[c], RandomID[c], "");
       MergedSomething = true;
     }
 
   return MergedSomething;
 }
 
-truth highscore::Add(long NewScore, cfestring& NewEntry)
+truth highscore::Add(long NewScore, cfestring& NewEntry,
+                     cfestring& HighScoreServerURL)
 {
-  return Add(NewScore, NewEntry, time(0), RAND());
+  return Add(NewScore, NewEntry, time(0), RAND(), HighScoreServerURL);
 }
 
 /* Because of major stupidity this return the number of NEXT
@@ -262,7 +263,8 @@ static size_t WriteMemoryCallback(char* Contents, size_t Size, size_t Count, voi
   return RealSize;
 }
 
-static truth RetrieveHighScoresFromServer(std::vector<festring>& GlobalEntry,
+static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
+                                          std::vector<festring>& GlobalEntry,
                                           std::vector<long>& GlobalScore,
                                           std::vector<time_t>& GlobalTime)
 {
@@ -274,8 +276,9 @@ static truth RetrieveHighScoresFromServer(std::vector<festring>& GlobalEntry,
   if(CURL* Curl = curl_easy_init())
   {
     festring RetrievedData;
+    festring HighScoreRetrieveURL = HighScoreServerURL + "/highscores";
 
-    curl_easy_setopt(Curl, CURLOPT_URL, HIGH_SCORE_SERVER "/highscores");
+    curl_easy_setopt(Curl, CURLOPT_URL, HighScoreRetrieveURL.CStr());
     curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
     curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &RetrievedData);
@@ -299,7 +302,8 @@ static truth RetrieveHighScoresFromServer(std::vector<festring>& GlobalEntry,
   return Success;
 }
 
-static void SubmitHighScoreToServer(long NewScore, cfestring& NewEntry,
+static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
+                                    long NewScore, cfestring& NewEntry,
                                     time_t NewTime, long NewRandomID)
 {
   if(curl_global_init(CURL_GLOBAL_ALL) != 0)
@@ -316,7 +320,9 @@ static void SubmitHighScoreToServer(long NewScore, cfestring& NewEntry,
       "\"entry\": \"" << NewEntry << "\""
     "}";
 
-    curl_easy_setopt(Curl, CURLOPT_URL, HIGH_SCORE_SERVER "/submit_score");
+    festring HighScoreSubmitURL = HighScoreServerURL + "/submit_score";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, HighScoreSubmitURL.CStr());
     curl_easy_setopt(Curl, CURLOPT_POST, 1);
     curl_easy_setopt(Curl, CURLOPT_HTTPHEADER, Headers);
     curl_easy_setopt(Curl, CURLOPT_POSTFIELDS, Json.CStr());

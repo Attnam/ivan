@@ -72,6 +72,9 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           "select MIDI output device",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
+stringoption ivanconfig::HighScoreServerURL("HighScoreServerURL",
+                                          "server to use for global high-scores",
+                                          "https://ivan-hall-of-fame.herokuapp.com");
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",
@@ -310,6 +313,7 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(&MIDIOutputDevice);
+  configsystem::AddOption(&HighScoreServerURL);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
 #endif

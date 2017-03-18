@@ -2148,7 +2148,8 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
         Desc << " in " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex());
     }
 
-    HScore.Add(long(game::GetScore() * Multiplier), Desc);
+    HScore.Add(long(game::GetScore() * Multiplier), Desc,
+               ivanconfig::GetHighScoreServerURL());
     HScore.Save();
   }
 }

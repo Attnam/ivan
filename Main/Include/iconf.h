@@ -31,6 +31,7 @@ class ivanconfig
   static truth GetBeNice() { return BeNice.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static cfestring& GetHighScoreServerURL() { return HighScoreServerURL.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
@@ -77,6 +78,7 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
+  static stringoption HighScoreServerURL;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;
 #endif
