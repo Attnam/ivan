@@ -33,6 +33,7 @@ class configsystem
   static void Show(void (*)() = 0, void (*)(felist&) = 0, truth = false);
   static void AddOption(configoption*);
   static void NormalStringDisplayer(const stringoption*, festring&);
+  static void SecretStringDisplayer(const stringoption*, festring&);
   static void NormalNumberDisplayer(const numberoption*, festring&);
   static void NormalTruthDisplayer(const truthoption*, festring&);
   static void NormalCycleDisplayer(const cycleoption*, festring&);

@@ -80,7 +80,8 @@ stringoption ivanconfig::HighScoreServerUsername("HighScoreServerUsername",
                                           "");
 stringoption ivanconfig::HighScoreServerPassword("HighScoreServerPassword",
                                           "password for submitting global high-scores",
-                                          "");
+                                          "",
+                                          &configsystem::SecretStringDisplayer);
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",

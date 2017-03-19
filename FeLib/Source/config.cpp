@@ -181,6 +181,15 @@ void configsystem::NormalStringDisplayer(const stringoption* O,
     Entry << '-';
 }
 
+void configsystem::SecretStringDisplayer(const stringoption* O,
+                                         festring& Entry)
+{
+  if(!O->Value.IsEmpty())
+    Entry << festring(O->Value.GetSize(), '*');
+  else
+    Entry << '-';
+}
+
 void configsystem::NormalNumberDisplayer(const numberoption* O,
                                          festring& Entry)
 {
