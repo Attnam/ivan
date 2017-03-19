@@ -75,6 +75,12 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
 stringoption ivanconfig::HighScoreServerURL("HighScoreServerURL",
                                           "server to use for global high-scores",
                                           "https://ivan-hall-of-fame.herokuapp.com");
+stringoption ivanconfig::HighScoreServerUsername("HighScoreServerUsername",
+                                          "username for submitting global high-scores",
+                                          "");
+stringoption ivanconfig::HighScoreServerPassword("HighScoreServerPassword",
+                                          "password for submitting global high-scores",
+                                          "");
 #ifndef __DJGPP__
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",
@@ -314,6 +320,8 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(&MIDIOutputDevice);
   configsystem::AddOption(&HighScoreServerURL);
+  configsystem::AddOption(&HighScoreServerUsername);
+  configsystem::AddOption(&HighScoreServerPassword);
 #ifndef __DJGPP__
   configsystem::AddOption(&FullScreenMode);
 #endif

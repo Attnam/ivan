@@ -32,6 +32,8 @@ class ivanconfig
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
   static cfestring& GetHighScoreServerURL() { return HighScoreServerURL.Value; }
+  static cfestring& GetHighScoreServerUsername() { return HighScoreServerUsername.Value; }
+  static cfestring& GetHighScoreServerPassword() { return HighScoreServerPassword.Value; }
 #ifndef __DJGPP__
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
@@ -79,6 +81,8 @@ class ivanconfig
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
   static stringoption HighScoreServerURL;
+  static stringoption HighScoreServerUsername;
+  static stringoption HighScoreServerPassword;
 #ifndef __DJGPP__
   static truthoption FullScreenMode;
 #endif

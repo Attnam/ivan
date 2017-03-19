@@ -22,7 +22,8 @@ static truth RetrieveHighScoresFromServer(cfestring&,
                                           std::vector<festring>&,
                                           std::vector<long>&,
                                           std::vector<time_t>&);
-static void SubmitHighScoreToServer(cfestring&, long, cfestring&, time_t, long);
+static void SubmitHighScoreToServer(cfestring&, cfestring&, cfestring&,
+                                    long, cfestring&, time_t, long);
 
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 128
@@ -36,10 +37,13 @@ long highscore::GetSize() const { return Entry.size(); }
 highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION) { Load(File); }
 
 truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
-                     long NewRandomID, cfestring& HighScoreServerURL)
+                     long NewRandomID, cfestring& HighScoreServerURL,
+                     cfestring& HighScoreServerUsername,
+                     cfestring& HighScoreServerPassword)
 {
   if (!HighScoreServerURL.IsEmpty())
-    SubmitHighScoreToServer(HighScoreServerURL, NewScore, NewEntry,
+    SubmitHighScoreToServer(HighScoreServerURL, HighScoreServerUsername,
+                            HighScoreServerPassword, NewScore, NewEntry,
                             NewTime, NewRandomID);
 
   for(uint c = 0; c < Score.size(); ++c)
@@ -191,7 +195,7 @@ truth highscore::MergeToFile(highscore* To) const
   for(uint c = 0; c < Score.size(); ++c)
     if(!To->Find(Score[c], Entry[c], Time[c], RandomID[c]))
     {
-      To->Add(Score[c], Entry[c], Time[c], RandomID[c], "");
+      To->Add(Score[c], Entry[c], Time[c], RandomID[c], "", "", "");
       MergedSomething = true;
     }
 
@@ -199,9 +203,12 @@ truth highscore::MergeToFile(highscore* To) const
 }
 
 truth highscore::Add(long NewScore, cfestring& NewEntry,
-                     cfestring& HighScoreServerURL)
+                     cfestring& HighScoreServerURL,
+                     cfestring& HighScoreServerUsername,
+                     cfestring& HighScoreServerPassword)
 {
-  return Add(NewScore, NewEntry, time(0), RAND(), HighScoreServerURL);
+  return Add(NewScore, NewEntry, time(0), RAND(), HighScoreServerURL,
+             HighScoreServerUsername, HighScoreServerPassword);
 }
 
 /* Because of major stupidity this return the number of NEXT
@@ -303,6 +310,8 @@ static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
 }
 
 static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
+                                    cfestring& HighScoreServerUsername,
+                                    cfestring& HighScoreServerPassword,
                                     long NewScore, cfestring& NewEntry,
                                     time_t NewTime, long NewRandomID)
 {
@@ -316,6 +325,8 @@ static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
     festring Json;
     Json <<
     "{"
+      "\"username\": \"" << HighScoreServerUsername << "\","
+      "\"password\": \"" << HighScoreServerPassword << "\","
       "\"score\": " << NewScore << ","
       "\"entry\": \"" << NewEntry << "\""
     "}";

@@ -38,7 +38,7 @@ class highscore
 {
  public:
   highscore(cfestring& = HIGH_SCORE_FILENAME);
-  truth Add(long, cfestring&, cfestring&);
+  truth Add(long, cfestring&, cfestring&, cfestring&, cfestring&);
   void Draw(cfestring&);
   void Save(cfestring& = HIGH_SCORE_FILENAME) const;
   void Load(cfestring& = HIGH_SCORE_FILENAME);
@@ -53,7 +53,7 @@ class highscore
   void Clear();
   truth CheckVersion() const;
  private:
-  truth Add(long, cfestring&, time_t, long, cfestring&);
+  truth Add(long, cfestring&, time_t, long, cfestring&, cfestring&, cfestring&);
   void ToggleBetweenLocalAndGlobalView() { View = static_cast<highscoreview>(!View); }
   std::vector<festring> Entry;
   std::vector<long> Score;
