@@ -360,6 +360,20 @@ solid
     InteractionFlags = Base&~CAN_DISSOLVE;
   }
 
+  Config TITANIUM;
+  {
+    StrengthValue = 200;
+    ConsumeType = CT_METAL;
+    Density = 4500;
+    Color = rgb16(190, 190, 190);
+    PriceModifier = 1000;
+    NameStem = "titanium";
+    AttachedGod = LORICATUS;
+    HardenedMaterial = ADAMANT;
+    IntelligenceRequirement = 25;
+    CommonFlags = Base|IS_METAL|IS_VALUABLE;
+  }
+
   Config BRONZE;
   {
     StrengthValue = 80;
@@ -1041,7 +1055,7 @@ solid
     NameStem = "lead";
     Flexibility = 2;
     AttachedGod = LORICATUS;
-    HardenedMaterial = ADAMANT;
+    HardenedMaterial = TITANIUM;
     IntelligenceRequirement = 7;
     CommonFlags = Base;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
@@ -2340,7 +2354,7 @@ ironalloy /* metals that rust */
     NameStem = "meteoric steel";
     AttachedGod = LORICATUS;
     RustModifier = 50;
-    HardenedMaterial = ADAMANT;
+    HardenedMaterial = TITANIUM;
     IntelligenceRequirement = 15;
     CommonFlags = Base|IS_VALUABLE;
   }
