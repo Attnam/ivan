@@ -288,33 +288,6 @@ CHARACTER(magicmushroom, mushroom)
   virtual void GetAICommand();
 };
 
-CHARACTER(ghost, nonhumanoid)
-{
- public:
-  ghost() : Active(true) { }
-  virtual void AddName(festring&, int) const;
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
-  virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
-  virtual truth RaiseTheDead(character*);
-  virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
-  virtual truth SpecialEnemySightedReaction(character*);
-  void SetIsActive(truth What) { Active = What; }
-  virtual truth IsPolymorphable() const { return MaxHP < 100; }
- protected:
-  virtual int GetBodyPartWobbleData(int) const;
-  virtual cchar* FirstPersonBiteVerb() const;
-  virtual cchar* FirstPersonCriticalBiteVerb() const;
-  virtual cchar* ThirdPersonBiteVerb() const;
-  virtual cchar* ThirdPersonCriticalBiteVerb() const;
-  virtual truth AttackIsBlockable(int) const { return false; }
-  virtual truth AttackMayDamageArmor() const { return false; }
-  virtual void GetAICommand();
-  festring OwnerSoul;
-  truth Active;
-};
-
 CHARACTER(twoheadedmoose, nonhumanoid)
 {
  public:
