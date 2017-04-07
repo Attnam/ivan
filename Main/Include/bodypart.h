@@ -111,6 +111,7 @@ ITEM(bodypart, item)
   virtual int GetSpecialFlags() const;
   virtual truth IsRepairable(ccharacter*) const;
   truth IsWarm() const;
+  truth IsWarmBlooded() const;
   truth UseMaterialAttributes() const;
   truth CanRegenerate() const;
   virtual square* GetSquareUnder(int = 0) const;
@@ -228,6 +229,8 @@ ITEM(head, bodypart)
   virtual int GetEquipments() const { return 2; }
   int GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(long What) { BaseBiteStrength = What; }
+  int GetBonusBiteStrength() const { return BonusBiteStrength; }
+  void SetBonusBiteStrength(long What) { BonusBiteStrength = What; }
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
@@ -240,6 +243,7 @@ ITEM(head, bodypart)
   gearslot HelmetSlot;
   gearslot AmuletSlot;
   int BaseBiteStrength;
+  int BonusBiteStrength;
   double BiteToHitValue;
   double BiteDamage;
   long BiteAPCost;

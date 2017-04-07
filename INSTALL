@@ -1,6 +1,15 @@
 Compiling IVAN under different systems
 --------------------------------------
 
+To build IVAN from source, you need to have the following dependencies
+installed on your system:
+
+- compiler with C++11 support (e.g. Clang 3.3 or newer, GCC 4.8 or newer)
+- CMake (https://cmake.org) version 2.8.12.2 or newer
+- SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
+
+--------------------------------------
+
 Under Linux and OS X, type:
 
 cmake .
@@ -13,6 +22,11 @@ cmake -D CMAKE_CXX_FLAGS=-DWIZARD .
 make -j
 make install
 
+To install IVAN to a custom prefix, pass the additional flag
+-DCMAKE_INSTALL_PREFIX=/your/prefix/path to the cmake invocation.
+(In particular, simply doing `make DESTDIR=/your/prefix/path install`
+doesn't work because IVAN needs the prefix information at build-time.)
+
 --------------------------------------
 
 Under DOS:
@@ -21,11 +35,6 @@ If you have DJGPP 2.03+ and gcc 2.952+
 installed, type:
 
 make -f ivandj.mak
-
-You need to install SDL development libraries,
-which can be downloaded from:
-
-http://www.libsdl.org/
 
 --------------------------------------
 

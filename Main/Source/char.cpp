@@ -256,6 +256,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Vampirism",
+    DUR_FLAGS,
+    &character::PrintBeginVampirismMessage,
+    &character::PrintEndVampirismMessage,
+    0,
+    0,
+    &character::VampirismHandler,
+    0,
+    0
   }
 };
 
@@ -714,7 +724,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
                                          && Enemy->BiteCapturesBodyPart());
   truth Succeeded = (GetBodyPart(BodyPart)
                      && HitEffect(Enemy, Weapon, HitPos, Type,
-                                  BodyPart, Dir, !DoneDamage))
+                                  BodyPart, Dir, !DoneDamage, Critical, DoneDamage))
                     || DoneDamage;
 
   if(Succeeded)
@@ -2254,7 +2264,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK,
-                                                        BodyPart, Direction, !DoneDamage)) || DoneDamage;
+                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage)) || DoneDamage;
 
   if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
@@ -4848,6 +4858,18 @@ void character::PrintEndLycanthropyMessage() const
     ADD_MESSAGE("You feel the wolf inside you has had enough of your bad habits.");
 }
 
+void character::PrintBeginVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly decide you have always hated garlic.");
+}
+
+void character::PrintEndVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
+}
+
 void character::PrintBeginInvisibilityMessage() const
 {
   if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm())
@@ -5028,6 +5050,9 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(GetType() == werewolfwolf::ProtoType.GetIndex())
+    return;
+
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
@@ -5449,6 +5474,11 @@ void character::PoisonedHandler()
 truth character::IsWarm() const
 {
   return combinebodypartpredicates()(this, &bodypart::IsWarm, 1);
+}
+
+truth character::IsWarmBlooded() const
+{
+  return combinebodypartpredicates()(this, &bodypart::IsWarmBlooded, 1);
 }
 
 void character::BeginInvisibility()
@@ -6104,7 +6134,7 @@ truth character::ContentsCanBeSeenBy(ccharacter* Viewer) const
 }
 
 truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
-                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+                           int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(Weapon)
     return Weapon->HitEffect(this, Enemy, HitPos, BodyPartIndex, Direction, BlockedByArmour);
@@ -6116,7 +6146,7 @@ truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
    case KICK_ATTACK:
     return Enemy->SpecialKickEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
    case BITE_ATTACK:
-    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour, Critical, DoneDamage);
   }
 
   return false;
@@ -8682,6 +8712,7 @@ void character::ReceiveWhiteUnicorn(long Amount)
   DecreaseStateCounter(POISONED, -Amount / 100);
   DecreaseStateCounter(PARASITIZED, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
+  DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
 
 /* Counter should be negative. Removes intrinsics. */
@@ -8736,6 +8767,12 @@ void character::LeprosyHandler()
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
   CheckDeath(CONST_S("killed by leprosy"));
+}
+
+void character::VampirismHandler()
+{
+  EditExperience(WISDOM, -25, 1 << 1);
+  CheckDeath(CONST_S("killed by vampirism"));
 }
 
 bodypart* character::SearchForOriginalBodyPart(int I) const

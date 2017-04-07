@@ -481,6 +481,16 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       break;
     }
 
+  if(StateIsActivated(VAMPIRISM) && !(RAND() % 2))
+    {
+      if(Chosen == USE_ARMS && CanAttackWithAnArm())
+        if(!GetRightWielded() && !GetLeftWielded())
+          Chosen = USE_HEAD;
+
+      if(Chosen == USE_LEGS && HasTwoUsableLegs())
+        Chosen = USE_HEAD;
+    }
+
   switch(Chosen)
   {
    case USE_ARMS:
@@ -946,6 +956,31 @@ void priest::BeTalkedTo()
     else
       ADD_MESSAGE("\"You seem to be lycanthropic. I might be able to do something "
                   "for that but I need %ldgp for the ritual materials first.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"You seem to have an addiction to drinking blood. Well, everyone has right to "
+                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray "
+                  "%s to remove your vampiric urges, just so you don't victimize our besotted youth.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(VAMPIRISM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to be vampiric. I might be able to do something for that but "
+                  "I need %ldgp for the ritual materials first.\"", Price);
   }
 
   static long Said;
@@ -3807,6 +3842,31 @@ festring werewolfwolf::GetKillName() const
   return humanoid::GetKillName();
 }
 
+truth werewolfwolf::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+  {
+    // Werewolf wolf gives lycanthropy
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY))
+      Victim->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000));
+
+    // Werewolves do double damage against vampires and this is a drain attack
+    if(Victim->StateIsActivated(VAMPIRISM) && (DoneDamage >= 1))
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You drain some life force from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+      else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some life force from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+      return Victim->ReceiveBodyPartDamage(this, DoneDamage, DRAIN, BodyPartIndex, Direction);
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
 int humanoid::GetRandomApplyBodyPart() const
 {
   if(RightArmIsUsable())
@@ -4523,7 +4583,7 @@ void necromancer::RaiseSkeleton()
   databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
   skeleton* Skeleton;
 
-  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
+  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(game::GetCurrentDungeonIndex() == XINROCH_TOMB) && !(RAND() % 250))
   {
     Skeleton = skeleton::Spawn(WAR_LORD);
     Skeleton->SetTeam(GetTeam());
@@ -4764,6 +4824,65 @@ void oree::Bite(character* Enemy, v2 HitPos, int, truth)
   Vomit(HitPos, 500 + RAND() % 500, false);
 }
 
+truth vampire::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+    else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY))
+      Victim->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500));
+
+      // HP recieved is about half the damage done; against werewolves this is full
+      int DrainDamage = (DoneDamage >> 1) + 1;
+      if(Victim->StateIsActivated(LYCANTHROPY))
+        DrainDamage = DoneDamage + 1;
+
+    if(IsPlayer())
+      game::DoEvilDeed(10);
+
+    return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
+  }
+  else
+    return false;
+}
+
+truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(StateIsActivated(VAMPIRISM))
+  {
+    if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+      else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+      if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY))
+        Victim->BeginTemporaryState(VAMPIRISM, 2000 + RAND_N(500));
+
+      // HP recieved is about half the damage done; against werewolves this is full
+      int DrainDamage = (DoneDamage >> 1) + 1;
+      if(Victim->StateIsActivated(LYCANTHROPY))
+        DrainDamage = DoneDamage + 1;
+
+      // To perpetuate vampirism, simply keep doing drain attacks
+      BeginTemporaryState(VAMPIRISM, 50*DrainDamage);
+      if(IsPlayer())
+        game::DoEvilDeed(10);
+
+      return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
 void sumowrestler::GetAICommand()
 {
   EditNP(-25);
@@ -4986,18 +5105,39 @@ void darkknight::SpecialBodyPartSeverReaction()
 {
   if(!IsPlayer())
   {
-    if(IsUsingHead())
-      ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
-    else if(!(RAND() % 5))
-      switch(RAND() % 3)
+    if(!(GetConfig() == MASTER))
+    {
+      if(IsUsingHead())
+        ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
+      else if(!(RAND() % 5))
+        switch(RAND() % 3)
+        {
+         case 0:
+          ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 1:
+          ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 2:
+          ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        }
+    }
+    else if((GetConfig() == MASTER) && HasHead())
+    {
+      character* Called = 0;
+      Called = darkknight::Spawn(ELITE);
+      Called->SetTeam(GetTeam());
+      Called->PutNear(GetPos());
+      Called->SignalGeneration();
+
+      if(CanBeSeenByPlayer())
       {
-       case 0:
-        ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 1:
-        ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 2:
-        ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        ADD_MESSAGE("%s screams a profane incantation to Infuscor before disappearing.", CHAR_NAME(DEFINITE));
+        TeleportRandomly(true);
       }
+      if(Called->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the shadows.", Called->CHAR_NAME(INDEFINITE));
+      }
+      else
+        ADD_MESSAGE("You feel the sudden presence of a violent enemy nearby.");
   }
 }
 
@@ -5369,6 +5509,65 @@ void oree::CallForMonsters()
     break;
    case 4:
     ToBeCalled = darkmage::Spawn(RAND_2 ? APPRENTICE : ELDER);
+    break;
+   case 5:
+    ToBeCalled = necromancer::Spawn(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+    break;
+  }
+
+  v2 TryToCreate;
+
+  for(int c = 0; c < 100; ++c)
+  {
+    TryToCreate = game::GetMonsterPortal()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+    if(GetArea()->IsValidPos(TryToCreate)
+       && ToBeCalled->CanMoveOn(GetNearLSquare(TryToCreate))
+       && ToBeCalled->IsFreeForMe(GetNearLSquare(TryToCreate)))
+    {
+      ToBeCalled->SetTeam(game::GetTeam(MONSTER_TEAM));
+      ToBeCalled->PutTo(TryToCreate);
+      return;
+    }
+  }
+
+  delete ToBeCalled;
+}
+
+void priest::GetAICommand()
+{
+  if(GetConfig() == INFUSCOR)
+  {
+    if(!RAND_N(50))
+      CallForMonsters();
+  }
+
+  StandIdleAI();
+}
+
+void priest::CallForMonsters()
+{
+  if(GetDungeon()->GetIndex() != XINROCH_TOMB || GetLevel()->GetIndex() != NECRO_CHAMBER_LEVEL)
+    return;
+
+  character* ToBeCalled = 0;
+
+  switch(RAND_N(6))
+  {
+   case 0:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 1:
+    ToBeCalled = zombie::Spawn();
+    break;
+   case 2:
+    ToBeCalled = frog::Spawn(DARK);
+    break;
+   case 3:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 4:
+    ToBeCalled = zombie::Spawn();
     break;
    case 5:
     ToBeCalled = necromancer::Spawn(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
@@ -5979,4 +6178,47 @@ void xinrochghost::CreateCorpse(lsquare* Square)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
   }
+}
+
+truth darkknight::SpecialEnemySightedReaction(character*)
+{
+  if((GetConfig() == MASTER))
+  {
+    const database* WarLordDataBase;
+    databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
+    skeleton* Skeleton;
+
+    if(!(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 5))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+      Skeleton = skeleton::Spawn(WAR_LORD);
+      Skeleton->SetTeam(GetTeam());
+      Skeleton->PutNear(GetPos());
+      Skeleton->SignalGeneration();
+
+      if(Skeleton->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the ground.", Skeleton->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s casts a powerful spell which makes the whole area tremble.", CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You feel the presence of an ancient evil being awakened from its long slumber. You shiver.");
+      
+      Skeleton->SetGenerationDanger(GetGenerationDanger());
+      return true;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+truth darkknight::CheckForUsefulItemsOnGround(truth CheckFood)
+{
+  if(GetConfig() == MASTER)
+    return false;
+  else
+    return character::CheckForUsefulItemsOnGround(CheckFood);
 }

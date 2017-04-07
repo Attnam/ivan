@@ -62,6 +62,7 @@
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
 #define ETHEREAL_MOVING (1 << 21)
+#define VAMPIRISM (1 << 22)
 
 #define HEAD 1
 #define TORSO 2
@@ -212,6 +213,7 @@
 #define EFFECT_OMMEL_BONE 29
 #define EFFECT_MUSTARD_GAS 30
 #define EFFECT_MUSTARD_GAS_LIQUID 31
+#define EFFECT_VAMPIRISM 32
 
 /* CEM = Consume End Message */
 
@@ -421,6 +423,7 @@
 #define MAGIC_MUSHROOM_FLESH (FLESH_ID + 43)
 #define SICK_SPIDER_FLESH (FLESH_ID + 44)
 #define MIND_WORM_FLESH (FLESH_ID + 45)
+#define VAMPIRE_FLESH (FLESH_ID + 46)
 
 #define POWDER_ID (4096 * 6)
 
@@ -771,7 +774,7 @@
 #define TOURIST_TEAM 10
 #define BETRAYED_TEAM 11
 #define XINROCH_TOMB_ENTRY_TEAM 12
-#define XINROCH_TOMB_SHOP_TEAM 13
+#define XINROCH_TOMB_NECRO_TEAM 13
 #define XINROCH_TOMB_KAMIKAZE_DWARF_TEAM 14
 #define PRISONER_TEAM 15
 
@@ -803,7 +806,8 @@
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
 
-#define DUAL_ENNER_BEAST_LEVEL 7
+#define DUAL_ENNER_BEAST_LEVEL 5
+#define NECRO_CHAMBER_LEVEL 6
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
@@ -987,6 +991,7 @@
 #define CAN_HAVE_PARASITE 4
 #define USE_MATERIAL_ATTRIBUTES 8
 #define CAN_REGENERATE 16
+#define IS_WARM_BLOODED 32
 
 /* InteractionFlags */
 #define CAN_BURN 1

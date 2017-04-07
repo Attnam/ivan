@@ -20,6 +20,9 @@ int door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 v2 portal::GetBitmapPos(int Frame) const { return v2(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 v2 monsterportal::GetBitmapPos(int Frame) const { return v2(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
+int christmastree::GetClassAnimationFrames() const { return game::IsXMas() ? 32 : 1; }
+v2 christmastree::GetBitmapPos(int Frame) const { return game::IsXMas() ? v2(16 + (((Frame & 31) << 3)&~8), 448) : v2(0, 448); }
+
 void fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::InitMaterials(material* M1, material* M2, truth CUP) { ObjectInitMaterials(MainMaterial, M1, 0, SecondaryMaterial, M2, 0, CUP); }
@@ -1373,7 +1376,9 @@ truth coffin::Open(character* Opener)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
-        GenerateGhost(GetLevel()->GetLSquare(Pos));
+      {
+        //GenerateGhost(GetLevel()->GetLSquare(Pos)); // This function awaits repair
+      }
     }
   }
 
@@ -1392,7 +1397,7 @@ void coffin::Break()
 
     if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
     {
-      GenerateGhost(Neighbour);
+      //GenerateGhost(Neighbour); // This function awaits repair
     }
   }
   olterraincontainer::Break();
@@ -1401,7 +1406,7 @@ void coffin::Break()
 void coffin::GenerateGhost(lsquare* Square)
 {
   v2 Pos = Square->GetPos();
-  character* Char = ghost::Spawn();
+  character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
   if((!Square->GetRoomIndex()
       || !Square->GetRoom()->DontGenerateMonsters()))
@@ -1503,4 +1508,9 @@ truth ironmaiden::Close(character* Closer)
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
+}
+
+int christmastree::GetSparkleFlags() const
+{
+  return (game::IsXMas() ? SPARKLING_B : 0);
 }
