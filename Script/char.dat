@@ -2399,10 +2399,18 @@ communist /* Ivan */
   CanBeWished = true;
   DefaultName = "Ivan";
   DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";
-  HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
+  HostileReplies =
+  {
+    5,
+    "\"Nu vse, tebe pizda!\"",
+    "\"Otyebis ot menya!\"",
+    "\"Ootebya nyet yayeesav!\"",
+    "\"Zhopu porvu margala vikoliu!\"",
+    "\"Schas po ebalu poluchish, suka!\"";
+  }
   FriendlyReplies =
   {
-    11,
+    12,
     "\"Da, @nu like killing.\"",
     "\"@Nu ruski specialist.\"",
     "\"@Nu work. Else @nu nerve stapled.\"",
@@ -2413,7 +2421,8 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
-    "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"";
+    "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
+    "\"Lenin want @nu kill capitalists!\"";
   }
   AttachedGod = LORICATUS;
   ConstantCommandFlags = FLEE_FROM_ENEMIES;
@@ -3817,10 +3826,51 @@ gibberling
   BaseUnarmedStrength = 300;
   FleshMaterial = GIBBERLING_FLESH;
   AttachedGod = SILVA;
-  HostileReplies == "@Dd gibbers diabolically.";
-  FriendlyReplies == "@Dd gibbers joyfully.";
   WillCarryItems = false;
   IsExtraFragile = true;
+  HostileReplies =
+  {
+    22, /* Gibberlings insult you in gibberish! */
+    "\"Poshyel k chyertu!\"", /* russian */
+    "\"Antiquis temporibus, nati tibi in rupibus ventosissimis exponebantur ad necem.\"", /* latin */
+    "\"Vouz avez plein de merde.\"",  /* french */
+    "\"Zhebni, debile.\"",  /* czech */
+    "\"Vaffanculo!\"", /* italian */
+    "\"Hisap telur!\"", /* malay */
+    "\"Elif air ab tizak!\"", /* arabic */
+    "\"Gellbourria salak!\"", /* turkish */
+    "\"Hum kah chan!\"", /* cantonese */
+    "\"Du Hurensohn!\"", /* german */
+    "\"Baka yaro!\"", /* japanese */
+    "\"Preklet kurac!\"", /* slovenian */
+    "\"Cachu bant ti cachu mes!\"", /* welsh */
+    "\"Lofasz a segedben!\"", /* hungarian */
+    "\"Yumago!\"", /* korean */
+    "\"Jebiesz jeze!\"", /* polish*/
+    "@Dd sneers at you. \"Mishugena.\"", /* yiddish */
+    "\"Lech zayen para.\"", /* hebrew */
+    "\"Dra at skogen.\"", /* swedish */
+    "\"Pinche idiota!\"", /* spanish */
+    "\"Tha sou skiso to mouni!\"", /* greek */
+    "\"Kurav tu ando mul!\""; /* romanian */
+  }
+  FriendlyReplies =
+  {
+    13, /* Famous literature, distorted into gibberish. */
+    "\"Who would fard that dream? Ay, and there's tural shocks that dreams momething afterprises the sleep; no more!\"", /* Hamlet */
+    "\"Buzzing a buzzing-noise, put lived unders, and he got of all he tree, and buzzing. If there's a buzzing.\"", /* Winnie the Pooh */
+    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That’s a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
+    "\"The heart. The most be seen or touched, things in they are felt with the heart.\"", /* The Little Prince */
+    "\"Fear is the its past not fear has gone that brings to see inner me. And then my fear. Fear is there will turn the inner me.\"", /* Dune */
+    "\"You want you remember and you? Yes. You forever, he said. You want to forget.\"", /* The Road */
+    "\"Candles exploding, burn live, the same are mad to talk, mad to like stars.\"", /* On The Road */
+    "\"Did seraphs, exhibit number for a princedom by the was and gentlemen initial girl-child. She tongue tip of my loin!\"", /* Lolita */
+    "\"That sometimes you realize truth arrives on you can’t even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
+    "\"Minitrue, which mainment, education and Minipax, the Miniluv and order. The Miniplenty.\"", /* 1984 */
+    "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
+    "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
+    "@Dd gibbers.";
+  }
 }
 
 largecat
@@ -3835,10 +3885,18 @@ largecat
   DefaultMana = 0;
   TotalVolume = 15000;
   TorsoBitmapPos = 496, 0;
-  HostileReplies == "@Dd mews.";
-  FriendlyReplies =
+  HostileReplies =
   {
     4,
+    "@Dd mews in a low, disconcerting tone.",
+    "@Dd flattens its ears.",
+    "@Dd bristles up.",
+    "@Dd hisses menacingly!";
+  }
+  FriendlyReplies =
+  {
+    5,
+    "@Dd mews.",
     "@Dd purrs.",
     "@Dd weaves between your legs.",
     "@Dd kneads you with its paws. Ouch!",
@@ -3872,7 +3930,12 @@ largerat
   CanOpen = false;
   TotalVolume = 4000;
   TorsoBitmapPos = 512, 0;
-  HostileReplies == "The furious @du squeaks.";
+  HostileReplies =
+  {
+    2,
+    "@Dd bares its tiny fangs.",
+    "The furious @du squeaks.";
+  }
   FriendlyReplies =
   {
     4,
@@ -3930,7 +3993,13 @@ angel
   /* Equipment initialization overridden */
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
-  HostileReplies == "\"With the power of @Gd, I shall slay thee, sinner!\"";
+  HostileReplies =
+  {
+    3,
+    "\"Repent!\"",
+    "\"Wrath of @Gd be upon thee!\"",
+    "\"With the power of @Gd, I shall slay thee, sinner!\"";
+  }
   FriendlyReplies =
   {
     6,
@@ -4030,9 +4099,16 @@ kamikazedwarf
   HPRequirementForGeneration = 60;
   DayRequirementForGeneration = 6;
   Frequency = 300;
-  HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
   AttachedGod = NONE;
   WieldedPosition = -1, -2;
+  HostileReplies =
+  {
+    4,
+    "@Dd smiles at you, eyes glowing with religious mania.",
+    "\"Die, infidel!\"",
+    "\"For the glory of @Gd!\"",
+    "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
+  }
   FriendlyReplies =
   {
     8,
@@ -5495,15 +5571,18 @@ invisiblestalker
   TorsoBitmapPos = 224, 16;
   FriendlyReplies =
   {
-    6,
-    "\"Gods are away on business.\"",
+    4,
     "\"I will watch you when you sleep.\"",
-    "\"Misery is the river of the world.\"",
     "\"Don't mind me. I'm just watching. Your. Every. Step.\"",
     "\"I'm not an invisible stalker! I'm your imaginary friend!\"",
     "\"Gah, I always feel like somebody's watching me. Creepy.\"";
   }
-  HostileReplies == "\"Misery is the river of the world.\"";
+  HostileReplies =
+  {
+    2,
+    "\"Gods are away on business.\"",
+    "\"Misery is the river of the world.\"";
+  }
   TotalSize = 170;
   NameSingular = "stalker";
   NamePlural = "stalkers";
