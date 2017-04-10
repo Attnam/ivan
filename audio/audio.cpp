@@ -70,6 +70,7 @@ std::vector<musicfile*> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
 
 char* audio::CurrentTrack;
+festring audio::MusDir;
 
 /** For each increase in intensity, the respective MIDI channel changes by the following amount */
 int  audio::DeltaVolumePerIntensity[MAX_MIDI_CHANNELS] = {0, 0, 0, 0, 0, -1, -1, -1, -1, 0, -1, 1, 1, 1, 1, 1};
@@ -85,7 +86,7 @@ void audio::error(RtMidiError::Type type, const std::string &errorText, void *us
 
 }
 
-void audio::Init()
+void audio::Init(cfestring& musicDirectory)
 {
    int audio_rate, audio_channels;
    unsigned short audio_format;
@@ -102,6 +103,7 @@ void audio::Init()
    TargetIntensity = 0;
    volumeChangeRequest = false;
    CurrentTrack = 0;
+   MusDir = musicDirectory;
 
    // RtMidiOut constructor
    try
@@ -167,7 +169,6 @@ int audio::Loop(void *ptr)
          int randomIndex = rand() % Tracks.size();
          CurrentTrack = Tracks[randomIndex]->GetFilename();
 
-         festring MusDir = game::GetMusicDir();
          festring MusFile = MusDir + festring(CurrentTrack);
 
          PlayMIDIFile( (char*)MusFile.CStr(), 1);
