@@ -82,7 +82,10 @@ public:
 
    static void error(RtMidiError::Type type, const std::string &errorText, void *userData );
 
-   static void Init();
+   /**
+    * @param musicDirectory path to the directory containing the MIDI files to load.
+    */
+   static void Init(cfestring& musicDirectory);
    static void DeInit(void);
 
    static int Loop(void *ptr);
@@ -148,6 +151,7 @@ private:
 
    static int  PlaybackState;
    static char* CurrentTrack;
+   static festring MusDir;
 
    static std::vector<musicfile*> Tracks;
 

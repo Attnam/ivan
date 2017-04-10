@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 
 #endif /* __DJGPP__ */
 
-  audio::Init();
+  audio::Init(game::GetMusicDir());
 
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
