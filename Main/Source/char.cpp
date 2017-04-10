@@ -7168,7 +7168,10 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
   truth Pummeled = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? 0 : (Damage >> 1),
                                  PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
 
-  if(Pummeled && GetArea()->IsValidPos(SpillPos))
+  // The ReceiveDamage calls above might cause 'this' to be polymorphed, in which case
+  // SquareUnder[0] is null and calling GetArea or SpillBlood will crash.
+  // See https://github.com/Attnam/ivan/issues/237 for details.
+  if(SquareUnder[0] && Pummeled && GetArea()->IsValidPos(SpillPos))
     GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
   festring Msg;
