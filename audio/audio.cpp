@@ -59,7 +59,7 @@ int audio::CurrentIntensity;
 bool audio::isInit;
 
 int audio::PlaybackState;
-bool audio::isTrackPlaying;
+volatile bool audio::isTrackPlaying;
 
 bool audio::volumeChangeRequest;
 

@@ -145,7 +145,7 @@ private:
    static int  TargetIntensity;
    static int  CurrentIntensity;
 
-   static bool isTrackPlaying;
+   static volatile bool isTrackPlaying;
 
    static int CurrentPosition;
 
