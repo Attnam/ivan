@@ -14,7 +14,7 @@
 #define __SAVE_H__
 
 #include <ctime>
-#include <cstdio>
+#include <fstream>
 #include <vector>
 #include <deque>
 #include <list>
@@ -40,22 +40,16 @@ inline inputfile& operator>>(inputfile& SaveFile, type& Value)\
 
 typedef std::map<festring, long> valuemap;
 
-/* fstream seems to bug with DJGPP, so we use FILE* here */
-
 class outputfile
 {
  public:
   outputfile(cfestring&, truth = true);
-  ~outputfile();
-  void Put(char What) { fputc(What, Buffer); }
-  void Write(cchar* Offset, long Size)
-  { fwrite(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer != 0; }
-  void Close() { fclose(Buffer);  Buffer = 0; }
-  void Flush() { fflush(Buffer); }
-  void ReOpen();
+  void Put(char What) { File.put(What); }
+  void Write(cchar* Data, long Size) { File.write(Data, Size); }
+  truth IsOpen() { return File.is_open(); }
+  void Close() { File.close(); }
  private:
-  FILE* Buffer;
+  std::ofstream File;
   festring FileName;
 };
 
@@ -63,7 +57,6 @@ class inputfile
 {
  public:
   inputfile(cfestring&, const valuemap* = 0, truth = true);
-  ~inputfile();
   festring ReadWord(truth = true);
   void ReadWord(festring&, truth = true);
   char ReadLetter(truth = true);
@@ -71,23 +64,22 @@ class inputfile
   festring ReadStringOrNumber (long *num, truth *isString, truth PreserveTerminator=false);
   v2 ReadVector2d();
   rect ReadRect();
-  int Get() { return fgetc(Buffer); }
-  void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
-  truth IsOpen() { return Buffer != 0; }
-  truth Eof() { return feof(Buffer); }
-  void ClearFlags() { clearerr(Buffer); }
-  void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
-  void SeekPosCurrent(long Offset) { fseek(Buffer, Offset, SEEK_CUR); }
-  void SeekPosEnd(long Offset) { fseek(Buffer, Offset, SEEK_END); }
-  long TellPos() { return ftell(Buffer); }
+  int Get() { return File.get(); }
+  void Read(char* Data, long Size) { File.read(Data, Size); }
+  truth IsOpen() { return File.is_open(); }
+  truth Eof() { return File.eof(); }
+  void SeekPosBegin(long Offset) { File.seekg(Offset, std::ios::beg); }
+  void SeekPosCurrent(long Offset) { File.seekg(Offset, std::ios::cur); }
+  void SeekPosEnd(long Offset) { File.seekg(Offset, std::ios::end); }
+  long TellPos() { return File.tellg(); }
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
   cfestring& GetFileName() const { return FileName; }
-  void Close() { fclose(Buffer); Buffer = 0; }
+  void Close() { File.close(); }
  private:
   festring ReadNumberIntr (int CallLevel, long *num, truth *isString, truth allowStr, truth PreserveTerminator);
   int HandlePunct(festring&, int, int);
-  FILE* Buffer;
+  std::ifstream File;
   festring FileName;
   const valuemap* ValueMap;
   truth lastWordWasString;
