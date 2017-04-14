@@ -68,7 +68,8 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(800, 600), ivanconfig::GetFullScreenMode());
+                      v2(800, 600), ivanconfig::GetGraphicsScale(),
+                      ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
 #ifndef __DJGPP__
