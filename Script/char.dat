@@ -2882,7 +2882,7 @@ zombie
   }
 }
 
-spirit
+ghost
 {
   DefaultArmStrength = 8;
   DefaultLegStrength = 10;
