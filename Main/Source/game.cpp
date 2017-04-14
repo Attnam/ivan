@@ -1757,6 +1757,9 @@ v2 game::NameKeyHandler(v2 CursorPos, int Key)
 
 void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
+  if(!Permanently)
+    game::Save();
+
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
 
