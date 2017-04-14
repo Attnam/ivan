@@ -966,7 +966,7 @@ class character : public entity, public id
   item* SearchForItem(ccharacter*, sorter) const;
   virtual character* CreateZombie() const { return 0; }
   virtual festring GetZombieDescription() const;
-  virtual festring GetSpiritDescription() const;
+  virtual festring GetGhostDescription() const;
   virtual truth CanAttack() const { return true; }
   truth DetectMaterial(cmaterial*) const;
   truth CheckIfTooScaredToHit(ccharacter*) const;

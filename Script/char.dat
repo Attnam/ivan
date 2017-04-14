@@ -2882,7 +2882,7 @@ zombie
   }
 }
 
-spirit
+ghost
 {
   DefaultArmStrength = 8;
   DefaultLegStrength = 10;
@@ -4985,51 +4985,6 @@ darkmage
     AllowUnconsciousness = false;
     UndeadVersions = false;
   }
-}
-
-ghost
-{
-  DefaultArmStrength = 5;
-  DefaultAgility = 8;
-  DefaultEndurance = 8;
-  DefaultPerception = 24;
-  DefaultIntelligence = 15;
-  DefaultWisdom = 10;
-  DefaultCharisma = 10;
-  DefaultMana = 15;
-  StandVerb = "hovering";
-  Frequency = 5000;
-  TotalVolume = 300000;
-  TorsoBitmapPos = 112, 16;
-  TotalSize = 100;
-  NameSingular = "ghost";
-  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
-  KnownCWeaponSkills == BITE;
-  CWeaponSkillHits == 100;
-  BaseEmitation = rgb24(110, 110, 110);
-  HostileReplies == "\"Boo!\"";
-  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
-  PanicLevel = 0;
-  HasALeg = false;
-  FleshMaterial = GHOST;
-  DeathMessage = "@Dd is sucked into hell.";
-  SpillsBlood = false;
-  Sweats = false;
-  UsesNutrition = false;
-  AttachedGod = MORTIFER;
-  BodyPartsDisappearWhenSevered = true;
-  BaseBiteStrength = 1000;
-  AttackStyle = USE_HEAD;
-  BiteCapturesBodyPart = false;
-  MoveType = ETHEREAL;
-  CanChoke = false;
-  IsImmuneToStickiness = true;
-  CreateUndeadConfigurations = true;
-  UndeadAttributeModifier = 75;
-  UndeadCopyMaterials = false;
-  CanBeGenerated = false;
-  CanBeGeneratedOnlyInTheCatacombs = true;
-  IsCatacombCreature = true;
 }
 
 twoheadedmoose

@@ -450,14 +450,14 @@ CHARACTER(zombie, humanoid)
   festring Description;
 };
 
-CHARACTER(spirit, humanoid)
+CHARACTER(ghost, humanoid)
 {
  public:
-  spirit() : Active(true) { }
+  ghost() : Active(true) { }
   virtual truth BodyPartIsVital(int) const;
 //  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
   void SetDescription(cfestring What) { Description = What; }
-  virtual festring GetSpiritDescription() const;
+  virtual festring GetGhostDescription() const;
   virtual void AddName(festring&, int) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -482,7 +482,7 @@ CHARACTER(spirit, humanoid)
   festring Description;
 };
 
-CHARACTER(bonesghost, spirit)
+CHARACTER(bonesghost, ghost)
 {
  public:
   virtual col16 GetHairColor() const { return HairColor; }
@@ -499,7 +499,7 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
-CHARACTER(xinrochghost, spirit)
+CHARACTER(xinrochghost, ghost)
 {
  public:
   virtual truth IsNameable() const { return false; }

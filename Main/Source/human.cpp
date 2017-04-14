@@ -43,13 +43,13 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
-truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
-festring spirit::GetSpiritDescription() const { return Description; }
-cchar* spirit::FirstPersonUnarmedHitVerb() const { return "touch"; }
-cchar* spirit::FirstPersonCriticalUnarmedHitVerb() const
+truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+festring ghost::GetGhostDescription() const { return Description; }
+cchar* ghost::FirstPersonUnarmedHitVerb() const { return "touch"; }
+cchar* ghost::FirstPersonCriticalUnarmedHitVerb() const
 { return "critically touch"; }
-cchar* spirit::ThirdPersonUnarmedHitVerb() const { return "touches"; }
-cchar* spirit::ThirdPersonCriticalUnarmedHitVerb() const
+cchar* ghost::ThirdPersonUnarmedHitVerb() const { return "touches"; }
+cchar* ghost::ThirdPersonCriticalUnarmedHitVerb() const
 { return "critically touches"; }
 
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
@@ -60,7 +60,7 @@ material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MA
 
 truth sumowrestler::EquipmentIsAllowed(int I) const { return I == BELT_INDEX; }
 
-truth spirit::SpecialEnemySightedReaction(character*) { return !(Active = true); }
+truth ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
 petrus::~petrus()
 {
@@ -2762,7 +2762,7 @@ void zombie::CreateBodyParts(int SpecialFlags)
     }
 }
 
-void spirit::AddName(festring& String, int Case) const
+void ghost::AddName(festring& String, int Case) const
 {
   if(OwnerSoul.IsEmpty() || Case & PLURAL)
     character::AddName(String, Case);
@@ -2773,13 +2773,13 @@ void spirit::AddName(festring& String, int Case) const
   }
 }
 
-void spirit::Save(outputfile& SaveFile) const
+void ghost::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
   SaveFile << OwnerSoul << Active << Description;
 }
 
-void spirit::Load(inputfile& SaveFile)
+void ghost::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> OwnerSoul >> Active >> Description;
@@ -2797,7 +2797,7 @@ void bonesghost::Load(inputfile& SaveFile)
   SaveFile >> OwnerSoul >> Active >> Description >> EyeColor >> HairColor;
 }
 
-truth spirit::RaiseTheDead(character* Summoner)
+truth ghost::RaiseTheDead(character* Summoner)
 {
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
@@ -2814,7 +2814,7 @@ truth spirit::RaiseTheDead(character* Summoner)
   return false;
 }
 
-int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
                                  int Direction, truth PenetrateResistance, truth Critical,
                                  truth ShowNoDamageMsg, truth CaptureBodyPart)
 {
@@ -2828,7 +2828,7 @@ int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int 
     return 0;
 }
 
-void spirit::GetAICommand()
+void ghost::GetAICommand()
 {
   if(Active)
     character::GetAICommand();

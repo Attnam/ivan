@@ -1405,6 +1405,7 @@ void coffin::Break()
 
 void coffin::GenerateGhost(lsquare* Square)
 {
+/*
   v2 Pos = Square->GetPos();
   character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -1419,6 +1420,7 @@ void coffin::GenerateGhost(lsquare* Square)
       ADD_MESSAGE("%s appears.", Char->CHAR_NAME(DEFINITE));
     }
   }
+*/
 }
 
 void barwall::Break()

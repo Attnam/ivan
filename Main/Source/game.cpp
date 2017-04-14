@@ -595,8 +595,6 @@ void game::Run()
           else if(!RAND_N(5))
           Char = billswill::Spawn();
           else if(!RAND_N(5))
-          Char = ghost::Spawn();
-          else if(!RAND_N(5))
           Char = dolphin::Spawn();
           else if(!RAND_N(5))
           Char = cossack::Spawn();
