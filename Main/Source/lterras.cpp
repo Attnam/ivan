@@ -20,6 +20,9 @@ int door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 v2 portal::GetBitmapPos(int Frame) const { return v2(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 v2 monsterportal::GetBitmapPos(int Frame) const { return v2(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
+int christmastree::GetClassAnimationFrames() const { return game::IsXMas() ? 32 : 1; }
+v2 christmastree::GetBitmapPos(int Frame) const { return game::IsXMas() ? v2(16 + (((Frame & 31) << 3)&~8), 448) : v2(0, 448); }
+
 void fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::InitMaterials(material* M1, material* M2, truth CUP) { ObjectInitMaterials(MainMaterial, M1, 0, SecondaryMaterial, M2, 0, CUP); }
@@ -681,6 +684,39 @@ truth altar::SitOn(character* Sitter)
 {
   ADD_MESSAGE("You kneel down and worship %s for a moment.", GetMasterGod()->GetName());
 
+  if((GetMasterGod()->GetType() == INFUSCOR) && (game::GetCurrentDungeonIndex() == XINROCH_TOMB) && (game::GetCurrentLevelIndex() == 0))
+  {
+    if(Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() != 1000)
+    {
+      ADD_MESSAGE("You have a horrid vision of yourself becoming a master dark knight. The nightmare fades in a whisper: "
+                  "\"Thou shalt be My Champion first!\"");
+      return true;
+    }
+
+    if(!Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() == 1000)
+    {
+      ADD_MESSAGE("You have a horrid vision of yourself becoming a master dark knight. The nightmare fades in a whisper: "
+                  "\"Thou shalt bring Me the lost ruby flaming sword first!\"");
+      return true;
+    }
+
+    if(Sitter->HasLostRubyFlamingSword() && game::GetGod(INFUSCOR)->GetRelation() == 1000)
+    {
+      game::TextScreen(CONST_S("A ghastly red light emanates upward from the altar, and all eyes in \n"
+                               "the temple are turned thither. A booming voice fills the air:\n\n"
+                               "\"mORtAl! Thou hast supplanted Xinroch and proven your devotion to Me! Therefore,\n"
+                               "I knight you, and hereby promote you to Master Dark Knight of the Unholy Order of Infuscor!\"\n\n"
+                               "You are victorious!"));
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("became the new Master Dark Knight of the Unholy Order of Infuscor");
+      PLAYER->AddScoreEntry(Msg, 4, false);
+      game::End(Msg);
+      return true;
+    }
+  }
+
   if(GetMasterGod()->GetRelation() < 500)
   {
     if(!(RAND() % 20))
@@ -752,7 +788,7 @@ void door::CreateBoobyTrap()
 
 truth fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(100)), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(500)), Who);
   return true;
 }
 
@@ -908,6 +944,41 @@ truth stairs::Enter(truth DirectionUp) const
     return olterrain::Enter(DirectionUp);
 
   /* "Temporary" gum solutions */
+
+  if(GetConfig() == XINROCH_TOMB_ENTRANCE)
+  {
+    if((game::GetXinrochTombStoryState() == 2) || (PLAYER->GetMoveType() & ETHEREAL))
+    {
+      ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely "
+                  "dangerous on the other side. You feel you should think twice before entering.");
+
+      if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
+        return false;
+    }
+    else
+    {
+      ADD_MESSAGE("An unknown magical force pushes you back.");
+      PLAYER->EditAP(-1000);
+      return true;
+    }
+  }
+
+  if(GetConfig() == XINROCH_TOMB_EXIT)
+  {
+    if(PLAYER->HasLostRubyFlamingSword())
+    {
+      ADD_MESSAGE("Somehow you get the feeling you cannot return.");
+
+      if(!game::TruthQuestion(CONST_S("Continue anyway? [y/N]")))
+        return false;
+    }
+    else
+    {
+      ADD_MESSAGE("An unknown magical force pushes you back.");
+      PLAYER->EditAP(-1000);
+      return true;
+    }
+  }
 
   if(GetConfig() == OREE_LAIR_ENTRY)
   {
@@ -1305,7 +1376,9 @@ truth coffin::Open(character* Opener)
     {
       v2 Pos = GetLevel()->GetRandomSquare();
       if(Pos != ERROR_V2)
-        GenerateGhost(GetLevel()->GetLSquare(Pos));
+      {
+        //GenerateGhost(GetLevel()->GetLSquare(Pos)); // This function awaits repair
+      }
     }
   }
 
@@ -1324,7 +1397,7 @@ void coffin::Break()
 
     if(!RAND_4 && Neighbour && Neighbour->IsFlyable())
     {
-      GenerateGhost(Neighbour);
+      //GenerateGhost(Neighbour); // This function awaits repair
     }
   }
   olterraincontainer::Break();
@@ -1333,7 +1406,7 @@ void coffin::Break()
 void coffin::GenerateGhost(lsquare* Square)
 {
   v2 Pos = Square->GetPos();
-  character* Char = ghost::Spawn();
+  character* Char = ghost::Spawn(); // Fix this
   Char->SetTeam(game::GetTeam(MONSTER_TEAM));
   if((!Square->GetRoomIndex()
       || !Square->GetRoom()->DontGenerateMonsters()))
@@ -1435,4 +1508,9 @@ truth ironmaiden::Close(character* Closer)
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
+}
+
+int christmastree::GetSparkleFlags() const
+{
+  return (game::IsXMas() ? SPARKLING_B : 0);
 }

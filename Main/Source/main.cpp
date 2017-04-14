@@ -28,10 +28,9 @@
 #include "script.h"
 #include "message.h"
 #include "proto.h"
-
 #include "audio.h"
 
-int Main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
   {
@@ -48,7 +47,7 @@ int Main(int argc, char **argv)
 
 #endif /* __DJGPP__ */
 
-  audio::Init();
+  audio::Init(game::GetMusicDir());
 
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();

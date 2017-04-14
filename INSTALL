@@ -1,17 +1,31 @@
 Compiling IVAN under different systems
 --------------------------------------
 
+To build IVAN from source, you need to have the following dependencies
+installed on your system:
+
+- compiler with C++11 support (e.g. Clang 3.3 or newer, GCC 4.8 or newer)
+- CMake (https://cmake.org) version 2.8.12.2 or newer
+- SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
+
+--------------------------------------
+
 Under Linux and OS X, type:
 
-./configure
-make
+cmake .
+make -j
 make install
 
 Note: Wizard Mode is disabled by default. To enable it run:
 
-./configure CXXFLAGS="-O0 -DWIZARD"
-make
+cmake -D CMAKE_CXX_FLAGS=-DWIZARD .
+make -j
 make install
+
+To install IVAN to a custom prefix, pass the additional flag
+-DCMAKE_INSTALL_PREFIX=/your/prefix/path to the cmake invocation.
+(In particular, simply doing `make DESTDIR=/your/prefix/path install`
+doesn't work because IVAN needs the prefix information at build-time.)
 
 --------------------------------------
 
@@ -24,21 +38,64 @@ make -f ivandj.mak
 
 --------------------------------------
 
-Under Win32:
+Under Windows - Visual Studio:
 
-If you have MinGW 1.1+ and gcc
-2.95.3-6+ installed, type:
 
-make -f ivanmgw.mak
+Install SDL2
 
-If you have VC++ 5.0+ installed,
-just open IVAN.dsw and build the
-Main project.
+Download SDL2-devel-2.0.4-VC.zip from http://www.libsdl.org/
+and install somewhere in system, e.g. D:\Apps\SDL2-2.0.4
 
-For both compilers you need to
-install SDL development libraries,
-which can be downloaded from:
 
-http://www.libsdl.org/
+Set system environment variable SDL2DIR to "D:\Apps\SDL2-2.0.4".
+Make sure to open command prompt after that (so this variable is taken into account).
+
+Alternatively set it just in current command prompt:
+
+D:\buildy\ivan>set SDL2DIR=D:\Apps\SDL2-2.0.4
+
+
+Compile IVAN
+
+Either use cmake-gui if system environment variable was set, or:
+
+D:\buildy\ivan>mkdir vs2015
+D:\buildy\ivan>cd vs2015
+D:\buildy\ivan\vs2015>cmake -G "Visual Studio 14 2015" .. -DCMAKE_INSTALL_PREFIX=D:/buildy/ivan/inst_vs2015
+
+Now open and compile D:\buildy\ivan\vs2015\ivan.sln in VS2015 IDE.
+
+Now you can run ivan from D:/buildy/ivan/inst_vs2015/ivan/ directory.
 
 --------------------------------------
+
+Under Windows - MinGW:
+
+
+Install SDL2
+
+Download SDL2-devel-2.0.4-mingw.tar.gz from http://www.libsdl.org/
+and install somewhere in system, e.g. D:\Apps\SDL2-devel-2.0.4-mingw
+
+Set environment variable SDL2DIR to "D:\Apps\SDL2-devel-2.0.4-mingw\SDL2-2.0.4\i686-w64-mingw32\".
+Make sure to open command prompt after that (so this variable is taken into account).
+
+Alternatively set it just in current command prompt:
+
+set SDL2DIR=D:\Apps\SDL2-devel-2.0.4-mingw\SDL2-2.0.4\i686-w64-mingw32\
+
+Use command line to generate MinGW makefiles in IVAN source directory:
+
+D:\buildy\ivan>mkdir mingw
+D:\buildy\ivan>cd mingw
+D:\buildy\ivan\mingw2>cmake .. -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=D:/buildy/ivan/inst_mingw
+
+Now you can compile from command line:
+
+D:\buildy\ivan\mingw2>mingw32-make -j4 install
+
+If you get a lot of weird compilation errors, try invoking cmake again with
+-DCMAKE_CXX_FLAGS='-std=gnu++11' as a workaround.
+
+Now you can run ivan from D:/buildy/ivan/inst_mingw/ivan/ directory.
+

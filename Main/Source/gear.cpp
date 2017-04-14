@@ -34,6 +34,13 @@ col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
+truth flamingsword::IsLostRubyFlamingSword() const
+{
+  if(GetConfig() == LOST_RUBY_FLAMING_SWORD)
+    return true;
+  else
+    return false;
+}
 
 col16 gorovitsweapon::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
@@ -61,6 +68,13 @@ cchar* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() 
 truth cloak::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
+truth cloak::IsShadowVeil() const
+{
+  if(GetConfig() == CLOAK_OF_SHADOWS)
+    return true;
+  else
+    return false;
+}
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }
@@ -734,7 +748,7 @@ truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
   {
     if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
       ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.",
-                  Hitter->CHAR_PERSONAL_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+                  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
     if(Hitter->IsPlayer())
     {
@@ -1110,7 +1124,7 @@ void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weap
       if(Weapon)
       {
         Weapon->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 200 + RAND() % 51));
-        ADD_MESSAGE("%s is completely doused in sulpheric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+        ADD_MESSAGE("%s %s completely doused in sulphuric acid!", Attacker->CHAR_DESCRIPTION(DEFINITE), Attacker->GetBeVerb().CStr());
         return;
       }
     }
@@ -1124,14 +1138,14 @@ void acidshield::BlockEffect(character* Blocker, character* Attacker, item* Weap
     if(!RAND_N(5))
     {
       Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 5 + RAND() % 11));
-      ADD_MESSAGE("%s is splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s %s splashed with acid!", Attacker->CHAR_DESCRIPTION(DEFINITE), Attacker->GetBeVerb().CStr());
       return;
     }
 
     if(RAND_2)
     {
       Attacker->SpillFluid(Blocker, liquid::Spawn(SULPHURIC_ACID, 25 + RAND() % 26));
-      ADD_MESSAGE("%s is splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s %s splashed with acid from the shield!", Attacker->CHAR_DESCRIPTION(DEFINITE), Attacker->GetBeVerb().CStr());
     }
   }
 }

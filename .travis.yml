@@ -1,0 +1,32 @@
+sudo: required
+dist: trusty
+
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libsdl2-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2; fi
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security $CXXFLAGS" ..
+  - make
+  - make igor
+  - make mihail
+  - sudo make install
+
+env:
+  matrix:
+    - CXXFLAGS=
+    - CXXFLAGS=-DWIZARD

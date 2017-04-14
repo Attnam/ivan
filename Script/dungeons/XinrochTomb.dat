@@ -1,0 +1,1772 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon XINROCH_TOMB;
+{
+  Levels = 11;
+  Description = "Tomb of Xinroch";
+  ShortDescription = "TX";
+
+  LevelDefault
+  {
+    FillSquare = GRAVEL solidterrain(GROUND), BASALT earth;
+    TunnelSquare = GRAVEL solidterrain(GROUND), 0;
+    BackGroundType = GRAY_FRACTAL;
+    Size = 64, 36;
+    Rooms = 8:15;
+    Items = 20:40;
+    GenerateMonsters = true;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    DifficultyBase = 70;
+    DifficultyDelta = 20;
+    MonsterAmountBase = 12;
+    MonsterAmountDelta = 3;
+    MonsterGenerationIntervalBase = 128;
+    MonsterGenerationIntervalDelta = -8;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 10;
+    ItemMinPriceDelta = 10;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 5;
+    EnchantmentPlusChanceDelta = 5;
+    IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
+    AudioPlayList = 
+    {
+      2,
+      "Dungeon.mid",
+      "Dungeon2.mid";
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == bone;
+      Times = 12:24;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == skull;
+      Times = 4:8;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:9,4:9;
+      AltarPossible = true;
+      WallSquare = FIR_WOOD solidterrain(PARQUET), BLACK_GRANITE wall(BRICK_OLD);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), IRON door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  Level 0; /* Outside the tomb*/
+  {
+    Description = "the Tomb entrance";
+    ShortDescription = "TX Entry";
+    FillSquare = SNOW solidterrain(SNOW_TERRAIN), 0;
+    Size = 61, 67;
+    GenerateMonsters = false;
+    Rooms = 5:8;
+    Items = 0;
+    IsOnGround = true;
+    TeamDefault = XINROCH_TOMB_ENTRY_TEAM;
+    LOSModifier = 48;
+    IgnoreDefaultSpecialSquares = true;
+    CanGenerateBone = false;
+    DifficultyBase = 150;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GRAY_FRACTAL;
+    AudioPlayList = { 0; }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-10;
+      Size = 4:6,4:6;
+      AltarPossible = false;
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), RUBY door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = false;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = true;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(SNOW_FIR);
+      Times = 200;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == bone;
+      Times = 12:24;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == skull;
+      Times = 2:4;
+    }
+
+    Square, Pos 30,YSize - 1;
+    {
+      EntryIndex = STAIRS_UP;
+    }
+
+    Room
+    {
+      Pos = 10,10;
+      Size = 41,41;
+      WallSquare = solidterrain(SNOW_TERRAIN), BLACK_GRANITE wall(BRICK_OLD);
+      FloorSquare = solidterrain(SNOW_TERRAIN), 0;
+      GenerateDoor = false;
+      DivineMaster = INFUSCOR;
+      GenerateLanterns = false;
+      IsInside = false;
+      GenerateWindows = false;
+
+      Square, Pos 19, 40;
+      {
+        OTerrain = 0;
+      }
+
+      Square, Pos 20, 40;
+      {
+        OTerrain = 0;
+      }
+
+      Square, Pos 21, 40;
+      {
+        OTerrain = 0;
+      }
+
+      GTerrainMap
+      {
+        Pos = 4,5;
+        Size = 33,31;
+        Types
+        {
+          # = BLACK_GRANITE solidterrain(FLOOR) { IsInside = true; }
+          - = BLACK_GRANITE solidterrain(FLOOR) { IsInside = true; }
+          | = OCTIRON solidterrain(FLOOR) { IsInside = true; }
+          % = RUBY solidterrain(FLOOR) { IsInside = true; }
+        }
+      }
+      {
+        ...............###...............
+        .............###%###.............
+        ...........###--%--###...........
+        ..........##---%%%---##..........
+        .........##----%-%----##.........
+        .......###----%%-%%----###.......
+        ......##------%---%------##......
+        .....##------%%---%%------##.....
+        ...###-------%-----%-------###...
+        ..##---------%-----%---------##..
+        ###---------%%-----%%---------###
+        #%%%%%%%%%%%%%%%|%%%%%%%%%%%%%%%#
+        #%%---------%|||||||%---------%%#
+        #-%%-------%%|||||||%%-------%%-#
+        ##-%-------%|||||||||%-------%-##
+        .#-%%%-----%|||||||||%-----%%%-#.
+        .#---%%%--%%|||||||||%%--%%%---#.
+        .##----%%-%|||||||||||%-%%----##.
+        ..#-----%%%|||||||||||%%%-----#..
+        ..#------%%%|||||||||%%%------#..
+        ..##-----%-%%|||||||%%-%-----##..
+        ...#----%%--%%%|||%%%--%%----#...
+        ...#----%-----%%|%%-----%----#...
+        ...##---%-----%%%%%-----%---##...
+        ....#--%%----%%---%%----%%--#....
+        ....#--%----%%-----%%----%--#....
+        ....##-%---%%-------%%---%-##....
+        .....#-%--%%---------%%--%-#.....
+        .....##%%%%-----------%%%%##.....
+        ......#%%---------------%%#......
+        ......##########-##########......
+      }
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 39,39;
+        Types
+        {
+          % = RUBY wall(BRICK_FINE);
+          # = OBSIDIAN wall(BRICK_OLD);
+          A = BLACK_GRANITE altar(INFUSCOR);
+          D = OCTIRON door(HEXAGONAL_LOCK);
+          b = decoration(SNOW_FIR);
+          f = fountain { SecondaryMaterial = GLOWING_BLOOD; }
+        }
+      }
+      {
+        .......................................
+        .......................................
+        .......................................
+        .......................................
+        ..................###..................
+        ...b............###.###................
+        ..............###.....###.........b....
+        ........b....##.........##.............
+        ............##.....A.....##............
+        ..........###.............###..........
+        ..b......##.................##.........
+        ........##...................##......b.
+        ......###.....................###......
+        .....##.........................##.....
+        ...###...........................###...
+        ...#...........%%%%D%%%%...........#...
+        ...#...........%.......%...........#...
+        ...#..........%%.......%%..........#...
+        ...##.........%.........%.........##...
+        b...#.........%.........%.........#....
+        ....#........%%.........%%........#....
+        ....##.......%...........%.......##....
+        .....#.......%...........%.......#.....
+        .....#.......%%.........%%.......#.....
+        .....##.......%%.......%%.......##...b.
+        ......#........%%%...%%%........#......
+        ...b..#..........%%.%%..........#......
+        ......##..........%%%..........##......
+        .......#.......................#.......
+        .......#...........f...........#.......
+        .......##.....................##.......
+        ........#.....................#.......b
+        .....b..##...................##........
+        .b.......#...................#....b....
+        .........##########D##########.........
+        .......................................
+        .................f...f.................
+        .......................................
+        .......................................
+      }
+
+      ItemMap
+      {
+        Pos = 4,5;
+        Size = 33,31;
+        Types
+        {
+          # == 0;
+          - == 0;
+          | == 0;
+          % == 0;
+          1 == lantern { SquarePosition = UP; }
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+        }
+      }
+      {
+        ...............###...............
+        .............##2-2##.............
+        ...........###-----###...........
+        ..........##---------##..........
+        .........##-----------##.........
+        .......###-------------###.......
+        ......##-----------------##......
+        .....##-------------------##.....
+        ...##2---------------------2##...
+        ..##-------------------------##..
+        ###---------------------------###
+        #-----------%%1%|%1%%-----------#
+        #-----------%|||||||%-----------#
+        #----------%%|||||||%%----------#
+        #3---------%|||||||||%---------4#
+        .#---------3|||||||||4---------#.
+        .#--------%%|||||||||%%--------#.
+        .##-------%|||||||||||%-------##.
+        ..#-------4|||||||||||3-------#..
+        ..#-------%%|||||||||%%-------#..
+        ..##-------%%|||||||%%-------##..
+        ...#--------2%1|||1%2--------#...
+        ...#----------%%|%%----------#...
+        ...##----------%%%----------##...
+        ....#-----------------------#....
+        ....#-----------------------#....
+        ....#3---------------------4#....
+        .....#---------------------#.....
+        .....##-------------------##.....
+        ......#-------------------#......
+        ......#####1##2#-#2##1#####......
+      }
+
+      CharacterMap
+      {
+        Pos = 4,5;
+        Size = 33,31;
+        Types
+        {
+          # = 0;
+          - = 0;
+          | = 0;
+          % = 0;
+          g = guard(TOMB_ENTRY);
+          E = guard(TOMB_ENTRY_MASTER);
+          y = mysticfrog(DARK);
+          k = kamikazedwarf(INFUSCOR);
+          K = veterankamikazedwarf(INFUSCOR);
+          d = darkknight(VETERAN);
+          D = darkknight(ELITE);
+        }
+      }
+      {
+        ...............###...............
+        .............###y###.............
+        ...........###-----###...........
+        ..........##---------##..........
+        .........##---g---g---##.........
+        .......###g-----------g###.......
+        ......##-----------d-----##......
+        .....##----d----E---------##.....
+        ...###d-------------------d###...
+        ..##------------------d------##..
+        ###-----------g---g-----------###
+        #g----d-----%%%%|%%%%----------g#
+        #----------k%g|||||g%k----------#
+        #K---------%%|||||||%%----d----K#
+        ##---------%||D|||D||%---------##
+        .#---d----k%|||||||||%k--------#.
+        .#g-------%%g|||||||g%%-------g#.
+        .##-------%|||||||||||%-------##.
+        ..#-------%D|||||||||D%-------#..
+        ..#g------%%|||||||||%%------g#..
+        ..##------k%%g||D||g%%k------##..
+        ...#--------%%%|g|%%%--------#...
+        ...#g---------%%y%%---------g#...
+        ...##----------%%%----------##...
+        ....#-----------k-----------#....
+        ....#g---------------------g#....
+        ....##---------------------##....
+        .....#---------------------#.....
+        .....##-------------------##.....
+        ......#K------g---g------K#......
+        ......##########-##########......
+      }
+    }
+
+    Square, Pos 30,32;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+    }
+  }
+
+  Level 1;
+  {
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Size = 14,14;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      WallSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+      UseFillSquareWalls = true;
+      
+      Square, Pos 0,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 7,13;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 7,6;
+      {
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 3,  Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; },
+                              Random { Chance = 75; MinPrice = 750; Times = 2; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; },
+                              Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; }}
+        }
+      }
+      Square, Pos 8, 6;
+      {
+        Character = veterankamikazedwarf(INFUSCOR);
+      }
+      Square, Pos 10, 3;
+      {
+        Character = veterankamikazedwarf(INFUSCOR);
+      }
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 12,12;
+        Types
+        {
+          # = 0;
+          B = GRAVEL earth;
+          t = BALSA_WOOD decoration(PALM);
+        }
+      }
+      {
+        ####BBBBBBB#
+        ##########BB
+        ###########B
+        ###########B
+        ######t####B
+        ###########B
+        #######t###B
+        ###########B
+        ###t#######B
+        ############
+        #####t####t#
+        ############
+      }
+
+      GTerrainMap
+      {
+        Pos = 1,1;
+        Size = 12,12;
+        Types
+        {
+          $ = SAND solidterrain(GRASS_TERRAIN);
+          # = 0;
+          w = WATER liquidterrain(POOL);
+          G = GRAVEL solidterrain(GRASS_TERRAIN);
+        }
+      }
+      {
+        #$$$GGGGGGG#
+        $$$wwwwGGGGG
+        $$wwwwwwwGGG
+        $$wwwwwwwwwG
+        $$www$$wwwwG
+        $$www$$$wwwG
+        $$wwww$$wwwG
+        $$ww$wwwwwwG
+        $$w$$$wwwwwG
+        $$$$$$$$ww$$
+        $$$$$$$$$$$$
+        #$$$$$$$$$$#
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  RandomLevel 1:2; /* Vampire room */
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+      AllowLockedDoors = false;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          v = vampirebat;
+          V = vampire { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+        }
+      }
+      {
+        .vvv.
+        vvVvv
+        vvvvv
+        .vvv.
+      }
+    }
+  }
+
+  RandomLevel 2:3;
+  {
+    Room
+    {
+      Size = 7,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+      AllowLockedDoors = false;
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          z = zombie;
+          d = zombie { Inventory == nut { Times = 2; } }
+          b = zombie { Inventory == can { SecondaryMaterial = BANANA_FLESH; } }
+          p = zombie { Inventory == can { SecondaryMaterial = PINEAPPLE_FLESH; } }
+          c = zombie { Inventory == carrot; }
+          Z = zombie { Inventory == pineapple { Times = 2; } }
+        }
+      }
+      {
+        .zbz.
+        zpdbz
+        dbzcd
+        .zZz.
+      }
+
+      ItemMap
+      {
+        Pos = 1,1;
+        Size = 5,4;
+
+        Types
+        {
+          o == can;
+          A == bodyarmor(ARMOR_OF_GREAT_HEALTH);
+        }
+      }
+      {
+        ..Ao.
+        .A.Ao
+        oA.A.
+        .oA..
+      }
+
+      Square, Pos 4, 3;
+      {
+        OTerrain = olterraincontainer(SHELF) { ItemsInside == can { MinPrice = 50; Times = 4; } }
+      }
+    }
+  }
+
+  RandomLevel 4:6; /* Dwarven gas chambers */
+  {
+    Room
+    {
+      Size = 10,17;
+      /*Pos = XSize+2:XSize/2+15,4:YSize-20;*/
+      AltarPossible = false;
+      GenerateDoor = false;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Flags = NO_MONSTER_GENERATION;
+      GenerateLanterns = false;
+      WallSquare = FIR_WOOD solidterrain(PARQUET), STEEL wall(BRICK_OLD);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = STEEL sign { Text = "Dwarven gas chambers. Welcome!"; }
+      }
+
+      Square, Pos 4, 0;
+      {
+        GTerrain = solidterrain(PARQUET);
+        OTerrain = STEEL door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+      Square, Pos 5, 0;
+      {
+        GTerrain = solidterrain(PARQUET);
+        OTerrain = STEEL door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+      Square, Pos 4, 16;
+      {
+        GTerrain = solidterrain(PARQUET);
+        OTerrain = STEEL door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+      Square, Pos 5, 16;
+      {
+        GTerrain = solidterrain(PARQUET);
+        OTerrain = STEEL door { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
+
+      Square, Random;
+      {
+        Items == Random { MinPrice = 500; Chance = 50; }
+        Times = 8;
+      }
+
+      Square, BoundedRandom 1, 6, 8, 8, HAS_NO_OTERRAIN;
+      {
+        Items == Random { MinPrice = 200; Category = POTION; Chance = 50; }
+        Times = 5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
+        Times = 12;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 8;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gasgrenade { Chance = 50; }
+        Times = 12;
+      }
+
+      OTerrainMap
+      {
+        Size = 8, 15;
+        Pos = 1, 1;
+        Types
+        {
+          # = STEEL wall(BRICK_OLD);
+        }
+      }
+      {
+        ###..###
+        ..#..#..
+        ........
+        ..#..#..
+        ###..###
+        ###..###
+        ..#..#..
+        ........
+        ..#..#..
+        ###..###
+        ###..###
+        ..#..#..
+        ........
+        ..#..#..
+        ###..###
+      }
+      CharacterMap
+      {
+        Size = 8, 15;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          k = kamikazedwarf(SEGES){ Team = XINROCH_TOMB_KAMIKAZE_DWARF_TEAM; }
+        }
+      }
+      {
+        ###..###
+        ..#..#..
+        ........
+        ..#..#..
+        ###..###
+        ###k.###
+        .k#..#..
+        ........
+        ..#..#k.
+        ###.k###
+        ###..###
+        ..#..#..
+        ........
+        ..#..#..
+        ###..###
+      }
+    }
+  }
+
+  Level 2;
+  {
+    Size = 72,36;
+
+    Room /* stylish little underground confluences */
+    {
+      Size = 7,7;
+      GenerateFountains = true;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = true;
+      Shape = ROUND_CORNERS;
+      FloorSquare = solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
+      EntryIndex = STAIRS_DOWN + 1;
+      AttachRequired = true;
+    }
+
+    Room /* To get into the Ice Level */
+    {
+      Size = 11,7;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = GRAVEL solidterrain(GROUND), BASALT earth;
+      FloorSquare = solidterrain(GROUND), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 3,1;
+        Size = 5,3;
+        Types
+        {
+          # = BASALT earth;
+        }
+      }
+      {
+        ##.##
+        .###.
+        ..#..
+      }
+
+      Square, Pos 5,1;
+      {
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; }
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, Pos 5,6; /*the door to the room!*/
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  Level 3; /*ice cave*/
+  {
+    Rooms = 15:30;
+    Size = 64, 36;
+    LevelMessage = "It is deathly cold in here...";
+    FillSquare = ICE solidterrain(GROUND), ICE earth;
+    TunnelSquare = ICE solidterrain(GROUND), 0;
+    BackGroundType = BLUE_FRACTAL;
+
+    RoomDefault
+    {
+      Size = 8:17,8:17;
+      Pos = 2:XSize-5,2:YSize-5;
+      GenerateLanterns = false;
+      Shape = ROUND_CORNERS;
+      WallSquare = ICE solidterrain(GROUND), ICE earth;
+      FloorSquare = ICE solidterrain(GROUND), 0;
+      DoorSquare = ICE solidterrain(GROUND), 0;
+      AltarPossible = false;
+      GenerateFountains = false;
+    }
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
+    }
+
+    Room
+    {
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      {
+          OTerrain = stairs(STAIRS_UP) { AttachedArea = 2; }
+          EntryIndex = STAIRS_UP;
+      }
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE decoration(SHARD);
+      Times = 10:30;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = fountain { SecondaryMaterial = ICE; }
+      Times = 3:6;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE boulder(1);
+      Times = 5:15;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = ICE boulder(2);
+      Times = 5:15;
+    }
+
+    Square, Random;
+    {
+      Items == ICE stone;
+      Times = 5:10;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(ICE);
+      Times = 2:5;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(BLUE_CRYSTAL);
+      Times = 2;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = bear(POLAR_BEAR);
+      Times = 2;
+    }
+
+    Square, Random;
+    {
+      Character = spider(LARGE);
+      Times = 15;
+    }
+  }
+
+  Level 4;
+  {
+    Size = 56,36;
+    FillSquare = BONE solidterrain(GROUND), BASALT earth;
+    TunnelSquare = BONE solidterrain(GROUND), 0;
+    Rooms = 8;
+
+    RoomDefault
+    {
+      WallSquare = FIR_WOOD solidterrain(PARQUET), BLACK_GRANITE wall(BRICK_OLD);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+    }
+
+    Room
+    {
+      Size = 7, 7;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = golem;
+        Times = 5;
+      }
+    }
+
+    Room
+    {
+      Size = 7, 7;
+      AltarPossible = false;
+      GenerateFountains = true;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = necromancer(APPRENTICE_NECROMANCER);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = darkmage(APPRENTICE);
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP) {AttachedArea = 2; AttachedEntry = STAIRS_DOWN + 1; } /* to get back to the right place */
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level DUAL_ENNER_BEAST_LEVEL;
+  {
+    FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
+    TunnelSquare = BONE solidterrain(GROUND), 0;
+    LevelMessage = "You hear some high, wailing screams in the distance. Enner children must dwell in the level!";
+
+    RoomDefault
+    {
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+    }
+
+    Size = 72, 32;
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(BOY);
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = ennerchild(GIRL);
+    }
+
+    Square, BoundedRandom 7*XSize/8, 1, XSize-2, YSize-2, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square,  BoundedRandom 1, 1, XSize/8, YSize-2, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 6;
+  {
+    FillSquare = BONE solidterrain(GROUND), OBSIDIAN earth;
+    TunnelSquare = BONE solidterrain(GROUND), 0;
+    EnchantmentPlusChanceBase = 10;
+    CanGenerateBone = false;
+
+    RoomDefault
+    {
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
+      FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), STEEL door;
+    }
+
+    Room /* Experimental necro-chamber */
+    {
+      Size = 17,10;
+      AltarPossible = false;
+      WallSquare = EBONY_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      FloorSquare = EBONY_WOOD solidterrain(PARQUET), 0;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Size = 15, 8;
+        Pos = 1, 1;
+        Types
+        {
+          # = STEEL barwall;
+          % = STEEL barwall(BROKEN_BARWALL);
+          G = STEEL door(BARDOOR) { Parameters = LOCKED; }
+          B = STEEL brokendoor(BARDOOR) { Parameters = LOCKED; }
+          A = GREEN_CRYSTAL altar(INFUSCOR);
+          S = STEEL sign { Text = "Mutant bear - Experimental result: Particularly dangerous!"; }
+          s = STEEL sign { Text = "Skeleton warrior - Experimental result: Typical."; }
+          z = STEEL sign { Text = "Enner children - Experimental status: On hiatus; specimens have escaped!"; }
+          Z = STEEL sign { Text = "Cave bear - Experimental status: Next candidate for mutation trials."; }
+          P = GREEN_CRYSTAL monsterportal;
+        }
+      }
+      {
+        ...#...#...#...
+        ...#...#...#...
+        #G###G###B%##G#
+        ..S...s.z...Z..
+        ...............
+        ......A.P......
+        ...............
+        ...............
+      }
+      CharacterMap
+      {
+        Size = 15, 8;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          B = bear(MUTANT_BEAR);
+          S = skeleton(WARRIOR);
+          b = bear(CAVE_BEAR);
+          g = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_NECRO_TEAM; }
+          P = priest(INFUSCOR) { Team = XINROCH_TOMB_NECRO_TEAM; }
+        }
+      }
+      {
+        .B.#.S.#...#.b.
+        ...#...#...#...
+        #########..####
+        g.............g
+        ...............
+        ......#P#......
+        ...............
+        g.............g
+      }
+
+      Square, Pos 0, 6;
+      {
+        OTerrain = METEORIC_STEEL door;
+        AttachRequired = true;
+      }
+
+      Square, Pos 16, 6;
+      {
+        OTerrain = METEORIC_STEEL door;
+        AttachRequired = true;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 7;
+  {
+    FillSquare = GNEISS solidterrain(GROUND), OBSIDIAN earth; /*use gneiss ground and floors?*/
+    TunnelSquare = GNEISS solidterrain(GROUND), 0;
+    EnchantmentPlusChanceDelta = 10;
+    Rooms = 10;
+
+    RoomDefault
+    {
+      WallSquare = GNEISS solidterrain(PARQUET), OBSIDIAN wall(BRICK_OLD);
+      FloorSquare = GNEISS solidterrain(PARQUET), 0;
+      DoorSquare = GNEISS solidterrain(PARQUET), METEORIC_STEEL door;
+    }
+
+    Items = 40:70;
+    ItemMinPriceBase = 20;
+
+    Square, Random;
+    {
+      Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 2:6;
+    }
+
+    Room
+    {
+      /*Pos = 2: XSize/2 - 7, YSize/2 : YSize - 9;*/ /*lower left quadrant*/
+      Size = 5,5;
+      AltarPossible = false;
+      GenerateFountains = false;
+      WallSquare = GNEISS solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+
+        Types
+        {
+          N = necromancer(MASTER_NECROMANCER) { Inventory == Random { Times = 2; MinPrice = 350; Category = WAND|SCROLL; } }
+          n = necromancer(APPRENTICE_NECROMANCER);
+        }
+      }
+      {
+        .N.
+        ...
+        n.n
+      }
+    }
+
+    Room
+    {
+      /*Pos = XSize/2+2 : XSize - 9, 2 : YSize/2 - 7;*/ /*upper right quadrant*/
+      Size = 5,5;
+      AltarPossible = false;
+      GenerateFountains = false;
+      WallSquare = GNEISS solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = darkknight(TEMPLAR);
+        Times = 6;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        {
+          ItemsInside = { 5,  Random { MinPrice = 150; Category = CLOAK; },
+                              Random { MinPrice = 750; Category = HELMET; },
+                              Random { MinPrice = 750; Category = WEAPON; },
+                              Random { Times = 6; MinPrice = 120; Category = FOOD; },
+                              Random { Times = 4; MinPrice = 50; Category = POTION; }}
+        }
+      }
+    }
+
+    Room
+    {
+      /*Pos = 2 : XSize/2 - 11, 2 : YSize/2 - 11;*/ /*upper left quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = vampire;
+        Times = 6;
+      }
+    }
+
+    Room
+    {
+      /*Pos = XSize/2+2 : XSize - 13, YSize/2 : YSize - 13;*/ /*lower right quadrant*/
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+      Shape = MAZE_ROOM;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = werewolfhuman;
+        Times = 6;
+      }
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  Level 8;  /* Tactical level */
+  {
+    Rooms = 1;
+    Size = 42, 26;
+    FillSquare = GNEISS solidterrain(GROUND), OCTIRON earth;
+    TunnelSquare = GNEISS solidterrain(GROUND), 0;
+    CanGenerateBone = false;
+    EarthquakesAffectTunnels = false;
+    LOSModifier = 48;
+    EnchantmentMinusChanceBase = 5;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 30;
+    IgnoreDefaultSpecialSquares = true;
+
+    RoomDefault
+    {
+      WallSquare = GNEISS solidterrain(GROUND), OCTIRON wall(BRICK_FINE);
+      FloorSquare = GNEISS solidterrain(PARQUET), 0;
+      DoorSquare = GNEISS solidterrain(PARQUET), RUBY door;
+      GenerateFountains = false;
+    }
+
+    Room
+    {
+      Pos = 2, 2;
+      Size = 38, 22;
+      AltarPossible = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      AllowLockedDoors = false;
+
+      Square, Pos 1,20;
+      {
+        OTerrain = stairs(STAIRS_UP);
+      }
+
+      Square, Pos 1,20;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Pos 1,1;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+      }
+
+      Square, Pos 1,1;
+      {
+        EntryIndex = STAIRS_DOWN;
+      }
+
+      OTerrainMap
+      {
+        Size = 36, 20;
+        Pos = 1, 1;
+        Types
+        {
+          # = OCTIRON wall(BRICK_FINE);
+          d = RUBY door(OCTAGONAL_LOCK);
+          D = RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        }
+      }
+      {
+        ....................................
+        ###D############################d##.
+        ....................................
+        ....................................
+        ..##################################
+        ..##################################
+        ....................................
+        ....................................
+        ##d#############################....
+        #....###....###..###....###....#....
+        #....###....###..###....###....#....
+        #############################d##....
+        ....................................
+        ....................................
+        ..##################################
+        ..##################################
+        ....................................
+        ....................................
+        ###D############################d##.
+        ....................................
+      }
+      ItemMap
+      {
+        Size = 36, 20;
+        Pos = 1, 1;
+        Types
+        {
+          # == 0;
+          1 == lantern { SquarePosition = UP; }
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+        }
+      }
+      {
+        ....................................
+        #2################################3.
+        ....................................
+        ....................................
+        ..##################################
+        ..###########2###################2##
+        ....................................
+        ....................................
+        #1########2###########2#####2###....
+        #....###....###..4##....###....#....
+        #....###....###..###....###....#....
+        #2#1##############2#############....
+        ....................................
+        ....................................
+        ..###############################1##
+        ..##################################
+        ....................................
+        ....................................
+        #1####################2###########3.
+        ....................................
+      }
+      CharacterMap
+      {
+        Size = 36, 20;
+        Pos = 1, 1;
+        Types
+        {
+          # = 0;
+          D = darkknight(GRAVE_KEEPER);
+          d = darkknight(TEMPLAR);
+          n = necromancer(APPRENTICE_NECROMANCER);
+          b = darkmage(BATTLE_MAGE);
+          a = darkmage(APPRENTICE);
+          m = mysticfrog(DARK);
+          r = darkknight(ROOKIE);
+          v = darkknight(VETERAN);
+          N = necromancer(MASTER_NECROMANCER);
+        }
+      }
+      {
+        ........D...........................
+        ###################################.
+        .........r...............d..........
+        .................................N..
+        ..##################################
+        ..##################################
+        ......n................v............
+        ....................................
+        ################################....
+        #.b..###....###.m###....###.d..#....
+        #....###....###..###..a.###....#....
+        ################################....
+        ............................n.......
+        ..............r.....................
+        ..##################################
+        ..##################################
+        ....v........................n......
+        ....................................
+        ###################################.
+        ..........................r.........
+      }
+    }
+  }
+
+  Level 9; /* Xinroch's Ghost level */
+  {
+    FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
+    TunnelSquare = SLATE solidterrain(GROUND), 0;
+    Rooms = 30:40;
+    Size = 25, 90;
+    EnchantmentMinusChanceBase = 10;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 40;
+    CanGenerateBone = false;
+    Items = 0;
+
+    RoomDefault
+    {
+      WallSquare = TEAK_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_OLD);
+      FloorSquare = TEAK_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = TEAK_WOOD solidterrain(PARQUET), OCTIRON door;
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 3:6,3:6;
+      GenerateFountains = false;
+    }
+
+    Room /* Giant maze room */
+    {
+      Pos = 2, YSize/4+5;
+      Size = 21,39;
+      GenerateDoor = false;
+      AltarPossible = false;
+      AllowLockedDoors = false;
+      Shape = MAZE_ROOM;
+      WallSquare = SLATE solidterrain(GROUND), OCTIRON wall(BRICK_OLD);
+      FloorSquare = SLATE solidterrain(GROUND), 0;
+      DoorSquare = SLATE solidterrain(GROUND), OCTIRON door;
+
+      Square, Random;
+      {
+        Items == Random { MinPrice = 130; }
+        Times = 20:40;
+      }
+
+      Square, Pos 1, 0;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 19, 0;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 1, 38;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+      Square, Pos 19, 38;
+      {
+        GTerrain = SLATE solidterrain(GROUND);
+        OTerrain = OCTIRON door;
+        AttachRequired = true;
+      }
+    }
+
+    Square, BoundedRandom 1, 1, XSize - 2, YSize * 1 / 5, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Room
+    {
+      Pos = 2: XSize/3 + 2, 77;
+      Size = 11, 11;
+      DivineMaster = INFUSCOR;
+      AltarPossible = false;
+
+      Square, Pos 5, 5;
+      {
+        OTerrain = portal(XINROCH_TOMB_ENTRANCE) { AttachedArea = 10; AttachedEntry = STAIRS_UP; }
+        Character = xinrochghost;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 10;
+      }
+
+      Square, Random;
+      {
+        Items == skull;
+        Times = 5;
+      }
+    }
+  }
+
+  Level 10; /* Ultimate level! */
+  {
+    LevelMessage = "\"HA HA HA! I'm ALIVE! Prepare to die mortal!\"";
+    Items = 5:10;
+    EnchantmentMinusChanceBase = 15;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    ItemMinPriceBase = 50;
+    FillSquare = BONE solidterrain(GROUND), OCTIRON earth;
+    TunnelSquare = BONE solidterrain(GROUND), 0;
+    CanGenerateBone = false;
+    IgnoreDefaultSpecialSquares = true;
+    Rooms = 8:10;
+
+    RoomDefault
+    {
+      Pos = 2:XSize-2,2:YSize-2;
+      Size = 6:9,6:9;
+      WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      FloorSquare = BONE solidterrain(PARQUET), 0;
+      DoorSquare = BONE solidterrain(PARQUET), OCTIRON door;
+      AltarPossible = false;
+      GenerateFountains = false;
+    }
+
+    Room
+    {
+      Pos = 2:XSize-5, 2:YSize-5;
+
+      Square, Random;
+      {
+        EntryIndex = STAIRS_UP;
+      }
+    }
+
+    Room
+    {
+      Size = 9,9;
+      DivineMaster = INFUSCOR;
+
+      Square, Pos 4,4;
+      {
+        OTerrain = METEORIC_STEEL altar(INFUSCOR);
+      }
+
+      Square, Pos 4,1;
+      {
+        OTerrain = portal(XINROCH_TOMB_EXIT) { AttachedArea = 3; AttachedEntry = STAIRS_UP; }
+      }
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 7,7;
+
+        Types
+        {
+          X = darkknight(MASTER);
+          A = angel(INFUSCOR);
+          k = darkknight(ELITE);
+        }
+      }
+      {
+        .......
+        .......
+        ..X.A..
+        .k...k.
+        .......
+        ...k...
+        .......
+      }
+    }
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = false;
+      Shape = MAZE_ROOM;
+      FloorSquare = BONE solidterrain(PARQUET), 0;
+      WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      DoorSquare = BONE solidterrain(PARQUET), OCTIRON door;
+    }
+
+    Room
+    {
+      Size = 13,13;
+      AltarPossible = false;
+      Shape = MAZE_ROOM;
+      FloorSquare = BONE solidterrain(PARQUET), 0;
+      WallSquare = BONE solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      DoorSquare = BONE solidterrain(PARQUET), OCTIRON door;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkknight(ELITE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = necromancer(APPRENTICE_NECROMANCER);
+      Times = 6;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = mysticfrog(DARK);
+      Times = 1;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = darkmage(APPRENTICE);
+      Times = 4;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = necromancer(MASTER_NECROMANCER);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(BATTLE_MAGE);
+      Times = 2;
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Character = darkmage(ELDER);
+      Times = 1;
+    }
+  }
+}

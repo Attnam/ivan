@@ -212,6 +212,8 @@ void dulcis::PrayGoodEffect()
 
     HasHelped = true;
   }
+  else if(HasHelped)
+    ADD_MESSAGE("Dulcis helps your companions to put out the flames.");
   if(HasHelped)
     return;
   else
@@ -233,18 +235,37 @@ void dulcis::PrayGoodEffect()
             if(Char->GetTeam() == PLAYER->GetTeam())
               ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_DESCRIPTION(DEFINITE));
             else if(Char->GetRelation(PLAYER) == HOSTILE)
+            {
               ADD_MESSAGE("%s stops fighting.", Char->CHAR_DESCRIPTION(DEFINITE));
+              HasHelped = true;
+            }
             else
               ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_DESCRIPTION(DEFINITE));
 
             Char->ChangeTeam(PLAYER->GetTeam());
           }
           else
+          {
             ADD_MESSAGE("%s resists its charming call.", Char->CHAR_DESCRIPTION(DEFINITE));
+            if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+          }
         else
+        {
           ADD_MESSAGE("%s seems not affected.", Char->CHAR_DESCRIPTION(DEFINITE));
+          if(Char->GetRelation(PLAYER) == HOSTILE)
+              HasHelped = true;
+        }
       }
     }
+  }
+  if(HasHelped)
+    return;
+  if (GetRelation() >= 50)
+  {
+     ADD_MESSAGE("You feel the music resonate within you.", GetName());
+     int Experience = Min(200, Max(75, GetRelation()/4));
+     PLAYER->EditExperience(CHARISMA, Experience, 33335);
   }
 }
 
@@ -318,17 +339,50 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  if(!Timer && Relation > 500 + RAND_N(500))
+  item* Enchantable;
+  item* PairEnchantable;
+  int LowEnchant = 99;
+  truth Pair = false;
+
+  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
   {
-    item* Reward = bodyarmor::Spawn(PLATE_MAIL, NO_MATERIALS);
-    Reward->InitMaterials(MAKE_MATERIAL(ARCANITE));
-    ADD_MESSAGE("%s materializes before you.", Reward->CHAR_NAME(INDEFINITE));
-    PLAYER->GetGiftStack()->AddItem(Reward);
-    AdjustTimer(45000);
-    AdjustRelation(-300);
+    item* Equipment = PLAYER->GetEquipment(c);
+
+    if(Equipment && Equipment->CanBeEnchanted() && !Equipment->IsWeapon(PLAYER)
+        && (Equipment->GetEnchantment() < LowEnchant))
+    {
+      Enchantable = Equipment;
+      LowEnchant = Enchantable->GetEnchantment();
+      Pair = false;
+      continue;
+    }
+
+    if(Enchantable && Equipment && Equipment->HandleInPairs()
+        && Equipment->CanBePiledWith(Enchantable, PLAYER))
+    {
+      Pair = true;
+      PairEnchantable = Equipment;
+    }
   }
-  else
-    ADD_MESSAGE("Nothing happens.");
+  if(LowEnchant < 99)
+  {
+    int EnchDiff = ((Enchantable->GetEnchantment()+2)*250 - GetRelation()) / 50;
+    if(EnchDiff <= 1 || !RAND_N(EnchDiff)) {
+      if(Pair)
+      {
+        ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Enchantable->CHAR_NAME(PLURAL));
+        Enchantable->EditEnchantment(1);
+        PairEnchantable->EditEnchantment(1);
+      }
+      else
+      {
+        ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Enchantable->CHAR_NAME(UNARTICLED));
+        Enchantable->EditEnchantment(1);
+      }
+      return;
+    }
+  }
+  ADD_MESSAGE("You feel that %s is watching your actions closely.", GetName());
 }
 
 void atavus::PrayBadEffect()
@@ -749,7 +803,7 @@ void mellis::PrayGoodEffect()
 
   item* NewVersion;
 
-  for(int c = 0; !OKItems.empty() && c < 5; ++c)
+  for(int c = 0; !OKItems.empty() && c < 4; ++c)
   {
     item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
     NewVersion = ToBeDeleted->BetterVersion();
@@ -944,23 +998,34 @@ void nefas::PrayGoodEffect()
       }
   }
 
-  mistress* Mistress = mistress::Spawn(RAND() & 7 ? 0 : TORTURING_CHIEF);
-  v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+  if((GetRelation() > 200) && RAND_N(5)) {
+    int Chief = 3000/GetRelation();
 
-  if(Where == ERROR_V2)
-  {
-    if(PLAYER->CanHear())
-      ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+    mistress* Mistress = mistress::Spawn(RAND_N(Chief) ? 0 : TORTURING_CHIEF);
+    v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+
+    if(Where == ERROR_V2)
+    {
+      if(PLAYER->CanHear())
+        ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+      else
+        ADD_MESSAGE("You feel the air vibrating.");
+
+      delete Mistress;
+    }
     else
-      ADD_MESSAGE("You feel the air vibrating.");
-
-    delete Mistress;
+    {
+      Mistress->SetTeam(PLAYER->GetTeam());
+      Mistress->PutTo(Where);
+      ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+    }
   }
-  else
-  {
-    Mistress->SetTeam(PLAYER->GetTeam());
-    Mistress->PutTo(Where);
-    ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+  else {
+    ADD_MESSAGE("You hear a sweet voice inside your head: \"Enjoy, mortal!\".");
+    potion* Bottle = potion::Spawn(0, NO_MATERIALS);
+    Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(VODKA));
+    PLAYER->GetGiftStack()->AddItem(Bottle);
+    ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(INDEFINITE));
   }
 }
 
@@ -1047,71 +1112,70 @@ void scabies::PrayBadEffect()
 void infuscor::PrayGoodEffect()
 {
   truth Success = false;
-  if(GetRelation() >= 0)
-  {
-    for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
-    {
-      lsquare* Square = PLAYER->GetNeighbourLSquare(d);
 
-      if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(),
+      PLAYER->GetPos(), PLAYER->GetESPRange());
+
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
+  {
+    for(int y = Rect.Y1; y <= Rect.Y2; ++y)
+    {
+      character* Victim = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+      if(Victim && Victim->CanBeSeenByPlayer() && PLAYER->GetRelation(Victim) == HOSTILE)
       {
         uint c;
+        truth Burned = false;
 
-        for(c = 1; c < uint(Square->GetCharacter()->GetBodyParts()); ++c) // annoying :(
+        for(c = 1; c < uint(Victim->GetBodyParts()); ++c) // annoying :(
         {
-          bodypart* BodyPart = Square->GetCharacter()->GetBodyPart(c);
+          bodypart* BodyPart = Victim->GetBodyPart(c);
 
-          if(BodyPart && BodyPart->IsDestroyable(Square->GetCharacter()))
-            if(BodyPart->GetMainMaterial())
-              if(BodyPart->CanBeBurned()
-                 && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
-                 && !BodyPart->IsBurning())
-              {
-                if(BodyPart->TestActivationEnergy(20 + GetRelation() / 10))
-                {
-                  if(GetRelation() >= 200)
-                    Success = true;
-                  else
-                  {
-                    ADD_MESSAGE("%s sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
-                    return;
-                  }
-                }
-              }
+          if(BodyPart && BodyPart->IsDestroyable(Victim)
+              && BodyPart->GetMainMaterial() && BodyPart->CanBeBurned()
+              && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+              && !BodyPart->IsBurning())
+          {
+            if(BodyPart->TestActivationEnergy(20 + GetRelation() / 10))
+            {
+              Success = true;
+              Burned = true;
+            }
+          }
         }
-        if(Success)
-        {
-          ADD_MESSAGE("%s savagely sets fire to %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
-          return;
-        }
+        if(Burned)
+          ADD_MESSAGE("%s savagely sets fire to %s!", GetName(), Victim->CHAR_DESCRIPTION(DEFINITE));
       }
     }
   }
-  else
-    ADD_MESSAGE("%s helps you.", GetName());
 
-  if(!PLAYER->StateIsActivated(ESP))
+  if(!Success)
   {
-    PLAYER->BeginTemporaryState(ESP, 10000 + RAND() % 10000);
-    return;
+    int Duration = 5000 + Relation * 15;
+
+    if(!PLAYER->StateIsActivated(ESP) ||
+        PLAYER->GetTemporaryStateCounter(ESP) < Duration)
+    {
+      if(!PLAYER->StateIsActivated(ESP))
+        PLAYER->BeginTemporaryState(ESP, Duration);
+      else
+        PLAYER->EditTemporaryStateCounter(ESP, PLAYER->GetTemporaryStateCounter(ESP)+Duration);
+      ADD_MESSAGE("You feel %s whisper in your mind.", GetName());
+      return;
+    }
+
+    if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL) ||
+        PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL) < Duration)
+    {
+      if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL))
+        PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, Duration);
+      else
+        PLAYER->EditTemporaryStateCounter(POLYMORPH_CONTROL, PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL)+Duration);
+      ADD_MESSAGE("You feel %s whisper throughout your whole body.", GetName());
+      return;
+    }
   }
-
-  if(!PLAYER->StateIsActivated(TELEPORT_CONTROL))
-  {
-    PLAYER->BeginTemporaryState(TELEPORT_CONTROL, 10000 + RAND() % 10000);
-    return;
-  }
-
-  if(!PLAYER->StateIsActivated(POLYMORPH_CONTROL))
-  {
-    PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, 10000 + RAND() % 10000);
-    return;
-  }
-
-  ADD_MESSAGE("Suddenly three scrolls appear almost under your feet.");
-
-  for(int c = 0; c < 3; ++c)
-    PLAYER->GetGiftStack()->AddItem(scrollofteleportation::Spawn());
 }
 
 void cruentus::PrayGoodEffect()
@@ -1159,16 +1223,22 @@ void cruentus::PrayGoodEffect()
 
   item* Weapon = PLAYER->GetMainWielded();
 
-  if(!Weapon || !Weapon->IsWeapon(PLAYER))
-    Weapon = PLAYER->GetSecondaryWielded();
-
-  if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted()
-     && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
+  for(int i = 0; i < 2; i++)
   {
-    ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
-    Weapon->EditEnchantment(1);
+    if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
+    {
+      int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+      if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+      {
+        ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
+        Weapon->EditEnchantment(1);
+        return;
+      }
+    }
+    Weapon = PLAYER->GetSecondaryWielded();
   }
-  else if(RAND() & 3)
+
+  if(RAND() & 3)
   {
     potion* Bottle = potion::Spawn(0, NO_MATERIALS);
     Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));

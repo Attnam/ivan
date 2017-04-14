@@ -129,7 +129,7 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   std::vector<std::string> devicenames;
   int NumDevices = audio::GetMIDIOutputDevices(devicenames);
   MIDIOutputDevice.CycleCount = NumDevices+1;
-  
+
   if( O->Value && devicenames.size() )
   {
      const char *cstr = devicenames[O->Value - 1].c_str();
@@ -141,12 +141,8 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   else
   {
      audio::ChangeMIDIOutputDevice(0);
-     Entry << CONST_S("No output Device");
+     Entry << CONST_S("No output device");
   }
-
-
-
-
 }
 
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
@@ -303,9 +299,6 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&Volume);
-  
-
-
 
   std::vector<std::string> DeviceNames;
   int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
@@ -315,7 +308,6 @@ void ivanconfig::Initialize()
      MIDIOutputDevice.Value = 1;
   }
   MIDIOutputDevice.CycleCount = NumDevices+1;
-
 
   configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__

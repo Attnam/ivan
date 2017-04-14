@@ -282,6 +282,7 @@ Dungeon ATTNAM;
           f = fountain { SecondaryMaterial = ICE; }
           d = decoration(DOUBLE_BED);
           B = GOLD boulder(1);
+          t = christmastree;
         }
       }
       {
@@ -316,15 +317,15 @@ Dungeon ATTNAM;
         .......#8.6#...............#...#.......
         b...b.b#473#...............#...#b.b...b
         .b....##@####...###D###...####@##....b.
-        b..####.s.s.D...#.b.b.#...D.....####..b
+        b..####.s.s.D...#.t.t.#...D.....####..b
         ..b#.d......#####.f.f.#####........#b..
         b..#....s.s.#b..b.....b..b#........#..b
-        .b.##...#####.bb..b.b..bb.#####...##.b.
+        .b.##...#####.bb..t.t..bb.#####...##.b.
         b..b##s.#b.b......f.f......b.b#..##b..b
         ....b####....b...........b....####b....
-        b.b...b...b.......b.b.......b...b...b.b
+        b.b...b...b.......t.t.......b...b...b.b
         ...............bb.f.f.bb...............
-        b.b.b.b.b.b.b.b..b...b..b.b.b.b.b.b.b.b
+        b.b.b.b.b.b.b.b..t...t..b.b.b.b.b.b.b.b
       }
 
       ItemMap
@@ -348,7 +349,7 @@ Dungeon ATTNAM;
           2 == lantern { SquarePosition = DOWN; }
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
-          C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, GOLD helmet, stone { Times = 10; }, GOLD banana; } }
+          C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, meleeweapon(GRAND_STOLLEN_KNIFE), stone { Times = 10; }, GOLD banana; } }
           F == ring(RING_OF_FIRE_RESISTANCE);
           I == ring(RING_OF_INVISIBILITY);
           E == amulet(AMULET_OF_ESP);
@@ -1042,6 +1043,11 @@ Dungeon ATTNAM;
     {
       OTerrain = stairs(STAIRS_UP);
       EntryIndex = STAIRS_UP;
+    }
+
+    Square, Pos 21,20;
+    {
+      Character = necromancer(IMPRISONED_NECROMANCER);
     }
   }
 

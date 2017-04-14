@@ -55,8 +55,9 @@ Dungeon ELPURI_CAVE;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      1,
-      "Dungeon.mid";
+      2,
+      "Dungeon.mid",
+      "Dungeon2.mid";
     }
 
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;

@@ -122,6 +122,7 @@ item
   IsKamikazeWeapon = false;
   FlexibilityIsEssential = false;
   IsSadistWeapon = false;
+  AllowedDungeons == ALL_DUNGEONS; /* example: AllowedDungeons = {2, UNDER_WATER_TUNNEL, ELPURI_CAVE; } */
 }
 
 materialcontainer
@@ -182,6 +183,7 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 lump
@@ -201,6 +203,7 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 meleeweapon
@@ -309,6 +312,41 @@ meleeweapon
     MaterialConfigChances = { 4, 0, 250, 25, 25; }
     EnchantmentMinusChance = 10;
     EnchantmentPlusChance = 10;
+  }
+
+  Config GRAND_STOLLEN_KNIFE;
+  {
+    DefaultSize = 200;
+    Possibility = 0;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 650;
+    DefaultSecondaryVolume = 175;
+    StrengthModifier = 200;
+    BitmapPos = 0, 16;
+    FormModifier = 180;
+    CanBeWished = false;
+    NameSingular = "stollen knife";
+    Adjective = "grand";
+    PostFix = "of Attnam";
+    ArticleMode = FORCE_THE;
+    MainMaterialConfig == GOLD;
+    SecondaryMaterialConfig == SILVER;
+    IsPolymorphable = false;
+    Roundness = 20;
+    IsTwoHanded = true;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    BaseEnchantment = 0;
+    CanBeEnchanted = true;
+    AttachedGod = ATAVUS;
+    WieldedBitmapPos = 176, 112;
+    DamageFlags = SLASH|BLUNT;
+  }
+
+  Config BROKEN|GRAND_STOLLEN_KNIFE;
+  {
+    BitmapPos = 32, 96;
+    WieldedBitmapPos = 176, 80;
   }
 
   Config SPEAR;
@@ -752,6 +790,7 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 
   Config BROKEN;
   {
@@ -1232,6 +1271,7 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 scrollofwishing /* scroll-> */
@@ -1578,6 +1618,7 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 pineapple
@@ -1596,6 +1637,7 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 palmbranch
@@ -2005,6 +2047,28 @@ cloak /* armor-> */
     MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
+  }
+
+  Config CLOAK_OF_SHADOWS;
+  {
+    Possibility = 0;
+    GearStates = ETHEREAL_MOVING;
+    Price = 2500;
+    MainMaterialConfig == GHOST;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    NameSingular = "shadow veil";
+    AttachedGod = INFUSCOR;
+    CanBeBroken = false;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    ArticleMode = FORCE_THE;
+    CanBeEnchanted = false;
   }
 }
 
@@ -3061,6 +3125,31 @@ flamingsword /* meleeweapon-> */
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 4;
   }
+
+  Config LOST_RUBY_FLAMING_SWORD;
+  {
+    Possibility = 0;
+    BitmapPos = 16, 336;
+    WieldedBitmapPos = 160, 16;
+    MainMaterialConfig == RUBY;
+    SecondaryMaterialConfig == RUBY;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 0;
+    Adjective = "lost ruby flaming";
+    PostFix = "of Xinroch";
+    AttachedGod = INFUSCOR;
+    CanBeWished = false;
+    IsDestroyable = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    IsQuestItem = true;
+    CanBeBurned = false;
+    CanBeBroken = false;
+    BaseEnchantment = 13;
+    CanBeEnchanted = true;
+    ArticleMode = FORCE_THE;
+  }
 }
 
 mjolak /* meleeweapon-> */
@@ -3237,6 +3326,35 @@ skull
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
+}
+
+skullofxinroch
+{
+  StrengthModifier = 100;
+  FormModifier = 15;
+  Roundness = 65;
+  DefaultSize = 20;
+  Possibility = 0;
+  DefaultMainVolume = 800;
+  BitmapPos = 48, 112;
+  Category = MISC;
+  NameSingular = "skull";
+  PostFix = "of Xinroch the skeleton warlord";
+  Alias == "skull of Xinroch";
+  MainMaterialConfig == BONE;
+  IsTwoHanded = true;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 128;
+  IsValuable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBeWished = false;
+  ArticleMode = FORCE_THE;
+  IsQuestItem = true;
 }
 
 gorovitsweapon
@@ -3493,6 +3611,7 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
 wondersmellstaff

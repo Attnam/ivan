@@ -21,7 +21,7 @@
 
 /* Team data for the game */
 
-Teams = 12;
+Teams = 15;
 
 /*
  * Description of hard-coded teams:
@@ -34,6 +34,9 @@ Teams = 12;
  * 9 == TOURIST_GUIDE_TEAM == dummy team which holds the village elder, who tourists follow
  * 10 == TOURIST_TEAM == tourists of New Attnam
  * 11 == BETRAYED_TEAM == pets which the player has angered
+ * 12 == XINROCH_TOMB_ENTRY_TEAM == The dudes in the tomb entrance of the Xinroch Tomb story arc
+ * 13 == XINROCH_TOMB_NECRO_TEAM == Necro chamber operators in Xinroch's tomb
+ * 14 == XINROCH_TOMB_KAMIKAZE_DWARF_TEAM == the fanatics in the gas chambers
  */
 
 Team ATTNAM_TEAM;
@@ -92,6 +95,24 @@ Team BETRAYED_TEAM;
 {
   Relation 0, HOSTILE;
   KillEvilness = 10;
+}
+
+Team XINROCH_TOMB_ENTRY_TEAM;
+{
+  Relation 0, UNCARING;
+  KillEvilness = 50;
+}
+
+Team XINROCH_TOMB_NECRO_TEAM;
+{
+  Relation 1, UNCARING;
+  KillEvilness = 50;
+}
+
+Team XINROCH_TOMB_KAMIKAZE_DWARF_TEAM;
+{
+  Relation 1, UNCARING;
+  KillEvilness = 100;
 }
 
 /* Dungeons to be included in the game */

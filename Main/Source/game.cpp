@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cstdarg>
 
-#if defined(LINUX) || defined(__DJGPP__)
+#if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
 #endif
 
@@ -52,8 +52,8 @@
 
 #include "audio.h"
 
-#define SAVE_FILE_VERSION 127 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 113 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 129 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 115 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -81,6 +81,7 @@ double game::AveragePlayerAgilityExperience;
 int game::Teams;
 int game::Dungeons;
 int game::StoryState;
+int game::XinrochTombStoryState;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -264,7 +265,7 @@ truth game::Init(cfestring& Name)
   mkdir("Bones", S_IWUSR);
 #endif
 
-#ifdef LINUX
+#ifdef UNIX
   mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
@@ -364,6 +365,7 @@ truth game::Init(cfestring& Name)
       Turn = 0;
       InitPlayerAttributeAverage();
       StoryState = 0;
+      XinrochTombStoryState = 0;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -851,7 +853,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning;
+  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -916,7 +918,7 @@ int game::Load(cfestring& SaveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning;
+  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -2338,7 +2340,7 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 festring game::GetHomeDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   festring Dir;
   Dir << getenv("HOME") << "/.ivan/";
   return Dir;
@@ -2361,7 +2363,7 @@ festring game::GetScrshotDir()
 
 festring game::GetDataDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return DATADIR "/ivan/";
 #endif
 
@@ -2372,7 +2374,7 @@ festring game::GetDataDir()
 
 festring game::GetBoneDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return LOCAL_STATE_DIR "/Bones/";
 #endif
 
@@ -2383,7 +2385,7 @@ festring game::GetBoneDir()
 
 festring game::GetMusicDir()
 {
-#ifdef LINUX
+#ifdef UNIX
   return GetDataDir() + "Music/";
 #endif
 
@@ -2790,7 +2792,10 @@ int game::GetMoveCommandKey(int I)
   case DIR_ALT:
     return MoveAbnormalCommandKey[I];
   case DIR_HACK:
-        return MoveNetHackCommandKey[I];
+    return MoveNetHackCommandKey[I];
+  default:
+    ABORT("This is not Emacs!");
+    return MoveNormalCommandKey[I];
   }
 }
 

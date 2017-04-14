@@ -169,6 +169,7 @@ CHARACTER(humanoid, character)
   truth HasSadistWeapon() const;
   virtual truth HasSadistAttackMode() const;
  protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
   virtual col16 GetBodyPartColorC(int, truth = false) const;
@@ -276,8 +277,9 @@ CHARACTER(shopkeeper, humanoid)
 CHARACTER(priest, humanoid)
 {
  protected:
-  virtual void GetAICommand() { StandIdleAI(); }
+  virtual void GetAICommand();
   virtual void BeTalkedTo();
+  void CallForMonsters();
 };
 
 CHARACTER(oree, humanoid)
@@ -296,6 +298,9 @@ CHARACTER(oree, humanoid)
 
 CHARACTER(darkknight, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+  virtual truth CheckForUsefulItemsOnGround(truth = true);
  protected:
   virtual int ModifyBodyPartHitPreference(int, int) const;
   virtual int ModifyBodyPartToHitChance(int, int) const;
@@ -308,6 +313,18 @@ CHARACTER(ennerbeast, humanoid)
  public:
   virtual truth Hit(character*, v2, int, int = 0);
   virtual truth MustBeRemovedFromBone() const;
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
+  virtual truth AttackIsBlockable(int) const { return false; }
+};
+
+CHARACTER(ennerchild, humanoid)
+{
+ public:
+  virtual truth Hit(character*, v2, int, int = 0);
+  virtual truth MustBeRemovedFromBone() const;
+  virtual truth ReceiveDamage(character*, int, int, int = ALL, int = 8, truth = false, truth = false, truth = false, truth = true);
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
@@ -438,7 +455,6 @@ CHARACTER(spirit, humanoid)
  public:
   spirit() : Active(true) { }
   virtual truth BodyPartIsVital(int) const;
-  virtual truth BodyPartCanBeSevered(int) const;
 //  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
   void SetDescription(cfestring What) { Description = What; }
   virtual festring GetSpiritDescription() const;
@@ -483,6 +499,17 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
+CHARACTER(xinrochghost, spirit)
+{
+ public:
+  virtual truth IsNameable() const { return false; }
+  virtual truth IsPolymorphable() const { return false; }
+  virtual truth CheckForUsefulItemsOnGround(truth = true) { return false; }
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+};
+
 CHARACTER(imp, humanoid)
 {
 };
@@ -503,6 +530,14 @@ CHARACTER(werewolfwolf, humanoid)
 {
  public:
   virtual festring GetKillName() const;
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+};
+
+CHARACTER(vampire, humanoid)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(kobold, humanoid)
@@ -637,6 +672,7 @@ CHARACTER(necromancer, humanoid)
  public:
   virtual truth TryToRaiseZombie();
   virtual void RaiseSkeleton();
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;

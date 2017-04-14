@@ -68,6 +68,14 @@ col16 carrot::GetMaterialColorB(int) const { return MakeRGB16(80, 100, 16); }
 
 col16 charmlyre::GetMaterialColorB(int) const { return MakeRGB16(150, 130, 110); }
 
+col16 skullofxinroch::GetOutlineColor(int) const { return MakeRGB16(180, 0, 0); }
+
+alpha skullofxinroch::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
 truth scroll::CanBeRead(character* Reader) const
 {
   return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
@@ -3285,4 +3293,17 @@ truth bone::Necromancy(character* Necromancer)
 void lump::AddLumpyPostFix(festring& String) const
 {
   MainMaterial->AddName(String << " of " << (!IsBurning() ? "" : "burning "), false, false);
+}
+
+bool skullofxinroch::SpecialOfferEffect(int GodNumber)
+{
+  if(GodNumber == INFUSCOR)
+  {
+    god* Receiver = game::GetGod(GodNumber);
+    Receiver->AdjustRelation(500);
+    ADD_MESSAGE("You sacrifice %s. %s appreciates your generous offer truly.", CHAR_NAME(DEFINITE), Receiver->GetName());
+    return true;
+  }
+  else
+    return false;
 }

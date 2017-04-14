@@ -491,6 +491,16 @@ portal /* stairs -> */
   Config OREE_LAIR_ENTRY; { }
   Config OREE_LAIR_EXIT; { }
   Config DARK_LEVEL; { }
+
+  Config XINROCH_TOMB_ENTRANCE;
+  {
+    MaterialColorB = rgb16(0, 200, 0);
+  }
+
+  Config XINROCH_TOMB_EXIT;
+  {
+    MaterialColorB = rgb16(140, 240, 255);
+  }
 }
 
 altar /* olterrain-> */
@@ -550,7 +560,7 @@ olterraincontainer /* olterrain->decoration-> */
   {
     CanBeDestroyed = true;
     MainMaterialConfig == FIR_WOOD;
-    NameSingular = "";
+    NameSingular = "shelf";
     BitmapPos = 16, 128;
     SitMessage = "The shelf is very uncomfortable to sit on.";
     StorageVolume = 80000;
@@ -723,8 +733,27 @@ ironmaiden
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
   CanBeDestroyed = true;
   DigMessage = "The iron maiden falls into pieces.";
+  SitMessage = "You sit in the iron maiden. This doesn't seem safe at all.";
   MainMaterialConfig == IRON;
   ShowMaterial = false;
   NameSingular = "iron maiden";
   HPModifier = 250;
+}
+
+christmastree
+{
+  OKVisualEffects = MIRROR;
+  CanBeDestroyed = true;
+  DigMessage = "You chop the tree down.";
+  MainMaterialConfig == SNOW;
+  ShowMaterial = false;
+  MaterialColorB = rgb16(32, 100, 32);
+  MaterialColorC = rgb16(0, 180, 80);
+  MaterialColorD = rgb16(180, 20, 0);
+  NameSingular = "fir";
+  PostFix = "covered with snow";
+  /* BitmapPos overridden */
+  HPModifier = 25;
+  IsAlwaysTransparent = false;
+  LeftOverItems == stick { MainMaterial = FIR_WOOD { Volume = 500:1500; } Times = 1:4; }
 }

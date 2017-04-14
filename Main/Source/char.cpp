@@ -247,6 +247,25 @@ statedata StateData[STATES] =
     &character::HiccupsHandler,
     0,
     &character::HiccupsSituationDangerModifier
+  }, {
+    "Ethereal",
+    NO_FLAGS,
+    &character::PrintBeginEtherealityMessage,
+    &character::PrintEndEtherealityMessage,
+    &character::BeginEthereality, &character::EndEthereality,
+    0,
+    0,
+    0
+  }, {
+    "Vampirism",
+    DUR_FLAGS,
+    &character::PrintBeginVampirismMessage,
+    &character::PrintEndVampirismMessage,
+    0,
+    0,
+    &character::VampirismHandler,
+    0,
+    0
   }
 };
 
@@ -341,9 +360,12 @@ truth character::MustBeRemovedFromBone() const
 truth character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 character* character::GetLeader() const { return GetTeam()->GetLeader(); }
 int character::GetMoveType() const
-{ return (!StateIsActivated(LEVITATION)
+{ return ((!StateIsActivated(LEVITATION)
           ? DataBase->MoveType
-          : DataBase->MoveType | FLY); }
+          : DataBase->MoveType | FLY) |
+          (!StateIsActivated(ETHEREAL_MOVING)
+          ? DataBase->MoveType
+          : DataBase->MoveType | ETHEREAL)); }
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -702,7 +724,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
                                          && Enemy->BiteCapturesBodyPart());
   truth Succeeded = (GetBodyPart(BodyPart)
                      && HitEffect(Enemy, Weapon, HitPos, Type,
-                                  BodyPart, Dir, !DoneDamage))
+                                  BodyPart, Dir, !DoneDamage, Critical, DoneDamage))
                     || DoneDamage;
 
   if(Succeeded)
@@ -1605,7 +1627,14 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 
   if(IsPlayer())
   {
-    AddScoreEntry(Msg);
+    if(game::GetXinrochTombStoryState() == 2)
+    {
+      festring MsgBut = CONST_S("delivered the Shadow Veil to the Necromancer and continued to further adventures, but was ");
+      festring NewMsg = MsgBut << Msg;
+      AddScoreEntry(NewMsg, 2, true);
+    }
+    else
+      AddScoreEntry(Msg);
 
     if(!game::IsInWilderness())
     {
@@ -1762,6 +1791,33 @@ truth character::HasGoldenEagleShirt() const
   return combineequipmentpredicates()(this, &item::IsGoldenEagleShirt, 1);
 }
 
+truth character::HasEncryptedScroll() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsEncryptedScroll())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsEncryptedScroll, 1);
+}
+
+truth character::HasShadowVeil() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsShadowVeil, 1);
+}
+
+truth character::HasLostRubyFlamingSword() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsLostRubyFlamingSword())
+      return true;
+
+  return combineequipmentpredicates()(this, &item::IsLostRubyFlamingSword, 1);
+}
+
 truth character::RemoveEncryptedScroll()
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -1778,6 +1834,32 @@ truth character::RemoveEncryptedScroll()
     item* Item = GetEquipment(c);
 
     if(Item && Item->IsEncryptedScroll())
+    {
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth character::RemoveShadowVeil()
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsShadowVeil())
+    {
+      item* Item = *i;
+      Item->RemoveFromSlot();
+      Item->SendToHell();
+      return true;
+    }
+
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Item = GetEquipment(c);
+
+    if(Item && Item->IsShadowVeil())
     {
       Item->RemoveFromSlot();
       Item->SendToHell();
@@ -2182,7 +2264,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK,
-                                                        BodyPart, Direction, !DoneDamage)) || DoneDamage;
+                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage)) || DoneDamage;
 
   if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
@@ -4776,6 +4858,18 @@ void character::PrintEndLycanthropyMessage() const
     ADD_MESSAGE("You feel the wolf inside you has had enough of your bad habits.");
 }
 
+void character::PrintBeginVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly decide you have always hated garlic.");
+}
+
+void character::PrintEndVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
+}
+
 void character::PrintBeginInvisibilityMessage() const
 {
   if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm())
@@ -4812,6 +4906,22 @@ void character::PrintEndInvisibilityMessage() const
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("Suddenly %s appears from nowhere!", CHAR_NAME(INDEFINITE));
   }
+}
+
+void character::PrintBeginEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel like many miscible droplets of ether.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s melds into the surroundings.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndEtherealityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You drop out of the firmament, feeling suddenly quite dense.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s displaces the air with a puff.", CHAR_NAME(INDEFINITE));
 }
 
 void character::PrintBeginInfraVisionMessage() const
@@ -4940,6 +5050,9 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(GetType() == werewolfwolf::ProtoType.GetIndex())
+    return;
+
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
@@ -5363,6 +5476,11 @@ truth character::IsWarm() const
   return combinebodypartpredicates()(this, &bodypart::IsWarm, 1);
 }
 
+truth character::IsWarmBlooded() const
+{
+  return combinebodypartpredicates()(this, &bodypart::IsWarmBlooded, 1);
+}
+
 void character::BeginInvisibility()
 {
   UpdatePictures();
@@ -5382,6 +5500,10 @@ void character::BeginESP()
     GetArea()->SendNewDrawRequest();
 }
 
+void character::BeginEthereality()
+{
+}
+
 void character::EndInvisibility()
 {
   UpdatePictures();
@@ -5399,6 +5521,10 @@ void character::EndESP()
 {
   if(IsPlayer() && IsEnabled())
     GetArea()->SendNewDrawRequest();
+}
+
+void character::EndEthereality()
+{
 }
 
 void character::Draw(blitdata& BlitData) const
@@ -6008,7 +6134,7 @@ truth character::ContentsCanBeSeenBy(ccharacter* Viewer) const
 }
 
 truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
-                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+                           int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(Weapon)
     return Weapon->HitEffect(this, Enemy, HitPos, BodyPartIndex, Direction, BlockedByArmour);
@@ -6020,7 +6146,7 @@ truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
    case KICK_ATTACK:
     return Enemy->SpecialKickEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
    case BITE_ATTACK:
-    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour, Critical, DoneDamage);
   }
 
   return false;
@@ -7042,7 +7168,10 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
   truth Pummeled = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? 0 : (Damage >> 1),
                                  PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
 
-  if(Pummeled && GetArea()->IsValidPos(SpillPos))
+  // The ReceiveDamage calls above might cause 'this' to be polymorphed, in which case
+  // SquareUnder[0] is null and calling GetArea or SpillBlood will crash.
+  // See https://github.com/Attnam/ivan/issues/237 for details.
+  if(SquareUnder[0] && Pummeled && GetArea()->IsValidPos(SpillPos))
     GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
   festring Msg;
@@ -8586,6 +8715,7 @@ void character::ReceiveWhiteUnicorn(long Amount)
   DecreaseStateCounter(POISONED, -Amount / 100);
   DecreaseStateCounter(PARASITIZED, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
+  DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
 
 /* Counter should be negative. Removes intrinsics. */
@@ -8631,6 +8761,8 @@ truth character::IsImmuneToLeprosy() const
 
 void character::LeprosyHandler()
 {
+  if(!(RAND() % 1000) && IsPlayer())
+    ADD_MESSAGE("You notice you're covered in sores!");
   EditExperience(ARM_STRENGTH, -25, 1 << 1);
   EditExperience(LEG_STRENGTH, -25, 1 << 1);
   EditExperience(DEXTERITY, -25, 1 << 1);
@@ -8638,6 +8770,12 @@ void character::LeprosyHandler()
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
   CheckDeath(CONST_S("killed by leprosy"));
+}
+
+void character::VampirismHandler()
+{
+  EditExperience(WISDOM, -25, 1 << 1);
+  CheckDeath(CONST_S("killed by vampirism"));
 }
 
 bodypart* character::SearchForOriginalBodyPart(int I) const
@@ -9530,11 +9668,6 @@ void character::AddRandomScienceName(festring& String) const
     if(!Prefix.IsEmpty() && Science.Find(Prefix) != festring::NPos)
       Prefix.Empty();
   }
-
-  int L = Prefix.GetSize();
-
-  if(L && Prefix[L - 1] == Science[0])
-    Science.Erase(0, 1);
 
   if(!NoAttrib && !NoSecondAdjective == !RAND_GOOD(3))
   {

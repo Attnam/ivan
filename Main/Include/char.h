@@ -176,6 +176,7 @@ struct characterdatabase : public databasebase
   int BaseUnarmedStrength;
   int BaseBiteStrength;
   int BaseKickStrength;
+  int BonusBiteStrength;
   int AttackStyle;
   long ClassStates;
   fearray<festring> Alias;
@@ -247,6 +248,7 @@ struct characterdatabase : public databasebase
   truth CanBeGeneratedOnlyInTheCatacombs;
   truth IsAlcoholic;
   truth IsImmuneToWhipOfThievery;
+  fearray<int> AllowedDungeons;
 };
 
 class characterprototype
@@ -299,8 +301,12 @@ class character : public entity, public id
   truth TryMove(v2, truth, truth);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
+  truth HasEncryptedScroll() const;
   truth HasPetrussNut() const;
   truth RemoveEncryptedScroll();
+  truth HasShadowVeil() const;
+  truth HasLostRubyFlamingSword() const;
+  truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
   truth Engrave(cfestring&);
   void AddScoreEntry(cfestring&, double = 1., truth = true) const;
@@ -517,6 +523,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, BaseUnarmedStrength);
   DATA_BASE_VALUE(int, BaseBiteStrength);
   DATA_BASE_VALUE(int, BaseKickStrength);
+  DATA_BASE_VALUE(int, BonusBiteStrength);
   DATA_BASE_VALUE(int, AttackStyle);
   DATA_BASE_TRUTH(CanUseEquipment);
   DATA_BASE_TRUTH(CanKick);
@@ -602,6 +609,7 @@ class character : public entity, public id
   DATA_BASE_TRUTH(CanBeGeneratedOnlyInTheCatacombs);
   DATA_BASE_TRUTH(IsAlcoholic);
   DATA_BASE_TRUTH(IsImmuneToWhipOfThievery);
+  DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
@@ -647,6 +655,8 @@ class character : public entity, public id
   void PrintEndSearchingMessage() const;
   void PrintBeginHiccupsMessage() const;
   void PrintEndHiccupsMessage() const;
+  void PrintBeginVampirismMessage() const;
+  void PrintEndVampirismMessage() const;
   void EndPolymorph();
   character* ForceEndPolymorph();
   void LycanthropyHandler();
@@ -659,6 +669,9 @@ class character : public entity, public id
   void EndInfraVision();
   void EndESP();
   void HiccupsHandler();
+  void BeginEthereality();
+  void EndEthereality();
+  void VampirismHandler();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
   void StartReading(item*, long);
@@ -671,6 +684,8 @@ class character : public entity, public id
   void PrintEndInfraVisionMessage() const;
   void PrintBeginESPMessage() const;
   void PrintEndESPMessage() const;
+  void PrintBeginEtherealityMessage() const;
+  void PrintEndEtherealityMessage() const;
   truth CanBeSeenByPlayer(truth = false, truth = false) const;
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
@@ -682,6 +697,7 @@ class character : public entity, public id
   void PrintBeginPoisonedMessage() const;
   void PrintEndPoisonedMessage() const;
   truth IsWarm() const;
+  truth IsWarmBlooded() const;
   void CalculateEquipmentState();
   void Draw(blitdata&) const;
   virtual void DrawBodyParts(blitdata&) const;
@@ -760,8 +776,8 @@ class character : public entity, public id
   virtual void CreateBlockPossibilityVector(blockvector&, double) const { }
   virtual truth SpecialUnarmedEffect(character*, v2, int, int, truth) { return false; }
   virtual truth SpecialKickEffect(character*, v2, int, int, truth) { return false; }
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth) { return false; }
-  truth HitEffect(character*, item*, v2, int, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int) { return false; }
+  truth HitEffect(character*, item*, v2, int, int, int, truth, truth, int);
   void WeaponSkillHit(item*, int, int);
   character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }

@@ -34,7 +34,7 @@
 class musicfile
 {
 public:
-   musicfile(char* filename, int LowThreshold, int HighThreshold);
+   musicfile(cchar* filename, int LowThreshold, int HighThreshold);
    ~musicfile();
 
    inline bool IsPlaying(void) { return isPlaying; }
@@ -82,7 +82,10 @@ public:
 
    static void error(RtMidiError::Type type, const std::string &errorText, void *userData );
 
-   static void Init();
+   /**
+    * @param musicDirectory path to the directory containing the MIDI files to load.
+    */
+   static void Init(cfestring& musicDirectory);
    static void DeInit(void);
 
    static int Loop(void *ptr);
@@ -104,7 +107,7 @@ public:
 
    static int GetVolumeLevel(void);
 
-   static int SendVolumeMessage(int targetVolume);
+   static void SendVolumeMessage(int targetVolume);
 
    /**
     * @param intensity 0 - 100
@@ -117,7 +120,7 @@ public:
     * @param filename MIDI file location
     * @param intensitylow
     */
-   static void LoadMIDIFile(char* filename, int intensitylow, int intensityhigh);
+   static void LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh);
 
 
    static void ClearMIDIPlaylist(char* exceptFilename = 0);
@@ -142,12 +145,13 @@ private:
    static int  TargetIntensity;
    static int  CurrentIntensity;
 
-   static bool isTrackPlaying;
+   static volatile bool isTrackPlaying;
 
    static int CurrentPosition;
 
    static int  PlaybackState;
    static char* CurrentTrack;
+   static festring MusDir;
 
    static std::vector<musicfile*> Tracks;
 

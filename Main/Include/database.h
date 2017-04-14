@@ -22,6 +22,7 @@ class festring;
 
 template <class database> struct databasememberbase
 {
+  virtual ~databasememberbase() = default;
   virtual void ReadData(database&, inputfile&) = 0;
 };
 

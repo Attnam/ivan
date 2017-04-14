@@ -29,8 +29,6 @@
 
 #include "v2.h"
 
-#define IVAN_VERSION "0.50.6"
-
 class item;
 class material;
 class character;
@@ -124,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 21
+#define STATES 23
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -147,6 +145,8 @@ const name##prototype name::ProtoType
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
+#define ETHEREAL_MOVING (1 << 21)
+#define VAMPIRISM (1 << 22)
 
 #define TORSO 1
 #define HEAD 2
@@ -382,6 +382,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define EFFECT_OMMEL_BONE 29
 #define EFFECT_MUSTARD_GAS 30
 #define EFFECT_MUSTARD_GAS_LIQUID 31
+#define EFFECT_VAMPIRISM 32
 
 /* CEM = Consume End Message */
 
@@ -517,6 +518,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
+#define EMPTY_AREA 5
+#define XINROCH_TOMB 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -527,6 +530,9 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define IVAN_LEVEL 7
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
+
+#define DUAL_ENNER_BEAST_LEVEL 5
+#define NECRO_CHAMBER_LEVEL 6
 
 /* stack::DrawContents flags */
 
@@ -541,6 +547,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
+#define MAZE_ROOM 3
 
 /* Gods, 0 == none */
 
@@ -1089,6 +1096,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define CAN_HAVE_PARASITE 4
 #define USE_MATERIAL_ATTRIBUTES 8
 #define CAN_REGENERATE 16
+#define IS_WARM_BLOODED 32
 
 /* InteractionFlags */
 #define CAN_BURN 1

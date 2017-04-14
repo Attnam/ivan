@@ -50,6 +50,9 @@ char command::GetKey() const
     return Key2;
    case DIR_HACK: // Nethack
     return Key3;
+   default:
+    ABORT("This is not Vim!");
+    return Key1;
   }
 }
 
@@ -617,7 +620,7 @@ truth commandsystem::Talk(character* Char)
     return ToTalk->ChatMenu();
   else
   {
-    int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk to? [press a direction key]"), false, true);
+    int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk? [press a direction key]"), false, true);
 
     if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
       return false;
@@ -1347,6 +1350,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+        
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        
         game::GetWorldMap()->SendNewDrawRequest();
       }
       else
@@ -1355,6 +1363,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+        
+        v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
+        game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
+        game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+        
         game::SaveWorldMap();
       }
 

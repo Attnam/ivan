@@ -131,7 +131,7 @@ CHARACTER(spider, nonhumanoid)
  public:
   virtual truth IsSpider() const { return true; }
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual bodypart* MakeBodyPart(int) const;
 };
@@ -159,6 +159,12 @@ CHARACTER(bat, nonhumanoid)
 {
  protected:
   virtual bodypart* MakeBodyPart(int) const;
+};
+
+CHARACTER(vampirebat, bat)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(largecat, nonhumanoid)
@@ -208,7 +214,7 @@ CHARACTER(buffalo, nonhumanoid)
 CHARACTER(snake, nonhumanoid)
 {
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(ostrich, nonhumanoid)
@@ -464,7 +470,7 @@ CHARACTER(lobhse, largecreature)
  public:
   virtual truth IsSpider() const { return true; }
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;

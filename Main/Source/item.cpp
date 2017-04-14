@@ -42,7 +42,7 @@ truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_
 item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0) { }
 truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 truth item::IsSimilarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
-double item::GetBaseDamage() const { return sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus(); }
+double item::GetBaseDamage() const { return Max(0., sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus()); }
 int item::GetBaseMinDamage() const { return int(GetBaseDamage() * 0.75); }
 int item::GetBaseMaxDamage() const { return int(GetBaseDamage() * 1.25) + 1; }
 int item::GetBaseToHitValue() const { return int(10000. / (1000 + GetWeight()) + GetTHVBonus()); }
