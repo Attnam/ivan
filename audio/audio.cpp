@@ -139,6 +139,7 @@ void audio::Init(cfestring& musicDirectory)
 
 void audio::DeInit(void)
 {
+   SetPlaybackStatus(STOPPED);
    isInit = false;
 
    for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
