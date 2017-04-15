@@ -253,7 +253,11 @@ void dig::Handle()
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-500);
 
-  if(Terrain->GetHP() <= 0)
+  truth TerrainDestroyed = Terrain->GetHP() <= 0;
+  truth AlreadyTerminated = Actor->GetAction() != this;
+  truth StoppedDigging = TerrainDestroyed || AlreadyTerminated;
+
+  if(TerrainDestroyed)
   {
     if(Square->CanBeSeenByPlayer())
       ADD_MESSAGE("%s", Terrain->GetDigMessage().CStr());
@@ -265,6 +269,12 @@ void dig::Handle()
     if(!Actor->IsEnabled())
       return;
 
+    if(!AlreadyTerminated)
+      Terminate(true);
+  }
+
+  if(StoppedDigging)
+  {
     if(MoveDigger && Actor->GetMainWielded())
       Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
@@ -283,11 +293,9 @@ void dig::Handle()
       LeftBackup->RemoveFromSlot();
       Actor->SetLeftWielded(LeftBackup);
     }
-
-    if(Actor->GetAction() == this) // Not already terminated?
-      Terminate(true);
   }
-  else
+
+  if(!TerrainDestroyed)
     game::DrawEverything();
 }
 
