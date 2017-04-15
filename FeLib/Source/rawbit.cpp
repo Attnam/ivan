@@ -11,6 +11,9 @@
  */
 
 #include <cstdarg>
+#include <memory>
+
+#include "png.h"
 
 #include "allocate.h"
 #include "rawbit.h"
@@ -22,38 +25,61 @@ void rawbitmap::MaskedBlit(bitmap* Bitmap, packcol16* Color) const { MaskedBlit(
 
 rawbitmap::rawbitmap(cfestring& FileName)
 {
-  inputfile File(FileName.CStr(), 0, false);
+  std::shared_ptr<FILE> File(fopen(FileName.CStr(), "rb"), fclose);
 
-  if(!File.IsOpen())
+  if(!File)
     ABORT("Bitmap %s not found!", FileName.CStr());
 
-  File.SeekPosEnd(-768);
+  png_structp PNGStruct = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+
+  if(!PNGStruct)
+    ABORT("Couldn't read PNG file %s!", FileName.CStr());
+
+  png_infop PNGInfo = png_create_info_struct(PNGStruct);
+
+  if(!PNGInfo)
+    abort();
+
+  if(setjmp(png_jmpbuf(PNGStruct)) != 0)
+    abort();
+
+  png_init_io(PNGStruct, File.get());
+  png_read_info(PNGStruct, PNGInfo);
+
+  Size.X = png_get_image_width(PNGStruct, PNGInfo);
+  Size.Y = png_get_image_height(PNGStruct, PNGInfo);
+
+  if(png_get_bit_depth(PNGStruct, PNGInfo) != 8)
+    ABORT("%s has wrong bit depth %d, should be 8!", FileName.CStr(),
+          int(png_get_bit_depth(PNGStruct, PNGInfo)));
+
+  png_colorp PNGPalette;
+  int PaletteSize;
+
+  if(!png_get_PLTE(PNGStruct, PNGInfo, &PNGPalette, &PaletteSize))
+    ABORT("%s is not in indexed color mode!", FileName.CStr());
+
+  if(PaletteSize != 256)
+    ABORT("%s has wrong palette size %d, should be 256!", FileName.CStr(), PaletteSize);
+
   Palette = new uchar[768];
-  File.Read(reinterpret_cast<char*>(Palette), 768);
-  File.SeekPosBegin(8);
-  Size.X  =  File.Get();
-  Size.X += (File.Get() << 8) + 1;
-  Size.Y  =  File.Get();
-  Size.Y += (File.Get() << 8) + 1;
-  File.SeekPosBegin(128);
+
+  for(int i = 0; i < PaletteSize; ++i)
+  {
+    Palette[i * 3 + 0] = PNGPalette[255 - i].red;
+    Palette[i * 3 + 1] = PNGPalette[255 - i].green;
+    Palette[i * 3 + 2] = PNGPalette[255 - i].blue;
+  }
+
   Alloc2D(PaletteBuffer, Size.Y, Size.X);
+  png_read_image(PNGStruct, PaletteBuffer);
   paletteindex* Buffer = PaletteBuffer[0];
   paletteindex* End = &PaletteBuffer[Size.Y - 1][Size.X];
 
-  while(Buffer != End)
-  {
-    int Char1 = File.Get();
+  for(; Buffer != End; ++Buffer)
+    *Buffer = 255 - *Buffer;
 
-    if(Char1 > 192)
-    {
-      int Char2 = File.Get();
-
-      for(; Char1 > 192; Char1--)
-        *Buffer++ = Char2;
-    }
-    else
-      *Buffer++ = Char1;
-  }
+  png_destroy_read_struct(&PNGStruct, &PNGInfo, nullptr);
 }
 
 rawbitmap::rawbitmap(v2 Size) : Size(Size)
@@ -74,36 +100,41 @@ rawbitmap::~rawbitmap()
   }
 }
 
-/* A lousy bitmap saver that uses the pcx format but doesn't do any compression. */
-
 void rawbitmap::Save(cfestring& FileName)
 {
-  char PCXHeader[128];
-  memset(PCXHeader, 0, 128);
-  *reinterpret_cast<ulong*>(PCXHeader) = 0x0801050A;
-  PCXHeader[65] = 0x01;
-  PCXHeader[66] = Size.X & 0xFF;
-  PCXHeader[67] = (Size.X >> 8) & 0xFF;
-  PCXHeader[0x08] = (Size.X - 1) & 0xFF;
-  PCXHeader[0x09] = ((Size.X - 1) >> 8) & 0xFF;
-  PCXHeader[0x0A] = (Size.Y - 1) & 0xFF;
-  PCXHeader[0x0B] = ((Size.Y - 1) >> 8) & 0xFF;
-  outputfile SaveFile(FileName);
-  SaveFile.Write(PCXHeader, 128);
+  std::shared_ptr<FILE> File(fopen(FileName.CStr(), "wb"), fclose);
+  png_structp PNGStruct = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  png_infop PNGInfo = png_create_info_struct(PNGStruct);
+  png_init_io(PNGStruct, File.get());
+
+  png_color PNGPalette[256];
+
+  for(int i = 0; i < 256; ++i)
+  {
+    PNGPalette[255 - i].red = Palette[i * 3 + 0];
+    PNGPalette[255 - i].green = Palette[i * 3 + 1];
+    PNGPalette[255 - i].blue = Palette[i * 3 + 2];
+  }
+
+  png_set_IHDR(PNGStruct, PNGInfo, Size.X, Size.Y, 8, PNG_COLOR_TYPE_PALETTE,
+               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+  png_set_PLTE(PNGStruct, PNGInfo, PNGPalette, 256);
+  png_write_info(PNGStruct, PNGInfo);
+
   paletteindex* Buffer = PaletteBuffer[0];
   paletteindex* End = &PaletteBuffer[Size.Y - 1][Size.X];
 
-  while(Buffer != End)
-  {
-    paletteindex Char = *Buffer++;
+  for(; Buffer != End; ++Buffer)
+    *Buffer = 255 - *Buffer;
 
-    if(Char >= 192)
-      SaveFile.Put(char(193));
+  png_write_image(PNGStruct, PaletteBuffer);
+  png_write_end(PNGStruct, PNGInfo);
+  png_destroy_write_struct(&PNGStruct, &PNGInfo);
 
-    SaveFile.Put(Char);
-  }
+  Buffer = PaletteBuffer[0];
 
-  SaveFile.Write(reinterpret_cast<char*>(Palette), 768);
+  for(; Buffer != End; ++Buffer)
+    *Buffer = 255 - *Buffer;
 }
 
 void rawbitmap::MaskedBlit(bitmap* Bitmap, v2 Src, v2 Dest, v2 Border, packcol16* Color) const
