@@ -369,15 +369,15 @@ bitmap* rawbitmap::Colorize(v2 Pos, v2 Border, v2 Move, cpackcol16* Color, alpha
             Blue >>= 1;
           }
 
-    if(Burnt && BurnData[ColorIndex]
-       && (BurnData[ColorIndex] & 3UL)
-       > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
-    {
-      Max >>= 2;
-      Red = Max + (Red >> 3);
-      Green = Max + (Green >> 3);
-      Blue = Max + (Blue >> 3);
-    }
+          if(Burnt && BurnData[ColorIndex]
+             && (BurnData[ColorIndex] & 3UL)
+             > (BurnSeed[ColorIndex] = BurnSeed[ColorIndex] * 1103515245 + 12345) >> 30)
+          {
+            Max >>= 2;
+            Red = Max + (Red >> 3);
+            Green = Max + (Green >> 3);
+            Blue = Max + (Blue >> 3);
+          }
 
           if(Red > 0x7FF)
             Red = 0x7FF;
