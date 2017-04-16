@@ -150,7 +150,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       festring Entry = Option[c]->Description;
       Entry.Capitalize();
       Entry.Resize(60);
-      Option[c]->DisplayeValue(Entry);
+      Option[c]->DisplayValue(Entry);
       List.AddEntry(Entry, LIGHT_GRAY);
     }
 
