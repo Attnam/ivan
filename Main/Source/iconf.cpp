@@ -136,7 +136,7 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   int NumDevices = audio::GetMIDIOutputDevices(devicenames);
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
-  if( O->Value && devicenames.size() )
+  if(O->Value && O->Value <= devicenames.size())
   {
      const char *cstr = devicenames[O->Value - 1].c_str();
      Entry << cstr;
