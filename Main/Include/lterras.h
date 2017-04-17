@@ -15,8 +15,6 @@
 
 #include "lterra.h"
 
-class ghost;
-
 OLTERRAIN(wall, olterrain)
 {
 };

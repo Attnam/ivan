@@ -35,6 +35,7 @@ class ivanconfig
   static cfestring& GetHighScoreServerUsername() { return HighScoreServerUsername.Value; }
   static cfestring& GetHighScoreServerPassword() { return HighScoreServerPassword.Value; }
 #ifndef __DJGPP__
+  static int GetGraphicsScale() { return GraphicsScale.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
 #else
@@ -63,6 +64,9 @@ class ivanconfig
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
 #ifndef __DJGPP__
+  static void GraphicsScaleDisplayer(const cycleoption*, festring&);
+  static truth GraphicsScaleChangeInterface(cycleoption*);
+  static void GraphicsScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
@@ -84,6 +88,7 @@ class ivanconfig
   static stringoption HighScoreServerUsername;
   static stringoption HighScoreServerPassword;
 #ifndef __DJGPP__
+  static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
 #endif
   static col24 ContrastLuminance;

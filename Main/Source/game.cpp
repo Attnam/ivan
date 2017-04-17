@@ -595,8 +595,6 @@ void game::Run()
           else if(!RAND_N(5))
           Char = billswill::Spawn();
           else if(!RAND_N(5))
-          Char = ghost::Spawn();
-          else if(!RAND_N(5))
           Char = dolphin::Spawn();
           else if(!RAND_N(5))
           Char = cossack::Spawn();
@@ -1759,6 +1757,9 @@ v2 game::NameKeyHandler(v2 CursorPos, int Key)
 
 void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
+  if(!Permanently)
+    game::Save();
+
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
 

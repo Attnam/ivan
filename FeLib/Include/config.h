@@ -63,7 +63,7 @@ struct configoption
   virtual void SaveValue(std::ofstream&) const = 0;
   virtual void LoadValue(inputfile&) = 0;
   virtual truth ActivateChangeInterface() = 0;
-  virtual void DisplayeValue(festring&) const = 0;
+  virtual void DisplayValue(festring&) const = 0;
   cchar* Name;
   cchar* Description;
 };
@@ -79,7 +79,7 @@ struct stringoption : public configoption
                = &configsystem::NormalStringChanger);
   virtual void SaveValue(std::ofstream&) const;
   virtual void LoadValue(inputfile&);
-  virtual void DisplayeValue(festring& Entry) const
+  virtual void DisplayValue(festring& Entry) const
   { ValueDisplayer(this, Entry); }
   virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
   void ChangeValue(cfestring& What) { ValueChanger(this, What); }
@@ -100,7 +100,7 @@ struct numberoption : public configoption
                = &configsystem::NormalNumberChanger);
   virtual void SaveValue(std::ofstream&) const;
   virtual void LoadValue(inputfile&);
-  virtual void DisplayeValue(festring& Entry) const
+  virtual void DisplayValue(festring& Entry) const
   { ValueDisplayer(this, Entry); }
   virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
   void ChangeValue(long What) { ValueChanger(this, What); }
@@ -132,7 +132,7 @@ struct truthoption : public configoption
               = &configsystem::NormalTruthChanger);
   virtual void SaveValue(std::ofstream&) const;
   virtual void LoadValue(inputfile&);
-  virtual void DisplayeValue(festring& Entry) const
+  virtual void DisplayValue(festring& Entry) const
   { ValueDisplayer(this, Entry); }
   virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
   void ChangeValue(truth What) { ValueChanger(this, What); }
@@ -153,7 +153,7 @@ struct cycleoption : public configoption
               = &configsystem::NormalCycleChanger);
   virtual void SaveValue(std::ofstream&) const;
   virtual void LoadValue(inputfile&);
-  virtual void DisplayeValue(festring& Entry) const
+  virtual void DisplayValue(festring& Entry) const
   { ValueDisplayer(this, Entry); }
   virtual truth ActivateChangeInterface() { return ChangeInterface(this); }
   void ChangeValue(long What) { ValueChanger(this, What); }

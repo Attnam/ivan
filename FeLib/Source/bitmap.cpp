@@ -109,56 +109,21 @@ int Blue;\
 bitmap::bitmap(cfestring& FileName)
 : FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
-  inputfile File(FileName.CStr(), 0, false);
-
-  if(!File.IsOpen())
-    ABORT("Bitmap %s not found!", FileName.CStr());
-
-  uchar Palette[768];
-  File.SeekPosEnd(-768);
-  File.Read(reinterpret_cast<char*>(Palette), 768);
-  File.SeekPosBegin(8);
-  Size.X  =  File.Get();
-  Size.X += (File.Get() << 8) + 1;
-  Size.Y  =  File.Get();
-  Size.Y += (File.Get() << 8) + 1;
+  rawbitmap Temp(FileName);
+  Size = Temp.Size;
   XSizeTimesYSize = Size.X * Size.Y;
-  File.SeekPosBegin(128);
   Alloc2D(Image, Size.Y, Size.X);
   packcol16* Buffer = Image[0];
+  paletteindex* TempBuffer = Temp.PaletteBuffer[0];
 
   for(int y = 0; y < Size.Y; ++y)
     for(int x = 0; x < Size.X; ++x)
     {
-      int Char1 = File.Get();
-
-      if(Char1 > 192)
-      {
-        --x;
-        int Char2 = File.Get();
-        int Char3 = Char2 + (Char2 << 1);
-        int Color = int(Palette[Char3] >> 3) << 11
-                    | int(Palette[Char3 + 1] >> 2) << 5
-                    | int(Palette[Char3 + 2] >> 3);
-
-        for(; Char1 > 192; --Char1)
-        {
-          *Buffer++ = Color;
-
-          if(++x == Size.X)
-          {
-            x = 0;
-            ++y;
-          }
-        }
-      }
-      else
-      {
-        int Char3 = Char1 + (Char1 << 1);
-        *Buffer++ = int(Palette[Char3] >> 3) << 11
-                    | int(Palette[Char3 + 1] >> 2) << 5
-                    | int(Palette[Char3 + 2] >> 3);
-      }
+      int Char1 = *TempBuffer++;
+      int Char3 = Char1 + (Char1 << 1);
+      *Buffer++ = int(Temp.Palette[Char3] >> 3) << 11
+                | int(Temp.Palette[Char3 + 1] >> 2) << 5
+                | int(Temp.Palette[Char3 + 2] >> 3);
     }
 }
 

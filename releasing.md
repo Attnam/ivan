@@ -1,26 +1,26 @@
 To do for each release
 ----------------------
 
-###Pull from master
+### Pull from master
 
-###Things to change around in the code:
+### Things to change around in the code:
 
  - Update the IVAN version number in the root CMakeLists.txt from 0.50.8 to 0.50.9, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
-###Things to change around on the web:
+### Things to change around on the web:
 
  - Announce the release on the RogueBasin main page at www.roguebasin.com.
  - Update the [IVAN wiki page at RogueBasin](http://www.roguebasin.com/index.php?title=IVAN) with the new version number and release date.
 
-###Compile the game
+### Compile the game
 
-###Include the following files in a zip folder for each release:
+### Include the following files in a zip folder for each release:
 
 **Folder: IvanWin0509**
 
-**Files = 10**
+**Files = 11**
 
   - AUTHORS
   - COPYING
@@ -32,27 +32,28 @@ To do for each release
   - README
   - README.md
   - SDL2.dll
+  - libpng3.dll
 
 **Subfolder: Graphics**
 
 **Files = 16**
 
-  - Char.pcx
-  - Cursor.pcx
-  - Effect.pcx
-  - Enner.pcx
-  - Font.pcx
-  - FOW.pcx
-  - GLTerra.pcx
-  - Humanoid.pcx
+  - Char.png
+  - Cursor.png
+  - Effect.png
+  - Enner.png
+  - Font.png
+  - FOW.png
+  - GLTerra.png
+  - Humanoid.png
   - Icon.bmp
-  - Item.pcx
-  - IVlad.pcx
-  - Menu.pcx
-  - OLTerra.pcx
-  - Smiley.pcx
-  - Symbol.pcx
-  - WTerra.pcx
+  - Item.png
+  - IVlad.png
+  - Menu.png
+  - OLTerra.png
+  - Smiley.png
+  - Symbol.png
+  - WTerra.png
 
 **Subfolder: Music**
 
@@ -88,7 +89,7 @@ To do for each release
 
 **Leave only dungeon data files in here**
 
-###Then commit changes, with the release tag v0509
+### Then commit changes, with the release tag v0509
 Tag can be appended to latest commit
 
-###Push changes
+### Push changes

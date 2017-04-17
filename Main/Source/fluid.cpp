@@ -336,7 +336,7 @@ void fluid::SetMotherItem(item* What)
 }
 
 /* Ensures the gear pictures are correct after this. ShadowPos is the armor's
-   or weapon's BitmapPos in humanoid.pcx. SpecialFlags should include drawing
+   or weapon's BitmapPos in Humanoid.png. SpecialFlags should include drawing
    information of the bodypart in question (ST_RIGHT_ARM etc). BodyArmor should
    be true iff the picture is part of a body armor, for instance armor covering
    one's shoulder. */

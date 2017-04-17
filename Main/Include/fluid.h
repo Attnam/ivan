@@ -95,7 +95,7 @@ class fluid : public entity
     /* AlphaSum / (non-transparent pixels in Picture), used to synchronise
        gear pictures with the main image */
     packalpha AlphaAverage;
-    /* The position of a gear picture in humanoid.pcx which binds the fluid;
+    /* The position of a gear picture in Humanoid.png which binds the fluid;
        remembered so that it can be easily determined whether the fluid needs
        to be redistributed due to a major graphics change */
     v2 ShadowPos;
