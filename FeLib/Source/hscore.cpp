@@ -275,6 +275,10 @@ static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
                                           std::vector<long>& GlobalScore,
                                           std::vector<time_t>& GlobalTime)
 {
+  iosystem::TextScreen(CONST_S("Fetching highscores from the server...\n\n"
+                               "This may take some time, please wait."),
+                       ZERO_V2, WHITE, false, true);
+
   if(curl_global_init(CURL_GLOBAL_ALL) != 0)
     return false;
 
@@ -315,6 +319,10 @@ static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
                                     long NewScore, cfestring& NewEntry,
                                     time_t NewTime, long NewRandomID)
 {
+  iosystem::TextScreen(CONST_S("Submitting highscore to the server...\n\n"
+                               "This may take some time, please wait."),
+                       ZERO_V2, WHITE, false, true);
+
   if(curl_global_init(CURL_GLOBAL_ALL) != 0)
     return;
 
