@@ -328,7 +328,8 @@ static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
       "\"username\": \"" << HighScoreServerUsername << "\","
       "\"password\": \"" << HighScoreServerPassword << "\","
       "\"score\": " << NewScore << ","
-      "\"entry\": \"" << NewEntry << "\""
+      "\"entry\": \"" << NewEntry << "\","
+      "\"version\": \"" << IVAN_VERSION << "\""
     "}";
 
     festring HighScoreSubmitURL = HighScoreServerURL + "/submit_score";
