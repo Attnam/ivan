@@ -10,7 +10,9 @@
  *
  */
 
+#ifdef USE_HIGHSCORE_SERVER
 #include <curl/curl.h>
+#endif
 
 #include "hscore.h"
 #include "save.h"
@@ -18,12 +20,14 @@
 #include "feio.h"
 #include "femath.h"
 
+#ifdef USE_HIGHSCORE_SERVER
 static truth RetrieveHighScoresFromServer(cfestring&,
                                           std::vector<festring>&,
                                           std::vector<long>&,
                                           std::vector<time_t>&);
 static void SubmitHighScoreToServer(cfestring&, cfestring&, cfestring&,
                                     long, cfestring&, time_t, long);
+#endif
 
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 128
@@ -41,10 +45,12 @@ truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
                      cfestring& HighScoreServerUsername,
                      cfestring& HighScoreServerAuthToken)
 {
+#ifdef USE_HIGHSCORE_SERVER
   if (!HighScoreServerURL.IsEmpty())
     SubmitHighScoreToServer(HighScoreServerURL, HighScoreServerUsername,
                             HighScoreServerAuthToken, NewScore, NewEntry,
                             NewTime, NewRandomID);
+#endif
 
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -100,12 +106,17 @@ void highscore::Draw(cfestring& HighScoreServerURL)
   for(;;)
   {
     festring Title;
+
+#ifdef USE_HIGHSCORE_SERVER
     if(View == LOCAL)
       Title = CONST_S("Adventurers' Hall of Fame                                "
                       "Press ENTER to view global highscores");
     else if(View == GLOBAL)
       Title = CONST_S("Global Adventurers' Hall of Fame                          "
                       "Press ENTER to view local highscores");
+#else
+    Title = CONST_S("Adventurers' Hall of Fame");
+#endif
 
     felist List(Title);
     festring Desc;
@@ -121,6 +132,7 @@ void highscore::Draw(cfestring& HighScoreServerURL)
         Desc << Entry[c];
         List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
       }
+#ifdef USE_HIGHSCORE_SERVER
     else if(View == GLOBAL)
     {
       RetrieveHighScoresFromServer(HighScoreServerURL, GlobalEntry,
@@ -137,10 +149,12 @@ void highscore::Draw(cfestring& HighScoreServerURL)
         List.AddEntry(Desc, LIGHT_GRAY, 13);
       }
     }
+#endif
 
     List.SetFlags(FADE);
     List.SetPageLength(40);
 
+#ifdef USE_HIGHSCORE_SERVER
     cuint DrawResult = List.Draw();
 
     if(DrawResult == UNSELECTABLE_SELECT) // Enter was pressed.
@@ -152,6 +166,10 @@ void highscore::Draw(cfestring& HighScoreServerURL)
     }
     else
       break;
+#else
+    List.Draw();
+    break;
+#endif
   }
 }
 
@@ -245,6 +263,7 @@ truth highscore::CheckVersion() const
   return Version == HIGH_SCORE_VERSION;
 }
 
+#ifdef USE_HIGHSCORE_SERVER
 static void ParseHighScoresFromCSV(cfestring& CSV,
                                    std::vector<festring>& GlobalEntry,
                                    std::vector<long>& GlobalScore,
@@ -312,6 +331,7 @@ static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
   curl_global_cleanup();
   return Success;
 }
+#endif
 
 /* Sends a HTTP request to the specified high-score server to validate the
    given username and password combination. Returns the user's auth token
@@ -321,6 +341,7 @@ festring FetchAuthToken(cfestring& HighScoreServerURL,
                         cfestring& HighScoreServerUsername,
                         cfestring& HighScoreServerPassword)
 {
+#ifdef USE_HIGHSCORE_SERVER
   if(curl_global_init(CURL_GLOBAL_ALL) != 0)
     return "";
 
@@ -349,7 +370,12 @@ festring FetchAuthToken(cfestring& HighScoreServerURL,
 
   curl_global_cleanup();
   return AuthToken;
+#else
+  return "";
+#endif
 }
+
+#ifdef USE_HIGHSCORE_SERVER
 
 static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
                                     cfestring& HighScoreServerUsername,
@@ -393,3 +419,5 @@ static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
 
   curl_global_cleanup();
 }
+
+#endif // USE_HIGHSCORE_SERVER

@@ -382,9 +382,11 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(&MIDIOutputDevice);
+#ifdef USE_HIGHSCORE_SERVER
   configsystem::AddOption(&HighScoreServerURL);
   configsystem::AddOption(&HighScoreServerUsername);
   configsystem::AddOption(&HighScoreServerAuthToken);
+#endif
 #ifndef __DJGPP__
   configsystem::AddOption(&GraphicsScale);
   configsystem::AddOption(&FullScreenMode);

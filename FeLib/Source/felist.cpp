@@ -256,11 +256,13 @@ uint felist::Draw()
     {
       if(Flags & SELECTABLE)
         Return = Selected;
+#ifdef USE_HIGHSCORE_SERVER
       else
         // Used by the hall of fame to toggle between local and global scores.
         Return = UNSELECTABLE_SELECT;
 
       break;
+#endif
     }
 
     if(Pressed == KEY_ESC)

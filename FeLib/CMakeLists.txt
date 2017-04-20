@@ -18,6 +18,12 @@ endif()
 
 # libcurl, for sending/fetching high-scores to/from a global high-score server.
 find_package(CURL)
+if(CURL_FOUND)
+  message(STATUS "Using libcurl ${CURL_VERSION_STRING}")
+  target_compile_definitions(FeLib PUBLIC USE_HIGHSCORE_SERVER)
+else()
+  message(WARNING "libcurl not found, global high-score submissions will be disabled")
+endif()
 
 if(MSVC)
   # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.
