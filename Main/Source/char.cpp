@@ -2151,7 +2151,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
     HScore.Add(long(game::GetScore() * Multiplier), Desc,
                ivanconfig::GetHighScoreServerURL(),
                ivanconfig::GetHighScoreServerUsername(),
-               ivanconfig::GetHighScoreServerPassword());
+               ivanconfig::GetHighScoreServerAuthToken());
     HScore.Save();
   }
 }

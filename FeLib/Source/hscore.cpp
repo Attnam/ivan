@@ -39,11 +39,11 @@ highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSIO
 truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
                      long NewRandomID, cfestring& HighScoreServerURL,
                      cfestring& HighScoreServerUsername,
-                     cfestring& HighScoreServerPassword)
+                     cfestring& HighScoreServerAuthToken)
 {
   if (!HighScoreServerURL.IsEmpty())
     SubmitHighScoreToServer(HighScoreServerURL, HighScoreServerUsername,
-                            HighScoreServerPassword, NewScore, NewEntry,
+                            HighScoreServerAuthToken, NewScore, NewEntry,
                             NewTime, NewRandomID);
 
   for(uint c = 0; c < Score.size(); ++c)
@@ -205,10 +205,10 @@ truth highscore::MergeToFile(highscore* To) const
 truth highscore::Add(long NewScore, cfestring& NewEntry,
                      cfestring& HighScoreServerURL,
                      cfestring& HighScoreServerUsername,
-                     cfestring& HighScoreServerPassword)
+                     cfestring& HighScoreServerAuthToken)
 {
   return Add(NewScore, NewEntry, time(0), RAND(), HighScoreServerURL,
-             HighScoreServerUsername, HighScoreServerPassword);
+             HighScoreServerUsername, HighScoreServerAuthToken);
 }
 
 /* Because of major stupidity this return the number of NEXT
@@ -313,9 +313,47 @@ static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
   return Success;
 }
 
+/* Sends a HTTP request to the specified high-score server to validate the
+   given username and password combination. Returns the user's auth token
+   if authentication was successful, otherwise returns an empty string. */
+
+festring FetchAuthToken(cfestring& HighScoreServerURL,
+                        cfestring& HighScoreServerUsername,
+                        cfestring& HighScoreServerPassword)
+{
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return "";
+
+  festring AuthToken;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    festring AuthTokenFetchURL = HighScoreServerURL + "/get_auth_token";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, AuthTokenFetchURL.CStr());
+    curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
+    curl_easy_setopt(Curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(Curl, CURLOPT_USERNAME, HighScoreServerUsername.CStr());
+    curl_easy_setopt(Curl, CURLOPT_PASSWORD, HighScoreServerPassword.CStr());
+    curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
+    curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &AuthToken);
+    CURLcode Res = curl_easy_perform(Curl);
+    long ResponseCode;
+    curl_easy_getinfo(Curl, CURLINFO_RESPONSE_CODE, &ResponseCode);
+
+    if(Res != CURLE_OK || ResponseCode != 200)
+      AuthToken.Empty();
+
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
+  return AuthToken;
+}
+
 static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
                                     cfestring& HighScoreServerUsername,
-                                    cfestring& HighScoreServerPassword,
+                                    cfestring& HighScoreServerAuthToken,
                                     long NewScore, cfestring& NewEntry,
                                     time_t NewTime, long NewRandomID)
 {
@@ -334,7 +372,7 @@ static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
     Json <<
     "{"
       "\"username\": \"" << HighScoreServerUsername << "\","
-      "\"password\": \"" << HighScoreServerPassword << "\","
+      "\"auth_token\": \"" << HighScoreServerAuthToken << "\","
       "\"score\": " << NewScore << ","
       "\"entry\": \"" << NewEntry << "\","
       "\"version\": \"" << IVAN_VERSION << "\""

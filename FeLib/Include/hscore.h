@@ -67,4 +67,8 @@ class highscore
   static highscoreview View;
 };
 
+festring FetchAuthToken(cfestring& HighScoreServerURL,
+                        cfestring& HighScoreServerUsername,
+                        cfestring& HighScoreServerPassword);
+
 #endif

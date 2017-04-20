@@ -27,7 +27,7 @@ class iosystem
   static festring ContinueMenu(col16, col16, cfestring&);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,
-                            truth, truth, stringkeyhandler = 0);
+                            truth, truth, stringkeyhandler = 0, truth = false);
   static long NumberQuestion(cfestring&, v2, col16,
                              truth, truth = false);
   static long ScrollBarQuestion(cfestring&, v2, long, long, long,

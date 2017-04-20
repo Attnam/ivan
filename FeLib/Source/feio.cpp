@@ -286,7 +286,8 @@ int iosystem::StringQuestion(festring& Input,
                              festring::sizetype MinLetters,
                              festring::sizetype MaxLetters,
                              truth Fade, truth AllowExit,
-                             stringkeyhandler StringKeyHandler)
+                             stringkeyhandler StringKeyHandler,
+                             truth SecretInput)
 {
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
@@ -303,7 +304,8 @@ int iosystem::StringQuestion(festring& Input,
     bitmap Buffer(RES, 0);
     Buffer.ActivateFastFlag();
     FONT->Printf(&Buffer, Pos, Color, "%s", Topic.CStr());
-    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 10), Color, "%s", Input.CStr());
+    FONT->Printf(&Buffer, v2(Pos.X, Pos.Y + 10), Color, "%s",
+                 SecretInput ? festring(Input.GetSize(), '*').CStr() : Input.CStr());
     Buffer.FadeToScreen();
   }
   else
@@ -317,8 +319,8 @@ int iosystem::StringQuestion(festring& Input,
   {
     B.Bitmap = DOUBLE_BUFFER;
     BackUp.NormalBlit(B);
-    FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 10),
-                 Color, "%s", Input.CStr());
+    FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 10), Color, "%s",
+                 SecretInput ? festring(Input.GetSize(), '*').CStr() : Input.CStr());
     FONT->Printf(DOUBLE_BUFFER, v2(Pos.X, Pos.Y + 11),
                  Color, "%*c", CursorPos + 1, '_');
 

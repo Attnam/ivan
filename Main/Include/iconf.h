@@ -33,7 +33,7 @@ class ivanconfig
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
   static cfestring& GetHighScoreServerURL() { return HighScoreServerURL.Value; }
   static cfestring& GetHighScoreServerUsername() { return HighScoreServerUsername.Value; }
-  static cfestring& GetHighScoreServerPassword() { return HighScoreServerPassword.Value; }
+  static cfestring& GetHighScoreServerAuthToken() { return HighScoreServerAuthToken.Value; }
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -63,6 +63,7 @@ class ivanconfig
   static void VolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static truth PasswordChangeInterface(stringoption*);
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
@@ -86,7 +87,7 @@ class ivanconfig
   static cycleoption MIDIOutputDevice;
   static stringoption HighScoreServerURL;
   static stringoption HighScoreServerUsername;
-  static stringoption HighScoreServerPassword;
+  static stringoption HighScoreServerAuthToken;
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;

@@ -42,6 +42,7 @@ class configsystem
   static truth NormalTruthChangeInterface(truthoption*);
   static truth NormalCycleChangeInterface(cycleoption*);
   static void NormalStringChanger(stringoption*, cfestring&);
+  static void SecretStringChanger(stringoption*, cfestring&);
   static void NormalNumberChanger(numberoption*, long);
   static void NormalTruthChanger(truthoption*, truth);
   static void NormalCycleChanger(cycleoption*, long);

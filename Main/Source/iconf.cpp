@@ -18,6 +18,7 @@
 #include "bitmap.h"
 #include "igraph.h"
 #include "audio.h"
+#include "hscore.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -78,10 +79,11 @@ stringoption ivanconfig::HighScoreServerURL("HighScoreServerURL",
 stringoption ivanconfig::HighScoreServerUsername("HighScoreServerUsername",
                                           "username for submitting global high-scores",
                                           "");
-stringoption ivanconfig::HighScoreServerPassword("HighScoreServerPassword",
+stringoption ivanconfig::HighScoreServerAuthToken("HighScoreServerAuthToken",
                                           "password for submitting global high-scores",
                                           "",
-                                          &configsystem::SecretStringDisplayer);
+                                          &configsystem::SecretStringDisplayer,
+                                          &PasswordChangeInterface);
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           "select graphics scale factor",
@@ -250,6 +252,43 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
   audio::SetVolumeLevel(What);
 }
 
+truth ivanconfig::PasswordChangeInterface(stringoption* O)
+{
+  festring Password;
+  festring Topic = CONST_S("Enter password for submitting global high-scores:");
+  truth FirstTry = true;
+
+  while(iosystem::StringQuestion(Password, Topic, v2(30, 30), WHITE, 0, 80,
+                                 true, true, nullptr, true) == NORMAL_EXIT)
+  {
+    if(Password.IsEmpty())
+    {
+      O->ChangeValue("");
+      break;
+    }
+
+    festring AuthToken = FetchAuthToken(ivanconfig::GetHighScoreServerURL(),
+                                        ivanconfig::GetHighScoreServerUsername(),
+                                        Password);
+
+    if(!AuthToken.IsEmpty())
+    {
+      O->ChangeValue(AuthToken);
+      break;
+    }
+
+    if(FirstTry)
+    {
+      Topic.Insert(0, "Incorrect username or password! ");
+      FirstTry = false;
+    }
+
+    Password.Empty();
+  }
+
+  return false;
+}
+
 #ifndef __DJGPP__
 
 void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
@@ -345,7 +384,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&MIDIOutputDevice);
   configsystem::AddOption(&HighScoreServerURL);
   configsystem::AddOption(&HighScoreServerUsername);
-  configsystem::AddOption(&HighScoreServerPassword);
+  configsystem::AddOption(&HighScoreServerAuthToken);
 #ifndef __DJGPP__
   configsystem::AddOption(&GraphicsScale);
   configsystem::AddOption(&FullScreenMode);
