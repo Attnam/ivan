@@ -46,7 +46,7 @@ truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
                      cfestring& HighScoreServerAuthToken)
 {
 #ifdef USE_HIGHSCORE_SERVER
-  if (!HighScoreServerURL.IsEmpty())
+  if (!HighScoreServerURL.IsEmpty() && NewScore)
     SubmitHighScoreToServer(HighScoreServerURL, HighScoreServerUsername,
                             HighScoreServerAuthToken, NewScore, NewEntry,
                             NewTime, NewRandomID);
