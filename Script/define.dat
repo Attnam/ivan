@@ -591,6 +591,7 @@
 #define GRAND_MASTER 8
 #define TOMB_ENTRY 9
 #define TOMB_ENTRY_MASTER 10
+#define HONOR 11
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -646,6 +647,7 @@
 #define MARSHAL 5
 
 #define MASTER_TORTURER 1
+#define HOARD_MASTER 2
 
 #define APPRENTICE 1
 #define BATTLE_MAGE 2

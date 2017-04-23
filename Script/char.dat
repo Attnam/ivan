@@ -436,11 +436,12 @@ farmer
   HostileReplies == "\"Did you think I use this axe only to chop wood?\"";
   FriendlyReplies =
   {
-    5,
+    6,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
     "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
+    "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
@@ -541,10 +542,12 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      7,
+      9,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "@Dd snorts.",
-      "@Dd looks at you: \"... Hmph.\"",
+      "@Dd spits on the ground.",
+      "\"...\"",
+      "\"Hmph.\"",
       "\"Don't even think of breaking rules.\"",
       "\"The high priest is my idol. I would want a sword as big as his!\"",
       "\"Don't talk to the prisoners in the Cellar, or you might end up amongst them.\"",
@@ -581,7 +584,7 @@ guard
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
     LeftWielded = IRON shield;
-    RightRing = ring(RING_OF_INFRA_VISION);
+    RightRing = VALPURIUM ring(RING_OF_INFRA_VISION);
     Adjective = "patrol";
     CWeaponSkillHits = { 2, 200, 200; }
     RightSWeaponSkillHits = 100;
@@ -590,11 +593,12 @@ guard
     ClothColor = rgb16(220, 220, 220);
     FriendlyReplies =
     {
-      5,
+      6,
       "@Dd shudders in the freezing air. \"Boy this rusty plate mail is cold in winter!\"",
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
+      "\"Through brightest day, through blackest night no evil shall escape my sight!\"",
       "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
@@ -689,11 +693,13 @@ guard
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
-      8,
+      10,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
       "\"My great-grandfather, Sir Haedlac Galladon IV, once told me a story he heard from his great-grandfather: That when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
+      "\"Enemy of my enemy is still my enemy, but much easier to double cross.\"",
+      "\"You can't make an omelet without ruthlessly crushing dozens of eggs beneath your steel boot and then publicly disemboweling the chickens that laid them as a warning to others.\"",
       "\"I'm the Attnamese Cardinal of Peace. I shall bring peace to the whole world, one nation at a time.\"",
       "\"Stop, citizen! You are guilty of a thought-crime! I thereby condemn you to re-education by the hand of the master torturer! Tee hee - just kidding. But you should have seen your face!\"",
       "\"I'm the seventh knight of my family line in the service of Petrus. My great-great-great-great-grandfather received knighthood after he helped Petrus overthrow High Priest Priscus.\"",
@@ -770,6 +776,31 @@ guard
     AllowUnconsciousness = false;
     DisplacePriority = 4;
     UndeadVersions = false;
+  }
+
+  Config HONOR;
+  {
+    Helmet = SILVER helmet(FULL_HELMET);
+    BodyArmor = SILVER bodyarmor(PLATE_MAIL);
+    Cloak = FABRIC cloak;
+    RightWielded = SILVER meleeweapon(HALBERD);
+    LeftWielded = 0;
+    RightGauntlet = SILVER gauntlet;
+    RightBoot = SILVER boot;
+    UsesLongAdjectiveArticle = true;
+    KnownCWeaponSkills == POLE_ARMS;
+    Adjective = "honor";
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 10;
+    PanicLevel = 25;
+    ClothColor = rgb16(220, 220, 220);
+    FriendlyReplies =
+    {
+      3,
+      "@Dd looks bored.",
+      "\"This is the Tomb of the Unknown Soldier! His name was Lamusius! Oops.\"",
+      "\"Not that I think about it, I was reassigned as an honor guard after that huge screw-up. I wonder if... Nah, it's probably just a coincidence.\"";
+    }
   }
 }
 
@@ -949,7 +980,7 @@ priest
     RightSWeaponSkillHits = 20;
     FriendlyReplies =
     {
-      13,
+      14,
       "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
       "\"The souls of the virtuous, the devout and the faithful bath forever in the radiant glory of Valpurus and sing praises on His greatness. The souls of sinners, heretics and unbelievers are swallowed by Mortifer and damned to relive their worst nightmares for all eternity!\"",
       "\"The Cathedral of Valpurus has no windows, for it is written in the Holy Book of Valpurus: 'Windows is Evil.'\"",
@@ -960,6 +991,7 @@ priest
       "\"Repeat after me: Ignorance is Strength.\"",
       "\"Hail mighty Petrus!\"",
       "\"Ad maiorem Valpuri gloriam.\"",
+      "\"Thou shalt not suffer a witch to live! Mystic frogs are OK, though.\"",
       "\"Thus spake Valpurus: 'I am the King of Gods, Valpurus. Thou shalt praise no other gods before me.\"",
       "@Dd smirks: \"I would not wish to startle you, but thanks to this amulet, I will always know if you're telling me the truth.\"",
       "@Dd frowns: \"In thy prayers thou must understand Valpurus is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray to Him when He hath called thee a Champion!\"";
@@ -1694,11 +1726,21 @@ billswill
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"You will install the Psionic Operating System. Resistance is futile. Prepare to be assimilated.\"";
+  HostileReplies =
+  {
+    4,
+    "\"You will install Bill's Psionic Operating System.\"",
+    "\"We shall strike you down! We shall send you to the Recycle Bin!\"",
+    "\"Resistance is futile.\"",
+    "\"Prepare to be assimilated.\"";
+  }
   FriendlyReplies =
   {
-    6,
+    9,
     "\"Praise the Corporation!\"",
+    "\"We say 640K should be enough for ANYBODY!\"",
+    "\"Great sorceress Xunil?  Never heard of her...\"",
+    "@Dd hacks out some psi-code and calls it a Service Pack.",
     "\"Your most unhappy customers are your greatest source of learning.\"",
     "\"Success is a lousy teacher. It seduces smart people into thinking they can't lose.\"",
     "\"It's fine to celebrate success but it is more important to heed the lessons of failure.\"",
@@ -3551,9 +3593,13 @@ mistress
     HostileReplies == "\"Bow before your queen!\"";
     FriendlyReplies =
     {
-      3,
+      7,
       "@Dd smiles: \"I am not afraid of pain. Quite the opposite.\"",
       "\"Rend me! Gore me! Pain forges me!\"",
+      "\"The truth is, I... you... for some reason, I think I lik-eeehh, nevermind! It's nothing!\"",
+      "\"Come closer, little boy, I'll give you something good!\"",
+      "\"Bad kitty! I need to punish you.\"",
+      "\"You can serve me to the end of your days, for you are my dearest slave.\"",
       "\"And I told her: 'That was awsome, but I said I will need some cunning linguists for the meeting.'\"";
     }
     DeathMessage = "@Dd dies with a smile: \"Good night, darling...\"";
@@ -4738,10 +4784,11 @@ imperialist
   IsPolymorphable = false;
   FriendlyReplies =
   {
-    10, /* the last isn't used if the player is a sumo champion */
+    11, /* the last isn't used if the player is a sumo champion */
+    "@Dd wonders if he should buy a small country.",
     "\"And they said levitating ostriches had no future! Hah!\"",
     "\"Happiness is a great thing, but it won't buy you much.\"",
-    "\"Everything can be bought and once we appraise everything, we will be able to buy the universe!\"",
+    "\"Everything can be bought, if you know the price. Once we appraise everything, we will be able to buy the universe!\"",
     "\"Everything has a price - your loyalty and life, the air we breathe, sunshine, even my own beliefs.\"",
     "\"Poor people shouldn't complain - after all it's their own fault.\"",
     "\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if my room has something to do with it?\"",
@@ -4841,11 +4888,12 @@ imperialist
     HostileReplies == "\"All you can do is hurt me. And I *love* hurting!\"";
     FriendlyReplies =
     {
-      10,
+      11,
       "@Dd smiles. It's terrifying.",
       "@Dd sighs: \"Why don't the prisoners understand it's for their own good?\"",
       "@Dd looks smug. \"I'm the head of the Citizen Purification Committee.\"",
       "\"I would love to break your arms, one bone at a time.\"",
+      "\"When I'm sad I stop being sad and go torture someone instead.\"",
       "\"Bazzaria, ah, home sweet home! You can buy there everything and anything, for the right price.\"",
       "@Dd smiles: \"How many lights do you see?\"",
       "\"Bazzaria is a land of possibility and opportunity, where every man can live his dream. Women, children and slaves not so much.\"",
@@ -4855,6 +4903,52 @@ imperialist
     }
     DeathMessage = "@Dd screams, dying: \"I see the door! The extasy of death! I'm coming!\"";
     Inventory == key;
+  }
+
+  Config HOARD_MASTER;
+  {
+    HeadBitmapPos = 96, 80;
+    TorsoBitmapPos = 32, 16;
+    ArmBitmapPos = 64, 16;
+    LegBitmapPos = 0, 32;
+    TorsoMainColor = rgb16(176, 0, 0);
+    LegMainColor = rgb16(176, 0, 0);
+    SkinColor = rgb16(255, 222, 202);
+    CapColor = rgb16(176, 0, 0);
+    Helmet = FABRIC helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
+    Amulet = amulet(AMULET_OF_ESP);
+    Cloak = FABRIC cloak { Enchantment = 3; }
+    BodyArmor = 0;
+    RightWielded = 0;
+    LeftWielded = 0;
+    LeftRing = 0;
+    RightGauntlet = 0;
+    Belt = FABRIC belt(BELT_OF_CARRYING) { Enchantment = 2; }
+    RightBoot = FABRIC boot { Enchantment = 2; }
+    NameSingular = "hoardmaster";
+    DefaultName = "Thesaurius";
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 50, 50; }
+    PanicLevel = 95;
+    BaseUnarmedStrength = 200;
+    IsExtraCoward = true;
+    StandVerb = "scowling";
+    HostileReplies == "\"Guards! Guards!\"";
+    FriendlyReplies =
+    {
+      10,
+      "\"I was appointed the Cardinal of Plenty because I can juggle the numbers like no one else.\"",
+      "\"It's only thanks to my skills with numbers that the Cathedral's accounting books show a steady economic growth.\"",
+      "\"The citizens have no bread, you say? Let them eat cake!\"",
+      "\"There can be economy only where there is efficiency.\"",
+      "\"The way to turn our economy stronger is not by making rich people poorer, it's by making poor people work harder.\"",
+      "\"It's called political economy because it is has nothing to do with either politics or economy.\"",
+      "\"It is virtually impossible to compete in today's economy without the Cathedral's favor.\"",
+      "\"The Attnamese domination of the local economy is based on its army.\"",
+      "\"A powerful Attnam is coming, and Bazzaria has only two choices: Either they're at the table, or they're on the menu!\"",
+      "\"The trick to strong and stable economy is to work the citizens hard enough they can't afford the luxury of thought.\"";
+    }
+    Inventory = { 3, GOLD key(HEXAGONAL_LOCK), GOLD scrollofdetectmaterial, GOLD holybook(MELLIS); }
   }
 }
 
@@ -5410,6 +5504,15 @@ darkmage
     IsExtraFragile = false;
     AllowUnconsciousness = false;
     UndeadVersions = false;
+    HostileReplies =
+    {
+      4,
+      "\"Minions, slaughter this fool!\"",
+      "\"Verily, thou shalt be one dead cretin.\"",
+      "@Dd is humming an incantation of a devastating death-spell.",
+      "\"A mere mortal dares challenge my might?\"";
+    }
+    FriendlyReplies == "\"Death awaits our foes.\"";
     DeathMessage = "@Dd dies with a calm smile: \"Hello darkness, my old friend...\"";
   }
 }
