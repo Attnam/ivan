@@ -371,8 +371,8 @@ Dungeon UNDER_WATER_TUNNEL;
       /* Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
-        EntryIndex = STAIRS_DOWN; */
-      }
+        EntryIndex = STAIRS_DOWN;
+      } */
     }
 
     Room
