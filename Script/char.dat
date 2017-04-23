@@ -3131,6 +3131,9 @@ zombie
     DefaultWisdom = 15;
     DefaultCharisma = 5;
     RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
+    KnownCWeaponSkills == AXES;
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 100;
     ClassStates = LEPROSY;
     IsExtraFragile = false;
     Sex = FEMALE;
@@ -4911,10 +4914,12 @@ imperialist
     TorsoBitmapPos = 32, 16;
     ArmBitmapPos = 64, 16;
     LegBitmapPos = 0, 32;
+    HairColor = rgb16(160, 160, 160);
     TorsoMainColor = rgb16(176, 0, 0);
     LegMainColor = rgb16(176, 0, 0);
     SkinColor = rgb16(255, 222, 202);
     CapColor = rgb16(176, 0, 0);
+    ClothColor = rgb16(176, 0, 0);
     Helmet = FABRIC helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
     Amulet = amulet(AMULET_OF_ESP);
     Cloak = FABRIC cloak { Enchantment = 3; }
