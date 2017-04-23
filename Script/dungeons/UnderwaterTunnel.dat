@@ -368,10 +368,10 @@ Dungeon UNDER_WATER_TUNNEL;
         EntryIndex = STAIRS_UP;
       }
 
-      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      /* Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
-        EntryIndex = STAIRS_DOWN;
+        EntryIndex = STAIRS_DOWN; */
       }
     }
 
@@ -389,11 +389,6 @@ Dungeon UNDER_WATER_TUNNEL;
       {
         OTerrain = decoration(HOLY_TREE);
       }
-
-      /*Square, Random HAS_NO_OTERRAIN;
-      {
-        Character = terra;
-      }*/
     }
 
     Square, Random HAS_NO_OTERRAIN;
