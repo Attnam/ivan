@@ -292,6 +292,7 @@ Dungeon ATTNAM;
           t = decoration(TABLE);
           x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, FABRIC cloak, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } } }
           X = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; } } }
+          c = christmastree;
         }
       }
       {
@@ -326,15 +327,15 @@ Dungeon ATTNAM;
         .......#8.6#...............#~..#.......
         b...b.b#473#...............#x=-#b.b...b
         .b....##@####...###D###...####@##....b.
-        b..####.s.s.D...#.b.b.#...D..[.[####..b
+        b..####.s.s.D...#.c.c.#...D..[.[####..b
         ..b#.d......#####.f.f.#####.....[.[#b..
         b..#....s.s.#b..b.....b..b#tttt....#..b
-        .b.##...#####.bb..b.b..bb.#####...##.b.
+        .b.##...#####.bb..c.c..bb.#####...##.b.
         b..b##xx#b.b......f.f......b.b#..##b..b
         ....b####....b...........b....####b....
-        b.b...b...b.......b.b.......b...b...b.b
+        b.b...b...b.......c.c.......b...b...b.b
         ...............bb.f.f.bb...............
-        b.b.b.b.b.b.b.b..b...b..b.b.b.b.b.b.b.b
+        b.b.b.b.b.b.b.b..c...c..b.b.b.b.b.b.b.b
       }
 
       ItemMap
