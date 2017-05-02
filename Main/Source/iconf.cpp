@@ -73,6 +73,12 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
+cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
+                                          "select graphics scale factor",
+                                          1, 2,
+                                          &GraphicsScaleDisplayer,
+                                          &GraphicsScaleChangeInterface,
+                                          &GraphicsScaleChanger);
 truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           "run the game in full screen mode",
                                           false,
@@ -130,7 +136,7 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   int NumDevices = audio::GetMIDIOutputDevices(devicenames);
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
-  if( O->Value && devicenames.size() )
+  if(O->Value && O->Value <= devicenames.size())
   {
      const char *cstr = devicenames[O->Value - 1].c_str();
      Entry << cstr;
@@ -236,6 +242,23 @@ void ivanconfig::VolumeChanger(numberoption* O, long What)
 
 #ifndef __DJGPP__
 
+void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value << 'x';
+}
+
+truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  return true;
+}
+
+void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+  graphics::SetScale(What);
+}
+
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
@@ -311,6 +334,7 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(&MIDIOutputDevice);
 #ifndef __DJGPP__
+  configsystem::AddOption(&GraphicsScale);
   configsystem::AddOption(&FullScreenMode);
 #endif
 #if defined(WIN32) || defined(__DJGPP__)

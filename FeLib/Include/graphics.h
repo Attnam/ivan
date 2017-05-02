@@ -34,12 +34,13 @@ class graphics
   static void Init();
   static void DeInit();
 #ifdef USE_SDL
+  static void SetScale(int);
   static void SwitchMode();
 #endif
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
-  static void SetMode(cchar*, cchar*, v2, truth);
+  static void SetMode(cchar*, cchar*, v2, int, truth);
   static void BlitDBToScreen();
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
@@ -115,6 +116,7 @@ class graphics
 #endif
   static bitmap* DoubleBuffer;
   static v2 Res;
+  static int Scale;
   static int ColorDepth;
   static rawbitmap* DefaultFont;
 };

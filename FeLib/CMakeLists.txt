@@ -38,6 +38,18 @@ if(MINGW)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
 endif()
 
+# Try finding libpng using pkg-config first, because find_package(PNG) finds a
+# mismatching header + library combination for me.
+include(FindPkgConfig)
+if(PKG_CONFIG_FOUND)
+  pkg_check_modules(PNG libpng)
+  set(PNG_LIBRARIES ${PNG_LDFLAGS})
+endif()
+if(NOT PNG_FOUND)
+  find_package(PNG REQUIRED)
+  add_definitions(${PNG_DEFINITIONS})
+endif()
+
 target_include_directories(FeLib PUBLIC Include)
-target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(FeLib ${SDL2_LIBRARY})
+target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
+target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES})

@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
@@ -436,10 +436,12 @@ farmer
   HostileReplies == "\"Did you think I use this axe only to chop wood?\"";
   FriendlyReplies =
   {
-    4,
+    6,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
     "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
+    "\"I would like to be like Ivan. Ivan is a good worker.\"",
+    "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
@@ -455,6 +457,24 @@ farmer
     "herbalism", "plants", "breeding", "snow", "forestry";
   }
   DisplacePriority = -2;
+
+  Config IMPRISONED_FARMER;
+  {
+    UsesLongAdjectiveArticle = true;    
+    Adjective = "eunuch";
+    CanBeGenerated = false;
+    AttributeBonus = -10;
+    RightWielded = 0;
+    IsMasochist = true;
+    HostileReplies == "\"You don't have the balls to kill me!\"";
+    FriendlyReplies =
+    {
+      3,
+      "\"Let's just say that Petrus' wife No. 3 was beautiful and I wasn't careful.\"",
+      "\"Would you have a nut to spare?\"",
+      "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
+    }
+  }
 }
 
 guard
@@ -503,6 +523,7 @@ guard
       "\"This place's as hot as the elemental plane of fire! I want back home.\"",
       "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
     }
+    DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
     AutomaticallySeen = true;
     DisplacePriority = -5;
   }
@@ -521,8 +542,12 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      5,
+      9,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
+      "@Dd snorts.",
+      "@Dd spits on the ground.",
+      "\"...\"",
+      "\"Hmph.\"",
       "\"Don't even think of breaking rules.\"",
       "\"The high priest is my idol. I would want a sword as big as his!\"",
       "\"Don't talk to the prisoners in the Cellar, or you might end up amongst them.\"",
@@ -559,7 +584,7 @@ guard
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
     LeftWielded = IRON shield;
-    RightRing = ring(RING_OF_INFRA_VISION);
+    RightRing = VALPURIUM ring(RING_OF_INFRA_VISION);
     Adjective = "patrol";
     CWeaponSkillHits = { 2, 200, 200; }
     RightSWeaponSkillHits = 100;
@@ -568,11 +593,12 @@ guard
     ClothColor = rgb16(220, 220, 220);
     FriendlyReplies =
     {
-      5,
+      6,
       "@Dd shudders in the freezing air. \"Boy this rusty plate mail is cold in winter!\"",
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
+      "\"Through brightest day, through blackest night no evil shall escape my sight!\"",
       "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
@@ -626,11 +652,12 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      5,
+      6,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
       "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
       "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
+      "\"Hi! You look fabulous today!\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
   }
@@ -666,11 +693,16 @@ guard
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
-      5,
+      10,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
-      "\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
+      "\"My great-grandfather, Sir Haedlac Galladon IV, once told me a story he heard from his great-grandfather: That when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
+      "\"Enemy of my enemy is still my enemy, but much easier to double cross.\"",
+      "\"You can't make an omelet without ruthlessly crushing dozens of eggs beneath your steel boot and then publicly disemboweling the chickens that laid them as a warning to others.\"",
+      "\"I'm the Attnamese Cardinal of Peace. I shall bring peace to the whole world, one nation at a time.\"",
+      "\"Stop, citizen! You are guilty of a thought-crime! I thereby condemn you to re-education by the hand of the master torturer! Tee hee - just kidding. But you should have seen your face!\"",
+      "\"I'm the seventh knight of my family line in the service of Petrus. My great-great-great-great-grandfather received knighthood after he helped Petrus overthrow High Priest Priscus.\"",
       "\"The house of Galladon has served Petrus ever since he took over.\"";
     }
     IsImmuneToItemTeleport = true;
@@ -717,6 +749,7 @@ guard
     LeftRing = ring(RING_OF_POISON_RESISTANCE);
     RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = ILLITHIUM boot { Enchantment = 2; }
+    DefaultName = "High Lord Kauhistuttava";
     Adjective = "master tomb";
     CWeaponSkillHits = { 2, 2000, 2000; }
     RightSWeaponSkillHits = 200;
@@ -743,6 +776,31 @@ guard
     AllowUnconsciousness = false;
     DisplacePriority = 4;
     UndeadVersions = false;
+  }
+
+  Config HONOR;
+  {
+    Helmet = SILVER helmet(FULL_HELMET);
+    BodyArmor = SILVER bodyarmor(PLATE_MAIL);
+    Cloak = FABRIC cloak;
+    RightWielded = SILVER meleeweapon(HALBERD);
+    LeftWielded = 0;
+    RightGauntlet = SILVER gauntlet;
+    RightBoot = SILVER boot;
+    UsesLongAdjectiveArticle = true;
+    KnownCWeaponSkills == POLE_ARMS;
+    Adjective = "honor";
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 10;
+    PanicLevel = 25;
+    ClothColor = rgb16(220, 220, 220);
+    FriendlyReplies =
+    {
+      3,
+      "@Dd looks bored.",
+      "\"This is the Tomb of the Unknown Soldier! His name was Lamusius! Oops.\"",
+      "\"Not that I think about it, I was reassigned as an honor guard after that huge screw-up. I wonder if... Nah, it's probably just a coincidence.\"";
+    }
   }
 }
 
@@ -864,7 +922,7 @@ shopkeeper
     KnownCWeaponSkills == AXES;
     CWeaponSkillHits == 1000;
     RightSWeaponSkillHits = 500;
-    DefaultName = "Fry";
+    DefaultName = "Fryndal";
     Inventory == lantern;
     UndeadVersions = false;
     FriendlyReplies =
@@ -906,9 +964,11 @@ priest
     LegBitmapPos = 0, 32;
     TotalVolume = 100000;
     TotalSize = 180;
+    DefaultName = "Verax";
     AttachedGod = VALPURUS;
     PostFix = "of Valpurus";
     Helmet = MITHRIL helmet { Enchantment = 2; }
+    Amulet = amulet(AMULET_OF_ESP);
     BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
     Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
     Belt = NYMPH_HAIR belt { Enchantment = 2; }
@@ -918,7 +978,24 @@ priest
     KnownCWeaponSkills == BLUNT_WEAPONS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
-    FriendlyReplies == "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"";
+    FriendlyReplies =
+    {
+      14,
+      "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"",
+      "\"The souls of the virtuous, the devout and the faithful bath forever in the radiant glory of Valpurus and sing praises on His greatness. The souls of sinners, heretics and unbelievers are swallowed by Mortifer and damned to relive their worst nightmares for all eternity!\"",
+      "\"The Cathedral of Valpurus has no windows, for it is written in the Holy Book of Valpurus: 'Windows is Evil.'\"",
+      "\"I am the Cardinal of Truth, therefore everything I say is truth.\"",
+      "\"Repeat after me: 1 + 1 = 3.\"",
+      "\"Repeat after me: War is Peace.\"",
+      "\"Repeat after me: Freedom is Slavery.\"",
+      "\"Repeat after me: Ignorance is Strength.\"",
+      "\"Hail mighty Petrus!\"",
+      "\"Ad maiorem Valpuri gloriam.\"",
+      "\"Thou shalt not suffer a witch to live! Mystic frogs are OK, though.\"",
+      "\"Thus spake Valpurus: 'I am the King of Gods, Valpurus. Thou shalt praise no other gods before me.\"",
+      "@Dd smirks: \"I would not wish to startle you, but thanks to this amulet, I will always know if you're telling me the truth.\"",
+      "@Dd frowns: \"In thy prayers thou must understand Valpurus is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray to Him when He hath called thee a Champion!\"";
+    }
   }
 
   Config SILVA;
@@ -942,6 +1019,7 @@ priest
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     AttachedGod = SILVA;
+    DefaultName = "Florea";
     NameSingular = "priestess";
     PostFix = "of Silva";
     Sex = FEMALE;
@@ -961,6 +1039,7 @@ priest
       "\"I cannot thank you enough for freeing us, but I'm afraid I must continue to charge for my services.\"",
       "\"Do not forget us, fair hero. It is a matter of time before word reaches the High Priest and I'm afraid of what he may do in his displeasure.\"";
     }
+    DeathMessage = "@Dd dies, whispering: \"I'm sorry! I failed you, Silva.\"";
     AutomaticallySeen = true;
   }
 
@@ -1052,7 +1131,7 @@ oree
   DefaultName = "Oree";
   HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
   FleshMaterial = DAEMON_FLESH;
-  DeathMessage = "@Dd vomits blood for one last time and then dies.";
+  DeathMessage = "@Dd vomits blood for one last time and rasps: \"Victory. A hollow and ridiculous notion.\"";
   AttachedGod = MORTIFER;
   CanBeConfused = false;
   WieldedPosition = 0, -1;
@@ -1204,6 +1283,7 @@ darkknight
     ClothColor = rgb16(20, 20, 120);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
+    DeathMessage = "@Dd dies with clenched teeth: \"I laugh in the face of death!\"";
   }
 
   Config GRAND_MASTER;
@@ -1247,6 +1327,7 @@ darkknight
     DisplacePriority = 8;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
+    DeathMessage = "@Dd kneels down, dying: \"Alas... It seem you have bested me.\"";
   }
 
   Config MASTER;
@@ -1645,8 +1726,27 @@ billswill
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 100;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilated.\"";
-  FriendlyReplies == "\"Praise the Corporation!\"";
+  HostileReplies =
+  {
+    4,
+    "\"You will install Bill's Psionic Operating System.\"",
+    "\"We shall strike you down! We shall send you to the Recycle Bin!\"",
+    "\"Resistance is futile.\"",
+    "\"Prepare to be assimilated.\"";
+  }
+  FriendlyReplies =
+  {
+    9,
+    "\"Praise the Corporation!\"",
+    "\"We say 640K should be enough for ANYBODY!\"",
+    "\"Great sorceress Xunil?  Never heard of her...\"",
+    "@Dd hacks out some psi-code and calls it a Service Pack.",
+    "\"Your most unhappy customers are your greatest source of learning.\"",
+    "\"Success is a lousy teacher. It seduces smart people into thinking they can't lose.\"",
+    "\"It's fine to celebrate success but it is more important to heed the lessons of failure.\"",
+    "\"We all need people who will give us feedback. That's how we improve.\"",
+    "\"As we look ahead into the next century, the Leader will be the one who empowers others.\"";
+  }
   Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
   PanicLevel = 0;
   HasALeg = false;
@@ -1810,11 +1910,21 @@ goblin
   Config BERSERKER;
   {
     AttributeBonus = 25;
-    RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
+    RightWielded = BRONZE BRONZE meleeweapon(TWO_HANDED_SWORD);
+    KnownCWeaponSkills == LARGE_SWORDS;
     CWeaponSkillHits == 20;
     RightSWeaponSkillHits = 10;
     NameSingular = "goblin berserker";
     ClothColor = rgb16(0, 96, 0);
+    FriendlyReplies =
+    {
+      5,
+      "\"GGRRRAAAAAH!!!\"",
+      "\"RrraaaaAAAAA!!!\"",
+      "\"Fus Ro Dah!\"",
+      "\"Me learning reading. Me goblin-savant.\"",
+      "\"Me fear no-thing that bleeds.\"";
+    }
   }
 
   Config BUTCHER;
@@ -1894,7 +2004,16 @@ mommo
   StandVerb = "bubbling";
   ForceCustomStandVerb = true;
   HostileReplies == "@Dd vibrates in fury.";
-  FriendlyReplies == "@Dd vibrates oddly.";
+  FriendlyReplies =
+  {
+    6,
+    "@Dd vibrates oddly.",
+    "@Dd spurts.",
+    "@Dd plops.",
+    "@Dd droops.",
+    "@Dd ripples.",
+    "\"Tekeli-li!\"";
+  }
   NameSingular = "mommo slime";
   IsAbstract = true;
   AttackStyle = USE_HEAD;
@@ -2193,6 +2312,26 @@ spider
     HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
     FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite comfortable noise.";
   }
+
+  Config ARANEA;
+  {
+    DefaultArmStrength = 20;
+    DefaultAgility = 26;
+    DefaultEndurance = 18;
+    DefaultPerception = 26;
+    DefaultIntelligence = 4;
+    DefaultWisdom = 4;
+    DefaultCharisma = 5;
+    Adjective = "aranea";
+    TorsoBitmapPos = 256, 0;
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 50;
+    TotalVolume = 5000;
+    TotalSize = 50;
+    Frequency = 0;
+    HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
+    FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
+  }
 }
 
 jackal
@@ -2302,10 +2441,18 @@ communist /* Ivan */
   CanBeWished = true;
   DefaultName = "Ivan";
   DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";
-  HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
+  HostileReplies =
+  {
+    5,
+    "\"Nu vse, tebe pizda!\"",
+    "\"Otyebis ot menya!\"",
+    "\"Ootebya nyet yayeesav!\"",
+    "\"Zhopu porvu margala vikoliu!\"",
+    "\"Schas po ebalu poluchish, suka!\"";
+  }
   FriendlyReplies =
   {
-    11,
+    12,
     "\"Da, @nu like killing.\"",
     "\"@Nu ruski specialist.\"",
     "\"@Nu work. Else @nu nerve stapled.\"",
@@ -2316,7 +2463,8 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
-    "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"";
+    "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
+    "\"Lenin want @nu kill capitalists!\"";
   }
   AttachedGod = LORICATUS;
   ConstantCommandFlags = FLEE_FROM_ENEMIES;
@@ -2427,6 +2575,31 @@ hunter
   ScienceTalkIntelligenceRequirement = 6;
   ScienceTalkWisdomRequirement = 3;
   IsSadist = true;
+
+  Config IMPRISONED_HUNTER;
+  {
+    UsesLongAdjectiveArticle = true;    
+    Adjective = "imprisoned";
+    CanBeGenerated = false;
+    AttributeBonus = -10;
+    TotalVolume = 72000;
+    Helmet = 0;
+    BodyArmor = 0;
+    RightWielded = 0;
+    KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
+    Inventory == bone;
+    IsMasochist = true;
+    HostileReplies == "\"Prison, torture and starvation didn't kill me, neither will you!\"";
+    FriendlyReplies =
+    {
+      5,
+      "\"Where's my arm? Gah, ask the master torturer!\"",
+      "\"I'm innocent! That guy ran onto my spear! Twenty seven times. From behind.\"",
+      "\"I was the Great White Hunter. Oh, how I miss the old days of ceaseless slaughter! Eh-heh heh.\"",
+      "\"It wasn't my fault. That bastard had it coming. He should have remembered the rules: No kill stealing!\"",
+      "\"I miss hunting. Sometimes I tear open my own flesh, just to see the vivid red of blood on my hands again. Eh-heh heh heh.\"";
+    }
+  }
 }
 
 bear
@@ -2521,7 +2694,19 @@ dolphin
   TotalVolume = 150000;
   TorsoBitmapPos = 320, 0;
   HostileReplies == "@Dd peeps diabolically to you.";
-  FriendlyReplies == "@Dd peeps passionately to you.";
+  FriendlyReplies =
+  {
+    8,
+    "@Dd peeps passionately to you.",
+    "@Dd peeps: \"Rain in the forest.\"",
+    "@Dd peeps: \"Summer before the Fall.\"",
+    "@Dd peeps: \"The tide rises and the tide falls.\"",
+    "@Dd peeps: \"Empty shells rolling in the surf.\"",
+    "@Dd peeps: \"No sparrow lives that cannot fly.\"",
+    "@Dd peeps: \"Mountains defy the consuming sea.\"",
+    "@Dd peeps: \"Blood in the water.\"";
+  }
+  DeathMessage = "@Dd peeps, dying: \"Every petal must fall...\"";
   TotalSize = 300;
   SkinColor = rgb16(144, 144, 144);
   TorsoSpecialColor = rgb16(100, 100, 255); /* EyeColor */
@@ -2564,13 +2749,42 @@ slave
   DefaultMoney = 0;
   FriendlyReplies = /* used only if the slave has been bought */
   {
-    5,
+    33,
     "\"Whatever the master wants.\"",
+    "\"What if we're ambushed in a dungeon like this?\"",
+    "\"Will you make me a gladiator? I've heard they have all the fame and women!\"",
+    "\"I once was a professor of philosophy, back in Tweraif, you know?\"",
+    "\"Errare humanum est.\"",
+    "\"Asinus manebis in saecula saeculorum.\"",
+    "\"Cuius regio, eius religion.\"",
+    "\"Faber suae quisque fortūnae. *snicker*\"",
+    "\"Fortes fortuna adiuvat.\"",
+    "\"Historia magistra vitae.\"",
+    "\"Hominem te esse, memento.\"",
+    "\"Homo doctus in se semper divitias habet.\"",
+    "\"Honesta quaedam scelera successus facit.\"",
+    "\"In vino veritas, in aqua sanitas.\"",
+    "\"Malo periculosam libertatem quam quietum servitium.\"",
+    "\"Militia est vita hominis super terram.\"",
+    "\"Nondum omnium dierum sol occidit.\"",
+    "\"Omnis vita supplicium est.\"",
+    "\"Optima philosophia meditatio est mortis.\"",
+    "\"Post nubia phoebus...\"",
+    "\"Quo usque tandem?\"",
+    "\"Scientia est potentia.\"",
+    "\"Stultorum Mater sempiter gravida.\"",
+    "\"Te audire non possum. Musa sapientum fixa est in aure.\"",
+    "\"Temeritas est damnare, quod nescias.\"",
+    "\"Vae victis!\"",
+    "\"Quidquid latine dictum sit, altum videtur.\"",
+    "\"Vita non est vivere sed valere vita est.\"",
+    "\"Mors ultima linea rerum.\"",
+    "\"Of course I speak the Old Tongue. I also know Ancient Elvish, High and Low Dwarven, a bit of Draconic, plus five dialects of Orcish.\"",
     "\"Work work work all day long. No, that was not a complaint! Don't punish!\"",
     "\"I love all my masters. At least when the whip is being washed.\"",
-    "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
   }
+  DeathMessage = "@Dd whispers, dying: \"Honesta mors turpi vita potior!\"";
   AttachedGod = MELLIS;
   Inventory == 0;
   IsMasochist = true;
@@ -2608,17 +2822,18 @@ petrusswife
   HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
   FriendlyReplies =
   {
-    5,
+    6,
     "\"I'm so sick jealous to those dolphins...\"",
     "\"I'm Petrus's favorite, not she!\"",
     "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
-    "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
+    "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"",
+    "\"Petrus has a *massive* sword, if you know what I mean.\"",
     "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
   }
   AttachedGod = DULCIS;
   WillCarryItems = false;
   IsExtraFragile = true;
-  Belt = chastitybelt(OCTAGONAL_LOCK);
+  Belt = chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
   UndeadVersions = false;
 
   Config 1;
@@ -2626,6 +2841,23 @@ petrusswife
     HairColor = rgb16(24, 24, 24);
     HeadBitmapPos = 112, 0;
     PostFix = "number 1";
+    DefaultIntelligence = 40;
+    DefaultWisdom = 40;
+    HostileReplies == "\"Aut vincere aut mori!\"";
+    FriendlyReplies =
+    {
+      6,
+      "\"I'm not actually Petrus' first wife, only his eldest right now. He outlived nearly a dozen wives by now.\"",
+      "\"Amicus veritas, sed magis amica mihi Petrus.\"",
+      "\"I have actually written most Attnamese trade agreements, draft bills and international treaties for the past twenty years. But don't tell Petrus, he would be mad.\"",
+      "\"Oh, you come from Tweraif? I've heard so much about local University!\"",
+      "\"You actually met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
+      "\"I actually wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
+    }
+    DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
+    AttachedGod = SOPHOS;
+    PanicLevel = 20;
+    IsExtraCoward = false;
   }
 
   Config 2;
@@ -2650,6 +2882,13 @@ petrusswife
     HairColor = rgb16(200, 96, 0);
     HeadBitmapPos = 112, 32;
     PostFix = "number 4";
+    FriendlyReplies =
+    {
+      3,
+      "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
+      "\"I am boooored!\"",
+      "\"Uncle Petrus says I am special! He says it to all his wives, but I know he means it for me. Tee hee.\"";
+    }
   }
 
   Config 5;
@@ -2702,11 +2941,13 @@ housewife
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
-    5,
+    7,
     "\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
     "\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
     "\"Petrus's wives are so arrogant towards us working class ones. Grr...\"",
+    "\"Don't think too much, the Cardinals can hear you.\"",
+    "\"When I was just a little girl, I wished to become a dentist.\"",
     "\"If you men only knew!\"";
   }
 }
@@ -2776,6 +3017,21 @@ femaleslave
       "\"Now it's my sister's turn to be jealous!\"";
     }
     AutomaticallySeen = true;
+  }
+
+  Config IMPRISONED_FEMALE;
+  {   
+    NameSingular = "prisoner";
+    CanBeGenerated = false;
+    AttachedGod = DULCIS;
+    RightWielded = 0;
+    IsMasochist = true;
+    FriendlyReplies =
+    {
+      2,
+      "\"Never say no to Petrus. Ever!\"",
+      "\"And I thought Richel Decos was bad with his whips...\"";
+    }
   }
 }
 
@@ -2860,7 +3116,8 @@ zombie
 
   Config ZOMBIE_OF_KHAZ_ZADM;
   {
-    DefaultName = "Khaz-zadm";
+    DefaultName = "Tholtig";
+    PostFix = "of Khaz-zadm";
     TamingDifficulty = NO_TAMING;
     IsNameable = false;
     IsUnique = true;
@@ -2871,18 +3128,53 @@ zombie
     DefaultEndurance = 15;
     DefaultPerception = 18;
     DefaultIntelligence = 7;
-    DefaultWisdom = 5;
+    DefaultWisdom = 15;
     DefaultCharisma = 5;
-    RightWielded = VALPURIUM meleeweapon(HAMMER);
+    RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
+    KnownCWeaponSkills == AXES;
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 100;
     ClassStates = LEPROSY;
+    IsExtraFragile = false;
+    Sex = FEMALE;
+    FireResistance = 25;
+    ElectricityResistance = 15;
+    EnergyResistance = 15;
+    IsImmuneToLeprosy = true;
+    CanBeGenerated = false;
+    CreateUndeadConfigurations = false;
+    DeathMessage = "As @Dd collapses, you hear her hiss: \"Peeeeeetrrrruuuuuuuss!!!\"";
+    FriendlyReplies =
+    {
+      5,
+      "\"Once, I was a duchess of a great dwarven fortress-city of Khaz-zadm.\"",
+      "\"After the Dwarven Wars, our land lay in ruins. Our mines were undermined and filled with masterless golems. Our resources were stretched thin. That was when Petrus came with his offer of charity. I should have known better.\"",
+      "\"Naught but ashes remain from my people. Petrus even saw that the word would not spread to Kharaz-arad or other dwarven lands.\"",
+      "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
+      "\"After the coup, I knew that war would come. Priscus was a politician. Petrus was a warrior.\"";
+    }
+  }
+
+  Config IMPRISONED_ZOMBIE;
+  {
+    PostFix = "prisoner";
     Sex = MALE;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
     CreateUndeadConfigurations = false;
+    IsMasochist = true;
+    FriendlyReplies =
+    {
+      4,
+      "\"Mighty Petrus said: 'Eating brainz is bad.'\"",
+      "\"I got off lightly - only three life sentences!\"",
+      "\"Poems while you wait! Pay one brain, get one poem and one for free!\"",
+      "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now I'm a prisoner.\"";
+    }
   }
 }
 
-spirit
+ghost
 {
   DefaultArmStrength = 8;
   DefaultLegStrength = 10;
@@ -3046,6 +3338,13 @@ imp
   WillCarryItems = false;
   CanChoke = false;
   UndeadVersions = false;
+  FriendlyReplies =
+  {
+    3,
+    "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
+    "\"I was about to kiss her, but then I got summoned.\"",
+    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
+  }
 }
 
 bat
@@ -3139,8 +3438,14 @@ mistress
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
-    3,
+    9,
     "\"What? You want more whip?\"",
+    "\"I'm not THAT flexible.\"",
+    "\"I sense a snake about!\"",
+    "\"Pain! Make of me your quarry!\"",
+    "\"Sweet, oh sweetest agony!\"",
+    "\"They say our queen Sherarax uses bear traps for nipple clamps.\"",
+    "\"The queen of mistresses is selected by a ritual where she must survive a night with Mistress Nefas herself.\"",
     "\"Ever participated in the weekly orgy at Nefas's High Temple? I guess not. You wouldn't have survived.\"",
     "\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
   }
@@ -3288,6 +3593,19 @@ mistress
     AllowUnconsciousness = false;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
+    HostileReplies == "\"Bow before your queen!\"";
+    FriendlyReplies =
+    {
+      7,
+      "@Dd smiles: \"I am not afraid of pain. Quite the opposite.\"",
+      "\"Rend me! Gore me! Pain forges me!\"",
+      "\"The truth is, I... you... for some reason, I think I lik-eeehh, nevermind! It's nothing!\"",
+      "\"Come closer, little boy, I'll give you something good!\"",
+      "\"Bad kitty! I need to punish you.\"",
+      "\"You can serve me to the end of your days, for you are my dearest slave.\"",
+      "\"And I told her: 'That was awsome, but I said I will need some cunning linguists for the meeting.'\"";
+    }
+    DeathMessage = "@Dd dies with a smile: \"Good night, darling...\"";
   }
 }
 
@@ -3311,7 +3629,14 @@ werewolfhuman
   ArmBitmapPos = 64, 0;
   LegBitmapPos = 0, 176;
   HostileReplies == "@Dd screams in fury.";
-  FriendlyReplies == "@Dd screams in a friendly manner.";
+  FriendlyReplies =
+  {
+    4,
+    "@Dd screams in a friendly manner.",
+    "\"Does the black moon howl?\"",
+    "\"Flesh. Blood. Raw hearts and shredded bones!\"",
+    "\"Full moon - my greatest love, my greatest fear.\"";
+  }
   TotalSize = 170;
   NameSingular = "werewolf";
   NamePlural = "werewolves";
@@ -3348,7 +3673,13 @@ werewolfwolf
   ArmBitmapPos = 64, 240;
   LegBitmapPos = 0, 192;
   HostileReplies == "@Dd growls in fury.";
-  FriendlyReplies == "@Dd growls cheerfully.";
+  FriendlyReplies =
+  {
+    3,
+    "@Dd growls.",
+    "@Dd howls.",
+    "@Dd barks.";
+  }
   TotalSize = 200;
   NameSingular = "werewolf";
   NamePlural = "werewolves";
@@ -3544,10 +3875,51 @@ gibberling
   BaseUnarmedStrength = 300;
   FleshMaterial = GIBBERLING_FLESH;
   AttachedGod = SILVA;
-  HostileReplies == "@Dd gibbers diabolically.";
-  FriendlyReplies == "@Dd gibbers joyfully.";
   WillCarryItems = false;
   IsExtraFragile = true;
+  HostileReplies =
+  {
+    22, /* Gibberlings insult you in gibberish! */
+    "\"Poshyel k chyertu!\"", /* russian */
+    "\"Antiquis temporibus, nati tibi in rupibus ventosissimis exponebantur ad necem.\"", /* latin */
+    "\"Vouz avez plein de merde.\"",  /* french */
+    "\"Zhebni, debile.\"",  /* czech */
+    "\"Vaffanculo!\"", /* italian */
+    "\"Hisap telur!\"", /* malay */
+    "\"Elif air ab tizak!\"", /* arabic */
+    "\"Gellbourria salak!\"", /* turkish */
+    "\"Hum kah chan!\"", /* cantonese */
+    "\"Du Hurensohn!\"", /* german */
+    "\"Baka yaro!\"", /* japanese */
+    "\"Preklet kurac!\"", /* slovenian */
+    "\"Cachu bant ti cachu mes!\"", /* welsh */
+    "\"Lofasz a segedben!\"", /* hungarian */
+    "\"Yumago!\"", /* korean */
+    "\"Jebiesz jeze!\"", /* polish*/
+    "@Dd sneers at you. \"Mishugena.\"", /* yiddish */
+    "\"Lech zayen para.\"", /* hebrew */
+    "\"Dra at skogen.\"", /* swedish */
+    "\"Pinche idiota!\"", /* spanish */
+    "\"Tha sou skiso to mouni!\"", /* greek */
+    "\"Kurav tu ando mul!\""; /* romanian */
+  }
+  FriendlyReplies =
+  {
+    13, /* Famous literature, distorted into gibberish. */
+    "\"Who would fard that dream? Ay, and there's tural shocks that dreams momething afterprises the sleep; no more!\"", /* Hamlet */
+    "\"Buzzing a buzzing-noise, put lived unders, and he got of all he tree, and buzzing. If there's a buzzing.\"", /* Winnie the Pooh */
+    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That’s a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
+    "\"The heart. The most be seen or touched, things in they are felt with the heart.\"", /* The Little Prince */
+    "\"Fear is the its past not fear has gone that brings to see inner me. And then my fear. Fear is there will turn the inner me.\"", /* Dune */
+    "\"You want you remember and you? Yes. You forever, he said. You want to forget.\"", /* The Road */
+    "\"Candles exploding, burn live, the same are mad to talk, mad to like stars.\"", /* On The Road */
+    "\"Did seraphs, exhibit number for a princedom by the was and gentlemen initial girl-child. She tongue tip of my loin!\"", /* Lolita */
+    "\"That sometimes you realize truth arrives on you can’t even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
+    "\"Minitrue, which mainment, education and Minipax, the Miniluv and order. The Miniplenty.\"", /* 1984 */
+    "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
+    "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
+    "@Dd gibbers.";
+  }
 }
 
 largecat
@@ -3562,8 +3934,23 @@ largecat
   DefaultMana = 0;
   TotalVolume = 15000;
   TorsoBitmapPos = 496, 0;
-  HostileReplies == "@Dd mews.";
-  FriendlyReplies == "@Dd purrs.";
+  HostileReplies =
+  {
+    4,
+    "@Dd mews in a low, disconcerting tone.",
+    "@Dd flattens its ears.",
+    "@Dd bristles up.",
+    "@Dd hisses menacingly!";
+  }
+  FriendlyReplies =
+  {
+    5,
+    "@Dd mews.",
+    "@Dd purrs.",
+    "@Dd weaves between your legs.",
+    "@Dd kneads you with its paws. Ouch!",
+    "@Dd headbutts you playfully.";
+  }
   TotalSize = 60;
   SkinColor = rgb16(50, 50, 50);
   Adjective = "large";
@@ -3592,8 +3979,20 @@ largerat
   CanOpen = false;
   TotalVolume = 4000;
   TorsoBitmapPos = 512, 0;
-  HostileReplies == "The furious @du squeaks.";
-  FriendlyReplies == "@Dd squeaks in a friendly manner.";
+  HostileReplies =
+  {
+    2,
+    "@Dd bares its tiny fangs.",
+    "The furious @du squeaks.";
+  }
+  FriendlyReplies =
+  {
+    4,
+    "@Dd squeaks in a friendly manner.",
+    "@Dd wiggles its ears at you.",
+    "@Dd scratches in the dirt.",
+    "@Dd sniffs at you.";
+  }
   TotalSize = 30;
   SkinColor = rgb16(180, 100, 40);
   Adjective = "large";
@@ -3643,8 +4042,23 @@ angel
   /* Equipment initialization overridden */
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
-  HostileReplies == "\"With the power of @Gd, I shall slay thee, sinner!\"";
-  FriendlyReplies == "\"@Gd be with you, mortal.\"";
+  HostileReplies =
+  {
+    3,
+    "\"Repent!\"",
+    "\"Wrath of @Gd be upon thee!\"",
+    "\"With the power of @Gd, I shall slay thee, sinner!\"";
+  }
+  FriendlyReplies =
+  {
+    6,
+    "\"@Gd be with you, mortal.\"",
+    "\"@Gd is in the Heavens. All is right over the world.\"",
+    "\"Even though you walk through the valley of the shadow of death, you shall fear no one for @Gd is at your side.\"",
+    "\"I am but a humble servant of @Gd.\"",
+    "\"You are not worthy of @Gd, mortal. Alas, gods need your prayers badly.\"",
+    "\"I was created to sing praises on @Gd. I am destined to die for @Gd. All hail @Gd!\"";
+  }
   DeathMessage = "@Dd leaves this mortal plane behind.";
   StandVerb = "flying";
   AttachedGod = NONE;
@@ -3734,13 +4148,24 @@ kamikazedwarf
   HPRequirementForGeneration = 60;
   DayRequirementForGeneration = 6;
   Frequency = 300;
-  HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
   AttachedGod = NONE;
   WieldedPosition = -1, -2;
-  FriendlyReplies =
+  HostileReplies =
   {
     4,
+    "@Dd smiles at you, eyes glowing with religious mania.",
+    "\"Die, infidel!\"",
+    "\"For the glory of @Gd!\"",
+    "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
+  }
+  FriendlyReplies =
+  {
+    8,
     "\"Would you like me to teach you the best suicidal bombing tactics?\"",
+    "\"I love the smell of gunpowder in the morning.\"",
+    "\"My life for @Gd!\"",
+    "\"Short? Who called me short?!\"",
+    "\"Someone said I have a short fuse. OF COURSE I HAVE A SHORT FUSE! HOW ELSE AM I MEANT TO CLEANSE MY ENEMIES IN HOLY FIRE?!\"",
     "@Dd shouts: \"Death to disbelievers!\"",
     "@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
     "\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
@@ -4362,8 +4787,12 @@ imperialist
   IsPolymorphable = false;
   FriendlyReplies =
   {
-    7, /* the last isn't used if the player is a sumo champion */
-    "\"And they said levitating ostriches had no future! Hah!",
+    11, /* the last isn't used if the player is a sumo champion */
+    "@Dd wonders if he should buy a small country.",
+    "\"And they said levitating ostriches had no future! Hah!\"",
+    "\"Happiness is a great thing, but it won't buy you much.\"",
+    "\"Everything can be bought, if you know the price. Once we appraise everything, we will be able to buy the universe!\"",
+    "\"Everything has a price - your loyalty and life, the air we breathe, sunshine, even my own beliefs.\"",
     "\"Poor people shouldn't complain - after all it's their own fault.\"",
     "\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if my room has something to do with it?\"",
     "\"I couldn't possibly thank this city enough for making Decos Bananas Co. the world's greatest fruit producer. So I don't do it all.\"",
@@ -4435,6 +4864,97 @@ imperialist
   ScienceTalkCharismaRequirement = 15;
   IsSadist = true;
   UndeadVersions = false;
+
+  Config MASTER_TORTURER;
+  {
+    HeadBitmapPos = 96, 64;
+    TorsoBitmapPos = 48, 48;
+    ArmBitmapPos = 64, 256;
+    LegBitmapPos = 0, 48;
+    TorsoMainColor = rgb16(30, 30, 30);
+    LegMainColor = rgb16(30,30,30);
+    SkinColor = rgb16(255, 222, 202);
+    CapColor = rgb16(50, 50, 50);
+    Helmet = BLACK_LEATHER helmet { Enchantment = 2; }
+    Amulet = amulet(AMULET_OF_ESP);
+    Cloak = BLACK_LEATHER cloak { Enchantment = 2; }
+    BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Belt = BLACK_LEATHER belt { Enchantment = 2; }
+    RightRing = ring(RING_OF_FIRE_RESISTANCE);
+    RightWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
+    LeftWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
+    RightGauntlet = BLACK_LEATHER gauntlet { Enchantment = 1; }
+    RightBoot = BLACK_LEATHER boot(BOOT_OF_KICKING) { Enchantment = 3; }
+    NameSingular = "master torturer";
+    DefaultName = "Migel Decos";
+    AttachedGod = CRUENTUS;
+    HostileReplies == "\"All you can do is hurt me. And I *love* hurting!\"";
+    FriendlyReplies =
+    {
+      11,
+      "@Dd smiles. It's terrifying.",
+      "@Dd sighs: \"Why don't the prisoners understand it's for their own good?\"",
+      "@Dd looks smug. \"I'm the head of the Citizen Purification Committee.\"",
+      "\"I would love to break your arms, one bone at a time.\"",
+      "\"When I'm sad I stop being sad and go torture someone instead.\"",
+      "\"Bazzaria, ah, home sweet home! You can buy there everything and anything, for the right price.\"",
+      "@Dd smiles: \"How many lights do you see?\"",
+      "\"Bazzaria is a land of possibility and opportunity, where every man can live his dream. Women, children and slaves not so much.\"",
+      "\"New Attnam? Yes, my brother is a viceroy there.\"",
+      "\"When I arrived to Attnam, Petrus immediately recognized my skills and appointed me the Cardinal of Love.\"",
+      "\"I was tasked with re-education of thought-criminals by mighty Petrus himself!\"";
+    }
+    DeathMessage = "@Dd screams, dying: \"I see the door! The extasy of death! I'm coming!\"";
+    Inventory == key;
+  }
+
+  Config HOARD_MASTER;
+  {
+    HeadBitmapPos = 96, 80;
+    TorsoBitmapPos = 32, 16;
+    ArmBitmapPos = 64, 16;
+    LegBitmapPos = 0, 32;
+    HairColor = rgb16(160, 160, 160);
+    TorsoMainColor = rgb16(176, 0, 0);
+    LegMainColor = rgb16(176, 0, 0);
+    SkinColor = rgb16(255, 222, 202);
+    CapColor = rgb16(176, 0, 0);
+    ClothColor = rgb16(176, 0, 0);
+    Helmet = FABRIC helmet(HELM_OF_UNDERSTANDING) { Enchantment = 2; }
+    Amulet = amulet(AMULET_OF_ESP);
+    Cloak = FABRIC cloak { Enchantment = 3; }
+    BodyArmor = 0;
+    RightWielded = 0;
+    LeftWielded = 0;
+    LeftRing = 0;
+    RightGauntlet = 0;
+    Belt = FABRIC belt(BELT_OF_CARRYING) { Enchantment = 2; }
+    RightBoot = FABRIC boot { Enchantment = 2; }
+    NameSingular = "hoardmaster";
+    DefaultName = "Thesaurius";
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 50, 50; }
+    PanicLevel = 95;
+    BaseUnarmedStrength = 200;
+    IsExtraCoward = true;
+    StandVerb = "scowling";
+    HostileReplies == "\"Guards! Guards!\"";
+    FriendlyReplies =
+    {
+      10,
+      "\"I was appointed the Cardinal of Plenty because I can juggle the numbers like no one else.\"",
+      "\"It's only thanks to my skills with numbers that the Cathedral's accounting books show a steady economic growth.\"",
+      "\"The citizens have no bread, you say? Let them eat cake!\"",
+      "\"There can be economy only where there is efficiency.\"",
+      "\"The way to turn our economy stronger is not by making rich people poorer, it's by making poor people work harder.\"",
+      "\"It's called political economy because it is has nothing to do with either politics or economy.\"",
+      "\"It is virtually impossible to compete in today's economy without the Cathedral's favor.\"",
+      "\"The Attnamese domination of the local economy is based on its army.\"",
+      "\"A powerful Attnam is coming, and Bazzaria has only two choices: Either they're at the table, or they're on the menu!\"",
+      "\"The trick to strong and stable economy is to work the citizens hard enough they can't afford the luxury of thought.\"";
+    }
+    Inventory = { 3, GOLD key(HEXAGONAL_LOCK), GOLD scrollofdetectmaterial, GOLD holybook(MELLIS); }
+  }
 }
 
 smith
@@ -4545,19 +5065,21 @@ elder
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {
-    10,
+    14,
     "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
+    "\"It is said Mortifer was the first being to die, felled by the hand of His brother, Valpurus.\"",
+    "\"It is said Valpurus is cursed to forever bear the world upon His shoulders, without a moment of respite, as a penance and punishment for His deeds.\"",
     "\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
     "\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",
     "@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
     "\"For a decade I served this Decos lad as a banana grower like everyone else, but then an elephant stepped on my toe and my leg was amputated. I couldn't climb trees anymore so they made me a tourist guide.\"",
     "\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven foot wingspans, and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
     "\"Previously we could use donkeys to carry the bananas. Then one day Attnamese tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
-    "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"";
+    "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
-    /*"\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-Se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses. Through the millenia she has gained every imaginable disease and bitten by every existing poisonous creature; now she is practically invulnerable to all damage.\"",
-    "\"Beware and avoid Lobh-Se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty there and she returns promptly when satiated.\"";*/
+    "\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-Se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses. Through the millenia she has gained every imaginable disease and bitten by every existing poisonous creature; now she is practically invulnerable to all damage.\"",
+    "\"Beware and avoid Lobh-Se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty there and she returns promptly when satiated.\"";
   }
   AutomaticallySeen = true;
   ScienceTalkPossibility = 75;
@@ -4854,6 +5376,7 @@ darkmage
     LeftSWeaponSkillHits = 20;
     PolymorphIntelligenceRequirement = 5;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 5; } }
+    DeathMessage = "@Dd dies screaming: \"No! The darkness, it's coming for me!\"";
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 10;
     ScienceTalkWisdomModifier = 5;
@@ -4890,6 +5413,7 @@ darkmage
     LeftSWeaponSkillHits = 50;
     PolymorphIntelligenceRequirement = 20;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
+    DeathMessage = "@Dd dies laughing: \"You understand nothing! The darkness will rise and nothing you can do will stop it.\"";
     ScienceTalkPossibility = 50;
     ScienceTalkIntelligenceModifier = 25;
     ScienceTalkWisdomModifier = 10;
@@ -4928,6 +5452,7 @@ darkmage
     LeftSWeaponSkillHits = 100;
     PolymorphIntelligenceRequirement = 35;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 50; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 50; } }
+    DeathMessage = "@Dd dies laughing: \"You understand nothing! The darkness will rise and nothing you can do will stop it.\"";
     ScienceTalkPossibility = 100;
     ScienceTalkIntelligenceModifier = 100;
     ScienceTalkWisdomModifier = 50;
@@ -4984,52 +5509,17 @@ darkmage
     IsExtraFragile = false;
     AllowUnconsciousness = false;
     UndeadVersions = false;
+    HostileReplies =
+    {
+      4,
+      "\"Minions, slaughter this fool!\"",
+      "\"Verily, thou shalt be one dead cretin.\"",
+      "@Dd is humming an incantation of a devastating death-spell.",
+      "\"A mere mortal dares challenge my might?\"";
+    }
+    FriendlyReplies == "\"Death awaits our foes.\"";
+    DeathMessage = "@Dd dies with a calm smile: \"Hello darkness, my old friend...\"";
   }
-}
-
-ghost
-{
-  DefaultArmStrength = 5;
-  DefaultAgility = 8;
-  DefaultEndurance = 8;
-  DefaultPerception = 24;
-  DefaultIntelligence = 15;
-  DefaultWisdom = 10;
-  DefaultCharisma = 10;
-  DefaultMana = 15;
-  StandVerb = "hovering";
-  Frequency = 5000;
-  TotalVolume = 300000;
-  TorsoBitmapPos = 112, 16;
-  TotalSize = 100;
-  NameSingular = "ghost";
-  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
-  KnownCWeaponSkills == BITE;
-  CWeaponSkillHits == 100;
-  BaseEmitation = rgb24(110, 110, 110);
-  HostileReplies == "\"Boo!\"";
-  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
-  PanicLevel = 0;
-  HasALeg = false;
-  FleshMaterial = GHOST;
-  DeathMessage = "@Dd is sucked into hell.";
-  SpillsBlood = false;
-  Sweats = false;
-  UsesNutrition = false;
-  AttachedGod = MORTIFER;
-  BodyPartsDisappearWhenSevered = true;
-  BaseBiteStrength = 1000;
-  AttackStyle = USE_HEAD;
-  BiteCapturesBodyPart = false;
-  MoveType = ETHEREAL;
-  CanChoke = false;
-  IsImmuneToStickiness = true;
-  CreateUndeadConfigurations = true;
-  UndeadAttributeModifier = 75;
-  UndeadCopyMaterials = false;
-  CanBeGenerated = false;
-  CanBeGeneratedOnlyInTheCatacombs = true;
-  IsCatacombCreature = true;
 }
 
 twoheadedmoose
@@ -5142,8 +5632,20 @@ invisiblestalker
   DefaultMana = 0;
   TotalVolume = 40000;
   TorsoBitmapPos = 224, 16;
-  FriendlyReplies == "\"Gods are away on business.\"";
-  HostileReplies == "\"Misery is the river of the world.\"";
+  FriendlyReplies =
+  {
+    4,
+    "\"I will watch you when you sleep.\"",
+    "\"Don't mind me. I'm just watching. Your. Every. Step.\"",
+    "\"I'm not an invisible stalker! I'm your imaginary friend!\"",
+    "\"Gah, I always feel like somebody's watching me. Creepy.\"";
+  }
+  HostileReplies =
+  {
+    2,
+    "\"Gods are away on business.\"",
+    "\"Misery is the river of the world.\"";
+  }
   TotalSize = 170;
   NameSingular = "stalker";
   NamePlural = "stalkers";
@@ -5444,8 +5946,8 @@ necromancer
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
+  ConsumeFlags = CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE; /* Necromancers eat vegetarians, not vegetables! */
   HostileReplies == "@Dd yells: \"Death! Death!\"";
-  FriendlyReplies == "\"I see dead people.\"";
   IgnoreDanger = true;
   AttachedGod = INFUSCOR;
   IsAbstract = true;
@@ -5484,6 +5986,19 @@ necromancer
     GauntletColor = rgb16(150, 150, 100);
     PolymorphIntelligenceRequirement = 5;
     Inventory = { 3, skull, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 5; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 1; } }
+    FriendlyReplies =
+    {
+      8,
+      "@Dd smiles oddly: \"I see dead people.\"",
+      "\"My powers over death suddenly manifested after I ate a wand of necromancy.\"",
+      "\"What? No! Necromancy and necrophilia are *not* the same!\"",
+      "\"Hey, I have a deal for you! Give me your soul, I will give you immortality. *cough* Raised as a mindless skeleton. *cough*\"",
+      "\"I was working on my evil laugh lately. What do you think: MWHAHAHAHAHA - *cough* *cough* *cough* - Sorry.\"",
+      "\"I hate vampires. They're all broody and sparkly and cool, but all they can talk about is blood. And angst, I guess.\"",
+      "\"Once, I tried to subtly stick a dagger in my master's back. She said she would electrocute me, then raise me as a zombie and electrocute me again if I ever tried it again.\"",
+      "\"My master says that ommel blood is sweeter and stronger than any wine.\"";
+    }
+    DeathMessage = "@Dd dies screaming: \"Nooo! I'm too young and beautiful to die!\"";
     ScienceTalkPossibility = 10;
     ScienceTalkIntelligenceModifier = 5;
     ScienceTalkWisdomModifier = 2;
@@ -5519,6 +6034,19 @@ necromancer
     GauntletColor = rgb16(100, 100, 200);
     PolymorphIntelligenceRequirement = 20;
     Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }
+    FriendlyReplies =
+    {
+      8,
+      "@Dd smiles oddly: \"I see dead people. Lots of them. All the time. It's annoying.\"",
+      "\"I'm trying to raise funds for a personal side-project of mine. Would you happen to have some virgins to spare?\"",
+      "\"I was on a good way to become a lich, but I couldn't decide on the color of my phylactery.\"",
+      "\"Yes, I'm angry! The library refused to extend my loan period on the Necronomicon.\"",
+      "\"You don't know what SCP-008 is? Hehehe, ha ha! MWHAHAHAHAHAHA-ha. Sorry.\"",
+      "\"The dead long for torture - to feel once more!\"",
+      "\"I am the Reaper! Come join my dance.\"",
+      "\"Are you a registered organ donor for the Flesh Golem Research Program? And would you like to be?\"";
+    }
+    DeathMessage = "@Dd dies laughing: \"Death is just a beginning!\"";
     ScienceTalkPossibility = 50;
     ScienceTalkIntelligenceModifier = 50;
     ScienceTalkWisdomModifier = 25;
@@ -5549,7 +6077,7 @@ necromancer
     DefaultWisdom = 20;
     DefaultCharisma = 9;
     DefaultMana = 50;
-    UsesLongAdjectiveArticle = true;
+    DefaultName = "Anmah";
     Adjective = "imprisoned";
     TotalVolume = 80000;
     TotalSize = 180;
@@ -5834,6 +6362,14 @@ archangel
   CanChoke = false;
   DisplacePriority = 10;
   AllowPlayerToChangeEquipment = false;
+  HostileReplies == "\"I judge thee guilty!\"";
+  FriendlyReplies =
+  {
+    3,
+    "\"I command us all to be friends!\"",
+    "\"I judge thee... barely adequate of my Glory.\"",
+    "\"I'm here only because @Gd wished so.\"";
+  }
 
   Config VALPURUS;
   {
@@ -6143,6 +6679,15 @@ mindworm
   AttachedGod = SCABIES;
   IsAbstract = true;
   TorsoMainColor = rgb16(200, 30, 30);
+  FriendlyReplies =
+  {
+    5,
+    "\"It is the mark of an educated mind to be able to entertain a thought without accepting it.\"",
+    "\"You have power over your mind - not outside events. Realize this, and you will find strength.\"",
+    "\"We are shaped by our thoughts; we become what we think. When the mind is pure, joy follows like a shadow that never leaves.\"",
+    "\"Learning never exhausts the mind.\"",
+    "\"The mind is everything. What you think you become.\"";
+  }
 
   Config HATCHLING;
   {
@@ -6191,9 +6736,13 @@ punisher
   CWeaponSkillHits = { 2, 200, 200; }
   RightSWeaponSkillHits = 200;
   AttackStyle = USE_ARMS|USE_LEGS;
-  TamingDifficulty = NO_TAMING;
   HostileReplies == "\"You are now about to enter a world of pain!\"";
   AttachedGod = CRUENTUS;
-  FriendlyReplies == "\"My cousin a banana encourager in New Attnam\"";
   IsSadist = true;
+  FriendlyReplies =
+  {
+    2,
+    "\"Hey, I'm also from New Attnam!\"",
+    "\"Gah, that mask itches! But Mr. Decos says we have to wear it to keep the morale of prisoners up.\"";
+  }
 }

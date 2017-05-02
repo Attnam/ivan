@@ -134,8 +134,7 @@ void dungeon::PrepareMusic(int Index)
 {
   const levelscript* LevelScript = GetLevelScript(Index);
   bool hasCurrentTrack = false;
-  char* CurrentTrack = audio::GetCurrentlyPlayedFile();
-
+  cchar* CurrentTrack = audio::GetCurrentlyPlayedFile();
 
   for( int i = 0; i < LevelScript->GetAudioPlayList()->Size; ++i  )
   {

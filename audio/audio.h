@@ -28,26 +28,24 @@
 #endif
 
 #include "error.h"
+#include "festring.h"
 #include <vector>
 #include "RtMidi.h"
 
 class musicfile
 {
 public:
-   musicfile(cchar* filename, int LowThreshold, int HighThreshold);
-   ~musicfile();
+   musicfile(cfestring& Filename, int LowThreshold, int HighThreshold);
 
    inline bool IsPlaying(void) { return isPlaying; }
    inline void SetPlayState(bool state) { isPlaying = state;}
-   inline char* GetFilename(void) { return Filename; }
+   inline cfestring& GetFilename() const { return Filename; }
 
 private:
-   char* Filename;
+   festring Filename;
    int LowThreshold;
    int HighThreshold;
-
    bool isPlaying;
-
 };
 
 
@@ -98,7 +96,7 @@ public:
 
    static int ChangeMIDIOutputDevice(int newPort);
 
-   static char* GetCurrentlyPlayedFile(void);
+   static cchar* GetCurrentlyPlayedFile();
 
    /**
     * @param vol 0 - 128
@@ -123,7 +121,7 @@ public:
    static void LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh);
 
 
-   static void ClearMIDIPlaylist(char* exceptFilename = 0);
+   static void ClearMIDIPlaylist(cchar* exceptFilename = 0);
 
    static int IsPlaybackStopped(void);
 
@@ -150,10 +148,10 @@ private:
    static int CurrentPosition;
 
    static int  PlaybackState;
-   static char* CurrentTrack;
+   static cchar* CurrentTrack;
    static festring MusDir;
 
-   static std::vector<musicfile*> Tracks;
+   static std::vector<musicfile> Tracks;
 
    static RtMidiOut* midiout;
    static int CurrentMIDIOutPort;

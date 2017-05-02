@@ -577,6 +577,8 @@
 #define BRAVERY 1
 #define FEAR 2
 
+#define IMPRISONED_FARMER 1
+
 #define ROOKIE 1
 #define VETERAN 2
 #define EUNUCH 3
@@ -589,6 +591,7 @@
 #define GRAND_MASTER 8
 #define TOMB_ENTRY 9
 #define TOMB_ENTRY_MASTER 10
+#define HONOR 11
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -610,6 +613,9 @@
 
 #define LARGE 1
 #define GIANT 2
+#define ARANEA 3
+
+#define IMPRISONED_HUNTER 1
 
 #define BLACK_BEAR 1
 #define GRIZZLY_BEAR 2
@@ -617,7 +623,10 @@
 #define POLAR_BEAR 4
 #define MUTANT_BEAR 5
 
+#define IMPRISONED_FEMALE 1
+
 #define ZOMBIE_OF_KHAZ_ZADM 1
+#define IMPRISONED_ZOMBIE 2
 
 #define TORTURING_CHIEF 1
 #define WHIP_CHAMPION 2
@@ -636,6 +645,9 @@
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
+
+#define MASTER_TORTURER 1
+#define HOARD_MASTER 2
 
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
@@ -695,19 +707,36 @@
 #define HOLY_TREE 3
 #define CARPET 4
 #define COUCH 5
-#define DOUBLE_BED 6
-#define POOL_BORDER 7
-#define POOL_CORNER 8
-#define PALM 9
-#define SNOW_PINE 10
-#define SNOW_FIR 11
-#define ANVIL 12
-#define SHARD 13
-#define CACTUS 14
-#define OAK 15
-#define BIRCH 16
-#define TEAK 17
-#define DWARF_BIRCH 18
+#define CHAIR 6
+#define ARM_CHAIR 7
+#define BENCH 8
+#define DOUBLE_BED 9
+#define CHEAP_BED 10
+#define PLAIN_BED 11
+#define EXPENSIVE_BED 12
+#define POOL_BORDER 13
+#define POOL_CORNER 14
+#define PALM 15
+#define SNOW_PINE 16
+#define SNOW_FIR 17
+#define ANVIL 18
+#define SHARD 19
+#define CACTUS 20
+#define OAK 21
+#define BIRCH 22
+#define TEAK 23
+#define DWARF_BIRCH 24
+#define PEDESTAL 25
+#define FORGE 26
+#define FURNACE 27
+#define OVEN 28
+#define WOODEN_HORSE 29
+#define TORTURE_RACK 30
+#define DESK 31
+#define WORK_BENCH 32
+#define TABLE 33
+#define WELL 34
+#define SHACKLES 35
 
 #define SNOW_BOULDER 4
 
@@ -749,6 +778,7 @@
 #define XINROCH_TOMB_ENTRY_TEAM 12
 #define XINROCH_TOMB_NECRO_TEAM 13
 #define XINROCH_TOMB_KAMIKAZE_DWARF_TEAM 14
+#define PRISONER_TEAM 15
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2
@@ -771,6 +801,7 @@
 #define VESANA_LEVEL 2
 #define CRYSTAL_LEVEL 3
 #define SPIDER_LEVEL 4
+
 #define ENNER_BEAST_LEVEL 4
 #define ZOMBIE_LEVEL 5
 #define IVAN_LEVEL 7

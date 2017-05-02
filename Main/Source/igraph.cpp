@@ -28,20 +28,20 @@ bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
 cchar* igraph::RawGraphicFileName[] =
 {
-  "Graphics/GLTerra.pcx",
-  "Graphics/OLTerra.pcx",
-  "Graphics/Item.pcx",
-  "Graphics/Char.pcx",
-  "Graphics/Humanoid.pcx",
-  "Graphics/Effect.pcx",
-  "Graphics/Cursor.pcx"
+  "Graphics/GLTerra.png",
+  "Graphics/OLTerra.png",
+  "Graphics/Item.png",
+  "Graphics/Char.png",
+  "Graphics/Humanoid.png",
+  "Graphics/Effect.png",
+  "Graphics/Cursor.png"
 };
 cchar* igraph::GraphicFileName[] =
 {
-  "Graphics/WTerra.pcx",
-  "Graphics/FOW.pcx",
-  "Graphics/Symbol.pcx",
-  "Graphics/Smiley.pcx"
+  "Graphics/WTerra.png",
+  "Graphics/FOW.png",
+  "Graphics/Symbol.png",
+  "Graphics/Smiley.png"
 };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
@@ -68,13 +68,14 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(800, 600), ivanconfig::GetFullScreenMode());
+                      v2(800, 600), ivanconfig::GetGraphicsScale(),
+                      ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
 #ifndef __DJGPP__
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
-    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.pcx");
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
     felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
@@ -464,7 +465,7 @@ void igraph::CreateBodyBitmapValidityMaps()
 
 void igraph::LoadMenu()
 {
-  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.pcx");
+  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.png");
 }
 
 void igraph::UnLoadMenu()

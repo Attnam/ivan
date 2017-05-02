@@ -374,7 +374,7 @@ truth character::HasBeenSeen() const
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
 cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
-festring character::GetSpiritDescription() const
+festring character::GetGhostDescription() const
 { return " of " + GetName(INDEFINITE); }
 
 int characterdatabase::* ExpPtr[ATTRIBUTES] =

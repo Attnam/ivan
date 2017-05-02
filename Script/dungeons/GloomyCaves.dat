@@ -329,12 +329,36 @@ Dungeon ELPURI_CAVE;
     }
   }
 
+  RandomLevel 1:4;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(TABLE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
+      }
+    }
+  }
+
   Level ENNER_BEAST_LEVEL;
   {
     LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
     IgnoreDefaultSpecialSquares = true;
     Items = 35:70;
-    EnterImage = "Enner.pcx";
+    EnterImage = "Enner.png";
     EnterTextDisplacement = -150, 0;
 
     Room
@@ -472,7 +496,7 @@ Dungeon ELPURI_CAVE;
         {
           # = WATER liquidterrain(UNDERGROUND_LAKE);
           _ = GRAVEL solidterrain(GROUND);
-          ~ = SAND solidterrain(GROUND);
+          ~ = SAND solidterrain(SAND_TERRAIN);
           x = FIR_WOOD solidterrain(PARQUET);
         }
       }
@@ -742,7 +766,7 @@ Dungeon ELPURI_CAVE;
   {
     LevelMessage = "You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
     FillSquare = solidterrain(GROUND), QUARTZITE earth;
-    EnterImage = "IVlad.pcx";
+    EnterImage = "IVlad.png";
     EnterTextDisplacement = 260, 0;
 
     RoomDefault

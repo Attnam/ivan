@@ -50,6 +50,7 @@ graphics::modeinfo graphics::ModeInfo;
 
 bitmap* graphics::DoubleBuffer;
 v2 graphics::Res;
+int graphics::Scale;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
 
@@ -113,7 +114,7 @@ void graphics::DeInit()
 #ifdef USE_SDL
 
 void graphics::SetMode(cchar* Title, cchar* IconName,
-                       v2 NewRes, truth FullScreen)
+                       v2 NewRes, int NewScale, truth FullScreen)
 {
 #if SDL_MAJOR_VERSION == 1
   if(IconName)
@@ -207,6 +208,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
   Res = NewRes;
+  SetScale(NewScale);
   ColorDepth = 16;
 
 #if SDL_MAJOR_VERSION == 1
@@ -292,6 +294,23 @@ void graphics::BlitDBToScreen()
 
 #endif
 
+void graphics::SetScale(int NewScale)
+{
+  Scale = NewScale;
+#if SDL_MAJOR_VERSION == 1
+#warning Graphics scaling not implemented for SDL v1
+#else
+  // Scale the window, maintaining its center position.
+  v2 WindowPos, OldSize, NewSize = Res * NewScale;
+  SDL_GetWindowPosition(Window, &WindowPos.X, &WindowPos.Y);
+  SDL_GetWindowSize(Window, &OldSize.X, &OldSize.Y);
+  WindowPos += (OldSize - NewSize) / 2;
+  SDL_SetWindowPosition(Window, WindowPos.X, WindowPos.Y);
+  SDL_SetWindowSize(Window, Res.X * NewScale, Res.Y * NewScale);
+  SDL_RenderSetScale(Renderer, NewScale, NewScale);
+#endif
+}
+
 void graphics::SwitchMode()
 {
 #if SDL_MAJOR_VERSION == 1
@@ -320,6 +339,7 @@ void graphics::SwitchMode()
   {
     SDL_ShowCursor(SDL_ENABLE);
     SDL_SetWindowFullscreen(Window, 0);
+    SetScale(Scale);
   }
   else
   {
