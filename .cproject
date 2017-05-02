@@ -36,8 +36,9 @@
 									<listOptionValue builtIn="false" value="__WIN32__"/>
 									<listOptionValue builtIn="false" value="_WINMM_"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
+									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
 								</option>
-								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1815342761" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.268280965" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -54,8 +55,9 @@
 									<listOptionValue builtIn="false" value="USE_SDL"/>
 									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
+									<listOptionValue builtIn="false" value="&quot;IVAN_VERSION=\&quot;0.50.8\&quot;&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.909660028" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.1771045529" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1969962433" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=gnu++11" valueType="string"/>
@@ -67,12 +69,15 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1728504866" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.794092131" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="mingw32"/>
+									<listOptionValue builtIn="false" value="zlib"/>
+									<listOptionValue builtIn="false" value="png"/>
 									<listOptionValue builtIn="false" value="winmm"/>
 									<listOptionValue builtIn="false" value="SDL2main"/>
 									<listOptionValue builtIn="false" value="SDL2"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.493400093" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/i686-w64-mingw32/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lib}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.921602185" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-static-libgcc -static-libstdc++" valueType="string"/>
 								<option id="gnu.cpp.link.option.strip.1443829636" name="Omit all symbol information (-s)" superClass="gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
@@ -133,6 +138,8 @@
 									<listOptionValue builtIn="false" value="USE_SDL"/>
 									<listOptionValue builtIn="false" value="__LINUX_ALSA__"/>
 									<listOptionValue builtIn="false" value="LINUX"/>
+									<listOptionValue builtIn="false" value="PROJECT_VERSION=&quot;0.50.8&quot;"/>
+									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1679517968" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.843749153" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -154,6 +161,8 @@
 									<listOptionValue builtIn="false" value="LOCAL_STATE_DIR=\&quot;/var/lib/ivan\&quot;"/>
 									<listOptionValue builtIn="false" value="DATADIR=\&quot;/usr/local/share\&quot;"/>
 									<listOptionValue builtIn="false" value="LINUX"/>
+									<listOptionValue builtIn="false" value="PROJECT_VERSION=&quot;0.50.8&quot;"/>
+									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1077402583" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.238683031" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
