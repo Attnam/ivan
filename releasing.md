@@ -20,7 +20,7 @@ To do for each release
 
 **Folder: IvanWin0509**
 
-**Files = 10**
+**Files = 11**
 
   - AUTHORS
   - COPYING
@@ -32,27 +32,28 @@ To do for each release
   - README
   - README.md
   - SDL2.dll
+  - libpng3.dll
 
 **Subfolder: Graphics**
 
 **Files = 16**
 
-  - Char.pcx
-  - Cursor.pcx
-  - Effect.pcx
-  - Enner.pcx
-  - Font.pcx
-  - FOW.pcx
-  - GLTerra.pcx
-  - Humanoid.pcx
+  - Char.png
+  - Cursor.png
+  - Effect.png
+  - Enner.png
+  - Font.png
+  - FOW.png
+  - GLTerra.png
+  - Humanoid.png
   - Icon.bmp
-  - Item.pcx
-  - IVlad.pcx
-  - Menu.pcx
-  - OLTerra.pcx
-  - Smiley.pcx
-  - Symbol.pcx
-  - WTerra.pcx
+  - Item.png
+  - IVlad.png
+  - Menu.png
+  - OLTerra.png
+  - Smiley.png
+  - Symbol.png
+  - WTerra.png
 
 **Subfolder: Music**
 

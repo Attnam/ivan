@@ -49,13 +49,6 @@ int eddy::GetBodyPartWobbleData(int) const { return WOBBLE_VERTICALLY|(2 << WOBB
 
 bodypart* magicmushroom::MakeBodyPart(int) const { return magicmushroomtorso::Spawn(0, NO_MATERIALS); }
 
-cchar* ghost::FirstPersonBiteVerb() const { return "touch"; }
-cchar* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
-cchar* ghost::ThirdPersonBiteVerb() const { return "touches"; }
-cchar* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
-truth ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
-int ghost::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
-
 cchar* magpie::FirstPersonBiteVerb() const { return "peck"; }
 cchar* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
 cchar* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
@@ -1400,73 +1393,6 @@ truth genetrixvesana::MustBeRemovedFromBone() const
          || GetTeam()->GetID() != MONSTER_TEAM
          || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL
          || GetLevel()->GetIndex() != VESANA_LEVEL;
-}
-
-void ghost::AddName(festring& String, int Case) const
-{
-  if(OwnerSoul.IsEmpty() || Case & PLURAL)
-    character::AddName(String, Case);
-  else
-  {
-    character::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
-    String << " of " << OwnerSoul;
-  }
-}
-
-void ghost::Save(outputfile& SaveFile) const
-{
-  nonhumanoid::Save(SaveFile);
-  SaveFile << OwnerSoul << Active;
-}
-
-void ghost::Load(inputfile& SaveFile)
-{
-  nonhumanoid::Load(SaveFile);
-  SaveFile >> OwnerSoul >> Active;
-}
-
-truth ghost::RaiseTheDead(character* Summoner)
-{
-  itemvector ItemVector;
-  GetStackUnder()->FillItemVector(ItemVector);
-
-  for(uint c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->SuckSoul(this, Summoner))
-      return true;
-
-  if(IsPlayer())
-    ADD_MESSAGE("You shudder.");
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
-
-  return false;
-}
-
-int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
-                                 int Direction, truth PenetrateResistance, truth Critical,
-                                 truth ShowNoDamageMsg, truth CaptureBodyPart)
-{
-  if(Type != SOUND)
-  {
-    Active = true;
-    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
-                                            PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
-  }
-  else
-    return 0;
-}
-
-void ghost::GetAICommand()
-{
-  if(Active)
-    character::GetAICommand();
-  else
-  {
-    if(CheckForEnemies(false, false, false))
-      return;
-
-    EditAP(-1000);
-  }
 }
 
 int largecreature::GetSquareIndex(v2 Pos) const

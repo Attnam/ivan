@@ -7,6 +7,7 @@ installed on your system:
 - compiler with C++11 support (e.g. Clang 3.3 or newer, GCC 4.8 or newer)
 - CMake (https://cmake.org) version 2.8.12.2 or newer
 - SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
+- libpng (http://www.libpng.org/pub/png/libpng.html)
 
 --------------------------------------
 

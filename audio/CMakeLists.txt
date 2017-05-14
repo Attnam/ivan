@@ -1,6 +1,7 @@
 file(GLOB FEAUDIO_SOURCES *.h *.cpp)
 
 add_library(FeAudio ${FEAUDIO_SOURCES})
+target_link_libraries(FeAudio FeLib)
 
 # Add RtMidi dependencies on Windows
 if(WIN32)
