@@ -63,6 +63,7 @@ To do for each release
   - defeat.mid
   - Dungeon.mid
   - Dungeon2.mid
+  - Dungeon3.mid
   - Empty.mid
   - Japan.mid
   - mainmenu.mid
