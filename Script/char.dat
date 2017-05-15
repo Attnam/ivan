@@ -6614,6 +6614,7 @@ siren
   DefaultCharisma = 50;
   DefaultMana = 5;
   Sex = FEMALE;
+  StandVerb = "flaunting";
   HeadBitmapPos = 112, 368;
   TorsoBitmapPos = 48, 288;
   ArmBitmapPos = 80, 240;
@@ -6626,7 +6627,6 @@ siren
   NameSingular = "siren";
   IsAbstract = true;
   CanBeGenerated = true;
-  Frequency = 10000;
   AttachedGod = DULCIS;
   FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
 
