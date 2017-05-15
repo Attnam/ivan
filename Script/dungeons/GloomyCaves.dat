@@ -55,9 +55,10 @@ Dungeon ELPURI_CAVE;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      2,
+      3,
       "Dungeon.mid",
-      "Dungeon2.mid";
+      "Dungeon2.mid",
+      "Dungeon3.mid";
     }
 
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
@@ -358,7 +359,7 @@ Dungeon ELPURI_CAVE;
     LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
     IgnoreDefaultSpecialSquares = true;
     Items = 35:70;
-    EnterImage = "Enner.pcx";
+    EnterImage = "Enner.png";
     EnterTextDisplacement = -150, 0;
 
     Room
@@ -766,7 +767,7 @@ Dungeon ELPURI_CAVE;
   {
     LevelMessage = "You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
     FillSquare = solidterrain(GROUND), QUARTZITE earth;
-    EnterImage = "IVlad.pcx";
+    EnterImage = "IVlad.png";
     EnterTextDisplacement = 260, 0;
 
     RoomDefault
