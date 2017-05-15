@@ -6614,8 +6614,7 @@ siren
   DefaultCharisma = 50;
   DefaultMana = 5;
   Sex = FEMALE;
-  SkinColor = rgb16(160, 100, 64);
-  HairColor = rgb16(80, 48, 32);
+  StandVerb = "flaunting";
   HeadBitmapPos = 112, 368;
   TorsoBitmapPos = 48, 288;
   ArmBitmapPos = 80, 240;
@@ -6626,6 +6625,8 @@ siren
   HostileReplies == "\"LAallaaalalaaa!\"";
   CanRead = true;
   NameSingular = "siren";
+  IsAbstract = true;
+  CanBeGenerated = true;
   AttachedGod = DULCIS;
   FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
 
@@ -6658,15 +6659,43 @@ siren
   Config DARK_SIREN;
   {
     SkinColor = rgb16(128, 80, 48);
-    HairColor = rgb16(80, 48, 32);
-    TorsoMainColor = rgb16(60, 30, 25);
+    HairColor = rgb16(35, 35, 35);
+    TorsoMainColor = rgb16(30, 30, 30);
   }
 
   Config GREEN_SIREN;
   {
     SkinColor = rgb16(180, 255, 150);
     HairColor = rgb16(200, 48, 32);
-    TorsoMainColor = rgb16(180, 40, 25);
+    TorsoMainColor = rgb16(180, 255, 150);
+  }
+
+  Config BLUE_SIREN;
+  {
+    SkinColor = rgb16(153, 204, 255);
+    HairColor = rgb16(51, 51, 255);
+    TorsoMainColor = rgb16(153, 204, 255);
+  }
+
+  Config RED_SIREN;
+  {
+    SkinColor = rgb16(255, 51, 51);
+    HairColor = rgb16(255, 255, 255);
+    TorsoMainColor = rgb16(255, 51, 51);
+  }
+
+  Config PINK_SIREN;
+  {
+    SkinColor = rgb16(240, 200, 201);
+    HairColor = rgb16(255, 51, 153);
+    TorsoMainColor = rgb16(240, 200, 201);
+  }
+
+  Config HISPANIC_SIREN;
+  {
+    SkinColor = rgb16(160, 100, 64);
+    HairColor = rgb16(80, 48, 32);
+    TorsoMainColor = rgb16(160, 100, 64);
   }
 }
 

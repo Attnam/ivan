@@ -677,6 +677,10 @@
 #define CAUCASIAN_SIREN 3
 #define DARK_SIREN 4
 #define GREEN_SIREN 5
+#define BLUE_SIREN 6
+#define RED_SIREN 7
+#define PINK_SIREN 8
+#define HISPANIC_SIREN 9
 
 #define HATCHLING 1
 #define BOIL 2
