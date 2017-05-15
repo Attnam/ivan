@@ -55,9 +55,10 @@ Dungeon XINROCH_TOMB;
     EarthquakesAffectTunnels = true;
     AudioPlayList = 
     {
-      2,
+      3,
       "Dungeon.mid",
-      "Dungeon2.mid";
+      "Dungeon2.mid",
+      "Dungeon3.mid";
     }
 
     Square, Random HAS_NO_OTERRAIN;
