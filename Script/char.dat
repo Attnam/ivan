@@ -652,12 +652,13 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      6,
+      7,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
       "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
       "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"Hi! You look fabulous today!\"",
+      "\"It is we who stand guard, our eternal watch shall not fail.\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
   }
@@ -693,17 +694,26 @@ guard
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
-      10,
+      12,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
       "\"My great-grandfather, Sir Haedlac Galladon IV, once told me a story he heard from his great-grandfather: That when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
+      "\"No crime can be tolerated. Justice shall tower over freedom!\"",
+      "\"In my left hand, judgement - in my right, retribution!\"",
       "\"Enemy of my enemy is still my enemy, but much easier to double cross.\"",
       "\"You can't make an omelet without ruthlessly crushing dozens of eggs beneath your steel boot and then publicly disemboweling the chickens that laid them as a warning to others.\"",
       "\"I'm the Attnamese Cardinal of Peace. I shall bring peace to the whole world, one nation at a time.\"",
       "\"Stop, citizen! You are guilty of a thought-crime! I thereby condemn you to re-education by the hand of the master torturer! Tee hee - just kidding. But you should have seen your face!\"",
       "\"I'm the seventh knight of my family line in the service of Petrus. My great-great-great-great-grandfather received knighthood after he helped Petrus overthrow High Priest Priscus.\"",
       "\"The house of Galladon has served Petrus ever since he took over.\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"Your transgressions end here!\"",
+      "\"My mandate is absolute. I am above question, above doubt. Valpurus guides me and commands your destruction.\"",
+      "\"There is mercy for the repentant - for you, there is punishment and death!\"";
     }
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
@@ -996,6 +1006,14 @@ priest
       "@Dd smirks: \"I would not wish to startle you, but thanks to this amulet, I will always know if you're telling me the truth.\"",
       "@Dd frowns: \"In thy prayers thou must understand Valpurus is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray to Him when He hath called thee a Champion!\"";
     }
+    HostileReplies =
+    {
+      3,
+      "\"Cleanse! Purge! Kill!\"",
+      "\"Valpurus guides my weapon.\"",
+      "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
+    }
+
   }
 
   Config SILVA;
@@ -1065,6 +1083,7 @@ priest
     HairColor = rgb16(64, 0, 64);
     EyeColor = rgb16(128, 0, 64);
     AttachedGod = INFUSCOR;
+    DefaultName = "Praecantrix";
     NameSingular = "priestess";
     PostFix = "of Infuscor";
     Sex = FEMALE;
@@ -1327,7 +1346,19 @@ darkknight
     DisplacePriority = 8;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
-    DeathMessage = "@Dd kneels down, dying: \"Alas... It seem you have bested me.\"";
+    HostileReplies =
+    {
+      2,
+      "\"For the Dark Gods!\"",
+      "\"Chaaaaaaaaaaaarge!\"";
+    }
+    FriendlyReplies =
+    {
+      2,
+      "\"Yeah, I was a guard in Attnam once. Is that all?\"",
+      "\"The Order of the Dark Knights is ancient and you should stop asking questions.\"";
+    }
+    DeathMessage = "@Dd kneels down, dying: \"Alas... It seems you have bested me.\"";
   }
 
   Config MASTER;
@@ -1868,6 +1899,17 @@ skeleton
     IsExtraFragile = false;
     TamingDifficulty = NO_TAMING;
     CreateUndeadConfigurations = false;
+    HostileReplies =
+    {
+      5,
+      "\"I remeber... life. I want to be whole again.\"",
+      "\"I remeber my sword. My precious sword. What have become of it?\"",
+      "\"I feel... empty. Hollow.\"",
+      "\"I have lost what made me whole. I am now nothing but a soulles husk.\"",
+      "@Dd rasps: \"How deep have I fallen...\"";
+    }
+    FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
+    DeathMessage = "As @Dd crumples into a heap of bones, you hear an echoing whisper: \"We shall meet again...\"";
     AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
   }
 }
@@ -1916,6 +1958,7 @@ goblin
     RightSWeaponSkillHits = 10;
     NameSingular = "goblin berserker";
     ClothColor = rgb16(0, 96, 0);
+    IgnoreDanger = true;
     FriendlyReplies =
     {
       5,
@@ -2452,7 +2495,7 @@ communist /* Ivan */
   }
   FriendlyReplies =
   {
-    12,
+    14,
     "\"Da, @nu like killing.\"",
     "\"@Nu ruski specialist.\"",
     "\"@Nu work. Else @nu nerve stapled.\"",
@@ -2463,6 +2506,8 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
+    "\"@Nu gone through spacetime portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
+    "\"You can always find a party in Lunethia. But in Soviet Russia, the Party can always find you!\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
     "\"Lenin want @nu kill capitalists!\"";
   }
@@ -2820,16 +2865,6 @@ petrusswife
   IsExtraCoward = true;
   WieldedPosition = 0, -1;
   HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
-  FriendlyReplies =
-  {
-    6,
-    "\"I'm so sick jealous to those dolphins...\"",
-    "\"I'm Petrus's favorite, not she!\"",
-    "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
-    "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"",
-    "\"Petrus has a *massive* sword, if you know what I mean.\"",
-    "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
-  }
   AttachedGod = DULCIS;
   WillCarryItems = false;
   IsExtraFragile = true;
@@ -2847,12 +2882,12 @@ petrusswife
     FriendlyReplies =
     {
       6,
-      "\"I'm not actually Petrus' first wife, only his eldest right now. He outlived nearly a dozen wives by now.\"",
+      "\"I'm not Petrus' first wife, only his eldest right now. He outlived nearly a dozen wives by now.\"",
       "\"Amicus veritas, sed magis amica mihi Petrus.\"",
-      "\"I have actually written most Attnamese trade agreements, draft bills and international treaties for the past twenty years. But don't tell Petrus, he would be mad.\"",
+      "\"I have written most Attnamese trade agreements, draft bills and international treaties for the past twenty years. But don't tell Petrus, he would be mad.\"",
       "\"Oh, you come from Tweraif? I've heard so much about local University!\"",
-      "\"You actually met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
-      "\"I actually wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
+      "\"You met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
+      "\"I wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
     }
     DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
     AttachedGod = SOPHOS;
@@ -2865,6 +2900,17 @@ petrusswife
     HairColor = rgb16(24, 24, 24);
     HeadBitmapPos = 112, 16;
     PostFix = "number 2";
+    FriendlyReplies =
+    {
+      7,
+      "\"I'm so sick jealous of those dolphins...\"",
+      "\"I'm Petrus' favorite, not No. 1!\"",
+      "\"No. 3 once was here with her twin sister. I've heard that one of them cheated on Petrus and... I really shouldn't be telling you this.\"",
+      "\"I have no idea what Petrus sees on No. 4! She's so dumb it hurts!\"",
+      "\"No. 5 thinks how funny she is. I can't stand her, she simply doesn't know how to shut her face!\"",
+      "\"Petrus has a *massive* sword, if you know what I mean.\"",
+      "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
+    }
   }
 
   Config 3;
@@ -2872,6 +2918,22 @@ petrusswife
     HairColor = rgb16(48, 40, 8);
     HeadBitmapPos = 112, 0;
     PostFix = "number 3";
+    FriendlyReplies =
+    {
+      8,
+      "\"Petrus also married my twin sister, but I haven't seen her around for some time.\"",
+      "\"I despise Petrus. Surprised to hear me talk like that? He took away the love of my life, what worse can he do to me?\"",
+      "\"I never loved Petrus. He knew it and that must be why he allowed me to fall in love with someone else. To torment me.\"",
+      "\"After my transgression, why has Petrus never punished me? Does he think it's more cruel to leave me rot in this harem?\"",
+      "\"I once was a princess of a proud nomad tribe of the great eastern steppes. Me and my twin sister were wed to Petrus as a tribute of peace.\"",
+      "\"I miss the smell of horses, the rhythm of their run. I remember me and my sister riding for hours, miles upon miles of pure joy and freedom.\"",
+      "\"How I hate this gilded cage! I was born to feel the wind and rain on my face, not to sit in an armchair all day long, chitter and broider.\"",
+      "\"You want to learn more about the four Cardinals? They are the most trusted knights and advisors of Petrus: a coward, a liar, a thief and a madman.\"";
+    }
+    PanicLevel = 20;
+    IsExtraCoward = false;
+    KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
+    CWeaponSkillHits == 500;
   }
 
   Config 4;
@@ -2884,9 +2946,12 @@ petrusswife
     PostFix = "number 4";
     FriendlyReplies =
     {
-      3,
+      6,
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
       "\"I am boooored!\"",
+      "\"Have you heard No. 5? She's so funny!\"",
+      "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
+      "\"No. 1 is so clever it's scary. Really!\"",
       "\"Uncle Petrus says I am special! He says it to all his wives, but I know he means it for me. Tee hee.\"";
     }
   }
@@ -2896,6 +2961,46 @@ petrusswife
     HairColor = rgb16(60, 48, 24);
     HeadBitmapPos = 112, 48;
     PostFix = "number 5";
+    FriendlyReplies =
+    {
+      36,
+      "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
+      "\"Kobolds are a living proof that the gods have a sense of humor.\"",
+      "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
+      "\"What has two legs and bleeds? Half a goblin.\"",
+      "\"An orc told me that a thought crossed his mind once. It must have been a long and lonely journey.\"",
+      "\"Why do dragons sleep all day? So they can fight knights.\"",
+      "\"How do you escape from a dwarf? Step on a chair.\"",
+      "\"Why are the noses of Bazzarians so big? So they can sniff out a dropped coin from a mile away.\"",
+      "\"Why didn't the skeleton cross the road? He didn't have the guts.\"",
+      "\"A skeleton walks into a bar... and orders a beer and a mop.\"",
+      "\"What's the difference between a slave and a bench? A bench can support a family.\"",
+      "\"What do you call a knight who is too afraid to fight? Sir Render.\"",
+      "\"It's not that I don't like kobolds. I just that I can't finish a whole one.\"",
+      "\"Why should you never ask a dwarf to pay for drinks? Because he's always a little short.\"",
+      "\"A sage was once asked by an orc general what did he think about orcish civilization. The sage replied: 'Yes, that would be a great idea.'\"",
+      "\"A woman comes home to find her husband in bed with a female dwarf. She screams at him: 'You said you wouldn't cheat on me anymore!' He replies: 'I know. Can't you see I'm trying to cut it down?'\"",
+      "\"Why do dwarven songs sound better by candlelight? You can shove the wax in your ears.\"",
+      "\"An elf, a man and a dwarf order an ale, but there is a fly in each tankard. When the elf notices it, he pours his ale out in disgust. The man picks the fly out and drinks the ale. The dwarf picks the fly out, holds it legs-up and shouts: 'Spit it back, ye' li'l blight!'\"",
+      "\"A blind elf walks into a bar, sits down and says: 'Do you want to hear a dwarf joke?' A voice beside him growls: 'Before you tell a dwarf joke, know that the bartender is a dwarf, the guard is a dwarf, I am a dwarf and my two companions are dwarves. Do you still want to tell your joke?!' The blind elf thinks for a moment and then replies: 'No, not if I have to explain it five times.'\"",
+      "\"If ugly was a crime the entire orcish race would have rotted in the dungeons long ago. Oh, wait a minute...\"",
+      "\"An orc, a barbarian and a blood-thirsty savage entered a bar... and that was just the first person!\"",
+      "\"What do you call an orc with half a brain? Gifted.\"",
+      "\"Two orc hunters went bear hunting. They came upon a fork in a road where a sign read 'BEAR LEFT'. And so they went home. And do you know what's the funny part? That any orc could read!\"",
+      "\"How do orcs name their children? They throw them down the stairs and wait what noise they make.\"",
+      "\"In a battle of wits, an orc is unarmed, blind and lame.\"",
+      "\"How many kobolds do you need to paint a room? Only one if you throw him really hard.\"",
+      "\"An orc walks into a bar with a parrot on his shoulder. Impressed by such a strange sight the barkeep says: 'An incredible beast, can he talk?' To which the parrot responds: 'Barely.'\"",
+      "\"A dwarf walks out of a bar... Hey, it *could* happen!\"",
+      "\"What did the human say when he walked into a dwarf bar? 'Argh, my head!'\"",
+      "\"What do you call an elf that can count past ten? Barefoot.\"",
+      "\"Why are rogues so sneaky? Because their armor is literally made of hide.\"",
+      "\"Did you hear about that knight who fell from the tallest tower in the castle and lived? They called him Sir Vive.\"",
+      "\"What do you call a group of witches in a hot spring? A self-cleaning coven.\"",
+      "\"An elf, a man and an orc walk into a bar. The dwarf walks under it.\"",
+      "\"Why was the wizard late for work? He was up all night playing with his staff.\"",
+      "\"It is true that orcs sleep with horses. If you've seen their women, you'll know why.\"";
+    }
   }
 
   Config 6;
@@ -2903,6 +3008,38 @@ petrusswife
     HairColor = rgb16(200, 0, 0);
     HeadBitmapPos = 112, 64;
     PostFix = "number 6";
+    FriendlyReplies =
+    {
+      6,
+      "\"The day I became Petrus' wife was the best day of my life. And it haven't gotten worse since!\"",
+      "\"Leave? Why would I want to leave? I have luxury here, servant - everything I can wish for. Outside, there is just poverty and grime.\"",
+      "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
+      "\"I only wish No. 5 didn't babble all the time.\"",
+      "\"Don't bother talking to No. 3, she's weird.\"",
+      "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
+    }
+  }
+
+  Config 7;
+  {
+    HairColor = rgb16(48, 40, 8);
+    HeadBitmapPos = 112, 0;
+    Adjective = "lobotomized";
+    ArticleMode = 0;
+    ClassStates = CONFUSED;
+    FriendlyReplies =
+    {
+      5,
+      "@Dd says with a blank face: \"All hail mighty Petrus.\"",
+      "@Dd says with a blank face: \"Praise Valpurus.\"",
+      "@Dd says with a blank face: \"I love the Cathedral.\"",
+      "@Dd says with a blank face: \"I hear. I obey.\"",
+      "@Dd drools.";
+    }
+    HostileReplies == "\"You have to obey or great Petrus will punish you.\"";
+    DeathMessage = "@Dd dies with a last whisper: \"Thank you.\"";
+    IsExtraCoward = false;
+    IgnoreDanger = true;
   }
 }
 
@@ -4910,6 +5047,9 @@ imperialist
 
   Config HOARD_MASTER;
   {
+    AttributeBonus = -30;
+    DefaultIntelligence = 35;
+    DefaultWisdom = 35;
     HeadBitmapPos = 96, 80;
     TorsoBitmapPos = 32, 16;
     ArmBitmapPos = 64, 16;
@@ -5336,8 +5476,24 @@ darkmage
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
-  HostileReplies == "@Dd yells: \"Prepare to meet your maker!\"";
-  FriendlyReplies == "\"Death awaits our foes.\"";
+  HostileReplies =
+  {
+    3,
+    "\"Avada Kedavra!\"",
+    "@Dd screams: \"May the Darkness swallow you!\"",
+    "@Dd yells: \"Prepare to meet your maker!\"";
+  }
+  FriendlyReplies =
+  {
+    7,
+    "\"Don't fear the Darkness, my friend.\"",
+    "\"Light thinks it travels faster than anything but it is wrong. No matter how fast Light travels, it finds the Darkness has always got there first, and is waiting for it.\"",
+    "\"Everything looks better when it's dead and on fire!\"",
+    "\"My motto? If it's not on fire now, it will be soon.\"",
+    "\"What hurts you, blesses you. Darkness is your candle.\"",
+    "@Dd cackles madly: \"Build a man a fire, and he'll be warm for a day. Set a man on fire, and he'll be warm for the rest of his life.\"",
+    "\"Death awaits our foes.\"";
+  }
   IgnoreDanger = true;
   AttachedGod = INFUSCOR;
   IsAbstract = true;
@@ -5517,7 +5673,16 @@ darkmage
       "@Dd is humming an incantation of a devastating death-spell.",
       "\"A mere mortal dares challenge my might?\"";
     }
-    FriendlyReplies == "\"Death awaits our foes.\"";
+    FriendlyReplies =
+    {
+      6,
+      "@Dd conjures a quick illusion. \"This is picture from my great-grandson's fourth birthday last week. His name is Timmy. And this is the arcanite golem I gave him.\"",
+      "\"Timotheodon, my only great-grandson, once stole my spellbook and tried to blast his classmates with a fireball. Isn't he a lovable rascal?\"",
+      "@Dd sighs: \"My late wife, Helen, baked a wonderful banana stollen. Atavus day is not the same anymore, without her.\"",
+      "\"I miss my wife so much. I even considered looking into necromancy, but... No, she wouldn't like it that way.\"",
+      "@Dd winks at you: \"Ever tried a shot of vodka with just a sprinkle of ommel urine? That gives it just the right bite!\"",
+      "\"Some holidays, I wish I could just summon my family rather than try to make them agree on a time and place...\"";
+    }
     DeathMessage = "@Dd dies with a calm smile: \"Hello darkness, my old friend...\"";
   }
 }
