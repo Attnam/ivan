@@ -293,6 +293,9 @@ Dungeon ATTNAM;
           x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, FABRIC cloak, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } } }
           X = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; } } }
           c = christmastree;
+          % = GOLD barwall;
+          + = GOLD door(BARDOOR) { Parameters = LOCKED; }
+          S = sign { Text = "Be responsible, sort your waste."; }
         }
       }
       {
@@ -302,14 +305,14 @@ Dungeon ATTNAM;
         ..b...b........#########........b...b..
         b....b.......bb#.......#bb.......b....b
         ...####b..b..###.......###..b..b####...
-        b.b#..#.b....#...........#....b.#=.#b.b
-        ...#..#....###...........###....#-.#...
-        b.b#..#b..b#...............#b..b#..#b.b
-        ...#..###..#.....T...T.....#..###.B#...
+        b.b#..#.b....#...........#....b.#..#b.b
+        ...#..#....###...........###....#..#...
+        b.b#..#b..b#...............#b..b#+%#b.b
+        ...#..###..#.....T.A.T.....#..###.B#...
         b.b#....#.b#.......|.......#b.#....#b.b
-        ...#....#..#.......|.......#..#B...#...
-        b.b###..#b.###.....|.....###.b#..###b.b
-        ....b#..#@#.b#.....|.....#b.#@#.B#b....
+        ...#....#..#.......|.......#..#B.-=#...
+        b.b###..#b.###.....|.....###.S#..###b.b
+        ....b#..#@#.f#.....|.....#..#@#.B#b....
         b....#....#_.#.....|.....#..#..B.#....b
         ..bb.###..####.....|.....####..###.bb..
         b.....b#.....#.....|.....#...B.#b.....b
@@ -330,7 +333,7 @@ Dungeon ATTNAM;
         b..####.s.s.D...#.c.c.#...D..[.[####..b
         ..b#.d......#####.f.f.#####.....[.[#b..
         b..#....s.s.#b..b.....b..b#tttt....#..b
-        .b.##...#####.bb..c.c..bb.#####...##.b.
+        .b.##~..#####.bb..c.c..bb.#####...##.b.
         b..b##xx#b.b......f.f......b.b#..##b..b
         ....b####....b...........b....####b....
         b.b...b...b.......c.c.......b...b...b.b
@@ -360,20 +363,23 @@ Dungeon ATTNAM;
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
           C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, meleeweapon(GRAND_STOLLEN_KNIFE), stone { Times = 10; }, GOLD banana; } }
-          F == ring(RING_OF_FIRE_RESISTANCE);
-          I == ring(RING_OF_INVISIBILITY);
-          E == amulet(AMULET_OF_ESP);
+          F == GOLD ring(RING_OF_FIRE_RESISTANCE);
+          I == GOLD ring(RING_OF_INVISIBILITY);
+          E == GOLD amulet(AMULET_OF_ESP);
           S == GOLD GOLD meleeweapon(LONG_SWORD);
           U == DIAMOND helmet(HELM_OF_UNDERSTANDING);
           A == GOLD helmet(HELM_OF_ATTRACTIVITY);
           L == oillamp;
           P == GOLD bodyarmor(PLATE_MAIL);
           O == GOLD cloak;
-          W == wand(WAND_OF_POLYMORPH);
+          W == DIAMOND wand(WAND_OF_POLYMORPH);
           w == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           c == Random { MinPrice = 700; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }
           m == Random { MinPrice = 350; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           X == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
+          t == itemcontainer(LARGE_CHEST) { ItemsInside = { 7, can { Times = 0:3; SecondaryMaterial = 0; }, PLANT_FIBER lump { Times = 0:1; }, lantern(BROKEN) { Times = 0:2; }, brokenbottle { Times = 0:5; }, bananapeels { Times = 0:5; }, banana(BROKEN) { Times = 0:1; }, bone { Times = 0:5; } } }
+          T == itemcontainer(LARGE_CHEST) { ItemsInside == Random { Times = 3:10; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = BROKEN; } }
+          B == firstbornchild(FEMALE);
         }
       }
       {
@@ -381,17 +387,17 @@ Dungeon ATTNAM;
         ............#.......#............
         ####......###.......###......####
         #..#......#...........#......#..4
-        #..#....###...........###....#.i#
-        #..#....#...r.......r...#....#hC#
+        #..#....###...........###....#..#
+        #..#....#...r.......r...#....#..#
         #..###..#.........a.....#..###I.#
-        #...e#..#......b.b......#..#EOLF#
-        #...e#..#......k.k......#..#.dPS#
+        #...e#..#......b.b......#..#COLF#
+        #...e#..#......k.k......#..#.d..#
         ##1.e#..##1.h..p.p..h.1##..#Ug1##
-        ..#.e4##..#....b.b....#..##3r.#..
-        ..#....#..#....k.k....#..#Wh.L#..
+        ..#.e4##..#....b.b....#tt##3r.#..
+        ..#....#..#....k.k....#Tt#Wh.L#..
         ..###..4###....p.p....###3Fi###..
         ....#.....3.d..b.b..d.4P.A.I#....
-        ....#.....#....k.k....#r.gEd#....
+        ....#.....#....k.k....#r.gEP#....
         ....###3..#....p.p....#Sd4###....
         .......#..#....b.b....#h.#.......
         ......###.3.g..k.k..g.4.###......
@@ -408,7 +414,7 @@ Dungeon ATTNAM;
         ####.........#.....#.........####
         #........#####.....#####........#
         #........#.............#........4
-        ##...#####.............#####...##
+        ##B..#####.............#####...##
         .##..#.....................#XX##.
         ..####.....................####..
       }
@@ -426,7 +432,8 @@ Dungeon ATTNAM;
           E = guard(ELITE);
           m = guard(MASTER);
           p = priest(VALPURUS);
-          d = dolphin;
+          d = dolphin(ADULT_FEMALE);
+          D = dolphin(ADULT_MALE);
           l = frog(LIGHT);
           f = frog(GREATER_LIGHT);
           i = frog(GIANT_LIGHT);
@@ -441,27 +448,30 @@ Dungeon ATTNAM;
           k = kamikazedwarf(VALPURUS);
           K = veterankamikazedwarf(VALPURUS);
           h = imperialist(HOARD_MASTER);
+          G = golem(GOLD);
+          o = orc(REPRESENTATIVE);
+          a = siren(AMBASSADOR_SIREN);
         }
       }
       {
-        ............#########....d.......
+        ............#########....D.......
         ............#g.....g#............
         ####......###..ymy..###......####
-        #.K#......#g....l....g#......#h.#
+        #.K#......#g....l....g#......#G.#
         #..#....###...........###....#..#
         #k.#....#E.............E#....#..#
         #k.###..#....sPs.s.s....#..###..#
         #k...#..#..f....i....f..#..#....#
-        #k...#..#E.............E#..#....#
+        #k...#..#E.............E#..#...h#
         ###..#..###...........###..#..###
         ..#..###..#...........#..###..#..
         ..#....#..#g.l.....l.g#..#....#..
         ..###k.####...........####..###..
-        ....#k...k#...........#.E...#....
+        ....#k...k#.....o.....#.E...#....
         ....#k...k#...........#.....#....
         ....####.k#g.........g#..####....
         .......#..#...........#..#.......
-        ......###.#...........#.###......
+        ......###.#.....a.....#.###......
         ..#####E#.#...........#.#.#####..
         .##.......#g.........g#.......##.
         .#......#.#...........#.#..p...#.
@@ -1103,12 +1113,14 @@ Dungeon ATTNAM;
           H = guard(HONOR);
           N = necromancer(IMPRISONED_NECROMANCER) { Team = 15; }
           P = punisher;
+          L = punisher(LAW_STUDENT);
           M = mistress { Inventory == potion { Times = 1:2; SecondaryMaterial = VALDEMAR; } }
           T = imperialist(MASTER_TORTURER) { Flags = IS_MASTER; }
           1 = farmer(IMPRISONED_FARMER) { Team = 15; }
           2 = hunter(IMPRISONED_HUNTER) { Team = 15; }
           3 = femaleslave(IMPRISONED_FEMALE) { Team = 15; }
           4 = zombie(IMPRISONED_ZOMBIE) { Team = 15; }
+          7 = petrusswife(7);
         }
       }
       {
@@ -1119,7 +1131,7 @@ Dungeon ATTNAM;
         ************#...#.................#####
         ************#######..#.###...####.....#
         ******************#..#.**#...#**#.#...#
-        ******************####*.*#...#**#.#...#
+        ******************####*.*#7..#**#.#...#
         ************************#######*#.#####
         ************************#...G.#*#.....#
         #########################.....#*#.#...#
@@ -1135,7 +1147,7 @@ Dungeon ATTNAM;
         #..3#*#...#*#...#*#...#*#.....#*#.###**
         ##.#####.#####.#####.####.....#*#.#****
         #.............................###.##***
-        #..................................#***
+        #..........................L.......#***
         #########################.....#.#..#***
         *########.............#*#.....#.#.G#***
         *#.....##.............#*##...##.#..#***
@@ -1284,7 +1296,7 @@ Dungeon ATTNAM;
         {
           b = 0;
           s = 0;
-          C = MARBLE coffin;
+          C = coffin;
          }
       }
       {
