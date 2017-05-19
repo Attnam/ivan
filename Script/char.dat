@@ -438,7 +438,7 @@ farmer
   {
     6,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
-    "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
+    "@Dd seems suspicious. \"You look like one from Mondedr! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
@@ -474,6 +474,7 @@ farmer
       "\"Would you have a nut to spare?\"",
       "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
     }
+    UndeadVersions = false;
   }
 }
 
@@ -1008,9 +1009,10 @@ priest
     }
     HostileReplies =
     {
-      3,
+      4,
       "\"Cleanse! Purge! Kill!\"",
       "\"Valpurus guides my weapon.\"",
+      "\"Prepare to meet @Gd, fool!\"",
       "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
     }
 
@@ -1454,14 +1456,20 @@ ennerbeast
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
   Inventory == horn(FEAR);
   IsUnique = true; /* currently */
-  HostileReplies == "Aighee!";
+  HostileReplies =
+  {
+    3,
+    "\"I only want to talk but everyone is rude and dies when I try.\"",
+    "\"Sometimes, I feel so lonely...\"",
+    "@Dd laughs with a devastating sound which shakes the ground.";
+  }
   FriendlyReplies =
   {
     4,
     "\"Fishing is fun! Do you fish?\"",
     "\"And then I got that perch weighting fifty stones...\"",
     "\"I only want to talk but everyone is rude and dies when I try.\"",
-    "\"Can you help me with this download problem?\"";
+    "\"Can you help me finding my children?\"";
   }
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
@@ -1782,7 +1790,7 @@ billswill
   PanicLevel = 0;
   HasALeg = false;
   FleshMaterial = MAGICAL_AIR;
-  DeathMessage = "@Dd vanishes from existence.";
+  DeathMessage = "@Dd vanishes from existence: \"Fatal error - shutting down.\"";
   SpillsBlood = false;
   Sweats = false;
   HasHead = false;
@@ -2046,15 +2054,27 @@ mommo
   CanOpen = false;
   StandVerb = "bubbling";
   ForceCustomStandVerb = true;
-  HostileReplies == "@Dd vibrates in fury.";
+  HostileReplies =
+  {
+    7,
+    "@Dd oozes.",
+    "@Dd spurts.",
+    "@Dd plops.",
+    "@Dd droops.",
+    "@Dd ripples.",
+    "@Dd slurps.",
+    "@Dd splashes";
+  }
   FriendlyReplies =
   {
-    6,
+    8,
     "@Dd vibrates oddly.",
     "@Dd spurts.",
     "@Dd plops.",
     "@Dd droops.",
     "@Dd ripples.",
+    "@Dd oozes.",
+    "@Dd slurps.",
     "\"Tekeli-li!\"";
   }
   NameSingular = "mommo slime";
@@ -2155,7 +2175,12 @@ golem
   CWeaponSkillHits == 50;
   PanicLevel = 0;
   HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
-  FriendlyReplies == "Yes, master?";
+  FriendlyReplies =
+  {
+    2,
+    "Golem obeys.",
+    "Yes, master?";
+  }
   /* FleshMaterial overridden */
   DeathMessage = "The Holy Words of @dd fly away. The monster's magic fades and it vanishes in seconds.";
   UsesNutrition = false;
@@ -2568,10 +2593,11 @@ hunter
   HostileReplies == "\"Your head will look fine above my fireplace!\"";
   FriendlyReplies =
   {
-    5,
+    6,
     "\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"",
     "\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"",
     "\"I am the Great White Hunter. Get out of My way!\"",
+    "\"Oh, I only hunt for the sport. I'm vegetarian.\"",
     "\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"",
     "\"It is good Petrus had his predecessor assassinated. Can you believe it, the dude tried to take from us our natural right to carry a spear in the street!\"";
   }
@@ -2644,6 +2670,7 @@ hunter
       "\"It wasn't my fault. That bastard had it coming. He should have remembered the rules: No kill stealing!\"",
       "\"I miss hunting. Sometimes I tear open my own flesh, just to see the vivid red of blood on my hands again. Eh-heh heh heh.\"";
     }
+    UndeadVersions = false;
   }
 }
 
@@ -2739,25 +2766,12 @@ dolphin
   TotalVolume = 150000;
   TorsoBitmapPos = 320, 0;
   HostileReplies == "@Dd peeps diabolically to you.";
-  FriendlyReplies =
-  {
-    8,
-    "@Dd peeps passionately to you.",
-    "@Dd peeps: \"Rain in the forest.\"",
-    "@Dd peeps: \"Summer before the Fall.\"",
-    "@Dd peeps: \"The tide rises and the tide falls.\"",
-    "@Dd peeps: \"Empty shells rolling in the surf.\"",
-    "@Dd peeps: \"No sparrow lives that cannot fly.\"",
-    "@Dd peeps: \"Mountains defy the consuming sea.\"",
-    "@Dd peeps: \"Blood in the water.\"";
-  }
+  FriendlyReplies == "@Dd peeps passionately to you.";
   DeathMessage = "@Dd peeps, dying: \"Every petal must fall...\"";
   TotalSize = 300;
   SkinColor = rgb16(144, 144, 144);
   TorsoSpecialColor = rgb16(100, 100, 255); /* EyeColor */
-  Adjective = "female";
   NameSingular = "dolphin";
-  PostFix = "in season";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
   HasALeg = false;
@@ -2769,6 +2783,31 @@ dolphin
   ScienceTalkWisdomModifier = 1000;
   ScienceTalkIntelligenceRequirement = 50;
   ScienceTalkWisdomRequirement = 50;
+
+  Config ADULT_MALE;
+  {
+    Adjective = "male";
+    Sex = MALE;
+  }
+
+  Config ADULT_FEMALE;
+  {
+    Adjective = "female";
+    PostFix = "in season";
+    FriendlyReplies =
+    {
+      8,
+      "@Dd peeps passionately to you.",
+      "@Dd peeps: \"Rain in the forest.\"",
+      "@Dd peeps: \"Summer before the Fall.\"",
+      "@Dd peeps: \"The tide rises and the tide falls.\"",
+      "@Dd peeps: \"Empty shells rolling in the surf.\"",
+      "@Dd peeps: \"No sparrow lives that cannot fly.\"",
+      "@Dd peeps: \"Mountains defy the consuming sea.\"",
+      "@Dd peeps: \"Blood in the water.\"";
+    }
+    Sex = FEMALE;
+  }
 }
 
 slave
@@ -2868,12 +2907,13 @@ petrusswife
   AttachedGod = DULCIS;
   WillCarryItems = false;
   IsExtraFragile = true;
-  Belt = chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+  Belt = GOLD chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
   UndeadVersions = false;
 
   Config 1;
   {
     HairColor = rgb16(24, 24, 24);
+    ClothColor = rgb16(4, 93, 28);
     HeadBitmapPos = 112, 0;
     PostFix = "number 1";
     DefaultIntelligence = 40;
@@ -2898,24 +2938,28 @@ petrusswife
   Config 2;
   {
     HairColor = rgb16(24, 24, 24);
+    ClothColor = rgb16(65,105,225);
     HeadBitmapPos = 112, 16;
     PostFix = "number 2";
     FriendlyReplies =
     {
-      7,
+      8,
       "\"I'm so sick jealous of those dolphins...\"",
       "\"I'm Petrus' favorite, not No. 1!\"",
       "\"No. 3 once was here with her twin sister. I've heard that one of them cheated on Petrus and... I really shouldn't be telling you this.\"",
       "\"I have no idea what Petrus sees on No. 4! She's so dumb it hurts!\"",
       "\"No. 5 thinks how funny she is. I can't stand her, she simply doesn't know how to shut her face!\"",
-      "\"Petrus has a *massive* sword, if you know what I mean.\"",
+      "\"Petrus gave me a daughter, now I want to give him a son.\"",
+      "\"If only I could be the one to give Petrus his firstborn son...\"",
       "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
     }
+    /* RightWielded = firstbornchild(FEMALE); */
   }
 
   Config 3;
   {
     HairColor = rgb16(48, 40, 8);
+    ClothColor = rgb16(119,136,153);
     HeadBitmapPos = 112, 0;
     PostFix = "number 3";
     FriendlyReplies =
@@ -2946,8 +2990,9 @@ petrusswife
     PostFix = "number 4";
     FriendlyReplies =
     {
-      6,
+      7,
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
+      "\"Uncle Petrus has a *massive* sword! Tee hee.\"",
       "\"I am boooored!\"",
       "\"Have you heard No. 5? She's so funny!\"",
       "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
@@ -2959,11 +3004,13 @@ petrusswife
   Config 5;
   {
     HairColor = rgb16(60, 48, 24);
+    ClothColor = rgb16(255,255,255);
     HeadBitmapPos = 112, 48;
     PostFix = "number 5";
     FriendlyReplies =
     {
-      36,
+      37,
+      "\"You know what the greatest joke of them all is? When you laugh only to stop yourself from crying.\"",
       "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
       "\"Kobolds are a living proof that the gods have a sense of humor.\"",
       "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
@@ -3001,11 +3048,13 @@ petrusswife
       "\"Why was the wizard late for work? He was up all night playing with his staff.\"",
       "\"It is true that orcs sleep with horses. If you've seen their women, you'll know why.\"";
     }
+    IsAlcoholic = true;
   }
 
   Config 6;
   {
     HairColor = rgb16(200, 0, 0);
+    ClothColor = rgb16(148,0,211);
     HeadBitmapPos = 112, 64;
     PostFix = "number 6";
     FriendlyReplies =
@@ -3018,11 +3067,14 @@ petrusswife
       "\"Don't bother talking to No. 3, she's weird.\"",
       "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
     }
+    IsMasochist = true; /* kinky! */
   }
 
   Config 7;
   {
     HairColor = rgb16(48, 40, 8);
+    ClothColor = rgb16(119,136,153);
+    BeltColor = rgb16(105,105,105);
     HeadBitmapPos = 112, 0;
     Adjective = "lobotomized";
     ArticleMode = 0;
@@ -3040,6 +3092,7 @@ petrusswife
     DeathMessage = "@Dd dies with a last whisper: \"Thank you.\"";
     IsExtraCoward = false;
     IgnoreDanger = true;
+    Belt = CLOTH belt;
   }
 }
 
@@ -3167,8 +3220,9 @@ femaleslave
     {
       2,
       "\"Never say no to Petrus. Ever!\"",
-      "\"And I thought Richel Decos was bad with his whips...\"";
+      "\"And I thought Richel Decos was bad with his whips...\"";
     }
+    UndeadVersions = false;
   }
 }
 
@@ -3482,6 +3536,20 @@ imp
     "\"I was about to kiss her, but then I got summoned.\"",
     "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
   }
+  HostileReplies =
+  {
+    10,
+    "@Dd cackles evilly.",
+    "@Dd cackles diabolically.",
+    "@Dd laughs devilishly.",
+    "@Dd laughs demonically.",
+    "@Dd giggles infernally.",
+    "@Dd giggles fiendishly.",
+    "@Dd snickers satanically.",
+    "@Dd snickers apocalyptically.",
+    "@Dd grins maniacally.",
+    "@Dd grins sadistically.";
+  }
 }
 
 bat
@@ -3572,6 +3640,7 @@ mistress
   Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
   HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
   AttachedGod = NEFAS;
+  FleshMaterial = ELF_FLESH;
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
@@ -3765,7 +3834,13 @@ werewolfhuman
   TorsoBitmapPos = 48, 0;
   ArmBitmapPos = 64, 0;
   LegBitmapPos = 0, 176;
-  HostileReplies == "@Dd screams in fury.";
+  HostileReplies =
+  {
+    3,
+    "\"I bet your innards taste real sweet!\"",
+    "\"Yummy! I was getting tired of kobolds.\"",
+    "@Dd growls: \"Another adventurer? I just got through picking my teeth from the last.\"";
+  }
   FriendlyReplies =
   {
     4,
@@ -4422,7 +4497,12 @@ genie
   RightSWeaponSkillHits = 200;
   PanicLevel = 0;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"Fall, puny primy!\"";
+  HostileReplies =
+  {
+    2,
+    "\"Fall, puny mortal!\"",
+    "\"Your last wish?\"";
+  }
   FriendlyReplies == "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
   Belt = SPIDER_SILK belt;
   FleshMaterial = MAGICAL_AIR;
@@ -4633,8 +4713,19 @@ orc
   LeftSWeaponSkillHits = 20;
   ClassStates = GAS_IMMUNITY|INFRA_VISION;
   PanicLevel = 50;
-  HostileReplies == "\"Nice scalp! Me want it!\"";
-  FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
+  HostileReplies =
+  {
+    3,
+    "\"Nice scalp! Me want it!\"",
+    "@Dd spits on the ground.",
+    "@Dd scratches @sp armpit.";
+  }
+  FriendlyReplies =
+  {
+    2,
+    "\"Has you seen any elf or dwarf? Me hungry.\"",
+    "@Dd flips you the bird.";
+  }
   FleshMaterial = ORC_FLESH;
   AttachedGod = CRUENTUS;
   WieldedPosition = -1, -1;
@@ -4776,6 +4867,61 @@ orc
     TamingDifficulty = 35;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
+    Sex = MALE;
+  }
+
+  Config REPRESENTATIVE;
+  {
+    AttributeBonus = 60;
+    DefaultWisdom = 19;
+    HairColor = rgb16(224, 224, 0);
+    ClothColor = rgb16(224, 224, 0);
+    BeltColor = rgb16(176, 0, 0);
+    LegMainColor = rgb16(224, 224, 0);
+    LegSpecialColor = rgb16(176, 0, 0);
+    HeadBitmapPos = 112, 176;
+    TorsoBitmapPos = 48, 32;
+    ArmBitmapPos = 80, 16;
+    LegBitmapPos = 0, 224;
+    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
+    Cloak = FABRIC cloak { Enchantment = 2; }
+    BodyArmor = GOLD bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+    Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
+    RightGauntlet = FABRIC gauntlet { Enchantment = 2; }
+    RightBoot = FABRIC boot { Enchantment = 2; }
+    RightWielded = GOLD EBONY_WOOD meleeweapon(AXE) { Enchantment = 3; }
+    LeftWielded = 0;
+    CWeaponSkillHits == 500;
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    TamingDifficulty = 30;
+    DefaultName = "Khor";
+    NameSingular = "orcish representative";
+    FriendlyReplies =
+    {
+      8,
+      "\"I am here on behalf of the orcish freeholds of Gothrok, Gotturan and Gotrotill.\"",
+      "\"We are a proud new nation which renounced both the barbarism of Ur-Khan's horde and the slavery under human overlords.\"",
+      "\"The orcish freeholds do not recognize the rulership of Khans. We rule ourselves as a true democracy.\"",
+      "\"We cannot tolerate the greenskin threat anymore! No goblin shall think it stands equal to an orc or a man.\"",
+      "\"My lords want the head of Guugzamesh served to them on a silver platter, and Attnam can very helpful in that.\"",
+      "\"How long can Petrus ignore me?! I'm here to offer him an alliance!\"",
+      "\"Oh, the emisary of Aslona is here, too. I will enjoy seeing him grovel and beg for the help from Attnam.\"",
+      "\"Many of my peers have fallen in wars under the old king of Aslona. I will not mourn the fall of the new king, either.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"I know what they say about orcish diplomacy! Well, they are not untrue!\"",
+      "\"You're just prejudiced against my kind, aren't you?\"";
+    }
+    Sex = MALE;
+    TotalVolume = 120000;
+    Inventory == potion { SecondaryMaterial = VODKA; Times = 1:10; }
   }
 }
 
@@ -5006,7 +5152,6 @@ imperialist
   {
     HeadBitmapPos = 96, 64;
     TorsoBitmapPos = 48, 48;
-    ArmBitmapPos = 64, 256;
     LegBitmapPos = 0, 48;
     TorsoMainColor = rgb16(30, 30, 30);
     LegMainColor = rgb16(30,30,30);
@@ -5318,8 +5463,15 @@ floatingeye
   DefaultMana = 0;
   CanOpen = false;
   TotalVolume = 30000;
-  HostileReplies == "@Dd stares at you.";
-  FriendlyReplies == "@Dd stares at you.";
+  HostileReplies =
+  {
+    4,
+    "@Dd stares at you intently.",
+    "@Dd blinks.",
+    "@Dd goes unfocused for a second.",
+    "@Dd gazes at you.";
+  }
+  FriendlyReplies == "@Dd stares at you in a friendly manner.";
   TotalSize = 40;
   Adjective = "floating";
   NameSingular = "eye";
@@ -6791,8 +6943,8 @@ siren
   NameSingular = "siren";
   IsAbstract = true;
   CanBeGenerated = true;
-  Frequency = 10000;
   AttachedGod = DULCIS;
+  FleshMaterial = ELF_FLESH;
   FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
 
   /* if somebody really wants to J_Kahvi has provided
@@ -6861,6 +7013,38 @@ siren
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     TorsoMainColor = rgb16(160, 100, 64);
+  }
+
+  Config AMBASSADOR_SIREN;
+  {
+    DefaultIntelligence = 30;
+    DefaultWisdom = 35;
+    DefaultCharisma = 75;
+    HeadBitmapPos = 112, 400;
+    SkinColor = rgb16(180, 255, 150);
+    HairColor = rgb16(200, 48, 32);
+    TorsoMainColor = rgb16(180, 255, 150);
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    TamingDifficulty = 20;
+    DefaultName = "Elianise";
+    NameSingular = "elven ambassador";
+    PostFix = "of the Dark Forest";
+    Cloak = NYMPH_HAIR cloak { Enchantment = 4; }
+    RightWielded = charmlyre;
+    FriendlyReplies =
+    {
+      4,
+      "\"Greetings! I am Elianise Lurora Faefina Glynjor Ilythyrra Reysatra Liarryn, Her Most Trusted Advisor and Ambassador of the Fair Empress of Elvenkind.\"",
+      "\"I was sent from Lunethia to here on a diplomatic mission from my Empress. I hope my stay will be short.\"",
+      "\"Yes, the rumors are true. Lunethia really is a town built atop a gigantic oak.\"",
+      "\"The violation of our borders must end! We don't care where will Attnam take its wood, but the Dark Forest will not be exploited.\"";
+    }
+    IsExtraCoward = true;
+    UndeadVersions = false;
   }
 }
 
@@ -6936,7 +7120,62 @@ punisher
   FriendlyReplies =
   {
     2,
-    "\"Hey, I'm also from New Attnam!\"",
+    "\"We work very hard here. You would not believe how exhausting is it to torture people.\"",
     "\"Gah, that mask itches! But Mr. Decos says we have to wear it to keep the morale of prisoners up.\"";
+  }
+
+  Config LAW_STUDENT;
+  {
+    DefaultArmStrength = 10;
+    DefaultLegStrength = 10;
+    DefaultDexterity = 15;
+    DefaultAgility = 15;
+    DefaultEndurance = 10;
+    DefaultPerception = 24;
+    DefaultIntelligence = 28;
+    DefaultWisdom = 25;
+    DefaultCharisma = 30;
+    Sex = FEMALE;
+    ArmMainColor = rgb16(30,30,30);
+    LegMainColor = rgb16(30,30,30);
+    HairColor = rgb16(229, 200, 168);
+    HeadBitmapPos = 128, 416;
+    TorsoBitmapPos = 32, 160;
+    ArmBitmapPos = 64, 160;
+    LegBitmapPos = 0, 128;
+    TotalVolume = 40000;
+    TotalSize = 175;
+    CanRead = true;
+    NameSingular = "law student";
+    DefaultName = "Laki Oppilas";
+    RightWielded = 0;
+    LeftWielded = holybook(LEGIFER);
+    Cloak = BLACK_LEATHER cloak;
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 100, 100; }
+    AttachedGod = MELLIS;
+    IsSadist = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    FriendlyReplies =
+    {
+      8,
+      "\"I'm here on a student exchange program, to gather resources for my dissertation.\"",
+      "\"I'm writing a dissertation on the legal implications of using torture in public proceedings.\"",
+      "\"The law system of Bazzaria is derived from the old, time-tested methods - trials by ordeal, layman juries and lynching.\"",
+      "\"Legifer? No, I'm a future lawyer, of course I worship Mellis!\"",
+      "@Dd says very loudly: \"Why yes, I love working with Mr. Decos! It's a pleasure to assist a true professional with his work.\"",
+      "@Dd whispers with a haunted expression: \"Please, help me! I don't want to be here. Mr. Decos is a madman and those punishers...\"",
+      "@Dd whispers on the verge of tears: \"Please, help me! I don't want to know anything anymore about their laws or techniques. I just want to go home.\"",
+      "@Dd whispers to you: \"Please, help me! I can't take it anymore.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"Stop or I will sue you!\"",
+      "@Dd screams: \"No! This is assault and battery!\"";
+    }
   }
 }
