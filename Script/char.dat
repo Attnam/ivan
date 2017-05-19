@@ -6931,6 +6931,7 @@ siren
   DefaultCharisma = 50;
   DefaultMana = 5;
   Sex = FEMALE;
+  StandVerb = "flaunting";
   HeadBitmapPos = 112, 368;
   TorsoBitmapPos = 48, 288;
   ArmBitmapPos = 80, 240;
