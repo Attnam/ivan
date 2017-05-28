@@ -1180,6 +1180,7 @@ void slave::GetAICommand()
   EditAP(-1000);
 }
 
+/*
 void librarian::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)
@@ -1264,6 +1265,7 @@ void librarian::BeTalkedTo()
     break;
   }
 }
+*/
 
 truth communist::MoveRandomly()
 {
