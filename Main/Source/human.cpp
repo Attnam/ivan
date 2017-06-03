@@ -1309,7 +1309,7 @@ void zombie::BeTalkedTo()
       ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   }
   else
-    ADD_MESSAGE("\"Need brain but you too stoopid!\"");
+    character::BeTalkedTo();
 }
 
 void angel::Save(outputfile& SaveFile) const
