@@ -425,6 +425,8 @@ CHARACTER(femaleslave, humanoid)
 
 CHARACTER(librarian, humanoid)
 {
+ public:
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 };
