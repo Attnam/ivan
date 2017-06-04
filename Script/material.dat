@@ -56,6 +56,7 @@ material
   InteractionFlags = CAN_DISSOLVE;
   Stickiness = 0;
   DisablesPanicWhenConsumed = false;
+  BlockESP = false;
   FireResistance = 0;
   BurnModifier = 1000;
 }
@@ -397,6 +398,7 @@ solid
     AttachedGod = LORICATUS;
     HardenedMaterial = COPPER;
     CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
+    BlockESP = true;
   }
 
   Config SPIDER_SILK;
