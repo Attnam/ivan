@@ -2887,7 +2887,7 @@ helmet
   CoverPercentile = 50;
   HelmetBitmapPos = 112, 416;
   EnchantmentPlusChance = 15;
-  SoundResistance = 1;
+  SoundResistance = 0;
 
   Config BROKEN;
   {
@@ -2914,7 +2914,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 10;
-    SoundResistance = 2;
+    SoundResistance = 1;
   }
 
   Config BROKEN|FULL_HELMET;
@@ -2946,6 +2946,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
   }
 
   Config BROKEN|HELM_OF_PERCEPTION;
@@ -2977,6 +2978,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
   }
 
   Config BROKEN|HELM_OF_UNDERSTANDING;
@@ -3007,6 +3009,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
   }
 
   Config BROKEN|HELM_OF_BRILLIANCE;
@@ -3038,6 +3041,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
   }
 
   Config BROKEN|HELM_OF_ATTRACTIVITY;
