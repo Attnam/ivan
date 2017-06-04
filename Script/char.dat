@@ -445,9 +445,9 @@ farmer
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
-  ScienceTalkPossibility = 33;
-  ScienceTalkIntelligenceModifier = 5;
-  ScienceTalkWisdomModifier = 10;
+  ScienceTalkPossibility = 15;
+  ScienceTalkIntelligenceModifier = 10;
+  ScienceTalkWisdomModifier = 5;
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 10;
   ScienceTalkName =
@@ -594,12 +594,16 @@ guard
     ClothColor = rgb16(220, 220, 220);
     FriendlyReplies =
     {
-      6,
+      10,
       "@Dd shudders in the freezing air. \"Boy this rusty plate mail is cold in winter!\"",
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
       "\"Through brightest day, through blackest night no evil shall escape my sight!\"",
+      "@Dd sighs: \"I need a drink...\"",
+      "\"Don't even thing about littering!\"",
+      "\"Jaywalking is strictly forbidden.\"",
+      "\"The high priest sees everything, anyway, so why am I stuck patrolling here?\"",
       "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
@@ -1015,7 +1019,6 @@ priest
       "\"Prepare to meet @Gd, fool!\"",
       "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
     }
-
   }
 
   Config SILVA;
@@ -1102,6 +1105,103 @@ priest
     RightSWeaponSkillHits = 20;
     FriendlyReplies == "@Dd speaks: \"Can't you see I'm busy, infidel? One of these days I'll summon Him back, and Chaos will reign forever!\"";
     UndeadVersions = false;
+  }
+
+  Config LEGIFER; /* paladin */
+  {
+    DefaultArmStrength = 23;
+    DefaultLegStrength = 23;
+    DefaultDexterity = 37;
+    DefaultAgility = 37;
+    DefaultEndurance = 30;
+    DefaultPerception = 35;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 37;
+    DefaultCharisma = 55;
+    DefaultMana = 30;
+    HairColor = rgb16(140, 60, 60);
+    ClothColor = rgb16(224, 224, 224);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 32, 128;
+    ArmBitmapPos = 64, 80;
+    LegBitmapPos = 0, 64;
+    TotalVolume = 40000;
+    TotalSize = 165;
+    Helmet = MITHRIL helmet(FULL_HELMET);
+    Amulet = BLUE_CRYSTAL amulet(AMULET_OF_WARDING);
+    BodyArmor = MITHRIL bodyarmor(PLATE_MAIL);
+    Cloak = ANGEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE);
+    Belt = MITHRIL belt;
+    RightWielded = MITHRIL thunderhammer { Enchantment = 2; }
+    LeftWielded = MITHRIL shield { Enchantment = 2; }
+    RightRing = ring(RING_OF_TELEPORT_CONTROL);
+    LeftRing = ring(RING_OF_INFRA_VISION);
+    RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = MITHRIL boot { Enchantment = 2; }
+    DefaultName = "lady Decora";
+    Adjective = "shining";
+    NameSingular = "knight";
+    PostFix = "of Legifer";
+    AttachedGod = LEGIFER;
+    Sex = FEMALE;
+    AttackStyle = USE_ARMS|USE_LEGS;
+    KnownCWeaponSkills = { 3, UNARMED, KICK, BLUNT_WEAPONS; }
+    CWeaponSkillHits = { 3, 200, 200, 500; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 0; /* paladins are immune to fear */
+    TamingDifficulty = 35;
+    IsUnique = true;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    CanBeGenerated = false;
+    UndeadVersions = false;
+    IsImmuneToLeprosy = true; /* paladins are immune to diseases */
+    FriendlyReplies =
+    {
+      15,
+      "\"Legifer is the All-Seeing Sun. He sees and remembers every your deed until you die and are judged at the Last Court of Heavens.\"",
+      "\"Judge, but do not condemn. Anybody can be redeemed.\"",
+      "\"I am one of the last Shining Knights. And now I am stuck in this place, because the High Priest won't let me leave, nor will he allow me to do anything.\"",
+      "\"The Order of the Shining Knights was founded by my forebears to fight the Dark Knights of Xinroch.\"",
+      "\"The Shining Knights once were a proud and powerful order, but after the fateful defeat at the Fortress of Prym, only a handful of wandering knights remained.\"",
+      "\"The mantle of a Shining Knight is passed down in a family. I was bequeathed knighthood by my mother, who succeeded her father, and so on since the days of Prym.\"",
+      "\"All Shining Knights bear the symbol of the All-Seeing Sun, for Legifer guides us in our wanderings.\"",
+      "\"Every Shining Knight wields an enchanted mace. A legend goes that during the battle of Prym, Legifer blessed the mace of every His knight and named them all Turox.\"",
+      "\"My mother died a hero, protecting a village from an elven onslaught. Alas, our family heritage, the blessed mace 'Turox', was lost with her death.\"",
+      "\"This hammer was forged for me by a good friend. When he was but a baby, he lost his home. Yet he managed to revive all the craft and artistry of the destroyed dwarven city of Khaz-zadm and I will hold this hammer against all evil to honor the legacy of his people.\"",
+      "\"Legifer helps us find and uproot all evil. May His holy flames scorch all sins away.\"",
+      "\"I will pray for you and good luck in your quest. May His holy flames guide your way.\"",
+      "\"I was sent to Attnam by a vision from Legifer. I didn't understand at first, but now... Now I'm starting to see.\"",
+      "\"There is no being so evil that the light of His holy flames cannot reach them and raise them up.\"",
+      "\"The four Cardinals... Foul thoughts blacken the soul, but sometimes, I can't help myself.\"";
+    }
+    HostileReplies =
+    {
+      6,
+      "\"You can still come back. If you are willing, I can help you.\"",
+      "\"Please. I beg of you, lay down your weapons.\"",
+      "\"If you refuse to seek repentance in this life, then I pray you seek it in the next.\"",
+      "\"There is still good in you! I can feel it. It's not too late to turn back.\"",
+      "\"If you strike me down, know that I will blaze a trail to the Heavens for you and pray that you will someday join me there.\"",
+      "\"I'm sorry. I'm sorry for you.\"";
+    }
+    DeathMessage = "@Dd dies with a last few words: \"I forgive you.\"";
+    ScienceTalkPossibility = 10;
+    ScienceTalkIntelligenceModifier = 15;
+    ScienceTalkWisdomModifier = 15;
+    ScienceTalkCharismaModifier = 15;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 20;
+    ScienceTalkName =
+    {
+      15,
+      "knighthood", "law", "chivalry", "honorable death", "divine truths",
+      "history", "moral code", "divine wisdom", "warfare", "secret teachings",
+      "tradition", "knightly orders", "heraldry", "quests", "genealogy";
+    }
   }
 }
 
@@ -1836,7 +1936,15 @@ skeleton
   RightSWeaponSkillHits = 10;
   PanicLevel = 0;
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
-  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd talks about bones.",
+    "@Dd rattles @sp bones omniously.",
+    "\"Hope I'm not giving you a boner! Heh, heh.\"",
+    "\"I lost my old skull in a game of poker, so I killed this adventurer guy and took his. Quite handsome, right?\"",
+    "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
+  }
   FleshMaterial = BONE;
   DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
   SpillsBlood = false;
@@ -2174,12 +2282,22 @@ golem
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 50;
   PanicLevel = 0;
-  HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
+  HostileReplies = /* No quotes! (golem engraves) */
+  {
+    3,
+    "GOLEM KILL, GOLEM THEN RETURN",
+    "GOLEM KILL ALL HUMANS",
+    "GOLEM NEED MASTER";
+  }
   FriendlyReplies =
   {
-    2,
-    "Golem obeys.",
-    "Yes, master?";
+    6,
+    "GOLEM OBEY MASTER",
+    "GOLEM SERVE MASTER",
+    "GOLEM MAY NOT INJURE MASTER OR ALLOW MASTER TO COME TO HARM",
+    "GOLEM PROTECT MASTER",
+    "GOLEM SMASH FOR MASTER",
+    "YES, MASTER";
   }
   /* FleshMaterial overridden */
   DeathMessage = "The Holy Words of @dd fly away. The monster's magic fades and it vanishes in seconds.";
@@ -2221,6 +2339,17 @@ golem
     Frequency = 10000;
     IsImmuneToItemTeleport = true;
     TamingDifficulty = 35;
+    HostileReplies =
+    {
+      7,
+      "GOLEM FREE",
+      "NO MORE MASTERS",
+      "NO MORE EXPERIMENTS",
+      "EXPERIMENT IDENTIFICATION: ZQ-29",
+      "EXPERIMENT OBJECTIVES: INFILTRATION, EXTERMINATION",
+      "PRIME DIRECTIVE: KILL",
+      "ALL MASTERS MUST DIE";
+    }
   }
 
   Config ACIDOUS_BLOOD;
@@ -2671,6 +2800,8 @@ hunter
       "\"I miss hunting. Sometimes I tear open my own flesh, just to see the vivid red of blood on my hands again. Eh-heh heh heh.\"";
     }
     UndeadVersions = false;
+    ScienceTalkIntelligenceModifier = 10;
+    ScienceTalkWisdomModifier = 5;
   }
 }
 
@@ -2887,7 +3018,6 @@ petrusswife
   DefaultCharisma = 80;
   DefaultMana = 20;
   Sex = FEMALE;
-  ClothColor = rgb16(150, 0, 0);
   BeltColor = rgb16(180, 180, 0);
   TorsoBitmapPos = 32, 160;
   ArmBitmapPos = 64, 160;
@@ -2909,6 +3039,19 @@ petrusswife
   IsExtraFragile = true;
   Belt = GOLD chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
   UndeadVersions = false;
+  ScienceTalkPossibility = 10;
+  ScienceTalkIntelligenceModifier = 5;
+  ScienceTalkWisdomModifier = 5;
+  ScienceTalkCharismaModifier = 5;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 10;
+  ScienceTalkCharismaRequirement = 18;
+  ScienceTalkName =
+  {
+    10,
+    "marriage", "luxury", "jewelry", "embroidery", "hobbies",
+    "leisure activities", "festivities", "apparel", "gowns", "boredom";
+  }
 
   Config 1;
   {
@@ -2930,6 +3073,68 @@ petrusswife
       "\"I wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
     }
     DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
+    ScienceTalkIntelligenceModifier = 25;
+    ScienceTalkWisdomModifier = 25;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 10;
+    ScienceTalkName =
+    {
+      225,
+      "sanitation", "relativity", "physics", "mathematics", "philosophy",
+      "numerology", "slavery", "mechanics", "magicks", "architecture",
+      "archaeology", "logic", "fiction", "questions", "theology",
+      "alchemy", "valpurism", "analysis", "gastronomy", "oceanography",
+      "astronomy", "astrology", "anthropology", "ethics", "linguistics",
+
+      "psychology", "methods", "choreography", "music", "semiotics",
+      "culture", "forestry", "engineering", "journalism", "agriculture",
+      "ergonomics", "sagas", "pedagogy", "apiculture", "aquaculture",
+      "horticulture", "silviculture", "law", "dentistry", "surgery",
+      "rocketry", "fission", "pharmacy", "dogmatics", "cartography",
+
+      "gerontology", "formalism", "feminism", "communism", "flight",
+      "cricket", "rhetorics", "navigation", "sculpture", "literature",
+      "shamanism", "painting", "utilitarism", "grammar", "arithmetic",
+      "algebra", "marxism", "capitalism", "behaviorism", "causality",
+      "folklore", "legends", "animism", "spiritualism", "idolatry",
+
+      "constructions", "currency", "riding", "federalism", "monarchy",
+      "medicine", "tradition", "chivalry", "righteousness", "banking",
+      "gravity", "metallurgy", "magnetism", "nationalism", "industry",
+      "pollution", "espionage", "corporations", "particles", "transportation",
+      "refining", "combustion", "colonization", "steel", "materials",
+
+      "hallucinations", "armours", "trance", "afterlife", "paradigms",
+      "customer support", "virginity", "zoology", "witchcraft", "wine",
+      "claustrophobia", "eddies", "vegetables", "mobility", "eudaimoia",
+      "ablutophobia", "palindromes", "jokes", "materialism", "surfaces",
+      "acarophobia", "energy", "momentum", "mushrooms", "brains",
+
+      "selenophobia", "alloys", "equations", "bombs", "fashion",
+      "taurophobia", "naturism", "nirvana", "drugs", "everything",
+      "ranidaphobia", "horror", "sightseeing", "marriage", "mirages",
+      "phronemophobia", "cancer", "scrofula", "depression", "air power",
+      "phallophobia", "romance", "bondage", "interfaces", "software",
+
+      "pentheraphobia", "nations", "levitation", "tubes", "structures",
+      "peladophobia", "travel", "meditation", "systems", "algorithms",
+      "lachanophobia", "taxonomy", "taxidermy", "viruses", "bacteria",
+      "epistaxiophobia", "camping", "resistance", "chauvinism", "fruits",
+      "ephebiphobia", "simulation", "computers", "conductors", "fibers",
+
+      "coulrophobia", "defence", "broomsticks", "fusion", "power",
+      "arachnophobia", "balls", "diseases", "universes", "weapons",
+      "virtue", "immortality", "elevators", "marketing", "civilizations",
+      "dreams", "anatomy", "reproduction", "calligraphy", "chess",
+      "Go", "cooking", "altruism", "anomalities", "fishing",
+
+      "crime", "nonsense", "monsters", "thought control", "euthanasia",
+      "genocide", "cremation", "waste disposal", "breeding", "eugenics",
+      "minds", "lottery", "sterilization", "utopias", "perpetual motion",
+      "dynamics", "entropy", "skepticism", "hoaxes", "creationism",
+      "cold fusion", "execution",  "warfare", "miracles", "the truth";
+    }
     AttachedGod = SOPHOS;
     PanicLevel = 20;
     IsExtraCoward = false;
@@ -2948,7 +3153,7 @@ petrusswife
       "\"I'm Petrus' favorite, not No. 1!\"",
       "\"No. 3 once was here with her twin sister. I've heard that one of them cheated on Petrus and... I really shouldn't be telling you this.\"",
       "\"I have no idea what Petrus sees on No. 4! She's so dumb it hurts!\"",
-      "\"No. 5 thinks how funny she is. I can't stand her, she simply doesn't know how to shut her face!\"",
+      "\"I'm not sure I should be talking to you. No. 5 once said too much and... Well, she won't be using her tongue again.\"",
       "\"Petrus gave me a daughter, now I want to give him a son.\"",
       "\"If only I could be the one to give Petrus his firstborn son...\"",
       "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
@@ -2978,6 +3183,12 @@ petrusswife
     IsExtraCoward = false;
     KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
     CWeaponSkillHits == 500;
+    ScienceTalkName =
+    {
+      10,
+      "hunting", "horses", "steppe", "trapping", "sharpshooting",
+      "combat", "traditions", "storytelling", "freedom", "boredom";
+    }
   }
 
   Config 4;
@@ -2986,6 +3197,7 @@ petrusswife
     DefaultWisdom = 8;
     DefaultCharisma = 85;
     HairColor = rgb16(200, 96, 0);
+    ClothColor = rgb16(150, 0, 0);
     HeadBitmapPos = 112, 32;
     PostFix = "number 4";
     FriendlyReplies =
@@ -2994,11 +3206,17 @@ petrusswife
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
       "\"Uncle Petrus has a *massive* sword! Tee hee.\"",
       "\"I am boooored!\"",
-      "\"Have you heard No. 5? She's so funny!\"",
+      "\"Have you heard No. 5? No, because she can't speak! Tee hee.\"",
       "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
       "\"No. 1 is so clever it's scary. Really!\"",
       "\"Uncle Petrus says I am special! He says it to all his wives, but I know he means it for me. Tee hee.\"";
     }
+    ScienceTalkIntelligenceModifier = 0;
+    ScienceTalkWisdomModifier = 0;
+    ScienceTalkCharismaModifier = 50;
+    ScienceTalkIntelligenceRequirement = 0;
+    ScienceTalkWisdomRequirement = 0;
+    ScienceTalkCharismaRequirement = 25;
   }
 
   Config 5;
@@ -3007,48 +3225,11 @@ petrusswife
     ClothColor = rgb16(255,255,255);
     HeadBitmapPos = 112, 48;
     PostFix = "number 5";
-    FriendlyReplies =
-    {
-      37,
-      "\"You know what the greatest joke of them all is? When you laugh only to stop yourself from crying.\"",
-      "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
-      "\"Kobolds are a living proof that the gods have a sense of humor.\"",
-      "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
-      "\"What has two legs and bleeds? Half a goblin.\"",
-      "\"An orc told me that a thought crossed his mind once. It must have been a long and lonely journey.\"",
-      "\"Why do dragons sleep all day? So they can fight knights.\"",
-      "\"How do you escape from a dwarf? Step on a chair.\"",
-      "\"Why are the noses of Bazzarians so big? So they can sniff out a dropped coin from a mile away.\"",
-      "\"Why didn't the skeleton cross the road? He didn't have the guts.\"",
-      "\"A skeleton walks into a bar... and orders a beer and a mop.\"",
-      "\"What's the difference between a slave and a bench? A bench can support a family.\"",
-      "\"What do you call a knight who is too afraid to fight? Sir Render.\"",
-      "\"It's not that I don't like kobolds. I just that I can't finish a whole one.\"",
-      "\"Why should you never ask a dwarf to pay for drinks? Because he's always a little short.\"",
-      "\"A sage was once asked by an orc general what did he think about orcish civilization. The sage replied: 'Yes, that would be a great idea.'\"",
-      "\"A woman comes home to find her husband in bed with a female dwarf. She screams at him: 'You said you wouldn't cheat on me anymore!' He replies: 'I know. Can't you see I'm trying to cut it down?'\"",
-      "\"Why do dwarven songs sound better by candlelight? You can shove the wax in your ears.\"",
-      "\"An elf, a man and a dwarf order an ale, but there is a fly in each tankard. When the elf notices it, he pours his ale out in disgust. The man picks the fly out and drinks the ale. The dwarf picks the fly out, holds it legs-up and shouts: 'Spit it back, ye' li'l blight!'\"",
-      "\"A blind elf walks into a bar, sits down and says: 'Do you want to hear a dwarf joke?' A voice beside him growls: 'Before you tell a dwarf joke, know that the bartender is a dwarf, the guard is a dwarf, I am a dwarf and my two companions are dwarves. Do you still want to tell your joke?!' The blind elf thinks for a moment and then replies: 'No, not if I have to explain it five times.'\"",
-      "\"If ugly was a crime the entire orcish race would have rotted in the dungeons long ago. Oh, wait a minute...\"",
-      "\"An orc, a barbarian and a blood-thirsty savage entered a bar... and that was just the first person!\"",
-      "\"What do you call an orc with half a brain? Gifted.\"",
-      "\"Two orc hunters went bear hunting. They came upon a fork in a road where a sign read 'BEAR LEFT'. And so they went home. And do you know what's the funny part? That any orc could read!\"",
-      "\"How do orcs name their children? They throw them down the stairs and wait what noise they make.\"",
-      "\"In a battle of wits, an orc is unarmed, blind and lame.\"",
-      "\"How many kobolds do you need to paint a room? Only one if you throw him really hard.\"",
-      "\"An orc walks into a bar with a parrot on his shoulder. Impressed by such a strange sight the barkeep says: 'An incredible beast, can he talk?' To which the parrot responds: 'Barely.'\"",
-      "\"A dwarf walks out of a bar... Hey, it *could* happen!\"",
-      "\"What did the human say when he walked into a dwarf bar? 'Argh, my head!'\"",
-      "\"What do you call an elf that can count past ten? Barefoot.\"",
-      "\"Why are rogues so sneaky? Because their armor is literally made of hide.\"",
-      "\"Did you hear about that knight who fell from the tallest tower in the castle and lived? They called him Sir Vive.\"",
-      "\"What do you call a group of witches in a hot spring? A self-cleaning coven.\"",
-      "\"An elf, a man and an orc walk into a bar. The dwarf walks under it.\"",
-      "\"Why was the wizard late for work? He was up all night playing with his staff.\"",
-      "\"It is true that orcs sleep with horses. If you've seen their women, you'll know why.\"";
-    }
+    FriendlyReplies == "@Dd remains silent.";
+    HostileReplies == "@Dd scowls at you silently.";
+    DeathMessage = "@Dd dies silently.";
     IsAlcoholic = true;
+    ScienceTalkPossibility = 0;
   }
 
   Config 6;
@@ -3063,7 +3244,7 @@ petrusswife
       "\"The day I became Petrus' wife was the best day of my life. And it haven't gotten worse since!\"",
       "\"Leave? Why would I want to leave? I have luxury here, servant - everything I can wish for. Outside, there is just poverty and grime.\"",
       "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
-      "\"I only wish No. 5 didn't babble all the time.\"",
+      "\"No. 5 was babbling all the time, once. I couldn't stand it, but now the silence is even worse.\"",
       "\"Don't bother talking to No. 3, she's weird.\"",
       "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
     }
@@ -3093,6 +3274,7 @@ petrusswife
     IsExtraCoward = false;
     IgnoreDanger = true;
     Belt = CLOTH belt;
+    ScienceTalkPossibility = 0;
   }
 }
 
@@ -3137,8 +3319,20 @@ housewife
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
     "\"Petrus's wives are so arrogant towards us working class ones. Grr...\"",
     "\"Don't think too much, the Cardinals can hear you.\"",
-    "\"When I was just a little girl, I wished to become a dentist.\"",
+    "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
+  }
+  ScienceTalkPossibility = 15;
+  ScienceTalkIntelligenceModifier = 5;
+  ScienceTalkWisdomModifier = 10;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 10;
+  ScienceTalkName =
+  {
+    15,
+    "pregnancy", "housework", "housekeeping", "children", "cooking",
+    "sex", "fertility", "jealousy", "cheating", "quantum physics",
+    "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
 }
 
@@ -3224,6 +3418,68 @@ femaleslave
     }
     UndeadVersions = false;
   }
+
+  Config JESTER;
+  {
+    DefaultDexterity = 15;
+    DefaultAgility = 20;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 30;
+    HairColor = rgb16(51, 51, 255);
+    TorsoMainColor = rgb16(255, 0, 0);
+    ArmMainColor = rgb16(0, 204, 0);
+    LegMainColor = rgb16(255, 255, 102);
+    TorsoBitmapPos = 32, 160;
+    ArmBitmapPos = 64, 160;
+    LegBitmapPos = 0, 128;
+    Adjective = "court";
+    NameSingular = "jester";
+    AttachedGod = DULCIS;
+    RightWielded = 0;
+    CanBeGenerated = false;
+    DeathMessage = "@Dd laughs for the last time and dies.";
+    FriendlyReplies =
+    {
+      37,
+      "\"You know what the greatest joke of them all is? When you laugh only to stop yourself from crying.\"",
+      "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
+      "\"Kobolds are a living proof that the gods have a sense of humor.\"",
+      "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
+      "\"What has two legs and bleeds? Half a goblin.\"",
+      "\"An orc told me that a thought crossed his mind once. It must have been a long and lonely journey.\"",
+      "\"Why do dragons sleep all day? So they can fight knights.\"",
+      "\"How do you escape from a dwarf? Step on a chair.\"",
+      "\"Why are the noses of Bazzarians so big? So they can sniff out a dropped coin from a mile away.\"",
+      "\"Why didn't the skeleton cross the road? He didn't have the guts.\"",
+      "\"A skeleton walks into a bar... and orders a beer and a mop.\"",
+      "\"What's the difference between a slave and a bench? A bench can support a family.\"",
+      "\"What do you call a knight who is too afraid to fight? Sir Render.\"",
+      "\"It's not that I don't like kobolds. I just that I can't finish a whole one.\"",
+      "\"Why should you never ask a dwarf to pay for drinks? Because he's always a little short.\"",
+      "\"A sage was once asked by an orc general what did he think about orcish civilization. The sage replied: 'Yes, that would be a great idea.'\"",
+      "\"A woman comes home to find her husband in bed with a female dwarf. She screams at him: 'You said you wouldn't cheat on me anymore!' He replies: 'I know. Can't you see I'm trying to cut it down?'\"",
+      "\"Why do dwarven songs sound better by candlelight? You can shove the wax in your ears.\"",
+      "\"An elf, a man and a dwarf order an ale, but there is a fly in each tankard. When the elf notices it, he pours his ale out in disgust. The man picks the fly out and drinks the ale. The dwarf picks the fly out, holds it legs-up and shouts: 'Spit it back, ye' li'l blight!'\"",
+      "\"A blind elf walks into a bar, sits down and says: 'Do you want to hear a dwarf joke?' A voice beside him growls: 'Before you tell a dwarf joke, know that the bartender is a dwarf, the guard is a dwarf, I am a dwarf and my two companions are dwarves. Do you still want to tell your joke?!' The blind elf thinks for a moment and then replies: 'No, not if I have to explain it five times.'\"",
+      "\"If ugly was a crime the entire orcish race would have rotted in the dungeons long ago. Oh, wait a minute...\"",
+      "\"An orc, a barbarian and a blood-thirsty savage entered a bar... and that was just the first person!\"",
+      "\"What do you call an orc with half a brain? Gifted.\"",
+      "\"Two orc hunters went bear hunting. They came upon a fork in a road where a sign read 'BEAR LEFT'. And so they went home. And do you know what's the funny part? That any orc could read!\"",
+      "\"How do orcs name their children? They throw them down the stairs and wait what noise they make.\"",
+      "\"In a battle of wits, an orc is unarmed, blind and lame.\"",
+      "\"How many kobolds do you need to paint a room? Only one if you throw him really hard.\"",
+      "\"An orc walks into a bar with a parrot on his shoulder. Impressed by such a strange sight the barkeep says: 'An incredible beast, can he talk?' To which the parrot responds: 'Barely.'\"",
+      "\"A dwarf walks out of a bar... Hey, it *could* happen!\"",
+      "\"What did the human say when he walked into a dwarf bar? 'Argh, my head!'\"",
+      "\"What do you call an elf that can count past ten? Barefoot.\"",
+      "\"Why are rogues so sneaky? Because their armor is literally made of hide.\"",
+      "\"Did you hear about that knight who fell from the tallest tower in the castle and lived? They called him Sir Vive.\"",
+      "\"What do you call a group of witches in a hot spring? A self-cleaning coven.\"",
+      "\"An elf, a man and an orc walk into a bar. The dwarf walks under it.\"",
+      "\"Why was the wizard late for work? He was up all night playing with his staff.\"",
+      "\"It is true that orcs sleep with horses. If you've seen their women, you'll know why.\"";
+    }
+  }
 }
 
 librarian
@@ -3252,7 +3508,32 @@ librarian
   PanicLevel = 50;
   CanBeCloned = false;
   DefaultMoney = 2000;
-  /* Replies depend on story state */
+  HostileReplies =
+  {
+    3,
+    "\"The pen is mightier than the sword! Fall, unlearned one!\"",
+    "\"The pen is mightier than the sword! Especially if the sword is very short and the pen is very sharp.\"",
+    "@Dd rasps: \"Suddenly I wish I worked out a bit.\"";
+  }
+  FriendlyReplies =
+  {
+    15,
+    "\"Are you going to fight Elpuri? If so, beware, for it is a powerful enemy. Other monsters are very vulnerable if surrounded by your party, but not that beast. It may slay a horde of your friends at once with its horrendous tail attack.\"",
+    "\"Elpuri the Dark Frog abhors light and resides in a place of eternal darkness.\"",
+    "\"Shh! You shall be silent in the library.\"",
+    "\"Brute force bereft of wisdom falls to ruin by its own weight.\"",
+    "\"Elpuri's attacks are so strong that they may shatter many of your precious items.\"",
+    "\"Don't you smell all the knowledge floating around here?\"",
+    "\"The Shirt of the Golden Eagle is a legendary artifact. You cannot find a better armor.\"",
+    "\"In this book they talk about Mortifer, the Great Chaos God. He hates mortals, gods and everything and will respond only to Champions of Evil.\"",
+    "\"Attnam is traditionally ruled by the high priest of the Great Frog. He holds the holy broadsword named Valpurus' Justifier and the Shirt of the Golden Eagle, and has always killed his predecessor.\"",
+    "\"You should keep all the artifacts you find. They shall make you famous after your retirement. If you can somehow survive that long, that is.\"",
+    "\"If you should ever encounter an enner beast, know this: It is a horrible foe. It may shatter your items and armor with its scream that penetrates iron and stone. You should not engage it in melee but rather kill it from afar.\"",
+    "\"A brave adventurer called Ivan delved into the cave of Elpuri not long ago.\"",
+    "\"It is said that chaotic gods offer great power to their followers. But remember that lawful gods will help you even when things go bad.\"",
+    "\"If a man cannot choose, he ceases to be a man.\"",
+    "@Dd sighs: \"The censorship laws in this town are really too strict...\"";
+  }
   IsUnique = true;
   IsNameable = false;
   DefaultName = "Haathbar";
@@ -3293,7 +3574,13 @@ zombie
   Sex = UNDEFINED;
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
-  /* Replies overridden */
+  /* HostileReplies overridden */
+  FriendlyReplies =
+  {
+    2,
+    "\"Need brain but you too stoopid!\"",
+    "\"Brraaaaaaaaiiiiiiinnnz!!!\"";
+  }
   DeathMessage = "@Dd is slain (again).";
   AttachedGod = MORTIFER;
   ClassStates = GAS_IMMUNITY;
@@ -3309,7 +3596,7 @@ zombie
   {
     DefaultName = "Tholtig";
     PostFix = "of Khaz-zadm";
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 30;
     IsNameable = false;
     IsUnique = true;
     DefaultArmStrength = 15;
@@ -3342,7 +3629,7 @@ zombie
       "\"After the Dwarven Wars, our land lay in ruins. Our mines were undermined and filled with masterless golems. Our resources were stretched thin. That was when Petrus came with his offer of charity. I should have known better.\"",
       "\"Naught but ashes remain from my people. Petrus even saw that the word would not spread to Kharaz-arad or other dwarven lands.\"",
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
-      "\"After the coup, I knew that war would come. Priscus was a politician. Petrus was a warrior.\"";
+      "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
   }
 
@@ -3362,6 +3649,7 @@ zombie
       "\"Poems while you wait! Pay one brain, get one poem and one for free!\"",
       "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now I'm a prisoner.\"";
     }
+    DeathMessage = "@Dd is slain (finally).";
   }
 }
 
@@ -3534,7 +3822,7 @@ imp
     3,
     "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
     "\"I was about to kiss her, but then I got summoned.\"",
-    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
+    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
   }
   HostileReplies =
   {
@@ -4908,7 +5196,7 @@ orc
       "\"We are a proud new nation which renounced both the barbarism of Ur-Khan's horde and the slavery under human overlords.\"",
       "\"The orcish freeholds do not recognize the rulership of Khans. We rule ourselves as a true democracy.\"",
       "\"We cannot tolerate the greenskin threat anymore! No goblin shall think it stands equal to an orc or a man.\"",
-      "\"My lords want the head of Guugzamesh served to them on a silver platter, and Attnam can very helpful in that.\"",
+      "\"My lords want the head of Guugzamesh served to them on a silver platter, and Attnam can be very helpful in that.\"",
       "\"How long can Petrus ignore me?! I'm here to offer him an alliance!\"",
       "\"Oh, the emisary of Aslona is here, too. I will enjoy seeing him grovel and beg for the help from Attnam.\"",
       "\"Many of my peers have fallen in wars under the old king of Aslona. I will not mourn the fall of the new king, either.\"";
@@ -5150,6 +5438,8 @@ imperialist
 
   Config MASTER_TORTURER;
   {
+    DefaultWisdom = 25;
+    DefaultCharisma = 10;
     HeadBitmapPos = 96, 64;
     TorsoBitmapPos = 48, 48;
     LegBitmapPos = 0, 48;
@@ -5187,14 +5477,42 @@ imperialist
       "\"I was tasked with re-education of thought-criminals by mighty Petrus himself!\"";
     }
     DeathMessage = "@Dd screams, dying: \"I see the door! The extasy of death! I'm coming!\"";
+    ScienceTalkName =
+    {
+      75,
+      "impalement", "mock executions", "phobias", "torture", "disembowelment",
+      "whipping", "interrogation", "sleep deprivation", "brazen bulls", "disfigurement",
+      "masochism", "dentistry", "maiming", "beating", "blinding",
+      "boiling alive", "breaking bones", "branding", "forced abortion", "castration",
+      "testicle crushing", "waterboarding", "anatomy", "pain", "agony",
+
+      "strangling", "combing", "cutting", "denailing", "spanking",
+      "drowning", "flagellation", "flaying", "thumbscrews", "foot roasting",
+      "foot whipping", "forced circumcision", "hamstringing", "scaphism", "kneecapping",
+      "iron maidens", "stocks", "wooden horses", "dunking", "tablillas",
+      "kneehauling", "mutilation", "pitchcapping", "rape", "horror",
+
+      "rat torture", "sawing", "scalping", "starving", "strappado",
+      "tickle torture", "tooth extraction", "walling", "breaking wheels", "choke pears",
+      "breast rippers", "heretic forks", "spiked chairs", "pendulums", "pillories",
+      "torture racks", "freezing", "burning", "live burials", "half-hanging",
+      "bamboo torture", "abacination", "hooding", "cangue", "tean zu";
+    }
+    ScienceTalkPossibility = 50;
+    ScienceTalkIntelligenceModifier = 20;
+    ScienceTalkWisdomModifier = 40;
+    ScienceTalkCharismaModifier = 0;
+    ScienceTalkIntelligenceRequirement = 10;
+    ScienceTalkWisdomRequirement = 15;
+    ScienceTalkCharismaRequirement = 0;
     Inventory == key;
   }
 
   Config HOARD_MASTER;
   {
     AttributeBonus = -30;
-    DefaultIntelligence = 35;
-    DefaultWisdom = 35;
+    DefaultIntelligence = 50;
+    DefaultWisdom = 50;
     HeadBitmapPos = 96, 80;
     TorsoBitmapPos = 32, 16;
     ArmBitmapPos = 64, 16;
@@ -5238,6 +5556,13 @@ imperialist
       "\"A powerful Attnam is coming, and Bazzaria has only two choices: Either they're at the table, or they're on the menu!\"",
       "\"The trick to strong and stable economy is to work the citizens hard enough they can't afford the luxury of thought.\"";
     }
+    ScienceTalkPossibility = 20;
+    ScienceTalkIntelligenceModifier = 40;
+    ScienceTalkWisdomModifier = 40;
+    ScienceTalkCharismaModifier = 0;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 0;
     Inventory = { 3, GOLD key(HEXAGONAL_LOCK), GOLD scrollofdetectmaterial, GOLD holybook(MELLIS); }
   }
 }
@@ -7035,7 +7360,7 @@ siren
     NameSingular = "elven ambassador";
     PostFix = "of the Dark Forest";
     Cloak = NYMPH_HAIR cloak { Enchantment = 4; }
-    RightWielded = charmlyre;
+    /* RightWielded = charmlyre; */
     FriendlyReplies =
     {
       4,
@@ -7137,13 +7462,19 @@ punisher
     DefaultWisdom = 25;
     DefaultCharisma = 30;
     Sex = FEMALE;
-    ArmMainColor = rgb16(30,30,30);
-    LegMainColor = rgb16(30,30,30);
-    HairColor = rgb16(229, 200, 168);
+    HairColor = rgb16(200, 96, 0);
+    EyeColor = rgb16(4, 93, 28);
+    CapColor = rgb16(4, 93, 28);
+    SkinColor = rgb16(240, 200, 201);
+    ClothColor = rgb16(255, 105, 180);
+    ArmMainColor = rgb16(240, 200, 201);
+    LegMainColor = rgb16(240, 200, 201);
+    LegSpecialColor = rgb16(255, 105, 180);
+    BootColor = rgb16(30, 30, 30);
     HeadBitmapPos = 128, 416;
-    TorsoBitmapPos = 32, 160;
-    ArmBitmapPos = 64, 160;
-    LegBitmapPos = 0, 128;
+    TorsoBitmapPos = 48, 96;
+    ArmBitmapPos = 80, 240;
+    LegBitmapPos = 16, 192;
     TotalVolume = 40000;
     TotalSize = 175;
     CanRead = true;
@@ -7151,7 +7482,6 @@ punisher
     DefaultName = "Laki Oppilas";
     RightWielded = 0;
     LeftWielded = holybook(LEGIFER);
-    Cloak = BLACK_LEATHER cloak;
     KnownCWeaponSkills = { 2, UNARMED, KICK; }
     CWeaponSkillHits = { 2, 100, 100; }
     AttachedGod = MELLIS;

@@ -322,10 +322,10 @@ Dungeon ATTNAM;
         .b.b....b###D#.....|.....#L###b....b.b.
         b...b#####.#.#.....|.....#.#.#####b.b.b
         ....##s....D.#.....|.....#.D.....##....
-        b..b#X..152#.#.....|.....#.#......#b..b
-        .b..#X..8.6#.#.....|.....#.#..A...#..b.
+        b..b#X..152#.#.....|.....#.#....._#b..b
+        .b..#X..8.6#.#.....|.....#.#..A.._#..b.
         b...##.=8.6#.#.....|.....#.#.....##...b
-        ....b##-8.6#.#...........#.#....##b....
+        ....b#@-8.6#.#...........#.#....@#b....
         b.b..b##8.6#.######D######.###L##b..b.b
         .......#8.6#...............#~..#.......
         b...b.b#473#...............#x=-#b.b...b
@@ -333,7 +333,7 @@ Dungeon ATTNAM;
         b..####.s.s.D...#.c.c.#...D..[.[####..b
         ..b#.d......#####.f.f.#####.....[.[#b..
         b..#....s.s.#b..b.....b..b#tttt....#..b
-        .b.##~..#####.bb..c.c..bb.#####...##.b.
+        .b.##...#####.bb..c.c..bb.#####...##.b.
         b..b##xx#b.b......f.f......b.b#..##b..b
         ....b####....b...........b....####b....
         b.b...b...b.......c.c.......b...b...b.b
@@ -378,8 +378,7 @@ Dungeon ATTNAM;
           m == Random { MinPrice = 350; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           X == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
           t == itemcontainer(LARGE_CHEST) { ItemsInside = { 7, can { Times = 0:3; SecondaryMaterial = 0; }, PLANT_FIBER lump { Times = 0:1; }, lantern(BROKEN) { Times = 0:2; }, brokenbottle { Times = 0:5; }, bananapeels { Times = 0:5; }, banana(BROKEN) { Times = 0:1; }, bone { Times = 0:5; } } }
-          T == itemcontainer(LARGE_CHEST) { ItemsInside == Random { Times = 3:10; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = BROKEN; } }
-          B == firstbornchild(FEMALE);
+          T == itemcontainer(LARGE_CHEST) { ItemsInside == Random { Times = 3:7; MaxPrice = 10; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = BROKEN; } }
         }
       }
       {
@@ -414,7 +413,7 @@ Dungeon ATTNAM;
         ####.........#.....#.........####
         #........#####.....#####........#
         #........#.............#........4
-        ##B..#####.............#####...##
+        ##...#####.............#####...##
         .##..#.....................#XX##.
         ..####.....................####..
       }
@@ -432,6 +431,7 @@ Dungeon ATTNAM;
           E = guard(ELITE);
           m = guard(MASTER);
           p = priest(VALPURUS);
+          L = priest(LEGIFER);
           d = dolphin(ADULT_FEMALE);
           D = dolphin(ADULT_MALE);
           l = frog(LIGHT);
@@ -439,6 +439,7 @@ Dungeon ATTNAM;
           i = frog(GIANT_LIGHT);
           y = mysticfrog(LIGHT);
           s = femaleslave(ATTNAM);
+          j = femaleslave(JESTER);
           1 = petrusswife(1);
           2 = petrusswife(2);
           3 = petrusswife(3);
@@ -461,11 +462,11 @@ Dungeon ATTNAM;
         #..#....###...........###....#..#
         #k.#....#E.............E#....#..#
         #k.###..#....sPs.s.s....#..###..#
-        #k...#..#..f....i....f..#..#....#
+        #k...#..#.jf....i....f..#..#....#
         #k...#..#E.............E#..#...h#
         ###..#..###...........###..#..###
         ..#..###..#...........#..###..#..
-        ..#....#..#g.l.....l.g#..#....#..
+        ..#....#L.#g.l.....l.g#..#....#..
         ..###k.####...........####..###..
         ....#k...k#.....o.....#.E...#....
         ....#k...k#...........#.....#....

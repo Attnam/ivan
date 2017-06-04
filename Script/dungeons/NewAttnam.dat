@@ -377,6 +377,11 @@ Dungeon NEW_ATTNAM;
         Character = priest(SILVA) { Flags = IS_MASTER; }
       }
 
+      Square, Pos 1, 2;
+      {
+        GTerrain = solidterrain(FLOOR);
+      }
+
       OTerrainMap
       {
         Pos = 0,0;
