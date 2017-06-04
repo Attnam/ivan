@@ -598,6 +598,7 @@
 #define TOMB_ENTRY 9
 #define TOMB_ENTRY_MASTER 10
 #define HONOR 11
+#define EMISSARY 12
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -628,6 +629,7 @@
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
 #define MUTANT_BEAR 5
+#define PANDA_BEAR 6
 
 #define IMPRISONED_FEMALE 1
 /* 2 reserved for ATTNAM */

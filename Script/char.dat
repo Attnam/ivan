@@ -817,6 +817,61 @@ guard
       "\"Not that I think about it, I was reassigned as an honor guard after that huge screw-up. I wonder if... Nah, it's probably just a coincidence.\"";
     }
   }
+
+  Config EMISSARY;
+  {
+    AttributeBonus = 30;
+    DefaultIntelligence = 20;
+    DefaultWisdom = 20;
+    EyeColor = rgb16(0, 153, 255);
+    SkinColor = rgb16(230, 140, 100);
+    ClothColor = rgb16(128, 128, 128);
+    HeadBitmapPos = 96, 368;
+    Helmet = 0;
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = OCTIRON OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
+    RightGauntlet = STEEL gauntlet { Enchantment = 2; }
+    RightBoot = STEEL boot { Enchantment = 2; }
+    DefaultName = "sir Lancelyn";
+    NameSingular = "emissary";
+    PostFix = "of Aslona";
+    CWeaponSkillHits = { 2, 500, 500; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 50;
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    TamingDifficulty = 25;
+    AttachedGod = CRUENTUS;
+    FriendlyReplies =
+    {
+      12,
+      "\"I shouldn't be saying this so openly, but Aslona is in dire straits and *needs* any help it can get.\"",
+      "\"I've heard other emissaries were sent from Aslona even to goblin lands to negotiate assistance.\"",
+      "\"After the old king was assassinated and the Rebellion started, Aslona lost much of its former power.\"",
+      "\"I will see the Rebellion crushed and every last rebel executed for their crimes!\"",
+      "\"My king is young and inexperienced, his army only barely holds the rebels back. My only hope is I can return to him successful.\"",
+      "\"Bandits are roving free through the forests of Aslona and you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
+      "\"My father was a trusted general of the old king, and the first one to meet with the rebel army on a battlefield after the regicide. Alas, he was betrayed by his slave-soldiers and murdered along with all of his loyal knights.\"",
+      "\"I see a representative of the orcish freeholds arrived. Don't trust him! Those orcish vultures would love to feast on the carcass of Aslona, but I won't let that happen.\"",
+      "\"I hope the negotiations over in goblin lands go well. As I heard, my king offers to free all goblin slaves in Aslona in exchange for military assistance against the orcish freeholds.\"",
+      "\"I don't understand why does the high priest tolerate that filthy orc here! No orc can be trusted, they are all raiders and murderers with no honor.\"",
+      "\"The orcish freeholds have set their sights on aslonian wealth long ago and were a bother on the borders since then. Right now, I don't know whether we are strong enough to fend them off by ourselves.\"",
+      "\"Hm, that elven ambassador, those perky... eyes of hers. As if she could see right through you, right?\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"Die, you treacherous bastard!\"",
+      "\"What are you doing? I have a diplomatic immunity!\"",
+      "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
+    }
+  }
 }
 
 shopkeeper
@@ -959,6 +1014,21 @@ priest
   MoveType = WALK|SWIM;
   IsAbstract = true;
   Inventory == potion { Times = 2; SecondaryMaterial = ANTIDOTE_LIQUID; }
+  FriendlyReplies =
+  {
+    3,
+    "\"May @Gd be with you.\"",
+    "\"Bless thee, child.\"",
+    "@Dd smiles at you in a comforting manner.";
+  }
+  HostileReplies =
+  {
+    4,
+    "\"Die, infidel!\"",
+    "\"Divine wrath upon thee!\"",
+    "\"Thou shalt pay for thy sins!\"",
+    "\"I shall punish you in the name of @Gd.\"";
+  }
 
   Config VALPURUS;
   {
@@ -1120,6 +1190,7 @@ priest
     DefaultCharisma = 55;
     DefaultMana = 30;
     HairColor = rgb16(140, 60, 60);
+    EyeColor = rgb16(4, 93, 28);
     ClothColor = rgb16(224, 224, 224);
     HeadBitmapPos = 96, 112;
     TorsoBitmapPos = 32, 128;
@@ -1145,8 +1216,8 @@ priest
     AttachedGod = LEGIFER;
     Sex = FEMALE;
     AttackStyle = USE_ARMS|USE_LEGS;
-    KnownCWeaponSkills = { 3, UNARMED, KICK, BLUNT_WEAPONS; }
-    CWeaponSkillHits = { 3, 200, 200, 500; }
+    KnownCWeaponSkills = { 4, UNARMED, KICK, BLUNT_WEAPONS, SHIELDS; }
+    CWeaponSkillHits = { 4, 200, 200, 500, 500; }
     RightSWeaponSkillHits = 200;
     LeftSWeaponSkillHits = 200;
     PanicLevel = 0; /* paladins are immune to fear */
@@ -2827,6 +2898,19 @@ bear
   DeathMessage = "@Dd groans terribly and falls dead to the ground.";
   AttachedGod = SILVA;
   IsAbstract = true;
+
+  Config PANDA_BEAR;
+  {
+    Adjective = "panda";
+    SkinColor = rgb16(80, 80, 80);
+    CanBeGenerated = true;
+    TotalVolume = 125000;
+    TotalSize = 125;
+    AttributeBonus = -35;
+    TorsoBitmapPos = 192, 16;
+    DeathMessage = "@Dd groans terribly and falls dead to the ground. You feel really bad for endangering this species.";
+    Frequency = 1000;
+  }
 
   Config BLACK_BEAR;
   {
@@ -5208,6 +5292,7 @@ orc
       "\"You're just prejudiced against my kind, aren't you?\"";
     }
     Sex = MALE;
+    AttachedGod = MELLIS;
     TotalVolume = 120000;
     Inventory == potion { SecondaryMaterial = VODKA; Times = 1:10; }
   }
@@ -5250,10 +5335,11 @@ cossack
   AttachedGod = SILVA;
   FriendlyReplies =
   {
-    4,
-    "\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"",
+    5,
+    "\"Graah! Eating raw flesh makes one feel so masculine and powerful (and sick)!\"",
     "\"It surely is cold on this island. Remembers me of my six years in Siberia after breaking into the local pub's booze cellar...\"",
     "\"What, why have I no horse? Er, I lost it in poker.\"",
+    "\"I followed Ivan through some weird portal and ended up in this land. At least no creditors can find me.\"",
     "\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"";
   }
 }
@@ -7278,6 +7364,14 @@ siren
      color in Doc/Data/Dialog.txt starting from
      line 2552 to 2640 */
 
+  ScienceTalkPossibility = 33;
+  ScienceTalkIntelligenceModifier = 0;
+  ScienceTalkWisdomModifier = 0;
+  ScienceTalkCharismaModifier = 2;
+  ScienceTalkIntelligenceRequirement = 0;
+  ScienceTalkWisdomRequirement = 0;
+  ScienceTalkCharismaRequirement = 15;
+
   Config LIGHT_ASIAN_SIREN;
   {
     SkinColor = rgb16(254, 247, 208);
@@ -7371,6 +7465,8 @@ siren
     }
     IsExtraCoward = true;
     UndeadVersions = false;
+    ScienceTalkPossibility = 15;
+    ScienceTalkCharismaModifier = 20;
   }
 }
 
