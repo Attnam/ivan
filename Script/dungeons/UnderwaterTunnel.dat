@@ -21,7 +21,7 @@
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-  Levels = 4;
+  Levels = 5;
   Description = "underwater tunnel";
   ShortDescription = "UT";
 
@@ -369,11 +369,11 @@ Dungeon UNDER_WATER_TUNNEL;
         EntryIndex = STAIRS_UP;
       }
 
-      /* Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
         EntryIndex = STAIRS_DOWN;
-      } */
+      }
     }
 
     Room
@@ -504,8 +504,143 @@ Dungeon UNDER_WATER_TUNNEL;
     }
   }
 
- /* Level SPIDER_LEVEL;
+  Level SPIDER_LEVEL;
   {
+    Rooms = 1;
+    Size = 64, 36;
+    Description = "spider nest";
+    ShortDescription = "SpiderNest";
+    LevelMessage = "The air feels stale and sickly, and you hear thousands of tiny scuttling feet.";
+    IgnoreDefaultSpecialSquares = true;
+    FillSquare = solidterrain(GROUND), BASALT earth;
+    DifficultyBase = 100;
+    DifficultyDelta = 0;
+    MonsterAmountBase = 25;
+    MonsterGenerationIntervalBase = 60;
+    Items = 0;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 40;
+    EnchantmentPlusChanceDelta = 0;
+    LOSModifier = 10;
+	
+    Room
+    {
+      Size = 59,32;
+      Pos = 2,2;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      GenerateTunnel = false;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      WallSquare = solidterrain(GROUND), BASALT earth;
+      FloorSquare = solidterrain(SAND_TERRAIN), 0;
+      DoorSquare = solidterrain(SAND_TERRAIN), 0;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = true;
+      Flags = 0;
 
-  } */
+      OTerrainMap
+      {
+        Size = 60, 32;
+        Pos = 0, 0;
+        Types
+        {
+          # = BASALT earth;
+          x = ADAMANT wall(BRICK_FINE);
+          + = ADAMANT door { Parameters = LOCKED; }
+        }
+      }
+      {
+        ############################################################
+        ####..######.....#######################..........#.....#..#
+        ##.....#.###.......###################....................##
+        #..................###########..#...##............#......###
+        #.......####........###########.......#..................###
+        #........###........########..............................##
+        ##......#.##.........#######..........#..................###
+        ####.................#######...........#####.#.........#.###
+        ####..#.............##########.........#######..........####
+        ######..............##########......###########.........####
+        #####.............###########......############..##.......##
+        ####..............#.##########........#########...##.......#
+        #####................######...........########..####.......#
+        ######................#####..........##########.#.##.......#
+        ########...........###..####.........###########..####.....#
+        ########..........#####...##..........##########..#######.##
+        #######.........########..............########.##.#.##..#..#
+        #######......##.##########.............######..#....##...#.#
+        ########..#.#################..........####.........#......#
+        ########..###################.........#####................#
+        ########.###################............##...............###
+        ######...###################...............................#
+        ######..####################...............................#
+        ######..##############..###...........#..................###
+        ######..#############...###..........##......#.........#####
+        #####...###########.....##.........###.......##.........####
+        ####...##########.........#####....###........##........####
+        ##......#######..........#######..###.........###......#####
+        #.......######..#........############.........####..#..#####
+        #.......######...........##############.......####..##.#####
+        ##.....#########.......#..###########...###..###############
+        ############################################################
+      }
+
+      /* Square, Pos 58, 1;
+      {
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 5; }
+        EntryIndex = STAIRS_DOWN;
+      } */
+
+      Square, BoundedRandom 1, 27, 7, 30, HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_UP) { AttachedArea = 3; }
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = boulder(1);
+        Times = 5:15;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = boulder(2);
+        Times = 5:15;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CACTUS);
+        Times = 15;
+      }
+
+      Square, Random;
+      {
+        Character = spider(LARGE);
+        Times = 20;
+      }
+
+      Square, Random;
+      {
+        Character = spider(GIANT);
+        Times = 50;
+      }
+
+      Square, Random;
+      {
+        Character = spider(ARANEA);
+        Times = 30;
+      }
+
+      Square, Random;
+      {
+        Character = lobhse;
+      }
+    }
+  }
 }
