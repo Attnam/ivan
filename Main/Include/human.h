@@ -737,4 +737,12 @@ CHARACTER(punisher, humanoid)
 {
 };
 
+CHARACTER(child, humanoid)
+{
+};
+
+CHARACTER(bum, humanoid)
+{
+};
+
 #endif

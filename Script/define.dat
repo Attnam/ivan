@@ -599,6 +599,7 @@
 #define TOMB_ENTRY_MASTER 10
 #define HONOR 11
 #define EMISSARY 12
+#define TRAINEE 13
 
 #define DARK 1
 #define GREATER_DARK 2

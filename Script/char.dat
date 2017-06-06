@@ -529,6 +529,29 @@ guard
     DisplacePriority = -5;
   }
 
+  Config TRAINEE;
+  {
+    AttributeBonus = -20;
+    Helmet = BIRCH_WOOD helmet(FULL_HELMET);
+    BodyArmor = BIRCH_WOOD bodyarmor(PLATE_MAIL);
+    RightWielded = BIRCH_WOOD BIRCH_WOOD meleeweapon(LONG_SWORD);
+    LeftWielded = BIRCH_WOOD shield;
+    Adjective = "trainee";
+    CWeaponSkillHits = { 2, 20, 20; }
+    PanicLevel = 50;
+    ClothColor = rgb16(130, 80, 30);
+    FriendlyReplies =
+    {
+      5,
+      "\"Why do we have to practise with these training swords? I want a real blade!\"",
+      "\"One day, I will be in the personal guard of the high priest himself!\"",
+      "\"Being a guard is a dream job. You get vodka, you get responsibility, you get merits. And sometimes, you get to fight amazons.\"",
+      "\"I hope someone will attack soon, so that I can save many people and prove myself a hero!\"",
+      "\"What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for the safety of society, defending it with his life. A civilian does not. I am proud to call myself a citizen.\"";
+    }
+    HostileReplies == "\"I'm ready! I will fight you! I will kill you!\"";
+  }
+
   Config VETERAN;
   {
     Helmet = IRON helmet(FULL_HELMET);
@@ -926,7 +949,7 @@ shopkeeper
       4,
       "\"Welcome to the cheapest banana shop in the world!\"",
       "@Dd sighs: \"It's depressing that the locals have so little purchasing power... But Mellis bless the tourists!\"",
-      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
+      "\"No, I don't sell spoiled food. Decos' alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
       "\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
     }
     AutomaticallySeen = true;
@@ -3109,8 +3132,8 @@ petrusswife
   TotalVolume = 40000;
   TotalSize = 170;
   CanRead = true;
-  NameSingular = "Petrus's wife";
-  NamePlural = "Petrus's wives";
+  NameSingular = "Petrus' wife";
+  NamePlural = "Petrus' wives";
   ArticleMode = NO_ARTICLE;
   IsAbstract = true;
   PanicLevel = 95;
@@ -3242,7 +3265,7 @@ petrusswife
       "\"If only I could be the one to give Petrus his firstborn son...\"",
       "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
     }
-    /* RightWielded = firstbornchild(FEMALE); */
+    RightWielded = firstbornchild(FEMALE);
   }
 
   Config 3;
@@ -3401,7 +3424,7 @@ housewife
     "\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
     "\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
-    "\"Petrus's wives are so arrogant towards us working class ones. Grr...\"",
+    "\"Petrus' wives are so arrogant towards us working class ones. Grr...\"",
     "\"Don't think too much, the Cardinals can hear you.\"",
     "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
@@ -4024,7 +4047,7 @@ mistress
     "\"Sweet, oh sweetest agony!\"",
     "\"They say our queen Sherarax uses bear traps for nipple clamps.\"",
     "\"The queen of mistresses is selected by a ritual where she must survive a night with Mistress Nefas herself.\"",
-    "\"Ever participated in the weekly orgy at Nefas's High Temple? I guess not. You wouldn't have survived.\"",
+    "\"Ever participated in the weekly orgy at Nefas' High Temple? I guess not. You wouldn't have survived.\"",
     "\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
   }
   ScienceTalkAdjectiveAttribute =
@@ -4324,8 +4347,9 @@ vampire
   CanBeGenerated = true;
   CanRead = true;
   UndeadVersions = false;
+  IsCatacombCreature = true;
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
-  AllowedDungeons == XINROCH_TOMB;
+  AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
 }
 
 kobold
@@ -7605,4 +7629,155 @@ punisher
       "@Dd screams: \"No! This is assault and battery!\"";
     }
   }
+}
+
+child
+{
+  DefaultArmStrength = 7;
+  DefaultLegStrength = 8;
+  DefaultDexterity = 10;
+  DefaultAgility = 12;
+  DefaultEndurance = 10;
+  DefaultPerception = 14;
+  DefaultIntelligence = 9;
+  DefaultWisdom = 5;
+  DefaultCharisma = 8;
+  DefaultMana = 0;
+  TorsoBitmapPos = 32, 384;
+  ArmBitmapPos = 80, 352;
+  LegBitmapPos = 16, 16;
+  BootColor = rgb16(90, 50, 10);
+  ClothColor = rgb16(200, 200, 200);
+  TotalVolume = 40000;
+  TotalSize = 100;
+  Sex = UNDEFINED;
+  AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
+  DefaultCommandFlags = FOLLOW_PLAYER|FLEE_FROM_ENEMIES;
+  HostileReplies == "\"Mommy! Daddy! Help!\"";
+  AttachedGod = ATAVUS;
+  IsAbstract = true;
+  IsExtraCoward = true;
+  IsExtraFragile = true;
+  AutomaticallySeen = true;
+  CanRead = false;
+  CanBeGenerated = false;
+
+  Config BOY;
+  {
+    HairColor = rgb16(181, 82, 57);
+    LegMainColor = rgb16(135, 206, 250);
+    HeadBitmapPos = 112, 335;
+    NameSingular = "boy";
+    Sex = MALE;
+    FriendlyReplies =
+    {
+      3,
+      "\"Do you like snowball fighting?\"",
+      "\"Let's play catch!\"",
+      "\"Eeny, meeny, miny, moe...\"";
+    }
+  }
+
+  Config GIRL;
+  {
+    HairColor = rgb16(80, 48, 32);
+    CapColor = rgb16(80, 48, 32); /* also used for hair */
+    LegMainColor = rgb16(255, 105, 180);
+    HeadBitmapPos = 96, 335; 
+    NameSingular = "girl";
+    Sex = FEMALE;
+    FriendlyReplies =
+    {
+      3,
+      "\"My sister was eaten by a wolf yesterday.\"",
+      "\"I hope I will get a doll of the high priest on the Atavus day.\"",
+      "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
+    }
+  }
+}
+
+bum
+{
+  DefaultArmStrength = 18;
+  DefaultLegStrength = 18;
+  DefaultDexterity = 10;
+  DefaultAgility = 10;
+  DefaultEndurance = 25;
+  DefaultPerception = 10;
+  DefaultIntelligence = 6;
+  DefaultWisdom = 6;
+  DefaultCharisma = 2;
+  DefaultMana = 5;
+  HeadBitmapPos = 112, 160;
+  TorsoBitmapPos = 32, 288;
+  LegBitmapPos = 16, 256;
+  ArmBitmapPos = 80, 192;
+  SkinColor = rgb16(255, 212, 192);
+  HairColor = rgb16(35, 35, 35);
+  TorsoMainColor = rgb16(30, 30, 30);
+  TotalVolume = 80000;
+  TotalSize = 190;
+  NameSingular = "bum";
+  KnownCWeaponSkills == UNARMED;
+  CWeaponSkillHits == 50;
+  RightSWeaponSkillHits = 20;
+  IsAlcoholic = true;
+  CanBeGenerated = false;
+  IgnoreDanger = true; /* too drunk */
+  PanicLevel = 0;
+  FriendlyReplies =
+  {
+    50, /* rumors, more to come */
+    "\"Once I ate a resurrected banana and gosh, was it tasty!\"",
+    "\"I met an angel once. She fixed my arm. Lovely lady, she was.\"",
+    "\"Don't eat too much, my mama told me, or you'll grow fat and clumsy.\"",
+    "\"I've heard that unicorns taste weird. Not that I would know first-hand.\"",
+    "\"Tweraif? Yeah, I heard about it from a guy... What was his name again? Oily Orpiv, I think.\"",
+    "\"I once saw an apprentice dark mage polymorph his small chest and spill all his stuff. I would have laughed, but I didn't wanna be turned into a dark frog.\"",
+    "\"I've heard you can fetch a nice iron arm from the dwarves of Kharaz-arad.\"",
+    "\"I once tried to pet a hedgehog and got my hand all screwed up. Tried it next time with a gauntlet, and let me tell ya, it takes the sting from their spines!\"",
+    "\"You ever thrown a bone to a doggie? I love the way it makes them happy.\"",
+    "\"You know what I've heard? That intellectuals can get harder. Har har har.\"",
+    "\"All those priests can say so many weird and foreign words... I betcha gods love listening to wise words!\"",
+    "\"You know how to best get a discount in a shop, eh? Use your charms, dummy! Har har!\"",
+    "\"My dad was an adventurer, years ago. Died in some damp cave. I hope no other bloody adventurer found his bones and took all of his stuff.\"",
+    "\"That doctor who had to run from here, he said to me once that mutant flesh is not good for your body form. Eh, I say when you have nothing else...\"",
+    "\"You came through that scary underwater tunnel, right? I've heard it's deeper than it seems. Sounds spooky, eh?\"",
+    "\"I hate zombies! Dead things should stay dead and not try to bite you. I was bitten once, in the Cellar, and my arm got all inflamed and necrotic.\"",
+    "\"You know how people talk about the genies locked in old oil lamps? Tavern stories and wishful legends, I tell ya!\"",
+    "\"One cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favourite sword, so he came back.\"",
+    "\"Some cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
+    "\"I've heard that only the dead can be safe around an enner beast! I say when you're dead, it's no longer of concern what's around you, eh?\"",
+    "\"The Cathedral has impenetrable defenses with its four Cardinals scanning the thoughts of everyone, they say. Well, they still get their stuff stolen by kobolds, har har har! Those little midgets are so dumb no thoughts can be read from them! Har har!\"",
+    "\"My mama told me you only need a wand of polymorph and some rocks to make a fortune. Eh, never held a wand in my hands, so what can I know?\"",
+    "\"Those bananas are dangerous, I tell ya! You eat one, you drop that peel-thingy and then someone goes and slips on it, cracking their skull open!\"",
+    "\"Let me give you a word of advice - next time you get drunk, don't let the bottles lying on the ground. Broken bottles are a pain in the foot, if you know what I mean.\"",
+    "\"I got attacked by a kobold one night, but I blocked his spear with my lantern and then beaten him to death with it.\"",
+    "\"Mistresses love a good whipping, you say? Eh, I got whipped once and let me tell ya, there's nothing to love about it.\"",
+    "\"I've heard from a friend that you can enchant a pair for the price of one, if you know what to do. Sounds like a bargain to me, har har!\"",
+    "\"I've heard from a friend that enchantments can be broken and you have to repair them. Eh, magic is weird.\"",
+    "\"My mama always told me, don't eat people, it's indecent. I'd say more like evil, but she always knew best.\"",
+    "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
+    "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
+    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stay each other?\"",
+    "\"When my mama took me to an altar for the first time, she made me kneel down there. It makes the gods happy, she said.\"",
+    "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
+    "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
+    "\"Someone once told me that necromancy is not for vegetarians. Well, they have to work with meat, I guess?\"",
+    "\"They say necromancy sows Chaos into your heart. I say you have to already have some Chaos in you to even try using necromancy.\"",
+    "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself by a water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
+    "\"I used to drink from the fountains, because it's free, but then I got all sick, so it's not always healthy. Now I drink vodka.\"",
+    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get suckud inside, right? Har har!\"",
+    "\"One mage once told me that wet clothes and electricity don't mix well. Eh, it's not like I know what an electricity is, but wet clothes are uncomfortable.\"",
+    "\"One mage once told me that metal armor and electricity don't mix well. I have neither armor, nor electricity, so I don't care.\"",
+    "\"One mage once told me not only gods can wield thunder in their hands. I told her that's a blasphemy and she should burn at a stake.\"",
+    "\"One mage once told me that careless use of lightning can leave you in a shock. I think she was making fun of me.\"",
+    "\"You ever tried hitting someone with an iron gauntlet on? That packs a punch!\"",
+    "\"I remeber an execution where a noble tried to get around his punishment with an amulet of life saving. But as they cut his head off, the amulet fell from the stump of his neck! We had a good laugh about it! What a moron!\"",
+    "\"You know about floating eyes? There's one of those buggers around the Cathedral all the time. Take just a single look at them and they will knock you out cold. But when it's dark... Har har!\"",
+    "\"You know about floating eyes? I was told eating them can make your mind go haywire. You'll start hearing voices and seeing things. Just like voda, I say! Har har!\"",
+    "\"Stupid good-for-nothing kobolds! You can't even eat them without being knock out cold.\"",
+    "\"Do you know of any good way of getting rid of a tapeworm? I tried drinking some acid the last time. It worked, but the heartburn was awful.\"";
+  }
+  HostileReplies == "@Dd yells gibberish in a drunken rage.";
 }
