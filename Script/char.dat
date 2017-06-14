@@ -547,7 +547,7 @@ guard
       "\"One day, I will be in the personal guard of the high priest himself!\"",
       "\"Being a guard is a dream job. You get vodka, you get responsibility, you get merits. And sometimes, you get to fight amazons.\"",
       "\"I hope someone will attack soon, so that I can save many people and prove myself a hero!\"",
-      "\""What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for killing the high priest's enemies. A civilian does not. I am proud to call myself a citizen.\"";
+      "\"What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for killing the high priest's enemies. A civilian does not. I am proud to call myself a citizen.\"";
     }
     HostileReplies == "\"I'm ready! I will fight you! I will kill you!\"";
   }
