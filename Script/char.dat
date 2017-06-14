@@ -445,9 +445,9 @@ farmer
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
-  ScienceTalkPossibility = 15;
-  ScienceTalkIntelligenceModifier = 10;
-  ScienceTalkWisdomModifier = 5;
+  ScienceTalkPossibility = 20;
+  ScienceTalkIntelligenceModifier = 5;
+  ScienceTalkWisdomModifier = 2;
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 10;
   ScienceTalkName =
@@ -3147,8 +3147,8 @@ petrusswife
   Belt = GOLD chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
   UndeadVersions = false;
   ScienceTalkPossibility = 10;
-  ScienceTalkIntelligenceModifier = 5;
-  ScienceTalkWisdomModifier = 5;
+  ScienceTalkIntelligenceModifier = 2;
+  ScienceTalkWisdomModifier = 2;
   ScienceTalkCharismaModifier = 5;
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 10;
@@ -3429,9 +3429,9 @@ housewife
     "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
   }
-  ScienceTalkPossibility = 15;
-  ScienceTalkIntelligenceModifier = 5;
-  ScienceTalkWisdomModifier = 10;
+  ScienceTalkPossibility = 20;
+  ScienceTalkIntelligenceModifier = 2;
+  ScienceTalkWisdomModifier = 5;
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 10;
   ScienceTalkName =
