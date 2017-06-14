@@ -1058,7 +1058,7 @@ solid
     NameStem = "black granite";
     AttachedGod = TERRA;
     NaturalForm = stone;
-    HardenedMaterial = PSYPHER;
+    HardenedMaterial = BASALT;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1104,8 +1104,8 @@ solid
     Alpha = 200;
     AttachedGod = MORTIFER;
     NaturalForm = stone;
-    IntelligenceRequirement = 95;
-    CommonFlags = Base|IS_VALUABLE;
+    IntelligenceRequirement = 150;
+    CommonFlags = Base|IS_VALUABLE&~CAN_BE_WISHED;
     CategoryFlags = Base;
     InteractionFlags = Base;
   }
@@ -2343,6 +2343,7 @@ flesh
     AttachedGod = MORTIFER;
     Effect = EFFECT_CONFUSE; /* elven flesh is sweet and addictive */
     ConsumeWisdomLimit = 15;
+    EffectStrength = 20;
     InteractionFlags = Base|CAN_BURN;
   }
 }
