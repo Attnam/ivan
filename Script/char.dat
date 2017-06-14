@@ -438,7 +438,7 @@ farmer
   {
     6,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
-    "@Dd seems suspicious. \"You look like one from Mondedr! Go away!\"",
+    "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
@@ -547,7 +547,7 @@ guard
       "\"One day, I will be in the personal guard of the high priest himself!\"",
       "\"Being a guard is a dream job. You get vodka, you get responsibility, you get merits. And sometimes, you get to fight amazons.\"",
       "\"I hope someone will attack soon, so that I can save many people and prove myself a hero!\"",
-      "\"What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for the safety of society, defending it with his life. A civilian does not. I am proud to call myself a citizen.\"";
+      "\""What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for killing the high priest's enemies. A civilian does not. I am proud to call myself a citizen.\"";
     }
     HostileReplies == "\"I'm ready! I will fight you! I will kill you!\"";
   }
@@ -624,7 +624,7 @@ guard
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
       "\"Through brightest day, through blackest night no evil shall escape my sight!\"",
       "@Dd sighs: \"I need a drink...\"",
-      "\"Don't even thing about littering!\"",
+      "\"Don't even think about littering!\"",
       "\"Jaywalking is strictly forbidden.\"",
       "\"The high priest sees everything, anyway, so why am I stuck patrolling here?\"",
       "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
@@ -722,13 +722,15 @@ guard
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
-      12,
+      14,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
       "\"My great-grandfather, Sir Haedlac Galladon IV, once told me a story he heard from his great-grandfather: That when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
       "\"No crime can be tolerated. Justice shall tower over freedom!\"",
       "\"In my left hand, judgement - in my right, retribution!\"",
+      "\"Those Shining Knights think they are above law, delivering 'justice' as they see fit. A law is a law, even for a paladin.\"",
+      "\"I will never allow vigilantes in Attnam. Lady Decora must learn her place.\"",
       "\"Enemy of my enemy is still my enemy, but much easier to double cross.\"",
       "\"You can't make an omelet without ruthlessly crushing dozens of eggs beneath your steel boot and then publicly disemboweling the chickens that laid them as a warning to others.\"",
       "\"I'm the Attnamese Cardinal of Peace. I shall bring peace to the whole world, one nation at a time.\"",
@@ -856,7 +858,7 @@ guard
     LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
     RightGauntlet = STEEL gauntlet { Enchantment = 2; }
     RightBoot = STEEL boot { Enchantment = 2; }
-    DefaultName = "sir Lancelyn";
+    DefaultName = "Sir Lancelyn";
     NameSingular = "emissary";
     PostFix = "of Aslona";
     CWeaponSkillHits = { 2, 500, 500; }
@@ -873,19 +875,18 @@ guard
     AttachedGod = CRUENTUS;
     FriendlyReplies =
     {
-      12,
+      11,
       "\"I shouldn't be saying this so openly, but Aslona is in dire straits and *needs* any help it can get.\"",
       "\"I've heard other emissaries were sent from Aslona even to goblin lands to negotiate assistance.\"",
       "\"After the old king was assassinated and the Rebellion started, Aslona lost much of its former power.\"",
       "\"I will see the Rebellion crushed and every last rebel executed for their crimes!\"",
-      "\"My king is young and inexperienced, his army only barely holds the rebels back. My only hope is I can return to him successful.\"",
-      "\"Bandits are roving free through the forests of Aslona and you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
+      "\"My king is young and inexperienced; his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
+      "\"Bandits are roving free through the forests of Aslona; you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
       "\"My father was a trusted general of the old king, and the first one to meet with the rebel army on a battlefield after the regicide. Alas, he was betrayed by his slave-soldiers and murdered along with all of his loyal knights.\"",
       "\"I see a representative of the orcish freeholds arrived. Don't trust him! Those orcish vultures would love to feast on the carcass of Aslona, but I won't let that happen.\"",
       "\"I hope the negotiations over in goblin lands go well. As I heard, my king offers to free all goblin slaves in Aslona in exchange for military assistance against the orcish freeholds.\"",
-      "\"I don't understand why does the high priest tolerate that filthy orc here! No orc can be trusted, they are all raiders and murderers with no honor.\"",
-      "\"The orcish freeholds have set their sights on aslonian wealth long ago and were a bother on the borders since then. Right now, I don't know whether we are strong enough to fend them off by ourselves.\"",
-      "\"Hm, that elven ambassador, those perky... eyes of hers. As if she could see right through you, right?\"";
+      "\"I don't understand why the high priest tolerates that filthy orc here! No orc can be trusted, they are all raiders and murderers with no honor.\"",
+      "\"The orcish freeholds have set their sights on aslonian wealth long ago and were a bother on the borders since then. Right now, I don't know whether we are strong enough to fend them off by ourselves.\"";
     }
     HostileReplies =
     {
@@ -1232,7 +1233,7 @@ priest
     LeftRing = ring(RING_OF_INFRA_VISION);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = MITHRIL boot { Enchantment = 2; }
-    DefaultName = "lady Decora";
+    DefaultName = "Lady Decora";
     Adjective = "shining";
     NameSingular = "knight";
     PostFix = "of Legifer";
@@ -1663,7 +1664,7 @@ ennerbeast
     "\"Fishing is fun! Do you fish?\"",
     "\"And then I got that perch weighting fifty stones...\"",
     "\"I only want to talk but everyone is rude and dies when I try.\"",
-    "\"Can you help me finding my children?\"";
+    "\"Can you help me find my children?\"";
   }
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
@@ -2112,10 +2113,10 @@ skeleton
     HostileReplies =
     {
       5,
-      "\"I remeber... life. I want to be whole again.\"",
-      "\"I remeber my sword. My precious sword. What have become of it?\"",
+      "\"I remember... life. I want to be whole again.\"",
+      "\"I remember my sword. My precious sword. What has become of it?\"",
       "\"I feel... empty. Hollow.\"",
-      "\"I have lost what made me whole. I am now nothing but a soulles husk.\"",
+      "\"I have lost what made me whole. I am now nothing but a soulless husk.\"",
       "@Dd rasps: \"How deep have I fallen...\"";
     }
     FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
@@ -2932,7 +2933,7 @@ bear
     AttributeBonus = -35;
     TorsoBitmapPos = 192, 16;
     DeathMessage = "@Dd groans terribly and falls dead to the ground. You feel really bad for endangering this species.";
-    Frequency = 1000;
+    Frequency = 100;
   }
 
   Config BLACK_BEAR;
@@ -3280,7 +3281,7 @@ petrusswife
       "\"Petrus also married my twin sister, but I haven't seen her around for some time.\"",
       "\"I despise Petrus. Surprised to hear me talk like that? He took away the love of my life, what worse can he do to me?\"",
       "\"I never loved Petrus. He knew it and that must be why he allowed me to fall in love with someone else. To torment me.\"",
-      "\"After my transgression, why has Petrus never punished me? Does he think it's more cruel to leave me rot in this harem?\"",
+      "\"After my transgression, why has Petrus never punished me? Does he think it's more cruel to leave me to rot in this harem?\"",
       "\"I once was a princess of a proud nomad tribe of the great eastern steppes. Me and my twin sister were wed to Petrus as a tribute of peace.\"",
       "\"I miss the smell of horses, the rhythm of their run. I remember me and my sister riding for hours, miles upon miles of pure joy and freedom.\"",
       "\"How I hate this gilded cage! I was born to feel the wind and rain on my face, not to sit in an armchair all day long, chitter and broider.\"",
@@ -3312,7 +3313,7 @@ petrusswife
       7,
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
       "\"Uncle Petrus has a *massive* sword! Tee hee.\"",
-      "\"I am boooored!\"",
+      "\"I'm boooored!\"",
       "\"Have you heard No. 5? No, because she can't speak! Tee hee.\"",
       "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
       "\"No. 1 is so clever it's scary. Really!\"",
@@ -3364,24 +3365,35 @@ petrusswife
     ClothColor = rgb16(119,136,153);
     BeltColor = rgb16(105,105,105);
     HeadBitmapPos = 112, 0;
-    Adjective = "lobotomized";
+    Adjective = "re-educated";
     ArticleMode = 0;
-    ClassStates = CONFUSED;
     FriendlyReplies =
     {
-      5,
-      "@Dd says with a blank face: \"All hail mighty Petrus.\"",
-      "@Dd says with a blank face: \"Praise Valpurus.\"",
-      "@Dd says with a blank face: \"I love the Cathedral.\"",
-      "@Dd says with a blank face: \"I hear. I obey.\"",
-      "@Dd drools.";
+      10,
+      "@Dd says very loudly: \"All hail mighty Petrus.\"",
+      "@Dd says with a nervous glance around: \"Praise Valpurus.\"",
+      "@Dd stifles a smirk: \"I love the Cathedral.\"",
+      "\"I may be only a few minutes older than my twin sister, but I'm still here to protect her, as older siblings should always do.\"",
+      "\"I couldn't stand my dear sister being punished for falling in love. Petrus never could tell us apart, anyway.\"",
+      "\"I hope they didn't catch the farmer. Maybe one day, my sister and him will escape. I wish they were happy together.\"",
+      "\"I once was a princess of a proud nomad tribe of the great eastern steppes. Me and my twin sister were wed to Petrus as a tribute of peace.\"",
+      "\"I miss the smell of horses, the rhythm of their run. I remember me and my sister riding for hours, miles upon miles of pure joy and freedom.\"",
+      "\"How I hate this dank dungeon! I was born to feel the wind and rain on my face, not to sit in a small cell all day long, alone.\"",
+      "\"How is my little sister doing?\"";
     }
-    HostileReplies == "\"You have to obey or great Petrus will punish you.\"";
-    DeathMessage = "@Dd dies with a last whisper: \"Thank you.\"";
+    HostileReplies == "@Dd snickers: \"Be careful about damaging Petrus' property, he'll be angry.\"";
+    DeathMessage = "@Dd dies with a last whisper: \"Curse you!\"";
     IsExtraCoward = false;
     IgnoreDanger = true;
     Belt = CLOTH belt;
-    ScienceTalkPossibility = 0;
+    KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
+    CWeaponSkillHits == 500;
+    ScienceTalkName =
+    {
+      10,
+      "hunting", "horses", "steppe", "trapping", "sharpshooting",
+      "combat", "traditions", "storytelling", "freedom", "boredom";
+    }
   }
 }
 
@@ -3547,8 +3559,7 @@ femaleslave
     DeathMessage = "@Dd laughs for the last time and dies.";
     FriendlyReplies =
     {
-      37,
-      "\"You know what the greatest joke of them all is? When you laugh only to stop yourself from crying.\"",
+      35,
       "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
       "\"Kobolds are a living proof that the gods have a sense of humor.\"",
       "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
@@ -3556,7 +3567,6 @@ femaleslave
       "\"An orc told me that a thought crossed his mind once. It must have been a long and lonely journey.\"",
       "\"Why do dragons sleep all day? So they can fight knights.\"",
       "\"How do you escape from a dwarf? Step on a chair.\"",
-      "\"Why are the noses of Bazzarians so big? So they can sniff out a dropped coin from a mile away.\"",
       "\"Why didn't the skeleton cross the road? He didn't have the guts.\"",
       "\"A skeleton walks into a bar... and orders a beer and a mop.\"",
       "\"What's the difference between a slave and a bench? A bench can support a family.\"",
@@ -3929,7 +3939,7 @@ imp
     3,
     "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
     "\"I was about to kiss her, but then I got summoned.\"",
-    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
+    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine's.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
   }
   HostileReplies =
   {
@@ -4328,8 +4338,22 @@ vampire
   TorsoBitmapPos = 32, 304;
   LegBitmapPos = 0, 48;
   ArmBitmapPos = 80, 176;
-  HostileReplies == "@Dd roars angrily.";
-  FriendlyReplies == "@Dd capers cheerfully.";
+  HostileReplies =
+  {
+    2,
+    "\"Don't try to run. I will find you. I will always find you.\"",
+    "@Dd hisses: \"There is no place to run.\"";
+  }
+  FriendlyReplies =
+  {
+    6,
+    "\"What's that smell? The sweet blood! Oh, it sings to me! It's enough to make a man sick.\"",
+    "\"Blessed be blood!\"",
+    "\"Blood makes us human, makes us more than human, makes us human no more.\"",
+    "\"Vampires have ten times more acute sense of smell than humans. And you blame us for being repulsed by garlic?\"",
+    "\"Of course I die when you stake me in the heart and cut off my head. Everything dies when you stake it in the heart and cut off its head!\"",
+    "\"No, I can't cross running water. But can you?\"";
+  }
   TotalSize = 170;
   NameSingular = "vampire";
   AttackStyle = USE_HEAD;
@@ -5312,7 +5336,7 @@ orc
     HostileReplies =
     {
       2,
-      "\"I know what they say about orcish diplomacy! Well, they are not untrue!\"",
+      "\"I know what they say about orcish diplomacy! Well, it's not untrue!\"",
       "\"You're just prejudiced against my kind, aren't you?\"";
     }
     Sex = MALE;
@@ -6065,15 +6089,20 @@ darkmage
   ClassStates = INFRA_VISION;
   HostileReplies =
   {
-    3,
+    7,
     "\"Avada Kedavra!\"",
+    "\"Abracadabra!\"",
+    "\"Hocus pocus!\"",
+    "\"Alakazam.\"",
+    "\"Sim sala bim!\"",
     "@Dd screams: \"May the Darkness swallow you!\"",
     "@Dd yells: \"Prepare to meet your maker!\"";
   }
   FriendlyReplies =
   {
-    7,
+    8,
     "\"Don't fear the Darkness, my friend.\"",
+    "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
     "\"Light thinks it travels faster than anything but it is wrong. No matter how fast Light travels, it finds the Darkness has always got there first, and is waiting for it.\"",
     "\"Everything looks better when it's dead and on fire!\"",
     "\"My motto? If it's not on fire now, it will be soon.\"",
@@ -7485,12 +7514,13 @@ siren
       "\"Greetings! I am Elianise Lurora Faefina Glynjor Ilythyrra Reysatra Liarryn, Her Most Trusted Advisor and Ambassador of the Fair Empress of Elvenkind.\"",
       "\"I was sent from Lunethia to here on a diplomatic mission from my Empress. I hope my stay will be short.\"",
       "\"Yes, the rumors are true. Lunethia really is a town built atop a gigantic oak.\"",
-      "\"The violation of our borders must end! We don't care where will Attnam take its wood, but the Dark Forest will not be exploited.\"";
+      "\"The violation of our borders must end! We don't care where Attnam gets its wood, but the Dark Forest will not be exploited.\"";
     }
     IsExtraCoward = true;
     UndeadVersions = false;
     ScienceTalkPossibility = 15;
     ScienceTalkCharismaModifier = 20;
+    StandVerb = "waiting";
   }
 }
 
@@ -7690,7 +7720,7 @@ child
     {
       3,
       "\"My sister was eaten by a wolf yesterday.\"",
-      "\"I hope I will get a doll of the high priest on the Atavus day.\"",
+      "\"I hope I will get a doll of the high priest on Atavus day.\"",
       "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
     }
   }
@@ -7760,12 +7790,12 @@ bum
     "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
     "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
     "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stay each other?\"",
-    "\"When my mama took me to an altar for the first time, she made me kneel down there. It makes the gods happy, she said.\"",
+    "\"When my mama took me to an altar for the first time, she made me kneel there. It makes the gods happy, she said.\"",
     "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
     "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
     "\"Someone once told me that necromancy is not for vegetarians. Well, they have to work with meat, I guess?\"",
     "\"They say necromancy sows Chaos into your heart. I say you have to already have some Chaos in you to even try using necromancy.\"",
-    "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself by a water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
+    "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself with water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
     "\"I used to drink from the fountains, because it's free, but then I got all sick, so it's not always healthy. Now I drink vodka.\"",
     "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get suckud inside, right? Har har!\"",
     "\"One mage once told me that wet clothes and electricity don't mix well. Eh, it's not like I know what an electricity is, but wet clothes are uncomfortable.\"",
@@ -7775,9 +7805,15 @@ bum
     "\"You ever tried hitting someone with an iron gauntlet on? That packs a punch!\"",
     "\"I remeber an execution where a noble tried to get around his punishment with an amulet of life saving. But as they cut his head off, the amulet fell from the stump of his neck! We had a good laugh about it! What a moron!\"",
     "\"You know about floating eyes? There's one of those buggers around the Cathedral all the time. Take just a single look at them and they will knock you out cold. But when it's dark... Har har!\"",
-    "\"You know about floating eyes? I was told eating them can make your mind go haywire. You'll start hearing voices and seeing things. Just like voda, I say! Har har!\"",
-    "\"Stupid good-for-nothing kobolds! You can't even eat them without being knock out cold.\"",
+    "\"You know about floating eyes? I was told eating them can make your mind go haywire. You'll start hearing voices and seeing things. Just like vodka, I say! Har har!\"",
+    "\"Stupid good-for-nothing kobolds! You can't even eat them without being knocked out cold.\"",
     "\"Do you know of any good way of getting rid of a tapeworm? I tried drinking some acid the last time. It worked, but the heartburn was awful.\"";
   }
-  HostileReplies == "@Dd yells gibberish in a drunken rage.";
+  HostileReplies =
+  {
+    3,
+    "\"All right, you savage, mindless creature. Prepare to meet your equal!\"",
+    "\"Bad adventurer! No more living for you!\"",
+    "@Dd yells gibberish in a drunken rage.";
+  }
 }
