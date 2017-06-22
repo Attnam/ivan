@@ -355,6 +355,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
   ADD_MEMBER(AcidResistance);
+  ADD_MEMBER(SoundResistance);
   ADD_MEMBER(IsUnique);
   ADD_MEMBER(ConsumeFlags);
   ADD_MEMBER(TotalVolume);
@@ -523,6 +524,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
   ADD_MEMBER(AcidResistance);
+  ADD_MEMBER(SoundResistance);
   ADD_MEMBER(StrengthModifier);
   ADD_MEMBER(FormModifier);
   ADD_MEMBER(DefaultSize);
