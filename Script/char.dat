@@ -50,6 +50,7 @@ character
   PoisonResistance = 0;
   ElectricityResistance = 0;
   AcidResistance = 0;
+  SoundResistance = 0;
   IsUnique = false;
   ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED;
   /* Obligatory: TotalVolume */
