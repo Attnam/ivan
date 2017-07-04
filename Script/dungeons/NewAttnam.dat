@@ -460,6 +460,12 @@ Dungeon NEW_ATTNAM;
       Times = 100;
     }
 
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(BANANA_TREE);
+      Times = 0:10;
+    }
+
     Square, BoundedRandom 1, 46, 44, 53, HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(WELL);

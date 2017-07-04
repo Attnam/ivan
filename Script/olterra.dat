@@ -211,7 +211,6 @@ decoration
     BitmapPos = 16, 368;
     HPModifier = 25;/*
     IsAlwaysTransparent = false;*/
-    LeftOverItems == banana { Times = 0:1; }
   }
 
   Config HOLY_TREE;
@@ -647,6 +646,21 @@ decoration
     NameSingular = "shackles";
     BitmapPos = 112, 288;
     HPModifier = 25;
+  }
+
+  Config BANANA_TREE;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == BALSA_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 80, 32);
+    NameSingular = "palm";
+    BitmapPos = 16, 368;
+    HPModifier = 25;
+    /* IsAlwaysTransparent = false; */
+    LeftOverItems == banana { Times = 0:1; }
   }
 }
 

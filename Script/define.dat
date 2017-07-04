@@ -756,6 +756,7 @@
 #define TABLE 33
 #define WELL 34
 #define SHACKLES 35
+#define BANANA_TREE 36
 
 #define SNOW_BOULDER 4
 
