@@ -302,6 +302,7 @@ solid
     Alpha = 175;
     AttachedGod = MELLIS;
     NaturalForm = stone;
+    HardenedMaterial = BLACK_DIAMOND;
     IntelligenceRequirement = 40;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -333,8 +334,7 @@ solid
     PriceModifier = 6000;
     NameStem = "sapphire";
     Alpha = 200;
-    AttachedGod = VALPURUS;
-    HardenedMaterial = BLACK_DIAMOND;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     HardenedMaterial = DIAMOND;
     IntelligenceRequirement = 35;
@@ -1872,29 +1872,6 @@ liquid
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
-  }
-
-  Config OMMEL_BLOOD;
-  {
-    StrengthValue = 1;
-    NutritionValue = 250;
-    Color = rgb16(180, 20, 20);
-    NameStem = "ommel blood";
-    Alpha = 175;
-    Flexibility = 40;
-    AttachedGod = CRUENTUS;
-    Acidicity = 5000:
-    RustModifier = 5000;
-    ConsumeWisdomLimit = 1;
-    CategoryFlags = IS_BLOOD;
-    InteractionFlags = Base|AFFECT_INSIDE;
-    StepInWisdomLimit = 1;
-    NameFlags = Base|USE_AN;
-    PriceModifier = 5000;
-    CommonFlags = Base|IS_VALUABLE&~CAN_BE_MIRRORED;
-    ConsumeEndMessage = CEM_OMMEL;
-    HitMessage = HM_OMMEL;
-    BodyFlags = Base|IS_WARM;
   }
 
   Config LIQUID_DARKNESS;

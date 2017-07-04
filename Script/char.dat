@@ -680,13 +680,12 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      7,
+      6,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
       "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
       "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"Hi! You look fabulous today!\"",
-      "\"It is we who stand guard, our eternal watch shall not fail.\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
   }
@@ -2756,7 +2755,7 @@ communist /* Ivan */
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
     "\"@Nu gone through spacetime portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
-    "\"You can always find a party in Lunethia. But in Soviet Russia, the Party can always find you!\"",
+    "\"You can always find party in Lunethia. But in Soviet Russia, Party can always find you!\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
     "\"Lenin want @nu kill capitalists!\"";
   }
@@ -2817,11 +2816,10 @@ hunter
   HostileReplies == "\"Your head will look fine above my fireplace!\"";
   FriendlyReplies =
   {
-    6,
+    5,
     "\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"",
     "\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"",
     "\"I am the Great White Hunter. Get out of My way!\"",
-    "\"Oh, I only hunt for the sport. I'm vegetarian.\"",
     "\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"",
     "\"It is good Petrus had his predecessor assassinated. Can you believe it, the dude tried to take from us our natural right to carry a spear in the street!\"";
   }
@@ -6089,8 +6087,7 @@ darkmage
   ClassStates = INFRA_VISION;
   HostileReplies =
   {
-    7,
-    "\"Avada Kedavra!\"",
+    6,
     "\"Abracadabra!\"",
     "\"Hocus pocus!\"",
     "\"Alakazam.\"",
@@ -6100,10 +6097,9 @@ darkmage
   }
   FriendlyReplies =
   {
-    8,
+    7,
     "\"Don't fear the Darkness, my friend.\"",
     "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
-    "\"Light thinks it travels faster than anything but it is wrong. No matter how fast Light travels, it finds the Darkness has always got there first, and is waiting for it.\"",
     "\"Everything looks better when it's dead and on fire!\"",
     "\"My motto? If it's not on fire now, it will be soon.\"",
     "\"What hurts you, blesses you. Darkness is your candle.\"",
@@ -7649,7 +7645,7 @@ punisher
       "\"Legifer? No, I'm a future lawyer, of course I worship Mellis!\"",
       "@Dd says very loudly: \"Why yes, I love working with Mr. Decos! It's a pleasure to assist a true professional with his work.\"",
       "@Dd whispers with a haunted expression: \"Please, help me! I don't want to be here. Mr. Decos is a madman and those punishers...\"",
-      "@Dd whispers on the verge of tears: \"Please, help me! I don't want to know anything anymore about their laws or techniques. I just want to go home.\"",
+      "@Dd whispers on the verge of tears: \"Please, help me! I don't want to know anything any more about their laws or techniques. I just want to go home.\"",
       "@Dd whispers to you: \"Please, help me! I can't take it anymore.\"";
     }
     HostileReplies =
@@ -7803,7 +7799,7 @@ bum
     "\"One mage once told me not only gods can wield thunder in their hands. I told her that's a blasphemy and she should burn at a stake.\"",
     "\"One mage once told me that careless use of lightning can leave you in a shock. I think she was making fun of me.\"",
     "\"You ever tried hitting someone with an iron gauntlet on? That packs a punch!\"",
-    "\"I remeber an execution where a noble tried to get around his punishment with an amulet of life saving. But as they cut his head off, the amulet fell from the stump of his neck! We had a good laugh about it! What a moron!\"",
+    "\"I remember an execution where a noble tried to get around his punishment with an amulet of life saving. But as they cut his head off, the amulet fell from the stump of his neck! We had a good laugh about it! What a moron!\"",
     "\"You know about floating eyes? There's one of those buggers around the Cathedral all the time. Take just a single look at them and they will knock you out cold. But when it's dark... Har har!\"",
     "\"You know about floating eyes? I was told eating them can make your mind go haywire. You'll start hearing voices and seeing things. Just like vodka, I say! Har har!\"",
     "\"Stupid good-for-nothing kobolds! You can't even eat them without being knocked out cold.\"",
