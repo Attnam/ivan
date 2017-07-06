@@ -7254,7 +7254,7 @@ tailor
   RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
   RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
   RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
-  KnownCWeaponSkills == BLUNT_WEAPONS;
+  KnownCWeaponSkills == SMALL_SWORDS;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
