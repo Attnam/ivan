@@ -445,7 +445,6 @@ int item::GetResistance(int Type) const
   switch(Type&0xFFF)
   {
    case PHYSICAL_DAMAGE: return GetStrengthValue();
-   case SOUND:
    case ENERGY:
    case DRAIN:
    case MUSTARD_GAS_DAMAGE:
@@ -454,6 +453,7 @@ int item::GetResistance(int Type) const
    case POISON: return GetPoisonResistance();
    case ELECTRICITY: return GetElectricityResistance();
    case ACID: return GetAcidResistance();
+   case SOUND: return GetSoundResistance();
   }
 
   ABORT("Resistance lack detected!");

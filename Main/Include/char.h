@@ -140,6 +140,7 @@ struct characterdatabase : public databasebase
   int PoisonResistance;
   int ElectricityResistance;
   int AcidResistance;
+  int SoundResistance;
   int ConsumeFlags;
   long TotalVolume;
   packv2 HeadBitmapPos;
@@ -484,6 +485,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, PoisonResistance);
   DATA_BASE_VALUE(int, ElectricityResistance);
   DATA_BASE_VALUE(int, AcidResistance);
+  DATA_BASE_VALUE(int, SoundResistance);
   DATA_BASE_VALUE(int, ConsumeFlags);
   DATA_BASE_VALUE(long, TotalVolume);
   virtual DATA_BASE_VALUE(v2, HeadBitmapPos);
