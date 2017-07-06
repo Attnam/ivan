@@ -155,6 +155,27 @@ Dungeon XINROCH_TOMB;
       Flags = 0;
     }
 
+    Square, Pos 28, 51; { Character = guard(TOMB_ENTRY); }
+    Square, Pos 32, 51; { Character = guard(TOMB_ENTRY); }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = skeleton;
+      Times = 2:5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = farmer(CULTIST);
+      Times = 5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = housewife(CULTIST);
+      Times = 5;
+    }
+
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(SNOW_FIR);
