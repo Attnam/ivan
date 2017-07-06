@@ -3309,13 +3309,14 @@ petrusswife
     PostFix = "number 4";
     FriendlyReplies =
     {
-      7,
+      8,
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
       "\"Uncle Petrus has a *massive* sword! Tee hee.\"",
       "\"I'm boooored!\"",
       "\"Have you heard No. 5? No, because she can't speak! Tee hee.\"",
       "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
       "\"No. 1 is so clever it's scary. Really!\"",
+      "\"I got a pony for my twentieth birthday! Unfortunately I can't see her, because I can't leave the harem, but uncle Petrus told me she's beautiful!\"",
       "\"Uncle Petrus says I am special! He says it to all his wives, but I know he means it for me. Tee hee.\"";
     }
     ScienceTalkIntelligenceModifier = 0;
@@ -3349,7 +3350,7 @@ petrusswife
     {
       6,
       "\"The day I became Petrus' wife was the best day of my life. And it haven't gotten worse since!\"",
-      "\"Leave? Why would I want to leave? I have luxury here, servant - everything I can wish for. Outside, there is just poverty and grime.\"",
+      "\"Leave? Why would I want to leave? I have luxury here, servants - everything I can wish for. Outside, there is just poverty and grime.\"",
       "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
       "\"No. 5 was babbling all the time, once. I couldn't stand it, but now the silence is even worse.\"",
       "\"Don't bother talking to No. 3, she's weird.\"",
@@ -4349,7 +4350,7 @@ vampire
     "\"What's that smell? The sweet blood! Oh, it sings to me! It's enough to make a man sick.\"",
     "\"Blessed be blood!\"",
     "\"Blood makes us human, makes us more than human, makes us human no more.\"",
-    "\"Vampires have ten times more acute sense of smell than humans. And you blame us for being repulsed by garlic?\"",
+    "\"Vampires have a sense of smell ten times more acute than humans. And you blame us for being repulsed by garlic?\"",
     "\"Of course I die when you stake me in the heart and cut off my head. Everything dies when you stake it in the heart and cut off its head!\"",
     "\"No, I can't cross running water. But can you?\"";
   }
