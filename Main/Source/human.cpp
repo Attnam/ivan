@@ -4694,9 +4694,11 @@ void necromancer::BeTalkedTo()
                                  "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
                                  "every now and again to check up on me.\"\n"));
 
-        game::TextScreen(CONST_S("\"I can relate the history of dark knighthood to you. Long ago, there lived a\n"
-                                 "powerful warrior, Xinroch, who rose up the ranks of the fearsome order of the\n"
-                                 "dark knights, to become the grand master dark knight. \n\n"
+        game::TextScreen(CONST_S("\"Wait, don't go yet! It gets lonely here, with no one to talk to but the punishers.\n"
+                                 "Keep me company a little longer, please... Maybe I can tell you a story? I can relate\n"
+                                 "the history of dark knighthood to you.\n\n"
+                                 "Long ago, there lived a powerful warrior, Xinroch, who rose up the ranks\n"
+                                 "of the fearsome order of the dark knights, to become the grand master dark knight. \n\n"
                                  "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
                                  "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
                                  "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"

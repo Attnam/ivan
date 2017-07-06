@@ -137,9 +137,9 @@ Dungeon XINROCH_TOMB;
       Pos = 2:XSize-5,2:YSize-10;
       Size = 4:6,4:6;
       AltarPossible = false;
-      WallSquare = FIR_WOOD solidterrain(PARQUET), OCTIRON wall(BRICK_FINE);
+      WallSquare = FIR_WOOD solidterrain(PARQUET), OBSIDIAN wall(BRICK_FINE);
       FloorSquare = FIR_WOOD solidterrain(PARQUET), 0;
-      DoorSquare = FIR_WOOD solidterrain(PARQUET), RUBY door;
+      DoorSquare = FIR_WOOD solidterrain(PARQUET), EBONY_WOOD door;
       GenerateDoor = true;
       DivineMaster = 0;
       GenerateTunnel = false;
@@ -153,6 +153,27 @@ Dungeon XINROCH_TOMB;
       GenerateWindows = true;
       UseFillSquareWalls = false;
       Flags = 0;
+    }
+
+    Square, Pos 28, 51; { Character = guard(TOMB_ENTRY); }
+    Square, Pos 32, 51; { Character = guard(TOMB_ENTRY); }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = skeleton;
+      Times = 2:5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = farmer(CULTIST);
+      Times = 5;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = housewife(CULTIST);
+      Times = 5;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
@@ -183,7 +204,7 @@ Dungeon XINROCH_TOMB;
       Pos = 10,10;
       Size = 41,41;
       WallSquare = solidterrain(SNOW_TERRAIN), BLACK_GRANITE wall(BRICK_OLD);
-      FloorSquare = solidterrain(SNOW_TERRAIN), 0;
+      FloorSquare = ASH solidterrain(SNOW_TERRAIN), 0;
       GenerateDoor = false;
       DivineMaster = INFUSCOR;
       GenerateLanterns = false;
@@ -261,22 +282,23 @@ Dungeon XINROCH_TOMB;
           # = OBSIDIAN wall(BRICK_OLD);
           A = BLACK_GRANITE altar(INFUSCOR);
           D = OCTIRON door(HEXAGONAL_LOCK);
-          b = decoration(SNOW_FIR);
+          b = decoration(DEAD_TREE);
+          s = decoration(STRANGE_TREE);
           f = fountain { SecondaryMaterial = GLOWING_BLOOD; }
         }
       }
       {
         .......................................
+        ............s..........................
         .......................................
         .......................................
-        .......................................
-        ..................###..................
+        ..................###......s...........
         ...b............###.###................
         ..............###.....###.........b....
         ........b....##.........##.............
         ............##.....A.....##............
         ..........###.............###..........
-        ..b......##.................##.........
+        ..s......##.................##.........
         ........##...................##......b.
         ......###.....................###......
         .....##.........................##.....
@@ -299,7 +321,7 @@ Dungeon XINROCH_TOMB;
         .......##.....................##.......
         ........#.....................#.......b
         .....b..##...................##........
-        .b.......#...................#....b....
+        .b.......#...................#....s....
         .........##########D##########.........
         .......................................
         .................f...f.................
@@ -408,6 +430,37 @@ Dungeon XINROCH_TOMB;
         .....##-------------------##.....
         ......#K------g---g------K#......
         ......##########-##########......
+      }
+    }
+
+    Room
+    {
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(ANVIL);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(FORGE);
+      }
+    }
+
+    Room
+    {
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(PLAIN_BED);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = BONE decoration(CHAIR);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
       }
     }
 

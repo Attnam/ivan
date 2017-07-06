@@ -476,6 +476,32 @@ farmer
       "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
     }
   }
+
+  Config CULTIST;
+  {
+    CanBeGenerated = false;
+    AttributeBonus = 10;
+    NameSingular = "cultist";
+    TorsoBitmapPos = 48, 352;
+    LegBitmapPos = 16, 160;
+    ClothColor = rgb16(50, 50, 50);
+    BeltColor = rgb16(100, 100, 100);
+    Belt = BLACK_LEATHER belt { Enchantment = 1; }
+    RightWielded = meleeweapon(BASTARD_SWORD);
+    KnownCWeaponSkills == LARGE_SWORDS;
+    IsSadist = true;
+    AttachedGod = CRUENTUS;
+    HostileReplies == "\"You dare desecrate the Tomb?!\"";
+    FriendlyReplies =
+    {
+      3,
+      "\"Praised be Cruentus!\"",
+      "\"Praised be Infuscor!\"",
+      "\"All hail our mighty lord Xinroch.\"";
+    }
+    ScienceTalkPossibility = 0;
+    Inventory = { 2, holybook(CRUENTUS) { Chance = 10; }, wand(WAND_OF_NECROMANCY) { Chance = 10; } }
+  }
 }
 
 guard
@@ -2950,6 +2976,37 @@ housewife
     "\"Don't think too much, the Cardinals can hear you.\"",
     "\"When I was just a little girl, I wished to become a dentist.\"",
     "\"If you men only knew!\"";
+  }
+
+  Config CULTIST;
+  {
+    CanBeGenerated = false;
+    AttributeBonus = 10;
+    NameSingular = "cultist";
+    TorsoBitmapPos = 48, 352;
+    ArmBitmapPos = 80, 96;
+    LegBitmapPos = 16, 160;
+    TorsoMainColor = rgb16(50, 50, 50);
+    ArmMainColor = rgb16(50, 50, 50);
+    LegMainColor = rgb16(50, 50, 50);
+    ClothColor = rgb16(50, 50, 50);
+    BeltColor = rgb16(100, 100, 100);
+    Cloak = BLACK_LEATHER cloak { Enchantment = 1; }
+    RightWielded = meleeweapon(SCYTHE);
+    KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
+    IsExtraCoward = false;
+    IsSadist = true;
+    AttachedGod = INFUSCOR;
+    HostileReplies == "\"You dare desecrate the Tomb?!\"";
+    FriendlyReplies =
+    {
+      3,
+      "\"Praised be Cruentus!\"",
+      "\"Praised be Infuscor!\"",
+      "\"All hail our mighty lord Xinroch.\"";
+    }
+    ScienceTalkPossibility = 0;
+    Inventory = { 2, holybook(INFUSCOR) { Chance = 10; }, HUMAN_FLESH lump; }
   }
 }
 
