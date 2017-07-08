@@ -435,6 +435,7 @@
 #define GUN_POWDER (POWDER_ID + 1)
 #define SNOW (POWDER_ID + 2)
 #define SAND (POWDER_ID + 3)
+#define ASH (POWDER_ID + 4)
 
 #define IRON_ALLOY_ID (4096 * 7)
 
@@ -583,6 +584,7 @@
 #define FEAR 2
 
 #define IMPRISONED_FARMER 1
+#define CULTIST 2
 
 #define ROOKIE 1
 #define VETERAN 2
@@ -757,6 +759,8 @@
 #define WELL 34
 #define SHACKLES 35
 #define BANANA_TREE 36
+#define DEAD_TREE 37
+#define STRANGE_TREE 38
 
 #define SNOW_BOULDER 4
 
