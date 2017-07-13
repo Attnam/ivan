@@ -645,6 +645,28 @@ decoration
     BitmapPos = 112, 288;
     HPModifier = 25;
   }
+
+  Config DEAD_TREE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You mercifully chop the tree down.";
+    MainMaterialConfig == FIR_WOOD;
+    ShowMaterial = false;
+    NameSingular = "dead tree";
+    BitmapPos = 64, 336;
+    HPModifier = 10;
+  }
+
+  Config STRANGE_TREE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the strange tree down.";
+    MainMaterialConfig == BONE;
+    ShowMaterial = true;
+    Adjective = "strange";
+    NameSingular = "tree";
+    BitmapPos = 80, 352;
+  }
 }
 
 door /* olterrain-> */
