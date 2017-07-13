@@ -7403,7 +7403,6 @@ lobhse
   CanOpen = false;
   HostileReplies == "@Dd says nothing.";
   FriendlyReplies == "@Dd says nothing.";
-  TotalSize = 10;
   SkinColor = rgb16(64, 64, 100);
   BeltColor = rgb16(50, 150, 50); /* the mouth */
   TorsoMainColor = rgb16(30, 30, 30);
@@ -7431,8 +7430,6 @@ lobhse
   CanBeCloned = false;
   DeathMessage = "@Dd groans horribly and drops @pp head.";
   CanBeConfused = false;
-  AttackStyle = USE_HEAD;
-  KnownCWeaponSkills == BITE;
   DestroysWalls = true;
   AllowUnconsciousness = false;
 }
