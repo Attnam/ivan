@@ -302,6 +302,7 @@ solid
     Alpha = 175;
     AttachedGod = MELLIS;
     NaturalForm = stone;
+    HardenedMaterial = BLACK_DIAMOND;
     IntelligenceRequirement = 40;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -1057,7 +1058,7 @@ solid
     NameStem = "black granite";
     AttachedGod = TERRA;
     NaturalForm = stone;
-    HardenedMaterial = MILKY_QUARTZ;
+    HardenedMaterial = BASALT;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
@@ -1073,6 +1074,40 @@ solid
     HardenedMaterial = HARDENED_LEATHER;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
     InteractionFlags = CAN_BURN;
+  }
+
+  Config BLACK_DIAMOND;
+  {
+    StrengthValue = 375;
+    ConsumeType = CT_MINERAL;
+    Density = 3500;
+    Color = rgb16(0, 0, 0);
+    PriceModifier = 15000;
+    NameStem = "black diamond";
+    Alpha = 175;
+    AttachedGod = MORTIFER;
+    NaturalForm = stone;
+    IntelligenceRequirement = 50;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base;
+  }
+
+  Config PSYPHER;
+  {
+    StrengthValue = 600;
+    ConsumeType = CT_MINERAL;
+    Density = 3500;
+    Color = rgb16(180, 50, 50);
+    PriceModifier = 15000;
+    NameStem = "psypher";
+    Alpha = 200;
+    AttachedGod = MORTIFER;
+    NaturalForm = stone;
+    IntelligenceRequirement = 150;
+    CommonFlags = Base|IS_VALUABLE&~CAN_BE_WISHED;
+    CategoryFlags = Base;
+    InteractionFlags = Base;
   }
 }
 
@@ -1355,7 +1390,8 @@ gas
   Config GHOST;
   {
     Color = rgb16(200, 200, 255);
-    NameStem = "ghost";
+    NameStem = "ectoplasm";
+    AdjectiveStem = "ectoplasmic";
     Alpha = 150;
     AttachedGod = MORTIFER;
     BodyFlags = Base|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
@@ -1413,6 +1449,16 @@ gas
     BreatheMessage = "It smells like mustard here.";
     Effect = EFFECT_MUSTARD_GAS;
     StepInWisdomLimit = 8;
+  }
+
+  Config SLEEPING_GAS;
+  {
+    Color = rgb16(180, 180, 225);
+    NameStem = "sleeping gas";
+    Alpha = 150;
+    AttachedGod = NEFAS; /* chloroform */
+    Effect = EFFECT_KOBOLD_FLESH;
+    StepInWisdomLimit = 3;
   }
 }
 
@@ -1830,6 +1876,21 @@ liquid
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
+  }
+
+  Config LIQUID_DARKNESS;
+  {
+    StrengthValue = 1;
+    Density = 10;
+    NutritionValue = 1;
+    RustModifier = 0;
+    Color = rgb16(0, 0, 0);
+    Emitation = rgb24(35, 35, 35);
+    NameStem = "liquid darkness";
+    Effect = EFFECT_DARKNESS;
+    ConsumeWisdomLimit = 1;
+    Alpha = 175;
+    AttachedGod = MORTIFER;
   }
 
   Config LIGHT_FROG_BLOOD;
@@ -2260,6 +2321,9 @@ flesh
   {
     NameStem = "sick spider flesh";
     AttachedGod = SCABIES;
+    Effect = EFFECT_POISON;
+    EffectStrength = 150;
+    ConsumeWisdomLimit = 3;
     BodyFlags = Base&~IS_WARM_BLOODED;
   }
 
@@ -2268,6 +2332,16 @@ flesh
     NameStem = "mind worm flesh";
     AttachedGod = SCABIES;
     BodyFlags = Base&~IS_WARM_BLOODED;
+  }
+
+  Config ELF_FLESH;
+  {
+    NameStem = "elven flesh";
+    AttachedGod = MORTIFER;
+    Effect = EFFECT_CONFUSE; /* elven flesh is sweet and addictive */
+    ConsumeWisdomLimit = 15;
+    EffectStrength = 20;
+    InteractionFlags = Base|CAN_BURN;
   }
 }
 

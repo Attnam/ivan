@@ -316,6 +316,8 @@
 #define LEAD (SOLID_ID + 65)
 #define BLACK_GRANITE (SOLID_ID + 66)
 #define BLACK_LEATHER (SOLID_ID + 67)
+#define BLACK_DIAMOND (SOLID_ID + 68)
+#define PSYPHER (SOLID_ID + 69)
 
 #define ORGANIC_ID (4096 * 2)
 
@@ -346,6 +348,7 @@
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 #define FART (GAS_ID + 9)
 #define MUSTARD_GAS (GAS_ID + 10)
+#define SLEEPING_GAS (GAS_ID + 11)
 
 #define LIQUID_ID (4096 * 4)
 
@@ -375,7 +378,8 @@
 #define YELLOW_SLIME (LIQUID_ID + 24)
 #define SICK_BLOOD (LIQUID_ID + 25)
 #define MUSTARD_GAS_LIQUID (LIQUID_ID + 26)
-#define LIGHT_FROG_BLOOD (LIQUID_ID + 27)
+#define LIQUID_DARKNESS (LIQUID_ID + 27)
+#define LIGHT_FROG_BLOOD (LIQUID_ID + 28)
 
 #define FLESH_ID (4096 * 5)
 
@@ -425,6 +429,7 @@
 #define SICK_SPIDER_FLESH (FLESH_ID + 44)
 #define MIND_WORM_FLESH (FLESH_ID + 45)
 #define VAMPIRE_FLESH (FLESH_ID + 46)
+#define ELF_FLESH (FLESH_ID + 47)
 
 #define POWDER_ID (4096 * 6)
 
@@ -595,6 +600,8 @@
 #define TOMB_ENTRY 9
 #define TOMB_ENTRY_MASTER 10
 #define HONOR 11
+#define EMISSARY 12
+#define TRAINEE 13
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -625,8 +632,12 @@
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
 #define MUTANT_BEAR 5
+#define PANDA_BEAR 6
 
 #define IMPRISONED_FEMALE 1
+/* 2 reserved for ATTNAM */
+/* 3 reserved for NEW_ATTNAM */
+#define JESTER 4
 
 #define ZOMBIE_OF_KHAZ_ZADM 1
 #define IMPRISONED_ZOMBIE 2
@@ -648,6 +659,7 @@
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
+#define REPRESENTATIVE 6
 
 #define MASTER_TORTURER 1
 #define HOARD_MASTER 2
@@ -684,9 +696,12 @@
 #define RED_SIREN 7
 #define PINK_SIREN 8
 #define HISPANIC_SIREN 9
+#define AMBASSADOR_SIREN 10
 
 #define HATCHLING 1
 #define BOIL 2
+
+#define LAW_STUDENT 1
 
 #define PARQUET 1
 #define FLOOR 2
@@ -744,8 +759,9 @@
 #define TABLE 33
 #define WELL 34
 #define SHACKLES 35
-#define DEAD_TREE 36
-#define STRANGE_TREE 37
+#define BANANA_TREE 36
+#define DEAD_TREE 37
+#define STRANGE_TREE 38
 
 #define SNOW_BOULDER 4
 

@@ -764,7 +764,7 @@ void priest::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)
   {
-    ADD_MESSAGE("\"Sinner! My hands shall pour Divine Wrath upon thee!\"");
+    character::BeTalkedTo();
     return;
   }
 
@@ -1307,7 +1307,7 @@ void zombie::BeTalkedTo()
       ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   }
   else
-    ADD_MESSAGE("\"Need brain but you too stoopid!\"");
+    character::BeTalkedTo();
 }
 
 void angel::Save(outputfile& SaveFile) const

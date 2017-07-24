@@ -37,7 +37,7 @@ Teams = 16;
  * 12 == XINROCH_TOMB_ENTRY_TEAM == The dudes in the tomb entrance of the Xinroch Tomb story arc
  * 13 == XINROCH_TOMB_NECRO_TEAM == Necro chamber operators in Xinroch's tomb
  * 14 == XINROCH_TOMB_KAMIKAZE_DWARF_TEAM == the fanatics in the gas chambers
- * 15 == prisoners in the Cathedral Cellar
+ * 15 == PRISONER_TEAM == prisoners in the Cathedral Cellar
  */
 
 Team ATTNAM_TEAM;

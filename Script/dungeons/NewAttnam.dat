@@ -377,6 +377,11 @@ Dungeon NEW_ATTNAM;
         Character = priest(SILVA) { Flags = IS_MASTER; }
       }
 
+      Square, Pos 1, 2;
+      {
+        GTerrain = solidterrain(FLOOR);
+      }
+
       OTerrainMap
       {
         Pos = 0,0;
@@ -453,6 +458,12 @@ Dungeon NEW_ATTNAM;
     {
       OTerrain = decoration(PALM);
       Times = 100;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(BANANA_TREE);
+      Times = 0:10;
     }
 
     Square, BoundedRandom 1, 46, 44, 53, HAS_NO_OTERRAIN;
