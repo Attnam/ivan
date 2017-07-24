@@ -437,12 +437,17 @@ farmer
   HostileReplies == "\"Did you think I use this axe only to chop wood?\"";
   FriendlyReplies =
   {
-    6,
+    11,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
     "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
+    "\"I'd better not see you flirt with my wife, or else...\"",
+    "\"You! Ain't you from Mondedr, stranger?! I'll be watching you.\"",
+    "\"Eh?\"",
+    "\"What?\"",
+    "@Dd boasts about @sp collection of shovels.",
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
@@ -470,9 +475,11 @@ farmer
     HostileReplies == "\"You don't have the balls to kill me!\"";
     FriendlyReplies =
     {
-      3,
+      5,
       "\"Let's just say that Petrus' wife No. 3 was beautiful and I wasn't careful.\"",
       "\"Would you have a nut to spare?\"",
+      "\"Eh?\"",
+      "\"Huh?\"",
       "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
     }
     UndeadVersions = false;
@@ -495,9 +502,10 @@ farmer
     HostileReplies == "\"You dare desecrate the Tomb?!\"";
     FriendlyReplies =
     {
-      3,
+      4,
       "\"Praised be Cruentus!\"",
       "\"Praised be Infuscor!\"",
+      "\"Blood for Cruentus! Souls for Infuscor!\"",
       "\"All hail our mighty lord Xinroch.\"";
     }
     ScienceTalkPossibility = 0;
@@ -545,10 +553,13 @@ guard
     ClothColor = rgb16(130, 80, 30);
     FriendlyReplies =
     {
-      4,
+      7,
       "@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got transferred?\"",
       "\"Lions killed a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
       "\"This place's as hot as the elemental plane of fire! I want back home.\"",
+      "\"What lousy pay we're getting here!\"",
+      "\"The food's not fit for orcs!\"",
+      "\"My feet hurt, I've been on them all day!\"",
       "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
     }
     DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
@@ -593,12 +604,14 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      9,
+      11,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "@Dd snorts.",
       "@Dd spits on the ground.",
       "\"...\"",
       "\"Hmph.\"",
+      "\"Anything you say can be used against you.\"",
+      "\"Put that weapon away before you hurt someone!\"",
       "\"Don't even think of breaking rules.\"",
       "\"The high priest is my idol. I would want a sword as big as his!\"",
       "\"Don't talk to the prisoners in the Cellar, or you might end up amongst them.\"",
@@ -707,12 +720,13 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      6,
+      7,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
       "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
       "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"Hi! You look fabulous today!\"",
+      "\"Out of my way, scum!\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
   }
@@ -793,10 +807,11 @@ guard
     UndeadVersions = false;
     FriendlyReplies =
     {
-      4,
+      5,
       "@Dd says helplessly: \"I know, right? Purple. It had to be Infuscor's favourite color.\"",
       "\"Don't even think of disturbing the Tomb.\"",
       "\"They say Xinroch's restless soul dwells below. I heard it guards a portal to another dimension. I wouldn't be caught dead going through there.\"",
+      "\"Souls for Infuscor!\"",
       "@Dd mutters. \"Hundreds of years guarding this Tomb. I wish those necromancers would get on with it!\"";
     }
   }
@@ -1021,11 +1036,17 @@ shopkeeper
     DefaultName = "Merka";
     FriendlyReplies =
     {
-      3,
+      8,
       "@Dd sighs: \"I wonder why I have so few customers these days...\"",
       "\"The topmost reason why I work here is that the monsters devour tax collectors.\"",
+      "\"Elpuri, eh? Folks say he hatched as a light frog in the Cathedral of Attnam. Yet his voracious appetite quickly set him apart. He ate and grew until his swollen bulk dwarfed even the largest of the giant dark frogs.\"",
+      "\"I've heard that Elpuri once was the favourite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
+      "\"After being renounced by Petrus, Elpuri fled the Cathedral and found refuge here in these caves, where he bides his time to build an army of dark frogs and strike back against the high priest.\"",
+      "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster then they could flood and torment the world.\"",
+      "\"The monsters don't really bother me, no. Not even they are stupid enough to want to be on the bad side of the Guild.\"",
       "\"The monsters don't attack me, because of our mutually profitable contract.\"";
     }
+    HostileReplies == "\"Fool! No one messes with the Guild and lives!\"";
   }
 
   Config XINROCH_TOMB;
@@ -1371,7 +1392,13 @@ oree
   CanBeCloned = false;
   Inventory == can { MainMaterial = IRON { Volume = 10; } SecondaryMaterial = PEPSI { Volume = 330; } }
   DefaultName = "Oree";
-  HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
+  HostileReplies =
+  {
+    3,
+    "@Dd prays to @Gd.",
+    "\"You have slain Elpuri. Now nothing will interfere with my plans! Fufufu!\"",
+    "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
+  }
   FleshMaterial = DAEMON_FLESH;
   DeathMessage = "@Dd vomits blood for one last time and rasps: \"Victory. A hollow and ridiculous notion.\"";
   AttachedGod = MORTIFER;
@@ -1416,7 +1443,12 @@ darkknight
   KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
   ClassStates = INFRA_VISION;
   HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
-  FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
+  FriendlyReplies =
+  {
+    2,
+    "\"Blood for Cruentus!\"",
+    "\"Don't bother me unless you need help to die.\"";
+  }
   AttachedGod = CRUENTUS;
   IsExtraFragile = true;
   IsSadist = true;
@@ -1676,20 +1708,30 @@ ennerbeast
   FleshMaterial = ENNER_BEAST_FLESH;
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
   Inventory == horn(FEAR);
-  IsUnique = true; /* currently */
+  IsUnique = true;
   HostileReplies =
   {
-    3,
+    8,
     "\"I only want to talk but everyone is rude and dies when I try.\"",
     "\"Sometimes, I feel so lonely...\"",
+    "\"Can you help me find my children?\"",
+    "\"The village of Enner is hidden in a beautiful mountain valley far, far east from here. You should pay a visit some day and hear our singers. Their arias are incredible!\"",
+    "\"After my wife passed away, I couldn't stand remaining in our village. Everything I looked at was a painful remainder of her.\"",
+    "\"My little girl wanted to see the world beyond our village, so off we went. It was the first time my children were genuinely happy since their mother passed away.\"",
+    "\"I thank the gods for my children every day. They were the best thing that ever happened in my life.\"",
     "@Dd laughs with a devastating sound which shakes the ground.";
   }
   FriendlyReplies =
   {
-    4,
+    9,
     "\"Fishing is fun! Do you fish?\"",
     "\"And then I got that perch weighting fifty stones...\"",
     "\"I only want to talk but everyone is rude and dies when I try.\"",
+    "\"You know what they say... fish and bread keep the poor man fed. Eh?\"",
+    "\"The village of Enner is hidden in a beautiful mountain valley far, far east from here. You should pay a visit some day and hear our singers. Their arias are incredible!\"",
+    "\"After my wife passed away, I couldn't stand remaining in our village. Everything I looked at was a painful remainder of her.\"",
+    "\"My little girl wanted to see the world beyond our village, so off we went. It was the first time my children were genuinely happy since their mother passed away.\"",
+    "\"I thank the gods for my children every day. They were the best thing that ever happened in my life.\"",
     "\"Can you help me find my children?\"";
   }
   AttachedGod = SCABIES;
@@ -2184,7 +2226,14 @@ goblin
   RightSWeaponSkillHits = 5;
   PanicLevel = 66;
   HostileReplies == "@Dd yells goblin war cries at you.";
-  FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
+  FriendlyReplies =
+  {
+    4,
+    "@Dd giggles.",
+    "@Dd curses the surface freaks.",
+    "@Dd mumbles incomprehensibly.",
+    "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
+  }
   FleshMaterial = GOBLINOID_FLESH;
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -2;
@@ -2239,6 +2288,13 @@ goblin
     HairColor = rgb16(220, 220, 0);
     ClothColor = rgb16(200, 0, 0);
     Inventory = { 2, potion { SecondaryMaterial = ANTIDOTE_LIQUID; Chance = 20; }, Random { Category = RING; Chance = 20; } }
+    FriendlyReplies =
+    {
+      3,
+      "\"My father may have 500 sons, but I will be the one to succeed him on the throne!\"",
+      "@Dd describes a recent article in 'Modern Monster' magazine.",
+      "@Dd wants nothing to do with you.";
+    }
   }
 
   Config KING;
@@ -2505,7 +2561,15 @@ wolf
   TotalVolume = 40000;
   TorsoBitmapPos = 224, 0;
   HostileReplies == "@Dd growls madly.";
-  FriendlyReplies == "@Dd growls happily.";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd growls.",
+    "@Dd howls.",
+    "@Dd yips.",
+    "@Dd whines.",
+    "@Dd barks.";
+  }
   TotalSize = 100;
   /* SkinColor overridden */
   NameSingular = "wolf";
@@ -3054,6 +3118,17 @@ dolphin
   Config ADULT_MALE;
   {
     Adjective = "male";
+    FriendlyReplies =
+    {
+      7,
+      "@Dd peeps: \"A soft rain drips down, The trees whisper in the wind, Sounds eclipsed by screams.\"",
+      "@Dd peeps: \"From the gloomy cave, A great dark frog leaps at us, The sound of slaughter.\"",
+      "@Dd peeps: \"White destroyed by red, On ground drenched in many bloods, This peace is final.\"",
+      "@Dd peeps: \"Silence reigns bloody, Through deep caves gloomy and dim, A faint sobbing comes.\"",
+      "@Dd peeps: \"The adventurer, Lost in the womb of the earth, Braves the evil dark.\"",
+      "@Dd peeps: \"Deep in the cavern, Dark, cold, gloomy, forbidden, Big hungry nightmare.\"",
+      "@Dd peeps: \"Hammers echoing, Shining steel weapons are born, Sorrow they shall sow.\"";
+    }
     Sex = MALE;
   }
 
@@ -3063,8 +3138,7 @@ dolphin
     PostFix = "in season";
     FriendlyReplies =
     {
-      8,
-      "@Dd peeps passionately to you.",
+      7,
       "@Dd peeps: \"Rain in the forest.\"",
       "@Dd peeps: \"Summer before the Fall.\"",
       "@Dd peeps: \"The tide rises and the tide falls.\"",
@@ -3505,9 +3579,10 @@ housewife
     HostileReplies == "\"You dare desecrate the Tomb?!\"";
     FriendlyReplies =
     {
-      3,
+      4,
       "\"Praised be Cruentus!\"",
       "\"Praised be Infuscor!\"",
+      "\"Blood for Cruentus! Souls for Infuscor!\"",
       "\"All hail our mighty lord Xinroch.\"";
     }
     ScienceTalkPossibility = 0;
@@ -3591,9 +3666,15 @@ femaleslave
     IsMasochist = true;
     FriendlyReplies =
     {
-      2,
-      "\"Never say no to Petrus. Ever!\"",
-      "\"And I thought Richel Decos was bad with his whips...\"";
+      8,
+      "\"It hurt me more than it did her.\"",
+      "\"I just wanted everything to be right.\"",
+      "\"It wasn't supposed to happen that way.\"",
+      "\"I wanted to help Him realize the truth.\"",
+      "\"It was her or me.\"",
+      "\"I thought He would understand.\"",
+      "\"Now we can be together.\"",
+      "\"It was for her own good.\"";
     }
     UndeadVersions = false;
   }
@@ -3619,7 +3700,8 @@ femaleslave
     DeathMessage = "@Dd laughs for the last time and dies.";
     FriendlyReplies =
     {
-      35,
+      36,
+      "@Dd imitates you.",
       "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
       "\"Kobolds are a living proof that the gods have a sense of humor.\"",
       "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
@@ -3852,7 +3934,14 @@ ghost
   NameSingular = "ghost";
   ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"Boo!\"";
+  HostileReplies =
+  {
+    4,
+    "@Dd moans.",
+    "@Dd wails.",
+    "@Dd attempts to spook you.",
+    "\"Boo!\"";
+  }
   FriendlyReplies == "\"A very good Boo to you, my friend.\"";
   PanicLevel = 0;
   /*HasALeg = false;*/
@@ -4032,8 +4121,18 @@ bat
   CanOpen = false;
   TotalVolume = 1000;
   TorsoBitmapPos = 464, 16;
-  HostileReplies == "@Dd squeaks evilly.";
-  FriendlyReplies == "@Dd squeaks happily.";
+  HostileReplies =
+  {
+    2,
+    "@Dd screeches!",
+    "@Dd shrieks in ultrasound!";
+  }
+  FriendlyReplies =
+  {
+    2,
+    "@Dd chirps.",
+    "@Dd squeaks.";
+  }
   TotalSize = 20;
   SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
@@ -4301,9 +4400,10 @@ werewolfhuman
   LegBitmapPos = 0, 176;
   HostileReplies =
   {
-    3,
+    4,
     "\"I bet your innards taste real sweet!\"",
     "\"Yummy! I was getting tired of kobolds.\"",
+    "@Dd throws back @sp head and lets out a blood-curdling howl!",
     "@Dd growls: \"Another adventurer? I just got through picking my teeth from the last.\"";
   }
   FriendlyReplies =
@@ -4352,9 +4452,11 @@ werewolfwolf
   HostileReplies == "@Dd growls in fury.";
   FriendlyReplies =
   {
-    3,
+    5,
     "@Dd growls.",
     "@Dd howls.",
+    "@Dd yips.",
+    "@Dd whines.",
     "@Dd barks.";
   }
   TotalSize = 200;
@@ -4400,18 +4502,24 @@ vampire
   ArmBitmapPos = 80, 176;
   HostileReplies =
   {
-    2,
+    4,
     "\"Don't try to run. I will find you. I will always find you.\"",
+    "\"I will suck you dry!\"",
+    "\"This is my hunting ground that you dare to prowl!\"",
     "@Dd hisses: \"There is no place to run.\"";
   }
   FriendlyReplies =
   {
-    6,
+    10,
     "\"What's that smell? The sweet blood! Oh, it sings to me! It's enough to make a man sick.\"",
     "\"Blessed be blood!\"",
     "\"Blood makes us human, makes us more than human, makes us human no more.\"",
     "\"Vampires have a sense of smell ten times more acute than humans. And you blame us for being repulsed by garlic?\"",
     "\"Of course I die when you stake me in the heart and cut off my head. Everything dies when you stake it in the heart and cut off its head!\"",
+    "\"Shall we prowl the night, master?\"",
+    "\"Good feedings to you!\"",
+    "\"I hate silver! It's so cold and gloomy. I much prefer wearing gold.\"",
+    "\"I loathe the sun. All the sparkling drives me crazy.\"",
     "\"No, I can't cross running water. But can you?\"";
   }
   TotalSize = 170;
@@ -4530,6 +4638,18 @@ kobold
     TamingDifficulty = 15;
     IsSadist = true;
     UndeadVersions = false;
+    FriendlyReplies =
+    {
+      8,
+      "\"My family traces its lineage all the way back to Karl, a scholar-knight of Sophos who became the first kobold patriarch.\"",
+      "\"The Path of Enlightenment is the greatest legacy our first patriarch Karl could bequeath to us. It will lead all kobolds out of the darkness of savagery.\"",
+      "\"If a kobold speaks or acts with an evil thought, pain follows him. If a kobold speaks or acts with a pure thought, happiness follows him.\"",
+      "\"Even death is not to be feared by a kobold who has lived wisely.\"",
+      "\"You will not be punished for your anger, you will be punished by your anger.\"",
+      "\"I often struggle to lead my kind on the Path of Enlightenment, but I must persevere. Too long we were beasts, now we shall become people.\"",
+      "\"The mind is everything. What you think you become.\"",
+      "\"Peace comes from within. Do not seek it without.\"";
+    }
   }
 }
 
@@ -4636,11 +4756,13 @@ largecat
   }
   FriendlyReplies =
   {
-    5,
+    7,
     "@Dd mews.",
     "@Dd purrs.",
     "@Dd weaves between your legs.",
     "@Dd kneads you with its paws. Ouch!",
+    "@Dd yowls.",
+    "You pet @dd.",
     "@Dd headbutts you playfully.";
   }
   TotalSize = 60;
@@ -4907,7 +5029,13 @@ unicorn
   DefaultCharisma = 30;
   DefaultMana = 25;
   HostileReplies == "The furious @du neighs.";
-  FriendlyReplies == "The happy @du neighs.";
+  FriendlyReplies =
+  {
+    3,
+    "@Dd neighs.",
+    "@Dd whinnies.",
+    "@Dd whickers.";
+  }
   TotalVolume = 100000;
   TorsoBitmapPos = 544, 0;
   TotalSize = 200;
@@ -4979,11 +5107,18 @@ genie
   BaseEmitation = rgb24(110, 110, 130);
   HostileReplies =
   {
-    2,
+    3,
     "\"Fall, puny mortal!\"",
+    "\"I will teach you not to disturb me!\"",
     "\"Your last wish?\"";
   }
-  FriendlyReplies == "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
+  FriendlyReplies =
+  {
+    3,
+    "\"I'm free!\"",
+    "\"Sorry, I'm all out of wishes.\"",
+    "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
+  }
   Belt = SPIDER_SILK belt;
   FleshMaterial = MAGICAL_AIR;
   DeathMessage = "@Dd vanishes from existence.";
@@ -5135,7 +5270,12 @@ snake
   DefaultMana = 0;
   TotalVolume = 10000;
   TorsoBitmapPos = 384, 0;
-  HostileReplies == "@Dd hisses in fury.";
+  HostileReplies =
+  {
+    2,
+    "@Dd hisses.",
+    "@Dd rattles!";
+  }
   FriendlyReplies == "@Dd hisses in a friendly manner.";
   TotalSize = 250;
   SkinColor = rgb16(130, 0, 0);
@@ -5348,6 +5488,47 @@ orc
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
     Sex = MALE;
+    FriendlyReplies =
+    {
+      27,
+      "\"I have a diary. It's called the Book of World Records.\"",
+      "\"I once threw a dwarven gas grenade and killed fifty people. Then the grenade exploded.\"",
+      "\"I counted to infinity. Twice.\"",
+      "\"I can kill two stones with one bird. Really!\"",
+      "\"I can hear sign language!\"",
+      "\"I can speak braille!\"",
+      "\"A snake bit me once. After days of excruciating pain, the snake died.\"",
+      "\"I make onions cry.\"",
+      "\"I don't need to cheat Death. I always win fair and square.\"",
+      "\"I once beat a mirror in a staring contest.\"",
+      "\"I will never have a heart attack. My heart is not foolish enough to attack me!\"",
+      "\"There is no evolution, just a list of creatures I allow to live.\"",
+      "\"I once punched a cyclops between the eye!\"",
+      "\"My tears can cure any disease. Too bad I never cry!\"",
+      "\"I don't play 'hide and seek'. I play 'hide and pray I don't find you'.\"",
+      "\"Death once had a near-me experience.\"",
+      "\"I put the 'laughter' into 'manslaughter'.\"",
+      "\"I should have died years ago, but Death can't get up the courage to tell me.\"",
+      "\"I can unscramble an egg.\"",
+      "\"I once found the end of a circle.\"",
+      "\"I never lie. I change the truth.\"",
+      "\"I use hot sauce as eye drops!\"",
+      "\"Do you know how many push-ups I can do? All of them!\"",
+      "\"I can slam a revolving door.\"",
+      "\"I can slow down time just by looking at an hourglass and flexing.\"",
+      "\"My father always wanted to be just like me when he was just a kid.\"",
+      "@Dd guffaws.";
+    }
+    HostileReplies =
+    {
+      6,
+      "\"You should have fled while you had the chance.\"",
+      "\"You are about to die, maggot!\"",
+      "\"Give me your best blow!\"",
+      "\"This dungeon ain't big enough for the both of us.\"",
+      "\"I'm gonna break your pretty face!\"",
+      "@Dd spouts torrents of taunts.";
+    }
   }
 
   Config REPRESENTATIVE;
@@ -6159,12 +6340,15 @@ darkmage
   }
   FriendlyReplies =
   {
-    7,
+    10,
     "\"Don't fear the Darkness, my friend.\"",
     "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
     "\"Everything looks better when it's dead and on fire!\"",
     "\"My motto? If it's not on fire now, it will be soon.\"",
     "\"What hurts you, blesses you. Darkness is your candle.\"",
+    "@Dd seems not to notice you.",
+    "@Dd seems to mutter a cantrip.",
+    "@Dd complains about unpleasant dungeon conditions.",
     "@Dd cackles madly: \"Build a man a fire, and he'll be warm for a day. Set a man on fire, and he'll be warm for the rest of his life.\"",
     "\"Death awaits our foes.\"";
   }
@@ -6174,6 +6358,16 @@ darkmage
   KnownCWeaponSkills == BLUNT_WEAPONS;
   IsExtraFragile = true;
   IsSadist = true;
+  ScienceTalkName =
+  {
+    25,
+    "spellcraft", "druidcraft", "illusioncraft", "witchcraft", "conjuration",
+    "charms", "enchantments", "summoning", "necromancy", "pyromancy",
+    "oneiromancy", "transmutation", "transformation", "transmogrification", "alchemy",
+    "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
+    "abjuration", "invocation", "evocation", "incantations", "hexes";
+  }
+
 
   Config APPRENTICE;
   {
@@ -6537,7 +6731,16 @@ elpuri
   PanicLevel = 0;
   CanBeCloned = false;
   DefaultName = "Elpuri";
-  HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
+  HostileReplies =
+  {
+    6,
+    "\"DiE, mOrTaL!!!\"",
+    "\"tHe PoRtAl Is SpEaKiNg To Me... ThEy ArE cOmInG... tHeY aRe EnDlEsS... gRaH-hAH-hArR!!! aT LeAsT i WiLl HaVe WhAt To EaT!!!\"",
+    "\"I hAvE dEvOuReD hOrDeS oF dAeMoNs, CoNsUmEd ThEiR pOwEr AnD sOuLs... YoU aRe BuT a TiNy MoRsEl!!!\"",
+    "\"i ReMeMbEr LiGhT... bUt DaRkNeSs Is So MuCh MoRe... DeLiGhTfUl... AnD dElItIoUs!!!\"",
+    "\"PeTrUs!!! I rEmEmBeR!!! oNe DaY, i WiLl DeVoUr EnOuGh, I wIlL gRoW eNoUgH aNd ThEn I wIlL fEaSt On HiS fLeSh!!!\"",
+    "@Dd roars horribly: \"DiE, pUnY hUmAn!!!\"";
+  }
   BloodMaterial = DARK_FROG_BLOOD;
   SkinColor = rgb16(60, 60, 60);
   ClassStates = INFRA_VISION|TELEPORT_CONTROL;
@@ -7452,7 +7655,7 @@ lobhse
     "\"Mommy!\"",
     "\"Where... my mommy?\"",
     "\"You... new mommy?\"",
-    "You pet @Dd.";
+    "You pet @dd.";
   }
   DeathMessage = "@Dd groans horribly and the world is finally freed from this terrible menace.";
 }
@@ -7478,14 +7681,22 @@ siren
   TotalVolume = 40000;
   TotalSize = 170;
   BaseUnarmedStrength = 200;
-  HostileReplies == "\"LAallaaalalaaa!\"";
   CanRead = true;
   NameSingular = "siren";
   IsAbstract = true;
   CanBeGenerated = true;
   AttachedGod = DULCIS;
   FleshMaterial = ELF_FLESH;
-  FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
+  HostileReplies == "\"LAallaaalalaaa!\"";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd curses all orcs.",
+    "@Dd comes on to you.",
+    "@Dd cajoles you.",
+    "\"Hello, sailor!\"";
+    "\"I'm singing in the rain... Oh wait...\"";
+  }
 
   /* if somebody really wants to J_Kahvi has provided
      detailed discussion of nipple and pubic hair
@@ -7585,10 +7796,13 @@ siren
     /* RightWielded = charmlyre; */
     FriendlyReplies =
     {
-      4,
+      7,
       "\"Greetings! I am Elianise Lurora Faefina Glynjor Ilythyrra Reysatra Liarryn, Her Most Trusted Advisor and Ambassador of the Fair Empress of Elvenkind.\"",
       "\"I was sent from Lunethia to here on a diplomatic mission from my Empress. I hope my stay will be short.\"",
-      "\"Yes, the rumors are true. Lunethia really is a town built atop a gigantic oak.\"",
+      "\"Yes, the rumors are true. Lunethia really is a town built atop a gigantic mango tree.\"",
+      "\"I'm not 'an elf', I come from the royal blood of Vindael, or wood-children, if you will.\"",
+      "\"I've heard a mistress of Nefas has infiltrated even this very Cathedral. Do not trust Dar'Vindael, for their words and deeds are just as treacherous as their goddess!\"",
+      "\"I never understood why are your people calling mine 'dark elves'. We may be living in the Dark Forest, but we give our lives to fight Darkness in all its forms.\"",
       "\"The violation of our borders must end! We don't care where Attnam gets its wood, but the Dark Forest will not be exploited.\"";
     }
     IsExtraCoward = true;
@@ -7832,7 +8046,14 @@ bum
   PanicLevel = 0;
   FriendlyReplies =
   {
-    50, /* rumors, more to come */
+    57, /* rumors, more to come */
+    "\"I always liked daggers. They may not do so much damage, but for some foes, it's just critical to find the gaps in their armor.\"",
+    "\"Don't eat snakes. And don't let me even get started on school food. Though it does make you tough, har har har.\"",
+    "\"Mining is hard, exhausting job. I used to work in a valpurium mine back in the day and man, was I hungry after a work shift!\"",
+    "\"Be careful what you wish for, my mama always told me. Well, I wish I had a bottle full of vodka! Har har har.\"",
+    "\"Har har har, masochists like it rough, if you know what I mean.\"",
+    "\"Loricatus? That's the smith god, right? I don't know what's with him, but he seems to really hate bananas.\"",
+    "\"I've heard that Silva rocks!\"",
     "\"Once I ate a resurrected banana and gosh, was it tasty!\"",
     "\"I met an angel once. She fixed my arm. Lovely lady, she was.\"",
     "\"Don't eat too much, my mama told me, or you'll grow fat and clumsy.\"",
