@@ -1894,6 +1894,7 @@ frog
     DefaultCharisma = 15;
     DefaultMana = 20;
     TotalVolume = 5000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 80, 0;
     TotalSize = 25;
     SkinColor = rgb16(32, 88, 32);
@@ -1919,6 +1920,7 @@ frog
     DefaultMana = 25;
     BaseBiteStrength = 1000;
     TotalVolume = 50000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 96, 0;
     TotalSize = 100;
     SkinColor = rgb16(32, 88, 32);
@@ -1944,6 +1946,7 @@ frog
     DefaultMana = 30;
     BaseBiteStrength = 1250;
     TotalVolume = 250000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 64, 0;
     TotalSize = 200;
     SkinColor = rgb16(32, 88, 32);
@@ -7377,6 +7380,7 @@ mysticfrog
     DefaultIntelligence = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     SkinColor = rgb16(32, 88, 32);
     Adjective = "mystic light";
     ClassStates = TELEPORT_CONTROL|INVISIBLE|ESP;
@@ -7399,39 +7403,58 @@ lobhse
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
-  BloodMaterial = SICK_BLOOD;
-  CanOpen = false;
-  HostileReplies == "@Dd says nothing.";
-  FriendlyReplies == "@Dd says nothing.";
   SkinColor = rgb16(64, 64, 100);
   BeltColor = rgb16(50, 150, 50); /* the mouth */
   TorsoMainColor = rgb16(30, 30, 30);
+  TorsoBitmapPos = 192, 64;
+  TotalSize = 200;
+  TotalVolume = 500000;
+  TamingDifficulty = 50;
+  DefaultName = "Lobh-Se";
   NameSingular = "behemoth spider";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 400;
-  ClassStates = INFRA_VISION;
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
-  FleshMaterial = SICK_SPIDER_FLESH;
+  ClassStates = INFRA_VISION|LEPROSY;
   AttachedGod = SCABIES;
+  FleshMaterial = SICK_SPIDER_FLESH;
+  BloodMaterial = SICK_BLOOD;
+  CanOpen = false;
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
   IsImmuneToStickiness = true;
-  DefaultName = "Lobh-Se";
-  TorsoBitmapPos = 192, 64;
-  TotalVolume = 500000;
-  TamingDifficulty = 50;
   IsNameable = false;
   IsUnique = true;
-  TotalSize = 200;
   IsPolymorphable = false;
   CanBeGenerated = false;
-  PanicLevel = 0;
   CanBeCloned = false;
-  DeathMessage = "@Dd groans horribly and drops @pp head.";
   CanBeConfused = false;
   DestroysWalls = true;
   AllowUnconsciousness = false;
+  IsImmuneToLeprosy = true;
+  EnergyResistance = 5;
+  FireResistance = 15;
+  PoisonResistance = 50;
+  ElectricityResistance = 5;
+  AcidResistance = 50;
+  PanicLevel = 0;
+  HostileReplies =
+  {
+    3,
+    "@Dd whimpers.",
+    "@Dd cries a little.",
+    "@Dd tears up.";
+  }
+  FriendlyReplies =
+  {
+    4,
+    "\"Mommy!\"",
+    "\"Where... my mommy?\"",
+    "\"You... new mommy?\"",
+    "You pet @Dd.";
+  }
+  DeathMessage = "@Dd groans horribly and the world is finally freed from this terrible menace.";
 }
 
 siren
