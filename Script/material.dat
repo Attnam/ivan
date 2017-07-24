@@ -1815,6 +1815,10 @@ liquid
     Flexibility = 40;
     AttachedGod = SCABIES;
     CategoryFlags = IS_BLOOD;
+    InteractionFlags = Base|AFFECT_INSIDE;
+    Acidicity = 50;
+    Effect = EFFECT_POISON;
+    EffectStrength = 1000;
   }
 
   Config MUSTARD_GAS_LIQUID;
@@ -1826,6 +1830,22 @@ liquid
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
+  }
+
+  Config LIGHT_FROG_BLOOD;
+  {
+    StrengthValue = 1;
+    NutritionValue = 40;
+    Color = rgb16(150, 0, 0);
+    NameStem = "light frog blood";
+    Alpha = 175;
+    Flexibility = 40;
+    AttachedGod = CRUENTUS;
+    CategoryFlags = IS_BLOOD;
+    InteractionFlags = Base|EFFECT_IS_GOOD;
+    Effect = EFFECT_ANTIDOTE;
+    ConsumeEndMessage = CEM_ANTIDOTE;
+    EffectStrength = 50;
   }
 }
 
