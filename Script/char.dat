@@ -587,7 +587,7 @@ guard
       "\"What lousy pay we're getting here!\"",
       "\"The food's not fit for orcs!\"",
       "\"My feet hurt, I've been on them all day!\"",
-      "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
+      "\"New Attnam, damn, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
     }
     DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
     AutomaticallySeen = true;
@@ -615,6 +615,7 @@ guard
       "\"What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for killing the high priest's enemies. A civilian does not. I am proud to call myself a citizen.\"";
     }
     HostileReplies == "\"I'm ready! I will fight you! I will kill you!\"";
+    DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
   }
 
   Config VETERAN;
@@ -1079,7 +1080,7 @@ shopkeeper
       "\"Elpuri, eh? Folks say he hatched as a light frog in the Cathedral of Attnam. Yet his voracious appetite quickly set him apart. He ate and grew until his swollen bulk dwarfed even the largest of the giant dark frogs.\"",
       "\"I've heard that Elpuri once was the favourite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
       "\"After being renounced by Petrus, Elpuri fled the Cathedral and found refuge here in these caves, where he bides his time to build an army of dark frogs and strike back against the high priest.\"",
-      "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster then they could flood and torment the world.\"",
+      "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster than they could flood and torment the world.\"",
       "\"The monsters don't really bother me, no. Not even they are stupid enough to want to be on the bad side of the Guild.\"",
       "\"The monsters don't attack me, because of our mutually profitable contract.\"";
     }
