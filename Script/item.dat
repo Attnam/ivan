@@ -3078,6 +3078,137 @@ helmet
     EnchantmentPlusChance = 0;
     SoundResistance = 0;
   }
+
+  Config HELM_OF_WILLPOWER;
+  {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 150;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    Possibility = 1;
+    PostFix = "of indomitable will";
+    AffectsWillPower = true;
+    MainMaterialConfig == OCTIRON;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    Price = 100;
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = LEGIFER;
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|HELM_OF_WILLPOWER;
+  {
+    BitmapPos = 64, 32;
+    Possibility = 0;
+    Price = 25;
+    AffectsWillPower = false;
+    HelmetBitmapPos = 96, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config HELM_OF_TELEPATHY;
+  {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 150;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    Possibility = 1;
+    PostFix = "of telepathy";
+    GearStates = ESP;
+    MainMaterialConfig == TIN; /* heh heh */
+    MaterialConfigChances == 100;
+    Price = 100;
+    AttachedGod = INFUSCOR;
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|HELM_OF_TELEPATHY;
+  {
+    BitmapPos = 64, 32;
+    Possibility = 0;
+    Price = 25;
+    GearStates = 0;
+    HelmetBitmapPos = 96, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config HELM_OF_TELEPORTATION;
+  {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 150;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    Possibility = 1;
+    PostFix = "of teleportation";
+    GearStates = TELEPORT;
+    MainMaterialConfig == MITHRIL;
+    MaterialConfigChances == 100;
+    Price = 100;
+    AttachedGod = SOPHOS;
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    EnchantmentPlusChance = 2;
+    Alias == "helm of teleport";
+  }
+
+  Config BROKEN|HELM_OF_TELEPORTATION;
+  {
+    BitmapPos = 64, 32;
+    Possibility = 0;
+    Price = 25;
+    GearStates = 0;
+    HelmetBitmapPos = 96, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config HELM_OF_ENLIGHTENMENT;
+  {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 150;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    Possibility = 1;
+    Adjective = "radiant";
+    PostFix = "of Macula";
+    Alias == "Macula";
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    AffectsPerception = true;
+    MainMaterialConfig == BLUE_CRYSTAL;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    Price = 500;
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = SOPHOS;
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    EnchantmentPlusChance = 2;
+    GearStates = INFRA_VISION;
+  }
+
+  Config BROKEN|HELM_OF_ENLIGHTENMENT;
+  {
+    BitmapPos = 64, 32;
+    Possibility = 2;
+    Price = 100;
+    AffectsPerception = false;
+    GearStates = 0;
+    HelmetBitmapPos = 96, 512;
+    EnchantmentPlusChance = 4;
+  }
 }
 
 stethoscope
