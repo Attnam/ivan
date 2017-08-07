@@ -2349,6 +2349,79 @@ belt /* armor-> */
     BitmapPos = 80, 384;
     BeltBitmapPos = 48, 512;
   }
+
+  Config BELT_OF_PROTECTION;
+  {
+    DefaultMainVolume = 300;
+    StrengthModifier = 150;
+    Possibility = 10;
+    PostFix = "of protection";
+    Price = 100;
+    AttachedGod = ATAVUS;
+    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+    MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+  }
+
+  Config BROKEN|BELT_OF_PROTECTION;
+  {
+    Possibility = 0;
+    Price = 50;
+    BitmapPos = 80, 384;
+    BeltBitmapPos = 48, 512;
+  }
+  
+  Config BELT_OF_GIANT_STRENGTH;
+  {
+    Possibility = 1;
+    PostFix = "of giant strength";
+    Price = 500;
+    AffectsArmStrength = true;
+    AffectsLegStrength = true;
+    BaseEnchantment = 1;
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = CRUENTUS;
+    MainMaterialConfig == TROLL_HIDE;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|BELT_OF_GIANT_STRENGTH;
+  {
+    Possibility = 1;
+    AffectsArmStrength = false;
+    AffectsLegStrength = false;
+    Price = 100;
+    BitmapPos = 80, 384;
+    BeltBitmapPos = 48, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config BELT_OF_THIEF;
+  {
+    Possibility = 1;
+    Adjective = "thief's";
+    NameSingular = "girdle";
+    Price = 500;
+    AffectsDexterity = true;
+    AffectsAgility = true;
+    BaseEnchantment = 1;
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = CLEPTIA;
+    MainMaterialConfig == NYMPH_HAIR;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|BELT_OF_THIEF;
+  {
+    Possibility = 1;
+    AffectsDexterity = false;
+    AffectsAgility = false;
+    Price = 100;
+    BitmapPos = 80, 384;
+    BeltBitmapPos = 48, 512;
+    EnchantmentPlusChance = 4;
+  }
 }
 
 ring
@@ -3206,6 +3279,38 @@ helmet
     Price = 100;
     AffectsPerception = false;
     GearStates = 0;
+    HelmetBitmapPos = 96, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config HELM_OF_MANA;
+  {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 150;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    Possibility = 0; /* not until we have magic */
+    PostFix = "of essence plethora";
+    Alias == "helm of mana";
+    AffectsMana = true;
+    MainMaterialConfig == AMETHYST;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    Price = 100;
+    PriceIsProportionalToEnchantment = true;
+    AttachedGod = SOPHOS;
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|HELM_OF_MANA;
+  {
+    BitmapPos = 64, 32;
+    Possibility = 0;
+    Price = 25;
+    AffectsMana = false;
     HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
