@@ -28,6 +28,8 @@ lsquare* bodypart::GetLSquareUnder(int I) const
 { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
 item* bodypart::GetExternalBodyArmor() const { return GetHumanoidMaster()->GetBodyArmor(); }
 item* bodypart::GetExternalCloak() const { return GetHumanoidMaster()->GetCloak(); }
+item* bodypart::GetExternalHelmet() const { return GetHumanoidMaster()->GetHelmet(); }
+item* bodypart::GetExternalBelt() const { return GetHumanoidMaster()->GetBelt(); }
 truth bodypart::AllowFluidBe() const { return !Master || !Master->IsPolymorphed(); }
 
 int head::GetBodyPartIndex() const { return HEAD_INDEX; }
