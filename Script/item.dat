@@ -2593,14 +2593,14 @@ amulet
     MainMaterialConfig == ILLITHIUM;
     GearStates = ESP;
     Price = 1000;
-    AttachedGod = LEGIFER;
+    AttachedGod = INFUSCOR;
   }
 
   Config AMULET_OF_WARDING;
   {
     Possibility = 4;
     PostFix = "of elemental protection";
-    MainMaterialConfig == ILLITHIUM;
+    MainMaterialConfig == ADAMANT;
     CanBeCloned = false;
     Price = 4000;
     AttachedGod = LEGIFER;
@@ -2608,6 +2608,29 @@ amulet
     ElectricityResistance = 30;
     AcidResistance = 5;
     PoisonResistance = 5;
+  }
+
+  Config AMULET_OF_UNBREATHING;
+  {
+    Possibility = 4;
+    PostFix = "of magic breath";
+    MainMaterialConfig == ARCANITE;
+    GearStates = GAS_IMMUNITY;
+    Price = 2000;
+    AttachedGod = SCABIES;
+  }
+
+  Config AMULET_OF_SPEED;
+  {
+    Possibility = 3;
+    PostFix = "of speed";
+    MainMaterialConfig == PLANT_FIBER;
+    GearStates = HASTE;
+    Price = 2000;
+    AttachedGod = CLEPTIA;
+    IsMaterialChangeable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 }
 
