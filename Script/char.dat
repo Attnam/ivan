@@ -1284,7 +1284,7 @@ priest
     RightSWeaponSkillHits = 20;
     FriendlyReplies =
     {
-      9,
+      10,
       "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live.\"",
       "\"Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished.\"",
       "\"This Tomb was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory. Let his majestic glory never be forgotten!\"",
@@ -1293,6 +1293,7 @@ priest
       "\"Souls for Infuscor!\"",
       "\"All hail our mighty lord Xinroch.\"";
       "\"One of these days I'll summon our lord Xinroch back, and Chaos will reign forever!\"",
+      "\"Oh, you like my tattooes? Every priest of Infuscor gets them as a part of their ordination. A holy purple ink is used to tattoo the entirety of the holy book of Infuscor over the initiate's body, so that the wise words may guide them through the rest of their lives.\"",
       "\"Can't you see I'm busy, infidel?\"";
     }
     UndeadVersions = false;
@@ -1495,8 +1496,11 @@ darkknight
   HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
   FriendlyReplies =
   {
-    2,
+    5,
     "\"Blood for Cruentus!\"",
+    "\"Fear is not a shame, it's a weapon. Fear shall never reign over me, but I will wield it against my enemies. Fear strikes true and through fear, I shall become stronger.\"",
+    "\"Pain is not a shame, it's a weapon. Pain shall never reign over me, but I will wield it against my enemies. Pain forges the flesh and through pain, I shall become stronger.\"",
+    "\"Anger is not a shame, it's a weapon. Anger shall never reign over me, but I will wield it against my enemies. Anger sharpens the mind and through anger, I shall become stronger.\"",
     "\"Don't bother me unless you need help to die.\"";
   }
   AttachedGod = CRUENTUS;
@@ -2394,18 +2398,20 @@ mommo
   ForceCustomStandVerb = true;
   HostileReplies =
   {
-    7,
+    9,
     "@Dd oozes.",
     "@Dd spurts.",
     "@Dd plops.",
     "@Dd droops.",
     "@Dd ripples.",
     "@Dd slurps.",
-    "@Dd splashes";
+    "@Dd gurgles.",
+    "@Dd burbles.",
+    "@Dd splashes.";
   }
   FriendlyReplies =
   {
-    8,
+    9,
     "@Dd vibrates oddly.",
     "@Dd spurts.",
     "@Dd plops.",
@@ -2413,6 +2419,7 @@ mommo
     "@Dd ripples.",
     "@Dd oozes.",
     "@Dd slurps.",
+    "@Dd burbles.",
     "\"Tekeli-li!\"";
   }
   NameSingular = "mommo slime";
@@ -3128,6 +3135,14 @@ bear
     IsEnormous = true;
     TorsoSpecialColor = rgb16(255, 128, 128); /* EyeColor */
     BloodMaterial = GLOWING_BLOOD;
+    HostileReplies =
+    {
+      4,
+      "\"We are bad news.\"",
+      "\"One bear to rule them all.\"",
+      "\"The time of ape-kind is over. We shall rise, we shall conquer. Soon, bear-kind shall reign over the whole world!\"",
+      "@Dd roars!";
+    }
   }
 }
 
@@ -4267,9 +4282,9 @@ mistress
   NameSingular = "mistress";
   NamePlural = "mistresses";
   CanBeGenerated = true;
-  BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-  RightGauntlet = LEATHER gauntlet;
-  RightBoot = LEATHER boot;
+  BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL);
+  RightGauntlet = BLACK_LEATHER gauntlet;
+  RightBoot = BLACK_LEATHER boot;
   RightWielded = NYMPH_HAIR whip { Enchantment = 1; }
   LeftWielded = NYMPH_HAIR whip { Enchantment = 1; }
   KnownCWeaponSkills == WHIPS;
@@ -8121,7 +8136,101 @@ bum
   PanicLevel = 0;
   FriendlyReplies =
   {
-    57, /* rumors, more to come */
+    151, /* rumors, more to come */
+    "\"There was this guy I used to adventure with, who nearly died to a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
+    "\"You shouldn't leave your weapons filthy! I once had this nice adamantine sword, but some blood got on it and before I knew it, the sword was completely covered in rust.\"",
+    "\"I've heard about a belt that can make you float in the air! Now that would have been useful that one time in the caves I stepped on a mine and nearly got my leg blown off.\"",
+    "\"You know magpies? Small, black and white birds? Murder them all! I hate those thieving... Argh!\"",
+    "\"As a little boy, I saw my father get into a fight with other farmers. You wouldn't believe how easily does a sickle chop off limbs.\"",
+    "\"I miss my cloak. The cold is not so bad, but I felt safer with it wrapped around my body.\"",
+    "\"Me and my father once got cornered by a pack of wolves when I was young. He took off his belt and chased them off. Belts really can pack a whip, har har har.\"",
+    "\"I've met this Ivan when he was in Attnam a few weeks back. He had a cute pet bunny, Vladimir!\"",
+    "\"I've met this Ivan when he was in Attnam a few weeks back. He seemed a cool guy, but quite reclusive. Maybe I was not cool enough for him to want to hang out? Har har har.\"",
+    "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can all see in the dark as well as a cat? They can't read, though, but who needs that, right? Har har har.\"",
+    "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can't smell at all? I once saw an orc standing in a cloud of mustard gas like it was nothing!\"",
+    "\"Have you ever lost a limb? Or maybe contracted leprosy? Woke up after a night of drinking as a wolf and knew nothing about it? Trust me and ask any priest, they know quite a bit about stuff like that.\"",
+    "\"I've tasted unicorn flesh just once in my whole life and... Well, it was weird.\"",
+    "\"My mama always told me that white unicorn steak can cure all your ills but... I'm not sure I really wish to try.\"",
+    "\"Har har har, it's always funny when you smack somebody on the head hard enough that they get this stupid, but quite happy smile and completely forget what they were doing. Har har har!\"",
+    "\"I once managed to mirror myself a doppelganger! We were unstoppable in battle, but sadly he didn't last.\"",
+    "\"Maybe you've heard about those fabled wands of cloning? I can think about a few things I wouldn't mind having more of, har har har.\"",
+    "\"Don't believe those legends about grateful genies released from their lamps! I've met one so grumpy he tried to behead me just because I rubbed his lamp.\"",
+    "\"Adamant, huh? Some say it's truly miraculous metal, but it's really just a noble iron, but heavy! Har har har!\"",
+    "\"Breaking your wands can have quite an effect, har har har. I've learned the hard way.\"",
+    "\"One of my friends once told me that altars and wands of polymorph mix surprisingly well. Hm, I'll have to try for myself one day.\"",
+    "\"My mama always told me, eat carrots and you'll see as well as a giant golden eagle.\"",
+    "\"Mushrooms are my favourite! They spawn so quickly you'll never run out of food! Har har har!\"",
+    "\"My mama always told me that fat people are not very agile and gaunt people are weak. It's best to try and stay fit, she said.\"",
+    "\"Ommels, eh? Magnificent creatures. Some say they have bones harder than steel and teeth like adamant!\"",
+    "\"Ommels, eh? Magnificent creatures. Some say you can even make good use of their excretions.\"",
+    "\"If you never had some troll blood, you should try it. It's so sweet, so tasty and nutritious... Enough to make a man sick.\"",
+    "\"Trolls really have tough hides. I made a pair of boots from the one I encountered in mountains far to the north, and used them for years before they wore out.\"",
+    "\"One priestess once told me that angels look out for ardent worshippers. I'm not sure what ardent means, so I just smiled and nodded.\"",
+    "\"Those kamikaze dwarves can't tell friend from foe. Maybe the gods don't care about a little friendly fire? Har har har!\"",
+    "\"Have you seen Petrus? Wise men have massive beards, indeed. Har har har!\"",
+    "\"One of my friends always said that when everything else fails, you can always bite your foes to death. Granted, she was a werewolf, but still...\"",
+    "\"Don't believe those rumors about a valpurium flaming sword +10 just lying around! It's all lies! Lies, I say!\"",
+    "\"I've heard tales about arcanite, a magical metal lighter than some wood! I would love to try out a shield made of arcanite.\"",
+    "\"One priestess once told me that phoenix feathers rise from their ashes. I wonder how incredible the whole birds must be, then.\"",
+    "\"Be careful about the minefields deep underground. The Dwarven Wars left behind so many landmines it's smart to invest into some fireproof dragon hide and a ring of fire resistance before going anywhere.\"",
+    "\"My mama told me tales about golden eagles, the kings of the sky, when I was a boy. That's why I first went to do some adventuring - to try and find them. Maybe I will, one day, har har har.\"",
+    "\"Deep underground, you can sometimes find incredible crystals. I've even heard tales about some that glow with inner light.\"",
+    "\"Don't remind me of school food! Just thinking about it makes me want to puke!\"",
+    "\"Blink dogs have acute understanding of spatial locations, mages say. I've also heard some goblin tribes make a tasty stew from them. Blink dogs and mages, both.\"",
+    "\"Pepsi? I wouldn't say the name aloud, being you. Some valpurists consider it a heresy just to speak this accursed name.\"",
+    "\"No, gibberlings talk nonsense. Don't pay attention to them.\"",
+    "\"Oh, a hattifattener? Really a shocking sight, let me tell you! Har har har!\"",
+    "\"Trust me when I tell you that kobold flesh has a stunning taste. Har har har!\"",
+    "\"I remember one mycologist telling me that eating mushrooms can lead to some strange experiences. Must be an interesting occupation, being a mycologist. Har har har!\"",
+    "\"Skunks are so smelly it makes me physically ill. Sometimes I wish I was an orc.\"",
+    "\"When a friend told me that a pea soup can save your life, I didn't believe them. I know better now.\"",
+    "\"I've heard that deep in the south, some cities have junkie dens where you can inhale some mysterious blue gas. Reportedly, it can make you feel unstoppable! Har har har!\"",
+    "\"I've heard that deep in the south, some cities have interesting junkie dens, but you should be very wary if you see any red gas hovering near them.\"",
+    "\"A sorceress once told me that raw magic is unpredictable. Not that I would think otherwise.\"",
+    "\"Ah yes, antidote is an adventurer's best friend. Don't be fooled, it can cure much more than just poison.\"",
+    "\"My mama always told me to take a bottle of water with me into a dungeon. There's nothing like a refreshing drink after an exhausting fight.\"",
+    "\"Drunks are fearless. Don't bother to scare them; I should know something about that. Har har har!\"",
+    "\"Backpacks full of gunpowder are not safe to have at home. Trust me, I've learned the hard way. Har har har!\"",
+    "\"I used to travel with an angel and help her heal the ailing. I love to think back to those days.\"",
+    "\"I've dated an angel once. She was really sweet, but we were sadly forced to break up when she had to return back to Heavens and I wasn't really ready to let go of this world...\"",
+    "\"My father had a saying: Bears are bad news.\"",
+    "\"Have you heard about Bill, that powerful psion? No? Then you're lucky. Har har har.\"",
+    "\"If you ever wish to go down under the Cathedral Cellar, remember that ghosts can be really scary.\"",
+    "\"What a pleasure to chat with the dolphins. They are more clever than it seems, har har har!\"",
+    "\"One necromancer once told me no one could ever get the hang of animating animals.\"",
+    "\"No matter how smart it seems at the time, pushing your fingers down your throat can be harmful to your body. And it's disgusting.\"",
+    "\"Some people are simply stronger. You can't do much about it. But nothing is stronger than an adamantine arm!\"",
+    "\"Some people are simply more healthy. You can't do much about it. Maybe wear an armor of great health, but...\"",
+    "\"Some people are simply faster. You can't do much about it. But nothing is quicker than an phoenix feather arm!\"",
+    "\"Some people are simply more clever. You can't do much about it. But maybe you can talk with people and try to learn from them?\"",
+    "\"I used to grow carnivorous plants when I had a garden. They liked acidic soil and fresh meat every morning.\"",
+    "\"Have you ever had hiccups? I had. For nearly a day. It was annoying.\"",
+    "\"My mama always told me that talking to yourself is dumb.\"",
+    "\"I had a friend who ended up with a prosthetic arm and was rather surprised when it didn't heal after a fight. Har har har! I don't know what she was thinking, but I gave her my scroll of repair and all was well.\"",
+    "\"Zombies are not be trusted! They say they need brains, but when I chopped one's head off, it could still walk rather well with no brain at all!\"",
+    "\"One mage once told me that no magic can regrow you a head. At least not when you're still alive.\"",
+    "\"My grandpa used to tell me bedtime stories about Solicitus, a god no one believed in. The poor god was quite stressed and hopeless about his situation.\"",
+    "\"My grandpa used to tell me bedtime stories about a god of pain, misery and annoying noises, who one day mysteriously disappeared. No one missed him.\"",
+    "\"I had a lovely pet kitten as a boy, until it died in a mammoth accident. Fortunately, my grandpa had a wand of resurrection.\"",
+    "\"Mustard is very, very bad for you. You don't want a first-hand experience, trust me.\"",
+    "\"My grandpa used to say that dangerous people face more dangerous foes and pride comes before a fall. I guess the moral is to be humble and murder everything before it can murder you. Har har har!\"",
+    "\"My grandpa used to tell me bedtime stories about Ischaldirh, the most powerful sorcerer in all realms. I've heard he's still alive and as dangerous as ever. Har har har! I hope I'll never meet him.\"",
+    "\"My grandpa used to tell me bedtime stories about the queens of mistresses, who are always the most powerful warladies of their times. The current one is called Sherarax, as far as I know. I don't say this often but his lady is too hot for my tastes, har har har!\"",
+    "\"Only sadists are not nice to their pets! No one should treat their pet like you would a slave, no offense.\"",
+    "\"My father was a farmer. He taught me how to use sickles and scythes, how to eviscerate the weeds. Those farming blades are deadly against plants. Har har har!\"",
+    "\"My grandpa used to say that it's best to slow the germs in our food so that they can't make it go bad. He was a bit crazy by then, and obsessed with his wands, but you never know what can save your life one day, eh?\"",
+    "\"My grandpa was a wandmaker, and damn good at that. You don't see many of their craft today. That's why wands are so pricey, I guess. Or it's those damned capitalists, har har har.\"",
+    "\"Invisible kamikaze dwarves are the worst kamikaze dwarves. They do it unseen, but with a huge bang. Har har har!\"",
+    "\"Enner beasts? Yes, I've heard about them. Try attacking them when they're out of breath. Not even such a monster can scream all day long, right? At least I hope so.\"",
+    "\"My mama always told me, don't read under bad lighting or you'll ruin your eyes!\"",
+    "\"My grandpa used to tell me bedtime stories about frogs, both light and dark. Did you know they like to eat magnolias?\"",
+    "\"My grandpa used to tell me bedtime stories about ommels, the kings of the wild. They dwarf elephants, scare dragons and completely ignore humankind. The elder males, called bristlers, are so ancient their hair is said to petrify while still on their bodies!\"",
+    "\"Don't be shy to talk to your friends. You can learn more, my mama used to say, and you definitely can! Har har har.\"",
+    "\"Eh, the shop magic is strange. How they can keep all the bananas fresh and unspoiled in the middle of a winter, I have no idea.\"",
+    "\"If you hate hose floating eyes as much as I do, try waiting for them in the dark. They can't see in darkness any better then you! Har har har!\"",
+    "\"I didn't know how much Nefas was into vodka until I got into a drinking contest with a mistress. When I regained consciousness, she told me how they train in the temples with full kegs.\"",
+    "\"My grandpa once lost an arm to an unfortunate chain explosion of some of his wands. He had a wand of resurrection on hand, though, so a single zap made it all better.\"",
+    "\"My grandpa never liked my father much. He didn't think a farmer would be a good match for his only daughter. He did like me, though. He always let me play with the wands in his workshop, or told me wonderful bedtime stories.\"",
     "\"I always liked daggers. They may not do so much damage, but for some foes, it's just critical to find the gaps in their armor.\"",
     "\"Don't eat snakes. And don't let me even get started on school food. Though it does make you tough, har har har.\"",
     "\"Mining is hard, exhausting job. I used to work in a valpurium mine back in the day and man, was I hungry after a work shift!\"",
@@ -8160,7 +8269,7 @@ bum
     "\"My mama always told me, don't eat people, it's indecent. I'd say more like evil, but she always knew best.\"",
     "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
     "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
-    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stay each other?\"",
+    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stand each other?\"",
     "\"When my mama took me to an altar for the first time, she made me kneel there. It makes the gods happy, she said.\"",
     "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
     "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
