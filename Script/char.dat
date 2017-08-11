@@ -1293,7 +1293,7 @@ priest
       "\"Souls for Infuscor!\"",
       "\"All hail our mighty lord Xinroch.\"";
       "\"One of these days I'll summon our lord Xinroch back, and Chaos will reign forever!\"",
-      "\"Oh, you like my tattooes? Every priest of Infuscor gets them as a part of their ordination. A holy purple ink is used to tattoo the entirety of the holy book of Infuscor over the initiate's body, so that the wise words may guide them through the rest of their lives.\"",
+      "\"Oh, you like my tattoos? Every priest of Infuscor gets them as a part of their ordination. A holy purple ink is used to tattoo the entirety of the holy book of Infuscor over the initiate's body, so that the wise words may guide them through the rest of their lives.\"",
       "\"Can't you see I'm busy, infidel?\"";
     }
     UndeadVersions = false;
@@ -1493,10 +1493,17 @@ darkknight
   IsAbstract = true;
   KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
   ClassStates = INFRA_VISION;
-  HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
+  HostileReplies =
+  {
+    3,
+    "\"Blood for Cruentus!\"",
+    "\"You are already dead.\"",
+    "@Dd yells: \"For Mortifer I shall slay you!\"";
+  }
   FriendlyReplies =
   {
-    5,
+    6,
+    "\"Reach the Heavens through violence, comrade.\"",
     "\"Blood for Cruentus!\"",
     "\"Fear is not a shame, it's a weapon. Fear shall never reign over me, but I will wield it against my enemies. Fear strikes true and through fear, I shall become stronger.\"",
     "\"Pain is not a shame, it's a weapon. Pain shall never reign over me, but I will wield it against my enemies. Pain forges the flesh and through pain, I shall become stronger.\"",
@@ -1663,8 +1670,11 @@ darkknight
     }
     FriendlyReplies =
     {
-      2,
+      5,
       "\"Yeah, I was a guard in Attnam once. Is that all?\"",
+      "\"The blood never bothered me anyway.\"",
+      "\"Reach the Heavens through violence!\"",
+      "\"I like watching things die.\"",
       "\"The Order of the Dark Knights is ancient and you should stop asking questions.\"";
     }
     DeathMessage = "@Dd kneels down, dying: \"Alas... It seems you have bested me.\"";
@@ -1708,7 +1718,7 @@ darkknight
     CanBeCloned = false;
     IsPolymorphable = false;
     HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
-    DeathMessage = "@Dd dies screaming, and the world is finally rid of this menace.";
+    DeathMessage = "@Dd dies with a chuckle: \"Don't worry, I'll be right back.\"";
     CanBeConfused = false;
     FireResistance = 30;
     ElectricityResistance = 30;
@@ -4957,7 +4967,8 @@ angel
   }
   FriendlyReplies =
   {
-    6,
+    7,
+    "\"Do not be afraid!\"",
     "\"@Gd be with you, mortal.\"",
     "\"@Gd is in the Heavens. All is right over the world.\"",
     "\"Even though you walk through the valley of the shadow of death, you shall fear no one for @Gd is at your side.\"",
@@ -6635,12 +6646,14 @@ darkmage
     }
     FriendlyReplies =
     {
-      6,
+      8,
       "@Dd conjures a quick illusion. \"This is picture from my great-grandson's fourth birthday last week. His name is Timmy. And this is the arcanite golem I gave him.\"",
       "\"Timotheodon, my only great-grandson, once stole my spellbook and tried to blast his classmates with a fireball. Isn't he a lovable rascal?\"",
       "@Dd sighs: \"My late wife, Helen, baked a wonderful banana stollen. Atavus day is not the same anymore, without her.\"",
       "\"I miss my wife so much. I even considered looking into necromancy, but... No, she wouldn't like it that way.\"",
       "@Dd winks at you: \"Ever tried a shot of vodka with just a sprinkle of ommel urine? That gives it just the right bite!\"",
+      "\"Magic always comes at a price.\"",
+      "\"The Art. It is not a painting, yet people will marvel at the sight. It is not a poem, yet it will move those that hear it. To be an Artist is to see the world as your canvas, to see reality as your clay.\"",
       "\"Some holidays, I wish I could just summon my family rather than try to make them agree on a time and place...\"";
     }
     DeathMessage = "@Dd dies with a calm smile: \"Hello Darkness, my old friend...\"";
@@ -7170,7 +7183,7 @@ necromancer
     Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }
     FriendlyReplies =
     {
-      8,
+      10,
       "@Dd smiles oddly: \"I see dead people. Lots of them. All the time. It's annoying.\"",
       "\"I'm trying to raise funds for a personal side-project of mine. Would you happen to have some virgins to spare?\"",
       "\"I was on a good way to become a lich, but I couldn't decide on the color of my phylactery.\"",
@@ -7178,6 +7191,8 @@ necromancer
       "\"You don't know what SCP-008 is? Hehehe, ha ha! MWHAHAHAHAHAHA-ha. Sorry.\"",
       "\"The dead long for torture - to feel once more!\"",
       "\"I am the Reaper! Come join my dance.\"",
+      "\"May you find beauty in endings...\"",
+      "\"Nothing is more certain than death and nothing more uncertain than the time of dying.\"",
       "\"Are you a registered organ donor for the Flesh Golem Research Program? And would you like to be?\"";
     }
     DeathMessage = "@Dd dies laughing: \"Death is just a beginning!\"";
@@ -7496,7 +7511,13 @@ archangel
   CanChoke = false;
   DisplacePriority = 10;
   AllowPlayerToChangeEquipment = false;
-  HostileReplies == "\"I judge thee guilty!\"";
+  HostileReplies =
+  {
+    3,
+    "\"Do be afraid!\"",
+    "\"In the most holy name of @Gd, die!\"",
+    "\"I judge thee guilty!\"";
+  }
   FriendlyReplies =
   {
     3,
@@ -8137,15 +8158,15 @@ bum
   FriendlyReplies =
   {
     151, /* rumors, more to come */
-    "\"There was this guy I used to adventure with, who nearly died to a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
+    "\"There was this guy I used to adventure with, who nearly got killed by a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
     "\"You shouldn't leave your weapons filthy! I once had this nice adamantine sword, but some blood got on it and before I knew it, the sword was completely covered in rust.\"",
     "\"I've heard about a belt that can make you float in the air! Now that would have been useful that one time in the caves I stepped on a mine and nearly got my leg blown off.\"",
     "\"You know magpies? Small, black and white birds? Murder them all! I hate those thieving... Argh!\"",
-    "\"As a little boy, I saw my father get into a fight with other farmers. You wouldn't believe how easily does a sickle chop off limbs.\"",
+    "\"As a little boy, I saw my father get into a fight with other farmers. You wouldn't believe how easily a sickle chops off limbs.\"",
     "\"I miss my cloak. The cold is not so bad, but I felt safer with it wrapped around my body.\"",
     "\"Me and my father once got cornered by a pack of wolves when I was young. He took off his belt and chased them off. Belts really can pack a whip, har har har.\"",
-    "\"I've met this Ivan when he was in Attnam a few weeks back. He had a cute pet bunny, Vladimir!\"",
-    "\"I've met this Ivan when he was in Attnam a few weeks back. He seemed a cool guy, but quite reclusive. Maybe I was not cool enough for him to want to hang out? Har har har.\"",
+    "\"I met this Ivan when he was in Attnam a few weeks back. He had a cute pet bunny, Vladimir!\"",
+    "\"I met this Ivan when he was in Attnam a few weeks back. He seemed a cool guy, but quite reclusive. Maybe I was not cool enough for him to want to hang out? Har har har.\"",
     "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can all see in the dark as well as a cat? They can't read, though, but who needs that, right? Har har har.\"",
     "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can't smell at all? I once saw an orc standing in a cloud of mustard gas like it was nothing!\"",
     "\"Have you ever lost a limb? Or maybe contracted leprosy? Woke up after a night of drinking as a wolf and knew nothing about it? Trust me and ask any priest, they know quite a bit about stuff like that.\"",
@@ -8169,10 +8190,10 @@ bum
     "\"Those kamikaze dwarves can't tell friend from foe. Maybe the gods don't care about a little friendly fire? Har har har!\"",
     "\"Have you seen Petrus? Wise men have massive beards, indeed. Har har har!\"",
     "\"One of my friends always said that when everything else fails, you can always bite your foes to death. Granted, she was a werewolf, but still...\"",
-    "\"Don't believe those rumors about a valpurium flaming sword +10 just lying around! It's all lies! Lies, I say!\"",
+    "\"Don't believe those rumors about an enchanted valpurium flaming sword just lying around! It's all lies! Lies, I say!\"",
     "\"I've heard tales about arcanite, a magical metal lighter than some wood! I would love to try out a shield made of arcanite.\"",
     "\"One priestess once told me that phoenix feathers rise from their ashes. I wonder how incredible the whole birds must be, then.\"",
-    "\"Be careful about the minefields deep underground. The Dwarven Wars left behind so many landmines it's smart to invest into some fireproof dragon hide and a ring of fire resistance before going anywhere.\"",
+    "\"Be careful about the minefields deep underground. The Dwarven Wars left behind so many landmines, it's smart to invest into some fireproof dragon hide and a ring of fire resistance before going anywhere.\"",
     "\"My mama told me tales about golden eagles, the kings of the sky, when I was a boy. That's why I first went to do some adventuring - to try and find them. Maybe I will, one day, har har har.\"",
     "\"Deep underground, you can sometimes find incredible crystals. I've even heard tales about some that glow with inner light.\"",
     "\"Don't remind me of school food! Just thinking about it makes me want to puke!\"",
