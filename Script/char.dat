@@ -3955,7 +3955,7 @@ zombie
 
   Config ZOMBIE_OF_KHAZ_ZADM;
   {
-    DefaultName = "Tholtig";
+    DefaultName = "Moonrise Stealing Dark";
     PostFix = "of Khaz-zadm";
     TamingDifficulty = 30;
     IsNameable = false;
@@ -6842,7 +6842,7 @@ elpuri
     "\"DiE, mOrTaL!!!\"",
     "\"tHe PoRtAl Is SpEaKiNg To Me... ThEy ArE cOmInG... tHeY aRe EnDlEsS... gRaH-hAH-hArR!!! aT LeAsT i WiLl HaVe WhAt To EaT!!!\"",
     "\"I hAvE dEvOuReD hOrDeS oF dAeMoNs, CoNsUmEd ThEiR pOwEr AnD sOuLs... YoU aRe BuT a TiNy MoRsEl!!!\"",
-    "\"i ReMeMbEr LiGhT... bUt DaRkNeSs Is So MuCh MoRe... DeLiGhTfUl... AnD dElItIoUs!!!\"",
+    "\"i ReMeMbEr LiGhT... bUt DaRkNeSs Is So MuCh MoRe... DeLiGhTfUl... AnD dElIcIoUs!!!\"",
     "\"PeTrUs!!! I rEmEmBeR!!! oNe DaY, i WiLl DeVoUr EnOuGh, I wIlL gRoW eNoUgH aNd ThEn I wIlL fEaSt On HiS fLeSh!!!\"",
     "@Dd roars horribly: \"DiE, pUnY hUmAn!!!\"";
   }
