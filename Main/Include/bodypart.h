@@ -127,6 +127,8 @@ ITEM(bodypart, item)
   virtual void UpdatePictures();
   item* GetExternalBodyArmor() const;
   item* GetExternalCloak() const;
+  item* GetExternalHelmet() const;
+  item* GetExternalBelt() const;
   virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
@@ -348,6 +350,8 @@ ITEM(arm, bodypart)
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*, citem*);
   void ApplyDexterityPenalty(item*);
+  void ApplyStrengthBonus(item*);
+  void ApplyDexterityBonus(item*);
   virtual truth DamageArmor(character*, int, int);
   truth CheckIfWeaponTooHeavy(cchar*) const;
   virtual truth EditAllAttributes(int);
@@ -453,6 +457,8 @@ ITEM(leg, bodypart)
   virtual void CalculateAttributeBonuses();
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyAgilityPenalty(item*);
+  void ApplyStrengthBonus(item*);
+  void ApplyAgilityBonus(item*);
   virtual void SignalVolumeAndWeightChange();
   virtual truth DamageArmor(character*, int, int);
   virtual truth EditAllAttributes(int);
