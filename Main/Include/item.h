@@ -131,6 +131,7 @@ struct itemdatabase : public databasebase
   truth CanBeBurned;
   truth CanBePiled;
   long Category;
+  int EnergyResistance;
   int FireResistance;
   int PoisonResistance;
   int ElectricityResistance;
@@ -321,6 +322,7 @@ class item : public object
   DATA_BASE_VALUE(int, WeaponCategory);
   DATA_BASE_TRUTH(IsAutoInitializable);
   DATA_BASE_VALUE(long, Category);
+  DATA_BASE_VALUE(int, EnergyResistance);
   DATA_BASE_VALUE(int, FireResistance);
   DATA_BASE_VALUE(int, PoisonResistance);
   DATA_BASE_VALUE(int, ElectricityResistance);

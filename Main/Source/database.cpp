@@ -520,6 +520,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsPolymorphSpawnable);
   ADD_MEMBER(IsAutoInitializable);
   ADD_MEMBER(Category);
+  ADD_MEMBER(EnergyResistance);
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);

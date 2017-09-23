@@ -33,10 +33,12 @@ item
   IsPolymorphSpawnable = true;
   IsAutoInitializable = true;
   Category = MISC;
+  EnergyResistance = 0;
   FireResistance = 0;
   PoisonResistance = 0;
   ElectricityResistance = 0;
   AcidResistance = 0;
+  SoundResistance = 0;
   StrengthModifier = 0;
   /* Obligatory: FormModifier */
   /* Obligatory: DefaultSize */
@@ -1820,6 +1822,17 @@ stone
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
   HasNormalPictureDirection = false;
+
+  Config SOL_STONE;
+  {
+    Possibility = 10;
+    DefaultMainVolume = -417;
+    Adjective = "sol";
+    Price = 100;
+    MainMaterialConfig == OBSIDIAN;
+    IsValuable = true;
+    TeleportPriority = 20000;
+  }
 }
 
 scrolloftaming /* scroll-> */
@@ -1925,6 +1938,45 @@ shield /* armor-> */
     MainMaterialConfig = { 7, EBONY_WOOD, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
     MaterialConfigChances = { 7, 100, 150, 25, 10, 25, 5, 5; }
     EnchantmentPlusChance = 30;
+  }
+
+  Config PHOENIX_SHIELD;
+  {
+    Possibility = 1;
+    Adjective = "blessed";
+    PostFix = "of the Phoenix";
+    MainMaterialConfig == PHOENIX_FEATHER;
+    Alias == "Shield of the Phoenix";
+    EnchantmentPlusChance = 2;
+    GearStates = LIFE_SAVED;
+  }
+
+  Config BROKEN|PHOENIX_SHIELD;
+  {
+    Possibility = 2;
+    DefaultSize = 40;
+    FormModifier = 20;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    EnchantmentPlusChance = 5;
+    GearStates = 0;
+  }
+
+  Config AEGIS_SHIELD;
+  {
+    Possibility = 1;
+    Adjective = "holy";
+    PostFix = "named Aegis";
+    MainMaterialConfig == ARCANITE;
+    Roundness = 105;
+    Alias == "Aegis";
+    CanBeBroken = false;
+    EnergyResistance = 15;
+    FireResistance = 15;
+    ElectricityResistance = 15;
+    AcidResistance = 2;
+    SoundResistance = 2;
+    EnchantmentPlusChance = 5;
   }
 }
 
@@ -2564,6 +2616,16 @@ ring
     MainMaterialConfig == SUN_CRYSTAL;
     Price = 500;
     AttachedGod = LEGIFER;
+  }
+
+  Config RING_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 10;
+    EnergyResistance = 15;
+    PostFix = "of magic resistance";
+    MainMaterialConfig == OCTIRON;
+    Price = 250;
+    AttachedGod = INFUSCOR;
   }
 }
 
