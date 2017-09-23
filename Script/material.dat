@@ -1881,7 +1881,8 @@ liquid
     AttachedGod = SCABIES;
     CategoryFlags = IS_BLOOD;
     InteractionFlags = Base|AFFECT_INSIDE;
-    Acidicity = 50;
+    RustModifier = 100;
+    Acidicity = 100;
     Effect = EFFECT_POISON;
     EffectStrength = 1000;
   }
