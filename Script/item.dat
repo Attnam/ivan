@@ -333,6 +333,7 @@ meleeweapon
     ArticleMode = FORCE_THE;
     MainMaterialConfig == GOLD;
     SecondaryMaterialConfig == SILVER;
+    IsMaterialChangeable = false;
     IsPolymorphable = false;
     Roundness = 20;
     IsTwoHanded = true;
@@ -466,7 +467,7 @@ meleeweapon
     MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
     Roundness = 30; /* we count the handle, too */
     IsTwoHanded = true;
-    AttachedGod = CRUENTUS;
+    AttachedGod = LEGIFER;
     WieldedBitmapPos = 160, 192;
     EnchantmentPlusChance = 10;
   }
@@ -656,7 +657,7 @@ meleeweapon
     MaterialConfigChances = { 7, 1500, 1000, 750, 100, 25, 25, 5; }
     Roundness = 30;
     IsTwoHanded = true;
-    AttachedGod = LORICATUS;
+    AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
@@ -825,6 +826,9 @@ holybanana /* materialcontainer->banana-> */
   CanBeMirrored = true; /* will create a peel */
   AllowEquip = true;
   IsValuable = true;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
 }
 
 justifier /* meleeweapon-> */
@@ -1949,6 +1953,12 @@ shield /* armor-> */
     Alias == "Shield of the Phoenix";
     EnchantmentPlusChance = 2;
     GearStates = LIFE_SAVED;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 
   Config BROKEN|PHOENIX_SHIELD;
@@ -1965,7 +1975,7 @@ shield /* armor-> */
   Config AEGIS_SHIELD;
   {
     Possibility = 1;
-    Adjective = "holy";
+    Adjective = "sacred";
     PostFix = "named Aegis";
     MainMaterialConfig == ARCANITE;
     Roundness = 105;
@@ -1977,6 +1987,12 @@ shield /* armor-> */
     AcidResistance = 2;
     SoundResistance = 2;
     EnchantmentPlusChance = 5;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 }
 
@@ -2018,7 +2034,7 @@ cloak /* armor-> */
     GearStates = INVISIBLE;
     PostFix = "of invisibility";
     Price = 2500;
-    MainMaterialConfig == LEATHER;
+    MainMaterialConfig == CLOTH;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
   }
@@ -2121,6 +2137,129 @@ cloak /* armor-> */
     CanBeBurned = false;
     ArticleMode = FORCE_THE;
     CanBeEnchanted = false;
+  }
+
+  Config CLOAK_OF_WEREWOLF;
+  {
+    Possibility = 1;
+    Adjective = "werewolf fur";
+    MainMaterialConfig == LEATHER;
+    MaterialConfigChances == 100;
+    GearStates = LYCANTHROPY;
+    EnchantmentPlusChance = 5;
+    Alias == "werewolf fur cloak";
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+  }
+
+  Config BROKEN|CLOAK_OF_WEREWOLF;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    GearStates = 0;
+    EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
+  }
+
+  Config CLOAK_OF_ORCS;
+  {
+    Possibility = 1;
+    NameSingular = "mantle";
+    PostFix = "of Al-Khan";
+    MainMaterialConfig == FABRIC;
+    MaterialConfigChances == 100;
+    GearStates = INVISIBLE|TELEPORT;
+    AffectsEndurance = true;
+    BaseEnchantment = 1;
+    EnchantmentPlusChance = 5;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+  }
+
+  Config BROKEN|CLOAK_OF_ORCS;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    GearStates = 0;
+    EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
+    AffectsEndurance = false;
+  }
+
+  Config CLOAK_OF_FLYING;
+  {
+    Possibility = 0;
+    GearStates = LEVITATION;
+    PostFix = "of flying";
+    Price = 2500;
+    MainMaterialConfig == OMMEL_HAIR;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|CLOAK_OF_FLYING;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    Price = 500;
+    GearStates = 0;
+    EnchantmentPlusChance = 4;
+    CloakBitmapPos = 48, 496;
+  }
+
+  Config CLOAK_OF_QUICKNESS;
+  {
+    Possibility = 1;
+    PostFix = "of quickness";
+    AffectsAgility = true;
+    BaseEnchantment = 1;
+    Price = 2500;
+    MainMaterialConfig == BLACK_LEATHER;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|CLOAK_OF_QUICKNESS;
+  {
+    Possibility = 2;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    Price = 500;
+    AffectsAgility = false;
+    EnchantmentPlusChance = 4;
+    CloakBitmapPos = 48, 496;
+  }
+
+  Config CLOAK_OF_PROTECTION;
+  {
+    Possibility = 5;
+    PostFix = "of protection";
+    Price = 250;
+    StrengthModifier = 150;
+    AttachedGod = ATAVUS;
+    InElasticityPenaltyModifier = 5;
+    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+    MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+  }
+
+  Config BROKEN|CLOAK_OF_PROTECTION;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 5;
+    Price = 150;
+    CloakBitmapPos = 48, 496;
   }
 }
 
@@ -3257,6 +3396,10 @@ helmet
     HelmetBitmapPos = 112, 432;
     EnchantmentPlusChance = 0;
     SoundResistance = 0;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 
   Config HELM_OF_WILLPOWER;
@@ -3521,6 +3664,9 @@ mjolak /* meleeweapon-> */
   NameSingular = "halberd";
   PostFix = "named Mjolak";
   ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
   Alias == "Mjolak";
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -3559,6 +3705,9 @@ vermis /* meleeweapon-> */
   IsTwoHanded = true;
   Alias == "Vermis";
   ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   Price = 500;
@@ -3597,10 +3746,13 @@ turox /* meleeweapon-> */
   IsTwoHanded = true;
   Alias == "Turox";
   ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   Price = 250;
-  AttachedGod = CRUENTUS;
+  AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
   EnchantmentPlusChance = 2;
 
@@ -3714,6 +3866,10 @@ gorovitsweapon
   CanBeBroken = false;
   CanBeWished = false;
   ArticleMode = FORCE_THE;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
   IsQuestItem = true;
   IsAbstract = true;
   CanBeBurned = false;
@@ -3860,7 +4016,7 @@ thunderhammer /* meleeweapon-> */
   CanBeUsedBySmith = true;
   Price = 500;
   BaseEmitation = rgb24(130, 130, 130);
-  AttachedGod = TERRA;
+  AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 16;
   EnchantmentPlusChance = 2;
 
@@ -3896,6 +4052,9 @@ saalthul
   Price = 500;
   GearStates = INVISIBLE;
   ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   Alias == "Saal'thul";
@@ -4262,6 +4421,12 @@ gorovitscopyoflenin /* item-> */
   Price = 50;
   Alias == "Lenin";
   CanBeBurned = false;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
 }
 
 chastitybelt
