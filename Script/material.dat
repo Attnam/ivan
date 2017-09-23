@@ -1109,6 +1109,25 @@ solid
     CategoryFlags = Base;
     InteractionFlags = Base;
   }
+
+  Config SUN_CRYSTAL;
+  {
+    StrengthValue = 150;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(224, 224, 0);
+    NameStem = "sun light crystal";
+    AdjectiveStem = "crystal";
+    Alpha = 150;
+    AttachedGod = TERRA;
+    Emitation = rgb24(160, 160, 160);
+    NaturalForm = stone;
+    PriceModifier = 8000;
+    IntelligenceRequirement = 20;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
 }
 
 organic /* substances that spoil but are not flesh */

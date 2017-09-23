@@ -2556,6 +2556,15 @@ ring
     AttachedGod = LORICATUS;
     TeleportPriority = 1000;
   }
+
+  Config RING_OF_LIGHT;
+  {
+    Possibility = 2;
+    PostFix = "of light";
+    MainMaterialConfig == SUN_CRYSTAL;
+    Price = 500;
+    AttachedGod = LEGIFER;
+  }
 }
 
 amulet
@@ -2604,10 +2613,10 @@ amulet
     CanBeCloned = false;
     Price = 4000;
     AttachedGod = LEGIFER;
-    FireResistance = 30;
-    ElectricityResistance = 30;
-    AcidResistance = 5;
-    PoisonResistance = 5;
+    FireResistance = 15;
+    ElectricityResistance = 15;
+    AcidResistance = 2;
+    PoisonResistance = 2;
   }
 
   Config AMULET_OF_UNBREATHING;
@@ -2628,6 +2637,19 @@ amulet
     GearStates = HASTE;
     Price = 2000;
     AttachedGod = CLEPTIA;
+    IsMaterialChangeable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+  }
+
+  Config AMULET_OF_PHASING;
+  {
+    Possibility = 1;
+    PostFix = "of phasing";
+    MainMaterialConfig == MUTANT_PLANT_FIBER;
+    GearStates = ETHEREAL_MOVING;
+    Price = 5000;
+    AttachedGod = MORTIFER;
     IsMaterialChangeable = false;
     CanBeCloned = false;
     CanBeMirrored = true;

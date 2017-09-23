@@ -2268,7 +2268,7 @@ goblin
     TorsoBitmapPos = 48, 208;
     HairColor = rgb16(220, 220, 0);
     ClothColor = rgb16(200, 0, 0);
-    Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
+    Inventory = { 2, stone { Chance = 50; }, amulet; }
     CanBeConfused = false;
     NaturalSparkleFlags = HAIR_COLOR;
     FireResistance = 30;
