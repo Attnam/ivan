@@ -768,6 +768,44 @@ meleeweapon
     MaterialConfigChances = { 4, 100, 25, 25, 5; }
     EnchantmentPlusChance = 40;
   }
+
+  Config MAGE_STAFF;
+  {
+    DefaultSize = 220;
+    Possibility = 1;
+    WeaponCategory = BLUNT_WEAPONS;
+    StrengthModifier = 150;
+    BitmapPos = 64, 240;
+    FormModifier = 125;
+    DefaultMainVolume = 2000;
+    DefaultSecondaryVolume = 200;
+    NameSingular = "mage staff";
+    PostFix = "named Y'yter Durr";
+    Alias == "Y'yter Durr";
+    MainMaterialConfig == OCTIRON;
+    SecondaryMaterialConfig == GREEN_CRYSTAL;
+    Roundness = 15;
+    AttachedGod = SCABIES;
+    WieldedBitmapPos = 160, 304;
+    Price = 1000;
+    EnchantmentPlusChance = 2;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    GearStates = POLYMORPH|POLYMORPH_CONTROL;
+  }
+
+  Config BROKEN|MAGE_STAFF;
+  {
+    Possibility = 2;
+    BitmapPos = 64, 256;
+    WieldedBitmapPos = 176, 304;
+    GearStates = 0;
+    EnchantmentPlusChance = 5;
+  }
 }
 
 banana /* materialcontainer-> */
