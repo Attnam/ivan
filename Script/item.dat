@@ -2142,7 +2142,7 @@ cloak /* armor-> */
   Config CLOAK_OF_WEREWOLF;
   {
     Possibility = 1;
-    Adjective = "werewolf fur";
+    NameSingular = "werewolf fur cloak";
     MainMaterialConfig == LEATHER;
     MaterialConfigChances == 100;
     GearStates = LYCANTHROPY;
@@ -2248,7 +2248,7 @@ cloak /* armor-> */
     Price = 250;
     StrengthModifier = 150;
     AttachedGod = ATAVUS;
-    InElasticityPenaltyModifier = 5;
+    InElasticityPenaltyModifier = 10;
     MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
     MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
   }
@@ -2759,7 +2759,7 @@ ring
 
   Config RING_OF_MAGIC_RESISTANCE;
   {
-    Possibility = 10;
+    Possibility = 0;
     EnergyResistance = 15;
     PostFix = "of magic resistance";
     MainMaterialConfig == OCTIRON;
@@ -2834,7 +2834,7 @@ amulet
   {
     Possibility = 3;
     PostFix = "of speed";
-    MainMaterialConfig == PLANT_FIBER;
+    MainMaterialConfig == MUTANT_PLANT_FIBER;
     GearStates = HASTE;
     Price = 2000;
     AttachedGod = CLEPTIA;
@@ -2845,9 +2845,9 @@ amulet
 
   Config AMULET_OF_PHASING;
   {
-    Possibility = 1;
+    Possibility = 0;
     PostFix = "of phasing";
-    MainMaterialConfig == MUTANT_PLANT_FIBER;
+    MainMaterialConfig == RESIDUUM;
     GearStates = ETHEREAL_MOVING;
     Price = 5000;
     AttachedGod = MORTIFER;

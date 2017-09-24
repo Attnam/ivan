@@ -336,6 +336,7 @@
 #define OMMEL_CERUMEN (ORGANIC_ID + 12)
 #define OMMEL_BONE (ORGANIC_ID + 13)
 #define OMMEL_TOOTH (ORGANIC_ID + 14)
+#define RESIDUUM (ORGANIC_ID + 15)
 
 #define GAS_ID (4096 * 3)
 

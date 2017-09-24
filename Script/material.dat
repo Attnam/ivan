@@ -1355,6 +1355,19 @@ organic /* substances that spoil but are not flesh */
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
   }
+
+  Config RESIDUUM;
+  {
+    StrengthValue = 120;
+    ConsumeType = CT_MISC_ORGANIC;
+    Density = 10000;
+    Color = rgb16(107, 255, 251);
+    NameStem = "residuum";
+    Flexibility = 10;
+    SpoilModifier = 5000;
+    AttachedGod = MORTIFER;
+    CommonFlags = Base|IS_SPARKLING|IS_VALUABLE;
+  }
 }
 
 gas
