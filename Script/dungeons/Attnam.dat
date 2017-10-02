@@ -375,7 +375,7 @@ Dungeon ATTNAM;
           k == kiwi;
           p == pineapple;
           e == backpack;
-          g == GOLD stone;
+          g == GOLD stone(SOL_STONE);
           i == SILVER stone;
           h == SAPPHIRE stone;
           r == RUBY stone;
@@ -393,7 +393,7 @@ Dungeon ATTNAM;
           A == GOLD helmet(HELM_OF_ATTRACTIVITY);
           L == oillamp;
           P == GOLD bodyarmor(PLATE_MAIL);
-          O == GOLD cloak;
+          O == PHOENIX_FEATHER cloak(CLOAK_OF_FLYING);
           W == DIAMOND wand(WAND_OF_POLYMORPH);
           w == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 1; }
           c == Random { MinPrice = 700; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }

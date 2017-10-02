@@ -6149,7 +6149,7 @@ elder
   TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
   CanRead = true;
-  Inventory == holybook(SILVA);
+  Inventory == pantheonbook;
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {

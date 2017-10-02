@@ -785,6 +785,7 @@ meleeweapon
     MainMaterialConfig == OCTIRON;
     SecondaryMaterialConfig == GREEN_CRYSTAL;
     Roundness = 15;
+    IsTwoHanded = true;
     AttachedGod = SCABIES;
     WieldedBitmapPos = 160, 304;
     Price = 1000;
@@ -864,7 +865,6 @@ holybanana /* materialcontainer->banana-> */
   CanBeMirrored = true; /* will create a peel */
   AllowEquip = true;
   IsValuable = true;
-  ArticleMode = FORCE_THE;
   CanBeWished = false;
   IsMaterialChangeable = false;
 }
@@ -2209,7 +2209,7 @@ cloak /* armor-> */
     Possibility = 1;
     NameSingular = "mantle";
     PostFix = "of Al-Khan";
-    MainMaterialConfig == FABRIC;
+    MainMaterialConfig == SPIDER_SILK;
     MaterialConfigChances == 100;
     GearStates = INVISIBLE|TELEPORT;
     AffectsEndurance = true;
@@ -2601,7 +2601,7 @@ belt /* armor-> */
   
   Config BELT_OF_GIANT_STRENGTH;
   {
-    Possibility = 1;
+    Possibility = 5;
     PostFix = "of giant strength";
     Price = 500;
     AffectsArmStrength = true;
@@ -2616,7 +2616,7 @@ belt /* armor-> */
 
   Config BROKEN|BELT_OF_GIANT_STRENGTH;
   {
-    Possibility = 1;
+    Possibility = 3;
     AffectsArmStrength = false;
     AffectsLegStrength = false;
     Price = 100;
@@ -2627,7 +2627,7 @@ belt /* armor-> */
 
   Config BELT_OF_THIEF;
   {
-    Possibility = 1;
+    Possibility = 5;
     Adjective = "thief's";
     NameSingular = "girdle";
     Price = 500;
@@ -2643,7 +2643,7 @@ belt /* armor-> */
 
   Config BROKEN|BELT_OF_THIEF;
   {
-    Possibility = 1;
+    Possibility = 3;
     AffectsDexterity = false;
     AffectsAgility = false;
     Price = 100;
@@ -2832,6 +2832,7 @@ amulet
     CanBeCloned = false;
     Price = 5000;
     AttachedGod = SEGES;
+    Alias == "AoLS";
   }
 
   Config AMULET_OF_ESP;
@@ -2856,6 +2857,7 @@ amulet
     ElectricityResistance = 15;
     AcidResistance = 2;
     PoisonResistance = 2;
+    Alias == "amulet of warding";
   }
 
   Config AMULET_OF_UNBREATHING;
@@ -2866,13 +2868,14 @@ amulet
     GearStates = GAS_IMMUNITY;
     Price = 2000;
     AttachedGod = SCABIES;
+    Alias == "amulet of unbreathing";
   }
 
   Config AMULET_OF_SPEED;
   {
-    Possibility = 3;
+    Possibility = 5;
     PostFix = "of speed";
-    MainMaterialConfig == MUTANT_PLANT_FIBER;
+    MainMaterialConfig == PLANT_FIBER;
     GearStates = HASTE;
     Price = 2000;
     AttachedGod = CLEPTIA;
@@ -2883,7 +2886,7 @@ amulet
 
   Config AMULET_OF_PHASING;
   {
-    Possibility = 0;
+    Possibility = 2;
     PostFix = "of phasing";
     MainMaterialConfig == RESIDUUM;
     GearStates = ETHEREAL_MOVING;
@@ -3958,7 +3961,7 @@ gorovitsweapon
   Config GOROVITS_SCIMITAR;
   {
     DefaultSize = 150;
-    Possibility = 0;
+    Possibility = 1;
     WeaponCategory = LARGE_SWORDS;
     DefaultMainVolume = 450;
     DefaultSecondaryVolume = 150;
@@ -4088,7 +4091,7 @@ saalthul
   SecondaryMaterialConfig == MITHRIL;
   Roundness = 10;
   Price = 500;
-  GearStates = INVISIBLE;
+  GearStates = INVISIBLE|HASTE;
   ArticleMode = FORCE_THE;
   CanBeWished = false;
   IsMaterialChangeable = false;
