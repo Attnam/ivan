@@ -708,11 +708,62 @@ solid
     NameStem = "ebony";
     AttachedGod = SILVA;
     NaturalForm = stick;
+    HardenedMaterial = KAURI_WOOD;
     IntelligenceRequirement = 10;
     CommonFlags = Base|IS_VALUABLE;
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     FireResistance = 2;
+    InteractionFlags = Base|CAN_BURN;
+  }
+
+  Config KAURI_WOOD;
+  {
+    StrengthValue = 80;
+    ConsumeType = CT_MISC_ORGANIC;
+    Density = 800;
+    Color = rgb16(140, 92, 42);
+    NameStem = "kauri";
+    AttachedGod = SILVA;
+    NaturalForm = stick;
+    HardenedMaterial = RATA_WOOD;
+    IntelligenceRequirement = 10;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    FireResistance = 3;
+    InteractionFlags = Base|CAN_BURN;
+  }
+	
+  Config RATA_WOOD;
+  {
+    StrengthValue = 95;
+    ConsumeType = CT_MISC_ORGANIC;
+    Density = 700;
+    Color = rgb16(166, 44, 24);
+    NameStem = "rata";
+    AttachedGod = SILVA;
+    NaturalForm = stick;
+    HardenedMaterial = SIDGURE_WOOD;
+    IntelligenceRequirement = 10;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    FireResistance = 4;
+    InteractionFlags = Base|CAN_BURN;
+  }
+
+  Config SIDGURE_WOOD; /* magical mango tree wood */
+  {
+    StrengthValue = 110;
+    ConsumeType = CT_MISC_ORGANIC;
+    Density = 600;
+    Color = rgb16(211, 211, 211);
+    NameStem = "sidgure";
+    AttachedGod = SILVA;
+    NaturalForm = stick;
+    IntelligenceRequirement = 15;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    FireResistance = 5;
     InteractionFlags = Base|CAN_BURN;
   }
 
@@ -1747,6 +1798,7 @@ liquid
     CategoryFlags = IS_BLOOD;
     Effect = EFFECT_POISON;
     EffectStrength = 1000;
+    ConsumeWisdomLimit = 3;
   }
 
   Config VOMIT;
@@ -1898,6 +1950,7 @@ liquid
     Acidicity = 100;
     Effect = EFFECT_POISON;
     EffectStrength = 1000;
+    ConsumeWisdomLimit = 3;
   }
 
   Config MUSTARD_GAS_LIQUID;
@@ -1909,6 +1962,7 @@ liquid
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
+    ConsumeWisdomLimit = 3;
   }
 
   Config LIQUID_DARKNESS;
@@ -1921,7 +1975,7 @@ liquid
     Emitation = rgb24(35, 35, 35);
     NameStem = "liquid darkness";
     Effect = EFFECT_DARKNESS;
-    ConsumeWisdomLimit = 1;
+    ConsumeWisdomLimit = 3;
     Alpha = 175;
     AttachedGod = MORTIFER;
   }

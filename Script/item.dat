@@ -363,9 +363,9 @@ meleeweapon
     DefaultMainVolume = 100;
     DefaultSecondaryVolume = 2500;
     NameSingular = "spear";
-    MainMaterialConfig = { 13, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+    MainMaterialConfig = { 19, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, FLINT, OBSIDIAN, LEAD; }
     SecondaryMaterialConfig == PINE_WOOD;
-    MaterialConfigChances = { 13, 250, 200, 150, 100, 250, 650, 500, 350, 200, 50, 50, 25, 10; }
+    MaterialConfigChances = { 19, 200, 200, 150, 100, 200, 550, 450, 300, 200, 50, 50, 25, 10, 50, 50, 50, 50, 50, 50; }
     Roundness = 10;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -717,9 +717,9 @@ meleeweapon
     DefaultMainVolume = 3000;
     DefaultSecondaryVolume = 200;
     NameSingular = "quarterstaff";
-    MainMaterialConfig = { 10, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE; }
-    SecondaryMaterialConfig = { 10, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE; }
-    MaterialConfigChances = { 10, 100, 350, 300, 250, 200, 150, 100, 75, 25, 5; }
+    MainMaterialConfig = { 13, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
+    SecondaryMaterialConfig = { 13, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
+    MaterialConfigChances = { 13, 100, 300, 250, 250, 200, 150, 100, 75, 25, 5, 50, 30, 20; }
     Roundness = 10;
     IsTwoHanded = true;
     AttachedGod = SILVA;
@@ -732,9 +732,9 @@ meleeweapon
     Possibility = 20;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
-    MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
-    SecondaryMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
-    MaterialConfigChances = { 3, 500, 200, 25; }
+    MainMaterialConfig = { 6, EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
+    SecondaryMaterialConfig = { 6, EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
+    MaterialConfigChances = { 6, 300, 200, 25, 100, 50, 50; }
     EnchantmentPlusChance = 40;
   }
 
@@ -1148,8 +1148,8 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 13, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS; }
-  MaterialConfigChances = { 13, 75, 50, 5, 45, 1, 10, 5, 25, 5, 5, 20, 5, 5; }
+  SecondaryMaterialConfig = { 20, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS, BROWN_SLIME, YELLOW_SLIME, DARK_FROG_BLOOD, SPIDER_BLOOD, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
+  MaterialConfigChances = { 20, 70, 50, 5, 30, 1, 9, 5, 25, 5, 5, 20, 2, 2, 6, 3, 5, 5, 5, 2, 1; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;

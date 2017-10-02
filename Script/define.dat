@@ -319,6 +319,9 @@
 #define BLACK_DIAMOND (SOLID_ID + 68)
 #define PSYPHER (SOLID_ID + 69)
 #define SUN_CRYSTAL (SOLID_ID + 70)
+#define KAURI_WOOD (SOLID_ID + 71)
+#define RATA_WOOD (SOLID_ID + 72)
+#define SIDGURE_WOOD (SOLID_ID + 73)
 
 #define ORGANIC_ID (4096 * 2)
 
