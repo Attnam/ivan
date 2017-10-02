@@ -1064,7 +1064,7 @@ bodyarmor /* armor-> */
   {
     StrengthModifier = 150;
     DefaultSize = 80;
-    DefaultMainVolume = 5000;
+    DefaultMainVolume = 3000;
     BitmapPos = 64, 208;
     Possibility = 5;
     UsesLongArticle = true;
@@ -1072,7 +1072,7 @@ bodyarmor /* armor-> */
     PostFix = "of great health";
     MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 7, 150, 75, 25, 50, 10, 25, 10; }
-    InElasticityPenaltyModifier = 40;
+    InElasticityPenaltyModifier = 20;
     AffectsEndurance = true;
     BaseEnchantment = 1;
     Price = 500;
@@ -1094,10 +1094,10 @@ bodyarmor /* armor-> */
     FormModifier = 20;
     Price = 50;
     AffectsEndurance = false;
-    MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
-    MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
+    MainMaterialConfig = { 6, NYMPH_HAIR, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
+    MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
     EnchantmentPlusChance = 4;
-    InElasticityPenaltyModifier = 50;
+    InElasticityPenaltyModifier = 25;
     TorsoArmorBitmapPos = 32, 544;
     ArmArmorBitmapPos = 80, 544;
     AthleteArmArmorBitmapPos = 80, 560;
