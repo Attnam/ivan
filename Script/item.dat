@@ -4576,3 +4576,35 @@ firstbornchild
     NameSingular = "daughter";
   }
 }
+
+darkaxe  /* meleeweapon-> */
+{
+  DefaultSize = 60;
+  Possibility = 15;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 200;
+  DefaultSecondaryVolume = 500;
+  BitmapPos = 16, 256;
+  FormModifier = 60;
+  StrengthModifier = 80;
+  Adjective = "dark";
+  NameSingular = "axe";
+  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  SecondaryMaterialConfig == EBONY_WOOD;
+  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  Roundness = 20;
+  Price = 150;
+  IsTwoHanded = true;
+  AttachedGod = INFUSCOR;
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 10;
+    BitmapPos = 32, 176;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
