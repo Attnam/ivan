@@ -3631,6 +3631,7 @@ housewife
     "sex", "fertility", "jealousy", "cheating", "quantum physics",
     "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
+  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; }; }
 
   Config CULTIST;
   {

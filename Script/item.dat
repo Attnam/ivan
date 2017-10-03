@@ -807,6 +807,63 @@ meleeweapon
     GearStates = 0;
     EnchantmentPlusChance = 5;
   }
+
+  Config ROLLING_PIN;
+  {
+    DefaultSize = 45;
+    Possibility = 1;
+    WeaponCategory = BLUNT_WEAPONS;
+    DefaultMainVolume = 650; /* roller */
+    DefaultSecondaryVolume = 150; /* handle */
+    StrengthModifier = 110;
+    BitmapPos = 80, 112;
+    FormModifier = 60;
+    NameSingular = "rolling pin";
+    MainMaterialConfig = { 7, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD; }
+    SecondaryMaterialConfig == PINE_WOOD;
+    MaterialConfigChances = { 7, 25, 100, 50, 10, 5, 5, 5; }
+    Roundness = 35;
+    AttachedGod = SEGES;
+    WieldedBitmapPos = 160, 352;
+    EnchantmentPlusChance = 15;
+  }
+
+  Config BROKEN|ROLLING_PIN;
+  {
+    Possibility = 0;
+    BitmapPos = 80, 112;
+    WieldedBitmapPos = 160, 352;
+    EnchantmentPlusChance = 30;
+  }
+
+  Config FRYING_PAN;
+  {
+    DefaultSize = 60;
+    Possibility = 1;
+    WeaponCategory = BLUNT_WEAPONS;
+    DefaultMainVolume = 300; /* pan */
+    DefaultSecondaryVolume = 100; /* handle */
+    StrengthModifier = 110;
+    BitmapPos = 80, 96;
+    FormModifier = 75;
+    NameSingular = "frying pan";
+    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
+    SecondaryMaterialConfig == PINE_WOOD;
+    MaterialConfigChances = { 7, 25, 100, 50, 10, 5, 1, 1; }
+    Roundness = 50;
+    IsTwoHanded = true;
+    AttachedGod = SEGES;
+    WieldedBitmapPos = 128, 48;
+    EnchantmentPlusChance = 15;
+  }
+
+  Config BROKEN|FRYING_PAN;
+  {
+    Possibility = 0;
+    BitmapPos = 80, 96;
+    WieldedBitmapPos = 128, 48;
+    EnchantmentPlusChance = 30;
+  }
 }
 
 banana /* materialcontainer-> */
