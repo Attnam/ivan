@@ -63,6 +63,7 @@
 #define HICCUPS (1 << 20)
 #define ETHEREAL_MOVING (1 << 21)
 #define VAMPIRISM (1 << 22)
+#define SWIMMING (1 << 23)
 
 #define HEAD 1
 #define TORSO 2

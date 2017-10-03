@@ -266,6 +266,15 @@ statedata StateData[STATES] =
     &character::VampirismHandler,
     0,
     0
+  }, {
+    "Swimming",
+    SECRET,
+    &character::PrintBeginSwimmingMessage,
+    &character::PrintEndSwimmingMessage,
+    &character::BeginSwimming, &character::EndSwimming,
+    0,
+    0,
+    0
   }
 };
 
@@ -365,7 +374,10 @@ int character::GetMoveType() const
           : DataBase->MoveType | FLY) |
           (!StateIsActivated(ETHEREAL_MOVING)
           ? DataBase->MoveType
-          : DataBase->MoveType | ETHEREAL)); }
+          : DataBase->MoveType | ETHEREAL) |
+          (!StateIsActivated(SWIMMING)
+          ? DataBase->MoveType
+          : DataBase->MoveType | WALK|SWIM)); }
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -4924,6 +4936,22 @@ void character::PrintEndEtherealityMessage() const
     ADD_MESSAGE("Suddenly %s displaces the air with a puff.", CHAR_NAME(INDEFINITE));
 }
 
+void character::PrintBeginSwimmingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You fondly remember the sound of ocean waves.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks wet.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndSwimmingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly remember how you nearly drowned as a child.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s looks less wet.", CHAR_NAME(INDEFINITE));
+}
+
 void character::PrintBeginInfraVisionMessage() const
 {
   if(IsPlayer())
@@ -5504,6 +5532,10 @@ void character::BeginEthereality()
 {
 }
 
+void character::BeginSwimming()
+{
+}
+
 void character::EndInvisibility()
 {
   UpdatePictures();
@@ -5524,6 +5556,10 @@ void character::EndESP()
 }
 
 void character::EndEthereality()
+{
+}
+
+void character::EndSwimming()
 {
 }
 

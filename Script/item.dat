@@ -2865,7 +2865,7 @@ amulet
     Possibility = 4;
     PostFix = "of magic breath";
     MainMaterialConfig == ARCANITE;
-    GearStates = GAS_IMMUNITY;
+    GearStates = GAS_IMMUNITY|SWIMMING;
     Price = 2000;
     AttachedGod = SCABIES;
     Alias == "amulet of unbreathing";

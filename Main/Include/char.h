@@ -673,6 +673,8 @@ class character : public entity, public id
   void HiccupsHandler();
   void BeginEthereality();
   void EndEthereality();
+  void BeginSwimming();
+  void EndSwimming();
   void VampirismHandler();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
@@ -688,6 +690,8 @@ class character : public entity, public id
   void PrintEndESPMessage() const;
   void PrintBeginEtherealityMessage() const;
   void PrintEndEtherealityMessage() const;
+  void PrintBeginSwimmingMessage() const;
+  void PrintEndSwimmingMessage() const;
   truth CanBeSeenByPlayer(truth = false, truth = false) const;
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
