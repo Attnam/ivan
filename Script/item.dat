@@ -701,8 +701,8 @@ meleeweapon
     Possibility = 5;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 50, 25, 25, 5; }
+    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT, PSYPHER; }
+    MaterialConfigChances = { 5, 50, 25, 25, 5, 1; }
     EnchantmentPlusChance = 40;
   }
 
@@ -4631,6 +4631,101 @@ darkaxe  /* meleeweapon-> */
     Possibility = 0;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+slowaxe  /* meleeweapon-> */
+{
+  DefaultSize = 60;
+  Possibility = 10;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 200;
+  DefaultSecondaryVolume = 500;
+  BitmapPos = 16, 256;
+  FormModifier = 60;
+  StrengthModifier = 80;
+  Adjective = "chilling";
+  NameSingular = "axe";
+  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  SecondaryMaterialConfig == ICE;
+  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  Roundness = 20;
+  Price = 150;
+  IsTwoHanded = true;
+  AttachedGod = CRUENTUS;
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 32, 176;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+terrorscythe  /* meleeweapon-> */
+{
+  DefaultSize = 200;
+  Possibility = 10;
+  WeaponCategory = POLE_ARMS;
+  DefaultMainVolume = 150;
+  DefaultSecondaryVolume = 1800;
+  BitmapPos = 64, 112;
+  FormModifier = 80;
+  StrengthModifier = 50;
+  NameSingular = "scythe";
+  PostFix = "of terror";
+  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, OCTIRON, BRONZE, STEEL, PSYPHER, MITHRIL; }
+  SecondaryMaterialConfig == EBONY_WOOD;
+  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 1, 90; }
+  Roundness = 10;
+  Price = 150;
+  IsTwoHanded = true;
+  AttachedGod = MORTIFER;
+  WieldedBitmapPos = 176, 48;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 64, 128;
+    WieldedBitmapPos = 160, 48;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+bansheesickle  /* meleeweapon-> */
+{
+  DefaultSize = 40;
+  Possibility = 10;
+  WeaponCategory = SMALL_SWORDS;
+  DefaultMainVolume = 100;
+  DefaultSecondaryVolume = 50;
+  BitmapPos = 48, 144;
+  FormModifier = 60;
+  StrengthModifier = 40;
+  NameSingular = "banshee sickle";
+  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, OCTIRON, IRON, METEORIC_STEEL, SILVER, GOLD; }
+  SecondaryMaterialConfig == RUBY;
+  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 10, 10; }
+  Roundness = 20;
+  Price = 150;
+  IsGoodWithPlants = true;
+  AttachedGod = SEGES;
+  WieldedBitmapPos = 176, 32;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    BitmapPos = 48, 176;
+    WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
   }
 }

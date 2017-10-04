@@ -1181,3 +1181,73 @@ void darkaxe::Be()
       SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 10));
   }
 }
+
+truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s axe chills %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The axe chills %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    return Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200)) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s scythe terrifies %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The scythe terrifies %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    return Enemy->BeginTemporaryState(PANIC, 400 + RAND_N(200)) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s sickle deafens %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The sickle deafens %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
