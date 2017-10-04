@@ -3631,7 +3631,7 @@ housewife
     "sex", "fertility", "jealousy", "cheating", "quantum physics",
     "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
-  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; }; }
+  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; } }
 
   Config CULTIST;
   {
@@ -3970,11 +3970,14 @@ zombie
     DefaultIntelligence = 7;
     DefaultWisdom = 15;
     DefaultCharisma = 5;
-    RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
+    RightWielded = OCTIRON darkaxe;
+    LeftWielded = OCTIRON darkaxe;
     KnownCWeaponSkills == AXES;
-    CWeaponSkillHits == 100;
+    CWeaponSkillHits == 150;
     RightSWeaponSkillHits = 100;
+    LeftSWeaponSkillHits = 100;
     ClassStates = LEPROSY;
+    FleshMaterial = DWARF_FLESH;
     IsExtraFragile = false;
     Sex = FEMALE;
     FireResistance = 25;
@@ -3993,6 +3996,7 @@ zombie
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
+    Inventory == OCTIRON key(HEXAGONAL_LOCK);
   }
 
   Config IMPRISONED_ZOMBIE;

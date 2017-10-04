@@ -2356,6 +2356,32 @@ cloak /* armor-> */
     Price = 150;
     CloakBitmapPos = 48, 496;
   }
+
+  Config CLOAK_OF_VAMPIRE;
+  {
+    Possibility = 1;
+    NameSingular = "vampire's cowl";
+    MainMaterialConfig == BLACK_LEATHER;
+    MaterialConfigChances == 100;
+    GearStates = VAMPIRISM;
+    EnchantmentPlusChance = 5;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+  }
+
+  Config BROKEN|CLOAK_OF_VAMPIRE;
+  {
+    Possibility = 0;
+    BitmapPos = 64, 304;
+    InElasticityPenaltyModifier = 40;
+    GearStates = 0;
+    EnchantmentPlusChance = 10;
+    CloakBitmapPos = 48, 496;
+  }
 }
 
 boot /* armor-> */
@@ -3763,7 +3789,7 @@ mjolak /* meleeweapon-> */
   PostFix = "named Mjolak";
   ArticleMode = FORCE_THE;
   CanBeWished = false;
-  IsMaterialChangeable = false;
+  /* IsMaterialChangeable = false;*/
   IsPolymorphable = false;
   Alias == "Mjolak";
   CanBeCloned = false;
@@ -3804,7 +3830,7 @@ vermis /* meleeweapon-> */
   Alias == "Vermis";
   ArticleMode = FORCE_THE;
   CanBeWished = false;
-  IsMaterialChangeable = false;
+  /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -3845,7 +3871,7 @@ turox /* meleeweapon-> */
   Alias == "Turox";
   ArticleMode = FORCE_THE;
   CanBeWished = false;
-  IsMaterialChangeable = false;
+  /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -4151,7 +4177,7 @@ saalthul
   GearStates = INVISIBLE|HASTE;
   ArticleMode = FORCE_THE;
   CanBeWished = false;
-  IsMaterialChangeable = false;
+  /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -4580,7 +4606,7 @@ firstbornchild
 darkaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 15;
+  Possibility = 0;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -4602,7 +4628,7 @@ darkaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 10;
+    Possibility = 0;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
