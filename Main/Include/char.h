@@ -614,6 +614,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
+  void DoDetecting();
   truth TeleportNear(character*);
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*, int, truth = false) = 0;
@@ -712,11 +713,17 @@ class character : public entity, public id
   void PrintBeginTeleportMessage() const;
   void PrintEndTeleportMessage() const;
   void TeleportHandler();
+  void PrintBeginDetectMessage() const;
+  void PrintEndDetectMessage() const;
+  void DetectHandler();
   void PrintEndTeleportControlMessage() const;
   void PrintBeginTeleportControlMessage() const;
   void PolymorphHandler();
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
+  void PrintBeginPolymorphLockMessage() const;
+  void PrintEndPolymorphLockMessage() const;
+  void PolymorphLockHandler();
   virtual void DisplayStethoscopeInfo(character*) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;

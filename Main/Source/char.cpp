@@ -275,6 +275,26 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Detecting",
+    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
+    &character::PrintBeginDetectMessage,
+    &character::PrintEndDetectMessage,
+    0,
+    0,
+    &character::DetectHandler,
+    0,
+    0
+  }, {
+    "PolymorphLocked",
+    SECRET,
+    &character::PrintBeginPolymorphLockMessage,
+    &character::PrintEndPolymorphLockMessage,
+    0,
+    0,
+    &character::PolymorphLockHandler,
+    0,
+    0
   }
 };
 
@@ -3466,6 +3486,49 @@ void character::TeleportRandomly(truth Intentional)
     GetAction()->Terminate(false);
 }
 
+void character::DoDetecting()
+{
+  material* TempMaterial;
+
+  for(;;)
+  {
+    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to detect?"),
+					  game::GetDefaultDetectMaterial());
+    TempMaterial = protosystem::CreateMaterial(Temp);
+
+    if(TempMaterial)
+      break;
+    else
+      game::DrawEverythingNoBlit();
+  }
+
+  level* Level = GetLevel();
+  int Squares = Level->DetectMaterial(TempMaterial);
+
+  if(Squares > GetAttribute(INTELLIGENCE) * (25 + RAND() % 51))
+  {
+    ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
+    Level->BlurMemory();
+    BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
+    EditExperience(INTELLIGENCE, -100, 1 << 12);
+  }
+  else if(!Squares)
+  {
+    ADD_MESSAGE("You feel a sudden urge to imagine the dark void of a starless night sky.");
+    EditExperience(INTELLIGENCE, 20, 1 << 12);
+  }
+  else
+  {
+    ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
+    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), GetPos(), 0, 0, false);
+    EditExperience(INTELLIGENCE, 30, 1 << 12);
+  }
+
+  delete TempMaterial;
+  Level->CalculateLuminances();
+  game::SendLOSUpdateRequest();
+}
+
 void character::RestoreHP()
 {
   doforbodyparts()(this, &bodypart::FastRestoreHP);
@@ -5078,6 +5141,9 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(StateIsActivated(POLYMORPH_LOCK))
+    return;
+
   if(GetType() == werewolfwolf::ProtoType.GetIndex())
     return;
 
@@ -5151,6 +5217,11 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 {
   character* NewForm = 0;
 
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return NewForm;
+  }
   if(StateIsActivated(POLYMORPH_CONTROL))
   {
     if(IsPlayer())
@@ -5626,6 +5697,18 @@ void character::PrintEndTeleportMessage() const
     ADD_MESSAGE("You suddenly realize you've always preferred walking to jumping.");
 }
 
+void character::PrintBeginDetectMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel curious about your surroundings.");
+}
+
+void character::PrintEndDetectMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You decide to rely on your own sight from now on.");
+}
+
 void character::TeleportHandler()
 {
   if(!(RAND() % 1500) && !game::IsInWilderness())
@@ -5637,6 +5720,20 @@ void character::TeleportHandler()
 
     TeleportRandomly();
   }
+}
+
+void character::DetectHandler()
+{
+  if(IsPlayer()) //the AI can't be asked position questions! So only the player can have this state really.
+  {
+    if(!(RAND() % 3000) && !game::IsInWilderness())
+    {
+      ADD_MESSAGE("Your mind wanders in search of something.");
+      DoDetecting();
+    }
+  }
+  else
+    return;
 }
 
 void character::PrintBeginPolymorphMessage() const
@@ -5655,6 +5752,28 @@ void character::PolymorphHandler()
 {
   if(!(RAND() % 1500))
     PolymorphRandomly(1, 999999, 200 + RAND() % 800);
+}
+
+void character::PrintBeginPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel incredibly stubborn about who you are.");
+}
+
+void character::PrintEndPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel more open to new ideas.");
+}
+
+void character::PolymorphLockHandler()
+{
+  if (TemporaryStateIsActivated(POLYMORPHED))
+  {
+      EditTemporaryStateCounter(POLYMORPHED, 1);
+      if (GetTemporaryStateCounter(POLYMORPHED) < 1000)
+        EditTemporaryStateCounter(POLYMORPHED, 1);
+  }
 }
 
 void character::PrintBeginTeleportControlMessage() const
@@ -9387,6 +9506,12 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
   festring Topic, Temp;
   NewForm = 0;
 
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return false;
+  }
+
   while(!NewForm)
   {
     festring Temp;
@@ -9640,7 +9765,7 @@ void character::PoisonedSituationDangerModifier(double& Danger) const
 
 void character::PolymorphingSituationDangerModifier(double& Danger) const
 {
-  if(!StateIsActivated(POLYMORPH_CONTROL))
+  if((!StateIsActivated(POLYMORPH_CONTROL)) && (!StateIsActivated(POLYMORPH_LOCK)))
     Danger *= 1.5;
 }
 

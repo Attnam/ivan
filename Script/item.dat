@@ -661,6 +661,7 @@ meleeweapon
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
+    Alias == "battle axe";
   }
 
   Config BROKEN|BATTLE_AXE;
@@ -1003,7 +1004,7 @@ pickaxe /* meleeweapon-> */
   BitmapPos = 0, 96;
   FormModifier = 35;
   NameSingular = "pick-axe";
-  Alias == "pick-ax";
+  Alias = { 3, "pick-ax", "pickaxe", "pick axe"; }
   Roundness = 20;
   WeaponCategory = AXES;
   StrengthModifier = 75;
@@ -2242,7 +2243,6 @@ cloak /* armor-> */
     MaterialConfigChances == 100;
     GearStates = LYCANTHROPY;
     EnchantmentPlusChance = 5;
-    Alias == "werewolf fur cloak";
     ArticleMode = FORCE_THE;
     CanBeWished = false;
     IsMaterialChangeable = false;
@@ -2761,6 +2761,7 @@ ring
     MainMaterialConfig == DRAGON_HIDE;
     Price = 250;
     AttachedGod = LORICATUS;
+    TeleportPriority = 1000;
   }
 
   Config RING_OF_POLYMORPH_CONTROL;
@@ -2837,6 +2838,7 @@ ring
     GearStates = INVISIBLE;
     Price = 2500;
     AttachedGod = CLEPTIA;
+    TeleportPriority = 1000;
   }
 
   Config RING_OF_ELECTRICITY_RESISTANCE;
@@ -2887,6 +2889,51 @@ ring
     MainMaterialConfig == OCTIRON;
     Price = 250;
     AttachedGod = INFUSCOR;
+  }
+
+  Config RING_OF_DETECTION;
+  {
+    Possibility = 10;
+    PostFix = "of detection";
+    MainMaterialConfig == OBSIDIAN;
+    Price = 500;
+    AttachedGod = SOPHOS;
+    GearStates = DETECTING;
+    Alias == "ring of detecting";
+  }
+
+  Config RING_OF_POLYMORPH_LOCK;
+  {
+    Possibility = 0;
+    PostFix = "of unchanging";
+    MainMaterialConfig == ICE;
+    GearStates = POLYMORPH_LOCK;
+    Price = 2500;
+    AttachedGod = SEGES;
+    TeleportPriority = 1000;
+    Alias == "ring of polymorph lock";
+  }
+
+  Config RING_OF_WORM;
+  {
+    Possibility = 1;
+    AcidResistance = 100;
+    PoisonResistance = 100;
+    NameSingular = "mutated symbiotic worm-ring";
+    MainMaterialConfig == MIND_WORM_FLESH;
+    Price = 2500;
+    AttachedGod = SCABIES;
+    GearStates = PARASITIZED;
+    TeleportPriority = 500;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBeBroken = false;
+    CanBeBurned = false;
+    Alias == "worm ring";
   }
 }
 
@@ -3644,7 +3691,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    GearStates = INFRA_VISION;
+    GearStates = INFRA_VISION|SEARCHING;
   }
 
   Config BROKEN|HELM_OF_ENLIGHTENMENT;
@@ -4405,7 +4452,7 @@ holyhandgrenade
   Price = 500;
   MainMaterialConfig == VALPURIUM;
   Adjective = "holy";
-  Alias == "gas grenade";
+  Alias == "holy grenade";
   CanBePiled = false;
   CanBeBurned = false;
 }

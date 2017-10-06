@@ -64,6 +64,8 @@
 #define ETHEREAL_MOVING (1 << 21)
 #define VAMPIRISM (1 << 22)
 #define SWIMMING (1 << 23)
+#define DETECTING (1 << 24)
+#define POLYMORPH_LOCK (1 << 25)
 
 #define HEAD 1
 #define TORSO 2
@@ -583,6 +585,9 @@
 #define RING_OF_ACID_RESISTANCE 11
 #define RING_OF_LIGHT 12
 #define RING_OF_MAGIC_RESISTANCE 13
+#define RING_OF_DETECTION 14
+#define RING_OF_POLYMORPH_LOCK 15
+#define RING_OF_WORM 16
 
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
