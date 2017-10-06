@@ -4517,6 +4517,12 @@ pantheonbook /* holybook-> */
   NameSingular = "saga";
   PostFix = "of the pantheon";
   ArticleMode = FORCE_THE;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
   MainMaterialConfig == PARCHMENT;
   Price = 500;
   Roundness = 70;
@@ -4730,4 +4736,34 @@ bansheesickle  /* meleeweapon-> */
     WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
   }
+}
+
+celestialmonograph /* holybook-> */
+{
+  DefaultSize = 30;
+  Possibility = 1; 
+  Category = BOOK;
+  DefaultMainVolume = 2500;
+  StrengthModifier = 150;
+  BitmapPos = 80, 432;
+  FormModifier = 20;
+  Adjective = "celestial";
+  NameSingular = "monograph";
+  PostFix = "of Solicitus";
+  ArticleMode = FORCE_THE;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  MainMaterialConfig == PARCHMENT;
+  Price = 1000;
+  Roundness = 70;
+  IsTwoHanded = true;
+  CreateDivineConfigurations = false;
+  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  WieldedBitmapPos = 176, 144;
+  ReadDifficulty = 1500;
+  Alias == "monograph";
 }

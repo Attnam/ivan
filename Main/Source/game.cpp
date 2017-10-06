@@ -3770,6 +3770,12 @@ void game::AdjustRelationsToAllGods(int Amount)
     GetGod(c)->AdjustRelation(Amount);
 }
 
+void game::SetRelationsToAllGods(int Amount)
+{
+  for(int c = 1; c <= GODS; ++c)
+    GetGod(c)->SetRelation(Amount);
+}
+
 void game::ShowDeathSmiley(bitmap* Buffer, truth)
 {
   static blitdata B = { 0,

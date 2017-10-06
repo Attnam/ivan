@@ -7258,6 +7258,7 @@ necromancer
     AllowUnconsciousness = false;
     DisplacePriority = 10;
     UndeadVersions = false;
+    Inventory == celestialmonograph;
   }
 }
 
