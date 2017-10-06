@@ -2320,7 +2320,7 @@ cloak /* armor-> */
     AffectsAgility = true;
     BaseEnchantment = 1;
     Price = 2500;
-    MainMaterialConfig == BLACK_LEATHER;
+    MainMaterialConfig == NYMPH_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
   }
@@ -2365,6 +2365,7 @@ cloak /* armor-> */
     MaterialConfigChances == 100;
     GearStates = VAMPIRISM;
     EnchantmentPlusChance = 5;
+    InElasticityPenaltyModifier = 30;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
     IsMaterialChangeable = false;
@@ -2377,7 +2378,7 @@ cloak /* armor-> */
   {
     Possibility = 0;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 40;
+    InElasticityPenaltyModifier = 20;
     GearStates = 0;
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
@@ -4684,6 +4685,7 @@ terrorscythe  /* meleeweapon-> */
   MaterialConfigChances = {7, 72, 48, 80, 225, 144, 1, 90; }
   Roundness = 10;
   Price = 150;
+  IsGoodWithPlants = true;
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 176, 48;
