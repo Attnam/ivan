@@ -621,6 +621,7 @@
 
 #define BRAVERY 1
 #define FEAR 2
+#define CONFUSION 3
 
 #define IMPRISONED_FARMER 1
 #define CULTIST 2

@@ -4167,6 +4167,12 @@ horn
     MainMaterialConfig == OBSIDIAN;
     PostFix = "of fear";
   }
+
+  Config CONFUSION;
+  {
+    MainMaterialConfig == OAK_WOOD;
+    PostFix = "of confusion";
+  }
 }
 
 thunderhammer /* meleeweapon-> */
@@ -4575,7 +4581,7 @@ pantheonbook /* holybook-> */
   Roundness = 70;
   IsTwoHanded = true;
   CreateDivineConfigurations = false;
-  AttachedGod = VALPURUS;
+  AttachedGod = NONE; /* it's about them all, but none in particular */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
 }
@@ -4624,6 +4630,7 @@ chastitybelt
   DamageFlags = BLUNT;
   CreateLockConfigurations = true;
   /*IsAbstract = true;*/
+  AttachedGod = DULCIS;
 }
 
 firstbornchild
