@@ -385,6 +385,7 @@ Dungeon ATTNAM;
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
           C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, meleeweapon(GRAND_STOLLEN_KNIFE), stone { Times = 10; }, GOLD banana; } }
+          y == GOLD itemcontainer(LARGE_CHEST) { ItemsInside = { 11, flamingsword { Chance = 20; }, darkaxe { Chance = 20; }, whipofthievery { Chance = 20; }, thunderhammer { Chance = 20; }, chameleonwhip { Chance = 20; }, wondersmellstaff { Chance = 20; }, daggerofvenom { Chance = 20; }, weepblade { Chance = 20; }, slowaxe { Chance = 20; }, terrorscythe { Chance = 20; }, bansheesickle { Chance = 20; } } }
           F == GOLD ring(RING_OF_FIRE_RESISTANCE);
           I == GOLD ring(RING_OF_INVISIBILITY);
           E == GOLD amulet(AMULET_OF_ESP);
@@ -417,7 +418,7 @@ Dungeon ATTNAM;
         ..#.e4##..#....b.b....#tt##3r.#..
         ..#....#..#....k.k....#Tt#Wh.L#..
         ..###..4###....p.p....###3Fi###..
-        ....#.....3.d..b.b..d.4P.A.I#....
+        ....#.....3.d..b.b..d.4y.A.I#....
         ....#.....#....k.k....#r.gEP#....
         ....###3..#....p.p....#Sd4###....
         .......#..#....b.b....#h.#.......
@@ -1287,6 +1288,7 @@ Dungeon ATTNAM;
   Level 4;
   {
     LevelMessage = "You hear rhythmic chanting of some profane ritual: \"Ia! Ia! Khaz-zadm fhtagn!\"";
+    Items = 3:5;
     DifficultyBase = 100;
     DifficultyDelta = 0;
     EnchantmentMinusChanceBase = 0;
@@ -1370,7 +1372,7 @@ Dungeon ATTNAM;
           b = 0;
           s = 0;
           C = 0;
-          N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, PURPLE_CRYSTAL skull, wand(WAND_OF_NECROMANCY); } }
+          N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, lantern, wand(WAND_OF_NECROMANCY); } }
           Z = zombie(ZOMBIE_OF_KHAZ_ZADM);
          }
       }

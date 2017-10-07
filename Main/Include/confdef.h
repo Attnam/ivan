@@ -303,6 +303,7 @@
 
 #define BRAVERY 1
 #define FEAR 2
+#define CONFUSION 3
 
 #define ROOKIE 1
 #define VETERAN 2

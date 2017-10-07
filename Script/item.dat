@@ -3760,7 +3760,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 15;
+  Possibility = 10;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -4107,7 +4107,7 @@ gorovitsweapon
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 176, 112;
     DamageFlags = SLASH;
-    BaseEnchantment = 2;
+    BaseEnchantment = 3;
     Price = 300;
   }
 }
@@ -4170,7 +4170,7 @@ horn
 
   Config CONFUSION;
   {
-    MainMaterialConfig == OAK_WOOD;
+    MainMaterialConfig == UNICORN_HORN;
     PostFix = "of confusion";
   }
 }
@@ -4466,7 +4466,7 @@ holyhandgrenade
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 15;
+  Possibility = 10;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -4487,7 +4487,7 @@ daggerofvenom
 
   Config BROKEN;
   {
-    Possibility = 10;
+    Possibility = 5;
     BitmapPos = 48, 288;
     WieldedBitmapPos = 176, 288;
     EnchantmentPlusChance = 4;
@@ -4518,7 +4518,7 @@ weepblade
 
   Config BROKEN;
   {
-    Possibility = 10;
+    Possibility = 5;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
     EnchantmentPlusChance = 4;
@@ -4616,7 +4616,7 @@ gorovitscopyoflenin /* item-> */
 chastitybelt
 {
   DefaultSize = 40;
-  Possibility = 0;
+  Possibility = 1;
   WeaponCategory = UNCATEGORIZED;
   DefaultMainVolume = 125;
   StrengthModifier = 60;
@@ -4708,9 +4708,9 @@ slowaxe  /* meleeweapon-> */
   StrengthModifier = 80;
   Adjective = "chilling";
   NameSingular = "axe";
-  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
   SecondaryMaterialConfig == ICE;
-  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
   Roundness = 20;
   Price = 150;
   IsTwoHanded = true;
@@ -4721,7 +4721,7 @@ slowaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 1;
+    Possibility = 5;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -4740,9 +4740,9 @@ terrorscythe  /* meleeweapon-> */
   StrengthModifier = 50;
   NameSingular = "scythe";
   PostFix = "of terror";
-  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, OCTIRON, BRONZE, STEEL, PSYPHER, MITHRIL; }
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, OCTIRON, PSYPHER, MITHRIL; }
   SecondaryMaterialConfig == EBONY_WOOD;
-  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 1, 90; }
+  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 1, 90; }
   Roundness = 10;
   Price = 150;
   IsGoodWithPlants = true;
@@ -4754,7 +4754,7 @@ terrorscythe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 1;
+    Possibility = 5;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -4772,9 +4772,9 @@ bansheesickle  /* meleeweapon-> */
   FormModifier = 60;
   StrengthModifier = 40;
   NameSingular = "banshee sickle";
-  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, OCTIRON, IRON, METEORIC_STEEL, SILVER, GOLD; }
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, SILVER, GOLD, MITHRIL; }
   SecondaryMaterialConfig == RUBY;
-  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 10, 10; }
+  MaterialConfigChances = {9, 30, 15, 250, 200, 150, 100, 10, 10, 90; }
   Roundness = 20;
   Price = 150;
   IsGoodWithPlants = true;
@@ -4785,7 +4785,7 @@ bansheesickle  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 1;
+    Possibility = 5;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
@@ -4799,7 +4799,7 @@ celestialmonograph /* holybook-> */
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
-  BitmapPos = 80, 432;
+  BitmapPos = 0, 144;
   FormModifier = 20;
   Adjective = "celestial";
   NameSingular = "monograph";

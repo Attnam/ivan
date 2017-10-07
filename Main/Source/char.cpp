@@ -3492,8 +3492,17 @@ void character::DoDetecting()
 
   for(;;)
   {
-    festring Temp = game::DefaultQuestion(CONST_S("What material do you want to detect?"),
-					  game::GetDefaultDetectMaterial());
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to detect?"),
+                             game::GetDefaultDetectMaterial(), true) == ABORTED)
+    {
+      if(game::TruthQuestion(CONST_S("Really cancel? [y/N]")))
+        return;
+      else
+        continue;
+    }
+
     TempMaterial = protosystem::CreateMaterial(Temp);
 
     if(TempMaterial)

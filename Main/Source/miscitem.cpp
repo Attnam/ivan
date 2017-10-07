@@ -3324,12 +3324,14 @@ void celestialmonograph::FinishReading(character* Reader)
   {
     PLAYER->EditExperience(INTELLIGENCE, 250, 1 << 12);
     PLAYER->EditExperience(WISDOM, 500, 1 << 12);
+
     game::SetRelationsToAllGods(0);
-      for(int c = 1; c <= GODS; ++c)
+
+    for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       game::GetGod(c)->SetIsKnown(false);
 
-      ADD_MESSAGE("With the help of the celestial monograph, you renounce any and all relations to the pantheon. The celestial monograph then disappears.");
+    ADD_MESSAGE("With the help of the celestial monograph, you renounce any and all relations to the pantheon. The celestial monograph then disappears.");
     RemoveFromSlot();
     SendToHell();
   }
