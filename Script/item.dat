@@ -1284,6 +1284,28 @@ scrollofteleportation /* scroll-> */
   ReadDifficulty = 50;
 }
 
+scrolloffireballs /* scroll-> */
+{
+  Possibility = 20;
+  Price = 1000;
+  PostFix = "of immolation";
+  AttachedGod = LEGIFER;
+  ReadDifficulty = 1000;
+  CanBeCloned = false;
+  IsPolymorphSpawnable = false;
+  Alias = { 2, "scroll of fireballs", "scroll of fireball"; }
+}
+
+scrollofearthquake /* scroll-> */
+{
+  Possibility = 10;
+  Price = 1000;
+  PostFix = "of earthquake";
+  AttachedGod = SILVA;
+  ReadDifficulty = 2500;
+  Alias = { 2, "scroll of earthquakes", "earthquake"; }
+}
+
 scrollofcharging /* scroll-> */
 {
   Possibility = 25;
@@ -1293,6 +1315,7 @@ scrollofcharging /* scroll-> */
   IsPolymorphSpawnable = false;
   AttachedGod = SOPHOS;
   ReadDifficulty = 500;
+  Alias = { 2, "scroll of recharge", "scroll of recharging"; }
 }
 
 nut

@@ -96,6 +96,195 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
+void scrolloffireballs::FinishReading(character* Reader)
+{
+  v2 FireBallPos = ERROR_V2;
+	
+  beamdata Beam
+  (
+    Reader,
+    CONST_S("killed by the spells of ") + Reader->GetName(INDEFINITE),
+    YOURSELF,
+    0
+  );
+	
+  ADD_MESSAGE("This could be loud...");
+
+  v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [direction keys move cursor, space accepts]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
+
+  if(Input == ERROR_V2) // esc pressed
+  {
+    ADD_MESSAGE("You choose not to summon a fireball.");
+    return;
+  }
+
+  lsquare* Square = GetNearLSquare(Input);
+
+  if((Input - Reader->GetPos()).GetLengthSquare() <= Reader->GetTeleportRangeSquare())
+  {
+    if(!Reader->IsFreeForMe(Square) || (Input == Reader->GetPos()))
+    {
+      FireBallPos = Input;
+    }
+    else
+    {
+      ADD_MESSAGE("The spell must target creatures, %s.", game::Insult());
+      return;
+    }
+  }
+  else
+  {
+    ADD_MESSAGE("You cannot concentrate yourself enough to send a fireball that far.");
+
+    if(!(RAND() % 3))
+    {
+      ADD_MESSAGE("Something very wrong happens with the spell.");
+      FireBallPos = Reader->GetPos();
+      Square = GetNearLSquare(Reader->GetPos());
+    }
+    else
+      return;
+  }
+
+  if(FireBallPos == ERROR_V2)
+    Square = GetNearLSquare(GetLevel()->GetRandomSquare(Reader));
+
+  if(Square->GetPos() == Reader->GetPos())
+  {
+    ADD_MESSAGE("The scroll explodes in your face!");
+  }
+  else
+  {
+    ADD_MESSAGE("A mighty fireball is called into existence.");
+  }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+  Square->DrawParticles(RED); 
+  Square->FireBall(Beam);
+}
+
+void scrollofearthquake::FinishReading(character* Reader)
+{
+  if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level!");
+    int c, Tunnels = 2 + RAND() % 3;
+    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
+      Tunnels = 0;
+
+    for(c = 0; c < Tunnels; ++c)
+      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
+
+    int ToEmpty = 10 + RAND() % 11;
+
+    for(c = 0; c < ToEmpty; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+        truth Correct = false;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(Square && Square->IsFlyable())
+          {
+            Correct = true;
+            break;
+          }
+        }
+
+        if(Correct)
+        {
+          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
+          break;
+        }
+      }
+
+    int ToGround = 20 + RAND() % 21;
+
+    for(c = 0; c < ToGround; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+        if(Pos == ERROR_V2)
+          continue;
+
+        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+        character* Char = Square->GetCharacter();
+
+        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+          continue;
+
+        int Walkables = 0;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(NearSquare && NearSquare->IsFlyable())
+            ++Walkables;
+        }
+
+        if(Walkables > 6)
+        {
+          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
+
+          if(Char)
+          {
+            if(Char->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s is hit by a rock falling from the ceiling!", Char->CHAR_NAME(DEFINITE));
+
+            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
+          }
+
+          Square->KickAnyoneStandingHereAway();
+          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+          break;
+        }
+      }
+
+    // Generate a few boulders in the level
+
+    int BoulderNumber = 10 + RAND() % 10;
+
+    for(c = 0; c < BoulderNumber; ++c)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+      character* MonsterHere = Square->GetCharacter();
+
+      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
+      {
+        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
+
+        if(MonsterHere)
+          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
+      }
+    }
+
+    // Damage to items in the level
+
+    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+  }
+  else
+  {
+    ADD_MESSAGE("The ground shakes slightly.");
+  }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+}
+
 truth wand::Apply(character* Terrorist)
 {
   if(Terrorist->IsPlayer()
@@ -3331,7 +3520,7 @@ void celestialmonograph::FinishReading(character* Reader)
       if(game::GetGod(c)->IsKnown())
       game::GetGod(c)->SetIsKnown(false);
 
-    ADD_MESSAGE("With the help of the celestial monograph, you renounce any and all relations to the pantheon. The celestial monograph then disappears.");
+    ADD_MESSAGE("With the help of the celestial monograph, you renounce any and all relations to the pantheon. The celestial monograph disappears.");
     RemoveFromSlot();
     SendToHell();
   }

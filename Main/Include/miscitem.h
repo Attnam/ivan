@@ -190,6 +190,19 @@ ITEM(scrollofteleportation, scroll)
   virtual void FinishReading(character*);
 };
 
+ITEM(scrolloffireballs, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+  virtual truth IsExplosive() const { return true; }
+};
+
+ITEM(scrollofearthquake, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
 ITEM(scrollofcharging, scroll)
 {
  public:
