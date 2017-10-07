@@ -1161,6 +1161,34 @@ bodyarmor /* armor-> */
     AthleteArmArmorBitmapPos = 80, 560;
     LegArmorBitmapPos = 16, 544;
   }
+
+  Config OMMEL_CUIRASS;
+  {
+    StrengthModifier = 400;
+    DefaultSize = 100;
+    DefaultMainVolume = 5000;
+    BitmapPos = 80, 176;
+    Possibility = 1;
+    NameSingular = "ommel bristler armor";
+    AttachedGod = ATAVUS;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBeBroken = false;
+    CanBeBurned = false;
+    IsDestroyable = false;
+    MainMaterialConfig == OMMEL_HAIR;
+    MaterialConfigChances == 100;
+    InElasticityPenaltyModifier = 20;
+    EnchantmentPlusChance = 5;
+    TorsoArmorBitmapPos = 48, 368;
+    ArmArmorBitmapPos = 80, 416;
+    AthleteArmArmorBitmapPos = 80, 448;
+    LegArmorBitmapPos = 16, 416;
+  }
 }
 
 goldeneagleshirt /* armor->bodyarmor-> */

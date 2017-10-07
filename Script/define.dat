@@ -523,6 +523,7 @@
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
 #define ARMOR_OF_GREAT_HEALTH 3
+#define OMMEL_CUIRASS 4
 
 #define CHEAP 1
 #define EXPENSIVE 2
