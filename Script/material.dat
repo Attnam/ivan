@@ -756,7 +756,7 @@ solid
     StrengthValue = 110;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 600;
-    Color = rgb16(211, 211, 211);
+    Color = rgb16(198, 110, 46);
     NameStem = "sidgure";
     AttachedGod = SILVA;
     NaturalForm = stick;

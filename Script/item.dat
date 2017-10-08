@@ -341,6 +341,7 @@ meleeweapon
     CanBeMirrored = true;
     BaseEnchantment = 0;
     CanBeEnchanted = true;
+    CanBePiled = false;
     AttachedGod = ATAVUS;
     WieldedBitmapPos = 176, 112;
     DamageFlags = SLASH|BLUNT;
@@ -797,6 +798,7 @@ meleeweapon
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
     GearStates = POLYMORPH|POLYMORPH_CONTROL;
   }
 
@@ -844,14 +846,14 @@ meleeweapon
     WeaponCategory = BLUNT_WEAPONS;
     DefaultMainVolume = 300; /* pan */
     DefaultSecondaryVolume = 100; /* handle */
-    StrengthModifier = 110;
+    StrengthModifier = 90;
     BitmapPos = 80, 96;
     FormModifier = 75;
     NameSingular = "frying pan";
     MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
     SecondaryMaterialConfig == PINE_WOOD;
     MaterialConfigChances = { 7, 25, 100, 50, 10, 5, 1, 1; }
-    Roundness = 50;
+    Roundness = 75;
     IsTwoHanded = true;
     AttachedGod = SEGES;
     WieldedBitmapPos = 128, 48;
@@ -881,7 +883,7 @@ banana /* materialcontainer-> */
   NameSingular = "banana";
   MainMaterialConfig == BANANA_PEEL;
   SecondaryMaterialConfig == BANANA_FLESH;
-  Alias == "gun";
+  Alias = { 2, "gun", "snack"; }
   Roundness = 15;
   CanBeBroken = true;
   /* MinCharges & MaxCharges overridden */
@@ -924,6 +926,7 @@ holybanana /* materialcontainer->banana-> */
   AllowEquip = true;
   IsValuable = true;
   CanBeWished = false;
+  CanBePiled = false;
   IsMaterialChangeable = false;
 }
 
@@ -954,6 +957,7 @@ justifier /* meleeweapon-> */
   CanBeBurned = false;
   BaseEnchantment = 16;
   CanBeEnchanted = false;
+  CanBePiled = false;
   GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
   AttachedGod = VALPURUS;
   WieldedBitmapPos = 160, 16;
@@ -988,6 +992,7 @@ neercseulb /* meleeweapon-> */
   CanBeMirrored = true;
   CanBeBroken = false;
   CanBeBurned = false;
+  CanBePiled = false;
   BaseEnchantment = 6;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 192;
@@ -1175,6 +1180,7 @@ bodyarmor /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    CanBePiled = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBeBroken = false;
@@ -1210,6 +1216,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
   CanBeBurned = false;
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
   BaseEnchantment = 10;
   InElasticityPenaltyModifier = 30;
   CanBeEnchanted = false;
@@ -1321,7 +1328,7 @@ scrolloffireballs /* scroll-> */
   ReadDifficulty = 1000;
   CanBeCloned = false;
   IsPolymorphSpawnable = false;
-  Alias = { 2, "scroll of fireballs", "scroll of fireball"; }
+  Alias = { 4, "scroll of fireballs", "scroll of fireball", "power", "magic"; }
 }
 
 scrollofearthquake /* scroll-> */
@@ -1379,6 +1386,7 @@ leftnutofpetrus /* nut-> */
   IsPolymorphable = false;
   CanBeWished = false;
   CanBeCloned = false;
+  CanBePiled = false;
   FormModifier = 15;
   AttachedGod = VALPURUS;
   IsQuestItem = true;
@@ -1715,6 +1723,7 @@ wand
     BeamEffect = BEAM_NECROMANCY;
     AttachedGod = INFUSCOR;
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
+    Alias = { 2, "necromancy", "undeath"; }
   }
 }
 
@@ -1753,6 +1762,7 @@ avatarofvalpurus
   WieldedBitmapPos = 160, 128;
   IsQuestItem = true;
   CanBeBurned = false;
+  CanBePiled = false;
 }
 
 kiwi
@@ -1810,6 +1820,7 @@ palmbranch
   AttachedGod = SILVA;
   WieldedBitmapPos = 160, 208;
   IsValuable = false;
+  Alias == "weapon";
 }
 
 whip /* meleeweapon-> */
@@ -1882,6 +1893,7 @@ backpack /* materialcontainer-> */
   MainMaterialConfig == LEATHER;
   SecondaryMaterialConfig == GUN_POWDER;
   Alias == "explosives";
+  Alias = { 4, "explosives", "explosion", "dynamite", "death"; }
   Roundness = 70;
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
@@ -1993,6 +2005,7 @@ scrolloftaming /* scroll-> */
   PostFix = "of taming";
   AttachedGod = DULCIS;
   ReadDifficulty = 100;
+  Alias = { 6, "pet", "ally", "minion", "companion", "familiar", "slave"; }
 }
 
 mine /*materialcontainer-> */
@@ -2078,6 +2091,7 @@ shield /* armor-> */
   CanBeBroken = true;
   WieldedBitmapPos = 128, 32;
   EnchantmentPlusChance = 15;
+  Alias = { 2, "defense", "protection"; }
 
   Config BROKEN;
   {
@@ -2106,6 +2120,7 @@ shield /* armor-> */
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 
   Config BROKEN|PHOENIX_SHIELD;
@@ -2140,6 +2155,7 @@ shield /* armor-> */
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 }
 
@@ -2284,6 +2300,7 @@ cloak /* armor-> */
     CanBeBurned = false;
     ArticleMode = FORCE_THE;
     CanBeEnchanted = false;
+    CanBePiled = false;
   }
 
   Config CLOAK_OF_WEREWOLF;
@@ -2300,6 +2317,7 @@ cloak /* armor-> */
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -2329,6 +2347,7 @@ cloak /* armor-> */
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 
   Config BROKEN|CLOAK_OF_ORCS;
@@ -2423,6 +2442,7 @@ cloak /* armor-> */
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -2456,6 +2476,7 @@ boot /* armor-> */
   BootBitmapPos = 16, 432;
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
+  Alias = { 3, "boots", "shoes", "moccasins"; }
 
   Config BROKEN;
   {
@@ -2473,6 +2494,7 @@ boot /* armor-> */
   Config BOOT_OF_STRENGTH;
   {
     Possibility = 10;
+    StrengthModifier = 125;
     PostFix = "of strength";
     MainMaterialConfig == TROLL_HIDE;
     MaterialConfigChances == 100;
@@ -2499,6 +2521,7 @@ boot /* armor-> */
   Config BOOT_OF_AGILITY;
   {
     Possibility = 10;
+    StrengthModifier = 125;
     PostFix = "of agility";
     MainMaterialConfig == LEATHER;
     MaterialConfigChances == 100;
@@ -2526,6 +2549,7 @@ boot /* armor-> */
   Config BOOT_OF_KICKING;
   {
     Possibility = 10;
+    StrengthModifier = 175;
     PostFix = "of kicking";
     MainMaterialConfig == IRON;
     MaterialConfigChances == 100;
@@ -2569,6 +2593,7 @@ gauntlet /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   HasNormalPictureDirection = false;
+  Alias == "glove";
 
   Config BROKEN;
   {
@@ -2586,6 +2611,7 @@ gauntlet /* armor-> */
   Config GAUNTLET_OF_STRENGTH;
   {
     Possibility = 10;
+    StrengthModifier = 110;
     PostFix = "of strength";
     MainMaterialConfig == TROLL_HIDE;
     MaterialConfigChances == 100;
@@ -2612,6 +2638,8 @@ gauntlet /* armor-> */
   Config GAUNTLET_OF_DEXTERITY;
   {
     Possibility = 10;
+    StrengthModifier = 110;
+    NameSingular = "glove";
     PostFix = "of dexterity";
     MainMaterialConfig == LEATHER;
     MaterialConfigChances == 100;
@@ -2621,6 +2649,7 @@ gauntlet /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = CLEPTIA;
     EnchantmentPlusChance = 2;
+    Alias = { 2, "gauntlet of dexterity", "gauntlets of dexterity"; }
   }
 
   Config BROKEN|GAUNTLET_OF_DEXTERITY;
@@ -2869,6 +2898,7 @@ ring
     Price = 250;
     WearWisdomLimit = 15;
     AttachedGod = SCABIES;
+    Alias = { 2, "polymorph", "change"; }
   }
 
   Config RING_OF_POISON_RESISTANCE;
@@ -2980,10 +3010,12 @@ ring
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsDestroyable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBeBroken = false;
     CanBeBurned = false;
+    CanBePiled = false;
     Alias == "worm ring";
   }
 }
@@ -3014,7 +3046,7 @@ amulet
     CanBeCloned = false;
     Price = 5000;
     AttachedGod = SEGES;
-    Alias == "AoLS";
+    Alias = { 4, "AoLS", "life", "longevity", "immortality"; }
   }
 
   Config AMULET_OF_ESP;
@@ -3039,7 +3071,7 @@ amulet
     ElectricityResistance = 15;
     AcidResistance = 2;
     PoisonResistance = 2;
-    Alias == "amulet of warding";
+    Alias = { 2, "amulet of warding", "resistance"; }
   }
 
   Config AMULET_OF_UNBREATHING;
@@ -3050,7 +3082,7 @@ amulet
     GearStates = GAS_IMMUNITY|SWIMMING;
     Price = 2000;
     AttachedGod = SCABIES;
-    Alias == "amulet of unbreathing";
+    Alias = { 2, "amulet of unbreathing", "swimming"; }
   }
 
   Config AMULET_OF_SPEED;
@@ -3064,6 +3096,7 @@ amulet
     IsMaterialChangeable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    Alias == "speed";
   }
 
   Config AMULET_OF_PHASING;
@@ -3195,6 +3228,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   WieldedBitmapPos = 160, 144;
   IsQuestItem = true;
   CanBeBurned = false;
+  CanBePiled = false;
 }
 
 corpse
@@ -3623,6 +3657,7 @@ helmet
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
   }
 
   Config HELM_OF_WILLPOWER;
@@ -3732,6 +3767,7 @@ helmet
     IsPolymorphable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+    CanBePiled = false;
     AffectsPerception = true;
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
@@ -3821,7 +3857,7 @@ flamingsword /* meleeweapon-> */
   NameSingular = "sword";
   Adjective = "flaming";
   MainMaterialConfig = { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-  SecondaryMaterialConfig = { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+  SecondaryMaterialConfig == DRAGON_HIDE;
   MaterialConfigChances = { 5, 1000, 750, 100, 25, 25; }
   Roundness = 10;
   BaseEmitation = rgb24(150, 120, 90);
@@ -3863,6 +3899,7 @@ flamingsword /* meleeweapon-> */
     IsQuestItem = true;
     CanBeBurned = false;
     CanBeBroken = false;
+    CanBePiled = false;
     BaseEnchantment = 13;
     CanBeEnchanted = true;
     ArticleMode = FORCE_THE;
@@ -3893,6 +3930,7 @@ mjolak /* meleeweapon-> */
   Alias == "Mjolak";
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
   Price = 750;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 256;
@@ -3933,6 +3971,7 @@ vermis /* meleeweapon-> */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
   Price = 500;
   AttachedGod = SOPHOS;
   WieldedBitmapPos = 160, 96;
@@ -3974,6 +4013,7 @@ turox /* meleeweapon-> */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
   Price = 250;
   AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
@@ -4079,6 +4119,7 @@ skullofxinroch
   CanBeBurned = false;
   CanBeBroken = false;
   CanBeWished = false;
+  CanBePiled = false;
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
 }
@@ -4096,6 +4137,7 @@ gorovitsweapon
   IsQuestItem = true;
   IsAbstract = true;
   CanBeBurned = false;
+  CanBePiled = false;
 
   Config GOROVITS_HAMMER;
   {
@@ -4286,6 +4328,7 @@ saalthul
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
   Alias == "Saal'thul";
   AttachedGod = CLEPTIA;
   WieldedBitmapPos = 160, 32;
@@ -4404,6 +4447,7 @@ charmlyre
   AttachedGod = DULCIS;
   WieldedBitmapPos = 176, 352;
   CanBeBurned = false;
+  Alias = { 5, "charm", "domination", "control", "peace", "world peace"; }
 }
 
 ennerhead /* head-> */
@@ -4627,6 +4671,7 @@ pantheonbook /* holybook-> */
   CanBeMirrored = true;
   CanBeBroken = false;
   CanBeBurned = false;
+  CanBePiled = false;
   MainMaterialConfig == PARCHMENT;
   Price = 500;
   Roundness = 70;
@@ -4635,6 +4680,7 @@ pantheonbook /* holybook-> */
   AttachedGod = NONE; /* it's about them all, but none in particular */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
+  Alias = { 2, "tome", "knowledge"; }
 }
 
 gorovitscopyoflenin /* item-> */
@@ -4662,6 +4708,7 @@ gorovitscopyoflenin /* item-> */
   IsPolymorphable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
+  CanBePiled = false;
 }
 
 chastitybelt
@@ -4824,7 +4871,7 @@ bansheesickle  /* meleeweapon-> */
   StrengthModifier = 40;
   NameSingular = "banshee sickle";
   MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, SILVER, GOLD, MITHRIL; }
-  SecondaryMaterialConfig == RUBY;
+  SecondaryMaterialConfig == OCTIRON;
   MaterialConfigChances = {9, 30, 15, 250, 200, 150, 100, 10, 10, 90; }
   Roundness = 20;
   Price = 150;
@@ -4862,6 +4909,7 @@ celestialmonograph /* holybook-> */
   CanBeMirrored = true;
   CanBeBroken = false;
   CanBeBurned = false;
+  CanBePiled = false;
   MainMaterialConfig == PARCHMENT;
   Price = 1000;
   Roundness = 70;
