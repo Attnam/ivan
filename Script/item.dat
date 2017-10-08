@@ -1070,6 +1070,7 @@ bodyarmor /* armor-> */
     AthleteArmArmorBitmapPos = 64, 464;
     LegArmorBitmapPos = 0, 432;
     EnchantmentPlusChance = 10;
+    Alias = { 2, "chainmail", "chain shirt"; }
   }
 
   Config BROKEN|CHAIN_MAIL;
@@ -1105,6 +1106,7 @@ bodyarmor /* armor-> */
     ArmArmorBitmapPos = 80, 416;
     AthleteArmArmorBitmapPos = 80, 448;
     LegArmorBitmapPos = 16, 416;
+    Alias = { 2, "platemail", "armour"; }
   }
 
   Config BROKEN|PLATE_MAIL;
@@ -1142,7 +1144,7 @@ bodyarmor /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SEGES;
     EnchantmentPlusChance = 2;
-    Alias == "AOgH";
+    Alias = { 4, "AoGH", "life", "health", "armor of greater health"; }
     TorsoArmorBitmapPos = 32, 464;
     ArmArmorBitmapPos = 80, 464;
     AthleteArmArmorBitmapPos = 80, 480;
@@ -1341,6 +1343,18 @@ scrollofearthquake /* scroll-> */
   Alias = { 2, "scroll of earthquakes", "earthquake"; }
 }
 
+scrollofbodyswitch /* scroll-> */
+{
+  Possibility = 1;
+  Price = 3000;
+  PostFix = "of body switch";
+  CanBeWished = false;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+  AttachedGod = INFUSCOR;
+  ReadDifficulty = 3000;
+}
+
 scrollofcharging /* scroll-> */
 {
   Possibility = 25;
@@ -1427,7 +1441,7 @@ loaf
   NamePlural = "loaves";
   MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
   MaterialConfigChances = { 3, 50, 50, 200; }
-  Alias = { 2, "food", "satiation", "nutrition"; }
+  Alias = { 3, "food", "satiation", "nutrition"; }
   Roundness = 20;
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
@@ -3047,7 +3061,7 @@ amulet
     CanBeCloned = false;
     Price = 5000;
     AttachedGod = SEGES;
-    Alias = { 4, "AoLS", "life", "longevity", "immortality"; }
+    Alias = { 3, "AoLS", "longevity", "immortality"; }
   }
 
   Config AMULET_OF_ESP;
@@ -4926,7 +4940,7 @@ ullrbone
 {
   Possibility = 1;
   DefaultMainVolume = 500;
-  StrengthModifier = 150;
+  StrengthModifier = 100;
   BitmapPos = 16, 240;
   FormModifier = 250;
   DefaultSize = 50;

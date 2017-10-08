@@ -287,6 +287,35 @@ void scrollofearthquake::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
+void scrollofbodyswitch::FinishReading(character* Reader)
+{
+  int Dir = game::DirectionQuestion(CONST_S("Choose a creature to possess. [press a direction key]"), false);
+
+  if(Dir == DIR_ERROR || !Reader->GetArea()->IsValidPos(Reader->GetPos() + game::GetMoveVector(Dir)))
+    return false;
+
+  character* ToPossess = Reader->GetNearLSquare(Reader->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
+
+  if(ToPossess)
+  {
+    if(ToPossess->CanTameWithScroll(Reader))
+    {
+      ToPossess->ChangeTeam(Reader->GetTeam());
+      Reader->RemoveFlags(C_PLAYER);
+      game::SetPlayer(ToPossess);
+      ADD_MESSAGE("Through the power of a terrifying black magic, two souls switch places with each other!");
+
+      RemoveFromSlot();
+      SendToHell();
+      ToPossess->EditExperience(INTELLIGENCE, 150, 1 << 12);
+    }
+  }
+  else
+    ADD_MESSAGE("There's no one to possess, %s!", game::Insult());
+
+  return true; // The old player's turn must end
+}
+
 truth wand::Apply(character* Terrorist)
 {
   if(Terrorist->IsPlayer()

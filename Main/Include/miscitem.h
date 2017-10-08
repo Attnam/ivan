@@ -203,6 +203,12 @@ ITEM(scrollofearthquake, scroll)
   virtual void FinishReading(character*);
 };
 
+ITEM(scrollofbodyswitch, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
 ITEM(scrollofcharging, scroll)
 {
  public:
@@ -669,7 +675,7 @@ ITEM(firstbornchild, item)
 ITEM(ullrbone, item)
 {
  public:
-  ullrbone() : TimesUsed(0), Charges(12) { }
+  ullrbone() : TimesUsed(0), Charges(8) { }
   virtual truth Zap(character*, v2, int);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsZappable(const character*) const { return true; }
