@@ -24,6 +24,8 @@ void materialcontainer::InitMaterials(const materialscript* M, const materialscr
 
 int holybanana::GetSpecialFlags() const { return ST_FLAME_1; }
 
+col16 ullrbone::GetOutlineColor(int) const { return MakeRGB16(210, 210, 210); }
+
 col16 lantern::GetMaterialColorA(int) const { return MakeRGB16(255, 255, 240); }
 col16 lantern::GetMaterialColorB(int) const { return MakeRGB16(255, 255, 100); }
 col16 lantern::GetMaterialColorC(int) const { return MakeRGB16(255, 255, 100); }
@@ -3529,4 +3531,80 @@ void celestialmonograph::FinishReading(character* Reader)
 col16 celestialmonograph::GetMaterialColorA(int) const
 {
   return MakeRGB16(40, 140, 40); 
+}
+
+truth ullrbone::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = item::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s bone of Ullr sears %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+    return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth ullrbone::Zap(character* Zapper, v2, int Direction)
+{
+  if(Charges > TimesUsed)
+  {
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+
+    beamdata Beam
+      (
+	Zapper,
+	CONST_S("killed by ") + GetName(INDEFINITE),
+	Zapper->GetPos(),
+	YELLOW,
+	BEAM_LIGHTNING,
+	Direction,
+	50,
+	0
+      );
+
+    (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
+    ++TimesUsed;
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
+}
+
+void ullrbone::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+  {
+    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << ", " << GetBaseToHitValueDescription();
+
+    if(!IsBroken())
+      Entry << ", " << GetStrengthValueDescription();
+
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
+      Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+
+    if(TimesUsed == 1)
+      Entry << ", used 1 time";
+    else if(TimesUsed)
+      Entry << ", used " << TimesUsed << " times";
+
+    Entry << ']';
+  }
+}
+
+alpha ullrbone::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
 }

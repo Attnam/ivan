@@ -1427,7 +1427,7 @@ loaf
   NamePlural = "loaves";
   MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
   MaterialConfigChances = { 3, 50, 50, 200; }
-  Alias == "food";
+  Alias = { 2, "food", "satiation", "nutrition"; }
   Roundness = 20;
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
@@ -1606,6 +1606,7 @@ wand
     BeamEffect = BEAM_RESURRECT;
     AttachedGod = SEGES;
     BreakMsg = "breaks, releasing countless green rays of highly compressed life energy";
+    Alias = { 2, "heal", "healing"; }
   }
 
   Config WAND_OF_DOOR_CREATION;
@@ -1936,7 +1937,7 @@ fiftymillionroubles
   NameSingular = "pile";
   PostFix = "of 50 million roubles";
   MainMaterialConfig == PARCHMENT;
-  Alias = { 2, "money", "riches"; }
+  Alias = { 4, "money", "riches", "gold", "wealth"; }
   Roundness = 60;
   AttachedGod = MELLIS;
   WieldedBitmapPos = 160, 128;
@@ -1979,7 +1980,7 @@ stone
   NameSingular = "stone";
   MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
   MaterialConfigChances = { 5, 300, 200, 150, 100, 50; }
-  Alias == "jewel";
+  Alias = { 2, "jewel", "gem"; }
   Roundness = 90;
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 368;
@@ -1994,7 +1995,7 @@ stone
     Price = 100;
     MainMaterialConfig == OBSIDIAN;
     IsValuable = true;
-    TeleportPriority = 20000;
+    TeleportPriority = 2000;
   }
 }
 
@@ -2005,7 +2006,7 @@ scrolloftaming /* scroll-> */
   PostFix = "of taming";
   AttachedGod = DULCIS;
   ReadDifficulty = 100;
-  Alias = { 6, "pet", "ally", "minion", "companion", "familiar", "slave"; }
+  Alias = { 8, "pet", "ally", "minion", "companion", "familiar", "slave", "friend", "help"; }
 }
 
 mine /*materialcontainer-> */
@@ -4918,5 +4919,36 @@ celestialmonograph /* holybook-> */
   AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
-  Alias == "monograph";
+  Alias = { 3, "insight", "revelation", "truth"; }
+}
+
+ullrbone
+{
+  Possibility = 1;
+  DefaultMainVolume = 500;
+  StrengthModifier = 150;
+  BitmapPos = 16, 240;
+  FormModifier = 250;
+  DefaultSize = 50;
+  Price = 1000;
+  NameSingular = "bone";
+  PostFix = "of Ullr";
+  WeaponCategory = BLUNT_WEAPONS;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  Roundness = 20;
+  WieldedBitmapPos = 160, 336;
+  MainMaterialConfig == OMMEL_BONE;
+  AllowEquip = true;
+  IsValuable = true;
+  AttachedGod = INFUSCOR;
+  GearStates = SWIMMING;
 }

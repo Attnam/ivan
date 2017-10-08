@@ -666,4 +666,24 @@ ITEM(firstbornchild, item)
   virtual col16 GetMaterialColorB(int) const;
 };
 
+ITEM(ullrbone, item)
+{
+ public:
+  ullrbone() : TimesUsed(0), Charges(12) { }
+  virtual truth Zap(character*, v2, int);
+  virtual void ChargeFully(character*) { TimesUsed = 0; }
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void Be() { }
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  int TimesUsed;
+  int Charges;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 #endif
