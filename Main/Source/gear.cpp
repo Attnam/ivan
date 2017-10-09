@@ -1201,7 +1201,7 @@ truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     }
 
     Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200));
-    return true;
+    return BaseSuccess;
   }
   else
     return BaseSuccess;
@@ -1226,7 +1226,7 @@ truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     }
 
     Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
-    return true;
+    return BaseSuccess;
   }
   else
     return BaseSuccess;
