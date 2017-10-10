@@ -350,9 +350,9 @@ class character : public entity, public id
   void DeActivateTemporaryState(long What) { TemporaryState &= ~What; }
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
-  truth TemporaryStateIsActivated(long What) const { return TemporaryState & What; }
+  truth TemporaryStateIsActivated(long What) const;
   truth EquipmentStateIsActivated(long What) const { return EquipmentState & What; }
-  truth StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
+  truth StateIsActivated(long What) const;
   truth LoseConsciousness(int, truth = false);
   void SetTemporaryStateCounter(long, int);
   void DeActivateVoluntaryAction(cfestring& = CONST_S(""));
@@ -436,6 +436,7 @@ class character : public entity, public id
   virtual int GetEquipments() const { return 0; }
   virtual sorter EquipmentSorter(int) const { return 0; }
   virtual void SetEquipment(int, item*) { }
+  truth IsESPBlockedByEquipment () const;
   void AddHealingLiquidConsumeEndMessage() const;
   void AddSchoolFoodConsumeEndMessage() const;
   void AddSchoolFoodHitMessage() const;
