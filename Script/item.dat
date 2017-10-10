@@ -464,7 +464,7 @@ meleeweapon
     MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
     Roundness = 30; /* we count the handle, too */
     IsTwoHanded = true;
-    AttachedGod = CRUENTUS;
+    AttachedGod = LEGIFER;
     WieldedBitmapPos = 160, 192;
     EnchantmentPlusChance = 10;
   }
@@ -654,7 +654,7 @@ meleeweapon
     MaterialConfigChances = { 7, 1500, 1000, 750, 100, 25, 25, 5; }
     Roundness = 30;
     IsTwoHanded = true;
-    AttachedGod = LORICATUS;
+    AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
@@ -3257,7 +3257,7 @@ turox /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   Price = 250;
-  AttachedGod = CRUENTUS;
+  AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
   EnchantmentPlusChance = 2;
 
@@ -3517,7 +3517,7 @@ thunderhammer /* meleeweapon-> */
   CanBeUsedBySmith = true;
   Price = 500;
   BaseEmitation = rgb24(130, 130, 130);
-  AttachedGod = TERRA;
+  AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 16;
   EnchantmentPlusChance = 2;
 
