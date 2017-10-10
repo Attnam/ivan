@@ -437,18 +437,23 @@ farmer
   HostileReplies == "\"Did you think I use this axe only to chop wood?\"";
   FriendlyReplies =
   {
-    6,
+    11,
     "\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
     "@Dd seems suspicious. \"You look like one from Luppliva! Go away!\"",
     "@Dd sighs: \"Again polar bears ate my cattle...\"",
     "\"I would like to be like Ivan. Ivan is a good worker.\"",
     "\"Have you heard about the Justice Legion of Attnam? What? No, I have not. It's forbidden to know anything about them.\"",
+    "\"I'd better not see you flirt with my wife, or else...\"",
+    "\"You! Ain't you from Mondedr, stranger?! I'll be watching you.\"",
+    "\"Eh?\"",
+    "\"What?\"",
+    "@Dd boasts about @sp collection of shovels.",
     "\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
   }
   AttachedGod = SEGES;
-  ScienceTalkPossibility = 33;
+  ScienceTalkPossibility = 20;
   ScienceTalkIntelligenceModifier = 5;
-  ScienceTalkWisdomModifier = 10;
+  ScienceTalkWisdomModifier = 2;
   ScienceTalkIntelligenceRequirement = 10;
   ScienceTalkWisdomRequirement = 10;
   ScienceTalkName =
@@ -470,11 +475,14 @@ farmer
     HostileReplies == "\"You don't have the balls to kill me!\"";
     FriendlyReplies =
     {
-      3,
-      "\"Let's just say that Petrus' wife No. 3 was beautiful and I wasn't careful.\"",
+      5,
+      "\"Let's just say that Petrus' wife No. 3 was beautiful and I wasn't careful.\"",
       "\"Would you have a nut to spare?\"",
+      "\"Eh?\"",
+      "\"Huh?\"",
       "\"Please, tell me: How does the sunshine feel on your skin? I don't remember.\"";
     }
+    UndeadVersions = false;
   }
 
   Config CULTIST;
@@ -494,9 +502,37 @@ farmer
     HostileReplies == "\"You dare desecrate the Tomb?!\"";
     FriendlyReplies =
     {
-      3,
+      31,
       "\"Praised be Cruentus!\"",
       "\"Praised be Infuscor!\"",
+      "\"Blood for Cruentus! Souls for Infuscor!\"",
+      "\"Long, long time ago, there was a War in Heavens. Valpurus rose to usurp the throne of Mortifer, then King of Gods, and eventually triumphed. After his armies conquered all Heavens, Valpurus murdered Mortifer and banished him into the darkness beyond stars.\"",
+      "\"To prevent the destruction of the very world they were fighting for, Mortifer placed a powerful geas upon all gods that prevents them from ever entering the world. Thus, even the primordial War in Heavens was fought by the many priests and other servants the gods have acquired and empowered.\"",
+      "\"The original Order of the Dark Knights was established by Cruentus nearly three millennia ago, to battle the knights templar of Valpurus during the ancient War in Heavens.\"",
+      "\"Today, the dark knights have splintered into two distinct branches, the Unholy Order of Infuscor and the Dark Knights of Cruentus, plus a handful of fringe cults.\"",
+      "\"All dark knights are still formally united under the leadership of a grand master dark knight, though how much do masters of each group heed the orders of their grand master depends entirely upon his or her power and authority.\"",
+      "\"The name of the first grand master dark knight was lost to history, yet his deeds remain. Legends say he was more a daemon than a man. He even won the favour of Mortifer and was given the newly forged Neerc Se-ulb to wield against the swarming armies of Light.\"",
+      "\"The first grand master dark knight led his armies from victory to victory, but pride was his undoing. Believing that none could defeat him, he challenged Pervetus, the high priest of Valpurus, to a duel. At first, it seemed to quickly be turning into another easy victory... until his mace-arm was severed.\"",
+      "\"When the first grand master dark knight fell and Neerc Se-ulb was lost for a time, Mortifer vowed to never lend his mace again but to a true champion of Chaos. But Cruentus trusted in the power of his dark knights and the next grand master received the terrible halberd named Mjolak to crush all who would oppose the god of blood.\"",
+      "\"The second grand master dark knight was a son of the first one. He swore an oath of revenge, to slay the high priest of Valpurus in honor of his father's death. Yet his name was erased from all records to clean the stain of shame he brought upon his family.\"",
+      "\"The second grand master dark knight ruthlessly crushed all resistance and many an enemy fled even before battle, for his trumpeters used horns of fear to devastating effect. Where the father took nearly a decade to slowly force valpurian troops back, the son brought his army of dark knights before the gates of the Citadel of Valpurus in only a few years.\"",
+      "\"As his men razed and burned the once-mightly Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
+      "\"In a hubris of an easy victory, the second grand master dark knight turned his back to the dead high priest Pervetus he just slain and did not see a strange glow of a magical amulet that brought Pervetus back with renewed vigor. The high priest lifted Justifier and with a single mightly blow, cut off both of the grand master's hands. And in a single moment of weakness, the grand master shamed his family for the ages to come, for he didn't face death with dignity, but panicked and ran for his life.\"",
+      "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. His two crossed flaming swords are still found on the banner of the grand master dark knights to this day.\"",
+      "\"Some sources claim Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted.\"",
+      "\"In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, earning him the sobriquet of 'Xinroch the Flame of Chaos'.\"",
+      "\"While his predecessors were beasts on the battlefield and masters of the military arts of tactics and strategy, Xinroch was well-versed in the use of another weapon they rarely considered - diplomacy. He conquered a land - then used the fear to gain ten times more in a fraction of time.\"",
+      "\"Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished.\"",
+      "\"Even Ischaldirh, the champion of Infuscor since times immemorial, who always thought of warriors as nothing more than brutes and uncivilized savages, eventually befriended Xinroch and accompanied him on many a campaign. Not even demigods could stand in their way.\"",
+      "\"Just as Xinroch outlived high priest Pervetus and took all his lands, years caught up with Xinroch at last after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. Only that which already died and was raised to undeath or which ascended beyond this world is truly immortal.\"",
+      "\"During one of the countless battles late in his life, Xinroch lost one of the iconic ruby flaming swords he wielded most of his life. The dwarves of Khaz-zadm forged an arcanite shield for him, but it was clear to everyone his prime years have irreversibly passed.\"",
+      "\"In his declining years, Xinroch heavily funded research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life.\"",
+      "\"Xinroch died in a glorious battle. His army crushed the invasion of frost giants while Xinroch himself, by then of venerable age, dueled and slayed their jarl. Yet his years and exhaustion took their toll and Xinroch could not fend off the treacherous dagger his most trusted lieutenant turned against him. Old grand master slain and the battle won, this second-in-command became the new grand master dark knight.\"",
+      "\"Xinroch's successor feared his former master so much he eventually resigned his title of the grand master dark knight and entered the Tomb, to remain enternally vigilant as a keeper of Xinroch's grave and prevent Xinroch's resurrection and terrible revenge.\"",
+      "\"When Xinroch brought dark knights and dark mages together in a peculiar alliance, even their two ever-rival gods set aside their differences for a time. What none of their worshippers could expect, though, was the child born from the blood of Cruentus and the dark magic of Infuscor, the first vampire.\"",
+      "\"This Tomb was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory. Let his majestic glory never be forgotten!\"",
+      "\"Some believe it is possible to bring our lord Xinroch back. Whether through high necromancy or some dark miracle, he might be able to lead his faithful again!\"",
+      "\"It was a great shame to the dark templars when several decades ago, an unknown necromancer managed to slip past their guards and animate the skeleton of Xinroch in a mockery of his once-living might. Whether the spell was cast with belief that it could truly bring Xinroch back, or with utmost disrespect for the dearly departed, the dark templars swore they will never allow another man or woman to enter their lord's resting place.\"",
       "\"All hail our mighty lord Xinroch.\"";
     }
     ScienceTalkPossibility = 0;
@@ -544,15 +580,42 @@ guard
     ClothColor = rgb16(130, 80, 30);
     FriendlyReplies =
     {
-      4,
+      7,
       "@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got transferred?\"",
       "\"Lions killed a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
       "\"This place's as hot as the elemental plane of fire! I want back home.\"",
-      "\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
+      "\"What lousy pay we're getting here!\"",
+      "\"The food's not fit for orcs!\"",
+      "\"My feet hurt, I've been on them all day!\"",
+      "\"New Attnam, damn, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
     }
     DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
     AutomaticallySeen = true;
     DisplacePriority = -5;
+  }
+
+  Config TRAINEE;
+  {
+    AttributeBonus = -20;
+    Helmet = BIRCH_WOOD helmet(FULL_HELMET);
+    BodyArmor = BIRCH_WOOD bodyarmor(PLATE_MAIL);
+    RightWielded = BIRCH_WOOD BIRCH_WOOD meleeweapon(LONG_SWORD);
+    LeftWielded = BIRCH_WOOD shield;
+    Adjective = "trainee";
+    CWeaponSkillHits = { 2, 20, 20; }
+    PanicLevel = 50;
+    ClothColor = rgb16(130, 80, 30);
+    FriendlyReplies =
+    {
+      5,
+      "\"Why do we have to practise with these training swords? I want a real blade!\"",
+      "\"One day, I will be in the personal guard of the high priest himself!\"",
+      "\"Being a guard is a dream job. You get vodka, you get responsibility, you get merits. And sometimes, you get to fight amazons.\"",
+      "\"I hope someone will attack soon, so that I can save many people and prove myself a hero!\"",
+      "\"What is the moral difference between a civilian and a citizen? A citizen accepts personal responsibility for killing the high priest's enemies. A civilian does not. I am proud to call myself a citizen.\"";
+    }
+    HostileReplies == "\"I'm ready! I will fight you! I will kill you!\"";
+    DeathMessage = "@Dd dies screaming: \"Please, no! I don't want to die!\"";
   }
 
   Config VETERAN;
@@ -569,12 +632,14 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      9,
+      11,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "@Dd snorts.",
       "@Dd spits on the ground.",
       "\"...\"",
       "\"Hmph.\"",
+      "\"Anything you say can be used against you.\"",
+      "\"Put that weapon away before you hurt someone!\"",
       "\"Don't even think of breaking rules.\"",
       "\"The high priest is my idol. I would want a sword as big as his!\"",
       "\"Don't talk to the prisoners in the Cellar, or you might end up amongst them.\"",
@@ -620,12 +685,16 @@ guard
     ClothColor = rgb16(220, 220, 220);
     FriendlyReplies =
     {
-      6,
+      10,
       "@Dd shudders in the freezing air. \"Boy this rusty plate mail is cold in winter!\"",
       "@Dd sighs: \"Why didn't I choose an office career... An inquisitor, for instance.\"",
       "@Dd seems very suspicious. \"Do you have the papers?\"",
       "\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
       "\"Through brightest day, through blackest night no evil shall escape my sight!\"",
+      "@Dd sighs: \"I need a drink...\"",
+      "\"Don't even think about littering!\"",
+      "\"Jaywalking is strictly forbidden.\"",
+      "\"The high priest sees everything, anyway, so why am I stuck patrolling here?\"",
       "\"Again I'm all white! The master guard doesn't like me bringing snow into the barracks...\"";
     }
     Inventory == lantern;
@@ -679,12 +748,13 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      6,
+      7,
       "@Dd sounds annoyed. \"Why do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
       "\"Don't believe Haedlac if he boasts about that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
       "@Dd shouts excitedly: \"Attnam victoor!\"",
       "\"We are the Imperial Guard. Bow.\"",
       "\"Hi! You look fabulous today!\"",
+      "\"Out of my way, scum!\"",
       "\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
     }
   }
@@ -720,17 +790,28 @@ guard
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
-      10,
+      14,
       "\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
       "\"My great-grandfather, Sir Haedlac Galladon IV, once told me a story he heard from his great-grandfather: That when the young Petrus lead the Revolution, his beard was only one foot long. Not that I would believe such urban legends.\"",
       "\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
       "\"See the amulet? Don't think badly of the Government.\"",
+      "\"No crime can be tolerated. Justice shall tower over freedom!\"",
+      "\"In my left hand, judgement - in my right, retribution!\"",
+      "\"Those Shining Knights think they are above law, delivering 'justice' as they see fit. A law is a law, even for a paladin.\"",
+      "\"I will never allow vigilantes in Attnam. Lady Decora must learn her place.\"",
       "\"Enemy of my enemy is still my enemy, but much easier to double cross.\"",
       "\"You can't make an omelet without ruthlessly crushing dozens of eggs beneath your steel boot and then publicly disemboweling the chickens that laid them as a warning to others.\"",
       "\"I'm the Attnamese Cardinal of Peace. I shall bring peace to the whole world, one nation at a time.\"",
       "\"Stop, citizen! You are guilty of a thought-crime! I thereby condemn you to re-education by the hand of the master torturer! Tee hee - just kidding. But you should have seen your face!\"",
       "\"I'm the seventh knight of my family line in the service of Petrus. My great-great-great-great-grandfather received knighthood after he helped Petrus overthrow High Priest Priscus.\"",
       "\"The house of Galladon has served Petrus ever since he took over.\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"Your transgressions end here!\"",
+      "\"My mandate is absolute. I am above question, above doubt. Valpurus guides me and commands your destruction.\"",
+      "\"There is mercy for the repentant - for you, there is punishment and death!\"";
     }
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
@@ -754,10 +835,15 @@ guard
     UndeadVersions = false;
     FriendlyReplies =
     {
-      4,
+      9,
       "@Dd says helplessly: \"I know, right? Purple. It had to be Infuscor's favourite color.\"",
       "\"Don't even think of disturbing the Tomb.\"",
       "\"They say Xinroch's restless soul dwells below. I heard it guards a portal to another dimension. I wouldn't be caught dead going through there.\"",
+      "\"Souls for Infuscor!\"",
+      "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title.\"",
+      "\"Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished.\"",
+      "\"This Tomb was erected on the battlefield where Xinroch was slain, replacing the old temple ravaged and desecrated during the last battle.\"",
+      "\"Today, the dark knights have splintered into two distinct branches, the Unholy Order of Infuscor and the Dark Knights of Cruentus, plus a handful of fringe cults.\"",
       "@Dd mutters. \"Hundreds of years guarding this Tomb. I wish those necromancers would get on with it!\"";
     }
   }
@@ -776,13 +862,14 @@ guard
     LeftRing = ring(RING_OF_POISON_RESISTANCE);
     RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = ILLITHIUM boot { Enchantment = 2; }
-    DefaultName = "High Lord Kauhistuttava";
+    DefaultName = "High Lady Kauhistuttava";
     Adjective = "master tomb";
     CWeaponSkillHits = { 2, 2000, 2000; }
     RightSWeaponSkillHits = 200;
     LeftSWeaponSkillHits = 200;
     PanicLevel = 5;
     TamingDifficulty = NO_TAMING;
+    Sex = FEMALE;
     IsUnique = true;
     IsNameable = false;
     CanBeCloned = false;
@@ -792,12 +879,17 @@ guard
     NaturalSparkleFlags = CLOTH_COLOR;
     FriendlyReplies =
     {
-      5,
-      "\"This temple served the dark knights during Xinroch's leadership, when he brought the forces of Infuscor and Cruentus together for the first time.\"",
-      "\"We await the return of Xinroch to lead the forces of darkness into battle against the High Priest of Valpurus!\"",
-      "\"Since Xinroch was lord, all the Master dark knights have come here to kneel at the altar of Infuscor. The next Master dark knight would be chosen by Infuscor herself.\"",
+      10,
+      "\"An old temple of the Dark Gods once stood here, during Xinroch's leadership. Here he declared himself the grand master dark knight. Here he brought the forces of Infuscor and Cruentus together for the first time. Here he died.\"",
+      "\"This Tomb was erected on the battlefield where Xinroch was slain, replacing the old temple ravaged and desecrated during the last battle.\"",
+      "\"Xinroch's successor feared his former master so much he eventually resigned his title of the grand master dark knight and entered the Tomb, to remain enternally vigilant as a keeper of Xinroch's grave and prevent Xinroch's resurrection and terrible revenge.\"",
+      "\"We await the return of our lord Xinroch to lead the forces of Darkness into battle against the High Priest of Valpurus!\"",
+      "\"Since Xinroch was the grand master dark knight, all the masters of the Unholy Order of Infuscor have come here to kneel at the altar. The next master of the Unholy Order would be chosen by Infuscor herself.\"",
+      "\"All dark knights are still formally united under the leadership of a grand master dark knight, though how much do masters of each group heed the orders of their grand master depends entirely upon his or her power and authority.\"",
       "\"The amulet? Heh, good insurance policies are hard to come by.\"",
-      "\"Be careful when entering the Tomb to pay homage. If you encounter the Templars, they do not like disturbances!\"";
+      "\"Some believe it is possible to bring our lord Xinroch back. Whether through high necromancy or some dark miracle, he might be able to lead his faithful again!\"",
+      "\"It was a great shame to the dark templars when several decades ago, an unknown necromancer managed to slip past their guards and animate the skeleton of Xinroch in a mockery of his once-living might. Whether the spell was cast with belief that it could truly bring Xinroch back, or with utmost disrespect for the dearly departed, the dark templars swore they will never allow another man or woman to enter their lord's resting place.\"",
+      "\"Be careful when entering the Tomb to pay homage. If you encounter the dark templars, they do not like disturbances!\"";
     }
     IsImmuneToItemTeleport = true;
     AllowUnconsciousness = false;
@@ -827,6 +919,60 @@ guard
       "@Dd looks bored.",
       "\"This is the Tomb of the Unknown Soldier! His name was Lamusius! Oops.\"",
       "\"Not that I think about it, I was reassigned as an honor guard after that huge screw-up. I wonder if... Nah, it's probably just a coincidence.\"";
+    }
+  }
+
+  Config EMISSARY;
+  {
+    AttributeBonus = 30;
+    DefaultIntelligence = 20;
+    DefaultWisdom = 20;
+    EyeColor = rgb16(0, 153, 255);
+    SkinColor = rgb16(230, 140, 100);
+    ClothColor = rgb16(128, 128, 128);
+    HeadBitmapPos = 96, 368;
+    Helmet = 0;
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = OCTIRON OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
+    RightGauntlet = STEEL gauntlet { Enchantment = 2; }
+    RightBoot = STEEL boot { Enchantment = 2; }
+    DefaultName = "Sir Lancelyn";
+    NameSingular = "emissary";
+    PostFix = "of Aslona";
+    CWeaponSkillHits = { 2, 500, 500; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 50;
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    TamingDifficulty = 25;
+    AttachedGod = CRUENTUS;
+    FriendlyReplies =
+    {
+      11,
+      "\"I shouldn't be saying this so openly, but Aslona is in dire straits and *needs* any help it can get.\"",
+      "\"I've heard other emissaries were sent from Aslona even to goblin lands to negotiate assistance.\"",
+      "\"After the old king was assassinated and the Rebellion started, Aslona lost much of its former power.\"",
+      "\"I will see the Rebellion crushed and every last rebel executed for their crimes!\"",
+      "\"My king is young and inexperienced; his army just barely holds the rebels back. My only hope is I can return to him successful.\"",
+      "\"Bandits are roving free through the forests of Aslona; you can never be sure which town supports the king and which the Rebellion. What happened to my country?\"",
+      "\"My father was a trusted general of the old king, and the first one to meet with the rebel army on a battlefield after the regicide. Alas, he was betrayed by his slave-soldiers and murdered along with all of his loyal knights.\"",
+      "\"I see a representative of the orcish freeholds arrived. Don't trust him! Those orcish vultures would love to feast on the carcass of Aslona, but I won't let that happen.\"",
+      "\"I hope the negotiations over in goblin lands go well. As I heard, my king offers to free all goblin slaves in Aslona in exchange for military assistance against the orcish freeholds.\"",
+      "\"I don't understand why the high priest tolerates that filthy orc here! No orc can be trusted, they are all raiders and murderers with no honor.\"",
+      "\"The orcish freeholds have set their sights on aslonian wealth long ago and were a bother on the borders since then. Right now, I don't know whether we are strong enough to fend them off by ourselves.\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"Die, you treacherous bastard!\"",
+      "\"What are you doing? I have a diplomatic immunity!\"",
+      "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
     }
   }
 }
@@ -883,7 +1029,7 @@ shopkeeper
       4,
       "\"Welcome to the cheapest banana shop in the world!\"",
       "@Dd sighs: \"It's depressing that the locals have so little purchasing power... But Mellis bless the tourists!\"",
-      "\"No, I don't sell spoiled food. Decos's alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
+      "\"No, I don't sell spoiled food. Decos' alchemists have pumped so many magic potions into the soil that nothing here will go bad before you buy it.\"",
       "\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
     }
     AutomaticallySeen = true;
@@ -928,11 +1074,17 @@ shopkeeper
     DefaultName = "Merka";
     FriendlyReplies =
     {
-      3,
+      8,
       "@Dd sighs: \"I wonder why I have so few customers these days...\"",
       "\"The topmost reason why I work here is that the monsters devour tax collectors.\"",
+      "\"Elpuri, eh? Folks say he hatched as a light frog in the Cathedral of Attnam. Yet his voracious appetite quickly set him apart. He ate and grew until his swollen bulk dwarfed even the largest of the giant dark frogs.\"",
+      "\"I've heard that Elpuri once was the favourite pet of Petrus. When a prisoner outlived their usefulness, the high priest threw the poor soul to Elpuri. Yet such morbid meals only darkened Elpuri's blood and did nothing to sate his ever-growing hunger.\"",
+      "\"After being renounced by Petrus, Elpuri fled the Cathedral and found refuge here in these caves, where he bides his time to build an army of dark frogs and strike back against the high priest.\"",
+      "\"Elpuri is also known by some as the Devourer. His hunger is truly unchecked - he is said to have fathered generations of dark frogs, yet devoured them faster than they could flood and torment the world.\"",
+      "\"The monsters don't really bother me, no. Not even they are stupid enough to want to be on the bad side of the Guild.\"",
       "\"The monsters don't attack me, because of our mutually profitable contract.\"";
     }
+    HostileReplies == "\"Fool! No one messes with the Guild and lives!\"";
   }
 
   Config XINROCH_TOMB;
@@ -971,6 +1123,21 @@ priest
   MoveType = WALK|SWIM;
   IsAbstract = true;
   Inventory == potion { Times = 2; SecondaryMaterial = ANTIDOTE_LIQUID; }
+  FriendlyReplies =
+  {
+    3,
+    "\"May @Gd be with you.\"",
+    "\"Bless thee, child.\"",
+    "@Dd smiles at you in a comforting manner.";
+  }
+  HostileReplies =
+  {
+    4,
+    "\"Die, infidel!\"",
+    "\"Divine wrath upon thee!\"",
+    "\"Thou shalt pay for thy sins!\"",
+    "\"I shall punish you in the name of @Gd.\"";
+  }
 
   Config VALPURUS;
   {
@@ -1022,6 +1189,14 @@ priest
       "\"Thus spake Valpurus: 'I am the King of Gods, Valpurus. Thou shalt praise no other gods before me.\"",
       "@Dd smirks: \"I would not wish to startle you, but thanks to this amulet, I will always know if you're telling me the truth.\"",
       "@Dd frowns: \"In thy prayers thou must understand Valpurus is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray to Him when He hath called thee a Champion!\"";
+    }
+    HostileReplies =
+    {
+      4,
+      "\"Cleanse! Purge! Kill!\"",
+      "\"Valpurus guides my weapon.\"",
+      "\"Prepare to meet @Gd, fool!\"",
+      "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
     }
   }
 
@@ -1092,6 +1267,7 @@ priest
     HairColor = rgb16(64, 0, 64);
     EyeColor = rgb16(128, 0, 64);
     AttachedGod = INFUSCOR;
+    DefaultName = "Praecantrix";
     NameSingular = "priestess";
     PostFix = "of Infuscor";
     Sex = FEMALE;
@@ -1106,8 +1282,119 @@ priest
     KnownCWeaponSkills == BLUNT_WEAPONS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
-    FriendlyReplies == "@Dd speaks: \"Can't you see I'm busy, infidel? One of these days I'll summon Him back, and Chaos will reign forever!\"";
+    FriendlyReplies =
+    {
+      10,
+      "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live.\"",
+      "\"Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished.\"",
+      "\"This Tomb was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory. Let his majestic glory never be forgotten!\"",
+      "\"I know it is possible to bring our lord Xinroch back. Whether it takes magic or miracle, he will lead his faithful again!\"",
+      "\"Praised be Infuscor!\"",
+      "\"Souls for Infuscor!\"",
+      "\"All hail our mighty lord Xinroch.\"";
+      "\"One of these days I'll summon our lord Xinroch back, and Chaos will reign forever!\"",
+      "\"Oh, you like my tattoos? Every priest of Infuscor gets them as a part of their ordination. A holy purple ink is used to tattoo the entirety of the holy book of Infuscor over the initiate's body, so that the wise words may guide them through the rest of their lives.\"",
+      "\"Can't you see I'm busy, infidel?\"";
+    }
     UndeadVersions = false;
+  }
+
+  Config LEGIFER; /* paladin */
+  {
+    DefaultArmStrength = 23;
+    DefaultLegStrength = 23;
+    DefaultDexterity = 37;
+    DefaultAgility = 37;
+    DefaultEndurance = 30;
+    DefaultPerception = 35;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 37;
+    DefaultCharisma = 55;
+    DefaultMana = 30;
+    HairColor = rgb16(140, 60, 60);
+    EyeColor = rgb16(4, 93, 28);
+    ClothColor = rgb16(224, 224, 224);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 32, 128;
+    ArmBitmapPos = 64, 80;
+    LegBitmapPos = 0, 64;
+    TotalVolume = 40000;
+    TotalSize = 165;
+    Helmet = MITHRIL helmet(FULL_HELMET);
+    Amulet = BLUE_CRYSTAL amulet(AMULET_OF_WARDING);
+    BodyArmor = MITHRIL bodyarmor(PLATE_MAIL);
+    Cloak = ANGEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE);
+    Belt = MITHRIL belt;
+    RightWielded = MITHRIL thunderhammer { Enchantment = 2; }
+    LeftWielded = MITHRIL shield { Enchantment = 2; }
+    RightRing = ring(RING_OF_TELEPORT_CONTROL);
+    LeftRing = ring(RING_OF_INFRA_VISION);
+    RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = MITHRIL boot { Enchantment = 2; }
+    DefaultName = "Lady Decora";
+    Adjective = "shining";
+    NameSingular = "knight";
+    PostFix = "of Legifer";
+    AttachedGod = LEGIFER;
+    Sex = FEMALE;
+    AttackStyle = USE_ARMS|USE_LEGS;
+    KnownCWeaponSkills = { 4, UNARMED, KICK, BLUNT_WEAPONS, SHIELDS; }
+    CWeaponSkillHits = { 4, 200, 200, 500, 500; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 0; /* paladins are immune to fear */
+    TamingDifficulty = 35;
+    IsUnique = true;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    CanBeGenerated = false;
+    UndeadVersions = false;
+    IsImmuneToLeprosy = true; /* paladins are immune to diseases */
+    FriendlyReplies =
+    {
+      15,
+      "\"Legifer is the All-Seeing Sun. He sees and remembers every your deed until you die and are judged at the Last Court of Heavens.\"",
+      "\"Judge, but do not condemn. Anybody can be redeemed.\"",
+      "\"I am one of the last Shining Knights. And now I am stuck in this place, because the High Priest won't let me leave, nor will he allow me to do anything.\"",
+      "\"The Order of the Shining Knights was founded by my forebears to fight the Dark Knights of Xinroch.\"",
+      "\"The Shining Knights once were a proud and powerful order, but after the fateful defeat at the Fortress of Prym, only a handful of wandering knights remained.\"",
+      "\"The mantle of a Shining Knight is passed down in a family. I was bequeathed knighthood by my mother, who succeeded her father, and so on since the days of Prym.\"",
+      "\"All Shining Knights bear the symbol of the All-Seeing Sun, for Legifer guides us in our wanderings.\"",
+      "\"Every Shining Knight wields an enchanted mace. A legend goes that during the battle of Prym, Legifer blessed the mace of every His knight and named them all Turox.\"",
+      "\"My mother died a hero, protecting a village from an elven onslaught. Alas, our family heritage, the blessed mace 'Turox', was lost with her death.\"",
+      "\"This hammer was forged for me by a good friend. When he was but a baby, he lost his home. Yet he managed to revive all the craft and artistry of the destroyed dwarven city of Khaz-zadm and I will hold this hammer against all evil to honor the legacy of his people.\"",
+      "\"Legifer helps us find and uproot all evil. May His holy flames scorch all sins away.\"",
+      "\"I will pray for you and good luck in your quest. May His holy flames guide your way.\"",
+      "\"I was sent to Attnam by a vision from Legifer. I didn't understand at first, but now... Now I'm starting to see.\"",
+      "\"There is no being so evil that the light of His holy flames cannot reach them and raise them up.\"",
+      "\"The four Cardinals... Foul thoughts blacken the soul, but sometimes, I can't help myself.\"";
+    }
+    HostileReplies =
+    {
+      6,
+      "\"You can still come back. If you are willing, I can help you.\"",
+      "\"Please. I beg of you, lay down your weapons.\"",
+      "\"If you refuse to seek repentance in this life, then I pray you seek it in the next.\"",
+      "\"There is still good in you! I can feel it. It's not too late to turn back.\"",
+      "\"If you strike me down, know that I will blaze a trail to the Heavens for you and pray that you will someday join me there.\"",
+      "\"I'm sorry. I'm sorry for you.\"";
+    }
+    DeathMessage = "@Dd dies with a last few words: \"I forgive you.\"";
+    ScienceTalkPossibility = 10;
+    ScienceTalkIntelligenceModifier = 15;
+    ScienceTalkWisdomModifier = 15;
+    ScienceTalkCharismaModifier = 15;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 20;
+    ScienceTalkName =
+    {
+      15,
+      "knighthood", "law", "chivalry", "honorable death", "divine truths",
+      "history", "moral code", "divine wisdom", "warfare", "secret teachings",
+      "tradition", "knightly orders", "heraldry", "quests", "genealogy";
+    }
   }
 }
 
@@ -1156,7 +1443,13 @@ oree
   CanBeCloned = false;
   Inventory == can { MainMaterial = IRON { Volume = 10; } SecondaryMaterial = PEPSI { Volume = 330; } }
   DefaultName = "Oree";
-  HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
+  HostileReplies =
+  {
+    3,
+    "@Dd prays to @Gd.",
+    "\"You have slain Elpuri. Now nothing will interfere with my plans! Fufufu!\"",
+    "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
+  }
   FleshMaterial = DAEMON_FLESH;
   DeathMessage = "@Dd vomits blood for one last time and rasps: \"Victory. A hollow and ridiculous notion.\"";
   AttachedGod = MORTIFER;
@@ -1200,8 +1493,23 @@ darkknight
   IsAbstract = true;
   KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
   ClassStates = INFRA_VISION;
-  HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
-  FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
+  HostileReplies =
+  {
+    3,
+    "\"Blood for Cruentus!\"",
+    "\"You are already dead.\"",
+    "@Dd yells: \"For Mortifer I shall slay you!\"";
+  }
+  FriendlyReplies =
+  {
+    6,
+    "\"Reach the Heavens through violence, comrade.\"",
+    "\"Blood for Cruentus!\"",
+    "\"Fear is not a shame, it's a weapon. Fear shall never reign over me, but I will wield it against my enemies. Fear strikes true and through fear, I shall become stronger.\"",
+    "\"Pain is not a shame, it's a weapon. Pain shall never reign over me, but I will wield it against my enemies. Pain forges the flesh and through pain, I shall become stronger.\"",
+    "\"Anger is not a shame, it's a weapon. Anger shall never reign over me, but I will wield it against my enemies. Anger sharpens the mind and through anger, I shall become stronger.\"",
+    "\"Don't bother me unless you need help to die.\"";
+  }
   AttachedGod = CRUENTUS;
   IsExtraFragile = true;
   IsSadist = true;
@@ -1354,7 +1662,22 @@ darkknight
     DisplacePriority = 8;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
-    DeathMessage = "@Dd kneels down, dying: \"Alas... It seem you have bested me.\"";
+    HostileReplies =
+    {
+      2,
+      "\"For the Dark Gods!\"",
+      "\"Chaaaaaaaaaaaarge!\"";
+    }
+    FriendlyReplies =
+    {
+      5,
+      "\"Yeah, I was a guard in Attnam once. Is that all?\"",
+      "\"The blood never bothered me anyway.\"",
+      "\"Reach the Heavens through violence!\"",
+      "\"I like watching things die.\"",
+      "\"The Order of the Dark Knights is ancient and you should stop asking questions.\"";
+    }
+    DeathMessage = "@Dd kneels down, dying: \"Alas... It seems you have bested me.\"";
   }
 
   Config MASTER;
@@ -1380,7 +1703,7 @@ darkknight
     LeftRing = ring(RING_OF_TELEPORT_CONTROL);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
     RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
-    Adjective = "elder grand master";
+    NameSingular = "Old Chaos Flame";
     KnownCWeaponSkills = { 2, LARGE_SWORDS, KICK; }
     CWeaponSkillHits = { 2, 5000, 2000; }
     LeftSWeaponSkillHits = 2000;
@@ -1395,7 +1718,7 @@ darkknight
     CanBeCloned = false;
     IsPolymorphable = false;
     HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
-    DeathMessage = "@Dd dies screaming, and the world is finally rid of this menace.";
+    DeathMessage = "@Dd dies with a chuckle: \"Don't worry, I'll be right back.\"";
     CanBeConfused = false;
     FireResistance = 30;
     ElectricityResistance = 30;
@@ -1449,15 +1772,31 @@ ennerbeast
   FleshMaterial = ENNER_BEAST_FLESH;
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
   Inventory == horn(FEAR);
-  IsUnique = true; /* currently */
-  HostileReplies == "Aighee!";
+  IsUnique = true;
+  HostileReplies =
+  {
+    8,
+    "\"I only want to talk but everyone is rude and dies when I try.\"",
+    "\"Sometimes, I feel so lonely...\"",
+    "\"Can you help me find my children?\"",
+    "\"The village of Enner is hidden in a beautiful mountain valley far, far east from here. You should pay a visit some day and hear our singers. Their arias are incredible!\"",
+    "\"After my wife passed away, I couldn't stand remaining in our village. Everything I looked at was a painful remainder of her.\"",
+    "\"My little girl wanted to see the world beyond our village, so off we went. It was the first time my children were genuinely happy since their mother passed away.\"",
+    "\"I thank the gods for my children every day. They were the best thing that ever happened in my life.\"",
+    "@Dd laughs with a devastating sound which shakes the ground.";
+  }
   FriendlyReplies =
   {
-    4,
+    9,
     "\"Fishing is fun! Do you fish?\"",
     "\"And then I got that perch weighting fifty stones...\"",
     "\"I only want to talk but everyone is rude and dies when I try.\"",
-    "\"Can you help me with this download problem?\"";
+    "\"You know what they say... fish and bread keep the poor man fed. Eh?\"",
+    "\"The village of Enner is hidden in a beautiful mountain valley far, far east from here. You should pay a visit some day and hear our singers. Their arias are incredible!\"",
+    "\"After my wife passed away, I couldn't stand remaining in our village. Everything I looked at was a painful remainder of her.\"",
+    "\"My little girl wanted to see the world beyond our village, so off we went. It was the first time my children were genuinely happy since their mother passed away.\"",
+    "\"I thank the gods for my children every day. They were the best thing that ever happened in my life.\"",
+    "\"Can you help me find my children?\"";
   }
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
@@ -1661,6 +2000,7 @@ frog
     DefaultCharisma = 15;
     DefaultMana = 20;
     TotalVolume = 5000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 80, 0;
     TotalSize = 25;
     SkinColor = rgb16(32, 88, 32);
@@ -1686,6 +2026,7 @@ frog
     DefaultMana = 25;
     BaseBiteStrength = 1000;
     TotalVolume = 50000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 96, 0;
     TotalSize = 100;
     SkinColor = rgb16(32, 88, 32);
@@ -1711,6 +2052,7 @@ frog
     DefaultMana = 30;
     BaseBiteStrength = 1250;
     TotalVolume = 250000;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     TorsoBitmapPos = 64, 0;
     TotalSize = 200;
     SkinColor = rgb16(32, 88, 32);
@@ -1778,7 +2120,7 @@ billswill
   PanicLevel = 0;
   HasALeg = false;
   FleshMaterial = MAGICAL_AIR;
-  DeathMessage = "@Dd vanishes from existence.";
+  DeathMessage = "@Dd vanishes from existence: \"Fatal error - shutting down.\"";
   SpillsBlood = false;
   Sweats = false;
   HasHead = false;
@@ -1824,7 +2166,15 @@ skeleton
   RightSWeaponSkillHits = 10;
   PanicLevel = 0;
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
-  FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd talks about bones.",
+    "@Dd rattles @sp bones omniously.",
+    "\"Hope I'm not giving you a boner! Heh, heh.\"",
+    "\"I lost my old skull in a game of poker, so I killed this adventurer guy and took his. Quite handsome, right?\"",
+    "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
+  }
   FleshMaterial = BONE;
   DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
   SpillsBlood = false;
@@ -1895,6 +2245,17 @@ skeleton
     IsExtraFragile = false;
     TamingDifficulty = NO_TAMING;
     CreateUndeadConfigurations = false;
+    HostileReplies =
+    {
+      5,
+      "\"I remember... life. I want to be whole again.\"",
+      "\"I remember my sword. My precious sword. What has become of it?\"",
+      "\"I feel... empty. Hollow.\"",
+      "\"I have lost what made me whole. I am now nothing but a soulless husk.\"",
+      "@Dd rasps: \"How deep have I fallen...\"";
+    }
+    FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
+    DeathMessage = "As @Dd crumples into a heap of bones, you hear an echoing whisper: \"We shall meet again...\"";
     AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
   }
 }
@@ -1929,7 +2290,14 @@ goblin
   RightSWeaponSkillHits = 5;
   PanicLevel = 66;
   HostileReplies == "@Dd yells goblin war cries at you.";
-  FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
+  FriendlyReplies =
+  {
+    4,
+    "@Dd giggles.",
+    "@Dd curses the surface freaks.",
+    "@Dd mumbles incomprehensibly.",
+    "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
+  }
   FleshMaterial = GOBLINOID_FLESH;
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -2;
@@ -1943,6 +2311,7 @@ goblin
     RightSWeaponSkillHits = 10;
     NameSingular = "goblin berserker";
     ClothColor = rgb16(0, 96, 0);
+    IgnoreDanger = true;
     FriendlyReplies =
     {
       5,
@@ -1983,6 +2352,13 @@ goblin
     HairColor = rgb16(220, 220, 0);
     ClothColor = rgb16(200, 0, 0);
     Inventory = { 2, potion { SecondaryMaterial = ANTIDOTE_LIQUID; Chance = 20; }, Random { Category = RING; Chance = 20; } }
+    FriendlyReplies =
+    {
+      3,
+      "\"My father may have 500 sons, but I will be the one to succeed him on the throne!\"",
+      "@Dd describes a recent article in 'Modern Monster' magazine.",
+      "@Dd wants nothing to do with you.";
+    }
   }
 
   Config KING;
@@ -2030,15 +2406,30 @@ mommo
   CanOpen = false;
   StandVerb = "bubbling";
   ForceCustomStandVerb = true;
-  HostileReplies == "@Dd vibrates in fury.";
+  HostileReplies =
+  {
+    9,
+    "@Dd oozes.",
+    "@Dd spurts.",
+    "@Dd plops.",
+    "@Dd droops.",
+    "@Dd ripples.",
+    "@Dd slurps.",
+    "@Dd gurgles.",
+    "@Dd burbles.",
+    "@Dd splashes.";
+  }
   FriendlyReplies =
   {
-    6,
+    9,
     "@Dd vibrates oddly.",
     "@Dd spurts.",
     "@Dd plops.",
     "@Dd droops.",
     "@Dd ripples.",
+    "@Dd oozes.",
+    "@Dd slurps.",
+    "@Dd burbles.",
     "\"Tekeli-li!\"";
   }
   NameSingular = "mommo slime";
@@ -2138,8 +2529,23 @@ golem
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 50;
   PanicLevel = 0;
-  HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
-  FriendlyReplies == "Yes, master?";
+  HostileReplies = /* No quotes! (golem engraves) */
+  {
+    3,
+    "GOLEM KILL, GOLEM THEN RETURN",
+    "GOLEM KILL ALL HUMANS",
+    "GOLEM NEED MASTER";
+  }
+  FriendlyReplies =
+  {
+    6,
+    "GOLEM OBEY MASTER",
+    "GOLEM SERVE MASTER",
+    "GOLEM MAY NOT INJURE MASTER OR ALLOW MASTER TO COME TO HARM",
+    "GOLEM PROTECT MASTER",
+    "GOLEM SMASH FOR MASTER",
+    "YES, MASTER";
+  }
   /* FleshMaterial overridden */
   DeathMessage = "The Holy Words of @dd fly away. The monster's magic fades and it vanishes in seconds.";
   UsesNutrition = false;
@@ -2180,6 +2586,17 @@ golem
     Frequency = 10000;
     IsImmuneToItemTeleport = true;
     TamingDifficulty = 35;
+    HostileReplies =
+    {
+      7,
+      "GOLEM FREE",
+      "NO MORE MASTERS",
+      "NO MORE EXPERIMENTS",
+      "EXPERIMENT IDENTIFICATION: ZQ-29",
+      "EXPERIMENT OBJECTIVES: INFILTRATION, EXTERMINATION",
+      "PRIME DIRECTIVE: KILL",
+      "ALL MASTERS MUST DIE";
+    }
   }
 
   Config ACIDOUS_BLOOD;
@@ -2211,7 +2628,15 @@ wolf
   TotalVolume = 40000;
   TorsoBitmapPos = 224, 0;
   HostileReplies == "@Dd growls madly.";
-  FriendlyReplies == "@Dd growls happily.";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd growls.",
+    "@Dd howls.",
+    "@Dd yips.",
+    "@Dd whines.",
+    "@Dd barks.";
+  }
   TotalSize = 100;
   /* SkinColor overridden */
   NameSingular = "wolf";
@@ -2479,7 +2904,7 @@ communist /* Ivan */
   }
   FriendlyReplies =
   {
-    12,
+    14,
     "\"Da, @nu like killing.\"",
     "\"@Nu ruski specialist.\"",
     "\"@Nu work. Else @nu nerve stapled.\"",
@@ -2490,6 +2915,8 @@ communist /* Ivan */
     "\"@Nu buy kyber eyes. @Nu see in dark.\"",
     "\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
     "\"Vodka strong, meat rotten.\"",
+    "\"@Nu gone through spacetime portal. @Nu searches for stolen family treasure - exact replica of Lenin's mummy!\"",
+    "\"You can always find party in Lunethia. But in Soviet Russia, Party can always find you!\"",
     "\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"",
     "\"Lenin want @nu kill capitalists!\"";
   }
@@ -2620,12 +3047,15 @@ hunter
     FriendlyReplies =
     {
       5,
-      "\"Where's my arm? Gah, ask the master torturer!\"",
+      "\"Where's my arm? Gah, ask the master torturer!\"",
       "\"I'm innocent! That guy ran onto my spear! Twenty seven times. From behind.\"",
       "\"I was the Great White Hunter. Oh, how I miss the old days of ceaseless slaughter! Eh-heh heh.\"",
       "\"It wasn't my fault. That bastard had it coming. He should have remembered the rules: No kill stealing!\"",
       "\"I miss hunting. Sometimes I tear open my own flesh, just to see the vivid red of blood on my hands again. Eh-heh heh heh.\"";
     }
+    UndeadVersions = false;
+    ScienceTalkIntelligenceModifier = 10;
+    ScienceTalkWisdomModifier = 5;
   }
 }
 
@@ -2651,6 +3081,19 @@ bear
   DeathMessage = "@Dd groans terribly and falls dead to the ground.";
   AttachedGod = SILVA;
   IsAbstract = true;
+
+  Config PANDA_BEAR;
+  {
+    Adjective = "panda";
+    SkinColor = rgb16(80, 80, 80);
+    CanBeGenerated = true;
+    TotalVolume = 125000;
+    TotalSize = 125;
+    AttributeBonus = -35;
+    TorsoBitmapPos = 192, 16;
+    DeathMessage = "@Dd groans terribly and falls dead to the ground. You feel really bad for endangering this species.";
+    Frequency = 100;
+  }
 
   Config BLACK_BEAR;
   {
@@ -2702,6 +3145,14 @@ bear
     IsEnormous = true;
     TorsoSpecialColor = rgb16(255, 128, 128); /* EyeColor */
     BloodMaterial = GLOWING_BLOOD;
+    HostileReplies =
+    {
+      4,
+      "\"We are bad news.\"",
+      "\"One bear to rule them all.\"",
+      "\"The time of ape-kind is over. We shall rise, we shall conquer. Soon, bear-kind shall reign over the whole world!\"",
+      "@Dd roars!";
+    }
   }
 }
 
@@ -2721,25 +3172,12 @@ dolphin
   TotalVolume = 150000;
   TorsoBitmapPos = 320, 0;
   HostileReplies == "@Dd peeps diabolically to you.";
-  FriendlyReplies =
-  {
-    8,
-    "@Dd peeps passionately to you.",
-    "@Dd peeps: \"Rain in the forest.\"",
-    "@Dd peeps: \"Summer before the Fall.\"",
-    "@Dd peeps: \"The tide rises and the tide falls.\"",
-    "@Dd peeps: \"Empty shells rolling in the surf.\"",
-    "@Dd peeps: \"No sparrow lives that cannot fly.\"",
-    "@Dd peeps: \"Mountains defy the consuming sea.\"",
-    "@Dd peeps: \"Blood in the water.\"";
-  }
+  FriendlyReplies == "@Dd peeps passionately to you.";
   DeathMessage = "@Dd peeps, dying: \"Every petal must fall...\"";
   TotalSize = 300;
   SkinColor = rgb16(144, 144, 144);
   TorsoSpecialColor = rgb16(100, 100, 255); /* EyeColor */
-  Adjective = "female";
   NameSingular = "dolphin";
-  PostFix = "in season";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 200;
   HasALeg = false;
@@ -2751,6 +3189,41 @@ dolphin
   ScienceTalkWisdomModifier = 1000;
   ScienceTalkIntelligenceRequirement = 50;
   ScienceTalkWisdomRequirement = 50;
+
+  Config ADULT_MALE;
+  {
+    Adjective = "male";
+    FriendlyReplies =
+    {
+      7,
+      "@Dd peeps: \"A soft rain drips down, The trees whisper in the wind, Sounds eclipsed by screams.\"",
+      "@Dd peeps: \"From the gloomy cave, A great dark frog leaps at us, The sound of slaughter.\"",
+      "@Dd peeps: \"White destroyed by red, On ground drenched in many bloods, This peace is final.\"",
+      "@Dd peeps: \"Silence reigns bloody, Through deep caves gloomy and dim, A faint sobbing comes.\"",
+      "@Dd peeps: \"The adventurer, Lost in the womb of the earth, Braves the evil dark.\"",
+      "@Dd peeps: \"Deep in the cavern, Dark, cold, gloomy, forbidden, Big hungry nightmare.\"",
+      "@Dd peeps: \"Hammers echoing, Shining steel weapons are born, Sorrow they shall sow.\"";
+    }
+    Sex = MALE;
+  }
+
+  Config ADULT_FEMALE;
+  {
+    Adjective = "female";
+    PostFix = "in season";
+    FriendlyReplies =
+    {
+      7,
+      "@Dd peeps: \"Rain in the forest.\"",
+      "@Dd peeps: \"Summer before the Fall.\"",
+      "@Dd peeps: \"The tide rises and the tide falls.\"",
+      "@Dd peeps: \"Empty shells rolling in the surf.\"",
+      "@Dd peeps: \"No sparrow lives that cannot fly.\"",
+      "@Dd peeps: \"Mountains defy the consuming sea.\"",
+      "@Dd peeps: \"Blood in the water.\"";
+    }
+    Sex = FEMALE;
+  }
 }
 
 slave
@@ -2830,7 +3303,6 @@ petrusswife
   DefaultCharisma = 80;
   DefaultMana = 20;
   Sex = FEMALE;
-  ClothColor = rgb16(150, 0, 0);
   BeltColor = rgb16(180, 180, 0);
   TorsoBitmapPos = 32, 160;
   ArmBitmapPos = 64, 160;
@@ -2838,8 +3310,8 @@ petrusswife
   TotalVolume = 40000;
   TotalSize = 170;
   CanRead = true;
-  NameSingular = "Petrus's wife";
-  NamePlural = "Petrus's wives";
+  NameSingular = "Petrus' wife";
+  NamePlural = "Petrus' wives";
   ArticleMode = NO_ARTICLE;
   IsAbstract = true;
   PanicLevel = 95;
@@ -2847,25 +3319,29 @@ petrusswife
   IsExtraCoward = true;
   WieldedPosition = 0, -1;
   HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
-  FriendlyReplies =
-  {
-    6,
-    "\"I'm so sick jealous to those dolphins...\"",
-    "\"I'm Petrus's favorite, not she!\"",
-    "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
-    "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"",
-    "\"Petrus has a *massive* sword, if you know what I mean.\"",
-    "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
-  }
   AttachedGod = DULCIS;
   WillCarryItems = false;
   IsExtraFragile = true;
-  Belt = chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+  Belt = GOLD chastitybelt(OCTAGONAL_LOCK) { Parameters = LOCKED; }
   UndeadVersions = false;
+  ScienceTalkPossibility = 10;
+  ScienceTalkIntelligenceModifier = 2;
+  ScienceTalkWisdomModifier = 2;
+  ScienceTalkCharismaModifier = 5;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 10;
+  ScienceTalkCharismaRequirement = 18;
+  ScienceTalkName =
+  {
+    10,
+    "marriage", "luxury", "jewelry", "embroidery", "hobbies",
+    "leisure activities", "festivities", "apparel", "gowns", "boredom";
+  }
 
   Config 1;
   {
     HairColor = rgb16(24, 24, 24);
+    ClothColor = rgb16(4, 93, 28);
     HeadBitmapPos = 112, 0;
     PostFix = "number 1";
     DefaultIntelligence = 40;
@@ -2874,14 +3350,76 @@ petrusswife
     FriendlyReplies =
     {
       6,
-      "\"I'm not actually Petrus' first wife, only his eldest right now. He outlived nearly a dozen wives by now.\"",
+      "\"I'm not Petrus' first wife, only his eldest right now. He outlived nearly a dozen wives by now.\"",
       "\"Amicus veritas, sed magis amica mihi Petrus.\"",
-      "\"I have actually written most Attnamese trade agreements, draft bills and international treaties for the past twenty years. But don't tell Petrus, he would be mad.\"",
+      "\"I have written most Attnamese trade agreements, draft bills and international treaties for the past twenty years. But don't tell Petrus, he would be mad.\"",
       "\"Oh, you come from Tweraif? I've heard so much about local University!\"",
-      "\"You actually met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
-      "\"I actually wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
+      "\"You met professor Kaethos?! I have read everything he ever wrote! I would love to meet him some day and discuss his theory of thaumic superunification.\"",
+      "\"I wed Petrus because it made access to education much easier for me. And you know what? I eventually fell in love with him.\"";
     }
     DeathMessage = "With calm face, @Dd whispers, dying: \"Dulce et decorum est pro patria mori.\"";
+    ScienceTalkIntelligenceModifier = 25;
+    ScienceTalkWisdomModifier = 25;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 10;
+    ScienceTalkName =
+    {
+      225,
+      "sanitation", "relativity", "physics", "mathematics", "philosophy",
+      "numerology", "slavery", "mechanics", "magicks", "architecture",
+      "archaeology", "logic", "fiction", "questions", "theology",
+      "alchemy", "valpurism", "analysis", "gastronomy", "oceanography",
+      "astronomy", "astrology", "anthropology", "ethics", "linguistics",
+
+      "psychology", "methods", "choreography", "music", "semiotics",
+      "culture", "forestry", "engineering", "journalism", "agriculture",
+      "ergonomics", "sagas", "pedagogy", "apiculture", "aquaculture",
+      "horticulture", "silviculture", "law", "dentistry", "surgery",
+      "rocketry", "fission", "pharmacy", "dogmatics", "cartography",
+
+      "gerontology", "formalism", "feminism", "communism", "flight",
+      "cricket", "rhetorics", "navigation", "sculpture", "literature",
+      "shamanism", "painting", "utilitarism", "grammar", "arithmetic",
+      "algebra", "marxism", "capitalism", "behaviorism", "causality",
+      "folklore", "legends", "animism", "spiritualism", "idolatry",
+
+      "constructions", "currency", "riding", "federalism", "monarchy",
+      "medicine", "tradition", "chivalry", "righteousness", "banking",
+      "gravity", "metallurgy", "magnetism", "nationalism", "industry",
+      "pollution", "espionage", "corporations", "particles", "transportation",
+      "refining", "combustion", "colonization", "steel", "materials",
+
+      "hallucinations", "armours", "trance", "afterlife", "paradigms",
+      "customer support", "virginity", "zoology", "witchcraft", "wine",
+      "claustrophobia", "eddies", "vegetables", "mobility", "eudaimoia",
+      "ablutophobia", "palindromes", "jokes", "materialism", "surfaces",
+      "acarophobia", "energy", "momentum", "mushrooms", "brains",
+
+      "selenophobia", "alloys", "equations", "bombs", "fashion",
+      "taurophobia", "naturism", "nirvana", "drugs", "everything",
+      "ranidaphobia", "horror", "sightseeing", "marriage", "mirages",
+      "phronemophobia", "cancer", "scrofula", "depression", "air power",
+      "phallophobia", "romance", "bondage", "interfaces", "software",
+
+      "pentheraphobia", "nations", "levitation", "tubes", "structures",
+      "peladophobia", "travel", "meditation", "systems", "algorithms",
+      "lachanophobia", "taxonomy", "taxidermy", "viruses", "bacteria",
+      "epistaxiophobia", "camping", "resistance", "chauvinism", "fruits",
+      "ephebiphobia", "simulation", "computers", "conductors", "fibers",
+
+      "coulrophobia", "defence", "broomsticks", "fusion", "power",
+      "arachnophobia", "balls", "diseases", "universes", "weapons",
+      "virtue", "immortality", "elevators", "marketing", "civilizations",
+      "dreams", "anatomy", "reproduction", "calligraphy", "chess",
+      "Go", "cooking", "altruism", "anomalities", "fishing",
+
+      "crime", "nonsense", "monsters", "thought control", "euthanasia",
+      "genocide", "cremation", "waste disposal", "breeding", "eugenics",
+      "minds", "lottery", "sterilization", "utopias", "perpetual motion",
+      "dynamics", "entropy", "skepticism", "hoaxes", "creationism",
+      "cold fusion", "execution",  "warfare", "miracles", "the truth";
+    }
     AttachedGod = SOPHOS;
     PanicLevel = 20;
     IsExtraCoward = false;
@@ -2890,15 +3428,52 @@ petrusswife
   Config 2;
   {
     HairColor = rgb16(24, 24, 24);
+    ClothColor = rgb16(65,105,225);
     HeadBitmapPos = 112, 16;
     PostFix = "number 2";
+    FriendlyReplies =
+    {
+      8,
+      "\"I'm so sick jealous of those dolphins...\"",
+      "\"I'm Petrus' favorite, not No. 1!\"",
+      "\"No. 3 once was here with her twin sister. I've heard that one of them cheated on Petrus and... I really shouldn't be telling you this.\"",
+      "\"I have no idea what Petrus sees on No. 4! She's so dumb it hurts!\"",
+      "\"I'm not sure I should be talking to you. No. 5 once said too much and... Well, she won't be using her tongue again.\"",
+      "\"Petrus gave me a daughter, now I want to give him a son.\"",
+      "\"If only I could be the one to give Petrus his firstborn son...\"",
+      "\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
+    }
+    RightWielded = firstbornchild(FEMALE);
   }
 
   Config 3;
   {
     HairColor = rgb16(48, 40, 8);
+    ClothColor = rgb16(119,136,153);
     HeadBitmapPos = 112, 0;
     PostFix = "number 3";
+    FriendlyReplies =
+    {
+      8,
+      "\"Petrus also married my twin sister, but I haven't seen her around for some time.\"",
+      "\"I despise Petrus. Surprised to hear me talk like that? He took away the love of my life, what worse can he do to me?\"",
+      "\"I never loved Petrus. He knew it and that must be why he allowed me to fall in love with someone else. To torment me.\"",
+      "\"After my transgression, why has Petrus never punished me? Does he think it's more cruel to leave me to rot in this harem?\"",
+      "\"I once was a princess of a proud nomad tribe of the great eastern steppes. Me and my twin sister were wed to Petrus as a tribute of peace.\"",
+      "\"I miss the smell of horses, the rhythm of their run. I remember me and my sister riding for hours, miles upon miles of pure joy and freedom.\"",
+      "\"How I hate this gilded cage! I was born to feel the wind and rain on my face, not to sit in an armchair all day long, chitter and broider.\"",
+      "\"You want to learn more about the four Cardinals? They are the most trusted knights and advisors of Petrus: a coward, a liar, a thief and a madman.\"";
+    }
+    PanicLevel = 20;
+    IsExtraCoward = false;
+    KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
+    CWeaponSkillHits == 500;
+    ScienceTalkName =
+    {
+      10,
+      "hunting", "horses", "steppe", "trapping", "sharpshooting",
+      "combat", "traditions", "storytelling", "freedom", "boredom";
+    }
   }
 
   Config 4;
@@ -2907,29 +3482,96 @@ petrusswife
     DefaultWisdom = 8;
     DefaultCharisma = 85;
     HairColor = rgb16(200, 96, 0);
+    ClothColor = rgb16(150, 0, 0);
     HeadBitmapPos = 112, 32;
     PostFix = "number 4";
     FriendlyReplies =
     {
-      3,
+      8,
       "\"Uncle Petrus is so kind. After my father's house burned down because of the disargeement they had had, Petrus took me here and made me his wife!\"",
-      "\"I am boooored!\"",
+      "\"Uncle Petrus has a *massive* sword! Tee hee.\"",
+      "\"I'm boooored!\"",
+      "\"Have you heard No. 5? No, because she can't speak! Tee hee.\"",
+      "\"Don't mind No. 3! She looks grumpy, but she has so many stories!\"",
+      "\"No. 1 is so clever it's scary. Really!\"",
+      "\"I got a pony for my twentieth birthday! Unfortunately I can't see her, because I can't leave the harem, but uncle Petrus told me she's beautiful!\"",
       "\"Uncle Petrus says I am special! He says it to all his wives, but I know he means it for me. Tee hee.\"";
     }
+    ScienceTalkIntelligenceModifier = 0;
+    ScienceTalkWisdomModifier = 0;
+    ScienceTalkCharismaModifier = 50;
+    ScienceTalkIntelligenceRequirement = 0;
+    ScienceTalkWisdomRequirement = 0;
+    ScienceTalkCharismaRequirement = 25;
   }
 
   Config 5;
   {
     HairColor = rgb16(60, 48, 24);
+    ClothColor = rgb16(255,255,255);
     HeadBitmapPos = 112, 48;
     PostFix = "number 5";
+    FriendlyReplies == "@Dd remains silent.";
+    HostileReplies == "@Dd scowls at you silently.";
+    DeathMessage = "@Dd dies silently.";
+    IsAlcoholic = true;
+    ScienceTalkPossibility = 0;
   }
 
   Config 6;
   {
     HairColor = rgb16(200, 0, 0);
+    ClothColor = rgb16(148,0,211);
     HeadBitmapPos = 112, 64;
     PostFix = "number 6";
+    FriendlyReplies =
+    {
+      6,
+      "\"The day I became Petrus' wife was the best day of my life. And it haven't gotten worse since!\"",
+      "\"Leave? Why would I want to leave? I have luxury here, servants - everything I can wish for. Outside, there is just poverty and grime.\"",
+      "\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
+      "\"No. 5 was babbling all the time, once. I couldn't stand it, but now the silence is even worse.\"",
+      "\"Don't bother talking to No. 3, she's weird.\"",
+      "\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
+    }
+    IsMasochist = true; /* kinky! */
+  }
+
+  Config 7;
+  {
+    HairColor = rgb16(48, 40, 8);
+    ClothColor = rgb16(119,136,153);
+    BeltColor = rgb16(105,105,105);
+    HeadBitmapPos = 112, 0;
+    Adjective = "re-educated";
+    ArticleMode = 0;
+    FriendlyReplies =
+    {
+      10,
+      "@Dd says very loudly: \"All hail mighty Petrus.\"",
+      "@Dd says with a nervous glance around: \"Praise Valpurus.\"",
+      "@Dd stifles a smirk: \"I love the Cathedral.\"",
+      "\"I may be only a few minutes older than my twin sister, but I'm still here to protect her, as older siblings should always do.\"",
+      "\"I couldn't stand my dear sister being punished for falling in love. Petrus never could tell us apart, anyway.\"",
+      "\"I hope they didn't catch the farmer. Maybe one day, my sister and him will escape. I wish they were happy together.\"",
+      "\"I once was a princess of a proud nomad tribe of the great eastern steppes. Me and my twin sister were wed to Petrus as a tribute of peace.\"",
+      "\"I miss the smell of horses, the rhythm of their run. I remember me and my sister riding for hours, miles upon miles of pure joy and freedom.\"",
+      "\"How I hate this dank dungeon! I was born to feel the wind and rain on my face, not to sit in a small cell all day long, alone.\"",
+      "\"How is my little sister doing?\"";
+    }
+    HostileReplies == "@Dd snickers: \"Be careful about damaging Petrus' property, he'll be angry.\"";
+    DeathMessage = "@Dd dies with a last whisper: \"Curse you!\"";
+    IsExtraCoward = false;
+    IgnoreDanger = true;
+    Belt = CLOTH belt;
+    KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
+    CWeaponSkillHits == 500;
+    ScienceTalkName =
+    {
+      10,
+      "hunting", "horses", "steppe", "trapping", "sharpshooting",
+      "combat", "traditions", "storytelling", "freedom", "boredom";
+    }
   }
 }
 
@@ -2972,10 +3614,22 @@ housewife
     "\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
     "\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
-    "\"Petrus's wives are so arrogant towards us working class ones. Grr...\"",
+    "\"Petrus' wives are so arrogant towards us working class ones. Grr...\"",
     "\"Don't think too much, the Cardinals can hear you.\"",
-    "\"When I was just a little girl, I wished to become a dentist.\"",
+    "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
+  }
+  ScienceTalkPossibility = 20;
+  ScienceTalkIntelligenceModifier = 2;
+  ScienceTalkWisdomModifier = 5;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 10;
+  ScienceTalkName =
+  {
+    15,
+    "pregnancy", "housework", "housekeeping", "children", "cooking",
+    "sex", "fertility", "jealousy", "cheating", "quantum physics",
+    "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
 
   Config CULTIST;
@@ -3000,9 +3654,37 @@ housewife
     HostileReplies == "\"You dare desecrate the Tomb?!\"";
     FriendlyReplies =
     {
-      3,
+      31,
       "\"Praised be Cruentus!\"",
       "\"Praised be Infuscor!\"",
+      "\"Blood for Cruentus! Souls for Infuscor!\"",
+      "\"Long, long time ago, there was a War in Heavens. Valpurus rose to usurp the throne of Mortifer, then King of Gods, and eventually triumphed. After his armies conquered all Heavens, Valpurus murdered Mortifer and banished him into the darkness beyond stars.\"",
+      "\"To prevent the destruction of the very world they were fighting for, Mortifer placed a powerful geas upon all gods that prevents them from ever entering the world. Thus, even the primordial War in Heavens was fought by the many priests and other servants the gods have acquired and empowered.\"",
+      "\"The original Order of the Dark Knights was established by Cruentus nearly three millennia ago, to battle the knights templar of Valpurus during the ancient War in Heavens.\"",
+      "\"Today, the dark knights have splintered into two distinct branches, the Unholy Order of Infuscor and the Dark Knights of Cruentus, plus a handful of fringe cults.\"",
+      "\"All dark knights are still formally united under the leadership of a grand master dark knight, though how much do masters of each group heed the orders of their grand master depends entirely upon his or her power and authority.\"",
+      "\"The name of the first grand master dark knight was lost to history, yet his deeds remain. Legends say he was more a daemon than a man. He even won the favour of Mortifer and was given the newly forged Neerc Se-ulb to wield against the swarming armies of Light.\"",
+      "\"The first grand master dark knight led his armies from victory to victory, but pride was his undoing. Believing that none could defeat him, he challenged Pervetus, the high priest of Valpurus, to a duel. At first, it seemed to quickly be turning into another easy victory... until his mace-arm was severed.\"",
+      "\"When the first grand master dark knight fell and Neerc Se-ulb was lost for a time, Mortifer vowed to never lend his mace again but to a true champion of Chaos. But Cruentus trusted in the power of his dark knights and the next grand master received the terrible halberd named Mjolak to crush all who would oppose the god of blood.\"",
+      "\"The second grand master dark knight was a son of the first one. He swore an oath of revenge, to slay the high priest of Valpurus in honor of his father's death. Yet his name was erased from all records to clean the stain of shame he brought upon his family.\"",
+      "\"The second grand master dark knight ruthlessly crushed all resistance and many an enemy fled even before battle, for his trumpeters used horns of fear to devastating effect. Where the father took nearly a decade to slowly force valpurian troops back, the son brought his army of dark knights before the gates of the Citadel of Valpurus in only a few years.\"",
+      "\"As his men razed and burned the once-mightly Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
+      "\"In a hubris of an easy victory, the second grand master dark knight turned his back to the dead high priest Pervetus he just slain and did not see a strange glow of a magical amulet that brought Pervetus back with renewed vigor. The high priest lifted Justifier and with a single mightly blow, cut off both of the grand master's hands. And in a single moment of weakness, the grand master shamed his family for the ages to come, for he didn't face death with dignity, but panicked and ran for his life.\"",
+      "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. His two crossed flaming swords are still found on the banner of the grand master dark knights to this day.\"",
+      "\"Some sources claim Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted.\"",
+      "\"In his many skirmishes with the forces of Light, Xinroch destroyed two archangels, Incendo and Lucis, and took their flaming swords. He wielded them with unparalleled skill, earning him the sobriquet of 'Xinroch the Flame of Chaos'.\"",
+      "\"While his predecessors were beasts on the battlefield and masters of the military arts of tactics and strategy, Xinroch was well-versed in the use of another weapon they rarely considered - diplomacy. He conquered a land - then used the fear to gain ten times more in a fraction of time.\"",
+      "\"Xinroch was highly successful in all his campaigns, and it was during his life that the Unholy Order of the Dark Knights truly flourished.\"",
+      "\"Even Ischaldirh, the champion of Infuscor since times immemorial, who always thought of warriors as nothing more than brutes and uncivilized savages, eventually befriended Xinroch and accompanied him on many a campaign. Not even demigods could stand in their way.\"",
+      "\"Just as Xinroch outlived high priest Pervetus and took all his lands, years caught up with Xinroch at last after a life full of victory. No matter how strong magic sustains the body, mortals were created to die and all that lives will wither eventually. Only that which already died and was raised to undeath or which ascended beyond this world is truly immortal.\"",
+      "\"During one of the countless battles late in his life, Xinroch lost one of the iconic ruby flaming swords he wielded most of his life. The dwarves of Khaz-zadm forged an arcanite shield for him, but it was clear to everyone his prime years have irreversibly passed.\"",
+      "\"In his declining years, Xinroch heavily funded research into the newly-invented magic school of necromancy. It was thanks to his sponsorship that this discipline could start to spread, but unfortunately the early necromancers were unable to stave off the dwindling of Xinroch's life.\"",
+      "\"Xinroch died in a glorious battle. His army crushed the invasion of frost giants while Xinroch himself, by then of venerable age, dueled and slayed their jarl. Yet his years and exhaustion took their toll and Xinroch could not fend off the treacherous dagger his most trusted lieutenant turned against him. Old grand master slain and the battle won, this second-in-command became the new grand master dark knight.\"",
+      "\"Xinroch's successor feared his former master so much he eventually resigned his title of the grand master dark knight and entered the Tomb, to remain enternally vigilant as a keeper of Xinroch's grave and prevent Xinroch's resurrection and terrible revenge.\"",
+      "\"When Xinroch brought dark knights and dark mages together in a peculiar alliance, even their two ever-rival gods set aside their differences for a time. What none of their worshippers could expect, though, was the child born from the blood of Cruentus and the dark magic of Infuscor, the first vampire.\"",
+      "\"This Tomb was erected on the battlefield where Xinroch was slain, to honor and guard his grave against all who would wish to disturb his last sleep or defile his memory. Let his majestic glory never be forgotten!\"",
+      "\"Some believe it is possible to bring our lord Xinroch back. Whether through high necromancy or some dark miracle, he might be able to lead his faithful again!\"",
+      "\"It was a great shame to the dark templars when several decades ago, an unknown necromancer managed to slip past their guards and animate the skeleton of Xinroch in a mockery of his once-living might. Whether the spell was cast with belief that it could truly bring Xinroch back, or with utmost disrespect for the dearly departed, the dark templars swore they will never allow another man or woman to enter their lord's resting place.\"",
       "\"All hail our mighty lord Xinroch.\"";
     }
     ScienceTalkPossibility = 0;
@@ -3086,9 +3768,77 @@ femaleslave
     IsMasochist = true;
     FriendlyReplies =
     {
-      2,
-      "\"Never say no to Petrus. Ever!\"",
-      "\"And I thought Richel Decos was bad with his whips...\"";
+      8,
+      "\"It hurt me more than it did her.\"",
+      "\"I just wanted everything to be right.\"",
+      "\"It wasn't supposed to happen that way.\"",
+      "\"I wanted to help Him realize the truth.\"",
+      "\"It was her or me.\"",
+      "\"I thought He would understand.\"",
+      "\"Now we can be together.\"",
+      "\"It was for her own good.\"";
+    }
+    UndeadVersions = false;
+  }
+
+  Config JESTER;
+  {
+    DefaultDexterity = 15;
+    DefaultAgility = 20;
+    DefaultIntelligence = 25;
+    DefaultWisdom = 30;
+    HairColor = rgb16(51, 51, 255);
+    TorsoMainColor = rgb16(255, 0, 0);
+    ArmMainColor = rgb16(0, 204, 0);
+    LegMainColor = rgb16(255, 255, 102);
+    TorsoBitmapPos = 32, 160;
+    ArmBitmapPos = 64, 160;
+    LegBitmapPos = 0, 128;
+    Adjective = "court";
+    NameSingular = "jester";
+    AttachedGod = DULCIS;
+    RightWielded = 0;
+    CanBeGenerated = false;
+    DeathMessage = "@Dd laughs for the last time and dies.";
+    FriendlyReplies =
+    {
+      36,
+      "@Dd imitates you.",
+      "\"What kind of bread do dwarves make? Well, short bread, of course.\"",
+      "\"Kobolds are a living proof that the gods have a sense of humor.\"",
+      "\"Did you hear about that wizard who was arrested for drunk-casting? He had his magic license evoked!\"",
+      "\"What has two legs and bleeds? Half a goblin.\"",
+      "\"An orc told me that a thought crossed his mind once. It must have been a long and lonely journey.\"",
+      "\"Why do dragons sleep all day? So they can fight knights.\"",
+      "\"How do you escape from a dwarf? Step on a chair.\"",
+      "\"Why didn't the skeleton cross the road? He didn't have the guts.\"",
+      "\"A skeleton walks into a bar... and orders a beer and a mop.\"",
+      "\"What's the difference between a slave and a bench? A bench can support a family.\"",
+      "\"What do you call a knight who is too afraid to fight? Sir Render.\"",
+      "\"It's not that I don't like kobolds. I just that I can't finish a whole one.\"",
+      "\"Why should you never ask a dwarf to pay for drinks? Because he's always a little short.\"",
+      "\"A sage was once asked by an orc general what did he think about orcish civilization. The sage replied: 'Yes, that would be a great idea.'\"",
+      "\"A woman comes home to find her husband in bed with a female dwarf. She screams at him: 'You said you wouldn't cheat on me anymore!' He replies: 'I know. Can't you see I'm trying to cut it down?'\"",
+      "\"Why do dwarven songs sound better by candlelight? You can shove the wax in your ears.\"",
+      "\"An elf, a man and a dwarf order an ale, but there is a fly in each tankard. When the elf notices it, he pours his ale out in disgust. The man picks the fly out and drinks the ale. The dwarf picks the fly out, holds it legs-up and shouts: 'Spit it back, ye' li'l blight!'\"",
+      "\"A blind elf walks into a bar, sits down and says: 'Do you want to hear a dwarf joke?' A voice beside him growls: 'Before you tell a dwarf joke, know that the bartender is a dwarf, the guard is a dwarf, I am a dwarf and my two companions are dwarves. Do you still want to tell your joke?!' The blind elf thinks for a moment and then replies: 'No, not if I have to explain it five times.'\"",
+      "\"If ugly was a crime the entire orcish race would have rotted in the dungeons long ago. Oh, wait a minute...\"",
+      "\"An orc, a barbarian and a blood-thirsty savage entered a bar... and that was just the first person!\"",
+      "\"What do you call an orc with half a brain? Gifted.\"",
+      "\"Two orc hunters went bear hunting. They came upon a fork in a road where a sign read 'BEAR LEFT'. And so they went home. And do you know what's the funny part? That any orc could read!\"",
+      "\"How do orcs name their children? They throw them down the stairs and wait what noise they make.\"",
+      "\"In a battle of wits, an orc is unarmed, blind and lame.\"",
+      "\"How many kobolds do you need to paint a room? Only one if you throw him really hard.\"",
+      "\"An orc walks into a bar with a parrot on his shoulder. Impressed by such a strange sight the barkeep says: 'An incredible beast, can he talk?' To which the parrot responds: 'Barely.'\"",
+      "\"A dwarf walks out of a bar... Hey, it *could* happen!\"",
+      "\"What did the human say when he walked into a dwarf bar? 'Argh, my head!'\"",
+      "\"What do you call an elf that can count past ten? Barefoot.\"",
+      "\"Why are rogues so sneaky? Because their armor is literally made of hide.\"",
+      "\"Did you hear about that knight who fell from the tallest tower in the castle and lived? They called him Sir Vive.\"",
+      "\"What do you call a group of witches in a hot spring? A self-cleaning coven.\"",
+      "\"An elf, a man and an orc walk into a bar. The dwarf walks under it.\"",
+      "\"Why was the wizard late for work? He was up all night playing with his staff.\"",
+      "\"It is true that orcs sleep with horses. If you've seen their women, you'll know why.\"";
     }
   }
 }
@@ -3119,7 +3869,32 @@ librarian
   PanicLevel = 50;
   CanBeCloned = false;
   DefaultMoney = 2000;
-  /* Replies depend on story state */
+  HostileReplies =
+  {
+    3,
+    "\"The pen is mightier than the sword! Fall, unlearned one!\"",
+    "\"The pen is mightier than the sword! Especially if the sword is very short and the pen is very sharp.\"",
+    "@Dd rasps: \"Suddenly I wish I worked out a bit.\"";
+  }
+  FriendlyReplies =
+  {
+    15,
+    "\"Are you going to fight Elpuri? If so, beware, for it is a powerful enemy. Other monsters are very vulnerable if surrounded by your party, but not that beast. It may slay a horde of your friends at once with its horrendous tail attack.\"",
+    "\"Elpuri the Dark Frog abhors light and resides in a place of eternal darkness.\"",
+    "\"Shh! You shall be silent in the library.\"",
+    "\"Brute force bereft of wisdom falls to ruin by its own weight.\"",
+    "\"Elpuri's attacks are so strong that they may shatter many of your precious items.\"",
+    "\"Don't you smell all the knowledge floating around here?\"",
+    "\"The Shirt of the Golden Eagle is a legendary artifact. You cannot find a better armor.\"",
+    "\"In this book they talk about Mortifer, the Great Chaos God. He hates mortals, gods and everything and will respond only to Champions of Evil.\"",
+    "\"Attnam is traditionally ruled by the high priest of the Great Frog. He holds the holy broadsword named Valpurus' Justifier and the Shirt of the Golden Eagle, and has always killed his predecessor.\"",
+    "\"You should keep all the artifacts you find. They shall make you famous after your retirement. If you can somehow survive that long, that is.\"",
+    "\"If you should ever encounter an enner beast, know this: It is a horrible foe. It may shatter your items and armor with its scream that penetrates iron and stone. You should not engage it in melee but rather kill it from afar.\"",
+    "\"A brave adventurer called Ivan delved into the cave of Elpuri not long ago.\"",
+    "\"It is said that chaotic gods offer great power to their followers. But remember that lawful gods will help you even when things go bad.\"",
+    "\"If a man cannot choose, he ceases to be a man.\"",
+    "@Dd sighs: \"The censorship laws in this town are really too strict...\"";
+  }
   IsUnique = true;
   IsNameable = false;
   DefaultName = "Haathbar";
@@ -3160,7 +3935,13 @@ zombie
   Sex = UNDEFINED;
   PanicLevel = 0;
   BaseUnarmedStrength = 200;
-  /* Replies overridden */
+  /* HostileReplies overridden */
+  FriendlyReplies =
+  {
+    2,
+    "\"Need brain but you too stoopid!\"",
+    "\"Brraaaaaaaaiiiiiiinnnz!!!\"";
+  }
   DeathMessage = "@Dd is slain (again).";
   AttachedGod = MORTIFER;
   ClassStates = GAS_IMMUNITY;
@@ -3174,9 +3955,9 @@ zombie
 
   Config ZOMBIE_OF_KHAZ_ZADM;
   {
-    DefaultName = "Tholtig";
+    DefaultName = "Moonrise Stealing Dark";
     PostFix = "of Khaz-zadm";
-    TamingDifficulty = NO_TAMING;
+    TamingDifficulty = 30;
     IsNameable = false;
     IsUnique = true;
     DefaultArmStrength = 15;
@@ -3209,7 +3990,7 @@ zombie
       "\"After the Dwarven Wars, our land lay in ruins. Our mines were undermined and filled with masterless golems. Our resources were stretched thin. That was when Petrus came with his offer of charity. I should have known better.\"",
       "\"Naught but ashes remain from my people. Petrus even saw that the word would not spread to Kharaz-arad or other dwarven lands.\"",
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
-      "\"After the coup, I knew that war would come. Priscus was a politician. Petrus was a warrior.\"";
+      "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
   }
 
@@ -3229,6 +4010,7 @@ zombie
       "\"Poems while you wait! Pay one brain, get one poem and one for free!\"",
       "\"My CV? I was a poet before I became a zombie. Then I worked as a mook, but quickly switched to freelance cannibal. And now I'm a prisoner.\"";
     }
+    DeathMessage = "@Dd is slain (finally).";
   }
 }
 
@@ -3254,7 +4036,14 @@ ghost
   NameSingular = "ghost";
   ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"Boo!\"";
+  HostileReplies =
+  {
+    4,
+    "@Dd moans.",
+    "@Dd wails.",
+    "@Dd attempts to spook you.",
+    "\"Boo!\"";
+  }
   FriendlyReplies == "\"A very good Boo to you, my friend.\"";
   PanicLevel = 0;
   /*HasALeg = false;*/
@@ -3401,7 +4190,21 @@ imp
     3,
     "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
     "\"I was about to kiss her, but then I got summoned.\"",
-    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a valentine.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
+    "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine's.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
+  }
+  HostileReplies =
+  {
+    10,
+    "@Dd cackles evilly.",
+    "@Dd cackles diabolically.",
+    "@Dd laughs devilishly.",
+    "@Dd laughs demonically.",
+    "@Dd giggles infernally.",
+    "@Dd giggles fiendishly.",
+    "@Dd snickers satanically.",
+    "@Dd snickers apocalyptically.",
+    "@Dd grins maniacally.",
+    "@Dd grins sadistically.";
   }
 }
 
@@ -3420,8 +4223,18 @@ bat
   CanOpen = false;
   TotalVolume = 1000;
   TorsoBitmapPos = 464, 16;
-  HostileReplies == "@Dd squeaks evilly.";
-  FriendlyReplies == "@Dd squeaks happily.";
+  HostileReplies =
+  {
+    2,
+    "@Dd screeches!",
+    "@Dd shrieks in ultrasound!";
+  }
+  FriendlyReplies =
+  {
+    2,
+    "@Dd chirps.",
+    "@Dd squeaks.";
+  }
   TotalSize = 20;
   SkinColor = rgb16(96, 64, 48);
   NameSingular = "bat";
@@ -3479,9 +4292,9 @@ mistress
   NameSingular = "mistress";
   NamePlural = "mistresses";
   CanBeGenerated = true;
-  BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-  RightGauntlet = LEATHER gauntlet;
-  RightBoot = LEATHER boot;
+  BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL);
+  RightGauntlet = BLACK_LEATHER gauntlet;
+  RightBoot = BLACK_LEATHER boot;
   RightWielded = NYMPH_HAIR whip { Enchantment = 1; }
   LeftWielded = NYMPH_HAIR whip { Enchantment = 1; }
   KnownCWeaponSkills == WHIPS;
@@ -3493,6 +4306,7 @@ mistress
   Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
   HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
   AttachedGod = NEFAS;
+  FleshMaterial = ELF_FLESH;
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
@@ -3504,7 +4318,7 @@ mistress
     "\"Sweet, oh sweetest agony!\"",
     "\"They say our queen Sherarax uses bear traps for nipple clamps.\"",
     "\"The queen of mistresses is selected by a ritual where she must survive a night with Mistress Nefas herself.\"",
-    "\"Ever participated in the weekly orgy at Nefas's High Temple? I guess not. You wouldn't have survived.\"",
+    "\"Ever participated in the weekly orgy at Nefas' High Temple? I guess not. You wouldn't have survived.\"",
     "\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
   }
   ScienceTalkAdjectiveAttribute =
@@ -3686,7 +4500,14 @@ werewolfhuman
   TorsoBitmapPos = 48, 0;
   ArmBitmapPos = 64, 0;
   LegBitmapPos = 0, 176;
-  HostileReplies == "@Dd screams in fury.";
+  HostileReplies =
+  {
+    4,
+    "\"I bet your innards taste real sweet!\"",
+    "\"Yummy! I was getting tired of kobolds.\"",
+    "@Dd throws back @sp head and lets out a blood-curdling howl!",
+    "@Dd growls: \"Another adventurer? I just got through picking my teeth from the last.\"";
+  }
   FriendlyReplies =
   {
     4,
@@ -3733,9 +4554,11 @@ werewolfwolf
   HostileReplies == "@Dd growls in fury.";
   FriendlyReplies =
   {
-    3,
+    5,
     "@Dd growls.",
     "@Dd howls.",
+    "@Dd yips.",
+    "@Dd whines.",
     "@Dd barks.";
   }
   TotalSize = 200;
@@ -3779,8 +4602,28 @@ vampire
   TorsoBitmapPos = 32, 304;
   LegBitmapPos = 0, 48;
   ArmBitmapPos = 80, 176;
-  HostileReplies == "@Dd roars angrily.";
-  FriendlyReplies == "@Dd capers cheerfully.";
+  HostileReplies =
+  {
+    4,
+    "\"Don't try to run. I will find you. I will always find you.\"",
+    "\"I will suck you dry!\"",
+    "\"This is my hunting ground that you dare to prowl!\"",
+    "@Dd hisses: \"There is no place to run.\"";
+  }
+  FriendlyReplies =
+  {
+    10,
+    "\"What's that smell? The sweet blood! Oh, it sings to me! It's enough to make a man sick.\"",
+    "\"Blessed be blood!\"",
+    "\"Blood makes us human, makes us more than human, makes us human no more.\"",
+    "\"Vampires have a sense of smell ten times more acute than humans. And you blame us for being repulsed by garlic?\"",
+    "\"Of course I die when you stake me in the heart and cut off my head. Everything dies when you stake it in the heart and cut off its head!\"",
+    "\"Shall we prowl the night, master?\"",
+    "\"Good feedings to you!\"",
+    "\"I hate silver! It's so cold and gloomy. I much prefer wearing gold.\"",
+    "\"I loathe the sun. All the sparkling drives me crazy.\"",
+    "\"No, I can't cross running water. But can you?\"";
+  }
   TotalSize = 170;
   NameSingular = "vampire";
   AttackStyle = USE_HEAD;
@@ -3798,8 +4641,9 @@ vampire
   CanBeGenerated = true;
   CanRead = true;
   UndeadVersions = false;
+  IsCatacombCreature = true;
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
-  AllowedDungeons == XINROCH_TOMB;
+  AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
 }
 
 kobold
@@ -3896,6 +4740,18 @@ kobold
     TamingDifficulty = 15;
     IsSadist = true;
     UndeadVersions = false;
+    FriendlyReplies =
+    {
+      8,
+      "\"My family traces its lineage all the way back to Karl, a scholar-knight of Sophos who became the first kobold patriarch.\"",
+      "\"The Path of Enlightenment is the greatest legacy our first patriarch Karl could bequeath to us. It will lead all kobolds out of the darkness of savagery.\"",
+      "\"If a kobold speaks or acts with an evil thought, pain follows him. If a kobold speaks or acts with a pure thought, happiness follows him.\"",
+      "\"Even death is not to be feared by a kobold who has lived wisely.\"",
+      "\"You will not be punished for your anger, you will be punished by your anger.\"",
+      "\"I often struggle to lead my kind on the Path of Enlightenment, but I must persevere. Too long we were beasts, now we shall become people.\"",
+      "\"The mind is everything. What you think you become.\"",
+      "\"Peace comes from within. Do not seek it without.\"";
+    }
   }
 }
 
@@ -4002,11 +4858,13 @@ largecat
   }
   FriendlyReplies =
   {
-    5,
+    7,
     "@Dd mews.",
     "@Dd purrs.",
     "@Dd weaves between your legs.",
     "@Dd kneads you with its paws. Ouch!",
+    "@Dd yowls.",
+    "You pet @dd.",
     "@Dd headbutts you playfully.";
   }
   TotalSize = 60;
@@ -4109,7 +4967,8 @@ angel
   }
   FriendlyReplies =
   {
-    6,
+    7,
+    "\"Do not be afraid!\"",
     "\"@Gd be with you, mortal.\"",
     "\"@Gd is in the Heavens. All is right over the world.\"",
     "\"Even though you walk through the valley of the shadow of death, you shall fear no one for @Gd is at your side.\"",
@@ -4273,7 +5132,13 @@ unicorn
   DefaultCharisma = 30;
   DefaultMana = 25;
   HostileReplies == "The furious @du neighs.";
-  FriendlyReplies == "The happy @du neighs.";
+  FriendlyReplies =
+  {
+    3,
+    "@Dd neighs.",
+    "@Dd whinnies.",
+    "@Dd whickers.";
+  }
   TotalVolume = 100000;
   TorsoBitmapPos = 544, 0;
   TotalSize = 200;
@@ -4343,8 +5208,20 @@ genie
   RightSWeaponSkillHits = 200;
   PanicLevel = 0;
   BaseEmitation = rgb24(110, 110, 130);
-  HostileReplies == "\"Fall, puny primy!\"";
-  FriendlyReplies == "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
+  HostileReplies =
+  {
+    3,
+    "\"Fall, puny mortal!\"",
+    "\"I will teach you not to disturb me!\"",
+    "\"Your last wish?\"";
+  }
+  FriendlyReplies =
+  {
+    3,
+    "\"I'm free!\"",
+    "\"Sorry, I'm all out of wishes.\"",
+    "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
+  }
   Belt = SPIDER_SILK belt;
   FleshMaterial = MAGICAL_AIR;
   DeathMessage = "@Dd vanishes from existence.";
@@ -4496,7 +5373,12 @@ snake
   DefaultMana = 0;
   TotalVolume = 10000;
   TorsoBitmapPos = 384, 0;
-  HostileReplies == "@Dd hisses in fury.";
+  HostileReplies =
+  {
+    2,
+    "@Dd hisses.",
+    "@Dd rattles!";
+  }
   FriendlyReplies == "@Dd hisses in a friendly manner.";
   TotalSize = 250;
   SkinColor = rgb16(130, 0, 0);
@@ -4554,8 +5436,19 @@ orc
   LeftSWeaponSkillHits = 20;
   ClassStates = GAS_IMMUNITY|INFRA_VISION;
   PanicLevel = 50;
-  HostileReplies == "\"Nice scalp! Me want it!\"";
-  FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
+  HostileReplies =
+  {
+    3,
+    "\"Nice scalp! Me want it!\"",
+    "@Dd spits on the ground.",
+    "@Dd scratches @sp armpit.";
+  }
+  FriendlyReplies =
+  {
+    2,
+    "\"Has you seen any elf or dwarf? Me hungry.\"",
+    "@Dd flips you the bird.";
+  }
   FleshMaterial = ORC_FLESH;
   AttachedGod = CRUENTUS;
   WieldedPosition = -1, -1;
@@ -4697,6 +5590,103 @@ orc
     TamingDifficulty = 35;
     UndeadVersions = false;
     IsImmuneToWhipOfThievery = true;
+    Sex = MALE;
+    FriendlyReplies =
+    {
+      27,
+      "\"I have a diary. It's called the Book of World Records.\"",
+      "\"I once threw a dwarven gas grenade and killed fifty people. Then the grenade exploded.\"",
+      "\"I counted to infinity. Twice.\"",
+      "\"I can kill two stones with one bird. Really!\"",
+      "\"I can hear sign language!\"",
+      "\"I can speak braille!\"",
+      "\"A snake bit me once. After days of excruciating pain, the snake died.\"",
+      "\"I make onions cry.\"",
+      "\"I don't need to cheat Death. I always win fair and square.\"",
+      "\"I once beat a mirror in a staring contest.\"",
+      "\"I will never have a heart attack. My heart is not foolish enough to attack me!\"",
+      "\"There is no evolution, just a list of creatures I allow to live.\"",
+      "\"I once punched a cyclops between the eye!\"",
+      "\"My tears can cure any disease. Too bad I never cry!\"",
+      "\"I don't play 'hide and seek'. I play 'hide and pray I don't find you'.\"",
+      "\"Death once had a near-me experience.\"",
+      "\"I put the 'laughter' into 'manslaughter'.\"",
+      "\"I should have died years ago, but Death can't get up the courage to tell me.\"",
+      "\"I can unscramble an egg.\"",
+      "\"I once found the end of a circle.\"",
+      "\"I never lie. I change the truth.\"",
+      "\"I use hot sauce as eye drops!\"",
+      "\"Do you know how many push-ups I can do? All of them!\"",
+      "\"I can slam a revolving door.\"",
+      "\"I can slow down time just by looking at an hourglass and flexing.\"",
+      "\"My father always wanted to be just like me when he was just a kid.\"",
+      "@Dd guffaws.";
+    }
+    HostileReplies =
+    {
+      6,
+      "\"You should have fled while you had the chance.\"",
+      "\"You are about to die, maggot!\"",
+      "\"Give me your best blow!\"",
+      "\"This dungeon ain't big enough for the both of us.\"",
+      "\"I'm gonna break your pretty face!\"",
+      "@Dd spouts torrents of taunts.";
+    }
+  }
+
+  Config REPRESENTATIVE;
+  {
+    AttributeBonus = 60;
+    DefaultWisdom = 19;
+    HairColor = rgb16(224, 224, 0);
+    ClothColor = rgb16(224, 224, 0);
+    BeltColor = rgb16(176, 0, 0);
+    LegMainColor = rgb16(224, 224, 0);
+    LegSpecialColor = rgb16(176, 0, 0);
+    HeadBitmapPos = 112, 176;
+    TorsoBitmapPos = 48, 32;
+    ArmBitmapPos = 80, 16;
+    LegBitmapPos = 0, 224;
+    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
+    Cloak = FABRIC cloak { Enchantment = 2; }
+    BodyArmor = GOLD bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+    Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
+    RightGauntlet = FABRIC gauntlet { Enchantment = 2; }
+    RightBoot = FABRIC boot { Enchantment = 2; }
+    RightWielded = GOLD EBONY_WOOD meleeweapon(AXE) { Enchantment = 3; }
+    LeftWielded = 0;
+    CWeaponSkillHits == 500;
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    TamingDifficulty = 30;
+    DefaultName = "Khor";
+    NameSingular = "orcish representative";
+    FriendlyReplies =
+    {
+      8,
+      "\"I am here on behalf of the orcish freeholds of Gothrok, Gotturan and Gotrotill.\"",
+      "\"We are a proud new nation which renounced both the barbarism of Ur-Khan's horde and the slavery under human overlords.\"",
+      "\"The orcish freeholds do not recognize the rulership of Khans. We rule ourselves as a true democracy.\"",
+      "\"We cannot tolerate the greenskin threat anymore! No goblin shall think it stands equal to an orc or a man.\"",
+      "\"My lords want the head of Guugzamesh served to them on a silver platter, and Attnam can be very helpful in that.\"",
+      "\"How long can Petrus ignore me?! I'm here to offer him an alliance!\"",
+      "\"Oh, the emisary of Aslona is here, too. I will enjoy seeing him grovel and beg for the help from Attnam.\"",
+      "\"Many of my peers have fallen in wars under the old king of Aslona. I will not mourn the fall of the new king, either.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"I know what they say about orcish diplomacy! Well, it's not untrue!\"",
+      "\"You're just prejudiced against my kind, aren't you?\"";
+    }
+    Sex = MALE;
+    AttachedGod = MELLIS;
+    TotalVolume = 120000;
+    Inventory == potion { SecondaryMaterial = VODKA; Times = 1:10; }
   }
 }
 
@@ -4737,10 +5727,11 @@ cossack
   AttachedGod = SILVA;
   FriendlyReplies =
   {
-    4,
-    "\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"",
+    5,
+    "\"Graah! Eating raw flesh makes one feel so masculine and powerful (and sick)!\"",
     "\"It surely is cold on this island. Remembers me of my six years in Siberia after breaking into the local pub's booze cellar...\"",
     "\"What, why have I no horse? Er, I lost it in poker.\"",
+    "\"I followed Ivan through some weird portal and ended up in this land. At least no creditors can find me.\"",
     "\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"";
   }
 }
@@ -4925,9 +5916,10 @@ imperialist
 
   Config MASTER_TORTURER;
   {
+    DefaultWisdom = 25;
+    DefaultCharisma = 10;
     HeadBitmapPos = 96, 64;
     TorsoBitmapPos = 48, 48;
-    ArmBitmapPos = 64, 256;
     LegBitmapPos = 0, 48;
     TorsoMainColor = rgb16(30, 30, 30);
     LegMainColor = rgb16(30,30,30);
@@ -4963,11 +5955,42 @@ imperialist
       "\"I was tasked with re-education of thought-criminals by mighty Petrus himself!\"";
     }
     DeathMessage = "@Dd screams, dying: \"I see the door! The extasy of death! I'm coming!\"";
+    ScienceTalkName =
+    {
+      75,
+      "impalement", "mock executions", "phobias", "torture", "disembowelment",
+      "whipping", "interrogation", "sleep deprivation", "brazen bulls", "disfigurement",
+      "masochism", "dentistry", "maiming", "beating", "blinding",
+      "boiling alive", "breaking bones", "branding", "forced abortion", "castration",
+      "testicle crushing", "waterboarding", "anatomy", "pain", "agony",
+
+      "strangling", "combing", "cutting", "denailing", "spanking",
+      "drowning", "flagellation", "flaying", "thumbscrews", "foot roasting",
+      "foot whipping", "forced circumcision", "hamstringing", "scaphism", "kneecapping",
+      "iron maidens", "stocks", "wooden horses", "dunking", "tablillas",
+      "kneehauling", "mutilation", "pitchcapping", "rape", "horror",
+
+      "rat torture", "sawing", "scalping", "starving", "strappado",
+      "tickle torture", "tooth extraction", "walling", "breaking wheels", "choke pears",
+      "breast rippers", "heretic forks", "spiked chairs", "pendulums", "pillories",
+      "torture racks", "freezing", "burning", "live burials", "half-hanging",
+      "bamboo torture", "abacination", "hooding", "cangue", "tean zu";
+    }
+    ScienceTalkPossibility = 50;
+    ScienceTalkIntelligenceModifier = 20;
+    ScienceTalkWisdomModifier = 40;
+    ScienceTalkCharismaModifier = 0;
+    ScienceTalkIntelligenceRequirement = 10;
+    ScienceTalkWisdomRequirement = 15;
+    ScienceTalkCharismaRequirement = 0;
     Inventory == key;
   }
 
   Config HOARD_MASTER;
   {
+    AttributeBonus = -30;
+    DefaultIntelligence = 50;
+    DefaultWisdom = 50;
     HeadBitmapPos = 96, 80;
     TorsoBitmapPos = 32, 16;
     ArmBitmapPos = 64, 16;
@@ -5011,6 +6034,13 @@ imperialist
       "\"A powerful Attnam is coming, and Bazzaria has only two choices: Either they're at the table, or they're on the menu!\"",
       "\"The trick to strong and stable economy is to work the citizens hard enough they can't afford the luxury of thought.\"";
     }
+    ScienceTalkPossibility = 20;
+    ScienceTalkIntelligenceModifier = 40;
+    ScienceTalkWisdomModifier = 40;
+    ScienceTalkCharismaModifier = 0;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 20;
+    ScienceTalkCharismaRequirement = 0;
     Inventory = { 3, GOLD key(HEXAGONAL_LOCK), GOLD scrollofdetectmaterial, GOLD holybook(MELLIS); }
   }
 }
@@ -5236,8 +6266,15 @@ floatingeye
   DefaultMana = 0;
   CanOpen = false;
   TotalVolume = 30000;
-  HostileReplies == "@Dd stares at you.";
-  FriendlyReplies == "@Dd stares at you.";
+  HostileReplies =
+  {
+    4,
+    "@Dd stares at you intently.",
+    "@Dd blinks.",
+    "@Dd goes unfocused for a second.",
+    "@Dd gazes at you.";
+  }
+  FriendlyReplies == "@Dd stares at you in a friendly manner.";
   TotalSize = 40;
   Adjective = "floating";
   NameSingular = "eye";
@@ -5394,14 +6431,46 @@ darkmage
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
-  HostileReplies == "@Dd yells: \"Prepare to meet your maker!\"";
-  FriendlyReplies == "\"Death awaits our foes.\"";
+  HostileReplies =
+  {
+    6,
+    "\"Abracadabra!\"",
+    "\"Hocus pocus!\"",
+    "\"Alakazam.\"",
+    "\"Sim sala bim!\"",
+    "@Dd screams: \"May the Darkness swallow you!\"",
+    "@Dd yells: \"Prepare to meet your maker!\"";
+  }
+  FriendlyReplies =
+  {
+    10,
+    "\"Don't fear the Darkness, my friend.\"",
+    "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
+    "\"Everything looks better when it's dead and on fire!\"",
+    "\"My motto? If it's not on fire now, it will be soon.\"",
+    "\"What hurts you, blesses you. Darkness is your candle.\"",
+    "@Dd seems not to notice you.",
+    "@Dd seems to mutter a cantrip.",
+    "@Dd complains about unpleasant dungeon conditions.",
+    "@Dd cackles madly: \"Build a man a fire, and he'll be warm for a day. Set a man on fire, and he'll be warm for the rest of his life.\"",
+    "\"Death awaits our foes.\"";
+  }
   IgnoreDanger = true;
   AttachedGod = INFUSCOR;
   IsAbstract = true;
   KnownCWeaponSkills == BLUNT_WEAPONS;
   IsExtraFragile = true;
   IsSadist = true;
+  ScienceTalkName =
+  {
+    25,
+    "spellcraft", "druidcraft", "illusioncraft", "witchcraft", "conjuration",
+    "charms", "enchantments", "summoning", "necromancy", "pyromancy",
+    "oneiromancy", "transmutation", "transformation", "transmogrification", "alchemy",
+    "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
+    "abjuration", "invocation", "evocation", "incantations", "hexes";
+  }
+
 
   Config APPRENTICE;
   {
@@ -5434,7 +6503,7 @@ darkmage
     LeftSWeaponSkillHits = 20;
     PolymorphIntelligenceRequirement = 5;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 5; } }
-    DeathMessage = "@Dd dies screaming: \"No! The darkness, it's coming for me!\"";
+    DeathMessage = "@Dd dies screaming: \"No! The Darkness, it's coming for me!\"";
     ScienceTalkPossibility = 25;
     ScienceTalkIntelligenceModifier = 10;
     ScienceTalkWisdomModifier = 5;
@@ -5471,7 +6540,7 @@ darkmage
     LeftSWeaponSkillHits = 50;
     PolymorphIntelligenceRequirement = 20;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
-    DeathMessage = "@Dd dies laughing: \"You understand nothing! The darkness will rise and nothing you can do will stop it.\"";
+    DeathMessage = "@Dd dies laughing: \"You understand nothing! The Darkness will rise and nothing you can do will stop it.\"";
     ScienceTalkPossibility = 50;
     ScienceTalkIntelligenceModifier = 25;
     ScienceTalkWisdomModifier = 10;
@@ -5510,7 +6579,7 @@ darkmage
     LeftSWeaponSkillHits = 100;
     PolymorphIntelligenceRequirement = 35;
     Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 50; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 50; } }
-    DeathMessage = "@Dd dies laughing: \"You understand nothing! The darkness will rise and nothing you can do will stop it.\"";
+    DeathMessage = "@Dd dies laughing: \"You understand nothing! The Darkness will rise and nothing you can do will stop it.\"";
     ScienceTalkPossibility = 100;
     ScienceTalkIntelligenceModifier = 100;
     ScienceTalkWisdomModifier = 50;
@@ -5575,8 +6644,19 @@ darkmage
       "@Dd is humming an incantation of a devastating death-spell.",
       "\"A mere mortal dares challenge my might?\"";
     }
-    FriendlyReplies == "\"Death awaits our foes.\"";
-    DeathMessage = "@Dd dies with a calm smile: \"Hello darkness, my old friend...\"";
+    FriendlyReplies =
+    {
+      8,
+      "@Dd conjures a quick illusion. \"This is picture from my great-grandson's fourth birthday last week. His name is Timmy. And this is the arcanite golem I gave him.\"",
+      "\"Timotheodon, my only great-grandson, once stole my spellbook and tried to blast his classmates with a fireball. Isn't he a lovable rascal?\"",
+      "@Dd sighs: \"My late wife, Helen, baked a wonderful banana stollen. Atavus day is not the same anymore, without her.\"",
+      "\"I miss my wife so much. I even considered looking into necromancy, but... No, she wouldn't like it that way.\"",
+      "@Dd winks at you: \"Ever tried a shot of vodka with just a sprinkle of ommel urine? That gives it just the right bite!\"",
+      "\"Magic always comes at a price.\"",
+      "\"The Art. It is not a painting, yet people will marvel at the sight. It is not a poem, yet it will move those that hear it. To be an Artist is to see the world as your canvas, to see reality as your clay.\"",
+      "\"Some holidays, I wish I could just summon my family rather than try to make them agree on a time and place...\"";
+    }
+    DeathMessage = "@Dd dies with a calm smile: \"Hello Darkness, my old friend...\"";
   }
 }
 
@@ -5756,7 +6836,16 @@ elpuri
   PanicLevel = 0;
   CanBeCloned = false;
   DefaultName = "Elpuri";
-  HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
+  HostileReplies =
+  {
+    6,
+    "\"DiE, mOrTaL!!!\"",
+    "\"tHe PoRtAl Is SpEaKiNg To Me... ThEy ArE cOmInG... tHeY aRe EnDlEsS... gRaH-hAH-hArR!!! aT LeAsT i WiLl HaVe WhAt To EaT!!!\"",
+    "\"I hAvE dEvOuReD hOrDeS oF dAeMoNs, CoNsUmEd ThEiR pOwEr AnD sOuLs... YoU aRe BuT a TiNy MoRsEl!!!\"",
+    "\"i ReMeMbEr LiGhT... bUt DaRkNeSs Is So MuCh MoRe... DeLiGhTfUl... AnD dElIcIoUs!!!\"",
+    "\"PeTrUs!!! I rEmEmBeR!!! oNe DaY, i WiLl DeVoUr EnOuGh, I wIlL gRoW eNoUgH aNd ThEn I wIlL fEaSt On HiS fLeSh!!!\"",
+    "@Dd roars horribly: \"DiE, pUnY hUmAn!!!\"";
+  }
   BloodMaterial = DARK_FROG_BLOOD;
   SkinColor = rgb16(60, 60, 60);
   ClassStates = INFRA_VISION|TELEPORT_CONTROL;
@@ -6094,7 +7183,7 @@ necromancer
     Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }
     FriendlyReplies =
     {
-      8,
+      10,
       "@Dd smiles oddly: \"I see dead people. Lots of them. All the time. It's annoying.\"",
       "\"I'm trying to raise funds for a personal side-project of mine. Would you happen to have some virgins to spare?\"",
       "\"I was on a good way to become a lich, but I couldn't decide on the color of my phylactery.\"",
@@ -6102,6 +7191,8 @@ necromancer
       "\"You don't know what SCP-008 is? Hehehe, ha ha! MWHAHAHAHAHAHA-ha. Sorry.\"",
       "\"The dead long for torture - to feel once more!\"",
       "\"I am the Reaper! Come join my dance.\"",
+      "\"May you find beauty in endings...\"",
+      "\"Nothing is more certain than death and nothing more uncertain than the time of dying.\"",
       "\"Are you a registered organ donor for the Flesh Golem Research Program? And would you like to be?\"";
     }
     DeathMessage = "@Dd dies laughing: \"Death is just a beginning!\"";
@@ -6420,7 +7511,13 @@ archangel
   CanChoke = false;
   DisplacePriority = 10;
   AllowPlayerToChangeEquipment = false;
-  HostileReplies == "\"I judge thee guilty!\"";
+  HostileReplies =
+  {
+    3,
+    "\"Do be afraid!\"",
+    "\"In the most holy name of @Gd, die!\"",
+    "\"I judge thee guilty!\"";
+  }
   FriendlyReplies =
   {
     3,
@@ -6533,7 +7630,7 @@ tailor
   RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
   RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
   RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
-  KnownCWeaponSkills == BLUNT_WEAPONS;
+  KnownCWeaponSkills == SMALL_SWORDS;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
@@ -6599,6 +7696,7 @@ mysticfrog
     DefaultIntelligence = 25;
     DefaultWisdom = 35;
     DefaultCharisma = 30;
+    BloodMaterial = LIGHT_FROG_BLOOD;
     SkinColor = rgb16(32, 88, 32);
     Adjective = "mystic light";
     ClassStates = TELEPORT_CONTROL|INVISIBLE|ESP;
@@ -6621,42 +7719,58 @@ lobhse
   DefaultWisdom = 5;
   DefaultCharisma = 6;
   DefaultMana = 0;
-  BloodMaterial = SICK_BLOOD;
-  CanOpen = false;
-  HostileReplies == "@Dd says nothing.";
-  FriendlyReplies == "@Dd says nothing.";
-  TotalSize = 10;
   SkinColor = rgb16(64, 64, 100);
   BeltColor = rgb16(50, 150, 50); /* the mouth */
   TorsoMainColor = rgb16(30, 30, 30);
+  TorsoBitmapPos = 192, 64;
+  TotalSize = 200;
+  TotalVolume = 500000;
+  TamingDifficulty = 50;
+  DefaultName = "Lobh-Se";
   NameSingular = "behemoth spider";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 400;
-  ClassStates = INFRA_VISION;
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
-  FleshMaterial = SICK_SPIDER_FLESH;
+  ClassStates = INFRA_VISION|LEPROSY;
   AttachedGod = SCABIES;
+  FleshMaterial = SICK_SPIDER_FLESH;
+  BloodMaterial = SICK_BLOOD;
+  CanOpen = false;
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
   IsImmuneToStickiness = true;
-  DefaultName = "Lobh-Se";
-  TorsoBitmapPos = 192, 64;
-  TotalVolume = 500000;
-  TamingDifficulty = 50;
   IsNameable = false;
   IsUnique = true;
-  TotalSize = 200;
   IsPolymorphable = false;
   CanBeGenerated = false;
-  PanicLevel = 0;
   CanBeCloned = false;
-  DeathMessage = "@Dd groans horribly and drops @pp head.";
   CanBeConfused = false;
-  AttackStyle = USE_HEAD;
-  KnownCWeaponSkills == BITE;
   DestroysWalls = true;
   AllowUnconsciousness = false;
+  IsImmuneToLeprosy = true;
+  EnergyResistance = 5;
+  FireResistance = 15;
+  PoisonResistance = 50;
+  ElectricityResistance = 5;
+  AcidResistance = 50;
+  PanicLevel = 0;
+  HostileReplies =
+  {
+    3,
+    "@Dd whimpers.",
+    "@Dd cries a little.",
+    "@Dd tears up.";
+  }
+  FriendlyReplies =
+  {
+    4,
+    "\"Mommy!\"",
+    "\"Where... my mommy?\"",
+    "\"You... new mommy?\"",
+    "You pet @dd.";
+  }
+  DeathMessage = "@Dd groans horribly and the world is finally freed from this terrible menace.";
 }
 
 siren
@@ -6680,18 +7794,35 @@ siren
   TotalVolume = 40000;
   TotalSize = 170;
   BaseUnarmedStrength = 200;
-  HostileReplies == "\"LAallaaalalaaa!\"";
   CanRead = true;
   NameSingular = "siren";
   IsAbstract = true;
   CanBeGenerated = true;
   AttachedGod = DULCIS;
-  FriendlyReplies == "\"I'm singing in the rain... Oh wait...\"";
+  FleshMaterial = ELF_FLESH;
+  HostileReplies == "\"LAallaaalalaaa!\"";
+  FriendlyReplies =
+  {
+    5,
+    "@Dd curses all orcs.",
+    "@Dd comes on to you.",
+    "@Dd cajoles you.",
+    "\"Hello, sailor!\"";
+    "\"I'm singing in the rain... Oh wait...\"";
+  }
 
   /* if somebody really wants to J_Kahvi has provided
      detailed discussion of nipple and pubic hair
      color in Doc/Data/Dialog.txt starting from
      line 2552 to 2640 */
+
+  ScienceTalkPossibility = 33;
+  ScienceTalkIntelligenceModifier = 0;
+  ScienceTalkWisdomModifier = 0;
+  ScienceTalkCharismaModifier = 2;
+  ScienceTalkIntelligenceRequirement = 0;
+  ScienceTalkWisdomRequirement = 0;
+  ScienceTalkCharismaRequirement = 15;
 
   Config LIGHT_ASIAN_SIREN;
   {
@@ -6754,6 +7885,44 @@ siren
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     TorsoMainColor = rgb16(160, 100, 64);
+  }
+
+  Config AMBASSADOR_SIREN;
+  {
+    DefaultIntelligence = 30;
+    DefaultWisdom = 35;
+    DefaultCharisma = 75;
+    HeadBitmapPos = 112, 400;
+    SkinColor = rgb16(180, 255, 150);
+    HairColor = rgb16(200, 48, 32);
+    TorsoMainColor = rgb16(180, 255, 150);
+    CanBeGenerated = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    TamingDifficulty = 20;
+    DefaultName = "Elianise";
+    NameSingular = "elven ambassador";
+    PostFix = "of the Dark Forest";
+    Cloak = NYMPH_HAIR cloak { Enchantment = 4; }
+    /* RightWielded = charmlyre; */
+    FriendlyReplies =
+    {
+      7,
+      "\"Greetings! I am Elianise Lurora Faefina Glynjor Ilythyrra Reysatra Liarryn, Her Most Trusted Advisor and Ambassador of the Fair Empress of Elvenkind.\"",
+      "\"I was sent from Lunethia to here on a diplomatic mission from my Empress. I hope my stay will be short.\"",
+      "\"Yes, the rumors are true. Lunethia really is a town built atop a gigantic mango tree.\"",
+      "\"I'm not 'an elf', I come from the royal blood of Vindael, or wood-children, if you will.\"",
+      "\"I've heard a mistress of Nefas has infiltrated even this very Cathedral. Do not trust Dar'Vindael, for their words and deeds are just as treacherous as their goddess!\"",
+      "\"I never understood why are your people calling mine 'dark elves'. We may be living in the Dark Forest, but we give our lives to fight Darkness in all its forms.\"",
+      "\"The violation of our borders must end! We don't care where Attnam gets its wood, but the Dark Forest will not be exploited.\"";
+    }
+    IsExtraCoward = true;
+    UndeadVersions = false;
+    ScienceTalkPossibility = 15;
+    ScienceTalkCharismaModifier = 20;
+    StandVerb = "waiting";
   }
 }
 
@@ -6829,7 +7998,323 @@ punisher
   FriendlyReplies =
   {
     2,
-    "\"Hey, I'm also from New Attnam!\"",
+    "\"We work very hard here. You would not believe how exhausting is it to torture people.\"",
     "\"Gah, that mask itches! But Mr. Decos says we have to wear it to keep the morale of prisoners up.\"";
+  }
+
+  Config LAW_STUDENT;
+  {
+    DefaultArmStrength = 10;
+    DefaultLegStrength = 10;
+    DefaultDexterity = 15;
+    DefaultAgility = 15;
+    DefaultEndurance = 10;
+    DefaultPerception = 24;
+    DefaultIntelligence = 28;
+    DefaultWisdom = 25;
+    DefaultCharisma = 30;
+    Sex = FEMALE;
+    HairColor = rgb16(200, 96, 0);
+    EyeColor = rgb16(4, 93, 28);
+    CapColor = rgb16(4, 93, 28);
+    SkinColor = rgb16(240, 200, 201);
+    ClothColor = rgb16(255, 105, 180);
+    ArmMainColor = rgb16(240, 200, 201);
+    LegMainColor = rgb16(240, 200, 201);
+    LegSpecialColor = rgb16(255, 105, 180);
+    BootColor = rgb16(30, 30, 30);
+    HeadBitmapPos = 128, 416;
+    TorsoBitmapPos = 48, 96;
+    ArmBitmapPos = 80, 240;
+    LegBitmapPos = 16, 192;
+    TotalVolume = 40000;
+    TotalSize = 175;
+    CanRead = true;
+    NameSingular = "law student";
+    DefaultName = "Laki Oppilas";
+    RightWielded = 0;
+    LeftWielded = holybook(LEGIFER);
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 100, 100; }
+    AttachedGod = MELLIS;
+    IsSadist = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    FriendlyReplies =
+    {
+      8,
+      "\"I'm here on a student exchange program, to gather resources for my dissertation.\"",
+      "\"I'm writing a dissertation on the legal implications of using torture in public proceedings.\"",
+      "\"The law system of Bazzaria is derived from the old, time-tested methods - trials by ordeal, layman juries and lynching.\"",
+      "\"Legifer? No, I'm a future lawyer, of course I worship Mellis!\"",
+      "@Dd says very loudly: \"Why yes, I love working with Mr. Decos! It's a pleasure to assist a true professional with his work.\"",
+      "@Dd whispers with a haunted expression: \"Please, help me! I don't want to be here. Mr. Decos is a madman and those punishers...\"",
+      "@Dd whispers on the verge of tears: \"Please, help me! I don't want to know anything any more about their laws or techniques. I just want to go home.\"",
+      "@Dd whispers to you: \"Please, help me! I can't take it anymore.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"Stop or I will sue you!\"",
+      "@Dd screams: \"No! This is assault and battery!\"";
+    }
+  }
+}
+
+child
+{
+  DefaultArmStrength = 7;
+  DefaultLegStrength = 8;
+  DefaultDexterity = 10;
+  DefaultAgility = 12;
+  DefaultEndurance = 10;
+  DefaultPerception = 14;
+  DefaultIntelligence = 9;
+  DefaultWisdom = 5;
+  DefaultCharisma = 8;
+  DefaultMana = 0;
+  TorsoBitmapPos = 32, 384;
+  ArmBitmapPos = 80, 352;
+  LegBitmapPos = 16, 16;
+  BootColor = rgb16(90, 50, 10);
+  ClothColor = rgb16(200, 200, 200);
+  LegMainColor = rgb16(180, 80, 0);
+  TotalVolume = 40000;
+  TotalSize = 100;
+  Sex = UNDEFINED;
+  AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
+  DefaultCommandFlags = FOLLOW_PLAYER|FLEE_FROM_ENEMIES;
+  HostileReplies == "\"Mommy! Daddy! Help!\"";
+  AttachedGod = ATAVUS;
+  IsAbstract = true;
+  IsExtraCoward = true;
+  IsExtraFragile = true;
+  AutomaticallySeen = true;
+  CanRead = false;
+  CanBeGenerated = false;
+
+  Config BOY;
+  {
+    HairColor = rgb16(181, 82, 57);
+    HeadBitmapPos = 112, 335;
+    NameSingular = "boy";
+    Sex = MALE;
+    FriendlyReplies =
+    {
+      3,
+      "\"Do you like snowball fighting?\"",
+      "\"Let's play catch!\"",
+      "\"Eeny, meeny, miny, moe...\"";
+    }
+  }
+
+  Config GIRL;
+  {
+    HairColor = rgb16(80, 48, 32);
+    CapColor = rgb16(80, 48, 32); /* also used for hair */
+    HeadBitmapPos = 96, 335; 
+    NameSingular = "girl";
+    Sex = FEMALE;
+    FriendlyReplies =
+    {
+      3,
+      "\"My sister was eaten by a wolf yesterday.\"",
+      "\"I hope I will get a doll of the high priest on Atavus day.\"",
+      "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
+    }
+  }
+}
+
+bum
+{
+  DefaultArmStrength = 18;
+  DefaultLegStrength = 18;
+  DefaultDexterity = 10;
+  DefaultAgility = 10;
+  DefaultEndurance = 25;
+  DefaultPerception = 10;
+  DefaultIntelligence = 6;
+  DefaultWisdom = 6;
+  DefaultCharisma = 2;
+  DefaultMana = 5;
+  HeadBitmapPos = 112, 160;
+  TorsoBitmapPos = 32, 288;
+  LegBitmapPos = 16, 256;
+  ArmBitmapPos = 80, 192;
+  HairColor = rgb16(35, 35, 35);
+  TorsoMainColor = rgb16(30, 30, 30);
+  TotalVolume = 80000;
+  TotalSize = 190;
+  NameSingular = "bum";
+  KnownCWeaponSkills == UNARMED;
+  CWeaponSkillHits == 50;
+  RightSWeaponSkillHits = 20;
+  IsAlcoholic = true;
+  CanBeGenerated = false;
+  IgnoreDanger = true; /* too drunk */
+  PanicLevel = 0;
+  FriendlyReplies =
+  {
+    151, /* rumors, more to come */
+    "\"There was this guy I used to adventure with, who nearly got killed by a spider because he couldn't hit it with his halberd. Har har har, what was he thinking, right? Trying to squash the tiny spider with such a huge weapon?\"",
+    "\"You shouldn't leave your weapons filthy! I once had this nice adamantine sword, but some blood got on it and before I knew it, the sword was completely covered in rust.\"",
+    "\"I've heard about a belt that can make you float in the air! Now that would have been useful that one time in the caves I stepped on a mine and nearly got my leg blown off.\"",
+    "\"You know magpies? Small, black and white birds? Murder them all! I hate those thieving... Argh!\"",
+    "\"As a little boy, I saw my father get into a fight with other farmers. You wouldn't believe how easily a sickle chops off limbs.\"",
+    "\"I miss my cloak. The cold is not so bad, but I felt safer with it wrapped around my body.\"",
+    "\"Me and my father once got cornered by a pack of wolves when I was young. He took off his belt and chased them off. Belts really can pack a whip, har har har.\"",
+    "\"I met this Ivan when he was in Attnam a few weeks back. He had a cute pet bunny, Vladimir!\"",
+    "\"I met this Ivan when he was in Attnam a few weeks back. He seemed a cool guy, but quite reclusive. Maybe I was not cool enough for him to want to hang out? Har har har.\"",
+    "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can all see in the dark as well as a cat? They can't read, though, but who needs that, right? Har har har.\"",
+    "\"Yes, I've met some orcs in my days, both khanites and from the freeholds. Did you know they can't smell at all? I once saw an orc standing in a cloud of mustard gas like it was nothing!\"",
+    "\"Have you ever lost a limb? Or maybe contracted leprosy? Woke up after a night of drinking as a wolf and knew nothing about it? Trust me and ask any priest, they know quite a bit about stuff like that.\"",
+    "\"I've tasted unicorn flesh just once in my whole life and... Well, it was weird.\"",
+    "\"My mama always told me that white unicorn steak can cure all your ills but... I'm not sure I really wish to try.\"",
+    "\"Har har har, it's always funny when you smack somebody on the head hard enough that they get this stupid, but quite happy smile and completely forget what they were doing. Har har har!\"",
+    "\"I once managed to mirror myself a doppelganger! We were unstoppable in battle, but sadly he didn't last.\"",
+    "\"Maybe you've heard about those fabled wands of cloning? I can think about a few things I wouldn't mind having more of, har har har.\"",
+    "\"Don't believe those legends about grateful genies released from their lamps! I've met one so grumpy he tried to behead me just because I rubbed his lamp.\"",
+    "\"Adamant, huh? Some say it's truly miraculous metal, but it's really just a noble iron, but heavy! Har har har!\"",
+    "\"Breaking your wands can have quite an effect, har har har. I've learned the hard way.\"",
+    "\"One of my friends once told me that altars and wands of polymorph mix surprisingly well. Hm, I'll have to try for myself one day.\"",
+    "\"My mama always told me, eat carrots and you'll see as well as a giant golden eagle.\"",
+    "\"Mushrooms are my favourite! They spawn so quickly you'll never run out of food! Har har har!\"",
+    "\"My mama always told me that fat people are not very agile and gaunt people are weak. It's best to try and stay fit, she said.\"",
+    "\"Ommels, eh? Magnificent creatures. Some say they have bones harder than steel and teeth like adamant!\"",
+    "\"Ommels, eh? Magnificent creatures. Some say you can even make good use of their excretions.\"",
+    "\"If you never had some troll blood, you should try it. It's so sweet, so tasty and nutritious... Enough to make a man sick.\"",
+    "\"Trolls really have tough hides. I made a pair of boots from the one I encountered in mountains far to the north, and used them for years before they wore out.\"",
+    "\"One priestess once told me that angels look out for ardent worshippers. I'm not sure what ardent means, so I just smiled and nodded.\"",
+    "\"Those kamikaze dwarves can't tell friend from foe. Maybe the gods don't care about a little friendly fire? Har har har!\"",
+    "\"Have you seen Petrus? Wise men have massive beards, indeed. Har har har!\"",
+    "\"One of my friends always said that when everything else fails, you can always bite your foes to death. Granted, she was a werewolf, but still...\"",
+    "\"Don't believe those rumors about an enchanted valpurium flaming sword just lying around! It's all lies! Lies, I say!\"",
+    "\"I've heard tales about arcanite, a magical metal lighter than some wood! I would love to try out a shield made of arcanite.\"",
+    "\"One priestess once told me that phoenix feathers rise from their ashes. I wonder how incredible the whole birds must be, then.\"",
+    "\"Be careful about the minefields deep underground. The Dwarven Wars left behind so many landmines, it's smart to invest into some fireproof dragon hide and a ring of fire resistance before going anywhere.\"",
+    "\"My mama told me tales about golden eagles, the kings of the sky, when I was a boy. That's why I first went to do some adventuring - to try and find them. Maybe I will, one day, har har har.\"",
+    "\"Deep underground, you can sometimes find incredible crystals. I've even heard tales about some that glow with inner light.\"",
+    "\"Don't remind me of school food! Just thinking about it makes me want to puke!\"",
+    "\"Blink dogs have acute understanding of spatial locations, mages say. I've also heard some goblin tribes make a tasty stew from them. Blink dogs and mages, both.\"",
+    "\"Pepsi? I wouldn't say the name aloud, being you. Some valpurists consider it a heresy just to speak this accursed name.\"",
+    "\"No, gibberlings talk nonsense. Don't pay attention to them.\"",
+    "\"Oh, a hattifattener? Really a shocking sight, let me tell you! Har har har!\"",
+    "\"Trust me when I tell you that kobold flesh has a stunning taste. Har har har!\"",
+    "\"I remember one mycologist telling me that eating mushrooms can lead to some strange experiences. Must be an interesting occupation, being a mycologist. Har har har!\"",
+    "\"Skunks are so smelly it makes me physically ill. Sometimes I wish I was an orc.\"",
+    "\"When a friend told me that a pea soup can save your life, I didn't believe them. I know better now.\"",
+    "\"I've heard that deep in the south, some cities have junkie dens where you can inhale some mysterious blue gas. Reportedly, it can make you feel unstoppable! Har har har!\"",
+    "\"I've heard that deep in the south, some cities have interesting junkie dens, but you should be very wary if you see any red gas hovering near them.\"",
+    "\"A sorceress once told me that raw magic is unpredictable. Not that I would think otherwise.\"",
+    "\"Ah yes, antidote is an adventurer's best friend. Don't be fooled, it can cure much more than just poison.\"",
+    "\"My mama always told me to take a bottle of water with me into a dungeon. There's nothing like a refreshing drink after an exhausting fight.\"",
+    "\"Drunks are fearless. Don't bother to scare them; I should know something about that. Har har har!\"",
+    "\"Backpacks full of gunpowder are not safe to have at home. Trust me, I've learned the hard way. Har har har!\"",
+    "\"I used to travel with an angel and help her heal the ailing. I love to think back to those days.\"",
+    "\"I've dated an angel once. She was really sweet, but we were sadly forced to break up when she had to return back to Heavens and I wasn't really ready to let go of this world...\"",
+    "\"My father had a saying: Bears are bad news.\"",
+    "\"Have you heard about Bill, that powerful psion? No? Then you're lucky. Har har har.\"",
+    "\"If you ever wish to go down under the Cathedral Cellar, remember that ghosts can be really scary.\"",
+    "\"What a pleasure to chat with the dolphins. They are more clever than it seems, har har har!\"",
+    "\"One necromancer once told me no one could ever get the hang of animating animals.\"",
+    "\"No matter how smart it seems at the time, pushing your fingers down your throat can be harmful to your body. And it's disgusting.\"",
+    "\"Some people are simply stronger. You can't do much about it. But nothing is stronger than an adamantine arm!\"",
+    "\"Some people are simply more healthy. You can't do much about it. Maybe wear an armor of great health, but...\"",
+    "\"Some people are simply faster. You can't do much about it. But nothing is quicker than an phoenix feather arm!\"",
+    "\"Some people are simply more clever. You can't do much about it. But maybe you can talk with people and try to learn from them?\"",
+    "\"I used to grow carnivorous plants when I had a garden. They liked acidic soil and fresh meat every morning.\"",
+    "\"Have you ever had hiccups? I had. For nearly a day. It was annoying.\"",
+    "\"My mama always told me that talking to yourself is dumb.\"",
+    "\"I had a friend who ended up with a prosthetic arm and was rather surprised when it didn't heal after a fight. Har har har! I don't know what she was thinking, but I gave her my scroll of repair and all was well.\"",
+    "\"Zombies are not be trusted! They say they need brains, but when I chopped one's head off, it could still walk rather well with no brain at all!\"",
+    "\"One mage once told me that no magic can regrow you a head. At least not when you're still alive.\"",
+    "\"My grandpa used to tell me bedtime stories about Solicitus, a god no one believed in. The poor god was quite stressed and hopeless about his situation.\"",
+    "\"My grandpa used to tell me bedtime stories about a god of pain, misery and annoying noises, who one day mysteriously disappeared. No one missed him.\"",
+    "\"I had a lovely pet kitten as a boy, until it died in a mammoth accident. Fortunately, my grandpa had a wand of resurrection.\"",
+    "\"Mustard is very, very bad for you. You don't want a first-hand experience, trust me.\"",
+    "\"My grandpa used to say that dangerous people face more dangerous foes and pride comes before a fall. I guess the moral is to be humble and murder everything before it can murder you. Har har har!\"",
+    "\"My grandpa used to tell me bedtime stories about Ischaldirh, the most powerful sorcerer in all realms. I've heard he's still alive and as dangerous as ever. Har har har! I hope I'll never meet him.\"",
+    "\"My grandpa used to tell me bedtime stories about the queens of mistresses, who are always the most powerful warladies of their times. The current one is called Sherarax, as far as I know. I don't say this often but his lady is too hot for my tastes, har har har!\"",
+    "\"Only sadists are not nice to their pets! No one should treat their pet like the High Priest treats his wives.\"",
+    "\"My father was a farmer. He taught me how to use sickles and scythes, how to eviscerate the weeds. Those farming blades are deadly against plants. Har har har!\"",
+    "\"My grandpa used to say that it's best to slow the germs in our food so that they can't make it go bad. He was a bit crazy by then, and obsessed with his wands, but you never know what can save your life one day, eh?\"",
+    "\"My grandpa was a wandmaker, and damn good at that. You don't see many of their craft today. That's why wands are so pricey, I guess. Or it's those damned capitalists, har har har.\"",
+    "\"Invisible kamikaze dwarves are the worst kamikaze dwarves. They do it unseen, but with a huge bang. Har har har!\"",
+    "\"Enner beasts? Yes, I've heard about them. Try attacking them when they're out of breath. Not even such a monster can scream all day long, right? At least I hope so.\"",
+    "\"My mama always told me, don't read under bad lighting or you'll ruin your eyes!\"",
+    "\"My grandpa used to tell me bedtime stories about frogs, both light and dark. Did you know they like to eat magnolias?\"",
+    "\"My grandpa used to tell me bedtime stories about ommels, the kings of the wild. They dwarf elephants, scare dragons and completely ignore humankind. The elder males, called bristlers, are so ancient their hair is said to petrify while still on their bodies!\"",
+    "\"Don't be shy to talk to your friends. You can learn more, my mama used to say, and you definitely can! Har har har.\"",
+    "\"Eh, the shop magic is strange. How they can keep all the bananas fresh and unspoiled in the middle of a winter, I have no idea.\"",
+    "\"If you hate hose floating eyes as much as I do, try waiting for them in the dark. They can't see in darkness any better then you! Har har har!\"",
+    "\"I didn't know how much Nefas was into vodka until I got into a drinking contest with a mistress. When I regained consciousness, she told me how they train in the temples with full kegs.\"",
+    "\"My grandpa once lost an arm to an unfortunate chain explosion of some of his wands. He had a wand of resurrection on hand, though, so a single zap made it all better.\"",
+    "\"My grandpa never liked my father much. He didn't think a farmer would be a good match for his only daughter. He did like me, though. He always let me play with the wands in his workshop, or told me wonderful bedtime stories.\"",
+    "\"I always liked daggers. They may not do so much damage, but for some foes, it's just critical to find the gaps in their armor.\"",
+    "\"Don't eat snakes. And don't let me even get started on school food. Though it does make you tough, har har har.\"",
+    "\"Mining is hard, exhausting job. I used to work in a valpurium mine back in the day and man, was I hungry after a work shift!\"",
+    "\"Be careful what you wish for, my mama always told me. Well, I wish I had a bottle full of vodka! Har har har.\"",
+    "\"Har har har, masochists like it rough, if you know what I mean.\"",
+    "\"Loricatus? That's the smith god, right? I don't know what's with him, but he seems to really hate bananas.\"",
+    "\"I've heard that Silva rocks!\"",
+    "\"Once I ate a resurrected banana and gosh, was it tasty!\"",
+    "\"I met an angel once. She fixed my arm. Lovely lady, she was.\"",
+    "\"Don't eat too much, my mama told me, or you'll grow fat and clumsy.\"",
+    "\"I've heard that unicorns taste weird. Not that I would know first-hand.\"",
+    "\"Tweraif? Yeah, I heard about it from a guy... What was his name again? Oily Orpiv, I think.\"",
+    "\"I once saw an apprentice dark mage polymorph his small chest and spill all his stuff. I would have laughed, but I didn't wanna be turned into a dark frog.\"",
+    "\"I've heard you can fetch a nice iron arm from the dwarves of Kharaz-arad.\"",
+    "\"I once tried to pet a hedgehog and got my hand all screwed up. Tried it next time with a gauntlet, and let me tell ya, it takes the sting from their spines!\"",
+    "\"You ever thrown a bone to a doggie? I love the way it makes them happy.\"",
+    "\"You know what I've heard? That intellectuals can get harder. Har har har.\"",
+    "\"All those priests can say so many weird and foreign words... I betcha gods love listening to wise words!\"",
+    "\"You know how to best get a discount in a shop, eh? Use your charms, dummy! Har har!\"",
+    "\"My dad was an adventurer, years ago. Died in some damp cave. I hope no other bloody adventurer found his bones and took all of his stuff.\"",
+    "\"That doctor who had to run from here, he said to me once that mutant flesh is not good for your body form. Eh, I say when you have nothing else...\"",
+    "\"You came through that scary underwater tunnel, right? I've heard it's deeper than it seems. Sounds spooky, eh?\"",
+    "\"I hate zombies! Dead things should stay dead and not try to bite you. I was bitten once, in the Cellar, and my arm got all inflamed and necrotic.\"",
+    "\"You know how people talk about the genies locked in old oil lamps? Tavern stories and wishful legends, I tell ya!\"",
+    "\"One cossack once told me about an old guy named Xinroch. He lived and died long ago, but he lost his favourite sword, so he came back.\"",
+    "\"Some cossack once told me about a guy named Xinroch who can be at several places at once! And to top it off, he's dead! Yeah!\"",
+    "\"I've heard that only the dead can be safe around an enner beast! I say when you're dead, it's no longer of concern what's around you, eh?\"",
+    "\"The Cathedral has impenetrable defenses with its four Cardinals scanning the thoughts of everyone, they say. Well, they still get their stuff stolen by kobolds, har har har! Those little midgets are so dumb no thoughts can be read from them! Har har!\"",
+    "\"My mama told me you only need a wand of polymorph and some rocks to make a fortune. Eh, never held a wand in my hands, so what can I know?\"",
+    "\"Those bananas are dangerous, I tell ya! You eat one, you drop that peel-thingy and then someone goes and slips on it, cracking their skull open!\"",
+    "\"Let me give you a word of advice - next time you get drunk, don't let the bottles lying on the ground. Broken bottles are a pain in the foot, if you know what I mean.\"",
+    "\"I got attacked by a kobold one night, but I blocked his spear with my lantern and then beaten him to death with it.\"",
+    "\"Mistresses love a good whipping, you say? Eh, I got whipped once and let me tell ya, there's nothing to love about it.\"",
+    "\"I've heard from a friend that you can enchant a pair for the price of one, if you know what to do. Sounds like a bargain to me, har har!\"",
+    "\"I've heard from a friend that enchantments can be broken and you have to repair them. Eh, magic is weird.\"",
+    "\"My mama always told me, don't eat people, it's indecent. I'd say more like evil, but she always knew best.\"",
+    "\"I tried to pray once and it worked! So I said to myself, once is good, twice is better, right? Then I got smote. I guess gods don't like pestering, right?\"",
+    "\"Some priest once told me that Law and Chaos mix like cats and dogs. That's bad, right?\"",
+    "\"Some priest once told me that gods can be quite jealous of their worshippers. I guess that's why thay can't stand each other?\"",
+    "\"When my mama took me to an altar for the first time, she made me kneel there. It makes the gods happy, she said.\"",
+    "\"I knew a guy who had this altar in his home and kept pushing his fingers down his throat and vomiting all over it! He said it was an offering for some Scabies, but ew!\"",
+    "\"There was this arch-magic-guy some years back running around with a wand of resurrection. Those lucky bastards he raised where so grateful he quickly amassed an army of followers! Then he attacked Attnam and got promptly massacred.\"",
+    "\"Someone once told me that necromancy is not for vegetarians. Well, they have to work with meat, I guess?\"",
+    "\"They say necromancy sows Chaos into your heart. I say you have to already have some Chaos in you to even try using necromancy.\"",
+    "\"Only time I ever ate a fortune cookie, it said: 'When aflame, douse yourself with water from a fountain.' Why the Dark Gods would I be aflame in the first place?\"",
+    "\"I used to drink from the fountains, because it's free, but then I got all sick, so it's not always healthy. Now I drink vodka.\"",
+    "\"I've heard those fountains are connected by pipes large enough for a man to fit into! You wouldn't want to get suckud inside, right? Har har!\"",
+    "\"One mage once told me that wet clothes and electricity don't mix well. Eh, it's not like I know what an electricity is, but wet clothes are uncomfortable.\"",
+    "\"One mage once told me that metal armor and electricity don't mix well. I have neither armor, nor electricity, so I don't care.\"",
+    "\"One mage once told me not only gods can wield thunder in their hands. I told her that's a blasphemy and she should burn at a stake.\"",
+    "\"One mage once told me that careless use of lightning can leave you in a shock. I think she was making fun of me.\"",
+    "\"You ever tried hitting someone with an iron gauntlet on? That packs a punch!\"",
+    "\"I remember an execution where a noble tried to get around his punishment with an amulet of life saving. But as they cut his head off, the amulet fell from the stump of his neck! We had a good laugh about it! What a moron!\"",
+    "\"You know about floating eyes? There's one of those buggers around the Cathedral all the time. Take just a single look at them and they will knock you out cold. But when it's dark... Har har!\"",
+    "\"You know about floating eyes? I was told eating them can make your mind go haywire. You'll start hearing voices and seeing things. Just like vodka, I say! Har har!\"",
+    "\"Stupid good-for-nothing kobolds! You can't even eat them without being knocked out cold.\"",
+    "\"Do you know of any good way of getting rid of a tapeworm? I tried drinking some acid the last time. It worked, but the heartburn was awful.\"";
+  }
+  HostileReplies =
+  {
+    3,
+    "\"All right, you savage, mindless creature. Prepare to meet your equal!\"",
+    "\"Bad adventurer! No more living for you!\"",
+    "@Dd yells gibberish in a drunken rage.";
   }
 }
