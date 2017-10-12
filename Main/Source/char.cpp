@@ -5282,7 +5282,7 @@ truth character::CanBeSeenByPlayer(truth Theoretically, truth IgnoreESP) const
 {
   if(IsEnabled() && !game::IsGenerating() && (Theoretically || GetSquareUnder()))
   {
-    truth MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+    truth MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && !IsESPBlockedByEquipment();
     truth MayBeInfraSeen = PLAYER->IsEnabled() && PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
     truth Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
@@ -10771,4 +10771,36 @@ void character::Slow()
   doforbodyparts()(this, &bodypart::Slow);
   doforequipments()(this, &item::Slow);
   BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+}
+
+truth character::IsESPBlockedByEquipment() const
+{
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item *Item = GetEquipment(c);
+
+    if (Item && Item->IsHelmet(this) &&
+        ((Item->GetMainMaterial() && Item->GetMainMaterial()->BlockESP()) ||
+         (Item->GetSecondaryMaterial() && Item->GetSecondaryMaterial()->BlockESP())))
+      return !(Item->IsBroken());
+  }
+  return false;
+}
+
+truth character::TemporaryStateIsActivated (long What) const
+{
+  if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
+  {
+    return ((TemporaryState&What) & (~ESP));
+  }
+  return (TemporaryState & What);
+}
+
+truth character::StateIsActivated (long What) const
+{
+  if ((What & ESP) && ((TemporaryState|EquipmentState) & ESP) && IsESPBlockedByEquipment())
+  {
+    return ((TemporaryState & What) & (~ESP)) || ((EquipmentState & What) & (~ESP));
+  }
+  return (TemporaryState & What) || (EquipmentState & What);
 }
