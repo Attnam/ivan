@@ -237,6 +237,7 @@ meleeweapon
     WieldedBitmapPos = 160, 16;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
+    Alias == "longsword";
   }
 
   Config BROKEN|LONG_SWORD;
@@ -271,6 +272,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
+    Alias == "greatsword";
   }
 
   Config BROKEN|TWO_HANDED_SWORD;
@@ -304,6 +306,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
+    Alias == "curved sword";
   }
 
   Config BROKEN|TWO_HANDED_SCIMITAR;
@@ -598,6 +601,7 @@ meleeweapon
     WieldedBitmapPos = 160, 32;
     EnchantmentPlusChance = 15;
     DamageFlags = SLASH|PIERCE;
+    Alias == "shortsword";
   }
 
   Config BROKEN|SHORT_SWORD;
@@ -727,6 +731,7 @@ meleeweapon
     AttachedGod = SILVA;
     WieldedBitmapPos = 160, 304;
     EnchantmentPlusChance = 20;
+    Alias = { 2, "staff", "stave"; }
   }
 
   Config BROKEN|QUARTER_STAFF;
@@ -759,6 +764,7 @@ meleeweapon
     AttachedGod = LORICATUS;
     WieldedBitmapPos = 176, 16;
     EnchantmentPlusChance = 20;
+    Alias == "mallet";
   }
 
   Config BROKEN|HAMMER;
@@ -1144,7 +1150,7 @@ bodyarmor /* armor-> */
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SEGES;
     EnchantmentPlusChance = 2;
-    Alias = { 4, "AoGH", "life", "health", "armor of greater health"; }
+    Alias = { 5, "AoGH", "life", "health", "armor of greater health", "endurance"; }
     TorsoArmorBitmapPos = 32, 464;
     ArmArmorBitmapPos = 80, 464;
     AthleteArmArmorBitmapPos = 80, 480;
@@ -1345,7 +1351,7 @@ scrollofearthquake /* scroll-> */
 
 scrollofbodyswitch /* scroll-> */
 {
-  Possibility = 1;
+  Possibility = 2;
   Price = 3000;
   PostFix = "of body switch";
   CanBeWished = false;
@@ -1860,6 +1866,7 @@ whip /* meleeweapon-> */
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
+  Alias = { 2, "BDSM", "love"; }
 
   Config BROKEN;
   {
@@ -2431,6 +2438,7 @@ cloak /* armor-> */
     InElasticityPenaltyModifier = 10;
     MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
     MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+    Alias == "invulnerability";
   }
 
   Config BROKEN|CLOAK_OF_PROTECTION;
@@ -2791,6 +2799,7 @@ belt /* armor-> */
     MainMaterialConfig == TROLL_HIDE;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
+    Alias = { 2, "belt of strength", "strength"; }
   }
 
   Config BROKEN|BELT_OF_GIANT_STRENGTH;
@@ -2818,6 +2827,7 @@ belt /* armor-> */
     MainMaterialConfig == NYMPH_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
+    Alias = { 3, "thief belt", "dexterity", "agility"; }
   }
 
   Config BROKEN|BELT_OF_THIEF;
@@ -3072,6 +3082,7 @@ amulet
     GearStates = ESP;
     Price = 1000;
     AttachedGod = INFUSCOR;
+    Alias == "ESP";
   }
 
   Config AMULET_OF_WARDING;
@@ -3538,6 +3549,7 @@ helmet
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     SoundResistance = 1;
+    Alias = { 2, "helm of perception", "perception"; }
   }
 
   Config BROKEN|HELM_OF_PERCEPTION;
@@ -3570,6 +3582,7 @@ helmet
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     SoundResistance = 1;
+    Alias = { 2, "helm of wisdom", "wisdom"; }
   }
 
   Config BROKEN|HELM_OF_UNDERSTANDING;
@@ -3601,6 +3614,7 @@ helmet
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     SoundResistance = 1;
+    Alias = { 2, "helm of intelligence", "intelligence"; }
   }
 
   Config BROKEN|HELM_OF_BRILLIANCE;
@@ -3633,6 +3647,7 @@ helmet
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     SoundResistance = 1;
+    Alias = { 2, "helm of charisma", "charisma"; }
   }
 
   Config BROKEN|HELM_OF_ATTRACTIVITY;
@@ -3694,6 +3709,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    Alias = { 3, "helm of willpower", "willpower", "will"; }
   }
 
   Config BROKEN|HELM_OF_WILLPOWER;
@@ -3716,13 +3732,14 @@ helmet
     Possibility = 1;
     PostFix = "of telepathy";
     GearStates = ESP;
-    MainMaterialConfig == TIN; /* heh heh */
+    MainMaterialConfig == ANGEL_HAIR;
     MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = INFUSCOR;
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    Alias == "helm of ESP";
   }
 
   Config BROKEN|HELM_OF_TELEPATHY;
