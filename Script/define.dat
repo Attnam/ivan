@@ -66,6 +66,7 @@
 #define SWIMMING (1 << 23)
 #define DETECTING (1 << 24)
 #define POLYMORPH_LOCK (1 << 25)
+#define REGENERATION (1 << 26)
 
 #define HEAD 1
 #define TORSO 2
@@ -614,6 +615,7 @@
 #define BELT_OF_PROTECTION 3
 #define BELT_OF_GIANT_STRENGTH 4
 #define BELT_OF_THIEF 5
+#define BELT_OF_REGENERATION 6
 
 #define SMALL_CHEST 1
 #define CHEST 2

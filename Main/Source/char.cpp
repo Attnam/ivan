@@ -295,6 +295,16 @@ statedata StateData[STATES] =
     &character::PolymorphLockHandler,
     0,
     0
+  }, {
+    "Regenerating",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginRegenerationMessage,
+    &character::PrintEndRegenerationMessage,
+    0,
+    0,
+    0,
+    0,
+    0
   }
 };
 
@@ -924,7 +934,7 @@ void character::Be()
     if(Stamina != MaxStamina)
       RegenerateStamina();
 
-    if(HP != MaxHP)
+    if(HP != MaxHP || StateIsActivated(REGENERATION))
       Regenerate();
 
     if(Action && AP >= 1000)
@@ -3949,7 +3959,28 @@ int character::GetResistance(int Type) const
 void character::Regenerate()
 {
   if(HP == MaxHP)
-    return;
+  {
+    if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
+    {
+      bodypart* NewBodyPart = GenerateRandomBodyPart();
+
+      if(!NewBodyPart)
+        return;
+
+      NewBodyPart->SetHP(1);
+
+      if(IsPlayer())
+        ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr());
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
+
+      return;
+    }
+    else
+    {
+      return;
+    }
+  }
 
   long RegenerationBonus = 0;
   truth NoHealableBodyParts = true;
@@ -5795,6 +5826,18 @@ void character::PrintEndTeleportControlMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You feel your control slipping.");
+}
+
+void character::PrintBeginRegenerationMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your heart races.");
+}
+
+void character::PrintEndRegenerationMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your rapid heartbeat calms down.");
 }
 
 void character::DisplayStethoscopeInfo(character*) const

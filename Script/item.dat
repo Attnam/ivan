@@ -2729,7 +2729,7 @@ belt /* armor-> */
     BaseEnchantment = 1;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = MELLIS;
-    MainMaterialConfig == TROLL_HIDE;
+    MainMaterialConfig == FABRIC;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
   }
@@ -2836,6 +2836,28 @@ belt /* armor-> */
     AffectsDexterity = false;
     AffectsAgility = false;
     Price = 100;
+    BitmapPos = 80, 384;
+    BeltBitmapPos = 48, 512;
+    EnchantmentPlusChance = 4;
+  }
+
+  Config BELT_OF_REGENERATION;
+  {
+    Possibility = 2;
+    PostFix = "of regeneration";
+    GearStates = REGENERATION;
+    Price = 100;
+    AttachedGod = SCABIES;
+    MainMaterialConfig == TROLL_HIDE;
+    MaterialConfigChances == 100;
+    EnchantmentPlusChance = 2;
+  }
+
+  Config BROKEN|BELT_OF_REGENERATION;
+  {
+    Possibility = 3;
+    GearStates = 0;
+    Price = 50;
     BitmapPos = 80, 384;
     BeltBitmapPos = 48, 512;
     EnchantmentPlusChance = 4;
