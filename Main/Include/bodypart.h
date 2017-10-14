@@ -240,6 +240,7 @@ ITEM(head, bodypart)
   virtual head* Behead();
   virtual item* GetArmorToReceiveFluid(truth) const;
   virtual void SignalPossibleUsabilityChange();
+  virtual truth IsHelmet(ccharacter*) const { return true; }
  protected:
   void UpdateHeadArmorPictures(graphicdata&) const;
   gearslot HelmetSlot;

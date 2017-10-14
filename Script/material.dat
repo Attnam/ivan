@@ -721,7 +721,7 @@ solid
 
   Config KAURI_WOOD;
   {
-    StrengthValue = 80;
+    StrengthValue = 95;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 800;
     Color = rgb16(140, 92, 42);
@@ -735,10 +735,10 @@ solid
     FireResistance = 3;
     InteractionFlags = Base|CAN_BURN;
   }
-	
+
   Config RATA_WOOD;
   {
-    StrengthValue = 95;
+    StrengthValue = 155;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 700;
     Color = rgb16(166, 44, 24);
@@ -746,7 +746,7 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stick;
     HardenedMaterial = SIDGURE_WOOD;
-    IntelligenceRequirement = 10;
+    IntelligenceRequirement = 15;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     FireResistance = 4;
@@ -755,14 +755,14 @@ solid
 
   Config SIDGURE_WOOD; /* magical mango tree wood */
   {
-    StrengthValue = 110;
+    StrengthValue = 225;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 600;
     Color = rgb16(198, 110, 46);
     NameStem = "sidgure";
     AttachedGod = SILVA;
     NaturalForm = stick;
-    IntelligenceRequirement = 15;
+    IntelligenceRequirement = 20;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     FireResistance = 5;

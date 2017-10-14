@@ -940,7 +940,7 @@ void priest::BeTalkedTo()
     if(PLAYER->GetMoney() >= Price)
     {
       ADD_MESSAGE("\"You seem to be turning into a werewolf quite frequently. Well, everyone has right to "
-                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray %s to "
+                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray to %s to "
                   "remove the canine blood from your veins, just so you don't scare our blessed youth.\"",
                   Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
 

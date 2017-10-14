@@ -2077,7 +2077,8 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
-  CanBeBurned = false;
+  CanBeBroken = true;
+  CanBeBurned = true;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
@@ -2722,7 +2723,7 @@ belt /* armor-> */
 
   Config BELT_OF_CARRYING;
   {
-    Possibility = 10;
+    Possibility = 5;
     PostFix = "of carrying";
     AffectsCarryingCapacity = true;
     Price = 75;
@@ -2770,7 +2771,7 @@ belt /* armor-> */
   {
     DefaultMainVolume = 300;
     StrengthModifier = 150;
-    Possibility = 10;
+    Possibility = 5;
     PostFix = "of protection";
     Price = 100;
     AttachedGod = ATAVUS;
@@ -2780,12 +2781,12 @@ belt /* armor-> */
 
   Config BROKEN|BELT_OF_PROTECTION;
   {
-    Possibility = 0;
+    Possibility = 2;
     Price = 50;
     BitmapPos = 80, 384;
     BeltBitmapPos = 48, 512;
   }
-  
+
   Config BELT_OF_GIANT_STRENGTH;
   {
     Possibility = 5;
@@ -2856,7 +2857,8 @@ ring
   IsAbstract = true;
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
-  CanBeBurned = false;
+  CanBeBroken = true;
+  CanBeBurned = true;
 
   Config RING_OF_FIRE_RESISTANCE;
   {
@@ -3160,6 +3162,7 @@ head /* bodypart-> */
   NameSingular = "head";
   Roundness = 70;
   WieldedBitmapPos = 160, 128;
+  HelmetBitmapPos = 176, 384;
 }
 
 torso /* bodypart-> */

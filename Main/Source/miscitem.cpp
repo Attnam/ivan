@@ -308,10 +308,10 @@ void scrollofbodyswitch::FinishReading(character* Reader)
       game::SetPlayer(ToPossess);
       ToPossess->EditExperience(INTELLIGENCE, 150, 1 << 12);
 
-      ADD_MESSAGE("Everything goes dark as you are torn from your body and dragged "
-                  "screaming soundlessly through the endless Void beyond all worlds."
-                  " Your soul weakens and starts to fray, piece by piece dissolving "
-                  "into nothingness. Then suddenly, you stand beside yourself.");
+      ADD_MESSAGE("Everything goes dark as you are torn from your body and dragged screaming "
+                  "soundlessly through the endless Void beyond all worlds. Your soul weakens "
+                  "and starts to fray, piece by piece dissolving into nothingness. Then suddenly, "
+                  "you stand beside yourself.");
     }
     else
     {
