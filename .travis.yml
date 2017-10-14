@@ -23,7 +23,8 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template $CXXFLAGS" ..
+  - cmake .. -G "Unix Makefiles"
+    -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
   - make
   - make igor
   - make mihail
