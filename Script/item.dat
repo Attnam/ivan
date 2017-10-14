@@ -2077,8 +2077,7 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
-  CanBeBroken = true;
-  CanBeBurned = true;
+  CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
@@ -2857,8 +2856,7 @@ ring
   IsAbstract = true;
   WieldedBitmapPos = 160, 368;
   TeleportPriority = 300;
-  CanBeBroken = true;
-  CanBeBurned = true;
+  CanBeBurned = false;
 
   Config RING_OF_FIRE_RESISTANCE;
   {
