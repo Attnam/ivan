@@ -466,7 +466,7 @@ farmer
 
   Config IMPRISONED_FARMER;
   {
-    UsesLongAdjectiveArticle = true;    
+    UsesLongAdjectiveArticle = true;
     Adjective = "eunuch";
     CanBeGenerated = false;
     AttributeBonus = -10;
@@ -3032,7 +3032,7 @@ hunter
 
   Config IMPRISONED_HUNTER;
   {
-    UsesLongAdjectiveArticle = true;    
+    UsesLongAdjectiveArticle = true;
     Adjective = "imprisoned";
     CanBeGenerated = false;
     AttributeBonus = -10;
@@ -3761,7 +3761,7 @@ femaleslave
   }
 
   Config IMPRISONED_FEMALE;
-  {   
+  {
     NameSingular = "prisoner";
     CanBeGenerated = false;
     AttachedGod = DULCIS;
@@ -3958,7 +3958,7 @@ zombie
   {
     DefaultName = "Moonrise Stealing Dark";
     PostFix = "of Khaz-zadm";
-    TamingDifficulty = 30;
+    TamingDifficulty = 20;
     IsNameable = false;
     IsUnique = true;
     DefaultArmStrength = 15;
@@ -7784,10 +7784,10 @@ siren
 {
   DefaultArmStrength = 3;
   DefaultLegStrength = 3;
-  DefaultDexterity = 15;
-  DefaultAgility = 20;
+  DefaultDexterity = 20;
+  DefaultAgility = 25;
   DefaultEndurance = 12;
-  DefaultPerception = 20;
+  DefaultPerception = 25;
   DefaultIntelligence = 10;
   DefaultWisdom = 15;
   DefaultCharisma = 50;
@@ -7799,7 +7799,8 @@ siren
   ArmBitmapPos = 80, 240;
   LegBitmapPos = 16, 240;
   TotalVolume = 40000;
-  TotalSize = 170;
+  Frequency = 2500;
+  TotalSize = 150;
   BaseUnarmedStrength = 200;
   CanRead = true;
   NameSingular = "siren";
@@ -8121,7 +8122,7 @@ child
   {
     HairColor = rgb16(80, 48, 32);
     CapColor = rgb16(80, 48, 32); /* also used for hair */
-    HeadBitmapPos = 96, 335; 
+    HeadBitmapPos = 96, 335;
     NameSingular = "girl";
     Sex = FEMALE;
     FriendlyReplies =

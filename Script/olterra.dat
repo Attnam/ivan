@@ -182,7 +182,6 @@ decoration
     NameSingular = "pine";
     BitmapPos = 16, 320;
     HPModifier = 25;
-    LeftOverItems == pineapple { Times = 0:1; } /* an apple of a pine tree */
   }
 
   Config FIR;
@@ -623,6 +622,7 @@ decoration
     NameSingular = "table";
     BitmapPos = 48, 240;
     HPModifier = 25;
+    Walkability = ETHEREAL;
   }
 
   Config WELL;

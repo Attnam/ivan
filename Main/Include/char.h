@@ -727,6 +727,8 @@ class character : public entity, public id
   void PolymorphLockHandler();
   void PrintBeginRegenerationMessage() const;
   void PrintEndRegenerationMessage() const;
+  void PrintBeginDiseaseImmunityMessage() const;
+  void PrintEndDiseaseImmunityMessage() const;
   virtual void DisplayStethoscopeInfo(character*) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;

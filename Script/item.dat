@@ -2331,7 +2331,7 @@ cloak /* armor-> */
     NameSingular = "werewolf fur cloak";
     MainMaterialConfig == LEATHER;
     MaterialConfigChances == 100;
-    GearStates = LYCANTHROPY;
+    GearStates = LYCANTHROPY|REGENERATION;
     EnchantmentPlusChance = 5;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
@@ -2456,7 +2456,7 @@ cloak /* armor-> */
     NameSingular = "vampire's cowl";
     MainMaterialConfig == BLACK_LEATHER;
     MaterialConfigChances == 100;
-    GearStates = VAMPIRISM;
+    GearStates = VAMPIRISM|INFRA_VISION;
     EnchantmentPlusChance = 5;
     InElasticityPenaltyModifier = 30;
     ArticleMode = FORCE_THE;
@@ -2851,6 +2851,7 @@ belt /* armor-> */
     MainMaterialConfig == TROLL_HIDE;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
+    Alias == "regeneration";
   }
 
   Config BROKEN|BELT_OF_REGENERATION;
@@ -3109,7 +3110,7 @@ amulet
 
   Config AMULET_OF_WARDING;
   {
-    Possibility = 4;
+    Possibility = 5;
     PostFix = "of elemental protection";
     MainMaterialConfig == ADAMANT;
     CanBeCloned = false;
@@ -3158,6 +3159,16 @@ amulet
     IsMaterialChangeable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
+  }
+
+  Config AMULET_OF_DISEASE_IMMUNITY;
+  {
+    Possibility = 4;
+    PostFix = "of disease immunity";
+    MainMaterialConfig == UNICORN_HORN;
+    GearStates = DISEASE_IMMUNITY;
+    Price = 2000;
+    AttachedGod = SEGES;
   }
 }
 
@@ -4948,7 +4959,7 @@ bansheesickle  /* meleeweapon-> */
 celestialmonograph /* holybook-> */
 {
   DefaultSize = 30;
-  Possibility = 1; 
+  Possibility = 1;
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;

@@ -305,6 +305,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "DiseaseImmunity",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginDiseaseImmunityMessage,
+    &character::PrintEndDiseaseImmunityMessage,
+    0,
+    0,
+    0,
+    0,
+    0
   }
 };
 
@@ -5840,6 +5850,18 @@ void character::PrintEndRegenerationMessage() const
     ADD_MESSAGE("Your rapid heartbeat calms down.");
 }
 
+void character::PrintBeginDiseaseImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel especially healthy.");
+}
+
+void character::PrintEndDiseaseImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You develop a sudden fear of germs.");
+}
+
 void character::DisplayStethoscopeInfo(character*) const
 {
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
@@ -8963,7 +8985,7 @@ void character::DecreaseStateCounter(long State, int Counter)
 
 truth character::IsImmuneToLeprosy() const
 {
-  return DataBase->IsImmuneToLeprosy || UseMaterialAttributes();
+  return DataBase->IsImmuneToLeprosy || UseMaterialAttributes() || StateIsActivated(DISEASE_IMMUNITY);
 }
 
 void character::LeprosyHandler()
