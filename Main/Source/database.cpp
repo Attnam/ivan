@@ -748,6 +748,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Stickiness);
   ADD_MEMBER(DisablesPanicWhenConsumed);
   ADD_MEMBER(FireResistance);
+  ADD_MEMBER(BlockESP);
 }
 
 #define ADD_BASE_VALUE(name)\

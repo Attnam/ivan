@@ -464,7 +464,7 @@ meleeweapon
     MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
     Roundness = 30; /* we count the handle, too */
     IsTwoHanded = true;
-    AttachedGod = CRUENTUS;
+    AttachedGod = LEGIFER;
     WieldedBitmapPos = 160, 192;
     EnchantmentPlusChance = 10;
   }
@@ -654,7 +654,7 @@ meleeweapon
     MaterialConfigChances = { 7, 1500, 1000, 750, 100, 25, 25, 5; }
     Roundness = 30;
     IsTwoHanded = true;
-    AttachedGod = LORICATUS;
+    AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
@@ -1104,8 +1104,8 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 11, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
-  MaterialConfigChances = { 11, 75, 50, 5, 50, 1, 10, 5, 25, 5, 5, 25; }
+  SecondaryMaterialConfig = { 13, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS; }
+  MaterialConfigChances = { 13, 75, 50, 5, 45, 1, 10, 5, 25, 5, 5, 20, 5, 5; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -3257,7 +3257,7 @@ turox /* meleeweapon-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   Price = 250;
-  AttachedGod = CRUENTUS;
+  AttachedGod = LEGIFER;
   WieldedBitmapPos = 160, 192;
   EnchantmentPlusChance = 2;
 
@@ -3517,7 +3517,7 @@ thunderhammer /* meleeweapon-> */
   CanBeUsedBySmith = true;
   Price = 500;
   BaseEmitation = rgb24(130, 130, 130);
-  AttachedGod = TERRA;
+  AttachedGod = LORICATUS;
   WieldedBitmapPos = 176, 16;
   EnchantmentPlusChance = 2;
 
@@ -3759,8 +3759,8 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 4, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR; }
-  MaterialConfigChances = { 4, 50, 10, 1, 10; }
+  SecondaryMaterialConfig = { 6, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR; }
+  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 1; }
   Adjective = "dwarven";
   Alias == "gas grenade";
 }
@@ -3929,7 +3929,7 @@ chastitybelt
   DefaultMainVolume = 125;
   StrengthModifier = 60;
   BitmapPos = 80, 80;
-  Adjective = "chastity";
+  NameSingular = "chastity belt";
   MainMaterialConfig == IRON;
   Roundness = 50;
   WieldedBitmapPos = 160, 128;
@@ -3946,10 +3946,9 @@ firstbornchild
   Possibility = 0;
   WeaponCategory = UNCATEGORIZED;
   DefaultMainVolume = 3000;
-
   DefaultSecondaryVolume = 75; /* cloth */
   SecondaryMaterialConfig == FABRIC;
-
+  WieldedBitmapPos = 176, 384;
   StrengthModifier = 40;
   BitmapPos = 80, 144;
   MainMaterialConfig == HUMAN_FLESH;
@@ -3965,6 +3964,7 @@ firstbornchild
   {
     NameSingular = "son";
   }
+
   Config FEMALE;
   {
     NameSingular = "daughter";
