@@ -4397,7 +4397,7 @@ void character::ReceiveHeal(long Amount)
   if(RAND() % 10 < Amount)
     HealHitPoint();
 
-  if(Amount >= 250 || RAND() % 250 < Amount)
+  if(Amount >= 1000 || RAND() % 1000 < Amount)
   {
     bodypart* NewBodyPart = GenerateRandomBodyPart();
 
