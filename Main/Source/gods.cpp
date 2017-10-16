@@ -128,9 +128,17 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally "
-              "powerful quantum displacement! You teleport away!");
-  PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+  if(PLAYER->StateIsActivated(TELEPORT_LOCK))
+  {
+    ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
+    return;
+  }
+  else
+  {
+    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally "
+                "powerful quantum displacement! You teleport away!");
+    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+  }
 }
 
 void sophos::PrayBadEffect()

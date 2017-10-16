@@ -68,6 +68,7 @@
 #define POLYMORPH_LOCK (1 << 25)
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
+#define TELEPORT_LOCK (1 << 28)
 
 #define HEAD 1
 #define TORSO 2
@@ -599,6 +600,7 @@
 #define AMULET_OF_SPEED 5
 #define AMULET_OF_PHASING 6
 #define AMULET_OF_DISEASE_IMMUNITY 7
+#define AMULET_OF_DIMENSION_ANCHOR 8
 
 #define FULL_HELMET 1
 #define HELM_OF_PERCEPTION 2

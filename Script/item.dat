@@ -3099,7 +3099,7 @@ amulet
 
   Config AMULET_OF_ESP;
   {
-    Possibility = 10;
+    Possibility = 7;
     PostFix = "of ESP";
     MainMaterialConfig == ILLITHIUM;
     GearStates = ESP;
@@ -3125,7 +3125,7 @@ amulet
 
   Config AMULET_OF_UNBREATHING;
   {
-    Possibility = 4;
+    Possibility = 3;
     PostFix = "of magic breath";
     MainMaterialConfig == ARCANITE;
     GearStates = GAS_IMMUNITY|SWIMMING;
@@ -3163,12 +3163,23 @@ amulet
 
   Config AMULET_OF_DISEASE_IMMUNITY;
   {
-    Possibility = 4;
+    Possibility = 3;
     PostFix = "of disease immunity";
     MainMaterialConfig == UNICORN_HORN;
     GearStates = DISEASE_IMMUNITY;
     Price = 2000;
     AttachedGod = SEGES;
+  }
+
+  Config AMULET_OF_DIMENSION_ANCHOR;
+  {
+    Possibility = 3;
+    PostFix = "of dimensional protection";
+    MainMaterialConfig == SIDGURE_WOOD;
+    GearStates = TELEPORT_LOCK;
+    Price = 2000;
+    AttachedGod = SOPHOS;
+    Alias == "amulet of teleport lock";
   }
 }
 

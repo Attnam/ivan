@@ -315,6 +315,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "TeleportLocked",
+    SECRET,
+    &character::PrintBeginTeleportLockMessage,
+    &character::PrintEndTeleportLockMessage,
+    0,
+    0,
+    &character::TeleportLockHandler,
+    0,
+    0
   }
 };
 
@@ -3430,6 +3440,12 @@ void character::TeleportRandomly(truth Intentional)
 {
   v2 TelePos = ERROR_V2;
 
+  if(StateIsActivated(TELEPORT_LOCK))
+  {
+    ADD_MESSAGE("You flicker for a second.");
+    return;
+  }
+
   if(StateIsActivated(TELEPORT_CONTROL))
   {
     if(IsPlayer())
@@ -5862,6 +5878,28 @@ void character::PrintEndDiseaseImmunityMessage() const
     ADD_MESSAGE("You develop a sudden fear of germs.");
 }
 
+void character::PrintBeginTeleportLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel firmly planted in reality.");
+}
+
+void character::PrintEndTeleportLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your mind soars far and wide.");
+}
+
+void character::TeleportLockHandler()
+{
+  if (StateIsActivated(TELEPORT_LOCK))
+  {
+    EditTemporaryStateCounter(TELEPORT_LOCK, 1);
+    if (GetTemporaryStateCounter(TELEPORT_LOCK) < 1000)
+      EditTemporaryStateCounter(TELEPORT_LOCK, 1);
+  }
+}
+
 void character::DisplayStethoscopeInfo(character*) const
 {
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
@@ -5910,6 +5948,14 @@ truth character::CanUseStethoscope(truth PrintReason) const
 
 void character::TeleportSomePartsAway(int NumberToTeleport)
 {
+  if(StateIsActivated(TELEPORT_LOCK))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You feel very itchy for a moment.");
+
+    return;
+  }
+
   for(int c = 0; c < NumberToTeleport; ++c)
   {
     int RandomBodyPart = GetRandomNonVitalBodyPart();
@@ -9642,7 +9688,7 @@ liquid* character::CreateSweat(long Volume) const
 
 truth character::TeleportRandomItem(truth TryToHinderVisibility)
 {
-  if(IsImmuneToItemTeleport())
+  if(IsImmuneToItemTeleport() || StateIsActivated(TELEPORT_LOCK))
     return false;
 
   itemvector ItemVector;
