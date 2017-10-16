@@ -3778,6 +3778,7 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
     BodyPart->RemoveFromSlot();
     CalculateAttributeBonuses();
     CalculateBattleInfo();
+    CalculateTotalCharacterWeight();
     BodyPart->SendToHell();
     SignalPossibleTransparencyChange();
     RemoveTraps(BodyPartIndex);
@@ -4228,6 +4229,7 @@ bodypart* character::CreateBodyPart(int I, int SpecialFlags)
   if(!IsInitializing())
   {
     CalculateBattleInfo();
+    CalculateTotalCharacterWeight();
     SendNewDrawRequest();
     SignalPossibleTransparencyChange();
   }
@@ -4639,7 +4641,9 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Size %d cm", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wght %d kg", GetTotalCharacterWeight());
+  ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   ++PanelPosY;
@@ -4675,21 +4679,21 @@ void character::DrawPanel(truth AnimationDraw) const
                    (1 << c) & EquipmentState || TemporaryStateCounter[c] >= PERMANENT ? BLUE : WHITE,
                    "%s", StateData[c].Description);
 
-  static cchar* HungerStateStrings[] = { "Starving", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
-  static cpackcol16 HungerStateColors[] = { RED, BLUE, BLUE, 0, WHITE, WHITE, WHITE };
+  static cchar* HungerStateStrings[] = { "Starving!", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
+  static cpackcol16 HungerStateColors[] = { RED, RED, BLUE, 0, WHITE, WHITE, WHITE };
   int HungerState = GetHungerState();
   if(HungerState != NOT_HUNGRY)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  HungerStateColors[HungerState], HungerStateStrings[HungerState]);
 
   static cchar* BurdenStateStrings[] = { "Overload!", "Stressed", "Burdened" };
-  static cpackcol16 BurdenStateColors[] = { RED, BLUE, BLUE };
+  static cpackcol16 BurdenStateColors[] = { RED, RED, BLUE };
   int BurdenState = GetBurdenState();
   if(BurdenState != UNBURDENED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  BurdenStateColors[BurdenState], BurdenStateStrings[BurdenState]);
 
-  static cchar* TirednessStateStrings[] = { "Fainting", "Exhausted" };
+  static cchar* TirednessStateStrings[] = { "Fainting!", "Exhausted" };
   static cpackcol16 TirednessStateColors[] = { RED, WHITE };
   int TirednessState = GetTirednessState();
   if(TirednessState != UNTIRED)
@@ -5522,6 +5526,7 @@ void character::AttachBodyPart(bodypart* BodyPart)
   BodyPart->UpdatePictures();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
+  CalculateTotalCharacterWeight();
   SendNewDrawRequest();
   SignalPossibleTransparencyChange();
 }
@@ -5910,6 +5915,8 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
   //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
 
   if(GetAction())
@@ -6020,6 +6027,23 @@ int character::GetRandomNonVitalBodyPart() const
   return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
 }
 
+void character::CalculateTotalCharacterWeight()
+{
+  Weight = 0;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      Weight += BodyPart->GetWeight();
+    }
+  }
+
+  TotalCharacterWeight = floor(Weight / 1000);
+}
+
 void character::CalculateVolumeAndWeight()
 {
   Volume = Stack->GetVolume();
@@ -6107,6 +6131,7 @@ void character::CalculateAll()
   Flags |= C_INITIALIZING;
   CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
+  CalculateTotalCharacterWeight();
   CalculateEmitation();
   CalculateBodyPartMaxHPs(0);
   CalculateMaxStamina();
