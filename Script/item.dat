@@ -931,7 +931,6 @@ holybanana /* materialcontainer->banana-> */
   CanBeMirrored = true; /* will create a peel */
   AllowEquip = true;
   IsValuable = true;
-  CanBeWished = false;
   CanBePiled = false;
   IsMaterialChangeable = false;
 }
@@ -4786,6 +4785,7 @@ gorovitscopyoflenin /* item-> */
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
+  IsQuestItem = true;
 }
 
 chastitybelt
