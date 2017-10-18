@@ -769,10 +769,8 @@ class character : public entity, public id
   void CalculateAll();
   void CalculateHP();
   void CalculateMaxHP();
-  void CalculateTotalCharacterWeight();
   int GetHP() const { return HP; }
   int GetMaxHP() const { return MaxHP; }
-  int GetTotalCharacterWeight() const { return TotalCharacterWeight; }
   void CalculateBodyPartMaxHPs(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   truth IsInitializing() const { return Flags & C_INITIALIZING; }
   truth IsInNoMsgMode() const { return Flags & C_IN_NO_MSG_MODE; }
@@ -1230,7 +1228,6 @@ class character : public entity, public id
   long BodyVolume;
   int HP;
   int MaxHP;
-  int TotalCharacterWeight;
   int BurdenState;
   double DodgeValue;
   int AllowedWeaponSkillCategories;
