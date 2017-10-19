@@ -1103,8 +1103,8 @@ bodyarmor /* armor-> */
     Possibility = 250;
     NameSingular = "plate mail";
     FlexibleNameSingular = "armor";
-    MainMaterialConfig = { 11, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
-    MaterialConfigChances = { 11, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25, 10, 5; }
+    MainMaterialConfig = { 14, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, OMMEL_TOOTH, EBONY_WOOD, KAURI_WOOD, RATA_WOOD; }
+    MaterialConfigChances = { 14, 5000, 2500, 250, 900, 100, 200, 150, 100, 25, 10, 5, 100, 30, 20; }
     InElasticityPenaltyModifier = 20;
     EnchantmentPlusChance = 5;
     TorsoArmorBitmapPos = 32, 416;
@@ -1826,7 +1826,7 @@ pineapple
 palmbranch
 {
   DefaultSize = 80;
-  Possibility = 0;
+  Possibility = 1;
   Category = MISC;
   DefaultMainVolume = 4000;
   StrengthModifier = 50;
@@ -1841,6 +1841,7 @@ palmbranch
   WieldedBitmapPos = 160, 208;
   IsValuable = false;
   Alias == "weapon";
+  AllowedDungeons = { 2, NEW_ATTNAM, UNDER_WATER_TUNNEL; }
 }
 
 whip /* meleeweapon-> */
