@@ -3672,6 +3672,7 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
     BodyPart->RandomizePosition();
     CalculateAttributeBonuses();
     CalculateBattleInfo();
+    CalculateTotalCharacterWeight();
     BodyPart->Enable();
     SignalPossibleTransparencyChange();
     RemoveTraps(BodyPartIndex);
@@ -4087,6 +4088,7 @@ bodypart* character::CreateBodyPart(int I, int SpecialFlags)
   if(!IsInitializing())
   {
     CalculateBattleInfo();
+    CalculateTotalCharacterWeight();
     SendNewDrawRequest();
     SignalPossibleTransparencyChange();
   }
@@ -4498,7 +4500,9 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Size %d cm", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wght %d kg", GetTotalCharacterWeight());
+  ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   ++PanelPosY;
@@ -5357,6 +5361,7 @@ void character::AttachBodyPart(bodypart* BodyPart)
   BodyPart->UpdatePictures();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
+  CalculateTotalCharacterWeight();
   SendNewDrawRequest();
   SignalPossibleTransparencyChange();
 }
@@ -5643,6 +5648,8 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
   //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
 
   if(GetAction())
@@ -5745,6 +5752,23 @@ int character::GetRandomNonVitalBodyPart() const
   return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
 }
 
+void character::CalculateTotalCharacterWeight()
+{
+  Weight = 0;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      Weight += BodyPart->GetWeight();
+    }
+  }
+
+  TotalCharacterWeight = floor(Weight / 1000);
+}
+
 void character::CalculateVolumeAndWeight()
 {
   Volume = Stack->GetVolume();
@@ -5832,6 +5856,7 @@ void character::CalculateAll()
   Flags |= C_INITIALIZING;
   CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
+  CalculateTotalCharacterWeight();
   CalculateEmitation();
   CalculateBodyPartMaxHPs(0);
   CalculateMaxStamina();
