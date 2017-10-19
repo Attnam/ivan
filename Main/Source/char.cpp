@@ -4534,22 +4534,22 @@ void character::DrawPanel(truth AnimationDraw) const
                    (1 << c) & EquipmentState || TemporaryStateCounter[c] >= PERMANENT ? BLUE : WHITE,
                    "%s", StateData[c].Description);
 
-  static cchar* HungerStateStrings[] = { "Starving", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
-  static cpackcol16 HungerStateColors[] = { RED, BLUE, BLUE, 0, WHITE, WHITE, WHITE };
+  static cchar* HungerStateStrings[] = { "Starving!", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
+  static cpackcol16 HungerStateColors[] = { RED, RED, YELLOW, 0, WHITE, WHITE, YELLOW };
   int HungerState = GetHungerState();
   if(HungerState != NOT_HUNGRY)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  HungerStateColors[HungerState], HungerStateStrings[HungerState]);
 
   static cchar* BurdenStateStrings[] = { "Overload!", "Stressed", "Burdened" };
-  static cpackcol16 BurdenStateColors[] = { RED, BLUE, BLUE };
+  static cpackcol16 BurdenStateColors[] = { RED, RED, YELLOW };
   int BurdenState = GetBurdenState();
   if(BurdenState != UNBURDENED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  BurdenStateColors[BurdenState], BurdenStateStrings[BurdenState]);
 
-  static cchar* TirednessStateStrings[] = { "Fainting", "Exhausted" };
-  static cpackcol16 TirednessStateColors[] = { RED, WHITE };
+  static cchar* TirednessStateStrings[] = { "Fainting!", "Exhausted" };
+  static cpackcol16 TirednessStateColors[] = { RED, YELLOW };
   int TirednessState = GetTirednessState();
   if(TirednessState != UNTIRED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
