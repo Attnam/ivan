@@ -1919,6 +1919,7 @@ backpack /* materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 144;
+  CloakBitmapPos = 80, 288;
   IsKamikazeWeapon = true;
 }
 

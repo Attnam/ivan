@@ -308,6 +308,7 @@ ITEM(backpack, materialcontainer)
  public:
   virtual truth Apply(character*);
   virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth IsExplosive() const;
   virtual long GetTotalExplosivePower() const;
