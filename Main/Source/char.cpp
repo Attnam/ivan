@@ -5759,7 +5759,7 @@ int character::GetTotalCharacterWeight() const
 
     if(BodyPart)
     {
-      Weight += BodyPart->GetWeight();
+      CharacterWeight += BodyPart->GetWeight();
     }
   }
 
