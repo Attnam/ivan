@@ -753,6 +753,7 @@ class character : public entity, public id
   void CalculateMaxHP();
   int GetHP() const { return HP; }
   int GetMaxHP() const { return MaxHP; }
+  int GetTotalCharacterWeight() const;
   void CalculateBodyPartMaxHPs(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   truth IsInitializing() const { return Flags & C_INITIALIZING; }
   truth IsInNoMsgMode() const { return Flags & C_IN_NO_MSG_MODE; }

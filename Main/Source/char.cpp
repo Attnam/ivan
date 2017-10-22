@@ -4498,7 +4498,9 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wt   %d kg", GetTotalCharacterWeight());
+  ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   ++PanelPosY;
@@ -5643,6 +5645,8 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
   //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
 
   if(GetAction())
@@ -5743,6 +5747,23 @@ int character::GetRandomNonVitalBodyPart() const
       OKBodyPart[OKBodyParts++] = c;
 
   return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
+}
+
+int character::GetTotalCharacterWeight() const
+{
+  int CharacterWeight = 0;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      CharacterWeight += BodyPart->GetWeight();
+    }
+  }
+
+  return (floor(CharacterWeight / 1000));
 }
 
 void character::CalculateVolumeAndWeight()
