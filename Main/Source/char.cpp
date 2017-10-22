@@ -3672,7 +3672,6 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
     BodyPart->RandomizePosition();
     CalculateAttributeBonuses();
     CalculateBattleInfo();
-    CalculateTotalCharacterWeight();
     BodyPart->Enable();
     SignalPossibleTransparencyChange();
     RemoveTraps(BodyPartIndex);
@@ -4088,7 +4087,6 @@ bodypart* character::CreateBodyPart(int I, int SpecialFlags)
   if(!IsInitializing())
   {
     CalculateBattleInfo();
-    CalculateTotalCharacterWeight();
     SendNewDrawRequest();
     SignalPossibleTransparencyChange();
   }
@@ -4500,8 +4498,8 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Size %d cm", GetSize());
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wght %d kg", GetTotalCharacterWeight());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wt   %d kg", GetTotalCharacterWeight());
   ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
@@ -5361,7 +5359,6 @@ void character::AttachBodyPart(bodypart* BodyPart)
   BodyPart->UpdatePictures();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
-  CalculateTotalCharacterWeight();
   SendNewDrawRequest();
   SignalPossibleTransparencyChange();
 }
@@ -5752,9 +5749,9 @@ int character::GetRandomNonVitalBodyPart() const
   return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
 }
 
-void character::CalculateTotalCharacterWeight()
+int character::GetTotalCharacterWeight() const
 {
-  Weight = 0;
+  int CharacterWeight = 0;
 
   for(int c = 0; c < BodyParts; ++c)
   {
@@ -5766,7 +5763,7 @@ void character::CalculateTotalCharacterWeight()
     }
   }
 
-  TotalCharacterWeight = floor(Weight / 1000);
+  return (floor(CharacterWeight / 1000));
 }
 
 void character::CalculateVolumeAndWeight()
@@ -5856,7 +5853,6 @@ void character::CalculateAll()
   Flags |= C_INITIALIZING;
   CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
-  CalculateTotalCharacterWeight();
   CalculateEmitation();
   CalculateBodyPartMaxHPs(0);
   CalculateMaxStamina();
