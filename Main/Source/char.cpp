@@ -277,7 +277,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Detecting",
-    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL)),
     &character::PrintBeginDetectMessage,
     &character::PrintEndDetectMessage,
     0,
