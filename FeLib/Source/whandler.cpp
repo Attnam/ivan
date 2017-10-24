@@ -223,6 +223,32 @@ int globalwindowhandler::ReadKey()
   return KeyBuffer.size() ? GetKey(false) : 0;
 }
 
+truth globalwindowhandler::WaitForKeyDown()
+{
+  SDL_Event Event;
+
+#if SDL_MAJOR_VERSION == 1
+  if(SDL_GetAppState() & SDL_APPACTIVE)
+#else
+  if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+#endif
+  {
+#if SDL_MAJOR_VERSION == 2
+    while(SDL_PollEvent(&Event))
+      if(Event.type == SDL_KEYDOWN)
+        return true;
+#else
+    while(SDL_PollEvent(&Event))
+      if(Event.active.type == SDL_KEYDOWN)
+        return true;
+#endif
+  }
+  else
+    SDL_WaitEvent(&Event);
+
+  return false;
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed = 0;

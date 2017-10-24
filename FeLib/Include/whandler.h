@@ -28,12 +28,14 @@
 #define GET_KEY globalwindowhandler::GetKey
 #define READ_KEY globalwindowhandler::ReadKey
 #define GET_TICK globalwindowhandler::GetTick
+#define WAIT_FOR_KEY_DOWN globalwindowhandler::WaitForKeyDown
 
 class globalwindowhandler
 {
  public:
   static int GetKey(truth = true);
   static int ReadKey();
+  static truth WaitForKeyDown();
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());
   static ulong GetTick() { return Tick; }
