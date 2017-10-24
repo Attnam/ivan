@@ -369,4 +369,31 @@ ITEM(chastitybelt, lockablebelt)
   virtual int GetFormModifier() const { return item::GetFormModifier(); }
 };
 
+ITEM(darkaxe, meleeweapon)
+{
+ public:
+  darkaxe() { Enable(); }
+  virtual void Be();
+protected:
+  virtual truth CalculateHasBe() const { return true; }
+};
+
+ITEM(slowaxe, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+};
+
+ITEM(terrorscythe, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+};
+
+ITEM(bansheesickle, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+};
+
 #endif

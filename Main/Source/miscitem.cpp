@@ -24,6 +24,8 @@ void materialcontainer::InitMaterials(const materialscript* M, const materialscr
 
 int holybanana::GetSpecialFlags() const { return ST_FLAME_1; }
 
+col16 ullrbone::GetOutlineColor(int) const { return MakeRGB16(210, 210, 210); }
+
 col16 lantern::GetMaterialColorA(int) const { return MakeRGB16(255, 255, 240); }
 col16 lantern::GetMaterialColorB(int) const { return MakeRGB16(255, 255, 100); }
 col16 lantern::GetMaterialColorC(int) const { return MakeRGB16(255, 255, 100); }
@@ -94,6 +96,235 @@ void scrollofteleportation::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+}
+
+void scrolloffireballs::FinishReading(character* Reader)
+{
+  v2 FireBallPos = ERROR_V2;
+	
+  beamdata Beam
+  (
+    Reader,
+    CONST_S("killed by the spells of ") + Reader->GetName(INDEFINITE),
+    YOURSELF,
+    0
+  );
+	
+  ADD_MESSAGE("This could be loud...");
+
+  v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [direction keys move cursor, space accepts]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
+
+  if(Input == ERROR_V2) // esc pressed
+  {
+    ADD_MESSAGE("You choose not to summon a fireball.");
+    return;
+  }
+
+  lsquare* Square = GetNearLSquare(Input);
+
+  if((Input - Reader->GetPos()).GetLengthSquare() <= Reader->GetTeleportRangeSquare())
+  {
+    if(!Reader->IsFreeForMe(Square) || (Input == Reader->GetPos()))
+    {
+      FireBallPos = Input;
+    }
+    else
+    {
+      ADD_MESSAGE("The spell must target creatures, %s.", game::Insult());
+      return;
+    }
+  }
+  else
+  {
+    ADD_MESSAGE("You cannot concentrate yourself enough to send a fireball that far.");
+
+    if(!(RAND() % 3))
+    {
+      ADD_MESSAGE("Something very wrong happens with the spell.");
+      FireBallPos = Reader->GetPos();
+      Square = GetNearLSquare(Reader->GetPos());
+    }
+    else
+      return;
+  }
+
+  if(FireBallPos == ERROR_V2)
+    Square = GetNearLSquare(GetLevel()->GetRandomSquare(Reader));
+
+  if(Square->GetPos() == Reader->GetPos())
+  {
+    ADD_MESSAGE("The scroll explodes in your face!");
+  }
+  else
+  {
+    ADD_MESSAGE("A mighty fireball is called into existence.");
+  }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+  Square->DrawParticles(RED); 
+  Square->FireBall(Beam);
+}
+
+void scrollofearthquake::FinishReading(character* Reader)
+{
+  if(!game::GetCurrentLevel()->IsOnGround())
+  {
+    ADD_MESSAGE("Suddenly a horrible earthquake shakes the level!");
+    int c, Tunnels = 2 + RAND() % 3;
+    if(!game::GetCurrentLevel()->EarthquakesAffectTunnels())
+      Tunnels = 0;
+
+    for(c = 0; c < Tunnels; ++c)
+      game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
+
+    int ToEmpty = 10 + RAND() % 11;
+
+    for(c = 0; c < ToEmpty; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
+        truth Correct = false;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(Square && Square->IsFlyable())
+          {
+            Correct = true;
+            break;
+          }
+        }
+
+        if(Correct)
+        {
+          game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
+          break;
+        }
+      }
+
+    int ToGround = 20 + RAND() % 21;
+
+    for(c = 0; c < ToGround; ++c)
+      for(int i = 0; i < 50; ++i)
+      {
+        v2 Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+        if(Pos == ERROR_V2)
+          continue;
+
+        lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+        character* Char = Square->GetCharacter();
+
+        if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+          continue;
+
+        int Walkables = 0;
+
+        for(int d = 0; d < 8; ++d)
+        {
+          lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
+
+          if(NearSquare && NearSquare->IsFlyable())
+            ++Walkables;
+        }
+
+        if(Walkables > 6)
+        {
+          Square->ChangeOLTerrainAndUpdateLights(earth::Spawn());
+
+          if(Char)
+          {
+            if(Char->CanBeSeenByPlayer())
+              ADD_MESSAGE("%s is hit by a rock falling from the ceiling!", Char->CHAR_NAME(DEFINITE));
+
+            Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+            Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
+          }
+
+          Square->KickAnyoneStandingHereAway();
+          Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+          break;
+        }
+      }
+
+    // Generate a few boulders in the level
+
+    int BoulderNumber = 10 + RAND() % 10;
+
+    for(c = 0; c < BoulderNumber; ++c)
+    {
+      v2 Pos = game::GetCurrentLevel()->GetRandomSquare();
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+      character* MonsterHere = Square->GetCharacter();
+
+      if(!Square->GetOLTerrain() && (!MonsterHere || MonsterHere->GetRelation(PLAYER) == HOSTILE))
+      {
+        Square->ChangeOLTerrainAndUpdateLights(boulder::Spawn(1 + (RAND() & 1)));
+
+        if(MonsterHere)
+          MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+        Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
+      }
+    }
+
+    // Damage to items in the level
+
+    for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+      for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+        game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
+  }
+  else
+  {
+    ADD_MESSAGE("The ground shakes slightly.");
+  }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+}
+
+void scrollofbodyswitch::FinishReading(character* Reader)
+{
+  int Dir = game::DirectionQuestion(CONST_S("Choose a creature to possess. [press a direction key]"), false);
+
+  if(Dir == DIR_ERROR || !Reader->GetArea()->IsValidPos(Reader->GetPos() + game::GetMoveVector(Dir)))
+  {
+    ADD_MESSAGE("You fumble with the magical gestures. Nothing happens.");
+    return;
+  }
+
+  character* ToPossess = Reader->GetNearLSquare(Reader->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
+
+  if(ToPossess)
+  {
+    if(ToPossess->CanTameWithScroll(Reader))
+    {
+      ToPossess->ChangeTeam(Reader->GetTeam());
+      Reader->RemoveFlags(C_PLAYER);
+      game::SetPlayer(ToPossess);
+      ToPossess->EditExperience(INTELLIGENCE, 150, 1 << 12);
+
+      ADD_MESSAGE("Everything goes dark as you are torn from your body and dragged screaming "
+                  "soundlessly through the endless Void beyond all worlds. Your soul weakens "
+                  "and starts to fray, piece by piece dissolving into nothingness. Then suddenly, "
+                  "you stand beside yourself.");
+    }
+    else
+    {
+      ADD_MESSAGE("Your mind is not strong enough for the transfer! The scroll turns to dust.");
+    }
+    RemoveFromSlot();
+    SendToHell();
+  }
+  else
+  {
+    ADD_MESSAGE("There's no one to possess, %s!", game::Insult());
+    return;
+  }
 }
 
 truth wand::Apply(character* Terrorist)
@@ -1950,7 +2181,15 @@ truth horn::Apply(character* Blower)
   if(!LastUsed || game::GetTick() - LastUsed >= 2500)
   {
     LastUsed = game::GetTick();
-    cchar* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
+		
+    cchar* SoundDescription;	
+    switch(GetConfig())
+    {
+      case BRAVERY: SoundDescription = "loud but calming"; break;
+      case FEAR: SoundDescription = "frightening, almost scream-like"; break;
+      case CONFUSION: SoundDescription = "strange and dissonant"; break;
+      default: SoundDescription = "never-before heard"; break;
+    }
 
     if(Blower->IsPlayer())
     {
@@ -1993,6 +2232,8 @@ truth horn::Apply(character* Blower)
           else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
                   && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+          else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())
+            Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
         }
       }
 
@@ -3165,7 +3406,7 @@ void pantheonbook::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
   {
-    PLAYER->EditExperience(INTELLIGENCE, 75, 1 << 12);
+    PLAYER->EditExperience(INTELLIGENCE, 1000, 1 << 12);
     PLAYER->EditExperience(WISDOM, 1000, 1 << 12);
 
     ADD_MESSAGE("The book reveals many divine secrets of the pantheon to you and disappears.");
@@ -3306,4 +3547,104 @@ bool skullofxinroch::SpecialOfferEffect(int GodNumber)
   }
   else
     return false;
+}
+
+void celestialmonograph::FinishReading(character* Reader)
+{
+  if(Reader->IsPlayer())
+  {
+    PLAYER->EditExperience(INTELLIGENCE, 250, 1 << 12);
+    PLAYER->EditExperience(WISDOM, 500, 1 << 12);
+
+    game::SetRelationsToAllGods(0);
+
+    for(int c = 1; c <= GODS; ++c)
+      if(game::GetGod(c)->IsKnown())
+      game::GetGod(c)->SetIsKnown(false);
+
+    ADD_MESSAGE("With the help of the celestial monograph, you renounce any and all relations to the pantheon. The celestial monograph disappears.");
+    RemoveFromSlot();
+    SendToHell();
+  }
+}
+
+col16 celestialmonograph::GetMaterialColorA(int) const
+{
+  return MakeRGB16(40, 140, 40); 
+}
+
+truth ullrbone::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = item::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s bone of Ullr sears %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+    return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth ullrbone::Zap(character* Zapper, v2, int Direction)
+{
+  if(Charges > TimesUsed)
+  {
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+
+    beamdata Beam
+      (
+	Zapper,
+	CONST_S("killed by ") + GetName(INDEFINITE),
+	Zapper->GetPos(),
+	YELLOW,
+	BEAM_LIGHTNING,
+	Direction,
+	50,
+	0
+      );
+
+    (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
+    ++TimesUsed;
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
+}
+
+void ullrbone::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+  {
+    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << ", " << GetBaseToHitValueDescription();
+
+    if(!IsBroken())
+      Entry << ", " << GetStrengthValueDescription();
+
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
+      Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+
+    if(TimesUsed == 1)
+      Entry << ", used 1 time";
+    else if(TimesUsed)
+      Entry << ", used " << TimesUsed << " times";
+
+    Entry << ']';
+  }
+}
+
+alpha ullrbone::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
 }

@@ -432,6 +432,7 @@ class game
   static void LearnAbout(god*);
   static truth PlayerKnowsAllGods();
   static void AdjustRelationsToAllGods(int);
+  static void SetRelationsToAllGods(int);
   static void ShowDeathSmiley(bitmap*, truth);
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
   static void SetEnterTextDisplacement(v2 What)

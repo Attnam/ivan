@@ -92,8 +92,17 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_KOBOLD_FLESH: Char->ReceiveKoboldFlesh(Amount); break;
    case EFFECT_HEAL: Char->ReceiveHeal(Amount); break;
    case EFFECT_LYCANTHROPY:
-    Char->BeginTemporaryState(LYCANTHROPY, Amount);
-    break;
+    {
+      if(!Char->StateIsActivated(DISEASE_IMMUNITY))
+      {
+        Char->BeginTemporaryState(LYCANTHROPY, Amount);
+        break;
+      }
+      else
+      {
+        break;
+      }
+    }
    case EFFECT_SCHOOL_FOOD: Char->ReceiveSchoolFood(Amount); break;
    case EFFECT_ANTIDOTE: Char->ReceiveAntidote(Amount); break;
    case EFFECT_CONFUSE: Char->BeginTemporaryState(CONFUSED, Amount); break;
@@ -144,7 +153,18 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
    case EFFECT_OMMEL_BONE: Char->ReceiveOmmelBone(Amount); break;
    case EFFECT_MUSTARD_GAS: Char->ReceiveMustardGas(BodyPart, Amount); break;
    case EFFECT_MUSTARD_GAS_LIQUID: Char->ReceiveMustardGasLiquid(BodyPart, Amount); break;
-   case EFFECT_VAMPIRISM: Char->BeginTemporaryState(VAMPIRISM, Amount); break;
+   case EFFECT_VAMPIRISM:
+    {
+      if(!Char->StateIsActivated(DISEASE_IMMUNITY))
+      {
+        Char->BeginTemporaryState(VAMPIRISM, Amount);
+        break;
+      }
+      else
+      {
+        break;
+      }
+    }
    default: return false;
   }
 

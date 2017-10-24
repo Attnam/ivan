@@ -445,7 +445,7 @@ int item::GetResistance(int Type) const
   switch(Type&0xFFF)
   {
    case PHYSICAL_DAMAGE: return GetStrengthValue();
-   case ENERGY:
+   case ENERGY: return GetEnergyResistance();
    case DRAIN:
    case MUSTARD_GAS_DAMAGE:
     return 0;

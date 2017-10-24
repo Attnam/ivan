@@ -1160,3 +1160,98 @@ void wondersmellstaff::Break(character* Who, int Much)
 
   meleeweapon::Break(Who, Much);
 }
+
+void darkaxe::Be()
+{
+  meleeweapon::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 10));
+  }
+}
+
+truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s axe chills %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The axe chills %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200));
+    return BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s scythe terrifies %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The scythe terrifies %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
+    return BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s sickle shrieks at %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The sickle shrieks at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}

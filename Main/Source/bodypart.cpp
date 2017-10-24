@@ -28,6 +28,8 @@ lsquare* bodypart::GetLSquareUnder(int I) const
 { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
 item* bodypart::GetExternalBodyArmor() const { return GetHumanoidMaster()->GetBodyArmor(); }
 item* bodypart::GetExternalCloak() const { return GetHumanoidMaster()->GetCloak(); }
+item* bodypart::GetExternalHelmet() const { return GetHumanoidMaster()->GetHelmet(); }
+item* bodypart::GetExternalBelt() const { return GetHumanoidMaster()->GetBelt(); }
 truth bodypart::AllowFluidBe() const { return !Master || !Master->IsPolymorphed(); }
 
 int head::GetBodyPartIndex() const { return HEAD_INDEX; }
@@ -2082,6 +2084,14 @@ void arm::CalculateAttributeBonuses()
   {
     ApplyDexterityPenalty(GetExternalCloak());
     ApplyDexterityPenalty(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalHelmet());
+    ApplyStrengthBonus(GetExternalCloak());
+    ApplyStrengthBonus(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalBelt());
+    ApplyDexterityBonus(GetExternalHelmet());
+    ApplyDexterityBonus(GetExternalCloak());
+    ApplyDexterityBonus(GetExternalBodyArmor());
+    ApplyDexterityBonus(GetExternalBelt());
   }
 
   if(!UseMaterialAttributes())
@@ -2112,6 +2122,14 @@ void leg::CalculateAttributeBonuses()
   {
     ApplyAgilityPenalty(GetExternalCloak());
     ApplyAgilityPenalty(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalHelmet());
+    ApplyStrengthBonus(GetExternalCloak());
+    ApplyStrengthBonus(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalBelt());
+    ApplyAgilityBonus(GetExternalHelmet());
+    ApplyAgilityBonus(GetExternalCloak());
+    ApplyAgilityBonus(GetExternalBodyArmor());
+    ApplyAgilityBonus(GetExternalBelt());
   }
 
   if(!UseMaterialAttributes())
@@ -2165,6 +2183,30 @@ int arm::GetWieldedHitStrength() const
   }
 
   return HitStrength - Requirement;
+}
+
+void arm::ApplyStrengthBonus(item* Item)
+{
+  if(Item && Item->AffectsArmStrength())
+    StrengthBonus += Item->GetEnchantment() / 2;
+}
+
+void arm::ApplyDexterityBonus(item* Item)
+{
+  if(Item && Item->AffectsDexterity())
+    DexterityBonus += Item->GetEnchantment() / 2;
+}
+
+void leg::ApplyStrengthBonus(item* Item)
+{
+  if(Item && Item->AffectsLegStrength())
+    StrengthBonus += Item->GetEnchantment() / 2;
+}
+
+void leg::ApplyAgilityBonus(item* Item)
+{
+  if(Item && Item->AffectsAgility())
+    AgilityBonus += Item->GetEnchantment() / 2;
 }
 
 void arm::ApplyDexterityPenalty(item* Item)
