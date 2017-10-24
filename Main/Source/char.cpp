@@ -950,8 +950,11 @@ void character::Be()
 
         msgsystem::ThyMessagesAreNowOld();
 
-        if(Action->IsVoluntary() && READ_KEY())
+        if(Action->IsVoluntary() && WAIT_FOR_KEY_DOWN())
+        {
+          READ_KEY();
           Action->Terminate(false);
+        }
       }
     }
     else
