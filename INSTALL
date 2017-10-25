@@ -100,3 +100,48 @@ If you get a lot of weird compilation errors, try invoking cmake again with
 
 Now you can run ivan from D:/buildy/ivan/inst_mingw/ivan/ directory.
 
+Download MSYS2 from http://www.msys2.org/ selecting the right download for your architecture.
+Follow instructions on the page to install correctly.
+
+Run MSYS2.exe from either the "-msys64" or "-msys32" folder, depending on your system, and type these commands
+$ pacman -Syu
+Proceed with installation (option Y), then exit by closing the terminal window. The terminal window will crash and burn eventually but may take some time to do so.
+
+Run MSYS2.exe again:
+$ pacman -Su
+proceed with installation (option Y). This will take a long time to download all the packages, depending on your download speed
+
+$ pacman -S git
+Proceed with installation (option Y) etcetera
+
+$ pacman -S mingw-w64-i686-gcc
+
+$ pacman -S make
+
+$ pacman -S mingw-w64-i686-cmake
+
+$ pacman -S mingw-w64-i686-libpng
+
+$ pacman -S mingw-w64-i686-SDL2
+
+$ pacman -S mingw-w64-i686-pkg-config
+
+Now the MSYS2 build system is installed, you only need to follow the instructions below to keep IVAN up to date
+
+Create an empty folder in \ivan\ called msys2
+run MinGW32.exe (from your "-msys64" or "-msys32" folder, whichever is applicable) and change directory to your newly created \ivan\msys2\ folder
+
+In MinGW32.exe type the following commands, respecting the direction of the slashes:
+$ cmake .. -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=C:/ivan/inst_msys2
+$ make -j4 install
+
+Navigate to \ivan\inst_msys2\ivan and you will find the ivan.exe executable!
+
+You will probably need to copy a bunch of DLLs into the directory where ivan.exe is located. These may include the following, likely not an exhaustive list, but they can be found under for example C:\-msys64\mingw32\bin:
+libpng16-16.dll
+libstdc++-6.dll
+libwinpthread-1.dll
+zlib.dll
+libgcc_s_dw2-1.dll
+
+Use dependencywalker if you need to check for missing libraries, and if you get the message: "error cannot find entrypoint inflateValidate (in dll libpng16-16.dll)" then you need to include zlib1.dll
