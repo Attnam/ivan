@@ -100,6 +100,11 @@ If you get a lot of weird compilation errors, try invoking cmake again with
 
 Now you can run ivan from D:/buildy/ivan/inst_mingw/ivan/ directory.
 
+--------------------------------------
+
+Under Windows - MSYS2:
+
+
 Download MSYS2 from http://www.msys2.org/ selecting the right download for your architecture.
 Follow instructions on the page to install correctly.
 
