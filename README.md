@@ -6,9 +6,9 @@ Iter Vehemens ad Necem
 [![Community](https://img.shields.io/badge/forum-cathedral%20of%20attnam-yellow.svg)](https://attnam.com/)
 [![Total Downloads](https://img.shields.io/github/downloads/attnam/ivan/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
 
-[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v0508)
-[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v0508/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
-[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v0508.svg)](https://github.com/Attnam/ivan/compare/v0508...master)
+[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v0509)
+[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v0509/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
+[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v0509.svg)](https://github.com/Attnam/ivan/compare/v0509...master)
 
 Iter Vehemens ad Necem (IVAN) is a graphical roguelike game, which currently
 runs in Windows, DOS, Linux, and OS X. It features advanced bodypart and
