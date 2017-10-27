@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12.2)
 
 project(ivan CXX C)
-set(PROJECT_VERSION 0.50.8)
+set(PROJECT_VERSION 0.50.9)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
