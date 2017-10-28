@@ -279,12 +279,16 @@ void graphics::BlitDBToScreen()
   void* DestPtr;
   int Pitch;
 
-  if (SDL_LockTexture(Texture, NULL, &DestPtr, &Pitch) < 0)
-    ABORT("Can't lock texture");
-
-  memcpy(DestPtr, SrcPtr, Res.Y * Pitch);
-
-  SDL_UnlockTexture(Texture);
+  if (SDL_LockTexture(Texture, NULL, &DestPtr, &Pitch) == 0)
+  {
+    memcpy(DestPtr, SrcPtr, Res.Y * Pitch);
+    SDL_UnlockTexture(Texture);
+  }
+  else
+  {
+    // Try to use the slower SDL_UpdateTexture() as a fallback if SDL_LockTexture() fails.
+    SDL_UpdateTexture(Texture, NULL, SrcPtr, Res.X * sizeof(packcol16));
+  }
 
   SDL_RenderClear(Renderer);
   SDL_RenderCopy(Renderer, Texture, NULL, NULL);
