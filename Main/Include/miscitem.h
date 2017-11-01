@@ -514,6 +514,7 @@ ITEM(skull, item)
 {
  public:
   virtual truth IsASkull() const { return true; }
+  virtual truth IsHelmet(ccharacter*) const { return true; }
 };
 
 ITEM(skullofxinroch, item)
