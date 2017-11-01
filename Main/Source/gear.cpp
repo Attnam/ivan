@@ -1187,7 +1187,7 @@ truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 1))
   {
     if(Hitter)
     {
@@ -1212,7 +1212,7 @@ truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 2))
   {
     if(Hitter)
     {
