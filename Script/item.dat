@@ -820,7 +820,7 @@ meleeweapon
   Config ROLLING_PIN;
   {
     DefaultSize = 45;
-    Possibility = 1;
+    Possibility = 10;
     WeaponCategory = BLUNT_WEAPONS;
     DefaultMainVolume = 650; /* roller */
     DefaultSecondaryVolume = 150; /* handle */
@@ -839,8 +839,8 @@ meleeweapon
 
   Config BROKEN|ROLLING_PIN;
   {
-    Possibility = 0;
-    BitmapPos = 80, 112;
+    Possibility = 5;
+    BitmapPos = 96, 208;
     WieldedBitmapPos = 160, 352;
     EnchantmentPlusChance = 30;
   }
@@ -848,7 +848,7 @@ meleeweapon
   Config FRYING_PAN;
   {
     DefaultSize = 60;
-    Possibility = 1;
+    Possibility = 10;
     WeaponCategory = BLUNT_WEAPONS;
     DefaultMainVolume = 300; /* pan */
     DefaultSecondaryVolume = 100; /* handle */
@@ -868,10 +868,43 @@ meleeweapon
 
   Config BROKEN|FRYING_PAN;
   {
-    Possibility = 0;
-    BitmapPos = 80, 96;
+    Possibility = 5;
+    BitmapPos = 96, 192;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 30;
+  }
+
+  Config CLAW;
+  {
+    DefaultSize = 40;
+    Possibility = 5;
+    WeaponCategory = UNARMED;
+    DefaultMainVolume = 35;
+    DefaultSecondaryVolume = 20;
+    BitmapPos = 64, 352;
+    FormModifier = 75;
+    StrengthModifier = 60;
+    NameSingular = "beast claw";
+    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE; }
+    SecondaryMaterialConfig == LEATHER;
+    MaterialConfigChances = { 5, 1000, 100, 25, 25, 5; }
+    Roundness = 15;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 112;
+    EnchantmentPlusChance = 15;
+    HandleInPairs = true;
+    DamageFlags = SLASH|PIERCE;
+  }
+
+  Config BROKEN|CLAW;
+  {
+    Possibility = 10;
+    BitmapPos = 80, 352;
+    WieldedBitmapPos = 160, 112;
+    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH, ADAMANT; }
+    SecondaryMaterialConfig == LEATHER;
+    MaterialConfigChances = { 5, 250, 25, 25, 5, 1; }
+    EnchantmentPlusChance = 20;
   }
 }
 
@@ -1067,6 +1100,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 2000;
     BitmapPos = 16, 96;
     NameSingular = "chain mail";
+    FlexibleNameSingular = "jacket";
     MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 8, 450, 300, 150, 25, 20, 25, 10, 5; }
     InElasticityPenaltyModifier = 10;
@@ -1920,7 +1954,7 @@ backpack /* materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 144;
-  CloakBitmapPos = 80, 288;
+  CloakBitmapPos = 80, 290;
   IsKamikazeWeapon = true;
 }
 
@@ -4469,10 +4503,17 @@ carrot
   Alias == "bazooka";
   Roundness = 10;
   CanBePiled = true;
+  CanBeBroken = true;
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
   AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 80, 272;
+  }
 }
 
 wondersmellstaff

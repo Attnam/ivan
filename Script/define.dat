@@ -518,6 +518,7 @@
 #define MAGE_STAFF 18
 #define ROLLING_PIN 19
 #define FRYING_PAN 20
+#define CLAW 21
 
 #define GOROVITS_HAMMER 1
 #define GOROVITS_SICKLE 2
