@@ -694,4 +694,12 @@ ITEM(ullrbone, item)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(mango, item)
+{
+};
+
+ITEM(sausage, item)
+{
+};
+
 #endif

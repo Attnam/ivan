@@ -4516,6 +4516,53 @@ carrot
   }
 }
 
+mango
+{
+  WeaponCategory = BLUNT_WEAPONS;
+  DefaultSize = 20;
+  Possibility = 100;
+  Category = FOOD;
+  DefaultMainVolume = 200;
+  StrengthModifier = 75;
+  BitmapPos = 0, 224;
+  FormModifier = 10;
+  NameSingular = "mango";
+  MainMaterialConfig == MANGO_FLESH;
+  Roundness = 15;
+  AttachedGod = SILVA;
+  WieldedBitmapPos = 176, 144;
+  IsValuable = false;
+  CanBeBroken = true;
+  AllowedDungeons = 0; /* will be DARK_FOREST */
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 16, 16;
+  }
+}
+
+sausage
+{
+  Possibility = 50;
+  WeaponCategory = WHIPS;
+  DefaultMainVolume = 250;
+  StrengthModifier = 75;
+  Category = FOOD;
+  BitmapPos = 80, 128;
+  FormModifier = 25;
+  DefaultSize = 20;
+  NameSingular = "sausage";
+  MainMaterialConfig = { 12, BEEF, PORK, BEAR_FLESH, RAT_FLESH, MAMMOTH_FLESH, BLACK_UNICORN_FLESH, WHITE_UNICORN_FLESH, CHAMELEON_FLESH, KOBOLD_FLESH, HUMAN_FLESH, DWARF_FLESH, ELF_FLESH; }
+  MaterialConfigChances = { 12, 1000, 1000, 500, 250, 250, 10, 10, 5, 5, 5, 5, 5; }
+  CanBeBroken = false;
+  AttachedGod = NEFAS; /* of course */
+  WieldedBitmapPos = 160, 320;
+  IsValuable = false;
+  IsSadistWeapon = true;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+}
+
 wondersmellstaff
 {
   DefaultSize = 220;
