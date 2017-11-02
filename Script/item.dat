@@ -3935,6 +3935,31 @@ helmet
     HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
+
+  Config MASK;
+  {
+    DefaultSize = 25;
+    DefaultMainVolume = 100;
+    StrengthModifier = 90;
+    FormModifier = 10;
+    BitmapPos = 80, 208;
+    Possibility = 10;
+    NameSingular = "mask";
+    MainMaterialConfig = { 15, LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
+    MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
+    CoverPercentile = 30;
+    HelmetBitmapPos = 112, 128;
+    EnchantmentPlusChance = 30;
+  }
+
+  Config BROKEN|MASK;
+  {
+    BitmapPos = 80, 224;
+    Possibility = 3;
+    MainMaterialConfig = { 16, DRAGON_HIDE, UNICORN_HORN, STEEL, ARCANITE, MITHRIL, ILLITHIUM, OCTIRON, ADAMANT, RATA_WOOD, SIDGURE_WOOD, OMMEL_TOOTH, GOLD, SAPPHIRE, RUBY, BLUE_CRYSTAL, SUN_CRYSTAL; }
+    MaterialConfigChances = { 16, 250, 100, 500, 250, 200, 100, 50, 10, 250, 100, 10, 5, 5, 5, 10, 5; }
+    EnchantmentPlusChance = 40;
+  }
 }
 
 stethoscope
