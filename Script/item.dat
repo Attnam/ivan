@@ -2981,7 +2981,7 @@ ring
     Price = 250;
     WearWisdomLimit = 15;
     AttachedGod = SCABIES;
-    Alias = { 2, "polymorph", "change"; }
+    Alias == "change";
   }
 
   Config RING_OF_POISON_RESISTANCE;
@@ -4545,7 +4545,7 @@ mango
 {
   WeaponCategory = BLUNT_WEAPONS;
   DefaultSize = 20;
-  Possibility = 100;
+  Possibility = 0;
   Category = FOOD;
   DefaultMainVolume = 200;
   StrengthModifier = 75;
@@ -4558,7 +4558,7 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  AllowedDungeons = 0; /* will be DARK_FOREST */
+  /* AllowedDungeons == DARK_FOREST; */
 
   Config BROKEN;
   {
