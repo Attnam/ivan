@@ -337,7 +337,7 @@ std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataB
 
   if(festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ') != festring::NPos)
     Result.first += DataBase->NameSingular.GetSize();
-
+ 
   if(!DataBase->Adjective.IsEmpty())
     ++Result.second;
 
@@ -353,7 +353,8 @@ std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataB
     Result.first += DataBase->PostFix.GetSize();
 
   for(uint c = 0; c < DataBase->Alias.Size; ++c)
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos)
+    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos
+       && (Result.first == 0 || DataBase->Alias[c].GetSize() > Result.first))
       Result.first += DataBase->Alias[c].GetSize();
 
   return Result;
