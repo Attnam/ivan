@@ -1387,7 +1387,6 @@ scrollofbodyswitch /* scroll-> */
   Possibility = 2;
   Price = 3000;
   PostFix = "of body switch";
-  CanBeWished = false;
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
   AttachedGod = INFUSCOR;
