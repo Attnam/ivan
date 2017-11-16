@@ -4648,6 +4648,7 @@ vampire
   CanRead = true;
   UndeadVersions = false;
   IsCatacombCreature = true;
+  StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
   AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
 }
@@ -4685,6 +4686,7 @@ kobold
   PanicLevel = 75;
   FleshMaterial = KOBOLD_FLESH;
   DeathMessage = "@Dd dies yelling like a tortured hyena.";
+  StandVerb = "skulking";
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -1;
   IsExtraFragile = true;
@@ -4788,13 +4790,14 @@ gibberling
   CanBeGenerated = true;
   Sex = UNDEFINED;
   CanUseEquipment = false;
-  CanTalk = false;
+  CanTalk = false; /* can, but no-one understands the gibberish */
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 50;
   PanicLevel = 85;
   BaseUnarmedStrength = 300;
   FleshMaterial = GIBBERLING_FLESH;
   AttachedGod = SILVA;
+  ClassStates = SWIMMING;
   WillCarryItems = false;
   IsExtraFragile = true;
   HostileReplies =

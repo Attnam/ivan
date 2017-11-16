@@ -4545,7 +4545,7 @@ mango
 {
   WeaponCategory = BLUNT_WEAPONS;
   DefaultSize = 20;
-  Possibility = 100;
+  Possibility = 0;
   Category = FOOD;
   DefaultMainVolume = 200;
   StrengthModifier = 75;
@@ -4558,7 +4558,7 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  AllowedDungeons = 0; /* will be DARK_FOREST */
+  /* AllowedDungeons == DARK_FOREST; */
 
   Config BROKEN;
   {
@@ -5143,4 +5143,44 @@ ullrbone
   IsValuable = true;
   AttachedGod = INFUSCOR;
   GearStates = SWIMMING;
+}
+
+taiaha /* meleeweapon-> */
+{
+  CanBePiled = false;
+  DefaultSize = 160;
+  Possibility = 0;
+  WeaponCategory = POLE_ARMS;
+  StrengthModifier = 80;
+  BitmapPos = 96, 352;
+  FormModifier = 85;
+  DefaultMainVolume = 100;
+  DefaultSecondaryVolume = 1500;
+  NameSingular = "taiaha";
+  MainMaterialConfig = { 8, AMETHYST, JASPER, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
+  SecondaryMaterialConfig == KAURI_WOOD;
+  MaterialConfigChances = { 8, 250, 200, 100, 100, 100, 100, 25, 10; }
+  Roundness = 10;
+  IsTwoHanded = true;
+  AttachedGod = SILVA;
+  WieldedBitmapPos = 160, 96;
+  EnchantmentPlusChance = 15;
+  DamageFlags = PIERCE;
+  Price = 500;
+  BeamRange = 5;
+  MinCharges = 2;
+  MaxCharges = 4;
+  IsKamikazeWeapon = true;
+  BreakMsg = "shatters to smithereens in an enormous explosion";
+  TeleportPriority = 1000;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 112, 352;
+    WieldedBitmapPos = 176, 96;
+    MainMaterialConfig = { 5, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
+    MaterialConfigChances = { 5, 100, 100, 25, 25, 5; }
+    EnchantmentPlusChance = 30;
+  }
 }
