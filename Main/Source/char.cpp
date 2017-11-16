@@ -268,7 +268,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Swimming",
-    SECRET,
+    SECRET|(RANDOMIZABLE&~SRC_EVIL)
     &character::PrintBeginSwimmingMessage,
     &character::PrintEndSwimmingMessage,
     &character::BeginSwimming, &character::EndSwimming,
@@ -287,7 +287,7 @@ statedata StateData[STATES] =
     0
   }, {
     "PolymorphLocked",
-    SECRET,
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginPolymorphLockMessage,
     &character::PrintEndPolymorphLockMessage,
     0,
@@ -337,7 +337,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Fasting",
-    RANDOMIZABLE&~SRC_EVIL,
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginFastingMessage,
     &character::PrintEndFastingMessage,
     0,

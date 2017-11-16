@@ -342,6 +342,18 @@ ITEM(decosadshirt, bodyarmor)
   ulong EquippedTicks;
 };
 
+ITEM(filthytunic, bodyarmor)
+{
+ public:
+  filthytunic() { Enable(); }
+  virtual void Be();
+ protected:
+  virtual truth CalculateHasBe() const { return true; }
+  virtual int GetClassAnimationFrames() const;
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 ITEM(weepblade, meleeweapon)
 {
  public:
@@ -399,8 +411,8 @@ ITEM(bansheesickle, meleeweapon)
 ITEM(taiaha, meleeweapon)
 {
  public:
-	virtual truth AllowAlphaEverywhere() const { return true; }
-	virtual void Save(outputfile&) const;
+  virtual truth AllowAlphaEverywhere() const { return true; }
+  virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual truth IsAppliable(ccharacter*) const { return false; }
@@ -413,7 +425,7 @@ ITEM(taiaha, meleeweapon)
   virtual int GetClassAnimationFrames() const;
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-	virtual void PostConstruct();
+  virtual void PostConstruct();
   int Charges;
   int TimesUsed;
 };

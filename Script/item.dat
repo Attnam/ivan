@@ -810,7 +810,7 @@ meleeweapon
 
   Config BROKEN|MAGE_STAFF;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     GearStates = 0;
@@ -2212,7 +2212,7 @@ shield /* armor-> */
 
   Config BROKEN|PHOENIX_SHIELD;
   {
-    Possibility = 2;
+    Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
     BitmapPos = 48, 224;
@@ -3926,7 +3926,7 @@ helmet
   Config BROKEN|HELM_OF_ENLIGHTENMENT;
   {
     BitmapPos = 64, 32;
-    Possibility = 2;
+    Possibility = 1;
     Price = 100;
     AffectsPerception = false;
     GearStates = 0;
@@ -4106,7 +4106,7 @@ mjolak /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 32, 144;
     Price = 150;
     WieldedBitmapPos = 176, 256;
@@ -4148,7 +4148,7 @@ vermis /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 32, 224;
     Price = 100;
     WieldedBitmapPos = 176, 96;
@@ -4163,7 +4163,7 @@ turox /* meleeweapon-> */
   FormModifier = 225;
   DefaultSize = 90;
   BitmapPos = 0, 32;
-  Possibility = 2;
+  Possibility = 1;
   DefaultMainVolume = 450;
   DefaultSecondaryVolume = 375;
   WeaponCategory = BLUNT_WEAPONS;
@@ -4188,7 +4188,7 @@ turox /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 3;
+    Possibility = 1;
     BitmapPos = 32, 112;
     Price = 50;
     WieldedBitmapPos = 176, 192;
@@ -4505,7 +4505,7 @@ saalthul
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 48, 272;
     Price = 100;
     GearStates = 0;
@@ -4694,6 +4694,51 @@ decosadshirt /* armor->bodyarmor-> */
   AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   Price = 0;
+}
+
+filthytunic /* armor->bodyarmor-> */
+{
+  Category = BODY_ARMOR;
+  FormModifier = 15;
+  StrengthModifier = 200;
+  DefaultSize = 40;
+  DefaultMainVolume = 500;
+  Roundness = 70;
+  BitmapPos = 96, 304;
+  Possibility = 1;
+  Adjective = "filthy";
+  NameSingular = "tunic";
+  PostFix = "of martyr Bessica";
+  AttachedGod = SCABIES;
+  MainMaterialConfig == ANGEL_HAIR;
+  MaterialConfigChances == 100;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBePiled = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  InElasticityPenaltyModifier = 20;
+  EnchantmentPlusChance = 5;
+  TorsoArmorBitmapPos = 32, 544;
+  LegArmorBitmapPos = 16, 416;
+  GearStates = POLYMORPH_LOCK|DISEASE_IMMUNITY|FEARLESS|FASTING;
+  IsTwoHanded = true;
+  CanBeBroken = true;
+  CanBeBurned = true;
+  WieldedBitmapPos = 160, 144;
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    StrengthModifier = 150;
+    BitmapPos = 112, 304;
+    FormModifier = 20;
+    EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 25;
+    GearStates = 0;
+  }
 }
 
 scrollofdetectmaterial /* scroll-> */

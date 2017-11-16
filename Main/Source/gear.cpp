@@ -103,6 +103,8 @@ int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128
 
 int taiaha::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
+int filthytunic::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
+
 truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2,
                              int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
@@ -1358,4 +1360,44 @@ col16 taiaha::GetOutlineColor(int Frame) const
     }
 
   return TRANSPARENT_COLOR;
+}
+
+void filthytunic::Be()
+{
+  bodyarmor::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+  }
+}
+
+alpha filthytunic::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  else
+    return 255;
+}
+
+col16 filthytunic::GetOutlineColor(int Frame) const
+{
+  if(!IsBroken())
+    return MakeRGB16(77, 254, 21);
+  else
+    return TRANSPARENT_COLOR;
 }
