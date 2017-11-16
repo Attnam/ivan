@@ -335,6 +335,16 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Fasting",
+    RANDOMIZABLE&~SRC_EVIL,
+    &character::PrintBeginFastingMessage,
+    &character::PrintEndFastingMessage,
+    0,
+    0,
+    0,
+    0,
+    0
   }
 };
 
@@ -2314,7 +2324,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
 
 truth character::CheckStarvationDeath(cfestring& Msg)
 {
-  if(GetNP() < 1 && UsesNutrition())
+  if(GetNP() < 1 && UsesNutrition() && !(StateIsActivated(FASTING))
     return CheckDeath(Msg, 0, FORCE_DEATH);
   else
     return false;
@@ -5040,6 +5050,18 @@ void character::PrintEndFearlessMessage () const
     ADD_MESSAGE("Everything looks much more dangerous now.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s seems to have lost all confidence.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintBeginFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your life-force invigorating your entire body.");
+}
+
+void character::PrintEndFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your stomach growls in discontent.");
 }
 
 void character::PrintBeginInvisibilityMessage() const
