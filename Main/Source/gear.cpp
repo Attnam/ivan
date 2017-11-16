@@ -1260,28 +1260,27 @@ truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 
 truth taiaha::Zap(character* Zapper, v2, int Direction)
 {
-  if(Charges <= TimesUsed)
+  if((Charges <= TimesUsed) || IsBroken())
   {
     ADD_MESSAGE("Nothing happens.");
     return true;
   }
 
   Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
-	int TaiahaBeamEffect = RAND() & 3;
 
-  beamdata Beam // Just hard-code this
+  beamdata Beam
     (
       Zapper,
       CONST_S("killed by ") + GetName(INDEFINITE) + " zapped @bk",
       Zapper->GetPos(),
       GREEN,
-      TaiahaBeamEffect ? ((RAND() & 2) ? BEAM_FIRE_BALL : BEAM_STRIKE ) : BEAM_LIGHTNING,
+      BEAM_STRIKE,
       Direction,
-      15, // 10 is the lowest beamrange out of the three
+      15,
       0
     );
 
-  (GetLevel()->*level::GetBeam(!TaiahaBeamEffect))(Beam);
+  (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
   ++TimesUsed;
   return true;
 }
@@ -1313,35 +1312,6 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
   }
 }
 
-void taiaha::BreakEffect(character* Terrorist, cfestring& DeathMsg)
-{
-  v2 Pos = GetPos();
-  level* Level = GetLevel();
-  RemoveFromSlot();
-  ulong StackSize = Level->AddRadiusToSquareStack(Pos, 2); //hardcode, default is 2 for most wands, but zero for fireballs
-  lsquare** SquareStack = Level->GetSquareStack();
-  ulong c;
-
-  for(c = 0; c < StackSize; ++c)
-    SquareStack[c]->RemoveFlags(IN_SQUARE_STACK);
-
-  fearray<lsquare*> Stack(SquareStack, StackSize);
-  (Level->*level::GetBeamEffectVisualizer(PARTICLE_BEAM))(Stack, YELLOW); //beamstyle
-
-  beamdata Beam
-    (
-      Terrorist,
-      DeathMsg,
-      YOURSELF,
-      0
-    );
-
-  for(c = 0; c < Stack.Size; ++c)
-    (Stack[c]->*lsquare::GetBeamEffect(BEAM_FIRE_BALL))(Beam); // beam effect
-
-  SendToHell(); //removes the taiaha from existence
-}
-
 void taiaha::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -1356,26 +1326,6 @@ void taiaha::Load(inputfile& SaveFile)
   SaveFile >> TimesUsed >> Charges;
 	SaveFile >> Enchantment;
   LoadMaterial(SaveFile, SecondaryMaterial);
-}
-
-truth taiaha::ReceiveDamage(character* Damager, int Damage, int Type, int)
-{
-  if(Type & (FIRE|ENERGY|PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
-  {
-    festring DeathMsg = CONST_S("killed by an explosion of ");
-    AddName(DeathMsg, INDEFINITE);
-
-    if(Damager)
-      DeathMsg << " caused @bk";
-
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakMsg().CStr());
-
-    BreakEffect(Damager, DeathMsg);
-    return true;
-  }
-
-  return false;
 }
 
 void taiaha::PostConstruct()

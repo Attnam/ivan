@@ -406,7 +406,6 @@ ITEM(taiaha, meleeweapon)
   virtual truth IsAppliable(ccharacter*) const { return false; }
   virtual truth IsZappable(ccharacter*) const { return true; }
   virtual truth IsChargeable(ccharacter*) const { return true; }
-  virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth Zap(character*, v2, int);
   virtual void AddInventoryEntry(ccharacter*, festring&, int, truth) const; //this?
   virtual truth IsExplosive() const { return true; }
@@ -415,7 +414,6 @@ ITEM(taiaha, meleeweapon)
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
 	virtual void PostConstruct();
-  void BreakEffect(character*, cfestring&);
   int Charges;
   int TimesUsed;
 };

@@ -883,7 +883,7 @@ meleeweapon
     DefaultSecondaryVolume = 20;
     BitmapPos = 64, 352;
     FormModifier = 75;
-    StrengthModifier = 60;
+    StrengthModifier = 50;
     NameSingular = "beast claw";
     MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE; }
     SecondaryMaterialConfig == LEATHER;
@@ -3947,7 +3947,7 @@ helmet
     MainMaterialConfig = { 15, LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
     MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
     CoverPercentile = 30;
-    HelmetBitmapPos = 112, 128;
+    HelmetBitmapPos = 112, 129;
     EnchantmentPlusChance = 30;
   }
 
@@ -5089,7 +5089,7 @@ celestialmonograph /* holybook-> */
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
-  BitmapPos = 0, 144;
+  BitmapPos = 80, 320;
   FormModifier = 20;
   Adjective = "celestial";
   NameSingular = "monograph";
@@ -5166,11 +5166,9 @@ taiaha /* meleeweapon-> */
   EnchantmentPlusChance = 15;
   DamageFlags = PIERCE;
   Price = 500;
-  BeamRange = 5;
   MinCharges = 2;
-  MaxCharges = 4;
+  MaxCharges = 8;
   IsKamikazeWeapon = true;
-  BreakMsg = "shatters to smithereens in an enormous explosion";
   TeleportPriority = 1000;
 
   Config BROKEN;
@@ -5190,8 +5188,8 @@ cauldron /* materialcontainer-> */
   Category = POTION;
   StrengthModifier = 350;
   DefaultSize = 150;
-  DefaultMainVolume = 800000;
-  DefaultSecondaryVolume = 26000;
+  DefaultMainVolume = 80000;
+  DefaultSecondaryVolume = 25000;
   BitmapPos = 80, 304;
   NameSingular = "cauldron";
   MainMaterialConfig == COPPER;
