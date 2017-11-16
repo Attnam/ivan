@@ -2328,9 +2328,11 @@ goblin
     AttributeBonus = 50;
     Helmet = LEATHER helmet;
     BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    RightWielded = IRON meleeweapon(MEAT_CLEAVER);
+    LeftWielded = IRON meleeweapon(MEAT_CLEAVER);
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
     NameSingular = "goblin butcher";
     ClothColor = rgb16(200, 0, 0);
     Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
@@ -3601,6 +3603,7 @@ housewife
   CanRead = true;
   NameSingular = "housewife";
   NamePlural = "housewives";
+  /* RightWielded overridden */
   KnownCWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
   CWeaponSkillHits = { 2, 50, 50; }
   BaseUnarmedStrength = 200;
@@ -3631,7 +3634,6 @@ housewife
     "sex", "fertility", "jealousy", "cheating", "quantum physics",
     "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
-  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; } }
 
   Config CULTIST;
   {
@@ -3647,8 +3649,7 @@ housewife
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
     Cloak = BLACK_LEATHER cloak { Enchantment = 1; }
-    RightWielded = meleeweapon(SCYTHE);
-    KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
+    /* RightWielded overridden */
     IsExtraCoward = false;
     IsSadist = true;
     AttachedGod = INFUSCOR;

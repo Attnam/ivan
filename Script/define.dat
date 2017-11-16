@@ -520,6 +520,7 @@
 #define ROLLING_PIN 19
 #define FRYING_PAN 20
 #define CLAW 21
+#define MEAT_CLEAVER 22
 
 #define GOROVITS_HAMMER 1
 #define GOROVITS_SICKLE 2

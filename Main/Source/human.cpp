@@ -784,7 +784,7 @@ void priest::BeTalkedTo()
         return;
       }
     }
-    else 
+    else
       ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
@@ -1015,7 +1015,7 @@ void communist::BeTalkedTo()
     {
       if(Char != this)
         Char->ChangeTeam(PLAYER->GetTeam());
-      
+
       if(GetTeam()->GetMembers() == 1) // Only Ivan left in Party
         break;
     }
@@ -3432,6 +3432,43 @@ truth housewife::SpecialEnemySightedReaction(character* Char)
                 Weapon->GetArticle(), Weapon->GetNameSingular().CStr());
 
   return false;
+}
+
+void housewife::CreateInitialEquipment(int SpecialFlags)
+{
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  meleeweapon* Weapon;
+
+  if(GetConfig() == CULTIST)
+  {
+    Weapon = meleeweapon::Spawn(SCYTHE);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(POLE_ARMS)->AddHit(100);
+    GetCurrentRightSWeaponSkill()->AddHit(50);
+    return;
+  }
+  else switch(RAND() % 4)
+  {
+   case 0:
+    Weapon = meleeweapon::Spawn(ROLLING_PIN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 1:
+    Weapon = meleeweapon::Spawn(FRYING_PAN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 2:
+    Weapon = meleeweapon::Spawn(MEAT_CLEAVER);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(SMALL_SWORDS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   default: break;
+  }
 }
 
 void guard::Save(outputfile& SaveFile) const

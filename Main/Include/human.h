@@ -410,6 +410,7 @@ CHARACTER(housewife, humanoid)
 {
  public:
   virtual truth SpecialEnemySightedReaction(character*);
+  virtual void CreateInitialEquipment(int);
  protected:
   virtual int GetHairColor() const;
   virtual v2 GetHeadBitmapPos() const;

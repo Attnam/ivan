@@ -898,13 +898,44 @@ meleeweapon
 
   Config BROKEN|CLAW;
   {
-    Possibility = 10;
+    Possibility = 5;
     BitmapPos = 80, 352;
     WieldedBitmapPos = 160, 112;
     MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH, ADAMANT; }
     SecondaryMaterialConfig == LEATHER;
     MaterialConfigChances = { 5, 250, 25, 25, 5, 1; }
     EnchantmentPlusChance = 20;
+  }
+
+  Config MEAT_CLEAVER;
+  {
+    DefaultSize = 50;
+    Possibility = 5;
+    WeaponCategory = SMALL_SWORDS;
+    DefaultMainVolume = 100;
+    DefaultSecondaryVolume = 30;
+    BitmapPos = 64, 144;
+    FormModifier = 80;
+    StrengthModifier = 95;
+    NameSingular = "cleaver";
+    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ILLITHIUM; }
+    SecondaryMaterialConfig == OAK_WOOD;
+    MaterialConfigChances = { 7, 1250, 1000, 750, 100, 25, 15, 10; }
+    Roundness = 15;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 32;
+    EnchantmentPlusChance = 15;
+    DamageFlags = SLASH;
+  }
+
+  Config BROKEN|MEAT_CLEAVER;
+  {
+    Possibility = 10;
+    BitmapPos = 64, 176;
+    WieldedBitmapPos = 176, 208;
+    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    EnchantmentPlusChance = 30;
   }
 }
 
@@ -3983,7 +4014,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -4006,7 +4037,7 @@ flamingsword /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 10;
+    Possibility = 5;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
@@ -4168,7 +4199,7 @@ turox /* meleeweapon-> */
 whipofthievery /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 10;
+  Possibility = 5;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -4486,7 +4517,7 @@ saalthul
 chameleonwhip /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 10;
+  Possibility = 5;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -4752,7 +4783,7 @@ holyhandgrenade
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -4765,7 +4796,7 @@ daggerofvenom
   SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
   MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   AttachedGod = CLEPTIA;
   WieldedBitmapPos = 160, 288;
   EnchantmentPlusChance = 2;
@@ -4783,7 +4814,7 @@ daggerofvenom
 weepblade
 {
   DefaultSize = 70;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 70;
   DefaultSecondaryVolume = 30;
@@ -4827,6 +4858,7 @@ acidshield /* armor ->*/
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
+  Price = 250;
   WieldedBitmapPos = 128, 32;
   AttachedGod = SCABIES;
 
@@ -4906,7 +4938,7 @@ gorovitscopyoflenin /* item-> */
 chastitybelt
 {
   DefaultSize = 40;
-  Possibility = 1;
+  Possibility = 4;
   WeaponCategory = UNCATEGORIZED;
   DefaultMainVolume = 125;
   StrengthModifier = 60;
@@ -4989,7 +5021,7 @@ darkaxe  /* meleeweapon-> */
 slowaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -5002,7 +5034,7 @@ slowaxe  /* meleeweapon-> */
   SecondaryMaterialConfig == ICE;
   MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 176;
@@ -5021,20 +5053,20 @@ slowaxe  /* meleeweapon-> */
 terrorscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
   BitmapPos = 64, 112;
   FormModifier = 80;
-  StrengthModifier = 50;
+  StrengthModifier = 60;
   NameSingular = "scythe";
   PostFix = "of terror";
   MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, OCTIRON, PSYPHER, MITHRIL; }
   SecondaryMaterialConfig == EBONY_WOOD;
   MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 1, 90; }
   Roundness = 10;
-  Price = 150;
+  Price = 250;
   IsGoodWithPlants = true;
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
@@ -5054,7 +5086,7 @@ terrorscythe  /* meleeweapon-> */
 bansheesickle  /* meleeweapon-> */
 {
   DefaultSize = 40;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 50;
@@ -5066,7 +5098,7 @@ bansheesickle  /* meleeweapon-> */
   SecondaryMaterialConfig == OCTIRON;
   MaterialConfigChances = {9, 30, 15, 250, 200, 150, 100, 10, 10, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   IsGoodWithPlants = true;
   AttachedGod = SEGES;
   WieldedBitmapPos = 176, 32;
