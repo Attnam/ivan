@@ -512,6 +512,7 @@ Dungeon UNDER_WATER_TUNNEL;
     ShortDescription = "SpiderNest";
     LevelMessage = "The air feels stale and sickly, and you hear thousands of tiny scuttling feet.";
     IgnoreDefaultSpecialSquares = true;
+    EarthquakesAffectTunnels = false;
     FillSquare = solidterrain(GROUND), BASALT earth;
     DifficultyBase = 100;
     DifficultyDelta = 0;

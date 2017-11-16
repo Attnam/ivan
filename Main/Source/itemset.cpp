@@ -30,6 +30,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 #include "char.h"
 #include "message.h"
 #include "stack.h"
+#include "lterras.h"
 #include "felist.h"
 #include "confdef.h"
 #include "room.h"

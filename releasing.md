@@ -5,7 +5,7 @@ To do for each release
 
 ### Things to change around in the code:
 
- - Update the IVAN version number in the root CMakeLists.txt from 0.50.8 to 0.50.9, depending on what the next version is
+ - Update the IVAN version number in the root CMakeLists.txt from 0.50.9 to 0.51, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
@@ -18,9 +18,9 @@ To do for each release
 
 ### Include the following files in a zip folder for each release:
 
-**Folder: IvanWin0509**
+**Folder: IvanWin051**
 
-**Files = 11**
+**Files = 12**
 
   - AUTHORS
   - COPYING
@@ -32,7 +32,8 @@ To do for each release
   - README
   - README.md
   - SDL2.dll
-  - libpng3.dll
+  - libpng12.dll / libpng16.dll
+  - zlib1.dll
 
 **Subfolder: Graphics**
 
@@ -57,7 +58,7 @@ To do for each release
 
 **Subfolder: Music**
 
-**Files = 10**
+**Files = 11**
 
   - Cathedral.mid
   - defeat.mid
@@ -90,7 +91,7 @@ To do for each release
 
 **Leave only dungeon data files in here**
 
-### Then commit changes, with the release tag v0509
+### Then commit changes, with the release tag v051
 Tag can be appended to latest commit
 
 ### Push changes

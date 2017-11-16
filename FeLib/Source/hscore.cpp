@@ -17,7 +17,7 @@
 #include "femath.h"
 
 /* Increment this if changes make highscores incompatible */
-#define HIGH_SCORE_VERSION 128
+#define HIGH_SCORE_VERSION 129
 
 cfestring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }

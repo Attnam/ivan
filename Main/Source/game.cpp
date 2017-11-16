@@ -52,8 +52,8 @@
 
 #include "audio.h"
 
-#define SAVE_FILE_VERSION 129 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 115 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 130 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 116 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -3768,6 +3768,12 @@ void game::AdjustRelationsToAllGods(int Amount)
 {
   for(int c = 1; c <= GODS; ++c)
     GetGod(c)->AdjustRelation(Amount);
+}
+
+void game::SetRelationsToAllGods(int Amount)
+{
+  for(int c = 1; c <= GODS; ++c)
+    GetGod(c)->SetRelation(Amount);
 }
 
 void game::ShowDeathSmiley(bitmap* Buffer, truth)

@@ -924,7 +924,7 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
     else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
       ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
 
-    if(Victim->IsHumanoid() && !Victim->StateIsActivated(LYCANTHROPY))
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(LYCANTHROPY) && !Victim->StateIsActivated(DISEASE_IMMUNITY))
       Victim->BeginTemporaryState(VAMPIRISM, 500 + RAND_N(250));
 
       // HP recieved is about half the damage done; against werewolves this is full

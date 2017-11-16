@@ -1,0 +1,39 @@
+version: 0.50.9.{build}
+
+branches:
+  only:
+  - master
+
+environment:
+    COMPILER: msys2
+    BUILDTOOL: cmake
+    MSYS2_DIR: msys64
+    MSYSTEM: MINGW32
+
+init:
+    - cmd: set PATH=C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
+
+build_script:
+    - ps: |
+        mkdir msys2
+        
+        cd C:/msys64
+        
+        C:\msys64\usr\bin\bash -lc ("for i in {1..3}; do pacman --noconfirm -Syu --force coreutils  && break || sleep 15; done");
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Su"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S git"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-gcc"
+        
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S make"
+        
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
+        
+        cd C:/projects/ivan
+        
+        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan/build 
+        cmake . 
+        make -j4 install
+        

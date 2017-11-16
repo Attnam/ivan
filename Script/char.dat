@@ -466,7 +466,7 @@ farmer
 
   Config IMPRISONED_FARMER;
   {
-    UsesLongAdjectiveArticle = true;    
+    UsesLongAdjectiveArticle = true;
     Adjective = "eunuch";
     CanBeGenerated = false;
     AttributeBonus = -10;
@@ -2388,7 +2388,7 @@ goblin
     TorsoBitmapPos = 48, 208;
     HairColor = rgb16(220, 220, 0);
     ClothColor = rgb16(200, 0, 0);
-    Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
+    Inventory = { 2, stone { Chance = 50; }, amulet; }
     CanBeConfused = false;
     NaturalSparkleFlags = HAIR_COLOR;
     FireResistance = 30;
@@ -3032,7 +3032,7 @@ hunter
 
   Config IMPRISONED_HUNTER;
   {
-    UsesLongAdjectiveArticle = true;    
+    UsesLongAdjectiveArticle = true;
     Adjective = "imprisoned";
     CanBeGenerated = false;
     AttributeBonus = -10;
@@ -3631,6 +3631,7 @@ housewife
     "sex", "fertility", "jealousy", "cheating", "quantum physics",
     "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
+  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; } }
 
   Config CULTIST;
   {
@@ -3760,7 +3761,7 @@ femaleslave
   }
 
   Config IMPRISONED_FEMALE;
-  {   
+  {
     NameSingular = "prisoner";
     CanBeGenerated = false;
     AttachedGod = DULCIS;
@@ -3957,7 +3958,7 @@ zombie
   {
     DefaultName = "Moonrise Stealing Dark";
     PostFix = "of Khaz-zadm";
-    TamingDifficulty = 30;
+    TamingDifficulty = 20;
     IsNameable = false;
     IsUnique = true;
     DefaultArmStrength = 15;
@@ -3969,11 +3970,15 @@ zombie
     DefaultIntelligence = 7;
     DefaultWisdom = 15;
     DefaultCharisma = 5;
-    RightWielded = VALPURIUM meleeweapon(BATTLE_AXE);
+    HeadBitmapPos = 112, 160; /* all dwarves have beards, no exceptions */
+    RightWielded = OCTIRON darkaxe;
+    LeftWielded = OCTIRON darkaxe;
     KnownCWeaponSkills == AXES;
-    CWeaponSkillHits == 100;
+    CWeaponSkillHits == 150;
     RightSWeaponSkillHits = 100;
+    LeftSWeaponSkillHits = 100;
     ClassStates = LEPROSY;
+    FleshMaterial = DWARF_FLESH;
     IsExtraFragile = false;
     Sex = FEMALE;
     FireResistance = 25;
@@ -3992,6 +3997,7 @@ zombie
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
+    Inventory == OCTIRON key(HEXAGONAL_LOCK);
   }
 
   Config IMPRISONED_ZOMBIE;
@@ -4569,7 +4575,7 @@ werewolfwolf
   BaseBiteStrength = 1200;
   CanUseEquipment = false;
   CanBeWished = false;
-  ClassStates = INFRA_VISION|LYCANTHROPY;
+  ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION;
   PanicLevel = 0;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
@@ -6149,7 +6155,7 @@ elder
   TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
   CanRead = true;
-  Inventory == holybook(SILVA);
+  Inventory == pantheonbook;
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {
@@ -7253,6 +7259,7 @@ necromancer
     AllowUnconsciousness = false;
     DisplacePriority = 10;
     UndeadVersions = false;
+    Inventory == celestialmonograph;
   }
 }
 
@@ -7777,10 +7784,10 @@ siren
 {
   DefaultArmStrength = 3;
   DefaultLegStrength = 3;
-  DefaultDexterity = 15;
-  DefaultAgility = 20;
+  DefaultDexterity = 20;
+  DefaultAgility = 25;
   DefaultEndurance = 12;
-  DefaultPerception = 20;
+  DefaultPerception = 25;
   DefaultIntelligence = 10;
   DefaultWisdom = 15;
   DefaultCharisma = 50;
@@ -7792,7 +7799,8 @@ siren
   ArmBitmapPos = 80, 240;
   LegBitmapPos = 16, 240;
   TotalVolume = 40000;
-  TotalSize = 170;
+  Frequency = 2500;
+  TotalSize = 150;
   BaseUnarmedStrength = 200;
   CanRead = true;
   NameSingular = "siren";
@@ -8114,7 +8122,7 @@ child
   {
     HairColor = rgb16(80, 48, 32);
     CapColor = rgb16(80, 48, 32); /* also used for hair */
-    HeadBitmapPos = 96, 335; 
+    HeadBitmapPos = 96, 335;
     NameSingular = "girl";
     Sex = FEMALE;
     FriendlyReplies =

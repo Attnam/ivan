@@ -190,6 +190,25 @@ ITEM(scrollofteleportation, scroll)
   virtual void FinishReading(character*);
 };
 
+ITEM(scrolloffireballs, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+  virtual truth IsExplosive() const { return true; }
+};
+
+ITEM(scrollofearthquake, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
+ITEM(scrollofbodyswitch, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
 ITEM(scrollofcharging, scroll)
 {
  public:
@@ -289,6 +308,7 @@ ITEM(backpack, materialcontainer)
  public:
   virtual truth Apply(character*);
   virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth IsExplosive() const;
   virtual long GetTotalExplosivePower() const;
@@ -629,6 +649,14 @@ ITEM(pantheonbook, holybook)
   virtual col16 GetMaterialColorA(int) const;
 };
 
+ITEM(celestialmonograph, holybook)
+{
+ public:
+  virtual void FinishReading(character*);
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
+};
+
 ITEM(gorovitscopyoflenin, item)
 {
  protected:
@@ -643,6 +671,26 @@ ITEM(firstbornchild, item)
   virtual truth Spoils() const { return false; } // temporary
  protected:
   virtual col16 GetMaterialColorB(int) const;
+};
+
+ITEM(ullrbone, item)
+{
+ public:
+  ullrbone() : TimesUsed(0), Charges(8) { }
+  virtual truth Zap(character*, v2, int);
+  virtual void ChargeFully(character*) { TimesUsed = 0; }
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void Be() { }
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  int TimesUsed;
+  int Charges;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
 };
 
 #endif

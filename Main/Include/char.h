@@ -615,6 +615,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const fearray<int>&, AllowedDungeons);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
+  void DoDetecting();
   truth TeleportNear(character*);
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*, int, truth = false) = 0;
@@ -674,6 +675,8 @@ class character : public entity, public id
   void HiccupsHandler();
   void BeginEthereality();
   void EndEthereality();
+  void BeginSwimming();
+  void EndSwimming();
   void VampirismHandler();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
@@ -689,6 +692,8 @@ class character : public entity, public id
   void PrintEndESPMessage() const;
   void PrintBeginEtherealityMessage() const;
   void PrintEndEtherealityMessage() const;
+  void PrintBeginSwimmingMessage() const;
+  void PrintEndSwimmingMessage() const;
   truth CanBeSeenByPlayer(truth = false, truth = false) const;
   truth CanBeSeenBy(ccharacter*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
@@ -709,11 +714,24 @@ class character : public entity, public id
   void PrintBeginTeleportMessage() const;
   void PrintEndTeleportMessage() const;
   void TeleportHandler();
+  void PrintBeginDetectMessage() const;
+  void PrintEndDetectMessage() const;
+  void DetectHandler();
   void PrintEndTeleportControlMessage() const;
   void PrintBeginTeleportControlMessage() const;
   void PolymorphHandler();
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
+  void PrintBeginPolymorphLockMessage() const;
+  void PrintEndPolymorphLockMessage() const;
+  void PolymorphLockHandler();
+  void PrintBeginRegenerationMessage() const;
+  void PrintEndRegenerationMessage() const;
+  void PrintBeginDiseaseImmunityMessage() const;
+  void PrintEndDiseaseImmunityMessage() const;
+  void PrintBeginTeleportLockMessage() const;
+  void PrintEndTeleportLockMessage() const;
+  void TeleportLockHandler();
   virtual void DisplayStethoscopeInfo(character*) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;
@@ -753,6 +771,7 @@ class character : public entity, public id
   void CalculateMaxHP();
   int GetHP() const { return HP; }
   int GetMaxHP() const { return MaxHP; }
+  int GetTotalCharacterWeight() const;
   void CalculateBodyPartMaxHPs(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   truth IsInitializing() const { return Flags & C_INITIALIZING; }
   truth IsInNoMsgMode() const { return Flags & C_IN_NO_MSG_MODE; }

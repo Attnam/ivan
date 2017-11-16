@@ -182,7 +182,6 @@ decoration
     NameSingular = "pine";
     BitmapPos = 16, 320;
     HPModifier = 25;
-    LeftOverItems == pineapple { Times = 0:1; } /* an apple of a pine tree */
   }
 
   Config FIR;
@@ -623,6 +622,7 @@ decoration
     NameSingular = "table";
     BitmapPos = 48, 240;
     HPModifier = 25;
+    Walkability = ETHEREAL;
   }
 
   Config WELL;
@@ -1008,6 +1008,7 @@ ironmaiden
 {
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
   CanBeDestroyed = true;
+  UsesLongArticle = true;
   DigMessage = "The iron maiden falls into pieces.";
   SitMessage = "You sit in the iron maiden. This doesn't seem safe at all.";
   MainMaterialConfig == IRON;
