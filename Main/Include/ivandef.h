@@ -122,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 29
+#define STATES 30
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -153,6 +153,7 @@ const name##prototype name::ProtoType
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
 #define TELEPORT_LOCK (1 << 28)
+#define FEARLESS (1 << 29)
 
 #define TORSO 1
 #define HEAD 2

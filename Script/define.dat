@@ -69,6 +69,7 @@
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
 #define TELEPORT_LOCK (1 << 28)
+#define FEARLESS (1 << 29)
 
 #define HEAD 1
 #define TORSO 2

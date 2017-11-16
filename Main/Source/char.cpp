@@ -325,6 +325,16 @@ statedata StateData[STATES] =
     &character::TeleportLockHandler,
     0,
     0
+  }, {
+    "Fearless",
+    RANDOMIZABLE&~SRC_EVIL,
+    &character::PrintBeginFearlessMessage,
+    &character::PrintEndFearlessMessage,
+    0,
+    0,
+    0,
+    0,
+    0
   }
 };
 
@@ -5014,6 +5024,22 @@ void character::PrintEndVampirismMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
+}
+
+void character::PrintBeginFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel very brave.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks very calm.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Everything looks much more dangerous now.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s seems to have lost all confidence.", CHAR_NAME(DEFINITE));
 }
 
 void character::PrintBeginInvisibilityMessage() const
@@ -10303,7 +10329,7 @@ truth character::AllowUnconsciousness() const
 
 truth character::CanPanic() const
 {
-  return !Action || !Action->IsUnconsciousness();
+  return !Action || !Action->IsUnconsciousness() || !StateIsActivated(FEARLESS);
 }
 
 int character::GetRandomBodyPart(ulong Possible) const
