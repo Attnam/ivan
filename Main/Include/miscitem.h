@@ -702,4 +702,21 @@ ITEM(sausage, item)
 {
 };
 
+ITEM(cauldron, materialcontainer)
+{
+ public:
+  virtual item* BetterVersion() const;
+  virtual void DipInto(liquid*, character*);
+  virtual liquid* CreateDipLiquid();
+  virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
+  virtual truth IsDipDestination(ccharacter*) const;
+  virtual truth IsExplosive() const;
+  virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual truth EffectIsGood() const;
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return IsExplosive(); }
+ protected:
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
+  virtual truth AddAdjective(festring&, truth) const;
+};
+
 #endif

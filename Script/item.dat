@@ -5183,3 +5183,25 @@ taiaha /* meleeweapon-> */
     EnchantmentPlusChance = 30;
   }
 }
+
+cauldron /* materialcontainer-> */
+{
+  Possibility = 0;
+  Category = POTION;
+  StrengthModifier = 350;
+  DefaultSize = 150;
+  DefaultMainVolume = 800000;
+  DefaultSecondaryVolume = 26000;
+  BitmapPos = 80, 304;
+  NameSingular = "cauldron";
+  MainMaterialConfig == COPPER;
+  SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, POISON_LIQUID, VODKA, TROLL_BLOOD, LIQUID_DARKNESS, YELLOW_SLIME, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
+  MaterialConfigChances = { 10, 75, 50, 25, 50, 25, 5, 5, 1, 5, 25; }
+  Roundness = 100;
+  CanBeBroken = false;
+  AttachedGod = NONE;
+  WieldedBitmapPos = 176, 144;
+  IsValuable = false;
+  CanBeGeneratedInContainer = false;
+  CanBePickedUp = false;
+}

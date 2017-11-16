@@ -41,6 +41,11 @@ truth potion::EffectIsGood() const
 { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
+truth cauldron::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
+truth cauldron::AddAdjective(festring& String, truth Articled) const { return AddEmptyAdjective(String, Articled); }
+truth cauldron::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
+truth cauldron::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
+
 truth stick::AddAdjective(festring& String, truth Articled) const { return AddBurningAdjective(String, Articled); }
 
 truth bananapeels::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
@@ -101,7 +106,7 @@ void scrollofteleportation::FinishReading(character* Reader)
 void scrolloffireballs::FinishReading(character* Reader)
 {
   v2 FireBallPos = ERROR_V2;
-	
+
   beamdata Beam
   (
     Reader,
@@ -109,7 +114,7 @@ void scrolloffireballs::FinishReading(character* Reader)
     YOURSELF,
     0
   );
-	
+
   ADD_MESSAGE("This could be loud...");
 
   v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [direction keys move cursor, space accepts]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
@@ -163,7 +168,7 @@ void scrolloffireballs::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
-  Square->DrawParticles(RED); 
+  Square->DrawParticles(RED);
   Square->FireBall(Beam);
 }
 
@@ -518,7 +523,23 @@ liquid* potion::CreateDipLiquid()
   return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
 }
 
+liquid* cauldron::CreateDipLiquid()
+{
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
+}
+
 void potion::DipInto(liquid* Liquid, character* Dipper)
+{
+  /* Add alchemy */
+
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  ChangeSecondaryMaterial(Liquid);
+  Dipper->DexterityAction(10);
+}
+
+void cauldron::DipInto(liquid* Liquid, character* Dipper)
 {
   /* Add alchemy */
 
@@ -539,6 +560,14 @@ item* potion::BetterVersion() const
 {
   if(!GetSecondaryMaterial())
     return potion::Spawn();
+  else
+    return 0;
+}
+
+item* cauldron::BetterVersion() const
+{
+  if(!GetSecondaryMaterial())
+    return cauldron::Spawn();
   else
     return 0;
 }
@@ -2181,8 +2210,8 @@ truth horn::Apply(character* Blower)
   if(!LastUsed || game::GetTick() - LastUsed >= 2500)
   {
     LastUsed = game::GetTick();
-		
-    cchar* SoundDescription;	
+
+    cchar* SoundDescription;
     switch(GetConfig())
     {
       case BRAVERY: SoundDescription = "loud but calming"; break;
@@ -3570,7 +3599,7 @@ void celestialmonograph::FinishReading(character* Reader)
 
 col16 celestialmonograph::GetMaterialColorA(int) const
 {
-  return MakeRGB16(40, 140, 40); 
+  return MakeRGB16(40, 140, 40);
 }
 
 truth ullrbone::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)

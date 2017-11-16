@@ -3986,6 +3986,7 @@ zombie
     EnergyResistance = 15;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
+    CanRead = true;
     CreateUndeadConfigurations = false;
     DeathMessage = "As @Dd collapses, you hear her hiss: \"Peeeeeetrrrruuuuuuuss!!!\"";
     FriendlyReplies =
@@ -4008,6 +4009,7 @@ zombie
     CanBeGenerated = false;
     CreateUndeadConfigurations = false;
     IsMasochist = true;
+    CanRead = true;
     FriendlyReplies =
     {
       4,
