@@ -656,7 +656,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
       Square, Random;
       {
-        Items == taiaha;
+        Items == taiaha(BROKEN);
       }
     }
   }

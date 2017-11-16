@@ -719,4 +719,8 @@ ITEM(cauldron, materialcontainer)
   virtual truth AddAdjective(festring&, truth) const;
 };
 
+ITEM(decoration, item)
+{
+};
+
 #endif

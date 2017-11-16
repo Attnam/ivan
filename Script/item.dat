@@ -5203,3 +5203,112 @@ cauldron /* materialcontainer-> */
   CanBeGeneratedInContainer = false;
   CanBePickedUp = false;
 }
+
+decoration
+{
+  Category = MISC;
+  IsAbstract = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  HasSecondaryMaterial = true;
+  Possibility = 10;
+  IsValuable = false;
+  WieldedBitmapPos = 176, 144;
+
+  Config POTTED_CACTUS;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 50;
+    DefaultSecondaryVolume = 500;
+    BitmapPos = 64, 320;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    Adjective = "potted";
+    NameSingular = "cactus";
+    MainMaterialConfig == MARBLE;
+    SecondaryMaterialConfig == PLANT_FIBER;
+    Roundness = 60;
+    AttachedGod = SCABIES;
+    IsSadistWeapon = true;
+    DamageFlags = PIERCE;
+  }
+
+  Config POTTED_PLANT;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 50;
+    DefaultSecondaryVolume = 500;
+    BitmapPos = 112, 336;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    Adjective = "potted";
+    NameSingular = "plant";
+    MainMaterialConfig == MARBLE;
+    SecondaryMaterialConfig == PLANT_FIBER;
+    Roundness = 60;
+    AttachedGod = SILVA;
+  }
+
+  Config DEAD_FISH;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 250;
+    HasSecondaryMaterial = false;
+    BitmapPos = 80, 336;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    Adjective = "dead";
+    NameSingular = "fish";
+    MainMaterialConfig == DOLPHIN_FLESH; /* maybe change */
+    Roundness = 15;
+    AttachedGod = SEGES;
+  }
+
+  Config BONE_FISH;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 150;
+    HasSecondaryMaterial = false;
+    BitmapPos = 96, 336;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    Adjective = "fish";
+    NameSingular = "bones";
+    NamePlural = "bones";
+    MainMaterialConfig == BONE;
+    Roundness = 15;
+    AttachedGod = SCABIES;
+  }
+
+  Config SMALL_CLOCK;
+  {
+    DefaultSize = 50;
+    DefaultMainVolume = 100;
+    DefaultSecondaryVolume = 1000;
+    BitmapPos = 96, 320;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    NameSingular = "timepiece";
+    MainMaterialConfig == ARCANITE;
+    SecondaryMaterialConfig == OAK_WOOD;
+    Roundness = 75;
+    AttachedGod = ATAVUS;
+  }
+
+  Config LARGE_CLOCK;
+  {
+    DefaultSize = 200;
+    DefaultMainVolume = 500;
+    DefaultSecondaryVolume = 30000;
+    BitmapPos = 112, 320;
+    FormModifier = 25;
+    StrengthModifier = 150;
+    NameSingular = "grandfather clock";
+    MainMaterialConfig == ARCANITE;
+    SecondaryMaterialConfig == OAK_WOOD;
+    Roundness = 75;
+    AttachedGod = ATAVUS;
+    IsTwoHanded = true;
+    CanBeGeneratedInContainer = false;
+  }
+}

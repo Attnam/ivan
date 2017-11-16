@@ -633,6 +633,13 @@
 #define FEAR 2
 #define CONFUSION 3
 
+#define POTTED_CACTUS 1
+#define POTTED_PLANT 2
+#define DEAD_FISH 3
+#define BONE_FISH 4
+#define SMALL_CLOCK 5
+#define LARGE_CLOCK 6
+
 #define IMPRISONED_FARMER 1
 #define CULTIST 2
 

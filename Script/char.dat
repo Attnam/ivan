@@ -1771,7 +1771,7 @@ ennerbeast
   PanicLevel = 75;
   FleshMaterial = ENNER_BEAST_FLESH;
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
-  Inventory == horn(FEAR);
+  Inventory == decoration(DEAD_FISH) { Times = 1:10; }
   IsUnique = true;
   HostileReplies =
   {
