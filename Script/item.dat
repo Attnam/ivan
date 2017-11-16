@@ -5204,7 +5204,7 @@ cauldron /* materialcontainer-> */
   CanBePickedUp = false;
 }
 
-decoration
+trinket
 {
   Category = MISC;
   IsAbstract = true;

@@ -402,9 +402,9 @@ Dungeon ATTNAM;
           X == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, banana { Times = 0:10; }, carrot { Times = 0:3; } } }
           t == itemcontainer(LARGE_CHEST) { ItemsInside = { 7, can { Times = 0:3; SecondaryMaterial = 0; }, PLANT_FIBER lump { Times = 0:1; }, lantern(BROKEN) { Times = 0:2; }, brokenbottle { Times = 0:5; }, bananapeels { Times = 0:5; }, banana(BROKEN) { Times = 0:1; }, bone { Times = 0:5; } } }
           T == itemcontainer(LARGE_CHEST) { ItemsInside == Random { Times = 3:7; MaxPrice = 10; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = BROKEN; } }
-          n == decoration(POTTED_PLANT);
-          N == decoration(POTTED_CACTUS);
-          Y == decoration(LARGE_CLOCK);
+          n == trinket(POTTED_PLANT);
+          N == trinket(POTTED_CACTUS);
+          Y == trinket(LARGE_CLOCK);
         }
       }
       {

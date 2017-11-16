@@ -505,7 +505,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
     Square, Random;
     {
-      Items == solstone;
+      Items == stone(SOL_STONE);
       Times = 0:3;
     }
   }

@@ -3677,3 +3677,19 @@ alpha ullrbone::GetOutlineAlpha(int Frame) const
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
 }
+
+col16 trinket::GetMaterialColorB(int) const
+{
+  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(87, 59, 12); }
+  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(200, 0, 0); }
+  if(GetConfig() == SMALL_CLOCK) { return MakeRGB16(124, 50, 16); }
+  if(GetConfig() == LARGE_CLOCK) { return MakeRGB16(124, 50, 16); }
+  else { return MakeRGB16(0, 0, 0); }
+}
+
+col16 trinket::GetMaterialColorC(int) const
+{
+  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(0, 160, 0); }
+  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(0, 160, 0); }
+  else { return MakeRGB16(0, 0, 0); }
+}

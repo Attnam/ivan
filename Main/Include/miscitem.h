@@ -719,8 +719,11 @@ ITEM(cauldron, materialcontainer)
   virtual truth AddAdjective(festring&, truth) const;
 };
 
-ITEM(decoration, item)
+ITEM(trinket, item)
 {
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorC(int) const;
 };
 
 #endif
