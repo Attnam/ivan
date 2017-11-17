@@ -556,13 +556,16 @@ void dog::CreateCorpse(lsquare* Square)
 {
   if(GetConfig() == SKELETON_DOG)
   {
+    Square->AddItem(skull::Spawn(PUPPY_SKULL));
+
     int Amount = 2 + (RAND() & 3);
 
     for(int c = 0; c < Amount; ++c)
       Square->AddItem(bone::Spawn());
 
     SendToHell();
-  } else
+  }
+  else
     nonhumanoid::CreateCorpse(Square);
 }
 
