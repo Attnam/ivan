@@ -2708,7 +2708,7 @@ dog
   Config SKELETON_DOG;
   {
     TorsoBitmapPos = 400, 0;
-    SkinColor = rgb16(160, 160, 160);
+    SkinColor = rgb16(200, 200, 200);
     EyeColor = rgb16(0, 0, 0);
     PanicLevel = 0;
     FleshMaterial = BONE;
