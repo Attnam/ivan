@@ -552,6 +552,20 @@ void dog::BeTalkedTo()
     ADD_MESSAGE("\"Meow.\"");
 }
 
+void dog::CreateCorpse(lsquare* Square)
+{
+  if(GetConfig() == SKELETON_DOG)
+  {
+    int Amount = 2 + (RAND() & 3);
+
+    for(int c = 0; c < Amount; ++c)
+      Square->AddItem(bone::Spawn());
+
+    SendToHell();
+  } else
+    nonhumanoid::CreateCorpse(Square);
+}
+
 col16 wolf::GetSkinColor() const
 {
   int Element = 40 + RAND() % 50;

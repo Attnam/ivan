@@ -332,6 +332,8 @@
 #define CONICAL 1
 #define FLAT 2
 
+#define SKELETON_DOG 1
+
 #define LARGE 1
 #define GIANT 2
 

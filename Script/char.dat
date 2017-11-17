@@ -2704,6 +2704,33 @@ dog
   ScienceTalkWisdomModifier = 2;
   ScienceTalkIntelligenceRequirement = 3;
   ScienceTalkWisdomRequirement = 4;
+
+  Config SKELETON_DOG;
+  {
+    TorsoBitmapPos = 400, 0;
+    SkinColor = rgb16(160, 160, 160);
+    EyeColor = rgb16(0, 0, 0);
+    PanicLevel = 0;
+    FleshMaterial = BONE;
+    DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
+    SpillsBlood = false;
+    Sweats = false;
+    UsesNutrition = false;
+    AttachedGod = MORTIFER;
+    ClassStates = GAS_IMMUNITY;
+    IsExtraFragile = true;
+    CanChoke = false;
+    IsCatacombCreature = true;
+    UndeadVersions = false;
+    CreateUndeadConfigurations = true;
+    UndeadAttributeModifier = 75;
+    UndeadVolumeModifier = 25;
+    UndeadCopyMaterials = false;
+    Frequency = 500;
+    Adjective = "skeleton";
+    BaseBiteStrength = 400;
+    CWeaponSkillHits == 40;
+  }
 }
 
 spider
