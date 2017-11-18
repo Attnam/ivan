@@ -226,6 +226,8 @@
 #define QUARTER_STAFF 15
 #define HAMMER 16
 
+#define PUPPY_SKULL 1
+
 #define GOROVITS_HAMMER 1
 #define GOROVITS_SICKLE 2
 #define GOROVITS_SCIMITAR 3
@@ -331,6 +333,8 @@
 
 #define CONICAL 1
 #define FLAT 2
+
+#define SKELETON_DOG 1
 
 #define LARGE 1
 #define GIANT 2

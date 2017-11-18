@@ -122,6 +122,7 @@ CHARACTER(dog, canine)
   virtual truth Catches(item*);
   virtual void BeTalkedTo();
  protected:
+  virtual void CreateCorpse(lsquare*);
   virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
 };

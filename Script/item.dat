@@ -4170,6 +4170,14 @@ skull
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
   IsValuable = false;
+
+  Config PUPPY_SKULL;
+  {
+    BitmapPos = 64, 352;
+    Adjective = "puppy";
+    DefaultSize = 15;
+    Possibility = 0;
+  }
 }
 
 skullofxinroch

@@ -3457,13 +3457,13 @@ col16 firstbornchild::GetMaterialColorB(int) const { return MakeRGB16(160, 160, 
 truth bone::Necromancy(character* Necromancer)
 {
   int NumberOfBones = 0;
-  truth HasSkull = false;
+  truth HasSkull = false, HasPuppySkull = false;
   lsquare* LSquareUnder = GetLSquareUnder();
 
   itemvector ItemVector;
   LSquareUnder->GetStack()->FillItemVector(ItemVector);
 
-// First count the number of bones, and find a skull
+  // First count the number of bones, and find a skull
   for(uint c = 0; c < ItemVector.size(); ++c)
   {
     if(ItemVector[c]->IsABone())
@@ -3473,6 +3473,9 @@ truth bone::Necromancy(character* Necromancer)
     else if(ItemVector[c]->IsASkull() && !HasSkull)
     {
       HasSkull = true;
+
+      if(ItemVector[c]->GetConfig() == PUPPY_SKULL)
+        HasPuppySkull = true;
     }
   }
   // if we don't have the requisite number of bones, nor a skull then get out of here
@@ -3486,8 +3489,13 @@ truth bone::Necromancy(character* Necromancer)
   else
     NumberOfBones = 5;
 
-  humanoid* Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
-  // character* Skeleton = skeleton::CreateSkeleton(Necromancer);
+  character* Skeleton;
+
+  if(HasPuppySkull)
+    Skeleton = dog::Spawn(SKELETON_DOG);
+  else
+    Skeleton = skeleton::Spawn(Necromancer->GetAttribute(INTELLIGENCE) < 30 ? 0 : WARRIOR, NO_EQUIPMENT);
+    // character* Skeleton = skeleton::CreateSkeleton(Necromancer);
 
   if(Skeleton)
   {
