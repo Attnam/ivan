@@ -2707,9 +2707,10 @@ dog
 
   Config SKELETON_DOG;
   {
+    DefaultEndurance = 9;
+    DefaultCharisma = 5;
     TorsoBitmapPos = 400, 0;
     SkinColor = rgb16(200, 200, 200);
-    EyeColor = rgb16(0, 0, 0);
     PanicLevel = 0;
     FleshMaterial = BONE;
     DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
@@ -2726,10 +2727,11 @@ dog
     UndeadAttributeModifier = 75;
     UndeadVolumeModifier = 25;
     UndeadCopyMaterials = false;
-    Frequency = 500;
     Adjective = "skeleton";
-    BaseBiteStrength = 400;
-    CWeaponSkillHits == 40;
+    BaseBiteStrength = 800;
+    CWeaponSkillHits == 80;
+    AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+    Frequency = 2000;
   }
 }
 
