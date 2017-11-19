@@ -2248,18 +2248,21 @@ truth horn::Apply(character* Blower)
 
         if(Audience)
         {
-          if(GetConfig() == BRAVERY && Audience->CanHear() && Audience->TemporaryStateIsActivated(PANIC)
-             && Blower->IsAlly(Audience))
+          if(GetConfig() == BRAVERY && Audience->CanHear() && Blower->IsAlly(Audience))
           {
-            if(Audience->IsPlayer())
-              ADD_MESSAGE("You calm down.");
-            else if(CanBeSeenByPlayer())
-              ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
-
-            Audience->DeActivateTemporaryState(PANIC);
             Audience->BeginTemporaryState(FEARLESS, 1000 + RAND() % 1000);
+
+            if(Audience->TemporaryStateIsActivated(PANIC))
+            {
+              if(Audience->IsPlayer())
+                ADD_MESSAGE("You calm down.");
+              else if(CanBeSeenByPlayer())
+                ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
+
+              Audience->DeActivateTemporaryState(PANIC);
+            }
           }
-          else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
+          else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && !Audience->StateIsActivated(FEARLESS)
                   && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
           else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())

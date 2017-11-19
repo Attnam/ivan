@@ -344,11 +344,7 @@ ITEM(decosadshirt, bodyarmor)
 
 ITEM(filthytunic, bodyarmor)
 {
- public:
-  filthytunic() { Enable(); }
-  virtual void Be();
  protected:
-  virtual truth CalculateHasBe() const { return true; }
   virtual int GetClassAnimationFrames() const;
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;

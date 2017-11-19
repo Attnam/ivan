@@ -268,7 +268,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Swimming",
-    SECRET|(RANDOMIZABLE&~SRC_EVIL)
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginSwimmingMessage,
     &character::PrintEndSwimmingMessage,
     &character::BeginSwimming, &character::EndSwimming,
@@ -2324,7 +2324,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
 
 truth character::CheckStarvationDeath(cfestring& Msg)
 {
-  if(GetNP() < 1 && UsesNutrition() && !(StateIsActivated(FASTING))
+  if(GetNP() < 1 && UsesNutrition() && !(StateIsActivated(FASTING)))
     return CheckDeath(Msg, 0, FORCE_DEATH);
   else
     return false;
@@ -2383,7 +2383,7 @@ void character::GetPlayerCommand()
   {
     game::DrawEverything();
 
-    if(game::GetDangerFound())
+    if(game::GetDangerFound() && !StateIsActivated(FEARLESS))
     {
       if(game::GetDangerFound() > 500.)
       {
@@ -2778,7 +2778,7 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
     if(SpecialEnemySightedReaction(NearestChar))
       return true;
 
-    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5)
+    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5 && !StateIsActivated(FEARLESS))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s sees %s.", CHAR_NAME(DEFINITE), NearestChar->CHAR_DESCRIPTION(DEFINITE));
@@ -3771,7 +3771,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 
     if(CanPanicFromSeveredBodyPart()
        && RAND() % 100 < GetPanicLevel()
-       && !StateIsActivated(PANIC) && !IsDead())
+       && !StateIsActivated(PANIC)
+       && !StateIsActivated(FEARLESS)
+       && !IsDead())
       BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
 
     SpecialBodyPartSeverReaction();
@@ -6699,7 +6701,7 @@ void character::PrintEndPanicMessage() const
 void character::CheckPanic(int Ticks)
 {
   if(GetPanicLevel() > 1 && !StateIsActivated(PANIC)
-     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1))
+     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1) && !StateIsActivated(FEARLESS))
     BeginTemporaryState(PANIC, ((Ticks * 3) >> 2) + RAND() % ((Ticks >> 1) + 1)); // 25% randomness to ticks...
 }
 
@@ -8702,7 +8704,8 @@ void character::CheckIfSeen()
 void character::SignalSeen()
 {
   if(!(WarnFlags & WARNED)
-     && GetRelation(PLAYER) == HOSTILE)
+     && GetRelation(PLAYER) == HOSTILE
+     && !StateIsActivated(FEARLESS))
   {
     double Danger = GetRelativeDanger(PLAYER);
 
@@ -9280,7 +9283,7 @@ void character::SignalDisappearance()
 
 truth character::HornOfFearWorks() const
 {
-  return CanHear() && GetPanicLevel() > RAND() % 33;
+  return CanHear() && GetPanicLevel() > RAND() % 33 && !StateIsActivated(FEARLESS);
 }
 
 void character::BeginLeprosy()
@@ -10972,6 +10975,10 @@ truth character::IsESPBlockedByEquipment() const
 
 truth character::TemporaryStateIsActivated (long What) const
 {
+  if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState&What) & (~PANIC));
+  }
   if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
   {
     return ((TemporaryState&What) & (~ESP));
@@ -10981,6 +10988,10 @@ truth character::TemporaryStateIsActivated (long What) const
 
 truth character::StateIsActivated (long What) const
 {
+  if ((What & PANIC) && ((TemporaryState|EquipmentState) & PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState & What) & (~PANIC)) || ((EquipmentState & What) & (~PANIC));
+  }
   if ((What & ESP) && ((TemporaryState|EquipmentState) & ESP) && IsESPBlockedByEquipment())
   {
     return ((TemporaryState & What) & (~ESP)) || ((EquipmentState & What) & (~ESP));

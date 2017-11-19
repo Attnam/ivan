@@ -4700,7 +4700,7 @@ filthytunic /* armor->bodyarmor-> */
 {
   Category = BODY_ARMOR;
   FormModifier = 15;
-  StrengthModifier = 200;
+  StrengthModifier = 150;
   DefaultSize = 40;
   DefaultMainVolume = 500;
   Roundness = 70;
@@ -4723,7 +4723,7 @@ filthytunic /* armor->bodyarmor-> */
   EnchantmentPlusChance = 5;
   TorsoArmorBitmapPos = 32, 544;
   LegArmorBitmapPos = 16, 416;
-  GearStates = POLYMORPH_LOCK|DISEASE_IMMUNITY|FEARLESS|FASTING;
+  GearStates = DISEASE_IMMUNITY|FEARLESS|FASTING;
   IsTwoHanded = true;
   CanBeBroken = true;
   CanBeBurned = true;
@@ -4732,7 +4732,7 @@ filthytunic /* armor->bodyarmor-> */
   Config BROKEN;
   {
     Possibility = 1;
-    StrengthModifier = 150;
+    StrengthModifier = 100;
     BitmapPos = 112, 304;
     FormModifier = 20;
     EnchantmentPlusChance = 10;

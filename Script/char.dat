@@ -7102,6 +7102,7 @@ necromancer
   EyeColor = rgb16(200, 0, 0);
   BeltColor = rgb16(100, 100, 100);
   ArmSpecialColor = rgb16(100, 100, 140);
+  Helmet = helmet(MASK);
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;
