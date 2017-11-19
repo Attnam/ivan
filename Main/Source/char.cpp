@@ -4009,29 +4009,23 @@ int character::GetResistance(int Type) const
 
 void character::Regenerate()
 {
-  if(HP == MaxHP)
+  if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
   {
-    if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
+    bodypart* NewBodyPart = GenerateRandomBodyPart();
+
+    if(NewBodyPart)
     {
-      bodypart* NewBodyPart = GenerateRandomBodyPart();
-
-      if(!NewBodyPart)
-        return;
-
       NewBodyPart->SetHP(1);
 
       if(IsPlayer())
         ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
-
-      return;
-    }
-    else
-    {
-      return;
     }
   }
+
+  if(HP == MaxHP)
+    return;
 
   long RegenerationBonus = 0;
   truth NoHealableBodyParts = true;

@@ -2285,33 +2285,33 @@ truth horn::Apply(character* Blower)
             switch(RAND() % 15)
             {
              case 0:
-              Food = carrot:Spawn();
+              Food = carrot::Spawn();
               break;
              case 1:
-              Food = sausage:Spawn();
+              Food = sausage::Spawn();
               break;
              case 2:
-              Food = mango:Spawn();
+              Food = mango::Spawn();
               break;
              case 3:
              case 4:
              case 5:
-              Food = can:Spawn();
+              Food = can::Spawn();
               break;
              case 6:
-              Food = lump:Spawn();
+              Food = lump::Spawn();
               break;
              case 7:
-              Food = loaf:Spawn();
+              Food = loaf::Spawn();
               break;
              case 8:
-              Food = kiwi:Spawn();
+              Food = kiwi::Spawn();
               break;
              case 9:
-              Food = pineapple:Spawn();
+              Food = pineapple::Spawn();
               break;
              default:
-              Food = banana:Spawn();
+              Food = banana::Spawn();
               break;
             }
 
