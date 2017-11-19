@@ -2217,6 +2217,8 @@ truth horn::Apply(character* Blower)
       case BRAVERY: SoundDescription = "loud but calming"; break;
       case FEAR: SoundDescription = "frightening, almost scream-like"; break;
       case CONFUSION: SoundDescription = "strange and dissonant"; break;
+      case HEALING: SoundDescription = "deep and soothing"; break;
+      case PLENTY: SoundDescription = "dull and muffled"; break;
       default: SoundDescription = "never-before heard"; break;
     }
 
@@ -2267,6 +2269,57 @@ truth horn::Apply(character* Blower)
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
           else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())
             Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
+          else if(GetConfig() == HEALING && Audience->CanHear() && Blower->IsAlly(Audience))
+          {
+            if(Audience->IsPlayer())
+              ADD_MESSAGE("Your wounds are healed.");
+            else if(CanBeSeenByPlayer())
+              ADD_MESSAGE("%s looks sound and hale again.", Audience->CHAR_NAME(DEFINITE));
+
+            Audience->RestoreLivingHP();
+          }
+          else if(GetConfig() == PLENTY)
+          {
+            item* Food;
+
+            switch(RAND() % 15)
+            {
+             case 0:
+              Food = carrot:Spawn();
+              break;
+             case 1:
+              Food = sausage:Spawn();
+              break;
+             case 2:
+              Food = mango:Spawn();
+              break;
+             case 3:
+             case 4:
+             case 5:
+              Food = can:Spawn();
+              break;
+             case 6:
+              Food = lump:Spawn();
+              break;
+             case 7:
+              Food = loaf:Spawn();
+              break;
+             case 8:
+              Food = kiwi:Spawn();
+              break;
+             case 9:
+              Food = pineapple:Spawn();
+              break;
+             default:
+              Food = banana:Spawn();
+              break;
+            }
+
+            if(Blower->IsPlayer())
+              ADD_MESSAGE("Suddenly, %s falls out of the horn.", Food->CHAR_NAME(INDEFINITE));
+
+            Blower->GetStack()->AddItem(Food);
+          }
         }
       }
 

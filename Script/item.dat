@@ -893,6 +893,7 @@ meleeweapon
     WieldedBitmapPos = 160, 112;
     EnchantmentPlusChance = 15;
     HandleInPairs = true;
+    CanBePiled = true;
     DamageFlags = SLASH|PIERCE;
   }
 
@@ -3077,7 +3078,7 @@ ring
 
   Config RING_OF_MAGIC_RESISTANCE;
   {
-    Possibility = 0;
+    Possibility = 2;
     EnergyResistance = 15;
     PostFix = "of magic resistance";
     MainMaterialConfig == OCTIRON;
@@ -3087,7 +3088,7 @@ ring
 
   Config RING_OF_DETECTION;
   {
-    Possibility = 10;
+    Possibility = 5;
     PostFix = "of detection";
     MainMaterialConfig == OBSIDIAN;
     Price = 500;
@@ -3130,6 +3131,17 @@ ring
     CanBeBurned = false;
     CanBePiled = false;
     Alias == "worm ring";
+  }
+
+  Config RING_OF_BRAVERY;
+  {
+    Possibility = 15;
+    PostFix = "of bravery";
+    MainMaterialConfig == STEEL;
+    Price = 250;
+    AttachedGod = CRUENTUS;
+    GearStates = FEARLESS;
+    Alias == "ring of fearlessness";
   }
 }
 
@@ -4434,6 +4446,18 @@ horn
     MainMaterialConfig == UNICORN_HORN;
     PostFix = "of confusion";
   }
+
+  Config HEALING;
+  {
+    MainMaterialConfig == GOLD;
+    PostFix = "of healing";
+  }
+
+  Config PLENTY;
+  {
+    MainMaterialConfig == LEAD;
+    PostFix = "of plenty";
+  }
 }
 
 thunderhammer /* meleeweapon-> */
@@ -5227,15 +5251,15 @@ taiaha /* meleeweapon-> */
   DefaultSize = 160;
   Possibility = 0;
   WeaponCategory = POLE_ARMS;
-  StrengthModifier = 80;
+  StrengthModifier = 90;
   BitmapPos = 96, 352;
   FormModifier = 85;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 1500;
   NameSingular = "taiaha";
-  MainMaterialConfig = { 8, AMETHYST, JASPER, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
+  MainMaterialConfig = { 6, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
   SecondaryMaterialConfig == KAURI_WOOD;
-  MaterialConfigChances = { 8, 250, 200, 100, 100, 100, 100, 25, 10; }
+  MaterialConfigChances = { 6, 100, 100, 50, 50, 10, 5; }
   Roundness = 10;
   IsTwoHanded = true;
   AttachedGod = SILVA;
@@ -5253,8 +5277,8 @@ taiaha /* meleeweapon-> */
     Possibility = 0;
     BitmapPos = 112, 352;
     WieldedBitmapPos = 176, 96;
-    MainMaterialConfig = { 5, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
-    MaterialConfigChances = { 5, 100, 100, 25, 25, 5; }
+    MainMaterialConfig = { 5, GREEN_CRYSTAL, SUN_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
+    MaterialConfigChances = { 5, 100, 100, 50, 50, 5; }
     EnchantmentPlusChance = 30;
   }
 }
@@ -5295,8 +5319,8 @@ trinket
   Config POTTED_CACTUS;
   {
     DefaultSize = 30;
-    DefaultMainVolume = 50;
-    DefaultSecondaryVolume = 500;
+    DefaultMainVolume = 500;
+    DefaultSecondaryVolume = 50;
     BitmapPos = 64, 320;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -5313,8 +5337,8 @@ trinket
   Config POTTED_PLANT;
   {
     DefaultSize = 30;
-    DefaultMainVolume = 50;
-    DefaultSecondaryVolume = 500;
+    DefaultMainVolume = 500;
+    DefaultSecondaryVolume = 50;
     BitmapPos = 112, 336;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -5360,7 +5384,7 @@ trinket
   Config SMALL_CLOCK;
   {
     DefaultSize = 50;
-    DefaultMainVolume = 100;
+    DefaultMainVolume = 1500;
     DefaultSecondaryVolume = 1000;
     BitmapPos = 96, 320;
     FormModifier = 25;
@@ -5375,8 +5399,8 @@ trinket
   Config LARGE_CLOCK;
   {
     DefaultSize = 200;
-    DefaultMainVolume = 500;
-    DefaultSecondaryVolume = 30000;
+    DefaultMainVolume = 30000;
+    DefaultSecondaryVolume = 5000;
     BitmapPos = 112, 320;
     FormModifier = 25;
     StrengthModifier = 150;

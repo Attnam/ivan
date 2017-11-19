@@ -310,6 +310,8 @@
 #define BRAVERY 1
 #define FEAR 2
 #define CONFUSION 3
+#define HEALING 4
+#define PLENTY 5
 
 #define POTTED_CACTUS 1
 #define POTTED_PLANT 2
