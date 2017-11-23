@@ -20,6 +20,9 @@ This is a fan continuation of IVAN by members of Attnam.com
 Contributing
 --------------------------
 
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
+By participating, you are expected to uphold this code. Please report any unacceptable behavior.
+
 Contributions are welcome! Please fork this repository and then once you have 
 made and tested your changes, submit a pull request. It will be reviewed by 
 one of the admins as soon as possible.

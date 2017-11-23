@@ -37,6 +37,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 #include "game.h"
 #include "materias.h"
 #include "human.h"
+#include "nonhuman.h"
 #include "team.h"
 #include "god.h"
 #include "team.h"

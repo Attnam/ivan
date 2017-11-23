@@ -1373,15 +1373,16 @@ Dungeon ATTNAM;
           C = 0;
           N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, lantern, wand(WAND_OF_NECROMANCY); } }
           Z = zombie(ZOMBIE_OF_KHAZ_ZADM);
+          p = dog(SKELETON_DOG);
          }
       }
       {
         .........
         ...bbb...
         ..s...s..
-        .b.N...b.
+        .b.N.p.b.
         .b..C..b.
-        .b...Z.b.
+        .b.p.Z.b.
         ..s...s..
         ...bbb...
         .........
