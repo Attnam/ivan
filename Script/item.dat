@@ -4746,6 +4746,8 @@ filthytunic /* armor->bodyarmor-> */
   InElasticityPenaltyModifier = 20;
   EnchantmentPlusChance = 5;
   TorsoArmorBitmapPos = 32, 544;
+  ArmArmorBitmapPos = 80, 416;
+  AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   GearStates = DISEASE_IMMUNITY|FEARLESS|FASTING;
   IsTwoHanded = true;

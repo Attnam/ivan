@@ -1362,6 +1362,27 @@ col16 taiaha::GetOutlineColor(int Frame) const
   return TRANSPARENT_COLOR;
 }
 
+void filthytunic::Be()
+{
+  bodyarmor::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+  }
+}
+
 alpha filthytunic::GetOutlineAlpha(int Frame) const
 {
   if(!IsBroken())
