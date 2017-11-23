@@ -4275,7 +4275,7 @@ skull
 
   Config PUPPY_SKULL;
   {
-    BitmapPos = 64, 352;
+    BitmapPos = 112, 288;
     Adjective = "puppy";
     DefaultSize = 15;
     Possibility = 0;
