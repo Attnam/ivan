@@ -2240,6 +2240,7 @@ truth horn::Apply(character* Blower)
     else if(PLAYER->CanHear())
       ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
 
+    // area horns
     rect Rect;
     femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 10);
 
@@ -2278,51 +2279,52 @@ truth horn::Apply(character* Blower)
 
             Audience->RestoreLivingHP();
           }
-          else if(GetConfig() == PLENTY)
-          {
-            item* Food;
-
-            switch(RAND() % 15)
-            {
-             case 0:
-              Food = carrot::Spawn();
-              break;
-             case 1:
-              Food = sausage::Spawn();
-              break;
-             case 2:
-              Food = mango::Spawn();
-              break;
-             case 3:
-             case 4:
-             case 5:
-              Food = can::Spawn();
-              break;
-             case 6:
-              Food = lump::Spawn();
-              break;
-             case 7:
-              Food = loaf::Spawn();
-              break;
-             case 8:
-              Food = kiwi::Spawn();
-              break;
-             case 9:
-              Food = pineapple::Spawn();
-              break;
-             default:
-              Food = banana::Spawn();
-              break;
-            }
-
-            if(Blower->IsPlayer())
-              ADD_MESSAGE("Suddenly, %s falls out of the horn.", Food->CHAR_NAME(INDEFINITE));
-
-            Blower->GetStack()->AddItem(Food);
-          }
         }
       }
 
+    // non-area horns
+    if(GetConfig() == PLENTY)
+    {
+      item* Food;
+
+      switch(RAND() % 15)
+      {
+       case 0:
+        Food = carrot::Spawn();
+        break;
+       case 1:
+        Food = sausage::Spawn();
+        break;
+       case 2:
+        Food = mango::Spawn();
+        break;
+       case 3:
+       case 4:
+       case 5:
+        Food = can::Spawn();
+        break;
+       case 6:
+        Food = lump::Spawn();
+        break;
+       case 7:
+        Food = loaf::Spawn();
+        break;
+       case 8:
+        Food = kiwi::Spawn();
+        break;
+       case 9:
+        Food = pineapple::Spawn();
+        break;
+       default:
+        Food = banana::Spawn();
+        break;
+      }
+
+      if(Blower->IsPlayer())
+        ADD_MESSAGE("Suddenly, %s falls out of the horn.", Food->CHAR_NAME(INDEFINITE));
+
+      Blower->GetStack()->AddItem(Food);
+    }
   }
   else
   {
