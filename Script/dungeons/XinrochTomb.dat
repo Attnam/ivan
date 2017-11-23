@@ -1214,6 +1214,7 @@ Dungeon XINROCH_TOMB;
       GenerateDoor = false;
       GenerateLanterns = false;
       Flags = NO_MONSTER_GENERATION;
+      DivineMaster = INFUSCOR;
 
       OTerrainMap
       {
