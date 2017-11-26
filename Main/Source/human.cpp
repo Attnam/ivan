@@ -2749,7 +2749,7 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 void zombie::CreateBodyParts(int SpecialFlags)
 {
   bool Anyway = false;
-  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM)
+  if((GetConfig() == ZOMBIE_OF_KHAZ_ZADM) || !!(SpecialFlags & NO_SEVERED_LIMBS))
   {
     Anyway = true;
   } // Khaz-Zadm needs his hands...
