@@ -4285,7 +4285,7 @@ skull
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
-  HelmetBitmapPos = 96, 96;
+  HelmetBitmapPos = 96, 97;
   IsValuable = false;
 
   Config PUPPY_SKULL;
