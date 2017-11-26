@@ -1810,6 +1810,21 @@ wand
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
     Alias = { 2, "necromancy", "undeath"; }
   }
+
+  Config WAND_OF_WEBBING;
+  {
+    Possibility = 40;
+    Price = 500;
+    PostFix = "of webbing";
+    MainMaterialConfig == SPIDER_SILK;
+    BeamRange = 5;
+    MinCharges = 3;
+    MaxCharges = 6;
+    BeamColor = WHITE;
+    BeamEffect = BEAM_WEBBING;
+    AttachedGod = SCABIES;
+    BreakMsg = "breaks, sending strands of spider silk everywhere";
+  }
 }
 
 scrollofchangematerial /* scroll-> */

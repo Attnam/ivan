@@ -49,6 +49,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(olterrain)(0, 0, "olterrain");
 #include "whandler.h"
 #include "rain.h"
 #include "balance.h"
+#include "traps.h"
 
 #include "level.cpp"
 #include "lsquare.cpp"
