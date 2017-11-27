@@ -2719,6 +2719,7 @@ dog
     AttachedGod = MORTIFER;
     ClassStates = GAS_IMMUNITY;
     IsExtraFragile = true;
+    IgnoreDanger = true;
     CanChoke = false;
     IsCatacombCreature = true;
     UndeadVersions = false;
