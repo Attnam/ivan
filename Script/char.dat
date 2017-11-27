@@ -2311,7 +2311,6 @@ goblin
     RightSWeaponSkillHits = 10;
     NameSingular = "goblin berserker";
     ClothColor = rgb16(0, 96, 0);
-    IgnoreDanger = true;
     FriendlyReplies =
     {
       5,
