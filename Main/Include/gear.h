@@ -408,6 +408,19 @@ ITEM(bansheesickle, meleeweapon)
   virtual truth HitEffect(character*, character*, v2, int, int, truth);
 };
 
+ITEM(rustscythe, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void BlockEffect(character*, character*, item*, int Type);
+};
+
+ITEM(sharpaxe, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+};
+
 ITEM(taiaha, meleeweapon)
 {
  public:

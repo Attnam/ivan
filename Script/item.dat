@@ -5208,6 +5208,71 @@ bansheesickle  /* meleeweapon-> */
   }
 }
 
+rustscythe  /* meleeweapon-> */
+{
+  DefaultSize = 200;
+  Possibility = 5;
+  WeaponCategory = POLE_ARMS;
+  DefaultMainVolume = 150;
+  DefaultSecondaryVolume = 1800;
+  BitmapPos = 64, 112;
+  FormModifier = 80;
+  StrengthModifier = 60;
+  NameSingular = "scythe";
+  PostFix = "of oxidation";
+  MainMaterialConfig = {4, IRON, STEEL, METEORIC_STEEL, ADAMANT; }
+  SecondaryMaterialConfig == PINE_WOOD;
+  MaterialConfigChances = {4, 250, 200, 100, 50; }
+  Roundness = 10;
+  Price = 250;
+  IsGoodWithPlants = true;
+  IsTwoHanded = true;
+  AttachedGod = MORTIFER;
+  WieldedBitmapPos = 176, 48;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 64, 128;
+    WieldedBitmapPos = 160, 48;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+sharpaxe  /* meleeweapon-> */
+{
+  DefaultSize = 60;
+  Possibility = 5;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 200;
+  DefaultSecondaryVolume = 500;
+  BitmapPos = 16, 256;
+  FormModifier = 60;
+  StrengthModifier = 80;
+  NameSingular = "axe";
+  PostFix = "of sharpness";
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
+  SecondaryMaterialConfig == FIR_WOOD;
+  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
+  Roundness = 20;
+  Price = 250;
+  IsTwoHanded = true;
+  AttachedGod = CRUENTUS;
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 32, 176;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
 celestialmonograph /* holybook-> */
 {
   DefaultSize = 30;
