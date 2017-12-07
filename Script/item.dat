@@ -938,6 +938,38 @@ meleeweapon
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 30;
   }
+
+  Config RUNE_SWORD;
+  {
+    DefaultSize = 120;
+    Possibility = 2;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 130;
+    DefaultSecondaryVolume = 45;
+    BitmapPos = 16, 336;
+    FormModifier = 30;
+    StrengthModifier = 0;
+    NameSingular = "rune sword";
+    MainMaterialConfig == OBSIDIAN;
+    SecondaryMaterialConfig == GOLD;
+    Roundness = 10;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 16;
+    EnchantmentPlusChance = 5;
+    DamageFlags = SLASH|PIERCE;
+    IsMaterialChangeable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    Alias == "runesword";
+  }
+
+  Config BROKEN|RUNE_SWORD;
+  {
+    Possibility = 3;
+    BitmapPos = 32, 208;
+    WieldedBitmapPos = 176, 80;
+    EnchantmentPlusChance = 20;
+  }
 }
 
 banana /* materialcontainer-> */
@@ -1809,6 +1841,21 @@ wand
     AttachedGod = INFUSCOR;
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
     Alias = { 2, "necromancy", "undeath"; }
+  }
+
+  Config WAND_OF_WEBBING;
+  {
+    Possibility = 40;
+    Price = 500;
+    PostFix = "of webbing";
+    MainMaterialConfig == SPIDER_SILK;
+    BeamRange = 5;
+    MinCharges = 3;
+    MaxCharges = 6;
+    BeamColor = WHITE;
+    BeamEffect = BEAM_WEBBING;
+    AttachedGod = SCABIES;
+    BreakMsg = "breaks, sending strands of spider silk everywhere";
   }
 }
 
@@ -3987,7 +4034,7 @@ helmet
     BitmapPos = 80, 208;
     Possibility = 10;
     NameSingular = "mask";
-    MainMaterialConfig = { 15, LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
+    MainMaterialConfig = { 15, HARDENED_LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
     MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
     CoverPercentile = 30;
     HelmetBitmapPos = 112, 129;
@@ -4270,12 +4317,12 @@ skull
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
-  HelmetBitmapPos = 96, 96;
+  HelmetBitmapPos = 96, 97;
   IsValuable = false;
 
   Config PUPPY_SKULL;
   {
-    BitmapPos = 64, 352;
+    BitmapPos = 112, 288;
     Adjective = "puppy";
     DefaultSize = 15;
     Possibility = 0;
@@ -4754,6 +4801,8 @@ filthytunic /* armor->bodyarmor-> */
   InElasticityPenaltyModifier = 20;
   EnchantmentPlusChance = 5;
   TorsoArmorBitmapPos = 32, 544;
+  ArmArmorBitmapPos = 80, 416;
+  AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   GearStates = DISEASE_IMMUNITY|FEARLESS|FASTING;
   IsTwoHanded = true;
@@ -5187,6 +5236,71 @@ bansheesickle  /* meleeweapon-> */
     Possibility = 5;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+rustscythe  /* meleeweapon-> */
+{
+  DefaultSize = 200;
+  Possibility = 5;
+  WeaponCategory = POLE_ARMS;
+  DefaultMainVolume = 150;
+  DefaultSecondaryVolume = 1800;
+  BitmapPos = 64, 112;
+  FormModifier = 80;
+  StrengthModifier = 60;
+  NameSingular = "scythe";
+  PostFix = "of oxidation";
+  MainMaterialConfig = {4, IRON, STEEL, METEORIC_STEEL, ADAMANT; }
+  SecondaryMaterialConfig == PINE_WOOD;
+  MaterialConfigChances = {4, 250, 200, 100, 50; }
+  Roundness = 10;
+  Price = 250;
+  IsGoodWithPlants = true;
+  IsTwoHanded = true;
+  AttachedGod = MORTIFER;
+  WieldedBitmapPos = 176, 48;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 64, 128;
+    WieldedBitmapPos = 160, 48;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+sharpaxe  /* meleeweapon-> */
+{
+  DefaultSize = 60;
+  Possibility = 5;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 200;
+  DefaultSecondaryVolume = 500;
+  BitmapPos = 16, 256;
+  FormModifier = 60;
+  StrengthModifier = 80;
+  NameSingular = "axe";
+  PostFix = "of sharpness";
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
+  SecondaryMaterialConfig == FIR_WOOD;
+  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
+  Roundness = 20;
+  Price = 250;
+  IsTwoHanded = true;
+  AttachedGod = CRUENTUS;
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 32, 176;
+    WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
   }
 }

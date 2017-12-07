@@ -231,6 +231,7 @@
 #define FRYING_PAN 20
 #define CLAW 21
 #define MEAT_CLEAVER 22
+#define RUNE_SWORD 23
 
 #define PUPPY_SKULL 1
 
@@ -259,6 +260,7 @@
 #define WAND_OF_ACID_RAIN 12
 #define WAND_OF_MIRRORING 13
 #define WAND_OF_NECROMANCY 14
+#define WAND_OF_WEBBING 15
 
 #define RUNED_WHIP 1
 

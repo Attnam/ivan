@@ -28,6 +28,13 @@ v2 meleeweapon::GetWieldedBitmapPos(int I) const
 { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
 void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP)
 { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
+truth meleeweapon::IsRuneSword() const
+{
+  if(GetConfig() == RUNE_SWORD)
+    return true;
+  else
+    return false;
+}
 
 col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
@@ -1191,7 +1198,7 @@ truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 1))
+  if(!IsBroken() && Enemy->IsEnabled())
   {
     if(Hitter)
     {
@@ -1255,6 +1262,101 @@ truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
     }
 
     return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth rustscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid())
+  {
+    bodypart* BodyPartHit = Enemy->GetBodyPart(BodyPartIndex);
+    item* MainArmor = 0;
+
+    switch(BodyPartIndex)
+    {
+     case TORSO_INDEX:
+      MainArmor = Enemy->GetEquipment(BODY_ARMOR_INDEX);
+      break;
+     case HEAD_INDEX:
+      MainArmor = Enemy->GetEquipment(HELMET_INDEX);
+      break;
+     case RIGHT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? RIGHT_WIELDED_INDEX : RIGHT_GAUNTLET_INDEX);
+      break;
+     case LEFT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? LEFT_WIELDED_INDEX : LEFT_GAUNTLET_INDEX);
+      break;
+     case GROIN_INDEX:
+      MainArmor = Enemy->GetEquipment(BELT_INDEX);
+      break;
+     case RIGHT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(RIGHT_BOOT_INDEX);
+      break;
+     case LEFT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(LEFT_BOOT_INDEX);
+      break;
+    }
+
+    if(MainArmor/* && BlockedByArmor */)
+    {
+      MainArmor->TryToRust(10000000);
+    }
+    else if(BodyPartHit)
+    {
+      BodyPartHit->TryToRust(10000000);
+    }
+  }
+
+  return BaseSuccess;
+}
+
+void rustscythe::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
+{
+  if(!IsBroken() && Weapon)
+  {
+    Weapon->TryToRust(10000000);
+  }
+}
+
+truth sharpaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                         int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && !(Enemy->IsUnique()))
+  {
+    bodypart* ToBeSevered = Enemy->GetBodyPart(BodyPartIndex);
+
+    if(ToBeSevered && Enemy->BodyPartCanBeSevered(BodyPartIndex))
+    {
+      if(Enemy->IsPlayer())
+        ADD_MESSAGE("Your %s is severed off!", ToBeSevered->GetBodyPartName().CStr());
+      else if(Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s %s is severed off!", Enemy->GetPossessivePronoun().CStr(), ToBeSevered->GetBodyPartName().CStr());
+
+      item* Severed = Enemy->SevereBodyPart(BodyPartIndex);
+      Enemy->SendNewDrawRequest();
+
+      if(Severed)
+      {
+        Enemy->GetStack()->AddItem(Severed);
+        Severed->DropEquipment();
+      }
+      else if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+      {
+        ADD_MESSAGE("It vanishes.");
+      }
+
+      if(Enemy->IsPlayer())
+        game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
+    }
+
+    return true;
   }
   else
     return BaseSuccess;
@@ -1360,6 +1462,27 @@ col16 taiaha::GetOutlineColor(int Frame) const
     }
 
   return TRANSPARENT_COLOR;
+}
+
+void filthytunic::Be()
+{
+  bodyarmor::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+  }
 }
 
 alpha filthytunic::GetOutlineAlpha(int Frame) const
