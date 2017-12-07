@@ -523,6 +523,7 @@
 #define FRYING_PAN 20
 #define CLAW 21
 #define MEAT_CLEAVER 22
+#define RUNE_SWORD 23
 
 #define PUPPY_SKULL 1
 

@@ -60,6 +60,7 @@ ITEM(meleeweapon, item)
   virtual void CalculateEnchantment();
   virtual truth AllowFluids() const { return true; }
   virtual int GetSparkleFlags() const;
+  virtual truth IsRuneSword() const;
  protected:
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;

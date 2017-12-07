@@ -1944,7 +1944,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
           continue;
       }
 
-      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
+      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3) && !(Item[0]->IsRuneSword()))
       {
         if(Item.size() == 1)
           ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!",

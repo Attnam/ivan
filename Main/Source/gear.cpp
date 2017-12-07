@@ -28,6 +28,13 @@ v2 meleeweapon::GetWieldedBitmapPos(int I) const
 { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
 void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP)
 { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
+truth meleeweapon::IsRuneSword() const
+{
+  if(GetConfig() == RUNE_SWORD)
+    return true;
+  else
+    return false;
+}
 
 col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
@@ -1191,7 +1198,7 @@ truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
 {
   truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 1))
+  if(!IsBroken() && Enemy->IsEnabled())
   {
     if(Hitter)
     {

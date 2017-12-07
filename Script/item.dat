@@ -938,6 +938,38 @@ meleeweapon
     MaterialConfigChances = { 4, 250, 25, 25, 5; }
     EnchantmentPlusChance = 30;
   }
+
+  Config RUNE_SWORD;
+  {
+    DefaultSize = 120;
+    Possibility = 2;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 130;
+    DefaultSecondaryVolume = 45;
+    BitmapPos = 16, 336;
+    FormModifier = 30;
+    StrengthModifier = 0;
+    NameSingular = "rune sword";
+    MainMaterialConfig == OBSIDIAN;
+    SecondaryMaterialConfig == GOLD;
+    Roundness = 10;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 16;
+    EnchantmentPlusChance = 5;
+    DamageFlags = SLASH|PIERCE;
+    IsMaterialChangeable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    Alias == "runesword";
+  }
+
+  Config BROKEN|RUNE_SWORD;
+  {
+    Possibility = 3;
+    BitmapPos = 32, 208;
+    WieldedBitmapPos = 176, 80;
+    EnchantmentPlusChance = 20;
+  }
 }
 
 banana /* materialcontainer-> */
@@ -4002,7 +4034,7 @@ helmet
     BitmapPos = 80, 208;
     Possibility = 10;
     NameSingular = "mask";
-    MainMaterialConfig = { 15, LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
+    MainMaterialConfig = { 15, HARDENED_LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
     MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
     CoverPercentile = 30;
     HelmetBitmapPos = 112, 129;

@@ -385,7 +385,23 @@ Dungeon ATTNAM;
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
           C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, meleeweapon(GRAND_STOLLEN_KNIFE), stone { Times = 10; }, GOLD banana; } }
-          y == GOLD itemcontainer(LARGE_CHEST) { ItemsInside = { 11, flamingsword { Chance = 20; }, darkaxe { Chance = 20; }, whipofthievery { Chance = 20; }, thunderhammer { Chance = 20; }, chameleonwhip { Chance = 20; }, wondersmellstaff { Chance = 20; }, daggerofvenom { Chance = 20; }, weepblade { Chance = 20; }, slowaxe { Chance = 20; }, terrorscythe { Chance = 20; }, bansheesickle { Chance = 20; } } }
+          y == GOLD itemcontainer(LARGE_CHEST) { ItemsInside = { 14,
+                                                                 flamingsword { Chance = 20; },
+                                                                 darkaxe { Chance = 20; },
+                                                                 whipofthievery { Chance = 20; },
+                                                                 thunderhammer { Chance = 20; },
+                                                                 chameleonwhip { Chance = 20; },
+                                                                 wondersmellstaff { Chance = 20; },
+                                                                 daggerofvenom { Chance = 20; },
+                                                                 weepblade { Chance = 20; },
+                                                                 slowaxe { Chance = 20; },
+                                                                 terrorscythe { Chance = 20; },
+                                                                 bansheesickle { Chance = 20; },
+                                                                 sharpaxe { Chance = 20; },
+                                                                 rustscythe { Chance = 20; },
+                                                                 meleeweapon(RUNE_SWORD) { Chance = 20; }
+                                                               }
+                                               }
           F == GOLD ring(RING_OF_FIRE_RESISTANCE);
           I == GOLD ring(RING_OF_INVISIBILITY);
           E == GOLD amulet(AMULET_OF_ESP);
