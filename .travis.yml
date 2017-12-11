@@ -1,3 +1,7 @@
+branch:
+  only:
+    - windows-releases-on-travis
+
 sudo: required
 dist: trusty
 
