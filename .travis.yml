@@ -3,13 +3,41 @@ dist: trusty
 
 language: cpp
 
-compiler:
-  - clang
-  - gcc
+matrix:
 
-os:
-  - linux
-  - osx
+  include:
+
+    - env: CXXFLAGS=
+      os: linux
+      compiler: gcc
+
+    - env: CXXFLAGS=-DWIZARD
+      os: linux
+      compiler: gcc
+
+    - env: CXXFLAGS=
+      os: osx
+      compiler: clang
+
+    - env: CXXFLAGS=-DWIZARD
+      os: osx
+      compiler: clang
+
+    - env: CXXFLAGS=
+      os: linux
+      compiler: gcc
+
+    - env: CXXFLAGS=-DWIZARD
+      os: linux
+      compiler: gcc
+
+    - env: CXXFLAGS=
+      os: osx
+      compiler: clang
+
+    - env: CXXFLAGS=-DWIZARD
+      os: osx
+      compiler: clang
 
 addons:
   apt:
@@ -29,8 +57,3 @@ script:
   - make igor
   - make mihail
   - sudo make install
-
-env:
-  matrix:
-    - CXXFLAGS=
-    - CXXFLAGS=-DWIZARD
