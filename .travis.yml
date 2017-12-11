@@ -13,11 +13,11 @@ matrix:
 
     - env: CXXFLAGS=
       os: linux
-      compiler: gcc
+      compiler: clang
 
     - env: CXXFLAGS=-DWIZARD
       os: linux
-      compiler: gcc
+      compiler: clang
 
     - env: CXXFLAGS=
       os: osx
@@ -37,11 +37,11 @@ matrix:
 
     - env: CXXFLAGS=
       os: osx
-      compiler: clang
+      compiler: gcc
 
     - env: CXXFLAGS=-DWIZARD
       os: osx
-      compiler: clang
+      compiler: gcc
 
 addons:
   apt:
