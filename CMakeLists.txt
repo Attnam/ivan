@@ -16,6 +16,10 @@ elseif(WIN32)
   install(DIRECTORY Graphics Script Music DESTINATION "ivan")
   add_definitions(-DWIN32)
 
+if(MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS -mwindows)
+endif(MINGW)
+
   # This is bad. To remove below defines, FeLib should switch to std::chrono and serialize time since common epoch.
   # 32 bit TIME_T has year 2038 problem. Moreover, serialized value is not portable for time_t in general.
   # Switching to std::chrono should not be hard, but it's not a topic for this pull request.

@@ -11,35 +11,35 @@ matrix:
 
   include:
 
-    - env: CXXFLAGS=
-      os: linux
-      compiler: clang
+#    - env: CXXFLAGS= IVAN_PLATFORM=
+#      os: linux
+#      compiler: clang
 
-    - env: CXXFLAGS=-DWIZARD
-      os: linux
-      compiler: clang
+#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+#      os: linux
+#      compiler: clang
 
-    - env: CXXFLAGS=
-      os: osx
-      compiler: clang
+#    - env: CXXFLAGS= IVAN_PLATFORM=
+#      os: osx
+#      compiler: clang
 
-    - env: CXXFLAGS=-DWIZARD
-      os: osx
-      compiler: clang
+#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+#      os: osx
+#      compiler: clang
 
-    - env: CXXFLAGS=
-      os: linux
-      compiler: gcc
+#    - env: CXXFLAGS= IVAN_PLATFORM=
+#      os: linux
+#      compiler: gcc
 
-    - env: CXXFLAGS=-DWIZARD
-      os: linux
-      compiler: gcc
+#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+#      os: linux
+#      compiler: gcc
 
-    - env: CXXFLAGS=
-      os: osx
-      compiler: gcc
+#    - env: CXXFLAGS= IVAN_PLATFORM=
+#      os: osx
+#      compiler: gcc
 
-    - env: CXXFLAGS=-DWIZARD
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM='IvanWin'
       os: osx
       compiler: gcc
 
@@ -51,6 +51,10 @@ addons:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2; fi
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./build/${IVAN_PLATFORM}/requirements.sh; fi
+
+install:
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./build/${IVAN_PLATFORM}/build.sh; fi
 
 script:
   - mkdir build
