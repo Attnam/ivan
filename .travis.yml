@@ -40,7 +40,7 @@ matrix:
 #      compiler: gcc
 
     - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM='IvanWin'
-      os: osx
+      os: linux
       compiler: gcc
 
 addons:
