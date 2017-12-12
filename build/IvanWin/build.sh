@@ -4,7 +4,7 @@ set -xue
 
 MXE_DIR=/usr/lib/mxe
 
-if [ "$BATTLESHIP_PLATFORM" = "IvanWin" ]; then
+if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
     MXE_TARGET=i686-w64-mingw32.static
 fi
 
