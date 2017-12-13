@@ -51,7 +51,8 @@ if(NOT PNG_FOUND)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-set(CMAKE_EXE_LINKER_FLAGS "pkg-config --libs --static sdl2 -static")
+set(CMAKE_CXX_FLAGS "i686-w64-mingw32.static-pkg-config --cflags sdl2 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "i686-w64-mingw32.static-pkg-config --libs sdl2 ${CMAKE_EXE_LINKER_FLAGS}")
 
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
