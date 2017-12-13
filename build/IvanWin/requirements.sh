@@ -17,9 +17,9 @@ if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
     MXE_TARGET=i686-w64-mingw32.static
 fi
 
-MXE2_TARGET=$(echo "$MXE_TARGET" | sed 's/_/-/g')
-sudo apt-get --yes install \
-    mxe-${MXE2_TARGET}-qt
+#MXE2_TARGET=$(echo "$MXE_TARGET" | sed 's/_/-/g')
+#sudo apt-get --yes install \
+#    mxe-${MXE2_TARGET}-qt
 
 # MXE doesn't have 64bit NSIS
 sudo apt-get --yes install \
