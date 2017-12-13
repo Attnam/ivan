@@ -51,6 +51,8 @@ if(NOT PNG_FOUND)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
+set(CMAKE_EXE_LINKER_FLAGS " -static")
+
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
 target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES} -static-libgcc -static-libstdc++)
