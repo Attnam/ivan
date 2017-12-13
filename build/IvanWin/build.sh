@@ -9,7 +9,7 @@ if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
 fi
 
 pkg-config --cflags sdl2
-pkg-config --libs sdl2
+pkg-config --libs --static sdl2
 
 ${MXE_DIR}/usr/bin/${MXE_TARGET}-cmake . -Bbuild-dir -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
 cmake --build build-dir --config Release

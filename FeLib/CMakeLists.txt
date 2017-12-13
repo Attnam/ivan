@@ -35,7 +35,8 @@ if(MINGW)
   message("sdl_lib_dir ${sdl_lib_dir}")
   install(FILES "${sdl_lib_dir}/../bin/SDL2.dll" DESTINATION "ivan")
 
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+#  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS " -static")
 endif()
 
 # Try finding libpng using pkg-config first, because find_package(PNG) finds a
@@ -52,4 +53,7 @@ endif()
 
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
-target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES})
+target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES} -static-libgcc -static-libstdc++)
+
+
+
