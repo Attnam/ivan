@@ -25,7 +25,7 @@ sudo apt-get --yes install \
 sudo apt-get --yes install \
     mxe-i686-w64-mingw32.static-nsis
 
-# MXE doesn't have SDL
+# MXE doesn't have SDL2
 sudo apt-get --yes install \
     mxe-i686-w64-mingw32.static-SDL2
 
