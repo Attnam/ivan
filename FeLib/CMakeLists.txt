@@ -57,6 +57,5 @@ endif()
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
 target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES} -static-libgcc -static-libstdc++)
-add_definitions(${SDL2_CFLAGS} ${SDL2_CFLAGS_OTHER})
-
+target_compile_options(FeLib PUBLIC ${SDL2_CFLAGS} ${SDL2_CFLAGS_OTHER})
 
