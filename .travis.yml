@@ -51,15 +51,15 @@ addons:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sdl2; fi
-  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./build/${IVAN_PLATFORM}/requirements.sh; fi
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./mxe/${IVAN_PLATFORM}/requirements.sh; fi
 
 #install:
-#  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./build/${IVAN_PLATFORM}/build.sh; fi
+#  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/build.sh; fi
 
 script:
   - mkdir build
   - cd build
-  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./build/${IVAN_PLATFORM}/build.sh; else cmake .. -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"; fi
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./mxe/${IVAN_PLATFORM}/build.sh; else cmake .. -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"; fi
 #  - cmake .. -G "Unix Makefiles"
 #    -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
   - make
