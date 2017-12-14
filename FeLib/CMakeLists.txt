@@ -54,8 +54,10 @@ endif()
 #set(CMAKE_CXX_FLAGS "pkg-config --cflags sdl2 ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_EXE_LINKER_FLAGS "pkg-config --libs sdl2 ${CMAKE_EXE_LINKER_FLAGS}")
 
+set(SDL2_LIBRARIES ${SDL2_LDFLAGS})
+
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
-target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES} -static-libgcc -static-libstdc++)
+target_link_libraries(FeLib ${SDL2_LIBRARIES} ${PNG_LIBRARIES} -static-libgcc -static-libstdc++)
 target_compile_options(FeLib PUBLIC ${SDL2_CFLAGS} ${SDL2_CFLAGS_OTHER})
 
