@@ -4470,7 +4470,7 @@ horn
   FormModifier = 30;
   Roundness = 40;
   DefaultSize = 30;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = BLUNT_WEAPONS;
   DefaultMainVolume = 400;
   BitmapPos = 48, 304;
@@ -5496,8 +5496,7 @@ trinket
     FormModifier = 25;
     StrengthModifier = 75;
     Adjective = "fish";
-    NameSingular = "bones";
-    NamePlural = "bones";
+    NameSingular = "skeleton";
     MainMaterialConfig == BONE;
     Roundness = 15;
     AttachedGod = SCABIES;

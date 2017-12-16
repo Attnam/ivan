@@ -2383,7 +2383,7 @@ void character::GetPlayerCommand()
   {
     game::DrawEverything();
 
-    if(game::GetDangerFound() && !StateIsActivated(FEARLESS))
+    if(!StateIsActivated(FEARLESS) && game::GetDangerFound())
     {
       if(game::GetDangerFound() > 500.)
       {
@@ -5035,7 +5035,7 @@ void character::PrintEndVampirismMessage() const
 void character::PrintBeginFearlessMessage () const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel very brave.");
+    ADD_MESSAGE("You shout: \"I am invincible!\"");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s looks very calm.", CHAR_NAME(DEFINITE));
 }
