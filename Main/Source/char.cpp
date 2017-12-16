@@ -8603,6 +8603,9 @@ int character::GetAttribute(int Identifier, truth AllowBonus) const
   if(AllowBonus && Identifier == INTELLIGENCE && BrainsHurt())
     return Max((A + AttributeBonus[INTELLIGENCE]) / 3, 1);
 
+  if(AllowBonus && Identifier == PERCEPTION && IsHeadless())
+    return 0;
+
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
 
