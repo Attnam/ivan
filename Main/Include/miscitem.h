@@ -721,6 +721,10 @@ ITEM(cauldron, materialcontainer)
 
 ITEM(trinket, item)
 {
+ public:
+  virtual material* RemoveMaterial(material* Material);
+  virtual truth Necromancy(character*);
+  virtual truth RaiseTheDead(character*);
  protected:
   virtual col16 GetMaterialColorB(int) const;
   virtual col16 GetMaterialColorC(int) const;

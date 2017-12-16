@@ -3745,6 +3745,52 @@ alpha ullrbone::GetOutlineAlpha(int Frame) const
   return 50 + (Frame * (31 - Frame) >> 1);
 }
 
+material* trinket::RemoveMaterial(material* Material)
+{
+  if(GetConfig() == DEAD_FISH)
+  {
+    item* Bones = trinket::Spawn(BONE_FISH);
+    DonateSlotTo(Bones);
+    DonateIDTo(Bones);
+    SendToHell();
+    return 0;
+  }
+  else
+    return item::RemoveMaterial(Material);
+}
+
+truth trinket::Necromancy(character*)
+{
+  if(GetConfig() == BONE_FISH)
+  {
+    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
+  else
+    return false;
+}
+
+truth trinket::RaiseTheDead(character*)
+{
+  if(GetConfig() == BONE_FISH)
+  {
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly air-drowns again.", CHAR_NAME(DEFINITE));
+    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
+  if(GetConfig() == DEAD_FISH)
+  {
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly air-drowns again.", CHAR_NAME(DEFINITE));
+    return false;
+  }
+  else
+    return false;
+}
+
 col16 trinket::GetMaterialColorB(int) const
 {
   if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(87, 59, 12); }
