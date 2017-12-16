@@ -958,11 +958,12 @@ meleeweapon
     WieldedBitmapPos = 160, 16;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH|PIERCE;
+    PriceIsProportionalToEnchantment = true;
     IsMaterialChangeable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
-    Price = 250;
+    Price = 500;
   }
 
   Config BROKEN|RUNE_SWORD;
@@ -2259,7 +2260,7 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
-    Price = 500;
+    Price = 2500;
   }
 
   Config BROKEN|PHOENIX_SHIELD;
@@ -2271,7 +2272,6 @@ shield /* armor-> */
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 5;
     GearStates = 0;
-    Price = 250;
   }
 
   Config AEGIS_SHIELD;
@@ -2296,7 +2296,7 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
-    Price = 500;
+    Price = 1000;
   }
 }
 
@@ -2459,7 +2459,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
-    Price = 250;
+    Price = 1000;
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -2490,7 +2490,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
-    Price = 500;
+    Price = 750;
   }
 
   Config BROKEN|CLOAK_OF_ORCS;
@@ -2587,7 +2587,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
-    Price = 250;
+    Price = 1000;
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -3982,7 +3982,7 @@ helmet
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
     BaseEnchantment = 1;
-    Price = 500;
+    Price = 1000;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SOPHOS;
     CoverPercentile = 90;
@@ -5356,7 +5356,7 @@ ullrbone
   BitmapPos = 16, 240;
   FormModifier = 250;
   DefaultSize = 50;
-  Price = 1000;
+  Price = 5000;
   NameSingular = "bone";
   PostFix = "of Ullr";
   WeaponCategory = BLUNT_WEAPONS;
@@ -5400,7 +5400,7 @@ taiaha /* meleeweapon-> */
   WieldedBitmapPos = 160, 96;
   EnchantmentPlusChance = 15;
   DamageFlags = PIERCE;
-  Price = 500;
+  Price = 1000;
   MinCharges = 2;
   MaxCharges = 8;
   IsKamikazeWeapon = true;
