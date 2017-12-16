@@ -1678,7 +1678,8 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::DoorCreation,
   &lsquare::AcidRain,
   &lsquare::Necromancy,
-  &lsquare::Webbing
+  &lsquare::Webbing,
+  &lsquare::Alchemize
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -2890,5 +2891,11 @@ truth lsquare::Webbing(const beamdata&)
 
   AddTrap(Web);
 
+  return false;
+}
+
+truth lsquare::Alchemize(const beamdata& Beam)
+{
+  GetStack()->Alchemize(Beam.Owner);
   return false;
 }

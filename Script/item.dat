@@ -1861,6 +1861,21 @@ wand
     AttachedGod = SCABIES;
     BreakMsg = "breaks, sending strands of spider silk everywhere";
   }
+
+  Config WAND_OF_ALCHEMY;
+  {
+    Possibility = 20;
+    Price = 500;
+    PostFix = "of alchemy";
+    MainMaterialConfig == LEAD;
+    BeamRange = 5;
+    MinCharges = 2;
+    MaxCharges = 5;
+    BeamColor = YELLOW;
+    BeamEffect = BEAM_ALCHEMY;
+    AttachedGod = MELLIS;
+    BreakMsg = "explodes in a puff of golden dust";
+  }
 }
 
 scrollofchangematerial /* scroll-> */
