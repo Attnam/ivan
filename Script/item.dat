@@ -347,6 +347,7 @@ meleeweapon
     CanBePiled = false;
     AttachedGod = ATAVUS;
     WieldedBitmapPos = 176, 112;
+    Price = 250;
     DamageFlags = SLASH|BLUNT;
   }
 
@@ -961,6 +962,7 @@ meleeweapon
     CanBeCloned = false;
     CanBeMirrored = true;
     Alias == "runesword";
+    Price = 250;
   }
 
   Config BROKEN|RUNE_SWORD;
@@ -1279,6 +1281,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 5000;
     BitmapPos = 80, 176;
     Possibility = 1;
+    Price = 250;
     NameSingular = "ommel bristler armor";
     AttachedGod = ATAVUS;
     ArticleMode = FORCE_THE;
@@ -2256,6 +2259,7 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 500;
   }
 
   Config BROKEN|PHOENIX_SHIELD;
@@ -2267,6 +2271,7 @@ shield /* armor-> */
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 5;
     GearStates = 0;
+    Price = 250;
   }
 
   Config AEGIS_SHIELD;
@@ -2291,6 +2296,7 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 500;
   }
 }
 
@@ -2453,6 +2459,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 250;
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -2483,6 +2490,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 500;
   }
 
   Config BROKEN|CLOAK_OF_ORCS;
@@ -2579,6 +2587,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 250;
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -4357,6 +4366,7 @@ skullofxinroch
   CanBePiled = false;
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
+  Price = 500;
 }
 
 gorovitsweapon
@@ -5437,6 +5447,7 @@ trinket
   Possibility = 10;
   IsValuable = false;
   WieldedBitmapPos = 176, 144;
+  Price = 50;
 
   Config POTTED_CACTUS;
   {
