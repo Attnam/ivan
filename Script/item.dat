@@ -4789,7 +4789,7 @@ filthytunic /* armor->bodyarmor-> */
 {
   Category = BODY_ARMOR;
   FormModifier = 15;
-  StrengthModifier = 150;
+  StrengthModifier = 80;
   DefaultSize = 40;
   DefaultMainVolume = 500;
   Roundness = 70;
@@ -4819,16 +4819,18 @@ filthytunic /* armor->bodyarmor-> */
   CanBeBroken = true;
   CanBeBurned = true;
   WieldedBitmapPos = 160, 144;
+  Price = 500;
 
   Config BROKEN;
   {
     Possibility = 1;
-    StrengthModifier = 100;
+    StrengthModifier = 30;
     BitmapPos = 112, 304;
     FormModifier = 20;
     EnchantmentPlusChance = 10;
     InElasticityPenaltyModifier = 25;
     GearStates = 0;
+    Price = 50;
   }
 }
 
