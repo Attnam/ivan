@@ -71,6 +71,10 @@ truth beartrap::AddAdjective(festring& String, truth Articled) const
 { return (IsActive() && AddActiveAdjective(String, Articled))
      || (!IsActive() && item::AddAdjective(String, Articled)); }
 
+truth gastrap::AddAdjective(festring& String, truth Articled) const
+{ return (IsActive() && AddActiveAdjective(String, Articled))
+     || (!IsActive() && item::AddAdjective(String, Articled)); }
+
 col16 carrot::GetMaterialColorB(int) const { return MakeRGB16(80, 100, 16); }
 
 col16 charmlyre::GetMaterialColorB(int) const { return MakeRGB16(150, 130, 110); }
@@ -3805,4 +3809,148 @@ col16 trinket::GetMaterialColorC(int) const
   if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(0, 160, 0); }
   if(GetConfig() == POTTED_PLANT) { return MakeRGB16(0, 160, 0); }
   else { return MakeRGB16(0, 0, 0); }
+}
+
+void gastrap::StepOnEffect(character* Stepper)
+{
+  if(IsActive() && !IsBroken())
+  {
+    if(Stepper->IsPlayer())
+      ADD_MESSAGE("You step on %s.", GetExtendedDescription().CStr());
+    else if(Stepper->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), GetExtendedDescription().CStr());
+
+    if(Stepper->IsPlayer())
+      game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
+
+    if(GetSecondaryMaterial())
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("It releases some gas!");
+
+      material* GasMaterial = GetSecondaryMaterial();
+      GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Stepper);
+    }
+    else
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("Luckily, it's empty.");
+    }
+
+    if(!(RAND() % 10))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s gets jammed.", CHAR_NAME(DEFINITE));
+
+      SetIsActive(false);
+      Break(Stepper);
+    }
+  }
+}
+
+truth gastrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
+{
+  if(Type & PHYSICAL_DAMAGE && Damage)
+  {
+    if(Damage > 125 || !(RAND() % (250 / Damage)))
+    {
+      if(GetSquareUnder()->CanBeSeenByPlayer(true))
+        ADD_MESSAGE("%s shatters!", GetExtendedDescription().CStr());
+
+      if(GetSecondaryMaterial())
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("It releases some gas!");
+
+        material* GasMaterial = GetSecondaryMaterial();
+        GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
+      }
+      else
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("Luckily, it's empty.");
+      }
+
+      RemoveFromSlot();
+      SendToHell();
+      return true;
+    }
+    else if(IsActive())
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s gets jammed.", CHAR_NAME(DEFINITE));
+
+      SetIsActive(false);
+      Break(Damager);
+      return true;
+    }
+  }
+  else if(Type & (ENERGY|SOUND) && Damage)
+  {
+    if(Damage > 50 || !(RAND() % (100 / Damage)))
+    {
+      if(GetSquareUnder()->CanBeSeenByPlayer(true))
+        ADD_MESSAGE("%s shatters!", GetExtendedDescription().CStr());
+
+      if(GetSecondaryMaterial())
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("It releases some gas!");
+
+        material* GasMaterial = GetSecondaryMaterial();
+        GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
+      }
+      else
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("Luckily, it's empty.");
+      }
+
+      RemoveFromSlot();
+      SendToHell();
+      return true;
+    }
+  }
+  else
+    return false;
+}
+
+truth gastrap::Apply(character* User)
+{
+  if(IsBroken())
+  {
+    if(User->IsPlayer())
+      ADD_MESSAGE("%s is jammed and useless.", CHAR_NAME(DEFINITE));
+    return false;
+  }
+
+  if(User->IsPlayer()
+     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+    return false;
+
+  room* Room = GetRoom();
+
+  if(Room)
+    Room->HostileAction(User);
+
+  if(User->IsPlayer())
+    ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
+
+  SetIsActive(!IsActive());
+  User->DexterityAction(10);
+
+  if(IsActive())
+  {
+    Team = User->GetTeam()->GetID();
+    RemoveFromSlot();
+    User->GetStackUnder()->AddItem(this);
+  }
+
+  return true;
+}
+
+truth gastrap::CheckPickUpEffect(character*)
+{
+  SetIsActive(false);
+  return true;
 }

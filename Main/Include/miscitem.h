@@ -730,4 +730,17 @@ ITEM(trinket, item)
   virtual col16 GetMaterialColorC(int) const;
 };
 
+ITEM(gastrap, itemtrap<materialcontainer>)
+{
+ public:
+  virtual void StepOnEffect(character*);
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth Apply(character* User);
+  virtual truth IsDangerous(ccharacter*) const { return Active; }
+  virtual truth CheckPickUpEffect(character*);
+ protected:
+  virtual truth AddAdjective(festring&, truth) const;
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
+};
+
 #endif
