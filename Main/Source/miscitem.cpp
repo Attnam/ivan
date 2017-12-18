@@ -3780,7 +3780,7 @@ truth trinket::RaiseTheDead(character*)
 {
   if(GetConfig() == BONE_FISH)
   {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly air-drowns again.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
     GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
     RemoveFromSlot();
     SendToHell();
@@ -3788,7 +3788,7 @@ truth trinket::RaiseTheDead(character*)
   }
   if(GetConfig() == DEAD_FISH)
   {
-    ADD_MESSAGE("%s suddenly comes back to life, but quickly air-drowns again.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
     return false;
   }
   else
@@ -3911,8 +3911,8 @@ truth gastrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
       return true;
     }
   }
-  else
-    return false;
+
+  return false;
 }
 
 truth gastrap::Apply(character* User)
