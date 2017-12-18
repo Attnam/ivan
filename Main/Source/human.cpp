@@ -784,7 +784,7 @@ void priest::BeTalkedTo()
         return;
       }
     }
-    else 
+    else
       ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
@@ -5697,6 +5697,12 @@ truth humanoid::BrainsHurt() const
 {
   head* Head = GetHead();
   return !Head || Head->IsBadlyHurt();
+}
+
+truth humanoid::IsHeadless() const
+{
+  head* Head = GetHead();
+  return !Head;
 }
 
 void playerkind::PostConstruct()

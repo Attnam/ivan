@@ -1101,6 +1101,7 @@ class character : public entity, public id
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual truth CanChokeOnWeb(web*) const { return CanChoke(); }
   virtual truth BrainsHurt() const { return false; }
+  virtual truth IsHeadless() const { return false; }
   truth IsSwimming() const;
   truth IsAnimated() const;
   virtual truth IsPlayerKind() const { return false; }
