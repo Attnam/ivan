@@ -10629,30 +10629,34 @@ void character::ApplyAllGodsKnownBonus()
               NewBook->CHAR_NAME(INDEFINITE));
 }
 
-void character::ReceiveSirenSong(character* Siren)
+truth character::ReceiveSirenSong(character* Siren)
 {
   if(Siren->GetTeam() == GetTeam())
-    return;
+    return false;
 
   if(!RAND_N(4))
   {
     if(IsPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.",
-                  Siren->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
-                  Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.", Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
 
     Stamina -= (1 + RAND_N(4)) * 10000;
-    return;
+    return true;
   }
 
   if(!IsPlayer() && IsCharmable() && !RAND_N(5))
   {
     ChangeTeam(Siren->GetTeam());
-    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE),
-                Siren->CHAR_NAME(DEFINITE));
-    return;
+
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
+
+    return true;
   }
 
   if(!RAND_N(4))
@@ -10662,29 +10666,24 @@ void character::ReceiveSirenSong(character* Siren)
     if(What)
     {
       if(IsPlayer())
-      {
         ADD_MESSAGE("%s music persuades you to give %s to %s as a present.",
-                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-      }
-      else
-      {
+                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.",
-                    CHAR_NAME(DEFINITE),
-                    What->CHAR_NAME(INDEFINITE),
-                    Siren->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-
-      }
+                    CHAR_NAME(DEFINITE), What->CHAR_NAME(INDEFINITE), Siren->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
     else
     {
       if(IsPlayer())
         ADD_MESSAGE("You would like to give something to %s.", Siren->CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
-
-    return;
+    return true;
   }
+  return false;
 }
 
 // return 0, if no item found

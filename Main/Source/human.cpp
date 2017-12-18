@@ -784,7 +784,7 @@ void priest::BeTalkedTo()
         return;
       }
     }
-    else 
+    else
       ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
@@ -1015,7 +1015,7 @@ void communist::BeTalkedTo()
     {
       if(Char != this)
         Char->ChangeTeam(PLAYER->GetTeam());
-      
+
       if(GetTeam()->GetMembers() == 1) // Only Ivan left in Party
         break;
     }
@@ -5966,8 +5966,10 @@ truth siren::TryToSing()
 
     if(Square && Square->GetCharacter())
     {
-      Success = true;
-      Square->GetCharacter()->ReceiveSirenSong(this);
+      Success = Square->GetCharacter()->ReceiveSirenSong(this);
+
+      if(Success)
+        break;
     }
   }
   if(Success)

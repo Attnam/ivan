@@ -1125,7 +1125,7 @@ class character : public entity, public id
   item* GiveMostExpensiveItem(character*);
   void ReceiveItemAsPresent(item*);
   item* FindMostExpensiveItem() const;
-  void ReceiveSirenSong(character* Siren);
+  truth ReceiveSirenSong(character* Siren);
   character* GetNearestEnemy() const;
   truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
   void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
