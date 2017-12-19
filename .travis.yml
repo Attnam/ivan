@@ -66,3 +66,15 @@ script:
   - make igor
   - make mihail
   - sudo make install
+
+before_deploy:
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./mxe/${IVAN_PLATFORM}/package.sh; fi
+
+deploy:
+  provider: releases
+  api_key: "$GH_API_KEY"
+  file:
+    - "$(ls ./build/${IVAN_PLATFORM}.zip)"
+  skip_cleanup: true
+#  on:
+#tags: true
