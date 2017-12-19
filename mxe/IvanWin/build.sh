@@ -2,6 +2,9 @@
 
 set -xue
 
+/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --libs --static sdl2
+/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --libs sdl2
+
 MXE_DIR=/usr/lib/mxe
 
 if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
