@@ -14,6 +14,7 @@ if(UNIX)
                   -DLOCAL_STATE_DIR="${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
 elseif(WIN32)
   install(DIRECTORY Graphics Script Music DESTINATION "ivan")
+  install(FILES AUTHORS COPYING INSTALL LICENSING NEWS README README.md DESTINATION "ivan")
   add_definitions(-DWIN32)
 
 if(MINGW)
