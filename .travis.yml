@@ -68,7 +68,7 @@ script:
   - sudo make install
 
 before_deploy:
-  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ./mxe/${IVAN_PLATFORM}/package.sh; fi
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/package.sh; fi
 
 deploy:
   provider: releases
