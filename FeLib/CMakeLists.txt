@@ -4,6 +4,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   add_definitions(-DGCC) # TODO: Use __GNUC__ in the code instead.
 endif()
 
+cmake_policy(SET CMP0004 OLD)
 add_library(FeLib ${FELIB_SOURCES})
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
