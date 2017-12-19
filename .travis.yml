@@ -76,5 +76,8 @@ deploy:
   file:
     - "$(ls ./build/${IVAN_PLATFORM}.zip)"
   skip_cleanup: true
-#  on:
-#tags: true
+  on:
+    condition: "$IVAN_PLATFORM = IvanWin"
+    branch: windows-releases-on-travis
+#    tags: true
+
