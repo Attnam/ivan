@@ -11,7 +11,7 @@ if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
 fi
 
 #${MXE_DIR}/usr/bin/${MXE_TARGET}-cmake . -Bbuild-dir -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
-${MXE_DIR}/usr/bin/${MXE_TARGET}-cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DSDL2_LDFLAGS=${SDL2_PKGCONFIG_LFLAGS} -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
+${MXE_DIR}/usr/bin/${MXE_TARGET}-cmake .. -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DSDL2_LDFLAGS="${SDL2_PKGCONFIG_LFLAGS}" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
 #cd build
 #cmake --build build-dir --config Release
 #cd build-dir
