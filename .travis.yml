@@ -68,13 +68,13 @@ script:
   - sudo make install
 
 before_deploy:
-  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/package.sh; fi
+  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ${TRAVIS_BUILD_DIR}/mxe/${IVAN_PLATFORM}/package.sh; fi
 
 deploy:
   provider: releases
   api_key: "$GH_API_KEY"
   file:
-    - "$(ls ./build/${IVAN_PLATFORM}.zip)"
+    - "$(ls ${TRAVIS_BUILD_DIR}/build/${IVAN_PLATFORM}.zip)"
   skip_cleanup: true
   on:
     condition: "$IVAN_PLATFORM = IvanWin"
