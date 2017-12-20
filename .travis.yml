@@ -27,9 +27,9 @@ matrix:
 #      os: osx
 #      compiler: clang
 
-#    - env: CXXFLAGS= IVAN_PLATFORM=
-#      os: linux
-#      compiler: gcc
+    - env: CXXFLAGS= IVAN_PLATFORM=
+      os: linux
+      compiler: gcc
 
 #    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
 #      os: linux
@@ -74,7 +74,7 @@ deploy:
   provider: releases
   api_key: "$GH_API_KEY"
   file:
-    - "$(ls ${TRAVIS_BUILD_DIR}/build/${IVAN_PLATFORM}${IVAN_FILE_VERSION}.zip)"
+    - "$(ls ${TRAVIS_BUILD_DIR}/build/${IVAN_PLATFORM}.zip)"
   skip_cleanup: true
   on:
     condition: "$IVAN_PLATFORM = IvanWin"
