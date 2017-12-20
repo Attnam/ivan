@@ -53,7 +53,7 @@ endif()
 
 # Try finding libpng using pkg-config first, because find_package(PNG) finds a
 # mismatching header + library combination for me.
-find_package(PkgConfig)
+include(FindPkgConfig)
 if(PKG_CONFIG_FOUND)
   pkg_check_modules(PNG libpng)
   set(PNG_LIBRARIES ${PNG_LDFLAGS})
