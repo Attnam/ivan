@@ -3,7 +3,9 @@
 set -xue
 
 if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
-  zip -9 -r ${IVAN_PLATFORM}.zip ${TRAVIS_BUILD_DIR}/build/IvanWin/*
+  cd ${TRAVIS_BUILD_DIR}/build/IvanWin/
+  mv ivan ${IVAN_PLATFORM}${PROJECT_FILE_VERSION}
+  zip -9 -r ${IVAN_PLATFORM}${PROJECT_FILE_VERSION}.zip *
 fi
 
 set +xue
