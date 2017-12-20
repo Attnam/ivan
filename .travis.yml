@@ -74,7 +74,7 @@ deploy:
   provider: releases
   api_key: "$GH_API_KEY"
   file:
-    - "$(ls ${TRAVIS_BUILD_DIR}/build/${IVAN_PLATFORM}${PROJECT_FILE_VERSION}.zip)"
+    - "$(ls ${TRAVIS_BUILD_DIR}/build/${IVAN_PLATFORM}${IVAN_FILE_VERSION}.zip)"
   skip_cleanup: true
   on:
     condition: "$IVAN_PLATFORM = IvanWin"
