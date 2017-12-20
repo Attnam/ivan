@@ -10,6 +10,8 @@ set(PROJECT_FILE_VERSION ${VERSION_MAJOR}${VERSION_MINOR}${VERSION_PATCH})
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo IVAN_FILE_VERSION=${PROJECT_FILE_VERSION} OUTPUT_VARIABLE IVAN_FILE_VERSION)
 
+message(STATUS "Project file version: ${PROJECT_FILE_VERSION}, Ivan file version: ${IVAN_FILE_VERSION}")
+
 if (EXISTS ${PROJECT_SOURCE_DIR}/.git)
     execute_process(COMMAND
         git --git-dir=${PROJECT_SOURCE_DIR}/.git rev-parse HEAD
