@@ -1199,7 +1199,7 @@ void cruentus::PrayGoodEffect()
       character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
       if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(PANIC)
-         && PLAYER->GetRelation(Audience) == HOSTILE)
+          && !Audience->StateIsActivated(FEARLESS) && PLAYER->GetRelation(Audience) == HOSTILE)
       {
         AudiencePresent = true;
         break;

@@ -1677,7 +1677,9 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::Lightning,
   &lsquare::DoorCreation,
   &lsquare::AcidRain,
-  &lsquare::Necromancy
+  &lsquare::Necromancy,
+  &lsquare::Webbing,
+  &lsquare::Alchemize
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -2880,4 +2882,20 @@ void lsquare::AddSpecialCursors()
 {
   if((FowMemorized || game::GetSeeWholeMapCheatMode()) && OLTerrain)
     OLTerrain->AddSpecialCursors();
+}
+
+truth lsquare::Webbing(const beamdata&)
+{
+  web* Web = web::Spawn();
+  Web->SetStrength(50);
+
+  AddTrap(Web);
+
+  return false;
+}
+
+truth lsquare::Alchemize(const beamdata& Beam)
+{
+  GetStack()->Alchemize(Beam.Owner);
+  return false;
 }

@@ -52,7 +52,7 @@ Dungeon UNDER_WATER_TUNNEL;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
-    AudioPlayList = 
+    AudioPlayList =
     {
       3,
       "Dungeon.mid",
@@ -502,6 +502,12 @@ Dungeon UNDER_WATER_TUNNEL;
       Character = lion;
       Times = 0:5;
     }
+
+    Square, Random;
+    {
+      Items == stone(SOL_STONE);
+      Times = 0:3;
+    }
   }
 
   Level SPIDER_LEVEL;
@@ -524,7 +530,7 @@ Dungeon UNDER_WATER_TUNNEL;
     EnchantmentPlusChanceBase = 40;
     EnchantmentPlusChanceDelta = 0;
     LOSModifier = 10;
-	
+
     Room
     {
       Size = 59,32;
@@ -641,6 +647,16 @@ Dungeon UNDER_WATER_TUNNEL;
       Square, Random;
       {
         Character = lobhse;
+      }
+
+      Square, Random;
+      {
+        Items == SPIDER_SILK bodyarmor(PLATE_MAIL);
+      }
+
+      Square, Random;
+      {
+        Items == taiaha(BROKEN);
       }
     }
   }

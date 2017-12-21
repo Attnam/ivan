@@ -3434,6 +3434,43 @@ truth housewife::SpecialEnemySightedReaction(character* Char)
   return false;
 }
 
+void housewife::CreateInitialEquipment(int SpecialFlags)
+{
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  meleeweapon* Weapon;
+
+  if(GetConfig() == CULTIST)
+  {
+    Weapon = meleeweapon::Spawn(SCYTHE);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(POLE_ARMS)->AddHit(100);
+    GetCurrentRightSWeaponSkill()->AddHit(50);
+    return;
+  }
+  else switch(RAND() % 4)
+  {
+   case 0:
+    Weapon = meleeweapon::Spawn(ROLLING_PIN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 1:
+    Weapon = meleeweapon::Spawn(FRYING_PAN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 2:
+    Weapon = meleeweapon::Spawn(MEAT_CLEAVER);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(SMALL_SWORDS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   default: break;
+  }
+}
+
 void guard::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);

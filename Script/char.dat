@@ -1771,7 +1771,7 @@ ennerbeast
   PanicLevel = 75;
   FleshMaterial = ENNER_BEAST_FLESH;
   DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
-  Inventory == horn(FEAR);
+  Inventory = { 2, trinket(DEAD_FISH) { Times = 1:10; }, horn; }
   IsUnique = true;
   HostileReplies =
   {
@@ -2327,9 +2327,11 @@ goblin
     AttributeBonus = 50;
     Helmet = LEATHER helmet;
     BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    RightWielded = IRON meleeweapon(MEAT_CLEAVER);
+    LeftWielded = IRON meleeweapon(MEAT_CLEAVER);
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
     NameSingular = "goblin butcher";
     ClothColor = rgb16(200, 0, 0);
     Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
@@ -3630,6 +3632,7 @@ housewife
   CanRead = true;
   NameSingular = "housewife";
   NamePlural = "housewives";
+  /* RightWielded overridden */
   KnownCWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
   CWeaponSkillHits = { 2, 50, 50; }
   BaseUnarmedStrength = 200;
@@ -3660,7 +3663,6 @@ housewife
     "sex", "fertility", "jealousy", "cheating", "quantum physics",
     "cleaning", "laundering", "gossips", "snow", "wild animals";
   }
-  Inventory = { 2, meleeweapon(ROLLING_PIN) { Chance = 30; }, meleeweapon(FRYING_PAN) { Chance = 30; } }
 
   Config CULTIST;
   {
@@ -3676,8 +3678,7 @@ housewife
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
     Cloak = BLACK_LEATHER cloak { Enchantment = 1; }
-    RightWielded = meleeweapon(SCYTHE);
-    KnownCWeaponSkills = { 2, UNARMED, POLE_ARMS; }
+    /* RightWielded overridden */
     IsExtraCoward = false;
     IsSadist = true;
     AttachedGod = INFUSCOR;
@@ -4015,6 +4016,7 @@ zombie
     EnergyResistance = 15;
     IsImmuneToLeprosy = true;
     CanBeGenerated = false;
+    CanRead = true;
     CreateUndeadConfigurations = false;
     DeathMessage = "As @Dd collapses, you hear her hiss: \"Peeeeeetrrrruuuuuuuss!!!\"";
     FriendlyReplies =
@@ -4037,6 +4039,7 @@ zombie
     CanBeGenerated = false;
     CreateUndeadConfigurations = false;
     IsMasochist = true;
+    CanRead = true;
     FriendlyReplies =
     {
       4,
@@ -4677,6 +4680,7 @@ vampire
   CanRead = true;
   UndeadVersions = false;
   IsCatacombCreature = true;
+  StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
   AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
 }
@@ -4714,6 +4718,7 @@ kobold
   PanicLevel = 75;
   FleshMaterial = KOBOLD_FLESH;
   DeathMessage = "@Dd dies yelling like a tortured hyena.";
+  StandVerb = "skulking";
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -1;
   IsExtraFragile = true;
@@ -4817,13 +4822,14 @@ gibberling
   CanBeGenerated = true;
   Sex = UNDEFINED;
   CanUseEquipment = false;
-  CanTalk = false;
+  CanTalk = false; /* can, but no-one understands the gibberish */
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 50;
   PanicLevel = 85;
   BaseUnarmedStrength = 300;
   FleshMaterial = GIBBERLING_FLESH;
   AttachedGod = SILVA;
+  ClassStates = SWIMMING;
   WillCarryItems = false;
   IsExtraFragile = true;
   HostileReplies =
@@ -7125,6 +7131,7 @@ necromancer
   EyeColor = rgb16(200, 0, 0);
   BeltColor = rgb16(100, 100, 100);
   ArmSpecialColor = rgb16(100, 100, 140);
+  Helmet = helmet(MASK);
   CanRead = true;
   CanBeGenerated = true;
   ClassStates = INFRA_VISION;

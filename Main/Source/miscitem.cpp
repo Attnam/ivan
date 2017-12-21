@@ -41,6 +41,11 @@ truth potion::EffectIsGood() const
 { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
+truth cauldron::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
+truth cauldron::AddAdjective(festring& String, truth Articled) const { return AddEmptyAdjective(String, Articled); }
+truth cauldron::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
+truth cauldron::IsDipDestination(ccharacter*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
+
 truth stick::AddAdjective(festring& String, truth Articled) const { return AddBurningAdjective(String, Articled); }
 
 truth bananapeels::IsDangerous(ccharacter* Stepper) const { return Stepper->HasALeg(); }
@@ -63,6 +68,10 @@ truth mine::AddAdjective(festring& String, truth Articled) const
 { return IsActive() && AddActiveAdjective(String, Articled); }
 
 truth beartrap::AddAdjective(festring& String, truth Articled) const
+{ return (IsActive() && AddActiveAdjective(String, Articled))
+     || (!IsActive() && item::AddAdjective(String, Articled)); }
+
+truth gastrap::AddAdjective(festring& String, truth Articled) const
 { return (IsActive() && AddActiveAdjective(String, Articled))
      || (!IsActive() && item::AddAdjective(String, Articled)); }
 
@@ -101,7 +110,7 @@ void scrollofteleportation::FinishReading(character* Reader)
 void scrolloffireballs::FinishReading(character* Reader)
 {
   v2 FireBallPos = ERROR_V2;
-	
+
   beamdata Beam
   (
     Reader,
@@ -109,7 +118,7 @@ void scrolloffireballs::FinishReading(character* Reader)
     YOURSELF,
     0
   );
-	
+
   ADD_MESSAGE("This could be loud...");
 
   v2 Input = game::PositionQuestion(CONST_S("Where do you wish to send the fireball? [direction keys move cursor, space accepts]"), Reader->GetPos(), &game::TeleportHandler, 0, false);
@@ -163,7 +172,7 @@ void scrolloffireballs::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
-  Square->DrawParticles(RED); 
+  Square->DrawParticles(RED);
   Square->FireBall(Beam);
 }
 
@@ -518,7 +527,23 @@ liquid* potion::CreateDipLiquid()
   return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
 }
 
+liquid* cauldron::CreateDipLiquid()
+{
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
+}
+
 void potion::DipInto(liquid* Liquid, character* Dipper)
+{
+  /* Add alchemy */
+
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+
+  ChangeSecondaryMaterial(Liquid);
+  Dipper->DexterityAction(10);
+}
+
+void cauldron::DipInto(liquid* Liquid, character* Dipper)
 {
   /* Add alchemy */
 
@@ -539,6 +564,14 @@ item* potion::BetterVersion() const
 {
   if(!GetSecondaryMaterial())
     return potion::Spawn();
+  else
+    return 0;
+}
+
+item* cauldron::BetterVersion() const
+{
+  if(!GetSecondaryMaterial())
+    return cauldron::Spawn();
   else
     return 0;
 }
@@ -1915,7 +1948,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
           continue;
       }
 
-      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
+      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3) && !(Item[0]->IsRuneSword()))
       {
         if(Item.size() == 1)
           ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!",
@@ -2181,13 +2214,15 @@ truth horn::Apply(character* Blower)
   if(!LastUsed || game::GetTick() - LastUsed >= 2500)
   {
     LastUsed = game::GetTick();
-		
-    cchar* SoundDescription;	
+
+    cchar* SoundDescription;
     switch(GetConfig())
     {
       case BRAVERY: SoundDescription = "loud but calming"; break;
       case FEAR: SoundDescription = "frightening, almost scream-like"; break;
       case CONFUSION: SoundDescription = "strange and dissonant"; break;
+      case HEALING: SoundDescription = "deep and soothing"; break;
+      case PLENTY: SoundDescription = "dull and muffled"; break;
       default: SoundDescription = "never-before heard"; break;
     }
 
@@ -2209,6 +2244,7 @@ truth horn::Apply(character* Blower)
     else if(PLAYER->CanHear())
       ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
 
+    // area horns
     rect Rect;
     femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 10);
 
@@ -2219,24 +2255,80 @@ truth horn::Apply(character* Blower)
 
         if(Audience)
         {
-          if(GetConfig() == BRAVERY && Audience->CanHear() && Audience->TemporaryStateIsActivated(PANIC)
-             && Blower->IsAlly(Audience))
+          if(GetConfig() == BRAVERY && Audience->CanHear() && Blower->IsAlly(Audience))
           {
-            if(Audience->IsPlayer())
-              ADD_MESSAGE("You calm down.");
-            else if(CanBeSeenByPlayer())
-              ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
+            Audience->BeginTemporaryState(FEARLESS, 1000 + RAND() % 1000);
 
-            Audience->DeActivateTemporaryState(PANIC);
+            if(Audience->TemporaryStateIsActivated(PANIC))
+            {
+              if(Audience->IsPlayer())
+                ADD_MESSAGE("You calm down.");
+              else if(CanBeSeenByPlayer())
+                ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
+
+              Audience->DeActivateTemporaryState(PANIC);
+            }
           }
-          else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
+          else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && !Audience->StateIsActivated(FEARLESS)
                   && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
             Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
           else if(GetConfig() == CONFUSION && Blower->GetRelation(Audience) == HOSTILE && Audience->CanHear())
             Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
+          else if(GetConfig() == HEALING && Audience->CanHear() && Blower->IsAlly(Audience))
+          {
+            if(Audience->IsPlayer())
+              ADD_MESSAGE("Your wounds are healed.");
+            else if(CanBeSeenByPlayer())
+              ADD_MESSAGE("%s looks sound and hale again.", Audience->CHAR_NAME(DEFINITE));
+
+            Audience->RestoreLivingHP();
+          }
         }
       }
 
+    // non-area horns
+    if(GetConfig() == PLENTY)
+    {
+      item* Food;
+
+      switch(RAND() % 15)
+      {
+       case 0:
+        Food = carrot::Spawn();
+        break;
+       case 1:
+        Food = sausage::Spawn();
+        break;
+       case 2:
+        Food = mango::Spawn();
+        break;
+       case 3:
+       case 4:
+       case 5:
+        Food = can::Spawn();
+        break;
+       case 6:
+        Food = lump::Spawn();
+        break;
+       case 7:
+        Food = loaf::Spawn();
+        break;
+       case 8:
+        Food = kiwi::Spawn();
+        break;
+       case 9:
+        Food = pineapple::Spawn();
+        break;
+       default:
+        Food = banana::Spawn();
+        break;
+      }
+
+      if(Blower->IsPlayer())
+        ADD_MESSAGE("Suddenly, %s falls out of the horn.", Food->CHAR_NAME(INDEFINITE));
+
+      Blower->GetStack()->AddItem(Food);
+    }
   }
   else
   {
@@ -3578,7 +3670,7 @@ void celestialmonograph::FinishReading(character* Reader)
 
 col16 celestialmonograph::GetMaterialColorA(int) const
 {
-  return MakeRGB16(40, 140, 40); 
+  return MakeRGB16(40, 140, 40);
 }
 
 truth ullrbone::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
@@ -3655,4 +3747,210 @@ alpha ullrbone::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+material* trinket::RemoveMaterial(material* Material)
+{
+  if(GetConfig() == DEAD_FISH)
+  {
+    item* Bones = trinket::Spawn(BONE_FISH);
+    DonateSlotTo(Bones);
+    DonateIDTo(Bones);
+    SendToHell();
+    return 0;
+  }
+  else
+    return item::RemoveMaterial(Material);
+}
+
+truth trinket::Necromancy(character*)
+{
+  if(GetConfig() == BONE_FISH)
+  {
+    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
+  else
+    return false;
+}
+
+truth trinket::RaiseTheDead(character*)
+{
+  if(GetConfig() == BONE_FISH)
+  {
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
+    GetSlot()->AddFriendItem(trinket::Spawn(DEAD_FISH));
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
+  if(GetConfig() == DEAD_FISH)
+  {
+    ADD_MESSAGE("%s suddenly comes back to life, but quickly suffocates again.", CHAR_NAME(DEFINITE));
+    return false;
+  }
+  else
+    return false;
+}
+
+col16 trinket::GetMaterialColorB(int) const
+{
+  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(87, 59, 12); }
+  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(200, 0, 0); }
+  if(GetConfig() == SMALL_CLOCK) { return MakeRGB16(124, 50, 16); }
+  if(GetConfig() == LARGE_CLOCK) { return MakeRGB16(124, 50, 16); }
+  else { return MakeRGB16(0, 0, 0); }
+}
+
+col16 trinket::GetMaterialColorC(int) const
+{
+  if(GetConfig() == POTTED_CACTUS) { return MakeRGB16(0, 160, 0); }
+  if(GetConfig() == POTTED_PLANT) { return MakeRGB16(0, 160, 0); }
+  else { return MakeRGB16(0, 0, 0); }
+}
+
+void gastrap::StepOnEffect(character* Stepper)
+{
+  if(IsActive() && !IsBroken())
+  {
+    if(Stepper->IsPlayer())
+      ADD_MESSAGE("You step on %s.", GetExtendedDescription().CStr());
+    else if(Stepper->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), GetExtendedDescription().CStr());
+
+    if(Stepper->IsPlayer())
+      game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
+
+    if(GetSecondaryMaterial())
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("It releases some gas!");
+
+      material* GasMaterial = GetSecondaryMaterial();
+      GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Stepper);
+    }
+    else
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("Luckily, it's empty.");
+    }
+
+    if(!(RAND() % 10))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s gets jammed.", CHAR_NAME(DEFINITE));
+
+      SetIsActive(false);
+      Break(Stepper);
+    }
+  }
+}
+
+truth gastrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
+{
+  if(Type & PHYSICAL_DAMAGE && Damage)
+  {
+    if(Damage > 125 || !(RAND() % (250 / Damage)))
+    {
+      if(GetSquareUnder()->CanBeSeenByPlayer(true))
+        ADD_MESSAGE("%s shatters!", GetExtendedDescription().CStr());
+
+      if(GetSecondaryMaterial())
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("It releases some gas!");
+
+        material* GasMaterial = GetSecondaryMaterial();
+        GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
+      }
+      else
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("Luckily, it's empty.");
+      }
+
+      RemoveFromSlot();
+      SendToHell();
+      return true;
+    }
+    else if(IsActive())
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s gets jammed.", CHAR_NAME(DEFINITE));
+
+      SetIsActive(false);
+      Break(Damager);
+      return true;
+    }
+  }
+  else if(Type & (ENERGY|SOUND) && Damage)
+  {
+    if(Damage > 50 || !(RAND() % (100 / Damage)))
+    {
+      if(GetSquareUnder()->CanBeSeenByPlayer(true))
+        ADD_MESSAGE("%s shatters!", GetExtendedDescription().CStr());
+
+      if(GetSecondaryMaterial())
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("It releases some gas!");
+
+        material* GasMaterial = GetSecondaryMaterial();
+        GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder(), Damager);
+      }
+      else
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("Luckily, it's empty.");
+      }
+
+      RemoveFromSlot();
+      SendToHell();
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth gastrap::Apply(character* User)
+{
+  if(IsBroken())
+  {
+    if(User->IsPlayer())
+      ADD_MESSAGE("%s is jammed and useless.", CHAR_NAME(DEFINITE));
+    return false;
+  }
+
+  if(User->IsPlayer()
+     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
+    return false;
+
+  room* Room = GetRoom();
+
+  if(Room)
+    Room->HostileAction(User);
+
+  if(User->IsPlayer())
+    ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
+
+  SetIsActive(!IsActive());
+  User->DexterityAction(10);
+
+  if(IsActive())
+  {
+    Team = User->GetTeam()->GetID();
+    RemoveFromSlot();
+    User->GetStackUnder()->AddItem(this);
+  }
+
+  return true;
+}
+
+truth gastrap::CheckPickUpEffect(character*)
+{
+  SetIsActive(false);
+  return true;
 }

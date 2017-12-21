@@ -255,6 +255,7 @@ class item : public object
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
+  virtual truth Alchemize(character*, stack*);
   virtual truth CheckPickUpEffect(character*) { return true; }
   virtual void StepOnEffect(character*) { }
   virtual truth IsTheAvatar() const { return false; }
@@ -491,6 +492,7 @@ class item : public object
   virtual truth IsEncryptedScroll() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
+  virtual truth IsRuneSword() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;
