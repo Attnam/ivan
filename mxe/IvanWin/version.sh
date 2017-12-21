@@ -2,9 +2,9 @@
 
 set -xue
 
-CURRENT_GIT_TAG=$(git describe --exact-match --tags HEAD)
+CURRENT_GIT_TAG=$(git name-rev --name-only --tags HEAD)
 
-if [ -z $CURRENT_GIT_TAG ]; then
+if [ "$CURRENT_GIT_TAG" = "undefined" ]; then
   IVAN_FILE_VERSION="-unversioned-$(git rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 else
   IVAN_FILE_VERSION="${CURRENT_GIT_TAG#?}"
