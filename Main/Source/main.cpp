@@ -156,7 +156,7 @@ int main(int argc, char** argv)
      case 3:
       {
         highscore HScore;
-        HScore.Draw();
+        HScore.Draw(ivanconfig::GetHighScoreServerURL());
         break;
       }
      case 4:

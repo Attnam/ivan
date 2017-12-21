@@ -16,6 +16,15 @@ else()
   message(STATUS "Using SDL1")
 endif()
 
+# libcurl, for sending/fetching high-scores to/from a global high-score server.
+find_package(CURL)
+if(CURL_FOUND)
+  message(STATUS "Using libcurl ${CURL_VERSION_STRING}")
+  target_compile_definitions(FeLib PUBLIC USE_HIGHSCORE_SERVER)
+else()
+  message(WARNING "libcurl not found, global high-score submissions will be disabled")
+endif()
+
 if(MSVC)
   # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.
   message("SDL2_LIBRARY ${SDL2_LIBRARY}")
@@ -51,5 +60,6 @@ if(NOT PNG_FOUND)
 endif()
 
 target_include_directories(FeLib PUBLIC Include)
-target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
-target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES})
+target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR}
+  PRIVATE ${PNG_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS})
+target_link_libraries(FeLib ${SDL2_LIBRARY} ${PNG_LIBRARIES} ${CURL_LIBRARIES})

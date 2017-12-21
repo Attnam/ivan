@@ -10,14 +10,29 @@
  *
  */
 
+#ifdef USE_HIGHSCORE_SERVER
+#include <curl/curl.h>
+#endif
+
 #include "hscore.h"
 #include "save.h"
 #include "felist.h"
 #include "feio.h"
 #include "femath.h"
 
+#ifdef USE_HIGHSCORE_SERVER
+static truth RetrieveHighScoresFromServer(cfestring&,
+                                          std::vector<festring>&,
+                                          std::vector<long>&,
+                                          std::vector<time_t>&);
+static void SubmitHighScoreToServer(cfestring&, cfestring&, cfestring&,
+                                    long, cfestring&, time_t, long);
+#endif
+
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 129
+
+highscoreview highscore::View = LOCAL;
 
 cfestring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
@@ -25,9 +40,18 @@ long highscore::GetSize() const { return Entry.size(); }
 
 highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION) { Load(File); }
 
-truth highscore::Add(long NewScore, cfestring& NewEntry,
-                     time_t NewTime, long NewRandomID)
+truth highscore::Add(long NewScore, cfestring& NewEntry, time_t NewTime,
+                     long NewRandomID, cfestring& HighScoreServerURL,
+                     cfestring& HighScoreServerUsername,
+                     cfestring& HighScoreServerAuthToken)
 {
+#ifdef USE_HIGHSCORE_SERVER
+  if (!HighScoreServerURL.IsEmpty() && NewScore)
+    SubmitHighScoreToServer(HighScoreServerURL, HighScoreServerUsername,
+                            HighScoreServerAuthToken, NewScore, NewEntry,
+                            NewTime, NewRandomID);
+#endif
+
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
     {
@@ -64,7 +88,7 @@ truth highscore::Add(long NewScore, cfestring& NewEntry,
   }
 }
 
-void highscore::Draw() const
+void highscore::Draw(cfestring& HighScoreServerURL)
 {
   if(Score.empty())
   {
@@ -79,23 +103,74 @@ void highscore::Draw() const
     return;
   }
 
-  felist List(CONST_S("Adventurers' Hall of Fame"));
-  festring Desc;
-
-  for(uint c = 0; c < Score.size(); ++c)
+  for(;;)
   {
-    Desc.Empty();
-    Desc << c + 1;
-    Desc.Resize(5, ' ');
-    Desc << Score[c];
-    Desc.Resize(13, ' ');
-    Desc << Entry[c];
-    List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
-  }
+    festring Title;
 
-  List.SetFlags(FADE);
-  List.SetPageLength(40);
-  List.Draw();
+#ifdef USE_HIGHSCORE_SERVER
+    if(View == LOCAL)
+      Title = CONST_S("Adventurers' Hall of Fame                                "
+                      "Press ENTER to view global highscores");
+    else if(View == GLOBAL)
+      Title = CONST_S("Global Adventurers' Hall of Fame                          "
+                      "Press ENTER to view local highscores");
+#else
+    Title = CONST_S("Adventurers' Hall of Fame");
+#endif
+
+    felist List(Title);
+    festring Desc;
+
+    if(View == LOCAL)
+      for(uint c = 0; c < Score.size(); ++c)
+      {
+        Desc.Empty();
+        Desc << c + 1;
+        Desc.Resize(5, ' ');
+        Desc << Score[c];
+        Desc.Resize(13, ' ');
+        Desc << Entry[c];
+        List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
+      }
+#ifdef USE_HIGHSCORE_SERVER
+    else if(View == GLOBAL)
+    {
+      RetrieveHighScoresFromServer(HighScoreServerURL, GlobalEntry,
+                                   GlobalScore, GlobalTime);
+
+      for(uint c = 0; c < GlobalScore.size(); ++c)
+      {
+        Desc.Empty();
+        Desc << c + 1;
+        Desc.Resize(5, ' ');
+        Desc << GlobalScore[c];
+        Desc.Resize(13, ' ');
+        Desc << GlobalEntry[c];
+        List.AddEntry(Desc, LIGHT_GRAY, 13);
+      }
+    }
+#endif
+
+    List.SetFlags(FADE);
+    List.SetPageLength(40);
+
+#ifdef USE_HIGHSCORE_SERVER
+    cuint DrawResult = List.Draw();
+
+    if(DrawResult == UNSELECTABLE_SELECT) // Enter was pressed.
+      ToggleBetweenLocalAndGlobalView();
+    else if(DrawResult == LIST_WAS_EMPTY)
+    {
+      iosystem::TextScreen(CONST_S("Couldn't fetch global highscores from the server."));
+      View = LOCAL;
+    }
+    else
+      break;
+#else
+    List.Draw();
+    break;
+#endif
+  }
 }
 
 void highscore::Save(cfestring& File) const
@@ -138,16 +213,20 @@ truth highscore::MergeToFile(highscore* To) const
   for(uint c = 0; c < Score.size(); ++c)
     if(!To->Find(Score[c], Entry[c], Time[c], RandomID[c]))
     {
-      To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
+      To->Add(Score[c], Entry[c], Time[c], RandomID[c], "", "", "");
       MergedSomething = true;
     }
 
   return MergedSomething;
 }
 
-truth highscore::Add(long NewScore, cfestring& NewEntry)
+truth highscore::Add(long NewScore, cfestring& NewEntry,
+                     cfestring& HighScoreServerURL,
+                     cfestring& HighScoreServerUsername,
+                     cfestring& HighScoreServerAuthToken)
 {
-  return Add(NewScore, NewEntry, time(0), RAND());
+  return Add(NewScore, NewEntry, time(0), RAND(), HighScoreServerURL,
+             HighScoreServerUsername, HighScoreServerAuthToken);
 }
 
 /* Because of major stupidity this return the number of NEXT
@@ -183,3 +262,162 @@ truth highscore::CheckVersion() const
 {
   return Version == HIGH_SCORE_VERSION;
 }
+
+#ifdef USE_HIGHSCORE_SERVER
+static void ParseHighScoresFromCSV(cfestring& CSV,
+                                   std::vector<festring>& GlobalEntry,
+                                   std::vector<long>& GlobalScore,
+                                   std::vector<time_t>& GlobalTime)
+{
+  for(festring::sizetype LastIndex = 0;;)
+  {
+    festring::csizetype ScoreIndex = CSV.Find("\n", LastIndex) + 1;
+    if(!ScoreIndex || ScoreIndex == festring::NPos) return;
+    GlobalScore.push_back(atol(CSV.CStr() + ScoreIndex));
+    festring::csizetype EntryIndex = CSV.Find("\"", ScoreIndex) + 1;
+    festring::csizetype EntryLength = CSV.Find("\"", EntryIndex) - EntryIndex;
+    GlobalEntry.push_back(festring(CSV.CStr() + EntryIndex, EntryLength) + '\0');
+    GlobalTime.push_back(0); // TODO
+    LastIndex = EntryIndex + EntryLength;
+  }
+}
+
+static size_t WriteMemoryCallback(char* Contents, size_t Size, size_t Count, void* UserData)
+{
+  const size_t RealSize = Size * Count;
+  *static_cast<festring*>(UserData) << cfestring(Contents, RealSize);
+  return RealSize;
+}
+
+static truth RetrieveHighScoresFromServer(cfestring& HighScoreServerURL,
+                                          std::vector<festring>& GlobalEntry,
+                                          std::vector<long>& GlobalScore,
+                                          std::vector<time_t>& GlobalTime)
+{
+  iosystem::TextScreen(CONST_S("Fetching highscores from the server...\n\n"
+                               "This may take some time, please wait."),
+                       ZERO_V2, WHITE, false, true);
+
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return false;
+
+  truth Success = false;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    festring RetrievedData;
+    festring HighScoreRetrieveURL = HighScoreServerURL + "/highscores";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, HighScoreRetrieveURL.CStr());
+    curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
+    curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
+    curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &RetrievedData);
+    CURLcode Res = curl_easy_perform(Curl);
+    long ResponseCode;
+    curl_easy_getinfo(Curl, CURLINFO_RESPONSE_CODE, &ResponseCode);
+
+    if(Res == CURLE_OK && ResponseCode == 200)
+    {
+      GlobalEntry.clear();
+      GlobalScore.clear();
+      GlobalTime.clear();
+      ParseHighScoresFromCSV(RetrievedData, GlobalEntry, GlobalScore, GlobalTime);
+      Success = true;
+    }
+
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
+  return Success;
+}
+#endif
+
+/* Sends a HTTP request to the specified high-score server to validate the
+   given username and password combination. Returns the user's auth token
+   if authentication was successful, otherwise returns an empty string. */
+
+festring FetchAuthToken(cfestring& HighScoreServerURL,
+                        cfestring& HighScoreServerUsername,
+                        cfestring& HighScoreServerPassword)
+{
+#ifdef USE_HIGHSCORE_SERVER
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return "";
+
+  festring AuthToken;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    festring AuthTokenFetchURL = HighScoreServerURL + "/get_auth_token";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, AuthTokenFetchURL.CStr());
+    curl_easy_setopt(Curl, CURLOPT_HTTPGET, 1);
+    curl_easy_setopt(Curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(Curl, CURLOPT_USERNAME, HighScoreServerUsername.CStr());
+    curl_easy_setopt(Curl, CURLOPT_PASSWORD, HighScoreServerPassword.CStr());
+    curl_easy_setopt(Curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
+    curl_easy_setopt(Curl, CURLOPT_WRITEDATA, &AuthToken);
+    CURLcode Res = curl_easy_perform(Curl);
+    long ResponseCode;
+    curl_easy_getinfo(Curl, CURLINFO_RESPONSE_CODE, &ResponseCode);
+
+    if(Res != CURLE_OK || ResponseCode != 200)
+      AuthToken.Empty();
+
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
+  return AuthToken;
+#else
+  return "";
+#endif
+}
+
+#ifdef USE_HIGHSCORE_SERVER
+
+static void SubmitHighScoreToServer(cfestring& HighScoreServerURL,
+                                    cfestring& HighScoreServerUsername,
+                                    cfestring& HighScoreServerAuthToken,
+                                    long NewScore, cfestring& NewEntry,
+                                    time_t NewTime, long NewRandomID)
+{
+  iosystem::TextScreen(CONST_S("Submitting highscore to the server...\n\n"
+                               "This may take some time, please wait."),
+                       ZERO_V2, WHITE, false, true);
+
+  if(curl_global_init(CURL_GLOBAL_ALL) != 0)
+    return;
+
+  if(CURL* Curl = curl_easy_init())
+  {
+    curl_slist* const Headers = curl_slist_append(nullptr, "Content-Type: application/json");
+
+    festring Json;
+    Json <<
+    "{"
+      "\"username\": \"" << HighScoreServerUsername << "\","
+      "\"auth_token\": \"" << HighScoreServerAuthToken << "\","
+      "\"score\": " << NewScore << ","
+      "\"entry\": \"" << NewEntry << "\","
+      "\"version\": \"" << IVAN_VERSION << "\""
+    "}";
+
+    festring HighScoreSubmitURL = HighScoreServerURL + "/submit_score";
+
+    curl_easy_setopt(Curl, CURLOPT_URL, HighScoreSubmitURL.CStr());
+    curl_easy_setopt(Curl, CURLOPT_POST, 1);
+    curl_easy_setopt(Curl, CURLOPT_HTTPHEADER, Headers);
+    curl_easy_setopt(Curl, CURLOPT_POSTFIELDS, Json.CStr());
+
+    curl_easy_perform(Curl);
+
+    curl_slist_free_all(Headers);
+    curl_easy_cleanup(Curl);
+  }
+
+  curl_global_cleanup();
+}
+
+#endif // USE_HIGHSCORE_SERVER

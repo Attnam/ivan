@@ -214,6 +214,7 @@ inline int GetMinColor24(col24 Color)
 #define LIST_WAS_EMPTY 0xFFFF
 #define ESCAPED 0xFFFE
 #define NOTHING_SELECTED 0xFFFD
+#define UNSELECTABLE_SELECT 0xFFFC
 
 #define NO_LIMIT 0xFFFF
 
