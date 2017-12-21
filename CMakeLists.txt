@@ -6,20 +6,6 @@ set(VERSION_MAJOR 0)
 set(VERSION_MINOR 50)
 set(VERSION_PATCH 9)
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-set(PROJECT_FILE_VERSION ${VERSION_MAJOR}${VERSION_MINOR}${VERSION_PATCH})
-
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo IVAN_FILE_VERSION=${PROJECT_FILE_VERSION} OUTPUT_VARIABLE IVAN_FILE_VERSION)
-
-message(STATUS "Project file version: ${PROJECT_FILE_VERSION}, Ivan file version: ${IVAN_FILE_VERSION}")
-
-if (EXISTS ${PROJECT_SOURCE_DIR}/.git)
-    execute_process(COMMAND
-        git --git-dir=${PROJECT_SOURCE_DIR}/.git rev-parse HEAD
-        OUTPUT_VARIABLE VERSION_COMMIT)
-    string(STRIP ${VERSION_COMMIT} VERSION_COMMIT)
-else ()
-    set(VERSION_COMMIT "unknown")
-endif ()
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
@@ -36,7 +22,7 @@ elseif(WIN32)
   add_definitions(-DWIN32)
 
 if(MINGW)
-    set(CMAKE_EXE_LINKER_FLAGS -mwindows)
+  set(CMAKE_EXE_LINKER_FLAGS -mwindows)
 endif(MINGW)
 
   # This is bad. To remove below defines, FeLib should switch to std::chrono and serialize time since common epoch.
