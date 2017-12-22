@@ -1,7 +1,3 @@
-branch:
-  only:
-    - windows-releases-on-travis
-
 sudo: required
 dist: trusty
 
@@ -11,33 +7,33 @@ matrix:
 
   include:
 
-#    - env: CXXFLAGS= IVAN_PLATFORM=
-#      os: linux
-#      compiler: clang
+    - env: CXXFLAGS= IVAN_PLATFORM=
+      os: linux
+      compiler: clang
 
-#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
-#      os: linux
-#      compiler: clang
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+      os: linux
+      compiler: clang
 
-#    - env: CXXFLAGS= IVAN_PLATFORM=
-#      os: osx
-#      compiler: clang
+    - env: CXXFLAGS= IVAN_PLATFORM=
+      os: osx
+      compiler: clang
 
-#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
-#      os: osx
-#      compiler: clang
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+      os: osx
+      compiler: clang
 
     - env: CXXFLAGS= IVAN_PLATFORM=
       os: linux
       compiler: gcc
 
-#    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
-#      os: linux
-#      compiler: gcc
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+      os: linux
+      compiler: gcc
 
-#    - env: CXXFLAGS= IVAN_PLATFORM=
-#      os: osx
-#      compiler: gcc
+    - env: CXXFLAGS= IVAN_PLATFORM=
+      os: osx
+      compiler: gcc
 
     - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM='IvanWin'
       os: linux
@@ -54,15 +50,10 @@ before_install:
   - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/requirements.sh; fi
   - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/version.sh; fi
 
-#install:
-#  - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then source ./mxe/${IVAN_PLATFORM}/build.sh; fi
-
 script:
   - mkdir build
   - cd build
   - if [[ "$IVAN_PLATFORM" == "IvanWin" ]]; then ../mxe/${IVAN_PLATFORM}/build.sh; else cmake .. -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"; fi
-#  - cmake .. -G "Unix Makefiles"
-#    -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option $CXXFLAGS"
   - make
   - make igor
   - make mihail
@@ -79,6 +70,7 @@ deploy:
   skip_cleanup: true
   on:
     condition: "$IVAN_PLATFORM = IvanWin"
-    branch: windows-releases-on-travis
+    branches: 
+      only:
+        - master
     tags: true
-

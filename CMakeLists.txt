@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.8.12.2)
-set(CMAKE_VERBOSE_MAKEFILE on)
 project(ivan CXX C)
 
 set(VERSION_MAJOR 0)
