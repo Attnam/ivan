@@ -80,5 +80,5 @@ deploy:
   on:
     condition: "$IVAN_PLATFORM = IvanWin"
     branch: windows-releases-on-travis
-#    tags: true
+    tags: true
 
