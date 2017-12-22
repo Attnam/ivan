@@ -1119,7 +1119,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Random HAS_NO_OTERRAIN;
       {
-        Character = golem;
+        Character = golem(BONE);
         Times = 5;
       }
     }
