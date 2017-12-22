@@ -35,6 +35,10 @@ matrix:
       os: osx
       compiler: gcc
 
+    - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM=
+      os: osx
+      compiler: gcc
+
     - env: CXXFLAGS=-DWIZARD IVAN_PLATFORM='IvanWin'
       os: linux
       compiler: gcc
