@@ -6,8 +6,13 @@ set(VERSION_MINOR 50)
 set(VERSION_PATCH 9)
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
+# Increment this if changes make savefiles incompatible
+set(SAVE_FILE_VERSION 130)
+# Increment this if changes make bonefiles incompatible
+set(BONE_FILE_VERSION 116)
+
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
+add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DSAVE_FILE_VERSION="${SAVE_FILE_VERSION}" -DBONE_FILE_VERSION="${BONE_FILE_VERSION}" -DUSE_SDL)
 
 if(UNIX)
   add_definitions(-DUNIX)
