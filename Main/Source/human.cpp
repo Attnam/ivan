@@ -1928,11 +1928,17 @@ int humanoid::GetGlobalResistance(int Type) const
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
 
-  if(GetRightWielded()->IsShield(0))
-    Resistance += GetRightWielded()->GetResistance(Type);
+  if(GetRightWielded())
+  {
+    if(GetRightWielded()->IsShield(this))
+      Resistance += GetRightWielded()->GetResistance(Type);
+  }
 
-  if(GetLeftWielded()->IsShield(0))
-    Resistance += GetLeftWielded()->GetResistance(Type);
+  if(GetLeftWielded())
+  {
+    if(GetLeftWielded()->IsShield(this))
+      Resistance += GetLeftWielded()->GetResistance(Type);
+  }
 
   if(!(Type & PHYSICAL_DAMAGE))
   {
