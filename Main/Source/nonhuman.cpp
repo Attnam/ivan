@@ -2410,10 +2410,10 @@ void mindworm::GetAICommand()
   if(GetConfig() == BOIL && NeighbourEnemy && NeighbourEnemy->IsHumanoid()
     && NeighbourEnemy->HasHead() && !NeighbourEnemy->IsInfectedByMindWorm())
   {
-    TryToImplantLarvae(NeighbourEnemy);
-    return;
+    if(TryToImplantLarvae(NeighbourEnemy));
+      return;
   }
-  if(NearestEnemy && !StateIsActivated(CONFUSED))
+  if(NearestEnemy && !StateIsActivated(CONFUSED) && !(RAND() & 2))
   {
     PsiAttack(NearestEnemy);
     return;
@@ -2422,7 +2422,7 @@ void mindworm::GetAICommand()
   nonhumanoid::GetAICommand();
 }
 
-void mindworm::TryToImplantLarvae(character* Victim)
+truth mindworm::TryToImplantLarvae(character* Victim)
 {
   if(Victim->MindWormCanPenetrateSkull(this))
   {
@@ -2438,9 +2438,13 @@ void mindworm::TryToImplantLarvae(character* Victim)
       ADD_MESSAGE("%s digs through %s's skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
+
     MoveRandomly();
     EditAP(-1000);
+    return true;
   }
+
+  return false;
 }
 
 void mindworm::PsiAttack(character* Victim)
@@ -2451,10 +2455,10 @@ void mindworm::PsiAttack(character* Victim)
   }
   else if(Victim->CanBeSeenByPlayer() && PLAYER->GetAttribute(PERCEPTION) > RAND_N(20))
   {
-    ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s looks pained.", Victim->CHAR_NAME(DEFINITE));
   }
 
-  Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, 8, false, false, false, false);
+  Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
   EditAP(-1000);
   EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);

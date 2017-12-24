@@ -7986,7 +7986,7 @@ mindworm
   IsImmuneToStickiness = true;
   UsesNutrition = false;
   AttackStyle = USE_HEAD;
-  DefaultCommandFlags = FLEE_FROM_ENEMIES;
+  ConstantCommandFlags = FLEE_FROM_ENEMIES;
   ClassStates = ESP;
   FleshMaterial = MIND_WORM_FLESH;
   AttachedGod = SCABIES;
