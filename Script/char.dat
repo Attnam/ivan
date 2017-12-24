@@ -7965,13 +7965,37 @@ siren
 
 mindworm
 {
-  DefaultMana = 5;
+  DefaultArmStrength = 1;
+  DefaultAgility = 12;
+  DefaultEndurance = 2;
+  DefaultPerception = 5;
+  DefaultWisdom = 15;
+  DefaultCharisma = 1;
+  DefaultMana = 30;
+  TotalSize = 7;
+  TotalVolume = 30;
+  TorsoBitmapPos = 208, 32;
+  TorsoMainColor = rgb16(200, 30, 30);
   CanOpen = false;
+  HasALeg = false;
+  HasEyes = false;
+  HasHead = false;
+  CanHear = false;
+  CanChoke = false;
+  Sweats = false;
+  IsImmuneToStickiness = true;
+  UsesNutrition = false;
+  AttackStyle = USE_HEAD;
+  DefaultCommandFlags = FLEE_FROM_ENEMIES;
   ClassStates = ESP;
   FleshMaterial = MIND_WORM_FLESH;
   AttachedGod = SCABIES;
+  BaseBiteStrength = 0;
+  MoveType = WALK|SWIM;
   IsAbstract = true;
-  TorsoMainColor = rgb16(200, 30, 30);
+  CanBeGenerated = true;
+  IgnoreDanger = true;
+  DayRequirementForGeneration = 4;
   FriendlyReplies =
   {
     5,
@@ -7981,21 +8005,32 @@ mindworm
     "\"Learning never exhausts the mind.\"",
     "\"The mind is everything. What you think you become.\"";
   }
+  HostileReplies == "@Dd screeches in the back of your mind.";
+  DeathMessage = "@Dd is squashed.";
+  StandVerb = "writhing";
 
   Config HATCHLING;
   {
-    TotalVolume = 30;
-    TorsoBitmapPos = 208, 32;
-    TotalSize = 7;
+    DefaultIntelligence = 20;
     NameSingular = "mind worm hatchling";
+    Frequency = 500;
+    ScienceTalkPossibility = 25;
+    ScienceTalkIntelligenceModifier = 10;
+    ScienceTalkWisdomModifier = 5;
+    ScienceTalkIntelligenceRequirement = 10;
+    ScienceTalkWisdomRequirement = 5;
   }
 
   Config BOIL;
   {
-    TotalVolume = 30;
-    TorsoBitmapPos = 208, 32;
-    TotalSize = 7;
+    DefaultIntelligence = 35;
     NameSingular = "mind worm boil";
+    Frequency = 1500;
+    ScienceTalkPossibility = 25;
+    ScienceTalkIntelligenceModifier = 100;
+    ScienceTalkWisdomModifier = 50;
+    ScienceTalkIntelligenceRequirement = 35;
+    ScienceTalkWisdomRequirement = 25;
   }
 }
 

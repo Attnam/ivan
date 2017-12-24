@@ -947,8 +947,6 @@ void character::Be()
         }
       }
       audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
-
-
     }
 
     if(Stamina != MaxStamina)
@@ -956,6 +954,9 @@ void character::Be()
 
     if(HP != MaxHP || StateIsActivated(REGENERATION))
       Regenerate();
+
+    if(IsInfectedByMindWorm())
+      MindWormHandler();
 
     if(Action && AP >= 1000)
       ActionAutoTermination();
@@ -10778,6 +10779,50 @@ character* character::GetNearestEnemy() const
 truth character::MindWormCanPenetrateSkull(mindworm*) const
 {
   return false;
+}
+
+truth character::IsInfectedByMindWorm() const
+{
+  if(GetCounterToMindWormHatch() > 0)
+    return true;
+
+  return false;
+}
+
+void character::MindWormHandler()
+{
+  if(GetCounterToMindWormHatch() > 1)
+  {
+    if(!(RAND() % 100))
+    {
+      BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
+
+      if(IsPlayer())
+        ADD_MESSAGE("Your brain hurts!");
+    }
+  }
+  if(GetCounterToMindWormHatch() == 1)
+  {
+    character* Spawned = 0;
+    Spawned = mindworm::Spawn(HATCHLING);
+    Spawned->SetTeam(0);
+    Spawned->PutNear(GetPos());
+    Spawned->SignalGeneration();
+
+    if(IsPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of your skull.", Spawned->CHAR_NAME(INDEFINITE));
+    }
+    else if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
+    }
+
+    ReceiveDamage(0, 1 + RAND_N(5), PHYSICAL_DAMAGE, HEAD, 8, false, false, false, false);
+    CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
+  }
+
+  SetCounterToMindWormHatch(GetCounterToMindWormHatch() - 1);
 }
 
 truth character::CanTameWithDulcis(const character* Tamer) const

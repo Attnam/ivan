@@ -1128,9 +1128,11 @@ class character : public entity, public id
   item* FindMostExpensiveItem() const;
   truth ReceiveSirenSong(character* Siren);
   character* GetNearestEnemy() const;
-  truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
+  truth IsInfectedByMindWorm() const;
   void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
+  int GetCounterToMindWormHatch() const { return CounterToMindWormHatch; }
   truth MindWormCanPenetrateSkull(mindworm*) const;
+  void MindWormHandler();
   truth CanTameWithDulcis(const character*) const;
   truth CanTameWithLyre(const character*) const;
   truth CanTameWithScroll(const character*) const;

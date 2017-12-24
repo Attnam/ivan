@@ -2405,44 +2405,41 @@ void lobhse::CreateCorpse(lsquare* Square)
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
+  character* NearestEnemy = GetNearestEnemy();
 
-  if(NeighbourEnemy && NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead()
-  && !NeighbourEnemy->IsInfectedByMindWorm())
+  if(GetConfig() == BOIL && NeighbourEnemy && NeighbourEnemy->IsHumanoid()
+    && NeighbourEnemy->HasHead() && !NeighbourEnemy->IsInfectedByMindWorm())
   {
     TryToImplantLarvae(NeighbourEnemy);
     return;
   }
-
-  character* NearestEnemy = GetNearestEnemy();
-
-  if(NearestEnemy)
+  if(NearestEnemy && !StateIsActivated(CONFUSED))
   {
     PsiAttack(NearestEnemy);
     return;
   }
 
-  if(MoveRandomly())
-    return;
-
-  EditAP(-1000);
+  nonhumanoid::GetAICommand();
 }
 
 void mindworm::TryToImplantLarvae(character* Victim)
 {
   if(Victim->MindWormCanPenetrateSkull(this))
   {
-    Victim->SetCounterToMindWormHatch(100);
+    Victim->SetCounterToMindWormHatch(1000);
+
     if(Victim->IsPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through your skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     else if(Victim->CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through %s's skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     MoveRandomly();
+    EditAP(-1000);
   }
 }
 
@@ -2457,6 +2454,8 @@ void mindworm::PsiAttack(character* Victim)
     ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
   }
 
-  Victim->ReceiveDamage(this, 1 + RAND_N(5), PSI, ALL, 8, false, false, false, false);
+  Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, 8, false, false, false, false);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
+  EditAP(-1000);
+  EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);
 }

@@ -5988,13 +5988,11 @@ truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
 {
   if(GetHelmet())
   {
-    if(RAND_N(102) > GetHelmet()->GetCoverPercentile())
-    {
-      return RAND_2;
-    }
+    if(RAND_N(100) < GetHelmet()->GetCoverPercentile())
+      return false;
   }
 
-  return RAND_2;
+  return true;
 }
 
 truth humanoid::HasSadistWeapon() const
