@@ -2255,8 +2255,8 @@ shield /* armor-> */
     StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 7, EBONY_WOOD, RATA_WOOD, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 7, 100, 50, 100, 50, 10, 15, 5, 2; }
+    MainMaterialConfig = { 9, EBONY_WOOD, RATA_WOOD, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
+    MaterialConfigChances = { 9, 100, 50, 350, 100, 50, 10, 15, 5, 2; }
     EnchantmentPlusChance = 30;
   }
 
