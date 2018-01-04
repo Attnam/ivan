@@ -1122,6 +1122,11 @@ Dungeon XINROCH_TOMB;
         Character = golem(BONE);
         Times = 5;
       }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == scrollofgolemcreation { Chance = 10; Times = 4; }
+      }
     }
 
     Room
@@ -1257,7 +1262,7 @@ Dungeon XINROCH_TOMB;
         Types
         {
           # = 0;
-          B = bear(MUTANT_BEAR);
+          B = bear(MUTANT_BEAR) { Inventory = { 2, Random { Category = AMULET|RING|WAND|SCROLL; Chance = 75; }, Random { Category = VALUABLE; } } }
           S = skeleton(WARRIOR);
           b = bear(CAVE_BEAR);
           g = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_NECRO_TEAM; }

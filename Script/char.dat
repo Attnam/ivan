@@ -1846,6 +1846,7 @@ ennerchild
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
   IsAbstract = true;
+  Inventory == Random { Category = RING|SCROLL|WAND; }
 
   Config BOY;
   {
@@ -4033,7 +4034,7 @@ zombie
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
-    Inventory == OCTIRON key(HEXAGONAL_LOCK);
+    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 50; }, key(OCTAGONAL_LOCK) { Chance = 50; } }
   }
 
   Config IMPRISONED_ZOMBIE;
@@ -8198,12 +8199,12 @@ bum
   TotalSize = 190;
   NameSingular = "bum";
   KnownCWeaponSkills == UNARMED;
-  CWeaponSkillHits == 50;
-  RightSWeaponSkillHits = 20;
+  CWeaponSkillHits == 500;
+  RightSWeaponSkillHits = 200;
   IsAlcoholic = true;
   CanBeGenerated = false;
-  IgnoreDanger = true; /* too drunk */
-  PanicLevel = 0;
+  IsNameable = false;
+  PanicLevel = 0; /* too drunk */
   FriendlyReplies =
   {
     151, /* rumors, more to come */
