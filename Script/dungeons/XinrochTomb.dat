@@ -1640,24 +1640,38 @@ Dungeon XINROCH_TOMB;
         Times = 20:40;
       }
 
+      Square, Random;
+      {
+        Character = golem(OMMEL_BONE);
+        Times = 2;
+      }
+
+      Square, Random;
+      {
+        Character = golem(OMMEL_TOOTH);
+      }
+
       Square, Pos 1, 0;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 19, 0;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 1, 38;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 19, 38;
       {
         GTerrain = SLATE solidterrain(GROUND);
