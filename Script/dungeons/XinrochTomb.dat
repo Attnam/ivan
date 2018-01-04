@@ -751,7 +751,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 4:6; /* Dwarven gas chambers */
+  RandomLevel 2:4; /* Dwarven gas chambers */
   {
     Room
     {
@@ -812,13 +812,19 @@ Dungeon XINROCH_TOMB;
       Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
-        Times = 12;
+        Times = 8;
       }
 
       Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
-        Times = 8;
+        Times = 6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gastrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 6;
       }
 
       Square, Random HAS_NO_OTERRAIN;
