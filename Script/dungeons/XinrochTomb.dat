@@ -493,7 +493,7 @@ Dungeon XINROCH_TOMB;
       AttachRequired = true;
     }
 
-    Room
+    Room /* Paradise island */
     {
       Size = 14,14;
       AllowLockedDoors = true;
@@ -520,7 +520,7 @@ Dungeon XINROCH_TOMB;
       }
       Square, Pos 7,6;
       {
-        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST|OCTAGONAL_LOCK)
         {
           Parameters = LOCKED;
           ItemsInside = { 3,  Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; },
@@ -545,7 +545,7 @@ Dungeon XINROCH_TOMB;
         {
           # = 0;
           B = GRAVEL earth;
-          t = BALSA_WOOD decoration(PALM);
+          t = BALSA_WOOD decoration(BANANA_TREE);
         }
       }
       {
@@ -687,7 +687,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 2:3;
+  RandomLevel 2:3; /* Zombie room */
   {
     Room
     {
@@ -1002,7 +1002,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 3; /*ice cave*/
+  Level 3; /* Ice cave */
   {
     Rooms = 15:30;
     Size = 64, 36;
