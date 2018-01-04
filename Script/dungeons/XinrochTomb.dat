@@ -889,6 +889,80 @@ Dungeon XINROCH_TOMB;
     }
   }
 
+  RandomLevel 1:4; /* Golem vault */
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+
+      OTerrainMap
+      {
+        Size = 3,3;
+        Pos = 3,3;
+        Types
+        {
+          # = METEORIC_STEEL wall(BRICK_OLD);
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 4,4;
+      {
+        Items == METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { MinPrice = 1250; Times = 2; } }
+        Character = golem(OMMEL_BONE);
+      }
+    }
+  }
+
+  RandomLevel 4:7; /* Cauldron vault */
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = IRON wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == gastrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 3;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == cauldron { SecondaryMaterial = TROLL_BLOOD; }
+      }
+    }
+  }
+
   Level 2;
   {
     Size = 72,36;
