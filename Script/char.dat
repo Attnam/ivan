@@ -1588,16 +1588,21 @@ darkknight
     CWeaponSkillHits == 1000;
     RightSWeaponSkillHits = 500;
     PanicLevel = 5;
+    CriticalModifier = 4;
+    TamingDifficulty = 20;
     TotalVolume = 90000;
     ClothColor = rgb16(80, 20, 20);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
     BootColor = rgb16(128, 128, 128);
+    IsNameable = false;
     IsUnique = true;
     CanBeGenerated = false;
-    HostileReplies == "@Dd exclaims: \"None shall pass.\"";
-    AttachedGod = INFUSCOR;
     UndeadVersions = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    AttachedGod = INFUSCOR;
+    HostileReplies == "@Dd exclaims: \"None shall pass.\"";
   }
 
   Config ELITE;
