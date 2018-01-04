@@ -658,6 +658,14 @@ Dungeon XINROCH_TOMB;
     }
   }
 
+  RandomLevel 1:10;
+  {
+    Square, Random;
+    {
+      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000; Chance = 5; }
+    }
+  }
+
   RandomLevel 1:2; /* Vampire room */
   {
     Room
