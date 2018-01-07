@@ -10801,7 +10801,7 @@ void character::MindWormHandler()
         ADD_MESSAGE("Your brain hurts!");
     }
   }
-  if(GetCounterToMindWormHatch() == 1)
+  else if(GetCounterToMindWormHatch() == 1)
   {
     character* Spawned = 0;
     Spawned = mindworm::Spawn(HATCHLING);

@@ -5984,11 +5984,11 @@ truth siren::TryToSing()
   return Success;
 }
 
-truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
+truth humanoid::MindWormCanPenetrateSkull(mindworm*) const
 {
   if(GetHelmet())
   {
-    if(RAND_N(100) < GetHelmet()->GetCoverPercentile())
+    if(RAND() % 100 < GetHelmet()->GetCoverPercentile())
       return false;
   }
 

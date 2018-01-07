@@ -2407,19 +2407,21 @@ void mindworm::GetAICommand()
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
   character* NearestEnemy = GetNearestEnemy();
 
-  if(GetConfig() == BOIL && NeighbourEnemy && NeighbourEnemy->IsHumanoid()
-    && NeighbourEnemy->HasHead() && !NeighbourEnemy->IsInfectedByMindWorm())
+  if(GetConfig() == BOIL && NeighbourEnemy)
   {
-    if(TryToImplantLarvae(NeighbourEnemy));
-      return;
+    if(NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead() && !NeighbourEnemy->IsInfectedByMindWorm())
+    {
+      if(TryToImplantLarvae(NeighbourEnemy))
+        return;
+    }
   }
-  if(NearestEnemy && !StateIsActivated(CONFUSED) && !(RAND() & 2))
+  else if(NearestEnemy && !StateIsActivated(CONFUSED) && !(RAND() & 2))
   {
     PsiAttack(NearestEnemy);
     return;
   }
-
-  nonhumanoid::GetAICommand();
+  else
+    nonhumanoid::GetAICommand();
 }
 
 truth mindworm::TryToImplantLarvae(character* Victim)
@@ -2460,6 +2462,6 @@ void mindworm::PsiAttack(character* Victim)
 
   Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
-  EditAP(-1000);
+  EditAP(-2000);
   EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);
 }
