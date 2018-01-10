@@ -1089,27 +1089,47 @@ shopkeeper
 
   Config XINROCH_TOMB;
   {
-    NameSingular = "quartermaster";
+    DefaultName = "Pate";
+    NameSingular = "peddler";
     AttributeBonus = 25;
-    Helmet = MITHRIL helmet { Enchantment = 1; }
-    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-    BodyArmor = IRON bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-    Belt = NYMPH_HAIR belt { Enchantment = 1; }
-    RightWielded = RUBY pickaxe { Enchantment = -1; }
-    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
-    RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
-    KnownCWeaponSkills == AXES;
-    CWeaponSkillHits == 1000;
+    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    Belt = IRON belt(BELT_OF_CARRYING) { Enchantment = 1; }
+    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = IRON shield;
+    RightGauntlet = IRON gauntlet { Enchantment = 1; }
+    RightBoot = IRON boot { Enchantment = 1; }
+    KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+    CWeaponSkillHits = { 2, 1000, 1000; }
     RightSWeaponSkillHits = 500;
-    DefaultName = "Fryndal";
-    Inventory == lantern;
+    LeftSWeaponSkillHits = 500;
+    HairColor = rgb16(140, 60, 60); /* horns */
+    ClothColor = rgb16(64, 0, 128);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 32, 128;
+    ArmBitmapPos = 64, 80;
+    LegBitmapPos = 0, 64;
+    Inventory = { 2, lantern, RUBY pickaxe { Enchantment = -1; } }
     UndeadVersions = false;
     FriendlyReplies =
     {
-      3,
-      "\"Normally these provisions are for the consumption of the tomb guards. But I'll allow you some comestibles, for a price of course...\"",
-      "\"The bones on the floor? Heh, sometimes we need to throw something to the monsters.\"",
-      "@Dd smiles: \"A drink at the fountain is free my friend. Just watch out for the residents.\"";
+      10,
+      "\"I used to be a guard in the temple above, but I got tired of the endless waiting for a miracle.\"",
+      "\"The bones on the floor? Heh, you wouldn't believe who dares to call themselves an adventurer these days.\"",
+      "\"Hey, you look reasonably sane! What are you doing in the Tomb? Are you an adventurer or something?\"",
+      "\"Best wares, best prices! Show me anyone who sells for less and I'll gut them and be the cheapest again!\"",
+      "\"Oh, I know what it is. You've come for the trinkets, haven't you? Well, whatever it is... I have it!\"",
+      "\"What wondrous treasures, have I! At a special price for you only. There you are, have a nice look at them!\"",
+      "\"I chop prices, not limbs! Usually, heh heh heh.\"",
+      "\"Fine stuff, eh? Don't forget to thank me, heh heh heh.\"",
+      "\"Have you met Petrus, that high priest? Believe me this one, the man is scum. They're all the same, those rotten priests.\"",
+      "\"Peddling is great - safer and better paid then guarding. Don't try it, though, or I'll have to remove competition.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"I still have friends up in the temple. You won't escape!\"",
+      "\"You'll die and then I'll sell your corpse to the necromancers!\"";
     }
   }
 }

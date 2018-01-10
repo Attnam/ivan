@@ -963,6 +963,61 @@ Dungeon XINROCH_TOMB;
     }
   }
 
+  RandomLevel 2:4; /* Shop */
+  {
+    CanGenerateBone = false;
+
+    Room
+    {
+      Size = 7,7;
+      AltarPossible = false;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      DivineMaster = MELLIS;
+      Type = ROOM_SHOP;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 3, 3;
+      {
+        Character = shopkeeper(XINROCH_TOMB) { Team = XINROCH_TOMB_ENTRY_TEAM; Flags = IS_MASTER; }
+      }
+
+      ItemMap
+      {
+        Pos = 2,2;
+        Size = 3,3;
+        Types
+        {
+          a == Random { MinPrice = 250; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
+          d == Random { MinPrice = 250; Category = RING|AMULET; }
+          w == Random { MinPrice = 500; Category = WEAPON|SHIELD; }
+          e == Random { MinPrice = 10; Category = FOOD|POTION; }
+          u == Random { MinPrice = 200; Category = WAND|TOOL; }
+          v == Random { MinPrice = 500; Category = SCROLL|TOOL; }
+        }
+      }
+      {
+        uvu
+        a.w
+        eed
+      }
+
+      Square, Random;
+      {
+        Items == Random { Chance = 50; }
+        Times = 3;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 3:9;
+      }
+    }
+  }
+
   Level 2;
   {
     Size = 72,36;

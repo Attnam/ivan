@@ -101,6 +101,7 @@ Team BETRAYED_TEAM;
 Team XINROCH_TOMB_ENTRY_TEAM;
 {
   Relation 0, UNCARING;
+  Relation 1, UNCARING;
   KillEvilness = 50;
 }
 
