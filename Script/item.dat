@@ -5473,6 +5473,7 @@ trinket
     BitmapPos = 64, 320;
     FormModifier = 20;
     StrengthModifier = 50;
+    Possibility = 1;
     Adjective = "potted";
     NameSingular = "cactus";
     MainMaterialConfig == MARBLE;
@@ -5491,6 +5492,7 @@ trinket
     BitmapPos = 112, 336;
     FormModifier = 20;
     StrengthModifier = 50;
+    Possibility = 1;
     Adjective = "potted";
     NameSingular = "plant";
     MainMaterialConfig == MARBLE;
@@ -5537,6 +5539,7 @@ trinket
     BitmapPos = 96, 320;
     FormModifier = 25;
     StrengthModifier = 75;
+    Possibility = 2;
     NameSingular = "timepiece";
     MainMaterialConfig == ARCANITE;
     SecondaryMaterialConfig == OAK_WOOD;
@@ -5552,6 +5555,7 @@ trinket
     BitmapPos = 112, 320;
     FormModifier = 25;
     StrengthModifier = 150;
+    Possibility = 1;
     NameSingular = "grandfather clock";
     MainMaterialConfig == ARCANITE;
     SecondaryMaterialConfig == OAK_WOOD;

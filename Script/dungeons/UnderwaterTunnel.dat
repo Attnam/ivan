@@ -126,6 +126,7 @@ Dungeon UNDER_WATER_TUNNEL;
     {
       WallSquare = solidterrain(GROUND), 0;
       FloorSquare = solidterrain(GROUND), 0;
+      DoorSquare = solidterrain(GROUND), 0;
       GenerateLanterns = false;
       GenerateFountains = false;
       GenerateDoor = false;
@@ -139,7 +140,7 @@ Dungeon UNDER_WATER_TUNNEL;
         Size = 3,3;
         Types
         {
-          # = SAND_STONE earth;;
+          # = SAND_STONE earth;
         }
       }
       {
