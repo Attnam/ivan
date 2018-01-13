@@ -1295,7 +1295,7 @@ Dungeon ATTNAM;
 
       Square, Pos 2,2;
       {
-        Items == EBONY_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside = { 2, Random { Category = TOOL; }, Random { Chance = 50; MinPrice = 250; Times = 2; Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT; } } }
+        Items == EBONY_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 150; Category = TOOL; }, Random { Chance = 75; MinPrice = 250; Times = 2; Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT; } } }
         Character = vampire;
       }
     }

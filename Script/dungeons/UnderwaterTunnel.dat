@@ -153,6 +153,19 @@ Dungeon UNDER_WATER_TUNNEL;
       {
         Items == RATA_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|GAUNTLET|BELT|BOOT; MinPrice = 100; Times = 3; Chance = 75; } }
       }
+
+      Square, Pos 0,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,4;
+      {
+        AttachRequired = true;
+      }
     }
   }
 
