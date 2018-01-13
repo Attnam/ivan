@@ -1722,15 +1722,17 @@ darkknight
     Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
     Amulet = amulet(AMULET_OF_LIFE_SAVING);
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
-    Cloak = DRAGON_HIDE cloak { Enchantment = 4; }
-    Belt = RUBY belt { Enchantment = 4; }
+    Cloak = DRAGON_HIDE cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 4; }
+    Belt = RUBY belt(BELT_OF_REGENERATION) { Enchantment = 4; }
     LeftWielded = RUBY RUBY flamingsword(LOST_RUBY_FLAMING_SWORD);
+    RightRing = ring(RING_OF_INFRA_VISION);
     LeftRing = ring(RING_OF_TELEPORT_CONTROL);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
     RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
     NameSingular = "Old Chaos Flame";
-    KnownCWeaponSkills = { 2, LARGE_SWORDS, KICK; }
-    CWeaponSkillHits = { 2, 5000, 2000; }
+    KnownCWeaponSkills = { 5, LARGE_SWORDS, SHIELDS, UNARMED, KICK, BITE; }
+    CWeaponSkillHits = { 5, 5000, 2000, 2000, 2000, 2000; }
+    RightSWeaponSkillHits = 2000;
     LeftSWeaponSkillHits = 2000;
     BaseKickStrength = 2500;
     PanicLevel = 0;
@@ -1742,7 +1744,7 @@ darkknight
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
-    HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
+    HostileReplies == "@Dd yells: \"I have returned!\"";
     DeathMessage = "@Dd dies with a chuckle: \"Don't worry, I'll be right back.\"";
     CanBeConfused = false;
     FireResistance = 30;
@@ -1757,7 +1759,7 @@ darkknight
     AttachedGod = INFUSCOR;
     BodyPartsDisappearWhenSevered = true;
     CanBeGenerated = false;
-    ClassStates = HASTE|GAS_IMMUNITY;
+    ClassStates = HASTE;
   }
 }
 
@@ -4165,55 +4167,62 @@ xinrochghost
   TorsoBitmapPos = 48, 80;
   HairColor = rgb16(180, 0, 32);
   EyeColor = rgb16(200, 0, 0);
-  Inventory == cloak(CLOAK_OF_SHADOWS);
-  RightWielded = METEORIC_STEEL EBONY_WOOD meleeweapon(LONG_SWORD);
-  KnownCWeaponSkills == LARGE_SWORDS;
-  CWeaponSkillHits == 200;
-  RightSWeaponSkillHits = 200;
-  Frequency = 0;
+  BaseEmitation = rgb24(110, 110, 160);
+  NameSingular = "ghost";
+  PostFix = "of Xinroch";
+  Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+  BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+  RightWielded = METEORIC_STEEL EBONY_WOOD meleeweapon(LONG_SWORD) { Enchantment = 2; }
+  LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
+  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  LeftRing = ring(RING_OF_INVISIBILITY);
+  RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+  RightBoot = METEORIC_STEEL boot { Enchantment = 2; }
+  KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+  CWeaponSkillHits = { 2, 1000, 1000; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 500;
+  PanicLevel = 0;
+  CanBeWished = true;
+  DangerModifier = 800;
+  FireResistance = 30;
+  ElectricityResistance = 30;
+  EnergyResistance = 30;
+  DisplacePriority = 8;
   TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   CanRead = true;
-  PanicLevel = 0;
-  CanBeWished = true;
-  DangerModifier = 800;
   CanBeCloned = false;
   IsPolymorphable = false;
   CanBeConfused = false;
-  FireResistance = 30;
-  ElectricityResistance = 30;
-  EnergyResistance = 30;
   IsImmuneToItemTeleport = true;
   AllowUnconsciousness = false;
-  DisplacePriority = 8;
   IsImmuneToWhipOfThievery = true;
   CreateUndeadConfigurations = false;
   CanBeGenerated = false;
-  CanBeGeneratedOnlyInTheCatacombs = false;
-  IsCatacombCreature = false;
+  CanBeGeneratedOnlyInTheCatacombs = true;
+  IsCatacombCreature = true;
   UndeadVersions = false;
   IsAbstract = false;
   CanUseEquipment = true;
-  StandVerb = "hovering";
-  NameSingular = "ghost";
-  PostFix = "of Xinroch";
-  AttachedGod = INFUSCOR;
-  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION|TELEPORT_CONTROL;
-  BaseEmitation = rgb24(110, 110, 160);
-  HostileReplies == "\"Who dares disturb my eternal slumber?\"";
-  FriendlyReplies == "\"Boo!\"";
-  DeathMessage = "@Dd is finally sucked into hell, leaving a shimmering cowl behind on the floor.";
-  ArticleMode = FORCE_THE;
-  FleshMaterial = GHOST;
   SpillsBlood = false;
   Sweats = false;
   UsesNutrition = false;
   BodyPartsDisappearWhenSevered = true;
-  MoveType = ETHEREAL;
   CanChoke = false;
   IsImmuneToStickiness = true;
   BiteCapturesBodyPart = false;
+  ArticleMode = FORCE_THE;
+  FleshMaterial = GHOST;
+  MoveType = ETHEREAL;
+  AttachedGod = INFUSCOR;
+  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
+  StandVerb = "hovering";
+  HostileReplies == "\"Who dares disturb my eternal slumber?\"";
+  FriendlyReplies == "\"Boo!\"";
+  DeathMessage = "@Dd is finally sucked into hell, leaving a shimmering cowl behind on the floor.";
+  Inventory == cloak(CLOAK_OF_SHADOWS);
 }
 
 imp

@@ -4152,6 +4152,8 @@ flamingsword /* meleeweapon-> */
     BaseEnchantment = 13;
     CanBeEnchanted = true;
     ArticleMode = FORCE_THE;
+    DamageFlags = SLASH|PIERCE;
+    GearStates = GAS_IMMUNITY|DISEASE_IMMUNITY;
   }
 }
 
