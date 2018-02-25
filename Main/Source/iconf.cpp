@@ -87,6 +87,7 @@ truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           &FullScreenModeChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
+truthoption ivanconfig::PlaySounds("PlaySounds", "use sounds", true);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
@@ -321,6 +322,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
+  configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
 
   std::vector<std::string> DeviceNames;
