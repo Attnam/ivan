@@ -6,8 +6,8 @@ MXE_DIR=/usr/lib/mxe
 
 if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
     MXE_TARGET=i686-w64-mingw32.static
-    SDL2_PKGCONFIG_CFLAGS=$(/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --cflags sdl2)
-    SDL2_PKGCONFIG_LFLAGS=$(/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --libs --static sdl2)
+    SDL2_PKGCONFIG_CFLAGS=$(/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --cflags sdl2 sdl2_mixer)
+    SDL2_PKGCONFIG_LFLAGS=$(/usr/lib/mxe/usr/bin/i686-w64-mingw32.static-pkg-config --libs --static sdl2 sdl2_mixer)
     SDL2_PKGCONFIG_LFLAGS2=$(echo "$SDL2_PKGCONFIG_LFLAGS"| awk '{$1=$1};1')
 fi
 

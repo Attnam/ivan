@@ -29,4 +29,8 @@ sudo apt-get --yes install \
 sudo apt-get --yes install \
     mxe-i686-w64-mingw32.static-SDL2
 
+# MXE doesn't have SDL2-mixer
+sudo apt-get --yes install \
+    mxe-i686-w64-mingw32.static-SDL2-mixer
+
 set +xue
