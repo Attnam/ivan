@@ -87,7 +87,7 @@ blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
 .*miss.*
 miss.wav miss2.wav miss3.wav miss4.wav miss5.wav
 .*bite.*
-eat.wav
+eat.wav eatWell.wav
 .*mesmerizing sound.*
 harp.wav
 .*highly alluring sound.*
@@ -102,10 +102,20 @@ horn.wav
 dooropen.wav
 .*opens the door.*
 dooropen.wav
+.*door opens.*
+dooropen.wav
 .*close the door.*
 doorclose.wav
 .*closes the door.*
 doorclose.wav
+.*door resists.*
+doorResists1.wav doorResists2.wav doorResists3.wav doorResists4.wav
+.*door is locked.*
+doorResists1.wav doorResists2.wav doorResists3.wav doorResists4.wav
+.*lock breaks.*
+lockbreaks.wav
+.*lock shatters.*
+lockbreaks.wav
 .*tortured hyena.*
 hyena.wav
 .*slain.*again.*
