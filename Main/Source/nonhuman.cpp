@@ -491,7 +491,7 @@ int nonhumanoid::DrawStats(truth AnimationDraw) const
   if(AnimationDraw)
     return 3;
 
-  int PanelPosX = RES.X - 96, PanelPosY = 3;
+  int PanelPosX = RES.X - 96 - 340, PanelPosY = 3; //340 is about 1/2 of the X area of the drawed dungeon in pixels
   PrintAttribute("Str", ARM_STRENGTH, PanelPosX, PanelPosY++);
   PrintAttribute("Agi", AGILITY, PanelPosX, PanelPosY++);
   return PanelPosY;

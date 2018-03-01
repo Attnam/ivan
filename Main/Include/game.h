@@ -256,8 +256,8 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
-  static int GetScreenXSize() { return 42; }
-  static int GetScreenYSize() { return 26; }
+  static int GetScreenXSize() { return 21; }
+  static int GetScreenYSize() { return 13; }
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);

@@ -4650,7 +4650,7 @@ void character::DrawPanel(truth AnimationDraw) const
                          v2(game::GetScreenXSize() << 4, 9));
   FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
-  int PanelPosX = RES.X - 96;
+  int PanelPosX = RES.X - 96 - 340; //340 is about 1/2 of the X area of the drawed dungeon in pixels
   int PanelPosY = DrawStats(false);
   PrintAttribute("End", ENDURANCE, PanelPosX, PanelPosY++);
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
