@@ -13,11 +13,11 @@ add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 if(UNIX)
   add_definitions(-DUNIX)
   include(GNUInstallDirs)
-  install(DIRECTORY Graphics Script Music DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
+  install(DIRECTORY Graphics Script Music Sound DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
   add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
                   -DLOCAL_STATE_DIR="${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
 elseif(WIN32)
-  install(DIRECTORY Graphics Script Music DESTINATION "ivan")
+  install(DIRECTORY Graphics Script Music Sound DESTINATION "ivan")
   install(FILES AUTHORS COPYING INSTALL LICENSING NEWS README README.md DESTINATION "ivan")
   add_definitions(-DWIN32)
 

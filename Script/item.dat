@@ -2234,12 +2234,12 @@ shield /* armor-> */
   Possibility = 250;
   Category = SHIELD;
   DefaultMainVolume = 350;
-  StrengthModifier = 150;
+  StrengthModifier = 100;
   BitmapPos = 32, 336;
   FormModifier = 15;
   NameSingular = "shield";
-  MainMaterialConfig = { 14, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-  MaterialConfigChances = { 14, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25, 10, 5; }
+  MainMaterialConfig = { 23, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, UNICORN_HORN, HARDENED_LEATHER, TROLL_HIDE, OBSIDIAN, JASPER, LEAD, SILVER, GOLD, BONE; }
+  MaterialConfigChances = { 23, 350, 300, 250, 200, 150, 100, 400, 300, 200, 100, 25, 15, 10, 5, 10, 250, 200, 50, 50, 100, 20, 20, 150; }
   Roundness = 95;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
@@ -2252,10 +2252,11 @@ shield /* armor-> */
     Possibility = 25;
     DefaultSize = 40;
     FormModifier = 20;
+    StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 7, EBONY_WOOD, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 7, 100, 150, 25, 10, 25, 5, 5; }
+    MainMaterialConfig = { 9, EBONY_WOOD, RATA_WOOD, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
+    MaterialConfigChances = { 9, 100, 50, 350, 100, 50, 10, 15, 5, 2; }
     EnchantmentPlusChance = 30;
   }
 
@@ -2267,6 +2268,7 @@ shield /* armor-> */
     MainMaterialConfig == PHOENIX_FEATHER;
     Alias == "Shield of the Phoenix";
     EnchantmentPlusChance = 2;
+    StrengthModifier = 150;
     GearStates = LIFE_SAVED;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
@@ -2283,6 +2285,7 @@ shield /* armor-> */
     Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
+    StrengthModifier = 75;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 5;
@@ -2296,6 +2299,7 @@ shield /* armor-> */
     PostFix = "named Aegis";
     MainMaterialConfig == ARCANITE;
     Roundness = 105;
+    StrengthModifier = 125;
     Alias == "Aegis";
     CanBeBroken = false;
     EnergyResistance = 15;
@@ -5002,9 +5006,9 @@ acidshield /* armor ->*/
   Possibility = 5;
   Category = SHIELD;
   DefaultMainVolume = 350;
-  StrengthModifier = 150;
+  StrengthModifier = 100;
   FormModifier = 15;
-  MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE; }
+  MainMaterialConfig = { 5, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, ARCANITE; }
   MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }
   EnchantmentPlusChance = 0;
   AcidResistance = 1;
@@ -5021,9 +5025,10 @@ acidshield /* armor ->*/
     Possibility = 3;
     DefaultSize = 45;
     FormModifier = 20;
+    StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE, MITHRIL; }
+    MainMaterialConfig = { 6, METEORIC_STEEL, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL, ARCANITE, MITHRIL; }
     MaterialConfigChances = { 6, 150, 250, 200, 60, 40, 20; }
     EnchantmentPlusChance = 1;
   }

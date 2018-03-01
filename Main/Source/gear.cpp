@@ -650,10 +650,8 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, " << GetBaseBlockValueDescription();
-
-    if(!IsBroken())
-      Entry << ", " << GetStrengthValueDescription();
+    Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue();
+    Entry << ", " << GetBaseBlockValueDescription();
 
     int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
     int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
