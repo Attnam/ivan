@@ -256,8 +256,12 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
-  static int GetScreenXSize() { return 21; }
-  static int GetScreenYSize() { return 13; }
+//  static int GetScreenXSize() { return 42; }
+//  static int GetScreenXSize() { return 21; } //half of visible dungeon area in X
+//  static int GetScreenXSize() { return 36; } // -6 from max to fit some text there
+  static int GetScreenXSize() { return 28; } // -14 from max to fit some text there in 16:9 monitor zoom
+//  static int GetScreenYSize() { return 26; }
+  static int GetScreenYSize() { return 13; } //half of visible dungeon area in Y
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);
