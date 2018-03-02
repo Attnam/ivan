@@ -7339,7 +7339,7 @@ void character::ParasitizedHandler()
     if(IsPlayer())
       ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
-    ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
+    ReceiveDamage(0, 1, DRAIN, TORSO, 8, false, false, false, false); // Use DRAIN here so that resistances do not apply.
     CheckDeath(CONST_S("killed by a vile parasite"), 0);
   }
 }
@@ -10865,13 +10865,14 @@ void character::MindwormedHandler()
 {
   if(!(RAND() % 200))
   {
-    BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
-
     if(IsPlayer())
       ADD_MESSAGE("Your brain hurts!");
+
+    BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
     return;
   }
 
+  // Multiple mind worm hatchlings can hatch, because multiple eggs could have been implanted.
   if(!(RAND() % 500))
   {
     character* Spawned = mindworm::Spawn(HATCHLING);
@@ -10895,7 +10896,7 @@ void character::MindwormedHandler()
       ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
     }
 
-    ReceiveDamage(0, 1 + RAND_N(5), PHYSICAL_DAMAGE, HEAD, 8, false, false, false, false);
+    ReceiveDamage(0, 1 + RAND_N(5), DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
     CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
   }
 }
