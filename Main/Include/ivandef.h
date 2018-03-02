@@ -122,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 30
+#define STATES 32
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -153,7 +153,10 @@ const name##prototype name::ProtoType
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
 #define TELEPORT_LOCK (1 << 28)
-#define PARASITE_MIND_WORM (1 << 29)
+#define FEARLESS (1 << 29)
+#define FASTING (1 << 30)
+#define PARASITE_MIND_WORM (1 << 31)
+
 
 #define TORSO 1
 #define HEAD 2
@@ -587,7 +590,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define HIT 1
 #define CATCHED 2
 
-#define BEAM_EFFECTS 13
+#define BEAM_EFFECTS 15
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -602,6 +605,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define BEAM_DOOR_CREATION 10
 #define BEAM_ACID_RAIN 11
 #define BEAM_NECROMANCY 12
+#define BEAM_WEBBING 13
+#define BEAM_ALCHEMY 14
 
 #define BEAM_STYLES 3
 

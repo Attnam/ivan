@@ -265,6 +265,19 @@ void stack::Polymorph(character* Polymorpher)
       break;
 }
 
+void stack::Alchemize(character* Midas)
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+  int p = 0;
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Exists()
+       && ItemVector[c]->Alchemize(Midas, this)
+       && ++p == 5)
+      break;
+}
+
 void stack::CheckForStepOnEffect(character* Stepper)
 {
   itemvector ItemVector;

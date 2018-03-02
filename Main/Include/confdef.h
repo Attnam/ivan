@@ -225,6 +225,13 @@
 #define SCYTHE 14
 #define QUARTER_STAFF 15
 #define HAMMER 16
+#define GRAND_STOLLEN_KNIFE 17
+#define MAGE_STAFF 18
+#define ROLLING_PIN 19
+#define FRYING_PAN 20
+#define CLAW 21
+#define MEAT_CLEAVER 22
+#define RUNE_SWORD 23
 
 #define PUPPY_SKULL 1
 
@@ -253,6 +260,8 @@
 #define WAND_OF_ACID_RAIN 12
 #define WAND_OF_MIRRORING 13
 #define WAND_OF_NECROMANCY 14
+#define WAND_OF_WEBBING 15
+#define WAND_OF_ALCHEMY 16
 
 #define RUNED_WHIP 1
 
@@ -306,6 +315,18 @@
 #define BRAVERY 1
 #define FEAR 2
 #define CONFUSION 3
+#define HEALING 4
+#define PLENTY 5
+
+#define POTTED_CACTUS 1
+#define POTTED_PLANT 2
+#define DEAD_FISH 3
+#define BONE_FISH 4
+#define SMALL_CLOCK 5
+#define LARGE_CLOCK 6
+
+#define IMPRISONED_FARMER 1
+#define CULTIST 2
 
 #define ROOKIE 1
 #define VETERAN 2

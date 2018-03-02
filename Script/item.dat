@@ -347,6 +347,7 @@ meleeweapon
     CanBePiled = false;
     AttachedGod = ATAVUS;
     WieldedBitmapPos = 176, 112;
+    Price = 250;
     DamageFlags = SLASH|BLUNT;
   }
 
@@ -792,7 +793,7 @@ meleeweapon
     Alias == "Y'yter Durr";
     MainMaterialConfig == OCTIRON;
     SecondaryMaterialConfig == GREEN_CRYSTAL;
-    Roundness = 15;
+    Roundness = 20;
     IsTwoHanded = true;
     AttachedGod = SCABIES;
     WieldedBitmapPos = 160, 304;
@@ -810,7 +811,7 @@ meleeweapon
 
   Config BROKEN|MAGE_STAFF;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     GearStates = 0;
@@ -820,7 +821,7 @@ meleeweapon
   Config ROLLING_PIN;
   {
     DefaultSize = 45;
-    Possibility = 1;
+    Possibility = 10;
     WeaponCategory = BLUNT_WEAPONS;
     DefaultMainVolume = 650; /* roller */
     DefaultSecondaryVolume = 150; /* handle */
@@ -839,8 +840,8 @@ meleeweapon
 
   Config BROKEN|ROLLING_PIN;
   {
-    Possibility = 0;
-    BitmapPos = 80, 112;
+    Possibility = 5;
+    BitmapPos = 96, 208;
     WieldedBitmapPos = 160, 352;
     EnchantmentPlusChance = 30;
   }
@@ -848,7 +849,7 @@ meleeweapon
   Config FRYING_PAN;
   {
     DefaultSize = 60;
-    Possibility = 1;
+    Possibility = 10;
     WeaponCategory = BLUNT_WEAPONS;
     DefaultMainVolume = 300; /* pan */
     DefaultSecondaryVolume = 100; /* handle */
@@ -868,10 +869,109 @@ meleeweapon
 
   Config BROKEN|FRYING_PAN;
   {
-    Possibility = 0;
-    BitmapPos = 80, 96;
+    Possibility = 5;
+    BitmapPos = 96, 192;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 30;
+  }
+
+  Config CLAW;
+  {
+    DefaultSize = 40;
+    Possibility = 5;
+    WeaponCategory = UNARMED;
+    DefaultMainVolume = 35;
+    DefaultSecondaryVolume = 20;
+    BitmapPos = 64, 352;
+    FormModifier = 75;
+    StrengthModifier = 50;
+    NameSingular = "beast claw";
+    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE; }
+    SecondaryMaterialConfig == LEATHER;
+    MaterialConfigChances = { 5, 1000, 100, 25, 25, 5; }
+    Roundness = 15;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 112;
+    EnchantmentPlusChance = 15;
+    HandleInPairs = true;
+    CanBePiled = true;
+    DamageFlags = SLASH|PIERCE;
+  }
+
+  Config BROKEN|CLAW;
+  {
+    Possibility = 5;
+    BitmapPos = 80, 352;
+    WieldedBitmapPos = 160, 112;
+    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH, ADAMANT; }
+    SecondaryMaterialConfig == LEATHER;
+    MaterialConfigChances = { 5, 250, 25, 25, 5, 1; }
+    EnchantmentPlusChance = 20;
+  }
+
+  Config MEAT_CLEAVER;
+  {
+    DefaultSize = 50;
+    Possibility = 5;
+    WeaponCategory = SMALL_SWORDS;
+    DefaultMainVolume = 100;
+    DefaultSecondaryVolume = 30;
+    BitmapPos = 64, 144;
+    FormModifier = 80;
+    StrengthModifier = 95;
+    NameSingular = "cleaver";
+    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ILLITHIUM; }
+    SecondaryMaterialConfig == OAK_WOOD;
+    MaterialConfigChances = { 7, 1250, 1000, 750, 100, 25, 15, 10; }
+    Roundness = 15;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 32;
+    EnchantmentPlusChance = 15;
+    DamageFlags = SLASH;
+  }
+
+  Config BROKEN|MEAT_CLEAVER;
+  {
+    Possibility = 10;
+    BitmapPos = 64, 176;
+    WieldedBitmapPos = 176, 208;
+    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    EnchantmentPlusChance = 30;
+  }
+
+  Config RUNE_SWORD;
+  {
+    DefaultSize = 120;
+    Possibility = 2;
+    WeaponCategory = LARGE_SWORDS;
+    DefaultMainVolume = 130;
+    DefaultSecondaryVolume = 45;
+    BitmapPos = 16, 336;
+    FormModifier = 30;
+    StrengthModifier = 0;
+    NameSingular = "rune sword";
+    MainMaterialConfig == OBSIDIAN;
+    SecondaryMaterialConfig == GOLD;
+    Roundness = 10;
+    AttachedGod = CRUENTUS;
+    WieldedBitmapPos = 160, 16;
+    EnchantmentPlusChance = 5;
+    DamageFlags = SLASH|PIERCE;
+    PriceIsProportionalToEnchantment = true;
+    IsMaterialChangeable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    Alias == "runesword";
+    Price = 500;
+  }
+
+  Config BROKEN|RUNE_SWORD;
+  {
+    Possibility = 3;
+    BitmapPos = 32, 208;
+    WieldedBitmapPos = 176, 80;
+    EnchantmentPlusChance = 20;
   }
 }
 
@@ -1067,6 +1167,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 2000;
     BitmapPos = 16, 96;
     NameSingular = "chain mail";
+    FlexibleNameSingular = "jacket";
     MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 8, 450, 300, 150, 25, 20, 25, 10, 5; }
     InElasticityPenaltyModifier = 10;
@@ -1181,6 +1282,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 5000;
     BitmapPos = 80, 176;
     Possibility = 1;
+    Price = 250;
     NameSingular = "ommel bristler armor";
     AttachedGod = ATAVUS;
     ArticleMode = FORCE_THE;
@@ -1353,7 +1455,6 @@ scrollofbodyswitch /* scroll-> */
   Possibility = 2;
   Price = 3000;
   PostFix = "of body switch";
-  CanBeWished = false;
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
   AttachedGod = INFUSCOR;
@@ -1745,6 +1846,36 @@ wand
     BreakMsg = "emits a gross of unholy rays and self-obliterates";
     Alias = { 2, "necromancy", "undeath"; }
   }
+
+  Config WAND_OF_WEBBING;
+  {
+    Possibility = 40;
+    Price = 500;
+    PostFix = "of webbing";
+    MainMaterialConfig == SPIDER_SILK;
+    BeamRange = 5;
+    MinCharges = 3;
+    MaxCharges = 6;
+    BeamColor = WHITE;
+    BeamEffect = BEAM_WEBBING;
+    AttachedGod = SCABIES;
+    BreakMsg = "breaks, sending strands of spider silk everywhere";
+  }
+
+  Config WAND_OF_ALCHEMY;
+  {
+    Possibility = 20;
+    Price = 500;
+    PostFix = "of alchemy";
+    MainMaterialConfig == LEAD;
+    BeamRange = 5;
+    MinCharges = 2;
+    MaxCharges = 5;
+    BeamColor = YELLOW;
+    BeamEffect = BEAM_ALCHEMY;
+    AttachedGod = MELLIS;
+    BreakMsg = "explodes in a puff of golden dust";
+  }
 }
 
 scrollofchangematerial /* scroll-> */
@@ -1920,7 +2051,7 @@ backpack /* materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 144;
-  CloakBitmapPos = 80, 288;
+  CloakBitmapPos = 80, 290;
   IsKamikazeWeapon = true;
 }
 
@@ -2041,7 +2172,7 @@ mine /*materialcontainer-> */
   StrengthModifier = 50;
   BitmapPos = 32, 288;
   FormModifier = 10;
-  NameSingular = "mine";
+  NameSingular = "land mine";
   MainMaterialConfig == IRON;
   SecondaryMaterialConfig == GUN_POWDER;
   Roundness = 100;
@@ -2103,12 +2234,12 @@ shield /* armor-> */
   Possibility = 250;
   Category = SHIELD;
   DefaultMainVolume = 350;
-  StrengthModifier = 150;
+  StrengthModifier = 100;
   BitmapPos = 32, 336;
   FormModifier = 15;
   NameSingular = "shield";
-  MainMaterialConfig = { 14, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-  MaterialConfigChances = { 14, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25, 10, 5; }
+  MainMaterialConfig = { 23, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, UNICORN_HORN, HARDENED_LEATHER, TROLL_HIDE, OBSIDIAN, JASPER, LEAD, SILVER, GOLD, BONE; }
+  MaterialConfigChances = { 23, 350, 300, 250, 200, 150, 100, 400, 300, 200, 100, 25, 15, 10, 5, 10, 250, 200, 50, 50, 100, 20, 20, 150; }
   Roundness = 95;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
@@ -2121,10 +2252,11 @@ shield /* armor-> */
     Possibility = 25;
     DefaultSize = 40;
     FormModifier = 20;
+    StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 7, EBONY_WOOD, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 7, 100, 150, 25, 10, 25, 5, 5; }
+    MainMaterialConfig = { 9, EBONY_WOOD, RATA_WOOD, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
+    MaterialConfigChances = { 9, 100, 50, 350, 100, 50, 10, 15, 5, 2; }
     EnchantmentPlusChance = 30;
   }
 
@@ -2136,6 +2268,7 @@ shield /* armor-> */
     MainMaterialConfig == PHOENIX_FEATHER;
     Alias == "Shield of the Phoenix";
     EnchantmentPlusChance = 2;
+    StrengthModifier = 150;
     GearStates = LIFE_SAVED;
     ArticleMode = FORCE_THE;
     CanBeWished = false;
@@ -2144,13 +2277,15 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 2500;
   }
 
   Config BROKEN|PHOENIX_SHIELD;
   {
-    Possibility = 2;
+    Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
+    StrengthModifier = 75;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
     EnchantmentPlusChance = 5;
@@ -2164,6 +2299,7 @@ shield /* armor-> */
     PostFix = "named Aegis";
     MainMaterialConfig == ARCANITE;
     Roundness = 105;
+    StrengthModifier = 125;
     Alias == "Aegis";
     CanBeBroken = false;
     EnergyResistance = 15;
@@ -2179,6 +2315,7 @@ shield /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 1000;
   }
 }
 
@@ -2341,6 +2478,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 1000;
   }
 
   Config BROKEN|CLOAK_OF_WEREWOLF;
@@ -2371,6 +2509,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 750;
   }
 
   Config BROKEN|CLOAK_OF_ORCS;
@@ -2467,6 +2606,7 @@ cloak /* armor-> */
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    Price = 1000;
   }
 
   Config BROKEN|CLOAK_OF_VAMPIRE;
@@ -3013,7 +3153,7 @@ ring
 
   Config RING_OF_MAGIC_RESISTANCE;
   {
-    Possibility = 0;
+    Possibility = 2;
     EnergyResistance = 15;
     PostFix = "of magic resistance";
     MainMaterialConfig == OCTIRON;
@@ -3023,7 +3163,7 @@ ring
 
   Config RING_OF_DETECTION;
   {
-    Possibility = 10;
+    Possibility = 5;
     PostFix = "of detection";
     MainMaterialConfig == OBSIDIAN;
     Price = 500;
@@ -3066,6 +3206,17 @@ ring
     CanBeBurned = false;
     CanBePiled = false;
     Alias == "worm ring";
+  }
+
+  Config RING_OF_BRAVERY;
+  {
+    Possibility = 15;
+    PostFix = "of bravery";
+    MainMaterialConfig == STEEL;
+    Price = 250;
+    AttachedGod = CRUENTUS;
+    GearStates = FEARLESS;
+    Alias == "ring of fearlessness";
   }
 }
 
@@ -3488,7 +3639,6 @@ itemcontainer
 
 beartrap
 {
-  MainMaterialConfig == IRON;
   NameSingular = "bear trap";
   Possibility = 100;
   /* Program overrides BitmapPos always */
@@ -3850,7 +4000,7 @@ helmet
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
     BaseEnchantment = 1;
-    Price = 500;
+    Price = 1000;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SOPHOS;
     CoverPercentile = 90;
@@ -3862,7 +4012,7 @@ helmet
   Config BROKEN|HELM_OF_ENLIGHTENMENT;
   {
     BitmapPos = 64, 32;
-    Possibility = 2;
+    Possibility = 1;
     Price = 100;
     AffectsPerception = false;
     GearStates = 0;
@@ -3901,6 +4051,31 @@ helmet
     HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
+
+  Config MASK;
+  {
+    DefaultSize = 25;
+    DefaultMainVolume = 100;
+    StrengthModifier = 90;
+    FormModifier = 10;
+    BitmapPos = 80, 208;
+    Possibility = 10;
+    NameSingular = "mask";
+    MainMaterialConfig = { 15, HARDENED_LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
+    MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
+    CoverPercentile = 30;
+    HelmetBitmapPos = 112, 129;
+    EnchantmentPlusChance = 30;
+  }
+
+  Config BROKEN|MASK;
+  {
+    BitmapPos = 80, 224;
+    Possibility = 3;
+    MainMaterialConfig = { 16, DRAGON_HIDE, UNICORN_HORN, STEEL, ARCANITE, MITHRIL, ILLITHIUM, OCTIRON, ADAMANT, RATA_WOOD, SIDGURE_WOOD, OMMEL_TOOTH, GOLD, SAPPHIRE, RUBY, BLUE_CRYSTAL, SUN_CRYSTAL; }
+    MaterialConfigChances = { 16, 250, 100, 500, 250, 200, 100, 50, 10, 250, 100, 10, 5, 5, 5, 10, 5; }
+    EnchantmentPlusChance = 40;
+  }
 }
 
 stethoscope
@@ -3925,7 +4100,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -3948,7 +4123,7 @@ flamingsword /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 10;
+    Possibility = 5;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
@@ -4017,7 +4192,7 @@ mjolak /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 32, 144;
     Price = 150;
     WieldedBitmapPos = 176, 256;
@@ -4059,7 +4234,7 @@ vermis /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 32, 224;
     Price = 100;
     WieldedBitmapPos = 176, 96;
@@ -4074,7 +4249,7 @@ turox /* meleeweapon-> */
   FormModifier = 225;
   DefaultSize = 90;
   BitmapPos = 0, 32;
-  Possibility = 2;
+  Possibility = 1;
   DefaultMainVolume = 450;
   DefaultSecondaryVolume = 375;
   WeaponCategory = BLUNT_WEAPONS;
@@ -4099,7 +4274,7 @@ turox /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 3;
+    Possibility = 1;
     BitmapPos = 32, 112;
     Price = 50;
     WieldedBitmapPos = 176, 192;
@@ -4110,7 +4285,7 @@ turox /* meleeweapon-> */
 whipofthievery /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 10;
+  Possibility = 5;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -4169,11 +4344,12 @@ skull
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 128;
+  HelmetBitmapPos = 96, 97;
   IsValuable = false;
 
   Config PUPPY_SKULL;
   {
-    BitmapPos = 64, 352;
+    BitmapPos = 112, 288;
     Adjective = "puppy";
     DefaultSize = 15;
     Possibility = 0;
@@ -4208,6 +4384,7 @@ skullofxinroch
   CanBePiled = false;
   ArticleMode = FORCE_THE;
   IsQuestItem = true;
+  Price = 500;
 }
 
 gorovitsweapon
@@ -4321,7 +4498,7 @@ horn
   FormModifier = 30;
   Roundness = 40;
   DefaultSize = 30;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = BLUNT_WEAPONS;
   DefaultMainVolume = 400;
   BitmapPos = 48, 304;
@@ -4351,6 +4528,18 @@ horn
   {
     MainMaterialConfig == UNICORN_HORN;
     PostFix = "of confusion";
+  }
+
+  Config HEALING;
+  {
+    MainMaterialConfig == GOLD;
+    PostFix = "of healing";
+  }
+
+  Config PLENTY;
+  {
+    MainMaterialConfig == LEAD;
+    PostFix = "of plenty";
   }
 }
 
@@ -4423,7 +4612,7 @@ saalthul
 
   Config BROKEN;
   {
-    Possibility = 2;
+    Possibility = 1;
     BitmapPos = 48, 272;
     Price = 100;
     GearStates = 0;
@@ -4435,7 +4624,7 @@ saalthul
 chameleonwhip /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 10;
+  Possibility = 5;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -4476,9 +4665,63 @@ carrot
   Alias == "bazooka";
   Roundness = 10;
   CanBePiled = true;
+  CanBeBroken = true;
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
+  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 80, 272;
+  }
+}
+
+mango
+{
+  WeaponCategory = BLUNT_WEAPONS;
+  DefaultSize = 20;
+  Possibility = 0;
+  Category = FOOD;
+  DefaultMainVolume = 200;
+  StrengthModifier = 75;
+  BitmapPos = 0, 224;
+  FormModifier = 10;
+  NameSingular = "mango";
+  MainMaterialConfig == MANGO_FLESH;
+  Roundness = 15;
+  AttachedGod = SILVA;
+  WieldedBitmapPos = 176, 144;
+  IsValuable = false;
+  CanBeBroken = true;
+  /* AllowedDungeons == DARK_FOREST; */
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 16, 16;
+  }
+}
+
+sausage
+{
+  Possibility = 50;
+  WeaponCategory = WHIPS;
+  DefaultMainVolume = 250;
+  StrengthModifier = 75;
+  Category = FOOD;
+  BitmapPos = 80, 128;
+  FormModifier = 25;
+  DefaultSize = 20;
+  NameSingular = "sausage";
+  MainMaterialConfig = { 12, BEEF, PORK, BEAR_FLESH, RAT_FLESH, MAMMOTH_FLESH, BLACK_UNICORN_FLESH, WHITE_UNICORN_FLESH, CHAMELEON_FLESH, KOBOLD_FLESH, HUMAN_FLESH, DWARF_FLESH, ELF_FLESH; }
+  MaterialConfigChances = { 12, 1000, 1000, 500, 250, 250, 10, 10, 5, 5, 5, 5, 5; }
+  CanBeBroken = false;
+  AttachedGod = NEFAS; /* of course */
+  WieldedBitmapPos = 160, 320;
+  IsValuable = false;
+  IsSadistWeapon = true;
   AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
 }
 
@@ -4558,6 +4801,55 @@ decosadshirt /* armor->bodyarmor-> */
   AthleteArmArmorBitmapPos = 80, 448;
   LegArmorBitmapPos = 16, 416;
   Price = 0;
+}
+
+filthytunic /* armor->bodyarmor-> */
+{
+  Category = BODY_ARMOR;
+  FormModifier = 15;
+  StrengthModifier = 80;
+  DefaultSize = 40;
+  DefaultMainVolume = 500;
+  Roundness = 70;
+  BitmapPos = 96, 304;
+  Possibility = 1;
+  Adjective = "filthy";
+  NameSingular = "tunic";
+  PostFix = "of martyr Bessica";
+  AttachedGod = SCABIES;
+  MainMaterialConfig == ANGEL_HAIR;
+  MaterialConfigChances == 100;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBePiled = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  InElasticityPenaltyModifier = 20;
+  EnchantmentPlusChance = 5;
+  TorsoArmorBitmapPos = 32, 544;
+  ArmArmorBitmapPos = 80, 416;
+  AthleteArmArmorBitmapPos = 80, 448;
+  LegArmorBitmapPos = 16, 416;
+  GearStates = DISEASE_IMMUNITY|FEARLESS|FASTING;
+  IsTwoHanded = true;
+  CanBeBroken = true;
+  CanBeBurned = true;
+  WieldedBitmapPos = 160, 144;
+  Price = 500;
+
+  Config BROKEN;
+  {
+    Possibility = 1;
+    StrengthModifier = 30;
+    BitmapPos = 112, 304;
+    FormModifier = 20;
+    EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 25;
+    GearStates = 0;
+    Price = 50;
+  }
 }
 
 scrollofdetectmaterial /* scroll-> */
@@ -4647,7 +4939,7 @@ holyhandgrenade
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -4660,7 +4952,7 @@ daggerofvenom
   SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
   MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   AttachedGod = CLEPTIA;
   WieldedBitmapPos = 160, 288;
   EnchantmentPlusChance = 2;
@@ -4678,7 +4970,7 @@ daggerofvenom
 weepblade
 {
   DefaultSize = 70;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 70;
   DefaultSecondaryVolume = 30;
@@ -4712,9 +5004,9 @@ acidshield /* armor ->*/
   Possibility = 5;
   Category = SHIELD;
   DefaultMainVolume = 350;
-  StrengthModifier = 150;
+  StrengthModifier = 100;
   FormModifier = 15;
-  MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE; }
+  MainMaterialConfig = { 5, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, ARCANITE; }
   MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }
   EnchantmentPlusChance = 0;
   AcidResistance = 1;
@@ -4722,6 +5014,7 @@ acidshield /* armor ->*/
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
+  Price = 250;
   WieldedBitmapPos = 128, 32;
   AttachedGod = SCABIES;
 
@@ -4730,9 +5023,10 @@ acidshield /* armor ->*/
     Possibility = 3;
     DefaultSize = 45;
     FormModifier = 20;
+    StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, ADAMANT, ARCANITE, MITHRIL; }
+    MainMaterialConfig = { 6, METEORIC_STEEL, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL, ARCANITE, MITHRIL; }
     MaterialConfigChances = { 6, 150, 250, 200, 60, 40, 20; }
     EnchantmentPlusChance = 1;
   }
@@ -4801,7 +5095,7 @@ gorovitscopyoflenin /* item-> */
 chastitybelt
 {
   DefaultSize = 40;
-  Possibility = 1;
+  Possibility = 4;
   WeaponCategory = UNCATEGORIZED;
   DefaultMainVolume = 125;
   StrengthModifier = 60;
@@ -4884,7 +5178,7 @@ darkaxe  /* meleeweapon-> */
 slowaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -4897,7 +5191,7 @@ slowaxe  /* meleeweapon-> */
   SecondaryMaterialConfig == ICE;
   MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 176;
@@ -4916,20 +5210,20 @@ slowaxe  /* meleeweapon-> */
 terrorscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
   BitmapPos = 64, 112;
   FormModifier = 80;
-  StrengthModifier = 50;
+  StrengthModifier = 60;
   NameSingular = "scythe";
   PostFix = "of terror";
   MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, OCTIRON, PSYPHER, MITHRIL; }
   SecondaryMaterialConfig == EBONY_WOOD;
   MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 1, 90; }
   Roundness = 10;
-  Price = 150;
+  Price = 250;
   IsGoodWithPlants = true;
   IsTwoHanded = true;
   AttachedGod = MORTIFER;
@@ -4949,7 +5243,7 @@ terrorscythe  /* meleeweapon-> */
 bansheesickle  /* meleeweapon-> */
 {
   DefaultSize = 40;
-  Possibility = 10;
+  Possibility = 5;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 50;
@@ -4961,7 +5255,7 @@ bansheesickle  /* meleeweapon-> */
   SecondaryMaterialConfig == OCTIRON;
   MaterialConfigChances = {9, 30, 15, 250, 200, 150, 100, 10, 10, 90; }
   Roundness = 20;
-  Price = 150;
+  Price = 250;
   IsGoodWithPlants = true;
   AttachedGod = SEGES;
   WieldedBitmapPos = 176, 32;
@@ -4977,6 +5271,71 @@ bansheesickle  /* meleeweapon-> */
   }
 }
 
+rustscythe  /* meleeweapon-> */
+{
+  DefaultSize = 200;
+  Possibility = 5;
+  WeaponCategory = POLE_ARMS;
+  DefaultMainVolume = 150;
+  DefaultSecondaryVolume = 1800;
+  BitmapPos = 64, 112;
+  FormModifier = 80;
+  StrengthModifier = 60;
+  NameSingular = "scythe";
+  PostFix = "of oxidation";
+  MainMaterialConfig = {4, IRON, STEEL, METEORIC_STEEL, ADAMANT; }
+  SecondaryMaterialConfig == PINE_WOOD;
+  MaterialConfigChances = {4, 250, 200, 100, 50; }
+  Roundness = 10;
+  Price = 250;
+  IsGoodWithPlants = true;
+  IsTwoHanded = true;
+  AttachedGod = MORTIFER;
+  WieldedBitmapPos = 176, 48;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 64, 128;
+    WieldedBitmapPos = 160, 48;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+sharpaxe  /* meleeweapon-> */
+{
+  DefaultSize = 60;
+  Possibility = 5;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 200;
+  DefaultSecondaryVolume = 500;
+  BitmapPos = 16, 256;
+  FormModifier = 60;
+  StrengthModifier = 80;
+  NameSingular = "axe";
+  PostFix = "of sharpness";
+  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
+  SecondaryMaterialConfig == FIR_WOOD;
+  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
+  Roundness = 20;
+  Price = 250;
+  IsTwoHanded = true;
+  AttachedGod = CRUENTUS;
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 5;
+    BitmapPos = 32, 176;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
 celestialmonograph /* holybook-> */
 {
   DefaultSize = 30;
@@ -4984,7 +5343,7 @@ celestialmonograph /* holybook-> */
   Category = BOOK;
   DefaultMainVolume = 2500;
   StrengthModifier = 150;
-  BitmapPos = 0, 144;
+  BitmapPos = 80, 320;
   FormModifier = 20;
   Adjective = "celestial";
   NameSingular = "monograph";
@@ -5016,7 +5375,7 @@ ullrbone
   BitmapPos = 16, 240;
   FormModifier = 250;
   DefaultSize = 50;
-  Price = 1000;
+  Price = 5000;
   NameSingular = "bone";
   PostFix = "of Ullr";
   WeaponCategory = BLUNT_WEAPONS;
@@ -5037,4 +5396,204 @@ ullrbone
   IsValuable = true;
   AttachedGod = INFUSCOR;
   GearStates = SWIMMING;
+}
+
+taiaha /* meleeweapon-> */
+{
+  CanBePiled = false;
+  DefaultSize = 160;
+  Possibility = 0;
+  WeaponCategory = POLE_ARMS;
+  StrengthModifier = 90;
+  BitmapPos = 96, 352;
+  FormModifier = 85;
+  DefaultMainVolume = 100;
+  DefaultSecondaryVolume = 1500;
+  NameSingular = "taiaha";
+  MainMaterialConfig = { 6, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
+  SecondaryMaterialConfig == KAURI_WOOD;
+  MaterialConfigChances = { 6, 100, 100, 50, 50, 10, 5; }
+  Roundness = 10;
+  IsTwoHanded = true;
+  AttachedGod = SILVA;
+  WieldedBitmapPos = 160, 96;
+  EnchantmentPlusChance = 15;
+  DamageFlags = PIERCE;
+  Price = 1000;
+  MinCharges = 2;
+  MaxCharges = 8;
+  IsKamikazeWeapon = true;
+  TeleportPriority = 1000;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 112, 352;
+    WieldedBitmapPos = 176, 96;
+    MainMaterialConfig = { 5, GREEN_CRYSTAL, SUN_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
+    MaterialConfigChances = { 5, 100, 100, 50, 50, 5; }
+    EnchantmentPlusChance = 30;
+  }
+}
+
+cauldron /* materialcontainer-> */
+{
+  Possibility = 0;
+  Category = POTION;
+  StrengthModifier = 350;
+  DefaultSize = 150;
+  DefaultMainVolume = 80000;
+  DefaultSecondaryVolume = 25000;
+  BitmapPos = 80, 304;
+  NameSingular = "cauldron";
+  MainMaterialConfig == COPPER;
+  SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, POISON_LIQUID, VODKA, TROLL_BLOOD, LIQUID_DARKNESS, YELLOW_SLIME, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
+  MaterialConfigChances = { 10, 75, 50, 25, 50, 25, 5, 5, 1, 5, 25; }
+  Roundness = 100;
+  CanBeBroken = false;
+  AttachedGod = NONE;
+  WieldedBitmapPos = 176, 144;
+  IsValuable = false;
+  CanBeGeneratedInContainer = false;
+  CanBePickedUp = false;
+}
+
+trinket
+{
+  Category = MISC;
+  IsAbstract = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  HasSecondaryMaterial = true;
+  Possibility = 10;
+  IsValuable = false;
+  WieldedBitmapPos = 176, 144;
+  Price = 50;
+
+  Config POTTED_CACTUS;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 500;
+    DefaultSecondaryVolume = 50;
+    BitmapPos = 64, 320;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    Adjective = "potted";
+    NameSingular = "cactus";
+    MainMaterialConfig == MARBLE;
+    SecondaryMaterialConfig == PLANT_FIBER;
+    Roundness = 60;
+    AttachedGod = SCABIES;
+    IsSadistWeapon = true;
+    DamageFlags = PIERCE;
+  }
+
+  Config POTTED_PLANT;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 500;
+    DefaultSecondaryVolume = 50;
+    BitmapPos = 112, 336;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    Adjective = "potted";
+    NameSingular = "plant";
+    MainMaterialConfig == MARBLE;
+    SecondaryMaterialConfig == PLANT_FIBER;
+    Roundness = 60;
+    AttachedGod = SILVA;
+  }
+
+  Config DEAD_FISH;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 250;
+    HasSecondaryMaterial = false;
+    BitmapPos = 80, 336;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    Adjective = "dead";
+    NameSingular = "fish";
+    MainMaterialConfig == DOLPHIN_FLESH; /* maybe change */
+    Roundness = 15;
+    AttachedGod = SEGES;
+  }
+
+  Config BONE_FISH;
+  {
+    DefaultSize = 30;
+    DefaultMainVolume = 150;
+    HasSecondaryMaterial = false;
+    BitmapPos = 96, 336;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    Adjective = "fish";
+    NameSingular = "skeleton";
+    MainMaterialConfig == BONE;
+    Roundness = 15;
+    AttachedGod = SCABIES;
+  }
+
+  Config SMALL_CLOCK;
+  {
+    DefaultSize = 50;
+    DefaultMainVolume = 1500;
+    DefaultSecondaryVolume = 1000;
+    BitmapPos = 96, 320;
+    FormModifier = 25;
+    StrengthModifier = 75;
+    NameSingular = "timepiece";
+    MainMaterialConfig == ARCANITE;
+    SecondaryMaterialConfig == OAK_WOOD;
+    Roundness = 75;
+    AttachedGod = ATAVUS;
+  }
+
+  Config LARGE_CLOCK;
+  {
+    DefaultSize = 200;
+    DefaultMainVolume = 30000;
+    DefaultSecondaryVolume = 5000;
+    BitmapPos = 112, 320;
+    FormModifier = 25;
+    StrengthModifier = 150;
+    NameSingular = "grandfather clock";
+    MainMaterialConfig == ARCANITE;
+    SecondaryMaterialConfig == OAK_WOOD;
+    Roundness = 75;
+    AttachedGod = ATAVUS;
+    IsTwoHanded = true;
+    CanBeGeneratedInContainer = false;
+  }
+}
+
+gastrap /*materialcontainer-> */
+{
+  DefaultSize = 65;
+  Possibility = 5;
+  Category = TOOL;
+  DefaultMainVolume = 100;
+  DefaultSecondaryVolume = 500;
+  StrengthModifier = 50;
+  BitmapPos = 32, 288;
+  FormModifier = 10;
+  Adjective = "dwarven";
+  NameSingular = "gas trap";
+  MainMaterialConfig == IRON;
+  SecondaryMaterialConfig = { 7, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
+  MaterialConfigChances = { 7, 20, 30, 1, 15, 10, 1, 5; }
+  Roundness = 50;
+  Price = 25;
+  CanBePiled = false;
+  CanBeBroken = true;
+  CanBeBurned = false;
+  IsTwoHanded = true;
+  AttachedGod = CRUENTUS;
+  WieldedBitmapPos = 160, 128;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    Price = 0;
+  }
 }

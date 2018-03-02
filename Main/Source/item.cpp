@@ -283,6 +283,37 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
   }
 }
 
+/* Returns truth that tells whether the alchemical conversion really happened. */
+
+truth item::Alchemize(character* Midas, stack* CurrentStack)
+{
+  if(IsQuestItem())
+    return false;
+  else
+  {
+    if(Midas && IsOnGround())
+    {
+      room* Room = GetRoom();
+
+      if(Room)
+        Room->HostileAction(Midas);
+    }
+
+    long Price = GetTruePrice();
+
+    if(Price)
+    {
+      Price /= 4; /* slightly lower than with 10 Cha */
+      ADD_MESSAGE("Gold pieces clatter on the floor.");
+      Midas->SetMoney(Midas->GetMoney() + Price);
+    }
+
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
+}
+
 /* Returns whether the Eater must stop eating the item */
 
 truth item::Consume(character* Eater, long Amount)

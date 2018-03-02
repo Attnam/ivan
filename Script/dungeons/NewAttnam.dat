@@ -47,7 +47,7 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = true;
-    AudioPlayList = 
+    AudioPlayList =
     {
       1,
       "Empty.mid";
@@ -201,6 +201,7 @@ Dungeon NEW_ATTNAM;
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
           c == GOLD itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, stone { Times = 0:10; }, GOLD banana; } }
+          Y == trinket(LARGE_CLOCK);
         }
       }
       {
@@ -215,7 +216,7 @@ Dungeon NEW_ATTNAM;
         #..4.........3..#
         #..#3.......4#..#
         #...##.....##...#
-        #....##...##....#
+        #...Y##...##....#
         ###.###...###.###
         #.....#...#.....#
         #.....#...#.....#

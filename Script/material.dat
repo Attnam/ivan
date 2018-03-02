@@ -1421,6 +1421,19 @@ organic /* substances that spoil but are not flesh */
     AttachedGod = MORTIFER;
     CommonFlags = Base|IS_SPARKLING|IS_VALUABLE;
   }
+
+  Config MANGO_FLESH;
+  {
+  StrengthValue = 3;
+  Density = 1200;
+  ConsumeType = CT_FRUIT;
+  NutritionValue = 1000;
+  Color = rgb16(250, 158, 74);
+  PriceModifier = 3000;
+  NameStem = "mango flesh";
+  Flexibility = 5;
+  AttachedGod = SILVA;
+  }
 }
 
 gas

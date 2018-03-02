@@ -69,7 +69,9 @@
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
 #define TELEPORT_LOCK (1 << 28)
-#define PARASITE_MIND_WORM (1 << 29)
+#define FEARLESS (1 << 29)
+#define FASTING (1 << 30)
+#define PARASITE_MIND_WORM (1 << 31)
 
 #define HEAD 1
 #define TORSO 2
@@ -347,6 +349,7 @@
 #define OMMEL_BONE (ORGANIC_ID + 13)
 #define OMMEL_TOOTH (ORGANIC_ID + 14)
 #define RESIDUUM (ORGANIC_ID + 15)
+#define MANGO_FLESH (ORGANIC_ID + 16)
 
 #define GAS_ID (4096 * 3)
 
@@ -519,6 +522,9 @@
 #define MAGE_STAFF 18
 #define ROLLING_PIN 19
 #define FRYING_PAN 20
+#define CLAW 21
+#define MEAT_CLEAVER 22
+#define RUNE_SWORD 23
 
 #define PUPPY_SKULL 1
 
@@ -548,6 +554,8 @@
 #define WAND_OF_ACID_RAIN 12
 #define WAND_OF_MIRRORING 13
 #define WAND_OF_NECROMANCY 14
+#define WAND_OF_WEBBING 15
+#define WAND_OF_ALCHEMY 16
 
 #define RUNED_WHIP 1
 
@@ -595,6 +603,7 @@
 #define RING_OF_DETECTION 14
 #define RING_OF_POLYMORPH_LOCK 15
 #define RING_OF_WORM 16
+#define RING_OF_BRAVERY 17
 
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
@@ -616,6 +625,7 @@
 #define HELM_OF_TELEPORTATION 9
 #define HELM_OF_ENLIGHTENMENT 10
 #define HELM_OF_MANA 11
+#define MASK 12
 
 #define BELT_OF_CARRYING 1
 #define BELT_OF_LEVITATION 2
@@ -632,6 +642,15 @@
 #define BRAVERY 1
 #define FEAR 2
 #define CONFUSION 3
+#define HEALING 4
+#define PLENTY 5
+
+#define POTTED_CACTUS 1
+#define POTTED_PLANT 2
+#define DEAD_FISH 3
+#define BONE_FISH 4
+#define SMALL_CLOCK 5
+#define LARGE_CLOCK 6
 
 #define IMPRISONED_FARMER 1
 #define CULTIST 2
@@ -931,6 +950,8 @@
 #define BEAM_DOOR_CREATION 10
 #define BEAM_ACID_RAIN 11
 #define BEAM_NECROMANCY 12
+#define BEAM_WEBBING 13
+#define BEAM_ALCHEMY 14
 
 #define BEAM_STYLES 3
 

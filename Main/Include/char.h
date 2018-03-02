@@ -661,6 +661,10 @@ class character : public entity, public id
   void PrintEndHiccupsMessage() const;
   void PrintBeginVampirismMessage() const;
   void PrintEndVampirismMessage() const;
+  void PrintBeginFearlessMessage() const;
+  void PrintEndFearlessMessage() const;
+  void PrintBeginFastingMessage() const;
+  void PrintEndFastingMessage() const;
   void EndPolymorph();
   character* ForceEndPolymorph();
   void LycanthropyHandler();
