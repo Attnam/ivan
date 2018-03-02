@@ -6848,16 +6848,25 @@ void character::ReceiveAntidote(long Amount)
     }
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(PARASITIZED))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_TAPE_WORM))
   {
     if(IsPlayer())
       ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
     Amount -= Min(100L, Amount);
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_MIND_WORM))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Something in your head screeches in pain.");
+
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
+    Amount -= Min(100L, Amount);
+  }
+
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(LEPROSY))
   {
     if(IsPlayer())
       ADD_MESSAGE("You are not falling to pieces anymore.");

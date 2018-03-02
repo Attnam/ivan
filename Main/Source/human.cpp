@@ -983,6 +983,54 @@ void priest::BeTalkedTo()
                   "I need %ldgp for the ritual materials first.\"", Price);
   }
 
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your guts. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your head. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
   static long Said;
 
   if(GetConfig() != SILVA)
@@ -998,7 +1046,7 @@ void skeleton::BeTalkedTo()
   if(GetHead())
     humanoid::BeTalkedTo();
   else
-    ADD_MESSAGE("The headless %s remains silent.", PLAYER->CHAR_DESCRIPTION(UNARTICLED));
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void communist::BeTalkedTo()
@@ -1294,7 +1342,11 @@ truth communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
+  if(!HasHead())
+  {
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
+  }
+  else if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
   {
     if(RAND() % 5)
     {
