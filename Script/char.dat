@@ -7987,6 +7987,7 @@ mindworm
   UsesNutrition = false;
   AttackStyle = USE_HEAD;
   ConstantCommandFlags = FLEE_FROM_ENEMIES;
+  DefaultCommandFlags = FLEE_FROM_ENEMIES;
   ClassStates = ESP;
   FleshMaterial = MIND_WORM_FLESH;
   AttachedGod = SCABIES;
@@ -7995,7 +7996,8 @@ mindworm
   IsAbstract = true;
   CanBeGenerated = true;
   IgnoreDanger = true;
-  DayRequirementForGeneration = 4;
+  HPRequirementForGeneration = 80;
+  DayRequirementForGeneration = 6;
   FriendlyReplies =
   {
     5,

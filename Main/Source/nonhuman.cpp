@@ -2409,13 +2409,13 @@ void mindworm::GetAICommand()
 
   if(GetConfig() == BOIL && NeighbourEnemy)
   {
-    if(NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead() && !NeighbourEnemy->IsInfectedByMindWorm())
+    if(NeighbourEnemy->HasHead() && !NeighbourEnemy->StateIsActivated(PARASITE_MIND_WORM))
     {
       if(TryToImplantLarvae(NeighbourEnemy))
         return;
     }
   }
-  else if(NearestEnemy && !StateIsActivated(CONFUSED) && !(RAND() & 2))
+  if(NearestEnemy && !NearestEnemy->IsESPBlockedByEquipment() && !StateIsActivated(CONFUSED) && !(RAND() & 2))
   {
     PsiAttack(NearestEnemy);
     return;
@@ -2426,10 +2426,8 @@ void mindworm::GetAICommand()
 
 truth mindworm::TryToImplantLarvae(character* Victim)
 {
-  if(Victim->MindWormCanPenetrateSkull(this))
+  if(Victim->MindWormCanPenetrateSkull(this) && Victim->CanBeParasitized())
   {
-    Victim->SetCounterToMindWormHatch(1000);
-
     if(Victim->IsPlayer())
     {
       ADD_MESSAGE("%s digs through your skull, lays %s eggs and jumps out.",
@@ -2441,12 +2439,14 @@ truth mindworm::TryToImplantLarvae(character* Victim)
                   CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
 
+    Victim->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200));
+
     MoveRandomly();
     EditAP(-1000);
     return true;
   }
-
-  return false;
+  else
+    return false;
 }
 
 void mindworm::PsiAttack(character* Victim)

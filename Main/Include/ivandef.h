@@ -122,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 29
+#define STATES 30
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -139,7 +139,7 @@ const name##prototype name::ProtoType
 #define TELEPORT_CONTROL (1 << 12)
 #define PANIC (1 << 13)
 #define CONFUSED (1 << 14)
-#define PARASITIZED (1 << 15)
+#define PARASITE_TAPE_WORM (1 << 15)
 #define SEARCHING (1 << 16)
 #define GAS_IMMUNITY (1 << 17)
 #define LEVITATION (1 << 18)
@@ -153,6 +153,7 @@ const name##prototype name::ProtoType
 #define REGENERATION (1 << 26)
 #define DISEASE_IMMUNITY (1 << 27)
 #define TELEPORT_LOCK (1 << 28)
+#define PARASITE_MIND_WORM (1 << 29)
 
 #define TORSO 1
 #define HEAD 2

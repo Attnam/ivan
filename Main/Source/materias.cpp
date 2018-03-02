@@ -323,7 +323,7 @@ material* organic::EatEffect(character* Eater, long Amount)
 
     if(GetBodyFlags() & CAN_HAVE_PARASITE
        && !(RAND() % (250 / GetSpoilLevel())))
-      Eater->GainIntrinsic(PARASITIZED);
+      Eater->GainIntrinsic(PARASITE_TAPE_WORM);
   }
 
   if(GetSpoilLevel() > 4)

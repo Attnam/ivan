@@ -864,6 +864,9 @@ class character : public entity, public id
   void PrintBeginParasitizedMessage() const;
   void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
+  void PrintBeginMindwormedMessage() const;
+  void PrintEndMindwormedMessage() const;
+  void MindwormedHandler();
   truth CanFollow() const;
   truth LeftOversAreUnique() const;
   virtual festring GetKillName() const;
@@ -1128,11 +1131,10 @@ class character : public entity, public id
   item* FindMostExpensiveItem() const;
   truth ReceiveSirenSong(character* Siren);
   character* GetNearestEnemy() const;
-  truth IsInfectedByMindWorm() const;
+  truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
   void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
   int GetCounterToMindWormHatch() const { return CounterToMindWormHatch; }
   truth MindWormCanPenetrateSkull(mindworm*) const;
-  void MindWormHandler();
   truth CanTameWithDulcis(const character*) const;
   truth CanTameWithLyre(const character*) const;
   truth CanTameWithScroll(const character*) const;
