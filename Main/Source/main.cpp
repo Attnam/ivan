@@ -81,14 +81,13 @@ int main(int argc, char** argv)
     return 0;
   }
 
-	for(int i=1;i<argc;i++)
-	{
-		if(festring(argv[i]) == "--widelayout")
-		{
-			game::SetWideLayout(true);
-	//    std::cout << "Using wide monitor 16:9 layout. You can zoom to it if your window manager allows it." << std::endl;
-		}
-	}
+  for(int i=1;i<argc;i++)
+  {
+    if(festring(argv[i]) == "--widelayout")
+    {
+      game::SetWideLayout(true);
+    }
+  }
 
 #ifdef __DJGPP__
 

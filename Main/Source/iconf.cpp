@@ -72,9 +72,6 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           "select MIDI output device",
                                           0, 0, // {default value, number of options to cycle through}
                                           &MIDIOutputDeviceDisplayer);
-truthoption ivanconfig::WideLayout(       "WideLayout",
-                                          "shrinking fits on 16:9 layout",
-                                          true);
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
                                           "select graphics scale factor",
@@ -338,7 +335,6 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(&MIDIOutputDevice);
-  configsystem::AddOption(&WideLayout);
 #ifndef __DJGPP__
   configsystem::AddOption(&GraphicsScale);
   configsystem::AddOption(&FullScreenMode);

@@ -4650,9 +4650,7 @@ void character::DrawPanel(truth AnimationDraw) const
                          v2(game::GetScreenXSize() << 4, 9));
   FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
-//  int PanelPosX = RES.X - 96;
   int PanelPosX = RES.X - 96 + (game::IsWideLayout() ? -130 : 0); // -130 to fit in zoomed 16:9 monitor
-//  int PanelPosX = RES.X - 96 - 340; //340 is about 1/2 of the X area of the drawed dungeon in pixels
   int PanelPosY = DrawStats(false);
   PrintAttribute("End", ENDURANCE, PanelPosX, PanelPosY++);
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
@@ -4682,18 +4680,17 @@ void character::DrawPanel(truth AnimationDraw) const
                                                                                       Time.Min < 10 ? "0" : "",
                                                                                       Time.Min);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Turn %ld", game::GetTurn());
-	
-	if(game::IsWideLayout())
-	{
-		PanelPosX = RES.X - 96 - 96 - 130; // -96 to self X pos. -96 to be on the left of attributes. -130 to fit in zoomed 16:9 monitor  
-	  //  PanelPosY-=17; //all previous to be on top
-		PanelPosY=15; //default top from DrawStats(truth)
-	}
-	else
-	{
-		++PanelPosY;
-	}
-	
+  
+  if(game::IsWideLayout())
+  {
+    PanelPosX = RES.X - 96 - 96 - 130; // -96 to self X pos. -96 to be on the left of attributes. -130 to fit in zoomed 16:9 monitor  
+    PanelPosY=15; //default top from DrawStats(truth)
+  }
+  else
+  {
+    ++PanelPosY;
+  }
+  
   if(GetAction())
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "%s",
                  festring(GetAction()->GetDescription()).CapitalizeCopy().CStr());

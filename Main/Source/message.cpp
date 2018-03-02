@@ -143,7 +143,6 @@ void msgsystem::Draw()
   }
 
   v2 Size = QuickDrawCache->GetSize();
-//  int Y = RES.Y - 122;
   int Y = RES.Y - 122 + (game::IsWideLayout() ? - 215 : 0); // -215 is about 1/2 of the Y area of the drawed dungeon in pixels
   blitdata B = { DOUBLE_BUFFER,
                  { 0, 0 },
