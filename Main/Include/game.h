@@ -256,6 +256,8 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
+  static void SetOutlinedGfx(truth b) { bOutlinedGfx = b; }
+  static truth IsOutlinedGfx() { return bOutlinedGfx; }
   static int GetScreenXSize() { return 42; }
   static int GetScreenYSize() { return 26; }
   static v2 CalculateScreenCoordinates(v2);
@@ -549,6 +551,7 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
+  static truth bOutlinedGfx;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

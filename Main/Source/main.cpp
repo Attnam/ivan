@@ -67,10 +67,26 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
+  if(argc > 1 && festring(argv[1]) == "--help")
+  {
+    std::cout << "--help        Show this help." << std::endl;
+    std::cout << "--version     Show version." << std::endl;
+    std::cout << "--outlinedgfx Some graphics will use their outlined option." << std::endl;
+    return 0;
+  }
+  
   if(argc > 1 && festring(argv[1]) == "--version")
   {
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
     return 0;
+  }
+
+  for(int i=1;i<argc;i++)
+  {
+    if(festring(argv[i]) == "--outlinedgfx")
+    {
+      game::SetOutlinedGfx(true);
+    }
   }
 
 #ifdef __DJGPP__
