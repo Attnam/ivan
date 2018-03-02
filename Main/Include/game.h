@@ -256,12 +256,15 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
+//  static truth IsWideLayout() { return ivanconfig::GetWideLayout(); }
+	static void SetWideLayout(truth b) { bWideLayout = b; }
+	static truth IsWideLayout() { return bWideLayout; }
 //  static int GetScreenXSize() { return 42; }
 //  static int GetScreenXSize() { return 21; } //half of visible dungeon area in X
 //  static int GetScreenXSize() { return 36; } // -6 from max to fit some text there
-  static int GetScreenXSize() { return 28; } // -14 from max to fit some text there in 16:9 monitor zoom
+  static int GetScreenXSize() { return IsWideLayout() ? 28 : 42; } // -14 from max to fit some text there in 16:9 monitor zoom
 //  static int GetScreenYSize() { return 26; }
-  static int GetScreenYSize() { return 13; } //half of visible dungeon area in Y
+  static int GetScreenYSize() { return IsWideLayout() ? 13 : 26; } //half of visible dungeon area in Y
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);
@@ -553,6 +556,7 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
+  static truth bWideLayout;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

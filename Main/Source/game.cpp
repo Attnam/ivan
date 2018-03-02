@@ -111,6 +111,7 @@ int game::LastAttributeChangeTick[ATTRIBUTES];
 int game::NecroCounter;
 int game::CursorData;
 truth game::CausePanicFlag;
+truth game::bWideLayout;
 
 truth game::Loading = false;
 truth game::JumpToPlayerBe = false;

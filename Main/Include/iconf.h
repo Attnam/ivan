@@ -32,6 +32,7 @@ class ivanconfig
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+  static truth GetWideLayout() { return WideLayout.Value; }
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -82,6 +83,7 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
+  static truthoption WideLayout;
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;

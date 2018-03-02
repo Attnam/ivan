@@ -67,11 +67,28 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
+  if(argc > 1 && festring(argv[1]) == "--help")
+  {
+    std::cout << "--help        Show this help." << std::endl;
+    std::cout << "--version     Show version." << std::endl;
+    std::cout << "--widelayout  Wide monitor 16:9 layout so you can zoom to it if your window manager allows it." << std::endl;
+    return 0;
+  }
+  
   if(argc > 1 && festring(argv[1]) == "--version")
   {
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
     return 0;
   }
+
+	for(int i=1;i<argc;i++)
+	{
+		if(festring(argv[i]) == "--widelayout")
+		{
+			game::SetWideLayout(true);
+	//    std::cout << "Using wide monitor 16:9 layout. You can zoom to it if your window manager allows it." << std::endl;
+		}
+	}
 
 #ifdef __DJGPP__
 

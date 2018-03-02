@@ -492,7 +492,7 @@ int nonhumanoid::DrawStats(truth AnimationDraw) const
     return 3;
 
 //  int PanelPosX = RES.X - 96, PanelPosY = 3;
-  int PanelPosX = RES.X - 96 - 130, PanelPosY = 3; // -130 to fit in zoomed 16:9 monitor  
+  int PanelPosX = RES.X - 96 + (game::IsWideLayout() ? -130 : 0), PanelPosY = 3; // -130 to fit in zoomed 16:9 monitor  
 //  int PanelPosX = RES.X - 96 - 340, PanelPosY = 3; //340 is about 1/2 of the X area of the drawed dungeon in pixels
   PrintAttribute("Str", ARM_STRENGTH, PanelPosX, PanelPosY++);
   PrintAttribute("Agi", AGILITY, PanelPosX, PanelPosY++);
