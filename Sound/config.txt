@@ -122,6 +122,10 @@ hyena.wav
 zombie.wav
 .*magpie.*is.*slain.*
 magpie.wav
+.*produce.*an interesting sound*
+whistle1.wav whistle2.wav whistle3.wav
+.*You hear a whistle playing.*
+whistle1.wav whistle2.wav whistle3.wav
 music:menu
 --music-played-at-menu--
 music:intro
