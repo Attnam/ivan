@@ -98,7 +98,7 @@ horn.wav
 horn.wav
 .*mighty sound.*
 horn.wav
-.*open the door.*
+^(?!.*fails).*open the door.*
 dooropen.wav
 .*opens the door.*
 dooropen.wav
