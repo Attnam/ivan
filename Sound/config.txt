@@ -126,21 +126,3 @@ magpie.wav
 whistle1.wav whistle2.wav whistle3.wav
 .*You hear a whistle playing.*
 whistle1.wav whistle2.wav whistle3.wav
-music:menu
---music-played-at-menu--
-music:intro
---music-played-at-intro--
-music:Petrus
---music-played-when-meeting-Petrus--
-music:death
---music-played-when-dead--
-music:Elpuri
---music--
-music:Mortifier
---music--
-music:Shirt
---music--
-music:High Priest
---music--
-music:Worldmap
---music-played-at-a-location-of-given-name--
