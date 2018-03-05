@@ -88,6 +88,8 @@ beartrap.wav
 blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
 .*sucked.*into.*hell.*
 ghost.wav
+.*door is damaged.*
+woodBreaks1.wav woodBreaks2.wav
 .*The.*enner.*beast.*dies.*
 ennerdeath.wav
 .*"THREE".*
