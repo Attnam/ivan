@@ -12,12 +12,8 @@ doorclose.wav
 skeleton.wav
 .*destroyed.*
 destroyed.wav
-.*door is locked.*
-doorResists1.wav doorResists2.wav doorResists3.wav doorResists4.wav
 .*door opens.*
 dooropen.wav
-.*door resists.*
-doorResists1.wav doorResists2.wav doorResists3.wav doorResists4.wav
 .*dries.*up.*
 drinkf.wav
 .*drops.*its.*head.*
@@ -46,10 +42,6 @@ slain.wav
 blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
 .* kicks .*
 blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
-.*lock breaks.*
-lockbreaks.wav
-.*lock shatters.*
-lockbreaks.wav
 .*loud but calming sound.*
 horn.wav
 .*magpie.*is.*slain.*
@@ -68,9 +60,9 @@ mutantass.wav
 slip.wav
 .*opens the door.*
 dooropen.wav
-.*produce.*an interesting sound*
-whistle1.wav whistle2.wav whistle3.wav
-.*shatters.*
+^(?!.*lock).*shatters.*
+shatter.wav shatter2.wav
+^(?!.*lock).*shattering.*
 shatter.wav shatter2.wav
 .*slain.*again.*
 zombie.wav
@@ -126,5 +118,5 @@ mine.wav
 whistle1.wav whistle2.wav whistle3.wav
 .*You.*hit.*
 punch.wav punch2.wav punch3.wav punch4.wav punch5.wav
-.*You.*vomit.*
+.*You [^.]*vomit.*
 vomit.wav
