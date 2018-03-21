@@ -3193,7 +3193,7 @@ ring
     MainMaterialConfig == MIND_WORM_FLESH;
     Price = 2500;
     AttachedGod = SCABIES;
-    GearStates = PARASITIZED;
+    GearStates = PARASITE_TAPE_WORM;
     TeleportPriority = 500;
     ArticleMode = FORCE_THE;
     CanBeWished = false;

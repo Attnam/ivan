@@ -408,6 +408,9 @@
 #define BOY 1
 #define GIRL 2
 
+#define HATCHLING 1
+#define BOIL 2
+
 #define PARQUET 1
 #define FLOOR 2
 #define GROUND 3
