@@ -1,3 +1,363 @@
+-----------------------------------------------------------------------------
+
+ >>> NOTICE!!! <<<
+
+ This file contains SPOILERS, which might ruin your IVAN experience
+ totally. The file is provided AS IS and is probably completely unreadable.
+
+-----------------------------------------------------------------------------
+
+Next version
+------------
+
+Changes:
+
+Fixes:
+
+Version 0.51, released 23rd December 2017
+-----------------------------------------
+
+Changes:
+* Skeleton puppies!!!
+* Buffed chilling axes and scythes of terror.
+* Buffed regeneration.
+* Item graphics from CLIVAN ported.
+* Beast claws from alien mod ported, they are rather rare weapons using unarmed combat skill.
+* Mangos and sausages added!
+* Masks, a new headgear, added. Necromancers wear them.
+* Taiahas ported from CLIVAN.
+* Cauldrons added, but not randomly generated.
+* Some potted plants and clocks added to the Cathedral, to make it more homey.
+* New Fearless (Panic immunity) and Fasting status effects.
+* Ring of bravery!
+* Artifact armor "filthy tunic of martyr Bessica" grants disease immunity, fearless and fasting.
+* New scythes of oxidation, axes of sharpness and rune swords.
+* New horn of healing and horn of plenty.
+* New wand of webbing and alchemy.
+* New dwarven gas traps.
+* Golem room in Tomb of Xinroch now spawns only bone golems.
+
+Fixes:
+* Magic weapon price increased.
+* Magic weapons and artifacts made more rare.
+* Scroll of body switch can be wished for.
+* Sirens no longer always sing.
+* Headless NPCs can no longer see.
+* Possibly fixed overpowered zombies appearing early.
+* Necro chamber now has divine room configuration, it will no longer crash on sacrifice.
+* Goblin berserker danger restored.
+* Wishing fixed.
+
+Plus:
+* Windows releases now via Travis CI.
+* Added a code of conduct for the Attnam/ivan project.
+* Better tracking of segfaults.
+
+Version 0.50.9, released 27th October 2017
+------------------------------------------
+
+Changes:
+* Several hundered new dialogue lines added,
+* Story of Xinroch added,
+* 45 new items, including several artifacts, added,
+* Full helmets grant sound resistance,
+* Tin headgear block ESP,
+* Several potions added,
+* Two new optional minibosses are generated,
+* Spider level added,
+* Improvements to Attnam and its underground,
+* More people in Tomb of Xinroch,
+* Sirens can be generated,
+* Science talking with more NPCs possible,
+* Several materials added,
+* Scaling option for graphics added,
+* Switch to .png graphics,
+* Show height and weight of creatures.
+
+Fixes:
+* Assorted balance tweaks,
+* Fix digging stopping after single turn with NumPad,
+* Many, many more fixes.
+
+Version 0.50.8, released 23rd December 2016
+-------------------------------------------
+
+Changes:
+* New Christmas trees in Attnam during Atavus Day!!!
+* New Grand Stollen Knife of Attnam!!!
+* New message when sitting on an iron maiden!?
+* Periodic warnings for leprosy.
+* Significant re-balancing of prayer effects.
+* Vampires, vampirism, vampire bats.
+* Vampires and werewolves hate each other.
+* Significant update to priests and priestesses.
+
+Fixes:
+* Fountain dipping works like other dipping.
+* Quest items can no longer be sold.
+* As usual, multifarious grammatical corrections. :)
+* Lots of rearranging of the Tomb of Xinroch (TX).
+* New world map icon for TX.
+* Sun shines on TX Entry level.
+
+Plus:
+* Now with Travis Continuous Integration.
+* Monsters and items can be restricted to generate only in specific dungeons.
+
+Version 0.50.7, released 18th September 2016
+--------------------------------------------
+
+Released as a part of the Annual Roguelike Release Party.
+
+Changes:
+* New multi-platform build system: instructions can be found in INSTALL.
+* Add music!!!
+* New dungeon: the Tomb of Xinroch.
+* Priests and priestesses can heal burns on body parts, and also put out the character if they're on fire.
+* Enner Beast now has a place to catch fish.
+* Maze rooms!
+
+Fixes:
+* Full screen bug is 99% solved!
+* Attribute penalties to burnt limbs have been scaled back.
+* Players will now find holy books.
+* Players can sever ghost limbs, which subsequently disappear.
+
+Version 0.50.6, released 7th June 2016
+--------------------------------------
+
+Changes:
+* Green Valpurium!
+* Users can add dungeons in a generic way to the world map by scripting alone, there are 32 slots available for this.
+* Dungeon data files now appear as individual files in Script/dungeons, one file per dungeon.
+* SDL UpdateTexture is replace with texture locking + pixel memcpy.
+* World terrains now appear in data files gwterra.dat and owterra.dat
+
+Fixes:
+* Player can talk to Ivan Gorovits again without the game crashing.
+
+Version 0.50.5, released 27th March 2016
+----------------------------------------
+
+Changes:
+* Lanterns ignite the square they break in.
+* Explosions split to fire only (fireballs) and fire + physical (land mines).
+* Female player head sprites added.
+* Body parts are warm if they're burning - Infravision
+* Ghosts now resemble the deceased!
+
+Fixes:
+* Screenshot directory now created before taking screenshot.
+* Fixed a bothersome problem with pet movement.
+* Coffin sprite now correctly used in the Attnam Catacombs.
+* Toggle option for smart open/close/apply functions.
+* Explosions only cause bleeding if they cause physical damage.
+* Can no longer eat or drink burning objects
+
+Version 0.50.4, released 26th December 2015
+-------------------------------------------
+
+Changes:
+* Make 'open', 'close' and 'use key' commands more context-aware.
+* Walking towards a closed door will automatically try to open it.
+* Improved MoveRandomly() algorithm.
+
+Fixes:
+* Fix iron maiden not changing sprite when closed.
+* Fix warnings.
+* Fix kamikaze dwarf graphics.
+
+Plus:
+* C++ 11 migration.
+* Updates for support email and the new website.
+
+Version 0.50.3, released 22nd July 2015
+---------------------------------------
+
+Changes:
+* Add SDL2 support.
+
+Fixes:
+* Make backspace key work on OS X.
+* Fix SetFireToBodyPart().
+* Fix fullscreen crash.
+
+Version 0.50.2, released 11th April 2015
+----------------------------------------
+
+Changes:
+* Whips can be broken.
+* Female slaves are team New Attnam, not Imperialist team.
+* Skeletons can be spawned by zapping wand of necromancy at a pile of bones and a skull. With high Int, you create skeleton warriors instead.
+* Melee weapons that are on fire will do fire damage, with a chance to set limbs on fire.
+* Gods will now answer to the new perils of fire subsystem when you pray.
+* Natural limbs now suffer penalties when burnt: Legs go down in strength and agility, arms in strength and dexterity. MaxHP is also affected by being burnt. Enjoy!
+* Drinking healing liquid or troll blood will heal limbs of their burns.
+
+Fixes:
+* Fire subsystem fixes.
+* Restrict wish confirmation to wizard mode only.
+* Holy handgrenades show armed state in inventory.
+* Not all creatures have fingers.
+
+Version 0.50.1, released 1st March 2015
+---------------------------------------
+
+Changes:
+* Fire subsystem (see below).
+* Made hunger/burden/tiredness state printing code more elegant.
+* Screenshots will be saved to ~/IvanScrshot/ (this directory can be changed to preference at line 308 of whandler.cpp).
+* Added Blob's drawing of Ivan and Vlad to GC8 entry.
+* Total equipment weight shown in equip screen.
+* Added NetHack Keybinding Option.
+* Cha affects Wand of Resurrection taming.
+* Add Spider Retrieval side quest.
+
+Fire subsystem:
+* Intoduced new material variables of Transient and Steady State thermal energy. Transient is responsible for enabling damage from multiple explosions to accumulate, triggering higher thresholds of activation energy for materials like dragon hide, etc. Transient stored energy de-accumulates with the Be() function. Steady state stores the accumulated energy and is decremented only when the burning object is in contact with a fluid, f. ex. water. once Steady State reached zero, then the flames on the object are extinguished.
+* Fire resistances have been added for materials.
+* There is an extinguish function for putting out flames on objects that are on fire. Extinguish() needs to be properly generalised so that the thermal energies reach zero when this function is called (another thing for the to-do list).
+* Graded charring in the bitmap, achieved by selecting the RGB colour with the max intensity, RSHIFT max intensity by 2, RSHIFT old RGB by 3 and then add these together with Max>>2 to form the new 'burnt' RGB values.
+* Added the visuals for items after they ignite. Only ignition source is due to explosions so far. Not sure if the Activation Energy for items should be lowered, but if it is too low then the whole dungeon will ignite.
+* Different materials now have different burn times. BurnModifier() determines the duration of burning based on material strength, fire resistance and density.
+* Materials now "Burn", if they are burning, and go through the stages not burnt, slightly burnt, moderately burnt and heavily burnt.
+* Strength value of the material decreases according to its degree of burnedness (NOT_BURNT, MODERATELY_BURNT etc.).
+* Solids no longer sparkle when they are burnt, but do again when they are repaired.
+* Objects are destroyed once they are completely burnt up, as per spoiling, rusting subsystems.
+* Made it so that books and scrolls catch fire like normal items do, but only after being tested for instantly burning away.
+* Burnt scrolls are illegible, unless you are intelligent enough to decipher them.
+* Phoenix feather materials "rise from the ashes" upon complete combustion.
+* Prevented wooden flaming swords from catching fire.
+* Melee weapons can be dipped when on fire, no fluid, and not both.
+* Armors can now be dipped but only when on fire and no other fluid is present.
+* Blood puts out flames.
+* Made it more likely for raindrops and vomit to put out fires. At the moment, normal items do not accumulate raindrops via this mechanism, only gear.
+* Made it so that the words "(on fire)" appear in the post-fix of meleeweapons and armors that are on fire, a la fluids (covered in ...).
+
+Fixes:
+* Found that materials no longer sparkle if dipped in fluids, and no longer resume sparkling even after the fluid has evaporated - which is a BUG!
+* Fixed a provisional bug where scrolls and books could be dipped without being on fire.
+* Ghosts, powder, fluids were all burning. Even the snow in Attnam was on fire! This was fixed for gases, fluids and powders.
+* Fixed window bug.
+* Removed test1 and test2 sirens.
+* Fixed typo in Atavus X-mas message.
+* If a character other than the player had polycontrol and lycanthropy, then the player would be prompted to decide whether the lycanthropic character would polymorph.
+* Important fix for 64-bit systems that prevents segfault when loading a save file.
+* Fixed cycleoption to be more generic (thus usable for other config options), rather than having code for the DirectionKeyMap option within its functions.
+* Bugfix for off-center loading animation.
+* Typo fixes.
+* Fixed bug in gods.cpp that caused game to not display the last time the player prayed to Valpurus and Mortifer.
+* Fixed Silva Earthquake crashing on GC6.
+* Player or NPC being struck by mine-activated mustard gas no longer causes a crash.
+* Gas immunity bones message bug (thanks Pent, Eagle V) fixed(?) and needs testing.
+* Fixed the shop door creation bug (dungeon script files).
+* "Fixed" Elite guard taming: TamingDifficulty = 30.
+* Double checked that Ommel Cerumen cannot be wished for (this is therefore fixed).
+* Fixed the library exploit.
+* Fixed the banana room exploit.
+* Holy hand grenade arm and drop in cathedral now go to dwarf room.
+* Mustard gas hostility bug fixed.
+* Fixed the drinking pea soup in the world map bug by including a check to avoid attempting to place a gas cloud in over world.
+* Removed spurious (?) semicolons from save.h, bodypart.h, char.h and char.cpp.
+* Valdemar spawn rate and base unarmed skill for humanoids bugs fixed.
+
+CVS, developed until 3rd September 2006
+---------------------------------------
+
+Changes:
+* History-related doc updates, especially in the Doc/Obsolete directory
+* Rather a large doc update
+* Kamikaze dwarfs sing hymns
+* Limbs cut off by leprosy go to the inventory not to the ground
+* Carnivorous plants can now (probably) eat
+* Some wands are teleported to kamikaze dwarfs in the cathedral (if they are kamikaze weapons)
+* Ighalli's god changed integrated
+* AUTHORS file updated
+* The order of priests' limb attachment and leprosy curing services has been reversed
+* Bananas can now jam
+* The Holy Hand Grenade, chastity belt, pear of anguish, weight (for use with spanish donkey) added to item.pcx by Kahvi
+* Judas chair, rotating drum, witch's spider, rack, wheel, spanish donkey, spanish boot, iron maiden added to olterra.pcx by Kahvi
+* Big T added as a 'being Tortured' symbol to symbol.pcx by Kahvi
+* You now hear coins clinking inside imperialists
+* Made some additional preparations for willpower and hiccups
+* Scars
+* Added some antidote to priests' inventories
+* Stairs and portals flash in look mode
+* Reduced magical whistle's recharging time from 75 to 60 min, because the latter is easier to remember
+* Mustard gas works
+* Holy handgranade and gas grenades
+* Total weight of inventory shown in inventory
+* Integrated code from Atomic: acid shield, weeping blade, amulet of warding
+* Player now get a mysterious and large saga of the pantheon when he/she/it finds about all the gods
+* Engravings become gibberish if polymorphed
+* Added sirens
+* An additional abstract base template for trap items
+* AI may be more intelligent when choosing whether to let another character or player to displace itself
+* Some typedefing and S&Ring from const <type> to c<type>, eg. const int -> cint & const item* -> citem* etc.
+* Added some code for an experience id system which would be a most powerful tool when battling abuses, but it's still very incomplete
+* The Groke added to item.pcx by Kahvi
+* A frying pan, a rolling pin and a sausage added to item.pcx by Kahvi
+* Gorovits family life-size copy of Lenin's mummy added
+* Some code related to mind worms added
+* Mola Mola added to char.pcx by Kahvi
+* Bats and spiders are now animated
+* Added some underground levels to Attnam
+* Coffin added
+* Punisher added
+* Added Kahvi's map of Attnam's cellar partially
+* Added new abstraction for locked items
+* Attnam's cellar has lamps
+* Humanoid.pcx modified, ready for Kahvi's addition of broken armor pics
+* Added a smiley to the "Unfortunately you died." screen
+* Added can materials
+* Added stairs to catacomb
+* Added zombie of Khaz-zadm
+* Added lots of new zombies, skeletons and ghosts
+* Added first-born sons and daughters
+* You can now gift stuff to Petrus's wives
+* Implemented alcoholic guards
+* Items can now be hasted and slowed to speed or slow their spoiling
+* Whip of thievery is now less powerful when thrown
+* Some of the best monsters are now immune to thievery
+* Lines cut in materia.cpp
+* Coffin added to OLTerra.pcx by Kahvi
+* Pregnant wife of Petrus torso added to Humanoid.pcx by Kahvi
+* Added enner beast image by blob to GC5 entering screen
+
+Fixes:
+* "Magpie critically peck you" corrected
+* Small bug corrected in the stamina regeneration
+* Typos corrected
+* Mind worms had somehow disappeared from char.pcx; they've been added again
+* Fixed a certain bug caused by the addition of willpower
+* Fixed a memory leak in the scar code
+* Golems' AGI, DEX and STRs are no longer affected by scars
+* Reading a scroll of repair with a corpse in the inventory no longer crashes
+* Mirror and clone crashed, no more
+* Corrected "if and ;" bug spotted by TheFallenOne222
+* Shopkeepers cannot be fooled by primed holy handgrenades
+* Checked acid shield's code and corrected some smallish mistakes
+* Biting a large hedgehog now works correctly
+* Big T and P work in container UI
+* Charming is now more dependent on attributes etc.
+* Fixed a bug in the equipment removal code
+* Fixed a bug in the death msg code
+* Sadism yet incomplete, fix bugs
+* Fixed a fatal bug in the head shot code
+* Fixed an animation bug which occured over memorized stairs outside LOS
+* Fixed a bug in the displacement code
+* The RAND_N function is now correct
+* Monsters are now generated in the catacombs
+* A small bug correction in the lookmode
+* Children no longer spoil
+* Corrected a bug in the scroll of change material code
+* Corrected a crash which occurred while wearing a Decos ad shirt
+* Ommel cerumen can no longer be wished
+* Fixed a bug in the dagger of venom code
+* Fixed a fatal bug in the fly code
+* Fixed a bug in the weaponskill code
+* The cursor is now shown properly if you are a 32x32 monster (not possible in the real game though)
+
 Version 0.50, released 10th December 2004
 -----------------------------------------
 
@@ -111,8 +471,6 @@ Version 0.311, released 25th February 2002
 Version 0.310, released 4th February 2002
 -----------------------------------------
 
-Added stuff after version 0.301, released 10th December 2001:
-
 - Linux and DOS ports
 - fountain effects
 - starting pet
@@ -126,3 +484,8 @@ Added stuff after version 0.301, released 10th December 2001:
 - danger levels and alignments added to the panel
 - processor loads decreased
 - ergonomic tweaks, e.g. with go, rest and look commands
+
+Version 0.301, released 10th December 2001
+------------------------------------------
+
+- first public release
