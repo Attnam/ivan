@@ -96,6 +96,12 @@ void msgsystem::AddMessage(cchar* Format, ...)
   }
 
   festring Temp;
+
+  if(ivanconfig::GetShowTurn())
+  {
+    Temp << game::GetTurn() << " ";
+  }
+
   Temp << Begin.X << ':';
 
   if(Begin.Y < 10)
