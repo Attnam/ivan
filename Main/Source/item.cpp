@@ -478,6 +478,7 @@ int item::GetResistance(int Type) const
    case PHYSICAL_DAMAGE: return GetStrengthValue();
    case ENERGY: return GetEnergyResistance();
    case DRAIN:
+   case PSI:
    case MUSTARD_GAS_DAMAGE:
     return 0;
    case FIRE: return GetFireResistance();

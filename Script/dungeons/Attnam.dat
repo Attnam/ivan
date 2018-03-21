@@ -1229,7 +1229,7 @@ Dungeon ATTNAM;
     }
   }
 
-  RandomLevel 2:3;
+  RandomLevel 2:3; /* Beartrap vault */
   {
     Room
     {
@@ -1261,6 +1261,42 @@ Dungeon ATTNAM;
       Square, Random;
       {
         Items == ADAMANT beartrap { Team = MONSTER_TEAM; IsActive = true; LifeExpectancy = 1000:10000; }
+      }
+    }
+  }
+
+  RandomLevel 3:4; /* Sepulcher */
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 5,5;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+        Types
+        {
+          # = BLACK_GRANITE wall(BRICK_OLD);
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 2,2;
+      {
+        Items == EBONY_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 150; Category = TOOL; }, Random { Chance = 75; MinPrice = 250; Times = 2; Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT; } } }
+        Character = vampire;
       }
     }
   }
@@ -1390,7 +1426,7 @@ Dungeon ATTNAM;
           b = 0;
           s = 0;
           C = 0;
-          N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, lantern, wand(WAND_OF_NECROMANCY); } }
+          N = necromancer(APPRENTICE_NECROMANCER) { Inventory = { 2, lantern, wand; } }
           Z = zombie(ZOMBIE_OF_KHAZ_ZADM);
           p = dog(SKELETON_DOG);
          }
@@ -1406,6 +1442,11 @@ Dungeon ATTNAM;
         ...bbb...
         .........
       }
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Items == Random { Category = SCROLL; }
     }
   }
 }

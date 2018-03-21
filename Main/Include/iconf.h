@@ -30,6 +30,7 @@ class ivanconfig
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
+  static truth GetShowTurn() { return ShowTurn.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -88,6 +89,7 @@ class ivanconfig
 #endif
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
+  static truthoption ShowTurn;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
