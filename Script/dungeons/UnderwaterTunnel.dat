@@ -120,6 +120,55 @@ Dungeon UNDER_WATER_TUNNEL;
     }
   }
 
+  RandomLevel 0:2; /* Vault */
+  {
+    Room
+    {
+      WallSquare = solidterrain(GROUND), 0;
+      FloorSquare = solidterrain(GROUND), 0;
+      DoorSquare = solidterrain(GROUND), 0;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      AltarPossible = false;
+      Size = 5,5;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+        Types
+        {
+          # = SAND_STONE earth;
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 2,2;
+      {
+        Items == RATA_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|GAUNTLET|BELT|BOOT; MinPrice = 100; Times = 3; Chance = 75; } }
+      }
+
+      Square, Pos 0,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,4;
+      {
+        AttachRequired = true;
+      }
+    }
+  }
+
   Level 0;
   {
     IgnoreDefaultSpecialSquares = true;

@@ -43,7 +43,7 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
-truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring ghost::GetGhostDescription() const { return Description; }
 cchar* ghost::FirstPersonUnarmedHitVerb() const { return "touch"; }
 cchar* ghost::FirstPersonCriticalUnarmedHitVerb() const
