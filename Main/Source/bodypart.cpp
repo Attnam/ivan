@@ -3715,7 +3715,7 @@ truth bodypart::IsDestroyable(ccharacter*) const
 
 truth bodypart::DamageTypeCanScar(int Type)
 {
-  return !(Type == POISON || Type == DRAIN);
+  return !(Type == POISON || Type == DRAIN || Type == PSI);
 }
 
 void bodypart::GenerateScar(int Damage, int Type)

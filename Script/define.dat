@@ -55,7 +55,7 @@
 #define TELEPORT_CONTROL (1 << 12)
 #define PANIC (1 << 13)
 #define CONFUSED (1 << 14)
-#define PARASITIZED (1 << 15)
+#define PARASITE_TAPE_WORM (1 << 15)
 #define SEARCHING (1 << 16)
 #define GAS_IMMUNITY (1 << 17)
 #define LEVITATION (1 << 18)
@@ -71,6 +71,7 @@
 #define TELEPORT_LOCK (1 << 28)
 #define FEARLESS (1 << 29)
 #define FASTING (1 << 30)
+#define PARASITE_MIND_WORM (1 << 31)
 
 #define HEAD 1
 #define TORSO 2

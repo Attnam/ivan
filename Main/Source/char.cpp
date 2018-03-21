@@ -79,7 +79,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "LifeSaved",
+    "Life Saved",
     SECRET,
     &character::PrintBeginLifeSaveMessage,
     &character::PrintEndLifeSaveMessage,
@@ -188,7 +188,7 @@ statedata StateData[STATES] =
     &character::CanBeConfused,
     &character::ConfusedSituationDangerModifier
   }, {
-    "Parasitized",
+    "Parasite (tapeworm)",
     SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
@@ -208,7 +208,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "GasImmunity",
+    "Gas Immunity",
     SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
@@ -286,7 +286,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "PolymorphLocked",
+    "Polymorph Locked",
     SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginPolymorphLockMessage,
     &character::PrintEndPolymorphLockMessage,
@@ -306,7 +306,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "DiseaseImmunity",
+    "Disease Immunity",
     SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginDiseaseImmunityMessage,
     &character::PrintEndDiseaseImmunityMessage,
@@ -316,7 +316,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "TeleportLocked",
+    "Teleport Locked",
     SECRET,
     &character::PrintBeginTeleportLockMessage,
     &character::PrintEndTeleportLockMessage,
@@ -345,6 +345,17 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Parasite (mindworm)",
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
+    &character::PrintBeginMindwormedMessage,
+    &character::PrintEndMindwormedMessage,
+    0,
+    0,
+    &character::MindwormedHandler,
+    &character::CanBeParasitized, // We are using TorsoIsAlive right now, but I think it's OK,
+                                  // because with unliving torso, your head will not be much better for mind worms.
+    &character::ParasitizedSituationDangerModifier
   }
 };
 
@@ -967,8 +978,6 @@ void character::Be()
         }
       }
       audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
-
-
     }
 
     if(Stamina != MaxStamina)
@@ -2470,12 +2479,12 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
     CheckStarvationDeath(CONST_S("vomited himself to death"));
   }
 
-  if(StateIsActivated(PARASITIZED) && !(RAND() & 7))
+  if(StateIsActivated(PARASITE_TAPE_WORM) && !(RAND() & 7))
   {
     if(IsPlayer())
       ADD_MESSAGE("You notice a dead broad tapeworm among your former stomach contents.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
   }
 
   if(!game::IsInWilderness())
@@ -3793,6 +3802,9 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
 
   if(StateIsActivated(LEPROSY))
     BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
+
+  if(BodyPartIndex == HEAD_INDEX && StateIsActivated(PARASITE_MIND_WORM))
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
 
   if(ForceDisappearance
      || BodyPartsDisappearWhenSevered()
@@ -6880,16 +6892,25 @@ void character::ReceiveAntidote(long Amount)
     }
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(PARASITIZED))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_TAPE_WORM))
   {
     if(IsPlayer())
       ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
     Amount -= Min(100L, Amount);
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_MIND_WORM))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Something in your head screeches in pain.");
+
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
+    Amount -= Min(100L, Amount);
+  }
+
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(LEPROSY))
   {
     if(IsPlayer())
       ADD_MESSAGE("You are not falling to pieces anymore.");
@@ -7311,14 +7332,14 @@ void character::PrintEndParasitizedMessage() const
 
 void character::ParasitizedHandler()
 {
-  EditNP(-5);
+  EditNP(-10);
 
   if(!(RAND() % 250))
   {
     if(IsPlayer())
       ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
-    ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
+    ReceiveDamage(0, 1, DRAIN, TORSO, 8, false, false, false, false); // Use DRAIN here so that resistances do not apply.
     CheckDeath(CONST_S("killed by a vile parasite"), 0);
   }
 }
@@ -9060,7 +9081,7 @@ void character::ReceiveWhiteUnicorn(long Amount)
   BeginTemporaryState(TELEPORT, Amount / 100);
   DecreaseStateCounter(LYCANTHROPY, -Amount / 100);
   DecreaseStateCounter(POISONED, -Amount / 100);
-  DecreaseStateCounter(PARASITIZED, -Amount / 100);
+  DecreaseStateCounter(PARASITE_TAPE_WORM, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
   DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
@@ -10820,9 +10841,64 @@ character* character::GetNearestEnemy() const
   return NearestEnemy;
 }
 
+void character::PrintBeginMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You have a killer headache.");
+}
+
+void character::PrintEndMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your headache finally subsides.");
+}
+
 truth character::MindWormCanPenetrateSkull(mindworm*) const
 {
-  return false;
+  if(!(RAND() % 2))
+    return true;
+  else
+    return false;
+}
+
+void character::MindwormedHandler()
+{
+  if(!(RAND() % 200))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Your brain hurts!");
+
+    BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
+    return;
+  }
+
+  // Multiple mind worm hatchlings can hatch, because multiple eggs could have been implanted.
+  if(!(RAND() % 500))
+  {
+    character* Spawned = mindworm::Spawn(HATCHLING);
+    v2 Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Spawned, GetPos());
+
+    if(Pos == ERROR_V2)
+    {
+      delete Spawned;
+      return;
+    }
+
+    Spawned->SetTeam(game::GetTeam(MONSTER_TEAM));
+    Spawned->PutTo(Pos);
+
+    if(IsPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of your skull.", Spawned->CHAR_NAME(INDEFINITE));
+    }
+    else if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
+    }
+
+    ReceiveDamage(0, 1 + RAND_N(5), DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
+    CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
+  }
 }
 
 truth character::CanTameWithDulcis(const character* Tamer) const

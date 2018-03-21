@@ -1089,27 +1089,47 @@ shopkeeper
 
   Config XINROCH_TOMB;
   {
-    NameSingular = "quartermaster";
+    DefaultName = "Pate";
+    NameSingular = "peddler";
     AttributeBonus = 25;
-    Helmet = MITHRIL helmet { Enchantment = 1; }
-    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-    BodyArmor = IRON bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-    Belt = NYMPH_HAIR belt { Enchantment = 1; }
-    RightWielded = RUBY pickaxe { Enchantment = -1; }
-    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
-    RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
-    KnownCWeaponSkills == AXES;
-    CWeaponSkillHits == 1000;
+    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    Belt = IRON belt(BELT_OF_CARRYING) { Enchantment = 1; }
+    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = IRON shield;
+    RightGauntlet = IRON gauntlet { Enchantment = 1; }
+    RightBoot = IRON boot { Enchantment = 1; }
+    KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+    CWeaponSkillHits = { 2, 1000, 1000; }
     RightSWeaponSkillHits = 500;
-    DefaultName = "Fryndal";
-    Inventory == lantern;
+    LeftSWeaponSkillHits = 500;
+    HairColor = rgb16(140, 60, 60); /* horns */
+    ClothColor = rgb16(64, 0, 128);
+    HeadBitmapPos = 96, 112;
+    TorsoBitmapPos = 32, 128;
+    ArmBitmapPos = 64, 80;
+    LegBitmapPos = 0, 64;
+    Inventory = { 2, lantern, RUBY pickaxe { Enchantment = -1; } }
     UndeadVersions = false;
     FriendlyReplies =
     {
-      3,
-      "\"Normally these provisions are for the consumption of the tomb guards. But I'll allow you some comestibles, for a price of course...\"",
-      "\"The bones on the floor? Heh, sometimes we need to throw something to the monsters.\"",
-      "@Dd smiles: \"A drink at the fountain is free my friend. Just watch out for the residents.\"";
+      10,
+      "\"I used to be a guard in the temple above, but I got tired of the endless waiting for a miracle.\"",
+      "\"The bones on the floor? Heh, you wouldn't believe who dares to call themselves an adventurer these days.\"",
+      "\"Hey, you look reasonably sane! What are you doing in the Tomb? Are you an adventurer or something?\"",
+      "\"Best wares, best prices! Show me anyone who sells for less and I'll gut them and be the cheapest again!\"",
+      "\"Oh, I know what it is. You've come for the trinkets, haven't you? Well, whatever it is... I have it!\"",
+      "\"What wondrous treasures, have I! At a special price for you only. There you are, have a nice look at them!\"",
+      "\"I chop prices, not limbs! Usually, heh heh heh.\"",
+      "\"Fine stuff, eh? Don't forget to thank me, heh heh heh.\"",
+      "\"Have you met Petrus, that high priest? Believe me this one, the man is scum. They're all the same, those rotten priests.\"",
+      "\"Peddling is great - safer and better paid then guarding. Don't try it, though, or I'll have to remove competition.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"I still have friends up in the temple. You won't escape!\"",
+      "\"You'll die and then I'll sell your corpse to the necromancers!\"";
     }
   }
 }
@@ -1588,16 +1608,21 @@ darkknight
     CWeaponSkillHits == 1000;
     RightSWeaponSkillHits = 500;
     PanicLevel = 5;
+    CriticalModifier = 4;
+    TamingDifficulty = 20;
     TotalVolume = 90000;
     ClothColor = rgb16(80, 20, 20);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
     BootColor = rgb16(128, 128, 128);
+    IsNameable = false;
     IsUnique = true;
     CanBeGenerated = false;
-    HostileReplies == "@Dd exclaims: \"None shall pass.\"";
-    AttachedGod = INFUSCOR;
     UndeadVersions = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    AttachedGod = INFUSCOR;
+    HostileReplies == "@Dd exclaims: \"None shall pass.\"";
   }
 
   Config ELITE;
@@ -1697,15 +1722,17 @@ darkknight
     Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 4; }
     Amulet = amulet(AMULET_OF_LIFE_SAVING);
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
-    Cloak = DRAGON_HIDE cloak { Enchantment = 4; }
-    Belt = RUBY belt { Enchantment = 4; }
+    Cloak = DRAGON_HIDE cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 4; }
+    Belt = RUBY belt(BELT_OF_REGENERATION) { Enchantment = 4; }
     LeftWielded = RUBY RUBY flamingsword(LOST_RUBY_FLAMING_SWORD);
+    RightRing = ring(RING_OF_INFRA_VISION);
     LeftRing = ring(RING_OF_TELEPORT_CONTROL);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 4; }
     RightBoot = METEORIC_STEEL boot { Enchantment = 4; }
     NameSingular = "Old Chaos Flame";
-    KnownCWeaponSkills = { 2, LARGE_SWORDS, KICK; }
-    CWeaponSkillHits = { 2, 5000, 2000; }
+    KnownCWeaponSkills = { 5, LARGE_SWORDS, SHIELDS, UNARMED, KICK, BITE; }
+    CWeaponSkillHits = { 5, 5000, 2000, 2000, 2000, 2000; }
+    RightSWeaponSkillHits = 2000;
     LeftSWeaponSkillHits = 2000;
     BaseKickStrength = 2500;
     PanicLevel = 0;
@@ -1717,7 +1744,7 @@ darkknight
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
-    HostileReplies == "@Dd yells: \"You have failed me for the last time!\"";
+    HostileReplies == "@Dd yells: \"I have returned!\"";
     DeathMessage = "@Dd dies with a chuckle: \"Don't worry, I'll be right back.\"";
     CanBeConfused = false;
     FireResistance = 30;
@@ -1732,7 +1759,7 @@ darkknight
     AttachedGod = INFUSCOR;
     BodyPartsDisappearWhenSevered = true;
     CanBeGenerated = false;
-    ClassStates = HASTE|GAS_IMMUNITY;
+    ClassStates = HASTE;
   }
 }
 
@@ -1841,6 +1868,7 @@ ennerchild
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
   IsAbstract = true;
+  Inventory == Random { Category = RING|SCROLL; }
 
   Config BOY;
   {
@@ -4028,7 +4056,7 @@ zombie
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
-    Inventory == OCTIRON key(HEXAGONAL_LOCK);
+    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 50; }, key(OCTAGONAL_LOCK) { Chance = 50; } }
   }
 
   Config IMPRISONED_ZOMBIE;
@@ -4139,55 +4167,62 @@ xinrochghost
   TorsoBitmapPos = 48, 80;
   HairColor = rgb16(180, 0, 32);
   EyeColor = rgb16(200, 0, 0);
-  Inventory == cloak(CLOAK_OF_SHADOWS);
-  RightWielded = METEORIC_STEEL EBONY_WOOD meleeweapon(LONG_SWORD);
-  KnownCWeaponSkills == LARGE_SWORDS;
-  CWeaponSkillHits == 200;
-  RightSWeaponSkillHits = 200;
-  Frequency = 0;
+  BaseEmitation = rgb24(110, 110, 160);
+  NameSingular = "ghost";
+  PostFix = "of Xinroch";
+  Helmet = METEORIC_STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+  BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+  RightWielded = METEORIC_STEEL EBONY_WOOD meleeweapon(LONG_SWORD) { Enchantment = 2; }
+  LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
+  RightRing = ring(RING_OF_TELEPORT_CONTROL);
+  LeftRing = ring(RING_OF_INVISIBILITY);
+  RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+  RightBoot = METEORIC_STEEL boot { Enchantment = 2; }
+  KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+  CWeaponSkillHits = { 2, 1000, 1000; }
+  RightSWeaponSkillHits = 500;
+  LeftSWeaponSkillHits = 500;
+  PanicLevel = 0;
+  CanBeWished = true;
+  DangerModifier = 800;
+  FireResistance = 30;
+  ElectricityResistance = 30;
+  EnergyResistance = 30;
+  DisplacePriority = 8;
   TamingDifficulty = NO_TAMING;
   IsNameable = false;
   IsUnique = true;
   CanRead = true;
-  PanicLevel = 0;
-  CanBeWished = true;
-  DangerModifier = 800;
   CanBeCloned = false;
   IsPolymorphable = false;
   CanBeConfused = false;
-  FireResistance = 30;
-  ElectricityResistance = 30;
-  EnergyResistance = 30;
   IsImmuneToItemTeleport = true;
   AllowUnconsciousness = false;
-  DisplacePriority = 8;
   IsImmuneToWhipOfThievery = true;
   CreateUndeadConfigurations = false;
   CanBeGenerated = false;
-  CanBeGeneratedOnlyInTheCatacombs = false;
-  IsCatacombCreature = false;
+  CanBeGeneratedOnlyInTheCatacombs = true;
+  IsCatacombCreature = true;
   UndeadVersions = false;
   IsAbstract = false;
   CanUseEquipment = true;
-  StandVerb = "hovering";
-  NameSingular = "ghost";
-  PostFix = "of Xinroch";
-  AttachedGod = INFUSCOR;
-  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION|TELEPORT_CONTROL;
-  BaseEmitation = rgb24(110, 110, 160);
-  HostileReplies == "\"Who dares disturb my eternal slumber?\"";
-  FriendlyReplies == "\"Boo!\"";
-  DeathMessage = "@Dd is finally sucked into hell, leaving a shimmering cowl behind on the floor.";
-  ArticleMode = FORCE_THE;
-  FleshMaterial = GHOST;
   SpillsBlood = false;
   Sweats = false;
   UsesNutrition = false;
   BodyPartsDisappearWhenSevered = true;
-  MoveType = ETHEREAL;
   CanChoke = false;
   IsImmuneToStickiness = true;
   BiteCapturesBodyPart = false;
+  ArticleMode = FORCE_THE;
+  FleshMaterial = GHOST;
+  MoveType = ETHEREAL;
+  AttachedGod = INFUSCOR;
+  ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
+  StandVerb = "hovering";
+  HostileReplies == "\"Who dares disturb my eternal slumber?\"";
+  FriendlyReplies == "\"Boo!\"";
+  DeathMessage = "@Dd is finally sucked into hell, leaving a shimmering cowl behind on the floor.";
+  Inventory == cloak(CLOAK_OF_SHADOWS);
 }
 
 imp
@@ -7972,13 +8007,39 @@ siren
 
 mindworm
 {
-  DefaultMana = 5;
+  DefaultArmStrength = 1;
+  DefaultAgility = 12;
+  DefaultEndurance = 2;
+  DefaultPerception = 5;
+  DefaultWisdom = 15;
+  DefaultCharisma = 1;
+  DefaultMana = 30;
+  TotalSize = 7;
+  TotalVolume = 30;
+  TorsoBitmapPos = 208, 32;
+  TorsoMainColor = rgb16(200, 30, 30);
   CanOpen = false;
+  HasALeg = false;
+  HasEyes = false;
+  HasHead = false;
+  CanHear = false;
+  CanChoke = false;
+  Sweats = false;
+  IsImmuneToStickiness = true;
+  UsesNutrition = false;
+  AttackStyle = USE_HEAD;
+  ConstantCommandFlags = FLEE_FROM_ENEMIES;
+  DefaultCommandFlags = FLEE_FROM_ENEMIES;
   ClassStates = ESP;
   FleshMaterial = MIND_WORM_FLESH;
   AttachedGod = SCABIES;
+  BaseBiteStrength = 0;
+  MoveType = WALK|SWIM;
   IsAbstract = true;
-  TorsoMainColor = rgb16(200, 30, 30);
+  CanBeGenerated = true;
+  IgnoreDanger = true;
+  HPRequirementForGeneration = 80;
+  DayRequirementForGeneration = 6;
   FriendlyReplies =
   {
     5,
@@ -7988,21 +8049,32 @@ mindworm
     "\"Learning never exhausts the mind.\"",
     "\"The mind is everything. What you think you become.\"";
   }
+  HostileReplies == "@Dd screeches in the back of your mind.";
+  DeathMessage = "@Dd is squashed.";
+  StandVerb = "writhing";
 
   Config HATCHLING;
   {
-    TotalVolume = 30;
-    TorsoBitmapPos = 208, 32;
-    TotalSize = 7;
+    DefaultIntelligence = 20;
     NameSingular = "mind worm hatchling";
+    Frequency = 500;
+    ScienceTalkPossibility = 25;
+    ScienceTalkIntelligenceModifier = 10;
+    ScienceTalkWisdomModifier = 5;
+    ScienceTalkIntelligenceRequirement = 10;
+    ScienceTalkWisdomRequirement = 5;
   }
 
   Config BOIL;
   {
-    TotalVolume = 30;
-    TorsoBitmapPos = 208, 32;
-    TotalSize = 7;
+    DefaultIntelligence = 35;
     NameSingular = "mind worm boil";
+    Frequency = 1500;
+    ScienceTalkPossibility = 25;
+    ScienceTalkIntelligenceModifier = 100;
+    ScienceTalkWisdomModifier = 50;
+    ScienceTalkIntelligenceRequirement = 35;
+    ScienceTalkWisdomRequirement = 25;
   }
 }
 
@@ -8193,12 +8265,12 @@ bum
   TotalSize = 190;
   NameSingular = "bum";
   KnownCWeaponSkills == UNARMED;
-  CWeaponSkillHits == 50;
-  RightSWeaponSkillHits = 20;
+  CWeaponSkillHits == 500;
+  RightSWeaponSkillHits = 200;
   IsAlcoholic = true;
   CanBeGenerated = false;
-  IgnoreDanger = true; /* too drunk */
-  PanicLevel = 0;
+  IsNameable = false;
+  PanicLevel = 0; /* too drunk */
   FriendlyReplies =
   {
     151, /* rumors, more to come */

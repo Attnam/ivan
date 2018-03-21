@@ -493,7 +493,7 @@ Dungeon XINROCH_TOMB;
       AttachRequired = true;
     }
 
-    Room
+    Room /* Paradise island */
     {
       Size = 14,14;
       AllowLockedDoors = true;
@@ -520,7 +520,7 @@ Dungeon XINROCH_TOMB;
       }
       Square, Pos 7,6;
       {
-        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST)
+        Items == METEORIC_STEEL itemcontainer(LARGE_CHEST|OCTAGONAL_LOCK)
         {
           Parameters = LOCKED;
           ItemsInside = { 3,  Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; },
@@ -545,7 +545,7 @@ Dungeon XINROCH_TOMB;
         {
           # = 0;
           B = GRAVEL earth;
-          t = BALSA_WOOD decoration(PALM);
+          t = BALSA_WOOD decoration(BANANA_TREE);
         }
       }
       {
@@ -658,6 +658,14 @@ Dungeon XINROCH_TOMB;
     }
   }
 
+  RandomLevel 1:10;
+  {
+    Square, Random;
+    {
+      Items == PSYPHER bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 6; LifeExpectancy = 1000; Chance = 5; }
+    }
+  }
+
   RandomLevel 1:2; /* Vampire room */
   {
     Room
@@ -687,7 +695,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 2:3;
+  RandomLevel 2:3; /* Zombie room */
   {
     Room
     {
@@ -743,7 +751,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  RandomLevel 4:6; /* Dwarven gas chambers */
+  RandomLevel 2:4; /* Dwarven gas chambers */
   {
     Room
     {
@@ -804,13 +812,19 @@ Dungeon XINROCH_TOMB;
       Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 75; }
-        Times = 12;
+        Times = 8;
       }
 
       Square, Random HAS_NO_OTERRAIN;
       {
         Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
-        Times = 8;
+        Times = 6;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gastrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 6;
       }
 
       Square, Random HAS_NO_OTERRAIN;
@@ -871,6 +885,135 @@ Dungeon XINROCH_TOMB;
         ........
         ..#..#..
         ###..###
+      }
+    }
+  }
+
+  RandomLevel 1:4; /* Golem vault */
+  {
+    Room
+    {
+      Size = 9,9;
+      AltarPossible = false;
+      GenerateFountains = false;
+
+      OTerrainMap
+      {
+        Size = 3,3;
+        Pos = 3,3;
+        Types
+        {
+          # = METEORIC_STEEL wall(BRICK_OLD);
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 4,4;
+      {
+        Items == METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { MinPrice = 1250; Times = 2; } }
+        Character = golem(OMMEL_BONE);
+      }
+    }
+  }
+
+  RandomLevel 4:7; /* Cauldron vault */
+  {
+    Room
+    {
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      GenerateTunnel = false;
+      AltarPossible = false;
+      Size = 7,7;
+      UseFillSquareWalls = true;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 5,5;
+        Types
+        {
+          x = IRON wall(BRICK_OLD);
+        }
+      }
+      {
+        xxxxx
+        x...x
+        x...x
+        x...x
+        xxxxx
+      }
+
+      Square, Random;
+      {
+        Items == gastrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+        Times = 3;
+      }
+
+      Square, Pos 3,3;
+      {
+        Items == cauldron { SecondaryMaterial = TROLL_BLOOD; }
+      }
+    }
+  }
+
+  RandomLevel 2:4; /* Shop */
+  {
+    CanGenerateBone = false;
+
+    Room
+    {
+      Size = 7,7;
+      AltarPossible = false;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      DivineMaster = MELLIS;
+      Type = ROOM_SHOP;
+      Shape = ROUND_CORNERS;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 3, 3;
+      {
+        Character = shopkeeper(XINROCH_TOMB) { Team = XINROCH_TOMB_ENTRY_TEAM; Flags = IS_MASTER; }
+      }
+
+      ItemMap
+      {
+        Pos = 2,2;
+        Size = 3,3;
+        Types
+        {
+          a == Random { MinPrice = 250; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
+          d == Random { MinPrice = 250; Category = RING|AMULET; }
+          w == Random { MinPrice = 500; Category = WEAPON|SHIELD; }
+          e == Random { MinPrice = 10; Category = FOOD|POTION; }
+          u == Random { MinPrice = 200; Category = WAND|TOOL; }
+          v == Random { MinPrice = 500; Category = SCROLL|TOOL; }
+        }
+      }
+      {
+        uvu
+        a.w
+        eed
+      }
+
+      Square, Random;
+      {
+        Items == Random { Chance = 50; }
+        Times = 3;
+      }
+
+      Square, Random;
+      {
+        Items == bone;
+        Times = 3:9;
       }
     }
   }
@@ -1002,7 +1145,7 @@ Dungeon XINROCH_TOMB;
     }
   }
 
-  Level 3; /*ice cave*/
+  Level 3; /* Ice cave */
   {
     Rooms = 15:30;
     Size = 64, 36;
@@ -1121,6 +1264,11 @@ Dungeon XINROCH_TOMB;
       {
         Character = golem(BONE);
         Times = 5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == scrollofgolemcreation { Chance = 10; Times = 4; }
       }
     }
 
@@ -1257,7 +1405,7 @@ Dungeon XINROCH_TOMB;
         Types
         {
           # = 0;
-          B = bear(MUTANT_BEAR);
+          B = bear(MUTANT_BEAR) { Inventory = { 2, Random { Category = AMULET|RING|WAND|SCROLL; Chance = 75; }, Random { Category = VALUABLE; } } }
           S = skeleton(WARRIOR);
           b = bear(CAVE_BEAR);
           g = guard(TOMB_ENTRY) { Team = XINROCH_TOMB_NECRO_TEAM; }
@@ -1635,24 +1783,38 @@ Dungeon XINROCH_TOMB;
         Times = 20:40;
       }
 
+      Square, Random;
+      {
+        Character = golem(OMMEL_BONE);
+        Times = 2;
+      }
+
+      Square, Random;
+      {
+        Character = golem(OMMEL_TOOTH);
+      }
+
       Square, Pos 1, 0;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 19, 0;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 1, 38;
       {
         GTerrain = SLATE solidterrain(GROUND);
         OTerrain = OCTIRON door;
         AttachRequired = true;
       }
+
       Square, Pos 19, 38;
       {
         GTerrain = SLATE solidterrain(GROUND);
