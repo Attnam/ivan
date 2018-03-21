@@ -1868,7 +1868,7 @@ ennerchild
   AttachedGod = SCABIES;
   BiteCapturesBodyPart = false;
   IsAbstract = true;
-  Inventory == Random { Category = RING|SCROLL|WAND; }
+  Inventory == Random { Category = RING|SCROLL; }
 
   Config BOY;
   {
