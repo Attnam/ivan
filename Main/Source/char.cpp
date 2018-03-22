@@ -10672,14 +10672,14 @@ void character::ApplyAllGodsKnownBonus()
   pantheonbook* NewBook = pantheonbook::Spawn();
   AddPlace->AddItem(NewBook);
 
-  ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA\"");
+  ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA!\"");
   ADD_MESSAGE("%s materializes near your feet.",
               NewBook->CHAR_NAME(INDEFINITE));
 }
 
 truth character::ReceiveSirenSong(character* Siren)
 {
-  if(Siren->GetTeam() == GetTeam())
+  if(Siren->GetRelation(this) != HOSTILE)
     return false;
 
   if(!RAND_N(4))
@@ -10695,7 +10695,7 @@ truth character::ReceiveSirenSong(character* Siren)
     return true;
   }
 
-  if(!IsPlayer() && IsCharmable() && !RAND_N(5))
+  if(!IsPlayer() && IsCharmable() && CanTameWithDulcis(Siren) && !RAND_N(5))
   {
     ChangeTeam(Siren->GetTeam());
 
@@ -10707,14 +10707,14 @@ truth character::ReceiveSirenSong(character* Siren)
     return true;
   }
 
-  if(!RAND_N(4))
+  if(!IsImmuneToWhipOfThievery() && !RAND_N(4))
   {
     item* What = GiveMostExpensiveItem(Siren);
 
     if(What)
     {
       if(IsPlayer())
-        ADD_MESSAGE("%s music persuades you to give %s to %s as a present.",
+        ADD_MESSAGE("%s song persuades you to give %s to %s as a present.",
                     Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
       else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.",

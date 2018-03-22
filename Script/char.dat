@@ -7945,7 +7945,7 @@ siren
     IsUnique = true;
     CanBeCloned = false;
     IsPolymorphable = false;
-    TamingDifficulty = 20;
+    TamingDifficulty = 40;
     DefaultName = "Elianise";
     NameSingular = "elven ambassador";
     PostFix = "of the Dark Forest";
