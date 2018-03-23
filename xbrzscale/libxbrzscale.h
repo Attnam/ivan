@@ -27,9 +27,12 @@ class libxbrzscale
   static void SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
   static SDL_Surface* createARGBSurface(int w, int h);
   static SDL_Surface* scale(SDL_Surface* src_img,int scale);
-  static void setEnableOutput(bool b){bEnableOutput=true;};
+  static SDL_Surface* scale(SDL_Surface* dst_imgCache,SDL_Surface* src_img,int scale);
+  static void setEnableOutput(bool b){bEnableOutput=b;};
+  static void setFreeInputSurfaceAfterScale(bool b){bFreeInputSurfaceAfterScale=b;};
   static uint32_t* surfaceToUint32(SDL_Surface* img);
   static void uint32toSurface(uint32_t* dest, SDL_Surface* dst_img);
  private:
   static bool bEnableOutput;
+  static bool bFreeInputSurfaceAfterScale;
 };

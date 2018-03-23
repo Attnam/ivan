@@ -109,7 +109,7 @@ int Blue;\
 }
 
 bitmap::bitmap(cfestring& FileName)
-: FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0)
+: FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0), img(0), imgStretched(0)
 {
   rawbitmap Temp(FileName);
   Size = Temp.Size;
@@ -148,7 +148,7 @@ bitmap::bitmap(cbitmap* Bitmap, int Flags, truth CopyAlpha)
 
 bitmap::bitmap(v2 Size)
 : Size(Size), XSizeTimesYSize(Size.X * Size.Y),
-  FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0)
+  FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0), img(0), imgStretched(0)
 {
   Alloc2D(Image, Size.Y, Size.X);
 }
@@ -1162,62 +1162,61 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 /**
  * stretch from 2 to 6 only!
  */
-void bitmap::StretchBlitXbrz(cblitdata& BlitData) const
+void bitmap::StretchBlitXbrz(cblitdata& BlitData)
 {
+  libxbrzscale::setFreeInputSurfaceAfterScale(false); //TODO this config should be placed more globally...
   SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
 
   blitdata B = BlitData;
   if(B.Stretch<2 || B.Stretch>6){std::cerr<<"invalid stretch value min=2, max=6, requested="<<B.Stretch<<std::endl;exit(1);}; //TODO should exit in a safer way? like saving the game? but this is a bug prevention anyway..
 
-//  bool bDbg=true; //TODO use preprocessor?
-//  if(bDbg)std::cout<<"src:"<<B.Src.X<<","<<B.Src.Y<<","<<B.Border.X<<","<<B.Border.Y<<",dest:"<<B.Dest.X<<","<<B.Dest.Y<<",S:"<<B.Stretch<<std::endl;
+  Uint32 color32bit;
+  packcol16 Pixel;
+  unsigned char cr,cg,cb,ca;
+  bool bFreeImg=false;
 
-  SDL_Surface* img = libxbrzscale::createARGBSurface(B.Border.X, B.Border.Y);
-//  if(bDbg)std::cout<<",img:"<<img->w<<","<<img->h<<std::endl;
-//  if(bDbg)std::cout<<",bpp:"<<(int)img->format->BytesPerPixel<<",pitch:"<<img->pitch<<std::endl;
-
+  if(img==NULL || img->w!=B.Border.X || img->h!=B.Border.Y || img->refcount==0){
+    if(img!=NULL && img->refcount>0)SDL_FreeSurface(img); //previous one
+    img = libxbrzscale::createARGBSurface(B.Border.X, B.Border.Y); //src img is always 16x16
+  }
   // copy pixels to surface
-//  if(bDbg)std::cout<<"pixels:";
   for(int x1 = 0; x1 < B.Border.X; x1++)
   {
     for(int y1 = 0; y1 < B.Border.Y; y1++)
     {
-      packcol16 Pixel = Image[B.Src.Y + y1][B.Src.X + x1];
-      unsigned char ca = Pixel == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
-      Uint32 ui32 = SDL_MapRGBA(
+      Pixel = Image[B.Src.Y + y1][B.Src.X + x1];
+      ca = Pixel == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
+      color32bit = SDL_MapRGBA(
         fmt,
         (unsigned char)GetRed16(Pixel),
         (unsigned char)GetGreen16(Pixel),
         (unsigned char)GetBlue16(Pixel),
         ca
       );
-      //if(bDbg)std::cout<<(int)ca<<"("<<putX<<","<<putY<<"/"<<ui32<<");";
-      libxbrzscale::SDL_PutPixel(img, x1, y1, ui32);
+      libxbrzscale::SDL_PutPixel(img, x1, y1, color32bit);
     }
   }
-//  if(bDbg)std::cout<<std::endl;
-//  if(bDbg)IMG_SavePNG(img,"tmpDebug-StretchBlitXbrz.png");
 
-  SDL_Surface* imgStretched = libxbrzscale::scale(img,B.Stretch);
-//  if(bDbg)std::cout<<",imgS:"<<imgStretched->w<<","<<imgStretched->h<<","<<std::endl;
-//  if(bDbg)std::cout<<",bpp:"<<(int)imgStretched->format->BytesPerPixel<<",pitch:"<<imgStretched->pitch<<std::endl;
-
+//  if(imgStretched==NULL || imgStretched->w!=B.Border.X || imgStretched->h!=B.Border.Y || imgStretched->refcount==0){
+//    if(imgStretched!=NULL && imgStretched->refcount>0)SDL_FreeSurface(imgStretched); //previous one
+//    imgStretched = libxbrzscale::scale(imgStretched,img,B.Stretch);
+//  }
+  imgStretched = libxbrzscale::scale(imgStretched,img,B.Stretch);
   // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
   for(int x1 = 0; x1 < imgStretched->w; ++x1)
   {
     for(int y1 = 0; y1 < imgStretched->h; ++y1)
     {
-      Uint32 ui32pixel = libxbrzscale::SDL_GetPixel(imgStretched,x1,y1);
-      unsigned char cr,cg,cb,ca;
-      SDL_GetRGBA(ui32pixel,fmt,&cr,&cg,&cb,&ca);
+      color32bit = libxbrzscale::SDL_GetPixel(imgStretched,x1,y1);
+      SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);
       if(ca!=0){
         B.Bitmap->Image[B.Dest.Y+y1][B.Dest.X+x1] = MakeRGB16(cr,cg,cb);
       }
     }
   }
 
-  //TODO crashing? SDL_FreeSurface(img); //easy on memory
-  //TODO crashing? SDL_FreeSurface(imgStretched);  //easy on memory
+//  SDL_FreeSurface(img);
+//  SDL_FreeSurface(imgStretched);
 }
 
 void bitmap::StretchBlit(cblitdata& BlitData) const

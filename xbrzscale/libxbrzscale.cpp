@@ -28,6 +28,7 @@
 #include "xbrz/xbrz.h"
 
 bool libxbrzscale::bEnableOutput=false;
+bool libxbrzscale::bFreeInputSurfaceAfterScale=true;
 
 Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
 {
@@ -175,13 +176,22 @@ void libxbrzscale::uint32toSurface(uint32_t* ui32src, SDL_Surface* dst_img){
 }
 
 SDL_Surface* libxbrzscale::scale(SDL_Surface* src_img, int scale){
+  return libxbrzscale::scale(NULL, src_img, scale);
+}
+/**
+ * dst_img if not null may be re-used, and is also returned
+ */
+SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img, int scale){
   int src_width = src_img->w;
   int src_height = src_img->h;
   int dst_width = src_width * scale;
   int dst_height = src_height * scale;
 
   uint32_t *in_data = surfaceToUint32(src_img);
-  SDL_FreeSurface(src_img);
+  if(bFreeInputSurfaceAfterScale && src_img!=NULL && src_img->refcount>0){
+    SDL_FreeSurface(src_img); //previous INPUT surface
+    src_img=NULL; //just to prevent future troubles here, but pointless outside here
+  }
 
   if(bEnableOutput)printf("Scaling image...\n");
   uint32_t* dest = new uint32_t[dst_width * dst_height];
@@ -190,14 +200,17 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* src_img, int scale){
   delete [] in_data;
 
   if(bEnableOutput)printf("Saving image...\n");
-  SDL_Surface* dst_img = createARGBSurface(dst_width, dst_height);
-  if (!dst_img) {
+  if(dst_imgCache==NULL || dst_imgCache->w!=dst_width || dst_imgCache->h!=dst_height || dst_imgCache->refcount==0){
+    if(dst_imgCache!=NULL && dst_imgCache->refcount>0)SDL_FreeSurface(dst_imgCache); //previous OUTPUT surface
+    dst_imgCache = createARGBSurface(dst_width, dst_height);
+  }
+  if (!dst_imgCache) {
     delete [] dest;
     if(bEnableOutput)fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
     return NULL;
   }
 
-  uint32toSurface(dest,dst_img);
+  uint32toSurface(dest,dst_imgCache);
 
-  return dst_img;
+  return dst_imgCache;
 }
