@@ -27,6 +27,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/audio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.415330665" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -48,6 +49,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/audio}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1407132300" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -88,10 +90,11 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.523463421" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.894021113" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.151746855" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.151746855" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1810501842" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -131,6 +134,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Main/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.876489057" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -152,6 +156,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/audio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FeLib/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.377349473" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -196,6 +201,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2094939906" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -259,4 +265,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
