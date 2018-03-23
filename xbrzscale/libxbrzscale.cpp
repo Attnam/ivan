@@ -18,19 +18,14 @@
 
 #include "libxbrzscale.h"
 
-#include <SDL2/SDL_endian.h>
-#include <SDL2/SDL_error.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_surface.h>
 #include <cstdio>
 
+#include "SDL.h"
+#include "SDL_endian.h"
+#include "SDL_error.h"
+#include "SDL_pixels.h"
+#include "SDL_surface.h"
 #include "xbrz/xbrz.h"
-
-//#include <cstdio>
-//#include <cstdint>
-//#include "SDL.h"
-//#include "SDL_image.h"
-//#include "xbrz/xbrz.h"
 
 bool libxbrzscale::bEnableOutput=false;
 

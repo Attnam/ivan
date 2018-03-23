@@ -10,28 +10,6 @@
  *
  */
 
-//#include <allocate.h>
-//#include <bitmap.h>
-//#include <error.h>
-//#include <felibdef.h>
-//#include <femath.h>
-//#include <graphics.h>
-//#include <libxbrzscale.h>
-//#include <rawbit.h>
-//#include <save.h>
-//#include <sys/time.h>
-//#include <SDL2/SDL_image.h>
-//#include <SDL2/SDL_pixels.h>
-//#include <SDL2/SDL_stdinc.h>
-//#include <SDL2/SDL_surface.h>
-//#include <typedef.h>
-//#include <cmath>
-//#include <cstdlib>
-//#include <cstring>
-//#include <ctime>
-//#include <iostream>
-//#include <vector>
-
 #include <cmath>
 #include <ctime>
 #include <iostream>

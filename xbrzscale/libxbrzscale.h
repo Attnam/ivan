@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <SDL2/SDL_stdinc.h>
+#include "SDL_stdinc.h"
 
 struct SDL_Surface;
 
