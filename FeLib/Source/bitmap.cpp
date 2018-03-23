@@ -10,8 +10,31 @@
  *
  */
 
+//#include <allocate.h>
+//#include <bitmap.h>
+//#include <error.h>
+//#include <felibdef.h>
+//#include <femath.h>
+//#include <graphics.h>
+//#include <libxbrzscale.h>
+//#include <rawbit.h>
+//#include <save.h>
+//#include <sys/time.h>
+//#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_pixels.h>
+//#include <SDL2/SDL_stdinc.h>
+//#include <SDL2/SDL_surface.h>
+//#include <typedef.h>
+//#include <cmath>
+//#include <cstdlib>
+//#include <cstring>
+//#include <ctime>
+//#include <iostream>
+//#include <vector>
+
 #include <cmath>
 #include <ctime>
+#include <iostream>
 
 #include "bitmap.h"
 #include "graphics.h"
@@ -19,6 +42,7 @@
 #include "allocate.h"
 #include "femath.h"
 #include "rawbit.h"
+#include "libxbrzscale.h"
 
 /*
  * Blitting must be as fast as possible, even if no optimizations are used;
@@ -1155,6 +1179,67 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   B.Flags = 0;
   NormalMaskedBlit(B);
   graphics::BlitDBToScreen();
+}
+
+/**
+ * stretch from 2 to 6 only!
+ */
+void bitmap::StretchBlitXbrz(cblitdata& BlitData) const
+{
+  SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+
+  blitdata B = BlitData;
+  if(B.Stretch<2 || B.Stretch>6){std::cerr<<"invalid stretch value min=2, max=6, requested="<<B.Stretch<<std::endl;exit(1);}; //TODO should exit in a safer way? like saving the game? but this is a bug prevention anyway..
+
+//  bool bDbg=true; //TODO use preprocessor?
+//  if(bDbg)std::cout<<"src:"<<B.Src.X<<","<<B.Src.Y<<","<<B.Border.X<<","<<B.Border.Y<<",dest:"<<B.Dest.X<<","<<B.Dest.Y<<",S:"<<B.Stretch<<std::endl;
+
+  SDL_Surface* img = libxbrzscale::createARGBSurface(B.Border.X, B.Border.Y);
+//  if(bDbg)std::cout<<",img:"<<img->w<<","<<img->h<<std::endl;
+//  if(bDbg)std::cout<<",bpp:"<<(int)img->format->BytesPerPixel<<",pitch:"<<img->pitch<<std::endl;
+
+  // copy pixels to surface
+//  if(bDbg)std::cout<<"pixels:";
+  for(int x1 = 0; x1 < B.Border.X; x1++)
+  {
+    for(int y1 = 0; y1 < B.Border.Y; y1++)
+    {
+      packcol16 Pixel = Image[B.Src.Y + y1][B.Src.X + x1];
+      unsigned char ca = Pixel == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
+      Uint32 ui32 = SDL_MapRGBA(
+        fmt,
+        (unsigned char)GetRed16(Pixel),
+        (unsigned char)GetGreen16(Pixel),
+        (unsigned char)GetBlue16(Pixel),
+        ca
+      );
+      //if(bDbg)std::cout<<(int)ca<<"("<<putX<<","<<putY<<"/"<<ui32<<");";
+      libxbrzscale::SDL_PutPixel(img, x1, y1, ui32);
+    }
+  }
+//  if(bDbg)std::cout<<std::endl;
+//  if(bDbg)IMG_SavePNG(img,"tmpDebug-StretchBlitXbrz.png");
+
+  SDL_Surface* imgStretched = libxbrzscale::scale(img,B.Stretch);
+//  if(bDbg)std::cout<<",imgS:"<<imgStretched->w<<","<<imgStretched->h<<","<<std::endl;
+//  if(bDbg)std::cout<<",bpp:"<<(int)imgStretched->format->BytesPerPixel<<",pitch:"<<imgStretched->pitch<<std::endl;
+
+  // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
+  for(int x1 = 0; x1 < imgStretched->w; ++x1)
+  {
+    for(int y1 = 0; y1 < imgStretched->h; ++y1)
+    {
+      Uint32 ui32pixel = libxbrzscale::SDL_GetPixel(imgStretched,x1,y1);
+      unsigned char cr,cg,cb,ca;
+      SDL_GetRGBA(ui32pixel,fmt,&cr,&cg,&cb,&ca);
+      if(ca!=0){
+        B.Bitmap->Image[B.Dest.Y+y1][B.Dest.X+x1] = MakeRGB16(cr,cg,cb);
+      }
+    }
+  }
+
+  //TODO crashing? SDL_FreeSurface(img); //easy on memory
+  //TODO crashing? SDL_FreeSurface(imgStretched);  //easy on memory
 }
 
 void bitmap::StretchBlit(cblitdata& BlitData) const
