@@ -14,6 +14,7 @@
 #define __BITMAP_H__
 
 #include "v2.h"
+#include "SDL.h"
 
 class bitmap;
 class rawbitmap;
@@ -83,6 +84,7 @@ class bitmap
   void DrawHorizontalLine(int, int, int, col16, truth = false);
 
   void StretchBlit(cblitdata&) const;
+  void StretchBlitXbrz(cblitdata&);
 
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);
@@ -140,6 +142,8 @@ class bitmap
   packalpha** AlphaMap;
   packpriority** PriorityMap;
   truth* RandMap;
+  SDL_Surface* img;
+  SDL_Surface* imgStretched;
 };
 
 inline void bitmap::SafeUpdateRandMap(v2 Pos, truth What)

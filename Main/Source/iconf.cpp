@@ -51,6 +51,9 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
+truthoption ivanconfig::XBRZScale(        "XBRZScale",
+                                          "use XBRZScale to stretch graphics",
+                                          false);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -327,6 +330,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
+  configsystem::AddOption(&XBRZScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
