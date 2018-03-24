@@ -5,10 +5,10 @@ Iter Vehemens ad Necem
 [![Build status](https://ci.appveyor.com/api/projects/status/lsx9yspma48ag0fr?svg=true)](https://ci.appveyor.com/project/Attnam/ivan)
 
 [![Community](https://img.shields.io/badge/forum-cathedral%20of%20attnam-yellow.svg)](https://attnam.com/)
-[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v051)
+[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v052)
 
-[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v051/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
-[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v051.svg)](https://github.com/Attnam/ivan/compare/v051...master)
+[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v052/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
+[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v052.svg)](https://github.com/Attnam/ivan/compare/v052...master)
 [![Total Downloads](https://img.shields.io/github/downloads/attnam/ivan/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
 
 Iter Vehemens ad Necem (IVAN) is a graphical roguelike game, which currently
