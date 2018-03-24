@@ -661,6 +661,10 @@ class character : public entity, public id
   void PrintEndHiccupsMessage() const;
   void PrintBeginVampirismMessage() const;
   void PrintEndVampirismMessage() const;
+  void PrintBeginFearlessMessage() const;
+  void PrintEndFearlessMessage() const;
+  void PrintBeginFastingMessage() const;
+  void PrintEndFastingMessage() const;
   void EndPolymorph();
   character* ForceEndPolymorph();
   void LycanthropyHandler();
@@ -864,6 +868,9 @@ class character : public entity, public id
   void PrintBeginParasitizedMessage() const;
   void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
+  void PrintBeginMindwormedMessage() const;
+  void PrintEndMindwormedMessage() const;
+  void MindwormedHandler();
   truth CanFollow() const;
   truth LeftOversAreUnique() const;
   virtual festring GetKillName() const;
@@ -1101,6 +1108,7 @@ class character : public entity, public id
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual truth CanChokeOnWeb(web*) const { return CanChoke(); }
   virtual truth BrainsHurt() const { return false; }
+  virtual truth IsHeadless() const { return false; }
   truth IsSwimming() const;
   truth IsAnimated() const;
   virtual truth IsPlayerKind() const { return false; }
@@ -1125,10 +1133,11 @@ class character : public entity, public id
   item* GiveMostExpensiveItem(character*);
   void ReceiveItemAsPresent(item*);
   item* FindMostExpensiveItem() const;
-  void ReceiveSirenSong(character* Siren);
+  truth ReceiveSirenSong(character* Siren);
   character* GetNearestEnemy() const;
   truth IsInfectedByMindWorm() const { return !CounterToMindWormHatch; }
   void SetCounterToMindWormHatch(int What) { CounterToMindWormHatch = What; }
+  int GetCounterToMindWormHatch() const { return CounterToMindWormHatch; }
   truth MindWormCanPenetrateSkull(mindworm*) const;
   truth CanTameWithDulcis(const character*) const;
   truth CanTameWithLyre(const character*) const;

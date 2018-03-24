@@ -17,6 +17,14 @@
 #include <sys/farptr.h>
 #endif
 
+#ifndef WIN32
+#include <csignal>
+#include <cstring>
+#include <cstdlib>
+#include <execinfo.h>
+#include <unistd.h>
+#endif
+
 #include "game.h"
 #include "database.h"
 #include "feio.h"
@@ -30,8 +38,35 @@
 #include "proto.h"
 #include "audio.h"
 
+#ifndef WIN32
+
+void CrashHandler(int Signal)
+{
+  // Prints stack trace to stderr.
+  void* CallStack[128];
+  size_t Frames = backtrace(CallStack, 128);
+  std::cerr << strsignal(Signal) << std::endl;
+  backtrace_symbols_fd(CallStack, Frames, STDERR_FILENO);
+  exit(1);
+}
+
+#endif
+
 int main(int argc, char** argv)
 {
+#ifndef WIN32
+  signal(SIGABRT, CrashHandler);
+  signal(SIGBUS, CrashHandler);
+  signal(SIGFPE, CrashHandler);
+  signal(SIGILL, CrashHandler);
+  signal(SIGINT, CrashHandler);
+  signal(SIGSEGV, CrashHandler);
+  signal(SIGSYS, CrashHandler);
+  signal(SIGTERM, CrashHandler);
+  signal(SIGTRAP, CrashHandler);
+  signal(SIGQUIT, CrashHandler);
+#endif
+
   if(argc > 1 && festring(argv[1]) == "--version")
   {
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;

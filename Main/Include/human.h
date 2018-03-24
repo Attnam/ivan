@@ -162,6 +162,7 @@ CHARACTER(humanoid, character)
   virtual truth AllowUnconsciousness() const;
   virtual truth CanChokeOnWeb(web*) const;
   virtual truth BrainsHurt() const;
+  virtual truth IsHeadless() const;
   virtual cchar* GetRunDescriptionLine(int) const;
   virtual cchar* GetNormalDeathMessage() const;
   virtual void ApplySpecialAttributeBonuses();
@@ -410,6 +411,7 @@ CHARACTER(housewife, humanoid)
 {
  public:
   virtual truth SpecialEnemySightedReaction(character*);
+  virtual void CreateInitialEquipment(int);
  protected:
   virtual int GetHairColor() const;
   virtual v2 GetHeadBitmapPos() const;

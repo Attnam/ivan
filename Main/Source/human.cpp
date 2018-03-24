@@ -43,7 +43,7 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
-truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
+truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring ghost::GetGhostDescription() const { return Description; }
 cchar* ghost::FirstPersonUnarmedHitVerb() const { return "touch"; }
 cchar* ghost::FirstPersonCriticalUnarmedHitVerb() const
@@ -784,7 +784,7 @@ void priest::BeTalkedTo()
         return;
       }
     }
-    else 
+    else
       ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
@@ -983,6 +983,54 @@ void priest::BeTalkedTo()
                   "I need %ldgp for the ritual materials first.\"", Price);
   }
 
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your guts. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your head. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
   static long Said;
 
   if(GetConfig() != SILVA)
@@ -998,7 +1046,7 @@ void skeleton::BeTalkedTo()
   if(GetHead())
     humanoid::BeTalkedTo();
   else
-    ADD_MESSAGE("The headless %s remains silent.", PLAYER->CHAR_DESCRIPTION(UNARTICLED));
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void communist::BeTalkedTo()
@@ -1015,7 +1063,7 @@ void communist::BeTalkedTo()
     {
       if(Char != this)
         Char->ChangeTeam(PLAYER->GetTeam());
-      
+
       if(GetTeam()->GetMembers() == 1) // Only Ivan left in Party
         break;
     }
@@ -1294,7 +1342,11 @@ truth communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
+  if(!HasHead())
+  {
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
+  }
+  else if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
   {
     if(RAND() % 5)
     {
@@ -1927,6 +1979,18 @@ int humanoid::GetGlobalResistance(int Type) const
 
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
+
+  if(GetRightWielded())
+  {
+    if(GetRightWielded()->IsShield(this))
+      Resistance += GetRightWielded()->GetResistance(Type);
+  }
+
+  if(GetLeftWielded())
+  {
+    if(GetLeftWielded()->IsShield(this))
+      Resistance += GetLeftWielded()->GetResistance(Type);
+  }
 
   if(!(Type & PHYSICAL_DAMAGE))
   {
@@ -2749,7 +2813,7 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 void zombie::CreateBodyParts(int SpecialFlags)
 {
   bool Anyway = false;
-  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM)
+  if((GetConfig() == ZOMBIE_OF_KHAZ_ZADM) || !!(SpecialFlags & NO_SEVERED_LIMBS))
   {
     Anyway = true;
   } // Khaz-Zadm needs his hands...
@@ -3432,6 +3496,43 @@ truth housewife::SpecialEnemySightedReaction(character* Char)
                 Weapon->GetArticle(), Weapon->GetNameSingular().CStr());
 
   return false;
+}
+
+void housewife::CreateInitialEquipment(int SpecialFlags)
+{
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  meleeweapon* Weapon;
+
+  if(GetConfig() == CULTIST)
+  {
+    Weapon = meleeweapon::Spawn(SCYTHE);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(POLE_ARMS)->AddHit(100);
+    GetCurrentRightSWeaponSkill()->AddHit(50);
+    return;
+  }
+  else switch(RAND() % 4)
+  {
+   case 0:
+    Weapon = meleeweapon::Spawn(ROLLING_PIN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 1:
+    Weapon = meleeweapon::Spawn(FRYING_PAN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 2:
+    Weapon = meleeweapon::Spawn(MEAT_CLEAVER);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(SMALL_SWORDS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   default: break;
+  }
 }
 
 void guard::Save(outputfile& SaveFile) const
@@ -5699,6 +5800,12 @@ truth humanoid::BrainsHurt() const
   return !Head || Head->IsBadlyHurt();
 }
 
+truth humanoid::IsHeadless() const
+{
+  head* Head = GetHead();
+  return !Head;
+}
+
 void playerkind::PostConstruct()
 {
   int R = 0, G = 0, B = 0;
@@ -5966,8 +6073,10 @@ truth siren::TryToSing()
 
     if(Square && Square->GetCharacter())
     {
-      Success = true;
-      Square->GetCharacter()->ReceiveSirenSong(this);
+      Success = Square->GetCharacter()->ReceiveSirenSong(this);
+
+      if(Success)
+        break;
     }
   }
   if(Success)
@@ -5976,17 +6085,15 @@ truth siren::TryToSing()
   return Success;
 }
 
-truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
+truth humanoid::MindWormCanPenetrateSkull(mindworm*) const
 {
   if(GetHelmet())
   {
-    if(RAND_N(102) > GetHelmet()->GetCoverPercentile())
-    {
-      return RAND_2;
-    }
+    if(RAND() % 100 < GetHelmet()->GetCoverPercentile())
+      return false;
   }
 
-  return RAND_2;
+  return true;
 }
 
 truth humanoid::HasSadistWeapon() const
