@@ -1,0 +1,29 @@
+Outline pixel quality for new additions, using gimp (see Char.xcf for details)
+
+- use the wand [fuzzy select tool] on the background of "LatestWork"
+- invert selection (so pictures are now the content of the OutlineSelection)
+- ctrl+c to copy the OutlineSelection and just paste what will create a floating layer and make it become a real new layer "LatestPictures"
+
+- grow OutlineSelection by 1
+- create a new layer OutlineSimpleAfterGrow1 (below "LatestPictures") and paint the inside of the selections with black (0,0,0)
+- zoom in and take care of the outline corners to avoid getting too bold. just look on the already done work as reference.
+
+- open Char.png on gimp, and temporarily merge all visible layers on Char.xcf (and undo just after) to copy the final result inside Char.png, to keep the correct file format after you select "overwrite" to save it.
+
+
+TIP: fast click on one layer eye to see the differences of old and new pictures
+
+
+TIP: convert from pcx to png (there may have a better way but...)
+
+ in this order:
+ - open the pcx file on gimp
+ - copy the png file to a new one (I will call it new.png)
+ - open new.png on gimp
+ - copy the contents of pcx file into new.png
+ - save overwriting 
+
+ this will keep the correct file format.
+
+
+TIP: these stuff can be done in many ways, these are just the way I found, if you find a better way we would like to know :)

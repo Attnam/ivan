@@ -16,7 +16,7 @@ set_source_files_properties(
 
 add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
 target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio)
-target_link_libraries(ivan FeLib FeAudio SDL2_mixer pcre)
+target_link_libraries(ivan FeLib FeAudio SDL2_mixer pcre xbrzscale)
 
 if(UNIX)
     install(TARGETS ivan DESTINATION "${CMAKE_INSTALL_BINDIR}")

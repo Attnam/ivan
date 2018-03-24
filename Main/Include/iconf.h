@@ -26,11 +26,13 @@ class ivanconfig
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
+  static truth GetXBRZScale() { return XBRZScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth GetShowTurn() { return ShowTurn.Value; }
+  static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -78,6 +80,7 @@ class ivanconfig
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
+  static truthoption XBRZScale;
   static cycleoption DirectionKeyMap;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
@@ -90,6 +93,7 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+  static truthoption OutlinedGfx;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

@@ -1,132 +1,122 @@
-.*Somehow.*you.*manage.*to.*trap.*
-beartrap.wav
-.*step.*in.*an.*active.*
-beartrap.wav
-.*twists.*the.*existence.*
-teleport.wav
-.*utter.*respect.*
-cathedral.wav
+.*bite.*
+eat.wav eatWell.wav
+.*bleeds.*very.*badly.*
+bleedsbadly.wav
 .*burst.*of.*energy.*
 wandofstriking.wav
-.*neighs.*one.*last.*time.*
-mutantass.wav
-.*transform.*
-polymorph.wav
-.*true.*form.*
-unpolymorph.wav
+.*closes the door.*
+doorclose.wav
+.*close the door.*
+doorclose.wav
 .*crumpled.*heap.*of.*bones.*
 skeleton.wav
-.*You.*hit.*
-punch.wav punch2.wav punch3.wav punch4.wav punch5.wav
-.*hits.*you.*
-hit.wav hit2.wav hit3.wav hit4.wav hit5.wav
+.*destroyed.*
+destroyed.wav
+.*door opens.*
+dooropen.wav
+.*dries.*up.*
+drinkf.wav
 .*drops.*its.*head.*
 elpurideath.wav
-.*The.*enner.*beast.*dies.*
-ennerdeath.wav
-.*UGH.*UGHAaaa!.*
-enner.wav
-.*Uga.*Ugar.*Ugade.*Ugat!.*
-enner.wav
-.*"THREE".*
-holygrenade.wav
-.*sucked.*into.*hell.*
-ghost.wav
-.*You.*hear.*a.*faint.*thump.*
-mine.wav
 .*explode.*
 explosion.wav explosion2.wav explosion3.wav explosion4.wav
 .*explodes.*
 explosion.wav explosion2.wav explosion3.wav explosion4.wav
 .*explosion.*
 explosion.wav explosion2.wav explosion3.wav explosion4.wav
-.*You.*vomit.*
-vomit.wav
-.*vomits.*
-vomit.wav
-.*bleeds.*very.*badly.*
-bleedsbadly.wav
-.*dries.*up.*
-drinkf.wav
-.*water.*taste.*
-drinkf.wav
-.*destroyed.*
-destroyed.wav
-.*massive.*burst.*of.*electricity.*
-lightning.wav
-.*You.*finish.*drinking.*
-drinkp.wav
-.*is.*slain.*
-slain.wav
-.*shatters.*
-shatter.wav shatter2.wav
-.*You.*commence.*your.*journey.*
-intro.wav intro2.wav
-.*You.*die.*
-die.wav die2.wav die3.wav
-.*You.*finish.*eating.*
-chew.wav
+^(?!.*fails).*open the door.*
+dooropen.wav
+.*frightening, almost scream-like sound.*
+horn.wav
 .*gibberling.*dies.*screaming.*
 gibberling.wav
-.*squashed.*
-squish.wav
+.*highly alluring sound.*
+harp.wav
+.*hits.*you.*
+hit.wav hit2.wav hit3.wav hit4.wav hit5.wav
 .*is severed.*
 severed.wav
-.*on banana peel.*
-slip.wav
-.*slash.*
-blade1.wav blade2.wav blade3.wav blade4.wav blade5.wav blade6.wav
-.*stab.*
-blade1.wav blade2.wav blade3.wav blade4.wav blade5.wav blade6.wav
-.*strike.*
-blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
+.*is.*slain.*
+slain.wav
 .* kick .*
 blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
 .* kicks .*
 blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
-.*miss.*
-miss.wav miss2.wav miss3.wav miss4.wav miss5.wav
-.*bite.*
-eat.wav
-.*mesmerizing sound.*
-harp.wav
-.*highly alluring sound.*
-harp.wav
-.*frightening, almost scream-like sound.*
-horn.wav
 .*loud but calming sound.*
 horn.wav
-.*mighty sound.*
-horn.wav
-.*open the door.*
-dooropen.wav
-.*opens the door.*
-dooropen.wav
-.*close the door.*
-doorclose.wav
-.*closes the door.*
-doorclose.wav
-.*tortured hyena.*
-hyena.wav
-.*slain.*again.*
-zombie.wav
 .*magpie.*is.*slain.*
 magpie.wav
-music:menu
---music-played-at-menu--
-music:intro
---music-played-at-intro--
-music:Petrus
---music-played-when-meeting-Petrus--
-music:death
---music-played-when-dead--
-music:Elpuri
---music--
-music:Mortifier
---music--
-music:Shirt
---music--
-music:High Priest
---music--
-music:Worldmap
---music-played-at-a-location-of-given-name--
+.*massive.*burst.*of.*electricity.*
+lightning.wav
+.*mesmerizing sound.*
+harp.wav
+.*mighty sound.*
+horn.wav
+.*miss.*
+miss.wav miss2.wav miss3.wav miss4.wav miss5.wav
+.*neighs.*one.*last.*time.*
+mutantass.wav
+.*on banana peel.*
+slip.wav
+.*opens the door.*
+dooropen.wav
+^(?!.*lock).*shatters.*
+shatter.wav shatter2.wav
+^(?!.*lock).*shattering.*
+shatter.wav shatter2.wav
+.*slain.*again.*
+zombie.wav
+.*slash.*
+blade1.wav blade2.wav blade3.wav blade4.wav blade5.wav blade6.wav
+.*Somehow.*you.*manage.*to.*trap.*
+beartrap.wav
+.*squashed.*
+squish.wav
+.*stab.*
+blade1.wav blade2.wav blade3.wav blade4.wav blade5.wav blade6.wav
+.*step.*in.*an.*active.*
+beartrap.wav
+.*strike.*
+blunt1.wav blunt2.wav blunt3.wav blunt4.wav punch4.wav
+.*sucked.*into.*hell.*
+ghost.wav
+.*door is damaged.*
+woodBreaks1.wav woodBreaks2.wav
+.*The.*enner.*beast.*dies.*
+ennerdeath.wav
+.*"THREE".*
+holygrenade.wav
+.*tortured hyena.*
+hyena.wav
+.*transform.*
+polymorph.wav
+.*true.*form.*
+unpolymorph.wav
+.*twists.*the.*existence.*
+teleport.wav
+.*Uga.*Ugar.*Ugade.*Ugat!.*
+enner.wav
+.*UGH.*UGHAaaa!.*
+enner.wav
+.*utter.*respect.*
+cathedral.wav
+.*vomits.*
+vomit.wav
+.*water.*taste.*
+drinkf.wav
+.*You.*commence.*your.*journey.*
+intro.wav intro2.wav
+.*You.*die.*
+die.wav die2.wav die3.wav
+.*You.*finish.*drinking.*
+drinkp.wav
+.*You.*finish.*eating.*
+chew.wav
+.*You.*hear.*a.*faint.*thump.*
+mine.wav
+.*You hear a whistle playing.*
+whistle1.wav whistle2.wav whistle3.wav
+.*You.*hit.*
+punch.wav punch2.wav punch3.wav punch4.wav punch5.wav
+.*You [^.]*vomit.*
+vomit.wav
