@@ -53,7 +53,7 @@ Dungeon ELPURI_CAVE;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
-    AudioPlayList = 
+    AudioPlayList =
     {
       3,
       "Dungeon.mid",
@@ -76,6 +76,12 @@ Dungeon ELPURI_CAVE;
     Square, Random;
     {
       Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 0:3;
     }
 
@@ -708,6 +714,12 @@ Dungeon ELPURI_CAVE;
 
     Square, Random;
     {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
       Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
     }
 
@@ -1097,6 +1109,12 @@ Dungeon ELPURI_CAVE;
 
     Square, Random;
     {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
       Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
       Times = 2:6;
     }
@@ -1135,6 +1153,12 @@ Dungeon ELPURI_CAVE;
     {
       Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
       Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
     }
 
     Square, Random;
@@ -1184,6 +1208,12 @@ Dungeon ELPURI_CAVE;
     {
       Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
       Times = 2:6;
+    }
+
+    Square, Random;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
     }
 
     Square, Random;

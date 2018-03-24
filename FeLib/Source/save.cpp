@@ -13,7 +13,7 @@
 #include <cctype>
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <direct.h> // for _mkdir
 #else
 #include <dirent.h>

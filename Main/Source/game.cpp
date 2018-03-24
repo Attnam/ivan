@@ -1868,10 +1868,10 @@ void game::InitDangerMap()
           First = false;
         }
 
-        character* Char = Proto->Spawn(Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+        character* Char = Proto->Spawn(Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE|NO_SEVERED_LIMBS);
         double NakedDanger = Char->GetRelativeDanger(Player, true);
         delete Char;
-        Char = Proto->Spawn(Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+        Char = Proto->Spawn(Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE|NO_SEVERED_LIMBS);
         double EquippedDanger = Char->GetRelativeDanger(Player, true);
         delete Char;
         DangerMap[configid(c1, Config)] = dangerid(NakedDanger, EquippedDanger);

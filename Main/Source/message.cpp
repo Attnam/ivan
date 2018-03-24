@@ -12,7 +12,9 @@
 
 #include <cstdarg>
 #include <cctype>
+#include <pcre.h>
 
+#include "iconf.h"
 #include "message.h"
 #include "festring.h"
 #include "felist.h"
@@ -53,6 +55,10 @@ void msgsystem::AddMessage(cchar* Format, ...)
   if(!Buffer.GetSize())
     ABORT("Empty message request!");
 
+#ifndef NOSOUND
+  soundsystem::playSound(Buffer);
+#endif
+
   Buffer.Capitalize();
 
   /* Comment the first line and uncomment the second before the release! */
@@ -90,6 +96,12 @@ void msgsystem::AddMessage(cchar* Format, ...)
   }
 
   festring Temp;
+
+  if(ivanconfig::GetShowTurn())
+  {
+    Temp << game::GetTurn() << " ";
+  }
+
   Temp << Begin.X << ':';
 
   if(Begin.Y < 10)
@@ -226,3 +238,147 @@ void msgsystem::ThyMessagesAreNowOld()
   for(uint c = 0; c < MessageHistory.GetLength(); ++c)
     MessageHistory.SetColor(c, LIGHT_GRAY);
 }
+
+/* SOUND SYSTEM */
+
+#ifndef NOSOUND
+
+struct SoundFile
+{
+  festring filename;
+  Mix_Chunk *chunk;
+  Mix_Music *music;
+};
+
+struct SoundInfo
+{
+  pcre *re;
+  pcre_extra *extra;
+  std::vector<int> sounds;
+};
+
+int soundsystem::SoundState = 0;
+
+std::vector<SoundFile> soundsystem::files;
+std::vector<SoundInfo> soundsystem::patterns;
+
+#include <ctype.h>
+
+int soundsystem::addFile(festring filename) {
+  for(int i=0; i < int(files.size()); i++)
+    if(files[i].filename == filename) return i;
+  SoundFile p;
+  p.filename = filename;
+  p.chunk = NULL;
+  p.music = NULL;
+  files.push_back(p);
+  return files.size() - 1;
+}
+
+bool eol = false;
+
+festring getstr(FILE *f, truth word)
+{
+  if(eol && word) return "";
+  festring s;
+  while(1)
+  {
+    char c = fgetc(f);
+    if(c == EOF) return s;
+    if(c == 13) continue;
+    if(c == 10 && s != "") return eol = true, s;
+    if(c == 10) continue;
+    if(c == ' ' && word && s != "") return s;
+    s = s + c;
+  }
+}
+
+void soundsystem::initSound()
+{
+  const char *error;
+  int erroffset;
+
+  if(SoundState == 0)
+  {
+    //FILE *debf = fopen("snddebug.txt", "a");
+    FILE *debf = fopen("snddebug.txt", "wt");
+    fprintf(debf, "This file can be used to diagnose problems with sound.\n");
+		
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0) 
+    {
+      ADD_MESSAGE("Unable to initialize audio: %s\n", Mix_GetError());
+      if(debf) fprintf(debf, "Unable to initialize audio: %s\n", Mix_GetError());
+      SoundState = -1;
+      return;
+    }
+    Mix_AllocateChannels(16);
+    SoundState = -2;
+      
+    festring cfgfile = game::GetDataDir() + "Sound/config.txt";
+    FILE *f = fopen(cfgfile.CStr(), "rt");
+    if(!f) SoundState = -1;
+    else
+    {
+      festring Pattern, File;
+      while((Pattern = getstr(f, false)) != "")
+      {
+        SoundInfo si;
+        si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
+        if(debf && !si.re)
+          fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
+        if(si.re) si.extra = pcre_study(si.re, 0, &error);
+
+        eol = false;
+        while((File = getstr(f, true)) != "")
+          si.sounds.push_back(addFile(File));
+        if(si.sounds.size() != 0) patterns.push_back(si);
+      }
+      fclose(f);
+      SoundState = 1;
+      //Mix_HookMusicFinished(changeMusic); // will this music type be used again one day?
+    }
+  if(debf) fclose(debf);
+  }
+}
+
+SoundFile *soundsystem::findMatchingSound(festring Buffer)
+{
+  for(int i = patterns.size() - 1; i >= 0; i--)
+  if(patterns[i].re)
+  if(pcre_exec(patterns[i].re, patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+    return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  return NULL;
+}
+
+void soundsystem::playSound(festring Buffer)
+{
+  if(!ivanconfig::GetPlaySounds()) return;
+  initSound();
+  if(SoundState == 1)
+  {
+    SoundFile *sf = findMatchingSound(Buffer);
+    if(!sf) return;
+    
+    if(!sf->chunk)
+    {
+      festring sndfile = game::GetDataDir() + "Sound/" + sf->filename;
+      sf->chunk = Mix_LoadWAV(sndfile.CStr());
+    }
+    
+    if(sf->chunk) 
+    {
+			for(int i=0; i<16; i++) 
+			{
+				if(!Mix_Playing(i))
+				{	
+					Mix_PlayChannel(i, sf->chunk, 0);	
+//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
+		//    Mix_SetPosition(i, angle, dist);
+					return;
+				}
+			}
+		}
+  }
+}
+
+#endif

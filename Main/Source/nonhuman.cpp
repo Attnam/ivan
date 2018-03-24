@@ -2405,45 +2405,48 @@ void lobhse::CreateCorpse(lsquare* Square)
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
-
-  if(NeighbourEnemy && NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead()
-  && !NeighbourEnemy->IsInfectedByMindWorm())
-  {
-    TryToImplantLarvae(NeighbourEnemy);
-    return;
-  }
-
   character* NearestEnemy = GetNearestEnemy();
 
-  if(NearestEnemy)
+  if(GetConfig() == BOIL && NeighbourEnemy)
+  {
+    if(NeighbourEnemy->HasHead() && !NeighbourEnemy->StateIsActivated(PARASITE_MIND_WORM))
+    {
+      if(TryToImplantLarvae(NeighbourEnemy))
+        return;
+    }
+  }
+  if(NearestEnemy && !NearestEnemy->IsESPBlockedByEquipment() && !StateIsActivated(CONFUSED) && !(RAND() & 2))
   {
     PsiAttack(NearestEnemy);
     return;
   }
-
-  if(MoveRandomly())
-    return;
-
-  EditAP(-1000);
+  else
+    nonhumanoid::GetAICommand();
 }
 
-void mindworm::TryToImplantLarvae(character* Victim)
+truth mindworm::TryToImplantLarvae(character* Victim)
 {
-  if(Victim->MindWormCanPenetrateSkull(this))
+  if(Victim->MindWormCanPenetrateSkull(this) && Victim->CanBeParasitized())
   {
-    Victim->SetCounterToMindWormHatch(100);
     if(Victim->IsPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through your skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     else if(Victim->CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through %s's skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
+
+    Victim->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200));
+
     MoveRandomly();
+    EditAP(-1000);
+    return true;
   }
+  else
+    return false;
 }
 
 void mindworm::PsiAttack(character* Victim)
@@ -2454,9 +2457,11 @@ void mindworm::PsiAttack(character* Victim)
   }
   else if(Victim->CanBeSeenByPlayer() && PLAYER->GetAttribute(PERCEPTION) > RAND_N(20))
   {
-    ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s looks pained.", Victim->CHAR_NAME(DEFINITE));
   }
 
-  Victim->ReceiveDamage(this, 1 + RAND_N(5), PSI, ALL, 8, false, false, false, false);
+  Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
+  EditAP(-2000);
+  EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);
 }

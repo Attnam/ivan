@@ -514,6 +514,7 @@ ITEM(skull, item)
 {
  public:
   virtual truth IsASkull() const { return true; }
+  virtual truth IsHelmet(ccharacter*) const { return true; }
 };
 
 ITEM(skullofxinroch, item)
@@ -691,6 +692,55 @@ ITEM(ullrbone, item)
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
+};
+
+ITEM(mango, item)
+{
+};
+
+ITEM(sausage, item)
+{
+};
+
+ITEM(cauldron, materialcontainer)
+{
+ public:
+  virtual item* BetterVersion() const;
+  virtual void DipInto(liquid*, character*);
+  virtual liquid* CreateDipLiquid();
+  virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
+  virtual truth IsDipDestination(ccharacter*) const;
+  virtual truth IsExplosive() const;
+  virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual truth EffectIsGood() const;
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return IsExplosive(); }
+ protected:
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
+  virtual truth AddAdjective(festring&, truth) const;
+};
+
+ITEM(trinket, item)
+{
+ public:
+  virtual material* RemoveMaterial(material* Material);
+  virtual truth Necromancy(character*);
+  virtual truth RaiseTheDead(character*);
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorC(int) const;
+};
+
+ITEM(gastrap, itemtrap<materialcontainer>)
+{
+ public:
+  virtual void StepOnEffect(character*);
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth Apply(character* User);
+  virtual truth IsDangerous(ccharacter*) const { return Active; }
+  virtual truth CheckPickUpEffect(character*);
+ protected:
+  virtual truth AddAdjective(festring&, truth) const;
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
 };
 
 #endif

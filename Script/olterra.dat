@@ -415,6 +415,7 @@ decoration
     NameSingular = "anvil";
     BitmapPos = 16, 432;
     HPModifier = 25;
+    Walkability = ETHEREAL;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   }
 
@@ -596,6 +597,7 @@ decoration
     NameSingular = "writing desk";
     BitmapPos = 48, 48;
     HPModifier = 25;
+    Walkability = ETHEREAL;
   }
 
   Config WORK_BENCH;
@@ -610,6 +612,7 @@ decoration
     NameSingular = "workbench";
     BitmapPos = 32, 224;
     HPModifier = 25;
+    Walkability = ETHEREAL;
   }
 
   Config TABLE;

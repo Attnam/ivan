@@ -79,7 +79,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "LifeSaved",
+    "Life Saved",
     SECRET,
     &character::PrintBeginLifeSaveMessage,
     &character::PrintEndLifeSaveMessage,
@@ -188,7 +188,7 @@ statedata StateData[STATES] =
     &character::CanBeConfused,
     &character::ConfusedSituationDangerModifier
   }, {
-    "Parasitized",
+    "Parasite (tapeworm)",
     SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
@@ -208,7 +208,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "GasImmunity",
+    "Gas Immunity",
     SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
@@ -268,7 +268,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Swimming",
-    SECRET,
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginSwimmingMessage,
     &character::PrintEndSwimmingMessage,
     &character::BeginSwimming, &character::EndSwimming,
@@ -286,8 +286,8 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "PolymorphLocked",
-    SECRET,
+    "Polymorph Locked",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginPolymorphLockMessage,
     &character::PrintEndPolymorphLockMessage,
     0,
@@ -306,7 +306,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "DiseaseImmunity",
+    "Disease Immunity",
     SECRET|(RANDOMIZABLE&~SRC_EVIL),
     &character::PrintBeginDiseaseImmunityMessage,
     &character::PrintEndDiseaseImmunityMessage,
@@ -316,7 +316,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "TeleportLocked",
+    "Teleport Locked",
     SECRET,
     &character::PrintBeginTeleportLockMessage,
     &character::PrintEndTeleportLockMessage,
@@ -325,6 +325,37 @@ statedata StateData[STATES] =
     &character::TeleportLockHandler,
     0,
     0
+  }, {
+    "Fearless",
+    RANDOMIZABLE&~SRC_EVIL,
+    &character::PrintBeginFearlessMessage,
+    &character::PrintEndFearlessMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Fasting",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginFastingMessage,
+    &character::PrintEndFastingMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Parasite (mindworm)",
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
+    &character::PrintBeginMindwormedMessage,
+    &character::PrintEndMindwormedMessage,
+    0,
+    0,
+    &character::MindwormedHandler,
+    &character::CanBeParasitized, // We are using TorsoIsAlive right now, but I think it's OK,
+                                  // because with unliving torso, your head will not be much better for mind worms.
+    &character::ParasitizedSituationDangerModifier
   }
 };
 
@@ -947,8 +978,6 @@ void character::Be()
         }
       }
       audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
-
-
     }
 
     if(Stamina != MaxStamina)
@@ -2304,7 +2333,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
 
 truth character::CheckStarvationDeath(cfestring& Msg)
 {
-  if(GetNP() < 1 && UsesNutrition())
+  if(GetNP() < 1 && UsesNutrition() && !(StateIsActivated(FASTING)))
     return CheckDeath(Msg, 0, FORCE_DEATH);
   else
     return false;
@@ -2363,7 +2392,7 @@ void character::GetPlayerCommand()
   {
     game::DrawEverything();
 
-    if(game::GetDangerFound())
+    if(!StateIsActivated(FEARLESS) && game::GetDangerFound())
     {
       if(game::GetDangerFound() > 500.)
       {
@@ -2450,12 +2479,12 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
     CheckStarvationDeath(CONST_S("vomited himself to death"));
   }
 
-  if(StateIsActivated(PARASITIZED) && !(RAND() & 7))
+  if(StateIsActivated(PARASITE_TAPE_WORM) && !(RAND() & 7))
   {
     if(IsPlayer())
       ADD_MESSAGE("You notice a dead broad tapeworm among your former stomach contents.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
   }
 
   if(!game::IsInWilderness())
@@ -2758,7 +2787,7 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
     if(SpecialEnemySightedReaction(NearestChar))
       return true;
 
-    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5)
+    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5 && !StateIsActivated(FEARLESS))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s sees %s.", CHAR_NAME(DEFINITE), NearestChar->CHAR_DESCRIPTION(DEFINITE));
@@ -3751,7 +3780,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 
     if(CanPanicFromSeveredBodyPart()
        && RAND() % 100 < GetPanicLevel()
-       && !StateIsActivated(PANIC) && !IsDead())
+       && !StateIsActivated(PANIC)
+       && !StateIsActivated(FEARLESS)
+       && !IsDead())
       BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
 
     SpecialBodyPartSeverReaction();
@@ -3771,6 +3802,9 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
 
   if(StateIsActivated(LEPROSY))
     BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
+
+  if(BodyPartIndex == HEAD_INDEX && StateIsActivated(PARASITE_MIND_WORM))
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
 
   if(ForceDisappearance
      || BodyPartsDisappearWhenSevered()
@@ -3987,29 +4021,23 @@ int character::GetResistance(int Type) const
 
 void character::Regenerate()
 {
-  if(HP == MaxHP)
+  if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
   {
-    if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
+    bodypart* NewBodyPart = GenerateRandomBodyPart();
+
+    if(NewBodyPart)
     {
-      bodypart* NewBodyPart = GenerateRandomBodyPart();
-
-      if(!NewBodyPart)
-        return;
-
       NewBodyPart->SetHP(1);
 
       if(IsPlayer())
         ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
-
-      return;
-    }
-    else
-    {
-      return;
     }
   }
+
+  if(HP == MaxHP)
+    return;
 
   long RegenerationBonus = 0;
   truth NoHealableBodyParts = true;
@@ -5014,6 +5042,34 @@ void character::PrintEndVampirismMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
+}
+
+void character::PrintBeginFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You shout: \"I am invincible!\"");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks very calm.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Everything looks much more dangerous now.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s seems to have lost all confidence.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintBeginFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your life-force invigorating your entire body.");
+}
+
+void character::PrintEndFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your stomach growls in discontent.");
 }
 
 void character::PrintBeginInvisibilityMessage() const
@@ -6651,7 +6707,7 @@ void character::PrintEndPanicMessage() const
 void character::CheckPanic(int Ticks)
 {
   if(GetPanicLevel() > 1 && !StateIsActivated(PANIC)
-     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1))
+     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1) && !StateIsActivated(FEARLESS))
     BeginTemporaryState(PANIC, ((Ticks * 3) >> 2) + RAND() % ((Ticks >> 1) + 1)); // 25% randomness to ticks...
 }
 
@@ -6836,16 +6892,25 @@ void character::ReceiveAntidote(long Amount)
     }
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(PARASITIZED))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_TAPE_WORM))
   {
     if(IsPlayer())
       ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
     Amount -= Min(100L, Amount);
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_MIND_WORM))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Something in your head screeches in pain.");
+
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
+    Amount -= Min(100L, Amount);
+  }
+
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(LEPROSY))
   {
     if(IsPlayer())
       ADD_MESSAGE("You are not falling to pieces anymore.");
@@ -7267,14 +7332,14 @@ void character::PrintEndParasitizedMessage() const
 
 void character::ParasitizedHandler()
 {
-  EditNP(-5);
+  EditNP(-10);
 
   if(!(RAND() % 250))
   {
     if(IsPlayer())
       ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
-    ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
+    ReceiveDamage(0, 1, DRAIN, TORSO, 8, false, false, false, false); // Use DRAIN here so that resistances do not apply.
     CheckDeath(CONST_S("killed by a vile parasite"), 0);
   }
 }
@@ -8603,6 +8668,9 @@ int character::GetAttribute(int Identifier, truth AllowBonus) const
   if(AllowBonus && Identifier == INTELLIGENCE && BrainsHurt())
     return Max((A + AttributeBonus[INTELLIGENCE]) / 3, 1);
 
+  if(AllowBonus && Identifier == PERCEPTION && IsHeadless())
+    return 0;
+
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
 
@@ -8654,7 +8722,8 @@ void character::CheckIfSeen()
 void character::SignalSeen()
 {
   if(!(WarnFlags & WARNED)
-     && GetRelation(PLAYER) == HOSTILE)
+     && GetRelation(PLAYER) == HOSTILE
+     && !StateIsActivated(FEARLESS))
   {
     double Danger = GetRelativeDanger(PLAYER);
 
@@ -9012,7 +9081,7 @@ void character::ReceiveWhiteUnicorn(long Amount)
   BeginTemporaryState(TELEPORT, Amount / 100);
   DecreaseStateCounter(LYCANTHROPY, -Amount / 100);
   DecreaseStateCounter(POISONED, -Amount / 100);
-  DecreaseStateCounter(PARASITIZED, -Amount / 100);
+  DecreaseStateCounter(PARASITE_TAPE_WORM, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
   DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
@@ -9232,7 +9301,7 @@ void character::SignalDisappearance()
 
 truth character::HornOfFearWorks() const
 {
-  return CanHear() && GetPanicLevel() > RAND() % 33;
+  return CanHear() && GetPanicLevel() > RAND() % 33 && !StateIsActivated(FEARLESS);
 }
 
 void character::BeginLeprosy()
@@ -10303,7 +10372,7 @@ truth character::AllowUnconsciousness() const
 
 truth character::CanPanic() const
 {
-  return !Action || !Action->IsUnconsciousness();
+  return !Action || !Action->IsUnconsciousness() || !StateIsActivated(FEARLESS);
 }
 
 int character::GetRandomBodyPart(ulong Possible) const
@@ -10629,30 +10698,34 @@ void character::ApplyAllGodsKnownBonus()
               NewBook->CHAR_NAME(INDEFINITE));
 }
 
-void character::ReceiveSirenSong(character* Siren)
+truth character::ReceiveSirenSong(character* Siren)
 {
   if(Siren->GetTeam() == GetTeam())
-    return;
+    return false;
 
   if(!RAND_N(4))
   {
     if(IsPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.",
-                  Siren->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
-                  Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.", Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
 
     Stamina -= (1 + RAND_N(4)) * 10000;
-    return;
+    return true;
   }
 
   if(!IsPlayer() && IsCharmable() && !RAND_N(5))
   {
     ChangeTeam(Siren->GetTeam());
-    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE),
-                Siren->CHAR_NAME(DEFINITE));
-    return;
+
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
+
+    return true;
   }
 
   if(!RAND_N(4))
@@ -10662,29 +10735,24 @@ void character::ReceiveSirenSong(character* Siren)
     if(What)
     {
       if(IsPlayer())
-      {
         ADD_MESSAGE("%s music persuades you to give %s to %s as a present.",
-                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-      }
-      else
-      {
+                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.",
-                    CHAR_NAME(DEFINITE),
-                    What->CHAR_NAME(INDEFINITE),
-                    Siren->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-
-      }
+                    CHAR_NAME(DEFINITE), What->CHAR_NAME(INDEFINITE), Siren->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
     else
     {
       if(IsPlayer())
         ADD_MESSAGE("You would like to give something to %s.", Siren->CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
-
-    return;
+    return true;
   }
+  return false;
 }
 
 // return 0, if no item found
@@ -10773,9 +10841,64 @@ character* character::GetNearestEnemy() const
   return NearestEnemy;
 }
 
+void character::PrintBeginMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You have a killer headache.");
+}
+
+void character::PrintEndMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your headache finally subsides.");
+}
+
 truth character::MindWormCanPenetrateSkull(mindworm*) const
 {
-  return false;
+  if(!(RAND() % 2))
+    return true;
+  else
+    return false;
+}
+
+void character::MindwormedHandler()
+{
+  if(!(RAND() % 200))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Your brain hurts!");
+
+    BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
+    return;
+  }
+
+  // Multiple mind worm hatchlings can hatch, because multiple eggs could have been implanted.
+  if(!(RAND() % 500))
+  {
+    character* Spawned = mindworm::Spawn(HATCHLING);
+    v2 Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Spawned, GetPos());
+
+    if(Pos == ERROR_V2)
+    {
+      delete Spawned;
+      return;
+    }
+
+    Spawned->SetTeam(game::GetTeam(MONSTER_TEAM));
+    Spawned->PutTo(Pos);
+
+    if(IsPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of your skull.", Spawned->CHAR_NAME(INDEFINITE));
+    }
+    else if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
+    }
+
+    ReceiveDamage(0, 1 + RAND_N(5), DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
+    CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
+  }
 }
 
 truth character::CanTameWithDulcis(const character* Tamer) const
@@ -10924,6 +11047,10 @@ truth character::IsESPBlockedByEquipment() const
 
 truth character::TemporaryStateIsActivated (long What) const
 {
+  if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState&What) & (~PANIC));
+  }
   if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
   {
     return ((TemporaryState&What) & (~ESP));
@@ -10933,6 +11060,10 @@ truth character::TemporaryStateIsActivated (long What) const
 
 truth character::StateIsActivated (long What) const
 {
+  if ((What & PANIC) && ((TemporaryState|EquipmentState) & PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState & What) & (~PANIC)) || ((EquipmentState & What) & (~PANIC));
+  }
   if ((What & ESP) && ((TemporaryState|EquipmentState) & ESP) && IsESPBlockedByEquipment())
   {
     return ((TemporaryState & What) & (~ESP)) || ((EquipmentState & What) & (~ESP));

@@ -129,6 +129,8 @@ $ pacman -S mingw-w64-i686-libpng
 
 $ pacman -S mingw-w64-i686-SDL2
 
+$ pacman -S mingw-w64-i686-SDL2_mixer
+
 $ pacman -S mingw-w64-i686-pkg-config
 
 Now the MSYS2 build system is installed, you only need to follow the instructions below to keep IVAN up to date
@@ -148,5 +150,8 @@ libstdc++-6.dll
 libwinpthread-1.dll
 zlib.dll
 libgcc_s_dw2-1.dll
+libSDL2_mixer-2-0-0.dll
+libmad-0.dll
+
 
 Use dependencywalker if you need to check for missing libraries, and if you get the message: "error cannot find entrypoint inflateValidate (in dll libpng16-16.dll)" then you need to include zlib1.dll
