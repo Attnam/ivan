@@ -52,8 +52,8 @@
 
 #include "audio.h"
 
-#define SAVE_FILE_VERSION 130 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 116 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 131 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 117 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1

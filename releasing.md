@@ -1,9 +1,10 @@
 To do for each release
 ----------------------
 
-1) Update version numbers in `CMakeLists.txt`
-2) Update savefile version, bonefile version or highscore version, as appropriate
-3) Push a git tag to `master` in the format `v051` (use the same number as the new version number entered in `CMakeLists.txt`)
+1) Pull from master
+2) Update version numbers in `CMakeLists.txt`
+3) Update savefile version, bonefile version or highscore version, as appropriate
+4) Push a git tag to `master` in the format `v053` (use the same number as the new version number entered in `CMakeLists.txt`)
 
 A zip file should appear later, on the release page. The binary is compiled with static linking, therefore, no dynamic link libraries are shipped.
 
@@ -15,7 +16,7 @@ Old instructions for posterity
 
 ### Things to change around in the code:
 
- - Update the IVAN version number in the root CMakeLists.txt from 0.50.9 to 0.51, depending on what the next version is
+ - Update the IVAN version number in the root CMakeLists.txt from 0.52 to 0.53, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
@@ -28,7 +29,7 @@ Old instructions for posterity
 
 ### Include the following files in a zip folder for each release:
 
-**Folder: IvanWin051**
+**Folder: IvanWin053**
 
 **Files = 12**
 
@@ -47,9 +48,10 @@ Old instructions for posterity
 
 **Subfolder: Graphics**
 
-**Files = 16**
+**Files = 19**
 
   - Char.png
+  - Char-outlined.png
   - Cursor.png
   - Effect.png
   - Enner.png
@@ -57,8 +59,10 @@ Old instructions for posterity
   - FOW.png
   - GLTerra.png
   - Humanoid.png
+  - Humanoid-outlined.png
   - Icon.bmp
   - Item.png
+  - Item-outlined.png
   - IVlad.png
   - Menu.png
   - OLTerra.png
@@ -101,7 +105,9 @@ Old instructions for posterity
 
 **Leave only dungeon data files in here**
 
-### Then commit changes, with the release tag v051
+**Subfolder: Script\sound**
+
+### Then commit changes, with the release tag v053
 Tag can be appended to latest commit
 
 ### Push changes
