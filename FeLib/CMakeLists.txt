@@ -62,6 +62,7 @@ endif()
 
 target_include_directories(FeLib PUBLIC Include)
 target_include_directories(FeLib SYSTEM PUBLIC ${SDL2_INCLUDE_DIR} PRIVATE ${PNG_INCLUDE_DIRS})
+target_include_directories(FeLib PUBLIC ../xbrzscale ../xbrzscale/xbrz)
 
 if((NOT BUILD_SHARED_LIBS) AND BUILD_STATIC_LIBS)
   target_link_libraries(FeLib ${PNG_LIBRARIES} ${SDL2_LIBRARIES} -static-libgcc -static-libstdc++)

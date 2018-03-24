@@ -51,6 +51,9 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
+truthoption ivanconfig::XBRZScale(        "XBRZScale",
+                                          "use XBRZScale to stretch graphics",
+                                          false);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -87,8 +90,15 @@ truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           &FullScreenModeChanger);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
-truthoption ivanconfig::PlaySounds("PlaySounds", "use sounds", true);
-truthoption ivanconfig::ShowTurn("ShowTurn", "show the turn on log messages", false);
+truthoption ivanconfig::PlaySounds(       "PlaySounds",
+                                          "use sounds",
+                                          true);
+truthoption ivanconfig::ShowTurn(         "ShowTurn",
+                                          "show the turn on log messages",
+                                          false);
+truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
+                                          "Outlined graphics (applied on next run)",
+                                          false);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
@@ -320,10 +330,12 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
+  configsystem::AddOption(&XBRZScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
 

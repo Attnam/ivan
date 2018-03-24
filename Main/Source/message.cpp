@@ -10,6 +10,8 @@
  *
  */
 
+#include <iostream>
+
 #include <cstdarg>
 #include <cctype>
 #include <pcre.h>
@@ -314,20 +316,35 @@ void soundsystem::initSound()
     Mix_AllocateChannels(16);
     SoundState = -2;
       
+    /**
+     * The last matching pattern will win (if more than one matches).
+     * Sound files are chosen randomly (if there is more than one).
+     */
+
+    // original config file
     festring cfgfile = game::GetDataDir() + "Sound/config.txt";
     FILE *f = fopen(cfgfile.CStr(), "rt");
-    if(!f) SoundState = -1;
-    else
+
+    // new config file
+    festring cfgfileNew = game::GetDataDir() + "Sound/SoundEffects.cfg";
+    FILE *fNew = fopen(cfgfileNew.CStr(), "rt");
+
+    if(!f && !fNew) SoundState = -1;
+
+    if(f)
     {
       festring Pattern, File;
       while((Pattern = getstr(f, false)) != "")
       {
         SoundInfo si;
+
+        // configure the regex
         si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
         if(debf && !si.re)
           fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
         if(si.re) si.extra = pcre_study(si.re, 0, &error);
 
+        // configure the assigned files
         eol = false;
         while((File = getstr(f, true)) != "")
           si.sounds.push_back(addFile(File));
@@ -335,9 +352,100 @@ void soundsystem::initSound()
       }
       fclose(f);
       SoundState = 1;
-      //Mix_HookMusicFinished(changeMusic); // will this music type be used again one day?
     }
-  if(debf) fclose(debf);
+
+    /**
+     * New config file syntax.
+     * (this config file will have priority by being loaded after)
+     * Adaptation by https://github.com/AquariusPower .
+     */
+    truth bDbg=false; //TODO global command line for debug messages
+    if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
+    if(fNew)
+    {
+      festring Line;
+      while((Line = getstr(fNew, false)) != "")
+      {
+        cchar* c = Line.CStr();
+        if(Line.IsEmpty())continue; //empty lines will be ignored (good for formating, easy readability)
+        if(c[0]=='#')continue; // lines beggining with '#' will be skipped, ignored like a comment
+
+        if(bDbg)std::cout << "LINE:'" << Line.CStr() <<"'"<< std::endl;
+
+        SoundInfo si;
+        int iPart=0;
+        festring Pattern, AllFiles, Description, TmpPart="";
+        for(int i=0;i<Line.GetSize();i++)
+        {
+          if( c[i]!=';' || i==(Line.GetSize()-1) ) // skip separator and add last char
+          {
+            TmpPart = TmpPart + c[i];
+          }
+
+          if( c[i]==';' || i==(Line.GetSize()-1) ) // prepare part if it is the separator or the last char
+          {
+            switch(iPart){
+            case 0: // description, good for sorting in groups by similarity (like everything about 'door: ')
+              Description = TmpPart;
+              if(bDbg)std::cout << "Desc:'" << Description.CStr() <<"'"<< std::endl;
+              break;
+            case 1: // files
+              AllFiles = TmpPart;
+              if(bDbg)std::cout << "Fles:'" << AllFiles.CStr() <<"'"<< std::endl;
+              break;
+            case 2: // regex
+              Pattern = TmpPart;
+              if(bDbg)std::cout << "Ptrn:'" << Pattern.CStr() <<"'"<< std::endl;
+              break;
+            }
+            TmpPart=""; //reset
+            iPart++;
+          }
+        }
+
+        // configure the regex
+        si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
+        if(debf && !si.re) fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
+        if(si.re) si.extra = pcre_study(si.re, 0, &error);
+
+        // configure the assigned files, now they are separated with ',' and the filename now accepts spaces.
+        festring FileName="";
+        truth bFoundDot=false;
+        for(int i=0;i<AllFiles.GetSize();i++)
+        {
+          if( FileName.GetSize()==0 && AllFiles[i] == ' ' )continue; //skip spaces from start TODO remove trailing spaces for each file
+          if( bFoundDot && AllFiles[i] == ' ' )continue; //skip spaces from end TODO this "after dot" trick will prevent more than one dot per file :/
+
+          if( AllFiles[i]!=',' || i==(AllFiles.GetSize()-1) ) // skip separator and add last char
+          {
+            FileName = FileName + AllFiles[i];
+          }
+
+          if(AllFiles[i]=='.')bFoundDot=true;
+
+          if( AllFiles[i]==',' || i==(AllFiles.GetSize()-1) ) // prepare part if it is the separator or the last char
+          {
+            si.sounds.push_back(addFile(FileName));
+            if(bDbg)std::cout <<"'"<<FileName.CStr()<<"'"<< " - " <<"'"<<Pattern.CStr()<<"'"<< std::endl;
+
+            //reset
+            FileName="";
+            bFoundDot=false;
+          }
+        }
+        if(bDbg)std::cout << "SInfoSize=" << si.sounds.size() << std::endl;
+
+        if(si.sounds.size() != 0) patterns.push_back(si);
+        if(bDbg)std::cout << "PtrnSize=" << patterns.data()->sounds.size() << std::endl;
+      }
+
+      fclose(fNew);
+      SoundState = 1;
+    }
+
+    //Mix_HookMusicFinished(changeMusic); // will this music type be used again one day? TODO may be as environment/ambient sounds!
+
+    if(debf) fclose(debf);
   }
 }
 

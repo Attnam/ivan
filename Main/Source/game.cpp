@@ -794,7 +794,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Dest.X = RES.X - 96;
       B.Dest.Y = RES.Y - 96;
       B.Stretch = 5;
-      DOUBLE_BUFFER->StretchBlit(B);
+      if(ivanconfig::GetXBRZScale()){
+        DOUBLE_BUFFER->StretchBlitXbrz(B);
+      }else{
+        DOUBLE_BUFFER->StretchBlit(B);
+      }
     }
 
     igraph::DrawCursor(ScreenCoord, CursorData);
