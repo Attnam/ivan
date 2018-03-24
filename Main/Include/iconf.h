@@ -31,6 +31,7 @@ class ivanconfig
   static truth GetBeNice() { return BeNice.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth GetShowTurn() { return ShowTurn.Value; }
+  static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -90,6 +91,7 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+  static truthoption OutlinedGfx;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
