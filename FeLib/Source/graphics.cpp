@@ -255,6 +255,14 @@ void graphics::BlitDBToScreen()
 
 #else
 
+void graphics::Zoom(bool bXBRZScale, bitmap* bmp, blitdata B){
+  if(bXBRZScale){
+    bmp->StretchBlitXbrz(B);
+  }else{
+    bmp->StretchBlit(B);
+  }
+}
+
 void graphics::BlitDBToScreen()
 {
 #if SDL_MAJOR_VERSION == 1
@@ -275,6 +283,16 @@ void graphics::BlitDBToScreen()
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
+  if(true){ //TODO this is still quite a mess..
+    // dungeon area
+    blitdata B = { DoubleBuffer,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+    B.Src = {20,20};
+    B.Dest = B.Src;
+    B.Border = {600,250};
+    B.Stretch = 3;
+    Zoom(true,DoubleBuffer,B);
+  }
+
   packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
   void* DestPtr;
   int Pitch;

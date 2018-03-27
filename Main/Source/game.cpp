@@ -732,6 +732,16 @@ void game::DrawEverything()
 {
   DrawEverythingNoBlit();
   graphics::BlitDBToScreen();
+
+//  if(graphics::IsWideLayout()){
+//    // dungeon area
+//    blitdata B = { DOUBLE_BUFFER,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+//    B.Src = {20,20};
+//    B.Dest = B.Src;
+//    B.Border = {GetScreenXSize()*TILE_SIZE,GetScreenYSize()*TILE_SIZE};
+//    B.Stretch = 3;
+//    graphics::Zoom(true,DOUBLE_BUFFER,B);
+//  }
 }
 
 truth game::OnScreen(v2 Pos)
@@ -794,11 +804,12 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Dest.X = RES.X - 96;
       B.Dest.Y = RES.Y - 96;
       B.Stretch = 5;
-      if(ivanconfig::GetXBRZScale()){
-        DOUBLE_BUFFER->StretchBlitXbrz(B);
-      }else{
-        DOUBLE_BUFFER->StretchBlit(B);
-      }
+//      if(ivanconfig::GetXBRZScale()){
+//        DOUBLE_BUFFER->StretchBlitXbrz(B);
+//      }else{
+//        DOUBLE_BUFFER->StretchBlit(B);
+//      }
+      graphics::Zoom(ivanconfig::GetXBRZScale(),DOUBLE_BUFFER,B);
     }
 
     igraph::DrawCursor(ScreenCoord, CursorData);

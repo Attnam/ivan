@@ -84,7 +84,7 @@ class bitmap
   void DrawHorizontalLine(int, int, int, col16, truth = false);
 
   void StretchBlit(cblitdata&) const;
-  void StretchBlitXbrz(cblitdata&);
+  void StretchBlitXbrz(cblitdata&) const;
 
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);

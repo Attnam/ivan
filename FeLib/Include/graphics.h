@@ -41,6 +41,7 @@ class graphics
   static void SwitchMode() { }
 #endif
   static void SetMode(cchar*, cchar*, v2, int, truth);
+  static void Zoom(bool bXBRZScale, bitmap* bmp, blitdata B);
   static void BlitDBToScreen();
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }

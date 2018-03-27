@@ -19,6 +19,7 @@
 #include "libxbrzscale.h"
 
 #include <cstdio>
+#include <iostream>
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -182,6 +183,8 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* src_img, int scale){
  * dst_img if not null may be re-used, and is also returned
  */
 SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img, int scale){
+  if(scale<2 || scale>6){std::cerr<<"invalid stretch value min=2, max=6, requested="<<scale<<std::endl;exit(1);}
+
   int src_width = src_img->w;
   int src_height = src_img->h;
   int dst_width = src_width * scale;
