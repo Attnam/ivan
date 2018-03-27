@@ -95,12 +95,12 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.523463421" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.894021113" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.151746855" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1810501842" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>

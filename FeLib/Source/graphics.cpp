@@ -49,6 +49,7 @@ graphics::modeinfo graphics::ModeInfo;
 #endif
 
 bitmap* graphics::DoubleBuffer;
+bitmap* graphics::ScaledBuffer;
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -207,6 +208,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
+  ScaledBuffer = new bitmap(NewRes);
   Res = NewRes;
   SetScale(NewScale);
   ColorDepth = 16;
@@ -255,11 +257,11 @@ void graphics::BlitDBToScreen()
 
 #else
 
-void graphics::Zoom(bool bXBRZScale, bitmap* bmp, blitdata B){
+void graphics::Zoom(bool bXBRZScale, bitmap* bmpFrom, blitdata Bto){
   if(bXBRZScale){
-    bmp->StretchBlitXbrz(B);
+    bmpFrom->StretchBlitXbrz(Bto);
   }else{
-    bmp->StretchBlit(B);
+    bmpFrom->StretchBlit(Bto);
   }
 }
 
@@ -283,17 +285,22 @@ void graphics::BlitDBToScreen()
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
-  if(true){ //TODO this is still quite a mess..
+  if(true){ //TODO testing
+    blitdata Bto;
+
+    // prepare "background" on the stretched
+    DoubleBuffer->FastBlit(ScaledBuffer);
+
     // dungeon area
-    blitdata B = { DoubleBuffer,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-    B.Src = {20,20};
-    B.Dest = B.Src;
-    B.Border = {600,250};
-    B.Stretch = 3;
-    Zoom(true,DoubleBuffer,B);
+    Bto = { ScaledBuffer,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+    Bto.Src = {13,30};
+    Bto.Dest = Bto.Src;
+    Bto.Border = {21*16+6,13*16+5};
+    Bto.Stretch = 2; //3;
+    Zoom(true,DoubleBuffer,Bto);
   }
 
-  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
+  packcol16* SrcPtr = ScaledBuffer->GetImage()[0];
   void* DestPtr;
   int Pitch;
 

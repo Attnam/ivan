@@ -116,6 +116,7 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
+  static bitmap* ScaledBuffer;
   static v2 Res;
   static int Scale;
   static int ColorDepth;
