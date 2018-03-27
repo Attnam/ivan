@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ ! -L Current ]];then echo "must be run at .devsPrefs folder!";exit 1;fi
+if [[ ! -L Current ]];then echo "must be run at .devsPrefs folder where is the link 'Current'!";exit 1;fi
 
 strUser="`readlink Current`"
 declare -p strUser
