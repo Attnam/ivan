@@ -1160,7 +1160,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   graphics::BlitDBToScreen();
 }
 
-bool bDbgMsg=true;
+bool bDbgMsg=false;
 std::vector<SDL_Surface*> vSurfaceCache;
 SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory hungryness
   //TODO move most of this cache code to libxbrzscale to be more useful to others too

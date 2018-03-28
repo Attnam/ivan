@@ -37,6 +37,7 @@ class libxbrzscale
   static void setFreeInputSurfaceAfterScale(bool b){bFreeInputSurfaceAfterScale=b;};
   static uint32_t* surfaceToUint32(SDL_Surface* img);
   static void uint32toSurface(uint32_t* dest, SDL_Surface* dst_img);
+  static bool isDbgMsg(){return bDbgMsg;}
  private:
   static bool bEnableOutput;
   static bool bDbgMsg;

@@ -135,8 +135,30 @@ void displayImage(SDL_Surface* surface, const char* message) {
 }
 */
 
+struct imgUint32{
+  uint32_t *data;
+  int iW;
+  int iH;
+};
+std::vector<imgUint32> vImgUint32Cache;
+imgUint32 ImgUint32Cache(int iW,int iH){ //as that memory deletion wont happen promptly, it may consume too much memory too fast unnecessarily becoming a bottle neck on performance
+  for(int i=0;i<vImgUint32Cache.size();i++){
+    if(vImgUint32Cache[i].iW==iW && vImgUint32Cache[i].iH==iH){
+      return vImgUint32Cache[i];
+    }
+  }
+
+  if(libxbrzscale::isDbgMsg())std::cout<<"Cache not found for w="<<iW<<" h="<<iH<<std::endl;
+  imgUint32 imgui32={new uint32_t[iW*iH],iW,iH};
+
+  vImgUint32Cache.push_back(imgui32);
+  if(libxbrzscale::isDbgMsg())std::cout<<"Cache size="<<vImgUint32Cache.size()<<std::endl;
+
+  return imgui32;
+}
+
 uint32_t* libxbrzscale::surfaceToUint32(SDL_Surface* img){
-  uint32_t *data = new uint32_t[img->w * img->h];
+  uint32_t *data = ImgUint32Cache(img->w,img->h).data;
 
   int x, y, offset=0;
   Uint8 r, g, b, a;
@@ -201,25 +223,23 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img
   }
 
   if(bEnableOutput)printf("Scaling image...\n");
-  uint32_t* dest = new uint32_t[dst_width * dst_height];
+  uint32_t* dest = ImgUint32Cache(dst_width,dst_height).data;
 
   xbrz::scale(scale, in_data, dest, src_width, src_height, xbrz::ColorFormat::ARGB);
-  delete [] in_data;
+  if(bFreeInputSurfaceAfterScale)delete [] in_data;
 
   if(bEnableOutput)printf("Saving image...\n");
 
   if(dst_imgCache==NULL || dst_imgCache->w!=dst_width || dst_imgCache->h!=dst_height || dst_imgCache->refcount==0){
-    if(bFreeOutputSurfaceAfterScale){
-      if(dst_imgCache!=NULL && dst_imgCache->refcount>0){
-        SDL_FreeSurface(dst_imgCache); //previous OUTPUT surface
-      }
+    if(bFreeOutputSurfaceAfterScale && dst_imgCache!=NULL && dst_imgCache->refcount>0){
+      SDL_FreeSurface(dst_imgCache); //previous OUTPUT surface
     }
 
     dst_imgCache = createARGBSurface(dst_width, dst_height);
   }
 
   if (!dst_imgCache) {
-    delete [] dest;
+    if(bFreeOutputSurfaceAfterScale)delete [] dest;
     if(bEnableOutput)fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
     return NULL;
   }
