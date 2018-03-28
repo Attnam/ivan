@@ -294,7 +294,6 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
-  graphics::SetScale(What);
 }
 
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
