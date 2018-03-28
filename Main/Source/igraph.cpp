@@ -74,7 +74,8 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(800, 600), ivanconfig::GetGraphicsScale(),
+                      v2(ivanconfig::GetWindowWidth(), ivanconfig::GetWindowHeight()),
+                      ivanconfig::GetGraphicsScale(),
                       ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
@@ -512,6 +513,28 @@ void igraph::CreateSilhouetteCaches()
   }
 }
 
+//void igraph::CreateBackGround(int ColorType)
+//{
+//  if(CurrentColorType == ColorType)
+//    return;
+//
+//  CurrentColorType = ColorType;
+//  delete BackGround;
+//  BackGround = new bitmap(RES);
+//  int Side = 1025;
+//  int** Map;
+//  Alloc2D(Map, Side, Side);
+//  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+//
+//  for(int x = 0; x < RES.X; ++x)
+//    for(int y = 0; y < RES.Y; ++y)
+//    {
+//      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+//      BackGround->PutPixel(x, y, GetBackGroundColor(E));
+//    }
+//
+//  delete [] Map;
+//}
 void igraph::CreateBackGround(int ColorType)
 {
   if(CurrentColorType == ColorType)
@@ -520,15 +543,17 @@ void igraph::CreateBackGround(int ColorType)
   CurrentColorType = ColorType;
   delete BackGround;
   BackGround = new bitmap(RES);
-  int Side = 1025;
+  int base=1024; //TODO explain this: fractals require multiple of 1024 to work/workBetter?
+  while(ivanconfig::GetWindowWidth()>base)base+=1024;
+  int Side = base+1;
   int** Map;
-  Alloc2D(Map, Side, Side);
-  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+  Alloc2D(Map, Side, Side); //TODO confirm and explain this: it seems fractals work better on a squared img right?
+  femath::GenerateFractalMap(Map, Side, Side - 1, ivanconfig::GetWindowWidth());
 
   for(int x = 0; x < RES.X; ++x)
     for(int y = 0; y < RES.Y; ++y)
     {
-      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+      int E = Limit<int>(abs(Map[base - x][base - (RES.Y - y)]) / 30, 0, 100);
       BackGround->PutPixel(x, y, GetBackGroundColor(E));
     }
 

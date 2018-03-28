@@ -42,6 +42,18 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+numberoption ivanconfig::WindowWidth(     "WindowWidth",
+                                          "* window width in pixels, min 800",
+                                          800,
+                                          &WindowWidthDisplayer,
+                                          &WindowWidthChangeInterface,
+                                          &WindowWidthChanger);
+numberoption ivanconfig::WindowHeight(    "WindowHeight",
+                                          "* window height in pixels, min 600",
+                                          600,
+                                          &WindowHeightDisplayer,
+                                          &WindowHeightChangeInterface,
+                                          &WindowHeightChanger);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -111,6 +123,16 @@ truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
+
+void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
+}
+
+void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
+}
 
 void ivanconfig::AutoSaveIntervalDisplayer(const numberoption* O, festring& Entry)
 {
@@ -200,6 +222,20 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
   return false;
 }
 
+truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  return false;
+}
+
+truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  return false;
+}
+
 truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
@@ -235,6 +271,18 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
+}
+
+void ivanconfig::WindowHeightChanger(numberoption* O, long What)
+{
+  if(What < 600) What = 600;
+  O->Value = What;
+}
+
+void ivanconfig::WindowWidthChanger(numberoption* O, long What)
+{
+  if(What < 800) What = 800;
+  O->Value = What;
 }
 
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
@@ -352,6 +400,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DefaultPetName);
   configsystem::AddOption(&AutoSaveInterval);
   configsystem::AddOption(&Contrast);
+  configsystem::AddOption(&WindowWidth);
+  configsystem::AddOption(&WindowHeight);
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);

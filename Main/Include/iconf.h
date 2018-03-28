@@ -23,6 +23,10 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static long GetWindowWidth() { return WindowWidth.Value; }
+  static long GetWindowHeight() { return WindowHeight.Value; }
+//  static long GetDungeonColumns() { return DungeonColumns.Value; }
+//  static long GetDungeonLines() { return DungeonLines.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -54,13 +58,19 @@ class ivanconfig
  private:
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
+  static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
+  static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
+  static truth WindowWidthChangeInterface(numberoption* O);
+  static truth WindowHeightChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
+  static void WindowWidthChanger(numberoption* O, long What);
+  static void WindowHeightChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
@@ -82,6 +92,10 @@ class ivanconfig
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static scrollbaroption Contrast;
+  static numberoption WindowWidth;
+  static numberoption WindowHeight;
+//  static numberoption DungeonColumns;
+//  static numberoption DungeonLines;
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;

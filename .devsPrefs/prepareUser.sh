@@ -2,7 +2,10 @@
 
 if [[ ! -L Current ]];then echo "must be run at .devsPrefs folder where is the link 'Current'!";exit 1;fi
 
+ls -l Current
+
 strUser="`readlink Current`"
+strUser="`basename "$strUser"`"
 declare -p strUser
 
 cd ..

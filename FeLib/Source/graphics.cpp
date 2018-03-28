@@ -55,7 +55,8 @@ graphics::modeinfo graphics::ModeInfo;
 bitmap* graphics::DoubleBuffer=NULL;
 bitmap* graphics::StretchedDB=NULL;
 std::vector<blitdata> graphics::StretchRegionVector;
-truth graphics::isUseXbrzScale=false;
+truth graphics::bUseXbrzScale=false;
+truth graphics::bAllowStretchedBlit=false;
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -264,7 +265,7 @@ void graphics::BlitDBToScreen()
 #else
 
 void graphics::Stretch(bitmap* bmpFrom, blitdata Bto){
-  Stretch(isUseXbrzScale,bmpFrom,Bto);
+  Stretch(bUseXbrzScale,bmpFrom,Bto);
 }
 void graphics::Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto){
   if(bXbrzMode){
@@ -275,7 +276,11 @@ void graphics::Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto){
 }
 
 void graphics::SetStretchMode(truth isXbrz){
-  isUseXbrzScale = isXbrz;
+  bUseXbrzScale = isXbrz;
+}
+
+void graphics::SetAllowStretchedBlit(truth b){
+  bAllowStretchedBlit=b;
 }
 
 void graphics::AddStretchRegion(blitdata B){
@@ -308,7 +313,8 @@ void graphics::BlitDBToScreen(){
   bitmap* DB = DoubleBuffer;
 
   if(
-      // TODO not at loading animations
+      bAllowStretchedBlit // basically, if the game is running. TODO so, not at loading animations, did it work?
+      &&
       !felist::isAnyFelistCurrentlyDrawn()
       &&
       !iosystem::IsOnMenu()

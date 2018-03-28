@@ -48,6 +48,7 @@ class graphics
   static void BlitDBToScreen();
   static void AddStretchRegion(blitdata B);
   static void SetStretchMode(truth isXbrz);
+  static void SetAllowStretchedBlit(truth b);
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(cfestring&);
@@ -123,7 +124,8 @@ class graphics
   static bitmap* DoubleBuffer;
   static bitmap* StretchedDB;
   static std::vector<blitdata> StretchRegionVector;
-  static truth isUseXbrzScale;
+  static truth bUseXbrzScale;
+  static truth bAllowStretchedBlit;
   static v2 Res;
   static int Scale;
   static int ColorDepth;

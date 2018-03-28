@@ -181,13 +181,9 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
-int game::GetScreenXSize() {
-//  std::cerr<<ivanconfig::GetDungeonGfxScale()<<std::endl;
-//  if(ivanconfig::GetDungeonGfxScale()==1){
-//    backtrace_symbols_fd(NULL,0,2);
-//  }
-  return 42/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some columns
-int game::GetScreenYSize() { return 26/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some lines
+void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
+int game::GetScreenXSize() { return 42/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some columns, no way to fit as scaler is integer and not float
+int game::GetScreenYSize() { return 26/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some lines, no way to fit as scaler is integer and not float
 
 void game::AddCharacterID(character* Char, ulong ID)
 {

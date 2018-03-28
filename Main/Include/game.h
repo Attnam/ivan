@@ -200,7 +200,7 @@ class game
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
   static truth IsRunning() { return Running; }
-  static void SetIsRunning(truth What) { Running = What; }
+  static void SetIsRunning(truth What);
   static void UpdateCameraX(int);
   static void UpdateCameraY(int);
   static int GetCurrentLevelIndex() { return CurrentLevelIndex; }
