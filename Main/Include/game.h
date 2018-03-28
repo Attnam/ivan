@@ -172,6 +172,7 @@ class game
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static void PrepareStretchRegions();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -256,8 +257,8 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
-  static int GetScreenXSize() { return 21; }
-  static int GetScreenYSize() { return 13; }
+  static int GetScreenXSize();
+  static int GetScreenYSize();
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);

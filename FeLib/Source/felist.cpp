@@ -22,6 +22,10 @@
 
 const felist* FelistCurrentlyDrawn = 0;
 
+truth felist::isAnyFelistCurrentlyDrawn(){
+  return FelistCurrentlyDrawn!=NULL;
+}
+
 truth FelistDrawController()
 {
   FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER);
@@ -296,6 +300,9 @@ uint felist::Draw()
     delete Buffer;
 
   globalwindowhandler::DeInstallControlLoop(FelistDrawController);
+
+  FelistCurrentlyDrawn=0;
+
   return Return;
 }
 

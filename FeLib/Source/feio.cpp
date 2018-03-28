@@ -110,6 +110,12 @@ int CountChars(char cSF, cfestring& sSH)
   return iReturnCounter;
 }
 
+truth bMenuIsActive=false;
+
+truth iosystem::IsOnMenu(){
+  return bMenuIsActive;
+}
+
 /* Draws a menu on bitmap BackGround to position Pos. festring Topic
    is the text that is shown before the choices '\r' is a line-ending
    character. Topic must end with a '\r'. sMS is a list of choices
@@ -132,6 +138,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   if(CountChars('\r', sMS) < 1)
     return (-1);
 
+  bMenuIsActive=true;
   truth bReady = false;
   int iSelected = 0;
   bitmap Backup(DOUBLE_BUFFER);
@@ -260,11 +267,14 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       break;
 
      default:
-      if(k > 0x30 && k < 0x31 + CountChars('\r', sMS))
+      if(k > 0x30 && k < 0x31 + CountChars('\r', sMS)){
+        bMenuIsActive=false;
         return k - 0x31;
+      }
     }
   }
 
+  bMenuIsActive=false;
   return iSelected;
 }
 

@@ -54,6 +54,12 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use XBRZScale to stretch graphics",
                                           false);
+cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
+                                          "select dungeon scale factor (applied on next run)",
+                                          1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
+                                          &DungeonGfxScaleDisplayer,
+                                          &DungeonGfxScaleChangeInterface,
+                                          &DungeonGfxScaleChanger);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -64,7 +70,7 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
-scrollbaroption ivanconfig::Volume(     "Volume",
+scrollbaroption ivanconfig::Volume(       "Volume",
                                           "volume",
                                           127,
                                           &VolumeDisplayer,
@@ -271,6 +277,23 @@ void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
   graphics::SetScale(What);
 }
 
+void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value << 'x';
+}
+
+truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  return true;
+}
+
+void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+  graphics::SetScale(What);
+}
+
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
@@ -331,6 +354,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
+  configsystem::AddOption(&DungeonGfxScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);

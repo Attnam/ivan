@@ -27,6 +27,7 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth GetXBRZScale() { return XBRZScale.Value; }
+  static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
@@ -68,6 +69,9 @@ class ivanconfig
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static void DungeonGfxScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
@@ -88,6 +92,7 @@ class ivanconfig
   static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
+  static cycleoption DungeonGfxScale;
   static truthoption FullScreenMode;
 #endif
   static col24 ContrastLuminance;

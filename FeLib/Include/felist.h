@@ -64,6 +64,7 @@ class felist
   void SetUpKey(uint What) { UpKey = What; }
   void SetDownKey(uint What) { DownKey = What; }
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
+  static truth isAnyFelistCurrentlyDrawn();
  private:
   void DrawDescription(bitmap*) const;
   std::vector<felistentry*> Entry;

@@ -20,11 +20,15 @@
 #include <go32.h>
 #endif
 
+#include <cassert>
+
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
 #include "error.h"
 #include "rawbit.h"
+#include "felist.h"
+#include "feio.h"
 
 void (*graphics::SwitchModeHandler)();
 
@@ -48,8 +52,10 @@ graphics::vesainfo graphics::VesaInfo;
 graphics::modeinfo graphics::ModeInfo;
 #endif
 
-bitmap* graphics::DoubleBuffer;
-bitmap* graphics::ScaledBuffer;
+bitmap* graphics::DoubleBuffer=NULL;
+bitmap* graphics::StretchedDB=NULL;
+std::vector<blitdata> graphics::StretchRegionVector;
+truth graphics::isUseXbrzScale=false;
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -208,7 +214,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
-  ScaledBuffer = new bitmap(NewRes);
+  StretchedDB = new bitmap(NewRes);
   Res = NewRes;
   SetScale(NewScale);
   ColorDepth = 16;
@@ -257,16 +263,27 @@ void graphics::BlitDBToScreen()
 
 #else
 
-void graphics::Zoom(bool bXBRZScale, bitmap* bmpFrom, blitdata Bto){
-  if(bXBRZScale){
+void graphics::Stretch(bitmap* bmpFrom, blitdata Bto){
+  if(isUseXbrzScale){
     bmpFrom->StretchBlitXbrz(Bto);
   }else{
     bmpFrom->StretchBlit(Bto);
   }
 }
 
-void graphics::BlitDBToScreen()
-{
+void graphics::SetStretchMode(truth isXbrz){
+  isUseXbrzScale = isXbrz;
+}
+
+void graphics::AddStretchRegion(blitdata B){
+  assert(B.Stretch>1);
+  assert(B.Bitmap==NULL);
+
+  B.Bitmap = StretchedDB;
+  StretchRegionVector.push_back(B);
+}
+
+void graphics::BlitDBToScreen(){
 #if SDL_MAJOR_VERSION == 1
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
@@ -285,22 +302,28 @@ void graphics::BlitDBToScreen()
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
-  if(true){ //TODO testing
-    blitdata Bto;
+  bitmap* DB = DoubleBuffer;
 
-    // prepare "background" on the stretched
-    DoubleBuffer->FastBlit(ScaledBuffer);
+  //if(!globalwindowhandler::ControlLoopsInstalled() && StretchRegionVector.size()>0){
+  if(!felist::isAnyFelistCurrentlyDrawn() && !iosystem::IsOnMenu() && StretchRegionVector.size()>0){
+    bool bDoStretch=false;
+    for(int i=0;i<StretchRegionVector.size();i++){
+      blitdata Bto=StretchRegionVector[i];
+      if(Bto.Stretch>1){
+        if(!bDoStretch){
+          // first time, if there is at least one stretching, prepare "background/base" on the stretched
+          DoubleBuffer->FastBlit(StretchedDB);
+          DB = StretchedDB; //and set it as the source
+        }
 
-    // dungeon area
-    Bto = { ScaledBuffer,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-    Bto.Src = {13,30};
-    Bto.Dest = Bto.Src;
-    Bto.Border = {21*16+6,13*16+5};
-    Bto.Stretch = 2; //3;
-    Zoom(true,DoubleBuffer,Bto);
+        Stretch(DoubleBuffer,Bto);
+
+        bDoStretch=true;
+      }
+    }
   }
 
-  packcol16* SrcPtr = ScaledBuffer->GetImage()[0];
+  packcol16* SrcPtr = DB->GetImage()[0];
   void* DestPtr;
   int Pitch;
 

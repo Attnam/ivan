@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <iostream>
+#include <execinfo.h>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -179,6 +181,14 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
+int game::GetScreenXSize() {
+//  std::cerr<<ivanconfig::GetDungeonGfxScale()<<std::endl;
+//  if(ivanconfig::GetDungeonGfxScale()==1){
+//    backtrace_symbols_fd(NULL,0,2);
+//  }
+  return 42/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some columns
+int game::GetScreenYSize() { return 26/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some lines
+
 void game::AddCharacterID(character* Char, ulong ID)
 {
   CharacterIDMap.insert(std::make_pair(ID, Char));
@@ -236,8 +246,28 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+void game::PrepareStretchRegions(){
+  if(ivanconfig::GetDungeonGfxScale()==1)return;
+
+  // dungeon visible area (Bitmap must be NULL)
+  blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+  Bto.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+  Bto.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
+  Bto.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
+  Bto.Stretch = ivanconfig::GetDungeonGfxScale();
+  graphics::AddStretchRegion(Bto);
+
+  //TODO these below should be at most x2, set thru one boolean for all.
+  //TODO equipped inventory
+  //TODO player stats etc
+  //TODO text log
+}
+
 truth game::Init(cfestring& Name)
 {
+  graphics::SetStretchMode(ivanconfig::GetXBRZScale());
+  PrepareStretchRegions();
+
   if(Name.IsEmpty())
   {
     if(ivanconfig::GetDefaultName().IsEmpty())
@@ -809,7 +839,8 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 //      }else{
 //        DOUBLE_BUFFER->StretchBlit(B);
 //      }
-      graphics::Zoom(ivanconfig::GetXBRZScale(),DOUBLE_BUFFER,B);
+      graphics::SetStretchMode(ivanconfig::GetXBRZScale());
+      graphics::Stretch(DOUBLE_BUFFER,B);
     }
 
     igraph::DrawCursor(ScreenCoord, CursorData);

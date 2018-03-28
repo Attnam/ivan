@@ -13,6 +13,8 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
+#include <vector>
+
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
@@ -41,8 +43,10 @@ class graphics
   static void SwitchMode() { }
 #endif
   static void SetMode(cchar*, cchar*, v2, int, truth);
-  static void Zoom(bool bXBRZScale, bitmap* bmp, blitdata B);
+  static void Stretch(bitmap* bmp, blitdata B);
   static void BlitDBToScreen();
+  static void AddStretchRegion(blitdata B);
+  static void SetStretchMode(truth isXbrz);
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(cfestring&);
@@ -116,7 +120,9 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static bitmap* ScaledBuffer;
+  static bitmap* StretchedDB;
+  static std::vector<blitdata> StretchRegionVector;
+  static truth isUseXbrzScale;
   static v2 Res;
   static int Scale;
   static int ColorDepth;
