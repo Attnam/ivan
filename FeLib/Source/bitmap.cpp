@@ -1163,7 +1163,6 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 bool bDbgMsg=false;
 std::vector<SDL_Surface*> vSurfaceCache;
 SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory hungryness
-  //TODO move most of this cache code to libxbrzscale to be more useful to others too
   int iW=B.Border.X;
   if(bUseScale)iW*=B.Stretch;
 
@@ -1186,6 +1185,7 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   return srf;
 }
 
+bool bXbrzLibCfgInitialized=false;
 /**
  * stretch from 2 to 6 only!
  */
@@ -1193,8 +1193,12 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
 {
   blitdata Bto = BlitDataTo; //to easy coding
 
-  libxbrzscale::setDebugMsg(bDbgMsg); //TODO this config should be placed more globally...
-  libxbrzscale::setFreeSurfaceAfterScale(false,false); //TODO this config should be placed more globally...
+  if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
+    libxbrzscale::setUseCache(true);
+    libxbrzscale::setDebugMsg(bDbgMsg);
+    libxbrzscale::setFreeSurfaceAfterScale(false,false);
+    bXbrzLibCfgInitialized=true;
+  }
 
   SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //based on xbrzscale code
 

@@ -30,7 +30,11 @@
 #include "xbrz/xbrz.h"
 
 bool libxbrzscale::bEnableOutput=false;
+
 bool libxbrzscale::bDbgMsg=false;
+
+bool libxbrzscale::bUseCache=false;
+
 bool libxbrzscale::bFreeInputSurfaceAfterScale=true;
 bool libxbrzscale::bFreeOutputSurfaceAfterScale=true;
 
@@ -226,7 +230,7 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img
   uint32_t* dest = ImgUint32Cache(dst_width,dst_height).data;
 
   xbrz::scale(scale, in_data, dest, src_width, src_height, xbrz::ColorFormat::ARGB);
-  if(bFreeInputSurfaceAfterScale)delete [] in_data;
+  if(!bUseCache)delete [] in_data;
 
   if(bEnableOutput)printf("Saving image...\n");
 
@@ -239,7 +243,7 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img
   }
 
   if (!dst_imgCache) {
-    if(bFreeOutputSurfaceAfterScale)delete [] dest;
+    if(!bUseCache)delete [] dest;
     if(bEnableOutput)fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
     return NULL;
   }
