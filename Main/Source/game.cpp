@@ -182,8 +182,28 @@ cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
-int game::GetScreenXSize() { return 42/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some columns, no way to fit as scaler is integer and not float
-int game::GetScreenYSize() { return 26/ivanconfig::GetDungeonGfxScale(); } //yes, may lose some lines, no way to fit as scaler is integer and not float
+
+int iXSize=0;
+int game::GetScreenXSize() {
+  if(iXSize==0){
+    // 800 provides 42. 800/16=50. 42=50-8. 8 magic number for whatever is drawn to the right of the dungeon.
+    iXSize=ivanconfig::GetWindowWidth()/TILE_SIZE;
+    iXSize-=8;
+    iXSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some columns, no way to fit as scaler is integer and not float
+  }
+  return iXSize;
+}
+
+int iYSize=0;
+int game::GetScreenYSize() {
+  if(iYSize==0){
+    // 600 provides 26. 600/16=37. 26=37-11. 11 magic number for whatever is drawn below of the dungeon.
+    iYSize=ivanconfig::GetWindowHeight()/TILE_SIZE;
+    iYSize-=11;
+    iYSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some lines, no way to fit as scaler is integer and not float
+  }
+  return iYSize;
+}
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
