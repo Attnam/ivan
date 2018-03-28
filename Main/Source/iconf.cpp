@@ -52,13 +52,13 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
 truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
-                                          "use XBRZScale to stretch look mode gfx only",
+                                          "use XBRZScale to stretch look mode only",
                                           false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "use XBRZScale to stretch all other gfx",
+                                          "* use XBRZScale to stretch all other gfx",
                                           false);
 cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
-                                          "select dungeon scale factor (applied on next run)",
+                                          "* Select dungeon scale factor",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
@@ -106,7 +106,7 @@ truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "show the turn on log messages",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
-                                          "Outlined graphics (applied on next run)",
+                                          "* Outlined graphics",
                                           false);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }

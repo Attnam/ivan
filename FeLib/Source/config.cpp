@@ -134,7 +134,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
   int Chosen;
   truth TruthChange = false;
 
-  felist List(CONST_S("Which setting do you wish to configure?"));
+  felist List(CONST_S("Which setting do you wish to configure? (* - applied on next run)"));
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
 

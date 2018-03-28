@@ -13,6 +13,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <vector>
 
 #include "bitmap.h"
 #include "graphics.h"
@@ -1159,13 +1160,42 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   graphics::BlitDBToScreen();
 }
 
+bool bDbgMsg=true;
+std::vector<SDL_Surface*> vSurfaceCache;
+SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory hungryness
+  //TODO move most of this cache code to libxbrzscale to be more useful to others too
+  int iW=B.Border.X;
+  if(bUseScale)iW*=B.Stretch;
+
+  int iH=B.Border.Y;
+  if(bUseScale)iH*=B.Stretch;
+
+  for(int i=0;i<vSurfaceCache.size();i++){
+//    if(bDbgMsg)std::cout<<"i="<<i<<" w="<<vSurfaceCache[i]->w<<" h="<<vSurfaceCache[i]->h<<std::endl;
+    if(vSurfaceCache[i]->w==iW && vSurfaceCache[i]->h==iH){
+      return vSurfaceCache[i];
+    }
+  }
+
+  if(bDbgMsg)std::cout<<"Cache not found for surface w="<<iW<<" h="<<iH<<std::endl;
+  SDL_Surface* srf = libxbrzscale::createARGBSurface(iW, iH); //src img for look zoom at least is always 16x16 tho
+
+  vSurfaceCache.push_back(srf);
+  if(bDbgMsg)std::cout<<"Cache size="<<vSurfaceCache.size()<<std::endl;
+
+  return srf;
+}
+
 /**
  * stretch from 2 to 6 only!
  */
 void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
 {
   blitdata Bto = BlitDataTo; //to easy coding
-  libxbrzscale::setFreeInputSurfaceAfterScale(false); //TODO this config should be placed more globally...
+
+  libxbrzscale::setDebugMsg(bDbgMsg); //TODO this config should be placed more globally...
+  libxbrzscale::setFreeSurfaceAfterScale(false,false); //TODO this config should be placed more globally...
+
   SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //based on xbrzscale code
 
   Uint32 color32bit;
@@ -1173,7 +1203,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
   unsigned char cr,cg,cb,ca;
   bool bFreeImg=false;
 
-  SDL_Surface* imgCopy = libxbrzscale::createARGBSurface(Bto.Border.X, Bto.Border.Y); //src img is always 16x16
+  SDL_Surface* imgCopy = SurfaceCache(Bto,false);
   // copy pixels to surface
   for(int x1 = 0; x1 < Bto.Border.X; x1++)
   {
@@ -1193,7 +1223,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
   }
 
   SDL_Surface* imgStretchedCopy=NULL;
-  imgStretchedCopy=libxbrzscale::scale(imgStretchedCopy,imgCopy,Bto.Stretch);
+  imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);
   // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
   for(int x1 = 0; x1 < imgStretchedCopy->w; ++x1)
   {
@@ -1207,8 +1237,8 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     }
   }
 
-  SDL_FreeSurface(imgCopy);
-  SDL_FreeSurface(imgStretchedCopy);
+//  SDL_FreeSurface(imgCopy);
+//  SDL_FreeSurface(imgStretchedCopy);
 }
 
 void bitmap::StretchBlit(cblitdata& BlitData) const

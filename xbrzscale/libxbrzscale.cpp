@@ -20,6 +20,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <vector>
 
 #include "SDL.h"
 #include "SDL_endian.h"
@@ -29,7 +30,9 @@
 #include "xbrz/xbrz.h"
 
 bool libxbrzscale::bEnableOutput=false;
+bool libxbrzscale::bDbgMsg=false;
 bool libxbrzscale::bFreeInputSurfaceAfterScale=true;
+bool libxbrzscale::bFreeOutputSurfaceAfterScale=true;
 
 Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
 {
@@ -93,6 +96,7 @@ void libxbrzscale::SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel
 
 
 SDL_Surface* libxbrzscale::createARGBSurface(int w, int h) {
+  if(bDbgMsg)printf("Creating SDL RGB surface w=%d h=%d\n",w,h);
   return SDL_CreateRGBSurface(0, w, h, 32, 0xff0000U, 0xff00U, 0xffU, 0xff000000U);
 }
 
@@ -203,10 +207,17 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img
   delete [] in_data;
 
   if(bEnableOutput)printf("Saving image...\n");
+
   if(dst_imgCache==NULL || dst_imgCache->w!=dst_width || dst_imgCache->h!=dst_height || dst_imgCache->refcount==0){
-    if(dst_imgCache!=NULL && dst_imgCache->refcount>0)SDL_FreeSurface(dst_imgCache); //previous OUTPUT surface
+    if(bFreeOutputSurfaceAfterScale){
+      if(dst_imgCache!=NULL && dst_imgCache->refcount>0){
+        SDL_FreeSurface(dst_imgCache); //previous OUTPUT surface
+      }
+    }
+
     dst_imgCache = createARGBSurface(dst_width, dst_height);
   }
+
   if (!dst_imgCache) {
     delete [] dest;
     if(bEnableOutput)fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
