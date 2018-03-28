@@ -328,10 +328,11 @@ void graphics::BlitDBToScreen(){
         if(!bDoStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
           DoubleBuffer->FastBlit(StretchedDB);
-          DB = StretchedDB; //and set it as the source
+          DB = StretchedDB; //and set stretched as the final source
         }
 
         Stretch(DoubleBuffer,Bto);
+        //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
 
         bDoStretch=true;
       }

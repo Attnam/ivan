@@ -38,7 +38,7 @@ bool libxbrzscale::bUseCache=false;
 bool libxbrzscale::bFreeInputSurfaceAfterScale=true;
 bool libxbrzscale::bFreeOutputSurfaceAfterScale=true;
 
-Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
+inline Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to retrieve */
@@ -65,7 +65,7 @@ Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
     }
 }
 
-void libxbrzscale::SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+inline void libxbrzscale::SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to set */
