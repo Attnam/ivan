@@ -26,7 +26,8 @@ class ivanconfig
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
-  static truth GetXBRZScale() { return XBRZScale.Value; }
+  static truth IsXBRZScale() { return XBRZScale.Value; }
+  static truth IsXBRZScaleLookMode() { return XBRZScaleLookMode.Value; }
   static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
@@ -85,6 +86,7 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+  static truthoption XBRZScaleLookMode;
   static cycleoption DirectionKeyMap;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;

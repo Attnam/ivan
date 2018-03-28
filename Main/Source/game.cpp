@@ -265,7 +265,7 @@ void game::PrepareStretchRegions(){
 
 truth game::Init(cfestring& Name)
 {
-  graphics::SetStretchMode(ivanconfig::GetXBRZScale());
+  graphics::SetStretchMode(ivanconfig::IsXBRZScale());
   PrepareStretchRegions();
 
   if(Name.IsEmpty())
@@ -834,13 +834,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Dest.X = RES.X - 96;
       B.Dest.Y = RES.Y - 96;
       B.Stretch = 5;
-//      if(ivanconfig::GetXBRZScale()){
-//        DOUBLE_BUFFER->StretchBlitXbrz(B);
-//      }else{
-//        DOUBLE_BUFFER->StretchBlit(B);
-//      }
-      graphics::SetStretchMode(ivanconfig::GetXBRZScale());
-      graphics::Stretch(DOUBLE_BUFFER,B);
+      graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }
 
     igraph::DrawCursor(ScreenCoord, CursorData);

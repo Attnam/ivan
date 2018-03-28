@@ -51,8 +51,11 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
+truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
+                                          "use XBRZScale to stretch look mode gfx only",
+                                          false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "use XBRZScale to stretch graphics",
+                                          "use XBRZScale to stretch all other gfx",
                                           false);
 cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           "select dungeon scale factor (applied on next run)",
@@ -354,6 +357,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
+  configsystem::AddOption(&XBRZScaleLookMode);
   configsystem::AddOption(&DungeonGfxScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);

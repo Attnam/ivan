@@ -44,6 +44,7 @@ class graphics
 #endif
   static void SetMode(cchar*, cchar*, v2, int, truth);
   static void Stretch(bitmap* bmp, blitdata B);
+  static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void BlitDBToScreen();
   static void AddStretchRegion(blitdata B);
   static void SetStretchMode(truth isXbrz);

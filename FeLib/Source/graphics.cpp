@@ -264,7 +264,10 @@ void graphics::BlitDBToScreen()
 #else
 
 void graphics::Stretch(bitmap* bmpFrom, blitdata Bto){
-  if(isUseXbrzScale){
+  Stretch(isUseXbrzScale,bmpFrom,Bto);
+}
+void graphics::Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto){
+  if(bXbrzMode){
     bmpFrom->StretchBlitXbrz(Bto);
   }else{
     bmpFrom->StretchBlit(Bto);
@@ -304,8 +307,14 @@ void graphics::BlitDBToScreen(){
 #else
   bitmap* DB = DoubleBuffer;
 
-  //if(!globalwindowhandler::ControlLoopsInstalled() && StretchRegionVector.size()>0){
-  if(!felist::isAnyFelistCurrentlyDrawn() && !iosystem::IsOnMenu() && StretchRegionVector.size()>0){
+  if(
+      // TODO not at loading animations
+      !felist::isAnyFelistCurrentlyDrawn()
+      &&
+      !iosystem::IsOnMenu()
+      &&
+      StretchRegionVector.size()>0
+  ){
     bool bDoStretch=false;
     for(int i=0;i<StretchRegionVector.size();i++){
       blitdata Bto=StretchRegionVector[i];
