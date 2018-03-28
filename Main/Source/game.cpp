@@ -181,12 +181,15 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
-void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
-
 int iMaxXSize=0;
 int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
+
+blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+int iPlayerRegion = -1;
+
+void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
 int game::GetMaxScreenXSize() {
   if(iMaxXSize==0){
@@ -279,7 +282,14 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::PrepareStretchRegions(){
+void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
+  bldPlayerOnScreen.Src = ScreenPos;
+  bldPlayerOnScreen.Dest = {ScreenPos.X*ivanconfig::GetDungeonGfxScale(), ScreenPos.Y*ivanconfig::GetDungeonGfxScale()};
+  std::cout<<"UpdPlOnScrB@"<<bldPlayerOnScreen.Src.X<<","<<bldPlayerOnScreen.Src.Y<<std::endl;
+  graphics::UpdateStretchRegion(iPlayerRegion,bldPlayerOnScreen,true);
+}
+
+void game::PrepareStretchRegions(){ // the order IS important if they overlap
   if(ivanconfig::GetDungeonGfxScale()==1)return;
 
   // dungeon visible area (Bitmap must be NULL)
@@ -289,6 +299,11 @@ void game::PrepareStretchRegions(){
   Bto.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
   Bto.Stretch = ivanconfig::GetDungeonGfxScale();
   graphics::AddStretchRegion(Bto);
+
+  // around player on screen TODO complete
+  bldPlayerOnScreen.Border = {TILE_SIZE, TILE_SIZE};
+  bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
+  iPlayerRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
 
   //TODO these below should be at most x2, set thru one boolean for all.
   //TODO equipped inventory
@@ -883,6 +898,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       {
         v2 ScreenCoord = CalculateScreenCoordinates(Pos);
         igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
+        UpdatePlayerOnScreenBlitdata(ScreenCoord);
       }
     }
     else
@@ -895,6 +911,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         {
           v2 ScreenCoord = CalculateScreenCoordinates(Pos);
           igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
+          UpdatePlayerOnScreenBlitdata(ScreenCoord);
         }
       }
     }

@@ -46,7 +46,9 @@ class graphics
   static void Stretch(bitmap* bmp, blitdata B);
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void BlitDBToScreen();
-  static void AddStretchRegion(blitdata B);
+  static int AddStretchRegion(blitdata B);
+//  static int AddStretchRegion(blitdata B, bool bIsAroundPlayer);
+  static int UpdateStretchRegion(int iIndex,blitdata B,bool bForceXBRZ);
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);
   static v2 GetRes() { return Res; }
@@ -123,7 +125,6 @@ class graphics
 #endif
   static bitmap* DoubleBuffer;
   static bitmap* StretchedDB;
-  static std::vector<blitdata> StretchRegionVector;
   static truth bUseXbrzScale;
   static truth bAllowStretchedBlit;
   static v2 Res;

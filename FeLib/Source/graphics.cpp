@@ -21,6 +21,7 @@
 #endif
 
 #include <cassert>
+#include <iostream>
 
 #include "graphics.h"
 #include "bitmap.h"
@@ -52,9 +53,15 @@ graphics::vesainfo graphics::VesaInfo;
 graphics::modeinfo graphics::ModeInfo;
 #endif
 
+struct stretchRegion
+{
+  blitdata B;
+  bool bForceXBRZ;
+};
+
+std::vector<stretchRegion> vStretchRegion;
 bitmap* graphics::DoubleBuffer=NULL;
 bitmap* graphics::StretchedDB=NULL;
-std::vector<blitdata> graphics::StretchRegionVector;
 truth graphics::bUseXbrzScale=false;
 truth graphics::bAllowStretchedBlit=false;
 v2 graphics::Res;
@@ -283,12 +290,27 @@ void graphics::SetAllowStretchedBlit(truth b){
   bAllowStretchedBlit=b;
 }
 
-void graphics::AddStretchRegion(blitdata B){
-  assert(B.Stretch>1);
-  assert(B.Bitmap==NULL);
+int graphics::UpdateStretchRegion(int iIndex,blitdata B,bool bForceXBRZ){
+  assert(B.Stretch>1); // some actual scaling is required
+  assert(B.Bitmap==NULL); // see below
 
   B.Bitmap = StretchedDB;
-  StretchRegionVector.push_back(B);
+  if(iIndex==-1){ //add
+    stretchRegion SR = {B,bForceXBRZ};
+    vStretchRegion.push_back(SR);
+    iIndex = vStretchRegion.size()-1;
+  }else{ //update
+    stretchRegion& SR = vStretchRegion[iIndex];
+    SR.B=B;
+    SR.bForceXBRZ=bForceXBRZ;
+    std::cout<<"Update"<<iIndex<<":SR@"<<SR.B.Src.X<<","<<SR.B.Src.Y<<"/Stretch="<<SR.B.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
+  }
+
+  return iIndex;
+}
+
+int graphics::AddStretchRegion(blitdata B){
+  return UpdateStretchRegion(-1, B, false);
 }
 
 void graphics::BlitDBToScreen(){
@@ -319,22 +341,33 @@ void graphics::BlitDBToScreen(){
       &&
       !iosystem::IsOnMenu()
       &&
-      StretchRegionVector.size()>0
+      vStretchRegion.size()>0
   ){
-    bool bDoStretch=false;
-    for(int i=0;i<StretchRegionVector.size();i++){
-      blitdata Bto=StretchRegionVector[i];
+    std::cout<<"StretchedBlits="<<vStretchRegion.size()<<std::endl;
+    bool bDidStretch=false;
+    for(int i=0;i<vStretchRegion.size();i++){
+      stretchRegion SR=vStretchRegion[i];
+      blitdata Bto=SR.B;
+
+      std::cout<<"["<<i<<"]SR@"<<Bto.Src.X<<","<<Bto.Src.Y<<"/Stretch="<<Bto.Stretch<<std::endl;
+
       if(Bto.Stretch>1){
-        if(!bDoStretch){
+        if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
           DoubleBuffer->FastBlit(StretchedDB);
           DB = StretchedDB; //and set stretched as the final source
         }
 
-        Stretch(DoubleBuffer,Bto);
+        if(SR.bForceXBRZ){
+          std::cout<<"Player"<<std::endl;
+          Stretch(true,DoubleBuffer,Bto);
+        }else{
+          std::cout<<"SomethingElse"<<std::endl;
+          Stretch(DoubleBuffer,Bto);
+        }
         //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
 
-        bDoStretch=true;
+        bDidStretch=true;
       }
     }
   }

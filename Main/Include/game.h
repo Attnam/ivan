@@ -173,6 +173,7 @@ class game
   static void DeInit();
   static void Run();
   static void PrepareStretchRegions();
+  static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -552,6 +553,7 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
+  static blitdata bldPlayerOnScreen;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)
