@@ -259,6 +259,8 @@ class game
   static void CreateGods();
   static int GetScreenXSize();
   static int GetScreenYSize();
+  static int GetMaxScreenXSize();
+  static int GetMaxScreenYSize();
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);

@@ -183,23 +183,40 @@ v2 game::EnterTextDisplacement;
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
+int iMaxXSize=0;
+int iMaxYSize=0;
 int iXSize=0;
-int game::GetScreenXSize() {
-  if(iXSize==0){
+int iYSize=0;
+
+int game::GetMaxScreenXSize() {
+  if(iMaxXSize==0){
     // 800 provides 42. 800/16=50. 42=50-8. 8 magic number for whatever is drawn to the right of the dungeon.
-    iXSize=ivanconfig::GetWindowWidth()/TILE_SIZE;
-    iXSize-=8;
+    iMaxXSize = ivanconfig::GetWindowWidth()/TILE_SIZE;
+    iMaxXSize-=8;
+  }
+  return iMaxXSize;
+}
+
+int game::GetMaxScreenYSize() {
+  if(iMaxYSize==0){
+    // 600 provides 26. 600/16=37. 26=37-11. 11 magic number for whatever is drawn below of the dungeon.
+    iMaxYSize = ivanconfig::GetWindowHeight()/TILE_SIZE;
+    iMaxYSize-=11;
+  }
+  return iMaxYSize;
+}
+
+int game::GetScreenXSize() { //actually dugeon visible width in tiles count
+  if(iXSize==0){
+    iXSize=GetMaxScreenXSize();
     iXSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some columns, no way to fit as scaler is integer and not float
   }
   return iXSize;
 }
 
-int iYSize=0;
-int game::GetScreenYSize() {
+int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
   if(iYSize==0){
-    // 600 provides 26. 600/16=37. 26=37-11. 11 magic number for whatever is drawn below of the dungeon.
-    iYSize=ivanconfig::GetWindowHeight()/TILE_SIZE;
-    iYSize-=11;
+    iYSize=GetMaxScreenYSize();
     iYSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some lines, no way to fit as scaler is integer and not float
   }
   return iYSize;
