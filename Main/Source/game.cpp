@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <iostream>
 #include <execinfo.h>
+#include <cassert>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -282,26 +283,57 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
+void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified?
   bldPlayerOnScreen.Src = ScreenPos;
 
-  v2 pos = Player->GetPos();
-  std::cout<<"Player->GetPos()="<<pos.X<<","<<pos.Y<<std::endl;
-  v2 cam = GetCamera();
-  std::cout<<"camPos="<<cam.X<<","<<cam.Y<<std::endl;
+  v2 posPlr = Player->GetPos();
+  std::cout<<"Player->GetPos()="<<posPlr.X<<","<<posPlr.Y<<std::endl;
+  v2 posCam = GetCamera();
+  std::cout<<"camPos="<<posCam.X<<","<<posCam.Y<<std::endl;
 
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
 
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*i;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*i;
+  v2 delta = {posPlr.X-posCam.X, posPlr.Y-posCam.Y};
+
+  v2 deltaForUpperLeft=delta;
+  deltaForUpperLeft.X-=i;
+  deltaForUpperLeft.Y-=i;
+  std::cout<<"deltaForUpperLeft="<<deltaForUpperLeft.X<<","<<deltaForUpperLeft.Y<<std::endl;
+
+  int iX = i;
+  int iY = i;
+
+  if(deltaForUpperLeft.X<0)iX+=deltaForUpperLeft.X;
+  if(deltaForUpperLeft.Y<0)iY+=deltaForUpperLeft.Y;
+
+  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
+
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*iX;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iY;
 
   bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*i*2);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*i*2);
+  int iBX=i*2;
+  int iBY=i*2;
+
+  if(deltaForUpperLeft.Y<0)iBY+=deltaForUpperLeft.Y;
+  if(deltaForUpperLeft.X<0)iBX+=deltaForUpperLeft.X;
+
+  v2 deltaForLowerRight=delta;
+  deltaForLowerRight.X=GetScreenXSize()-deltaForLowerRight.X-i-1;
+  deltaForLowerRight.Y=GetScreenYSize()-deltaForLowerRight.Y-i-1;
+
+  if(deltaForLowerRight.X<0)iBX+=deltaForLowerRight.X;
+  if(deltaForLowerRight.Y<0)iBY+=deltaForLowerRight.Y;
+
+  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
+
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iBX);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iBY);
 
   // this grants positioninig on the upper left player's square corner
-  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1;bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
+  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1; //TODO explain/understand why this...
+  bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
   bldPlayerOnScreen.Dest.X*=ivanconfig::GetDungeonGfxScale();
   bldPlayerOnScreen.Dest.Y*=ivanconfig::GetDungeonGfxScale();
 
