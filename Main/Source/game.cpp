@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cstdarg>
 #include <iostream>
-#include <execinfo.h>
 #include <cassert>
 
 #if defined(UNIX) || defined(__DJGPP__)
@@ -22,6 +21,7 @@
 
 #ifdef WIN32
 #include <direct.h>
+#include <execinfo.h>
 #endif
 
 #include "whandler.h"
