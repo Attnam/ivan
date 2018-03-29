@@ -69,6 +69,12 @@ truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "* use XBRZScale to stretch all other gfx",
                                           false);
+numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
+                                          "how many squares around player should be xbrz scaled",
+                                          0,
+                                          &XBRZSquaresAroundPlayerDisplayer,
+                                          &XBRZSquaresAroundPlayerChangeInterface,
+                                          &XBRZSquaresAroundPlayerChanger);
 cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           "* Select dungeon scale factor",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
@@ -124,9 +130,14 @@ truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
 
-void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
+void ivanconfig::XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " squares";
 }
 
 void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
@@ -222,6 +233,13 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
   return false;
 }
 
+truth ivanconfig::XBRZSquaresAroundPlayerChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how many squares around player should be prettyfied:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  return false;
+}
+
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
@@ -271,6 +289,12 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
     igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
+}
+
+void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  O->Value = What;
 }
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
@@ -407,6 +431,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
   configsystem::AddOption(&XBRZScaleLookMode);
+  configsystem::AddOption(&XBRZSquaresAroundPlayer);
   configsystem::AddOption(&DungeonGfxScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);

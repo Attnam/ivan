@@ -282,17 +282,23 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-int iSquaresAroundPlayer=0;
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
   bldPlayerOnScreen.Src = ScreenPos;
 
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*iSquaresAroundPlayer;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iSquaresAroundPlayer;
+  v2 pos = Player->GetPos();
+  std::cout<<"Player->GetPos()="<<pos.X<<","<<pos.Y<<std::endl;
+  v2 cam = GetCamera();
+  std::cout<<"camPos="<<cam.X<<","<<cam.Y<<std::endl;
+
+  int i=ivanconfig::GetXBRZSquaresAroundPlayer();
+
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*i;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*i;
 
   bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iSquaresAroundPlayer*2);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iSquaresAroundPlayer*2);
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*i*2);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*i*2);
 
   // this grants positioninig on the upper left player's square corner
   bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1;bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...

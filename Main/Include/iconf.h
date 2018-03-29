@@ -32,6 +32,7 @@ class ivanconfig
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
   static truth IsXBRZScaleLookMode() { return XBRZScaleLookMode.Value; }
+  static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
@@ -58,6 +59,7 @@ class ivanconfig
  private:
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
+  static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
@@ -65,10 +67,12 @@ class ivanconfig
   static truth DefaultNameChangeInterface(stringoption*);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
+  static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
+  static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
@@ -101,6 +105,8 @@ class ivanconfig
   static truthoption LookZoom;
   static truthoption XBRZScale;
   static truthoption XBRZScaleLookMode;
+  static cycleoption DungeonGfxScale;
+  static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
@@ -108,7 +114,6 @@ class ivanconfig
   static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
-  static cycleoption DungeonGfxScale;
   static truthoption FullScreenMode;
 #endif
   static col24 ContrastLuminance;
