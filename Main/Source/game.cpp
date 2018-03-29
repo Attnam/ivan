@@ -497,7 +497,7 @@ truth game::Init(cfestring& Name)
                                    "face the untold adventures ahead."));
 
       globalwindowhandler::InstallControlLoop(AnimationController);
-      SetIsRunning(true);
+      SetIsRunning(true); graphics::SetAllowStretchedBlit(false); //this simple workaround will make the animation visible while the game initializes
       InWilderness = true;
       iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."),
                            ZERO_V2, WHITE, false, true, &BusyAnimation);
@@ -581,6 +581,8 @@ truth game::Init(cfestring& Name)
       audio::ClearMIDIPlaylist();
       audio::LoadMIDIFile("world.mid", 0, 100);
       audio::SetPlaybackStatus(audio::PLAYING);
+
+      graphics::SetAllowStretchedBlit(true);
 
       return true;
     }
