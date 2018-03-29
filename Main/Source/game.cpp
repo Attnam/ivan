@@ -188,7 +188,9 @@ int iXSize=0;
 int iYSize=0;
 
 blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 int iPlayerRegion = -1;
+bool bReagionsReady=false;
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
@@ -284,6 +286,8 @@ void game::InitScript()
 }
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified?
+  if(!bReagionsReady)return;
+
   bldPlayerOnScreen.Src = ScreenPos;
 
   v2 posPlr = Player->GetPos();
@@ -332,17 +336,13 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iBY);
 
   // this grants positioninig on the upper left player's square corner
-//  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1; //TODO explain/understand why this...
-//  bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
-//  bldPlayerOnScreen.Dest.X*=ivanconfig::GetDungeonGfxScale();
-//  bldPlayerOnScreen.Dest.Y*=ivanconfig::GetDungeonGfxScale();
-//  int iLeftMargin=11;int iTopMargin=21;//x3
-//  int iLeftMargin=12;int iTopMargin=29;//x3
-//  int iLeftMargin=12;int iTopMargin=29;//x3
-//  bldPlayerOnScreen.Dest.X=iLeftMargin+((bldPlayerOnScreen.Src.X-iLeftMargin)*ivanconfig::GetDungeonGfxScale());
-//  bldPlayerOnScreen.Dest.Y=iTopMargin +((bldPlayerOnScreen.Src.Y-iTopMargin )*ivanconfig::GetDungeonGfxScale());
-  bldPlayerOnScreen.Dest.X=16+((bldPlayerOnScreen.Src.X-16)*ivanconfig::GetDungeonGfxScale());
-  bldPlayerOnScreen.Dest.Y=32+((bldPlayerOnScreen.Src.Y-32)*ivanconfig::GetDungeonGfxScale());
+
+  // relative to full dungeon in source image vanilla position
+  v2 deltaForFullDungeonSrc = {bldPlayerOnScreen.Src.X-bldFullDungeon.Src.X, bldPlayerOnScreen.Src.Y-bldFullDungeon.Src.Y};
+
+  // relative to full dungeon over it's stretched image position
+  bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetDungeonGfxScale());
+  bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetDungeonGfxScale());
 
   graphics::UpdateStretchRegion(iPlayerRegion,bldPlayerOnScreen,true);
 }
@@ -354,15 +354,15 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
   blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
   // workaround: only one line of the border will be stretched, hence src -1 and border +2
 //  Bto.Src = {16-1,32-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-  Bto.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-  Bto.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
+  bldFullDungeon.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+  bldFullDungeon.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
 //  Bto.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-  Bto.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
-  Bto.Stretch = ivanconfig::GetDungeonGfxScale();
-  graphics::AddStretchRegion(Bto);
+  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
+  bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
+  graphics::AddStretchRegion(bldFullDungeon);
 
   // around player on screen TODO complete
-  bldPlayerOnScreen.Border = {TILE_SIZE, TILE_SIZE};
+//  bldPlayerOnScreen.Border = {TILE_SIZE, TILE_SIZE};
   bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
   iPlayerRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
 
@@ -370,6 +370,8 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
   //TODO equipped inventory
   //TODO player stats etc
   //TODO text log
+
+  bReagionsReady=true;
 }
 
 truth game::Init(cfestring& Name)

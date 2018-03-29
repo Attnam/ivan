@@ -127,6 +127,7 @@ class graphics
   static bitmap* StretchedDB;
   static truth bUseXbrzScale;
   static truth bAllowStretchedBlit;
+  static bool bDbgMsg;
   static v2 Res;
   static int Scale;
   static int ColorDepth;

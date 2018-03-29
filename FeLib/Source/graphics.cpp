@@ -59,6 +59,7 @@ struct stretchRegion
   bool bForceXBRZ;
 };
 
+bool graphics::bDbgMsg=true;
 std::vector<stretchRegion> vStretchRegion;
 bitmap* graphics::DoubleBuffer=NULL;
 bitmap* graphics::StretchedDB=NULL;
@@ -349,7 +350,14 @@ void graphics::BlitDBToScreen(){
       stretchRegion SR=vStretchRegion[i];
       blitdata Bto=SR.B;
 
-      std::cout<<"["<<i<<"]SR@"<<Bto.Src.X<<","<<Bto.Src.Y<<"/Stretch="<<Bto.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
+      if(bDbgMsg){
+        std::cout<<"["<<i<<"]SR@"
+          <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
+          <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
+          <<"Stretch="<<Bto.Stretch<<"/"
+          <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
+          <<std::endl;
+      }
 
       if(Bto.Stretch>1){
         if(!bDidStretch){
