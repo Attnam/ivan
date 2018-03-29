@@ -19,10 +19,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef UNIX
-#include <execinfo.h>
-#endif
-
 #ifdef WIN32
 #include <direct.h>
 #endif
