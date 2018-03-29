@@ -55,8 +55,10 @@ graphics::modeinfo graphics::ModeInfo;
 
 struct stretchRegion
 {
+  bool bEnabled;
   blitdata B;
   bool bForceXBRZ;
+  bool bShowWithFelist;
 };
 
 bool graphics::bDbgMsg=true;
@@ -291,27 +293,35 @@ void graphics::SetAllowStretchedBlit(truth b){
   bAllowStretchedBlit=b;
 }
 
-int graphics::UpdateStretchRegion(int iIndex,blitdata B,bool bForceXBRZ){
+void graphics::SetSRegionEnable(int iIndex, bool b){
+  vStretchRegion[iIndex].bEnabled=b;
+}
+void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
+  vStretchRegion[iIndex].bForceXBRZ=b;
+}
+void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
+  vStretchRegion[iIndex].bShowWithFelist=b;
+}
+int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
   assert(B.Stretch>1); // some actual scaling is required
   assert(B.Bitmap==NULL); // see below
 
   B.Bitmap = StretchedDB;
   if(iIndex==-1){ //add
-    stretchRegion SR = {B,bForceXBRZ};
+    stretchRegion SR = {true,B,false};
     vStretchRegion.push_back(SR);
     iIndex = vStretchRegion.size()-1;
   }else{ //update
     stretchRegion& SR = vStretchRegion[iIndex];
     SR.B=B;
-    SR.bForceXBRZ=bForceXBRZ;
-    std::cout<<"Update"<<iIndex<<":SR@"<<SR.B.Src.X<<","<<SR.B.Src.Y<<"/Stretch="<<SR.B.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
+    if(bDbgMsg)std::cout<<"UpdateSR["<<iIndex<<"]@"<<SR.B.Src.X<<","<<SR.B.Src.Y<<"/Stretch="<<SR.B.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
   }
 
   return iIndex;
 }
 
 int graphics::AddStretchRegion(blitdata B){
-  return UpdateStretchRegion(-1, B, false);
+  return SetSRegionBlitdata(-1, B);
 }
 
 void graphics::BlitDBToScreen(){
@@ -338,20 +348,19 @@ void graphics::BlitDBToScreen(){
   if(
       bAllowStretchedBlit // basically, if the game is running. TODO so, not at loading animations, did it work?
       &&
-      !felist::isAnyFelistCurrentlyDrawn()
-      &&
-      !iosystem::IsOnMenu()
+      !iosystem::IsOnMenu() //main menu
       &&
       vStretchRegion.size()>0
   ){
-    if(bDbgMsg)std::cout<<"StretchedBlits="<<vStretchRegion.size()<<std::endl;
+    if(bDbgMsg)std::cout<<"StretchedBlitsTot="<<vStretchRegion.size()<<std::endl;
     bool bDidStretch=false;
+    bool bDoIt=true;
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
       blitdata Bto=SR.B;
 
       if(bDbgMsg){
-        std::cout<<"["<<i<<"]SR@"
+        std::cout<<"BlitSR["<<i<<"]@"
           <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
           <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
           <<"Stretch="<<Bto.Stretch<<"/"
@@ -360,20 +369,26 @@ void graphics::BlitDBToScreen(){
       }
 
       if(Bto.Stretch>1 && Bto.Border.X>0 && Bto.Border.Y>0){ //being 0 means it is not ready yet TODO this is guess work... should be a boolean bInitialized ...
-        if(!bDidStretch){
-          // first time, if there is at least one stretching, prepare "background/base" on the stretched
-          DoubleBuffer->FastBlit(StretchedDB);
-          DB = StretchedDB; //and set stretched as the final source
-        }
+        bDoIt=true; // try to disable below, is more clear to read long lists
+        if(!SR.bEnabled)bDoIt=false;
+        if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bDoIt=false;
 
-        if(SR.bForceXBRZ){
-          Stretch(true,DoubleBuffer,Bto);
-        }else{
-          Stretch(DoubleBuffer,Bto);
-        }
-        //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
+        if(bDoIt){
+          if(!bDidStretch){
+            // first time, if there is at least one stretching, prepare "background/base" on the stretched
+            DoubleBuffer->FastBlit(StretchedDB);
+            DB = StretchedDB; //and set stretched as the final source
+          }
 
-        bDidStretch=true;
+          if(SR.bForceXBRZ){
+            Stretch(true,DoubleBuffer,Bto);
+          }else{
+            Stretch(DoubleBuffer,Bto);
+          }
+          //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
+
+          bDidStretch=true;
+        }
       }
     }
   }

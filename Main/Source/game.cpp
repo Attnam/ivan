@@ -185,11 +185,11 @@ int iMaxXSize=0;
 int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
-
 blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 int iPlayerRegion = -1;
-bool bRegionsReady=false;
+int iSilhouetteRegion = -1;
+int iRegionIndexDungeon = -1;
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
@@ -316,7 +316,7 @@ void game::UpdatePlayerOnScreenSBSBlitdata() {
 }
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified?
-  if(!bRegionsReady)return;
+  if(iRegionIndexDungeon==-1)return;
 
   bldPlayerOnScreen.Src = ScreenPos;
 
@@ -374,39 +374,57 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetDungeonGfxScale());
   bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetDungeonGfxScale());
 
-  graphics::UpdateStretchRegion(iPlayerRegion,bldPlayerOnScreen,true);
+  graphics::SetSRegionBlitdata(iPlayerRegion,bldPlayerOnScreen);
 }
 
-void game::PrepareStretchRegions(){ // the order IS important if they overlap
-  if(ivanconfig::GetDungeonGfxScale()==1)return;
+void game::RegionSilhouetteEnable(bool b){
+  game::PrepareStretchRegions();
+  graphics::SetSRegionEnable(iSilhouetteRegion, b);
+}
 
-  // dungeon visible area (Bitmap must be NULL)
-  blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-  // workaround: only one line of the border will be stretched, hence src -1 and border +2
-  v2 topleft = area::getTopLeftCorner();
-  bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-  bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
-  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-  bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
-  graphics::AddStretchRegion(bldFullDungeon);
+void game::PrepareStretchRegions(){ // the ADD order IS important IF they overlap
+  if(iRegionIndexDungeon==-1){
+    if(ivanconfig::GetDungeonGfxScale()>1){
+      // dungeon visible area (Bitmap must be NULL)
+      // workaround: only one line of the border will be stretched, hence src -1 and border +2
+      v2 topleft = area::getTopLeftCorner();
+      bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+      bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
+      bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
+      bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
+      iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon);
 
-  // around player on screen TODO complete
-//  bldPlayerOnScreen.Border = {TILE_SIZE, TILE_SIZE};
-  bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
-  iPlayerRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
+      // (ABOVE) around player on screen TODO complete
+      bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
+      iPlayerRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
+      graphics::SetSRegionForceXBRZ(iPlayerRegion,true);
+    }
+  }
 
-  //TODO these below should be at most x2, set thru one boolean for all.
-  //TODO equipped inventory
-  //TODO player stats etc
-  //TODO text log
+  //TODO player stats etc, text log: at most x2?, set thru one user option bool for all (fast blit only?)
 
-  bRegionsReady=true;
+  if(iSilhouetteRegion==-1){     // equiped items and humanoid silhouette region
+    v2 sletPos = humanoid::GetSilhouetteWhere();
+    if(sletPos.X>0 && sletPos.Y>0){
+      sletPos.X -= 15; sletPos.Y -= 23;
+      int iSletScale=3; //TODO user option or automatic?
+      blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+      bldSilhouette.Src = {sletPos.X, sletPos.Y};
+      bldSilhouette.Dest = {sletPos.X -(96*iSletScale), sletPos.Y};
+      bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE
+      bldSilhouette.Stretch = iSletScale;
+      iSilhouetteRegion = graphics::AddStretchRegion(bldSilhouette);
+      graphics::SetSRegionForceXBRZ(iSilhouetteRegion,true);
+      graphics::SetSRegionShowWithFelist(iSilhouetteRegion,true);
+    }
+  }
+
 }
 
 truth game::Init(cfestring& Name)
 {
-  graphics::SetStretchMode(ivanconfig::IsXBRZScale());
-  PrepareStretchRegions();
+//  graphics::SetStretchMode(ivanconfig::IsXBRZScale());
+////  PrepareStretchRegions();
 
   if(Name.IsEmpty())
   {
@@ -445,6 +463,7 @@ truth game::Init(cfestring& Name)
   DangerFound = 0;
   CausePanicFlag = false;
 
+  bool bSuccess=false;
   switch(Load(SaveName(PlayerName)))
   {
    case LOADED:
@@ -455,7 +474,8 @@ truth game::Init(cfestring& Name)
       GetCurrentArea()->SendNewDrawRequest();
       SendLOSUpdateRequest();
       ADD_MESSAGE("Game loaded successfully.");
-      return true;
+      bSuccess=true;
+      break;
     }
    case NEW_GAME:
     {
@@ -497,7 +517,7 @@ truth game::Init(cfestring& Name)
                                    "face the untold adventures ahead."));
 
       globalwindowhandler::InstallControlLoop(AnimationController);
-      SetIsRunning(true); graphics::SetAllowStretchedBlit(false); //this simple workaround will make the animation visible while the game initializes
+      SetIsRunning(true); //graphics::SetAllowStretchedBlit(false); //this simple workaround will make the animation visible while the game initializes
       InWilderness = true;
       iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."),
                            ZERO_V2, WHITE, false, true, &BusyAnimation);
@@ -582,13 +602,24 @@ truth game::Init(cfestring& Name)
       audio::LoadMIDIFile("world.mid", 0, 100);
       audio::SetPlaybackStatus(audio::PLAYING);
 
-      graphics::SetAllowStretchedBlit(true);
+//      graphics::SetAllowStretchedBlit(true);
 
-      return true;
+      bSuccess=true;
+      break;
     }
    default:
-    return false;
+    {
+      bSuccess=false;
+      break;
+    }
   }
+
+  if(bSuccess){
+    graphics::SetStretchMode(ivanconfig::IsXBRZScale());
+    PrepareStretchRegions();
+  }
+
+  return bSuccess;
 }
 
 void game::DeInit()
@@ -793,7 +824,11 @@ void game::Run()
     catch(areachangerequest)
     {
     }
+
+//    PrepareStretchRegions();
   }
+
+  graphics::SetAllowStretchedBlit(false);
 }
 
 void game::InitLuxTable()

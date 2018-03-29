@@ -10,24 +10,25 @@
  *
  */
 
-#include "command.h"
-#include "char.h"
-#include "message.h"
-#include "game.h"
-#include "stack.h"
-#include "room.h"
-#include "god.h"
-#include "felist.h"
-#include "iconf.h"
-#include "bitmap.h"
 #include "actions.h"
+#include "bitmap.h"
+#include "char.h"
+#include "command.h"
+#include "database.h"
+#include "felist.h"
+#include "game.h"
+#include "god.h"
+#include "graphics.h"
+#include "iconf.h"
+#include "materia.h"
+#include "message.h"
 #include "miscitem.h"
+#include "room.h"
+#include "stack.h"
+#include "team.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
-#include "materia.h"
-#include "database.h"
-#include "team.h"
 
 #ifdef WIZARD
 #include "proto.h"
@@ -287,8 +288,11 @@ truth commandsystem::Open(character* Char)
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
-    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect))
+    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)){
+      game::RegionSilhouetteEnable(true);
       return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
+      game::RegionSilhouetteEnable(false);
+    }
   }
   else
     ADD_MESSAGE("This monster type cannot open anything.");
@@ -475,10 +479,13 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
 
 truth commandsystem::ShowInventory(character* Char)
 {
+  game::RegionSilhouetteEnable(true);
   festring Title("Your inventory (total weight: ");
   Title << Char->GetStack()->GetWeight();
   Title << "g)";
   Char->GetStack()->DrawContents(Char, Title, NO_SELECT);
+  game::RegionSilhouetteEnable(false);
+
   return false;
 }
 
@@ -1230,7 +1237,11 @@ truth commandsystem::AssignName(character*)
 
 truth commandsystem::EquipmentScreen(character* Char)
 {
-  return Char->EquipmentScreen(Char->GetStack(), 0);
+  game::RegionSilhouetteEnable(true);
+  bool b = Char->EquipmentScreen(Char->GetStack(), 0);
+  game::RegionSilhouetteEnable(false);
+
+  return b;
 }
 
 truth commandsystem::ScrollMessagesDown(character*)

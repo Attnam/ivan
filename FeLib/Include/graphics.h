@@ -47,8 +47,10 @@ class graphics
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void BlitDBToScreen();
   static int AddStretchRegion(blitdata B);
-//  static int AddStretchRegion(blitdata B, bool bIsAroundPlayer);
-  static int UpdateStretchRegion(int iIndex,blitdata B,bool bForceXBRZ);
+  static void SetSRegionEnable(int iIndex, bool b);
+  static void SetSRegionForceXBRZ(int iIndex, bool b);
+  static void SetSRegionShowWithFelist(int iIndex, bool b);
+  static int  SetSRegionBlitdata(int iIndex, blitdata B);
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);
   static v2 GetRes() { return Res; }
