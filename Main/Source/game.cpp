@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <iostream>
 #include <execinfo.h>
+#include <cassert>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -285,23 +286,37 @@ void game::InitScript()
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
   bldPlayerOnScreen.Src = ScreenPos;
 
-  v2 pos = Player->GetPos();
-  std::cout<<"Player->GetPos()="<<pos.X<<","<<pos.Y<<std::endl;
-  v2 cam = GetCamera();
-  std::cout<<"camPos="<<cam.X<<","<<cam.Y<<std::endl;
+  v2 posPlr = Player->GetPos();
+  std::cout<<"Player->GetPos()="<<posPlr.X<<","<<posPlr.Y<<std::endl;
+  v2 posCam = GetCamera();
+  std::cout<<"camPos="<<posCam.X<<","<<posCam.Y<<std::endl;
 
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
 
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*i;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*i;
+  v2 delta = {posPlr.X-posCam.X-i, posPlr.Y-posCam.Y-i};
+  std::cout<<"delta="<<delta.X<<","<<delta.Y<<std::endl;
+
+  int iX = i;if(delta.X<0)iX+=delta.X;
+  int iY = i;if(delta.Y<0)iY+=delta.Y;
+  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
+//  assert(iX==iY==3);//@@@ TEST REMOVE
+
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*iX;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iY;
 
   bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*i*2);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*i*2);
+  int iBX=i*2;if(delta.X<0)iBX+=delta.X;
+  int iBY=i*2;if(delta.Y<0)iBY+=delta.Y;
+  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
+//  assert(iBX==iBY==6);//@@@ TEST REMOVE
+
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iBX);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iBY);
 
   // this grants positioninig on the upper left player's square corner
-  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1;bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
+  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1; //TODO explain/understand why this...
+  bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
   bldPlayerOnScreen.Dest.X*=ivanconfig::GetDungeonGfxScale();
   bldPlayerOnScreen.Dest.Y*=ivanconfig::GetDungeonGfxScale();
 

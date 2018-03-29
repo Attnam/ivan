@@ -71,7 +71,7 @@ truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           false);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
                                           "how many squares around player should be xbrz scaled",
-                                          0,
+                                          3,
                                           &XBRZSquaresAroundPlayerDisplayer,
                                           &XBRZSquaresAroundPlayerChangeInterface,
                                           &XBRZSquaresAroundPlayerChanger);
@@ -132,12 +132,12 @@ void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
 
 void ivanconfig::XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry)
 {
-  Entry << O->Value << " pixels";
+  Entry << O->Value << " squares";
 }
 
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
 {
-  Entry << O->Value << " squares";
+  Entry << O->Value << " pixels";
 }
 
 void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
