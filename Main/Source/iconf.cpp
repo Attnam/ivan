@@ -64,13 +64,13 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
 truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
-                                          "use XBRZScale to stretch look mode only",
+                                          "use xBRZScale to stretch look mode only",
                                           false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "* use XBRZScale to stretch all other gfx",
+                                          "* use xBRZScale to stretch all other gfx",
                                           false);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
-                                          "how many squares around player should be xbrz scaled",
+                                          "how many squares around player should be xBRZ scaled",
                                           3,
                                           &XBRZSquaresAroundPlayerDisplayer,
                                           &XBRZSquaresAroundPlayerChangeInterface,
