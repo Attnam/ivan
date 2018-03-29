@@ -23,36 +23,36 @@
 #include <direct.h>
 #endif
 
-#include "whandler.h"
-#include "hscore.h"
-#include "rawbit.h"
-#include "message.h"
-#include "feio.h"
-#include "team.h"
-#include "iconf.h"
 #include "allocate.h"
-#include "pool.h"
-#include "god.h"
-#include "proto.h"
-#include "stack.h"
-#include "felist.h"
-#include "human.h"
-#include "nonhuman.h"
-#include "wsquare.h"
-#include "game.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "save.h"
-#include "miscitem.h"
-#include "room.h"
-#include "materias.h"
-#include "rain.h"
-#include "gear.h"
-#include "fetime.h"
-#include "balance.h"
-#include "confdef.h"
-
+#include "area.h"
 #include "audio.h"
+#include "balance.h"
+#include "bitmap.h"
+#include "confdef.h"
+#include "feio.h"
+#include "felist.h"
+#include "fetime.h"
+#include "game.h"
+#include "gear.h"
+#include "god.h"
+#include "graphics.h"
+#include "hscore.h"
+#include "human.h"
+#include "iconf.h"
+#include "materias.h"
+#include "message.h"
+#include "miscitem.h"
+#include "nonhuman.h"
+#include "pool.h"
+#include "proto.h"
+#include "rain.h"
+#include "rawbit.h"
+#include "room.h"
+#include "save.h"
+#include "stack.h"
+#include "team.h"
+#include "whandler.h"
+#include "wsquare.h"
 
 #define SAVE_FILE_VERSION 131 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 117 // Increment this if changes make bonefiles incompatible
@@ -291,6 +291,12 @@ void game::InitScript()
  * TODO each square on the dungeon can be a region to be scaled OR only create regions for squares around player
  */
 void game::UpdatePlayerOnScreenSBSBlitdata() {
+  /* TODO rework tips:
+  v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
+  igraph::DrawCursor(ScreenCoord, SpecialCursorData[c]);
+  GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+  */
+
   square* sqPlayer = Player->GetSquareUnder();
 
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
@@ -377,11 +383,10 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
   // dungeon visible area (Bitmap must be NULL)
   blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
   // workaround: only one line of the border will be stretched, hence src -1 and border +2
-  bldFullDungeon.Src = {16-1,32-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-//  bldFullDungeon.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-  bldFullDungeon.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
+  v2 topleft = area::getTopLeftCorner();
+  bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+  bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
   bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-//  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
   bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
   graphics::AddStretchRegion(bldFullDungeon);
 
@@ -897,16 +902,6 @@ void game::DrawEverything()
 {
   DrawEverythingNoBlit();
   graphics::BlitDBToScreen();
-
-//  if(graphics::IsWideLayout()){
-//    // dungeon area
-//    blitdata B = { DOUBLE_BUFFER,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-//    B.Src = {20,20};
-//    B.Dest = B.Src;
-//    B.Border = {GetScreenXSize()*TILE_SIZE,GetScreenYSize()*TILE_SIZE};
-//    B.Stretch = 3;
-//    graphics::Zoom(true,DOUBLE_BUFFER,B);
-//  }
 }
 
 truth game::OnScreen(v2 Pos)
@@ -2270,7 +2265,10 @@ int game::CompareLightToInt(col24 L, col24 Int)
 
 void game::SetStandardListAttributes(felist& List)
 {
-  List.SetPos(v2(26, 42));
+  v2 topleft = area::getTopLeftCorner();
+  int i = ivanconfig::GetDungeonGfxScale() ? -3 : 10;
+  List.SetPos(v2(topleft.X+i, topleft.Y+i));
+
   List.SetWidth(652);
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
   List.SetUpKey(GetMoveCommandKey(KEY_UP_INDEX));

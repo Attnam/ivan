@@ -45,6 +45,8 @@ class area
   truth IsValidPos(int X, int Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   const rect& GetBorder() const { return Border; }
   void SetEntryPos(int, v2);
+  static v2 getTopLeftCorner();
+  static int getOutlineThickness();
  protected:
   square*** Map;
   uchar** FlagMap;
@@ -52,6 +54,8 @@ class area
   ulong XSizeTimesYSize;
   rect Border;
   std::map<int, v2> EntryMap;
+  static v2 topLeftCorner;
+  static int iOutlineThickness;
 };
 
 #endif
