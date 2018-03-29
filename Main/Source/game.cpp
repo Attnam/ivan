@@ -189,7 +189,7 @@ int iYSize=0;
 blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 int iPlayerRegion = -1;
-bool bReagionsReady=false;
+bool bRegionsReady=false;
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
@@ -284,8 +284,33 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+/**
+ * SBS stands for Square By Square
+ *
+ * TODO collect all visible squares around player within range and blit them scaled up with xbrz
+ * TODO each square on the dungeon can be a region to be scaled OR only create regions for squares around player
+ */
+void game::UpdatePlayerOnScreenSBSBlitdata() {
+  square* sqPlayer = Player->GetSquareUnder();
+
+  int i=ivanconfig::GetXBRZSquaresAroundPlayer();
+
+  square* sqTopLeft;
+  for(int k=i;k>0;k--)sqTopLeft=sq->GetNearSquare({0,0});
+
+  square* sq=sqTopLeft;
+  int iW,iH;iW=iH=i*2;
+  for(int iY=0;iY<iH;iY++){
+    for(int iX=0;iX<iW;iX++){
+      if(sq->CanBeSeenByPlayer()){
+        //TODO collet image to blit as scaled region
+      }
+    }
+  }
+}
+
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified?
-  if(!bReagionsReady)return;
+  if(!bRegionsReady)return;
 
   bldPlayerOnScreen.Src = ScreenPos;
 
@@ -370,7 +395,7 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
   //TODO player stats etc
   //TODO text log
 
-  bReagionsReady=true;
+  bRegionsReady=true;
 }
 
 truth game::Init(cfestring& Name)
