@@ -19,12 +19,12 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef WIN32
-#include <direct.h>
+#ifdef UNIX
+#include <execinfo.h>
 #endif
 
-#ifndef WIN32
-#include <execinfo.h>
+#ifdef WIN32
+#include <direct.h>
 #endif
 
 #include "whandler.h"
