@@ -282,10 +282,23 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+int iSquaresAroundPlayer=0;
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
   bldPlayerOnScreen.Src = ScreenPos;
-  bldPlayerOnScreen.Dest = {ScreenPos.X*ivanconfig::GetDungeonGfxScale(), ScreenPos.Y*ivanconfig::GetDungeonGfxScale()};
-  std::cout<<"UpdPlOnScrB@"<<bldPlayerOnScreen.Src.X<<","<<bldPlayerOnScreen.Src.Y<<std::endl;
+
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*iSquaresAroundPlayer;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iSquaresAroundPlayer;
+
+  bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
+
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iSquaresAroundPlayer*2);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iSquaresAroundPlayer*2);
+
+  // this grants positioninig on the upper left player's square corner
+  bldPlayerOnScreen.Dest.X-=TILE_SIZE/2+1;bldPlayerOnScreen.Dest.Y-=TILE_SIZE+1; //TODO explain/understand why this...
+  bldPlayerOnScreen.Dest.X*=ivanconfig::GetDungeonGfxScale();
+  bldPlayerOnScreen.Dest.Y*=ivanconfig::GetDungeonGfxScale();
+
   graphics::UpdateStretchRegion(iPlayerRegion,bldPlayerOnScreen,true);
 }
 
@@ -294,9 +307,10 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
 
   // dungeon visible area (Bitmap must be NULL)
   blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-  Bto.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+  // workaround: only one line of the border will be stretched, hence src -1 and border +2
+  Bto.Src = {16-1,32-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
   Bto.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
-  Bto.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
+  Bto.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
   Bto.Stretch = ivanconfig::GetDungeonGfxScale();
   graphics::AddStretchRegion(Bto);
 

@@ -349,7 +349,7 @@ void graphics::BlitDBToScreen(){
       stretchRegion SR=vStretchRegion[i];
       blitdata Bto=SR.B;
 
-      std::cout<<"["<<i<<"]SR@"<<Bto.Src.X<<","<<Bto.Src.Y<<"/Stretch="<<Bto.Stretch<<std::endl;
+      std::cout<<"["<<i<<"]SR@"<<Bto.Src.X<<","<<Bto.Src.Y<<"/Stretch="<<Bto.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
 
       if(Bto.Stretch>1){
         if(!bDidStretch){
@@ -359,10 +359,8 @@ void graphics::BlitDBToScreen(){
         }
 
         if(SR.bForceXBRZ){
-          std::cout<<"Player"<<std::endl;
           Stretch(true,DoubleBuffer,Bto);
         }else{
-          std::cout<<"SomethingElse"<<std::endl;
           Stretch(DoubleBuffer,Bto);
         }
         //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
