@@ -296,7 +296,7 @@ void game::UpdatePlayerOnScreenSBSBlitdata() {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
 
   square* sqTopLeft;
-  for(int k=i;k>0;k--)sqTopLeft=sq->GetNearSquare({0,0});
+  for(int k=i;k>0;k--)sqTopLeft=sqPlayer->GetNearSquare({0,0});
 
   square* sq=sqTopLeft;
   int iW,iH;iW=iH=i*2;

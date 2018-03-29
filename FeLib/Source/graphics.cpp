@@ -344,7 +344,7 @@ void graphics::BlitDBToScreen(){
       &&
       vStretchRegion.size()>0
   ){
-    std::cout<<"StretchedBlits="<<vStretchRegion.size()<<std::endl;
+    if(bDbgMsg)std::cout<<"StretchedBlits="<<vStretchRegion.size()<<std::endl;
     bool bDidStretch=false;
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
@@ -359,7 +359,7 @@ void graphics::BlitDBToScreen(){
           <<std::endl;
       }
 
-      if(Bto.Stretch>1){
+      if(Bto.Stretch>1 && Bto.Border.X>0 && Bto.Border.Y>0){ //being 0 means it is not ready yet TODO this is guess work... should be a boolean bInitialized ...
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
           DoubleBuffer->FastBlit(StretchedDB);
