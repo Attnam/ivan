@@ -21,6 +21,9 @@
 
 #ifdef WIN32
 #include <direct.h>
+#endif
+
+#ifndef WIN32
 #include <execinfo.h>
 #endif
 
@@ -353,11 +356,11 @@ void game::PrepareStretchRegions(){ // the order IS important if they overlap
   // dungeon visible area (Bitmap must be NULL)
   blitdata Bto = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
   // workaround: only one line of the border will be stretched, hence src -1 and border +2
-//  Bto.Src = {16-1,32-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-  bldFullDungeon.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+  bldFullDungeon.Src = {16-1,32-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+//  bldFullDungeon.Src = {16,32}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
   bldFullDungeon.Dest = {12,29}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
-//  Bto.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
+  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
+//  bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE, game::GetScreenYSize()*TILE_SIZE};
   bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
   graphics::AddStretchRegion(bldFullDungeon);
 
