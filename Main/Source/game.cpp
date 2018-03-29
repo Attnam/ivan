@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef(UNIX)
+#ifdef UNIX
 #include <execinfo.h>
 #endif
 
