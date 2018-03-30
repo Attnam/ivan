@@ -185,11 +185,17 @@ int iMaxXSize=0;
 int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
-blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+
 int iPlayerRegion = -1;
 int iSilhouetteRegion = -1;
 int iRegionIndexDungeon = -1;
+
+//TODO should be transparent_color? is working well til now..
+blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+
+v2 silhouettePos = {0,0};
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
@@ -379,7 +385,19 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
 
 void game::RegionSilhouetteEnable(bool b){
   game::PrepareStretchRegions();
-  graphics::SetSRegionEnable(iSilhouetteRegion, b);
+  if(iSilhouetteRegion==-1)return;
+
+  if( b && ivanconfig::GetSilhouetteScale()>1 ){
+    bldSilhouette.Stretch = ivanconfig::GetSilhouetteScale();
+
+    bldSilhouette.Dest = {silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()), silhouettePos.Y};
+
+    graphics::SetSRegionBlitdata(iSilhouetteRegion, bldSilhouette);
+    graphics::SetSRegionEnable(iSilhouetteRegion, true);
+  }else{
+    graphics::SetSRegionEnable(iSilhouetteRegion, false);
+  }
+
 }
 
 void game::PrepareStretchRegions(){ // the ADD order IS important IF they overlap
@@ -404,15 +422,12 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
   //TODO player stats etc, text log: at most x2?, set thru one user option bool for all (fast blit only?)
 
   if(iSilhouetteRegion==-1){     // equiped items and humanoid silhouette region
-    v2 sletPos = humanoid::GetSilhouetteWhere();
-    if(sletPos.X>0 && sletPos.Y>0){
-      sletPos.X -= 15; sletPos.Y -= 23;
-      int iSletScale=3; //TODO user option or automatic?
-      blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-      bldSilhouette.Src = {sletPos.X, sletPos.Y};
-      bldSilhouette.Dest = {sletPos.X -(96*iSletScale), sletPos.Y};
-      bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE
-      bldSilhouette.Stretch = iSletScale;
+    silhouettePos = humanoid::GetSilhouetteWhere();
+    if(silhouettePos.X>0 && silhouettePos.Y>0){
+      silhouettePos.X -= 15; silhouettePos.Y -= 23; //top left corner of all equipped items countour
+      bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
+      bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
+      bldSilhouette.Stretch = 2; // minimum to allow setup
       iSilhouetteRegion = graphics::AddStretchRegion(bldSilhouette);
       graphics::SetSRegionForceXBRZ(iSilhouetteRegion,true);
       graphics::SetSRegionShowWithFelist(iSilhouetteRegion,true);

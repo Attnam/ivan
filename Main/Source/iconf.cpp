@@ -81,6 +81,12 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
+                                          "Silhouette scale factor (1 to disable)",
+                                          1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
+                                          &SilhouetteScaleDisplayer,
+                                          &SilhouetteScaleChangeInterface,
+                                          &SilhouetteScaleChanger);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -352,15 +358,31 @@ void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
   graphics::SetScale(What);
 }
 
+void ivanconfig::SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value << 'x';
+}
+
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
+}
+
+truth ivanconfig::SilhouetteScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  return true;
 }
 
 truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
 {
   O->ChangeValue(O->Value % O->CycleCount + 1);
   return true;
+}
+
+void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
 }
 
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
@@ -432,6 +454,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&XBRZScale);
   configsystem::AddOption(&XBRZScaleLookMode);
   configsystem::AddOption(&XBRZSquaresAroundPlayer);
+  configsystem::AddOption(&SilhouetteScale);
   configsystem::AddOption(&DungeonGfxScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);

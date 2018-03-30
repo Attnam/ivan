@@ -34,6 +34,7 @@ class ivanconfig
   static truth IsXBRZScaleLookMode() { return XBRZScaleLookMode.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
+  static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
@@ -85,8 +86,11 @@ class ivanconfig
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
+  static void SilhouetteScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
@@ -108,6 +112,7 @@ class ivanconfig
   static cycleoption DungeonGfxScale;
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static cycleoption SilhouetteScale;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static scrollbaroption Volume;
