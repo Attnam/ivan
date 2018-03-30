@@ -50,7 +50,7 @@ class graphics
   static void SetSRegionEnable(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
   static void SetSRegionShowWithFelist(int iIndex, bool b);
-  static void SetSRegionSpecialCurrentBrowsingItem(int iIndex);
+  static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);

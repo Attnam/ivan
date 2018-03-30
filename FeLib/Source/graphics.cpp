@@ -306,7 +306,7 @@ void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
 /**
  * there can only be one set at a time
  */
-void graphics::SetSRegionSpecialCurrentBrowsingItem(int iIndex){
+void graphics::SetSRegionListItem(int iIndex){
   if(vStretchRegion[iIndex].bSpecialCurrentBrowsingItem)return; //permissive on redundant setup
 
   for(int i=0;i<vStretchRegion.size();i++){
@@ -316,7 +316,7 @@ void graphics::SetSRegionSpecialCurrentBrowsingItem(int iIndex){
 
   vStretchRegion[iIndex].bSpecialCurrentBrowsingItem=true;
   vStretchRegion[iIndex].bShowWithFelist=true;
-//  vStretchRegion[iIndex].bEnabled=false;
+  vStretchRegion[iIndex].bEnabled=false;
 }
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
   assert(B.Stretch>1); // some actual scaling is required

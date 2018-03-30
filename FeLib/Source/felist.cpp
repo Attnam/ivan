@@ -343,17 +343,18 @@ truth felist::DrawPage(bitmap* Buffer) const
       {
         Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 
+        v2 v2EntryPos = v2(Pos.X + 13, LastFillBottom);
         if(EntryDrawer){
-          felist::v2SelectedPos = v2(Pos.X + 13, LastFillBottom);
           EntryDrawer(Buffer,
-                      felist::v2SelectedPos,
+                      v2EntryPos,
                       Entry[c]->ImageKey);
         }
 
-        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i){
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 5),
                                WHITE, "%s", Str.CStr());
-        else
+          felist::v2SelectedPos = v2EntryPos;
+        }else
           FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom + 4),
                        Entry[c]->Color, "%s", Str.CStr());
 
@@ -366,14 +367,17 @@ truth felist::DrawPage(bitmap* Buffer) const
                                                  Marginal);
         uint PictureTop = LastFillBottom + ChapterSize * 5 - 9;
 
+        v2 v2EntryPos = v2(Pos.X + 13, PictureTop);
+
         for(uint l = 0; l < ChapterSize; ++l)
         {
           Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-          if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+          if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i) {
             FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
                                  WHITE, "%s", Chapter[l].CStr());
-          else
+            felist::v2SelectedPos = v2EntryPos;
+          } else
             FONT->Printf(Buffer, v2(Pos.X + 37, LastFillBottom),
                          Entry[c]->Color, "%s", Chapter[l].CStr());
 
@@ -381,9 +385,8 @@ truth felist::DrawPage(bitmap* Buffer) const
         }
 
         if(EntryDrawer){
-          felist::v2SelectedPos = v2(Pos.X + 13, PictureTop);
           EntryDrawer(Buffer,
-                      felist::v2SelectedPos,
+                      v2EntryPos,
                       Entry[c]->ImageKey);
         }
       }
@@ -398,10 +401,10 @@ truth felist::DrawPage(bitmap* Buffer) const
       {
         Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
+        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i){
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 14, LastFillBottom + 1),
                                WHITE, "%s", Chapter[l].CStr());
-        else
+        }else
           FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom),
                        Entry[c]->Color, "%s", Chapter[l].CStr());
 

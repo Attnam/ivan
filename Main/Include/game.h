@@ -174,6 +174,7 @@ class game
   static void Run();
   static void PrepareStretchRegions();
   static void RegionSilhouetteEnable(bool b);
+  static void RegionListItemEnable(bool b);
   static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);
   static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);

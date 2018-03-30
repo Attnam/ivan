@@ -189,13 +189,13 @@ int iYSize=0;
 int iRegionRegion = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
-int iRegionSelectedItem = -1;
+int iRegionListItem = -1;
 
 //TODO should be transparent_color? is working well til now..
 blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-blitdata bldSelectedItem = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata bldListItem = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
@@ -386,6 +386,15 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   graphics::SetSRegionBlitdata(iRegionRegion,bldPlayerOnScreen);
 }
 
+void game::RegionListItemEnable(bool b){
+  game::PrepareStretchRegions();
+  if(iRegionListItem==-1)return;
+
+  // src pos is set at felist
+  graphics::SetSRegionBlitdata(iRegionListItem, bldListItem);
+  graphics::SetSRegionEnable(iRegionListItem, b);
+}
+
 void game::RegionSilhouetteEnable(bool b){
   game::PrepareStretchRegions();
   if(iRegionSilhouette==-1)return;
@@ -437,13 +446,13 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
     }
   }
 
-  if(iRegionSelectedItem==-1){
-    bldSelectedItem.Dest = ZoomPos;
-    bldSelectedItem.Border = {TILE_SIZE,TILE_SIZE};
-    bldSelectedItem.Stretch = 6;
-    iRegionSelectedItem = graphics::AddStretchRegion(bldSelectedItem);
-    graphics::SetSRegionSpecialCurrentBrowsingItem(iRegionSelectedItem);
-    graphics::SetSRegionForceXBRZ(iRegionSelectedItem,true);
+  if(iRegionListItem==-1){
+    bldListItem.Dest = ZoomPos;
+    bldListItem.Border = {TILE_SIZE,TILE_SIZE};
+    bldListItem.Stretch = 6;
+    iRegionListItem = graphics::AddStretchRegion(bldListItem);
+    graphics::SetSRegionListItem(iRegionListItem);
+    graphics::SetSRegionForceXBRZ(iRegionListItem,true);
   }
 
 }

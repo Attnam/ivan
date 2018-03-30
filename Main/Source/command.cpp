@@ -369,9 +369,12 @@ truth commandsystem::Close(character* Char)
 
 truth commandsystem::Drop(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->GetStack()->GetItems())
   {
     ADD_MESSAGE("You have nothing to drop!");
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -415,42 +418,62 @@ truth commandsystem::Drop(character* Char)
   if(Success)
   {
     Char->DexterityAction(2);
+    game::RegionListItemEnable(false);
     return true;
   }
 
+  game::RegionListItemEnable(false);
   return false;
 }
 
 truth commandsystem::Eat(character* Char)
 {
-  if(!Char->CheckConsume(CONST_S("eat")))
+  game::RegionListItemEnable(true);
+
+  if(!Char->CheckConsume(CONST_S("eat"))){
+    game::RegionListItemEnable(false);
     return false;
+  }
 
   lsquare* Square = Char->GetLSquareUnder();
 
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasEatEffect())
   {
-    if(Square->GetOLTerrain()->Eat(Char))
+    if(Square->GetOLTerrain()->Eat(Char)){
+      game::RegionListItemEnable(false);
       return true;
+    }
   }
 
-  return Consume(Char, "eat", &item::IsEatable);
+  bool b=Consume(Char, "eat", &item::IsEatable);
+
+  game::RegionListItemEnable(false);
+  return b;
 }
 
 truth commandsystem::Drink(character* Char)
 {
-  if(!Char->CheckConsume(CONST_S("drink")))
+  game::RegionListItemEnable(true);
+
+  if(!Char->CheckConsume(CONST_S("drink"))){
+    game::RegionListItemEnable(false);
     return false;
+  }
 
   lsquare* Square = Char->GetLSquareUnder();
 
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
   {
-    if(Square->GetOLTerrain()->Drink(Char))
+    if(Square->GetOLTerrain()->Drink(Char)){
+      game::RegionListItemEnable(false);
       return true;
+    }
   }
 
-  return Consume(Char, "drink", &item::IsDrinkable);
+  bool b=Consume(Char, "drink", &item::IsDrinkable);
+
+  game::RegionListItemEnable(false);
+  return b;
 }
 
 truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
@@ -491,9 +514,12 @@ truth commandsystem::ShowInventory(character* Char)
 
 truth commandsystem::PickUp(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->GetStackUnder()->GetVisibleItems(Char))
   {
     ADD_MESSAGE("There is nothing here to pick up!");
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -518,8 +544,10 @@ truth commandsystem::PickUp(character* Char)
         Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?',
                                          Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
-      if(!Amount)
+      if(!Amount){
+        game::RegionListItemEnable(false);
         return false;
+      }
 
       if((!PileVector[0][0]->GetRoom()
           || PileVector[0][0]->GetRoom()->PickupItem(Char, PileVector[0][0], Amount))
@@ -530,14 +558,19 @@ truth commandsystem::PickUp(character* Char)
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
         Char->DexterityAction(2);
+        game::RegionListItemEnable(false);
         return true;
       }
       else
+      {
+        game::RegionListItemEnable(false);
         return false;
+      }
     }
     else
     {
       ADD_MESSAGE("%s too large to pick up!", PileVector[0].size() == 1 ? "It is" : "They are");
+      game::RegionListItemEnable(false);
       return false;
     }
   }
@@ -574,9 +607,11 @@ truth commandsystem::PickUp(character* Char)
   if(Success)
   {
     Char->DexterityAction(2);
+    game::RegionListItemEnable(false);
     return true;
   }
 
+  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -696,9 +731,12 @@ truth commandsystem::Read(character* Char)
 
 truth commandsystem::Dip(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->GetStack()->SortedItems(Char, &item::IsDippable) && !Char->EquipsSomething(&item::IsDippable))
   {
     ADD_MESSAGE("You have nothing to dip!");
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -716,6 +754,7 @@ truth commandsystem::Dip(character* Char)
   if(!HasDipDestination && !DipDestinationNear)
   {
     ADD_MESSAGE("There is nothing to dip anything into.");
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -730,10 +769,15 @@ truth commandsystem::Dip(character* Char)
                                         + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
-      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
+      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination()){
+        game::RegionListItemEnable(false);
         return false;
+      }
 
-      return Char->GetNearLSquare(Pos)->DipInto(Item, Char);
+      bool b = Char->GetNearLSquare(Pos)->DipInto(Item, Char);
+
+      game::RegionListItemEnable(false);
+      return b;
     }
     else
     {
@@ -744,15 +788,18 @@ truth commandsystem::Dip(character* Char)
         if(Item == DipTo)
         {
           ADD_MESSAGE("Very funny...");
+          game::RegionListItemEnable(false);
           return false;
         }
 
         Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        game::RegionListItemEnable(false);
         return true;
       }
     }
   }
 
+  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -1007,12 +1054,17 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  if(!Char->CheckThrow())
+  game::RegionListItemEnable(true);
+
+  if(!Char->CheckThrow()){
+    game::RegionListItemEnable(false);
     return false;
+  }
 
   if(!Char->GetStack()->GetItems())
   {
     ADD_MESSAGE("You have nothing to throw!");
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -1023,8 +1075,10 @@ truth commandsystem::Throw(character* Char)
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
                                                  "[press a direction key]"), false);
 
-    if(Answer == DIR_ERROR)
+    if(Answer == DIR_ERROR){
+      game::RegionListItemEnable(false);
       return false;
+    }
 
     Char->ThrowItem(Answer, Item);
     Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
@@ -1032,31 +1086,44 @@ truth commandsystem::Throw(character* Char)
     Char->EditExperience(PERCEPTION, 75, 1 << 8);
     Char->EditNP(-50);
     Char->DexterityAction(5);
+    game::RegionListItemEnable(false);
     return true;
   }
   else
+  {
+    game::RegionListItemEnable(false);
     return false;
+  }
 }
 
 truth commandsystem::Apply(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->CanApply())
   {
     ADD_MESSAGE("This monster type cannot apply.");
+    game::RegionListItemEnable(false);
     return false;
   }
 
-  if(!Char->CheckApply())
+  if(!Char->CheckApply()){
+    game::RegionListItemEnable(false);
     return false;
+  }
 
   if(!Char->PossessesItem(&item::IsAppliable))
   {
     ADD_MESSAGE("You have nothing to apply!");
+    game::RegionListItemEnable(false);
     return false;
   }
 
   item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
-  return Item && Item->Apply(Char);
+  bool b = Item && Item->Apply(Char);
+
+  game::RegionListItemEnable(false);
+  return b;
 }
 
 truth commandsystem::ForceVomit(character* Char)
@@ -1094,12 +1161,17 @@ truth commandsystem::ForceVomit(character* Char)
 
 truth commandsystem::Zap(character* Char)
 {
-  if(!Char->CheckZap())
+  game::RegionListItemEnable(true);
+
+  if(!Char->CheckZap()){
+    game::RegionListItemEnable(false);
     return false;
+  }
 
   if(!Char->PossessesItem(&item::IsZappable))
   {
     ADD_MESSAGE("You have nothing to zap with, %s.", game::Insult());
+    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -1110,19 +1182,28 @@ truth commandsystem::Zap(character* Char)
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
                                                  "[press a direction key or '.']"), false, true);
 
-    if(Answer == DIR_ERROR)
+    if(Answer == DIR_ERROR){
+      game::RegionListItemEnable(false);
       return false;
+    }
 
     if(Item->Zap(Char, Char->GetPos(), Answer))
     {
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(PERCEPTION)));
+      game::RegionListItemEnable(false);
       return true;
     }
     else
+    {
+      game::RegionListItemEnable(false);
       return false;
+    }
   }
   else
+  {
+    game::RegionListItemEnable(false);
     return false;
+  }
 }
 
 truth commandsystem::Rest(character* Char)
@@ -1238,8 +1319,10 @@ truth commandsystem::AssignName(character*)
 truth commandsystem::EquipmentScreen(character* Char)
 {
   game::RegionSilhouetteEnable(true);
+  game::RegionListItemEnable(true);
   bool b = Char->EquipmentScreen(Char->GetStack(), 0);
   game::RegionSilhouetteEnable(false);
+  game::RegionListItemEnable(false);
 
   return b;
 }
@@ -1315,27 +1398,35 @@ truth commandsystem::ShowWeaponSkills(character* Char)
 
 truth commandsystem::WieldInRightArm(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
   else if(Char->TryToChangeEquipment(Char->GetStack(), 0, RIGHT_WIELDED_INDEX))
   {
     Char->DexterityAction(5);
+    game::RegionListItemEnable(false);
     return true;
   }
 
+  game::RegionListItemEnable(false);
   return false;
 }
 
 truth commandsystem::WieldInLeftArm(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
   else if(Char->TryToChangeEquipment(Char->GetStack(), 0, LEFT_WIELDED_INDEX))
   {
     Char->DexterityAction(5);
+    game::RegionListItemEnable(false);
     return true;
   }
 
+  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -1712,12 +1803,17 @@ truth commandsystem::Possess(character* Char)
 
 truth commandsystem::Polymorph(character* Char)
 {
+  game::RegionListItemEnable(true);
+
   character* NewForm;
 
-  if(!Char->GetNewFormForPolymorphWithControl(NewForm))
+  if(!Char->GetNewFormForPolymorphWithControl(NewForm)){
+    game::RegionListItemEnable(false);
     return true;
+  }
 
   Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), WHITE));
+  game::RegionListItemEnable(false);
   return true;
 }
 
