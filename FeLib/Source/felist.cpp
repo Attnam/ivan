@@ -22,6 +22,8 @@
 
 const felist* FelistCurrentlyDrawn = 0;
 
+v2 felist::v2SelectedPos = {0,0};
+
 truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
@@ -341,10 +343,12 @@ truth felist::DrawPage(bitmap* Buffer) const
       {
         Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 
-        if(EntryDrawer)
+        if(EntryDrawer){
+          felist::v2SelectedPos = v2(Pos.X + 13, LastFillBottom);
           EntryDrawer(Buffer,
-                      v2(Pos.X + 13, LastFillBottom),
+                      felist::v2SelectedPos,
                       Entry[c]->ImageKey);
+        }
 
         if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 5),
@@ -376,10 +380,12 @@ truth felist::DrawPage(bitmap* Buffer) const
           LastFillBottom += 10;
         }
 
-        if(EntryDrawer)
+        if(EntryDrawer){
+          felist::v2SelectedPos = v2(Pos.X + 13, PictureTop);
           EntryDrawer(Buffer,
-                      v2(Pos.X + 13, PictureTop),
+                      felist::v2SelectedPos,
                       Entry[c]->ImageKey);
+        }
       }
     }
     else
@@ -472,12 +478,12 @@ void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
     for(uint c2 = 0; c2 < ChapterSize; ++c2)
     {
       col16 Color = CurrentEntry->Color;
-      Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3
-                                            * Index / PageLength) >> 2),
+      Color = MakeRGB16(GetRed16(Color)   - ((GetRed16(Color) * 3
+                                              * Index / PageLength) >> 2),
                         GetGreen16(Color) - ((GetGreen16(Color) * 3
                                               * Index / PageLength) >> 2),
-                        GetBlue16(Color) - ((GetBlue16(Color) * 3
-                                             * Index / PageLength) >> 2));
+                        GetBlue16(Color)  - ((GetBlue16(Color) * 3
+                                              * Index / PageLength) >> 2));
       FONT->Printf(Bitmap, v2(13, Bottom), Color, "%s",
                    Chapter[ChapterSize - c2 - 1].CStr());
       Bottom -= 10;

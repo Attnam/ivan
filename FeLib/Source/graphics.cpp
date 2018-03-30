@@ -53,12 +53,13 @@ graphics::vesainfo graphics::VesaInfo;
 graphics::modeinfo graphics::ModeInfo;
 #endif
 
-struct stretchRegion
+struct stretchRegion //TODO all these booleans could be a single uint32? unnececessarily complicated?
 {
   bool bEnabled;
   blitdata B;
   bool bForceXBRZ;
   bool bShowWithFelist;
+  bool bSpecialCurrentBrowsingItem;
 };
 
 bool graphics::bDbgMsg=true;
@@ -302,13 +303,28 @@ void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
 void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
   vStretchRegion[iIndex].bShowWithFelist=b;
 }
+/**
+ * there can only be one set at a time
+ */
+void graphics::SetSRegionSpecialCurrentBrowsingItem(int iIndex){
+  if(vStretchRegion[iIndex].bSpecialCurrentBrowsingItem)return; //permissive on redundant setup
+
+  for(int i=0;i<vStretchRegion.size();i++){
+    stretchRegion SR=vStretchRegion[i];
+    assert(!SR.bSpecialCurrentBrowsingItem); //some other was set already
+  }
+
+  vStretchRegion[iIndex].bSpecialCurrentBrowsingItem=true;
+  vStretchRegion[iIndex].bShowWithFelist=true;
+//  vStretchRegion[iIndex].bEnabled=false;
+}
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
   assert(B.Stretch>1); // some actual scaling is required
   assert(B.Bitmap==NULL); // see below
 
   B.Bitmap = StretchedDB;
   if(iIndex==-1){ //add
-    stretchRegion SR = {true,B,false};
+    stretchRegion SR = {true,B,false,false,false};
     vStretchRegion.push_back(SR);
     iIndex = vStretchRegion.size()-1;
   }else{ //update
@@ -360,7 +376,7 @@ void graphics::BlitDBToScreen(){
       blitdata Bto=SR.B;
 
       if(bDbgMsg){
-        std::cout<<"BlitSR["<<i<<"]@"
+        std::cout<<"["<<i<<"]SR@"
           <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
           <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
           <<"Stretch="<<Bto.Stretch<<"/"
@@ -368,27 +384,55 @@ void graphics::BlitDBToScreen(){
           <<std::endl;
       }
 
-      if(Bto.Stretch>1 && Bto.Border.X>0 && Bto.Border.Y>0){ //being 0 means it is not ready yet TODO this is guess work... should be a boolean bInitialized ...
-        bDoIt=true; // try to disable below, is more clear to read long lists
-        if(!SR.bEnabled)bDoIt=false;
-        if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bDoIt=false;
+      bDoIt=true; // try to disable below, is more clear to read long lists
 
-        if(bDoIt){
-          if(!bDidStretch){
-            // first time, if there is at least one stretching, prepare "background/base" on the stretched
-            DoubleBuffer->FastBlit(StretchedDB);
-            DB = StretchedDB; //and set stretched as the final source
-          }
+      if(!SR.bEnabled)bDoIt=false;
+      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
 
-          if(SR.bForceXBRZ){
-            Stretch(true,DoubleBuffer,Bto);
-          }else{
-            Stretch(DoubleBuffer,Bto);
-          }
-          //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
+      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bDoIt=false;
+      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
 
-          bDidStretch=true;
+      if(SR.bSpecialCurrentBrowsingItem && !felist::isAnyFelistCurrentlyDrawn())bDoIt=false;
+      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+
+      if(Bto.Stretch<2)bDoIt=false;
+      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+
+      assert(Bto.Border.X>=0 && Bto.Border.Y>=0); // only negatives are critical
+      if(Bto.Border.X==0 || Bto.Border.Y==0){
+        if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+        if(Bto.Border.Is0()){ //being 0,0 means it is not ready yet.
+          if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+          bDoIt=false;
+        }else{
+          if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+          assert(Bto.Border.X>0 && Bto.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
+      }
+
+      assert(Bto.Dest.X>=0 && Bto.Dest.Y>=0);
+      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+
+      if(bDoIt){
+        if(!bDidStretch){
+          // first time, if there is at least one stretching, prepare "background/base" on the stretched
+          DoubleBuffer->FastBlit(StretchedDB);
+          DB = StretchedDB; //and set stretched as the final source
+        }
+
+        if(SR.bSpecialCurrentBrowsingItem){
+          Bto.Src = felist::GetSelectedPos();
+        }
+
+        if(bDbgMsg)std::cout<<"["<<i<<"]Blitting"<<std::endl;
+        if(SR.bForceXBRZ){
+          Stretch(true,DoubleBuffer,Bto);
+        }else{
+          Stretch(DoubleBuffer,Bto);
+        }
+        //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
+
+        bDidStretch=true;
       }
     }
   }

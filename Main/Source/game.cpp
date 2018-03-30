@@ -186,15 +186,18 @@ int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
 
-int iPlayerRegion = -1;
-int iSilhouetteRegion = -1;
+int iRegionRegion = -1;
+int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
+int iRegionSelectedItem = -1;
 
 //TODO should be transparent_color? is working well til now..
 blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata bldSelectedItem = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
 
+v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
@@ -380,22 +383,22 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetDungeonGfxScale());
   bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetDungeonGfxScale());
 
-  graphics::SetSRegionBlitdata(iPlayerRegion,bldPlayerOnScreen);
+  graphics::SetSRegionBlitdata(iRegionRegion,bldPlayerOnScreen);
 }
 
 void game::RegionSilhouetteEnable(bool b){
   game::PrepareStretchRegions();
-  if(iSilhouetteRegion==-1)return;
+  if(iRegionSilhouette==-1)return;
 
   if( b && ivanconfig::GetSilhouetteScale()>1 ){
     bldSilhouette.Stretch = ivanconfig::GetSilhouetteScale();
 
-    bldSilhouette.Dest = {silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()), silhouettePos.Y};
+    bldSilhouette.Dest = {silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()) -2, silhouettePos.Y};
 
-    graphics::SetSRegionBlitdata(iSilhouetteRegion, bldSilhouette);
-    graphics::SetSRegionEnable(iSilhouetteRegion, true);
+    graphics::SetSRegionBlitdata(iRegionSilhouette, bldSilhouette);
+    graphics::SetSRegionEnable(iRegionSilhouette, true);
   }else{
-    graphics::SetSRegionEnable(iSilhouetteRegion, false);
+    graphics::SetSRegionEnable(iRegionSilhouette, false);
   }
 
 }
@@ -414,24 +417,33 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
 
       // (ABOVE) around player on screen TODO complete
       bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
-      iPlayerRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
-      graphics::SetSRegionForceXBRZ(iPlayerRegion,true);
+      iRegionRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
+      graphics::SetSRegionForceXBRZ(iRegionRegion,true);
     }
   }
 
-  //TODO player stats etc, text log: at most x2?, set thru one user option bool for all (fast blit only?)
+  //TODO player stats etc, text log? at most x2?, set thru one user option bool for all (fast blit only?)
 
-  if(iSilhouetteRegion==-1){     // equiped items and humanoid silhouette region
+  if(iRegionSilhouette==-1){     // equiped items and humanoid silhouette region
     silhouettePos = humanoid::GetSilhouetteWhere();
     if(silhouettePos.X>0 && silhouettePos.Y>0){
       silhouettePos.X -= 15; silhouettePos.Y -= 23; //top left corner of all equipped items countour
       bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
       bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
       bldSilhouette.Stretch = 2; // minimum to allow setup
-      iSilhouetteRegion = graphics::AddStretchRegion(bldSilhouette);
-      graphics::SetSRegionForceXBRZ(iSilhouetteRegion,true);
-      graphics::SetSRegionShowWithFelist(iSilhouetteRegion,true);
+      iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette);
+      graphics::SetSRegionForceXBRZ(iRegionSilhouette,true);
+      graphics::SetSRegionShowWithFelist(iRegionSilhouette,true);
     }
+  }
+
+  if(iRegionSelectedItem==-1){
+    bldSelectedItem.Dest = ZoomPos;
+    bldSelectedItem.Border = {TILE_SIZE,TILE_SIZE};
+    bldSelectedItem.Stretch = 6;
+    iRegionSelectedItem = graphics::AddStretchRegion(bldSelectedItem);
+    graphics::SetSRegionSpecialCurrentBrowsingItem(iRegionSelectedItem);
+    graphics::SetSRegionForceXBRZ(iRegionSelectedItem,true);
   }
 
 }
@@ -629,7 +641,11 @@ truth game::Init(cfestring& Name)
     }
   }
 
-  if(bSuccess){
+  if(bSuccess){ // for loaded or new game
+    ZoomPos = {RES.X - 104, RES.Y - 112};
+//    if(bDbgMsg)std::cout<<"RES:W="<<RES.X<<",H="<<RES.Y<<std::endl;
+//    if(bDbgMsg)std::cout<<"ZoomPos:X="<<ZoomPos.X<<",Y="<<ZoomPos.Y<<std::endl;
+
     graphics::SetStretchMode(ivanconfig::IsXBRZScale());
     PrepareStretchRegions();
   }
@@ -1013,9 +1029,8 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     if(DoZoom())
     {
       B.Src = B.Dest;
-      B.Dest.X = RES.X - 96;
-      B.Dest.Y = RES.Y - 96;
-      B.Stretch = 5;
+      B.Dest = ZoomPos;
+      B.Stretch = 6;
       graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }
 
