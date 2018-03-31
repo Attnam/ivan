@@ -39,7 +39,6 @@
 									<listOptionValue builtIn="false" value="_WINMM_"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
-									<listOptionValue builtIn="false" value="DBGMSG"/>
 									<listOptionValue builtIn="false" value="UNIX"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
@@ -62,7 +61,6 @@
 									<listOptionValue builtIn="false" value="USE_SDL"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="&quot;IVAN_VERSION=\&quot;0.50.8\&quot;&quot;"/>
-									<listOptionValue builtIn="false" value="DBGMSG"/>
 									<listOptionValue builtIn="false" value="UNIX"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
