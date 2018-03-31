@@ -151,7 +151,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepar
 //  if(strcmp(str,"look")==0)return true;
 //  if(strcmp(str,"name")==0)return true;
 //  if(strcmp(str,"offer")==0)return true;
-//  if(strcmp(str,"open")==0)return true;
+  if(strcmp(str,"open")==0)return true;
   if(strcmp(str,"pick up")==0)return true;
 //  if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
