@@ -38,7 +38,8 @@ bool libxbrzscale::bUseCache=false;
 bool libxbrzscale::bFreeInputSurfaceAfterScale=true;
 bool libxbrzscale::bFreeOutputSurfaceAfterScale=true;
 
-inline Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
+//TODO This method should be 'inline', but travisci ivanWin final linking is failing with: "undefined reference to" it
+Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to retrieve */
@@ -65,7 +66,8 @@ inline Uint32 libxbrzscale::SDL_GetPixel(SDL_Surface *surface, int x, int y)
     }
 }
 
-inline void libxbrzscale::SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+//TODO This method should be 'inline', but travisci ivanWin final linking is failing with: "undefined reference to" it
+void libxbrzscale::SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to set */
