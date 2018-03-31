@@ -23,6 +23,10 @@
 #include <direct.h>
 #endif
 
+#ifdef DBGMSG
+#include "dbgmsg.h"
+#endif
+
 #include "allocate.h"
 #include "area.h"
 #include "audio.h"
@@ -113,6 +117,7 @@ int game::LastAttributeChangeTick[ATTRIBUTES];
 int game::NecroCounter;
 int game::CursorData;
 truth game::CausePanicFlag;
+//int game::iListWidth = 652;
 
 truth game::Loading = false;
 truth game::JumpToPlayerBe = false;
@@ -2347,12 +2352,19 @@ void game::SetStandardListAttributes(felist& List)
     iX=topleft.X-3;
     iY=topleft.Y-3;
   }
+
+  int iW = iListWidth;
   if(ivanconfig::GetAltListItemPos() && graphics::IsSRegionEnabled(iRegionListItem)){
     iX=bldListItem.Border.X*bldListItem.Stretch;
+
+    iW=ivanconfig::GetAltListItemWidth();
   }
+
   List.SetPos(v2(iX,iY));
 
-  List.SetWidth(652);
+
+  List.SetWidth(iW);
+
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
   List.SetUpKey(GetMoveCommandKey(KEY_UP_INDEX));
   List.SetDownKey(GetMoveCommandKey(KEY_DOWN_INDEX));
@@ -2602,6 +2614,9 @@ festring game::GetHomeDir()
 #ifdef UNIX
   festring Dir;
   Dir << getenv("HOME") << "/.ivan/";
+#ifdef DBGMSG
+  dbgmsg::SetDebugLogPath(Dir.CStr());
+#endif
   return Dir;
 #endif
 

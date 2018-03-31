@@ -98,8 +98,14 @@ truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
 truthoption ivanconfig::AltListItemPos(   "AltListItemPos",
-                                          "alternative zoomed list item positioning",
+                                          "scaled list item alternative position",
                                           false);
+numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
+                                          "list width for 'item alternative position'",
+                                          game::getDefaultItemsListWidth(),
+                                          &AltListItemWidthDisplayer,
+                                          &AltListItemWidthChangeInterface,
+                                          &AltListItemWidthChanger);
 scrollbaroption ivanconfig::Volume(       "Volume",
                                           "volume",
                                           127,
@@ -142,6 +148,11 @@ void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
 void ivanconfig::XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " squares";
+}
+
+void ivanconfig::AltListItemWidthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
 }
 
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
@@ -249,6 +260,13 @@ truth ivanconfig::XBRZSquaresAroundPlayerChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new item's list width to fit well with other elements:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  return false;
+}
+
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
@@ -303,6 +321,12 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
 void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
 {
   if(What < 0) What = 0;
+  O->Value = What;
+}
+
+void ivanconfig::AltListItemWidthChanger(numberoption* O, long What)
+{
+  if(What < 400) What = 400; //TODO find the best quality minimum value
   O->Value = What;
 }
 
@@ -463,6 +487,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&AltListItemPos);
+  configsystem::AddOption(&AltListItemWidth);
   configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);

@@ -442,10 +442,8 @@ class game
   static void SetRelationsToAllGods(int);
   static void ShowDeathSmiley(bitmap*, truth);
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
-  static void SetEnterTextDisplacement(v2 What)
-  {
-    EnterTextDisplacement = What;
-  }
+  static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
+  static int getDefaultItemsListWidth(){ return iListWidth; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -557,6 +555,7 @@ class game
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
   static blitdata bldPlayerOnScreen;
+  const static int iListWidth = 652;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

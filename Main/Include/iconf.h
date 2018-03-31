@@ -36,6 +36,7 @@ class ivanconfig
   static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
+  static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static truth GetAltListItemPos() { return AltListItemPos.Value; }
@@ -64,6 +65,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
+  static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
@@ -72,11 +74,13 @@ class ivanconfig
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
+  static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
+  static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
@@ -117,6 +121,7 @@ class ivanconfig
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static truthoption AltListItemPos;
+  static numberoption AltListItemWidth;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__
