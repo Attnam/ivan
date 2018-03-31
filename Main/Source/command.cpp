@@ -167,7 +167,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepar
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"throw")==0)return true;
+  if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
 //  if(strcmp(str,"wait")==0)return true;

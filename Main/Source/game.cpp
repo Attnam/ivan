@@ -2357,7 +2357,9 @@ void game::SetStandardListAttributes(felist& List)
   if(ivanconfig::GetAltListItemPos() && graphics::IsSRegionEnabled(iRegionListItem)){
     iX=bldListItem.Border.X*bldListItem.Stretch;
 
-    iW=ivanconfig::GetAltListItemWidth();
+    if(graphics::IsSRegionEnabled(iRegionSilhouette)){
+      iW=ivanconfig::GetAltListItemWidth();
+    }
   }
 
   List.SetPos(v2(iX,iY));
