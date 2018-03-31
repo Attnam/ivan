@@ -23,8 +23,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "felibdef.h"
-
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
@@ -32,6 +30,7 @@
 #include "rawbit.h"
 #include "felist.h"
 #include "feio.h"
+#include "dbgmsg.h"
 
 void (*graphics::SwitchModeHandler)();
 

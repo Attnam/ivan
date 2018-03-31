@@ -22,6 +22,7 @@
 #include "femath.h"
 #include "rawbit.h"
 #include "libxbrzscale.h"
+#include "dbgmsg.h"
 
 /*
  * Blitting must be as fast as possible, even if no optimizations are used;
