@@ -392,7 +392,7 @@ void game::RegionListItemEnable(bool b){
 
   // src pos is set at felist
   graphics::SetSRegionBlitdata(iRegionListItem, bldListItem);
-  graphics::SetSRegionEnable(iRegionListItem, b);
+  graphics::SetSRegionEnabled(iRegionListItem, b);
 }
 
 void game::RegionSilhouetteEnable(bool b){
@@ -405,9 +405,9 @@ void game::RegionSilhouetteEnable(bool b){
     bldSilhouette.Dest = {silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()) -2, silhouettePos.Y};
 
     graphics::SetSRegionBlitdata(iRegionSilhouette, bldSilhouette);
-    graphics::SetSRegionEnable(iRegionSilhouette, true);
+    graphics::SetSRegionEnabled(iRegionSilhouette, true);
   }else{
-    graphics::SetSRegionEnable(iRegionSilhouette, false);
+    graphics::SetSRegionEnabled(iRegionSilhouette, false);
   }
 
 }
@@ -2342,8 +2342,15 @@ int game::CompareLightToInt(col24 L, col24 Int)
 void game::SetStandardListAttributes(felist& List)
 {
   v2 topleft = area::getTopLeftCorner();
-  int i = ivanconfig::GetDungeonGfxScale() ? -3 : 10;
-  List.SetPos(v2(topleft.X+i, topleft.Y+i));
+  int iX=topleft.X+10,iY=topleft.Y+10;
+  if(ivanconfig::GetDungeonGfxScale()){
+    iX=topleft.X-3;
+    iY=topleft.Y-3;
+  }
+  if(ivanconfig::GetAltListItemPos() && graphics::IsSRegionEnabled(iRegionListItem)){
+    iX=bldListItem.Border.X*bldListItem.Stretch;
+  }
+  List.SetPos(v2(iX,iY));
 
   List.SetWidth(652);
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);

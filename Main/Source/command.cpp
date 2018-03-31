@@ -1390,8 +1390,7 @@ truth commandsystem::AssignName(character*)
 
 truth commandsystem::EquipmentScreen(character* Char)
 {
-  bool b = Char->EquipmentScreen(Char->GetStack(), 0);
-  return b;
+  return Char->EquipmentScreen(Char->GetStack(), 0);
 }
 
 truth commandsystem::ScrollMessagesDown(character*)

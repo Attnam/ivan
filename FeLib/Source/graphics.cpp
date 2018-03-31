@@ -318,7 +318,11 @@ void graphics::SetAllowStretchedBlit(truth b){
   bAllowStretchedBlit=b;
 }
 
-void graphics::SetSRegionEnable(int iIndex, bool b){
+bool graphics::IsSRegionEnabled(int iIndex){
+  if(iIndex>=vStretchRegion.size())return false; //not ready yet
+  return vStretchRegion[iIndex].bEnabled;
+}
+void graphics::SetSRegionEnabled(int iIndex, bool b){
   vStretchRegion[iIndex].bEnabled=b;
 }
 void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
@@ -437,7 +441,7 @@ void graphics::BlitDBToScreen(){
         if(SR.bSpecialListItem){
           B.Src = felist::GetSelectedPos();
           if(SR.bSpecialListItemAltPos){
-            B.Dest.X=5;
+            B.Dest.X=0;//B.Dest.X=5;
             B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
             if(B.Dest.Y<0)B.Dest.Y=0;
           }
