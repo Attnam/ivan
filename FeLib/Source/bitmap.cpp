@@ -22,7 +22,22 @@
 #include "femath.h"
 #include "rawbit.h"
 #include "libxbrzscale.h"
+
+#ifdef DBGMSG
 #include "dbgmsg.h"
+#else
+#define DBGSS
+#define DBG1
+#define DBG2
+#define DBG3
+#define DBG4
+#define DBG5
+#define DBG6
+#define DBG7
+#define DBG8
+#define DBG9
+#define DBGOK
+#endif
 
 /*
  * Blitting must be as fast as possible, even if no optimizations are used;

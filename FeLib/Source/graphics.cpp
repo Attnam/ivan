@@ -22,6 +22,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 #include "graphics.h"
 #include "bitmap.h"
@@ -30,7 +31,6 @@
 #include "rawbit.h"
 #include "felist.h"
 #include "feio.h"
-#include "dbgmsg.h"
 
 void (*graphics::SwitchModeHandler)();
 
@@ -78,24 +78,41 @@ int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
 
 #ifdef DBGMSG
-  #define DBGSRI(info) dbgSR(__FILENAME__,__LINE__,SR,info)
+  #include "dbgmsg.h"
+
+//#define DBGSRI(info) dbgSR(__FILENAME__,__LINE__,SR,info)
+  #define DBGSRI(info) dbgSR(SR,info)
   #define DBGSR DBGSRI("")
+
+  //void dbgSR(const char* fname, int iline, stretchRegion SR,const char* strInfo){
+  void dbgSR(stretchRegion SR,const char* strInfo){
+    blitdata Bto=SR.B;
+  //  std::cerr<<fname<<":"<<iline<<":"<<strInfo
+    stringstream ss;ss<<strInfo
+      <<"["<<SR.iIndex<<"]SR@"
+      <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
+      <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
+      <<"Stretch="<<Bto.Stretch<<"/"
+      <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
+      <<"id="<<SR.strId<<"/"
+      <<std::endl;
+  }
 #else
+  #define DBGSS
+  #define DBG1
+  #define DBG2
+  #define DBG3
+  #define DBG4
+  #define DBG5
+  #define DBG6
+  #define DBG7
+  #define DBG8
+  #define DBG9
+  #define DBGOK
+
   #define DBGSR
   #define DBGSRI
 #endif
-
-void dbgSR(const char* fname, int iline, stretchRegion SR,const char* strInfo){
-  blitdata Bto=SR.B;
-  std::cerr<<fname<<":"<<iline<<":"<<strInfo
-    <<"["<<SR.iIndex<<"]SR@"
-    <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
-    <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
-    <<"Stretch="<<Bto.Stretch<<"/"
-    <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
-    <<"id="<<SR.strId<<"/"
-    <<std::endl;
-}
 
 void graphics::Init()
 {
