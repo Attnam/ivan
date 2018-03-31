@@ -46,11 +46,11 @@ class graphics
   static void Stretch(bitmap* bmp, blitdata B);
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void BlitDBToScreen();
-  static int AddStretchRegion(blitdata B);
+  static int AddStretchRegion(blitdata B,const char* strId);
   static void SetSRegionEnable(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
   static void SetSRegionShowWithFelist(int iIndex, bool b);
-  static void SetSRegionListItem(int iIndex);
+  static void SetSRegionListItem(int iIndex, bool bUseAlternateListItemPos);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);
@@ -58,8 +58,7 @@ class graphics
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(cfestring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
-  static void SetSwitchModeHandler(void (*What)())
-  { SwitchModeHandler = What; }
+  static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
 #ifdef USE_SDL
 #if SDL_MAJOR_VERSION == 1
   static SDL_Surface* Screen;
@@ -130,7 +129,6 @@ class graphics
   static bitmap* StretchedDB;
   static truth bUseXbrzScale;
   static truth bAllowStretchedBlit;
-  static bool bDbgMsg;
   static v2 Res;
   static int Scale;
   static int ColorDepth;

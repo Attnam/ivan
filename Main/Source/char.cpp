@@ -2441,8 +2441,13 @@ void character::GetPlayerCommand()
         else
           if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
             ADD_MESSAGE("Activate wizardmode to use this function.");
-          else
+          else{
+            game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
+            game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
             HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+            game::RegionListItemEnable(false);
+            game::RegionSilhouetteEnable(false);
+          }
 
         ValidKeyPressed = true;
         break;

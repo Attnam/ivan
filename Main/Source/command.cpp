@@ -132,6 +132,128 @@ command* commandsystem::Command[] =
   0
 };
 
+truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepareCmdsDescrCode.sh (use cygwin)
+  cchar* str = Command[iIndex]->GetDescription();
+  if(strcmp(str,"apply")==0)return true;
+//  if(strcmp(str,"chat")==0)return true;
+//  if(strcmp(str,"close")==0)return true;
+  if(strcmp(str,"dip")==0)return true;
+  if(strcmp(str,"drink")==0)return true;
+  if(strcmp(str,"drop")==0)return true;
+  if(strcmp(str,"eat")==0)return true;
+//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"equipment menu")==0)return true;
+//  if(strcmp(str,"go")==0)return true;
+//  if(strcmp(str,"go down/enter area")==0)return true;
+//  if(strcmp(str,"go up")==0)return true;
+//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
+//  if(strcmp(str,"kick")==0)return true;
+//  if(strcmp(str,"look")==0)return true;
+//  if(strcmp(str,"name")==0)return true;
+//  if(strcmp(str,"offer")==0)return true;
+//  if(strcmp(str,"open")==0)return true;
+  if(strcmp(str,"pick up")==0)return true;
+//  if(strcmp(str,"pray")==0)return true;
+//  if(strcmp(str,"quit")==0)return true;
+//  if(strcmp(str,"read")==0)return true;
+//  if(strcmp(str,"rest/heal")==0)return true;
+//  if(strcmp(str,"save game")==0)return true;
+//  if(strcmp(str,"scroll messages down")==0)return true;
+//  if(strcmp(str,"scroll messages up")==0)return true;
+//  if(strcmp(str,"show config screen")==0)return true;
+//  if(strcmp(str,"show inventory")==0)return true;
+//  if(strcmp(str,"show key layout")==0)return true;
+//  if(strcmp(str,"show message history")==0)return true;
+//  if(strcmp(str,"show weapon skills")==0)return true;
+//  if(strcmp(str,"search")==0)return true;
+//  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"throw")==0)return true;
+//  if(strcmp(str,"toggle running")==0)return true;
+//  if(strcmp(str,"vomit")==0)return true;
+//  if(strcmp(str,"wait")==0)return true;
+  if(strcmp(str,"wield in right arm")==0)return true;
+  if(strcmp(str,"wield in left arm")==0)return true;
+//  if(strcmp(str,"wizard mode activation")==0)return true;
+  if(strcmp(str,"zap")==0)return true;
+//  if(strcmp(str,"raise stats")==0)return true;
+//  if(strcmp(str,"lower stats")==0)return true;
+//  if(strcmp(str,"see whole map")==0)return true;
+//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
+//  if(strcmp(str,"raise your relations to the gods")==0)return true;
+//  if(strcmp(str,"lower your relations to the gods")==0)return true;
+//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
+//  if(strcmp(str,"gain all items")==0)return true;
+//  if(strcmp(str,"reveal secret knowledge")==0)return true;
+//  if(strcmp(str,"detach a limb")==0)return true;
+//  if(strcmp(str,"set fire to a limb")==0)return true;
+//  if(strcmp(str,"summon monster")==0)return true;
+//  if(strcmp(str,"level teleport")==0)return true;
+//  if(strcmp(str,"possess creature")==0)return true;
+  if(strcmp(str,"polymorph")==0)return true;
+  return false;
+}
+truth commandsystem::IsForRegionSilhouette(int iIndex){ //see helper script prepareCmdsDescrCode.sh (use cygwin)
+  cchar* str = Command[iIndex]->GetDescription();
+//  if(strcmp(str,"dip")==0)return true;
+//  if(strcmp(str,"apply")==0)return true;
+//  if(strcmp(str,"chat")==0)return true;
+//  if(strcmp(str,"close")==0)return true;
+//  if(strcmp(str,"dip")==0)return true;
+//  if(strcmp(str,"drink")==0)return true;
+//  if(strcmp(str,"drop")==0)return true;
+//  if(strcmp(str,"eat")==0)return true;
+//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"equipment menu")==0)return true;
+//  if(strcmp(str,"go")==0)return true;
+//  if(strcmp(str,"go down/enter area")==0)return true;
+//  if(strcmp(str,"go up")==0)return true;
+//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
+//  if(strcmp(str,"kick")==0)return true;
+//  if(strcmp(str,"look")==0)return true;
+//  if(strcmp(str,"name")==0)return true;
+//  if(strcmp(str,"offer")==0)return true;
+  if(strcmp(str,"open")==0)return true;
+//  if(strcmp(str,"pick up")==0)return true;
+//  if(strcmp(str,"pray")==0)return true;
+//  if(strcmp(str,"quit")==0)return true;
+//  if(strcmp(str,"read")==0)return true;
+//  if(strcmp(str,"rest/heal")==0)return true;
+//  if(strcmp(str,"save game")==0)return true;
+//  if(strcmp(str,"scroll messages down")==0)return true;
+//  if(strcmp(str,"scroll messages up")==0)return true;
+//  if(strcmp(str,"show config screen")==0)return true;
+  if(strcmp(str,"show inventory")==0)return true;
+//  if(strcmp(str,"show key layout")==0)return true;
+//  if(strcmp(str,"show message history")==0)return true;
+//  if(strcmp(str,"show weapon skills")==0)return true;
+//  if(strcmp(str,"search")==0)return true;
+//  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"throw")==0)return true;
+//  if(strcmp(str,"toggle running")==0)return true;
+//  if(strcmp(str,"vomit")==0)return true;
+//  if(strcmp(str,"wait")==0)return true;
+//  if(strcmp(str,"wield in right arm")==0)return true;
+//  if(strcmp(str,"wield in left arm")==0)return true;
+//  if(strcmp(str,"wizard mode activation")==0)return true;
+//  if(strcmp(str,"zap")==0)return true;
+//  if(strcmp(str,"raise stats")==0)return true;
+//  if(strcmp(str,"lower stats")==0)return true;
+//  if(strcmp(str,"see whole map")==0)return true;
+//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
+//  if(strcmp(str,"raise your relations to the gods")==0)return true;
+//  if(strcmp(str,"lower your relations to the gods")==0)return true;
+//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
+//  if(strcmp(str,"gain all items")==0)return true;
+//  if(strcmp(str,"reveal secret knowledge")==0)return true;
+//  if(strcmp(str,"detach a limb")==0)return true;
+//  if(strcmp(str,"set fire to a limb")==0)return true;
+//  if(strcmp(str,"summon monster")==0)return true;
+//  if(strcmp(str,"level teleport")==0)return true;
+//  if(strcmp(str,"possess creature")==0)return true;
+//  if(strcmp(str,"polymorph")==0)return true;
+  return false;
+}
+
 truth commandsystem::GoUp(character* Char)
 {
   if(!Char->TryToUnStickTraps(ZERO_V2))
@@ -369,12 +491,9 @@ truth commandsystem::Close(character* Char)
 
 truth commandsystem::Drop(character* Char)
 {
-  game::RegionListItemEnable(true);
-
   if(!Char->GetStack()->GetItems())
   {
     ADD_MESSAGE("You have nothing to drop!");
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -418,20 +537,15 @@ truth commandsystem::Drop(character* Char)
   if(Success)
   {
     Char->DexterityAction(2);
-    game::RegionListItemEnable(false);
     return true;
   }
 
-  game::RegionListItemEnable(false);
   return false;
 }
 
 truth commandsystem::Eat(character* Char)
 {
-  game::RegionListItemEnable(true);
-
   if(!Char->CheckConsume(CONST_S("eat"))){
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -440,23 +554,19 @@ truth commandsystem::Eat(character* Char)
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasEatEffect())
   {
     if(Square->GetOLTerrain()->Eat(Char)){
-      game::RegionListItemEnable(false);
       return true;
     }
   }
 
   bool b=Consume(Char, "eat", &item::IsEatable);
 
-  game::RegionListItemEnable(false);
   return b;
 }
 
 truth commandsystem::Drink(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->CheckConsume(CONST_S("drink"))){
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -465,14 +575,12 @@ truth commandsystem::Drink(character* Char)
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
   {
     if(Square->GetOLTerrain()->Drink(Char)){
-      game::RegionListItemEnable(false);
       return true;
     }
   }
 
   bool b=Consume(Char, "drink", &item::IsDrinkable);
 
-  game::RegionListItemEnable(false);
   return b;
 }
 
@@ -502,24 +610,20 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
 
 truth commandsystem::ShowInventory(character* Char)
 {
-  game::RegionSilhouetteEnable(true);
   festring Title("Your inventory (total weight: ");
   Title << Char->GetStack()->GetWeight();
   Title << "g)";
   Char->GetStack()->DrawContents(Char, Title, NO_SELECT);
-  game::RegionSilhouetteEnable(false);
 
   return false;
 }
 
 truth commandsystem::PickUp(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->GetStackUnder()->GetVisibleItems(Char))
   {
     ADD_MESSAGE("There is nothing here to pick up!");
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -545,7 +649,6 @@ truth commandsystem::PickUp(character* Char)
                                          Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
       if(!Amount){
-        game::RegionListItemEnable(false);
         return false;
       }
 
@@ -558,19 +661,16 @@ truth commandsystem::PickUp(character* Char)
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
         Char->DexterityAction(2);
-        game::RegionListItemEnable(false);
         return true;
       }
       else
       {
-        game::RegionListItemEnable(false);
         return false;
       }
     }
     else
     {
       ADD_MESSAGE("%s too large to pick up!", PileVector[0].size() == 1 ? "It is" : "They are");
-      game::RegionListItemEnable(false);
       return false;
     }
   }
@@ -607,11 +707,9 @@ truth commandsystem::PickUp(character* Char)
   if(Success)
   {
     Char->DexterityAction(2);
-    game::RegionListItemEnable(false);
     return true;
   }
 
-  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -731,12 +829,10 @@ truth commandsystem::Read(character* Char)
 
 truth commandsystem::Dip(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->GetStack()->SortedItems(Char, &item::IsDippable) && !Char->EquipsSomething(&item::IsDippable))
   {
     ADD_MESSAGE("You have nothing to dip!");
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -754,7 +850,6 @@ truth commandsystem::Dip(character* Char)
   if(!HasDipDestination && !DipDestinationNear)
   {
     ADD_MESSAGE("There is nothing to dip anything into.");
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -770,13 +865,11 @@ truth commandsystem::Dip(character* Char)
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination()){
-        game::RegionListItemEnable(false);
         return false;
       }
 
       bool b = Char->GetNearLSquare(Pos)->DipInto(Item, Char);
 
-      game::RegionListItemEnable(false);
       return b;
     }
     else
@@ -788,18 +881,15 @@ truth commandsystem::Dip(character* Char)
         if(Item == DipTo)
         {
           ADD_MESSAGE("Very funny...");
-          game::RegionListItemEnable(false);
           return false;
         }
 
         Item->DipInto(DipTo->CreateDipLiquid(), Char);
-        game::RegionListItemEnable(false);
         return true;
       }
     }
   }
 
-  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -1054,17 +1144,14 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->CheckThrow()){
-    game::RegionListItemEnable(false);
     return false;
   }
 
   if(!Char->GetStack()->GetItems())
   {
     ADD_MESSAGE("You have nothing to throw!");
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -1076,7 +1163,6 @@ truth commandsystem::Throw(character* Char)
                                                  "[press a direction key]"), false);
 
     if(Answer == DIR_ERROR){
-      game::RegionListItemEnable(false);
       return false;
     }
 
@@ -1086,43 +1172,36 @@ truth commandsystem::Throw(character* Char)
     Char->EditExperience(PERCEPTION, 75, 1 << 8);
     Char->EditNP(-50);
     Char->DexterityAction(5);
-    game::RegionListItemEnable(false);
     return true;
   }
   else
   {
-    game::RegionListItemEnable(false);
     return false;
   }
 }
 
 truth commandsystem::Apply(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->CanApply())
   {
     ADD_MESSAGE("This monster type cannot apply.");
-    game::RegionListItemEnable(false);
     return false;
   }
 
   if(!Char->CheckApply()){
-    game::RegionListItemEnable(false);
     return false;
   }
 
   if(!Char->PossessesItem(&item::IsAppliable))
   {
     ADD_MESSAGE("You have nothing to apply!");
-    game::RegionListItemEnable(false);
     return false;
   }
 
   item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
   bool b = Item && Item->Apply(Char);
 
-  game::RegionListItemEnable(false);
   return b;
 }
 
@@ -1161,17 +1240,14 @@ truth commandsystem::ForceVomit(character* Char)
 
 truth commandsystem::Zap(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->CheckZap()){
-    game::RegionListItemEnable(false);
     return false;
   }
 
   if(!Char->PossessesItem(&item::IsZappable))
   {
     ADD_MESSAGE("You have nothing to zap with, %s.", game::Insult());
-    game::RegionListItemEnable(false);
     return false;
   }
 
@@ -1183,25 +1259,21 @@ truth commandsystem::Zap(character* Char)
                                                  "[press a direction key or '.']"), false, true);
 
     if(Answer == DIR_ERROR){
-      game::RegionListItemEnable(false);
       return false;
     }
 
     if(Item->Zap(Char, Char->GetPos(), Answer))
     {
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(PERCEPTION)));
-      game::RegionListItemEnable(false);
       return true;
     }
     else
     {
-      game::RegionListItemEnable(false);
       return false;
     }
   }
   else
   {
-    game::RegionListItemEnable(false);
     return false;
   }
 }
@@ -1318,12 +1390,7 @@ truth commandsystem::AssignName(character*)
 
 truth commandsystem::EquipmentScreen(character* Char)
 {
-  game::RegionSilhouetteEnable(true);
-  game::RegionListItemEnable(true);
   bool b = Char->EquipmentScreen(Char->GetStack(), 0);
-  game::RegionSilhouetteEnable(false);
-  game::RegionListItemEnable(false);
-
   return b;
 }
 
@@ -1398,35 +1465,28 @@ truth commandsystem::ShowWeaponSkills(character* Char)
 
 truth commandsystem::WieldInRightArm(character* Char)
 {
-  game::RegionListItemEnable(true);
-
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
   else if(Char->TryToChangeEquipment(Char->GetStack(), 0, RIGHT_WIELDED_INDEX))
   {
     Char->DexterityAction(5);
-    game::RegionListItemEnable(false);
     return true;
   }
 
-  game::RegionListItemEnable(false);
   return false;
 }
 
 truth commandsystem::WieldInLeftArm(character* Char)
 {
-  game::RegionListItemEnable(true);
 
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
   else if(Char->TryToChangeEquipment(Char->GetStack(), 0, LEFT_WIELDED_INDEX))
   {
     Char->DexterityAction(5);
-    game::RegionListItemEnable(false);
     return true;
   }
 
-  game::RegionListItemEnable(false);
   return false;
 }
 
@@ -1803,17 +1863,13 @@ truth commandsystem::Possess(character* Char)
 
 truth commandsystem::Polymorph(character* Char)
 {
-  game::RegionListItemEnable(true);
-
   character* NewForm;
 
   if(!Char->GetNewFormForPolymorphWithControl(NewForm)){
-    game::RegionListItemEnable(false);
     return true;
   }
 
   Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), WHITE));
-  game::RegionListItemEnable(false);
   return true;
 }
 

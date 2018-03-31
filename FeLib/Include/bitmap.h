@@ -38,6 +38,7 @@ struct blitdata
   col16 MaskColor;
   ulong CustomData;
 };
+#define DEFAULT_BLITDATA {NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0} //easy initializer TODO should be TRANSPARENT_COLOR?
 
 class bitmap
 {

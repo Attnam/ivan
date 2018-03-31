@@ -23,6 +23,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "felibdef.h"
+
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
@@ -55,14 +57,17 @@ graphics::modeinfo graphics::ModeInfo;
 
 struct stretchRegion //TODO all these booleans could be a single uint32? unnececessarily complicated?
 {
+  int iIndex;
+  const char* strId;
   bool bEnabled;
   blitdata B;
   bool bForceXBRZ;
   bool bShowWithFelist;
-  bool bSpecialCurrentBrowsingItem;
+  bool bSpecialListItem;
+  bool bSpecialListItemAltPos;
 };
+const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false,false};
 
-bool graphics::bDbgMsg=true;
 std::vector<stretchRegion> vStretchRegion;
 bitmap* graphics::DoubleBuffer=NULL;
 bitmap* graphics::StretchedDB=NULL;
@@ -72,6 +77,26 @@ v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
+
+#ifdef DBGMSG
+  #define DBGSRI(info) dbgSR(__FILENAME__,__LINE__,SR,info)
+  #define DBGSR DBGSRI("")
+#else
+  #define DBGSR
+  #define DBGSRI
+#endif
+
+void dbgSR(const char* fname, int iline, stretchRegion SR,const char* strInfo){
+  blitdata Bto=SR.B;
+  std::cerr<<fname<<":"<<iline<<":"<<strInfo
+    <<"["<<SR.iIndex<<"]SR@"
+    <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
+    <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
+    <<"Stretch="<<Bto.Stretch<<"/"
+    <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
+    <<"id="<<SR.strId<<"/"
+    <<std::endl;
+}
 
 void graphics::Init()
 {
@@ -306,15 +331,16 @@ void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
 /**
  * there can only be one set at a time
  */
-void graphics::SetSRegionListItem(int iIndex){
-  if(vStretchRegion[iIndex].bSpecialCurrentBrowsingItem)return; //permissive on redundant setup
+void graphics::SetSRegionListItem(int iIndex, bool bUseAlternateListItemPos){
+  if(vStretchRegion[iIndex].bSpecialListItem)return; //permissive on redundant setup
 
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion SR=vStretchRegion[i];
-    assert(!SR.bSpecialCurrentBrowsingItem); //some other was set already
+    assert(!SR.bSpecialListItem); //some other was set already
   }
 
-  vStretchRegion[iIndex].bSpecialCurrentBrowsingItem=true;
+  vStretchRegion[iIndex].bSpecialListItem=true;
+  vStretchRegion[iIndex].bSpecialListItemAltPos=bUseAlternateListItemPos;
   vStretchRegion[iIndex].bShowWithFelist=true;
   vStretchRegion[iIndex].bEnabled=false;
 }
@@ -324,20 +350,26 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
 
   B.Bitmap = StretchedDB;
   if(iIndex==-1){ //add
-    stretchRegion SR = {true,B,false,false,false};
+    stretchRegion SRcp = SRdefault;
+    stretchRegion& SR = SRcp;
+    SR.B=B;
+    iIndex = SR.iIndex = vStretchRegion.size();
     vStretchRegion.push_back(SR);
-    iIndex = vStretchRegion.size()-1;
+    DBGSRI("Add");
   }else{ //update
     stretchRegion& SR = vStretchRegion[iIndex];
+    DBG2(SR.iIndex,iIndex);assert(SR.iIndex==iIndex);
     SR.B=B;
-    if(bDbgMsg)std::cout<<"UpdateSR["<<iIndex<<"]@"<<SR.B.Src.X<<","<<SR.B.Src.Y<<"/Stretch="<<SR.B.Stretch<<"/bForceXBRZ="<<SR.bForceXBRZ<<std::endl;
+    DBGSRI("Update");
   }
 
   return iIndex;
 }
 
-int graphics::AddStretchRegion(blitdata B){
-  return SetSRegionBlitdata(-1, B);
+int graphics::AddStretchRegion(blitdata B,const char* strId){
+  int i = SetSRegionBlitdata(-1, B);
+  vStretchRegion[i].strId=strId;
+  return i;
 }
 
 void graphics::BlitDBToScreen(){
@@ -368,67 +400,56 @@ void graphics::BlitDBToScreen(){
       &&
       vStretchRegion.size()>0
   ){
-    if(bDbgMsg)std::cout<<"StretchedBlitsTot="<<vStretchRegion.size()<<std::endl;
+    DBG2("StretchedBlitsTot=",vStretchRegion.size());
     bool bDidStretch=false;
-    bool bDoIt=true;
+    bool bOk=true;
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
-      blitdata Bto=SR.B;
+      blitdata& B=SR.B;DBGSR;
 
-      if(bDbgMsg){
-        std::cout<<"["<<i<<"]SR@"
-          <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
-          <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
-          <<"Stretch="<<Bto.Stretch<<"/"
-          <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
-          <<std::endl;
-      }
+      bOk=true; // try to disable below, is more clear to read long lists
 
-      bDoIt=true; // try to disable below, is more clear to read long lists
+      if(!SR.bEnabled)bOk=false;DBGOK;
 
-      if(!SR.bEnabled)bDoIt=false;
-      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bOk=false;DBGOK;
 
-      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bDoIt=false;
-      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+      if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;DBGOK;
 
-      if(SR.bSpecialCurrentBrowsingItem && !felist::isAnyFelistCurrentlyDrawn())bDoIt=false;
-      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+      if(B.Stretch<2)bOk=false;DBGOK;
 
-      if(Bto.Stretch<2)bDoIt=false;
-      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
-
-      assert(Bto.Border.X>=0 && Bto.Border.Y>=0); // only negatives are critical
-      if(Bto.Border.X==0 || Bto.Border.Y==0){
-        if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
-        if(Bto.Border.Is0()){ //being 0,0 means it is not ready yet.
-          if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
-          bDoIt=false;
-        }else{
-          if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
-          assert(Bto.Border.X>0 && Bto.Border.Y>0); //minimum (if not 0,0) is 1,1
+      assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
+      if(B.Border.X==0 || B.Border.Y==0){DBGOK;
+        if(B.Border.Is0()){DBGOK; //being 0,0 means it is not ready yet.
+          bOk=false;
+        }else{DBGOK;
+          assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
       }
 
-      assert(Bto.Dest.X>=0 && Bto.Dest.Y>=0);
-      if(bDbgMsg)std::cout<<"["<<i<<"]"<<__LINE__<<"/"<<bDoIt<<std::endl;
+      assert(B.Dest.X>=0 && B.Dest.Y>=0);DBGOK;
 
-      if(bDoIt){
+      if(bOk){
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
           DoubleBuffer->FastBlit(StretchedDB);
           DB = StretchedDB; //and set stretched as the final source
         }
 
-        if(SR.bSpecialCurrentBrowsingItem){
-          Bto.Src = felist::GetSelectedPos();
+        if(SR.bSpecialListItem){
+          B.Src = felist::GetSelectedPos();
+          if(SR.bSpecialListItemAltPos){
+            B.Dest.X=5;
+            B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
+            if(B.Dest.Y<0)B.Dest.Y=0;
+          }
+          DBGSRI("ListItem");
         }
 
-        if(bDbgMsg)std::cout<<"["<<i<<"]Blitting"<<std::endl;
+        DBG2("Blitting",i);
         if(SR.bForceXBRZ){
-          Stretch(true,DoubleBuffer,Bto);
+          Stretch(true,DoubleBuffer,B);
         }else{
-          Stretch(DoubleBuffer,Bto);
+          Stretch(DoubleBuffer,B);
         }
         //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
 

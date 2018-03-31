@@ -38,6 +38,7 @@ class ivanconfig
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
+  static truth GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth GetShowTurn() { return ShowTurn.Value; }
   static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
@@ -115,6 +116,7 @@ class ivanconfig
   static cycleoption SilhouetteScale;
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
+  static truthoption AltListItemPos;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__

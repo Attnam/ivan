@@ -109,8 +109,10 @@ int main(int argc, char** argv)
     int Select = iosystem::Menu(igraph::GetMenuGraphic(),
                                 v2(RES.X / 2, RES.Y / 2 - 20),
                                 CONST_S("\r"),
-                                CONST_S("Start Game\rContinue Game\r"
-                                        "Configuration\rHighscores\r"
+                                CONST_S("Start Game\r"
+                                        "Continue Game\r"
+                                        "Configuration\r"
+                                        "Highscores\r"
                                         "Quit\r"),
                                 LIGHT_GRAY,
                                 CONST_S("Released under the GNU\r"

@@ -97,6 +97,9 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
+truthoption ivanconfig::AltListItemPos(   "AltListItemPos",
+                                          "alternative zoomed list item positioning",
+                                          false);
 scrollbaroption ivanconfig::Volume(       "Volume",
                                           "volume",
                                           127,
@@ -459,6 +462,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
+  configsystem::AddOption(&AltListItemPos);
   configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);

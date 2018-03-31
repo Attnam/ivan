@@ -186,16 +186,16 @@ int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
 
-int iRegionRegion = -1;
+int iRegionPlayerOnScreen = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 
 //TODO should be transparent_color? is working well til now..
-blitdata game::bldPlayerOnScreen = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-blitdata bldFullDungeon = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-blitdata bldSilhouette = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
-blitdata bldListItem = { NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0};
+blitdata game::bldPlayerOnScreen = DEFAULT_BLITDATA;
+blitdata bldFullDungeon = DEFAULT_BLITDATA;
+blitdata bldSilhouette = DEFAULT_BLITDATA;
+blitdata bldListItem = DEFAULT_BLITDATA;
 
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
@@ -324,15 +324,15 @@ void game::UpdatePlayerOnScreenSBSBlitdata() {
   }
 }
 
-void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified?
-  if(iRegionIndexDungeon==-1)return;
+void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
+  if(iRegionIndexDungeon==-1 || iRegionPlayerOnScreen==-1)return;
 
   bldPlayerOnScreen.Src = ScreenPos;
 
   v2 posPlr = Player->GetPos();
-  std::cout<<"Player->GetPos()="<<posPlr.X<<","<<posPlr.Y<<std::endl;
+//  std::cout<<"Player->GetPos()="<<posPlr.X<<","<<posPlr.Y<<std::endl;
   v2 posCam = GetCamera();
-  std::cout<<"camPos="<<posCam.X<<","<<posCam.Y<<std::endl;
+//  std::cout<<"camPos="<<posCam.X<<","<<posCam.Y<<std::endl;
 
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
 
@@ -341,7 +341,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   v2 deltaForUpperLeft=delta;
   deltaForUpperLeft.X-=i;
   deltaForUpperLeft.Y-=i;
-  std::cout<<"deltaForUpperLeft="<<deltaForUpperLeft.X<<","<<deltaForUpperLeft.Y<<std::endl;
+//  std::cout<<"deltaForUpperLeft="<<deltaForUpperLeft.X<<","<<deltaForUpperLeft.Y<<std::endl;
 
   int iX = i;
   int iY = i;
@@ -349,7 +349,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   if(deltaForUpperLeft.X<0)iX+=deltaForUpperLeft.X;
   if(deltaForUpperLeft.Y<0)iY+=deltaForUpperLeft.Y;
 
-  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
+//  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
 
   bldPlayerOnScreen.Src.X-=TILE_SIZE*iX;
   bldPlayerOnScreen.Src.Y-=TILE_SIZE*iY;
@@ -369,7 +369,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   if(deltaForLowerRight.X<0)iBX+=deltaForLowerRight.X;
   if(deltaForLowerRight.Y<0)iBY+=deltaForLowerRight.Y;
 
-  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
+//  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
 
   bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iBX);
   bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iBY);
@@ -383,7 +383,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetDungeonGfxScale());
   bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetDungeonGfxScale());
 
-  graphics::SetSRegionBlitdata(iRegionRegion,bldPlayerOnScreen);
+  graphics::SetSRegionBlitdata(iRegionPlayerOnScreen,bldPlayerOnScreen);
 }
 
 void game::RegionListItemEnable(bool b){
@@ -422,12 +422,12 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
       bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
       bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
       bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
-      iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon);
+      iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
 
-      // (ABOVE) around player on screen TODO complete
+      // (will be above dungeon) around player on screen
       bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
-      iRegionRegion = graphics::AddStretchRegion(bldPlayerOnScreen);//,true);
-      graphics::SetSRegionForceXBRZ(iRegionRegion,true);
+      iRegionPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");
+      graphics::SetSRegionForceXBRZ(iRegionPlayerOnScreen,true);
     }
   }
 
@@ -440,7 +440,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
       bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
       bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
       bldSilhouette.Stretch = 2; // minimum to allow setup
-      iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette);
+      iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
       graphics::SetSRegionForceXBRZ(iRegionSilhouette,true);
       graphics::SetSRegionShowWithFelist(iRegionSilhouette,true);
     }
@@ -450,8 +450,8 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
     bldListItem.Dest = ZoomPos;
     bldListItem.Border = {TILE_SIZE,TILE_SIZE};
     bldListItem.Stretch = 6;
-    iRegionListItem = graphics::AddStretchRegion(bldListItem);
-    graphics::SetSRegionListItem(iRegionListItem);
+    iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
+    graphics::SetSRegionListItem(iRegionListItem,ivanconfig::GetAltListItemPos());
     graphics::SetSRegionForceXBRZ(iRegionListItem,true);
   }
 

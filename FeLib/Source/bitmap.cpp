@@ -1160,7 +1160,6 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   graphics::BlitDBToScreen();
 }
 
-bool bDbgMsg=false;
 std::vector<SDL_Surface*> vSurfaceCache;
 SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory hungryness
   int iW=B.Border.X;
@@ -1176,11 +1175,11 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
     }
   }
 
-  if(bDbgMsg)std::cout<<"Cache not found for surface w="<<iW<<" h="<<iH<<std::endl;
+  DBG4("Cache not found for surface w=",iW," h=",iH);
   SDL_Surface* srf = libxbrzscale::createARGBSurface(iW, iH); //src img for look zoom at least is always 16x16 tho
 
   vSurfaceCache.push_back(srf);
-  if(bDbgMsg)std::cout<<"Cache size="<<vSurfaceCache.size()<<std::endl;
+  DBG2("Cache size=",vSurfaceCache.size());
 
   return srf;
 }
@@ -1195,7 +1194,9 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
 
   if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
     libxbrzscale::setUseCache(true);
-    libxbrzscale::setDebugMsg(bDbgMsg);
+#ifdef DBGMSG
+    libxbrzscale::setDebugMsg(true);
+#endif
     libxbrzscale::setFreeSurfaceAfterScale(false,false);
     bXbrzLibCfgInitialized=true;
   }

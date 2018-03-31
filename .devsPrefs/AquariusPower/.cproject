@@ -35,11 +35,12 @@
 									<listOptionValue builtIn="false" value="GCC"/>
 									<listOptionValue builtIn="false" value="WIZARD"/>
 									<listOptionValue builtIn="false" value="USE_SDL"/>
-									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="__WIN32__"/>
 									<listOptionValue builtIn="false" value="_WINMM_"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
+									<listOptionValue builtIn="false" value="DBGMSG"/>
+									<listOptionValue builtIn="false" value="UNIX"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1815342761" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -59,9 +60,10 @@
 									<listOptionValue builtIn="false" value="GCC"/>
 									<listOptionValue builtIn="false" value="WIZARD"/>
 									<listOptionValue builtIn="false" value="USE_SDL"/>
-									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="&quot;IVAN_VERSION=\&quot;0.50.8\&quot;&quot;"/>
+									<listOptionValue builtIn="false" value="DBGMSG"/>
+									<listOptionValue builtIn="false" value="UNIX"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.909660028" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
@@ -155,6 +157,7 @@
 									<listOptionValue builtIn="false" value="LINUX"/>
 									<listOptionValue builtIn="false" value="PROJECT_VERSION=&quot;0.50.8&quot;"/>
 									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
+									<listOptionValue builtIn="false" value="DBGMSG"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1679517968" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.843749153" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -181,6 +184,7 @@
 									<listOptionValue builtIn="false" value="LINUX"/>
 									<listOptionValue builtIn="false" value="PROJECT_VERSION=&quot;0.50.8&quot;"/>
 									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
+									<listOptionValue builtIn="false" value="DBGMSG"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1077402583" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.238683031" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
