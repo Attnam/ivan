@@ -1181,11 +1181,11 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
     }
   }
 
-  //DBG4("Cache not found for surface w=",iW," h=",iH);
+  DBG4("Cache not found for surface w=",iW," h=",iH);
   SDL_Surface* srf = libxbrzscale::createARGBSurface(iW, iH); //src img for look zoom at least is always 16x16 tho
 
   vSurfaceCache.push_back(srf);
-  //DBG2("Cache size=",vSurfaceCache.size());
+  DBG2("Cache size=",vSurfaceCache.size());
 
   return srf;
 }

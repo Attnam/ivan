@@ -100,8 +100,8 @@ rawbitmap* graphics::DefaultFont = 0;
 #else
   #include "rmdbgmsg.h"
 
+  #define DBGSRI(info)
   #define DBGSR
-  #define DBGSRI
 #endif
 
 void graphics::Init()
@@ -365,12 +365,12 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
     SR.B=B;
     iIndex = SR.iIndex = vStretchRegion.size();
     vStretchRegion.push_back(SR);
-    //DBGSRI("Add");
+    DBGSRI("Add");
   }else{ //update
     stretchRegion& SR = vStretchRegion[iIndex];
-    //DBG2(SR.iIndex,iIndex);assert(SR.iIndex==iIndex);
+    DBG2(SR.iIndex,iIndex);assert(SR.iIndex==iIndex);
     SR.B=B;
-    //DBGSRI("Update");
+    DBGSRI("Update");
   }
 
   return iIndex;
@@ -410,33 +410,33 @@ void graphics::BlitDBToScreen(){
       &&
       vStretchRegion.size()>0
   ){
-    //DBG2("StretchedBlitsTot=",vStretchRegion.size());
+    DBG2("StretchedBlitsTot=",vStretchRegion.size());
     bool bDidStretch=false;
     bool bOk=true;
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
-      blitdata& B=SR.B;//DBGSR;
+      blitdata& B=SR.B;DBGSR;
 
       bOk=true; // try to disable below, is more clear to read long lists
 
-      if(!SR.bEnabled)bOk=false;//DBGOK;
+      if(!SR.bEnabled)bOk=false;DBGOK;
 
-      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bOk=false;//DBGOK;
+      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bOk=false;DBGOK;
 
-      if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;//DBGOK;
+      if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;DBGOK;
 
-      if(B.Stretch<2)bOk=false;//DBGOK;
+      if(B.Stretch<2)bOk=false;DBGOK;
 
       assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
-      if(B.Border.X==0 || B.Border.Y==0){//DBGOK;
-        if(B.Border.Is0()){//DBGOK; //being 0,0 means it is not ready yet.
+      if(B.Border.X==0 || B.Border.Y==0){DBGOK;
+        if(B.Border.Is0()){DBGOK; //being 0,0 means it is not ready yet.
           bOk=false;
-        }else{//DBGOK;
+        }else{DBGOK;
           assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
       }
 
-      assert(B.Dest.X>=0 && B.Dest.Y>=0);//DBGOK;
+      assert(B.Dest.X>=0 && B.Dest.Y>=0);DBGOK;
 
       if(bOk){
         if(!bDidStretch){
@@ -452,10 +452,10 @@ void graphics::BlitDBToScreen(){
             B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
             if(B.Dest.Y<0)B.Dest.Y=0;
           }
-          //DBGSRI("ListItem");
+          DBGSRI("ListItem");
         }
 
-        //DBG2("Blitting",i);
+        DBG2("Blitting",i);
         if(SR.bForceXBRZ){
           Stretch(true,DoubleBuffer,B);
         }else{

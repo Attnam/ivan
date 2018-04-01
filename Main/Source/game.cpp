@@ -453,7 +453,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
 
   if(iRegionListItem==-1){
     bldListItem.Dest = ZoomPos;
-    bldListItem.Border = {TILE_SIZE,TILE_SIZE};
+    bldListItem.Border = TILE_V2;
     bldListItem.Stretch = 6;
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem,ivanconfig::GetAltListItemPos());

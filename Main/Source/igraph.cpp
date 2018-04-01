@@ -22,6 +22,12 @@
 #include "allocate.h"
 #include "whandler.h"
 
+#ifdef DBGMSG
+  #include "dbgmsg.h"
+#else
+  #include "rmdbgmsg.h"
+#endif
+
 rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
@@ -479,6 +485,41 @@ void igraph::UnLoadMenu()
 {
   delete Menu;
 }
+
+#ifdef IMPORT_EXPORT_GFX //INCOMPLETE WORK. for (one day) load each gfx from independent files.
+bool isFileExist(const char *fileName) //TODO this should be more global
+{
+  DBG2("chkIfFileExist:",fileName);
+  std::ifstream fl(fileName);
+  bool b=fl.good(); //ifstream destructor will close the file
+  DBG2("chkIfFileExist:",b);
+  return b;
+}
+bool importGfx(festring fsFile,bitmap** ppbmpSC){
+  DBG2("importing:",fsFile.CStr());
+  (*ppbmpSC) = new bitmap(SILHOUETTE_SIZE, 0);
+  inputfile flIn(fsFile);
+  (*ppbmpSC)->Load(flIn);
+  flIn.Close();
+  DBG2("imported:",fsFile.CStr());
+
+  return true; //TODO make it sure the file load woked, catching errors and so on...
+}
+bool bExportGfx=false; //if ran at a readonly location, true will fail.
+void chkExportGfx(){
+  //TODO inform this env var in some kind of developer documentation (preferable in an existing one)
+  char* env=std::getenv("IVAN_EXPORTGFX"); DBG2("bExportGfx",env);
+
+  if(env!=NULL){
+    bExportGfx = strcmp(env,"true")==0; DBG2("bExportGfx",bExportGfx);
+  }
+
+}
+festring prepareFileName(const char* strName){
+  festring fs="";
+  return fs<<game::GetDataDir()<<"Graphics/HumanBodypartSilhouette/"<<strName<<".png";
+}
+#endif
 
 void igraph::CreateSilhouetteCaches()
 {
