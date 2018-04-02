@@ -12,6 +12,7 @@
 
 #include <ctime>
 #include <cctype>
+#include <cassert>
 
 #ifdef WIN32
 #include <io.h>
@@ -148,7 +149,16 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   int c = 0;
 
   if(BackGround){
-    BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+    //vanilla was 800x600 as the background menu image. TODO provide calculations for lower than 800x600 one day?
+    assert(RES.X >= BackGround->GetSize().X);
+    assert(RES.Y >= BackGround->GetSize().Y);
+
+    if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+      Buffer.ClearToColor(0);
+      BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+    }else{
+      BackGround->FastBlit(&Buffer);
+    }
   }else
     Buffer.ClearToColor(0);
 
