@@ -223,7 +223,7 @@ int globalwindowhandler::ReadKey()
   return KeyBuffer.size() ? GetKey(false) : 0;
 }
 
-truth globalwindowhandler::WaitForKeyDown()
+truth globalwindowhandler::WaitForKeyEvent(uint Key)
 {
   SDL_Event Event;
 
@@ -235,37 +235,11 @@ truth globalwindowhandler::WaitForKeyDown()
   {
 #if SDL_MAJOR_VERSION == 2
     while(SDL_PollEvent(&Event))
-      if(Event.type == SDL_KEYDOWN)
+      if(Event.type == Key)
         return true;
 #else
     while(SDL_PollEvent(&Event))
-      if(Event.active.type == SDL_KEYDOWN)
-        return true;
-#endif
-  }
-  else
-    SDL_WaitEvent(&Event);
-
-  return false;
-}
-
-truth globalwindowhandler::WaitForKeyUp()
-{
-  SDL_Event Event;
-
-#if SDL_MAJOR_VERSION == 1
-  if(SDL_GetAppState() & SDL_APPACTIVE)
-#else
-  if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
-#endif
-  {
-#if SDL_MAJOR_VERSION == 2
-    while(SDL_PollEvent(&Event))
-      if(Event.type == SDL_KEYUP)
-        return true;
-#else
-    while(SDL_PollEvent(&Event))
-      if(Event.active.type == SDL_KEYUP)
+      if(Event.active.type == Key)
         return true;
 #endif
   }
