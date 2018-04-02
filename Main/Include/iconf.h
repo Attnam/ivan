@@ -39,10 +39,10 @@ class ivanconfig
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
-  static truth GetAltListItemPos() { return AltListItemPos.Value; }
+  static truth IsAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
-  static truth GetShowTurn() { return ShowTurn.Value; }
-  static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
+  static truth IsShowTurn() { return ShowTurn.Value; }
+  static truth IsOutlinedGfx() { return OutlinedGfx.Value; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__

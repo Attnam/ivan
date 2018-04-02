@@ -63,9 +63,10 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bForceXBRZ;
   bool bShowWithFelist;
   bool bSpecialListItem;
-  bool bSpecialListItemAltPos;
+//  bool bSpecialListItemAltPos;
 };
-const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false,false};
+const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false};
+bool graphics::bSpecialListItemAltPos=false;
 
 std::vector<stretchRegion> vStretchRegion;
 bitmap* graphics::DoubleBuffer=NULL;
@@ -341,7 +342,7 @@ void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
 /**
  * there can only be one set at a time
  */
-void graphics::SetSRegionListItem(int iIndex, bool bUseAlternateListItemPos){
+void graphics::SetSRegionListItem(int iIndex){
   if(vStretchRegion[iIndex].bSpecialListItem)return; //permissive on redundant setup
 
   for(int i=0;i<vStretchRegion.size();i++){
@@ -350,7 +351,6 @@ void graphics::SetSRegionListItem(int iIndex, bool bUseAlternateListItemPos){
   }
 
   vStretchRegion[iIndex].bSpecialListItem=true;
-  vStretchRegion[iIndex].bSpecialListItemAltPos=bUseAlternateListItemPos;
   vStretchRegion[iIndex].bShowWithFelist=true;
   vStretchRegion[iIndex].bEnabled=false;
 }
@@ -398,6 +398,7 @@ bitmap* graphics::prepareDoubleBuffer(){
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
       blitdata& B=SR.B;DBGSR;
+      assert(B.Bitmap==StretchedDB);
 
       bOk=true; // try to disable below, is more clear to read long lists
 
@@ -423,17 +424,24 @@ bitmap* graphics::prepareDoubleBuffer(){
       if(bOk){
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
-          DoubleBuffer->FastBlit(StretchedDB);
+          DoubleBuffer->FastBlit(StretchedDB); //simple copy (like a 3rd buffer)
           DB = StretchedDB; //and set stretched as the final source
         }
 
         if(SR.bSpecialListItem){
           B.Src = felist::GetSelectedPos();
-          if(SR.bSpecialListItemAltPos){
+          if(bSpecialListItemAltPos){
             B.Dest.X=0;//B.Dest.X=5;
             B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
             if(B.Dest.Y<0)B.Dest.Y=0;
           }
+//          blitdata Bbg = DEFAULT_BLITDATA;
+//          Bbg.Bitmap=StretchedDB;
+//          Bbg.Src=B.Dest-v2(3,3);
+//          Bbg.Dest=Bbg.Src;
+//          Bbg.Border=B.Border+v2(6,6);
+//          DoubleBuffer->NormalMaskedBlit(Bbg);
+          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
           DBGSRI("ListItem");
         }
 

@@ -66,7 +66,7 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-	if(ivanconfig::GetOutlinedGfx()){
+	if(ivanconfig::IsOutlinedGfx()){
 		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
 		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
 		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";

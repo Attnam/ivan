@@ -99,7 +99,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
 
   festring Temp;
 
-  if(ivanconfig::GetShowTurn())
+  if(ivanconfig::IsShowTurn())
   {
     Temp << game::GetTurn() << " ";
   }

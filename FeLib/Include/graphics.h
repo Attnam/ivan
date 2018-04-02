@@ -53,7 +53,7 @@ class graphics
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
   static void SetSRegionShowWithFelist(int iIndex, bool b);
-  static void SetSRegionListItem(int iIndex, bool bUseAlternateListItemPos);
+  static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);
@@ -62,6 +62,7 @@ class graphics
   static void LoadDefaultFont(cfestring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
+  static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
 #ifdef USE_SDL
 #if SDL_MAJOR_VERSION == 1
   static SDL_Surface* Screen;
@@ -132,6 +133,7 @@ class graphics
   static bitmap* StretchedDB;
   static truth bUseXbrzScale;
   static truth bAllowStretchedBlit;
+  static truth bSpecialListItemAltPos;
   static v2 Res;
   static int Scale;
   static int ColorDepth;

@@ -457,7 +457,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
     bldListItem.Border = TILE_V2;
     bldListItem.Stretch = iZoomFactor;
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
-    graphics::SetSRegionListItem(iRegionListItem,ivanconfig::GetAltListItemPos());
+    graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionForceXBRZ(iRegionListItem,true);
   }
 
@@ -1043,15 +1043,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Src = B.Dest;
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;
-
       graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getOutlineThickness(), ZoomPos, TILE_V2*iZoomFactor, DARK_GRAY, true);
-//      int iOT=area::getOutlineThickness();
-//      v2 v2OT={iOT,iOT};
-//      DOUBLE_BUFFER->DrawRectangle(
-//          ZoomPos-v2OT,
-//          ZoomPos+(TILE_V2*iZoomFactor)+v2OT/2,
-//          DARK_GRAY, true);
-
       graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }
 
@@ -2356,29 +2348,45 @@ int game::CompareLightToInt(col24 L, col24 Int)
     return -1;
 }
 
+void prepareList(v2& topleft, int& iW){
+  bool bAltItemPos = graphics::IsSRegionEnabled(iRegionListItem) && ivanconfig::IsAltListItemPos();
+  graphics::SetSpecialListItemAltPos(bAltItemPos);
+
+  int iX=topleft.X+10,iY=topleft.Y+10;
+  if(ivanconfig::GetDungeonGfxScale()>=2){
+    //mainly to be drawn above the small dungeon behind that gets scaled up
+    iX=topleft.X-3;
+    iY=topleft.Y-3;
+
+    if(bAltItemPos)iX+=area::getOutlineThickness()*2; //to leave some space to alt item outline
+  }
+
+  int iItemW=bldListItem.Border.X*bldListItem.Stretch;
+  if(bAltItemPos){
+    iX=iItemW;
+  }
+
+  if(graphics::IsSRegionEnabled(iRegionSilhouette)){
+    iW=ivanconfig::GetAltListItemWidth();
+    //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
+  }
+  
+  topleft={iX,iY};
+}
+
+int prepareListWidth(int iW){
+  return iW;
+}
+
 void game::SetStandardListAttributes(felist& List)
 {
   v2 topleft = area::getTopLeftCorner();
-  int iX=topleft.X+10,iY=topleft.Y+10;
-  if(ivanconfig::GetDungeonGfxScale()){
-    iX=topleft.X-3;
-    iY=topleft.Y-3;
-  }
-
-  if(ivanconfig::GetAltListItemPos() && graphics::IsSRegionEnabled(iRegionListItem)){
-    iX=bldListItem.Border.X*bldListItem.Stretch;
-  }
-  
   int iW = iListWidth;
-  if(graphics::IsSRegionEnabled(iRegionSilhouette)){
-    iW=ivanconfig::GetAltListItemWidth();
-  }
 
-  List.SetPos(v2(iX,iY));
+  prepareList(topleft, iW);
 
-
+  List.SetPos(topleft);
   List.SetWidth(iW);
-
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
   List.SetUpKey(GetMoveCommandKey(KEY_UP_INDEX));
   List.SetDownKey(GetMoveCommandKey(KEY_DOWN_INDEX));
