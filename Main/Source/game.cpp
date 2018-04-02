@@ -202,12 +202,13 @@ blitdata bldFullDungeon = DEFAULT_BLITDATA;
 blitdata bldSilhouette = DEFAULT_BLITDATA;
 blitdata bldListItem = DEFAULT_BLITDATA;
 
+int iZoomFactor=6;
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
 
 void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
 
-int game::GetMaxScreenXSize() {
+int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
   if(iMaxXSize==0){
     // 800 provides 42. 800/16=50. 42=50-8. 8 magic number for whatever is drawn to the right of the dungeon.
     iMaxXSize = ivanconfig::GetWindowWidth()/TILE_SIZE;
@@ -216,7 +217,7 @@ int game::GetMaxScreenXSize() {
   return iMaxXSize;
 }
 
-int game::GetMaxScreenYSize() {
+int game::GetMaxScreenYSize() { //this generally should not be used when the campera position is part of the calculations
   if(iMaxYSize==0){
     // 600 provides 26. 600/16=37. 26=37-11. 11 magic number for whatever is drawn below of the dungeon.
     iMaxYSize = ivanconfig::GetWindowHeight()/TILE_SIZE;
@@ -454,7 +455,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
   if(iRegionListItem==-1){
     bldListItem.Dest = ZoomPos;
     bldListItem.Border = TILE_V2;
-    bldListItem.Stretch = 6;
+    bldListItem.Stretch = iZoomFactor;
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem,ivanconfig::GetAltListItemPos());
     graphics::SetSRegionForceXBRZ(iRegionListItem,true);
@@ -1041,7 +1042,15 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     {
       B.Src = B.Dest;
       B.Dest = ZoomPos;
-      B.Stretch = 6;
+      B.Stretch = iZoomFactor;
+
+      int iOT=area::getOutlineThickness();
+      v2 v2OT={iOT,iOT};
+      DOUBLE_BUFFER->DrawRectangle(
+          ZoomPos-v2OT,
+          ZoomPos+(TILE_V2*iZoomFactor)+v2OT/2,
+          DARK_GRAY, true);
+
       graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }
 
@@ -1495,18 +1504,18 @@ int game::StringQuestion(festring& Answer, cfestring& Topic, col16 Color,
                          truth AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23)); // pos may be incorrect!
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23)); // pos may be incorrect!
   int Return = iosystem::StringQuestion(Answer, Topic, v2(16, 6), Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
 
 long game::NumberQuestion(cfestring& Topic, col16 Color, truth ReturnZeroOnEsc)
 {
   DrawEverythingNoBlit();
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   long Return = iosystem::NumberQuestion(Topic, v2(16, 6), Color, false, ReturnZeroOnEsc);
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
 
@@ -1514,11 +1523,11 @@ long game::ScrollBarQuestion(cfestring& Topic, long BeginValue, long Step, long 
                              col16 TopicColor, col16 Color1, col16 Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   long Return = iosystem::ScrollBarQuestion(Topic, v2(16, 6), BeginValue, Step, Min, Max, AbortValue,
                                             TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX),
                                             GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
 
@@ -1728,7 +1737,7 @@ int game::AskForKeyPress(cfestring& Topic)
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
   int Key = GET_KEY();
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Key;
 }
 
@@ -1807,10 +1816,15 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     Key = GET_KEY();
   }
 
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
-  igraph::BlitBackGround(v2(RES.X - 96, RES.Y - 96), v2(80, 80));
+  // for text
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  // for zoom
+  igraph::BlitBackGround(ZoomPos, TILE_V2*iZoomFactor);
   SetDoZoom(false);
+
   SetCursorPos(v2(-1, -1));
+
   return Return;
 }
 
@@ -1940,7 +1954,7 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
   }
 
   delete [] Key;
-  igraph::BlitBackGround(v2(16, 6), v2(GetScreenXSize() << 4, 23));
+  igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
 

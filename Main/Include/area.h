@@ -46,7 +46,7 @@ class area
   const rect& GetBorder() const { return Border; }
   void SetEntryPos(int, v2);
   static v2 getTopLeftCorner();
-  static int getOutlineThickness();
+  static int getOutlineThickness(); //TODO this should be more global...
  protected:
   square*** Map;
   uchar** FlagMap;
