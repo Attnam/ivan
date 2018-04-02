@@ -1044,12 +1044,13 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;
 
-      int iOT=area::getOutlineThickness();
-      v2 v2OT={iOT,iOT};
-      DOUBLE_BUFFER->DrawRectangle(
-          ZoomPos-v2OT,
-          ZoomPos+(TILE_V2*iZoomFactor)+v2OT/2,
-          DARK_GRAY, true);
+      graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getOutlineThickness(), ZoomPos, TILE_V2*iZoomFactor, DARK_GRAY, true);
+//      int iOT=area::getOutlineThickness();
+//      v2 v2OT={iOT,iOT};
+//      DOUBLE_BUFFER->DrawRectangle(
+//          ZoomPos-v2OT,
+//          ZoomPos+(TILE_V2*iZoomFactor)+v2OT/2,
+//          DARK_GRAY, true);
 
       graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }

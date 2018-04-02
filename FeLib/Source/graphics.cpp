@@ -453,6 +453,14 @@ bitmap* graphics::prepareDoubleBuffer(){
   return DB;
 }
 
+void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, int iLineThickness, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
+  v2 v2LT={iLineThickness,iLineThickness};
+  DOUBLE_BUFFER->DrawRectangle(
+      v2TopLeft-v2LT,
+      v2TopLeft+v2Border+v2LT/2,
+      color, wide);
+}
+
 void graphics::BlitDBToScreen()
 {
 #if SDL_MAJOR_VERSION == 1

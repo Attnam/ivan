@@ -45,6 +45,7 @@ class graphics
   static void SetMode(cchar*, cchar*, v2, int, truth);
   static void Stretch(bitmap* bmp, blitdata B);
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
+  static void DrawRectangleOutlineAround(bitmap* bmpAt, int iLineThickness, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
   static int AddStretchRegion(blitdata B,const char* strId);
   static bitmap* prepareDoubleBuffer();
