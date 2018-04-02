@@ -20,6 +20,12 @@
 #include "save.h"
 #include "festring.h"
 
+#ifdef DBGMSG
+  #include "dbgmsg.h"
+#else
+  #include "rmdbgmsg.h"
+#endif
+
 const felist* FelistCurrentlyDrawn = 0;
 
 v2 felist::v2SelectedPos = {0,0};
@@ -160,6 +166,7 @@ uint felist::Draw()
   else
     PageBegin = 0;
 
+  bool bWaitKeyUp=false;
   for(;;)
   {
     truth AtTheEnd = DrawPage(Buffer);
@@ -181,19 +188,21 @@ uint felist::Draw()
 
     uint Pressed = GET_KEY(false);
 
-    if(Flags & SELECTABLE && Pressed > 64
+    if(Flags & SELECTABLE && Pressed > 64 //TODO explain what are these numbers: letters/digits/symbols?
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
     {
       Return = Selected = Pressed - 65 + PageBegin;
+      bWaitKeyUp=true;
       break;
     }
 
-    if(Flags & SELECTABLE && Pressed > 96
+    if(Flags & SELECTABLE && Pressed > 96 //TODO explain what are these numbers: letters/digits/symbols?
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
     {
       Return = Selected = Pressed - 97 + PageBegin;
+      bWaitKeyUp=true;
       break;
     }
 
@@ -261,6 +270,7 @@ uint felist::Draw()
     if(Flags & SELECTABLE && Pressed == KEY_ENTER)
     {
       Return = Selected;
+      bWaitKeyUp=true;
       break;
     }
 
@@ -305,6 +315,9 @@ uint felist::Draw()
 
   FelistCurrentlyDrawn=0;
 
+  if(bWaitKeyUp){
+    DBG1("WaitKeyUp");while(!WAIT_FOR_KEY_UP());DBG1("WaitKeyUpDone");
+  }
   return Return;
 }
 
