@@ -130,7 +130,6 @@ void msgsystem::AddMessage(cchar* Format, ...)
 
   std::vector<festring> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
-  //TODO ? festring::SplitString(Temp, Chapter, (graphics::IsWideLayout()?1000:78), Marginal); //1000 is just big enough to remove any limitation, so the output looks ok
 
   for(uint c = 0; c < Chapter.size(); ++c)
     MessageHistory.AddEntry(Chapter[c], WHITE);

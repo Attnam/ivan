@@ -411,9 +411,7 @@ truth commandsystem::Open(character* Char)
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
     if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)){
-      game::RegionSilhouetteEnable(true);
       return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
-      game::RegionSilhouetteEnable(false);
     }
   }
   else

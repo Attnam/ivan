@@ -657,9 +657,6 @@ truth game::Init(cfestring& Name)
 
   if(bSuccess){ // for loaded or new game
     ZoomPos = {RES.X - 104, RES.Y - 112};
-//    if(bDbgMsg)std::cout<<"RES:W="<<RES.X<<",H="<<RES.Y<<std::endl;
-//    if(bDbgMsg)std::cout<<"ZoomPos:X="<<ZoomPos.X<<",Y="<<ZoomPos.Y<<std::endl;
-
     graphics::SetStretchMode(ivanconfig::IsXBRZScale());
     PrepareStretchRegions();
   }

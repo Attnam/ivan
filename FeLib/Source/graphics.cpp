@@ -382,25 +382,7 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
-void graphics::BlitDBToScreen(){
-#if SDL_MAJOR_VERSION == 1
-  if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
-    ABORT("Can't lock screen");
-
-  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
-
-  packcol16* DestPtr = static_cast<packcol16*>(Screen->pixels);
-  ulong ScreenYMove = (Screen->pitch >> 1);
-  ulong LineSize = Res.X << 1;
-
-  for(int y = 0; y < Res.Y; ++y, SrcPtr += Res.X, DestPtr += ScreenYMove)
-    memcpy(DestPtr, SrcPtr, LineSize);
-
-  if(SDL_MUSTLOCK(Screen))
-    SDL_UnlockSurface(Screen);
-
-  SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
-#else
+bitmap* graphics::prepareDoubleBuffer(){
   bitmap* DB = DoubleBuffer;
 
   if(
@@ -468,7 +450,30 @@ void graphics::BlitDBToScreen(){
     }
   }
 
-  packcol16* SrcPtr = DB->GetImage()[0];
+  return DB;
+}
+
+void graphics::BlitDBToScreen()
+{
+#if SDL_MAJOR_VERSION == 1
+  if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
+    ABORT("Can't lock screen");
+
+  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
+
+  packcol16* DestPtr = static_cast<packcol16*>(Screen->pixels);
+  ulong ScreenYMove = (Screen->pitch >> 1);
+  ulong LineSize = Res.X << 1;
+
+  for(int y = 0; y < Res.Y; ++y, SrcPtr += Res.X, DestPtr += ScreenYMove)
+    memcpy(DestPtr, SrcPtr, LineSize);
+
+  if(SDL_MUSTLOCK(Screen))
+    SDL_UnlockSurface(Screen);
+
+  SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
+#else
+  packcol16* SrcPtr = prepareDoubleBuffer()->GetImage()[0];
   void* DestPtr;
   int Pitch;
 

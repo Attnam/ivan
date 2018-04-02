@@ -47,6 +47,7 @@ class graphics
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void BlitDBToScreen();
   static int AddStretchRegion(blitdata B,const char* strId);
+  static bitmap* prepareDoubleBuffer();
   static bool IsSRegionEnabled(int iIndex);
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
