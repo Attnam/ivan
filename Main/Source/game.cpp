@@ -2353,13 +2353,13 @@ void game::SetStandardListAttributes(felist& List)
     iY=topleft.Y-3;
   }
 
-  int iW = iListWidth;
   if(ivanconfig::GetAltListItemPos() && graphics::IsSRegionEnabled(iRegionListItem)){
     iX=bldListItem.Border.X*bldListItem.Stretch;
-
-    if(graphics::IsSRegionEnabled(iRegionSilhouette)){
-      iW=ivanconfig::GetAltListItemWidth();
-    }
+  }
+  
+  int iW = iListWidth;
+  if(graphics::IsSRegionEnabled(iRegionSilhouette)){
+    iW=ivanconfig::GetAltListItemWidth();
   }
 
   List.SetPos(v2(iX,iY));
