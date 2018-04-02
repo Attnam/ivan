@@ -147,9 +147,9 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   Buffer.ActivateFastFlag();
   int c = 0;
 
-  if(BackGround)
-    BackGround->FastBlit(&Buffer);
-  else
+  if(BackGround){
+    BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+  }else
     Buffer.ClearToColor(0);
 
   festring sCopyOfMS;
