@@ -332,6 +332,8 @@ void game::UpdatePlayerOnScreenSBSBlitdata() {
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
   if(iRegionIndexDungeon==-1 || iRegionPlayerOnScreen==-1)return;
+  graphics::SetSRegionEnabled(iRegionPlayerOnScreen,!DoZoom());
+  if(DoZoom())return;
 
   bldPlayerOnScreen.Src = ScreenPos;
 

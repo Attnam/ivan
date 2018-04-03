@@ -413,7 +413,7 @@ bitmap* graphics::prepareDoubleBuffer(){
 
       assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
       if(B.Border.X==0 || B.Border.Y==0){DBGOK;
-        if(B.Border.Is0()){DBGOK; //being 0,0 means it is not ready yet.
+        if(B.Border.Is0()){DBGOK; //being 0,0 may mean it is not ready yet.
           bOk=false;
         }else{DBGOK;
           assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
