@@ -2353,16 +2353,15 @@ void prepareList(v2& topleft, int& iW){
 
   int iX=topleft.X+10,iY=topleft.Y+10;
   if(ivanconfig::GetDungeonGfxScale()>=2){
-    //mainly to be drawn above the small dungeon behind that gets scaled up
+    //mainly to be drawn above the small dungeon (that gets scaled up)
     iX=topleft.X-3;
     iY=topleft.Y-3;
-
-    if(bAltItemPos)iX+=area::getOutlineThickness()*2; //to leave some space to alt item outline
   }
 
   int iItemW=bldListItem.Border.X*bldListItem.Stretch;
   if(bAltItemPos){
-    iX=iItemW;
+    iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
+    iX += iItemW;
   }
 
   if(graphics::IsSRegionEnabled(iRegionSilhouette)){

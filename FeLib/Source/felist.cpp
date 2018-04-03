@@ -34,9 +34,39 @@ truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
 
+void felist::DrawCurrentListItemAltPos(blitdata& rB){
+  rB.Dest.X=0;//B.Dest.X=5;
+  rB.Dest.Y=rB.Src.Y - (rB.Border.Y*rB.Stretch/2);
+  if(rB.Dest.Y<0)rB.Dest.Y=0;
+
+//          int iW = B.Border*B.Stretch;
+//          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
+
+//          blitdata Bbg = DEFAULT_BLITDATA;
+//          Bbg.Bitmap=StretchedDB;
+//          Bbg.Src=B.Dest-v2(3,3);
+//          Bbg.Dest=Bbg.Src;
+//          Bbg.Border=B.Border+v2(6,6);
+//          DoubleBuffer->NormalMaskedBlit(Bbg);
+
+//          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, iW, DARK_GRAY, true);
+  v2 v2TopLeft;
+  v2TopLeft.X = rB.Dest.X;
+  v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y;
+
+  v2 v2Border;
+  v2Border.X = rB.Border.X*rB.Stretch;
+  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y;
+
+  //          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
+  rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
+
+  graphics::DrawRectangleOutlineAround(rB.Bitmap, 3, v2TopLeft, v2Border, DARK_GRAY, true);
+}
+
 truth FelistDrawController()
 {
-  FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER);
+  FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER,NULL);
   return true;
 }
 
@@ -85,7 +115,7 @@ struct felistdescription
 felist::felist(cfestring& Topic, col16 TopicColor, uint Maximum)
 : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780),
   PageLength(30), BackColor(0), Flags(SELECTABLE|FADE),
-  UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0)
+  UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0), v2FinalPageSize(0,0)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -169,7 +199,7 @@ uint felist::Draw()
   bool bWaitKeyUp=false;
   for(;;)
   {
-    truth AtTheEnd = DrawPage(Buffer);
+    truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
 
     if(Flags & FADE)
     {
@@ -323,7 +353,7 @@ uint felist::Draw()
 
 static festring Str;
 
-truth felist::DrawPage(bitmap* Buffer) const
+truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 {
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   DrawDescription(Buffer);
@@ -442,8 +472,17 @@ truth felist::DrawPage(bitmap* Buffer) const
         LastFillBottom += 10;
       }
 
-      Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2,
-                            LastFillBottom + 1, DARK_GRAY, true);
+      int iLeft   = Pos.X + 1,
+          iTop    = Pos.Y + 1,
+          iRight  = Pos.X + Width - 2,
+          iBottom = LastFillBottom + 1;
+      Buffer->DrawRectangle(iLeft,iTop,iRight,iBottom, DARK_GRAY, true);
+
+      if(pv2FinalPageSize!=NULL){
+        pv2FinalPageSize->X = iRight-iLeft;
+        pv2FinalPageSize->Y = iBottom-iTop;
+      }
+
       break;
     }
 

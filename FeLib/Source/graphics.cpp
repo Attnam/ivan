@@ -430,24 +430,11 @@ bitmap* graphics::prepareDoubleBuffer(){
         }
 
         if(SR.bSpecialListItem){
-          B.Src = felist::GetSelectedPos();
+          B.Src = felist::GetCurrentListSelectedItemPos();
           if(bSpecialListItemAltPos){
-            B.Dest.X=0;//B.Dest.X=5;
-            B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
-            if(B.Dest.Y<0)B.Dest.Y=0;
+            felist::DrawCurrentListItemAltPos(B);
           }
-//          int iW = B.Border*B.Stretch;
-//          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
-
-//          blitdata Bbg = DEFAULT_BLITDATA;
-//          Bbg.Bitmap=StretchedDB;
-//          Bbg.Src=B.Dest-v2(3,3);
-//          Bbg.Dest=Bbg.Src;
-//          Bbg.Border=B.Border+v2(6,6);
-//          DoubleBuffer->NormalMaskedBlit(Bbg);
-
-//          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, iW, DARK_GRAY, true);
-          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
+          graphics::DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
           DBGSRI("ListItem");
         }
 
