@@ -4662,11 +4662,11 @@ void character::DrawPanel(truth AnimationDraw) const
     return;
   }
 
-  igraph::BlitBackGround(v2(19 + (game::GetScreenXSize() << 4), 0),
-                         v2(RES.X - 19 - (game::GetScreenXSize() << 4), RES.Y));
-  igraph::BlitBackGround(v2(16, 45 + (game::GetScreenYSize() << 4)),
-                         v2(game::GetScreenXSize() << 4, 9));
-  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
+  igraph::BlitBackGround(v2(19 + (game::GetMaxScreenXSize() << 4), 0),
+                         v2(RES.X - 19 - (game::GetMaxScreenXSize() << 4), RES.Y));
+  igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
+                         v2(game::GetMaxScreenXSize() << 4, 9));
+  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
   int PanelPosY = DrawStats(false);

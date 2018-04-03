@@ -234,7 +234,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
   return false;
 }
@@ -248,7 +248,7 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
   return false;
 }
@@ -287,7 +287,7 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
 
   if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
   return false;
 }
@@ -300,7 +300,7 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
   return false;
 }
@@ -313,7 +313,7 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 
   return false;
 }

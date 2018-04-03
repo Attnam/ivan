@@ -78,12 +78,12 @@ void area::SendNewDrawRequest()
 
   igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
   DOUBLE_BUFFER->DrawRectangle(topLeftCorner.X-iOutlineThickness, topLeftCorner.Y-iOutlineThickness,
-                               17 + (game::GetScreenXSize() << 4),
-                               33 + (game::GetScreenYSize() << 4),
+                               17 + (game::GetScreenXSize() << 4), //outline of (possibly shrinked) dungeon area related to camera too
+                               33 + (game::GetScreenYSize() << 4), //outline of (possibly shrinked) dungeon area related to camera too
                                DARK_GRAY, true);
   DOUBLE_BUFFER->Fill(topLeftCorner.X, topLeftCorner.Y,
-                      game::GetScreenXSize() << 4,
-                      game::GetScreenYSize() << 4,
+                      game::GetScreenXSize() << 4, // unknown area (possibly shrinked) dungeon area related to camera too
+                      game::GetScreenYSize() << 4, // unknown area (possibly shrinked) dungeon area related to camera too
                       BLACK);
 }
 
