@@ -868,6 +868,7 @@ void game::Run()
     }
     catch(quitrequest)
     {
+      graphics::SetDenyStretchedBlit();
       break;
     }
     catch(areachangerequest)
@@ -1911,6 +1912,7 @@ void game::InitGlobalValueMap()
 void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
                       truth GKey, truth Fade, bitmapeditor BitmapEditor)
 {
+  graphics::SetDenyStretchedBlit();
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();

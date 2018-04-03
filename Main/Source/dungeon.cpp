@@ -77,6 +77,8 @@ const levelscript* dungeon::GetLevelScript(int I)
 
 truth dungeon::PrepareLevel(int Index, truth Visual)
 {
+  graphics::SetDenyStretchedBlit();
+
   if(Generated[Index])
   {
     level* NewLevel = LoadLevel(game::SaveName(), Index);
@@ -87,8 +89,6 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
-    graphics::SetDenyStretchedBlit();
-
     level* NewLevel = Level[Index] = new level;
     NewLevel->SetDungeon(this);
     NewLevel->SetIndex(Index);

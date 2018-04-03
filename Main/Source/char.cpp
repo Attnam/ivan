@@ -2391,7 +2391,7 @@ void character::GetPlayerCommand()
 
   while(!HasActed)
   {
-    graphics::SetAllowStretchedBlit();
+    graphics::SetAllowStretchedBlit(); //overall great/single location to re-enable stretched blit!
 
     game::DrawEverything();
 
