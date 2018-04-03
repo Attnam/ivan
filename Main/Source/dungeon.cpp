@@ -18,6 +18,7 @@
 #include "save.h"
 #include "femath.h"
 #include "bitmap.h"
+#include "graphics.h"
 #include "message.h"
 
 #include "audio.h"
