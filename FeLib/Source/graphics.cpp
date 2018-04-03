@@ -434,7 +434,7 @@ bitmap* graphics::prepareDoubleBuffer(){
           if(bSpecialListItemAltPos){
             felist::DrawCurrentListItemAltPos(B);
           }
-          graphics::DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
+          graphics::DrawRectangleOutlineAround(B.Bitmap, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
           DBGSRI("ListItem");
         }
 
@@ -453,11 +453,10 @@ bitmap* graphics::prepareDoubleBuffer(){
   return DB;
 }
 
-void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, int iLineThickness, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
-  v2 v2LT={iLineThickness,iLineThickness};
+void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
   DOUBLE_BUFFER->DrawRectangle(
-      v2TopLeft-v2LT,
-      v2TopLeft+v2Border+v2LT/2,
+      v2TopLeft,
+      v2TopLeft+v2Border,
       color, wide);
 }
 

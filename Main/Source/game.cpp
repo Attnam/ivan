@@ -1043,7 +1043,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Src = B.Dest;
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;
-      graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getOutlineThickness(), ZoomPos, TILE_V2*iZoomFactor, DARK_GRAY, true);
+      graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, ZoomPos, TILE_V2*iZoomFactor, DARK_GRAY, true);
       graphics::Stretch(ivanconfig::IsXBRZScaleLookMode(),DOUBLE_BUFFER,B);
     }
 

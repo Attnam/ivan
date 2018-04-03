@@ -37,23 +37,25 @@ truth felist::isAnyFelistCurrentlyDrawn(){
 void felist::DrawCurrentListItemAltPos(blitdata& rB){
   v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
 
+  int iExtraH = v2ItemFinalSize.Y/4;
+
   // scaled up item pos
   rB.Dest.X=FelistCurrentlyDrawn->v2OriginalPos.X;//B.Dest.X=5;
   rB.Dest.Y=rB.Src.Y - v2ItemFinalSize.Y/2;
   if(rB.Dest.Y<0)rB.Dest.Y=0;
 
-  // full background where all items will be positioned above it
+  // full background where all items will be drawn above it
   v2 v2TopLeft;
   v2TopLeft.X = FelistCurrentlyDrawn->v2OriginalPos.X;
-  v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y;
+  v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y - iExtraH;
 
   v2 v2Border;
   v2Border.X = v2ItemFinalSize.X;
-  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y + v2ItemFinalSize.Y/2;
+  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y + iExtraH*2;
 
   rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
 
-  graphics::DrawRectangleOutlineAround(rB.Bitmap, 2, v2TopLeft, v2Border, DARK_GRAY, true);
+  graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft, v2Border, DARK_GRAY, true);
 }
 
 truth FelistDrawController()
