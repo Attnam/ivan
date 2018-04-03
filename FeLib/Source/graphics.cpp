@@ -72,7 +72,7 @@ std::vector<stretchRegion> vStretchRegion;
 bitmap* graphics::DoubleBuffer=NULL;
 bitmap* graphics::StretchedDB=NULL;
 truth graphics::bUseXbrzScale=false;
-truth graphics::bAllowStretchedBlit=false;
+truth graphics::bAllowStretchedRegionsBlit=false;
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -323,7 +323,7 @@ void graphics::SetStretchMode(truth isXbrz){
 }
 
 void graphics::SetAllowStretchedBlit(truth b){
-  bAllowStretchedBlit=b;
+  bAllowStretchedRegionsBlit=b;
 }
 
 bool graphics::IsSRegionEnabled(int iIndex){
@@ -386,7 +386,7 @@ bitmap* graphics::prepareDoubleBuffer(){
   bitmap* DB = DoubleBuffer;
 
   if(
-      bAllowStretchedBlit // basically, if the game is running. TODO so, not at loading animations, did it work?
+      bAllowStretchedRegionsBlit // TODO not at loading animations and speeches/bigTextTalks
       &&
       !iosystem::IsOnMenu() //main menu
       &&

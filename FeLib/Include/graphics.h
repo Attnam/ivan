@@ -132,7 +132,7 @@ class graphics
   static bitmap* DoubleBuffer;
   static bitmap* StretchedDB;
   static truth bUseXbrzScale;
-  static truth bAllowStretchedBlit;
+  static truth bAllowStretchedRegionsBlit;
   static truth bSpecialListItemAltPos;
   static v2 Res;
   static int Scale;
