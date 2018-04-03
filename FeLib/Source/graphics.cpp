@@ -455,8 +455,8 @@ bitmap* graphics::prepareDoubleBuffer(){
 
 void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
   DOUBLE_BUFFER->DrawRectangle(
-      v2TopLeft,
-      v2TopLeft+v2Border,
+      v2TopLeft-v2(2,2),
+      v2TopLeft+v2Border+v2(1,1),
       color, wide);
 }
 
