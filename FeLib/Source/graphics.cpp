@@ -325,10 +325,6 @@ void graphics::SetStretchMode(truth isXbrz){
   bUseXbrzScale = isXbrz;
 }
 
-void graphics::SetAllowStretchedBlit(truth b){
-  bAllowStretchedRegionsBlit=b;
-}
-
 bool graphics::IsSRegionEnabled(int iIndex){
   if(iIndex>=vStretchRegion.size())return false; //not ready yet
   return vStretchRegion[iIndex].bEnabled;

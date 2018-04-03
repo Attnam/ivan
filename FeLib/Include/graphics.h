@@ -50,11 +50,22 @@ class graphics
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
-//  static void PreBlitDBForFelistToScreen(); //TODO
-  static bitmap* prepareDoubleBuffer();
+
+  static v2 GetRes() { return Res; }
+  static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
+  static void LoadDefaultFont(cfestring&);
+  static rawbitmap* GetDefaultFont() { return DefaultFont; }
+  static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
 
   static int AddStretchRegion(blitdata B,const char* strId);
   static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
+  static void SetStretchMode(truth isXbrz);
+  static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
+  static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
+  //  static void PreBlitDBForFelistToScreen(); //TODO
+  static bitmap* prepareDoubleBuffer();
+
+  //TODO utility class for sregion
   static bool IsSRegionEnabled(int iIndex);
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
@@ -63,14 +74,6 @@ class graphics
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
-
-  static void SetStretchMode(truth isXbrz);
-  static void SetAllowStretchedBlit(truth b);
-  static v2 GetRes() { return Res; }
-  static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
-  static void LoadDefaultFont(cfestring&);
-  static rawbitmap* GetDefaultFont() { return DefaultFont; }
-  static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
 
 #ifdef USE_SDL
   #if SDL_MAJOR_VERSION == 1

@@ -86,6 +86,8 @@ truth dungeon::PrepareLevel(int Index, truth Visual)
   }
   else
   {
+    graphics::SetDenyStretchedBlit();
+
     level* NewLevel = Level[Index] = new level;
     NewLevel->SetDungeon(this);
     NewLevel->SetIndex(Index);

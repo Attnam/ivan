@@ -1685,7 +1685,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 
     game::PlayDefeatMusic();
     ShowAdventureInfo();
-    graphics::SetAllowStretchedBlit(false); // to let final animation be seen properly
+    graphics::SetDenyStretchedBlit(); // to let final animation be seen properly
 
     if(!game::IsInWilderness())
       for(int c = 0; c < GetSquaresUnder(); ++c)

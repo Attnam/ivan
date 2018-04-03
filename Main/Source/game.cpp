@@ -206,7 +206,7 @@ int iZoomFactor=6;
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
 
-void game::SetIsRunning(truth What) { Running = What; graphics::SetAllowStretchedBlit(Running); }
+void game::SetIsRunning(truth What) { Running = What; }
 
 int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
   if(iMaxXSize==0){
@@ -567,7 +567,7 @@ truth game::Init(cfestring& Name)
                                    "face the untold adventures ahead."));
 
       globalwindowhandler::InstallControlLoop(AnimationController);
-      SetIsRunning(true); //graphics::SetAllowStretchedBlit(false); //this simple workaround will make the animation visible while the game initializes
+      SetIsRunning(true);
       InWilderness = true;
       iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."),
                            ZERO_V2, WHITE, false, true, &BusyAnimation);
@@ -651,8 +651,6 @@ truth game::Init(cfestring& Name)
       audio::ClearMIDIPlaylist();
       audio::LoadMIDIFile("world.mid", 0, 100);
       audio::SetPlaybackStatus(audio::PLAYING);
-
-//      graphics::SetAllowStretchedBlit(true);
 
       bSuccess=true;
       break;
@@ -879,7 +877,6 @@ void game::Run()
 //    PrepareStretchRegions();
   }
 
-  graphics::SetAllowStretchedBlit(false);
 }
 
 void game::InitLuxTable()
@@ -1649,8 +1646,6 @@ void game::BusyAnimation()
 
 void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
 {
-  graphics::SetAllowStretchedBlit(false);
-
   static clock_t LastTime = 0;
   static int Frame = 0;
   static blitdata B1 = { 0,
@@ -1690,8 +1685,6 @@ void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
 
     LastTime = clock();
   }
-
-  graphics::SetAllowStretchedBlit(true);
 }
 
 void game::CreateBusyAnimationCache()
