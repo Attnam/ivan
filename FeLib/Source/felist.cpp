@@ -35,33 +35,25 @@ truth felist::isAnyFelistCurrentlyDrawn(){
 }
 
 void felist::DrawCurrentListItemAltPos(blitdata& rB){
-  rB.Dest.X=0;//B.Dest.X=5;
-  rB.Dest.Y=rB.Src.Y - (rB.Border.Y*rB.Stretch/2);
+  v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
+
+  // scaled up item pos
+  rB.Dest.X=FelistCurrentlyDrawn->v2OriginalPos.X;//B.Dest.X=5;
+  rB.Dest.Y=rB.Src.Y - v2ItemFinalSize.Y/2;
   if(rB.Dest.Y<0)rB.Dest.Y=0;
 
-//          int iW = B.Border*B.Stretch;
-//          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
-
-//          blitdata Bbg = DEFAULT_BLITDATA;
-//          Bbg.Bitmap=StretchedDB;
-//          Bbg.Src=B.Dest-v2(3,3);
-//          Bbg.Dest=Bbg.Src;
-//          Bbg.Border=B.Border+v2(6,6);
-//          DoubleBuffer->NormalMaskedBlit(Bbg);
-
-//          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, iW, DARK_GRAY, true);
+  // full background where all items will be positioned above it
   v2 v2TopLeft;
-  v2TopLeft.X = rB.Dest.X;
+  v2TopLeft.X = FelistCurrentlyDrawn->v2OriginalPos.X;
   v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y;
 
   v2 v2Border;
-  v2Border.X = rB.Border.X*rB.Stretch;
-  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y;
+  v2Border.X = v2ItemFinalSize.X;
+  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y + v2ItemFinalSize.Y/2;
 
-  //          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
   rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
 
-  graphics::DrawRectangleOutlineAround(rB.Bitmap, 3, v2TopLeft, v2Border, DARK_GRAY, true);
+  graphics::DrawRectangleOutlineAround(rB.Bitmap, 2, v2TopLeft, v2Border, DARK_GRAY, true);
 }
 
 truth FelistDrawController()

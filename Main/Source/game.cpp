@@ -2348,14 +2348,16 @@ int game::CompareLightToInt(col24 L, col24 Int)
     return -1;
 }
 
-void prepareList(v2& topleft, int& iW){
+void prepareList(felist& rList, v2& v2TopLeft, int& iW){
   bool bAltItemPos = graphics::IsSRegionEnabled(iRegionListItem) && ivanconfig::IsAltListItemPos();
 
-  int iX=topleft.X+10,iY=topleft.Y+10;
+  rList.SetOriginalPos(v2TopLeft);
+
+  int iX=v2TopLeft.X+10,iY=v2TopLeft.Y+10;
   if(ivanconfig::GetDungeonGfxScale()>=2){
     //mainly to be drawn above the small dungeon (that gets scaled up)
-    iX=topleft.X-3;
-    iY=topleft.Y-3;
+    iX=v2TopLeft.X-3;
+    iY=v2TopLeft.Y-3;
   }
 
   int iItemW=bldListItem.Border.X*bldListItem.Stretch;
@@ -2369,7 +2371,7 @@ void prepareList(v2& topleft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
   
-  topleft={iX,iY};
+  v2TopLeft={iX,iY};
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
 }
@@ -2380,12 +2382,12 @@ int prepareListWidth(int iW){
 
 void game::SetStandardListAttributes(felist& List)
 {
-  v2 topleft = area::getTopLeftCorner();
+  v2 v2TopLeft = area::getTopLeftCorner();
   int iW = iListWidth;
 
-  prepareList(topleft, iW);
+  prepareList(List, v2TopLeft, iW);
 
-  List.SetPos(topleft);
+  List.SetPos(v2TopLeft);
   List.SetWidth(iW);
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
   List.SetUpKey(GetMoveCommandKey(KEY_UP_INDEX));

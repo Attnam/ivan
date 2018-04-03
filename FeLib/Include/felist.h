@@ -67,6 +67,7 @@ class felist
   static truth isAnyFelistCurrentlyDrawn();
   static void DrawCurrentListItemAltPos(blitdata& rB);
   static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
+  void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:
   void DrawDescription(bitmap*) const;
   std::vector<felistentry*> Entry;
@@ -84,6 +85,7 @@ class felist
   entrydrawer EntryDrawer;
   v2 v2FinalPageSize;
   static v2 v2SelectedPos;
+  v2 v2OriginalPos;
 };
 
 #endif
