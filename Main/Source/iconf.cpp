@@ -225,6 +225,31 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   }
 }
 
+void clearToBackgroundAfterChangeInterface(){
+  if(game::IsRunning())igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+}
+
+truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+truth ivanconfig::SilhouetteScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -233,8 +258,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -247,8 +271,7 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -257,6 +280,7 @@ truth ivanconfig::XBRZSquaresAroundPlayerChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how many squares around player should be prettyfied:"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -264,6 +288,7 @@ truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new item's list width to fit well with other elements:"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -271,6 +296,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -278,6 +304,7 @@ truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -286,8 +313,7 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -299,8 +325,7 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -312,8 +337,7 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -373,12 +397,6 @@ void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
-truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
-{
-  O->ChangeValue(O->Value % O->CycleCount + 1);
-  return true;
-}
-
 void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
@@ -393,18 +411,6 @@ void ivanconfig::SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
-}
-
-truth ivanconfig::SilhouetteScaleChangeInterface(cycleoption* O)
-{
-  O->ChangeValue(O->Value % O->CycleCount + 1);
-  return true;
-}
-
-truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
-{
-  O->ChangeValue(O->Value % O->CycleCount + 1);
-  return true;
 }
 
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)

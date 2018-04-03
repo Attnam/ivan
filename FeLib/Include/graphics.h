@@ -35,26 +35,35 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+
 #ifdef USE_SDL
   static void SetScale(int);
   static void SwitchMode();
 #endif
+
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
+
   static void SetMode(cchar*, cchar*, v2, int, truth);
   static void Stretch(bitmap* bmp, blitdata B);
   static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
-  static int AddStretchRegion(blitdata B,const char* strId);
+//  static void PreBlitDBForFelistToScreen(); //TODO
   static bitmap* prepareDoubleBuffer();
+
+  static int AddStretchRegion(blitdata B,const char* strId);
+  static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
   static bool IsSRegionEnabled(int iIndex);
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
-  static void SetSRegionShowWithFelist(int iIndex, bool b);
+  static void SetSRegionDrawAfterFelist(int iIndex, bool b);
+  static void SetSRegionDrawBeforeFelist(int iIndex, bool b);
+  static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
+
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(truth b);
   static v2 GetRes() { return Res; }
@@ -62,19 +71,23 @@ class graphics
   static void LoadDefaultFont(cfestring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
-  static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
+
 #ifdef USE_SDL
-#if SDL_MAJOR_VERSION == 1
-  static SDL_Surface* Screen;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  static SDL_Surface* TempSurface;
+  #if SDL_MAJOR_VERSION == 1
+    static SDL_Surface* Screen;
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+      static SDL_Surface* TempSurface;
+    #endif
+  #else
+    public:
+      static SDL_Window* GetWindow(){return Window;};
+    private:
+      static SDL_Window* Window;
+      static SDL_Renderer *Renderer;
+      static SDL_Texture *Texture;
+  #endif
 #endif
-#else
-  static SDL_Window* Window;
-  static SDL_Renderer *Renderer;
-  static SDL_Texture *Texture;
-#endif
-#endif
+
  private:
   static void (*SwitchModeHandler)();
 #ifdef __DJGPP__

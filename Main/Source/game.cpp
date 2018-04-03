@@ -410,7 +410,9 @@ void game::RegionSilhouetteEnable(bool b){
   if( b && ivanconfig::GetSilhouetteScale()>1 ){
     bldSilhouette.Stretch = ivanconfig::GetSilhouetteScale();
 
-    bldSilhouette.Dest = {silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()) -2, silhouettePos.Y};
+    bldSilhouette.Dest = {
+        silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()) -3,
+        silhouettePos.Y};
 
     graphics::SetSRegionBlitdata(iRegionSilhouette, bldSilhouette);
     graphics::SetSRegionEnabled(iRegionSilhouette, true);
@@ -444,13 +446,16 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
   if(iRegionSilhouette==-1){     // equiped items and humanoid silhouette region
     silhouettePos = humanoid::GetSilhouetteWhere();
     if(silhouettePos.X>0 && silhouettePos.Y>0){
-      silhouettePos.X -= 15; silhouettePos.Y -= 23; //top left corner of all equipped items countour
+      silhouettePos.X -= 15; silhouettePos.Y -= 23; //exact top left corner of all equipped items countour
+      silhouettePos-=v2(1,1); //1 dot b4
       bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
       bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
+      bldSilhouette.Border+=v2(3,3); //compensate for pos-1 and add +1 after border
       bldSilhouette.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
       graphics::SetSRegionForceXBRZ(iRegionSilhouette,true);
-      graphics::SetSRegionShowWithFelist(iRegionSilhouette,true);
+      graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
+      graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
     }
   }
 
@@ -461,6 +466,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionForceXBRZ(iRegionListItem,true);
+    graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
   }
 
 }
@@ -1041,7 +1047,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
 
     if(DoZoom())
-    {
+    { //TODO this could simply be another stretchregion
       B.Src = B.Dest;
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;
@@ -1643,6 +1649,8 @@ void game::BusyAnimation()
 
 void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
 {
+  graphics::SetAllowStretchedBlit(false);
+
   static clock_t LastTime = 0;
   static int Frame = 0;
   static blitdata B1 = { 0,
@@ -1682,6 +1690,8 @@ void game::BusyAnimation(bitmap* Buffer, truth ForceDraw)
 
     LastTime = clock();
   }
+
+  graphics::SetAllowStretchedBlit(true);
 }
 
 void game::CreateBusyAnimationCache()

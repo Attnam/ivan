@@ -54,6 +54,7 @@ graphics::vesainfo graphics::VesaInfo;
 graphics::modeinfo graphics::ModeInfo;
 #endif
 
+//TODO create a utility `class sregion{}` to set it's values outside here w/o using graphics::...
 struct stretchRegion //TODO all these booleans could be a single uint32? unnececessarily complicated?
 {
   int iIndex;
@@ -61,18 +62,20 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bEnabled;
   blitdata B;
   bool bForceXBRZ;
-  bool bShowWithFelist;
+  bool bDrawBeforeFelist;
+  bool bDrawAfterFelist;
   bool bSpecialListItem;
-//  bool bSpecialListItemAltPos;
+  bool bDrawRectangleOutline;
 };
-const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false};
+const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false,false,false};
 bool graphics::bSpecialListItemAltPos=false;
-
+bool bPreFelistBlitDB=false;
 std::vector<stretchRegion> vStretchRegion;
-bitmap* graphics::DoubleBuffer=NULL;
-bitmap* graphics::StretchedDB=NULL;
 truth graphics::bUseXbrzScale=false;
 truth graphics::bAllowStretchedRegionsBlit=false;
+
+bitmap* graphics::DoubleBuffer=NULL;
+bitmap* graphics::StretchedDB=NULL;
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -336,8 +339,14 @@ void graphics::SetSRegionEnabled(int iIndex, bool b){
 void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
   vStretchRegion[iIndex].bForceXBRZ=b;
 }
-void graphics::SetSRegionShowWithFelist(int iIndex, bool b){
-  vStretchRegion[iIndex].bShowWithFelist=b;
+void graphics::SetSRegionDrawBeforeFelist(int iIndex, bool b){
+  vStretchRegion[iIndex].bDrawBeforeFelist=b;
+}
+void graphics::SetSRegionDrawAfterFelist(int iIndex, bool b){
+  vStretchRegion[iIndex].bDrawAfterFelist=b;
+}
+void graphics::SetSRegionDrawRectangleOutline(int iIndex, bool b){
+  vStretchRegion[iIndex].bDrawRectangleOutline=b;
 }
 /**
  * there can only be one set at a time
@@ -351,7 +360,7 @@ void graphics::SetSRegionListItem(int iIndex){
   }
 
   vStretchRegion[iIndex].bSpecialListItem=true;
-  vStretchRegion[iIndex].bShowWithFelist=true;
+  vStretchRegion[iIndex].bDrawAfterFelist=true;
   vStretchRegion[iIndex].bEnabled=false;
 }
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
@@ -382,6 +391,12 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
+//void graphics::PreBlitDBForFelistToScreen(){ //TODO
+//  bPreFelistBlitDB=true;
+//  BlitDBToScreen();
+//  bPreFelistBlitDB=false;
+//}
+
 bitmap* graphics::prepareDoubleBuffer(){
   bitmap* DB = DoubleBuffer;
 
@@ -403,24 +418,24 @@ bitmap* graphics::prepareDoubleBuffer(){
 
       bOk=true; // try to disable below, is more clear to read long lists
 
-      if(!SR.bEnabled)bOk=false;DBGOK;
+      if(bOk)if(!SR.bEnabled)bOk=false;DBGOK;
 
-      if(felist::isAnyFelistCurrentlyDrawn() && !SR.bShowWithFelist)bOk=false;DBGOK;
+      if(bOk)if(B.Stretch<2)bOk=false;DBGOK;
 
-      if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;DBGOK;
+      if(bOk)if(felist::isAnyFelistCurrentlyDrawn() && !SR.bDrawAfterFelist)bOk=false;DBGOK;
 
-      if(B.Stretch<2)bOk=false;DBGOK;
+      if(bOk)if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;DBGOK;
 
       assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
-      if(B.Border.X==0 || B.Border.Y==0){DBGOK;
-        if(B.Border.Is0()){DBGOK; //being 0,0 may mean it is not ready yet.
+      if(bOk)if(B.Border.X==0 || B.Border.Y==0){DBGOK;
+        if(B.Border.Is0()){DBGOK; //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
           bOk=false;
         }else{DBGOK;
           assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
       }
 
-      assert(B.Dest.X>=0 && B.Dest.Y>=0);DBGOK;
+      assert(B.Dest.X>=0 && B.Dest.Y>=0);DBGOK; // only negatives are critical
 
       if(bOk){
         if(!bDidStretch){
@@ -434,8 +449,11 @@ bitmap* graphics::prepareDoubleBuffer(){
           if(bSpecialListItemAltPos){
             felist::DrawCurrentListItemAltPos(B);
           }
-          graphics::DrawRectangleOutlineAround(B.Bitmap, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
           DBGSRI("ListItem");
+        }
+
+        if(SR.bDrawRectangleOutline){
+          graphics::DrawRectangleOutlineAround(B.Bitmap, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
         }
 
         DBG2("Blitting",i);
