@@ -27,19 +27,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/audio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.415330665" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
 									<listOptionValue builtIn="false" value="WIZARD"/>
 									<listOptionValue builtIn="false" value="USE_SDL"/>
+									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="__WIN32__"/>
 									<listOptionValue builtIn="false" value="_WINMM_"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="IVAN_VERSION=&quot;0.50.8&quot;"/>
-									<listOptionValue builtIn="false" value="UNIX"/>
 									<listOptionValue builtIn="false" value="DBGMSG"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
@@ -52,17 +49,14 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/audio}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1407132300" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
 									<listOptionValue builtIn="false" value="WIZARD"/>
 									<listOptionValue builtIn="false" value="USE_SDL"/>
+									<listOptionValue builtIn="false" value="WIN32"/>
 									<listOptionValue builtIn="false" value="__WINDOWS_MM__"/>
 									<listOptionValue builtIn="false" value="&quot;IVAN_VERSION=\&quot;0.50.8\&quot;&quot;"/>
-									<listOptionValue builtIn="false" value="UNIX"/>
 									<listOptionValue builtIn="false" value="DBGMSG"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
@@ -97,22 +91,16 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.523463421" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.894021113" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.151746855" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1810501842" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="xbrzscale|Main/Source|FeLib/Source|craigsapp-midifile-462f55a|rtmidi-2.1.1|portmidi|SDL2_mixer-2.0.1|demos|mihail|igor|Main/Source/wterras.cpp|Main/Source/wterra.cpp|Main/Source/wsquare.cpp|Main/Source/worldmap.cpp|Main/Source/traps.cpp|Main/Source/trap.cpp|Main/Source/terra.cpp|Main/Source/team.cpp|Main/Source/stack.cpp|Main/Source/square.cpp|Main/Source/smoke.cpp|Main/Source/slot.cpp|Main/Source/rooms.cpp|Main/Source/room.cpp|Main/Source/rain.cpp|Main/Source/proto.cpp|Main/Source/pool.cpp|Main/Source/nonhuman.cpp|Main/Source/miscitem.cpp|Main/Source/materias.cpp|Main/Source/materia.cpp|Main/Source/lterras.cpp|Main/Source/lterra.cpp|Main/Source/lsquare.cpp|Main/Source/level.cpp|Main/Source/human.cpp|Main/Source/gods.cpp|Main/Source/god.cpp|Main/Source/gear.cpp|Main/Source/fluid.cpp|Main/Source/entity.cpp|Main/Source/database.cpp|Main/Source/cont.cpp|Main/Source/char.cpp|Main/Source/bodypart.cpp|Main/Source/area.cpp|Main/Source/actions.cpp|Main/Source/item.cpp|Main/Source/action.cpp|SDL2-2.0.4/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FeLib/Source"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Main/Source"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="xbrzscale"/>
+						<entry excluding="craigsapp-midifile-462f55a|rtmidi-2.1.1|portmidi|SDL2_mixer-2.0.1|demos|mihail|igor|Main/Source/wterras.cpp|Main/Source/wterra.cpp|Main/Source/wsquare.cpp|Main/Source/worldmap.cpp|Main/Source/traps.cpp|Main/Source/trap.cpp|Main/Source/terra.cpp|Main/Source/team.cpp|Main/Source/stack.cpp|Main/Source/square.cpp|Main/Source/smoke.cpp|Main/Source/slot.cpp|Main/Source/rooms.cpp|Main/Source/room.cpp|Main/Source/rain.cpp|Main/Source/proto.cpp|Main/Source/pool.cpp|Main/Source/nonhuman.cpp|Main/Source/miscitem.cpp|Main/Source/materias.cpp|Main/Source/materia.cpp|Main/Source/lterras.cpp|Main/Source/lterra.cpp|Main/Source/lsquare.cpp|Main/Source/level.cpp|Main/Source/human.cpp|Main/Source/gods.cpp|Main/Source/god.cpp|Main/Source/gear.cpp|Main/Source/fluid.cpp|Main/Source/entity.cpp|Main/Source/database.cpp|Main/Source/cont.cpp|Main/Source/char.cpp|Main/Source/bodypart.cpp|Main/Source/area.cpp|Main/Source/actions.cpp|Main/Source/item.cpp|Main/Source/action.cpp|SDL2-2.0.4/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -145,9 +133,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Main/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.876489057" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -170,9 +155,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/audio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/SDL2-2.0.4/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FeLib/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.377349473" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC"/>
@@ -218,9 +200,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/Main/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/FeLib/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/SDL2-2.0.4/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Ivan/xbrzscale/xbrz}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include/SDL2"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2094939906" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>

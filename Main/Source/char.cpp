@@ -2391,6 +2391,8 @@ void character::GetPlayerCommand()
 
   while(!HasActed)
   {
+    graphics::SetAllowStretchedBlit();
+
     game::DrawEverything();
 
     if(!StateIsActivated(FEARLESS) && game::GetDangerFound())

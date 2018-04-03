@@ -78,3 +78,5 @@ Save
 ######################### my preferences ############################
 dbgmsg.h
 dbgmsg.cpp
+/Linux/
+/SDL2-2.0.4/
