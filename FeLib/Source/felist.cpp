@@ -316,7 +316,7 @@ uint felist::Draw()
   FelistCurrentlyDrawn=0;
 
   if(bWaitKeyUp){
-    DBG1("WaitKeyUp");while(!WAIT_FOR_KEY_UP()){int i=0;};DBG1("WaitKeyUpDone"); //int to prevent empty block
+    DBG1("WaitKeyUp"); for(;;){if(WAIT_FOR_KEY_UP())break;}; DBG1("WaitKeyUpDone");
   }
   return Return;
 }

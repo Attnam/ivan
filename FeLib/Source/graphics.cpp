@@ -395,6 +395,7 @@ bitmap* graphics::prepareDoubleBuffer(){
     DBG2("StretchedBlitsTot=",vStretchRegion.size());
     bool bDidStretch=false;
     bool bOk=true;
+
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
       blitdata& B=SR.B;DBGSR;
@@ -435,12 +436,17 @@ bitmap* graphics::prepareDoubleBuffer(){
             B.Dest.Y=B.Src.Y - (B.Border.Y*B.Stretch/2);
             if(B.Dest.Y<0)B.Dest.Y=0;
           }
+//          int iW = B.Border*B.Stretch;
+//          StretchedDB->Fill(SR.v2FelistTopLeft-v2(iW,0), {iW,400}, BLACK);
+
 //          blitdata Bbg = DEFAULT_BLITDATA;
 //          Bbg.Bitmap=StretchedDB;
 //          Bbg.Src=B.Dest-v2(3,3);
 //          Bbg.Dest=Bbg.Src;
 //          Bbg.Border=B.Border+v2(6,6);
 //          DoubleBuffer->NormalMaskedBlit(Bbg);
+
+//          DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, iW, DARK_GRAY, true);
           DrawRectangleOutlineAround(B.Bitmap, 3, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
           DBGSRI("ListItem");
         }
@@ -451,7 +457,6 @@ bitmap* graphics::prepareDoubleBuffer(){
         }else{
           Stretch(DoubleBuffer,B);
         }
-        //TODO should outline only the requested rectangle //Bto.Bitmap->Outline(LIGHT_GRAY, 0xff, AVERAGE_PRIORITY);
 
         bDidStretch=true;
       }

@@ -2350,7 +2350,6 @@ int game::CompareLightToInt(col24 L, col24 Int)
 
 void prepareList(v2& topleft, int& iW){
   bool bAltItemPos = graphics::IsSRegionEnabled(iRegionListItem) && ivanconfig::IsAltListItemPos();
-  graphics::SetSpecialListItemAltPos(bAltItemPos);
 
   int iX=topleft.X+10,iY=topleft.Y+10;
   if(ivanconfig::GetDungeonGfxScale()>=2){
@@ -2372,6 +2371,8 @@ void prepareList(v2& topleft, int& iW){
   }
   
   topleft={iX,iY};
+
+  graphics::SetSpecialListItemAltPos(bAltItemPos);
 }
 
 int prepareListWidth(int iW){
