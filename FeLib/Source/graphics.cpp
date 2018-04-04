@@ -85,11 +85,13 @@ rawbitmap* graphics::DefaultFont = 0;
 
 #ifdef DBGMSG
   #include "dbgmsg.h"
+
   #define DBGSRI(info) dbgSRI(rSR,info)
   #define DBGSR DBGSRI("")
   #define DBGBL(rb,info) DBGSS(dbgBL(rb,info).str())
-  stringstream dbgBL(blitdata& rB,const char* strInfo){
-    stringstream ss;
+
+  std::stringstream dbgBL(blitdata& rB,const char* strInfo){
+    std::stringstream ss;
     ss<<strInfo<<"/"
       <<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/"
       <<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/"
@@ -99,6 +101,7 @@ rawbitmap* graphics::DefaultFont = 0;
     ;
     return ss;
   }
+
   void dbgSRI(stretchRegion& SR,const char* strInfo){
     blitdata& rB=SR.B;
     DBG1(strInfo
@@ -107,14 +110,10 @@ rawbitmap* graphics::DefaultFont = 0;
       <<"id="<<SR.strId<<"/"
       <<dbgBL(rB,"").str()
     );
-//      <<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/"
-//      <<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/"
-//      <<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/"
-//      <<"Stretch="<<rB.Stretch<<"/"
-//    );
   }
 #else
   #include "rmdbgmsg.h"
+
   #define DBGSRI(info)
   #define DBGSR
 #endif
@@ -466,8 +465,12 @@ bitmap* graphics::PrepareBuffer(){
 
       if(bOk && (pB->Stretch<2 ))bOk=false;DBGOK;
 
+//      if(bOk && (rSR.bDrawBeforeFelistPage))bOk=false;DBGOK; //bDrawBeforeFelistPage is not meant to work here.
+
       if(felist::isAnyFelistCurrentlyDrawn()){
         if(bOk && (!rSR.bDrawAfterFelist))bOk=false;DBGOK;
+      }else{
+        if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGOK;
       }
 
       assert(pB->Border.X>=0 && pB->Border.Y>=0); // only negatives are critical
@@ -488,16 +491,16 @@ bitmap* graphics::PrepareBuffer(){
           ReturnBuffer = StretchedDB; //and set stretched as the final source
         }
 
-        if(rSR.bSpecialListItem){
-          pB->Src = felist::GetCurrentListSelectedItemPos();
-          if(bSpecialListItemAltPos){
-            felist::PrepareListItemAltPosBackground(*pB);
-          }
-          DBGSRI("ListItem");
+        if(rSR.bSpecialListItem){ DBGSRI("ListItem");
+          pB->Src = felist::GetCurrentListSelectedItemPos(); //the tiny one
         }
 
-        if(rSR.bDrawRectangleOutline){
-          graphics::DrawRectangleOutlineAround(pB->Bitmap, pB->Dest, (pB->Border) * (pB->Stretch), DARK_GRAY, true);
+        if(rSR.bSpecialListItem && bSpecialListItemAltPos){
+          felist::PrepareListItemAltPosBackground(*pB); //let felist setup prepare it and work with it
+        }else{ // for bSpecialListItemAltPos felist draws the outline
+          if(rSR.bDrawRectangleOutline){
+            graphics::DrawRectangleOutlineAround(pB->Bitmap, pB->Dest, (pB->Border) * (pB->Stretch), DARK_GRAY, true);
+          }
         }
 
         DBGSRI("BLITTING");

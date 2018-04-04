@@ -12,6 +12,12 @@
 
 /* Compiled through itemset.cpp */
 
+#ifdef DBGMSG
+  #include "dbgmsg.h"
+#else
+  #include "rmdbgmsg.h"
+#endif
+
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
 truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE; }
@@ -2424,7 +2430,6 @@ truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
       else
         ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(),
                     Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
-
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
   }

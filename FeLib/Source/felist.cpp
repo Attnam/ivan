@@ -34,7 +34,11 @@ truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
 
-void felist::PrepareListItemAltPosBackground(blitdata& rB){
+bool felist::PrepareListItemAltPosBackground(blitdata& rB){
+  if(FelistCurrentlyDrawn==NULL)return false;
+
+  rB.Src = felist::GetCurrentListSelectedItemPos();
+
   v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
 
   int iExtraH = v2ItemFinalSize.Y/4;
@@ -55,7 +59,10 @@ void felist::PrepareListItemAltPosBackground(blitdata& rB){
 
   rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
 
+  // item outline
   graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft, v2Border, DARK_GRAY, true);
+
+  return true;
 }
 
 truth FelistDrawController()
@@ -151,7 +158,7 @@ uint felist::Draw()
   if(Entry.empty())
     return LIST_WAS_EMPTY;
 
-  FelistCurrentlyDrawn = this;
+  FelistCurrentlyDrawn = this;DBGLN;
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -339,7 +346,7 @@ uint felist::Draw()
 
   globalwindowhandler::DeInstallControlLoop(FelistDrawController);
 
-  FelistCurrentlyDrawn=0;
+  FelistCurrentlyDrawn=NULL;DBGLN;
 
   if(bWaitKeyUp){
     DBG1("WaitKeyUp"); for(;;){if(WAIT_FOR_KEY_UP())break;}; DBG1("WaitKeyUpDone");
