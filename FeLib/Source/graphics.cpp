@@ -382,10 +382,10 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
-void graphics::BlitDBToScreenOnceBeforeFelist(){
-  bDrawBeforeFelistPageOnce=true;
-  BlitDBToScreen();
-  bDrawBeforeFelistPageOnce=false;
+void graphics::BlitDBToScreenOnceBeforeFelist(){ //TODO store the dungeon visual in a new bitmap to keep drawing it b4 felist?
+//  bDrawBeforeFelistPageOnce=true;
+//  BlitDBToScreen();
+//  bDrawBeforeFelistPageOnce=false;
 }
 
 bitmap* graphics::prepareDoubleBuffer(){
