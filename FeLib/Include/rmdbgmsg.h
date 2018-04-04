@@ -1,3 +1,4 @@
+// just copy this file freely anywhere or it's contents
 #ifndef DBGMSG
 #define DBGSS(s)
 #define DBG1(a)
