@@ -451,7 +451,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
       silhouettePos-=v2(1,1); //1 dot b4
       bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
       bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
-      bldSilhouette.Border+=v2(3,3); //compensate for pos-1 and add +1 after border
+      bldSilhouette.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
       bldSilhouette.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
       graphics::SetSRegionForceXBRZ(iRegionSilhouette,true);

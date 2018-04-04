@@ -419,13 +419,10 @@ bitmap* graphics::prepareDoubleBuffer(){
 //          assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
 //        }
 //      }
-      if(bOk)if(!SR.bEnabled)bOk=false;DBGOK;
-
-      if(bOk)if(B.Stretch<2)bOk=false;DBGOK;
-
-      if(bOk)if(felist::isAnyFelistCurrentlyDrawn() && !SR.bDrawAfterFelist)bOk=false;DBGOK;
-
-      if(bOk)if(SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn())bOk=false;DBGOK;
+      if(bOk && (!SR.bEnabled                                               ))bOk=false;DBGOK;
+      if(bOk && (B.Stretch<2                                                ))bOk=false;DBGOK;
+      if(bOk && (felist::isAnyFelistCurrentlyDrawn() && !SR.bDrawAfterFelist))bOk=false;DBGOK;
+//      if(bOk && (SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn()))bOk=false;DBGOK;
 
       assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
       if(bOk)if(B.Border.X==0 || B.Border.Y==0){DBGOK;
