@@ -436,7 +436,7 @@ void graphics::DrawBeforeFelistPage(){
 
     if(!rSR.bDrawBeforeFelistPage)continue;
 
-    rSR.CacheBitmap->FastBlit(StretchedDB, rSR.B.Dest);
+    rSR.CacheBitmap->FastBlit(DoubleBuffer, rSR.B.Dest); // is a cache substitute to the region scaling
   }
 }
 
