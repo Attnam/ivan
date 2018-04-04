@@ -433,6 +433,7 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
       bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
       bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
+      graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true);
 
       // (will be above dungeon) around player on screen
       bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();

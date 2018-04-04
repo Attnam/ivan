@@ -62,14 +62,14 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bEnabled;
   blitdata B;
   bool bForceXBRZ;
-  bool bDrawBeforeFelist;
+  bool bDrawBeforeFelistPage;
   bool bDrawAfterFelist;
   bool bSpecialListItem;
   bool bDrawRectangleOutline;
 };
 const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false,false,false};
 bool graphics::bSpecialListItemAltPos=false;
-bool bPreFelistBlitDB=false;
+bool bDrawBeforeFelistPageOnce=false;
 std::vector<stretchRegion> vStretchRegion;
 truth graphics::bUseXbrzScale=false;
 truth graphics::bAllowStretchedRegionsBlit=false;
@@ -83,15 +83,10 @@ rawbitmap* graphics::DefaultFont = 0;
 
 #ifdef DBGMSG
   #include "dbgmsg.h"
-
-//#define DBGSRI(info) dbgSR(__FILENAME__,__LINE__,SR,info)
-  #define DBGSRI(info) dbgSR(SR,info)
+  #define DBGSRI(info) dbgSRI(SR,info)
   #define DBGSR DBGSRI("")
-
-  //void dbgSR(const char* fname, int iline, stretchRegion SR,const char* strInfo){
-  void dbgSR(stretchRegion SR,const char* strInfo){
+  void dbgSRI(stretchRegion& SR,const char* strInfo){
     blitdata Bto=SR.B;
-  //  std::cerr<<fname<<":"<<iline<<":"<<strInfo
     stringstream ss;ss<<strInfo
       <<"["<<SR.iIndex<<"]SR@"
       <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
@@ -99,11 +94,11 @@ rawbitmap* graphics::DefaultFont = 0;
       <<"Stretch="<<Bto.Stretch<<"/"
       <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
       <<"id="<<SR.strId<<"/"
-      <<std::endl;
+      ;
+    DBG1(ss.str());
   }
 #else
   #include "rmdbgmsg.h"
-
   #define DBGSRI(info)
   #define DBGSR
 #endif
@@ -335,8 +330,8 @@ void graphics::SetSRegionEnabled(int iIndex, bool b){
 void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
   vStretchRegion[iIndex].bForceXBRZ=b;
 }
-void graphics::SetSRegionDrawBeforeFelist(int iIndex, bool b){
-  vStretchRegion[iIndex].bDrawBeforeFelist=b;
+void graphics::SetSRegionDrawBeforeFelistPage(int iIndex, bool b){
+  vStretchRegion[iIndex].bDrawBeforeFelistPage=b;
 }
 void graphics::SetSRegionDrawAfterFelist(int iIndex, bool b){
   vStretchRegion[iIndex].bDrawAfterFelist=b;
@@ -387,33 +382,43 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
-//void graphics::PreBlitDBForFelistToScreen(){ //TODO
-//  bPreFelistBlitDB=true;
-//  BlitDBToScreen();
-//  bPreFelistBlitDB=false;
-//}
+void graphics::BlitDBToScreenOnceBeforeFelist(){
+  bDrawBeforeFelistPageOnce=true;
+  BlitDBToScreen();
+  bDrawBeforeFelistPageOnce=false;
+}
 
 bitmap* graphics::prepareDoubleBuffer(){
   bitmap* DB = DoubleBuffer;
 
   if(
-      bAllowStretchedRegionsBlit // TODO not at loading animations and speeches/bigTextTalks
+      bAllowStretchedRegionsBlit
       &&
       !iosystem::IsOnMenu() //main menu
       &&
       vStretchRegion.size()>0
   ){
-    DBG2("StretchedBlitsTot=",vStretchRegion.size());
     bool bDidStretch=false;
     bool bOk=true;
 
     for(int i=0;i<vStretchRegion.size();i++){
       stretchRegion SR=vStretchRegion[i];
-      blitdata& B=SR.B;DBGSR;
+      blitdata& B=SR.B;DBGSRI("tryBlit");
       assert(B.Bitmap==StretchedDB);
 
-      bOk=true; // try to disable below, is more clear to read long lists
-
+      bOk=true; // try to disable below, is easier to read long lists
+//      bOk=bOk&&(SR.bEnabled                                               );DBGOK;
+//      bOk=bOk&&(B.Stretch>=2                                              );DBGOK;
+//      bOk=bOk&&(felist::isAnyFelistCurrentlyDrawn() && SR.bDrawAfterFelist);DBGOK;
+//      if(bOk){
+//        assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
+//
+//        if(B.Border.Is0()){
+//          bOk=false; //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
+//        }else{
+//          assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
+//        }
+//      }
       if(bOk)if(!SR.bEnabled)bOk=false;DBGOK;
 
       if(bOk)if(B.Stretch<2)bOk=false;DBGOK;
@@ -452,7 +457,7 @@ bitmap* graphics::prepareDoubleBuffer(){
           graphics::DrawRectangleOutlineAround(B.Bitmap, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
         }
 
-        DBG2("Blitting",i);
+        DBGSRI("Blitting");//DBG3("Blitting",i,SR.strId);
         if(SR.bForceXBRZ){
           Stretch(true,DoubleBuffer,B);
         }else{

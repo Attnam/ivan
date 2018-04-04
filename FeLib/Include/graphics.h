@@ -62,7 +62,7 @@ class graphics
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
-  //  static void PreBlitDBForFelistToScreen(); //TODO
+  static void BlitDBToScreenOnceBeforeFelist();
   static bitmap* prepareDoubleBuffer();
 
   //TODO utility class for sregion
@@ -70,7 +70,7 @@ class graphics
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionForceXBRZ(int iIndex, bool b);
   static void SetSRegionDrawAfterFelist(int iIndex, bool b);
-  static void SetSRegionDrawBeforeFelist(int iIndex, bool b);
+  static void SetSRegionDrawBeforeFelistPage(int iIndex, bool b);
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
