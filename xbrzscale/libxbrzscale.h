@@ -16,7 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef XBRZLIB_RELATIVEPATHSDL
+#include <SDL2/SDL_stdinc.h>
+#else
 #include "SDL_stdinc.h"
+#endif
 
 struct SDL_Surface;
 
