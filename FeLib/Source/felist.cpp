@@ -34,7 +34,7 @@ truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
 
-void felist::DrawCurrentListItemAltPos(blitdata& rB){
+void felist::PrepareListItemAltPosBackground(blitdata& rB){
   v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
 
   int iExtraH = v2ItemFinalSize.Y/4;
@@ -194,6 +194,7 @@ uint felist::Draw()
   graphics::PrepareBeforeDrawingFelist();
   for(;;)
   {
+    graphics::DrawBeforeFelistPage();
     truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
 
     if(Flags & FADE)

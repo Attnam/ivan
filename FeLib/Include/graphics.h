@@ -46,8 +46,8 @@ class graphics
 #endif
 
   static void SetMode(cchar*, cchar*, v2, int, truth);
-  static void Stretch(bitmap* bmp, blitdata B);
-  static void Stretch(bool bXbrzMode, bitmap* bmpFrom, blitdata Bto);
+  static void Stretch(bitmap*, blitdata&);
+  static void Stretch(bool, bitmap*, blitdata&);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
 
@@ -63,6 +63,7 @@ class graphics
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
   static void PrepareBeforeDrawingFelist();
+  static void DrawBeforeFelistPage();
   static bitmap* PrepareBuffer();
 
   //TODO utility class for sregion
@@ -92,6 +93,7 @@ class graphics
 #endif
 
  private:
+  static void stretchFromDB(bool bForceXBRZ, blitdata* pBto);
   static void (*SwitchModeHandler)();
 #ifdef __DJGPP__
   static ulong BufferSize;
