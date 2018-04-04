@@ -191,9 +191,9 @@ uint felist::Draw()
     PageBegin = 0;
 
   bool bWaitKeyUp=false;
+  graphics::PrepareBeforeDrawingFelist();
   for(;;)
   {
-    graphics::BlitDBToScreenOnceBeforeFelist();
     truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
 
     if(Flags & FADE)

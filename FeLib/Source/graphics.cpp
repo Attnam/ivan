@@ -67,9 +67,9 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bSpecialListItem;
   bool bDrawRectangleOutline;
 };
-const stretchRegion SRdefault = {-1,NULL,true,DEFAULT_BLITDATA,false,false,false,false,false};
+const stretchRegion SRdefault = {-1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,false,false,false,false,false};
 bool graphics::bSpecialListItemAltPos=false;
-bool bDrawBeforeFelistPageOnce=false;
+bool bPrepareDoubleBufferJustBeforeFelist=false;
 std::vector<stretchRegion> vStretchRegion;
 truth graphics::bUseXbrzScale=false;
 truth graphics::bAllowStretchedRegionsBlit=false;
@@ -83,19 +83,27 @@ rawbitmap* graphics::DefaultFont = 0;
 
 #ifdef DBGMSG
   #include "dbgmsg.h"
-  #define DBGSRI(info) dbgSRI(SR,info)
+  #define DBGSRI(info) dbgSRI(rSR,info)
   #define DBGSR DBGSRI("")
   void dbgSRI(stretchRegion& SR,const char* strInfo){
-    blitdata Bto=SR.B;
-    stringstream ss;ss<<strInfo
+    blitdata& rB=SR.B;
+//    stringstream ss;ss<<strInfo
+//      <<"["<<SR.iIndex<<"]SR@"
+//      <<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/"
+//      <<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/"
+//      <<"Stretch="<<rB.Stretch<<"/"
+//      <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
+//      <<"id="<<SR.strId<<"/"
+//      ;
+//    DBG1(ss.str());
+    DBG1(strInfo
       <<"["<<SR.iIndex<<"]SR@"
-      <<"Src="<<Bto.Src.X<<","<<Bto.Src.Y<<"/"
-      <<"Dest="<<Bto.Dest.X<<","<<Bto.Dest.Y<<"/"
-      <<"Stretch="<<Bto.Stretch<<"/"
+      <<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/"
+      <<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/"
+      <<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/"
+      <<"Stretch="<<rB.Stretch<<"/"
       <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
-      <<"id="<<SR.strId<<"/"
-      ;
-    DBG1(ss.str());
+      <<"id="<<SR.strId<<"/");
   }
 #else
   #include "rmdbgmsg.h"
@@ -361,15 +369,14 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
   B.Bitmap = StretchedDB;
   if(iIndex==-1){ //add
     stretchRegion SRcp = SRdefault;
-    stretchRegion& SR = SRcp;
-    SR.B=B;
-    iIndex = SR.iIndex = vStretchRegion.size();
-    vStretchRegion.push_back(SR);
-    DBGSRI("Add");
+    stretchRegion& rSR = SRcp;
+    rSR.B=B;
+    iIndex = rSR.iIndex = vStretchRegion.size();
+    vStretchRegion.push_back(rSR);DBGSRI("Add");
   }else{ //update
-    stretchRegion& SR = vStretchRegion[iIndex];
-    DBG2(SR.iIndex,iIndex);assert(SR.iIndex==iIndex);
-    SR.B=B;
+    stretchRegion& rSR = vStretchRegion[iIndex];
+    DBG2(rSR.iIndex,iIndex);assert(rSR.iIndex==iIndex);
+    rSR.B=B;
     DBGSRI("Update");
   }
 
@@ -378,18 +385,35 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
 
 int graphics::AddStretchRegion(blitdata B,const char* strId){
   int i = SetSRegionBlitdata(-1, B);
-  vStretchRegion[i].strId=strId;
+  stretchRegion& rSR = vStretchRegion[i];
+  rSR.strId=strId;DBGSRI("AddOk");
   return i;
 }
 
-void graphics::BlitDBToScreenOnceBeforeFelist(){ //TODO store the dungeon visual in a new bitmap to keep drawing it b4 felist?
-//  bDrawBeforeFelistPageOnce=true;
-//  BlitDBToScreen();
-//  bDrawBeforeFelistPageOnce=false;
+int iCountPrepDBJBF=0;
+void graphics::PrepareBeforeDrawingFelist(){ //TODO store the dungeon visual in a new bitmap to keep drawing it b4 felist?
+  //TODO explain: so felist is actually freezing the contents below it in the doublebuffer?
+//  iCountPrepDBJBF++;
+  bPrepareDoubleBufferJustBeforeFelist=true;
+  DBG1("PrepareBeforeDrawingFelist:"<<iCountPrepDBJBF);
+  BlitDBToScreen(); // it will modify THE DoubleBuffer to show the stretched dungeon on it THIS TIME while felist is drawn
+  DBG1("PrepareBeforeDrawingFelist:OK");
+  bPrepareDoubleBufferJustBeforeFelist=false;
 }
 
-bitmap* graphics::prepareDoubleBuffer(){
-  bitmap* DB = DoubleBuffer;
+bitmap* graphics::PrepareBuffer(){
+  bitmap* ReturnBuffer = DoubleBuffer;
+
+//  if(bPrepareDoubleBufferBeforeFelist){
+//    for(int i=0;i<vStretchRegion.size();i++){
+//      stretchRegion SR=vStretchRegion[i];
+//      blitdata& B=SR.B;DBGSRI("tryBlit");
+//
+//      if(SR.bDrawBeforeFelistPage){
+//
+//      }
+//    }
+//  }
 
   if(
       bAllowStretchedRegionsBlit
@@ -402,71 +426,84 @@ bitmap* graphics::prepareDoubleBuffer(){
     bool bOk=true;
 
     for(int i=0;i<vStretchRegion.size();i++){
-      stretchRegion SR=vStretchRegion[i];
-      blitdata& B=SR.B;DBGSRI("tryBlit");
-      assert(B.Bitmap==StretchedDB);
+      stretchRegion& rSR=vStretchRegion[i];
+      blitdata& rB=rSR.B;DBGSRI("tryBlit");
 
-      bOk=true; // try to disable below, is easier to read long lists
-//      bOk=bOk&&(SR.bEnabled                                               );DBGOK;
-//      bOk=bOk&&(B.Stretch>=2                                              );DBGOK;
-//      bOk=bOk&&(felist::isAnyFelistCurrentlyDrawn() && SR.bDrawAfterFelist);DBGOK;
-//      if(bOk){
-//        assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
-//
-//        if(B.Border.Is0()){
-//          bOk=false; //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
-//        }else{
-//          assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
-//        }
+      bool bStretchThisOneAtDefaultDB = bPrepareDoubleBufferJustBeforeFelist && rSR.bDrawBeforeFelistPage;
+
+      //blit target
+      if(bStretchThisOneAtDefaultDB){
+        DBG1("count:"<<iCountPrepDBJBF++);
+        rB.Bitmap=DoubleBuffer;
+      }else{
+        assert(rB.Bitmap==StretchedDB);
+      }
+
+      // try to disable below, is easier to read long lists
+      bOk=true;
+
+      if(bOk && (!rSR.bEnabled))bOk=false;DBGOK;
+
+      if(bOk && (rB.Stretch<2 ))bOk=false;DBGOK;
+
+      if(bOk && bStretchThisOneAtDefaultDB){}
+      else
+      if(bOk && (felist::isAnyFelistCurrentlyDrawn() && !rSR.bDrawAfterFelist))bOk=false;DBGOK;
+//      if(bOk && felist::isAnyFelistCurrentlyDrawn()){
+//        if(SR.bDrawAfterFelist){DBGOK;}
+//        else
+//        if(bStretchThisOneAtDefaultDB){DBGOK;}
+//        else
+//        {bOk=false;DBGOK;}
 //      }
-      if(bOk && (!SR.bEnabled                                               ))bOk=false;DBGOK;
-      if(bOk && (B.Stretch<2                                                ))bOk=false;DBGOK;
-      if(bOk && (felist::isAnyFelistCurrentlyDrawn() && !SR.bDrawAfterFelist))bOk=false;DBGOK;
-//      if(bOk && (SR.bSpecialListItem && !felist::isAnyFelistCurrentlyDrawn()))bOk=false;DBGOK;
 
-      assert(B.Border.X>=0 && B.Border.Y>=0); // only negatives are critical
-      if(bOk)if(B.Border.X==0 || B.Border.Y==0){DBGOK;
-        if(B.Border.Is0()){DBGOK; //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
+      assert(rB.Border.X>=0 && rB.Border.Y>=0); // only negatives are critical
+      if(bOk)if(rB.Border.X==0 || rB.Border.Y==0){DBGOK;
+        if(rB.Border.Is0()){DBGOK; //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
           bOk=false;
         }else{DBGOK;
-          assert(B.Border.X>0 && B.Border.Y>0); //minimum (if not 0,0) is 1,1
+          assert(rB.Border.X>0 && rB.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
       }
 
-      assert(B.Dest.X>=0 && B.Dest.Y>=0);DBGOK; // only negatives are critical
+      assert(rB.Dest.X>=0 && rB.Dest.Y>=0);DBGOK; // only negatives are critical
 
       if(bOk){
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
-          DoubleBuffer->FastBlit(StretchedDB); //simple copy (like a 3rd buffer)
-          DB = StretchedDB; //and set stretched as the final source
+          if(!bPrepareDoubleBufferJustBeforeFelist)DoubleBuffer->FastBlit(StretchedDB); //simple copy (like a 3rd buffer)
+          ReturnBuffer = StretchedDB; //and set stretched as the final source
         }
 
-        if(SR.bSpecialListItem){
-          B.Src = felist::GetCurrentListSelectedItemPos();
+        if(rSR.bSpecialListItem){
+          rB.Src = felist::GetCurrentListSelectedItemPos();
           if(bSpecialListItemAltPos){
-            felist::DrawCurrentListItemAltPos(B);
+            felist::DrawCurrentListItemAltPos(rB);
           }
           DBGSRI("ListItem");
         }
 
-        if(SR.bDrawRectangleOutline){
-          graphics::DrawRectangleOutlineAround(B.Bitmap, B.Dest, B.Border*B.Stretch, DARK_GRAY, true);
+        if(rSR.bDrawRectangleOutline){
+          graphics::DrawRectangleOutlineAround(rB.Bitmap, rB.Dest, rB.Border*rB.Stretch, DARK_GRAY, true);
         }
 
-        DBGSRI("Blitting");//DBG3("Blitting",i,SR.strId);
-        if(SR.bForceXBRZ){
-          Stretch(true,DoubleBuffer,B);
+        DBGSRI("BLITTING");//DBG3("Blitting",i,SR.strId);
+        if(rSR.bForceXBRZ){
+          Stretch(true,DoubleBuffer,rB);
         }else{
-          Stretch(DoubleBuffer,B);
+          Stretch(DoubleBuffer,rB);
         }
 
         bDidStretch=true;
       }
+
+      if(bStretchThisOneAtDefaultDB){
+        rB.Bitmap=StretchedDB; //restore to assert again if it was not modified outside here!
+      }
     }
   }
 
-  return DB;
+  return ReturnBuffer;
 }
 
 void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
@@ -496,7 +533,7 @@ void graphics::BlitDBToScreen()
 
   SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 #else
-  packcol16* SrcPtr = prepareDoubleBuffer()->GetImage()[0];
+  packcol16* SrcPtr = PrepareBuffer()->GetImage()[0];
   void* DestPtr;
   int Pitch;
 

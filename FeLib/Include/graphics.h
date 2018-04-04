@@ -62,8 +62,8 @@ class graphics
   static void SetStretchMode(truth isXbrz);
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
-  static void BlitDBToScreenOnceBeforeFelist();
-  static bitmap* prepareDoubleBuffer();
+  static void PrepareBeforeDrawingFelist();
+  static bitmap* PrepareBuffer();
 
   //TODO utility class for sregion
   static bool IsSRegionEnabled(int iIndex);
