@@ -172,7 +172,7 @@ class game
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
-  static void PrepareStretchRegions();
+  static void PrepareStretchRegionsLazy();
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);

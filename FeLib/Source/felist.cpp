@@ -59,7 +59,9 @@ bool felist::PrepareListItemAltPosBackground(blitdata& rB){
 
   rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
 
-  // item outline
+  // full background outline
+//  v2 v2ShrinkBy={2,2};
+//  graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft+v2ShrinkBy, v2Border-(v2ShrinkBy*2), DARK_GRAY, true);
   graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft, v2Border, DARK_GRAY, true);
 
   return true;

@@ -395,7 +395,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
 }
 
 void game::RegionListItemEnable(bool b){
-  game::PrepareStretchRegions();
+  game::PrepareStretchRegionsLazy();
   if(iRegionListItem==-1)return;
 
   // src pos is set at felist
@@ -404,7 +404,7 @@ void game::RegionListItemEnable(bool b){
 }
 
 void game::RegionSilhouetteEnable(bool b){
-  game::PrepareStretchRegions();
+  game::PrepareStretchRegionsLazy();
   if(iRegionSilhouette==-1)return;
 
   if( b && ivanconfig::GetSilhouetteScale()>1 ){
@@ -422,7 +422,7 @@ void game::RegionSilhouetteEnable(bool b){
 
 }
 
-void game::PrepareStretchRegions(){ // the ADD order IS important IF they overlap
+void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they overlap
   if(iRegionIndexDungeon==-1){
     if(ivanconfig::GetDungeonGfxScale()>1){
       // dungeon visible area (Bitmap must be NULL)
@@ -435,6 +435,9 @@ void game::PrepareStretchRegions(){ // the ADD order IS important IF they overla
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true);
 
+      /*******************
+       * player
+       *******************/
       // (will be above dungeon) around player on screen
       bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
       iRegionPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");
@@ -666,7 +669,7 @@ truth game::Init(cfestring& Name)
   if(bSuccess){ // for loaded or new game
     ZoomPos = {RES.X - 104, RES.Y - 112};
     graphics::SetStretchMode(ivanconfig::IsXBRZScale());
-    PrepareStretchRegions();
+    PrepareStretchRegionsLazy();
   }
 
   return bSuccess;
