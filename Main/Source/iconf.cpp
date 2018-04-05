@@ -480,16 +480,31 @@ void ivanconfig::CalculateContrastLuminance()
   ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 
+// TODO keep initializing with invalid values (where possible) so if they are used before cfg file loading it will show errors clearly?
+int  ivanconfig::iStartingWindowWidth=-1;
+int  ivanconfig::iStartingWindowHeight=-1;
+int  ivanconfig::iStartingDungeonGfxScale=-1;
+bool ivanconfig::bStartingOutlinedGfx=false;
+
 void ivanconfig::Initialize()
 {
+  // game core setup
   configsystem::AddOption(&DefaultName);
   configsystem::AddOption(&DefaultPetName);
   configsystem::AddOption(&AutoSaveInterval);
+
+  // about the overall game window
   configsystem::AddOption(&Contrast);
   configsystem::AddOption(&WindowWidth);
   configsystem::AddOption(&WindowHeight);
+
+  // gameplay changes
+  configsystem::AddOption(&BeNice);
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
+  configsystem::AddOption(&SmartOpenCloseApply);
+
+  // about graphics
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
   configsystem::AddOption(&XBRZSquaresAroundPlayer);
@@ -497,11 +512,11 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AltListItemPos);
   configsystem::AddOption(&AltListItemWidth);
   configsystem::AddOption(&DungeonGfxScale);
-  configsystem::AddOption(&DirectionKeyMap);
-  configsystem::AddOption(&SmartOpenCloseApply);
-  configsystem::AddOption(&BeNice);
-  configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&OutlinedGfx);
+
+  // system config, user interface/input
+  configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
 
@@ -525,6 +540,13 @@ void ivanconfig::Initialize()
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
   configsystem::Load();
+
+  // apply some settings after loading the config file
+  iStartingWindowWidth=WindowWidth.Value;
+  iStartingWindowHeight=WindowHeight.Value;
+  iStartingDungeonGfxScale=DungeonGfxScale.Value;
+  bStartingOutlinedGfx=OutlinedGfx.Value;
+
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);

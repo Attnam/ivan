@@ -66,7 +66,7 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-	if(ivanconfig::IsOutlinedGfx()){
+	if(ivanconfig::IsStartingOutlinedGfx()){
 		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
 		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
 		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
@@ -80,7 +80,7 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(ivanconfig::GetWindowWidth(), ivanconfig::GetWindowHeight()),
+                      v2(ivanconfig::GetStartingWindowWidth(), ivanconfig::GetStartingWindowHeight()),
                       ivanconfig::GetGraphicsScale(),
                       ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
@@ -585,11 +585,11 @@ void igraph::CreateBackGround(int ColorType)
   delete BackGround;
   BackGround = new bitmap(RES);
   int base=1024; //TODO explain this: fractals require multiple of 1024 to work/workBetter?
-  while(ivanconfig::GetWindowWidth()>base)base+=1024;
+  while(ivanconfig::GetStartingWindowWidth()>base)base+=1024;
   int Side = base+1;
   int** Map;
   Alloc2D(Map, Side, Side); //TODO confirm and explain this: it seems fractals work better on a squared img right?
-  femath::GenerateFractalMap(Map, Side, Side - 1, ivanconfig::GetWindowWidth());
+  femath::GenerateFractalMap(Map, Side, Side - 1, ivanconfig::GetStartingWindowWidth());
 
   for(int x = 0; x < RES.X; ++x)
     for(int y = 0; y < RES.Y; ++y)

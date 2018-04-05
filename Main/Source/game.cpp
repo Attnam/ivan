@@ -211,7 +211,7 @@ void game::SetIsRunning(truth What) { Running = What; }
 int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
   if(iMaxXSize==0){
     // 800 provides 42. 800/16=50. 42=50-8. 8 magic number for whatever is drawn to the right of the dungeon.
-    iMaxXSize = ivanconfig::GetWindowWidth()/TILE_SIZE;
+    iMaxXSize = ivanconfig::GetStartingWindowWidth()/TILE_SIZE;
     iMaxXSize-=8;
   }
   return iMaxXSize;
@@ -220,7 +220,7 @@ int game::GetMaxScreenXSize() { //this generally should not be used when the cam
 int game::GetMaxScreenYSize() { //this generally should not be used when the campera position is part of the calculations
   if(iMaxYSize==0){
     // 600 provides 26. 600/16=37. 26=37-11. 11 magic number for whatever is drawn below of the dungeon.
-    iMaxYSize = ivanconfig::GetWindowHeight()/TILE_SIZE;
+    iMaxYSize = ivanconfig::GetStartingWindowHeight()/TILE_SIZE;
     iMaxYSize-=11;
   }
   return iMaxYSize;
@@ -229,7 +229,7 @@ int game::GetMaxScreenYSize() { //this generally should not be used when the cam
 int game::GetScreenXSize() { //actually dugeon visible width in tiles count
   if(iXSize==0){
     iXSize=GetMaxScreenXSize();
-    iXSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some columns, no way to fit as scaler is integer and not float
+    iXSize/=ivanconfig::GetStartingDungeonGfxScale(); //yes, may lose some columns, no way to fit as scaler is integer and not float
   }
   return iXSize;
 }
@@ -237,7 +237,7 @@ int game::GetScreenXSize() { //actually dugeon visible width in tiles count
 int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
   if(iYSize==0){
     iYSize=GetMaxScreenYSize();
-    iYSize/=ivanconfig::GetDungeonGfxScale(); //yes, may lose some lines, no way to fit as scaler is integer and not float
+    iYSize/=ivanconfig::GetStartingDungeonGfxScale(); //yes, may lose some lines, no way to fit as scaler is integer and not float
   }
   return iYSize;
 }
@@ -393,8 +393,8 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   v2 deltaForFullDungeonSrc = {bldPlayerOnScreen.Src.X-bldFullDungeon.Src.X, bldPlayerOnScreen.Src.Y-bldFullDungeon.Src.Y};
 
   // relative to full dungeon over it's stretched image position
-  bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetDungeonGfxScale());
-  bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetDungeonGfxScale());
+  bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
+  bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
   graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen);
 }
@@ -443,14 +443,14 @@ void game::UpdateSRegionsXBRZ(){
 
 void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they overlap
   if(iRegionIndexDungeon==-1){
-    if(ivanconfig::GetDungeonGfxScale()>1){
+    if(ivanconfig::GetStartingDungeonGfxScale()>1){
       // dungeon visible area (Bitmap must be NULL)
       // workaround: only one line of the border will be stretched, hence src -1 and border +2
       v2 topleft = area::getTopLeftCorner();
       bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
       bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
       bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-      bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
+      bldFullDungeon.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
       iTotSRegions++;
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true);
@@ -459,7 +459,7 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
        * player
        *******************/
       // (will be above dungeon) around player on screen
-      bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
+      bldPlayerOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionXBRZPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");
       iTotSRegions++;
     }
@@ -2385,7 +2385,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
   rList.SetOriginalPos(v2TopLeft);
 
   int iX=v2TopLeft.X+10,iY=v2TopLeft.Y+10;
-  if(ivanconfig::GetDungeonGfxScale()>=2){
+  if(ivanconfig::GetStartingDungeonGfxScale()>=2){
     //mainly to be drawn above the small dungeon (that gets scaled up)
     iX=v2TopLeft.X-3;
     iY=v2TopLeft.Y-3;

@@ -23,16 +23,14 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
-  static long GetWindowWidth() { return WindowWidth.Value; }
-  static long GetWindowHeight() { return WindowHeight.Value; }
-//  static long GetDungeonColumns() { return DungeonColumns.Value; }
-//  static long GetDungeonLines() { return DungeonLines.Value; }
+  static long GetStartingWindowWidth() { return iStartingWindowWidth; }
+  static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
-  static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
+  static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
@@ -41,7 +39,7 @@ class ivanconfig
   static truth IsAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
-  static truth IsOutlinedGfx() { return OutlinedGfx.Value; }
+  static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -101,26 +99,38 @@ class ivanconfig
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
+
   static stringoption DefaultName;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
+
   static scrollbaroption Contrast;
+
   static numberoption WindowWidth;
+  static int iStartingWindowWidth;
+
   static numberoption WindowHeight;
-//  static numberoption DungeonColumns;
-//  static numberoption DungeonLines;
+  static int iStartingWindowHeight;
+
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
-  static cycleoption DungeonGfxScale;
+
+  static cycleoption  DungeonGfxScale;
+  static int iStartingDungeonGfxScale;
+
+  static truthoption   OutlinedGfx;
+  static bool bStartingOutlinedGfx;
+
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static cycleoption SilhouetteScale;
-  static truthoption SmartOpenCloseApply;
-  static truthoption BeNice;
   static truthoption AltListItemPos;
   static numberoption AltListItemWidth;
+
+  static truthoption SmartOpenCloseApply;
+  static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
 #ifndef __DJGPP__
@@ -130,7 +140,6 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
-  static truthoption OutlinedGfx;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
