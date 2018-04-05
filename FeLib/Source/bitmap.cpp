@@ -1190,6 +1190,7 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   return srf;
 }
 
+bool bUseAlpha=false; //TODO alpha work kept to re-enable if useful some day, must be fixed/tested anyway
 bool bXbrzLibCfgInitialized=false;
 /**
  * stretch from 2 to 6 only!
@@ -1207,11 +1208,11 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     bXbrzLibCfgInitialized=true;
   }
 
-  SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //based on xbrzscale code
+  SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //format based on xbrzscale code
 
   Uint32 color32bit;
   packcol16 PixelFrom;
-  unsigned char cr,cg,cb,ca;
+  unsigned char cr,cg,cb,ca=0xff;
   bool bFreeImg=false;
 
   SDL_Surface* imgCopy = SurfaceCache(Bto,false);
@@ -1221,7 +1222,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     for(int y1 = 0; y1 < Bto.Border.Y; y1++)
     {
       PixelFrom = Image[Bto.Src.Y + y1][Bto.Src.X + x1];
-      ca = PixelFrom == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
+      if(bUseAlpha)ca = PixelFrom == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
       color32bit = SDL_MapRGBA(
         fmt,
         (unsigned char)GetRed16(PixelFrom),
@@ -1242,7 +1243,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     {
       color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);
       SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);
-      if(ca!=0){
+      if(!bUseAlpha || ca!=0){
         Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);
       }
     }
