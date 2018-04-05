@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -306,25 +307,31 @@ void game::ClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot) {
   if(i==0)return;
 
   lsquare* plsq = Player->GetLSquareUnder();
-  v2 pos = plsq->GetPos();DBG3("PlayerPos",pos.X,pos.Y);
-  v2 posUpperLeft (pos.X-i,pos.Y-i);
-  v2 posLowerRight(pos.X+i+1,pos.Y+i+1);
+  v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+  v2 v2SqrPosMaxUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);
+  v2 v2SqrPosMaxLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);
 
-  v2 chkPos(posUpperLeft);
+  v2 v2ChkSqrPos(v2SqrPosMaxUpperLeft);
   square* psqChk;
-  for(int iY=posUpperLeft.Y;iY<posLowerRight.Y;iY++){
-    for(int iX=posUpperLeft.X;iX<posLowerRight.X;iX++){
-      chkPos={iX,iY};
-      psqChk = Player->GetArea()->GetSquare(chkPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
+  std::vector<v2> vv2;
+  for(int iY=v2SqrPosMaxUpperLeft.Y;iY<v2SqrPosMaxLowerRight.Y;iY++){
+    for(int iX=v2SqrPosMaxUpperLeft.X;iX<v2SqrPosMaxLowerRight.X;iX++){
+      v2ChkSqrPos={iX,iY};
+      psqChk = Player->GetArea()->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
       if(!psqChk->CanBeSeenByPlayer()){
-        v2 clearAt(
-          topLeftScreenDot.X + ((chkPos.X - posUpperLeft.X)*TILE_SIZE),
-          topLeftScreenDot.Y + ((chkPos.Y - posUpperLeft.Y)*TILE_SIZE)
-        );
-        //TODO graphics::ClearDoubleBufferSquareAt(clearAt, TILE_V2); //TODO can this mess things up here? better send what to clear and graphics take care of it... just testing anyway...
+//        vv2.push_back(v2(
+//          topLeftScreenDot.X + ((v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE),
+//          topLeftScreenDot.Y + ((v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE)
+//        ));
+        vv2.push_back(v2(
+          (v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE,
+          (v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE
+        ));
       }
     }
   }
+
+  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2);
 }
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()

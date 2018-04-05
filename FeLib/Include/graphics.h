@@ -73,7 +73,7 @@ class graphics
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
-  static void ClearDoubleBufferSquareAt(v2 pos, v2 size);
+  static void SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2);
 
 #ifdef USE_SDL
   #if SDL_MAJOR_VERSION == 1

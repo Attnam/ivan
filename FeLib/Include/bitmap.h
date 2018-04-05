@@ -38,7 +38,7 @@ struct blitdata
   col16 MaskColor;
   ulong CustomData;
 };
-#define DEFAULT_BLITDATA {NULL,{0,0},{0,0},{0,0},{0},TRANSPARENT_COLOR,0} //easy initializer TODO should be TRANSPARENT_COLOR? TODO update everywere with this default and just apply there differences to shrink the code?
+#define DEFAULT_BLITDATA {NULL,{0,0},{0,0},{0,0}, {0}, TRANSPARENT_COLOR,0} //easy initializer TODO should be TRANSPARENT_COLOR? TODO update everywere with this default and just apply there differences to shrink the code?
 
 class bitmap
 {
