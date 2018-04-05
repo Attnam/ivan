@@ -65,7 +65,7 @@ class felist
   void SetDownKey(uint What) { DownKey = What; }
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
   static truth isAnyFelistCurrentlyDrawn();
-  static bool PrepareListItemAltPosBackground(blitdata& rB);
+  static bool PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg);
   static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:

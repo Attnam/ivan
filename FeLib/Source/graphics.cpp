@@ -495,12 +495,18 @@ bitmap* graphics::PrepareBuffer(){
           pB->Src = felist::GetCurrentListSelectedItemPos(); //the tiny one
         }
 
-        if(rSR.bSpecialListItem && bSpecialListItemAltPos){
-          felist::PrepareListItemAltPosBackground(*pB); //let felist setup prepare it and work with it
-        }else{ // for bSpecialListItemAltPos felist draws the outline
-          if(rSR.bDrawRectangleOutline){
-            graphics::DrawRectangleOutlineAround(pB->Bitmap, pB->Dest, (pB->Border) * (pB->Stretch), DARK_GRAY, true);
+        bool bDrawSROutline=rSR.bDrawRectangleOutline;
+        if(rSR.bSpecialListItem){
+          if(bSpecialListItemAltPos){
+            bool bAltPosFullBkg=false; //TODO user option ? doesnt look too good anyway..
+            // let felist re-configure the blitdata before the stretching below
+            felist::PrepareListItemAltPosBackground(*pB,bAltPosFullBkg);
+            if(bAltPosFullBkg)bDrawSROutline=false;
           }
+        }
+
+        if(bDrawSROutline){
+          graphics::DrawRectangleOutlineAround(pB->Bitmap, pB->Dest, (pB->Border) * (pB->Stretch), DARK_GRAY, true);
         }
 
         DBGSRI("BLITTING");
@@ -516,9 +522,10 @@ bitmap* graphics::PrepareBuffer(){
 
 void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
   bmpAt->DrawRectangle(
-      v2TopLeft-v2(2,2),
-      v2TopLeft+v2Border+v2(1,1),
-      color, wide);
+    v2TopLeft-v2(2,2),
+    v2TopLeft+v2Border+v2(1,1),
+    color, wide
+  );
 }
 
 void graphics::BlitDBToScreen()

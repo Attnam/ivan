@@ -34,12 +34,13 @@ truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
 
-bool felist::PrepareListItemAltPosBackground(blitdata& rB){
+bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
   if(FelistCurrentlyDrawn==NULL)return false;
 
   rB.Src = felist::GetCurrentListSelectedItemPos();
 
-  v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
+//  v2 v2ItemFinalSize(rB.Border.X*rB.Stretch, rB.Border.Y*rB.Stretch);
+  v2 v2ItemFinalSize(rB.Border*rB.Stretch);
 
   int iExtraH = v2ItemFinalSize.Y/4;
 
@@ -49,20 +50,20 @@ bool felist::PrepareListItemAltPosBackground(blitdata& rB){
   if(rB.Dest.Y<0)rB.Dest.Y=0;
 
   // full background where all items will be drawn above it
-  v2 v2TopLeft;
-  v2TopLeft.X = FelistCurrentlyDrawn->v2OriginalPos.X;
-  v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y - iExtraH;
+  if(bAltPosFullBkg){
+    v2 v2TopLeft;
+    v2TopLeft.X = FelistCurrentlyDrawn->v2OriginalPos.X;
+    v2TopLeft.Y = FelistCurrentlyDrawn->Pos.Y - iExtraH;
 
-  v2 v2Border;
-  v2Border.X = v2ItemFinalSize.X;
-  v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y + iExtraH*2;
+    v2 v2Border;
+    v2Border.X = v2ItemFinalSize.X;
+    v2Border.Y = FelistCurrentlyDrawn->v2FinalPageSize.Y + iExtraH*2;
 
-  rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
+    rB.Bitmap->Fill(v2TopLeft, v2Border, BLACK);
 
-  // full background outline
-//  v2 v2ShrinkBy={2,2};
-//  graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft+v2ShrinkBy, v2Border-(v2ShrinkBy*2), DARK_GRAY, true);
-  graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft, v2Border, DARK_GRAY, true);
+    // full background outline
+    graphics::DrawRectangleOutlineAround(rB.Bitmap, v2TopLeft, v2Border, DARK_GRAY, true);
+  }
 
   return true;
 }
