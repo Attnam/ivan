@@ -299,34 +299,23 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-/**
- * SBS stands for Square By Square
- *
- * TODO collect all visible squares around player within range and blit them scaled up with xbrz
- * TODO each square on the dungeon can be a region to be scaled OR only create regions for squares around player
- */
-void game::UpdatePlayerOnScreenSBSBlitdata() {
+void game::ClearNonVisibleSquaresAroundPlayer() {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
 
-  /* TODO rework tips:
-  v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
-  igraph::DrawCursor(ScreenCoord, SpecialCursorData[c]);
-  GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
-  */
+  lsquare* plsq = Player->GetLSquareUnder();
+  v2 pos = plsq->GetPos();
+  DBG3("PlayerPos",pos.X,pos.Y);
+  v2 posUpperLeft (pos.X-i,pos.Y-i);
+  v2 posLowerRight(pos.X+i+1,pos.Y+i+1);
 
-  square* sqPlayer = Player->GetSquareUnder();
-
-  square* sqTopLeft;
-  for(int k=i;k>0;k--)sqTopLeft=sqPlayer->GetNearSquare({0,0});
-
-  square* sq=sqTopLeft;
-  int iW,iH;iW=iH=i*2;
-  for(int iY=0;iY<iH;iY++){
-    for(int iX=0;iX<iW;iX++){
-      if(sq->CanBeSeenByPlayer()){
-        //TODO collet image to blit as scaled region
-      }
+  v2 chkPos(posUpperLeft);
+  square* psqChk;
+  for(int iY=posUpperLeft.Y;iY<posLowerRight.Y;iY++){
+    for(int iX=posUpperLeft.X;iX<posLowerRight.X;iX++){
+      chkPos={iX,iY};
+      psqChk = Player->GetArea()->GetSquare(chkPos);
+      DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
     }
   }
 }
@@ -334,8 +323,8 @@ void game::UpdatePlayerOnScreenSBSBlitdata() {
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
   if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
 
-  int iXBRZSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
-  if(iXBRZSAP==0 || DoZoom()){
+  int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
+  if(iSAP==0 || DoZoom()){
     graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,false);
     return;
   }
@@ -351,41 +340,40 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
 
   v2 delta = {posPlr.X-posCam.X, posPlr.Y-posCam.Y};
 
-  v2 deltaForUpperLeft=delta;
-  deltaForUpperLeft.X-=iXBRZSAP;
-  deltaForUpperLeft.Y-=iXBRZSAP;
+  v2 deltaSquaresForUpperLeft=delta;
+  deltaSquaresForUpperLeft.X-=iSAP;
+  deltaSquaresForUpperLeft.Y-=iSAP;
 //  std::cout<<"deltaForUpperLeft="<<deltaForUpperLeft.X<<","<<deltaForUpperLeft.Y<<std::endl;
 
-  int iX = iXBRZSAP;
-  int iY = iXBRZSAP;
+  int iSrcSquareX = iSAP;
+  int iSrcSquareY = iSAP;
 
-  if(deltaForUpperLeft.X<0)iX+=deltaForUpperLeft.X;
-  if(deltaForUpperLeft.Y<0)iY+=deltaForUpperLeft.Y;
+  if(deltaSquaresForUpperLeft.X<0)iSrcSquareX+=deltaSquaresForUpperLeft.X;
+  if(deltaSquaresForUpperLeft.Y<0)iSrcSquareY+=deltaSquaresForUpperLeft.Y;
 
 //  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
 
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*iX;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iY;
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*iSrcSquareX;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iSrcSquareY;
 
   bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
-  int iBX=iXBRZSAP*2;
-  int iBY=iXBRZSAP*2;
+  v2 borderSquares(iSAP*2,iSAP*2);
 
-  if(deltaForUpperLeft.Y<0)iBY+=deltaForUpperLeft.Y;
-  if(deltaForUpperLeft.X<0)iBX+=deltaForUpperLeft.X;
+  if(deltaSquaresForUpperLeft.X<0)borderSquares.X+=deltaSquaresForUpperLeft.X;
+  if(deltaSquaresForUpperLeft.Y<0)borderSquares.Y+=deltaSquaresForUpperLeft.Y;
 
   v2 deltaForLowerRight=delta;
-  deltaForLowerRight.X=GetScreenXSize()-deltaForLowerRight.X-iXBRZSAP-1;
-  deltaForLowerRight.Y=GetScreenYSize()-deltaForLowerRight.Y-iXBRZSAP-1;
+  deltaForLowerRight.X=GetScreenXSize()-deltaForLowerRight.X-iSAP-1;
+  deltaForLowerRight.Y=GetScreenYSize()-deltaForLowerRight.Y-iSAP-1;
 
-  if(deltaForLowerRight.X<0)iBX+=deltaForLowerRight.X;
-  if(deltaForLowerRight.Y<0)iBY+=deltaForLowerRight.Y;
+  if(deltaForLowerRight.X<0)borderSquares.X+=deltaForLowerRight.X;
+  if(deltaForLowerRight.Y<0)borderSquares.Y+=deltaForLowerRight.Y;
 
 //  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
 
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*iBX);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*iBY);
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*borderSquares.X);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*borderSquares.Y);
 
   // this grants positioninig on the upper left player's square corner
 
@@ -397,6 +385,8 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
   graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen);
+
+  ClearNonVisibleSquaresAroundPlayer();
 }
 
 void game::RegionListItemEnable(bool b){
@@ -456,9 +446,9 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
       iTotSRegions++;
 
-      /*******************
-       * player
-       *******************/
+      /**********
+       * player *
+       **********/
       // (will be above dungeon) around player on screen
       bldPlayerOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionXBRZPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");

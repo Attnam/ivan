@@ -1244,7 +1244,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
       color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);
       SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);
       if(!bUseAlpha || ca!=0){
-        Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);
+        Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb); //TODO does alpha make any sense here anyway?
       }
     }
   }

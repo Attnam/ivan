@@ -70,7 +70,7 @@ truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           &configsystem::NormalTruthChangeInterface,
                                           &XBRZScaleChanger);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
-                                          "Stretch squares around player with xBRZ",
+                                          "Stretch squares around player with xBRZ (performance)",
                                           3,
                                           &XBRZSquaresAroundPlayerDisplayer,
                                           &XBRZSquaresAroundPlayerChangeInterface,
