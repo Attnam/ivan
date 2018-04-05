@@ -63,9 +63,6 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
-truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
-                                          "use xBRZScale to stretch look mode only",
-                                          false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use xBRZScale to stretch graphics",
                                           false,
@@ -73,7 +70,7 @@ truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           &configsystem::NormalTruthChangeInterface,
                                           &XBRZScaleChanger);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
-                                          "how many squares around player should be xBRZ scaled",
+                                          "Stretch squares around player with xBRZ",
                                           3,
                                           &XBRZSquaresAroundPlayerDisplayer,
                                           &XBRZSquaresAroundPlayerChangeInterface,
@@ -101,10 +98,10 @@ truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
 truthoption ivanconfig::AltListItemPos(   "AltListItemPos",
-                                          "scaled list item alternative position",
+                                          "Stretched list item alternative position",
                                           false);
 numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
-                                          "list width for 'item alternative position'",
+                                          "List width for 'item alternative position'",
                                           game::getDefaultItemsListWidth(),
                                           &AltListItemWidthDisplayer,
                                           &AltListItemWidthChangeInterface,
@@ -281,7 +278,7 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 
 truth ivanconfig::XBRZSquaresAroundPlayerChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how many squares around player should be prettyfied:"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how many squares around player to xBRZ (0=FullDungeon):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -495,15 +492,14 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
-  configsystem::AddOption(&XBRZScaleLookMode);
   configsystem::AddOption(&XBRZSquaresAroundPlayer);
   configsystem::AddOption(&SilhouetteScale);
+  configsystem::AddOption(&AltListItemPos);
+  configsystem::AddOption(&AltListItemWidth);
   configsystem::AddOption(&DungeonGfxScale);
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
-  configsystem::AddOption(&AltListItemPos);
-  configsystem::AddOption(&AltListItemWidth);
   configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);

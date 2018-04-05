@@ -31,7 +31,6 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
-  static truth IsXBRZScaleLookMode() { return XBRZScaleLookMode.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetDungeonGfxScale() { return DungeonGfxScale.Value; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
@@ -114,7 +113,6 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
-  static truthoption XBRZScaleLookMode;
   static cycleoption DungeonGfxScale;
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
