@@ -61,7 +61,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   const char* strId;
   bool bEnabled;
   blitdata B;
-  bool bForceXBRZ;
+  bool bUseXBRZ;
   bool bDrawBeforeFelistPage;
   bool bDrawAfterFelist;
   bool bSpecialListItem;
@@ -73,7 +73,6 @@ bool graphics::bSpecialListItemAltPos=false;
 bool bPrepareCacheBitmapsBeforeFelist=false;
 bool bDrawCacheBitmapsBeforeFelist=false;
 std::vector<stretchRegion> vStretchRegion;
-truth graphics::bUseXbrzScale=false;
 truth graphics::bAllowStretchedRegionsBlit=false;
 
 bitmap* graphics::DoubleBuffer=NULL;
@@ -106,7 +105,7 @@ rawbitmap* graphics::DefaultFont = 0;
     blitdata& rB=SR.B;
     DBG1(strInfo
       <<"["<<SR.iIndex<<"]SR@"
-      <<"bForceXBRZ="<<SR.bForceXBRZ<<"/"
+      <<"bForceXBRZ="<<SR.bUseXBRZ<<"/"
       <<"id="<<SR.strId<<"/"
       <<dbgBL(rB,"").str()
     );
@@ -320,19 +319,12 @@ void graphics::BlitDBToScreen()
 
 #else
 
-void graphics::Stretch(bitmap* pBmpFrom, blitdata& rBto){
-  Stretch(bUseXbrzScale,pBmpFrom,rBto);
-}
 void graphics::Stretch(bool bXbrzMode, bitmap* pBmpFrom, blitdata& rBto){
   if(bXbrzMode){
     pBmpFrom->StretchBlitXbrz(rBto);
   }else{
     pBmpFrom->StretchBlit(rBto);
   }
-}
-
-void graphics::SetStretchMode(truth isXbrz){
-  bUseXbrzScale = isXbrz;
 }
 
 bool graphics::IsSRegionEnabled(int iIndex){
@@ -342,8 +334,8 @@ bool graphics::IsSRegionEnabled(int iIndex){
 void graphics::SetSRegionEnabled(int iIndex, bool b){
   vStretchRegion[iIndex].bEnabled=b;
 }
-void graphics::SetSRegionForceXBRZ(int iIndex, bool b){
-  vStretchRegion[iIndex].bForceXBRZ=b;
+void graphics::SetSRegionUseXBRZ(int iIndex, bool b){
+  vStretchRegion[iIndex].bUseXBRZ=b;
 }
 void graphics::SetSRegionDrawBeforeFelistPage(int iIndex, bool b){
   vStretchRegion[iIndex].bDrawBeforeFelistPage=b;
@@ -397,14 +389,6 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
-void graphics::stretchFromDB(bool bForceXBRZ, blitdata* pBto){
-  if(bForceXBRZ){
-    Stretch(true,DoubleBuffer,*pBto);
-  }else{
-    Stretch(DoubleBuffer,*pBto);
-  }
-}
-
 void graphics::PrepareBeforeDrawingFelist(){
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion& rSR=vStretchRegion[i];
@@ -424,7 +408,7 @@ void graphics::PrepareBeforeDrawingFelist(){
     B.Bitmap = rSR.CacheBitmap;
     B.Dest=v2(0,0);
 
-    stretchFromDB(rSR.bForceXBRZ, &B);
+    Stretch(rSR.bUseXBRZ, DoubleBuffer, B);
   }
 }
 
@@ -509,8 +493,8 @@ bitmap* graphics::PrepareBuffer(){
           graphics::DrawRectangleOutlineAround(pB->Bitmap, pB->Dest, (pB->Border) * (pB->Stretch), DARK_GRAY, true);
         }
 
-        DBGSRI("BLITTING");
-        stretchFromDB(rSR.bForceXBRZ,pB);
+        DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
+        Stretch(rSR.bUseXBRZ, DoubleBuffer, *pB);
 
         bDidStretch=true;
       }

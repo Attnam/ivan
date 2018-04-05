@@ -422,6 +422,20 @@ void game::RegionSilhouetteEnable(bool b){
 
 }
 
+int iTotSRegions=0;
+void game::UpdateSRegionsXBRZ(){
+  for(int i=0;i<iTotSRegions;i++){
+    if(i==iRegionIndexDungeon){
+      if(ivanconfig::GetXBRZSquaresAroundPlayer()>0){
+        graphics::SetSRegionUseXBRZ(iRegionIndexDungeon,false);
+        continue;
+      }
+    }
+
+    graphics::SetSRegionUseXBRZ(i,ivanconfig::IsXBRZScale());
+  }
+}
+
 void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they overlap
   if(iRegionIndexDungeon==-1){
     if(ivanconfig::GetDungeonGfxScale()>1){
@@ -433,6 +447,7 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
       bldFullDungeon.Stretch = ivanconfig::GetDungeonGfxScale();
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
+      iTotSRegions++;
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true);
 
       /*******************
@@ -441,7 +456,7 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       // (will be above dungeon) around player on screen
       bldPlayerOnScreen.Stretch = ivanconfig::GetDungeonGfxScale();
       iRegionPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");
-      graphics::SetSRegionForceXBRZ(iRegionPlayerOnScreen,true);
+      iTotSRegions++;
     }
   }
 
@@ -457,7 +472,7 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       bldSilhouette.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
       bldSilhouette.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
-      graphics::SetSRegionForceXBRZ(iRegionSilhouette,true);
+      iTotSRegions++;
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
     }
@@ -468,11 +483,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     bldListItem.Border = TILE_V2;
     bldListItem.Stretch = iZoomFactor;
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
+    iTotSRegions++;
     graphics::SetSRegionListItem(iRegionListItem);
-    graphics::SetSRegionForceXBRZ(iRegionListItem,true);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
   }
 
+  UpdateSRegionsXBRZ();
 }
 
 truth game::Init(cfestring& Name)
@@ -668,7 +684,6 @@ truth game::Init(cfestring& Name)
 
   if(bSuccess){ // for loaded or new game
     ZoomPos = {RES.X - 104, RES.Y - 112};
-    graphics::SetStretchMode(ivanconfig::IsXBRZScale());
     PrepareStretchRegionsLazy();
   }
 
@@ -1049,7 +1064,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
 
     if(DoZoom())
-    { //TODO this could simply be another stretchregion
+    { //TODO could this zoom feature simply be another stretchregion?
       B.Src = B.Dest;
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;

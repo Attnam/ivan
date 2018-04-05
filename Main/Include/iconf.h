@@ -97,6 +97,7 @@ class ivanconfig
   static void DungeonGfxScaleChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
+  static void XBRZScaleChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
   static void VolumeHandler(long);

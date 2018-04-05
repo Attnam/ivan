@@ -67,8 +67,11 @@ truthoption ivanconfig::XBRZScaleLookMode("XBRZScaleLookMode",
                                           "use xBRZScale to stretch look mode only",
                                           false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "* use xBRZScale to stretch all other gfx",
-                                          false);
+                                          "use xBRZScale to stretch graphics",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &XBRZScaleChanger);
 numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
                                           "how many squares around player should be xBRZ scaled",
                                           3,
@@ -421,6 +424,13 @@ void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
+}
+
+void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
+{
+  O->Value = What;
+
+  game::UpdateSRegionsXBRZ();
 }
 
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)

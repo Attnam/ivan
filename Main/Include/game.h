@@ -173,6 +173,7 @@ class game
   static void DeInit();
   static void Run();
   static void PrepareStretchRegionsLazy();
+  static void UpdateSRegionsXBRZ();
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);
