@@ -431,6 +431,8 @@ int iTotSRegions=0;
 void game::UpdateSRegionsXBRZ(){
   for(int i=0;i<iTotSRegions;i++){
     if(i==iRegionIndexDungeon){
+      graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true,ivanconfig::IsXBRZScale());
+
       if(ivanconfig::GetXBRZSquaresAroundPlayer()>0){
         graphics::SetSRegionUseXBRZ(iRegionIndexDungeon,false);
         continue;
@@ -453,7 +455,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       bldFullDungeon.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
       iTotSRegions++;
-      graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true);
 
       /*******************
        * player

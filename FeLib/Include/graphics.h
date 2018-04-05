@@ -69,7 +69,7 @@ class graphics
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionUseXBRZ(int iIndex, bool b);
   static void SetSRegionDrawAfterFelist(int iIndex, bool b);
-  static void SetSRegionDrawBeforeFelistPage(int iIndex, bool b);
+  static void SetSRegionDrawBeforeFelistPage(int iIndex, bool, bool);
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);

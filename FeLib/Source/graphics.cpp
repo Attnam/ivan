@@ -62,13 +62,14 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bEnabled;
   blitdata B;
   bool bUseXBRZ;
+  bool bUseXBRZDrawBeforeFelistPage;
   bool bDrawBeforeFelistPage;
   bool bDrawAfterFelist;
   bool bSpecialListItem;
   bool bDrawRectangleOutline;
   bitmap* CacheBitmap;
 };
-const stretchRegion SRdefault = {-1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,false,false,false,false,false,NULL};
+const stretchRegion SRdefault = {-1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,false,false,false,false,false,false,NULL};
 bool graphics::bSpecialListItemAltPos=false;
 bool bPrepareCacheBitmapsBeforeFelist=false;
 bool bDrawCacheBitmapsBeforeFelist=false;
@@ -337,8 +338,9 @@ void graphics::SetSRegionEnabled(int iIndex, bool b){
 void graphics::SetSRegionUseXBRZ(int iIndex, bool b){
   vStretchRegion[iIndex].bUseXBRZ=b;
 }
-void graphics::SetSRegionDrawBeforeFelistPage(int iIndex, bool b){
-  vStretchRegion[iIndex].bDrawBeforeFelistPage=b;
+void graphics::SetSRegionDrawBeforeFelistPage(int iIndex, bool bDrawBeforeFelistPage, bool bUseXBRZDrawBeforeFelistPage){
+  vStretchRegion[iIndex].bDrawBeforeFelistPage=bDrawBeforeFelistPage;
+  vStretchRegion[iIndex].bUseXBRZDrawBeforeFelistPage=bUseXBRZDrawBeforeFelistPage;
 }
 void graphics::SetSRegionDrawAfterFelist(int iIndex, bool b){
   vStretchRegion[iIndex].bDrawAfterFelist=b;
@@ -408,7 +410,7 @@ void graphics::PrepareBeforeDrawingFelist(){
     B.Bitmap = rSR.CacheBitmap;
     B.Dest=v2(0,0);
 
-    Stretch(rSR.bUseXBRZ, DoubleBuffer, B);
+    Stretch(rSR.bUseXBRZ || rSR.bUseXBRZDrawBeforeFelistPage, DoubleBuffer, B);
   }
 }
 
