@@ -132,7 +132,7 @@ command* commandsystem::Command[] =
   0
 };
 
-truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepareCmdsDescrCode.sh (use cygwin)
+truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
   cchar* str = Command[iIndex]->GetDescription();
   if(strcmp(str,"apply")==0)return true;
 //  if(strcmp(str,"chat")==0)return true;
@@ -150,7 +150,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepar
 //  if(strcmp(str,"kick")==0)return true;
 //  if(strcmp(str,"look")==0)return true;
 //  if(strcmp(str,"name")==0)return true;
-//  if(strcmp(str,"offer")==0)return true;
+  if(strcmp(str,"offer")==0)return true;
   if(strcmp(str,"open")==0)return true;
   if(strcmp(str,"pick up")==0)return true;
 //  if(strcmp(str,"pray")==0)return true;
@@ -192,16 +192,15 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see helper script prepar
   if(strcmp(str,"polymorph")==0)return true;
   return false;
 }
-truth commandsystem::IsForRegionSilhouette(int iIndex){ //see helper script prepareCmdsDescrCode.sh (use cygwin)
+truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
   cchar* str = Command[iIndex]->GetDescription();
-//  if(strcmp(str,"dip")==0)return true;
-//  if(strcmp(str,"apply")==0)return true;
+  if(strcmp(str,"apply")==0)return true;
 //  if(strcmp(str,"chat")==0)return true;
 //  if(strcmp(str,"close")==0)return true;
-//  if(strcmp(str,"dip")==0)return true;
-//  if(strcmp(str,"drink")==0)return true;
-//  if(strcmp(str,"drop")==0)return true;
-//  if(strcmp(str,"eat")==0)return true;
+  if(strcmp(str,"dip")==0)return true;
+  if(strcmp(str,"drink")==0)return true;
+  if(strcmp(str,"drop")==0)return true;
+  if(strcmp(str,"eat")==0)return true;
 //  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
@@ -211,9 +210,9 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see helper script prep
 //  if(strcmp(str,"kick")==0)return true;
 //  if(strcmp(str,"look")==0)return true;
 //  if(strcmp(str,"name")==0)return true;
-//  if(strcmp(str,"offer")==0)return true;
+  if(strcmp(str,"offer")==0)return true;
   if(strcmp(str,"open")==0)return true;
-//  if(strcmp(str,"pick up")==0)return true;
+  if(strcmp(str,"pick up")==0)return true;
 //  if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
 //  if(strcmp(str,"read")==0)return true;
@@ -228,14 +227,14 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see helper script prep
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
-//  if(strcmp(str,"throw")==0)return true;
+  if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
 //  if(strcmp(str,"wait")==0)return true;
-//  if(strcmp(str,"wield in right arm")==0)return true;
-//  if(strcmp(str,"wield in left arm")==0)return true;
+  if(strcmp(str,"wield in right arm")==0)return true;
+  if(strcmp(str,"wield in left arm")==0)return true;
 //  if(strcmp(str,"wizard mode activation")==0)return true;
-//  if(strcmp(str,"zap")==0)return true;
+  if(strcmp(str,"zap")==0)return true;
 //  if(strcmp(str,"raise stats")==0)return true;
 //  if(strcmp(str,"lower stats")==0)return true;
 //  if(strcmp(str,"see whole map")==0)return true;
@@ -250,7 +249,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see helper script prep
 //  if(strcmp(str,"summon monster")==0)return true;
 //  if(strcmp(str,"level teleport")==0)return true;
 //  if(strcmp(str,"possess creature")==0)return true;
-//  if(strcmp(str,"polymorph")==0)return true;
+  if(strcmp(str,"polymorph")==0)return true;
   return false;
 }
 
