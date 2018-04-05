@@ -232,7 +232,10 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* src_img, int scale){
  * dst_img if not null may be re-used, and is also returned
  */
 SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img, int scale){
-  if(scale<2 || scale>6){std::cerr<<"invalid stretch value min=2, max=6, requested="<<scale<<std::endl;exit(1);}
+  if(scale<2 || scale>6){
+    fprintf(stderr, "invalid stretch value min=2, max=6, requested=%d\n", scale);
+    return NULL;
+  }
 
   int src_width = src_img->w;
   int src_height = src_img->h;
@@ -263,7 +266,7 @@ SDL_Surface* libxbrzscale::scale(SDL_Surface* dst_imgCache, SDL_Surface* src_img
 
   if (!dst_imgCache) {
     if(!bUseCache){DeleteCache(false);dest=NULL;}
-    if(bEnableOutput)fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
+    fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError()); //error messages must always output
     return NULL;
   }
 
