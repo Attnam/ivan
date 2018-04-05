@@ -39,7 +39,7 @@ class libxbrzscale
     bFreeOutputSurfaceAfterScale=bOutputSurface;
   };
   static void setUseCache(bool b){bUseCache=b;};
-  static uint32_t* surfaceToUint32(SDL_Surface* img);
+  static uint32_t* surfaceToUint32(bool bIn, SDL_Surface* img);
   static void uint32toSurface(uint32_t* dest, SDL_Surface* dst_img);
   static bool isDbgMsg(){return bDbgMsg;}
  private:
