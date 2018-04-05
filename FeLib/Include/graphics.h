@@ -64,7 +64,7 @@ class graphics
   static void DrawBeforeFelistPage();
   static bitmap* PrepareBuffer();
 
-  //TODO utility class for sregion
+  //TODO utility class for sregion?
   static bool IsSRegionEnabled(int iIndex);
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionUseXBRZ(int iIndex, bool b);
@@ -73,6 +73,7 @@ class graphics
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
+  static void ClearDoubleBufferSquareAt(v2 pos, v2 size);
 
 #ifdef USE_SDL
   #if SDL_MAJOR_VERSION == 1

@@ -24,7 +24,9 @@
 #endif
 
 #ifdef DBGMSG
-#include "dbgmsg.h"
+  #include "dbgmsg.h"
+#else
+  #include "rmdbgmsg.h"
 #endif
 
 #include "allocate.h"
@@ -299,13 +301,12 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::ClearNonVisibleSquaresAroundPlayer() {
+void game::ClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
 
   lsquare* plsq = Player->GetLSquareUnder();
-  v2 pos = plsq->GetPos();
-  DBG3("PlayerPos",pos.X,pos.Y);
+  v2 pos = plsq->GetPos();DBG3("PlayerPos",pos.X,pos.Y);
   v2 posUpperLeft (pos.X-i,pos.Y-i);
   v2 posLowerRight(pos.X+i+1,pos.Y+i+1);
 
@@ -314,8 +315,14 @@ void game::ClearNonVisibleSquaresAroundPlayer() {
   for(int iY=posUpperLeft.Y;iY<posLowerRight.Y;iY++){
     for(int iX=posUpperLeft.X;iX<posLowerRight.X;iX++){
       chkPos={iX,iY};
-      psqChk = Player->GetArea()->GetSquare(chkPos);
-      DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
+      psqChk = Player->GetArea()->GetSquare(chkPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
+      if(!psqChk->CanBeSeenByPlayer()){
+        v2 clearAt(
+          topLeftScreenDot.X + ((chkPos.X - posUpperLeft.X)*TILE_SIZE),
+          topLeftScreenDot.Y + ((chkPos.Y - posUpperLeft.Y)*TILE_SIZE)
+        );
+        //TODO graphics::ClearDoubleBufferSquareAt(clearAt, TILE_V2); //TODO can this mess things up here? better send what to clear and graphics take care of it... just testing anyway...
+      }
     }
   }
 }
@@ -386,7 +393,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
 
   graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen);
 
-  ClearNonVisibleSquaresAroundPlayer();
+  ClearNonVisibleSquaresAroundPlayer(bldPlayerOnScreen.Src);
 }
 
 void game::RegionListItemEnable(bool b){

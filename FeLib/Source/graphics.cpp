@@ -391,6 +391,10 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
   return i;
 }
 
+void graphics::ClearDoubleBufferSquareAt(v2 pos, v2 size){
+  DoubleBuffer->Fill(pos,size,TRANSPARENT_COLOR);
+}
+
 void graphics::PrepareBeforeDrawingFelist(){
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion& rSR=vStretchRegion[i];
