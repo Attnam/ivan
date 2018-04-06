@@ -98,8 +98,8 @@ rawbitmap* graphics::DefaultFont = 0;
 #ifdef DBGMSG
   #include "dbgmsg.h"
 
-  #define DBGSRI(info) dbgSRI(rSR,info)
-  #define DBGSR DBGSRI("")
+  #define DBGSRI(info)    dbgSRI(rSR,info)
+  #define DBGSR           DBGSRI("")
   #define DBGBLD(rb,info) DBGSS(dbgBLD(rb,info).str())
 
   std::stringstream dbgBLD(blitdata& rB,const char* strInfo){
@@ -127,7 +127,7 @@ rawbitmap* graphics::DefaultFont = 0;
 
   #define DBGSRI(info)
   #define DBGSR
-  #define DBGBLD
+  #define DBGBLD(rb,info)
 #endif
 
 void graphics::Init()
