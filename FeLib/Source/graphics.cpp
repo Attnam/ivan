@@ -448,7 +448,7 @@ void graphics::PrepareBeforeDrawingFelist(){
     B.Bitmap = rSR.CacheBitmap;
     B.Dest=v2(0,0);
 
-    Stretch(rSR.bUseXBRZ || rSR.bUseXBRZDrawBeforeFelistPage, DoubleBuffer, B, false);
+    Stretch(rSR.bUseXBRZ && rSR.bUseXBRZDrawBeforeFelistPage, DoubleBuffer, B, false);
   }
 }
 
