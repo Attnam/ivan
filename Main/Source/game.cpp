@@ -325,7 +325,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
 //  v2 posCam = GetCamera();
   area* pa = Player->GetArea();
   for(int iY=v2SqrUpperLeft.Y;iY<v2SqrLowerRight.Y;iY++){
-    if(iY<0 || iY>=pa->GetXSize())continue;
+    if(iY<0 || iY>=pa->GetYSize())continue;
 
     for(int iX=v2SqrUpperLeft.X;iX<v2SqrLowerRight.X;iX++){
       if(iX<0 || iX>=pa->GetXSize())continue;
