@@ -24,12 +24,6 @@
 #include <direct.h>
 #endif
 
-#ifdef DBGMSG
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
-
 #include "allocate.h"
 #include "area.h"
 #include "audio.h"
@@ -67,6 +61,20 @@
 #define LOADED 0
 #define NEW_GAME 1
 #define BACK 2
+
+#ifdef DBGMSG
+  #include "dbgmsg.h"
+  #define DBGV2(v2,info) DBGSS(dbgV2(v2,info).str())
+  std::stringstream dbgV2(v2 v2Val,const char* c){
+    std::stringstream ss;
+    ss<<c<<"/";DBGLN;
+    ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";DBGLN;
+    return ss;
+  }
+#else
+  #include "rmdbgmsg.h"
+  #define DBGV2(v2,info)
+#endif
 
 int game::CurrentLevelIndex;
 truth game::InWilderness = false;
@@ -232,7 +240,7 @@ int game::GetMaxScreenYSize() { //this generally should not be used when the cam
 int game::GetScreenXSize() { //actually dugeon visible width in tiles count
   if(iXSize==0){
     iXSize=GetMaxScreenXSize();
-    iXSize/=ivanconfig::GetStartingDungeonGfxScale(); //yes, may lose some columns, no way to fit as scaler is integer and not float
+    iXSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("DungeonColumns",iXSize); //yes, may lose some columns, no way to fit as scaler is integer and not float
   }
   return iXSize;
 }
@@ -240,7 +248,7 @@ int game::GetScreenXSize() { //actually dugeon visible width in tiles count
 int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
   if(iYSize==0){
     iYSize=GetMaxScreenYSize();
-    iYSize/=ivanconfig::GetStartingDungeonGfxScale(); //yes, may lose some lines, no way to fit as scaler is integer and not float
+    iYSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("DungeonLines",iYSize); //yes, may lose some lines, no way to fit as scaler is integer and not float
   }
   return iYSize;
 }
@@ -302,30 +310,64 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::ClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot) {
+//void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot) {
+//  int i=ivanconfig::GetXBRZSquaresAroundPlayer();
+//  if(i==0)return;
+//
+//  lsquare* plsq = Player->GetLSquareUnder();
+//  v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+//  v2 v2SqrPosMaxUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);
+//  v2 v2SqrPosMaxLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);
+//
+//  v2 v2ChkSqrPos(v2SqrPosMaxUpperLeft);
+//  square* psqChk;
+//  std::vector<v2> vv2;
+//  for(int iY=v2SqrPosMaxUpperLeft.Y;iY<v2SqrPosMaxLowerRight.Y;iY++){
+//    for(int iX=v2SqrPosMaxUpperLeft.X;iX<v2SqrPosMaxLowerRight.X;iX++){
+//      v2ChkSqrPos={iX,iY};
+//      psqChk = Player->GetArea()->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
+//      if(!psqChk->CanBeSeenByPlayer()){
+////        vv2.push_back(v2(
+////          topLeftScreenDot.X + ((v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE),
+////          topLeftScreenDot.Y + ((v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE)
+////        ));
+//        vv2.push_back(v2(
+//          (v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE,
+//          (v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE
+//        ));
+//      }
+//    }
+//  }
+//
+//  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2);
+//}
+
+void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
 
   lsquare* plsq = Player->GetLSquareUnder();
   v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2SqrPosMaxUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);
-  v2 v2SqrPosMaxLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);
+  v2 v2SqrUpperLeft (v2PlayerPos.X-i  ,v2PlayerPos.Y-i  );DBGV2(v2SqrUpperLeft,"v2SqrUpperLeft");
+  v2 v2SqrLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
 
-  v2 v2ChkSqrPos(v2SqrPosMaxUpperLeft);
+  v2 v2ChkSqrPos(v2SqrUpperLeft);
   square* psqChk;
   std::vector<v2> vv2;
-  for(int iY=v2SqrPosMaxUpperLeft.Y;iY<v2SqrPosMaxLowerRight.Y;iY++){
-    for(int iX=v2SqrPosMaxUpperLeft.X;iX<v2SqrPosMaxLowerRight.X;iX++){
+  v2 posCam = GetCamera();
+  area* pa = Player->GetArea();
+  for(int iY=v2SqrUpperLeft.Y;iY<v2SqrLowerRight.Y;iY++){
+    if(iY<0 || iY>=pa->GetXSize())continue;
+
+    for(int iX=v2SqrUpperLeft.X;iX<v2SqrLowerRight.X;iX++){
+      if(iX<0 || iX>=pa->GetXSize())continue;
+
       v2ChkSqrPos={iX,iY};
-      psqChk = Player->GetArea()->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
+      psqChk = pa->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
       if(!psqChk->CanBeSeenByPlayer()){
-//        vv2.push_back(v2(
-//          topLeftScreenDot.X + ((v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE),
-//          topLeftScreenDot.Y + ((v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE)
-//        ));
         vv2.push_back(v2(
-          (v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE,
-          (v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE
+          (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE,
+          (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE
         ));
       }
     }
@@ -348,46 +390,37 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Src = ScreenPos;
 
   v2 posPlr = Player->GetPos();
-//  std::cout<<"Player->GetPos()="<<posPlr.X<<","<<posPlr.Y<<std::endl;
   v2 posCam = GetCamera();
-//  std::cout<<"camPos="<<posCam.X<<","<<posCam.Y<<std::endl;
+  v2 deltaSquares = {posPlr.X-posCam.X, posPlr.Y-posCam.Y};
 
-  v2 delta = {posPlr.X-posCam.X, posPlr.Y-posCam.Y};
-
-  v2 deltaSquaresForUpperLeft=delta;
+  v2 deltaSquaresForUpperLeft=deltaSquares;
   deltaSquaresForUpperLeft.X-=iSAP;
   deltaSquaresForUpperLeft.Y-=iSAP;
-//  std::cout<<"deltaForUpperLeft="<<deltaForUpperLeft.X<<","<<deltaForUpperLeft.Y<<std::endl;
 
-  int iSrcSquareX = iSAP;
-  int iSrcSquareY = iSAP;
+  v2 v2SrcInSquares(iSAP,iSAP);
 
-  if(deltaSquaresForUpperLeft.X<0)iSrcSquareX+=deltaSquaresForUpperLeft.X;
-  if(deltaSquaresForUpperLeft.Y<0)iSrcSquareY+=deltaSquaresForUpperLeft.Y;
+  if(deltaSquaresForUpperLeft.X<0)v2SrcInSquares.X+=deltaSquaresForUpperLeft.X;
+  if(deltaSquaresForUpperLeft.Y<0)v2SrcInSquares.Y+=deltaSquaresForUpperLeft.Y;
 
-//  std::cout<<"iX,Y="<<iX<<","<<iY<<std::endl;
-
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*iSrcSquareX;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*iSrcSquareY;
+  bldPlayerOnScreen.Src.X-=TILE_SIZE*v2SrcInSquares.X;
+  bldPlayerOnScreen.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
 
   bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
-  v2 borderSquares(iSAP*2,iSAP*2);
+  v2 v2BorderInSquares(iSAP*2,iSAP*2);
 
-  if(deltaSquaresForUpperLeft.X<0)borderSquares.X+=deltaSquaresForUpperLeft.X;
-  if(deltaSquaresForUpperLeft.Y<0)borderSquares.Y+=deltaSquaresForUpperLeft.Y;
+  if(deltaSquaresForUpperLeft.X<0)v2BorderInSquares.X+=deltaSquaresForUpperLeft.X;
+  if(deltaSquaresForUpperLeft.Y<0)v2BorderInSquares.Y+=deltaSquaresForUpperLeft.Y;
 
-  v2 deltaForLowerRight=delta;
+  v2 deltaForLowerRight=deltaSquares;
   deltaForLowerRight.X=GetScreenXSize()-deltaForLowerRight.X-iSAP-1;
   deltaForLowerRight.Y=GetScreenYSize()-deltaForLowerRight.Y-iSAP-1;
 
-  if(deltaForLowerRight.X<0)borderSquares.X+=deltaForLowerRight.X;
-  if(deltaForLowerRight.Y<0)borderSquares.Y+=deltaForLowerRight.Y;
+  if(deltaForLowerRight.X<0)v2BorderInSquares.X+=deltaForLowerRight.X;
+  if(deltaForLowerRight.Y<0)v2BorderInSquares.Y+=deltaForLowerRight.Y;
 
-//  std::cout<<"iBX,Y="<<iBX<<","<<iBY<<std::endl;
-
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*borderSquares.X);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*borderSquares.Y);
+  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.X);
+  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.Y);
 
   // this grants positioninig on the upper left player's square corner
 
@@ -400,7 +433,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
 
   graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen);
 
-  ClearNonVisibleSquaresAroundPlayer(bldPlayerOnScreen.Src);
+  PrepareToClearNonVisibleSquaresAroundPlayer();
 }
 
 void game::RegionListItemEnable(bool b){

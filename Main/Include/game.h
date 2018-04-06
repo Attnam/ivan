@@ -177,7 +177,7 @@ class game
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);
-  static void ClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot);
+  static void PrepareToClearNonVisibleSquaresAroundPlayer();
   static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
