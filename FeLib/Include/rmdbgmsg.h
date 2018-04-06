@@ -1,5 +1,6 @@
 // just copy this file freely anywhere or it's contents
 #ifndef DBGMSG
+
 #define DBGSS(s)
 #define DBG1(a)
 #define DBG2(a,b)
@@ -13,4 +14,11 @@
 #define DBGLN
 #define DBGB(b)
 #define DBGSTK
+
+// project specific
+#define DBGV2(v2,info)
+#define DBGSRI(info)
+#define DBGSR
+#define DBGBLD(rb,info)
+
 #endif

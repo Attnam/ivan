@@ -64,16 +64,8 @@
 
 #ifdef DBGMSG
   #include "dbgmsg.h"
-  #define DBGV2(v2,info) DBGSS(dbgV2(v2,info).str())
-  std::stringstream dbgV2(v2 v2Val,const char* c){
-    std::stringstream ss;
-    ss<<c<<"/";DBGLN;
-    ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";DBGLN;
-    return ss;
-  }
 #else
   #include "rmdbgmsg.h"
-  #define DBGV2(v2,info)
 #endif
 
 int game::CurrentLevelIndex;
@@ -313,50 +305,109 @@ void game::InitScript()
 void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
+  if(IsInWilderness())return;
+
+  /***
+   * this will check the squares around player for visibility/CanFeel
+   *
+   * the problem is the dungeon corners, ex.:
+   *  0       1       2
+   *  ####### ######O ######O
+   *  ####### ##P###O ##P###O
+   *  WWW#### WWW###O WWW###O
+   *  ##WP### ##W###O     ##O
+   *  ##W#### ##W###O      #O
+   *  ####### OOOOOOO OOOOOOO
+   *  ####### OOOOOOO OOOOOOO
+   *
+   *  Using xBRZ around player by 3 squares.
+   *  P = player
+   *  # = within user requested "around" distance.
+   *  O = out of user requested "around" distance (are ignored/not considered)
+   *  W = wall
+   *
+   *  0 - player is far from visible dungeon corners (no complexity)
+   *
+   *  1 - player is near top left corner:
+   *    The drawn dungeon visible area will be copied just 2 to the left and 1 to the top away from player position,
+   *    this means the cached bitmap will be smaller than at (*0).
+   *
+   *  2 - The player surroundings will be checked for visibility/CanFeel, if neither, these squares (that I deleted
+   *    on the example above) will be cleared from pixel colors to the mask/transparent color.
+   *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
+   */
 
   lsquare* plsq = Player->GetLSquareUnder();
-  v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2SqrUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);DBGV2(v2SqrUpperLeft ,"v2SqrUpperLeft");
-  v2 v2SqrLowerRight(v2PlayerPos.X+i,v2PlayerPos.Y+i);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
+  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+  v2 v2MaxSqrUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i); DBGV2(v2MaxSqrUpperLeft ,"v2SqrUpperLeft");
+  v2 v2MaxSqrLowerRight(v2PlayerPos.X+i,v2PlayerPos.Y+i); DBGV2(v2MaxSqrLowerRight,"v2SqrLowerRight");
 
-  v2 v2ChkSqrPos(v2SqrUpperLeft);
-//  square* psqChk;
+  level* plv = Player->GetLevel();
+  v2 v2ChkSqrPos;
   lsquare* plsqChk;
-  std::vector<v2> vv2;
+  std::vector<v2> vv2ToBeCleared;
   v2 v2CamSqPos = GetCamera();
   v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
-//  area* pa = Player->GetArea();
-  level* plv = Player->GetLevel();
   int iSqLeftSkipX=0;
   int iSqTopSkipY=0;
-  for(int iY=v2SqrUpperLeft.Y;iY<=v2SqrLowerRight.Y;iY++){
-    if(iY<0               || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
+  v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
+  for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
+    if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
     if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
 
     iSqLeftSkipX=0; //must be reset here
-    for(int iX=v2SqrUpperLeft.X;iX<=v2SqrLowerRight.X;iX++){
-      if(iX<0               || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
+    for(int iX=v2MaxSqrUpperLeft.X;iX<=v2MaxSqrLowerRight.X;iX++){
+      if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
       if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
-//      if(iX<v2CamSqPos.X){iSqLeftSkipX++;continue;}
-//      if(iX>=pa->GetXSize())break;
 
       v2ChkSqrPos={iX,iY};
+      if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
+      v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
       plsqChk = plv->GetLSquare(v2ChkSqrPos);
-//      psqChk = pa->GetSquare(v2ChkSqrPos); DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
-      if(!plsqChk->CanBeSeenByPlayer() && !plsqChk->CanBeFeltByPlayer()){ DBG3( "v2PixelPos", (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE, (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE );
-        vv2.push_back(v2( //now the final thing is the relative pixel position on the blitdata->bitmap that will have such squares cleared
-          (v2ChkSqrPos.X - v2SqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
-          (v2ChkSqrPos.Y - v2SqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-        ));
-      }
+
+      if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
+      if(plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+
+      /********************************************************************************************
+       * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
+       * (that is a copy of the player surroundings at dungeon area),
+       * that will have the squares cleared after it is cached
+       * and before it is stretched with xBRZ,
+       * so that the non visible squares will be drawn equally to all other far away
+       * non vivible squares.
+       */
+      vv2ToBeCleared.push_back(v2(
+        (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
+        (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
+      )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1],"v2ToBeCleared");
     }
   }
 
-  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2);
+  DBGV2(v2TopLeft,"v2TopLeft");
+  DBGV2(v2BottomRight,"v2BottomRight");
+
+  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2ToBeCleared);
 }
+
+//void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
+//  if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
+//  if(Player->IsDead())return; //avoid messing the final breath ;)
+//
+//  int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
+//  if(iSAP==0 || DoZoom()){
+//    graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,false);
+//    return;
+//  }
+//
+//  graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,true);
+//
+//  bldPlayerOnScreen.Src = ScreenPos;
+//
+//}
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
   if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
+  if(Player->IsDead())return; //avoid messing the final breath ;)
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(iSAP==0 || DoZoom()){
@@ -384,7 +435,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Src.X-=TILE_SIZE*v2SrcInSquares.X;
   bldPlayerOnScreen.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
 
-  bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
+//  bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
   v2 v2BorderInSquares(iSAP*2,iSAP*2);
 
@@ -410,7 +461,7 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
   bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
-  graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen);
+  graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen); DBGBLD(bldPlayerOnScreen,"bldPlayerOnScreen");
 
   PrepareToClearNonVisibleSquaresAroundPlayer();
 }

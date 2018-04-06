@@ -96,38 +96,10 @@ int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
 
 #ifdef DBGMSG
+  #define DBGMSG_STRETCHREGION
   #include "dbgmsg.h"
-
-  #define DBGSRI(info)    dbgSRI(rSR,info)
-  #define DBGSR           DBGSRI("")
-  #define DBGBLD(rb,info) DBGSS(dbgBLD(rb,info).str())
-
-  std::stringstream dbgBLD(blitdata& rB,const char* strInfo){
-    std::stringstream ss;
-    ss<<strInfo<<"/";DBGLN;
-    ss<<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/";DBGLN;
-    ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";DBGLN;
-    ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";DBGLN;
-    ss<<"Stretch="<<rB.Stretch<<"/";DBGLN;
-    ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";DBGLN;
-    return ss;
-  }
-
-  void dbgSRI(stretchRegion& SR,const char* strInfo){
-    blitdata& rB=SR.B;
-    DBG1(strInfo
-      <<"["<<SR.iIndex<<"]SR@"
-      <<"bForceXBRZ="<<SR.bUseXBRZ<<"/"
-      <<"id="<<SR.strId<<"/"
-      <<dbgBLD(rB,"").str()
-    );
-  }
 #else
   #include "rmdbgmsg.h"
-
-  #define DBGSRI(info)
-  #define DBGSR
-  #define DBGBLD(rb,info)
 #endif
 
 void graphics::Init()
