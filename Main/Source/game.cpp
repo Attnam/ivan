@@ -316,26 +316,31 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
 
   lsquare* plsq = Player->GetLSquareUnder();
   v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2SqrUpperLeft (v2PlayerPos.X-i  ,v2PlayerPos.Y-i  );DBGV2(v2SqrUpperLeft ,"v2SqrUpperLeft");
-  v2 v2SqrLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
+  v2 v2SqrUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);DBGV2(v2SqrUpperLeft ,"v2SqrUpperLeft");
+  v2 v2SqrLowerRight(v2PlayerPos.X+i,v2PlayerPos.Y+i);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
 
   v2 v2ChkSqrPos(v2SqrUpperLeft);
   square* psqChk;
   std::vector<v2> vv2;
 //  v2 posCam = GetCamera();
   area* pa = Player->GetArea();
-  for(int iY=v2SqrUpperLeft.Y;iY<v2SqrLowerRight.Y;iY++){
-    if(iY<0 || iY>=pa->GetYSize())continue;
+  int iSqLeftSkipX=0;
+  int iSqTopSkipY=0;
+  for(int iY=v2SqrUpperLeft.Y;iY<=v2SqrLowerRight.Y;iY++){
+    if(iY<0){iSqTopSkipY++;continue;}
+    if(iY>=pa->GetYSize())break;
 
-    for(int iX=v2SqrUpperLeft.X;iX<v2SqrLowerRight.X;iX++){
-      if(iX<0 || iX>=pa->GetXSize())continue;
+    iSqLeftSkipX=0; //must be reinitialized.
+    for(int iX=v2SqrUpperLeft.X;iX<=v2SqrLowerRight.X;iX++){
+      if(iX<0){iSqLeftSkipX++;continue;}
+      if(iX>=pa->GetXSize())break;
 
-      v2ChkSqrPos={iX,iY};
-      psqChk = pa->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
-      if(!psqChk->CanBeSeenByPlayer()){
-        vv2.push_back(v2( //now the final thing is the relative pixel position
-          (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE,
-          (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE
+      v2ChkSqrPos={iX,iY};DBGV2(v2ChkSqrPos,"v2ChkSqrPos");
+      psqChk = pa->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
+      if(!psqChk->CanBeSeenByPlayer()){ DBG3( "v2PixelPos", (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE, (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE );
+        vv2.push_back(v2( //now the final thing is the relative pixel position on the blitdata->bitmap that will have such squares cleared
+          (v2ChkSqrPos.X - v2SqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
+          (v2ChkSqrPos.Y - v2SqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
         ));
       }
     }
