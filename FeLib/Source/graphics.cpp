@@ -127,6 +127,7 @@ rawbitmap* graphics::DefaultFont = 0;
 
   #define DBGSRI(info)
   #define DBGSR
+  #define DBGBLD
 #endif
 
 void graphics::Init()
