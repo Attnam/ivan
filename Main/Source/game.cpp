@@ -322,21 +322,24 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   v2 v2ChkSqrPos(v2SqrUpperLeft);
   square* psqChk;
   std::vector<v2> vv2;
-//  v2 posCam = GetCamera();
+  v2 v2CamSqPos = GetCamera();
+  v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
   area* pa = Player->GetArea();
   int iSqLeftSkipX=0;
   int iSqTopSkipY=0;
   for(int iY=v2SqrUpperLeft.Y;iY<=v2SqrLowerRight.Y;iY++){
-    if(iY<0){iSqTopSkipY++;continue;}
-    if(iY>=pa->GetYSize())break;
+    if(iY<0               || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
+    if(iY>=pa->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
 
-    iSqLeftSkipX=0; //must be reinitialized.
+    iSqLeftSkipX=0; //must be reset here
     for(int iX=v2SqrUpperLeft.X;iX<=v2SqrLowerRight.X;iX++){
-      if(iX<0){iSqLeftSkipX++;continue;}
-      if(iX>=pa->GetXSize())break;
+      if(iX<0               || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
+      if(iX>=pa->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
+//      if(iX<v2CamSqPos.X){iSqLeftSkipX++;continue;}
+//      if(iX>=pa->GetXSize())break;
 
-      v2ChkSqrPos={iX,iY};DBGV2(v2ChkSqrPos,"v2ChkSqrPos");
-      psqChk = pa->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
+      v2ChkSqrPos={iX,iY};
+      psqChk = pa->GetSquare(v2ChkSqrPos); DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
       if(!psqChk->CanBeSeenByPlayer()){ DBG3( "v2PixelPos", (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE, (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE );
         vv2.push_back(v2( //now the final thing is the relative pixel position on the blitdata->bitmap that will have such squares cleared
           (v2ChkSqrPos.X - v2SqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
