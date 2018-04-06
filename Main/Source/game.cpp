@@ -310,51 +310,19 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-//void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 topLeftScreenDot) {
-//  int i=ivanconfig::GetXBRZSquaresAroundPlayer();
-//  if(i==0)return;
-//
-//  lsquare* plsq = Player->GetLSquareUnder();
-//  v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-//  v2 v2SqrPosMaxUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i);
-//  v2 v2SqrPosMaxLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);
-//
-//  v2 v2ChkSqrPos(v2SqrPosMaxUpperLeft);
-//  square* psqChk;
-//  std::vector<v2> vv2;
-//  for(int iY=v2SqrPosMaxUpperLeft.Y;iY<v2SqrPosMaxLowerRight.Y;iY++){
-//    for(int iX=v2SqrPosMaxUpperLeft.X;iX<v2SqrPosMaxLowerRight.X;iX++){
-//      v2ChkSqrPos={iX,iY};
-//      psqChk = Player->GetArea()->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
-//      if(!psqChk->CanBeSeenByPlayer()){
-////        vv2.push_back(v2(
-////          topLeftScreenDot.X + ((v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE),
-////          topLeftScreenDot.Y + ((v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE)
-////        ));
-//        vv2.push_back(v2(
-//          (v2ChkSqrPos.X - v2SqrPosMaxUpperLeft.X)*TILE_SIZE,
-//          (v2ChkSqrPos.Y - v2SqrPosMaxUpperLeft.Y)*TILE_SIZE
-//        ));
-//      }
-//    }
-//  }
-//
-//  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2);
-//}
-
 void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
 
   lsquare* plsq = Player->GetLSquareUnder();
   v2 v2PlayerPos = plsq->GetPos();DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2SqrUpperLeft (v2PlayerPos.X-i  ,v2PlayerPos.Y-i  );DBGV2(v2SqrUpperLeft,"v2SqrUpperLeft");
+  v2 v2SqrUpperLeft (v2PlayerPos.X-i  ,v2PlayerPos.Y-i  );DBGV2(v2SqrUpperLeft ,"v2SqrUpperLeft");
   v2 v2SqrLowerRight(v2PlayerPos.X+i+1,v2PlayerPos.Y+i+1);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
 
   v2 v2ChkSqrPos(v2SqrUpperLeft);
   square* psqChk;
   std::vector<v2> vv2;
-  v2 posCam = GetCamera();
+//  v2 posCam = GetCamera();
   area* pa = Player->GetArea();
   for(int iY=v2SqrUpperLeft.Y;iY<v2SqrLowerRight.Y;iY++){
     if(iY<0 || iY>=pa->GetXSize())continue;
@@ -365,7 +333,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
       v2ChkSqrPos={iX,iY};
       psqChk = pa->GetSquare(v2ChkSqrPos);DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,psqChk->CanBeSeenByPlayer());
       if(!psqChk->CanBeSeenByPlayer()){
-        vv2.push_back(v2(
+        vv2.push_back(v2( //now the final thing is the relative pixel position
           (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE,
           (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE
         ));
