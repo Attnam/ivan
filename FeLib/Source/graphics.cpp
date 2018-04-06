@@ -68,6 +68,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bDrawAfterFelist;
   bool bSpecialListItem;
   bool bDrawRectangleOutline;
+  bool bAllowTransparency; //mask
 
   std::vector<v2> vv2ClearSquaresAt;
   v2 v2ClearSquareSize;
@@ -77,7 +78,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
 };
 const stretchRegion SRdefault = {
   -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,
-  false,false,false,false,false,false,
+  false,false,false,false,false,false,false,
   std::vector<v2>(), v2(), DEFAULT_BLITDATA,
   NULL
 };
@@ -99,17 +100,16 @@ rawbitmap* graphics::DefaultFont = 0;
 
   #define DBGSRI(info) dbgSRI(rSR,info)
   #define DBGSR DBGSRI("")
-  #define DBGBL(rb,info) DBGSS(dbgBL(rb,info).str())
+  #define DBGBLD(rb,info) DBGSS(dbgBLD(rb,info).str())
 
-  std::stringstream dbgBL(blitdata& rB,const char* strInfo){
+  std::stringstream dbgBLD(blitdata& rB,const char* strInfo){
     std::stringstream ss;
-    ss<<strInfo<<"/"
-      <<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/"
-      <<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/"
-      <<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/"
-      <<"Stretch="<<rB.Stretch<<"/"
-      <<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/"
-    ;
+    ss<<strInfo<<"/";DBGLN;
+    ss<<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/";DBGLN;
+    ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";DBGLN;
+    ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";DBGLN;
+    ss<<"Stretch="<<rB.Stretch<<"/";DBGLN;
+    ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";DBGLN;
     return ss;
   }
 
@@ -119,7 +119,7 @@ rawbitmap* graphics::DefaultFont = 0;
       <<"["<<SR.iIndex<<"]SR@"
       <<"bForceXBRZ="<<SR.bUseXBRZ<<"/"
       <<"id="<<SR.strId<<"/"
-      <<dbgBL(rB,"").str()
+      <<dbgBLD(rB,"").str()
     );
   }
 #else
@@ -331,9 +331,9 @@ void graphics::BlitDBToScreen()
 
 #else
 
-void graphics::Stretch(bool bXbrzMode, bitmap* pBmpFrom, blitdata& rBto){
+void graphics::Stretch(bool bXbrzMode, bitmap* pBmpFrom, blitdata& rBto, bool bAllowTransparency){
   if(bXbrzMode){
-    pBmpFrom->StretchBlitXbrz(rBto);
+    pBmpFrom->StretchBlitXbrz(rBto,bAllowTransparency);
   }else{
     pBmpFrom->StretchBlit(rBto);
   }
@@ -362,6 +362,7 @@ void graphics::SetSRegionDrawRectangleOutline(int iIndex, bool b){
 void graphics::SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2){
   vStretchRegion[iIndex].vv2ClearSquaresAt=vv2;
   vStretchRegion[iIndex].v2ClearSquareSize=v2Size;
+  vStretchRegion[iIndex].bAllowTransparency=true;
 }
 /**
  * there can only be one set at a time
@@ -409,15 +410,15 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
 bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   blitdata& rB = rSR.B;
   blitdata& rBC = rSR.BClearSquares;
-  if(rBC.Bitmap!=NULL && rBC.Bitmap->GetSize()!=rB.Border){
+  if(rBC.Bitmap==NULL || rBC.Bitmap->GetSize()!=rB.Border){
     if(rBC.Bitmap!=NULL)delete rBC.Bitmap;
     rBC.Bitmap = new bitmap(rB.Border);
   }
 
   rBC.Src = rB.Src;DBGLN;
-  rBC.Dest = v2();
-  rBC.Stretch = 1;
+  rBC.Dest = {0,0};DBGLN;
   rBC.Border = rB.Border;DBGLN;
+  DBGBLD(rBC,"ClearSquares");
   DoubleBuffer->NormalBlit(rBC);DBGLN;
 
   for(int i=0;i<rSR.vv2ClearSquaresAt.size();i++){
@@ -447,7 +448,7 @@ void graphics::PrepareBeforeDrawingFelist(){
     B.Bitmap = rSR.CacheBitmap;
     B.Dest=v2(0,0);
 
-    Stretch(rSR.bUseXBRZ || rSR.bUseXBRZDrawBeforeFelistPage, DoubleBuffer, B);
+    Stretch(rSR.bUseXBRZ || rSR.bUseXBRZDrawBeforeFelistPage, DoubleBuffer, B, false);
   }
 }
 
@@ -532,10 +533,10 @@ bitmap* graphics::PrepareBuffer(){
         }
 
         bitmap* pbmpFrom = DoubleBuffer;
-        //if(rSR.vv2ClearSquaresAt.size()>0)pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        if(rSR.vv2ClearSquaresAt.size()>0)pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
 
         DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
-        Stretch(rSR.bUseXBRZ, pbmpFrom, rB);
+        Stretch(rSR.bUseXBRZ, pbmpFrom, rB, rSR.bAllowTransparency);
 
         bDidStretch=true;
       }

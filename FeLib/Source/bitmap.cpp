@@ -1190,12 +1190,11 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   return srf;
 }
 
-bool bUseAlpha=false; //TODO alpha work kept to re-enable if useful some day, must be fixed/tested anyway
 bool bXbrzLibCfgInitialized=false;
 /**
  * stretch from 2 to 6 only!
  */
-void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
+void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) const
 {
   blitdata Bto = BlitDataTo; //to easy coding
 
@@ -1222,7 +1221,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     for(int y1 = 0; y1 < Bto.Border.Y; y1++)
     {
       PixelFrom = Image[Bto.Src.Y + y1][Bto.Src.X + x1];
-      if(bUseAlpha)ca = PixelFrom == TRANSPARENT_COLOR ? 0 : 0xff; //TODO is 0xff correct for invisible alpha?
+      ca = PixelFrom == Bto.MaskColor ? 0 : 0xff; //0 invisible, 0xff opaque
       color32bit = SDL_MapRGBA(
         fmt,
         (unsigned char)GetRed16(PixelFrom),
@@ -1243,7 +1242,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo) const
     {
       color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);
       SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);
-      if(!bUseAlpha || ca!=0){
+      if(!bAllowTransparency || ca!=0){
         Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb); //TODO does alpha make any sense here anyway?
       }
     }

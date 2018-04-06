@@ -1079,7 +1079,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       B.Dest = ZoomPos;
       B.Stretch = iZoomFactor;
       graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, ZoomPos, TILE_V2*iZoomFactor, DARK_GRAY, true);
-      graphics::Stretch(ivanconfig::IsXBRZScale(),DOUBLE_BUFFER,B);
+      graphics::Stretch(ivanconfig::IsXBRZScale(),DOUBLE_BUFFER,B,false);
     }
 
     igraph::DrawCursor(ScreenCoord, CursorData);

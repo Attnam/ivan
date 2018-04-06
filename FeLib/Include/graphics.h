@@ -46,7 +46,7 @@ class graphics
 #endif
 
   static void SetMode(cchar*, cchar*, v2, int, truth);
-  static void Stretch(bool, bitmap*, blitdata&);
+  static void Stretch(bool, bitmap*, blitdata&, bool);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
 
