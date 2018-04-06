@@ -320,27 +320,30 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   v2 v2SqrLowerRight(v2PlayerPos.X+i,v2PlayerPos.Y+i);DBGV2(v2SqrLowerRight,"v2SqrLowerRight");
 
   v2 v2ChkSqrPos(v2SqrUpperLeft);
-  square* psqChk;
+//  square* psqChk;
+  lsquare* plsqChk;
   std::vector<v2> vv2;
   v2 v2CamSqPos = GetCamera();
   v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
-  area* pa = Player->GetArea();
+//  area* pa = Player->GetArea();
+  level* plv = Player->GetLevel();
   int iSqLeftSkipX=0;
   int iSqTopSkipY=0;
   for(int iY=v2SqrUpperLeft.Y;iY<=v2SqrLowerRight.Y;iY++){
     if(iY<0               || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
-    if(iY>=pa->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
+    if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
 
     iSqLeftSkipX=0; //must be reset here
     for(int iX=v2SqrUpperLeft.X;iX<=v2SqrLowerRight.X;iX++){
       if(iX<0               || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
-      if(iX>=pa->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
+      if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
 //      if(iX<v2CamSqPos.X){iSqLeftSkipX++;continue;}
 //      if(iX>=pa->GetXSize())break;
 
       v2ChkSqrPos={iX,iY};
-      psqChk = pa->GetSquare(v2ChkSqrPos); DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
-      if(!psqChk->CanBeSeenByPlayer()){ DBG3( "v2PixelPos", (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE, (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE );
+      plsqChk = plv->GetLSquare(v2ChkSqrPos);
+//      psqChk = pa->GetSquare(v2ChkSqrPos); DBG4("SquareAroundPlayer",psqChk->GetPos().X,psqChk->GetPos().Y,(psqChk->CanBeSeenByPlayer()?"true":"false"));
+      if(!plsqChk->CanBeSeenByPlayer() && !plsqChk->CanBeFeltByPlayer()){ DBG3( "v2PixelPos", (v2ChkSqrPos.X - v2SqrUpperLeft.X)*TILE_SIZE, (v2ChkSqrPos.Y - v2SqrUpperLeft.Y)*TILE_SIZE );
         vv2.push_back(v2( //now the final thing is the relative pixel position on the blitdata->bitmap that will have such squares cleared
           (v2ChkSqrPos.X - v2SqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
           (v2ChkSqrPos.Y - v2SqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
