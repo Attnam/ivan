@@ -346,6 +346,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
   int iSqLeftSkipX=0;
   int iSqTopSkipY=0;
   v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
+  // tips: OnScreen(v2Square)
   for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
     if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
     if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
@@ -371,7 +372,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
        * so that the non visible squares will be drawn equally to all other far away
        * non vivible squares.
        */
-      vv2ToBeCleared.push_back(v2(
+      vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
         (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
         (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
       )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1],"v2ToBeCleared");
