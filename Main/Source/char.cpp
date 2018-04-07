@@ -7671,7 +7671,7 @@ void inventoryInfo(const character* pC){
   game::RegionListItemEnable(true);
   game::RegionSilhouetteEnable(true);
 
-  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED); //NO_SELECT);
+  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED);
 
   for(stackiterator i = pC->GetStack()->GetBottom(); i.HasItem(); ++i)
     i->DrawContents(pC);
@@ -7684,6 +7684,8 @@ void inventoryInfo(const character* pC){
 
 void character::ShowAdventureInfo() const
 {
+  graphics::SetAllowStretchedBlit();
+
   if(ivanconfig::IsAltAdentureInfo())
   {
     ShowAdventureInfoAlt();
@@ -7701,7 +7703,10 @@ void character::ShowAdventureInfo() const
 
     if(!game::MassacreListsEmpty()
        && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+    {
+      graphics::SetAllowStretchedBlit();
       game::DisplayMassacreLists();
+    }
   }
 
   graphics::SetDenyStretchedBlit(); //back to menu

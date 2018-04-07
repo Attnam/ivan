@@ -2862,9 +2862,11 @@ void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMs
 void game::DisplayMassacreLists()
 {
   game::RegionListItemEnable(true);
+
   DisplayMassacreList(PlayerMassacreMap, "directly by you.", PlayerMassacreAmount);
   DisplayMassacreList(PetMassacreMap, "by your allies.", PetMassacreAmount);
   DisplayMassacreList(MiscMassacreMap, "by some other reason.", MiscMassacreAmount);
+
   game::RegionListItemEnable(false);
 }
 
