@@ -29,6 +29,7 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
+  static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
@@ -103,6 +104,7 @@ class ivanconfig
   static stringoption DefaultName;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
+  static truthoption AltAdentureInfo;
 
   static scrollbaroption Contrast;
 

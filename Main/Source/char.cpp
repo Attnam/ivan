@@ -23,6 +23,8 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "dbgmsgproj.h"
+
 struct statedata
 {
   cchar* Description;
@@ -1683,9 +1685,9 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
+    graphics::SetDenyStretchedBlit(); // to let final animation be seen properly
     game::PlayDefeatMusic();
     ShowAdventureInfo();
-    graphics::SetDenyStretchedBlit(); // to let final animation be seen properly
 
     if(!game::IsInWilderness())
       for(int c = 0; c < GetSquaresUnder(); ++c)
@@ -7665,26 +7667,67 @@ void character::PrintEndGasImmunityMessage() const
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
 
+void inventoryInfo(const character* pC){
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+
+  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED); //NO_SELECT);
+
+  for(stackiterator i = pC->GetStack()->GetBottom(); i.HasItem(); ++i)
+    i->DrawContents(pC);
+
+  doforequipmentswithparam<ccharacter*>()(pC, &item::DrawContents, pC);
+
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+}
+
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems()
-     && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+  if(ivanconfig::IsAltAdentureInfo())
   {
-    GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
+    ShowAdventureInfoAlt();
+  }
+  else
+  {
+    if(GetStack()->GetItems()
+       && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+    {
+      inventoryInfo(this);
+    }
 
-    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      i->DrawContents(this);
+    if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
+      msgsystem::DrawMessageHistory();
 
-    doforequipmentswithparam<ccharacter*>()(this, &item::DrawContents, this);
+    if(!game::MassacreListsEmpty()
+       && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+      game::DisplayMassacreLists();
   }
 
-  if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
-    msgsystem::DrawMessageHistory();
-
-  if(!game::MassacreListsEmpty()
-     && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
-    game::DisplayMassacreLists();
+  graphics::SetDenyStretchedBlit(); //back to menu
 }
+
+void character::ShowAdventureInfoAlt() const
+{
+  while(true) {
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
+         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x means any other key?
+    DBG4("Answer",Answer,KEY_ESC,KEY_SPACE);
+
+    if(Answer == 'i' || Answer == 'I'){
+      inventoryInfo(this);
+    }else if(Answer == 'm' || Answer == 'M'){
+     msgsystem::DrawMessageHistory();
+    }else if(Answer == 'k' || Answer == 'K'){
+     game::DisplayMassacreLists();
+    }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
+     return;
+    }
+  }
+}
+
 
 truth character::EditAllAttributes(int Amount)
 {

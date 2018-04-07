@@ -77,9 +77,10 @@
 
   // project specific
   #define DBGV2(v2,info)
+  #define DBGBLD(rb,info)
+
   #define DBGSRI(info)
   #define DBGSR
-  #define DBGBLD(rb,info)
 
 #endif //DBGMSG
 

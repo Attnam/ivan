@@ -63,6 +63,9 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
+truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
+                                          "on death, enhanced messages review mode",
+                                          false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use xBRZScale to stretch graphics",
                                           false,
@@ -492,6 +495,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DefaultName);
   configsystem::AddOption(&DefaultPetName);
   configsystem::AddOption(&AutoSaveInterval);
+  configsystem::AddOption(&AltAdentureInfo);
 
   // about the overall game window
   configsystem::AddOption(&Contrast);

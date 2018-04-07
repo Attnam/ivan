@@ -54,6 +54,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 131 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 117 // Increment this if changes make bonefiles incompatible
@@ -61,8 +62,6 @@
 #define LOADED 0
 #define NEW_GAME 1
 #define BACK 2
-
-#include "dbgmsgproj.h"
 
 int game::CurrentLevelIndex;
 truth game::InWilderness = false;
@@ -403,7 +402,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
 
 void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
   if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
-  if(Player->IsDead())return; //avoid messing the final breath ;)
+  if(Player->IsDead())return;
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(iSAP==0 || DoZoom()){
@@ -2862,9 +2861,11 @@ void game::SignalDeath(ccharacter* Ghost, ccharacter* Murderer, festring DeathMs
 
 void game::DisplayMassacreLists()
 {
+  game::RegionListItemEnable(true);
   DisplayMassacreList(PlayerMassacreMap, "directly by you.", PlayerMassacreAmount);
   DisplayMassacreList(PetMassacreMap, "by your allies.", PetMassacreAmount);
   DisplayMassacreList(MiscMassacreMap, "by some other reason.", MiscMassacreAmount);
+  game::RegionListItemEnable(false);
 }
 
 struct massacresetentry
