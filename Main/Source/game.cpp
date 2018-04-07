@@ -62,11 +62,7 @@
 #define NEW_GAME 1
 #define BACK 2
 
-#ifdef DBGMSG
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
+#include "dbgmsgproj.h"
 
 int game::CurrentLevelIndex;
 truth game::InWilderness = false;
@@ -232,7 +228,7 @@ int game::GetMaxScreenYSize() { //this generally should not be used when the cam
 int game::GetScreenXSize() { //actually dugeon visible width in tiles count
   if(iXSize==0){
     iXSize=GetMaxScreenXSize();
-    iXSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("DungeonColumns",iXSize); //yes, may lose some columns, no way to fit as scaler is integer and not float
+    iXSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("VisibleDungeonColumns",iXSize); //yes, may lose some columns, no way to fit as scaler is integer and not float
   }
   return iXSize;
 }
@@ -240,7 +236,7 @@ int game::GetScreenXSize() { //actually dugeon visible width in tiles count
 int game::GetScreenYSize() {  //actually dugeon visible height in tiles count
   if(iYSize==0){
     iYSize=GetMaxScreenYSize();
-    iYSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("DungeonLines",iYSize); //yes, may lose some lines, no way to fit as scaler is integer and not float
+    iYSize/=ivanconfig::GetStartingDungeonGfxScale();DBG2("VisibleDungeonLines",iYSize); //yes, may lose some lines, no way to fit as scaler is integer and not float
   }
   return iYSize;
 }
@@ -1090,6 +1086,8 @@ truth game::OnScreen(v2 Pos)
 
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
+  bool bXBRZandFelist=ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
+
   if(LOSUpdateRequested && Player->IsEnabled())
   {
     if(!IsInWilderness())
@@ -1106,18 +1104,19 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
   }
 
-  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
-    if(OnScreen(SpecialCursorPos[c]))
-      CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+  if(!bXBRZandFelist)
+    for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
+      if(OnScreen(SpecialCursorPos[c]))
+        CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
   globalwindowhandler::UpdateTick();
-  GetCurrentArea()->Draw(AnimationDraw);
+  if(!bXBRZandFelist)GetCurrentArea()->Draw(AnimationDraw);
   Player->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
     msgsystem::Draw();
 
-  if(OnScreen(CursorPos))
+  if(!bXBRZandFelist && OnScreen(CursorPos))
   {
     v2 ScreenCoord = CalculateScreenCoordinates(CursorPos);
     blitdata B = { DOUBLE_BUFFER,
@@ -1148,7 +1147,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     igraph::DrawCursor(ScreenCoord, CursorData);
   }
 
-  if(Player->IsEnabled())
+  if(!bXBRZandFelist && Player->IsEnabled())
   {
     if(Player->IsSmall())
     {
@@ -1177,13 +1176,16 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
-    if(OnScreen(SpecialCursorPos[c]))
-    {
-      v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
-      igraph::DrawCursor(ScreenCoord, SpecialCursorData[c]);
-      GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+  if(!bXBRZandFelist)
+    for(size_t c = 0; c < SpecialCursorPos.size(); ++c){
+      if(OnScreen(SpecialCursorPos[c]))
+      {
+        v2 ScreenCoord = CalculateScreenCoordinates(SpecialCursorPos[c]);
+        igraph::DrawCursor(ScreenCoord, SpecialCursorData[c]);
+        GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+      }
     }
+
 }
 
 truth game::Save(cfestring& SaveName)

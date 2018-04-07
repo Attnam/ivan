@@ -22,12 +22,7 @@
 #include "femath.h"
 #include "rawbit.h"
 #include "libxbrzscale.h"
-
-#ifdef DBGMSG
-#include "dbgmsg.h"
-#else
-#include "rmdbgmsg.h"
-#endif
+#include "dbgmsgproj.h"
 
 /*
  * Blitting must be as fast as possible, even if no optimizations are used;
@@ -1849,7 +1844,7 @@ void bitmap::PowerPutPixel(int X, int Y, col16 Color, alpha Alpha, priority Prio
 }
 
 void bitmap::MaskedPriorityBlit(cblitdata& BlitData) const
-{
+{DBGBLD(BlitData,"MaskedPriorityBlit");
   if(!PriorityMap || !BlitData.Bitmap->PriorityMap)
   {
     LuminanceMaskedBlit(BlitData);

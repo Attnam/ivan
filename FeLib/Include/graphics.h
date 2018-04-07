@@ -61,7 +61,7 @@ class graphics
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
   static void PrepareBeforeDrawingFelist();
-  static void DrawBeforeFelistPage();
+  static void DrawAtDoubleBufferBeforeFelistPage();
   static bitmap* PrepareBuffer();
 
   //TODO utility class for sregion?

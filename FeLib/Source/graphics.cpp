@@ -76,6 +76,9 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
 
   bitmap* CacheBitmap;
 };
+#define DBGMSG_STRETCHREGION
+#include "dbgmsgproj.h"
+
 const stretchRegion SRdefault = {
   -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,
   false,false,false,false,false,false,false,
@@ -94,13 +97,6 @@ v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
-
-#ifdef DBGMSG
-  #define DBGMSG_STRETCHREGION
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
 
 void graphics::Init()
 {
@@ -425,7 +421,7 @@ void graphics::PrepareBeforeDrawingFelist(){
   }
 }
 
-void graphics::DrawBeforeFelistPage(){
+void graphics::DrawAtDoubleBufferBeforeFelistPage(){
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion& rSR=vStretchRegion[i];
 
@@ -437,6 +433,8 @@ void graphics::DrawBeforeFelistPage(){
 
 bitmap* graphics::PrepareBuffer(){
   bitmap* ReturnBuffer = DoubleBuffer;
+
+//  if(felist::isAnyFelistCurrentlyDrawn())graphics::DrawAtDoubleBufferBeforeFelistPage();
 
   if(
       bAllowStretchedRegionsBlit

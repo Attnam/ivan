@@ -22,12 +22,6 @@
 #include "allocate.h"
 #include "whandler.h"
 
-#ifdef DBGMSG
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
-
 rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;

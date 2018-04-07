@@ -12,12 +12,6 @@
 
 /* Compiled through itemset.cpp */
 
-#ifdef DBGMSG
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
-
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
 truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE; }

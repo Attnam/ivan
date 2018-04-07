@@ -19,12 +19,7 @@
 #include "rawbit.h"
 #include "save.h"
 #include "festring.h"
-
-#ifdef DBGMSG
-  #include "dbgmsg.h"
-#else
-  #include "rmdbgmsg.h"
-#endif
+#include "dbgmsgproj.h"
 
 const felist* FelistCurrentlyDrawn = 0;
 
@@ -204,7 +199,7 @@ uint felist::Draw()
   graphics::PrepareBeforeDrawingFelist();
   for(;;)
   {
-    graphics::DrawBeforeFelistPage();
+    graphics::DrawAtDoubleBufferBeforeFelistPage(); // here prevents full dungeon blink
     truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
 
     if(Flags & FADE)
@@ -219,10 +214,12 @@ uint felist::Draw()
 
       JustSelectMove = false;
     }
-    else
+    else{
       graphics::BlitDBToScreen();
+      graphics::DrawAtDoubleBufferBeforeFelistPage(); // here helps on hiding unstretched static squares
+    }
 
-    uint Pressed = GET_KEY(false);
+    uint Pressed = GET_KEY(false);DBGLN;
 
     if(Flags & SELECTABLE && Pressed > 64 //TODO explain what are these numbers: letters/digits/symbols?
        && Pressed < 91 && Pressed - 65 < PageLength
@@ -338,11 +335,13 @@ uint felist::Draw()
 
   if(!(Flags & FADE))
   {
-    if(Flags & DRAW_BACKGROUND_AFTERWARDS)
+    if(Flags & DRAW_BACKGROUND_AFTERWARDS){
       BackGround.FastBlit(DOUBLE_BUFFER);
+    }
 
-    if(Flags & BLIT_AFTERWARDS)
+    if(Flags & BLIT_AFTERWARDS){
       graphics::BlitDBToScreen();
+    }
   }
   else
     delete Buffer;

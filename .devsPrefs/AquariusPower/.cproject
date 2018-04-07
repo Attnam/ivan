@@ -40,6 +40,7 @@
 									<listOptionValue builtIn="false" value="DBGMSG"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_RELATIVEPATHSDL"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_NOINLINEGETSETPIX"/>
+									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.2144750180" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1815342761" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -62,6 +63,7 @@
 									<listOptionValue builtIn="false" value="DBGMSG"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_RELATIVEPATHSDL"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_NOINLINEGETSETPIX"/>
+									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1518829872" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.909660028" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
@@ -149,6 +151,7 @@
 									<listOptionValue builtIn="false" value="UNIX"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_RELATIVEPATHSDL"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_NOINLINEGETSETPIX"/>
+									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1679517968" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.843749153" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -175,6 +178,7 @@
 									<listOptionValue builtIn="false" value="UNIX"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_RELATIVEPATHSDL"/>
 									<listOptionValue builtIn="false" value="XBRZLIB_NOINLINEGETSETPIX"/>
+									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.1077402583" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.238683031" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
