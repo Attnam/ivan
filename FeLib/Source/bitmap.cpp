@@ -1186,6 +1186,36 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
 }
 
 bool bXbrzLibCfgInitialized=false;
+SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //format based on xbrzscale code
+
+SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL_Surface* srf) const
+{
+  if(srf==NULL) srf = libxbrzscale::createARGBSurface(this->Size.X,this->Size.Y);
+
+  // copy pixels to surface
+  Uint32 color32bit;
+  packcol16 PixelFrom;
+  unsigned char ca=0xff;
+  for(int x1 = 0; x1 < v2Size.X; x1++)
+  {
+    for(int y1 = 0; y1 < v2Size.Y; y1++)
+    {
+      PixelFrom = Image[v2TopLeft.Y + y1][v2TopLeft.X + x1];
+      ca = PixelFrom == MaskColor ? 0 : 0xff; //0 invisible, 0xff opaque
+      color32bit = SDL_MapRGBA(
+        fmt,
+        (unsigned char)GetRed16(PixelFrom),
+        (unsigned char)GetGreen16(PixelFrom),
+        (unsigned char)GetBlue16(PixelFrom),
+        ca
+      );
+      libxbrzscale::SDL_PutPixel(srf, x1, y1, color32bit);
+    }
+  }
+
+  return srf;
+}
+
 /**
  * stretch from 2 to 6 only!
  */
@@ -1202,32 +1232,12 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) con
     bXbrzLibCfgInitialized=true;
   }
 
-  SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //format based on xbrzscale code
-
-  Uint32 color32bit;
-  packcol16 PixelFrom;
-  unsigned char cr,cg,cb,ca=0xff;
   bool bFreeImg=false;
 
-  SDL_Surface* imgCopy = SurfaceCache(Bto,false);
-  // copy pixels to surface
-  for(int x1 = 0; x1 < Bto.Border.X; x1++)
-  {
-    for(int y1 = 0; y1 < Bto.Border.Y; y1++)
-    {
-      PixelFrom = Image[Bto.Src.Y + y1][Bto.Src.X + x1];
-      ca = PixelFrom == Bto.MaskColor ? 0 : 0xff; //0 invisible, 0xff opaque
-      color32bit = SDL_MapRGBA(
-        fmt,
-        (unsigned char)GetRed16(PixelFrom),
-        (unsigned char)GetGreen16(PixelFrom),
-        (unsigned char)GetBlue16(PixelFrom),
-        ca
-      );
-      libxbrzscale::SDL_PutPixel(imgCopy, x1, y1, color32bit);
-    }
-  }
+  SDL_Surface* imgCopy = CopyToSurface(Bto.Src, Bto.Border, Bto.MaskColor, SurfaceCache(Bto,false));
 
+  Uint32 color32bit;
+  unsigned char cr,cg,cb,ca;
   SDL_Surface* imgStretchedCopy=NULL;
   imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);
   // copy from surface the scaled image back to where it is expected TODO comment a more precise info...

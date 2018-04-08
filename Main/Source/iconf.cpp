@@ -56,7 +56,7 @@ numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
 numberoption ivanconfig::FrameSkip(       "FrameSkip",
-                                          "FrameSkip to inc. input responsiveness (experimental)",
+                                          "FrameSkip to inc. input responsiveness",
                                           0,
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
@@ -167,7 +167,10 @@ void ivanconfig::AltListItemWidthDisplayer(const numberoption* O, festring& Entr
 
 void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
 {
-  Entry << O->Value << " frames";
+  Entry << O->Value;
+  if(O->Value==-2)Entry  << " = wait"  ;
+  if(O->Value==-1)Entry  << " = auto"  ;
+  if(O->Value>= 0)Entry  <<   " frames";
 }
 
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
@@ -309,7 +312,7 @@ truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
 
 truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set frames to skip to let controls/input work better (-1 means automatic, to 100):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set frame skip to let controls/input work better (-2=wait,-1=auto,0to100):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -379,8 +382,9 @@ void ivanconfig::AltListItemWidthChanger(numberoption* O, long What)
 
 void ivanconfig::FrameSkipChanger(numberoption* O, long What)
 {
-  if(What < -1) What = -1;
+  if(What <  -2) What =  -2;
   if(What > 100) What = 100;
+
   if(O!=NULL)O->Value = What;
 
   globalwindowhandler::SetAddFrameSkip(What);

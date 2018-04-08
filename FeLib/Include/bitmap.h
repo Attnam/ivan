@@ -86,6 +86,7 @@ class bitmap
 
   void StretchBlit(cblitdata&) const;
   void StretchBlitXbrz(cblitdata&,bool) const;
+  SDL_Surface* CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor = TRANSPARENT_COLOR, SDL_Surface* srf = NULL) const;
 
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);
