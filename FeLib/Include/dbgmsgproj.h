@@ -74,6 +74,16 @@
   #define DBGLN
   #define DBGB(b)
   #define DBGSTK
+  #define DBGTOSTR_(str)
+  #define DBGTOSTR(str)
+  #define DBGB(B)
+  #define DBGSB(B)
+  #define DBGI(I)
+  #define DBGSI(I)
+  #define DBGF(F)
+  #define DBGSF(F)
+  #define DBGC(C)
+  #define DBGSC(C)
 
   // project specific
   #define DBGV2(v2,info)

@@ -11,12 +11,16 @@
  */
 
 #include <cstdio>
+#include <ctime>
+#include <ratio>
+#include <chrono>
 
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
 #include "festring.h"
+#include "dbgmsgproj.h"
 
 #if SDL_MAJOR_VERSION == 1
 /* redefine SDL2 to SDL1 */
@@ -137,6 +141,78 @@ void globalwindowhandler::Init()
 #endif
 }
 
+int iCountFPS=0;
+int iLastSecondFPS=0;
+std::chrono::high_resolution_clock::time_point tpLastSecondFPS;
+int MeasureLastSecondRealFPS(){ //call this every new frame request
+  iCountFPS++;
+
+  using namespace std::chrono;
+  high_resolution_clock::time_point tpNow = high_resolution_clock::now();
+  duration<double, std::milli> delay = tpNow - tpLastSecondFPS;
+  if(delay.count() > 1000){ //1s
+    iLastSecondFPS=iCountFPS;
+    iCountFPS=0; //reset
+    tpLastSecondFPS = tpNow; //reset
+  }
+
+  return iLastSecondFPS;
+}
+
+std::chrono::high_resolution_clock::time_point tpPreviousFrameTime;
+double InstaCalcFPS(){ //call this every new frame request
+  using namespace std::chrono;
+  high_resolution_clock::time_point tpNow = high_resolution_clock::now();
+  duration<double, std::milli> delay = tpNow - tpPreviousFrameTime;
+  tpPreviousFrameTime = tpNow;
+  double d = delay.count();
+  if(d==0)d=1; //TODO this may never happen?
+  return 1000/d;
+}
+
+bool bAllowFrameSkip=true;
+int iFrameSkip=0;
+std::chrono::high_resolution_clock::time_point tpBefore;
+std::chrono::duration<double, std::milli> delay;
+int iLastSecCountFPS;
+float fInstaFPS;
+double dFrameTimeMS;
+int iDefaultDelayMS=10;
+int iAddFrameSkip=0;
+
+void globalwindowhandler::SetAddFrameSkip(int i){
+  iAddFrameSkip=i;
+}
+
+int FrameSkipOrDraw(){ //return SDL delay in ms
+  if(iFrameSkip==0){
+    tpBefore = std::chrono::high_resolution_clock::now();
+    graphics::BlitDBToScreen();
+    delay = std::chrono::high_resolution_clock::now() - tpBefore;
+    dFrameTimeMS = delay.count();
+
+    iLastSecCountFPS = MeasureLastSecondRealFPS();
+
+    iFrameSkip+=iAddFrameSkip; // to let user input be more responsive as full dungeon xBRZ may be too heavy
+  }
+
+  fInstaFPS = InstaCalcFPS();
+  DBG5(DBGF(fInstaFPS),DBGI(iLastSecCountFPS),DBGF(dFrameTimeMS),DBGI(iAddFrameSkip),DBGI(iFrameSkip));
+
+/** TODO automatic mode is still not helping, WIP
+  if(iFrameSkip==0 && dFrameTime>100 && fFPS<10 && iFPS<10){ //TODO
+    iFrameSkip+=100;
+  }
+ */
+
+  if(iFrameSkip>0){
+    iFrameSkip--;
+    return 1;
+  }
+
+  return iDefaultDelayMS;
+}
+
 int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
@@ -149,6 +225,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     KeyBuffer.clear();
   }
 
+  int iDelayMS=iDefaultDelayMS;
   for(;;)
     if(!KeyBuffer.empty())
     {
@@ -186,11 +263,18 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
               if(ControlLoop[c]())
                 Draw = true;
 
-            if(Draw)
-              graphics::BlitDBToScreen();
+            if(!bAllowFrameSkip){
+              if(Draw)
+                graphics::BlitDBToScreen();
+
+              iDelayMS=iDefaultDelayMS;
+            }else{
+              iDelayMS = FrameSkipOrDraw();
+            }
+
           }
 
-          SDL_Delay(10);
+          SDL_Delay(iDelayMS);
         }
         else
         {

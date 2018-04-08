@@ -70,7 +70,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bDrawRectangleOutline;
   bool bAllowTransparency; //mask
 
-  std::vector<v2> vv2ClearSquaresAt;
+  std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
   v2 v2ClearSquareSize;
   blitdata BClearSquares;
 
@@ -455,28 +455,28 @@ bitmap* graphics::PrepareBuffer(){
       // try to disable below, is easier to read long lists
       bOk=true;
 
-      if(bOk && (!rSR.bEnabled))bOk=false;DBGB(bOk);
+      if(bOk && (!rSR.bEnabled))bOk=false;DBGSB(bOk);
 
-      if(bOk && (rB.Stretch<2 ))bOk=false;DBGB(bOk);
+      if(bOk && (rB.Stretch<2 ))bOk=false;DBGSB(bOk);
 
-//      if(bOk && (rSR.bDrawBeforeFelistPage))bOk=false;DBGB(bOk); //bDrawBeforeFelistPage is not meant to work here.
+//      if(bOk && (rSR.bDrawBeforeFelistPage))bOk=false;DBGSB(bOk); //bDrawBeforeFelistPage is not meant to work here.
 
       if(felist::isAnyFelistCurrentlyDrawn()){
-        if(bOk && (!rSR.bDrawAfterFelist))bOk=false;DBGB(bOk);
+        if(bOk && (!rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
       }else{
-        if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGB(bOk);
+        if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
       }
 
       assert(rB.Border.X>=0 && rB.Border.Y>=0); // only negatives are critical
-      if(bOk)if(rB.Border.X==0 || rB.Border.Y==0){DBGB(bOk);
-        if(rB.Border.Is0()){DBGB(bOk); //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
+      if(bOk)if(rB.Border.X==0 || rB.Border.Y==0){DBGSB(bOk);
+        if(rB.Border.Is0()){DBGSB(bOk); //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
           bOk=false;
-        }else{DBGB(bOk);
+        }else{DBGSB(bOk);
           assert(rB.Border.X>0 && rB.Border.Y>0); //minimum (if not 0,0) is 1,1
         }
       }
 
-      assert(rB.Dest.X>=0 && rB.Dest.Y>=0);DBGB(bOk); // only negatives are critical
+      assert(rB.Dest.X>=0 && rB.Dest.Y>=0);DBGSB(bOk); // only negatives are critical
 
       if(bOk){
         if(!bDidStretch){

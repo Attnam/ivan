@@ -25,6 +25,7 @@ class ivanconfig
   static long GetContrast() { return Contrast.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
+  static long GetFrameSkip() { return FrameSkip.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -63,6 +64,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
+  static void FrameSkipDisplayer(const numberoption* O, festring& Entry);
   static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
@@ -72,12 +74,14 @@ class ivanconfig
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
+  static truth FrameSkipChangeInterface(numberoption* O);
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
+  static void FrameSkipChanger(numberoption* O, long What);
   static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
@@ -113,6 +117,8 @@ class ivanconfig
 
   static numberoption WindowHeight;
   static int iStartingWindowHeight;
+
+  static numberoption FrameSkip;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;

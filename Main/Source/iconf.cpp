@@ -18,6 +18,7 @@
 #include "bitmap.h"
 #include "igraph.h"
 #include "audio.h"
+#include "whandler.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -54,6 +55,12 @@ numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
+numberoption ivanconfig::FrameSkip(       "FrameSkip",
+                                          "FrameSkip to inc. input responsiveness (experimental)",
+                                          0,
+                                          &FrameSkipDisplayer,
+                                          &FrameSkipChangeInterface,
+                                          &FrameSkipChanger);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -156,6 +163,11 @@ void ivanconfig::XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festrin
 void ivanconfig::AltListItemWidthDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " frames";
 }
 
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
@@ -295,6 +307,14 @@ truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how much frames should be skipped to let input work better (0-1000):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
@@ -357,6 +377,15 @@ void ivanconfig::AltListItemWidthChanger(numberoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::FrameSkipChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  if(What > 100) What = 100;
+  if(O!=NULL)O->Value = What;
+
+  globalwindowhandler::SetAddFrameSkip(What);
+}
+
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
   if(What < 600) What = 600;
@@ -381,6 +410,7 @@ void ivanconfig::ContrastChanger(numberoption* O, long What)
   if(What < 0) What = 0;
   if(What > 200) What = 200;
   O->Value = What;
+
   CalculateContrastLuminance();
 }
 
@@ -501,6 +531,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&Contrast);
   configsystem::AddOption(&WindowWidth);
   configsystem::AddOption(&WindowHeight);
+#ifndef __DJGPP__
+  configsystem::AddOption(&GraphicsScale);
+#endif
 
   // gameplay changes
   configsystem::AddOption(&BeNice);
@@ -519,8 +552,11 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&OutlinedGfx);
 
   // system config, user interface/input
-  configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&DirectionKeyMap);
+  configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&FrameSkip);
+
+  // sounds
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
 
@@ -534,10 +570,11 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(&MIDIOutputDevice);
+
 #ifndef __DJGPP__
-  configsystem::AddOption(&GraphicsScale);
-  configsystem::AddOption(&FullScreenMode);
+  configsystem::AddOption(&FullScreenMode); //good as last one quick access (keyUp, Enter), despite "game window section"
 #endif
+
 #if defined(WIN32) || defined(__DJGPP__)
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
@@ -555,4 +592,5 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
+  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods above too?
 }
