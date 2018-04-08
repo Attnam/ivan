@@ -309,7 +309,7 @@ truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
 
 truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how much frames should be skipped to let input work better (0-1000):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set frames to skip to let controls/input work better (-1 means automatic, to 100):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -379,7 +379,7 @@ void ivanconfig::AltListItemWidthChanger(numberoption* O, long What)
 
 void ivanconfig::FrameSkipChanger(numberoption* O, long What)
 {
-  if(What < 0) What = 0;
+  if(What < -1) What = -1;
   if(What > 100) What = 100;
   if(O!=NULL)O->Value = What;
 

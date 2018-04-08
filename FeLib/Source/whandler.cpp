@@ -193,7 +193,22 @@ int FrameSkipOrDraw(){ //return SDL delay in ms
 
     iLastSecCountFPS = MeasureLastSecondRealFPS();
 
-    iFrameSkip+=iAddFrameSkip; // to let user input be more responsive as full dungeon xBRZ may be too heavy
+    if(iAddFrameSkip==-1){ //TODO improve this automatic mode?
+      if(dFrameTimeMS>250){ //4fps
+        iFrameSkip=10;
+      }else
+      if(dFrameTimeMS>200){ //5fps
+        iFrameSkip=5;
+      }else
+      if(dFrameTimeMS>150){
+        iFrameSkip=3;
+      }else
+      if(dFrameTimeMS>100){ //10fps
+        iFrameSkip=1;
+      }
+    }else{
+      iFrameSkip=iAddFrameSkip; // to let user input be more responsive as full dungeon xBRZ may be too heavy
+    }
   }
 
   fInstaFPS = InstaCalcFPS();

@@ -72,7 +72,6 @@
   #define DBG8(a,b,c,d,e,f,g,h)
   #define DBG9(a,b,c,d,e,f,g,h,i)
   #define DBGLN
-  #define DBGB(b)
   #define DBGSTK
   #define DBGTOSTR_(str)
   #define DBGTOSTR(str)
