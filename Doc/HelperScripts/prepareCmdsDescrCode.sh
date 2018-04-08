@@ -10,4 +10,4 @@ sedPrepareCode='s@.*@if(strcmp(str,"&")==0)return true;@'
 egrep "new command" command.cpp \
   |sed -r \
     -e "$sedCollectDescription" \
-    -e "$sedPrepareCode" # already in alphabetic order for user cmds
+    -e "$sedPrepareCode" # already in alphabetic order for user  cmds
