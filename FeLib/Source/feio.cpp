@@ -202,7 +202,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
         FONT->Printf(&Buffer, v2(XPos, YPos), Color, "%d. %s",
                      i + 1, VeryUnGuruPrintf.CStr());
 
-        }
+    }
 
     sCopyOfMS = SmallText1;
 

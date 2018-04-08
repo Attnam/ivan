@@ -60,6 +60,7 @@ class graphics
   static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
+  static bool isStretchedRegionsAllowed();
   static void PrepareBeforeDrawingFelist();
   static void DrawAtDoubleBufferBeforeFelistPage();
   static bitmap* PrepareBuffer();

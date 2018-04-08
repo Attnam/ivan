@@ -398,7 +398,19 @@ bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   return rBC.Bitmap;
 }
 
+bool graphics::isStretchedRegionsAllowed(){
+  return
+    bAllowStretchedRegionsBlit
+    &&
+    !iosystem::IsOnMenu() //main menu
+    &&
+    vStretchRegion.size()>0
+    ;
+}
+
 void graphics::PrepareBeforeDrawingFelist(){
+  if(!isStretchedRegionsAllowed())return;
+
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion& rSR=vStretchRegion[i];
     blitdata& rB=rSR.B;
@@ -422,6 +434,8 @@ void graphics::PrepareBeforeDrawingFelist(){
 }
 
 void graphics::DrawAtDoubleBufferBeforeFelistPage(){
+  if(!isStretchedRegionsAllowed())return;
+
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion& rSR=vStretchRegion[i];
 
@@ -436,13 +450,7 @@ bitmap* graphics::PrepareBuffer(){
 
 //  if(felist::isAnyFelistCurrentlyDrawn())graphics::DrawAtDoubleBufferBeforeFelistPage();
 
-  if(
-      bAllowStretchedRegionsBlit
-      &&
-      !iosystem::IsOnMenu() //main menu
-      &&
-      vStretchRegion.size()>0
-  ){ // !!!!!!!!!!!!!!!!!!!!!!!! DO NOT MODIFY DoubleBuffer HERE (chaotic recursive blitting problem) !!!!!!!!!!!!!!!!!!!!!!!!
+  if(isStretchedRegionsAllowed()){ // !!!!!!!!!!!!!!!!!!!!!!!! DO NOT MODIFY DoubleBuffer HERE (chaotic recursive blitting problem) !!!!!!!!!!!!!!!!!!!!!!!!
     bool bDidStretch=false;
     bool bOk=true;
 
