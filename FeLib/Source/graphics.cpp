@@ -395,7 +395,7 @@ bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   }
   rSR.vv2ClearSquaresAt.clear();
 
-  rSR.B.Src=v2(); //as the blitdata for cleared squares will now be the source
+  rB.Src=v2(); //as the blitdata for cleared squares will now be the source to be stretched from
   return rBC.Bitmap;
 }
 

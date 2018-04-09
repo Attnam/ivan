@@ -300,8 +300,7 @@ void game::InitScript()
 void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
-  if(IsInWilderness())return;
-  if(DoZoom())return;
+  if(DoZoom())return; //TODO should be able to clear in zoom mode too? the result is still messy, but... is it cool to xBRZ non visible squares in look mode?  if so, no need to clear them...
 
   /***
    * this will check the squares around player for visibility/CanFeel
@@ -363,7 +362,7 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
       plsqChk = plv->GetLSquare(v2ChkSqrPos);
 
       if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-      if(plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+      if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
 
       /********************************************************************************************
        * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
