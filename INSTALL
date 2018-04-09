@@ -19,7 +19,7 @@ make install
 
 Note: Wizard Mode is disabled by default. To enable it run:
 
-cmake -D CMAKE_CXX_FLAGS=-DWIZARD .
+cmake -D CMAKE_CXX_FLAGS="-DWIZARD" .
 make -j
 make install
 
@@ -27,6 +27,10 @@ To install IVAN to a custom prefix, pass the additional flag
 -DCMAKE_INSTALL_PREFIX=/your/prefix/path to the cmake invocation.
 (In particular, simply doing `make DESTDIR=/your/prefix/path install`
 doesn't work because IVAN needs the prefix information at build-time.)
+
+If config option toggle is too fast, you can add this flag -DFELIST_WAITKEYUP, like: 
+cmake -D CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP -DWIZARD" .
+(you may chose what flags to add independently).
 
 --------------------------------------
 
