@@ -61,6 +61,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
+                                          "Show current dungeon's full name",
+                                          false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -558,6 +561,7 @@ void ivanconfig::Initialize()
   // system config, user interface/input
   configsystem::AddOption(&DirectionKeyMap);
   configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&ShowFullDungeonName);
   configsystem::AddOption(&FrameSkip);
 
   // sounds

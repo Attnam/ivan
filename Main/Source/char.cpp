@@ -7378,7 +7378,15 @@ festring character::GetPanelName() const
   festring Name;
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
-  return Name;
+
+  festring PanelName;
+  if(!game::IsInWilderness()){
+    PanelName << Name;
+    if(ivanconfig::IsShowFullDungeonName())
+      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) << ')';
+  }
+
+  return PanelName;
 }
 
 long character::GetMoveAPRequirement(int Difficulty) const
@@ -7718,7 +7726,7 @@ void character::ShowAdventureInfoAlt() const
     int Answer =
      game::KeyQuestion(
        CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
-         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x means any other key?
+         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
     DBG4("Answer",Answer,KEY_ESC,KEY_SPACE);
 
     if(Answer == 'i' || Answer == 'I'){

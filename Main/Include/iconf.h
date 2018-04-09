@@ -26,6 +26,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -119,6 +120,7 @@ class ivanconfig
   static int iStartingWindowHeight;
 
   static numberoption FrameSkip;
+  static truthoption ShowFullDungeonName;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
