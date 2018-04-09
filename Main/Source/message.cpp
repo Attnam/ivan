@@ -321,38 +321,11 @@ void soundsystem::initSound()
      * Sound files are chosen randomly (if there is more than one).
      */
 
-    // original config file
-    festring cfgfile = game::GetDataDir() + "Sound/config.txt";
-    FILE *f = fopen(cfgfile.CStr(), "rt");
-
     // new config file
     festring cfgfileNew = game::GetDataDir() + "Sound/SoundEffects.cfg";
     FILE *fNew = fopen(cfgfileNew.CStr(), "rt");
 
-    if(!f && !fNew) SoundState = -1;
-
-    if(f)
-    {
-      festring Pattern, File;
-      while((Pattern = getstr(f, false)) != "")
-      {
-        SoundInfo si;
-
-        // configure the regex
-        si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
-        if(debf && !si.re)
-          fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
-        if(si.re) si.extra = pcre_study(si.re, 0, &error);
-
-        // configure the assigned files
-        eol = false;
-        while((File = getstr(f, true)) != "")
-          si.sounds.push_back(addFile(File));
-        if(si.sounds.size() != 0) patterns.push_back(si);
-      }
-      fclose(f);
-      SoundState = 1;
-    }
+    if(!fNew) SoundState = -1;
 
     /**
      * New config file syntax.
