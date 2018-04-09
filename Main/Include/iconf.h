@@ -26,13 +26,14 @@ class ivanconfig
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
+  static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static truth GetXBRZScale() { return XBRZScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
-  static truth GetShowTurn() { return ShowTurn.Value; }
-  static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
+  static truth IsShowTurn() { return ShowTurn.Value; }
+  static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -76,6 +77,7 @@ class ivanconfig
   static stringoption DefaultName;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
+  static truthoption AltAdentureInfo;
   static scrollbaroption Contrast;
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
@@ -94,6 +96,7 @@ class ivanconfig
   static truthoption PlaySounds;
   static truthoption ShowTurn;
   static truthoption OutlinedGfx;
+  static bool bStartingOutlinedGfx;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

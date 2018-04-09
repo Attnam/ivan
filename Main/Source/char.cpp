@@ -7657,25 +7657,58 @@ void character::PrintEndGasImmunityMessage() const
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
 
+void inventoryInfo(const character* pC){
+  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED);
+
+  for(stackiterator i = pC->GetStack()->GetBottom(); i.HasItem(); ++i)
+    i->DrawContents(pC);
+
+  doforequipmentswithparam<ccharacter*>()(pC, &item::DrawContents, pC);
+}
+
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems()
-     && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+  if(ivanconfig::IsAltAdentureInfo())
   {
-    GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
-
-    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      i->DrawContents(this);
-
-    doforequipmentswithparam<ccharacter*>()(this, &item::DrawContents, this);
+    ShowAdventureInfoAlt();
   }
+  else
+  {
+    if(GetStack()->GetItems()
+       && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+    {
+      inventoryInfo(this);
+    }
 
-  if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
-    msgsystem::DrawMessageHistory();
+    if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
+      msgsystem::DrawMessageHistory();
 
-  if(!game::MassacreListsEmpty()
-     && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
-    game::DisplayMassacreLists();
+    if(!game::MassacreListsEmpty()
+       && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+    {
+      game::DisplayMassacreLists();
+    }
+  }
+}
+
+void character::ShowAdventureInfoAlt() const
+{
+  while(true) {
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
+         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
+
+    if(Answer == 'i' || Answer == 'I'){
+      inventoryInfo(this);
+    }else if(Answer == 'm' || Answer == 'M'){
+     msgsystem::DrawMessageHistory();
+    }else if(Answer == 'k' || Answer == 'K'){
+     game::DisplayMassacreLists();
+    }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
+     return;
+    }
+  }
 }
 
 truth character::EditAllAttributes(int Amount)

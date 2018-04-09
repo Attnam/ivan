@@ -51,6 +51,9 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
+truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
+                                          "on death, enhanced messages review mode",
+                                          false);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use XBRZScale to stretch graphics",
                                           false);
@@ -163,6 +166,10 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   }
 }
 
+void clearToBackgroundAfterChangeInterface(){
+  if(game::IsRunning())igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+}
+
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -171,8 +178,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -185,8 +191,7 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -196,8 +201,7 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -209,8 +213,7 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -222,8 +225,7 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -321,21 +323,37 @@ void ivanconfig::CalculateContrastLuminance()
   ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 
+bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
+  // game core setup
   configsystem::AddOption(&DefaultName);
   configsystem::AddOption(&DefaultPetName);
   configsystem::AddOption(&AutoSaveInterval);
+  configsystem::AddOption(&AltAdentureInfo);
+
+  // about the overall game window
   configsystem::AddOption(&Contrast);
+#ifndef __DJGPP__
+  configsystem::AddOption(&GraphicsScale);
+#endif
+
+  // gameplay changes
+  configsystem::AddOption(&BeNice);
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
+  configsystem::AddOption(&SmartOpenCloseApply);
+
+  // about graphics
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&XBRZScale);
-  configsystem::AddOption(&DirectionKeyMap);
-  configsystem::AddOption(&SmartOpenCloseApply);
-  configsystem::AddOption(&BeNice);
-  configsystem::AddOption(&ShowTurn);
   configsystem::AddOption(&OutlinedGfx);
+
+  // system config, user interface/input
+  configsystem::AddOption(&DirectionKeyMap);
+  configsystem::AddOption(&ShowTurn);
+
+  // sounds
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
 
@@ -349,16 +367,21 @@ void ivanconfig::Initialize()
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
   configsystem::AddOption(&MIDIOutputDevice);
+
 #ifndef __DJGPP__
-  configsystem::AddOption(&GraphicsScale);
-  configsystem::AddOption(&FullScreenMode);
+  configsystem::AddOption(&FullScreenMode); //good as last one quick access (keyUp, Enter), despite "game window section"
 #endif
+
 #if defined(WIN32) || defined(__DJGPP__)
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
   configsystem::Load();
+
+  // apply some settings after loading the config file
+  bStartingOutlinedGfx=OutlinedGfx.Value;
+
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
