@@ -10,8 +10,8 @@
    ************************************************************/
   #ifndef DBGMSG_OBJ //do NOT define this in your project cpp files!
 
-    #define DBGV2(v2,info)  DBGSS(dbgmsgprj::dbgV2(v2,info).str())
-    #define DBGBLD(rb,info) DBGSS(dbgmsgprj::dbgBLD(rb,info).str())
+    #define DBGV2(v2)  DBGSS(dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str())
+    #define DBGBLD(rb) DBGSS(dbgmsgprj::dbgBLD(rb,DBGTOSTR(rb)).str())
 
 //    #ifdef DBGMSG_STRETCHREGION
 //      #define DBGSRI(info)  DBG1( dbgmsgprj::dbgSRI(rSR,info).str())
@@ -85,8 +85,8 @@
   #define DBGSC(C)
 
   // project specific
-  #define DBGV2(v2,info)
-  #define DBGBLD(rb,info)
+  #define DBGV2(v2)
+  #define DBGBLD(rb)
 
   #define DBGSRI(info)
   #define DBGSR

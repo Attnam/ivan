@@ -189,13 +189,13 @@ int iMaxYSize=0;
 int iXSize=0;
 int iYSize=0;
 
-int iRegionXBRZPlayerOnScreen = -1;
+int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 
 //TODO should be transparent_color? is working well til now..
-blitdata game::bldPlayerOnScreen = DEFAULT_BLITDATA;
+blitdata game::bldAroundOnScreen = DEFAULT_BLITDATA;
 blitdata bldFullDungeon = DEFAULT_BLITDATA;
 blitdata bldSilhouette = DEFAULT_BLITDATA;
 blitdata bldListItem = DEFAULT_BLITDATA;
@@ -297,10 +297,11 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
+void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
   if(IsInWilderness())return;
+  if(DoZoom())return;
 
   /***
    * this will check the squares around player for visibility/CanFeel
@@ -332,10 +333,10 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
    *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
    */
 
-  lsquare* plsq = Player->GetLSquareUnder();
-  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2MaxSqrUpperLeft (v2PlayerPos.X-i,v2PlayerPos.Y-i); DBGV2(v2MaxSqrUpperLeft ,"v2SqrUpperLeft");
-  v2 v2MaxSqrLowerRight(v2PlayerPos.X+i,v2PlayerPos.Y+i); DBGV2(v2MaxSqrLowerRight,"v2SqrLowerRight");
+//  lsquare* plsq = Player->GetLSquareUnder();
+//  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGV2(v2MaxSqrUpperLeft);
+  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGV2(v2MaxSqrLowerRight);
 
   level* plv = Player->GetLevel();
   v2 v2ChkSqrPos;
@@ -375,51 +376,36 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer() {
       vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
         (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
         (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-      )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1],"v2ToBeCleared");
+      )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
     }
   }
 
-  DBGV2(v2TopLeft,"v2TopLeft");
-  DBGV2(v2BottomRight,"v2BottomRight");
+  DBGV2(v2TopLeft);DBGV2(v2BottomRight);
 
-  graphics::SetSRegionClearSquaresAt(iRegionXBRZPlayerOnScreen,TILE_V2,vv2ToBeCleared);
+  graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
 
-//void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){
-//  if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
-//  if(Player->IsDead())return; //avoid messing the final breath ;)
-//
-//  int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
-//  if(iSAP==0 || DoZoom()){
-//    graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,false);
-//    return;
-//  }
-//
-//  graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,true);
-//
-//  bldPlayerOnScreen.Src = ScreenPos;
-//
-//}
-
-void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
-  if(iRegionIndexDungeon==-1 || iRegionXBRZPlayerOnScreen==-1)return;
+void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
+  if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1)return;
   if(Player->IsDead())return;
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
-  if(iSAP==0 || DoZoom()){
-    graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,false);
+  if(iSAP==0){
+    graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
     return;
   }
 
-  graphics::SetSRegionEnabled(iRegionXBRZPlayerOnScreen,true);
+  v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGV2(v2ScreenPos);
 
-  bldPlayerOnScreen.Src = ScreenPos;
+  graphics::SetSRegionEnabled(iRegionAroundXBRZ,true);
 
-  v2 posPlr = Player->GetPos();
-  v2 posCam = GetCamera();
-  v2 deltaSquares = {posPlr.X-posCam.X, posPlr.Y-posCam.Y};
+  bldAroundOnScreen.Src = v2ScreenPos;
 
-  v2 deltaSquaresForUpperLeft=deltaSquares;
+//  v2 v2SqrPosPlayer = Player->GetPos();
+  v2 v2SqrPosCam = GetCamera();
+  v2 v2DeltaSqr = {v2SqrPos.X-v2SqrPosCam.X, v2SqrPos.Y-v2SqrPosCam.Y};
+
+  v2 deltaSquaresForUpperLeft=v2DeltaSqr;
   deltaSquaresForUpperLeft.X-=iSAP;
   deltaSquaresForUpperLeft.Y-=iSAP;
 
@@ -428,8 +414,8 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   if(deltaSquaresForUpperLeft.X<0)v2SrcInSquares.X+=deltaSquaresForUpperLeft.X;
   if(deltaSquaresForUpperLeft.Y<0)v2SrcInSquares.Y+=deltaSquaresForUpperLeft.Y;
 
-  bldPlayerOnScreen.Src.X-=TILE_SIZE*v2SrcInSquares.X;
-  bldPlayerOnScreen.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
+  bldAroundOnScreen.Src.X-=TILE_SIZE*v2SrcInSquares.X;
+  bldAroundOnScreen.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
 
 //  bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
@@ -438,28 +424,28 @@ void game::UpdatePlayerOnScreenBlitdata(v2 ScreenPos){ //TODO this method logic 
   if(deltaSquaresForUpperLeft.X<0)v2BorderInSquares.X+=deltaSquaresForUpperLeft.X;
   if(deltaSquaresForUpperLeft.Y<0)v2BorderInSquares.Y+=deltaSquaresForUpperLeft.Y;
 
-  v2 deltaForLowerRight=deltaSquares;
+  v2 deltaForLowerRight=v2DeltaSqr;
   deltaForLowerRight.X=GetScreenXSize()-deltaForLowerRight.X-iSAP-1;
   deltaForLowerRight.Y=GetScreenYSize()-deltaForLowerRight.Y-iSAP-1;
 
   if(deltaForLowerRight.X<0)v2BorderInSquares.X+=deltaForLowerRight.X;
   if(deltaForLowerRight.Y<0)v2BorderInSquares.Y+=deltaForLowerRight.Y;
 
-  bldPlayerOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.X);
-  bldPlayerOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.Y);
+  bldAroundOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.X);
+  bldAroundOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.Y);
 
   // this grants positioninig on the upper left player's square corner
 
   // relative to full dungeon in source image vanilla position
-  v2 deltaForFullDungeonSrc = {bldPlayerOnScreen.Src.X-bldFullDungeon.Src.X, bldPlayerOnScreen.Src.Y-bldFullDungeon.Src.Y};
+  v2 deltaForFullDungeonSrc = {bldAroundOnScreen.Src.X-bldFullDungeon.Src.X, bldAroundOnScreen.Src.Y-bldFullDungeon.Src.Y};
 
   // relative to full dungeon over it's stretched image position
-  bldPlayerOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
-  bldPlayerOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
-  graphics::SetSRegionBlitdata(iRegionXBRZPlayerOnScreen,bldPlayerOnScreen); DBGBLD(bldPlayerOnScreen,"bldPlayerOnScreen");
+  graphics::SetSRegionBlitdata(iRegionAroundXBRZ,bldAroundOnScreen); DBGBLD(bldAroundOnScreen);
 
-  PrepareToClearNonVisibleSquaresAroundPlayer();
+  PrepareToClearNonVisibleSquaresAroundPlayer(v2SqrPos);
 }
 
 void game::RegionListItemEnable(bool b){
@@ -519,12 +505,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
       iTotSRegions++;
 
-      /**********
-       * player *
-       **********/
+      /***********************************
+       * AROUND: player or look zoom pos *
+       ***********************************/
       // (will be above dungeon) around player on screen
-      bldPlayerOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
-      iRegionXBRZPlayerOnScreen = graphics::AddStretchRegion(bldPlayerOnScreen,"PlayerOnScreen");
+      bldAroundOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
+      iRegionAroundXBRZ = graphics::AddStretchRegion(bldAroundOnScreen,"AroundXBRZ");
       iTotSRegions++;
     }
   }
@@ -1157,7 +1143,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       {
         v2 ScreenCoord = CalculateScreenCoordinates(Pos);
         igraph::DrawCursor(ScreenCoord, Player->GetCursorData());
-        UpdatePlayerOnScreenBlitdata(ScreenCoord);
+        if(!DoZoom())UpdatePosAroundForXBRZ(Pos);
       }
     }
     else
@@ -1170,7 +1156,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         {
           v2 ScreenCoord = CalculateScreenCoordinates(Pos);
           igraph::DrawCursor(ScreenCoord, Player->GetCursorData()|CURSOR_BIG, c);
-          UpdatePlayerOnScreenBlitdata(ScreenCoord);
+          if(!DoZoom())UpdatePosAroundForXBRZ(Pos);
         }
       }
     }
@@ -1905,6 +1891,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
 
     FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CStr());
     SetCursorPos(CursorPos);
+    UpdatePosAroundForXBRZ(CursorPos);
     DrawEverything();
     Key = GET_KEY();
   }
@@ -1917,6 +1904,10 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   SetDoZoom(false);
 
   SetCursorPos(v2(-1, -1));
+
+  if(ivanconfig::IsCenterOnPlayerAfterLook()){
+    UpdateCamera();
+  }
 
   return Return;
 }

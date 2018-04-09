@@ -176,8 +176,8 @@ class game
   static void UpdateSRegionsXBRZ();
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
-  static void UpdatePlayerOnScreenBlitdata(v2 ScreenPos);
-  static void PrepareToClearNonVisibleSquaresAroundPlayer();
+  static void UpdatePosAroundForXBRZ(v2 ScreenPos);
+  static void PrepareToClearNonVisibleSquaresAroundPlayer(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
@@ -556,7 +556,7 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
-  static blitdata bldPlayerOnScreen;
+  static blitdata bldAroundOnScreen;
   const static int iListWidth = 652;
 };
 

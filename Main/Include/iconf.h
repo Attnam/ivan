@@ -27,6 +27,7 @@ class ivanconfig
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
+  static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -110,6 +111,7 @@ class ivanconfig
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
+  static truthoption CenterOnPlayerAfterLook;
 
   static scrollbaroption Contrast;
 

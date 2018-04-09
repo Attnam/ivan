@@ -64,6 +64,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
+truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
+                                          "Always center camera on player after look mode exits",
+                                          false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -547,6 +550,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&SmartOpenCloseApply);
+  configsystem::AddOption(&CenterOnPlayerAfterLook);
 
   // about graphics
   configsystem::AddOption(&LookZoom);

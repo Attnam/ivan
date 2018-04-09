@@ -387,12 +387,13 @@ bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   rBC.Src = rB.Src;DBGLN;
   rBC.Dest = {0,0};DBGLN;
   rBC.Border = rB.Border;DBGLN;
-  DBGBLD(rBC,"ClearSquares");
+  DBGBLD(rBC);
   DoubleBuffer->NormalBlit(rBC);DBGLN;
 
   for(int i=0;i<rSR.vv2ClearSquaresAt.size();i++){
     rBC.Bitmap->Fill(rSR.vv2ClearSquaresAt[i],rSR.v2ClearSquareSize,TRANSPARENT_COLOR);
   }
+  rSR.vv2ClearSquaresAt.clear();
 
   rSR.B.Src=v2(); //as the blitdata for cleared squares will now be the source
   return rBC.Bitmap;
@@ -494,7 +495,7 @@ bitmap* graphics::PrepareBuffer(){
         }
 
         if(rSR.bSpecialListItem){ DBGSRI("ListItem");
-        rB.Src = felist::GetCurrentListSelectedItemPos(); //the tiny one
+          rB.Src = felist::GetCurrentListSelectedItemPos(); //the tiny one
         }
 
         bool bDrawSROutline=rSR.bDrawRectangleOutline;
