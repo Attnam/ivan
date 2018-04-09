@@ -154,6 +154,7 @@ uint felist::Draw()
   else
     PageBegin = 0;
 
+  bool bWaitKeyUp=false;
   for(;;)
   {
     truth AtTheEnd = DrawPage(Buffer);
@@ -180,6 +181,7 @@ uint felist::Draw()
        && Pressed - 65 + PageBegin < Selectables)
     {
       Return = Selected = Pressed - 65 + PageBegin;
+      bWaitKeyUp=true;
       break;
     }
 
@@ -188,6 +190,7 @@ uint felist::Draw()
        && Pressed - 97 + PageBegin < Selectables)
     {
       Return = Selected = Pressed - 97 + PageBegin;
+      bWaitKeyUp=true;
       break;
     }
 
@@ -255,6 +258,7 @@ uint felist::Draw()
     if(Flags & SELECTABLE && Pressed == KEY_ENTER)
     {
       Return = Selected;
+      bWaitKeyUp=true;
       break;
     }
 
@@ -296,6 +300,11 @@ uint felist::Draw()
     delete Buffer;
 
   globalwindowhandler::DeInstallControlLoop(FelistDrawController);
+
+  #ifdef FELIST_WAITKEYUP
+  if(bWaitKeyUp)for(;;){if(WAIT_FOR_KEY_UP())break;};
+  #endif
+
   return Return;
 }
 

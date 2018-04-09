@@ -223,7 +223,7 @@ int globalwindowhandler::ReadKey()
   return KeyBuffer.size() ? GetKey(false) : 0;
 }
 
-truth globalwindowhandler::WaitForKeyDown()
+truth globalwindowhandler::WaitForKeyEvent(uint Key)
 {
   SDL_Event Event;
 
@@ -235,11 +235,11 @@ truth globalwindowhandler::WaitForKeyDown()
   {
 #if SDL_MAJOR_VERSION == 2
     while(SDL_PollEvent(&Event))
-      if(Event.type == SDL_KEYDOWN)
+      if(Event.type == Key)
         return true;
 #else
     while(SDL_PollEvent(&Event))
-      if(Event.active.type == SDL_KEYDOWN)
+      if(Event.active.type == Key)
         return true;
 #endif
   }
