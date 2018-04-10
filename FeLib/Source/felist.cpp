@@ -351,9 +351,7 @@ uint felist::Draw()
   FelistCurrentlyDrawn=NULL;DBGLN;
 
   #ifdef FELIST_WAITKEYUP
-  if(bWaitKeyUp){
-    DBG1("WaitKeyUp"); for(;;){if(WAIT_FOR_KEY_UP())break;}; DBG1("WaitKeyUpDone");
-  }
+  if(bWaitKeyUp)for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
   return Return;
