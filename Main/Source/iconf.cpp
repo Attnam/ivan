@@ -135,7 +135,7 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
-                                          "select graphics scale factor",
+                                          "select window scale factor",
                                           1, 2,
                                           &GraphicsScaleDisplayer,
                                           &GraphicsScaleChangeInterface,
@@ -532,19 +532,11 @@ void ivanconfig::Initialize()
 {
   festring fsCategory;
 
-  fsCategory="Core Setup";
+  fsCategory="Core Game Setup";
   configsystem::AddOption(fsCategory,&DefaultName);
   configsystem::AddOption(fsCategory,&DefaultPetName);
   configsystem::AddOption(fsCategory,&AutoSaveInterval);
   configsystem::AddOption(fsCategory,&AltAdentureInfo);
-
-  fsCategory="Window";
-  configsystem::AddOption(fsCategory,&Contrast);
-  configsystem::AddOption(fsCategory,&WindowWidth);
-  configsystem::AddOption(fsCategory,&WindowHeight);
-#ifndef __DJGPP__
-  configsystem::AddOption(fsCategory,&GraphicsScale);
-#endif
 
   fsCategory="Gameplay Changes";
   configsystem::AddOption(fsCategory,&BeNice);
@@ -552,6 +544,15 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+
+  fsCategory="Window";
+  configsystem::AddOption(fsCategory,&Contrast);
+  configsystem::AddOption(fsCategory,&WindowWidth);
+  configsystem::AddOption(fsCategory,&WindowHeight);
+#ifndef __DJGPP__
+  configsystem::AddOption(fsCategory,&GraphicsScale);
+  configsystem::AddOption(fsCategory,&FullScreenMode);
+#endif
 
   fsCategory="Graphics";
   configsystem::AddOption(fsCategory,&LookZoom);
@@ -562,11 +563,6 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
-
-  fsCategory="System and user interface/input";
-  configsystem::AddOption(fsCategory,&DirectionKeyMap);
-  configsystem::AddOption(fsCategory,&ShowTurn);
-  configsystem::AddOption(fsCategory,&ShowFullDungeonName);
   configsystem::AddOption(fsCategory,&FrameSkip);
 
   fsCategory="Sounds";
@@ -584,19 +580,20 @@ void ivanconfig::Initialize()
 
   configsystem::AddOption(fsCategory,&MIDIOutputDevice);
 
-#ifndef __DJGPP__
-  configsystem::AddOption(fsCategory,&FullScreenMode); //good as last one quick access (keyUp, Enter), despite "game window section"
-#endif
+  fsCategory="System and user interface/input";
+  configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&ShowTurn);
+  configsystem::AddOption(fsCategory,&ShowFullDungeonName);
 
+  /********************************
+   * LOAD AND APPLY some SETTINGS *
+   ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
 
-  /********************************
-   * LOAD AND APPLY some SETTINGS *
-   ********************************/
   configsystem::Load();
 
   iStartingWindowWidth=WindowWidth.Value;
