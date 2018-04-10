@@ -14,14 +14,12 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
-#include <cassert>
 
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
 #include "festring.h"
-#include "dbgmsgproj.h"
 
 #if SDL_MAJOR_VERSION == 1
 /* redefine SDL2 to SDL1 */
@@ -196,7 +194,7 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   bool bDrawFrame=false;
   bool bDelay1MS=false;
 
-  assert(iFrameSkip>=0);
+  if(iFrameSkip<0)ABORT("iFrameSkip is %d < 0",iFrameSkip);
 
   if(iAddFrameSkip==-2){
     if(dLastFrameTimeMS>142){ //if it is too slow <= 7 fps
@@ -251,10 +249,10 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
     //call these ONLY when the frame is actually DRAWN!!! (despite not being actually used yet)
     iLastSecCountFPS = MeasureLastSecondRealFPS();
     fInstaFPS = InstaCalcFPS();
-    DBG5(DBGF(fInstaFPS),DBGI(iLastSecCountFPS),DBGF(dLastFrameTimeMS),DBGI(iAddFrameSkip),DBGI(iFrameSkip));
+    //DBG5(DBGF(fInstaFPS),DBGI(iLastSecCountFPS),DBGF(dLastFrameTimeMS),DBGI(iAddFrameSkip),DBGI(iFrameSkip));
   }else{
     if(iFrameSkip>0)iFrameSkip--;
-    DBGSI(iFrameSkip);
+    //DBGSI(iFrameSkip);
   }
 
   if(bDelay1MS){
