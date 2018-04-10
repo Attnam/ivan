@@ -46,6 +46,7 @@ class globalwindowhandler
   static void SetScrshotDirectory(cfestring& DirectoryName)
   { ScrshotDirectoryName = DirectoryName; }
   static festring ScrshotNameHandler(); // Number successive screenshots based on existing filenames
+  static void SetAddFrameSkip(int i);
 #ifdef USE_SDL
   static void Init();
   static void SetQuitMessageHandler(truth (*What)())

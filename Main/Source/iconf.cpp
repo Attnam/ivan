@@ -18,6 +18,7 @@
 #include "bitmap.h"
 #include "igraph.h"
 #include "audio.h"
+#include "whandler.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -42,6 +43,12 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+numberoption ivanconfig::FrameSkip(       "FrameSkip",
+                                          "FrameSkip to inc. input responsiveness",
+                                          0,
+                                          &FrameSkipDisplayer,
+                                          &FrameSkipChangeInterface,
+                                          &FrameSkipChanger);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -103,6 +110,14 @@ truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
 
+void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value;
+  if(O->Value==-2)Entry  << " = wait"  ;
+  if(O->Value==-1)Entry  << " = auto"  ;
+  if(O->Value>= 0)Entry  <<   " frames";
+}
+
 void ivanconfig::AutoSaveIntervalDisplayer(const numberoption* O, festring& Entry)
 {
   if(O->Value)
@@ -163,6 +178,10 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   }
 }
 
+void clearToBackgroundAfterChangeInterface(){
+  if(game::IsRunning())igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+}
+
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -171,8 +190,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -185,9 +203,16 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
+  return false;
+}
+
+truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set frame skip to let controls/input work better (-2=wait,-1=auto,0to100):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -196,8 +221,7 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -209,8 +233,7 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -222,10 +245,19 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
+}
+
+void ivanconfig::FrameSkipChanger(numberoption* O, long What)
+{
+  if(What <  -2) What =  -2;
+  if(What > 100) What = 100;
+
+  if(O!=NULL)O->Value = What;
+
+  globalwindowhandler::SetAddFrameSkip(What);
 }
 
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
@@ -335,6 +367,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&FrameSkip);
   configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);
@@ -363,4 +396,5 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
+  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods above too?
 }
