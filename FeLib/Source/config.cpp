@@ -19,9 +19,10 @@ configoption* configsystem::Option[MAX_CONFIG_OPTIONS];
 festring configsystem::ConfigFileName;
 int configsystem::Options;
 
-void configsystem::AddOption(configoption* O) {
+void configsystem::AddOption(festring fsCategory, configoption* O) {
   for(int i=0;i<Options;i++)if(Option[i] == O)ABORT("Option already set '%s' '%s'", O->Name, O->Description); //help developers to prevent duplicated entries
 
+  O->fsCategory=fsCategory;
   Option[Options++] = O;
 }
 void configsystem::NormalStringChanger(stringoption* O, cfestring& What)
@@ -149,12 +150,19 @@ void configsystem::Show(void (*BackGroundDrawer)(),
 
     List.Empty();
 
+    festring fsLastCategory;
     for(int c = 0; c < Options; ++c)
     {
       festring Entry = Option[c]->Description;
       Entry.Capitalize();
       Entry.Resize(60);
       Option[c]->DisplayValue(Entry);
+
+      if(fsLastCategory!=Option[c]->fsCategory){
+        List.AddEntry(Option[c]->fsCategory, WHITE, 0, NO_IMAGE, false);
+        fsLastCategory=Option[c]->fsCategory;
+      }
+
       List.AddEntry(Entry, LIGHT_GRAY);
     }
 

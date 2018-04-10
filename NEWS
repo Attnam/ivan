@@ -24,6 +24,7 @@ Changes:
 * You can now optionally review after death events/items/msgs using Ivan3D mode.
 * Optionally always center on player after exiting LookZoom mode.
 * Optionally show full dungeon name.
+* Grouped config options in categories.
 
 Fixes:
 * Mainly when toggling full screen mode on linux, it will now wait you release the key to apply.

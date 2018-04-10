@@ -530,46 +530,48 @@ int  ivanconfig::iStartingDungeonGfxScale=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
-  // game core setup
-  configsystem::AddOption(&DefaultName);
-  configsystem::AddOption(&DefaultPetName);
-  configsystem::AddOption(&AutoSaveInterval);
-  configsystem::AddOption(&AltAdentureInfo);
+  festring fsCategory;
 
-  // about the overall game window
-  configsystem::AddOption(&Contrast);
-  configsystem::AddOption(&WindowWidth);
-  configsystem::AddOption(&WindowHeight);
+  fsCategory="Core Setup";
+  configsystem::AddOption(fsCategory,&DefaultName);
+  configsystem::AddOption(fsCategory,&DefaultPetName);
+  configsystem::AddOption(fsCategory,&AutoSaveInterval);
+  configsystem::AddOption(fsCategory,&AltAdentureInfo);
+
+  fsCategory="Window";
+  configsystem::AddOption(fsCategory,&Contrast);
+  configsystem::AddOption(fsCategory,&WindowWidth);
+  configsystem::AddOption(fsCategory,&WindowHeight);
 #ifndef __DJGPP__
-  configsystem::AddOption(&GraphicsScale);
+  configsystem::AddOption(fsCategory,&GraphicsScale);
 #endif
 
-  // gameplay changes
-  configsystem::AddOption(&BeNice);
-  configsystem::AddOption(&WarnAboutDanger);
-  configsystem::AddOption(&AutoDropLeftOvers);
-  configsystem::AddOption(&SmartOpenCloseApply);
-  configsystem::AddOption(&CenterOnPlayerAfterLook);
+  fsCategory="Gameplay Changes";
+  configsystem::AddOption(fsCategory,&BeNice);
+  configsystem::AddOption(fsCategory,&WarnAboutDanger);
+  configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
+  configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
+  configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
 
-  // about graphics
-  configsystem::AddOption(&LookZoom);
-  configsystem::AddOption(&XBRZScale);
-  configsystem::AddOption(&XBRZSquaresAroundPlayer);
-  configsystem::AddOption(&SilhouetteScale);
-  configsystem::AddOption(&AltListItemPos);
-  configsystem::AddOption(&AltListItemWidth);
-  configsystem::AddOption(&DungeonGfxScale);
-  configsystem::AddOption(&OutlinedGfx);
+  fsCategory="Graphics";
+  configsystem::AddOption(fsCategory,&LookZoom);
+  configsystem::AddOption(fsCategory,&XBRZScale);
+  configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
+  configsystem::AddOption(fsCategory,&SilhouetteScale);
+  configsystem::AddOption(fsCategory,&AltListItemPos);
+  configsystem::AddOption(fsCategory,&AltListItemWidth);
+  configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&OutlinedGfx);
 
-  // system config, user interface/input
-  configsystem::AddOption(&DirectionKeyMap);
-  configsystem::AddOption(&ShowTurn);
-  configsystem::AddOption(&ShowFullDungeonName);
-  configsystem::AddOption(&FrameSkip);
+  fsCategory="System and user interface/input";
+  configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&ShowTurn);
+  configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+  configsystem::AddOption(fsCategory,&FrameSkip);
 
-  // sounds
-  configsystem::AddOption(&PlaySounds);
-  configsystem::AddOption(&Volume);
+  fsCategory="Sounds";
+  configsystem::AddOption(fsCategory,&PlaySounds);
+  configsystem::AddOption(fsCategory,&Volume);
 
   std::vector<std::string> DeviceNames;
   int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
@@ -580,10 +582,10 @@ void ivanconfig::Initialize()
   }
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
-  configsystem::AddOption(&MIDIOutputDevice);
+  configsystem::AddOption(fsCategory,&MIDIOutputDevice);
 
 #ifndef __DJGPP__
-  configsystem::AddOption(&FullScreenMode); //good as last one quick access (keyUp, Enter), despite "game window section"
+  configsystem::AddOption(fsCategory,&FullScreenMode); //good as last one quick access (keyUp, Enter), despite "game window section"
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -591,9 +593,12 @@ void ivanconfig::Initialize()
 #else
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
+
+  /********************************
+   * LOAD AND APPLY some SETTINGS *
+   ********************************/
   configsystem::Load();
 
-  // apply some settings after loading the config file
   iStartingWindowWidth=WindowWidth.Value;
   iStartingWindowHeight=WindowHeight.Value;
   iStartingDungeonGfxScale=DungeonGfxScale.Value;
@@ -603,5 +608,5 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
-  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods above too?
+  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
 }
