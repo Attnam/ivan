@@ -54,6 +54,8 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+
+#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 131 // Increment this if changes make savefiles incompatible
@@ -386,7 +388,9 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
 
 void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
   if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1)return;
-  if(Player->IsDead())return;
+  if(Player->IsDead())return; //TODO this is not working why?
+  if(Player->GetHP()<=0)return;
+  if(DoZoom() && IsDark(Player->GetLevel()->GetSunLightEmitation()))return;  //TODO lookzoom could use the cleared squares at night one day.
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(iSAP==0){

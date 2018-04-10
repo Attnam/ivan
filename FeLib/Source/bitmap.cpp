@@ -1170,7 +1170,6 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   if(bUseScale)iH*=B.Stretch;
 
   for(int i=0;i<vSurfaceCache.size();i++){
-//    if(bDbgMsg)std::cout<<"i="<<i<<" w="<<vSurfaceCache[i]->w<<" h="<<vSurfaceCache[i]->h<<std::endl;
     if(vSurfaceCache[i]->w==iW && vSurfaceCache[i]->h==iH){
       return vSurfaceCache[i];
     }

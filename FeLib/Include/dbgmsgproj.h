@@ -21,25 +21,8 @@
     class dbgmsgprj{
       public:
 
-      static std::stringstream dbgBLD(const blitdata& rB,const char* strInfo){
-        std::stringstream ss;
-        ss<<strInfo<<"/";
-        ss<<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/";
-        ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";
-        ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";
-        ss<<"Stretch="<<rB.Stretch<<"/";
-        if(rB.Bitmap!=NULL)ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";
-        return ss;
-      }
-
-      static std::stringstream dbgV2(v2 v2Val,const char* c){
-        std::stringstream ss;
-        ss<<c<<"/";
-        ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";
-        return ss;
-      }
-
       #ifdef DBGMSG_STRETCHREGION
+      #define DBGMSG_BLITDATA
       #define DBGSRI(info)  DBG1( dbgmsgprj::dbgSRI(rSR,info).str())
       #define DBGSR         DBGSRI("")
       static std::stringstream dbgSRI(stretchRegion& SR,const char* strInfo){
@@ -54,6 +37,31 @@
         return ss;
       }
       #endif //DBGMSG_STRETCHREGION
+
+      #ifdef DBGMSG_BLITDATA
+      #define DBGMSG_V2
+      #define DBGBLD(rb) DBGSS(dbgmsgprj::dbgBLD(rb,DBGTOSTR(rb)).str())
+      static std::stringstream dbgBLD(const blitdata& rB,const char* strInfo){
+        std::stringstream ss;
+        ss<<strInfo<<"/";
+        ss<<"Src="<<rB.Src.X<<","<<rB.Src.Y<<"/";
+        ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";
+        ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";
+        ss<<"Stretch="<<rB.Stretch<<"/";
+        if(rB.Bitmap!=NULL)ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";
+        return ss;
+      }
+      #endif //DBGMSG_BLITDATA
+
+      #ifdef DBGMSG_V2
+      #define DBGV2(v2)  DBGSS(dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str())
+      static std::stringstream dbgV2(v2 v2Val,const char* c){
+        std::stringstream ss;
+        ss<<c<<"/";
+        ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";
+        return ss;
+      }
+      #endif //DBGMSG_V2
 
     };
 

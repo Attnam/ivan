@@ -23,8 +23,6 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
-#include "dbgmsgproj.h"
-
 struct statedata
 {
   cchar* Description;
@@ -7727,7 +7725,6 @@ void character::ShowAdventureInfoAlt() const
      game::KeyQuestion(
        CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
          'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
-    DBG4("Answer",Answer,KEY_ESC,KEY_SPACE);
 
     if(Answer == 'i' || Answer == 'I'){
       inventoryInfo(this);
