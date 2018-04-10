@@ -1683,7 +1683,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
-    graphics::SetDenyStretchedBlit(); // to let final animation be seen properly
+    game::ApplyPlayerDiedAdjustments();
     game::PlayDefeatMusic();
     ShowAdventureInfo();
 

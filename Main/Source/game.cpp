@@ -386,17 +386,40 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
 
+void game::ApplyPlayerDiedAdjustments(){
+  graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
+}
+
 void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
-  if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1)return;
-  if(Player->IsDead())return; //TODO this is not working why?
-  if(Player->GetHP()<=0)return;
-  if(DoZoom() && IsDark(Player->GetLevel()->GetSunLightEmitation()))return;  //TODO lookzoom could use the cleared squares at night one day.
+  if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1){ // around is for dungeon
+    return;
+  }
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
-  if(iSAP==0){
+  if(
+      iSAP==0
+      ||
+      Player->IsDead() // this may actually never happen...
+      ||
+      (
+        !IsInWilderness() // in town or dungeon
+        &&
+        (
+          DoZoom() //TODO lookzoom could use the cleared squares at night one day and be an user option (if it is still too slow)
+          &&
+          (
+            IsDark(Player->GetLevel()->GetSunLightEmitation())
+            ||
+            IsDark(Player->GetLevel()->GetAmbientLuminance()) //TODO explain: snow/rain?
+          )
+        )
+      )
+  ){
     graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
     return;
   }
+
+  /////////////////// ok ///////////////////////
 
   v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGV2(v2ScreenPos);
 
