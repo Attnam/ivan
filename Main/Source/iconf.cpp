@@ -42,6 +42,9 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
+                                          "Show current dungeon's full name",
+                                          false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -335,6 +338,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&SmartOpenCloseApply);
   configsystem::AddOption(&BeNice);
   configsystem::AddOption(&ShowTurn);
+  configsystem::AddOption(&ShowFullDungeonName);
   configsystem::AddOption(&OutlinedGfx);
   configsystem::AddOption(&PlaySounds);
   configsystem::AddOption(&Volume);

@@ -7368,7 +7368,15 @@ festring character::GetPanelName() const
   festring Name;
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
-  return Name;
+
+  festring PanelName;
+  if(!game::IsInWilderness()){
+    PanelName << Name;
+    if(ivanconfig::IsShowFullDungeonName())
+      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) << ')';
+  }
+
+  return PanelName;
 }
 
 long character::GetMoveAPRequirement(int Difficulty) const

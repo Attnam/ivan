@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -77,6 +78,7 @@ class ivanconfig
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static scrollbaroption Contrast;
+  static truthoption ShowFullDungeonName;
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
