@@ -528,7 +528,6 @@ int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
-
 void ivanconfig::Initialize()
 {
   // game core setup

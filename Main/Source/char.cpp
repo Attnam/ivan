@@ -7710,7 +7710,6 @@ void character::ShowAdventureInfo() const
     if(!game::MassacreListsEmpty()
        && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
     {
-      graphics::SetAllowStretchedBlit();
       game::DisplayMassacreLists();
     }
   }

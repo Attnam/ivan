@@ -112,7 +112,6 @@ class ivanconfig
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;
-
   static scrollbaroption Contrast;
 
   static numberoption WindowWidth;
