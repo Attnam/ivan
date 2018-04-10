@@ -302,14 +302,14 @@ void soundsystem::initSound()
 
   if(SoundState == 0)
   {
-    //FILE *debf = fopen("snddebug.txt", "a");
-    FILE *debf = fopen("snddebug.txt", "wt");
-    fprintf(debf, "This file can be used to diagnose problems with sound.\n");
+    festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
+    FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
+    if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 		
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0) 
     {
       ADD_MESSAGE("Unable to initialize audio: %s\n", Mix_GetError());
-      if(debf) fprintf(debf, "Unable to initialize audio: %s\n", Mix_GetError());
+      if(debf)fprintf(debf, "Unable to initialize audio: %s\n", Mix_GetError());
       SoundState = -1;
       return;
     }
