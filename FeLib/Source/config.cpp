@@ -19,7 +19,11 @@ configoption* configsystem::Option[MAX_CONFIG_OPTIONS];
 festring configsystem::ConfigFileName;
 int configsystem::Options;
 
-void configsystem::AddOption(configoption* O) { Option[Options++] = O; }
+void configsystem::AddOption(configoption* O) {
+  for(int i=0;i<Options;i++)if(Option[i] == O)ABORT("Option already set '%s' '%s'", O->Name, O->Description); //help developers to prevent duplicated entries
+
+  Option[Options++] = O;
+}
 void configsystem::NormalStringChanger(stringoption* O, cfestring& What)
 { O->Value = What; }
 void configsystem::NormalNumberChanger(numberoption* O, long What)
