@@ -196,11 +196,10 @@ int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 bool bSRegionMouseZoomOk=false;
 
-//TODO should be transparent_color? is working well til now..
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
-blitdata bldFullDungeon = DEFAULT_BLITDATA;
-blitdata bldSilhouette = DEFAULT_BLITDATA;
-blitdata bldListItem = DEFAULT_BLITDATA;
+blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
+blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
+blitdata bldListItemTMP = DEFAULT_BLITDATA;
 
 int iZoomFactor=6;
 v2 ZoomPos = {0,0};
@@ -476,11 +475,11 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
   // this grants positioninig on the upper left player's square corner
 
   // relative to full dungeon in source image vanilla position
-  v2 deltaForFullDungeonSrc = {bldAroundOnScreenTMP.Src.X-bldFullDungeon.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeon.Src.Y};
+  v2 deltaForFullDungeonSrc = {bldAroundOnScreenTMP.Src.X-bldFullDungeonTMP.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeonTMP.Src.Y};
 
   // relative to full dungeon over it's stretched image position
-  bldAroundOnScreenTMP.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
-  bldAroundOnScreenTMP.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreenTMP.Dest.X=bldFullDungeonTMP.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreenTMP.Dest.Y=bldFullDungeonTMP.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
   graphics::SetSRegionBlitdata(iRegionAroundXBRZ,bldAroundOnScreenTMP); DBGBLD(bldAroundOnScreenTMP);
 
@@ -492,7 +491,7 @@ void game::RegionListItemEnable(bool b){
   if(iRegionListItem==-1)return;
 
   // src pos is set at felist
-  graphics::SetSRegionBlitdata(iRegionListItem, bldListItem);
+  graphics::SetSRegionBlitdata(iRegionListItem, bldListItemTMP);
   graphics::SetSRegionEnabled(iRegionListItem, b);
 }
 
@@ -501,13 +500,13 @@ void game::RegionSilhouetteEnable(bool b){
   if(iRegionSilhouette==-1)return;
 
   if( b && ivanconfig::GetSilhouetteScale()>1 ){
-    bldSilhouette.Stretch = ivanconfig::GetSilhouetteScale();
+    bldSilhouetteTMP.Stretch = ivanconfig::GetSilhouetteScale();
 
-    bldSilhouette.Dest = {
-        silhouettePos.X -(bldSilhouette.Border.X*ivanconfig::GetSilhouetteScale()) -3,
+    bldSilhouetteTMP.Dest = {
+        silhouettePos.X -(bldSilhouetteTMP.Border.X*ivanconfig::GetSilhouetteScale()) -3,
         silhouettePos.Y};
 
-    graphics::SetSRegionBlitdata(iRegionSilhouette, bldSilhouette);
+    graphics::SetSRegionBlitdata(iRegionSilhouette, bldSilhouetteTMP);
     graphics::SetSRegionEnabled(iRegionSilhouette, true);
   }else{
     graphics::SetSRegionEnabled(iRegionSilhouette, false);
@@ -538,11 +537,11 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
        * workaround: only one line of the border will be stretched, hence src -1 and border +2
        */
       v2 topleft = area::getTopLeftCorner();
-      bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
-      bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
-      bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
-      bldFullDungeon.Stretch = ivanconfig::GetStartingDungeonGfxScale();
-      iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
+      bldFullDungeonTMP.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
+      bldFullDungeonTMP.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
+      bldFullDungeonTMP.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
+      bldFullDungeonTMP.Stretch = ivanconfig::GetStartingDungeonGfxScale();
+      iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeonTMP,"FullDungeon");
 
       /***********************************
        * AROUND: player or look zoom pos *
@@ -560,21 +559,21 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     if(silhouettePos.X>0 && silhouettePos.Y>0){
       silhouettePos.X -= 15; silhouettePos.Y -= 23; //exact top left corner of all equipped items countour
       silhouettePos-=v2(1,1); //1 dot b4
-      bldSilhouette.Src = {silhouettePos.X, silhouettePos.Y};
-      bldSilhouette.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
-      bldSilhouette.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
-      bldSilhouette.Stretch = 2; // minimum to allow setup
-      iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
+      bldSilhouetteTMP.Src = {silhouettePos.X, silhouettePos.Y};
+      bldSilhouetteTMP.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
+      bldSilhouetteTMP.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
+      bldSilhouetteTMP.Stretch = 2; // minimum to allow setup
+      iRegionSilhouette = graphics::AddStretchRegion(bldSilhouetteTMP,"Silhouette");
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
     }
   }
 
   if(iRegionListItem==-1){
-    bldListItem.Dest = ZoomPos;
-    bldListItem.Border = TILE_V2;
-    bldListItem.Stretch = iZoomFactor;
-    iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
+    bldListItemTMP.Dest = ZoomPos;
+    bldListItemTMP.Border = TILE_V2;
+    bldListItemTMP.Stretch = iZoomFactor;
+    iRegionListItem = graphics::AddStretchRegion(bldListItemTMP,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
   }
@@ -2502,7 +2501,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iY=v2TopLeft.Y-3;
   }
 
-  int iItemW=bldListItem.Border.X*bldListItem.Stretch;
+  int iItemW=bldListItemTMP.Border.X*bldListItemTMP.Stretch;
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;

@@ -549,13 +549,13 @@ int graphics::GetTotSRegions(){
 }
 
 int iSRMouseZoomIndex=-1;
-blitdata bldMouseZoom = DEFAULT_BLITDATA;
 bool graphics::PrepareSRegionMouseZoomLazy(){
   if(iSRMouseZoomIndex>-1)return true;
   if(StretchedDB==NULL)return false;
 
-  bldMouseZoom.Stretch=2; //min to let it work
-  iSRMouseZoomIndex = AddStretchRegion(bldMouseZoom,"MouseZoom"); DBGSI(iSRMouseZoomIndex);
+  blitdata B = DEFAULT_BLITDATA;
+  B.Stretch=2; //min to let it work
+  iSRMouseZoomIndex = AddStretchRegion(B,"MouseZoom"); DBGSI(iSRMouseZoomIndex);
 
   return true;
 }
