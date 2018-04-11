@@ -155,6 +155,9 @@ class stack
   ccharacter* FindCarrier() const;
   void Haste();
   void Slow();
+  static void SetStandardPageLength(uint l){ StandardPageLength = l; };
+  static uint GetStandardPageLength(){ return StandardPageLength; };
+  static uint GetDefaultPageLength(){ return 12; };
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;
@@ -170,6 +173,7 @@ class stack
   col24 Emitation : 24;
   ulong Flags : 8;
   int Items;
+  static uint StandardPageLength;
 };
 
 #endif

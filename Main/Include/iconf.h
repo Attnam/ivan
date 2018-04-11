@@ -38,6 +38,7 @@ class ivanconfig
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
+  static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
   static truth IsAltListItemPos() { return AltListItemPos.Value; }
@@ -66,6 +67,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
+  static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
   static void FrameSkipDisplayer(const numberoption* O, festring& Entry);
   static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
@@ -76,6 +78,7 @@ class ivanconfig
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
+  static truth StackListPageLengthChangeInterface(numberoption* O);
   static truth FrameSkipChangeInterface(numberoption* O);
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
@@ -83,6 +86,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
+  static void StackListPageLengthChanger(numberoption* O, long What);
   static void FrameSkipChanger(numberoption* O, long What);
   static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
@@ -139,6 +143,7 @@ class ivanconfig
   static cycleoption SilhouetteScale;
   static truthoption AltListItemPos;
   static numberoption AltListItemWidth;
+  static numberoption StackListPageLength;
 
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;

@@ -16,6 +16,7 @@
    the initial selected item */
 
 int stack::Selected;
+uint stack::StandardPageLength = stack::GetDefaultPageLength();
 
 stack::stack(square* MotherSquare, entity* MotherEntity, ulong Flags)
 : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity),
@@ -486,7 +487,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack,
                                           Flags, 3 - c, SorterFunction);
 
   game::SetStandardListAttributes(Contents);
-  Contents.SetPageLength(12);
+  Contents.SetPageLength(stack::GetStandardPageLength());
   Contents.RemoveFlags(BLIT_AFTERWARDS);
   Contents.SetEntryDrawer(game::ItemEntryDrawer);
 

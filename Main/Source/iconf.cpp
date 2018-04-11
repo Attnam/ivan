@@ -19,6 +19,7 @@
 #include "igraph.h"
 #include "audio.h"
 #include "whandler.h"
+#include "stack.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -55,6 +56,12 @@ numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
+numberoption ivanconfig::StackListPageLength("StackListPageLength",
+                                          "Stack list page length in entries",
+                                          stack::GetDefaultPageLength(),
+                                          &StackListPageLengthDisplayer,
+                                          &StackListPageLengthChangeInterface,
+                                          &StackListPageLengthChanger);
 numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           "FrameSkip to inc. input responsiveness",
                                           0,
@@ -177,6 +184,11 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
   if(O->Value==-2)Entry  << " = wait"  ;
   if(O->Value==-1)Entry  << " = auto"  ;
   if(O->Value>= 0)Entry  <<   " frames";
+}
+
+void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " entries";
 }
 
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
@@ -324,6 +336,14 @@ truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new stack list page's length in entries:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
@@ -394,6 +414,14 @@ void ivanconfig::FrameSkipChanger(numberoption* O, long What)
   if(O!=NULL)O->Value = What;
 
   globalwindowhandler::SetAddFrameSkip(What);
+}
+
+void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
+{
+  if(What < stack::GetDefaultPageLength()) What = stack::GetDefaultPageLength();
+  if(O!=NULL)O->Value = What;
+
+  stack::SetStandardPageLength(What);
 }
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
@@ -482,7 +510,9 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 
 void ivanconfig::Show()
 {
+  game::SRegionAroundDeny();
   configsystem::Show(&BackGroundDrawer, &game::SetStandardListAttributes, game::IsRunning());
+  game::SRegionAroundAllow();
 }
 
 void ivanconfig::ContrastHandler(long Value)
@@ -561,6 +591,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&SilhouetteScale);
   configsystem::AddOption(fsCategory,&AltListItemPos);
   configsystem::AddOption(fsCategory,&AltListItemWidth);
+  configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
@@ -606,4 +637,5 @@ void ivanconfig::Initialize()
   audio::SetVolumeLevel(Volume.Value);
 
   FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
+  StackListPageLengthChanger(NULL, StackListPageLength.Value);
 }
