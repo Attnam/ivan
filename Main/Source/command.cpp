@@ -153,7 +153,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"offer")==0)return true;
   if(strcmp(str,"open")==0)return true;
   if(strcmp(str,"pick up")==0)return true;
-//  if(strcmp(str,"pray")==0)return true;
+  if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
 //  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
@@ -213,7 +213,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"offer")==0)return true;
   if(strcmp(str,"open")==0)return true;
   if(strcmp(str,"pick up")==0)return true;
-//  if(strcmp(str,"pray")==0)return true;
+  if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
 //  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
