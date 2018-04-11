@@ -559,7 +559,7 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
-  static blitdata bldAroundOnScreen;
+  static blitdata bldAroundOnScreenTMP;
   const static int iListWidth = 652;
 };
 

@@ -596,7 +596,7 @@ void graphics::ChangeSRegionMouseZoomArea(bool bInc, bool* pbX){
   v2& rv2MinSize = vStretchRegion[iSRMouseZoomIndex].v2SquareSize;
   if(rv2MinSize.X<=0 || rv2MinSize.Y<=0)ABORT("mouze zoom min size invalid %d,%d",rv2MinSize.X,rv2MinSize.Y);
 
-  v2& rv2Brd = bldMouseZoom.Border;
+  v2& rv2Brd = vStretchRegion[iSRMouseZoomIndex].B.Border;
 
   if(pbX==NULL || *pbX){
     rv2Brd.X += (bInc?1:-1) * rv2MinSize.X;
@@ -608,7 +608,7 @@ void graphics::ChangeSRegionMouseZoomArea(bool bInc, bool* pbX){
     if(rv2Brd.Y < rv2MinSize.Y) rv2Brd.Y = rv2MinSize.Y;
   }
 
-  DBGV2(bldMouseZoom.Border);
+  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Border);
 }
 
 void CheckAllowMouseCursorActions(){

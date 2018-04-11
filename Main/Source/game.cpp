@@ -197,7 +197,7 @@ int iRegionListItem = -1;
 bool bSRegionMouseZoomOk=false;
 
 //TODO should be transparent_color? is working well til now..
-blitdata game::bldAroundOnScreen = DEFAULT_BLITDATA;
+blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeon = DEFAULT_BLITDATA;
 blitdata bldSilhouette = DEFAULT_BLITDATA;
 blitdata bldListItem = DEFAULT_BLITDATA;
@@ -438,7 +438,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,true);
 
-  bldAroundOnScreen.Src = v2ScreenPos;
+  bldAroundOnScreenTMP.Src = v2ScreenPos;
 
 //  v2 v2SqrPosPlayer = Player->GetPos();
   v2 v2SqrPosCam = GetCamera();
@@ -453,8 +453,8 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
   if(deltaSquaresForUpperLeft.X<0)v2SrcInSquares.X+=deltaSquaresForUpperLeft.X;
   if(deltaSquaresForUpperLeft.Y<0)v2SrcInSquares.Y+=deltaSquaresForUpperLeft.Y;
 
-  bldAroundOnScreen.Src.X-=TILE_SIZE*v2SrcInSquares.X;
-  bldAroundOnScreen.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
+  bldAroundOnScreenTMP.Src.X-=TILE_SIZE*v2SrcInSquares.X;
+  bldAroundOnScreenTMP.Src.Y-=TILE_SIZE*v2SrcInSquares.Y;
 
 //  bldPlayerOnScreen.Dest = bldPlayerOnScreen.Src;
 
@@ -470,19 +470,19 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
   if(deltaForLowerRight.X<0)v2BorderInSquares.X+=deltaForLowerRight.X;
   if(deltaForLowerRight.Y<0)v2BorderInSquares.Y+=deltaForLowerRight.Y;
 
-  bldAroundOnScreen.Border.X=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.X);
-  bldAroundOnScreen.Border.Y=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.Y);
+  bldAroundOnScreenTMP.Border.X=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.X);
+  bldAroundOnScreenTMP.Border.Y=TILE_SIZE+(TILE_SIZE*v2BorderInSquares.Y);
 
   // this grants positioninig on the upper left player's square corner
 
   // relative to full dungeon in source image vanilla position
-  v2 deltaForFullDungeonSrc = {bldAroundOnScreen.Src.X-bldFullDungeon.Src.X, bldAroundOnScreen.Src.Y-bldFullDungeon.Src.Y};
+  v2 deltaForFullDungeonSrc = {bldAroundOnScreenTMP.Src.X-bldFullDungeon.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeon.Src.Y};
 
   // relative to full dungeon over it's stretched image position
-  bldAroundOnScreen.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
-  bldAroundOnScreen.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreenTMP.Dest.X=bldFullDungeon.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
+  bldAroundOnScreenTMP.Dest.Y=bldFullDungeon.Dest.Y+(deltaForFullDungeonSrc.Y*ivanconfig::GetStartingDungeonGfxScale());
 
-  graphics::SetSRegionBlitdata(iRegionAroundXBRZ,bldAroundOnScreen); DBGBLD(bldAroundOnScreen);
+  graphics::SetSRegionBlitdata(iRegionAroundXBRZ,bldAroundOnScreenTMP); DBGBLD(bldAroundOnScreenTMP);
 
   PrepareToClearNonVisibleSquaresAroundPlayer(v2SqrPos);
 }
@@ -548,8 +548,8 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
        * AROUND: player or look zoom pos *
        ***********************************/
       // (will be above dungeon) around player on screen
-      bldAroundOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
-      iRegionAroundXBRZ = graphics::AddStretchRegion(bldAroundOnScreen,"AroundXBRZ");
+      bldAroundOnScreenTMP.Stretch = ivanconfig::GetStartingDungeonGfxScale();
+      iRegionAroundXBRZ = graphics::AddStretchRegion(bldAroundOnScreenTMP,"AroundXBRZ");
     }
   }
 
