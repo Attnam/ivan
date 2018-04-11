@@ -177,7 +177,9 @@ class game
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
-  static void ApplyPlayerDiedAdjustments();
+  static void SRegionAroundDisable();
+  static void SRegionAroundAllow();
+  static void SRegionAroundDeny();
   static void PrepareToClearNonVisibleSquaresAroundPlayer(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);

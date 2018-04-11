@@ -793,6 +793,7 @@ truth commandsystem::Save(character*)
   if(game::TruthQuestion(CONST_S("Do you truly wish to save and flee? [y/N]")))
   {
     game::Save();
+    game::SRegionAroundDisable();
     game::End("", false);
     return true;
   }

@@ -386,11 +386,24 @@ void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
 
-void game::ApplyPlayerDiedAdjustments(){
+void game::SRegionAroundDisable(){
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
 }
 
-void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO this method logic could be simplified? may be UpdatePlayerOnScreenSBSBlitdata()
+bool bRegionAroundXBRZAllowed=true;
+void game::SRegionAroundAllow(){
+  bRegionAroundXBRZAllowed=true;
+}
+void game::SRegionAroundDeny(){
+  bRegionAroundXBRZAllowed=false;
+}
+
+void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with PrepareToClearNonVisibleSquaresAroundPlayer() as they deal with the same thing.
+  if(!bRegionAroundXBRZAllowed){
+    SRegionAroundDisable();
+    return;
+  }
+
   if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1){ // around is for dungeon
     return;
   }
@@ -1610,7 +1623,9 @@ int game::StringQuestion(festring& Answer, cfestring& Topic, col16 Color,
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23)); // pos may be incorrect!
+  SRegionAroundDeny();
   int Return = iosystem::StringQuestion(Answer, Topic, v2(16, 6), Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
+  SRegionAroundAllow();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
@@ -1619,7 +1634,9 @@ long game::NumberQuestion(cfestring& Topic, col16 Color, truth ReturnZeroOnEsc)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+  SRegionAroundDeny();
   long Return = iosystem::NumberQuestion(Topic, v2(16, 6), Color, false, ReturnZeroOnEsc);
+  SRegionAroundAllow();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
@@ -1629,9 +1646,11 @@ long game::ScrollBarQuestion(cfestring& Topic, long BeginValue, long Step, long 
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+  SRegionAroundDeny();
   long Return = iosystem::ScrollBarQuestion(Topic, v2(16, 6), BeginValue, Step, Min, Max, AbortValue,
                                             TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX),
                                             GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
+  SRegionAroundAllow();
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Return;
 }
