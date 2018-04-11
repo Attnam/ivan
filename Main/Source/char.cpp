@@ -7380,8 +7380,9 @@ festring character::GetPanelName() const
   festring PanelName;
   if(!game::IsInWilderness()){
     PanelName << Name;
-    if(ivanconfig::IsShowFullDungeonName())
-      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) << ')';
+    if(ivanconfig::IsShowFullDungeonName()){
+      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true) << ')';
+    }
   }
 
   return PanelName;

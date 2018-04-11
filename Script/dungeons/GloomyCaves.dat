@@ -22,7 +22,7 @@
 Dungeon ELPURI_CAVE;
 {
   Levels = 13;
-  Description = "gloomy cave";
+  Description = "Gloomy Cave";
   ShortDescription = "GC";
 
   LevelDefault

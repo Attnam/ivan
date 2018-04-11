@@ -40,7 +40,7 @@ class dungeon
   const levelscript* GetLevelScript(int);
   v2 GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(v2 What) { WorldMapPos = What; }
-  festring GetLevelDescription(int);
+  festring GetLevelDescription(int,bool bPretty = false);
   festring GetShortLevelDescription(int);
   level* LoadLevel(inputfile&, int);
   truth IsGenerated(int I) const { return Generated[I]; }

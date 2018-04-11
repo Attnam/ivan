@@ -23,8 +23,9 @@ Changes:
 * FrameSkip optional functionality for slow machines (or heavy CPU load as in "play while you work" :))
 * You can now optionally review after death events/items/msgs using Ivan3D mode.
 * Optionally always center on player after exiting LookZoom mode.
-* Optionally show full dungeon name.
+* Optionally show full dungeon name with roman level numbers.
 * Grouped config options in categories.
+* Custom stack list length (items, drop, throw etc).
 
 Fixes:
 * Mainly when toggling full screen mode on linux, it will now wait you release the key to apply.
