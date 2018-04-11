@@ -30,6 +30,7 @@
         std::stringstream ss;
         ss<<strInfo
           <<"["<<SR.iIndex<<"]SR@"
+          <<"bEnabled="<<SR.bEnabled<<"/"
           <<"bForceXBRZ="<<SR.bUseXBRZ<<"/"
           <<"id="<<SR.strId<<"/"
           <<dbgBLD(rB,"").str()

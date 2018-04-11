@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cstdarg>
 #include <iostream>
-#include <cassert>
 #include <vector>
 
 #if defined(UNIX) || defined(__DJGPP__)
@@ -195,6 +194,7 @@ int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
+bool bSRegionMouseZoomOk=false;
 
 //TODO should be transparent_color? is working well til now..
 blitdata game::bldAroundOnScreen = DEFAULT_BLITDATA;
@@ -515,9 +515,8 @@ void game::RegionSilhouetteEnable(bool b){
 
 }
 
-int iTotSRegions=0;
 void game::UpdateSRegionsXBRZ(){
-  for(int i=0;i<iTotSRegions;i++){
+  for(int i=0;i<graphics::GetTotSRegions();i++){
     if(i==iRegionIndexDungeon){
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true,ivanconfig::IsXBRZScale());
 
@@ -534,15 +533,16 @@ void game::UpdateSRegionsXBRZ(){
 void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they overlap
   if(iRegionIndexDungeon==-1){
     if(ivanconfig::GetStartingDungeonGfxScale()>1){
-      // dungeon visible area (Bitmap must be NULL)
-      // workaround: only one line of the border will be stretched, hence src -1 and border +2
+      /**
+       * dungeon visible area (Bitmap must be NULL)
+       * workaround: only one line of the border will be stretched, hence src -1 and border +2
+       */
       v2 topleft = area::getTopLeftCorner();
       bldFullDungeon.Src = {topleft.X-1,topleft.Y-1}; //the top left corner of the dungeon drawn area INSIDE the dungeon are grey ouline
       bldFullDungeon.Dest = {topleft.X - area::getOutlineThickness() -1, topleft.Y - area::getOutlineThickness() -1}; //the top left corner of the grey ouline to cover it TODO a new one should be drawn one day
       bldFullDungeon.Border = {GetScreenXSize()*TILE_SIZE+2, game::GetScreenYSize()*TILE_SIZE+2};
       bldFullDungeon.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionIndexDungeon = graphics::AddStretchRegion(bldFullDungeon,"FullDungeon");
-      iTotSRegions++;
 
       /***********************************
        * AROUND: player or look zoom pos *
@@ -550,7 +550,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       // (will be above dungeon) around player on screen
       bldAroundOnScreen.Stretch = ivanconfig::GetStartingDungeonGfxScale();
       iRegionAroundXBRZ = graphics::AddStretchRegion(bldAroundOnScreen,"AroundXBRZ");
-      iTotSRegions++;
     }
   }
 
@@ -566,7 +565,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       bldSilhouette.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
       bldSilhouette.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouette,"Silhouette");
-      iTotSRegions++;
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
     }
@@ -577,9 +575,14 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     bldListItem.Border = TILE_V2;
     bldListItem.Stretch = iZoomFactor;
     iRegionListItem = graphics::AddStretchRegion(bldListItem,"ListItem");
-    iTotSRegions++;
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
+  }
+
+  if(!bSRegionMouseZoomOk){
+    if(graphics::PrepareSRegionMouseZoomLazy()){
+      bSRegionMouseZoomOk = graphics::SetSRegionMouseZoomMinSizeLazy(TILE_V2);
+    }
   }
 
   UpdateSRegionsXBRZ();
@@ -812,6 +815,8 @@ void game::DeInit()
 
 void game::Run()
 {
+  PrepareStretchRegionsLazy();
+
   for(;;)
   {
     if(!InWilderness)

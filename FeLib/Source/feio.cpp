@@ -12,7 +12,6 @@
 
 #include <ctime>
 #include <cctype>
-#include <cassert>
 
 #ifdef WIN32
 #include <io.h>
@@ -37,6 +36,7 @@
 #include "rawbit.h"
 #include "festring.h"
 #include "bitmap.h"
+#include "error.h"
 
 #define PENT_WIDTH 70
 
@@ -150,8 +150,8 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
 
   if(BackGround){
     //vanilla was 800x600 as the background menu image. TODO provide calculations for lower than 800x600 one day?
-    assert(RES.X >= BackGround->GetSize().X);
-    assert(RES.Y >= BackGround->GetSize().Y);
+    if(RES.X < BackGround->GetSize().X)ABORT("invalid window width %d",RES.X);
+    if(RES.Y < BackGround->GetSize().Y)ABORT("invalid window height %d",RES.Y);
 
     if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
       Buffer.ClearToColor(0);

@@ -57,6 +57,7 @@ class graphics
   static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
 
   static int AddStretchRegion(blitdata B,const char* strId);
+  static int GetTotSRegions();
   static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
   static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
   static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
@@ -64,6 +65,13 @@ class graphics
   static void PrepareBeforeDrawingFelist();
   static void DrawAtDoubleBufferBeforeFelistPage();
   static bitmap* PrepareBuffer();
+
+  static bool PrepareSRegionMouseZoomLazy();
+  static bool SetSRegionMouseZoomMinSizeLazy(v2 v2Size);
+  static void ChangeSRegionMouseZoomArea(bool bInc, bool* pbX);
+  static void ToggleMouseCursorZoom();
+  static void UpdateSRegionMouseZoomArea(int iX, int iY);
+  static bool IsMouseCursorZoomEnabled();
 
   //TODO utility class for sregion?
   static bool IsSRegionEnabled(int iIndex);

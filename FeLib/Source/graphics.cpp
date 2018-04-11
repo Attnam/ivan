@@ -20,7 +20,6 @@
 #include <go32.h>
 #endif
 
-#include <cassert>
 #include <iostream>
 #include <sstream>
 
@@ -70,8 +69,9 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bDrawRectangleOutline;
   bool bAllowTransparency; //mask
 
+  v2 v2SquareSize; //to clear or to inc/dec zoom
+
   std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
-  v2 v2ClearSquareSize;
   blitdata BClearSquares;
 
   bitmap* CacheBitmap;
@@ -82,7 +82,8 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
 const stretchRegion SRdefault = {
   -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,
   false,false,false,false,false,false,false,
-  std::vector<v2>(), v2(), DEFAULT_BLITDATA,
+  v2(),
+  std::vector<v2>(), DEFAULT_BLITDATA,
   NULL
 };
 bool graphics::bSpecialListItemAltPos=false;
@@ -97,6 +98,8 @@ v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
+
+bool bAllowMouseCursorActions=false;
 
 void graphics::Init()
 {
@@ -117,6 +120,8 @@ void graphics::Init()
 #ifdef __DJGPP__
     VesaInfo.Retrieve();
 #endif
+
+    PrepareSRegionMouseZoomLazy();
 
     atexit(graphics::DeInit);
   }
@@ -174,7 +179,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   if(FullScreen)
   {
-    SDL_ShowCursor(SDL_DISABLE);
+    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
 #if SDL_MAJOR_VERSION == 1
     Flags |= SDL_FULLSCREEN;
 #else
@@ -314,6 +319,7 @@ bool graphics::IsSRegionEnabled(int iIndex){
 }
 void graphics::SetSRegionEnabled(int iIndex, bool b){
   vStretchRegion[iIndex].bEnabled=b;
+  if(b){stretchRegion& rSR = vStretchRegion[iIndex];DBGSR;}
 }
 void graphics::SetSRegionUseXBRZ(int iIndex, bool b){
   vStretchRegion[iIndex].bUseXBRZ=b;
@@ -330,7 +336,7 @@ void graphics::SetSRegionDrawRectangleOutline(int iIndex, bool b){
 }
 void graphics::SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2){
   vStretchRegion[iIndex].vv2ClearSquaresAt=vv2;
-  vStretchRegion[iIndex].v2ClearSquareSize=v2Size;
+  vStretchRegion[iIndex].v2SquareSize=v2Size;
   vStretchRegion[iIndex].bAllowTransparency=true;
 }
 /**
@@ -341,16 +347,20 @@ void graphics::SetSRegionListItem(int iIndex){
 
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion SR=vStretchRegion[i];
-    assert(!SR.bSpecialListItem); //some other was set already
+    if(SR.bSpecialListItem)ABORT("some other SRegion is already bSpecialListItem");
   }
 
   vStretchRegion[iIndex].bSpecialListItem=true;
   vStretchRegion[iIndex].bDrawAfterFelist=true;
   vStretchRegion[iIndex].bEnabled=false;
 }
+/**
+ * it actually copies the blitdata
+ */
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
-  assert(B.Stretch>1); // some actual scaling is required
-  assert(B.Bitmap==NULL); // see below
+  if(B.Stretch<=1)ABORT("SRegion stretch value invalid %d", B.Stretch); // some actual scaling is required
+  if(B.Bitmap!=NULL)ABORT("SRegion bitmap should not be set."); // see below
+  if(StretchedDB==NULL)ABORT("StretchedDB not set yet.");
 
   B.Bitmap = StretchedDB;
   if(iIndex==-1){ //add
@@ -361,7 +371,7 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
     vStretchRegion.push_back(rSR);DBGSRI("Add");
   }else{ //update
     stretchRegion& rSR = vStretchRegion[iIndex];
-    DBG2(rSR.iIndex,iIndex);assert(rSR.iIndex==iIndex);
+    DBG2(rSR.iIndex,iIndex);if(rSR.iIndex!=iIndex)ABORT("wrongly configured SRegion internal index %d, expecting %d",rSR.iIndex,iIndex);
     rSR.B=B;
     DBGSRI("Update");
   }
@@ -391,7 +401,7 @@ bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   DoubleBuffer->NormalBlit(rBC);DBGLN;
 
   for(int i=0;i<rSR.vv2ClearSquaresAt.size();i++){
-    rBC.Bitmap->Fill(rSR.vv2ClearSquaresAt[i],rSR.v2ClearSquareSize,TRANSPARENT_COLOR);
+    rBC.Bitmap->Fill(rSR.vv2ClearSquaresAt[i],rSR.v2SquareSize,TRANSPARENT_COLOR);
   }
   rSR.vv2ClearSquaresAt.clear();
 
@@ -459,7 +469,7 @@ bitmap* graphics::PrepareBuffer(){
       stretchRegion& rSR=vStretchRegion[i];
       blitdata& rB=rSR.B;DBGSRI("tryBlit");
 
-      assert(rB.Bitmap==StretchedDB);
+      if(rB.Bitmap!=StretchedDB)ABORT("SRegion bitmap is not pointing to StretchedDB.");
 
       // try to disable below, is easier to read long lists
       bOk=true;
@@ -476,16 +486,16 @@ bitmap* graphics::PrepareBuffer(){
         if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
       }
 
-      assert(rB.Border.X>=0 && rB.Border.Y>=0); // only negatives are critical
+      if(!(rB.Border.X>=0 && rB.Border.Y>=0))ABORT("invalid SRegion border (negatives are critical) %d,%d",rB.Border.X,rB.Border.Y);
       if(bOk)if(rB.Border.X==0 || rB.Border.Y==0){DBGSB(bOk);
         if(rB.Border.Is0()){DBGSB(bOk); //being 0,0 may mean it is not ready yet (wouldnt be accepted to blit anyway).
-          bOk=false;
+          bOk=false;DBGSB(bOk);
         }else{DBGSB(bOk);
-          assert(rB.Border.X>0 && rB.Border.Y>0); //minimum (if not 0,0) is 1,1
+          if(!(rB.Border.X>0 && rB.Border.Y>0))ABORT("SRegion border: minimum (if not 0,0) is 1,1: %d,%d",rB.Border.X,rB.Border.Y);
         }
       }
 
-      assert(rB.Dest.X>=0 && rB.Dest.Y>=0);DBGSB(bOk); // only negatives are critical
+      if(!(rB.Dest.X>=0 && rB.Dest.Y>=0))ABORT("invalid SRegion Dest (negatives are critical) %d,%d",rB.Dest.X,rB.Dest.Y);DBGSB(bOk);
 
       if(bOk){
         if(!bDidStretch){
@@ -532,6 +542,92 @@ void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Bord
     v2TopLeft+v2Border+v2(1,1),
     color, wide
   );
+}
+
+int graphics::GetTotSRegions(){
+  return vStretchRegion.size();
+}
+
+int iSRMouseZoomIndex=-1;
+blitdata bldMouseZoom = DEFAULT_BLITDATA;
+bool graphics::PrepareSRegionMouseZoomLazy(){
+  if(iSRMouseZoomIndex>-1)return true;
+  if(StretchedDB==NULL)return false;
+
+  bldMouseZoom.Stretch=2; //min to let it work
+  iSRMouseZoomIndex = AddStretchRegion(bldMouseZoom,"MouseZoom"); DBGSI(iSRMouseZoomIndex);
+
+  return true;
+}
+void graphics::UpdateSRegionMouseZoomArea(int iX, int iY){
+  if(!PrepareSRegionMouseZoomLazy())return;
+
+  blitdata& rB = vStretchRegion[iSRMouseZoomIndex].B;
+
+  v2& rv2Src = rB.Src;
+  rv2Src.X=iX;
+  rv2Src.Y=iY;
+
+  v2& rv2Dest = rB.Dest;
+  rv2Dest = rv2Src;
+
+  rv2Src.X -= rB.Border.X/2;
+  rv2Src.Y -= rB.Border.Y/2;
+
+  rv2Dest.X -= (rB.Border.X*rB.Stretch)/2;
+  rv2Dest.Y -= (rB.Border.Y*rB.Stretch)/2;
+
+  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Src);
+  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Dest);
+}
+bool graphics::SetSRegionMouseZoomMinSizeLazy(v2 v2Size){
+  if(!PrepareSRegionMouseZoomLazy())return false;
+
+//  if(v2Size.X<=0 || v2Size.Y<=0)ABORT("invalid mouse zoom min size %d,%d",v2Size.X,v2Size.Y);
+
+  vStretchRegion[iSRMouseZoomIndex].v2SquareSize = v2Size; DBGV2(vStretchRegion[iSRMouseZoomIndex].v2SquareSize);
+  ChangeSRegionMouseZoomArea(false,NULL); //init border
+
+  return true;
+}
+void graphics::ChangeSRegionMouseZoomArea(bool bInc, bool* pbX){
+  if(!PrepareSRegionMouseZoomLazy())return;
+
+  v2& rv2MinSize = vStretchRegion[iSRMouseZoomIndex].v2SquareSize;
+  if(rv2MinSize.X<=0 || rv2MinSize.Y<=0)ABORT("mouze zoom min size invalid %d,%d",rv2MinSize.X,rv2MinSize.Y);
+
+  v2& rv2Brd = bldMouseZoom.Border;
+
+  if(pbX==NULL || *pbX){
+    rv2Brd.X += (bInc?1:-1) * rv2MinSize.X;
+    if(rv2Brd.X < rv2MinSize.X) rv2Brd.X = rv2MinSize.X;
+  }
+
+  if(pbX==NULL || !*pbX){
+    rv2Brd.Y += (bInc?1:-1) * rv2MinSize.Y;
+    if(rv2Brd.Y < rv2MinSize.Y) rv2Brd.Y = rv2MinSize.Y;
+  }
+
+  DBGV2(bldMouseZoom.Border);
+}
+
+void CheckAllowMouseCursorActions(){
+  bAllowMouseCursorActions=false;
+  if(vStretchRegion[iSRMouseZoomIndex].bEnabled)bAllowMouseCursorActions=true;
+  // other actions can be checked here later, only enablers.
+}
+
+void graphics::ToggleMouseCursorZoom(){
+  if(!PrepareSRegionMouseZoomLazy())return;
+
+  SetSRegionEnabled(iSRMouseZoomIndex, !vStretchRegion[iSRMouseZoomIndex].bEnabled);
+  CheckAllowMouseCursorActions();
+}
+
+bool graphics::IsMouseCursorZoomEnabled(){
+  if(!PrepareSRegionMouseZoomLazy())return false;
+
+  return vStretchRegion[iSRMouseZoomIndex].bEnabled;
 }
 
 void graphics::BlitDBToScreen()
@@ -606,7 +702,7 @@ void graphics::SwitchMode()
   }
   else
   {
-    SDL_ShowCursor(SDL_DISABLE);
+    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
     Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
   }
 
@@ -626,7 +722,7 @@ void graphics::SwitchMode()
   }
   else
   {
-    SDL_ShowCursor(SDL_DISABLE);
+    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
   }
   BlitDBToScreen();
