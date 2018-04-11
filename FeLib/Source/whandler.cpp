@@ -506,26 +506,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
        == KeyBuffer.end())
       KeyBuffer.push_back(KeyPressed);
 #endif
-   case SDL_MOUSEBUTTONDOWN:
-     if(Event->button.button == SDL_BUTTON_MIDDLE){
-       graphics::ToggleMouseCursorZoom();
-     }
-     break;
-   case SDL_MOUSEWHEEL:
-     DBGSI(Event->wheel.y);
-     if(graphics::IsMouseCursorZoomEnabled())
-     {
-       bool* pbX=NULL; //both
-       if(Event->key.keysym.mod & KMOD_SHIFT)*pbX=true;
-       if(Event->key.keysym.mod & KMOD_CTRL )*pbX=false;
-       graphics::ChangeSRegionMouseZoomArea(Event->wheel.y < 0, pbX);
-     }
-     break;
-   case SDL_MOUSEMOTION:
-     if(graphics::IsMouseCursorZoomEnabled()){
-       graphics::UpdateSRegionMouseZoomArea(Event->motion.x,Event->motion.y);
-     }
-     break;
   }
 }
 

@@ -194,7 +194,6 @@ int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
-bool bSRegionMouseZoomOk=false;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
@@ -576,12 +575,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     iRegionListItem = graphics::AddStretchRegion(bldListItemTMP,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
-  }
-
-  if(!bSRegionMouseZoomOk){
-    if(graphics::PrepareSRegionMouseZoomLazy()){
-      bSRegionMouseZoomOk = graphics::SetSRegionMouseZoomMinSizeLazy(TILE_V2);
-    }
   }
 
   UpdateSRegionsXBRZ();

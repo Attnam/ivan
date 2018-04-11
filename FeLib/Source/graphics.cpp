@@ -121,8 +121,6 @@ void graphics::Init()
     VesaInfo.Retrieve();
 #endif
 
-    PrepareSRegionMouseZoomLazy();
-
     atexit(graphics::DeInit);
   }
 }
@@ -546,88 +544,6 @@ void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Bord
 
 int graphics::GetTotSRegions(){
   return vStretchRegion.size();
-}
-
-int iSRMouseZoomIndex=-1;
-bool graphics::PrepareSRegionMouseZoomLazy(){
-  if(iSRMouseZoomIndex>-1)return true;
-  if(StretchedDB==NULL)return false;
-
-  blitdata B = DEFAULT_BLITDATA;
-  B.Stretch=2; //min to let it work
-  iSRMouseZoomIndex = AddStretchRegion(B,"MouseZoom"); DBGSI(iSRMouseZoomIndex);
-
-  return true;
-}
-void graphics::UpdateSRegionMouseZoomArea(int iX, int iY){
-  if(!PrepareSRegionMouseZoomLazy())return;
-
-  blitdata& rB = vStretchRegion[iSRMouseZoomIndex].B;
-
-  v2& rv2Src = rB.Src;
-  rv2Src.X=iX;
-  rv2Src.Y=iY;
-
-  v2& rv2Dest = rB.Dest;
-  rv2Dest = rv2Src;
-
-  rv2Src.X -= rB.Border.X/2;
-  rv2Src.Y -= rB.Border.Y/2;
-
-  rv2Dest.X -= (rB.Border.X*rB.Stretch)/2;
-  rv2Dest.Y -= (rB.Border.Y*rB.Stretch)/2;
-
-  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Src);
-  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Dest);
-}
-bool graphics::SetSRegionMouseZoomMinSizeLazy(v2 v2Size){
-  if(!PrepareSRegionMouseZoomLazy())return false;
-
-//  if(v2Size.X<=0 || v2Size.Y<=0)ABORT("invalid mouse zoom min size %d,%d",v2Size.X,v2Size.Y);
-
-  vStretchRegion[iSRMouseZoomIndex].v2SquareSize = v2Size; DBGV2(vStretchRegion[iSRMouseZoomIndex].v2SquareSize);
-  ChangeSRegionMouseZoomArea(false,NULL); //init border
-
-  return true;
-}
-void graphics::ChangeSRegionMouseZoomArea(bool bInc, bool* pbX){
-  if(!PrepareSRegionMouseZoomLazy())return;
-
-  v2& rv2MinSize = vStretchRegion[iSRMouseZoomIndex].v2SquareSize;
-  if(rv2MinSize.X<=0 || rv2MinSize.Y<=0)ABORT("mouze zoom min size invalid %d,%d",rv2MinSize.X,rv2MinSize.Y);
-
-  v2& rv2Brd = vStretchRegion[iSRMouseZoomIndex].B.Border;
-
-  if(pbX==NULL || *pbX){
-    rv2Brd.X += (bInc?1:-1) * rv2MinSize.X;
-    if(rv2Brd.X < rv2MinSize.X) rv2Brd.X = rv2MinSize.X;
-  }
-
-  if(pbX==NULL || !*pbX){
-    rv2Brd.Y += (bInc?1:-1) * rv2MinSize.Y;
-    if(rv2Brd.Y < rv2MinSize.Y) rv2Brd.Y = rv2MinSize.Y;
-  }
-
-  DBGV2(vStretchRegion[iSRMouseZoomIndex].B.Border);
-}
-
-void CheckAllowMouseCursorActions(){
-  bAllowMouseCursorActions=false;
-  if(vStretchRegion[iSRMouseZoomIndex].bEnabled)bAllowMouseCursorActions=true;
-  // other actions can be checked here later, only enablers.
-}
-
-void graphics::ToggleMouseCursorZoom(){
-  if(!PrepareSRegionMouseZoomLazy())return;
-
-  SetSRegionEnabled(iSRMouseZoomIndex, !vStretchRegion[iSRMouseZoomIndex].bEnabled);
-  CheckAllowMouseCursorActions();
-}
-
-bool graphics::IsMouseCursorZoomEnabled(){
-  if(!PrepareSRegionMouseZoomLazy())return false;
-
-  return vStretchRegion[iSRMouseZoomIndex].bEnabled;
 }
 
 void graphics::BlitDBToScreen()

@@ -66,13 +66,6 @@ class graphics
   static void DrawAtDoubleBufferBeforeFelistPage();
   static bitmap* PrepareBuffer();
 
-  static bool PrepareSRegionMouseZoomLazy();
-  static bool SetSRegionMouseZoomMinSizeLazy(v2 v2Size);
-  static void ChangeSRegionMouseZoomArea(bool bInc, bool* pbX);
-  static void ToggleMouseCursorZoom();
-  static void UpdateSRegionMouseZoomArea(int iX, int iY);
-  static bool IsMouseCursorZoomEnabled();
-
   //TODO utility class for sregion?
   static bool IsSRegionEnabled(int iIndex);
   static void SetSRegionEnabled(int iIndex, bool b);
