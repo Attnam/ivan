@@ -533,9 +533,17 @@ bitmap* graphics::PrepareBuffer(){
 }
 
 void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
+  v2 v2BottomRight = v2TopLeft+v2Border;
+  if(wide){ //is 3 thickness
+    v2TopLeft -= v2(2,2);
+    v2BottomRight += v2(1,1);
+  }else{
+    v2TopLeft -= v2(1,1);
+  }
+
   bmpAt->DrawRectangle(
-    v2TopLeft-v2(2,2),
-    v2TopLeft+v2Border+v2(1,1),
+    v2TopLeft,
+    v2BottomRight,
     color, wide
   );
 }

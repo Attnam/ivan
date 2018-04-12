@@ -206,6 +206,7 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
+  static void UpdateShowItemsAtPlayerSquare();
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
   static truth IsRunning() { return Running; }

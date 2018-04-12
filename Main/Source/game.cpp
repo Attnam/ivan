@@ -414,10 +414,8 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
     if(!IsInWilderness()){ // always allowed in wilderness (as there is only fully dark squares, not partial as memories)
       bOk=false;
       /**
-       * TODO adapt the squares cleaners to work with bPositionQuestionMode too
-       * despite interesting, these are not good...:
-      if(bOk && IsDark(Player->GetLevel()->GetSunLightEmitation()))bOk=false;
-      if(bOk && IsDark(Player->GetLevel()->GetAmbientLuminance ()))bOk=false; //TODO explain: snow/rain?
+       * TODO ??? adapt the squares cleaners to work with bPositionQuestionMode in dungeons and towns too ONLY IF
+       * one day, it is working faster, as for now it only makes that feature a slow thing...
        */
     }
   }
@@ -1105,7 +1103,7 @@ truth game::OnScreen(v2 Pos)
 
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
-  bool bXBRZandFelist=ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
+  bool bXBRZandFelist = ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
 
   if(LOSUpdateRequested && Player->IsEnabled())
   {
@@ -1195,7 +1193,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  if(!bXBRZandFelist)
+  if(!bXBRZandFelist){
     for(size_t c = 0; c < SpecialCursorPos.size(); ++c){
       if(OnScreen(SpecialCursorPos[c]))
       {
@@ -1204,7 +1202,42 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
       }
     }
+  }
 
+  if(!bXBRZandFelist && Player->IsEnabled())UpdateShowItemsAtPlayerSquare();
+
+}
+
+void game::UpdateShowItemsAtPlayerSquare(){
+  stack* su = Player->GetStackUnder();
+  if(su!=NULL){
+
+    blitdata B = DEFAULT_BLITDATA;
+    B.Bitmap = DOUBLE_BUFFER;
+    B.Border = { TILE_SIZE, TILE_SIZE };
+    B.Luminance = ivanconfig::GetContrastLuminance();
+    B.CustomData = ALLOW_ANIMATE;
+
+    v2 v2Border = {TILE_SIZE*su->GetItems(),TILE_SIZE};
+
+    //TODO could be? graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*su->GetItems(),TILE_SIZE}, LIGHT_GRAY, false);
+    //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
+    DOUBLE_BUFFER->Fill(area::getTopLeftCorner(),v2Border,DARK_GRAY);
+
+    v2 v2Pos = area::getTopLeftCorner();
+    for(int i=0;i<su->GetItems();i++){
+      item* it = su->GetItem(i);
+      B.Dest = v2Pos;
+      it->Draw(B);
+      v2Pos.X+=TILE_SIZE;
+    }
+
+    v2 v2SqrPos=Camera;
+    for(int i=0;i<su->GetItems();i++){
+      GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
+      v2SqrPos.X++;
+    }
+  }
 }
 
 truth game::Save(cfestring& SaveName)
