@@ -99,8 +99,6 @@ int graphics::Scale;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
 
-bool bAllowMouseCursorActions=false;
-
 void graphics::Init()
 {
   static truth AlreadyInstalled = false;
@@ -177,7 +175,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   if(FullScreen)
   {
-    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
 #if SDL_MAJOR_VERSION == 1
     Flags |= SDL_FULLSCREEN;
 #else
@@ -618,7 +616,7 @@ void graphics::SwitchMode()
   }
   else
   {
-    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
     Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
   }
 
@@ -638,7 +636,7 @@ void graphics::SwitchMode()
   }
   else
   {
-    if(!bAllowMouseCursorActions)SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
   }
   BlitDBToScreen();
