@@ -103,7 +103,9 @@ void globalerrorhandler::DeInstall()
 
 void globalerrorhandler::Abort(cchar* Format, ...)
 {
+#ifndef WIN32
   DumpStackTraceToStdErr();
+#endif
 
   char Buffer[512];
 
