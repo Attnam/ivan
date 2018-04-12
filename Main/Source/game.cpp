@@ -204,6 +204,8 @@ int iZoomFactor=6;
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
 
+bool bPositionQuestionMode=false;
+
 void game::SetIsRunning(truth What) { Running = What; }
 
 int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
@@ -297,7 +299,7 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
-void game::PrepareToClearNonVisibleSquaresAroundPlayer(v2 v2SqrPos) {
+void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
   if(DoZoom())return; //TODO should be able to clear in zoom mode too? the result is still messy, but... is it cool to xBRZ non visible squares in look mode?  if so, no need to clear them...
@@ -397,36 +399,31 @@ void game::SRegionAroundDeny(){
 }
 
 void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with PrepareToClearNonVisibleSquaresAroundPlayer() as they deal with the same thing.
-  if(!bRegionAroundXBRZAllowed){
-    SRegionAroundDisable();
-    return;
-  }
+  if(iRegionAroundXBRZ==-1)return;
 
-  if(iRegionIndexDungeon==-1 || iRegionAroundXBRZ==-1){ // around is for dungeon
-    return;
-  }
+  bool bOk=true;
+
+  if(bOk && !bRegionAroundXBRZAllowed)bOk=false;
 
   int iSAP=ivanconfig::GetXBRZSquaresAroundPlayer();
-  if(
-      iSAP==0
-      ||
-      Player->IsDead() // this may actually never happen...
-      ||
-      (
-        !IsInWilderness() // in town or dungeon
-        &&
-        (
-          DoZoom() //TODO lookzoom could use the cleared squares at night one day and be an user option (if it is still too slow)
-          &&
-          (
-            IsDark(Player->GetLevel()->GetSunLightEmitation())
-            ||
-            IsDark(Player->GetLevel()->GetAmbientLuminance()) //TODO explain: snow/rain?
-          )
-        )
-      )
-  ){
-    graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
+  if(bOk && iSAP==0)bOk=false;
+
+  if(bOk && Player->IsDead())bOk=false; // this may actually never happen...
+
+  if(bOk && bPositionQuestionMode){
+    if(!IsInWilderness()){ // always allowed in wilderness (as there is only fully dark squares, not partial as memories)
+      bOk=false;
+      /**
+       * TODO adapt the squares cleaners to work with bPositionQuestionMode too
+       * despite interesting, these are not good...:
+      if(bOk && IsDark(Player->GetLevel()->GetSunLightEmitation()))bOk=false;
+      if(bOk && IsDark(Player->GetLevel()->GetAmbientLuminance ()))bOk=false; //TODO explain: snow/rain?
+       */
+    }
+  }
+
+  if(!bOk){
+    SRegionAroundDisable();
     return;
   }
 
@@ -482,7 +479,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   graphics::SetSRegionBlitdata(iRegionAroundXBRZ,bldAroundOnScreenTMP); DBGBLD(bldAroundOnScreenTMP);
 
-  PrepareToClearNonVisibleSquaresAroundPlayer(v2SqrPos);
+  PrepareToClearNonVisibleSquaresAround(v2SqrPos);
 }
 
 void game::RegionListItemEnable(bool b){
@@ -1877,6 +1874,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   if(Handler)
     Handler(CursorPos);
 
+  bPositionQuestionMode=true;
   for(;;)
   {
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
@@ -1937,6 +1935,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     DrawEverything();
     Key = GET_KEY();
   }
+  bPositionQuestionMode=false;
 
   // for text
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));

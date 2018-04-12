@@ -180,7 +180,7 @@ class game
   static void SRegionAroundDisable();
   static void SRegionAroundAllow();
   static void SRegionAroundDeny();
-  static void PrepareToClearNonVisibleSquaresAroundPlayer(v2);
+  static void PrepareToClearNonVisibleSquaresAround(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
