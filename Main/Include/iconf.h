@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static long GetShowItemsAtPlayerSquareCode(){ return ShowItemsAtPlayerSquareCode.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
@@ -65,6 +66,7 @@ class ivanconfig
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
+  static void ShowItemsAtPlayerSquareCodeDisplayer(const numberoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
@@ -76,6 +78,7 @@ class ivanconfig
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
+  static truth ShowItemsAtPlayerSquareCodeChangeInterface(numberoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
   static truth StackListPageLengthChangeInterface(numberoption* O);
@@ -84,6 +87,7 @@ class ivanconfig
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
+  static void ShowItemsAtPlayerSquareCodeChanger(numberoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
   static void StackListPageLengthChanger(numberoption* O, long What);
@@ -126,6 +130,7 @@ class ivanconfig
 
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
+  static numberoption ShowItemsAtPlayerSquareCode;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;

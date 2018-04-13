@@ -44,6 +44,12 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+numberoption ivanconfig::ShowItemsAtPlayerSquareCode("ShowItemsAtPlayerSquareCode",
+                                          "Show, side by side, items at player square",
+                                          0,
+                                          &ShowItemsAtPlayerSquareCodeDisplayer,
+                                          &ShowItemsAtPlayerSquareCodeChangeInterface,
+                                          &ShowItemsAtPlayerSquareCodeChanger);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -194,6 +200,17 @@ void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& E
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::ShowItemsAtPlayerSquareCodeDisplayer(const numberoption* O, festring& Entry)
+{
+  if(O->Value<10){
+    Entry << "disabled";
+  }else{
+    Entry << "x" << game::ItemUnderZoom(O->Value);
+    Entry << " ";
+    Entry << (game::ItemUnderHV(O->Value) ? "Horiz" : "Vert");
+  }
 }
 
 void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
@@ -352,6 +369,14 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
   return false;
 }
 
+truth ivanconfig::ShowItemsAtPlayerSquareCodeChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("From 0 to 61. Zoom (1 to 6)*10. If vertical add +1. Ex. 30 is 3x Horizontal:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
@@ -427,6 +452,13 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
   if(What < 600) What = 600;
+  O->Value = What;
+}
+
+void ivanconfig::ShowItemsAtPlayerSquareCodeChanger(numberoption* O, long What)
+{
+  if(What < 10) What = 0; //just disable it
+  if(What > 61) What = 61;
   O->Value = What;
 }
 
@@ -595,6 +627,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
+  configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquareCode);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

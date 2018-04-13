@@ -1204,39 +1204,74 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  if(!bXBRZandFelist && Player->IsEnabled())UpdateShowItemsAtPlayerSquare();
+  if(!bXBRZandFelist && Player->IsEnabled()){
+    UpdateShowItemsAtPlayerSquare();
+  }
 
 }
 
+int game::ItemUnderZoom(int val){
+  return val/10;
+}
+bool game::ItemUnderHV(int val){
+  return val%2==0; //odd is vertical
+}
 void game::UpdateShowItemsAtPlayerSquare(){
+  int iCode = ivanconfig::GetShowItemsAtPlayerSquareCode();
+  if(iCode==0)return;
+
   stack* su = Player->GetStackUnder();
   if(su!=NULL){
+    bool bHorizontal = ItemUnderHV(iCode);
+    int iZoom=ItemUnderZoom(iCode);
 
-    blitdata B = DEFAULT_BLITDATA;
-    B.Bitmap = DOUBLE_BUFFER;
-    B.Border = { TILE_SIZE, TILE_SIZE };
-    B.Luminance = ivanconfig::GetContrastLuminance();
-    B.CustomData = ALLOW_ANIMATE;
-
-    v2 v2Border = {TILE_SIZE*su->GetItems(),TILE_SIZE};
-
-    //TODO could be? graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*su->GetItems(),TILE_SIZE}, LIGHT_GRAY, false);
-    //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
-    DOUBLE_BUFFER->Fill(area::getTopLeftCorner(),v2Border,DARK_GRAY);
-
-    v2 v2Pos = area::getTopLeftCorner();
-    for(int i=0;i<su->GetItems();i++){
-      item* it = su->GetItem(i);
-      B.Dest = v2Pos;
-      it->Draw(B);
-      v2Pos.X+=TILE_SIZE;
+    int iTot = su->GetItems();
+    if(bHorizontal){
+      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+    }else{
+      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
     }
 
-    v2 v2SqrPos=Camera;
-    for(int i=0;i<su->GetItems();i++){
-      GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
-      v2SqrPos.X++;
+    switch(iZoom){
+      case 1: {
+        blitdata B = DEFAULT_BLITDATA;
+        B.Bitmap = DOUBLE_BUFFER;
+        B.Border = { TILE_SIZE, TILE_SIZE };
+        B.CustomData = ALLOW_ANIMATE;
+
+        B.Luminance = ivanconfig::GetContrastLuminance();
+
+        v2 v2Border = TILE_V2;
+        if(bHorizontal){v2Border.X*=iTot;}else{v2Border.Y*=iTot;}
+
+        //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
+        DOUBLE_BUFFER->Fill(area::getTopLeftCorner(),v2Border,DARK_GRAY);
+
+        v2 v2Pos = area::getTopLeftCorner();
+        for(int i=0;i<iTot;i++){
+          item* it = su->GetItem(i);
+          B.Dest = v2Pos;
+          it->Draw(B);
+          if(bHorizontal){v2Pos.X+=TILE_SIZE;}else{v2Pos.Y+=TILE_SIZE;}
+        }
+
+        v2 v2SqrPos=Camera;
+        for(int i=0;i<iTot;i++){
+          GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
+          if(bHorizontal){v2SqrPos.X++;}else{v2SqrPos.Y++;}
+        }
+
+      }break;
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+        //TODO xBRZ
+        //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
+        break;
     }
+
   }
 }
 

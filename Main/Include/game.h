@@ -207,6 +207,8 @@ class game
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
   static void UpdateShowItemsAtPlayerSquare();
+  static int ItemUnderZoom(int val);
+  static bool ItemUnderHV(int val);
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
   static truth IsRunning() { return Running; }
