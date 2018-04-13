@@ -1290,24 +1290,64 @@ bool game::ItemUnderHV(int val){
 //    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2Dest);
 //  }
 //}
-void PrepareItemsUnderDB(stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+//void PrepareItemsUnderDB(stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+//  int iTot = su->GetItems();
+//  if(iMax>-1)iTot = Min(iMax,iTot);
+//  if(iTot==0)return;
+//
+//  v2 v2Pos = v2PosIni;
+//
+//  blitdata B = DEFAULT_BLITDATA;
+//  B.CustomData = ALLOW_ANIMATE;
+//  B.Stretch = 1;
+//  B.Border = { TILE_SIZE, TILE_SIZE };
+//  B.Luminance = ivanconfig::GetContrastLuminance();
+//
+//  bitmap* bmp = DOUBLE_BUFFER;
+//  B.Bitmap=bmp;
+//
+//  for(int i=0;i<iTot;i++){
+//    bmp->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
+//    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
+//
+//    item* it = su->GetItem(i);
+//    B.Dest = v2Pos;
+//    it->Draw(B);
+//
+//    v2Pos.X+=(TILE_SIZE*iDirX);
+//    v2Pos.Y+=(TILE_SIZE*iDirY);
+//  }
+//}
+
+bitmap* bmpTgt = NULL;
+bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
   int iTot = su->GetItems();
   if(iMax>-1)iTot = Min(iMax,iTot);
-  if(iTot==0)return;
+  if(iTot==0)return NULL;
 
   v2 v2Pos = v2PosIni;
-  bitmap* bmp = DOUBLE_BUFFER;
 
   blitdata B = DEFAULT_BLITDATA;
-  B.Bitmap=bmp;
   B.CustomData = ALLOW_ANIMATE;
-  B.Stretch = 1;
+  B.Stretch = 1; //TODO ignored?
   B.Border = { TILE_SIZE, TILE_SIZE };
   B.Luminance = ivanconfig::GetContrastLuminance();
 
-  for(int i=0;i<iTot;i++){
-    bmp->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
-    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
+  if(bUseDB){
+    bmpTgt = DOUBLE_BUFFER;
+  }else{
+    v2 v2Size = v2(TILE_SIZE*iTot,TILE_SIZE);
+    if(bmpTgt==NULL || bmpTgt->GetSize()!=v2Size){
+      if(bmpTgt!=NULL)delete bmpTgt;
+      bmpTgt = new bitmap(v2Size);
+    }
+  }
+
+  B.Bitmap=bmpTgt;
+
+  for(int i=0;i<iTot;i++){ // fully work on one square per time
+    bmpTgt->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
+    graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
 
     item* it = su->GetItem(i);
     B.Dest = v2Pos;
@@ -1316,6 +1356,8 @@ void PrepareItemsUnderDB(stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY)
     v2Pos.X+=(TILE_SIZE*iDirX);
     v2Pos.Y+=(TILE_SIZE*iDirY);
   }
+
+  return bmpTgt;
 }
 
 //void game::UpdateShowItemsAtPlayerSquareAboveHead(){
@@ -1329,6 +1371,9 @@ void game::UpdateShowItemsAtPlayerSquare(){
 
   int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
   if(iCode==0)return;
+
+  stack* su = Player->GetStackUnder();
+  if(su==NULL)return;
 
   v2 v2PlayerPos = Player->GetPos();
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
@@ -1348,50 +1393,49 @@ void game::UpdateShowItemsAtPlayerSquare(){
     //  if(!game::GetCurrentDungeon()->IsGenerated())return;
     //  if(GetCurrentArea()->)
     //  if(Player->GetArea()->get)
-//    PrepareItemsUnder(false, B, Player->GetStackUnder(), -1, CalculateScreenCoordinates(Player->GetPos()), 1, 0);
+    //CalculateScreenCoordinates(Player->GetPos())
+    //bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
     return;
   }
 
-  stack* su = Player->GetStackUnder();
-  if(su!=NULL){
-    int iCorner = ItemUnderCorner(iCode);
-    bool bHorizontal = ItemUnderHV(iCode);
-    int iStretch=ItemUnderZoom(iCode);
+  int iCorner = ItemUnderCorner(iCode);
+  bool bHorizontal = ItemUnderHV(iCode);
+  int iStretch=ItemUnderZoom(iCode);
 
-    switch(iStretch){
-      case 1: { //this overwrites over dungeon squares pixels and is faster!
-        int iDirX=0,iDirY=0;
-        v2 v2SqrPos=Camera;
-        v2 v2PosIni = area::getTopLeftCorner();
-        int iScSX=game::GetScreenXSize()-1;
-        int iScSY=game::GetScreenYSize()-1;
-        switch(iCorner){
-          case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
-            break;
-          case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
-            v2SqrPos.X+=iScSX;
-            v2PosIni.X+=iScSX*TILE_SIZE;
-            break;
-          case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
-            v2SqrPos.Y+=iScSY;
-            v2PosIni.Y+=iScSY*TILE_SIZE;
-            break;
-          case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
-            v2SqrPos.X+=iScSX;
-            v2SqrPos.Y+=iScSY;
-            v2PosIni.X+=iScSX*TILE_SIZE;
-            v2PosIni.Y+=iScSY*TILE_SIZE;
-            break;
-        }
+  switch(iStretch){
+    case 1: { //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
+      int iDirX=0,iDirY=0;
+      v2 v2SqrPos=Camera;
+      v2 v2PosIni = area::getTopLeftCorner();
+      int iScSX=game::GetScreenXSize()-1;
+      int iScSY=game::GetScreenYSize()-1;
+      switch(iCorner){
+        case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
+          break;
+        case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
+          v2SqrPos.X+=iScSX;
+          v2PosIni.X+=iScSX*TILE_SIZE;
+          break;
+        case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
+          v2SqrPos.Y+=iScSY;
+          v2PosIni.Y+=iScSY*TILE_SIZE;
+          break;
+        case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
+          v2SqrPos.X+=iScSX;
+          v2SqrPos.Y+=iScSY;
+          v2PosIni.X+=iScSX*TILE_SIZE;
+          v2PosIni.Y+=iScSY*TILE_SIZE;
+          break;
+      }
 
-        int iTot = su->GetItems();
-        if(bHorizontal){
-          if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-        }else{
-          if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
-        }
+      int iTot = su->GetItems();
+      if(bHorizontal){
+        if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+      }else{
+        if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+      }
 
-        PrepareItemsUnderDB(su,iTot,v2PosIni,iDirX,iDirY);
+      PrepareItemsUnder(true,su,iTot,v2PosIni,iDirX,iDirY);
 
 //        for(int i=0;i<iTot;i++){
 //          //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
@@ -1406,25 +1450,24 @@ void game::UpdateShowItemsAtPlayerSquare(){
 //          v2Pos.Y+=(TILE_SIZE*iDirY);
 //        }
 
-        for(int i=0;i<iTot;i++){
-          GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
-          v2SqrPos.X+=iDirX;
-          v2SqrPos.Y+=iDirY;
-        }
+      for(int i=0;i<iTot;i++){
+        GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
+        v2SqrPos.X+=iDirX;
+        v2SqrPos.Y+=iDirY;
+      }
 
-      }break;
+    }break;
 
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-        //TODO xBRZ ?
-        //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
-        break;
-    }
-
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      //TODO xBRZ ?
+      //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
+      break;
   }
+
 }
 
 truth game::Save(cfestring& SaveName)
