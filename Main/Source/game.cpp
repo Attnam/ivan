@@ -1278,9 +1278,19 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 
   B.Bitmap=bmpTgt;
 
+  bool bLight=false;
+  col16 clOutline = bLight ? LIGHT_GRAY : DARK_GRAY;
+  if(!bLight){ //overall around if tiny
+    v2 v2BkgIni = bUseDB ? v2PosIni : v2(0,0);
+    v2 v2Border = bUseDB ? B.Border : bmpTgt->GetSize();
+    igraph::BlitBackGround(bmpTgt, v2BkgIni, v2Border);
+    graphics::DrawRectangleOutlineAround(bmpTgt, v2BkgIni, v2Border, clOutline, false);
+  }
   for(int i=0;i<iTot;i++){ // fully work on one square per time
-    bmpTgt->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
-    graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
+    if(bLight){ // each square
+      bmpTgt->Fill(v2Pos, B.Border, DARK_GRAY);
+      graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
+    }
 
     item* it = su->GetItem(i);
     B.Dest = v2Pos;
@@ -1293,17 +1303,23 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   return bmpTgt;
 }
 
+int iStretchedTileSize = -1;
+int getStretchedTileSize(){
+  if(iStretchedTileSize==-1)iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
+  return iStretchedTileSize;
+}
+
 /**
+ * For Stretched buffer:
  * The final screen coordinates are relative not to 0,0 but to the top left dungeon corner,
- * because the full dungeon stretching happens from that spot, therefore this does not work, ex.:
+ * because the full dungeon stretching happens from that spot,
+ * therefore when working on the stretched buffer, this does not work, ex.:
  *  CalculateScreenCoordinates(Player->GetPos())
  */
 v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
-  int iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
   v2 v2SqrRelativePosFromCam = v2SqrPos - GetCamera();
-  v2 v2Min = area::getTopLeftCorner();;
-  v2 v2StretchedBufferDest=v2Min;
-  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*iStretchedTileSize);
+  v2 v2StretchedBufferDest=area::getTopLeftCorner();
+  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*getStretchedTileSize());
   return v2StretchedBufferDest;
 }
 
@@ -1347,17 +1363,13 @@ void game::UpdateShowItemsAtLevelSquarePos(bool bAllowed){
   if(iCode==1){
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
-    int iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
-    v2 v2PosFromCam = v2AbsLevelSqrPos - GetCamera();
-    v2 v2Min = area::getTopLeftCorner();;
-    v2 v2StretchedBufferDest=v2Min;
-    v2StretchedBufferDest+=(v2PosFromCam*iStretchedTileSize);
-    v2StretchedBufferDest.X+=iStretchedTileSize/2; //center of player's head
+    v2 v2StretchedBufferDest = CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2AbsLevelSqrPos);
+    v2StretchedBufferDest.X+=getStretchedTileSize()/2; //center of player's head
     v2StretchedBufferDest.X-=(bmp->GetSize().X*iItemsUnderStretch)/2;
     v2StretchedBufferDest.Y-= bmp->GetSize().Y*iItemsUnderStretch; // above player's head
     v2StretchedBufferDest.Y-=2; //just to look better
-    if(v2StretchedBufferDest.X<v2Min.X)v2StretchedBufferDest.X=v2Min.X;
-    if(v2StretchedBufferDest.Y<v2Min.Y)v2StretchedBufferDest.Y=v2Min.Y;
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
     return;

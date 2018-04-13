@@ -557,8 +557,8 @@ void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Bord
 
   // fixer
   int iMargin=bWide?2:1; //wide is 3, middle is at 2
-  if(v2TopLeft.X<iMargin)v2TopLeft.X=iMargin;
-  if(v2TopLeft.Y<iMargin)v2TopLeft.Y=iMargin;
+  if(v2TopLeft.X<iMargin)v2TopLeft.X=iMargin-1;
+  if(v2TopLeft.Y<iMargin)v2TopLeft.Y=iMargin-1;
   int iMMax;
   iMMax=bmpAt->GetSize().X-iMargin;if(v2BottomRight.X>iMMax)v2BottomRight.X=iMMax;
   iMMax=bmpAt->GetSize().Y-iMargin;if(v2BottomRight.Y>iMMax)v2BottomRight.Y=iMMax;
