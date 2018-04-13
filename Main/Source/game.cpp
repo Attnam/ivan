@@ -1279,10 +1279,20 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   B.Bitmap=bmpTgt;
 
   bool bLight=false;
-  col16 clOutline = bLight ? LIGHT_GRAY : DARK_GRAY;
+  col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
   if(!bLight){ //overall around if tiny
-    v2 v2BkgIni = bUseDB ? v2PosIni : v2(0,0);
-    v2 v2Border = bUseDB ? B.Border : bmpTgt->GetSize();
+    v2 v2BkgIni = v2(0,0);
+    v2 v2Border = bmpTgt->GetSize();
+    if(bUseDB){
+      v2BkgIni = v2PosIni+v2(1,1);
+      if(iDirX<0)v2BkgIni.X-=((iTot-1)*TILE_SIZE);
+      if(iDirY<0)v2BkgIni.Y-=((iTot-1)*TILE_SIZE);
+
+      v2Border = B.Border;
+      if(iDirX!=0)v2Border.X*=iTot;
+      if(iDirY!=0)v2Border.Y*=iTot;
+      v2Border-=v2(2,2);
+    }
     igraph::BlitBackGround(bmpTgt, v2BkgIni, v2Border);
     graphics::DrawRectangleOutlineAround(bmpTgt, v2BkgIni, v2Border, clOutline, false);
   }
