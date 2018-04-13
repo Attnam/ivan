@@ -1262,7 +1262,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
-  B.Stretch = 1; //TODO ignored?
+  B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
   B.Border = { TILE_SIZE, TILE_SIZE };
   B.Luminance = ivanconfig::GetContrastLuminance();
 
@@ -1314,7 +1314,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 }
 
 int iStretchedTileSize = -1;
-int getStretchedTileSize(){
+int getDungeonStretchedTileSize(){
   if(iStretchedTileSize==-1)iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
   return iStretchedTileSize;
 }
@@ -1329,7 +1329,7 @@ int getStretchedTileSize(){
 v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
   v2 v2SqrRelativePosFromCam = v2SqrPos - GetCamera();
   v2 v2StretchedBufferDest=area::getTopLeftCorner();
-  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*getStretchedTileSize());
+  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*getDungeonStretchedTileSize());
   return v2StretchedBufferDest;
 }
 
@@ -1347,7 +1347,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   stack* su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
   if(bOk && su==NULL)bOk=false;
-  if(bOk && su->GetItems()<2)bOk=false;
+  if(bOk && su->GetItems()==0)bOk=false; //I think this will never happen... was <2 but showing only one item is quite useful too!
 
   if(!bOk){ // this is IMPORTANT as disabler
     graphics::SetSRegionEnabled(iRegionItemsUnder,false);
@@ -1373,14 +1373,20 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
   if(iCode==1){
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+
+    int iStretch=iItemsUnderStretch;
+    if(su->GetItems()==1)iStretch++;
+
     v2 v2StretchedBufferDest = CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2AbsLevelSqrPos);
-    v2StretchedBufferDest.X+=getStretchedTileSize()/2; //center of player's head
-    v2StretchedBufferDest.X-=(bmp->GetSize().X*iItemsUnderStretch)/2;
-    v2StretchedBufferDest.Y-= bmp->GetSize().Y*iItemsUnderStretch; // above player's head
+    v2StretchedBufferDest.X+=getDungeonStretchedTileSize()/2; //center of player's head
+    v2StretchedBufferDest.X-=(bmp->GetSize().X*iStretch)/2;
+    v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
     v2StretchedBufferDest.Y-=2; //just to look better
+
     if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
     if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
-    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2StretchedBufferDest);
+
+    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
     return;
   }
