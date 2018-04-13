@@ -377,11 +377,27 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
   return iIndex;
 }
 
+/**
+ * If bmp is not NULL, it is an indicator (bool) itself. Therefore setting to null will disable it's functionality.
+ */
 void graphics::SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, v2 v2Dest){
   vStretchRegion[iIndex].B.Src={0,0};
-  vStretchRegion[iIndex].B.Border=bmp->GetSize();
-  vStretchRegion[iIndex].B.Dest=v2Dest;
+
+  bool bDeletePrevious=false;
+  if(bmp == NULL)bDeletePrevious=true;
+  if(bmp != vStretchRegion[iIndex].bmpOverride)bDeletePrevious=true;
+
+  if(bDeletePrevious){
+    if(vStretchRegion[iIndex].bmpOverride != NULL){
+      delete vStretchRegion[iIndex].bmpOverride;
+      vStretchRegion[iIndex].bmpOverride = NULL;
+    }
+  }
+
   vStretchRegion[iIndex].bmpOverride=bmp;
+  if(bmp!=NULL)vStretchRegion[iIndex].B.Border=bmp->GetSize();
+
+  vStretchRegion[iIndex].B.Dest=v2Dest;
 }
 
 int graphics::AddStretchRegion(blitdata B,const char* strId){

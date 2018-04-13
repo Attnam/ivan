@@ -1214,7 +1214,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  UpdateShowItemsAtLevelSquarePos(!bXBRZandFelist);
+  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
 
 }
 
@@ -1271,7 +1271,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   }else{
     v2 v2Size = v2(TILE_SIZE*iTot,TILE_SIZE);
     if(bmpTgt==NULL || bmpTgt->GetSize()!=v2Size){
-      if(bmpTgt!=NULL)delete bmpTgt;
+      // DO NOT DELETE the old bitmap here. See graphics::SetSRegionSrcBitmapOverride(); //NO NO NO: if(bmpTgt!=NULL)delete bmpTgt;
       bmpTgt = new bitmap(v2Size);
     }
   }
@@ -1333,7 +1333,7 @@ v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
   return v2StretchedBufferDest;
 }
 
-void game::UpdateShowItemsAtLevelSquarePos(bool bAllowed){
+void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
   bool bOk=true;
 
   if(bOk && !bAllowed)bOk=false;
@@ -1383,9 +1383,11 @@ void game::UpdateShowItemsAtLevelSquarePos(bool bAllowed){
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
     return;
-  }else{
-    graphics::SetSRegionEnabled(iRegionItemsUnder,false);
   }
+
+  ////////////////////////////// CORNERS WORK DIRECTLY ON DB /////////////////////////////
+
+  graphics::SetSRegionEnabled(iRegionItemsUnder,false); //disable above head region
 
   int iCorner = ItemUnderCorner(iCode);
   bool bHorizontal = ItemUnderHV(iCode);
@@ -1426,20 +1428,7 @@ void game::UpdateShowItemsAtLevelSquarePos(bool bAllowed){
 
       PrepareItemsUnder(true,su,iTot,v2PosIni,iDirX,iDirY);
 
-//        for(int i=0;i<iTot;i++){
-//          //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
-//          DOUBLE_BUFFER->Fill(v2Pos,v2Size,DARK_GRAY);
-//          graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
-//
-//          item* it = su->GetItem(i);
-//          bldShowItemsAtPlayerSquareTMP.Dest = v2Pos;
-//          it->Draw(bldShowItemsAtPlayerSquareTMP);
-//
-//          v2Pos.X+=(TILE_SIZE*iDirX);
-//          v2Pos.Y+=(TILE_SIZE*iDirY);
-//        }
-
-      for(int i=0;i<iTot;i++){
+      for(int i=0;i<iTot;i++){ // this grants updating the squares used to show the items.
         GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
         v2SqrPos.X+=iDirX;
         v2SqrPos.Y+=iDirY;
