@@ -1394,7 +1394,10 @@ void game::UpdateShowItemsAtPlayerSquare(){
     //  if(GetCurrentArea()->)
     //  if(Player->GetArea()->get)
     //CalculateScreenCoordinates(Player->GetPos())
-    //bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+    v2 v2Dest=CalculateScreenCoordinates(Player->GetPos());
+    v2Dest*=ivanconfig::GetStartingDungeonGfxScale();
+    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2Dest);
     return;
   }
 

@@ -70,10 +70,10 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bDrawRectangleOutline;
   bool bAllowTransparency; //mask
 
-  v2 v2SquareSize; //to clear or to inc/dec zoom
+  v2 v2SquareSize; //to clear
 
   std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
-  blitdata BInterm; //intermediary, it's bitmap will be filled to serve as source
+  blitdata BClearSquares; //intermediary, it's bitmap will be filled to serve as source
 
   bitmap* CacheBitmap;
 };
@@ -368,7 +368,7 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
     vStretchRegion.push_back(rSR);DBGSRI("Add");
   }else{ //update
     stretchRegion& rSR = vStretchRegion[iIndex];
-//    if(rSR.bmpOverride!=NULL)ABORT("wrong usage, bUsingDirectBitmapOverride already set: %s %d",rSR.strId,rSR.iIndex);
+    if(rSR.bmpOverride!=NULL)ABORT("wrong usage, bitmap override already set: %s %d",rSR.strId,rSR.iIndex);
     DBG2(rSR.iIndex,iIndex);if(rSR.iIndex!=iIndex)ABORT("wrongly configured SRegion internal index %d, expecting %d",rSR.iIndex,iIndex);
     rSR.B=B;
     DBGSRI("Update");
@@ -378,7 +378,7 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
 }
 
 void graphics::SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, v2 v2Dest){
-//  vStretchRegion[iIndex].B.Src={0,0};
+  vStretchRegion[iIndex].B.Src={0,0};
   vStretchRegion[iIndex].B.Border=bmp->GetSize();
   vStretchRegion[iIndex].B.Dest=v2Dest;
   vStretchRegion[iIndex].bmpOverride=bmp;
@@ -393,7 +393,7 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
 
 bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   blitdata& rB = rSR.B;
-  blitdata& rBC = rSR.BInterm;
+  blitdata& rBC = rSR.BClearSquares;
   if(rBC.Bitmap==NULL || rBC.Bitmap->GetSize()!=rB.Border){
     if(rBC.Bitmap!=NULL)delete rBC.Bitmap;
     rBC.Bitmap = new bitmap(rB.Border);
@@ -528,7 +528,12 @@ bitmap* graphics::PrepareBuffer(){
         }
 
         bitmap* pbmpFrom = DoubleBuffer;
-        if(rSR.vv2ClearSquaresAt.size()>0)pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        if(rSR.bmpOverride!=NULL){
+          pbmpFrom = rSR.bmpOverride;
+        }else
+        if(rSR.vv2ClearSquaresAt.size()>0){
+          pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        }
 
         DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
         Stretch(rSR.bUseXBRZ, pbmpFrom, rB, rSR.bAllowTransparency);
