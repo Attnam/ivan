@@ -1214,9 +1214,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  if(!bXBRZandFelist && Player->IsEnabled()){
-    UpdateShowItemsAtLevelSquarePos(Player->GetPos());
-  }
+  UpdateShowItemsAtLevelSquarePos(!bXBRZandFelist);
 
 }
 
@@ -1253,73 +1251,6 @@ int game::ItemUnderZoom(int val){
 bool game::ItemUnderHV(int val){
   return val%2==0; //odd is vertical
 }
-
-//void PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
-//  int iTot = su->GetItems();
-//  if(iMax>-1)iTot = Min(iMax,iTot);
-//  if(iTot==0)return;
-//
-//  v2 v2Pos = bUseDB ? v2PosIni : v2(0,0);
-//
-//  blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
-//  bldShowItemsAtPlayerSquareTMP.CustomData = ALLOW_ANIMATE;
-//  bldShowItemsAtPlayerSquareTMP.Border = { TILE_SIZE, TILE_SIZE };
-//  bldShowItemsAtPlayerSquareTMP.Luminance = ivanconfig::GetContrastLuminance();
-//
-//  v2 v2Size = TILE_V2*bldShowItemsAtPlayerSquareTMP.Stretch;
-//  if(!bUseDB){
-//    v2Size.X*=iTot;
-//  }
-//
-//  bitmap* bmp = bUseDB ? DOUBLE_BUFFER : new bitmap(v2Size);
-//  bldShowItemsAtPlayerSquareTMP.Bitmap=bmp;
-//
-//  for(int i=0;i<iTot;i++){
-//    //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
-//    bmp->Fill(v2Pos,v2Size,DARK_GRAY);
-//    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
-//
-//    item* it = su->GetItem(i);
-//    bldShowItemsAtPlayerSquareTMP.Dest = v2Pos;
-//    it->Draw(bldShowItemsAtPlayerSquareTMP);
-//
-//    v2Pos.X+=(TILE_SIZE*iDirX);
-//    v2Pos.Y+=(TILE_SIZE*iDirY);
-//  }
-//
-//  if(!bUseDB){
-//    v2 v2Dest = v2PosIni;
-//    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2Dest);
-//  }
-//}
-//void PrepareItemsUnderDB(stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
-//  int iTot = su->GetItems();
-//  if(iMax>-1)iTot = Min(iMax,iTot);
-//  if(iTot==0)return;
-//
-//  v2 v2Pos = v2PosIni;
-//
-//  blitdata B = DEFAULT_BLITDATA;
-//  B.CustomData = ALLOW_ANIMATE;
-//  B.Stretch = 1;
-//  B.Border = { TILE_SIZE, TILE_SIZE };
-//  B.Luminance = ivanconfig::GetContrastLuminance();
-//
-//  bitmap* bmp = DOUBLE_BUFFER;
-//  B.Bitmap=bmp;
-//
-//  for(int i=0;i<iTot;i++){
-//    bmp->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
-//    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
-//
-//    item* it = su->GetItem(i);
-//    B.Dest = v2Pos;
-//    it->Draw(B);
-//
-//    v2Pos.X+=(TILE_SIZE*iDirX);
-//    v2Pos.Y+=(TILE_SIZE*iDirY);
-//  }
-//}
 
 bitmap* bmpTgt = NULL;
 bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
@@ -1362,38 +1293,44 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   return bmpTgt;
 }
 
-//void game::UpdateShowItemsAtPlayerSquareAboveHead(){
-////  if(!game::GetCurrentDungeon()->IsGenerated())return;
-////  if(GetCurrentArea()->)
-////  if(Player->GetArea()->get)
-//  PrepareItemsUnder(false, Player->GetStackUnder(), -1, CalculateScreenCoordinates(Player->GetPos()), 1, 0);
-//}
-void game::UpdateShowItemsAtLevelSquarePos(v2 v2AbsLevelSqrPos){
+/**
+ * The final screen coordinates are relative not to 0,0 but to the top left dungeon corner,
+ * because the full dungeon stretching happens from that spot, therefore this does not work, ex.:
+ *  CalculateScreenCoordinates(Player->GetPos())
+ */
+v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
+  int iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
+  v2 v2SqrRelativePosFromCam = v2SqrPos - GetCamera();
+  v2 v2Min = area::getTopLeftCorner();;
+  v2 v2StretchedBufferDest=v2Min;
+  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*iStretchedTileSize);
+  return v2StretchedBufferDest;
+}
+
+void game::UpdateShowItemsAtLevelSquarePos(bool bAllowed){
   bool bOk=true;
+
+  if(bOk && !bAllowed)bOk=false;
+
+  if(bOk && !Player->IsEnabled())bOk=false;
 
   if(bOk && IsInWilderness())bOk=false;
 
-  int iCode;
-  if(bOk){
-    iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
-    if(bOk && iCode==0)bOk=false;
-  }
+  int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+  if(bOk && iCode==0)bOk=false;
 
-  stack* su;
-  if(bOk){
-    su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
-    if(bOk && su==NULL)bOk=false;
-    if(bOk && su->GetItems()<2)bOk=false;
-  }
+  stack* su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
+  if(bOk && su==NULL)bOk=false;
+  if(bOk && su->GetItems()<2)bOk=false;
 
-  if(!bOk){
+  if(!bOk){ // this is IMPORTANT as disabler
     graphics::SetSRegionEnabled(iRegionItemsUnder,false);
     return;
   }
 
   /////////////////////// ok ////////////////////////
+  v2 v2AbsLevelSqrPos = Player->GetPos();
 
-//  v2 v2PlayerPos = Player->GetPos();
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
   if(
       v2AbsLevelSqrPos.X<=iNearEC
@@ -1408,10 +1345,7 @@ void game::UpdateShowItemsAtLevelSquarePos(v2 v2AbsLevelSqrPos){
   }
 
   if(iCode==1){
-    //  if(!game::GetCurrentDungeon()->IsGenerated())return;
-    //  if(GetCurrentArea()->)
-    //  if(Player->GetArea()->get)
-    //CalculateScreenCoordinates(Player->GetPos())
+    // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
     int iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
     v2 v2PosFromCam = v2AbsLevelSqrPos - GetCamera();
@@ -1424,8 +1358,6 @@ void game::UpdateShowItemsAtLevelSquarePos(v2 v2AbsLevelSqrPos){
     v2StretchedBufferDest.Y-=2; //just to look better
     if(v2StretchedBufferDest.X<v2Min.X)v2StretchedBufferDest.X=v2Min.X;
     if(v2StretchedBufferDest.Y<v2Min.Y)v2StretchedBufferDest.Y=v2Min.Y;
-    //v2 v2Dest=CalculateScreenCoordinates(Player->GetPos());
-//    v2Dest*=ivanconfig::GetStartingDungeonGfxScale();
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
     return;
