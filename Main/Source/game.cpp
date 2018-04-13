@@ -202,6 +202,8 @@ blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
 //blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
 
+int iItemsUnderStretch = 2;
+
 int iZoomFactor=6;
 v2 ZoomPos = {0,0};
 v2 silhouettePos = {0,0};
@@ -576,7 +578,7 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
 
   if(iRegionItemsUnder==-1){
     blitdata B = DEFAULT_BLITDATA;
-    B.Stretch=2;
+    B.Stretch=iItemsUnderStretch;
     iRegionItemsUnder = graphics::AddStretchRegion(B,"ItemsUnderPosShowAboveHead");
   }
 
@@ -1213,7 +1215,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   }
 
   if(!bXBRZandFelist && Player->IsEnabled()){
-    UpdateShowItemsAtPlayerSquare();
+    UpdateShowItemsAtLevelSquarePos(Player->GetPos());
   }
 
 }
@@ -1366,25 +1368,41 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
 ////  if(Player->GetArea()->get)
 //  PrepareItemsUnder(false, Player->GetStackUnder(), -1, CalculateScreenCoordinates(Player->GetPos()), 1, 0);
 //}
-void game::UpdateShowItemsAtPlayerSquare(){
-  if(IsInWilderness())return;
+void game::UpdateShowItemsAtLevelSquarePos(v2 v2AbsLevelSqrPos){
+  bool bOk=true;
 
-  int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
-  if(iCode==0)return;
+  if(bOk && IsInWilderness())bOk=false;
 
-  stack* su = Player->GetStackUnder();
-  if(su==NULL)return;
+  int iCode;
+  if(bOk){
+    iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+    if(bOk && iCode==0)bOk=false;
+  }
 
-  v2 v2PlayerPos = Player->GetPos();
+  stack* su;
+  if(bOk){
+    su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
+    if(bOk && su==NULL)bOk=false;
+    if(bOk && su->GetItems()<2)bOk=false;
+  }
+
+  if(!bOk){
+    graphics::SetSRegionEnabled(iRegionItemsUnder,false);
+    return;
+  }
+
+  /////////////////////// ok ////////////////////////
+
+//  v2 v2PlayerPos = Player->GetPos();
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
   if(
-      v2PlayerPos.X<=iNearEC
+      v2AbsLevelSqrPos.X<=iNearEC
       ||
-      v2PlayerPos.Y<=iNearEC
+      v2AbsLevelSqrPos.Y<=iNearEC
       ||
-      v2PlayerPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)
+      v2AbsLevelSqrPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)
       ||
-      v2PlayerPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
+      v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
   ){
     iCode=1; //force above head
   }
@@ -1395,10 +1413,24 @@ void game::UpdateShowItemsAtPlayerSquare(){
     //  if(Player->GetArea()->get)
     //CalculateScreenCoordinates(Player->GetPos())
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
-    v2 v2Dest=CalculateScreenCoordinates(Player->GetPos());
-    v2Dest*=ivanconfig::GetStartingDungeonGfxScale();
-    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2Dest);
+    int iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
+    v2 v2PosFromCam = v2AbsLevelSqrPos - GetCamera();
+    v2 v2Min = area::getTopLeftCorner();;
+    v2 v2StretchedBufferDest=v2Min;
+    v2StretchedBufferDest+=(v2PosFromCam*iStretchedTileSize);
+    v2StretchedBufferDest.X+=iStretchedTileSize/2; //center of player's head
+    v2StretchedBufferDest.X-=(bmp->GetSize().X*iItemsUnderStretch)/2;
+    v2StretchedBufferDest.Y-= bmp->GetSize().Y*iItemsUnderStretch; // above player's head
+    v2StretchedBufferDest.Y-=2; //just to look better
+    if(v2StretchedBufferDest.X<v2Min.X)v2StretchedBufferDest.X=v2Min.X;
+    if(v2StretchedBufferDest.Y<v2Min.Y)v2StretchedBufferDest.Y=v2Min.Y;
+    //v2 v2Dest=CalculateScreenCoordinates(Player->GetPos());
+//    v2Dest*=ivanconfig::GetStartingDungeonGfxScale();
+    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2StretchedBufferDest);
+    graphics::SetSRegionEnabled(iRegionItemsUnder,true);
     return;
+  }else{
+    graphics::SetSRegionEnabled(iRegionItemsUnder,false);
   }
 
   int iCorner = ItemUnderCorner(iCode);
