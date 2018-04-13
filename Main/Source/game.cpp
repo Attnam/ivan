@@ -194,12 +194,13 @@ int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
+int iRegionItemsUnder = -1;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
-blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
+//blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
 
 int iZoomFactor=6;
 v2 ZoomPos = {0,0};
@@ -571,6 +572,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     iRegionListItem = graphics::AddStretchRegion(bldListItemTMP,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
+  }
+
+  if(iRegionItemsUnder==-1){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Stretch=2;
+    iRegionItemsUnder = graphics::AddStretchRegion(B,"ItemsUnderPosShowAboveHead");
   }
 
   UpdateSRegionsXBRZ();
@@ -1213,19 +1220,22 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
 int game::IntemUnderCode(int iCycleValue){
   switch(iCycleValue){
-    case 0:return 0;
+    case 0:return 0; //disabled
 
-    case 1:return  10;
-    case 2:return  11;
+    case 1:return 1; //above head
 
-    case 3:return 110;
-    case 4:return 111;
+    // corners and Horizontal/Vertical
+    case 2:return  10;
+    case 3:return  11;
 
-    case 5:return 210;
-    case 6:return 211;
+    case 4:return 110;
+    case 5:return 111;
 
-    case 7:return 310;
-    case 8:return 311;
+    case 6:return 210;
+    case 7:return 211;
+
+    case 8:return 310;
+    case 9:return 311;
 
     default:ABORT("invalid IntemUnder cycle value %d",iCycleValue);
   }
@@ -1242,23 +1252,105 @@ bool game::ItemUnderHV(int val){
   return val%2==0; //odd is vertical
 }
 
-/**
- * not good...
- * complex to solve issues when player/NPCs are at dungeon corners/edges,
- * this would hide them making combat a real pain...
- */
+//void PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+//  int iTot = su->GetItems();
+//  if(iMax>-1)iTot = Min(iMax,iTot);
+//  if(iTot==0)return;
+//
+//  v2 v2Pos = bUseDB ? v2PosIni : v2(0,0);
+//
+//  blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
+//  bldShowItemsAtPlayerSquareTMP.CustomData = ALLOW_ANIMATE;
+//  bldShowItemsAtPlayerSquareTMP.Border = { TILE_SIZE, TILE_SIZE };
+//  bldShowItemsAtPlayerSquareTMP.Luminance = ivanconfig::GetContrastLuminance();
+//
+//  v2 v2Size = TILE_V2*bldShowItemsAtPlayerSquareTMP.Stretch;
+//  if(!bUseDB){
+//    v2Size.X*=iTot;
+//  }
+//
+//  bitmap* bmp = bUseDB ? DOUBLE_BUFFER : new bitmap(v2Size);
+//  bldShowItemsAtPlayerSquareTMP.Bitmap=bmp;
+//
+//  for(int i=0;i<iTot;i++){
+//    //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
+//    bmp->Fill(v2Pos,v2Size,DARK_GRAY);
+//    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
+//
+//    item* it = su->GetItem(i);
+//    bldShowItemsAtPlayerSquareTMP.Dest = v2Pos;
+//    it->Draw(bldShowItemsAtPlayerSquareTMP);
+//
+//    v2Pos.X+=(TILE_SIZE*iDirX);
+//    v2Pos.Y+=(TILE_SIZE*iDirY);
+//  }
+//
+//  if(!bUseDB){
+//    v2 v2Dest = v2PosIni;
+//    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,v2Dest);
+//  }
+//}
+void PrepareItemsUnderDB(stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+  int iTot = su->GetItems();
+  if(iMax>-1)iTot = Min(iMax,iTot);
+  if(iTot==0)return;
+
+  v2 v2Pos = v2PosIni;
+  bitmap* bmp = DOUBLE_BUFFER;
+
+  blitdata B = DEFAULT_BLITDATA;
+  B.Bitmap=bmp;
+  B.CustomData = ALLOW_ANIMATE;
+  B.Stretch = 1;
+  B.Border = { TILE_SIZE, TILE_SIZE };
+  B.Luminance = ivanconfig::GetContrastLuminance();
+
+  for(int i=0;i<iTot;i++){
+    bmp->Fill(v2Pos,B.Border,DARK_GRAY); //TODO could be? igraph::BlitBackGround(v2Pos,v2Size);
+    graphics::DrawRectangleOutlineAround(bmp, v2Pos+v2(1,1), B.Border-v2(2,2), LIGHT_GRAY, false);
+
+    item* it = su->GetItem(i);
+    B.Dest = v2Pos;
+    it->Draw(B);
+
+    v2Pos.X+=(TILE_SIZE*iDirX);
+    v2Pos.Y+=(TILE_SIZE*iDirY);
+  }
+}
+
+//void game::UpdateShowItemsAtPlayerSquareAboveHead(){
+////  if(!game::GetCurrentDungeon()->IsGenerated())return;
+////  if(GetCurrentArea()->)
+////  if(Player->GetArea()->get)
+//  PrepareItemsUnder(false, Player->GetStackUnder(), -1, CalculateScreenCoordinates(Player->GetPos()), 1, 0);
+//}
 void game::UpdateShowItemsAtPlayerSquare(){
   if(IsInWilderness())return;
 
-  //TODO aboveHead
-//  if(!game::GetCurrentDungeon()->IsGenerated())return;
-//  if(GetCurrentArea()->)
-//  if(Player->GetArea()->get)
-  UpdateShowItemsAtPlayerSquareAtDungeons();
-}
-void game::UpdateShowItemsAtPlayerSquareAtDungeons(){
   int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
   if(iCode==0)return;
+
+  v2 v2PlayerPos = Player->GetPos();
+  int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
+  if(
+      v2PlayerPos.X<=iNearEC
+      ||
+      v2PlayerPos.Y<=iNearEC
+      ||
+      v2PlayerPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)
+      ||
+      v2PlayerPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
+  ){
+    iCode=1; //force above head
+  }
+
+  if(iCode==1){
+    //  if(!game::GetCurrentDungeon()->IsGenerated())return;
+    //  if(GetCurrentArea()->)
+    //  if(Player->GetArea()->get)
+//    PrepareItemsUnder(false, B, Player->GetStackUnder(), -1, CalculateScreenCoordinates(Player->GetPos()), 1, 0);
+    return;
+  }
 
   stack* su = Player->GetStackUnder();
   if(su!=NULL){
@@ -1266,27 +1358,11 @@ void game::UpdateShowItemsAtPlayerSquareAtDungeons(){
     bool bHorizontal = ItemUnderHV(iCode);
     int iStretch=ItemUnderZoom(iCode);
 
-    int iTot = su->GetItems();
-    if(bHorizontal){
-      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-    }else{
-      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
-    }
-
-    v2 v2Size = TILE_V2*iStretch;
-
     switch(iStretch){
       case 1: { //this overwrites over dungeon squares pixels and is faster!
-        blitdata B = DEFAULT_BLITDATA; //TODO global var
-        B.Bitmap = DOUBLE_BUFFER;
-        B.Border = { TILE_SIZE, TILE_SIZE };
-        B.CustomData = ALLOW_ANIMATE;
-
-        B.Luminance = ivanconfig::GetContrastLuminance();
-
         int iDirX=0,iDirY=0;
         v2 v2SqrPos=Camera;
-        v2 v2Pos = area::getTopLeftCorner();
+        v2 v2PosIni = area::getTopLeftCorner();
         int iScSX=game::GetScreenXSize()-1;
         int iScSY=game::GetScreenYSize()-1;
         switch(iCorner){
@@ -1294,32 +1370,41 @@ void game::UpdateShowItemsAtPlayerSquareAtDungeons(){
             break;
           case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
             v2SqrPos.X+=iScSX;
-            v2Pos.X+=iScSX*TILE_SIZE;
+            v2PosIni.X+=iScSX*TILE_SIZE;
             break;
           case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
             v2SqrPos.Y+=iScSY;
-            v2Pos.Y+=iScSY*TILE_SIZE;
+            v2PosIni.Y+=iScSY*TILE_SIZE;
             break;
           case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
             v2SqrPos.X+=iScSX;
             v2SqrPos.Y+=iScSY;
-            v2Pos.X+=iScSX*TILE_SIZE;
-            v2Pos.Y+=iScSY*TILE_SIZE;
+            v2PosIni.X+=iScSX*TILE_SIZE;
+            v2PosIni.Y+=iScSY*TILE_SIZE;
             break;
         }
 
-        for(int i=0;i<iTot;i++){
-          //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
-          DOUBLE_BUFFER->Fill(v2Pos,v2Size,DARK_GRAY);
-          graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
-
-          item* it = su->GetItem(i);
-          B.Dest = v2Pos;
-          it->Draw(B);
-
-          v2Pos.X+=(TILE_SIZE*iDirX);
-          v2Pos.Y+=(TILE_SIZE*iDirY);
+        int iTot = su->GetItems();
+        if(bHorizontal){
+          if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+        }else{
+          if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
         }
+
+        PrepareItemsUnderDB(su,iTot,v2PosIni,iDirX,iDirY);
+
+//        for(int i=0;i<iTot;i++){
+//          //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
+//          DOUBLE_BUFFER->Fill(v2Pos,v2Size,DARK_GRAY);
+//          graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
+//
+//          item* it = su->GetItem(i);
+//          bldShowItemsAtPlayerSquareTMP.Dest = v2Pos;
+//          it->Draw(bldShowItemsAtPlayerSquareTMP);
+//
+//          v2Pos.X+=(TILE_SIZE*iDirX);
+//          v2Pos.Y+=(TILE_SIZE*iDirY);
+//        }
 
         for(int i=0;i<iTot;i++){
           GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();

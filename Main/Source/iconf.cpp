@@ -46,7 +46,7 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastHandler);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
-                                          0, 9,
+                                          0, 10,
                                           &ShowItemsAtPlayerSquareDisplayer);
 //                                          &ShowItemsAtPlayerSquareChangeInterface);
 //                                          &ShowItemsAtPlayerSquareChanger);
@@ -206,8 +206,11 @@ void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring
 {
   int iCode = game::IntemUnderCode(O->Value);
 
-  if(iCode<10){
+  if(iCode==0){
     Entry << "disabled";
+  }else
+  if(iCode==1){
+    Entry << "above head";
   }else{
     switch(game::ItemUnderCorner(iCode)){
       case 0:Entry << "UL";break;
