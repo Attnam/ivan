@@ -1210,8 +1210,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
 }
 
+int game::ItemUnderCorner(int val){
+  return val/100;
+}
 int game::ItemUnderZoom(int val){
-  return val/10;
+  return (val%100)/10;
 }
 bool game::ItemUnderHV(int val){
   return val%2==0; //odd is vertical
@@ -1222,8 +1225,9 @@ void game::UpdateShowItemsAtPlayerSquare(){
 
   stack* su = Player->GetStackUnder();
   if(su!=NULL){
+    int iCorner = ItemUnderCorner(iCode);
     bool bHorizontal = ItemUnderHV(iCode);
-    int iZoom=ItemUnderZoom(iCode);
+    int iStretch=ItemUnderZoom(iCode);
 
     int iTot = su->GetItems();
     if(bHorizontal){
@@ -1232,36 +1236,62 @@ void game::UpdateShowItemsAtPlayerSquare(){
       if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
     }
 
-    switch(iZoom){
-      case 1: {
-        blitdata B = DEFAULT_BLITDATA;
+    v2 v2Size = TILE_V2*iStretch;
+
+    switch(iStretch){
+      case 1: { //this overwrites over dungeon squares pixels and is faster!
+        blitdata B = DEFAULT_BLITDATA; //TODO global var
         B.Bitmap = DOUBLE_BUFFER;
         B.Border = { TILE_SIZE, TILE_SIZE };
         B.CustomData = ALLOW_ANIMATE;
 
         B.Luminance = ivanconfig::GetContrastLuminance();
 
-        v2 v2Border = TILE_V2;
-        if(bHorizontal){v2Border.X*=iTot;}else{v2Border.Y*=iTot;}
-
-        //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
-        DOUBLE_BUFFER->Fill(area::getTopLeftCorner(),v2Border,DARK_GRAY);
-
+        int iDirX=0,iDirY=0;
+        v2 v2SqrPos=Camera;
         v2 v2Pos = area::getTopLeftCorner();
+        int iScSX=game::GetScreenXSize()-1;
+        int iScSY=game::GetScreenYSize()-1;
+        switch(iCorner){
+          case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
+            break;
+          case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
+            v2SqrPos.X+=iScSX;
+            v2Pos.X+=iScSX*TILE_SIZE;
+            break;
+          case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
+            v2SqrPos.Y+=iScSY;
+            v2Pos.Y+=iScSY*TILE_SIZE;
+            break;
+          case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
+            v2SqrPos.X+=iScSX;
+            v2SqrPos.Y+=iScSY;
+            v2Pos.X+=iScSX*TILE_SIZE;
+            v2Pos.Y+=iScSY*TILE_SIZE;
+            break;
+        }
+
         for(int i=0;i<iTot;i++){
+          //TODO could be? igraph::BlitBackGround(v2Pos, TILE_V2);
+          DOUBLE_BUFFER->Fill(v2Pos,v2Size,DARK_GRAY);
+          graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2Pos+v2(1,1), v2Size-v2(2,2), LIGHT_GRAY, false);
+
           item* it = su->GetItem(i);
           B.Dest = v2Pos;
           it->Draw(B);
-          if(bHorizontal){v2Pos.X+=TILE_SIZE;}else{v2Pos.Y+=TILE_SIZE;}
+
+          v2Pos.X+=(TILE_SIZE*iDirX);
+          v2Pos.Y+=(TILE_SIZE*iDirY);
         }
 
-        v2 v2SqrPos=Camera;
         for(int i=0;i<iTot;i++){
           GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
-          if(bHorizontal){v2SqrPos.X++;}else{v2SqrPos.Y++;}
+          v2SqrPos.X+=iDirX;
+          v2SqrPos.Y+=iDirY;
         }
 
       }break;
+
       case 2:
       case 3:
       case 4:

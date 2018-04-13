@@ -207,9 +207,20 @@ void ivanconfig::ShowItemsAtPlayerSquareCodeDisplayer(const numberoption* O, fes
   if(O->Value<10){
     Entry << "disabled";
   }else{
+    switch(game::ItemUnderCorner(O->Value)){
+      case 0:Entry << "UL";break;
+      case 1:Entry << "UR";break;
+      case 2:Entry << "LL";break;
+      case 3:Entry << "LR";break;
+    }
+
+    Entry << ",";
+
     Entry << "x" << game::ItemUnderZoom(O->Value);
-    Entry << " ";
-    Entry << (game::ItemUnderHV(O->Value) ? "Horiz" : "Vert");
+
+    Entry << ",";
+
+    Entry << (game::ItemUnderHV(O->Value) ? "H" : "V");
   }
 }
 
@@ -371,7 +382,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 
 truth ivanconfig::ShowItemsAtPlayerSquareCodeChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("From 0 to 61. Zoom (1 to 6)*10. If vertical add +1. Ex. 30 is 3x Horizontal:"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("From 0 to 361: Corner(0to3)*100. Zoom(1to6)*10. If vertical add +1. Ex. 230 is '3x Hz LL':"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -458,7 +469,7 @@ void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 void ivanconfig::ShowItemsAtPlayerSquareCodeChanger(numberoption* O, long What)
 {
   if(What < 10) What = 0; //just disable it
-  if(What > 61) What = 61;
+  if(What > 361) What = 361;
   O->Value = What;
 }
 
