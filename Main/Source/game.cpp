@@ -1338,6 +1338,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   if(bOk && !bAllowed)bOk=false;
 
+  if(bOk && bPositionQuestionMode)bOk=false;
+
   if(bOk && !Player->IsEnabled())bOk=false;
 
   if(bOk && IsInWilderness())bOk=false;
