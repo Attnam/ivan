@@ -72,7 +72,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   v2 v2SquareSize; //to clear or to inc/dec zoom
 
   std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
-  blitdata BClearSquares;
+  blitdata BInterm; //intermediary, it's bitmap will be filled to serve as source
 
   bitmap* CacheBitmap;
 };
@@ -384,7 +384,7 @@ int graphics::AddStretchRegion(blitdata B,const char* strId){
 
 bitmap* SRegionPrepareClearedSquares(bitmap* DoubleBuffer, stretchRegion& rSR){
   blitdata& rB = rSR.B;
-  blitdata& rBC = rSR.BClearSquares;
+  blitdata& rBC = rSR.BInterm;
   if(rBC.Bitmap==NULL || rBC.Bitmap->GetSize()!=rB.Border){
     if(rBC.Bitmap!=NULL)delete rBC.Bitmap;
     rBC.Bitmap = new bitmap(rB.Border);

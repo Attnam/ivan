@@ -199,6 +199,7 @@ blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
+blitdata bldShowItemsAtPlayerSquareTMP = DEFAULT_BLITDATA;
 
 int iZoomFactor=6;
 v2 ZoomPos = {0,0};
@@ -1210,6 +1211,27 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
 }
 
+int game::IntemUnderCode(int iCycleValue){
+  switch(iCycleValue){
+    case 0:return 0;
+
+    case 1:return  10;
+    case 2:return  11;
+
+    case 3:return 110;
+    case 4:return 111;
+
+    case 5:return 210;
+    case 6:return 211;
+
+    case 7:return 310;
+    case 8:return 311;
+
+    default:ABORT("invalid IntemUnder cycle value %d",iCycleValue);
+  }
+
+  return -1; //dummy (never happens, just to cpp do not bother..)
+}
 int game::ItemUnderCorner(int val){
   return val/100;
 }
@@ -1219,8 +1241,23 @@ int game::ItemUnderZoom(int val){
 bool game::ItemUnderHV(int val){
   return val%2==0; //odd is vertical
 }
+
+/**
+ * not good...
+ * complex to solve issues when player/NPCs are at dungeon corners/edges,
+ * this would hide them making combat a real pain...
+ */
 void game::UpdateShowItemsAtPlayerSquare(){
-  int iCode = ivanconfig::GetShowItemsAtPlayerSquareCode();
+  if(IsInWilderness())return;
+
+  //TODO aboveHead
+//  if(!game::GetCurrentDungeon()->IsGenerated())return;
+//  if(GetCurrentArea()->)
+//  if(Player->GetArea()->get)
+  UpdateShowItemsAtPlayerSquareAtDungeons();
+}
+void game::UpdateShowItemsAtPlayerSquareAtDungeons(){
+  int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
   if(iCode==0)return;
 
   stack* su = Player->GetStackUnder();
@@ -1297,7 +1334,7 @@ void game::UpdateShowItemsAtPlayerSquare(){
       case 4:
       case 5:
       case 6:
-        //TODO xBRZ
+        //TODO xBRZ ?
         //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
         break;
     }

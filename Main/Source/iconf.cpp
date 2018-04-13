@@ -44,12 +44,12 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
-numberoption ivanconfig::ShowItemsAtPlayerSquareCode("ShowItemsAtPlayerSquareCode",
-                                          "Show, side by side, items at player square",
-                                          0,
-                                          &ShowItemsAtPlayerSquareCodeDisplayer,
-                                          &ShowItemsAtPlayerSquareCodeChangeInterface,
-                                          &ShowItemsAtPlayerSquareCodeChanger);
+cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
+                                          "Show items at player square",
+                                          0, 9,
+                                          &ShowItemsAtPlayerSquareDisplayer);
+//                                          &ShowItemsAtPlayerSquareChangeInterface);
+//                                          &ShowItemsAtPlayerSquareChanger);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -202,25 +202,25 @@ void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
   Entry << O->Value << " pixels";
 }
 
-void ivanconfig::ShowItemsAtPlayerSquareCodeDisplayer(const numberoption* O, festring& Entry)
+void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
 {
-  if(O->Value<10){
+  int iCode = game::IntemUnderCode(O->Value);
+
+  if(iCode<10){
     Entry << "disabled";
   }else{
-    switch(game::ItemUnderCorner(O->Value)){
+    switch(game::ItemUnderCorner(iCode)){
       case 0:Entry << "UL";break;
       case 1:Entry << "UR";break;
       case 2:Entry << "LL";break;
       case 3:Entry << "LR";break;
     }
 
+//    Entry << ",";
+//    Entry << "x" << game::ItemUnderZoom(O->Value);
+
     Entry << ",";
-
-    Entry << "x" << game::ItemUnderZoom(O->Value);
-
-    Entry << ",";
-
-    Entry << (game::ItemUnderHV(O->Value) ? "H" : "V");
+    Entry << (game::ItemUnderHV(iCode) ? "H" : "V");
   }
 }
 
@@ -380,13 +380,13 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
   return false;
 }
 
-truth ivanconfig::ShowItemsAtPlayerSquareCodeChangeInterface(numberoption* O)
-{
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("From 0 to 361: Corner(0to3)*100. Zoom(1to6)*10. If vertical add +1. Ex. 230 is '3x Hz LL':"),
-                                          GetQuestionPos(), WHITE, !game::IsRunning()));
-  clearToBackgroundAfterChangeInterface();
-  return false;
-}
+//truth ivanconfig::ShowItemsAtPlayerSquareChangeInterface(cycleoption* O)
+//{
+//  O->ChangeValue(iosystem::NumberQuestion(CONST_S("From 0 to 361: Corner(0to3)*100. Zoom(1to6)*10. If vertical add +1. Ex. 230 is '3x Hz LL':"),
+//                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+//  clearToBackgroundAfterChangeInterface();
+//  return false;
+//}
 
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
@@ -466,12 +466,12 @@ void ivanconfig::WindowHeightChanger(numberoption* O, long What)
   O->Value = What;
 }
 
-void ivanconfig::ShowItemsAtPlayerSquareCodeChanger(numberoption* O, long What)
-{
-  if(What < 10) What = 0; //just disable it
-  if(What > 361) What = 361;
-  O->Value = What;
-}
+//void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
+//{
+//  if(What < 10) What = 0; //just disable it
+//  if(What > 361) What = 361;
+//  O->Value = What;
+//}
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
@@ -638,7 +638,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
-  configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquareCode);
+  configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

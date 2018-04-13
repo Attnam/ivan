@@ -207,6 +207,8 @@ class game
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
   static void UpdateShowItemsAtPlayerSquare();
+  static void UpdateShowItemsAtPlayerSquareAtDungeons();
+  static int IntemUnderCode(int iCycleValue);
   static int ItemUnderCorner(int val);
   static int ItemUnderZoom(int val);
   static bool ItemUnderHV(int val);
