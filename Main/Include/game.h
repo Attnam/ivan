@@ -210,6 +210,7 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
+  static character* _BugWorkaroundDupPlayer(character* CharAsked);
   static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
   static double GetMinDifficulty();

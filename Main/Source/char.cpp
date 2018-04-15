@@ -23,6 +23,8 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "dbgmsgproj.h"
+
 struct statedata
 {
   cchar* Description;
@@ -7829,6 +7831,28 @@ truth character::PreProcessForBone()
   ID = -ID;
   game::AddCharacterID(this, ID);
   return true;
+}
+
+/**
+ * TODO when the bug is really fixed b4 happening, this method should vanish.
+ * This must be tested for side effects/problems/errors/glitches that this work may cause.
+ */
+void character::_BugWorkaround_PlayerDup(){
+  if(!this->IsPlayer())return;
+  if(PLAYER==this)return;
+  //? PLAYER->GetID() != this->GetID()
+  //? PLAYER->GetFlags() != this->GetFlags()
+
+  DBGCHAR(this,"_BugWorkaround_PlayerDup_B4HellCharDetails");
+  Flags ^= C_PLAYER;
+  ID = game::CreateNewCharacterID(this); //TODO it will call std::make_pair, could it mean more trouble?
+  this->RemoveAllItems();
+  this->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
+  this->SetAssignedName("BugMan"); //funny enough? :)
+  //may crash:  this->Remove(); //from the square he is to nowhere?
+  DBGCHAR(this,"ReadyToHellCharDetails");
+
+  //this crashes: this->SendToHell();
 }
 
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)

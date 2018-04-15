@@ -179,6 +179,8 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
+bool _bBugWorkaround_DuplicatedPlayer_DoFix=false;
+
 void game::AddCharacterID(character* Char, ulong ID)
 {
   CharacterIDMap.insert(std::make_pair(ID, Char));
@@ -191,10 +193,25 @@ void game::AddItemID(item* Item, ulong ID)
 {
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
+
 void game::RemoveItemID(ulong ID)
 {
-  if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+  bool bErase=true;
+
+  if(bErase && !ID)bErase=false;
+
+  item* it = SearchItem(ID);
+  if(bErase && it==NULL && _bBugWorkaround_DuplicatedPlayer_DoFix){ //this will prevent the crash
+    DBG2("AlreadyErased_EraseItem",ID); //TODO this double request mean a duplicated item, try to fix it. Need a test case tho...
+    bErase=false;
+  }
+
+  if(bErase){
+    DBG2("Erasing_EraseItem",ID); //trying to get name, description, position will all crash..
+    ItemIDMap.erase(ItemIDMap.find(ID));
+  }
 }
+
 void game::UpdateItemID(item* Item, ulong ID)
 {
   ItemIDMap.find(ID)->second = Item;
@@ -961,7 +978,7 @@ int game::Load(cfestring& SaveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
+  SetPlayer(_BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter()));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -971,6 +988,96 @@ int game::Load(cfestring& SaveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
   return LOADED;
+}
+
+/**
+ * this may happen after game crash, when loading an AutoSave file
+ */
+character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+  _bBugWorkaround_DuplicatedPlayer_DoFix=false; //reset for next load event
+  
+  std::vector<character*> vPlayer;
+  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
+    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
+      character* Char = GetCurrentArea()->GetSquare({iX,iY})->GetCharacter();
+      if(Char!=NULL && Char->IsPlayer())vPlayer.push_back(Char);
+    }
+  }
+
+  if(vPlayer.size()==1){
+    if(vPlayer[0]!=CharAsked){ //TODO can this happen?
+      ABORT("Asked player not found! askedPos=%d,%d; id=%d pos=%d,%d; idOther=%d posOther=%d,%d",
+        CharAsked->GetID(),CharAsked->GetPos().X,CharAsked->GetPos().Y,
+        vPlayer[0]->GetID(),vPlayer[0]->GetPos().X,vPlayer[0]->GetPos().Y
+      );
+    }
+
+    return CharAsked;
+  }
+
+  /////////////////////// duplication detected ////////////////////
+
+  bool bAskedOnce=false;
+  for(int i=0;i<vPlayer.size();i++){
+    character* CharChk = vPlayer[i];
+
+    for(int i=0;i<CharChk->GetEquipments();i++){
+      item* eq = CharChk->GetEquipment(i);
+      if(eq!=NULL)DBG2(CharChk,eq->GetID()); //some helpful info for comparison and understanding
+    }
+
+    if(CharChk==CharAsked)continue;
+
+    //////////////////////// let user decide if and when to fix //////////////////////
+    bool bAllowFix=false;
+    if(!bAskedOnce){ //TODO create method: bool AlertConfirmationQuestion()
+      v2 v2Border(300,100);
+      v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
+
+      DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+//      graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+      DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+
+      v2TL+=v2(16,16);
+      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), YELLOW, "%s", "Duplicated player bug detected!!!");
+      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+16),   BLUE, "%s", "Please backup your savegame files.");
+      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32),  WHITE, "%s", "Try to fix it? (y/...)");
+
+      graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
+
+      if(GET_KEY() == 'y')bAllowFix=true;
+    }
+
+    if(bAllowFix){
+      DBGCHAR(CharChk,"BugWorkaroundRemovingDupChar");
+      _bBugWorkaround_DuplicatedPlayer_DoFix=true;
+
+      for(int i=0;i<CharChk->GetEquipments();i++){
+        item* eq = CharChk->GetEquipment(i);
+        if(eq!=NULL)eq->_BugWorkaround_ItemDup();
+      }
+
+      stack* stk=CharChk->GetStack(); //inventory
+      for(int i=0;i<stk->GetItems();i++){
+        item* it=stk->GetItem(i);
+        it->_BugWorkaround_ItemDup();
+      }
+
+      for(int i=0;i<CharChk->GetBodyParts();i++){
+        bodypart* bp = CharChk->GetBodyPart(i);
+        if(bp!=NULL)bp->_BugWorkaround_ItemDup();
+      }
+
+      CharChk->_BugWorkaround_PlayerDup();
+    }else{
+      ABORT("Duplicated player (and owned items) askedPos=%d,%d; id=%d pos=%d,%d; idDup=%d posDup=%d,%d",
+        CharAsked->GetID(),CharAsked->GetPos().X,CharAsked->GetPos().Y,
+        CharChk->GetID(),CharChk->GetPos().X,CharChk->GetPos().Y
+      );
+    }
+  }
+
+  return CharAsked; //the asked is the valid/latest one
 }
 
 festring game::SaveName(cfestring& Base)

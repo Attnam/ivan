@@ -1116,6 +1116,10 @@ void item::PreProcessForBone()
   }
 }
 
+void item::_BugWorkaround_ItemDup(){
+  ID=game::CreateNewItemID(this);
+}
+
 void item::PostProcessForBone()
 {
   boneidmap::iterator BI = game::GetBoneItemIDMap().find(-ID);
