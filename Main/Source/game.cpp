@@ -1148,103 +1148,141 @@ void game::_BugWorkaround_CheckAllItemsForDups(){
   if(vItem.size()>0)ABORT("Dup ItemID found! Tot dup items: %d. Tot items %d.",vItem.size(),ItemIDMap.size());
 }
 
+character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+  for (auto const& kv : CharacterIDMap){
+    ulong key = kv.first;
+    character* Char  = kv.second;
+    DBG5("CharID:Key:Value:ID",key,Char->GetID(),Char,Char->IsPlayer());
+    if(key!=Char->GetID()){
+      DBG1("invalid id");
+    }
+  }
+
+  for (auto const& kv : ItemIDMap){
+    ulong key = kv.first;
+    item* it  = kv.second;
+    DBG4("ItemID:Key:Value:ID",key,it->GetID(),it);
+    if(key!=it->GetID()){
+      DBG1("invalid id");
+    }
+  }
+
+  for (auto const& kv : TrapIDMap){
+    ulong key = kv.first;
+    entity* trap  = kv.second;
+    DBG4("TrapID:Key:Value:ID",key,trap->GetTrapID(),trap);
+    if(key!=trap->GetTrapID()){
+      DBG1("invalid id");
+    }
+  }
+
+  //////////////////////
+
+  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
+    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
+
+      square* sqr = GetCurrentArea()->GetSquare({iX,iY});
+      character* Char = sqr->GetCharacter();
+
+      if(Char!=NULL){
+        bool bFound=false;
+        for (auto const& kv : CharacterIDMap){
+          if(Char==kv.second){
+            bFound=true;
+            break;
+          }
+        }
+
+        if(!bFound){
+  //        Char->Remove();
+          sqr->SetCharacter(NULL);
+//          delete Char;
+        }
+      }
+
+    }
+  }
+
+  return CharAsked;
+}
+
 /**
  * This may happen after game crash, when loading an AutoSave file.
  * This must be tested for side effects/problems/errors/glitches that this workaround could cause.
  */
-character* game::_BugWorkaroundDupPlayer(character* CharAsked){
-  _bBugWorkaround_DuplicatedPlayer_DoFix=false; //reset for next load event
-  
-  //not happening: _BugWorkaround_FixPlayerDupInv(CharAsked);DBGLN;
-//  _BugWorkaround_CheckAllItemsForDups();
-
-  std::vector<character*> vPlayer;DBGLN;
-  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
-    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
-      character* Char = GetCurrentArea()->GetSquare({iX,iY})->GetCharacter();
-      if(Char!=NULL && Char->IsPlayer())vPlayer.push_back(Char);
-    }
-  }
-  DBGLN;
-
-  if(vPlayer.size()==1)return CharAsked;
-
-  /////////////////////// duplication detected ////////////////////
-
-  bool bAskedOnce=false;DBGLN;
-  for(int i=0;i<vPlayer.size();i++){
-    character* CharChk = vPlayer[i];DBGLN;
-
-    {DBGLN; // extra info
-      for(int i=0;i<CharChk->GetEquipments();i++)
-        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),false,"ChkChar:Equipped:Info",NULL);
-
-      stack* stk=CharChk->GetStack();DBGLN; //inventory
-      for(int i=0;i<stk->GetItems();i++)
-        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),false,"ChkChar:Inventory:Info",NULL);
-    }
-
-    if(CharChk==CharAsked)continue;
-//    if(CharChk==CharAsked){
-//      _BugWorkaround_FixPlayerDupInv(CharChk);DBGLN;
-//      continue;
+//character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+//  _bBugWorkaround_DuplicatedPlayer_DoFix=false; //reset for next load event
+//
+//  //not happening: _BugWorkaround_FixPlayerDupInv(CharAsked);DBGLN;
+////  _BugWorkaround_CheckAllItemsForDups();
+//
+//  std::vector<character*> vPlayer;DBGLN;
+//  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
+//    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
+//      character* Char = GetCurrentArea()->GetSquare({iX,iY})->GetCharacter();
+//      if(Char!=NULL && Char->IsPlayer())vPlayer.push_back(Char);
 //    }
-
-    //////////////////////// let user decide if and when to fix //////////////////////
-    bool bAllowFix=false;DBGLN;
-    if(!bAskedOnce){ //TODO create method: bool AlertConfirmationQuestion()
-      bAllowFix = AlertConfirmFixMsg("Duplicated player bug detected!!!");
-//      v2 v2Border(300,100);
-//      v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
+//  }
+//  DBGLN;
 //
-//      DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
-////      graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
-//      DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+//  if(vPlayer.size()==1)return CharAsked;
 //
-//      v2TL+=v2(16,16);
-//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), YELLOW, "%s", "Duplicated player bug detected!!!");
-//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+16),   BLUE, "%s", "Please backup your savegame files.");
-//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32),  WHITE, "%s", "Try to fix it? (y/...)");
+//  /////////////////////// duplication detected ////////////////////
 //
-//      graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
+//  bool bAskedOnce=false;DBGLN;
+//  for(int i=0;i<vPlayer.size();i++){
+//    character* CharChk = vPlayer[i];DBGLN;
 //
-//      if(GET_KEY() == 'y')bAllowFix=true;
-
-      bAskedOnce=true;
-    }
-
-    if(bAllowFix){ // everything on the dup player is duplicated.
-      DBGCHAR(CharChk,"BugWorkaroundRemovingDupChar");
-      _bBugWorkaround_DuplicatedPlayer_DoFix=true;
-
-      for(int i=0;i<CharChk->GetEquipments();i++)
-        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),true,"DupPlayer:Equipped",NULL);
-
-      stack* stk=CharChk->GetStack(); //inventory
-      for(int i=0;i<stk->GetItems();i++)
-        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),true,"DupPlayer:Inventory",NULL);
-
-      for(int i=0;i<CharChk->GetBodyParts();i++)
-        _BugWorkaround_DupItemWork(CharChk,CharChk->GetBodyPart(i),true,"DupPlayer:BodyPart",NULL);
-
-      ulong keyChar=0;
-      for(auto const& kv : CharacterIDMap){
-        ulong key = kv.first;
-        character* Char = kv.second;
-        if(Char==CharChk)keyChar=key;
-      }
-      if(keyChar==0)ABORT("keyChar should have been found...");
-      CharChk->_BugWorkaround_PlayerDup(keyChar); //will remove all it's items
-    }else{
-      ABORT("Duplicated player (and owned items) askedPos=%d,%d; id=%d pos=%d,%d; idDup=%d posDup=%d,%d",
-        CharAsked->GetID(),CharAsked->GetPos().X,CharAsked->GetPos().Y,
-        CharChk->GetID(),CharChk->GetPos().X,CharChk->GetPos().Y
-      );
-    }
-  }
-
-  return CharAsked; //the asked is the valid/latest one
-}
+//    {DBGLN; // extra info
+//      for(int i=0;i<CharChk->GetEquipments();i++)
+//        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),false,"ChkChar:Equipped:Info",NULL);
+//
+//      stack* stk=CharChk->GetStack();DBGLN; //inventory
+//      for(int i=0;i<stk->GetItems();i++)
+//        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),false,"ChkChar:Inventory:Info",NULL);
+//    }
+//
+//    if(CharChk==CharAsked)continue;
+//
+//    //////////////////////// let user decide if and when to fix //////////////////////
+//    bool bAllowFix=false;DBGLN;
+//    if(!bAskedOnce){ //TODO create method: bool AlertConfirmationQuestion()
+//      bAllowFix = AlertConfirmFixMsg("Duplicated player bug detected!!!");
+//      bAskedOnce=true;
+//    }
+//
+//    if(bAllowFix){ // everything on the dup player is duplicated.
+//      DBGCHAR(CharChk,"BugWorkaroundRemovingDupChar");
+//      _bBugWorkaround_DuplicatedPlayer_DoFix=true;
+//
+//      for(int i=0;i<CharChk->GetEquipments();i++)
+//        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),true,"DupPlayer:Equipped",NULL);
+//
+//      stack* stk=CharChk->GetStack(); //inventory
+//      for(int i=0;i<stk->GetItems();i++)
+//        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),true,"DupPlayer:Inventory",NULL);
+//
+//      for(int i=0;i<CharChk->GetBodyParts();i++)
+//        _BugWorkaround_DupItemWork(CharChk,CharChk->GetBodyPart(i),true,"DupPlayer:BodyPart",NULL);
+//
+//      ulong keyChar=0;
+//      for(auto const& kv : CharacterIDMap){
+//        ulong key = kv.first;
+//        character* Char = kv.second;
+//        if(Char==CharChk)keyChar=key;
+//      }
+//      if(keyChar==0)ABORT("keyChar should have been found...");
+//      CharChk->_BugWorkaround_PlayerDup(keyChar); //will remove all it's items
+//    }else{
+//      ABORT("Duplicated player (and owned items) askedPos=%d,%d; id=%d pos=%d,%d; idDup=%d posDup=%d,%d",
+//        CharAsked->GetID(),CharAsked->GetPos().X,CharAsked->GetPos().Y,
+//        CharChk->GetID(),CharChk->GetPos().X,CharChk->GetPos().Y
+//      );
+//    }
+//  }
+//
+//  return CharAsked; //the asked is the valid/latest one
+//}
 
 festring game::SaveName(cfestring& Base)
 {
@@ -2000,9 +2038,10 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       character* Char = Square->GetCharacter();
 
-      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
+      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-      else
+        _BugWorkaroundDupPlayer(NULL);
+      }else
         ADD_MESSAGE("You see no one here.");
     }
     else
