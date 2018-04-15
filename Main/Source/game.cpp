@@ -202,12 +202,12 @@ void game::RemoveItemID(ulong ID)
 
   item* it = SearchItem(ID);
   if(bErase && it==NULL && _bBugWorkaround_DuplicatedPlayer_DoFix){ //this will prevent the crash
-    DBG2("AlreadyErased_EraseItem",ID); //TODO this double request mean a duplicated item, try to fix it. Need a test case tho...
+    DBG2("AlreadyErased:ItemID",ID); //TODO this double request mean a duplicated item, try to fix it. Need a test case tho...
     bErase=false;
   }
 
   if(bErase){
-    DBG2("Erasing_EraseItem",ID); //trying to get name, description, position will all crash..
+    DBG2("Erasing:ItemID",ID); //trying to get name, description, position will all crash..
     ItemIDMap.erase(ItemIDMap.find(ID));
   }
 }
@@ -909,7 +909,7 @@ truth game::Save(cfestring& SaveName)
 }
 
 int game::Load(cfestring& SaveName)
-{
+{DBGLN;
   inputfile SaveFile(SaveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
@@ -990,6 +990,20 @@ int game::Load(cfestring& SaveName)
   return LOADED;
 }
 
+void _BugWorkaround_DupItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem){
+  if(it!=NULL){
+    if(pvItem!=NULL)pvItem->push_back(it);
+
+    if(bFix){
+      int iOldID=it->GetID();
+      it->_BugWorkaround_ItemDup();
+      DBG8(Char,Char->GetID(),cInfo,"Changing:ItemID","OldID",iOldID,"NewID",it->GetID());
+    }else{
+      DBG5(Char,Char->GetID(),cInfo,"ItemID",it->GetID()); //some helpful info for comparison and understanding
+    }
+  }
+}
+
 void _BugWorkaround_FixPlayerDupInv(character* CharChk){
   std::vector<item*> vItem;
 
@@ -999,22 +1013,24 @@ void _BugWorkaround_FixPlayerDupInv(character* CharChk){
    * we just need a test case.
    * There may also have other duplications like any NPC and may be even bodyparts? anyway, we just need a test case.
    */
-  for(int i=0;i<CharChk->GetEquipments();i++){
-    item* eq = CharChk->GetEquipment(i);
-    if(eq!=NULL){
-      vItem.push_back(eq);
-      DBG4(CharChk,CharChk->GetID(),"Player:EquippedItemId",eq->GetID()); //some helpful info for comparison and understanding
-    }
-  }
+  for(int i=0;i<CharChk->GetEquipments();i++)
+    _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),false,"Player:Equipped",&vItem);
+//    item* eq = CharChk->GetEquipment(i);
+//    if(eq!=NULL){
+//      vItem.push_back(eq);
+//      DBG4(CharChk,CharChk->GetID(),"Player:EquippedItemId",eq->GetID()); //some helpful info for comparison and understanding
+//    }
+//  }
 
   stack* stk=CharChk->GetStack(); //inventory
-  for(int i=0;i<stk->GetItems();i++){
-    item* it=stk->GetItem(i);
-    if(it!=NULL){
-      vItem.push_back(it);
-      DBG4(CharChk,CharChk->GetID(),"Player:InventoryItemId",it->GetID()); //some helpful info for comparison and understanding
-    }
-  }
+  for(int i=0;i<stk->GetItems();i++)
+    _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),false,"Player:Inventory",&vItem);
+//    item* it=stk->GetItem(i);
+//    if(it!=NULL){
+//      vItem.push_back(it);
+//      DBG4(CharChk,CharChk->GetID(),"Player:InventoryItemId",it->GetID()); //some helpful info for comparison and understanding
+//    }
+//  }
 
   for(int i1=0;i1<vItem.size();i1++){
     item* it1=vItem[i1];
@@ -1026,18 +1042,8 @@ void _BugWorkaround_FixPlayerDupInv(character* CharChk){
         // the player may have a duplicated item on his inventory, so fix it promptly too
         it2->_BugWorkaround_ItemDup();
         it2->SendToHell(); //no cheating :)
-        DBG6(CharChk,CharChk->GetID(),"Player:ItemKept",it1->GetID(),"Player:ItemSentToHell",it2->GetID()); //some helpful info for comparison and understanding
+        DBG6(CharChk,CharChk->GetID(),"Player:ItemID:Kept",it1->GetID(),"Player:ItemID:SentToHell",it2->GetID()); //some helpful info for comparison and understanding
       }
-    }
-  }
-}
-
-void _BugWorkaround_DupItem(item* it, bool bFix){
-  if(it!=NULL){
-    if(bFix){
-      int iOldID=it->GetID();
-      it->_BugWorkaround_ItemDup();
-      DBG3("Changing:DupPlayer:InventoryItemID",iOldID,it->GetID());
     }
   }
 }
@@ -1077,20 +1083,22 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     character* CharChk = vPlayer[i];DBGLN;
 
     {DBGLN; // extra info
-      for(int i=0;i<CharChk->GetEquipments();i++){
-        item* eq = CharChk->GetEquipment(i);
-        if(eq!=NULL){
-          DBG4(CharChk,CharChk->GetID(),"ChkChar:EquippedItemId",eq->GetID()); //some helpful info for comparison and understanding
-        }
-      };DBGLN;
+      for(int i=0;i<CharChk->GetEquipments();i++)
+        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),false,"ChkChar:Equipped:Info",NULL);
+//        item* eq = CharChk->GetEquipment(i);
+//        if(eq!=NULL){
+//          DBG4(CharChk,CharChk->GetID(),"ChkChar:EquippedItemId",eq->GetID()); //some helpful info for comparison and understanding
+//        }
+//      };DBGLN;
 
       stack* stk=CharChk->GetStack();DBGLN; //inventory
-      for(int i=0;i<stk->GetItems();i++){
-        item* it=stk->GetItem(i);
-        if(it!=NULL){
-          DBG4(CharChk,CharChk->GetID(),"ChkChar:InventoryItemId",it->GetID()); //some helpful info for comparison and understanding
-        }
-      };DBGLN;
+      for(int i=0;i<stk->GetItems();i++)
+        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),false,"ChkChar:Inventory:Info",NULL);
+//        item* it=stk->GetItem(i);
+//        if(it!=NULL){
+//          DBG4(CharChk,CharChk->GetID(),"ChkChar:InventoryItemId",it->GetID()); //some helpful info for comparison and understanding
+//        }
+//      };DBGLN;
     }
 
     if(CharChk==CharAsked){
@@ -1122,33 +1130,29 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
       DBGCHAR(CharChk,"BugWorkaroundRemovingDupChar");
       _bBugWorkaround_DuplicatedPlayer_DoFix=true;
 
-      for(int i=0;i<CharChk->GetEquipments();i++){
-        item* eq = CharChk->GetEquipment(i);
-        if(eq!=NULL){
-          int iOldID=eq->GetID();
-          eq->_BugWorkaround_ItemDup();
-          DBG3("Changing:DupPlayer:EquippedItemID",iOldID,eq->GetID());
-        }
-      }
+      for(int i=0;i<CharChk->GetEquipments();i++)
+        _BugWorkaround_DupItemWork(CharChk,CharChk->GetEquipment(i),true,"DupPlayer:Equipped",NULL);
+//        item* eq = CharChk->GetEquipment(i);
+//        if(eq!=NULL){
+//          int iOldID=eq->GetID();
+//          eq->_BugWorkaround_ItemDup();
+//          DBG3("Changing:DupPlayer:EquippedItemID",iOldID,eq->GetID());
+//        }
+//      }
 
       stack* stk=CharChk->GetStack(); //inventory
-      for(int i=0;i<stk->GetItems();i++){
-        item* it=stk->GetItem(i);
-        if(it!=NULL){
-          int iOldID=it->GetID();
-          it->_BugWorkaround_ItemDup();
-          DBG3("Changing:DupPlayer:InventoryItemID",iOldID,it->GetID());
-        }
-      }
+      for(int i=0;i<stk->GetItems();i++)
+        _BugWorkaround_DupItemWork(CharChk,stk->GetItem(i),true,"DupPlayer:Inventory",NULL);
 
-      for(int i=0;i<CharChk->GetBodyParts();i++){
-        bodypart* bp = CharChk->GetBodyPart(i);
-        if(bp!=NULL){
-          int iOldID=bp->GetID();
-          bp->_BugWorkaround_ItemDup();
-          DBG3("Changing:DupPlayer:BodypartID",iOldID,bp->GetID());
-        }
-      }
+      for(int i=0;i<CharChk->GetBodyParts();i++)
+        _BugWorkaround_DupItemWork(CharChk,CharChk->GetBodyPart(i),true,"DupPlayer:BodyPart",NULL);
+//        bodypart* bp = CharChk->GetBodyPart(i);
+//        if(bp!=NULL){
+//          int iOldID=bp->GetID();
+//          bp->_BugWorkaround_ItemDup();
+//          DBG3("Changing:DupPlayer:BodypartID",iOldID,bp->GetID());
+//        }
+//      }
 
       CharChk->_BugWorkaround_PlayerDup(); //will remove all it's items
     }else{
