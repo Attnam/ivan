@@ -7833,10 +7833,6 @@ truth character::PreProcessForBone()
   return true;
 }
 
-/**
- * TODO when the bug is really fixed b4 happening, this method should vanish.
- * This must be tested for side effects/problems/errors/glitches that this work may cause.
- */
 void character::_BugWorkaround_PlayerDup(){
   if(!this->IsPlayer())return;
   if(PLAYER==this)return;
