@@ -1116,8 +1116,9 @@ void item::PreProcessForBone()
   }
 }
 
-void item::_BugWorkaround_ItemDup(){
-  ID=game::CreateNewItemID(this);
+void item::_BugWorkaround_ItemDup(ulong key){
+//  ID=game::CreateNewItemID(this);
+  ID=key;
 }
 
 void item::PostProcessForBone()

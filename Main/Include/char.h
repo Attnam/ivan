@@ -886,7 +886,7 @@ class character : public entity, public id
   void SetHomePos(v2);
   void RemoveHomeData();
   ulong GetID() const { return ID; }
-  void _BugWorkaround_PlayerDup();
+  void _BugWorkaround_PlayerDup(ulong key);
   void AddESPConsumeMessage() const;
   const std::list<ulong>& GetOriginalBodyPartID(int) const;
   void GetHitByExplosion(const explosion*, int);

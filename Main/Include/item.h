@@ -268,7 +268,7 @@ class item : public object
   void SetSize(int Value) { Size = Value; }
   virtual int GetSize() const { return Size; }
   ulong GetID() const { return ID; }
-  void _BugWorkaround_ItemDup();
+  void _BugWorkaround_ItemDup(ulong key);
   virtual void TeleportRandomly();
   virtual int GetStrengthValue() const;
   slot* GetSlot(int I = 0) const { return Slot[I]; }
