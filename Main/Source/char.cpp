@@ -7833,23 +7833,9 @@ truth character::PreProcessForBone()
   return true;
 }
 
-void character::_BugWorkaround_PlayerDup(ulong key){
-  if(!this->IsPlayer())return;
-  if(PLAYER==this)return;
-  //? PLAYER->GetID() != this->GetID()
-  //? PLAYER->GetFlags() != this->GetFlags()
-
-  DBGCHAR(this,"_BugWorkaround_PlayerDup_B4HellCharDetails");
+void character::_BugWorkaround_PlayerDup(ulong key){ //keep it simple!
+  ID=key;
   Flags ^= C_PLAYER;
-//  ID = game::CreateNewCharacterID(this); //TODO it will call std::make_pair, could it mean more trouble?
-  ID = key;
-  this->RemoveAllItems();
-  this->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
-  this->SetAssignedName("BugMan"); //funny enough? :)
-  //may crash:  this->Remove(); //from the square he is to nowhere?
-  DBGCHAR(this,"ReadyToHellCharDetails");
-
-  //this crashes: this->SendToHell();
 }
 
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)

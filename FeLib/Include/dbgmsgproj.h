@@ -10,8 +10,6 @@
    ************************************************************/
   #ifndef DBGMSG_OBJ //do NOT define this in your project cpp files!
 
-    #define DBGV2(v2)  DBGSS(dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str())
-    #define DBGBLD(rb) DBGSS(dbgmsgprj::dbgBLD(rb,DBGTOSTR(rb)).str())
     #define DBGCHAR(ch,info) DBG7(info, PLAYER, ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetFlags()), ch->GetStack())
 
     class dbgmsgprj{
@@ -51,7 +49,8 @@
       #endif //DBGMSG_BLITDATA
 
       #ifdef DBGMSG_V2
-      #define DBGV2(v2)  DBGSS(dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str())
+      #define DBGAV2(v2)  dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str()
+      #define DBGSV2(v2)  DBGSS(DBGAV2(v2))
       static std::stringstream dbgV2(v2 v2Val,const char* c){
         std::stringstream ss;
         ss<<c<<"/";
