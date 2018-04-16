@@ -1256,60 +1256,207 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   if(vInvalidChars.size() >  1)ABORT("%d invalid characters found, %s", vInvalidChars.size(), cMsgNotReady); //TODO the only invalid char it can deal is the player for now
 
   ///////////////////////////// the fix /////////////////////////////////////
-  if(vValidPlayers.size()==1)CharFoundAtSqrAndIDMap=vValidPlayers[0];
+  bool bSendToHell=true;
 
-  bool bSendToHell=false;
-  if(!isCharOnVector(&vValidPlayers,CharAsked)){ //it will be at vInvalidChars
-    DBG4("CharFix:ConsistentPlayer:",CharFoundAtSqrAndIDMap,"BuggyPlayer:",CharAsked);
+  bool bFixTheAsked=false;
+  if(bFixTheAsked){
+    if(vValidPlayers.size()==1)CharFoundAtSqrAndIDMap=vValidPlayers[0];
 
-    ///////////////// items //////////////////
-    _BugWorkaround_CharItemsWork(CharAsked,true,bSendToHell);
-//    for(int i=0;i<CharAsked->GetEquipments();i++)
-//      _BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),true,"DupPlayer:Equipped",NULL,bSendToHell);
-//
-//    stack* stk=CharAsked->GetStack(); //inventory
-//    for(int i=0;i<stk->GetItems();i++)
-//      _BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),true,"DupPlayer:Inventory",NULL,bSendToHell);
-//
-//    for(int i=0;i<CharAsked->GetBodyParts();i++)
-//      _BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),true,"DupPlayer:BodyPart",NULL,bSendToHell);
+    if(!isCharOnVector(&vValidPlayers,CharAsked)){ //it will be at vInvalidChars
+      DBG4("CharFix:ConsistentPlayer:",CharFoundAtSqrAndIDMap,"BuggyPlayer:",CharAsked);
 
-    /////////////////// character ////////////////
+      ///////////////// items //////////////////
+      _BugWorkaround_CharItemsWork(CharAsked,true,bSendToHell);
 
-//    if(!this->IsPlayer())return;
-//    if(PLAYER==this)return;
-    //? PLAYER->GetID() != this->GetID()
-    //? PLAYER->GetFlags() != this->GetFlags()
+      /////////////////// character ////////////////
+      DBGCHAR(CharAsked,"CharFix:BeforeCharFix");
 
-    DBGCHAR(CharAsked,"CharFix:BeforeCharFix");
+      CharAsked->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharAsked));
+      game::AddCharacterID(CharAsked,CharAsked->GetID()); //consistency
 
-//    Flags ^= C_PLAYER;
-    //  ID = game::CreateNewCharacterID(this); //TODO it will call std::make_pair, could it mean more trouble?
-//    ID = key!=0 ? key : game::CreateNewCharacterID(this);
-    CharAsked->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharAsked));
-    game::AddCharacterID(CharAsked,CharAsked->GetID()); //consistency
+      if(bSendToHell){ //still crashing on load...
+        //may crash:  this->Remove(); //from the square he is to nowhere?
+        //    SquareUnder[0]->RemoveCharacter();
+    //    SquareUnder[0]->SetCharacter(NULL);
+    //    SquareUnder[0] = 0;
+        CharAsked->SendToHell(); //this crashes?
+      }else{
+  //      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
+        CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
+        CharAsked->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
+      }
 
-    if(bSendToHell){ //still crashing on load...
-      //may crash:  this->Remove(); //from the square he is to nowhere?
-      //    SquareUnder[0]->RemoveCharacter();
-  //    SquareUnder[0]->SetCharacter(NULL);
-  //    SquareUnder[0] = 0;
-      CharAsked->SendToHell(); //this crashes?
-    }else{
-//      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
-      CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
-      CharAsked->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
+      DBGCHAR(CharAsked,"CharFix:AfterCharFix");
+    }
+  }else{
+    if(!isCharOnVector(&vValidPlayers,CharAsked)){ //it will be at vInvalidChars
+      //////////////////////// OLD player //////////////////
+      character* CharOldValid=vValidPlayers[0];
+
+      _BugWorkaround_CharItemsWork(CharOldValid,true,bSendToHell);
+
+      RemoveCharacterID(CharOldValid->GetID()); //free the ID 1 to the NEW player CharAsked
+      CharOldValid->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharOldValid));
+      game::AddCharacterID(CharOldValid,CharOldValid->GetID()); //consistency
+
+      if(bSendToHell){ //still crashing on load...
+        //may crash:  this->Remove(); //from the square he is to nowhere?
+        //    SquareUnder[0]->RemoveCharacter();
+    //    SquareUnder[0]->SetCharacter(NULL);
+    //    SquareUnder[0] = 0;
+        CharOldValid->SendToHell(); //this crashes?
+      }else{
+  //      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
+        CharOldValid->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
+        CharOldValid->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
+      }
+
+      ////////////////////////  NEW player//////////////////////////
+      game::AddCharacterID(CharAsked,CharAsked->GetID()); //consistency  (player ID is always 1)
     }
 
-    DBGCHAR(CharAsked,"CharFix:AfterCharFix");
-
-//    CharAsked->_BugWorkaround_PlayerDup();
-//    CharAsked->Remove(); //from square TODO can this break animated entities as it will decrement their amount?
-//    vInvalidChars.erase(CharAsked);
+    CharFoundAtSqrAndIDMap=CharAsked;
   }
 
   return CharFoundAtSqrAndIDMap;
 }
+//character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+//  DBG5("CharID:Pointer",CharAsked->GetID(),CharAsked,DBGB(CharAsked->IsPlayer()),DBGI(CharAsked->GetNP()));
+//
+//  ////////////////// core consistency checks ///////////////////////////
+//  for (auto const& kv : CharacterIDMap){
+//    ulong key = kv.first;
+//    character* Char  = kv.second;
+//    DBG5("CharID:Pointer",DBGI(key),DBGI(Char->GetID()),Char,DBGB(Char->IsPlayer()));
+//    if(key!=Char->GetID())ABORT("invalid char id %d key %d",Char->GetID(),key);
+//    _BugWorkaround_CharItemsWork(Char);
+//  }
+//
+//  for (auto const& kv : ItemIDMap){
+//    ulong key = kv.first;
+//    item* it  = kv.second;
+//    DBG4("ItemID:Pointer",DBGI(key),DBGI(it->GetID()),it);
+//    if(key!=it->GetID())ABORT("invalid item id %d key %d",it->GetID(),key);
+//  }
+//
+//  for (auto const& kv : TrapIDMap){
+//    ulong key = kv.first;
+//    entity* trap  = kv.second;
+//    DBG4("TrapID:Pointer",DBGI(key),DBGI(trap->GetTrapID()),trap);
+//    if(key!=trap->GetTrapID())ABORT("invalid trap id %d key %d",trap->GetTrapID(),key);
+//  }
+//
+//  ////////////////////// validations ///////////////////////////////
+//  const char* cMsgNotReady = "the bugfix/workaround is not ready to deal with that...";
+//
+//  int iPlayersAtIDMap=0;
+//  for (auto const& kv : CharacterIDMap){
+//    ulong key = kv.first;
+//    character* CharAtIDMap  = kv.second;
+//    if(CharAtIDMap->IsPlayer())iPlayersAtIDMap++;
+//  }
+//  if(iPlayersAtIDMap!=1)ABORT("%d players found at CharacterIDMap, %s",iPlayersAtIDMap,cMsgNotReady); //should not be inconsistent
+//
+//  character* CharFoundAtSqrAndIDMap=NULL;
+//  std::vector<character*> vValidPlayers,vInvalidChars;
+//  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
+//    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
+//      square* sqr = GetCurrentArea()->GetSquare({iX,iY});
+//      lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
+//
+//      stack* stk = lsqr->GetStack();
+//      for(int i=0;i<stk->GetItems();i++){
+//        item* it = stk->GetItem(i);
+//        DBG3("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID());
+//      }
+//
+//      character* SqrChar = sqr->GetCharacter();
+//      if(SqrChar!=NULL){
+//        DBG6("CharFix:",DBGAV2(sqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+//        _BugWorkaround_CharItemsWork(SqrChar);
+//
+//        bool bFoundOnCharIDMap=false;
+//        for (auto const& kv : CharacterIDMap){
+//          ulong key = kv.first;
+//          character* CharAtIDMap  = kv.second;
+//
+//          if(SqrChar==CharAtIDMap){
+//            bFoundOnCharIDMap=true;
+//
+//            if(SqrChar->IsPlayer()){
+////              _BugWorkaround_CharItemsWork(SqrChar);
+//              if(isCharOnVector(&vValidPlayers,CharAtIDMap))ABORT("this player %d already found, %s",CharAtIDMap,cMsgNotReady); //TODO improbable?
+//              vValidPlayers.push_back(CharAtIDMap);
+//            }
+//
+//            break;
+//          }
+//        }
+//        if(!bFoundOnCharIDMap)vInvalidChars.push_back(SqrChar);
+//      }
+//
+//    }
+//  }
+//
+//  if(vValidPlayers.size() == 0)ABORT("no valid players found, %s",cMsgNotReady);
+//  if(vValidPlayers.size() >  1)ABORT("%d valid players found, %s", vValidPlayers.size(), cMsgNotReady); //TODO this fix is ready to let only one valid player work
+//  if(vInvalidChars.size() >  1)ABORT("%d invalid characters found, %s", vInvalidChars.size(), cMsgNotReady); //TODO the only invalid char it can deal is the player for now
+//
+//  ///////////////////////////// the fix /////////////////////////////////////
+//  if(vValidPlayers.size()==1)CharFoundAtSqrAndIDMap=vValidPlayers[0];
+//
+//  bool bSendToHell=false;
+//  if(!isCharOnVector(&vValidPlayers,CharAsked)){ //it will be at vInvalidChars
+//    DBG4("CharFix:ConsistentPlayer:",CharFoundAtSqrAndIDMap,"BuggyPlayer:",CharAsked);
+//
+//    ///////////////// items //////////////////
+//    _BugWorkaround_CharItemsWork(CharAsked,true,bSendToHell);
+////    for(int i=0;i<CharAsked->GetEquipments();i++)
+////      _BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),true,"DupPlayer:Equipped",NULL,bSendToHell);
+////
+////    stack* stk=CharAsked->GetStack(); //inventory
+////    for(int i=0;i<stk->GetItems();i++)
+////      _BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),true,"DupPlayer:Inventory",NULL,bSendToHell);
+////
+////    for(int i=0;i<CharAsked->GetBodyParts();i++)
+////      _BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),true,"DupPlayer:BodyPart",NULL,bSendToHell);
+//
+//    /////////////////// character ////////////////
+//
+////    if(!this->IsPlayer())return;
+////    if(PLAYER==this)return;
+//    //? PLAYER->GetID() != this->GetID()
+//    //? PLAYER->GetFlags() != this->GetFlags()
+//
+//    DBGCHAR(CharAsked,"CharFix:BeforeCharFix");
+//
+////    Flags ^= C_PLAYER;
+//    //  ID = game::CreateNewCharacterID(this); //TODO it will call std::make_pair, could it mean more trouble?
+////    ID = key!=0 ? key : game::CreateNewCharacterID(this);
+//    CharAsked->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharAsked));
+//    game::AddCharacterID(CharAsked,CharAsked->GetID()); //consistency
+//
+//    if(bSendToHell){ //still crashing on load...
+//      //may crash:  this->Remove(); //from the square he is to nowhere?
+//      //    SquareUnder[0]->RemoveCharacter();
+//  //    SquareUnder[0]->SetCharacter(NULL);
+//  //    SquareUnder[0] = 0;
+//      CharAsked->SendToHell(); //this crashes?
+//    }else{
+////      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
+//      CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
+//      CharAsked->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
+//    }
+//
+//    DBGCHAR(CharAsked,"CharFix:AfterCharFix");
+//
+////    CharAsked->_BugWorkaround_PlayerDup();
+////    CharAsked->Remove(); //from square TODO can this break animated entities as it will decrement their amount?
+////    vInvalidChars.erase(CharAsked);
+//  }
+//
+//  return CharFoundAtSqrAndIDMap;
+//}
 
 /**
  * This may happen after game crash, when loading an AutoSave file.
