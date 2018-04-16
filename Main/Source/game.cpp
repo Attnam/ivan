@@ -181,7 +181,7 @@ std::vector<int> game::SpecialCursorData;
 cbitmap* game::EnterImage;
 v2 game::EnterTextDisplacement;
 
-bool _bBugWorkaround_DuplicatedPlayer_DoFix=false;
+//bool _bBugWorkaround_DuplicatedPlayer_DoFix=false;
 
 void game::AddCharacterID(character* Char, ulong ID)
 {
@@ -1014,18 +1014,27 @@ int game::Load(cfestring& SaveName)
   return LOADED;
 }
 
+std::vector<item*> _BugWorkaround_vAllItemsInLevel;
 void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
   if(it!=NULL){
     if(pvItem!=NULL)pvItem->push_back(it);
 
     if(bFix){
-      int iOldID=it->GetID();
+      for(int i=0;i<_BugWorkaround_vAllItemsInLevel.size();i++){
+        item* itOther = _BugWorkaround_vAllItemsInLevel[i];
+        if(it == itOther)continue;
 
-      ulong key = _BugWorkaround_getCorrectKey(it);
-      it->_BugWorkaround_ItemDup(key!=0 ? key : game::CreateNewItemID(it)); // key=0 if it is not on ItemIDMap
-      game::AddItemID(it,it->GetID()); // make it consistent
+        if(it->GetID() == itOther->GetID()){
+          int iOldID=it->GetID();
+    //      ulong key = _BugWorkaround_getCorrectKey(it);
+//          it->_BugWorkaround_ItemDup(key!=0 ? key : game::CreateNewItemID(it)); // key=0 if it is not on ItemIDMap
+          it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
+          game::AddItemID(it,it->GetID()); // make it consistent
 
-      DBG8(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",it->GetID());
+          DBG8(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",it->GetID());
+          break;
+        }
+      }
 
       if(bSendToHell)it->SendToHell();
     }else{
@@ -1161,28 +1170,36 @@ void game::_BugWorkaround_CheckAllItemsForDups(){
   if(vItem.size()>0)ABORT("Dup ItemID found! Tot dup items: %d. Tot items %d.",vItem.size(),ItemIDMap.size());
 }
 
-void _BugWorkaround_CharItemsWork(character* CharAsked, bool bFix=false, bool bSendToHell=false){
+void _BugWorkaround_CharItemsWork(character* CharAsked, bool bFix, bool bSendToHell,std::vector<item*>* pvItem=NULL){
   for(int i=0;i<CharAsked->GetEquipments();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",NULL,bSendToHell);
+    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
 
   stack* stk=CharAsked->GetStack(); //inventory
   for(int i=0;i<stk->GetItems();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",NULL,bSendToHell);
+    game::_BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
 
   for(int i=0;i<CharAsked->GetBodyParts();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",NULL,bSendToHell);
+    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
+}
+void _BugWorkaround_CharItemsInfo(character* CharAsked){
+  _BugWorkaround_CharItemsWork(CharAsked, false, false, NULL);
+}
+void _BugWorkaround_CharItemsCollect(character* CharAsked,std::vector<item*>* pvItem){
+  _BugWorkaround_CharItemsWork(CharAsked, false, false, pvItem);
 }
 
 character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   DBG5("CharID:Pointer",CharAsked->GetID(),CharAsked,DBGB(CharAsked->IsPlayer()),DBGI(CharAsked->GetNP()));
 
+  /////////////////////////////////////////////////////////////////////////////////
   ////////////////// core consistency checks ///////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
   for (auto const& kv : CharacterIDMap){
     ulong key = kv.first;
     character* Char  = kv.second;
     DBG5("CharID:Pointer",DBGI(key),DBGI(Char->GetID()),Char,DBGB(Char->IsPlayer()));
     if(key!=Char->GetID())ABORT("invalid char id %d key %d",Char->GetID(),key);
-    _BugWorkaround_CharItemsWork(Char);
+    _BugWorkaround_CharItemsInfo(Char);
   }
 
   for (auto const& kv : ItemIDMap){
@@ -1199,7 +1216,9 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     if(key!=trap->GetTrapID())ABORT("invalid trap id %d key %d",trap->GetTrapID(),key);
   }
 
+  /////////////////////////////////////////////////////////////////////////////////
   ////////////////////// validations ///////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
   const char* cMsgNotReady = "the bugfix/workaround is not ready to deal with that...";
 
   int iPlayersAtIDMap=0;
@@ -1210,23 +1229,26 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   }
   if(iPlayersAtIDMap!=1)ABORT("%d players found at CharacterIDMap, %s",iPlayersAtIDMap,cMsgNotReady); //should not be inconsistent
 
-  character* CharFoundAtSqrAndIDMap=NULL;
+  ///////////////// scan the whole level ////////////////////////
+  _BugWorkaround_vAllItemsInLevel.empty(); //important after saving and loading w/o exiting the game
   std::vector<character*> vValidPlayers,vInvalidChars;
+  character* CharFoundAtSqrAndIDMap=NULL;
   for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
     for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
-      square* sqr = GetCurrentArea()->GetSquare({iX,iY});
+//      square* sqr = GetCurrentArea()->GetSquare({iX,iY});
       lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
 
       stack* stk = lsqr->GetStack();
       for(int i=0;i<stk->GetItems();i++){
         item* it = stk->GetItem(i);
         DBG3("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID());
+        _BugWorkaround_vAllItemsInLevel.push_back(it);
       }
 
-      character* SqrChar = sqr->GetCharacter();
+      character* SqrChar = lsqr->GetCharacter();
       if(SqrChar!=NULL){
-        DBG6("CharFix:",DBGAV2(sqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
-        _BugWorkaround_CharItemsWork(SqrChar);
+        DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+        _BugWorkaround_CharItemsCollect(SqrChar,&_BugWorkaround_vAllItemsInLevel);
 
         bool bFoundOnCharIDMap=false;
         for (auto const& kv : CharacterIDMap){
@@ -1255,7 +1277,9 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   if(vValidPlayers.size() >  1)ABORT("%d valid players found, %s", vValidPlayers.size(), cMsgNotReady); //TODO this fix is ready to let only one valid player work
   if(vInvalidChars.size() >  1)ABORT("%d invalid characters found, %s", vInvalidChars.size(), cMsgNotReady); //TODO the only invalid char it can deal is the player for now
 
+  /////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// the fix /////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
   bool bSendToHell=false; //crashing w/o stack...
 
   bool bFixTheAsked=false;
@@ -1320,6 +1344,28 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     }
 
     CharFoundAtSqrAndIDMap=CharAsked;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// final dup items consistency check ////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  std::vector<item*> vInconsistentItemsID;
+  for(int iA=0;iA<_BugWorkaround_vAllItemsInLevel.size();iA++){
+    item* itA = _BugWorkaround_vAllItemsInLevel[iA];
+    for(int iB=0;iB<_BugWorkaround_vAllItemsInLevel.size();iB++){
+      item* itB = _BugWorkaround_vAllItemsInLevel[iB];
+      if(itA==itB)continue;
+      if(itA->GetID() == itB->GetID()){
+        if(!isItemOnVector(&vInconsistentItemsID,itA))vInconsistentItemsID.push_back(itA);
+        if(!isItemOnVector(&vInconsistentItemsID,itB))vInconsistentItemsID.push_back(itB);
+      }
+    }
+  }
+  if(vInconsistentItemsID.size()>0){
+    for(int i=0;i<vInconsistentItemsID.size();i++){
+      DBG3("CharFix:ItemID:FinalInconsistencyCheckFails",vInconsistentItemsID[i],vInconsistentItemsID[i]->GetID());
+    }
+    ABORT("CharFix:ItemID:FinalInconsistencyCheckFails tot=%d, %s",vInconsistentItemsID.size(),cMsgNotReady);
   }
 
   return CharFoundAtSqrAndIDMap;
