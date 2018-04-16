@@ -41,7 +41,7 @@ class ivanconfig
   static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
-  static truth IsAltListItemPos() { return AltListItemPos.Value; }
+  static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
@@ -100,6 +100,7 @@ class ivanconfig
   static void GraphicsScaleChanger(cycleoption*, long);
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
+  static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
@@ -141,7 +142,7 @@ class ivanconfig
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static cycleoption SilhouetteScale;
-  static truthoption AltListItemPos;
+  static cycleoption AltListItemPos;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
 
