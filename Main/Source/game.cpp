@@ -1256,7 +1256,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   if(vInvalidChars.size() >  1)ABORT("%d invalid characters found, %s", vInvalidChars.size(), cMsgNotReady); //TODO the only invalid char it can deal is the player for now
 
   ///////////////////////////// the fix /////////////////////////////////////
-  bool bSendToHell=true;
+  bool bSendToHell=false; //crashing w/o stack...
 
   bool bFixTheAsked=false;
   if(bFixTheAsked){
@@ -1281,7 +1281,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     //    SquareUnder[0] = 0;
         CharAsked->SendToHell(); //this crashes?
       }else{
-  //      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
+        CharAsked->RemoveAllItems(); // their IDs must have been fixed already
         CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
         CharAsked->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
       }
@@ -1308,7 +1308,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     //    SquareUnder[0] = 0;
         CharOldValid->SendToHell(); //this crashes?
       }else{
-  //      CharAsked->RemoveAllItems(); // their IDs must have been fixed already
+        CharOldValid->RemoveAllItems(); // their IDs must have been fixed already
         CharOldValid->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
         CharOldValid->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
       }
@@ -2296,7 +2296,6 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
 
       if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-        _BugWorkaroundDupPlayer(NULL);
       }else
         ADD_MESSAGE("You see no one here.");
     }
