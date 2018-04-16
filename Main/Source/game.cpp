@@ -1292,7 +1292,9 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     if(!isCharOnVector(&vValidPlayers,CharAsked)){ //it will be at vInvalidChars
       //////////////////////// OLD player //////////////////
       character* CharOldValid=vValidPlayers[0];
+      DBG4("CharFix:NewPlayer:",CharAsked,"OldPlayer:",CharOldValid);
 
+      DBGCHAR(CharOldValid,"CharFix:BeforeCharFix");
       _BugWorkaround_CharItemsWork(CharOldValid,true,bSendToHell);
 
       RemoveCharacterID(CharOldValid->GetID()); //free the ID 1 to the NEW player CharAsked
@@ -1310,9 +1312,11 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
         CharOldValid->SetTeam(game::GetTeam(MONSTER_TEAM)); //funny...
         CharOldValid->SetAssignedName("BugMan"); //funny enough? :), wont be if it crashes again.. :/
       }
+      DBGCHAR(CharOldValid,"CharFix:AfterCharFix");
 
       ////////////////////////  NEW player//////////////////////////
       game::AddCharacterID(CharAsked,CharAsked->GetID()); //consistency  (player ID is always 1)
+      DBGCHAR(CharAsked,"CharFix:NewCharSetAsPlayer");
     }
 
     CharFoundAtSqrAndIDMap=CharAsked;
