@@ -11,12 +11,16 @@
  */
 
 #include <cstdio>
+#include <ctime>
+#include <ratio>
+#include <chrono>
 
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
 #include "festring.h"
+#include "dbgmsgproj.h"
 
 #if SDL_MAJOR_VERSION == 1
 /* redefine SDL2 to SDL1 */
@@ -137,6 +141,128 @@ void globalwindowhandler::Init()
 #endif
 }
 
+int iCountFPS=0;
+int iLastSecondFPS=0;
+std::chrono::high_resolution_clock::time_point tpLastSecondFPS;
+int MeasureLastSecondRealFPS(){ //call this every new frame request
+  iCountFPS++;
+
+  using namespace std::chrono;
+  high_resolution_clock::time_point tpNow = high_resolution_clock::now();
+  duration<double, std::milli> delay = tpNow - tpLastSecondFPS;
+  if(delay.count() > 1000){ //1s
+    iLastSecondFPS=iCountFPS;
+    iCountFPS=0; //reset
+    tpLastSecondFPS = tpNow; //reset
+  }
+
+  return iLastSecondFPS;
+}
+
+std::chrono::high_resolution_clock::time_point tpPreviousFrameTime;
+double InstaCalcFPS(){ //call this every new frame request
+  using namespace std::chrono;
+  high_resolution_clock::time_point tpNow = high_resolution_clock::now();
+  duration<double, std::milli> delay = tpNow - tpPreviousFrameTime;
+  tpPreviousFrameTime = tpNow;
+  double d = delay.count();
+  if(d==0)d=1; //TODO this may never happen?
+  return 1000/d;
+}
+
+bool bAllowFrameSkip=true;
+int iFrameSkip=0;
+std::chrono::high_resolution_clock::time_point tpBefore;
+std::chrono::duration<double, std::milli> delay;
+int iLastSecCountFPS;
+float fInstaFPS;
+double dLastFrameTimeMS;
+int iDefaultDelayMS=10;
+int iAddFrameSkip=0;
+
+void globalwindowhandler::SetAddFrameSkip(int i){
+  iAddFrameSkip=i;
+  bAllowFrameSkip = iAddFrameSkip!=0;
+}
+
+/**
+ *  to let user input be more responsive as full dungeon xBRZ may be too heavy
+ *  return SDL delay in ms
+ */
+int FrameSkipOrDraw(){ //TODO could this be simplified?
+  bool bWaitAKeyPress=false;
+  bool bDoAutoFrameSkip=false;
+  bool bDrawFrame=false;
+  bool bDelay1MS=false;
+
+  if(iFrameSkip<0)ABORT("iFrameSkip is %d < 0",iFrameSkip);
+
+  if(iAddFrameSkip==-2){
+    if(dLastFrameTimeMS>142){ //if it is too slow <= 7 fps
+      bWaitAKeyPress=true;
+    }else{
+      bDoAutoFrameSkip=true;
+    }
+  }else
+  if(iAddFrameSkip==-1){
+    bDoAutoFrameSkip=true;
+  }
+
+  if(!bWaitAKeyPress){ // if waiting a key press, there will have no stand-by animation at all...
+    if(iFrameSkip==0){
+      bDrawFrame=true;
+
+      // setup next
+      if(bDoAutoFrameSkip){ //TODO improve this automatic mode?
+        if(dLastFrameTimeMS>250){ //4fps
+          iFrameSkip=10;
+        }else
+        if(dLastFrameTimeMS>200){ //5fps
+          iFrameSkip=5;
+        }else
+        if(dLastFrameTimeMS>150){
+          iFrameSkip=3;
+        }else
+        if(dLastFrameTimeMS>100){ //10fps
+          iFrameSkip=1;
+        }
+
+        bDelay1MS=true;
+      }else{
+        if(iAddFrameSkip==0){ //vanilla  (wont be reached tho cuz of bAllowFrameSkip=false), kept for completeness (in case it changes before calling this method)
+          bDrawFrame=true;
+        }else
+        if(iAddFrameSkip>0){ //fixed
+          iFrameSkip=iAddFrameSkip;
+
+          bDelay1MS=true;
+        }
+      }
+    }
+  }
+
+  if(bDrawFrame){
+    tpBefore = std::chrono::high_resolution_clock::now();
+    graphics::BlitDBToScreen();
+    delay = std::chrono::high_resolution_clock::now() - tpBefore;
+    dLastFrameTimeMS = delay.count();
+
+    //call these ONLY when the frame is actually DRAWN!!! (despite not being actually used yet)
+    iLastSecCountFPS = MeasureLastSecondRealFPS();
+    fInstaFPS = InstaCalcFPS();
+    //DBG5(DBGF(fInstaFPS),DBGI(iLastSecCountFPS),DBGF(dLastFrameTimeMS),DBGI(iAddFrameSkip),DBGI(iFrameSkip));
+  }else{
+    if(iFrameSkip>0)iFrameSkip--;
+    //DBGSI(iFrameSkip);
+  }
+
+  if(bDelay1MS){
+    return 1;
+  }else{
+    return iDefaultDelayMS;
+  }
+}
+
 int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
@@ -149,6 +275,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     KeyBuffer.clear();
   }
 
+  int iDelayMS=iDefaultDelayMS;
   for(;;)
     if(!KeyBuffer.empty())
     {
@@ -170,7 +297,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 #if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
 #else
-        if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
+        if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
 #endif
            && Controls && ControlLoopsEnabled)
         {
@@ -186,11 +313,19 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
               if(ControlLoop[c]())
                 Draw = true;
 
-            if(Draw)
-              graphics::BlitDBToScreen();
+            // the stand-by animation
+            if(!bAllowFrameSkip){
+              if(Draw)
+                graphics::BlitDBToScreen();
+
+              iDelayMS=iDefaultDelayMS;
+            }else{
+              iDelayMS = FrameSkipOrDraw();
+            }
+
           }
 
-          SDL_Delay(10);
+          SDL_Delay(iDelayMS);
         }
         else
         {
@@ -208,7 +343,7 @@ int globalwindowhandler::ReadKey()
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
 #endif
   {
     while(SDL_PollEvent(&Event))
@@ -223,23 +358,23 @@ int globalwindowhandler::ReadKey()
   return KeyBuffer.size() ? GetKey(false) : 0;
 }
 
-truth globalwindowhandler::WaitForKeyDown()
+truth globalwindowhandler::WaitForKeyEvent(uint Key)
 {
   SDL_Event Event;
 
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::Window) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
 #endif
   {
 #if SDL_MAJOR_VERSION == 2
     while(SDL_PollEvent(&Event))
-      if(Event.type == SDL_KEYDOWN)
+      if(Event.type == Key)
         return true;
 #else
     while(SDL_PollEvent(&Event))
-      if(Event.active.type == SDL_KEYDOWN)
+      if(Event.active.type == Key)
         return true;
 #endif
   }

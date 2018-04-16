@@ -60,7 +60,7 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
-	if(ivanconfig::GetOutlinedGfx()){
+	if(ivanconfig::IsStartingOutlinedGfx()){
 		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
 		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
 		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
@@ -74,7 +74,8 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(800, 600), ivanconfig::GetGraphicsScale(),
+                      v2(ivanconfig::GetStartingWindowWidth(), ivanconfig::GetStartingWindowHeight()),
+                      ivanconfig::GetGraphicsScale(),
                       ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
@@ -479,6 +480,41 @@ void igraph::UnLoadMenu()
   delete Menu;
 }
 
+#ifdef IMPORT_EXPORT_GFX //INCOMPLETE WORK. for (one day) load each gfx from independent files.
+bool isFileExist(const char *fileName) //TODO this should be more global
+{
+  DBG2("chkIfFileExist:",fileName);
+  std::ifstream fl(fileName);
+  bool b=fl.good(); //ifstream destructor will close the file
+  DBG2("chkIfFileExist:",b);
+  return b;
+}
+bool importGfx(festring fsFile,bitmap** ppbmpSC){
+  DBG2("importing:",fsFile.CStr());
+  (*ppbmpSC) = new bitmap(SILHOUETTE_SIZE, 0);
+  inputfile flIn(fsFile);
+  (*ppbmpSC)->Load(flIn);
+  flIn.Close();
+  DBG2("imported:",fsFile.CStr());
+
+  return true; //TODO make it sure the file load woked, catching errors and so on...
+}
+bool bExportGfx=false; //if ran at a readonly location, true will fail.
+void chkExportGfx(){
+  //TODO inform this env var in some kind of developer documentation (preferable in an existing one)
+  char* env=std::getenv("IVAN_EXPORTGFX"); DBG2("bExportGfx",env);
+
+  if(env!=NULL){
+    bExportGfx = strcmp(env,"true")==0; DBG2("bExportGfx",bExportGfx);
+  }
+
+}
+festring prepareFileName(const char* strName){
+  festring fs="";
+  return fs<<game::GetDataDir()<<"Graphics/HumanBodypartSilhouette/"<<strName<<".png";
+}
+#endif
+
 void igraph::CreateSilhouetteCaches()
 {
   int BodyPartSilhouetteMColorIndex[HUMANOID_BODYPARTS] = { 3, 0, 1, 2, 1, 2, 3 };
@@ -512,6 +548,28 @@ void igraph::CreateSilhouetteCaches()
   }
 }
 
+//void igraph::CreateBackGround(int ColorType)
+//{
+//  if(CurrentColorType == ColorType)
+//    return;
+//
+//  CurrentColorType = ColorType;
+//  delete BackGround;
+//  BackGround = new bitmap(RES);
+//  int Side = 1025;
+//  int** Map;
+//  Alloc2D(Map, Side, Side);
+//  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+//
+//  for(int x = 0; x < RES.X; ++x)
+//    for(int y = 0; y < RES.Y; ++y)
+//    {
+//      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+//      BackGround->PutPixel(x, y, GetBackGroundColor(E));
+//    }
+//
+//  delete [] Map;
+//}
 void igraph::CreateBackGround(int ColorType)
 {
   if(CurrentColorType == ColorType)
@@ -520,15 +578,17 @@ void igraph::CreateBackGround(int ColorType)
   CurrentColorType = ColorType;
   delete BackGround;
   BackGround = new bitmap(RES);
-  int Side = 1025;
+  int base=1024; //TODO explain this: fractals require multiple of 1024 to work/workBetter?
+  while(ivanconfig::GetStartingWindowWidth()>base)base+=1024;
+  int Side = base+1;
   int** Map;
-  Alloc2D(Map, Side, Side);
-  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+  Alloc2D(Map, Side, Side); //TODO confirm and explain this: it seems fractals work better on a squared img right?
+  femath::GenerateFractalMap(Map, Side, Side - 1, ivanconfig::GetStartingWindowWidth());
 
   for(int x = 0; x < RES.X; ++x)
     for(int y = 0; y < RES.Y; ++y)
     {
-      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+      int E = Limit<int>(abs(Map[base - x][base - (RES.Y - y)]) / 30, 0, 100);
       BackGround->PutPixel(x, y, GetBackGroundColor(E));
     }
 

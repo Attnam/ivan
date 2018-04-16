@@ -169,6 +169,7 @@ CHARACTER(humanoid, character)
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
   truth HasSadistWeapon() const;
   virtual truth HasSadistAttackMode() const;
+  static v2 GetSilhouetteWhere(){return SilhouetteWhere;};
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
@@ -192,6 +193,7 @@ CHARACTER(humanoid, character)
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
   static cint DrawOrder[];
+  static v2 SilhouetteWhere;
 };
 
 CHARACTER(playerkind, humanoid)

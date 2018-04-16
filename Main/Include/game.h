@@ -172,6 +172,16 @@ class game
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static void PrepareStretchRegionsLazy();
+  static void UpdateSRegionsXBRZ();
+  static void RegionSilhouetteEnable(bool b);
+  static void RegionListItemEnable(bool b);
+  static void UpdatePosAroundForXBRZ(v2 ScreenPos);
+  static void SRegionAroundDisable();
+  static void SRegionAroundAllow();
+  static void SRegionAroundDeny();
+  static void PrepareToClearNonVisibleSquaresAround(v2);
+  static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -199,7 +209,7 @@ class game
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
   static truth IsRunning() { return Running; }
-  static void SetIsRunning(truth What) { Running = What; }
+  static void SetIsRunning(truth What);
   static void UpdateCameraX(int);
   static void UpdateCameraY(int);
   static int GetCurrentLevelIndex() { return CurrentLevelIndex; }
@@ -256,8 +266,10 @@ class game
   static int GetDirectionForVector(v2);
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
-  static int GetScreenXSize() { return 42; }
-  static int GetScreenYSize() { return 26; }
+  static int GetScreenXSize();
+  static int GetScreenYSize();
+  static int GetMaxScreenXSize();
+  static int GetMaxScreenYSize();
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);
@@ -435,10 +447,8 @@ class game
   static void SetRelationsToAllGods(int);
   static void ShowDeathSmiley(bitmap*, truth);
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
-  static void SetEnterTextDisplacement(v2 What)
-  {
-    EnterTextDisplacement = What;
-  }
+  static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
+  static int getDefaultItemsListWidth(){ return iListWidth; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -549,6 +559,8 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
+  static blitdata bldAroundOnScreenTMP;
+  const static int iListWidth = 652;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

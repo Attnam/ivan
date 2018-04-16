@@ -39,17 +39,11 @@
 #include "audio.h"
 
 #ifndef WIN32
-
 void CrashHandler(int Signal)
 {
-  // Prints stack trace to stderr.
-  void* CallStack[128];
-  size_t Frames = backtrace(CallStack, 128);
-  std::cerr << strsignal(Signal) << std::endl;
-  backtrace_symbols_fd(CallStack, Frames, STDERR_FILENO);
+  globalerrorhandler::DumpStackTraceToStdErr(Signal);
   exit(1);
 }
-
 #endif
 
 int main(int argc, char** argv)
@@ -97,6 +91,7 @@ int main(int argc, char** argv)
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
+  game::PrepareStretchRegionsLazy();
 
   /* Set off the main menu music */
   audio::SetPlaybackStatus(0);
@@ -109,8 +104,10 @@ int main(int argc, char** argv)
     int Select = iosystem::Menu(igraph::GetMenuGraphic(),
                                 v2(RES.X / 2, RES.Y / 2 - 20),
                                 CONST_S("\r"),
-                                CONST_S("Start Game\rContinue Game\r"
-                                        "Configuration\rHighscores\r"
+                                CONST_S("Start Game\r"
+                                        "Continue Game\r"
+                                        "Configuration\r"
+                                        "Highscores\r"
                                         "Quit\r"),
                                 LIGHT_GRAY,
                                 CONST_S("Released under the GNU\r"

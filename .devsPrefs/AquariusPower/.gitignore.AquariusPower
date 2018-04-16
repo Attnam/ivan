@@ -1,0 +1,82 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+ivan
+igor/igor
+mihail/mihail
+
+# Editor backup/swap files
+*~
+*.swp
+*.swap
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Folders and misc stuff like f. ex. save folders :)
+Bones
+/ivan.cfg
+/HScore.dat
+Save
+/Debug/
+/Linux/
+
+# OS / IDE files
+.DS_Store
+
+######
+## Eclipse developers preferences over different operational systems
+## and personalized configurations.
+######
+
+# link to some user folder at /.devsPrefs
+/.devsPrefs/Current
+
+# direct links to preferences at /.devsPrefs/Current
+/.cproject
+/.project
+/.settings
+
+# Git ignore files are special. They are relative to their current path!
+# If the one at '/.devsPrefs/SomeUserName/.gitignore' remains named like that,
+# git will recognize and ignore files as that sub folder is a root folder!
+# Therefore ONLY that file must be named like: '/.devsPrefs/SomeUserName/.gitignore.SomeUserName'
+# And after creating the link to it, the link itself must be renamed to '.gitignore' to be again recognized by git.
+/.gitignore
+
+
+######################### my preferences ############################
+dbgmsg.h
+dbgmsg.cpp
+/Linux/
+/SDL2-2.0.4/

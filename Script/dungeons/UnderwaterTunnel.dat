@@ -22,7 +22,7 @@
 Dungeon UNDER_WATER_TUNNEL;
 {
   Levels = 5;
-  Description = "underwater tunnel";
+  Description = "Underwater Tunnel";
   ShortDescription = "UT";
 
   LevelDefault

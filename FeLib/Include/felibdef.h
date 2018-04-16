@@ -166,7 +166,7 @@ inline int GetMinColor24(col24 Color)
 #define FLIP 2
 #define ROTATE 4
 
-#define TRANSPARENT_COLOR 0xF81F
+#define TRANSPARENT_COLOR 0xF81F  // pink
 
 #define RED 0xF800
 #define GREEN 0x07E0
