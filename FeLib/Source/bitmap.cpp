@@ -22,6 +22,8 @@
 #include "femath.h"
 #include "rawbit.h"
 #include "libxbrzscale.h"
+
+#define DBGMSG_V2
 #include "dbgmsgproj.h"
 
 /*
@@ -1178,8 +1180,8 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   DBG4("Cache not found for surface w=",iW," h=",iH);
   SDL_Surface* srf = libxbrzscale::createARGBSurface(iW, iH); //src img for look zoom at least is always 16x16 tho
 
-  vSurfaceCache.push_back(srf);
-  DBG2("Cache size=",vSurfaceCache.size());
+  vSurfaceCache.push_back(srf);DBG3(srf,DBGI(srf->w),DBGI(srf->h));
+  DBGSI(vSurfaceCache.size());
 
   return srf;
 }
@@ -1220,37 +1222,42 @@ SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL
  */
 void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) const
 {
-  blitdata Bto = BlitDataTo; //to easy coding
-
-  if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
-    libxbrzscale::setUseCache(true);
-#ifdef DBGMSG
-    libxbrzscale::setDebugMsg(true);
-#endif
-    libxbrzscale::setFreeSurfaceAfterScale(false,false);
-    bXbrzLibCfgInitialized=true;
+  blitdata Bto = BlitDataTo;DBGLN; //to easy coding
+  if(Bto.Dest.X>=Bto.Bitmap->GetSize().X || Bto.Dest.Y>=Bto.Bitmap->GetSize().Y){
+    ABORT("invalid stretch destination %d,%d on target bitmap size %d,%d",Bto.Dest.X,Bto.Dest.Y,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
   }
 
-  bool bFreeImg=false;
+  if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
+    libxbrzscale::setUseCache(true);DBGLN;
+#ifdef DBGMSG
+    libxbrzscale::setDebugMsg(true);DBGLN;
+#endif
+    libxbrzscale::setFreeSurfaceAfterScale(false,false);DBGLN;
+    bXbrzLibCfgInitialized=true;DBGLN;
+  }
 
-  SDL_Surface* imgCopy = CopyToSurface(Bto.Src, Bto.Border, Bto.MaskColor, SurfaceCache(Bto,false));
+  bool bFreeImg=false;DBGLN;
 
-  Uint32 color32bit;
-  unsigned char cr,cg,cb,ca;
-  SDL_Surface* imgStretchedCopy=NULL;
-  imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);
+  DBG2(Bto.Bitmap,DBGAV2(Bto.Bitmap->GetSize()));
+  SDL_Surface* imgCopy = CopyToSurface(Bto.Src, Bto.Border, Bto.MaskColor, SurfaceCache(Bto,false));DBGLN;
+
+  Uint32 color32bit;DBGLN;
+  unsigned char cr,cg,cb,ca;DBGLN;
+  SDL_Surface* imgStretchedCopy=NULL;DBGLN;
+  imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);DBG3(imgStretchedCopy,DBGI(imgStretchedCopy->w),DBGI(imgStretchedCopy->h));
   // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
   for(int x1 = 0; x1 < imgStretchedCopy->w; ++x1)
   {
     for(int y1 = 0; y1 < imgStretchedCopy->h; ++y1)
     {
-      color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);
-      SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);
-      if(!bAllowTransparency || ca!=0){
-        Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb); //TODO does alpha make any sense here anyway?
+      color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);//DBGLN;
+      SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);//DBGLN;
+      if(!bAllowTransparency || ca!=0){//DBGLN;
+        Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);//DBGLN; //TODO does alpha make any sense here anyway?
       }
     }
   }
+  DBGLN;
 
 //  SDL_FreeSurface(imgCopy);
 //  SDL_FreeSurface(imgStretchedCopy);

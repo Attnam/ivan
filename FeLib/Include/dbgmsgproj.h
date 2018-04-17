@@ -10,20 +10,11 @@
    ************************************************************/
   #ifndef DBGMSG_OBJ //do NOT define this in your project cpp files!
 
-    #define DBGAV2(v2)  dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str()
-    #define DBGSV2(v2)  DBGSS(DBGAV2(v2))
-    #define DBGBLD(rb) DBGSS(dbgmsgprj::dbgBLD(rb,DBGTOSTR(rb)).str())
-
-//    #ifdef DBGMSG_STRETCHREGION
-//      #define DBGSRI(info)  DBG1( dbgmsgprj::dbgSRI(rSR,info).str())
-//      #define DBGSR         DBGSRI("")
-//    #endif //DBGMSG_STRETCHREGION
-
     class dbgmsgprj{
       public:
 
       #ifdef DBGMSG_STRETCHREGION
-      #define DBGMSG_BLITDATA
+      #define DBGMSG_BLITDATA // alows the dependency
       #define DBGSRI(info)  DBG1( dbgmsgprj::dbgSRI(rSR,info).str())
       #define DBGSR         DBGSRI("")
       static std::stringstream dbgSRI(stretchRegion& SR,const char* strInfo){
@@ -41,7 +32,7 @@
       #endif //DBGMSG_STRETCHREGION
 
       #ifdef DBGMSG_BLITDATA
-      #define DBGMSG_V2
+      #define DBGMSG_V2 // alows the dependency
       #define DBGBLD(rb) DBGSS(dbgmsgprj::dbgBLD(rb,DBGTOSTR(rb)).str())
       static std::stringstream dbgBLD(const blitdata& rB,const char* strInfo){
         std::stringstream ss;
@@ -56,7 +47,8 @@
       #endif //DBGMSG_BLITDATA
 
       #ifdef DBGMSG_V2
-      #define DBGV2(v2)  DBGSS(dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str())
+      #define DBGAV2(v2)  dbgmsgprj::dbgV2(v2,DBGTOSTR(v2)).str()
+      #define DBGSV2(v2)  DBGSS(DBGAV2(v2))
       static std::stringstream dbgV2(v2 v2Val,const char* c){
         std::stringstream ss;
         ss<<c<<"/";
@@ -95,7 +87,8 @@
   #define DBGSC(C)
 
   // project specific
-  #define DBGV2(v2)
+  #define DBGAV2(v2)
+  #define DBGSV2(v2)
   #define DBGBLD(rb)
 
   #define DBGSRI(info)

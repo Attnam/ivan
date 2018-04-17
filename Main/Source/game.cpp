@@ -339,8 +339,8 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
 
 //  lsquare* plsq = Player->GetLSquareUnder();
 //  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGV2(v2MaxSqrUpperLeft);
-  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGV2(v2MaxSqrLowerRight);
+  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
+  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
 
   level* plv = Player->GetLevel();
   v2 v2ChkSqrPos;
@@ -380,11 +380,11 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
       vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
         (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
         (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-      )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+      )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
     }
   }
 
-  DBGV2(v2TopLeft);DBGV2(v2BottomRight);
+  DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
 
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
@@ -413,6 +413,8 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   if(bOk && Player->IsDead())bOk=false; // this may actually never happen...
 
+  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+
   if(bOk && bPositionQuestionMode){
     if(!IsInWilderness()){ // always allowed in wilderness (as there is only fully dark squares, not partial as memories)
       bOk=false;
@@ -432,7 +434,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   /////////////////// ok ///////////////////////
 
-  v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGV2(v2ScreenPos);
+  v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGSV2(v2ScreenPos);
 
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,true);
 
@@ -1343,10 +1345,15 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   if(bOk && !Player->IsEnabled())bOk=false;
 
+  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+
   if(bOk && IsInWilderness())bOk=false;
 
   int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
-  if(bOk && iCode==0)bOk=false;
+  bool bEnabled=iCode>0;
+  bool bAboveHead=iCode==1;
+
+  if(bOk && !bEnabled)bOk=false;
 
   stack* su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
   if(bOk && su==NULL)bOk=false;
@@ -1370,10 +1377,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
       ||
       v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
   ){
-    iCode=1; //force above head
+    bAboveHead=true;
   }
 
-  if(iCode==1 && ivanconfig::GetStartingDungeonGfxScale()>1){
+  // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
+  if(bAboveHead && ivanconfig::GetStartingDungeonGfxScale()>=2){ //use xBRZ stretch region
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
 
@@ -1394,7 +1402,10 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
     return;
   }
 
-  ////////////////////////////// CORNERS WORK DIRECTLY ON DB /////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////// Dungeon square overwrite mode ///////////////////////////
+  ////////////////////////////// CORNERS WORK DIRECTLY ON DoubleBuffer ///////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
 
   graphics::SetSRegionEnabled(iRegionItemsUnder,false); //disable above head region
 
@@ -1404,7 +1415,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
   v2 v2ScrPosIni;
   v2 v2SqrPosIni;
 
-  if(iCode==1){ //above head
+  if(bAboveHead){ //only for x1 dungeon scale
     v2SqrPosIni=Player->GetPos();
     v2SqrPosIni.Y--;
     v2SqrPosIni.X-=iTot/2;
@@ -1616,6 +1627,9 @@ int game::Load(cfestring& SaveName)
   SaveFile >> PlayerHasReceivedAllGodsKnownBonus;
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
+
+  UpdateCamera();
+
   return LOADED;
 }
 
