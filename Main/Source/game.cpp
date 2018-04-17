@@ -2731,7 +2731,19 @@ int game::CompareLightToInt(col24 L, col24 Int)
 }
 
 void prepareList(felist& rList, v2& v2TopLeft, int& iW){
-  bool bAltItemPos = graphics::IsSRegionEnabled(iRegionListItem) && ivanconfig::IsAltListItemPos();
+  bool bAltItemPos = ivanconfig::GetAltListItemPos()==2;
+  if(iRegionListItem==-1){ //not initialized
+    bAltItemPos=false;
+  }else{
+    if(ivanconfig::GetAltListItemPos()==0){
+      graphics::SetSRegionEnabled(iRegionListItem,false); //user option override
+    }
+
+    if(!graphics::IsSRegionEnabled(iRegionListItem)){ //can be by user option or dependent on what command the user is using like 'drop'
+      bAltItemPos=false;
+    }
+  }
+//  bool bAltItemPos = graphics::IsSRegionEnabled(iRegionListItem) && ivanconfig::GetAltListItemPos()==2;
 
   rList.SetOriginalPos(v2TopLeft);
 
@@ -2746,6 +2758,8 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;
+  }else{
+    bldListItemTMP.Dest = ZoomPos;
   }
 
   if(graphics::IsSRegionEnabled(iRegionSilhouette)){

@@ -126,9 +126,10 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
-truthoption ivanconfig::AltListItemPos(   "AltListItemPos",
+cycleoption ivanconfig::AltListItemPos(   "AltListItemPos",
                                           "Stretched list item alternative position",
-                                          false);
+                                          0, 3,
+                                          &AltListItemPosDisplayer);
 numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
                                           "List width for 'item alternative position'",
                                           game::getDefaultItemsListWidth(),
@@ -523,6 +524,15 @@ void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
 void ivanconfig::SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
+}
+
+void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0:Entry << "disabled";break; //do not show
+  case 1:Entry << "no";break; //default pos
+  case 2:Entry << "yes";break; //alt pos
+  }
 }
 
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
