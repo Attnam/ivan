@@ -1404,27 +1404,47 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   switch(iStretch){
     case 1: { //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
+//      v2 v2SqrSize(
+//        Min(game::GetScreenXSize(), GetCurrentArea()->GetXSize()),
+//        Min(game::GetScreenYSize(), GetCurrentArea()->GetYSize()) );
+//      GetCurrentLevel()->get
       int iDirX=0,iDirY=0;
-      v2 v2SqrPos=Camera;
-      v2 v2PosIni = area::getTopLeftCorner();
-      int iScSX=game::GetScreenXSize()-1;
-      int iScSY=game::GetScreenYSize()-1;
+
+      // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+      v2 v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+      v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+      if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
+      if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+
+      // min top left dungeon sqr coords
+      v2 v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
+      if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+      if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+
+      // max bottom right dungeon sqr coords
+//      v2 v2SqrSize(game::GetScreenXSize(),game::GetScreenYSize());
+      v2 v2SqrSize(
+        Min(game::GetScreenXSize(), GetCurrentLevel()->GetXSize()),
+        Min(game::GetScreenYSize(), GetCurrentLevel()->GetYSize()) );
+      int iSqrMaxX=v2SqrSize.X-1;
+      int iSqrMaxY=v2SqrSize.Y-1;
+
       switch(iCorner){
         case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
           break;
         case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
-          v2SqrPos.X+=iScSX;
-          v2PosIni.X+=iScSX*TILE_SIZE;
+          v2SqrPosIni.X+=iSqrMaxX;
+          v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
           break;
         case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
-          v2SqrPos.Y+=iScSY;
-          v2PosIni.Y+=iScSY*TILE_SIZE;
+          v2SqrPosIni.Y+=iSqrMaxY;
+          v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
           break;
         case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
-          v2SqrPos.X+=iScSX;
-          v2SqrPos.Y+=iScSY;
-          v2PosIni.X+=iScSX*TILE_SIZE;
-          v2PosIni.Y+=iScSY*TILE_SIZE;
+          v2SqrPosIni.X+=iSqrMaxX;
+          v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+          v2SqrPosIni.Y+=iSqrMaxY;
+          v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
           break;
       }
 
@@ -1435,12 +1455,20 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
         if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
       }
 
-      PrepareItemsUnder(true,su,iTot,v2PosIni,iDirX,iDirY);
+      PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
 
-      for(int i=0;i<iTot;i++){ // this grants updating the squares used to show the items.
-        GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
-        v2SqrPos.X+=iDirX;
-        v2SqrPos.Y+=iDirY;
+      /**
+       * this grants updating the squares used to show the items.
+       * this also provides a cleanup after player moves or gets things from the floor.
+       */
+      for(int i=0;i<iTot;i++){DBGSV2(v2SqrPosIni);
+        if(GetCurrentArea()->IsValidPos(v2SqrPosIni)){
+//          square* sqr = GetCurrentArea()->GetSquare(v2SqrPos);
+//          if(sqr!=NULL)sqr->SendStrongNewDrawRequest();
+          GetCurrentArea()->GetSquare(v2SqrPosIni)->SendStrongNewDrawRequest();
+        }
+        v2SqrPosIni.X+=iDirX;
+        v2SqrPosIni.Y+=iDirY;
       }
 
     }break;

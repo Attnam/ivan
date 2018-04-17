@@ -47,9 +47,9 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
                                           0, 10,
-                                          &ShowItemsAtPlayerSquareDisplayer);
-//                                          &ShowItemsAtPlayerSquareChangeInterface);
-//                                          &ShowItemsAtPlayerSquareChanger);
+                                          &ShowItemsAtPlayerSquareDisplayer,
+                                          &configsystem::NormalCycleChangeInterface,
+                                          &ShowItemsAtPlayerSquareChanger);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -459,6 +459,15 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
   if(What < 600) What = 600;
+  O->Value = What;
+}
+
+void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
+{
+  if(What==1 && GetStartingDungeonGfxScale()<3){ //above head asked
+    What=2; //upgrade to 1st corner
+  }
+
   O->Value = What;
 }
 
