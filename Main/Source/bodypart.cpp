@@ -2424,7 +2424,6 @@ truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
       else
         ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(),
                     Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
-
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
   }

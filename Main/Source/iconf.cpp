@@ -18,6 +18,8 @@
 #include "bitmap.h"
 #include "igraph.h"
 #include "audio.h"
+#include "whandler.h"
+#include "stack.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -42,6 +44,36 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+numberoption ivanconfig::WindowWidth(     "WindowWidth",
+                                          "* window width in pixels, min 800",
+                                          800,
+                                          &WindowWidthDisplayer,
+                                          &WindowWidthChangeInterface,
+                                          &WindowWidthChanger);
+numberoption ivanconfig::WindowHeight(    "WindowHeight",
+                                          "* window height in pixels, min 600",
+                                          600,
+                                          &WindowHeightDisplayer,
+                                          &WindowHeightChangeInterface,
+                                          &WindowHeightChanger);
+numberoption ivanconfig::StackListPageLength("StackListPageLength",
+                                          "Stack list page length in entries",
+                                          stack::GetDefaultPageLength(),
+                                          &StackListPageLengthDisplayer,
+                                          &StackListPageLengthChangeInterface,
+                                          &StackListPageLengthChanger);
+numberoption ivanconfig::FrameSkip(       "FrameSkip",
+                                          "FrameSkip to inc. input responsiveness",
+                                          0,
+                                          &FrameSkipDisplayer,
+                                          &FrameSkipChangeInterface,
+                                          &FrameSkipChanger);
+truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
+                                          "Show current dungeon's full name",
+                                          false);
+truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
+                                          "Always center camera on player after look mode exits",
+                                          false);
 truthoption ivanconfig::WarnAboutDanger(  "WarnAboutVeryDangerousMonsters",
                                           "Warn about very dangerous monsters",
                                           true);
@@ -51,9 +83,33 @@ truthoption ivanconfig::AutoDropLeftOvers("AutoDropLeftOvers",
 truthoption ivanconfig::LookZoom(         "LookZoom",
                                           "zoom feature in look mode",
                                           false);
-truthoption ivanconfig::XBRZScale(        "XBRZScale",
-                                          "use XBRZScale to stretch graphics",
+truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
+                                          "on death, enhanced messages review mode",
                                           false);
+truthoption ivanconfig::XBRZScale(        "XBRZScale",
+                                          "use xBRZScale to stretch graphics",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &XBRZScaleChanger);
+numberoption ivanconfig::XBRZSquaresAroundPlayer("XBRZSquaresAroundPlayer",
+                                          "Stretch squares around player with xBRZ (performance)",
+                                          3,
+                                          &XBRZSquaresAroundPlayerDisplayer,
+                                          &XBRZSquaresAroundPlayerChangeInterface,
+                                          &XBRZSquaresAroundPlayerChanger);
+cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
+                                          "* Select dungeon scale factor",
+                                          1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
+                                          &DungeonGfxScaleDisplayer,
+                                          &DungeonGfxScaleChangeInterface,
+                                          &DungeonGfxScaleChanger);
+cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
+                                          "Silhouette scale factor (1 to disable)",
+                                          1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
+                                          &SilhouetteScaleDisplayer,
+                                          &SilhouetteScaleChangeInterface,
+                                          &SilhouetteScaleChanger);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -64,7 +120,17 @@ truthoption ivanconfig::SmartOpenCloseApply("SmartOpenCloseApply",
 truthoption ivanconfig::BeNice(           "BeNice",
                                           "be nice to pets",
                                           true);
-scrollbaroption ivanconfig::Volume(     "Volume",
+cycleoption ivanconfig::AltListItemPos(   "AltListItemPos",
+                                          "Stretched list item alternative position",
+                                          0, 3,
+                                          &AltListItemPosDisplayer);
+numberoption ivanconfig::AltListItemWidth("AltListItemWidth",
+                                          "List width for 'item alternative position'",
+                                          game::getDefaultItemsListWidth(),
+                                          &AltListItemWidthDisplayer,
+                                          &AltListItemWidthChangeInterface,
+                                          &AltListItemWidthChanger);
+scrollbaroption ivanconfig::Volume(       "Volume",
                                           "volume",
                                           127,
                                           &VolumeDisplayer,
@@ -77,7 +143,7 @@ cycleoption ivanconfig::MIDIOutputDevice(  "MIDIOutputDevice",
                                           &MIDIOutputDeviceDisplayer);
 #ifndef __DJGPP__
 cycleoption ivanconfig::GraphicsScale(    "GraphicsScale",
-                                          "select graphics scale factor",
+                                          "select window scale factor",
                                           1, 2,
                                           &GraphicsScaleDisplayer,
                                           &GraphicsScaleChangeInterface,
@@ -97,11 +163,44 @@ truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "show the turn on log messages",
                                           false);
 truthoption ivanconfig::OutlinedGfx(      "OutlinedGfx",
-                                          "Outlined graphics (applied on next run)",
+                                          "* Outlined graphics",
                                           false);
 
 v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
+
+void ivanconfig::XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " squares";
+}
+
+void ivanconfig::AltListItemWidthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
+}
+
+void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value;
+  if(O->Value==-2)Entry  << " = wait"  ;
+  if(O->Value==-1)Entry  << " = auto"  ;
+  if(O->Value>= 0)Entry  <<   " frames";
+}
+
+void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " entries";
+}
+
+void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
+}
+
+void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
+{
+  Entry << O->Value << " pixels";
+}
 
 void ivanconfig::AutoSaveIntervalDisplayer(const numberoption* O, festring& Entry)
 {
@@ -163,6 +262,31 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
   }
 }
 
+void clearToBackgroundAfterChangeInterface(){
+  if(game::IsRunning())igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
+}
+
+truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+truth ivanconfig::SilhouetteScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -171,8 +295,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -185,9 +308,56 @@ truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
+  return false;
+}
+
+truth ivanconfig::XBRZSquaresAroundPlayerChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set how many squares around player to xBRZ (0=FullDungeon):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+truth ivanconfig::AltListItemWidthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new item's list width to fit well with other elements:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+truth ivanconfig::FrameSkipChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set frame skip to let controls/input work better (-2=wait,-1=auto,0to100):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new stack list page's length in entries:"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
+  return false;
+}
+
+truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
+{
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+                                          GetQuestionPos(), WHITE, !game::IsRunning()));
+  clearToBackgroundAfterChangeInterface();
   return false;
 }
 
@@ -196,8 +366,7 @@ truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -209,8 +378,7 @@ truth ivanconfig::ContrastChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
 }
@@ -222,10 +390,51 @@ truth ivanconfig::VolumeChangeInterface(numberoption* O)
                               game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX),
                               !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
-  if(game::IsRunning())
-    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
+  clearToBackgroundAfterChangeInterface();
 
   return false;
+}
+
+void ivanconfig::XBRZSquaresAroundPlayerChanger(numberoption* O, long What)
+{
+  if(What < 0) What = 0;
+  O->Value = What;
+}
+
+void ivanconfig::AltListItemWidthChanger(numberoption* O, long What)
+{
+  if(What < 400) What = 400; //TODO find the best quality minimum value
+  O->Value = What;
+}
+
+void ivanconfig::FrameSkipChanger(numberoption* O, long What)
+{
+  if(What <  -2) What =  -2;
+  if(What > 100) What = 100;
+
+  if(O!=NULL)O->Value = What;
+
+  globalwindowhandler::SetAddFrameSkip(What);
+}
+
+void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
+{
+  if(What < stack::GetDefaultPageLength()) What = stack::GetDefaultPageLength();
+  if(O!=NULL)O->Value = What;
+
+  stack::SetStandardPageLength(What);
+}
+
+void ivanconfig::WindowHeightChanger(numberoption* O, long What)
+{
+  if(What < 600) What = 600;
+  O->Value = What;
+}
+
+void ivanconfig::WindowWidthChanger(numberoption* O, long What)
+{
+  if(What < 800) What = 800;
+  O->Value = What;
 }
 
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
@@ -240,6 +449,7 @@ void ivanconfig::ContrastChanger(numberoption* O, long What)
   if(What < 0) What = 0;
   if(What > 200) What = 200;
   O->Value = What;
+
   CalculateContrastLuminance();
 }
 
@@ -259,16 +469,46 @@ void ivanconfig::GraphicsScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
-truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
-{
-  O->ChangeValue(O->Value % O->CycleCount + 1);
-  return true;
-}
-
 void ivanconfig::GraphicsScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
   graphics::SetScale(What);
+}
+
+void ivanconfig::SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value << 'x';
+}
+
+void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0:Entry << "disabled";break; //do not show
+  case 1:Entry << "no";break; //default pos
+  case 2:Entry << "yes";break; //alt pos
+  }
+}
+
+void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value << 'x';
+}
+
+void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+}
+
+void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+}
+
+void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
+{
+  O->Value = What;
+
+  game::UpdateSRegionsXBRZ();
 }
 
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
@@ -280,7 +520,9 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 
 void ivanconfig::Show()
 {
+  game::SRegionAroundDeny();
   configsystem::Show(&BackGroundDrawer, &game::SetStandardListAttributes, game::IsRunning());
+  game::SRegionAroundAllow();
 }
 
 void ivanconfig::ContrastHandler(long Value)
@@ -321,23 +563,52 @@ void ivanconfig::CalculateContrastLuminance()
   ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 
+// TODO keep initializing with invalid values (where possible) so if they are used before cfg file loading it will show errors clearly?
+int  ivanconfig::iStartingWindowWidth=-1;
+int  ivanconfig::iStartingWindowHeight=-1;
+int  ivanconfig::iStartingDungeonGfxScale=-1;
+bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
-  configsystem::AddOption(&DefaultName);
-  configsystem::AddOption(&DefaultPetName);
-  configsystem::AddOption(&AutoSaveInterval);
-  configsystem::AddOption(&Contrast);
-  configsystem::AddOption(&WarnAboutDanger);
-  configsystem::AddOption(&AutoDropLeftOvers);
-  configsystem::AddOption(&LookZoom);
-  configsystem::AddOption(&XBRZScale);
-  configsystem::AddOption(&DirectionKeyMap);
-  configsystem::AddOption(&SmartOpenCloseApply);
-  configsystem::AddOption(&BeNice);
-  configsystem::AddOption(&ShowTurn);
-  configsystem::AddOption(&OutlinedGfx);
-  configsystem::AddOption(&PlaySounds);
-  configsystem::AddOption(&Volume);
+  festring fsCategory;
+
+  fsCategory="Core Game Setup";
+  configsystem::AddOption(fsCategory,&DefaultName);
+  configsystem::AddOption(fsCategory,&DefaultPetName);
+  configsystem::AddOption(fsCategory,&AutoSaveInterval);
+  configsystem::AddOption(fsCategory,&AltAdentureInfo);
+
+  fsCategory="Gameplay Changes";
+  configsystem::AddOption(fsCategory,&BeNice);
+  configsystem::AddOption(fsCategory,&WarnAboutDanger);
+  configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
+  configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
+  configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+
+  fsCategory="Window";
+  configsystem::AddOption(fsCategory,&Contrast);
+  configsystem::AddOption(fsCategory,&WindowWidth);
+  configsystem::AddOption(fsCategory,&WindowHeight);
+#ifndef __DJGPP__
+  configsystem::AddOption(fsCategory,&GraphicsScale);
+  configsystem::AddOption(fsCategory,&FullScreenMode);
+#endif
+
+  fsCategory="Graphics";
+  configsystem::AddOption(fsCategory,&LookZoom);
+  configsystem::AddOption(fsCategory,&XBRZScale);
+  configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
+  configsystem::AddOption(fsCategory,&SilhouetteScale);
+  configsystem::AddOption(fsCategory,&AltListItemPos);
+  configsystem::AddOption(fsCategory,&AltListItemWidth);
+  configsystem::AddOption(fsCategory,&StackListPageLength);
+  configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&OutlinedGfx);
+  configsystem::AddOption(fsCategory,&FrameSkip);
+
+  fsCategory="Sounds";
+  configsystem::AddOption(fsCategory,&PlaySounds);
+  configsystem::AddOption(fsCategory,&Volume);
 
   std::vector<std::string> DeviceNames;
   int NumDevices = audio::GetMIDIOutputDevices(DeviceNames);
@@ -348,19 +619,33 @@ void ivanconfig::Initialize()
   }
   MIDIOutputDevice.CycleCount = NumDevices+1;
 
-  configsystem::AddOption(&MIDIOutputDevice);
-#ifndef __DJGPP__
-  configsystem::AddOption(&GraphicsScale);
-  configsystem::AddOption(&FullScreenMode);
-#endif
+  configsystem::AddOption(fsCategory,&MIDIOutputDevice);
+
+  fsCategory="System and user interface/input";
+  configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&ShowTurn);
+  configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+
+  /********************************
+   * LOAD AND APPLY some SETTINGS *
+   ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
 #else
   configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
 #endif
+
   configsystem::Load();
+
+  iStartingWindowWidth=WindowWidth.Value;
+  iStartingWindowHeight=WindowHeight.Value;
+  iStartingDungeonGfxScale=DungeonGfxScale.Value;
+  bStartingOutlinedGfx=OutlinedGfx.Value;
+
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
+  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
+  StackListPageLengthChanger(NULL, StackListPageLength.Value);
 }

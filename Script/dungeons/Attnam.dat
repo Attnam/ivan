@@ -22,7 +22,7 @@
 Dungeon ATTNAM;
 {
   Levels = 5;
-  Description = "Attnamese catacombs";
+  Description = "Attnamese Catacombs";
   ShortDescription = "AC";
 
   LevelDefault

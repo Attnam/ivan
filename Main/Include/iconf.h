@@ -23,16 +23,28 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static long GetStartingWindowWidth() { return iStartingWindowWidth; }
+  static long GetStartingWindowHeight() { return iStartingWindowHeight; }
+  static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
+  static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
-  static truth GetXBRZScale() { return XBRZScale.Value; }
+  static truth IsXBRZScale() { return XBRZScale.Value; }
+  static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
+  static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
+  static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
+  static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
+  static int GetAltListItemWidth() { return AltListItemWidth.Value; }
+  static int GetStackListPageLength() { return StackListPageLength.Value; }
   static truth GetSmartOpenCloseApply() { return SmartOpenCloseApply.Value; }
   static truth GetBeNice() { return BeNice.Value; }
+  static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
-  static truth GetShowTurn() { return ShowTurn.Value; }
-  static truth GetOutlinedGfx() { return OutlinedGfx.Value; }
+  static truth IsShowTurn() { return ShowTurn.Value; }
+  static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 #ifndef __DJGPP__
@@ -52,13 +64,31 @@ class ivanconfig
  private:
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
+  static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
+  static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
+  static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
+  static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
+  static void FrameSkipDisplayer(const numberoption* O, festring& Entry);
+  static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
+  static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
+  static truth WindowWidthChangeInterface(numberoption* O);
+  static truth WindowHeightChangeInterface(numberoption* O);
+  static truth StackListPageLengthChangeInterface(numberoption* O);
+  static truth FrameSkipChangeInterface(numberoption* O);
+  static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
+  static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
+  static void WindowWidthChanger(numberoption* O, long What);
+  static void WindowHeightChanger(numberoption* O, long What);
+  static void StackListPageLengthChanger(numberoption* O, long What);
+  static void FrameSkipChanger(numberoption* O, long What);
+  static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
@@ -68,20 +98,54 @@ class ivanconfig
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
+  static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
+  static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static truth SilhouetteScaleChangeInterface(cycleoption*);
+  static void DungeonGfxScaleChanger(cycleoption*, long);
+  static void SilhouetteScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
+  static void XBRZScaleChanger(truthoption*, truth);
 #endif
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
+
   static stringoption DefaultName;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
+  static truthoption AltAdentureInfo;
+  static truthoption CenterOnPlayerAfterLook;
   static scrollbaroption Contrast;
+
+  static numberoption WindowWidth;
+  static int iStartingWindowWidth;
+
+  static numberoption WindowHeight;
+  static int iStartingWindowHeight;
+
+  static numberoption FrameSkip;
+  static truthoption ShowFullDungeonName;
+
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+
+  static cycleoption  DungeonGfxScale;
+  static int iStartingDungeonGfxScale;
+
+  static truthoption   OutlinedGfx;
+  static bool bStartingOutlinedGfx;
+
+  static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static cycleoption SilhouetteScale;
+  static cycleoption AltListItemPos;
+  static numberoption AltListItemWidth;
+  static numberoption StackListPageLength;
+
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
   static scrollbaroption Volume;
@@ -93,7 +157,6 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
-  static truthoption OutlinedGfx;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
