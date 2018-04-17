@@ -60,6 +60,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   const char* strId;
   bool bEnabled;
   blitdata B;
+  bitmap* bmpOverride;
 
   bool bUseXBRZ;
   bool bUseXBRZDrawBeforeFelistPage;
@@ -69,10 +70,10 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   bool bDrawRectangleOutline;
   bool bAllowTransparency; //mask
 
-  v2 v2SquareSize; //to clear or to inc/dec zoom
+  v2 v2SquareSize; //to clear
 
   std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
-  blitdata BClearSquares;
+  blitdata BClearSquares; //intermediary, it's bitmap will be filled to serve as source
 
   bitmap* CacheBitmap;
 };
@@ -80,7 +81,7 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
 #include "dbgmsgproj.h"
 
 const stretchRegion SRdefault = {
-  -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,
+  -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,NULL,
   false,false,false,false,false,false,false,
   v2(),
   std::vector<v2>(), DEFAULT_BLITDATA,
@@ -367,12 +368,38 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
     vStretchRegion.push_back(rSR);DBGSRI("Add");
   }else{ //update
     stretchRegion& rSR = vStretchRegion[iIndex];
+    if(rSR.bmpOverride!=NULL)ABORT("wrong usage, bitmap override already set: %s %d",rSR.strId,rSR.iIndex);
     DBG2(rSR.iIndex,iIndex);if(rSR.iIndex!=iIndex)ABORT("wrongly configured SRegion internal index %d, expecting %d",rSR.iIndex,iIndex);
     rSR.B=B;
     DBGSRI("Update");
   }
 
   return iIndex;
+}
+
+/**
+ * If bmp is not NULL, it is an indicator (bool) itself. Therefore setting to null will disable it's functionality.
+ */
+void graphics::SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, int iStretch, v2 v2Dest){
+  vStretchRegion[iIndex].B.Src={0,0};
+
+  bool bDeletePrevious=false;
+  if(bmp == NULL)bDeletePrevious=true;
+  if(bmp != vStretchRegion[iIndex].bmpOverride)bDeletePrevious=true;
+
+  if(bDeletePrevious){
+    if(vStretchRegion[iIndex].bmpOverride != NULL){
+      delete vStretchRegion[iIndex].bmpOverride;
+      vStretchRegion[iIndex].bmpOverride = NULL;
+    }
+  }
+
+  vStretchRegion[iIndex].bmpOverride=bmp;
+  if(bmp!=NULL)vStretchRegion[iIndex].B.Border=bmp->GetSize();
+
+  vStretchRegion[iIndex].B.Stretch=iStretch;
+
+  vStretchRegion[iIndex].B.Dest=v2Dest;
 }
 
 int graphics::AddStretchRegion(blitdata B,const char* strId){
@@ -519,7 +546,12 @@ bitmap* graphics::PrepareBuffer(){
         }
 
         bitmap* pbmpFrom = DoubleBuffer;
-        if(rSR.vv2ClearSquaresAt.size()>0)pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        if(rSR.bmpOverride!=NULL){
+          pbmpFrom = rSR.bmpOverride;
+        }else
+        if(rSR.vv2ClearSquaresAt.size()>0){
+          pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        }
 
         DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
         Stretch(rSR.bUseXBRZ, pbmpFrom, rB, rSR.bAllowTransparency);
@@ -532,12 +564,24 @@ bitmap* graphics::PrepareBuffer(){
   return ReturnBuffer;
 }
 
-void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
-  bmpAt->DrawRectangle(
-    v2TopLeft-v2(2,2),
-    v2TopLeft+v2Border+v2(1,1),
-    color, wide
-  );
+void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool bWide){
+  v2 v2BottomRight = v2TopLeft+v2Border;
+  if(bWide){ //is 3 thickness
+    v2TopLeft -= v2(2,2);
+    v2BottomRight += v2(1,1);
+  }else{
+    v2TopLeft -= v2(1,1);
+  }
+
+  // fixer
+  int iMargin=bWide?2:1; //wide is 3, middle is at 2
+  if(v2TopLeft.X<iMargin)v2TopLeft.X=iMargin-1;
+  if(v2TopLeft.Y<iMargin)v2TopLeft.Y=iMargin-1;
+  int iMMax;
+  iMMax=bmpAt->GetSize().X-iMargin;if(v2BottomRight.X>iMMax)v2BottomRight.X=iMMax;
+  iMMax=bmpAt->GetSize().Y-iMargin;if(v2BottomRight.Y>iMMax)v2BottomRight.Y=iMMax;
+
+  bmpAt->DrawRectangle(v2TopLeft, v2BottomRight, color, bWide);
 }
 
 int graphics::GetTotSRegions(){
