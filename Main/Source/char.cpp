@@ -7833,10 +7833,11 @@ truth character::PreProcessForBone()
   return true;
 }
 
-void character::_BugWorkaround_PlayerDup(ulong key){ //keep it simple!
+void character::_BugWorkaround_PlayerDup(ulong key){
   ID=key;
-  Flags ^= C_PLAYER;
-}
+  Stack = new stack(0, this, HIDDEN); //NULL;//
+  //TODO empty bodyparts/equipments too
+} //keep it simple!
 
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)
 {
