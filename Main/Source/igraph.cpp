@@ -611,7 +611,12 @@ col16 igraph::GetBackGroundColor(int Element)
 
 void igraph::BlitBackGround(v2 Pos, v2 Border)
 {
-  blitdata B = { DOUBLE_BUFFER,
+  BlitBackGround(DOUBLE_BUFFER, Pos, Border);
+}
+
+void igraph::BlitBackGround(bitmap* bmpAt, v2 Pos, v2 Border)
+{
+  blitdata B = { bmpAt,
                   { Pos.X, Pos.Y },
                   { Pos.X, Pos.Y },
                   { Border.X, Border.Y },
