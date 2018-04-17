@@ -1373,7 +1373,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
     iCode=1; //force above head
   }
 
-  if(iCode==1){
+  if(iCode==1 && ivanconfig::GetStartingDungeonGfxScale()>1){
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
     bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
 
@@ -1398,91 +1398,92 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   graphics::SetSRegionEnabled(iRegionItemsUnder,false); //disable above head region
 
-  int iCorner = ItemUnderCorner(iCode);
-  bool bHorizontal = ItemUnderHV(iCode);
-  int iStretch=ItemUnderZoom(iCode);
+  //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
+  int iDirX=1,iDirY=0;
+  int iTot = su->GetItems();
+  v2 v2ScrPosIni;
+  v2 v2SqrPosIni;
 
-  switch(iStretch){
-    case 1: { //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
-//      v2 v2SqrSize(
-//        Min(game::GetScreenXSize(), GetCurrentArea()->GetXSize()),
-//        Min(game::GetScreenYSize(), GetCurrentArea()->GetYSize()) );
-//      GetCurrentLevel()->get
-      int iDirX=0,iDirY=0;
+  if(iCode==1){ //above head
+    v2SqrPosIni=Player->GetPos();
+    v2SqrPosIni.Y--;
+    v2SqrPosIni.X-=iTot/2;
 
-      // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
-      v2 v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
-      v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
-      if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
-      if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+  }else{
+    int iCorner = ItemUnderCorner(iCode);
+    bool bHorizontal = ItemUnderHV(iCode);
 
-      // min top left dungeon sqr coords
-      v2 v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
-      if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
-      if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+    // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+    v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+    if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
+    if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
 
-      // max bottom right dungeon sqr coords
-//      v2 v2SqrSize(game::GetScreenXSize(),game::GetScreenYSize());
-      v2 v2SqrSize(
-        Min(game::GetScreenXSize(), GetCurrentLevel()->GetXSize()),
-        Min(game::GetScreenYSize(), GetCurrentLevel()->GetYSize()) );
-      int iSqrMaxX=v2SqrSize.X-1;
-      int iSqrMaxY=v2SqrSize.Y-1;
+    // min top left dungeon sqr coords
+    v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
 
-      switch(iCorner){
-        case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
-          break;
-        case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
-          v2SqrPosIni.X+=iSqrMaxX;
-          v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
-          break;
-        case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
-          v2SqrPosIni.Y+=iSqrMaxY;
-          v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
-          break;
-        case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
-          v2SqrPosIni.X+=iSqrMaxX;
-          v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
-          v2SqrPosIni.Y+=iSqrMaxY;
-          v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
-          break;
-      }
+    // max bottom right dungeon sqr coords
+    v2 v2SqrSize(
+      Min(game::GetScreenXSize(), GetCurrentLevel()->GetXSize()),
+      Min(game::GetScreenYSize(), GetCurrentLevel()->GetYSize()) );
+    int iSqrMaxX=v2SqrSize.X-1;
+    int iSqrMaxY=v2SqrSize.Y-1;
 
-      int iTot = su->GetItems();
-      if(bHorizontal){
-        if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-      }else{
-        if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
-      }
+    switch(iCorner){
+      case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
+        break;
+      case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
+        v2SqrPosIni.X+=iSqrMaxX;
+        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+        break;
+      case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
+        v2SqrPosIni.Y+=iSqrMaxY;
+        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+        break;
+      case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
+        v2SqrPosIni.X+=iSqrMaxX;
+        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+        v2SqrPosIni.Y+=iSqrMaxY;
+        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+        break;
+    }
 
-      PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
+    if(bHorizontal){
+      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+    }else{
+      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+    }
 
-      /**
-       * this grants updating the squares used to show the items.
-       * this also provides a cleanup after player moves or gets things from the floor.
-       */
-      for(int i=0;i<iTot;i++){DBGSV2(v2SqrPosIni);
-        if(GetCurrentArea()->IsValidPos(v2SqrPosIni)){
-//          square* sqr = GetCurrentArea()->GetSquare(v2SqrPos);
-//          if(sqr!=NULL)sqr->SendStrongNewDrawRequest();
-          GetCurrentArea()->GetSquare(v2SqrPosIni)->SendStrongNewDrawRequest();
-        }
-        v2SqrPosIni.X+=iDirX;
-        v2SqrPosIni.Y+=iDirY;
-      }
+//
+//      }break;
+//
+//      case 2:
+//      case 3:
+//      case 4:
+//      case 5:
+//      case 6:
+//        //TODO xBRZ ?
+//        //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
+//        break;
 
-    }break;
-
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-      //TODO xBRZ ?
-      //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
-      break;
   }
 
+  PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
+
+  /**
+   * this grants updating the squares used to show the items.
+   * this also provides a cleanup after player moves or gets things from the floor.
+   */
+  for(int i=0;i<iTot;i++){DBGSV2(v2SqrPosIni);
+    if(GetCurrentArea()->IsValidPos(v2SqrPosIni)){
+      GetCurrentArea()->GetSquare(v2SqrPosIni)->SendStrongNewDrawRequest();
+    }
+    v2SqrPosIni.X+=iDirX;
+    v2SqrPosIni.Y+=iDirY;
+  }
 }
 
 truth game::Save(cfestring& SaveName)

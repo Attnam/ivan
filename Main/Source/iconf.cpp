@@ -464,9 +464,9 @@ void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 
 void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 {
-  if(What==1 && GetStartingDungeonGfxScale()<3){ //above head asked
-    What=2; //upgrade to 1st corner
-  }
+//  if(What==1 && GetStartingDungeonGfxScale()<3){ //above head asked
+//    What=2; //upgrade to 1st corner
+//  }
 
   O->Value = What;
 }
