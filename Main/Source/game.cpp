@@ -194,11 +194,14 @@ int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
+int iRegionItemsUnder = -1;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
+
+int iItemsUnderStretch = 2;
 
 int iZoomFactor=6;
 v2 ZoomPos = {0,0};
@@ -572,6 +575,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     iRegionListItem = graphics::AddStretchRegion(bldListItemTMP,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
+  }
+
+  if(iRegionItemsUnder==-1){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Stretch=iItemsUnderStretch;
+    iRegionItemsUnder = graphics::AddStretchRegion(B,"ItemsUnderPosShowAboveHead");
   }
 
   UpdateSRegionsXBRZ();
@@ -1105,7 +1114,7 @@ truth game::OnScreen(v2 Pos)
 
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
-  bool bXBRZandFelist=ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
+  bool bXBRZandFelist = ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
 
   if(LOSUpdateRequested && Player->IsEnabled())
   {
@@ -1195,7 +1204,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  if(!bXBRZandFelist)
+  if(!bXBRZandFelist){
     for(size_t c = 0; c < SpecialCursorPos.size(); ++c){
       if(OnScreen(SpecialCursorPos[c]))
       {
@@ -1204,6 +1213,247 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
       }
     }
+  }
+
+  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+
+}
+
+int game::IntemUnderCode(int iCycleValue){
+  switch(iCycleValue){
+    case 0:return 0; //disabled
+
+    case 1:return 1; //above head
+
+    // corners and Horizontal/Vertical
+    case 2:return  10;
+    case 3:return  11;
+
+    case 4:return 110;
+    case 5:return 111;
+
+    case 6:return 210;
+    case 7:return 211;
+
+    case 8:return 310;
+    case 9:return 311;
+
+    default:ABORT("invalid IntemUnder cycle value %d",iCycleValue);
+  }
+
+  return -1; //dummy (never happens, just to cpp do not bother..)
+}
+int game::ItemUnderCorner(int val){
+  return val/100;
+}
+int game::ItemUnderZoom(int val){
+  return (val%100)/10;
+}
+bool game::ItemUnderHV(int val){
+  return val%2==0; //odd is vertical
+}
+
+bitmap* bmpTgt = NULL;
+bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+  int iTot = su->GetItems();
+  if(iMax>-1)iTot = Min(iMax,iTot);
+  if(iTot==0)return NULL;
+
+  v2 v2Pos = v2PosIni;
+
+  blitdata B = DEFAULT_BLITDATA;
+  B.CustomData = ALLOW_ANIMATE;
+  B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
+  B.Border = { TILE_SIZE, TILE_SIZE };
+  B.Luminance = ivanconfig::GetContrastLuminance();
+
+  if(bUseDB){
+    bmpTgt = DOUBLE_BUFFER;
+  }else{
+    v2 v2Size = v2(TILE_SIZE*iTot,TILE_SIZE);
+    if(bmpTgt==NULL || bmpTgt->GetSize()!=v2Size){
+      // DO NOT DELETE the old bitmap here. See graphics::SetSRegionSrcBitmapOverride(); //NO NO NO: if(bmpTgt!=NULL)delete bmpTgt;
+      bmpTgt = new bitmap(v2Size);
+    }
+  }
+
+  B.Bitmap=bmpTgt;
+
+  bool bLight=false;
+  col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
+  if(!bLight){ //overall around if tiny
+    v2 v2BkgIni = v2(0,0);
+    v2 v2Border = bmpTgt->GetSize();
+    if(bUseDB){
+      v2BkgIni = v2PosIni+v2(1,1);
+      if(iDirX<0)v2BkgIni.X-=((iTot-1)*TILE_SIZE);
+      if(iDirY<0)v2BkgIni.Y-=((iTot-1)*TILE_SIZE);
+
+      v2Border = B.Border;
+      if(iDirX!=0)v2Border.X*=iTot;
+      if(iDirY!=0)v2Border.Y*=iTot;
+      v2Border-=v2(2,2);
+    }
+    igraph::BlitBackGround(bmpTgt, v2BkgIni, v2Border);
+    graphics::DrawRectangleOutlineAround(bmpTgt, v2BkgIni, v2Border, clOutline, false);
+  }
+  for(int i=0;i<iTot;i++){ // fully work on one square per time
+    if(bLight){ // each square
+      bmpTgt->Fill(v2Pos, B.Border, DARK_GRAY);
+      graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
+    }
+
+    item* it = su->GetItem(i);
+    B.Dest = v2Pos;
+    it->Draw(B);
+
+    v2Pos.X+=(TILE_SIZE*iDirX);
+    v2Pos.Y+=(TILE_SIZE*iDirY);
+  }
+
+  return bmpTgt;
+}
+
+int iStretchedTileSize = -1;
+int getDungeonStretchedTileSize(){
+  if(iStretchedTileSize==-1)iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
+  return iStretchedTileSize;
+}
+
+/**
+ * For Stretched buffer:
+ * The final screen coordinates are relative not to 0,0 but to the top left dungeon corner,
+ * because the full dungeon stretching happens from that spot,
+ * therefore when working on the stretched buffer, this does not work, ex.:
+ *  CalculateScreenCoordinates(Player->GetPos())
+ */
+v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
+  v2 v2SqrRelativePosFromCam = v2SqrPos - GetCamera();
+  v2 v2StretchedBufferDest=area::getTopLeftCorner();
+  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*getDungeonStretchedTileSize());
+  return v2StretchedBufferDest;
+}
+
+void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
+  bool bOk=true;
+
+  if(bOk && !bAllowed)bOk=false;
+
+  if(bOk && bPositionQuestionMode)bOk=false;
+
+  if(bOk && !Player->IsEnabled())bOk=false;
+
+  if(bOk && IsInWilderness())bOk=false;
+
+  int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+  if(bOk && iCode==0)bOk=false;
+
+  stack* su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
+  if(bOk && su==NULL)bOk=false;
+  if(bOk && su->GetItems()==0)bOk=false; //I think this will never happen... was <2 but showing only one item is quite useful too!
+
+  if(!bOk){ // this is IMPORTANT as disabler
+    graphics::SetSRegionEnabled(iRegionItemsUnder,false);
+    return;
+  }
+
+  /////////////////////// ok ////////////////////////
+  v2 v2AbsLevelSqrPos = Player->GetPos();
+
+  int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
+  if(
+      v2AbsLevelSqrPos.X<=iNearEC
+      ||
+      v2AbsLevelSqrPos.Y<=iNearEC
+      ||
+      v2AbsLevelSqrPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)
+      ||
+      v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
+  ){
+    iCode=1; //force above head
+  }
+
+  if(iCode==1){
+    // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
+    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+
+    int iStretch=iItemsUnderStretch;
+    if(su->GetItems()==1)iStretch++;
+
+    v2 v2StretchedBufferDest = CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2AbsLevelSqrPos);
+    v2StretchedBufferDest.X+=getDungeonStretchedTileSize()/2; //center of player's head
+    v2StretchedBufferDest.X-=(bmp->GetSize().X*iStretch)/2;
+    v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
+    v2StretchedBufferDest.Y-=2; //just to look better
+
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
+
+    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
+    graphics::SetSRegionEnabled(iRegionItemsUnder,true);
+    return;
+  }
+
+  ////////////////////////////// CORNERS WORK DIRECTLY ON DB /////////////////////////////
+
+  graphics::SetSRegionEnabled(iRegionItemsUnder,false); //disable above head region
+
+  int iCorner = ItemUnderCorner(iCode);
+  bool bHorizontal = ItemUnderHV(iCode);
+  int iStretch=ItemUnderZoom(iCode);
+
+  switch(iStretch){
+    case 1: { //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
+      int iDirX=0,iDirY=0;
+      v2 v2SqrPos=Camera;
+      v2 v2PosIni = area::getTopLeftCorner();
+      int iScSX=game::GetScreenXSize()-1;
+      int iScSY=game::GetScreenYSize()-1;
+      switch(iCorner){
+        case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
+          break;
+        case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
+          v2SqrPos.X+=iScSX;
+          v2PosIni.X+=iScSX*TILE_SIZE;
+          break;
+        case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
+          v2SqrPos.Y+=iScSY;
+          v2PosIni.Y+=iScSY*TILE_SIZE;
+          break;
+        case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
+          v2SqrPos.X+=iScSX;
+          v2SqrPos.Y+=iScSY;
+          v2PosIni.X+=iScSX*TILE_SIZE;
+          v2PosIni.Y+=iScSY*TILE_SIZE;
+          break;
+      }
+
+      int iTot = su->GetItems();
+      if(bHorizontal){
+        if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+      }else{
+        if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+      }
+
+      PrepareItemsUnder(true,su,iTot,v2PosIni,iDirX,iDirY);
+
+      for(int i=0;i<iTot;i++){ // this grants updating the squares used to show the items.
+        GetCurrentArea()->GetSquare(v2SqrPos)->SendStrongNewDrawRequest();
+        v2SqrPos.X+=iDirX;
+        v2SqrPos.Y+=iDirY;
+      }
+
+    }break;
+
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      //TODO xBRZ ?
+      //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
+      break;
+  }
 
 }
 

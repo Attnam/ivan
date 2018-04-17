@@ -206,6 +206,12 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
+  static void UpdateShowItemsAtPlayerPos(bool bAllowed);
+  static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
+  static int IntemUnderCode(int iCycleValue);
+  static int ItemUnderCorner(int val);
+  static int ItemUnderZoom(int val);
+  static bool ItemUnderHV(int val);
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
   static truth IsRunning() { return Running; }

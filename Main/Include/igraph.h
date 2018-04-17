@@ -117,6 +117,7 @@ class igraph
   static bitmap* GetSilhouetteCache(int I1, int I2, int I3) { return SilhouetteCache[I1][I2][I3]; }
   static cbitmap* GetBackGround() { return BackGround; }
   static void BlitBackGround(v2, v2);
+  static void BlitBackGround(bitmap* bmpAt, v2 Pos, v2 Border);
   static void CreateBackGround(int);
   static bitmap* GenerateScarBitmap(int, int, int);
   static cbitmap* GetSmileyGraphic() { return Graphic[GR_SMILEY]; }

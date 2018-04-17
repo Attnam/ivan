@@ -44,6 +44,12 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
+                                          "Show items at player square",
+                                          0, 10,
+                                          &ShowItemsAtPlayerSquareDisplayer);
+//                                          &ShowItemsAtPlayerSquareChangeInterface);
+//                                          &ShowItemsAtPlayerSquareChanger);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -195,6 +201,31 @@ void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& E
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
+{
+  int iCode = game::IntemUnderCode(O->Value);
+
+  if(iCode==0){
+    Entry << "disabled";
+  }else
+  if(iCode==1){
+    Entry << "above head";
+  }else{
+    switch(game::ItemUnderCorner(iCode)){
+      case 0:Entry << "UL";break;
+      case 1:Entry << "UR";break;
+      case 2:Entry << "LL";break;
+      case 3:Entry << "LR";break;
+    }
+
+//    Entry << ",";
+//    Entry << "x" << game::ItemUnderZoom(O->Value);
+
+    Entry << ",";
+    Entry << (game::ItemUnderHV(iCode) ? "H" : "V");
+  }
 }
 
 void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
@@ -605,6 +636,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
+  configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
