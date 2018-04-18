@@ -773,6 +773,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   struct fileInfo{
     festring name;
     festring time;
+    festring idOnList;
   };
 
   if(dp)
@@ -800,35 +801,55 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       tm* timee = localtime(&(attr.st_mtime));
       ssTime << std::put_time(timee, "%Y/%m/%d-%H:%M");
       DBG6(ssTime.str(),attr.st_mtime,attr.st_ctime,attr.st_size,fullName.CStr(),attr.st_ino);
-      fi.time=festring()<<ssTime.str().c_str();
+      fi.time=festring()<<ssTime.str().c_str();DBGLN;
 
-      vFiles.push_back(fi);
+      vFiles.push_back(fi);DBGLN;
     }
 
-    static bool bSortByName=false;
+    static int iSortMode=4;DBGLN;
     std::sort( vFiles.begin(), vFiles.end(),
       [ ]( const fileInfo& l, const fileInfo& r )
       {
-        if(bSortByName)
+        switch(iSortMode){
+        case 0: //no sort
+          return false;
+        case 1: //by name
+        case 2: //by name with dungeons ids
           return l.name < r.name;
-        else
+        case 3: //by time with dungeons ids
+        case 4: //by time reversed with dungeons ids
           return l.time < r.time;
+        }
       }
-    );
+    );DBGLN;
 
+    std::vector<festring> vIds;
     for(int i=0;i<vFiles.size();i++)
     {
       DBG2(vFiles[i].name.CStr(),vFiles[i].time.CStr());
       /* Add to List all save files */
       if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
-//        List.AddEntry(festring()<<vFiles[i].name<<", "<<vFiles[i].time, WHITE, 0, NO_IMAGE, false);
-//        List.AddEntry(vFiles[i].name, ListColor);
-//        if(bSortByName){
-          List.AddEntry(festring("")<<vFiles[i].name<<" "<<vFiles[i].time, ListColor);
-//        }else{
-//          List.AddEntry(vFiles[i].time<<" "<<vFiles[i].name, ListColor);
-//        }
+        vFiles[i].idOnList.Empty();
+        switch(iSortMode){
+        case 0: //no sort
+        case 1: //by name
+        case 2: //by name with dungeons ids
+          vFiles[i].idOnList<<vFiles[i].name;
+          break;
+        case 3: //by time with dungeons ids
+        case 4: //by time reversed with dungeons ids
+          vFiles[i].idOnList<<vFiles[i].time<<" "<<vFiles[i].name;
+          break;
+        }
+
+        vIds.push_back(vFiles[i].idOnList);DBGSC(vFiles[i].idOnList.CStr());
       }
+    }
+
+    if(iSortMode==4){ //reversed time
+      for(int i=vIds.size()-1;i>=0;i--)List.AddEntry(vIds[i],ListColor);
+    }else{
+      for(int i=0;i<vIds.size();i++)List.AddEntry(vIds[i],ListColor);
     }
 
     closedir(dp);
@@ -845,7 +866,13 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(Check & FELIST_ERROR_BIT)
         return "";
 
-      return List.GetEntry(Check);
+      festring chosen = List.GetEntry(Check);
+      for(int i=0;i<vFiles.size();i++){
+        if(chosen==vFiles[i].idOnList){
+          return vFiles[i].name;
+        }
+      }
+      ABORT("failed to match chosen file with id %s %s",chosen.CStr());
     }
 
   }
