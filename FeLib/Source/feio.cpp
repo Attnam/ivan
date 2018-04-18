@@ -23,6 +23,10 @@
 #include <cstdio>
 #include <sys/types.h>
 #include <algorithm>
+#include <sys/stat.h>
+#include <time.h>
+#include <stdio.h>
+#include <iomanip>
 #endif
 
 #ifdef __DJGPP__
@@ -37,6 +41,8 @@
 #include "festring.h"
 #include "bitmap.h"
 #include "error.h"
+
+#include "dbgmsgproj.h"
 
 #define PENT_WIDTH 70
 
@@ -764,21 +770,64 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
   dp = opendir(DirectoryName.CStr());
 
+  struct fileInfo{
+    festring name;
+    festring time;
+  };
+
   if(dp)
   {
-    std::vector<festring> vFiles;
-    /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-    while((ep = readdir(dp)))vFiles.push_back(festring(ep->d_name));
+    std::vector<fileInfo> vFiles;
+    int iTmSz=100;
+//    char* pcTimeTMP=NULL;
+    char* pcName=NULL;
+    struct stat attr;
+    festring fullName;
+    while((ep = readdir(dp))){
+      pcName=ep->d_name;
+      if(strcmp(pcName,".")==0)continue;
+      if(strcmp(pcName,"..")==0)continue;
 
+      fileInfo fi;
+
+      fi.name = festring(pcName);
+
+      fullName.Empty();
+      fullName<<DirectoryName<<"/"<<fi.name;
+      if(stat(fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",fullName.CStr(),std::strerror(errno));
+
+      std::stringstream ssTime;
+      tm* timee = localtime(&(attr.st_mtime));
+      ssTime << std::put_time(timee, "%Y/%m/%d-%H:%M");
+      DBG6(ssTime.str(),attr.st_mtime,attr.st_ctime,attr.st_size,fullName.CStr(),attr.st_ino);
+      fi.time=festring()<<ssTime.str().c_str();
+
+      vFiles.push_back(fi);
+    }
+
+    static bool bSortByName=false;
     std::sort( vFiles.begin(), vFiles.end(),
-      [ ]( const festring& lhs, const festring& rhs ){ return lhs < rhs; } );
+      [ ]( const fileInfo& l, const fileInfo& r )
+      {
+        if(bSortByName)
+          return l.name < r.name;
+        else
+          return l.time < r.time;
+      }
+    );
 
     for(int i=0;i<vFiles.size();i++)
     {
+      DBG2(vFiles[i].name.CStr(),vFiles[i].time.CStr());
       /* Add to List all save files */
-      if(vFiles[i].Find(".sav") != vFiles[i].NPos){
-
-        List.AddEntry(vFiles[i], ListColor);
+      if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
+//        List.AddEntry(festring()<<vFiles[i].name<<", "<<vFiles[i].time, WHITE, 0, NO_IMAGE, false);
+//        List.AddEntry(vFiles[i].name, ListColor);
+//        if(bSortByName){
+          List.AddEntry(festring("")<<vFiles[i].name<<" "<<vFiles[i].time, ListColor);
+//        }else{
+//          List.AddEntry(vFiles[i].time<<" "<<vFiles[i].name, ListColor);
+//        }
       }
     }
 
