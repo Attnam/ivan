@@ -761,20 +761,25 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 #ifdef UNIX
   DIR* dp;
   struct dirent* ep;
-  festring Buffer;
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
   dp = opendir(DirectoryName.CStr());
 
   if(dp)
   {
-    while((ep = readdir(dp)))
+    std::vector<festring> vFiles;
+    /* Buffer = ep->d_name; Doesn't work because of a festring bug */
+    while((ep = readdir(dp)))vFiles.push_back(festring(ep->d_name));
+
+    std::sort( vFiles.begin(), vFiles.end(),
+      [ ]( const festring& lhs, const festring& rhs ){ return lhs < rhs; } );
+
+    for(int i=0;i<vFiles.size();i++)
     {
-      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-      Buffer.Empty();
-      Buffer << ep->d_name;
       /* Add to List all save files */
-      if(Buffer.Find(".sav") != Buffer.NPos)
-        List.AddEntry(Buffer, ListColor);
+      if(vFiles[i].Find(".sav") != vFiles[i].NPos){
+
+        List.AddEntry(vFiles[i], ListColor);
+      }
     }
 
     closedir(dp);
