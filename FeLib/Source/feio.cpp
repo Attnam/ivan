@@ -27,6 +27,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <iomanip>
+#include <sstream>
 #endif
 
 #ifdef __DJGPP__
