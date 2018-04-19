@@ -377,8 +377,8 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
 
 //  lsquare* plsq = Player->GetLSquareUnder();
 //  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGV2(v2MaxSqrUpperLeft);
-  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGV2(v2MaxSqrLowerRight);
+  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
+  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
 
   level* plv = Player->GetLevel();
   v2 v2ChkSqrPos;
@@ -418,11 +418,11 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
       vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
         (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
         (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-      )); DBGV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+      )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
     }
   }
 
-  DBGV2(v2TopLeft);DBGV2(v2BottomRight);
+  DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
 
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
@@ -470,7 +470,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   /////////////////// ok ///////////////////////
 
-  v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGV2(v2ScreenPos);
+  v2 v2ScreenPos = CalculateScreenCoordinates(v2SqrPos);//DBGSV2(v2ScreenPos);
 
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,true);
 
