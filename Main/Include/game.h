@@ -221,6 +221,7 @@ class game
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
   static character* _BugWorkaroundDupPlayer(character* CharAsked);
+  static void _BugWorkaround_GatherAllItemInLevel();
   static void _BugWorkaround_CheckAllItemsForDups();
   static ulong _BugWorkaround_getCorrectKey(item* itChk);
   static void _BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);

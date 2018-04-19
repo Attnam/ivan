@@ -7896,9 +7896,17 @@ truth character::PreProcessForBone()
 
 void character::_BugWorkaround_PlayerDup(ulong key){
   ID=key;
-  Stack = new stack(0, this, HIDDEN); //NULL;//
-  //TODO empty bodyparts/equipments too
-} //keep it simple!
+
+  // brute force empty the inv list leaving objects untracked in memory. TODO really untracked?
+  Stack = new stack(0, this, HIDDEN); //like constructor init
+
+  for(int i=0;i<GetEquipments();i++){ //but w/o equipments and inventory
+    if(CanUseEquipment(i)){
+      SetEquipment(i,NULL); //this leaves untracked objects in memory. TODO really untracked?
+      DBG2("CharFix:EquipmentRemoved",i);
+    }
+  }
+}
 
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)
 {
