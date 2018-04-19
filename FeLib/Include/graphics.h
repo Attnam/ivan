@@ -13,6 +13,8 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
+#include <vector>
+
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
@@ -33,33 +35,64 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+
 #ifdef USE_SDL
   static void SetScale(int);
   static void SwitchMode();
 #endif
+
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
+
   static void SetMode(cchar*, cchar*, v2, int, truth);
+  static void Stretch(bool, bitmap*, blitdata&, bool);
+  static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
+
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(cfestring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
-  static void SetSwitchModeHandler(void (*What)())
-  { SwitchModeHandler = What; }
+  static void SetSwitchModeHandler(void (*What)()){ SwitchModeHandler = What; }
+
+  static int AddStretchRegion(blitdata B,const char* strId);
+  static int GetTotSRegions();
+  static void SetSpecialListItemAltPos(bool b){bSpecialListItemAltPos=b;}
+  static void SetAllowStretchedBlit(){bAllowStretchedRegionsBlit=true;} //as the dungeon shows most of the time,
+  static void SetDenyStretchedBlit(){bAllowStretchedRegionsBlit=false;} //it should be denied only during a few moments.
+  static bool isStretchedRegionsAllowed();
+  static void PrepareBeforeDrawingFelist();
+  static void DrawAtDoubleBufferBeforeFelistPage();
+  static bitmap* PrepareBuffer();
+
+  //TODO utility class for sregion?
+  static bool IsSRegionEnabled(int iIndex);
+  static void SetSRegionEnabled(int iIndex, bool b);
+  static void SetSRegionUseXBRZ(int iIndex, bool b);
+  static void SetSRegionDrawAfterFelist(int iIndex, bool b);
+  static void SetSRegionDrawBeforeFelistPage(int iIndex, bool, bool);
+  static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
+  static void SetSRegionListItem(int iIndex);
+  static int  SetSRegionBlitdata(int iIndex, blitdata B);
+  static void SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2);
+
 #ifdef USE_SDL
-#if SDL_MAJOR_VERSION == 1
-  static SDL_Surface* Screen;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  static SDL_Surface* TempSurface;
+  #if SDL_MAJOR_VERSION == 1
+    static SDL_Surface* Screen;
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+      static SDL_Surface* TempSurface;
+    #endif
+  #else
+    public:
+      static SDL_Window* GetWindow(){return Window;};
+    private:
+      static SDL_Window* Window;
+      static SDL_Renderer *Renderer;
+      static SDL_Texture *Texture;
+  #endif
 #endif
-#else
-  static SDL_Window* Window;
-  static SDL_Renderer *Renderer;
-  static SDL_Texture *Texture;
-#endif
-#endif
+
  private:
   static void (*SwitchModeHandler)();
 #ifdef __DJGPP__
@@ -115,6 +148,9 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
+  static bitmap* StretchedDB;
+  static truth bAllowStretchedRegionsBlit;
+  static truth bSpecialListItemAltPos;
   static v2 Res;
   static int Scale;
   static int ColorDepth;

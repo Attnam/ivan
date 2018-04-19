@@ -24,6 +24,9 @@
 class globalerrorhandler
 {
  public:
+#ifndef WIN32
+  static void DumpStackTraceToStdErr(int Signal = -1);
+#endif
   static void Install();
   static void DeInstall();
   [[noreturn]] static void LIKE_PRINTF(1, 2) Abort(cchar*, ...);

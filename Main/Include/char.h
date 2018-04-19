@@ -903,6 +903,7 @@ class character : public entity, public id
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
   void ShowAdventureInfo() const;
+  void ShowAdventureInfoAlt() const;
   virtual truth BoundToUse(citem*, int) const { return false; }
   virtual truth IsBananaGrower() const { return false; }
   virtual int GetRandomApplyBodyPart() const;

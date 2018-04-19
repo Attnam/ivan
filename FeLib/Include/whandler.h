@@ -29,13 +29,16 @@
 #define READ_KEY globalwindowhandler::ReadKey
 #define GET_TICK globalwindowhandler::GetTick
 #define WAIT_FOR_KEY_DOWN globalwindowhandler::WaitForKeyDown
+#define WAIT_FOR_KEY_UP globalwindowhandler::WaitForKeyUp
 
 class globalwindowhandler
 {
  public:
   static int GetKey(truth = true);
   static int ReadKey();
-  static truth WaitForKeyDown();
+  static truth WaitForKeyEvent(uint Key);
+  static truth WaitForKeyDown(){return WaitForKeyEvent(SDL_KEYDOWN);}
+  static truth WaitForKeyUp  (){return WaitForKeyEvent(SDL_KEYUP  );}
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());
   static ulong GetTick() { return Tick; }
@@ -46,6 +49,7 @@ class globalwindowhandler
   static void SetScrshotDirectory(cfestring& DirectoryName)
   { ScrshotDirectoryName = DirectoryName; }
   static festring ScrshotNameHandler(); // Number successive screenshots based on existing filenames
+  static void SetAddFrameSkip(int i);
 #ifdef USE_SDL
   static void Init();
   static void SetQuitMessageHandler(truth (*What)())

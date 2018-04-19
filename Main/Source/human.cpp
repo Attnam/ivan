@@ -1910,6 +1910,7 @@ v2 humanoid::GetEquipmentPanelPos(int I) const // convert to array
   return v2(24, 12);
 }
 
+v2 humanoid::SilhouetteWhere={0,0}; //zeroed because wont init properly here.. TODO explain why.
 void humanoid::DrawSilhouette(truth AnimationDraw) const
 {
   int c;
@@ -1921,14 +1922,14 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
                   TRANSPARENT_COLOR,
                   ALLOW_ANIMATE };
 
-  v2 Where(RES.X - SILHOUETTE_SIZE.X - 39, 53);
   cint Equipments = GetEquipments();
 
+  humanoid::SilhouetteWhere={RES.X - SILHOUETTE_SIZE.X - 39, 53};
   if(CanUseEquipment())
     for(c = 0; c < Equipments; ++c)
       if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
       {
-        v2 Pos = Where + GetEquipmentPanelPos(c);
+        v2 Pos = SilhouetteWhere + GetEquipmentPanelPos(c);
 
         if(!AnimationDraw)
           DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
@@ -1952,7 +1953,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
   {
     blitdata B2 = { DOUBLE_BUFFER,
                     { 0, 0 },
-                    { Where.X + 8, Where.Y },
+                    { SilhouetteWhere.X + 8, SilhouetteWhere.Y },
                     { SILHOUETTE_SIZE.X, SILHOUETTE_SIZE.Y },
                     { 0 },
                     0,

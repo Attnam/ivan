@@ -1685,6 +1685,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
+    game::SRegionAroundDisable();
     game::PlayDefeatMusic();
     ShowAdventureInfo();
 
@@ -2392,6 +2393,8 @@ void character::GetPlayerCommand()
 
   while(!HasActed)
   {
+    graphics::SetAllowStretchedBlit(); //overall great/single location to re-enable stretched blit!
+
     game::DrawEverything();
 
     if(!StateIsActivated(FEARLESS) && game::GetDangerFound())
@@ -2442,8 +2445,13 @@ void character::GetPlayerCommand()
         else
           if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
             ADD_MESSAGE("Activate wizardmode to use this function.");
-          else
+          else{
+            game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
+            game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
             HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+            game::RegionListItemEnable(false);
+            game::RegionSilhouetteEnable(false);
+          }
 
         ValidKeyPressed = true;
         break;
@@ -4658,11 +4666,11 @@ void character::DrawPanel(truth AnimationDraw) const
     return;
   }
 
-  igraph::BlitBackGround(v2(19 + (game::GetScreenXSize() << 4), 0),
-                         v2(RES.X - 19 - (game::GetScreenXSize() << 4), RES.Y));
-  igraph::BlitBackGround(v2(16, 45 + (game::GetScreenYSize() << 4)),
-                         v2(game::GetScreenXSize() << 4, 9));
-  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
+  igraph::BlitBackGround(v2(19 + (game::GetMaxScreenXSize() << 4), 0),
+                         v2(RES.X - 19 - (game::GetMaxScreenXSize() << 4), RES.Y));
+  igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
+                         v2(game::GetMaxScreenXSize() << 4, 9));
+  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
   int PanelPosY = DrawStats(false);
@@ -7370,7 +7378,16 @@ festring character::GetPanelName() const
   festring Name;
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
-  return Name;
+
+  festring PanelName;
+  if(!game::IsInWilderness()){
+    PanelName << Name;
+    if(ivanconfig::IsShowFullDungeonName()){
+      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true) << ')';
+    }
+  }
+
+  return PanelName;
 }
 
 long character::GetMoveAPRequirement(int Difficulty) const
@@ -7659,26 +7676,70 @@ void character::PrintEndGasImmunityMessage() const
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
 
+void inventoryInfo(const character* pC){
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+
+  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED);
+
+  for(stackiterator i = pC->GetStack()->GetBottom(); i.HasItem(); ++i)
+    i->DrawContents(pC);
+
+  doforequipmentswithparam<ccharacter*>()(pC, &item::DrawContents, pC);
+
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+}
+
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems()
-     && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+  graphics::SetAllowStretchedBlit();
+
+  if(ivanconfig::IsAltAdentureInfo())
   {
-    GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
+    ShowAdventureInfoAlt();
+  }
+  else
+  {
+    if(GetStack()->GetItems()
+       && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+    {
+      inventoryInfo(this);
+    }
 
-    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      i->DrawContents(this);
+    if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
+      msgsystem::DrawMessageHistory();
 
-    doforequipmentswithparam<ccharacter*>()(this, &item::DrawContents, this);
+    if(!game::MassacreListsEmpty()
+       && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+    {
+      game::DisplayMassacreLists();
+    }
   }
 
-  if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
-    msgsystem::DrawMessageHistory();
-
-  if(!game::MassacreListsEmpty()
-     && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
-    game::DisplayMassacreLists();
+  graphics::SetDenyStretchedBlit(); //back to menu
 }
+
+void character::ShowAdventureInfoAlt() const
+{
+  while(true) {
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
+         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
+
+    if(Answer == 'i' || Answer == 'I'){
+      inventoryInfo(this);
+    }else if(Answer == 'm' || Answer == 'M'){
+     msgsystem::DrawMessageHistory();
+    }else if(Answer == 'k' || Answer == 'K'){
+     game::DisplayMassacreLists();
+    }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
+     return;
+    }
+  }
+}
+
 
 truth character::EditAllAttributes(int Amount)
 {

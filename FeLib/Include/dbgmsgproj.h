@@ -89,12 +89,12 @@
   #define DBGSC(C)
 
   // project specific
-  #define DBGV2(v2)
-  #define DBGBLD(rb)
   #define DBGCHAR(ch,info)
-
   #define DBGSRI(info)
   #define DBGSR
+  #define DBGBLD(rb)
+  #define DBGAV2(v2)
+  #define DBGSV2(v2)
 
 #endif //DBGMSG
 

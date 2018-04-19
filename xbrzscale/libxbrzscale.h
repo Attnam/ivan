@@ -16,7 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef XBRZLIB_RELATIVEPATHSDL
+#include <SDL2/SDL_stdinc.h>
+#else
 #include "SDL_stdinc.h"
+#endif
 
 struct SDL_Surface;
 
@@ -29,10 +33,19 @@ class libxbrzscale
   static SDL_Surface* scale(SDL_Surface* src_img,int scale);
   static SDL_Surface* scale(SDL_Surface* dst_imgCache,SDL_Surface* src_img,int scale);
   static void setEnableOutput(bool b){bEnableOutput=b;};
-  static void setFreeInputSurfaceAfterScale(bool b){bFreeInputSurfaceAfterScale=b;};
-  static uint32_t* surfaceToUint32(SDL_Surface* img);
+  static void setDebugMsg(bool b){bDbgMsg=b;};
+  static void setFreeSurfaceAfterScale(bool bInputSurface,bool bOutputSurface){
+    bFreeInputSurfaceAfterScale=bInputSurface;
+    bFreeOutputSurfaceAfterScale=bOutputSurface;
+  };
+  static void setUseCache(bool b){bUseCache=b;};
+  static uint32_t* surfaceToUint32(bool bIn, SDL_Surface* img);
   static void uint32toSurface(uint32_t* dest, SDL_Surface* dst_img);
+  static bool isDbgMsg(){return bDbgMsg;}
  private:
   static bool bEnableOutput;
+  static bool bDbgMsg;
+  static bool bUseCache;
   static bool bFreeInputSurfaceAfterScale;
+  static bool bFreeOutputSurfaceAfterScale;
 };

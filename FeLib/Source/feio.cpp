@@ -36,6 +36,7 @@
 #include "rawbit.h"
 #include "festring.h"
 #include "bitmap.h"
+#include "error.h"
 
 #define PENT_WIDTH 70
 
@@ -110,6 +111,12 @@ int CountChars(char cSF, cfestring& sSH)
   return iReturnCounter;
 }
 
+truth bMenuIsActive=false;
+
+truth iosystem::IsOnMenu(){
+  return bMenuIsActive;
+}
+
 /* Draws a menu on bitmap BackGround to position Pos. festring Topic
    is the text that is shown before the choices '\r' is a line-ending
    character. Topic must end with a '\r'. sMS is a list of choices
@@ -132,6 +139,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   if(CountChars('\r', sMS) < 1)
     return (-1);
 
+  bMenuIsActive=true;
   truth bReady = false;
   int iSelected = 0;
   bitmap Backup(DOUBLE_BUFFER);
@@ -140,9 +148,18 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   Buffer.ActivateFastFlag();
   int c = 0;
 
-  if(BackGround)
-    BackGround->FastBlit(&Buffer);
-  else
+  if(BackGround){
+    //vanilla was 800x600 as the background menu image. TODO provide calculations for lower than 800x600 one day?
+    if(RES.X < BackGround->GetSize().X)ABORT("invalid window width %d",RES.X);
+    if(RES.Y < BackGround->GetSize().Y)ABORT("invalid window height %d",RES.Y);
+
+    if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+      Buffer.ClearToColor(0);
+      BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+    }else{
+      BackGround->FastBlit(&Buffer);
+    }
+  }else
     Buffer.ClearToColor(0);
 
   festring sCopyOfMS;
@@ -185,7 +202,7 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
         FONT->Printf(&Buffer, v2(XPos, YPos), Color, "%d. %s",
                      i + 1, VeryUnGuruPrintf.CStr());
 
-        }
+    }
 
     sCopyOfMS = SmallText1;
 
@@ -260,11 +277,14 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
       break;
 
      default:
-      if(k > 0x30 && k < 0x31 + CountChars('\r', sMS))
+      if(k > 0x30 && k < 0x31 + CountChars('\r', sMS)){
+        bMenuIsActive=false;
         return k - 0x31;
+      }
     }
   }
 
+  bMenuIsActive=false;
   return iSelected;
 }
 
