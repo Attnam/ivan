@@ -1563,12 +1563,21 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   character* CharPlayerOld = NULL;
   if(CharPlayer!=CharAsked){
     CharPlayerOld=CharPlayer;
-    DBG3("CharFix:CharPlayerOld",CharPlayerOld,CharPlayerOld->GetID());
+    DBGCHAR(CharPlayerOld,"CharFix:CharPlayerOld");
+//    DBG3("CharFix:CharPlayerOld",CharPlayerOld,CharPlayerOld->GetID());
 //    delete CharAsked;
+    DBGCHAR(CharAsked,"CharFix:CharAsked");
     CharAsked->_BugWorkaround_PlayerDup(0);
+    for(int i=0;i<CharAsked->GetEquipments();i++){
+      if(CharAsked->CanUseEquipment(i)){
+        CharAsked->SetEquipment(i,NULL);
+        DBG2("CharFix:EquipmentRemoved",i);
+      }
+    }
     CharAsked->RemoveFlags(C_PLAYER);
     CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM));
     CharAsked->SetAssignedName("_DupPlayerBug_");
+    DBGCHAR(CharAsked,"CharFix:CharAsked");
 //    CharAsked->Remove();
     CharWins=CharPlayerOld;
   }

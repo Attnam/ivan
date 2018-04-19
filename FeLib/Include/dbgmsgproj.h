@@ -10,7 +10,7 @@
    ************************************************************/
   #ifndef DBGMSG_OBJ //do NOT define this in your project cpp files!
 
-    #define DBGCHAR(ch,info) DBG7(info, PLAYER, ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetFlags()), ch->GetStack())
+    #define DBGCHAR(ch,info) DBG7(PLAYER, info, ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetFlags()), DBGI(ch->GetStack()->GetItems()) )
 
     class dbgmsgprj{
       public:
