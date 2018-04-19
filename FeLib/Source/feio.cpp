@@ -771,9 +771,10 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   dp = opendir(DirectoryName.CStr());
 
   struct fileInfo{
-    festring name="";
-    festring time="";
-    festring idOnList="";
+    festring name=festring(); //TODO this init helps with festring? it is buggy?
+    festring fullName=festring();
+    festring time=festring();
+    festring idOnList=festring();
   };
 
   if(dp)
@@ -783,7 +784,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 //    char* pcTimeTMP=NULL;
     char* pcName=NULL;
     struct stat attr;
-    festring fullName;
     while((ep = readdir(dp))){
       pcName=ep->d_name;
       if(strcmp(pcName,".")==0)continue;
@@ -791,19 +791,17 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
       fileInfo fi;
 
-      fi.name = festring(pcName);
+      fi.name<<pcName; //TODO this assigning helps with festring instead of '=', it is buggy?
 
-      fullName.Empty();
-      fullName<<DirectoryName<<"/"<<fi.name;
-      if(stat(fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",fullName.CStr(),std::strerror(errno));
+      fi.fullName<<DirectoryName<<"/"<<fi.name;
+      if(stat(fi.fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",fi.fullName.CStr(),std::strerror(errno));
 
       std::stringstream ssTime;
-      tm* timee = localtime(&(attr.st_mtime));
-      ssTime << std::put_time(timee, "%Y/%m/%d-%H:%M");
-      DBG6(ssTime.str(),attr.st_mtime,attr.st_ctime,attr.st_size,fullName.CStr(),attr.st_ino);
-      fi.time=festring()<<ssTime.str().c_str();DBGLN;
+      ssTime << std::put_time(localtime(&(attr.st_mtime)), "%Y/%m/%d-%H:%M");
+      DBG6(ssTime.str(),attr.st_mtime,attr.st_ctime,attr.st_size,fi.fullName.CStr(),attr.st_ino);
+      fi.time<<ssTime.str().c_str();
 
-      vFiles.push_back(fi);DBGLN;
+      vFiles.push_back(fi);
     }
     closedir(dp);
 
@@ -878,7 +876,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(Check & FELIST_ERROR_BIT)
         return "";
 
-      festring chosen = List.GetEntry(Check);
+      festring chosen;chosen<<List.GetEntry(Check);
       for(int i=0;i<vFiles.size();i++){
         if(chosen==vFiles[i].idOnList){
           return vFiles[i].name;
