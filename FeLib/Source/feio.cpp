@@ -771,9 +771,9 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   dp = opendir(DirectoryName.CStr());
 
   struct fileInfo{
-    festring name;
-    festring time;
-    festring idOnList;
+    festring name="";
+    festring time="";
+    festring idOnList="";
   };
 
   if(dp)
@@ -805,54 +805,66 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
       vFiles.push_back(fi);DBGLN;
     }
+    closedir(dp);
 
-    static int iSortMode=4;DBGLN;
+    // sort the vector BY NAME ONLY (to get the dungeon ids easily)
     std::sort( vFiles.begin(), vFiles.end(),
-      [ ]( const fileInfo& l, const fileInfo& r )
-      {
-        switch(iSortMode){
-        case 0: //no sort
-          return false;
-        case 1: //by name
-        case 2: //by name with dungeons ids
-          return l.name < r.name;
-        case 3: //by time with dungeons ids
-        case 4: //by time reversed with dungeons ids
-          return l.time < r.time;
-        }
-      }
+      [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
     );DBGLN;
 
+    static int iSortMode=4;DBGLN;
     std::vector<festring> vIds;
+    festring dungeonIds("");
     for(int i=0;i<vFiles.size();i++)
     {
-      DBG2(vFiles[i].name.CStr(),vFiles[i].time.CStr());
-      /* Add to List all save files */
+//      if(vFiles[i].name.IsEmpty())ABORT("invalid empty save file (or part)");
+
+      DBGSC(vFiles[i].name.CStr());
+
+      if(vFiles[i].name.Find(".wm") != vFiles[i].name.NPos){
+        //ignored
+      }else
       if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
-        vFiles[i].idOnList.Empty();
+        festring id;
         switch(iSortMode){
         case 0: //no sort
         case 1: //by name
         case 2: //by name with dungeons ids
-          vFiles[i].idOnList<<vFiles[i].name;
+          id<<vFiles[i].name;
           break;
         case 3: //by time with dungeons ids
         case 4: //by time reversed with dungeons ids
-          vFiles[i].idOnList<<vFiles[i].time<<" "<<vFiles[i].name;
+          id<<vFiles[i].time<<" "<<vFiles[i].name;
           break;
         }
 
-        vIds.push_back(vFiles[i].idOnList);DBGSC(vFiles[i].idOnList.CStr());
+        if(iSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
+
+        vFiles[i].idOnList<<id;
+        vIds.push_back(id);DBGSC(id.CStr());
+
+        dungeonIds.Empty();
+      }else{ //dungeon IDs
+        std::string s=vFiles[i].name.CStr();
+        s=s.substr(s.find(".")+1);
+        if(!dungeonIds.IsEmpty())dungeonIds<<",";
+        dungeonIds<<s.c_str();
+        DBG3(vFiles[i].name.CStr(),s,dungeonIds.CStr());
       }
     }
 
-    if(iSortMode==4){ //reversed time
-      for(int i=vIds.size()-1;i>=0;i--)List.AddEntry(vIds[i],ListColor);
-    }else{
-      for(int i=0;i<vIds.size();i++)List.AddEntry(vIds[i],ListColor);
-    }
+    // this will sort the ids alphabetically even if by time (so will sort the time as a string)
+    std::sort( vIds.begin(), vIds.end(),
+      [ ]( const festring& l, const festring& r ){ return l < r; }
+    );
 
-    closedir(dp);
+    if(iSortMode==4){ //reversed time
+      for(int i=vIds.size()-1;i>=0;i--)
+        List.AddEntry(vIds[i],ListColor);
+    }else{
+      for(int i=0;i<vIds.size();i++)
+        List.AddEntry(vIds[i],ListColor);
+    }
 
     if(List.IsEmpty())
     {
@@ -872,7 +884,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
           return vFiles[i].name;
         }
       }
-      ABORT("failed to match chosen file with id %s %s",chosen.CStr());
+      ABORT("failed to match chosen file with id %s",chosen.CStr());
     }
 
   }
