@@ -25,6 +25,7 @@ class iosystem
 {
  public:
   static festring ContinueMenu(col16, col16, cfestring&);
+  static void SetSaveGameSortMode(int i);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,
                             truth, truth, stringkeyhandler = 0);

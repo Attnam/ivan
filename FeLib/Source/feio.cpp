@@ -722,9 +722,10 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
+static int iSaveGameSortMode=0;
+void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
 /* DirectoryName is the directory where the savefiles are located. Returns
    the selected file or "" if an error occures or if no files are found. */
-
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
                                 cfestring& DirectoryName)
 {
@@ -810,7 +811,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
     );DBGLN;
 
-    static int iSortMode=4;DBGLN;
     std::vector<festring> vIds;
     festring dungeonIds("");
     for(int i=0;i<vFiles.size();i++)
@@ -824,7 +824,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       }else
       if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
         festring id;
-        switch(iSortMode){
+        switch(iSaveGameSortMode){
         case 0: //no sort
         case 1: //by name
         case 2: //by name with dungeons ids
@@ -836,7 +836,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
           break;
         }
 
-        if(iSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
+        if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
 
         vFiles[i].idOnList<<id;
         vIds.push_back(id);DBGSC(id.CStr());
@@ -856,7 +856,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       [ ]( const festring& l, const festring& r ){ return l < r; }
     );
 
-    if(iSortMode==4){ //reversed time
+    if(iSaveGameSortMode==4){ //reversed time
       for(int i=vIds.size()-1;i>=0;i--)
         List.AddEntry(vIds[i],ListColor);
     }else{

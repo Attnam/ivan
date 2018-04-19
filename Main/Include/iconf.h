@@ -101,10 +101,12 @@ class ivanconfig
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
+  static void SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
+  static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void FullScreenModeChanger(truthoption*, truth);
   static void XBRZScaleChanger(truthoption*, truth);
 #endif
@@ -132,6 +134,8 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+
+  static cycleoption  SaveGameSortMode;
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;

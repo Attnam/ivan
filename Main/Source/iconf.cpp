@@ -104,6 +104,12 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
+                                          "sort savegame files and show dungeon IDs progress",
+                                          0, 5,
+                                          &SaveGameSortModeDisplayer,
+                                          &configsystem::NormalCycleChangeInterface,
+                                          &SaveGameSortModeChanger);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           "Silhouette scale factor (1 to disable)",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
@@ -489,6 +495,17 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "no sort";break;
+  case 1: Entry << "alpha";break;
+  case 2: Entry << "alpha+ids";break;
+  case 3: Entry << "DtTm+ids";break;
+  case 4: Entry << "revDtTm+ids";break;
+  }
+}
+
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
@@ -497,6 +514,13 @@ void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
+}
+
+void ivanconfig::SaveGameSortModeChanger(cycleoption* O, long What)
+{
+  if(O!=NULL)O->Value = What;
+
+  iosystem::SetSaveGameSortMode(What);
 }
 
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
@@ -623,6 +647,7 @@ void ivanconfig::Initialize()
 
   fsCategory="System and user interface/input";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
 
@@ -646,6 +671,7 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
-  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
+  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
+  SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
 }
