@@ -1602,7 +1602,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   character* CharWins = CharAsked;
   character* CharPlayerOld = NULL;
   bool bLevelItemsCollected=false;
-  if(CharPlayer!=CharAsked){
+  if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
     _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated player found. Restore the old player instance (experimental)?");
 
     CharPlayerOld=CharPlayer;DBGLN;
