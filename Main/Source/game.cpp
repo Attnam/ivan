@@ -1511,14 +1511,14 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
       if(!bChangeItemID){
         // scan each map/level's square for dups
         int iPointerMatchCount=0;
-        labelAreaY:for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){if(bChangeItemID)break;
-          labelAreaX:for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){if(bChangeItemID)break;
+        for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
+          for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
             lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
 
             std::vector<item*> vItem;
 
             stack* stk = lsqr->GetStack();
-            for(int i=0;i<stk->GetItems();i++){if(bChangeItemID)break;
+            for(int i=0;i<stk->GetItems();i++){//if(bChangeItemID)break;
               vItem.push_back(stk->GetItem(i));
             }
 
@@ -1533,7 +1533,11 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
                 iPointerMatchCount++;
                 continue;
               }
-              if(itWork->GetID()==vItem[i]->GetID())bChangeItemID=true;
+
+              if(itWork->GetID()==vItem[i]->GetID()){
+                DBG9("CharFix:LSqr:Dup:ItemID",DBGAV2(lsqr->GetPos()),vItem[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()));
+                bChangeItemID=true;
+              }
 //              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
 //              vBugWorkaroundAllItemsInLevel.push_back(it);
             }
