@@ -1385,7 +1385,7 @@ bool _BugWorkaroundDupPlayer_Accepted=false;
 void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot=true){
   if(_BugWorkaroundDupPlayer_Accepted)return;
 
-  v2 v2Border(RES.X-20,RES.Y-20);
+  v2 v2Border(700,100);
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
 
   DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
@@ -1411,6 +1411,8 @@ void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const c
 
     if(bFix){
       if(vBugWorkaroundAllItemsInLevel.size()==0)ABORT("vBugWorkaroundAllItemsInLevel is empty");
+
+      // update this item ID if it conflicts
       for(int i=0;i<vBugWorkaroundAllItemsInLevel.size();i++){
         item* itOther = vBugWorkaroundAllItemsInLevel[i];
         if(it == itOther)continue;
@@ -1422,10 +1424,21 @@ void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const c
     //      ulong key = _BugWorkaround_getCorrectKey(it);
 //          it->_BugWorkaround_ItemDup(key!=0 ? key : game::CreateNewItemID(it)); // key=0 if it is not on ItemIDMap
           it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
-          AddItemID(it,it->GetID()); // make it consistent
+//          AddItemID(it,it->GetID()); // make it consistent
 
           DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",DBGI(it->GetID()),it);
           break;
+        }
+      }
+
+      // add missing ID (even if it was an existing ID w/o conflicts)
+      item* itExisting = SearchItem(it->GetID());
+      if(itExisting==NULL){
+        AddItemID(it,it->GetID()); // make it consistent
+      }else{
+        if(itExisting!=it){
+          DBG3(DBGI(it->GetID()),it,itExisting);
+          ABORT("other item for this ID=%d should not exist at this point",it->GetID());
         }
       }
 
@@ -1592,42 +1605,159 @@ void game::_BugWorkaround_GatherAllItemInLevel(){
   }
 }
 
+//character* _BugWorkaroundDupPlayer_PreferOldInstance(character* CharAsked){
+//  _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
+//  DBGCHAR(CharAsked,"CharFix:CharAsked");
+//
+//  character* CharPlayer = game::SearchCharacter(CharAsked->GetID()); //Player is 1 tho
+//  DBGCHAR(CharPlayer,"CharFix:CharPlayer");
+//
+//  character* CharWins = CharAsked;
+//  character* CharPlayerOld = NULL;
+//  bool bLevelItemsCollected=false;
+//  if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
+//    _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated player found. Restore the old player instance (experimental)?");
+//
+//    CharPlayerOld=CharPlayer;DBGLN;
+//    DBGCHAR(CharPlayerOld,"CharFix:CharPlayerOld");
+//
+//    character* CharToBeLost=CharAsked;
+//    //make it consistent as removing it is crashing (also empties inv)
+//    CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN;
+//    CharToBeLost->RemoveFlags(C_PLAYER);DBGLN;
+//    CharToBeLost->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
+//    CharToBeLost->SetAssignedName("_DupPlayerBug_");DBGLN;
+//
+//    // check for dup item's ids
+//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bLevelItemsCollected=true;
+//
+//    _BugWorkaround_CharBodypartsWork(CharToBeLost,true,false);DBGLN;
+//    // this leads to crash //CharAsked->Remove();
+//
+//    DBGCHAR(CharToBeLost,"CharFix:CharToBeLost");
+//
+//    CharWins=CharPlayerOld;
+//  }
+//
+//  //now... grants the valid player has no issues compared to other items on the level/chars
+//  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+//  _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
+//  _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
+//
+//  DBGCHAR(CharWins,"CharFix:CharWins");
+//  return CharWins;
+//}
+//character* _BugWorkaroundDupPlayer_PreferNewInstance(character* CharAsked){
+//  _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
+//  DBGCHAR(CharAsked,"CharFix:CharAsked");
+//
+//  character* CharPlayer = game::SearchCharacter(CharAsked->GetID()); //Player is 1 tho
+//  DBGCHAR(CharPlayer,"CharFix:CharPlayer");
+//
+//  character* CharWins = CharAsked;
+//  character* CharPlayerOld = NULL;
+//  bool bLevelItemsCollected=false;
+//  if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
+//    _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated player found. Fix new player instance (experimental)?");
+//
+//    CharPlayerOld=CharPlayer;DBGLN;
+//    DBGCHAR(CharPlayerOld,"CharFix:CharPlayerOld");
+//
+//    character* CharToBeLost=CharPlayerOld;
+//    //make it consistent as removing it is crashing (also empties inv)
+//    CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN;
+//    CharToBeLost->RemoveFlags(C_PLAYER);DBGLN;
+//    CharToBeLost->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
+//    CharToBeLost->SetAssignedName("_DupPlayerBug_");DBGLN;
+//
+//    // check for dup item's ids
+//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bLevelItemsCollected=true;
+//
+//    _BugWorkaround_CharBodypartsWork(CharToBeLost,true,false);DBGLN;
+//    // this leads to crash //CharAsked->Remove();
+//
+//    DBGCHAR(CharToBeLost,"CharFix:CharToBeLost");
+//
+//    CharWins=CharPlayerOld;
+//  }
+//
+//  //now... grants the valid player has no issues compared to other items on the level/chars
+//  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+//  _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
+//  _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
+//
+//  DBGCHAR(CharWins,"CharFix:CharWins");
+//  return CharWins;
+//}
+
+bool bNewPlayerInstanceShallWin=true;
 character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+  // TODO the best is to prefer the new instance
+//  return _BugWorkaroundDupPlayer_PreferOldInstance(CharAsked);
+
   _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
   DBGCHAR(CharAsked,"CharFix:CharAsked");
 
-  character* CharPlayer = SearchCharacter(CharAsked->GetID()); //Player is 1 tho
+  character* CharPlayer = game::SearchCharacter(CharAsked->GetID()); //Player is 1 tho
   DBGCHAR(CharPlayer,"CharFix:CharPlayer");
 
   character* CharWins = CharAsked;
   character* CharPlayerOld = NULL;
   bool bLevelItemsCollected=false;
   if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
-    _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated player found. Restore the old player instance (experimental)?");
+    _BugWorkaroundDupPlayer_AlertConfirmFixMsg(
+      bNewPlayerInstanceShallWin ?
+      "Duplicated player found. Fix new player instance (experimental)?"    :
+      "Duplicated player found. Restore old player instance (experimental)?" );
 
     CharPlayerOld=CharPlayer;DBGLN;
     DBGCHAR(CharPlayerOld,"CharFix:CharPlayerOld");
 
-    //make it consistent as removing it is crashing (also empties inv)
-    CharAsked->_BugWorkaround_PlayerDup(CreateNewCharacterID(CharAsked));DBGLN;
-    CharAsked->RemoveFlags(C_PLAYER);DBGLN;
-    CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
-    CharAsked->SetAssignedName("_DupPlayerBug_");DBGLN;
+    character* CharToBeLost = bNewPlayerInstanceShallWin ? CharPlayerOld : CharAsked;
+
+    if(bNewPlayerInstanceShallWin){
+      // the old char is valid and consistent at char's list (so remove it as will receive new ID)
+      game::RemoveCharacterID(CharPlayerOld->GetID()); //actually id 1
+      // the new char is not valid and not consistent at char's list yet, so...
+      game::AddCharacterID(CharAsked,CharAsked->GetID()); //this will "update" the player ID (actually id 1) to the new character making it consistent on the list
+    }
+
+    //TODO transfer old player items to new player instance if they have the same ID?
+
+    // make it consistent as removing it is crashing (also empties inv)
+    CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN;
+    for(int i=0;i<CharToBeLost->GetEquipments();i++){ // clear equipments too
+      if(CharToBeLost->CanUseEquipment(i)){
+        item* it = CharToBeLost->GetEquipment(i);
+        if(it!=NULL){
+          CharToBeLost->SetEquipment(i,NULL); //this leaves untracked objects in memory. TODO really untracked?
+          if(SearchItem(it->GetID())!=NULL){
+            RemoveItemID(it->GetID()); //TODO could such item pointer or ID be still referenced somewhere?
+          }
+          DBG4("CharFix:EquipmentRemoved",i,DBGI(it->GetID()),it);
+        }
+      }
+    }
+    CharToBeLost->RemoveFlags(C_PLAYER);DBGLN;
+    CharToBeLost->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
+    CharToBeLost->SetAssignedName("_DupPlayerBug_");DBGLN; //non immersive naming, shall not be, this bug shall be properly fixed one day.
 
     // check for dup item's ids
-    _BugWorkaround_GatherAllItemInLevel();DBGLN;
+    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
     bLevelItemsCollected=true;
 
-    _BugWorkaround_CharBodypartsWork(CharAsked,true,false);DBGLN;
+    _BugWorkaround_CharBodypartsWork(CharToBeLost,true,false);DBGLN;
     // this leads to crash //CharAsked->Remove();
 
-    DBGCHAR(CharAsked,"CharFix:CharAsked");
+    DBGCHAR(CharToBeLost,"CharFix:CharToBeLost");
 
-    CharWins=CharPlayerOld;
+    CharWins = bNewPlayerInstanceShallWin ? CharAsked : CharPlayerOld;
   }
 
-  //now... grants the valid player has no issues compared to other items on the level/chars
-  if(!bLevelItemsCollected){_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+  // now, grants the valid player has no issues compared to other items on the level/chars (this may create duplicated items tho)
+  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
   _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
   _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
 

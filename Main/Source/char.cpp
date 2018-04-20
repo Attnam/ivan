@@ -7896,16 +7896,8 @@ truth character::PreProcessForBone()
 
 void character::_BugWorkaround_PlayerDup(ulong key){
   ID=key;
-
-  // brute force empty the inv list leaving objects untracked in memory. TODO really untracked?
+  // brute force empty the inv list leaving objects untracked in volatile memory. TODO really untracked?
   Stack = new stack(0, this, HIDDEN); //like constructor init
-
-  for(int i=0;i<GetEquipments();i++){ //but w/o equipments and inventory
-    if(CanUseEquipment(i)){
-      SetEquipment(i,NULL); //this leaves untracked objects in memory. TODO really untracked?
-      DBG2("CharFix:EquipmentRemoved",i);
-    }
-  }
 }
 
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)
