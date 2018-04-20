@@ -798,10 +798,10 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       fi.fullName<<DirectoryName<<"/"<<fi.name;
       if(stat(fi.fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",fi.fullName.CStr(),std::strerror(errno));
 
-      std::stringstream ssTime;
-      ssTime << std::put_time(localtime(&(attr.st_mtime)), "%Y/%m/%d-%H:%M");
-      DBG6(ssTime.str(),attr.st_mtime,attr.st_ctime,attr.st_size,fi.fullName.CStr(),attr.st_ino);
-      fi.time<<ssTime.str().c_str();
+      char cTime[100];
+      strftime(cTime,100,"%Y/%m/%d-%H:%M",localtime(&(attr.st_mtime)));
+      fi.time<<cTime;
+      DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,fi.fullName.CStr(),attr.st_ino);
 
       vFiles.push_back(fi);
     }
