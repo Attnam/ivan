@@ -1437,7 +1437,7 @@ void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const c
         AddItemID(it,it->GetID()); // make it consistent
       }else{
         if(itExisting!=it){
-          DBG3(DBGI(it->GetID()),it,itExisting);
+          DBG4("ConflictingItemsIDs",DBGI(it->GetID()),it,itExisting);
           ABORT("other item for this ID=%d should not exist at this point",it->GetID());
         }
       }
@@ -1692,8 +1692,9 @@ void game::_BugWorkaround_GatherAllItemInLevel(){
 //  return CharWins;
 //}
 
-bool bNewPlayerInstanceShallWin=true;
 character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+//  char* cOpt = std::getenv("IVAN_BUGFIXDUPPLAYEROLD"); //TODO document
+  bool bNewPlayerInstanceShallWin = false;
   // TODO the best is to prefer the new instance
 //  return _BugWorkaroundDupPlayer_PreferOldInstance(CharAsked);
 
@@ -1733,12 +1734,17 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
         item* it = CharToBeLost->GetEquipment(i);
         if(it!=NULL){
           CharToBeLost->SetEquipment(i,NULL); //this leaves untracked objects in memory. TODO really untracked?
-          if(SearchItem(it->GetID())!=NULL){
-            RemoveItemID(it->GetID()); //TODO could such item pointer or ID be still referenced somewhere?
-          }
+//          if(SearchItem(it->GetID())!=NULL){
+//            RemoveItemID(it->GetID()); //TODO could such item pointer or ID be still referenced somewhere?
+//          }
           DBG4("CharFix:EquipmentRemoved",i,DBGI(it->GetID()),it);
         }
       }
+    }
+    if(bNewPlayerInstanceShallWin){
+      // old player's items are consistent (on the list), they will get a new ID and be sent to hell
+      _BugWorkaround_CharEquipmentsWork(CharPlayerOld,true,true);DBGLN;
+      _BugWorkaround_CharInventoryWork(CharPlayerOld,true,true);DBGLN;
     }
     CharToBeLost->RemoveFlags(C_PLAYER);DBGLN;
     CharToBeLost->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
@@ -1756,8 +1762,9 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     CharWins = bNewPlayerInstanceShallWin ? CharAsked : CharPlayerOld;
   }
 
-  // now, grants the valid player has no issues compared to other items on the level/chars (this may create duplicated items tho)
+  // now, grants the valid player has no item issues compared to other items on the level/chars TODO this may create duplicated items?
   if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+  // new player's items will be made consistent if required (added to the list)
   _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
   _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
 
