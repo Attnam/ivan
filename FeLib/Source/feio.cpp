@@ -13,7 +13,12 @@
 #include <ctime>
 #include <cctype>
 
+#include <algorithm>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #ifdef WIN32
+#define stat _stat
 #include <io.h>
 #endif
 
@@ -21,18 +26,10 @@
 #include <dirent.h>
 #include <stddef.h>
 #include <cstdio>
-#include <algorithm>
 #include <time.h>
 #include <stdio.h>
 #include <iomanip>
 #include <sstream>
-#endif
-
-#include <sys/types.h>
-
-#include <sys/stat.h>
-#ifdef WIN32
-#define stat _stat
 #endif
 
 #ifdef __DJGPP__
