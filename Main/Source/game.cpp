@@ -1381,6 +1381,29 @@ int game::Load(cfestring& SaveName)
   return LOADED;
 }
 
+bool _BugWorkaroundDupPlayer_Accepted=false;
+void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot=true){
+  if(_BugWorkaroundDupPlayer_Accepted)return;
+
+  v2 v2Border(RES.X-20,RES.Y-20);
+  v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
+
+  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+
+  v2TL+=v2(16,16);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), YELLOW, "%s", cMsg);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+16),   BLUE, "%s", "Please backup your savegame files.");
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32),  WHITE, "%s", "Try to fix it? (y/...)");
+
+  graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
+
+  if(GET_KEY() == 'y')_BugWorkaroundDupPlayer_Accepted=true;
+
+  if(bAbortIfNot && !_BugWorkaroundDupPlayer_Accepted)ABORT("%s. Rejected. Can't continue or it will crash...",cMsg);
+}
+
 std::vector<item*> vBugWorkaroundAllItemsInLevel;
 void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
   if(it!=NULL){
@@ -1392,7 +1415,8 @@ void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const c
         item* itOther = vBugWorkaroundAllItemsInLevel[i];
         if(it == itOther)continue;
 
-        if(it->GetID() == itOther->GetID()){
+        if(it->GetID() == itOther->GetID()){ //THE FIX
+          _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated items found. Fix them (experimental)?");
           int iOldID=it->GetID();
 //          RemoveItemID();
     //      ulong key = _BugWorkaround_getCorrectKey(it);
@@ -1410,26 +1434,6 @@ void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const c
       DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(it->GetID()),it); //some helpful info for comparison and understanding
     }
   }
-}
-
-bool AlertConfirmFixMsg(const char* cMsg){
-  v2 v2Border(300,100);
-  v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
-
-  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
-//TODO this prettyfier depends on another branch: graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
-  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
-
-  v2TL+=v2(16,16);
-  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), YELLOW, "%s", cMsg);
-  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+16),   BLUE, "%s", "Please backup your savegame files.");
-  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32),  WHITE, "%s", "Try to fix it? (y/...)");
-
-  graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
-
-  if(GET_KEY() == 'y')return true;
-
-  return false;
 }
 
 //void game::_BugWorkaround_FixPlayerDupInv(character* CharChk){
@@ -1589,6 +1593,7 @@ void game::_BugWorkaround_GatherAllItemInLevel(){
 }
 
 character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+  _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
   DBGCHAR(CharAsked,"CharFix:CharAsked");
 
   character* CharPlayer = SearchCharacter(CharAsked->GetID()); //Player is 1 tho
@@ -1598,17 +1603,13 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   character* CharPlayerOld = NULL;
   bool bLevelItemsCollected=false;
   if(CharPlayer!=CharAsked){
+    _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated player found. Restore the old player instance (experimental)?");
+
     CharPlayerOld=CharPlayer;DBGLN;
     DBGCHAR(CharPlayerOld,"CharFix:CharPlayerOld");
 
-//    CharAsked->_BugWorkaround_PlayerDup(0);
-    CharAsked->_BugWorkaround_PlayerDup(CreateNewCharacterID(CharAsked));DBGLN; //make it consistent as removing it is crashing (also empties inv)
-//    for(int i=0;i<CharAsked->GetEquipments();i++){ //but w/o equipments and inventory
-//      if(CharAsked->CanUseEquipment(i)){
-//        CharAsked->SetEquipment(i,NULL); //this leaves untracked objects in memory. TODO really untracked?
-//        DBG2("CharFix:EquipmentRemoved",i);
-//      }
-//    }
+    //make it consistent as removing it is crashing (also empties inv)
+    CharAsked->_BugWorkaround_PlayerDup(CreateNewCharacterID(CharAsked));DBGLN;
     CharAsked->RemoveFlags(C_PLAYER);DBGLN;
     CharAsked->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
     CharAsked->SetAssignedName("_DupPlayerBug_");DBGLN;
@@ -1618,9 +1619,6 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     bLevelItemsCollected=true;
 
     _BugWorkaround_CharBodypartsWork(CharAsked,true,false);DBGLN;
-//    for(int i=0;i<CharAsked->GetBodyParts();i++) //fix body parts ids
-//      game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),true,"CharFix:BodyPart",NULL,false);
-
     // this leads to crash //CharAsked->Remove();
 
     DBGCHAR(CharAsked,"CharFix:CharAsked");
@@ -1632,11 +1630,6 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   if(!bLevelItemsCollected){_BugWorkaround_GatherAllItemInLevel();DBGLN;}
   _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
   _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
-//  for(int i=0;i<CharWins->GetEquipments();i++)
-//    game::_BugWorkaround_ItemWork(CharWins,CharWins->GetEquipment(i),true,"CharFix:Equipped",NULL,false);
-//  stack* stk=CharWins->GetStack(); //inventory
-//  for(int i=0;i<stk->GetItems();i++)
-//    game::_BugWorkaround_ItemWork(CharWins,stk->GetItem(i),true,"CharFix:Inventory",NULL,false);
 
   DBGCHAR(CharWins,"CharFix:CharWins");
   return CharWins;
