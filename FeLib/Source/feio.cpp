@@ -21,13 +21,18 @@
 #include <dirent.h>
 #include <stddef.h>
 #include <cstdio>
-#include <sys/types.h>
 #include <algorithm>
-#include <sys/stat.h>
 #include <time.h>
 #include <stdio.h>
 #include <iomanip>
 #include <sstream>
+#endif
+
+#include <sys/types.h>
+
+#include <sys/stat.h>
+#ifdef WIN32
+#define stat _stat
 #endif
 
 #ifdef __DJGPP__
@@ -740,7 +745,7 @@ festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
   /* No file found */
   if(hFile == -1L)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
     return "";
   }
 
@@ -820,123 +825,7 @@ festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
 
   if(Check)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
-  }
-
-  while(!Check)
-  {
-    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
-    Buffer.Empty();
-    Buffer << Found.ff_name;
-    List.AddEntry(Buffer, ListColor);
-    Check = findnext(&Found);
-  }
-
-  Check = List.Draw();
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
-#endif
-}
-
-festring ContinueMenuMixedPreWork(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName)
-{
-#ifdef WIN32
-  struct _finddata_t Found;
-  long hFile;
-  int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
-
-  /* No file found */
-  if(hFile == -1L)
-  {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
-  }
-
-  while(!Check)
-  {
-    /* Copy all the filenames to Buffer */
-    /* Buffer = Found.name; Doesn't work because of a festring bug */
-
-    Buffer.Empty();
-    Buffer << Found.name;
-    List.AddEntry(Buffer, ListColor);
-    Check = _findnext(hFile, &Found);
-  }
-
-  Check = List.Draw();
-
-  /* an error has occured in felist */
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
-#endif
-
-#ifdef UNIX
-  DIR* dp;
-  struct dirent* ep;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  dp = opendir(DirectoryName.CStr());
-
-  if(dp)
-  {
-    while((ep = readdir(dp)))
-    {
-      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-      Buffer.Empty();
-      Buffer << ep->d_name;
-      /* Add to List all save files */
-      if(Buffer.Find(".sav") != Buffer.NPos)
-        List.AddEntry(Buffer, ListColor);
-    }
-
-    closedir(dp);
-
-    if(List.IsEmpty())
-    {
-      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-      return "";
-    }
-    else
-    {
-      int Check = List.Draw();
-
-      if(Check & FELIST_ERROR_BIT)
-        return "";
-
-      return List.GetEntry(Check);
-    }
-
-  }
-
-  return "";
-#endif
-
-#ifdef __DJGPP__
-  struct ffblk Found;
-  int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-
-  /* get all filenames ending with .sav. Accepts all files even if they
-     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
-
-  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
-                    &Found, FA_HIDDEN | FA_ARCH);
-
-  if(Check)
-  {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
     return "";
   }
 
