@@ -723,11 +723,10 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
-static int iSaveGameSortMode=0;
-void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
-/* DirectoryName is the directory where the savefiles are located. Returns
-   the selected file or "" if an error occures or if no files are found. */
-festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
+/**
+ * this will surely work if savegame sorting is disabled
+ */
+festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
                                 cfestring& DirectoryName)
 {
 #ifdef WIN32
@@ -769,105 +768,27 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 #ifdef UNIX
   DIR* dp;
   struct dirent* ep;
+  festring Buffer;
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
   dp = opendir(DirectoryName.CStr());
 
-  struct fileInfo{
-    festring name=festring(); //TODO this init helps with festring? it is buggy?
-    festring fullName=festring();
-    festring time=festring();
-    festring idOnList=festring();
-  };
-
   if(dp)
   {
-    std::vector<fileInfo> vFiles;
-    int iTmSz=100;
-//    char* pcTimeTMP=NULL;
-    char* pcName=NULL;
-    struct stat attr;
-    while((ep = readdir(dp))){
-      pcName=ep->d_name;
-      if(strcmp(pcName,".")==0)continue;
-      if(strcmp(pcName,"..")==0)continue;
-
-      fileInfo fi;
-
-      fi.name<<pcName; //TODO this assigning helps with festring instead of '=', it is buggy?
-
-      fi.fullName<<DirectoryName<<"/"<<fi.name;
-      if(stat(fi.fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",fi.fullName.CStr(),std::strerror(errno));
-
-      char cTime[100];
-      strftime(cTime,100,"%Y/%m/%d-%H:%M",localtime(&(attr.st_mtime)));
-      fi.time<<cTime;
-      DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,fi.fullName.CStr(),attr.st_ino);
-
-      vFiles.push_back(fi);
-    }
-    closedir(dp);
-
-    // sort the vector BY NAME ONLY (to get the dungeon ids easily)
-    std::sort( vFiles.begin(), vFiles.end(),
-      [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
-    );DBGLN;
-
-    std::vector<festring> vIds;
-    festring dungeonIds("");
-    for(int i=0;i<vFiles.size();i++)
+    while((ep = readdir(dp)))
     {
-//      if(vFiles[i].name.IsEmpty())ABORT("invalid empty save file (or part)");
-
-      DBGSC(vFiles[i].name.CStr());
-
-      if(vFiles[i].name.Find(".wm") != vFiles[i].name.NPos){
-        //ignored
-      }else
-      if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
-        festring id;
-        switch(iSaveGameSortMode){
-        case 0: //no sort
-        case 1: //by name
-        case 2: //by name with dungeons ids
-          id<<vFiles[i].name;
-          break;
-        case 3: //by time with dungeons ids
-        case 4: //by time reversed with dungeons ids
-          id<<vFiles[i].time<<" "<<vFiles[i].name;
-          break;
-        }
-
-        if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
-
-        vFiles[i].idOnList<<id;
-        vIds.push_back(id);DBGSC(id.CStr());
-
-        dungeonIds.Empty();
-      }else{ //dungeon IDs
-        std::string s=vFiles[i].name.CStr();
-        s=s.substr(s.find(".")+1);
-        if(!dungeonIds.IsEmpty())dungeonIds<<",";
-        dungeonIds<<s.c_str();
-        DBG3(vFiles[i].name.CStr(),s,dungeonIds.CStr());
-      }
+      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
+      Buffer.Empty();
+      Buffer << ep->d_name;
+      /* Add to List all save files */
+      if(Buffer.Find(".sav") != Buffer.NPos)
+        List.AddEntry(Buffer, ListColor);
     }
 
-    // this will sort the ids alphabetically even if by time (so will sort the time as a string)
-    std::sort( vIds.begin(), vIds.end(),
-      [ ]( const festring& l, const festring& r ){ return l < r; }
-    );
-
-    if(iSaveGameSortMode==4){ //reversed time
-      for(int i=vIds.size()-1;i>=0;i--)
-        List.AddEntry(vIds[i],ListColor);
-    }else{
-      for(int i=0;i<vIds.size();i++)
-        List.AddEntry(vIds[i],ListColor);
-    }
+    closedir(dp);
 
     if(List.IsEmpty())
     {
-      TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
       return "";
     }
     else
@@ -877,13 +798,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(Check & FELIST_ERROR_BIT)
         return "";
 
-      festring chosen;chosen<<List.GetEntry(Check);
-      for(int i=0;i<vFiles.size();i++){
-        if(chosen==vFiles[i].idOnList){
-          return vFiles[i].name;
-        }
-      }
-      ABORT("failed to match chosen file with id %s",chosen.CStr());
+      return List.GetEntry(Check);
     }
 
   }
@@ -925,6 +840,313 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
   return List.GetEntry(Check);
 #endif
+}
+
+festring ContinueMenuMixedPreWork(col16 TopicColor, col16 ListColor,
+                                cfestring& DirectoryName)
+{
+#ifdef WIN32
+  struct _finddata_t Found;
+  long hFile;
+  int Check = 0;
+  festring Buffer;
+  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
+
+  /* No file found */
+  if(hFile == -1L)
+  {
+    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+
+  while(!Check)
+  {
+    /* Copy all the filenames to Buffer */
+    /* Buffer = Found.name; Doesn't work because of a festring bug */
+
+    Buffer.Empty();
+    Buffer << Found.name;
+    List.AddEntry(Buffer, ListColor);
+    Check = _findnext(hFile, &Found);
+  }
+
+  Check = List.Draw();
+
+  /* an error has occured in felist */
+
+  if(Check & FELIST_ERROR_BIT)
+    return "";
+
+  return List.GetEntry(Check);
+#endif
+
+#ifdef UNIX
+  DIR* dp;
+  struct dirent* ep;
+  festring Buffer;
+  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+  dp = opendir(DirectoryName.CStr());
+
+  if(dp)
+  {
+    while((ep = readdir(dp)))
+    {
+      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
+      Buffer.Empty();
+      Buffer << ep->d_name;
+      /* Add to List all save files */
+      if(Buffer.Find(".sav") != Buffer.NPos)
+        List.AddEntry(Buffer, ListColor);
+    }
+
+    closedir(dp);
+
+    if(List.IsEmpty())
+    {
+      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+      return "";
+    }
+    else
+    {
+      int Check = List.Draw();
+
+      if(Check & FELIST_ERROR_BIT)
+        return "";
+
+      return List.GetEntry(Check);
+    }
+
+  }
+
+  return "";
+#endif
+
+#ifdef __DJGPP__
+  struct ffblk Found;
+  int Check = 0;
+  festring Buffer;
+  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+
+  /* get all filenames ending with .sav. Accepts all files even if they
+     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
+
+  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
+                    &Found, FA_HIDDEN | FA_ARCH);
+
+  if(Check)
+  {
+    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+
+  while(!Check)
+  {
+    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
+    Buffer.Empty();
+    Buffer << Found.ff_name;
+    List.AddEntry(Buffer, ListColor);
+    Check = findnext(&Found);
+  }
+
+  Check = List.Draw();
+
+  if(Check & FELIST_ERROR_BIT)
+    return "";
+
+  return List.GetEntry(Check);
+#endif
+}
+
+static int iSaveGameSortMode=0;
+void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
+struct fileInfo{
+  festring name=festring(); //TODO this init helps with festring? it is buggy?
+  festring fullName=festring();
+  festring time=festring();
+  festring idOnList=festring();
+};
+std::vector<fileInfo> vFiles;
+bool addFileInfo(char* c){
+  // skippers
+  if(strcmp(c,".")==0)return false;
+  if(strcmp(c,"..")==0)return false;
+
+  // do add
+  fileInfo fi;
+  fi.name<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
+  vFiles.push_back(fi); //stores a copy
+
+  return true; //added
+}
+festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName)
+{
+  ///////////////////// prepare general base data ///////////////////
+  vFiles.clear();
+  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+
+  ////////////////////////// OS SPECIFIC!!! collect all files at save folder. //////////////////////////
+#ifdef UNIX
+  {
+    DIR* dp;
+    struct dirent* ep;
+    dp = opendir(DirectoryName.CStr());
+    if(dp!=NULL)
+    {
+      while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
+      closedir(dp);
+    }else{
+      return "";
+    }
+  }
+#endif
+
+#ifdef WIN32
+  struct _finddata_t Found;
+  long hFile;
+  int Check = 0;
+  hFile = _findfirst(festring(DirectoryName + "*").CStr(), &Found);
+
+  /* No file found */
+  if(hFile != -1L)
+  {
+    while(!Check)
+    {
+      addFileInfo(Found.name);
+      Check = _findnext(hFile, &Found);
+    }
+  }
+#endif
+
+#ifdef __DJGPP__
+  struct ffblk Found;
+  int Check = 0;
+
+  /* get all filenames. Accepts all files even if they
+     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
+
+  Check = findfirst(festring(DirectoryName + "*").CStr(),
+                    &Found, FA_HIDDEN | FA_ARCH);
+
+  if(!Check)
+  {
+    while(!Check){
+      addFileInfo(Found.ff_name);
+      Check = findnext(&Found);
+    }
+  }
+#endif
+
+  if(vFiles.size()==0){
+    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+
+  /////////////////////////////// sort work //////////////////////////////////////
+  int iTmSz=100;
+  struct stat attr;
+  for(int i=0;i<vFiles.size();i++)
+  {
+    vFiles[i].fullName<<DirectoryName<<"/"<<vFiles[i].name;
+    if(stat(vFiles[i].fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",vFiles[i].fullName.CStr(),std::strerror(errno));
+
+    char cTime[iTmSz];
+    strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M",localtime(&(attr.st_mtime)));
+    vFiles[i].time<<cTime;
+    DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].fullName.CStr(),attr.st_ino);
+  }
+
+  // sort the vector BY NAME ONLY (to get the dungeon ids easily)
+  std::sort( vFiles.begin(), vFiles.end(),
+    [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
+  );DBGLN;
+
+  std::vector<festring> vIds;
+  festring dungeonIds("");
+  for(int i=0;i<vFiles.size();i++)
+  {
+    DBGSC(vFiles[i].name.CStr());
+
+    if(vFiles[i].name.Find(".wm") != vFiles[i].name.NPos){
+      //ignored
+    }else
+    if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
+      festring id;
+      switch(iSaveGameSortMode){
+      case 0: //no sort
+      case 1: //by name
+      case 2: //by name with dungeons ids
+        id<<vFiles[i].name;
+        break;
+      case 3: //by time with dungeons ids
+      case 4: //by time reversed with dungeons ids
+        id<<vFiles[i].time<<" "<<vFiles[i].name;
+        break;
+      }
+
+      if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
+
+      vFiles[i].idOnList<<id;
+      vIds.push_back(id);DBGSC(id.CStr());
+
+      dungeonIds.Empty();
+    }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
+      std::string s=vFiles[i].name.CStr();
+      s=s.substr(s.find(".")+1);
+      if(!dungeonIds.IsEmpty())dungeonIds<<",";
+      dungeonIds<<s.c_str();
+      DBG3(vFiles[i].name.CStr(),s,dungeonIds.CStr());
+    }
+  }
+
+  // this will sort the ids alphabetically even if by time (so will sort the time as a string)
+  std::sort( vIds.begin(), vIds.end(),
+    [ ]( const festring& l, const festring& r ){ return l < r; }
+  );
+
+  if(iSaveGameSortMode==4){ //reversed time
+    for(int i=vIds.size()-1;i>=0;i--)
+      List.AddEntry(vIds[i],ListColor);
+  }else{
+    for(int i=0;i<vIds.size();i++)
+      List.AddEntry(vIds[i],ListColor);
+  }
+
+  if(List.IsEmpty())
+  {
+    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+  else
+  {
+    int Check = List.Draw();
+
+    /* an error has occured in felist */
+    if(Check & FELIST_ERROR_BIT)
+      return "";
+
+    festring chosen;chosen<<List.GetEntry(Check);
+    for(int i=0;i<vFiles.size();i++){
+      if(chosen==vFiles[i].idOnList){
+        return vFiles[i].name;
+      }
+    }
+    ABORT("failed to match chosen file with id %s",chosen.CStr());
+  }
+
+  return ""; //dummy just to gcc do not complain..
+}
+
+/* DirectoryName is the directory where the savefiles are located. Returns
+   the selected file or "" if an error occures or if no files are found. */
+festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
+                                cfestring& DirectoryName)
+{
+  if(iSaveGameSortMode==0){
+    return ContinueMenuOldAndSafe(TopicColor,ListColor,DirectoryName);
+  }else{
+    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName);
+  }
 }
 
 truth iosystem::IsAcceptableForStringQuestion(char Key)
