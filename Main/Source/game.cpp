@@ -1404,50 +1404,243 @@ void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfN
   if(bAbortIfNot && !_BugWorkaroundDupPlayer_Accepted)ABORT("%s. Rejected. Can't continue or it will crash...",cMsg);
 }
 
-std::vector<item*> vBugWorkaroundAllItemsInLevel;
-void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
-  if(it!=NULL){
-    if(pvItem!=NULL)pvItem->push_back(it);
+//void _BugWorkaround_ItemFix(const char* cInfo,character* Char,item* it,bool bChangeItemID,bool bMakeItConsistent){
+//  if(bChangeItemID){
+//    int iOldID=it->GetID();
+//    it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
+//    DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",DBGI(it->GetID()),it);
+//    bMakeItConsistent=true;
+//  }
+//
+//  if(bMakeItConsistent){ // !!!!!!!!!!!!!!!!!! AFTER CHANGING THE ID (if it happened) !!!!!!!!!!!!!!!!!!!!!!
+//    DBG6(Char,Char->GetID(),cInfo,"CharFix:MakingConsistent:ItemID",DBGI(it->GetID()),it);
+//    game::AddItemID(it,it->GetID()); // make it consistent
+//  }
+//}
+
+//struct _BugWorkaround_CharItem{
+//  character* Char;
+//  item* it;
+//};
+
+//std::vector<item*> vBugWorkaroundAllItemsInLevel;
+//std::vector<_BugWorkaround_CharItem> vBugWorkaroundAllItemsInLevel;
+//
+//void _BugWorkaround_AllItemsInLevelValidate(){
+//  for(int iA=0;iA<vBugWorkaroundAllItemsInLevel.size();iA++){
+//    for(int iB=0;iB<vBugWorkaroundAllItemsInLevel.size();iB++){
+//      if(iA==iB)continue;
+//      if(vBugWorkaroundAllItemsInLevel[iA]==vBugWorkaroundAllItemsInLevel[iB]){
+//        DBGSTK;
+////        vBugWorkaroundAllItemsInLevel[iA]->ch
+//        ABORT("item reference/pointer/object is in more than one place. id=%d pointer=0x%x",vBugWorkaroundAllItemsInLevel[iA]->GetID(),vBugWorkaroundAllItemsInLevel[iA]);
+//      }
+//    }
+//  }
+//}
+//
+//void _BugWorkaround_AddItemID(character* Char,item* it,bool bAddToAllItemsVector){
+//  game::AddItemID(it,it->GetID());
+//
+//  if(bAddToAllItemsVector){
+//    _BugWorkaround_CharItem ci;
+//    ci.Char=Char;
+//    ci.it=it;
+//
+//    vBugWorkaroundAllItemsInLevel.push_back(ci);
+//  }
+//
+//  _BugWorkaround_AllItemsInLevelValidate();
+//}
+
+void _BugWorkaround_CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+  for(int i=0;i<CharAsked->GetEquipments();i++)
+    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
+}
+void _BugWorkaround_CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+  stack* stk=CharAsked->GetStack(); //inventory
+  for(int i=0;i<stk->GetItems();i++)
+    game::_BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
+}
+void _BugWorkaround_CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+  for(int i=0;i<CharAsked->GetBodyParts();i++)
+    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
+}
+
+void _BugWorkaround_CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+  _BugWorkaround_CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
+  _BugWorkaround_CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
+  _BugWorkaround_CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
+}
+void _BugWorkaround_CharAllItemsInfo(character* CharAsked){
+  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, NULL);
+}
+void _BugWorkaround_CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem){
+  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, pvItem);
+}
+
+void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
+  if(itWork!=NULL){
+    if(pvItem!=NULL)pvItem->push_back(itWork);
 
     if(bFix){
-      if(vBugWorkaroundAllItemsInLevel.size()==0)ABORT("vBugWorkaroundAllItemsInLevel is empty");
+      bool bChangeItemID = false;
+      bool bMakeItConsistent = false;
 
-      // update this item ID if it conflicts
-      for(int i=0;i<vBugWorkaroundAllItemsInLevel.size();i++){
-        item* itOther = vBugWorkaroundAllItemsInLevel[i];
-        if(it == itOther)continue;
-
-        if(it->GetID() == itOther->GetID()){ //THE FIX
-          _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated items found. Fix them (experimental)?");
-          int iOldID=it->GetID();
-//          RemoveItemID();
-    //      ulong key = _BugWorkaround_getCorrectKey(it);
-//          it->_BugWorkaround_ItemDup(key!=0 ? key : game::CreateNewItemID(it)); // key=0 if it is not on ItemIDMap
-          it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
-//          AddItemID(it,it->GetID()); // make it consistent
-
-          DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",DBGI(it->GetID()),it);
-          break;
-        }
-      }
-
-      // add missing ID (even if it was an existing ID w/o conflicts)
-      item* itExisting = SearchItem(it->GetID());
-      if(itExisting==NULL){
-        AddItemID(it,it->GetID()); // make it consistent
+      item* itExistingValid = SearchItem(itWork->GetID());
+      if(itExistingValid==NULL){
+        DBG6(Char,Char->GetID(),cInfo,"CharFix:NothingFoundFor:ItemID",DBGI(itWork->GetID()),itWork);
+        bMakeItConsistent=true;
       }else{
-        if(itExisting!=it){
-          DBG4("ConflictingItemsIDs",DBGI(it->GetID()),it,itExisting);
-          ABORT("other item for this ID=%d should not exist at this point",it->GetID());
+        if(itWork!=itExistingValid){ // if the object found on the list with the same ID is the same working object pointer, it is already consistent
+          bChangeItemID=true;
         }
       }
 
-      if(bSendToHell)it->SendToHell();
+//      if(!bChangeItemID){
+//        for(int i=0;i<vBugWorkaroundAllItemsInLevel.size();i++){
+//          item* itOther = vBugWorkaroundAllItemsInLevel[i];
+//          if(it == itOther)continue;
+//
+//          if(it->GetID() == itOther->GetID()){ //THE FIX
+//            bChangeItemID=true;
+//            break;
+//          }
+//        }
+//      }
+      if(!bChangeItemID){
+        // scan each map/level's square for dups
+        int iPointerMatchCount=0;
+        labelAreaY:for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){if(bChangeItemID)break;
+          labelAreaX:for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){if(bChangeItemID)break;
+            lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
+
+            std::vector<item*> vItem;
+
+            stack* stk = lsqr->GetStack();
+            for(int i=0;i<stk->GetItems();i++){if(bChangeItemID)break;
+              vItem.push_back(stk->GetItem(i));
+            }
+
+            character* SqrChar = lsqr->GetCharacter();
+            if(SqrChar!=NULL && SqrChar!=Char){
+//              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+              _BugWorkaround_CharAllItemsCollect(SqrChar,&vItem);
+            }
+
+            for(int i=0;i<vItem.size();i++){
+              if(itWork==vItem[i]){
+                iPointerMatchCount++;
+                continue;
+              }
+              if(itWork->GetID()==vItem[i]->GetID())bChangeItemID=true;
+//              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
+//              vBugWorkaroundAllItemsInLevel.push_back(it);
+            }
+
+          }
+        }
+
+        if(iPointerMatchCount>1)ABORT("more than one tot=%d item pointer/object/reference 0x%x found for id=%d",iPointerMatchCount,itWork,itWork->GetID());
+      }
+
+//      _BugWorkaround_ItemFix(cInfo,Char,it,bChangeItemID,bMakeItConsistent);
+      if(bChangeItemID){
+        int iOldID=itWork->GetID();
+        itWork->_BugWorkaround_ItemDup(game::CreateNewItemID(itWork));
+        DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID",itWork,"OldID",iOldID,"NewID",DBGI(itWork->GetID()));
+        bMakeItConsistent=true;
+      }
+
+      if(bMakeItConsistent){ // !!!!!!!!!!!!!!!!!! AFTER CHANGING THE ID (if it happened) !!!!!!!!!!!!!!!!!!!!!!
+        DBG6(Char,Char->GetID(),cInfo,"CharFix:MakingConsistent:ItemID",DBGI(itWork->GetID()),itWork);
+        game::AddItemID(itWork,itWork->GetID()); // make it consistent
+//        _BugWorkaround_AddItemID(it,true); // make it consistent
+      }
+
+//      // update this item ID if it conflicts
+//      for(int i=0;i<vBugWorkaroundAllItemsInLevel.size();i++){
+//        item* itOther = vBugWorkaroundAllItemsInLevel[i];
+//        if(it == itOther)continue;
+//
+//        if(it->GetID() == itOther->GetID()){ //THE FIX
+//          _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated items found. Fix them (experimental)?");
+//          int iOldID=it->GetID();
+//          RemoveItemID(iOldID); //TODO could such item pointer or ID be still referenced somewhere?
+//
+//          it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
+//
+//          DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",DBGI(it->GetID()),it);
+//          break;
+//        }
+//      }
+//
+//      // add missing ID (even if it was an existing ID w/o conflicts)
+//      if(itExisting==NULL){
+//        AddItemID(it,it->GetID()); // make it consistent
+//        DBG4(Char,"MakingConsistent:ItemID",it,it->GetID());
+//      }else{
+//        if(itExisting!=it){
+//          DBG4("Conflicting:ItemID",DBGI(it->GetID()),it,itExisting);
+//          ABORT("other item for this ID=%d should not exist at this point",it->GetID());
+//        }
+//      }
+
+      if(bSendToHell){
+        itWork->SendToHell();
+        DBG3("SentToHell:ItemsID",DBGI(itWork->GetID()),itWork);
+      }
     }else{
-      DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(it->GetID()),it); //some helpful info for comparison and understanding
+      DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(itWork->GetID()),itWork); //some helpful info for comparison and understanding
     }
   }
 }
+//void game::_BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
+//  if(it!=NULL){
+//    if(pvItem!=NULL)pvItem->push_back(it);
+//
+//    if(bFix){
+//      if(vBugWorkaroundAllItemsInLevel.size()==0)ABORT("vBugWorkaroundAllItemsInLevel is empty");
+//
+//      item* itExisting = SearchItem(it->GetID());
+//
+//      // update this item ID if it conflicts
+//      for(int i=0;i<vBugWorkaroundAllItemsInLevel.size();i++){
+//        item* itOther = vBugWorkaroundAllItemsInLevel[i];
+//        if(it == itOther)continue;
+//
+//        if(it->GetID() == itOther->GetID()){ //THE FIX
+//          _BugWorkaroundDupPlayer_AlertConfirmFixMsg("Duplicated items found. Fix them (experimental)?");
+//          int iOldID=it->GetID();
+//          //RemoveItemID(iOldID); //TODO could such item pointer or ID be still referenced somewhere?
+//
+//          it->_BugWorkaround_ItemDup(game::CreateNewItemID(it));
+//
+//          DBG9(Char,Char->GetID(),cInfo,"CharFix:Changing:ItemID","OldID",iOldID,"NewID",DBGI(it->GetID()),it);
+//          break;
+//        }
+//      }
+//
+//      // add missing ID (even if it was an existing ID w/o conflicts)
+//      if(itExisting==NULL){
+//        AddItemID(it,it->GetID()); // make it consistent
+//        DBG4(Char,"MakingConsistent:ItemID",it,it->GetID());
+//      }else{
+//        if(itExisting!=it){
+//          DBG4("Conflicting:ItemID",DBGI(it->GetID()),it,itExisting);
+//          ABORT("other item for this ID=%d should not exist at this point",it->GetID());
+//        }
+//      }
+//
+//      if(bSendToHell){
+//        it->SendToHell();
+//        DBG3("SentToHell:ItemsID",DBGI(it->GetID()),it);
+//      }
+//    }else{
+//      DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(it->GetID()),it); //some helpful info for comparison and understanding
+//    }
+//  }
+//}
 
 //void game::_BugWorkaround_FixPlayerDupInv(character* CharChk){
 //  std::vector<item*> vItem;
@@ -1556,54 +1749,30 @@ void game::_BugWorkaround_CheckAllItemsForDups(){
   if(vItem.size()>0)ABORT("Dup ItemID found! Tot dup items: %d. Tot items %d.",vItem.size(),ItemIDMap.size());
 }
 
-void _BugWorkaround_CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
-  for(int i=0;i<CharAsked->GetEquipments();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
-}
-void _BugWorkaround_CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
-  stack* stk=CharAsked->GetStack(); //inventory
-  for(int i=0;i<stk->GetItems();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
-}
-void _BugWorkaround_CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
-  for(int i=0;i<CharAsked->GetBodyParts();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
-}
-
-void _BugWorkaround_CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
-  _BugWorkaround_CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
-  _BugWorkaround_CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
-  _BugWorkaround_CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
-}
-void _BugWorkaround_CharAllItemsInfo(character* CharAsked){
-  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, NULL);
-}
-void _BugWorkaround_CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem){
-  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, pvItem);
-}
-
-void game::_BugWorkaround_GatherAllItemInLevel(){
-  vBugWorkaroundAllItemsInLevel.clear(); //important after saving and loading w/o exiting the game
-  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
-    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
-      lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
-
-      stack* stk = lsqr->GetStack();
-      for(int i=0;i<stk->GetItems();i++){
-        item* it = stk->GetItem(i);
-        DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
-        vBugWorkaroundAllItemsInLevel.push_back(it);
-      }
-
-      character* SqrChar = lsqr->GetCharacter();
-      if(SqrChar!=NULL){
-        DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
-        _BugWorkaround_CharAllItemsCollect(SqrChar,&vBugWorkaroundAllItemsInLevel);
-      }
-
-    }
-  }
-}
+//void game::_BugWorkaround_GatherAllItemInLevel(){
+//  vBugWorkaroundAllItemsInLevel.clear(); //important after saving and loading w/o exiting the game
+//  for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){
+//    for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){
+//      lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
+//
+//      stack* stk = lsqr->GetStack();
+//      for(int i=0;i<stk->GetItems();i++){
+//        item* it = stk->GetItem(i);
+//        DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
+//        vBugWorkaroundAllItemsInLevel.push_back(it);
+//      }
+//
+//      character* SqrChar = lsqr->GetCharacter();
+//      if(SqrChar!=NULL){
+//        DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+//        _BugWorkaround_CharAllItemsCollect(SqrChar,&vBugWorkaroundAllItemsInLevel);
+//      }
+//
+//    }
+//  }
+//
+//  _BugWorkaround_AllItemsInLevelValidate();
+//}
 
 //character* _BugWorkaroundDupPlayer_PreferOldInstance(character* CharAsked){
 //  _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
@@ -1725,10 +1894,19 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
       game::AddCharacterID(CharAsked,CharAsked->GetID()); //this will "update" the player ID (actually id 1) to the new character making it consistent on the list
     }
 
-    //TODO transfer old player items to new player instance if they have the same ID?
+//    // prepare to check for dup item's ids
+//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bLevelItemsCollected=true;
 
-    // make it consistent as removing it is crashing (also empties inv)
-    CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN;
+    //TODO transfer old player items (pointers/objects/instances) to new player instance if they have the same ID?
+
+    if(bNewPlayerInstanceShallWin){
+      // old player's items are consistent (on the list), they will get a new ID and be sent to hell
+      // new player's items have the same ID of old player's ones, their pointers will become consistent later...
+      _BugWorkaround_CharEquipmentsWork(CharPlayerOld,true,true);DBGLN;
+      _BugWorkaround_CharInventoryWork(CharPlayerOld,true,true);DBGLN;
+    }
+    CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN; // make it consistent as removing it is crashing (also empties inv)
     for(int i=0;i<CharToBeLost->GetEquipments();i++){ // clear equipments too
       if(CharToBeLost->CanUseEquipment(i)){
         item* it = CharToBeLost->GetEquipment(i);
@@ -1737,22 +1915,17 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
 //          if(SearchItem(it->GetID())!=NULL){
 //            RemoveItemID(it->GetID()); //TODO could such item pointer or ID be still referenced somewhere?
 //          }
-          DBG4("CharFix:EquipmentRemoved",i,DBGI(it->GetID()),it);
+          DBG5(CharToBeLost,"CharFix:EquipmentRemoved",i,DBGI(it->GetID()),it);
         }
       }
-    }
-    if(bNewPlayerInstanceShallWin){
-      // old player's items are consistent (on the list), they will get a new ID and be sent to hell
-      _BugWorkaround_CharEquipmentsWork(CharPlayerOld,true,true);DBGLN;
-      _BugWorkaround_CharInventoryWork(CharPlayerOld,true,true);DBGLN;
     }
     CharToBeLost->RemoveFlags(C_PLAYER);DBGLN;
     CharToBeLost->SetTeam(game::GetTeam(MONSTER_TEAM));DBGLN;
     CharToBeLost->SetAssignedName("_DupPlayerBug_");DBGLN; //non immersive naming, shall not be, this bug shall be properly fixed one day.
 
-    // check for dup item's ids
-    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
-    bLevelItemsCollected=true;
+//    // prepare to check for dup item's ids
+//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bLevelItemsCollected=true;
 
     _BugWorkaround_CharBodypartsWork(CharToBeLost,true,false);DBGLN;
     // this leads to crash //CharAsked->Remove();
@@ -1763,7 +1936,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   }
 
   // now, grants the valid player has no item issues compared to other items on the level/chars TODO this may create duplicated items?
-  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+//  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
   // new player's items will be made consistent if required (added to the list)
   _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
   _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
