@@ -1479,6 +1479,60 @@ void _BugWorkaround_CharAllItemsCollect(character* CharAsked,std::vector<item*>*
   _BugWorkaround_CharAllItemsWork(CharAsked, false, false, pvItem);
 }
 
+bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork){
+  int iDupIDCount=0;
+
+  // scan each map/level's square for dups
+  int iPointerMatchCount=0;
+  for(int iY=0;iY<game::GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
+    for(int iX=0;iX<game::GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
+      lsquare* lsqr = game::GetCurrentLevel()->GetLSquare({iX,iY});
+
+      std::vector<item*> vSqrItems;
+
+      stack* stk = lsqr->GetStack();
+      for(int i=0;i<stk->GetItems();i++){//if(bChangeItemID)break;
+        vSqrItems.push_back(stk->GetItem(i));
+      }
+
+      character* SqrChar = lsqr->GetCharacter();
+      //if(SqrChar!=NULL && SqrChar!=Char){
+      if(SqrChar!=NULL){ //w/o skipping the Char, this will check for dups inside self Char inventory!
+//              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+        _BugWorkaround_CharAllItemsCollect(SqrChar,&vSqrItems);
+      }
+
+      #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
+      for(int i=0;i<vSqrItems.size();i++){
+        if(itWork==vSqrItems[i]){
+          iPointerMatchCount++;
+          if(iPointerMatchCount>1)DBGSQRITEM("CharFix:LSqr:DupRef:ItemID"); //the 1st is "expectedly" the real self...
+          continue;
+        }
+
+        if(itWork->GetID()==vSqrItems[i]->GetID()){
+          iDupIDCount++;
+          if(iDupIDCount>1)DBGSQRITEM("CharFix:LSqr:DupID:ItemID"); //the 1st is "expectedly" the real self...
+        }
+//              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
+//              vBugWorkaroundAllItemsInLevel.push_back(it);
+      }
+
+    }
+  }
+
+  if(iDupIDCount>1 || iPointerMatchCount>1){
+    ABORT(
+      "iDupCount=%d found for item 0x%x id=%d."
+      "tot=%d item pointer/object/reference 0x%x found for id=%d.",
+      iDupIDCount,itWork,itWork->GetID(),
+      iPointerMatchCount,itWork,itWork->GetID()
+    );
+  }
+
+  return iDupIDCount>0;
+}
+
 void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
   if(itWork!=NULL){
     if(pvItem!=NULL)pvItem->push_back(itWork);
@@ -1509,43 +1563,44 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
 //        }
 //      }
       if(!bChangeItemID){
-        // scan each map/level's square for dups
-        int iPointerMatchCount=0;
-        for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
-          for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
-            lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
-
-            std::vector<item*> vItem;
-
-            stack* stk = lsqr->GetStack();
-            for(int i=0;i<stk->GetItems();i++){//if(bChangeItemID)break;
-              vItem.push_back(stk->GetItem(i));
-            }
-
-            character* SqrChar = lsqr->GetCharacter();
-            if(SqrChar!=NULL && SqrChar!=Char){
-//              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
-              _BugWorkaround_CharAllItemsCollect(SqrChar,&vItem);
-            }
-
-            for(int i=0;i<vItem.size();i++){
-              if(itWork==vItem[i]){
-                iPointerMatchCount++;
-                continue;
-              }
-
-              if(itWork->GetID()==vItem[i]->GetID()){
-                DBG9("CharFix:LSqr:Dup:ItemID",DBGAV2(lsqr->GetPos()),vItem[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()));
-                bChangeItemID=true;
-              }
-//              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
-//              vBugWorkaroundAllItemsInLevel.push_back(it);
-            }
-
-          }
-        }
-
-        if(iPointerMatchCount>1)ABORT("more than one tot=%d item pointer/object/reference 0x%x found for id=%d",iPointerMatchCount,itWork,itWork->GetID());
+        bChangeItemID = _BugWorkaround_FindDupItemOnLevel(Char,itWork);
+//        // scan each map/level's square for dups
+//        int iPointerMatchCount=0;
+//        for(int iY=0;iY<GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
+//          for(int iX=0;iX<GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
+//            lsquare* lsqr = GetCurrentLevel()->GetLSquare({iX,iY});
+//
+//            std::vector<item*> vSqrItems;
+//
+//            stack* stk = lsqr->GetStack();
+//            for(int i=0;i<stk->GetItems();i++){//if(bChangeItemID)break;
+//              vSqrItems.push_back(stk->GetItem(i));
+//            }
+//
+//            character* SqrChar = lsqr->GetCharacter();
+//            if(SqrChar!=NULL && SqrChar!=Char){
+////              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
+//              _BugWorkaround_CharAllItemsCollect(SqrChar,&vSqrItems);
+//            }
+//
+//            for(int i=0;i<vSqrItems.size();i++){
+//              if(itWork==vSqrItems[i]){
+//                iPointerMatchCount++;
+//                continue;
+//              }
+//
+//              if(itWork->GetID()==vSqrItems[i]->GetID()){
+//                DBG9("CharFix:LSqr:Dup:ItemID",DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()));
+//                bChangeItemID=true;
+//              }
+////              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
+////              vBugWorkaroundAllItemsInLevel.push_back(it);
+//            }
+//
+//          }
+//        }
+//
+//        if(iPointerMatchCount>1)ABORT("more than one tot=%d item pointer/object/reference 0x%x found for id=%d",iPointerMatchCount,itWork,itWork->GetID());
       }
 
 //      _BugWorkaround_ItemFix(cInfo,Char,it,bChangeItemID,bMakeItConsistent);
