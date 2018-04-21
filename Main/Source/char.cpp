@@ -9789,9 +9789,13 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
   while(!NewForm)
   {
     festring Temp;
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true); //polymorphing may unequip items, so taking a look at them is good
     int Return = game::DefaultQuestion(Temp, CONST_S("What do you want to become? [press '?' for a list]"),
                                        game::GetDefaultPolymorphTo(), true,
                                        &game::PolymorphControlKeyHandler);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     if(Return == ABORTED)
     {
       ADD_MESSAGE("You choose not to polymorph.");
