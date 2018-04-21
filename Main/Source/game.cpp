@@ -1952,7 +1952,7 @@ void game::_BugWorkaround_CheckAllItemsForDups(){
 
 character* game::_BugWorkaroundDupPlayer(character* CharAsked){
 //  char* cOpt = std::getenv("IVAN_BUGFIXDUPPLAYEROLD"); //TODO document
-  bool bNewPlayerInstanceShallWin = false;
+  bool bNewPlayerInstanceShallWin = true;
   // TODO the best is to prefer the new instance
 //  return _BugWorkaroundDupPlayer_PreferOldInstance(CharAsked);
 
