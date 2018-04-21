@@ -9476,7 +9476,13 @@ truth character::ChatMenu()
 
 truth character::ChangePetEquipment()
 {
-  if(EquipmentScreen(PLAYER->GetStack(), GetStack()))
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+  bool b = EquipmentScreen(PLAYER->GetStack(), GetStack());
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+
+  if(b)
   {
     DexterityAction(3);
     return true;
@@ -9494,6 +9500,9 @@ truth character::TakePetItems()
   {
     itemvector ToTake;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     GetStack()->DrawContents(ToTake,
                              0,
                              PLAYER,
@@ -9503,6 +9512,8 @@ truth character::TakePetItems()
                              GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                              GetVerbalBurdenStateColor(),
                              REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToTake.empty())
       break;
@@ -9532,6 +9543,9 @@ truth character::GivePetItems()
   {
     itemvector ToGive;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     PLAYER->GetStack()->DrawContents(ToGive,
                                      0,
                                      this,
@@ -9541,6 +9555,8 @@ truth character::GivePetItems()
                                      GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                                      GetVerbalBurdenStateColor(),
                                      REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToGive.empty())
       break;
