@@ -1418,13 +1418,13 @@ void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfN
 //  }
 //}
 
-//struct _BugWorkaround_CharItem{
-//  character* Char;
-//  item* it;
-//};
+struct _BugWorkaround_CharItem{
+  character* Char;
+  item* it;
+};
+//std::vector<_BugWorkaround_CharItem> vBugWorkaroundAllItemsInLevel;
 
 //std::vector<item*> vBugWorkaroundAllItemsInLevel;
-//std::vector<_BugWorkaround_CharItem> vBugWorkaroundAllItemsInLevel;
 //
 //void _BugWorkaround_AllItemsInLevelValidate(){
 //  for(int iA=0;iA<vBugWorkaroundAllItemsInLevel.size();iA++){
@@ -1479,7 +1479,7 @@ void _BugWorkaround_CharAllItemsCollect(character* CharAsked,std::vector<item*>*
   _BugWorkaround_CharAllItemsWork(CharAsked, false, false, pvItem);
 }
 
-bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork){
+bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork, std::vector<_BugWorkaround_CharItem>* pvAllCharAndOrItemsInLevel=NULL, bool bIgnoreBodyParts=false){
   int iDupIDCount=0;
 
   // scan each map/level's square for dups
@@ -1493,33 +1493,59 @@ bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork){
       stack* stk = lsqr->GetStack();
       for(int i=0;i<stk->GetItems();i++){//if(bChangeItemID)break;
         vSqrItems.push_back(stk->GetItem(i));
+
+        if(pvAllCharAndOrItemsInLevel!=NULL){
+          _BugWorkaround_CharItem ci;
+          ci.Char=NULL;
+          ci.it=stk->GetItem(i);
+          pvAllCharAndOrItemsInLevel->push_back(ci);
+        }
       }
 
       character* SqrChar = lsqr->GetCharacter();
       //if(SqrChar!=NULL && SqrChar!=Char){
       if(SqrChar!=NULL){ //w/o skipping the Char, this will check for dups inside self Char inventory!
 //              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
-        _BugWorkaround_CharAllItemsCollect(SqrChar,&vSqrItems);
+        std::vector<item*> vCharItems;
+        _BugWorkaround_CharAllItemsCollect(SqrChar,&vCharItems);
+
+        for(int i=0;i<vCharItems.size();i++)vSqrItems.push_back(vCharItems[i]);
+
+        if(pvAllCharAndOrItemsInLevel!=NULL){
+          for(int i=0;i<vCharItems.size();i++){
+            _BugWorkaround_CharItem ci;
+            ci.Char=SqrChar;
+            ci.it=vCharItems[i];
+            pvAllCharAndOrItemsInLevel->push_back(ci);
+          }
+        }
       }
 
-      #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
-      for(int i=0;i<vSqrItems.size();i++){
-        if(itWork==vSqrItems[i]){
-          iPointerMatchCount++;
-          if(iPointerMatchCount>1)DBGSQRITEM("CharFix:LSqr:DupRef:ItemID"); //the 1st is "expectedly" the real self...
-          continue;
-        }
+      if(pvAllCharAndOrItemsInLevel==NULL){
+        #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
+        for(int i=0;i<vSqrItems.size();i++){
+          if(bIgnoreBodyParts){
+            bodypart* bp = dynamic_cast<bodypart*> (vSqrItems[i]);
+            if(bp!=NULL)continue;
+          }
 
-        if(itWork->GetID()==vSqrItems[i]->GetID()){
-          iDupIDCount++;
-          if(iDupIDCount>1)DBGSQRITEM("CharFix:LSqr:DupID:ItemID"); //the 1st is "expectedly" the real self...
+          if(itWork==vSqrItems[i]){
+            iPointerMatchCount++;
+            if(iPointerMatchCount>1)DBGSQRITEM("CharFix:LSqr:DupRef:ItemID"); //the 1st is "expectedly" the real self...
+            continue;
+          }
+
+          if(itWork->GetID()==vSqrItems[i]->GetID()){
+            iDupIDCount++;
+            if(iDupIDCount>1)DBGSQRITEM("CharFix:LSqr:DupID:ItemID"); //the 1st is "expectedly" the real self...
+          }
+  //              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
+  //              vBugWorkaroundAllItemsInLevel.push_back(it);
         }
-//              DBG4("CharFix:LSqr:ItemID",DBGAV2(lsqr->GetPos()),it->GetID(),it);
-//              vBugWorkaroundAllItemsInLevel.push_back(it);
       }
 
-    }
-  }
+    }//X
+  }//Y
 
   if(iDupIDCount>1 || iPointerMatchCount>1){
     ABORT(
@@ -1531,6 +1557,10 @@ bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork){
   }
 
   return iDupIDCount>0;
+}
+
+void _BugWorkaround_FullLevelRevalidate(){
+  std::vector<_BugWorkaround_CharItem> vAllCharAndOrItemsInLevel;
 }
 
 void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
@@ -1999,6 +2029,16 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   // new player's items will be made consistent if required (added to the list)
   _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
   _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
+
+  // validate full level
+  std::vector<_BugWorkaround_CharItem> vAllCharAndOrItemsInLevel;
+  _BugWorkaround_FindDupItemOnLevel(NULL,NULL,&vAllCharAndOrItemsInLevel);
+  for(int i=0;i<vAllCharAndOrItemsInLevel.size();i++){
+    _BugWorkaround_CharItem ci = vAllCharAndOrItemsInLevel[i];
+    if(_BugWorkaround_FindDupItemOnLevel(ci.Char,ci.it,NULL,true)){
+      ABORT("Full level validation against dups failed.");
+    }
+  }
 
   DBGCHAR(CharWins,"CharFix:CharWins");
   return CharWins;
