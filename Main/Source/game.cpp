@@ -1445,7 +1445,11 @@ bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, s
       }
 
       if(pvAllCharAndOrItemsInLevel==NULL){
-        #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
+        #ifdef DBGMSG
+          #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
+        #else
+          #define DBGSQRITEM(msg)
+        #endif
         for(int i=0;i<vSqrItems.size();i++){
           if(bIgnoreBodyParts){
             bodypart* bp = dynamic_cast<bodypart*> (vSqrItems[i]);
