@@ -496,11 +496,15 @@ void game::RegionListItemEnable(bool b){
   graphics::SetSRegionEnabled(iRegionListItem, b);
 }
 
-void game::RegionSilhouetteEnable(bool b){
+void game::RegionSilhouetteEnable(bool bEnable){
   game::PrepareStretchRegionsLazy();
   if(iRegionSilhouette==-1)return;
 
-  if( b && ivanconfig::GetSilhouetteScale()>1 ){
+  if(bEnable && ivanconfig::GetSilhouetteScale()==1)bEnable=false;
+
+  if(bEnable && !PLAYER->IsHumanoid())bEnable=false; //TODO isHuman() too?
+
+  if(bEnable){
     bldSilhouetteTMP.Stretch = ivanconfig::GetSilhouetteScale();
 
     bldSilhouetteTMP.Dest = {
