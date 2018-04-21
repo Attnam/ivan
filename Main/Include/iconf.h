@@ -25,6 +25,7 @@ class ivanconfig
   static long GetContrast() { return Contrast.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
+  static int GetBugWorkaroundDupPlayer() { return BugWorkaroundDupPlayer.Value; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
@@ -98,6 +99,7 @@ class ivanconfig
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry);
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
@@ -157,6 +159,8 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+
+  static cycleoption BugWorkaroundDupPlayer;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

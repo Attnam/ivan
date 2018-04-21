@@ -104,6 +104,10 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
+                                          "Detects dup player bug and fix it (experimental)",
+                                          0, 3,
+                                          &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           "Silhouette scale factor (1 to disable)",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
@@ -489,6 +493,15 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "old player";break;
+  case 2: Entry << "new player";break;
+  }
+}
+
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
@@ -625,6 +638,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+
+  fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&BugWorkaroundDupPlayer);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

@@ -1525,7 +1525,9 @@ void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, 
 }
 
 character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAsked){
-  bool bNewPlayerInstanceShallWin = true;
+  if(ivanconfig::GetBugWorkaroundDupPlayer()==0)return CharAsked;
+
+  bool bNewPlayerInstanceShallWin = ivanconfig::GetBugWorkaroundDupPlayer()==2; //==1 is old player instance
 
   bugWorkaroundDupPlayer::Accepted=false; //init for next iteration w/o closing the game app
   DBGCHAR(CharAsked,"CharFix:CharAsked");
