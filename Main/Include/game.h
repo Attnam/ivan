@@ -166,6 +166,32 @@ typedef std::vector<character*> charactervector;
 class quitrequest { };
 class areachangerequest { };
 
+struct bugWorkaroundDupPlayerCharItem{
+  character* Char;
+  item* it;
+};
+class bugWorkaroundDupPlayer{
+  public:
+    static character* BugWorkaroundDupPlayer(character* CharAsked);
+  private:
+    static void GatherAllItemInLevel();
+//    static void CheckAllItemsForDups();
+//    static ulong getCorrectKey(item* itChk);
+    static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
+    static void FixPlayerDupInv(character* CharChk);
+    static void CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static void CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static void CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static void CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static void CharAllItemsInfo(character* CharAsked);
+    static void CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem);
+    static bool FindDupItemOnLevel(character* Char, item* itWork, std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel=NULL, bool bIgnoreBodyParts=false);
+    static void AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot);
+//    static bool isItemOnVector(std::vector<item*>* pv, item* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
+//    static bool isCharOnVector(std::vector<character*>* pv, character* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
+    static bool Accepted;
+};
+
 class game
 {
  public:
@@ -220,12 +246,6 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
-  static character* _BugWorkaroundDupPlayer(character* CharAsked);
-  static void _BugWorkaround_GatherAllItemInLevel();
-  static void _BugWorkaround_CheckAllItemsForDups();
-  static ulong _BugWorkaround_getCorrectKey(item* itChk);
-  static void _BugWorkaround_ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
-  static void _BugWorkaround_FixPlayerDupInv(character* CharChk);
   static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
   static double GetMinDifficulty();

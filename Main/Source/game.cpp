@@ -1342,7 +1342,7 @@ int game::Load(cfestring& SaveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(_BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter()));
+  SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter()));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -1354,9 +1354,9 @@ int game::Load(cfestring& SaveName)
   return LOADED;
 }
 
-bool _BugWorkaroundDupPlayer_Accepted=false;
-void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot=true){
-  if(_BugWorkaroundDupPlayer_Accepted)return;
+bool bugWorkaroundDupPlayer::Accepted=false;
+void bugWorkaroundDupPlayer::AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot=true){
+  if(bugWorkaroundDupPlayer::Accepted)return;
 
   v2 v2Border(700,100);
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
@@ -1372,43 +1372,38 @@ void _BugWorkaroundDupPlayer_AlertConfirmFixMsg(const char* cMsg, bool bAbortIfN
 
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y')_BugWorkaroundDupPlayer_Accepted=true;
+  if(GET_KEY() == 'y')bugWorkaroundDupPlayer::Accepted=true;
 
-  if(bAbortIfNot && !_BugWorkaroundDupPlayer_Accepted)ABORT("%s. Rejected. Can't continue or it will crash...",cMsg);
+  if(bAbortIfNot && !bugWorkaroundDupPlayer::Accepted)ABORT("%s. Rejected. Can't continue or it will crash...",cMsg);
 }
 
-struct _BugWorkaround_CharItem{
-  character* Char;
-  item* it;
-};
-
-void _BugWorkaround_CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+void bugWorkaroundDupPlayer::CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
   for(int i=0;i<CharAsked->GetEquipments();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
+    bugWorkaroundDupPlayer::ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
 }
-void _BugWorkaround_CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+void bugWorkaroundDupPlayer::CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
   stack* stk=CharAsked->GetStack(); //inventory
   for(int i=0;i<stk->GetItems();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
+    bugWorkaroundDupPlayer::ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
 }
-void _BugWorkaround_CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
+void bugWorkaroundDupPlayer::CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
   for(int i=0;i<CharAsked->GetBodyParts();i++)
-    game::_BugWorkaround_ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
+    bugWorkaroundDupPlayer::ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
 }
 
-void _BugWorkaround_CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL){
-  _BugWorkaround_CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
-  _BugWorkaround_CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
-  _BugWorkaround_CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
+void bugWorkaroundDupPlayer::CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
+  bugWorkaroundDupPlayer::CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
+  bugWorkaroundDupPlayer::CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
+  bugWorkaroundDupPlayer::CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
 }
-void _BugWorkaround_CharAllItemsInfo(character* CharAsked){
-  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, NULL);
+void bugWorkaroundDupPlayer::CharAllItemsInfo(character* CharAsked){
+  bugWorkaroundDupPlayer::CharAllItemsWork(CharAsked, false, false, NULL);
 }
-void _BugWorkaround_CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem){
-  _BugWorkaround_CharAllItemsWork(CharAsked, false, false, pvItem);
+void bugWorkaroundDupPlayer::CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem){
+  bugWorkaroundDupPlayer::CharAllItemsWork(CharAsked, false, false, pvItem);
 }
 
-bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork, std::vector<_BugWorkaround_CharItem>* pvAllCharAndOrItemsInLevel=NULL, bool bIgnoreBodyParts=false){
+bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel, bool bIgnoreBodyParts){
   int iDupIDCount=0;
 
   // scan each map/level's square for dups
@@ -1424,7 +1419,7 @@ bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork, std::vecto
         vSqrItems.push_back(stk->GetItem(i));
 
         if(pvAllCharAndOrItemsInLevel!=NULL){
-          _BugWorkaround_CharItem ci;
+          bugWorkaroundDupPlayerCharItem ci;
           ci.Char=NULL;
           ci.it=stk->GetItem(i);
           pvAllCharAndOrItemsInLevel->push_back(ci);
@@ -1436,13 +1431,13 @@ bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork, std::vecto
       if(SqrChar!=NULL){ //w/o skipping the Char, this will check for dups inside self Char inventory!
 //              DBG6("CharFix:",DBGAV2(lsqr->GetPos()),DBGI(SqrChar->GetID()),SqrChar,DBGB(SqrChar->IsPlayer()),DBGI(SqrChar->GetNP()));
         std::vector<item*> vCharItems;
-        _BugWorkaround_CharAllItemsCollect(SqrChar,&vCharItems);
+        bugWorkaroundDupPlayer::CharAllItemsCollect(SqrChar,&vCharItems);
 
         for(int i=0;i<vCharItems.size();i++)vSqrItems.push_back(vCharItems[i]);
 
         if(pvAllCharAndOrItemsInLevel!=NULL){
           for(int i=0;i<vCharItems.size();i++){
-            _BugWorkaround_CharItem ci;
+            bugWorkaroundDupPlayerCharItem ci;
             ci.Char=SqrChar;
             ci.it=vCharItems[i];
             pvAllCharAndOrItemsInLevel->push_back(ci);
@@ -1488,11 +1483,7 @@ bool _BugWorkaround_FindDupItemOnLevel(character* Char, item* itWork, std::vecto
   return iDupIDCount>0;
 }
 
-void _BugWorkaround_FullLevelRevalidate(){
-  std::vector<_BugWorkaround_CharItem> vAllCharAndOrItemsInLevel;
-}
-
-void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
+void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
   if(itWork!=NULL){
     if(pvItem!=NULL)pvItem->push_back(itWork);
 
@@ -1500,7 +1491,7 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
       bool bChangeItemID = false;
       bool bMakeItConsistent = false;
 
-      item* itExistingValid = SearchItem(itWork->GetID());
+      item* itExistingValid = game::SearchItem(itWork->GetID());
       if(itExistingValid==NULL){
         DBG6(Char,Char->GetID(),cInfo,"CharFix:NothingFoundFor:ItemID",DBGI(itWork->GetID()),itWork);
         bMakeItConsistent=true;
@@ -1511,7 +1502,7 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
       }
 
       if(!bChangeItemID){
-        bChangeItemID = _BugWorkaround_FindDupItemOnLevel(Char,itWork);
+        bChangeItemID = bugWorkaroundDupPlayer::FindDupItemOnLevel(Char,itWork);
       }
 
       if(bChangeItemID){
@@ -1536,76 +1527,69 @@ void game::_BugWorkaround_ItemWork(character* Char, item* itWork, bool bFix, con
   }
 }
 
-bool isItemOnVector(std::vector<item*>* pv, item* e){
-  return (std::find(pv->begin(), pv->end(), e) != pv->end());
-}
-bool isCharOnVector(std::vector<character*>* pv, character* e){
-  return (std::find(pv->begin(), pv->end(), e) != pv->end());
-}
-
-ulong game::_BugWorkaround_getCorrectKey(item* itChk){
-  for (auto const& kv : ItemIDMap){
-    ulong key = kv.first;
-    item* it  = kv.second;
-    if(itChk==it && itChk->GetID()!=key)return key;
-  }
-  return 0;
-}
-
-void game::_BugWorkaround_CheckAllItemsForDups(){
-  std::vector<item*> vItem;
-
-  for (auto const& kv : ItemIDMap){
-    DBG4("ItemID:Key:Pointer:ID",kv.first,kv.second,kv.second->GetID());
-    ulong key = kv.first;
-    item* it  = kv.second;
-    if(key!=it->GetID()){
-//      it->
-    }
-  }
-
-  for (auto const& kvA : ItemIDMap){
-    item* it1 = kvA.second;
-
-//    if(_BugWorkaround_alreadyOnTheList(&vItem,it1))continue;
-
-    for (auto const& kvB : ItemIDMap){
-      item* it2 = kvB.second;
-
-      if(it1==it2)continue;
-
-//      if(_BugWorkaround_alreadyOnTheList(&vItem,it2))continue;
-
-      if(it1->GetID()==it2->GetID()){
-        if(!isItemOnVector(&vItem,it1)){
-          vItem.push_back(it1);
-          DBG4("Dup:ItemID:Found",it1->GetID(),it1,kvA.first);
-        }
-
-        if(!isItemOnVector(&vItem,it2)){
-          vItem.push_back(it2);
-          DBG4("Dup:ItemID:Found",it2->GetID(),it2,kvB.first);
-        }
-//          DBG2("Dup:ItemID:Found",it2->CHAR_NAME(UNARTICLED));
-//          DBG2("Dup:ItemID:Found",it2->GetDescription(UNARTICLED).CStr());
-//          if(it2->GetSquareUnder()!=NULL)DBGSV2(it2->GetSquareUnder()->GetPos());
-      }
-    }
-  }
-
-//  for(int i=0;i<vItem.size();i++){
-//    vItem[i]->_BugWorkaround_ItemDup();
+//ulong bugWorkaroundDupPlayer::getCorrectKey(item* itChk){
+//  for (auto const& kv : ItemIDMap){
+//    ulong key = kv.first;
+//    item* it  = kv.second;
+//    if(itChk==it && itChk->GetID()!=key)return key;
 //  }
-  if(vItem.size()>0)ABORT("Dup ItemID found! Tot dup items: %d. Tot items %d.",vItem.size(),ItemIDMap.size());
-}
+//  return 0;
+//}
 
-character* game::_BugWorkaroundDupPlayer(character* CharAsked){
+//void bugWorkaroundDupPlayer::CheckAllItemsForDups(){
+//  std::vector<item*> vItem;
+//
+//  for (auto const& kv : ItemIDMap){
+//    DBG4("ItemID:Key:Pointer:ID",kv.first,kv.second,kv.second->GetID());
+//    ulong key = kv.first;
+//    item* it  = kv.second;
+//    if(key!=it->GetID()){
+////      it->
+//    }
+//  }
+//
+//  for (auto const& kvA : ItemIDMap){
+//    item* it1 = kvA.second;
+//
+////    if(bugWorkaroundDupPlayer::alreadyOnTheList(&vItem,it1))continue;
+//
+//    for (auto const& kvB : ItemIDMap){
+//      item* it2 = kvB.second;
+//
+//      if(it1==it2)continue;
+//
+////      if(bugWorkaroundDupPlayer::alreadyOnTheList(&vItem,it2))continue;
+//
+//      if(it1->GetID()==it2->GetID()){
+//        if(!isItemOnVector(&vItem,it1)){
+//          vItem.push_back(it1);
+//          DBG4("Dup:ItemID:Found",it1->GetID(),it1,kvA.first);
+//        }
+//
+//        if(!isItemOnVector(&vItem,it2)){
+//          vItem.push_back(it2);
+//          DBG4("Dup:ItemID:Found",it2->GetID(),it2,kvB.first);
+//        }
+////          DBG2("Dup:ItemID:Found",it2->CHAR_NAME(UNARTICLED));
+////          DBG2("Dup:ItemID:Found",it2->GetDescription(UNARTICLED).CStr());
+////          if(it2->GetSquareUnder()!=NULL)DBGSV2(it2->GetSquareUnder()->GetPos());
+//      }
+//    }
+//  }
+//
+////  for(int i=0;i<vItem.size();i++){
+////    vItem[i]->_BugWorkaround_ItemDup();
+////  }
+//  if(vItem.size()>0)ABORT("Dup ItemID found! Tot dup items: %d. Tot items %d.",vItem.size(),ItemIDMap.size());
+//}
+
+character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAsked){
 //  char* cOpt = std::getenv("IVAN_BUGFIXDUPPLAYEROLD"); //TODO document
   bool bNewPlayerInstanceShallWin = true;
   // TODO the best is to prefer the new instance
-//  return _BugWorkaroundDupPlayer_PreferOldInstance(CharAsked);
+//  return bugWorkaroundDupPlayer::PreferOldInstance(CharAsked);
 
-  _BugWorkaroundDupPlayer_Accepted=false; //init for next iteration w/o closing the game app
+  bugWorkaroundDupPlayer::Accepted=false; //init for next iteration w/o closing the game app
   DBGCHAR(CharAsked,"CharFix:CharAsked");
 
   character* CharPlayer = game::SearchCharacter(CharAsked->GetID()); //Player is 1 tho
@@ -1615,7 +1599,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   character* CharPlayerOld = NULL;
   bool bLevelItemsCollected=false;
   if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
-    _BugWorkaroundDupPlayer_AlertConfirmFixMsg(
+    bugWorkaroundDupPlayer::AlertConfirmFixMsg(
       bNewPlayerInstanceShallWin ?
       "Duplicated player found. Fix new player instance (experimental)?"    :
       "Duplicated player found. Restore old player instance (experimental)?" );
@@ -1633,7 +1617,7 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     }
 
 //    // prepare to check for dup item's ids
-//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bugWorkaroundDupPlayer::GatherAllItemInLevel();DBGLN;
 //    bLevelItemsCollected=true;
 
     //TODO transfer old player items (pointers/objects/instances) to new player instance if they have the same ID?
@@ -1641,8 +1625,8 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     if(bNewPlayerInstanceShallWin){
       // old player's items are consistent (on the list), they will get a new ID and be sent to hell
       // new player's items have the same ID of old player's ones, their pointers will become consistent later...
-      _BugWorkaround_CharEquipmentsWork(CharPlayerOld,true,true);DBGLN;
-      _BugWorkaround_CharInventoryWork(CharPlayerOld,true,true);DBGLN;
+      bugWorkaroundDupPlayer::CharEquipmentsWork(CharPlayerOld,true,true);DBGLN;
+      bugWorkaroundDupPlayer::CharInventoryWork(CharPlayerOld,true,true);DBGLN;
     }
     CharToBeLost->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(CharToBeLost));DBGLN; // make it consistent as removing it is crashing (also empties inv)
     for(int i=0;i<CharToBeLost->GetEquipments();i++){ // clear equipments too
@@ -1662,10 +1646,10 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
     CharToBeLost->SetAssignedName("_DupPlayerBug_");DBGLN; //non immersive naming, shall not be, this bug shall be properly fixed one day.
 
 //    // prepare to check for dup item's ids
-//    game::_BugWorkaround_GatherAllItemInLevel();DBGLN;
+//    bugWorkaroundDupPlayer::GatherAllItemInLevel();DBGLN;
 //    bLevelItemsCollected=true;
 
-    _BugWorkaround_CharBodypartsWork(CharToBeLost,true,false);DBGLN;
+    bugWorkaroundDupPlayer::CharBodypartsWork(CharToBeLost,true,false);DBGLN;
     // this leads to crash //CharAsked->Remove();
 
     DBGCHAR(CharToBeLost,"CharFix:CharToBeLost");
@@ -1674,17 +1658,17 @@ character* game::_BugWorkaroundDupPlayer(character* CharAsked){
   }
 
   // now, grants the valid player has no item issues compared to other items on the level/chars TODO this may create duplicated items?
-//  if(!bLevelItemsCollected){game::_BugWorkaround_GatherAllItemInLevel();DBGLN;}
+//  if(!bLevelItemsCollected){bugWorkaroundDupPlayer::GatherAllItemInLevel();DBGLN;}
   // new player's items will be made consistent if required (added to the list)
-  _BugWorkaround_CharEquipmentsWork(CharWins,true,false);DBGLN;
-  _BugWorkaround_CharInventoryWork(CharWins,true,false);DBGLN;
+  bugWorkaroundDupPlayer::CharEquipmentsWork(CharWins,true,false);DBGLN;
+  bugWorkaroundDupPlayer::CharInventoryWork(CharWins,true,false);DBGLN;
 
   // validate full level
-  std::vector<_BugWorkaround_CharItem> vAllCharAndOrItemsInLevel;
-  _BugWorkaround_FindDupItemOnLevel(NULL,NULL,&vAllCharAndOrItemsInLevel);
+  std::vector<bugWorkaroundDupPlayerCharItem> vAllCharAndOrItemsInLevel;
+  bugWorkaroundDupPlayer::FindDupItemOnLevel(NULL,NULL,&vAllCharAndOrItemsInLevel);
   for(int i=0;i<vAllCharAndOrItemsInLevel.size();i++){
-    _BugWorkaround_CharItem ci = vAllCharAndOrItemsInLevel[i];
-    if(_BugWorkaround_FindDupItemOnLevel(ci.Char,ci.it,NULL,true)){
+    bugWorkaroundDupPlayerCharItem ci = vAllCharAndOrItemsInLevel[i];
+    if(bugWorkaroundDupPlayer::FindDupItemOnLevel(ci.Char,ci.it,NULL,true)){
       ABORT("Full level validation against dups failed.");
     }
   }
@@ -2745,7 +2729,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
     }
 
-    _BugWorkaroundDupPlayer(Player);
+    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player);
 
     uint c;
 
