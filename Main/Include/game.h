@@ -175,8 +175,6 @@ class bugWorkaroundDupPlayer{
     static character* BugWorkaroundDupPlayer(character* CharAsked);
   private:
     static void GatherAllItemInLevel();
-//    static void CheckAllItemsForDups();
-//    static ulong getCorrectKey(item* itChk);
     static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
     static void FixPlayerDupInv(character* CharChk);
     static void CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
