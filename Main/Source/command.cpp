@@ -976,10 +976,14 @@ truth commandsystem::Pray(character* Char)
 
   if(!DivineMaster)
   {
+    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
-        Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
+        desc.Empty();
+        desc << game::GetGod(c)->GetCompleteDescription();
+        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
         Known[Index++] = c;
       }
   }

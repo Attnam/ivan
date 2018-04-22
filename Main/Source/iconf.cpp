@@ -77,6 +77,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
+truthoption ivanconfig::ShowGodInfo(      "ShowGodInfo",
+                                          "Shows info about each God when praying",
+                                          false);
 truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
                                           "Always center camera on player after look mode exits",
                                           false);
@@ -624,6 +627,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+  configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
