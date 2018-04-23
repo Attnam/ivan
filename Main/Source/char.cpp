@@ -23,6 +23,8 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "dbgmsgproj.h"
+
 struct statedata
 {
   cchar* Description;
@@ -8846,8 +8848,39 @@ truth character::CanUseEquipment(int I) const
   return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I) && EquipmentIsAllowed(I);
 }
 
-/* Target mustn't have any equipment */
+void character::MemorizeEquipedItems(){DBGCHAR(this,"");
+  int iEqCount=0;
+  for(int c = 0; c < MAX_EQUIPMENT_SLOTS; ++c)
+  {
+    item* Item = NULL;
+    if(CanUseEquipment(c))Item=GetEquipment(c);
 
+    if(Item!=NULL){
+      MemorizedEquippedItemIDs[c]=Item->GetID(); DBGSI(MemorizedEquippedItemIDs[c]);
+      iEqCount++;
+    }else{
+      MemorizedEquippedItemIDs[c]=0;
+    }
+  }
+}
+
+bool IsImprovedPetEquipmentMode(){
+  return true;
+}
+void addPolymorphBkpToVector(character* CharIni,std::vector<character*>* pvCharMemory){
+  character* CharMemory = CharIni;
+
+  while(CharMemory!=NULL){
+    if(std::find(pvCharMemory->begin(), pvCharMemory->end(), CharMemory) == pvCharMemory->end()){ //if not already in vector
+      pvCharMemory->push_back(CharMemory); DBGCHAR(CharMemory,"");
+    }
+
+    CharMemory=CharMemory->GetPolymorphBackup();
+
+    if(CharMemory==CharIni){DBG1("weirdRecurrentPolymorphBkp?");break;} //TODO keep this? just in case some weird thing happens out of here? it probably would mean inconsistency?
+  }
+}
+/* Target mustn't have any equipment */
 void character::DonateEquipmentTo(character* Character)
 {
   if(IsPlayer())
@@ -8876,8 +8909,7 @@ void character::DonateEquipmentTo(character* Character)
       else if(EquipmentMemory[c]
               && Character->CanUseEquipment(c))
       {
-        for(stackiterator i = Character->GetStack()->GetBottom();
-            i.HasItem(); ++i)
+        for(stackiterator i = Character->GetStack()->GetBottom(); i.HasItem(); ++i)
           if(i->GetID() == EquipmentMemory[c])
           {
             item* Item = *i;
@@ -8892,9 +8924,31 @@ void character::DonateEquipmentTo(character* Character)
   }
   else
   {
+    if(IsImprovedPetEquipmentMode() && IsPet())MemorizeEquipedItems();
+
     for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Item = GetEquipment(c);
+
+      if(Item==NULL){
+        /**
+         *
+         * Looks as much far as possible for Equipped memories.
+         */
+        std::vector<character*> vCharMemory;
+        addPolymorphBkpToVector(Character,&vCharMemory);
+        addPolymorphBkpToVector(this,&vCharMemory); DBGSI(vCharMemory.size());
+
+        /* The target has all items on it's inventory now, so search at it only. */
+        DBGCHAR(Character,""); DBGCHAR(this,"");
+        for(int i=0;i<vCharMemory.size();i++){ character* CharMemory=vCharMemory[i]; DBGCHAR(CharMemory,"");
+          Item=Character->SearchForItem(CharMemory->MemorizedEquippedItemIDs[c]);
+          if(Item!=NULL){
+            DBG5("FoundMemEqAtInv",DBGI(Item->GetID()),DBGI(CharMemory->GetID()),DBGI(this->GetID()),DBGI(Character->GetID()));
+            break;
+          }
+        }
+      }
 
       if(Item)
       {
@@ -8904,7 +8958,13 @@ void character::DonateEquipmentTo(character* Character)
           Character->SetEquipment(c, Item);
         }
         else
-          Item->MoveTo(Character->GetStackUnder());
+        {
+          if(IsImprovedPetEquipmentMode() && IsPet()){
+            Item->MoveTo(Character->GetStack());
+          }else{
+            Item->MoveTo(Character->GetStackUnder());
+          }
+        }
       }
     }
   }

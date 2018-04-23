@@ -458,6 +458,7 @@ class character : public entity, public id
   bodypart* CreateBodyPart(int, int = 0);
   virtual truth EquipmentIsAllowed(int) const { return true; }
   truth CanUseEquipment(int) const;
+  void MemorizeEquipedItems();
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(int) { }
   virtual double GetNaturalExperience(int) const;
@@ -1262,6 +1263,7 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
+  ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];
   virtual truth NeedsBurningPostFix() const { return false; }
 };
 
