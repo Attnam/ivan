@@ -928,6 +928,15 @@ truth commandsystem::ShowKeyLayout(character*)
   return false;
 }
 
+void commandsystem::PlayerDiedLookMode(){
+  //TODO why this does not work??? if(!PLAYER->IsDead())return;
+  if(!game::GetSeeWholeMapCheatMode()){
+    game::SeeWholeMap(); //1
+    game::SeeWholeMap(); //2
+  }
+  commandsystem::Look(PLAYER);
+}
+
 truth commandsystem::Look(character* Char)
 {
   festring Msg;

@@ -7723,17 +7723,21 @@ void character::ShowAdventureInfoAlt() const
   while(true) {
     int Answer =
      game::KeyQuestion(
-       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
-         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
+       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, (l)ook, (\\)cfg, or [ESC]/(n)othing?"),
+         'x', 12, 'i', 'I', 'm', 'M', 'k', 'K', 'l', 'L', 'N', 'n', '\\', KEY_ESC); //TODO x is ingored?
 
     if(Answer == 'i' || Answer == 'I'){
       inventoryInfo(this);
     }else if(Answer == 'm' || Answer == 'M'){
-     msgsystem::DrawMessageHistory();
+      msgsystem::DrawMessageHistory();
     }else if(Answer == 'k' || Answer == 'K'){
-     game::DisplayMassacreLists();
+      game::DisplayMassacreLists();
+    }else if(Answer == 'l' || Answer == 'L'){
+      commandsystem::PlayerDiedLookMode();
+    }else if(Answer == '\\'){
+      ivanconfig::Show();
     }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
-     return;
+      return;
     }
   }
 }
