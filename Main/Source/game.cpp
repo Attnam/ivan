@@ -1340,7 +1340,7 @@ v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
   return v2StretchedBufferDest;
 }
 
-void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
+void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work with look mode for visible squares too?
   bool bOk=true;
 
   if(bOk && !bAllowed)bOk=false;
@@ -1348,6 +1348,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
   if(bOk && bPositionQuestionMode)bOk=false;
 
   if(bOk && !Player->IsEnabled())bOk=false;
+
+  if(bOk && Player->IsDead())bOk=false;
 
   if(bOk && !OnScreen(Player->GetPos()))bOk=false;
 
@@ -1359,9 +1361,12 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){
 
   if(bOk && !bEnabled)bOk=false;
 
-  stack* su = Player->GetStackUnder(); //TODO should this work with look mode for visible squares too?
-  if(bOk && su==NULL)bOk=false;
-  if(bOk && su->GetItems()==0)bOk=false; //I think this will never happen... was <2 but showing only one item is quite useful too!
+  stack* su = NULL;
+  if(bOk){
+    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    if(bOk && su==NULL)bOk=false; //TODO can this happen?
+    if(bOk && su->GetItems()==0)bOk=false;
+  }
 
   if(!bOk){ // this is IMPORTANT as disabler
     graphics::SetSRegionEnabled(iRegionItemsUnder,false);
