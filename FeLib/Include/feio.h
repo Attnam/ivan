@@ -24,7 +24,7 @@ typedef void (*bitmapeditor)(bitmap*, truth);
 class iosystem
 {
  public:
-  static festring ContinueMenu(col16, col16, cfestring&);
+  static festring ContinueMenu(col16, col16, cfestring&, const int iSaveFileVersion);
   static void SetSaveGameSortMode(int i);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,

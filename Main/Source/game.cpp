@@ -64,6 +64,7 @@
 #define NEW_GAME 1
 #define BACK 2
 
+int game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
 int game::CurrentLevelIndex;
 truth game::InWilderness = false;
 worldmap* game::WorldMap;

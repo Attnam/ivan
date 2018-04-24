@@ -17,6 +17,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
 #ifdef WIN32
 #define stat _stat
 #include <io.h>
@@ -847,6 +851,7 @@ festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
 static int iSaveGameSortMode=0;
 void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
 struct fileInfo{
+  int Version;
   festring name=festring(); //TODO this init helps with festring? it is buggy?
   festring fullName=festring();
   festring time=festring();
@@ -865,7 +870,7 @@ bool addFileInfo(char* c){
 
   return true; //added
 }
-festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName)
+festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion)
 {
   ///////////////////// prepare general base data ///////////////////
   vFiles.clear();
@@ -947,7 +952,7 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
     [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
   );DBGLN;
 
-  std::vector<festring> vIds;
+  std::vector<festring> vIds,vInvIds;
   festring dungeonIds("");
   for(int i=0;i<vFiles.size();i++)
   {
@@ -958,6 +963,15 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
     }else
     if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
       festring id;
+
+      // savegame version
+      std::fstream file(vFiles[i].fullName.CStr(), std::ios::in | std::ios::binary);
+      unsigned char cVersion;
+      file.read(reinterpret_cast<char*>(&cVersion),1); //TODO how many bytes are used to store the file version? 131=0x83 is the current version at the time of this implementation
+      vFiles[i].Version = static_cast<int>(cVersion); DBG2(DBGI((static_cast<int>(cVersion))),DBGI(vFiles[i].Version));
+      file.close();
+      if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
+
       switch(iSaveGameSortMode){
       case 0: //no sort
       case 1: //by name
@@ -973,7 +987,11 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
 
       vFiles[i].idOnList<<id;
-      vIds.push_back(id);DBGSC(id.CStr());
+      if(vFiles[i].Version == iSaveFileVersion){
+        vIds.push_back(id);DBG2("ok",DBGC(id.CStr()));
+      }else{
+        vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
+      }
 
       dungeonIds.Empty();
     }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
@@ -986,21 +1004,21 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
   }
 
   // this will sort the ids alphabetically even if by time (so will sort the time as a string)
-  std::sort( vIds.begin(), vIds.end(),
-    [ ]( const festring& l, const festring& r ){ return l < r; }
-  );
+  std::sort( vIds   .begin(), vIds   .end(), [ ]( const festring& l, const festring& r ){return l < r;} );
+  std::sort( vInvIds.begin(), vInvIds.end(), [ ]( const festring& l, const festring& r ){return l < r;} );
 
-  if(iSaveGameSortMode==4){ //reversed time
-    for(int i=vIds.size()-1;i>=0;i--)
-      List.AddEntry(vIds[i],ListColor);
-  }else{
-    for(int i=0;i<vIds.size();i++)
-      List.AddEntry(vIds[i],ListColor);
+  // reversed or normal
+  int iFirst,iFirstI,iStopAt,iStopAtI,iDir; //TODO implement something more readable...
+  if(iSaveGameSortMode==4){
+    iDir=-1; iFirst=vIds.size()-1; iStopAt=-1         ; iFirstI=vInvIds.size()-1; iStopAtI=-1            ; }else{
+    iDir= 1; iFirst=0            ; iStopAt=vIds.size(); iFirstI=0               ; iStopAtI=vInvIds.size();
   }
+  for(int i=iFirst ;i!=iStopAt ;i+=iDir){List.AddEntry(vIds   [i],ListColor,0,NO_IMAGE,true ); DBG2(DBGC(vIds[i].CStr())   ,"ok"     );}
+  for(int i=iFirstI;i!=iStopAtI;i+=iDir){List.AddEntry(vInvIds[i],DARK_GRAY,0,NO_IMAGE,false); DBG2(DBGC(vInvIds[i].CStr()),"invalid");}
 
-  if(List.IsEmpty())
+  if(List.IsEmpty() || vIds.empty())
   {
-    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    iosystem::TextScreen(CONST_S("You don't have any valid previous saves."), ZERO_V2, TopicColor);
     return "";
   }
   else
@@ -1017,7 +1035,7 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         return vFiles[i].name;
       }
     }
-    ABORT("failed to match chosen file with id %s",chosen.CStr());
+    ABORT("failed to match chosen file with id %s",chosen.CStr()); //shouldnt happen
   }
 
   return ""; //dummy just to gcc do not complain..
@@ -1026,12 +1044,12 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
 /* DirectoryName is the directory where the savefiles are located. Returns
    the selected file or "" if an error occures or if no files are found. */
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName)
+                                cfestring& DirectoryName, const int iSaveFileVersion)
 {
   if(iSaveGameSortMode==0){
     return ContinueMenuOldAndSafe(TopicColor,ListColor,DirectoryName);
   }else{
-    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName);
+    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName,iSaveFileVersion);
   }
 }
 

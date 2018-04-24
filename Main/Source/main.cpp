@@ -130,7 +130,7 @@ int main(int argc, char** argv)
       break;
      case 1:
       {
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion());
 
         if(LoadName.GetSize())
         {
