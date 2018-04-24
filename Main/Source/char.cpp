@@ -7721,10 +7721,17 @@ void character::ShowAdventureInfo() const
 void character::ShowAdventureInfoAlt() const
 {
   while(true) {
+#ifdef WIZARD
     int Answer =
      game::KeyQuestion(
-       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
-         'x', 11, 'i', 'I', 'm', 'M', 'k', 'K', 'l', 'L', 'N', 'n', KEY_ESC); //TODO x is ingored?
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook, (x) cheat look or [ESC]/(n)othing?"),
+         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'x','X', 'N','n', KEY_ESC); //default answer 'z' is ignored
+#else
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
+         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+#endif
 
     if(Answer == 'i' || Answer == 'I'){
       inventoryInfo(this);
@@ -7732,8 +7739,13 @@ void character::ShowAdventureInfoAlt() const
       msgsystem::DrawMessageHistory();
     }else if(Answer == 'k' || Answer == 'K'){
       game::DisplayMassacreLists();
+#ifdef WIZARD
+    }else if(Answer == 'l' || Answer == 'L' || Answer == 'x' || Answer == 'X'){
+      commandsystem::PlayerDiedLookMode(Answer == 'x' || Answer == 'X');
+#else
     }else if(Answer == 'l' || Answer == 'L'){
       commandsystem::PlayerDiedLookMode();
+#endif
     }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
       return;
     }

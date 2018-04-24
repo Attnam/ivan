@@ -928,10 +928,10 @@ truth commandsystem::ShowKeyLayout(character*)
   return false;
 }
 
-void commandsystem::PlayerDiedLookMode(){
+void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
   //TODO why this does not work??? if(!PLAYER->IsDead())return;
 #ifdef WIZARD
-  if(!game::GetSeeWholeMapCheatMode()){
+  if(bSeeWholeMapCheatMode && !game::GetSeeWholeMapCheatMode()){
     game::SeeWholeMap(); //1
     game::SeeWholeMap(); //2
   }
