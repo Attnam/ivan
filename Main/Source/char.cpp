@@ -2160,10 +2160,8 @@ void character::Load(inputfile& SaveFile)
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 
-  if(game::GetCurrentSavefileVersion()>=132){
-    for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
-      SaveFile >> MemorizedEquippedItemIDs[c];
-  }
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    SaveFile >> MemorizedEquippedItemIDs[c];
 
   /////////////// loading ended /////////////////////////
 
