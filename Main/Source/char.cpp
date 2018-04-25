@@ -5971,6 +5971,8 @@ void character::TeleportLockHandler()
 
 void character::DisplayStethoscopeInfo(character*) const
 {
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
   Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
