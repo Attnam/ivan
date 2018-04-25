@@ -68,6 +68,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
+                                          "Let old savegames (v131 up) be imported (experimental)",
+                                          false);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
@@ -650,6 +653,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+
+  fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

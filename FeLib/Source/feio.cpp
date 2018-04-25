@@ -40,14 +40,15 @@
 #include <dir.h>
 #endif
 
-#include "graphics.h"
-#include "feio.h"
-#include "whandler.h"
-#include "felist.h"
-#include "rawbit.h"
-#include "festring.h"
 #include "bitmap.h"
 #include "error.h"
+#include "feio.h"
+#include "felist.h"
+#include "festring.h"
+#include "graphics.h"
+#include "rawbit.h"
+#include "save.h"
+#include "whandler.h"
 
 #include "dbgmsgproj.h"
 
@@ -870,7 +871,7 @@ bool addFileInfo(char* c){
 
   return true; //added
 }
-festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion)
+festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
   ///////////////////// prepare general base data ///////////////////
   vFiles.clear();
@@ -965,11 +966,9 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       festring id;
 
       // savegame version
-      std::fstream file(vFiles[i].fullName.CStr(), std::ios::in | std::ios::binary);
-      unsigned char cVersion;
-      file.read(reinterpret_cast<char*>(&cVersion),1); //TODO how many bytes are used to store the file version? 131=0x83 is the current version at the time of this implementation
-      vFiles[i].Version = static_cast<int>(cVersion); DBG2(DBGI((static_cast<int>(cVersion))),DBGI(vFiles[i].Version));
-      file.close();
+      inputfile file(vFiles[i].fullName, 0, false);
+      file >> vFiles[i].Version; DBGSI(vFiles[i].Version);
+      file.Close();
       if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
 
       switch(iSaveGameSortMode){
@@ -987,7 +986,15 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
 
       vFiles[i].idOnList<<id;
-      if(vFiles[i].Version == iSaveFileVersion){
+
+      bool bValid=false;
+      int iOldSavegameVersionImportSince=131;
+      if(!bValid && vFiles[i].Version == iSaveFileVersion)bValid=true;
+      if(!bValid && vFiles[i].Version <  iSaveFileVersion)
+        if(bAllowImportOldSavegame)
+          if(vFiles[i].Version >= iOldSavegameVersionImportSince)
+            bValid=true;
+      if(bValid){
         vIds.push_back(id);DBG2("ok",DBGC(id.CStr()));
       }else{
         vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
@@ -1044,12 +1051,12 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
 /* DirectoryName is the directory where the savefiles are located. Returns
    the selected file or "" if an error occures or if no files are found. */
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName, const int iSaveFileVersion)
+                                cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
   if(iSaveGameSortMode==0){
     return ContinueMenuOldAndSafe(TopicColor,ListColor,DirectoryName);
   }else{
-    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName,iSaveFileVersion);
+    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName,iSaveFileVersion,bAllowImportOldSavegame);
   }
 }
 

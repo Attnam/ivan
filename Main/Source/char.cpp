@@ -2147,6 +2147,14 @@ void character::Load(inputfile& SaveFile)
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 
+/*
+  if(game::GetCurrentSavefileVersion()>=132){ //TODO enable after merge with branch ImprovedPetEquipmentManagement
+    for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+      SaveFile >> MemorizedEquippedItemIDs[c];
+  }
+*/
+  /////////////// loading ended /////////////////////////
+
   if(IsEnabled() && !game::IsInWilderness())
     for(c = 1; c < GetSquaresUnder(); ++c)
       GetSquareUnder(c)->SetCharacter(this);

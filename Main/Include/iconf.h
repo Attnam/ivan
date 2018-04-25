@@ -26,6 +26,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
@@ -129,6 +130,7 @@ class ivanconfig
 
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
+  static truthoption AllowImportOldSavegame;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
