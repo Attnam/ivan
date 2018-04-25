@@ -1259,24 +1259,38 @@ truth game::Save(cfestring& SaveName)
   return true;
 }
 
+int CurrentSavefileVersion=-1;
+int game::GetCurrentSavefileVersion(){
+  if(CurrentSavefileVersion==-1)ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
+  return CurrentSavefileVersion;
+}
+
 int game::Load(cfestring& SaveName)
-{
+{DBGLN;
   inputfile SaveFile(SaveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
     return NEW_GAME;
 
-  int Version;
-  SaveFile >> Version;
+  SaveFile >> CurrentSavefileVersion;
 
-  if(Version != SAVE_FILE_VERSION)
-  {
-    if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
-                       CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
-                       CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-      return NEW_GAME;
-    else
+  if(ivanconfig::IsAllowImportOldSavegame()){
+    if(CurrentSavefileVersion > SAVE_FILE_VERSION){
+      iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+        CONST_S("Sorry, this save can't be imported by this game version.\r"),
+        CONST_S("Hit a key to go back...\r"), LIGHT_GRAY);
       return BACK;
+    }
+  }else{
+    if(CurrentSavefileVersion != SAVE_FILE_VERSION)
+    {
+      if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                         CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
+                         CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+        return NEW_GAME;
+      else
+        return BACK;
+    }
   }
 
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
