@@ -527,6 +527,9 @@ character::character(ccharacter& Char)
 
   int c;
 
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    MemorizedEquippedItemIDs[c]=0; //TODO use Char?
+
   for(c = 0; c < STATES; ++c)
     TemporaryStateCounter[c] = Char.TemporaryStateCounter[c];
 
@@ -576,6 +579,11 @@ character::character()
   WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0)
 {
   Stack = new stack(0, this, HIDDEN);
+
+  int c;
+
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    MemorizedEquippedItemIDs[c]=0;
 }
 
 character::~character()
@@ -2091,6 +2099,9 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << CWeaponSkill[c];
 
   SaveFile << static_cast<ushort>(GetConfig());
+
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    SaveFile << MemorizedEquippedItemIDs[c];
 }
 
 void character::Load(inputfile& SaveFile)
@@ -2148,6 +2159,13 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> CWeaponSkill[c];
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
+
+  if(game::GetCurrentSavefileVersion()>=132){
+    for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+      SaveFile >> MemorizedEquippedItemIDs[c];
+  }
+
+  /////////////// loading ended /////////////////////////
 
   if(IsEnabled() && !game::IsInWilderness())
     for(c = 1; c < GetSquaresUnder(); ++c)
