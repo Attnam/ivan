@@ -942,8 +942,13 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 truth commandsystem::Look(character* Char)
 {
   festring Msg;
-  if(!game::IsInWilderness())
-    Char->GetLevel()->AddSpecialCursors();
+  if(!game::IsInWilderness()){
+    if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
+      game::GetCurrentLevel()->AddSpecialCursors();
+    }else{
+      Char->GetLevel()->AddSpecialCursors();
+    }
+  }
 
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
