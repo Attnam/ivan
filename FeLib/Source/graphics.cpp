@@ -315,8 +315,7 @@ bool graphics::IsSRegionEnabled(int iIndex){
   return vStretchRegion[iIndex].bEnabled;
 }
 void graphics::SetSRegionEnabled(int iIndex, bool b){
-  vStretchRegion[iIndex].bEnabled=b;
-  if(b){stretchRegion& rSR = vStretchRegion[iIndex];DBGSR;}
+  vStretchRegion[iIndex].bEnabled=b; DBGEXEC(if(b){stretchRegion& rSR = vStretchRegion[iIndex];DBGSR;});
 }
 void graphics::SetSRegionUseXBRZ(int iIndex, bool b){
   vStretchRegion[iIndex].bUseXBRZ=b;

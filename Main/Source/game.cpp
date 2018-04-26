@@ -195,10 +195,14 @@ int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 int iRegionItemsUnder = -1;
+int iRegionAltSilhouette = -1;
+
+blitdata bldPlayerTMP = DEFAULT_BLITDATA;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
+blitdata bldAltSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
 
 int iItemsUnderStretch = 2;
@@ -571,6 +575,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouetteTMP,"Silhouette");
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
+
+      if(iRegionAltSilhouette==-1){ //will be drawn above silhouette
+        bldAltSilhouetteTMP.Border = TILE_V2;
+        bldAltSilhouetteTMP.Stretch=2; // minimum to allow setup
+        iRegionAltSilhouette = graphics::AddStretchRegion(bldAltSilhouetteTMP,"AlternativeSilhouetteZoom");
+      }
     }
   }
 
@@ -1118,6 +1128,49 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+void game::UpdateAltSilhouette(bool bAllowed){
+  bool bOk=true;
+
+  if(bOk && !bAllowed)bOk=false;
+
+  if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on
+
+  if(bOk && !Player->IsEnabled())bOk=false;
+
+  if(bOk && Player->IsDead())bOk=false; //TODO this works?
+
+//  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+
+//  if(bOk && IsInWilderness())bOk=false;
+
+  if(!bOk){
+    graphics::SetSRegionEnabled(iRegionAltSilhouette,false);
+    return;
+  }
+
+  /////////////////////////// ok ////////////////////////////
+
+  if(bldPlayerTMP.Bitmap==NULL){
+//    bldPlayerTMP.Stretch = bldSilhouetteTMP.Stretch*3;
+//    if(bldPlayerTMP.Stretch>6)bldPlayerTMP.Stretch=6;//TODO stretch from stretched later allowing x18 (xBRZ max of x6 * 3 that is available space over silhouette)
+    bldPlayerTMP.Stretch = 1;
+    bldPlayerTMP.Border = TILE_V2*bldPlayerTMP.Stretch;
+    bldPlayerTMP.Bitmap = new bitmap(bldPlayerTMP.Border);
+  };DBGBLD(bldPlayerTMP);
+  igraph::BlitBackGround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border);
+  graphics::DrawRectangleOutlineAround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border, LIGHT_GRAY, false);
+  PLAYER->Draw(bldPlayerTMP);
+
+  bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
+  bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(21,22)*bldSilhouetteTMP.Stretch;
+  DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
+
+  graphics::SetSRegionSrcBitmapOverride(
+    iRegionAltSilhouette, bldPlayerTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
+
+  graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
+}
+
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
   bool bXBRZandFelist = ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
@@ -1221,8 +1274,9 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+  UpdateAltSilhouette(bXBRZandFelist);
 
+  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
 }
 
 int game::IntemUnderCode(int iCycleValue){
