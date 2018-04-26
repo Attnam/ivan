@@ -85,6 +85,7 @@ void igraph::Init()
     graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
+    felist::SetDefaultEntryImageSize(TILE_V2);
     felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
     felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
     object::InitSparkleValidityArrays();
