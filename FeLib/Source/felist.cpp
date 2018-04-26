@@ -150,6 +150,9 @@ void felist::Pop()
 
 uint felist::Draw()
 {
+  if(Flags & SELECTABLE)
+    PageLength=26; //from aA to zZ, there is no coded support beyond that anyways...
+
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
 
@@ -221,7 +224,7 @@ uint felist::Draw()
 
     uint Pressed = GET_KEY(false);DBGLN;
 
-    if(Flags & SELECTABLE && Pressed > 64 //TODO explain what are these numbers: letters/digits/symbols?
+    if(Flags & SELECTABLE && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
     {
@@ -230,7 +233,7 @@ uint felist::Draw()
       break;
     }
 
-    if(Flags & SELECTABLE && Pressed > 96 //TODO explain what are these numbers: letters/digits/symbols?
+    if(Flags & SELECTABLE && Pressed > 96 // 97='a' 122='z'
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
     {
@@ -461,8 +464,11 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
       }
     }
 
-    if((i - PageBegin == PageLength - 1 && Entry[c]->Selectable)
-       || c == Entry.size() - 1)
+    if(
+        (i - PageBegin == PageLength - 1 && Entry[c]->Selectable)
+        ||
+        c == Entry.size() - 1
+      )
     {
       if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1)
          || (Flags & INVERSE_MODE && PageBegin))

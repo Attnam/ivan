@@ -63,7 +63,7 @@ numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
 numberoption ivanconfig::StackListPageLength("StackListPageLength",
-                                          "Stack list page length in entries",
+                                          "Page length in entries for non-selectable lists",
                                           stack::GetDefaultPageLength(),
                                           &StackListPageLengthDisplayer,
                                           &StackListPageLengthChangeInterface,
