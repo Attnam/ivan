@@ -172,6 +172,7 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
 
