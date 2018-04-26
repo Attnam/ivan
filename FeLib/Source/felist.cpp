@@ -150,8 +150,8 @@ void felist::Pop()
 
 uint felist::Draw()
 {
-  if(Flags & SELECTABLE)
-    PageLength=26; //from aA to zZ, there is no coded support beyond that anyways...
+  if(Flags & SELECTABLE && PageLength > 26)
+    PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
 
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
