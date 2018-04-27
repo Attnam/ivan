@@ -1142,6 +1142,8 @@ int i3=3; // :/
 int iY4 = TILE_SIZE + TILE_SIZE/i3;
 //bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
 int iAltSilBlitCount=0;
+int iRandomTall=0;
+int iPreviousAltSilOpt=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1161,11 +1163,14 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(!bOk){
     graphics::SetSRegionEnabled(iRegionAltSilhouette,false);
+    iRandomTall=iAltSilBlitCount%i3;
     iAltSilBlitCount=0;
     return;
   }
 
   /////////////////////////// ok ////////////////////////////
+  iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
+
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
     bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
@@ -1190,14 +1195,19 @@ void game::UpdateAltSilhouette(bool bAllowed){
      * which one is determined by blit count.
      */
     int iYDest=0;
-    int nBreathDelay=20; //calm breathing
-    if(PlayerIsRunning())nBreathDelay-=10;
-    if(Player->GetTirednessState()==FAINTING)nBreathDelay=1;
-    if(nBreathDelay<1)nBreathDelay=1;
+    if(ivanconfig::GetAltSilhouette()==3){ //breath animation
+      int nBreathDelay=20; //calm breathing
+      if(PlayerIsRunning())nBreathDelay=10;
+      if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay=5;
+      if(Player->GetTirednessState()==FAINTING)nBreathDelay=1;
+      if(nBreathDelay<1)nBreathDelay=1;
+
+      iRandomTall=(iAltSilBlitCount/nBreathDelay)%i3;
+    }
     for(int y = 0; y < TILE_SIZE; ++y){
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
 //      if(y%i3 == 0){//iAltSilBlitCount%(i3*10)){
-      if(y%i3 == (iAltSilBlitCount/nBreathDelay)%i3){
+      if(y%i3 == iRandomTall){
 //        Player->is
         iYDest++;
         if(iYDest>=iY4)break;
