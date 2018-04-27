@@ -1132,18 +1132,14 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-//class bitmap3by4 : bitmap{
-//  public:
-//    void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom){
-//      memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], TILE_SIZE);
-//    }
-//};
 int i3=3; // :/
 int iY4 = TILE_SIZE + TILE_SIZE/i3;
-//bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
 int iAltSilBlitCount=0;
 int iRandomTall=0;
 int iPreviousAltSilOpt=0;
+v2 v2AltSilDispl = v2(24,24);
+v2 v2AltSilPos;
+bool bUseNewSRegion=false;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1173,10 +1169,13 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
+//    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
+    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE; //excellent!
+    v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
   }
-  igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap, v2(0,0), bldPlayerCopyTMP.Bitmap->GetSize());
+  //igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap, v2(0,0), bldPlayerCopyTMP.Bitmap->GetSize());
   //just this was not good:  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,BLACK);
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
   v2 v2SizeSrc=bldPlayerCopyTMP.Bitmap->GetSize();
@@ -1184,16 +1183,9 @@ void game::UpdateAltSilhouette(bool bAllowed){
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=2; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
-//      bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
-//      bldPlayer3by4TMP.Bitmap = bmp34;
       bldPlayer3by4TMP.Bitmap = new bitmap(v2(TILE_SIZE, iY4));
-//      bldPlayer3by4TMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
     }
 
-    /**
-     * every 3 lines, duplicate one of them once.
-     * which one is determined by blit count.
-     */
     int iYDest=0;
     if(ivanconfig::GetAltSilhouette()==3){ //breath animation
       int nBreathDelay=20; //calm breathing
@@ -1205,27 +1197,18 @@ void game::UpdateAltSilhouette(bool bAllowed){
       iRandomTall=(iAltSilBlitCount/nBreathDelay)%i3;
     }
     for(int y = 0; y < TILE_SIZE; ++y){
+      /**
+       * every 3 lines, duplicate one of them once.
+       * which one is determined by blit count.
+       */
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//      if(y%i3 == 0){//iAltSilBlitCount%(i3*10)){
       if(y%i3 == iRandomTall){
-//        Player->is
         iYDest++;
         if(iYDest>=iY4)break;
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
       }
       iYDest++;
     }
-//    for(int iYDest=0,y = 0; y < TILE_SIZE; ++y){
-//      for(bool bDupOnce=true;;){
-//        if(iYDest>=iY4)break;
-////        bmp34.copyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y);
-//        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-////        memcpy(&bldPlayer3by4TMP.Bitmap->im[iYDest][0], &bldPlayerCopyTMP.Bitmap[y][0], TILE_SIZE);
-//        iYDest++;
-//        if(y%3 == iAltSilBlitCount%3 && bDupOnce){bDupOnce=false;continue;}
-//        break;
-//      }
-//    }
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
     v2SizeSrc=bldPlayer3by4TMP.Bitmap->GetSize();
@@ -1236,27 +1219,32 @@ void game::UpdateAltSilhouette(bool bAllowed){
     bldPlayerToSilhouetteAreaTMP.Border = v2SizeSrc;//TILE_V2;
 
     v2 v2BmpSize = bldPlayerToSilhouetteAreaTMP.Border * bldPlayerToSilhouetteAreaTMP.Stretch;
-//    v2BmpSize.X = bldPlayerToSilhouetteAreaTMP.Border.X * bldPlayerToSilhouetteAreaTMP.Stretch;
     if(!bXbyYis3by4){
-//      v2BmpSize.Y = bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1);
-//    }else{
       v2BmpSize.Y = bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1);
       bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
     }
 
     bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2BmpSize); // 3/4 the silhouette area is like that
 //    igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
-    bldPlayerToSilhouetteAreaTMP.Bitmap->Fill(v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize(), BLACK);
+//    bldPlayerToSilhouetteAreaTMP.Bitmap->Fill(v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize(), BLACK);
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
+  if(!bUseNewSRegion)bmpPlayerSrc = bldPlayerToSilhouetteAreaTMP.Bitmap;
 
-  bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
-  bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
-  DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
+  if(bUseNewSRegion){
+    //TODO it is glitching, the 1st frame still shows the old silhouette
+    bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
+    bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
+    DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
 
-  graphics::SetSRegionSrcBitmapOverride(
-    iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
-  graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
+    graphics::SetSRegionSrcBitmapOverride(
+      iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
+    graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
+  }else{
+    bmpPlayerSrc->FastBlit(DOUBLE_BUFFER, v2AltSilPos); // will just be used by the already setup SRegion for silhouette!
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2AltSilPos, bmpPlayerSrc->GetSize(), DARK_GRAY, false);
+  }
+
   iAltSilBlitCount++;
 }
 
