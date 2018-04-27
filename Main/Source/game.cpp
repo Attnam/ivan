@@ -579,7 +579,9 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       if(iRegionAltSilhouette==-1){ //will be drawn above silhouette
         bldAltSilhouetteTMP.Border = TILE_V2;
         bldAltSilhouetteTMP.Stretch=2; // minimum to allow setup
-        iRegionAltSilhouette = graphics::AddStretchRegion(bldAltSilhouetteTMP,"AlternativeSilhouetteZoom");
+        iRegionAltSilhouette = graphics::AddStretchRegion(bldAltSilhouetteTMP,"AltSilhouetteShowingPlayer");
+        graphics::SetSRegionDrawAfterFelist(iRegionAltSilhouette,true);
+        graphics::SetSRegionDrawRectangleOutline(iRegionAltSilhouette,true);
       }
     }
   }
@@ -1133,7 +1135,9 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(bOk && !bAllowed)bOk=false;
 
-  if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on
+  if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
+
+  if(bOk && !ivanconfig::IsAltSilhouette())bOk=false;
 
   if(bOk && !Player->IsEnabled())bOk=false;
 
@@ -1151,14 +1155,12 @@ void game::UpdateAltSilhouette(bool bAllowed){
   /////////////////////////// ok ////////////////////////////
 
   if(bldPlayerTMP.Bitmap==NULL){
-//    bldPlayerTMP.Stretch = bldSilhouetteTMP.Stretch*3;
-//    if(bldPlayerTMP.Stretch>6)bldPlayerTMP.Stretch=6;//TODO stretch from stretched later allowing x18 (xBRZ max of x6 * 3 that is available space over silhouette)
-    bldPlayerTMP.Stretch = 1;
+    bldPlayerTMP.Stretch = 3;
     bldPlayerTMP.Border = TILE_V2*bldPlayerTMP.Stretch;
     bldPlayerTMP.Bitmap = new bitmap(bldPlayerTMP.Border);
   };DBGBLD(bldPlayerTMP);
-  igraph::BlitBackGround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border);
-  graphics::DrawRectangleOutlineAround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border, LIGHT_GRAY, false);
+//  igraph::BlitBackGround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border);
+//  graphics::DrawRectangleOutlineAround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border, LIGHT_GRAY, false);
   PLAYER->Draw(bldPlayerTMP);
 
   bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
@@ -1167,7 +1169,6 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   graphics::SetSRegionSrcBitmapOverride(
     iRegionAltSilhouette, bldPlayerTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
-
   graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
 }
 

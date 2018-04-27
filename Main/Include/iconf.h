@@ -27,6 +27,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsAltSilhouette() { return AltSilhouette.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -149,6 +150,7 @@ class ivanconfig
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static cycleoption SilhouetteScale;
+  static truthoption AltSilhouette;
   static cycleoption AltListItemPos;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;

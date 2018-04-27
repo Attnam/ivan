@@ -119,6 +119,9 @@ cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           &SilhouetteScaleDisplayer,
                                           &SilhouetteScaleChangeInterface,
                                           &SilhouetteScaleChanger);
+truthoption ivanconfig::AltSilhouette(    "AltSilhouette",
+                                          "Use alternative scaled silhouette.",
+                                          false);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -643,6 +646,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&XBRZScale);
   configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
   configsystem::AddOption(fsCategory,&SilhouetteScale);
+  configsystem::AddOption(fsCategory,&AltSilhouette);
   configsystem::AddOption(fsCategory,&AltListItemPos);
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
