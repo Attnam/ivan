@@ -195,7 +195,7 @@ int iRegionSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 int iRegionItemsUnder = -1;
-int iRegionAltSilhouette = -1;
+//int iRegionAltSilhouette = -1;
 
 blitdata bldPlayerCopyTMP = DEFAULT_BLITDATA;
 blitdata bldPlayer3by4TMP = DEFAULT_BLITDATA;
@@ -204,7 +204,7 @@ blitdata bldPlayerToSilhouetteAreaTMP = DEFAULT_BLITDATA;
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
-blitdata bldAltSilhouetteTMP = DEFAULT_BLITDATA;
+//blitdata bldAltSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
 
 int iItemsUnderStretch = 2;
@@ -578,13 +578,13 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
 
-      if(iRegionAltSilhouette==-1){ //will be drawn above silhouette
-        bldAltSilhouetteTMP.Border = TILE_V2;
-        bldAltSilhouetteTMP.Stretch=2; // minimum to allow setup
-        iRegionAltSilhouette = graphics::AddStretchRegion(bldAltSilhouetteTMP,"AltSilhouetteShowingPlayer");
-        graphics::SetSRegionDrawAfterFelist(iRegionAltSilhouette,true);
-        graphics::SetSRegionDrawRectangleOutline(iRegionAltSilhouette,true);
-      }
+//      if(iRegionAltSilhouette==-1){ //will be drawn above silhouette
+//        bldAltSilhouetteTMP.Border = TILE_V2;
+//        bldAltSilhouetteTMP.Stretch=2; // minimum to allow setup
+//        iRegionAltSilhouette = graphics::AddStretchRegion(bldAltSilhouetteTMP,"AltSilhouetteShowingPlayer");
+//        graphics::SetSRegionDrawAfterFelist(iRegionAltSilhouette,true);
+//        graphics::SetSRegionDrawRectangleOutline(iRegionAltSilhouette,true);
+//      }
     }
   }
 
@@ -1134,12 +1134,13 @@ truth game::OnScreen(v2 Pos)
 
 int i3=3; // :/
 int iY4 = TILE_SIZE + TILE_SIZE/i3;
+v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
 int iAltSilBlitCount=0;
 int iRandomTall=0;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
 v2 v2AltSilPos;
-bool bUseNewSRegion=false;
+//bool bUseNewSRegion=false;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1158,8 +1159,9 @@ void game::UpdateAltSilhouette(bool bAllowed){
 //  if(bOk && IsInWilderness())bOk=false;
 
   if(!bOk){
-    graphics::SetSRegionEnabled(iRegionAltSilhouette,false);
-    iRandomTall=iAltSilBlitCount%i3;
+//    graphics::SetSRegionEnabled(iRegionAltSilhouette,false);
+//    iRandomTall=iAltSilBlitCount%i3;
+    iRandomTall=random()%i3;
     iAltSilBlitCount=0;
     return;
   }
@@ -1178,12 +1180,12 @@ void game::UpdateAltSilhouette(bool bAllowed){
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,BLACK);
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
-  v2 v2SizeSrc=bldPlayerCopyTMP.Bitmap->GetSize();
+//  v2 v2SizeSrc=bldPlayerCopyTMP.Bitmap->GetSize();
 
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=2; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
-      bldPlayer3by4TMP.Bitmap = new bitmap(v2(TILE_SIZE, iY4));
+      bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
     }
 
     int iYDest=0;
@@ -1210,40 +1212,40 @@ void game::UpdateAltSilhouette(bool bAllowed){
       iYDest++;
     }
 
+    if(iRandomTall==0)bldPlayer3by4TMP.Bitmap->Fill(0, 0, TILE_SIZE, 1, BLACK); //unglue the head from the top!
+
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
-    v2SizeSrc=bldPlayer3by4TMP.Bitmap->GetSize();
+//    v2SizeSrc=bldPlayer3by4TMP.Bitmap->GetSize();
   }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
     bldPlayerToSilhouetteAreaTMP.Stretch = 3;
-    bldPlayerToSilhouetteAreaTMP.Border = v2SizeSrc;//TILE_V2;
-
-    v2 v2BmpSize = bldPlayerToSilhouetteAreaTMP.Border * bldPlayerToSilhouetteAreaTMP.Stretch;
-    if(!bXbyYis3by4){
-      v2BmpSize.Y = bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1);
-      bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
-    }
-
-    bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2BmpSize); // 3/4 the silhouette area is like that
-//    igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
-//    bldPlayerToSilhouetteAreaTMP.Bitmap->Fill(v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize(), BLACK);
+    bldPlayerToSilhouetteAreaTMP.Bitmap = DOUBLE_BUFFER;
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);
-  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
-  if(!bUseNewSRegion)bmpPlayerSrc = bldPlayerToSilhouetteAreaTMP.Bitmap;
-
-  if(bUseNewSRegion){
-    //TODO it is glitching, the 1st frame still shows the old silhouette
-    bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
-    bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
-    DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
-
-    graphics::SetSRegionSrcBitmapOverride(
-      iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
-    graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
-  }else{
-    bmpPlayerSrc->FastBlit(DOUBLE_BUFFER, v2AltSilPos); // will just be used by the already setup SRegion for silhouette!
-    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2AltSilPos, bmpPlayerSrc->GetSize(), DARK_GRAY, false);
+  bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
+  if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
+  bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
+  if(ivanconfig::GetAltSilhouette()==1){ //squared
+    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,BLACK);
   }
+  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
+//  if(!bUseNewSRegion)bmpPlayerSrc = bldPlayerToSilhouetteAreaTMP.Bitmap;
+  bmpPlayerSrc = bldPlayerToSilhouetteAreaTMP.Bitmap;
+
+//  if(bUseNewSRegion){
+//    //TODO it is glitching, the 1st frame still shows the old silhouette
+//    bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
+//    bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
+//    DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
+//
+//    graphics::SetSRegionSrcBitmapOverride(
+//      iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
+//    graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
+//  }else{
+//    bmpPlayerSrc->FastBlit(DOUBLE_BUFFER, v2AltSilPos); // will just be used by the already setup SRegion for silhouette!
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
+      v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
+//  }
 
   iAltSilBlitCount++;
 }
