@@ -1129,7 +1129,7 @@ int iAltSilBlitCount=0;
 int iRandomTall=0;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
-v2 v2AltSilPos;
+v2 v2AltSilPos=v2(0,0);
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1152,10 +1152,12 @@ void game::UpdateAltSilhouette(bool bAllowed){
   /////////////////////////// ok ////////////////////////////
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
 
+  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
+
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE; //excellent!
-    v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
+    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
+    bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,BLACK);
   Player->Draw(bldPlayerCopyTMP);
@@ -1207,7 +1209,6 @@ void game::UpdateAltSilhouette(bool bAllowed){
     DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,BLACK);
   }
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
-  bmpPlayerSrc = bldPlayerToSilhouetteAreaTMP.Bitmap;
 
   graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
     v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
