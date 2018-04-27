@@ -136,6 +136,8 @@ class bitmap
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
   void InterLace();
+
+  void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize){memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], iSize);}
  protected:
   v2 Size;
   ulong XSizeTimesYSize : 31;

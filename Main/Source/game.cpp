@@ -198,6 +198,7 @@ int iRegionItemsUnder = -1;
 int iRegionAltSilhouette = -1;
 
 blitdata bldPlayerCopyTMP = DEFAULT_BLITDATA;
+blitdata bldPlayer3by4TMP = DEFAULT_BLITDATA;
 blitdata bldPlayerToSilhouetteAreaTMP = DEFAULT_BLITDATA;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
@@ -1131,6 +1132,16 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+//class bitmap3by4 : bitmap{
+//  public:
+//    void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom){
+//      memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], TILE_SIZE);
+//    }
+//};
+bool bXbyYis3by4=false;
+int iY4 = TILE_SIZE + TILE_SIZE/3;
+//bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
+int iAltSilBlitCount=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1150,30 +1161,61 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(!bOk){
     graphics::SetSRegionEnabled(iRegionAltSilhouette,false);
+    iAltSilBlitCount=0;
     return;
   }
 
   /////////////////////////// ok ////////////////////////////
+  bitmap* bmpPlayerSrc=NULL;
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
+    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
   }
   igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap, v2(0,0), bldPlayerCopyTMP.Bitmap->GetSize());
-//  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  //just this was not good:  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
   Player->Draw(bldPlayerCopyTMP);
+  bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
+
+  if(bXbyYis3by4){
+    if(bldPlayer3by4TMP.Bitmap==NULL){
+//      bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
+//      bldPlayer3by4TMP.Bitmap = bmp34;
+      bldPlayer3by4TMP.Bitmap = new bitmap(v2(TILE_SIZE, iY4));
+      bldPlayer3by4TMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
+    }
+
+    /**
+     * every 3 lines, duplicate one of them once.
+     * which one is determined by blit count.
+     */
+    for(int iYDest=0,y = 0; y < TILE_SIZE; ++y){
+      for(bool bDupOnce=true;;){
+        if(iYDest>=iY4)break;
+//        bmp34.copyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//        memcpy(&bldPlayer3by4TMP.Bitmap->im[iYDest][0], &bldPlayerCopyTMP.Bitmap[y][0], TILE_SIZE);
+        iYDest++;
+        if(y%3 == iAltSilBlitCount%3 && bDupOnce){bDupOnce=false;continue;}
+        break;
+      }
+    }
+
+    bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
+  }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
     bldPlayerToSilhouetteAreaTMP.Stretch = 3;
     bldPlayerToSilhouetteAreaTMP.Border = TILE_V2;
-    bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2;
+    if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2;
     bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2( // 3/4 the silhouette area is like that
         bldPlayerToSilhouetteAreaTMP.Border.X * bldPlayerToSilhouetteAreaTMP.Stretch,
         bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1)
     ));
+//    igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
+    bldPlayerToSilhouetteAreaTMP.Bitmap->Fill(v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize(), BLACK);
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);
-//  igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
-  graphics::Stretch(ivanconfig::IsXBRZScale(),bldPlayerCopyTMP.Bitmap,bldPlayerToSilhouetteAreaTMP,true);
+  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
   bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
   bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
@@ -1182,6 +1224,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
   graphics::SetSRegionSrcBitmapOverride(
     iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
   graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
+  iAltSilBlitCount++;
 }
 
 void game::DrawEverythingNoBlit(truth AnimationDraw)
