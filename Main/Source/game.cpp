@@ -1144,7 +1144,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
   if(!bOk){
-    iRandomTall=random()%i3;
+    iRandomTall=0;//random()%i3;
     iAltSilBlitCount=0;
     return;
   }
