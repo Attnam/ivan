@@ -302,6 +302,11 @@ void bitmap::ClearToColor(col16 Color)
   }
 }
 
+void bitmap::CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize){
+  iSize*=sizeof(packcol16);
+  memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], iSize);
+}
+
 void bitmap::NormalBlit(cblitdata& BlitData) const
 {
   blitdata B = BlitData;

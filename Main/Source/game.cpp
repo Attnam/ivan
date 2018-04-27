@@ -1138,8 +1138,8 @@ truth game::OnScreen(v2 Pos)
 //      memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], TILE_SIZE);
 //    }
 //};
-bool bXbyYis3by4=false;
-int iY4 = TILE_SIZE + TILE_SIZE/3;
+int i3=3; // :/
+int iY4 = TILE_SIZE + TILE_SIZE/i3;
 //bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
 int iAltSilBlitCount=0;
 void game::UpdateAltSilhouette(bool bAllowed){
@@ -1149,7 +1149,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
 
-  if(bOk && !ivanconfig::IsAltSilhouette())bOk=false;
+  if(bOk && ivanconfig::GetAltSilhouette()==0)bOk=false;
 
   if(bOk && !Player->IsEnabled())bOk=false;
 
@@ -1166,8 +1166,6 @@ void game::UpdateAltSilhouette(bool bAllowed){
   }
 
   /////////////////////////// ok ////////////////////////////
-  bitmap* bmpPlayerSrc=NULL;
-
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
     bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
@@ -1175,43 +1173,68 @@ void game::UpdateAltSilhouette(bool bAllowed){
   igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap, v2(0,0), bldPlayerCopyTMP.Bitmap->GetSize());
   //just this was not good:  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
   Player->Draw(bldPlayerCopyTMP);
-  bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
+  bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
+  v2 v2SizeSrc=bldPlayerCopyTMP.Bitmap->GetSize();
 
+  bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=2; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
 //      bitmap3by4 bmp34 = new bitmap3by4(v2(TILE_SIZE, iY4));
 //      bldPlayer3by4TMP.Bitmap = bmp34;
       bldPlayer3by4TMP.Bitmap = new bitmap(v2(TILE_SIZE, iY4));
-      bldPlayer3by4TMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
+//      bldPlayer3by4TMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //animated, excellent!
     }
 
     /**
      * every 3 lines, duplicate one of them once.
      * which one is determined by blit count.
      */
-    for(int iYDest=0,y = 0; y < TILE_SIZE; ++y){
-      for(bool bDupOnce=true;;){
-        if(iYDest>=iY4)break;
-//        bmp34.copyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//        memcpy(&bldPlayer3by4TMP.Bitmap->im[iYDest][0], &bldPlayerCopyTMP.Bitmap[y][0], TILE_SIZE);
+    int iYDest=0;
+    int nBreathDelay=20; //calm breathing
+    if(PlayerIsRunning())nBreathDelay-=10;
+    if(Player->GetTirednessState()==FAINTING)nBreathDelay=1;
+    if(nBreathDelay<1)nBreathDelay=1;
+    for(int y = 0; y < TILE_SIZE; ++y){
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//      if(y%i3 == 0){//iAltSilBlitCount%(i3*10)){
+      if(y%i3 == (iAltSilBlitCount/nBreathDelay)%i3){
+//        Player->is
         iYDest++;
-        if(y%3 == iAltSilBlitCount%3 && bDupOnce){bDupOnce=false;continue;}
-        break;
+        if(iYDest>=iY4)break;
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
       }
+      iYDest++;
     }
+//    for(int iYDest=0,y = 0; y < TILE_SIZE; ++y){
+//      for(bool bDupOnce=true;;){
+//        if(iYDest>=iY4)break;
+////        bmp34.copyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y);
+//        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+////        memcpy(&bldPlayer3by4TMP.Bitmap->im[iYDest][0], &bldPlayerCopyTMP.Bitmap[y][0], TILE_SIZE);
+//        iYDest++;
+//        if(y%3 == iAltSilBlitCount%3 && bDupOnce){bDupOnce=false;continue;}
+//        break;
+//      }
+//    }
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
+    v2SizeSrc=bldPlayer3by4TMP.Bitmap->GetSize();
   }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
     bldPlayerToSilhouetteAreaTMP.Stretch = 3;
-    bldPlayerToSilhouetteAreaTMP.Border = TILE_V2;
-    if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2;
-    bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2( // 3/4 the silhouette area is like that
-        bldPlayerToSilhouetteAreaTMP.Border.X * bldPlayerToSilhouetteAreaTMP.Stretch,
-        bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1)
-    ));
+    bldPlayerToSilhouetteAreaTMP.Border = v2SizeSrc;//TILE_V2;
+
+    v2 v2BmpSize = bldPlayerToSilhouetteAreaTMP.Border * bldPlayerToSilhouetteAreaTMP.Stretch;
+//    v2BmpSize.X = bldPlayerToSilhouetteAreaTMP.Border.X * bldPlayerToSilhouetteAreaTMP.Stretch;
+    if(!bXbyYis3by4){
+//      v2BmpSize.Y = bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1);
+//    }else{
+      v2BmpSize.Y = bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1);
+      bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
+    }
+
+    bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2BmpSize); // 3/4 the silhouette area is like that
 //    igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
     bldPlayerToSilhouetteAreaTMP.Bitmap->Fill(v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize(), BLACK);
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);

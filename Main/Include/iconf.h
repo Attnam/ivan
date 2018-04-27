@@ -27,7 +27,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
-  static truth IsAltSilhouette() { return AltSilhouette.Value; }
+  static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -100,10 +100,15 @@ class ivanconfig
   static void VolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
+
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void FullScreenModeChanger(truthoption*, truth);
+#endif
+
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
@@ -111,9 +116,7 @@ class ivanconfig
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
-  static void FullScreenModeChanger(truthoption*, truth);
   static void XBRZScaleChanger(truthoption*, truth);
-#endif
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -150,7 +153,7 @@ class ivanconfig
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static cycleoption SilhouetteScale;
-  static truthoption AltSilhouette;
+  static cycleoption AltSilhouette;
   static cycleoption AltListItemPos;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
@@ -159,10 +162,12 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
+
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
 #endif
+
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
