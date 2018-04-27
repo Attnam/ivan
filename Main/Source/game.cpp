@@ -197,7 +197,8 @@ int iRegionListItem = -1;
 int iRegionItemsUnder = -1;
 int iRegionAltSilhouette = -1;
 
-blitdata bldPlayerTMP = DEFAULT_BLITDATA;
+blitdata bldPlayerCopyTMP = DEFAULT_BLITDATA;
+blitdata bldPlayerToSilhouetteAreaTMP = DEFAULT_BLITDATA;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
@@ -1154,21 +1155,32 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   /////////////////////////// ok ////////////////////////////
 
-  if(bldPlayerTMP.Bitmap==NULL){
-    bldPlayerTMP.Stretch = 3;
-    bldPlayerTMP.Border = TILE_V2*bldPlayerTMP.Stretch;
-    bldPlayerTMP.Bitmap = new bitmap(bldPlayerTMP.Border);
-  };DBGBLD(bldPlayerTMP);
-//  igraph::BlitBackGround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border);
-//  graphics::DrawRectangleOutlineAround(bldPlayerTMP.Bitmap, v2(0,0), bldPlayerTMP.Border, LIGHT_GRAY, false);
-  PLAYER->Draw(bldPlayerTMP);
+  if(bldPlayerCopyTMP.Bitmap==NULL){
+    bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
+    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
+  }
+  igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap, v2(0,0), bldPlayerCopyTMP.Bitmap->GetSize());
+//  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  Player->Draw(bldPlayerCopyTMP);
+
+  if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
+    bldPlayerToSilhouetteAreaTMP.Stretch = 3;
+    bldPlayerToSilhouetteAreaTMP.Border = TILE_V2;
+    bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2;
+    bldPlayerToSilhouetteAreaTMP.Bitmap = new bitmap(v2( // 3/4 the silhouette area is like that
+        bldPlayerToSilhouetteAreaTMP.Border.X * bldPlayerToSilhouetteAreaTMP.Stretch,
+        bldPlayerToSilhouetteAreaTMP.Border.Y *(bldPlayerToSilhouetteAreaTMP.Stretch+1)
+    ));
+  };DBGBLD(bldPlayerToSilhouetteAreaTMP);
+//  igraph::BlitBackGround(bldPlayerToSilhouetteAreaTMP.Bitmap, v2(0,0), bldPlayerToSilhouetteAreaTMP.Bitmap->GetSize());
+  graphics::Stretch(ivanconfig::IsXBRZScale(),bldPlayerCopyTMP.Bitmap,bldPlayerToSilhouetteAreaTMP,true);
 
   bldAltSilhouetteTMP.Stretch = bldSilhouetteTMP.Stretch;
-  bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(21,22)*bldSilhouetteTMP.Stretch;
+  bldAltSilhouetteTMP.Dest = bldSilhouetteTMP.Dest + v2(24,24)*bldSilhouetteTMP.Stretch;
   DBGBLD(bldSilhouetteTMP);DBGBLD(bldAltSilhouetteTMP);
 
   graphics::SetSRegionSrcBitmapOverride(
-    iRegionAltSilhouette, bldPlayerTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
+    iRegionAltSilhouette, bldPlayerToSilhouetteAreaTMP.Bitmap, bldAltSilhouetteTMP.Stretch, bldAltSilhouetteTMP.Dest);
   graphics::SetSRegionEnabled(iRegionAltSilhouette,true);
 }
 
