@@ -1124,7 +1124,7 @@ truth game::OnScreen(v2 Pos)
 
 int iStep=2;
 int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
-int iY4 = TILE_SIZE + iYDiff;
+int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
 v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
 int iAltSilBlitCount=0;
 const int iTotTallStates=3;
@@ -1193,7 +1193,9 @@ void game::UpdateAltSilhouette(bool bAllowed){
       iTallState=iTallStateNew;
     }
     if(TILE_SIZE==16){
-      //TODO never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top?
+      //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
+      bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+
       int iTotTopBlankLines = iTotTallStates - (iTallState+1);
       // 3-(2+1)=0 //nothing
       // 3-(1+1)=1 //0
@@ -1268,11 +1270,8 @@ void game::UpdateAltSilhouette(bool bAllowed){
   if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
 
-  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
-//  }else{
-//    if(ivanconfig::GetAltSilhouette()==1) //squared
-//      DOUBLE_BUFFER->Fill(v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, TRANSPARENT_COLOR);
-//  }
+//  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
+  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch);
 
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
