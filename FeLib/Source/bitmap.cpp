@@ -1211,13 +1211,7 @@ SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL
 
       if(PixelFrom == MaskColor){ //0 invisible, 0xff opaque
         ca = 0;
-        /**
-         * TODO
-         * it seems that xBRZScale does not blend from opaque to transparent using intermediary alpha values?
-         * so the blend from an opaque color to transparentBlack is the in-between color fully opaque right?
-         * if it was a half transparent color, only opaque pixels could be collected and the messed contour could be discarded...
-         */
-        PixelFrom = BLACK; //xBRZ blends countours better this way if background is invisible, despite not perfect..
+        PixelFrom = WHITE; //xBRZ blends countours perfectly using white color.
       }else{
         ca = 0xff;
       }

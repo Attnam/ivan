@@ -1133,7 +1133,6 @@ int iTallState=iTotTallStates-1;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
 v2 v2AltSilPos=v2(0,0);
-packcol16 bkgColor=TRANSPARENT_COLOR;
 int iRandTorso=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
@@ -1157,15 +1156,21 @@ void game::UpdateAltSilhouette(bool bAllowed){
   /////////////////////////// ok ////////////////////////////
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
 
+//  festring alignment(GetVerbalPlayerAlignment());
+//  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
+//  else
+//  if(alignment.Find("neutral")!=-1)bkgColorToXBRZ=LIGHT_GRAY;
+//  else
+//  if(alignment.Find("chaotic")!=-1)bkgColorToXBRZ=RED;
+
   if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-//    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
     bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE; //excellent!
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
-  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgColor);
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
@@ -1194,16 +1199,16 @@ void game::UpdateAltSilhouette(bool bAllowed){
       // 3-(1+1)=1 //0
       // 3-(0+1)=2 //0 1
       for(int i=0;i<iTotTopBlankLines;i++)
-        bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, bkgColor); //blank space above head
+        bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR); //blank space above head
 
       int iHeadLines=6;
       for(int y=0;y<iHeadLines;y++){ //head
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
       }
 
-      // torso are lines 6 7 8 9
+      // torso are lines 6 7 8 9 (lets keep it simple to read...)
       switch(iTallState){
-      case 0:
+      case 0: //lowest (6 lines)
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
@@ -1211,17 +1216,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
         break;
-      case 1:
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
-        break;
-      case 2:
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+      case 1: // (7 lines)
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
@@ -1230,6 +1225,18 @@ void game::UpdateAltSilhouette(bool bAllowed){
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
         break;
+      case 2: //tallest (8 lines)
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+        break;
+      default:
+        ABORT("not supported tall state %d",iTallState); //all the above is for 3 tall states, changing it requires updating them all
       }
 
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true); //pants
@@ -1260,15 +1267,17 @@ void game::UpdateAltSilhouette(bool bAllowed){
   bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
   if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
-//  if(ivanconfig::GetAltSilhouette()==1){ //squared
-//    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,bkgColor);
-    igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
-//  }
-  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
-//  graphics::Stretch(false,bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
-//  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
-//    v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
+  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
+//  }else{
+//    if(ivanconfig::GetAltSilhouette()==1) //squared
+//      DOUBLE_BUFFER->Fill(v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, TRANSPARENT_COLOR);
+//  }
+
+  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
+
+//    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
+//      v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
 
   iAltSilBlitCount++;
 }
