@@ -564,8 +564,8 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   //TODO player stats etc, text log? at most x2?, set thru one user option bool for all (fast blit only?)
 
   if(iRegionSilhouette==-1){     // equiped items and humanoid silhouette region
-    silhouettePos = humanoid::GetSilhouetteWhere();
-    if(silhouettePos.X>0 && silhouettePos.Y>0){
+    silhouettePos = humanoid::GetSilhouetteWhereDefault();
+    if(!silhouettePos.Is0()){
       silhouettePos.X -= 15; silhouettePos.Y -= 23; //exact top left corner of all equipped items countour
       silhouettePos-=v2(1,1); //1 dot b4
       bldSilhouetteTMP.Src = {silhouettePos.X, silhouettePos.Y};
@@ -1128,18 +1128,19 @@ int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
 v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
 int iAltSilBlitCount=0;
 const int iTotTallStates=3;
+const int iTallFrom=2;
 const int iBreathFrom=3;
 int iTallState=iTotTallStates-1;
 int iPreviousAltSilOpt=0;
-v2 v2AltSilDispl = v2(24,24);
+v2 v2AltSilDispl = v2(10,-2);//v2(24,24);
 v2 v2AltSilPos=v2(0,0);
 int iRandTorso=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
-  if(bOk && !bAllowed)bOk=false;
+  //if(bOk && !bAllowed)bOk=false;
 
-  if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
+  //if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
 
   if(bOk && ivanconfig::GetAltSilhouette()==0)bOk=false;
 
@@ -1147,14 +1148,19 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
+  if(humanoid::GetSilhouetteWhereDefault().Is0())bOk=false;
+
   if(!bOk){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
+    humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
     return;
   }
 
   /////////////////////////// ok ////////////////////////////
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
+
+  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
 
 //  festring alignment(GetVerbalPlayerAlignment());
 //  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
@@ -1163,7 +1169,9 @@ void game::UpdateAltSilhouette(bool bAllowed){
 //  else
 //  if(alignment.Find("chaotic")!=-1)bkgColorToXBRZ=RED;
 
-  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
+//  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
+//  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
+  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhereDefault() + v2AltSilDispl;
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
@@ -1174,7 +1182,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
-  bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=2; // tall/breathing
+  bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
       bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
@@ -1270,7 +1278,6 @@ void game::UpdateAltSilhouette(bool bAllowed){
   if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
 
-//  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
   igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch);
 
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);

@@ -267,7 +267,7 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
     case 0: Entry << "no"        ; break;
-    case 1: Entry << "yes"       ; break;
+    case 1: Entry << "short"     ; break;
     case 2: Entry << "tall"      ; break;
     case 3: Entry << "breathing" ; break;
     case 4: Entry << "breathing2"; break;
