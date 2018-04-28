@@ -192,6 +192,7 @@ int iYSize=0;
 
 int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
+int iRegionVanillaSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 int iRegionItemsUnder = -1;
@@ -203,6 +204,7 @@ blitdata bldPlayerToSilhouetteAreaTMP = DEFAULT_BLITDATA;
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
+blitdata bldVanillaSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
 
 int iItemsUnderStretch = 2;
@@ -569,12 +571,21 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       silhouettePos.X -= 15; silhouettePos.Y -= 23; //exact top left corner of all equipped items countour
       silhouettePos-=v2(1,1); //1 dot b4
       bldSilhouetteTMP.Src = {silhouettePos.X, silhouettePos.Y};
-      bldSilhouetteTMP.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
+      int iEqSize=23;
+      v2 v2EqSqr(iEqSize,iEqSize);
+      bldSilhouetteTMP.Border = SILHOUETTE_SIZE+(v2EqSqr*2); //SILHOUETTE_SIZE + equipped items all around
       bldSilhouetteTMP.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
       bldSilhouetteTMP.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouetteTMP,"Silhouette");
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
+
+      // alt vanilla silhouette pos
+      bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
+      bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
+      iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
+      graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
+      graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
     }
   }
 
@@ -1135,7 +1146,7 @@ int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(10,-2);//v2(24,24);
 v2 v2AltSilPos=v2(0,0);
 int iRandTorso=0;
-void game::UpdateAltSilhouette(bool bAllowed){
+void game::UpdateAltSilhouette(bool AnimationDraw){
   bool bOk=true;
 
   //if(bOk && !bAllowed)bOk=false;
@@ -1154,13 +1165,44 @@ void game::UpdateAltSilhouette(bool bAllowed){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
+    graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     return;
   }
 
   /////////////////////////// ok ////////////////////////////
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
 
-  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
+//  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
+  if(iRegionVanillaSilhouette!=-1){
+    bool bOk=true;
+
+    if(bOk && ZoomPos.Is0())bOk=false;
+
+    humanoid* h=dynamic_cast<humanoid*>(Player);
+    if(bOk && h==NULL)bOk=false;
+
+    if(bOk && ivanconfig::GetAltListItemPos()==1 && graphics::IsSRegionEnabled(iRegionListItem))bOk=false; //is same of zoom pos
+
+    if(bOk){
+      v2 v2Pos=ZoomPos;
+
+      humanoid::SetSilhouetteWhere(v2Pos);
+
+      bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
+
+      v2 v2Dest = v2Pos;
+      v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
+      if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
+      if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
+      bldVanillaSilhouetteTMP.Dest=v2Dest;
+
+      graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
+      //h->DrawSilhouette(AnimationDraw); //TODO necessary?
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+    }else{
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    }
+  }
 
 //  festring alignment(GetVerbalPlayerAlignment());
 //  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
@@ -1208,6 +1250,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
       // 3-(2+1)=0 //nothing
       // 3-(1+1)=1 //0
       // 3-(0+1)=2 //0 1
+      if(iTallState==0)iTotTopBlankLines++; //wont dup pants
       for(int i=0;i<iTotTopBlankLines;i++)
         bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR); //blank space above head
 
@@ -1252,7 +1295,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true); //pants
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,11,TILE_SIZE,true); //weapon handle
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
-      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
+      if(iTallState!=0)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true);
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
@@ -1391,7 +1434,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  UpdateAltSilhouette(bXBRZandFelist);
+  UpdateAltSilhouette(AnimationDraw);
 
   UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
 }

@@ -41,6 +41,7 @@
         ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";
         ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";
         ss<<"Stretch="<<rB.Stretch<<"/";
+//        DBG2("rB.Bitmap",rB.Bitmap); // some(random)times this causes SEGFAULT: rB.Bitmap->GetSize()
         if(rB.Bitmap!=NULL)ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";
         return ss;
       }

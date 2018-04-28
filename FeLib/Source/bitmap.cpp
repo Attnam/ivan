@@ -1258,6 +1258,8 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) con
   unsigned char cr,cg,cb,ca;DBGLN;
   SDL_Surface* imgStretchedCopy=NULL;DBGLN;
   imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);DBG3(imgStretchedCopy,DBGI(imgStretchedCopy->w),DBGI(imgStretchedCopy->h));
+//  if( ((Bto.Dest.X+imgStretchedCopy->w) >= Bto.Bitmap->GetSize().X) ||
+//      ((Bto.Dest.Y+imgStretchedCopy->h) >= Bto.Bitmap->GetSize().Y)    )ABORT("blit %d,%d + %d,%d outside dest bitmap %d,%d",Bto.Dest.X,Bto.Dest.Y,imgStretchedCopy->w,imgStretchedCopy->h,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
   // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
   for(int x1 = 0; x1 < imgStretchedCopy->w; ++x1)
   {
@@ -1266,7 +1268,9 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) con
       color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);//DBGLN;
       SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);//DBGLN;
       if(!bAllowTransparency || ca==0xff){ //TODO ca==0xff may work better than ca!=0 the day xBRZScale blends from opaque to transparent with a half-transparent alpha value as result!?
-        Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);//DBGLN; //TODO does alpha make any sense here anyway?
+        if((Bto.Dest.X+x1)<Bto.Bitmap->GetSize().X && (Bto.Dest.Y+y1)<Bto.Bitmap->GetSize().Y){
+          Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);//DBGLN; //TODO does alpha make any sense here anyway?
+        }
       }
     }
   }

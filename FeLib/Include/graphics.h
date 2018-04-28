@@ -71,6 +71,7 @@ class graphics
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionUseXBRZ(int iIndex, bool b);
   static void SetSRegionDrawAfterFelist(int iIndex, bool b);
+  static void SetSRegionDrawAlways(int iIndex, bool b);
   static void SetSRegionDrawBeforeFelistPage(int iIndex, bool, bool);
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
   static void SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, int iStretch, v2 v2Dest);
