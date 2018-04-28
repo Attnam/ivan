@@ -1122,14 +1122,18 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-int i3=3; // :/
-int iY4 = TILE_SIZE + TILE_SIZE/i3;
+int iStep=2;
+int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
+int iY4 = TILE_SIZE + iYDiff;
 v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
 int iAltSilBlitCount=0;
-int iRandomTall=0;
+const int iTotTallStates=2;
+int iTallState=iTotTallStates-1;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
 v2 v2AltSilPos=v2(0,0);
+packcol16 bkgColor=BLACK;
+int iRandTorso=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
 
@@ -1144,7 +1148,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
   if(!bOk){
-    iRandomTall=0;//random()%i3;
+    iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     return;
   }
@@ -1159,7 +1163,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
     bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
-  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,BLACK);
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgColor);
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
@@ -1170,30 +1174,52 @@ void game::UpdateAltSilhouette(bool bAllowed){
     }
 
     int iYDest=0;
-    if(ivanconfig::GetAltSilhouette()==3){ //breath animation
-      int nBreathDelay=20; //calm breathing
-      if(PlayerIsRunning())nBreathDelay=10;
-      if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay=5;
-      if(Player->GetTirednessState()==FAINTING)nBreathDelay=1;
+    if(ivanconfig::GetAltSilhouette()>=3){ //breath animation
+      int nBreathDelay=20+10*(ivanconfig::GetAltSilhouette()-3); //calm breathing
+      if(PlayerIsRunning())nBreathDelay/=2;
+      if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay/=2;
+      if(Player->GetTirednessState()==FAINTING)nBreathDelay/=2;
       if(nBreathDelay<1)nBreathDelay=1;
 
-      iRandomTall=(iAltSilBlitCount/nBreathDelay)%i3;
+      int iTallStateNew=(iAltSilBlitCount/nBreathDelay)%iTotTallStates;
+      if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
+      iTallState=iTallStateNew;
     }
-    for(int y = 0; y < TILE_SIZE; ++y){
-      /**
-       * every 3 lines, duplicate one of them once.
-       * which one is determined by blit count.
-       */
-      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-      if(y%i3 == iRandomTall){
-        iYDest++;
-        if(iYDest>=iY4)break;
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-      }
-      iYDest++;
-    }
+    if(TILE_SIZE==16){
+      //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
+      for(int i=0;i<(iTotTallStates-iTallState);i++)
+        bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, bkgColor);
 
-    if(iRandomTall==0)bldPlayer3by4TMP.Bitmap->Fill(0, 0, TILE_SIZE, 1, BLACK); //unglue the head from the top!
+      int iLowerLines=1;
+      int iHeadLines=6;
+      int iMaxTorsoDestY=iY4-iLowerLines;
+      for(int y=0;y<iHeadLines;y++){ //head
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+      }
+
+      for(int y=iHeadLines;y<16;y++){ //torso dups
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+        if(++iYDest>=iMaxTorsoDestY)break;
+
+        if(y%2==iRandTorso && y!=11){ //do not stretch the weapon handle (11) and alternate stretching on lines
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+          if(++iYDest>=iMaxTorsoDestY)break;
+        }
+      }
+
+      // weapon handle, legs, feet
+      for(int y=16-iLowerLines;y<16;y++){
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+      }
+    }else{
+      // fall back to simple blit for not supported tile sizes
+      bool bBreakLoop=false;
+      for(int y = 0; y < TILE_SIZE; ++y){
+        if(bBreakLoop)break;
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+        if(++iYDest>=iY4){bBreakLoop=true;continue;}
+      }
+    }
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
   }
@@ -1206,7 +1232,7 @@ void game::UpdateAltSilhouette(bool bAllowed){
   if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
   if(ivanconfig::GetAltSilhouette()==1){ //squared
-    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,BLACK);
+    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,bkgColor);
   }
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 

@@ -121,7 +121,7 @@ cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           &SilhouetteScaleChanger);
 cycleoption ivanconfig::AltSilhouette(    "AltSilhouette",
                                           "Use alternative scaled silhouette.",
-                                          0, 4,
+                                          0, 7,
                                           &AltSilhouetteDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
@@ -265,20 +265,14 @@ void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
 
 void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
 {
-  switch(O->Value)
-  {
-    case 0:
-      Entry << "no";
-      break;
-    case 1:
-      Entry << "yes";
-      break;
-    case 2:
-      Entry << "tall";
-      break;
-    case 3:
-      Entry << "breathing";
-      break;
+  switch(O->Value){
+    case 0: Entry << "no"        ; break;
+    case 1: Entry << "yes"       ; break;
+    case 2: Entry << "tall"      ; break;
+    case 3: Entry << "breathing" ; break;
+    case 4: Entry << "breathing2"; break;
+    case 5: Entry << "breathing3"; break;
+    case 6: Entry << "breathing4"; break;
   }
 }
 
