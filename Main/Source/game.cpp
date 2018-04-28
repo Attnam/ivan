@@ -1193,65 +1193,46 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
       int iHeadLines=6;
       for(int y=0;y<iHeadLines;y++){ //head
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
       }
 
-//      int iTopTorsoAlwaysDup=4;
-      int iLowerLines=6;
-      int iMaxTorsoDestY=iY4-iLowerLines;
+      int i3by4TotLowerLines=7;
+      int i3by4MaxTorsoY=iY4-i3by4TotLowerLines;
       bool bTallest = iTallState==iTotTallStates-1;
-      int iTorsoCount=0;
       for(int y=iHeadLines;y<16;y++){ //torso dups
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-        if(++iYDest>=iMaxTorsoDestY)break;
+        if(bTallest && y==iHeadLines){ //first torso line will draw a 3 times
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=i3by4MaxTorsoY)break;
 
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-        if(++iYDest>=iMaxTorsoDestY)break;
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=i3by4MaxTorsoY)break;
 
-        if(bTallest && y==iHeadLines){ //first draw a 3rd time
-          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-          if(++iYDest>=iMaxTorsoDestY)break;
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=i3by4MaxTorsoY)break;
+        }else{
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=i3by4MaxTorsoY)break;
+
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=i3by4MaxTorsoY)break;
         }
-
-//        if(iTorsoCount==0){ //tot 3
-//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//          if(++iYDest>=iMaxTorsoDestY)break;
-//
-//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//          if(++iYDest>=iMaxTorsoDestY)break;
-//        }else{
-//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//          if(++iYDest>=iMaxTorsoDestY)break;
-//
-//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//          if(++iYDest>=iMaxTorsoDestY)break;
-//        }
-
-//        bool bDup=true;
-//        if(bDup && y==11)bDup=false; //do not stretch the weapon handle (11)
-//        if(bDup)
-//          if(bTallest){
-//            if(bDup && y>=(iHeadLines+iTopTorsoAlwaysDup))bDup=false; //dup first torso lines
-//          }else{
-//            if(bDup && y%2!=iRandTorso)bDup=false; //random alt dup remaining lines
-//          }
-//        if(bDup){
-//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-//          if(++iYDest>=iMaxTorsoDestY)break;
-//        }
-        iTorsoCount++;
       }
 
       // weapon handle, legs, feet
-      for(int y=16-iLowerLines;y<16;y++){
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
-      }
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true);
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,11,TILE_SIZE,true); //weapon handle
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true);
+      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
+      if(iYDest>iY4)ABORT("bad calc iYDest=%d > iY4=%d",iYDest,iY4);
     }else{
       // fall back to simple blit for not supported tile sizes
       bool bBreakLoop=false;
       for(int y = 0; y < TILE_SIZE; ++y){
         if(bBreakLoop)break;
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
         if(++iYDest>=iY4){bBreakLoop=true;continue;}
       }
     }

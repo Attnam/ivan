@@ -137,7 +137,7 @@ class bitmap
   void MoveLineHorizontally(int, int);
   void InterLace();
 
-  void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize);
+  void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe=false);
  protected:
   v2 Size;
   ulong XSizeTimesYSize : 31;

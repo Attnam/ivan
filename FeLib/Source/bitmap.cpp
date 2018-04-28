@@ -302,9 +302,9 @@ void bitmap::ClearToColor(col16 Color)
   }
 }
 
-void bitmap::CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize){
+void bitmap::CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe){
   iSize*=sizeof(packcol16);
-  if(iYDest>=Size.Y)return; //failsafe //TODO should generate at lease ONE warning message.
+  if(bFailSafe && iYDest>=Size.Y)return;
   memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], iSize);
 }
 
