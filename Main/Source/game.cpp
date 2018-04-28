@@ -1127,7 +1127,8 @@ int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be
 int iY4 = TILE_SIZE + iYDiff;
 v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
 int iAltSilBlitCount=0;
-const int iTotTallStates=2;
+const int iTotTallStates=3;
+const int iBreathFrom=3;
 int iTallState=iTotTallStates-1;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
@@ -1174,11 +1175,11 @@ void game::UpdateAltSilhouette(bool bAllowed){
     }
 
     int iYDest=0;
-    if(ivanconfig::GetAltSilhouette()>=3){ //breath animation
-      int nBreathDelay=20+10*(ivanconfig::GetAltSilhouette()-3); //calm breathing
+    if(ivanconfig::GetAltSilhouette()>=iBreathFrom){ //breath animation
+      int nBreathDelay = 20 + 10*(ivanconfig::GetAltSilhouette()-iBreathFrom); //calm breathing
       if(PlayerIsRunning())nBreathDelay/=2;
-      if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay/=2;
-      if(Player->GetTirednessState()==FAINTING)nBreathDelay/=2;
+      if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay/=2; // OR faiting...
+      if(Player->GetTirednessState()==FAINTING )nBreathDelay/=4;
       if(nBreathDelay<1)nBreathDelay=1;
 
       int iTallStateNew=(iAltSilBlitCount/nBreathDelay)%iTotTallStates;
@@ -1186,25 +1187,59 @@ void game::UpdateAltSilhouette(bool bAllowed){
       iTallState=iTallStateNew;
     }
     if(TILE_SIZE==16){
-      //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
-      for(int i=0;i<(iTotTallStates-iTallState);i++)
+      //TODO (just remove the -1) never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top?
+      for(int i=0;i<(iTotTallStates-iTallState-1);i++)
         bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, bkgColor);
 
-      int iLowerLines=1;
       int iHeadLines=6;
-      int iMaxTorsoDestY=iY4-iLowerLines;
       for(int y=0;y<iHeadLines;y++){ //head
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
       }
 
+//      int iTopTorsoAlwaysDup=4;
+      int iLowerLines=6;
+      int iMaxTorsoDestY=iY4-iLowerLines;
+      bool bTallest = iTallState==iTotTallStates-1;
+      int iTorsoCount=0;
       for(int y=iHeadLines;y<16;y++){ //torso dups
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
         if(++iYDest>=iMaxTorsoDestY)break;
 
-        if(y%2==iRandTorso && y!=11){ //do not stretch the weapon handle (11) and alternate stretching on lines
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+        if(++iYDest>=iMaxTorsoDestY)break;
+
+        if(bTallest && y==iHeadLines){ //first draw a 3rd time
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
           if(++iYDest>=iMaxTorsoDestY)break;
         }
+
+//        if(iTorsoCount==0){ //tot 3
+//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//          if(++iYDest>=iMaxTorsoDestY)break;
+//
+//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//          if(++iYDest>=iMaxTorsoDestY)break;
+//        }else{
+//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//          if(++iYDest>=iMaxTorsoDestY)break;
+//
+//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//          if(++iYDest>=iMaxTorsoDestY)break;
+//        }
+
+//        bool bDup=true;
+//        if(bDup && y==11)bDup=false; //do not stretch the weapon handle (11)
+//        if(bDup)
+//          if(bTallest){
+//            if(bDup && y>=(iHeadLines+iTopTorsoAlwaysDup))bDup=false; //dup first torso lines
+//          }else{
+//            if(bDup && y%2!=iRandTorso)bDup=false; //random alt dup remaining lines
+//          }
+//        if(bDup){
+//          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE);
+//          if(++iYDest>=iMaxTorsoDestY)break;
+//        }
+        iTorsoCount++;
       }
 
       // weapon handle, legs, feet
