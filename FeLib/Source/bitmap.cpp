@@ -1208,7 +1208,20 @@ SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL
     for(int y1 = 0; y1 < v2Size.Y; y1++)
     {
       PixelFrom = Image[v2TopLeft.Y + y1][v2TopLeft.X + x1];
-      ca = PixelFrom == MaskColor ? 0 : 0xff; //0 invisible, 0xff opaque
+
+      if(PixelFrom == MaskColor){ //0 invisible, 0xff opaque
+        ca = 0;
+        /**
+         * TODO
+         * it seems that xBRZScale does not blend from opaque to transparent using intermediary alpha values?
+         * so the blend from an opaque color to transparentBlack is the in-between color fully opaque right?
+         * if it was a half transparent color, only opaque pixels could be collected and the messed contour could be discarded...
+         */
+        PixelFrom = BLACK; //xBRZ blends countours better this way if background is invisible, despite not perfect..
+      }else{
+        ca = 0xff;
+      }
+
       color32bit = SDL_MapRGBA(
         fmt,
         (unsigned char)GetRed16(PixelFrom),
@@ -1258,7 +1271,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) con
     {
       color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);//DBGLN;
       SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);//DBGLN;
-      if(!bAllowTransparency || ca!=0){//DBGLN;
+      if(!bAllowTransparency || ca==0xff){ //TODO ca==0xff may work better than ca!=0 the day xBRZScale blends from opaque to transparent with a half-transparent alpha value as result!?
         Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);//DBGLN; //TODO does alpha make any sense here anyway?
       }
     }

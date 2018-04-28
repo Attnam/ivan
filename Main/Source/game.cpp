@@ -1133,7 +1133,7 @@ int iTallState=iTotTallStates-1;
 int iPreviousAltSilOpt=0;
 v2 v2AltSilDispl = v2(24,24);
 v2 v2AltSilPos=v2(0,0);
-packcol16 bkgColor=BLACK;
+packcol16 bkgColor=TRANSPARENT_COLOR;
 int iRandTorso=0;
 void game::UpdateAltSilhouette(bool bAllowed){
   bool bOk=true;
@@ -1161,7 +1161,8 @@ void game::UpdateAltSilhouette(bool bAllowed){
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
+//    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE|ALLOW_ALPHA; //excellent!
+    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE; //excellent!
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgColor);
@@ -1259,13 +1260,15 @@ void game::UpdateAltSilhouette(bool bAllowed){
   bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
   if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
-  if(ivanconfig::GetAltSilhouette()==1){ //squared
-    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,bkgColor);
-  }
+//  if(ivanconfig::GetAltSilhouette()==1){ //squared
+//    DOUBLE_BUFFER->Fill(v2AltSilPos,v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch,bkgColor);
+    igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch+v2(0,1));
+//  }
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
+//  graphics::Stretch(false,bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
-  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
-    v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
+//  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
+//    v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
 
   iAltSilBlitCount++;
 }
