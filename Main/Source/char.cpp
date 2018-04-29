@@ -8880,9 +8880,6 @@ void character::MemorizeEquipedItems(){DBGCHAR(this,"");
   }
 }
 
-bool IsImprovedPetEquipmentMode(){
-  return true;
-}
 void addPolymorphBkpToVector(character* CharIni,std::vector<character*>* pvCharMemory){
   character* CharMemory = CharIni;
 
@@ -8940,13 +8937,17 @@ void character::DonateEquipmentTo(character* Character)
   }
   else
   {
-    if(IsImprovedPetEquipmentMode() && IsPet())MemorizeEquipedItems();
+    bool bImprovedEquipping =
+       ivanconfig::GetMemorizeEquipmentMode()==2 ||
+      (ivanconfig::GetMemorizeEquipmentMode()==1 && IsPet()) ;
+
+    if(bImprovedEquipping)MemorizeEquipedItems();
 
     for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Item = GetEquipment(c);
 
-      if(Item==NULL){
+      if(bImprovedEquipping && Item==NULL){
         /**
          *
          * Looks as much far as possible for Equipped memories.
@@ -8975,7 +8976,7 @@ void character::DonateEquipmentTo(character* Character)
         }
         else
         {
-          if(IsImprovedPetEquipmentMode() && IsPet()){
+          if(bImprovedEquipping){
             Item->MoveTo(Character->GetStack());
           }else{
             Item->MoveTo(Character->GetStackUnder());
