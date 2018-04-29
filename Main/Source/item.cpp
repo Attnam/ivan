@@ -168,6 +168,8 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
   int RangeLeft;
 
   truth Draw=false;
+  int iRotateTimes=ivanconfig::GetRotateTimesPerSquare();
+  bool bLowerRotationsPerSqr=iRotateTimes==5;
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
   {
     if(!GetLevel()->IsValidPos(Pos + DirVector))
@@ -210,14 +212,18 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
         while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
 
       if(iRotateFlyingThrownStep>=0){
-        if(ivanconfig::GetRotateTimesPerSquare()==1){
+        if(iRotateTimes==1){
           iRotateFlyingThrownStep++; //next rotation step on next square
         }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
-          for(int i=0;i<(ivanconfig::GetRotateTimesPerSquare()-1);i++){
+          for(int i=0;i<(iRotateTimes-1);i++){
             iRotateFlyingThrownStep++;
             if(Draw){
               RemoveFromSlot();JustHit->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square to redraw...
               game::DrawEverything();
+              if(bLowerRotationsPerSqr){
+                iRotateTimes--;
+                if(iRotateTimes<1)iRotateTimes=1;
+              }
             }
           }
         }
@@ -1249,12 +1255,86 @@ void item::Draw(blitdata& BlitData) const
   cbitmap* P = GraphicData.Picture[F];
 
   if(iRotateFlyingThrownStep>=0){
+//case NONE: //0
+//case MIRROR:
+//case FLIP:
+//case (MIRROR | FLIP):
+//case ROTATE:
+//case (MIRROR | ROTATE):
+//case (FLIP | ROTATE):
+//case (MIRROR | FLIP | ROTATE):
+//    blitdata bldTest=DEFAULT_BLITDATA; //throw a single blade AXE that is not balanced!
+//    bldTest.Bitmap=new bitmap((*P).GetSize());
+//    bldTest.Border=(*P).GetSize();
+//
+//    bldTest.Flags=0;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("NONE"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+//
+//    bldTest.Flags=MIRROR;
+//    P->NormalBlit(bldTest);
+//    bldTest.Bitmap->Save(festring("MIRROR"));
+
+//    bitmap* bmpBkp=new bitmap((*P).GetSize());
+//    blitdata bldBkp=DEFAULT_BLITDATA;
+//    bldBkp.Bitmap=bmpBkp;
+//    bldBkp.Border=(*P).GetSize();
+//    P->NormalBlit(bldBkp);
+//
+//    bitmap* bmpRotatingTmp=new bitmap((*P).GetSize());
+//    blitdata bldRotatingTmp=DEFAULT_BLITDATA;
+//    bldRotatingTmp.Bitmap=bmpRotatingTmp;
+//    bldRotatingTmp.Border=(*P).GetSize();
+//    bldRotatingTmp.Flags |= ROTATE; //rotate the top by 90 degrees to the right
+//    bldBkp->NormalBlit(bldRotatingTmp);
+//
+//    bldRotateWork.Bitmap=new bitmap((*P).GetSize());
+//
+//    int iSteps = iRotateFlyingThrownStep%4;
+//    if(iSteps!=3){
+//      for(int i=0;i<=iSteps;i++){
+//        bmpBkp->NormalBlit(bldRotateWork);
+//      }
+//    }
+//
     switch(iRotateFlyingThrownStep%4){
     case 0:
-      BlitData.Flags |= ROTATE; //90 degrees
+      BlitData.Flags |= ROTATE; //90 degrees (1st step always rotate once)
       break;
     case 1:
-      BlitData.Flags |= ROTATE|MIRROR; //180 degrees
+      BlitData.Flags |= FLIP|MIRROR; //180 degrees
       break;
     case 2:
       BlitData.Flags |= ROTATE|MIRROR|FLIP; //270 degrees

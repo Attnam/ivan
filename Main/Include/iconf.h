@@ -70,6 +70,7 @@ class ivanconfig
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
+  static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);

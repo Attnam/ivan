@@ -52,7 +52,8 @@ cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           &ShowItemsAtPlayerSquareChanger);
 cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           "Thrown weapons rotate times per square",
-                                          0, 5); //1 to 4 times, 0 disabled
+                                          0, 6,
+                                          &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -211,6 +212,18 @@ void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& E
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "x1";break;
+  case 2: Entry << "x2";break;
+  case 3: Entry << "x3";break;
+  case 4: Entry << "x4";break;
+  case 5: Entry << "dynamic";break;
+  }
 }
 
 void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)

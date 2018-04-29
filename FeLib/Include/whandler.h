@@ -34,6 +34,7 @@
 class globalwindowhandler
 {
  public:
+  static truth HasKeysOnBuffer();
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);

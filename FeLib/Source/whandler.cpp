@@ -263,6 +263,10 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+truth globalwindowhandler::HasKeysOnBuffer(){
+  return KeyBuffer.size()>0;
+}
+
 int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
@@ -495,15 +499,13 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       if(!KeyPressed)
         return;
     }
-    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-       == KeyBuffer.end())
+    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
       KeyBuffer.push_back(KeyPressed);
     break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:
     KeyPressed = Event->text.text[0];
-    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-       == KeyBuffer.end())
+    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
       KeyBuffer.push_back(KeyPressed);
 #endif
   }
