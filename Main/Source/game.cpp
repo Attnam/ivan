@@ -1498,6 +1498,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   }
 
   B.Bitmap=bmpTgt;
+  B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
 
   bool bLight=false;
   col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
@@ -1570,8 +1571,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   if(bOk && IsInWilderness())bOk=false;
 
   int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
-  bool bEnabled=iCode>0;
-  bool bAboveHead=iCode==1;
+  bool bEnabled = iCode>0;
+  bool bAboveHead = iCode==1;
 
   if(bOk && !bEnabled)bOk=false;
 
