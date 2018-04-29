@@ -316,7 +316,7 @@ void graphics::Stretch(bool bXbrzMode, bitmap* pBmpFrom, blitdata& rBto, bool bA
 
 /* if on class, make it private */
 stretchRegion& GetSRegion(int iIndex){ // vectors are too permissive, it eveb accepts -1 index and will cause a lot of weirdness...
-  if(iIndex>=vStretchRegion.size() || iIndex<0)ABORT("Invalid SRegion index=%d (tot=%d)",iIndex,vStretchRegion.size());
+  if(iIndex>=vStretchRegion.size() || iIndex<0)ABORT("Invalid SRegion index=%d (tot=%d)",iIndex,(int)vStretchRegion.size());
   return vStretchRegion[iIndex];
 }
 
