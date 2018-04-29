@@ -8939,7 +8939,7 @@ void character::DonateEquipmentTo(character* Character)
   {
     bool bImprovedEquipping =
        ivanconfig::GetMemorizeEquipmentMode()==2 ||
-      (ivanconfig::GetMemorizeEquipmentMode()==1 && IsPet()) ;
+      (ivanconfig::GetMemorizeEquipmentMode()==1 && IsPet());
 
     if(bImprovedEquipping)MemorizeEquipedItems();
 
