@@ -1257,13 +1257,20 @@ void item::Draw(blitdata& BlitData) const
 {
   cint AF = GraphicData.AnimationFrames;
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-  cbitmap* P = GraphicData.Picture[F];
 
+  bitmap* bmp = GraphicData.Picture[F];
   if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe
-    // grant reset
-    BlitData.Flags &= ~MIRROR;
-    BlitData.Flags &= ~FLIP;
-    BlitData.Flags &= ~ROTATE;
+    static blitdata B = DEFAULT_BLITDATA;
+    if(B.Bitmap==NULL){
+      //to reuse tmp bitmap memory
+      B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
+      B.Border = TILE_V2; //bmp->GetSize();
+    }
+
+    // grant reset (may not be necessary but kept anyway in case of changing back to Blitdata param)
+    B.Flags &= ~MIRROR;
+    B.Flags &= ~FLIP;
+    B.Flags &= ~ROTATE;
 
     // set
     int iR = iRotateFlyingThrownStep%4;
@@ -1293,38 +1300,40 @@ void item::Draw(blitdata& BlitData) const
     // 1st step always rotate once
     switch(iR){
     case 1:
-      BlitData.Flags |= ROTATE; //90 degrees
+      B.Flags |= ROTATE; //90 degrees
       break;
     case 2:
-      BlitData.Flags |= FLIP|MIRROR; //180 degrees
+      B.Flags |= FLIP|MIRROR; //180 degrees
       break;
     case 3:
-      BlitData.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
+      B.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
       break;
     case 4:
       // initial/default rotation
       break;
     case -1:
-      BlitData.Flags |= FLIP|ROTATE; //-90 degrees
+      B.Flags |= FLIP|ROTATE; //-90 degrees
       break;
     case -2:
-      BlitData.Flags |= FLIP; //-180 degrees
+      B.Flags |= FLIP; //-180 degrees
       break;
     case -3:
-      BlitData.Flags |= MIRROR|ROTATE; //-270 degrees
+      B.Flags |= MIRROR|ROTATE; //-270 degrees
       break;
     case -4:
-      BlitData.Flags |= MIRROR; //-0 degrees
+      B.Flags |= MIRROR; //-0 degrees
       break;
     }
 
-    P->NormalMaskedBlit(BlitData); //only way to rotate...
-  }else{
-    if(BlitData.CustomData & ALLOW_ALPHA)
-      P->AlphaLuminanceBlit(BlitData);
-    else
-      P->LuminanceMaskedBlit(BlitData);
+    bmp->NormalBlit(B); //or NormalMaskedBlit() only way to rotate...
+    bmp = B.Bitmap;
   }
+  cbitmap* P = bmp;
+
+  if(BlitData.CustomData & ALLOW_ALPHA)
+    P->AlphaLuminanceBlit(BlitData);
+  else
+    P->LuminanceMaskedBlit(BlitData);
 
   if(Fluid && ShowFluids())
     DrawFluids(BlitData);
