@@ -39,7 +39,7 @@ itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, ite
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0) { }
+item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0), iRotateFlyingThrownStep(-1) { }
 truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 truth item::IsSimilarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 double item::GetBaseDamage() const { return Max(0., sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus()); }
@@ -119,13 +119,16 @@ item::~item()
   }
 }
 
-void item::Fly(character* Thrower, int Direction, int Force)
+void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrownRotation)
 {
+  lsquare* LandingSquare=NULL;
+
   int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
 
   lsquare* LSquareUnder = GetLSquareUnder();
   RemoveFromSlot();
   LSquareUnder->GetStack()->AddItem(this, false);
+  LandingSquare=LSquareUnder;
 
   if(!Range || GetSquaresUnder() != 1)
   {
@@ -153,6 +156,8 @@ void item::Fly(character* Thrower, int Direction, int Force)
     BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase()
                      / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY)
                      * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+
+    if(bTryStartThrownRotation && ivanconfig::GetRotateTimesPerSquare()>0)iRotateFlyingThrownStep=0; //init rotation
   }
   else
   {
@@ -162,6 +167,7 @@ void item::Fly(character* Thrower, int Direction, int Force)
 
   int RangeLeft;
 
+  truth Draw=false;
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
   {
     if(!GetLevel()->IsValidPos(Pos + DirVector))
@@ -181,7 +187,8 @@ void item::Fly(character* Thrower, int Direction, int Force)
       Pos += DirVector;
       RemoveFromSlot();
       JustHit->GetStack()->AddItem(this, false);
-      truth Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
+      LandingSquare=JustHit;
+      Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
 
       if(Draw)
         game::DrawEverything();
@@ -201,7 +208,31 @@ void item::Fly(character* Thrower, int Direction, int Force)
 
       if(Draw)
         while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
+
+      if(iRotateFlyingThrownStep>=0){
+        if(ivanconfig::GetRotateTimesPerSquare()==1){
+          iRotateFlyingThrownStep++; //next rotation step on next square
+        }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
+          for(int i=0;i<(ivanconfig::GetRotateTimesPerSquare()-1);i++){
+            iRotateFlyingThrownStep++;
+            if(Draw){
+              RemoveFromSlot();JustHit->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square to redraw...
+              game::DrawEverything();
+            }
+          }
+        }
+      }
+
     }
+
+  }
+
+  if(iRotateFlyingThrownStep>=0){ //must be disabled before exiting Fly()
+    iRotateFlyingThrownStep=3; //default rotation is w/o the rotation flags at the switch(){}
+    //force redraw at default rotation to avoid another spin when player moves TODO how to let it stay in the last rotation?
+    RemoveFromSlot();LandingSquare->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square...
+    game::DrawEverything();
+    iRotateFlyingThrownStep=-1; //disables rotation
   }
 
   if(Breaks)
@@ -1217,10 +1248,29 @@ void item::Draw(blitdata& BlitData) const
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
   cbitmap* P = GraphicData.Picture[F];
 
-  if(BlitData.CustomData & ALLOW_ALPHA)
-    P->AlphaLuminanceBlit(BlitData);
-  else
-    P->LuminanceMaskedBlit(BlitData);
+  if(iRotateFlyingThrownStep>=0){
+    switch(iRotateFlyingThrownStep%4){
+    case 0:
+      BlitData.Flags |= ROTATE; //90 degrees
+      break;
+    case 1:
+      BlitData.Flags |= ROTATE|MIRROR; //180 degrees
+      break;
+    case 2:
+      BlitData.Flags |= ROTATE|MIRROR|FLIP; //270 degrees
+      break;
+    case 3:
+      // initial rotation
+      break;
+    }
+
+    P->NormalMaskedBlit(BlitData); //only way to rotate...
+  }else{
+    if(BlitData.CustomData & ALLOW_ALPHA)
+      P->AlphaLuminanceBlit(BlitData);
+    else
+      P->LuminanceMaskedBlit(BlitData);
+  }
 
   if(Fluid && ShowFluids())
     DrawFluids(BlitData);

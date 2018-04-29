@@ -50,6 +50,9 @@ cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           &ShowItemsAtPlayerSquareDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &ShowItemsAtPlayerSquareChanger);
+cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
+                                          "Thrown weapons rotate times per square",
+                                          0, 5); //1 to 4 times, 0 disabled
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -668,6 +671,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
+  configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

@@ -39,6 +39,7 @@ class ivanconfig
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
+  static int GetRotateTimesPerSquare() { return RotateTimesPerSquare.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
@@ -155,6 +156,7 @@ class ivanconfig
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
   static cycleoption AltListItemPos;
+  static cycleoption RotateTimesPerSquare;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
 

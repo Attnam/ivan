@@ -2345,7 +2345,8 @@ void character::ThrowItem(int Direction, item* ToBeThrown)
   if(Direction > 7)
     ABORT("Throw in TOO odd direction...");
 
-  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH));
+  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH),
+    ToBeThrown->IsWeapon(this) && !ToBeThrown->IsBroken());
 }
 
 void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, double ToHitValue, int Direction)
