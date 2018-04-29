@@ -1165,7 +1165,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
-    graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    if(iRegionVanillaSilhouette!=-1)graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     return;
   }
 
