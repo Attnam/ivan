@@ -1133,20 +1133,21 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-int iStep=2;
-int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
-int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
-v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
-int iAltSilBlitCount=0;
-const int iTotTallStates=3;
-const int iTallFrom=2;
-const int iBreathFrom=3;
-int iTallState=iTotTallStates-1;
-int iPreviousAltSilOpt=0;
-v2 v2AltSilDispl = v2(10,-2);//v2(24,24);
-v2 v2AltSilPos=v2(0,0);
-int iRandTorso=0;
 void game::UpdateAltSilhouette(bool AnimationDraw){
+  static int iStep=2;
+  static int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
+  static int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
+  static v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
+  static int iAltSilBlitCount=0;
+  static const int iTotTallStates=3;
+  static const int iTallFrom=2;
+  static const int iBreathFrom=3;
+  static int iTallState=iTotTallStates-1;
+  static int iPreviousAltSilOpt=0;
+  static v2 v2AltSilDispl = v2(10,-2);//v2(24,24);
+  static v2 v2AltSilPos=v2(0,0);
+  static int iRandTorso=0;
+
   bool bOk=true;
 
   //if(bOk && !bAllowed)bOk=false;
@@ -1173,6 +1174,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
 
 //  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
+  bool bRolling=false;
+  bool bHopping=false;
   if(iRegionVanillaSilhouette!=-1){
     bool bOk=true;
 
@@ -1184,6 +1187,9 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     if(bOk && ivanconfig::GetAltListItemPos()==1 && graphics::IsSRegionEnabled(iRegionListItem))bOk=false; //is same of zoom pos
 
     if(bOk){
+      bRolling=!h->GetRightLeg() && !h->GetLeftLeg();
+      bHopping=!bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
+
       v2 v2Pos=ZoomPos;
 
       humanoid::SetSilhouetteWhere(v2Pos);
@@ -1204,12 +1210,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     }
   }
 
-//  festring alignment(GetVerbalPlayerAlignment());
-//  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
-//  else
-//  if(alignment.Find("neutral")!=-1)bkgColorToXBRZ=LIGHT_GRAY;
-//  else
-//  if(alignment.Find("chaotic")!=-1)bkgColorToXBRZ=RED;
+  /**
+   * TODO depict alignment with background colors/animations? tho, not more info than what is already written by the side of player's name
+  festring alignment(GetVerbalPlayerAlignment());
+  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
+  else
+  if(alignment.Find("neutral")!=-1)bkgColorToXBRZ=LIGHT_GRAY;
+  else
+  if(alignment.Find("chaotic")!=-1)bkgColorToXBRZ=RED;
+   */
 
 //  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
 //  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
@@ -1217,7 +1226,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData = ALLOW_ANIMATE; //excellent!
+    bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE; //SQUARE_INDEX_MASK
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
@@ -1230,6 +1239,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
     }
 
+    bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
+
     int iYDest=0;
     if(ivanconfig::GetAltSilhouette()>=iBreathFrom){ //breath animation
       int nBreathDelay = 20 + 10*(ivanconfig::GetAltSilhouette()-iBreathFrom); //calm breathing
@@ -1238,7 +1249,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       if(Player->GetTirednessState()==FAINTING )nBreathDelay/=4;
       if(nBreathDelay<1)nBreathDelay=1;
 
-      int iTallStateNew=(iAltSilBlitCount/nBreathDelay)%iTotTallStates;
+      int iTallStateNew=(iAltSilBlitCount/nBreathDelay)%(iTotTallStates -(Player->IsFlying()?1:0)); //tallest will not show when flying
       if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
       iTallState=iTallStateNew;
     }
@@ -1246,13 +1257,25 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
       bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
 
-      int iTotTopBlankLines = iTotTallStates - (iTallState+1);
+      bool bLower = (iTallState==0 && bTired) || Player->IsFlying();
+
+      int iTotBlankLines = iTotTallStates - (iTallState+1);
       // 3-(2+1)=0 //nothing
       // 3-(1+1)=1 //0
       // 3-(0+1)=2 //0 1
-      if(iTallState==0)iTotTopBlankLines++; //wont dup pants
-      for(int i=0;i<iTotTopBlankLines;i++)
-        bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR); //blank space above head
+      if(bLower)iTotBlankLines++; //wont dup pants
+
+      if(Player->IsFlying()){
+        // random blank above head to make it oscillate while flying
+        if(clock()%2==0){
+          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+          iTotBlankLines--;
+        }
+      }else{
+        //blank space above head
+        for(int i=0;i<iTotBlankLines;i++)
+          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+      }
 
       int iHeadLines=6;
       for(int y=0;y<iHeadLines;y++){ //head
@@ -1295,11 +1318,18 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true); //pants
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,11,TILE_SIZE,true); //weapon handle
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
-      if(iTallState!=0)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
+      if(!bLower)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true);
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
-      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d",iYDest,iY4);
+
+      if(Player->IsFlying()){
+        for(int i=0;i<iTotBlankLines;i++)
+          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+      }
+
+      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d",iYDest,iY4); //Better never remove this, highly useful!
+
     }else{
       // fall back to simple blit for not supported tile sizes
       bool bBreakLoop=false;
@@ -1311,6 +1341,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     }
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
+
+    if(Player->IsSwimming()){ //TODO mmm... we always drown? kept here because it is too simple.
+      for(int iY=iY4/2+(clock()%3);iY<iY4;iY++)
+        bldPlayer3by4TMP.Bitmap->Fill(0,iY,TILE_SIZE,1,BLUE);
+    }
   }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
