@@ -1699,7 +1699,14 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   if(bOk && IsInWilderness())bOk=false;
 
-  int iCode = IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+  bool bDynamic=false;
+  bool bDynamicItems=false;
+  if(ivanconfig::GetShowItemsAtPlayerSquare()>=10){
+    bDynamic=true;
+    if(ivanconfig::GetShowItemsAtPlayerSquare()==11)bDynamicItems=true;
+  }
+  int iCode = 1;
+  if(!bDynamic)iCode=IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
   bool bEnabled = iCode>0;
   bool bAboveHead = iCode==1;
 
@@ -1734,7 +1741,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
   if(bNearEC)bAboveHead=true;
 
-  if(bAboveHead){
+  if(bDynamic && bAboveHead){
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
     bool bCharAboveNear=false;
     bool bItemAboveNear=false;
@@ -1746,9 +1753,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
           break;
         }
 
-        if(GetCurrentLevel()->GetLSquare(v2Chk)->GetStack()->GetItems()>0){
-          bItemAboveNear=true;
-          break;
+        if(bDynamicItems){
+          if(GetCurrentLevel()->GetLSquare(v2Chk)->GetStack()->GetItems()>0){
+            bItemAboveNear=true;
+            break;
+          }
         }
       }
     }

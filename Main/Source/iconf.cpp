@@ -46,7 +46,7 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastHandler);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
-                                          0, 10,
+                                          0, 12,
                                           &ShowItemsAtPlayerSquareDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &ShowItemsAtPlayerSquareChanger);
@@ -228,6 +228,12 @@ void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& E
 
 void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
 {
+  if(O->Value>=10){
+    Entry << "dynamic";
+    if(O->Value==11)Entry << "+items";
+    return;
+  }
+
   int iCode = game::IntemUnderCode(O->Value);
 
   if(iCode==0){
