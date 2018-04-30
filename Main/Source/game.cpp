@@ -1303,8 +1303,10 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       if(nBreathDelay<1)nBreathDelay=1;
 
       iBreathStepCount = iAltSilBlitCount/nBreathDelay;
-      int iTallStateNew = iBreathStepCount % iTotTallStates;
-      if(Player->IsFlying())iTallStateNew=0;
+      int iTotTallStatesCurrent=iTotTallStates;
+      if(Player->IsFlying())iTotTallStatesCurrent=2;
+      int iTallStateNew = iBreathStepCount % iTotTallStatesCurrent;
+//      if(Player->IsFlying())iTallStateNew=0;
       if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
       iTallState=iTallStateNew;
     }
@@ -1322,7 +1324,12 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
       bool bJump=false;
       if(Player->IsFlying()){
-        iTotBlankLines+=3; // -2 for the even smaller torso, -1 for the shorter legs
+        iTotBlankLines+=1; // for the shorter legs
+        iTotBlankLines+=2; // for the even smaller torso with -2 lines both at 0 and 1 tall states
+//        switch(iTallState){
+//        case 0: iTotBlankLines+=2; break; // for the even smaller torso
+//        case 1: iTotBlankLines+=1; break;
+//        }
 
 //        // random blank above head to make it oscillate while flying
 //        if(iFlyRandom%2==0){
@@ -1363,14 +1370,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
         }
         break;
-      case 1: // (7 lines)
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+      case 1:
+        if(Player->IsFlying()){ //flying (5 lines)
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+        }else{ // (7 lines)
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+        }
         break;
       case 2: //tallest (8 lines)
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
