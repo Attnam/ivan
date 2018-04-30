@@ -1233,6 +1233,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
+  v2 v2FlyingDisplacement={0,0};
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
@@ -1350,6 +1351,10 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
 
+      if(Player->IsFlying()){
+        v2FlyingDisplacement={(clock()%3)-1,clock()%2}; // a bit more turbulence :)
+      }
+
       if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, lower=%s, TotBlank=%d",iYDest,iY4,
         bJump?"T":"F", Player->IsFlying()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
 
@@ -1376,7 +1381,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     bldPlayerToSilhouetteAreaTMP.Bitmap = DOUBLE_BUFFER;
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);
   bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
-  if(!bXbyYis3by4)bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
+  if(bXbyYis3by4){
+    bldPlayerToSilhouetteAreaTMP.Dest+=v2FlyingDisplacement;
+  }else{
+    bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
+  }
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
 
   igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch);
