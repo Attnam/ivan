@@ -1242,6 +1242,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
 
     int iYDest=0;
+    int iBreathStepCount=0;
     if(ivanconfig::GetAltSilhouette()>=iBreathFrom){ //breath animation
       int nBreathDelay = 20 + 10*(ivanconfig::GetAltSilhouette()-iBreathFrom); //calm breathing
       if(PlayerIsRunning())nBreathDelay/=2;
@@ -1249,7 +1250,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       if(Player->GetTirednessState()==FAINTING )nBreathDelay/=4;
       if(nBreathDelay<1)nBreathDelay=1;
 
-      int iTallStateNew=(iAltSilBlitCount/nBreathDelay)%(iTotTallStates -(Player->IsFlying()?1:0)); //tallest will not show when flying
+      iBreathStepCount = iAltSilBlitCount/nBreathDelay;
+      int iTallStateNew = iBreathStepCount % (iTotTallStates -(Player->IsFlying()?1:0)); //tallest will not show when flying
       if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
       iTallState=iTallStateNew;
     }
@@ -1265,6 +1267,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       // 3-(0+1)=2 //0 1
       if(bLower)iTotBlankLines++; //wont dup pants
 
+      bool bJump=false;
       if(Player->IsFlying()){
         // random blank above head to make it oscillate while flying
         if(clock()%2==0){
@@ -1272,11 +1275,17 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           iTotBlankLines--;
         }
       }else{
+        if(iTallState==0 && bHopping && clock()%2==0)bJump=true;
+
         //blank space above head
-        for(int i=0;i<iTotBlankLines;i++)
-          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+        if(!bJump)
+          for(int i=0;i<iTotBlankLines;i++)
+            bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
 
+      /*************************************
+       * full body
+       *************************************/
       int iHeadLines=6;
       for(int y=0;y<iHeadLines;y++){ //head
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
@@ -1323,7 +1332,10 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true);
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
 
-      if(Player->IsFlying()){
+      ////////////////////////// end of body //////////////////////////
+
+      if(Player->IsFlying() || bJump){
+        // blank lines below feet
         for(int i=0;i<iTotBlankLines;i++)
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
