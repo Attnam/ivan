@@ -1251,11 +1251,12 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       if(nBreathDelay<1)nBreathDelay=1;
 
       iBreathStepCount = iAltSilBlitCount/nBreathDelay;
-      int iTallStateNew = iBreathStepCount % (iTotTallStates -(Player->IsFlying()?1:0)); //tallest will not show when flying
+      int iTallStateNew = iBreathStepCount % iTotTallStates;
+      if(Player->IsFlying())iTallStateNew=0;
       if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
       iTallState=iTallStateNew;
     }
-    if(TILE_SIZE==16){
+    if(TILE_SIZE==16){ // this is like a post processing gfx
       //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
       bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
 
@@ -1269,6 +1270,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
       bool bJump=false;
       if(Player->IsFlying()){
+        iTotBlankLines+=3; // -2 for the even smaller torso, -1 for the shorter legs
+
         // random blank above head to make it oscillate while flying
         if(clock()%2==0){
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
@@ -1293,13 +1296,20 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
       // torso are lines 6 7 8 9 (lets keep it simple to read...)
       switch(iTallState){
-      case 0: //lowest (6 lines)
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
-        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+      case 0:
+        if(Player->IsFlying()){ //flying (4 lines)
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+        }else{ //lowest (6 lines)  for non flying
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+        }
         break;
       case 1: // (7 lines)
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
@@ -1321,7 +1331,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
         bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
         break;
       default:
-        ABORT("not supported tall state %d",iTallState); //all the above is for 3 tall states, changing it requires updating them all
+        ABORT("not supported tall state %d",iTallState); //all the above is for 3 tall states, changing it probably will require updating them all
       }
 
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true); //pants
@@ -1329,7 +1339,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
       if(!bLower)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
-      bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true);
+      if(!Player->IsFlying())bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true); //shorter legs if flying
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
 
       ////////////////////////// end of body //////////////////////////
@@ -1340,7 +1350,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
 
-      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d",iYDest,iY4); //Better never remove this, highly useful!
+      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, lower=%s, TotBlank=%d",iYDest,iY4,
+        bJump?"T":"F", Player->IsFlying()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
 
     }else{
       // fall back to simple blit for not supported tile sizes
