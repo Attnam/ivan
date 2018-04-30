@@ -1712,7 +1712,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     if(bOk && su->GetItems()==0)bOk=false;
   }
 
-  if(!bOk){ // this is IMPORTANT as disabler
+  if(!bOk){ // reaching here is IMPORTANT as a disabler to the region!
     graphics::SetSRegionEnabled(iRegionItemsUnder,false);
     return;
   }
@@ -1720,17 +1720,43 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   /////////////////////// ok ////////////////////////
   v2 v2AbsLevelSqrPos = Player->GetPos();
 
+  bool bNearEC=false;
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
-  if(
-      v2AbsLevelSqrPos.X<=iNearEC
-      ||
-      v2AbsLevelSqrPos.Y<=iNearEC
-      ||
-      v2AbsLevelSqrPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)
-      ||
-      v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)
-  ){
-    bAboveHead=true;
+  int iCycleCodeFallBack=4; //top right horiz if not near corners/edges
+  if(v2AbsLevelSqrPos.X<=iNearEC){ //left edge
+    bNearEC=true;iCycleCodeFallBack=8; //bottom right vert
+  }else if(v2AbsLevelSqrPos.Y<=iNearEC){ //top edge
+    bNearEC=true;iCycleCodeFallBack=6; //bottom left horiz
+  }else if(v2AbsLevelSqrPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)){ //right edge
+    bNearEC=true;iCycleCodeFallBack=7; //bottom left vert
+  }else if(v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)){ //bottom edge
+    bNearEC=true;iCycleCodeFallBack=4; //top right horiz
+  }
+  if(bNearEC)bAboveHead=true;
+
+  if(bAboveHead){
+    v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
+    bool bCharAboveNear=false;
+    bool bItemAboveNear=false;
+    for(int i=-1;i<=1;i++){
+      v2Chk = v2AbsLevelSqrPos+v2(0+i,-1);
+      if(GetCurrentLevel()->IsValidPos(v2Chk)){
+        if(GetCurrentLevel()->GetSquare(v2Chk)->GetCharacter()){
+          bCharAboveNear=true;
+          break;
+        }
+
+        if(GetCurrentLevel()->GetLSquare(v2Chk)->GetStack()->GetItems()>0){
+          bItemAboveNear=true;
+          break;
+        }
+      }
+    }
+
+    if(bCharAboveNear || bItemAboveNear){
+      iCode = IntemUnderCode(iCycleCodeFallBack);
+      bAboveHead=false;
+    }
   }
 
   // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
