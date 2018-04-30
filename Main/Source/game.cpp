@@ -1133,7 +1133,7 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-void game::UpdateAltSilhouette(bool AnimationDraw){
+void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in more, merely to easy it's understanding..
   static int iStep=2;
   static int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
   static int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
@@ -1233,7 +1233,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
-  v2 v2FlyingDisplacement={0,0};
+  static v2 v2FlyingDisplacement;
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
@@ -1241,6 +1241,41 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     }
 
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
+
+    static int iVariationStepPrevious=0;
+    if(Player->IsFlying()){
+      float fFlyRandomVariationsPerSecond = 0.5;
+      if(PlayerIsRunning())fFlyRandomVariationsPerSecond*=2; //above tired for better integer division
+      if(bTired)fFlyRandomVariationsPerSecond/=2;
+      int iVariationStepDelay = CLOCKS_PER_SEC/fFlyRandomVariationsPerSecond;
+      int iTilOneSecond = clock() % CLOCKS_PER_SEC;
+      int iVariationStep = iTilOneSecond/iVariationStepDelay;
+
+      static v2 v2New;
+      v2New = v2FlyingDisplacement;
+      if(iVariationStep != iVariationStepPrevious){ //set new target spot
+        iVariationStepPrevious=iVariationStep;
+
+        // a bit more turbulence :)
+        static int iMaxDisplacementFromCenterLess1=TILE_SIZE/(PlayerIsRunning()?2:4);
+//        int iDiff  = iFlyRandom % iMaxDisplacementFromCenterLess1; //0 1 2
+        v2New.X  = clock()%iMaxDisplacementFromCenterLess1;
+        v2New.Y  = clock()%iMaxDisplacementFromCenterLess1;
+        v2New.X *= clock()%2==0 ? 1 : -1;
+        v2New.Y *= clock()%2==0 ? 1 : -1;
+//        v2FlyingDisplacement.X=(iDiff*((clock()%iMaxDisplacementFromCenter))-(iMaxDisplacementFromCenter/2));
+//        v2FlyingDisplacement.Y=(iDiff*((clock()%iMaxDisplacementFromCenter))-(iMaxDisplacementFromCenter/2));
+      }
+      if(v2FlyingDisplacement!=v2New){ //slowly move to the new spot
+        if(v2FlyingDisplacement.X < v2New.X)v2FlyingDisplacement.X++;
+        else
+        if(v2FlyingDisplacement.X > v2New.X)v2FlyingDisplacement.X--;
+
+        if(v2FlyingDisplacement.Y < v2New.Y)v2FlyingDisplacement.Y++;
+        else
+        if(v2FlyingDisplacement.Y > v2New.Y)v2FlyingDisplacement.Y--;
+      }
+    }
 
     int iYDest=0;
     int iBreathStepCount=0;
@@ -1273,11 +1308,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       if(Player->IsFlying()){
         iTotBlankLines+=3; // -2 for the even smaller torso, -1 for the shorter legs
 
-        // random blank above head to make it oscillate while flying
-        if(clock()%2==0){
-          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
-          iTotBlankLines--;
-        }
+//        // random blank above head to make it oscillate while flying
+//        if(iFlyRandom%2==0){
+//          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+//          iTotBlankLines--;
+//        }
       }else{
         if(iTallState==0 && bHopping && clock()%2==0)bJump=true;
 
@@ -1351,10 +1386,6 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
 
-      if(Player->IsFlying()){
-        v2FlyingDisplacement={(clock()%3)-1,clock()%2}; // a bit more turbulence :)
-      }
-
       if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, lower=%s, TotBlank=%d",iYDest,iY4,
         bJump?"T":"F", Player->IsFlying()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
 
@@ -1370,10 +1401,12 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
 
-    if(Player->IsSwimming()){ //TODO mmm... we always drown? kept here because it is too simple.
+    if(Player->IsSwimming()){ //TODO mmm... we always drown? kept here because it is too simple, but this means I couldnt test it...
       for(int iY=iY4/2+(clock()%3);iY<iY4;iY++)
-        bldPlayer3by4TMP.Bitmap->Fill(0,iY,TILE_SIZE,1,BLUE);
+        bldPlayer3by4TMP.Bitmap->Fill(0,iY,TILE_SIZE,1,BLUE); //TODO 0.5 alpha blit! TODO liquid color?
     }
+  }else{
+    v2FlyingDisplacement={0,0};
   }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){

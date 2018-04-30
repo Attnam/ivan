@@ -159,7 +159,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
                      * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
 
     if(bTryStartThrownRotation && ivanconfig::GetRotateTimesPerSquare()>0)
-      iRotateFlyingThrownStep = clock()%2==0 ? 1 : -1; //init rotation
+      iRotateFlyingThrownStep = (clock()%2)==0 ? 1 : -1; //init rotation
   }
   else
   {
