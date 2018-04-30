@@ -861,6 +861,8 @@ int character::TakeHit(character* Enemy, item* Weapon,
   else
     DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+  GetLSquareUnder()->AddHitEffect(Weapon);
+
   return HAS_HIT;
 }
 

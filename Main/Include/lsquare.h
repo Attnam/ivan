@@ -28,6 +28,7 @@ class fluid;
 class material;
 class item;
 class smoke;
+class hiteffect;
 class gas;
 class bodypart;
 class liquid;
@@ -195,6 +196,8 @@ class lsquare : public square
   void AddSmoke(gas*);
   truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
+  void AddHitEffect(item* Weapon);
+  void RemoveHitEffect(hiteffect* ToBeRemoved);
   void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;
   void DisplaySmokeInfo(festring&) const;
@@ -277,6 +280,7 @@ class lsquare : public square
   } StaticContentCache;
   fluid* Fluid;
   smoke* Smoke;
+  hiteffect* HitEffect;
   rain* Rain;
   trap* Trap;
   emittervector Emitter;

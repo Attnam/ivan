@@ -41,7 +41,7 @@ truth lsquare::IsDipDestination() const
 
 lsquare::lsquare(level* LevelUnder, v2 Pos)
 : square(LevelUnder, Pos),
-  Fluid(0), Smoke(0), Rain(0), Trap(0),
+  Fluid(0), Smoke(0), HitEffect(0), Rain(0), Trap(0),
   GLTerrain(0), OLTerrain(0),
   Memorized(0), FowMemorized(0),
   Engraved(0),
@@ -302,6 +302,11 @@ void lsquare::Draw(blitdata& BlitData) const
 
           for(const smoke* S = Smoke; S; S = S->Next)
             S->Draw(BlitData);
+        }
+
+        // always above character
+        for(const hiteffect* S = HitEffect; S; S = S->Next){
+          if(HitEffect->DrawStep(BlitData))break; //draw one valid per frame
         }
 
         BlitData.CustomData &= ~SQUARE_INDEX_MASK;
@@ -1840,6 +1845,56 @@ void lsquare::SignalSmokeAlphaChange(int What)
 {
   SmokeAlphaSum += What;
   SignalPossibleTransparencyChange();
+}
+
+void lsquare::AddHitEffect(item* ToBeAdded)
+{
+  hiteffect* S = HitEffect; //head of the linked list
+  hiteffect* New = new hiteffect(ToBeAdded, this);
+
+  if(!S)
+  {
+    HitEffect = New;
+    IncAnimatedEntities();
+  }
+  else
+  {
+    hiteffect* LS;
+
+    do
+    { // The same item can be re-added if it hits again later
+      LS = S; //finds the tail of linked list
+      S = S->Next;
+    }
+    while(S);
+
+    LS->Next = New;
+  }
+}
+void lsquare::RemoveHitEffect(hiteffect* ToBeRemoved)
+{
+  hiteffect* H = HitEffect;
+
+  if(H == ToBeRemoved)
+  {
+    HitEffect = H->Next;
+
+    if(!H)
+      DecAnimatedEntities();
+  }
+  else
+  {
+    hiteffect* LH; // last or previously linked
+
+    do
+    {
+      LH = H;
+      H = H->Next;
+    }
+    while(H != ToBeRemoved);
+
+    LH->Next = H->Next;
+  }
 }
 
 int lsquare::GetDivineMaster() const

@@ -28,6 +28,7 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(material)(0, 0, 0, "material");
 #include "save.h"
 #include "fluid.h"
 #include "smoke.h"
+#include "hiteffect.h"
 #include "bitmap.h"
 #include "game.h"
 #include "rawbit.h"
@@ -39,3 +40,4 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(material)(0, 0, 0, "material");
 #include "fluid.cpp"
 #include "smoke.cpp"
 #include "rain.cpp"
+#include "hiteffect.cpp" //TODO could the hit transfered energy be considered mater? otherwise this is out of context :/... but will compile.
