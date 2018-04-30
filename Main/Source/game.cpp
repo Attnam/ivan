@@ -1242,30 +1242,32 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
 
-    static int iVariationStepPrevious=0;
+    static long lPreviousFlyStepTime=0;
     if(Player->IsFlying()){
       float fFlyRandomVariationsPerSecond = 0.5;
       if(PlayerIsRunning())fFlyRandomVariationsPerSecond*=2; //above tired for better integer division
       if(bTired)fFlyRandomVariationsPerSecond/=2;
-      int iVariationStepDelay = CLOCKS_PER_SEC/fFlyRandomVariationsPerSecond;
-      int iTilOneSecond = clock() % CLOCKS_PER_SEC;
-      int iVariationStep = iTilOneSecond/iVariationStepDelay;
+      long lVariationStepDelay = CLOCKS_PER_SEC/fFlyRandomVariationsPerSecond;
 
       static v2 v2New;
-      v2New = v2FlyingDisplacement;
-      if(iVariationStep != iVariationStepPrevious){ //set new target spot
-        iVariationStepPrevious=iVariationStep;
+      long lTimeNow=clock(); //this is animation based on real time.
+      if(lTimeNow-lPreviousFlyStepTime > lVariationStepDelay){
+        v2 v2Displ;
 
         // a bit more turbulence :)
-        static int iMaxDisplacementFromCenterLess1=TILE_SIZE/(PlayerIsRunning()?2:4);
-//        int iDiff  = iFlyRandom % iMaxDisplacementFromCenterLess1; //0 1 2
-        v2New.X  = clock()%iMaxDisplacementFromCenterLess1;
-        v2New.Y  = clock()%iMaxDisplacementFromCenterLess1;
-        v2New.X *= clock()%2==0 ? 1 : -1;
-        v2New.Y *= clock()%2==0 ? 1 : -1;
-//        v2FlyingDisplacement.X=(iDiff*((clock()%iMaxDisplacementFromCenter))-(iMaxDisplacementFromCenter/2));
-//        v2FlyingDisplacement.Y=(iDiff*((clock()%iMaxDisplacementFromCenter))-(iMaxDisplacementFromCenter/2));
+        int iMaxDisplacementFromCenterLess1=TILE_SIZE/(PlayerIsRunning()?2:4);
+        v2Displ.X  = clock()%iMaxDisplacementFromCenterLess1;
+        v2Displ.Y  = clock()%iMaxDisplacementFromCenterLess1;
+        v2Displ.X *= clock()%2==0 ? 1 : -1;
+        v2Displ.Y *= clock()%2==0 ? 1 : -1;
+
+        v2New  = v2AltSilPos; //top left
+        v2New += v2(v2OverSilhouette.X/2,0); //top center
+        v2New += v2Displ; //variation from top center
+
+        lPreviousFlyStepTime=lTimeNow;
       }
+
       if(v2FlyingDisplacement!=v2New){ //slowly move to the new spot
         if(v2FlyingDisplacement.X < v2New.X)v2FlyingDisplacement.X++;
         else
@@ -1274,7 +1276,10 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
         if(v2FlyingDisplacement.Y < v2New.Y)v2FlyingDisplacement.Y++;
         else
         if(v2FlyingDisplacement.Y > v2New.Y)v2FlyingDisplacement.Y--;
+      }else{
+
       }
+
     }
 
     int iYDest=0;
