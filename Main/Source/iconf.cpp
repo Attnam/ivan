@@ -44,6 +44,9 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+numberoption ivanconfig::HitIndicator(    "HitIndicator",
+                                          "Hit indicator draw times, suggested 5 (0 to disable)",
+                                          0);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
                                           0, 12,
@@ -691,6 +694,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
   configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
+  configsystem::AddOption(fsCategory,&HitIndicator);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);

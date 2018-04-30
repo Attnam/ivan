@@ -305,8 +305,8 @@ void lsquare::Draw(blitdata& BlitData) const
         }
 
         // always above character
-        for(const hiteffect* S = HitEffect; S; S = S->Next){
-          if(HitEffect->DrawStep(BlitData))break; //draw one valid per frame
+        for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
+          if(HE->DrawStep(BlitData))break; //this is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
         }
 
         BlitData.CustomData &= ~SQUARE_INDEX_MASK;
@@ -1849,8 +1849,11 @@ void lsquare::SignalSmokeAlphaChange(int What)
 
 void lsquare::AddHitEffect(item* ToBeAdded)
 {
+  if(ToBeAdded==NULL)return;
+  if(ivanconfig::GetHitIndicator()==0)return;
+
   hiteffect* S = HitEffect; //head of the linked list
-  hiteffect* New = new hiteffect(ToBeAdded, this);
+  hiteffect* New = new hiteffect(ToBeAdded, this, ivanconfig::GetHitIndicator());
 
   if(!S)
   {

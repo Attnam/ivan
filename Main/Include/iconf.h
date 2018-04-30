@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static long GetHitIndicator() { return HitIndicator.Value; }
   static long GetShowItemsAtPlayerSquare(){ return ShowItemsAtPlayerSquare.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
@@ -160,6 +161,7 @@ class ivanconfig
   static cycleoption RotateTimesPerSquare;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
+  static numberoption HitIndicator;
 
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
