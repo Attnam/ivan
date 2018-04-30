@@ -34,6 +34,7 @@
 class globalwindowhandler
 {
  public:
+  static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
   static int GetKey(truth = true);
   static int ReadKey();

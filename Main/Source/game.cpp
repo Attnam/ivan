@@ -1223,6 +1223,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 //  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
 //  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
   if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhereDefault() + v2AltSilDispl;
+  static v2 v2AltSilTopCenterPos = v2AltSilPos + v2(v2OverSilhouette.X/2,0);
+  static v2 v2AltSilMovingPos=v2AltSilPos;
 
   if(bldPlayerCopyTMP.Bitmap==NULL){
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
@@ -1233,7 +1235,6 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
-  static v2 v2FlyingDisplacement;
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
   if(bXbyYis3by4){
     if(bldPlayer3by4TMP.Bitmap==NULL){
@@ -1242,42 +1243,52 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
 
-    static long lPreviousFlyStepTime=0;
     if(Player->IsFlying()){
-      float fFlyRandomVariationsPerSecond = 0.5;
-      if(PlayerIsRunning())fFlyRandomVariationsPerSecond*=2; //above tired for better integer division
-      if(bTired)fFlyRandomVariationsPerSecond/=2;
-      long lVariationStepDelay = CLOCKS_PER_SEC/fFlyRandomVariationsPerSecond;
+      float fStepsPerSecond=15; //fly turbulence move base speed
+      int iMoveStep=1;
+      if(PlayerIsRunning()){
+        static int iRunMultSPS=2;
+        fStepsPerSecond *= iRunMultSPS; //this will not work well if the machine is too slow
+        if(globalwindowhandler::GetFPS(true) < fStepsPerSecond) iMoveStep=iRunMultSPS; //this is like a frame skip
+      }
+      if(bTired){
+        fStepsPerSecond/=2;
+        iMoveStep=1;
+      }
+      long lFlyStepDelay = CLOCKS_PER_SEC/fStepsPerSecond;
 
-      static v2 v2New;
+      static v2 v2PtoSAmoveTo;
       long lTimeNow=clock(); //this is animation based on real time.
-      if(lTimeNow-lPreviousFlyStepTime > lVariationStepDelay){
-        v2 v2Displ;
+      bool bDoStepNow=false;
+      static long lPreviousFlyStepTime=0;
+      if(lTimeNow-lPreviousFlyStepTime > lFlyStepDelay){
+        bDoStepNow=true;
+        lPreviousFlyStepTime=lTimeNow;
+      }else{DBGSI(lTimeNow);}
 
+      v2 v2Dist = v2PtoSAmoveTo - v2AltSilMovingPos; DBG2(DBGAV2(v2Dist),DBGB(v2Dist<v2(2,2)));
+//      if(!v2PtoSAmoveTo.Is0() && v2AltSilMovingPos != v2PtoSAmoveTo){ //slowly move to the new spot
+      if( !v2PtoSAmoveTo.Is0() && (abs(v2Dist.X)>=iMoveStep || abs(v2Dist.Y)>=iMoveStep) ){ //slowly move to the new spot
+        if(bDoStepNow){
+          if(v2AltSilMovingPos.X < v2PtoSAmoveTo.X)v2AltSilMovingPos.X+=iMoveStep;
+          else
+          if(v2AltSilMovingPos.X > v2PtoSAmoveTo.X)v2AltSilMovingPos.X-=iMoveStep;
+
+          if(v2AltSilMovingPos.Y < v2PtoSAmoveTo.Y)v2AltSilMovingPos.Y+=iMoveStep;
+          else
+          if(v2AltSilMovingPos.Y > v2PtoSAmoveTo.Y)v2AltSilMovingPos.Y-=iMoveStep;
+        }
+      }else{ //prepare new target fly spot destination
         // a bit more turbulence :)
-        int iMaxDisplacementFromCenterLess1=TILE_SIZE/(PlayerIsRunning()?2:4);
+        v2 v2Displ;
+        int iMaxDisplacementFromCenterLess1=TILE_SIZE/4;//(PlayerIsRunning()?4:8);
         v2Displ.X  = clock()%iMaxDisplacementFromCenterLess1;
         v2Displ.Y  = clock()%iMaxDisplacementFromCenterLess1;
         v2Displ.X *= clock()%2==0 ? 1 : -1;
         v2Displ.Y *= clock()%2==0 ? 1 : -1;
 
-        v2New  = v2AltSilPos; //top left
-        v2New += v2(v2OverSilhouette.X/2,0); //top center
-        v2New += v2Displ; //variation from top center
-
-        lPreviousFlyStepTime=lTimeNow;
-      }
-
-      if(v2FlyingDisplacement!=v2New){ //slowly move to the new spot
-        if(v2FlyingDisplacement.X < v2New.X)v2FlyingDisplacement.X++;
-        else
-        if(v2FlyingDisplacement.X > v2New.X)v2FlyingDisplacement.X--;
-
-        if(v2FlyingDisplacement.Y < v2New.Y)v2FlyingDisplacement.Y++;
-        else
-        if(v2FlyingDisplacement.Y > v2New.Y)v2FlyingDisplacement.Y--;
-      }else{
-
+        v2PtoSAmoveTo  = v2AltSilTopCenterPos - v2(v2OverSilhouette.X/2,0); //top left
+        v2PtoSAmoveTo += v2Displ; //variation from top center
       }
 
     }
@@ -1410,8 +1421,6 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       for(int iY=iY4/2+(clock()%3);iY<iY4;iY++)
         bldPlayer3by4TMP.Bitmap->Fill(0,iY,TILE_SIZE,1,BLUE); //TODO 0.5 alpha blit! TODO liquid color?
     }
-  }else{
-    v2FlyingDisplacement={0,0};
   }
 
   if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
@@ -1420,7 +1429,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   };DBGBLD(bldPlayerToSilhouetteAreaTMP);
   bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
   if(bXbyYis3by4){
-    bldPlayerToSilhouetteAreaTMP.Dest+=v2FlyingDisplacement;
+    bldPlayerToSilhouetteAreaTMP.Dest=v2AltSilMovingPos;
   }else{
     bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   }
