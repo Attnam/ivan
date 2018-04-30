@@ -1259,7 +1259,7 @@ void item::Draw(blitdata& BlitData) const
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
 
   bitmap* bmp = GraphicData.Picture[F];
-  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe
+  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
     static blitdata B = DEFAULT_BLITDATA;
     if(B.Bitmap==NULL){
       //to reuse tmp bitmap memory
