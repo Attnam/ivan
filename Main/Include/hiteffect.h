@@ -39,12 +39,12 @@ class hiteffect : public entity
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   virtual truth IsOnGround() const { return true; }
-  void Merge(item*);
-  item* GetItem(){return Item;}
+//  void Merge(item*);
+//  item* GetItem(){return Item;}
  protected:
-  item* Item;
   lsquare* LSquareUnder;
   int iDrawTimes; //TODO use realtime??? may not be good on slow machines?
+  bitmap* bmpHitEffect;
 };
 
 #endif //__HITEFFECT_H_

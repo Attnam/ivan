@@ -15,13 +15,27 @@
 hiteffect::hiteffect() : entity(HAS_BE), Next(0) { }
 square* hiteffect::GetSquareUnderEntity(int) const { return LSquareUnder; }
 
-hiteffect::hiteffect(item* addItem, lsquare* LSquareUnder, int iDrawTimeS)
-: entity(HAS_BE), Next(0), Item(addItem), LSquareUnder(LSquareUnder), iDrawTimes(iDrawTimeS)
+hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iDrawTimeS)
+: entity(HAS_BE), Next(0), LSquareUnder(LSquareUnder), iDrawTimes(iDrawTimeS)
 {
+  static blitdata bld = [](){
+    static int iL=0xFF*0.70;
+    static col24 lum=MakeRGB24(iL,iL,iL);
+
+    blitdata B = DEFAULT_BLITDATA;
+    B.Luminance = lum;
+    B.Border = TILE_V2;
+    return B;
+  }();
+  bmpHitEffect = bld.Bitmap = new bitmap(TILE_V2);
+  bmpHitEffect->ClearToColor(TRANSPARENT_COLOR);
+
+  Item->Draw(bld); //the item* cant be stored as it may break and be sent to hell after here...
 }
 
 hiteffect::~hiteffect()
 {
+  delete bmpHitEffect;
 }
 
 void hiteffect::Be()
@@ -67,11 +81,12 @@ void hiteffect::Draw(blitdata& bld) const
   ////      Weapon->Draw(bldShowHit);
   ////    }
 
-  if(iDrawTimes>0){
-    static int iL=0xFF*0.70;
-    static col24 lum=MakeRGB24(iL,iL,iL);
-    bld.Luminance = lum;
-    Item->Draw(bld); //TODO use rotation?
+  if(iDrawTimes>0){ //TODO use rotation?
+//    static int iL=0xFF*0.70;
+//    static col24 lum=MakeRGB24(iL,iL,iL);
+//    bld.Luminance = lum;
+//    Item->Draw(bld);
+    bmpHitEffect->NormalMaskedBlit(bld);
   }
 //  iDrawTimes--;
 }

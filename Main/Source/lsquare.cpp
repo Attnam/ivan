@@ -304,11 +304,6 @@ void lsquare::Draw(blitdata& BlitData) const
             S->Draw(BlitData);
         }
 
-        // always above character
-        for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
-          if(HE->DrawStep(BlitData))break; //this is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
-        }
-
         BlitData.CustomData &= ~SQUARE_INDEX_MASK;
       }
       else
@@ -341,6 +336,15 @@ void lsquare::Draw(blitdata& BlitData) const
         Character->Draw(BlitData);
         BlitData.CustomData &= ~SQUARE_INDEX_MASK;
       }
+    }
+
+    // end this tmp effect as soon as possible
+    for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
+      /**
+       * This is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
+       * One draw step per frame.
+       */
+      if(HE->DrawStep(BlitData))break;
     }
 
     Flags &= ~STRONG_NEW_DRAW_REQUEST;
