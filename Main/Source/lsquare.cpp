@@ -1851,14 +1851,14 @@ void lsquare::SignalSmokeAlphaChange(int What)
   SignalPossibleTransparencyChange();
 }
 
-void lsquare::AddHitEffect(item* ToBeAdded, character* WhoIsHit, character* WhoHits)
+void lsquare::AddHitEffect(item* itemEffectReference, character* WhoIsHit, character* WhoHits)
 {
-  if(ToBeAdded==NULL)return;
+  if(itemEffectReference==NULL)return;
   if(ivanconfig::GetHitIndicator()==0)return;
 
   hiteffect* S = HitEffect; //head of the linked list
   hiteffect* New = new hiteffect(
-    ToBeAdded, this, ivanconfig::GetHitIndicator(), WhoIsHit, WhoHits);
+    itemEffectReference, this, ivanconfig::GetHitIndicator(), WhoIsHit, WhoHits);
 
   if(!S)
   {

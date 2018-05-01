@@ -825,7 +825,8 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
-    GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
+    if(CanBeSeenByPlayer())
+      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
 
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
