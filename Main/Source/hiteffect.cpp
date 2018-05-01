@@ -12,23 +12,42 @@
 
 /* Compiled through materset.cpp */
 
+#define DBGMSG_V2
+#include "dbgmsgproj.h"
+
 hiteffect::hiteffect() : entity(HAS_BE), Next(0) { }
 square* hiteffect::GetSquareUnderEntity(int) const { return LSquareUnder; }
 
-hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iDrawTimeS)
+hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iDrawTimeS, character* WhoIsHit, character* WhoHits)
 : entity(HAS_BE), Next(0), LSquareUnder(LSquareUnder), iDrawTimes(iDrawTimeS)
 {
+  static short int iL=0xFF*0.60;
+  static col24 lum=MakeRGB24(iL,iL,iL);
+  static short int iIsh=0xFF*0.90;
+  static col24 lumBluish  =MakeRGB24(iL,iL,iIsh);
+  static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
+  static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
   static blitdata bld = [](){
-    static int iL=0xFF*0.70;
-    static col24 lum=MakeRGB24(iL,iL,iL);
-
     blitdata B = DEFAULT_BLITDATA;
     B.Luminance = lum;
     B.Border = TILE_V2;
     return B;
   }();
+
+  if(WhoIsHit->IsPlayer() || WhoIsHit->IsPet()){
+    bld.Luminance = lumReddish;
+  }else
+  if(WhoHits->IsPlayer()){
+    bld.Luminance = lumBluish;
+  }else
+  if(WhoHits->IsPet()){
+    bld.Luminance = lumGreenish;
+  }
+
   bmpHitEffect = bld.Bitmap = new bitmap(TILE_V2);
   bmpHitEffect->ClearToColor(TRANSPARENT_COLOR);
+
+  v2 v2HitFromDir = LSquareUnder->GetPos() - WhoHits->GetPos(); DBGEXEC(if(WhoHits->IsPlayer())DBGSV2(v2HitFromDir));
 
   Item->Draw(bld); //the item* cant be stored as it may break and be sent to hell after here...
 }
@@ -65,28 +84,7 @@ truth hiteffect::DrawStep(blitdata bld)
 
 void hiteffect::Draw(blitdata& bld) const
 {
-  //  static blitdata bldShowHit = [](v2 v2Dest){ //static bool b = []() -> bool {return true;}; //static int iA = []() -> int { return 0; }();
-  //    blitdata bld=DEFAULT_BLITDATA;
-  //    bld.Bitmap=DOUBLE_BUFFER;
-  //    bld.Border=TILE_V2;
-  ////    bld.CustomData |= ALLOW_ANIMATE;
-//      bld.Luminance = MakeRGB24(127,127,127); //NORMAL_LUMINANCE;
-  //    return bld;
-  //  }(HitPos);
-  //  if(Weapon!=NULL){
-  //    bldShowHit.Dest=game::CalculateScreenCoordinates(HitPos);
-  //    Weapon->Draw(bldShowHit);
-  ////    clock_t StartTime = clock();
-  ////    while(clock() - StartTime < 0.5 * CLOCKS_PER_SEC){
-  ////      Weapon->Draw(bldShowHit);
-  ////    }
-
   if(iDrawTimes>0){ //TODO use rotation?
-//    static int iL=0xFF*0.70;
-//    static col24 lum=MakeRGB24(iL,iL,iL);
-//    bld.Luminance = lum;
-//    Item->Draw(bld);
     bmpHitEffect->NormalMaskedBlit(bld);
   }
-//  iDrawTimes--;
 }

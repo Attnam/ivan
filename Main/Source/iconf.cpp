@@ -45,7 +45,7 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChanger,
                                           &ContrastHandler);
 numberoption ivanconfig::HitIndicator(    "HitIndicator",
-                                          "Hit indicator draw times, suggested 5 (0 to disable)",
+                                          "Hit indicator draw times, suggested 3 (0 to disable)",
                                           0);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",

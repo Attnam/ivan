@@ -30,7 +30,7 @@ class hiteffect : public entity
   hiteffect* Next;
  public:
   hiteffect();
-  hiteffect(item*, lsquare*, int iDrawTimeS);
+  hiteffect(item*, lsquare*, int iDrawTimeS, character* WhoIsHit, character* WhoHits);
   virtual ~hiteffect();
   virtual void Be();
   virtual void Draw(blitdata&) const;
