@@ -1160,6 +1160,10 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
   if(bOk && Player->IsDead())bOk=false; //TODO this works?
 
+  humanoid* h=dynamic_cast<humanoid*>(Player);
+  if(bOk && h==NULL)bOk=false; //TODO let it work with non humanoid forms
+//  if(bOk && Player->IsPolymorphed())bOk=false;
+
   if(humanoid::GetSilhouetteWhereDefault().Is0())bOk=false;
 
   if(!bOk){
@@ -1177,16 +1181,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   bool bRolling=false;
   bool bHopping=false;
   if(iRegionVanillaSilhouette!=-1){
-    bool bOk=true;
+    bool bOk2=true;
 
-    if(bOk && ZoomPos.Is0())bOk=false;
+    if(bOk2 && ZoomPos.Is0())bOk2=false;
 
-    humanoid* h=dynamic_cast<humanoid*>(Player);
-    if(bOk && h==NULL)bOk=false;
+    if(bOk2 && h==NULL)bOk2=false;
 
-    if(bOk && ivanconfig::GetAltListItemPos()==1 && graphics::IsSRegionEnabled(iRegionListItem))bOk=false; //is same of zoom pos
+    if(bOk2 && ivanconfig::GetAltListItemPos()==1 && graphics::IsSRegionEnabled(iRegionListItem))bOk2=false; //is same of zoom pos
 
-    if(bOk){
+    if(bOk2){
       bRolling=!h->GetRightLeg() && !h->GetLeftLeg();
       bHopping=!bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
 
