@@ -23,6 +23,8 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "hiteffect.h" //TODO move to charsset.cpp?
+
 struct statedata
 {
   cchar* Description;
@@ -661,6 +663,13 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
+  hiteffect* hitEff = NULL;
+  if(CanBeSeenByPlayer()){
+    item* itemEffFrom = Weapon;
+    if(itemEffFrom==NULL)itemEffFrom=EnemyBodyPart;
+    hitEff = GetLSquareUnder()->AddHitEffect(itemEffFrom,this,Enemy,Type,GivenDir);
+  }
+
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
   double DodgeValue = GetDodgeValue();
 
@@ -722,6 +731,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+    if(hitEff!=NULL)hitEff->End();
     return HAS_DODGED;
   }
 
@@ -805,6 +815,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
       else
         DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+      if(hitEff!=NULL)hitEff->End();
       return HAS_BLOCKED;
     }
   }
@@ -825,8 +836,8 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
-    if(CanBeSeenByPlayer())
-      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
+//    if(CanBeSeenByPlayer())
+//      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
 
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
@@ -850,6 +861,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+    if(hitEff!=NULL)hitEff->End();
     return DID_NO_DAMAGE;
   }
 

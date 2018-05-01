@@ -30,7 +30,7 @@ class hiteffect : public entity
   hiteffect* Next;
  public:
   hiteffect();
-  hiteffect(item*, lsquare*, int iDrawTimeS, character* WhoIsHit, character* WhoHits);
+  hiteffect(item*, lsquare*, int iDrawTimeS, character* WhoIsHit, character* WhoHits, int Type, int GivenDir);
   virtual ~hiteffect();
   virtual void Be();
   virtual void Draw(blitdata&) const;
@@ -38,9 +38,8 @@ class hiteffect : public entity
   virtual square* GetSquareUnderEntity(int = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  virtual truth IsOnGround() const { return true; }
-//  void Merge(item*);
-//  item* GetItem(){return Item;}
+  virtual truth IsOnGround() const { return true; } //TODO false?
+  void End(){iDrawTimes=0;}
  protected:
   lsquare* LSquareUnder;
   int iDrawTimes; //TODO use realtime??? may not be good on slow machines?

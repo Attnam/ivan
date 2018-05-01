@@ -196,7 +196,7 @@ class lsquare : public square
   void AddSmoke(gas*);
   truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
-  void AddHitEffect(item*, character*, character*);
+  hiteffect* AddHitEffect(item*, character*, character*,int Type, int GivenDir);
   void RemoveHitEffect(hiteffect* ToBeRemoved);
   void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;
