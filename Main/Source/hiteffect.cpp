@@ -21,13 +21,13 @@ square* hiteffect::GetSquareUnderEntity(int) const { return LSquareUnder; }
 hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* WhoIsHit, character* WhoHits, int Type, int GivenDir)
 : entity(HAS_BE), Next(0), LSquareUnder(LSquareUnder), iDrawTimes(3)
 {
-  static short int iL=0xFF*0.60; //base
-  static short int iIsh=0xFF*0.90;
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
-  static col24 lumBluish  =MakeRGB24(iL,iL,iIsh);
-  static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
+  static short int iL=0xFF*0.40; //darker works better with already light graphics
+  static short int iIsh=0xFF*0.90;
   static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
+  static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
+  static col24 lumBluish  =MakeRGB24(iL,iL,iIsh);
   static blitdata bld = [](){
     blitdata B = DEFAULT_BLITDATA;
     B.Border = TILE_V2;
