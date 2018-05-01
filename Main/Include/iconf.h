@@ -72,6 +72,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
+  static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
@@ -161,7 +162,7 @@ class ivanconfig
   static cycleoption RotateTimesPerSquare;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
-  static numberoption HitIndicator;
+  static cycleoption HitIndicator;
 
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;

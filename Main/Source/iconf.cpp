@@ -44,9 +44,10 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
-numberoption ivanconfig::HitIndicator(    "HitIndicator",
-                                          "Hit indicator draw times, suggested 3 (0 to disable)",
-                                          0);
+cycleoption ivanconfig::HitIndicator(     "HitIndicator",
+                                          "Show Hit",
+                                          0, 4,
+                                          &HitIndicatorDisplayer);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
                                           0, 12,
@@ -226,6 +227,16 @@ void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& E
   case 3: Entry << "x3";break;
   case 4: Entry << "x4";break;
   case 5: Entry << "dynamic";break;
+  }
+}
+
+void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "immersive";break;
+  case 2: Entry << "indicator";break;
+  case 3: Entry << "ind+color";break;
   }
 }
 

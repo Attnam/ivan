@@ -1260,12 +1260,13 @@ void item::Draw(blitdata& BlitData) const
 
   bitmap* bmp = GraphicData.Picture[F];
   if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
-    static blitdata B = DEFAULT_BLITDATA;
-    if(B.Bitmap==NULL){
+    static blitdata B = [](){
+      blitdata B2 = DEFAULT_BLITDATA;
       //to reuse tmp bitmap memory
-      B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
-      B.Border = TILE_V2; //bmp->GetSize();
-    }
+      B2.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
+      B2.Border = TILE_V2; //bmp->GetSize();
+      return B2;
+    }();
 
     // grant reset (may not be necessary but kept anyway in case of changing back to Blitdata param)
     B.Flags &= ~MIRROR;
@@ -1285,7 +1286,7 @@ void item::Draw(blitdata& BlitData) const
      * 8 0->4
      */
     if(iR==0)iR = 4 * (iRotateFlyingThrownStep>0 ? 1 : -1);
-    /***
+    /*** the blade side is inverted, so invert the rotation
      * -1 -> -4
      * -2 -> -3
      * -3 -> -2
