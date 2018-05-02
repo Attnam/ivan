@@ -24,7 +24,7 @@ class blitdata;
 /**
  * temporary, less than 1s, not to be saved
  */
-struct hiteffectSetup {
+struct hiteffectSetup { //TODO some of these are not actually an external setup...
   lsquare* LSquareUnder;
   int iMode;
 
@@ -33,6 +33,9 @@ struct hiteffectSetup {
 
   character* WhoHits;
   lsquare* LSquareUnderOfWhoHits;
+
+  lsquare* LSquareUnderExtra1;
+  lsquare* LSquareUnderExtra2;
 
   v2 v2HitFromSqrPos;
   v2 v2HitToSqrPos;

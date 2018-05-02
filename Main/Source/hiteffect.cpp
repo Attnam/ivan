@@ -48,7 +48,13 @@ hiteffect::hiteffect(hiteffectSetup s)
   setup.v2HitFromSqrPos=s.WhoHits->GetPos();
   setup.v2HitToSqrPos=s.WhoIsHit->GetPos();
   setup.v2HitFromToSqrDiff = setup.v2HitFromSqrPos-setup.v2HitToSqrPos; DBGSV2(setup.v2HitFromToSqrDiff);
+  if(setup.v2HitFromToSqrDiff.X!=0 && setup.v2HitFromToSqrDiff.Y!=0){ //diagonal
+    setup.LSquareUnderExtra1 = s.WhoHits->GetNearLSquare(setup.v2HitFromSqrPos.X,setup.v2HitToSqrPos.Y  );
+    setup.LSquareUnderExtra2 = s.WhoHits->GetNearLSquare(setup.v2HitToSqrPos.X,  setup.v2HitFromSqrPos.Y);
+  }
+
   setup.bWhoIsHitDied=s.WhoIsHit->IsDead();
+
   setup.LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder();
 
   switch(setup.iMode){
@@ -239,6 +245,8 @@ truth hiteffect::DrawStep()
     //clear all hit effects as soon as possible
     setup.LSquareUnder->SendStrongNewDrawRequest();
     setup.LSquareUnderOfWhoHits->SendStrongNewDrawRequest();
+    if(setup.LSquareUnderExtra1!=NULL)setup.LSquareUnderExtra1->SendStrongNewDrawRequest();
+    if(setup.LSquareUnderExtra2!=NULL)setup.LSquareUnderExtra2->SendStrongNewDrawRequest();
   }
 
   return true; //did draw now
