@@ -82,6 +82,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
+                                          "Hide weird hit animations that look like miss",
+                                          true);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
@@ -727,6 +730,9 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+
+  fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

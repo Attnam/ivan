@@ -30,7 +30,7 @@ hiteffect::hiteffect(hiteffectSetup s)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
-  static short int iL=0xFF*0.15; //dark works better with already light graphics like arcanite or bone stuff
+  static short int iL  =0xFF*0.15; //dark works better with already light graphics like arcanite or bone stuff
   static short int iIsh=0xFF*0.90;
   static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
   static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
@@ -200,18 +200,22 @@ truth hiteffect::DrawStep()
   bool bDraw = true;
   bool bAnimate = true;
 
-  if(bAnimate && setup.bWhoIsHitDied)bAnimate=false;
-  if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
-  if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
-    /*
-     * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
-     *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
-     *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
-     */
-    iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
-    bDraw=false;
+//  static bool bHideWeirdHitAnimationsThatLookLikeMiss=false; //TODO make this a user cfg? may be at a new section: "workarounds" or at advanced/developer?
+  if(ivanconfig::IsHideWeirdHitAnimationsThatLookLikeMiss()){
+    //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
+    if(bAnimate && setup.bWhoIsHitDied)bAnimate=false;
+    if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
+    if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
+      /*
+       * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
+       *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
+       *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
+       */
+      iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
+      bDraw=false;
 
-    bAnimate=false;
+      bAnimate=false;
+    }
   }
 
   //TODO use rotation?

@@ -29,6 +29,7 @@ class ivanconfig
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
+  static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -142,6 +143,7 @@ class ivanconfig
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static cycleoption ShowItemsAtPlayerSquare;
+  static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
