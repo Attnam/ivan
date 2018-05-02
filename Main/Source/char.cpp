@@ -25,6 +25,9 @@
 
 #include "hiteffect.h" //TODO move to charsset.cpp?
 
+#define DBGMSG_V2
+#include "dbgmsgproj.h"
+
 struct statedata
 {
   cchar* Description;
@@ -663,18 +666,16 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
-  hiteffectSetup hitef;
-//  hiteffect* hitEff = NULL;
+  hiteffectSetup* phitef;
   if(CanBeSeenByPlayer()){
-    item* itemEffFrom = Weapon;
-    if(itemEffFrom==NULL)itemEffFrom=EnemyBodyPart;
-    hitef.Critical=Critical;
-    hitef.GivenDir=GivenDir;
-    hitef.Type=Type;
-    hitef.WhoHits=Enemy;
-    hitef.WhoIsHit=this;
-    hitef.itemEffectReference=itemEffFrom;
-//    hitEff = GetLSquareUnder()->AddHitEffect(hitef);
+    phitef=new hiteffectSetup();
+    phitef->Critical=Critical;
+    phitef->GivenDir=GivenDir;
+    phitef->Type=Type;
+    phitef->WhoHits=Enemy; DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
+    phitef->WhoIsHit=this;
+    phitef->itemEffectReference = Weapon;
+    if(phitef->itemEffectReference==NULL)phitef->itemEffectReference=EnemyBodyPart;
   }
 
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
@@ -872,7 +873,10 @@ int character::TakeHit(character* Enemy, item* Weapon,
     return DID_NO_DAMAGE;
   }
 
-  GetLSquareUnder()->AddHitEffect(hitef); //after all returns of failure and before any other returns
+  if(phitef!=NULL){
+    GetLSquareUnder()->AddHitEffect(*phitef); //after all returns of failure and before any other returns
+    delete phitef; //already copied
+  }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
                 Enemy->IsPlayer() ? FORCE_MSG : 0))

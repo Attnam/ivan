@@ -41,9 +41,9 @@ hiteffect::hiteffect(hiteffectSetup s)
     return B;
   }();
 
-  bldFinalDraw=DEFAULT_BLITDATA;
+  setup=s; DBG3(s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
-  setup=s;
+  bldFinalDraw=DEFAULT_BLITDATA;
 
   setup.v2HitFromSqrPos=s.WhoHits->GetPos();
   setup.v2HitToSqrPos=s.WhoIsHit->GetPos();
@@ -193,6 +193,10 @@ void hiteffect::PrepareBlitdata(const blitdata& bld){
 //  return true;
 //}
 
+void hiteffect::End(){
+  iDrawCount=iDrawTot;
+}
+
 truth hiteffect::DrawStep()
 {
   if(iDrawCount==iDrawTot)return false;
@@ -211,7 +215,7 @@ truth hiteffect::DrawStep()
        *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
        *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
        */
-      iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
+      End(); //this will end the drawing to prevent it looking like a missed hit :(
       bDraw=false;
 
       bAnimate=false;

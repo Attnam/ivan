@@ -58,7 +58,7 @@ class hiteffect : public entity
 //  void SetLSquareUnder(lsquare* What) { setup.LSquareUnder = What; }
 //  lsquare* GetLSquareUnder() const { return setup.LSquareUnder; }
   virtual truth IsOnGround() const { return true; } //TODO false?
-//  void End(){iDrawTimes=0;}
+  void End();
  protected:
 //  truth CanAnimate();
 //  lsquare* LSquareUnder;
