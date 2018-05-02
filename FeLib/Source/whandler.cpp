@@ -274,10 +274,9 @@ truth globalwindowhandler::HasKeysOnBuffer(){
   return KeyBuffer.size()>0;
 }
 
-void ShowFPS(){
-  static const char* c=std::getenv("IVAN_SHOWFPS");
+void ShowFPS(){ //TODO still flickers sometimes cuz of silhouette?
   static long lTimePrevious=clock();
-  static bool bShowFPS = c!=NULL && strcmp(c,"true")==0;
+  static bool bShowFPS = [](){const char* c=std::getenv("IVAN_SHOWFPS");return c!=NULL && strcmp(c,"true")==0;}();
   if(bShowFPS){
 //    if(clock()%(CLOCKS_PER_SEC*3)<CLOCKS_PER_SEC){
     long lTime=clock();

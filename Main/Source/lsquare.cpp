@@ -338,16 +338,26 @@ void lsquare::Draw(blitdata& BlitData) const
       }
     }
 
-    // end this tmp effect as soon as possible
-    for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
-      /**
-       * This is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
-       * One draw step per frame.
-       */
-      if(HE->DrawStep(BlitData))break;
+    if(ivanconfig::GetHitIndicator()>0){
+      hiteffect* HE = HitEffect;
+      while(HE){
+        HE->PrepareBlitdata(BlitData);
+        HE = HE->Next;
+      }
     }
 
     Flags &= ~STRONG_NEW_DRAW_REQUEST;
+  }
+}
+
+void lsquare::DrawHitEffect(){
+  // end this tmp effect as soon as possible
+  for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
+    /**
+     * This is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
+     * One draw step per frame.
+     */
+    if(HE->DrawStep())break;
   }
 }
 

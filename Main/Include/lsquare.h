@@ -126,6 +126,7 @@ class lsquare : public square
   void UpdateMemorizedDescription(truth = false);
   truth BeKicked(character*, item*, bodypart*, double, double, int, int, truth, truth);
   int GetDivineMaster() const;
+  void DrawHitEffect();
   void Draw(blitdata&) const;
   void UpdateMemorized();
   truth CanBeDug() const;

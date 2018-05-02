@@ -19,6 +19,7 @@
 #include "v2.h"
 
 class lsquare;
+class blitdata;
 
 /**
  * temporary, less than 1s, not to be saved
@@ -29,7 +30,13 @@ struct hiteffectSetup {
 
   item* itemEffectReference;
   character* WhoIsHit;
+
   character* WhoHits;
+  v2 v2HitFromSqrPos;
+  v2 v2HitToSqrPos;
+  v2 v2HitFromToSqrDiff;
+  bool bWhoIsHitDied;
+
   int Type;
   int GivenDir;
   truth Critical;
@@ -44,8 +51,9 @@ class hiteffect : public entity
   hiteffect(hiteffectSetup);
   virtual ~hiteffect();
   virtual void Be();
-  virtual void Draw(blitdata&) const;
-  truth DrawStep(blitdata bld);
+  virtual void Draw() const;
+  truth DrawStep();
+  void PrepareBlitdata(const blitdata& bld);
   virtual square* GetSquareUnderEntity(int = 0) const;
 //  void SetLSquareUnder(lsquare* What) { setup.LSquareUnder = What; }
 //  lsquare* GetLSquareUnder() const { return setup.LSquareUnder; }
@@ -53,9 +61,12 @@ class hiteffect : public entity
 //  void End(){iDrawTimes=0;}
  protected:
 //  lsquare* LSquareUnder;
-  int iDrawTimes; //TODO use realtime??? may not be good on slow machines?
+//  int iDrawTimes;
+  v2 v2DrawAtScreenPos;
+  int iDrawCount; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;
   hiteffectSetup setup;
+  blitdata bldFinalDraw;
 };
 
 #endif //__HITEFFECT_H_

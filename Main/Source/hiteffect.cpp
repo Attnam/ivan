@@ -15,14 +15,15 @@
 #define DBGMSG_V2
 #include "dbgmsgproj.h"
 
-hiteffect::hiteffect() : entity(HAS_BE), Next(0) { }
+int iDrawTot=3;
+hiteffect::hiteffect() : entity(HAS_BE), Next(0), iDrawCount(iDrawTot) { } //idrawcount here just to try to grant nothing weird will happen wherever this constructor may be used.
 square* hiteffect::GetSquareUnderEntity(int) const { return setup.LSquareUnder; }
 
 /**
  * TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
  */
 hiteffect::hiteffect(hiteffectSetup s)
-: entity(HAS_BE), Next(0), iDrawTimes(3)
+: entity(HAS_BE), Next(0), iDrawCount(0)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
@@ -37,7 +38,14 @@ hiteffect::hiteffect(hiteffectSetup s)
     return B;
   }();
 
+  bldFinalDraw=DEFAULT_BLITDATA;
+
   setup=s;
+
+  setup.v2HitFromSqrPos=s.WhoHits->GetPos();
+  setup.v2HitToSqrPos=s.WhoIsHit->GetPos();
+  setup.v2HitFromToSqrDiff = setup.v2HitFromSqrPos-setup.v2HitToSqrPos; DBGSV2(setup.v2HitFromToSqrDiff);
+  setup.bWhoIsHitDied=s.WhoIsHit->IsDead();
 
   switch(setup.iMode){
   case 1: //immersive
@@ -149,7 +157,7 @@ hiteffect::~hiteffect()
 
 void hiteffect::Be()
 {
-  if(iDrawTimes==0)
+  if(iDrawCount==iDrawTot)
   {
     setup.LSquareUnder->RemoveHitEffect(this);
     SendToHell();
@@ -159,22 +167,36 @@ void hiteffect::Be()
   }
 }
 
-truth hiteffect::DrawStep(blitdata bld)
+void hiteffect::PrepareBlitdata(const blitdata& bld){
+  bldFinalDraw=bld; //copy
+//    B.Border=TILE_V2;
+//  bld.Dest = v2DrawAtScreenPos;
+}
+
+truth hiteffect::DrawStep()
 {
-  if(iDrawTimes==0)return false;
+  if(iDrawCount==iDrawTot)return false;
 
-  Draw(bld);
+  if(iDrawCount<iDrawTot){ //TODO use rotation?
+    if(!setup.bWhoIsHitDied){ //just to not fly if it died already
+      //place at who hits to fly from it to who is hit
+      bldFinalDraw.Dest += setup.v2HitFromToSqrDiff*TILE_SIZE;
 
-  iDrawTimes--; // AFTER drawing!
+      //displacement, interpolate TODO could be at v2 class with To and fPercent!
+      bldFinalDraw.Dest += -(setup.v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
+    }
+  }
+  Draw();
+
+  iDrawCount++; // AFTER drawing!
 
   setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
 
   return true; //did draw now
 }
 
-void hiteffect::Draw(blitdata& bld) const
+void hiteffect::Draw() const //TODO is it being called other than thru DrawStep()?
 {
-  if(iDrawTimes>0){ //TODO use rotation?
-    bmpHitEffect->NormalMaskedBlit(bld);
-  }
+  if(iDrawCount<iDrawTot)
+    bmpHitEffect->NormalMaskedBlit(bldFinalDraw); //TODO use alpha?
 }

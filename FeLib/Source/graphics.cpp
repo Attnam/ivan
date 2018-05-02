@@ -495,6 +495,16 @@ void graphics::DrawAtDoubleBufferBeforeFelistPage(){
   }
 }
 
+void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedDB){
+  static bool bDbgTinyDungeon = [](){const char* c=std::getenv("IVAN_DebugShowTinyDungeon");return c!=NULL && strcmp(c,"true")==0;}();
+  if(bDbgTinyDungeon){
+    blitdata Bdbg=DEFAULT_BLITDATA;
+    Bdbg.Bitmap=StretchedDB;
+    Bdbg.Border={400,300};
+    DoubleBuffer->NormalBlit(Bdbg);
+  }
+}
+
 bitmap* graphics::PrepareBuffer(){
   bitmap* ReturnBuffer = DoubleBuffer;
 
@@ -577,6 +587,8 @@ bitmap* graphics::PrepareBuffer(){
         bDidStretch=true;
       }
     }
+
+    debugTinyDungeon(DoubleBuffer,StretchedDB);
   }
 
   return ReturnBuffer;
