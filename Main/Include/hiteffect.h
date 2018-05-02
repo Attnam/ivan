@@ -60,6 +60,7 @@ class hiteffect : public entity
   virtual truth IsOnGround() const { return true; } //TODO false?
 //  void End(){iDrawTimes=0;}
  protected:
+//  truth CanAnimate();
 //  lsquare* LSquareUnder;
 //  int iDrawTimes;
   v2 v2DrawAtScreenPos;

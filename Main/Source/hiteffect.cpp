@@ -21,13 +21,16 @@ square* hiteffect::GetSquareUnderEntity(int) const { return setup.LSquareUnder; 
 
 /**
  * TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
+ *
+ * TODO the effect is being drawn OUTSIDE the square it is related (the fly weapon animation), can this cause trouble/glitches?
+ *      a way to prevent such glitches would probably be to sendStrongDrawRequest to all affected squares nearby.
  */
 hiteffect::hiteffect(hiteffectSetup s)
 : entity(HAS_BE), Next(0), iDrawCount(0)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
-  static short int iL=0xFF*0.40; //darker works better with already light graphics
+  static short int iL=0xFF*0.15; //dark works better with already light graphics like arcanite or bone stuff
   static short int iIsh=0xFF*0.90;
   static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
   static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
@@ -173,24 +176,58 @@ void hiteffect::PrepareBlitdata(const blitdata& bld){
 //  bld.Dest = v2DrawAtScreenPos;
 }
 
+//truth hiteffect::CanAnimate(){
+//  if(setup.bWhoIsHitDied)return false;
+//
+//  if(!setup.WhoIsHit->Exists())return false; //TODO is this crash safe?
+//  if(setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
+//   /*
+//    * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
+//    *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
+//    *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
+//    */
+//    iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
+//    return false; //target moved
+//  }
+//
+//  return true;
+//}
+
 truth hiteffect::DrawStep()
 {
   if(iDrawCount==iDrawTot)return false;
 
-  if(iDrawCount<iDrawTot){ //TODO use rotation?
-    if(!setup.bWhoIsHitDied){ //just to not fly if it died already
-      //place at who hits to fly from it to who is hit
-      bldFinalDraw.Dest += setup.v2HitFromToSqrDiff*TILE_SIZE;
+  bool bDraw = true;
+  bool bAnimate = true;
 
-      //displacement, interpolate TODO could be at v2 class with To and fPercent!
-      bldFinalDraw.Dest += -(setup.v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
-    }
+  if(bAnimate && setup.bWhoIsHitDied)bAnimate=false;
+  if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
+  if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
+    /*
+     * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
+     *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
+     *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
+     */
+    iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
+    bDraw=false;
+
+    bAnimate=false;
   }
-  Draw();
 
-  iDrawCount++; // AFTER drawing!
+  //TODO use rotation?
+  if(bAnimate){ //just to not fly if it died already
+    //place at who hits to fly from it to who is hit
+    bldFinalDraw.Dest += setup.v2HitFromToSqrDiff*TILE_SIZE;
 
-  setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+    //displacement, interpolate TODO could be at v2 class with To and fPercent!
+    bldFinalDraw.Dest += -(setup.v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
+  }
+
+  if(bDraw){
+    Draw();
+    iDrawCount++; // AFTER drawing!
+    setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+  }
 
   return true; //did draw now
 }
