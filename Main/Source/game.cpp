@@ -1144,7 +1144,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   static const int iBreathFrom=3;
   static int iTallState=iTotTallStates-1;
   static int iPreviousAltSilOpt=0;
-  static v2 v2AltSilDispl = v2(10,-2);//v2(24,24);
+  static v2 v2AltSilDispl = v2(8,-2);//v2(10,-2);//v2(24,24);
   static v2 v2AltSilPos=v2(0,0);
   static int iRandTorso=0;
 
@@ -1213,16 +1213,6 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     }
   }
 
-  /**
-   * TODO depict alignment with background colors/animations? tho, not more info than what is already written by the side of player's name
-  festring alignment(GetVerbalPlayerAlignment());
-  if(alignment.Find("lawful" )!=-1)bkgColorToXBRZ=BLUE;
-  else
-  if(alignment.Find("neutral")!=-1)bkgColorToXBRZ=LIGHT_GRAY;
-  else
-  if(alignment.Find("chaotic")!=-1)bkgColorToXBRZ=RED;
-   */
-
 //  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
 //  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
   if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhereDefault() + v2AltSilDispl;
@@ -1234,7 +1224,33 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE; //SQUARE_INDEX_MASK
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
   }
-  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  static int iCComp=50;
+  static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iCComp,iCComp,iCComp); //still glitches a bit...
+  col16 bkgAlignmentColor=darkestThatWontGlitchWithAlpha;
+  switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
+  case 0:
+    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+    break;
+  case 1:
+    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,darkestThatWontGlitchWithAlpha);
+    break;
+  case 2:
+    /**
+     * depicts alignment with background colors/animations? tho, not more info than what is already written by the side of player's name
+     */
+    festring alignment(GetVerbalPlayerAlignment());
+    static col16 red = MakeRGB16(200,0,0);
+    static col16 blue = MakeRGB16(0,0,200);
+    //TODO use  the variations for each alignment to increase the color lightness, may be use the background fractal and luminiscence with red and blue?
+    if(alignment.Find("lawful" )!=-1)bkgAlignmentColor=blue;
+    else
+    if(alignment.Find("neutral")!=-1)bkgAlignmentColor=darkestThatWontGlitchWithAlpha;
+    else
+    if(alignment.Find("chaotic")!=-1)bkgAlignmentColor=red;
+//    igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap,v2(),TILE_V2); //not good...
+    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgAlignmentColor);
+    break;
+  }
   Player->Draw(bldPlayerCopyTMP);
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap;
 
@@ -1453,12 +1469,25 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   }
   bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
 
-  igraph::BlitBackGround(DOUBLE_BUFFER, v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch);
+  v2 v2StretchedPos = v2AltSilPos+v2(-2,0);
+//  v2 v2StretchedBorder = (v2OverSilhouette+v2(4,2))*bldPlayerToSilhouetteAreaTMP.Stretch;
+  v2 v2StretchedBorder = (v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch)+v2(4,2);
+  switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
+  case 0:
+    igraph::BlitBackGround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder);
+    break;
+  case 1:
+    DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, darkestThatWontGlitchWithAlpha);
+    break;
+  case 2:
+    DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, bkgAlignmentColor);
+    break;
+  }
 
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
-//    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER,
-//      v2AltSilPos, v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch, DARK_GRAY, false);
+  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0)
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, DARK_GRAY, false);
 
   iAltSilBlitCount++;
 }

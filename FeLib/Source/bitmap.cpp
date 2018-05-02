@@ -1211,7 +1211,9 @@ SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL
 
       if(PixelFrom == MaskColor){ //0 invisible, 0xff opaque
         ca = 0;
-        PixelFrom = WHITE; //xBRZ blends countours perfectly using white color.
+//        static packcol16 DarkestNotBlack = MakeRGB16(1,1,1);
+//        PixelFrom = DarkestNotBlack; //didnt work :(
+        PixelFrom = WHITE; //xBRZ blends countours perfectly this way
       }else{
         ca = 0xff;
       }

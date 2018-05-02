@@ -85,6 +85,10 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide weird hit animations that look like miss",
                                           true);
+cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
+                                          "Prevent countour/transparent color glitch at alt silhouette",
+                                          2, 3,
+                                          &AltSilhouettePreventColorGlitchDisplayer);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
@@ -219,6 +223,15 @@ void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& E
 void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
+}
+
+void ivanconfig::AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "transparent";break;
+  case 1: Entry << "dark";break;
+  case 2: Entry << "alignment";break;
+  }
 }
 
 void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry)
@@ -733,6 +746,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&AltSilhouettePreventColorGlitch);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

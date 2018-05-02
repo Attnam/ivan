@@ -30,6 +30,7 @@ class ivanconfig
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -73,6 +74,7 @@ class ivanconfig
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
+  static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
   static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
@@ -144,6 +146,7 @@ class ivanconfig
   static truthoption ShowFullDungeonName;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static cycleoption AltSilhouettePreventColorGlitch;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
