@@ -32,6 +32,8 @@ struct hiteffectSetup {
   character* WhoIsHit;
 
   character* WhoHits;
+  lsquare* LSquareUnderOfWhoHits;
+
   v2 v2HitFromSqrPos;
   v2 v2HitToSqrPos;
   v2 v2HitFromToSqrDiff;

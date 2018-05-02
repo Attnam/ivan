@@ -49,6 +49,7 @@ hiteffect::hiteffect(hiteffectSetup s)
   setup.v2HitToSqrPos=s.WhoIsHit->GetPos();
   setup.v2HitFromToSqrDiff = setup.v2HitFromSqrPos-setup.v2HitToSqrPos; DBGSV2(setup.v2HitFromToSqrDiff);
   setup.bWhoIsHitDied=s.WhoIsHit->IsDead();
+  setup.LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder();
 
   switch(setup.iMode){
   case 1: //immersive
@@ -234,7 +235,10 @@ truth hiteffect::DrawStep()
   if(bDraw){
     Draw();
     iDrawCount++; // AFTER drawing!
-    setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+
+    //clear all hit effects as soon as possible
+    setup.LSquareUnder->SendStrongNewDrawRequest();
+    setup.LSquareUnderOfWhoHits->SendStrongNewDrawRequest();
   }
 
   return true; //did draw now
