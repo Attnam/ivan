@@ -162,14 +162,14 @@ hiteffect::hiteffect(hiteffectSetup s)
 
 hiteffect::~hiteffect()
 {
-  delete bmpHitEffect;
+  if(bmpHitEffect!=NULL)delete bmpHitEffect;
 }
 
 void hiteffect::Be()
 {
   if(iDrawCount==iDrawTot)
   {
-    setup.LSquareUnder->RemoveHitEffect(this);
+    if(setup.LSquareUnder!=NULL)setup.LSquareUnder->RemoveHitEffect(this);
     SendToHell();
     return;
   }else{
