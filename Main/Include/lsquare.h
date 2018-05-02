@@ -35,6 +35,7 @@ class liquid;
 class rain;
 class trap;
 struct sortdata;
+struct hiteffectSetup;
 
 typedef std::vector<item*> itemvector;
 typedef truth (item::*sorter)(ccharacter*) const;
@@ -196,7 +197,7 @@ class lsquare : public square
   void AddSmoke(gas*);
   truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
-  hiteffect* AddHitEffect(item*, character*, character*,int Type, int GivenDir);
+  hiteffect* AddHitEffect(hiteffectSetup);
   void RemoveHitEffect(hiteffect* ToBeRemoved);
   void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;

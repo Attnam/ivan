@@ -1851,11 +1851,11 @@ void lsquare::SignalSmokeAlphaChange(int What)
   SignalPossibleTransparencyChange();
 }
 
-hiteffect* lsquare::AddHitEffect(item* itemEffectReference, character* WhoIsHit, character* WhoHits, int Type, int GivenDir)
+hiteffect* lsquare::AddHitEffect(hiteffectSetup s)
 {
   if(ivanconfig::GetHitIndicator()==0)return NULL;
 
-  if(itemEffectReference==NULL){
+  if(s.itemEffectReference==NULL){
 //    switch(Type)
 //    {
 //     case UNARMED_ATTACK:
@@ -1869,12 +1869,13 @@ hiteffect* lsquare::AddHitEffect(item* itemEffectReference, character* WhoIsHit,
 //      break;
 //    }
 
-    if(itemEffectReference==NULL)return NULL;
+    if(s.itemEffectReference==NULL)return NULL;
   }
 
+  s.iMode=ivanconfig::GetHitIndicator();
+  s.LSquareUnder=this;
   hiteffect* S = HitEffect; //head of the linked list
-  hiteffect* New = new hiteffect(
-    itemEffectReference, this, ivanconfig::GetHitIndicator(), WhoIsHit, WhoHits,Type,GivenDir);
+  hiteffect* New = new hiteffect(s);
 
   if(!S)
   {

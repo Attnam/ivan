@@ -46,7 +46,7 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastHandler);
 cycleoption ivanconfig::HitIndicator(     "HitIndicator",
                                           "Show Hit",
-                                          0, 4,
+                                          0, 5,
                                           &HitIndicatorDisplayer);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
@@ -237,6 +237,7 @@ void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
   case 1: Entry << "immersive";break;
   case 2: Entry << "indicator";break;
   case 3: Entry << "ind+color";break;
+  case 4: Entry << "dynamic";break;
   }
 }
 

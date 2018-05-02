@@ -663,11 +663,18 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
-  hiteffect* hitEff = NULL;
+  hiteffectSetup hitef;
+//  hiteffect* hitEff = NULL;
   if(CanBeSeenByPlayer()){
     item* itemEffFrom = Weapon;
     if(itemEffFrom==NULL)itemEffFrom=EnemyBodyPart;
-    hitEff = GetLSquareUnder()->AddHitEffect(itemEffFrom,this,Enemy,Type,GivenDir);
+    hitef.Critical=Critical;
+    hitef.GivenDir=GivenDir;
+    hitef.Type=Type;
+    hitef.WhoHits=Enemy;
+    hitef.WhoIsHit=this;
+    hitef.itemEffectReference=itemEffFrom;
+//    hitEff = GetLSquareUnder()->AddHitEffect(hitef);
   }
 
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
@@ -731,7 +738,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
-    if(hitEff!=NULL)hitEff->End();
+//    if(hitEff!=NULL)hitEff->End();
     return HAS_DODGED;
   }
 
@@ -815,7 +822,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
       else
         DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
-      if(hitEff!=NULL)hitEff->End();
+//      if(hitEff!=NULL)hitEff->End();
       return HAS_BLOCKED;
     }
   }
@@ -861,9 +868,11 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
-    if(hitEff!=NULL)hitEff->End();
+//    if(hitEff!=NULL)hitEff->End();
     return DID_NO_DAMAGE;
   }
+
+  GetLSquareUnder()->AddHitEffect(hitef); //after all returns of failure and before any other returns
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
                 Enemy->IsPlayer() ? FORCE_MSG : 0))

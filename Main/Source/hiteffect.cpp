@@ -16,10 +16,13 @@
 #include "dbgmsgproj.h"
 
 hiteffect::hiteffect() : entity(HAS_BE), Next(0) { }
-square* hiteffect::GetSquareUnderEntity(int) const { return LSquareUnder; }
+square* hiteffect::GetSquareUnderEntity(int) const { return setup.LSquareUnder; }
 
-hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* WhoIsHit, character* WhoHits, int Type, int GivenDir)
-: entity(HAS_BE), Next(0), LSquareUnder(LSquareUnder), iDrawTimes(3)
+/**
+ * TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
+ */
+hiteffect::hiteffect(hiteffectSetup s)
+: entity(HAS_BE), Next(0), iDrawTimes(3)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
@@ -34,7 +37,9 @@ hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* Wh
     return B;
   }();
 
-  switch(iMode){
+  setup=s;
+
+  switch(setup.iMode){
   case 1: //immersive
     bld.Luminance = NORMAL_LUMINANCE;
     break;
@@ -42,20 +47,41 @@ hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* Wh
     bld.Luminance = lumHigh;
     break;
   case 3: //colored indicators where possible
-    if(WhoIsHit->IsPlayer() || WhoIsHit->IsPet()){
+    if(setup.WhoIsHit->IsPlayer() || setup.WhoIsHit->IsPet()){
       bld.Luminance = lumReddish;
     }else
-    if(WhoHits->IsPlayer()){
+    if(setup.WhoHits->IsPlayer()){
       bld.Luminance = lumBluish;
     }else
-    if(WhoHits->IsPet()){
+    if(setup.WhoHits->IsPet()){
       bld.Luminance = lumGreenish;
     }else{
       bld.Luminance = lumHigh;
     }
     break;
+  case 4: //dynamic colored indicators or not based on usefulness of the color indicator
+    if(setup.WhoIsHit->IsPlayer() || setup.WhoHits->IsPlayer()){ //player being hit or hitting is w/o doubts the origin of the attack
+      if(setup.Critical){
+        bld.Luminance = lumReddish;
+      }else{
+        bld.Luminance = NORMAL_LUMINANCE;
+      }
+    }else
+    if(setup.WhoIsHit->IsPet()){
+      bld.Luminance = lumReddish;
+    }else
+    if(setup.WhoHits->IsPet()){
+      if(setup.itemEffectReference->IsWeapon(setup.WhoHits)){ //TODO why char as param?
+        bld.Luminance = lumBluish;
+      }else{
+        bld.Luminance = lumGreenish;
+      }
+    }else{
+      bld.Luminance = NORMAL_LUMINANCE;
+    }
+    break;
   default:
-    ABORT("unsupported hiteffect mode %d",iMode);
+    ABORT("unsupported hiteffect mode %d",setup.iMode);
   }
 
   static bitmap* bmpTmp = new bitmap(TILE_V2);
@@ -64,7 +90,7 @@ hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* Wh
   bld.Flags &= ~MIRROR;
   bld.Flags &= ~FLIP;
   bld.Flags &= ~ROTATE;
-  Item->Draw(bld); //the item* cant be stored as it may break and be sent to hell after here...
+  setup.itemEffectReference->Draw(bld); //the item* cant be stored as it may break and be sent to hell after here...
 
   /**
    * GivenDir TODO make this functionality more global?
@@ -91,9 +117,9 @@ hiteffect::hiteffect(item* Item, lsquare* LSquareUnder, int iMode, character* Wh
    */
   bool bRandomDir=true; // this should be kept true until all items are properly pointing to upper right when reaching this method!
 
-  DBGEXEC(if(WhoHits->IsPlayer())DBG3(DBGI(Type),DBGI(GivenDir),DBGC(Item->GetName(DEFINITE).CStr())));
+  DBGEXEC(if(setup.WhoHits->IsPlayer())DBG3(DBGI(setup.Type),DBGI(setup.GivenDir),DBGC(setup.itemEffectReference->GetName(DEFINITE).CStr())));
   // there is no horizontal or vertical easy rotations implemented yet TODO but ex.: spears would not fit in 16x16 w/o shrinking it...
-  int iDir = bRandomDir ? clock()%8 : GivenDir;
+  int iDir = bRandomDir ? clock()%8 : setup.GivenDir;
   if(iDir==1)iDir = clock()%2==0 ? 0 : 2;
   if(iDir==3)iDir = clock()%2==0 ? 0 : 5;
   if(iDir==4)iDir = clock()%2==0 ? 2 : 7;
@@ -125,11 +151,11 @@ void hiteffect::Be()
 {
   if(iDrawTimes==0)
   {
-    LSquareUnder->RemoveHitEffect(this);
+    setup.LSquareUnder->RemoveHitEffect(this);
     SendToHell();
     return;
   }else{
-    LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+    setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
   }
 }
 
@@ -141,7 +167,7 @@ truth hiteffect::DrawStep(blitdata bld)
 
   iDrawTimes--; // AFTER drawing!
 
-  LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+  setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
 
   return true; //did draw now
 }

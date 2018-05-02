@@ -23,6 +23,17 @@ class lsquare;
 /**
  * temporary, less than 1s, not to be saved
  */
+struct hiteffectSetup {
+  lsquare* LSquareUnder;
+  int iMode;
+
+  item* itemEffectReference;
+  character* WhoIsHit;
+  character* WhoHits;
+  int Type;
+  int GivenDir;
+  truth Critical;
+};
 class hiteffect : public entity
 {
  public:
@@ -30,20 +41,21 @@ class hiteffect : public entity
   hiteffect* Next;
  public:
   hiteffect();
-  hiteffect(item*, lsquare*, int iMode, character* WhoIsHit, character* WhoHits, int Type, int GivenDir);
+  hiteffect(hiteffectSetup);
   virtual ~hiteffect();
   virtual void Be();
   virtual void Draw(blitdata&) const;
   truth DrawStep(blitdata bld);
   virtual square* GetSquareUnderEntity(int = 0) const;
-  void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
-  lsquare* GetLSquareUnder() const { return LSquareUnder; }
+//  void SetLSquareUnder(lsquare* What) { setup.LSquareUnder = What; }
+//  lsquare* GetLSquareUnder() const { return setup.LSquareUnder; }
   virtual truth IsOnGround() const { return true; } //TODO false?
-  void End(){iDrawTimes=0;}
+//  void End(){iDrawTimes=0;}
  protected:
-  lsquare* LSquareUnder;
+//  lsquare* LSquareUnder;
   int iDrawTimes; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;
+  hiteffectSetup setup;
 };
 
 #endif //__HITEFFECT_H_
