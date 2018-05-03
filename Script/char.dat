@@ -7802,6 +7802,7 @@ archangel
   DefaultEndurance = 35;
   DefaultPerception = 45;
   DefaultIntelligence = 35;
+  DefaultWillPower = 35;
   DefaultWisdom = 45;
   DefaultCharisma = 60;
   DefaultMana = 45;
@@ -7821,6 +7822,10 @@ archangel
   Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
   Belt = ANGEL_HAIR belt { Enchantment = 4; }
   RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+  CWeaponSkillHits = { 2, 5000, 5000; }
+  RightSWeaponSkillHits = 2000;
+  LeftSWeaponSkillHits = 2000;
   IsImmuneToItemTeleport = true;
   ScienceTalkPossibility = 100;
   ScienceTalkIntelligenceModifier = 50;
@@ -7849,54 +7854,107 @@ archangel
   Config VALPURUS;
   {
     DefaultName = "Inlux";
+    Helmet = VALPURIUM helmet;
+    BodyArmor = VALPURIUM bodyarmor(CHAIN_MAIL);
+    Cloak = GOLDEN_EAGLE_FEATHER cloak;
+    RightWielded = VALPURIUM VALPURIUM meleeweapon(TWO_HANDED_SWORD);
+    LeftWielded = VALPURIUM shield;
     HostileReplies == "\"Thou wouldst defy the King Upon the Throne, the Lord of Lords and God of Gods, the Frog Beneath the World Who Bears the Greatest of All Burdens, Mighty Valpurus Himself? I shall not stand thy heresy any longer, worthless worm!\"";
   }
 
   Config LEGIFER;
   {
     DefaultName = "Iustitia";
+    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
+    BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
+    RightWielded = SUN_CRYSTAL GOLD flamingsword { Enchantment = 7; }
+    LeftWielded = SUN_CRYSTAL shield { Enchantment = 7; }
   }
 
   Config ATAVUS;
   {
     DefaultName = "Beneficus";
+    BodyArmor = ARCANITE bodyarmor(PLATE_MAIL);
+    RightWielded = DIAMOND OCTIRON meleeweapon(BATTLE_AXE) { Enchantment = 4; }
+    LeftWielded = DIAMOND shield { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
   }
 
   Config DULCIS;
   {
     DefaultName = "Amatrix";
+    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 4; }
+    RightWielded = 0;
+    LeftWielded = 0;
+    KnownCWeaponSkills = { 2, UNARMED, BITE; }
+    AttackStyle = USE_ARMS|USE_HEAD;
+    BaseUnarmedStrength = 1000;
+    BaseBiteStrength = 1000;
   }
 
   Config SEGES;
   {
     DefaultName = "Salubris";
+    Helmet = helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
+    RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
+    LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, LARGE_SWORDS; }
+    Inventory == Random { Category = FOOD; Times = 2; }
   }
 
   Config SOPHOS;
   {
     DefaultName = "Magus";
+    Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
+    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL);
+    Cloak = SPIDER_SILK cloak;
+    RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    Belt = SPIDER_SILK belt;
+    RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
   }
 
   Config SILVA;
   {
     DefaultName = "Nux";
+    Helmet = BLUE_CRYSTAL helmet(FULL_HELMET) { Enchantment = 4; }
+    RightWielded = BLUE_CRYSTAL SIDGURE_WOOD pickaxe { Enchantment = 6; }
+    LeftWielded = SIDGURE_WOOD shield { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
   }
 
   Config LORICATUS;
   {
     DefaultName = "Ignigena";
+    Helmet = ADAMANT helmet(FULL_HELMET);
+    BodyArmor = ADAMANT bodyarmor(PLATE_MAIL);
+    Cloak = 0;
+    RightWielded = ADAMANT ADAMANT thunderhammer;
+    LeftWielded = ADAMANT ADAMANT thunderhammer;
+    Belt = ADAMANT belt(BELT_OF_PROTECTION);
+    RightGauntlet = ADAMANT gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, SHIELDS; }
   }
 
   Config MELLIS;
   {
     DefaultName = "Leguleius";
     IsSadist = true;
+    RightWielded = DIAMOND DIAMOND meleeweapon(BASTARD_SWORD) { Enchantment = 4; }
+    LeftWielded = DIAMOND shield { Enchantment = 4; }
+    Belt = ANGEL_HAIR belt(BELT_OF_CARRYING) { Enchantment = 4; }
+    Inventory == fiftymillionroubles;
   }
 
   Config CLEPTIA;
   {
     DefaultName = "Latro";
     IsSadist = true;
+    Cloak = ANGEL_HAIR cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 4; }
+    RightWielded = RUBY OCTIRON daggerofvenom { Enchantment = 5; }
+    LeftWielded = whipofthievery { Enchantment = 5; }
+    Belt = ANGEL_HAIR belt(BELT_OF_THIEF) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, WHIPS; }
   }
 
   Config NEFAS;
@@ -7904,30 +7962,51 @@ archangel
     DefaultName = "Rapax";
     IsSadist = true;
     IsMasochist = true;
+    RightWielded = OMMEL_HAIR RUBY meleeweapon(RUNED_WHIP) { Enchantment = 5; }
+    LeftWielded = OMMEL_HAIR RUBY meleeweapon(RUNED_WHIP) { Enchantment = 5; }
+    KnownCWeaponSkills = { 2, WHIPS, BITE; }
+    Inventory == potion { Times = 2; SecondaryMaterial = VODKA; }
   }
 
   Config SCABIES;
   {
     DefaultName = "Pestilentia";
     IsSadist = true;
+    BodyArmor = ANGEL_HAIR bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 4; }
+    RightWielded = weepblade { Enchantment = 5; }
+    LeftWielded = chameleonwhip { Enchantment = 5; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, WHIPS; }
   }
 
   Config INFUSCOR;
   {
     DefaultName = "Sinistra";
     IsSadist = true;
+    Helmet = helmet(HELM_OF_MANA) { Enchantment = 4; }
+    RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
   }
 
   Config CRUENTUS;
   {
     DefaultName = "Gladius";
     IsSadist = true;
+    RightWielded = RUBY OCTIRON meleeweapon(HALBERD) { Enchantment = 4; }
+    LeftWielded = RUBY OCTIRON meleeweapon(HALBERD) { Enchantment = 4; }
+    Belt = RUBY belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 4; }
+    RightGauntlet = OCTIRON gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, LARGE_SWORDS; }
+    Inventory == RUBY OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; }
   }
 
   Config MORTIFER;
   {
     DefaultName = "Erado";
     IsSadist = true;
+    Helmet = OMMEL_BONE skull;
+    RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 2; }
+    LeftWielded = PSYPHER OCTIRON meleeweapon(SICKLE) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, SMALL_SWORDS; }
   }
 }
 
