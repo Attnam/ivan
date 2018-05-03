@@ -4545,7 +4545,7 @@ void necromancer::GetAICommand()
 
   if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
   {
-    if(GetConfig() == MASTER_NECROMANCER && !(RAND() & 3))
+    if(GetConfig() != APPRENTICE_NECROMANCER && !(RAND() & 3))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
@@ -4589,7 +4589,7 @@ void necromancer::GetAICommand()
      case APPRENTICE_NECROMANCER:
       RaiseSkeleton();
       break;
-     case MASTER_NECROMANCER:
+     default:
       if(RAND() % 5)
         RaiseSkeleton();
       else
