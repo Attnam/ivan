@@ -719,6 +719,8 @@
 #define WAR_LADY 3
 #define QUEEN 4
 
+#define DRUID 1
+
 #define CHIEFTAIN 1
 #define LORD 2
 #define PATRIARCH 3

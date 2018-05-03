@@ -548,6 +548,7 @@ farmer
     RightWielded = COPPER sharpaxe { Enchantment = 5; }
     CWeaponSkillHits == 100;
     RightSWeaponSkillHits = 50;
+    TamingDifficulty = 25;
     IsNameable = false;
     IsUnique = true;
     CanBeWished = true;
@@ -4790,6 +4791,45 @@ werewolfwolf
   AttachedGod = INFUSCOR;
   WillCarryItems = true;
   UndeadVersions = false;
+
+  Config DRUID;
+  {
+    DefaultWillPower = 50;
+    DefaultName = "Moryggan";
+    PostFix = "druidess of Silva";
+    RightWielded = weepblade { Enchantment = 1; }
+    LeftWielded = acidshield { Enchantment = 1; }
+    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 2; }
+    KnownCWeaponSkills = { 3, SMALL_SWORDS, SHIELDS, BITE; }
+    CWeaponSkillHits = { 3, 50, 50, 100; }
+    RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
+    TamingDifficulty = 20;
+    CanUseEquipment = true;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    CanBeGenerated = true;
+    IsPolymorphable = false;
+    HostileReplies =
+    {
+      3,
+      "@Dd growls: \"@Gd! I offer thee this sacrifice of flesh and violence!\"",
+      "@Dd snarls in disdain.",
+      "\"Ah... Fresh meat.\"";
+    }
+    FriendlyReplies =
+    {
+      3,
+      "\"When I was bitten, @Gd blessed me with will strong enough to last through the transformation.\"",
+      "\"The tattoos? They are pure moonsilver, enchanted with magic of nature and protection. They prevent the changing of forms and ward my mind against the madness of lycanthropy.\"",
+      "\"I did not choose to become a monster, yet I am a werewolf. I am what I am.\"";
+    }
+    AttackStyle = USE_ARMS|USE_HEAD;
+    Sex = FEMALE;
+    ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION|POLYMORPH_LOCK;
+    AttachedGod = SILVA;
+  }
 }
 
 vampire
@@ -7155,7 +7195,7 @@ genetrixvesana
   TotalSize = 250;
   Adjective = "mother carnivorous";
   NameSingular = "plant";
-  DefaultName = "genetrix vesana";
+  DefaultName = "Genetrix Vesana";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 600;
   SkinColor = rgb16(111, 64, 37);
