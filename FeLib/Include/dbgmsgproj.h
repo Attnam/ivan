@@ -9,6 +9,10 @@
    * CUSTOM / PROJECT SPECIFIC, modify at will
    ************************************************************/
   #ifndef DBGMSG_OBJ //do NOT define this in your project cpp files!
+    #include <bitset>
+
+    #define DBGCHAR(ch,info) DBG8(info, ch->CHAR_NAME(DEFINITE), ch->GetAssignedName().CStr(), ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetStack()->GetItems()), DBGI(ch->GetEquipments()) ) //, std::bitset<16>(ch->GetFlags()) )
+    #define DBGITEM(it,info) DBG3(info,it,(it==NULL?0:it->GetID()))
 
     class dbgmsgprj{
       public:
@@ -74,6 +78,7 @@
   #define DBG7(a,b,c,d,e,f,g)
   #define DBG8(a,b,c,d,e,f,g,h)
   #define DBG9(a,b,c,d,e,f,g,h,i)
+  #define DBGSCTSV4(id,a,b,c,d)
   #define DBGLN
   #define DBGSTK
   #define DBGTOSTR_(str)
@@ -93,7 +98,8 @@
   #define DBGAV2(v2)
   #define DBGSV2(v2)
   #define DBGBLD(rb)
-
+  #define DBGCHAR(ch,info)
+  #define DBGITEM(it,info)
   #define DBGSRI(info)
   #define DBGSR
 

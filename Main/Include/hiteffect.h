@@ -51,9 +51,9 @@ class hiteffect : public entity
   virtual truth IsOnGround() const { return true; } //TODO false?
   void End();
  protected:
+  truth CheckIntegrity() const;
   void cleanup();
   int iState;
-  v2 v2DrawAtScreenPos;
   int iDrawCount; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;
   hiteffectSetup setup;

@@ -12,7 +12,7 @@
 
 /* Compiled through materset.cpp */
 
-#define DBGMSG_V2
+#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 int iDrawTot=3;
@@ -175,6 +175,8 @@ void hiteffect::Be()
 {
   if(iState!=1)ABORT("hiteffect not initialized %d",iState);
 
+  CheckIntegrity();
+
   if(iDrawCount==iDrawTot)
   {
     setup.LSquareUnder->RemoveHitEffect(this);
@@ -201,6 +203,7 @@ void hiteffect::cleanup(){
 
 void hiteffect::PrepareBlitdata(const blitdata& bld){
   bldFinalDraw=bld; //copy
+  CheckIntegrity();
 }
 
 void hiteffect::End(){
@@ -248,15 +251,47 @@ truth hiteffect::DrawStep()
     setup.LSquareUnder->SendStrongNewDrawRequest();
     LSquareUnderOfWhoHits->SendStrongNewDrawRequest();
     for(int i=0;i<vExtraSquares.size();i++){
-      vExtraSquares[i]->SendStrongNewDrawRequest(); DBGSV2(vExtraSquares[i]->GetPos())
+      vExtraSquares[i]->SendStrongNewDrawRequest(); DBGSV2(vExtraSquares[i]->GetPos());
     }
   }
 
   return true; //did draw now
 }
 
+truth hiteffect::CheckIntegrity() const{
+  if(
+      bldFinalDraw.Border.X==0 ||
+      bldFinalDraw.Border.Y==0
+  ){
+#ifdef DBGMSG //will force exit during development
+    DBGSI(iState);
+    DBGSCTSV4("pointers",setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference);
+    DBGSI(setup.Type);
+    DBGSB(bWhoIsHitDied);
+    DBGSV2(v2HitFromSqrPos);
+    DBGSV2(v2HitToSqrPos);
+    DBGSC(setup.WhoHits->GetName(DEFINITE).CStr());
+    DBGSC(setup.WhoIsHit->GetName(DEFINITE).CStr());
+    DBGBLD(bldFinalDraw);
+    DBGSV2(bmpHitEffect->GetSize());
+    DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr());
+    DBGSTK;
+    ABORT("invalid hit effect setup");
+#endif
+
+    return false;
+  }
+  return true;
+}
+
 void hiteffect::Draw() const //TODO is it being called other than thru DrawStep()?
 {
+  /**
+   * As this is just an effect, it's funtionally shall not break the game.
+   * So it will simply return if something is wrong.
+   */
+  if(!CheckIntegrity())return;
+
   if(iDrawCount<iDrawTot)
     bmpHitEffect->NormalMaskedBlit(bldFinalDraw); //TODO use alpha?
 }
