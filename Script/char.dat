@@ -4761,10 +4761,10 @@ kobold
   Config CHIEFTAIN;
   {
     AttributeBonus = 30;
-    RightWielded = COPPER meleeweapon(SPEAR);
+    RightWielded = COPPER PINE_WOOD meleeweapon(SPEAR);
     CWeaponSkillHits == 10;
     RightSWeaponSkillHits = 5;
-    NameSingular = "kobold chieftain";
+    NameSingular = "kobold hunter";
     PanicLevel = 66;
     ClothColor = rgb16(100, 100, 48);
     LegMainColor = rgb16(111, 74, 37);
@@ -4773,10 +4773,13 @@ kobold
   Config LORD;
   {
     AttributeBonus = 60;
-    RightWielded = IRON meleeweapon(SPEAR);
-    CWeaponSkillHits == 20;
+    RightWielded = IRON FIR_WOOD meleeweapon(SPEAR);
+    LeftWielded = FIR_WOOD shield;
+    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
+    CWeaponSkillHits = { 2, 20, 20; }
     RightSWeaponSkillHits = 10;
-    NameSingular = "kobold lord";
+    LeftSWeaponSkillHits = 10;
+    NameSingular = "kobold warrior";
     PanicLevel = 50;
     ClothColor = rgb16(160, 0, 0);
     LegMainColor = rgb16(111, 74, 37);
@@ -4815,6 +4818,7 @@ kobold
     TamingDifficulty = 15;
     IsSadist = true;
     UndeadVersions = false;
+    Sex = MALE;
     FriendlyReplies =
     {
       8,
@@ -4827,6 +4831,61 @@ kobold
       "\"The mind is everything. What you think you become.\"",
       "\"Peace comes from within. Do not seek it without.\"";
     }
+  }
+
+  Config ASSASSIN;
+  {
+    AttributeBonus = 90;
+    RightWielded = IRON IRON meleeweapon(DAGGER);
+    LeftWielded = IRON IRON meleeweapon(DAGGER);
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 50;
+    RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
+    NameSingular = "kobold assassin";
+    PanicLevel = 40;
+    ClothColor = rgb16(80, 80, 160);
+    LegMainColor = rgb16(111, 74, 37);
+    TotalSize = 80;
+    Inventory == Random { Category = POTION; Chance = 25; }
+  }
+
+  Config MASTER_ASSASSIN;
+  {
+    AttributeBonus = 120;
+    Helmet = MITHRIL helmet(MASK);
+    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
+    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+    Belt = NYMPH_HAIR belt;
+    Cloak = NYMPH_HAIR cloak(CLOAK_OF_INVISIBILITY);
+    RightGauntlet = NYMPH_HAIR gauntlet;
+    RightBoot = NYMPH_HAIR boot;
+    RightRing = ring(RING_OF_INFRA_VISION);
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    DefaultName = "Trenia";
+    NameSingular = "kobold master assassin";
+    IsUnique = true;
+    CanBeWished = true;
+    DangerModifier = 2500;
+    IsNameable = false;
+    CanBeCloned = false;
+    TotalSize = 70;
+    PanicLevel = 20;
+    ClothColor = rgb16(20, 20, 160);
+    LegMainColor = rgb16(111, 74, 37);
+    Inventory == Random { Category = POTION; Times = 2; }
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
+    IsExtraFragile = false;
+    TamingDifficulty = 15;
+    IsSadist = true;
+    UndeadVersions = false;
+    Sex = FEMALE;
   }
 }
 

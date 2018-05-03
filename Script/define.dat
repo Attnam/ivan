@@ -720,6 +720,8 @@
 #define CHIEFTAIN 1
 #define LORD 2
 #define PATRIARCH 3
+#define ASSASSIN 4
+#define MASTER_ASSASSIN 5
 
 #define GREATER 1
 #define GIANT 2

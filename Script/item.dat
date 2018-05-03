@@ -369,7 +369,7 @@ meleeweapon
     DefaultSecondaryVolume = 2500;
     NameSingular = "spear";
     MainMaterialConfig = { 19, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, FLINT, OBSIDIAN, LEAD; }
-    SecondaryMaterialConfig == PINE_WOOD;
+    SecondaryMaterialConfig = { 19, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, PINE_WOOD, PINE_WOOD, FIR_WOOD, FIR_WOOD, BIRCH_WOOD, BIRCH_WOOD, OAK_WOOD, OAK_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD; }
     MaterialConfigChances = { 19, 200, 200, 150, 100, 200, 550, 450, 300, 200, 50, 50, 25, 10, 50, 50, 50, 50, 50, 50; }
     Roundness = 10;
     IsTwoHanded = true;
@@ -385,6 +385,7 @@ meleeweapon
     BitmapPos = 32, 224;
     WieldedBitmapPos = 176, 96;
     MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
+    SecondaryMaterialConfig == OAK_WOOD;
     MaterialConfigChances = { 7, 150, 25, 25, 5, 5, 5, 5; }
     EnchantmentPlusChance = 30;
   }
