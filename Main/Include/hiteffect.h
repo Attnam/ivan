@@ -27,7 +27,7 @@ class blitdata;
 struct hiteffectSetup { //TODO some of these are not actually an external setup...
   truth Critical;
   int GivenDir;
-  int Type;
+  int Type; //TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
   character* WhoHits;
   character* WhoIsHit;
   item* itemEffectReference;
@@ -48,14 +48,11 @@ class hiteffect : public entity
   truth DrawStep();
   void PrepareBlitdata(const blitdata& bld);
   virtual square* GetSquareUnderEntity(int = 0) const;
-//  void SetLSquareUnder(lsquare* What) { setup.LSquareUnder = What; }
-//  lsquare* GetLSquareUnder() const { return setup.LSquareUnder; }
   virtual truth IsOnGround() const { return true; } //TODO false?
   void End();
  protected:
-//  truth CanAnimate();
-//  lsquare* LSquareUnder;
-//  int iDrawTimes;
+  void cleanup();
+  int iState;
   v2 v2DrawAtScreenPos;
   int iDrawCount; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;

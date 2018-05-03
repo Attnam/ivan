@@ -16,17 +16,15 @@
 #include "dbgmsgproj.h"
 
 int iDrawTot=3;
-hiteffect::hiteffect() : entity(HAS_BE), Next(0), iDrawCount(iDrawTot) { } //idrawcount here just to try to grant nothing weird will happen wherever this constructor may be used.
-square* hiteffect::GetSquareUnderEntity(int) const { return setup.LSquareUnder; }
 
-/**
- * TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
- *
- * TODO the effect is being drawn OUTSIDE the square it is related (the fly weapon animation), can this cause trouble/glitches?
- *      a way to prevent such glitches would probably be to sendStrongDrawRequest to all affected squares nearby.
- */
+hiteffect::hiteffect() : entity(HAS_BE), Next(0), iState(-1) { }
+
+square* hiteffect::GetSquareUnderEntity(int) const {
+  return setup.LSquareUnder;
+}
+
 hiteffect::hiteffect(hiteffectSetup s)
-: entity(HAS_BE), Next(0), iDrawCount(0)
+: entity(HAS_BE), Next(0), iDrawCount(0), iState(0)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
@@ -49,15 +47,13 @@ hiteffect::hiteffect(hiteffectSetup s)
   v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGSV2(v2HitToSqrPos);
   v2HitFromToSqrDiff = v2HitFromSqrPos-v2HitToSqrPos; DBGSV2(v2HitFromToSqrDiff);
   if(v2HitFromToSqrDiff.X!=0 && v2HitFromToSqrDiff.Y!=0){ DBGLN; //diagonal
-    v2 v2FromXY(Min(v2HitFromSqrPos.X,v2HitToSqrPos.X),Min(v2HitFromSqrPos.Y,v2HitToSqrPos.Y));
-    v2 v2ToXY(Max(v2HitFromSqrPos.X,v2HitToSqrPos.X),Max(v2HitFromSqrPos.Y,v2HitToSqrPos.Y));
-    for(int iY=v2FromXY.Y;iY<v2ToXY.Y;iY++){
-      for(int iX=v2FromXY.X;iX<v2ToXY.X;iX++){
+    v2 v2FromXY(Min(v2HitFromSqrPos.X,v2HitToSqrPos.X),Min(v2HitFromSqrPos.Y,v2HitToSqrPos.Y)); DBGSV2(v2FromXY);
+    v2 v2ToXY(Max(v2HitFromSqrPos.X,v2HitToSqrPos.X),Max(v2HitFromSqrPos.Y,v2HitToSqrPos.Y)); DBGSV2(v2ToXY);
+    for(int iY=v2FromXY.Y;iY<=v2ToXY.Y;iY++){
+      for(int iX=v2FromXY.X;iX<=v2ToXY.X;iX++){
         vExtraSquares.push_back(s.WhoHits->GetLevel()->GetLSquare(iX,iY)); DBG3("vExtraSquares:add",iX,iY);
       }
     }
-//    vExtraSquares.push_back(s.WhoHits->GetNearLSquare(v2HitFromSqrPos.X,v2HitToSqrPos.Y  )); DBGLN;
-//    vExtraSquares.push_back(s.WhoHits->GetNearLSquare(v2HitToSqrPos.X,  v2HitFromSqrPos.Y)); DBGLN;
   }
 
   bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
@@ -165,18 +161,24 @@ hiteffect::hiteffect(hiteffectSetup s)
 
   ( bld.Bitmap = bmpHitEffect = new bitmap(TILE_V2) )->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
   bmpTmp->NormalBlit(bld); DBGLN; //this "rotates"
+
+  iState=1;
 }
 
 hiteffect::~hiteffect()
 {
   if(bmpHitEffect!=NULL)delete bmpHitEffect;
+  iState=3;
 }
 
 void hiteffect::Be()
 {
+  if(iState!=1)ABORT("hiteffect not initialized %d",iState);
+
   if(iDrawCount==iDrawTot)
   {
-    if(setup.LSquareUnder!=NULL)setup.LSquareUnder->RemoveHitEffect(this);
+    setup.LSquareUnder->RemoveHitEffect(this);
+    cleanup();
     SendToHell();
     return;
   }else{
@@ -184,28 +186,22 @@ void hiteffect::Be()
   }
 }
 
-void hiteffect::PrepareBlitdata(const blitdata& bld){
-  bldFinalDraw=bld; //copy
-//    B.Border=TILE_V2;
-//  bld.Dest = v2DrawAtScreenPos;
+void hiteffect::cleanup(){
+  setup.LSquareUnder=NULL;
+  setup.WhoHits=NULL;
+  setup.WhoIsHit=NULL;
+  setup.itemEffectReference=NULL;
+
+  bmpHitEffect=NULL;
+  LSquareUnderOfWhoHits=NULL;
+  vExtraSquares.clear();
+
+  iState=2;
 }
 
-//truth hiteffect::CanAnimate(){
-//  if(setup.bWhoIsHitDied)return false;
-//
-//  if(!setup.WhoIsHit->Exists())return false; //TODO is this crash safe?
-//  if(setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
-//   /*
-//    * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
-//    *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
-//    *      but still looks like a miss, so I just disabled the effect when that happens to not look confusing :(.
-//    */
-//    iDrawCount=iDrawTot; //this will end the drawing to prevent it looking like a missed hit :(
-//    return false; //target moved
-//  }
-//
-//  return true;
-//}
+void hiteffect::PrepareBlitdata(const blitdata& bld){
+  bldFinalDraw=bld; //copy
+}
 
 void hiteffect::End(){
   iDrawCount=iDrawTot;
@@ -218,7 +214,6 @@ truth hiteffect::DrawStep()
   bool bDraw = true;
   bool bAnimate = true;
 
-//  static bool bHideWeirdHitAnimationsThatLookLikeMiss=false; //TODO make this a user cfg? may be at a new section: "workarounds" or at advanced/developer?
   if(ivanconfig::IsHideWeirdHitAnimationsThatLookLikeMiss()){
     //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
     if(bAnimate && bWhoIsHitDied)bAnimate=false;
@@ -255,8 +250,6 @@ truth hiteffect::DrawStep()
     for(int i=0;i<vExtraSquares.size();i++){
       vExtraSquares[i]->SendStrongNewDrawRequest(); DBGSV2(vExtraSquares[i]->GetPos())
     }
-//    if(setup.LSquareUnderExtra1!=NULL)setup.LSquareUnderExtra1->SendStrongNewDrawRequest();
-//    if(setup.LSquareUnderExtra2!=NULL)setup.LSquareUnderExtra2->SendStrongNewDrawRequest();
   }
 
   return true; //did draw now

@@ -1497,7 +1497,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
   // this stretch draws the modified player at the tiny silhouette region
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
 
-  if(Player->IsSwimming()){ //TODO 0.5 alpha blit! how!? is there some function already? change a tmp bitmap dots? turn the bitmap into an alpha effect like is done with smoke?
+  if(Player->IsSwimming() && !IsInWilderness()){ //TODO let it work in wilderness too
     static bool bSimple=false;
 
     static const int iMaxWaveLength=6;

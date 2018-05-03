@@ -92,6 +92,13 @@ lsquare::~lsquare()
     delete ToDel;
   }
 
+  for(hiteffect* H = HitEffect; H;)
+  {
+    hiteffect* ToDel = H;
+    H = H->Next;
+    delete ToDel;
+  }
+
   for(rain* R = Rain; R;)
   {
     rain* ToDel = R;
@@ -1914,7 +1921,7 @@ void lsquare::RemoveHitEffect(hiteffect* ToBeRemoved)
 {
   hiteffect* H = HitEffect;
 
-  if(H == ToBeRemoved)
+  if(H == ToBeRemoved) // head  of linked list
   {
     HitEffect = H->Next;
 
