@@ -12,6 +12,8 @@
 
 /* Compiled through levelset.cpp */
 
+#include "dbgmsgproj.h"
+
 lsquare*** eyecontroller::Map;
 
 lsquare*** pathcontroller::Map;
@@ -1862,7 +1864,7 @@ void lsquare::SignalSmokeAlphaChange(int What)
 }
 
 hiteffect* lsquare::AddHitEffect(hiteffectSetup s)
-{
+{DBGLN;
   if(ivanconfig::GetHitIndicator()==0)return NULL;
 
   if(s.itemEffectReference==NULL){

@@ -83,7 +83,7 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
-                                          "Hide weird hit animations that look like miss",
+                                          "Hide hit animations that look like miss",
                                           true);
 cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
                                           "Prevent countour/transparent color glitch at alt silhouette",
@@ -260,8 +260,9 @@ void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
 {
   if(O->Value>=10){
-    Entry << "dynamic";
-    if(O->Value==11)Entry << "+items";
+    Entry << "Use corners if NPC";
+    if(O->Value==11)Entry << "+Items";
+    Entry << " above";
     return;
   }
 

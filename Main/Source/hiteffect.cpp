@@ -43,19 +43,19 @@ hiteffect::hiteffect(hiteffectSetup s)
 
   setup=s; DBG3(s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
-  bldFinalDraw=DEFAULT_BLITDATA;
+  bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
 
-  setup.v2HitFromSqrPos=s.WhoHits->GetPos();
-  setup.v2HitToSqrPos=s.WhoIsHit->GetPos();
+  setup.v2HitFromSqrPos=s.WhoHits->GetPos();  DBGLN;
+  setup.v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGLN;
   setup.v2HitFromToSqrDiff = setup.v2HitFromSqrPos-setup.v2HitToSqrPos; DBGSV2(setup.v2HitFromToSqrDiff);
-  if(setup.v2HitFromToSqrDiff.X!=0 && setup.v2HitFromToSqrDiff.Y!=0){ //diagonal
-    setup.LSquareUnderExtra1 = s.WhoHits->GetNearLSquare(setup.v2HitFromSqrPos.X,setup.v2HitToSqrPos.Y  );
-    setup.LSquareUnderExtra2 = s.WhoHits->GetNearLSquare(setup.v2HitToSqrPos.X,  setup.v2HitFromSqrPos.Y);
+  if(setup.v2HitFromToSqrDiff.X!=0 && setup.v2HitFromToSqrDiff.Y!=0){ DBGLN; //diagonal
+    setup.LSquareUnderExtra1 = s.WhoHits->GetNearLSquare(setup.v2HitFromSqrPos.X,setup.v2HitToSqrPos.Y  ); DBGLN;
+    setup.LSquareUnderExtra2 = s.WhoHits->GetNearLSquare(setup.v2HitToSqrPos.X,  setup.v2HitFromSqrPos.Y); DBGLN;
   }
 
-  setup.bWhoIsHitDied=s.WhoIsHit->IsDead();
+  setup.bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
 
-  setup.LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder();
+  setup.LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder(); DBGLN;
 
   switch(setup.iMode){
   case 1: //immersive
@@ -102,8 +102,8 @@ hiteffect::hiteffect(hiteffectSetup s)
     ABORT("unsupported hiteffect mode %d",setup.iMode);
   }
 
-  static bitmap* bmpTmp = new bitmap(TILE_V2);
-  (bld.Bitmap = bmpTmp)->ClearToColor(TRANSPARENT_COLOR);
+  static bitmap* bmpTmp = new bitmap(TILE_V2); DBGLN;
+  (bld.Bitmap = bmpTmp)->ClearToColor(TRANSPARENT_COLOR); DBGLN;
   // reset static blitdata dir, grant it is drawn pointing to default top right
   bld.Flags &= ~MIRROR;
   bld.Flags &= ~FLIP;
@@ -156,8 +156,8 @@ hiteffect::hiteffect(hiteffectSetup s)
     break;
   }
 
-  ( bld.Bitmap = bmpHitEffect = new bitmap(TILE_V2) )->ClearToColor(TRANSPARENT_COLOR); //TODO is clear unnecessary?
-  bmpTmp->NormalBlit(bld); //this "rotates"
+  ( bld.Bitmap = bmpHitEffect = new bitmap(TILE_V2) )->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
+  bmpTmp->NormalBlit(bld); DBGLN; //this "rotates"
 }
 
 hiteffect::~hiteffect()

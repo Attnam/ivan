@@ -197,10 +197,6 @@ int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
 int iRegionItemsUnder = -1;
 
-blitdata bldPlayerCopyTMP = DEFAULT_BLITDATA;
-blitdata bldPlayer3by4TMP = DEFAULT_BLITDATA;
-blitdata bldPlayerToSilhouetteAreaTMP = DEFAULT_BLITDATA;
-
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
@@ -1134,25 +1130,27 @@ truth game::OnScreen(v2 Pos)
 }
 
 void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in more, merely to easy it's understanding..
-  static int iStep=2;
-  static int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
-  static int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
-  static v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
+  static const int iStep=2;
+  static const int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
+  static const int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
+  static const v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
   static int iAltSilBlitCount=0;
   static const int iTotTallStates=3;
   static const int iTallFrom=2;
   static const int iBreathFrom=3;
   static int iTallState=iTotTallStates-1;
   static int iPreviousAltSilOpt=0;
-  static v2 v2AltSilDispl = v2(8,-2);//v2(10,-2);//v2(24,24);
+  static const v2 v2AltSilDispl = v2(8,-2);//v2(10,-2);//v2(24,24);
   static v2 v2AltSilPos=v2(0,0);
-  static int iRandTorso=0;
+//  static int iRandTorso=0;
 
   bool bOk=true;
 
   //if(bOk && !bAllowed)bOk=false;
 
   //if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
+
+  if(bOk && bPositionQuestionMode)bOk=false;
 
   if(bOk && ivanconfig::GetAltSilhouette()==0)bOk=false;
 
@@ -1216,14 +1214,16 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 //  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
 //  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
   if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhereDefault() + v2AltSilDispl;
-  static v2 v2AltSilTopCenterPos = v2AltSilPos + v2(v2OverSilhouette.X/2,0);
+  static const v2 v2AltSilTopCenterPos = v2AltSilPos + v2(v2OverSilhouette.X/2,0);
   static v2 v2AltSilMovingPos=v2AltSilPos;
 
-  if(bldPlayerCopyTMP.Bitmap==NULL){
-    bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE; //SQUARE_INDEX_MASK
-    bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE;
-  }
+  static blitdata bldPlayerCopyTMP = [](){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Bitmap = new bitmap(TILE_V2);
+    B.CustomData |= ALLOW_ANIMATE; //SQUARE_INDEX_MASK
+    B.Luminance = NORMAL_LUMINANCE;
+    return B;
+  }();
   static int iCComp=50;
   static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iCComp,iCComp,iCComp); //still glitches a bit...
   col16 bkgAlignmentColor=darkestThatWontGlitchWithAlpha;
@@ -1256,13 +1256,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
   if(bXbyYis3by4){
-    if(bldPlayer3by4TMP.Bitmap==NULL){
+    static blitdata bldPlayer3by4TMP = [](){
+//      blitdata B = DEFAULT_BLITDATA;
+      bldPlayer3by4TMP=DEFAULT_BLITDATA;
       bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
-    }
+//      return B;
+      return bldPlayer3by4TMP;
+    }();
+//    if(bldPlayer3by4TMP.Bitmap==NULL){
+//      bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
+//    }
 
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
 
-    if(Player->IsFlying()){
+    bool bFluctuating = Player->IsSwimming() || Player->IsFlying();
+
+    if(bFluctuating){
       float fStepsPerSecond=15; //fly turbulence move base speed
       int iMoveStep=1;
       if(PlayerIsRunning()){
@@ -1323,17 +1332,17 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
       iBreathStepCount = iAltSilBlitCount/nBreathDelay;
       int iTotTallStatesCurrent=iTotTallStates;
-      if(Player->IsFlying())iTotTallStatesCurrent=2;
+      if(bFluctuating)iTotTallStatesCurrent=2;
       int iTallStateNew = iBreathStepCount % iTotTallStatesCurrent;
-//      if(Player->IsFlying())iTallStateNew=0;
-      if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
+//      if(bFluctuating)iTallStateNew=0;
+//      if(iTallStateNew!=iTallState)iRandTorso=clock()%2;
       iTallState=iTallStateNew;
     }
     if(TILE_SIZE==16){ // this is like a post processing gfx
       //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
       bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
 
-      bool bLower = (iTallState==0 && bTired) || Player->IsFlying();
+      bool bLower = (iTallState==0 && bTired) || bFluctuating;
 
       int iTotBlankLines = iTotTallStates - (iTallState+1);
       // 3-(2+1)=0 //nothing
@@ -1342,7 +1351,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       if(bLower)iTotBlankLines++; //wont dup pants
 
       bool bJump=false;
-      if(Player->IsFlying()){
+      if(bFluctuating){
         iTotBlankLines+=1; // for the shorter legs
         iTotBlankLines+=2; // for the even smaller torso with -2 lines both at 0 and 1 tall states
 //        switch(iTallState){
@@ -1375,7 +1384,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       // torso are lines 6 7 8 9 (lets keep it simple to read...)
       switch(iTallState){
       case 0:
-        if(Player->IsFlying()){ //flying (4 lines)
+        if(bFluctuating){ //flying (4 lines)
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
@@ -1390,7 +1399,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
         }
         break;
       case 1:
-        if(Player->IsFlying()){ //flying (5 lines)
+        if(bFluctuating){ //flying (5 lines)
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
           bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
@@ -1425,19 +1434,19 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
       if(!bLower)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
-      if(!Player->IsFlying())bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true); //shorter legs if flying
+      if(!bFluctuating)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true); //shorter legs if flying
       bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
 
       ////////////////////////// end of body //////////////////////////
 
-      if(Player->IsFlying() || bJump){
+      if(bFluctuating || bJump){
         // blank lines below feet
         for(int i=0;i<iTotBlankLines;i++)
           bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
       }
 
-      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, lower=%s, TotBlank=%d",iYDest,iY4,
-        bJump?"T":"F", Player->IsFlying()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
+      if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, swim=%s, lower=%s, TotBlank=%d",iYDest,iY4,
+        bJump?"T":"F", Player->IsFlying()?"T":"F", Player->IsSwimming()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
 
     }else{
       // fall back to simple blit for not supported tile sizes
@@ -1450,28 +1459,29 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     }
 
     bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
-
-    if(Player->IsSwimming()){ //TODO mmm... we always drown? kept here because it is too simple, but this means I couldnt test it...
-      for(int iY=iY4/2+(clock()%3);iY<iY4;iY++)
-        bldPlayer3by4TMP.Bitmap->Fill(0,iY,TILE_SIZE,1,BLUE); //TODO 0.5 alpha blit! TODO liquid color?
-    }
   }
 
-  if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
-    bldPlayerToSilhouetteAreaTMP.Stretch = 3;
-    bldPlayerToSilhouetteAreaTMP.Bitmap = DOUBLE_BUFFER;
-  };DBGBLD(bldPlayerToSilhouetteAreaTMP);
+  static blitdata bldPlayerToSilhouetteAreaTMP = [](){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Stretch = 3;
+    B.Bitmap = DOUBLE_BUFFER;
+    return B;
+  }();
+//  if(bldPlayerToSilhouetteAreaTMP.Bitmap==NULL){
+//    bldPlayerToSilhouetteAreaTMP.Stretch = 3;
+//    bldPlayerToSilhouetteAreaTMP.Bitmap = DOUBLE_BUFFER;
+//  };
   bldPlayerToSilhouetteAreaTMP.Dest = v2AltSilPos;
   if(bXbyYis3by4){
     bldPlayerToSilhouetteAreaTMP.Dest=v2AltSilMovingPos;
   }else{
     bldPlayerToSilhouetteAreaTMP.Dest.Y+=TILE_SIZE/2; //to center on it
   }
-  bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize();
+  bldPlayerToSilhouetteAreaTMP.Border = bmpPlayerSrc->GetSize(); DBGBLD(bldPlayerToSilhouetteAreaTMP);
 
-  v2 v2StretchedPos = v2AltSilPos+v2(-2,0);
+  static const v2 v2StretchedPos = v2AltSilPos+v2(-2,0);
 //  v2 v2StretchedBorder = (v2OverSilhouette+v2(4,2))*bldPlayerToSilhouetteAreaTMP.Stretch;
-  v2 v2StretchedBorder = (v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch)+v2(4,2);
+  static const v2 v2StretchedBorder = (v2OverSilhouette*bldPlayerToSilhouetteAreaTMP.Stretch)+v2(4,2);
   switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
   case 0:
     igraph::BlitBackGround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder);
@@ -1484,7 +1494,73 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     break;
   }
 
+  // this stretch draws the modified player at the tiny silhouette region
   graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaTMP,true);
+
+  if(Player->IsSwimming()){ //TODO 0.5 alpha blit! how!? is there some function already? change a tmp bitmap dots? turn the bitmap into an alpha effect like is done with smoke?
+    static bool bSimple=false;
+
+    static const int iMaxWaveLength=6;
+    static int iWaveLength=iMaxWaveLength;
+    static const int iHeight = v2StretchedBorder.Y*0.75;
+    static const int iLiquidFPS=5;
+    static const int iStepDelay = CLOCKS_PER_SEC/iLiquidFPS;
+
+    static int iWaveStepPrevious=-1;
+    int iWaveStep = clock()/iStepDelay;
+    static int iDegrees;
+    static int iHeightFinal;
+    static int iDestDisplY;
+    static v2 v2Dest;
+    static int iDegreesStep=30;
+    if(iWaveStepPrevious!=iWaveStep){
+      iDegrees+=iDegreesStep;
+      if(iDegrees>=360){
+        iDegrees=0;
+        iDegreesStep=30+clock()%60;
+        iWaveLength=iMaxWaveLength/(1 + clock()%3);
+      }
+      iHeightFinal = iHeight + iWaveLength*sin(iDegrees*3.14159/180);
+      iDestDisplY = v2StretchedBorder.Y - iHeightFinal;
+      v2Dest = v2StretchedPos+v2(0,iDestDisplY);
+      iWaveStepPrevious=iWaveStep;
+    }
+
+    if(bSimple){
+      DOUBLE_BUFFER->Fill(v2Dest, v2(v2StretchedBorder.X,iHeightFinal), BLUE);
+    }else{
+      // from level square, collect the liquid ground gfx
+      static blitdata bldFromSqr = [](){bldFromSqr = DEFAULT_BLITDATA;
+        bldFromSqr.Border=TILE_V2;
+        bldFromSqr.Bitmap=new bitmap(bldFromSqr.Border);
+        bldFromSqr.Luminance=NORMAL_LUMINANCE;
+        bldFromSqr.CustomData |= ALLOW_ANIMATE; return bldFromSqr; }(); DBGBLD(bldFromSqr);
+      Player->GetLSquareUnder()->DrawStaticContents(bldFromSqr);
+
+      // stretch that gfx enough to prepare the final blit
+      static blitdata bldStretch = [](){bldStretch = DEFAULT_BLITDATA;
+        bldStretch.Stretch=bldPlayerToSilhouetteAreaTMP.Stretch+1; //+1 as there is tiny bits around the player allowing fly/swim animations
+        bldStretch.Border = TILE_V2;
+        bldStretch.Bitmap=new bitmap(bldStretch.Border * bldStretch.Stretch);
+        bldStretch.Bitmap->CreateAlphaMap(0xFF*0.50); return bldStretch; }(); DBGBLD(bldStretch);
+      graphics::Stretch(ivanconfig::IsXBRZScale(),bldFromSqr.Bitmap,bldStretch,true);
+
+      // copy from stretched as much as needed, to DB
+      static blitdata bldToDB = [](){bldToDB=DEFAULT_BLITDATA;
+        bldToDB.Border=v2StretchedBorder;
+        bldToDB.Luminance=NORMAL_LUMINANCE;
+        bldToDB.Bitmap=DOUBLE_BUFFER; return bldToDB;}(); DBGBLD(bldToDB);
+      bldToDB.Dest = v2Dest;
+      bldToDB.Border.Y=iHeightFinal;
+      /**
+       * TODO oscilating the alpha is being cumulative and this is not working:
+      float fAlpha = 0.85-(0.03*iWaveStep);
+      bldStretch.Bitmap->FillAlpha(0xFF*fAlpha);
+       */
+      bldStretch.Bitmap->AlphaMaskedBlit(bldToDB);
+      //      bldStretch.Bitmap->AlphaLuminanceBlit(bldToDB);
+    }
+  }
 
   if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0)
     graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, DARK_GRAY, false);

@@ -666,13 +666,13 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
-  hiteffectSetup* phitef;
-  if(CanBeSeenByPlayer()){
+  hiteffectSetup* phitef=NULL;DBGLN;
+  if(CanBeSeenByPlayer()){DBGLN;
     phitef=new hiteffectSetup();
     phitef->Critical=Critical;
     phitef->GivenDir=GivenDir;
     phitef->Type=Type;
-    phitef->WhoHits=Enemy; DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
+    phitef->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
     phitef->WhoIsHit=this;
     phitef->itemEffectReference = Weapon;
     if(phitef->itemEffectReference==NULL)phitef->itemEffectReference=EnemyBodyPart;
@@ -873,7 +873,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     return DID_NO_DAMAGE;
   }
 
-  if(phitef!=NULL){
+  if(phitef!=NULL){DBGLN;
     GetLSquareUnder()->AddHitEffect(*phitef); //after all returns of failure and before any other returns
     delete phitef; //already copied
   }
