@@ -2235,11 +2235,13 @@ skeleton
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
   FriendlyReplies =
   {
-    5,
+    7,
     "@Dd talks about bones.",
     "@Dd rattles @sp bones omniously.",
     "\"Hope I'm not giving you a boner! Heh, heh.\"",
     "\"I lost my old skull in a game of poker, so I killed this adventurer guy and took his. Quite handsome, right?\"",
+    "\"I'm not resting, I'm dead!\"",
+    "@Dd throws @sp skull high in the air, then catches it and puts it back on.",
     "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
   }
   FleshMaterial = BONE;
@@ -4136,16 +4138,57 @@ zombie
     CanRead = true;
     CreateUndeadConfigurations = false;
     DeathMessage = "As @Dd collapses, you hear her hiss: \"Peeeeeetrrrruuuuuuuss!!!\"";
+    HostileReplies =
+    {
+      25,
+      "\"A pity.\"",
+      "\"Are you so easily decieved?\"",
+      "\"You will not suffer... for long.\"",
+      "\"It must be this way.\"",
+      "\"My city... in ruins.\"",
+      "\"This will be quick.\"",
+      "\"How we've fallen.\"",
+      "\"You will fall as we did.\"",
+      "\"This is for the best.\"",
+      "\"He cannot be stopped.\"",
+      "\"He must be stopped.\"",
+      "\"I will save you.\"",
+      "\"I will make you understand.\"",
+      "\"How long have I slumbered?\"",
+      "\"Let us end it.\"",
+      "\"I will stop this.\"",
+      "\"You cannot win.\"",
+      "\"You cannot hurt me.\"",
+      "\"You have been betrayed.\"",
+      "\"I must do this, for your sake.\"",
+      "\"Curse His name!\"",
+      "\"It cannot end like this.\"",
+      "\"I was wrong.\"",
+      "\"Return them to me!\"",
+      "@Dd whispers: \"Please... \"";
+    }
     FriendlyReplies =
     {
-      5,
+      17,
       "\"Once, I was a duchess of a great dwarven fortress-city of Khaz-zadm.\"",
       "\"After the Dwarven Wars, our land lay in ruins. Our mines were undermined and filled with masterless golems. Our resources were stretched thin. That was when Petrus came with his offer of charity. I should have known better.\"",
       "\"Naught but ashes remain from my people. Petrus even saw that the word would not spread to Kharaz-arad or other dwarven lands.\"",
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
+      "\"The poor children of Khaz-zadm! Taken from their murdered parents and trained to die at the behest of the high priest, praising Valpurus with their dying breath.\"",
+      "\"Khaz-zadm once held the richest deposits of valpurian ore on this whole continent. No wonder Attnam has no shortage of vaplurium these days.\"",
+      "\"Attnam and Khaz-zadm were close partners for many years. Attnam bought its sacred metal from us, but we needed attnamese priests to bless the smelting, lest a burnt slag was produced instead of a magical metal.\"",
+      "\"I remember with fondness our shared visits with high priest Priscus. I was greatly saddened by the betrayal of the orcish delegation and his death. Too late did I learn the truth - I fell for the tricks of the same enemy he did.\"",
+      "\"High priest Priscus had a life-long dream - Pax Attnamica, a peace amongst all the lands, races and religions. Alas, not everyone even in his own country agreed with his pacifistic ways and evetually, his efforts led to his untimely demise.\"",
+      "\"Many have recounted the story differently, but I believe this: It was neither the retinue of Priscus, nor the orcish delegation of Al-Khan who betrayed and massacred the other. There is someone else to blame.\"",
+      "\"I learned too late it was Petrus along with Sir Galladon I. and his loyal elite guards who ambushed and murdered both Priscus and Al-Khan, winning the attnamese throne for Petrus and throwing all khanite orcs into chaos.\"",
+      "\"Al-Khan was a great leader and politician. He managed to unite most of the orcish tribes in a singular horde the likes of which nobody had seen since the ancient War in Heavens. Yet he did not seek conquest, but rather strength and prosperity in unity for his people.\"",
+      "\"Once, the great mountain was filled with the joy of dwarven life. But Khaz-zadm has fallen and its corridors are now gloomy and full of monsters.\"", /* Yes, gloomy caves once were teh dwarven city of Khaz-zadm and its mines. */
+      "\"Khaz-zadm stretched for miles below the great mountain - a monument to craftsdwarfship. What remains of it now but another dark dungeon?\"",          /* That's why there are so many artificial rooms and corridors in a 'cave'. */
+      "\"We dug deep in our days of glory. And in the deepest reaches of Khaz-zadm, we built a massive fortress of solid steel. No one could ever dream of conquering it, even during the Dwarven Wars.\"", /* But Elpuri took it once it was abandoned. */
+      "\"I only met Al-Khan once, yet I saw a strong, wilful man in him, not a murderer.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
-    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 50; }, key(OCTAGONAL_LOCK) { Chance = 50; } }
+    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 75; }, key(OCTAGONAL_LOCK) { Chance = 75; } }
   }
 
   Config IMPRISONED_ZOMBIE;
@@ -4199,7 +4242,14 @@ ghost
     "@Dd attempts to spook you.",
     "\"Boo!\"";
   }
-  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
+  FriendlyReplies =
+  {
+    4,
+    "@Dd moans.",
+    "\"How did I die? Oh wow, that is kind of private!\"",
+    "\"...oOoOOOooOooooOoOooOOoOoooOOo...\"",
+    "\"A very good Boo to you, my friend.\"";
+  }
   PanicLevel = 0;
   /*HasALeg = false;*/
   FleshMaterial = GHOST;
@@ -4349,9 +4399,12 @@ imp
   UndeadVersions = false;
   FriendlyReplies =
   {
-    3,
+    6,
     "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
     "\"I was about to kiss her, but then I got summoned.\"",
+    "\"It is said: To err is human. Stupid humans...\"",
+    "\"They say, if you cannot beat them, join them. I say, if you cannot beat them, beat them later. Because they will be expecting you to join them, so you will have the element of surprise.\"",
+    "\"Fight fire with fire! Unless it's not metaphorical fire but real fire, then you should probably use water.\"",
     "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine's.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
   }
   HostileReplies =
@@ -6377,7 +6430,7 @@ elder
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {
-    14,
+    15,
     "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
     "\"It is said Mortifer was the first being to die, felled by the hand of His brother, Valpurus.\"",
@@ -6391,6 +6444,7 @@ elder
     "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
     "\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-Se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses. Through the millenia she has gained every imaginable disease and bitten by every existing poisonous creature; now she is practically invulnerable to all damage.\"",
+    "\"When I was a child, we used to travel through the tunnel to easily reach the mainland. A mighty and wise guardian lived down there then... But now the tunnel is overrun by hedgehogs and carnivorous plants.\"",
     "\"Beware and avoid Lobh-Se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty there and she returns promptly when satiated.\"";
   }
   AutomaticallySeen = true;
@@ -7755,6 +7809,7 @@ archangel
   Config VALPURUS;
   {
     DefaultName = "Inlux";
+    HostileReplies == "\"Thou wouldst defy the King Upon the Throne, the Lord of Lords and God of Gods, the Frog Beneath the World Who Bears the Greatest of All Burdens, Mighty Valpurus Himself? I shall not stand thy heresy any longer, worthless worm!\"";
   }
 
   Config LEGIFER;
