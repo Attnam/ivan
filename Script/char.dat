@@ -4795,6 +4795,7 @@ werewolfwolf
   Config DRUID;
   {
     DefaultWillPower = 50;
+    ArmBitmapPos = 64, 208;
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
     RightWielded = weepblade { Enchantment = 1; }
@@ -7854,9 +7855,10 @@ archangel
   Config VALPURUS;
   {
     DefaultName = "Inlux";
-    Helmet = VALPURIUM helmet;
-    BodyArmor = VALPURIUM bodyarmor(CHAIN_MAIL);
-    Cloak = GOLDEN_EAGLE_FEATHER cloak;
+    BodyArmor = VALPURIUM bodyarmor(CHAIN_MAIL) { Enchantment = 0; }
+    Cloak = GOLDEN_EAGLE_FEATHER cloak { Enchantment = 0; }
+    Belt = GOLDEN_EAGLE_FEATHER belt { Enchantment = 0; }
+    RightGauntlet = GOLDEN_EAGLE_FEATHER gauntlet { Enchantment = 0; }
     RightWielded = VALPURIUM VALPURIUM meleeweapon(TWO_HANDED_SWORD);
     LeftWielded = VALPURIUM shield;
     HostileReplies == "\"Thou wouldst defy the King Upon the Throne, the Lord of Lords and God of Gods, the Frog Beneath the World Who Bears the Greatest of All Burdens, Mighty Valpurus Himself? I shall not stand thy heresy any longer, worthless worm!\"";
@@ -7874,7 +7876,7 @@ archangel
   Config ATAVUS;
   {
     DefaultName = "Beneficus";
-    BodyArmor = ARCANITE bodyarmor(PLATE_MAIL);
+    BodyArmor = ARCANITE bodyarmor(PLATE_MAIL) { Enchantment = 0; }
     RightWielded = DIAMOND OCTIRON meleeweapon(BATTLE_AXE) { Enchantment = 4; }
     LeftWielded = DIAMOND shield { Enchantment = 4; }
     KnownCWeaponSkills = { 2, AXES, SHIELDS; }
@@ -7883,7 +7885,7 @@ archangel
   Config DULCIS;
   {
     DefaultName = "Amatrix";
-    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 4; }
+    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
     RightWielded = 0;
     LeftWielded = 0;
     KnownCWeaponSkills = { 2, UNARMED, BITE; }
@@ -7906,19 +7908,19 @@ archangel
   {
     DefaultName = "Magus";
     Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
-    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL);
-    Cloak = SPIDER_SILK cloak;
+    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
+    Cloak = SPIDER_SILK cloak { Enchantment = 0; }
     RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
-    Belt = SPIDER_SILK belt;
+    Belt = SPIDER_SILK belt { Enchantment = 0; }
     RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
-    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config SILVA;
   {
     DefaultName = "Nux";
     Helmet = BLUE_CRYSTAL helmet(FULL_HELMET) { Enchantment = 4; }
-    RightWielded = BLUE_CRYSTAL SIDGURE_WOOD pickaxe { Enchantment = 6; }
+    RightWielded = BLUE_CRYSTAL SIDGURE_WOOD pickaxe { Enchantment = 7; }
     LeftWielded = SIDGURE_WOOD shield { Enchantment = 4; }
     KnownCWeaponSkills = { 2, AXES, SHIELDS; }
   }
@@ -7926,23 +7928,23 @@ archangel
   Config LORICATUS;
   {
     DefaultName = "Ignigena";
-    Helmet = ADAMANT helmet(FULL_HELMET);
-    BodyArmor = ADAMANT bodyarmor(PLATE_MAIL);
+    Helmet = ADAMANT helmet(FULL_HELMET) { Enchantment = 0; }
+    BodyArmor = ADAMANT bodyarmor(PLATE_MAIL) { Enchantment = 0; }
     Cloak = 0;
     RightWielded = ADAMANT ADAMANT thunderhammer;
     LeftWielded = ADAMANT ADAMANT thunderhammer;
-    Belt = ADAMANT belt(BELT_OF_PROTECTION);
+    Belt = ADAMANT belt(BELT_OF_PROTECTION) { Enchantment = 0; }
     RightGauntlet = ADAMANT gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
-    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, SHIELDS; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config MELLIS;
   {
     DefaultName = "Leguleius";
     IsSadist = true;
-    RightWielded = DIAMOND DIAMOND meleeweapon(BASTARD_SWORD) { Enchantment = 4; }
-    LeftWielded = DIAMOND shield { Enchantment = 4; }
-    Belt = ANGEL_HAIR belt(BELT_OF_CARRYING) { Enchantment = 4; }
+    RightWielded = SAPPHIRE GOLD meleeweapon(BASTARD_SWORD) { Enchantment = 4; }
+    LeftWielded = SAPPHIRE shield { Enchantment = 4; }
+    Belt = SAPPHIRE belt(BELT_OF_CARRYING) { Enchantment = 4; }
     Inventory == fiftymillionroubles;
   }
 
@@ -7962,8 +7964,8 @@ archangel
     DefaultName = "Rapax";
     IsSadist = true;
     IsMasochist = true;
-    RightWielded = OMMEL_HAIR RUBY meleeweapon(RUNED_WHIP) { Enchantment = 5; }
-    LeftWielded = OMMEL_HAIR RUBY meleeweapon(RUNED_WHIP) { Enchantment = 5; }
+    RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 5; }
+    LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 5; }
     KnownCWeaponSkills = { 2, WHIPS, BITE; }
     Inventory == potion { Times = 2; SecondaryMaterial = VODKA; }
   }
@@ -7973,7 +7975,7 @@ archangel
     DefaultName = "Pestilentia";
     IsSadist = true;
     BodyArmor = ANGEL_HAIR bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 4; }
-    RightWielded = weepblade { Enchantment = 5; }
+    RightWielded = RUBY RUBY weepblade { Enchantment = 5; }
     LeftWielded = chameleonwhip { Enchantment = 5; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, WHIPS; }
   }
@@ -7984,7 +7986,7 @@ archangel
     IsSadist = true;
     Helmet = helmet(HELM_OF_MANA) { Enchantment = 4; }
     RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
-    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config CRUENTUS;
