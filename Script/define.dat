@@ -686,6 +686,7 @@
 #define BUTCHER 2
 #define PRINCE 3
 #define KING 4
+#define MONK 5
 
 #define CONICAL 1
 #define FLAT 2

@@ -2404,6 +2404,53 @@ goblin
     Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
   }
 
+  Config MONK;
+  {
+    AttributeBonus = 50;
+    RightWielded = 0;
+    LeftWielded = 0;
+    Belt = BLACK_LEATHER belt;
+    KnownCWeaponSkills == UNARMED;
+    AttackStyle = USE_ARMS|USE_LEGS;
+    BaseUnarmedStrength = 600;
+    CWeaponSkillHits == 100;
+    NameSingular = "goblin monk";
+    CreateDivineConfigurations = true;
+    CanRead = true;
+    Sex = FEMALE;
+    ConstantCommandFlags = DONT_CHANGE_EQUIPMENT;
+    ClothColor = rgb16(255, 69, 0); /* Orange robes. */
+    Inventory == potion { SecondaryMaterial = VODKA; Chance = 30; }
+    DeathMessage = "@Dd dies with acceptance.";
+    HostileReplies =
+    {
+      10,
+      "\"@Gd! Forgive me for this violence I am about to inflict.\"",
+      "@Dd screams: \"Claw of the Cheerful Wolf!\"",
+      "@Dd shouts: \"Contemplative Rooster Hammer!\"",
+      "@Dd roars: \"Fear-ridden Assassin Blow!\"",
+      "@Dd yells: \"Nine Fortuitous Bodhisattvas Strike!\"",
+      "@Dd screams: \"Monkey's Clutch of White Snares!\"",
+      "@Dd shouts: \"Kick of One Thousand Phantoms' Dance!\"",
+      "@Dd roars: \"Ninety-nine Million Emerald Meteors Fist!\"",
+      "@Dd yells: \"Pinch of the Terrifying Badger!\"",
+      "@Dd whispers: \"Hand of Dancing Gallows!\"";
+    }
+    FriendlyReplies =
+    {
+      8, /* Some koans: */
+      "\"The lawyer came to the guru and asked for truth. The guru said nothing. This pleased the lawyer, who went on his way with the exhilaration of newfound knowledge. Moments later, the guru awoke.\"",
+      "\"The wise old man said to the child: 'Nothing is true that cannot be proven.' The child replied: 'Prove it.'\"",
+      "\"The guru told the frog: 'Nothing is better than the Good.' The frog said: 'But a nice bite of lettuce is better than nothing.'\"",
+      "\"The wise old man told the child do the opposite of whatever was asked of her, but the child refused.\"",
+      "\"The guru said: 'This wise old man never lies!' The wise old man said: 'That guru never tells the truth.'\"",
+      "\"In between bites of lettuce, the frog told the guru: 'I am all that exists. Everything else is illusion.' The guru said: 'But frog, I know I exist.' The frog replied: 'Sorry, I meant to say that you were all that existed. Everything else is illusion.'\"",
+      "\"The lawyer, the wise old man and the guru watched a flag flap in the wind. The lawyer said: 'The flag is moving.' The wise old man said: 'The wind is moving.' The guru said: 'Your minds are moving.' And the child exclaimed: 'Could you keep it down? Some of us are trying to sleep.'\"",
+      "\"The child said: 'Everything I say is true because I say so.'\"";
+    }
+    Frequency = 1500;
+  }
+
   Config PRINCE;
   {
     AttributeBonus = 75;
@@ -2427,6 +2474,7 @@ goblin
       "@Dd describes a recent article in 'Modern Monster' magazine.",
       "@Dd wants nothing to do with you.";
     }
+    Sex = MALE;
   }
 
   Config KING;
@@ -2459,11 +2507,13 @@ goblin
     Inventory = { 2, stone { Chance = 50; }, amulet; }
     CanBeConfused = false;
     NaturalSparkleFlags = HAIR_COLOR;
+    Sex = MALE;
     FireResistance = 30;
     ElectricityResistance = 30;
     EnergyResistance = 30;
     TamingDifficulty = 20;
     UndeadVersions = false;
+    /* TODO: Special dialogue. */
   }
 }
 
@@ -4894,8 +4944,8 @@ kobold
     AttributeBonus = 120;
     Helmet = MITHRIL helmet(MASK);
     BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
-    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 1; }
+    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 1; }
     Belt = NYMPH_HAIR belt;
     Cloak = NYMPH_HAIR cloak(CLOAK_OF_INVISIBILITY);
     RightGauntlet = NYMPH_HAIR gauntlet;
