@@ -25,26 +25,14 @@ class blitdata;
  * temporary, less than 1s, not to be saved
  */
 struct hiteffectSetup { //TODO some of these are not actually an external setup...
-  lsquare* LSquareUnder;
-  int iMode;
-
-  item* itemEffectReference;
-  character* WhoIsHit;
-
-  character* WhoHits;
-  lsquare* LSquareUnderOfWhoHits;
-
-  lsquare* LSquareUnderExtra1;
-  lsquare* LSquareUnderExtra2;
-
-  v2 v2HitFromSqrPos;
-  v2 v2HitToSqrPos;
-  v2 v2HitFromToSqrDiff;
-  bool bWhoIsHitDied;
-
-  int Type;
-  int GivenDir;
   truth Critical;
+  int GivenDir;
+  int Type;
+  character* WhoHits;
+  character* WhoIsHit;
+  item* itemEffectReference;
+  int iMode;
+  lsquare* LSquareUnder;
 };
 class hiteffect : public entity
 {
@@ -73,6 +61,12 @@ class hiteffect : public entity
   bitmap* bmpHitEffect;
   hiteffectSetup setup;
   blitdata bldFinalDraw;
+  lsquare* LSquareUnderOfWhoHits;
+  std::vector<lsquare*> vExtraSquares;
+  v2 v2HitFromSqrPos;
+  v2 v2HitToSqrPos;
+  v2 v2HitFromToSqrDiff;
+  bool bWhoIsHitDied;
 };
 
 #endif //__HITEFFECT_H_

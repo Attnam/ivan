@@ -45,17 +45,24 @@ hiteffect::hiteffect(hiteffectSetup s)
 
   bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
 
-  setup.v2HitFromSqrPos=s.WhoHits->GetPos();  DBGLN;
-  setup.v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGLN;
-  setup.v2HitFromToSqrDiff = setup.v2HitFromSqrPos-setup.v2HitToSqrPos; DBGSV2(setup.v2HitFromToSqrDiff);
-  if(setup.v2HitFromToSqrDiff.X!=0 && setup.v2HitFromToSqrDiff.Y!=0){ DBGLN; //diagonal
-    setup.LSquareUnderExtra1 = s.WhoHits->GetNearLSquare(setup.v2HitFromSqrPos.X,setup.v2HitToSqrPos.Y  ); DBGLN;
-    setup.LSquareUnderExtra2 = s.WhoHits->GetNearLSquare(setup.v2HitToSqrPos.X,  setup.v2HitFromSqrPos.Y); DBGLN;
+  v2HitFromSqrPos=s.WhoHits->GetPos();  DBGSV2(v2HitFromSqrPos);
+  v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGSV2(v2HitToSqrPos);
+  v2HitFromToSqrDiff = v2HitFromSqrPos-v2HitToSqrPos; DBGSV2(v2HitFromToSqrDiff);
+  if(v2HitFromToSqrDiff.X!=0 && v2HitFromToSqrDiff.Y!=0){ DBGLN; //diagonal
+    v2 v2FromXY(Min(v2HitFromSqrPos.X,v2HitToSqrPos.X),Min(v2HitFromSqrPos.Y,v2HitToSqrPos.Y));
+    v2 v2ToXY(Max(v2HitFromSqrPos.X,v2HitToSqrPos.X),Max(v2HitFromSqrPos.Y,v2HitToSqrPos.Y));
+    for(int iY=v2FromXY.Y;iY<v2ToXY.Y;iY++){
+      for(int iX=v2FromXY.X;iX<v2ToXY.X;iX++){
+        vExtraSquares.push_back(s.WhoHits->GetLevel()->GetLSquare(iX,iY)); DBG3("vExtraSquares:add",iX,iY);
+      }
+    }
+//    vExtraSquares.push_back(s.WhoHits->GetNearLSquare(v2HitFromSqrPos.X,v2HitToSqrPos.Y  )); DBGLN;
+//    vExtraSquares.push_back(s.WhoHits->GetNearLSquare(v2HitToSqrPos.X,  v2HitFromSqrPos.Y)); DBGLN;
   }
 
-  setup.bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
+  bWhoIsHitDied=s.WhoIsHit->IsDead(); DBGLN;
 
-  setup.LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder(); DBGLN;
+  LSquareUnderOfWhoHits=s.WhoHits->GetLSquareUnder(); DBGLN;
 
   switch(setup.iMode){
   case 1: //immersive
@@ -214,9 +221,9 @@ truth hiteffect::DrawStep()
 //  static bool bHideWeirdHitAnimationsThatLookLikeMiss=false; //TODO make this a user cfg? may be at a new section: "workarounds" or at advanced/developer?
   if(ivanconfig::IsHideWeirdHitAnimationsThatLookLikeMiss()){
     //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
-    if(bAnimate && setup.bWhoIsHitDied)bAnimate=false;
+    if(bAnimate && bWhoIsHitDied)bAnimate=false;
     if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
-    if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=setup.v2HitToSqrPos){
+    if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=v2HitToSqrPos){
       /*
        * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)
        *      and will look like a miss (what is wrong), so I tried setting it to instantly draw there,
@@ -232,10 +239,10 @@ truth hiteffect::DrawStep()
   //TODO use rotation?
   if(bAnimate){ //just to not fly if it died already
     //place at who hits to fly from it to who is hit
-    bldFinalDraw.Dest += setup.v2HitFromToSqrDiff*TILE_SIZE;
+    bldFinalDraw.Dest += v2HitFromToSqrDiff*TILE_SIZE;
 
     //displacement, interpolate TODO could be at v2 class with To and fPercent!
-    bldFinalDraw.Dest += -(setup.v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
+    bldFinalDraw.Dest += -(v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
   }
 
   if(bDraw){
@@ -244,9 +251,12 @@ truth hiteffect::DrawStep()
 
     //clear all hit effects as soon as possible
     setup.LSquareUnder->SendStrongNewDrawRequest();
-    setup.LSquareUnderOfWhoHits->SendStrongNewDrawRequest();
-    if(setup.LSquareUnderExtra1!=NULL)setup.LSquareUnderExtra1->SendStrongNewDrawRequest();
-    if(setup.LSquareUnderExtra2!=NULL)setup.LSquareUnderExtra2->SendStrongNewDrawRequest();
+    LSquareUnderOfWhoHits->SendStrongNewDrawRequest();
+    for(int i=0;i<vExtraSquares.size();i++){
+      vExtraSquares[i]->SendStrongNewDrawRequest(); DBGSV2(vExtraSquares[i]->GetPos())
+    }
+//    if(setup.LSquareUnderExtra1!=NULL)setup.LSquareUnderExtra1->SendStrongNewDrawRequest();
+//    if(setup.LSquareUnderExtra2!=NULL)setup.LSquareUnderExtra2->SendStrongNewDrawRequest();
   }
 
   return true; //did draw now
