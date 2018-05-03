@@ -538,6 +538,45 @@ farmer
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(CRUENTUS) { Chance = 10; }, wand(WAND_OF_NECROMANCY) { Chance = 10; } }
   }
+
+  Config CRAZED_FARMER;
+  {
+    DefaultName = "Brom";
+    Adjective = "crazed";
+    AttributeBonus = 30;
+    Belt = LEATHER belt { Enchantment = 5; }
+    RightWielded = COPPER sharpaxe { Enchantment = 5; }
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 50;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeWished = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    IsSadist = true;
+    UndeadVersions = false;
+    CanBeGenerated = true;
+    ClassStates = CONFUSED;
+    DeathMessage = "@Dd laughs and sobs and screams and dies.";
+    HostileReplies =
+    {
+      5,
+      "\"Please, let it stop!\"",
+      "\"I couldn't save her! No one can!!!\"",
+      "\"You're one of them! Of course. Hihihi...\"",
+      "\"Let us see the crimson. Yes, yes! Hihihi...\"",
+      "\"They're under your skin! Get them out!\"";
+    }
+    FriendlyReplies =
+    {
+      5,
+      "\"I would rather grow a share of crops in hell than stay alive. Hihihi...\"",
+      "\"Little mouse-babes played with cat, So she killed them and then ate.\"",
+      "\"I'm not insane, I'm not insane! Hihihi...\"",
+      "\"Let us see the crimson. Please? Hihihi...\"",
+      "\"I know what I know, I know what I know, I know what I know...\"";
+    }
+  }
 }
 
 guard
@@ -8323,6 +8362,7 @@ bum
   TotalVolume = 80000;
   TotalSize = 190;
   NameSingular = "bum";
+  BaseUnarmedStrength = 600;
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;

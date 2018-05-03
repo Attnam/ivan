@@ -654,6 +654,7 @@
 
 #define IMPRISONED_FARMER 1
 #define CULTIST 2
+#define CRAZED_FARMER 3
 
 #define ROOKIE 1
 #define VETERAN 2
