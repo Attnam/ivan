@@ -1535,14 +1535,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
         bldFromSqr.Bitmap=new bitmap(bldFromSqr.Border);
         bldFromSqr.Luminance=NORMAL_LUMINANCE;
         bldFromSqr.CustomData |= ALLOW_ANIMATE; return bldFromSqr; }(); DBGBLD(bldFromSqr);
-      Player->GetLSquareUnder()->DrawStaticContents(bldFromSqr);
+      //      Player->GetLSquareUnder()->DrawStaticContents(bldFromSqr);
+      Player->GetLSquareUnder()->GetGLTerrain()->Draw(bldFromSqr);
 
       // stretch that gfx enough to prepare the final blit
       static blitdata bldStretch = [](){bldStretch = DEFAULT_BLITDATA;
         bldStretch.Stretch=bldPlayerToSilhouetteAreaTMP.Stretch+1; //+1 as there is tiny bits around the player allowing fly/swim animations
         bldStretch.Border = TILE_V2;
         bldStretch.Bitmap=new bitmap(bldStretch.Border * bldStretch.Stretch);
-        bldStretch.Bitmap->CreateAlphaMap(0xFF*0.50); return bldStretch; }(); DBGBLD(bldStretch);
+        bldStretch.Bitmap->CreateAlphaMap(0xFF*0.50); return bldStretch;}(); DBGBLD(bldStretch);
       graphics::Stretch(ivanconfig::IsXBRZScale(),bldFromSqr.Bitmap,bldStretch,true);
 
       // copy from stretched as much as needed, to DB
