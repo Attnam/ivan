@@ -671,6 +671,9 @@
 #define HONOR 11
 #define EMISSARY 12
 #define TRAINEE 13
+#define ROOKIE_FEMALE 14
+#define VETERAN_FEMALE 15
+#define ELITE_FEMALE 16
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -746,6 +749,8 @@
 #define BATTLE_MAGE 2
 #define ELDER 3
 #define ARCH_MAGE 4
+
+#define SLAYER 1
 
 /* Least significant bit defines sex */
 

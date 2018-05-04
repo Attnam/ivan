@@ -1592,6 +1592,25 @@ darkknight
     GauntletColor = rgb16(50, 50, 50);
   }
 
+  Config ROOKIE_FEMALE;
+  {
+    AttributeBonus = -20;
+    Helmet = BRONZE helmet(FULL_HELMET);
+    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
+    LeftWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
+    Adjective = "rookie";
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 200;
+    RightSWeaponSkillHits = 100;
+    LeftSWeaponSkillHits = 100;
+    PanicLevel = 15;
+    ClothColor = rgb16(70, 70, 70);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
+  }
+
   Config VETERAN;
   {
     Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
@@ -1608,6 +1627,26 @@ darkknight
     ClothColor = rgb16(40, 40, 40);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
+  }
+
+  Config VETERAN_FEMALE;
+  {
+    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
+    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
+    LeftWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
+    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+    RightBoot = IRON boot { Enchantment = 1; }
+    Adjective = "veteran";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 500;
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 10;
+    ClothColor = rgb16(40, 40, 40);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
   }
 
   Config TEMPLAR; /* Tougher than veteran */
@@ -1684,6 +1723,30 @@ darkknight
     ClothColor = rgb16(20, 20, 120);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
+    DeathMessage = "@Dd dies with clenched teeth: \"I laugh in the face of death!\"";
+  }
+
+  Config ELITE_FEMALE;
+  {
+    AttributeBonus = 20;
+    Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = STEEL STEEL meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = STEEL STEEL meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = STEEL boot { Enchantment = 2; }
+    UsesLongAdjectiveArticle = true;
+    Adjective = "elite";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 1000;
+    RightSWeaponSkillHits = 500;
+    LeftSWeaponSkillHits = 500;
+    PanicLevel = 5;
+    TotalVolume = 90000;
+    ClothColor = rgb16(20, 20, 120);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
     DeathMessage = "@Dd dies with clenched teeth: \"I laugh in the face of death!\"";
   }
 
@@ -4798,6 +4861,7 @@ werewolfwolf
   {
     DefaultWillPower = 50;
     ArmBitmapPos = 64, 208;
+    EyeColor = rgb16(34, 139, 34);
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
     RightWielded = taiaha { Enchantment = 2; }
@@ -5038,7 +5102,7 @@ kobold
   Config MASTER_ASSASSIN;
   {
     AttributeBonus = 120;
-    Helmet = MITHRIL helmet(MASK);
+    Helmet = TIN helmet(MASK);
     BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
     RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 1; }
     LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 1; }
@@ -7137,7 +7201,6 @@ invisiblestalker
   }
   TotalSize = 170;
   NameSingular = "stalker";
-  NamePlural = "stalkers";
   Adjective = "invisible";
   UsesLongAdjectiveArticle = true;
   AttackStyle = USE_ARMS;
@@ -7153,6 +7216,17 @@ invisiblestalker
   ClassStates = INVISIBLE;
   BodyPartsDisappearWhenSevered = true;
   IsImmuneToStickiness = true;
+
+  Config SLAYER;
+  {
+    DefaultIntelligence = 1;
+    AttributeBonus = 50;
+    TotalSize = 100;
+    CWeaponSkillHits == 500;
+    NameSingular = "slayer";
+    PanicLevel = 50;
+    EyeColor = rgb16(180, 0, 0);
+  }
 }
 
 largecreature
@@ -8828,11 +8902,11 @@ nihil
   IsSadist = true;
   CanBeGenerated = true;
   IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
   AllowUnconsciousness = false;
   CanChoke = false;
   CanRead = true;
   UndeadVersions = false;
-  //BodyPartsDisappearWhenSevered = true;
   UsesNutrition = false;
   AllowPlayerToChangeEquipment = false;
   Helmet = helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
@@ -8862,7 +8936,7 @@ nihil
   DeathMessage = "@Dd dissolves into nothingness.";
   HostileReplies =
   {
-    7,
+    6,
     "\"Do you know what punishments I've endured for my sins? None. I am proof of the absurdity of 'divinity'. No true god would tolerate my existence.\"",
     "\"The truth is an endless deathly agony. The truth is death. You have to choose: death or lies. I've never been able to kill myself.\"",
     "\"In nothingness, there is no ignorance, no old age or death, no suffering.\"",

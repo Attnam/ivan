@@ -3363,6 +3363,11 @@ truth angel::CanCreateBodyPart(int I) const
   return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
 }
 
+truth nihil::CanCreateBodyPart(int I) const
+{
+  return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
+}
+
 truth genie::CanCreateBodyPart(int I) const
 {
   return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
