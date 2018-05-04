@@ -5395,6 +5395,18 @@ void zombie::PostConstruct()
     GainIntrinsic(LEPROSY);
 }
 
+truth orc::MoveRandomly()
+{
+  if(GetConfig() == REPRESENTATIVE)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
+}
+
 void orc::PostConstruct()
 {
   if(!RAND_N(25))
@@ -6057,6 +6069,18 @@ void siren::GetAICommand()
     return;
 
   humanoid::GetAICommand();
+}
+
+truth siren::MoveRandomly()
+{
+  if(GetConfig() == AMBASSADOR_SIREN)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
 }
 
 truth siren::TryToSing()

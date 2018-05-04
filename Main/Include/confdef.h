@@ -399,6 +399,7 @@
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
+#define REPRESENTATIVE 6
 
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
@@ -422,6 +423,17 @@
 
 #define BOY 1
 #define GIRL 2
+
+#define LIGHT_ASIAN_SIREN 1
+#define DARK_ASIAN_SIREN 2
+#define CAUCASIAN_SIREN 3
+#define DARK_SIREN 4
+#define GREEN_SIREN 5
+#define BLUE_SIREN 6
+#define RED_SIREN 7
+#define PINK_SIREN 8
+#define HISPANIC_SIREN 9
+#define AMBASSADOR_SIREN 10
 
 #define HATCHLING 1
 #define BOIL 2

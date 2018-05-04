@@ -2473,19 +2473,20 @@ goblin
 
   Config MONK;
   {
+    DefaultWisdom = 25;
     AttributeBonus = 50;
     RightWielded = 0;
     LeftWielded = 0;
     Belt = BLACK_LEATHER belt;
-    KnownCWeaponSkills == UNARMED;
     AttackStyle = USE_ARMS|USE_LEGS;
-    BaseUnarmedStrength = 600;
-    CWeaponSkillHits == 100;
+    BaseUnarmedStrength = 800;
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 200, 200; }
     NameSingular = "goblin monk";
-    CreateDivineConfigurations = true;
+    /* CreateDivineConfigurations = true; */
     CanRead = true;
     Sex = FEMALE;
-    AttachedGod = NONE;
+    AttachedGod = SOPHOS;
     ConstantCommandFlags = DONT_CHANGE_EQUIPMENT;
     ClothColor = rgb16(255, 69, 0); /* Orange robes. */
     Inventory == potion { SecondaryMaterial = VODKA; Chance = 30; }
@@ -4907,6 +4908,7 @@ werewolfwolf
     DefaultWillPower = 50;
     ArmBitmapPos = 64, 208;
     EyeColor = rgb16(34, 139, 34);
+    ClothColor = rgb16(0, 160, 0);
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
     RightWielded = taiaha { Enchantment = 2; }
@@ -4914,7 +4916,6 @@ werewolfwolf
     KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
     CWeaponSkillHits = { 2, 50, 100; }
     RightSWeaponSkillHits = 20;
-    LeftSWeaponSkillHits = 20;
     TamingDifficulty = 20;
     CanUseEquipment = true;
     IsNameable = false;

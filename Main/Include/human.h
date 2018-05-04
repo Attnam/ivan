@@ -604,6 +604,8 @@ CHARACTER(genie, humanoid)
 
 CHARACTER(orc, humanoid)
 {
+ public:
+  virtual truth MoveRandomly();
  protected:
   virtual void PostConstruct();
 };
@@ -736,6 +738,7 @@ CHARACTER(siren, humanoid)
 {
  public:
   virtual void GetAICommand();
+  virtual truth MoveRandomly();
  protected:
   virtual truth TryToSing();
 };
