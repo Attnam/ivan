@@ -5425,7 +5425,6 @@ taiaha /* meleeweapon-> */
   Price = 1000;
   MinCharges = 2;
   MaxCharges = 8;
-  IsKamikazeWeapon = true;
   TeleportPriority = 1000;
 
   Config BROKEN;

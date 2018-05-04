@@ -577,6 +577,7 @@ farmer
       "\"Let us see the crimson. Please? Hihihi...\"",
       "\"I know what I know, I know what I know, I know what I know...\"";
     }
+    Inventory == wand(WAND_OF_RESURRECTION);
   }
 }
 
@@ -4798,11 +4799,10 @@ werewolfwolf
     ArmBitmapPos = 64, 208;
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
-    RightWielded = weepblade { Enchantment = 1; }
-    LeftWielded = acidshield { Enchantment = 1; }
-    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 2; }
-    KnownCWeaponSkills = { 3, SMALL_SWORDS, SHIELDS, BITE; }
-    CWeaponSkillHits = { 3, 50, 50, 100; }
+    RightWielded = taiaha { Enchantment = 2; }
+    Cloak = PALM_LEAF cloak { Enchantment = 2; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
+    CWeaponSkillHits = { 2, 50, 100; }
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
     TamingDifficulty = 20;
@@ -4830,6 +4830,7 @@ werewolfwolf
     Sex = FEMALE;
     ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION|POLYMORPH_LOCK;
     AttachedGod = SILVA;
+    Inventory == scrollofearthquake;
   }
 }
 
@@ -5151,6 +5152,37 @@ gibberling
     "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
     "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
     "@Dd gibbers.";
+  }
+
+  Config LORD;
+  {
+    AttributeBonus = 50;
+    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE);
+    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 1; }
+    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 1; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, SHIELDS; }
+    CWeaponSkillHits = { 2, 100, 100; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    DefaultName = "Ydhee-Yiggub";
+    NameSingular = "gibberlord";
+    PanicLevel = 15;
+    FireResistance = 15;
+    ElectricityResistance = 15;
+    EnergyResistance = 15;
+    TamingDifficulty = 15;
+    ClassStates = SWIMMING|GAS_IMMUNITY;
+    ClothColor = rgb16(139, 0, 139);
+    CanUseEquipment = true;
+    WillCarryItems = true;
+    IsExtraFragile = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    Inventory == gasgrenade { Times = 3:7; }
   }
 }
 
