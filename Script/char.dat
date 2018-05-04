@@ -4942,7 +4942,7 @@ kobold
   WieldedPosition = 0, -1;
   IsExtraFragile = true;
 
-  Config CHIEFTAIN;
+  Config HUNTER;
   {
     AttributeBonus = 30;
     RightWielded = COPPER PINE_WOOD meleeweapon(SPEAR);
@@ -4954,7 +4954,7 @@ kobold
     LegMainColor = rgb16(111, 74, 37);
   }
 
-  Config LORD;
+  Config WARRIOR;
   {
     AttributeBonus = 60;
     RightWielded = IRON FIR_WOOD meleeweapon(SPEAR);
