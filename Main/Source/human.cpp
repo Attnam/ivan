@@ -54,6 +54,8 @@ cchar* ghost::ThirdPersonCriticalUnarmedHitVerb() const
 
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
+truth nihil::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
+
 truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
 material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
@@ -2703,6 +2705,16 @@ col16 housewife::GetHairColor() const
 }
 
 int angel::GetAttribute(int Identifier, truth AllowBonus) const // temporary until wings are bodyparts
+{
+  if(Identifier == LEG_STRENGTH)
+    return GetDefaultLegStrength();
+  else if(Identifier == AGILITY)
+    return GetDefaultAgility();
+  else
+    return humanoid::GetAttribute(Identifier, AllowBonus);
+}
+
+int nihil::GetAttribute(int Identifier, truth AllowBonus) const
 {
   if(Identifier == LEG_STRENGTH)
     return GetDefaultLegStrength();

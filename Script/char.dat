@@ -2422,6 +2422,7 @@ goblin
     CreateDivineConfigurations = true;
     CanRead = true;
     Sex = FEMALE;
+    AttachedGod = NONE;
     ConstantCommandFlags = DONT_CHANGE_EQUIPMENT;
     ClothColor = rgb16(255, 69, 0); /* Orange robes. */
     Inventory == potion { SecondaryMaterial = VODKA; Chance = 30; }
@@ -6957,7 +6958,6 @@ darkmage
     TotalVolume = 100000;
     TotalSize = 150;
     IsUnique = true;
-    PanicLevel = 0;
     TamingDifficulty = 50;
     IsNameable = false;
     CanBeCloned = false;
@@ -8790,4 +8790,87 @@ bum
     "\"Bad adventurer! No more living for you!\"",
     "@Dd yells gibberish in a drunken rage.";
   }
+}
+
+nihil
+{
+  DefaultArmStrength = 35;
+  DefaultLegStrength = 35;
+  DefaultDexterity = 35;
+  DefaultAgility = 70;
+  DefaultEndurance = 35;
+  DefaultPerception = 45;
+  DefaultIntelligence = 35;
+  DefaultWillPower = 35;
+  DefaultWisdom = 45;
+  DefaultCharisma = 60;
+  DefaultMana = 45;
+  FireResistance = 40;
+  ElectricityResistance = 40;
+  EnergyResistance = 40;
+  HeadBitmapPos = 112, 256;
+  TorsoBitmapPos = 48, 256;
+  ArmBitmapPos = 80, 256;
+  SkinColor = rgb16(200, 200, 200);
+  HairColor = rgb16(180, 180, 0);
+  EyeColor = rgb16(180, 0, 0);
+  TorsoMainColor = rgb16(40, 40, 40);
+  ArmMainColor = rgb16(40, 40, 40);
+  WieldedPosition = 0, -2;
+  DefaultName = "Nihil";
+  NameSingular = "fallen archangel";
+  PostFix = "of Mortifer";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  IsSadist = true;
+  CanBeGenerated = true;
+  IsImmuneToItemTeleport = true;
+  AllowUnconsciousness = false;
+  CanChoke = false;
+  CanRead = true;
+  UndeadVersions = false;
+  //BodyPartsDisappearWhenSevered = true;
+  UsesNutrition = false;
+  AllowPlayerToChangeEquipment = false;
+  Helmet = helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
+  Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = OCTIRON bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
+  Belt = BLACK_DIAMOND belt(BELT_OF_REGENERATION) { Enchantment = 4; }
+  RightWielded = BLACK_DIAMOND OCTIRON sharpaxe { Enchantment = 4; }
+  LeftWielded = BLACK_DIAMOND OCTIRON darkaxe { Enchantment = 4; }
+  RightGauntlet = OCTIRON gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+  RightRing = ring(RING_OF_INVISIBILITY);
+  LeftRing = ring(RING_OF_POLYMORPH_LOCK);
+  KnownCWeaponSkills == AXES;
+  CWeaponSkillHits == 5000;
+  RightSWeaponSkillHits = 2000;
+  LeftSWeaponSkillHits = 2000;
+  DisplacePriority = 10;
+  PanicLevel = 0;
+  BaseUnarmedStrength = 200;
+  TotalVolume = 60000;
+  TotalSize = 200;
+  Sex = FEMALE;
+  AttachedGod = NONE;
+  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY;
+  TamingDifficulty = NO_TAMING;
+  MoveType = FLY;
+  StandVerb = "flying";
+  DeathMessage = "@Dd dissolves into nothingness.";
+  HostileReplies =
+  {
+    7,
+    "\"Do you know what punishments I've endured for my sins? None. I am proof of the absurdity of 'divinity'. No true god would tolerate my existence.\"",
+    "\"The truth is an endless deathly agony. The truth is death. You have to choose: death or lies. I've never been able to kill myself.\"",
+    "\"In nothingness, there is no ignorance, no old age or death, no suffering.\"",
+    "\"The only absolute knowledge is that everything is meaningless.\"",
+    "\"I wish to believe but belief is a graveyard.\"",
+    "\"The point is there's no point.\"";
+  }
+  Inventory = { 8, celestialmonograph, GOLD stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
+  DayRequirementForGeneration = 60;
+  Frequency = 1;
 }

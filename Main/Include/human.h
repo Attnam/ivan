@@ -749,4 +749,13 @@ CHARACTER(bum, humanoid)
 {
 };
 
+CHARACTER(nihil, humanoid)
+{
+ public:
+  virtual truth BodyPartIsVital(int) const;
+  virtual int GetAttribute(int, truth = true) const;
+  virtual col24 GetBaseEmitation() const { return MakeRGB24(150, 110, 110); }
+  virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
+};
+
 #endif
