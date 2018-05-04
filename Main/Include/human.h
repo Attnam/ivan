@@ -168,6 +168,7 @@ CHARACTER(humanoid, character)
   virtual void ApplySpecialAttributeBonuses();
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
   truth HasSadistWeapon() const;
+  truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
   static v2 GetSilhouetteWhere(){return SilhouetteWhere;};
  protected:
@@ -347,6 +348,8 @@ CHARACTER(skeleton, humanoid)
 
 CHARACTER(goblin, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(golem, humanoid)

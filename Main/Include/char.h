@@ -1153,6 +1153,7 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
+  truth CheckAIZapOpportunity();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

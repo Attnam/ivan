@@ -2519,6 +2519,51 @@ goblin
     Frequency = 1500;
   }
 
+  Config WARLOCK;
+  {
+    DefaultIntelligence = 15;
+    DefaultMana = 25;
+    AttributeBonus = 25;
+    Helmet = skull;
+    BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = BONE BONE meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
+    KnownCWeaponSkills == POLE_ARMS;
+    CWeaponSkillHits == 20;
+    RightSWeaponSkillHits = 10;
+    PanicLevel = 66;
+    CanRead = true;
+    NameSingular = "goblin warlock";
+    ClothColor = rgb16(255, 0, 255);
+    AttachedGod = INFUSCOR;
+    ClassStates = INFRA_VISION;
+    HostileReplies =
+    {
+      3,
+      "@Dd tries to curse you.",
+      "@Dd tries to hex you.",
+      "@Dd cackles madly.";
+    }
+    FriendlyReplies =
+    {
+      2,
+      "\"Me know great body-part-zuppe! Me prepare - you want?\"",
+      "@Dd laughs: \"Humie friend. Many mommo we teleport. Many spider we polymorph.\"";
+    }
+    Inventory = { 7,
+                  wand(WAND_OF_TELEPORTATION) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_DOOR_CREATION) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_ACID_RAIN) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_WEBBING) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_MIRRORING) { Chance = 5; LifeExpectancy = 10000; },
+                  wand(WAND_OF_POLYMORPH) { Chance = 5; LifeExpectancy = 10000; },
+                  wand(WAND_OF_SLOW) { Chance = 50; LifeExpectancy = 10000; },
+                }
+    DangerModifier = 150;
+    HPRequirementForGeneration = 50;
+    DayRequirementForGeneration = 3;
+    Frequency = 1500;
+  }
+
   Config PRINCE;
   {
     AttributeBonus = 75;

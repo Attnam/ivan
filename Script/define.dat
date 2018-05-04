@@ -690,6 +690,7 @@
 #define PRINCE 3
 #define KING 4
 #define MONK 5
+#define WARLOCK 6
 
 #define CONICAL 1
 #define FLAT 2

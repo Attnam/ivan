@@ -1205,6 +1205,9 @@ void slave::GetAICommand()
 {
   SeekLeader(GetLeader());
 
+  if(CheckAIZapOpportunity())
+    return;
+
   if(CheckForEnemies(true, true, true))
     return;
 
@@ -6322,4 +6325,20 @@ truth darkknight::CheckForUsefulItemsOnGround(truth CheckFood)
     return false;
   else
     return character::CheckForUsefulItemsOnGround(CheckFood);
+}
+
+void goblin::GetAICommand()
+{
+  if(CheckAIZapOpportunity())
+    return;
+
+  humanoid::GetAICommand();
+}
+
+truth humanoid::CheckAIZapOpportunity()
+{
+  if(!HasAUsableArm() || !CanZap() || !(RAND() % 2) || StateIsActivated(CONFUSED))
+    return false;
+  else
+    return character::CheckAIZapOpportunity();
 }
