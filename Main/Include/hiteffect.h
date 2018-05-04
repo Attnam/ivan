@@ -51,19 +51,22 @@ class hiteffect : public entity
   virtual truth IsOnGround() const { return true; } //TODO false?
   void End();
  protected:
-  truth CheckIntegrity() const;
+  truth CheckIntegrity(int iDbgState) const;
   void cleanup();
-  int iState;
   int iDrawCount; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;
   hiteffectSetup setup;
   blitdata bldFinalDraw;
+  truth bBlitdataWasSet;
   lsquare* LSquareUnderOfWhoHits;
   std::vector<lsquare*> vExtraSquares;
   v2 v2HitFromSqrPos;
   v2 v2HitToSqrPos;
   v2 v2HitFromToSqrDiff;
   bool bWhoIsHitDied;
+
+  int iState;
+  void SetIntegrityState(int i);
 };
 
 #endif //__HITEFFECT_H_

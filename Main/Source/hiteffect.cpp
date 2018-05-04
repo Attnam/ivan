@@ -17,14 +17,29 @@
 
 int iDrawTot=3;
 
-hiteffect::hiteffect() : entity(HAS_BE), Next(0), iState(-1) { }
+hiteffect::hiteffect() : entity(HAS_BE), Next(0), iState(-1), bBlitdataWasSet(false) { }
 
 square* hiteffect::GetSquareUnderEntity(int) const {
   return setup.LSquareUnder;
 }
 
+#define DBGSTATE_INIT    1 //in order always
+#define DBGSTATE_SETBLD  2
+#define DBGSTATE_CLEANUP 3
+#define DBGSTATE_DESTROY 4
+#define DBGHITEFFINFO \
+    DBGSI(iState); \
+    DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
+    DBG3(setup.Type,bWhoIsHitDied,DBGAV2(v2HitFromSqrPos)); \
+    DBGSV2(v2HitToSqrPos); \
+    DBG2(setup.WhoHits->GetName(DEFINITE).CStr(),setup.WhoIsHit->GetName(DEFINITE).CStr()); \
+    DBGBLD(bldFinalDraw); \
+    DBGSV2(bmpHitEffect->GetSize()); \
+    DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr()); \
+    DBGSTK;
+
 hiteffect::hiteffect(hiteffectSetup s)
-: entity(HAS_BE), Next(0), iDrawCount(0), iState(0)
+: entity(HAS_BE), Next(0), iDrawCount(0), iState(0), bBlitdataWasSet(false)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
@@ -39,7 +54,7 @@ hiteffect::hiteffect(hiteffectSetup s)
     return B;
   }();
 
-  setup=s; DBG3(s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
+  setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
   bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
 
@@ -162,21 +177,26 @@ hiteffect::hiteffect(hiteffectSetup s)
   ( bld.Bitmap = bmpHitEffect = new bitmap(TILE_V2) )->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
   bmpTmp->NormalBlit(bld); DBGLN; //this "rotates"
 
-  iState=1;
+  SetIntegrityState(DBGSTATE_INIT);
+}
+
+void hiteffect::SetIntegrityState(int i){
+  if(iState != i-1){
+    DBGHITEFFINFO;
+    ABORT("Wrong state usage(%d), must always be equal to current(%d)+1",i,iState);
+  }
+
+  iState=i;
 }
 
 hiteffect::~hiteffect()
 {
   if(bmpHitEffect!=NULL)delete bmpHitEffect;
-  iState=3;
+  SetIntegrityState(DBGSTATE_DESTROY);
 }
 
 void hiteffect::Be()
 {
-  if(iState!=1)ABORT("hiteffect not initialized %d",iState);
-
-  CheckIntegrity();
-
   if(iDrawCount==iDrawTot)
   {
     setup.LSquareUnder->RemoveHitEffect(this);
@@ -184,7 +204,10 @@ void hiteffect::Be()
     SendToHell();
     return;
   }else{
-    setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+    if(bBlitdataWasSet){
+      CheckIntegrity(DBGSTATE_SETBLD);
+      setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
+    }
   }
 }
 
@@ -198,12 +221,17 @@ void hiteffect::cleanup(){
   LSquareUnderOfWhoHits=NULL;
   vExtraSquares.clear();
 
-  iState=2;
+  SetIntegrityState(DBGSTATE_CLEANUP);
 }
 
 void hiteffect::PrepareBlitdata(const blitdata& bld){
-  bldFinalDraw=bld; //copy
-  CheckIntegrity();
+  bldFinalDraw=bld; DBG1(this);DBGBLD(bldFinalDraw); //copy
+  bBlitdataWasSet=true;
+
+  if(iState!=DBGSTATE_SETBLD){ //can be set more than once
+    CheckIntegrity(DBGSTATE_INIT); //must be only  this one here
+    SetIntegrityState(DBGSTATE_SETBLD);
+  }
 }
 
 void hiteffect::End(){
@@ -258,26 +286,17 @@ truth hiteffect::DrawStep()
   return true; //did draw now
 }
 
-truth hiteffect::CheckIntegrity() const{
+truth hiteffect::CheckIntegrity(int iDbgState) const{
   if(
       bldFinalDraw.Border.X==0 ||
       bldFinalDraw.Border.Y==0
   ){
-#ifdef DBGMSG //will force exit during development
-    DBGSI(iState);
-    DBGSCTSV4("pointers",setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference);
-    DBGSI(setup.Type);
-    DBGSB(bWhoIsHitDied);
-    DBGSV2(v2HitFromSqrPos);
-    DBGSV2(v2HitToSqrPos);
-    DBGSC(setup.WhoHits->GetName(DEFINITE).CStr());
-    DBGSC(setup.WhoIsHit->GetName(DEFINITE).CStr());
-    DBGBLD(bldFinalDraw);
-    DBGSV2(bmpHitEffect->GetSize());
-    DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr());
-    DBGSTK;
-    ABORT("invalid hit effect setup");
+#ifdef DBGMSG
+    DBGHITEFFINFO;
+    ABORT("invalid hit effect setup"); //will force exit right here during development
 #endif
+
+    if(iState!=iDbgState)ABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iDbgState);
 
     return false;
   }
@@ -290,7 +309,7 @@ void hiteffect::Draw() const //TODO is it being called other than thru DrawStep(
    * As this is just an effect, it's funtionally shall not break the game.
    * So it will simply return if something is wrong.
    */
-  if(!CheckIntegrity())return;
+  if(!CheckIntegrity(DBGSTATE_SETBLD))return;
 
   if(iDrawCount<iDrawTot)
     bmpHitEffect->NormalMaskedBlit(bldFinalDraw); //TODO use alpha?
