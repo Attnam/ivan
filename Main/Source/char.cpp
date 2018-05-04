@@ -11131,3 +11131,135 @@ truth character::StateIsActivated (long What) const
   }
   return (TemporaryState & What) || (EquipmentState & What);
 }
+
+truth character::CheckAIZapOpportunity()
+{
+  if(!CanZap() || !IsHumanoid() || !IsEnabled())
+    return false;
+
+  // Check visible area for hostiles:
+  v2 Pos = GetPos();
+  v2 TestPos;
+  int SensibleRange = 5;
+  int RangeMax = GetLOSRange();
+
+  if(RangeMax < SensibleRange)
+    SensibleRange = RangeMax;
+
+  int CandidateDirections[7] = {0, 0, 0, 0, 0, 0, 0};
+  int HostileFound = 0;
+
+  for(int r = 2; r <= SensibleRange; ++r)
+  {
+    for(int dir = 0; dir < 8; ++dir)
+    {
+      switch(dir)
+      {
+       case 0:
+        TestPos = v2(Pos.X - r, Pos.Y - r);
+        break;
+       case 1:
+        TestPos = v2(Pos.X, Pos.Y - r);
+        break;
+       case 2:
+        TestPos = v2(Pos.X + r, Pos.Y - r);
+        break;
+       case 3:
+        TestPos = v2(Pos.X - r, Pos.Y);
+        break;
+       case 4:
+        TestPos = v2(Pos.X + r, Pos.Y);
+        break;
+       case 5:
+        TestPos = v2(Pos.X - r, Pos.Y + r);
+        break;
+       case 6:
+        TestPos = v2(Pos.X, Pos.Y + r);
+        break;
+       case 7:
+        TestPos = v2(Pos.X + r, Pos.Y + r);
+        break;
+      }
+
+      level* Level = GetLevel();
+
+      if(Level->IsValidPos(TestPos))
+      {
+        square* TestSquare = GetNearSquare(TestPos);
+        character* Dude = TestSquare->GetCharacter();
+
+        if((Dude && Dude->IsEnabled() && (GetRelation(Dude) != HOSTILE)
+           && Dude->CanBeSeenBy(this, false, true)))
+        {
+          CandidateDirections[dir] = BLOCKED;
+        }
+
+        if(Dude && Dude->IsEnabled() && (GetRelation(Dude) == HOSTILE)
+           && Dude->CanBeSeenBy(this, false, true)
+           && (CandidateDirections[dir] != BLOCKED))
+        {
+          CandidateDirections[dir] = SUCCESS;
+          HostileFound = 1;
+        }
+      }
+    }
+  }
+
+  int ZapDirection = 0;
+  int TargetFound = 0;
+
+  if(HostileFound)
+  {
+    for(int dir = 0; dir < 8; ++dir)
+    {
+      if( (CandidateDirections[dir] == SUCCESS) && !TargetFound)
+      {
+        ZapDirection = dir;
+        TargetFound = 1;
+      }
+    }
+    if(!TargetFound)
+    {
+      return false;
+    }
+  }
+  else
+    return false;
+
+
+  // Check inventory for zappable item.
+  itemvector ItemVector;
+  GetStack()->FillItemVector(ItemVector);
+  item* ToBeZapped = 0;
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+  if((ItemVector[c]->GetMinCharges() > 0) && ItemVector[c]->GetPrice()) // Empty wands have zero price!
+  {
+    ToBeZapped = ItemVector[c];
+    break;
+  }
+
+  if(!ToBeZapped)
+    return false;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s zaps %s.", CHAR_NAME(DEFINITE), ToBeZapped->CHAR_NAME(INDEFINITE));
+
+  if(ToBeZapped->Zap(this, GetPos(), ZapDirection))
+  {
+    EditAP(-100000 / APBonus(GetAttribute(PERCEPTION)));
+    return true;
+  }
+  else
+    return false;
+
+  TerminateGoingTo();
+  return true;
+
+  // Steps:
+  // (1) - Acquire target as nearest enemy.
+  // (2) - Check that this enemy is in range, and is in appropriate direction.
+  //       No friendly fire!
+  // (3) - Check inventory for zappable item.
+  // (4) - Zap item in direction where the enemy is.
+}
