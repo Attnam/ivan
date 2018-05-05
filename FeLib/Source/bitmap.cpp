@@ -308,6 +308,8 @@ truth bitmap::HasColor(col16 findColor)
     for(int iX=0;iX<Size.X;iX++)
       if(Image[iY][iX]==findColor)
         return true;
+
+  return false;
 }
 
 void bitmap::ReplaceColor(col16 findColor,col16 replaceWith)
