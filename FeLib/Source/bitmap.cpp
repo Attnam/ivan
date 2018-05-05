@@ -1192,7 +1192,66 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   return srf;
 }
 
-bool bXbrzLibCfgInitialized=false;
+void bitmap::ConfigureBlitdataRotation(blitdata& B,int iR){
+  // grant reset
+  B.Flags &= ~MIRROR;
+  B.Flags &= ~FLIP;
+  B.Flags &= ~ROTATE;
+
+  // set
+  iR %= 4;
+  /****
+   * 1 1
+   * 2 2
+   * 3 3
+   * 4 0->4
+   * 5 1
+   * 6 2
+   * 7 3
+   * 8 0->4
+   */
+  if(iR==0)iR = 4 * (iR>0 ? 1 : -1);
+  /*** the blade side is inverted, so invert the rotation
+   * -1 -> -4
+   * -2 -> -3
+   * -3 -> -2
+   * -4 -> -1
+   */
+  switch(iR){
+  case -1:iR=-4;break;
+  case -2:iR=-3;break;
+  case -3:iR=-2;break;
+  case -4:iR=-1;break;
+  }
+
+  switch(iR){
+  case 1:    // 1st step always rotate once
+    B.Flags |= ROTATE; //90 degrees
+    break;
+  case 2:
+    B.Flags |= FLIP|MIRROR; //180 degrees
+    break;
+  case 3:
+    B.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
+    break;
+  case 4:
+    // initial/default rotation
+    break;
+  case -1:    // 1st step always rotate once
+    B.Flags |= MIRROR; //-90 degrees
+    break;
+  case -2:
+    B.Flags |= FLIP|ROTATE; //-180 degrees
+    break;
+  case -3:
+    B.Flags |= FLIP; //-270 degrees
+    break;
+  case -4:
+    B.Flags |= MIRROR|ROTATE; //-0 degrees (like a mirrored image :))
+    break;
+  }
+}
+
 SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //format based on xbrzscale code
 
 SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL_Surface* srf) const
@@ -1250,6 +1309,7 @@ void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) con
     ABORT("invalid stretch destination %d,%d on target bitmap size %d,%d",Bto.Dest.X,Bto.Dest.Y,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
   }
 
+  static bool bXbrzLibCfgInitialized=false;
   if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
     libxbrzscale::setUseCache(true);DBGLN;
 #ifdef DBGMSG

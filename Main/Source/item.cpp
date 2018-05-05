@@ -1260,71 +1260,11 @@ void item::Draw(blitdata& BlitData) const
 
   bitmap* bmp = GraphicData.Picture[F];
   if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
-    static blitdata B = [](){
-      blitdata B2 = DEFAULT_BLITDATA;
-      //to reuse tmp bitmap memory
-      B2.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
-      B2.Border = TILE_V2; //bmp->GetSize();
-      return B2;
-    }();
+    static blitdata B = [](){B=DEFAULT_BLITDATA; //to reuse tmp bitmap memory
+      B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
+      B.Border = TILE_V2; return B; }();
 
-    // grant reset (may not be necessary but kept anyway in case of changing back to Blitdata param)
-    B.Flags &= ~MIRROR;
-    B.Flags &= ~FLIP;
-    B.Flags &= ~ROTATE;
-
-    // set
-    int iR = iRotateFlyingThrownStep%4;
-    /****
-     * 1 1
-     * 2 2
-     * 3 3
-     * 4 0->4
-     * 5 1
-     * 6 2
-     * 7 3
-     * 8 0->4
-     */
-    if(iR==0)iR = 4 * (iRotateFlyingThrownStep>0 ? 1 : -1);
-    /*** the blade side is inverted, so invert the rotation
-     * -1 -> -4
-     * -2 -> -3
-     * -3 -> -2
-     * -4 -> -1
-     */
-    switch(iR){
-    case -1:iR=-4;break;
-    case -2:iR=-3;break;
-    case -3:iR=-2;break;
-    case -4:iR=-1;break;
-    }
-    // 1st step always rotate once
-    switch(iR){
-    case 1:
-      B.Flags |= ROTATE; //90 degrees
-      break;
-    case 2:
-      B.Flags |= FLIP|MIRROR; //180 degrees
-      break;
-    case 3:
-      B.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
-      break;
-    case 4:
-      // initial/default rotation
-      break;
-    case -1:
-      B.Flags |= FLIP|ROTATE; //-90 degrees
-      break;
-    case -2:
-      B.Flags |= FLIP; //-180 degrees
-      break;
-    case -3:
-      B.Flags |= MIRROR|ROTATE; //-270 degrees
-      break;
-    case -4:
-      B.Flags |= MIRROR; //-0 degrees
-      break;
-    }
+    bitmap::ConfigureBlitdataRotation(B,iRotateFlyingThrownStep);
 
     bmp->NormalBlit(B); //or NormalMaskedBlit() only way to rotate...
     bmp = B.Bitmap;
