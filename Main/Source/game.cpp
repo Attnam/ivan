@@ -1273,9 +1273,50 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 //    bldPlayerCopyTMP.CustomData &= ~SQUARE_INDEX_MASK;
   }
 
+  /**
+   * This is an attempt to workaround the alpha blit.
+   *
+   * The problem (glitch):
+   *  To blit the player with transparent background we use TRANSPARENT_COLOR.
+   *  But when the alpha blit from Player->Draw() writes to the bitmap, it will blend with the TRANSPARENT_COLOR.
+   *
+   * The workaround:
+   *  Let it draw over TRANSPARENT_COLOR.
+   *  Look for the first available (non used) color from darkest possible.
+   *  Let it draw again over that not found color to prevent the glitch.
+   *
+   * TODO The correct solution (may be):
+   *  Let Player->Draw(), when blitting alpha pixels, optionally use some requested color (like black) just to blend
+   *  with thes alpha pixels, instead of the existing one (TRANSPARENT_COLOR that is pink).
+   */
+  static col16 aColorToClear[256];static bool bDummy_aColorToClear = [](){ //grey levels
+    for(int i=0;i<256;i++)aColorToClear[i]=MakeRGB16(i,i,i); return true;}();
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  Player->Draw(bldPlayerCopyTMP);
+  col16 colorNotFound=TRANSPARENT_COLOR; //this may cause one frame glitch from time to time :/ by bleding other color that has alpha with that color
+  for(int i=0;i<256;i++){ //starting from black (0,0,0) gave better visual results than from white or gray.
+    if(!bldPlayerCopyTMP.Bitmap->HasColor(aColorToClear[i])){
+      colorNotFound=aColorToClear[i]; DBG2(colorNotFound,i);
+      break;
+    }
+  }
+  if(colorNotFound!=TRANSPARENT_COLOR){
+    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,colorNotFound);
+    Player->Draw(bldPlayerCopyTMP);
+    bldPlayerCopyTMP.Bitmap->ReplaceColor(colorNotFound, TRANSPARENT_COLOR);
+  }
+  /*
+  static col16 ColorBlendWithAlphaAndToClear = MakeRGB16(255,254,253); //TODO expectedly unused, but just a wild bad guess...
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2, ColorBlendWithAlphaAndToClear);
+  Player->Draw(bldPlayerCopyTMP);
+  bldPlayerCopyTMP.Bitmap->ReplaceColor(ColorBlendWithAlphaAndToClear,TRANSPARENT_COLOR); //TODO this may create holes in the image...
+  */
+  /*
   static bool bBkgPlayerForceTransparent = true;
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2, bBkgPlayerForceTransparent ? TRANSPARENT_COLOR : bkgAlignmentColor);
   Player->Draw(bldPlayerCopyTMP);
+ * */
+
   bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap; //DBG1(bmpPlayerSrc);
 
   bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing

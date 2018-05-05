@@ -139,6 +139,8 @@ class bitmap
   void MoveLineHorizontally(int, int);
   void InterLace();
 
+  truth HasColor(col16 findColor);
+  void ReplaceColor(col16 findColor,col16 replaceWith);
   void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe=false);
  protected:
   v2 Size;

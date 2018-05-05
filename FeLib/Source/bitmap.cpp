@@ -302,6 +302,22 @@ void bitmap::ClearToColor(col16 Color)
   }
 }
 
+truth bitmap::HasColor(col16 findColor)
+{
+  for(int iY=0;iY<Size.Y;iY++)
+    for(int iX=0;iX<Size.X;iX++)
+      if(Image[iY][iX]==findColor)
+        return true;
+}
+
+void bitmap::ReplaceColor(col16 findColor,col16 replaceWith)
+{
+  for(int iY=0;iY<Size.Y;iY++)
+    for(int iX=0;iX<Size.X;iX++)
+      if(Image[iY][iX]==findColor)
+        Image[iY][iX]=replaceWith;
+}
+
 void bitmap::CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe){
   iSize*=sizeof(packcol16);
   if(bFailSafe && iYDest>=Size.Y)return;
