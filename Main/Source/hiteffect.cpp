@@ -192,7 +192,7 @@ void hiteffect::SetIntegrityState(int i){
 hiteffect::~hiteffect()
 {
   if(bmpHitEffect!=NULL)delete bmpHitEffect;
-  SetIntegrityState(DBGSTATE_DESTROY);
+  iState=DBGSTATE_DESTROY; //not safe to  use this here: SetIntegrityState(DBGSTATE_DESTROY); as may have debug messages...
 }
 
 void hiteffect::Be()
