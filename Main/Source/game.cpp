@@ -25,6 +25,7 @@
 #endif
 
 #include "allocate.h"
+#include "action.h"
 #include "area.h"
 #include "audio.h"
 #include "balance.h"
@@ -1220,7 +1221,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
   static blitdata bldPlayerCopyTMP = [](){bldPlayerCopyTMP = DEFAULT_BLITDATA;
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
-    bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE; //SQUARE_INDEX_MASK
+    bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE;
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE; return bldPlayerCopyTMP; }(); DBGBLD(bldPlayerCopyTMP);
   static int iCComp=50;
   static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iCComp,iCComp,iCComp); //still glitches a bit...
@@ -1249,6 +1250,29 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 //    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgAlignmentColor);
     break;
   }
+
+  bool bFluctuating = Player->IsSwimming() || Player->IsFlying();
+
+  bool bSleeping = false;
+  if(Player->GetAction()!=NULL)bSleeping=Player->GetAction()->IsUnconsciousness();
+
+  bool bRotate=false;
+  static blitdata bldRotated = [](){bldRotated = DEFAULT_BLITDATA;
+    bldRotated.Border=TILE_V2;
+    bldRotated.Bitmap = new bitmap(TILE_V2); return bldRotated; }(); DBGBLD(bldRotated);
+
+  static int iLastSleepSide=0;
+//  if(bSleeping && !bFluctuating){
+  if(bSleeping){ //TODO ? currently there is no space for breath animation if rotated +-90 degrees, some lines could be lost may be?
+    if(iLastSleepSide==0)iLastSleepSide=clock()%2==0?1:-1;
+    bitmap::ConfigureBlitdataRotation(bldRotated,1);
+//    bldPlayerCopyTMP.CustomData |= SQUARE_INDEX_MASK;
+    bRotate=true;
+  }else{
+    iLastSleepSide=0;
+//    bldPlayerCopyTMP.CustomData &= ~SQUARE_INDEX_MASK;
+  }
+
   static bool bBkgPlayerForceTransparent = true;
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2, bBkgPlayerForceTransparent ? TRANSPARENT_COLOR : bkgAlignmentColor);
   Player->Draw(bldPlayerCopyTMP);
@@ -1269,21 +1293,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
     bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
 
-    bool bFluctuating = Player->IsSwimming() || Player->IsFlying();
-
     static int iFullBreathCount=0;
 
     static bool bKeepRolling=false;
     static int iNextRollAtFullBreath=0;
-    if(bRolling && !bFluctuating && iTallState==0){
+    if(bRolling && !bFluctuating && !bSleeping && iTallState==0){
       if(Player->GetBurdenState()!=OVER_LOADED){
         if(iFullBreathCount>=iNextRollAtFullBreath){
           int iRollFPS = 3 * (PlayerIsRunning()?2:1); // 4 steps is one full roll 360 degrees
           int iStepDelay = CLOCKS_PER_SEC/iRollFPS;
-
-          static blitdata bldRollRotated = [](){bldRollRotated = DEFAULT_BLITDATA;
-            bldRollRotated.Border=TILE_V2;
-            bldRollRotated.Bitmap = new bitmap(TILE_V2); return bldRollRotated; }(); DBGBLD(bldRollRotated);
 
           static clock_t nextRollTime=0;
           static int iRollDirection=1;
@@ -1291,8 +1309,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
           if(clock() >= nextRollTime){
             iRollingCount++;
 
-            bitmap::ConfigureBlitdataRotation(bldRollRotated,iRollingCount*iRollDirection);
-            DBG5("RollRotate90deg", iRollingCount*iRollDirection, bldRollRotated.Flags&ROTATE, bldRollRotated.Flags&FLIP, bldRollRotated.Flags&MIRROR );
+            bitmap::ConfigureBlitdataRotation(bldRotated,iRollingCount*iRollDirection);
+            DBG5("RollRotate90deg", iRollingCount*iRollDirection, bldRotated.Flags&ROTATE, bldRotated.Flags&FLIP, bldRotated.Flags&MIRROR );
 
             if(iRollingCount >= 4){
               bKeepRolling=false;
@@ -1306,12 +1324,16 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
             nextRollTime = clock()+iStepDelay;
           }
 
-          bmpPlayerSrc->NormalBlit(bldRollRotated); //DBG1(bmpPlayerSrc);DBGLN;
-          bmpPlayerSrc = bldRollRotated.Bitmap; //DBG1(bmpPlayerSrc);DBGLN;
+          bRotate=true;
         }
       }else{
         bKeepRolling=false;
       }
+    }
+
+    if(bRotate){
+      bmpPlayerSrc->NormalBlit(bldRotated); //DBG1(bmpPlayerSrc);DBGLN;
+      bmpPlayerSrc = bldRotated.Bitmap; //DBG1(bmpPlayerSrc);DBGLN;
     }
 
     /********************************************
@@ -1367,7 +1389,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 
     }
 
-    if(!bKeepRolling){
+    if(!bKeepRolling && !bSleeping){
       int iYDest=0;
       int iBreathStepCount=0;
       if(ivanconfig::GetAltSilhouette()>=iBreathFrom){ //breath animation
@@ -1532,10 +1554,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
 //    bldPlayerToSilhouetteAreaAtDB.Bitmap = DOUBLE_BUFFER;
 //  };
   bldPlayerToSilhouetteAreaAtDB.Dest = v2AltSilPos;
-  if(bXbyYis3by4){
-    bldPlayerToSilhouetteAreaAtDB.Dest=v2AltSilMovingPos;
+  if(bXbyYis3by4 && !bSleeping){
+    bldPlayerToSilhouetteAreaAtDB.Dest = v2AltSilMovingPos; DBGLN;
   }else{
-    bldPlayerToSilhouetteAreaAtDB.Dest.Y+=TILE_SIZE/2; //to center on it
+//    if(bSleeping && !bFluctuating){
+//      bldPlayerToSilhouetteAreaAtDB.Dest.Y += iY4-TILE_SIZE;
+//    }else{
+//    bldPlayerToSilhouetteAreaAtDB.Dest.Y += TILE_SIZE/2 + (iY4-TILE_SIZE); //at bottom
+    bldPlayerToSilhouetteAreaAtDB.Dest.Y += (iY4-TILE_SIZE)*bldPlayerToSilhouetteAreaAtDB.Stretch; //at bottom
+    //    bldPlayerToSilhouetteAreaAtDB.Dest.Y += TILE_SIZE/2; //to center on it TODO wrong?
   }
   bldPlayerToSilhouetteAreaAtDB.Border = bmpPlayerSrc->GetSize(); DBGBLD(bldPlayerToSilhouetteAreaAtDB);
 
@@ -1624,13 +1651,14 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
       static int iWalkStepPrevious=-1;
       int iWalkStep = clock()/iStepDelay;
       if(iWalkStepPrevious!=iWalkStep){
-        int iHeight = v2StretchedBorder.Y * (bRolling ? 0.66 : 0.33);
+        int iHeight = v2StretchedBorder.Y * (bRolling||bSleeping ? 0.66 : 0.33);
         bldToDB.Dest = v2StretchedPos+(v2(0,v2StretchedBorder.Y-iHeight));
         bldToDB.Border.Y=iHeight;
 
         //walking ground effect
         static int iGroundSrcY=0;
-        if(Player->GetBurdenState()!=OVER_LOADED)
+        bool bIsMovingOnFloor = !bSleeping && Player->GetBurdenState()!=OVER_LOADED;
+        if(bIsMovingOnFloor)
           iGroundSrcY++; //moving
         if((iGroundSrcY+iHeight)>v2StretchedBorder.Y)
           iGroundSrcY=0;
