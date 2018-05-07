@@ -1131,7 +1131,11 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
-void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in many, merely to easy it's understanding by sub-contexts..
+/**
+ * TODO optimize it: there are some calculations that could be made once per turn and not per frame...
+ * TODO split this method in many, merely to easy it's understanding by sub-contexts..
+ */
+void game::UpdateAltSilhouette(bool AnimationDraw){
   static const int iStep=2;
   static const int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
   static const int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
@@ -1225,7 +1229,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE; return bldPlayerCopyTMP; }(); DBGBLD(bldPlayerCopyTMP);
   static int iDarkComp=50;
   static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iDarkComp,iDarkComp,iDarkComp); //still glitches a bit...
+//  static col24 darkestThatWontGlitchWithAlphaLum24 = MakeRGB24(iDarkComp,iDarkComp,iDarkComp);
   col16 bkgAlignmentColor = TRANSPARENT_COLOR;
+  col24 bkgAlignmentLum24 = NORMAL_LUMINANCE;
+  int iPlayerAlignment = GetPlayerAlignment();
+  int iAbsPA=(abs(iPlayerAlignment)*2)+1;
   switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
   case 0:
     // keep default transparent
@@ -1235,13 +1243,15 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     break;
   case 2:{
     /**
-     * depicts alignment with background colors/animations? tho, not more info than what is already written by the side of player's name
+     * depicts alignment with background colors (TODO cliche animations? fire chaotic, clouds lawful) tho, not more info than what is already written by the side of player's name
      */
-    festring alignment(GetVerbalPlayerAlignment());
+//    festring alignment(GetVerbalPlayerAlignment());
     const static int totColorVariations=10;
     static int iColorBase=200;
     static col16 reds[totColorVariations];
+    static col24 reds24[totColorVariations];
     static col16 blues[totColorVariations];
+    static col24 blues24[totColorVariations];
 //    static col16 greys[totColorVariations];
     static bool bDummy_Colors = [](){
       int iColorVarFinal,iMult;
@@ -1251,9 +1261,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
          */
         iMult=10;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
         reds[i]=MakeRGB16(iColorBase+iColorVarFinal,0,0); // chaotic variation
+        reds24[i]=MakeRGB24(GetRed16(reds[i]),GetGreen16(reds[i]),GetBlue16(reds[i]));
 
         iMult=2;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
         blues[i]=MakeRGB16(0,0,iColorBase+iColorVarFinal);
+        blues24[i]=MakeRGB24(GetRed16(blues[i]),GetGreen16(blues[i]),GetBlue16(blues[i]));
 
 //        iMult=1;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
 //        greys[i]=MakeRGB16(iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal);
@@ -1275,14 +1287,26 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
         iColorVariationDir=-1;
       }
     }
-//    static col16 red = MakeRGB16(iColorBase,0,0);
-//    static col16 blue = MakeRGB16(0,0,iColorBase);
-    //TODO use  the variations for each alignment to increase the color lightness, may be use the background fractal and luminiscence with red and blue?
-    if(alignment.Find("lawful" )!=-1)bkgAlignmentColor=blues[iColorVariationIndex];
-    else
-    if(alignment.Find("neutral")!=-1)bkgAlignmentColor=darkestThatWontGlitchWithAlpha; //greys[iColorVariationIndex];
-    else
-    if(alignment.Find("chaotic")!=-1)bkgAlignmentColor=reds[iColorVariationIndex];
+    switch(iPlayerAlignment){
+      case  4:
+      case  3:
+      case  2:
+      case  1:
+        bkgAlignmentColor=blues[iColorVariationIndex];
+        bkgAlignmentLum24=blues24[iColorVariationIndex];
+        break;
+      case  0:
+        bkgAlignmentColor=darkestThatWontGlitchWithAlpha; //greys[iColorVariationIndex];
+        bkgAlignmentLum24=NORMAL_LUMINANCE;// to not darken it //darkestThatWontGlitchWithAlphaLum24;
+        break;
+      case -1:
+      case -2:
+      case -3:
+      case -4:
+        bkgAlignmentColor=reds[iColorVariationIndex];
+        bkgAlignmentLum24=reds24[iColorVariationIndex];
+        break;
+    }
 //    igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap,v2(),TILE_V2); //not good...
 //    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgAlignmentColor);
     }break;
@@ -1672,7 +1696,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, darkestThatWontGlitchWithAlpha);
     break;
   case 2:
-    DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, bkgAlignmentColor);
+    static blitdata bldLum = [](){bldLum=DEFAULT_BLITDATA;
+      bldLum.Bitmap = DOUBLE_BUFFER;
+      bldLum.Dest = bldLum.Src = v2StretchedPos;
+      bldLum.Border = v2StretchedBorder; return bldLum;}();
+
+    static long iNextAlignBkgMove=0;
+    if(clock()>iNextAlignBkgMove){
+      v2 v2Displacement=v2( clock()%iAbsPA,  clock()%iAbsPA);
+      bldLum.Src = v2StretchedPos+v2Displacement;
+      long iDisplDelay = CLOCKS_PER_SEC/iAbsPA;
+      iNextAlignBkgMove = clock()+iDisplDelay;
+    }
+
+    bldLum.Luminance = bkgAlignmentLum24;
+    igraph::GetBackGround()->LuminanceBlit(bldLum);
+    //DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, bkgAlignmentColor);
     break;
   }
 
@@ -2765,34 +2804,59 @@ int game::GetDirectionForVector(v2 Vector)
   return DIR_ERROR;
 }
 
-cchar* game::GetVerbalPlayerAlignment()
-{
+int GetPlayerAlignmentSum(){
   long Sum = 0;
 
   for(int c = 1; c <= GODS; ++c)
   {
-    if(GetGod(c)->GetRelation() > 0)
-      Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->GetAlignment());
+    if(game::GetGod(c)->GetRelation() > 0)
+      Sum += game::GetGod(c)->GetRelation() * (5 - game::GetGod(c)->GetAlignment());
   }
 
-  if(Sum > 15000)
-    return "extremely lawful";
-  if(Sum > 10000)
-    return "very lawful";
-  if(Sum > 5000)
-    return "lawful";
-  if(Sum > 1000)
-    return "mildly lawful";
-  if(Sum > -1000)
-    return "neutral";
-  if(Sum > -5000)
-    return "mildly chaotic";
-  if(Sum > -10000)
-    return "chaotic";
-  if(Sum > -15000)
-    return "very chaotic";
+  return Sum;
+}
 
+int game::GetPlayerAlignment()
+{
+  long Sum = GetPlayerAlignmentSum();
+
+  if(Sum >  15000)return  4;
+  if(Sum >  10000)return  3;
+  if(Sum >   5000)return  2;
+  if(Sum >   1000)return  1;
+  if(Sum >  -1000)return  0;
+  if(Sum >  -5000)return -1;
+  if(Sum > -10000)return -2;
+  if(Sum > -15000)return -3;
+
+  return -4;
+}
+
+cchar* game::GetVerbalPlayerAlignment()
+{
+  switch(GetPlayerAlignment()){
+  case  4:return "extremely lawful";
+  case  3:return "very lawful";
+  case  2:return "lawful";
+  case  1:return "mildly lawful";
+  case  0:return "neutral";
+  case -1:return "mildly chaotic";
+  case -2:return "chaotic";
+  case -3:return "very chaotic";
+  case -4:return "extremely chaotic";
+  }
+  /* //kept just in case something changes...
+  long Sum = GetPlayerAlignment();
+  if(Sum >  15000)return "extremely lawful";
+  if(Sum >  10000)return "very lawful";
+  if(Sum >   5000)return "lawful";
+  if(Sum >   1000)return "mildly lawful";
+  if(Sum >  -1000)return "neutral";
+  if(Sum >  -5000)return "mildly chaotic";
+  if(Sum > -10000)return "chaotic";
+  if(Sum > -15000)return "very chaotic";
   return "extremely chaotic";
+  */
 }
 
 void game::CreateGods()

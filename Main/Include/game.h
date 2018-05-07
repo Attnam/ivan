@@ -271,6 +271,7 @@ class game
   static void SetPetrus(character* What) { Petrus = What; }
   static truth HandleQuitMessage();
   static int GetDirectionForVector(v2);
+  static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
   static int GetScreenXSize();
