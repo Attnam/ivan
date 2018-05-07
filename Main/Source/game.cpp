@@ -1223,31 +1223,71 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
     bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE;
     bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE; return bldPlayerCopyTMP; }(); DBGBLD(bldPlayerCopyTMP);
-  static int iCComp=50;
-  static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iCComp,iCComp,iCComp); //still glitches a bit...
-  col16 bkgAlignmentColor=darkestThatWontGlitchWithAlpha;
+  static int iDarkComp=50;
+  static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iDarkComp,iDarkComp,iDarkComp); //still glitches a bit...
+  col16 bkgAlignmentColor = TRANSPARENT_COLOR;
   switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
   case 0:
-    bkgAlignmentColor = TRANSPARENT_COLOR;
+    // keep default transparent
     break;
   case 1:
     bkgAlignmentColor = darkestThatWontGlitchWithAlpha;
     break;
-  case 2:
+  case 2:{
     /**
      * depicts alignment with background colors/animations? tho, not more info than what is already written by the side of player's name
      */
     festring alignment(GetVerbalPlayerAlignment());
-    static col16 red = MakeRGB16(200,0,0);
-    static col16 blue = MakeRGB16(0,0,200);
+    const static int totColorVariations=10;
+    static int iColorBase=200;
+    static col16 reds[totColorVariations];
+    static col16 blues[totColorVariations];
+//    static col16 greys[totColorVariations];
+    static bool bDummy_Colors = [](){
+      int iColorVarFinal,iMult;
+      for(int i=0;i<totColorVariations;i++){
+        /**
+         * the i*Multiplier: there are not so many colors on col16, will variate less with: 1, 2, 3.. but is useful :)
+         */
+        iMult=10;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
+        reds[i]=MakeRGB16(iColorBase+iColorVarFinal,0,0); // chaotic variation
+
+        iMult=2;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
+        blues[i]=MakeRGB16(0,0,iColorBase+iColorVarFinal);
+
+//        iMult=1;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
+//        greys[i]=MakeRGB16(iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal);
+      };return true; }();
+    static int iColorVariationIndex=0;
+    static int iColorVariationDir=1;
+    static int iColorVariationDelay=CLOCKS_PER_SEC/totColorVariations;
+    static int iColorVariationChangeAt=clock()+iColorVariationDelay;
+    if(clock()>=iColorVariationChangeAt){
+      iColorVariationIndex+=iColorVariationDir;
+
+      if(iColorVariationIndex<0){
+        iColorVariationIndex=0;
+        iColorVariationDir=1;
+      }
+
+      if(iColorVariationIndex==totColorVariations){
+        iColorVariationIndex=totColorVariations-1;
+        iColorVariationDir=-1;
+      }
+    }
+//    static col16 red = MakeRGB16(iColorBase,0,0);
+//    static col16 blue = MakeRGB16(0,0,iColorBase);
     //TODO use  the variations for each alignment to increase the color lightness, may be use the background fractal and luminiscence with red and blue?
-    if(alignment.Find("lawful" )!=-1)bkgAlignmentColor=blue;
+    if(alignment.Find("lawful" )!=-1)bkgAlignmentColor=blues[iColorVariationIndex];
     else
-    if(alignment.Find("neutral")!=-1)bkgAlignmentColor=darkestThatWontGlitchWithAlpha;
+    if(alignment.Find("neutral")!=-1)bkgAlignmentColor=darkestThatWontGlitchWithAlpha; //greys[iColorVariationIndex];
     else
-    if(alignment.Find("chaotic")!=-1)bkgAlignmentColor=red;
+    if(alignment.Find("chaotic")!=-1)bkgAlignmentColor=reds[iColorVariationIndex];
 //    igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap,v2(),TILE_V2); //not good...
 //    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgAlignmentColor);
+    }break;
+  default:
+    ABORT("invalid option GetAltSilhouettePreventColorGlitch %d",ivanconfig::GetAltSilhouettePreventColorGlitch());
     break;
   }
 
@@ -1293,16 +1333,26 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
     for(int i=0;i<256;i++)aColorToClear[i]=MakeRGB16(i,i,i); return true;}();
   bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
   Player->Draw(bldPlayerCopyTMP);
+
   col16 colorNotFound=TRANSPARENT_COLOR; //this may cause one frame glitch from time to time :/ by bleding other color that has alpha with that color
-  for(int i=0;i<256;i++){ //starting from black (0,0,0) gave better visual results than from white or gray.
-    if(!bldPlayerCopyTMP.Bitmap->HasColor(aColorToClear[i])){
-      colorNotFound=aColorToClear[i]; DBG2(colorNotFound,i);
-      break;
+
+  if(bkgAlignmentColor != TRANSPARENT_COLOR){ // prefers alignment color first for best blending
+    if(!bldPlayerCopyTMP.Bitmap->HasColor(bkgAlignmentColor))
+      colorNotFound=bkgAlignmentColor;
+  }
+
+  if(colorNotFound == TRANSPARENT_COLOR){
+    for(int i=0;i<256;i++){ //starting from black (0,0,0) gave better visual results than from white or gray.
+      if(!bldPlayerCopyTMP.Bitmap->HasColor(aColorToClear[i])){
+        colorNotFound=aColorToClear[i]; DBG2(colorNotFound,i);
+        break;
+      }
     }
   }
-  if(colorNotFound!=TRANSPARENT_COLOR){
+
+  if(colorNotFound != TRANSPARENT_COLOR){
     bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,colorNotFound);
-    Player->Draw(bldPlayerCopyTMP);
+    Player->Draw(bldPlayerCopyTMP); // draws again for best blending
     bldPlayerCopyTMP.Bitmap->ReplaceColor(colorNotFound, TRANSPARENT_COLOR);
   }
   /*
@@ -1657,8 +1707,9 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
    * prepare the multiplied ground copy for maximum details before stretching
    */
   static v2 v2CopyWH = [](){
-    v2CopyWH = v2(3,4);
-    v2CopyWH += v2(1,1); //+1 as there is tiny bits around the player allowing fly/swim animations
+    v2CopyWH = v2(3,4); //the tall silhouette
+    v2CopyWH += v2(1,1); //+1,1 as there is tiny bits around the player allowing fly/swim shaking animations
+    v2CopyWH += v2(0,1); //+1 if the ground liquid oscilates too much
     return v2CopyWH;
   }();
   static blitdata bldCopy = [](){bldCopy = DEFAULT_BLITDATA;
@@ -1762,8 +1813,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){ //TODO split this method in 
         float fAlpha = 0.85-(0.03*iWaveStep);
         bldStretch.Bitmap->FillAlpha(0xFF*fAlpha);
          */
-  //      bldStretch.Bitmap->AlphaMaskedBlit(bldToDB);      //      bldStretch.Bitmap->AlphaLuminanceBlit(bldToDB);
-        bldCopy.Bitmap->AlphaMaskedBlit(bldToDB);      //      bldStretch.Bitmap->AlphaLuminanceBlit(bldToDB);
+        bldCopy.Bitmap->AlphaMaskedBlit(bldToDB); //->AlphaLuminanceBlit(bldToDB);
       }
     }
   }
