@@ -43,17 +43,19 @@ hiteffect::hiteffect(hiteffectSetup s)
 {
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
+
   static short int iL  =0xFF*0.15; //dark works better with already light graphics like arcanite or bone stuff
   static short int iIsh=0xFF*0.90;
   static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
   static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
   static col24 lumBluish  =MakeRGB24(iL,iL,iIsh);
   static col24 lumYellowish =MakeRGB24(iIsh,iIsh,iL);
-  static blitdata bld = [](){
-    blitdata B = DEFAULT_BLITDATA;
-    B.Border = TILE_V2;
-    return B;
-  }();
+
+  static blitdata bldLum = [](){bldLum = DEFAULT_BLITDATA;
+    bldLum.Bitmap = new bitmap(TILE_V2);
+    bldLum.Border = TILE_V2; return bldLum;}();
+  bldLum.Src=v2(); //reset
+  bldLum.Bitmap->ClearToColor(TRANSPARENT_COLOR); //reset
 
   setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
@@ -78,88 +80,103 @@ hiteffect::hiteffect(hiteffectSetup s)
 
   switch(setup.iMode){
   case 1: //immersive
-    bld.Luminance = NORMAL_LUMINANCE;
+    bldLum.Luminance = NORMAL_LUMINANCE;
     break;
   case 2: //indicator
-    bld.Luminance = lumHigh;
+    bldLum.Luminance = lumHigh;
     break;
   case 3: //colored indicators where possible
     if(setup.WhoIsHit->IsPlayer() || setup.WhoIsHit->IsPet()){
-      bld.Luminance = lumReddish;
+      bldLum.Luminance = lumReddish;
     }else
     if(setup.WhoHits->IsPlayer()){
-      bld.Luminance = lumBluish;
+      bldLum.Luminance = lumBluish;
     }else
     if(setup.WhoHits->IsPet()){
-      bld.Luminance = lumGreenish;
+      bldLum.Luminance = lumGreenish;
     }else{
-      bld.Luminance = lumHigh;
+      bldLum.Luminance = lumHigh;
     }
     break;
   case 4: //dynamic colored indicators or based on usefulness of the color indicator
     if(setup.WhoIsHit->IsPlayer() || setup.WhoHits->IsPlayer()){ //player being hit or hitting is w/o doubts the origin of the attack
       if(setup.Critical){
-        bld.Luminance = lumReddish;
+        bldLum.Luminance = lumReddish;
       }else{
-        bld.Luminance = NORMAL_LUMINANCE;
+        bldLum.Luminance = NORMAL_LUMINANCE; // do not highlight non critical strikes
       }
     }else
     if(setup.WhoIsHit->IsPet()){
-      bld.Luminance = lumYellowish; // to call player attention
+      if(setup.Critical){
+        bldLum.Luminance = lumReddish;
+      }else{
+        bldLum.Luminance = lumYellowish; // just to call player attention
+      }
     }else
     if(setup.WhoHits->IsPet()){
       if(setup.itemEffectReference->IsWeapon(setup.WhoHits)){ //TODO why char as param?
-        bld.Luminance = lumBluish;
+        bldLum.Luminance = lumBluish;
       }else{
-        bld.Luminance = lumGreenish;
+        bldLum.Luminance = lumGreenish;
       }
     }else{
-      bld.Luminance = NORMAL_LUMINANCE;
+      bldLum.Luminance = NORMAL_LUMINANCE; // unrelated to the player's team have no highlighting at all
     }
 
-    if(bld.Luminance == NORMAL_LUMINANCE){
-      if(dynamic_cast<bodypart*>(setup.itemEffectReference)!=NULL){
-        bld.Luminance = lumHigh;
-      }
-    }
+//    if(bldLum.Luminance == NORMAL_LUMINANCE){
+//      if(dynamic_cast<bodypart*>(setup.itemEffectReference)!=NULL){
+//        bldLum.Luminance = lumHigh;
+//      }
+//    }
 
     break;
   default:
     ABORT("unsupported hiteffect mode %d",setup.iMode);
   }
 
-  static bitmap* bmpTmp = new bitmap(TILE_V2); DBGLN;
-  (bld.Bitmap = bmpTmp)->ClearToColor(TRANSPARENT_COLOR); DBGLN;
-  // reset static blitdata dir, grant it is drawn pointing to default top right
-  bld.Flags &= ~MIRROR;
-  bld.Flags &= ~FLIP;
-  bld.Flags &= ~ROTATE;
-  setup.itemEffectReference->Draw(bld); //the item* cant be stored as it may break and be sent to hell after here...
+  switch(setup.Type) //TODO use arm, feet, head material colors
+  {
+   case WEAPON_ATTACK:
+    setup.itemEffectReference->Draw(bldLum); //the item* cant be stored as it may break and be sent to hell after here...
+    break;
+   case UNARMED_ATTACK:
+    if(bldLum.Src.X==0)bldLum.Src.X = 16;
+    /* no break */
+   case KICK_ATTACK:
+    if(bldLum.Src.X==0)bldLum.Src.X = 32;
+    /* no break */
+   case BITE_ATTACK: // X is at 0
+    bldLum.Src.Y = 112;
+    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(bldLum);
+    break;
+  }
 
   /**
-   * GivenDir TODO make this functionality more global?
+   * GivenDir
    * 012
    * 3 4
    * 567
-   * */
-
-  /*
-   * From the tests, top right as 0 degrees HERE is only for 1 3 4 6. (but not always...)
-   * From the tests, top left  is 0 degrees HERE for         0 2 5 7. (but not always...)
-   * TODO WHY!?!? what sets these stuff so randomly?
-   * */
-
-  /*
+   *
+   * TODO what sets these stuff so randomly?
+   *      From the tests, top right as 0 degrees HERE is only for 1 3 4 6. (but not always...)
+   *      From the tests, top left  is 0 degrees HERE for         0 2 5 7. (but not always...)
+   *
    * TODO the items graphics are not all pointing to the upper right as 0 degrees!!! fix the graphics file!!! ? or set a hint for each item?
    *
-   * For now, this will only work for items like the single bleded axe and mace...
-   * TODO unless they suddenly come pre-flipped, WHY???
+   * For now, this will only work for items like the single bladed axe and mace (unless they suddenly come pre-flipped TODO what sets these stuff so randomly?)
    *
    * See doc MirrorFlipRotateToDegrees.jpg
    *
-   * The below may only work AFTER all items are poiting to the upper right ALWAYS :(
+   * TODO The below may only work AFTER the day all items are poiting to the upper right ALWAYS (not the random that is now)
    */
-  bool bRandomDir=true; // this should be kept true until all items are properly pointing to upper right when reaching this method!
+  bool bRandomDir=true; // TODO this should be kept true until all items are properly pointing to upper right when reaching this method! because otherwise it will just keep a wrong rotation and will look worse than it already is...
+  static blitdata bldRotate = [](){bldRotate = DEFAULT_BLITDATA;bldRotate.Border = TILE_V2;return bldRotate;}();
+  bldRotate.Bitmap=NULL; //reset
+
+  // reset static blitdata dir, grant it is drawn pointing to default top right
+  bldRotate.Flags &= ~MIRROR;
+  bldRotate.Flags &= ~FLIP;
+  bldRotate.Flags &= ~ROTATE;
 
   DBGEXEC(if(setup.WhoHits->IsPlayer())DBG3(DBGI(setup.Type),DBGI(setup.GivenDir),DBGC(setup.itemEffectReference->GetName(DEFINITE).CStr())));
   // there is no horizontal or vertical easy rotations implemented yet TODO but ex.: spears would not fit in 16x16 w/o shrinking it...
@@ -170,20 +187,20 @@ hiteffect::hiteffect(hiteffectSetup s)
   if(iDir==6)iDir = clock()%2==0 ? 5 : 7;
   switch(iDir){ //this reuses the blitdata!
   case 0:
-    bld.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
+    bldRotate.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
     break;
   case 2: //default is top right
     break;
   case 5:
-    bld.Flags |= FLIP|MIRROR; //180 degrees
+    bldRotate.Flags |= FLIP|MIRROR; //180 degrees
     break;
   case 7:
-    bld.Flags |= ROTATE; //90 degrees
+    bldRotate.Flags |= ROTATE; //90 degrees
     break;
   }
 
-  ( bld.Bitmap = bmpHitEffect = new bitmap(TILE_V2) )->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
-  bmpTmp->NormalBlit(bld); DBGLN; //this "rotates"
+  (bmpHitEffect = bldRotate.Bitmap = new bitmap(TILE_V2))->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
+  bldLum.Bitmap->NormalBlit(bldRotate); DBGLN; //this "rotates"
 
   SetIntegrityState(DBGSTATE_INIT);
 }
@@ -220,14 +237,16 @@ void hiteffect::Be()
 }
 
 void hiteffect::cleanup(){
+  // TODO necessary?
   setup.LSquareUnder=NULL;
   setup.WhoHits=NULL;
   setup.WhoIsHit=NULL;
   setup.itemEffectReference=NULL;
 
-  bmpHitEffect=NULL;
+  //not external reference, must be deleted at destructor: bmpHitEffect=NULL;
+
   LSquareUnderOfWhoHits=NULL;
-  vExtraSquares.clear();
+  vExtraSquares.clear(); //TODO move to destructor? or is automatic?
 
   SetIntegrityState(DBGSTATE_CLEANUP);
 }
