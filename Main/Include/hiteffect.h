@@ -27,7 +27,7 @@ class blitdata;
 struct hiteffectSetup { //TODO some of these are not actually an external setup...
   truth Critical;
   int GivenDir;
-  int Type; //TODO kept Type to use custom pictures for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
+  int Type; //TODO kept Type to use custom pictures (could just be the outline black/white as icon?) for bite(bigMouthWithTeeths), kick(bigFoot) and unarmed(BigPunchHand) one day
   character* WhoHits;
   character* WhoIsHit;
   item* itemEffectReference;

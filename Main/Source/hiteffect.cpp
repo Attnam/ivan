@@ -48,6 +48,7 @@ hiteffect::hiteffect(hiteffectSetup s)
   static col24 lumReddish =MakeRGB24(iIsh,iL,iL);
   static col24 lumGreenish=MakeRGB24(iL,iIsh,iL);
   static col24 lumBluish  =MakeRGB24(iL,iL,iIsh);
+  static col24 lumYellowish =MakeRGB24(iIsh,iIsh,iL);
   static blitdata bld = [](){
     blitdata B = DEFAULT_BLITDATA;
     B.Border = TILE_V2;
@@ -95,7 +96,7 @@ hiteffect::hiteffect(hiteffectSetup s)
       bld.Luminance = lumHigh;
     }
     break;
-  case 4: //dynamic colored indicators or not based on usefulness of the color indicator
+  case 4: //dynamic colored indicators or based on usefulness of the color indicator
     if(setup.WhoIsHit->IsPlayer() || setup.WhoHits->IsPlayer()){ //player being hit or hitting is w/o doubts the origin of the attack
       if(setup.Critical){
         bld.Luminance = lumReddish;
@@ -104,7 +105,7 @@ hiteffect::hiteffect(hiteffectSetup s)
       }
     }else
     if(setup.WhoIsHit->IsPet()){
-      bld.Luminance = lumReddish;
+      bld.Luminance = lumYellowish; // to call player attention
     }else
     if(setup.WhoHits->IsPet()){
       if(setup.itemEffectReference->IsWeapon(setup.WhoHits)){ //TODO why char as param?
@@ -115,6 +116,13 @@ hiteffect::hiteffect(hiteffectSetup s)
     }else{
       bld.Luminance = NORMAL_LUMINANCE;
     }
+
+    if(bld.Luminance == NORMAL_LUMINANCE){
+      if(dynamic_cast<bodypart*>(setup.itemEffectReference)!=NULL){
+        bld.Luminance = lumHigh;
+      }
+    }
+
     break;
   default:
     ABORT("unsupported hiteffect mode %d",setup.iMode);
