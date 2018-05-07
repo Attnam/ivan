@@ -6366,3 +6366,26 @@ truth humanoid::CheckAIZapOpportunity()
   else
     return character::CheckAIZapOpportunity();
 }
+
+truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
+
+  if(BodyPart && BodyPart->IsDestroyable(Victim))
+  {
+    if(BodyPart->GetMainMaterial())
+    {
+      if(BodyPart->CanBeBurned()
+         && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+         && !BodyPart->IsBurning())
+      {
+        if(BodyPart->TestActivationEnergy(50))
+        {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}

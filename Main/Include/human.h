@@ -519,6 +519,8 @@ CHARACTER(xinrochghost, ghost)
 
 CHARACTER(imp, humanoid)
 {
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(mistress, humanoid)

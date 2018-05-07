@@ -4497,8 +4497,9 @@ imp
   CanBeGenerated = true;
   Sex = UNDEFINED;
   CanUseEquipment = false;
-  KnownCWeaponSkills == UNARMED;
-  CWeaponSkillHits == 50;
+  AttackStyle = USE_ARMS|USE_HEAD;
+  KnownCWeaponSkills = { 2, UNARMED, BITE; }
+  CWeaponSkillHits = { 2, 50, 50; }
   PanicLevel = 75;
   BaseUnarmedStrength = 300;
   FleshMaterial = SULFUR;
