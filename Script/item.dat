@@ -1870,8 +1870,8 @@ wand
     PostFix = "of alchemy";
     MainMaterialConfig == LEAD;
     BeamRange = 5;
-    MinCharges = 2;
-    MaxCharges = 5;
+    MinCharges = 1;
+    MaxCharges = 3;
     BeamColor = YELLOW;
     BeamEffect = BEAM_ALCHEMY;
     AttachedGod = MELLIS;

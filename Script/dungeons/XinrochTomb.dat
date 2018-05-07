@@ -1791,7 +1791,7 @@ Dungeon XINROCH_TOMB;
 
       Square, Random;
       {
-        Character = golem(OMMEL_TOOTH);
+        Character = golem(OMMEL_TOOTH) { Inventory == Random { MinPrice = 2500; Times = 2; Chance = 75; } }
       }
 
       Square, Pos 1, 0;

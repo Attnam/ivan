@@ -1597,8 +1597,8 @@ darkknight
     AttributeBonus = -20;
     Helmet = BRONZE helmet(FULL_HELMET);
     BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
-    RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
-    LeftWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
+    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    LeftWielded = IRON IRON meleeweapon(SHORT_SWORD);
     Adjective = "rookie";
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 200;
@@ -2552,12 +2552,12 @@ goblin
     }
     Inventory = { 7,
                   wand(WAND_OF_TELEPORTATION) { Chance = 50; LifeExpectancy = 10000; },
-                  wand(WAND_OF_DOOR_CREATION) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_DOOR_CREATION) { Chance = 30; LifeExpectancy = 10000; },
                   wand(WAND_OF_ACID_RAIN) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_WEBBING) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_MIRRORING) { Chance = 5; LifeExpectancy = 10000; },
                   wand(WAND_OF_POLYMORPH) { Chance = 5; LifeExpectancy = 10000; },
-                  wand(WAND_OF_SLOW) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; }
                 }
     DangerModifier = 150;
     HPRequirementForGeneration = 50;
