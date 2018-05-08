@@ -2068,12 +2068,14 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
     graphics::DrawRectangleOutlineAround(bmpTgt, v2BkgIni, v2Border, clOutline, false);
   }
   for(int i=0;i<iTot;i++){ // fully work on one square per time
+    item* it = su->GetItem(i);
+    if(!it->CanBeSeenByPlayer())continue;
+
     if(bLight){ // each square
       bmpTgt->Fill(v2Pos, B.Border, DARK_GRAY);
       graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
     }
 
-    item* it = su->GetItem(i);
     B.Dest = v2Pos;
     it->Draw(B);
 
@@ -2137,6 +2139,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
     if(bOk && su==NULL)bOk=false; //TODO can this happen?
     if(bOk && su->GetItems()==0)bOk=false;
+    if(bOk)
+      for(int i=0;i<su->GetItems();i++){
+        if(su->GetItem(i)->CanBeSeenByPlayer())break;
+        if(i==(su->GetItems()-1))bOk=false; // nothing there can be seen
+      }
   }
 
   if(!bOk){ // reaching here is IMPORTANT as a disabler to the region!
