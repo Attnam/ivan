@@ -2862,6 +2862,10 @@ cchar* game::GetVerbalPlayerAlignment()
   case -3:return "very chaotic";
   case -4:return "extremely chaotic";
   }
+
+  ABORT("unsupported alignment %d",GetPlayerAlignment());
+  return NULL; //return just to let it compile
+
   /* //kept just in case something changes...
   long Sum = GetPlayerAlignment();
   if(Sum >  15000)return "extremely lawful";
