@@ -13,6 +13,7 @@
 
     #define DBGCHAR(ch,info) DBG8(info, ch->CHAR_NAME(DEFINITE), ch->GetAssignedName().CStr(), ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetStack()->GetItems()), DBGI(ch->GetEquipments()) ) //, std::bitset<16>(ch->GetFlags()) )
     #define DBGITEM(it,info) DBG3(info,it,(it==NULL?0:it->GetID()))
+    #define DBGABORT(x...) ABORT(x) //will only abort in development mode
 
     class dbgmsgprj{
       public:
@@ -101,6 +102,7 @@
   #define DBGITEM(it,info)
   #define DBGSRI(info)
   #define DBGSR
+  #define DBGABORT(x...)
 
 #endif //DBGMSG
 

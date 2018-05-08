@@ -1210,11 +1210,15 @@ SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory 
   return srf;
 }
 
-void bitmap::ConfigureBlitdataRotation(blitdata& B,int iR){
-  // grant reset
+void bitmap::ResetBlitdataRotation(blitdata& B)
+{
   B.Flags &= ~MIRROR;
   B.Flags &= ~FLIP;
   B.Flags &= ~ROTATE;
+}
+
+void bitmap::ConfigureBlitdataRotation(blitdata& B,int iR){
+  ResetBlitdataRotation(B);
 
   // set
   iR %= 4;

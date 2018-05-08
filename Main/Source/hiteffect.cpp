@@ -130,75 +130,117 @@ hiteffect::hiteffect(hiteffectSetup s)
 //    }
 
     break;
-  default:
-    ABORT("unsupported hiteffect mode %d",setup.iMode);
+  default: ABORT("unsupported hiteffect mode %d",setup.iMode);
   }
 
+  int iDegrees=0;
+  int iTipAt=2; //2 is default of most items TODO a simple database specifying where is the tip of each item gfx: 0 2 7 or 5
+  bool bAllowDirRotate=true;
+  bool bTypePrepared=false;
   switch(setup.Type) //TODO use arm, feet, head material colors
   {
    case WEAPON_ATTACK:
+    if(!bTypePrepared)bTypePrepared=true;
+
+    //TODO make it sure the item will be drawn pointing at the same direction found at it's graphics file
     setup.itemEffectReference->Draw(bldLum); //the item* cant be stored as it may break and be sent to hell after here...
     break;
-   case UNARMED_ATTACK:
-    if(bldLum.Src.X==0)bldLum.Src.X = 16;
+
+   /**
+    * These 3 specific graphics below are collected directly from the raw bitmap.
+    */
+
+   case UNARMED_ATTACK: // The punch used graphics looks messy if rotated at any direction as it has no direction (it points nowhere in the 2D, it is upwards in 3D).
+    if(!bTypePrepared){bTypePrepared=true;
+      bldLum.Src.X = 16;
+    }
     /* no break */
-   case KICK_ATTACK:
-    if(bldLum.Src.X==0)bldLum.Src.X = 32;
+
+   case KICK_ATTACK: // the used graphics points at dir 6 (down)
+    if(!bTypePrepared){bTypePrepared=true;
+      bldLum.Src.X = 32;
+      switch(setup.GivenDir){
+        case 0:case 1:case 2: iDegrees=180; break;
+        case 3:               iDegrees= 90; break;
+        case 4:               iDegrees=270; break;
+        // ignored 5 (6) 7
+      }
+    }
     /* no break */
-   case BITE_ATTACK: // X is at 0
+
+   case BITE_ATTACK: // the used graphics points at dir 4 (right)
+    if(!bTypePrepared){bTypePrepared=true;
+      switch(setup.GivenDir){
+        case 0:case 1:case 2: iDegrees=270; break;
+        case 3:               iDegrees=180; break;
+        // ignored (4)
+        case 5:case 6:case 7: iDegrees= 90; break;
+      }
+    }
+
     bldLum.Src.Y = 112;
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(bldLum);
+
+    bAllowDirRotate=false;
+
     break;
+
+   default: DBGABORT("unsupported type mode %d",setup.Type);
   }
 
   /**
-   * GivenDir
+   * GivenDir, see doc MirrorFlipRotateToDegrees.jpg
    * 012
    * 3 4
    * 567
-   *
-   * TODO what sets these stuff so randomly?
-   *      From the tests, top right as 0 degrees HERE is only for 1 3 4 6. (but not always...)
-   *      From the tests, top left  is 0 degrees HERE for         0 2 5 7. (but not always...)
-   *
-   * TODO the items graphics are not all pointing to the upper right as 0 degrees!!! fix the graphics file!!! ? or set a hint for each item?
-   *
-   * For now, this will only work for items like the single bladed axe and mace (unless they suddenly come pre-flipped TODO what sets these stuff so randomly?)
-   *
-   * See doc MirrorFlipRotateToDegrees.jpg
-   *
-   * TODO The below may only work AFTER the day all items are poiting to the upper right ALWAYS (not the random that is now)
    */
-  bool bRandomDir=true; // TODO this should be kept true until all items are properly pointing to upper right when reaching this method! because otherwise it will just keep a wrong rotation and will look worse than it already is...
   static blitdata bldRotate = [](){bldRotate = DEFAULT_BLITDATA;bldRotate.Border = TILE_V2;return bldRotate;}();
   bldRotate.Bitmap=NULL; //reset
 
   // reset static blitdata dir, grant it is drawn pointing to default top right
-  bldRotate.Flags &= ~MIRROR;
-  bldRotate.Flags &= ~FLIP;
-  bldRotate.Flags &= ~ROTATE;
+  bitmap::ResetBlitdataRotation(bldRotate);
 
   DBGEXEC(if(setup.WhoHits->IsPlayer())DBG3(DBGI(setup.Type),DBGI(setup.GivenDir),DBGC(setup.itemEffectReference->GetName(DEFINITE).CStr())));
   // there is no horizontal or vertical easy rotations implemented yet TODO but ex.: spears would not fit in 16x16 w/o shrinking it...
-  int iDir = bRandomDir ? clock()%8 : setup.GivenDir;
-  if(iDir==1)iDir = clock()%2==0 ? 0 : 2;
-  if(iDir==3)iDir = clock()%2==0 ? 0 : 5;
-  if(iDir==4)iDir = clock()%2==0 ? 2 : 7;
-  if(iDir==6)iDir = clock()%2==0 ? 5 : 7;
-  switch(iDir){ //this reuses the blitdata!
-  case 0:
-    bldRotate.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
-    break;
-  case 2: //default is top right
-    break;
-  case 5:
-    bldRotate.Flags |= FLIP|MIRROR; //180 degrees
-    break;
-  case 7:
-    bldRotate.Flags |= ROTATE; //90 degrees
-    break;
+  if(bAllowDirRotate){
+    int iDir = setup.GivenDir;
+
+    if(iDir==1)iDir = clock()%2==0 ? 0 : 2;
+    if(iDir==3)iDir = clock()%2==0 ? 0 : 5;
+    if(iDir==4)iDir = clock()%2==0 ? 2 : 7;
+    if(iDir==6)iDir = clock()%2==0 ? 5 : 7;
+
+    switch(iDir){
+      case 0: iDegrees=270; break;
+      case 2: iDegrees=  0; break; //default at top right
+      case 5: iDegrees=180; break;
+      case 7: iDegrees= 90; break;
+      default: DBGABORT("unsupported iDir %d",iDir);
+    }
+
+    // adjusts the requested rotation based on the tip default rotation
+    switch(iTipAt){
+      case 2:break; //default top right
+      case 7:iDegrees+=-90;break; //lower right
+      case 5:iDegrees+=180;break; //lower left
+      case 0:iDegrees+= 90;break; //upper left
+      default: DBGABORT("unsupported iTipAt %d",iTipAt); //should have been converted to one of these 4
+    }
+
+    // fix overlaps
+    while(iDegrees>=360)iDegrees-=360;
+    while(iDegrees<   0)iDegrees+=360;
   }
 
+  switch(iDegrees){
+    case 270: bldRotate.Flags |= ROTATE|FLIP|MIRROR; break;
+    case 180: bldRotate.Flags |=        FLIP|MIRROR; break;
+    case  90: bldRotate.Flags |= ROTATE;             break;
+    case   0: break; //default
+    default: DBGABORT("unsupported iDegrees %d",iDegrees);
+  }
+
+  DBG7(iDegrees, bAllowDirRotate,setup.GivenDir, bTypePrepared,bldRotate.Flags&ROTATE,bldRotate.Flags&FLIP,bldRotate.Flags&MIRROR);
   (bmpHitEffect = bldRotate.Bitmap = new bitmap(TILE_V2))->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
   bldLum.Bitmap->NormalBlit(bldRotate); DBGLN; //this "rotates"
 
@@ -253,6 +295,7 @@ void hiteffect::cleanup(){
 
 void hiteffect::PrepareBlitdata(const blitdata& bld){
   bldFinalDraw=bld; DBG1(this);DBGBLD(bldFinalDraw); //copy
+  bitmap::ResetBlitdataRotation(bldFinalDraw); //prevent it from further rotating beyong the initial setup at constructor!!!
   bBlitdataWasSet=true;
 
   if(iState!=DBGSTATE_SETBLD){ //can be set more than once
@@ -318,10 +361,8 @@ truth hiteffect::CheckIntegrity(int iDbgState) const{
       bldFinalDraw.Border.X==0 ||
       bldFinalDraw.Border.Y==0
   ){
-#ifdef DBGMSG
     DBGHITEFFINFO;
-    ABORT("invalid hit effect setup"); //will force exit right here during development
-#endif
+    DBGABORT("invalid hit effect setup"); //will force exit right here during development
 
     if(iState!=iDbgState)ABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iDbgState);
 
