@@ -1910,8 +1910,8 @@ v2 humanoid::GetEquipmentPanelPos(int I) const // convert to array
   return v2(24, 12);
 }
 
-v2 humanoid::SilhouetteWhere={0,0}; //zeroed because wont init properly here.. TODO explain why.
-v2 humanoid::SilhouetteWhereDefault={0,0}; //zeroed because wont init properly here.. TODO explain why.
+v2 humanoid::SilhouetteWhere=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
+v2 humanoid::SilhouetteWhereDefault=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
 void humanoid::DrawSilhouette(truth AnimationDraw) const
 {
   int c;

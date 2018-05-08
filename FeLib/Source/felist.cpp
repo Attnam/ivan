@@ -23,8 +23,8 @@
 
 const felist* FelistCurrentlyDrawn = 0;
 
-v2 felist::v2SelectedPos = {0,0};
-v2 felist::v2DefaultEntryImageSize={0,0};
+v2 felist::v2SelectedPos = v2(0,0);
+v2 felist::v2DefaultEntryImageSize=v2(0,0);
 
 truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;

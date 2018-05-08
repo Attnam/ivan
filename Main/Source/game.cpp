@@ -208,8 +208,8 @@ blitdata bldListItemTMP = DEFAULT_BLITDATA;
 int iItemsUnderStretch = 2;
 
 int iZoomFactor=6;
-v2 ZoomPos = {0,0};
-v2 silhouettePos = {0,0};
+v2 ZoomPos = v2(0,0);
+v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
 
@@ -365,7 +365,7 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
       if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
       if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
 
-      v2ChkSqrPos={iX,iY};
+      v2ChkSqrPos=v2(iX,iY);
       if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
       v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
       plsqChk = plv->GetLSquare(v2ChkSqrPos);
@@ -446,7 +446,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
 //  v2 v2SqrPosPlayer = Player->GetPos();
   v2 v2SqrPosCam = GetCamera();
-  v2 v2DeltaSqr = {v2SqrPos.X-v2SqrPosCam.X, v2SqrPos.Y-v2SqrPosCam.Y};
+  v2 v2DeltaSqr = v2(v2SqrPos.X-v2SqrPosCam.X, v2SqrPos.Y-v2SqrPosCam.Y);
 
   v2 deltaSquaresForUpperLeft=v2DeltaSqr;
   deltaSquaresForUpperLeft.X-=iSAP;
@@ -480,7 +480,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
   // this grants positioninig on the upper left player's square corner
 
   // relative to full dungeon in source image vanilla position
-  v2 deltaForFullDungeonSrc = {bldAroundOnScreenTMP.Src.X-bldFullDungeonTMP.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeonTMP.Src.Y};
+  v2 deltaForFullDungeonSrc = v2(bldAroundOnScreenTMP.Src.X-bldFullDungeonTMP.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeonTMP.Src.Y);
 
   // relative to full dungeon over it's stretched image position
   bldAroundOnScreenTMP.Dest.X=bldFullDungeonTMP.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
@@ -1233,7 +1233,6 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   col16 bkgAlignmentColor = TRANSPARENT_COLOR;
   col24 bkgAlignmentLum24 = NORMAL_LUMINANCE;
   int iPlayerAlignment = GetPlayerAlignment();
-  int iAbsPA=(abs(iPlayerAlignment)*2)+1;
   switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
   case 0:
     // keep default transparent
@@ -1243,33 +1242,37 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     break;
   case 2:{
     /**
-     * depicts alignment with background colors (TODO cliche animations? fire chaotic, clouds lawful) tho, not more info than what is already written by the side of player's name
+     * depicts alignment with background colors
+     * tho, not more info than what is already written by the side of player's name
+     * TODO animations? fire chaotic, clouds lawful
      */
-//    festring alignment(GetVerbalPlayerAlignment());
-    const static int totColorVariations=10;
-    static int iColorBase=200;
-    static col16 reds[totColorVariations];
-    static col24 reds24[totColorVariations];
-    static col16 blues[totColorVariations];
-    static col24 blues24[totColorVariations];
-//    static col16 greys[totColorVariations];
+    const static int iColorCompBase=0xff/2; // should start where NORMAL_LUMINANCE does, in the middle of the range
+    const static int iColorCompMax=225;
+    const static int iColorStepMult=3;
+    const static int iMaxColorVariations = (iColorCompMax-iColorCompBase)/iColorStepMult;
+    static col16 reds[iMaxColorVariations];
+    static col24 reds24[iMaxColorVariations];
+    static col16 blues[iMaxColorVariations];
+    static col24 blues24[iMaxColorVariations];
+//    static col16 greys[iMaxColorVariations];
     static bool bDummy_Colors = [](){
-      int iColorVarFinal,iMult;
-      for(int i=0;i<totColorVariations;i++){
+      int iColorVarFinal;
+      for(int i=0;i<iMaxColorVariations;i++){
         /**
-         * the i*Multiplier: there are not so many colors on col16, will variate less with: 1, 2, 3.. but is useful :)
+         * the i*Multiplier: there are not so many colors on col16
          */
-        iMult=10;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
-        reds[i]=MakeRGB16(iColorBase+iColorVarFinal,0,0); // chaotic variation
-        reds24[i]=MakeRGB24(GetRed16(reds[i]),GetGreen16(reds[i]),GetBlue16(reds[i]));
+        iColorVarFinal = iColorCompBase + (i+1)*iColorStepMult; //+1 to avoid the extact middle
 
-        iMult=2;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
-        blues[i]=MakeRGB16(0,0,iColorBase+iColorVarFinal);
-        blues24[i]=MakeRGB24(GetRed16(blues[i]),GetGreen16(blues[i]),GetBlue16(blues[i]));
+        reds[i]=MakeRGB16(iColorVarFinal,0,0); // chaotic variation
+        reds24[i]=MakeRGB24(GetRed16(reds[i]),iColorCompBase,iColorCompBase);
+
+        blues[i]=MakeRGB16(0,0,iColorVarFinal);
+        blues24[i]=MakeRGB24(iColorCompBase,iColorCompBase,GetBlue16(blues[i]));
 
 //        iMult=1;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
 //        greys[i]=MakeRGB16(iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal);
       };return true; }();
+    const static int totColorVariations=iMaxColorVariations/4; //4 is max lawful or chaotic steps
     static int iColorVariationIndex=0;
     static int iColorVariationDir=1;
     static int iColorVariationDelay=CLOCKS_PER_SEC/totColorVariations;
@@ -1287,11 +1290,19 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
         iColorVariationDir=-1;
       }
     }
-    switch(iPlayerAlignment){
-      case  4:
-      case  3:
-      case  2:
+    int iBaseColorVariation=0;
+    switch(abs(iPlayerAlignment)){
+      case  4: iBaseColorVariation+=totColorVariations;
+      case  3: iBaseColorVariation+=totColorVariations;
+      case  2: iBaseColorVariation+=totColorVariations;
       case  1:
+      case  0:
+        iColorVariationIndex+=iBaseColorVariation;
+        if(iColorVariationIndex>=iMaxColorVariations)iColorVariationIndex=iMaxColorVariations-1; //fail safe...
+    }
+    DBG5(iColorVariationIndex,iBaseColorVariation,totColorVariations,iMaxColorVariations,iColorVariationDir);
+    switch(iPlayerAlignment){
+      case  4:      case  3:      case  2:      case  1:
         bkgAlignmentColor=blues[iColorVariationIndex];
         bkgAlignmentLum24=blues24[iColorVariationIndex];
         break;
@@ -1299,10 +1310,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
         bkgAlignmentColor=darkestThatWontGlitchWithAlpha; //greys[iColorVariationIndex];
         bkgAlignmentLum24=NORMAL_LUMINANCE;// to not darken it //darkestThatWontGlitchWithAlphaLum24;
         break;
-      case -1:
-      case -2:
-      case -3:
-      case -4:
+      case -1:      case -2:      case -3:      case -4:
         bkgAlignmentColor=reds[iColorVariationIndex];
         bkgAlignmentLum24=reds24[iColorVariationIndex];
         break;
@@ -1684,7 +1692,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   /*************************************************
    *  blit the base background to DB
    */
-  static const v2 v2StretchedPos = v2AltSilPos+v2(-2,0);
+  static const v2 v2StretchedPos = v2AltSilPos+v2(-2,0); DBG2(DBGAV2(v2AltSilPos),DBGAV2(v2StretchedPos));
 //  v2 v2StretchedBorder = (v2OverSilhouette+v2(4,2))*bldPlayerToSilhouetteAreaAtDB.Stretch;
   static const v2 v2StretchedBorder = (v2OverSilhouette*bldPlayerToSilhouetteAreaAtDB.Stretch)+v2(4,2);
 
@@ -1703,14 +1711,23 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
     static long iNextAlignBkgMove=0;
     if(clock()>iNextAlignBkgMove){
-      v2 v2Displacement=v2( clock()%iAbsPA,  clock()%iAbsPA);
-      bldLum.Src = v2StretchedPos+v2Displacement;
+      static v2 v2DisplTargetNext=v2(0,0); DBGSV2(v2DisplTargetNext);
+      static v2 v2Displacement=v2(0,0); DBGSV2(v2Displacement);
+      v2 v2Diff = v2DisplTargetNext-v2Displacement; DBGSV2(v2Diff);
+      int iAbsPA=(abs(iPlayerAlignment)*2)+1; DBG1(iAbsPA);
+      if(v2Diff.Is0()){
+        v2DisplTargetNext=v2( clock()%iAbsPA,  clock()%iAbsPA);
+      }else{
+        if(v2Diff.X!=0)v2Displacement.X += v2Diff.X>0 ? 1 : -1;
+        if(v2Diff.Y!=0)v2Displacement.Y += v2Diff.Y>0 ? 1 : -1;
+      }
+      bldLum.Src = v2StretchedPos+v2Displacement; DBGSV2(v2Displacement);
       long iDisplDelay = CLOCKS_PER_SEC/iAbsPA;
       iNextAlignBkgMove = clock()+iDisplDelay;
     }
 
     bldLum.Luminance = bkgAlignmentLum24;
-    igraph::GetBackGround()->LuminanceBlit(bldLum);
+    igraph::GetBackGround()->LuminanceBlit(bldLum); DBGBLD(bldLum);
     //DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, bkgAlignmentColor);
     break;
   }
@@ -3627,7 +3644,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
   
-  v2TopLeft={iX,iY};
+  v2TopLeft=v2(iX,iY);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
 }

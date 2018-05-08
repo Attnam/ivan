@@ -57,7 +57,7 @@
       static std::stringstream dbgV2(v2 v2Val,const char* c){
         std::stringstream ss;
         ss<<c<<"/";
-        ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";
+        ss<<"X,Y="<<((int)v2Val.X)<<","<<((int)v2Val.Y)<<"/";
         return ss;
       }
       #endif //DBGMSG_V2
