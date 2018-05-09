@@ -1365,7 +1365,7 @@ festring game::SaveName(cfestring& Base)
     SaveName << Base;
 
   for(festring::sizetype c = 0; c < SaveName.GetSize(); ++c)
-    if(SaveName[c] == ' ')
+    if(SaveName[c] == ' ') //TODO prevent other possibly troublesome invalid characters like ;:^/\... etc etc, should allow only a-zA-Z0-9
       SaveName[c] = '_';
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -1469,16 +1469,18 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
   }
 }
 
-void game::RemoveSaves(truth RealSavesAlso)
+void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 {
+  festring bkp(".bkp");
+
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav").CStr());
-    remove(festring(SaveName() + ".wm").CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
   }
 
-  remove(festring(AutoSaveFileName + ".sav").CStr());
-  remove(festring(AutoSaveFileName + ".wm").CStr());
+  remove(festring(AutoSaveFileName + ".sav" + (onlyBackups?bkp.CStr():"")).CStr());
+  remove(festring(AutoSaveFileName + ".wm"  + (onlyBackups?bkp.CStr():"")).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
@@ -1492,12 +1494,12 @@ void game::RemoveSaves(truth RealSavesAlso)
       File << c;
 
       if(RealSavesAlso)
-        remove(File.CStr());
+        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
 
       File = AutoSaveFileName + '.' + i;
       File << c;
 
-      remove(File.CStr());
+      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
     }
 }
 
@@ -1695,7 +1697,7 @@ truth game::HandleQuitMessage()
       {
        case 0:
         Save();
-        RemoveSaves(false);
+        RemoveSaves(false); //keep backups during autosaves
         break;
        case 2:
         GetCurrentArea()->SendNewDrawRequest();
@@ -1711,8 +1713,10 @@ truth game::HandleQuitMessage()
     else
       if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1),
                CONST_S("You can't save at this point. Are you sure you still want to do this?\r"),
-               CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-        RemoveSaves();
+               CONST_S("Yes\rNo\r"), LIGHT_GRAY)){
+        RemoveSaves(); //will remove the real saves too
+        RemoveSaves(true,true); //will remove only the backups now
+      }
       else
       {
         GetCurrentArea()->SendNewDrawRequest();
@@ -2164,6 +2168,8 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
   if(!Permanently)
     game::Save();
+
+  game::RemoveSaves(true,true); // after fully saving successfully, is a safe moment to remove ONLY the backups.
 
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);

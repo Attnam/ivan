@@ -10,16 +10,17 @@
  *
  */
 
-#include "iconf.h"
-#include "game.h"
-#include "feio.h"
 #include "area.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "igraph.h"
 #include "audio.h"
-#include "whandler.h"
+#include "bitmap.h"
+#include "feio.h"
+#include "game.h"
+#include "graphics.h"
+#include "iconf.h"
+#include "igraph.h"
+#include "save.h"
 #include "stack.h"
+#include "whandler.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -71,6 +72,12 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           "Let old savegames (v131 up) be imported (experimental)",
                                           false);
+truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
+                                          "Safely save games",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SavegameSafelyChanger);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
@@ -531,6 +538,13 @@ void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+
+  outputfile::SetBackupBeforeSaving(What);
+}
+
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
 {
   O->Value = What;
@@ -656,6 +670,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
+  configsystem::AddOption(fsCategory,&SavegameSafely);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
@@ -677,7 +692,9 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
-  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too
+  //TODO re-use changer methods for above configs too to avoid duplicating the algo?
+  FrameSkipChanger(NULL,FrameSkip.Value);
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
+  SavegameSafelyChanger(NULL, SavegameSafely.Value);
 }

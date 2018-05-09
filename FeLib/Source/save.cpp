@@ -23,6 +23,12 @@
 #include "save.h"
 #include "femath.h"
 
+truth outputfile::bakcupBeforeSaving = false;
+
+void outputfile::SetBackupBeforeSaving(truth b){
+  bakcupBeforeSaving=b;
+}
+
 outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
 : FileName(FileName)
 {
@@ -33,6 +39,15 @@ outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
     festring DirectoryPath = FileName;
     DirectoryPath.Resize(LastPathSeparatorPos);
     MakePath(DirectoryPath);
+  }
+
+  if(bakcupBeforeSaving){
+    std::ifstream orig(FileName.CStr(), std::ios::binary);
+    if(orig.good()){
+      std::ofstream bkp(festring(FileName+".bkp").CStr(), std::ios::binary);
+      bkp << orig.rdbuf();
+      orig.close();
+    }
   }
 
   File.open(FileName.CStr(), std::ios::binary);

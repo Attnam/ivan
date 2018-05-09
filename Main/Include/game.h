@@ -230,7 +230,7 @@ class game
   static ulong GetTick() { return Tick; }
   static festring GetAutoSaveFileName() { return AutoSaveFileName; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false);
-  static void RemoveSaves(truth = true);
+  static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }

@@ -48,7 +48,9 @@ class outputfile
   void Write(cchar* Data, long Size) { File.write(Data, Size); }
   truth IsOpen() { return File.is_open(); }
   void Close() { File.close(); }
+  static void SetBackupBeforeSaving(truth b);
  private:
+  static truth bakcupBeforeSaving;
   std::ofstream File;
   festring FileName;
 };

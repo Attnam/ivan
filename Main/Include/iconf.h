@@ -26,6 +26,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
@@ -110,6 +111,7 @@ class ivanconfig
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void FullScreenModeChanger(truthoption*, truth);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SavegameSafelyChanger(truthoption* O, truth What);
 #endif
   static void ContrastHandler(long);
   static void VolumeHandler(long);
@@ -131,6 +133,7 @@ class ivanconfig
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
+  static truthoption SavegameSafely;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
