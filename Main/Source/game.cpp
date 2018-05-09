@@ -1342,7 +1342,7 @@ int game::Load(cfestring& SaveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter()));
+  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter(),Pos) ); DBG2(GetCurrentArea()->GetSquare(Pos)->GetCharacter(),Player);
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -1403,10 +1403,55 @@ void bugWorkaroundDupPlayer::CharAllItemsCollect(character* CharAsked,std::vecto
   bugWorkaroundDupPlayer::CharAllItemsWork(CharAsked, false, false, pvItem);
 }
 
-bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel, bool bIgnoreBodyParts){
-  int iDupIDCount=0;
+void bugWorkaroundDupPlayer::CollectAllCharactersOnLevel(std::vector<character*>* pvCharsOnLevel)
+{
+  std::vector<bugWorkaroundDupPlayerCharItem> pvAllCharAndOrItemsInLevel;
+  ScanLevelForCharactersAndItemsWork(NULL,true,false,&pvAllCharAndOrItemsInLevel);
 
+  character* last = NULL;
+  character* current = NULL;
+  for(int i=0;i<pvAllCharAndOrItemsInLevel.size();i++){
+    current = pvAllCharAndOrItemsInLevel[i].Char;
+    if(current==NULL)continue; //items on floor
+
+    if(current!=last){ //the char's item is added per char, so there is no gaps
+      pvCharsOnLevel->push_back(current);
+      last=current;
+    }
+  }
+}
+
+/**
+ * it may be filled with duplicated items references (pointers) and IDs,
+ * that's the idea, to look for each for DUPs (or multiples) later.
+ */
+void bugWorkaroundDupPlayer::CollectAllItemsOnLevel(std::vector<item*>* pvAllItemsOnLevel)
+{
+  std::vector<bugWorkaroundDupPlayerCharItem> pvAllCharAndOrItemsInLevel;
+  ScanLevelForCharactersAndItemsWork(NULL,true,false,&pvAllCharAndOrItemsInLevel);
+
+  for(int i=0;i<pvAllCharAndOrItemsInLevel.size();i++)
+    pvAllItemsOnLevel->push_back(pvAllCharAndOrItemsInLevel[i].it);
+}
+
+void bugWorkaroundDupPlayer::CollectAllCharactersAndItemsOnLevel(std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel)
+{
+  ScanLevelForCharactersAndItemsWork(NULL,false,false,pvAllCharAndOrItemsInLevel);
+}
+
+bool bugWorkaroundDupPlayer::FindDupItemOnLevel(item* itWork, bool bIgnoreBodyParts, bool bAbortOnMultiples)
+{
+  return ScanLevelForCharactersAndItemsWork(itWork,bIgnoreBodyParts,bAbortOnMultiples,NULL);
+}
+
+bool bugWorkaroundDupPlayer::ScanLevelForCharactersAndItemsWork(
+    item* itWork,
+    bool bIgnoreBodyParts,
+    bool bAbortOnMultiples, // more than dups
+    std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel
+){
   // scan each map/level's square for dups
+  int iDupIDCount=0;
   int iPointerMatchCount=0;
   for(int iY=0;iY<game::GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
     for(int iX=0;iX<game::GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
@@ -1444,9 +1489,9 @@ bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, s
         }
       }
 
-      if(pvAllCharAndOrItemsInLevel==NULL){
+      if(bAbortOnMultiples){
         #ifdef DBGMSG
-          #define DBGSQRITEM(msg) DBG9(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),Char,Char->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
+          #define DBGSQRITEM(msg) DBG7(msg,DBGAV2(lsqr->GetPos()),vSqrItems[i],itWork,itWork->GetID(),(SqrChar==NULL?0:SqrChar),(SqrChar==NULL?0:SqrChar->GetID()))
         #else
           #define DBGSQRITEM(msg)
         #endif
@@ -1458,13 +1503,13 @@ bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, s
 
           if(itWork==vSqrItems[i]){
             iPointerMatchCount++;
-            if(iPointerMatchCount>1)DBGSQRITEM("CharFix:LSqr:DupRef:ItemID"); //the 1st is "expectedly" the real self...
+            if(iPointerMatchCount>1)DBGSQRITEM("CharFix:LSqr:DupRef:ItemID"); //the 1st is "expectedly" the real (valid) self...
             continue;
           }
 
           if(itWork->GetID()==vSqrItems[i]->GetID()){
             iDupIDCount++;
-            if(iDupIDCount>1)DBGSQRITEM("CharFix:LSqr:DupID:ItemID"); //the 1st is "expectedly" the real self...
+            if(iDupIDCount>1)DBGSQRITEM("CharFix:LSqr:DupID:ItemID"); //the 1st is "expectedly" the real (valid) self...
           }
         }
       }
@@ -1472,14 +1517,14 @@ bool bugWorkaroundDupPlayer::FindDupItemOnLevel(character* Char, item* itWork, s
     }//X
   }//Y
 
-  if(iDupIDCount>1 || iPointerMatchCount>1){
-    ABORT(
-      "iDupCount=%d found for item 0x%x id=%d."
-      "tot=%d item pointer/object/reference 0x%x found for id=%d.",
-      iDupIDCount,itWork,itWork->GetID(),
-      iPointerMatchCount,itWork,itWork->GetID()
-    );
-  }
+  if(bAbortOnMultiples)
+    if(iDupIDCount>1 || iPointerMatchCount>1)
+      ABORT( //more than 2 copies (one valid and one invalid) is more complicated and the code is not ready yet to deal with that.
+        "iDupCount=%d found for item 0x%x id=%d."
+        "tot=%d item pointer/object/reference 0x%x found for id=%d.",
+        iDupIDCount,itWork,itWork->GetID(),
+        iPointerMatchCount,itWork,itWork->GetID()
+      );
 
   return iDupIDCount>0;
 }
@@ -1503,7 +1548,7 @@ void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, 
       }
 
       if(!bChangeItemID){
-        bChangeItemID = bugWorkaroundDupPlayer::FindDupItemOnLevel(Char,itWork);
+        bChangeItemID = bugWorkaroundDupPlayer::FindDupItemOnLevel(itWork,false,true);
       }
 
       if(bChangeItemID){
@@ -1528,21 +1573,57 @@ void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, 
   }
 }
 
-character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAsked){
-  if(ivanconfig::GetBugWorkaroundDupPlayer()==0)return CharAsked;
+character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos){ DBG2(CharAsked,DBGAV2(v2AskedPos));
+  bool bAllowPlayerBugFix = ivanconfig::GetBugWorkaroundDupPlayer()!=0;
+  bool bAllowJustMissingPlayerBugFix = ivanconfig::GetBugWorkaroundDupPlayer()==1;
+  bool bNewPlayerInstanceShallWin = ivanconfig::GetBugWorkaroundDupPlayer()==3; //==2 is old player instance
 
-  bool bNewPlayerInstanceShallWin = ivanconfig::GetBugWorkaroundDupPlayer()==2; //==1 is old player instance
+  if(CharAsked!=NULL && !CharAsked->IsPlayer()){
+    DBGCHAR(CharAsked,"CharFix:CharAsked:IsNotThePlayer");
+    CharAsked=NULL; //deny invalid character
+  }
 
-  bugWorkaroundDupPlayer::Accepted=false; //init for next iteration w/o closing the game app
-  DBGCHAR(CharAsked,"CharFix:CharAsked");
+  if(!bAllowPlayerBugFix)
+    if(CharAsked!=NULL) //would crash elsewhere if player is NULL
+      return CharAsked;
 
-  character* CharPlayer = game::SearchCharacter(CharAsked->GetID()); //Player is 1 tho
+  if(CharAsked==NULL){
+    if(!bAllowJustMissingPlayerBugFix){
+      ABORT("Player not found at asked pos=(%d,%d), you can try the 'missing player workaround option'",v2AskedPos.X,v2AskedPos.Y);
+    }
+  }
+
+  bugWorkaroundDupPlayer::Accepted=false; //init to ask again if needed, so the user knows what is happening
+
+  character* CharPlayer = game::SearchCharacter(1);
+  if(CharPlayer==NULL){
+    std::vector<character*> vCharsOnLevel;
+    bugWorkaroundDupPlayer::CollectAllCharactersOnLevel(&vCharsOnLevel);
+    for(int i=0;i<vCharsOnLevel.size();i++){
+      DBGCHAR(vCharsOnLevel[i],DBGAV2(vCharsOnLevel[i]->GetPos()));
+
+      if(vCharsOnLevel[i]->GetID()==1){
+        DBGCHAR(vCharsOnLevel[i],"CharWithID=1");
+        DBG2("CharFix:CharID1FoundAt",DBGAV2(vCharsOnLevel[i]->GetPos()));
+      }
+
+      if(vCharsOnLevel[i]->IsPlayer()){
+        CharPlayer=vCharsOnLevel[i];
+        DBG2("CharFix:PlayerFoundAt",DBGAV2(CharPlayer->GetPos()));
+        break;
+      }
+    }
+
+    if(CharPlayer==NULL)ABORT("Player cant be found anywhere"); //OMG... may be this is pointless, better just fix to prevent such bugs from ever happening...
+  }
   DBGCHAR(CharPlayer,"CharFix:CharPlayer");
+
+  if(bAllowJustMissingPlayerBugFix)return CharPlayer;
 
   character* CharWins = CharAsked;
   character* CharPlayerOld = NULL;
   bool bLevelItemsCollected=false;
-  if(CharPlayer!=CharAsked){ // IT PREFERS THE OLD PLAYER FOR NOW, TODO THE BEST WOULD BE THE NEW PLAYER INSTANCE!
+  if(CharPlayer!=CharAsked){
     bugWorkaroundDupPlayer::AlertConfirmFixMsg(
       bNewPlayerInstanceShallWin ?
       "Duplicated player found. Fix new player instance (experimental)?"    :
@@ -1608,11 +1689,10 @@ character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAsked){
   bugWorkaroundDupPlayer::CharInventoryWork(CharWins,true,false);DBGLN;
 
   // validate full level against other possible dup items
-  std::vector<bugWorkaroundDupPlayerCharItem> vAllCharAndOrItemsInLevel;
-  bugWorkaroundDupPlayer::FindDupItemOnLevel(NULL,NULL,&vAllCharAndOrItemsInLevel);
-  for(int i=0;i<vAllCharAndOrItemsInLevel.size();i++){
-    bugWorkaroundDupPlayerCharItem ci = vAllCharAndOrItemsInLevel[i];
-    if(bugWorkaroundDupPlayer::FindDupItemOnLevel(ci.Char,ci.it,NULL,true)){
+  std::vector<item*> vAllItemsOnLevel;
+  bugWorkaroundDupPlayer::CollectAllItemsOnLevel(&vAllItemsOnLevel);
+  for(int i=0;i<vAllItemsOnLevel.size();i++){
+    if(bugWorkaroundDupPlayer::FindDupItemOnLevel(vAllItemsOnLevel[i],true,true)){
       ABORT("Full level validation against dups failed.");
     }
   }
@@ -2669,11 +2749,12 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
       Player->PutToOrNear(Pos);
     }
-    else{
+    else
+    {
       SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
     }
 
-    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player);
+    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 

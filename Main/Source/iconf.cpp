@@ -105,8 +105,8 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
 cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
-                                          "Detects dup player bug and fix it (experimental/slow)",
-                                          0, 3,
+                                          "Detects missing or DUP player bug and fix it (experimental/slow)",
+                                          0, 4,
                                           &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           "Silhouette scale factor (1 to disable)",
@@ -497,8 +497,9 @@ void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring&
 {
   switch(O->Value){
   case 0: Entry << "disabled";break;
-  case 1: Entry << "old player";break;
-  case 2: Entry << "new player";break;
+  case 1: Entry << "missing only";break;
+  case 2: Entry << "prefer old player";break;
+  case 3: Entry << "prefer new player";break;
   }
 }
 
