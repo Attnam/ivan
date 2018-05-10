@@ -149,6 +149,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
   double BaseDamage, BaseToHitValue;
 
   /*** check ***/
+  int iRotateTimes = ivanconfig::GetRotateTimesPerSquare();
 
   if(Thrower)
   {
@@ -160,19 +161,21 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
 
     if(bTryStartThrownRotation && ivanconfig::GetRotateTimesPerSquare()>0)
       iRotateFlyingThrownStep = (clock()%2)==0 ? 1 : -1; //init rotation
+
+    if(!Thrower->IsPlayer() && iRotateTimes>1)
+      iRotateTimes=1; //disable "dramatic" rotations from NPCs but still keep minimum if enabled
   }
   else
   {
     BaseDamage = sqrt(5e-6 * GetWeaponStrength() * Force / Range);
     BaseToHitValue = 10 * 100 / (500 + GetWeight()) / Range;
+    iRotateTimes=0;
   }
 
   int RangeLeft;
 
   truth Draw=false;
   float fFlyDelay = 0.03;
-  int iRotateTimes = ivanconfig::GetRotateTimesPerSquare();
-  if(!Thrower->IsPlayer() && iRotateTimes>1)iRotateTimes=1; //disable "dramatic" rotations from NPCs but still keep minimum if enabled
   bool bLowerRotationsPerSqr = iRotateTimes==5;
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
   {
