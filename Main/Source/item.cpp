@@ -171,8 +171,9 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
 
   truth Draw=false;
   float fFlyDelay = 0.03;
-  int iRotateTimes=ivanconfig::GetRotateTimesPerSquare();
-  bool bLowerRotationsPerSqr=iRotateTimes==5;
+  int iRotateTimes = ivanconfig::GetRotateTimesPerSquare();
+  if(!Thrower->IsPlayer() && iRotateTimes>1)iRotateTimes=1; //disable "dramatic" rotations from NPCs but still keep minimum if enabled
+  bool bLowerRotationsPerSqr = iRotateTimes==5;
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
   {
     if(!GetLevel()->IsValidPos(Pos + DirVector))
