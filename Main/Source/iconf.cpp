@@ -10,16 +10,17 @@
  *
  */
 
-#include "iconf.h"
-#include "game.h"
-#include "feio.h"
 #include "area.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "igraph.h"
 #include "audio.h"
-#include "whandler.h"
+#include "bitmap.h"
+#include "feio.h"
+#include "game.h"
+#include "graphics.h"
+#include "iconf.h"
+#include "igraph.h"
+#include "save.h"
 #include "stack.h"
+#include "whandler.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -85,10 +86,6 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
-cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
-                                          "Prevent countour/transparent color glitch at alt silhouette",
-                                          2, 3,
-                                          &AltSilhouettePreventColorGlitchDisplayer);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
                                           false);
@@ -135,9 +132,13 @@ cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           &SilhouetteScaleChangeInterface,
                                           &SilhouetteScaleChanger);
 cycleoption ivanconfig::AltSilhouette(    "AltSilhouette",
-                                          "Use alternative scaled silhouette.",
+                                          "Alternative silhouette mode",
                                           0, 7,
                                           &AltSilhouetteDisplayer);
+cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
+                                          "Alternative silhouette background",
+                                          2, 3,
+                                          &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -324,9 +325,9 @@ void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
     case 1: Entry << "short"     ; break;
     case 2: Entry << "tall"      ; break;
     case 3: Entry << "breathing" ; break;
-    case 4: Entry << "breathing2"; break;
-    case 5: Entry << "breathing3"; break;
-    case 6: Entry << "breathing4"; break;
+    case 4: Entry << "breathSlower"; break;
+    case 5: Entry << "breathSlower+"; break;
+    case 6: Entry << "breathSlower++"; break;
   }
 }
 
@@ -715,6 +716,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
   configsystem::AddOption(fsCategory,&SilhouetteScale);
   configsystem::AddOption(fsCategory,&AltSilhouette);
+  configsystem::AddOption(fsCategory,&AltSilhouettePreventColorGlitch);
   configsystem::AddOption(fsCategory,&AltListItemPos);
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
@@ -747,7 +749,6 @@ void ivanconfig::Initialize()
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
-  configsystem::AddOption(fsCategory,&AltSilhouettePreventColorGlitch);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

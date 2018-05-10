@@ -1168,7 +1168,11 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   if(bOk && h==NULL)bOk=false; //TODO let it work with non humanoid forms
 //  if(bOk && Player->IsPolymorphed())bOk=false;
 
-  if(humanoid::GetSilhouetteWhereDefault().Is0())bOk=false;
+  if(humanoid::GetSilhouetteWhereDefault().Is0()){
+    bOk=false;
+  }else{
+    if(iRegionVanillaSilhouette==-1)game::PrepareStretchRegionsLazy();
+  }
 
   if(!bOk){
     iTallState=iTotTallStates-1;
@@ -1179,11 +1183,12 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
   }
 
   /////////////////////////// ok ////////////////////////////
+
   iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
 
 //  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
   bool bRolling=false;
-  bool bHopping=false;
+  bool bHopping=false; DBG1(iRegionVanillaSilhouette);
   if(iRegionVanillaSilhouette!=-1){
     bool bOk2=true;
 
@@ -1199,7 +1204,12 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 
       v2 v2Pos=ZoomPos;
 
-      humanoid::SetSilhouetteWhere(v2Pos);
+      humanoid::SetSilhouetteWhere(v2Pos);DBGSV2(v2Pos);
+
+      if(iAltSilBlitCount==0) //first time
+        if(h){
+          h->DrawSilhouette(false);DBGLN;
+        }
 
       bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
 
