@@ -53,6 +53,7 @@ class hiteffect : public entity
  protected:
   truth CheckIntegrity(int iDbgState) const;
   void cleanup();
+  void chkCleanupAlready() const;
   int iDrawCount; //TODO use realtime??? may not be good on slow machines?
   bitmap* bmpHitEffect;
   hiteffectSetup setup;

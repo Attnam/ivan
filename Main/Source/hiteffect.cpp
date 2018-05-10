@@ -17,7 +17,7 @@
 
 int iDrawTot=3;
 
-hiteffect::hiteffect() : entity(HAS_BE), Next(0), iState(-1), bBlitdataWasSet(false) { }
+hiteffect::hiteffect() : entity(HAS_BE), Next(NULL), iState(-1), bBlitdataWasSet(false) {DBGSTK;} //iState -1 indicates this constructor
 
 square* hiteffect::GetSquareUnderEntity(int) const {
   return setup.LSquareUnder;
@@ -28,9 +28,9 @@ square* hiteffect::GetSquareUnderEntity(int) const {
 #define DBGSTATE_CLEANUP 3
 #define DBGSTATE_DESTROY 4
 #define DBGHITEFFINFO \
-    DBGSI(iState); \
+    DBG1(iState); \
     DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
-    DBG3(setup.Type,bWhoIsHitDied,DBGAV2(v2HitFromSqrPos)); \
+    DBG5(setup.Type,bWhoIsHitDied,iDrawCount,bBlitdataWasSet,DBGAV2(v2HitFromSqrPos)); \
     DBGSV2(v2HitToSqrPos); \
     DBG2(setup.WhoHits->GetName(DEFINITE).CStr(),setup.WhoIsHit->GetName(DEFINITE).CStr()); \
     DBGBLD(bldFinalDraw); \
@@ -39,8 +39,10 @@ square* hiteffect::GetSquareUnderEntity(int) const {
     DBGSTK;
 
 hiteffect::hiteffect(hiteffectSetup s)
-: entity(HAS_BE), Next(0), iDrawCount(0), iState(0), bBlitdataWasSet(false)
+: entity(HAS_BE), Next(NULL), iDrawCount(0), iState(0), bBlitdataWasSet(false)
 {
+  chkCleanupAlready();
+
   static short int iHigh=0xFF*0.85;
   static col24 lumHigh=MakeRGB24(iHigh,iHigh,iHigh);
 
@@ -247,13 +249,16 @@ hiteffect::hiteffect(hiteffectSetup s)
   SetIntegrityState(DBGSTATE_INIT);
 }
 
-void hiteffect::SetIntegrityState(int i){
-  if(iState != i-1){
+void hiteffect::SetIntegrityState(int iNewState){ DBG1(iNewState);
+  chkCleanupAlready();
+
+  if(iState != iNewState-1){
     DBGHITEFFINFO;
-    ABORT("Wrong state usage(%d), must always be equal to current(%d)+1",i,iState);
+    if(iNewState!=DBGSTATE_CLEANUP) // cleanup is the end of it, no problem.
+      DBGABORT("Wrong state usage(%d), must always be equal to current(%d)+1",iNewState,iState);
   }
 
-  iState=i;
+  iState=iNewState;
 }
 
 hiteffect::~hiteffect()
@@ -264,6 +269,8 @@ hiteffect::~hiteffect()
 
 void hiteffect::Be()
 {
+  chkCleanupAlready();
+
   if(iDrawCount==iDrawTot)
   {
     setup.LSquareUnder->RemoveHitEffect(this);
@@ -278,7 +285,16 @@ void hiteffect::Be()
   }
 }
 
+void hiteffect::chkCleanupAlready() const
+{
+  if(iState==DBGSTATE_CLEANUP)DBGABORT("hiteffect was cleanup already!");
+}
+
 void hiteffect::cleanup(){
+  chkCleanupAlready();
+
+  SetIntegrityState(DBGSTATE_CLEANUP); //before the actual cleanup as pointers are still set
+
   // TODO necessary?
   setup.LSquareUnder=NULL;
   setup.WhoHits=NULL;
@@ -289,11 +305,11 @@ void hiteffect::cleanup(){
 
   LSquareUnderOfWhoHits=NULL;
   vExtraSquares.clear(); //TODO move to destructor? or is automatic?
-
-  SetIntegrityState(DBGSTATE_CLEANUP);
 }
 
 void hiteffect::PrepareBlitdata(const blitdata& bld){
+  chkCleanupAlready();
+
   bldFinalDraw=bld; DBG1(this);DBGBLD(bldFinalDraw); //copy
   bitmap::ResetBlitdataRotation(bldFinalDraw); //prevent it from further rotating beyong the initial setup at constructor!!!
   bBlitdataWasSet=true;
@@ -305,11 +321,15 @@ void hiteffect::PrepareBlitdata(const blitdata& bld){
 }
 
 void hiteffect::End(){
+  chkCleanupAlready();
+
   iDrawCount=iDrawTot;
 }
 
 truth hiteffect::DrawStep()
 {
+  chkCleanupAlready();
+
   if(iDrawCount==iDrawTot)return false;
 
   bool bDraw = true;
@@ -357,15 +377,17 @@ truth hiteffect::DrawStep()
 }
 
 truth hiteffect::CheckIntegrity(int iDbgState) const{
+  chkCleanupAlready();
+
   if(
       bldFinalDraw.Border.X==0 ||
       bldFinalDraw.Border.Y==0
   ){
     DBGHITEFFINFO;
+
+    if(iState!=iDbgState)DBGABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iDbgState);
+
     DBGABORT("invalid hit effect setup"); //will force exit right here during development
-
-    if(iState!=iDbgState)ABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iDbgState);
-
     return false;
   }
   return true;
@@ -373,6 +395,10 @@ truth hiteffect::CheckIntegrity(int iDbgState) const{
 
 void hiteffect::Draw() const //TODO is it being called other than thru DrawStep()?
 {
+  chkCleanupAlready();
+
+  if(!bBlitdataWasSet)return;
+
   /**
    * As this is just an effect, it's funtionally shall not break the game.
    * So it will simply return if something is wrong.
