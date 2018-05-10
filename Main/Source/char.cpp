@@ -666,16 +666,30 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
-  hiteffectSetup* phitef=NULL;DBGLN;
-  if(CanBeSeenByPlayer()){DBGLN;
-    phitef=new hiteffectSetup();
-    phitef->Critical=Critical;
-    phitef->GivenDir=GivenDir;
-    phitef->Type=Type;
-    phitef->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
-    phitef->WhoIsHit=this;
-    phitef->itemEffectReference = Weapon;
-    if(phitef->itemEffectReference==NULL)phitef->itemEffectReference=EnemyBodyPart;
+  hiteffectSetup* pHitEff=NULL;DBGLN;
+  bool bShowHitEffect = false;
+  static bool bHardestMode = false; //TODO make these an user hardcore combat option?
+  if(!bHardestMode){
+    //w/o ESP/infravision and if the square is visible even if both fighting are invisible
+    static bool bPlayerCanHearWhereTheFightIsHappening = true; //TODO this feels like cheating? making things easier? if so, set it to false
+    static bool bPlayerCanSensePetFighting = true; //TODO this feels like cheating? making things easier? if so, set it to false
+
+    if(bPlayerCanHearWhereTheFightIsHappening) //TODO should then also show at non directly visible squares?
+      if(GetLSquareUnder()->CanBeSeenByPlayer() || Enemy->GetLSquareUnder()->CanBeSeenByPlayer())bShowHitEffect = true;
+
+    if(bPlayerCanSensePetFighting && IsPet())bShowHitEffect=true; // override for team awareness
+  }
+  if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())bShowHitEffect=true; //throwing hits in the air is valid (seen) if the other one is invisible
+  if(IsPlayer())bShowHitEffect=true; //override
+  if(bShowHitEffect){DBGLN;
+    pHitEff=new hiteffectSetup();
+    pHitEff->Critical=Critical;
+    pHitEff->GivenDir=GivenDir;
+    pHitEff->Type=Type;
+    pHitEff->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
+    pHitEff->WhoIsHit=this;
+    pHitEff->itemEffectReference = Weapon;
+    if(pHitEff->itemEffectReference==NULL)pHitEff->itemEffectReference=EnemyBodyPart;
   }
 
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
@@ -873,9 +887,9 @@ int character::TakeHit(character* Enemy, item* Weapon,
     return DID_NO_DAMAGE;
   }
 
-  if(phitef!=NULL){DBGLN;
-    GetLSquareUnder()->AddHitEffect(*phitef); //after all returns of failure and before any other returns
-    delete phitef; //already copied
+  if(pHitEff!=NULL){DBGLN;
+    GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
+    delete pHitEff; //already copied
   }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
