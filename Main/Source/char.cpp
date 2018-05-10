@@ -11210,7 +11210,7 @@ truth character::CheckAIZapOpportunity()
 
   if(HostileFound)
   {
-    for(int dir = 0; dir < 8; ++dir)
+    for(uint dir = 0; dir < 8; ++dir)
     {
       if( (CandidateDirections[dir] == SUCCESS) && !TargetFound)
       {
