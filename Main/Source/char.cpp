@@ -11189,13 +11189,13 @@ truth character::CheckAIZapOpportunity()
         character* Dude = TestSquare->GetCharacter();
 
         if((Dude && Dude->IsEnabled() && (GetRelation(Dude) != HOSTILE)
-           && Dude->CanBeSeenBy(this, false, true)))
+           && Dude->SquareUnderCanBeSeenBy(this, false)))
         {
           CandidateDirections[dir] = BLOCKED;
         }
 
         if(Dude && Dude->IsEnabled() && (GetRelation(Dude) == HOSTILE)
-           && Dude->CanBeSeenBy(this, false, true)
+           && Dude->SquareUnderCanBeSeenBy(this, false)
            && (CandidateDirections[dir] != BLOCKED))
         {
           CandidateDirections[dir] = SUCCESS;
@@ -11212,7 +11212,7 @@ truth character::CheckAIZapOpportunity()
   {
     for(int dir = 0; dir < 8; ++dir)
     {
-      if( (CandidateDirections[dir] == SUCCESS) && !TargetFound)
+      if((CandidateDirections[dir] == SUCCESS) && !TargetFound)
       {
         ZapDirection = dir;
         TargetFound = 1;
@@ -11233,11 +11233,13 @@ truth character::CheckAIZapOpportunity()
   item* ToBeZapped = 0;
 
   for(uint c = 0; c < ItemVector.size(); ++c)
-  if((ItemVector[c]->GetMinCharges() > 0) && ItemVector[c]->GetPrice()) // Empty wands have zero price!
-  {
-    ToBeZapped = ItemVector[c];
-    break;
-  }
+    if((ItemVector[c]->GetMinCharges() > 0) && ItemVector[c]->GetPrice()) // Empty wands have zero price!
+    {
+      ToBeZapped = ItemVector[c];
+
+      if(!(RAND() % 3)) // Do not always pick the first available wand to zap.
+        break;
+    }
 
   if(!ToBeZapped)
     return false;
@@ -11253,8 +11255,8 @@ truth character::CheckAIZapOpportunity()
   else
     return false;
 
-  TerminateGoingTo();
-  return true;
+  TerminateGoingTo(); // Is this useful here? I don't think the code will ever
+  return true;        // get down here.
 
   // Steps:
   // (1) - Acquire target as nearest enemy.
