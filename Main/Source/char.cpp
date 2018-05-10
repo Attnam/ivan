@@ -10957,7 +10957,7 @@ void character::MindwormedHandler()
       ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
     }
 
-    ReceiveDamage(0, 1 + RAND_N(5), DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
+    ReceiveDamage(0, 1, DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
     CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
   }
 }

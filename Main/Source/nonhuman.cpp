@@ -2460,7 +2460,7 @@ void mindworm::PsiAttack(character* Victim)
     ADD_MESSAGE("%s looks pained.", Victim->CHAR_NAME(DEFINITE));
   }
 
-  Victim->ReceiveDamage(this, 1 + RAND_N(2), PSI, HEAD, YOURSELF, true);
+  Victim->ReceiveDamage(this, 1, PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
   EditAP(-2000);
   EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);

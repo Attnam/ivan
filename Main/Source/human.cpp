@@ -6371,21 +6371,16 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 {
   bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
 
-  if(BodyPart && BodyPart->IsDestroyable(Victim))
-  {
-    if(BodyPart->GetMainMaterial())
-    {
-      if(BodyPart->CanBeBurned()
-         && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
-         && !BodyPart->IsBurning())
+  if(BodyPart && BodyPart->IsDestroyable(Victim)
+     && BodyPart->GetMainMaterial() && BodyPart->CanBeBurned()
+     && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+     && !BodyPart->IsBurning())
       {
-        if(BodyPart->TestActivationEnergy(50))
+        if(BodyPart->TestActivationEnergy(150))
         {
           return true;
         }
       }
-    }
-  }
 
   return false;
 }

@@ -5399,15 +5399,15 @@ angel
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
-  TamingDifficulty = 30;
+  TamingDifficulty = NO_TAMING;
   Sex = FEMALE;
+  ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   TotalVolume = 60000;
   TorsoBitmapPos = 432, 0;
   TotalSize = 200;
   CanRead = true;
   NameSingular = "angel";
   UsesLongArticle = true;
-  ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   SkinColor = rgb16(200, 200, 200);
   HairColor = rgb16(180, 180, 0);
   EyeColor = rgb16(48, 48, 255);
@@ -8993,5 +8993,4 @@ nihil
   }
   Inventory = { 8, celestialmonograph, GOLD stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
   DayRequirementForGeneration = 60;
-  Frequency = 1;
 }
