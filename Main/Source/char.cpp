@@ -11146,7 +11146,7 @@ truth character::CheckAIZapOpportunity()
   if(RangeMax < SensibleRange)
     SensibleRange = RangeMax;
 
-  int CandidateDirections[7] = {0, 0, 0, 0, 0, 0, 0};
+  int CandidateDirections[8] = {0, 0, 0, 0, 0, 0, 0, 0};
   int HostileFound = 0;
 
   for(int r = 2; r <= SensibleRange; ++r)
