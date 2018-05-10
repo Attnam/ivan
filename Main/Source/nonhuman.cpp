@@ -145,13 +145,13 @@ truth unicorn::SpecialEnemySightedReaction(character*)
 {
   if(!(RAND() & 15))
   {
-    MonsterTeleport("neighs happily");
+    MonsterTeleport(" happily");
     return true;
   }
 
   if(StateIsActivated(PANIC) || (RAND() & 1 && IsInBadCondition()))
   {
-    MonsterTeleport("neighs");
+    MonsterTeleport("");
     return true;
   }
 

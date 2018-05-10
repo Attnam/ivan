@@ -35,6 +35,8 @@ Fixes:
 * Elianise will no longer steal from you.
 * All the ambassadors will stay in the Cathedral and not wander around.
 * Nerf mind worm damage a bit.
+* Fix unlocking hexagonal and octagonal locks on chests.
+* Fix unicorns neighs.
 
 Version 0.52, released 24th March 2018
 --------------------------------------
