@@ -5370,6 +5370,30 @@ celestialmonograph /* holybook-> */
   Alias = { 3, "insight", "revelation", "truth"; }
 }
 
+materialmanual /* holybook-> */
+{
+  DefaultSize = 30;
+  Possibility = 1;
+  Category = BOOK;
+  DefaultMainVolume = 2500;
+  StrengthModifier = 150;
+  BitmapPos = 0, 144;
+  FormModifier = 20;
+  Price = 0; /* It's actually a cheap brochure. */
+  Adjective = "Morgo's magnificent";
+  NameSingular = "manual";
+  PostFix = "of materials";
+  ArticleMode = FORCE_THE;
+  MainMaterialConfig == PARCHMENT;
+  Roundness = 70;
+  IsTwoHanded = true;
+  CreateDivineConfigurations = false;
+  AttachedGod = LORICATUS;
+  WieldedBitmapPos = 176, 144;
+  ReadDifficulty = 500;
+  Alias = { 2, "materials", "manual of materials"; }
+}
+
 ullrbone
 {
   Possibility = 1;

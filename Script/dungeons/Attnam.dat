@@ -837,7 +837,7 @@ Dungeon ATTNAM;
 
       Square, Random HAS_NO_OTERRAIN;
       {
-        OTerrain = olterraincontainer(CHEST_OF_DRAWERS);
+        OTerrain = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside == materialmanual; }
       }
     }
 

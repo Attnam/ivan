@@ -1509,11 +1509,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-        
+
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-        
+
         game::GetWorldMap()->SendNewDrawRequest();
       }
       else
@@ -1522,11 +1522,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-        
+
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-        
+
         game::SaveWorldMap();
       }
 
@@ -1762,7 +1762,7 @@ truth commandsystem::SecretKnowledge(character* Char)
     std::vector<material*> Material;
     protosystem::CreateEveryMaterial(Material);
     List.SetPageLength(30);
-    List.AddDescription(CONST_S("                                        Strength       Flexibility   Density"));
+    List.AddDescription(CONST_S("                                        Strength       Flexibility    Density"));
 
     for(c = 0; c < Material.size(); ++c)
     {
