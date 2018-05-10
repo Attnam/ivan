@@ -105,7 +105,7 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
 cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
-                                          "Detects missing or DUP player bug and fix it (experimental/slow)",
+                                          "BugFix missing/DUP player (experimental/slow)",
                                           0, 4,
                                           &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
