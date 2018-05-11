@@ -3072,7 +3072,7 @@ truth game::MassacreListsEmpty()
 
 #ifdef WIZARD
 
-int game::AutoPlayModeApply(){
+void game::AutoPlayModeApply(){
   int iTimeout=0;
 
   const char* msg;

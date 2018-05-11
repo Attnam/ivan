@@ -357,7 +357,7 @@ class game
   static truth WizardModeIsActive() { return WizardMode; }
   static void IncAutoPlayMode();
   static int GetAutoPlayMode() { return AutoPlayMode; }
-  static int AutoPlayModeApply();
+  static void AutoPlayModeApply();
   static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
