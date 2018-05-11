@@ -36,7 +36,7 @@ class globalwindowhandler
  public:
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
-  static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);  static int GetKey(truth = true);
+  static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);
