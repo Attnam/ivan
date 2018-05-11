@@ -65,6 +65,7 @@ class hiteffect : public entity
   v2 v2HitToSqrPos;
   v2 v2HitFromToSqrDiff;
   bool bWhoIsHitDied;
+  long lStartTime;
 
   int iState;
   void SetIntegrityState(int i);

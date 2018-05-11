@@ -39,7 +39,7 @@ square* hiteffect::GetSquareUnderEntity(int) const {
     DBGSTK;
 
 hiteffect::hiteffect(hiteffectSetup s)
-: entity(HAS_BE), Next(NULL), iDrawCount(0), iState(0), bBlitdataWasSet(false)
+: entity(HAS_BE), Next(NULL), iDrawCount(0), iState(0), bBlitdataWasSet(false), lStartTime(clock())
 {
   chkCleanupAlready();
 
@@ -350,6 +350,12 @@ truth hiteffect::DrawStep()
 
       bAnimate=false;
     }
+  }
+
+  static long lTimeoutDelay = CLOCKS_PER_SEC*3.0; //prevent effects older than 3 seconds from continue playing, the glitch is most visible during wizard autoplay mode
+  if( clock() > (lStartTime+lTimeoutDelay) ){
+    End();
+    bDraw=false;
   }
 
   //TODO use rotation?
