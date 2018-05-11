@@ -268,7 +268,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
 
     EditHP(1, -Damage);
 
-    if(Type & DRAIN && IsAlive())
+    if(Damager!=NULL && (Type & DRAIN) && IsAlive())
       for(int c = 0; c < Damage; ++c)
         Damager->HealHitPoint();
 
