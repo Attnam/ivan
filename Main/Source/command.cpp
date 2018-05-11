@@ -112,7 +112,7 @@ command* commandsystem::Command[] =
 
   /* Sort according to key */
 
-  new command(&AutoPlay, "auto play (player uses NPC AI)", '~', '~', '~', true, true),
+  new command(&AutoPlay, "auto play the game using NPC AI (hold ESC to stop)", '~', '~', '~', true, true),
   new command(&RaiseStats, "raise stats", '1', '1', '1', true, true),
   new command(&LowerStats, "lower stats", '2', '2', '2', true, true),
   new command(&SeeWholeMap, "see whole map", '3', '3', '3', true, true),

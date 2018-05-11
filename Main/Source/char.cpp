@@ -1421,9 +1421,10 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
               {
                 /* not sure if this is better than "the door is locked", but I guess it _might_ be slightly better */
                 ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr());
-                return false;
+                if(game::GetAutoPlayMode()==0)return false;
               }
-              else if(Important && CheckKick())
+
+              if(Important && CheckKick())
               {
                 room* Room = MoveToSquare[c]->GetRoom();
 
@@ -1570,7 +1571,10 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     {
       game::DrawEverything();
 
-      if(!game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))
+      bool bInstaResurrect=false;
+      if(!bInstaResurrect && game::GetAutoPlayMode()>0)bInstaResurrect=true;
+      if(!bInstaResurrect && !game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))bInstaResurrect=true;
+      if(bInstaResurrect)
       {
         RestoreBodyParts();
         ResetSpoiling();
