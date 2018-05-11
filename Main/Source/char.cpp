@@ -2389,82 +2389,101 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
 
 truth character::AutoPlayAICommand(int& rKey)
 {
-  if(CheckForEnemies(false,false,false,true)){DBG1("FoundEnemy");
-    return true;
-  }
+//  if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem");
+//    return true;
+//  }
+//
+//  if(CheckForDoors()){DBG1("FoundDoor");
+//    return true;
+//  }
 
-  if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem");
-    return true;
-  }
-
-  if(CheckForDoors()){DBG1("FoundDoor");
-    return true;
-  }
-
-  static v2 v2GoUp=v2(0,0);
-  static v2 v2GoDown=v2(0,0);
+  std::vector<v2> v2Exits;
+//  static v2 v2GoUp=v2(0,0);
+//  static v2 v2GoDown=v2(0,0);
   level* lvl = game::GetCurrentLevel();
 //  v2 Pos = lvl->GetEntryPos(Player, EntryIndex);
-  static bool bTravelingToAnotherDungeon = false;
-  if(IsGoingSomeWhere()){DBG1("GoingSomewhere");
-    if(MoveTowardsTarget(true)){
-      return true;
-    }else{
-      if(GetPos() == GoingTo){
-        TerminateGoingTo();
+//  static bool bTravelingToAnotherDungeon = false;
+  static v2 v2TravelingToAnotherDungeon=v2(0,0);
+  DBG1(DBGAV2(GetPos()));
+//  if(IsGoingSomeWhere()){ DBG2("GoingSomewhere",DBGAV2(GetPos()));
+//    bool bMoved = MoveTowardsTarget(true);
+//    if(MoveTowardsTarget(true)){
+//      return true;
+//    }else{
+//      if(GetPos() == GoingTo){ DBGSV2(GoingTo);
+//        TerminateGoingTo();
 
-        if(bTravelingToAnotherDungeon){
+        if(GetPos() == v2TravelingToAnotherDungeon){
           bool bTravel=false;
-          if(GetPos()==v2GoUp){
-            rKey='<';
-            bTravel=true;
-          }
-          if(GetPos()==v2GoDown){
-            rKey='>';
-            bTravel=true;
+          lsquare* lsqr = lvl->GetLSquare(v2TravelingToAnotherDungeon);
+          olterrain* olt = lsqr->GetOLTerrain();
+          if(olt){
+            if(olt->GetConfig() == STAIRS_UP){
+              rKey='<';
+              bTravel=true;
+            }
+
+            if(olt->GetConfig() == STAIRS_DOWN){
+              rKey='>';
+              bTravel=true;
+            }
           }
 
-          if(bTravel){
-            bTravelingToAnotherDungeon=false;
-            v2GoUp=v2(0,0);
-            v2GoDown=v2(0,0);
+//          if(GetPos()==v2GoUp){
+//            (*pKey)='<';
+//            bTravel=true;
+//          }
+//          if(GetPos()==v2GoDown){
+//            (*pKey)='>';
+//            bTravel=true;
+//          }
+
+          if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
+            v2TravelingToAnotherDungeon=v2(0,0); //reset
+//            v2GoUp=v2(0,0);
+//            v2GoDown=v2(0,0);
             return false; //so the new key will be used as command
           }
         }
-      }else{
-        for(int i=0;i<100;i++){ //TODO 100 is too much about CPU usage and user command get/read key press?
-          if(MoveRandomly()){ //TODO did this work?
-            break; DBG2("randomSuccessAt",i); //it seems to not be able to continue moving, so try to randomly let it work again
-//          }else{
-//            Kick
-          }
-        }
-        return true;
-      }
-    }
-  }
+//      }else{
+//        for(int i=0;i<100;i++){ //TODO 100 is too much about CPU usage and user command get/read key press?
+//          if(MoveRandomly()){ //TODO did this work?
+//            break; DBG2("randomSuccessAt",i); //it seems to not be able to continue moving, so try to randomly let it work again
+////          }else{
+////            Kick
+//          }
+//        }
+//        return true;
+//      }
+
+//        bool bMoved = MoveTowardsTarget(true);
+//    if(bMoved)return true;
+//    if(MoveTowardsTarget(true))return true;
+//  }
 
   if(!IsGoingSomeWhere()){
     // target undiscovered squares to explore
     v2 v2TravelTo=v2(0,0);
     std::vector<v2> vv2;
-    bool bFoundUp=false;
-    bool bFoundDown=false;
+//    bool bFoundUp=false;
+//    bool bFoundDown=false;
     for(int iY=0;iY<lvl->GetYSize();iY++){
 //      if(!v2TravelTo.Is0())break;
       for(int iX=0;iX<lvl->GetXSize();iX++){
         lsquare* lsqr = lvl->GetLSquare(iX,iY);
 
         olterrain* olt = lsqr->GetOLTerrain();
-        if(olt && olt->GetConfig() == STAIRS_UP){
-          v2GoUp=lsqr->GetPos();
-          bFoundUp=true;
+        if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
+          v2Exits.push_back(v2(lsqr->GetPos()));
         }
-
-        if(olt && olt->GetConfig() == STAIRS_DOWN){
-          v2GoDown=lsqr->GetPos();
-          bFoundDown=true;
-        }
+//        if(olt && olt->GetConfig() == STAIRS_UP){
+//          v2GoUp=lsqr->GetPos();
+//          bFoundUp=true;
+//        }
+//        if(olt && olt->GetConfig() == STAIRS_DOWN){
+//          v2GoDown=lsqr->GetPos();
+//          bFoundDown=true;
+//        }
 
         if(
             !lsqr->HasBeenSeen() // undiscovered/unseen
@@ -2477,8 +2496,8 @@ truth character::AutoPlayAICommand(int& rKey)
         }
       }
     }
-    if(!bFoundDown)v2GoDown=v2(0,0);
-    if(!bFoundUp)v2GoUp=v2(0,0);
+//    if(!bFoundDown)v2GoDown=v2(0,0);
+//    if(!bFoundUp)v2GoUp=v2(0,0);
 
     //find nearest
     int iNearestDist=10000000; //TODO should be max integer but this will do for now..
@@ -2491,24 +2510,29 @@ truth character::AutoPlayAICommand(int& rKey)
     }
 
     // travel between dungeons
-    if(v2TravelTo.Is0()){
-      if(!v2GoUp.Is0() && !v2GoDown.Is0()){
-        v2TravelTo = clock()%2==0 ? v2GoUp : v2GoDown;
-      }else{
-        if(!v2GoUp.Is0())v2TravelTo=v2GoUp;
-        if(!v2GoDown.Is0())v2TravelTo=v2GoDown;
-      }
-
-      if(!v2TravelTo.Is0())bTravelingToAnotherDungeon=true;
+    if(v2TravelTo.Is0() && v2Exits.size()>0){
+      v2TravelingToAnotherDungeon = v2TravelTo = v2Exits[clock()%v2Exits.size()];
+//      if(!v2GoUp.Is0() && !v2GoDown.Is0()){
+//        v2TravelTo = clock()%2==0 ? v2GoUp : v2GoDown;
+//      }else{
+//        if(!v2GoUp.Is0())v2TravelTo=v2GoUp;
+//        if(!v2GoDown.Is0())v2TravelTo=v2GoDown;
+//      }
+//      v2TravelingToAnotherDungeon=v2TravelTo;
+//      if(!v2TravelTo.Is0())bTravelingToAnotherDungeon=true;
     }
 
     if(!v2TravelTo.Is0()){
-      SetGoingTo(v2TravelTo); DBG7(DBGAV2(v2TravelTo),vv2.size(),iNearestDist,DBGAV2(v2GoUp),DBGAV2(v2GoDown),bTravelingToAnotherDungeon,rKey);
-      return true;
+      SetGoingTo(v2TravelTo); DBG5(DBGAV2(v2TravelTo),vv2.size(),iNearestDist,DBGAV2(v2TravelingToAnotherDungeon),rKey);
+//      return true;
     }
   }
 
-  GetAICommand(); //fallback to default
+  if(CheckForEnemies(true,true,false,true)){DBG1("CheckForEnemies");
+    return true;
+  }
+
+  GetAICommand(); DBGLN; //fallback to default
   return true;
 }
 
@@ -2561,7 +2585,7 @@ void character::GetPlayerCommand()
         if(game::IsInWilderness()){
           Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
         }else{
-          HasActed = AutoPlayAICommand(Key);
+          HasActed = AutoPlayAICommand(Key); DBG2("Simulated",Key);
           if(HasActed)ValidKeyPressed = true; //valid simulated action
         }
       }else{
