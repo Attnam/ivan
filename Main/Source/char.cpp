@@ -2433,7 +2433,11 @@ void character::GetPlayerCommand()
 #ifdef WIZARD
     if(game::GetAutoPlayMode()>0){
       if(Key=='.'){ // pressed or simulated
-        GetAICommand();
+        if(game::IsInWilderness()){
+          Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
+        }else{
+          GetAICommand(); //TODO make it target undiscovered squares to explore, also target dungeon travel squares after it completes the current dungeon
+        }
         HasActed = true;
         ValidKeyPressed = true;
       }else{
