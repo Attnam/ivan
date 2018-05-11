@@ -173,6 +173,7 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
+int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -3070,6 +3071,51 @@ truth game::MassacreListsEmpty()
 }
 
 #ifdef WIZARD
+
+int game::AutoPlayModeApply(){
+  int iTimeout=0;
+
+  const char* msg;
+  switch(game::AutoPlayMode){
+  case 0:
+    // disabled
+    msg="%s says \"I can rest now.\"";
+    break;
+  case 1:
+    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
+    msg="%s says \"I won't rest!\"";
+    break;
+  case 2: // TIMEOUTs key press from here to below
+    msg="%s says \"I can't wait anymore!\"";
+    iTimeout=(1000);
+    break;
+  case 3:
+    msg="%s says \"I am in a hurry!!\"";
+    iTimeout=(1000/2);
+    break;
+  case 4:
+    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    break;
+  }
+  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
+
+  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
+}
+
+void game::IncAutoPlayMode() {
+//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
+//    if(AutoPlayMode>=2){
+//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
+//      AutoPlayModeApply();
+//    }
+//  }
+
+  ++AutoPlayMode;
+  if(AutoPlayMode>4)AutoPlayMode=0;
+
+  AutoPlayModeApply();
+}
 
 void game::SeeWholeMap()
 {

@@ -263,6 +263,40 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+int iTimeoutDelay=0; // must init with 0
+int iTimeoutDefaultKey;
+//int iTimeoutIgnoreKeyWhenDisabling;
+long keyTimeoutRequestedAt;
+/**
+ * This is intended to remain active ONLY until the user hits any key.
+ */
+void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
+{
+  iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
+  if(iTimeoutDelay>0 && iTimeoutDelay<(1000/10))iTimeoutDelay=1000/10; // we are unable to issue commands if it is less than 100ms
+
+  iTimeoutDefaultKey=iDefaultReturnedKey;
+//  iTimeoutIgnoreKeyWhenDisabling=iIgnoreKeyWhenDisabling;
+}
+truth globalwindowhandler::IsKeyTimeoutEnabled()
+{
+  return iTimeoutDelay>0;
+}
+void globalwindowhandler::CheckKeyTimeout()
+{
+  if(iTimeoutDelay>0){ // timeout mode is enalbed
+    if(!KeyBuffer.empty()){ // user pressed some key
+      keyTimeoutRequestedAt=clock(); // resets reference time to wait from
+//      if(KeyBuffer[0]!=iTimeoutIgnoreKeyWhenDisabling){
+//        iTimeoutDelay=0; //user pressed a key, disable timeout mode
+//      }
+    }else{
+      if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
+        KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
+    }
+  }
+}
+
 int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
@@ -275,8 +309,11 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     KeyBuffer.clear();
   }
 
+  keyTimeoutRequestedAt=clock();
   int iDelayMS=iDefaultDelayMS;
-  for(;;)
+  for(;;){
+    CheckKeyTimeout();
+
     if(!KeyBuffer.empty())
     {
       int Key = KeyBuffer[0];
@@ -334,6 +371,8 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         }
       }
     }
+
+  }
 }
 
 int globalwindowhandler::ReadKey()

@@ -355,6 +355,10 @@ class game
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
+  static void IncAutoPlayMode();
+  static int GetAutoPlayMode() { return AutoPlayMode; }
+  static int AutoPlayModeApply();
+  static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -363,6 +367,7 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
+  static int GetAutoPlayMode() { return 0; }
 #endif
   static truth WizardModeIsReallyActive() { return WizardMode; }
   static void CreateBone();
@@ -520,6 +525,7 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
+  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;

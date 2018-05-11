@@ -84,6 +84,7 @@ class commandsystem
   static truth Consume(character*, cchar*, sorter);
 #ifdef WIZARD
   static truth WizardMode(character*);
+  static truth AutoPlay(character* Char);
   static truth RaiseStats(character*);
   static truth LowerStats(character*);
   static truth SeeWholeMap(character*);

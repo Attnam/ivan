@@ -1025,7 +1025,9 @@ void character::Be()
         Search(GetAttribute(PERCEPTION));
 
       if(!Action)
+      {
         GetPlayerCommand();
+      }
       else
       {
         if(Action->ShowEnvironment())
@@ -2422,38 +2424,58 @@ void character::GetPlayerCommand()
     int Key = GET_KEY();
     game::SetIsInGetCommand(false);
 
-    if(Key != '+' && Key != '-' && Key != 'M') // gum
+    if(Key != '+' && Key != '-' && Key != 'M') // gum (these are the messages keys M=ShowHistory +-=ScrollHistUpDown)
       msgsystem::ThyMessagesAreNowOld();
 
     truth ValidKeyPressed = false;
     int c;
 
-    for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-      if(Key == game::GetMoveCommandKey(c))
-      {
-        HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning());
+#ifdef WIZARD
+    if(game::GetAutoPlayMode()>0){
+      if(Key=='.'){ // pressed or simulated
+        GetAICommand();
+        HasActed = true;
         ValidKeyPressed = true;
+      }else{
+        /**
+         * if the user hits any key during the autoplay mode that runs by itself, it will be disabled
+         */
+        if(game::GetAutoPlayMode()>=2 && Key!='~')
+          game::DisableAutoPlayMode();
       }
+    }
+#endif
 
-    for(c = 1; commandsystem::GetCommand(c); ++c)
-      if(Key == commandsystem::GetCommand(c)->GetKey())
-      {
-        if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
-          ADD_MESSAGE("This function cannot be used while in wilderness.");
-        else
-          if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
-            ADD_MESSAGE("Activate wizardmode to use this function.");
-          else{
-            game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
-            game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
-            HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
-            game::RegionListItemEnable(false);
-            game::RegionSilhouetteEnable(false);
-          }
+    if(!HasActed){
 
-        ValidKeyPressed = true;
-        break;
-      }
+      for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+        if(Key == game::GetMoveCommandKey(c))
+        {
+          HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning());
+          ValidKeyPressed = true;
+        }
+
+      for(c = 1; commandsystem::GetCommand(c); ++c)
+        if(Key == commandsystem::GetCommand(c)->GetKey())
+        {
+          if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
+            ADD_MESSAGE("This function cannot be used while in wilderness.");
+          else
+            if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
+              ADD_MESSAGE("Activate wizardmode to use this function.");
+            else{
+              game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
+              game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
+              HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+              game::RegionListItemEnable(false);
+              game::RegionSilhouetteEnable(false);
+            }
+
+          ValidKeyPressed = true;
+          break;
+        }
+
+    }
 
     if(!ValidKeyPressed)
       ADD_MESSAGE("Unknown key. Press '?' for a list of commands.");
