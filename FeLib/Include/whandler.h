@@ -37,6 +37,7 @@ class globalwindowhandler
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static void SetPlayInBackground(truth b){playInBackground=b;}
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);
@@ -72,6 +73,7 @@ class globalwindowhandler
   static int Controls;
   static ulong Tick;
   static truth ControlLoopsEnabled;
+  static truth playInBackground;
   static festring ScrshotDirectoryName;
 };
 

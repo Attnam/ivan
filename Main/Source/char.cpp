@@ -2387,6 +2387,131 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
   return !Item->EffectIsGood() && RAND() % int(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
+truth character::AutoPlayAICommand(int& rKey)
+{
+  if(CheckForEnemies(false,false,false,true)){DBG1("FoundEnemy");
+    return true;
+  }
+
+  if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem");
+    return true;
+  }
+
+  if(CheckForDoors()){DBG1("FoundDoor");
+    return true;
+  }
+
+  static v2 v2GoUp=v2(0,0);
+  static v2 v2GoDown=v2(0,0);
+  level* lvl = game::GetCurrentLevel();
+//  v2 Pos = lvl->GetEntryPos(Player, EntryIndex);
+  static bool bTravelingToAnotherDungeon = false;
+  if(IsGoingSomeWhere()){DBG1("GoingSomewhere");
+    if(MoveTowardsTarget(true)){
+      return true;
+    }else{
+      if(GetPos() == GoingTo){
+        TerminateGoingTo();
+
+        if(bTravelingToAnotherDungeon){
+          bool bTravel=false;
+          if(GetPos()==v2GoUp){
+            rKey='<';
+            bTravel=true;
+          }
+          if(GetPos()==v2GoDown){
+            rKey='>';
+            bTravel=true;
+          }
+
+          if(bTravel){
+            bTravelingToAnotherDungeon=false;
+            v2GoUp=v2(0,0);
+            v2GoDown=v2(0,0);
+            return false; //so the new key will be used as command
+          }
+        }
+      }else{
+        for(int i=0;i<100;i++){ //TODO 100 is too much about CPU usage and user command get/read key press?
+          if(MoveRandomly()){ //TODO did this work?
+            break; DBG2("randomSuccessAt",i); //it seems to not be able to continue moving, so try to randomly let it work again
+//          }else{
+//            Kick
+          }
+        }
+        return true;
+      }
+    }
+  }
+
+  if(!IsGoingSomeWhere()){
+    // target undiscovered squares to explore
+    v2 v2TravelTo=v2(0,0);
+    std::vector<v2> vv2;
+    bool bFoundUp=false;
+    bool bFoundDown=false;
+    for(int iY=0;iY<lvl->GetYSize();iY++){
+//      if(!v2TravelTo.Is0())break;
+      for(int iX=0;iX<lvl->GetXSize();iX++){
+        lsquare* lsqr = lvl->GetLSquare(iX,iY);
+
+        olterrain* olt = lsqr->GetOLTerrain();
+        if(olt && olt->GetConfig() == STAIRS_UP){
+          v2GoUp=lsqr->GetPos();
+          bFoundUp=true;
+        }
+
+        if(olt && olt->GetConfig() == STAIRS_DOWN){
+          v2GoDown=lsqr->GetPos();
+          bFoundDown=true;
+        }
+
+        if(
+            !lsqr->HasBeenSeen() // undiscovered/unseen
+            &&
+            CanMoveOn(lsqr)
+        ){
+          vv2.push_back(lsqr->GetPos());
+//          v2TravelTo=v2(iX,iY);
+//          break;
+        }
+      }
+    }
+    if(!bFoundDown)v2GoDown=v2(0,0);
+    if(!bFoundUp)v2GoUp=v2(0,0);
+
+    //find nearest
+    int iNearestDist=10000000; //TODO should be max integer but this will do for now..
+    for(int i=0;i<vv2.size();i++){
+      int iDist = (vv2[i]-GetPos()).GetLengthSquare();
+      if(iDist<iNearestDist){
+        iNearestDist=iDist;
+        v2TravelTo=vv2[i];
+      }
+    }
+
+    // travel between dungeons
+    if(v2TravelTo.Is0()){
+      if(!v2GoUp.Is0() && !v2GoDown.Is0()){
+        v2TravelTo = clock()%2==0 ? v2GoUp : v2GoDown;
+      }else{
+        if(!v2GoUp.Is0())v2TravelTo=v2GoUp;
+        if(!v2GoDown.Is0())v2TravelTo=v2GoDown;
+      }
+
+      if(!v2TravelTo.Is0())bTravelingToAnotherDungeon=true;
+    }
+
+    if(!v2TravelTo.Is0()){
+      SetGoingTo(v2TravelTo); DBG7(DBGAV2(v2TravelTo),vv2.size(),iNearestDist,DBGAV2(v2GoUp),DBGAV2(v2GoDown),bTravelingToAnotherDungeon,rKey);
+      return true;
+    }
+  }
+
+  GetAICommand(); //fallback to default
+  return true;
+}
+
 void character::GetPlayerCommand()
 {
   truth HasActed = false;
@@ -2436,10 +2561,9 @@ void character::GetPlayerCommand()
         if(game::IsInWilderness()){
           Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
         }else{
-          GetAICommand(); //TODO make it target undiscovered squares to explore, also target dungeon travel squares after it completes the current dungeon
+          HasActed = AutoPlayAICommand(Key);
+          if(HasActed)ValidKeyPressed = true; //valid simulated action
         }
-        HasActed = true;
-        ValidKeyPressed = true;
       }else{
         /**
          * if the user hits any key during the autoplay mode that runs by itself, it will be disabled

@@ -3100,6 +3100,7 @@ void game::AutoPlayModeApply(){
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
+  globalwindowhandler::SetPlayInBackground(iTimeout>0);
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 

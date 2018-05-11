@@ -42,6 +42,7 @@ truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
+truth globalwindowhandler::playInBackground=false;
 festring globalwindowhandler::ScrshotDirectoryName = "";
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
@@ -334,7 +335,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 #if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
 #else
-        if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
+        if(playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
 #endif
            && Controls && ControlLoopsEnabled)
         {

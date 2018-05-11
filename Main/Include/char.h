@@ -1182,6 +1182,7 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
+  truth AutoPlayAICommand(int&);
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;
