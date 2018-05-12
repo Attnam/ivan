@@ -51,27 +51,6 @@ void CrashHandler(int Signal)
 void SkipGameScript(inputfile* pSaveFile){
   gamescript* gs=0;
   (*pSaveFile) >> gs; //dummy just to "seek" for next binary data TODO if dungeon and level was saved before it, this would not be necessary... re-structuring the savegame file (one day) would be good.
-
-  // it would have to pre-load each savegame partially enough to collect dungeon data like dungeon name! :O
-
-//  int Dungeons = *gs->GetDungeons() + 1;
-//  dungeon** Dungeon = new dungeon *[Dungeons];
-//  Dungeon[0] = 0;
-//
-//  for(int c = 1; c < Dungeons; ++c)
-//  {
-//    Dungeon[c] = new dungeon(c);
-//    Dungeon[c]->SetIndex(c);
-//  }
-//
-//  for(int i=0;i<(*game::GetGameScript()->GetDungeons());i++){
-//    std::map<int, dungeonscript>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(i);
-//    const dungeonscript* DungeonScript;
-//    if(DungeonIterator != game::GetGameScript()->GetDungeon().end()){
-//      DungeonScript = &DungeonIterator->second;
-//      DBG3(i,DungeonScript->GetShortDescription(),DungeonScript->GetDescription());
-//    }
-//  }
 }
 
 int main(int argc, char** argv)

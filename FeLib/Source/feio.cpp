@@ -963,7 +963,6 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
   );DBGLN;
 
   std::vector<festring> vIds,vInvIds;
-//  festring dungeonIds("");
   std::vector<fileInfo> vComponents;
   for(int i=0;i<vFiles.size();i++)
   {
@@ -979,7 +978,7 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       inputfile SaveFile(vFiles[i].fullName, 0, false);
       SaveFile >> vFiles[i].Version; DBGSI(vFiles[i].Version);
       if(SkipGameScript==NULL)ABORT("SkipGameScript function not set");
-      SkipGameScript(&SaveFile); //SaveFile >> vFiles[i].GameScript; //DUMMY
+      SkipGameScript(&SaveFile); //DUMMY (for here) binary data skipper
       SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
       SaveFile.Close();
       if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
@@ -1026,16 +1025,12 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
       }
 
-//      dungeonIds.Empty();
       vComponents.clear(); // reset to begin filling it for next .sav
     }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
       std::string s=vFiles[i].name.CStr();
       s=s.substr(s.find(".")+1);
-//      if(!dungeonIds.IsEmpty())dungeonIds<<",";
-//      dungeonIds<<s.c_str();
       vFiles[i].dungeonID<<festring(s.c_str());
       vComponents.push_back(vFiles[i]);
-//      vFiles[i].vDungeonIDs.push_back(festring(s.c_str()));
       DBG3(vFiles[i].name.CStr(),s,vComponents.size());//,dungeonIds.CStr());
     }
   }
