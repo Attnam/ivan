@@ -853,10 +853,14 @@ static int iSaveGameSortMode=0;
 void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
 struct fileInfo{
   int Version;
+  char* GameScript = 0; //dummy
+  int CurrentDungeonIndex;
+  int CurrentLevelIndex;
   festring name=festring(); //TODO this init helps with festring? it is buggy?
   festring fullName=festring();
   festring time=festring();
   festring idOnList=festring();
+  festring dungeonID=festring();
 };
 std::vector<fileInfo> vFiles;
 bool addFileInfo(char* c){
@@ -870,6 +874,11 @@ bool addFileInfo(char* c){
   vFiles.push_back(fi); //stores a copy
 
   return true; //added
+}
+SkipGameScriptLinkedFunctionType SkipGameScript=NULL;
+void iosystem::SetSkipGameScriptLinkedFunction(SkipGameScriptLinkedFunctionType sgs)
+{
+  SkipGameScript = sgs;DBGLN;
 }
 festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
@@ -954,7 +963,8 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
   );DBGLN;
 
   std::vector<festring> vIds,vInvIds;
-  festring dungeonIds("");
+//  festring dungeonIds("");
+  std::vector<fileInfo> vComponents;
   for(int i=0;i<vFiles.size();i++)
   {
     DBGSC(vFiles[i].name.CStr());
@@ -963,12 +973,15 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       //ignored
     }else
     if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
-      festring id;
+      festring id("");
 
-      // savegame version
-      inputfile file(vFiles[i].fullName, 0, false);
-      file >> vFiles[i].Version; DBGSI(vFiles[i].Version);
-      file.Close();
+      // savegame version (structure taken from game::Load()
+      inputfile SaveFile(vFiles[i].fullName, 0, false);
+      SaveFile >> vFiles[i].Version; DBGSI(vFiles[i].Version);
+      if(SkipGameScript==NULL)ABORT("SkipGameScript function not set");
+      SkipGameScript(&SaveFile); //SaveFile >> vFiles[i].GameScript; //DUMMY
+      SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
+      SaveFile.Close();
       if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
 
       switch(iSaveGameSortMode){
@@ -983,7 +996,20 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         break;
       }
 
-      if(iSaveGameSortMode>=2 && !dungeonIds.IsEmpty())id<<" ("<<dungeonIds<<")";
+      festring currentDungeonLevel("");
+      currentDungeonLevel << vFiles[i].CurrentDungeonIndex << vFiles[i].CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
+      if(iSaveGameSortMode>=2 && !vComponents.empty()){
+        id<<" (";
+        for(int k=0;k<vComponents.size();k++){
+          if(k>0)id<<" ";
+          if(vComponents[k].dungeonID == currentDungeonLevel){
+            id<<"@"<<currentDungeonLevel<<"";
+          }else{
+            id<<vComponents[k].dungeonID;
+          }
+        }
+        id<<")";
+      }
 
       vFiles[i].idOnList<<id;
 
@@ -1000,13 +1026,17 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
       }
 
-      dungeonIds.Empty();
+//      dungeonIds.Empty();
+      vComponents.clear(); // reset to begin filling it for next .sav
     }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
       std::string s=vFiles[i].name.CStr();
       s=s.substr(s.find(".")+1);
-      if(!dungeonIds.IsEmpty())dungeonIds<<",";
-      dungeonIds<<s.c_str();
-      DBG3(vFiles[i].name.CStr(),s,dungeonIds.CStr());
+//      if(!dungeonIds.IsEmpty())dungeonIds<<",";
+//      dungeonIds<<s.c_str();
+      vFiles[i].dungeonID<<festring(s.c_str());
+      vComponents.push_back(vFiles[i]);
+//      vFiles[i].vDungeonIDs.push_back(festring(s.c_str()));
+      DBG3(vFiles[i].name.CStr(),s,vComponents.size());//,dungeonIds.CStr());
     }
   }
 
