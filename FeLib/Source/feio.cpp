@@ -875,11 +875,8 @@ bool addFileInfo(char* c){
 
   return true; //added
 }
-SkipGameScriptLinkedFunctionType SkipGameScript=NULL;
-void iosystem::SetSkipGameScriptLinkedFunction(SkipGameScriptLinkedFunctionType sgs)
-{
-  SkipGameScript = sgs;DBGLN;
-}
+skipseeksave skipSeek=NULL;
+void iosystem::SetSkipSeekSave(skipseeksave sss){skipSeek = sss;}
 festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
   ///////////////////// prepare general base data ///////////////////
@@ -977,8 +974,8 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       // savegame version (structure taken from game::Load()
       inputfile SaveFile(vFiles[i].fullName, 0, false);
       SaveFile >> vFiles[i].Version; DBGSI(vFiles[i].Version);
-      if(SkipGameScript==NULL)ABORT("SkipGameScript function not set");
-      SkipGameScript(&SaveFile); //DUMMY (for here) binary data skipper
+      if(skipSeek==NULL)ABORT("SkipSeek function not set");
+      skipSeek(&SaveFile); //DUMMY (for here) binary data skipper
       SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
       SaveFile.Close();
       if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";

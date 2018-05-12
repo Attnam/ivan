@@ -20,13 +20,13 @@ class bitmap;
 
 typedef truth (*stringkeyhandler)(int, festring&);
 typedef void (*bitmapeditor)(bitmap*, truth);
-typedef void (*SkipGameScriptLinkedFunctionType)(inputfile* pSaveFile);
+typedef void (*skipseeksave)(inputfile* pSaveFile);
 
 class iosystem
 {
  public:
   static festring ContinueMenu(col16, col16, cfestring&, const int iSaveFileVersion, bool bAllowImportOldSavegame);
-  static void SetSkipGameScriptLinkedFunction(SkipGameScriptLinkedFunctionType);
+  static void SetSkipSeekSave(skipseeksave);
   static void SetSaveGameSortMode(int i);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,
