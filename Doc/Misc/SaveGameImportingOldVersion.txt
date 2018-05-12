@@ -12,25 +12,11 @@ if(loadedSavegameFileVersion >= 133){
 
 Only to load the savegame of course, and at all related classes that may have new stuff.
 
-Every new addition !!!MUST!!! be sequential (only put 134 stuff after 133!).
-So the savegame data structure organization will not be pretty, but we may be able to keep it compatible.
+ex.:
+v132 [ some old data ] [ some old dataaaaaaa ] [ some old dataaaaaaaaaaaaaa ]
+v133 [ some old data ] [ some old dataaaaaaa ] [ some NEW v133 data ] [ some old dataaaaaaaaaaaaaa ]
 
-Multi class example:
-
-ClassA -> Save()
-| |_calls ClassB->Save()
-|_continues saving ClassA stuff
-|__calls ClassC->Save()
-
-now ClassB has new stuff.
-it can't be appended at the end of the ClassB->Save() method
-it must be like:
-
-ClassA -> Save()
-| |_calls ClassB->Save()
-|_continues saving ClassA stuff
-|_calls ClassC->Save()
-| ClassB()->SaveV133NewData()
+The importer at v133 to load v132, if it just skip loading "some NEW v133 data" from v132, even if it is not in the end of the file, may work well, just test it!
 
 =====================================
 
@@ -51,7 +37,7 @@ Anyway, if in some special case, something severe changes breaking the game to a
 
 
 
-/////////////////////////////// TODO one day //////////////////////////////////////
+/////////////////////////////// TODO one day may be //////////////////////////////////////
 
 Another thing I thought would be to create savegames structure based on tokens/IDs for each data sector.
 
