@@ -313,6 +313,7 @@ void hiteffect::PrepareBlitdata(const blitdata& bld){
 
   bldFinalDraw=bld; DBG1(this);DBGBLD(bldFinalDraw); //copy
   bitmap::ResetBlitdataRotation(bldFinalDraw); //prevent it from further rotating beyong the initial setup at constructor!!!
+  bldFinalDraw.Stretch=0; //TODO why so big numbers here? was it uninitialized?
   bBlitdataWasSet=true;
 
   if(iState!=DBGSTATE_SETBLD){ //can be set more than once
