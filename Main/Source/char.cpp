@@ -2469,6 +2469,7 @@ truth character::AutoPlayAICommand(int& rKey)
       bDropSomething=true;
     }
   }
+
   if(bDropSomething){ DBG1("DropSomething");
     item* dropMe=NULL;
 
@@ -2502,30 +2503,69 @@ truth character::AutoPlayAICommand(int& rKey)
       ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
       //TODO stop autoplay mode?
     }
-  }else{
-    // just equip items
-    itemvector ItemVector;
-    GetStackUnder()->FillItemVector(ItemVector);
-    bool bEquipped=false;
-    for(uint c = 0; c < ItemVector.size(); ++c)
-      if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
-        if(TryToEquip(ItemVector[c])){
-          bEquipped=true;
-          continue;
-        }
-      }
+  }
 
-    // just pick up items (after equipping as may drop current)
-    if(GetBurdenState()>STRESSED){ // burdened or unburdened
-      if(bEquipped)GetStackUnder()->FillItemVector(ItemVector);
-      for(uint c = 0; c < ItemVector.size(); ++c)
-        if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
-          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c]))continue;
+  //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
+//  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
+//  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
+  if(dynamic_cast<ghost*>(this) != NULL){ //this avoid many issues
+    GetAICommand(); DBG2("Wandering:Ghost",iWanderTurns); //fallback to default TODO never reached?
+//    AutoPlayReset(true);
+    iWanderTurns=iMinWanderTurns; //mainly to draw the debug indicator
+    return true;
+  }
 
-          ItemVector[c]->MoveTo(GetStack()); //pickup
-          if(GetBurdenState()<=STRESSED)break; // stressed or overloaded
-        }
-    }
+  if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
+//    if(GetBurdenState()>STRESSED) // burdened or unburdened
+      if(CheckForUsefulItemsOnGround(false))
+        return true;
+
+//    // look for items
+//    static itemvector ItemVector;
+//    GetStackUnder()->FillItemVector(ItemVector);
+//    bool bEquipped=false;
+//    for(uint c = 0; c < ItemVector.size(); ++c){
+//      if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
+////        if(GetBurdenState()>STRESSED) // burdened or unburdened
+////          if(TryToEquip(ItemVector[c]))
+////            return true;
+//        static item* lastTryToConsume=NULL;
+//        if(lastTryToConsume!=ItemVector[c]) //prevents getting stuck if being interrupted
+//          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c])){ DBG1("eatMore"); //TODO try consume must be after try equip, why?
+//            return true;
+//          }
+//
+//        if(GetBurdenState()>STRESSED){ // burdened or unburdened
+//          ItemVector[c]->MoveTo(GetStack()); DBG1("pickup");
+//          return true;
+//        }
+//
+////        if(GetBurdenState()!=OVER_LOADED){
+////          if(TryToEquip(ItemVector[c]))
+////            bEquipped=true;
+////          else
+////            ItemVector[c]->MoveTo(GetStack()); //pickup
+////
+////          if(GetBurdenState()==OVER_LOADED)ItemVector[c]->MoveTo(GetStackUnder());//drop back if this one becomes too much
+////          if(GetBurdenState()==STRESSED)break; // stop if stressed
+////        }
+//      }
+//    }
+//    if(bEquipped)return true; //to look again for possible stuff dropped
+
+//    // just pick up items (after equipping as may drop current)
+//    if(GetBurdenState()>STRESSED){ // burdened or unburdened
+////      if(bEquipped)GetStackUnder()->FillItemVector(ItemVector);
+//      GetStackUnder()->FillItemVector(ItemVector);
+//      for(uint c = 0; c < ItemVector.size(); ++c)
+//        if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
+//          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c]))continue;
+//
+//          ItemVector[c]->MoveTo(GetStack()); //pickup
+//          if(GetBurdenState()==OVER_LOADED)ItemVector[c]->MoveTo(GetStackUnder());//drop back if this one becomes too much
+//          if(GetBurdenState()==STRESSED)break; // stop if stressed
+//        }
+//    }
   }
 
   /**
@@ -2550,7 +2590,7 @@ truth character::AutoPlayAICommand(int& rKey)
 
     if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
       AutoPlayReset(true);
-      return false; //so the new key will be used as command
+      return false; //so the new/changed key will be used as command, otherwise it would be ignored
     }
   }
 
