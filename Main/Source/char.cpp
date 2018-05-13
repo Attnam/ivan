@@ -2394,12 +2394,23 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
   return !Item->EffectIsGood() && RAND() % int(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
+character* AutoPlayLastChar=NULL;
+const int iMaxWanderTurns=20;
+const int iMinWanderTurns=3;
+
 v2 v2KeepGoingTo=v2(0,0);
+v2 v2TravelingToAnotherDungeon=v2(0,0);
+int iWanderTurns=iMinWanderTurns;
+bool bAutoPlayUseRandomTargetOnce=false;
 std::vector<v2> vv2FailTravelToTargets;
-static int iWanderTurns=0;
-static int iMaxWanderTurns=20;
-static int iMinWanderTurns=3;
-static v2 v2TravelingToAnotherDungeon=v2(0,0);
+void AutoPlayReset(bool bFailedToo){
+  v2KeepGoingTo=v2(0,0); //will retry
+  v2TravelingToAnotherDungeon=v2(0,0);
+  iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
+  bAutoPlayUseRandomTargetOnce=false;
+
+  if(bFailedToo)vv2FailTravelToTargets.clear();
+}
 void character::AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo){
   v2KeepGoingTo=v2KGTo;
   SetGoingTo(v2KeepGoingTo); DBGSV2(v2KeepGoingTo);
@@ -2407,11 +2418,9 @@ void character::AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo){
   if(Route.empty()){ DBG1("RouteCreationFailed");
     TerminateGoingTo(); //redundant?
     vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+    bAutoPlayUseRandomTargetOnce=true;
 
-    //reset stuff
-    v2KeepGoingTo=v2(0,0);//will retry
-    v2TravelingToAnotherDungeon=v2(0,0);
-    iWanderTurns=iMinWanderTurns; //to wander just a bit
+    AutoPlayReset(false);
   }
 }
 
@@ -2423,6 +2432,8 @@ void DebugDrawSquareRect(v2 v2SqrPos, col16 color){
   }
 }
 void character::AutoPlayDebugDrawOverlay(){
+  if(!game::WizardModeIsActive())return;
+
   for(int i=0;i<vv2FailTravelToTargets.size();i++)
     DebugDrawSquareRect(vv2FailTravelToTargets[i],RED);
 
@@ -2439,6 +2450,11 @@ void character::AutoPlayDebugDrawOverlay(){
 
 truth character::AutoPlayAICommand(int& rKey)
 {
+  if(AutoPlayLastChar!=this){
+    AutoPlayReset(true);
+    AutoPlayLastChar=this;
+  }
+
   DBG1(DBGAV2(GetPos()));
 
   level* lvl = game::GetCurrentLevel();
@@ -2486,6 +2502,30 @@ truth character::AutoPlayAICommand(int& rKey)
       ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
       //TODO stop autoplay mode?
     }
+  }else{
+    // just equip items
+    itemvector ItemVector;
+    GetStackUnder()->FillItemVector(ItemVector);
+    bool bEquipped=false;
+    for(uint c = 0; c < ItemVector.size(); ++c)
+      if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
+        if(TryToEquip(ItemVector[c])){
+          bEquipped=true;
+          continue;
+        }
+      }
+
+    // just pick up items (after equipping as may drop current)
+    if(GetBurdenState()>STRESSED){ // burdened or unburdened
+      if(bEquipped)GetStackUnder()->FillItemVector(ItemVector);
+      for(uint c = 0; c < ItemVector.size(); ++c)
+        if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
+          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c]))continue;
+
+          ItemVector[c]->MoveTo(GetStack()); //pickup
+          if(GetBurdenState()<=STRESSED)break; // stressed or overloaded
+        }
+    }
   }
 
   /**
@@ -2509,9 +2549,7 @@ truth character::AutoPlayAICommand(int& rKey)
     }
 
     if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
-      v2KeepGoingTo=v2(0,0);
-      v2TravelingToAnotherDungeon=v2(0,0); //reset
-      vv2FailTravelToTargets.clear();
+      AutoPlayReset(true);
       return false; //so the new key will be used as command
     }
   }
@@ -2528,7 +2566,7 @@ truth character::AutoPlayAICommand(int& rKey)
 
         olterrain* olt = lsqr->GetOLTerrain();
         if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
-          v2Exits.push_back(v2(lsqr->GetPos()));
+          v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
         }
 
         bool bAddValidTargetSquare=true;
@@ -2552,12 +2590,17 @@ truth character::AutoPlayAICommand(int& rKey)
 
     //find nearest
     v2 v2NewKGTo=v2(0,0);
-    int iNearestDist=10000000; //TODO should be max integer but this will do for now..
-    for(int i=0;i<vv2UndiscoveredSquares.size();i++){
-      int iDist = (vv2UndiscoveredSquares[i]-GetPos()).GetLengthSquare();
-      if(iDist<iNearestDist){
-        iNearestDist=iDist;
-        v2NewKGTo=vv2UndiscoveredSquares[i];
+    if(bAutoPlayUseRandomTargetOnce){
+      v2NewKGTo=vv2UndiscoveredSquares[clock()%vv2UndiscoveredSquares.size()]; DBG2("RandomTarget",DBGAV2(v2NewKGTo));
+      bAutoPlayUseRandomTargetOnce=false;
+    }else{
+      int iNearestDist=10000000; //TODO should be max integer but this will do for now..
+      for(int i=0;i<vv2UndiscoveredSquares.size();i++){
+        int iDist = (vv2UndiscoveredSquares[i]-GetPos()).GetLengthSquare();
+        if(iDist<iNearestDist){
+          iNearestDist=iDist;
+          v2NewKGTo=vv2UndiscoveredSquares[i];
+        }
       }
     }
 
@@ -2584,8 +2627,8 @@ truth character::AutoPlayAICommand(int& rKey)
       return true;
     }
 
-//    CheckForUsefulItemsOnGround(true); DBGSV2(GoingTo);
-    CheckForEnemies(false, true, false, false); DBGSV2(GoingTo);
+//    CheckForUsefulItemsOnGround(false); DBGSV2(GoingTo);
+//    CheckForEnemies(false, true, false, false); DBGSV2(GoingTo);
 
 //    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
 //      SetGoingTo(v2KeepGoingTo);
