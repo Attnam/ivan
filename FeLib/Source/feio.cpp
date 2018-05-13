@@ -949,7 +949,7 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
     if(stat(vFiles[i].fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",vFiles[i].fullName.CStr(),std::strerror(errno));
 
     char cTime[iTmSz];
-    strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M",localtime(&(attr.st_mtime)));
+    strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M:%S",localtime(&(attr.st_mtime))); // this format is important for the sorting that is text based
     vFiles[i].time<<cTime;
     DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].fullName.CStr(),attr.st_ino);
   }
@@ -961,12 +961,16 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
 
   std::vector<festring> vIds,vInvIds;
   std::vector<fileInfo> vComponents;
+  bool bHasBkp=false;
   for(int i=0;i<vFiles.size();i++)
   {
     DBGSC(vFiles[i].name.CStr());
 
     if(vFiles[i].name.Find(".wm") != vFiles[i].name.NPos){
       //ignored
+    }else
+    if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //TODO allow .bkp files be listed and used from the user interface easily, may be just rename existing ones to .old (and ignore these .old too) before renaming the .bkp ones to the normal filename
+      bHasBkp=true;
     }else
     if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
       festring id("");
@@ -1007,6 +1011,10 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         id<<")";
       }
 
+      if(bHasBkp){
+        id<<" has backup!";
+      }
+
       vFiles[i].idOnList<<id;
 
       bool bValid=false;
@@ -1022,7 +1030,9 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
         vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
       }
 
+      //resets
       vComponents.clear(); // reset to begin filling it for next .sav
+      bHasBkp=false;
     }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
       std::string s=vFiles[i].name.CStr();
       s=s.substr(s.find(".")+1);
