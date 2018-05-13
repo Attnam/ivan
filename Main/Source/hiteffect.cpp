@@ -32,10 +32,11 @@ square* hiteffect::GetSquareUnderEntity(int) const {
     DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
     DBG5(setup.Type,bWhoIsHitDied,iDrawCount,bBlitdataWasSet,DBGAV2(v2HitFromSqrPos)); \
     DBGSV2(v2HitToSqrPos); \
-    DBG2(setup.WhoHits->GetName(DEFINITE).CStr(),setup.WhoIsHit->GetName(DEFINITE).CStr()); \
-    DBGBLD(bldFinalDraw); \
+    DBGEXEC(if(setup.WhoHits ->Exists())DBG1(setup.WhoHits ->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(setup.WhoIsHit->Exists())DBG1(setup.WhoIsHit->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(setup.itemEffectReference->Exists())DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr())); \
     DBGSV2(bmpHitEffect->GetSize()); \
-    DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr()); \
+    DBGBLD(bldFinalDraw); \
     DBGSTK;
 
 hiteffect::hiteffect(hiteffectSetup s)
