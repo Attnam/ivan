@@ -2397,6 +2397,7 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
 character* AutoPlayLastChar=NULL;
 const int iMaxWanderTurns=20;
 const int iMinWanderTurns=3;
+int iCurrentDungeonTurnsCount=-1; //-1 as it will be the turn index and be inc before checking
 
 v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
@@ -2408,6 +2409,8 @@ void AutoPlayReset(bool bFailedToo){
   v2TravelingToAnotherDungeon=v2(0,0);
   iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
   bAutoPlayUseRandomTargetOnce=false;
+
+  PLAYER->TerminateGoingTo();
 
   if(bFailedToo)vv2FailTravelToTargets.clear();
 }
@@ -2429,23 +2432,28 @@ void DebugDrawSquareRect(v2 v2SqrPos, col16 color){
   if(game::OnScreen(v2SqrPos)){
     v2ScrPos=game::CalculateScreenCoordinates(v2SqrPos);
     DOUBLE_BUFFER->DrawRectangle(v2ScrPos.X+1, v2ScrPos.Y+1, v2ScrPos.X+TILE_SIZE-2, v2ScrPos.Y+TILE_SIZE-2, color, false);
+//    game::GetCurrentLevel()->GetLSquare(v2SqrPos)->SendStrongNewDrawRequest();
+    game::GetCurrentArea()->GetSquare(v2SqrPos)->SendNewDrawRequest();
+//    game::GetCurrentLevel()->GetSquare(v2SqrPos)->SendNewDrawRequest();
   }
 }
 void character::AutoPlayDebugDrawOverlay(){
   if(!game::WizardModeIsActive())return;
 
-  for(int i=0;i<vv2FailTravelToTargets.size();i++)
+  for(int i=0;i<vv2FailTravelToTargets.size();i++){DBGLN;
     DebugDrawSquareRect(vv2FailTravelToTargets[i],RED);
+  }
 
-  if(!PLAYER->Route.empty()){
+  if(!PLAYER->Route.empty()){DBGLN;
     for(int i=0;i<PLAYER->Route.size();i++)
       DebugDrawSquareRect(PLAYER->Route[i],GREEN);
   }
 
-  if(!v2KeepGoingTo.Is0())
+  if(!v2KeepGoingTo.Is0()){DBGLN;
     DebugDrawSquareRect(v2KeepGoingTo,BLUE);
-  else
+  }else{DBGLN;
     DebugDrawSquareRect(PLAYER->GetPos(),YELLOW); //means wandering
+  }
 }
 
 truth character::AutoPlayAICommand(int& rKey)
@@ -2458,7 +2466,10 @@ truth character::AutoPlayAICommand(int& rKey)
   DBG1(DBGAV2(GetPos()));
 
   level* lvl = game::GetCurrentLevel();
+//  area* Area = game::GetCurrentArea();
   static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayDebugDrawOverlay);return true;}();
+
+  iCurrentDungeonTurnsCount++;
 
   /**
    *  unburden
@@ -2497,7 +2508,8 @@ truth character::AutoPlayAICommand(int& rKey)
     }
 
     if(dropMe!=NULL){
-      dropMe->MoveTo(GetStackUnder());
+      ThrowItem(clock()%8,dropMe);
+//      dropMe->MoveTo(GetStackUnder());
       return true;
     }else{ DBG1("AutoPlayNeedsImprovement")
       ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
@@ -2517,8 +2529,21 @@ truth character::AutoPlayAICommand(int& rKey)
 
   if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
 //    if(GetBurdenState()>STRESSED) // burdened or unburdened
-      if(CheckForUsefulItemsOnGround(false))
-        return true;
+    if(CheckForUsefulItemsOnGround(false))
+      return true;
+
+    //just pick up any stuff
+    static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
+    if(GetBurdenState()!=OVER_LOADED){
+      for(uint c = 0; c < vit.size(); ++c){
+        if(vit[c]->CanBeSeenBy(this) && vit[c]->IsPickable(this) && vit[c]->GetSquaresUnder()==1){
+          vit[c]->MoveTo(GetStack()); DBG1("pickup");
+//          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
+//          return true;
+          break;
+        }
+      }
+    }
 
 //    // look for items
 //    static itemvector ItemVector;
@@ -2575,14 +2600,16 @@ truth character::AutoPlayAICommand(int& rKey)
   if(!v2TravelingToAnotherDungeon.Is0() && GetPos() == v2TravelingToAnotherDungeon){
     bool bTravel=false;
     lsquare* lsqr = lvl->GetLSquare(v2TravelingToAnotherDungeon);
-    olterrain* olt = lsqr->GetOLTerrain();
-    if(olt){
-      if(olt->GetConfig() == STAIRS_UP){
+//    square* sqr = Area->GetSquare(v2TravelingToAnotherDungeon);
+    olterrain* ot = lsqr->GetOLTerrain();
+//    oterrain* ot = sqr->GetOTerrain();
+    if(ot){
+      if(ot->GetConfig() == STAIRS_UP){
         rKey='<';
         bTravel=true;
       }
 
-      if(olt->GetConfig() == STAIRS_DOWN){
+      if(ot->GetConfig() == STAIRS_DOWN){
         rKey='>';
         bTravel=true;
       }
@@ -2646,7 +2673,11 @@ truth character::AutoPlayAICommand(int& rKey)
 
     // travel between dungeons if current fully explored
     if(v2NewKGTo.Is0() && v2Exits.size()>0){
-      v2TravelingToAnotherDungeon = v2NewKGTo = v2Exits[clock()%v2Exits.size()]; DBGSV2(v2TravelingToAnotherDungeon);
+      if(iCurrentDungeonTurnsCount==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
+        iWanderTurns=100+clock()%300; //just move around a lot, some NPC may spawn
+      }else{
+        v2TravelingToAnotherDungeon = v2NewKGTo = v2Exits[clock()%v2Exits.size()]; DBGSV2(v2TravelingToAnotherDungeon);
+      }
     }
 
     if(!v2NewKGTo.Is0()){
@@ -2662,8 +2693,9 @@ truth character::AutoPlayAICommand(int& rKey)
 
   if(!v2KeepGoingTo.Is0()){
     if(v2KeepGoingTo==GetPos()){ DBG3("ReachedDestination",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
-      v2KeepGoingTo=v2(0,0);
-      TerminateGoingTo();
+//      v2KeepGoingTo=v2(0,0);
+//      TerminateGoingTo();
+      AutoPlayReset(false);
       return true;
     }
 
@@ -2681,18 +2713,23 @@ truth character::AutoPlayAICommand(int& rKey)
 //    GetAICommand();
 //    if(MoveTowardsTarget(false))
 
-//    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
-    if(!MoveTowardsTarget(false)){ DBGSV2(GoingTo); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
-//      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-//      v2KeepGoingTo=v2(0,0); //try new one
+    //    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
+    if(!MoveTowardsTarget(false)){ DBG2("FailGoingTo",DBGAV2(GoingTo)); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
       TerminateGoingTo();
+      v2KeepGoingTo=v2(0,0); //reset only this one to try again
+      GetAICommand(); //wander once for randomicity
     }
+//    if(!MoveTowardsTarget(false)){ DBG2("FailGoingTo",DBGAV2(GoingTo)); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
+////      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+////      v2KeepGoingTo=v2(0,0); //try new one
+//      TerminateGoingTo();
+//    }
 
-    DBGSV2(GoingTo);
-    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
-//      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-      v2KeepGoingTo=v2(0,0); //try again or new one
-    }
+//    DBGSV2(GoingTo);
+//    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
+////      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+//      v2KeepGoingTo=v2(0,0); //try again or new one
+//    }
 
     return true;
   }
@@ -2761,8 +2798,10 @@ void character::GetPlayerCommand()
         /**
          * if the user hits any key during the autoplay mode that runs by itself, it will be disabled
          */
-        if(game::GetAutoPlayMode()>=2 && Key!='~')
+        if(game::GetAutoPlayMode()>=2 && Key!='~'){
           game::DisableAutoPlayMode();
+          AutoPlayReset(true); // this will help on re-randomizing things, mainly paths
+        }
       }
     }
 #endif
