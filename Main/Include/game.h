@@ -166,6 +166,8 @@ typedef std::vector<character*> charactervector;
 class quitrequest { };
 class areachangerequest { };
 
+typedef void (*dbgdrawoverlay)();
+
 class game
 {
  public:
@@ -454,6 +456,7 @@ class game
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
   static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
   static int getDefaultItemsListWidth(){ return iListWidth; }
+  static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -567,6 +570,7 @@ class game
   static v2 EnterTextDisplacement;
   static blitdata bldAroundOnScreenTMP;
   const static int iListWidth = 652;
+  static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

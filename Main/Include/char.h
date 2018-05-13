@@ -1182,6 +1182,7 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
+  static void AutoPlayDebugDrawOverlay();
   truth AutoPlayAICommand(int&);
   void AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo);
   virtual void GetAICommand();

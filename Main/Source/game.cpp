@@ -207,6 +207,8 @@ v2 silhouettePos = {0,0};
 
 bool bPositionQuestionMode=false;
 
+std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
+
 void game::SetIsRunning(truth What) { Running = What; }
 
 int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
@@ -1206,6 +1208,13 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
       }
     }
 
+  #ifdef WIZARD
+    DBG1(vDbgDrawOverlayFunctions.size());
+    if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
+      for(int i=0;i<vDbgDrawOverlayFunctions.size();i++)
+        vDbgDrawOverlayFunctions[i](); //call it
+    }
+  #endif
 }
 
 truth game::Save(cfestring& SaveName)

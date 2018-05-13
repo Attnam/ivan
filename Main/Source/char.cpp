@@ -2415,16 +2415,34 @@ void character::AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo){
   }
 }
 
+void DebugDrawSquareRect(v2 v2SqrPos, col16 color){
+  static v2 v2ScrPos=v2(0,0); //static to avoid instancing
+  if(game::OnScreen(v2SqrPos)){
+    v2ScrPos=game::CalculateScreenCoordinates(v2SqrPos);
+    DOUBLE_BUFFER->DrawRectangle(v2ScrPos.X+1, v2ScrPos.Y+1, v2ScrPos.X+TILE_SIZE-2, v2ScrPos.Y+TILE_SIZE-2, color, false);
+  }
+}
+void character::AutoPlayDebugDrawOverlay(){
+  for(int i=0;i<vv2FailTravelToTargets.size();i++)
+    DebugDrawSquareRect(vv2FailTravelToTargets[i],RED);
+
+  if(!PLAYER->Route.empty()){
+    for(int i=0;i<PLAYER->Route.size();i++)
+      DebugDrawSquareRect(PLAYER->Route[i],GREEN);
+  }
+
+  if(!v2KeepGoingTo.Is0())
+    DebugDrawSquareRect(v2KeepGoingTo,BLUE);
+  else
+    DebugDrawSquareRect(PLAYER->GetPos(),YELLOW); //means wandering
+}
+
 truth character::AutoPlayAICommand(int& rKey)
 {
   DBG1(DBGAV2(GetPos()));
 
   level* lvl = game::GetCurrentLevel();
-  DBGEXEC(
-    for(int i=0;i<vv2FailTravelToTargets.size();i++){
-      lvl->GetLSquare(vv2FailTravelToTargets[i])->AddSpecialCursors();
-    }
-  );
+  static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayDebugDrawOverlay);return true;}();
 
   /**
    *  unburden
@@ -2566,7 +2584,8 @@ truth character::AutoPlayAICommand(int& rKey)
       return true;
     }
 
-    CheckForUsefulItemsOnGround(true); DBGSV2(GoingTo);
+//    CheckForUsefulItemsOnGround(true); DBGSV2(GoingTo);
+    CheckForEnemies(false, true, false, false); DBGSV2(GoingTo);
 
 //    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
 //      SetGoingTo(v2KeepGoingTo);
