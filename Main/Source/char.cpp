@@ -2394,84 +2394,37 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
   return !Item->EffectIsGood() && RAND() % int(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
+v2 v2KeepGoingTo=v2(0,0);
+std::vector<v2> vv2FailTravelToTargets;
+static int iWanderTurns=0;
+static int iMaxWanderTurns=20;
+static int iMinWanderTurns=3;
+static v2 v2TravelingToAnotherDungeon=v2(0,0);
+void character::AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo){
+  v2KeepGoingTo=v2KGTo;
+  SetGoingTo(v2KeepGoingTo); DBGSV2(v2KeepGoingTo);
+  CreateRoute();
+  if(Route.empty()){ DBG1("RouteCreationFailed");
+    TerminateGoingTo(); //redundant?
+    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+
+    //reset stuff
+    v2KeepGoingTo=v2(0,0);//will retry
+    v2TravelingToAnotherDungeon=v2(0,0);
+    iWanderTurns=iMinWanderTurns; //to wander just a bit
+  }
+}
+
 truth character::AutoPlayAICommand(int& rKey)
 {
   DBG1(DBGAV2(GetPos()));
 
-  /**
-   * travel between dungeons
-   */
-  std::vector<v2> v2Exits;
   level* lvl = game::GetCurrentLevel();
-  static v2 v2TravelingToAnotherDungeon=v2(0,0);
-  if(GetPos() == v2TravelingToAnotherDungeon){
-    bool bTravel=false;
-    lsquare* lsqr = lvl->GetLSquare(v2TravelingToAnotherDungeon);
-    olterrain* olt = lsqr->GetOLTerrain();
-    if(olt){
-      if(olt->GetConfig() == STAIRS_UP){
-        rKey='<';
-        bTravel=true;
-      }
-
-      if(olt->GetConfig() == STAIRS_DOWN){
-        rKey='>';
-        bTravel=true;
-      }
+  DBGEXEC(
+    for(int i=0;i<vv2FailTravelToTargets.size();i++){
+      lvl->GetLSquare(vv2FailTravelToTargets[i])->AddSpecialCursors();
     }
-
-    if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
-      v2TravelingToAnotherDungeon=v2(0,0); //reset
-      return false; //so the new key will be used as command
-    }
-  }
-
-  /**
-   * navigate the unknown dungeon
-   */
-  if(!IsGoingSomeWhere()){
-    // target undiscovered squares to explore
-    v2 v2TravelTo=v2(0,0);
-    std::vector<v2> vv2UndiscoveredSquares;
-    for(int iY=0;iY<lvl->GetYSize();iY++){
-      for(int iX=0;iX<lvl->GetXSize();iX++){
-        lsquare* lsqr = lvl->GetLSquare(iX,iY);
-
-        olterrain* olt = lsqr->GetOLTerrain();
-        if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
-          v2Exits.push_back(v2(lsqr->GetPos()));
-        }
-
-        bool bAddValidTargetSquare=true;
-        if(bAddValidTargetSquare && lsqr->HasBeenSeen())bAddValidTargetSquare=false; //undiscovered
-        if(bAddValidTargetSquare && CanMoveOn(lsqr)    )bAddValidTargetSquare=false;
-//            (!Illegal.empty() && Illegal.find(lsqr->GetPos()) == Illegal.end()) // only non valid squares
-        if(bAddValidTargetSquare){
-          vv2UndiscoveredSquares.push_back(lsqr->GetPos());
-        }
-      }
-    }
-
-    //find nearest
-    int iNearestDist=10000000; //TODO should be max integer but this will do for now..
-    for(int i=0;i<vv2UndiscoveredSquares.size();i++){
-      int iDist = (vv2UndiscoveredSquares[i]-GetPos()).GetLengthSquare();
-      if(iDist<iNearestDist){
-        iNearestDist=iDist;
-        v2TravelTo=vv2UndiscoveredSquares[i];
-      }
-    }
-
-    // travel between dungeons
-    if(v2TravelTo.Is0() && v2Exits.size()>0){
-      v2TravelingToAnotherDungeon = v2TravelTo = v2Exits[clock()%v2Exits.size()];
-    }
-
-    if(!v2TravelTo.Is0()){
-      SetGoingTo(v2TravelTo); DBG5(DBGAV2(v2TravelTo),vv2UndiscoveredSquares.size(),iNearestDist,DBGAV2(v2TravelingToAnotherDungeon),rKey);
-//      return true;
-    }
-  }
+  );
 
   /**
    *  unburden
@@ -2482,7 +2435,7 @@ truth character::AutoPlayAICommand(int& rKey)
       bDropSomething=true;
     }
   }
-  if(bDropSomething){ DBG1("Overloaded");
+  if(bDropSomething){ DBG1("DropSomething");
     item* dropMe=NULL;
 
     bool bFound=false;
@@ -2511,35 +2464,231 @@ truth character::AutoPlayAICommand(int& rKey)
     if(dropMe!=NULL){
       dropMe->MoveTo(GetStackUnder());
       return true;
-    }else{
+    }else{ DBG1("AutoPlayNeedsImprovement")
       ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
       //TODO stop autoplay mode?
     }
   }
 
-//  if(GetBurdenState() == BURDENED || GetBurdenState() == UNBURDENED){
-    if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem"); //this is just to equip or eat, not store on inv
-      return true;
+  /**
+   * travel between dungeons
+   */
+  std::vector<v2> v2Exits;
+  if(!v2TravelingToAnotherDungeon.Is0() && GetPos() == v2TravelingToAnotherDungeon){
+    bool bTravel=false;
+    lsquare* lsqr = lvl->GetLSquare(v2TravelingToAnotherDungeon);
+    olterrain* olt = lsqr->GetOLTerrain();
+    if(olt){
+      if(olt->GetConfig() == STAIRS_UP){
+        rKey='<';
+        bTravel=true;
+      }
+
+      if(olt->GetConfig() == STAIRS_DOWN){
+        rKey='>';
+        bTravel=true;
+      }
     }
+
+    if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
+      v2KeepGoingTo=v2(0,0);
+      v2TravelingToAnotherDungeon=v2(0,0); //reset
+      vv2FailTravelToTargets.clear();
+      return false; //so the new key will be used as command
+    }
+  }
+
+  /**
+   * navigate the unknown dungeon
+   */
+//  if(IsGoingSomeWhere()){
+//    if(!v2KeepGoingTo.Is0() && GoingTo == v2KeepGoingTo){ //current goingto was (expectely) requested here
+//      static v2 v2LastPos=v2(0,0);
+//      if(v2LastPos==GetPos()){
+//        vv2FailTravelToTargets.push_back(GoingTo); DBG4("FailTravelTo",DBGAV2(GoingTo),"from",DBGAV2(GetPos()));  //TODO unstuck AI to continue navigating dungeon or exit it, working?
+//        TerminateGoingTo(); // to try a new one
+//      }
+//      v2LastPos=GetPos();
+//    }
+//  }else{
+//  if(!IsGoingSomeWhere()){
+
+//  if(!v2KeepGoingTo.Is0()){
+//    if(GetPos()==v2KeepGoingTo){
+//      v2KeepGoingTo=v2(0,0); // reached destination
+//      TerminateGoingTo();
+////      return true;
+//    }else{
+//      SetGoingTo(v2KeepGoingTo);
+//      if(MoveTowardsTarget(false))
+//        return true;
+////        TerminateGoingTo();
+//    }
 //  }
 
-  if(CheckForDoors()){DBG1("FoundDoor");
-    return true;
-  }
+//  bool bTryNewTravelDestination=false;
+//  if(bTryNewTravelDestination && !v2KeepGoingTo.Is0())bTryNewTravelDestination=false;
+//  if(bTryNewTravelDestination && iWanderTurns>0)bTryNewTravelDestination=false;
+//  if(iWanderTurns<=0 && )bTryNewTravelDestination=true;
+//  if(bTryNewTravelDestination){
+  if(v2KeepGoingTo.Is0() && iWanderTurns<=0){
+    // target undiscovered squares to explore
+//    v2KeepGoingTo=v2(0,0); // try to set below
+    std::vector<v2> vv2UndiscoveredSquares;
+    for(int iY=0;iY<lvl->GetYSize();iY++){
+      for(int iX=0;iX<lvl->GetXSize();iX++){
+        lsquare* lsqr = lvl->GetLSquare(iX,iY);
 
-  if(CheckForEnemies(true,true,false,clock()%100<10)){DBG1("FoundEnemies???");
-    return true;
-  }
+        olterrain* olt = lsqr->GetOLTerrain();
+        if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
+          v2Exits.push_back(v2(lsqr->GetPos()));
+        }
 
-  if(IsGoingSomeWhere()){
-    static v2 v2LastPos=v2(0,0);
-    if(v2LastPos==GetPos()){
-      //TODO unstuck AI to continue navigating dungeon or exit it
+        bool bAddValidTargetSquare=true;
+        if(bAddValidTargetSquare && lsqr->HasBeenSeen())bAddValidTargetSquare=false; //undiscovered
+        if(bAddValidTargetSquare && !CanMoveOn(lsqr)   )bAddValidTargetSquare=false;
+        if(bAddValidTargetSquare)
+          for(int j=0;j<vv2FailTravelToTargets.size();j++)
+            if(vv2FailTravelToTargets[j]==lsqr->GetPos()){
+              bAddValidTargetSquare=false;
+              break;
+            }
+//        if(bAddValidTargetSquare) //ignore the borders
+//          if(lsqr->GetPos().X==0 || lsqr->GetPos().X==lvl->GetXSize()-1 ||
+//             lsqr->GetPos().Y==0 || lsqr->GetPos().Y==lvl->GetYSize()-1    )bAddValidTargetSquare=false;
+//            (!Illegal.empty() && Illegal.find(lsqr->GetPos()) == Illegal.end()) // only non valid squares
+        if(bAddValidTargetSquare){
+          vv2UndiscoveredSquares.push_back(lsqr->GetPos());
+        }
+      }
     }
-    v2LastPos=GetPos();
+
+    //find nearest
+    v2 v2NewKGTo=v2(0,0);
+    int iNearestDist=10000000; //TODO should be max integer but this will do for now..
+    for(int i=0;i<vv2UndiscoveredSquares.size();i++){
+      int iDist = (vv2UndiscoveredSquares[i]-GetPos()).GetLengthSquare();
+      if(iDist<iNearestDist){
+        iNearestDist=iDist;
+        v2NewKGTo=vv2UndiscoveredSquares[i];
+      }
+    }
+
+    // travel between dungeons if current fully explored
+    if(v2NewKGTo.Is0() && v2Exits.size()>0){
+      v2TravelingToAnotherDungeon = v2NewKGTo = v2Exits[clock()%v2Exits.size()]; DBGSV2(v2TravelingToAnotherDungeon);
+    }
+
+    if(!v2NewKGTo.Is0()){
+      iWanderTurns=(clock()%iMaxWanderTurns)+iMinWanderTurns;
+      AutoPlaySetAndValidateKeepGoingTo(v2NewKGTo);
+//      SetGoingTo(v2KeepGoingTo); DBG5(DBGAV2(v2KeepGoingTo),vv2UndiscoveredSquares.size(),iNearestDist,DBGAV2(v2TravelingToAnotherDungeon),rKey);
+//      return true;
+    }else{ DBG1("AutoPlayNeedsImprovement")
+      ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
+      //TODO stop autoplay mode?
+    }
   }
 
-  GetAICommand(); DBG1("DefaultAI"); //fallback to default
+  if(!v2KeepGoingTo.Is0()){
+    if(v2KeepGoingTo==GetPos()){ DBG3("ReachedDestination",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+      v2KeepGoingTo=v2(0,0);
+      TerminateGoingTo();
+      return true;
+    }
+
+    CheckForUsefulItemsOnGround(true); DBGSV2(GoingTo);
+
+//    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+//      SetGoingTo(v2KeepGoingTo);
+//    }
+    if(v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+      AutoPlaySetAndValidateKeepGoingTo(v2KeepGoingTo); DBGSV2(GoingTo);
+    }
+
+//      return;
+//    GetAICommand();
+//    if(MoveTowardsTarget(false))
+
+//    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
+    if(!MoveTowardsTarget(false)){ DBGSV2(GoingTo); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
+//      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+//      v2KeepGoingTo=v2(0,0); //try new one
+      TerminateGoingTo();
+    }
+
+    DBGSV2(GoingTo);
+    if(!IsGoingSomeWhere()){ // failed to continue on the path to the requested destination
+//      vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+      v2KeepGoingTo=v2(0,0); //try again or new one
+    }
+
+    return true;
+
+//    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockTarget",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+//    v2KeepGoingTo=v2(0,0);
+  }
+//  if(v2KeepGoingTo==GoingTo){ DBG1("Exploring");
+//    if(MoveTowardsTarget(false)){
+//      if(v2KeepGoingTo==GetPos()){
+//        TerminateGoingTo(); //reached
+//        v2KeepGoingTo=v2(0,0); //reset
+//      }
+//      return true;
+//    }else{ DBG1("FailToMove");
+//      vv2FailTravelToTargets.push_back(v2KeepGoingTo);
+//      v2KeepGoingTo=v2(0,0); //reset
+//    }
+//  }else{ DBG3("GoingToGotChangedElsewhere",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+//    v2KeepGoingTo=v2(0,0); //reset
+//  }
+
+//  if(v2KeepGoingTo!=GoingTo){
+//    v2KeepGoingTo=v2(0,0); //got changed, reset to try to set new one
+//  }else{
+//    if(MoveTowardsTarget(false)){
+//      if(v2KeepGoingTo==GetPos()){
+//        TerminateGoingTo();
+//        v2KeepGoingTo=v2(0,0);
+//      }
+//      return true;
+//    }
+//  }
+
+//  if(!v2KeepGoingTo.Is0() && ){
+//    if(GetPos()==v2KeepGoingTo){
+//      v2KeepGoingTo=v2(0,0); // reached destination
+//      TerminateGoingTo();
+////      return true;
+//    }else{
+//      SetGoingTo(v2KeepGoingTo);
+//      if(MoveTowardsTarget(false))
+//        return true;
+////        TerminateGoingTo();
+//    }
+//  }
+
+//  if(GetBurdenState() == BURDENED || GetBurdenState() == UNBURDENED){
+//    if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem"); //this is just to equip or eat, not store on inv
+//      return true;
+//    }
+//  }
+
+//  if(CheckForDoors()){DBG1("FoundDoor");
+//    return true;
+//  }
+
+//  if(CheckForEnemies(true,true,false,clock()%100<10)){DBG1("FoundEnemies???");
+//    if(CheckForEnemies(true,true,false,false)){DBG1("AI:CheckForEnemies"); //TODO this seems to never fail?
+//  if(CheckForEnemies(false,false,false,false)){DBG1("AI:CheckForEnemies"); //TODO this seems to never fail?
+//    return true;
+//  }
+
+  GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
+  iWanderTurns--;
+
+//  v2KeepGoingTo=v2(0,0); //grant reset
+
   return true;
 }
 

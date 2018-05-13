@@ -1183,6 +1183,7 @@ class character : public entity, public id
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
   truth AutoPlayAICommand(int&);
+  void AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo);
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;
