@@ -2501,39 +2501,8 @@ truth character::AutoPlayAICommand(int& rKey)
   /**
    * navigate the unknown dungeon
    */
-//  if(IsGoingSomeWhere()){
-//    if(!v2KeepGoingTo.Is0() && GoingTo == v2KeepGoingTo){ //current goingto was (expectely) requested here
-//      static v2 v2LastPos=v2(0,0);
-//      if(v2LastPos==GetPos()){
-//        vv2FailTravelToTargets.push_back(GoingTo); DBG4("FailTravelTo",DBGAV2(GoingTo),"from",DBGAV2(GetPos()));  //TODO unstuck AI to continue navigating dungeon or exit it, working?
-//        TerminateGoingTo(); // to try a new one
-//      }
-//      v2LastPos=GetPos();
-//    }
-//  }else{
-//  if(!IsGoingSomeWhere()){
-
-//  if(!v2KeepGoingTo.Is0()){
-//    if(GetPos()==v2KeepGoingTo){
-//      v2KeepGoingTo=v2(0,0); // reached destination
-//      TerminateGoingTo();
-////      return true;
-//    }else{
-//      SetGoingTo(v2KeepGoingTo);
-//      if(MoveTowardsTarget(false))
-//        return true;
-////        TerminateGoingTo();
-//    }
-//  }
-
-//  bool bTryNewTravelDestination=false;
-//  if(bTryNewTravelDestination && !v2KeepGoingTo.Is0())bTryNewTravelDestination=false;
-//  if(bTryNewTravelDestination && iWanderTurns>0)bTryNewTravelDestination=false;
-//  if(iWanderTurns<=0 && )bTryNewTravelDestination=true;
-//  if(bTryNewTravelDestination){
   if(v2KeepGoingTo.Is0() && iWanderTurns<=0){
     // target undiscovered squares to explore
-//    v2KeepGoingTo=v2(0,0); // try to set below
     std::vector<v2> vv2UndiscoveredSquares;
     for(int iY=0;iY<lvl->GetYSize();iY++){
       for(int iX=0;iX<lvl->GetXSize();iX++){
@@ -2624,65 +2593,7 @@ truth character::AutoPlayAICommand(int& rKey)
     }
 
     return true;
-
-//    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockTarget",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-//    v2KeepGoingTo=v2(0,0);
   }
-//  if(v2KeepGoingTo==GoingTo){ DBG1("Exploring");
-//    if(MoveTowardsTarget(false)){
-//      if(v2KeepGoingTo==GetPos()){
-//        TerminateGoingTo(); //reached
-//        v2KeepGoingTo=v2(0,0); //reset
-//      }
-//      return true;
-//    }else{ DBG1("FailToMove");
-//      vv2FailTravelToTargets.push_back(v2KeepGoingTo);
-//      v2KeepGoingTo=v2(0,0); //reset
-//    }
-//  }else{ DBG3("GoingToGotChangedElsewhere",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
-//    v2KeepGoingTo=v2(0,0); //reset
-//  }
-
-//  if(v2KeepGoingTo!=GoingTo){
-//    v2KeepGoingTo=v2(0,0); //got changed, reset to try to set new one
-//  }else{
-//    if(MoveTowardsTarget(false)){
-//      if(v2KeepGoingTo==GetPos()){
-//        TerminateGoingTo();
-//        v2KeepGoingTo=v2(0,0);
-//      }
-//      return true;
-//    }
-//  }
-
-//  if(!v2KeepGoingTo.Is0() && ){
-//    if(GetPos()==v2KeepGoingTo){
-//      v2KeepGoingTo=v2(0,0); // reached destination
-//      TerminateGoingTo();
-////      return true;
-//    }else{
-//      SetGoingTo(v2KeepGoingTo);
-//      if(MoveTowardsTarget(false))
-//        return true;
-////        TerminateGoingTo();
-//    }
-//  }
-
-//  if(GetBurdenState() == BURDENED || GetBurdenState() == UNBURDENED){
-//    if(CheckForUsefulItemsOnGround(true)){DBG1("FoundItem"); //this is just to equip or eat, not store on inv
-//      return true;
-//    }
-//  }
-
-//  if(CheckForDoors()){DBG1("FoundDoor");
-//    return true;
-//  }
-
-//  if(CheckForEnemies(true,true,false,clock()%100<10)){DBG1("FoundEnemies???");
-//    if(CheckForEnemies(true,true,false,false)){DBG1("AI:CheckForEnemies"); //TODO this seems to never fail?
-//  if(CheckForEnemies(false,false,false,false)){DBG1("AI:CheckForEnemies"); //TODO this seems to never fail?
-//    return true;
-//  }
 
   GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
   iWanderTurns--;
