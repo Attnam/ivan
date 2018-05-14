@@ -2405,6 +2405,7 @@ int iWanderTurns=iMinWanderTurns;
 bool bAutoPlayUseRandomTargetOnce=false;
 int iLastTryToWieldTurn=-1;
 int iLastTryToUseInvTurn=-1;
+int iLastFreeHandsTurn=-1;
 std::vector<v2> vv2Previous;
 v2 v2LastDropAt=v2(0,0);
 std::vector<v2> vv2FailTravelToTargets;
@@ -2415,6 +2416,7 @@ void AutoPlayReset(bool bFailedToo){
   bAutoPlayUseRandomTargetOnce=false;
   iLastTryToWieldTurn=-1;
   iLastTryToUseInvTurn=-1;
+  iLastFreeHandsTurn=-1;
   v2LastDropAt=v2(0,0);
   vv2Previous.clear();
 
@@ -2564,27 +2566,29 @@ truth character::AutoPlayAICommand(int& rKey)
       }
     }
 
-    if(dropMe==NULL && weightest==cheapest)
-      dropMe=weightest;
+    if(weightest!=NULL && cheapest!=NULL){
+      if(dropMe==NULL && weightest==cheapest)
+        dropMe=weightest;
 
-    static int iValueless = 5; //5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
-    if(dropMe==NULL && cheapest->GetTruePrice()<=iValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
-      dropMe=cheapest;
-    }
-
-    if(dropMe==NULL){
-      // the worst price VS weight will be dropped
-      float fC = cheapest ->GetTruePrice()/(float)cheapest ->GetWeight();
-      float fW = weightest->GetTruePrice()/(float)weightest->GetWeight(); DBG3("PriceVsWeightRatio",fC,fW);
-      if(fC < fW){
-        dropMe = cheapest;
-      }else{
-        dropMe = weightest;
+      static int iValueless = 5; //5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+      if(dropMe==NULL && cheapest->GetTruePrice()<=iValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
+        dropMe=cheapest;
       }
-    }
 
-    if(dropMe==NULL)
-      dropMe = clock()%2==0 ? weightest : cheapest;
+      if(dropMe==NULL){
+        // the worst price VS weight will be dropped
+        float fC = cheapest ->GetTruePrice()/(float)cheapest ->GetWeight();
+        float fW = weightest->GetTruePrice()/(float)weightest->GetWeight(); DBG3("PriceVsWeightRatio",fC,fW);
+        if(fC < fW){
+          dropMe = cheapest;
+        }else{
+          dropMe = weightest;
+        }
+      }
+
+      if(dropMe==NULL)
+        dropMe = clock()%2==0 ? weightest : cheapest;
+    }
 
 //    bool bDropped=false;
     if(dropMe!=NULL){
@@ -2637,14 +2641,25 @@ truth character::AutoPlayAICommand(int& rKey)
   /* equip and pickup */
   if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
     if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
-      //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
       static itemvector vitEqW;
       humanoid* h = dynamic_cast<humanoid*>(this);
-      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToWieldTurn+10)){ //every 10 turns try to wield
+      item* iL = NULL;
+      item* iR = NULL;
+      if(h!=NULL){
+        iL = h->GetEquipment(LEFT_WIELDED_INDEX);
+        iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
+      }
+
+      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastFreeHandsTurn+150)){ //every X turns try to wield new items
+        iLastFreeHandsTurn=iCurrentDungeonTurnsCount;
+        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;h->SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
+        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;h->SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+      }
+
+      //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToWieldTurn+10)){ //every X turns try to wield
         iLastTryToWieldTurn=iCurrentDungeonTurnsCount;
         bool bDoneLR=false;
-        item* iL = h->GetEquipment(LEFT_WIELDED_INDEX);
-        item* iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
         bool bL2H = iL && iL->IsTwoHanded();
         bool bR2H = iR && iR->IsTwoHanded();
         if( !bDoneLR &&
