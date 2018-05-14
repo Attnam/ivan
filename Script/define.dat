@@ -259,6 +259,28 @@
 #define SOLID_ID 4096
 
 #define VALPURIUM (SOLID_ID + 1)
+#define TIN (SOLID_ID + 1)
+#define COPPER (SOLID_ID + 1)
+#define BRONZE (SOLID_ID + 1)
+#define DEEP_BRONZE (SOLID_ID + 1)
+#define BRASS (SOLID_ID + 1)
+#define HEPATIZON (SOLID_ID + 1)
+#define OCTIRON (SOLID_ID + 1)
+#define ORICHALCUM (SOLID_ID + 1)
+#define SILVER (SOLID_ID + 1)
+#define MOON_SILVER (SOLID_ID + 1)
+#define FAIRY_STEEL (SOLID_ID + 1)
+#define MITHRIL (SOLID_ID + 1)
+#define GALVORN (SOLID_ID + 1)
+#define STAR_METAL (SOLID_ID + 1)
+#define PLATINUM (SOLID_ID + 1)
+#define LEAD (SOLID_ID + 1)
+#define GOLD (SOLID_ID + 1)
+#define DARK_GOLD (SOLID_ID + 1)
+#define DARK_MATTER (SOLID_ID + 1)
+#define PETRIFIED_DARK (SOLID_ID + 1)
+#define ELECTRUM (SOLID_ID + 1)
+
 #define GRAVEL (SOLID_ID + 2)
 #define MORAINE (SOLID_ID + 3)
 #define OCTIRON (SOLID_ID + 4)
@@ -455,10 +477,17 @@
 
 #define IRON_ALLOY_ID (4096 * 7)
 
-#define IRON (IRON_ALLOY_ID + 1)
-#define STEEL (IRON_ALLOY_ID + 2)
-#define METEORIC_STEEL (IRON_ALLOY_ID + 3)
-#define ADAMANT (IRON_ALLOY_ID + 4)
+#define PIG_IRON (IRON_ALLOY_ID + 1)
+#define IRON (IRON_ALLOY_ID + 2)
+#define STEEL (IRON_ALLOY_ID + 3)
+#define DWARF_STEEL (IRON_ALLOY_ID + 4)
+#define METEORIC_STEEL (IRON_ALLOY_ID + 5)
+#define UKKU_STEEL (IRON_ALLOY_ID + 6)
+#define ADAMANT (IRON_ALLOY_ID + 7)
+#define BLACK_IRON (IRON_ALLOY_ID + 8)
+#define SOUL_STEEL (IRON_ALLOY_ID + 9)
+#define BLOOD_IRON (IRON_ALLOY_ID + 10)
+#define BLOOD_STEEL (IRON_ALLOY_ID + 11)
 
 #define UNARMED_ATTACK 0
 #define WEAPON_ATTACK 1
