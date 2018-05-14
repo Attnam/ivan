@@ -2447,14 +2447,20 @@ void character::AutoPlayDebugDrawOverlay(){
   if(!game::WizardModeIsActive())return;
 
   // redraw previous to clean them
-  for(int i=0;i<vv2Previous.size();i++){
-    //    game::GetCurrentArea()->GetSquare(vv2Previous[i])->SendNewDrawRequest();
-    square* sqr = game::GetCurrentArea()->GetSquare(vv2Previous[i]);
-    if(sqr)sqr->SendNewDrawRequest();
+  static area* areaPrevious=NULL;
+  area* Area = game::GetCurrentArea();
+  if(Area != areaPrevious){
+    areaPrevious=Area;
+    vv2Previous.clear();
   }
-  vv2Previous.clear();
+  for(int i=0;i<vv2Previous.size();i++){
+//    Area->GetSquare(vv2Previous[i])->SendNewDrawRequest();
+    square* sqr = Area->GetSquare(vv2Previous[i]);
+    if(sqr)sqr->SendNewDrawRequest(); //TODO why this happens?
+  }
 
   // draw new ones
+  vv2Previous.clear(); //empty before fillup below
 
   for(int i=0;i<vv2FailTravelToTargets.size();i++){
     DebugDrawSquareRect(vv2FailTravelToTargets[i],RED);
