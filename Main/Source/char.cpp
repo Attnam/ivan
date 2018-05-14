@@ -2403,12 +2403,16 @@ v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
 int iWanderTurns=iMinWanderTurns;
 bool bAutoPlayUseRandomTargetOnce=false;
+std::vector<v2> vv2Previous;
+v2 v2LastDropAt=v2(0,0);
 std::vector<v2> vv2FailTravelToTargets;
 void AutoPlayReset(bool bFailedToo){
   v2KeepGoingTo=v2(0,0); //will retry
   v2TravelingToAnotherDungeon=v2(0,0);
   iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
   bAutoPlayUseRandomTargetOnce=false;
+  v2LastDropAt=v2(0,0);
+  vv2Previous.clear();
 
   PLAYER->TerminateGoingTo();
 
@@ -2432,24 +2436,32 @@ void DebugDrawSquareRect(v2 v2SqrPos, col16 color){
   if(game::OnScreen(v2SqrPos)){
     v2ScrPos=game::CalculateScreenCoordinates(v2SqrPos);
     DOUBLE_BUFFER->DrawRectangle(v2ScrPos.X+1, v2ScrPos.Y+1, v2ScrPos.X+TILE_SIZE-2, v2ScrPos.Y+TILE_SIZE-2, color, false);
-//    game::GetCurrentLevel()->GetLSquare(v2SqrPos)->SendStrongNewDrawRequest();
-    game::GetCurrentArea()->GetSquare(v2SqrPos)->SendNewDrawRequest();
-//    game::GetCurrentLevel()->GetSquare(v2SqrPos)->SendNewDrawRequest();
+    vv2Previous.push_back(v2SqrPos);
   }
 }
 void character::AutoPlayDebugDrawOverlay(){
   if(!game::WizardModeIsActive())return;
 
-  for(int i=0;i<vv2FailTravelToTargets.size();i++){DBGLN;
+  // redraw previous to clean them
+  for(int i=0;i<vv2Previous.size();i++){
+//    square* sqr = game::GetCurrentArea()->GetSquare(vv2Previous[i]);
+//    if(sqr)sqr->SendNewDrawRequest();
+    game::GetCurrentArea()->GetSquare(vv2Previous[i])->SendNewDrawRequest();
+  }
+  vv2Previous.clear();
+
+  // draw new ones
+
+  for(int i=0;i<vv2FailTravelToTargets.size();i++){
     DebugDrawSquareRect(vv2FailTravelToTargets[i],RED);
   }
 
-  if(!PLAYER->Route.empty()){DBGLN;
+  if(!PLAYER->Route.empty()){
     for(int i=0;i<PLAYER->Route.size();i++)
       DebugDrawSquareRect(PLAYER->Route[i],GREEN);
   }
 
-  if(!v2KeepGoingTo.Is0()){DBGLN;
+  if(!v2KeepGoingTo.Is0()){
     DebugDrawSquareRect(v2KeepGoingTo,BLUE);
   }else{DBGLN;
     DebugDrawSquareRect(PLAYER->GetPos(),YELLOW); //means wandering
@@ -2483,38 +2495,111 @@ truth character::AutoPlayAICommand(int& rKey)
 
   if(bDropSomething){ DBG1("DropSomething");
     item* dropMe=NULL;
+    item* weightest=NULL;
+    item* cheapest=NULL;
+    int iLanternCount=0;
 
-    bool bFound=false;
-    for(int k=0;k<2;k++){
-      if(dropMe!=NULL)break;
-      for(int i=0;i<GetStack()->GetItems();i++){
-        item* current = GetStack()->GetItem(i);
-        if(current->IsEncryptedScroll())continue;
-        if(dynamic_cast<lantern*>(current)!=NULL)continue;
-
-        if(dropMe==NULL)dropMe=current;
-
-        switch(k){
-        case 0: //better not implement this as a user function as that will remove the doubt about items values what is another fun challenge :)
-          if(current->GetTruePrice() < dropMe->GetTruePrice()) //cheapest
-            dropMe=current;
-          break;
-        case 1: //this could be added as user function to avoid browsing the drop list, but may not be that good...
-          if(current->GetWeight() > dropMe->GetWeight()) //weightest
-            dropMe=current;
-          break;
-        }
+//    bool bFound=false;
+//    for(int k=0;k<2;k++){
+//      if(dropMe!=NULL)break;
+    static item* eqDropChk=NULL;
+    for(int i=0;i<GetEquipments();i++){
+      eqDropChk=GetEquipment(i);
+      if(eqDropChk!=NULL && eqDropChk->IsBroken()){
+        dropMe=eqDropChk;
+        break;
       }
     }
 
-    if(dropMe!=NULL){
-      ThrowItem(clock()%8,dropMe);
-//      dropMe->MoveTo(GetStackUnder());
-      return true;
-    }else{ DBG1("AutoPlayNeedsImprovement")
-      ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
-      //TODO stop autoplay mode?
+    if(dropMe==NULL){
+      static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
+      for(int i=0;i<vit.size();i++){ DBG4("CurrentChkToDrop",vit[i]->GetName(DEFINITE).CStr(),vit[i]->GetTruePrice(),vit[i]->GetWeight());
+//        item* current = vit[i];
+        if(vit[i]->IsEncryptedScroll())continue;
+        if(iLanternCount==0 && dynamic_cast<lantern*>(vit[i])!=NULL){
+          iLanternCount++;
+          continue;
+        }
+
+        if(vit[i]->IsBroken()){ //TODO use repair scroll?
+          dropMe=vit[i];
+          break;
+        }
+
+        if(weightest==NULL)weightest=vit[i];
+        if(cheapest==NULL)cheapest=vit[i];
+
+//        switch(k){
+//        case 0: //better not implement this as a user function as that will remove the doubt about items values what is another fun challenge :)
+          if(vit[i]->GetTruePrice() < cheapest->GetTruePrice()) //cheapest
+            cheapest=vit[i];
+//          break;
+//        case 1: //this could be added as user function to avoid browsing the drop list, but may not be that good...
+          if(vit[i]->GetWeight() > weightest->GetWeight()) //weightest
+            weightest=vit[i];
+//          break;
+//        }
+      }
     }
+
+    if(dropMe==NULL && weightest==cheapest)
+      dropMe=weightest;
+
+    static int iValueless = 5; //5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+    if(dropMe==NULL && cheapest->GetTruePrice()<=iValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
+      dropMe=cheapest;
+    }
+
+    if(dropMe==NULL){
+      // the worst price VS weight will be dropped
+      float fC = cheapest ->GetTruePrice()/(float)cheapest ->GetWeight();
+      float fW = weightest->GetTruePrice()/(float)weightest->GetWeight(); DBG3("PriceVsWeightRatio",fC,fW);
+      if(fC < fW){
+        dropMe = cheapest;
+      }else{
+        dropMe = weightest;
+      }
+    }
+
+    if(dropMe==NULL)
+      dropMe = clock()%2==0 ? weightest : cheapest;
+
+//    bool bDropped=false;
+    if(dropMe!=NULL){
+      static std::vector<int> vv2DirBase;static bool bDummyInit = [](){for(int i=0;i<8;i++)vv2DirBase.push_back(i);return true;}();
+      std::vector<int> vv2Dir(vv2DirBase);
+      int iDirOk=-1;
+      for(int i=0;i<8;i++){
+        int k = clock()%vv2Dir.size(); //random chose from remaining TODO could be where there is NPC foe
+        int iDir = vv2Dir[k]; //collect direction value
+        vv2Dir.erase(vv2Dir.begin() + k); //remove using the chosen index to prepare next random choice
+
+        v2 v2Dir = game::GetMoveVector(iDir);
+        v2 v2Chk = GetPos() + v2Dir;
+        if(lvl->IsValidPos(v2Chk) && lvl->GetLSquare(v2Chk)->IsFlyable()){
+          iDirOk = iDir;
+          break;
+        }
+      }
+
+      if(iDirOk==-1){iDirOk=clock()%8;DBG2("DropThrow:RandomDir",iDirOk);} //TODO should just drop may be? unless hitting w/e is there could help
+
+      if(iDirOk>-1){
+  //      dropMe->RemoveFromSlot();
+        ThrowItem(iDirOk, dropMe); DBG5("DropThrow",iDirOk,dropMe->GetName(DEFINITE).CStr(),dropMe->GetTruePrice(),dropMe->GetWeight());
+//        GetAICommand(); // wander once helps
+//        bDropped=true;
+  //      dropMe->MoveTo(GetStackUnder());
+        v2LastDropAt=GetPos();
+        return true;
+      }
+    }
+
+//    if(!bDropped){
+      DBG1("AutoPlayNeedsImprovement:DropItem");
+      ADD_MESSAGE("%s says \"I need more intelligence to organize my stuff...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
+      //TODO stop autoplay mode? if not, something random may happen some time and wont reach here ex.: spoil, fire, etc..
+//    }
   }
 
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
@@ -2527,20 +2612,167 @@ truth character::AutoPlayAICommand(int& rKey)
     return true;
   }
 
-  if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
-//    if(GetBurdenState()>STRESSED) // burdened or unburdened
-    if(CheckForUsefulItemsOnGround(false))
-      return true;
+  /* equip and pickup */
+  if(!bDropSomething && v2LastDropAt!=GetPos()){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
+    if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
+      //wield some weapon as the NPC AI is not working for the player TODO why?
+      humanoid* h = dynamic_cast<humanoid*>(this);
+      if(h!=NULL && iCurrentDungeonTurnsCount%10==0){
+        static itemvector vitEqW;
 
-    //just pick up any stuff
-    static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
-    if(GetBurdenState()!=OVER_LOADED){
+        bool bDoneLR=false;
+        item* iL = h->GetEquipment(LEFT_WIELDED_INDEX);
+        item* iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
+        bool bL2H = iL && iL->IsTwoHanded();
+        bool bR2H = iR && iR->IsTwoHanded();
+        if( !bDoneLR &&
+            iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
+            iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
+        ){ //try 2handed 1st
+          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+          for(uint c = 0; c < vitEqW.size(); ++c){
+            if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
+              vitEqW[c]->RemoveFromSlot();
+              h->SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+              bDoneLR=true;
+              break;
+            }
+          }
+        }
+
+        if(!bDoneLR){
+          for(int i=0;i<2;i++){ //try 1handed
+            int iChk=-1;
+            if(i==0)iChk=LEFT_WIELDED_INDEX;
+            if(i==1)iChk=RIGHT_WIELDED_INDEX;
+
+            if(
+                !bDoneLR &&
+                (
+                  (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
+                  ||
+                  (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
+                )
+            ){
+              vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+              for(uint c = 0; c < vitEqW.size(); ++c){
+                if(
+                    (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+                    ||
+                    vitEqW[c]->IsShield(this)
+                ){
+                  vitEqW[c]->RemoveFromSlot();
+                  h->SetEquipment(iChk, vitEqW[c]);
+                  bDoneLR=true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+//        if(!bDoneLR && iL==NULL && iR!=NULL && !iR->IsTwoHanded()){
+//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//          for(uint c = 0; c < vitEqW.size(); ++c){
+//            if(
+//                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+//                ||
+//                vitEqW[c]->IsShield(this)
+//            ){
+//              vitEqW[c]->RemoveFromSlot();
+//              h->SetEquipment(LEFT_WIELDED_INDEX, vitEqW[c]);
+//              bDoneLR=true;
+//              break;
+//            }
+//          }
+//        }
+//
+//        if(!bDoneLR && iL==NULL && iR!=NULL && !iR->IsTwoHanded()){
+//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//          for(uint c = 0; c < vitEqW.size(); ++c){
+//            if(
+//                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+//                ||
+//                vitEqW[c]->IsShield(this)
+//            ){
+//              vitEqW[c]->RemoveFromSlot();
+//              h->SetEquipment(LEFT_WIELDED_INDEX, vitEqW[c]);
+//              bDoneLR=true;
+//              break;
+//            }
+//          }
+//        }
+
+//        if(iL==NULL){
+//          if(iR && !iR->IsTwoHanded()){
+//            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//            for(uint c = 0; c < vitEqW.size(); ++c){
+//              if(vitEqW[c]->IsWeapon(this) || vitEqW[c]->IsShield(this)){
+//                vitEqW[c]->RemoveFromSlot();
+//                h->SetEquipment(iEqIndex,vitEqW[c]); DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+//                break;
+//              }
+//            }
+//          }
+//        }
+//
+//
+//        static itemvector vitEqW;
+//        static int iEqIndex=-1;
+//        static int iEqIndexOther=-1;
+//        bool bTwoHanded=false;
+//        for(int i=0;i<2;i++){
+//          if(i==0){iEqIndex=LEFT_WIELDED_INDEX ;iEqIndexOther=RIGHT_WIELDED_INDEX;}
+//          if(i==1){iEqIndex=RIGHT_WIELDED_INDEX;iEqIndexOther=LEFT_WIELDED_INDEX ;}
+//          if(h->GetEquipment(iEqIndex)==NULL){
+//            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//            for(uint c = 0; c < vitEqW.size(); ++c){
+//              if(vitEqW[c]->IsTwoHanded()){
+//                item* iOther = h->GetEquipment(iEqIndexOther);
+//                if(iOther!=NULL)iOther->MoveTo(GetStack());
+//                bTwoHanded=true;
+//              }
+//
+//              if(vitEqW[c]->IsWeapon(this) || vitEqW[c]->IsShield(this)){
+//                vitEqW[c]->RemoveFromSlot();
+//                h->SetEquipment(iEqIndex,vitEqW[c]); DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+//                break;
+//              }
+//            }
+//
+//            if(bTwoHanded)break;
+//          }
+//        }
+
+  //        GetEquipment(RIGHT_WIELDED_INDEX);
+//            && e != LEFT_WIELDED_INDEX)
+  //             || Item->IsWeapon(this)
+  //             || Item->IsShield(this))
+  //         && AllowEquipment(Item, e))
+  //      {
+  //      geteq
+      }
+
+  //    if(GetBurdenState()>STRESSED) // burdened or unburdened
+      if(CheckForUsefulItemsOnGround(false))
+        return true;
+
+      //just pick up any stuff
+      static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
       for(uint c = 0; c < vit.size(); ++c){
-        if(vit[c]->CanBeSeenBy(this) && vit[c]->IsPickable(this) && vit[c]->GetSquaresUnder()==1){
+        if(
+            vit[c]->CanBeSeenBy(this) &&
+            vit[c]->IsPickable(this) &&
+            vit[c]->GetSquaresUnder()==1 &&
+            !vit[c]->IsBroken() &&
+            vit[c]->GetSpoilLevel()==0
+        ){
           vit[c]->MoveTo(GetStack()); DBG1("pickup");
 //          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
 //          return true;
-          break;
+          static bool bHoarder=true;
+          if(!bHoarder)break;
+//          break;
         }
       }
     }
@@ -2685,8 +2917,8 @@ truth character::AutoPlayAICommand(int& rKey)
       AutoPlaySetAndValidateKeepGoingTo(v2NewKGTo);
 //      SetGoingTo(v2KeepGoingTo); DBG5(DBGAV2(v2KeepGoingTo),vv2UndiscoveredSquares.size(),iNearestDist,DBGAV2(v2TravelingToAnotherDungeon),rKey);
 //      return true;
-    }else{ DBG1("AutoPlayNeedsImprovement")
-      ADD_MESSAGE("%s says \"I need more brain cells...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
+    }else{ DBG1("AutoPlayNeedsImprovement:Navigation")
+      ADD_MESSAGE("%s says \"I need more intelligence to move around...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
       //TODO stop autoplay mode?
     }
   }
