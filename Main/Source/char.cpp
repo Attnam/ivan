@@ -10934,7 +10934,7 @@ void character::MindwormedHandler()
   }
 
   // Multiple mind worm hatchlings can hatch, because multiple eggs could have been implanted.
-  if(!(RAND() % 500))
+  if(!game::IsInWilderness() && !(RAND() % 500))
   {
     character* Spawned = mindworm::Spawn(HATCHLING);
     v2 Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Spawned, GetPos());
