@@ -2403,6 +2403,8 @@ v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
 int iWanderTurns=iMinWanderTurns;
 bool bAutoPlayUseRandomTargetOnce=false;
+int iLastTryToWieldTurn=-1;
+int iLastTryToUseInvTurn=-1;
 std::vector<v2> vv2Previous;
 v2 v2LastDropAt=v2(0,0);
 std::vector<v2> vv2FailTravelToTargets;
@@ -2411,6 +2413,8 @@ void AutoPlayReset(bool bFailedToo){
   v2TravelingToAnotherDungeon=v2(0,0);
   iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
   bAutoPlayUseRandomTargetOnce=false;
+  iLastTryToWieldTurn=-1;
+  iLastTryToUseInvTurn=-1;
   v2LastDropAt=v2(0,0);
   vv2Previous.clear();
 
@@ -2444,9 +2448,9 @@ void character::AutoPlayDebugDrawOverlay(){
 
   // redraw previous to clean them
   for(int i=0;i<vv2Previous.size();i++){
-//    square* sqr = game::GetCurrentArea()->GetSquare(vv2Previous[i]);
-//    if(sqr)sqr->SendNewDrawRequest();
-    game::GetCurrentArea()->GetSquare(vv2Previous[i])->SendNewDrawRequest();
+    //    game::GetCurrentArea()->GetSquare(vv2Previous[i])->SendNewDrawRequest();
+    square* sqr = game::GetCurrentArea()->GetSquare(vv2Previous[i]);
+    if(sqr)sqr->SendNewDrawRequest();
   }
   vv2Previous.clear();
 
@@ -2463,7 +2467,7 @@ void character::AutoPlayDebugDrawOverlay(){
 
   if(!v2KeepGoingTo.Is0()){
     DebugDrawSquareRect(v2KeepGoingTo,BLUE);
-  }else{DBGLN;
+  }else{
     DebugDrawSquareRect(PLAYER->GetPos(),YELLOW); //means wandering
   }
 }
@@ -2492,9 +2496,21 @@ truth character::AutoPlayAICommand(int& rKey)
       bDropSomething=true;
     }
   }
+  static item* eqDropChk=NULL;
+  item* eqBroken=NULL;
+  for(int i=0;i<GetEquipments();i++){
+    eqDropChk=GetEquipment(i);
+    if(eqDropChk!=NULL && eqDropChk->IsBroken()){
+      eqBroken=eqDropChk;
+      bDropSomething=true;
+      break;
+    }
+  }
 
   if(bDropSomething){ DBG1("DropSomething");
     item* dropMe=NULL;
+    if(eqBroken!=NULL)dropMe=eqBroken;
+
     item* weightest=NULL;
     item* cheapest=NULL;
     int iLanternCount=0;
@@ -2502,14 +2518,14 @@ truth character::AutoPlayAICommand(int& rKey)
 //    bool bFound=false;
 //    for(int k=0;k<2;k++){
 //      if(dropMe!=NULL)break;
-    static item* eqDropChk=NULL;
-    for(int i=0;i<GetEquipments();i++){
-      eqDropChk=GetEquipment(i);
-      if(eqDropChk!=NULL && eqDropChk->IsBroken()){
-        dropMe=eqDropChk;
-        break;
-      }
-    }
+//    static item* eqDropChk=NULL;
+//    for(int i=0;i<GetEquipments();i++){
+//      eqDropChk=GetEquipment(i);
+//      if(eqDropChk!=NULL && eqDropChk->IsBroken()){
+//        dropMe=eqDropChk;
+//        break;
+//      }
+//    }
 
     if(dropMe==NULL){
       static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
@@ -2613,13 +2629,13 @@ truth character::AutoPlayAICommand(int& rKey)
   }
 
   /* equip and pickup */
-  if(!bDropSomething && v2LastDropAt!=GetPos()){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
+  if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
     if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
-      //wield some weapon as the NPC AI is not working for the player TODO why?
+      //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+      static itemvector vitEqW;
       humanoid* h = dynamic_cast<humanoid*>(this);
-      if(h!=NULL && iCurrentDungeonTurnsCount%10==0){
-        static itemvector vitEqW;
-
+      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToWieldTurn+10)){ //every 10 turns try to wield
+        iLastTryToWieldTurn=iCurrentDungeonTurnsCount;
         bool bDoneLR=false;
         item* iL = h->GetEquipment(LEFT_WIELDED_INDEX);
         item* iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
@@ -2671,158 +2687,56 @@ truth character::AutoPlayAICommand(int& rKey)
           }
         }
 
-//        if(!bDoneLR && iL==NULL && iR!=NULL && !iR->IsTwoHanded()){
-//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-//          for(uint c = 0; c < vitEqW.size(); ++c){
-//            if(
-//                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
-//                ||
-//                vitEqW[c]->IsShield(this)
-//            ){
-//              vitEqW[c]->RemoveFromSlot();
-//              h->SetEquipment(LEFT_WIELDED_INDEX, vitEqW[c]);
-//              bDoneLR=true;
-//              break;
-//            }
-//          }
-//        }
-//
-//        if(!bDoneLR && iL==NULL && iR!=NULL && !iR->IsTwoHanded()){
-//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-//          for(uint c = 0; c < vitEqW.size(); ++c){
-//            if(
-//                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
-//                ||
-//                vitEqW[c]->IsShield(this)
-//            ){
-//              vitEqW[c]->RemoveFromSlot();
-//              h->SetEquipment(LEFT_WIELDED_INDEX, vitEqW[c]);
-//              bDoneLR=true;
-//              break;
-//            }
-//          }
-//        }
+      }
 
-//        if(iL==NULL){
-//          if(iR && !iR->IsTwoHanded()){
+      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+        iLastTryToUseInvTurn=iCurrentDungeonTurnsCount;
+        vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+        for(uint c = 0; c < vitEqW.size(); ++c){
+          if(TryToConsume(vitEqW[c]))return true;
+
+          if(TryToEquip  (vitEqW[c])){
+            return true;
+          }else{
+            vitEqW[c]->MoveTo(GetStack()); //was dropped, get back...
+          }
+        }
+//        for(int i=0;i<GetEquipments();i++){
+//          if(GetBodyPartOfEquipment(i)!=NULL && GetEquipment(i)==NULL){
 //            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
 //            for(uint c = 0; c < vitEqW.size(); ++c){
-//              if(vitEqW[c]->IsWeapon(this) || vitEqW[c]->IsShield(this)){
-//                vitEqW[c]->RemoveFromSlot();
-//                h->SetEquipment(iEqIndex,vitEqW[c]); DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
-//                break;
-//              }
+//              TryToEquip(vitEqW[c]);
 //            }
 //          }
 //        }
-//
-//
-//        static itemvector vitEqW;
-//        static int iEqIndex=-1;
-//        static int iEqIndexOther=-1;
-//        bool bTwoHanded=false;
-//        for(int i=0;i<2;i++){
-//          if(i==0){iEqIndex=LEFT_WIELDED_INDEX ;iEqIndexOther=RIGHT_WIELDED_INDEX;}
-//          if(i==1){iEqIndex=RIGHT_WIELDED_INDEX;iEqIndexOther=LEFT_WIELDED_INDEX ;}
-//          if(h->GetEquipment(iEqIndex)==NULL){
-//            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-//            for(uint c = 0; c < vitEqW.size(); ++c){
-//              if(vitEqW[c]->IsTwoHanded()){
-//                item* iOther = h->GetEquipment(iEqIndexOther);
-//                if(iOther!=NULL)iOther->MoveTo(GetStack());
-//                bTwoHanded=true;
-//              }
-//
-//              if(vitEqW[c]->IsWeapon(this) || vitEqW[c]->IsShield(this)){
-//                vitEqW[c]->RemoveFromSlot();
-//                h->SetEquipment(iEqIndex,vitEqW[c]); DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
-//                break;
-//              }
-//            }
-//
-//            if(bTwoHanded)break;
-//          }
-//        }
-
-  //        GetEquipment(RIGHT_WIELDED_INDEX);
-//            && e != LEFT_WIELDED_INDEX)
-  //             || Item->IsWeapon(this)
-  //             || Item->IsShield(this))
-  //         && AllowEquipment(Item, e))
-  //      {
-  //      geteq
       }
 
   //    if(GetBurdenState()>STRESSED) // burdened or unburdened
-      if(CheckForUsefulItemsOnGround(false))
-        return true;
+      if(v2LastDropAt!=GetPos()){
+        if(CheckForUsefulItemsOnGround(false))
+          return true;
 
-      //just pick up any stuff
-      static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
-      for(uint c = 0; c < vit.size(); ++c){
-        if(
-            vit[c]->CanBeSeenBy(this) &&
-            vit[c]->IsPickable(this) &&
-            vit[c]->GetSquaresUnder()==1 &&
-            !vit[c]->IsBroken() &&
-            vit[c]->GetSpoilLevel()==0
-        ){
-          vit[c]->MoveTo(GetStack()); DBG1("pickup");
-//          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
-//          return true;
-          static bool bHoarder=true;
-          if(!bHoarder)break;
-//          break;
+        //just pick up any stuff
+        static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
+        for(uint c = 0; c < vit.size(); ++c){
+          if(
+              vit[c]->CanBeSeenBy(this) &&
+              vit[c]->IsPickable(this) &&
+              vit[c]->GetSquaresUnder()==1 && //avoid big corpses 2x2
+              !vit[c]->IsBroken() &&
+              vit[c]->GetSpoilLevel()==0
+          ){
+            vit[c]->MoveTo(GetStack()); DBG1("pickup");
+  //          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
+  //          return true;
+            static bool bHoarder=true;
+            if(!bHoarder)break;
+  //          break;
+          }
         }
       }
     }
 
-//    // look for items
-//    static itemvector ItemVector;
-//    GetStackUnder()->FillItemVector(ItemVector);
-//    bool bEquipped=false;
-//    for(uint c = 0; c < ItemVector.size(); ++c){
-//      if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
-////        if(GetBurdenState()>STRESSED) // burdened or unburdened
-////          if(TryToEquip(ItemVector[c]))
-////            return true;
-//        static item* lastTryToConsume=NULL;
-//        if(lastTryToConsume!=ItemVector[c]) //prevents getting stuck if being interrupted
-//          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c])){ DBG1("eatMore"); //TODO try consume must be after try equip, why?
-//            return true;
-//          }
-//
-//        if(GetBurdenState()>STRESSED){ // burdened or unburdened
-//          ItemVector[c]->MoveTo(GetStack()); DBG1("pickup");
-//          return true;
-//        }
-//
-////        if(GetBurdenState()!=OVER_LOADED){
-////          if(TryToEquip(ItemVector[c]))
-////            bEquipped=true;
-////          else
-////            ItemVector[c]->MoveTo(GetStack()); //pickup
-////
-////          if(GetBurdenState()==OVER_LOADED)ItemVector[c]->MoveTo(GetStackUnder());//drop back if this one becomes too much
-////          if(GetBurdenState()==STRESSED)break; // stop if stressed
-////        }
-//      }
-//    }
-//    if(bEquipped)return true; //to look again for possible stuff dropped
-
-//    // just pick up items (after equipping as may drop current)
-//    if(GetBurdenState()>STRESSED){ // burdened or unburdened
-////      if(bEquipped)GetStackUnder()->FillItemVector(ItemVector);
-//      GetStackUnder()->FillItemVector(ItemVector);
-//      for(uint c = 0; c < ItemVector.size(); ++c)
-//        if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this)){
-//          if(UsesNutrition() && GetHungerState()<OVER_FED && TryToConsume(ItemVector[c]))continue;
-//
-//          ItemVector[c]->MoveTo(GetStack()); //pickup
-//          if(GetBurdenState()==OVER_LOADED)ItemVector[c]->MoveTo(GetStackUnder());//drop back if this one becomes too much
-//          if(GetBurdenState()==STRESSED)break; // stop if stressed
-//        }
-//    }
   }
 
   /**
@@ -2937,7 +2851,8 @@ truth character::AutoPlayAICommand(int& rKey)
 //    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
 //      SetGoingTo(v2KeepGoingTo);
 //    }
-    if(v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+    if(v2KeepGoingTo!=GoingTo){ DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
+      GetAICommand(); //wander once for randomicity
       AutoPlaySetAndValidateKeepGoingTo(v2KeepGoingTo); DBGSV2(GoingTo);
     }
 
