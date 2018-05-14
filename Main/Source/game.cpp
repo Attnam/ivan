@@ -209,6 +209,8 @@ bool bPositionQuestionMode=false;
 
 std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
 
+int game::iCurrentDungeonTurn=-1;
+
 void game::SetIsRunning(truth What) { Running = What; }
 
 int game::GetMaxScreenXSize() { //this generally should not be used when the campera position is part of the calculations
@@ -2479,6 +2481,8 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     if(ivanconfig::GetAutoSaveInterval())
       Save(GetAutoSaveFileName().CStr());
   }
+
+  iCurrentDungeonTurn=-1; //-1 as it will be the turn index and be inc before checking
 }
 
 int game::CompareLightToInt(col24 L, col24 Int)

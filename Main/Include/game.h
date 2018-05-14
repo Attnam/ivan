@@ -420,7 +420,7 @@ class game
   static int DefaultQuestion(festring&, festring, festring&, truth, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
-  static void IncreaseTurn() { ++Turn; }
+  static void IncreaseTurn() { ++Turn; ++iCurrentDungeonTurn; }
   static int GetTotalMinutes() { return Tick * 60 / 2000; }
   static truth PolymorphControlKeyHandler(int, festring&);
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
@@ -457,6 +457,7 @@ class game
   static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
   static int getDefaultItemsListWidth(){ return iListWidth; }
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
+  static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -571,6 +572,7 @@ class game
   static blitdata bldAroundOnScreenTMP;
   const static int iListWidth = 652;
   static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
+  static int iCurrentDungeonTurn;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

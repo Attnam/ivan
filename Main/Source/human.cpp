@@ -12,6 +12,8 @@
 
 /* Compiled through charsset.cpp */
 
+#include "dbgmsgproj.h"
+
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
 
@@ -3444,6 +3446,114 @@ long skeleton::GetBodyPartVolume(int I) const
 
   ABORT("Illegal humanoid bodypart volume request!");
   return 0;
+}
+
+truth humanoid::AutoPlayAIequip()
+{
+  static itemvector vitEqW;
+  item* iL = GetEquipment(LEFT_WIELDED_INDEX);
+  item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
+
+  //every X turns remove all equipments
+  bool bTryWieldNow=false;
+  static int iLastReEquipAllTurn=-1;
+  if(game::GetCurrentDungeonTurnsCount()>(iLastReEquipAllTurn+150)){ DBG2(game::GetCurrentDungeonTurnsCount(),iLastReEquipAllTurn);
+    iLastReEquipAllTurn=game::GetCurrentDungeonTurnsCount();
+    for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
+      item* eq = GetEquipment(i);
+      if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
+      if(iL==eq)iL=NULL;
+      if(iR==eq)iR=NULL;
+    }
+//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
+//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+    bTryWieldNow=true;
+  }
+
+  //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+  //every X turns try to wield
+  static int iLastTryToWieldTurn=-1;
+  if(bTryWieldNow || game::GetCurrentDungeonTurnsCount()>(iLastTryToWieldTurn+10)){ DBG2(game::GetCurrentDungeonTurnsCount(),iLastTryToWieldTurn);
+    iLastTryToWieldTurn=game::GetCurrentDungeonTurnsCount();
+    bool bDoneLR=false;
+    bool bL2H = iL && iL->IsTwoHanded();
+    bool bR2H = iR && iR->IsTwoHanded();
+
+    //2handed
+    static int iTryWieldWhat=0; iTryWieldWhat++;
+    if(iTryWieldWhat%2==0){ //will try 2handed first, alternating. If player has only 2handeds, the 1handeds will not be wielded and it will use punches, what is good too for tests.
+      if( !bDoneLR &&
+          iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
+          iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
+      ){
+        vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+        for(uint c = 0; c < vitEqW.size(); ++c){
+          if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
+            vitEqW[c]->RemoveFromSlot();
+            SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+            bDoneLR=true;
+            break;
+          }
+        }
+      }
+    }
+
+    //dual 1handed (if not 2hd already)
+    if(!bDoneLR){
+      for(int i=0;i<2;i++){
+        int iChk=-1;
+        if(i==0)iChk=LEFT_WIELDED_INDEX;
+        if(i==1)iChk=RIGHT_WIELDED_INDEX;
+
+        if(
+            !bDoneLR &&
+            (
+              (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
+              ||
+              (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
+            )
+        ){
+          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+          for(uint c = 0; c < vitEqW.size(); ++c){
+            if(
+                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+                ||
+                vitEqW[c]->IsShield(this)
+            ){
+              vitEqW[c]->RemoveFromSlot();
+              SetEquipment(iChk, vitEqW[c]);
+              bDoneLR=true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  static int iLastTryToUseInvTurn=-1;
+  if(game::GetCurrentDungeonTurnsCount()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+    iLastTryToUseInvTurn=game::GetCurrentDungeonTurnsCount();
+
+    vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+    for(uint c = 0; c < vitEqW.size(); ++c){
+      if(GetHungerState() >= BLOATED)break;
+      if(TryToConsume(vitEqW[c]))return true;
+    }
+
+    vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+    for(uint c = 0; c < vitEqW.size(); ++c){
+      if(TryToEquip(vitEqW[c],true)){
+        return true;
+      }else{
+        vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+      }
+    }
+
+  }
+
+  return false;
 }
 
 truth humanoid::CheckIfEquipmentIsNotUsable(int I) const

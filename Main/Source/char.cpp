@@ -2397,15 +2397,11 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
 character* AutoPlayLastChar=NULL;
 const int iMaxWanderTurns=20;
 const int iMinWanderTurns=3;
-int iCurrentDungeonTurnsCount=-1; //-1 as it will be the turn index and be inc before checking
 
 v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
 int iWanderTurns=iMinWanderTurns;
 bool bAutoPlayUseRandomTargetOnce=false;
-int iLastTryToWieldTurn=-1;
-int iLastTryToUseInvTurn=-1;
-int iLastFreeHandsTurn=-1;
 std::vector<v2> vv2Previous;
 v2 v2LastDropAt=v2(0,0);
 std::vector<v2> vv2FailTravelToTargets;
@@ -2414,9 +2410,6 @@ void AutoPlayReset(bool bFailedToo){
   v2TravelingToAnotherDungeon=v2(0,0);
   iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
   bAutoPlayUseRandomTargetOnce=false;
-  iLastTryToWieldTurn=-1;
-  iLastTryToUseInvTurn=-1;
-  iLastFreeHandsTurn=-1;
   v2LastDropAt=v2(0,0);
   vv2Previous.clear();
 
@@ -2493,7 +2486,7 @@ truth character::AutoPlayAICommand(int& rKey)
 //  area* Area = game::GetCurrentArea();
   static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayDebugDrawOverlay);return true;}();
 
-  iCurrentDungeonTurnsCount++;
+//  iCurrentDungeonTurnsCount++;
 
   /**
    *  unburden
@@ -2640,99 +2633,137 @@ truth character::AutoPlayAICommand(int& rKey)
 
   /* equip and pickup */
   if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
-    if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
-      static itemvector vitEqW;
-      humanoid* h = dynamic_cast<humanoid*>(this);
-      item* iL = NULL;
-      item* iR = NULL;
-      if(h!=NULL){
-        iL = h->GetEquipment(LEFT_WIELDED_INDEX);
-        iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
-      }
-
-      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastFreeHandsTurn+150)){ //every X turns try to wield new items
-        iLastFreeHandsTurn=iCurrentDungeonTurnsCount;
-        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;h->SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
-        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;h->SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
-      }
-
-      //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
-      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToWieldTurn+10)){ //every X turns try to wield
-        iLastTryToWieldTurn=iCurrentDungeonTurnsCount;
-        bool bDoneLR=false;
-        bool bL2H = iL && iL->IsTwoHanded();
-        bool bR2H = iR && iR->IsTwoHanded();
-        if( !bDoneLR &&
-            iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
-            iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
-        ){ //try 2handed 1st
-          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-          for(uint c = 0; c < vitEqW.size(); ++c){
-            if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
-              vitEqW[c]->RemoveFromSlot();
-              h->SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
-              bDoneLR=true;
-              break;
-            }
-          }
-        }
-
-        if(!bDoneLR){
-          for(int i=0;i<2;i++){ //try 1handed
-            int iChk=-1;
-            if(i==0)iChk=LEFT_WIELDED_INDEX;
-            if(i==1)iChk=RIGHT_WIELDED_INDEX;
-
-            if(
-                !bDoneLR &&
-                (
-                  (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
-                  ||
-                  (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
-                )
-            ){
-              vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-              for(uint c = 0; c < vitEqW.size(); ++c){
-                if(
-                    (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
-                    ||
-                    vitEqW[c]->IsShield(this)
-                ){
-                  vitEqW[c]->RemoveFromSlot();
-                  h->SetEquipment(iChk, vitEqW[c]);
-                  bDoneLR=true;
-                  break;
-                }
-              }
-            }
-          }
-        }
-
-      }
-
-      if(h!=NULL && iCurrentDungeonTurnsCount>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
-        iLastTryToUseInvTurn=iCurrentDungeonTurnsCount;
-        vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-        for(uint c = 0; c < vitEqW.size(); ++c){
-          if(TryToConsume(vitEqW[c]))return true;
-
-          if(TryToEquip  (vitEqW[c])){
-            return true;
-          }else{
-            vitEqW[c]->MoveTo(GetStack()); //was dropped, get back...
-          }
-        }
-//        for(int i=0;i<GetEquipments();i++){
-//          if(GetBodyPartOfEquipment(i)!=NULL && GetEquipment(i)==NULL){
-//            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-//            for(uint c = 0; c < vitEqW.size(); ++c){
-//              TryToEquip(vitEqW[c]);
+      static humanoid* h;h = dynamic_cast<humanoid*>(this);
+      if(h && h->AutoPlayAIequip())return true;
+//      if(h!=NULL){
+//        static itemvector vitEqW;
+//        item* iL = h->GetEquipment(LEFT_WIELDED_INDEX);
+//        item* iR = h->GetEquipment(RIGHT_WIELDED_INDEX);
+//
+//        //every X turns remove all equipments
+//        bool bTryWieldNow=false;
+//        static int iLastReEquipAllTurn=-1;
+//        if(iCurrentDungeonTurnsCount>(iLastReEquipAllTurn+150)){ DBG2(iCurrentDungeonTurnsCount,iLastReEquipAllTurn);
+//          iLastReEquipAllTurn=iCurrentDungeonTurnsCount;
+//          for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
+//            item* eq = h->GetEquipment(i);
+//            if(eq){eq->MoveTo(GetStack());h->SetEquipment(i,NULL);} //eq is moved to end of stack!
+//            if(iL==eq)iL=NULL;
+//            if(iR==eq)iR=NULL;
+//          }
+//  //        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;h->SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
+//  //        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;h->SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+//          bTryWieldNow=true;
+//        }
+//
+//        //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+//        //every X turns try to wield
+//        static int iLastTryToWieldTurn=-1;
+//        if(bTryWieldNow || iCurrentDungeonTurnsCount>(iLastTryToWieldTurn+10)){ DBG2(iCurrentDungeonTurnsCount,iLastTryToWieldTurn);
+//          iLastTryToWieldTurn=iCurrentDungeonTurnsCount;
+//          bool bDoneLR=false;
+//          bool bL2H = iL && iL->IsTwoHanded();
+//          bool bR2H = iR && iR->IsTwoHanded();
+//
+//          //2handed
+//          static int iTryWieldWhat=0; iTryWieldWhat++;
+//          if(iTryWieldWhat%2==0){ //will try 2handed first, alternating. If player has only 2handeds, the 1handeds will not be wielded and it will use punches, what is good too for tests.
+//            if( !bDoneLR &&
+//                iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
+//                iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
+//            ){
+//              vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//              for(uint c = 0; c < vitEqW.size(); ++c){
+//                if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
+//                  vitEqW[c]->RemoveFromSlot();
+//                  h->SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+//                  bDoneLR=true;
+//                  break;
+//                }
+//              }
 //            }
 //          }
+//
+//          //dual 1handed (if not 2hd already)
+//          if(!bDoneLR){
+//            for(int i=0;i<2;i++){
+//              int iChk=-1;
+//              if(i==0)iChk=LEFT_WIELDED_INDEX;
+//              if(i==1)iChk=RIGHT_WIELDED_INDEX;
+//
+//              if(
+//                  !bDoneLR &&
+//                  (
+//                    (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
+//                    ||
+//                    (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
+//                  )
+//              ){
+//                vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//                for(uint c = 0; c < vitEqW.size(); ++c){
+//                  if(
+//                      (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+//                      ||
+//                      vitEqW[c]->IsShield(this)
+//                  ){
+//                    vitEqW[c]->RemoveFromSlot();
+//                    h->SetEquipment(iChk, vitEqW[c]);
+//                    bDoneLR=true;
+//                    break;
+//                  }
+//                }
+//              }
+//            }
+//          }
+//
 //        }
-      }
+//
+//        static int iLastTryToUseInvTurn=-1;
+//        if(iCurrentDungeonTurnsCount>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+//          iLastTryToUseInvTurn=iCurrentDungeonTurnsCount;
+//
+//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//          for(uint c = 0; c < vitEqW.size(); ++c){
+//            if(GetHungerState() >= BLOATED)break;
+//            if(TryToConsume(vitEqW[c]))return true;
+//          }
+//
+//          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//          for(uint c = 0; c < vitEqW.size(); ++c){
+//            if(TryToEquip(vitEqW[c],true)){
+//              return true;
+//            }else{
+//              vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+//            }
+//          }
+//
+////          for(int j=0;j<GetEquipments();j++){
+////            if(GetEquipment(j)!=NULL)continue;
+////
+////            //only empty slots
+////            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+////            for(uint c = 0; c < vitEqW.size(); ++c){
+////              if(TryToEquip(vitEqW[c],j)){
+////                return true;
+////              }else{
+////                vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+////              }
+////            }
+////          }
+//
+//  //        for(int i=0;i<GetEquipments();i++){
+//  //          if(GetBodyPartOfEquipment(i)!=NULL && GetEquipment(i)==NULL){
+//  //            vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+//  //            for(uint c = 0; c < vitEqW.size(); ++c){
+//  //              TryToEquip(vitEqW[c]);
+//  //            }
+//  //          }
+//  //        }
+//        }
+//      }
 
   //    if(GetBurdenState()>STRESSED) // burdened or unburdened
+    if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
       if(v2LastDropAt!=GetPos()){
         if(CheckForUsefulItemsOnGround(false))
           return true;
@@ -2840,7 +2871,7 @@ truth character::AutoPlayAICommand(int& rKey)
 
     // travel between dungeons if current fully explored
     if(v2NewKGTo.Is0() && v2Exits.size()>0){
-      if(iCurrentDungeonTurnsCount==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
+      if(game::GetCurrentDungeonTurnsCount()==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
         iWanderTurns=100+clock()%300; //just move around a lot, some NPC may spawn
       }else{
         v2TravelingToAnotherDungeon = v2NewKGTo = v2Exits[clock()%v2Exits.size()]; DBGSV2(v2TravelingToAnotherDungeon);
@@ -7124,7 +7155,7 @@ character* character::Duplicate(ulong Flags)
   return Char;
 }
 
-truth character::TryToEquip(item* Item)
+truth character::TryToEquip(item* Item, truth onlyIfEmpty, int onlyAt)
 {
   if(!Item->AllowEquip()
      || !CanUseEquipment()
@@ -7132,7 +7163,9 @@ truth character::TryToEquip(item* Item)
      || Item->GetSquaresUnder() != 1)
     return false;
 
-  for(int e = 0; e < GetEquipments(); ++e)
+  for(int e = 0; e < GetEquipments(); ++e){
+    if(onlyAt>-1 && e!=onlyAt)continue;
+
     if(GetBodyPartOfEquipment(e) && EquipmentIsAllowed(e))
     {
       sorter Sorter = EquipmentSorter(e);
@@ -7144,6 +7177,7 @@ truth character::TryToEquip(item* Item)
          && AllowEquipment(Item, e))
       {
         item* OldEquipment = GetEquipment(e);
+        if(onlyIfEmpty && OldEquipment!=NULL)continue;
 
         if(BoundToUse(OldEquipment, e))
           continue;
@@ -7220,6 +7254,7 @@ truth character::TryToEquip(item* Item)
         }
       }
     }
+  }
 
   return false;
 }

@@ -807,7 +807,7 @@ class character : public entity, public id
   void WeaponSkillHit(item*, int, int);
   character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
-  truth TryToEquip(item*);
+  truth TryToEquip(item*, truth onlyIfEmpty=false, int onlyAt=-1);
   truth TryToConsume(item*);
   void UpdateESPLOS() const;
   int GetCWeaponSkillLevel(citem*) const;
