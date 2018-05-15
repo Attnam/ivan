@@ -35,7 +35,7 @@ Dungeon ATTNAM;
     TeamDefault = MONSTER_TEAM;
     LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
-    CanGenerateBone = false;
+    CanGenerateBone = true;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 0;
