@@ -3087,6 +3087,7 @@ truth game::MassacreListsEmpty()
 
 void game::AutoPlayModeApply(){
   int iTimeout=0;
+  bool bPlayInBackground=false;
 
   const char* msg;
   switch(game::AutoPlayMode){
@@ -3101,19 +3102,22 @@ void game::AutoPlayModeApply(){
   case 2: // TIMEOUTs key press from here to below
     msg="%s says \"I can't wait anymore!\"";
     iTimeout=(1000);
+    bPlayInBackground=true;
     break;
   case 3:
     msg="%s says \"I am in a hurry!!\"";
     iTimeout=(1000/2);
+    bPlayInBackground=true;
     break;
   case 4:
     msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
     iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    bPlayInBackground=true;
     break;
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
-  globalwindowhandler::SetPlayInBackground(iTimeout>0);
+  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 

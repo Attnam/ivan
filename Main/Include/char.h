@@ -1182,9 +1182,17 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
-  static void AutoPlayDebugDrawOverlay();
+
   truth AutoPlayAICommand(int&);
-  void AutoPlaySetAndValidateKeepGoingTo(v2 v2KGTo);
+  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, bool bWide=false);
+  static void AutoPlayAIDebugDrawOverlay();
+  static bool AutoPlayAICheckAreaLevelChangedAndReset();
+  truth AutoPlayAIDropThings();
+  truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
+  truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
+  truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
+  void AutoPlayAIReset(bool bFailedToo);
+
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;

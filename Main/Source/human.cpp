@@ -3450,7 +3450,6 @@ long skeleton::GetBodyPartVolume(int I) const
 
 truth humanoid::AutoPlayAIequip()
 {
-  static itemvector vitEqW;
   item* iL = GetEquipment(LEFT_WIELDED_INDEX);
   item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
 
@@ -3486,7 +3485,7 @@ truth humanoid::AutoPlayAIequip()
           iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
           iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
       ){
-        vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+        static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
         for(uint c = 0; c < vitEqW.size(); ++c){
           if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
             vitEqW[c]->RemoveFromSlot();
@@ -3513,7 +3512,7 @@ truth humanoid::AutoPlayAIequip()
               (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
             )
         ){
-          vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+          static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
           for(uint c = 0; c < vitEqW.size(); ++c){
             if(
                 (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
@@ -3536,18 +3535,39 @@ truth humanoid::AutoPlayAIequip()
   if(game::GetCurrentDungeonTurnsCount()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
     iLastTryToUseInvTurn=game::GetCurrentDungeonTurnsCount();
 
-    vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-    for(uint c = 0; c < vitEqW.size(); ++c){
-      if(GetHungerState() >= BLOATED)break;
-      if(TryToConsume(vitEqW[c]))return true;
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(GetHungerState() >= BLOATED)break;
+        if(TryToConsume(vitEqW[c]))return true;
+      }
     }
 
-    vitEqW.clear();GetStack()->FillItemVector(vitEqW);
-    for(uint c = 0; c < vitEqW.size(); ++c){
-      if(TryToEquip(vitEqW[c],true)){
-        return true;
-      }else{
-        vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(TryToEquip(vitEqW[c],true)){
+          return true;
+        }else{
+          vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+        }
+      }
+    }
+
+    static int iLastZapTurn=-1;
+    if(game::GetCurrentDungeonTurnsCount()>(iLastZapTurn+100)){ //every X turns try to use stuff from inv
+      iLastZapTurn=game::GetCurrentDungeonTurnsCount();
+
+      int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsZappable(this))continue;
+
+        if(vitEqW[c]->Zap(this, GetPos(), iDir)) //TODO try to aim at NPCs
+          return true;
+
+        if(vitEqW[c]->Apply(this))
+          return true;
       }
     }
 
