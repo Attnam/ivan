@@ -55,9 +55,11 @@ class hiteffect : public entity
   void cleanup();
   void chkCleanupAlready() const;
   int iDrawCount; //TODO use realtime??? may not be good on slow machines?
+  int iCleanCount;
   bitmap* bmpHitEffect;
   hiteffectSetup setup;
   blitdata bldFinalDraw;
+  v2 v2CamPos;
   truth bBlitdataWasSet;
   lsquare* LSquareUnderOfWhoHits;
   std::vector<lsquare*> vExtraSquares;

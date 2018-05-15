@@ -16,6 +16,7 @@
 #include "dbgmsgproj.h"
 
 int iDrawTot=3;
+int iCleanTot=2; //min 1
 
 hiteffect::hiteffect() : entity(HAS_BE), Next(NULL), iState(-1), bBlitdataWasSet(false) {DBGSTK;} //iState -1 indicates this constructor
 
@@ -63,6 +64,8 @@ hiteffect::hiteffect(hiteffectSetup s)
   setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
 
   bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
+
+  v2CamPos = game::GetCamera();
 
   v2HitFromSqrPos=s.WhoHits->GetPos();  DBGSV2(v2HitFromSqrPos);
   v2HitToSqrPos=s.WhoIsHit->GetPos();  DBGSV2(v2HitToSqrPos);
@@ -272,18 +275,33 @@ void hiteffect::Be()
 {
   chkCleanupAlready();
 
+  bool bHell=false;
+  bool bClean=false;
+
   if(iDrawCount==iDrawTot)
-  {
-    setup.LSquareUnder->RemoveHitEffect(this);
-    cleanup();
-    SendToHell();
-    return;
-  }else{
+    iCleanCount++;
+
+  if(iCleanCount>0)
+    bClean=true;
+
+  if(bClean){
+    //TODO is post clean (after drawing ends) unnecessary now that drawing is denied when camera changes pos?
+    //TODO is post clean working at all?
     if(bBlitdataWasSet){
-      CheckIntegrity(DBGSTATE_SETBLD);
+      CheckIntegrity(DBGSTATE_SETBLD); //before hell
       setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
     }
   }
+
+  if(iDrawCount==iDrawTot && iCleanCount==iCleanTot)
+    bHell=true;
+
+  if(bHell){
+    setup.LSquareUnder->RemoveHitEffect(this);
+    cleanup();
+    SendToHell();
+  }
+
 }
 
 void hiteffect::chkCleanupAlready() const
@@ -367,6 +385,17 @@ truth hiteffect::DrawStep()
 
     //displacement, interpolate TODO could be at v2 class with To and fPercent!
     bldFinalDraw.Dest += -(v2HitFromToSqrDiff*TILE_SIZE)*(iDrawCount/(float)iDrawTot);
+  }
+
+  if(game::GetCamera()!=v2CamPos){
+    /**
+     * As the hiteffect will draw LATER,
+     * this means, if the camera moves, the blitdata will command to still draw relatively to where the camera WAS
+     * and not where the camera IS!!
+     * TODO improve this by updating the blitdata to the new camPos?
+     */
+    End();
+    bDraw=false;
   }
 
   if(bDraw){
