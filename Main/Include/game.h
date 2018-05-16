@@ -458,6 +458,7 @@ class game
   static int getDefaultItemsListWidth(){ return iListWidth; }
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
+  static int GetSaveFileVersion();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
