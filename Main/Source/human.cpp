@@ -3456,8 +3456,8 @@ truth humanoid::AutoPlayAIequip()
   //every X turns remove all equipments
   bool bTryWieldNow=false;
   static int iLastReEquipAllTurn=-1;
-  if(game::GetCurrentDungeonTurnsCount()>(iLastReEquipAllTurn+150)){ DBG2(game::GetCurrentDungeonTurnsCount(),iLastReEquipAllTurn);
-    iLastReEquipAllTurn=game::GetCurrentDungeonTurnsCount();
+  if(game::GetTurn()>(iLastReEquipAllTurn+150)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
+    iLastReEquipAllTurn=game::GetTurn();
     for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
       item* eq = GetEquipment(i);
       if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
@@ -3472,8 +3472,8 @@ truth humanoid::AutoPlayAIequip()
   //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
   //every X turns try to wield
   static int iLastTryToWieldTurn=-1;
-  if(bTryWieldNow || game::GetCurrentDungeonTurnsCount()>(iLastTryToWieldTurn+10)){ DBG2(game::GetCurrentDungeonTurnsCount(),iLastTryToWieldTurn);
-    iLastTryToWieldTurn=game::GetCurrentDungeonTurnsCount();
+  if(bTryWieldNow || game::GetTurn()>(iLastTryToWieldTurn+10)){ DBG2(game::GetTurn(),iLastTryToWieldTurn);
+    iLastTryToWieldTurn=game::GetTurn();
     bool bDoneLR=false;
     bool bL2H = iL && iL->IsTwoHanded();
     bool bR2H = iR && iR->IsTwoHanded();
@@ -3532,9 +3532,10 @@ truth humanoid::AutoPlayAIequip()
   }
 
   static int iLastTryToUseInvTurn=-1;
-  if(game::GetCurrentDungeonTurnsCount()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
-    iLastTryToUseInvTurn=game::GetCurrentDungeonTurnsCount();
+  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+    iLastTryToUseInvTurn=game::GetTurn();
 
+    //////////////////////////////// consume food/drink
     {
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
       for(uint c = 0; c < vitEqW.size(); ++c){
@@ -3543,6 +3544,7 @@ truth humanoid::AutoPlayAIequip()
       }
     }
 
+    //////////////////////////////// equip
     {
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
       for(uint c = 0; c < vitEqW.size(); ++c){
@@ -3554,9 +3556,10 @@ truth humanoid::AutoPlayAIequip()
       }
     }
 
+    //////////////////////////////// zap
     static int iLastZapTurn=-1;
-    if(game::GetCurrentDungeonTurnsCount()>(iLastZapTurn+100)){ //every X turns try to use stuff from inv
-      iLastZapTurn=game::GetCurrentDungeonTurnsCount();
+    if(game::GetTurn()>(iLastZapTurn+100)){ //every X turns try to use stuff from inv
+      iLastZapTurn=game::GetTurn();
 
       int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
       static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
@@ -3571,6 +3574,21 @@ truth humanoid::AutoPlayAIequip()
       }
     }
 
+    //////////////////////////////// read book
+    static int iLastReadTurn=-1;
+    if(game::GetTurn()>(iLastReadTurn+50)){ //every X turns try to use stuff from inv
+      iLastReadTurn=game::GetTurn();
+
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsReadable(this))continue;
+        static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
+        if(hb==NULL)continue;
+
+        if(vitEqW[c]->Read(this)) //TODO try to aim at NPCs
+          return true;
+      }
+    }
   }
 
   return false;

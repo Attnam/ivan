@@ -1192,7 +1192,7 @@ class character : public entity, public id
   int   AutoPlayAIFindWalkDist(lsquare* lsqrTo);
   truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
   truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
-  void AutoPlayAIDieTeleport();
+  void AutoPlayAITeleport(bool bDeathCountBased);
   void AutoPlayAIReset(bool bFailedToo);
   truth IsPlayerAutoPlay();
 

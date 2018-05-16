@@ -1556,24 +1556,30 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::AutoPlayAIDieTeleport()
+void character::AutoPlayAITeleport(bool bDeathCountBased)
 {
-  // this is good to prevent autoplay AI getting stuck endless dieing
-  static int iDieMax=10;
-  static int iDieTeleportCountDown=iDieMax;
-  if(iDieTeleportCountDown==0){ //this helps on defeating not so strong enemies in spot
-    if(IsPlayerAutoPlay())
-      Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there TODO and should be in sync! create TeleportRandomDirectly() ?
-    iDieTeleportCountDown=iDieMax;
-  }else{
-    static v2 v2DiePos(0,0);
-    if(v2DiePos==GetPos()){
-      iDieTeleportCountDown--;
-    }else{
-      v2DiePos=GetPos();
+  bool bTeleportNow=false;
+
+  if(bDeathCountBased){ // this is good to prevent autoplay AI getting stuck endless dieing
+    static int iDieMax=10;
+    static int iDieTeleportCountDown=iDieMax;
+    if(iDieTeleportCountDown==0){ //this helps on defeating not so strong enemies in spot
+      if(IsPlayerAutoPlay())
+        bTeleportNow=true;
       iDieTeleportCountDown=iDieMax;
+    }else{
+      static v2 v2DiePos(0,0);
+      if(v2DiePos==GetPos()){
+        iDieTeleportCountDown--;
+      }else{
+        v2DiePos=GetPos();
+        iDieTeleportCountDown=iDieMax;
+      }
     }
   }
+
+  if(bTeleportNow)
+    Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there TODO and should be in sync! create TeleportRandomDirectly() ?
 }
 
 void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
@@ -1612,7 +1618,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
         ResetStates();
         SetNP(SATIATED_LEVEL);
         SendNewDrawRequest();
-        if(IsPlayerAutoPlay())AutoPlayAIDieTeleport();
+        if(IsPlayerAutoPlay())AutoPlayAITeleport(true);
         return;
       }
     }
@@ -2419,6 +2425,12 @@ character* AutoPlayLastChar=NULL;
 const int iMaxWanderTurns=20;
 const int iMinWanderTurns=3;
 
+/**
+ * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+ * btw, lantern price is currently 10.
+ */
+static int iMaxValueless = 5;
+
 v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
 int iWanderTurns=iMinWanderTurns;
@@ -2426,6 +2438,8 @@ bool bAutoPlayUseRandomTargetOnce=false;
 std::vector<v2> vv2DebugDrawSqrPrevious;
 v2 v2LastDropPlayerWasAt=v2(0,0);
 std::vector<v2> vv2FailTravelToTargets;
+std::vector<v2> vv2WrongGoingTo;
+
 void character::AutoPlayAIReset(bool bFailedToo)
 { DBG7(bFailedToo,iWanderTurns,DBGAV2(v2KeepGoingTo),DBGAV2(v2TravelingToAnotherDungeon),DBGAV2(v2LastDropPlayerWasAt),vv2FailTravelToTargets.size(),vv2DebugDrawSqrPrevious.size());
   v2KeepGoingTo=v2(0,0); //will retry
@@ -2439,6 +2453,7 @@ void character::AutoPlayAIReset(bool bFailedToo)
 
   if(bFailedToo){
     vv2FailTravelToTargets.clear();
+    vv2WrongGoingTo.clear();
   }
 }
 truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
@@ -2523,6 +2538,9 @@ void character::AutoPlayAIDebugDrawOverlay()
     AutoPlayAIDebugDrawSquareRect(v2KeepGoingTo,BLUE,true);
   else
     AutoPlayAIDebugDrawSquareRect(PLAYER->GetPos(),YELLOW); //means wandering
+
+  for(int i=0;i<vv2WrongGoingTo.size();i++)
+    AutoPlayAIDebugDrawSquareRect(vv2WrongGoingTo[i],BLUE,false,true);
 }
 
 truth character::AutoPlayAIDropThings()
@@ -2608,12 +2626,7 @@ truth character::AutoPlayAIDropThings()
       if(dropMe==NULL && heaviest==cheapest)
         dropMe=heaviest;
 
-      /**
-       * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
-       * btw, lantern price is currently 10.
-       */
-      static int iValueless = 5;
-      if(dropMe==NULL && cheapest->GetTruePrice()<=iValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
+      if(dropMe==NULL && cheapest->GetTruePrice()<=iMaxValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
         dropMe=cheapest;
       }
 
@@ -2687,7 +2700,10 @@ truth character::AutoPlayAIDropThings()
 truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(this);
-  if(h && h->AutoPlayAIequip())return true;
+  if(h==NULL)return false;
+
+  if(h->AutoPlayAIequip())
+    return true;
 
   if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
     if(v2LastDropPlayerWasAt!=GetPos()){
@@ -2697,31 +2713,34 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
         if(!bHoarder)
           return true;
 
-      //just pick up any stuff
+      //just pick up any useful stuff
       static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
       for(uint c = 0; c < vit.size(); ++c){
-        if(
-            vit[c]->CanBeSeenBy(this) &&
-            vit[c]->IsPickable(this) &&
-            vit[c]->GetSquaresUnder()==1 && //avoid big corpses 2x2
-            !vit[c]->IsBroken() &&
-            ( vit[c]->GetSpoilLevel()==0 || (!bPlayerHasLantern && vit[c]->IsOnFire(this)) )
-        ){
-          static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
-          if(itc && !itc->IsLocked()){
-            static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
-            for(uint d = 0; d < vitItc.size(); ++d)
-              vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
-            continue;
-          }
+        if(!vit[c]->CanBeSeenBy(this))continue;
+        if(!vit[c]->IsPickable(this))continue;
+        if(!vit[c]->GetSquaresUnder()==1)continue; //avoid big corpses 2x2
 
-          vit[c]->MoveTo(GetStack()); DBG2("pickup",vit[c]->GetNameSingular().CStr());
+        if(!bPlayerHasLantern && vit[c]->IsOnFire(this)){
+          //ok
+        }else{
+          if(vit[c]->IsBroken())continue;
+          if(vit[c]->GetTruePrice()<=iMaxValueless)continue; //mainly to avoid all rocks from broken walls
+          if(vit[c]->GetSpoilLevel()>0)continue;
+        }
+
+        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
+        if(itc && !itc->IsLocked()){
+          static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
+          for(uint d = 0; d < vitItc.size(); ++d)
+            vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
+          continue;
+        }
+
+        vit[c]->MoveTo(GetStack()); DBG2("pickup",vit[c]->GetNameSingular().CStr());
 //          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
 //          return true;
-          if(!bHoarder)
-            return true;
-//            break;
-        }
+        if(!bHoarder)
+          return true;
       }
     }
   }
@@ -3005,10 +3024,22 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 //      SetGoingTo(v2KeepGoingTo);
 //    }
     static int iForceGoingToCountDown=10;
+    static v2 v2GoingToBkp;v2GoingToBkp=GoingTo;
     if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
       if(iForceGoingToCountDown==0){
         DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
-        AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo); DBGSV2(GoingTo);
+
+        if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
+          static int iSetFailTeleportCountDown=10;
+          iSetFailTeleportCountDown--;
+          vv2WrongGoingTo.push_back(v2GoingToBkp);
+          if(iSetFailTeleportCountDown==0){
+            AutoPlayAITeleport(false);
+            AutoPlayAIReset(true); //refresh to test/try it all again
+            iSetFailTeleportCountDown=10;
+          }
+        }
+        DBGSV2(GoingTo);
         return true;
       }else{
         iForceGoingToCountDown--;
@@ -3080,18 +3111,14 @@ truth character::AutoPlayAICommand(int& rKey)
     iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
   }
 
+  if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
+    return true;
+
   if(iWanderTurns>0){
     GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
     iWanderTurns--;
     return true;
   }
-
-  if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
-    return true;
-//  /* equip and pickup */
-//  if(!bDropSomething){ // if(!IsPolymorphed()){ //polymorphed seems to make it too complex to deal with TODO may be just check if is humanoid?
-//
-//  }
 
   /***************************************************************************************************
    * WANDER above here
