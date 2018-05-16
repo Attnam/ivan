@@ -2734,7 +2734,7 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
       for(uint c = 0; c < vit.size(); ++c){
         if(!vit[c]->CanBeSeenBy(this))continue;
         if(!vit[c]->IsPickable(this))continue;
-        if(!vit[c]->GetSquaresUnder()==1)continue; //avoid big corpses 2x2
+        if(vit[c]->GetSquaresUnder()!=1)continue; //avoid big corpses 2x2
 
         if(!bPlayerHasLantern && vit[c]->IsOnFire(this)){
           //ok
