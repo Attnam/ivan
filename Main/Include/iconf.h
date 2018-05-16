@@ -155,6 +155,8 @@ class ivanconfig
 
   static cycleoption MemorizeEquipmentMode;
 
+  static cycleoption MemorizeEquipmentMode;
+
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
