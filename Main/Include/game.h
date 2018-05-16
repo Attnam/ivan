@@ -457,6 +457,7 @@ class game
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
   static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
   static int getDefaultItemsListWidth(){ return iListWidth; }
+  static int GetSaveFileVersion();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];

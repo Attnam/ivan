@@ -31,6 +31,7 @@ class ivanconfig
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
+  static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -54,6 +55,7 @@ class ivanconfig
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -61,6 +63,7 @@ class ivanconfig
 #else
   static truth GetFullScreenMode() { return true; }
 #endif
+
   static long ApplyContrastTo(long);
   static void Save() { configsystem::Save(); }
   static void Load() { configsystem::Load(); }
@@ -68,6 +71,7 @@ class ivanconfig
   static col24 GetContrastLuminance() { return ContrastLuminance; }
   static void Initialize();
   static void Show();
+
  private:
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
@@ -103,6 +107,7 @@ class ivanconfig
   static void FrameSkipChanger(numberoption* O, long What);
   static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
+  static void MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
@@ -147,6 +152,8 @@ class ivanconfig
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
   static cycleoption AltSilhouettePreventColorGlitch;
+
+  static cycleoption MemorizeEquipmentMode;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;

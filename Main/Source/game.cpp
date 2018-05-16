@@ -59,7 +59,7 @@
 #define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 131 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 117 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -212,6 +212,8 @@ v2 ZoomPos = v2(0,0);
 v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
+
+int game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
