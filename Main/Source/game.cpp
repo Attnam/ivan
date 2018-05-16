@@ -313,84 +313,86 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
   if(i==0)return;
   if(DoZoom())return; //TODO should be able to clear in zoom mode too? the result is still messy, but... is it cool to xBRZ non visible squares in look mode?  if so, no need to clear them...
 
-  /***
-   * this will check the squares around player for visibility/CanFeel
-   *
-   * the problem is the dungeon corners, ex.:
-   *  0       1       2
-   *  ####### ######O ######O
-   *  ####### ##P###O ##P###O
-   *  WWW#### WWW###O WWW###O
-   *  ##WP### ##W###O     ##O
-   *  ##W#### ##W###O      #O
-   *  ####### OOOOOOO OOOOOOO
-   *  ####### OOOOOOO OOOOOOO
-   *
-   *  Using xBRZ around player by 3 squares.
-   *  P = player
-   *  # = within user requested "around" distance.
-   *  O = out of user requested "around" distance (are ignored/not considered)
-   *  W = wall
-   *
-   *  0 - player is far from visible dungeon corners (no complexity)
-   *
-   *  1 - player is near top left corner:
-   *    The drawn dungeon visible area will be copied just 2 to the left and 1 to the top away from player position,
-   *    this means the cached bitmap will be smaller than at (*0).
-   *
-   *  2 - The player surroundings will be checked for visibility/CanFeel, if neither, these squares (that I deleted
-   *    on the example above) will be cleared from pixel colors to the mask/transparent color.
-   *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
-   */
-
-//  lsquare* plsq = Player->GetLSquareUnder();
-//  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
-  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
-
-  level* plv = Player->GetLevel();
-  v2 v2ChkSqrPos;
-  lsquare* plsqChk;
   std::vector<v2> vv2ToBeCleared;
-  v2 v2CamSqPos = GetCamera();
-  v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
-  int iSqLeftSkipX=0;
-  int iSqTopSkipY=0;
-  v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
-  // tips: OnScreen(v2Square)
-  for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
-    if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
-    if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
+  if(!IsInWilderness()){
+    /***
+     * this will check the squares around player for visibility/CanFeel
+     *
+     * the problem is the dungeon corners, ex.:
+     *  0       1       2
+     *  ####### ######O ######O
+     *  ####### ##P###O ##P###O
+     *  WWW#### WWW###O WWW###O
+     *  ##WP### ##W###O     ##O
+     *  ##W#### ##W###O      #O
+     *  ####### OOOOOOO OOOOOOO
+     *  ####### OOOOOOO OOOOOOO
+     *
+     *  Using xBRZ around player by 3 squares.
+     *  P = player
+     *  # = within user requested "around" distance.
+     *  O = out of user requested "around" distance (are ignored/not considered)
+     *  W = wall
+     *
+     *  0 - player is far from visible dungeon corners (no complexity)
+     *
+     *  1 - player is near top left corner:
+     *    The drawn dungeon visible area will be copied just 2 to the left and 1 to the top away from player position,
+     *    this means the cached bitmap will be smaller than at (*0).
+     *
+     *  2 - The player surroundings will be checked for visibility/CanFeel, if neither, these squares (that I deleted
+     *    on the example above) will be cleared from pixel colors to the mask/transparent color.
+     *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
+     */
 
-    iSqLeftSkipX=0; //must be reset here
-    for(int iX=v2MaxSqrUpperLeft.X;iX<=v2MaxSqrLowerRight.X;iX++){
-      if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
-      if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
+  //  lsquare* plsq = Player->GetLSquareUnder();
+  //  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+    v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
+    v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
 
-      v2ChkSqrPos=v2(iX,iY);
-      if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
-      v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
-      plsqChk = plv->GetLSquare(v2ChkSqrPos);
+    level* plv = Player->GetLevel();
+    v2 v2ChkSqrPos;
+    lsquare* plsqChk;
+    v2 v2CamSqPos = GetCamera();
+    v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
+    int iSqLeftSkipX=0;
+    int iSqTopSkipY=0;
+    v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
+    // tips: OnScreen(v2Square)
+    for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
+      if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
+      if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
 
-      if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-      if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+      iSqLeftSkipX=0; //must be reset here
+      for(int iX=v2MaxSqrUpperLeft.X;iX<=v2MaxSqrLowerRight.X;iX++){
+        if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
+        if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
 
-      /********************************************************************************************
-       * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
-       * (that is a copy of the player surroundings at dungeon area),
-       * that will have the squares cleared after it is cached
-       * and before it is stretched with xBRZ,
-       * so that the non visible squares will be drawn equally to all other far away
-       * non vivible squares.
-       */
-      vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
-        (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
-        (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-      )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+        v2ChkSqrPos=v2(iX,iY);
+        if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
+        v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
+        plsqChk = plv->GetLSquare(v2ChkSqrPos);
+
+        if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
+        if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+
+        /********************************************************************************************
+         * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
+         * (that is a copy of the player surroundings at dungeon area),
+         * that will have the squares cleared after it is cached
+         * and before it is stretched with xBRZ,
+         * so that the non visible squares will be drawn equally to all other far away
+         * non vivible squares.
+         */
+        vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
+          (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
+          (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
+        )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+      }
     }
-  }
 
-  DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
+    DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
+  }
 
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
@@ -419,7 +421,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   if(bOk && Player->IsDead())bOk=false; // this may actually never happen...
 
-  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+  if(bOk && !OnScreen(v2SqrPos))bOk=false;
 
   if(bOk && bPositionQuestionMode){
     if(!IsInWilderness()){ // always allowed in wilderness (as there is only fully dark squares, not partial as memories)
