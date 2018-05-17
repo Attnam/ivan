@@ -851,12 +851,10 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 //}
 
 static bool bSaveGameSortModeByDtTm;
-static bool bSaveGameSortModeAlphaNum;
 static bool bSaveGameSortModeProgress;
 static bool bSaveGameSortModeReversed;
 void iosystem::SetSaveGameSortMode(int i){
   bSaveGameSortModeByDtTm=false;
-  bSaveGameSortModeAlphaNum=false;
   bSaveGameSortModeProgress=false;
   bSaveGameSortModeReversed=false;
 
@@ -864,20 +862,15 @@ void iosystem::SetSaveGameSortMode(int i){
   case 0:
     bSaveGameSortModeReversed=true;
     bSaveGameSortModeByDtTm=true;
-    bSaveGameSortModeAlphaNum=true;
     break;
   case 1:
     bSaveGameSortModeReversed=true;
     bSaveGameSortModeByDtTm=true;
-    bSaveGameSortModeAlphaNum=true;
-
     bSaveGameSortModeProgress=true;
     break;
-  case 2:
-    bSaveGameSortModeAlphaNum=true;
+  case 2: //alphanum is essential
     break;
   case 3:
-    bSaveGameSortModeAlphaNum=true;
     bSaveGameSortModeProgress=true;
     break;
   default:
@@ -1018,27 +1011,32 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       skipSeek(&SaveFile); //DUMMY (for here) binary data skipper
       SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
       SaveFile.Close();
-      if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
+
+      festring fsVer("");
+      if(vFiles[i].Version != iSaveFileVersion)
+        fsVer<<"(v"<<vFiles[i].Version<<") ";
 
       if(bSaveGameSortModeByDtTm)
-        id<<vFiles[i].time<<" ";
+        id<<fsVer<<vFiles[i].time<<" ";
 
-      if(bSaveGameSortModeAlphaNum)
-        id<<vFiles[i].name<<" ";
+      std::string sname=vFiles[i].name.CStr();
+      sname=sname.substr(0,sname.find(".")); //prettier name
+      id<<sname.c_str()<<" ";
+
+      if(!bSaveGameSortModeByDtTm)
+        id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
 
       festring currentDungeonLevel("");
       currentDungeonLevel << vFiles[i].CurrentDungeonIndex << vFiles[i].CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
       if(bSaveGameSortModeProgress && !vComponents.empty()){
-        id<<"(";
         for(int k=0;k<vComponents.size();k++){
           if(k>0)id<<" ";
           if(vComponents[k].dungeonID == currentDungeonLevel){
-            id<<"@"<<currentDungeonLevel<<"";
+            id<<"@"<<currentDungeonLevel<<""; // the legendary player character indicator! :D
           }else{
             id<<vComponents[k].dungeonID;
           }
         }
-        id<<")";
       }
 
       if(bHasBkp){
