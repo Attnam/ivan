@@ -1154,6 +1154,7 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
+  truth IsPlayerAutoPlay();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1185,17 +1186,17 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
-  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, bool bWide=false, bool bKeepColor=false);
+  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
-  int   AutoPlayAIFindWalkDist(lsquare* lsqrTo);
+  int   AutoPlayAIFindWalkDist(v2 v2To);
+  truth AutoPlayAITestValidPathTo(v2 v2To);
   truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
   truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
   void AutoPlayAITeleport(bool bDeathCountBased);
   void AutoPlayAIReset(bool bFailedToo);
-  truth IsPlayerAutoPlay();
 
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);

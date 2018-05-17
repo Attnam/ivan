@@ -3700,6 +3700,8 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
+  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+
   for(;;)
   {
     festring Temp;
