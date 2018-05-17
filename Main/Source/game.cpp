@@ -206,7 +206,7 @@ v2 silhouettePos = {0,0};
 
 bool bPositionQuestionMode=false;
 
-int game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
+int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
