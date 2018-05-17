@@ -96,6 +96,10 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
 truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
                                           "on death, enhanced messages review mode",
                                           false);
+cycleoption ivanconfig::MemorizeEquipmentMode("MemorizeEquipmentMode",
+                                          "NPCs restore equipped items after polymorph",
+                                          0, 3,
+                                          &MemorizeEquipmentModeDisplayer);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use xBRZScale to stretch graphics",
                                           false,
@@ -515,6 +519,15 @@ void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry
   }
 }
 
+void ivanconfig::MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0:Entry << "disabled";break; //do not show
+  case 1:Entry << "only pet";break; //default pos
+  case 2:Entry << "everyone";break; //alt pos
+  }
+}
+
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
@@ -624,6 +637,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+  configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

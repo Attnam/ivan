@@ -28,6 +28,7 @@ class ivanconfig
   static long GetFrameSkip() { return FrameSkip.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
+  static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
@@ -49,6 +50,7 @@ class ivanconfig
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
+
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
@@ -56,6 +58,7 @@ class ivanconfig
 #else
   static truth GetFullScreenMode() { return true; }
 #endif
+
   static long ApplyContrastTo(long);
   static void Save() { configsystem::Save(); }
   static void Load() { configsystem::Load(); }
@@ -63,6 +66,7 @@ class ivanconfig
   static col24 GetContrastLuminance() { return ContrastLuminance; }
   static void Initialize();
   static void Show();
+
  private:
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
@@ -92,14 +96,19 @@ class ivanconfig
   static void FrameSkipChanger(numberoption* O, long What);
   static void AltListItemWidthChanger(numberoption* O, long What);
   static void ContrastChanger(numberoption*, long);
+  static void MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry);
   static void MIDIOutputDeviceDisplayer(const cycleoption*, festring&);
   static void VolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void FullScreenModeChanger(truthoption*, truth);
+#endif
+
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
@@ -112,7 +121,6 @@ class ivanconfig
   static void FullScreenModeChanger(truthoption*, truth);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
-#endif
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -134,6 +142,8 @@ class ivanconfig
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
   static truthoption SavegameSafely;
+
+  static cycleoption MemorizeEquipmentMode;
 
   static truthoption WarnAboutDanger;
   static truthoption AutoDropLeftOvers;
@@ -159,10 +169,12 @@ class ivanconfig
   static truthoption BeNice;
   static scrollbaroption Volume;
   static cycleoption MIDIOutputDevice;
+
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
 #endif
+
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
