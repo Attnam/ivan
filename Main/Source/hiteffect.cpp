@@ -24,10 +24,12 @@ square* hiteffect::GetSquareUnderEntity(int) const {
   return setup.LSquareUnder;
 }
 
-#define DBGSTATE_INIT    1 //in order always
-#define DBGSTATE_SETBLD  2
-#define DBGSTATE_CLEANUP 3
-#define DBGSTATE_DESTROY 4
+#define ITGSTATE_INIT    1 //in order always
+#define ITGSTATE_SETBLD  2
+#define ITGSTATE_SENDTOHELL 2 //must be the state value before cleaup bypassing previous
+#define ITGSTATE_CLEANUP 3
+#define ITGSTATE_DESTROY 4
+
 #define DBGHITEFFINFO \
     DBG1(iState); \
     DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
@@ -250,7 +252,7 @@ hiteffect::hiteffect(hiteffectSetup s)
   (bmpHitEffect = bldRotate.Bitmap = new bitmap(TILE_V2))->ClearToColor(TRANSPARENT_COLOR); DBGLN; //TODO is clear unnecessary?
   bldLum.Bitmap->NormalBlit(bldRotate); DBGLN; //this "rotates"
 
-  SetIntegrityState(DBGSTATE_INIT);
+  SetIntegrityState(ITGSTATE_INIT);
 }
 
 void hiteffect::SetIntegrityState(int iNewState){ DBG1(iNewState);
@@ -258,7 +260,7 @@ void hiteffect::SetIntegrityState(int iNewState){ DBG1(iNewState);
 
   if(iState != iNewState-1){
     DBGHITEFFINFO;
-    if(iNewState!=DBGSTATE_CLEANUP) // cleanup is the end of it, no problem.
+    if(iNewState!=ITGSTATE_CLEANUP) // cleanup is the end of it, no problem.
       DBGABORT("Wrong state usage(%d), must always be equal to current(%d)+1",iNewState,iState);
   }
 
@@ -268,7 +270,7 @@ void hiteffect::SetIntegrityState(int iNewState){ DBG1(iNewState);
 hiteffect::~hiteffect()
 {
   if(bmpHitEffect!=NULL)delete bmpHitEffect;
-  iState=DBGSTATE_DESTROY; //not safe to  use this here: SetIntegrityState(DBGSTATE_DESTROY); as may have debug messages...
+  iState=ITGSTATE_DESTROY; //not safe to  use this here: SetIntegrityState(ITGSTATE_DESTROY); as may have debug messages...
 }
 
 void hiteffect::Be()
@@ -288,7 +290,7 @@ void hiteffect::Be()
     //TODO is post clean (after drawing ends) unnecessary now that drawing is denied when camera changes pos?
     //TODO is post clean working at all?
     if(bBlitdataWasSet){
-      CheckIntegrity(DBGSTATE_SETBLD); //before hell
+      CheckIntegrity(ITGSTATE_SETBLD); //before hell
       setup.LSquareUnder->SendStrongNewDrawRequest(); //too unbuffer all hit effects as soon as possible
     }
   }
@@ -298,6 +300,7 @@ void hiteffect::Be()
 
   if(bHell){
     setup.LSquareUnder->RemoveHitEffect(this);
+    iState=ITGSTATE_SENDTOHELL;
     cleanup();
     SendToHell();
   }
@@ -306,13 +309,13 @@ void hiteffect::Be()
 
 void hiteffect::chkCleanupAlready() const
 {
-  if(iState==DBGSTATE_CLEANUP)DBGABORT("hiteffect was cleanup already!");
+  if(iState==ITGSTATE_CLEANUP)DBGABORT("hiteffect was cleanup already!");
 }
 
 void hiteffect::cleanup(){
   chkCleanupAlready();
 
-  SetIntegrityState(DBGSTATE_CLEANUP); //before the actual cleanup as pointers are still set
+  SetIntegrityState(ITGSTATE_CLEANUP); //before the actual cleanup as pointers are still set
 
   // TODO necessary?
   setup.LSquareUnder=NULL;
@@ -334,9 +337,9 @@ void hiteffect::PrepareBlitdata(const blitdata& bld){
   bldFinalDraw.Stretch=0; //TODO why so big numbers here? was it uninitialized?
   bBlitdataWasSet=true;
 
-  if(iState!=DBGSTATE_SETBLD){ //can be set more than once
-    CheckIntegrity(DBGSTATE_INIT); //must be only  this one here
-    SetIntegrityState(DBGSTATE_SETBLD);
+  if(iState!=ITGSTATE_SETBLD){ //can be set more than once
+    CheckIntegrity(ITGSTATE_INIT); //must be only  this one here
+    SetIntegrityState(ITGSTATE_SETBLD);
   }
 }
 
@@ -413,7 +416,7 @@ truth hiteffect::DrawStep()
   return true; //did draw now
 }
 
-truth hiteffect::CheckIntegrity(int iDbgState) const{
+truth hiteffect::CheckIntegrity(int iItgState) const{
   chkCleanupAlready();
 
   if(
@@ -422,7 +425,7 @@ truth hiteffect::CheckIntegrity(int iDbgState) const{
   ){
     DBGHITEFFINFO;
 
-    if(iState!=iDbgState)DBGABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iDbgState);
+    if(iState!=iItgState)DBGABORT("hiteffect not initialized or not setup properly %d!=%d",iState,iItgState);
 
     DBGABORT("invalid hit effect setup"); //will force exit right here during development
     return false;
@@ -440,7 +443,7 @@ void hiteffect::Draw() const //TODO is it being called other than thru DrawStep(
    * As this is just an effect, it's funtionally shall not break the game.
    * So it will simply return if something is wrong.
    */
-  if(!CheckIntegrity(DBGSTATE_SETBLD))return;
+  if(!CheckIntegrity(ITGSTATE_SETBLD))return;
 
   if(iDrawCount<iDrawTot)
     bmpHitEffect->NormalMaskedBlit(bldFinalDraw); //TODO use alpha?
