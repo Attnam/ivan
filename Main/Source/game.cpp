@@ -2021,7 +2021,7 @@ int game::ItemUnderCode(int iCycleValue){
     case 8:return 310;
     case 9:return 311;
 
-    default:ABORT("invalid IntemUnder cycle value %d",iCycleValue);
+    default:ABORT("invalid ItemUnder cycle value %d",iCycleValue);
   }
 
   return -1; //dummy (never happens, just to cpp do not bother..)
@@ -2144,7 +2144,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     if(ivanconfig::GetShowItemsAtPlayerSquare()==11)bDynamicItems=true;
   }
   int iCode = 1;
-  if(!bDynamic)iCode=IntemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+  if(!bDynamic)iCode=ItemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
   bool bEnabled = iCode>0;
   bool bAboveHead = iCode==1;
 
@@ -2209,7 +2209,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     }
 
     if(bCharAboveNear || bItemAboveNear){
-      iCode = IntemUnderCode(iCycleCodeFallBack);
+      iCode = ItemUnderCode(iCycleCodeFallBack);
       bAboveHead=false;
     }
   }

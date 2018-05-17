@@ -271,7 +271,7 @@ void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring
     return;
   }
 
-  int iCode = game::IntemUnderCode(O->Value);
+  int iCode = game::ItemUnderCode(O->Value);
 
   if(iCode==0){
     Entry << "disabled";
