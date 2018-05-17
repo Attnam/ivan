@@ -730,127 +730,160 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
-/**
- * this will surely work if savegame sorting is disabled
- */
-festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName)
-{
-#ifdef WIN32
-  struct _finddata_t Found;
-  long hFile;
-  int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
+//TODO dropped in favor of non crashing (for old saves) new code protection, clean this commented code later
+///**
+// * this will surely work if savegame sorting is disabled
+// */
+//festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
+//                                cfestring& DirectoryName)
+//{
+//#ifdef WIN32
+//  struct _finddata_t Found;
+//  long hFile;
+//  int Check = 0;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
+//
+//  /* No file found */
+//  if(hFile == -1L)
+//  {
+//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//    return "";
+//  }
+//
+//  while(!Check)
+//  {
+//    /* Copy all the filenames to Buffer */
+//    /* Buffer = Found.name; Doesn't work because of a festring bug */
+//
+//    Buffer.Empty();
+//    Buffer << Found.name;
+//    List.AddEntry(Buffer, ListColor);
+//    Check = _findnext(hFile, &Found);
+//  }
+//
+//  Check = List.Draw();
+//
+//  /* an error has occured in felist */
+//
+//  if(Check & FELIST_ERROR_BIT)
+//    return "";
+//
+//  return List.GetEntry(Check);
+//#endif
+//
+//#ifdef UNIX
+//  DIR* dp;
+//  struct dirent* ep;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//  dp = opendir(DirectoryName.CStr());
+//
+//  if(dp)
+//  {
+//    while((ep = readdir(dp)))
+//    {
+//      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
+//      Buffer.Empty();
+//      Buffer << ep->d_name;
+//      /* Add to List all save files */
+//      if(Buffer.Find(".sav") != Buffer.NPos)
+//        List.AddEntry(Buffer, ListColor);
+//    }
+//
+//    closedir(dp);
+//
+//    if(List.IsEmpty())
+//    {
+//      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//      return "";
+//    }
+//    else
+//    {
+//      int Check = List.Draw();
+//
+//      if(Check & FELIST_ERROR_BIT)
+//        return "";
+//
+//      return List.GetEntry(Check);
+//    }
+//
+//  }
+//
+//  return "";
+//#endif
+//
+//#ifdef __DJGPP__
+//  struct ffblk Found;
+//  int Check = 0;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//
+//  /* get all filenames ending with .sav. Accepts all files even if they
+//     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
+//
+//  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
+//                    &Found, FA_HIDDEN | FA_ARCH);
+//
+//  if(Check)
+//  {
+//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//    return "";
+//  }
+//
+//  while(!Check)
+//  {
+//    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
+//    Buffer.Empty();
+//    Buffer << Found.ff_name;
+//    List.AddEntry(Buffer, ListColor);
+//    Check = findnext(&Found);
+//  }
+//
+//  Check = List.Draw();
+//
+//  if(Check & FELIST_ERROR_BIT)
+//    return "";
+//
+//  return List.GetEntry(Check);
+//#endif
+//}
 
-  /* No file found */
-  if(hFile == -1L)
-  {
-    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
+static bool bSaveGameSortModeByDtTm;
+static bool bSaveGameSortModeAlphaNum;
+static bool bSaveGameSortModeProgress;
+static bool bSaveGameSortModeReversed;
+void iosystem::SetSaveGameSortMode(int i){
+  bSaveGameSortModeByDtTm=false;
+  bSaveGameSortModeAlphaNum=false;
+  bSaveGameSortModeProgress=false;
+  bSaveGameSortModeReversed=false;
+
+  switch(i){
+  case 0:
+    bSaveGameSortModeReversed=true;
+    bSaveGameSortModeByDtTm=true;
+    bSaveGameSortModeAlphaNum=true;
+    break;
+  case 1:
+    bSaveGameSortModeReversed=true;
+    bSaveGameSortModeByDtTm=true;
+    bSaveGameSortModeAlphaNum=true;
+
+    bSaveGameSortModeProgress=true;
+    break;
+  case 2:
+    bSaveGameSortModeAlphaNum=true;
+    break;
+  case 3:
+    bSaveGameSortModeAlphaNum=true;
+    bSaveGameSortModeProgress=true;
+    break;
+  default:
+    ABORT("unsupported savegame sort option %d",i);
   }
-
-  while(!Check)
-  {
-    /* Copy all the filenames to Buffer */
-    /* Buffer = Found.name; Doesn't work because of a festring bug */
-
-    Buffer.Empty();
-    Buffer << Found.name;
-    List.AddEntry(Buffer, ListColor);
-    Check = _findnext(hFile, &Found);
-  }
-
-  Check = List.Draw();
-
-  /* an error has occured in felist */
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
-#endif
-
-#ifdef UNIX
-  DIR* dp;
-  struct dirent* ep;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  dp = opendir(DirectoryName.CStr());
-
-  if(dp)
-  {
-    while((ep = readdir(dp)))
-    {
-      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-      Buffer.Empty();
-      Buffer << ep->d_name;
-      /* Add to List all save files */
-      if(Buffer.Find(".sav") != Buffer.NPos)
-        List.AddEntry(Buffer, ListColor);
-    }
-
-    closedir(dp);
-
-    if(List.IsEmpty())
-    {
-      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-      return "";
-    }
-    else
-    {
-      int Check = List.Draw();
-
-      if(Check & FELIST_ERROR_BIT)
-        return "";
-
-      return List.GetEntry(Check);
-    }
-
-  }
-
-  return "";
-#endif
-
-#ifdef __DJGPP__
-  struct ffblk Found;
-  int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-
-  /* get all filenames ending with .sav. Accepts all files even if they
-     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
-
-  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
-                    &Found, FA_HIDDEN | FA_ARCH);
-
-  if(Check)
-  {
-    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
-  }
-
-  while(!Check)
-  {
-    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
-    Buffer.Empty();
-    Buffer << Found.ff_name;
-    List.AddEntry(Buffer, ListColor);
-    Check = findnext(&Found);
-  }
-
-  Check = List.Draw();
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
-#endif
 }
-
-static int iSaveGameSortMode=0;
-void iosystem::SetSaveGameSortMode(int i){iSaveGameSortMode=i;}
 struct fileInfo{
   int Version;
   char* GameScript = 0; //dummy
@@ -877,7 +910,10 @@ bool addFileInfo(char* c){
 }
 skipseeksave skipSeek=NULL;
 void iosystem::SetSkipSeekSave(skipseeksave sss){skipSeek = sss;}
-festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
+/* DirectoryName is the directory where the savefiles are located. Returns
+   the selected file or "" if an error occures or if no files are found. */
+festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
+                                cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
   ///////////////////// prepare general base data ///////////////////
   vFiles.clear();
@@ -984,22 +1020,16 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
       SaveFile.Close();
       if(vFiles[i].Version != iSaveFileVersion)id<<"(v"<<vFiles[i].Version<<") ";
 
-      switch(iSaveGameSortMode){
-      case 0: //no sort
-      case 1: //by name
-      case 2: //by name with dungeons ids
-        id<<vFiles[i].name;
-        break;
-      case 3: //by time with dungeons ids
-      case 4: //by time reversed with dungeons ids
-        id<<vFiles[i].time<<" "<<vFiles[i].name;
-        break;
-      }
+      if(bSaveGameSortModeByDtTm)
+        id<<vFiles[i].time<<" ";
+
+      if(bSaveGameSortModeAlphaNum)
+        id<<vFiles[i].name<<" ";
 
       festring currentDungeonLevel("");
       currentDungeonLevel << vFiles[i].CurrentDungeonIndex << vFiles[i].CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
-      if(iSaveGameSortMode>=2 && !vComponents.empty()){
-        id<<" (";
+      if(bSaveGameSortModeProgress && !vComponents.empty()){
+        id<<"(";
         for(int k=0;k<vComponents.size();k++){
           if(k>0)id<<" ";
           if(vComponents[k].dungeonID == currentDungeonLevel){
@@ -1048,7 +1078,7 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
 
   // reversed or normal
   int iFirst,iFirstI,iStopAt,iStopAtI,iDir; //TODO implement something more readable...
-  if(iSaveGameSortMode==4){
+  if(bSaveGameSortModeReversed){
     iDir=-1; iFirst=vIds.size()-1; iStopAt=-1         ; iFirstI=vInvIds.size()-1; iStopAtI=-1            ; }else{
     iDir= 1; iFirst=0            ; iStopAt=vIds.size(); iFirstI=0               ; iStopAtI=vInvIds.size();
   }
@@ -1078,18 +1108,6 @@ festring ContinueMenuWithSortModes(col16 TopicColor, col16 ListColor, cfestring&
   }
 
   return ""; //dummy just to gcc do not complain..
-}
-
-/* DirectoryName is the directory where the savefiles are located. Returns
-   the selected file or "" if an error occures or if no files are found. */
-festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
-{
-  if(iSaveGameSortMode==0){
-    return ContinueMenuOldAndSafe(TopicColor,ListColor,DirectoryName);
-  }else{
-    return ContinueMenuWithSortModes(TopicColor,ListColor,DirectoryName,iSaveFileVersion,bAllowImportOldSavegame);
-  }
 }
 
 truth iosystem::IsAcceptableForStringQuestion(char Key)

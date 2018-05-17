@@ -116,7 +116,7 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleChanger);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "sort savegame files and show dungeon IDs progress",
-                                          0, 5,
+                                          0, 4,
                                           &SaveGameSortModeDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &SaveGameSortModeChanger);
@@ -508,11 +508,10 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
 void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
-  case 0: Entry << "no sort";break;
-  case 1: Entry << "alpha";break;
-  case 2: Entry << "alpha+ids";break;
-  case 3: Entry << "DtTm+ids";break;
-  case 4: Entry << "revDtTm+ids";break;
+  case 0: Entry << "newest first";break;
+  case 1: Entry << "newest first + progress";break;
+  case 2: Entry << "alphanumeric";break;
+  case 3: Entry << "alphanumeric + progress";break;
   }
 }
 
