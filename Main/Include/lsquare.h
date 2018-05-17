@@ -28,12 +28,14 @@ class fluid;
 class material;
 class item;
 class smoke;
+class hiteffect;
 class gas;
 class bodypart;
 class liquid;
 class rain;
 class trap;
 struct sortdata;
+struct hiteffectSetup;
 
 typedef std::vector<item*> itemvector;
 typedef truth (item::*sorter)(ccharacter*) const;
@@ -124,6 +126,7 @@ class lsquare : public square
   void UpdateMemorizedDescription(truth = false);
   truth BeKicked(character*, item*, bodypart*, double, double, int, int, truth, truth);
   int GetDivineMaster() const;
+  void DrawHitEffect();
   void Draw(blitdata&) const;
   void UpdateMemorized();
   truth CanBeDug() const;
@@ -195,6 +198,8 @@ class lsquare : public square
   void AddSmoke(gas*);
   truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
+  hiteffect* AddHitEffect(hiteffectSetup);
+  void RemoveHitEffect(hiteffect* ToBeRemoved);
   void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;
   void DisplaySmokeInfo(festring&) const;
@@ -277,6 +282,7 @@ class lsquare : public square
   } StaticContentCache;
   fluid* Fluid;
   smoke* Smoke;
+  hiteffect* HitEffect;
   rain* Rain;
   trap* Trap;
   emittervector Emitter;

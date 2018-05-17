@@ -289,7 +289,7 @@ const name##prototype name::ProtoType
 #define WOBBLE_FREQ_SHIFT 4
 #define WOBBLE_FREQ_RANGE (3 << WOBBLE_FREQ_SHIFT)
 
-cv2 SILHOUETTE_SIZE(48, 64);
+cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 
 #define ITEM_CATEGORIES 18
 

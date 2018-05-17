@@ -249,7 +249,7 @@ class item : public object
   virtual liquid* CreateDipLiquid() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual int GetOfferValue(int) const;
-  virtual void Fly(character*, int, int);
+  virtual void Fly(character*, int, int, truth=false);
   int HitCharacter(character*, character*, int, double, int);
   virtual truth DogWillCatchAndConsume(ccharacter*) const { return false; }
   virtual truth Apply(character*);
@@ -631,6 +631,7 @@ class item : public object
   int SquaresUnder;
   int LifeExpectancy;
   ulong ItemFlags;
+  int iRotateFlyingThrownStep;
   virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 

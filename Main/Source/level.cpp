@@ -1214,6 +1214,18 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   return true;
 }
 
+void level::DrawHitEffects(cint XMin,cint XMax,cint YMin,cint YMax) const
+{
+  if(ivanconfig::GetHitIndicator()==0)return;
+
+  for(int x = XMin; x < XMax; ++x)
+  {
+    lsquare** SquarePtr = &Map[x][YMin];
+    for(int y = YMin; y < YMax; ++y, ++SquarePtr)
+      (*SquarePtr)->DrawHitEffect();
+  }
+}
+
 void level::Draw(truth AnimationDraw) const
 {
   cint XMin = Max(game::GetCamera().X, 0);
@@ -1292,6 +1304,8 @@ void level::Draw(truth AnimationDraw) const
         (*SquarePtr)->Draw(BlitData);
     }
   }
+
+  DrawHitEffects(XMin,XMax,YMin,YMax); // so it will be drawn above everything else
 }
 
 v2 level::GetEntryPos(ccharacter* Char, int I) const

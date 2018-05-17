@@ -85,6 +85,7 @@ void igraph::Init()
     graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
+    felist::SetDefaultEntryImageSize(TILE_V2);
     felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
     felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
     object::InitSparkleValidityArrays();
@@ -611,7 +612,12 @@ col16 igraph::GetBackGroundColor(int Element)
 
 void igraph::BlitBackGround(v2 Pos, v2 Border)
 {
-  blitdata B = { DOUBLE_BUFFER,
+  BlitBackGround(DOUBLE_BUFFER, Pos, Border);
+}
+
+void igraph::BlitBackGround(bitmap* bmpAt, v2 Pos, v2 Border)
+{
+  blitdata B = { bmpAt,
                   { Pos.X, Pos.Y },
                   { Pos.X, Pos.Y },
                   { Border.X, Border.Y },

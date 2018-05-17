@@ -23,7 +23,8 @@
 
 const felist* FelistCurrentlyDrawn = 0;
 
-v2 felist::v2SelectedPos = {0,0};
+v2 felist::v2SelectedPos = v2(0,0);
+v2 felist::v2DefaultEntryImageSize=v2(0,0);
 
 truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
@@ -150,6 +151,26 @@ void felist::Pop()
 
 uint felist::Draw()
 {
+  if(Flags & SELECTABLE){
+    if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
+  }else{
+    for(int i=0;i<Entry.size();i++)
+      if(Entry[i]->ImageKey != NO_IMAGE){
+        /**
+         * This allows much more visible entries when the list have no images.
+         *
+         * But this is still a dumb guesser, because it considers all entries will have images.
+         *
+         * The difficulty is because having a fixed page length, even if the contents of each page may differ,
+         * we are unable to precisely calculate how many entries will fit on each page.
+         *
+         * So, opting for the worst case (all are images) is the safest option.
+         */
+        PageLength/=2;
+        break;
+      }
+  }
+
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
 
@@ -221,7 +242,7 @@ uint felist::Draw()
 
     uint Pressed = GET_KEY(false);DBGLN;
 
-    if(Flags & SELECTABLE && Pressed > 64 //TODO explain what are these numbers: letters/digits/symbols?
+    if(Flags & SELECTABLE && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
     {
@@ -230,7 +251,7 @@ uint felist::Draw()
       break;
     }
 
-    if(Flags & SELECTABLE && Pressed > 96 //TODO explain what are these numbers: letters/digits/symbols?
+    if(Flags & SELECTABLE && Pressed > 96 // 97='a' 122='z'
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
     {
@@ -359,6 +380,11 @@ uint felist::Draw()
 
 static festring Str;
 
+bool felist::IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos){
+  if(v2DefaultEntryImageSize.X==0 || v2DefaultEntryImageSize.Y==0)ABORT("v2DefaultEntryImageSize not set.");
+  return Buffer->IsValidPos(pos.X+v2DefaultEntryImageSize.X, pos.Y+v2DefaultEntryImageSize.Y);
+}
+
 truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 {
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
@@ -393,7 +419,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
         Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 
         v2 v2EntryPos = v2(Pos.X + 13, LastFillBottom);
-        if(EntryDrawer){
+        if(EntryDrawer && IsEntryDrawingAtValidPos(Buffer,v2EntryPos)){
           EntryDrawer(Buffer,
                       v2EntryPos,
                       Entry[c]->ImageKey);
@@ -433,7 +459,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
           LastFillBottom += 10;
         }
 
-        if(EntryDrawer){
+        if(EntryDrawer && IsEntryDrawingAtValidPos(Buffer,v2EntryPos)){
           EntryDrawer(Buffer,
                       v2EntryPos,
                       Entry[c]->ImageKey);
@@ -461,8 +487,11 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
       }
     }
 
-    if((i - PageBegin == PageLength - 1 && Entry[c]->Selectable)
-       || c == Entry.size() - 1)
+    if(
+        (i - PageBegin == PageLength - 1 && Entry[c]->Selectable)
+        ||
+        c == Entry.size() - 1
+      )
     {
       if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1)
          || (Flags & INVERSE_MODE && PageBegin))
