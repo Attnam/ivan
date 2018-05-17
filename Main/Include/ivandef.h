@@ -676,7 +676,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 #define LOCK_BITS 0xFC00
 
-#define BROKEN_LOCK S_LOCK_ID
+#define BROKEN_LOCK 32768
 
 /* Normal lock types, which can be randomized */
 
