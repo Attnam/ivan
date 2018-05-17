@@ -118,7 +118,6 @@ class ivanconfig
   static void DungeonGfxScaleChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
-  static void FullScreenModeChanger(truthoption*, truth);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
