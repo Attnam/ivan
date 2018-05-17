@@ -209,7 +209,7 @@ class game
   static void UpdateShowItemsAtPlayerPos(bool bAllowed);
   static void UpdateAltSilhouette(bool bAllowed);
   static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
-  static int IntemUnderCode(int iCycleValue);
+  static int ItemUnderCode(int iCycleValue);
   static int ItemUnderCorner(int val);
   static int ItemUnderZoom(int val);
   static bool ItemUnderHV(int val);

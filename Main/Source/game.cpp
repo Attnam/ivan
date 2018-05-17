@@ -2002,7 +2002,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
 }
 
-int game::IntemUnderCode(int iCycleValue){
+int game::ItemUnderCode(int iCycleValue){
   switch(iCycleValue){
     case 0:return 0; //disabled
 
