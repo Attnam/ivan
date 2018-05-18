@@ -495,11 +495,11 @@ void graphics::DrawAtDoubleBufferBeforeFelistPage(){
   }
 }
 
-void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedDB){
+void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedBuffer){
   static bool bDbgTinyDungeon = [](){const char* c=std::getenv("IVAN_DebugShowTinyDungeon");return c!=NULL && strcmp(c,"true")==0;}();
   if(bDbgTinyDungeon){
     blitdata Bdbg=DEFAULT_BLITDATA;
-    Bdbg.Bitmap=StretchedDB;
+    Bdbg.Bitmap=StretchedBuffer;
     Bdbg.Border={400,300};
     DoubleBuffer->NormalBlit(Bdbg);
   }
@@ -588,7 +588,7 @@ bitmap* graphics::PrepareBuffer(){
       }
     }
 
-    debugTinyDungeon(DoubleBuffer,StretchedDB);
+    debugTinyDungeon(DoubleBuffer,StretchedBuffer);
   }
 
   DrawAboveAll(ReturnBuffer);
