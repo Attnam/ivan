@@ -41,6 +41,8 @@
 #define set_new_handler std::set_new_handler
 #endif
 
+#include "dbgmsgproj.h"
+
 #include "error.h"
 
 /* Shouldn't be initialized here! */
@@ -129,6 +131,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
   std::cout << Buffer << std::endl;
 #endif
 
+  DBGSTK;DBG2("ABORT:",Buffer);
   exit(4);
 }
 
