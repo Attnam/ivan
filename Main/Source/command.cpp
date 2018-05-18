@@ -19,6 +19,7 @@
 #include "game.h"
 #include "god.h"
 #include "graphics.h"
+#include "human.h"
 #include "iconf.h"
 #include "materia.h"
 #include "message.h"
@@ -78,6 +79,7 @@ command* commandsystem::Command[] =
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
+  new command(&ShowMap, "show map", 'm', 'm', 'm', false),
   new command(&AssignName, "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
@@ -1339,6 +1341,22 @@ truth commandsystem::Rest(character* Char)
   Rest->SetMinToStop(0);
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
+  return true;
+}
+
+truth commandsystem::ShowMap(character* Char)
+{
+  static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
+
+  if( h && (h->GetLeftArm() || h->GetRightArm()) ){
+    if(game::ToggleDrawMapOverlay()){
+      while(!game::TruthQuestion(festring("Hit a key to close your map."), YES, 'm'));
+      game::ToggleDrawMapOverlay();
+    }
+  }else{
+    ADD_MESSAGE("I can't hold the map!");
+  }
+
   return true;
 }
 

@@ -29,6 +29,8 @@ class bitmap;
 class rawbitmap;
 class festring;
 
+typedef void (*drawabove)(bitmap*);
+
 class graphics
 {
  public:
@@ -49,6 +51,9 @@ class graphics
   static void Stretch(bool, bitmap*, blitdata&, bool);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
+
+  static void DrawAboveAll(bitmap* bmpDest);
+  static void AddDrawAboveAll(drawabove da, int iPriority, const char* desc);
 
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
@@ -148,7 +153,7 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static bitmap* StretchedDB;
+  static bitmap* StretchedBuffer;
   static truth bAllowStretchedRegionsBlit;
   static truth bSpecialListItemAltPos;
   static v2 Res;

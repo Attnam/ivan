@@ -73,6 +73,7 @@ class commandsystem
   static truth Zap(character*);
   static truth Rest(character*);
   static truth Sit(character*);
+  static truth ShowMap(character*);
   static truth Go(character*);
   static truth ShowConfigScreen(character*);
   static truth ScrollMessagesDown(character*);

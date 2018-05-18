@@ -1105,6 +1105,141 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+bool bDrawMapOverlayEnabled=false;
+bool game::ToggleDrawMapOverlay(){
+  static bool bDummyInit = [](){graphics::AddDrawAboveAll(&DrawMapOverlay,1000,"Map");return true;}();
+  bDrawMapOverlayEnabled=!bDrawMapOverlayEnabled;
+  return bDrawMapOverlayEnabled;
+}
+void game::DrawMapOverlay(bitmap* buffer)
+{
+  if(!bDrawMapOverlayEnabled)return;
+
+  if(ivanconfig::GetStartingDungeonGfxScale()==1){
+    ADD_MESSAGE("This map is as big as the world!");
+  }else{ //it actually work works (for now) if there is any dungeon stretching going on
+    if(buffer!=NULL){
+      static float fRGB=0.3;
+      static int iR=0xFF*fRGB,iG=0xFF*fRGB,iB=0xFF*fRGB;
+
+      static const int iLumTot=5;
+      static col16 bkg[iLumTot];
+      static col24 lum[iLumTot];static bool bDummyInit=[](){
+        for(int i=0;i<iLumTot;i++){
+          float f    = 1.00 + 0.02*i;
+          float fBkg = 0.25 + 0.05*i; //col16 has less variations
+          lum[i]=MakeRGB24(iR*f   , iG*f   , iB*f   );
+          bkg[i]=MakeRGB16(iR*fBkg, iG*fBkg, iB*fBkg);
+          DBG5(i,f,fBkg,lum[i],bkg[i]);
+        };return true;}();
+
+      static v2 v2MapMaxSize(RES/TILE_SIZE);
+      static v2 v2CL;v2CL=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
+
+      static v2 v2MapVisibleSize;
+      v2MapVisibleSize.X = Min(v2MapMaxSize.X,v2CL.X);
+      v2MapVisibleSize.Y = Min(v2MapMaxSize.Y,v2CL.Y);
+
+      static v2 v2MapSkipSize;
+      v2MapSkipSize.X = v2CL.X - v2MapVisibleSize.X;
+      v2MapSkipSize.Y = v2CL.Y - v2MapVisibleSize.Y;
+
+      float fPercX = PLAYER->GetPos().X/(float)game::GetCurrentLevel()->GetXSize();
+      float fPercY = PLAYER->GetPos().Y/(float)game::GetCurrentLevel()->GetYSize();
+
+      v2MapSkipSize.X*=fPercX;
+      v2MapSkipSize.Y*=fPercY;
+
+      static blitdata B = [buffer](){B=DEFAULT_BLITDATA;
+        B.Bitmap=buffer;
+        B.Border=TILE_V2;return B;}();
+//        B.Luminance=NORMAL_LUMINANCE; return B;}(); //TODO yellowish like an old map? this no good: MakeRGB24(150,150,0);
+//        B.Luminance=MakeRGB24(iR,iG,iB); return B;}(); //TODO yellowish like an old map
+
+      v2 v2TopLeft(
+        RES.X/2 -(v2MapVisibleSize.X * TILE_SIZE)/2,
+        RES.Y/2 -(v2MapVisibleSize.Y * TILE_SIZE)/2);
+
+      /** arms not ready, still broken, TODO would be cool anyway?
+        static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
+        static blitdata bldArm = [](){bldArm=DEFAULT_BLITDATA;
+          bldArm.Bitmap=new bitmap(TILE_V2);
+          bldArm.Border=TILE_V2; return bldArm;}();
+        static blitdata bldArmBig = [buffer](){bldArmBig=DEFAULT_BLITDATA;
+          bldArmBig.Bitmap=buffer;
+          bldArmBig.Border=TILE_V2; return bldArmBig;}();
+          bldArmBig.Stretch=6;
+        if(h->GetLeftArm ())h->GetLeftArm ()->Draw(bldArm);
+        graphics::Stretch(ivanconfig::IsXBRZScale(), bldArm.Bitmap, bldArmBig, false);
+        //TODO fix right pos etc
+        if(h->GetRightArm())h->GetRightArm()->Draw(bldArm);
+        graphics::Stretch(ivanconfig::IsXBRZScale(), bldArm.Bitmap, bldArmBig, false);
+      */
+
+      /* the alpha just looks bad, mainly when above non visible areas, kept this comment as reminder...
+        static blitdata bldTmp = [](){bldTmp=DEFAULT_BLITDATA;
+          bldTmp.Bitmap=new bitmap(TILE_V2);
+          bldTmp.Bitmap->CreateAlphaMap(0xFF*0.75);
+          bldTmp.Border=TILE_V2; return bldTmp;}();
+      */
+
+      v2 PlayerScrPos(0,0);
+      for(int iY=0;iY<v2MapVisibleSize.Y;iY++){
+        B.Dest.Y = v2TopLeft.Y +iY*TILE_SIZE;
+
+        for(int iX=0;iX<v2MapVisibleSize.X;iX++){
+          B.Dest.X = v2TopLeft.X +iX*TILE_SIZE;
+
+          static v2 v2SqrPos;v2SqrPos=v2(v2MapSkipSize.X+iX, v2MapSkipSize.Y+iY);
+
+          static lsquare* lsqr;lsqr=CurrentLevel->GetLSquare(v2SqrPos);
+
+          static float fStepDelay=3.0;
+          static int iAdd;iAdd = ((int)(clock()/(CLOCKS_PER_SEC*fStepDelay))) % ((iLumTot-1)*2); //moving waves
+          static int iLumIndex;iLumIndex = abs( ((iX+iY+iAdd)%((iLumTot-1)*2)) - (iLumTot-1)); //like a wave from 0 to iLumTot to 0 to iLumTot
+          B.Luminance=lum[iLumIndex]; DBG2(iLumIndex,B.Luminance);
+//          bldTmp.Luminance=lum[iLumIndex]; DBG2(iLumIndex,B.Luminance);
+
+          if(lsqr->HasBeenSeen()){
+            lsqr->GetGLTerrain()->Draw(B);
+//            lsqr->GetGLTerrain()->Draw(bldTmp);
+//            bldTmp.Bitmap->AlphaMaskedBlit(B);
+
+            static olterrain* olt;olt = lsqr->GetOLTerrain();
+            if(olt){
+              olt->Draw(B);
+//              olt->Draw(bldTmp);
+//              bldTmp.Bitmap->AlphaMaskedBlit(B);
+            }
+          }else{
+//            static col16 bkg = MakeRGB16(iR,iG,iB);
+            B.Bitmap->Fill(B.Dest, B.Border, bkg[iLumIndex]); DBG2(iLumIndex,bkg[iLumIndex]);
+          }
+
+          if(PLAYER->GetPos() == v2SqrPos){
+            static float fP = 0.75;
+            static col24 colP = MakeRGB24(0xff*fP,0xff*fP,0xff*fP);
+            B.Luminance = clock()%2==0 ? colP : NORMAL_LUMINANCE; //to call attention like a highlight TODO not working...
+            PLAYER->Draw(B);
+//            static int iHL=0;iHL++;
+//            B.Bitmap->DrawRectangle(B.Dest-v2(1,1), B.Border+v2(2,2), iHL%2==0 ? RED : YELLOW, false);
+//            graphics::DrawRectangleOutlineAround(
+//                B.Bitmap, B.Dest-v2(2,2), B.Border+v2(4,4), RED, true);//iHL%2==0);
+//            B.Bitmap, B.Dest-v2(2,2), B.Border+v2(4,4), RED, iHL%2==0);
+            PlayerScrPos=B.Dest;
+          }
+        }
+      }
+
+      graphics::DrawRectangleOutlineAround(
+        B.Bitmap, v2TopLeft, v2MapVisibleSize*TILE_SIZE, LIGHT_GRAY, true);
+
+      graphics::DrawRectangleOutlineAround(
+        B.Bitmap, PlayerScrPos, TILE_V2, RED, false);
+    }
+  }
+}
+
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
   bool bXBRZandFelist=ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();

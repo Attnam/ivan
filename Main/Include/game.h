@@ -352,6 +352,9 @@ class game
   static truth MassacreListsEmpty();
   static void PlayVictoryMusic();
   static void PlayDefeatMusic();
+  static bool ToggleDrawMapOverlay();
+  static void DrawMapOverlay(bitmap* =NULL);
+
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
@@ -364,6 +367,7 @@ class game
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
 #endif
+
   static truth WizardModeIsReallyActive() { return WizardMode; }
   static void CreateBone();
   static int GetQuestMonstersFound() { return QuestMonstersFound; }
