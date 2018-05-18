@@ -1918,11 +1918,11 @@ void itemlock::PostConstruct()
 
 truth itemlock::TryKey(item* Key, character* Applier)
 {
-  /*if(GetVirtualConfig() & BROKEN_LOCK)
+  if(GetVirtualConfig() & BROKEN_LOCK)
   {
     ADD_MESSAGE("The lock is broken.");
     return true;
-  }*/
+  }
 
   if(Key->CanOpenLockType(GetVirtualConfig()&LOCK_BITS))
   {
