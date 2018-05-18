@@ -42,6 +42,7 @@ class commandsystem
   static command* GetCommand(int I) { return Command[I]; }
   static truth IsForRegionListItem(int iIndex);
   static truth IsForRegionSilhouette(int iIndex);
+  static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
  private:
   static truth Apply(character*);
   static truth Close(character*);

@@ -59,7 +59,7 @@ void area::Load(inputfile& SaveFile)
   SaveFile.Read(reinterpret_cast<char*>(FlagMap[0]), XSizeTimesYSize * sizeof(uchar));
 }
 
-v2 area::topLeftCorner={16,32};
+v2 area::topLeftCorner=v2(16,32);
 int area::iOutlineThickness=2;
 
 int area::getOutlineThickness(){return iOutlineThickness;}

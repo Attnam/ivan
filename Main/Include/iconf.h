@@ -23,12 +23,18 @@ class ivanconfig
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static long GetHitIndicator() { return HitIndicator.Value; }
+  static long GetShowItemsAtPlayerSquare(){ return ShowItemsAtPlayerSquare.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static long GetAltSilhouette() { return AltSilhouette.Value; }
+  static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
+  static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
   static truth GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
@@ -37,6 +43,7 @@ class ivanconfig
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
+  static int GetRotateTimesPerSquare() { return RotateTimesPerSquare.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
   static int GetAltListItemWidth() { return AltListItemWidth.Value; }
   static int GetStackListPageLength() { return StackListPageLength.Value; }
@@ -69,6 +76,10 @@ class ivanconfig
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
+  static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
+  static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
+  static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
+  static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
@@ -80,6 +91,7 @@ class ivanconfig
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
+  static truth ShowItemsAtPlayerSquareChangeInterface(cycleoption* O);
   static truth WindowWidthChangeInterface(numberoption* O);
   static truth WindowHeightChangeInterface(numberoption* O);
   static truth StackListPageLengthChangeInterface(numberoption* O);
@@ -88,6 +100,7 @@ class ivanconfig
   static truth ContrastChangeInterface(numberoption*);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
+  static void ShowItemsAtPlayerSquareChanger(cycleoption* O, long What);
   static void WindowWidthChanger(numberoption* O, long What);
   static void WindowHeightChanger(numberoption* O, long What);
   static void StackListPageLengthChanger(numberoption* O, long What);
@@ -99,6 +112,7 @@ class ivanconfig
   static void VolumeDisplayer(const numberoption*, festring&);
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
+  static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -125,6 +139,7 @@ class ivanconfig
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;
   static scrollbaroption Contrast;
+  static truthoption ShowGodInfo;
 
   static numberoption WindowWidth;
   static int iStartingWindowWidth;
@@ -134,6 +149,9 @@ class ivanconfig
 
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
+  static cycleoption ShowItemsAtPlayerSquare;
+  static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static cycleoption AltSilhouettePreventColorGlitch;
 
   static cycleoption MemorizeEquipmentMode;
 
@@ -151,9 +169,12 @@ class ivanconfig
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
   static cycleoption SilhouetteScale;
+  static cycleoption AltSilhouette;
   static cycleoption AltListItemPos;
+  static cycleoption RotateTimesPerSquare;
   static numberoption AltListItemWidth;
   static numberoption StackListPageLength;
+  static cycleoption HitIndicator;
 
   static truthoption SmartOpenCloseApply;
   static truthoption BeNice;
