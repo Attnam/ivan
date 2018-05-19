@@ -117,8 +117,10 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       break;
     }
    case EFFECT_TRAIN_PERCEPTION:
-    Char->EditExperience(PERCEPTION, Amount, 1 << 14);
-    break;
+    {
+      Char->EditExperience(PERCEPTION, Amount, 1 << 14);
+      break;
+    }
    case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
@@ -173,6 +175,11 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
     }
    case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
    case EFFECT_PANIC: Char->BeginTemporaryState(PANIC, Amount); break;
+   case EFFECT_TRAIN_WISDOM:
+    {
+      Char->EditExperience(WISDOM, Amount, 1 << 14);
+      break;
+    }
    default: return false;
   }
 

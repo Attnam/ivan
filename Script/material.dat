@@ -4911,12 +4911,11 @@ liquid
     NutritionValue = 500;
     Color = rgb16(48, 48, 48);
     NameStem = "coke";
-    Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
+    Effect = EFFECT_TRAIN_WISDOM;
     ConsumeEndMessage = CEM_COCA_COLA;
     AttachedGod = VALPURUS;
-    EffectStrength = 500;
     PriceModifier = 10000;
-    CommonFlags = Base|IS_VALUABLE;
+    CommonFlags = Base|IS_VALUABLE&~(CAN_BE_WISHED|CAN_BE_MIRRORED);
     InteractionFlags = Base|EFFECT_IS_GOOD;
     CategoryFlags = Base|IS_SPARKLING;
   }

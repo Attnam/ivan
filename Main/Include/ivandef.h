@@ -396,6 +396,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define EFFECT_PANACEA 33
 #define EFFECT_OMMEL_BLOOD 34
 #define EFFECT_PANIC 35
+#define EFFECT_TRAIN_WISDOM 36
 
 /* CEM = Consume End Message */
 
