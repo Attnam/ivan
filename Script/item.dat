@@ -1168,7 +1168,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 2000;
     BitmapPos = 16, 96;
     NameSingular = "chain mail";
-    FlexibleNameSingular = "jacket";
+    FlexibleNameSingular = "tunic";
     MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 8, 450, 300, 150, 25, 20, 25, 10, 5; }
     InElasticityPenaltyModifier = 10;
@@ -1278,7 +1278,7 @@ bodyarmor /* armor-> */
 
   Config OMMEL_CUIRASS;
   {
-    StrengthModifier = 400;
+    StrengthModifier = 600;
     DefaultSize = 100;
     DefaultMainVolume = 5000;
     BitmapPos = 80, 176;
@@ -1351,7 +1351,7 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 20, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS, BROWN_SLIME, YELLOW_SLIME, DARK_FROG_BLOOD, SPIDER_BLOOD, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
+  SecondaryMaterialConfig = { 20, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS, BROWN_SLIME, GREEN_SLIME, DARK_FROG_BLOOD, SPIDER_BLOOD, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
   MaterialConfigChances = { 20, 70, 50, 5, 30, 1, 9, 5, 25, 5, 5, 20, 2, 2, 6, 3, 5, 5, 5, 2, 1; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
@@ -1546,7 +1546,7 @@ loaf
   FormModifier = 20;
   NameSingular = "loaf";
   NamePlural = "loaves";
-  MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
+  MainMaterialConfig = { 3, BEEF, PORK, DARK_BREAD; }
   MaterialConfigChances = { 3, 50, 50, 200; }
   Alias = { 3, "food", "satiation", "nutrition"; }
   Roundness = 20;
@@ -2358,7 +2358,7 @@ cloak /* armor-> */
     GearStates = INVISIBLE;
     PostFix = "of invisibility";
     Price = 2500;
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == LINEN_CLOTH;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
   }
@@ -2446,7 +2446,7 @@ cloak /* armor-> */
     Possibility = 0;
     GearStates = ETHEREAL_MOVING;
     Price = 2500;
-    MainMaterialConfig == GHOST;
+    MainMaterialConfig == ECTOPLASM;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
     NameSingular = "shadow veil";
@@ -4795,7 +4795,7 @@ decosadshirt /* armor->bodyarmor-> */
   StrengthModifier = 75;
   NameSingular = "shirt";
   PostFix = "with a Decos Bananas Co. ad";
-  MainMaterialConfig == CLOTH;
+  MainMaterialConfig == NYLON;
   CanBeBroken = false;
   InElasticityPenaltyModifier = 30;
   AttachedGod = MELLIS;
@@ -5473,7 +5473,7 @@ cauldron /* materialcontainer-> */
   BitmapPos = 80, 304;
   NameSingular = "cauldron";
   MainMaterialConfig == COPPER;
-  SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, POISON_LIQUID, VODKA, TROLL_BLOOD, LIQUID_DARKNESS, YELLOW_SLIME, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
+  SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, POISON_LIQUID, VODKA, TROLL_BLOOD, LIQUID_DARKNESS, GREEN_SLIME, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
   MaterialConfigChances = { 10, 75, 50, 25, 50, 25, 5, 5, 1, 5, 25; }
   Roundness = 100;
   CanBeBroken = false;
@@ -5542,7 +5542,7 @@ trinket
     StrengthModifier = 75;
     Adjective = "dead";
     NameSingular = "fish";
-    MainMaterialConfig == DOLPHIN_FLESH; /* maybe change */
+    MainMaterialConfig == SARDINE;
     Roundness = 15;
     AttachedGod = SEGES;
   }

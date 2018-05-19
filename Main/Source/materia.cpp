@@ -165,6 +165,14 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
         break;
       }
     }
+   case EFFECT_PANACEA:
+    {
+      Char->ReceiveHeal(Amount);
+      Char->ReceiveAntidote(Amount);
+      break;
+    }
+   case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
+   case EFFECT_PANIC: Char->BeginTemporaryState(PANIC, Amount); break;
    default: return false;
   }
 
@@ -296,6 +304,8 @@ void material::AddConsumeEndMessage(character* Eater) const
     Eater->AddWhiteUnicornConsumeEndMessage();
     break;
    case CEM_OMMEL_BONE: Eater->AddOmmelBoneConsumeEndMessage(); break;
+   case CEM_COCA_COLA: Eater->AddCocaColaConsumeEndMessage(); break;
+   case CEM_LIQUID_HORROR: Eater->AddLiquidHorrorConsumeEndMessage(); break;
   }
 }
 

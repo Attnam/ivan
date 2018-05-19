@@ -828,6 +828,7 @@ guard
     ClothColor = rgb16(144, 144, 200);
     CanBeConfused = false;
     NaturalSparkleFlags = CLOTH_COLOR;
+    BloodMaterial = BLUE_BLOOD;
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
@@ -910,6 +911,7 @@ guard
     LeftSWeaponSkillHits = 200;
     PanicLevel = 5;
     TamingDifficulty = NO_TAMING;
+    BloodMaterial = BLUE_BLOOD;
     Sex = FEMALE;
     IsUnique = true;
     IsNameable = false;
@@ -993,6 +995,7 @@ guard
     UndeadVersions = false;
     TamingDifficulty = 25;
     AttachedGod = CRUENTUS;
+    BloodMaterial = BLUE_BLOOD;
     FriendlyReplies =
     {
       11,
@@ -1398,6 +1401,7 @@ priest
     PostFix = "of Legifer";
     AttachedGod = LEGIFER;
     Sex = FEMALE;
+    BloodMaterial = BLUE_BLOOD;
     AttackStyle = USE_ARMS|USE_LEGS;
     KnownCWeaponSkills = { 4, UNARMED, KICK, BLUNT_WEAPONS, SHIELDS; }
     CWeaponSkillHits = { 4, 200, 200, 500, 500; }
@@ -2251,7 +2255,7 @@ billswill
   Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
   PanicLevel = 0;
   HasALeg = false;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd vanishes from existence: \"Fatal error - shutting down.\"";
   SpillsBlood = false;
   Sweats = false;
@@ -2433,6 +2437,7 @@ goblin
     "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
   }
   FleshMaterial = GOBLINOID_FLESH;
+  BloodMaterial = GREEN_BLOOD;
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -2;
 
@@ -2703,9 +2708,9 @@ mommo
     HPRequirementForGeneration = 120;
     DayRequirementForGeneration = 12;
     Frequency = 1000;
-    BloodMaterial = YELLOW_SLIME;
-    FleshMaterial = YELLOW_SLIME;
-    VomitMaterial = YELLOW_SLIME;
+    BloodMaterial = GREEN_SLIME;
+    FleshMaterial = GREEN_SLIME;
+    VomitMaterial = GREEN_SLIME;
   }
 
   Config FLAT;
@@ -3825,7 +3830,7 @@ petrusswife
     DeathMessage = "@Dd dies with a last whisper: \"Curse you!\"";
     IsExtraCoward = false;
     IgnoreDanger = true;
-    Belt = CLOTH belt;
+    Belt = HEMP_CLOTH belt;
     KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
     CWeaponSkillHits == 500;
     ScienceTalkName =
@@ -4364,7 +4369,7 @@ ghost
   }
   PanicLevel = 0;
   /*HasALeg = false;*/
-  FleshMaterial = GHOST;
+  FleshMaterial = ECTOPLASM;
   DeathMessage = "@Dd is sucked into hell.";
   SpillsBlood = false;
   Sweats = false;
@@ -4465,7 +4470,7 @@ xinrochghost
   IsImmuneToStickiness = true;
   BiteCapturesBodyPart = false;
   ArticleMode = FORCE_THE;
-  FleshMaterial = GHOST;
+  FleshMaterial = ECTOPLASM;
   MoveType = ETHEREAL;
   AttachedGod = INFUSCOR;
   ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
@@ -5685,7 +5690,7 @@ genie
     "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
   }
   Belt = SPIDER_SILK belt;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd vanishes from existence.";
   SpillsBlood = false;
   Sweats = false;
@@ -5756,6 +5761,7 @@ carnivorousplant
   ClassStates = INFRA_VISION;
   HasALeg = false;
   FleshMaterial = PLANT_FIBER;
+  BloodMaterial = PLANT_SAP;
   DeathMessage = "@Dd is destroyed.";
   SpillsBlood = false;
   Sweats = false;
@@ -6801,7 +6807,7 @@ eddy
   UsesNutrition = false;
   SpillsBlood = false;
   Sweats = false;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd disappears.";
   AttachedGod = SOPHOS;
   BodyPartsDisappearWhenSevered = true;
@@ -7252,7 +7258,7 @@ invisiblestalker
   UsesLongAdjectiveArticle = true;
   AttackStyle = USE_ARMS;
   CanBeGenerated = true;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   BaseUnarmedStrength = 750;
   DeathMessage = "@Dd hisses and vanishes.";
   AttachedGod = CLEPTIA;
@@ -7364,6 +7370,7 @@ genetrixvesana
   DeathMessage = "@Dd is brutally destroyed.";
   BaseEmitation = rgb24(140, 100, 100);
   FleshMaterial = MUTANT_PLANT_FIBER;
+  BloodMaterial = PLANT_SAP;
   AttachedGod = SCABIES;
   IsPlant = true;
   CanOpen = false;

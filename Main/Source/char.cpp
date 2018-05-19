@@ -4496,6 +4496,15 @@ void character::ReceiveNutrition(long SizeOfEffect)
   EditNP(SizeOfEffect);
 }
 
+void character::ReceiveOmmelBlood(long Amount)
+{
+  EditExperience(WILL_POWER, 500, Amount << 4);
+  EditExperience(MANA, 500, Amount << 4);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
 void character::ReceiveOmmelUrine(long Amount)
 {
   EditExperience(ARM_STRENGTH, 500, Amount << 4);
@@ -4586,6 +4595,14 @@ void character::AddPepsiConsumeEndMessage() const
     ADD_MESSAGE("Urgh. You feel your guruism fading away.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s looks very lame.", CHAR_NAME(DEFINITE));
+}
+
+void character::AddCocaColaConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your guruism rising!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks awesome.", CHAR_NAME(DEFINITE));
 }
 
 void character::ReceiveDarkness(long Amount)
@@ -10493,6 +10510,14 @@ void character::AddOmmelBoneConsumeEndMessage() const
     ADD_MESSAGE("You feel the power of all your canine ancestors combining in your body.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("For a moment %s looks extremely ferocious. You shudder.", CHAR_NAME(DEFINITE));
+}
+
+void character::AddLiquidHorrorConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Untold horrors flash before your eyes. The melancholy of the world is on your shoulders!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks as if the true terror of existence flashed before %s eyes!.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 }
 
 int character::GetBodyPartSparkleFlags(int) const
