@@ -2687,12 +2687,14 @@ truth character::AutoPlayAIDropThings()
 
         v2 v2Dir = game::GetMoveVector(iDir);
         v2 v2Chk = GetPos() + v2Dir;
-        lsquare* lsqrChk=game::GetCurrentLevel()->GetLSquare(v2Chk);
-        if(game::GetCurrentLevel()->IsValidPos(v2Chk) && lsqrChk->IsFlyable()){
-          iDirOk = iDir;
-          v2DropAt = v2Chk;
-          lsqrDropAt=lsqrChk;
-          break;
+        if(game::GetCurrentLevel()->IsValidPos(v2Chk)){
+          lsquare* lsqrChk=game::GetCurrentLevel()->GetLSquare(v2Chk);
+          if(lsqrChk->IsFlyable()){
+            iDirOk = iDir;
+            v2DropAt = v2Chk;
+            lsqrDropAt=lsqrChk;
+            break;
+          }
         }
       };DBGLN;
 
