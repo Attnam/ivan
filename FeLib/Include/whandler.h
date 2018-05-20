@@ -38,6 +38,8 @@ class globalwindowhandler
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static void SetPlayInBackground(truth b){playInBackground=b;}
+  static float GetFPS(bool bInsta);
+  static truth HasKeysOnBuffer();
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);

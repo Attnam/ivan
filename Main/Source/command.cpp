@@ -930,11 +930,27 @@ truth commandsystem::ShowKeyLayout(character*)
   return false;
 }
 
+void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
+  //TODO why this does not work??? if(!PLAYER->IsDead())return;
+#ifdef WIZARD
+  if(bSeeWholeMapCheatMode && !game::GetSeeWholeMapCheatMode()){
+    game::SeeWholeMap(); //1
+    game::SeeWholeMap(); //2
+  }
+#endif
+  commandsystem::Look(PLAYER);
+}
+
 truth commandsystem::Look(character* Char)
 {
   festring Msg;
-  if(!game::IsInWilderness())
-    Char->GetLevel()->AddSpecialCursors();
+  if(!game::IsInWilderness()){
+    if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
+      game::GetCurrentLevel()->AddSpecialCursors();
+    }else{
+      Char->GetLevel()->AddSpecialCursors();
+    }
+  }
 
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
@@ -978,10 +994,14 @@ truth commandsystem::Pray(character* Char)
 
   if(!DivineMaster)
   {
+    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
-        Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
+        desc.Empty();
+        desc << game::GetGod(c)->GetCompleteDescription();
+        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
         Known[Index++] = c;
       }
   }
