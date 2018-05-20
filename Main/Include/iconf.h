@@ -31,7 +31,8 @@ class ivanconfig
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
-  static int GetShowMap(){return ShowMap.Value;};
+  static int GetShowMap(){return ShowMap.Value;}
+  static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
@@ -155,6 +156,7 @@ class ivanconfig
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
+  static truthoption ShowMapAtDetectMaterial;
 
   static cycleoption MemorizeEquipmentMode;
 

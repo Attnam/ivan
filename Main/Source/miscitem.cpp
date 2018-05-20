@@ -3033,8 +3033,10 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   else
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
+    game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
     game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"),
                            Reader->GetPos(), 0, 0, false);
+    game::SetDrawMapOverlay(false);
     Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
   }
 

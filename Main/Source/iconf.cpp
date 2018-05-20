@@ -87,6 +87,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
+                                          "Show map while detecting material",
+                                          false);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -729,6 +732,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
   configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
   configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
+  configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

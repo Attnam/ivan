@@ -361,6 +361,7 @@ class game
   static void PlayVictoryMusic();
   static void PlayDefeatMusic();
   static bool ToggleDrawMapOverlay();
+  static void SetDrawMapOverlay(bool b);
   static void DrawMapOverlay(bitmap* =NULL);
 
 #ifdef WIZARD

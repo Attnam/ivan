@@ -1137,14 +1137,19 @@ truth game::OnScreen(v2 Pos)
 
 bool bDrawMapOverlayEnabled=false;
 int iMapOverlayDrawCount=0;
-bool game::ToggleDrawMapOverlay(){
+bool game::ToggleDrawMapOverlay()
+{
+  SetDrawMapOverlay(!bDrawMapOverlayEnabled);
+  return bDrawMapOverlayEnabled;
+}
+
+void game::SetDrawMapOverlay(bool b)
+{
   static bool bDummyInit = [](){graphics::AddDrawAboveAll(&DrawMapOverlay,1000,"Map");return true;}();
 
-  bDrawMapOverlayEnabled=!bDrawMapOverlayEnabled;
+  bDrawMapOverlayEnabled=b;
 
   if(bDrawMapOverlayEnabled)iMapOverlayDrawCount=0;
-
-  return bDrawMapOverlayEnabled;
 }
 
 bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftFinal, v2& v2MapScrSizeFinal, v2 v2Center){
@@ -1165,7 +1170,7 @@ bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftF
 };
 
 void game::DrawMapOverlay(bitmap* buffer)
-{
+{ DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
   bool bUsexBRZ=false;
@@ -1354,9 +1359,18 @@ void game::DrawMapOverlay(bitmap* buffer)
             }else{ //floor
               colorO=colorFloor;
             }
+
+            //this happens during detect material! TODO this is just a guess work and may fail one day or at some untested place
+            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){
+              colorO=YELLOW;
+            }
           }else{
-            colorO=colorMapBkg;
-  //            colorO=bkg[iLumIndex];
+//            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){ //this happens during detect material!
+//              colorO=YELLOW;
+//            }else{
+              colorO=colorMapBkg;
+    //            colorO=bkg[iLumIndex];
+//            }
           }
 
           bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
