@@ -1486,7 +1486,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     }
 
-    if(iImersiveMap>0){ // at player hands!
+    if(iImersiveMap>0 && iMapOverlayDrawCount==0){ // at player hands!
       v2TopLeftFinal = area::getTopLeftCorner()
         + (CalculateScreenCoordinates(PLAYER->GetPos()) -area::getTopLeftCorner()) * ivanconfig::GetStartingDungeonGfxScale()
         + (TILE_V2*ivanconfig::GetStartingDungeonGfxScale())/2 //find center at player tile
@@ -1495,10 +1495,15 @@ void game::DrawMapOverlay(bitmap* buffer)
         ;
     }
 
-    bmpFinal->FastBlit(buffer, v2TopLeftFinal);
+    if(iMapOverlayDrawCount==0){
+      if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
+      if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
+      if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
+      if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    }
 
-    graphics::DrawRectangleOutlineAround(
-      buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
+    bmpFinal->FastBlit(buffer, v2TopLeftFinal);
+    graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
 
     iMapOverlayDrawCount++;
   }
