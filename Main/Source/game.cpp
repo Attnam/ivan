@@ -1146,9 +1146,29 @@ bool game::ToggleDrawMapOverlay(){
 
   return bDrawMapOverlayEnabled;
 }
+
+bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftFinal, v2& v2MapScrSizeFinal, v2 v2Center){
+  bld.Stretch = iStretch;
+  bld.Border = bmpFrom->GetSize();
+
+  v2MapScrSizeFinal = bld.Border * bld.Stretch;
+  v2TopLeftFinal = v2Center -(v2MapScrSizeFinal/2);
+
+  if(bld.Bitmap==NULL || bld.Bitmap->GetSize()!=v2MapScrSizeFinal){
+    delete bld.Bitmap;
+    bld.Bitmap = new bitmap(v2MapScrSizeFinal);
+  }
+
+  graphics::Stretch(true,bmpFrom,bld,false);
+
+  return bld.Bitmap;
+};
+
 void game::DrawMapOverlay(bitmap* buffer)
 {
   if(!bDrawMapOverlayEnabled)return;
+
+  static bool bUsexBRZ=ivanconfig::IsXBRZScale();
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
     ADD_MESSAGE("This map is as big as the world!");
@@ -1157,8 +1177,15 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     static bitmap* bmpMapBuffer=NULL;
 
+    int iMapTileSize=32; //TODO this starting is too big if known map is still tiny?
+    int iMapTileSizeVanillaBkp=iMapTileSize;
     static v2 v2TopLeft(0,0);
+    static v2 v2Center(0,0);
     static v2 v2MapScrSize(0,0);
+    static v2 v2BmpSize(0,0);
+    static v2 v2TopLeftFinal(0,0);
+    static v2 v2MapScrSizeFinal(0,0);
+    static bitmap* bmpFinal;
 
     if(iMapOverlayDrawCount==0){
   //    static level* lvlLast=NULL; //this is just a changed dungeon indicator
@@ -1198,10 +1225,11 @@ void game::DrawMapOverlay(bitmap* buffer)
       }} DBG3(DBGAV2(v2Min),DBGAV2(v2Max),DBGAV2(v2KnownDungeonSize));
 
 
-      int iMapTileSize=32; //TODO starting is too big if map is tiny?
 //      v2 v2FullDungeonSize=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
       while(iMapTileSize*v2KnownDungeonSize.X > RES.X*0.8)iMapTileSize--;
       while(iMapTileSize*v2KnownDungeonSize.Y > RES.Y*0.8)iMapTileSize--;
+      iMapTileSizeVanillaBkp=iMapTileSize;
+      if(bUsexBRZ)iMapTileSize=1;
       /********** ONLY USE iMapTileSize BELOW HERE!!! *************/
 
       v2 v2MapTileSize(iMapTileSize,iMapTileSize);
@@ -1212,14 +1240,19 @@ void game::DrawMapOverlay(bitmap* buffer)
       v2DungeonScrSize *= TILE_SIZE*ivanconfig::GetStartingDungeonGfxScale(); //the final size in pixels
       DBG4(DBGAV2(v2KnownDungeonSize),DBGAV2(area::getTopLeftCorner()),DBGAV2(v2DungeonScrSize),DBGAV2(v2MapScrSize));
 //      v2 v2VisibleDungeonScrSize=v2CL*TILE_SIZE;
-      v2TopLeft = area::getTopLeftCorner() +v2DungeonScrSize/2 -v2MapScrSize/2;
+      v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
+      v2TopLeft = v2Center -v2MapScrSize/2;
       if(v2TopLeft.X<0)v2TopLeft.X=0;
       if(v2TopLeft.Y<0)v2TopLeft.Y=0;
 //        v2(
 //          RES.X/2 -(v2CL.X * iMapTileSize)/2,
 //          RES.Y/2 -(v2CL.Y * iMapTileSize)/2);
 
-      bmpMapBuffer=new bitmap(v2KnownDungeonSize*iMapTileSize);
+      v2BmpSize=v2KnownDungeonSize*iMapTileSize;
+      if(bmpMapBuffer==NULL || bmpMapBuffer->GetSize()!=v2BmpSize){
+        delete bmpMapBuffer;
+        bmpMapBuffer=new bitmap(v2BmpSize);
+      }
 //      bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
 
       v2 v2PlayerScrPos(0,0);
@@ -1288,9 +1321,9 @@ void game::DrawMapOverlay(bitmap* buffer)
               }else if(olt->IsFountainWithWater()){
                 colorO=colorFountain;
 //              }else if(olt->IsUpLink()){
-              }else if(olt->GetConfig() == STAIRS_UP){
+              }else if(olt->GetConfig() == STAIRS_UP   || olt->GetConfig() == SUMO_ARENA_EXIT ){
                 colorO=colorUp;
-              }else if(olt->GetConfig() == STAIRS_DOWN){
+              }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
                 colorO=colorDown;
               }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
                 colorO=colorOnGround;
@@ -1313,15 +1346,126 @@ void game::DrawMapOverlay(bitmap* buffer)
 //      graphics::DrawRectangleOutlineAround(
 //        B.Bitmap, v2TopLeft, v2CL*iMapTileSize, LIGHT_GRAY, true);
 
-      graphics::DrawRectangleOutlineAround(
-        bmpMapBuffer, v2PlayerScrPos, v2MapTileSize, RED, true);
+      if(iMapTileSize<3){
+        bmpMapBuffer->Fill(v2PlayerScrPos, v2MapTileSize, RED);
+      }else{
+        graphics::DrawRectangleOutlineAround(
+          bmpMapBuffer, v2PlayerScrPos, v2MapTileSize, RED, iMapTileSize>12);
+      }
 
+      bmpFinal = bmpMapBuffer;
+      v2TopLeftFinal = v2TopLeft;
+      v2MapScrSizeFinal = v2MapScrSize;
     } DBG3(bmpMapBuffer,iMapOverlayDrawCount,DBGAV2(v2TopLeft));
 
-    bmpMapBuffer->FastBlit(buffer, v2TopLeft);
+    if(bUsexBRZ && iMapOverlayDrawCount==0){ //double stretch
+      /**
+       * these are "best fit" double stretch values
+       *
+       * max 'a' or 'b' is 6, min is 2
+       *
+       * 'b' may be ignored
+       *
+       * for best xBRZ results, 'a' should be as big as possible.
+       *
+       * TODO a smart formulae that allows above 32 too one day? :>
+       */
+      int a=-1,b=-1;
+//      if(iMapTileSize==1){
+        switch(iMapTileSizeVanillaBkp/iMapTileSize){
+        case 32:case 31:case 30:
+          a=6;b=5;break;
+        case 29:case 28:case 27:case 26:case 25:
+          a=5;b=5;break;
+        case 24:
+          a=6;b=4;break;
+        case 23:case 22:case 21:case 20:
+          a=5;b=4;break;
+        case 19:case 18:
+          a=6;b=3;break;
+        case 17:case 16:
+          a=4;b=4;break;
+        case 15:
+          a=5;b=3;break;
+        case 14:case 13:case 12:
+          a=6;b=2;break;
+        case 11:case 10:
+          a=5;b=2;break;
+        case 9:
+          a=3;b=3;break;
+        case 8:
+          a=4;b=2;break;
+        case 7:
+          a=6;break;
+        default: // <=6
+          a=iMapTileSizeVanillaBkp;
+        }
+//      }
+//      else
+//      if(iMapTileSize==2){ // the final result is a bit messy... kept in case we use it anyway
+//        switch(iMapTileSizeVanillaBkp){ //
+//        case 32:
+//          a=4;b=4;break;
+//        case 31:case 30:
+//          a=3;b=5;break;
+//        case 29:case 28:case 27:case 26:case 25:case 24:
+//          a=3;b=4;break;
+//        case 23:case 22:case 21:case 20:
+//          a=2;b=5;break;
+//        case 19:case 18:
+//          a=3;b=3;break;
+//        case 17:case 16:
+//          a=2;b=4;break;
+//        default: // <=15
+//          a=iMapTileSizeVanillaBkp/2;
+//        }
+//      }
+      DBG4(a,b,iMapTileSize,iMapTileSizeVanillaBkp);
+      if(a<b)ABORT("a=%d should be bigger than b=%d for best initial xBRZ results",a,b);
+
+      if(a>=2){
+        v2 v2BmpSizeIn=v2BmpSize;
+        static blitdata bldA=DEFAULT_BLITDATA;
+        bmpFinal=finalMapBmp(bldA,a,bmpFinal,v2TopLeftFinal,v2MapScrSizeFinal,v2Center);
+//        /* a */
+//        { // a block to prevent mistakes at 'b'
+//          static blitdata bld=DEFAULT_BLITDATA;
+//          v2MapScrSizeFinal = v2BmpSizeIn*a;
+//          if(bld.Bitmap == NULL || bld.Bitmap->GetSize()!=v2MapScrSizeFinal){
+//            delete bld.Bitmap;
+//            bmpFinal = bld.Bitmap = new bitmap(v2MapScrSizeFinal);
+//          }
+//          bld.Stretch = a;
+//          bld.Border = v2BmpSizeIn;
+//          graphics::Stretch(true,bmpFinal,bld,false);
+//          v2TopLeftFinal = v2Center -(bld.Border*bld.Stretch)/2;
+//        }
+//
+//        /* b */
+        if(b>=2){
+          static blitdata bldB=DEFAULT_BLITDATA;
+          bmpFinal=finalMapBmp(bldB,b,bmpFinal,v2TopLeftFinal,v2MapScrSizeFinal,v2Center);
+//          v2MapScrSizeFinal = v2BmpSize*a;
+//          if(bld.Bitmap == NULL || bld.Bitmap->GetSize()!=v2MapScrSizeFinal){
+//            delete bld.Bitmap;
+//            bmpFinal = bld.Bitmap = new bitmap(v2MapScrSizeFinal);
+//          }
+//          bld.Stretch = a;
+//          bld.Border = v2BmpSize;
+//          graphics::Stretch(true,bmpFinal,bld,false);
+//          v2TopLeftFinal = v2Center -(bld.Border*bld.Stretch)/2;
+        }
+
+//        graphics::DrawRectangleOutlineAround(
+//          buffer, bld.Dest, bld.Border*bld.Stretch, LIGHT_GRAY, true);
+      }
+
+    }
+
+    bmpFinal->FastBlit(buffer, v2TopLeftFinal);
 
     graphics::DrawRectangleOutlineAround(
-      buffer, v2TopLeft, v2MapScrSize, LIGHT_GRAY, true);
+      buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
 
     iMapOverlayDrawCount++;
   }
@@ -1329,7 +1473,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 }
 /****************
  * Fancy map code have some interesting calculations,
- * kept as reference, may be useful to something later.
+ * kept as reference, may be useful to something later,
+ * if it breaks just comment or remove it...
  */
 void DrawMapOverlayFancy(bitmap* buffer)
 {
