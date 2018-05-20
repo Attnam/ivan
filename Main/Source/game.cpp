@@ -1168,8 +1168,24 @@ void game::DrawMapOverlay(bitmap* buffer)
 {
   if(!bDrawMapOverlayEnabled)return;
 
-  static bool bUsexBRZ=ivanconfig::IsXBRZScale();
-  static bool bImersiveMap=true; //TODO add to config: vanilla, xBRZ, imersive (do not implement always visible as it would not require one round to look at the map! or do it?)
+  bool bUsexBRZ=false;
+  int iImersiveMap=0;
+
+  switch(ivanconfig::GetShowMap()){
+  case 0: //mmm... just not using xBRZ
+    break;
+
+  case 1:
+    bUsexBRZ=ivanconfig::IsXBRZScale();
+    break;
+
+  case 4:iImersiveMap++;
+    /* no break */
+  case 3:iImersiveMap++;
+    /* no break */
+  case 2:iImersiveMap++;
+    break;
+  }
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
     ADD_MESSAGE("This map is as big as the world!");
@@ -1230,9 +1246,9 @@ void game::DrawMapOverlay(bitmap* buffer)
       while(iMapTileSize*v2KnownDungeonSize.X > RES.X*0.8)iMapTileSize--;
       while(iMapTileSize*v2KnownDungeonSize.Y > RES.Y*0.8)iMapTileSize--;
       iMapTileSizeVanillaBkp=iMapTileSize;
-      if(bImersiveMap || bUsexBRZ){
+      if(iImersiveMap>0 || bUsexBRZ){
         iMapTileSize=1;
-        if(bImersiveMap)iMapTileSizeVanillaBkp=3; //forces x2 scale tiny map
+        if(iImersiveMap>0)iMapTileSizeVanillaBkp=3+iImersiveMap; //forces x2 scale tiny map
       }
       /********** ONLY USE iMapTileSize BELOW HERE!!! *************/
 
@@ -1466,7 +1482,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     }
 
-    if(bImersiveMap){ // at player hands!
+    if(iImersiveMap>0){ // at player hands!
       v2TopLeftFinal = area::getTopLeftCorner()
         + (CalculateScreenCoordinates(PLAYER->GetPos()) -area::getTopLeftCorner()) * ivanconfig::GetStartingDungeonGfxScale()
         + (TILE_V2*ivanconfig::GetStartingDungeonGfxScale())/2 //find center at player tile
