@@ -1174,16 +1174,17 @@ void game::DrawMapOverlay(bitmap* buffer)
   switch(ivanconfig::GetShowMap()){
   case 0: //mmm... just not using xBRZ
     break;
-
   case 1:
     bUsexBRZ=ivanconfig::IsXBRZScale();
     break;
-
-  case 4:iImersiveMap++;
-    /* no break */
-  case 3:iImersiveMap++;
-    /* no break */
-  case 2:iImersiveMap++;
+  case 2:
+    iImersiveMap=1;
+    break;
+  case 3:
+    iImersiveMap=2;
+    break;
+  case 4:
+    iImersiveMap=3;
     break;
   }
 
@@ -1194,8 +1195,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 
     static bitmap* bmpMapBuffer=NULL;
 
-    int iMapTileSize=32; //TODO this starting is too big if known map is still tiny?
-    int iMapTileSizeVanillaBkp=iMapTileSize;
+    int iMapTileSizeMax=32; //TODO this starting is too big if known map is still tiny?
+    int iMapTileSize=iMapTileSizeMax;
     static v2 v2TopLeft(0,0);
     static v2 v2Center(0,0);
     static v2 v2MapScrSize(0,0);
@@ -1243,13 +1244,15 @@ void game::DrawMapOverlay(bitmap* buffer)
 
 
 //      v2 v2FullDungeonSize=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
-      while(iMapTileSize*v2KnownDungeonSize.X > RES.X*0.8)iMapTileSize--;
-      while(iMapTileSize*v2KnownDungeonSize.Y > RES.Y*0.8)iMapTileSize--;
-      iMapTileSizeVanillaBkp=iMapTileSize;
+      while(iMapTileSizeMax*v2KnownDungeonSize.X > RES.X*0.9)iMapTileSizeMax--;
+      while(iMapTileSizeMax*v2KnownDungeonSize.Y > RES.Y*0.9)iMapTileSizeMax--;
+      iMapTileSize=iMapTileSizeMax;
       if(iImersiveMap>0 || bUsexBRZ){
-        iMapTileSize=1;
-        if(iImersiveMap>0)iMapTileSizeVanillaBkp=3+iImersiveMap; //forces x2 scale tiny map
-      }
+        iMapTileSize=1; //1 works best with xBRZ (2 makes it blocky again)
+
+        if(iImersiveMap>0)
+          iMapTileSizeMax = 3 + iImersiveMap; //forces x2 scale tiny map
+      }DBG2(iMapTileSizeMax,iMapTileSize);
       /********** ONLY USE iMapTileSize BELOW HERE!!! *************/
 
       v2 v2MapTileSize(iMapTileSize,iMapTileSize);
@@ -1378,7 +1381,7 @@ void game::DrawMapOverlay(bitmap* buffer)
       v2MapScrSizeFinal = v2MapScrSize;
     } DBG3(bmpMapBuffer,iMapOverlayDrawCount,DBGAV2(v2TopLeft));
 
-    if(bUsexBRZ && iMapOverlayDrawCount==0){ //double stretch
+    if((bUsexBRZ || iImersiveMap>0) && iMapOverlayDrawCount==0){ //double stretch
       /**
        * these are "best fit" double stretch values
        *
@@ -1392,7 +1395,8 @@ void game::DrawMapOverlay(bitmap* buffer)
        */
       int a=-1,b=-1;
 //      if(iMapTileSize==1){
-        switch(iMapTileSizeVanillaBkp/iMapTileSize){
+        if(iMapTileSizeMax>32)ABORT("not supported yet: iMapTileSizeMax=%d",iMapTileSizeMax);
+        switch(iMapTileSizeMax/iMapTileSize){
         case 32:case 31:case 30:
           a=6;b=5;break;
         case 29:case 28:case 27:case 26:case 25:
@@ -1418,7 +1422,7 @@ void game::DrawMapOverlay(bitmap* buffer)
         case 7:
           a=6;break;
         default: // <=6
-          a=iMapTileSizeVanillaBkp;
+          a=iMapTileSizeMax;
         }
 //      }
 //      else
@@ -1440,7 +1444,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 //          a=iMapTileSizeVanillaBkp/2;
 //        }
 //      }
-      DBG4(a,b,iMapTileSize,iMapTileSizeVanillaBkp);
+      DBG4(a,b,iMapTileSize,iMapTileSizeMax);
       if(a<b)ABORT("a=%d should be bigger than b=%d for best initial xBRZ results",a,b);
 
       if(a>=2){
