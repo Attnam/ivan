@@ -31,7 +31,7 @@ class configsystem
   static truth Save();
   static truth Load();
   static void Show(void (*)() = 0, void (*)(felist&) = 0, truth = false);
-  static void AddOption(configoption*);
+  static void AddOption(festring fsCategory, configoption*);
   static void NormalStringDisplayer(const stringoption*, festring&);
   static void NormalNumberDisplayer(const numberoption*, festring&);
   static void NormalTruthDisplayer(const truthoption*, festring&);
@@ -65,6 +65,7 @@ struct configoption
   virtual void DisplayValue(festring&) const = 0;
   cchar* Name;
   cchar* Description;
+  festring fsCategory;
 };
 
 struct stringoption : public configoption

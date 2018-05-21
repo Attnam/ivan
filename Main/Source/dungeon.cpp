@@ -18,8 +18,8 @@
 #include "save.h"
 #include "femath.h"
 #include "bitmap.h"
+#include "graphics.h"
 #include "message.h"
-
 #include "audio.h"
 
 dungeon::dungeon(int Index) : Index(Index)
@@ -76,6 +76,8 @@ const levelscript* dungeon::GetLevelScript(int I)
 
 truth dungeon::PrepareLevel(int Index, truth Visual)
 {
+  graphics::SetDenyStretchedBlit();
+
   if(Generated[Index])
   {
     level* NewLevel = LoadLevel(game::SaveName(), Index);
@@ -219,12 +221,26 @@ int dungeon::GetLevels() const
   return *DungeonScript->GetLevels();
 }
 
-festring dungeon::GetLevelDescription(int I)
+festring dungeon::GetLevelDescription(int I,bool bPretty)
 {
-  if(GetLevel(I)->GetLevelScript()->GetDescription())
+  if(GetLevel(I)->GetLevelScript()->GetDescription()){
     return *GetLevel(I)->GetLevelScript()->GetDescription();
-  else
-    return *DungeonScript->GetDescription() + " level " + (I + 1);
+  }else{
+    festring fs = *DungeonScript->GetDescription();
+    int i = I+1;
+
+    if(bPretty){
+      festring fsRoman;
+      const char* X[] = {"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC"};
+      fsRoman << X[(i%100)/10];
+      const char* I[] = {"","I","II","III","IV","V","VI","VII","VIII","IX"};
+      fsRoman << I[(i%10)];
+
+      return fs + " " + fsRoman;
+    }else{
+      return fs + " level " + i;
+    }
+  }
 }
 
 festring dungeon::GetShortLevelDescription(int I)

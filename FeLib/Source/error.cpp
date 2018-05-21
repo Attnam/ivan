@@ -26,6 +26,11 @@
 #include <windows.h>
 #else
 #include <iostream>
+#include <csignal>
+#include <cstring>
+#include <cstdlib>
+#include <execinfo.h>
+#include <unistd.h>
 #endif
 
 #ifdef VC
@@ -35,6 +40,8 @@
 #include <new>
 #define set_new_handler std::set_new_handler
 #endif
+
+#include "dbgmsgproj.h"
 
 #include "error.h"
 
@@ -56,6 +63,16 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 void (*globalerrorhandler::OldSignal[SIGNALS])(int);
 int globalerrorhandler::Signal[SIGNALS]
 = { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
+#endif
+
+#ifndef WIN32
+void globalerrorhandler::DumpStackTraceToStdErr(int Signal){
+  // Prints stack trace to stderr.
+  void* CallStack[128];
+  size_t Frames = backtrace(CallStack, 128);
+  if(Signal>-1)std::cerr << strsignal(Signal) << std::endl;
+  backtrace_symbols_fd(CallStack, Frames, STDERR_FILENO);
+}
 #endif
 
 void globalerrorhandler::Install()
@@ -88,6 +105,10 @@ void globalerrorhandler::DeInstall()
 
 void globalerrorhandler::Abort(cchar* Format, ...)
 {
+#ifndef WIN32
+  DumpStackTraceToStdErr();
+#endif
+
   char Buffer[512];
 
   va_list AP;
@@ -110,6 +131,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
   std::cout << Buffer << std::endl;
 #endif
 
+  DBGSTK;DBG2("ABORT:",Buffer);
   exit(4);
 }
 

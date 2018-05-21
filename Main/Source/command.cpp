@@ -10,24 +10,25 @@
  *
  */
 
-#include "command.h"
-#include "char.h"
-#include "message.h"
-#include "game.h"
-#include "stack.h"
-#include "room.h"
-#include "god.h"
-#include "felist.h"
-#include "iconf.h"
-#include "bitmap.h"
 #include "actions.h"
+#include "bitmap.h"
+#include "char.h"
+#include "command.h"
+#include "database.h"
+#include "felist.h"
+#include "game.h"
+#include "god.h"
+#include "graphics.h"
+#include "iconf.h"
+#include "materia.h"
+#include "message.h"
 #include "miscitem.h"
+#include "room.h"
+#include "stack.h"
+#include "team.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
-#include "materia.h"
-#include "database.h"
-#include "team.h"
 
 #ifdef WIZARD
 #include "proto.h"
@@ -130,6 +131,127 @@ command* commandsystem::Command[] =
 
   0
 };
+
+truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
+  cchar* str = Command[iIndex]->GetDescription();
+  if(strcmp(str,"apply")==0)return true;
+//  if(strcmp(str,"chat")==0)return true;
+//  if(strcmp(str,"close")==0)return true;
+  if(strcmp(str,"dip")==0)return true;
+  if(strcmp(str,"drink")==0)return true;
+  if(strcmp(str,"drop")==0)return true;
+  if(strcmp(str,"eat")==0)return true;
+//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"equipment menu")==0)return true;
+//  if(strcmp(str,"go")==0)return true;
+//  if(strcmp(str,"go down/enter area")==0)return true;
+//  if(strcmp(str,"go up")==0)return true;
+//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
+//  if(strcmp(str,"kick")==0)return true;
+//  if(strcmp(str,"look")==0)return true;
+//  if(strcmp(str,"name")==0)return true;
+  if(strcmp(str,"offer")==0)return true;
+  if(strcmp(str,"open")==0)return true;
+  if(strcmp(str,"pick up")==0)return true;
+  if(strcmp(str,"pray")==0)return true;
+//  if(strcmp(str,"quit")==0)return true;
+//  if(strcmp(str,"read")==0)return true;
+//  if(strcmp(str,"rest/heal")==0)return true;
+//  if(strcmp(str,"save game")==0)return true;
+//  if(strcmp(str,"scroll messages down")==0)return true;
+//  if(strcmp(str,"scroll messages up")==0)return true;
+//  if(strcmp(str,"show config screen")==0)return true;
+//  if(strcmp(str,"show inventory")==0)return true;
+//  if(strcmp(str,"show key layout")==0)return true;
+//  if(strcmp(str,"show message history")==0)return true;
+//  if(strcmp(str,"show weapon skills")==0)return true;
+//  if(strcmp(str,"search")==0)return true;
+//  if(strcmp(str,"sit")==0)return true;
+  if(strcmp(str,"throw")==0)return true;
+//  if(strcmp(str,"toggle running")==0)return true;
+//  if(strcmp(str,"vomit")==0)return true;
+//  if(strcmp(str,"wait")==0)return true;
+  if(strcmp(str,"wield in right arm")==0)return true;
+  if(strcmp(str,"wield in left arm")==0)return true;
+//  if(strcmp(str,"wizard mode activation")==0)return true;
+  if(strcmp(str,"zap")==0)return true;
+//  if(strcmp(str,"raise stats")==0)return true;
+//  if(strcmp(str,"lower stats")==0)return true;
+//  if(strcmp(str,"see whole map")==0)return true;
+//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
+//  if(strcmp(str,"raise your relations to the gods")==0)return true;
+//  if(strcmp(str,"lower your relations to the gods")==0)return true;
+//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
+//  if(strcmp(str,"gain all items")==0)return true;
+//  if(strcmp(str,"reveal secret knowledge")==0)return true;
+//  if(strcmp(str,"detach a limb")==0)return true;
+//  if(strcmp(str,"set fire to a limb")==0)return true;
+//  if(strcmp(str,"summon monster")==0)return true;
+//  if(strcmp(str,"level teleport")==0)return true;
+//  if(strcmp(str,"possess creature")==0)return true;
+  if(strcmp(str,"polymorph")==0)return true;
+  return false;
+}
+truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
+  cchar* str = Command[iIndex]->GetDescription();
+  if(strcmp(str,"apply")==0)return true;
+//  if(strcmp(str,"chat")==0)return true;
+//  if(strcmp(str,"close")==0)return true;
+  if(strcmp(str,"dip")==0)return true;
+  if(strcmp(str,"drink")==0)return true;
+  if(strcmp(str,"drop")==0)return true;
+  if(strcmp(str,"eat")==0)return true;
+//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"equipment menu")==0)return true;
+//  if(strcmp(str,"go")==0)return true;
+//  if(strcmp(str,"go down/enter area")==0)return true;
+//  if(strcmp(str,"go up")==0)return true;
+//  if(strcmp(str,"issue command(s) to team member(s)")==0)return true;
+//  if(strcmp(str,"kick")==0)return true;
+//  if(strcmp(str,"look")==0)return true;
+//  if(strcmp(str,"name")==0)return true;
+  if(strcmp(str,"offer")==0)return true;
+  if(strcmp(str,"open")==0)return true;
+  if(strcmp(str,"pick up")==0)return true;
+  if(strcmp(str,"pray")==0)return true;
+//  if(strcmp(str,"quit")==0)return true;
+//  if(strcmp(str,"read")==0)return true;
+//  if(strcmp(str,"rest/heal")==0)return true;
+//  if(strcmp(str,"save game")==0)return true;
+//  if(strcmp(str,"scroll messages down")==0)return true;
+//  if(strcmp(str,"scroll messages up")==0)return true;
+//  if(strcmp(str,"show config screen")==0)return true;
+  if(strcmp(str,"show inventory")==0)return true;
+//  if(strcmp(str,"show key layout")==0)return true;
+//  if(strcmp(str,"show message history")==0)return true;
+//  if(strcmp(str,"show weapon skills")==0)return true;
+//  if(strcmp(str,"search")==0)return true;
+//  if(strcmp(str,"sit")==0)return true;
+  if(strcmp(str,"throw")==0)return true;
+//  if(strcmp(str,"toggle running")==0)return true;
+//  if(strcmp(str,"vomit")==0)return true;
+//  if(strcmp(str,"wait")==0)return true;
+  if(strcmp(str,"wield in right arm")==0)return true;
+  if(strcmp(str,"wield in left arm")==0)return true;
+//  if(strcmp(str,"wizard mode activation")==0)return true;
+  if(strcmp(str,"zap")==0)return true;
+//  if(strcmp(str,"raise stats")==0)return true;
+//  if(strcmp(str,"lower stats")==0)return true;
+//  if(strcmp(str,"see whole map")==0)return true;
+//  if(strcmp(str,"toggle walk through walls mode")==0)return true;
+//  if(strcmp(str,"raise your relations to the gods")==0)return true;
+//  if(strcmp(str,"lower your relations to the gods")==0)return true;
+//  if(strcmp(str,"gain knowledge of all gods")==0)return true;
+//  if(strcmp(str,"gain all items")==0)return true;
+//  if(strcmp(str,"reveal secret knowledge")==0)return true;
+//  if(strcmp(str,"detach a limb")==0)return true;
+//  if(strcmp(str,"set fire to a limb")==0)return true;
+//  if(strcmp(str,"summon monster")==0)return true;
+//  if(strcmp(str,"level teleport")==0)return true;
+//  if(strcmp(str,"possess creature")==0)return true;
+  if(strcmp(str,"polymorph")==0)return true;
+  return false;
+}
 
 truth commandsystem::GoUp(character* Char)
 {
@@ -287,8 +409,9 @@ truth commandsystem::Open(character* Char)
 
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
-    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect))
+    if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect)){
       return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
+    }
   }
   else
     ADD_MESSAGE("This monster type cannot open anything.");
@@ -419,34 +542,43 @@ truth commandsystem::Drop(character* Char)
 
 truth commandsystem::Eat(character* Char)
 {
-  if(!Char->CheckConsume(CONST_S("eat")))
+  if(!Char->CheckConsume(CONST_S("eat"))){
     return false;
+  }
 
   lsquare* Square = Char->GetLSquareUnder();
 
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasEatEffect())
   {
-    if(Square->GetOLTerrain()->Eat(Char))
+    if(Square->GetOLTerrain()->Eat(Char)){
       return true;
+    }
   }
 
-  return Consume(Char, "eat", &item::IsEatable);
+  bool b=Consume(Char, "eat", &item::IsEatable);
+
+  return b;
 }
 
 truth commandsystem::Drink(character* Char)
 {
-  if(!Char->CheckConsume(CONST_S("drink")))
+
+  if(!Char->CheckConsume(CONST_S("drink"))){
     return false;
+  }
 
   lsquare* Square = Char->GetLSquareUnder();
 
   if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
   {
-    if(Square->GetOLTerrain()->Drink(Char))
+    if(Square->GetOLTerrain()->Drink(Char)){
       return true;
+    }
   }
 
-  return Consume(Char, "drink", &item::IsDrinkable);
+  bool b=Consume(Char, "drink", &item::IsDrinkable);
+
+  return b;
 }
 
 truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
@@ -479,11 +611,13 @@ truth commandsystem::ShowInventory(character* Char)
   Title << Char->GetStack()->GetWeight();
   Title << "g)";
   Char->GetStack()->DrawContents(Char, Title, NO_SELECT);
+
   return false;
 }
 
 truth commandsystem::PickUp(character* Char)
 {
+
   if(!Char->GetStackUnder()->GetVisibleItems(Char))
   {
     ADD_MESSAGE("There is nothing here to pick up!");
@@ -511,8 +645,9 @@ truth commandsystem::PickUp(character* Char)
         Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?',
                                          Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
-      if(!Amount)
+      if(!Amount){
         return false;
+      }
 
       if((!PileVector[0][0]->GetRoom()
           || PileVector[0][0]->GetRoom()->PickupItem(Char, PileVector[0][0], Amount))
@@ -526,7 +661,9 @@ truth commandsystem::PickUp(character* Char)
         return true;
       }
       else
+      {
         return false;
+      }
     }
     else
     {
@@ -656,6 +793,7 @@ truth commandsystem::Save(character*)
   if(game::TruthQuestion(CONST_S("Do you truly wish to save and flee? [y/N]")))
   {
     game::Save();
+    game::SRegionAroundDisable();
     game::End("", false);
     return true;
   }
@@ -689,6 +827,7 @@ truth commandsystem::Read(character* Char)
 
 truth commandsystem::Dip(character* Char)
 {
+
   if(!Char->GetStack()->SortedItems(Char, &item::IsDippable) && !Char->EquipsSomething(&item::IsDippable))
   {
     ADD_MESSAGE("You have nothing to dip!");
@@ -723,10 +862,13 @@ truth commandsystem::Dip(character* Char)
                                         + "? [press a direction key or '.']", false, true);
       v2 Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
-      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
+      if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination()){
         return false;
+      }
 
-      return Char->GetNearLSquare(Pos)->DipInto(Item, Char);
+      bool b = Char->GetNearLSquare(Pos)->DipInto(Item, Char);
+
+      return b;
     }
     else
     {
@@ -786,11 +928,27 @@ truth commandsystem::ShowKeyLayout(character*)
   return false;
 }
 
+void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
+  //TODO why this does not work??? if(!PLAYER->IsDead())return;
+#ifdef WIZARD
+  if(bSeeWholeMapCheatMode && !game::GetSeeWholeMapCheatMode()){
+    game::SeeWholeMap(); //1
+    game::SeeWholeMap(); //2
+  }
+#endif
+  commandsystem::Look(PLAYER);
+}
+
 truth commandsystem::Look(character* Char)
 {
   festring Msg;
-  if(!game::IsInWilderness())
-    Char->GetLevel()->AddSpecialCursors();
+  if(!game::IsInWilderness()){
+    if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
+      game::GetCurrentLevel()->AddSpecialCursors();
+    }else{
+      Char->GetLevel()->AddSpecialCursors();
+    }
+  }
 
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
@@ -834,10 +992,14 @@ truth commandsystem::Pray(character* Char)
 
   if(!DivineMaster)
   {
+    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
-        Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
+        desc.Empty();
+        desc << game::GetGod(c)->GetCompleteDescription();
+        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
         Known[Index++] = c;
       }
   }
@@ -1000,8 +1162,10 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
-  if(!Char->CheckThrow())
+
+  if(!Char->CheckThrow()){
     return false;
+  }
 
   if(!Char->GetStack()->GetItems())
   {
@@ -1016,8 +1180,9 @@ truth commandsystem::Throw(character* Char)
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
                                                  "[press a direction key]"), false);
 
-    if(Answer == DIR_ERROR)
+    if(Answer == DIR_ERROR){
       return false;
+    }
 
     Char->ThrowItem(Answer, Item);
     Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
@@ -1028,19 +1193,23 @@ truth commandsystem::Throw(character* Char)
     return true;
   }
   else
+  {
     return false;
+  }
 }
 
 truth commandsystem::Apply(character* Char)
 {
+
   if(!Char->CanApply())
   {
     ADD_MESSAGE("This monster type cannot apply.");
     return false;
   }
 
-  if(!Char->CheckApply())
+  if(!Char->CheckApply()){
     return false;
+  }
 
   if(!Char->PossessesItem(&item::IsAppliable))
   {
@@ -1049,7 +1218,9 @@ truth commandsystem::Apply(character* Char)
   }
 
   item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
-  return Item && Item->Apply(Char);
+  bool b = Item && Item->Apply(Char);
+
+  return b;
 }
 
 truth commandsystem::ForceVomit(character* Char)
@@ -1087,8 +1258,10 @@ truth commandsystem::ForceVomit(character* Char)
 
 truth commandsystem::Zap(character* Char)
 {
-  if(!Char->CheckZap())
+
+  if(!Char->CheckZap()){
     return false;
+  }
 
   if(!Char->PossessesItem(&item::IsZappable))
   {
@@ -1103,8 +1276,9 @@ truth commandsystem::Zap(character* Char)
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  "
                                                  "[press a direction key or '.']"), false, true);
 
-    if(Answer == DIR_ERROR)
+    if(Answer == DIR_ERROR){
       return false;
+    }
 
     if(Item->Zap(Char, Char->GetPos(), Answer))
     {
@@ -1112,10 +1286,14 @@ truth commandsystem::Zap(character* Char)
       return true;
     }
     else
+    {
       return false;
+    }
   }
   else
+  {
     return false;
+  }
 }
 
 truth commandsystem::Rest(character* Char)
@@ -1317,6 +1495,7 @@ truth commandsystem::WieldInRightArm(character* Char)
 
 truth commandsystem::WieldInLeftArm(character* Char)
 {
+
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
   else if(Char->TryToChangeEquipment(Char->GetStack(), 0, LEFT_WIELDED_INDEX))
@@ -1703,8 +1882,9 @@ truth commandsystem::Polymorph(character* Char)
 {
   character* NewForm;
 
-  if(!Char->GetNewFormForPolymorphWithControl(NewForm))
+  if(!Char->GetNewFormForPolymorphWithControl(NewForm)){
     return true;
+  }
 
   Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), WHITE));
   return true;

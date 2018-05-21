@@ -38,6 +38,7 @@ struct blitdata
   col16 MaskColor;
   ulong CustomData;
 };
+#define DEFAULT_BLITDATA {NULL,{0,0},{0,0},{0,0}, {0}, TRANSPARENT_COLOR,0} //easy initializer TODO should be TRANSPARENT_COLOR? TODO update everywere with this default and just apply there differences to shrink the code?
 
 class bitmap
 {
@@ -84,7 +85,11 @@ class bitmap
   void DrawHorizontalLine(int, int, int, col16, truth = false);
 
   void StretchBlit(cblitdata&) const;
-  void StretchBlitXbrz(cblitdata&);
+  void StretchBlitXbrz(cblitdata&,bool) const;
+  SDL_Surface* CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor = TRANSPARENT_COLOR, SDL_Surface* srf = NULL) const;
+
+  static void ResetBlitdataRotation(blitdata& B);
+  static void ConfigureBlitdataRotation(blitdata& B,int i);
 
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);
@@ -134,6 +139,10 @@ class bitmap
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
   void InterLace();
+
+  truth HasColor(col16 findColor);
+  void ReplaceColor(col16 findColor,col16 replaceWith);
+  void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe=false);
  protected:
   v2 Size;
   ulong XSizeTimesYSize : 31;

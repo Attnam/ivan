@@ -15,6 +15,21 @@ Changes:
 Fixes:
 
 
+Version 0.53, released ###TODO### 2018
+--------------------------------------
+
+Changes:
+* Optional xBRZScale now used to stretch the: full dungeon, Silhouette, inventory items, NPCs on lists.
+* FrameSkip optional functionality for slow machines (or heavy CPU load as in "play while you work" :))
+* You can now optionally review after death events/items/msgs using Ivan3D mode.
+* Optionally always center on player after exiting LookZoom mode.
+* Optionally show full dungeon name with roman level numbers.
+* Grouped config options in categories.
+* Custom stack list length (items, drop, throw etc).
+* Show items at player position, side by side.
+
+Fixes:
+* Mainly when toggling full screen mode on linux, it will now wait you release the key to apply.
 
 Version 0.52, released 24th March 2018
 --------------------------------------
