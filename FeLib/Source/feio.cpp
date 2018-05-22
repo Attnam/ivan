@@ -906,6 +906,7 @@ struct fileInfo{
   festring time=festring();
   festring idOnList=festring();
   festring dungeonID=festring();
+  festring nameAutoSave=festring();
   std::vector<festring> vBackups;
   bool bIsBkp = false;
 };
@@ -1011,16 +1012,22 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
   std::vector<festring> vIds,vInvIds,vBackups;
   std::vector<fileInfo> vComponents;
+  festring autoSaveFound("");
   for(int i=0;i<vFiles.size();i++)
   {
     DBGSC(vFiles[i].name.CStr());
 
     if(vFiles[i].name.Find(".wm" ) != vFiles[i].name.NPos){
-      //ignored
+      //skipped from the list
     }else
-    if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //TODO allow .bkp files be listed and used from the user interface easily, may be just rename existing ones to .old (and ignore these .old too) before renaming the .bkp ones to the normal filename
+    if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //skipped from the list
       vBackups.push_back(vFiles[i].fullName);
       vFiles[i].bIsBkp=true;
+    }else
+    if(vFiles[i].name.Find(".AutoSave.") != vFiles[i].name.NPos){ //skipped from the list
+      if(vFiles[i].name.Find(".AutoSave.sav") != vFiles[i].name.NPos){ // the correct autosave to be returned
+        autoSaveFound=vFiles[i].name;
+      }
     }else
     if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
       festring id("");
@@ -1060,6 +1067,11 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
         }
       }
 
+      if(!autoSaveFound.IsEmpty()){
+        id<<" has AutoSave!";
+        vFiles[i].nameAutoSave=autoSaveFound;
+      }
+
       if(vBackups.size()>0){
         id<<" has backup(s)!";
         vFiles[i].vBackups=vBackups; //makes a copy
@@ -1085,7 +1097,8 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       //reset to for next .sav fillup
       vComponents.clear();
       vBackups.clear();
-    }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
+      autoSaveFound.Empty();
+    }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game
       std::string s=vFiles[i].name.CStr();
       s=s.substr(s.find(".")+1);
       vFiles[i].dungeonID<<festring(s.c_str());
@@ -1123,28 +1136,49 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     festring chosen;chosen<<List.GetEntry(Check);
     for(int i=0;i<vFiles.size();i++){
       if(chosen == vFiles[i].idOnList){
-        std::vector<festring>& rvBackups = vFiles[i].vBackups;
-        if(rvBackups.size()>0){
-          if(AlertConfirmMsg("Try to restore the backup?")){
-            for(int b=0;b<rvBackups.size();b++){
-              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+        if(!vFiles[i].nameAutoSave.IsEmpty()){
+          /**
+           * autosaves are old and apparently a safe thing,
+           * therefore will be preferred as restoration override.
+           */
+          return vFiles[i].nameAutoSave;
+        }else{
+          /**
+           * Backups are a fallback mainly when a crash happens like this:
+           *
+           * - USER action: you try to enter a new dungeon (so it will be created now)
+           *
+           * - game action: saves a backup of the current dungeon last save at ".bkp"
+           * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
+           * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
+           *
+           * - game bug: the new dungeon creation fails and crashes.
+           *
+           * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
+           */
+          std::vector<festring>& rvBackups = vFiles[i].vBackups;
+          if(rvBackups.size()>0){
+            if(AlertConfirmMsg("Try to restore the backup?")){
+              for(int b=0;b<rvBackups.size();b++){
+                festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
 
-              festring fsFinal("");fsFinal << fsBkp;
-              fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
+                festring fsFinal("");fsFinal << fsBkp;
+                fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
-              std::remove(fsFinal.CStr()); // remove broken save file
+                std::remove(fsFinal.CStr()); // remove broken save file
 
-              std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
-              if(flBkp.good()){
-                std::ofstream final(fsFinal.CStr(), std::ios::binary);
-                final << flBkp.rdbuf();
+                std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
+                if(flBkp.good()){
+                  std::ofstream final(fsFinal.CStr(), std::ios::binary);
+                  final << flBkp.rdbuf();
 
-                final.close();
-                flBkp.close();
+                  final.close();
+                  flBkp.close();
 
-                // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
-              }else{
-                ABORT("unable to access the backup file '%s'",fsBkp.CStr());
+                  // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
+                }else{
+                  ABORT("unable to access the backup file '%s'",fsBkp.CStr());
+                }
               }
             }
           }
