@@ -554,7 +554,7 @@ void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
 {
   if(O!=NULL)O->Value = What;
 
-  outputfile::SetBackupBeforeSaving(What);
+  outputfile::SetSafeSaving(What);
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)

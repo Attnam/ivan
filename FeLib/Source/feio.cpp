@@ -850,6 +850,25 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 //#endif
 //}
 
+bool AlertConfirmMsg(const char* cMsg, bool bAbortIfNot=true) //TODO this method could be more global
+{
+  v2 v2Border(700,100);
+  v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
+
+  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+
+  v2TL+=v2(16,16);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), WHITE, "%s", cMsg);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32), WHITE, "%s", "(y)es, any other key to ignore this message.");
+
+  graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
+
+  if(GET_KEY() == 'y')return true;
+
+  return false;
+}
+
 static bool bSaveGameSortModeByDtTm;
 static bool bSaveGameSortModeProgress;
 static bool bSaveGameSortModeReversed;
@@ -878,15 +897,17 @@ void iosystem::SetSaveGameSortMode(int i){
   }
 }
 struct fileInfo{
-  int Version;
+  int Version = -1;
   char* GameScript = 0; //dummy
-  int CurrentDungeonIndex;
-  int CurrentLevelIndex;
+  int CurrentDungeonIndex = -1;
+  int CurrentLevelIndex = -1;
   festring name=festring(); //TODO this init helps with festring? it is buggy?
   festring fullName=festring();
   festring time=festring();
   festring idOnList=festring();
   festring dungeonID=festring();
+  std::vector<festring> vBackups;
+  bool bIsBkp = false;
 };
 std::vector<fileInfo> vFiles;
 bool addFileInfo(char* c){
@@ -983,23 +1004,23 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].fullName.CStr(),attr.st_ino);
   }
 
-  // sort the vector BY NAME ONLY (to get the dungeon ids easily)
+  // sort the vector BY NAME ONLY (to get the dungeon ids easily, numbers come before letters)
   std::sort( vFiles.begin(), vFiles.end(),
     [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
   );DBGLN;
 
-  std::vector<festring> vIds,vInvIds;
+  std::vector<festring> vIds,vInvIds,vBackups;
   std::vector<fileInfo> vComponents;
-  bool bHasBkp=false;
   for(int i=0;i<vFiles.size();i++)
   {
     DBGSC(vFiles[i].name.CStr());
 
-    if(vFiles[i].name.Find(".wm") != vFiles[i].name.NPos){
+    if(vFiles[i].name.Find(".wm" ) != vFiles[i].name.NPos){
       //ignored
     }else
     if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //TODO allow .bkp files be listed and used from the user interface easily, may be just rename existing ones to .old (and ignore these .old too) before renaming the .bkp ones to the normal filename
-      bHasBkp=true;
+      vBackups.push_back(vFiles[i].fullName);
+      vFiles[i].bIsBkp=true;
     }else
     if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
       festring id("");
@@ -1039,28 +1060,31 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
         }
       }
 
-      if(bHasBkp){
-        id<<" has backup!";
+      if(vBackups.size()>0){
+        id<<" has backup(s)!";
+        vFiles[i].vBackups=vBackups; //makes a copy
       }
 
       vFiles[i].idOnList<<id;
 
       bool bValid=false;
-      int iOldSavegameVersionImportSince=131;
-      if(!bValid && vFiles[i].Version == iSaveFileVersion)bValid=true;
+      static const int iOldSavegameVersionImportSince=131;
+      if(!bValid && vFiles[i].Version == iSaveFileVersion)
+        bValid=true;
       if(!bValid && vFiles[i].Version <  iSaveFileVersion)
         if(bAllowImportOldSavegame)
           if(vFiles[i].Version >= iOldSavegameVersionImportSince)
             bValid=true;
+
       if(bValid){
         vIds.push_back(id);DBG2("ok",DBGC(id.CStr()));
       }else{
         vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
       }
 
-      //resets
-      vComponents.clear(); // reset to begin filling it for next .sav
-      bHasBkp=false;
+      //reset to for next .sav fillup
+      vComponents.clear();
+      vBackups.clear();
     }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game?
       std::string s=vFiles[i].name.CStr();
       s=s.substr(s.find(".")+1);
@@ -1098,7 +1122,34 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
     festring chosen;chosen<<List.GetEntry(Check);
     for(int i=0;i<vFiles.size();i++){
-      if(chosen==vFiles[i].idOnList){
+      if(chosen == vFiles[i].idOnList){
+        std::vector<festring>& rvBackups = vFiles[i].vBackups;
+        if(rvBackups.size()>0){
+          if(AlertConfirmMsg("Try to restore the backup?")){
+            for(int b=0;b<rvBackups.size();b++){
+              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+
+              festring fsFinal("");fsFinal << fsBkp;
+              fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
+
+              std::remove(fsFinal.CStr()); // remove broken save file
+
+              std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
+              if(flBkp.good()){
+                std::ofstream final(fsFinal.CStr(), std::ios::binary);
+                final << flBkp.rdbuf();
+
+                final.close();
+                flBkp.close();
+
+                // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
+              }else{
+                ABORT("unable to access the backup file '%s'",fsBkp.CStr());
+              }
+            }
+          }
+        }
+
         return vFiles[i].name;
       }
     }

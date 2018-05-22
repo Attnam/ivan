@@ -127,7 +127,6 @@ time_t game::LastLoad;
 time_t game::GameBegan;
 truth game::PlayerHasReceivedAllGodsKnownBonus;
 
-festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 cchar* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 god** game::God;
 
@@ -581,9 +580,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
 
 truth game::Init(cfestring& Name)
 {
-//  graphics::SetStretchMode(ivanconfig::IsXBRZScale());
-////  PrepareStretchRegions();
-
   if(Name.IsEmpty())
   {
     if(ivanconfig::GetDefaultName().IsEmpty())
@@ -1344,7 +1340,10 @@ int game::Load(cfestring& SaveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
+  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
+  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
+    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
+  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -1480,8 +1479,8 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
     remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
   }
 
-  remove(festring(AutoSaveFileName + ".sav" + (onlyBackups?bkp.CStr():"")).CStr());
-  remove(festring(AutoSaveFileName + ".wm"  + (onlyBackups?bkp.CStr():"")).CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
@@ -1497,7 +1496,7 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
       if(RealSavesAlso)
         remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
 
-      File = AutoSaveFileName + '.' + i;
+      File = GetAutoSaveFileName() + '.' + i;
       File << c;
 
       remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
@@ -1874,7 +1873,12 @@ int game::AskForKeyPress(cfestring& Topic)
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
+
   int Key = GET_KEY();
+  #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
+  for(;;){if(WAIT_FOR_KEY_UP())break;};
+  #endif
+
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Key;
 }
@@ -2170,7 +2174,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   if(!Permanently)
     game::Save();
 
-  game::RemoveSaves(true,true); // after fully saving successfully, is a safe moment to remove ONLY the backups.
+  game::RemoveSaves(true,true); // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
 
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);

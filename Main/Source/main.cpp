@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 
         if(LoadName.GetSize())
         {
-          LoadName.Resize(LoadName.GetSize() - 4);
+          LoadName.Resize(LoadName.GetSize() - 4); // - ".sav"
 
           if(game::Init(LoadName))
           {

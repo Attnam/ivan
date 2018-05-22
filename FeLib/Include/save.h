@@ -47,12 +47,15 @@ class outputfile
   void Put(char What) { File.put(What); }
   void Write(cchar* Data, long Size) { File.write(Data, Size); }
   truth IsOpen() { return File.is_open(); }
-  void Close() { File.close(); }
-  static void SetBackupBeforeSaving(truth b);
+  void Close();
+  ~outputfile(){Close();}
+  static void SetSafeSaving(truth b);
  private:
   static truth bakcupBeforeSaving;
+  static truth saveOnNewFileAlways;
   std::ofstream File;
   festring FileName;
+  festring FileNameNewTmp;
 };
 
 class inputfile
