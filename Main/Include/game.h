@@ -206,8 +206,16 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
+  static void UpdateShowItemsAtPlayerPos(bool bAllowed);
+  static void UpdateAltSilhouette(bool bAllowed);
+  static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
+  static int ItemUnderCode(int iCycleValue);
+  static int ItemUnderCorner(int val);
+  static int ItemUnderZoom(int val);
+  static bool ItemUnderHV(int val);
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
+  static int GetCurrentSavefileVersion();
   static truth IsRunning() { return Running; }
   static void SetIsRunning(truth What);
   static void UpdateCameraX(int);
@@ -227,9 +235,9 @@ class game
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return AutoSaveFileName; }
+  static festring GetAutoSaveFileName() { return game::GetSaveDir() + PlayerName + ".AutoSave"; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false);
-  static void RemoveSaves(truth = true);
+  static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }
@@ -264,6 +272,7 @@ class game
   static void SetPetrus(character* What) { Petrus = What; }
   static truth HandleQuitMessage();
   static int GetDirectionForVector(v2);
+  static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
   static int GetScreenXSize();
@@ -469,7 +478,7 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring AutoSaveFileName;
+  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;

@@ -13,6 +13,7 @@
 
     #define DBGCHAR(ch,info) DBG8(info, ch->CHAR_NAME(DEFINITE), ch->GetAssignedName().CStr(), ch, DBGI(ch->GetID()), DBGB(ch->IsPlayer()), DBGI(ch->GetStack()->GetItems()), DBGI(ch->GetEquipments()) ) //, std::bitset<16>(ch->GetFlags()) )
     #define DBGITEM(it,info) DBG3(info,it,(it==NULL?0:it->GetID()))
+    #define DBGABORT(x...) ABORT(x) //will only abort in development mode
 
     class dbgmsgprj{
       public:
@@ -45,6 +46,7 @@
         ss<<"Dest="<<rB.Dest.X<<","<<rB.Dest.Y<<"/";
         ss<<"Border="<<rB.Border.X<<","<<rB.Border.Y<<"/";
         ss<<"Stretch="<<rB.Stretch<<"/";
+//        DBG2("rB.Bitmap",rB.Bitmap); // some(random)times this causes SEGFAULT: rB.Bitmap->GetSize()
         if(rB.Bitmap!=NULL)ss<<"BitmapSize="<<rB.Bitmap->GetSize().X<<","<<rB.Bitmap->GetSize().Y<<"/";
         return ss;
       }
@@ -56,7 +58,7 @@
       static std::stringstream dbgV2(v2 v2Val,const char* c){
         std::stringstream ss;
         ss<<c<<"/";
-        ss<<"X="<<v2Val.X<<","<<v2Val.Y<<"/";
+        ss<<"X,Y="<<((int)v2Val.X)<<","<<((int)v2Val.Y)<<"/";
         return ss;
       }
       #endif //DBGMSG_V2
@@ -100,6 +102,7 @@
   #define DBGITEM(it,info)
   #define DBGSRI(info)
   #define DBGSR
+  #define DBGABORT(x...)
 
 #endif //DBGMSG
 

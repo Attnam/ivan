@@ -38,6 +38,8 @@
 #include "proto.h"
 #include "audio.h"
 
+#include "dbgmsgproj.h"
+
 #ifndef WIN32
 void CrashHandler(int Signal)
 {
@@ -45,6 +47,11 @@ void CrashHandler(int Signal)
   exit(1);
 }
 #endif
+
+void SkipGameScript(inputfile* pSaveFile){
+  gamescript* gs=0;
+  (*pSaveFile) >> gs; //dummy just to "seek" for next binary data TODO if dungeon and level was saved before it, this would not be necessary... re-structuring the savegame file (one day) would be good.
+}
 
 int main(int argc, char** argv)
 {
@@ -130,11 +137,12 @@ int main(int argc, char** argv)
       break;
      case 1:
       {
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
+        iosystem::SetSkipSeekSave(&SkipGameScript);
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion(), ivanconfig::IsAllowImportOldSavegame());
 
         if(LoadName.GetSize())
         {
-          LoadName.Resize(LoadName.GetSize() - 4);
+          LoadName.Resize(LoadName.GetSize() - 4); // - ".sav"
 
           if(game::Init(LoadName))
           {
