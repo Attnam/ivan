@@ -2768,6 +2768,14 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
   return true;
 }
 
+void character::DeActivateTemporaryState(long What)
+{
+  if(PolymorphBackup && PolymorphBackup->TemporaryStateIsActivated(What))
+    PolymorphBackup->TemporaryState &= ~What;
+
+  TemporaryState &= ~What;
+}
+
 void character::DeActivateVoluntaryAction(cfestring& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
