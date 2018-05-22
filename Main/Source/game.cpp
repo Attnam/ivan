@@ -3044,7 +3044,8 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  for(;;){if(WAIT_FOR_KEY_UP())break;};
+  if(game::GetAutoPlayMode()==0)
+    for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
