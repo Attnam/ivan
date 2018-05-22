@@ -864,10 +864,10 @@ guard
   Config TOMB_ENTRY;
   {
     AttributeBonus = 20;
-    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = IRON bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    LeftWielded = IRON shield;
+    Helmet = HARDENED_ASH helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = HARDENED_ASH bodyarmor(PLATE_MAIL);
+    RightWielded = HARDENED_ASH AMETHYST meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = HARDENED_ASH shield;
     Adjective = "tomb";
     CWeaponSkillHits = { 2, 100, 100; }
     RightSWeaponSkillHits = 10;
@@ -945,7 +945,7 @@ guard
     Helmet = SILVER helmet(FULL_HELMET);
     BodyArmor = SILVER bodyarmor(PLATE_MAIL);
     Cloak = FABRIC cloak;
-    RightWielded = SILVER meleeweapon(HALBERD);
+    RightWielded = SILVER EBONY_WOOD meleeweapon(HALBERD);
     LeftWielded = 0;
     RightGauntlet = SILVER gauntlet;
     RightBoot = SILVER boot;
@@ -1136,13 +1136,13 @@ shopkeeper
     DefaultName = "Pate";
     NameSingular = "peddler";
     AttributeBonus = 25;
-    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    Belt = IRON belt(BELT_OF_CARRYING) { Enchantment = 1; }
-    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    LeftWielded = IRON shield;
-    RightGauntlet = IRON gauntlet { Enchantment = 1; }
-    RightBoot = IRON boot { Enchantment = 1; }
+    Helmet = HARDENED_ASH helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = HARDENED_ASH bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    Belt = AMETHYST belt(BELT_OF_CARRYING) { Enchantment = 1; }
+    RightWielded = HARDENED_ASH AMETHYST meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = HARDENED_ASH shield;
+    RightGauntlet = HARDENED_ASH gauntlet { Enchantment = 1; }
+    RightBoot = HARDENED_ASH boot { Enchantment = 1; }
     KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
     CWeaponSkillHits = { 2, 1000, 1000; }
     RightSWeaponSkillHits = 500;
@@ -1262,6 +1262,7 @@ priest
       "\"Prepare to meet @Gd, fool!\"",
       "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
     }
+    Inventory == can { Times = 2; SecondaryMaterial = LIGHT_FROG_BLOOD; }
   }
 
   Config SILVA;
@@ -1395,6 +1396,7 @@ priest
     LeftRing = ring(RING_OF_INFRA_VISION);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = MITHRIL boot { Enchantment = 2; }
+    Inventory == potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; }
     DefaultName = "Lady Decora";
     Adjective = "shining";
     NameSingular = "knight";
@@ -4636,7 +4638,7 @@ mistress
   LeftSWeaponSkillHits = 200;
   ClassStates = INFRA_VISION;
   PanicLevel = 20;
-  Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
+  Inventory = { 3, banana { Chance = 10; }, holybanana { Chance = 1; }, RUBBER stick { Chance = 5; } }
   HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
   AttachedGod = NEFAS;
   FleshMaterial = ELF_FLESH;
