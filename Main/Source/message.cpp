@@ -172,6 +172,7 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
 
@@ -321,17 +322,12 @@ void soundsystem::initSound()
      * Sound files are chosen randomly (if there is more than one).
      */
 
-    // new config file
+    // new config file (new syntax)
     festring cfgfileNew = game::GetDataDir() + "Sound/SoundEffects.cfg";
     FILE *fNew = fopen(cfgfileNew.CStr(), "rt");
 
     if(!fNew) SoundState = -1;
 
-    /**
-     * New config file syntax.
-     * (this config file will have priority by being loaded after)
-     * Adaptation by https://github.com/AquariusPower .
-     */
     truth bDbg=false; //TODO global command line for debug messages
     if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
     if(fNew)

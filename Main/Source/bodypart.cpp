@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
 truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE; }
@@ -252,7 +254,7 @@ void leg::Load(inputfile& SaveFile)
 }
 
 truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
-{
+{DBG1(Damager);
   if(Master)
   {
     if(Type & POISON && !IsAlive())
@@ -268,7 +270,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
 
     EditHP(1, -Damage);
 
-    if(Type & DRAIN && IsAlive())
+    if(Damager!=NULL && (Type & DRAIN) && IsAlive())
       for(int c = 0; c < Damage; ++c)
         Damager->HealHitPoint();
 

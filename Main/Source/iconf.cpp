@@ -10,16 +10,17 @@
  *
  */
 
-#include "iconf.h"
-#include "game.h"
-#include "feio.h"
 #include "area.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "igraph.h"
 #include "audio.h"
-#include "whandler.h"
+#include "bitmap.h"
+#include "feio.h"
+#include "game.h"
+#include "graphics.h"
+#include "iconf.h"
+#include "igraph.h"
+#include "save.h"
 #include "stack.h"
+#include "whandler.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -44,6 +45,20 @@ scrollbaroption ivanconfig::Contrast(     "Contrast",
                                           &ContrastChangeInterface,
                                           &ContrastChanger,
                                           &ContrastHandler);
+cycleoption ivanconfig::HitIndicator(     "HitIndicator",
+                                          "Show Hit",
+                                          0, 5,
+                                          &HitIndicatorDisplayer);
+cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
+                                          "Show items at player square",
+                                          0, 12,
+                                          &ShowItemsAtPlayerSquareDisplayer,
+                                          &configsystem::NormalCycleChangeInterface,
+                                          &ShowItemsAtPlayerSquareChanger);
+cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
+                                          "Thrown weapons rotate times per square",
+                                          0, 6,
+                                          &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 800",
                                           800,
@@ -57,7 +72,7 @@ numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
 numberoption ivanconfig::StackListPageLength("StackListPageLength",
-                                          "Stack list page length in entries",
+                                          "Page length in entries for non-selectable lists",
                                           stack::GetDefaultPageLength(),
                                           &StackListPageLengthDisplayer,
                                           &StackListPageLengthChangeInterface,
@@ -68,8 +83,23 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
+                                          "Let old savegames (v131 up) be imported (experimental)",
+                                          false);
+truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
+                                          "Safely save games",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SavegameSafelyChanger);
+truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
+                                          "Hide hit animations that look like miss",
+                                          true);
 truthoption ivanconfig::ShowFullDungeonName("ShowFullDungeonName",
                                           "Show current dungeon's full name",
+                                          false);
+truthoption ivanconfig::ShowGodInfo(      "ShowGodInfo",
+                                          "Shows info about each God when praying",
                                           false);
 truthoption ivanconfig::CenterOnPlayerAfterLook("CenterOnPlayerAfterLook",
                                           "Always center camera on player after look mode exits",
@@ -86,6 +116,10 @@ truthoption ivanconfig::LookZoom(         "LookZoom",
 truthoption ivanconfig::AltAdentureInfo(  "AltAdentureInfo",
                                           "on death, enhanced messages review mode",
                                           false);
+cycleoption ivanconfig::MemorizeEquipmentMode("MemorizeEquipmentMode",
+                                          "NPCs restore equipped items after polymorph",
+                                          0, 3,
+                                          &MemorizeEquipmentModeDisplayer);
 truthoption ivanconfig::XBRZScale(        "XBRZScale",
                                           "use xBRZScale to stretch graphics",
                                           false,
@@ -104,12 +138,26 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
+                                          "sort savegame files and show dungeon IDs progress",
+                                          0, 4,
+                                          &SaveGameSortModeDisplayer,
+                                          &configsystem::NormalCycleChangeInterface,
+                                          &SaveGameSortModeChanger);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           "Silhouette scale factor (1 to disable)",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
                                           &SilhouetteScaleDisplayer,
                                           &SilhouetteScaleChangeInterface,
                                           &SilhouetteScaleChanger);
+cycleoption ivanconfig::AltSilhouette(    "AltSilhouette",
+                                          "Alternative silhouette mode",
+                                          0, 7,
+                                          &AltSilhouetteDisplayer);
+cycleoption ivanconfig::AltSilhouettePreventColorGlitch("AltSilhouettePreventColorGlitch",
+                                          "Alternative silhouette background",
+                                          2, 3,
+                                          &AltSilhouettePreventColorGlitchDisplayer);
 cycleoption ivanconfig::DirectionKeyMap(  "DirectionKeyMap",
                                           "Movement control scheme",
                                           DIR_NORM, 3, // {default value, number of options to cycle through}
@@ -197,6 +245,70 @@ void ivanconfig::WindowHeightDisplayer(const numberoption* O, festring& Entry)
   Entry << O->Value << " pixels";
 }
 
+void ivanconfig::AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "transparent";break;
+  case 1: Entry << "dark";break;
+  case 2: Entry << "alignment";break;
+  }
+}
+
+void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "x1";break;
+  case 2: Entry << "x2";break;
+  case 3: Entry << "x3";break;
+  case 4: Entry << "x4";break;
+  case 5: Entry << "dynamic";break;
+  }
+}
+
+void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "immersive";break;
+  case 2: Entry << "indicator";break;
+  case 3: Entry << "ind+color";break;
+  case 4: Entry << "dynamic";break;
+  }
+}
+
+void ivanconfig::ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value>=10){
+    Entry << "Use corners if NPC";
+    if(O->Value==11)Entry << "+Items";
+    Entry << " above";
+    return;
+  }
+
+  int iCode = game::ItemUnderCode(O->Value);
+
+  if(iCode==0){
+    Entry << "disabled";
+  }else
+  if(iCode==1){
+    Entry << "above head";
+  }else{
+    switch(game::ItemUnderCorner(iCode)){
+      case 0:Entry << "UL";break;
+      case 1:Entry << "UR";break;
+      case 2:Entry << "LL";break;
+      case 3:Entry << "LR";break;
+    }
+
+//    Entry << ",";
+//    Entry << "x" << game::ItemUnderZoom(O->Value);
+
+    Entry << ",";
+    Entry << (game::ItemUnderHV(iCode) ? "H" : "V");
+  }
+}
+
 void ivanconfig::WindowWidthDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << " pixels";
@@ -223,6 +335,19 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
 void ivanconfig::VolumeDisplayer(const numberoption* O, festring& Entry)
 {
   Entry << O->Value << "/127";
+}
+
+void ivanconfig::AltSilhouetteDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+    case 0: Entry << "no"        ; break;
+    case 1: Entry << "short"     ; break;
+    case 2: Entry << "tall"      ; break;
+    case 3: Entry << "breathing" ; break;
+    case 4: Entry << "breathSlower"; break;
+    case 5: Entry << "breathSlower+"; break;
+    case 6: Entry << "breathSlower++"; break;
+  }
 }
 
 void ivanconfig::DirectionKeyMapDisplayer(const cycleoption* O, festring& Entry)
@@ -431,6 +556,15 @@ void ivanconfig::WindowHeightChanger(numberoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
+{
+//  if(What==1 && GetStartingDungeonGfxScale()<3){ //above head asked
+//    What=2; //upgrade to 1st corner
+//  }
+
+  O->Value = What;
+}
+
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
   if(What < 800) What = 800;
@@ -489,6 +623,25 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "newest first";break;
+  case 1: Entry << "newest first + progress";break;
+  case 2: Entry << "alphanumeric";break;
+  case 3: Entry << "alphanumeric + progress";break;
+  }
+}
+
+void ivanconfig::MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0:Entry << "disabled";break; //do not show
+  case 1:Entry << "only pet";break; //default pos
+  case 2:Entry << "everyone";break; //alt pos
+  }
+}
+
 void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
 {
   Entry << O->Value << 'x';
@@ -499,9 +652,23 @@ void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SaveGameSortModeChanger(cycleoption* O, long What)
+{
+  if(O!=NULL)O->Value = What;
+
+  iosystem::SetSaveGameSortMode(What);
+}
+
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
+}
+
+void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+
+  outputfile::SetSafeSaving(What);
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
@@ -584,6 +751,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
+  configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
+  configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -599,12 +768,17 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&XBRZScale);
   configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
   configsystem::AddOption(fsCategory,&SilhouetteScale);
+  configsystem::AddOption(fsCategory,&AltSilhouette);
+  configsystem::AddOption(fsCategory,&AltSilhouettePreventColorGlitch);
   configsystem::AddOption(fsCategory,&AltListItemPos);
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
+  configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
+  configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
+  configsystem::AddOption(fsCategory,&HitIndicator);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
@@ -623,8 +797,14 @@ void ivanconfig::Initialize()
 
   fsCategory="System and user interface/input";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
+
+  fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
+  configsystem::AddOption(fsCategory,&SavegameSafely);
+  configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
@@ -646,6 +826,9 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
-  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
+  //TODO re-use changer methods for above configs too to avoid duplicating the algo?
+  FrameSkipChanger(NULL,FrameSkip.Value);
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
+  SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
+  SavegameSafelyChanger(NULL, SavegameSafely.Value);
 }

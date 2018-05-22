@@ -13,7 +13,16 @@
 #include <ctime>
 #include <cctype>
 
+#include <algorithm>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
 #ifdef WIN32
+#define stat _stat
 #include <io.h>
 #endif
 
@@ -21,22 +30,27 @@
 #include <dirent.h>
 #include <stddef.h>
 #include <cstdio>
-#include <sys/types.h>
-#include <algorithm>
+#include <time.h>
+#include <stdio.h>
+#include <iomanip>
+#include <sstream>
 #endif
 
 #ifdef __DJGPP__
 #include <dir.h>
 #endif
 
-#include "graphics.h"
-#include "feio.h"
-#include "whandler.h"
-#include "felist.h"
-#include "rawbit.h"
-#include "festring.h"
 #include "bitmap.h"
 #include "error.h"
+#include "feio.h"
+#include "felist.h"
+#include "festring.h"
+#include "graphics.h"
+#include "rawbit.h"
+#include "save.h"
+#include "whandler.h"
+
+#include "dbgmsgproj.h"
 
 #define PENT_WIDTH 70
 
@@ -716,123 +730,467 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
+//TODO dropped in favor of non crashing (for old saves) new code protection, clean this commented code later
+///**
+// * this will surely work if savegame sorting is disabled
+// */
+//festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
+//                                cfestring& DirectoryName)
+//{
+//#ifdef WIN32
+//  struct _finddata_t Found;
+//  long hFile;
+//  int Check = 0;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
+//
+//  /* No file found */
+//  if(hFile == -1L)
+//  {
+//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//    return "";
+//  }
+//
+//  while(!Check)
+//  {
+//    /* Copy all the filenames to Buffer */
+//    /* Buffer = Found.name; Doesn't work because of a festring bug */
+//
+//    Buffer.Empty();
+//    Buffer << Found.name;
+//    List.AddEntry(Buffer, ListColor);
+//    Check = _findnext(hFile, &Found);
+//  }
+//
+//  Check = List.Draw();
+//
+//  /* an error has occured in felist */
+//
+//  if(Check & FELIST_ERROR_BIT)
+//    return "";
+//
+//  return List.GetEntry(Check);
+//#endif
+//
+//#ifdef UNIX
+//  DIR* dp;
+//  struct dirent* ep;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//  dp = opendir(DirectoryName.CStr());
+//
+//  if(dp)
+//  {
+//    while((ep = readdir(dp)))
+//    {
+//      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
+//      Buffer.Empty();
+//      Buffer << ep->d_name;
+//      /* Add to List all save files */
+//      if(Buffer.Find(".sav") != Buffer.NPos)
+//        List.AddEntry(Buffer, ListColor);
+//    }
+//
+//    closedir(dp);
+//
+//    if(List.IsEmpty())
+//    {
+//      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//      return "";
+//    }
+//    else
+//    {
+//      int Check = List.Draw();
+//
+//      if(Check & FELIST_ERROR_BIT)
+//        return "";
+//
+//      return List.GetEntry(Check);
+//    }
+//
+//  }
+//
+//  return "";
+//#endif
+//
+//#ifdef __DJGPP__
+//  struct ffblk Found;
+//  int Check = 0;
+//  festring Buffer;
+//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+//
+//  /* get all filenames ending with .sav. Accepts all files even if they
+//     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
+//
+//  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
+//                    &Found, FA_HIDDEN | FA_ARCH);
+//
+//  if(Check)
+//  {
+//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+//    return "";
+//  }
+//
+//  while(!Check)
+//  {
+//    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
+//    Buffer.Empty();
+//    Buffer << Found.ff_name;
+//    List.AddEntry(Buffer, ListColor);
+//    Check = findnext(&Found);
+//  }
+//
+//  Check = List.Draw();
+//
+//  if(Check & FELIST_ERROR_BIT)
+//    return "";
+//
+//  return List.GetEntry(Check);
+//#endif
+//}
+
+bool AlertConfirmMsg(const char* cMsg, bool bAbortIfNot=true) //TODO this method could be more global
+{
+  v2 v2Border(700,100);
+  v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
+
+  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+  graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
+
+  v2TL+=v2(16,16);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), WHITE, "%s", cMsg);
+  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32), WHITE, "%s", "(y)es, any other key to ignore this message.");
+
+  graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
+
+  if(GET_KEY() == 'y')return true;
+
+  return false;
+}
+
+static bool bSaveGameSortModeByDtTm;
+static bool bSaveGameSortModeProgress;
+static bool bSaveGameSortModeReversed;
+void iosystem::SetSaveGameSortMode(int i){
+  bSaveGameSortModeByDtTm=false;
+  bSaveGameSortModeProgress=false;
+  bSaveGameSortModeReversed=false;
+
+  switch(i){
+  case 0:
+    bSaveGameSortModeReversed=true;
+    bSaveGameSortModeByDtTm=true;
+    break;
+  case 1:
+    bSaveGameSortModeReversed=true;
+    bSaveGameSortModeByDtTm=true;
+    bSaveGameSortModeProgress=true;
+    break;
+  case 2: //alphanum is essential
+    break;
+  case 3:
+    bSaveGameSortModeProgress=true;
+    break;
+  default:
+    ABORT("unsupported savegame sort option %d",i);
+  }
+}
+struct fileInfo{
+  int Version = -1;
+  char* GameScript = 0; //dummy
+  int CurrentDungeonIndex = -1;
+  int CurrentLevelIndex = -1;
+  festring name=festring(); //TODO this init helps with festring? it is buggy?
+  festring fullName=festring();
+  festring time=festring();
+  festring idOnList=festring();
+  festring dungeonID=festring();
+  festring nameAutoSave=festring();
+  std::vector<festring> vBackups;
+  bool bIsBkp = false;
+};
+std::vector<fileInfo> vFiles;
+bool addFileInfo(char* c){
+  // skippers
+  if(strcmp(c,".")==0)return false;
+  if(strcmp(c,"..")==0)return false;
+
+  // do add
+  fileInfo fi;
+  fi.name<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
+  vFiles.push_back(fi); //stores a copy
+
+  return true; //added
+}
+skipseeksave skipSeek=NULL;
+void iosystem::SetSkipSeekSave(skipseeksave sss){skipSeek = sss;}
 /* DirectoryName is the directory where the savefiles are located. Returns
    the selected file or "" if an error occures or if no files are found. */
-
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
-                                cfestring& DirectoryName)
+                                cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
+  ///////////////////// prepare general base data ///////////////////
+  vFiles.clear();
+  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+
+  ////////////////////////// OS SPECIFIC!!! collect all files at save folder. //////////////////////////
+#ifdef UNIX
+  {
+    DIR* dp;
+    struct dirent* ep;
+    dp = opendir(DirectoryName.CStr());
+    if(dp!=NULL)
+    {
+      while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
+      closedir(dp);
+    }else{
+      return "";
+    }
+  }
+#endif
+
 #ifdef WIN32
   struct _finddata_t Found;
   long hFile;
   int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
+  hFile = _findfirst(festring(DirectoryName + "*").CStr(), &Found);
 
   /* No file found */
-  if(hFile == -1L)
+  if(hFile != -1L)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
-  }
-
-  while(!Check)
-  {
-    /* Copy all the filenames to Buffer */
-    /* Buffer = Found.name; Doesn't work because of a festring bug */
-
-    Buffer.Empty();
-    Buffer << Found.name;
-    List.AddEntry(Buffer, ListColor);
-    Check = _findnext(hFile, &Found);
-  }
-
-  Check = List.Draw();
-
-  /* an error has occured in felist */
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
-#endif
-
-#ifdef UNIX
-  DIR* dp;
-  struct dirent* ep;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-  dp = opendir(DirectoryName.CStr());
-
-  if(dp)
-  {
-    while((ep = readdir(dp)))
+    while(!Check)
     {
-      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-      Buffer.Empty();
-      Buffer << ep->d_name;
-      /* Add to List all save files */
-      if(Buffer.Find(".sav") != Buffer.NPos)
-        List.AddEntry(Buffer, ListColor);
+      addFileInfo(Found.name);
+      Check = _findnext(hFile, &Found);
     }
-
-    closedir(dp);
-
-    if(List.IsEmpty())
-    {
-      TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-      return "";
-    }
-    else
-    {
-      int Check = List.Draw();
-
-      if(Check & FELIST_ERROR_BIT)
-        return "";
-
-      return List.GetEntry(Check);
-    }
-
   }
-
-  return "";
 #endif
 
 #ifdef __DJGPP__
   struct ffblk Found;
   int Check = 0;
-  festring Buffer;
-  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
 
-  /* get all filenames ending with .sav. Accepts all files even if they
+  /* get all filenames. Accepts all files even if they
      FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
 
-  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
+  Check = findfirst(festring(DirectoryName + "*").CStr(),
                     &Found, FA_HIDDEN | FA_ARCH);
 
-  if(Check)
+  if(!Check)
   {
-    TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-    return "";
+    while(!Check){
+      addFileInfo(Found.ff_name);
+      Check = findnext(&Found);
+    }
   }
-
-  while(!Check)
-  {
-    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
-    Buffer.Empty();
-    Buffer << Found.ff_name;
-    List.AddEntry(Buffer, ListColor);
-    Check = findnext(&Found);
-  }
-
-  Check = List.Draw();
-
-  if(Check & FELIST_ERROR_BIT)
-    return "";
-
-  return List.GetEntry(Check);
 #endif
+
+  if(vFiles.size()==0){
+    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+
+  /////////////////////////////// sort work //////////////////////////////////////
+  int iTmSz=100;
+  struct stat attr;
+  for(int i=0;i<vFiles.size();i++)
+  {
+    vFiles[i].fullName<<DirectoryName<<"/"<<vFiles[i].name;
+    if(stat(vFiles[i].fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",vFiles[i].fullName.CStr(),std::strerror(errno));
+
+    char cTime[iTmSz];
+    strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M:%S",localtime(&(attr.st_mtime))); // this format is important for the sorting that is text based
+    vFiles[i].time<<cTime;
+    DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].fullName.CStr(),attr.st_ino);
+  }
+
+  // sort the vector BY NAME ONLY (to get the dungeon ids easily, numbers come before letters)
+  std::sort( vFiles.begin(), vFiles.end(),
+    [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
+  );DBGLN;
+
+  std::vector<festring> vIds,vInvIds,vBackups;
+  std::vector<fileInfo> vComponents;
+  festring autoSaveFound("");
+  for(int i=0;i<vFiles.size();i++)
+  {
+    DBGSC(vFiles[i].name.CStr());
+
+    if(vFiles[i].name.Find(".wm" ) != vFiles[i].name.NPos){
+      //skipped from the list
+    }else
+    if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //skipped from the list
+      vBackups.push_back(vFiles[i].fullName);
+      vFiles[i].bIsBkp=true;
+    }else
+    if(vFiles[i].name.Find(".AutoSave.") != vFiles[i].name.NPos){ //skipped from the list
+      if(vFiles[i].name.Find(".AutoSave.sav") != vFiles[i].name.NPos){ // the correct autosave to be returned
+        autoSaveFound=vFiles[i].name;
+      }
+    }else
+    if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
+      festring id("");
+
+      // savegame version (structure taken from game::Load()
+      inputfile SaveFile(vFiles[i].fullName, 0, false);
+      SaveFile >> vFiles[i].Version; DBGSI(vFiles[i].Version);
+      if(skipSeek==NULL)ABORT("SkipSeek function not set");
+      skipSeek(&SaveFile); //DUMMY (for here) binary data skipper
+      SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
+      SaveFile.Close();
+
+      festring fsVer("");
+      if(vFiles[i].Version != iSaveFileVersion)
+        fsVer<<"(v"<<vFiles[i].Version<<") ";
+
+      if(bSaveGameSortModeByDtTm)
+        id<<fsVer<<vFiles[i].time<<" ";
+
+      std::string sname=vFiles[i].name.CStr();
+      sname=sname.substr(0,sname.find(".")); //prettier name
+      id<<sname.c_str()<<" ";
+
+      if(!bSaveGameSortModeByDtTm)
+        id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
+
+      festring currentDungeonLevel("");
+      currentDungeonLevel << vFiles[i].CurrentDungeonIndex << vFiles[i].CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
+      if(bSaveGameSortModeProgress && !vComponents.empty()){
+        for(int k=0;k<vComponents.size();k++){
+          if(k>0)id<<" ";
+          if(vComponents[k].dungeonID == currentDungeonLevel){
+            id<<"@"<<currentDungeonLevel<<""; // the legendary player character indicator! :D
+          }else{
+            id<<vComponents[k].dungeonID;
+          }
+        }
+      }
+
+      if(!autoSaveFound.IsEmpty()){
+        id<<" has AutoSave!";
+        vFiles[i].nameAutoSave=autoSaveFound;
+      }
+
+      if(vBackups.size()>0){
+        id<<" has backup(s)!";
+        vFiles[i].vBackups=vBackups; //makes a copy
+      }
+
+      vFiles[i].idOnList<<id;
+
+      bool bValid=false;
+      static const int iOldSavegameVersionImportSince=131;
+      if(!bValid && vFiles[i].Version == iSaveFileVersion)
+        bValid=true;
+      if(!bValid && vFiles[i].Version <  iSaveFileVersion)
+        if(bAllowImportOldSavegame)
+          if(vFiles[i].Version >= iOldSavegameVersionImportSince)
+            bValid=true;
+
+      if(bValid){
+        vIds.push_back(id);DBG2("ok",DBGC(id.CStr()));
+      }else{
+        vInvIds.push_back(id);DBG2("invalid",DBGC(id.CStr()));
+      }
+
+      //reset to for next .sav fillup
+      vComponents.clear();
+      vBackups.clear();
+      autoSaveFound.Empty();
+    }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game
+      std::string s=vFiles[i].name.CStr();
+      s=s.substr(s.find(".")+1);
+      vFiles[i].dungeonID<<festring(s.c_str());
+      vComponents.push_back(vFiles[i]);
+      DBG3(vFiles[i].name.CStr(),s,vComponents.size());//,dungeonIds.CStr());
+    }
+  }
+
+  // this will sort the ids alphabetically even if by time (so will sort the time as a string)
+  std::sort( vIds   .begin(), vIds   .end(), [ ]( const festring& l, const festring& r ){return l < r;} );
+  std::sort( vInvIds.begin(), vInvIds.end(), [ ]( const festring& l, const festring& r ){return l < r;} );
+
+  // reversed or normal
+  int iFirst,iFirstI,iStopAt,iStopAtI,iDir; //TODO implement something more readable...
+  if(bSaveGameSortModeReversed){
+    iDir=-1; iFirst=vIds.size()-1; iStopAt=-1         ; iFirstI=vInvIds.size()-1; iStopAtI=-1            ; }else{
+    iDir= 1; iFirst=0            ; iStopAt=vIds.size(); iFirstI=0               ; iStopAtI=vInvIds.size();
+  }
+  for(int i=iFirst ;i!=iStopAt ;i+=iDir){List.AddEntry(vIds   [i],ListColor,0,NO_IMAGE,true ); DBG2(DBGC(vIds[i].CStr())   ,"ok"     );}
+  for(int i=iFirstI;i!=iStopAtI;i+=iDir){List.AddEntry(vInvIds[i],DARK_GRAY,0,NO_IMAGE,false); DBG2(DBGC(vInvIds[i].CStr()),"invalid");}
+
+  if(List.IsEmpty() || vIds.empty())
+  {
+    iosystem::TextScreen(CONST_S("You don't have any valid previous saves."), ZERO_V2, TopicColor);
+    return "";
+  }
+  else
+  {
+    int Check = List.Draw();
+
+    /* an error has occured in felist */
+    if(Check & FELIST_ERROR_BIT)
+      return "";
+
+    festring chosen;chosen<<List.GetEntry(Check);
+    for(int i=0;i<vFiles.size();i++){
+      if(chosen == vFiles[i].idOnList){
+        if(!vFiles[i].nameAutoSave.IsEmpty()){
+          /**
+           * autosaves are old and apparently a safe thing,
+           * therefore will be preferred as restoration override.
+           */
+          return vFiles[i].nameAutoSave;
+        }else{
+          /**
+           * Backups are a fallback mainly when a crash happens like this:
+           *
+           * - USER action: you try to enter a new dungeon (so it will be created now)
+           *
+           * - game action: saves a backup of the current dungeon last save at ".bkp"
+           * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
+           * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
+           *
+           * - game bug: the new dungeon creation fails and crashes.
+           *
+           * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
+           */
+          std::vector<festring>& rvBackups = vFiles[i].vBackups;
+          if(rvBackups.size()>0){
+            if(AlertConfirmMsg("Try to restore the backup?")){
+              for(int b=0;b<rvBackups.size();b++){
+                festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+
+                festring fsFinal("");fsFinal << fsBkp;
+                fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
+
+                std::remove(fsFinal.CStr()); // remove broken save file
+
+                std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
+                if(flBkp.good()){
+                  std::ofstream final(fsFinal.CStr(), std::ios::binary);
+                  final << flBkp.rdbuf();
+
+                  final.close();
+                  flBkp.close();
+
+                  // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
+                }else{
+                  ABORT("unable to access the backup file '%s'",fsBkp.CStr());
+                }
+              }
+            }
+          }
+        }
+
+        return vFiles[i].name;
+      }
+    }
+    ABORT("failed to match chosen file with id %s",chosen.CStr()); //shouldnt happen
+  }
+
+  return ""; //dummy just to gcc do not complain..
 }
 
 truth iosystem::IsAcceptableForStringQuestion(char Key)
