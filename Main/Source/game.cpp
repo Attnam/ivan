@@ -212,6 +212,15 @@ v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
 
+int CurrentSavefileVersion=-1;
+
+int game::GetCurrentSavefileVersion(){
+  if(CurrentSavefileVersion==-1)
+    ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
+
+  return CurrentSavefileVersion;
+}
+
 int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
@@ -663,6 +672,8 @@ truth game::Init(cfestring& Name)
     }
    case NEW_GAME:
     {
+      CurrentSavefileVersion = SAVE_FILE_VERSION;
+
       /* New game music */
       audio::SetPlaybackStatus(0);
       audio::ClearMIDIPlaylist();
@@ -2376,12 +2387,6 @@ truth game::Save(cfestring& SaveName)
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
   return true;
-}
-
-int CurrentSavefileVersion=-1;
-int game::GetCurrentSavefileVersion(){
-  if(CurrentSavefileVersion==-1)ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
-  return CurrentSavefileVersion;
 }
 
 int game::Load(cfestring& SaveName)
