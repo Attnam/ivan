@@ -4693,7 +4693,7 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
   PrintAttribute("Int", INTELLIGENCE, PanelPosX, PanelPosY++);
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
-  PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
+  PrintAttribute("Will", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
   PrintAttribute("Mana", MANA, PanelPosX, PanelPosY++);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
@@ -8655,6 +8655,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       UpdatePictures();
 
     break;
+   case WILL_POWER:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel incredibly stubborn.";
+      NPCMsg = "You notice %s looks much more determined.";
+    }
+    else
+    {
+      PlayerMsg = "You loose your determination.";
+      NPCMsg = "You notice how wimpy %s looks.";
+    }
+    break;
    case CHARISMA:
     if(Change > 0)
     {
@@ -8696,8 +8708,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       PlayerMsg = "You feel your magical abilities withering slowly.";
       NPCMsg = "You notice strange vibrations in the air around %s. But they disappear rapidly.";
     }
-
     break;
+   default:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel more awesome!";
+      NPCMsg = "You notice how cool %s looks.";
+    }
+    else
+    {
+      PlayerMsg = "You feel a strange sensation, but then it passes.";
+      NPCMsg = "You notice there is something different about %s.";
+    }
   }
 
   if(IsPlayer())
