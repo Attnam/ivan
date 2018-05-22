@@ -129,7 +129,6 @@ time_t game::LastLoad;
 time_t game::GameBegan;
 truth game::PlayerHasReceivedAllGodsKnownBonus;
 
-festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 cchar* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 god** game::God;
 
@@ -218,7 +217,7 @@ std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
 
 int game::iCurrentDungeonTurn=-1;
 
-int game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
+int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
@@ -616,9 +615,6 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
 
 truth game::Init(cfestring& Name)
 {
-//  graphics::SetStretchMode(ivanconfig::IsXBRZScale());
-////  PrepareStretchRegions();
-
   if(Name.IsEmpty())
   {
     if(ivanconfig::GetDefaultName().IsEmpty())
@@ -2396,24 +2392,38 @@ truth game::Save(cfestring& SaveName)
   return true;
 }
 
+int CurrentSavefileVersion=-1;
+int game::GetCurrentSavefileVersion(){
+  if(CurrentSavefileVersion==-1)ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
+  return CurrentSavefileVersion;
+}
+
 int game::Load(cfestring& SaveName)
-{
+{DBGLN;
   inputfile SaveFile(SaveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
     return NEW_GAME;
 
-  int Version;
-  SaveFile >> Version;
+  SaveFile >> CurrentSavefileVersion;
 
-  if(Version != SAVE_FILE_VERSION)
-  {
-    if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
-                       CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
-                       CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-      return NEW_GAME;
-    else
+  if(ivanconfig::IsAllowImportOldSavegame()){
+    if(CurrentSavefileVersion > SAVE_FILE_VERSION){
+      iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+        CONST_S("Sorry, this save can't be imported by this game version.\r"),
+        CONST_S("Hit a key to go back...\r"), LIGHT_GRAY);
       return BACK;
+    }
+  }else{
+    if(CurrentSavefileVersion != SAVE_FILE_VERSION)
+    {
+      if(!iosystem::Menu(0, v2(RES.X >> 1, RES.Y >> 1),
+                         CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"),
+                         CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+        return NEW_GAME;
+      else
+        return BACK;
+    }
   }
 
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
@@ -2466,7 +2476,10 @@ int game::Load(cfestring& SaveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
+  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
+  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
+    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
+  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -2491,7 +2504,7 @@ festring game::SaveName(cfestring& Base)
     SaveName << Base;
 
   for(festring::sizetype c = 0; c < SaveName.GetSize(); ++c)
-    if(SaveName[c] == ' ')
+    if(SaveName[c] == ' ') //TODO prevent other possibly troublesome invalid characters like ;:^/\... etc etc, should allow only a-zA-Z0-9
       SaveName[c] = '_';
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -2595,16 +2608,18 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
   }
 }
 
-void game::RemoveSaves(truth RealSavesAlso)
+void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 {
+  festring bkp(".bkp");
+
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav").CStr());
-    remove(festring(SaveName() + ".wm").CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
   }
 
-  remove(festring(AutoSaveFileName + ".sav").CStr());
-  remove(festring(AutoSaveFileName + ".wm").CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
@@ -2618,12 +2633,12 @@ void game::RemoveSaves(truth RealSavesAlso)
       File << c;
 
       if(RealSavesAlso)
-        remove(File.CStr());
+        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
 
-      File = AutoSaveFileName + '.' + i;
+      File = GetAutoSaveFileName() + '.' + i;
       File << c;
 
-      remove(File.CStr());
+      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
     }
 }
 
@@ -2821,7 +2836,7 @@ truth game::HandleQuitMessage()
       {
        case 0:
         Save();
-        RemoveSaves(false);
+        RemoveSaves(false); //keep backups during autosaves
         break;
        case 2:
         GetCurrentArea()->SendNewDrawRequest();
@@ -2837,8 +2852,10 @@ truth game::HandleQuitMessage()
     else
       if(!Menu(0, v2(RES.X >> 1, RES.Y >> 1),
                CONST_S("You can't save at this point. Are you sure you still want to do this?\r"),
-               CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-        RemoveSaves();
+               CONST_S("Yes\rNo\r"), LIGHT_GRAY)){
+        RemoveSaves(); //will remove the real saves too
+        RemoveSaves(true,true); //will remove only the backups now
+      }
       else
       {
         GetCurrentArea()->SendNewDrawRequest();
@@ -3024,7 +3041,12 @@ int game::AskForKeyPress(cfestring& Topic)
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
+
   int Key = GET_KEY();
+  #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
+  for(;;){if(WAIT_FOR_KEY_UP())break;};
+  #endif
+
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
   return Key;
 }
@@ -3319,6 +3341,8 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
   if(!Permanently)
     game::Save();
+
+  game::RemoveSaves(true,true); // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
 
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);

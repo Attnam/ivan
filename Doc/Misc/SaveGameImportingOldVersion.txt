@@ -1,0 +1,47 @@
+(changed from: https://github.com/Attnam/ivan/issues/346)
+
+Based on the version collected on the savegame binary file, a simple code can implemented like this:
+
+if(loadedSavegameFileVersion >= 132){
+// load new stuff from 132
+}
+
+if(loadedSavegameFileVersion >= 133){
+// load new stuff from 133
+}
+
+Only to load the savegame of course, and at all related classes that may have new stuff.
+
+ex.:
+v132 [ some old data ] [ some old dataaaaaaa ] [ some old dataaaaaaaaaaaaaa ]
+v133 [ some old data ] [ some old dataaaaaaa ] [ some NEW v133 data ] [ some old dataaaaaaaaaaaaaa ]
+
+The importer at v133 to load v132, if it just skip loading "some NEW v133 data" from v132, even if it is not in the end of the file, may work well, just test it!
+
+=====================================
+
+Being simple means no compatibilization should be coded, ex. if gameplay was too easy, when importing an old save, the result shall not be modified to make it adequate to the new way things work. 
+
+So, after the import ends, the things that were not imported (from the end of the savegame binary file), that were missing, "will probably/expectedly" receive default values equivalent to when starting a new game.
+That's why an import "may" work. The user may try the importer, or just continue playing using the old game version til char's death.
+
+Anyway, if in some special case, something severe changes breaking the game to an unplayable point, the import will fail, may be from save version 131 to 141 too many critical things changed and it could fail, but if the user upgrade the save, thru all "game versions" "importer" one by one, then instead of importing directly to save version 141, going every step (132, 133, 134 etc) could probably make it work better, may be...
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////// TODO one day may be //////////////////////////////////////
+
+Another thing I thought would be to create savegames structure based on tokens/IDs for each data sector.
+
+Not necessarily a xml file, neither a non binary save (user readable/editable would not be good),
+so it could be some kind of binary with tokens delimiting sectors.
+
+That way these gaps, or saved data position changing, created by new savegame versions could (probably) not be a problem at all, and there would (probably) not have compatibility problems.
