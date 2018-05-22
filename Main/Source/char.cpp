@@ -2770,7 +2770,7 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
 
 void character::DeActivateTemporaryState(long What)
 {
-  if(PolymorphBackup && PolymorphBackup->TemporaryStateIsActivated(What))
+  if(PolymorphBackup)
     PolymorphBackup->TemporaryState &= ~What;
 
   TemporaryState &= ~What;
