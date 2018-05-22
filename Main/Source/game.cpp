@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <iostream>
 #include <vector>
+#include <bitset>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
@@ -24,6 +25,7 @@
 #endif
 
 #include "allocate.h"
+#include "action.h"
 #include "area.h"
 #include "audio.h"
 #include "balance.h"
@@ -191,17 +193,22 @@ int iYSize=0;
 
 int iRegionAroundXBRZ = -1;
 int iRegionSilhouette = -1;
+int iRegionVanillaSilhouette = -1;
 int iRegionIndexDungeon = -1;
 int iRegionListItem = -1;
+int iRegionItemsUnder = -1;
 
 blitdata game::bldAroundOnScreenTMP = DEFAULT_BLITDATA;
 blitdata bldFullDungeonTMP = DEFAULT_BLITDATA;
 blitdata bldSilhouetteTMP = DEFAULT_BLITDATA;
+blitdata bldVanillaSilhouetteTMP = DEFAULT_BLITDATA;
 blitdata bldListItemTMP = DEFAULT_BLITDATA;
 
+int iItemsUnderStretch = 2;
+
 int iZoomFactor=6;
-v2 ZoomPos = {0,0};
-v2 silhouettePos = {0,0};
+v2 ZoomPos = v2(0,0);
+v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
 
@@ -305,84 +312,86 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
   if(i==0)return;
   if(DoZoom())return; //TODO should be able to clear in zoom mode too? the result is still messy, but... is it cool to xBRZ non visible squares in look mode?  if so, no need to clear them...
 
-  /***
-   * this will check the squares around player for visibility/CanFeel
-   *
-   * the problem is the dungeon corners, ex.:
-   *  0       1       2
-   *  ####### ######O ######O
-   *  ####### ##P###O ##P###O
-   *  WWW#### WWW###O WWW###O
-   *  ##WP### ##W###O     ##O
-   *  ##W#### ##W###O      #O
-   *  ####### OOOOOOO OOOOOOO
-   *  ####### OOOOOOO OOOOOOO
-   *
-   *  Using xBRZ around player by 3 squares.
-   *  P = player
-   *  # = within user requested "around" distance.
-   *  O = out of user requested "around" distance (are ignored/not considered)
-   *  W = wall
-   *
-   *  0 - player is far from visible dungeon corners (no complexity)
-   *
-   *  1 - player is near top left corner:
-   *    The drawn dungeon visible area will be copied just 2 to the left and 1 to the top away from player position,
-   *    this means the cached bitmap will be smaller than at (*0).
-   *
-   *  2 - The player surroundings will be checked for visibility/CanFeel, if neither, these squares (that I deleted
-   *    on the example above) will be cleared from pixel colors to the mask/transparent color.
-   *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
-   */
-
-//  lsquare* plsq = Player->GetLSquareUnder();
-//  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
-  v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
-  v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
-
-  level* plv = Player->GetLevel();
-  v2 v2ChkSqrPos;
-  lsquare* plsqChk;
   std::vector<v2> vv2ToBeCleared;
-  v2 v2CamSqPos = GetCamera();
-  v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
-  int iSqLeftSkipX=0;
-  int iSqTopSkipY=0;
-  v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
-  // tips: OnScreen(v2Square)
-  for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
-    if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
-    if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
+  if(!IsInWilderness()){
+    /***
+     * this will check the squares around player for visibility/CanFeel
+     *
+     * the problem is the dungeon corners, ex.:
+     *  0       1       2
+     *  ####### ######O ######O
+     *  ####### ##P###O ##P###O
+     *  WWW#### WWW###O WWW###O
+     *  ##WP### ##W###O     ##O
+     *  ##W#### ##W###O      #O
+     *  ####### OOOOOOO OOOOOOO
+     *  ####### OOOOOOO OOOOOOO
+     *
+     *  Using xBRZ around player by 3 squares.
+     *  P = player
+     *  # = within user requested "around" distance.
+     *  O = out of user requested "around" distance (are ignored/not considered)
+     *  W = wall
+     *
+     *  0 - player is far from visible dungeon corners (no complexity)
+     *
+     *  1 - player is near top left corner:
+     *    The drawn dungeon visible area will be copied just 2 to the left and 1 to the top away from player position,
+     *    this means the cached bitmap will be smaller than at (*0).
+     *
+     *  2 - The player surroundings will be checked for visibility/CanFeel, if neither, these squares (that I deleted
+     *    on the example above) will be cleared from pixel colors to the mask/transparent color.
+     *    So, the vanilla (non xBRZ) non-visible squares' representation will be kept.
+     */
 
-    iSqLeftSkipX=0; //must be reset here
-    for(int iX=v2MaxSqrUpperLeft.X;iX<=v2MaxSqrLowerRight.X;iX++){
-      if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
-      if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
+  //  lsquare* plsq = Player->GetLSquareUnder();
+  //  v2 v2PlayerPos = plsq->GetPos(); DBG3("PlayerPos",v2PlayerPos.X,v2PlayerPos.Y);
+    v2 v2MaxSqrUpperLeft (v2SqrPos.X-i,v2SqrPos.Y-i); DBGSV2(v2MaxSqrUpperLeft);
+    v2 v2MaxSqrLowerRight(v2SqrPos.X+i,v2SqrPos.Y+i); DBGSV2(v2MaxSqrLowerRight);
 
-      v2ChkSqrPos={iX,iY};
-      if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
-      v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
-      plsqChk = plv->GetLSquare(v2ChkSqrPos);
+    level* plv = Player->GetLevel();
+    v2 v2ChkSqrPos;
+    lsquare* plsqChk;
+    v2 v2CamSqPos = GetCamera();
+    v2 v2DungeonSqSize = v2(GetScreenXSize(),GetScreenYSize());
+    int iSqLeftSkipX=0;
+    int iSqTopSkipY=0;
+    v2 v2Invalid(-1,-1),v2TopLeft(v2Invalid),v2BottomRight(v2Invalid);
+    // tips: OnScreen(v2Square)
+    for(int iY=v2MaxSqrUpperLeft.Y;iY<=v2MaxSqrLowerRight.Y;iY++){
+      if(iY<0                || iY<  v2CamSqPos.Y                   ){iSqTopSkipY++;continue;}
+      if(iY>=plv->GetYSize() || iY>=(v2CamSqPos.Y+v2DungeonSqSize.Y))break;
 
-      if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-      if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+      iSqLeftSkipX=0; //must be reset here
+      for(int iX=v2MaxSqrUpperLeft.X;iX<=v2MaxSqrLowerRight.X;iX++){
+        if(iX<0                || iX<  v2CamSqPos.X                   ){iSqLeftSkipX++;continue;}
+        if(iX>=plv->GetXSize() || iX>=(v2CamSqPos.X+v2DungeonSqSize.X))break;
 
-      /********************************************************************************************
-       * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
-       * (that is a copy of the player surroundings at dungeon area),
-       * that will have the squares cleared after it is cached
-       * and before it is stretched with xBRZ,
-       * so that the non visible squares will be drawn equally to all other far away
-       * non vivible squares.
-       */
-      vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
-        (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
-        (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
-      )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+        v2ChkSqrPos=v2(iX,iY);
+        if(v2TopLeft==v2Invalid)v2TopLeft=v2ChkSqrPos; //first is top left
+        v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
+        plsqChk = plv->GetLSquare(v2ChkSqrPos);
+
+        if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
+        if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+
+        /********************************************************************************************
+         * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
+         * (that is a copy of the player surroundings at dungeon area),
+         * that will have the squares cleared after it is cached
+         * and before it is stretched with xBRZ,
+         * so that the non visible squares will be drawn equally to all other far away
+         * non vivible squares.
+         */
+        vv2ToBeCleared.push_back(v2( //TODO CalculateScreenCoordinates(v2Square)
+          (v2ChkSqrPos.X - v2MaxSqrUpperLeft.X - iSqLeftSkipX)*TILE_SIZE,
+          (v2ChkSqrPos.Y - v2MaxSqrUpperLeft.Y - iSqTopSkipY )*TILE_SIZE
+        )); DBGSV2(vv2ToBeCleared[vv2ToBeCleared.size()-1]);
+      }
     }
-  }
 
-  DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
+    DBGSV2(v2TopLeft);DBGSV2(v2BottomRight);
+  }
 
   graphics::SetSRegionClearSquaresAt(iRegionAroundXBRZ,TILE_V2,vv2ToBeCleared);
 }
@@ -411,6 +420,8 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
   if(bOk && Player->IsDead())bOk=false; // this may actually never happen...
 
+  if(bOk && !OnScreen(v2SqrPos))bOk=false;
+
   if(bOk && bPositionQuestionMode){
     if(!IsInWilderness()){ // always allowed in wilderness (as there is only fully dark squares, not partial as memories)
       bOk=false;
@@ -438,7 +449,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
 
 //  v2 v2SqrPosPlayer = Player->GetPos();
   v2 v2SqrPosCam = GetCamera();
-  v2 v2DeltaSqr = {v2SqrPos.X-v2SqrPosCam.X, v2SqrPos.Y-v2SqrPosCam.Y};
+  v2 v2DeltaSqr = v2(v2SqrPos.X-v2SqrPosCam.X, v2SqrPos.Y-v2SqrPosCam.Y);
 
   v2 deltaSquaresForUpperLeft=v2DeltaSqr;
   deltaSquaresForUpperLeft.X-=iSAP;
@@ -472,7 +483,7 @@ void game::UpdatePosAroundForXBRZ(v2 v2SqrPos){ //TODO join this logic with Prep
   // this grants positioninig on the upper left player's square corner
 
   // relative to full dungeon in source image vanilla position
-  v2 deltaForFullDungeonSrc = {bldAroundOnScreenTMP.Src.X-bldFullDungeonTMP.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeonTMP.Src.Y};
+  v2 deltaForFullDungeonSrc = v2(bldAroundOnScreenTMP.Src.X-bldFullDungeonTMP.Src.X, bldAroundOnScreenTMP.Src.Y-bldFullDungeonTMP.Src.Y);
 
   // relative to full dungeon over it's stretched image position
   bldAroundOnScreenTMP.Dest.X=bldFullDungeonTMP.Dest.X+(deltaForFullDungeonSrc.X*ivanconfig::GetStartingDungeonGfxScale());
@@ -492,11 +503,15 @@ void game::RegionListItemEnable(bool b){
   graphics::SetSRegionEnabled(iRegionListItem, b);
 }
 
-void game::RegionSilhouetteEnable(bool b){
+void game::RegionSilhouetteEnable(bool bEnable){
   game::PrepareStretchRegionsLazy();
   if(iRegionSilhouette==-1)return;
 
-  if( b && ivanconfig::GetSilhouetteScale()>1 ){
+  if(bEnable && ivanconfig::GetSilhouetteScale()==1)bEnable=false;
+
+  if(bEnable && !PLAYER->IsHumanoid())bEnable=false; //TODO isHuman() too?
+
+  if(bEnable){
     bldSilhouetteTMP.Stretch = ivanconfig::GetSilhouetteScale();
 
     bldSilhouetteTMP.Dest = {
@@ -552,17 +567,26 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   //TODO player stats etc, text log? at most x2?, set thru one user option bool for all (fast blit only?)
 
   if(iRegionSilhouette==-1){     // equiped items and humanoid silhouette region
-    silhouettePos = humanoid::GetSilhouetteWhere();
-    if(silhouettePos.X>0 && silhouettePos.Y>0){
+    silhouettePos = humanoid::GetSilhouetteWhereDefault();
+    if(!silhouettePos.Is0()){
       silhouettePos.X -= 15; silhouettePos.Y -= 23; //exact top left corner of all equipped items countour
       silhouettePos-=v2(1,1); //1 dot b4
       bldSilhouetteTMP.Src = {silhouettePos.X, silhouettePos.Y};
-      bldSilhouetteTMP.Border = {94,110}; //SILHOUETTE_SIZE + equipped items around
+      int iEqSize=23;
+      v2 v2EqSqr(iEqSize,iEqSize);
+      bldSilhouetteTMP.Border = SILHOUETTE_SIZE+(v2EqSqr*2); //SILHOUETTE_SIZE + equipped items all around
       bldSilhouetteTMP.Border+=v2(2,2); //compensate for pos-1 and add +1 after border
       bldSilhouetteTMP.Stretch = 2; // minimum to allow setup
       iRegionSilhouette = graphics::AddStretchRegion(bldSilhouetteTMP,"Silhouette");
       graphics::SetSRegionDrawAfterFelist(iRegionSilhouette,true);
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
+
+      // alt vanilla silhouette pos
+      bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
+      bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
+      iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
+      graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
+      graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
     }
   }
 
@@ -573,6 +597,12 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
     iRegionListItem = graphics::AddStretchRegion(bldListItemTMP,"ListItem");
     graphics::SetSRegionListItem(iRegionListItem);
     graphics::SetSRegionDrawRectangleOutline(iRegionListItem,true);
+  }
+
+  if(iRegionItemsUnder==-1){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Stretch=iItemsUnderStretch;
+    iRegionItemsUnder = graphics::AddStretchRegion(B,"ItemsUnderPosShowAboveHead");
   }
 
   UpdateSRegionsXBRZ();
@@ -1101,9 +1131,768 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+/**
+ * TODO optimize it: there are some calculations that could be made once per turn and not per frame...
+ * TODO split this method in many, merely to easy it's understanding by sub-contexts..
+ */
+void game::UpdateAltSilhouette(bool AnimationDraw){
+  static const int iStep=2;
+  static const int iYDiff=TILE_SIZE/3; //has more +- 33% height, after stretching by x3 will be like 3x4 squares of 16x16 dots each
+  static const int iY4 = TILE_SIZE + iYDiff + 1; //+1 as the top line is to be kept empty
+  static const v2 v2OverSilhouette = v2(TILE_SIZE, iY4);
+  static int iAltSilBlitCount=0;
+  static const int iTotTallStates=3;
+  static const int iTallFrom=2;
+  static const int iBreathFrom=3;
+  static int iTallState=iTotTallStates-1;
+  static int iPreviousAltSilOpt=0;
+  static const v2 v2AltSilDispl = v2(8,-2);//v2(10,-2);//v2(24,24);
+  static v2 v2AltSilPos=v2(0,0);
+//  static int iRandTorso=0;
+
+  bool bOk=true;
+
+  //if(bOk && !bAllowed)bOk=false;
+
+  //if(bOk && !graphics::IsSRegionEnabled(iRegionSilhouette))bOk=false; //depends on it
+
+  if(bOk && bPositionQuestionMode)bOk=false;
+
+  if(bOk && ivanconfig::GetAltSilhouette()==0)bOk=false;
+
+  if(bOk && !Player->IsEnabled())bOk=false;
+
+  if(bOk && Player->IsDead())bOk=false; //TODO this works?
+
+  humanoid* h=dynamic_cast<humanoid*>(Player);
+  if(bOk && h==NULL)bOk=false; //TODO let it work with non humanoid forms
+//  if(bOk && Player->IsPolymorphed())bOk=false;
+
+  if(humanoid::GetSilhouetteWhereDefault().Is0()){
+    bOk=false;
+  }else{
+    if(iRegionVanillaSilhouette==-1)game::PrepareStretchRegionsLazy();
+  }
+
+  if(!bOk){
+    iTallState=iTotTallStates-1;
+    iAltSilBlitCount=0;
+    humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
+    if(iRegionVanillaSilhouette!=-1)graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    return;
+  }
+
+  /////////////////////////// ok ////////////////////////////
+
+  iPreviousAltSilOpt=ivanconfig::GetAltSilhouette();
+
+//  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
+  bool bRolling=false;
+  bool bHopping=false; DBG1(iRegionVanillaSilhouette);
+  if(iRegionVanillaSilhouette!=-1){
+    bool bOk2=true;
+
+    if(bOk2 && ZoomPos.Is0())bOk2=false;
+
+    if(bOk2 && h==NULL)bOk2=false;
+
+    if(bOk2 && ivanconfig::GetAltListItemPos()==1 && graphics::IsSRegionEnabled(iRegionListItem))bOk2=false; //is same of zoom pos
+
+    if(bOk2){
+      bRolling = !h->GetRightLeg() && !h->GetLeftLeg();
+      bHopping = !bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
+
+      v2 v2Pos=ZoomPos;
+
+      humanoid::SetSilhouetteWhere(v2Pos);DBGSV2(v2Pos);
+
+      if(iAltSilBlitCount==0) //first time
+        if(h){
+          h->DrawSilhouette(false);DBGLN;
+        }
+
+      bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
+
+      v2 v2Dest = v2Pos;
+      v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
+      if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
+      if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
+      bldVanillaSilhouetteTMP.Dest=v2Dest;
+
+      graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
+      //h->DrawSilhouette(AnimationDraw); //TODO necessary?
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+    }else{
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    }
+  }
+
+//  if(v2AltSilPos.Is0())v2AltSilPos = bldSilhouetteTMP.Src + v2AltSilDispl;
+//  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhere() + v2AltSilDispl;
+  if(v2AltSilPos.Is0())v2AltSilPos = humanoid::GetSilhouetteWhereDefault() + v2AltSilDispl;
+  static const v2 v2AltSilTopCenterPos = v2AltSilPos + v2(v2OverSilhouette.X/2,0);
+  static v2 v2AltSilMovingPos=v2AltSilPos;
+
+  static blitdata bldPlayerCopyTMP = [](){bldPlayerCopyTMP = DEFAULT_BLITDATA;
+    bldPlayerCopyTMP.Bitmap = new bitmap(TILE_V2);
+    bldPlayerCopyTMP.CustomData |= ALLOW_ANIMATE;
+    bldPlayerCopyTMP.Luminance = NORMAL_LUMINANCE; return bldPlayerCopyTMP; }(); DBGBLD(bldPlayerCopyTMP);
+  static int iDarkComp=50;
+  static col16 darkestThatWontGlitchWithAlpha = MakeRGB16(iDarkComp,iDarkComp,iDarkComp); //still glitches a bit...
+//  static col24 darkestThatWontGlitchWithAlphaLum24 = MakeRGB24(iDarkComp,iDarkComp,iDarkComp);
+  col16 bkgAlignmentColor = TRANSPARENT_COLOR;
+  col24 bkgAlignmentLum24 = NORMAL_LUMINANCE;
+  int iPlayerAlignment = GetPlayerAlignment();
+  switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
+  case 0:
+    // keep default transparent
+    break;
+  case 1:
+    bkgAlignmentColor = darkestThatWontGlitchWithAlpha;
+    break;
+  case 2:{
+    /**
+     * depicts alignment with background colors
+     * tho, not more info than what is already written by the side of player's name
+     * TODO animations? fire chaotic, clouds lawful
+     */
+    const static int iColorCompBase=0xff/2; // should start where NORMAL_LUMINANCE does, in the middle of the range
+    const static int iColorCompMax=225;
+    const static int iColorStepMult=3;
+    const static int iMaxColorVariations = (iColorCompMax-iColorCompBase)/iColorStepMult;
+    static col16 reds[iMaxColorVariations];
+    static col24 reds24[iMaxColorVariations];
+    static col16 blues[iMaxColorVariations];
+    static col24 blues24[iMaxColorVariations];
+//    static col16 greys[iMaxColorVariations];
+    static bool bDummy_Colors = [](){
+      int iColorVarFinal;
+      for(int i=0;i<iMaxColorVariations;i++){
+        /**
+         * the i*Multiplier: there are not so many colors on col16
+         */
+        iColorVarFinal = iColorCompBase + (i+1)*iColorStepMult; //+1 to avoid the extact middle
+
+        reds[i]=MakeRGB16(iColorVarFinal,0,0); // chaotic variation
+        reds24[i]=MakeRGB24(GetRed16(reds[i]),iColorCompBase,iColorCompBase);
+
+        blues[i]=MakeRGB16(0,0,iColorVarFinal);
+        blues24[i]=MakeRGB24(iColorCompBase,iColorCompBase,GetBlue16(blues[i]));
+
+//        iMult=1;iColorVarFinal = (i*iMult)-((totColorVariations*iMult)/2);
+//        greys[i]=MakeRGB16(iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal,iDarkComp+iColorVarFinal);
+      };return true; }();
+    const static int totColorVariations=iMaxColorVariations/4; //4 is max lawful or chaotic steps
+    static int iColorVariationIndex=0;
+    static int iColorVariationDir=1;
+    static int iColorVariationDelay=CLOCKS_PER_SEC/totColorVariations;
+    static int iColorVariationChangeAt=clock()+iColorVariationDelay;
+    if(clock()>=iColorVariationChangeAt){
+      iColorVariationIndex+=iColorVariationDir;
+
+      if(iColorVariationIndex<0){
+        iColorVariationIndex=0;
+        iColorVariationDir=1;
+      }
+
+      if(iColorVariationIndex==totColorVariations){
+        iColorVariationIndex=totColorVariations-1;
+        iColorVariationDir=-1;
+      }
+    }
+    int iBaseColorVariation=0;
+    switch(abs(iPlayerAlignment)){
+      case  4: iBaseColorVariation+=totColorVariations;
+      case  3: iBaseColorVariation+=totColorVariations;
+      case  2: iBaseColorVariation+=totColorVariations;
+      case  1:
+      case  0:
+        iColorVariationIndex+=iBaseColorVariation;
+        if(iColorVariationIndex>=iMaxColorVariations)iColorVariationIndex=iMaxColorVariations-1; //fail safe...
+    }
+    DBG5(iColorVariationIndex,iBaseColorVariation,totColorVariations,iMaxColorVariations,iColorVariationDir);
+    switch(iPlayerAlignment){
+      case  4:      case  3:      case  2:      case  1:
+        bkgAlignmentColor=blues[iColorVariationIndex];
+        bkgAlignmentLum24=blues24[iColorVariationIndex];
+        break;
+      case  0:
+        bkgAlignmentColor=darkestThatWontGlitchWithAlpha; //greys[iColorVariationIndex];
+        bkgAlignmentLum24=NORMAL_LUMINANCE;// to not darken it //darkestThatWontGlitchWithAlphaLum24;
+        break;
+      case -1:      case -2:      case -3:      case -4:
+        bkgAlignmentColor=reds[iColorVariationIndex];
+        bkgAlignmentLum24=reds24[iColorVariationIndex];
+        break;
+    }
+//    igraph::BlitBackGround(bldPlayerCopyTMP.Bitmap,v2(),TILE_V2); //not good...
+//    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,bkgAlignmentColor);
+    }break;
+  default:
+    ABORT("invalid option GetAltSilhouettePreventColorGlitch %d",ivanconfig::GetAltSilhouettePreventColorGlitch());
+    break;
+  }
+
+  bool bFluctuating = Player->IsSwimming() || Player->IsFlying();
+
+  bool bSleeping = false;
+  if(Player->GetAction()!=NULL)bSleeping=Player->GetAction()->IsUnconsciousness();
+
+  bool bRotate=false;
+  static blitdata bldRotated = [](){bldRotated = DEFAULT_BLITDATA;
+    bldRotated.Border=TILE_V2;
+    bldRotated.Bitmap = new bitmap(TILE_V2); return bldRotated; }(); DBGBLD(bldRotated);
+
+  static int iLastSleepSide=0;
+//  if(bSleeping && !bFluctuating){
+  if(bSleeping){ //TODO ? currently there is no space for breath animation if rotated +-90 degrees, some lines could be lost may be?
+    if(iLastSleepSide==0)iLastSleepSide=clock()%2==0?1:-1;
+    bitmap::ConfigureBlitdataRotation(bldRotated,1);
+//    bldPlayerCopyTMP.CustomData |= SQUARE_INDEX_MASK;
+    bRotate=true;
+  }else{
+    iLastSleepSide=0;
+//    bldPlayerCopyTMP.CustomData &= ~SQUARE_INDEX_MASK;
+  }
+
+  /**
+   * This is an attempt to workaround the alpha blit.
+   *
+   * The problem (glitch):
+   *  To blit the player with transparent background we use TRANSPARENT_COLOR.
+   *  But when the alpha blit from Player->Draw() writes to the bitmap, it will blend with the TRANSPARENT_COLOR.
+   *
+   * The workaround:
+   *  Let it draw over TRANSPARENT_COLOR.
+   *  Look for the first available (non used) color from darkest possible.
+   *  Let it draw again over that not found color to prevent the glitch.
+   *
+   * TODO The correct solution (may be):
+   *  Let Player->Draw(), when blitting alpha pixels, optionally use some requested color (like black) just to blend
+   *  with thes alpha pixels, instead of the existing one (TRANSPARENT_COLOR that is pink).
+   */
+  static col16 aColorToClear[256];static bool bDummy_aColorToClear = [](){ //grey levels
+    for(int i=0;i<256;i++)aColorToClear[i]=MakeRGB16(i,i,i); return true;}();
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,TRANSPARENT_COLOR);
+  Player->Draw(bldPlayerCopyTMP);
+
+  col16 colorNotFound=TRANSPARENT_COLOR; //this may cause one frame glitch from time to time :/ by bleding other color that has alpha with that color
+
+  if(bkgAlignmentColor != TRANSPARENT_COLOR){ // prefers alignment color first for best blending
+    if(!bldPlayerCopyTMP.Bitmap->HasColor(bkgAlignmentColor))
+      colorNotFound=bkgAlignmentColor;
+  }
+
+  if(colorNotFound == TRANSPARENT_COLOR){
+    for(int i=0;i<256;i++){ //starting from black (0,0,0) gave better visual results than from white or gray.
+      if(!bldPlayerCopyTMP.Bitmap->HasColor(aColorToClear[i])){
+        colorNotFound=aColorToClear[i]; DBG2(colorNotFound,i);
+        break;
+      }
+    }
+  }
+
+  if(colorNotFound != TRANSPARENT_COLOR){
+    bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2,colorNotFound);
+    Player->Draw(bldPlayerCopyTMP); // draws again for best blending
+    bldPlayerCopyTMP.Bitmap->ReplaceColor(colorNotFound, TRANSPARENT_COLOR);
+  }
+  /*
+  static col16 ColorBlendWithAlphaAndToClear = MakeRGB16(255,254,253); //TODO expectedly unused, but just a wild bad guess...
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2, ColorBlendWithAlphaAndToClear);
+  Player->Draw(bldPlayerCopyTMP);
+  bldPlayerCopyTMP.Bitmap->ReplaceColor(ColorBlendWithAlphaAndToClear,TRANSPARENT_COLOR); //TODO this may create holes in the image...
+  */
+  /*
+  static bool bBkgPlayerForceTransparent = true;
+  bldPlayerCopyTMP.Bitmap->Fill(0,0,TILE_V2, bBkgPlayerForceTransparent ? TRANSPARENT_COLOR : bkgAlignmentColor);
+  Player->Draw(bldPlayerCopyTMP);
+ * */
+
+  bitmap* bmpPlayerSrc=bldPlayerCopyTMP.Bitmap; //DBG1(bmpPlayerSrc);
+
+  bool bXbyYis3by4=ivanconfig::GetAltSilhouette()>=iTallFrom; // tall/breathing
+  if(bXbyYis3by4){
+    static blitdata bldPlayer3by4TMP = [](){
+//      blitdata B = DEFAULT_BLITDATA;
+      bldPlayer3by4TMP=DEFAULT_BLITDATA;
+      bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
+//      return B;
+      return bldPlayer3by4TMP;
+    }();
+//    if(bldPlayer3by4TMP.Bitmap==NULL){
+//      bldPlayer3by4TMP.Bitmap = new bitmap(v2OverSilhouette);
+//    }
+
+    bool bTired = Player->GetTirednessState()==EXHAUSTED || Player->GetTirednessState()==FAINTING;
+
+    static int iFullBreathCount=0;
+
+    static bool bKeepRolling=false;
+    static int iNextRollAtFullBreath=0;
+    if(bRolling && !bFluctuating && !bSleeping && iTallState==0){
+      if(Player->GetBurdenState()!=OVER_LOADED){
+        if(iFullBreathCount>=iNextRollAtFullBreath){
+          int iRollFPS = 3 * (PlayerIsRunning()?2:1); // 4 steps is one full roll 360 degrees
+          int iStepDelay = CLOCKS_PER_SEC/iRollFPS;
+
+          static clock_t nextRollTime=0;
+          static int iRollDirection=1;
+          static int iRollingCount=0;
+          if(clock() >= nextRollTime){
+            iRollingCount++;
+
+            bitmap::ConfigureBlitdataRotation(bldRotated,iRollingCount*iRollDirection);
+            DBG5("RollRotate90deg", iRollingCount*iRollDirection, bldRotated.Flags&ROTATE, bldRotated.Flags&FLIP, bldRotated.Flags&MIRROR );
+
+            if(iRollingCount >= 4){
+              bKeepRolling=false;
+              iRollDirection = clock()%2==0 ? 1 : -1; //prepare for next roll direction TODO use last if was left or right move (will ignore up/down tho)? would look good
+              iRollingCount=0;
+              iNextRollAtFullBreath = iFullBreathCount + 2 + clock()%4; DBG1(iNextRollAtFullBreath);
+            }else{
+              bKeepRolling=true;
+            } DBG2(bKeepRolling,DBGB(bKeepRolling));
+
+            nextRollTime = clock()+iStepDelay;
+          }
+
+          bRotate=true;
+        }
+      }else{
+        bKeepRolling=false;
+      }
+    }
+
+    if(bRotate){
+      bmpPlayerSrc->NormalBlit(bldRotated); //DBG1(bmpPlayerSrc);DBGLN;
+      bmpPlayerSrc = bldRotated.Bitmap; //DBG1(bmpPlayerSrc);DBGLN;
+    }
+
+    /********************************************
+     * set base position
+     */
+    if(bFluctuating){
+      float fStepsPerSecond=15; //fly turbulence move base speed
+      int iMoveStep=1;
+      if(PlayerIsRunning()){
+        static int iRunMultSPS=2;
+        fStepsPerSecond *= iRunMultSPS; //this will not work well if the machine is too slow
+        if(globalwindowhandler::GetFPS(true) < fStepsPerSecond) iMoveStep=iRunMultSPS; //this is like a frame skip
+      }
+      if(bTired){
+        fStepsPerSecond/=2;
+        iMoveStep=1;
+      }
+      long lFlyStepDelay = CLOCKS_PER_SEC/fStepsPerSecond;
+
+      static v2 v2PtoSAmoveTo;
+      long lTimeNow=clock(); //this is animation based on real time.
+      bool bDoStepNow=false;
+      static long lPreviousFlyStepTime=0;
+      if(lTimeNow-lPreviousFlyStepTime > lFlyStepDelay){
+        bDoStepNow=true;
+        lPreviousFlyStepTime=lTimeNow;
+      }else{DBGSI(lTimeNow);}
+
+      v2 v2Dist = v2PtoSAmoveTo - v2AltSilMovingPos; DBG2(DBGAV2(v2Dist),DBGB(v2Dist<v2(2,2)));
+//      if(!v2PtoSAmoveTo.Is0() && v2AltSilMovingPos != v2PtoSAmoveTo){ //slowly move to the new spot
+      if( !v2PtoSAmoveTo.Is0() && (abs(v2Dist.X)>=iMoveStep || abs(v2Dist.Y)>=iMoveStep) ){ //slowly move to the new spot
+        if(bDoStepNow){
+          if(v2AltSilMovingPos.X < v2PtoSAmoveTo.X)v2AltSilMovingPos.X+=iMoveStep;
+          else
+          if(v2AltSilMovingPos.X > v2PtoSAmoveTo.X)v2AltSilMovingPos.X-=iMoveStep;
+
+          if(v2AltSilMovingPos.Y < v2PtoSAmoveTo.Y)v2AltSilMovingPos.Y+=iMoveStep;
+          else
+          if(v2AltSilMovingPos.Y > v2PtoSAmoveTo.Y)v2AltSilMovingPos.Y-=iMoveStep;
+        }
+      }else{ //prepare new target fly spot destination
+        // a bit more turbulence :)
+        v2 v2Displ;
+        int iMaxDisplacementFromCenterLess1=TILE_SIZE/4;//(PlayerIsRunning()?4:8);
+        v2Displ.X  = clock()%iMaxDisplacementFromCenterLess1;
+        v2Displ.Y  = clock()%iMaxDisplacementFromCenterLess1;
+        v2Displ.X *= clock()%2==0 ? 1 : -1;
+        v2Displ.Y *= clock()%2==0 ? 1 : -1;
+
+        v2PtoSAmoveTo  = v2AltSilTopCenterPos - v2(v2OverSilhouette.X/2,0); //top left
+        v2PtoSAmoveTo += v2Displ; //variation from top center
+      }
+
+    }
+
+    if(!bKeepRolling && !bSleeping){
+      int iYDest=0;
+      int iBreathStepCount=0;
+      if(ivanconfig::GetAltSilhouette()>=iBreathFrom){ //breath animation
+        int nBreathDelay = 20 + 10*(ivanconfig::GetAltSilhouette()-iBreathFrom); //calm breathing
+        if(PlayerIsRunning())nBreathDelay/=2;
+        if(Player->GetTirednessState()==EXHAUSTED)nBreathDelay/=2; // OR faiting...
+        if(Player->GetTirednessState()==FAINTING )nBreathDelay/=4;
+        if(nBreathDelay<1)nBreathDelay=1;
+
+        iBreathStepCount = iAltSilBlitCount/nBreathDelay;
+        int iTotTallStatesCurrent=iTotTallStates;
+        if(bFluctuating)iTotTallStatesCurrent=2;
+        int iTallStateNew = iBreathStepCount % iTotTallStatesCurrent;
+  //      if(bFluctuating)iTallStateNew=0;
+        if(iTallStateNew!=iTallState){
+          if(iTallStateNew==0)iFullBreathCount++;
+        }
+        iTallState=iTallStateNew;
+      }DBG1(iTallState);
+      if(TILE_SIZE==16){ // this is like a post processing gfx
+        //never glue the head on top to prevent (more) stretching distortions, so we have at least one empty line on top
+        bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+
+        bool bLower = (iTallState==0 && bTired) || bFluctuating;
+
+        int iTotBlankLines = iTotTallStates - (iTallState+1);
+        // 3-(2+1)=0 //nothing
+        // 3-(1+1)=1 //0
+        // 3-(0+1)=2 //0 1
+        if(bLower)iTotBlankLines++; //wont dup pants
+
+        bool bJump=false;
+        if(bFluctuating){
+          iTotBlankLines+=1; // for the shorter legs
+          iTotBlankLines+=2; // for the even smaller torso with -2 lines both at 0 and 1 tall states
+  //        switch(iTallState){
+  //        case 0: iTotBlankLines+=2; break; // for the even smaller torso
+  //        case 1: iTotBlankLines+=1; break;
+  //        }
+
+  //        // random blank above head to make it oscillate while flying
+  //        if(iFlyRandom%2==0){
+  //          bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+  //          iTotBlankLines--;
+  //        }
+        }else{
+          if(iTallState==0 && bHopping && clock()%2==0)bJump=true;
+
+          //blank space above head
+          if(!bJump)
+            for(int i=0;i<iTotBlankLines;i++)
+              bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+        }
+
+        /*************************************
+         * full body
+         *************************************/
+        int iHeadLines=6;
+        for(int y=0;y<iHeadLines;y++){ //head
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+        }
+
+        // torso are lines 6 7 8 9 (lets keep it simple to read...)
+        switch(iTallState){
+        case 0:
+          if(bFluctuating){ // -2L (4 lines)
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }else{ //lowest (6 lines)  for non flying
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }
+          break;
+        case 1:
+          if(bFluctuating){ // -2L (5 lines)
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }else{ // (7 lines)
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }
+          break;
+        case 2:
+          if(bFluctuating){ // -2L (6 lines)
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }else{ //tallest (8 lines)
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,6,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,7,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,8,TILE_SIZE,true);
+            bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,9,TILE_SIZE,true);
+          }
+          break;
+        default:
+          ABORT("not supported tall state %d",iTallState); //all the above is for 3 tall states, changing it probably will require updating them all
+        }
+
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,10,TILE_SIZE,true); //pants
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,11,TILE_SIZE,true); //weapon handle
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants
+        if(!bLower)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,12,TILE_SIZE,true); //pants dup
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,13,TILE_SIZE,true);
+        if(!bFluctuating)bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,14,TILE_SIZE,true); //shorter legs if flying
+        bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest++,bldPlayerCopyTMP.Bitmap,15,TILE_SIZE,true); //feet
+
+        ////////////////////////// end of body //////////////////////////
+
+        if(bFluctuating || bJump){
+          // blank lines below feet
+          for(int i=0;i<iTotBlankLines;i++)
+            bldPlayer3by4TMP.Bitmap->Fill(0, iYDest++, TILE_SIZE, 1, TRANSPARENT_COLOR);
+        }
+
+        if(iYDest!=iY4)ABORT("bad calc iYDest=%d != iY4=%d, jump=%s, fly=%s, swim=%s, lower=%s, TotBlank=%d",iYDest,iY4,
+          bJump?"T":"F", Player->IsFlying()?"T":"F", Player->IsSwimming()?"T":"F", bLower?"T":"F", iTotBlankLines); //Better never remove this, highly useful!
+
+      }else{
+        // fall back to simple blit for not supported tile sizes
+        bool bBreakLoop=false;
+        for(int y = 0; y < TILE_SIZE; ++y){
+          if(bBreakLoop)break;
+          bldPlayer3by4TMP.Bitmap->CopyLineFrom(iYDest,bldPlayerCopyTMP.Bitmap,y,TILE_SIZE,true);
+          if(++iYDest>=iY4){bBreakLoop=true;continue;}
+        }
+      }
+
+      bmpPlayerSrc=bldPlayer3by4TMP.Bitmap;
+    }
+
+  }
+
+  static blitdata bldPlayerToSilhouetteAreaAtDB = [](){
+    blitdata B = DEFAULT_BLITDATA;
+    B.Stretch = 3;
+    B.Bitmap = DOUBLE_BUFFER;
+    return B;
+  }();
+//  if(bldPlayerToSilhouetteAreaAtDB.Bitmap==NULL){
+//    bldPlayerToSilhouetteAreaAtDB.Stretch = 3;
+//    bldPlayerToSilhouetteAreaAtDB.Bitmap = DOUBLE_BUFFER;
+//  };
+  bldPlayerToSilhouetteAreaAtDB.Dest = v2AltSilPos;
+  if(bXbyYis3by4 && !bSleeping){
+    bldPlayerToSilhouetteAreaAtDB.Dest = v2AltSilMovingPos; DBGLN;
+  }else{
+//    if(bSleeping && !bFluctuating){
+//      bldPlayerToSilhouetteAreaAtDB.Dest.Y += iY4-TILE_SIZE;
+//    }else{
+//    bldPlayerToSilhouetteAreaAtDB.Dest.Y += TILE_SIZE/2 + (iY4-TILE_SIZE); //at bottom
+    bldPlayerToSilhouetteAreaAtDB.Dest.Y += (iY4-TILE_SIZE)*bldPlayerToSilhouetteAreaAtDB.Stretch; //at bottom
+    //    bldPlayerToSilhouetteAreaAtDB.Dest.Y += TILE_SIZE/2; //to center on it TODO wrong?
+  }
+  bldPlayerToSilhouetteAreaAtDB.Border = bmpPlayerSrc->GetSize(); DBGBLD(bldPlayerToSilhouetteAreaAtDB);
+
+  /*************************************************
+   *  blit the base background to DB
+   */
+  static const v2 v2StretchedPos = v2AltSilPos+v2(-2,0); DBG2(DBGAV2(v2AltSilPos),DBGAV2(v2StretchedPos));
+//  v2 v2StretchedBorder = (v2OverSilhouette+v2(4,2))*bldPlayerToSilhouetteAreaAtDB.Stretch;
+  static const v2 v2StretchedBorder = (v2OverSilhouette*bldPlayerToSilhouetteAreaAtDB.Stretch)+v2(4,2);
+
+  switch(ivanconfig::GetAltSilhouettePreventColorGlitch()){
+  case 0:
+    igraph::BlitBackGround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder);
+    break;
+  case 1:
+    DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, darkestThatWontGlitchWithAlpha);
+    break;
+  case 2:
+    static blitdata bldLum = [](){bldLum=DEFAULT_BLITDATA;
+      bldLum.Bitmap = DOUBLE_BUFFER;
+      bldLum.Dest = bldLum.Src = v2StretchedPos;
+      bldLum.Border = v2StretchedBorder; return bldLum;}();
+
+    static long iNextAlignBkgMove=0;
+    if(clock()>iNextAlignBkgMove){
+      static v2 v2DisplTargetNext=v2(0,0); DBGSV2(v2DisplTargetNext);
+      static v2 v2Displacement=v2(0,0); DBGSV2(v2Displacement);
+      v2 v2Diff = v2DisplTargetNext-v2Displacement; DBGSV2(v2Diff);
+      int iAbsPA=(abs(iPlayerAlignment)*2)+1; DBG1(iAbsPA);
+      if(v2Diff.Is0()){
+        v2DisplTargetNext=v2( clock()%iAbsPA,  clock()%iAbsPA);
+      }else{
+        if(v2Diff.X!=0)v2Displacement.X += v2Diff.X>0 ? 1 : -1;
+        if(v2Diff.Y!=0)v2Displacement.Y += v2Diff.Y>0 ? 1 : -1;
+      }
+      bldLum.Src = v2StretchedPos+v2Displacement; DBGSV2(v2Displacement);
+      long iDisplDelay = CLOCKS_PER_SEC/iAbsPA;
+      iNextAlignBkgMove = clock()+iDisplDelay;
+    }
+
+    bldLum.Luminance = bkgAlignmentLum24;
+    igraph::GetBackGround()->LuminanceBlit(bldLum); DBGBLD(bldLum);
+    //DOUBLE_BUFFER->Fill(v2StretchedPos, v2StretchedBorder, bkgAlignmentColor);
+    break;
+  }
+
+  bool bAllowOtherLayers=!IsInWilderness(); //TODO let it work in wilderness too)
+  /*************************************************
+   *  configure the final blit to DB
+   */
+  static blitdata bldToDB = [](){bldToDB=DEFAULT_BLITDATA;
+    bldToDB.Border=v2StretchedBorder;
+    bldToDB.Luminance=NORMAL_LUMINANCE;
+    bldToDB.Bitmap=DOUBLE_BUFFER; return bldToDB;}(); DBGBLD(bldToDB);
+
+  /*************************************************
+   * collect the graphics from the square
+   */
+  static blitdata bldFromSqr = [](){bldFromSqr = DEFAULT_BLITDATA;
+    bldFromSqr.Border=TILE_V2;
+    bldFromSqr.Bitmap=new bitmap(bldFromSqr.Border);
+    bldFromSqr.Luminance=NORMAL_LUMINANCE;
+    bldFromSqr.CustomData |= ALLOW_ANIMATE; return bldFromSqr; }(); DBGBLD(bldFromSqr);
+  if(bAllowOtherLayers){
+  //  if(Player->IsSwimming()){
+  //    // collect the liquid ground gfx
+    Player->GetLSquareUnder()->GetGLTerrain()->Draw(bldFromSqr); //only the terrain w/o other stuff dropped on it
+  //  }else{
+  //    // collect the whole ground gfx
+  //    Player->GetLSquareUnder()->DrawStaticContents(bldFromSqr);
+  //  }
+  }
+
+  /*************************************************
+   * prepare the multiplied ground copy for maximum details before stretching
+   */
+  static v2 v2CopyWH = [](){
+    v2CopyWH = v2(3,4); //the tall silhouette
+    v2CopyWH += v2(1,1); //+1,1 as there is tiny bits around the player allowing fly/swim shaking animations
+    v2CopyWH += v2(0,1); //+1 if the ground liquid oscilates too much
+    return v2CopyWH;
+  }();
+  static blitdata bldCopy = [](){bldCopy = DEFAULT_BLITDATA;
+    bldCopy.Border = v2CopyWH*TILE_SIZE;
+    bldCopy.Bitmap=new bitmap(bldCopy.Border);
+    bldCopy.Bitmap->CreateAlphaMap(0xFF*0.50); return bldCopy;}(); DBGBLD(bldCopy);
+  if(bAllowOtherLayers){
+  //  static blitdata bldStretch = [](){bldStretch = DEFAULT_BLITDATA;
+  //    bldStretch.Stretch=bldPlayerToSilhouetteAreaAtDB.Stretch+1; //+1 as there is tiny bits around the player allowing fly/swim animations
+  //    bldStretch.Border = TILE_V2;
+  //    bldStretch.Bitmap=new bitmap(bldStretch.Border * bldStretch.Stretch);
+  //    bldStretch.Bitmap->CreateAlphaMap(0xFF*0.50); return bldStretch;}(); DBGBLD(bldStretch);
+    // stretch that gfx enough to prepare the final blit
+  //  graphics::Stretch(ivanconfig::IsXBRZScale(),bldFromSqr.Bitmap,bldStretch,true);
+    for(int iY=0;iY<v2CopyWH.Y;iY++){
+      for(int iX=0;iX<v2CopyWH.X;iX++){
+        bldCopy.Dest=v2(iX,iY)*TILE_SIZE;
+        bldFromSqr.Bitmap->NormalBlit(bldCopy); //to have maximum details before stretching later
+      }
+    }
+  }
+
+  if(bAllowOtherLayers){
+    /*************************************************
+     * the moving shrinked ground below player
+     */
+    if(!Player->IsSwimming()){ //TODO wilderness: earth below and treetop on top sides, in case walking in trees square
+      int iWalkFPS = 2 * (PlayerIsRunning()?3:1);
+      int iStepDelay = CLOCKS_PER_SEC/iWalkFPS;
+
+      static int iWalkStepPrevious=-1;
+      int iWalkStep = clock()/iStepDelay;
+      if(iWalkStepPrevious!=iWalkStep){
+        int iHeight = v2StretchedBorder.Y * (bRolling||bSleeping ? 0.66 : 0.33);
+        bldToDB.Dest = v2StretchedPos+(v2(0,v2StretchedBorder.Y-iHeight));
+        bldToDB.Border.Y=iHeight;
+
+        //walking ground effect
+        static int iGroundSrcY=0;
+        bool bIsMovingOnFloor = !bSleeping && Player->GetBurdenState()!=OVER_LOADED;
+        if(bIsMovingOnFloor)
+          iGroundSrcY++; //moving
+        if((iGroundSrcY+iHeight)>v2StretchedBorder.Y)
+          iGroundSrcY=0;
+        bldToDB.Src = v2(0,iGroundSrcY);
+
+        iWalkStepPrevious=iWalkStep;
+      }
+
+      // copy from stretched as much as needed, to DB
+  //    bldStretch.Bitmap->NormalBlit(bldToDB);
+      bldCopy.Bitmap->NormalBlit(bldToDB);
+    }
+  }
+
+  /*************************************************
+   * this stretch draws the modified player at the tiny silhouette region at DB
+   **/
+  graphics::Stretch(ivanconfig::IsXBRZScale(),bmpPlayerSrc,bldPlayerToSilhouetteAreaAtDB,true); DBG1(bmpPlayerSrc);
+
+  if(bAllowOtherLayers){
+    /*************************************************
+     * draw transparent ground liquid above player
+     */
+    if(Player->IsSwimming()){
+      static bool bSimple=false;
+
+      static const int iMaxWaveLength=6;
+      static int iWaveLength=iMaxWaveLength;
+      static const int iHeight = v2StretchedBorder.Y*0.75;
+      static const int iLiquidFPS=5;
+      static const int iStepDelay = CLOCKS_PER_SEC/iLiquidFPS;
+
+      static int iWaveStepPrevious=-1;
+      int iWaveStep = clock()/iStepDelay;
+      static int iDegrees;
+      static int iHeightFinal;
+      static int iDestDisplY;
+      static v2 v2Dest;
+      static int iDegreesStep=30;
+      if(iWaveStepPrevious!=iWaveStep){
+        iDegrees+=iDegreesStep;
+        if(iDegrees>=360){
+          iDegrees=0;
+          iDegreesStep=30+clock()%60;
+          iWaveLength=iMaxWaveLength/(1 + clock()%3);
+        }
+        iHeightFinal = iHeight + iWaveLength*sin(iDegrees*3.14159/180);
+        iDestDisplY = v2StretchedBorder.Y - iHeightFinal;
+        v2Dest = v2StretchedPos+v2(0,iDestDisplY);
+        iWaveStepPrevious=iWaveStep;
+      }
+
+      if(bSimple){
+        DOUBLE_BUFFER->Fill(v2Dest, v2(v2StretchedBorder.X,iHeightFinal), BLUE);
+      }else{
+        // copy from stretched as much as needed, to DB
+        bldToDB.Dest = v2Dest;
+        bldToDB.Border.Y=iHeightFinal;
+        /* TODO oscilating the alpha is being cumulative? leading to full transparency, and this alpha veriation is not working as intended:
+        float fAlpha = 0.85-(0.03*iWaveStep);
+        bldStretch.Bitmap->FillAlpha(0xFF*fAlpha);
+         */
+        bldCopy.Bitmap->AlphaMaskedBlit(bldToDB); //->AlphaLuminanceBlit(bldToDB);
+      }
+    }
+  }
+
+  if(ivanconfig::GetAltSilhouettePreventColorGlitch()>0)
+    graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2StretchedPos, v2StretchedBorder, DARK_GRAY, false);
+
+  iAltSilBlitCount++;
+}
+
 void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
-  bool bXBRZandFelist=ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
+  bool bXBRZandFelist = ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
 
   if(LOSUpdateRequested && Player->IsEnabled())
   {
@@ -1193,7 +1982,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     }
   }
 
-  if(!bXBRZandFelist)
+  if(!bXBRZandFelist){
     for(size_t c = 0; c < SpecialCursorPos.size(); ++c){
       if(OnScreen(SpecialCursorPos[c]))
       {
@@ -1202,7 +1991,340 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         GetCurrentArea()->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
       }
     }
+  }
 
+  UpdateAltSilhouette(AnimationDraw);
+
+  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+}
+
+int game::ItemUnderCode(int iCycleValue){
+  switch(iCycleValue){
+    case 0:return 0; //disabled
+
+    case 1:return 1; //above head
+
+    // corners and Horizontal/Vertical
+    case 2:return  10;
+    case 3:return  11;
+
+    case 4:return 110;
+    case 5:return 111;
+
+    case 6:return 210;
+    case 7:return 211;
+
+    case 8:return 310;
+    case 9:return 311;
+
+    default:ABORT("invalid ItemUnder cycle value %d",iCycleValue);
+  }
+
+  return -1; //dummy (never happens, just to cpp do not bother..)
+}
+int game::ItemUnderCorner(int val){
+  return val/100;
+}
+int game::ItemUnderZoom(int val){
+  return (val%100)/10;
+}
+bool game::ItemUnderHV(int val){
+  return val%2==0; //odd is vertical
+}
+
+bitmap* bmpTgt = NULL;
+bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDirX, int iDirY){
+  int iTot = su->GetItems();
+  if(iMax>-1)iTot = Min(iMax,iTot);
+  if(iTot==0)return NULL;
+
+  v2 v2Pos = v2PosIni;
+
+  blitdata B = DEFAULT_BLITDATA;
+  B.CustomData = ALLOW_ANIMATE;
+  B.Stretch = 1; //ignored? anyway this will work only from/to 16x16...
+  B.Border = { TILE_SIZE, TILE_SIZE };
+  B.Luminance = ivanconfig::GetContrastLuminance();
+
+  if(bUseDB){
+    bmpTgt = DOUBLE_BUFFER;
+  }else{
+    v2 v2Size = v2(TILE_SIZE*iTot,TILE_SIZE);
+    if(bmpTgt==NULL || bmpTgt->GetSize()!=v2Size){
+      // DO NOT DELETE the old bitmap here. See graphics::SetSRegionSrcBitmapOverride(); //NO NO NO: if(bmpTgt!=NULL)delete bmpTgt;
+      bmpTgt = new bitmap(v2Size);
+    }
+  }
+
+  B.Bitmap=bmpTgt;
+  B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
+
+  bool bLight=false;
+  col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
+  if(!bLight){ //overall around if tiny
+    v2 v2BkgIni = v2(0,0);
+    v2 v2Border = bmpTgt->GetSize();
+    if(bUseDB){
+      v2BkgIni = v2PosIni+v2(1,1);
+      if(iDirX<0)v2BkgIni.X-=((iTot-1)*TILE_SIZE);
+      if(iDirY<0)v2BkgIni.Y-=((iTot-1)*TILE_SIZE);
+
+      v2Border = B.Border;
+      if(iDirX!=0)v2Border.X*=iTot;
+      if(iDirY!=0)v2Border.Y*=iTot;
+      v2Border-=v2(2,2);
+    }
+    igraph::BlitBackGround(bmpTgt, v2BkgIni, v2Border);
+    graphics::DrawRectangleOutlineAround(bmpTgt, v2BkgIni, v2Border, clOutline, false);
+  }
+//  itemvector vit;su->FillItemVector(vit);
+  static itemvector vit;vit.clear();su->FillItemVector(vit);
+  for(int i=0;i<iTot;i++){ // fully work on one square per time
+    item* it = vit[i];
+    if(!it->CanBeSeenByPlayer())continue;
+
+    if(bLight){ // each square
+      bmpTgt->Fill(v2Pos, B.Border, DARK_GRAY);
+      graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
+    }
+
+    B.Dest = v2Pos;
+    it->Draw(B);
+
+    v2Pos.X+=(TILE_SIZE*iDirX);
+    v2Pos.Y+=(TILE_SIZE*iDirY);
+  }
+
+  return bmpTgt;
+}
+
+int iStretchedTileSize = -1;
+int getDungeonStretchedTileSize(){
+  if(iStretchedTileSize==-1)iStretchedTileSize = TILE_SIZE * ivanconfig::GetStartingDungeonGfxScale();
+  return iStretchedTileSize;
+}
+
+/**
+ * For Stretched buffer:
+ * The final screen coordinates are relative not to 0,0 but to the top left dungeon corner,
+ * because the full dungeon stretching happens from that spot,
+ * therefore when working on the stretched buffer, this does not work, ex.:
+ *  CalculateScreenCoordinates(Player->GetPos())
+ */
+v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
+  v2 v2SqrRelativePosFromCam = v2SqrPos - GetCamera();
+  v2 v2StretchedBufferDest=area::getTopLeftCorner();
+  v2StretchedBufferDest+=(v2SqrRelativePosFromCam*getDungeonStretchedTileSize());
+  return v2StretchedBufferDest;
+}
+
+void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work with look mode for visible squares too?
+  bool bOk=true;
+
+  if(bOk && !bAllowed)bOk=false;
+
+  if(bOk && bPositionQuestionMode)bOk=false;
+
+  if(bOk && !Player->IsEnabled())bOk=false;
+
+  if(bOk && Player->IsDead())bOk=false;
+
+  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+
+  if(bOk && IsInWilderness())bOk=false;
+
+  bool bDynamic=false;
+  bool bDynamicItems=false;
+  if(ivanconfig::GetShowItemsAtPlayerSquare()>=10){
+    bDynamic=true;
+    if(ivanconfig::GetShowItemsAtPlayerSquare()==11)bDynamicItems=true;
+  }
+  int iCode = 1;
+  if(!bDynamic)iCode=ItemUnderCode(ivanconfig::GetShowItemsAtPlayerSquare());
+  bool bEnabled = iCode>0;
+  bool bAboveHead = iCode==1;
+
+  if(bOk && !bEnabled)bOk=false;
+
+  stack* su = NULL;
+  if(bOk){
+    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    if(bOk && su==NULL)bOk=false; //TODO can this happen?
+    if(bOk && su->GetItems()==0)bOk=false;
+    if(bOk){
+//      itemvector vit;su->FillItemVector(vit);
+      static itemvector vit;vit.clear();su->FillItemVector(vit);
+      for(int i=0;i<vit.size();i++){
+        if(vit[i]->CanBeSeenByPlayer())break;
+        if(i==(vit.size()-1))bOk=false; // nothing there can be seen
+      }
+    }
+  }
+
+  if(!bOk){ // reaching here is IMPORTANT as a disabler to the region!
+    graphics::SetSRegionEnabled(iRegionItemsUnder,false);
+    return;
+  }
+
+  /////////////////////// ok ////////////////////////
+  v2 v2AbsLevelSqrPos = Player->GetPos();
+
+  bool bNearEC=false;
+  int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
+  int iCycleCodeFallBack=4; //top right horiz if not near corners/edges
+  if(v2AbsLevelSqrPos.X<=iNearEC){ //left edge
+    bNearEC=true;iCycleCodeFallBack=8; //bottom right vert
+  }else if(v2AbsLevelSqrPos.Y<=iNearEC){ //top edge
+    bNearEC=true;iCycleCodeFallBack=6; //bottom left horiz
+  }else if(v2AbsLevelSqrPos.X >= (GetCurrentArea()->GetXSize() - iNearEC)){ //right edge
+    bNearEC=true;iCycleCodeFallBack=7; //bottom left vert
+  }else if(v2AbsLevelSqrPos.Y >= (GetCurrentArea()->GetYSize() - iNearEC)){ //bottom edge
+    bNearEC=true;iCycleCodeFallBack=4; //top right horiz
+  }
+  if(bNearEC)bAboveHead=true;
+
+  if(bDynamic && bAboveHead){
+    v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
+    bool bCharAboveNear=false;
+    bool bItemAboveNear=false;
+    for(int i=-1;i<=1;i++){
+      v2Chk = v2AbsLevelSqrPos+v2(0+i,-1);
+      if(GetCurrentLevel()->IsValidPos(v2Chk)){
+        if(GetCurrentLevel()->GetSquare(v2Chk)->GetCharacter()){
+          bCharAboveNear=true;
+          break;
+        }
+
+        if(bDynamicItems){
+          if(GetCurrentLevel()->GetLSquare(v2Chk)->GetStack()->GetItems()>0){
+            bItemAboveNear=true;
+            break;
+          }
+        }
+      }
+    }
+
+    if(bCharAboveNear || bItemAboveNear){
+      iCode = ItemUnderCode(iCycleCodeFallBack);
+      bAboveHead=false;
+    }
+  }
+
+  // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
+  if(bAboveHead && ivanconfig::GetStartingDungeonGfxScale()>=2){ //use xBRZ stretch region
+    // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
+    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+
+    int iStretch=iItemsUnderStretch;
+    if(su->GetItems()==1)iStretch++;
+
+    v2 v2StretchedBufferDest = CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2AbsLevelSqrPos);
+    v2StretchedBufferDest.X+=getDungeonStretchedTileSize()/2; //center of player's head
+    v2StretchedBufferDest.X-=(bmp->GetSize().X*iStretch)/2;
+    v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
+    v2StretchedBufferDest.Y-=2; //just to look better
+
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
+
+    graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
+    graphics::SetSRegionEnabled(iRegionItemsUnder,true);
+    return;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////// Dungeon square overwrite mode ///////////////////////////
+  ////////////////////////////// CORNERS WORK DIRECTLY ON DoubleBuffer ///////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  graphics::SetSRegionEnabled(iRegionItemsUnder,false); //disable above head region
+
+  //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
+  int iDirX=1,iDirY=0;
+  int iTot = su->GetItems();
+  v2 v2ScrPosIni;
+  v2 v2SqrPosIni;
+
+  if(bAboveHead){ //only for x1 dungeon scale
+    v2SqrPosIni=Player->GetPos();
+    v2SqrPosIni.Y--;
+    v2SqrPosIni.X-=iTot/2;
+
+    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+  }else{
+    int iCorner = ItemUnderCorner(iCode);
+    bool bHorizontal = ItemUnderHV(iCode);
+
+    // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+    v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+    if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
+    if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+
+    // min top left dungeon sqr coords
+    v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+
+    // max bottom right dungeon sqr coords
+    v2 v2SqrSize(
+      Min(game::GetScreenXSize(), GetCurrentLevel()->GetXSize()),
+      Min(game::GetScreenYSize(), GetCurrentLevel()->GetYSize()) );
+    int iSqrMaxX=v2SqrSize.X-1;
+    int iSqrMaxY=v2SqrSize.Y-1;
+
+    switch(iCorner){
+      case 0: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0: 1;
+        break;
+      case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
+        v2SqrPosIni.X+=iSqrMaxX;
+        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+        break;
+      case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
+        v2SqrPosIni.Y+=iSqrMaxY;
+        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+        break;
+      case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
+        v2SqrPosIni.X+=iSqrMaxX;
+        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+        v2SqrPosIni.Y+=iSqrMaxY;
+        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+        break;
+    }
+
+    if(bHorizontal){
+      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
+    }else{
+      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+    }
+
+//
+//      }break;
+//
+//      case 2:
+//      case 3:
+//      case 4:
+//      case 5:
+//      case 6:
+//        //TODO xBRZ ?
+//        //TODO graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, area::getTopLeftCorner(), {TILE_SIZE*iTot,TILE_SIZE}, LIGHT_GRAY, false);
+//        break;
+
+  }
+
+  PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
+
+  /**
+   * this grants updating the squares used to show the items.
+   * this also provides a cleanup after player moves or gets things from the floor.
+   */
+  for(int i=0;i<iTot;i++){DBGSV2(v2SqrPosIni);
+    if(GetCurrentArea()->IsValidPos(v2SqrPosIni)){
+      GetCurrentArea()->GetSquare(v2SqrPosIni)->SendStrongNewDrawRequest();
+    }
+    v2SqrPosIni.X+=iDirX;
+    v2SqrPosIni.Y+=iDirY;
+  }
 }
 
 truth game::Save(cfestring& SaveName)
@@ -1352,6 +2474,9 @@ int game::Load(cfestring& SaveName)
   SaveFile >> PlayerHasReceivedAllGodsKnownBonus;
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
+
+  UpdateCamera();
+
   return LOADED;
 }
 
@@ -1739,34 +2864,63 @@ int game::GetDirectionForVector(v2 Vector)
   return DIR_ERROR;
 }
 
-cchar* game::GetVerbalPlayerAlignment()
-{
+int GetPlayerAlignmentSum(){
   long Sum = 0;
 
   for(int c = 1; c <= GODS; ++c)
   {
-    if(GetGod(c)->GetRelation() > 0)
-      Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->GetAlignment());
+    if(game::GetGod(c)->GetRelation() > 0)
+      Sum += game::GetGod(c)->GetRelation() * (5 - game::GetGod(c)->GetAlignment());
   }
 
-  if(Sum > 15000)
-    return "extremely lawful";
-  if(Sum > 10000)
-    return "very lawful";
-  if(Sum > 5000)
-    return "lawful";
-  if(Sum > 1000)
-    return "mildly lawful";
-  if(Sum > -1000)
-    return "neutral";
-  if(Sum > -5000)
-    return "mildly chaotic";
-  if(Sum > -10000)
-    return "chaotic";
-  if(Sum > -15000)
-    return "very chaotic";
+  return Sum;
+}
 
+int game::GetPlayerAlignment()
+{
+  long Sum = GetPlayerAlignmentSum();
+
+  if(Sum >  15000)return  4;
+  if(Sum >  10000)return  3;
+  if(Sum >   5000)return  2;
+  if(Sum >   1000)return  1;
+  if(Sum >  -1000)return  0;
+  if(Sum >  -5000)return -1;
+  if(Sum > -10000)return -2;
+  if(Sum > -15000)return -3;
+
+  return -4;
+}
+
+cchar* game::GetVerbalPlayerAlignment()
+{
+  switch(GetPlayerAlignment()){
+  case  4:return "extremely lawful";
+  case  3:return "very lawful";
+  case  2:return "lawful";
+  case  1:return "mildly lawful";
+  case  0:return "neutral";
+  case -1:return "mildly chaotic";
+  case -2:return "chaotic";
+  case -3:return "very chaotic";
+  case -4:return "extremely chaotic";
+  }
+
+  ABORT("unsupported alignment %d",GetPlayerAlignment());
+  return NULL; //return just to let it compile
+
+  /* //kept just in case something changes...
+  long Sum = GetPlayerAlignment();
+  if(Sum >  15000)return "extremely lawful";
+  if(Sum >  10000)return "very lawful";
+  if(Sum >   5000)return "lawful";
+  if(Sum >   1000)return "mildly lawful";
+  if(Sum >  -1000)return "neutral";
+  if(Sum >  -5000)return "mildly chaotic";
+  if(Sum > -10000)return "chaotic";
+  if(Sum > -15000)return "very chaotic";
   return "extremely chaotic";
+  */
 }
 
 void game::CreateGods()
@@ -2544,7 +3698,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
   
-  v2TopLeft={iX,iY};
+  v2TopLeft=v2(iX,iY);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
 }

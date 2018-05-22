@@ -15,11 +15,13 @@
 #include <ratio>
 #include <chrono>
 
-#include "whandler.h"
-#include "graphics.h"
-#include "error.h"
 #include "bitmap.h"
+#include "error.h"
+#include "graphics.h"
 #include "festring.h"
+#include "rawbit.h"
+#include "whandler.h"
+
 #include "dbgmsgproj.h"
 
 #if SDL_MAJOR_VERSION == 1
@@ -263,6 +265,38 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+float globalwindowhandler::GetFPS(bool bInsta){
+  if(bInsta)return fInstaFPS;
+  return iLastSecCountFPS;
+}
+
+truth globalwindowhandler::HasKeysOnBuffer(){
+  return KeyBuffer.size()>0;
+}
+
+void ShowFPS(){ //TODO still flickers sometimes cuz of silhouette?
+  static long lTimePrevious=clock();
+  static bool bShowFPS = [](){const char* c=std::getenv("IVAN_SHOWFPS");return c!=NULL && strcmp(c,"true")==0;}();
+  if(bShowFPS){
+//    if(clock()%(CLOCKS_PER_SEC*3)<CLOCKS_PER_SEC){
+    long lTime=clock();
+    if(clock()-lTimePrevious > CLOCKS_PER_SEC*1){
+      static int iMargin=2;
+      static v2 v2Margin(iMargin,iMargin);
+      static char c[100];
+
+      sprintf(c,"FPS:ls=%.1f,insta=%.1f",globalwindowhandler::GetFPS(false),globalwindowhandler::GetFPS(true));
+      int iDistX = strlen(c)*8 + 10;
+      v2 v2Pos = RES-v2(iDistX,RES.Y)+v2Margin;
+      v2 v2Size(iDistX, 8+iMargin*2);
+
+      DOUBLE_BUFFER->Fill(v2Pos,v2Size,BLACK);
+      FONT->Printf(DOUBLE_BUFFER,v2Pos+v2Margin,WHITE,"%s",c);
+      lTimePrevious=lTime;
+    }
+  }
+}
+
 int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
@@ -313,7 +347,10 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
               if(ControlLoop[c]())
                 Draw = true;
 
-            // the stand-by animation
+            /******************
+             * the stand-by animation
+             */
+            ShowFPS();
             if(!bAllowFrameSkip){
               if(Draw)
                 graphics::BlitDBToScreen();
@@ -495,15 +532,13 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       if(!KeyPressed)
         return;
     }
-    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-       == KeyBuffer.end())
+    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
       KeyBuffer.push_back(KeyPressed);
     break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:
     KeyPressed = Event->text.text[0];
-    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
-       == KeyBuffer.end())
+    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
       KeyBuffer.push_back(KeyPressed);
 #endif
   }

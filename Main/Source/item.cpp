@@ -39,7 +39,7 @@ itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, ite
 
 truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0) { }
+item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0), ItemFlags(0), iRotateFlyingThrownStep(0) { }
 truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 truth item::IsSimilarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 double item::GetBaseDamage() const { return Max(0., sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus()); }
@@ -119,13 +119,17 @@ item::~item()
   }
 }
 
-void item::Fly(character* Thrower, int Direction, int Force)
+void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrownRotation)
 {
+  iRotateFlyingThrownStep=0; //simple granted reset
+  lsquare* LandingSquare=NULL;
+
   int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
 
   lsquare* LSquareUnder = GetLSquareUnder();
   RemoveFromSlot();
   LSquareUnder->GetStack()->AddItem(this, false);
+  LandingSquare=LSquareUnder;
 
   if(!Range || GetSquaresUnder() != 1)
   {
@@ -145,6 +149,7 @@ void item::Fly(character* Thrower, int Direction, int Force)
   double BaseDamage, BaseToHitValue;
 
   /*** check ***/
+  int iRotateTimes = ivanconfig::GetRotateTimesPerSquare();
 
   if(Thrower)
   {
@@ -153,15 +158,25 @@ void item::Fly(character* Thrower, int Direction, int Force)
     BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase()
                      / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY)
                      * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+
+    if(bTryStartThrownRotation && ivanconfig::GetRotateTimesPerSquare()>0)
+      iRotateFlyingThrownStep = (clock()%2)==0 ? 1 : -1; //init rotation
+
+    if(!Thrower->IsPlayer() && iRotateTimes>1)
+      iRotateTimes=1; //disable "dramatic" rotations from NPCs but still keep minimum if enabled
   }
   else
   {
     BaseDamage = sqrt(5e-6 * GetWeaponStrength() * Force / Range);
     BaseToHitValue = 10 * 100 / (500 + GetWeight()) / Range;
+    iRotateTimes=0;
   }
 
   int RangeLeft;
 
+  truth Draw=false;
+  float fFlyDelay = 0.03;
+  bool bLowerRotationsPerSqr = iRotateTimes==5;
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
   {
     if(!GetLevel()->IsValidPos(Pos + DirVector))
@@ -181,7 +196,8 @@ void item::Fly(character* Thrower, int Direction, int Force)
       Pos += DirVector;
       RemoveFromSlot();
       JustHit->GetStack()->AddItem(this, false);
-      truth Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
+      LandingSquare=JustHit;
+      Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
 
       if(Draw)
         game::DrawEverything();
@@ -200,8 +216,38 @@ void item::Fly(character* Thrower, int Direction, int Force)
       }
 
       if(Draw)
-        while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
+        while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+
+      if(iRotateFlyingThrownStep!=0){
+        if(iRotateTimes==1){
+          iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1; //next rotation step on next square
+        }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
+          for(int i=0;i<(iRotateTimes-1);i++){
+            iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1;
+            if(Draw){
+              StartTime = clock();
+              RemoveFromSlot();JustHit->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square to redraw...
+              game::DrawEverything();
+              if(bLowerRotationsPerSqr){
+                iRotateTimes--;
+                if(iRotateTimes<1)iRotateTimes=1;
+              }
+              //while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
+            }
+          }
+        }
+      }
+
     }
+
+  }
+
+  if(iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
+    iRotateFlyingThrownStep=4; //default rotation is w/o the rotation flags at the switch(){}
+    //force redraw at default rotation to avoid another spin when player moves TODO how to let it stay in the last rotation?
+    RemoveFromSlot();LandingSquare->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square...
+    game::DrawEverything();
+    iRotateFlyingThrownStep=0; //disables rotation
   }
 
   if(Breaks)
@@ -1215,7 +1261,19 @@ void item::Draw(blitdata& BlitData) const
 {
   cint AF = GraphicData.AnimationFrames;
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-  cbitmap* P = GraphicData.Picture[F];
+
+  bitmap* bmp = GraphicData.Picture[F];
+  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
+    static blitdata B = [](){B=DEFAULT_BLITDATA; //to reuse tmp bitmap memory
+      B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
+      B.Border = TILE_V2; return B; }();
+
+    bitmap::ConfigureBlitdataRotation(B,iRotateFlyingThrownStep);
+
+    bmp->NormalBlit(B); //or NormalMaskedBlit() only way to rotate...
+    bmp = B.Bitmap;
+  }
+  cbitmap* P = bmp;
 
   if(BlitData.CustomData & ALLOW_ALPHA)
     P->AlphaLuminanceBlit(BlitData);

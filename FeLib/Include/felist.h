@@ -50,6 +50,8 @@ class felist
   uint GetSelected() const { return Selected; }
   void SetSelected(uint What) { Selected = What; }
   void EditSelected(int What) { Selected += What; }
+  static void SetDefaultEntryImageSize(v2 v2Size){v2DefaultEntryImageSize=v2Size;}
+  static bool IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos);
   truth DrawPage(bitmap*, v2* pv2FinalPageSize) const;
   void Pop();
   static void CreateQuickDrawFontCaches(rawbitmap*, col16, uint);
@@ -86,6 +88,7 @@ class felist
   v2 v2FinalPageSize;
   static v2 v2SelectedPos;
   v2 v2OriginalPos;
+  static v2 v2DefaultEntryImageSize;
 };
 
 #endif

@@ -23,6 +23,9 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "hiteffect.h" //TODO move to charsset.cpp?
+
+#define DBGMSG_V2
 #include "dbgmsgproj.h"
 
 struct statedata
@@ -671,6 +674,32 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
+  hiteffectSetup* pHitEff=NULL;DBGLN;
+  bool bShowHitEffect = false;
+  static bool bHardestMode = false; //TODO make these an user hardcore combat option?
+  if(!bHardestMode){
+    //w/o ESP/infravision and if the square is visible even if both fighting are invisible
+    static bool bPlayerCanHearWhereTheFightIsHappening = true; //TODO this feels like cheating? making things easier? if so, set it to false
+    static bool bPlayerCanSensePetFighting = true; //TODO this feels like cheating? making things easier? if so, set it to false
+
+    if(bPlayerCanHearWhereTheFightIsHappening) //TODO should then also show at non directly visible squares?
+      if(GetLSquareUnder()->CanBeSeenByPlayer() || Enemy->GetLSquareUnder()->CanBeSeenByPlayer())bShowHitEffect = true;
+
+    if(bPlayerCanSensePetFighting && IsPet())bShowHitEffect=true; // override for team awareness
+  }
+  if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())bShowHitEffect=true; //throwing hits in the air is valid (seen) if the other one is invisible
+  if(IsPlayer())bShowHitEffect=true; //override
+  if(bShowHitEffect){DBGLN;
+    pHitEff=new hiteffectSetup();
+    pHitEff->Critical=Critical;
+    pHitEff->GivenDir=GivenDir;
+    pHitEff->Type=Type;
+    pHitEff->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
+    pHitEff->WhoIsHit=this;
+    pHitEff->itemEffectReference = Weapon;
+    if(pHitEff->itemEffectReference==NULL)pHitEff->itemEffectReference=EnemyBodyPart;
+  }
+
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
   double DodgeValue = GetDodgeValue();
 
@@ -732,6 +761,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//    if(hitEff!=NULL)hitEff->End();
     return HAS_DODGED;
   }
 
@@ -815,6 +845,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
       else
         DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//      if(hitEff!=NULL)hitEff->End();
       return HAS_BLOCKED;
     }
   }
@@ -835,6 +866,9 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
+//    if(CanBeSeenByPlayer())
+//      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
+
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
@@ -857,7 +891,13 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//    if(hitEff!=NULL)hitEff->End();
     return DID_NO_DAMAGE;
+  }
+
+  if(pHitEff!=NULL){DBGLN;
+    GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
+    delete pHitEff; //already copied
   }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
@@ -2365,7 +2405,8 @@ void character::ThrowItem(int Direction, item* ToBeThrown)
   if(Direction > 7)
     ABORT("Throw in TOO odd direction...");
 
-  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH));
+  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH),
+    ToBeThrown->IsWeapon(this) && !ToBeThrown->IsBroken());
 }
 
 void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, double ToHitValue, int Direction)
@@ -5991,6 +6032,8 @@ void character::TeleportLockHandler()
 
 void character::DisplayStethoscopeInfo(character*) const
 {
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
   Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
@@ -7741,19 +7784,33 @@ void character::ShowAdventureInfo() const
 void character::ShowAdventureInfoAlt() const
 {
   while(true) {
+#ifdef WIZARD
     int Answer =
      game::KeyQuestion(
-       CONST_S("Do you want to see your (i)nventory, (m)essage history, (k)ill list, or [ESC]/(n)othing?"),
-         'x', 9, 'i', 'I', 'm', 'M', 'k', 'K', 'N', 'n', KEY_ESC); //TODO x is ingored?
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook, (x) cheat look or [ESC]/(n)othing?"),
+         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'x','X', 'N','n', KEY_ESC); //default answer 'z' is ignored
+#else
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
+         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+#endif
 
     if(Answer == 'i' || Answer == 'I'){
       inventoryInfo(this);
     }else if(Answer == 'm' || Answer == 'M'){
-     msgsystem::DrawMessageHistory();
+      msgsystem::DrawMessageHistory();
     }else if(Answer == 'k' || Answer == 'K'){
-     game::DisplayMassacreLists();
+      game::DisplayMassacreLists();
+#ifdef WIZARD
+    }else if(Answer == 'l' || Answer == 'L' || Answer == 'x' || Answer == 'X'){
+      commandsystem::PlayerDiedLookMode(Answer == 'x' || Answer == 'X');
+#else
+    }else if(Answer == 'l' || Answer == 'L'){
+      commandsystem::PlayerDiedLookMode();
+#endif
     }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
-     return;
+      return;
     }
   }
 }
@@ -9555,7 +9612,13 @@ truth character::ChatMenu()
 
 truth character::ChangePetEquipment()
 {
-  if(EquipmentScreen(PLAYER->GetStack(), GetStack()))
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+  bool b = EquipmentScreen(PLAYER->GetStack(), GetStack());
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+
+  if(b)
   {
     DexterityAction(3);
     return true;
@@ -9573,6 +9636,9 @@ truth character::TakePetItems()
   {
     itemvector ToTake;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     GetStack()->DrawContents(ToTake,
                              0,
                              PLAYER,
@@ -9582,6 +9648,8 @@ truth character::TakePetItems()
                              GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                              GetVerbalBurdenStateColor(),
                              REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToTake.empty())
       break;
@@ -9611,6 +9679,9 @@ truth character::GivePetItems()
   {
     itemvector ToGive;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     PLAYER->GetStack()->DrawContents(ToGive,
                                      0,
                                      this,
@@ -9620,6 +9691,8 @@ truth character::GivePetItems()
                                      GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                                      GetVerbalBurdenStateColor(),
                                      REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToGive.empty())
       break;
@@ -9868,9 +9941,13 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
   while(!NewForm)
   {
     festring Temp;
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true); //polymorphing may unequip items, so taking a look at them is good
     int Return = game::DefaultQuestion(Temp, CONST_S("What do you want to become? [press '?' for a list]"),
                                        game::GetDefaultPolymorphTo(), true,
                                        &game::PolymorphControlKeyHandler);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     if(Return == ABORTED)
     {
       ADD_MESSAGE("You choose not to polymorph.");

@@ -26,6 +26,7 @@ Changes:
 * Optionally show full dungeon name with roman level numbers.
 * Grouped config options in categories.
 * Custom stack list length (items, drop, throw etc).
+* Show items at player position, side by side.
 
 Fixes:
 * Mainly when toggling full screen mode on linux, it will now wait you release the key to apply.
