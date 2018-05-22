@@ -886,7 +886,7 @@ solid
     Flexibility = 10;
     IntelligenceRequirement = 6;
     PriceModifier = 50;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = WOLF_SKIN;
     HardenedMaterial = TROLL_HIDE;
     CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
@@ -1932,7 +1932,8 @@ solid
     StrengthValue = 75;
     ConsumeType = CT_MINERAL;
     Density = 1500;
-    Color = rgb16(255, 0, 255);
+    Color = rgb16(255, 5, 255);
+    Emitation = rgb24(139, 0, 139);
     NameStem = "magic crystal";
     AdjectiveStem = "crystal";
     AttachedGod = SOPHOS;
@@ -2077,7 +2078,7 @@ solid
     NameStem = "ice";
     Alpha = 150;
     IntelligenceRequirement = 3;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = WATER;
     HardenedMaterial = RED_ICE;
     NaturalForm = stone;
@@ -2094,7 +2095,7 @@ solid
     NameStem = "red ice";
     Alpha = 150;
     IntelligenceRequirement = 8;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = ICE;
     HardenedMaterial = JOTUN_ICE;
     NaturalForm = stone;
@@ -2110,7 +2111,7 @@ solid
     NameStem = "jotun ice";
     Alpha = 175;
     IntelligenceRequirement = 18;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = RED_ICE;
     HardenedMaterial = PRIMORDIAL_ICE;
     NaturalForm = stone;
@@ -2126,7 +2127,7 @@ solid
     NameStem = "primordial ice";
     Alpha = 175;
     IntelligenceRequirement = 28;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = JOTUN_ICE;
     NaturalForm = stone;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -3078,7 +3079,7 @@ solid
     Density = 2650;
     Color = rgb16(254, 104, 12);
     NameStem = "jacinth";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 8;
     SoftenedMaterial = JASPER;
@@ -3096,7 +3097,7 @@ solid
     Density = 2650;
     Color = rgb16(93, 161, 154);
     NameStem = "agate";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 9;
     SoftenedMaterial = JACINTH;
@@ -3115,7 +3116,7 @@ solid
     Density = 2650;
     Color = rgb16(136, 165, 175);
     NameStem = "tourmaline";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 10;
     SoftenedMaterial = AGATE;
@@ -3133,7 +3134,7 @@ solid
     Density = 2650;
     Color = rgb16(114, 117, 162);
     NameStem = "chalcedony";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 12;
     SoftenedMaterial = TOURMALINE;
@@ -3255,7 +3256,7 @@ solid
     Density = 2650;
     Color = rgb16(230, 210, 40);
     NameStem = "citrine";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 8;
     SoftenedMaterial = FLINT;
@@ -3273,7 +3274,7 @@ solid
     Density = 2650;
     Color = rgb16(38, 97, 156);
     NameStem = "lapis lazuli";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 9;
     SoftenedMaterial = CITRINE;
@@ -3290,7 +3291,7 @@ solid
     Density = 1100;
     Color = rgb16(255, 191, 0);
     NameStem = "amber";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 10;
     SoftenedMaterial = LAPIS_LAZULI;
@@ -3309,7 +3310,7 @@ solid
     Density = 2700;
     Color = rgb16(81, 231, 213);
     NameStem = "opal";
-    AttachedGod = SILVA;
+    AttachedGod = MELLIS;
     NaturalForm = stone;
     IntelligenceRequirement = 11;
     SoftenedMaterial = AMBER;
@@ -3327,7 +3328,7 @@ solid
     Density = 2700;
     Color = rgb16(15, 15, 15);
     NameStem = "onyx";
-    AttachedGod = SILVA;
+    AttachedGod = INFUSCOR;
     NaturalForm = stone;
     IntelligenceRequirement = 13;
     SoftenedMaterial = OPAL;
@@ -4091,7 +4092,7 @@ solid
     Density = 2000;
     Color = rgb16(204, 204, 204);
     NameStem = "forged ash";
-    Flexibility = 1;
+    Flexibility = 3;
     IntelligenceRequirement = 11;
     AttachedGod = INFUSCOR;
     SoftenedMaterial = ASH;
@@ -4368,7 +4369,7 @@ organic /* Substances that spoil but are not flesh. */
     NameStem = "banana stollen";
     Flexibility = 5;
     SpoilModifier = 20000;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = BANANA_FLESH;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -4598,7 +4599,7 @@ organic /* Substances that spoil but are not flesh. */
 
   Config RESIDUUM;
   {
-    StrengthValue = 120;
+    StrengthValue = 250;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 10000;
     Color = rgb16(107, 255, 251);
@@ -5331,7 +5332,7 @@ liquid
   {
     StrengthValue = 1;
     NutritionValue = 150;
-    Color = rgb16(226, 255, 226);
+    Color = rgb16(126, 255, 126);
     NameStem = "sap"; /* plant blood */
     Alpha = 175;
     Flexibility = 40;
@@ -6179,7 +6180,7 @@ powder
     NameStem = "snow";
     AdjectiveStem = "snowy";
     Flexibility = 40;
-    AttachedGod = SILVA;
+    AttachedGod = ATAVUS;
     SoftenedMaterial = WATER;
     HardenedMaterial = ICE;
     RainColor = rgb16(255, 255, 255);
