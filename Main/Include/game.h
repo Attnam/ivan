@@ -215,6 +215,7 @@ class game
   static bool ItemUnderHV(int val);
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
+  static int GetCurrentSavefileVersion();
   static truth IsRunning() { return Running; }
   static void SetIsRunning(truth What);
   static void UpdateCameraX(int);
@@ -234,9 +235,9 @@ class game
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return AutoSaveFileName; }
+  static festring GetAutoSaveFileName() { return game::GetSaveDir() + PlayerName + ".AutoSave"; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false);
-  static void RemoveSaves(truth = true);
+  static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }
@@ -477,7 +478,7 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring AutoSaveFileName;
+  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
