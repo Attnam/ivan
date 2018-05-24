@@ -33,6 +33,8 @@ class ivanconfig
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
+  static int GetShowMap(){return ShowMap.Value;}
+  static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
@@ -78,6 +80,7 @@ class ivanconfig
   static v2 GetQuestionPos();
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
+  static void ShowMapDisplayer(const cycleoption* O, festring& Entry);
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
@@ -159,6 +162,8 @@ class ivanconfig
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
   static cycleoption AltSilhouettePreventColorGlitch;
+  static cycleoption ShowMap;
+  static truthoption ShowMapAtDetectMaterial;
 
   static cycleoption MemorizeEquipmentMode;
 
