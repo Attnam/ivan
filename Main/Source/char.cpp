@@ -2768,6 +2768,14 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
   return true;
 }
 
+void character::DeActivateTemporaryState(long What)
+{
+  if(PolymorphBackup)
+    PolymorphBackup->TemporaryState &= ~What;
+
+  TemporaryState &= ~What;
+}
+
 void character::DeActivateVoluntaryAction(cfestring& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
@@ -3666,7 +3674,9 @@ void character::DoDetecting()
   else
   {
     ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
+    game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
     game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), GetPos(), 0, 0, false);
+    game::SetDrawMapOverlay(false);
     EditExperience(INTELLIGENCE, 30, 1 << 12);
   }
 

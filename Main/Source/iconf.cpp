@@ -55,6 +55,10 @@ cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           &ShowItemsAtPlayerSquareDisplayer,
                                           &configsystem::NormalCycleChangeInterface,
                                           &ShowItemsAtPlayerSquareChanger);
+cycleoption ivanconfig::ShowMap(          "ShowMap",
+                                          "Map preferences",
+                                          0, 5,
+                                          &ShowMapDisplayer);
 cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           "Thrown weapons rotate times per square",
                                           0, 6,
@@ -83,6 +87,9 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
+                                          "Show map while detecting material",
+                                          false);
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           "Let old savegames (v131 up) be imported (experimental)",
                                           false);
@@ -274,6 +281,17 @@ void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
   case 2: Entry << "indicator";break;
   case 3: Entry << "ind+color";break;
   case 4: Entry << "dynamic";break;
+  }
+}
+
+void ivanconfig::ShowMapDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+    case 0:Entry << "vanilla";break; //mmm... just not using xBRZ
+    case 1:Entry << "xBRZ";break;
+    case 2:Entry << "imersive";break;
+    case 3:Entry << "imersive2";break;
+    case 4:Entry << "imersive3";break;
   }
 }
 
@@ -753,6 +771,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
   configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
   configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
+  configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -779,6 +798,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
   configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
   configsystem::AddOption(fsCategory,&HitIndicator);
+  configsystem::AddOption(fsCategory,&ShowMap);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
