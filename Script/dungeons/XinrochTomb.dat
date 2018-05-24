@@ -525,7 +525,7 @@ Dungeon XINROCH_TOMB;
           Parameters = LOCKED;
           ItemsInside = { 3,  Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; },
                               Random { Chance = 75; MinPrice = 750; Times = 2; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; },
-                              Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; }}
+                              Random { Chance = 75; MinPrice = 1500; Times = 4; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 1000:4000; } }
         }
       }
       Square, Pos 8, 6;
@@ -1147,6 +1147,8 @@ Dungeon XINROCH_TOMB;
 
   Level 3; /* Ice cave */
   {
+    Description = "ice cave";
+    ShortDescription = "Ice Cave";
     Rooms = 15:30;
     Size = 64, 36;
     LevelMessage = "It is deathly cold in here...";
@@ -1744,6 +1746,8 @@ Dungeon XINROCH_TOMB;
 
   Level 9; /* Xinroch's Ghost level */
   {
+    Description = "unholy tomb";
+    ShortDescription = "Unholy Tomb";
     FillSquare = SLATE solidterrain(GROUND), OCTIRON earth;
     TunnelSquare = SLATE solidterrain(GROUND), 0;
     Rooms = 30:40;
@@ -1859,6 +1863,8 @@ Dungeon XINROCH_TOMB;
 
   Level 10; /* Ultimate level! */
   {
+    Description = "deep temple";
+    ShortDescription = "Deep Temple";
     LevelMessage = "\"HA HA HA! I'm ALIVE! Prepare to die mortal!\"";
     Items = 5:10;
     EnchantmentMinusChanceBase = 15;

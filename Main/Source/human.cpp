@@ -1915,7 +1915,8 @@ v2 humanoid::GetEquipmentPanelPos(int I) const // convert to array
   return v2(24, 12);
 }
 
-v2 humanoid::SilhouetteWhere={0,0}; //zeroed because wont init properly here.. TODO explain why.
+v2 humanoid::SilhouetteWhere=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
+v2 humanoid::SilhouetteWhereDefault=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
 void humanoid::DrawSilhouette(truth AnimationDraw) const
 {
   int c;
@@ -1929,12 +1930,14 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 
   cint Equipments = GetEquipments();
 
-  humanoid::SilhouetteWhere={RES.X - SILHOUETTE_SIZE.X - 39, 53};
+  if(SilhouetteWhereDefault.Is0())SilhouetteWhereDefault={RES.X - SILHOUETTE_SIZE.X - 39, 53};
+  if(SilhouetteWhere.Is0())SilhouetteWhere=SilhouetteWhereDefault;
+
   if(CanUseEquipment())
     for(c = 0; c < Equipments; ++c)
       if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
       {
-        v2 Pos = SilhouetteWhere + GetEquipmentPanelPos(c);
+        v2 Pos = SilhouetteWhereDefault + GetEquipmentPanelPos(c);
 
         if(!AnimationDraw)
           DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);

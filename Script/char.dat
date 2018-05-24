@@ -548,6 +548,9 @@ farmer
     RightWielded = COPPER sharpaxe { Enchantment = 5; }
     CWeaponSkillHits == 100;
     RightSWeaponSkillHits = 50;
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
     TamingDifficulty = 25;
     IsNameable = false;
     IsUnique = true;
@@ -1695,6 +1698,9 @@ darkknight
     RightSWeaponSkillHits = 500;
     PanicLevel = 5;
     CriticalModifier = 4;
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
     TamingDifficulty = 20;
     TotalVolume = 90000;
     ClothColor = rgb16(80, 20, 20);
@@ -4503,18 +4509,17 @@ imp
   UsesLongArticle = true;
   CanBeGenerated = true;
   Sex = UNDEFINED;
-  CanUseEquipment = false;
   AttackStyle = USE_ARMS|USE_HEAD;
   KnownCWeaponSkills = { 2, UNARMED, BITE; }
   CWeaponSkillHits = { 2, 50, 50; }
   PanicLevel = 75;
   BaseUnarmedStrength = 300;
+  BaseBiteStrength = 500;
   FleshMaterial = SULFUR;
   UsesNutrition = false;
   AttachedGod = MORTIFER;
   ClassStates = GAS_IMMUNITY;
   FireResistance = 1000;
-  WillCarryItems = false;
   CanChoke = false;
   UndeadVersions = false;
   FriendlyReplies =
@@ -4924,6 +4929,9 @@ werewolfwolf
     KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
     CWeaponSkillHits = { 2, 50, 100; }
     RightSWeaponSkillHits = 20;
+    FireResistance = 30;
+    ElectricityResistance = 30;
+    EnergyResistance = 30;
     TamingDifficulty = 20;
     CanUseEquipment = true;
     IsNameable = false;
@@ -4949,7 +4957,7 @@ werewolfwolf
     Sex = FEMALE;
     ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION|POLYMORPH_LOCK;
     AttachedGod = SILVA;
-    Inventory == scrollofearthquake;
+    Inventory = { 3, scrollofearthquake, scrollofhardenmaterial, holybook(SILVA); }
   }
 }
 
@@ -5180,7 +5188,7 @@ kobold
     PanicLevel = 20;
     ClothColor = rgb16(20, 20, 160);
     LegMainColor = rgb16(111, 74, 37);
-    Inventory == Random { Category = POTION; Times = 2; }
+    Inventory == Random { Category = POTION; Times = 2:8; }
     FireResistance = 20;
     ElectricityResistance = 20;
     EnergyResistance = 20;
@@ -8052,8 +8060,8 @@ archangel
     LeftWielded = 0;
     KnownCWeaponSkills = { 2, UNARMED, BITE; }
     AttackStyle = USE_ARMS|USE_HEAD;
-    BaseUnarmedStrength = 1000;
-    BaseBiteStrength = 1000;
+    BaseUnarmedStrength = 2000;
+    BaseBiteStrength = 1500;
   }
 
   Config SEGES;
@@ -8313,11 +8321,11 @@ lobhse
   DestroysWalls = true;
   AllowUnconsciousness = false;
   IsImmuneToLeprosy = true;
-  EnergyResistance = 5;
-  FireResistance = 15;
-  PoisonResistance = 50;
-  ElectricityResistance = 5;
-  AcidResistance = 50;
+  EnergyResistance = 30;
+  FireResistance = 30;
+  PoisonResistance = 100;
+  ElectricityResistance = 30;
+  AcidResistance = 100;
   PanicLevel = 0;
   HostileReplies =
   {

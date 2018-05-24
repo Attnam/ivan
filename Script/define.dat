@@ -1204,7 +1204,7 @@
 #define S_LOCK_ID 16384
 #define LOCK_DELTA 1024
 
-#define BROKEN_LOCK S_LOCK_ID
+#define BROKEN_LOCK 32768
 
 /* Normal lock types, which can be randomized */
 

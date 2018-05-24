@@ -88,6 +88,9 @@ class bitmap
   void StretchBlitXbrz(cblitdata&,bool) const;
   SDL_Surface* CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor = TRANSPARENT_COLOR, SDL_Surface* srf = NULL) const;
 
+  static void ResetBlitdataRotation(blitdata& B);
+  static void ConfigureBlitdataRotation(blitdata& B,int i);
+
   void DrawRectangle(int, int, int, int, col16, truth = false);
   void DrawRectangle(v2, int, int, col16, truth = false);
   void DrawRectangle(int, int, v2, col16, truth = false);
@@ -136,6 +139,10 @@ class bitmap
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
   void InterLace();
+
+  truth HasColor(col16 findColor);
+  void ReplaceColor(col16 findColor,col16 replaceWith);
+  void CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe=false);
  protected:
   v2 Size;
   ulong XSizeTimesYSize : 31;

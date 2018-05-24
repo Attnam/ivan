@@ -28,6 +28,7 @@ Changes:
 * Custom stack list length (items, drop, throw etc).
 * Several new monsters added, including five new uniques.
 * Monster AI now knows how to zap wands at you!
+* Show items at player position, side by side.
 
 Fixes:
 * Mainly when toggling full screen mode on linux, it will now wait until you release the key to apply.
