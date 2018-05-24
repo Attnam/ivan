@@ -90,6 +90,15 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
+truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
+                                          "Let old savegames (v131 up) be imported (experimental)",
+                                          false);
+truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
+                                          "Safely save games",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &SavegameSafelyChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -136,6 +145,12 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
+                                          "sort savegame files and show dungeon IDs progress",
+                                          0, 4,
+                                          &SaveGameSortModeDisplayer,
+                                          &configsystem::NormalCycleChangeInterface,
+                                          &SaveGameSortModeChanger);
 cycleoption ivanconfig::SilhouetteScale(  "SilhouetteScale",
                                           "Silhouette scale factor (1 to disable)",
                                           1, 6, //from 1 to 6 (max xbrz) where 1 is no scale
@@ -626,6 +641,16 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "newest first";break;
+  case 1: Entry << "newest first + progress";break;
+  case 2: Entry << "alphanumeric";break;
+  case 3: Entry << "alphanumeric + progress";break;
+  }
+}
+
 void ivanconfig::MemorizeEquipmentModeDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -645,9 +670,23 @@ void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::SaveGameSortModeChanger(cycleoption* O, long What)
+{
+  if(O!=NULL)O->Value = What;
+
+  iosystem::SetSaveGameSortMode(What);
+}
+
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
+}
+
+void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+
+  outputfile::SetSafeSaving(What);
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
@@ -778,10 +817,13 @@ void ivanconfig::Initialize()
 
   fsCategory="System and user interface/input";
   configsystem::AddOption(fsCategory,&DirectionKeyMap);
+  configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
 
   fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
+  configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
 
   /********************************
@@ -804,6 +846,9 @@ void ivanconfig::Initialize()
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
   audio::SetVolumeLevel(Volume.Value);
 
-  FrameSkipChanger(NULL,FrameSkip.Value); //TODO re-use changer methods for above configs too?
+  //TODO re-use changer methods for above configs too to avoid duplicating the algo?
+  FrameSkipChanger(NULL,FrameSkip.Value);
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
+  SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
+  SavegameSafelyChanger(NULL, SavegameSafely.Value);
 }

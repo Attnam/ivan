@@ -28,6 +28,8 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static truth IsSavegameSafely(){ return SavegameSafely.Value; }
+  static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
@@ -127,11 +129,14 @@ class ivanconfig
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
+  static void SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
+  static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
+  static void SavegameSafelyChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -152,6 +157,8 @@ class ivanconfig
 
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
+  static truthoption AllowImportOldSavegame;
+  static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
   static cycleoption AltSilhouettePreventColorGlitch;
@@ -164,6 +171,8 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+
+  static cycleoption  SaveGameSortMode;
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;

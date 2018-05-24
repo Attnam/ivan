@@ -2200,8 +2200,10 @@ void character::Load(inputfile& SaveFile)
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 
-  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
-    SaveFile >> MemorizedEquippedItemIDs[c];
+  if(game::GetCurrentSavefileVersion()>=132){
+    for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+      SaveFile >> MemorizedEquippedItemIDs[c];
+  }
 
   /////////////// loading ended /////////////////////////
 
@@ -2764,6 +2766,14 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
   Unconsciousness->SetCounter(Counter);
   SetAction(Unconsciousness);
   return true;
+}
+
+void character::DeActivateTemporaryState(long What)
+{
+  if(PolymorphBackup)
+    PolymorphBackup->TemporaryState &= ~What;
+
+  TemporaryState &= ~What;
 }
 
 void character::DeActivateVoluntaryAction(cfestring& Reason)

@@ -23,8 +23,39 @@
 #include "save.h"
 #include "femath.h"
 
-outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
-: FileName(FileName)
+#include "dbgmsgproj.h"
+
+truth outputfile::bakcupBeforeSaving = false;
+truth outputfile::saveOnNewFileAlways = false;
+
+void outputfile::SetSafeSaving(truth b){
+  bakcupBeforeSaving=b;
+  saveOnNewFileAlways=b;
+}
+
+void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewFileAlways);
+  File.close();
+
+  if(saveOnNewFileAlways){ // This moves the new .tmp file to the correct filename, before removing it.
+    std::ifstream newTmpFile(FileNameNewTmp.CStr(), std::ios::binary);
+    if(newTmpFile.good()){
+      std::remove(FileName.CStr()); //just to not let existing one create any doubts if some crash happens here
+
+      std::ofstream final(FileName.CStr(), std::ios::binary);
+      final << newTmpFile.rdbuf();
+
+      final.close();
+      newTmpFile.close();
+
+      std::remove(FileNameNewTmp.CStr()); //last thing
+    }else{
+      ABORT("the new savegame tmp file '%s' should exist!",FileNameNewTmp.CStr());
+    }
+  }
+}
+
+outputfile::outputfile(cfestring& fileName, truth AbortOnErr)
+: FileName(fileName)
 {
   // If FileName contains a directory, make sure the directory exists first.
   festring::csizetype LastPathSeparatorPos = FileName.FindLast('/');
@@ -35,10 +66,40 @@ outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
     MakePath(DirectoryPath);
   }
 
-  File.open(FileName.CStr(), std::ios::binary);
+  if(bakcupBeforeSaving){ // this is not that useful, the tmp files are better as they prevent overwriting the final files in case the game crashes
+    std::ifstream orig(FileName.CStr(), std::ios::binary);
+    if(orig.good()){
+      festring fsBkp("");fsBkp << FileName << ".bkp";
+      std::remove(fsBkp.CStr()); //just to have a granted clean new backup
+
+      std::ofstream bkp(fsBkp.CStr(), std::ios::binary);
+      bkp << orig.rdbuf();
+
+      orig.close();
+      bkp.close();
+
+      // backups are kept until leaving the game
+    }
+  }
+
+  festring FileNameNew("");
+  FileNameNew<<FileName;
+  if(saveOnNewFileAlways){
+    FileNameNew<<".tmp";
+    FileNameNewTmp<<FileNameNew;
+
+    /**
+     * if happened a crash and a tmp file is still there,
+     * it is most probably invalid and incomplete,
+     * so just remove it.
+     */
+    std::remove(FileNameNew.CStr());
+  }
+
+  File.open(FileNameNew.CStr(), std::ios::binary);
 
   if(AbortOnErr && !IsOpen())
-    ABORT("Can't open %s for output!", FileName.CStr());
+    ABORT("Can't open %s for output!", FileNameNew.CStr());
 }
 
 inputfile::inputfile(cfestring& FileName,
