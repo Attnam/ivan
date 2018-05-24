@@ -2796,7 +2796,7 @@ golem
   UsesNutrition = false;
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
-  Frequency = 1500;
+  Frequency = 800;
   CanTalk = false;
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
