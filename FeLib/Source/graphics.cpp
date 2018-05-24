@@ -98,7 +98,7 @@ std::vector<stretchRegion> vStretchRegion;
 truth graphics::bAllowStretchedRegionsBlit=false;
 
 bitmap* graphics::DoubleBuffer=NULL;
-bitmap* graphics::StretchedDB=NULL;
+bitmap* graphics::StretchedBuffer=NULL; //this is actually a 3rd buffer...
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -256,8 +256,8 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 #endif
 
   globalwindowhandler::Init();
-  DoubleBuffer = new bitmap(NewRes); DBG2("DoubleBuffer",DoubleBuffer);
-  StretchedDB = new bitmap(NewRes); DBG2("StretchedDB",StretchedDB);
+  DoubleBuffer = new bitmap(NewRes);
+  StretchedBuffer = new bitmap(NewRes); DBG2("StretchedBuffer",StretchedBuffer);
   Res = NewRes;
   SetScale(NewScale);
   ColorDepth = 16;
@@ -370,11 +370,11 @@ void graphics::SetSRegionListItem(int iIndex){
  * it actually copies the blitdata
  */
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
-  if(B.Stretch  <=1   )ABORT("SRegion stretch value invalid %d", B.Stretch); // some actual scaling is required
-  if(B.Bitmap   !=NULL)ABORT("SRegion bitmap should not be set."); // see below
-  if(StretchedDB==NULL)ABORT("StretchedDB not set yet.");
+  if(B.Stretch      <=1   )ABORT("SRegion stretch value invalid %d", B.Stretch); // some actual scaling is required
+  if(B.Bitmap       !=NULL)ABORT("SRegion bitmap should not be set."); // see below
+  if(StretchedBuffer==NULL)ABORT("StretchedBuffer not set yet.");
 
-  B.Bitmap = StretchedDB;
+  B.Bitmap = StretchedBuffer;
   if(iIndex==-1){ //add
     stretchRegion SRcp = SRdefault;
     stretchRegion& rSR = SRcp;
@@ -495,11 +495,11 @@ void graphics::DrawAtDoubleBufferBeforeFelistPage(){
   }
 }
 
-void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedDB){
+void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedBuffer){
   static bool bDbgTinyDungeon = [](){const char* c=std::getenv("IVAN_DebugShowTinyDungeon");return c!=NULL && strcmp(c,"true")==0;}();
   if(bDbgTinyDungeon){
     blitdata Bdbg=DEFAULT_BLITDATA;
-    Bdbg.Bitmap=StretchedDB;
+    Bdbg.Bitmap=StretchedBuffer;
     Bdbg.Border={400,300};
     DoubleBuffer->NormalBlit(Bdbg);
   }
@@ -518,7 +518,7 @@ bitmap* graphics::PrepareBuffer(){
       stretchRegion& rSR=vStretchRegion[i];
       blitdata& rB=rSR.B;DBGSRI("tryBlit");
 
-      if(rB.Bitmap!=StretchedDB)ABORT("SRegion bitmap is not pointing to StretchedDB.");
+      if(rB.Bitmap!=StretchedBuffer)ABORT("SRegion bitmap is not pointing to StretchedBuffer.");
 
       // try to disable below, is easier to read long lists
       bOk=true;
@@ -551,8 +551,8 @@ bitmap* graphics::PrepareBuffer(){
       if(bOk){
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
-          DoubleBuffer->FastBlit(StretchedDB); //simple copy (like a 3rd buffer)
-          ReturnBuffer = StretchedDB; //and set stretched as the final source
+          DoubleBuffer->FastBlit(StretchedBuffer); //simple copy (like a 3rd buffer)
+          ReturnBuffer = StretchedBuffer; //and set stretched as the final source
         }
 
         if(rSR.bSpecialListItem){ DBGSRI("ListItem");
@@ -581,17 +581,86 @@ bitmap* graphics::PrepareBuffer(){
           pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
         }
 
-        DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
+        DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedBuffer");
         Stretch(rSR.bUseXBRZ, pbmpFrom, rB, rSR.bAllowTransparency);
 
         bDidStretch=true;
       }
     }
 
-    debugTinyDungeon(DoubleBuffer,StretchedDB);
+    debugTinyDungeon(DoubleBuffer,StretchedBuffer);
   }
 
+  DrawAboveAll(ReturnBuffer);
+
   return ReturnBuffer;
+}
+
+struct drawaboveentry{
+  drawabove da;
+  int iPriority;
+  const char* desc; //to help on development
+};
+std::vector<drawaboveentry> vDrawabove;
+void graphics::DrawAboveAll(bitmap* bmpDest)
+{
+  for(int i=0;i<vDrawabove.size();i++){
+    vDrawabove[i].da(StretchedBuffer);
+  }
+}
+
+/**
+ * Priority to reorganize (recreate) the vector ordering.
+ * Priority can be any value.
+ * Lowest priority will be drawn below, and higher ones above.
+ *
+ * The suggestion is to skip by 100 every new layer, so if there are too many they can
+ *  fit in between w/o having to change everywhere ex.:
+ *   900 : some new layer below Map
+ *   1000 : Map
+ *   1100 : Some other new layer above Map
+ *  many days later just create another
+ *   950 : another new layer will be drawn above 900 and below the Map
+ *  and you dont have to change everywhere.
+ */
+void graphics::AddDrawAboveAll(drawabove da, int iPriority, const char* desc)
+{
+  drawaboveentry dae;
+  dae.da=da;
+  dae.iPriority=iPriority;
+  dae.desc=desc;
+
+  std::vector<drawaboveentry> vDrawaboveTmp(vDrawabove);
+  vDrawaboveTmp.push_back(dae);
+
+  vDrawabove.clear();
+
+  while(vDrawaboveTmp.size()>0){
+    drawaboveentry daeLowestPriority;
+    daeLowestPriority.iPriority=1000000000; //TODO should be max int
+    int iIndexLP=-1;
+    for(int i=0;i<vDrawaboveTmp.size();i++){
+      if(vDrawaboveTmp[i].iPriority < daeLowestPriority.iPriority){
+        daeLowestPriority=vDrawaboveTmp[i];
+        iIndexLP=i;
+      }
+    }
+
+    vDrawabove.push_back(daeLowestPriority);
+
+    vDrawaboveTmp.erase(vDrawaboveTmp.begin()+iIndexLP);
+  }
+
+  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //to help on development, so all priorities can be adjusted easily
+  bool bCOut = c!=NULL && strcmp(c,"true")==0;
+  festring fsDrawAbovePriority("");
+  for(int i=0;i<vDrawabove.size();i++){
+    fsDrawAbovePriority << vDrawabove[i].iPriority << ":" << vDrawabove[i].desc;
+    if(bCOut)
+      std::cout << fsDrawAbovePriority.CStr() << std::endl;
+    DBG1(fsDrawAbovePriority.CStr());
+  }
+
 }
 
 void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool bWide){
