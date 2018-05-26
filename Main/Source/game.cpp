@@ -55,6 +55,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "namegen.h"
 
 #define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
@@ -617,6 +618,13 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   UpdateSRegionsXBRZ();
 }
 
+void FantasyName(festring& rfsName){
+  if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
+
+  NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+  rfsName << gen.toString().c_str();
+}
+
 truth game::Init(cfestring& Name)
 {
   if(Name.IsEmpty())
@@ -624,6 +632,8 @@ truth game::Init(cfestring& Name)
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
+
+      FantasyName(PlayerName);
 
       if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
                                   v2(30, 46), WHITE, 1, 20, true, true) == ABORTED

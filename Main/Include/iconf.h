@@ -20,6 +20,7 @@ class ivanconfig
 {
  public:
   static cfestring& GetDefaultName() { return DefaultName.Value; }
+  static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
@@ -93,6 +94,7 @@ class ivanconfig
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
+  static truth FantasyNameChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -142,6 +144,7 @@ class ivanconfig
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
+  static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
