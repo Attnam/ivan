@@ -299,7 +299,7 @@ class character : public entity, public id
   truth ReadItem(item*);
   truth TestForPickup(item*) const;
   void ThrowItem(int, item*);
-  truth TryMove(v2, truth, truth);
+  truth TryMove(v2, truth, truth, truth* =NULL);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
   truth HasEncryptedScroll() const;
