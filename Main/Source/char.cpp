@@ -531,7 +531,9 @@ character::character(ccharacter& Char)
   int c;
 
   for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
-    MemorizedEquippedItemIDs[c]=0; //TODO use Char?
+    MemorizedEquippedItemIDs[c] = Char.MemorizedEquippedItemIDs[c];
+
+  v2HoldPos=Char.v2HoldPos;
 
   for(c = 0; c < STATES; ++c)
     TemporaryStateCounter[c] = Char.TemporaryStateCounter[c];
@@ -587,6 +589,8 @@ character::character()
 
   for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
     MemorizedEquippedItemIDs[c]=0;
+
+  v2HoldPos=v2(0,0);
 }
 
 character::~character()
@@ -2972,26 +2976,40 @@ truth character::FollowLeader(character* Leader)
   if(!Leader || Leader == this || !IsEnabled())
     return false;
 
-  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this) && Leader->SquareUnderCanBeSeenBy(this, true))
-  {
-    v2 Distance = GetPos() - GoingTo;
+  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this) && Leader->SquareUnderCanBeSeenBy(this, true)){
+    v2HoldPos = GoingTo; //will keep the last reference position possible
 
+    v2 Distance = GetPos() - GoingTo; //set by SeekLeader()
     if(abs(Distance.X) <= 2 && abs(Distance.Y) <= 2)
       return false;
     else
       return MoveTowardsTarget(false);
   }
-  else
-    if(IsGoingSomeWhere())
-      if(!MoveTowardsTarget(true))
-      {
-        TerminateGoingTo();
-        return false;
-      }
-      else
-        return true;
-    else
+
+  if(IsGoingSomeWhere()){
+    if(!MoveTowardsTarget(true)){
+      TerminateGoingTo();
       return false;
+    }else{
+      return true;
+    }
+  }else{
+    // just hold near position
+    if(v2HoldPos.Is0())
+      v2HoldPos=GetPos(); //when the game is loaded keep current pos TODO could be savegamed tho
+    if(ivanconfig::GetHoldPosMaxDist()>0){
+      v2 v2HoldDist = GetPos() - v2HoldPos;
+      if(abs(v2HoldDist.X) < ivanconfig::GetHoldPosMaxDist() && abs(v2HoldDist.Y) < ivanconfig::GetHoldPosMaxDist()){
+        // will do other things
+        return false;
+      }else{
+        SetGoingTo(v2HoldPos); DBG4(GetNameSingular().CStr(),DBGAV2(v2HoldPos),DBGAV2(Leader->GetPos()),DBGAV2(v2HoldDist));
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 void character::SeekLeader(ccharacter* Leader)
@@ -3007,7 +3025,7 @@ void character::SeekLeader(ccharacter* Leader)
     {
       team* Team = GetTeam();
 
-      for(character* p : Team->GetMember())
+      for(character* p : Team->GetMember()){
         if(p->IsEnabled()
            && p->GetID() != GetID()
            && (CommandFlags & FOLLOW_LEADER)
@@ -3023,6 +3041,10 @@ void character::SeekLeader(ccharacter* Leader)
             break;
           }
         }
+      }
+
+//      if(!IsGoingSomeWhere()){ // couldnt follow leader neather team mate
+//      }
     }
   }
 }

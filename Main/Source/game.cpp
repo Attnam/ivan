@@ -41,6 +41,7 @@
 #include "hscore.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
@@ -1346,6 +1347,7 @@ void game::DrawMapOverlay(bitmap* buffer)
             static col16 colorFountain=MakeRGB16(        0,         0,0xFF     );
             static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0);
             static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0);
+            static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
 
             static olterrain* olt;olt = lsqr->GetOLTerrain();
             if(olt){
@@ -1360,6 +1362,8 @@ void game::DrawMapOverlay(bitmap* buffer)
                 colorO=colorUp;
               }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
                 colorO=colorDown;
+              }else if(dynamic_cast<altar*>(olt)!=NULL){
+                colorO=colorAltar;
               }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
                 colorO=colorOnGround;
               }
@@ -1367,17 +1371,10 @@ void game::DrawMapOverlay(bitmap* buffer)
               colorO=colorFloor;
             }
 
-            //this happens during detect material! TODO this is just a guess work and may fail one day or at some untested place
-            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){
+            if(lsqr->IsMaterialDetected()) //color override
               colorO=YELLOW;
-            }
           }else{
-//            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){ //this happens during detect material!
-//              colorO=YELLOW;
-//            }else{
-              colorO=colorMapBkg;
-    //            colorO=bkg[iLumIndex];
-//            }
+            colorO=colorMapBkg;
           }
 
           bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
