@@ -4296,14 +4296,14 @@ zombie
       "\"Khaz-zadm once held the richest deposits of valpurian ore on this whole continent. No wonder Attnam has no shortage of vaplurium these days.\"",
       "\"Attnam and Khaz-zadm were close partners for many years. Attnam bought its sacred metal from us, but we needed attnamese priests to bless the smelting, lest a burnt slag was produced instead of a magical metal.\"",
       "\"I remember with fondness our shared visits with high priest Priscus. I was greatly saddened by the betrayal of the orcish delegation and his death. Too late did I learn the truth - I fell for the tricks of the same enemy he did.\"",
-      "\"High priest Priscus had a life-long dream - Pax Attnamica, a peace amongst all the lands, races and religions. Alas, not everyone even in his own country agreed with his pacifistic ways and evetually, his efforts led to his untimely demise.\"",
-      "\"Many have recounted the story differently, but I believe this: It was neither the retinue of Priscus, nor the orcish delegation of Al-Khan who betrayed and massacred the other. There is someone else to blame.\"",
-      "\"I learned too late it was Petrus along with Sir Galladon I. and his loyal elite guards who ambushed and murdered both Priscus and Al-Khan, winning the attnamese throne for Petrus and throwing all khanite orcs into chaos.\"",
-      "\"Al-Khan was a great leader and politician. He managed to unite most of the orcish tribes in a singular horde the likes of which nobody had seen since the ancient War in Heavens. Yet he did not seek conquest, but rather strength and prosperity in unity for his people.\"",
-      "\"Once, the great mountain was filled with the joy of dwarven life. But Khaz-zadm has fallen and its corridors are now gloomy and full of monsters.\"", /* Yes, gloomy caves once were teh dwarven city of Khaz-zadm and its mines. */
+      "\"High priest Priscus had a life-long dream - Pax Attnamica, a peace amongst all the lands, races and religions. Alas, not everyone even in his own country agreed with his pacifistic ways and eventually, his efforts led to his untimely demise.\"",
+      "\"Many have recounted the story differently, but I believe this: It was neither the retinue of Priscus, nor the orcish delegation of Vol-Khan who betrayed and massacred the other. There is someone else to blame.\"",
+      "\"I learned too late it was Petrus along with Sir Galladon I. and his loyal elite guards who ambushed and murdered both Priscus and Vol-Khan, winning the attnamese throne for Petrus and throwing all khanite orcs into chaos.\"",
+      "\"Vol-Khan was a great leader and politician. He managed to unite most of the orcish tribes in a singular horde the likes of which nobody had seen since the ancient War in Heavens. Yet he did not seek conquest, but rather strength and prosperity in unity for his people.\"",
+      "\"Once, the great mountain was filled with the joy of dwarven life. But Khaz-zadm has fallen and its corridors are now gloomy and full of monsters.\"", /* Yes, gloomy caves once were the dwarven city of Khaz-zadm and its mines. */
       "\"Khaz-zadm stretched for miles below the great mountain - a monument to craftsdwarfship. What remains of it now but another dark dungeon?\"",          /* That's why there are so many artificial rooms and corridors in a 'cave'. */
       "\"We dug deep in our days of glory. And in the deepest reaches of Khaz-zadm, we built a massive fortress of solid steel. No one could ever dream of conquering it, even during the Dwarven Wars.\"", /* But Elpuri took it once it was abandoned. */
-      "\"I only met Al-Khan once, yet I saw a strong, wilful man in him, not a murderer.\"",
+      "\"I only met Vol-Khan once, yet I saw a strong, wilful man in him, not a murderer.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
     Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 75; }, key(OCTAGONAL_LOCK) { Chance = 75; } }
