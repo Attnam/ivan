@@ -2343,6 +2343,7 @@ flesh
   Config MUSHROOM_FLESH;
   {
     NameStem = "mushroom";
+    AdjectiveStem = "fungal";
     Density = 600;
     Effect = EFFECT_MUSHROOM;
     ConsumeWisdomLimit = 10;
@@ -2409,6 +2410,7 @@ flesh
   Config MAGIC_MUSHROOM_FLESH;
   {
     NameStem = "magical mushroom";
+    AdjectiveStem = "fungal";
     Density = 600;
     Effect = EFFECT_MAGIC_MUSHROOM;
     ConsumeWisdomLimit = 10;
