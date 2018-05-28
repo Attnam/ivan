@@ -348,7 +348,7 @@ class character : public entity, public id
   void FallTo(character*, v2);
   truth CheckCannibalism(cmaterial*) const;
   void ActivateTemporaryState(long What) { TemporaryState |= What; }
-  void DeActivateTemporaryState(long What) { TemporaryState &= ~What; }
+  void DeActivateTemporaryState(long What);
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
   truth TemporaryStateIsActivated(long What) const;
