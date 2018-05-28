@@ -1232,7 +1232,7 @@ truth iosystem::IsAcceptableForStringQuestion(int Key)
     return false;
 
   if(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC
-     || Key == KEY_HOME || Key == KEY_END)
+     || Key == KEY_HOME || Key == KEY_END || Key == KEY_LEFT || Key == KEY_RIGHT)
     return true;
 
   if(Key < 0x20 || Key >= 0x7F)
