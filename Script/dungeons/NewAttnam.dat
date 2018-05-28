@@ -566,7 +566,7 @@ Dungeon NEW_ATTNAM;
   Level 1;
   {
     Description = "New Attnam's sumo wrestling arena";
-    ShortDescription = "SumoArena";
+    ShortDescription = "Sumo Arena";
     FillSquare = solidterrain(GROUND), MORAINE earth;
     Size = 55, 55;
     Rooms = 1;

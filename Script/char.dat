@@ -538,6 +538,50 @@ farmer
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(CRUENTUS) { Chance = 10; }, wand(WAND_OF_NECROMANCY) { Chance = 10; } }
   }
+
+  Config CRAZED_FARMER;
+  {
+    DefaultName = "Brom";
+    Adjective = "crazed";
+    AttributeBonus = 30;
+    Belt = LEATHER belt { Enchantment = 5; }
+    RightWielded = COPPER sharpaxe { Enchantment = 5; }
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 50;
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
+    TamingDifficulty = 25;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeWished = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    IsSadist = true;
+    UndeadVersions = false;
+    CanBeGenerated = true;
+    ClassStates = CONFUSED;
+    DeathMessage = "@Dd laughs and sobs and screams and dies.";
+    HostileReplies =
+    {
+      5,
+      "\"Please, let it stop!\"",
+      "\"I couldn't save her! No one can!!!\"",
+      "\"You're one of them! Of course. Hihihi...\"",
+      "\"Let us see the crimson. Yes, yes! Hihihi...\"",
+      "\"They're under your skin! Get them out!\"";
+    }
+    FriendlyReplies =
+    {
+      5,
+      "\"I would rather grow a share of crops in hell than stay alive. Hihihi...\"",
+      "\"Little mouse-babes played with cat, So she killed them and then ate.\"",
+      "\"I'm not insane, I'm not insane! Hihihi...\"",
+      "\"Let us see the crimson. Please? Hihihi...\"",
+      "\"I know what I know, I know what I know, I know what I know...\"";
+    }
+    Inventory == wand(WAND_OF_RESURRECTION);
+  }
 }
 
 guard
@@ -1551,6 +1595,25 @@ darkknight
     GauntletColor = rgb16(50, 50, 50);
   }
 
+  Config ROOKIE_FEMALE;
+  {
+    AttributeBonus = -20;
+    Helmet = BRONZE helmet(FULL_HELMET);
+    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    LeftWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    Adjective = "rookie";
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 200;
+    RightSWeaponSkillHits = 100;
+    LeftSWeaponSkillHits = 100;
+    PanicLevel = 15;
+    ClothColor = rgb16(70, 70, 70);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
+  }
+
   Config VETERAN;
   {
     Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
@@ -1567,6 +1630,26 @@ darkknight
     ClothColor = rgb16(40, 40, 40);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
+  }
+
+  Config VETERAN_FEMALE;
+  {
+    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
+    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
+    LeftWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
+    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+    RightBoot = IRON boot { Enchantment = 1; }
+    Adjective = "veteran";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 500;
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 10;
+    ClothColor = rgb16(40, 40, 40);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
   }
 
   Config TEMPLAR; /* Tougher than veteran */
@@ -1609,6 +1692,9 @@ darkknight
     RightSWeaponSkillHits = 500;
     PanicLevel = 5;
     CriticalModifier = 4;
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
     TamingDifficulty = 20;
     TotalVolume = 90000;
     ClothColor = rgb16(80, 20, 20);
@@ -1643,6 +1729,30 @@ darkknight
     ClothColor = rgb16(20, 20, 120);
     CapColor = rgb16(48, 48, 48);
     GauntletColor = rgb16(50, 50, 50);
+    DeathMessage = "@Dd dies with clenched teeth: \"I laugh in the face of death!\"";
+  }
+
+  Config ELITE_FEMALE;
+  {
+    AttributeBonus = 20;
+    Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = STEEL STEEL meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = STEEL STEEL meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+    RightBoot = STEEL boot { Enchantment = 2; }
+    UsesLongAdjectiveArticle = true;
+    Adjective = "elite";
+    KnownCWeaponSkills == LARGE_SWORDS;
+    CWeaponSkillHits == 1000;
+    RightSWeaponSkillHits = 500;
+    LeftSWeaponSkillHits = 500;
+    PanicLevel = 5;
+    TotalVolume = 90000;
+    ClothColor = rgb16(20, 20, 120);
+    CapColor = rgb16(48, 48, 48);
+    GauntletColor = rgb16(50, 50, 50);
+    Sex = FEMALE;
     DeathMessage = "@Dd dies with clenched teeth: \"I laugh in the face of death!\"";
   }
 
@@ -2196,11 +2306,13 @@ skeleton
   HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
   FriendlyReplies =
   {
-    5,
+    7,
     "@Dd talks about bones.",
     "@Dd rattles @sp bones omniously.",
     "\"Hope I'm not giving you a boner! Heh, heh.\"",
     "\"I lost my old skull in a game of poker, so I killed this adventurer guy and took his. Quite handsome, right?\"",
+    "\"I'm not resting, I'm dead!\"",
+    "@Dd throws @sp skull high in the air, then catches it and puts it back on.",
     "@Dd sings: \"Leg bone is connected to the hip bone, hip bone is connected to the rib bone...\"";
   }
   FleshMaterial = BONE;
@@ -2365,6 +2477,100 @@ goblin
     Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
   }
 
+  Config MONK;
+  {
+    DefaultWisdom = 25;
+    AttributeBonus = 50;
+    RightWielded = 0;
+    LeftWielded = 0;
+    Belt = BLACK_LEATHER belt;
+    AttackStyle = USE_ARMS|USE_LEGS;
+    BaseUnarmedStrength = 800;
+    KnownCWeaponSkills = { 2, UNARMED, KICK; }
+    CWeaponSkillHits = { 2, 200, 200; }
+    NameSingular = "goblin monk";
+    /* CreateDivineConfigurations = true; */
+    CanRead = true;
+    Sex = FEMALE;
+    AttachedGod = SOPHOS;
+    ConstantCommandFlags = DONT_CHANGE_EQUIPMENT;
+    ClothColor = rgb16(255, 69, 0); /* Orange robes. */
+    Inventory == potion { SecondaryMaterial = VODKA; Chance = 30; }
+    DeathMessage = "@Dd dies with acceptance.";
+    HostileReplies =
+    {
+      10,
+      "\"@Gd! Forgive me for this violence I am about to inflict.\"",
+      "@Dd screams: \"Claw of the Cheerful Wolf!\"",
+      "@Dd shouts: \"Contemplative Rooster Hammer!\"",
+      "@Dd roars: \"Fear-ridden Assassin Blow!\"",
+      "@Dd yells: \"Nine Fortuitous Bodhisattvas Strike!\"",
+      "@Dd screams: \"Monkey's Clutch of White Snares!\"",
+      "@Dd shouts: \"Kick of One Thousand Phantoms' Dance!\"",
+      "@Dd roars: \"Ninety-nine Million Emerald Meteors Fist!\"",
+      "@Dd yells: \"Pinch of the Terrifying Badger!\"",
+      "@Dd whispers: \"Hand of Dancing Gallows!\"";
+    }
+    FriendlyReplies =
+    {
+      8, /* Some koans: */
+      "\"The lawyer came to the guru and asked for truth. The guru said nothing. This pleased the lawyer, who went on his way with the exhilaration of newfound knowledge. Moments later, the guru awoke.\"",
+      "\"The wise old man said to the child: 'Nothing is true that cannot be proven.' The child replied: 'Prove it.'\"",
+      "\"The guru told the frog: 'Nothing is better than the Good.' The frog said: 'But a nice bite of lettuce is better than nothing.'\"",
+      "\"The wise old man told the child do the opposite of whatever was asked of her, but the child refused.\"",
+      "\"The guru said: 'This wise old man never lies!' The wise old man said: 'That guru never tells the truth.'\"",
+      "\"In between bites of lettuce, the frog told the guru: 'I am all that exists. Everything else is illusion.' The guru said: 'But frog, I know I exist.' The frog replied: 'Sorry, I meant to say that you were all that existed. Everything else is illusion.'\"",
+      "\"The lawyer, the wise old man and the guru watched a flag flap in the wind. The lawyer said: 'The flag is moving.' The wise old man said: 'The wind is moving.' The guru said: 'Your minds are moving.' And the child exclaimed: 'Could you keep it down? Some of us are trying to sleep.'\"",
+      "\"The child said: 'Everything I say is true because I say so.'\"";
+    }
+    Frequency = 1500;
+  }
+
+  Config WARLOCK;
+  {
+    DefaultIntelligence = 15;
+    DefaultMana = 25;
+    AttributeBonus = 25;
+    Helmet = skull;
+    BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = BONE BONE meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
+    KnownCWeaponSkills == POLE_ARMS;
+    CWeaponSkillHits == 20;
+    RightSWeaponSkillHits = 10;
+    PanicLevel = 66;
+    CanRead = true;
+    NameSingular = "goblin warlock";
+    ClothColor = rgb16(255, 0, 255);
+    AttachedGod = INFUSCOR;
+    ClassStates = INFRA_VISION;
+    HostileReplies =
+    {
+      3,
+      "@Dd tries to curse you.",
+      "@Dd tries to hex you.",
+      "@Dd cackles madly.";
+    }
+    FriendlyReplies =
+    {
+      2,
+      "\"Me know great body-part-zuppe! Me prepare - you want?\"",
+      "@Dd laughs: \"Humie friend. Many mommo we teleport. Many spider we polymorph.\"";
+    }
+    Inventory = { 7,
+                  wand(WAND_OF_TELEPORTATION) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_DOOR_CREATION) { Chance = 30; LifeExpectancy = 10000; },
+                  wand(WAND_OF_ACID_RAIN) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_WEBBING) { Chance = 50; LifeExpectancy = 10000; },
+                  wand(WAND_OF_MIRRORING) { Chance = 5; LifeExpectancy = 10000; },
+                  wand(WAND_OF_POLYMORPH) { Chance = 5; LifeExpectancy = 10000; },
+                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; }
+                }
+    DangerModifier = 150;
+    HPRequirementForGeneration = 50;
+    DayRequirementForGeneration = 3;
+    Frequency = 1500;
+  }
+
   Config PRINCE;
   {
     AttributeBonus = 75;
@@ -2388,6 +2594,7 @@ goblin
       "@Dd describes a recent article in 'Modern Monster' magazine.",
       "@Dd wants nothing to do with you.";
     }
+    Sex = MALE;
   }
 
   Config KING;
@@ -2420,11 +2627,13 @@ goblin
     Inventory = { 2, stone { Chance = 50; }, amulet; }
     CanBeConfused = false;
     NaturalSparkleFlags = HAIR_COLOR;
+    Sex = MALE;
     FireResistance = 30;
     ElectricityResistance = 30;
     EnergyResistance = 30;
     TamingDifficulty = 20;
     UndeadVersions = false;
+    /* TODO: Special dialogue. */
   }
 }
 
@@ -4047,16 +4256,57 @@ zombie
     CanRead = true;
     CreateUndeadConfigurations = false;
     DeathMessage = "As @Dd collapses, you hear her hiss: \"Peeeeeetrrrruuuuuuuss!!!\"";
+    HostileReplies =
+    {
+      25,
+      "\"A pity.\"",
+      "\"Are you so easily decieved?\"",
+      "\"You will not suffer... for long.\"",
+      "\"It must be this way.\"",
+      "\"My city... in ruins.\"",
+      "\"This will be quick.\"",
+      "\"How we've fallen.\"",
+      "\"You will fall as we did.\"",
+      "\"This is for the best.\"",
+      "\"He cannot be stopped.\"",
+      "\"He must be stopped.\"",
+      "\"I will save you.\"",
+      "\"I will make you understand.\"",
+      "\"How long have I slumbered?\"",
+      "\"Let us end it.\"",
+      "\"I will stop this.\"",
+      "\"You cannot win.\"",
+      "\"You cannot hurt me.\"",
+      "\"You have been betrayed.\"",
+      "\"I must do this, for your sake.\"",
+      "\"Curse His name!\"",
+      "\"It cannot end like this.\"",
+      "\"I was wrong.\"",
+      "\"Return them to me!\"",
+      "@Dd whispers: \"Please... \"";
+    }
     FriendlyReplies =
     {
-      5,
+      17,
       "\"Once, I was a duchess of a great dwarven fortress-city of Khaz-zadm.\"",
       "\"After the Dwarven Wars, our land lay in ruins. Our mines were undermined and filled with masterless golems. Our resources were stretched thin. That was when Petrus came with his offer of charity. I should have known better.\"",
       "\"Naught but ashes remain from my people. Petrus even saw that the word would not spread to Kharaz-arad or other dwarven lands.\"",
       "\"No one remembers Priscus, the former High Priest of Valpurus, these days. Only me.\"",
+      "\"The poor children of Khaz-zadm! Taken from their murdered parents and trained to die at the behest of the high priest, praising Valpurus with their dying breath.\"",
+      "\"Khaz-zadm once held the richest deposits of valpurian ore on this whole continent. No wonder Attnam has no shortage of vaplurium these days.\"",
+      "\"Attnam and Khaz-zadm were close partners for many years. Attnam bought its sacred metal from us, but we needed attnamese priests to bless the smelting, lest a burnt slag was produced instead of a magical metal.\"",
+      "\"I remember with fondness our shared visits with high priest Priscus. I was greatly saddened by the betrayal of the orcish delegation and his death. Too late did I learn the truth - I fell for the tricks of the same enemy he did.\"",
+      "\"High priest Priscus had a life-long dream - Pax Attnamica, a peace amongst all the lands, races and religions. Alas, not everyone even in his own country agreed with his pacifistic ways and eventually, his efforts led to his untimely demise.\"",
+      "\"Many have recounted the story differently, but I believe this: It was neither the retinue of Priscus, nor the orcish delegation of Vol-Khan who betrayed and massacred the other. There is someone else to blame.\"",
+      "\"I learned too late it was Petrus along with Sir Galladon I. and his loyal elite guards who ambushed and murdered both Priscus and Vol-Khan, winning the attnamese throne for Petrus and throwing all khanite orcs into chaos.\"",
+      "\"Vol-Khan was a great leader and politician. He managed to unite most of the orcish tribes in a singular horde the likes of which nobody had seen since the ancient War in Heavens. Yet he did not seek conquest, but rather strength and prosperity in unity for his people.\"",
+      "\"Once, the great mountain was filled with the joy of dwarven life. But Khaz-zadm has fallen and its corridors are now gloomy and full of monsters.\"", /* Yes, gloomy caves once were the dwarven city of Khaz-zadm and its mines. */
+      "\"Khaz-zadm stretched for miles below the great mountain - a monument to craftsdwarfship. What remains of it now but another dark dungeon?\"",          /* That's why there are so many artificial rooms and corridors in a 'cave'. */
+      "\"We dug deep in our days of glory. And in the deepest reaches of Khaz-zadm, we built a massive fortress of solid steel. No one could ever dream of conquering it, even during the Dwarven Wars.\"", /* But Elpuri took it once it was abandoned. */
+      "\"I only met Vol-Khan once, yet I saw a strong, wilful man in him, not a murderer.\"",
       "\"After the coup, I knew that another war would come. Priscus was a politician. Petrus was a warrior.\"";
     }
-    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 50; }, key(OCTAGONAL_LOCK) { Chance = 50; } }
+    Inventory = { 2, key(HEXAGONAL_LOCK) { Chance = 75; }, key(OCTAGONAL_LOCK) { Chance = 75; } }
   }
 
   Config IMPRISONED_ZOMBIE;
@@ -4110,7 +4360,14 @@ ghost
     "@Dd attempts to spook you.",
     "\"Boo!\"";
   }
-  FriendlyReplies == "\"A very good Boo to you, my friend.\"";
+  FriendlyReplies =
+  {
+    4,
+    "@Dd moans.",
+    "\"How did I die? Oh wow, that is kind of private!\"",
+    "\"...oOoOOOooOooooOoOooOOoOoooOOo...\"",
+    "\"A very good Boo to you, my friend.\"";
+  }
   PanicLevel = 0;
   /*HasALeg = false;*/
   FleshMaterial = GHOST;
@@ -4245,24 +4502,27 @@ imp
   UsesLongArticle = true;
   CanBeGenerated = true;
   Sex = UNDEFINED;
-  CanUseEquipment = false;
-  KnownCWeaponSkills == UNARMED;
-  CWeaponSkillHits == 50;
+  AttackStyle = USE_ARMS|USE_HEAD;
+  KnownCWeaponSkills = { 2, UNARMED, BITE; }
+  CWeaponSkillHits = { 2, 50, 50; }
   PanicLevel = 75;
   BaseUnarmedStrength = 300;
+  BaseBiteStrength = 500;
   FleshMaterial = SULFUR;
   UsesNutrition = false;
   AttachedGod = MORTIFER;
   ClassStates = GAS_IMMUNITY;
   FireResistance = 1000;
-  WillCarryItems = false;
   CanChoke = false;
   UndeadVersions = false;
   FriendlyReplies =
   {
-    3,
+    6,
     "\"And she said: 'Stop pecking at your food!' And I was like: 'But mom! It's raw and I told you I wanted the toddler well done!'\"",
     "\"I was about to kiss her, but then I got summoned.\"",
+    "\"It is said: To err is human. Stupid humans...\"",
+    "\"They say, if you cannot beat them, join them. I say, if you cannot beat them, beat them later. Because they will be expecting you to join them, so you will have the element of surprise.\"",
+    "\"Fight fire with fire! Unless it's not metaphorical fire but real fire, then you should probably use water.\"",
     "\"And the summoner tore his heart out and said: 'I present this humble sacrifice to thee, oh daemon of the Nether Realms!' And I was like: 'Gee, that's so sweet and all, but sorry, I already have a date for Valentine's.' Plus he was like what, seventy, maybe? I'm ten times older than him! How creepy is that, right?\"";
   }
   HostileReplies =
@@ -4648,6 +4908,50 @@ werewolfwolf
   AttachedGod = INFUSCOR;
   WillCarryItems = true;
   UndeadVersions = false;
+
+  Config DRUID;
+  {
+    DefaultWillPower = 50;
+    ArmBitmapPos = 64, 208;
+    EyeColor = rgb16(34, 139, 34);
+    ClothColor = rgb16(0, 160, 0);
+    DefaultName = "Moryggan";
+    PostFix = "druidess of Silva";
+    RightWielded = taiaha { Enchantment = 2; }
+    Cloak = PALM_LEAF cloak { Enchantment = 2; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
+    CWeaponSkillHits = { 2, 50, 100; }
+    RightSWeaponSkillHits = 20;
+    FireResistance = 30;
+    ElectricityResistance = 30;
+    EnergyResistance = 30;
+    TamingDifficulty = 20;
+    CanUseEquipment = true;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    CanBeGenerated = true;
+    IsPolymorphable = false;
+    HostileReplies =
+    {
+      3,
+      "@Dd growls: \"@Gd! I offer thee this sacrifice of flesh and violence!\"",
+      "@Dd snarls in disdain.",
+      "\"Ah... Fresh meat.\"";
+    }
+    FriendlyReplies =
+    {
+      3,
+      "\"When I was bitten, @Gd blessed me with will strong enough to last through the transformation.\"",
+      "\"The tattoos? They are pure moonsilver, enchanted with magic of nature and protection. They prevent the changing of forms and ward my mind against the madness of lycanthropy.\"",
+      "\"I did not choose to become a monster, yet I am a werewolf. I am what I am.\"";
+    }
+    AttackStyle = USE_ARMS|USE_HEAD;
+    Sex = FEMALE;
+    ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION|POLYMORPH_LOCK;
+    AttachedGod = SILVA;
+    Inventory = { 3, scrollofearthquake, scrollofhardenmaterial, holybook(SILVA); }
+  }
 }
 
 vampire
@@ -4758,25 +5062,28 @@ kobold
   WieldedPosition = 0, -1;
   IsExtraFragile = true;
 
-  Config CHIEFTAIN;
+  Config HUNTER;
   {
     AttributeBonus = 30;
-    RightWielded = COPPER meleeweapon(SPEAR);
+    RightWielded = COPPER PINE_WOOD meleeweapon(SPEAR);
     CWeaponSkillHits == 10;
     RightSWeaponSkillHits = 5;
-    NameSingular = "kobold chieftain";
+    NameSingular = "kobold hunter";
     PanicLevel = 66;
     ClothColor = rgb16(100, 100, 48);
     LegMainColor = rgb16(111, 74, 37);
   }
 
-  Config LORD;
+  Config WARRIOR;
   {
     AttributeBonus = 60;
-    RightWielded = IRON meleeweapon(SPEAR);
-    CWeaponSkillHits == 20;
+    RightWielded = IRON FIR_WOOD meleeweapon(SPEAR);
+    LeftWielded = FIR_WOOD shield;
+    KnownCWeaponSkills = { 2, POLE_ARMS, SHIELDS; }
+    CWeaponSkillHits = { 2, 20, 20; }
     RightSWeaponSkillHits = 10;
-    NameSingular = "kobold lord";
+    LeftSWeaponSkillHits = 10;
+    NameSingular = "kobold warrior";
     PanicLevel = 50;
     ClothColor = rgb16(160, 0, 0);
     LegMainColor = rgb16(111, 74, 37);
@@ -4815,6 +5122,7 @@ kobold
     TamingDifficulty = 15;
     IsSadist = true;
     UndeadVersions = false;
+    Sex = MALE;
     FriendlyReplies =
     {
       8,
@@ -4827,6 +5135,61 @@ kobold
       "\"The mind is everything. What you think you become.\"",
       "\"Peace comes from within. Do not seek it without.\"";
     }
+  }
+
+  Config ASSASSIN;
+  {
+    AttributeBonus = 90;
+    RightWielded = IRON IRON meleeweapon(DAGGER);
+    LeftWielded = IRON IRON meleeweapon(DAGGER);
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 50;
+    RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
+    NameSingular = "kobold assassin";
+    PanicLevel = 40;
+    ClothColor = rgb16(80, 80, 160);
+    LegMainColor = rgb16(111, 74, 37);
+    TotalSize = 80;
+    Inventory == Random { Category = POTION; Chance = 25; }
+  }
+
+  Config MASTER_ASSASSIN;
+  {
+    AttributeBonus = 120;
+    Helmet = TIN helmet(MASK);
+    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 1; }
+    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 1; }
+    Belt = NYMPH_HAIR belt;
+    Cloak = NYMPH_HAIR cloak(CLOAK_OF_INVISIBILITY);
+    RightGauntlet = NYMPH_HAIR gauntlet;
+    RightBoot = NYMPH_HAIR boot;
+    RightRing = ring(RING_OF_INFRA_VISION);
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    DefaultName = "Trenia";
+    NameSingular = "kobold master assassin";
+    IsUnique = true;
+    CanBeWished = true;
+    DangerModifier = 2500;
+    IsNameable = false;
+    CanBeCloned = false;
+    TotalSize = 70;
+    PanicLevel = 20;
+    ClothColor = rgb16(20, 20, 160);
+    LegMainColor = rgb16(111, 74, 37);
+    Inventory == Random { Category = POTION; Times = 2:8; }
+    FireResistance = 20;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
+    IsExtraFragile = false;
+    TamingDifficulty = 15;
+    IsSadist = true;
+    UndeadVersions = false;
+    Sex = FEMALE;
   }
 }
 
@@ -4909,6 +5272,37 @@ gibberling
     "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
     "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
     "@Dd gibbers.";
+  }
+
+  Config LORD;
+  {
+    AttributeBonus = 50;
+    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE);
+    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 1; }
+    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 1; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, SHIELDS; }
+    CWeaponSkillHits = { 2, 100, 100; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    DefaultName = "Ydhee-Yiggub";
+    NameSingular = "gibberlord";
+    PanicLevel = 15;
+    FireResistance = 15;
+    ElectricityResistance = 15;
+    EnergyResistance = 15;
+    TamingDifficulty = 15;
+    ClassStates = SWIMMING|GAS_IMMUNITY;
+    ClothColor = rgb16(139, 0, 139);
+    CanUseEquipment = true;
+    WillCarryItems = true;
+    IsExtraFragile = false;
+    IsNameable = false;
+    IsUnique = true;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    Inventory == gasgrenade { Times = 3:7; }
   }
 }
 
@@ -5013,15 +5407,15 @@ angel
   DefaultWisdom = 35;
   DefaultCharisma = 50;
   DefaultMana = 35;
-  TamingDifficulty = 30;
+  TamingDifficulty = NO_TAMING;
   Sex = FEMALE;
+  ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   TotalVolume = 60000;
   TorsoBitmapPos = 432, 0;
   TotalSize = 200;
   CanRead = true;
   NameSingular = "angel";
   UsesLongArticle = true;
-  ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
   SkinColor = rgb16(200, 200, 200);
   HairColor = rgb16(180, 180, 0);
   EyeColor = rgb16(48, 48, 255);
@@ -6229,7 +6623,7 @@ elder
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {
-    14,
+    15,
     "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
     "\"It is said Mortifer was the first being to die, felled by the hand of His brother, Valpurus.\"",
@@ -6243,6 +6637,7 @@ elder
     "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
     "\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-Se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses. Through the millenia she has gained every imaginable disease and bitten by every existing poisonous creature; now she is practically invulnerable to all damage.\"",
+    "\"When I was a child, we used to travel through the tunnel to easily reach the mainland. A mighty and wise guardian lived down there then... But now the tunnel is overrun by hedgehogs and carnivorous plants.\"",
     "\"Beware and avoid Lobh-Se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty there and she returns promptly when satiated.\"";
   }
   AutomaticallySeen = true;
@@ -6682,7 +7077,6 @@ darkmage
     TotalVolume = 100000;
     TotalSize = 150;
     IsUnique = true;
-    PanicLevel = 0;
     TamingDifficulty = 50;
     IsNameable = false;
     CanBeCloned = false;
@@ -6862,7 +7256,6 @@ invisiblestalker
   }
   TotalSize = 170;
   NameSingular = "stalker";
-  NamePlural = "stalkers";
   Adjective = "invisible";
   UsesLongAdjectiveArticle = true;
   AttackStyle = USE_ARMS;
@@ -6878,6 +7271,17 @@ invisiblestalker
   ClassStates = INVISIBLE;
   BodyPartsDisappearWhenSevered = true;
   IsImmuneToStickiness = true;
+
+  Config SLAYER;
+  {
+    DefaultIntelligence = 1;
+    AttributeBonus = 50;
+    TotalSize = 100;
+    CWeaponSkillHits == 500;
+    NameSingular = "slayer";
+    PanicLevel = 50;
+    EyeColor = rgb16(180, 0, 0);
+  }
 }
 
 largecreature
@@ -6953,7 +7357,7 @@ genetrixvesana
   TotalSize = 250;
   Adjective = "mother carnivorous";
   NameSingular = "plant";
-  DefaultName = "genetrix vesana";
+  DefaultName = "Genetrix Vesana";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 600;
   SkinColor = rgb16(111, 64, 37);
@@ -7560,6 +7964,7 @@ archangel
   DefaultEndurance = 35;
   DefaultPerception = 45;
   DefaultIntelligence = 35;
+  DefaultWillPower = 35;
   DefaultWisdom = 45;
   DefaultCharisma = 60;
   DefaultMana = 45;
@@ -7579,6 +7984,10 @@ archangel
   Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
   Belt = ANGEL_HAIR belt { Enchantment = 4; }
   RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+  KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+  CWeaponSkillHits = { 2, 5000, 5000; }
+  RightSWeaponSkillHits = 2000;
+  LeftSWeaponSkillHits = 2000;
   IsImmuneToItemTeleport = true;
   ScienceTalkPossibility = 100;
   ScienceTalkIntelligenceModifier = 50;
@@ -7607,53 +8016,108 @@ archangel
   Config VALPURUS;
   {
     DefaultName = "Inlux";
+    BodyArmor = VALPURIUM bodyarmor(CHAIN_MAIL) { Enchantment = 0; }
+    Cloak = GOLDEN_EAGLE_FEATHER cloak { Enchantment = 0; }
+    Belt = GOLDEN_EAGLE_FEATHER belt { Enchantment = 0; }
+    RightGauntlet = GOLDEN_EAGLE_FEATHER gauntlet { Enchantment = 0; }
+    RightWielded = VALPURIUM VALPURIUM meleeweapon(TWO_HANDED_SWORD);
+    LeftWielded = VALPURIUM shield;
+    HostileReplies == "\"Thou wouldst defy the King Upon the Throne, the Lord of Lords and God of Gods, the Frog Beneath the World Who Bears the Greatest of All Burdens, Mighty Valpurus Himself? I shall not stand thy heresy any longer, worthless worm!\"";
   }
 
   Config LEGIFER;
   {
     DefaultName = "Iustitia";
+    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
+    BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
+    RightWielded = SUN_CRYSTAL GOLD flamingsword { Enchantment = 7; }
+    LeftWielded = SUN_CRYSTAL shield { Enchantment = 7; }
   }
 
   Config ATAVUS;
   {
     DefaultName = "Beneficus";
+    BodyArmor = ARCANITE bodyarmor(PLATE_MAIL) { Enchantment = 0; }
+    RightWielded = DIAMOND OCTIRON meleeweapon(BATTLE_AXE) { Enchantment = 4; }
+    LeftWielded = DIAMOND shield { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
   }
 
   Config DULCIS;
   {
     DefaultName = "Amatrix";
+    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
+    RightWielded = 0;
+    LeftWielded = 0;
+    KnownCWeaponSkills = { 2, UNARMED, BITE; }
+    AttackStyle = USE_ARMS|USE_HEAD;
+    BaseUnarmedStrength = 2000;
+    BaseBiteStrength = 1500;
   }
 
   Config SEGES;
   {
     DefaultName = "Salubris";
+    Helmet = helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
+    RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
+    LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, LARGE_SWORDS; }
+    Inventory == Random { Category = FOOD; Times = 2; }
   }
 
   Config SOPHOS;
   {
     DefaultName = "Magus";
+    Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
+    BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
+    Cloak = SPIDER_SILK cloak { Enchantment = 0; }
+    RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    Belt = SPIDER_SILK belt { Enchantment = 0; }
+    RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config SILVA;
   {
     DefaultName = "Nux";
+    Helmet = BLUE_CRYSTAL helmet(FULL_HELMET) { Enchantment = 4; }
+    RightWielded = BLUE_CRYSTAL SIDGURE_WOOD pickaxe { Enchantment = 7; }
+    LeftWielded = SIDGURE_WOOD shield { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, AXES, SHIELDS; }
   }
 
   Config LORICATUS;
   {
     DefaultName = "Ignigena";
+    Helmet = ADAMANT helmet(FULL_HELMET) { Enchantment = 0; }
+    BodyArmor = ADAMANT bodyarmor(PLATE_MAIL) { Enchantment = 0; }
+    Cloak = 0;
+    RightWielded = ADAMANT ADAMANT thunderhammer;
+    LeftWielded = ADAMANT ADAMANT thunderhammer;
+    Belt = ADAMANT belt(BELT_OF_PROTECTION) { Enchantment = 0; }
+    RightGauntlet = ADAMANT gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config MELLIS;
   {
     DefaultName = "Leguleius";
     IsSadist = true;
+    RightWielded = SAPPHIRE GOLD meleeweapon(BASTARD_SWORD) { Enchantment = 4; }
+    LeftWielded = SAPPHIRE shield { Enchantment = 4; }
+    Belt = SAPPHIRE belt(BELT_OF_CARRYING) { Enchantment = 4; }
+    Inventory == fiftymillionroubles;
   }
 
   Config CLEPTIA;
   {
     DefaultName = "Latro";
     IsSadist = true;
+    Cloak = ANGEL_HAIR cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 4; }
+    RightWielded = RUBY OCTIRON daggerofvenom { Enchantment = 5; }
+    LeftWielded = whipofthievery { Enchantment = 5; }
+    Belt = ANGEL_HAIR belt(BELT_OF_THIEF) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, WHIPS; }
   }
 
   Config NEFAS;
@@ -7661,30 +8125,51 @@ archangel
     DefaultName = "Rapax";
     IsSadist = true;
     IsMasochist = true;
+    RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 5; }
+    LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 5; }
+    KnownCWeaponSkills = { 2, WHIPS, BITE; }
+    Inventory == potion { Times = 2; SecondaryMaterial = VODKA; }
   }
 
   Config SCABIES;
   {
     DefaultName = "Pestilentia";
     IsSadist = true;
+    BodyArmor = ANGEL_HAIR bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 4; }
+    RightWielded = RUBY RUBY weepblade { Enchantment = 5; }
+    LeftWielded = chameleonwhip { Enchantment = 5; }
+    KnownCWeaponSkills = { 2, SMALL_SWORDS, WHIPS; }
   }
 
   Config INFUSCOR;
   {
     DefaultName = "Sinistra";
     IsSadist = true;
+    Helmet = helmet(HELM_OF_MANA) { Enchantment = 4; }
+    RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
+    KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
 
   Config CRUENTUS;
   {
     DefaultName = "Gladius";
     IsSadist = true;
+    RightWielded = RUBY OCTIRON meleeweapon(HALBERD) { Enchantment = 4; }
+    LeftWielded = RUBY OCTIRON meleeweapon(HALBERD) { Enchantment = 4; }
+    Belt = RUBY belt(BELT_OF_GIANT_STRENGTH) { Enchantment = 4; }
+    RightGauntlet = OCTIRON gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, LARGE_SWORDS; }
+    Inventory == RUBY OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; }
   }
 
   Config MORTIFER;
   {
     DefaultName = "Erado";
     IsSadist = true;
+    Helmet = OMMEL_BONE skull;
+    RightWielded = PSYPHER OCTIRON terrorscythe { Enchantment = 2; }
+    LeftWielded = PSYPHER OCTIRON meleeweapon(SICKLE) { Enchantment = 4; }
+    KnownCWeaponSkills = { 2, POLE_ARMS, SMALL_SWORDS; }
   }
 }
 
@@ -7827,11 +8312,11 @@ lobhse
   DestroysWalls = true;
   AllowUnconsciousness = false;
   IsImmuneToLeprosy = true;
-  EnergyResistance = 5;
-  FireResistance = 15;
-  PoisonResistance = 50;
-  ElectricityResistance = 5;
-  AcidResistance = 50;
+  EnergyResistance = 30;
+  FireResistance = 30;
+  PoisonResistance = 100;
+  ElectricityResistance = 30;
+  AcidResistance = 100;
   PanicLevel = 0;
   HostileReplies =
   {
@@ -8264,6 +8749,7 @@ bum
   TotalVolume = 80000;
   TotalSize = 190;
   NameSingular = "bum";
+  BaseUnarmedStrength = 600;
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
@@ -8433,4 +8919,86 @@ bum
     "\"Bad adventurer! No more living for you!\"",
     "@Dd yells gibberish in a drunken rage.";
   }
+}
+
+nihil
+{
+  DefaultArmStrength = 35;
+  DefaultLegStrength = 35;
+  DefaultDexterity = 35;
+  DefaultAgility = 70;
+  DefaultEndurance = 35;
+  DefaultPerception = 45;
+  DefaultIntelligence = 35;
+  DefaultWillPower = 35;
+  DefaultWisdom = 45;
+  DefaultCharisma = 60;
+  DefaultMana = 45;
+  FireResistance = 40;
+  ElectricityResistance = 40;
+  EnergyResistance = 40;
+  HeadBitmapPos = 112, 256;
+  TorsoBitmapPos = 48, 256;
+  ArmBitmapPos = 80, 256;
+  SkinColor = rgb16(200, 200, 200);
+  HairColor = rgb16(180, 180, 0);
+  EyeColor = rgb16(180, 0, 0);
+  TorsoMainColor = rgb16(40, 40, 40);
+  ArmMainColor = rgb16(40, 40, 40);
+  WieldedPosition = 0, -2;
+  DefaultName = "Nihil";
+  NameSingular = "fallen archangel";
+  PostFix = "of Mortifer";
+  IsUnique = true;
+  IsNameable = false;
+  CanBeCloned = false;
+  IsPolymorphable = false;
+  CanBeConfused = false;
+  IsSadist = true;
+  CanBeGenerated = true;
+  IsImmuneToItemTeleport = true;
+  IsImmuneToStickiness = true;
+  AllowUnconsciousness = false;
+  CanChoke = false;
+  CanRead = true;
+  UndeadVersions = false;
+  UsesNutrition = false;
+  AllowPlayerToChangeEquipment = false;
+  Helmet = helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
+  Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
+  BodyArmor = OCTIRON bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
+  Belt = BLACK_DIAMOND belt(BELT_OF_REGENERATION) { Enchantment = 4; }
+  RightWielded = BLACK_DIAMOND OCTIRON sharpaxe { Enchantment = 4; }
+  LeftWielded = BLACK_DIAMOND OCTIRON darkaxe { Enchantment = 4; }
+  RightGauntlet = OCTIRON gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+  RightRing = ring(RING_OF_INVISIBILITY);
+  LeftRing = ring(RING_OF_POLYMORPH_LOCK);
+  KnownCWeaponSkills == AXES;
+  CWeaponSkillHits == 5000;
+  RightSWeaponSkillHits = 2000;
+  LeftSWeaponSkillHits = 2000;
+  DisplacePriority = 10;
+  PanicLevel = 0;
+  BaseUnarmedStrength = 200;
+  TotalVolume = 60000;
+  TotalSize = 200;
+  Sex = FEMALE;
+  AttachedGod = NONE;
+  ClassStates = TELEPORT|TELEPORT_CONTROL|HASTE|INFRA_VISION|ESP|DISEASE_IMMUNITY|GAS_IMMUNITY;
+  TamingDifficulty = NO_TAMING;
+  MoveType = FLY;
+  StandVerb = "flying";
+  DeathMessage = "@Dd dissolves into nothingness.";
+  HostileReplies =
+  {
+    6,
+    "\"Do you know what punishments I've endured for my sins? None. I am proof of the absurdity of 'divinity'. No true god would tolerate my existence.\"",
+    "\"The truth is an endless deathly agony. The truth is death. You have to choose: death or lies. I've never been able to kill myself.\"",
+    "\"In nothingness, there is no ignorance, no old age or death, no suffering.\"",
+    "\"The only absolute knowledge is that everything is meaningless.\"",
+    "\"I wish to believe but belief is a graveyard.\"",
+    "\"The point is there's no point.\"";
+  }
+  Inventory = { 8, celestialmonograph, GOLD stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
+  DayRequirementForGeneration = 60;
 }

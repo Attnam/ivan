@@ -359,22 +359,37 @@
 
 #define LARGE 1
 #define GIANT 2
+#define ARANEA 3
+
+#define IMPRISONED_HUNTER 1
 
 #define BLACK_BEAR 1
 #define GRIZZLY_BEAR 2
 #define CAVE_BEAR 3
 #define POLAR_BEAR 4
+#define PANDA_BEAR 6
+
+#define IMPRISONED_FEMALE 1
+/* 2 reserved for ATTNAM */
+/* 3 reserved for NEW_ATTNAM */
+#define JESTER 4
 
 #define ZOMBIE_OF_KHAZ_ZADM 1
+#define IMPRISONED_ZOMBIE 2
 
 #define TORTURING_CHIEF 1
 #define WHIP_CHAMPION 2
 #define WAR_LADY 3
 #define QUEEN 4
 
-#define CHIEFTAIN 1
-#define LORD 2
+#define DRUID 1
+
+#define HUNTER 2
 #define PATRIARCH 3
+#define ASSASSIN 4
+#define MASTER_ASSASSIN 5
+
+#define LORD 1
 
 #define GREATER 1
 #define GIANT 2
@@ -384,6 +399,7 @@
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
+#define REPRESENTATIVE 6
 
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
@@ -407,6 +423,17 @@
 
 #define BOY 1
 #define GIRL 2
+
+#define LIGHT_ASIAN_SIREN 1
+#define DARK_ASIAN_SIREN 2
+#define CAUCASIAN_SIREN 3
+#define DARK_SIREN 4
+#define GREEN_SIREN 5
+#define BLUE_SIREN 6
+#define RED_SIREN 7
+#define PINK_SIREN 8
+#define HISPANIC_SIREN 9
+#define AMBASSADOR_SIREN 10
 
 #define HATCHLING 1
 #define BOIL 2
