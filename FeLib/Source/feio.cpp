@@ -1225,7 +1225,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   return ""; //dummy just to gcc do not complain..
 }
 
-truth iosystem::IsAcceptableForStringQuestion(unsigned int Key)
+truth iosystem::IsAcceptableForStringQuestion(int Key)
 {
   if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
      || Key == '/' || Key == '\\' || Key == ':')
