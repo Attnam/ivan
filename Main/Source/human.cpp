@@ -54,6 +54,8 @@ cchar* ghost::ThirdPersonCriticalUnarmedHitVerb() const
 
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
+truth nihil::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
+
 truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
 material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
@@ -1202,6 +1204,9 @@ void slave::BeTalkedTo()
 void slave::GetAICommand()
 {
   SeekLeader(GetLeader());
+
+  if(CheckAIZapOpportunity())
+    return;
 
   if(CheckForEnemies(true, true, true))
     return;
@@ -2715,6 +2720,16 @@ int angel::GetAttribute(int Identifier, truth AllowBonus) const // temporary unt
     return humanoid::GetAttribute(Identifier, AllowBonus);
 }
 
+int nihil::GetAttribute(int Identifier, truth AllowBonus) const
+{
+  if(Identifier == LEG_STRENGTH)
+    return GetDefaultLegStrength();
+  else if(Identifier == AGILITY)
+    return GetDefaultAgility();
+  else
+    return humanoid::GetAttribute(Identifier, AllowBonus);
+}
+
 int genie::GetAttribute(int Identifier, truth AllowBonus) const // temporary until someone invents a better way of doing this
 {
   if(Identifier == LEG_STRENGTH)
@@ -3350,6 +3365,11 @@ truth humanoid::CheckTalk()
 }
 
 truth angel::CanCreateBodyPart(int I) const
+{
+  return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
+}
+
+truth nihil::CanCreateBodyPart(int I) const
 {
   return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
 }
@@ -4548,7 +4568,7 @@ void necromancer::GetAICommand()
 
   if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
   {
-    if(GetConfig() == MASTER_NECROMANCER && !(RAND() & 3))
+    if(GetConfig() != APPRENTICE_NECROMANCER && !(RAND() & 3))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
@@ -4592,7 +4612,7 @@ void necromancer::GetAICommand()
      case APPRENTICE_NECROMANCER:
       RaiseSkeleton();
       break;
-     case MASTER_NECROMANCER:
+     default:
       if(RAND() % 5)
         RaiseSkeleton();
       else
@@ -5356,43 +5376,17 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   GetStack()->AddItem(holybook::Spawn(GetConfig(), SpecialFlags));
-  armor* Equipment;
-  meleeweapon* Weapon;
 
   switch(GetMasterGod()->GetBasicAlignment())
   {
    case GOOD:
-    Weapon = flamingsword::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(ADAMANT), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetRightWielded(Weapon);
-    Equipment = shield::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Equipment->InitMaterials(MAKE_MATERIAL(DIAMOND), !(SpecialFlags & NO_PIC_UPDATE));
-    Equipment->SetEnchantment(4);
-    SetLeftWielded(Equipment);
-    GetCWeaponSkill(LARGE_SWORDS)->AddHit(200000);
-    GetCWeaponSkill(SHIELDS)->AddHit(500000);
-    GetCurrentRightSWeaponSkill()->AddHit(200000);
-    GetCurrentLeftSWeaponSkill()->AddHit(200000);
     GetRightArm()->SetDexterity(70);
     GetLeftArm()->SetDexterity(70);
     break;
    case NEUTRAL:
-    Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetRightWielded(Weapon);
-    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500000);
-    GetCurrentRightSWeaponSkill()->AddHit(200000);
     SetEndurance(70);
     break;
    case EVIL:
-    Weapon = meleeweapon::Spawn(HALBERD, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetLeftWielded(Weapon);
-    GetCWeaponSkill(POLE_ARMS)->AddHit(500000);
-    GetCurrentLeftSWeaponSkill()->AddHit(500000);
     GetRightArm()->SetStrength(70);
     GetLeftArm()->SetStrength(70);
   }
@@ -5402,6 +5396,18 @@ void zombie::PostConstruct()
 {
   if(!RAND_N(3))
     GainIntrinsic(LEPROSY);
+}
+
+truth orc::MoveRandomly()
+{
+  if(GetConfig() == REPRESENTATIVE)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
 }
 
 void orc::PostConstruct()
@@ -6068,6 +6074,18 @@ void siren::GetAICommand()
   humanoid::GetAICommand();
 }
 
+truth siren::MoveRandomly()
+{
+  if(GetConfig() == AMBASSADOR_SIREN)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
+}
+
 truth siren::TryToSing()
 {
   truth Success = false;
@@ -6334,4 +6352,38 @@ truth darkknight::CheckForUsefulItemsOnGround(truth CheckFood)
     return false;
   else
     return character::CheckForUsefulItemsOnGround(CheckFood);
+}
+
+void goblin::GetAICommand()
+{
+  if(CheckAIZapOpportunity())
+    return;
+
+  humanoid::GetAICommand();
+}
+
+truth humanoid::CheckAIZapOpportunity()
+{
+  if(!HasAUsableArm() || !CanZap() || !(RAND() % 2) || StateIsActivated(CONFUSED))
+    return false;
+  else
+    return character::CheckAIZapOpportunity();
+}
+
+truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
+
+  if(BodyPart && BodyPart->IsDestroyable(Victim)
+     && BodyPart->GetMainMaterial() && BodyPart->CanBeBurned()
+     && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+     && !BodyPart->IsBurning())
+      {
+        if(BodyPart->TestActivationEnergy(150))
+        {
+          return true;
+        }
+      }
+
+  return false;
 }
