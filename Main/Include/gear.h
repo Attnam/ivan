@@ -198,6 +198,7 @@ ITEM(armor, item)
  protected:
   virtual void AddPostFix(festring&, int) const;
   virtual void PostConstruct();
+  virtual cfestring& GetNameSingular() const;
   int Enchantment;
 };
 
@@ -210,7 +211,6 @@ ITEM(bodyarmor, armor)
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual truth AddAdjective(festring&, truth) const;
-  virtual cfestring& GetNameSingular() const;
 };
 
 ITEM(goldeneagleshirt, bodyarmor)

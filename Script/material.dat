@@ -1685,7 +1685,7 @@ solid
     StrengthValue = 125;
     ConsumeType = CT_METAL;
     Density = 7500;
-    Color = rgb16(70, 130, 180);
+    Color = rgb16(160, 160, 160); /* Color = rgb16(70, 130, 180); */
     PriceModifier = 60;
     NameStem = "stainless steel";
     Flexibility = 1;
@@ -1871,7 +1871,7 @@ solid
     Emitation = rgb24(50, 160, 50);
     PriceModifier = 1500;
     NameStem = "uranium";
-    AttachedGod = INFUSCOR;
+    AttachedGod = SCABIES;
     SoftenedMaterial = LEAD;
     HardenedMaterial = SOLARIUM;
     IntelligenceRequirement = 20;
@@ -1891,7 +1891,7 @@ solid
     Emitation = rgb24(160, 160, 100);
     PriceModifier = 2500;
     NameStem = "solarium";
-    AttachedGod = INFUSCOR;
+    AttachedGod = SCABIES;
     SoftenedMaterial = URANIUM;
     HardenedMaterial = NEUTRONIUM;
     IntelligenceRequirement = 30;
@@ -1911,7 +1911,7 @@ solid
     Emitation = rgb24(70, 120, 160);
     PriceModifier = 5000;
     NameStem = "neutronium";
-    AttachedGod = INFUSCOR;
+    AttachedGod = SCABIES;
     SoftenedMaterial = SOLARIUM;
     IntelligenceRequirement = 40;
     Flexibility = 1;
@@ -1934,7 +1934,7 @@ solid
     Density = 1500;
     Color = rgb16(255, 5, 255);
     Emitation = rgb24(139, 0, 139);
-    NameStem = "magic crystal";
+    NameStem = "raw crystallized magic";
     AdjectiveStem = "crystal";
     AttachedGod = SOPHOS;
     NaturalForm = stone;
@@ -4622,7 +4622,7 @@ gas
 
   Config AIR;
   {
-    Color = rgb16(180, 180, 255);
+    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
     NameStem = "air";
     Alpha = 150;
     AttachedGod = SILVA;
@@ -4631,7 +4631,7 @@ gas
 
   Config VACUUM;
   {
-    Color = rgb16(180, 180, 255);
+    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
     NameStem = "vacuum";
     Alpha = 150;
     AttachedGod = MORTIFER;
@@ -4676,6 +4676,7 @@ gas
     AdjectiveStem = "ectoplasmic";
     Alpha = 150;
     AttachedGod = MORTIFER;
+    HardenedMaterial = SOUL_STEEL;
     NameFlags = Base|USE_AN;
     BodyFlags = Base|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
   }
