@@ -437,9 +437,9 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
-    if(LastKey >= 0x20 && Input.GetSize() < MaxLetters
+    if(LastKey >= 0x20 && LastKey < 0x7F
        && (LastKey != ' ' || !Input.IsEmpty())
-       && LastKey != KEY_UP && LastKey != KEY_DOWN)
+       && Input.GetSize() < MaxLetters)
       Input.Insert(static_cast<festring::sizetype>(CursorPos++),
                    static_cast<char>(LastKey));
   }
