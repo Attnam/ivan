@@ -2797,6 +2797,7 @@ golem
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
   Frequency = 800;
+  DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
@@ -3532,7 +3533,7 @@ slave
     "\"Errare humanum est.\"",
     "\"Asinus manebis in saecula saeculorum.\"",
     "\"Cuius regio, eius religion.\"",
-    "\"Faber suae quisque fortūnae. *snicker*\"",
+    "\"Faber suae quisque fortunae. *snicker*\"",
     "\"Fortes fortuna adiuvat.\"",
     "\"Historia magistra vitae.\"",
     "\"Hominem te esse, memento.\"",
@@ -3943,7 +3944,7 @@ housewife
       "\"When the first grand master dark knight fell and Neerc Se-ulb was lost for a time, Mortifer vowed to never lend his mace again but to a true champion of Chaos. But Cruentus trusted in the power of his dark knights and the next grand master received the terrible halberd named Mjolak to crush all who would oppose the god of blood.\"",
       "\"The second grand master dark knight was a son of the first one. He swore an oath of revenge, to slay the high priest of Valpurus in honor of his father's death. Yet his name was erased from all records to clean the stain of shame he brought upon his family.\"",
       "\"The second grand master dark knight ruthlessly crushed all resistance and many an enemy fled even before battle, for his trumpeters used horns of fear to devastating effect. Where the father took nearly a decade to slowly force valpurian troops back, the son brought his army of dark knights before the gates of the Citadel of Valpurus in only a few years.\"",
-      "\"As his men razed and burned the once-mightly Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
+      "\"As his men razed and burned the once-mighty Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
       "\"In a hubris of an easy victory, the second grand master dark knight turned his back to the dead high priest Pervetus he just slain and did not see a strange glow of a magical amulet that brought Pervetus back with renewed vigor. The high priest lifted Justifier and with a single mightly blow, cut off both of the grand master's hands. And in a single moment of weakness, the grand master shamed his family for the ages to come, for he didn't face death with dignity, but panicked and ran for his life.\"",
       "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. His two crossed flaming swords are still found on the banner of the grand master dark knights to this day.\"",
       "\"Some sources claim Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted.\"",

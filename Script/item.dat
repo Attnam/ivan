@@ -374,7 +374,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
-    Alias == "greatsword";
+    Alias = { 2, "greatsword", "great sword"; }
   }
 
   Config BROKEN|TWO_HANDED_SWORD;
@@ -2469,7 +2469,7 @@ copyofleftnutofpetrus /* nut-> */
   {
     Possibility = 10;
     Price = 50;
-    MainMaterialConfig == GLASS; /* should be plastic */
+    MainMaterialConfig == PLASTIC;
     Adjective = "cheap";
     Alias == "left nut";
   }
@@ -3170,7 +3170,7 @@ shield /* armor-> */
                          MAMMOTH_TUSK, OMMEL_TOOTH, RESIDUUM, PIG_IRON, IRON,
                          STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
                          BLOOD_IRON, BLOOD_STEEL, PLASTIC, HARDENED_PLASTIC; }
-  MaterialConfigChances = { 105,
+  MaterialConfigChances = { 107,
                             50, 300, 150, 25, 25, 5, 2, 75, 50, 25, 5, 15, 150, 50,
                             25, 10, 25, 10, 5, 75, 250, 20, 200, 200, 200, 100, 25,
                             25, 5, 5, 3, 5, 1, 5, 5, 3, 150, 250, 300, 350, 250,
@@ -3209,7 +3209,7 @@ shield /* armor-> */
     MaterialConfigChances = { 52,
                               250, 100, 50, 150, 50, 250, 300, 100, 75, 25, 50, 50,
                               300, 150, 50, 25, 10, 75, 300, 150, 75, 150, 150, 5,
-                              5, 5, 1, 1, 1, 50, 25, 15, 20, 20, 1, 5, 75, 25, 5,
+                              5, 5, 1, 1, 1, 50, 25, 15, 20, 1, 5, 75, 25, 5,
                               100, 25, 30, 5, 5, 5, 5, 50, 30, 20, 3, 3, 25, 5; }
     EnchantmentPlusChance = 30;
   }
@@ -3695,6 +3695,8 @@ boot /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 125;
+    NameSingular = "greave";
+    FlexibleNameSingular = "boot";
     PostFix = "of strength";
     AffectsLegStrength = true;
     Price = 50;
@@ -3720,6 +3722,8 @@ boot /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 125;
+    NameSingular = "greave";
+    FlexibleNameSingular = "boot";
     PostFix = "of agility";
     AffectsAgility = true;
     Price = 75;
@@ -3884,6 +3888,8 @@ gauntlet /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 110;
+    NameSingular = "gauntlet";
+    FlexibleNameSingular = "glove";
     PostFix = "of strength";
     AffectsArmStrength = true;
     Price = 75;
@@ -3909,7 +3915,8 @@ gauntlet /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 110;
-    NameSingular = "glove";
+    NameSingular = "gauntlet";
+    FlexibleNameSingular = "glove";
     PostFix = "of dexterity";
     AffectsDexterity = true;
     Price = 100;
@@ -4002,6 +4009,8 @@ belt /* armor-> */
   Config BELT_OF_CARRYING;
   {
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of carrying";
     AffectsCarryingCapacity = true;
     Price = 75;
@@ -4029,6 +4038,8 @@ belt /* armor-> */
   Config BELT_OF_LEVITATION;
   {
     Possibility = 0;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of levitation";
     GearStates = LEVITATION;
     Price = 500;
@@ -4052,6 +4063,8 @@ belt /* armor-> */
     DefaultMainVolume = 300;
     StrengthModifier = 150;
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of protection";
     MainMaterialConfig = { 30,
                            COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
@@ -4088,6 +4101,8 @@ belt /* armor-> */
   Config BELT_OF_GIANT_STRENGTH;
   {
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of giant strength";
     Price = 500;
     AffectsArmStrength = true;
@@ -4143,6 +4158,8 @@ belt /* armor-> */
   Config BELT_OF_REGENERATION;
   {
     Possibility = 2;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of regeneration";
     GearStates = REGENERATION;
     Price = 100;
@@ -4989,6 +5006,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of piercing perception";
     AffectsPerception = true;
     MainMaterialConfig == ILLITHIUM;
@@ -5022,6 +5041,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of understanding";
     AffectsWisdom = true;
     MainMaterialConfig == UNICORN_HORN;
@@ -5055,6 +5076,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of brilliance";
     AffectsIntelligence = true;
     MainMaterialConfig == ARCANITE;
@@ -5087,6 +5110,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of attractivity";
     AffectsCharisma = true;
     MainMaterialConfig == GOLD;
@@ -5150,6 +5175,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of indomitable will";
     AffectsWillPower = true;
     MainMaterialConfig == OCTIRON;
@@ -5182,9 +5209,11 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of telepathy";
     GearStates = ESP;
-    MainMaterialConfig == ANGEL_HAIR;
+    MainMaterialConfig == SOUL_STEEL;
     MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = INFUSCOR;
@@ -5212,6 +5241,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of teleportation";
     GearStates = TELEPORT;
     MainMaterialConfig == MITHRIL;
@@ -5284,6 +5315,8 @@ helmet
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of essence plethora";
     Alias == "helm of mana";
     AffectsMana = true;
@@ -6304,9 +6337,13 @@ weepblade
   StrengthModifier = 90;
   NameSingular = "blade";
   Adjective = "weeping";
-  MainMaterialConfig = { 6, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL; }
+  MainMaterialConfig = { 13,
+                         MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE; }
   SecondaryMaterialConfig == SIDGURE_WOOD;
-  MaterialConfigChances = { 6, 420, 390, 364, 210, 195, 182; }
+  MaterialConfigChances = { 13,
+                            75, 100, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   Roundness = 10;
   Price = 250;
   AttachedGod = SCABIES;
@@ -6319,6 +6356,12 @@ weepblade
     Possibility = 5;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, PSYPHER; }
+    MaterialConfigChances = { 15,
+                              150, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 1; }
     EnchantmentPlusChance = 4;
   }
 }
@@ -6331,9 +6374,13 @@ acidshield /* armor ->*/
   DefaultMainVolume = 350;
   StrengthModifier = 100;
   FormModifier = 15;
-  MainMaterialConfig = { 5, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, ARCANITE; }
-  MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }
-  EnchantmentPlusChance = 0;
+  MainMaterialConfig = { 13,
+                         MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE; }
+  MaterialConfigChances = { 13,
+                            300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
+  EnchantmentPlusChance = 2;
   AcidResistance = 1;
   NameSingular = "acid shield";
   BitmapPos = 32, 336;
@@ -6351,9 +6398,13 @@ acidshield /* armor ->*/
     StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 6, METEORIC_STEEL, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL, ARCANITE, MITHRIL; }
-    MaterialConfigChances = { 6, 150, 250, 200, 60, 40, 20; }
-    EnchantmentPlusChance = 1;
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
+    MaterialConfigChances = { 15,
+                              250, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 5; }
+    EnchantmentPlusChance = 4;
   }
 }
 
@@ -6479,8 +6530,7 @@ darkaxe  /* meleeweapon-> */
   BitmapPos = 16, 256;
   FormModifier = 60;
   StrengthModifier = 80;
-  Adjective = "dark";
-  NameSingular = "axe";
+  NameSingular = "dark axe";
   MainMaterialConfig = { 33,
                          DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
                          GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
@@ -6809,9 +6859,14 @@ taiaha /* meleeweapon-> */
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 1500;
   NameSingular = "taiaha";
-  MainMaterialConfig = { 6, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
-  SecondaryMaterialConfig == KAURI_WOOD;
-  MaterialConfigChances = { 6, 100, 100, 50, 50, 10, 5; }
+  MainMaterialConfig = { 15,
+                         AMETHYST, TOPAZ, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE, OMMEL_BONE, OMMEL_TOOTH; }
+  SecondaryMaterialConfig == SIDGURE_WOOD;
+  MaterialConfigChances = { 15,
+                            10, 10, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50,
+                            25, 10, 5; }
   Roundness = 10;
   IsTwoHanded = true;
   AttachedGod = SILVA;
@@ -6828,8 +6883,12 @@ taiaha /* meleeweapon-> */
     Possibility = 0;
     BitmapPos = 112, 352;
     WieldedBitmapPos = 176, 96;
-    MainMaterialConfig = { 5, GREEN_CRYSTAL, SUN_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
-    MaterialConfigChances = { 5, 100, 100, 50, 50, 5; }
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, SAPPHIRE, EMERALD, RUBY, DIAMOND, PSYPHER; }
+    MaterialConfigChances = { 15,
+                              150, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 1; }
     EnchantmentPlusChance = 30;
   }
 }
@@ -6851,7 +6910,7 @@ cauldron /* materialcontainer-> */
                               COCA_COLA, PEPSI, CIDER, WHITE_WINE, RED_WINE, BEER,
                               ELF_ALE, DWARF_BEER, LIGHT_FROG_BLOOD, CURE_ALL_LIQUID; }
   MaterialConfigChances = { 21,
-                            25, 75, 25, 50, 25, 50, 100, 25, 25, 25, 25, 5, 1, 1, 25,
+                            25, 75, 25, 50, 25, 50, 100, 25, 25, 25, 5, 1, 1, 25,
                             25, 25, 50, 25, 25, 10, 1; }
   Roundness = 100;
   CanBeBroken = false;
