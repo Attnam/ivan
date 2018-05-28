@@ -866,7 +866,7 @@ Dungeon ELPURI_CAVE;
   Level DARK_LEVEL;
   {
     Description = "dark level";
-    ShortDescription = "DarkLevel";
+    ShortDescription = "Dark Level";
     LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
     FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
     TunnelSquare = STEEL solidterrain(FLOOR), 0;
@@ -1305,7 +1305,7 @@ Dungeon ELPURI_CAVE;
   Level OREE_LAIR;
   {
     Description = "Oree's lair";
-    ShortDescription = "OreeLair";
+    ShortDescription = "Oree Lair";
     LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
     FillSquare = BLOOD liquidterrain(UNDERGROUND_LAKE), 0;
     TunnelSquare = solidterrain(GROUND), 0;

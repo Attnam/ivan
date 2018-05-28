@@ -151,7 +151,15 @@ Dungeon UNDER_WATER_TUNNEL;
 
       Square, Pos 2,2;
       {
-        Items == RATA_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { Category = HELMET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|GAUNTLET|BELT|BOOT; MinPrice = 100; Times = 3; Chance = 75; } }
+        Items == RATA_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 3, Random { MinPrice = 300; Chance = 75; Category = WEAPON|SHIELD; },
+                             Random { MinPrice = 300; Chance = 75; Category = HELMET|CLOAK|BODY_ARMOR|GAUNTLET|BELT|BOOT; },
+                             Random { Category = FOOD|POTION|VALUABLE; }
+                        }
+        }
+        Character = golem(OAK_WOOD);
       }
 
       Square, Pos 0,0;
@@ -380,7 +388,7 @@ Dungeon UNDER_WATER_TUNNEL;
     Rooms = 17:30;
     Size = 64, 36;
     Description = "crystal cave";
-    ShortDescription = "CrystalCave";
+    ShortDescription = "Crystal Cave";
     LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
     FillSquare = solidterrain(GROUND), ROCK_CRYSTAL earth;
     TunnelSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
@@ -389,7 +397,6 @@ Dungeon UNDER_WATER_TUNNEL;
     MonsterAmountBase = 25;
     MonsterGenerationIntervalBase = 60;
     MonsterGenerationIntervalDelta = 0;
-    Items = 0;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 40;
@@ -555,7 +562,7 @@ Dungeon UNDER_WATER_TUNNEL;
     Square, Random;
     {
       Items == stone(SOL_STONE);
-      Times = 0:3;
+      Times = 1:3;
     }
   }
 
@@ -564,7 +571,7 @@ Dungeon UNDER_WATER_TUNNEL;
     Rooms = 1;
     Size = 64, 36;
     Description = "spider nest";
-    ShortDescription = "SpiderNest";
+    ShortDescription = "Spider Nest";
     LevelMessage = "The air feels stale and sickly, and you hear thousands of tiny scuttling feet.";
     IgnoreDefaultSpecialSquares = true;
     EarthquakesAffectTunnels = false;
@@ -572,8 +579,7 @@ Dungeon UNDER_WATER_TUNNEL;
     DifficultyBase = 100;
     DifficultyDelta = 0;
     MonsterAmountBase = 25;
-    MonsterGenerationIntervalBase = 60;
-    Items = 0;
+    MonsterGenerationIntervalBase = 30;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 40;
