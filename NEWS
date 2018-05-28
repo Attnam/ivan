@@ -26,9 +26,18 @@ Changes:
 * Optionally show full dungeon name with roman level numbers.
 * Grouped config options in categories.
 * Custom stack list length (items, drop, throw etc).
+* Several new monsters added, including five new uniques.
+* Monster AI now knows how to zap wands at you!
+* Show items at player position, side by side.
 
 Fixes:
-* Mainly when toggling full screen mode on linux, it will now wait you release the key to apply.
+* Mainly when toggling full screen mode on linux, it will now wait until you release the key to apply.
+* Imprisoned necromancer can cast spells.
+* Elianise will no longer steal from you.
+* All the ambassadors will stay in the Cathedral and not wander around.
+* Nerf mind worm damage a bit.
+* Fix unlocking hexagonal and octagonal locks on chests.
+* Fix unicorns neighs.
 
 Version 0.52, released 24th March 2018
 --------------------------------------
@@ -37,10 +46,10 @@ Changes:
 * Enhanced scaling/stretching graphics using XBRZScale code!! (only in "zoom in (l)ook mode"...)
 * New Mind worms!!
 * Sound files from IVAN3D, plus other new sounds!! (utilizes more advanced config file syntax than before)
-* UT vault added
-* Headless ghosts
-* Outlined graphics from IVAN3D
-* Option to display the turn number on log messages
+* UT vault added.
+* Headless ghosts.
+* Outlined graphics from IVAN3D.
+* Option to display the turn number on log messages.
 
 Tomb of Xinroch, now with MORE evil:
 * Buffed both Xinrochs.

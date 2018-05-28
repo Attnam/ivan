@@ -168,8 +168,11 @@ CHARACTER(humanoid, character)
   virtual void ApplySpecialAttributeBonuses();
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
   truth HasSadistWeapon() const;
+  truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
-  static v2 GetSilhouetteWhere(){return SilhouetteWhere;};
+  static v2 GetSilhouetteWhereDefault(){return SilhouetteWhereDefault;}
+  static v2 GetSilhouetteWhere(){return SilhouetteWhere;}
+  static void SetSilhouetteWhere(v2 pos){SilhouetteWhere=pos;}
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
@@ -193,6 +196,7 @@ CHARACTER(humanoid, character)
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
   static cint DrawOrder[];
+  static v2 SilhouetteWhereDefault;
   static v2 SilhouetteWhere;
 };
 
@@ -347,6 +351,8 @@ CHARACTER(skeleton, humanoid)
 
 CHARACTER(goblin, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(golem, humanoid)
@@ -516,6 +522,8 @@ CHARACTER(xinrochghost, ghost)
 
 CHARACTER(imp, humanoid)
 {
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(mistress, humanoid)
@@ -601,6 +609,8 @@ CHARACTER(genie, humanoid)
 
 CHARACTER(orc, humanoid)
 {
+ public:
+  virtual truth MoveRandomly();
  protected:
   virtual void PostConstruct();
 };
@@ -733,6 +743,7 @@ CHARACTER(siren, humanoid)
 {
  public:
   virtual void GetAICommand();
+  virtual truth MoveRandomly();
  protected:
   virtual truth TryToSing();
 };
@@ -747,6 +758,16 @@ CHARACTER(child, humanoid)
 
 CHARACTER(bum, humanoid)
 {
+};
+
+CHARACTER(nihil, humanoid)
+{
+ public:
+  virtual truth BodyPartIsVital(int) const;
+  virtual truth CanCreateBodyPart(int) const;
+  virtual int GetAttribute(int, truth = true) const;
+  virtual col24 GetBaseEmitation() const { return MakeRGB24(150, 110, 110); }
+  virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
 };
 
 #endif

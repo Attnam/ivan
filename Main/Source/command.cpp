@@ -19,6 +19,7 @@
 #include "game.h"
 #include "god.h"
 #include "graphics.h"
+#include "human.h"
 #include "iconf.h"
 #include "materia.h"
 #include "message.h"
@@ -78,6 +79,7 @@ command* commandsystem::Command[] =
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
+  new command(&ShowMap, "show map", 'm', 'm', 'm', false),
   new command(&AssignName, "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
@@ -928,11 +930,27 @@ truth commandsystem::ShowKeyLayout(character*)
   return false;
 }
 
+void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
+  //TODO why this does not work??? if(!PLAYER->IsDead())return;
+#ifdef WIZARD
+  if(bSeeWholeMapCheatMode && !game::GetSeeWholeMapCheatMode()){
+    game::SeeWholeMap(); //1
+    game::SeeWholeMap(); //2
+  }
+#endif
+  commandsystem::Look(PLAYER);
+}
+
 truth commandsystem::Look(character* Char)
 {
   festring Msg;
-  if(!game::IsInWilderness())
-    Char->GetLevel()->AddSpecialCursors();
+  if(!game::IsInWilderness()){
+    if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
+      game::GetCurrentLevel()->AddSpecialCursors();
+    }else{
+      Char->GetLevel()->AddSpecialCursors();
+    }
+  }
 
   if(!game::IsInWilderness())
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'i' examines items, 'c' examines a character.");
@@ -976,10 +994,14 @@ truth commandsystem::Pray(character* Char)
 
   if(!DivineMaster)
   {
+    festring desc;
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
       {
-        Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
+        desc.Empty();
+        desc << game::GetGod(c)->GetCompleteDescription();
+        if(ivanconfig::IsShowGodInfo())desc << " ("<<game::GetGod(c)->GetDescription()<<")";
+        Panthenon.AddEntry(desc, LIGHT_GRAY, 20, c);
         Known[Index++] = c;
       }
   }
@@ -1339,6 +1361,22 @@ truth commandsystem::Rest(character* Char)
   Rest->SetMinToStop(0);
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
+  return true;
+}
+
+truth commandsystem::ShowMap(character* Char)
+{
+  static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
+
+  if( h && (h->GetLeftArm() || h->GetRightArm()) ){
+    if(game::ToggleDrawMapOverlay()){
+      while(!game::TruthQuestion(festring("Hit a key to close your map."), YES, 'm'));
+      game::ToggleDrawMapOverlay();
+    }
+  }else{
+    ADD_MESSAGE("I can't hold the map!");
+  }
+
   return true;
 }
 

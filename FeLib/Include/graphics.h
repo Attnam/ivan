@@ -29,6 +29,8 @@ class bitmap;
 class rawbitmap;
 class festring;
 
+typedef void (*drawabove)(bitmap*);
+
 class graphics
 {
  public:
@@ -49,6 +51,9 @@ class graphics
   static void Stretch(bool, bitmap*, blitdata&, bool);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
+
+  static void DrawAboveAll(bitmap* bmpDest);
+  static void AddDrawAboveAll(drawabove da, int iPriority, const char* desc);
 
   static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
@@ -71,8 +76,10 @@ class graphics
   static void SetSRegionEnabled(int iIndex, bool b);
   static void SetSRegionUseXBRZ(int iIndex, bool b);
   static void SetSRegionDrawAfterFelist(int iIndex, bool b);
+  static void SetSRegionDrawAlways(int iIndex, bool b);
   static void SetSRegionDrawBeforeFelistPage(int iIndex, bool, bool);
   static void SetSRegionDrawRectangleOutline(int iIndex, bool b);
+  static void SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, int iStretch, v2 v2Dest);
   static void SetSRegionListItem(int iIndex);
   static int  SetSRegionBlitdata(int iIndex, blitdata B);
   static void SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2);
@@ -148,7 +155,7 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static bitmap* StretchedDB;
+  static bitmap* StretchedBuffer;
   static truth bAllowStretchedRegionsBlit;
   static truth bSpecialListItemAltPos;
   static v2 Res;

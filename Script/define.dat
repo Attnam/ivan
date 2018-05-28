@@ -654,6 +654,7 @@
 
 #define IMPRISONED_FARMER 1
 #define CULTIST 2
+#define CRAZED_FARMER 3
 
 #define ROOKIE 1
 #define VETERAN 2
@@ -670,6 +671,9 @@
 #define HONOR 11
 #define EMISSARY 12
 #define TRAINEE 13
+#define ROOKIE_FEMALE 14
+#define VETERAN_FEMALE 15
+#define ELITE_FEMALE 16
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -685,6 +689,8 @@
 #define BUTCHER 2
 #define PRINCE 3
 #define KING 4
+#define MONK 5
+#define WARLOCK 6
 
 #define CONICAL 1
 #define FLAT 2
@@ -717,9 +723,15 @@
 #define WAR_LADY 3
 #define QUEEN 4
 
-#define CHIEFTAIN 1
-#define LORD 2
+#define DRUID 1
+
+/* WARRIOR already defined. */
+#define HUNTER 2
 #define PATRIARCH 3
+#define ASSASSIN 4
+#define MASTER_ASSASSIN 5
+
+#define LORD 1
 
 #define GREATER 1
 #define GIANT 2
@@ -738,6 +750,8 @@
 #define BATTLE_MAGE 2
 #define ELDER 3
 #define ARCH_MAGE 4
+
+#define SLAYER 1
 
 /* Least significant bit defines sex */
 
@@ -970,7 +984,7 @@
 #define S_LOCK_ID 16384
 #define LOCK_DELTA 1024
 
-#define BROKEN_LOCK S_LOCK_ID
+#define BROKEN_LOCK 32768
 
 /* Normal lock types, which can be randomized */
 

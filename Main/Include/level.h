@@ -193,6 +193,7 @@ class level : public area
   void Explosion(character*, cfestring&, v2, int, truth = true, truth = false);
   truth CollectCreatures(charactervector&, character*, truth);
   void ApplyLSquareScript(const squarescript*);
+  void DrawHitEffects(cint XMin,cint XMax,cint YMin,cint YMax) const;
   virtual void Draw(truth) const;
   v2 GetEntryPos(ccharacter*, int) const;
   void GenerateRectangularRoom(std::vector<v2>&, std::vector<v2>&, std::vector<v2>&, const roomscript*, room*, v2, v2);

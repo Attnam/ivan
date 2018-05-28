@@ -348,7 +348,7 @@ class character : public entity, public id
   void FallTo(character*, v2);
   truth CheckCannibalism(cmaterial*) const;
   void ActivateTemporaryState(long What) { TemporaryState |= What; }
-  void DeActivateTemporaryState(long What) { TemporaryState &= ~What; }
+  void DeActivateTemporaryState(long What);
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
   truth TemporaryStateIsActivated(long What) const;
@@ -459,6 +459,7 @@ class character : public entity, public id
   bodypart* CreateBodyPart(int, int = 0);
   virtual truth EquipmentIsAllowed(int) const { return true; }
   truth CanUseEquipment(int) const;
+  void MemorizeEquipedItems();
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(int) { }
   virtual double GetNaturalExperience(int) const;
@@ -1155,6 +1156,7 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
+  truth CheckAIZapOpportunity();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1264,6 +1266,7 @@ class character : public entity, public id
   trapdata* TrapData;
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
+  ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];
   virtual truth NeedsBurningPostFix() const { return false; }
 };
 

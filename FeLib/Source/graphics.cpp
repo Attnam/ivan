@@ -60,19 +60,21 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
   const char* strId;
   bool bEnabled;
   blitdata B;
+  bitmap* bmpOverride;
 
   bool bUseXBRZ;
   bool bUseXBRZDrawBeforeFelistPage;
   bool bDrawBeforeFelistPage;
-  bool bDrawAfterFelist;
-  bool bSpecialListItem;
+  bool  bDrawAfterFelist;
+  bool  bDrawAlways;
+  bool  bSpecialListItem;
   bool bDrawRectangleOutline;
   bool bAllowTransparency; //mask
 
-  v2 v2SquareSize; //to clear or to inc/dec zoom
+  v2 v2SquareSize; //to clear
 
   std::vector<v2> vv2ClearSquaresAt; //these are the relative top left square's pixels at BClearSquares.Bitmap
-  blitdata BClearSquares;
+  blitdata BClearSquares; //intermediary, it's bitmap will be filled to serve as source
 
   bitmap* CacheBitmap;
 };
@@ -80,8 +82,8 @@ struct stretchRegion //TODO all these booleans could be a single uint32? unnecec
 #include "dbgmsgproj.h"
 
 const stretchRegion SRdefault = {
-  -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,
-  false,false,false,false,false,false,false,
+  -1,"READABLE ID NOT SET!!!",true,DEFAULT_BLITDATA,NULL,
+  false,false,false, false,false,false, false,false,
   v2(),
   std::vector<v2>(), DEFAULT_BLITDATA,
   NULL
@@ -89,11 +91,14 @@ const stretchRegion SRdefault = {
 bool graphics::bSpecialListItemAltPos=false;
 bool bPrepareCacheBitmapsBeforeFelist=false;
 bool bDrawCacheBitmapsBeforeFelist=false;
+
+/* !!! USE GetSRegion(), never access this vector indexes directly !!! */
 std::vector<stretchRegion> vStretchRegion;
+
 truth graphics::bAllowStretchedRegionsBlit=false;
 
 bitmap* graphics::DoubleBuffer=NULL;
-bitmap* graphics::StretchedDB=NULL;
+bitmap* graphics::StretchedBuffer=NULL; //this is actually a 3rd buffer...
 v2 graphics::Res;
 int graphics::Scale;
 int graphics::ColorDepth;
@@ -252,7 +257,7 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
-  StretchedDB = new bitmap(NewRes);
+  StretchedBuffer = new bitmap(NewRes); DBG2("StretchedBuffer",StretchedBuffer);
   Res = NewRes;
   SetScale(NewScale);
   ColorDepth = 16;
@@ -309,56 +314,67 @@ void graphics::Stretch(bool bXbrzMode, bitmap* pBmpFrom, blitdata& rBto, bool bA
   }
 }
 
+/* if on class, make it private */
+stretchRegion& GetSRegion(int iIndex){ // vectors are too permissive, it eveb accepts -1 index and will cause a lot of weirdness...
+  if(iIndex>=vStretchRegion.size() || iIndex<0)ABORT("Invalid SRegion index=%d (tot=%d)",iIndex,(int)vStretchRegion.size());
+  return vStretchRegion[iIndex];
+}
+
 bool graphics::IsSRegionEnabled(int iIndex){
   if(iIndex>=vStretchRegion.size())return false; //not ready yet
-  return vStretchRegion[iIndex].bEnabled;
+  return GetSRegion(iIndex).bEnabled;
 }
 void graphics::SetSRegionEnabled(int iIndex, bool b){
-  vStretchRegion[iIndex].bEnabled=b;
-  if(b){stretchRegion& rSR = vStretchRegion[iIndex];DBGSR;}
+  GetSRegion(iIndex).bEnabled=b; DBG2(iIndex,vStretchRegion.size());DBGEXEC(if(b){stretchRegion& rSR = GetSRegion(iIndex);DBGSR;});
 }
 void graphics::SetSRegionUseXBRZ(int iIndex, bool b){
-  vStretchRegion[iIndex].bUseXBRZ=b;
+  GetSRegion(iIndex).bUseXBRZ=b;
 }
 void graphics::SetSRegionDrawBeforeFelistPage(int iIndex, bool bDrawBeforeFelistPage, bool bUseXBRZDrawBeforeFelistPage){
-  vStretchRegion[iIndex].bDrawBeforeFelistPage=bDrawBeforeFelistPage;
-  vStretchRegion[iIndex].bUseXBRZDrawBeforeFelistPage=bUseXBRZDrawBeforeFelistPage;
+  stretchRegion& rSR = GetSRegion(iIndex);
+  rSR.bDrawBeforeFelistPage=bDrawBeforeFelistPage;
+  rSR.bUseXBRZDrawBeforeFelistPage=bUseXBRZDrawBeforeFelistPage;
 }
 void graphics::SetSRegionDrawAfterFelist(int iIndex, bool b){
-  vStretchRegion[iIndex].bDrawAfterFelist=b;
+  GetSRegion(iIndex).bDrawAfterFelist=b;
+}
+void graphics::SetSRegionDrawAlways(int iIndex, bool b){
+  GetSRegion(iIndex).bDrawAlways=b;
 }
 void graphics::SetSRegionDrawRectangleOutline(int iIndex, bool b){
-  vStretchRegion[iIndex].bDrawRectangleOutline=b;
+  GetSRegion(iIndex).bDrawRectangleOutline=b;
 }
 void graphics::SetSRegionClearSquaresAt(int iIndex, v2 v2Size, std::vector<v2> vv2){
-  vStretchRegion[iIndex].vv2ClearSquaresAt=vv2;
-  vStretchRegion[iIndex].v2SquareSize=v2Size;
-  vStretchRegion[iIndex].bAllowTransparency=true;
+  stretchRegion& rSR = GetSRegion(iIndex);
+  rSR.vv2ClearSquaresAt=vv2;
+  rSR.v2SquareSize=v2Size;
+  rSR.bAllowTransparency=true;
 }
 /**
  * there can only be one set at a time
  */
 void graphics::SetSRegionListItem(int iIndex){
-  if(vStretchRegion[iIndex].bSpecialListItem)return; //permissive on redundant setup
+  stretchRegion& rSR = GetSRegion(iIndex);
+  if(rSR.bSpecialListItem)return; //permissive on redundant setup
 
   for(int i=0;i<vStretchRegion.size();i++){
     stretchRegion SR=vStretchRegion[i];
     if(SR.bSpecialListItem)ABORT("some other SRegion is already bSpecialListItem");
   }
 
-  vStretchRegion[iIndex].bSpecialListItem=true;
-  vStretchRegion[iIndex].bDrawAfterFelist=true;
-  vStretchRegion[iIndex].bEnabled=false;
+  rSR.bSpecialListItem=true;
+  rSR.bDrawAfterFelist=true;
+  rSR.bEnabled=false;
 }
 /**
  * it actually copies the blitdata
  */
 int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
-  if(B.Stretch<=1)ABORT("SRegion stretch value invalid %d", B.Stretch); // some actual scaling is required
-  if(B.Bitmap!=NULL)ABORT("SRegion bitmap should not be set."); // see below
-  if(StretchedDB==NULL)ABORT("StretchedDB not set yet.");
+  if(B.Stretch      <=1   )ABORT("SRegion stretch value invalid %d", B.Stretch); // some actual scaling is required
+  if(B.Bitmap       !=NULL)ABORT("SRegion bitmap should not be set."); // see below
+  if(StretchedBuffer==NULL)ABORT("StretchedBuffer not set yet.");
 
-  B.Bitmap = StretchedDB;
+  B.Bitmap = StretchedBuffer;
   if(iIndex==-1){ //add
     stretchRegion SRcp = SRdefault;
     stretchRegion& rSR = SRcp;
@@ -366,13 +382,40 @@ int graphics::SetSRegionBlitdata(int iIndex, blitdata B){
     iIndex = rSR.iIndex = vStretchRegion.size();
     vStretchRegion.push_back(rSR);DBGSRI("Add");
   }else{ //update
-    stretchRegion& rSR = vStretchRegion[iIndex];
+    stretchRegion& rSR = GetSRegion(iIndex);
+    if(rSR.bmpOverride!=NULL)ABORT("wrong usage, bitmap override already set: %s %d",rSR.strId,rSR.iIndex);
     DBG2(rSR.iIndex,iIndex);if(rSR.iIndex!=iIndex)ABORT("wrongly configured SRegion internal index %d, expecting %d",rSR.iIndex,iIndex);
     rSR.B=B;
     DBGSRI("Update");
   }
 
   return iIndex;
+}
+
+/**
+ * If bmp is not NULL, it is an indicator (bool) itself. Therefore setting to null will disable it's functionality.
+ */
+void graphics::SetSRegionSrcBitmapOverride(int iIndex, bitmap* bmp, int iStretch, v2 v2Dest){
+  stretchRegion& rSR = GetSRegion(iIndex);
+  rSR.B.Src={0,0};
+
+  bool bDeletePrevious=false;
+  if(bmp == NULL)bDeletePrevious=true;
+  if(bmp != rSR.bmpOverride)bDeletePrevious=true;
+
+  if(bDeletePrevious){
+    if(rSR.bmpOverride != NULL){
+      delete rSR.bmpOverride;
+      rSR.bmpOverride = NULL;
+    }
+  }
+
+  rSR.bmpOverride=bmp;
+  if(bmp!=NULL)rSR.B.Border=bmp->GetSize();
+
+  rSR.B.Stretch=iStretch;
+
+  rSR.B.Dest=v2Dest;
 }
 
 int graphics::AddStretchRegion(blitdata B,const char* strId){
@@ -452,6 +495,16 @@ void graphics::DrawAtDoubleBufferBeforeFelistPage(){
   }
 }
 
+void debugTinyDungeon(bitmap* DoubleBuffer, bitmap* StretchedBuffer){
+  static bool bDbgTinyDungeon = [](){const char* c=std::getenv("IVAN_DebugShowTinyDungeon");return c!=NULL && strcmp(c,"true")==0;}();
+  if(bDbgTinyDungeon){
+    blitdata Bdbg=DEFAULT_BLITDATA;
+    Bdbg.Bitmap=StretchedBuffer;
+    Bdbg.Border={400,300};
+    DoubleBuffer->NormalBlit(Bdbg);
+  }
+}
+
 bitmap* graphics::PrepareBuffer(){
   bitmap* ReturnBuffer = DoubleBuffer;
 
@@ -465,7 +518,7 @@ bitmap* graphics::PrepareBuffer(){
       stretchRegion& rSR=vStretchRegion[i];
       blitdata& rB=rSR.B;DBGSRI("tryBlit");
 
-      if(rB.Bitmap!=StretchedDB)ABORT("SRegion bitmap is not pointing to StretchedDB.");
+      if(rB.Bitmap!=StretchedBuffer)ABORT("SRegion bitmap is not pointing to StretchedBuffer.");
 
       // try to disable below, is easier to read long lists
       bOk=true;
@@ -476,10 +529,12 @@ bitmap* graphics::PrepareBuffer(){
 
 //      if(bOk && (rSR.bDrawBeforeFelistPage))bOk=false;DBGSB(bOk); //bDrawBeforeFelistPage is not meant to work here.
 
-      if(felist::isAnyFelistCurrentlyDrawn()){
-        if(bOk && (!rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
-      }else{
-        if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
+      if(!rSR.bDrawAlways){
+        if(felist::isAnyFelistCurrentlyDrawn()){
+          if(bOk && (!rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
+        }else{
+          if(bOk && ( rSR.bDrawAfterFelist))bOk=false;DBGSB(bOk);
+        }
       }
 
       if(!(rB.Border.X>=0 && rB.Border.Y>=0))ABORT("invalid SRegion border (negatives are critical) %d,%d",rB.Border.X,rB.Border.Y);
@@ -496,8 +551,8 @@ bitmap* graphics::PrepareBuffer(){
       if(bOk){
         if(!bDidStretch){
           // first time, if there is at least one stretching, prepare "background/base" on the stretched
-          DoubleBuffer->FastBlit(StretchedDB); //simple copy (like a 3rd buffer)
-          ReturnBuffer = StretchedDB; //and set stretched as the final source
+          DoubleBuffer->FastBlit(StretchedBuffer); //simple copy (like a 3rd buffer)
+          ReturnBuffer = StretchedBuffer; //and set stretched as the final source
         }
 
         if(rSR.bSpecialListItem){ DBGSRI("ListItem");
@@ -519,25 +574,113 @@ bitmap* graphics::PrepareBuffer(){
         }
 
         bitmap* pbmpFrom = DoubleBuffer;
-        if(rSR.vv2ClearSquaresAt.size()>0)pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        if(rSR.bmpOverride!=NULL){
+          pbmpFrom = rSR.bmpOverride;
+        }else
+        if(rSR.vv2ClearSquaresAt.size()>0){
+          pbmpFrom = SRegionPrepareClearedSquares(DoubleBuffer,rSR);
+        }
 
-        DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedDB");
+        DBGSRI("STRETCHING FROM DoubleBuffer TO StretchedBuffer");
         Stretch(rSR.bUseXBRZ, pbmpFrom, rB, rSR.bAllowTransparency);
 
         bDidStretch=true;
       }
     }
+
+    debugTinyDungeon(DoubleBuffer,StretchedBuffer);
   }
+
+  DrawAboveAll(ReturnBuffer);
 
   return ReturnBuffer;
 }
 
-void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide){
-  bmpAt->DrawRectangle(
-    v2TopLeft-v2(2,2),
-    v2TopLeft+v2Border+v2(1,1),
-    color, wide
-  );
+struct drawaboveentry{
+  drawabove da;
+  int iPriority;
+  const char* desc; //to help on development
+};
+std::vector<drawaboveentry> vDrawabove;
+void graphics::DrawAboveAll(bitmap* bmpDest)
+{
+  for(int i=0;i<vDrawabove.size();i++){
+    vDrawabove[i].da(StretchedBuffer);
+  }
+}
+
+/**
+ * Priority to reorganize (recreate) the vector ordering.
+ * Priority can be any value.
+ * Lowest priority will be drawn below, and higher ones above.
+ *
+ * The suggestion is to skip by 100 every new layer, so if there are too many they can
+ *  fit in between w/o having to change everywhere ex.:
+ *   900 : some new layer below Map
+ *   1000 : Map
+ *   1100 : Some other new layer above Map
+ *  many days later just create another
+ *   950 : another new layer will be drawn above 900 and below the Map
+ *  and you dont have to change everywhere.
+ */
+void graphics::AddDrawAboveAll(drawabove da, int iPriority, const char* desc)
+{
+  drawaboveentry dae;
+  dae.da=da;
+  dae.iPriority=iPriority;
+  dae.desc=desc;
+
+  std::vector<drawaboveentry> vDrawaboveTmp(vDrawabove);
+  vDrawaboveTmp.push_back(dae);
+
+  vDrawabove.clear();
+
+  while(vDrawaboveTmp.size()>0){
+    drawaboveentry daeLowestPriority;
+    daeLowestPriority.iPriority=1000000000; //TODO should be max int
+    int iIndexLP=-1;
+    for(int i=0;i<vDrawaboveTmp.size();i++){
+      if(vDrawaboveTmp[i].iPriority < daeLowestPriority.iPriority){
+        daeLowestPriority=vDrawaboveTmp[i];
+        iIndexLP=i;
+      }
+    }
+
+    vDrawabove.push_back(daeLowestPriority);
+
+    vDrawaboveTmp.erase(vDrawaboveTmp.begin()+iIndexLP);
+  }
+
+  char* c = std::getenv("IVAN_LISTDRAWABOVE"); //to help on development, so all priorities can be adjusted easily
+  bool bCOut = c!=NULL && strcmp(c,"true")==0;
+  festring fsDrawAbovePriority("");
+  for(int i=0;i<vDrawabove.size();i++){
+    fsDrawAbovePriority << vDrawabove[i].iPriority << ":" << vDrawabove[i].desc;
+    if(bCOut)
+      std::cout << fsDrawAbovePriority.CStr() << std::endl;
+    DBG1(fsDrawAbovePriority.CStr());
+  }
+
+}
+
+void graphics::DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool bWide){
+  v2 v2BottomRight = v2TopLeft+v2Border;
+  if(bWide){ //is 3 thickness
+    v2TopLeft -= v2(2,2);
+    v2BottomRight += v2(1,1);
+  }else{
+    v2TopLeft -= v2(1,1);
+  }
+
+  // fixer
+  int iMargin=bWide?2:1; //wide is 3, middle is at 2
+  if(v2TopLeft.X<iMargin)v2TopLeft.X=iMargin-1;
+  if(v2TopLeft.Y<iMargin)v2TopLeft.Y=iMargin-1;
+  int iMMax;
+  iMMax=bmpAt->GetSize().X-iMargin;if(v2BottomRight.X>iMMax)v2BottomRight.X=iMMax;
+  iMMax=bmpAt->GetSize().Y-iMargin;if(v2BottomRight.Y>iMMax)v2BottomRight.Y=iMMax;
+
+  bmpAt->DrawRectangle(v2TopLeft, v2BottomRight, color, bWide);
 }
 
 int graphics::GetTotSRegions(){

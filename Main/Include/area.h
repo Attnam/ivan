@@ -45,7 +45,7 @@ class area
   truth IsValidPos(int X, int Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   const rect& GetBorder() const { return Border; }
   void SetEntryPos(int, v2);
-  static v2 getTopLeftCorner();
+  static v2 getTopLeftCorner(); //this is equal to camera screen coordinates tho
   static int getOutlineThickness(); //TODO this should be more global...
  protected:
   square*** Map;
