@@ -508,7 +508,7 @@ truth commandsystem::SetItemLabel(character* Char)
     if(ToAddLabel.empty())
       break;
 
-    festring What;
+    festring What = ToAddLabel[0]->GetLabel();
     if(game::StringQuestion(What, CONST_S("How you want to label it?"), WHITE, 0, 20, true) == NORMAL_EXIT)
       for(int i=0;i<ToAddLabel.size();i++)
         ToAddLabel[i]->SetLabel(What);

@@ -263,6 +263,7 @@ class item : public object
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth IsExplosive() const { return false; }
   virtual void SetLabel(cfestring& What);
+  virtual cfestring& GetLabel() const { return label; }
   virtual void AddName(festring&, int) const;
   virtual void AddName(festring& a, int b, int c) const {object::AddName(a,b,c);} //required because of AddName(festring&,int)
   virtual void Save(outputfile&) const;
