@@ -80,7 +80,7 @@ command* commandsystem::Command[] =
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
-  new command(&AssignName, "name", 'n', 'n', 'N', false),
+  new command(&AssignName , "name"     , 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&PickUp, "pick up", ',', ',', ',', false),
@@ -91,6 +91,7 @@ command* commandsystem::Command[] =
   new command(&Save, "save game", 'S', 'S', 'S', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', '+', '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', '-', '-', true),
+  new command(&SetItemLabel, "set item label", 'L', 'l', 'l', true),
   new command(&ShowConfigScreen, "show config screen", '\\', '\\', '\\', true),
   new command(&ShowInventory, "show inventory", 'i', 'i', 'i', true),
   new command(&ShowKeyLayout, "show key layout", '?', '?', '?', true),
@@ -484,6 +485,34 @@ truth commandsystem::Close(character* Char)
   }
   else
     ADD_MESSAGE("This monster type cannot close anything.");
+
+  return false;
+}
+
+truth commandsystem::SetItemLabel(character* Char)
+{
+  if(!Char->GetStack()->GetItems())
+  {
+    ADD_MESSAGE("You have nothing to add a label!");
+    return false;
+  }
+
+  stack::SetSelected(0);
+
+  for(;;)
+  {
+    itemvector ToAddLabel;
+    game::DrawEverythingNoBlit();
+    Char->GetStack()->DrawContents(ToAddLabel, Char, CONST_S("What do you want to add a label?"), REMEMBER_SELECTED);
+
+    if(ToAddLabel.empty())
+      break;
+
+    festring What;
+    if(game::StringQuestion(What, CONST_S("How you want to label it?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+      for(int i=0;i<ToAddLabel.size();i++)
+        ToAddLabel[i]->SetLabel(What);
+  }
 
   return false;
 }
