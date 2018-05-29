@@ -81,6 +81,10 @@ numberoption ivanconfig::StackListPageLength("StackListPageLength",
                                           &StackListPageLengthDisplayer,
                                           &StackListPageLengthChangeInterface,
                                           &StackListPageLengthChanger);
+cycleoption ivanconfig::GoOnStopMode(     "GoOnStopMode",
+                                          "Go stop mode",
+                                          0, 4,
+                                          &GoOnStopModeDisplayer);
 numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           "FrameSkip to inc. input responsiveness",
                                           0,
@@ -281,6 +285,16 @@ void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
   case 2: Entry << "indicator";break;
   case 3: Entry << "ind+color";break;
   case 4: Entry << "dynamic";break;
+  }
+}
+
+void ivanconfig::GoOnStopModeDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+    case 0:Entry << "everything";break;
+    case 1:Entry << "ignore useless";break;
+    case 2:Entry << "ignore cheap";break;
+    case 3:Entry << "ignore encumbering";break;
   }
 }
 
@@ -772,6 +786,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
   configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
+  configsystem::AddOption(fsCategory,&GoOnStopMode);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

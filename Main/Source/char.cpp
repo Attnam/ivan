@@ -3343,8 +3343,62 @@ void character::GoOn(go* Go, truth FirstStep)
 
   if(GetStackUnder()->GetVisibleItems(this))
   {
-    Go->Terminate(false);
-    return;
+    bool bUseless=false,bTooCheap=false,bEncumbering=false;
+
+    switch(ivanconfig::GetGoOnStopMode()){
+    case 0: Go->Terminate(false); return;
+    case 1:bUseless=true;break;
+    case 2:bTooCheap=true;break;
+    case 3:bEncumbering=true;break;
+    default:
+      ABORT("unsupported go on stop mode %d",ivanconfig::GetGoOnStopMode());
+      break;
+    }
+
+    itemvector vit;
+    GetStackUnder()->FillItemVector(vit);
+    for(int i=0;i<vit.size();i++){
+      DBG9(vit[i]->GetNameSingular().CStr(), vit[i]->AllowEquip(), vit[i]->IsAppliable(this), vit[i]->IsConsumable(),
+        vit[i]->IsEatable(this), vit[i]->IsDrinkable(this), vit[i]->IsOpenable(this), vit[i]->IsReadable(this), vit[i]->IsZappable(this) );
+      DBG8(vit[i]->GetNameSingular().CStr(),vit[i]->IsWeapon(this),vit[i]->IsArmor(this),vit[i]->IsBodyArmor(this),vit[i]->IsHelmet(this),
+        vit[i]->IsGauntlet(this),vit[i]->IsBoot(this),vit[i]->IsBelt(this) );
+      if( //TODO ? vit[i]->GetSpoilLevel()==0
+          (bUseless &&
+            (
+              vit[i]->IsAppliable(this) ||
+              vit[i]->IsZappable(this)  ||
+
+              // bad!              vit[i]->IsConsumable() ||
+              vit[i]->IsEatable(this) ||
+              vit[i]->IsDrinkable(this) ||
+
+              // bad!              vit[i]->AllowEquip() ||
+              vit[i]->IsWeapon(this) ||
+              vit[i]->IsArmor(this) || //all armor slots
+//              vit[i]->IsBodyArmor(this) ||
+//              vit[i]->IsHelmet(this) ||
+//              vit[i]->IsGauntlet(this) ||
+//              vit[i]->IsBoot(this) ||
+//              vit[i]->IsBelt(this) ||
+
+              vit[i]->IsAmulet(this) ||
+              vit[i]->IsRing(this) ||
+
+              vit[i]->IsOpenable(this) ||
+              vit[i]->IsReadable(this)
+            )
+          ) ||
+          (bTooCheap &&
+            (vit[i]->GetTruePrice() > iMaxValueless)
+          ) ||
+          (bEncumbering && //calc in float price vs weight
+            (vit[i]->GetTruePrice()/(vit[i]->GetWeight()/1000.0)) > (iMaxValueless*2)
+          )
+      ){
+        Go->Terminate(false);
+        return;
+      }
+    }
   }
 
   game::DrawEverything();
