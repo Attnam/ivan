@@ -2574,7 +2574,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   if(iMax>-1)iTot = Min(iMax,iTot);
   if(iTot==0)return NULL;
 
-  v2 v2Pos = v2PosIni;
+  v2 v2Pos = v2PosIni; DBGSV2(v2PosIni);
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
@@ -2595,7 +2595,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   B.Bitmap=bmpTgt;
   B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
 
-  bool bLight=false;
+  static bool bLight=false; //TODO make this an user option?
   col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
   if(!bLight){ //overall around if tiny
     v2 v2BkgIni = v2(0,0);
@@ -2624,7 +2624,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
       graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
     }
 
-    B.Dest = v2Pos;
+    B.Dest = v2Pos; DBGBLD(B);
     it->Draw(B);
 
     v2Pos.X+=(TILE_SIZE*iDirX);
@@ -2787,36 +2787,31 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
   int iDirX=1,iDirY=0;
-  v2 v2ScrPosIni(0,0);
+//  v2 v2ScrPosIni(0,0);
   v2 v2SqrPosIni(0,0);
-
-  // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
 
   if(bAboveHead){ //only for x1 dungeon scale
     v2SqrPosIni=Player->GetPos();
 
     v2SqrPosIni.X-=iTot/2;
-    if(v2SqrPosIni.X<0)
-      v2SqrPosIni.X=0;
-
     v2SqrPosIni.Y--;
-    if(v2SqrPosIni.Y<0)
-      v2SqrPosIni.Y=0;
+
+    // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
 
 //    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
 //  }else{
 //    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
   }
 
+//  v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
+//
 //  // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
 //  v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
-//  if(v2ScrPosIni.X<v2Sqr00ScrPos.X)
-//    v2ScrPosIni.X=v2Sqr00ScrPos.X;
-//
-//  if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)
-//    v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
-
-  v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+//  if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X; //TODO can this conflict with or miss v2SqrPosIni position ?
+//  if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+//  DBGSV2(v2SqrPosIni);
 
   if(!bAboveHead){
     int iCorner = ItemUnderCorner(iCode);
@@ -2839,17 +2834,17 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
         break;
       case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         break;
       case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
       case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
     }
 
@@ -2874,6 +2869,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 //        break;
 
   }
+
+  v2 v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
 
   PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
 
