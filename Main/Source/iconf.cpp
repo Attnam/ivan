@@ -97,6 +97,9 @@ truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           "Let old savegames (v131 up) be imported (experimental)",
                                           false);
+truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
+                                          "wait neutral NPCs move away from your path",
+                                          false);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
                                           false,
@@ -787,6 +790,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
+  configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

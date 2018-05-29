@@ -1352,7 +1352,7 @@ int character::CalculateNewSquaresUnder(lsquare** NewSquare, v2 Pos) const
     return 0;
 }
 
-truth character::TryMove(v2 MoveVector, truth Important, truth Run)
+truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWaitNeutralMove)
 {
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   character* Pet[MAX_SQUARES_UNDER];
@@ -1411,22 +1411,27 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
         return Hit(Hostile[Index], HostilePos[Index], Direction);
       }
 
-      if(Neutrals == 1)
-      {
-        if(!IsPlayer() && !Pets && Important && CanMoveOn(MoveToSquare[0]))
-          return HandleCharacterBlockingTheWay(Neutral[0], NeutralPos[0], Direction);
-        else
-          return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
-      }
-      else if(Neutrals)
-      {
-        if(IsPlayer())
+      if(Neutrals>0 && ivanconfig::IsWaitNeutralsMoveAway() && pbWaitNeutralMove!=NULL){
+        (*pbWaitNeutralMove)=true;
+        return false;
+      }else{
+        if(Neutrals == 1)
         {
-          int Index = RAND() % Neutrals;
-          return Hit(Neutral[Index], NeutralPos[Index], Direction);
+          if(!IsPlayer() && !Pets && Important && CanMoveOn(MoveToSquare[0]))
+            return HandleCharacterBlockingTheWay(Neutral[0], NeutralPos[0], Direction);
+          else
+            return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
         }
-        else
-          return false;
+        else if(Neutrals)
+        {
+          if(IsPlayer())
+          {
+            int Index = RAND() % Neutrals;
+            return Hit(Neutral[Index], NeutralPos[Index], Direction);
+          }
+          else
+            return false;
+        }
       }
 
       if(!IsPlayer())
@@ -2498,7 +2503,12 @@ void character::GetPlayerCommand()
     for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == game::GetMoveCommandKey(c))
       {
-        HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning());
+        bool bWaitNeutralMove=false;
+        HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+        if(!HasActed && bWaitNeutralMove){
+          //cant access.. HasActed = commandsystem::NOP(this);
+          Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
+        }
         ValidKeyPressed = true;
       }
 
