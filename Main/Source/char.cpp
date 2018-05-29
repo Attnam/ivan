@@ -28,6 +28,12 @@
 #define DBGMSG_V2
 #include "dbgmsgproj.h"
 
+/**
+ * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+ * btw, lantern price is currently 10.
+ */
+static int iMaxValueless = 5;
+
 struct statedata
 {
   cchar* Description;
