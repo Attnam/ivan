@@ -76,7 +76,7 @@ command* commandsystem::Command[] =
   new command(&Go, "go", 'g', 'g', 'g', false),
   new command(&GoDown, "go down/enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
-  new command(&SetItemLabel, "inscribe item", 'b', 'b', 'b', true),
+  new command(&SetItemLabel, "inscribe on item", 'b', 'b', 'b', true),
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
@@ -493,7 +493,7 @@ truth commandsystem::SetItemLabel(character* Char)
 {
   if(!Char->GetStack()->GetItems())
   {
-    ADD_MESSAGE("You have nothing to inscribe!");
+    ADD_MESSAGE("You have nothing to inscribe on!");
     return false;
   }
 
@@ -503,13 +503,13 @@ truth commandsystem::SetItemLabel(character* Char)
   {
     itemvector ToAddLabel;
     game::DrawEverythingNoBlit();
-    Char->GetStack()->DrawContents(ToAddLabel, Char, CONST_S("What do you want to inscribe?"), REMEMBER_SELECTED);
+    Char->GetStack()->DrawContents(ToAddLabel, Char, CONST_S("What item do you want to inscribe on?"), REMEMBER_SELECTED);
 
     if(ToAddLabel.empty())
       break;
 
     festring What = ToAddLabel[0]->GetLabel();
-    if(game::StringQuestion(What, CONST_S("What would you like to inscribe in this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+    if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
       for(int i=0;i<ToAddLabel.size();i++)
         ToAddLabel[i]->SetLabel(What);
   }
