@@ -3379,6 +3379,8 @@ void character::GoOn(go* Go, truth FirstStep)
       DBG8(vit[i]->GetNameSingular().CStr(),vit[i]->IsWeapon(this),vit[i]->IsArmor(this),vit[i]->IsBodyArmor(this),vit[i]->IsHelmet(this),
         vit[i]->IsGauntlet(this),vit[i]->IsBoot(this),vit[i]->IsBelt(this) );
       if( //TODO ? vit[i]->GetSpoilLevel()==0
+          vit[i]->IsOpenable(this) //doors are not items, but works for chests too
+          ||
           (bUseless &&
             (
               vit[i]->IsAppliable(this) ||
@@ -3400,7 +3402,6 @@ void character::GoOn(go* Go, truth FirstStep)
               vit[i]->IsAmulet(this) ||
               vit[i]->IsRing(this) ||
 
-              vit[i]->IsOpenable(this) ||
               vit[i]->IsReadable(this)
             )
           ) ||
