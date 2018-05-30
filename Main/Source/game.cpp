@@ -406,6 +406,8 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
 }
 
 void game::SRegionAroundDisable(){
+  if(iRegionAroundXBRZ==-1)return;
+
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
 }
 
@@ -1714,7 +1716,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
-    if(iRegionVanillaSilhouette!=-1)graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    if(iRegionVanillaSilhouette!=-1)
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     return;
   }
 
@@ -2574,7 +2577,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   if(iMax>-1)iTot = Min(iMax,iTot);
   if(iTot==0)return NULL;
 
-  v2 v2Pos = v2PosIni;
+  v2 v2Pos = v2PosIni; DBGSV2(v2PosIni);
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
@@ -2595,7 +2598,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   B.Bitmap=bmpTgt;
   B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
 
-  bool bLight=false;
+  static bool bLight=false; //TODO make this an user option?
   col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
   if(!bLight){ //overall around if tiny
     v2 v2BkgIni = v2(0,0);
@@ -2624,7 +2627,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
       graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
     }
 
-    B.Dest = v2Pos;
+    B.Dest = v2Pos; DBGBLD(B);
     it->Draw(B);
 
     v2Pos.X+=(TILE_SIZE*iDirX);
@@ -2703,7 +2706,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
 
   /////////////////////// ok ////////////////////////
-  v2 v2AbsLevelSqrPos = Player->GetPos();
+  const v2 v2AbsLevelSqrPos = Player->GetPos();
 
   bool bNearEC=false;
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
@@ -2746,10 +2749,17 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     }
   }
 
+  int iTot = su->GetItems();
+  if(iTot>game::GetScreenXSize())
+    iTot=game::GetScreenXSize();
+  if(iTot>GetCurrentArea()->GetXSize())
+    iTot=GetCurrentArea()->GetXSize();
+
+  //////////////////////////////////////////////////////////////////////////////////////
   // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
   if(bAboveHead && ivanconfig::GetStartingDungeonGfxScale()>=2){ //use xBRZ stretch region
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
-    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+    bitmap* bmp = PrepareItemsUnder(false, su, iTot, v2(0,0), 1, 0);
 
     int iStretch=iItemsUnderStretch;
     if(su->GetItems()==1)iStretch++;
@@ -2760,8 +2770,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
     v2StretchedBufferDest.Y-=2; //just to look better
 
-    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
-    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)
+      v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)
+      v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
 
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
@@ -2777,25 +2790,35 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
   int iDirX=1,iDirY=0;
-  int iTot = su->GetItems();
-  v2 v2ScrPosIni;
-  v2 v2SqrPosIni;
+//  v2 v2ScrPosIni(0,0);
+  v2 v2SqrPosIni(0,0);
 
   if(bAboveHead){ //only for x1 dungeon scale
     v2SqrPosIni=Player->GetPos();
-    v2SqrPosIni.Y--;
-    v2SqrPosIni.X-=iTot/2;
 
-    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
-  }else{
-    int iCorner = ItemUnderCorner(iCode);
-    bool bHorizontal = ItemUnderHV(iCode);
+    v2SqrPosIni.X-=iTot/2;
+    v2SqrPosIni.Y--;
 
     // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
-    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
-    v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
-    if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
-    if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+
+//    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+//  }else{
+//    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+  }
+
+//  v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
+//
+//  // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+//  v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+//  if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X; //TODO can this conflict with or miss v2SqrPosIni position ?
+//  if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+//  DBGSV2(v2SqrPosIni);
+
+  if(!bAboveHead){
+    int iCorner = ItemUnderCorner(iCode);
+    bool bHorizontal = ItemUnderHV(iCode);
 
     // min top left dungeon sqr coords
     v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
@@ -2814,24 +2837,26 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
         break;
       case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         break;
       case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
       case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
     }
 
-    if(bHorizontal){
-      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-    }else{
-      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+    if(!bHorizontal){
+      if(iTot>game::GetScreenYSize())
+        iTot=game::GetScreenYSize();
+
+      if(iTot>GetCurrentArea()->GetYSize())
+        iTot=GetCurrentArea()->GetYSize();
     }
 
 //
@@ -2847,6 +2872,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 //        break;
 
   }
+
+  v2 v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
 
   PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
 
