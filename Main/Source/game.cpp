@@ -618,22 +618,22 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   UpdateSRegionsXBRZ();
 }
 
-void FantasyName(festring& rfsName){
+void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyNamePattern().CStr());
   if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
 
   NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
-  rfsName << gen.toString().c_str();
+  rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
 }
 
 truth game::Init(cfestring& Name)
-{
+{ DBG2(Name.CStr(),ivanconfig::GetDefaultName().CStr());
   if(Name.IsEmpty())
   {
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
 
-      FantasyName(PlayerName);
+      FantasyName(PlayerName); DBG1(PlayerName.CStr());
 
       if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
                                   v2(30, 46), WHITE, 1, 20, true, true) == ABORTED
