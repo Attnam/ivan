@@ -221,6 +221,10 @@ truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &FullScreenModeChanger);
+cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
+                                          "* scaling quality",
+                                          0, 2,
+                                          &ScalingQualityDisplayer);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
@@ -734,6 +738,14 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
   graphics::SwitchMode();
 }
 
+void ivanconfig::ScalingQualityDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "pixelated"; break;
+  case 1: Entry << "smooth"; break;
+  }
+}
+
 #endif
 
 void ivanconfig::Show()
@@ -819,6 +831,9 @@ void ivanconfig::Initialize()
 #endif
 
   fsCategory="Graphics";
+#ifndef __DJGPP__
+  configsystem::AddOption(fsCategory,&ScalingQuality);
+#endif
   configsystem::AddOption(fsCategory,&LookZoom);
   configsystem::AddOption(fsCategory,&XBRZScale);
   configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);
