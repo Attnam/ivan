@@ -82,7 +82,6 @@ class commandsystem
   static truth WieldInRightArm(character*);
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
-  static truth SetItemLabel(character*);
   static truth Search(character*);
   static truth Consume(character*, cchar*, sorter);
 #ifdef WIZARD
