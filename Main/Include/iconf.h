@@ -20,6 +20,7 @@ class ivanconfig
 {
  public:
   static cfestring& GetDefaultName() { return DefaultName.Value; }
+  static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
@@ -29,6 +30,7 @@ class ivanconfig
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
+  static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
@@ -64,6 +66,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
+  static int GetScalingQuality() { return ScalingQuality.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
 #else
@@ -87,6 +90,7 @@ class ivanconfig
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
+  static void HoldPosMaxDistDisplayer(const cycleoption* O, festring& Entry);
   static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
@@ -96,6 +100,7 @@ class ivanconfig
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
+  static truth FantasyNameChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -124,6 +129,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
+  static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
@@ -145,6 +151,7 @@ class ivanconfig
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
+  static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
@@ -158,6 +165,7 @@ class ivanconfig
   static numberoption WindowHeight;
   static int iStartingWindowHeight;
 
+  static cycleoption HoldPosMaxDist;
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
@@ -203,6 +211,7 @@ class ivanconfig
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
+  static cycleoption ScalingQuality;
 #endif
 
   static col24 ContrastLuminance;
