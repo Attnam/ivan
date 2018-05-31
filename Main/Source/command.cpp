@@ -76,11 +76,12 @@ command* commandsystem::Command[] =
   new command(&Go, "go", 'g', 'g', 'g', false),
   new command(&GoDown, "go down/enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
+  new command(&SetItemLabel, "inscribe on item", 'b', 'b', 'b', true),
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
-  new command(&AssignName, "name", 'n', 'n', 'N', false),
+  new command(&AssignName , "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&PickUp, "pick up", ',', ',', ',', false),
@@ -484,6 +485,34 @@ truth commandsystem::Close(character* Char)
   }
   else
     ADD_MESSAGE("This monster type cannot close anything.");
+
+  return false;
+}
+
+truth commandsystem::SetItemLabel(character* Char)
+{
+  if(!Char->GetStack()->GetItems())
+  {
+    ADD_MESSAGE("You have nothing to inscribe on!");
+    return false;
+  }
+
+  stack::SetSelected(0);
+
+  for(;;)
+  {
+    itemvector ToAddLabel;
+    game::DrawEverythingNoBlit();
+    Char->GetStack()->DrawContents(ToAddLabel, Char, CONST_S("What item do you want to inscribe on?"), REMEMBER_SELECTED);
+
+    if(ToAddLabel.empty())
+      break;
+
+    festring What = ToAddLabel[0]->GetLabel();
+    if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+      for(int i=0;i<ToAddLabel.size();i++)
+        ToAddLabel[i]->SetLabel(What);
+  }
 
   return false;
 }
