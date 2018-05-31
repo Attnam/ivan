@@ -1265,6 +1265,7 @@ class character : public entity, public id
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
   ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];
+  v2 v2HoldPos;
   virtual truth NeedsBurningPostFix() const { return false; }
 };
 
