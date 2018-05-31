@@ -76,7 +76,7 @@ command* commandsystem::Command[] =
   new command(&Go, "go", 'g', 'g', 'g', false),
   new command(&GoDown, "go down/enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
-  new command(&SetItemLabel, "inscribe on item", 'b', 'b', 'b', true),
+  new command(&SetItemLabel, "inscribe on item", 'b', 'b', 'B', true),
   new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
