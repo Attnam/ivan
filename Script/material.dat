@@ -1686,7 +1686,7 @@ solid
     ConsumeType = CT_METAL;
     Density = 7500;
     Color = rgb16(160, 160, 160); /* Color = rgb16(70, 130, 180); */
-    PriceModifier = 60;
+    PriceModifier = 600;
     NameStem = "stainless steel";
     Flexibility = 1;
     IntelligenceRequirement = 12;
@@ -1704,7 +1704,7 @@ solid
     ConsumeType = CT_METAL;
     Density = 6000;
     Color = rgb16(176, 196, 222);
-    PriceModifier = 250;
+    PriceModifier = 800;
     NameStem = "plasteel";
     Flexibility = 1;
     IntelligenceRequirement = 18;
@@ -1722,7 +1722,7 @@ solid
     ConsumeType = CT_METAL;
     Density = 8000;
     Color = rgb16(255, 140, 0);
-    PriceModifier = 500;
+    PriceModifier = 1000;
     NameStem = "duralloy";
     Flexibility = 1;
     IntelligenceRequirement = 23;

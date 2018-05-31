@@ -3605,8 +3605,9 @@ boot /* armor-> */
   StrengthModifier = 150;
   BitmapPos = 0, 400;
   FormModifier = 20;
-  NameSingular = "greave";
-  FlexibleNameSingular = "boot";
+  NameSingular = "boot";
+  /* NameSingular = "greave";    This sadly down not work with plural naming,
+  FlexibleNameSingular = "boot"; as plurals are always based on NameSingular. */
   MainMaterialConfig = { 145,
                          TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
                          SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
@@ -3695,8 +3696,6 @@ boot /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 125;
-    NameSingular = "greave";
-    FlexibleNameSingular = "boot";
     PostFix = "of strength";
     AffectsLegStrength = true;
     Price = 50;
@@ -3722,8 +3721,6 @@ boot /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 125;
-    NameSingular = "greave";
-    FlexibleNameSingular = "boot";
     PostFix = "of agility";
     AffectsAgility = true;
     Price = 75;
