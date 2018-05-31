@@ -974,7 +974,7 @@ truth commandsystem::WhatToEngrave(character* Char)
   while(!(Key == KEY_ESC || Key == ' '))
   {
     Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
-                                       "'.' square, 'i' items, ESC exits"));
+                                       "'.' square, 'i' inventory, ESC exits"));
 
     if(Key == '.')
     {
