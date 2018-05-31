@@ -4062,9 +4062,9 @@ solid
     NameStem = "hematite";
     AttachedGod = LORICATUS;
     NaturalForm = stone;
-    IntelligenceRequirement = 5;
+    IntelligenceRequirement = 3;
     SoftenedMaterial = GRANITE;
-    HardenedMaterial = IRON;
+    HardenedMaterial = PIG_IRON;
     PriceModifier = 600;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;

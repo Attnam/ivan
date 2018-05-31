@@ -1770,7 +1770,7 @@ justifier /* meleeweapon-> */
   IsMaterialChangeable = false;
   NameSingular = "broad sword";
   Adjective = "holy";
-  PostFix = "named Valpurus's Justifier";
+  PostFix = "named Valpurus' Justifier";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == VALPURIUM;
   SecondaryMaterialConfig == VALPURIUM;
@@ -1932,7 +1932,7 @@ bodyarmor /* armor-> */
                            WITCH_BARK, DARK_PETAL, ARCANITE, PEARL_GLASS, ILLITHIUM,
                            OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 62,
-                              750, 1500, 200, 500, 50, 150, 250, 25, 5, 25, 300, 150, 15,
+                              750, 1500, 200, 75, 50, 150, 250, 25, 5, 25, 300, 150, 15,
                               5, 75, 50, 25, 750, 1000, 250, 75, 15, 5, 300, 75, 300, 75,
                               3, 3, 3, 3, 1, 10, 10, 5, 15, 10, 5, 3, 1, 25, 5, 5, 25,
                               10, 5, 2, 4, 6, 5, 1, 1, 1, 25, 2, 3, 5, 25, 25, 5, 15, 5; }
@@ -2010,7 +2010,7 @@ bodyarmor /* armor-> */
                            STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
                            BLOOD_IRON, BLOOD_STEEL; }
     MaterialConfigChances = { 145,
-                              25, 250, 500, 10, 150, 25, 5, 50, 75, 25, 5, 10, 100,
+                              25, 250, 500, 10, 100, 25, 5, 50, 75, 25, 5, 10, 100,
                               50, 10, 15, 5, 3, 1, 1000, 300, 75, 25, 50, 250, 200,
                               75, 50, 25, 5, 1, 5000, 5, 2500, 2500, 2500, 2500, 100,
                               25, 750, 200, 75, 5, 75, 150, 50, 5, 1, 1, 1, 1, 1, 1,
@@ -2090,7 +2090,7 @@ bodyarmor /* armor-> */
                            WITCH_BARK, DARK_PETAL, ARCANITE, PEARL_GLASS, ILLITHIUM,
                            OMMEL_BONE, OMMEL_TOOTH; }
     MaterialConfigChances = { 62,
-                              750, 1500, 200, 500, 50, 150, 250, 25, 5, 25, 300, 150, 15,
+                              750, 1500, 200, 250, 50, 150, 250, 25, 5, 25, 300, 150, 15,
                               5, 75, 50, 25, 750, 1000, 250, 75, 15, 5, 300, 75, 300, 75,
                               3, 3, 3, 3, 1, 10, 10, 5, 15, 10, 5, 3, 1, 25, 5, 5, 25,
                               10, 5, 2, 4, 6, 5, 1, 1, 1, 25, 2, 3, 5, 25, 25, 5, 15, 5; }
@@ -5352,6 +5352,33 @@ helmet
     NameSingular = "mask";
     CoverPercentile = 30;
     HelmetBitmapPos = 112, 129;
+    MainMaterialConfig = { 100,
+                           TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                           SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                           GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, HUMAN_SKIN,
+                           HARDENED_LEATHER, IMP_HIDE, GRIFFON_FEATHER, PHOENIX_FEATHER,
+                           SEA_SERPENT_SCALE, STAINLESS_STEEL, JET, ALABASTER, AEGI_SALT,
+                           MAGIC_CRYSTAL, ARCANITE, GLASS, PEARL_GLASS, RED_ICE, JOTUN_ICE,
+                           WITCH_BARK, DARK_PETAL, SPRUCE_WOOD, SYCAMORE_WOOD,
+                           ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, YEW_WOOD, BEECH_WOOD,
+                           BAMBOO_WOOD, MAHOGANY_WOOD, PINE_WOOD, FIR_WOOD, BRIM_STONE,
+                           BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                           PETRIFIED_WOOD, CHITINE, TURTLE_SHELL, SEA_SHELL, OBSIDIAN,
+                           JACINTH, AGATE, ONYX, NACRE, CORAL, DEEP_CORAL, HALCYON,
+                           MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, ILLITHIUM, DRAGON_HIDE,
+                           NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, PORCELAIN, HARDENED_ASH, BANANA_PEEL,
+                           BONE, WHALE_BONE, WRAITH_BONE, OMMEL_BONE, MAMMOTH_TUSK, OMMEL_TOOTH,
+                           IRON, STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                           BLOOD_IRON, BLOOD_STEEL, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
+    MaterialConfigChances = { 100,
+                              15, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
+                              25, 50, 5, 3, 1, 5, 100, 50, 50, 5, 5, 5, 10, 75, 5,
+                              15, 5, 25, 15, 30, 20, 100, 50, 40, 50, 60, 75, 25, 30,
+                              40, 50, 60, 30, 40, 5, 50, 60, 75, 25, 10, 1, 50, 10,
+                              5, 100, 30, 30, 30, 25, 75, 50, 15, 100, 75, 50, 5, 5,
+                              25, 100, 75, 50, 25, 50, 5, 50, 1, 1, 100, 75, 50, 5,
+                              25, 5, 50, 10, 5, 1, 15, 5, 15, 5, 5, 5, 3, 3, 1; }
     EnchantmentPlusChance = 30;
   }
 
@@ -5359,6 +5386,17 @@ helmet
   {
     BitmapPos = 80, 224;
     Possibility = 3;
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, EMERALD, RUBY, DIAMOND, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 250, 150, 100, 50, 5, 5, 5, 150, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 10, 25, 25, 100, 75,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 40;
   }
 }
@@ -5788,7 +5826,7 @@ scrollofrepair /* scroll-> */
   Possibility = 50;
   Price = 250;
   PostFix = "of repair";
-  Alias == "scroll of repairing";
+  Alias = { 2, "scroll of repairing", "repair"; }
   AttachedGod = LORICATUS;
   ReadDifficulty = 500;
 }

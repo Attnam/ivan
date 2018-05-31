@@ -641,10 +641,10 @@ guard
   Config TRAINEE;
   {
     AttributeBonus = -20;
-    Helmet = BIRCH_WOOD helmet(FULL_HELMET);
-    BodyArmor = BIRCH_WOOD bodyarmor(PLATE_MAIL);
+    Helmet = BRONZE helmet(FULL_HELMET);
+    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
     RightWielded = BIRCH_WOOD BIRCH_WOOD meleeweapon(LONG_SWORD);
-    LeftWielded = BIRCH_WOOD shield;
+    LeftWielded = BRONZE shield;
     Adjective = "trainee";
     CWeaponSkillHits = { 2, 20, 20; }
     PanicLevel = 50;
@@ -693,10 +693,11 @@ guard
 
   Config EUNUCH;
   {
-    Helmet = STEEL helmet(FULL_HELMET);
-    BodyArmor = STEEL bodyarmor(PLATE_MAIL);
-    RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
-    LeftWielded = STEEL shield;
+    Helmet = MOON_SILVER helmet(FULL_HELMET);
+    BodyArmor = MOON_SILVER bodyarmor(PLATE_MAIL);
+    Cloak = FABRIC cloak;
+    RightWielded = MOON_SILVER RUBY meleeweapon(LONG_SWORD);
+    LeftWielded = MOON_SILVER shield;
     UsesLongAdjectiveArticle = true;
     Adjective = "eunuch";
     CWeaponSkillHits = { 2, 200, 200; }
@@ -718,6 +719,7 @@ guard
   {
     Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
+    Cloak = BEAR_SKIN cloak;
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
     LeftWielded = IRON shield;
     RightRing = VALPURIUM ring(RING_OF_INFRA_VISION);
@@ -978,11 +980,11 @@ guard
     ClothColor = rgb16(128, 128, 128);
     HeadBitmapPos = 96, 368;
     Helmet = 0;
-    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    RightWielded = OCTIRON OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = OCTIRON EMERALD meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
     LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
-    RightGauntlet = STEEL gauntlet { Enchantment = 2; }
-    RightBoot = STEEL boot { Enchantment = 2; }
+    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
+    RightBoot = BRASS boot { Enchantment = 2; }
     DefaultName = "Sir Lancelyn";
     NameSingular = "emissary";
     PostFix = "of Aslona";
@@ -1229,7 +1231,7 @@ priest
     AttachedGod = VALPURUS;
     PostFix = "of Valpurus";
     Helmet = MITHRIL helmet { Enchantment = 2; }
-    Amulet = amulet(AMULET_OF_ESP);
+    Amulet = VALPURIUM amulet(AMULET_OF_ESP);
     BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
     Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
     Belt = NYMPH_HAIR belt { Enchantment = 2; }
@@ -1294,7 +1296,7 @@ priest
     PostFix = "of Silva";
     Sex = FEMALE;
     Cloak = NYMPH_HAIR cloak;
-    RightWielded = EBONY_WOOD EBONY_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
+    RightWielded = EBONY_WOOD ROSE_QUARTZ meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
     KnownCWeaponSkills == BLUNT_WEAPONS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
@@ -1604,10 +1606,10 @@ darkknight
   Config ROOKIE_FEMALE;
   {
     AttributeBonus = -20;
-    Helmet = BRONZE helmet(FULL_HELMET);
-    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
-    LeftWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    Helmet = PIG_IRON helmet(FULL_HELMET);
+    BodyArmor = PIG_IRON bodyarmor(PLATE_MAIL);
+    RightWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
+    LeftWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
     Adjective = "rookie";
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 200;
@@ -2474,8 +2476,8 @@ goblin
     AttributeBonus = 50;
     Helmet = LEATHER helmet;
     BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-    RightWielded = IRON meleeweapon(MEAT_CLEAVER);
-    LeftWielded = IRON meleeweapon(MEAT_CLEAVER);
+    RightWielded = DEEP_BRONZE meleeweapon(MEAT_CLEAVER);
+    LeftWielded = DEEP_BRONZE meleeweapon(MEAT_CLEAVER);
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
@@ -3151,7 +3153,7 @@ communist /* Ivan */
   ClassStates = INFRA_VISION;
   Helmet = helmet(GOROVITS_FAMILY_GAS_MASK);
   Cloak = OMMEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 2; }
-  BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+  BodyArmor = KEVLAR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
   Belt = TROLL_HIDE belt { Enchantment = 2; }
   RightWielded = gorovitsweapon(GOROVITS_HAMMER);
   LeftWielded = gorovitsweapon(GOROVITS_SICKLE);
@@ -3922,7 +3924,7 @@ housewife
     LegMainColor = rgb16(50, 50, 50);
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
-    Cloak = BLACK_LEATHER cloak { Enchantment = 1; }
+    Cloak = HUMAN_SKIN cloak { Enchantment = 1; }
     /* RightWielded overridden */
     IsExtraCoward = false;
     IsSadist = true;
@@ -4246,6 +4248,7 @@ zombie
     DefaultWisdom = 15;
     DefaultCharisma = 5;
     HeadBitmapPos = 112, 160; /* all dwarves have beards, no exceptions */
+    BodyArmor = VERDIGRIS bodyarmor(CHAIN_MAIL);
     RightWielded = OCTIRON darkaxe;
     LeftWielded = OCTIRON darkaxe;
     KnownCWeaponSkills == AXES;
@@ -4925,8 +4928,8 @@ werewolfwolf
     ClothColor = rgb16(0, 160, 0);
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
-    RightWielded = taiaha { Enchantment = 2; }
-    Cloak = PALM_LEAF cloak { Enchantment = 2; }
+    RightWielded = WHITE_JADE taiaha { Enchantment = 2; }
+    Cloak = DARK_PETAL cloak { Enchantment = 2; }
     KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
     CWeaponSkillHits = { 2, 50, 100; }
     RightSWeaponSkillHits = 20;
@@ -5875,7 +5878,7 @@ snake
   CanOpen = false;
   AttachedGod = MELLIS;
   AutomaticallySeen = true;
-  RunDescriptionLineOne = "Crawling";
+  RunDescriptionLineOne = "Slithering";
   RunDescriptionLineTwo = "very fast";
 }
 
@@ -6190,16 +6193,16 @@ cossack
   TotalVolume = 70000;
   TotalSize = 190;
   NameSingular = "cossack";
-  Helmet = HARDENED_LEATHER helmet;
-  Cloak = HARDENED_LEATHER cloak;
+  Helmet = WOLF_SKIN helmet;
+  Cloak = WOLF_SKIN cloak;
   BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-  Belt = HARDENED_LEATHER belt;
+  Belt = WOLF_SKIN belt;
   RightWielded = IRON IRON meleeweapon(LONG_SWORD);
   KnownCWeaponSkills == LARGE_SWORDS;
   CWeaponSkillHits == 100;
   RightSWeaponSkillHits = 100;
-  RightGauntlet = HARDENED_LEATHER gauntlet;
-  RightBoot = HARDENED_LEATHER boot;
+  RightGauntlet = WOLF_SKIN gauntlet;
+  RightBoot = WOLF_SKIN boot;
   PanicLevel = 10;
   DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
   HostileReplies == "@Dd shouts wildly: \"For Tataria!\"";
@@ -6951,7 +6954,6 @@ darkmage
     "abjuration", "invocation", "evocation", "incantations", "hexes";
   }
 
-
   Config APPRENTICE;
   {
     DefaultArmStrength = 15;
@@ -7098,7 +7100,7 @@ darkmage
     Cloak = PHOENIX_FEATHER cloak { Enchantment = 5; }
     Belt = ANGEL_HAIR belt { Enchantment = 5; }
     RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
-    RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    RightWielded = OCCULTUM BLACK_DIAMOND meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
     Inventory = { 9, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR), key(OCTAGONAL_LOCK); }
     HPRequirementForGeneration = 450;
     DayRequirementForGeneration = 45;
@@ -8974,7 +8976,7 @@ nihil
   UndeadVersions = false;
   UsesNutrition = false;
   AllowPlayerToChangeEquipment = false;
-  Helmet = helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
+  Helmet = BLACK_DIAMOND helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
   Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
   BodyArmor = OCTIRON bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
   Belt = BLACK_DIAMOND belt(BELT_OF_REGENERATION) { Enchantment = 4; }
@@ -9009,6 +9011,6 @@ nihil
     "\"I wish to believe but belief is a graveyard.\"",
     "\"The point is there's no point.\"";
   }
-  Inventory = { 8, celestialmonograph, GOLD stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
+  Inventory = { 8, celestialmonograph, NEUTRONIUM stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
   DayRequirementForGeneration = 60;
 }
