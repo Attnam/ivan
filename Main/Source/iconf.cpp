@@ -54,6 +54,10 @@ cycleoption ivanconfig::HitIndicator(     "HitIndicator",
                                           "Show Hit",
                                           0, 5,
                                           &HitIndicatorDisplayer);
+cycleoption ivanconfig::HoldPosMaxDist(   "HoldPosMaxDist",
+                                          "Pet will wait near the last position", // if pet is set to not follow, will move away max the specified distance. if it loses the player, will stay near the last position it moves to trying to follow the player.
+                                          0, 7,
+                                          &HoldPosMaxDistDisplayer);
 cycleoption ivanconfig::ShowItemsAtPlayerSquare("ShowItemsAtPlayerSquare",
                                           "Show items at player square",
                                           0, 12,
@@ -217,6 +221,10 @@ truthoption ivanconfig::FullScreenMode(   "FullScreenMode",
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &FullScreenModeChanger);
+cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
+                                          "* scaling quality",
+                                          0, 2,
+                                          &ScalingQualityDisplayer);
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
@@ -279,6 +287,14 @@ void ivanconfig::RotateTimesPerSquareDisplayer(const cycleoption* O, festring& E
   case 4: Entry << "x4";break;
   case 5: Entry << "dynamic";break;
   }
+}
+
+void ivanconfig::HoldPosMaxDistDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value>0)
+    Entry << O->Value << " squares";
+  else
+    Entry << "disabled";
 }
 
 void ivanconfig::HitIndicatorDisplayer(const cycleoption* O, festring& Entry)
@@ -722,6 +738,14 @@ void ivanconfig::FullScreenModeChanger(truthoption*, truth)
   graphics::SwitchMode();
 }
 
+void ivanconfig::ScalingQualityDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "pixelated"; break;
+  case 1: Entry << "smooth"; break;
+  }
+}
+
 #endif
 
 void ivanconfig::Show()
@@ -787,12 +811,13 @@ void ivanconfig::Initialize()
 
   fsCategory="Gameplay Changes";
   configsystem::AddOption(fsCategory,&BeNice);
+  configsystem::AddOption(fsCategory,&HoldPosMaxDist);
+  configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
   configsystem::AddOption(fsCategory,&WarnAboutDanger);
   configsystem::AddOption(fsCategory,&AutoDropLeftOvers);
   configsystem::AddOption(fsCategory,&SmartOpenCloseApply);
   configsystem::AddOption(fsCategory,&CenterOnPlayerAfterLook);
   configsystem::AddOption(fsCategory,&ShowGodInfo); //gameplay change in a sense that, to remember what each god is about may be a challenge on itself :)
-  configsystem::AddOption(fsCategory,&MemorizeEquipmentMode);
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
 
@@ -806,6 +831,9 @@ void ivanconfig::Initialize()
 #endif
 
   fsCategory="Graphics";
+#ifndef __DJGPP__
+  configsystem::AddOption(fsCategory,&ScalingQuality);
+#endif
   configsystem::AddOption(fsCategory,&LookZoom);
   configsystem::AddOption(fsCategory,&XBRZScale);
   configsystem::AddOption(fsCategory,&XBRZSquaresAroundPlayer);

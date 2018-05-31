@@ -29,6 +29,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
@@ -64,6 +65,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
+  static int GetScalingQuality() { return ScalingQuality.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
 #else
@@ -86,6 +88,7 @@ class ivanconfig
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
+  static void HoldPosMaxDistDisplayer(const cycleoption* O, festring& Entry);
   static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
@@ -124,6 +127,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
+  static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
@@ -159,6 +163,7 @@ class ivanconfig
   static numberoption WindowHeight;
   static int iStartingWindowHeight;
 
+  static cycleoption HoldPosMaxDist;
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
@@ -203,6 +208,7 @@ class ivanconfig
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
+  static cycleoption ScalingQuality;
 #endif
 
   static col24 ContrastLuminance;
