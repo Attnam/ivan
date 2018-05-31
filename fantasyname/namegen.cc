@@ -506,6 +506,7 @@ std::wstring towstring(const std::string & s)
 	}
 
 	std::vector<wchar_t> buf(wn);
+	cs = s.c_str();
 	const size_t wn_again = std::mbsrtowcs(buf.data(), &cs, wn, nullptr);
 
 	if (wn_again == static_cast<size_t>(-1)) {
