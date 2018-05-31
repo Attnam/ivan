@@ -198,6 +198,7 @@ class lsquare : public square
   void AddSmoke(gas*);
   truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
+  truth IsMaterialDetected() const { return bMaterialDetected; }
   hiteffect* AddHitEffect(hiteffectSetup);
   void RemoveHitEffect(hiteffect* ToBeRemoved);
   void SignalSmokeAlphaChange(int);
@@ -283,6 +284,7 @@ class lsquare : public square
   fluid* Fluid;
   smoke* Smoke;
   hiteffect* HitEffect;
+  truth bMaterialDetected; //temporary
   rain* Rain;
   trap* Trap;
   emittervector Emitter;

@@ -41,6 +41,7 @@
 #include "hscore.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
@@ -1334,37 +1335,57 @@ void game::DrawMapOverlay(bitmap* buffer)
 //          static float fB=fFrom-fStep; //always darker than everything else based on height
 //          static col16 colorMapBkg=MakeRGB16(iR*fB,iG*fB,iB*fB);
 
-          static col16 colorWall,colorFloor,colorMapBkg;
+          static col16 colorNaturalWall,colorBuiltWall,colorFloor,colorMapBkg;
           static bool bDummyInit = [](){
             int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
             float fFrom=0.95;
-            float fStep=0.20;
+            float fStep=0.15;
             int iTot=1.0/fStep;
             col16 clMap[iTot];
             for(int i=0;i<iTot;i++){
               float f=fFrom -fStep*i;
               clMap[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(clMap[i]);
             }
-            colorWall  =clMap[0];
-            colorFloor =clMap[1];
-            colorMapBkg=clMap[2]; //always darker than everything else based on height
+            int k=0;
+            colorBuiltWall  =clMap[k++];
+            colorNaturalWall=clMap[k++];
+            colorFloor      =clMap[k++];
+            colorMapBkg     =clMap[k++]; //always darker than everything else based on height
             return true;
           }();
 
           col16 colorO;
           if(lsqr->HasBeenSeen()){
             static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
-            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
-            static col16 colorFountain=MakeRGB16(        0,         0,0xFF     );
-            static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0);
-            static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0);
+            static col16 colorFountain=MakeRGB16(        0,         0,0xFF     ); //blue
+            static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
+            static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
+            static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+//            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
+
+            static const int iTotRM=5 +1; //5 is max rest modifier from dat files
+            static col16 colorOnGroundRM[iTotRM];
+            static bool bDummyInit2 = [](){
+              int iR=0xFF, iG=0xFF*0.70, iB=0xFF*0.40; //light orange
+              float fFrom=1.00;
+              float fStep=0.05;
+              for(int i=0;i<iTotRM;i++){
+                float f=fFrom -fStep*(iTotRM-1 -i);
+                colorOnGroundRM[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(colorOnGroundRM[i]);
+              }
+//              colorOnGround = colorOnGroundRM[0];
+              return true;
+            }();
 
             static olterrain* olt;olt = lsqr->GetOLTerrain();
             if(olt){
               if(olt->IsDoor()){
                 colorO=colorDoor;
               }else if(olt->IsWall()){
-                colorO=colorWall;
+                if(dynamic_cast<earth*>(olt)!=NULL)
+                  colorO=colorNaturalWall;
+                else
+                  colorO=colorBuiltWall;
               }else if(olt->IsFountainWithWater()){
                 colorO=colorFountain;
 //              }else if(olt->IsUpLink()){
@@ -1372,24 +1393,23 @@ void game::DrawMapOverlay(bitmap* buffer)
                 colorO=colorUp;
               }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
                 colorO=colorDown;
+              }else if(dynamic_cast<altar*>(olt)!=NULL){
+                colorO=colorAltar;
               }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
-                colorO=colorOnGround;
+//                if(olt->GetRestModifier()>1)
+//                  colorO=colorOnGround;
+//                else
+//                  colorO=colorOnGround;
+                colorO=colorOnGroundRM[olt->GetRestModifier()]; //TODO this may break if another RM level is configured at .dat files
               }
             }else{ //floor
               colorO=colorFloor;
             }
 
-            //this happens during detect material! TODO this is just a guess work and may fail one day or at some untested place
-            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){
+            if(lsqr->IsMaterialDetected()) //color override
               colorO=YELLOW;
-            }
           }else{
-//            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){ //this happens during detect material!
-//              colorO=YELLOW;
-//            }else{
-              colorO=colorMapBkg;
-    //            colorO=bkg[iLumIndex];
-//            }
+            colorO=colorMapBkg;
           }
 
           bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);

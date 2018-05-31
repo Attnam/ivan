@@ -29,6 +29,7 @@ class ivanconfig
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
@@ -86,6 +87,7 @@ class ivanconfig
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
+  static void HoldPosMaxDistDisplayer(const cycleoption* O, festring& Entry);
   static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
@@ -159,6 +161,7 @@ class ivanconfig
   static numberoption WindowHeight;
   static int iStartingWindowHeight;
 
+  static cycleoption HoldPosMaxDist;
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
