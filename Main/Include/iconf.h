@@ -65,6 +65,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
+  static int GetScalingQuality() { return ScalingQuality.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
 #else
@@ -126,6 +127,7 @@ class ivanconfig
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
+  static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
   static void FullScreenModeChanger(truthoption*, truth);
@@ -206,6 +208,7 @@ class ivanconfig
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
+  static cycleoption ScalingQuality;
 #endif
 
   static col24 ContrastLuminance;
