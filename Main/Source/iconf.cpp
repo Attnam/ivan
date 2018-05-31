@@ -27,6 +27,11 @@ stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "",
                                           &configsystem::NormalStringDisplayer,
                                           &DefaultNameChangeInterface);
+stringoption ivanconfig::FantasyNamePattern("FantasyNamePattern",
+                                          "fantasy name generator pattern",
+                                          "!ss !sV",
+                                          &configsystem::NormalStringDisplayer,
+                                          &FantasyNameChangeInterface);
 stringoption ivanconfig::DefaultPetName(  "DefaultPetName",
                                           "starting pet's default name",
                                           CONST_S("Kenny"),
@@ -433,6 +438,19 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
   return true;
 }
 
+truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
+{
+  festring String;
+
+  if(iosystem::StringQuestion(String, CONST_S("Set name generator pattern (recommended \"!ss !sV\"):"),
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+    O->ChangeValue(String);
+
+  clearToBackgroundAfterChangeInterface();
+
+  return false;
+}
+
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -762,6 +780,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Core Game Setup";
   configsystem::AddOption(fsCategory,&DefaultName);
+  configsystem::AddOption(fsCategory,&FantasyNamePattern);
   configsystem::AddOption(fsCategory,&DefaultPetName);
   configsystem::AddOption(fsCategory,&AutoSaveInterval);
   configsystem::AddOption(fsCategory,&AltAdentureInfo);
