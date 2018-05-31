@@ -390,7 +390,7 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
@@ -407,9 +407,23 @@ int iosystem::StringQuestion(festring& Input,
       }
     }
 
+    if(LastKey == KEY_HOME)
+    {
+      CursorPos = 0;
+
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      CursorPos = static_cast<int>(Input.GetSize());
+
+      continue;
+    }
+
     if(LastKey == KEY_LEFT)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         --CursorPos;
 
       continue;
@@ -423,25 +437,9 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
-    if(LastKey == KEY_LEFT)
-    {
-      if(CursorPos)
-        --CursorPos;
-
-      continue;
-    }
-
-    if(LastKey == KEY_RIGHT)
-    {
-      if(CursorPos < static_cast<int>(Input.GetSize()))
-        ++CursorPos;
-
-      continue;
-    }
-
-    if(LastKey >= 0x20 && Input.GetSize() < MaxLetters
+    if(LastKey >= 0x20 && LastKey < 0x7F
        && (LastKey != ' ' || !Input.IsEmpty())
-       && LastKey != KEY_UP && LastKey != KEY_DOWN)
+       && Input.GetSize() < MaxLetters)
       Input.Insert(static_cast<festring::sizetype>(CursorPos++),
                    static_cast<char>(LastKey));
   }
@@ -506,13 +504,14 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 
     while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE
           && LastKey != KEY_ENTER && LastKey != KEY_ESC
+          && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
           && (LastKey != '-' || !Input.IsEmpty()))
       LastKey = GET_KEY(false);
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
@@ -529,9 +528,23 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
       break;
     }
 
+    if(LastKey == KEY_HOME)
+    {
+      CursorPos = 0;
+
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      CursorPos = static_cast<int>(Input.GetSize());
+
+      continue;
+    }
+
     if(LastKey == KEY_LEFT)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         --CursorPos;
 
       continue;
@@ -678,6 +691,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
     while(!isdigit(LastKey) && LastKey != KEY_ESC
           && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER
           && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>'
+          && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != RightKey && LastKey != LeftKey
           && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
       LastKey = GET_KEY(false);
@@ -698,6 +712,24 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 
     if(LastKey == KEY_ENTER || LastKey == KEY_SPACE)
       break;
+
+    if(LastKey == KEY_HOME)
+    {
+      BarValue = Min;
+
+      Input.Empty();
+      Input << BarValue;
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      BarValue = Max;
+
+      Input.Empty();
+      Input << BarValue;
+      continue;
+    }
 
     if(LastKey == '<' || LastKey == LeftKey || LastKey == KEY_LEFT)
     {
@@ -1193,14 +1225,17 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   return ""; //dummy just to gcc do not complain..
 }
 
-truth iosystem::IsAcceptableForStringQuestion(char Key)
+truth iosystem::IsAcceptableForStringQuestion(int Key)
 {
   if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
      || Key == '/' || Key == '\\' || Key == ':')
     return false;
 
-  if(Key < 0x20
-     && !(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC))
+  if(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC
+     || Key == KEY_HOME || Key == KEY_END || Key == KEY_LEFT || Key == KEY_RIGHT)
+    return true;
+
+  if(Key < 0x20 || Key >= 0x7F)
     return false;
 
   return true;

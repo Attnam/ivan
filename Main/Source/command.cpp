@@ -80,7 +80,7 @@ command* commandsystem::Command[] =
   new command(&Kick, "kick", 'k', 'K', 'K', false),
   new command(&Look, "look", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
-  new command(&AssignName, "name", 'n', 'n', 'N', false),
+  new command(&AssignName , "name", 'n', 'n', 'N', false),
   new command(&Offer, "offer", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
   new command(&PickUp, "pick up", ',', ',', ',', false),
@@ -970,10 +970,50 @@ truth commandsystem::WhatToEngrave(character* Char)
     return false;
   }
 
-  festring What;
+  int Key = 0;
+  while(!(Key == KEY_ESC || Key == ' '))
+  {
+    Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
+                                       "'.' square, 'i' inventory, ESC exits"));
 
-  if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
-    Char->GetNearLSquare(Char->GetPos())->Engrave(What);
+    if(Key == '.')
+    {
+      festring What;
+
+      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
+        Char->GetNearLSquare(Char->GetPos())->Engrave(What);
+
+      break;
+    }
+
+    if(Key == 'i')
+    {
+      if(!Char->GetStack()->GetItems())
+      {
+        ADD_MESSAGE("You have nothing to inscribe on!");
+        return false;
+      }
+
+      stack::SetSelected(0);
+
+      for(;;)
+      {
+        itemvector ToAddLabel;
+        game::DrawEverythingNoBlit();
+        Char->GetStack()->DrawContents(ToAddLabel, Char, CONST_S("What item do you want to inscribe on?"), REMEMBER_SELECTED);
+
+        if(ToAddLabel.empty())
+          break;
+
+        festring What = ToAddLabel[0]->GetLabel();
+        if(game::StringQuestion(What, CONST_S("What would you like to inscribe on this item?"), WHITE, 0, 20, true) == NORMAL_EXIT)
+          for(int i=0;i<ToAddLabel.size();i++)
+            ToAddLabel[i]->SetLabel(What);
+      }
+
+      break;
+    }
+  }
 
   return false;
 }

@@ -43,7 +43,7 @@ truth lsquare::IsDipDestination() const
 
 lsquare::lsquare(level* LevelUnder, v2 Pos)
 : square(LevelUnder, Pos),
-  Fluid(0), Smoke(0), HitEffect(0), Rain(0), Trap(0),
+  Fluid(0), Smoke(0), HitEffect(0), bMaterialDetected(false), Rain(0), Trap(0),
   GLTerrain(0), OLTerrain(0),
   Memorized(0), FowMemorized(0),
   Engraved(0),
