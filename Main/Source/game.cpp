@@ -41,6 +41,7 @@
 #include "hscore.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
@@ -55,6 +56,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "namegen.h"
 
 #define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
@@ -411,6 +413,8 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
 }
 
 void game::SRegionAroundDisable(){
+  if(iRegionAroundXBRZ==-1)return;
+
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
 }
 
@@ -622,13 +626,22 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   UpdateSRegionsXBRZ();
 }
 
+void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyNamePattern().CStr());
+  if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
+
+  NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+  rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
+}
+
 truth game::Init(cfestring& Name)
-{
+{ DBG2(Name.CStr(),ivanconfig::GetDefaultName().CStr());
   if(Name.IsEmpty())
   {
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
+
+      FantasyName(PlayerName); DBG1(PlayerName.CStr());
 
       if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
                                   v2(30, 46), WHITE, 1, 20, true, true) == ABORTED
@@ -1327,37 +1340,57 @@ void game::DrawMapOverlay(bitmap* buffer)
 //          static float fB=fFrom-fStep; //always darker than everything else based on height
 //          static col16 colorMapBkg=MakeRGB16(iR*fB,iG*fB,iB*fB);
 
-          static col16 colorWall,colorFloor,colorMapBkg;
+          static col16 colorNaturalWall,colorBuiltWall,colorFloor,colorMapBkg;
           static bool bDummyInit = [](){
             int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
             float fFrom=0.95;
-            float fStep=0.20;
+            float fStep=0.15;
             int iTot=1.0/fStep;
             col16 clMap[iTot];
             for(int i=0;i<iTot;i++){
               float f=fFrom -fStep*i;
               clMap[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(clMap[i]);
             }
-            colorWall  =clMap[0];
-            colorFloor =clMap[1];
-            colorMapBkg=clMap[2]; //always darker than everything else based on height
+            int k=0;
+            colorBuiltWall  =clMap[k++];
+            colorNaturalWall=clMap[k++];
+            colorFloor      =clMap[k++];
+            colorMapBkg     =clMap[k++]; //always darker than everything else based on height
             return true;
           }();
 
           col16 colorO;
           if(lsqr->HasBeenSeen()){
             static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
-            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
-            static col16 colorFountain=MakeRGB16(        0,         0,0xFF     );
-            static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0);
-            static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0);
+            static col16 colorFountain=MakeRGB16(        0,         0,0xFF     ); //blue
+            static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
+            static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
+            static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+//            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
+
+            static const int iTotRM=5 +1; //5 is max rest modifier from dat files
+            static col16 colorOnGroundRM[iTotRM];
+            static bool bDummyInit2 = [](){
+              int iR=0xFF, iG=0xFF*0.70, iB=0xFF*0.40; //light orange
+              float fFrom=1.00;
+              float fStep=0.05;
+              for(int i=0;i<iTotRM;i++){
+                float f=fFrom -fStep*(iTotRM-1 -i);
+                colorOnGroundRM[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(colorOnGroundRM[i]);
+              }
+//              colorOnGround = colorOnGroundRM[0];
+              return true;
+            }();
 
             static olterrain* olt;olt = lsqr->GetOLTerrain();
             if(olt){
               if(olt->IsDoor()){
                 colorO=colorDoor;
               }else if(olt->IsWall()){
-                colorO=colorWall;
+                if(dynamic_cast<earth*>(olt)!=NULL)
+                  colorO=colorNaturalWall;
+                else
+                  colorO=colorBuiltWall;
               }else if(olt->IsFountainWithWater()){
                 colorO=colorFountain;
 //              }else if(olt->IsUpLink()){
@@ -1365,24 +1398,23 @@ void game::DrawMapOverlay(bitmap* buffer)
                 colorO=colorUp;
               }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
                 colorO=colorDown;
+              }else if(dynamic_cast<altar*>(olt)!=NULL){
+                colorO=colorAltar;
               }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
-                colorO=colorOnGround;
+//                if(olt->GetRestModifier()>1)
+//                  colorO=colorOnGround;
+//                else
+//                  colorO=colorOnGround;
+                colorO=colorOnGroundRM[olt->GetRestModifier()]; //TODO this may break if another RM level is configured at .dat files
               }
             }else{ //floor
               colorO=colorFloor;
             }
 
-            //this happens during detect material! TODO this is just a guess work and may fail one day or at some untested place
-            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){
+            if(lsqr->IsMaterialDetected()) //color override
               colorO=YELLOW;
-            }
           }else{
-//            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){ //this happens during detect material!
-//              colorO=YELLOW;
-//            }else{
-              colorO=colorMapBkg;
-    //            colorO=bkg[iLumIndex];
-//            }
+            colorO=colorMapBkg;
           }
 
           bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
@@ -1716,7 +1748,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
-    if(iRegionVanillaSilhouette!=-1)graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    if(iRegionVanillaSilhouette!=-1)
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     return;
   }
 
@@ -2585,7 +2618,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   if(iMax>-1)iTot = Min(iMax,iTot);
   if(iTot==0)return NULL;
 
-  v2 v2Pos = v2PosIni;
+  v2 v2Pos = v2PosIni; DBGSV2(v2PosIni);
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
@@ -2606,7 +2639,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   B.Bitmap=bmpTgt;
   B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
 
-  bool bLight=false;
+  static bool bLight=false; //TODO make this an user option?
   col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
   if(!bLight){ //overall around if tiny
     v2 v2BkgIni = v2(0,0);
@@ -2635,7 +2668,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
       graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
     }
 
-    B.Dest = v2Pos;
+    B.Dest = v2Pos; DBGBLD(B);
     it->Draw(B);
 
     v2Pos.X+=(TILE_SIZE*iDirX);
@@ -2714,7 +2747,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
 
   /////////////////////// ok ////////////////////////
-  v2 v2AbsLevelSqrPos = Player->GetPos();
+  const v2 v2AbsLevelSqrPos = Player->GetPos();
 
   bool bNearEC=false;
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
@@ -2757,10 +2790,17 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     }
   }
 
+  int iTot = su->GetItems();
+  if(iTot>game::GetScreenXSize())
+    iTot=game::GetScreenXSize();
+  if(iTot>GetCurrentArea()->GetXSize())
+    iTot=GetCurrentArea()->GetXSize();
+
+  //////////////////////////////////////////////////////////////////////////////////////
   // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
   if(bAboveHead && ivanconfig::GetStartingDungeonGfxScale()>=2){ //use xBRZ stretch region
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
-    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+    bitmap* bmp = PrepareItemsUnder(false, su, iTot, v2(0,0), 1, 0);
 
     int iStretch=iItemsUnderStretch;
     if(su->GetItems()==1)iStretch++;
@@ -2771,8 +2811,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
     v2StretchedBufferDest.Y-=2; //just to look better
 
-    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
-    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)
+      v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)
+      v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
 
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
@@ -2788,25 +2831,35 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
   int iDirX=1,iDirY=0;
-  int iTot = su->GetItems();
-  v2 v2ScrPosIni;
-  v2 v2SqrPosIni;
+//  v2 v2ScrPosIni(0,0);
+  v2 v2SqrPosIni(0,0);
 
   if(bAboveHead){ //only for x1 dungeon scale
     v2SqrPosIni=Player->GetPos();
-    v2SqrPosIni.Y--;
-    v2SqrPosIni.X-=iTot/2;
 
-    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
-  }else{
-    int iCorner = ItemUnderCorner(iCode);
-    bool bHorizontal = ItemUnderHV(iCode);
+    v2SqrPosIni.X-=iTot/2;
+    v2SqrPosIni.Y--;
 
     // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
-    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
-    v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
-    if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
-    if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+
+//    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+//  }else{
+//    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+  }
+
+//  v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
+//
+//  // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+//  v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+//  if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X; //TODO can this conflict with or miss v2SqrPosIni position ?
+//  if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+//  DBGSV2(v2SqrPosIni);
+
+  if(!bAboveHead){
+    int iCorner = ItemUnderCorner(iCode);
+    bool bHorizontal = ItemUnderHV(iCode);
 
     // min top left dungeon sqr coords
     v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
@@ -2825,24 +2878,26 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
         break;
       case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         break;
       case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
       case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
     }
 
-    if(bHorizontal){
-      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-    }else{
-      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+    if(!bHorizontal){
+      if(iTot>game::GetScreenYSize())
+        iTot=game::GetScreenYSize();
+
+      if(iTot>GetCurrentArea()->GetYSize())
+        iTot=GetCurrentArea()->GetYSize();
     }
 
 //
@@ -2858,6 +2913,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 //        break;
 
   }
+
+  v2 v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
 
   PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
 

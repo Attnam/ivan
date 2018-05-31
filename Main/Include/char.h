@@ -299,7 +299,7 @@ class character : public entity, public id
   truth ReadItem(item*);
   truth TestForPickup(item*) const;
   void ThrowItem(int, item*);
-  truth TryMove(v2, truth, truth);
+  truth TryMove(v2, truth, truth, truth* =NULL);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
   truth HasEncryptedScroll() const;
@@ -1280,6 +1280,7 @@ class character : public entity, public id
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
   ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];
+  v2 v2HoldPos;
   virtual truth NeedsBurningPostFix() const { return false; }
 };
 

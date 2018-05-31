@@ -50,7 +50,7 @@ int main(int, char**)
   OConfigFile.close();
 
   graphics::Init();
-  graphics::SetMode("IGOR 1.203", 0, v2(800, 600), 1, false);
+  graphics::SetMode("IGOR 1.203", 0, v2(800, 600), 1, 0, false);
   graphics::LoadDefaultFont(Directory + "Font.png");
   DOUBLE_BUFFER->ClearToColor(0);
 

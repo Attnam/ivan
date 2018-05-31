@@ -401,6 +401,23 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
     && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
 
+void item::SetLabel(cfestring& What)
+{
+  label.Empty();
+  if(What.GetSize()>0)
+    label << What;
+}
+
+void item::AddName(festring& Name, int Case) const
+{
+  if(label.GetSize())
+    Name << label << " "; //this way user can decide how it should look, with or w/o delimiters and which ones
+//    Name << "{"<<label<<"}" << " ";
+//    Name << "#"<<label << " ";
+
+  object::AddName(Name,Case);
+}
+
 void item::Save(outputfile& SaveFile) const
 {
   SaveFile << static_cast<ushort>(GetType());
@@ -408,6 +425,9 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetConfig());
   SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
+  if(game::GetSaveFileVersion()>=132){
+    SaveFile << label;
+  }
   SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
@@ -427,6 +447,9 @@ void item::Load(inputfile& SaveFile)
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
   SaveFile >> Size >> ID >> LifeExpectancy >> ItemFlags;
+  if(game::GetSaveFileVersion()>=132){
+    SaveFile >> label;
+  }
   LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
@@ -880,7 +903,8 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
           && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
           && !Fluid && !Item->Fluid
           && !LifeExpectancy == !Item->LifeExpectancy
-          && !IsBurning() == !Item->IsBurning());
+          && !IsBurning() == !Item->IsBurning()
+          && label==Item->label );
 }
 
 void item::Break(character* Breaker, int)
