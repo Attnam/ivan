@@ -166,6 +166,8 @@ typedef std::vector<character*> charactervector;
 class quitrequest { };
 class areachangerequest { };
 
+typedef void (*dbgdrawoverlay)();
+
 class game
 {
  public:
@@ -368,6 +370,10 @@ class game
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
+  static void IncAutoPlayMode();
+  static int GetAutoPlayMode() { return AutoPlayMode; }
+  static void AutoPlayModeApply();
+  static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -376,6 +382,7 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
+  static int GetAutoPlayMode() { return 0; }
 #endif
 
   static truth WizardModeIsReallyActive() { return WizardMode; }
@@ -427,7 +434,7 @@ class game
   static int DefaultQuestion(festring&, festring, festring&, truth, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
-  static void IncreaseTurn() { ++Turn; }
+  static void IncreaseTurn() { ++Turn; ++iCurrentDungeonTurn; }
   static int GetTotalMinutes() { return Tick * 60 / 2000; }
   static truth PolymorphControlKeyHandler(int, festring&);
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
@@ -463,6 +470,8 @@ class game
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
   static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
   static int getDefaultItemsListWidth(){ return iListWidth; }
+  static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
+  static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersion();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
@@ -535,6 +544,7 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
+  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;
@@ -576,6 +586,8 @@ class game
   static v2 EnterTextDisplacement;
   static blitdata bldAroundOnScreenTMP;
   const static int iListWidth = 652;
+  static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
+  static int iCurrentDungeonTurn;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

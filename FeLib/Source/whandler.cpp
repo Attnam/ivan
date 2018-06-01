@@ -44,6 +44,7 @@ truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
+truth globalwindowhandler::playInBackground=false;
 festring globalwindowhandler::ScrshotDirectoryName = "";
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
@@ -265,6 +266,35 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+int iTimeoutDelay=0; // must init with 0
+int iTimeoutDefaultKey;
+long keyTimeoutRequestedAt;
+/**
+ * This is intended to remain active ONLY until the user hits any key.
+ */
+void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
+{
+  iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
+  if(iTimeoutDelay>0 && iTimeoutDelay<10)iTimeoutDelay=10; // we are unable to issue commands if it is too low TODO could be less than 10ms?
+
+  iTimeoutDefaultKey=iDefaultReturnedKey;
+}
+truth globalwindowhandler::IsKeyTimeoutEnabled()
+{
+  return iTimeoutDelay>0;
+}
+void globalwindowhandler::CheckKeyTimeout()
+{
+  if(iTimeoutDelay>0){ // timeout mode is enalbed
+    if(!KeyBuffer.empty()){ // user pressed some key
+      keyTimeoutRequestedAt=clock(); // resets reference time to wait from
+    }else{
+      if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
+        KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
+    }
+  }
+}
+
 float globalwindowhandler::GetFPS(bool bInsta){
   if(bInsta)return fInstaFPS;
   return iLastSecCountFPS;
@@ -309,8 +339,11 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     KeyBuffer.clear();
   }
 
+  keyTimeoutRequestedAt=clock();
   int iDelayMS=iDefaultDelayMS;
-  for(;;)
+  for(;;){
+    CheckKeyTimeout();
+
     if(!KeyBuffer.empty())
     {
       int Key = KeyBuffer[0];
@@ -331,7 +364,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 #if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
 #else
-        if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
+        if( (playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)))
 #endif
            && Controls && ControlLoopsEnabled)
         {
@@ -371,6 +404,8 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         }
       }
     }
+
+  }
 }
 
 int globalwindowhandler::ReadKey()

@@ -27,6 +27,7 @@
 #include "room.h"
 #include "stack.h"
 #include "team.h"
+#include "whandler.h"
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterras.h"
@@ -113,6 +114,7 @@ command* commandsystem::Command[] =
 
   /* Sort according to key */
 
+  new command(&AutoPlay, "auto play the game (hold ESC to stop)", '~', '~', '~', true, true), //there is more AI than NPC's one to let it work better
   new command(&RaiseStats, "raise stats", '1', '1', '1', true, true),
   new command(&LowerStats, "lower stats", '2', '2', '2', true, true),
   new command(&SeeWholeMap, "see whole map", '3', '3', '3', true, true),
@@ -1620,6 +1622,12 @@ truth commandsystem::WizardMode(character* Char)
   for(int c = 0; c < 5; ++c)
     Char->GetStack()->AddItem(scrollofwishing::Spawn());
 
+  return false;
+}
+
+truth commandsystem::AutoPlay(character* Char)
+{
+  game::IncAutoPlayMode();
   return false;
 }
 

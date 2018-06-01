@@ -176,6 +176,7 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
+int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
@@ -213,6 +214,10 @@ v2 ZoomPos = v2(0,0);
 v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
+
+std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
+
+int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
@@ -2562,6 +2567,15 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   UpdateAltSilhouette(AnimationDraw);
 
   UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+  
+  #ifdef WIZARD
+    DBG1(vDbgDrawOverlayFunctions.size());
+    if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
+      for(int i=0;i<vDbgDrawOverlayFunctions.size();i++)
+        vDbgDrawOverlayFunctions[i](); //call it
+    }
+  #endif
+
 }
 
 int game::ItemUnderCode(int iCycleValue){
@@ -3614,7 +3628,8 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  for(;;){if(WAIT_FOR_KEY_UP())break;};
+  if(game::GetAutoPlayMode()==0)
+    for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
@@ -4233,6 +4248,8 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     if(ivanconfig::GetAutoSaveInterval())
       Save(GetAutoSaveFileName().CStr());
   }
+
+  iCurrentDungeonTurn=-1; //-1 as it will be the turn index and be inc before checking
 }
 
 int game::CompareLightToInt(col24 L, col24 Int)
@@ -4835,6 +4852,56 @@ truth game::MassacreListsEmpty()
 
 #ifdef WIZARD
 
+void game::AutoPlayModeApply(){
+  int iTimeout=0;
+  bool bPlayInBackground=false;
+
+  const char* msg;
+  switch(game::AutoPlayMode){
+  case 0:
+    // disabled
+    msg="%s says \"I can rest now.\"";
+    break;
+  case 1:
+    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
+    msg="%s says \"I won't rest!\"";
+    break;
+  case 2: // TIMEOUTs key press from here to below
+    msg="%s says \"I can't wait anymore!\"";
+    iTimeout=(1000);
+    bPlayInBackground=true;
+    break;
+  case 3:
+    msg="%s says \"I am in a hurry!!\"";
+    iTimeout=(1000/2);
+    bPlayInBackground=true;
+    break;
+  case 4:
+    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    bPlayInBackground=true;
+    break;
+  }
+  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
+
+  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
+  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
+}
+
+void game::IncAutoPlayMode() {
+//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
+//    if(AutoPlayMode>=2){
+//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
+//      AutoPlayModeApply();
+//    }
+//  }
+
+  ++AutoPlayMode;
+  if(AutoPlayMode>4)AutoPlayMode=0;
+
+  AutoPlayModeApply();
+}
+
 void game::SeeWholeMap()
 {
   if(SeeWholeMapCheatMode < 2)
@@ -5398,6 +5465,8 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
+  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+
   for(;;)
   {
     festring Temp;
