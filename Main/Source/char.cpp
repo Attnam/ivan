@@ -2492,12 +2492,6 @@ character* AutoPlayLastChar=NULL;
 const int iMaxWanderTurns=20;
 const int iMinWanderTurns=3;
 
-/**
- * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
- * btw, lantern price is currently 10.
- */
-static int iMaxValueless = 5;
-
 v2 v2KeepGoingTo=v2(0,0);
 v2 v2TravelingToAnotherDungeon=v2(0,0);
 int iWanderTurns=iMinWanderTurns;
