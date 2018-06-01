@@ -1058,11 +1058,11 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iChairIndex=iEntryIndex++, true); DBG1(iChairIndex);
 //  }
 
-  if(craftRecipes.GetLength()==0){
-    ADD_MESSAGE("You do not have the required ingredients to craft anything right now.");
-    //TODO show recipe's requirements as unselectable entries at the end of the list
-    return false;
-  }
+//  if(craftRecipes.GetLength()==0){
+//    ADD_MESSAGE("You do not have the required ingredients to craft anything right now.");
+//    //TODO show recipe's requirements as unselectable entries at the end of the list
+//    return false;
+//  }
 
   game::SetStandardListAttributes(craftRecipes);
   craftRecipes.AddFlags(SELECTABLE);
