@@ -2577,9 +2577,10 @@ bool character::AutoPlayAICheckAreaLevelChangedAndReset()
     vv2DebugDrawSqrPrevious.clear();
 
     vv2AllDungeonSquares.clear();
-    for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
-      vv2AllDungeonSquares.push_back(game::GetCurrentLevel()->GetLSquare(iX, iY));
-    }}
+    if(!game::IsInWilderness())
+      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+        vv2AllDungeonSquares.push_back(game::GetCurrentLevel()->GetLSquare(iX, iY));
+      }}
 
     return true;
   }
