@@ -12,6 +12,8 @@
 
 /* Compiled through charsset.cpp */
 
+#include "dbgmsgproj.h"
+
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
 
@@ -3467,6 +3469,152 @@ long skeleton::GetBodyPartVolume(int I) const
 
   ABORT("Illegal humanoid bodypart volume request!");
   return 0;
+}
+
+truth humanoid::AutoPlayAIequip()
+{
+  item* iL = GetEquipment(LEFT_WIELDED_INDEX);
+  item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
+
+  //every X turns remove all equipments
+  bool bTryWieldNow=false;
+  static int iLastReEquipAllTurn=-1;
+  if(game::GetTurn()>(iLastReEquipAllTurn+150)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
+    iLastReEquipAllTurn=game::GetTurn();
+    for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
+      item* eq = GetEquipment(i);
+      if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
+      if(iL==eq)iL=NULL;
+      if(iR==eq)iR=NULL;
+    }
+//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
+//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+    bTryWieldNow=true;
+  }
+
+  //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+  //every X turns try to wield
+  static int iLastTryToWieldTurn=-1;
+  if(bTryWieldNow || game::GetTurn()>(iLastTryToWieldTurn+10)){ DBG2(game::GetTurn(),iLastTryToWieldTurn);
+    iLastTryToWieldTurn=game::GetTurn();
+    bool bDoneLR=false;
+    bool bL2H = iL && iL->IsTwoHanded();
+    bool bR2H = iR && iR->IsTwoHanded();
+
+    //2handed
+    static int iTryWieldWhat=0; iTryWieldWhat++;
+    if(iTryWieldWhat%2==0){ //will try 2handed first, alternating. If player has only 2handeds, the 1handeds will not be wielded and it will use punches, what is good too for tests.
+      if( !bDoneLR &&
+          iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
+          iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
+      ){
+        static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+        for(uint c = 0; c < vitEqW.size(); ++c){
+          if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
+            vitEqW[c]->RemoveFromSlot();
+            SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+            bDoneLR=true;
+            break;
+          }
+        }
+      }
+    }
+
+    //dual 1handed (if not 2hd already)
+    if(!bDoneLR){
+      for(int i=0;i<2;i++){
+        int iChk=-1;
+        if(i==0)iChk=LEFT_WIELDED_INDEX;
+        if(i==1)iChk=RIGHT_WIELDED_INDEX;
+
+        if(
+            !bDoneLR &&
+            (
+              (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
+              ||
+              (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
+            )
+        ){
+          static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+          for(uint c = 0; c < vitEqW.size(); ++c){
+            if(
+                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+                ||
+                vitEqW[c]->IsShield(this)
+            ){
+              vitEqW[c]->RemoveFromSlot();
+              SetEquipment(iChk, vitEqW[c]);
+              bDoneLR=true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  static int iLastTryToUseInvTurn=-1;
+  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+    iLastTryToUseInvTurn=game::GetTurn();
+
+    //////////////////////////////// consume food/drink
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(GetHungerState() >= BLOATED)break;
+        if(TryToConsume(vitEqW[c]))return true;
+      }
+    }
+
+    //////////////////////////////// equip
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(TryToEquip(vitEqW[c],true)){
+          return true;
+        }else{
+          vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+        }
+      }
+    }
+
+    //////////////////////////////// zap
+    static int iLastZapTurn=-1;
+    if(game::GetTurn()>(iLastZapTurn+100)){ //every X turns try to use stuff from inv
+      iLastZapTurn=game::GetTurn();
+
+      int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsZappable(this))continue;
+
+        if(vitEqW[c]->Zap(this, GetPos(), iDir)) //TODO try to aim at NPCs
+          return true;
+
+        if(vitEqW[c]->Apply(this))
+          return true;
+      }
+    }
+
+    //////////////////////////////// read book
+    static int iLastReadTurn=-1;
+    if(game::GetTurn()>(iLastReadTurn+50)){ //every X turns try to use stuff from inv
+      iLastReadTurn=game::GetTurn();
+
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsReadable(this))continue;
+        static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
+        if(hb==NULL)continue;
+
+        if(vitEqW[c]->Read(this)) //TODO try to aim at NPCs
+          return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 truth humanoid::CheckIfEquipmentIsNotUsable(int I) const

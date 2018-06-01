@@ -808,7 +808,7 @@ class character : public entity, public id
   void WeaponSkillHit(item*, int, int);
   character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
-  truth TryToEquip(item*);
+  truth TryToEquip(item*, truth onlyIfEmpty=false, int onlyAt=-1);
   truth TryToConsume(item*);
   void UpdateESPLOS() const;
   int GetCWeaponSkillLevel(citem*) const;
@@ -1154,6 +1154,7 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
+  truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
@@ -1184,6 +1185,20 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
+
+  truth AutoPlayAICommand(int&);
+  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
+  static void AutoPlayAIDebugDrawOverlay();
+  static bool AutoPlayAICheckAreaLevelChangedAndReset();
+  truth AutoPlayAIDropThings();
+  truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
+  int   AutoPlayAIFindWalkDist(v2 v2To);
+  truth AutoPlayAITestValidPathTo(v2 v2To);
+  truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
+  truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
+  void AutoPlayAITeleport(bool bDeathCountBased);
+  void AutoPlayAIReset(bool bFailedToo);
+
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;
