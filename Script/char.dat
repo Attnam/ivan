@@ -641,10 +641,10 @@ guard
   Config TRAINEE;
   {
     AttributeBonus = -20;
-    Helmet = BIRCH_WOOD helmet(FULL_HELMET);
-    BodyArmor = BIRCH_WOOD bodyarmor(PLATE_MAIL);
+    Helmet = BRONZE helmet(FULL_HELMET);
+    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
     RightWielded = BIRCH_WOOD BIRCH_WOOD meleeweapon(LONG_SWORD);
-    LeftWielded = BIRCH_WOOD shield;
+    LeftWielded = BRONZE shield;
     Adjective = "trainee";
     CWeaponSkillHits = { 2, 20, 20; }
     PanicLevel = 50;
@@ -693,10 +693,11 @@ guard
 
   Config EUNUCH;
   {
-    Helmet = STEEL helmet(FULL_HELMET);
-    BodyArmor = STEEL bodyarmor(PLATE_MAIL);
-    RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
-    LeftWielded = STEEL shield;
+    Helmet = MOON_SILVER helmet(FULL_HELMET);
+    BodyArmor = MOON_SILVER bodyarmor(PLATE_MAIL);
+    Cloak = FABRIC cloak;
+    RightWielded = MOON_SILVER RUBY meleeweapon(LONG_SWORD);
+    LeftWielded = MOON_SILVER shield;
     UsesLongAdjectiveArticle = true;
     Adjective = "eunuch";
     CWeaponSkillHits = { 2, 200, 200; }
@@ -718,6 +719,7 @@ guard
   {
     Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
+    Cloak = BEAR_SKIN cloak;
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
     LeftWielded = IRON shield;
     RightRing = VALPURIUM ring(RING_OF_INFRA_VISION);
@@ -831,6 +833,7 @@ guard
     ClothColor = rgb16(144, 144, 200);
     CanBeConfused = false;
     NaturalSparkleFlags = CLOTH_COLOR;
+    BloodMaterial = BLUE_BLOOD;
     Inventory == key(HEXAGONAL_LOCK);
     FriendlyReplies =
     {
@@ -866,10 +869,10 @@ guard
   Config TOMB_ENTRY;
   {
     AttributeBonus = 20;
-    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = IRON bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    LeftWielded = IRON shield;
+    Helmet = HARDENED_ASH helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = HARDENED_ASH bodyarmor(PLATE_MAIL);
+    RightWielded = HARDENED_ASH AMETHYST meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = HARDENED_ASH shield;
     Adjective = "tomb";
     CWeaponSkillHits = { 2, 100, 100; }
     RightSWeaponSkillHits = 10;
@@ -913,6 +916,7 @@ guard
     LeftSWeaponSkillHits = 200;
     PanicLevel = 5;
     TamingDifficulty = NO_TAMING;
+    BloodMaterial = BLUE_BLOOD;
     Sex = FEMALE;
     IsUnique = true;
     IsNameable = false;
@@ -946,7 +950,7 @@ guard
     Helmet = SILVER helmet(FULL_HELMET);
     BodyArmor = SILVER bodyarmor(PLATE_MAIL);
     Cloak = FABRIC cloak;
-    RightWielded = SILVER meleeweapon(HALBERD);
+    RightWielded = SILVER EBONY_WOOD meleeweapon(HALBERD);
     LeftWielded = 0;
     RightGauntlet = SILVER gauntlet;
     RightBoot = SILVER boot;
@@ -976,11 +980,11 @@ guard
     ClothColor = rgb16(128, 128, 128);
     HeadBitmapPos = 96, 368;
     Helmet = 0;
-    BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    RightWielded = OCTIRON OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = OCTIRON EMERALD meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
     LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
-    RightGauntlet = STEEL gauntlet { Enchantment = 2; }
-    RightBoot = STEEL boot { Enchantment = 2; }
+    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
+    RightBoot = BRASS boot { Enchantment = 2; }
     DefaultName = "Sir Lancelyn";
     NameSingular = "emissary";
     PostFix = "of Aslona";
@@ -996,6 +1000,7 @@ guard
     UndeadVersions = false;
     TamingDifficulty = 25;
     AttachedGod = CRUENTUS;
+    BloodMaterial = BLUE_BLOOD;
     FriendlyReplies =
     {
       11,
@@ -1136,13 +1141,13 @@ shopkeeper
     DefaultName = "Pate";
     NameSingular = "peddler";
     AttributeBonus = 25;
-    Helmet = IRON helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    Belt = IRON belt(BELT_OF_CARRYING) { Enchantment = 1; }
-    RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    LeftWielded = IRON shield;
-    RightGauntlet = IRON gauntlet { Enchantment = 1; }
-    RightBoot = IRON boot { Enchantment = 1; }
+    Helmet = HARDENED_ASH helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = HARDENED_ASH bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    Belt = AMETHYST belt(BELT_OF_CARRYING) { Enchantment = 1; }
+    RightWielded = HARDENED_ASH AMETHYST meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = HARDENED_ASH shield;
+    RightGauntlet = HARDENED_ASH gauntlet { Enchantment = 1; }
+    RightBoot = HARDENED_ASH boot { Enchantment = 1; }
     KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
     CWeaponSkillHits = { 2, 1000, 1000; }
     RightSWeaponSkillHits = 500;
@@ -1226,7 +1231,7 @@ priest
     AttachedGod = VALPURUS;
     PostFix = "of Valpurus";
     Helmet = MITHRIL helmet { Enchantment = 2; }
-    Amulet = amulet(AMULET_OF_ESP);
+    Amulet = VALPURIUM amulet(AMULET_OF_ESP);
     BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
     Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
     Belt = NYMPH_HAIR belt { Enchantment = 2; }
@@ -1262,6 +1267,7 @@ priest
       "\"Prepare to meet @Gd, fool!\"",
       "@Dd sighs: \"Infidels to the left, heathens to the right. Tremendous.\"";
     }
+    Inventory == can { Times = 2; SecondaryMaterial = LIGHT_FROG_BLOOD; }
   }
 
   Config SILVA;
@@ -1290,7 +1296,7 @@ priest
     PostFix = "of Silva";
     Sex = FEMALE;
     Cloak = NYMPH_HAIR cloak;
-    RightWielded = EBONY_WOOD EBONY_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
+    RightWielded = EBONY_WOOD ROSE_QUARTZ meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
     KnownCWeaponSkills == BLUNT_WEAPONS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
@@ -1395,12 +1401,14 @@ priest
     LeftRing = ring(RING_OF_INFRA_VISION);
     RightGauntlet = ANGEL_HAIR gauntlet { Enchantment = 2; }
     RightBoot = MITHRIL boot { Enchantment = 2; }
+    Inventory == potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; }
     DefaultName = "Lady Decora";
     Adjective = "shining";
     NameSingular = "knight";
     PostFix = "of Legifer";
     AttachedGod = LEGIFER;
     Sex = FEMALE;
+    BloodMaterial = BLUE_BLOOD;
     AttackStyle = USE_ARMS|USE_LEGS;
     KnownCWeaponSkills = { 4, UNARMED, KICK, BLUNT_WEAPONS, SHIELDS; }
     CWeaponSkillHits = { 4, 200, 200, 500, 500; }
@@ -1598,10 +1606,10 @@ darkknight
   Config ROOKIE_FEMALE;
   {
     AttributeBonus = -20;
-    Helmet = BRONZE helmet(FULL_HELMET);
-    BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
-    RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
-    LeftWielded = IRON IRON meleeweapon(SHORT_SWORD);
+    Helmet = PIG_IRON helmet(FULL_HELMET);
+    BodyArmor = PIG_IRON bodyarmor(PLATE_MAIL);
+    RightWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
+    LeftWielded = PIG_IRON PIG_IRON meleeweapon(SHORT_SWORD);
     Adjective = "rookie";
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 200;
@@ -2257,7 +2265,7 @@ billswill
   Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
   PanicLevel = 0;
   HasALeg = false;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd vanishes from existence: \"Fatal error - shutting down.\"";
   SpillsBlood = false;
   Sweats = false;
@@ -2439,6 +2447,7 @@ goblin
     "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
   }
   FleshMaterial = GOBLINOID_FLESH;
+  BloodMaterial = GREEN_BLOOD;
   AttachedGod = CRUENTUS;
   WieldedPosition = 0, -2;
 
@@ -2467,8 +2476,8 @@ goblin
     AttributeBonus = 50;
     Helmet = LEATHER helmet;
     BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-    RightWielded = IRON meleeweapon(MEAT_CLEAVER);
-    LeftWielded = IRON meleeweapon(MEAT_CLEAVER);
+    RightWielded = DEEP_BRONZE meleeweapon(MEAT_CLEAVER);
+    LeftWielded = DEEP_BRONZE meleeweapon(MEAT_CLEAVER);
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
@@ -2709,9 +2718,9 @@ mommo
     HPRequirementForGeneration = 120;
     DayRequirementForGeneration = 12;
     Frequency = 1000;
-    BloodMaterial = YELLOW_SLIME;
-    FleshMaterial = YELLOW_SLIME;
-    VomitMaterial = YELLOW_SLIME;
+    BloodMaterial = GREEN_SLIME;
+    FleshMaterial = GREEN_SLIME;
+    VomitMaterial = GREEN_SLIME;
   }
 
   Config FLAT;
@@ -2789,7 +2798,8 @@ golem
   UsesNutrition = false;
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
-  Frequency = 1500;
+  Frequency = 800;
+  DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
@@ -3143,7 +3153,7 @@ communist /* Ivan */
   ClassStates = INFRA_VISION;
   Helmet = helmet(GOROVITS_FAMILY_GAS_MASK);
   Cloak = OMMEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 2; }
-  BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+  BodyArmor = KEVLAR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
   Belt = TROLL_HIDE belt { Enchantment = 2; }
   RightWielded = gorovitsweapon(GOROVITS_HAMMER);
   LeftWielded = gorovitsweapon(GOROVITS_SICKLE);
@@ -3525,7 +3535,7 @@ slave
     "\"Errare humanum est.\"",
     "\"Asinus manebis in saecula saeculorum.\"",
     "\"Cuius regio, eius religion.\"",
-    "\"Faber suae quisque fortūnae. *snicker*\"",
+    "\"Faber suae quisque fortunae. *snicker*\"",
     "\"Fortes fortuna adiuvat.\"",
     "\"Historia magistra vitae.\"",
     "\"Hominem te esse, memento.\"",
@@ -3831,7 +3841,7 @@ petrusswife
     DeathMessage = "@Dd dies with a last whisper: \"Curse you!\"";
     IsExtraCoward = false;
     IgnoreDanger = true;
-    Belt = CLOTH belt;
+    Belt = HEMP_CLOTH belt;
     KnownCWeaponSkills == POLE_ARMS; /* she once was a warrior-princess */
     CWeaponSkillHits == 500;
     ScienceTalkName =
@@ -3914,7 +3924,7 @@ housewife
     LegMainColor = rgb16(50, 50, 50);
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
-    Cloak = BLACK_LEATHER cloak { Enchantment = 1; }
+    Cloak = HUMAN_SKIN cloak { Enchantment = 1; }
     /* RightWielded overridden */
     IsExtraCoward = false;
     IsSadist = true;
@@ -3936,7 +3946,7 @@ housewife
       "\"When the first grand master dark knight fell and Neerc Se-ulb was lost for a time, Mortifer vowed to never lend his mace again but to a true champion of Chaos. But Cruentus trusted in the power of his dark knights and the next grand master received the terrible halberd named Mjolak to crush all who would oppose the god of blood.\"",
       "\"The second grand master dark knight was a son of the first one. He swore an oath of revenge, to slay the high priest of Valpurus in honor of his father's death. Yet his name was erased from all records to clean the stain of shame he brought upon his family.\"",
       "\"The second grand master dark knight ruthlessly crushed all resistance and many an enemy fled even before battle, for his trumpeters used horns of fear to devastating effect. Where the father took nearly a decade to slowly force valpurian troops back, the son brought his army of dark knights before the gates of the Citadel of Valpurus in only a few years.\"",
-      "\"As his men razed and burned the once-mightly Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
+      "\"As his men razed and burned the once-mighty Citadel of Valpurus, the second grand master dark knight assailed Pervetus, the high priest of Valpurus. Now being of venerable age, Pervetus quickly fell to the power of Mjolak.\"",
       "\"In a hubris of an easy victory, the second grand master dark knight turned his back to the dead high priest Pervetus he just slain and did not see a strange glow of a magical amulet that brought Pervetus back with renewed vigor. The high priest lifted Justifier and with a single mightly blow, cut off both of the grand master's hands. And in a single moment of weakness, the grand master shamed his family for the ages to come, for he didn't face death with dignity, but panicked and ran for his life.\"",
       "\"Our lord Xinroch was the greatest and most powerful grand master dark knight to ever live, and the third to bear that title. His two crossed flaming swords are still found on the banner of the grand master dark knights to this day.\"",
       "\"Some sources claim Xinroch was no one in his youth, maybe even one of the children kidnapped from forgotten villages to be trained for war. But soon, his talents became apparent. He was clever, quick to learn and utterly ruthless when he could get what he wanted.\"",
@@ -4238,6 +4248,7 @@ zombie
     DefaultWisdom = 15;
     DefaultCharisma = 5;
     HeadBitmapPos = 112, 160; /* all dwarves have beards, no exceptions */
+    BodyArmor = VERDIGRIS bodyarmor(CHAIN_MAIL);
     RightWielded = OCTIRON darkaxe;
     LeftWielded = OCTIRON darkaxe;
     KnownCWeaponSkills == AXES;
@@ -4370,7 +4381,7 @@ ghost
   }
   PanicLevel = 0;
   /*HasALeg = false;*/
-  FleshMaterial = GHOST;
+  FleshMaterial = ECTOPLASM;
   DeathMessage = "@Dd is sucked into hell.";
   SpillsBlood = false;
   Sweats = false;
@@ -4471,7 +4482,7 @@ xinrochghost
   IsImmuneToStickiness = true;
   BiteCapturesBodyPart = false;
   ArticleMode = FORCE_THE;
-  FleshMaterial = GHOST;
+  FleshMaterial = ECTOPLASM;
   MoveType = ETHEREAL;
   AttachedGod = INFUSCOR;
   ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY|LEVITATION;
@@ -4636,7 +4647,7 @@ mistress
   LeftSWeaponSkillHits = 200;
   ClassStates = INFRA_VISION;
   PanicLevel = 20;
-  Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
+  Inventory = { 3, banana { Chance = 10; }, holybanana { Chance = 1; }, RUBBER stick { Chance = 5; } }
   HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
   AttachedGod = NEFAS;
   FleshMaterial = ELF_FLESH;
@@ -4917,8 +4928,8 @@ werewolfwolf
     ClothColor = rgb16(0, 160, 0);
     DefaultName = "Moryggan";
     PostFix = "druidess of Silva";
-    RightWielded = taiaha { Enchantment = 2; }
-    Cloak = PALM_LEAF cloak { Enchantment = 2; }
+    RightWielded = WHITE_JADE taiaha { Enchantment = 2; }
+    Cloak = DARK_PETAL cloak { Enchantment = 2; }
     KnownCWeaponSkills = { 2, POLE_ARMS, BITE; }
     CWeaponSkillHits = { 2, 50, 100; }
     RightSWeaponSkillHits = 20;
@@ -5693,7 +5704,7 @@ genie
     "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
   }
   Belt = SPIDER_SILK belt;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd vanishes from existence.";
   SpillsBlood = false;
   Sweats = false;
@@ -5764,6 +5775,7 @@ carnivorousplant
   ClassStates = INFRA_VISION;
   HasALeg = false;
   FleshMaterial = PLANT_FIBER;
+  BloodMaterial = PLANT_SAP;
   DeathMessage = "@Dd is destroyed.";
   SpillsBlood = false;
   Sweats = false;
@@ -5866,7 +5878,7 @@ snake
   CanOpen = false;
   AttachedGod = MELLIS;
   AutomaticallySeen = true;
-  RunDescriptionLineOne = "Crawling";
+  RunDescriptionLineOne = "Slithering";
   RunDescriptionLineTwo = "very fast";
 }
 
@@ -6181,16 +6193,16 @@ cossack
   TotalVolume = 70000;
   TotalSize = 190;
   NameSingular = "cossack";
-  Helmet = HARDENED_LEATHER helmet;
-  Cloak = HARDENED_LEATHER cloak;
+  Helmet = WOLF_SKIN helmet;
+  Cloak = WOLF_SKIN cloak;
   BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-  Belt = HARDENED_LEATHER belt;
+  Belt = WOLF_SKIN belt;
   RightWielded = IRON IRON meleeweapon(LONG_SWORD);
   KnownCWeaponSkills == LARGE_SWORDS;
   CWeaponSkillHits == 100;
   RightSWeaponSkillHits = 100;
-  RightGauntlet = HARDENED_LEATHER gauntlet;
-  RightBoot = HARDENED_LEATHER boot;
+  RightGauntlet = WOLF_SKIN gauntlet;
+  RightBoot = WOLF_SKIN boot;
   PanicLevel = 10;
   DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
   HostileReplies == "@Dd shouts wildly: \"For Tataria!\"";
@@ -6809,7 +6821,7 @@ eddy
   UsesNutrition = false;
   SpillsBlood = false;
   Sweats = false;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   DeathMessage = "@Dd disappears.";
   AttachedGod = SOPHOS;
   BodyPartsDisappearWhenSevered = true;
@@ -6941,7 +6953,6 @@ darkmage
     "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
     "abjuration", "invocation", "evocation", "incantations", "hexes";
   }
-
 
   Config APPRENTICE;
   {
@@ -7089,7 +7100,7 @@ darkmage
     Cloak = PHOENIX_FEATHER cloak { Enchantment = 5; }
     Belt = ANGEL_HAIR belt { Enchantment = 5; }
     RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
-    RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    RightWielded = OCCULTUM BLACK_DIAMOND meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
     Inventory = { 9, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR), key(OCTAGONAL_LOCK); }
     HPRequirementForGeneration = 450;
     DayRequirementForGeneration = 45;
@@ -7260,7 +7271,7 @@ invisiblestalker
   UsesLongAdjectiveArticle = true;
   AttackStyle = USE_ARMS;
   CanBeGenerated = true;
-  FleshMaterial = MAGICAL_AIR;
+  FleshMaterial = ETHER;
   BaseUnarmedStrength = 750;
   DeathMessage = "@Dd hisses and vanishes.";
   AttachedGod = CLEPTIA;
@@ -7372,6 +7383,7 @@ genetrixvesana
   DeathMessage = "@Dd is brutally destroyed.";
   BaseEmitation = rgb24(140, 100, 100);
   FleshMaterial = MUTANT_PLANT_FIBER;
+  BloodMaterial = PLANT_SAP;
   AttachedGod = SCABIES;
   IsPlant = true;
   CanOpen = false;
@@ -8964,7 +8976,7 @@ nihil
   UndeadVersions = false;
   UsesNutrition = false;
   AllowPlayerToChangeEquipment = false;
-  Helmet = helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
+  Helmet = BLACK_DIAMOND helmet(HELM_OF_WILLPOWER) { Enchantment = 4; }
   Amulet = BLACK_DIAMOND amulet(AMULET_OF_LIFE_SAVING);
   BodyArmor = OCTIRON bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
   Belt = BLACK_DIAMOND belt(BELT_OF_REGENERATION) { Enchantment = 4; }
@@ -8999,6 +9011,6 @@ nihil
     "\"I wish to believe but belief is a graveyard.\"",
     "\"The point is there's no point.\"";
   }
-  Inventory = { 8, celestialmonograph, GOLD stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
+  Inventory = { 8, celestialmonograph, NEUTRONIUM stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
   DayRequirementForGeneration = 60;
 }

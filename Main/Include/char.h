@@ -335,6 +335,7 @@ class character : public entity, public id
   virtual truth MoveRandomly();
   void ReceiveNutrition(long);
   void ReceiveOmmelUrine(long);
+  void ReceiveOmmelBlood(long);
   void ReceivePepsi(long);
   void ReceiveSchoolFood(long);
   void Regenerate();
@@ -442,6 +443,7 @@ class character : public entity, public id
   void AddSchoolFoodHitMessage() const;
   void AddOmmelConsumeEndMessage() const;
   void AddPepsiConsumeEndMessage() const;
+  void AddCocaColaConsumeEndMessage() const;
   void AddFrogFleshConsumeEndMessage() const;
   void AddKoboldFleshConsumeEndMessage() const;
   void AddKoboldFleshHitMessage() const;
@@ -450,6 +452,7 @@ class character : public entity, public id
   void AddGrayUnicornConsumeEndMessage() const;
   void AddWhiteUnicornConsumeEndMessage() const;
   void AddOmmelBoneConsumeEndMessage() const;
+  void AddLiquidHorrorConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
   virtual void IgniteBodyPart(int, int);

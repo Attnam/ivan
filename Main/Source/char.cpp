@@ -28,12 +28,6 @@
 #define DBGMSG_V2
 #include "dbgmsgproj.h"
 
-/**
- * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
- * btw, lantern price is currently 10.
- */
-static int iMaxValueless = 5;
-
 struct statedata
 {
   cchar* Description;
@@ -5494,6 +5488,15 @@ void character::ReceiveNutrition(long SizeOfEffect)
   EditNP(SizeOfEffect);
 }
 
+void character::ReceiveOmmelBlood(long Amount)
+{
+  EditExperience(WILL_POWER, 500, Amount << 4);
+  EditExperience(MANA, 500, Amount << 4);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
 void character::ReceiveOmmelUrine(long Amount)
 {
   EditExperience(ARM_STRENGTH, 500, Amount << 4);
@@ -5586,6 +5589,14 @@ void character::AddPepsiConsumeEndMessage() const
     ADD_MESSAGE("%s looks very lame.", CHAR_NAME(DEFINITE));
 }
 
+void character::AddCocaColaConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your guruism rising!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks awesome.", CHAR_NAME(DEFINITE));
+}
+
 void character::ReceiveDarkness(long Amount)
 {
   EditExperience(INTELLIGENCE, -Amount / 5, 1 << 13);
@@ -5674,8 +5685,9 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
   PrintAttribute("Int", INTELLIGENCE, PanelPosX, PanelPosY++);
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
-  PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
+  PrintAttribute("Will", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
+  PrintAttribute("Mana", MANA, PanelPosX, PanelPosY++);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wt   %d kg", GetTotalCharacterWeight());
   ++PanelPosY;
@@ -6977,8 +6989,9 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-  //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Mana: ") + GetAttribute(MANA), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
@@ -9654,6 +9667,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       UpdatePictures();
 
     break;
+   case WILL_POWER:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel incredibly stubborn.";
+      NPCMsg = "You notice %s looks much more determined.";
+    }
+    else
+    {
+      PlayerMsg = "You loose your determination.";
+      NPCMsg = "You notice how wimpy %s looks.";
+    }
+    break;
    case CHARISMA:
     if(Change > 0)
     {
@@ -9695,8 +9720,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       PlayerMsg = "You feel your magical abilities withering slowly.";
       NPCMsg = "You notice strange vibrations in the air around %s. But they disappear rapidly.";
     }
-
     break;
+   default:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel more awesome!";
+      NPCMsg = "You notice how cool %s looks.";
+    }
+    else
+    {
+      PlayerMsg = "You feel a strange sensation, but then it passes.";
+      NPCMsg = "You notice there is something different about %s.";
+    }
   }
 
   if(IsPlayer())
@@ -11588,6 +11623,14 @@ void character::AddOmmelBoneConsumeEndMessage() const
     ADD_MESSAGE("You feel the power of all your canine ancestors combining in your body.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("For a moment %s looks extremely ferocious. You shudder.", CHAR_NAME(DEFINITE));
+}
+
+void character::AddLiquidHorrorConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Untold horrors flash before your eyes. The melancholy of the world is on your shoulders!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks as if the true terror of existence flashed before %s eyes!.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 }
 
 int character::GetBodyPartSparkleFlags(int) const

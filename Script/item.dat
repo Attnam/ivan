@@ -179,8 +179,16 @@ can /* materialcontainer-> */
   NameSingular = "can";
   /* Adjective and PostFix overridden */
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = {10 , BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT, FLOATING_EYE_FLESH, CAT_FLESH, RAT_FLESH, PINEAPPLE_FLESH; }
-  MaterialConfigChances = { 10, 750, 5, 25, 25, 10, 10, 25, 20, 20, 100; }
+  SecondaryMaterialConfig = { 25,
+                              BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP,
+                              OMMEL_CERUMEN, OMMEL_SNOT, FLOATING_EYE_FLESH, CAT_FLESH,
+                              RAT_FLESH, PINEAPPLE_FLESH, HEALING_LIQUID, CHICKEN_SOUP,
+                              PORRIDGE, CUSTARD, HONEY, MYSTERY_MEAT, TUNA, SARDINE,
+                              BEAR_FLESH, BLINK_DOG_FLESH, GRAY_UNICORN_FLESH, MANGO_FLESH,
+                              KELP, PLANKTON, CHOCOLATE; }
+  MaterialConfigChances = { 25,
+                            500, 5, 25, 25, 10, 10, 25, 20, 20, 100, 25, 25, 15, 15, 15,
+                            15, 15, 15, 15, 25, 10, 15, 15, 15, 15; }
   Roundness = 60;
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
@@ -198,8 +206,9 @@ lump
   BitmapPos = 16, 48;
   FormModifier = 10;
   NameSingular = "lump";
-  MainMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
-  MaterialConfigChances = { 2, 75, 5; }
+  MainMaterialConfig = { 6,
+                         BANANA_FLESH, SCHOOL_FOOD, KELP, MYSTERY_MEAT, SNAKE_JERKY, BEAR_FLESH; }
+  MaterialConfigChances = { 6, 75, 5, 5, 5, 5, 5; }
   OKVisualEffects = MIRROR|FLIP;
   Roundness = 75;
   AttachedGod = NONE;
@@ -229,9 +238,47 @@ meleeweapon
     FormModifier = 90;
     StrengthModifier = 100;
     NameSingular = "long sword";
-    MainMaterialConfig = { 10, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 10, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 10, 200, 150, 100, 50, 1000, 750, 100, 25, 25, 5; }
+    MainMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           PETRIFIED_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, BIRCH_WOOD, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           FIR_WOOD, TEAK_WOOD, EBONY_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           AMETHYST, COPPER, BRONZE, BIRCH_WOOD, EBONY_WOOD, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 79,
+                              100, 50, 100, 50, 100, 50, 50, 25, 5, 1, 10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1000, 1500, 100, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 1, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 750, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 10;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 16;
@@ -245,9 +292,26 @@ meleeweapon
     Possibility = 10;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
-    MainMaterialConfig = { 5, EBONY_WOOD, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    SecondaryMaterialConfig = { 5, EBONY_WOOD, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 5, 25, 100, 25, 25, 10; }
+    MainMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 36,
+                              25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
+                              15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
+                              50, 10, 5, 150, 150; }
     EnchantmentPlusChance = 10;
   }
 
@@ -262,9 +326,47 @@ meleeweapon
     BitmapPos = 0, 0;
     FormModifier = 135;
     NameSingular = "two-handed sword";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
+    MainMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           PETRIFIED_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, BIRCH_WOOD, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           FIR_WOOD, TEAK_WOOD, EBONY_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           AMETHYST, COPPER, BRONZE, BIRCH_WOOD, EBONY_WOOD, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 79,
+                              100, 50, 100, 50, 100, 50, 50, 25, 5, 1, 10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2000, 100, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 1, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 500, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -272,7 +374,7 @@ meleeweapon
     EnchantmentMinusChance = 5;
     EnchantmentPlusChance = 5;
     DamageFlags = SLASH;
-    Alias == "greatsword";
+    Alias = { 2, "greatsword", "great sword"; }
   }
 
   Config BROKEN|TWO_HANDED_SWORD;
@@ -280,7 +382,26 @@ meleeweapon
     Possibility = 8;
     BitmapPos = 32, 80;
     WieldedBitmapPos = 176, 80;
-    MaterialConfigChances = { 4, 0, 250, 25, 25; }
+    MainMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 36,
+                              25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
+                              15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentMinusChance = 10;
     EnchantmentPlusChance = 10;
   }
@@ -296,9 +417,47 @@ meleeweapon
     BitmapPos = 0, 16;
     FormModifier = 160;
     NameSingular = "two-handed scimitar";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
+    MainMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           PETRIFIED_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, BIRCH_WOOD, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           FIR_WOOD, TEAK_WOOD, EBONY_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           AMETHYST, COPPER, BRONZE, BIRCH_WOOD, EBONY_WOOD, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 79,
+                              100, 50, 100, 50, 100, 50, 50, 25, 5, 1, 10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2000, 100, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 1, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 500, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -314,7 +473,26 @@ meleeweapon
     Possibility = 3;
     BitmapPos = 32, 96;
     WieldedBitmapPos = 176, 80;
-    MaterialConfigChances = { 4, 0, 250, 25, 25; }
+    MainMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 36,
+                              25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
+                              15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentMinusChance = 10;
     EnchantmentPlusChance = 10;
   }
@@ -362,15 +540,60 @@ meleeweapon
     DefaultSize = 190;
     Possibility = 600;
     WeaponCategory = POLE_ARMS;
-    StrengthModifier = 70;
+    StrengthModifier = 80;
     BitmapPos = 16, 144;
     FormModifier = 85;
     DefaultMainVolume = 100;
     DefaultSecondaryVolume = 2500;
     NameSingular = "spear";
-    MainMaterialConfig = { 19, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, FLINT, OBSIDIAN, LEAD; }
-    SecondaryMaterialConfig = { 19, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, PINE_WOOD, PINE_WOOD, FIR_WOOD, FIR_WOOD, BIRCH_WOOD, BIRCH_WOOD, OAK_WOOD, OAK_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD; }
-    MaterialConfigChances = { 19, 200, 200, 150, 100, 200, 550, 450, 300, 200, 50, 50, 25, 10, 50, 50, 50, 50, 50, 50; }
+    MainMaterialConfig = { 96,
+                           FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                           CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                           MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           SIDGURE_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, PETRIFIED_WOOD, FLINT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM, BUFFALO_HORN,
+                           MOOSE_ANTLER, UNICORN_HORN, AGATE, CITRINE, CORAL, NETHER_QUARTZ,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           BONE, WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 96,
+                           FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                           CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                           MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           SIDGURE_WOOD, DRAGON_BONE, MAHOGANY_WOOD, MAHOGANY_WOOD, MAHOGANY_WOOD,
+                           DEEP_CORAL, HALCYON, ASH_WOOD, ASH_WOOD, ASH_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, KAURI_WOOD, KAURI_WOOD, RATA_WOOD,
+                           BEECH_WOOD, BEECH_WOOD, PETRIFIED_WOOD, FIR_WOOD,
+                           HARDENED_ASH, BIRCH_WOOD, BIRCH_WOOD, YEW_WOOD, FUNGI_WOOD, OAK_WOOD,
+                           OAK_WOOD, SIDGURE_WOOD, CYPRESS_WOOD, CYPRESS_WOOD, CORAL, RATA_WOOD,
+                           OAK_WOOD, OAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD, BIRCH_WOOD,
+                           BIRCH_WOOD, OAK_WOOD, OAK_WOOD, EBONY_WOOD, BEECH_WOOD, BEECH_WOOD,
+                           ASH_WOOD, EBONY_WOOD, OAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           OAK_WOOD, EBONY_WOOD, MAHOGANY_WOOD, GLASS,
+                           MAHOGANY_WOOD, MAHOGANY_WOOD, EBONY_WOOD, EBONY_WOOD, ELM_WOOD,
+                           FIR_WOOD, BIRCH_WOOD, BIRCH_WOOD, OAK_WOOD, OAK_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           BONE, OAK_WOOD, OAK_WOOD, TEAK_WOOD, SIDGURE_WOOD, OAK_WOOD,
+                           OAK_WOOD, TEAK_WOOD; }
+    MaterialConfigChances = { 96,
+                              5, 10, 15, 50, 100, 150, 5, 10, 15, 75, 120, 5, 10, 15,
+                              25, 50, 100, 150, 200, 100, 25, 5, 50, 20, 20, 75, 25,
+                              25, 20, 5, 15, 25, 25, 20, 10, 15, 1, 1, 75, 1, 250, 400,
+                              15, 5, 75, 50, 5, 15, 10, 25, 25, 50, 200, 25, 10, 5, 25,
+                              50, 10, 5, 5, 100, 25, 20, 5, 5, 15, 10, 5, 30, 5, 20, 5,
+                              5, 15, 30, 40, 25, 300, 150, 50, 25, 5, 1, 75, 15, 75, 15,
+                              150, 200, 300, 10, 5, 100, 150, 75; }
     Roundness = 10;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -384,9 +607,28 @@ meleeweapon
     Possibility = 60;
     BitmapPos = 32, 224;
     WieldedBitmapPos = 176, 96;
-    MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
-    SecondaryMaterialConfig == OAK_WOOD;
-    MaterialConfigChances = { 7, 150, 25, 25, 5, 5, 5, 5; }
+    MainMaterialConfig = { 42,
+                           EBONY_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE,
+                           AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           UNICORN_HORN, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, STAR_METAL, DARK_GOLD,
+                           DARK_MATTER, STAINLESS_STEEL, ARCANITE, OCCULTUM, ILLITHIUM,
+                           PRIMORDIAL_ICE, STEEL, DWARF_STEEL, METEORIC_STEEL, UKKU_STEEL,
+                           SOUL_STEEL, BLOOD_STEEL, ADAMANT, OMMEL_BONE, OMMEL_TOOTH; }
+    SecondaryMaterialConfig = { 42,
+                           EBONY_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE,
+                           KAURI_WOOD, KAURI_WOOD, RATA_WOOD, RATA_WOOD, SIDGURE_WOOD, KAURI_WOOD, KAURI_WOOD,
+                           RATA_WOOD, RATA_WOOD, SIDGURE_WOOD, SIDGURE_WOOD,
+                           SIDGURE_WOOD, RATA_WOOD, RATA_WOOD, RATA_WOOD, EBONY_WOOD, EBONY_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, RATA_WOOD, RATA_WOOD, KAURI_WOOD,
+                           EBONY_WOOD, RATA_WOOD, RATA_WOOD, SIDGURE_WOOD, SIDGURE_WOOD,
+                           EBONY_WOOD, KAURI_WOOD, KAURI_WOOD, RATA_WOOD, RATA_WOOD,
+                           SIDGURE_WOOD, SIDGURE_WOOD, SIDGURE_WOOD, SIDGURE_WOOD, SIDGURE_WOOD; }
+    MaterialConfigChances = { 42,
+                              75, 100, 150, 100, 5, 5, 5, 5, 5, 5, 50, 50, 25, 25,
+                              2, 2, 1, 100, 25, 15, 5, 5, 75, 50, 25, 5, 25, 10, 50,
+                              5, 5, 5, 5, 150, 75, 25, 5, 25, 25, 5, 10, 5; }
     EnchantmentPlusChance = 30;
   }
 
@@ -402,9 +644,29 @@ meleeweapon
     FormModifier = 60;
     NameSingular = "axe";
     UsesLongArticle = true;
-    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == PINE_WOOD;
-    MaterialConfigChances = { 7, 1250, 1000, 500, 100, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     IsTwoHanded = true;
     AttachedGod = LORICATUS;
@@ -418,8 +680,17 @@ meleeweapon
     Possibility = 40;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 30;
   }
 
@@ -434,9 +705,29 @@ meleeweapon
     BitmapPos = 0, 80;
     FormModifier = 115;
     NameSingular = "halberd";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == BIRCH_WOOD;
-    MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -451,8 +742,17 @@ meleeweapon
     Possibility = 10;
     BitmapPos = 32, 144;
     WieldedBitmapPos = 176, 256;
-    MainMaterialConfig = { 3, STEEL, METEORIC_STEEL, MITHRIL; }
-    MaterialConfigChances = { 3, 250, 25, 25; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentMinusChance = 10;
     EnchantmentPlusChance = 10;
   }
@@ -468,9 +768,29 @@ meleeweapon
     Possibility = 300;
     WeaponCategory = BLUNT_WEAPONS;
     NameSingular = "mace";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+    MainMaterialConfig = { 68,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH, SLADE,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == FIR_WOOD;
-    MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
+    MaterialConfigChances = { 68,
+                              10, 200, 50, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 30; /* we count the handle, too */
     IsTwoHanded = true;
     AttachedGod = LEGIFER;
@@ -483,8 +803,17 @@ meleeweapon
     Possibility = 30;
     BitmapPos = 32, 112;
     WieldedBitmapPos = 176, 192;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 20;
   }
 
@@ -499,9 +828,29 @@ meleeweapon
     BitmapPos = 80, 16;
     FormModifier = 55;
     NameSingular = "war hammer";
-    MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, OMMEL_TOOTH; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == FIR_WOOD;
-    MaterialConfigChances = { 8, 1000, 750, 500, 100, 25, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     IsTwoHanded = true;
     CanBeUsedBySmith = true;
@@ -515,8 +864,17 @@ meleeweapon
     Possibility = 20;
     BitmapPos = 80, 32;
     WieldedBitmapPos = 176, 336;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 30;
   }
 
@@ -531,9 +889,29 @@ meleeweapon
     FormModifier = 60;
     StrengthModifier = 40;
     NameSingular = "sickle";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == FIR_WOOD;
-    MaterialConfigChances = { 5, 500, 100, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     AttachedGod = SEGES;
     WieldedBitmapPos = 176, 32;
@@ -547,8 +925,17 @@ meleeweapon
     Possibility = 5;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
-    MainMaterialConfig = { 6, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
-    MaterialConfigChances = { 6, 25, 25, 5, 5, 5, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 40;
   }
 
@@ -563,9 +950,43 @@ meleeweapon
     FormModifier = 75;
     StrengthModifier = 60;
     NameSingular = "dagger";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 5, 1000, 100, 25, 25, 5; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, SAPPHIRE, RUBY,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, JOTUN_ICE, PRIMORDIAL_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, SAPPHIRE, RUBY,
+                           AMETHYST, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, JOTUN_ICE, PRIMORDIAL_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     AttachedGod = CLEPTIA;
     WieldedBitmapPos = 160, 288;
@@ -578,9 +999,24 @@ meleeweapon
     Possibility = 30;
     BitmapPos = 48, 288;
     WieldedBitmapPos = 176, 288;
-    MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
-    SecondaryMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
-    MaterialConfigChances = { 7, 100, 25, 25, 5, 5, 5, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, SAPPHIRE, EMERALD, RUBY, DIAMOND, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 33,
+                           DRAGON_BONE, SAPPHIRE, EMERALD, RUBY, DIAMOND, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 5, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 50;
   }
 
@@ -595,9 +1031,43 @@ meleeweapon
     FormModifier = 80;
     StrengthModifier = 90;
     NameSingular = "short sword";
-    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 7, 1250, 1000, 750, 100, 25, 25, 5; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     AttachedGod = CLEPTIA;
     WieldedBitmapPos = 160, 32;
@@ -611,9 +1081,24 @@ meleeweapon
     Possibility = 20;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 30;
   }
 
@@ -628,9 +1113,47 @@ meleeweapon
     BitmapPos = 64, 160;
     FormModifier = 115;
     NameSingular = "bastard sword";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    MaterialConfigChances = { 5, 2000, 100, 25, 25, 5; }
+    MainMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           PETRIFIED_WOOD, DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, BIRCH_WOOD, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig = { 79,
+                           ASH_WOOD, CYPRESS_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           FIR_WOOD, TEAK_WOOD, EBONY_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD,
+                           EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD, EBONY_WOOD,
+                           TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
+                           AMETHYST, COPPER, BRONZE, BIRCH_WOOD, EBONY_WOOD, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    MaterialConfigChances = { 79,
+                              100, 50, 100, 50, 100, 50, 50, 25, 5, 1, 10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1000, 1500, 100, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 1, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 750, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -644,7 +1167,26 @@ meleeweapon
     Possibility = 8;
     BitmapPos = 64, 192;
     WieldedBitmapPos = 176, 80;
-    MaterialConfigChances = { 4, 0, 250, 25, 25; }
+    MainMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    SecondaryMaterialConfig = { 36,
+                           KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE, AMETHYST,
+                           TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE, GREEN_JADE, BLUE_JADE,
+                           WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL, DEEP_BRONZE, BRASS,
+                           HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
+                           MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+    MaterialConfigChances = { 36,
+                              25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
+                              15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
+                              50, 10, 5, 150, 150; }
     EnchantmentPlusChance = 10;
   }
 
@@ -658,17 +1200,37 @@ meleeweapon
     StrengthModifier = 100;
     BitmapPos = 64, 80;
     FormModifier = 85;
-    NameSingular = "battle-axe";
-    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+    NameSingular = "battle axe";
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == OAK_WOOD;
-    MaterialConfigChances = { 7, 1500, 1000, 750, 100, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 30;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 272;
     EnchantmentPlusChance = 10;
     DamageFlags = SLASH;
-    Alias == "battle axe";
+    Alias == "battle-axe";
   }
 
   Config BROKEN|BATTLE_AXE;
@@ -676,8 +1238,17 @@ meleeweapon
     Possibility = 20;
     BitmapPos = 64, 96;
     WieldedBitmapPos = 176, 272;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 20;
   }
 
@@ -692,9 +1263,29 @@ meleeweapon
     FormModifier = 80;
     StrengthModifier = 40;
     NameSingular = "scythe";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
-    SecondaryMaterialConfig == FIR_WOOD;
-    MaterialConfigChances = { 5, 500, 100, 25, 25, 5; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
+    SecondaryMaterialConfig == BIRCH_WOOD;
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 10;
     IsTwoHanded = true;
     AttachedGod = MORTIFER;
@@ -709,8 +1300,17 @@ meleeweapon
     Possibility = 5;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
-    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT, PSYPHER; }
-    MaterialConfigChances = { 5, 50, 25, 25, 5, 1; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 40;
   }
 
@@ -725,9 +1325,28 @@ meleeweapon
     DefaultMainVolume = 3000;
     DefaultSecondaryVolume = 200;
     NameSingular = "quarterstaff";
-    MainMaterialConfig = { 13, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
-    SecondaryMaterialConfig = { 13, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_BONE, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
-    MaterialConfigChances = { 13, 100, 300, 250, 250, 200, 150, 100, 75, 25, 5, 50, 30, 20; }
+    MainMaterialConfig = { 39,
+                           FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                           CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                           MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           SIDGURE_WOOD, HARDENED_ASH, BUFFALO_HORN, HARDENED_PLASTIC,
+                           CARBIDE, MOOSE_ANTLER, UNICORN_HORN, HEPATIZON, OCTIRON,
+                           ARCANITE, RED_ICE, JOTUN_ICE, STEEL_LEAF, BONE, WHALE_BONE,
+                           WRAITH_BONE, OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK; }
+    SecondaryMaterialConfig = { 39,
+                           FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                           CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                           MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
+                           SIDGURE_WOOD, HARDENED_ASH, BUFFALO_HORN, HARDENED_PLASTIC,
+                           CARBIDE, MOOSE_ANTLER, UNICORN_HORN, HEPATIZON, OCTIRON,
+                           ARCANITE, RED_ICE, JOTUN_ICE, STEEL_LEAF, BONE, WHALE_BONE,
+                           WRAITH_BONE, OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK; }
+    MaterialConfigChances = { 39,
+                              25, 50, 75, 150, 200, 300, 25, 50, 75, 300, 250, 25, 50,
+                              50, 75, 100, 250, 100, 100, 50, 10, 5, 50, 2, 1, 25, 5,
+                              15, 5, 5, 75, 25, 5, 250, 200, 150, 25, 150, 75; }
     Roundness = 10;
     IsTwoHanded = true;
     AttachedGod = SILVA;
@@ -741,9 +1360,14 @@ meleeweapon
     Possibility = 20;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
-    MainMaterialConfig = { 6, EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
-    SecondaryMaterialConfig = { 6, EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD; }
-    MaterialConfigChances = { 6, 300, 200, 25, 100, 50, 50; }
+    MainMaterialConfig = { 11,
+                           EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD,
+                           ORICHALCUM, STAR_METAL, OCCULTUM, CHLOROPHYTE, PRIMORDIAL_ICE; }
+    SecondaryMaterialConfig = { 11,
+                           EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD,
+                           ORICHALCUM, STAR_METAL, OCCULTUM, CHLOROPHYTE, PRIMORDIAL_ICE; }
+    MaterialConfigChances = { 11,
+                              300, 200, 25, 50, 150, 50, 5, 5, 5, 5, 25; }
     EnchantmentPlusChance = 40;
   }
 
@@ -758,9 +1382,29 @@ meleeweapon
     BitmapPos = 48, 160;
     FormModifier = 50;
     NameSingular = "hammer";
-    MainMaterialConfig = { 7, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, OMMEL_TOOTH; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == FIR_WOOD;
-    MaterialConfigChances = { 7, 750, 500, 100, 25, 25, 10, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 20;
     CanBeUsedBySmith = true;
     AttachedGod = LORICATUS;
@@ -774,8 +1418,17 @@ meleeweapon
     Possibility = 5;
     BitmapPos = 48, 192;
     WieldedBitmapPos = 176, 224;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 100, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 40;
   }
 
@@ -830,9 +1483,15 @@ meleeweapon
     BitmapPos = 80, 112;
     FormModifier = 60;
     NameSingular = "rolling pin";
-    MainMaterialConfig = { 7, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD; }
+    MainMaterialConfig = { 20,
+                           FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                           CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                           MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                           OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD; }
     SecondaryMaterialConfig == PINE_WOOD;
-    MaterialConfigChances = { 7, 25, 100, 50, 10, 5, 5, 5; }
+    MaterialConfigChances = { 20,
+                              25, 50, 75, 150, 200, 300, 25, 50, 75, 300, 250, 25, 50,
+                              50, 75, 100, 250, 100, 100, 50; }
     Roundness = 35;
     AttachedGod = SEGES;
     WieldedBitmapPos = 160, 352;
@@ -858,9 +1517,12 @@ meleeweapon
     BitmapPos = 80, 96;
     FormModifier = 75;
     NameSingular = "frying pan";
-    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
+    MainMaterialConfig = { 12,
+                           COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON,
+                           LEAD, ALUMINIUM, NICKEL, CHROME, STAINLESS_STEEL; }
     SecondaryMaterialConfig == PINE_WOOD;
-    MaterialConfigChances = { 7, 25, 100, 50, 10, 5, 1, 1; }
+    MaterialConfigChances = { 12,
+                              25, 150, 50, 10, 5, 1, 1, 150, 75, 25, 1, 5; }
     Roundness = 75;
     IsTwoHanded = true;
     AttachedGod = SEGES;
@@ -887,9 +1549,29 @@ meleeweapon
     FormModifier = 75;
     StrengthModifier = 50;
     NameSingular = "beast claw";
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, SAPPHIRE, RUBY,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, JOTUN_ICE, PRIMORDIAL_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == LEATHER;
-    MaterialConfigChances = { 5, 1000, 100, 25, 25, 5; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 112;
@@ -904,9 +1586,18 @@ meleeweapon
     Possibility = 5;
     BitmapPos = 80, 352;
     WieldedBitmapPos = 160, 112;
-    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH, ADAMANT; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, SAPPHIRE, EMERALD, RUBY, DIAMOND, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
     SecondaryMaterialConfig == LEATHER;
-    MaterialConfigChances = { 5, 250, 25, 25, 5, 1; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 5, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 20;
   }
 
@@ -921,9 +1612,29 @@ meleeweapon
     FormModifier = 80;
     StrengthModifier = 95;
     NameSingular = "cleaver";
-    MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ILLITHIUM; }
+    MainMaterialConfig = { 67,
+                           DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                           DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                           HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                           VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                           MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                           DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                           STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                           PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                           PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                           WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                           TROLL_TUSK, MAMMOTH_TUSK; }
     SecondaryMaterialConfig == OAK_WOOD;
-    MaterialConfigChances = { 7, 1250, 1000, 750, 100, 25, 15, 10; }
+    MaterialConfigChances = { 67,
+                              10, 200, 50, 50,
+                              25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                              1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                              15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                              4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                              100, 10, 5, 100, 50, 25; }
     Roundness = 15;
     AttachedGod = CRUENTUS;
     WieldedBitmapPos = 160, 32;
@@ -936,8 +1647,17 @@ meleeweapon
     Possibility = 10;
     BitmapPos = 64, 176;
     WieldedBitmapPos = 176, 208;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 30;
   }
 
@@ -1048,9 +1768,9 @@ justifier /* meleeweapon-> */
   StrengthModifier = 275;
   CanBeWished = false;
   IsMaterialChangeable = false;
-  NameSingular = "broadsword";
+  NameSingular = "broad sword";
   Adjective = "holy";
-  PostFix = "named Valpurus's Justifier";
+  PostFix = "named Valpurus' Justifier";
   ArticleMode = FORCE_THE;
   MainMaterialConfig == VALPURIUM;
   SecondaryMaterialConfig == VALPURIUM;
@@ -1119,9 +1839,29 @@ pickaxe /* meleeweapon-> */
   Roundness = 20;
   WeaponCategory = AXES;
   StrengthModifier = 75;
-  MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
+  MainMaterialConfig = { 67,
+                         DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                         DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                         MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                         HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                         VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                         MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                         DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                         STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                         PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                         PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                         UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                         WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                         TROLL_TUSK, MAMMOTH_TUSK; }
   SecondaryMaterialConfig == FIR_WOOD;
-  MaterialConfigChances = { 7, 2000, 1500, 750, 100, 25, 25, 5; }
+  MaterialConfigChances = { 67,
+                            10, 200, 50, 50,
+                            25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                            2000, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                            15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                            4, 100, 1500, 750, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                            100, 10, 5, 100, 50, 25; }
   IsTwoHanded = true;
   Price = 50; /* bonus for being able to dig */
   AttachedGod = LORICATUS;
@@ -1135,8 +1875,17 @@ pickaxe /* meleeweapon-> */
     BitmapPos = 32, 160;
     Price = 0;
     WieldedBitmapPos = 176, 64;
-    MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-    MaterialConfigChances = { 4, 250, 100, 25, 25; }
+    MainMaterialConfig = { 34,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                           UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL, IRON; }
+    MaterialConfigChances = { 34,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 100, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 250, 100,
+                              50, 10, 5, 150, 150, 1500; }
     EnchantmentPlusChance = 20;
   }
 }
@@ -1168,9 +1917,25 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 2000;
     BitmapPos = 16, 96;
     NameSingular = "chain mail";
-    FlexibleNameSingular = "jacket";
-    MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-    MaterialConfigChances = { 8, 450, 300, 150, 25, 20, 25, 10, 5; }
+    FlexibleNameSingular = "tunic";
+    MainMaterialConfig = { 62,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, LINEN_CLOTH, HEMP_CLOTH, WOOL_CLOTH, FELT, FABRIC,
+                           ELF_CLOTH, NYMPH_HAIR, OMMEL_HAIR, WOLF_SKIN, BEAR_SKIN,
+                           SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, LEATHER, BLACK_LEATHER,
+                           TROLL_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                           SEA_WEED, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN, DREAM_CLOTH,
+                           RAINBOW_CLOTH, SHADOW_CLOTH, STAINLESS_STEEL, PALM_LEAF,
+                           WITCH_BARK, DARK_PETAL, ARCANITE, PEARL_GLASS, ILLITHIUM,
+                           OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 62,
+                              750, 1500, 200, 75, 50, 150, 250, 25, 5, 25, 300, 150, 15,
+                              5, 75, 50, 25, 750, 1000, 250, 75, 15, 5, 300, 75, 300, 75,
+                              3, 3, 3, 3, 1, 10, 10, 5, 15, 10, 5, 3, 1, 25, 5, 5, 25,
+                              10, 5, 2, 4, 6, 5, 1, 1, 1, 25, 2, 3, 5, 25, 25, 5, 15, 5; }
     InElasticityPenaltyModifier = 10;
     TorsoArmorBitmapPos = 32, 432;
     ArmArmorBitmapPos = 64, 432;
@@ -1186,8 +1951,18 @@ bodyarmor /* armor-> */
     BitmapPos = 48, 208;
     FormModifier = 20;
     StrengthModifier = 75;
-    MainMaterialConfig = { 6, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 6, 50, 25, 20, 25, 5, 5; }
+    MainMaterialConfig = { 30,
+                           DEEP_BRONZE, BRASS, MITHRIL, DARK_GOLD, DARK_MATTER,
+                           STEEL, DWARF_STEEL, METEORIC_STEEL, UKKU_STEEL, SOUL_STEEL,
+                           BLOOD_STEEL, OMMEL_HAIR, TROLL_WOOL, NAGA_SKIN, TROLL_HIDE,
+                           GRIFFON_FEATHER, PHOENIX_FEATHER, SELKIE_SKIN, DREAM_CLOTH,
+                           RAINBOW_CLOTH, SHADOW_CLOTH, STAINLESS_STEEL, CHLOROPHYTE,
+                           ARCANITE, ILLITHIUM, HEPATIZON, OCTIRON, GALVORN, ADAMANT,
+                           OCCULTUM; }
+    MaterialConfigChances = { 30,
+                              500, 50, 25, 50, 25, 750, 300, 150, 50, 100, 100, 25, 5,
+                              25, 25, 25, 5, 10, 1, 1, 1, 75, 5, 25, 20, 25, 15, 15,
+                              5, 15; }
     EnchantmentPlusChance = 20;
     InElasticityPenaltyModifier = 15;
     TorsoArmorBitmapPos = 32, 512;
@@ -1205,8 +1980,46 @@ bodyarmor /* armor-> */
     Possibility = 250;
     NameSingular = "plate mail";
     FlexibleNameSingular = "armor";
-    MainMaterialConfig = { 14, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, OMMEL_TOOTH, EBONY_WOOD, KAURI_WOOD, RATA_WOOD; }
-    MaterialConfigChances = { 14, 5000, 2500, 250, 900, 100, 200, 150, 100, 25, 10, 5, 100, 30, 20; }
+    MainMaterialConfig = { 145,
+                           TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                           SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                           GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, ELF_CLOTH,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                           BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                           BOILED_LEATHER, QUILTED_LEATHER, STUDDED_LEATHER, TROLL_HIDE,
+                           IMP_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN,
+                           SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH, SHADOW_CLOTH,
+                           ELASTI_CLOTH, KEVLAR, LATEX, STAINLESS_STEEL, JET, URANIUM,
+                           MAGIC_CRYSTAL, ARCANITE, RED_SAND_STONE, GLASS, PEARL_GLASS,
+                           ICE, RED_ICE, JOTUN_ICE, PALM_LEAF, WITCH_BARK, DARK_PETAL,
+                           STEEL_LEAF, PAPER_BOARD, FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD,
+                           ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD,
+                           BAMBOO_WOOD, MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD,
+                           BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                           PETRIFIED_WOOD, HUMAN_NAIL, CHITINE, BUFFALO_HORN, MOOSE_ANTLER,
+                           TURTLE_SHELL, SEA_SHELL, OBSIDIAN, MARBLE, BASALT, JASPER,
+                           JACINTH, AGATE, BLACK_GRANITE, CITRINE, ONYX, NACRE, CORAL,
+                           DEEP_CORAL, HALCYON, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ,
+                           NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, PORCELAIN, AEGI_SALT,
+                           HEMATITE, HARDENED_ASH, BANANA_PEEL, BONE, WHALE_BONE, WRAITH_BONE,
+                           OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK, MAMMOTH_TUSK, OMMEL_TOOTH,
+                           RESIDUUM, ECTOPLASM, MAGIC_VAPOUR, QUICK_SILVER, PIG_IRON, IRON,
+                           STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                           BLOOD_IRON, BLOOD_STEEL; }
+    MaterialConfigChances = { 145,
+                              25, 250, 500, 10, 100, 25, 5, 50, 75, 25, 5, 10, 100,
+                              50, 10, 15, 5, 3, 1, 1000, 300, 75, 25, 50, 250, 200,
+                              75, 50, 25, 5, 1, 5000, 5, 2500, 2500, 2500, 2500, 100,
+                              25, 750, 200, 75, 5, 75, 150, 50, 5, 1, 1, 1, 1, 1, 1,
+                              25, 5, 1, 3, 15, 2, 3, 25, 2, 4, 1, 1, 50, 20, 5, 1, 5,
+                              10, 15, 20, 25, 30, 5, 10, 15, 25, 35, 5, 10, 15, 20, 25,
+                              30, 35, 50, 2, 1, 50, 30, 15, 5, 5, 15, 15, 15, 10, 10,
+                              5, 15, 10, 10, 3, 15, 5, 1, 25, 15, 10, 5, 75, 50, 25, 5,
+                              25, 5, 1, 1, 1, 3, 1, 1, 5, 50, 25, 10, 50, 25, 10, 5, 1,
+                              1, 1, 1, 500, 300, 100, 25, 5, 75, 25, 75, 25; }
     InElasticityPenaltyModifier = 20;
     EnchantmentPlusChance = 5;
     TorsoArmorBitmapPos = 32, 416;
@@ -1222,8 +2035,29 @@ bodyarmor /* armor-> */
     StrengthModifier = 100;
     BitmapPos = 0, 352;
     FormModifier = 20;
-    MainMaterialConfig = { 6, NYMPH_HAIR, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
-    MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     EnchantmentPlusChance = 10;
     InElasticityPenaltyModifier = 25;
     TorsoArmorBitmapPos = 32, 496;
@@ -1242,8 +2076,24 @@ bodyarmor /* armor-> */
     UsesLongArticle = true;
     NameSingular = "armor";
     PostFix = "of great health";
-    MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, OMMEL_BONE, OMMEL_TOOTH; }
-    MaterialConfigChances = { 7, 150, 75, 25, 50, 10, 25, 10; }
+    MainMaterialConfig = { 62,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, LINEN_CLOTH, HEMP_CLOTH, WOOL_CLOTH, FELT, FABRIC,
+                           ELF_CLOTH, NYMPH_HAIR, OMMEL_HAIR, WOLF_SKIN, BEAR_SKIN,
+                           SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, LEATHER, BLACK_LEATHER,
+                           TROLL_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                           SEA_WEED, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN, DREAM_CLOTH,
+                           RAINBOW_CLOTH, SHADOW_CLOTH, STAINLESS_STEEL, PALM_LEAF,
+                           WITCH_BARK, DARK_PETAL, ARCANITE, PEARL_GLASS, ILLITHIUM,
+                           OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 62,
+                              750, 1500, 200, 250, 50, 150, 250, 25, 5, 25, 300, 150, 15,
+                              5, 75, 50, 25, 750, 1000, 250, 75, 15, 5, 300, 75, 300, 75,
+                              3, 3, 3, 3, 1, 10, 10, 5, 15, 10, 5, 3, 1, 25, 5, 5, 25,
+                              10, 5, 2, 4, 6, 5, 1, 1, 1, 25, 2, 3, 5, 25, 25, 5, 15, 5; }
     InElasticityPenaltyModifier = 20;
     AffectsEndurance = true;
     BaseEnchantment = 1;
@@ -1266,8 +2116,29 @@ bodyarmor /* armor-> */
     FormModifier = 20;
     Price = 50;
     AffectsEndurance = false;
-    MainMaterialConfig = { 6, NYMPH_HAIR, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
-    MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     EnchantmentPlusChance = 4;
     InElasticityPenaltyModifier = 25;
     TorsoArmorBitmapPos = 32, 544;
@@ -1278,7 +2149,7 @@ bodyarmor /* armor-> */
 
   Config OMMEL_CUIRASS;
   {
-    StrengthModifier = 400;
+    StrengthModifier = 600;
     DefaultSize = 100;
     DefaultMainVolume = 5000;
     BitmapPos = 80, 176;
@@ -1351,8 +2222,19 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 20, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS, BROWN_SLIME, YELLOW_SLIME, DARK_FROG_BLOOD, SPIDER_BLOOD, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
-  MaterialConfigChances = { 20, 70, 50, 5, 30, 1, 9, 5, 25, 5, 5, 20, 2, 2, 6, 3, 5, 5, 5, 2, 1; }
+  SecondaryMaterialConfig = { 43,
+                              WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID,
+                              VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT,
+                              OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS,
+                              BROWN_SLIME, GREEN_SLIME, DARK_FROG_BLOOD, SPIDER_BLOOD, SWEAT,
+                              SICK_BLOOD, LIGHT_FROG_BLOOD, CURE_ALL_LIQUID, MAGIC_LIQUID,
+                              MILK, HONEY, COCA_COLA, INK, BRINE, CIDER, WHITE_WINE, RED_WINE,
+                              BEER, ELF_ALE, DWARF_BEER, LIQUID_FEAR, ASPHALT, BLOOD, GREEN_BLOOD,
+                              BLUE_BLOOD, PLANT_SAP, GLOWING_BLOOD, MERCURY, QUICK_SILVER,
+                              OMMEL_BLOOD; }
+  MaterialConfigChances = { 43,
+                            50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 20, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
+                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -1546,8 +2428,11 @@ loaf
   FormModifier = 20;
   NameSingular = "loaf";
   NamePlural = "loaves";
-  MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
-  MaterialConfigChances = { 3, 50, 50, 200; }
+  MainMaterialConfig = { 9,
+                         BEEF, PORK, DARK_BREAD, FLAT_BREAD, RYE_BREAD, CHEESE, BANANA_STOLLEN,
+                         CHOCOLATE, VENISON; }
+  MaterialConfigChances = { 9,
+                            50, 50, 100, 100, 100, 50, 1, 3, 50; }
   Alias = { 3, "food", "satiation", "nutrition"; }
   Roundness = 20;
   AttachedGod = NONE;
@@ -1584,7 +2469,7 @@ copyofleftnutofpetrus /* nut-> */
   {
     Possibility = 10;
     Price = 50;
-    MainMaterialConfig == GLASS; /* should be plastic */
+    MainMaterialConfig == PLASTIC;
     Adjective = "cheap";
     Alias == "left nut";
   }
@@ -1986,9 +2871,15 @@ whip /* meleeweapon-> */
   StrengthModifier = 70;
   BitmapPos = 32, 0;
   NameSingular = "whip";
-  MainMaterialConfig = { 4, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+  MainMaterialConfig = { 18,
+                         HUMAN_SKIN, SNAKE_SKIN, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         QUILTED_LEATHER, STUDDED_LEATHER, MERMAID_HAIR, SELKIE_SKIN,
+                         ELF_CLOTH, NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, DREAM_CLOTH,
+                         RAINBOW_CLOTH, SHADOW_CLOTH, FLEXI_CLOTH, QUICK_SILVER; }
   SecondaryMaterialConfig == EBONY_WOOD;
-  MaterialConfigChances = { 4, 75, 50, 25, 10; }
+  MaterialConfigChances = { 18,
+                            1, 20, 75, 5, 50, 50, 50, 25, 10, 35, 25, 10, 5, 1, 1,
+                            1, 1, 1; }
   Roundness = 2;
   FormModifier = 10; /* this is multiplied by MainMaterial's flexibility */
   CanBeBroken = true;
@@ -1998,14 +2889,14 @@ whip /* meleeweapon-> */
   FlexibilityIsEssential = true;
   DamageFlags = SLASH;
   IsSadistWeapon = true;
-  Alias = { 2, "BDSM", "love"; }
+  Alias = { 3, "BDSM", "love", "porn"; }
 
   Config BROKEN;
   {
     Possibility = 5;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MainMaterialConfig = { 3, MERMAID_HAIR, NYMPH_HAIR, OMMEL_HAIR; }
     MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 60;
   }
@@ -2027,7 +2918,7 @@ whip /* meleeweapon-> */
     Possibility = 3;
     BitmapPos = 32, 256;
     WieldedBitmapPos = 176, 208;
-    MainMaterialConfig = { 3, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
+    MainMaterialConfig = { 3, HARDENED_LEATHER, OMMEL_HAIR, TROLL_WOOL; }
     MaterialConfigChances = { 3, 75, 50, 25,}
     EnchantmentPlusChance = 40;
   }
@@ -2132,8 +3023,23 @@ stone
   BitmapPos = 0, 48;
   FormModifier = 10;
   NameSingular = "stone";
-  MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
-  MaterialConfigChances = { 5, 300, 200, 150, 100, 50; }
+  MainMaterialConfig = { 60,
+                         SILVER, MOON_SILVER, GOLD, DARK_GOLD, PLATINUM, ELECTRUM,
+                         TITANITE, ADAMANT, CHAR_COAL, COAL, JET, URANIUM, SOLARIUM,
+                         NEUTRONIUM, MAGIC_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                         PURPLE_CRYSTAL, PEARL_GLASS, PETRIFIED_WOOD, PETRIFIED_DARK,
+                         DRAGON_BONE, MAMMOTH_TUSK, OBSIDIAN, JASPER, JACINTH, AGATE,
+                         TOURMALINE, CHALCEDONY, CITRINE, LAPIS_LAZULI, OCCULTUM,
+                         AMBER, OPAL, ONYX, PEARL, CORAL, ROSE_QUARTZ, NETHER_QUARTZ,
+                         AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY, DIAMOND, BLACK_DIAMOND,
+                         JADEITE, MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                         BLUE_JADE, WHITE_JADE, BRIM_STONE, ALABASTER, HEMATITE,
+                         PYRITE, PRIMORDIAL_ICE, HALCYON; }
+  MaterialConfigChances = { 60,
+                            300, 25, 200, 25, 50, 75, 5, 5, 10, 10, 25, 1, 1, 1,
+                            5, 5, 5, 5, 3, 2, 1, 1, 25, 50, 75, 50, 50, 50, 50, 50,
+                            50, 5, 75, 75, 75, 50, 25, 25, 25, 50, 50, 50, 50, 50,
+                            25, 5, 50, 50, 50, 25, 20, 15, 10, 5, 2, 1, 2, 5, 1, 1; }
   Alias = { 2, "jewel", "gem"; }
   Roundness = 90;
   AttachedGod = NONE;
@@ -2145,7 +3051,7 @@ stone
   {
     Possibility = 10;
     DefaultMainVolume = -417;
-    Adjective = "sol";
+    NameSingular = "sol stone";
     Price = 100;
     MainMaterialConfig == OBSIDIAN;
     IsValuable = true;
@@ -2215,7 +3121,11 @@ key
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
   Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
-  Config HEXAGONAL_LOCK; { Adjective = "hexagonal"; }
+  Config HEXAGONAL_LOCK;
+  {
+    MainMaterialConfig == MITHRIL;
+    Adjective = "hexagonal";
+  }
   Config OCTAGONAL_LOCK;
   {
     MainMaterialConfig == OCTIRON;
@@ -2225,7 +3135,7 @@ key
   Config HEART_SHAPED_LOCK;
   {
     MainMaterialConfig == GOLD;
-    Adjective = "heart shaped";
+    Adjective = "heart-shaped";
   }
 }
 
@@ -2239,8 +3149,36 @@ shield /* armor-> */
   BitmapPos = 32, 336;
   FormModifier = 15;
   NameSingular = "shield";
-  MainMaterialConfig = { 23, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH, UNICORN_HORN, HARDENED_LEATHER, TROLL_HIDE, OBSIDIAN, JASPER, LEAD, SILVER, GOLD, BONE; }
-  MaterialConfigChances = { 23, 350, 300, 250, 200, 150, 100, 400, 300, 200, 100, 25, 15, 10, 5, 10, 250, 200, 50, 50, 100, 20, 20, 150; }
+  MainMaterialConfig = { 107,
+                         TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                         SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                         GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         BOILED_LEATHER, STUDDED_LEATHER, TROLL_HIDE, IMP_HIDE,
+                         STAINLESS_STEEL, JET, ARCANITE, GLASS, PEARL_GLASS, ICE,
+                         RED_ICE, JOTUN_ICE, STEEL_LEAF, FUNGI_WOOD, SPRUCE_WOOD,
+                         SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, HOLLY_WOOD,
+                         YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD, MAHOGANY_WOOD, BALSA_WOOD,
+                         PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD,
+                         EBONY_WOOD, KAURI_WOOD, PETRIFIED_WOOD, CHITINE, BUFFALO_HORN,
+                         MOOSE_ANTLER, TURTLE_SHELL, SEA_SHELL, OBSIDIAN, MARBLE, BASALT,
+                         JASPER, JACINTH, AGATE, BLACK_GRANITE, CITRINE, ONYX, NACRE, CORAL,
+                         DEEP_CORAL, HALCYON, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ,
+                         NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, AEGI_SALT, HEMATITE, HARDENED_ASH,
+                         BONE, WHALE_BONE, WRAITH_BONE, OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK,
+                         MAMMOTH_TUSK, OMMEL_TOOTH, RESIDUUM, PIG_IRON, IRON,
+                         STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                         BLOOD_IRON, BLOOD_STEEL, PLASTIC, HARDENED_PLASTIC; }
+  MaterialConfigChances = { 107,
+                            50, 300, 150, 25, 25, 5, 2, 75, 50, 25, 5, 15, 150, 50,
+                            25, 10, 25, 10, 5, 75, 250, 20, 200, 200, 200, 100, 25,
+                            25, 5, 5, 3, 5, 1, 5, 5, 3, 150, 250, 300, 350, 250,
+                            150, 75, 200, 300, 350, 200, 50, 150, 250, 350, 300,
+                            200, 75, 25, 5, 75, 150, 75, 15, 5, 30, 25, 10, 5, 5,
+                            5, 20, 5, 5, 2, 25, 15, 5, 50, 30, 20, 10, 75, 50, 25,
+                            5, 15, 1, 5, 5, 1, 250, 150, 75, 10, 200, 100, 25, 5,
+                            1, 300, 100, 25, 5, 2, 100, 25, 100, 25, 1, 1; }
   Roundness = 95;
   WeaponCategory = SHIELDS;
   CanBeBroken = true;
@@ -2256,8 +3194,23 @@ shield /* armor-> */
     StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 9, EBONY_WOOD, RATA_WOOD, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 9, 100, 50, 350, 100, 50, 10, 15, 5, 2; }
+    MainMaterialConfig = { 52,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, STAINLESS_STEEL, ARCANITE,
+                           JOTUN_ICE, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, HYDRA_HIDE,
+                           DRAGON_HIDE, KRAKEN_HIDE, LEVIATHAN_HIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD,
+                           RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 52,
+                              250, 100, 50, 150, 50, 250, 300, 100, 75, 25, 50, 50,
+                              300, 150, 50, 25, 10, 75, 300, 150, 75, 150, 150, 5,
+                              5, 5, 1, 1, 1, 50, 25, 15, 20, 1, 5, 75, 25, 5,
+                              100, 25, 30, 5, 5, 5, 5, 50, 30, 20, 3, 3, 25, 5; }
     EnchantmentPlusChance = 30;
   }
 
@@ -2330,8 +3283,20 @@ cloak /* armor-> */
   BitmapPos = 32, 352;
   FormModifier = 20;
   NameSingular = "cloak";
-  MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
-  MaterialConfigChances = { 5, 2000, 1000, 500, 250, 100; }
+  MainMaterialConfig = { 38,
+                         LINEN_CLOTH, HEMP_CLOTH, WOOL_CLOTH, FELT, FABRIC, ELF_CLOTH,
+                         NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                         BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         QUILTED_LEATHER, TROLL_HIDE, IMP_HIDE, OSTRICH_FEATHER,
+                         HARPY_FEATHER, GRIFFON_FEATHER, PHOENIX_FEATHER, FISH_SCALE,
+                         MERMAID_HAIR, SELKIE_SKIN, SEA_SERPENT_SCALE, DREAM_CLOTH,
+                         RAINBOW_CLOTH, SHADOW_CLOTH, ELASTI_CLOTH, PALM_LEAF,
+                         WITCH_BARK, DARK_PETAL; }
+  MaterialConfigChances = { 38,
+                            50, 50, 50, 50, 5, 350, 250, 100, 25, 1, 300, 250, 75,
+                            50, 25, 10, 5, 2000, 25, 1000, 1000, 250, 50, 250, 100,
+                            50, 5, 50, 250, 75, 5, 1, 1, 1, 1, 3, 100, 25; }
   Roundness = 60;
   IsTwoHanded = true;
   InElasticityPenaltyModifier = 50;
@@ -2346,8 +3311,6 @@ cloak /* armor-> */
     Possibility = 25;
     BitmapPos = 64, 304;
     InElasticityPenaltyModifier = 40;
-    MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
-    MaterialConfigChances = { 4, 500, 250, 100, 25; }
     EnchantmentPlusChance = 20;
     CloakBitmapPos = 48, 496;
   }
@@ -2358,8 +3321,8 @@ cloak /* armor-> */
     GearStates = INVISIBLE;
     PostFix = "of invisibility";
     Price = 2500;
-    MainMaterialConfig == CLOTH;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 3, HEMP_CLOTH, SHADOW_CLOTH, ECTOPLASM; }
+    MaterialConfigChances = { 3, 250, 50, 1; }
     EnchantmentPlusChance = 2;
   }
 
@@ -2390,8 +3353,6 @@ cloak /* armor-> */
     InElasticityPenaltyModifier = 40;
     FireResistance = 10;
     Price = 150;
-    MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
-    MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
   }
@@ -2412,8 +3373,6 @@ cloak /* armor-> */
     InElasticityPenaltyModifier = 40;
     ElectricityResistance = 10;
     Price = 150;
-    MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
-    MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
   }
@@ -2435,8 +3394,6 @@ cloak /* armor-> */
     InElasticityPenaltyModifier = 40;
     AcidResistance = 2;
     Price = 150;
-    MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
-    MaterialConfigChances = { 4, 300, 200, 100, 50; }
     EnchantmentPlusChance = 10;
     CloakBitmapPos = 48, 496;
   }
@@ -2446,7 +3403,7 @@ cloak /* armor-> */
     Possibility = 0;
     GearStates = ETHEREAL_MOVING;
     Price = 2500;
-    MainMaterialConfig == GHOST;
+    MainMaterialConfig == ECTOPLASM;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
     NameSingular = "shadow veil";
@@ -2468,7 +3425,7 @@ cloak /* armor-> */
   {
     Possibility = 1;
     NameSingular = "werewolf fur cloak";
-    MainMaterialConfig == LEATHER;
+    MainMaterialConfig == WOLF_SKIN;
     MaterialConfigChances == 100;
     GearStates = LYCANTHROPY|REGENERATION;
     EnchantmentPlusChance = 5;
@@ -2530,8 +3487,8 @@ cloak /* armor-> */
     GearStates = LEVITATION;
     PostFix = "of flying";
     Price = 2500;
-    MainMaterialConfig == OMMEL_HAIR;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 4, FABRIC, OMMEL_HAIR, OSTRICH_FEATHER, GRIFFON_FEATHER; }
+    MaterialConfigChances = { 4, 50, 150, 250, 50; }
     EnchantmentPlusChance = 2;
   }
 
@@ -2553,8 +3510,8 @@ cloak /* armor-> */
     AffectsAgility = true;
     BaseEnchantment = 1;
     Price = 2500;
-    MainMaterialConfig == NYMPH_HAIR;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 4, NYMPH_HAIR, MERMAID_HAIR, ELASTI_CLOTH, QUICK_SILVER; }
+    MaterialConfigChances = { 4, 250, 150, 1, 1; }
     EnchantmentPlusChance = 2;
   }
 
@@ -2577,8 +3534,16 @@ cloak /* armor-> */
     StrengthModifier = 150;
     AttachedGod = ATAVUS;
     InElasticityPenaltyModifier = 10;
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     Alias == "invulnerability";
   }
 
@@ -2586,6 +3551,16 @@ cloak /* armor-> */
   {
     Possibility = 0;
     BitmapPos = 64, 304;
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     InElasticityPenaltyModifier = 5;
     Price = 150;
     CloakBitmapPos = 48, 496;
@@ -2631,8 +3606,48 @@ boot /* armor-> */
   BitmapPos = 0, 400;
   FormModifier = 20;
   NameSingular = "boot";
-  MainMaterialConfig = { 9, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
-  MaterialConfigChances = { 9, 2000, 1000, 500, 250, 100, 1000, 500, 100, 25; }
+  /* NameSingular = "greave";    This sadly down not work with plural naming,
+  FlexibleNameSingular = "boot"; as plurals are always based on NameSingular. */
+  MainMaterialConfig = { 145,
+                         TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                         SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                         GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, ELF_CLOTH,
+                         NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                         BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         BOILED_LEATHER, QUILTED_LEATHER, STUDDED_LEATHER, TROLL_HIDE,
+                         IMP_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                         PHOENIX_FEATHER, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN,
+                         SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH, SHADOW_CLOTH,
+                         ELASTI_CLOTH, KEVLAR, LATEX, STAINLESS_STEEL, JET, URANIUM,
+                         MAGIC_CRYSTAL, ARCANITE, RED_SAND_STONE, GLASS, PEARL_GLASS,
+                         ICE, RED_ICE, JOTUN_ICE, PALM_LEAF, WITCH_BARK, DARK_PETAL,
+                         STEEL_LEAF, PAPER_BOARD, FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD,
+                         ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD,
+                         BAMBOO_WOOD, MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD,
+                         BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                         PETRIFIED_WOOD, HUMAN_NAIL, CHITINE, BUFFALO_HORN, MOOSE_ANTLER,
+                         TURTLE_SHELL, SEA_SHELL, OBSIDIAN, MARBLE, BASALT, JASPER,
+                         JACINTH, AGATE, BLACK_GRANITE, CITRINE, ONYX, NACRE, CORAL,
+                         DEEP_CORAL, HALCYON, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ,
+                         NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, PORCELAIN, AEGI_SALT,
+                         HEMATITE, HARDENED_ASH, BANANA_PEEL, BONE, WHALE_BONE, WRAITH_BONE,
+                         OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK, MAMMOTH_TUSK, OMMEL_TOOTH,
+                         RESIDUUM, ECTOPLASM, MAGIC_VAPOUR, QUICK_SILVER, PIG_IRON, IRON,
+                         STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                         BLOOD_IRON, BLOOD_STEEL; }
+  MaterialConfigChances = { 145,
+                            25, 250, 500, 10, 150, 25, 5, 50, 75, 25, 5, 10, 100,
+                            50, 10, 15, 5, 3, 1, 1000, 300, 75, 25, 50, 250, 200,
+                            75, 50, 25, 5, 1, 5000, 5, 2500, 2500, 2500, 2500, 100,
+                            25, 750, 200, 75, 5, 75, 150, 50, 5, 1, 1, 1, 1, 1, 1,
+                            25, 5, 1, 3, 15, 2, 3, 25, 2, 4, 1, 1, 50, 20, 5, 1, 5,
+                            10, 15, 20, 25, 30, 5, 10, 15, 25, 35, 5, 10, 15, 20, 25,
+                            30, 35, 50, 2, 1, 50, 30, 15, 5, 5, 15, 15, 15, 10, 10,
+                            5, 15, 10, 10, 3, 15, 5, 1, 25, 15, 10, 5, 75, 50, 25, 5,
+                            25, 5, 1, 1, 1, 3, 1, 1, 5, 50, 25, 10, 50, 25, 10, 5, 1,
+                            1, 1, 1, 500, 300, 100, 25, 5, 75, 25, 75, 25; }
   Roundness = 50;
   CanBePiled = true;
   InElasticityPenaltyModifier = 10;
@@ -2649,8 +3664,29 @@ boot /* armor-> */
     FormModifier = 30;
     BitmapPos = 80, 368;
     Possibility = 25;
-    MainMaterialConfig = { 9, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 9, 100, 500, 100, 25, 10, 10, 25, 5, 1; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     EnchantmentPlusChance = 20;
     InElasticityPenaltyModifier = 30;
     BootBitmapPos = 16, 512;
@@ -2661,8 +3697,6 @@ boot /* armor-> */
     Possibility = 10;
     StrengthModifier = 125;
     PostFix = "of strength";
-    MainMaterialConfig == TROLL_HIDE;
-    MaterialConfigChances == 100;
     AffectsLegStrength = true;
     Price = 50;
     BaseEnchantment = 1;
@@ -2688,8 +3722,6 @@ boot /* armor-> */
     Possibility = 10;
     StrengthModifier = 125;
     PostFix = "of agility";
-    MainMaterialConfig == LEATHER;
-    MaterialConfigChances == 100;
     AffectsAgility = true;
     Price = 75;
     BaseEnchantment = 1;
@@ -2715,9 +3747,18 @@ boot /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 175;
+    NameSingular = "boot";
     PostFix = "of kicking";
-    MainMaterialConfig == IRON;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     Price = 50;
     FormModifier = 50;
     EnchantmentPlusChance = 5;
@@ -2729,8 +3770,16 @@ boot /* armor-> */
     FormModifier = 30;
     BitmapPos = 80, 368;
     Possibility = 20;
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     EnchantmentPlusChance = 10;
     InElasticityPenaltyModifier = 30;
     BootBitmapPos = 16, 512;
@@ -2747,8 +3796,47 @@ gauntlet /* armor-> */
   BitmapPos = 32, 368;
   FormModifier = 20;
   NameSingular = "gauntlet";
-  MainMaterialConfig = { 8, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
-  MaterialConfigChances = { 8, 2000, 1000, 200, 100, 500, 250, 50, 10; }
+  FlexibleNameSingular = "glove";
+  MainMaterialConfig = { 145,
+                         TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                         SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                         GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, ELF_CLOTH,
+                         NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                         BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         BOILED_LEATHER, QUILTED_LEATHER, STUDDED_LEATHER, TROLL_HIDE,
+                         IMP_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                         PHOENIX_FEATHER, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN,
+                         SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH, SHADOW_CLOTH,
+                         ELASTI_CLOTH, KEVLAR, LATEX, STAINLESS_STEEL, JET, URANIUM,
+                         MAGIC_CRYSTAL, ARCANITE, RED_SAND_STONE, GLASS, PEARL_GLASS,
+                         ICE, RED_ICE, JOTUN_ICE, PALM_LEAF, WITCH_BARK, DARK_PETAL,
+                         STEEL_LEAF, PAPER_BOARD, FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD,
+                         ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD,
+                         BAMBOO_WOOD, MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD,
+                         BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                         PETRIFIED_WOOD, HUMAN_NAIL, CHITINE, BUFFALO_HORN, MOOSE_ANTLER,
+                         TURTLE_SHELL, SEA_SHELL, OBSIDIAN, MARBLE, BASALT, JASPER,
+                         JACINTH, AGATE, BLACK_GRANITE, CITRINE, ONYX, NACRE, CORAL,
+                         DEEP_CORAL, HALCYON, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ,
+                         NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, PORCELAIN, AEGI_SALT,
+                         HEMATITE, HARDENED_ASH, BANANA_PEEL, BONE, WHALE_BONE, WRAITH_BONE,
+                         OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK, MAMMOTH_TUSK, OMMEL_TOOTH,
+                         RESIDUUM, ECTOPLASM, MAGIC_VAPOUR, QUICK_SILVER, PIG_IRON, IRON,
+                         STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                         BLOOD_IRON, BLOOD_STEEL; }
+  MaterialConfigChances = { 145,
+                            25, 250, 500, 10, 150, 25, 5, 50, 75, 25, 5, 10, 100,
+                            50, 10, 15, 5, 3, 1, 1000, 300, 75, 25, 50, 250, 200,
+                            75, 50, 25, 5, 1, 5000, 5, 2500, 2500, 2500, 2500, 100,
+                            25, 750, 200, 75, 5, 75, 150, 50, 5, 1, 1, 1, 1, 1, 1,
+                            25, 5, 1, 3, 15, 2, 3, 25, 2, 4, 1, 1, 50, 20, 5, 1, 5,
+                            10, 15, 20, 25, 30, 5, 10, 15, 25, 35, 5, 10, 15, 20, 25,
+                            30, 35, 50, 2, 1, 50, 30, 15, 5, 5, 15, 15, 15, 10, 10,
+                            5, 15, 10, 10, 3, 15, 5, 1, 25, 15, 10, 5, 75, 50, 25, 5,
+                            25, 5, 1, 1, 1, 3, 1, 1, 5, 50, 25, 10, 50, 25, 10, 5, 1,
+                            1, 1, 1, 500, 300, 100, 25, 5, 75, 25, 75, 25; }
   Roundness = 60;
   CanBePiled = true;
   InElasticityPenaltyModifier = 20;
@@ -2758,13 +3846,33 @@ gauntlet /* armor-> */
   CanBeBroken = true;
   EnchantmentPlusChance = 10;
   HasNormalPictureDirection = false;
-  Alias == "glove";
 
   Config BROKEN;
   {
     Possibility = 25;
-    MainMaterialConfig = { 7, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, MITHRIL; }
-    MaterialConfigChances = { 7, 100, 500, 250, 50, 10, 5, 10; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     DefaultSize = 30;
     FormModifier = 30;
     BitmapPos = 80, 400;
@@ -2777,9 +3885,9 @@ gauntlet /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 110;
+    NameSingular = "gauntlet";
+    FlexibleNameSingular = "glove";
     PostFix = "of strength";
-    MainMaterialConfig == TROLL_HIDE;
-    MaterialConfigChances == 100;
     AffectsArmStrength = true;
     Price = 75;
     BaseEnchantment = 1;
@@ -2804,10 +3912,9 @@ gauntlet /* armor-> */
   {
     Possibility = 10;
     StrengthModifier = 110;
-    NameSingular = "glove";
+    NameSingular = "gauntlet";
+    FlexibleNameSingular = "glove";
     PostFix = "of dexterity";
-    MainMaterialConfig == LEATHER;
-    MaterialConfigChances == 100;
     AffectsDexterity = true;
     Price = 100;
     BaseEnchantment = 1;
@@ -2839,9 +3946,22 @@ belt /* armor-> */
   DefaultMainVolume = 250;
   StrengthModifier = 100;
   BitmapPos = 32, 384;
-  NameSingular = "belt";
-  MainMaterialConfig = { 4, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
-  MaterialConfigChances = { 4, 1500, 500, 250, 100; }
+  NameSingular = "girdle";
+  FlexibleNameSingular = "belt";
+  MainMaterialConfig = { 38,
+                         LINEN_CLOTH, HEMP_CLOTH, WOOL_CLOTH, FELT, FABRIC, ELF_CLOTH,
+                         NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                         BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         QUILTED_LEATHER, TROLL_HIDE, IMP_HIDE, OSTRICH_FEATHER,
+                         HARPY_FEATHER, GRIFFON_FEATHER, PHOENIX_FEATHER, FISH_SCALE,
+                         MERMAID_HAIR, SELKIE_SKIN, SEA_SERPENT_SCALE, DREAM_CLOTH,
+                         RAINBOW_CLOTH, SHADOW_CLOTH, ELASTI_CLOTH, PALM_LEAF,
+                         WITCH_BARK, DARK_PETAL; }
+  MaterialConfigChances = { 38,
+                            50, 50, 50, 50, 5, 350, 250, 100, 25, 1, 300, 250, 75,
+                            50, 25, 10, 5, 2000, 25, 1000, 1000, 250, 50, 250, 100,
+                            50, 5, 50, 250, 75, 5, 1, 1, 1, 1, 3, 100, 25; }
   Roundness = 10;
   FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
   WieldedBitmapPos = 160, 224;
@@ -2855,8 +3975,29 @@ belt /* armor-> */
   {
     DefaultSize = 150;
     Possibility = 25;
-    MainMaterialConfig = { 5, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE, MITHRIL; }
-    MaterialConfigChances = { 5, 500, 250, 100, 25, 10; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     BitmapPos = 80, 384;
     EnchantmentPlusChance = 20;
     BeltBitmapPos = 48, 512;
@@ -2865,14 +4006,16 @@ belt /* armor-> */
   Config BELT_OF_CARRYING;
   {
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of carrying";
     AffectsCarryingCapacity = true;
     Price = 75;
     BaseEnchantment = 1;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = MELLIS;
-    MainMaterialConfig == FABRIC;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 4, FABRIC, GOLD, SILVER, PLATINUM; }
+    MaterialConfigChances = { 4, 250, 5, 5, 5; }
     EnchantmentPlusChance = 2;
   }
 
@@ -2882,6 +4025,8 @@ belt /* armor-> */
     Possibility = 20;
     AffectsCarryingCapacity = false;
     Price = 25;
+    MainMaterialConfig = { 4, FABRIC, GOLD, SILVER, PLATINUM; }
+    MaterialConfigChances = { 4, 250, 5, 5, 5; }
     BitmapPos = 80, 384;
     EnchantmentPlusChance = 4;
     BeltBitmapPos = 48, 512;
@@ -2890,6 +4035,8 @@ belt /* armor-> */
   Config BELT_OF_LEVITATION;
   {
     Possibility = 0;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of levitation";
     GearStates = LEVITATION;
     Price = 500;
@@ -2913,17 +4060,37 @@ belt /* armor-> */
     DefaultMainVolume = 300;
     StrengthModifier = 150;
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of protection";
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     Price = 100;
     AttachedGod = ATAVUS;
-    MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
   }
 
   Config BROKEN|BELT_OF_PROTECTION;
   {
     Possibility = 2;
     Price = 50;
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     BitmapPos = 80, 384;
     BeltBitmapPos = 48, 512;
   }
@@ -2931,6 +4098,8 @@ belt /* armor-> */
   Config BELT_OF_GIANT_STRENGTH;
   {
     Possibility = 5;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of giant strength";
     Price = 500;
     AffectsArmStrength = true;
@@ -2938,7 +4107,7 @@ belt /* armor-> */
     BaseEnchantment = 1;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = CRUENTUS;
-    MainMaterialConfig == TROLL_HIDE;
+    MainMaterialConfig == BEAR_SKIN;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 2;
     Alias = { 2, "belt of strength", "strength"; }
@@ -2986,6 +4155,8 @@ belt /* armor-> */
   Config BELT_OF_REGENERATION;
   {
     Possibility = 2;
+    NameSingular = "girdle";
+    FlexibleNameSingular = "belt";
     PostFix = "of regeneration";
     GearStates = REGENERATION;
     Price = 100;
@@ -3175,7 +4346,7 @@ ring
 
   Config RING_OF_POLYMORPH_LOCK;
   {
-    Possibility = 0;
+    Possibility = 1;
     PostFix = "of unchanging";
     MainMaterialConfig == ICE;
     GearStates = POLYMORPH_LOCK;
@@ -3191,7 +4362,7 @@ ring
     AcidResistance = 100;
     PoisonResistance = 100;
     NameSingular = "mutated symbiotic worm-ring";
-    MainMaterialConfig == MIND_WORM_FLESH;
+    MainMaterialConfig == URANIUM;
     Price = 2500;
     AttachedGod = SCABIES;
     GearStates = PARASITE_TAPE_WORM;
@@ -3566,7 +4737,13 @@ itemcontainer
   Roundness = 60;
   IsTwoHanded = true;
   FormModifier = 15;
-  MainMaterialConfig == FIR_WOOD;
+  MainMaterialConfig = { 20,
+                         FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD, ELM_WOOD, ASH_WOOD,
+                         CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
+                         MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
+                         OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD; }
+  MaterialConfigChances = { 20,
+                            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 500, 5, 5, 5, 5, 5, 5; }
   Roundness = 60;
   CanBePiled = false;
   IsAbstract = true;
@@ -3631,7 +4808,16 @@ itemcontainer
     Price = 250;
     Possibility = 10;
     MaxGeneratedContainedItems = 3;
-    MainMaterialConfig == IRON;
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, ARCANITE, ILLITHIUM; }
+    MaterialConfigChances = { 30,
+                              300, 750, 10, 100, 25, 5, 25, 10, 5, 1, 100, 5, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 1, 1; }
     BitmapPos = 48, 368;
     DamageDivider = 5;
     StrengthModifier = 150;
@@ -3655,16 +4841,22 @@ beartrap
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
   IsPolymorphable = false;
-  MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-  MaterialConfigChances = { 7, 200, 300, 500, 100, 50, 25, 1; }
+  MainMaterialConfig = { 30,
+                         COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                         ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                         BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+  MaterialConfigChances = { 30,
+                            300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                            5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                            25, 50, 10, 5; }
 
   Config BROKEN;
   {
     Possibility = 10;
     BitmapPos = 48, 48;
     Price = 0;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 100, 50, 25, 1; }
   }
 }
 
@@ -3678,8 +4870,47 @@ helmet
   BitmapPos = 16, 384;
   FormModifier = 10;
   NameSingular = "helmet";
-  MainMaterialConfig = { 23, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, OBSIDIAN, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-  MaterialConfigChances = { 23, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 100, 100, 750, 500, 250, 100, 25, 25, 25, 25, 10, 5; }
+  FlexibleNameSingular = "cap";
+  MainMaterialConfig = { 145,
+                         TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                         SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                         GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, ELF_CLOTH,
+                         NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, HUMAN_SKIN, WOLF_SKIN,
+                         BEAR_SKIN, SNAKE_SKIN, CROCODILE_SKIN, BASILISK_SKIN, NAGA_SKIN,
+                         WYVERN_HIDE, LEATHER, BLACK_LEATHER, HARDENED_LEATHER,
+                         BOILED_LEATHER, QUILTED_LEATHER, STUDDED_LEATHER, TROLL_HIDE,
+                         IMP_HIDE, OSTRICH_FEATHER, HARPY_FEATHER, GRIFFON_FEATHER,
+                         PHOENIX_FEATHER, FISH_SCALE, MERMAID_HAIR, SELKIE_SKIN,
+                         SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH, SHADOW_CLOTH,
+                         ELASTI_CLOTH, KEVLAR, LATEX, STAINLESS_STEEL, JET, URANIUM,
+                         MAGIC_CRYSTAL, ARCANITE, RED_SAND_STONE, GLASS, PEARL_GLASS,
+                         ICE, RED_ICE, JOTUN_ICE, PALM_LEAF, WITCH_BARK, DARK_PETAL,
+                         STEEL_LEAF, PAPER_BOARD, FUNGI_WOOD, SPRUCE_WOOD, SYCAMORE_WOOD,
+                         ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD,
+                         BAMBOO_WOOD, MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD,
+                         BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                         PETRIFIED_WOOD, HUMAN_NAIL, CHITINE, BUFFALO_HORN, MOOSE_ANTLER,
+                         TURTLE_SHELL, SEA_SHELL, OBSIDIAN, MARBLE, BASALT, JASPER,
+                         JACINTH, AGATE, BLACK_GRANITE, CITRINE, ONYX, NACRE, CORAL,
+                         DEEP_CORAL, HALCYON, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ,
+                         NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, PORCELAIN, AEGI_SALT,
+                         HEMATITE, HARDENED_ASH, BANANA_PEEL, BONE, WHALE_BONE, WRAITH_BONE,
+                         OMMEL_BONE, SHARK_TOOTH, TROLL_TUSK, MAMMOTH_TUSK, OMMEL_TOOTH,
+                         RESIDUUM, ECTOPLASM, MAGIC_VAPOUR, QUICK_SILVER, PIG_IRON, IRON,
+                         STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                         BLOOD_IRON, BLOOD_STEEL; }
+  MaterialConfigChances = { 145,
+                            25, 250, 500, 10, 150, 25, 5, 50, 75, 25, 5, 10, 100,
+                            50, 10, 15, 5, 3, 1, 1000, 300, 75, 25, 50, 250, 200,
+                            75, 50, 25, 5, 1, 5000, 5, 2500, 2500, 2500, 2500, 100,
+                            25, 750, 200, 75, 5, 75, 150, 50, 5, 1, 1, 1, 1, 1, 1,
+                            25, 5, 1, 3, 15, 2, 3, 25, 2, 4, 1, 1, 50, 20, 5, 1, 5,
+                            10, 15, 20, 25, 30, 5, 10, 15, 25, 35, 5, 10, 15, 20, 25,
+                            30, 35, 50, 2, 1, 50, 30, 15, 5, 5, 15, 15, 15, 10, 10,
+                            5, 15, 10, 10, 3, 15, 5, 1, 25, 15, 10, 5, 75, 50, 25, 5,
+                            25, 5, 1, 1, 1, 3, 1, 1, 5, 50, 25, 10, 50, 25, 10, 5, 1,
+                            1, 1, 1, 500, 300, 100, 25, 5, 75, 25, 75, 25; }
   Roundness = 60;
   CanBeBroken = true;
   WieldedBitmapPos = 160, 128;
@@ -3692,8 +4923,29 @@ helmet
   {
     BitmapPos = 64, 64;
     Possibility = 35;
-    MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 7, 100, 25, 25, 25, 25, 10, 5; }
+    MainMaterialConfig = { 71,
+                           DEEP_BRONZE, BRASS, HEPATIZON, FAIRY_STEEL, MITHRIL,
+                           NYMPH_HAIR, OMMEL_HAIR, TROLL_WOOL, BASILISK_SKIN, NAGA_SKIN,
+                           WYVERN_HIDE, TROLL_HIDE, IMP_HIDE, GRIFFON_FEATHER,
+                           PHOENIX_FEATHER, SEA_SERPENT_SCALE, DREAM_CLOTH, RAINBOW_CLOTH,
+                           SHADOW_CLOTH, KEVLAR, STAINLESS_STEEL, ARCANITE, JOTUN_ICE,
+                           DARK_PETAL, STEEL_LEAF, EBONY_WOOD, KAURI_WOOD, TURTLE_SHELL,
+                           DEEP_CORAL, HALCYON, BLACK_JADE, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, SOUL_STEEL, BLOOD_STEEL, OCTIRON, GALVORN,
+                           DARK_MATTER, PETRIFIED_DARK, IRIDIUM, CHROME, ANGEL_HAIR,
+                           HYDRA_HIDE, DRAGON_HIDE, STYMPHALIAN_FEATHER, KRAKEN_HIDE,
+                           LEVIATHAN_HIDE, FLEXI_CLOTH, SYNTH_CLOTH, CARBIDE, FOLDED_CARBIDE,
+                           OCCULTUM, ILLITHIUM, PRIMORDIAL_ICE, CHLOROPHYTE, RATA_WOOD,
+                           SIDGURE_WOOD, UNICORN_HORN, DRAGON_BONE, AMETHYST, TOPAZ,
+                           SAPPHIRE, EMERALD, RED_JADE, GREEN_JADE, BLUE_JADE, BLUE_CRYSTAL,
+                           GREEN_CRYSTAL, UKKU_STEEL, ADAMANT; }
+    MaterialConfigChances = { 71,
+                              250, 75, 10, 250, 50, 300, 250, 100, 200, 100, 75,
+                              300, 250, 250, 50, 100, 1, 1, 1, 1, 100, 50, 25,
+                              75, 50, 150, 75, 25, 25, 5, 50, 750, 500, 250, 100,
+                              100, 10, 10, 5, 2, 25, 5, 5, 50, 25, 15, 25, 15, 1,
+                              1, 1, 1, 5, 15, 5, 50, 75, 5, 25, 20, 5, 5, 5, 5,
+                              25, 10, 5, 2, 1, 25, 5; }
     HelmetBitmapPos = 112, 496;
     EnchantmentPlusChance = 30;
     SoundResistance = 0;
@@ -3708,8 +4960,17 @@ helmet
     BitmapPos = 48, 32;
     Possibility = 35;
     Adjective = "full";
-    MainMaterialConfig = { 9, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-    MaterialConfigChances = { 9, 750, 500, 250, 100, 25, 25, 25, 10, 5; }
+    FlexibleNameSingular = "helmet";
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+    MaterialConfigChances = { 30,
+                              750, 1500, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 10, 5; }
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 10;
@@ -3720,8 +4981,16 @@ helmet
   {
     BitmapPos = 64, 32;
     Possibility = 4;
-    MainMaterialConfig = { 7, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 7, 250, 100, 25, 25, 25, 10, 5; }
+    MainMaterialConfig = { 30,
+                           COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, SILVER, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD, DARK_GOLD, DARK_MATTER,
+                           ELECTRUM, NICKEL, COBALT, PIG_IRON, IRON, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON,
+                           BLOOD_STEEL, STAINLESS_STEEL, OCTIRON, ADAMANT; }
+    MaterialConfigChances = { 30,
+                              750, 1500, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
+                              5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 100, 25, 100,
+                              25, 50, 5, 5; }
     HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 20;
   }
@@ -3730,10 +4999,12 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of piercing perception";
     AffectsPerception = true;
     MainMaterialConfig == ILLITHIUM;
@@ -3763,10 +5034,12 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of understanding";
     AffectsWisdom = true;
     MainMaterialConfig == UNICORN_HORN;
@@ -3796,10 +5069,12 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of brilliance";
     AffectsIntelligence = true;
     MainMaterialConfig == ARCANITE;
@@ -3828,10 +5103,12 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of attractivity";
     AffectsCharisma = true;
     MainMaterialConfig == GOLD;
@@ -3891,10 +5168,12 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of indomitable will";
     AffectsWillPower = true;
     MainMaterialConfig == OCTIRON;
@@ -3926,10 +5205,12 @@ helmet
     StrengthModifier = 150;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 1;
+    Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of telepathy";
     GearStates = ESP;
-    MainMaterialConfig == ANGEL_HAIR;
+    MainMaterialConfig == SOUL_STEEL;
     MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = INFUSCOR;
@@ -3942,7 +5223,7 @@ helmet
   Config BROKEN|HELM_OF_TELEPATHY;
   {
     BitmapPos = 64, 32;
-    Possibility = 0;
+    Possibility = 3;
     Price = 25;
     GearStates = 0;
     HelmetBitmapPos = 96, 512;
@@ -3956,7 +5237,9 @@ helmet
     StrengthModifier = 150;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 1;
+    Possibility = 5;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of teleportation";
     GearStates = TELEPORT;
     MainMaterialConfig == MITHRIL;
@@ -3972,7 +5255,7 @@ helmet
   Config BROKEN|HELM_OF_TELEPORTATION;
   {
     BitmapPos = 64, 32;
-    Possibility = 0;
+    Possibility = 3;
     Price = 25;
     GearStates = 0;
     HelmetBitmapPos = 96, 512;
@@ -4028,7 +5311,9 @@ helmet
     StrengthModifier = 150;
     FormModifier = 25;
     BitmapPos = 48, 32;
-    Possibility = 0; /* not until we have magic */
+    Possibility = 1;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "cap";
     PostFix = "of essence plethora";
     Alias == "helm of mana";
     AffectsMana = true;
@@ -4062,10 +5347,35 @@ helmet
     BitmapPos = 80, 208;
     Possibility = 10;
     NameSingular = "mask";
-    MainMaterialConfig = { 15, HARDENED_LEATHER, BONE, OAK_WOOD, PINE_WOOD, GLASS, OBSIDIAN, PURPLE_CRYSTAL, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, EBONY_WOOD, KAURI_WOOD, SILVER; }
-    MaterialConfigChances = { 15, 3000, 2500, 500, 900, 100, 200, 25, 500, 250, 100, 50, 10, 100, 50, 10; }
     CoverPercentile = 30;
     HelmetBitmapPos = 112, 129;
+    MainMaterialConfig = { 100,
+                           TIN, COPPER, BRONZE, VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON,
+                           SILVER, MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD,
+                           GOLD, DARK_GOLD, ELECTRUM, NICKEL, COBALT, TUNGSTEN, HUMAN_SKIN,
+                           HARDENED_LEATHER, IMP_HIDE, GRIFFON_FEATHER, PHOENIX_FEATHER,
+                           SEA_SERPENT_SCALE, STAINLESS_STEEL, JET, ALABASTER, AEGI_SALT,
+                           MAGIC_CRYSTAL, ARCANITE, GLASS, PEARL_GLASS, RED_ICE, JOTUN_ICE,
+                           WITCH_BARK, DARK_PETAL, SPRUCE_WOOD, SYCAMORE_WOOD,
+                           ELM_WOOD, ASH_WOOD, CYPRESS_WOOD, YEW_WOOD, BEECH_WOOD,
+                           BAMBOO_WOOD, MAHOGANY_WOOD, PINE_WOOD, FIR_WOOD, BRIM_STONE,
+                           BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD,
+                           PETRIFIED_WOOD, CHITINE, TURTLE_SHELL, SEA_SHELL, OBSIDIAN,
+                           JACINTH, AGATE, ONYX, NACRE, CORAL, DEEP_CORAL, HALCYON,
+                           MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, ILLITHIUM, DRAGON_HIDE,
+                           NETHER_QUARTZ, JADEITE, MALACHITE, NEPHRITE, BLACK_JADE,
+                           ROCK_CRYSTAL, PURPLE_CRYSTAL, PORCELAIN, HARDENED_ASH, BANANA_PEEL,
+                           BONE, WHALE_BONE, WRAITH_BONE, OMMEL_BONE, MAMMOTH_TUSK, OMMEL_TOOTH,
+                           IRON, STEEL, DWARF_STEEL, METEORIC_STEEL, BLACK_IRON, SOUL_STEEL,
+                           BLOOD_IRON, BLOOD_STEEL, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
+    MaterialConfigChances = { 100,
+                              15, 50, 100, 25, 25, 5, 1, 50, 25, 25, 5, 15, 50, 50,
+                              25, 50, 5, 3, 1, 5, 100, 50, 50, 5, 5, 5, 10, 75, 5,
+                              15, 5, 25, 15, 30, 20, 100, 50, 40, 50, 60, 75, 25, 30,
+                              40, 50, 60, 30, 40, 5, 50, 60, 75, 25, 10, 1, 50, 10,
+                              5, 100, 30, 30, 30, 25, 75, 50, 15, 100, 75, 50, 5, 5,
+                              25, 100, 75, 50, 25, 50, 5, 50, 1, 1, 100, 75, 50, 5,
+                              25, 5, 50, 10, 5, 1, 15, 5, 15, 5, 5, 5, 3, 3, 1; }
     EnchantmentPlusChance = 30;
   }
 
@@ -4073,8 +5383,17 @@ helmet
   {
     BitmapPos = 80, 224;
     Possibility = 3;
-    MainMaterialConfig = { 16, DRAGON_HIDE, UNICORN_HORN, STEEL, ARCANITE, MITHRIL, ILLITHIUM, OCTIRON, ADAMANT, RATA_WOOD, SIDGURE_WOOD, OMMEL_TOOTH, GOLD, SAPPHIRE, RUBY, BLUE_CRYSTAL, SUN_CRYSTAL; }
-    MaterialConfigChances = { 16, 250, 100, 500, 250, 200, 100, 50, 10, 250, 100, 10, 5, 5, 5, 10, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, EMERALD, RUBY, DIAMOND, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 250, 150, 100, 50, 5, 5, 5, 150, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 10, 25, 25, 100, 75,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 40;
   }
 }
@@ -4091,7 +5410,7 @@ stethoscope
   Roundness = 20;
   NameSingular = "stethoscope";
   Price = 250;
-  MainMaterialConfig == UNICORN_HORN;
+  MainMaterialConfig == STEEL;
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 128;
   HasNormalPictureDirection = false;
@@ -4110,9 +5429,29 @@ flamingsword /* meleeweapon-> */
   StrengthModifier = 100;
   NameSingular = "sword";
   Adjective = "flaming";
-  MainMaterialConfig = { 5, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+  MainMaterialConfig = { 67,
+                         DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                         DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                         MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                         HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                         VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                         MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                         DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                         STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                         PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                         PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                         UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                         WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                         TROLL_TUSK, MAMMOTH_TUSK; }
   SecondaryMaterialConfig == DRAGON_HIDE;
-  MaterialConfigChances = { 5, 1000, 750, 100, 25, 25; }
+  MaterialConfigChances = { 67,
+                            10, 200, 50, 50,
+                            25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                            1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                            15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                            4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                            100, 10, 5, 100, 50, 25; }
   Roundness = 10;
   BaseEmitation = rgb24(150, 120, 90);
   Price = 250;
@@ -4127,9 +5466,17 @@ flamingsword /* meleeweapon-> */
     Possibility = 5;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
-    MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-    MaterialConfigChances = { 4, 250, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     EnchantmentPlusChance = 4;
   }
 
@@ -4459,8 +5806,8 @@ gorovitsweapon
     BitmapPos = 0, 16;
     FormModifier = 170;
     NameSingular = "scimitar";
-    MainMaterialConfig == METEORIC_STEEL;
-    SecondaryMaterialConfig == METEORIC_STEEL;
+    MainMaterialConfig == MITHRIL;
+    SecondaryMaterialConfig == FIR_WOOD;
     Roundness = 15;
     IsTwoHanded = true;
     AttachedGod = CRUENTUS;
@@ -4476,7 +5823,7 @@ scrollofrepair /* scroll-> */
   Possibility = 50;
   Price = 250;
   PostFix = "of repair";
-  Alias == "scroll of repairing";
+  Alias = { 2, "scroll of repairing", "repair"; }
   AttachedGod = LORICATUS;
   ReadDifficulty = 500;
 }
@@ -4557,9 +5904,29 @@ thunderhammer /* meleeweapon-> */
   BitmapPos = 48, 160;
   FormModifier = 110;
   NameSingular = "thunder hammer";
-  MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
-  SecondaryMaterialConfig == FIR_WOOD;
-  MaterialConfigChances = { 7, 1000, 750, 500, 100, 25, 25, 25; }
+  MainMaterialConfig = { 67,
+                         DRAGON_BONE, OBSIDIAN, JASPER, JACINTH,
+                         DEEP_CORAL, HALCYON, QUARTZITE, ROSE_QUARTZ, AMETHYST,
+                         MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                         ROCK_CRYSTAL, PURPLE_CRYSTAL, BRIM_STONE, AEGI_SALT,
+                         HARDENED_ASH, COPPER, BRONZE, ONYX, RESIDUUM,
+                         VERDIGRIS, DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, SILVER,
+                         MOON_SILVER, FAIRY_STEEL, MITHRIL, PLATINUM, LEAD, GOLD,
+                         DARK_GOLD, DARK_MATTER, ELECTRUM, NICKEL, COBALT, TUNGSTEN,
+                         STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
+                         PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
+                         PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
+                         UKKU_STEEL, BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL,
+                         WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
+                         TROLL_TUSK, MAMMOTH_TUSK; }
+  SecondaryMaterialConfig == FIR_WOOD; /* FROZEN_LIGHTNING */
+  MaterialConfigChances = { 67,
+                            10, 200, 50, 50,
+                            25, 5, 25, 15, 5, 100, 50, 25, 20, 15, 25, 5, 1, 1, 1,
+                            1500, 2500, 25, 5, 150, 100, 50, 25, 5, 50, 25, 25,
+                            15, 5, 250, 25, 15, 5, 5, 5, 4, 3, 50, 2, 3, 1, 3, 4, 2,
+                            4, 100, 1000, 2000, 100, 50, 25, 5, 300, 50, 300, 50, 150,
+                            100, 10, 5, 100, 50, 25; }
   Roundness = 20;
   IsTwoHanded = true;
   CanBeUsedBySmith = true;
@@ -4575,8 +5942,17 @@ thunderhammer /* meleeweapon-> */
     BitmapPos = 48, 192;
     Price = 100;
     WieldedBitmapPos = 176, 224;
-    MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, ADAMANT; }
-    MaterialConfigChances = { 5, 250, 25, 25, 25, 5; }
+    MainMaterialConfig = { 33,
+                           DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                           GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                           DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                           FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                           STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+    MaterialConfigChances = { 33,
+                              10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                              1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                              50, 10, 5, 250, 250; }
     BaseEmitation = 0;
     EnchantmentPlusChance = 4;
   }
@@ -4718,8 +6094,12 @@ sausage
   FormModifier = 25;
   DefaultSize = 20;
   NameSingular = "sausage";
-  MainMaterialConfig = { 12, BEEF, PORK, BEAR_FLESH, RAT_FLESH, MAMMOTH_FLESH, BLACK_UNICORN_FLESH, WHITE_UNICORN_FLESH, CHAMELEON_FLESH, KOBOLD_FLESH, HUMAN_FLESH, DWARF_FLESH, ELF_FLESH; }
-  MaterialConfigChances = { 12, 1000, 1000, 500, 250, 250, 10, 10, 5, 5, 5, 5, 5; }
+  MainMaterialConfig = { 15,
+                         BEEF, PORK, VENISON, MYSTERY_MEAT, BEAR_FLESH, RAT_FLESH,
+                         MAMMOTH_FLESH, BLACK_UNICORN_FLESH, WHITE_UNICORN_FLESH,
+                         CHAMELEON_FLESH, KOBOLD_FLESH, HUMAN_FLESH, DWARF_FLESH,
+                         ELF_FLESH, KELP; }
+  MaterialConfigChances = { 15, 500, 500, 500, 500, 500, 250, 250, 10, 10, 5, 5, 5, 5, 5, 5; }
   CanBeBroken = false;
   AttachedGod = NEFAS; /* of course */
   WieldedBitmapPos = 160, 320;
@@ -4740,9 +6120,12 @@ wondersmellstaff
   DefaultSecondaryVolume = 200;
   NameSingular = "staff";
   PostFix = "of wondrous smells";
-  MainMaterialConfig = { 4, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
+  MainMaterialConfig = { 11,
+                         EBONY_WOOD, ARCANITE, OCTIRON, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD,
+                         ORICHALCUM, STAR_METAL, OCCULTUM, CHLOROPHYTE, PRIMORDIAL_ICE; }
   SecondaryMaterialConfig == RUBY;
-  MaterialConfigChances = { 4, 250, 100, 50, 25; }
+  MaterialConfigChances = { 11,
+                            300, 200, 25, 50, 150, 50, 5, 5, 5, 5, 25; }
   Roundness = 10;
   IsTwoHanded = true;
   AttachedGod = INFUSCOR;
@@ -4755,8 +6138,6 @@ wondersmellstaff
     Possibility = 5;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
-    MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
-    MaterialConfigChances = { 3, 100, 50, 25; }
     EnchantmentPlusChance = 10;
   }
 }
@@ -4795,7 +6176,7 @@ decosadshirt /* armor->bodyarmor-> */
   StrengthModifier = 75;
   NameSingular = "shirt";
   PostFix = "with a Decos Bananas Co. ad";
-  MainMaterialConfig == CLOTH;
+  MainMaterialConfig == NYLON;
   CanBeBroken = false;
   InElasticityPenaltyModifier = 30;
   AttachedGod = MELLIS;
@@ -4916,7 +6297,7 @@ gasgrenade
   Price = 50;
   MainMaterialConfig == IRON;
   SecondaryMaterialConfig = { 6, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR; }
-  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 1; }
+  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 5; }
   Adjective = "dwarven";
   Alias == "gas grenade";
 }
@@ -4951,9 +6332,18 @@ daggerofvenom
   StrengthModifier = 60;
   NameSingular = "dagger";
   PostFix = "of venom";
-  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
-  SecondaryMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
-  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  MainMaterialConfig = { 33,
+                         DRAGON_BONE, OMMEL_BONE, OMMEL_TOOTH, RUBY, DIAMOND, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
+  SecondaryMaterialConfig == EMERALD;
+  MaterialConfigChances = { 33,
+                            10, 5, 5, 5, 5, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250; }
   Roundness = 20;
   Price = 250;
   AttachedGod = CLEPTIA;
@@ -4982,9 +6372,13 @@ weepblade
   StrengthModifier = 90;
   NameSingular = "blade";
   Adjective = "weeping";
-  MainMaterialConfig = {6, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL; }
-  SecondaryMaterialConfig = {6, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL; }
-  MaterialConfigChances = {6, 420, 390, 364, 210, 195, 182; }
+  MainMaterialConfig = { 13,
+                         MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE; }
+  SecondaryMaterialConfig == SIDGURE_WOOD;
+  MaterialConfigChances = { 13,
+                            75, 100, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   Roundness = 10;
   Price = 250;
   AttachedGod = SCABIES;
@@ -4997,6 +6391,12 @@ weepblade
     Possibility = 5;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, PSYPHER; }
+    MaterialConfigChances = { 15,
+                              150, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 1; }
     EnchantmentPlusChance = 4;
   }
 }
@@ -5009,9 +6409,13 @@ acidshield /* armor ->*/
   DefaultMainVolume = 350;
   StrengthModifier = 100;
   FormModifier = 15;
-  MainMaterialConfig = { 5, MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, PURPLE_CRYSTAL, ARCANITE; }
-  MaterialConfigChances = { 5, 200, 300, 150, 30, 30; }
-  EnchantmentPlusChance = 0;
+  MainMaterialConfig = { 13,
+                         MILKY_QUARTZ, QUARTZITE, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE; }
+  MaterialConfigChances = { 13,
+                            300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
+  EnchantmentPlusChance = 2;
   AcidResistance = 1;
   NameSingular = "acid shield";
   BitmapPos = 32, 336;
@@ -5029,9 +6433,13 @@ acidshield /* armor ->*/
     StrengthModifier = 50;
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
-    MainMaterialConfig = { 6, METEORIC_STEEL, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL, ARCANITE, MITHRIL; }
-    MaterialConfigChances = { 6, 150, 250, 200, 60, 40, 20; }
-    EnchantmentPlusChance = 1;
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
+    MaterialConfigChances = { 15,
+                              250, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 5; }
+    EnchantmentPlusChance = 4;
   }
 }
 
@@ -5055,7 +6463,7 @@ pantheonbook /* holybook-> */
   CanBeBroken = false;
   CanBeBurned = false;
   CanBePiled = false;
-  MainMaterialConfig == PARCHMENT;
+  MainMaterialConfig == VELLUM;
   Price = 500;
   Roundness = 70;
   IsTwoHanded = true;
@@ -5104,7 +6512,8 @@ chastitybelt
   StrengthModifier = 60;
   BitmapPos = 80, 80;
   NameSingular = "chastity belt";
-  MainMaterialConfig == IRON;
+  MainMaterialConfig = { 4, IRON, GOLD, SILVER, PLATINUM; }
+  MaterialConfigChances = { 4, 250, 5, 5, 5; }
   Roundness = 50;
   WieldedBitmapPos = 160, 128;
   BeltBitmapPos = 48, 432;
@@ -5156,11 +6565,19 @@ darkaxe  /* meleeweapon-> */
   BitmapPos = 16, 256;
   FormModifier = 60;
   StrengthModifier = 80;
-  Adjective = "dark";
-  NameSingular = "axe";
-  MainMaterialConfig = {7, OMMEL_BONE, OMMEL_TOOTH, ILLITHIUM, BRONZE, STEEL, ARCANITE, MITHRIL; }
+  NameSingular = "dark axe";
+  MainMaterialConfig = { 33,
+                         DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
   SecondaryMaterialConfig == EBONY_WOOD;
-  MaterialConfigChances = {7, 72, 48, 80, 225, 144, 100, 90; }
+  MaterialConfigChances = { 33,
+                            10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250; }
   Roundness = 20;
   Price = 150;
   IsTwoHanded = true;
@@ -5190,9 +6607,18 @@ slowaxe  /* meleeweapon-> */
   StrengthModifier = 80;
   Adjective = "chilling";
   NameSingular = "axe";
-  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
+  MainMaterialConfig = { 33,
+                         DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
   SecondaryMaterialConfig == ICE;
-  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
+  MaterialConfigChances = { 33,
+                            10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250; }
   Roundness = 20;
   Price = 250;
   IsTwoHanded = true;
@@ -5222,9 +6648,19 @@ terrorscythe  /* meleeweapon-> */
   StrengthModifier = 60;
   NameSingular = "scythe";
   PostFix = "of terror";
-  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, OCTIRON, PSYPHER, MITHRIL; }
+  MainMaterialConfig = { 36,
+                         DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL,
+                         PSYPHER, OMMEL_BONE, OMMEL_TOOTH; }
   SecondaryMaterialConfig == EBONY_WOOD;
-  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 1, 90; }
+  MaterialConfigChances = { 36,
+                            10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250, 1, 10, 5; }
   Roundness = 10;
   Price = 250;
   IsGoodWithPlants = true;
@@ -5254,9 +6690,18 @@ bansheesickle  /* meleeweapon-> */
   FormModifier = 60;
   StrengthModifier = 40;
   NameSingular = "banshee sickle";
-  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, SILVER, GOLD, MITHRIL; }
+  MainMaterialConfig = { 33,
+                         DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
   SecondaryMaterialConfig == OCTIRON;
-  MaterialConfigChances = {9, 30, 15, 250, 200, 150, 100, 10, 10, 90; }
+  MaterialConfigChances = { 33,
+                            10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250; }
   Roundness = 20;
   Price = 250;
   IsGoodWithPlants = true;
@@ -5286,9 +6731,12 @@ rustscythe  /* meleeweapon-> */
   StrengthModifier = 60;
   NameSingular = "scythe";
   PostFix = "of oxidation";
-  MainMaterialConfig = {4, IRON, STEEL, METEORIC_STEEL, ADAMANT; }
+  MainMaterialConfig = { 11,
+                         PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL, UKKU_STEEL,
+                         BLACK_IRON, SOUL_STEEL, BLOOD_IRON, BLOOD_STEEL, ADAMANT; }
   SecondaryMaterialConfig == PINE_WOOD;
-  MaterialConfigChances = {4, 250, 200, 100, 50; }
+  MaterialConfigChances = { 11,
+                            250, 500, 750, 500, 250, 100, 200, 50, 100, 50, 25; }
   Roundness = 10;
   Price = 250;
   IsGoodWithPlants = true;
@@ -5319,9 +6767,18 @@ sharpaxe  /* meleeweapon-> */
   StrengthModifier = 80;
   NameSingular = "axe";
   PostFix = "of sharpness";
-  MainMaterialConfig = {9, OMMEL_BONE, OMMEL_TOOTH, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, ILLITHIUM, MITHRIL; }
+  MainMaterialConfig = { 33,
+                         DRAGON_BONE, AMETHYST, TOPAZ, SAPPHIRE, BLACK_JADE, RED_JADE,
+                         GREEN_JADE, BLUE_JADE, WHITE_JADE, GREEN_CRYSTAL, BLUE_CRYSTAL,
+                         DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
+                         FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
+                         STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
+                         METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, BLOOD_STEEL; }
   SecondaryMaterialConfig == FIR_WOOD;
-  MaterialConfigChances = {9, 30, 10, 250, 200, 150, 100, 60, 60, 90; }
+  MaterialConfigChances = { 33,
+                            10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
+                            1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
+                            50, 10, 5, 250, 250; }
   Roundness = 20;
   Price = 250;
   IsTwoHanded = true;
@@ -5359,7 +6816,7 @@ celestialmonograph /* holybook-> */
   CanBeBroken = false;
   CanBeBurned = false;
   CanBePiled = false;
-  MainMaterialConfig == PARCHMENT;
+  MainMaterialConfig == PAPYRUS;
   Price = 1000;
   Roundness = 70;
   IsTwoHanded = true;
@@ -5368,6 +6825,30 @@ celestialmonograph /* holybook-> */
   WieldedBitmapPos = 176, 144;
   ReadDifficulty = 1500;
   Alias = { 3, "insight", "revelation", "truth"; }
+}
+
+materialmanual /* holybook-> */
+{
+  DefaultSize = 30;
+  Possibility = 1;
+  Category = BOOK;
+  DefaultMainVolume = 2500;
+  StrengthModifier = 150;
+  BitmapPos = 0, 144;
+  FormModifier = 20;
+  Price = 0; /* It's actually a cheap brochure. */
+  Adjective = "Morgo's magnificent";
+  NameSingular = "manual";
+  PostFix = "of materials";
+  ArticleMode = FORCE_THE;
+  MainMaterialConfig == PARCHMENT;
+  Roundness = 70;
+  IsTwoHanded = true;
+  CreateDivineConfigurations = false;
+  AttachedGod = LORICATUS;
+  WieldedBitmapPos = 176, 144;
+  ReadDifficulty = 500;
+  Alias = { 2, "materials", "manual of materials"; }
 }
 
 ullrbone
@@ -5413,9 +6894,14 @@ taiaha /* meleeweapon-> */
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 1500;
   NameSingular = "taiaha";
-  MainMaterialConfig = { 6, PURPLE_CRYSTAL, BLUE_CRYSTAL, SAPPHIRE, RUBY, OMMEL_BONE, OMMEL_TOOTH; }
-  SecondaryMaterialConfig == KAURI_WOOD;
-  MaterialConfigChances = { 6, 100, 100, 50, 50, 10, 5; }
+  MainMaterialConfig = { 15,
+                         AMETHYST, TOPAZ, ROSE_QUARTZ, NETHER_QUARTZ, PURPLE_CRYSTAL,
+                         BLUE_CRYSTAL, GREEN_CRYSTAL, MAGIC_CRYSTAL, JADEITE, MALACHITE,
+                         NEPHRITE, BLACK_JADE, RED_JADE, OMMEL_BONE, OMMEL_TOOTH; }
+  SecondaryMaterialConfig == SIDGURE_WOOD;
+  MaterialConfigChances = { 15,
+                            10, 10, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50,
+                            25, 10, 5; }
   Roundness = 10;
   IsTwoHanded = true;
   AttachedGod = SILVA;
@@ -5432,15 +6918,19 @@ taiaha /* meleeweapon-> */
     Possibility = 0;
     BitmapPos = 112, 352;
     WieldedBitmapPos = 176, 96;
-    MainMaterialConfig = { 5, GREEN_CRYSTAL, SUN_CRYSTAL, SAPPHIRE, RUBY, DIAMOND; }
-    MaterialConfigChances = { 5, 100, 100, 50, 50, 5; }
+    MainMaterialConfig = { 15,
+                           NETHER_QUARTZ, PURPLE_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, SAPPHIRE, EMERALD, RUBY, DIAMOND, PSYPHER; }
+    MaterialConfigChances = { 15,
+                              150, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 1; }
     EnchantmentPlusChance = 30;
   }
 }
 
 cauldron /* materialcontainer-> */
 {
-  Possibility = 0;
+  Possibility = 1;
   Category = POTION;
   StrengthModifier = 350;
   DefaultSize = 150;
@@ -5449,8 +6939,14 @@ cauldron /* materialcontainer-> */
   BitmapPos = 80, 304;
   NameSingular = "cauldron";
   MainMaterialConfig == COPPER;
-  SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, POISON_LIQUID, VODKA, TROLL_BLOOD, LIQUID_DARKNESS, YELLOW_SLIME, SWEAT, SICK_BLOOD, LIGHT_FROG_BLOOD; }
-  MaterialConfigChances = { 10, 75, 50, 25, 50, 25, 5, 5, 1, 5, 25; }
+  SecondaryMaterialConfig = { 21,
+                              WATER, HEALING_LIQUID, MAGIC_LIQUID, VODKA, TROLL_BLOOD,
+                              PEA_SOUP, CHICKEN_SOUP, PORRIDGE, CUSTARD, MILK, HONEY,
+                              COCA_COLA, PEPSI, CIDER, WHITE_WINE, RED_WINE, BEER,
+                              ELF_ALE, DWARF_BEER, LIGHT_FROG_BLOOD, CURE_ALL_LIQUID; }
+  MaterialConfigChances = { 21,
+                            25, 75, 25, 50, 25, 50, 100, 25, 25, 25, 5, 1, 1, 25,
+                            25, 25, 50, 25, 25, 10, 1; }
   Roundness = 100;
   CanBeBroken = false;
   AttachedGod = NONE;
@@ -5458,6 +6954,7 @@ cauldron /* materialcontainer-> */
   IsValuable = false;
   CanBeGeneratedInContainer = false;
   CanBePickedUp = false;
+  AllowedDungeons == UNDER_WATER_TUNNEL;
 }
 
 trinket
@@ -5518,7 +7015,7 @@ trinket
     StrengthModifier = 75;
     Adjective = "dead";
     NameSingular = "fish";
-    MainMaterialConfig == DOLPHIN_FLESH; /* maybe change */
+    MainMaterialConfig == SARDINE;
     Roundness = 15;
     AttachedGod = SEGES;
   }
@@ -5546,7 +7043,7 @@ trinket
     BitmapPos = 96, 320;
     FormModifier = 25;
     StrengthModifier = 75;
-    Possibility = 2;
+    Possibility = 1;
     NameSingular = "timepiece";
     MainMaterialConfig == ARCANITE;
     SecondaryMaterialConfig == OAK_WOOD;
@@ -5586,8 +7083,11 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 7, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
-  MaterialConfigChances = { 7, 20, 30, 1, 15, 10, 1, 5; }
+  SecondaryMaterialConfig = { 7,
+                              MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
+                              EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
+  MaterialConfigChances = { 7,
+                            20, 30, 1, 15, 10, 15, 5; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;

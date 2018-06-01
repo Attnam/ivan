@@ -658,6 +658,14 @@ ITEM(celestialmonograph, holybook)
   virtual col16 GetMaterialColorA(int) const;
 };
 
+ITEM(materialmanual, holybook)
+{
+ public:
+  virtual void FinishReading(character*);
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
+};
+
 ITEM(gorovitscopyoflenin, item)
 {
  protected:

@@ -633,10 +633,13 @@ void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyN
   rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
 }
 
-truth game::Init(cfestring& Name)
-{ DBG2(Name.CStr(),ivanconfig::GetDefaultName().CStr());
-  if(Name.IsEmpty())
-  {
+truth game::Init(cfestring& loadBaseName)
+{
+  festring absLoadNameOk;
+
+  if(!loadBaseName.IsEmpty()){
+    absLoadNameOk = SaveName(loadBaseName); //will prepend the path
+  }else{
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
@@ -650,9 +653,9 @@ truth game::Init(cfestring& Name)
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+
+    absLoadNameOk = SaveName(); //default is to use PlayerName
   }
-  else
-    PlayerName = Name;
 
 #ifdef WIN32
   _mkdir("Save");
@@ -674,8 +677,8 @@ truth game::Init(cfestring& Name)
   DangerFound = 0;
   CausePanicFlag = false;
 
-  bool bSuccess=false;
-  switch(Load(SaveName(PlayerName)))
+  bool bSuccess=false; DBG3(PlayerName.CStr(),loadBaseName.CStr(),absLoadNameOk.CStr());
+  switch(Load(absLoadNameOk))
   {
    case LOADED:
     {
@@ -2982,9 +2985,9 @@ truth game::Save(cfestring& SaveName)
   return true;
 }
 
-int game::Load(cfestring& SaveName)
+int game::Load(cfestring& saveName)
 {DBGLN;
-  inputfile SaveFile(SaveName + ".sav", 0, false);
+  inputfile SaveFile(saveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
     return NEW_GAME;
@@ -3047,13 +3050,13 @@ int game::Load(cfestring& SaveName)
 
   if(InWilderness)
   {
-    SetCurrentArea(LoadWorldMap(SaveName));
+    SetCurrentArea(LoadWorldMap(saveName));
     CurrentWSquareMap = WorldMap->GetMap();
     igraph::CreateBackGround(GRAY_FRACTAL);
   }
   else
   {
-    SetCurrentArea(CurrentLevel = GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex));
+    SetCurrentArea(CurrentLevel = GetCurrentDungeon()->LoadLevel(saveName, CurrentLevelIndex));
     CurrentLSquareMap = CurrentLevel->GetMap();
     igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
   }
@@ -3082,14 +3085,29 @@ festring game::SaveName(cfestring& Base)
 {
   festring SaveName = GetSaveDir();
 
-  if(!Base.GetSize())
-    SaveName << PlayerName;
-  else
-    SaveName << Base;
+  /**
+   * Base must come OK, will just prepend directory,
+   * the problem on modifying it is that as it is read from the filesystem
+   * it will not be found if it gets changed...
+   */
+  festring BaseOk;
+  BaseOk << Base; DBG2(PlayerName.CStr(),Base.CStr());
 
-  for(festring::sizetype c = 0; c < SaveName.GetSize(); ++c)
-    if(SaveName[c] == ' ') //TODO prevent other possibly troublesome invalid characters like ;:^/\... etc etc, should allow only a-zA-Z0-9
-      SaveName[c] = '_';
+  if(Base.GetSize()==0){
+    BaseOk.Empty();
+    BaseOk << PlayerName; //ATTENTION! festring reuses the internal festring data pointer of other festring when using operator= even to char* !
+
+    for(festring::sizetype c = 0; c < BaseOk.GetSize(); ++c){
+      // this prevents all possibly troublesome characters in all OSs
+      if(BaseOk[c]>=0x41 && BaseOk[c]<=0x5A)continue; //A-Z
+      if(BaseOk[c]>=0x61 && BaseOk[c]<=0x7A)continue; //a-z
+      if(BaseOk[c]>=0x30 && BaseOk[c]<=0x39)continue; //0-9
+
+      BaseOk[c] = '_';
+    }
+  }DBG3(PlayerName.CStr(),BaseOk.CStr(),Base.CStr());
+
+  SaveName << BaseOk;
 
 #if defined(WIN32) || defined(__DJGPP__)
   if(SaveName.GetSize() > 13)

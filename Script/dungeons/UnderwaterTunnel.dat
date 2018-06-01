@@ -159,7 +159,7 @@ Dungeon UNDER_WATER_TUNNEL;
                              Random { Category = FOOD|POTION|VALUABLE; }
                         }
         }
-        Character = golem(OAK_WOOD);
+        Character = golem(BAMBOO_WOOD);
       }
 
       Square, Pos 0,0;

@@ -52,11 +52,11 @@ int armor::GetCarryingBonus() const { return Enchantment << 1; }
 double armor::GetTHVBonus() const { return Enchantment * .5; }
 double armor::GetDamageBonus() const { return Enchantment; }
 truth armor::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
+cfestring& armor::GetNameSingular() const
+{ return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 truth bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
-cfestring& bodyarmor::GetNameSingular() const
-{ return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 cchar* bodyarmor::GetBreakVerb() const
 { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
