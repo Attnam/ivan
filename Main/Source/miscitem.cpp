@@ -3675,6 +3675,44 @@ col16 celestialmonograph::GetMaterialColorA(int) const
   return MakeRGB16(40, 140, 40);
 }
 
+void materialmanual::FinishReading(character* Reader)
+{
+  if(Reader->IsPlayer())
+  {
+    felist List(CONST_S("Morgo's magnificent manual of materials"));
+    std::vector<material*> Material;
+    protosystem::CreateEveryMaterial(Material);
+    game::SetStandardListAttributes(List);
+    List.SetPageLength(30);
+    List.AddDescription(CONST_S("                                        Strength       Flexibility    Density"));
+    uint c;
+    festring Entry;
+
+    for(c = 0; c < Material.size(); ++c)
+    {
+      Entry.Empty();
+      Material[c]->AddName(Entry, false, false);
+      Entry.Resize(40);
+      Entry << Material[c]->GetStrengthValue();
+      Entry.Resize(55);
+      Entry << Material[c]->GetFlexibility();
+      Entry.Resize(70);
+      Entry << Material[c]->GetDensity();
+      List.AddEntry(Entry, Material[c]->GetColor());
+    }
+
+    List.Draw();
+
+    for(c = 0; c < Material.size(); ++c)
+      delete Material[c];
+  }
+}
+
+col16 materialmanual::GetMaterialColorA(int) const
+{
+  return MakeRGB16(111, 64, 37);
+}
+
 truth ullrbone::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
   truth BaseSuccess = item::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
