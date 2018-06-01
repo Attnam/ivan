@@ -267,7 +267,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You destroy the armchair.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == LINEN_CLOTH;
     ShowMaterial = false;
     MaterialColorB = rgb16(140, 96, 48);
     SitMessage = "You sit on the comfortable armchair.";
@@ -314,7 +314,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You smash the bed into pieces.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == HEMP_CLOTH;
     Adjective = "cheap";
     NameSingular = "bed";
     BitmapPos = 0, 352;
@@ -331,7 +331,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You smash the bed into pieces.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == LINEN_CLOTH;
     NameSingular = "bed";
     BitmapPos = 0, 336;
     MaterialColorB = rgb16(140, 96, 48);

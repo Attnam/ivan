@@ -1589,11 +1589,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-        
+
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-        
+
         game::GetWorldMap()->SendNewDrawRequest();
       }
       else
@@ -1602,11 +1602,11 @@ truth commandsystem::WizardMode(character* Char)
         v2 ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
         game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(elpuricave::Spawn());
         game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-        
+
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(locationAW::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
-        
+
         game::SaveWorldMap();
       }
 
@@ -1848,7 +1848,7 @@ truth commandsystem::SecretKnowledge(character* Char)
     std::vector<material*> Material;
     protosystem::CreateEveryMaterial(Material);
     List.SetPageLength(30);
-    List.AddDescription(CONST_S("                                        Strength       Flexibility   Density"));
+    List.AddDescription(CONST_S("                                        Str.  Flex. Dens. Int.  God"));
 
     for(c = 0; c < Material.size(); ++c)
     {
@@ -1856,10 +1856,14 @@ truth commandsystem::SecretKnowledge(character* Char)
       Material[c]->AddName(Entry, false, false);
       Entry.Resize(40);
       Entry << Material[c]->GetStrengthValue();
-      Entry.Resize(55);
+      Entry.Resize(46);
       Entry << Material[c]->GetFlexibility();
-      Entry.Resize(70);
+      Entry.Resize(52);
       Entry << Material[c]->GetDensity();
+      Entry.Resize(58);
+      Entry << Material[c]->GetIntelligenceRequirement();
+      Entry.Resize(64);
+      Entry << game::GetGod(Material[c]->GetAttachedGod())->GetName();
       List.AddEntry(Entry, Material[c]->GetColor());
     }
 
