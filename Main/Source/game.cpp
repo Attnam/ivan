@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <string>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include <bitset>
