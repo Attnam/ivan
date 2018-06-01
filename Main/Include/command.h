@@ -61,6 +61,7 @@ class commandsystem
   static truth Open(character*);
   static truth PickUp(character*);
   static truth Pray(character*);
+  static truth Craft(character*);
   static truth Quit(character*);
   static truth Read(character*);
   static truth Save(character*);

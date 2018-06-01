@@ -14,6 +14,7 @@
 #include "bitmap.h"
 #include "char.h"
 #include "command.h"
+#include "confdef.h"
 #include "database.h"
 #include "felist.h"
 #include "game.h"
@@ -21,9 +22,11 @@
 #include "graphics.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materia.h"
 #include "message.h"
 #include "miscitem.h"
+#include "nonhuman.h"
 #include "room.h"
 #include "stack.h"
 #include "team.h"
@@ -35,6 +38,8 @@
 #ifdef WIZARD
 #include "proto.h"
 #endif
+
+#include "dbgmsgproj.h"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
@@ -68,6 +73,7 @@ command* commandsystem::Command[] =
   new command(&Apply, "apply", 'a', 'a', 'a', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
   new command(&Close, "close", 'c', 'c', 'c', false),
+  new command(&Craft, "craft", 'f', 'F', 'f', false),
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
@@ -1014,6 +1020,88 @@ truth commandsystem::WhatToEngrave(character* Char)
       }
 
       break;
+    }
+  }
+
+  return false;
+}
+
+truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
+{
+  felist craftRecipes(CONST_S("What do you want to craft?"));
+
+  // collect requirements to display recipes
+  itemvector vitInv;
+  Char->GetStack()->FillItemVector(vitInv);
+//  int iStickCount=0;
+//  int iGlueCount=0;
+//  for(int i=0;i<vitInv.size();i++){
+//    if(dynamic_cast<stick*>(vitInv[i])!=NULL)
+//      iStickCount++;
+////    corpse* Corpse = dynamic_cast<corpse*>(vit[i]);
+////    if(Corpse!=NULL && dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL)
+////      iGlueCount+=100;
+//  }
+
+//  festring recipe;
+//  recipe.Empty(); recipe << "chair" << " "
+//  craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iKeyIndex++, true);
+
+  // check requirements and display recipes
+  int iEntryIndex=0;
+
+  int iChairIndex=-1;
+//  if(iStickCount>=50){
+//    if(iStickCount>=50 && iGlueCount>=100){
+    //TODO add 100 spider web ingredients as glue, when moving thru webs get 1 to 3 spider web ingredient, if it is destroyed get x5 times more
+    //TODO use 50 nails instead, can be bought at shops (do not prevent other items spawning there, just add to one of the shop's square's stack)
+    craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iChairIndex=iEntryIndex++, true); DBG1(iChairIndex);
+//  }
+
+  if(craftRecipes.GetLength()==0){
+    ADD_MESSAGE("You do not have the required ingredients to craft anything right now.");
+    //TODO show recipe's requirements as unselectable entries at the end of the list
+    return false;
+  }
+
+  game::SetStandardListAttributes(craftRecipes);
+  craftRecipes.AddFlags(SELECTABLE);
+  int Select = craftRecipes.Draw(); DBG1(Select);
+
+  if(Select & FELIST_ERROR_BIT)
+    return false;
+
+  itemvector vitIngredients;
+  if(Select == iChairIndex){
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(Char->GetPos());
+    if(lsqr->GetOLTerrain()!=NULL){
+      ADD_MESSAGE("A chair can't be placed here!");
+    }else{
+      int iStickCount=0;
+      for(int i=0;i<vitInv.size();i++){
+        if(dynamic_cast<stick*>(vitInv[i])!=NULL){
+          vitIngredients.push_back(vitInv[i]);
+          iStickCount++;
+        }
+      }
+
+      if(iStickCount>=20){
+        for(int i=0;i<vitIngredients.size();i++){
+          vitIngredients[i]->RemoveFromSlot();
+          vitIngredients[i]->SendToHell();
+        }
+
+        //TODO this is instantaneous... should take time, wield sticks (and glue), be an interruptable action class like the DIG one
+        game::GetCurrentLevel()->
+          GetLSquare(Char->GetPos())->
+            ChangeOLTerrainAndUpdateLights( decoration::Spawn(CHAIR) );
+
+        ADD_MESSAGE("You end the construction of a usable chair."); //not fine neither nice :)
+
+        return true;
+      }
+
+      ADD_MESSAGE("You don't have enough materials to create a chair...");
     }
   }
 
