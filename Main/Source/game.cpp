@@ -3879,14 +3879,27 @@ void DefinesValidatorClose(){
 
   DefinesValidator.close();
 }
-
 #include "definesvalidator.h" //tip: 1st run this was commented
+void game::GenerateDefinesValidator(bool bValidade)
+{
+  DefinesValidatorTop();
+
+  for(const valuemap::value_type& p : GlobalValueMap)
+    DefinesValidatorAppendCode(p.first.CStr(), p.second);
+
+  DefinesValidatorClose();
+
+  if(bValidade)
+    definesvalidator::Validate(); //tip: 1st run this was commented
+}
+
+//#include "definesvalidator.h" //tip: 1st run this was commented
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
   festring Word;
 
-  DefinesValidatorTop();
+//  DefinesValidatorTop();
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
   {
@@ -3896,13 +3909,12 @@ void game::InitGlobalValueMap()
     SaveFile.ReadWord(Word);
 
     long value = SaveFile.ReadNumber();
-    DefinesValidatorAppendCode(Word.CStr(),value);
+//    DefinesValidatorAppendCode(Word.CStr(),value);
     GlobalValueMap.insert(std::make_pair(Word, value));
   }
 
-  DefinesValidatorClose();
-
-  definesvalidator::Validate(); //tip: 1st run this was commented
+//  DefinesValidatorClose();
+//  definesvalidator::Validate(); //tip: 1st run this was commented
 }
 
 void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
