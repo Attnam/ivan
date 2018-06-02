@@ -1026,10 +1026,22 @@ truth commandsystem::WhatToEngrave(character* Char)
   return false;
 }
 
+struct recipe{
+  recipe(cchar* nm):name(nm),iListIndex(-1){};
+  festring name;
+  int iListIndex;
+};
+recipe rpChair("Chair");
+recipe rpWall("Wall");
+felist craftRecipes(CONST_S("What do you want to craft?"));
+std::vector<recipe*> vrp;
+void addRecipe(recipe* prp){
+  static int iEntryIndex=0;
+  craftRecipes.AddEntry(prp->name, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  vrp.push_back(prp);
+}
 truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
-  felist craftRecipes(CONST_S("What do you want to craft?"));
-
   // collect requirements to display recipes
   itemvector vitInv;
   Char->GetStack()->FillItemVector(vitInv);
@@ -1050,13 +1062,19 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   // check requirements and display recipes
   int iEntryIndex=0;
 
-  int iChairIndex=-1;
-//  if(iStickCount>=50){
-//    if(iStickCount>=50 && iGlueCount>=100){
-    //TODO add 100 spider web ingredients as glue, when moving thru webs get 1 to 3 spider web ingredient, if it is destroyed get x5 times more
-    //TODO use 50 nails instead, can be bought at shops (do not prevent other items spawning there, just add to one of the shop's square's stack)
-    craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iChairIndex=iEntryIndex++, true); DBG1(iChairIndex);
-//  }
+  if(vrp.size()==0){
+    addRecipe(&rpChair);
+    addRecipe(&rpWall);
+  }
+//  recipe rpChair;
+//  rpChair.name="chair";
+////  if(iStickCount>=50){
+////    if(iStickCount>=50 && iGlueCount>=100){
+//    //TODO add 100 spider web ingredients as glue, when moving thru webs get 1 to 3 spider web ingredient, if it is destroyed get x5 times more
+//    //TODO use 50 nails instead, can be bought at shops (do not prevent other items spawning there, just add to one of the shop's square's stack)
+//    craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iChairIndex=iEntryIndex++, true); DBG1(iChairIndex);
+//    craftRecipes.AddEntry("wall", LIGHT_GRAY, 20, iWallIndex=iEntryIndex++, true); DBG1(iWallIndex);
+////  }
 
 //  if(craftRecipes.GetLength()==0){
 //    ADD_MESSAGE("You do not have the required ingredients to craft anything right now.");
@@ -1071,38 +1089,100 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   if(Select & FELIST_ERROR_BIT)
     return false;
 
+  bool bSuccess=false;
+
+  olterrain* otSpawn=NULL;
+  recipe* prp = NULL;
+  lsquare* lsqrCharPos = game::GetCurrentLevel()->GetLSquare(Char->GetPos());
+  lsquare* lsqrWhere = NULL;
+  bool bCanBePlaced=false;
+  bool bHasIngredients=false;
   itemvector vitIngredients;
-  if(Select == iChairIndex){
-    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(Char->GetPos());
-    if(lsqr->GetOLTerrain()!=NULL){
-      ADD_MESSAGE("A chair can't be placed here!");
-    }else{
+  if(Select == rpChair.iListIndex){
+    prp=&rpChair;
+
+    lsqrWhere=lsqrCharPos;
+    if(lsqrWhere->GetOLTerrain()==NULL){
+      bCanBePlaced=true;
+
       int iStickCount=0;
       for(int i=0;i<vitInv.size();i++){
         if(dynamic_cast<stick*>(vitInv[i])!=NULL){
+          if(vitInv[i]->IsBurning())continue;
           vitIngredients.push_back(vitInv[i]);
           iStickCount++;
         }
       }
 
-      if(iStickCount>=20){
+      int iReqStick=20;
+      if(iStickCount>=iReqStick){
+        bHasIngredients=true;
+
         for(int i=0;i<vitIngredients.size();i++){
           vitIngredients[i]->RemoveFromSlot();
           vitIngredients[i]->SendToHell();
+          if(i==iReqStick-1)break;
         }
 
-        //TODO this is instantaneous... should take time, wield sticks (and glue), be an interruptable action class like the DIG one
-        game::GetCurrentLevel()->
-          GetLSquare(Char->GetPos())->
-            ChangeOLTerrainAndUpdateLights( decoration::Spawn(CHAIR) );
+        otSpawn=decoration::Spawn(CHAIR);
 
-        ADD_MESSAGE("You end the construction of a usable chair."); //not fine neither nice :)
+        bSuccess=true;
+      }
+    }
+  }
 
-        return true;
+  if(Select == rpWall.iListIndex){ // a wall will destroy whatever is in the place
+    prp = &rpWall;
+
+    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
+    if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+      lsqrWhere = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
+
+    if(lsqrWhere!=NULL && lsqrWhere->GetOLTerrain()==NULL && lsqrWhere->GetCharacter()==NULL){
+      bCanBePlaced=true;
+
+      int iStoneCount=0;
+      material* mat=NULL;
+      for(int i=0;i<vitInv.size();i++){
+        if(dynamic_cast<stone*>(vitInv[i])!=NULL){
+          vitIngredients.push_back(vitInv[i]);
+          if(mat==NULL)mat=vitInv[i]->GetMaterial(0);
+          iStoneCount++;
+        }
       }
 
-      ADD_MESSAGE("You don't have enough materials to create a chair...");
+      int iReqStone=9;
+      if(iStoneCount>=iReqStone){ //max dropped is 3 stones, but these are what didnt turn to dust!
+        bHasIngredients=true;
+
+        for(int i=0;i<vitIngredients.size();i++){
+          vitIngredients[i]->RemoveFromSlot();
+          vitIngredients[i]->SendToHell();
+          if(i==iReqStone-1)break;
+        }
+
+        otSpawn=earth::Spawn();
+
+        bSuccess=true;
+      }
     }
+  }
+
+  if(prp==NULL)
+    return false;
+
+  //TODO these messages are generic, therefore dont look good... improve it
+  if(bSuccess){
+    //TODO this is instantaneous... should take time, wield sticks (and glue), be an interruptable action class like the DIG one etc...
+    lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+    ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
+    return true;
+  }else{
+    if(bCanBePlaced){
+      if(!bHasIngredients)
+        ADD_MESSAGE("You don't have enough materials to create %s",prp->name.CStr());
+    }else
+      ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
   }
 
   return false;
