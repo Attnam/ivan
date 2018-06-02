@@ -690,19 +690,19 @@
 #define HOLY_TREE 3
 #define CARPET 4
 #define COUCH 5
-#define DOUBLE_BED 6
-#define POOL_BORDER 7
-#define POOL_CORNER 8
-#define PALM 9
-#define SNOW_PINE 10
-#define SNOW_FIR 11
-#define ANVIL 12
-#define SHARD 13
-#define CACTUS 14
-#define OAK 15
-#define BIRCH 16
-#define TEAK 17
-#define DWARF_BIRCH 18
+#define DOUBLE_BED 9
+#define POOL_BORDER 13
+#define POOL_CORNER 14
+#define PALM 15
+#define SNOW_PINE 16
+#define SNOW_FIR 17
+#define ANVIL 18
+#define SHARD 19
+#define CACTUS 20
+#define OAK 21
+#define BIRCH 22
+#define TEAK 23
+#define DWARF_BIRCH 24
 
 #define SNOW_BOULDER 4
 

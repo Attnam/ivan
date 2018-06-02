@@ -3837,8 +3837,12 @@ void DefinesValidatorAppend(std::string s)
 }
 void DefinesValidatorTop()
 {
-  DefinesValidatorAppend("/* AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!! */");
-  DefinesValidatorAppend("/* after it is generated, update the one at source code path with it !!! */");
+  DefinesValidatorAppend("/****");
+  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
+  DefinesValidatorAppend(" *");
+  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
+  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
+  DefinesValidatorAppend(" */");
   DefinesValidatorAppend("");
   DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
   DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
@@ -3846,6 +3850,7 @@ void DefinesValidatorTop()
   DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
   DefinesValidatorAppend("");
   DefinesValidatorAppend("  std::stringstream ssErrors;");
+  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
   DefinesValidatorAppend("");
 }
 void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
@@ -3858,11 +3863,13 @@ void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile
 
   static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
 
-  //    "    ABORT(\"" << ssMsg.str() << "\"," << sDefineId << "); //DO NOT MODIFY!" <<
+//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
   ssCode <<
     "  " << std::endl <<
-    "#ifdef " << sDefineId << std::endl <<
-    "  if(" << valueReadFromDatFile << " != " << sDefineId << ") // DO NOT MODIFY!" << std::endl <<
+    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
+    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
+    "  bsB = " << sDefineId << ";" << std::endl <<
+    "  if(bsA!=bsB)" << std::endl <<
     "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
     "#endif " << std::endl;
 
@@ -3893,13 +3900,10 @@ void game::GenerateDefinesValidator(bool bValidade)
     definesvalidator::Validate(); //tip: 1st run this was commented
 }
 
-//#include "definesvalidator.h" //tip: 1st run this was commented
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
   festring Word;
-
-//  DefinesValidatorTop();
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
   {
@@ -3909,12 +3913,9 @@ void game::InitGlobalValueMap()
     SaveFile.ReadWord(Word);
 
     long value = SaveFile.ReadNumber();
-//    DefinesValidatorAppendCode(Word.CStr(),value);
     GlobalValueMap.insert(std::make_pair(Word, value));
   }
 
-//  DefinesValidatorClose();
-//  definesvalidator::Validate(); //tip: 1st run this was commented
 }
 
 void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,

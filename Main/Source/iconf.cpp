@@ -116,7 +116,7 @@ truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
 truthoption ivanconfig::GenerateDefinesValidator("GenerateDefinesValidator",
-                                          "Validate define.dat (may abort)",
+                                          "generate validator and validate define.dat (may abort)",
                                           false,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
