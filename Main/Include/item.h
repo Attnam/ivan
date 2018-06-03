@@ -284,6 +284,7 @@ class item : public object
   virtual truth IsConsumable() const { return true; }
   truth IsEatable(ccharacter*) const;
   truth IsDrinkable(ccharacter*) const;
+  truth IsValidRecipeIngredient(ccharacter* Eater) const;
   virtual truth IsOpenable(ccharacter*) const { return false; }
   virtual truth IsReadable(ccharacter*) const { return false; }
   virtual truth IsDippable(ccharacter*) const { return false; }
@@ -611,6 +612,7 @@ class item : public object
   void SendMemorizedUpdateRequest() const;
   virtual void Ignite();
   virtual void Extinguish(truth);
+  void SetValidRecipeIngredient(truth b){ValidRecipeIngredient=b;}
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
@@ -637,6 +639,7 @@ class item : public object
   festring label;
   ulong ItemFlags;
   int iRotateFlyingThrownStep;
+  truth ValidRecipeIngredient;
   virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 
