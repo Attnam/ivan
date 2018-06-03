@@ -1096,12 +1096,18 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   bool bSuccess=false;
 
   olterrain* otSpawn=NULL;
+  item* itSpawn=NULL;
   recipe* prp = NULL;
   lsquare* lsqrCharPos = game::GetCurrentLevel()->GetLSquare(Char->GetPos());
   lsquare* lsqrWhere = NULL;
   bool bCanBePlaced=false;
   bool bHasIngredients=false;
   itemvector vitIngredients;
+  v2 v2PlaceAt(0,0);
+  object* craftWhat=NULL;
+  item* itTool=NULL;
+  int iTurnsToFinish=1; //TODO should be based on attributes
+  std::vector<ulong> ingredients; //TODO must be filled based on required volume to craft something
   if(Select == rpChair.iListIndex){
     prp=&rpChair;
 
@@ -1124,12 +1130,15 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         bHasIngredients=true;
 
         for(int i=0;i<vitIngredients.size();i++){
-          vitIngredients[i]->RemoveFromSlot();
-          vitIngredients[i]->SendToHell();
+          ingredients.push_back(vitIngredients[i]->GetID());
+//          vitIngredients[i]->RemoveFromSlot();
+//          vitIngredients[i]->SendToHell();
           if(i==iReqStick-1)break;
         }
 
+        v2PlaceAt = lsqrWhere->GetPos();
         otSpawn=decoration::Spawn(CHAIR);
+        iTurnsToFinish=10;
 
         bSuccess=true;
       }
@@ -1161,12 +1170,14 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         bHasIngredients=true;
 
         for(int i=0;i<vitIngredients.size();i++){
-          vitIngredients[i]->RemoveFromSlot();
-          vitIngredients[i]->SendToHell();
+          ingredients.push_back(vitIngredients[i]->GetID());
+//          vitIngredients[i]->RemoveFromSlot();
+//          vitIngredients[i]->SendToHell();
           if(i==iReqStone-1)break;
         }
 
         otSpawn=earth::Spawn();
+        iTurnsToFinish=20;
 
         bSuccess=true;
       }
@@ -1201,10 +1212,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
 
     //TODO this is instantaneous... should take time, wield sticks (and glue), be an interruptable action class like the DIG one etc...
-    if(otSpawn!=NULL)
-      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+    if(otSpawn!=NULL) {
+      Char->SwitchToCraft(ingredients, iTurnsToFinish, itTool, itSpawn, otSpawn, lsqrWhere->GetPos());
+      Char->DexterityAction(5);
+//      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+    }
 
-    ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
+//    ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
 
     return true;
   }else{

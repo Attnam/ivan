@@ -16,6 +16,8 @@
 #include "action.h"
 #include "festring.h"
 #include "v2.h"
+#include "lterra.h"
+#include "item.h"
 
 ACTION(unconsciousness, action)
 {
@@ -89,6 +91,35 @@ ACTION(dig, action)
   ulong LeftBackupID;
   v2 SquareDug;
   truth MoveDigger;
+};
+
+ACTION(craft, action)
+{
+ public:
+  craft() : RightBackupID(0), LeftBackupID(0) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void Handle();
+  void SetCraftWhat(std::vector<ulong> ingredients, int iTurns, truth toolRequired, item* itSpawn, olterrain* otSpawn=NULL, v2 v2Where=v2(0,0)) {
+    Ingredients=ingredients, iTurnsToFinish=iTurns; ToolRequired=toolRequired; itWhat=itSpawn; itWhatID=itWhat?itWhat->GetID():0; otWhat=otSpawn; v2PlaceAt=v2Where; }
+  virtual void Terminate(truth);
+  void SetRightBackupID(ulong What) { RightBackupID = What; }
+  void SetLeftBackupID(ulong What) { LeftBackupID = What; }
+  virtual truth TryDisplace() { return false; }
+  virtual cchar* GetDescription() const;
+  virtual truth ShowEnvironment() const { return false; }
+  void SetMoveCraftTool(truth What) { MoveCraftTool = What; }
+ protected:
+  ulong RightBackupID;
+  ulong LeftBackupID;
+  truth MoveCraftTool;
+  std::vector<ulong> Ingredients;
+  int iTurnsToFinish;
+  truth ToolRequired;
+  item* itWhat;
+  ulong itWhatID;
+  olterrain* otWhat;
+  v2 v2PlaceAt;
 };
 
 ACTION(go, action)

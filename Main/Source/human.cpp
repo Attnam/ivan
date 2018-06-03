@@ -1779,6 +1779,51 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
+void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* itTool, item* itSpawn, olterrain* otSpawn, v2 v2Where)
+{
+  craft* Act = craft::Spawn(this);
+
+  if(itTool!=NULL){
+    if(GetRightArm())
+    {
+      item* Item = GetRightArm()->GetWielded();
+
+      if(Item && Item != itTool)
+      {
+        Act->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+        GetRightArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetLeftArm())
+    {
+      item* Item = GetLeftArm()->GetWielded();
+
+      if(Item && Item != itTool)
+      {
+        Act->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+        GetLeftArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetMainWielded() != itTool)
+    {
+      Act->SetMoveCraftTool(true);
+      itTool->RemoveFromSlot();
+
+      if(GetMainArm() && GetMainArm()->IsUsable())
+        GetMainArm()->SetWielded(itTool);
+      else
+        GetSecondaryArm()->SetWielded(itTool);
+    }
+    else
+      Act->SetMoveCraftTool(false);
+  }
+
+  Act->SetCraftWhat(ingredients,iTurnsToFinish, itTool!=NULL, itSpawn,otSpawn,v2Where);
+  SetAction(Act);
+}
+
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   dig* Dig = dig::Spawn(this);
