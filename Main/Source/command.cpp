@@ -18,6 +18,7 @@
 #include "database.h"
 #include "felist.h"
 #include "game.h"
+#include "gear.h"
 #include "god.h"
 #include "graphics.h"
 #include "human.h"
@@ -1040,6 +1041,9 @@ void addRecipe(recipe* prp){
   craftRecipes.AddEntry(prp->name, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
   vrp.push_back(prp);
 }
+/**
+ * Dear developer, be sure to read the ABORT message before adding a recipe! :)
+ */
 truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
   // collect requirements to display recipes
@@ -1109,6 +1113,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       for(int i=0;i<vitInv.size();i++){
         if(dynamic_cast<stick*>(vitInv[i])!=NULL){
           if(vitInv[i]->IsBurning())continue;
+//TODO          vitInv[i]->GetVolume();
           vitIngredients.push_back(vitInv[i]);
           iStickCount++;
         }
@@ -1173,9 +1178,34 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
   //TODO these messages are generic, therefore dont look good... improve it
   if(bSuccess){
+    object* pChk=NULL;
+    if(otSpawn!=NULL)
+      pChk=otSpawn;
+
+    if(
+        dynamic_cast<amulet*>(pChk)!=NULL ||
+        dynamic_cast<horn*  >(pChk)!=NULL ||
+        dynamic_cast<ring*  >(pChk)!=NULL ||
+        dynamic_cast<scroll*>(pChk)!=NULL ||
+        dynamic_cast<wand*  >(pChk)!=NULL ||
+        false // just to make it easier to re-organize and add entries above
+        //TODO check if item has any kind of magic property
+    ){
+      ABORT(
+        "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
+        "- Quest items.\n"
+        "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
+        "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
+        "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
+      );
+    }
+
     //TODO this is instantaneous... should take time, wield sticks (and glue), be an interruptable action class like the DIG one etc...
-    lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+    if(otSpawn!=NULL)
+      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+
     ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
+
     return true;
   }else{
     if(bCanBePlaced){
