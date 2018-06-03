@@ -273,6 +273,7 @@ void craft::Handle()
       if(itWhat!=NULL){
         itWhat->MoveTo(Actor->GetStack());
         ADD_MESSAGE("You created %s.", itWhat->GetName(DEFINITE).CStr());
+        itWhat=NULL; //see destructor
       }
     }
 
@@ -281,6 +282,8 @@ void craft::Handle()
 
 //      if(lsqrWhere->CanBeSeenByPlayer())
         ADD_MESSAGE("You placed %s.", otWhat->GetName(DEFINITE).CStr());
+
+      otWhat=NULL; //see destructor
     }
 
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
@@ -334,6 +337,18 @@ void craft::Terminate(truth Finished)
   }
 
   action::Terminate(Finished);
+}
+
+craft::~craft(){ // called from Terminate()
+  // cleanups if not finished
+
+  if(itWhat && itWhat->Exists()){
+    itWhat->SendToHell();
+  }
+
+  if(otWhat && otWhat->Exists()){
+    otWhat->SendToHell();
+  }
 }
 
 void dig::Save(outputfile& SaveFile) const
