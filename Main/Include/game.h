@@ -345,6 +345,7 @@ class game
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetDataDir();
+  static festring GetStateDir();
   static festring GetBoneDir();
   static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
