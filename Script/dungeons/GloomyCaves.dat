@@ -804,6 +804,11 @@ Dungeon ELPURI_CAVE;
     {
       Character = vladimir { Team = IVAN_TEAM; }
     }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Items == LEAD itemcontainer(LARGE_CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == URANIUM stick { Times = 3:17; } }
+    }
   }
 
   RandomLevel 6:8;
