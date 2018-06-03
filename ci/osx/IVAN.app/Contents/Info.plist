@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>play</string>
+	<key>CFBundleIconFile</key>
+	<string>ivan</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.attnam.ivan</string>
 	<key>CFBundleInfoDictionaryVersion</key>
