@@ -1266,7 +1266,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
     //TODO extract poison glands as a new item to be used here instead of the corpse?
     item* itBottle=NULL;
-    item* itSpiderCorpse=NULL;
+    item* itPoisonousCorpse=NULL;
     material* mat = NULL;
     long currentVolume=0;
     for(int i=0;i<vitInv.size();i++){
@@ -1296,14 +1296,22 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
     for(int i=0;i<vitInv.size();i++){
       corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
-      if(Corpse!=NULL && dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL)
-        itSpiderCorpse=Corpse;
+      if(Corpse!=NULL){
+        if(
+            dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
+            dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
+            dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL ||
+            false //to easy add tests above
+        ){
+          itPoisonousCorpse=Corpse;
+        }
+      }
     }
 
-    if(itBottle && itSpiderCorpse){
+    if(itBottle && itPoisonousCorpse){
       bHasIngredients=true;
 
-      int volume=currentVolume+100;
+      int volume = currentVolume +25 +(clock()%75);
 //      material* mat = itBottle->GetSecondaryMaterial();
 //      if(mat!=NULL)
 //        volume+=mat->GetVolume();
@@ -1319,8 +1327,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       itBottle->DipInto(poison, Char);
 //      delete poison;
 
-      itSpiderCorpse->RemoveFromSlot();
-      itSpiderCorpse->SendToHell();
+      itPoisonousCorpse->RemoveFromSlot();
+      itPoisonousCorpse->SendToHell();
 
       iTurnsToFinish=5;
 
