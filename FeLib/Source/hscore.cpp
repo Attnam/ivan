@@ -23,7 +23,7 @@ cfestring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
 long highscore::GetSize() const { return Entry.size(); }
 
-highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION), FilePath(File) { Load(File); }
+highscore::highscore(cfestring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION), DefaultFile(File) { Load(File); }
 
 truth highscore::Add(long NewScore, cfestring& NewEntry,
                      time_t NewTime, long NewRandomID)
@@ -100,7 +100,7 @@ void highscore::Draw() const
 
 void highscore::Save(cfestring& File) const
 {
-  outputfile HighScore(File.GetSize() > 0 ? File : FilePath);
+  outputfile HighScore(File.GetSize() > 0 ? File : DefaultFile);
   long CheckSum = HIGH_SCORE_VERSION + LastAdd;
   for(ushort c = 0; c < Score.size(); ++c)
   {
@@ -114,7 +114,7 @@ void highscore::Save(cfestring& File) const
 /* This function needs much more error handling */
 void highscore::Load(cfestring& File)
 {
-  cfestring Path = File.GetSize() > 0 ? File : FilePath;
+  cfestring Path = File.GetSize() > 0 ? File : DefaultFile;
 
   {
     inputfile HighScore(Path, 0, false);

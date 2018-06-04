@@ -54,7 +54,7 @@ class highscore
   std::vector<long> RandomID;
   int LastAdd;
   ushort Version;
-  cfestring FilePath;
+  cfestring DefaultFile;
 };
 
 #endif
