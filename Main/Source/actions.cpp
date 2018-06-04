@@ -260,12 +260,6 @@ void craft::Handle()
 
   if(finished)
   {
-    for(int i=0;i<Ingredients.size();i++){
-      item* it=game::SearchItem(Ingredients[i]);
-      it->RemoveFromSlot();
-      it->SendToHell();
-    }
-
     if(itWhatID!=0){
       if(itWhat==NULL)
         itWhat = game::SearchItem(itWhatID);
@@ -277,13 +271,35 @@ void craft::Handle()
       }
     }
 
+    int iWallMaterialConfig=-1;
     if(otWhat!=NULL){
       lsqrWhere->ChangeOLTerrainAndUpdateLights(otWhat);
+      if(dynamic_cast<wall*>(otWhat)!=NULL)
+        iWallMaterialConfig = otWhat->GetMainMaterial()->GetConfig();
 
 //      if(lsqrWhere->CanBeSeenByPlayer())
         ADD_MESSAGE("You placed %s.", otWhat->GetName(DEFINITE).CStr());
 
       otWhat=NULL; //see destructor
+    }
+
+    for(int i=0;i<Ingredients.size();i++){
+      item* it=game::SearchItem(Ingredients[i]);
+      it->RemoveFromSlot();
+
+      bool bSendToHell=true;
+      if(iWallMaterialConfig!=-1){
+        if(it->GetMainMaterial()->GetConfig() != iWallMaterialConfig)
+          bSendToHell=false;
+      }
+
+      if(bSendToHell){
+        it->SendToHell();
+      }else{
+        //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
+        //TODO what about amulet of phasing or ghost mode?
+        it->MoveTo(lsqrWhere->GetStack());
+      }
     }
 
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */

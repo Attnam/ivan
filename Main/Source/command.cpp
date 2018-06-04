@@ -1029,90 +1029,24 @@ truth commandsystem::WhatToEngrave(character* Char)
 }
 
 struct recipe{
-  recipe(cchar* nm):name(nm),iListIndex(-1){};
-//  virtual ~recipe();
-//  virtual truth IsValidIngredient();
-//  truth Filter(character* Char){
-//    return IsValidIngredient();
-//  }
+  recipe(cchar* act,cchar* nm):action(act),name(nm),iListIndex(-1){};//,desc(""){};
+  festring action;
   festring name;
   int iListIndex;
+  festring desc;
+//  char desc[200];
 };
-//class recipeChair : public recipe{
-//  virtual truth IsValidIngredient(){
-//    return
-//  }
-//};
-//recipe rpChair("Chair"){
-//  virtual truth IsValidIngredient(){
-//
-//  }
-//};
-recipe rpChair("Chair");
-recipe rpWall("Wall");
-recipe rpPoison("Poison");
+recipe rpChair("build","a chair");
+recipe rpWall("construct","a wall");
+recipe rpPoison("extract","some poison");
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrp;
 void addRecipe(recipe* prp){
   static int iEntryIndex=0;
-  craftRecipes.AddEntry(prp->name, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  craftRecipes.AddEntry(prp->name+" - "+prp->desc, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
   vrp.push_back(prp);
 }
-//void selectIngredients(){
-//  for(;;)
-//  {
-//    itemvector ToPut;
-//    game::DrawEverythingNoBlit();
-//    Opener->GetStack()->DrawContents(ToPut, Opener,
-//                                     CONST_S("What do you want to put in ")
-//                                     + ContainerName + '?',
-//                                     REMEMBER_SELECTED);
-//
-//    if(ToPut.empty())
-//      break;
-//
-//    if(ToPut[0]->GetID() == ContainerID)
-//    {
-//      ADD_MESSAGE("You can't put %s inside itself!", ContainerName.CStr());
-//      continue;
-//    }
-//
-//    uint Amount = Min<uint>((StorageVolume - GetVolume())
-//                            / ToPut[0]->GetVolume(),
-//                            ToPut.size());
-//
-//    if(!Amount)
-//    {
-//      if(ToPut.size() == 1)
-//        ADD_MESSAGE("%s doesn't fit in %s.",
-//                    ToPut[0]->CHAR_NAME(DEFINITE),
-//                    ContainerName.CStr());
-//      else
-//        ADD_MESSAGE("None of the %d %s fit in %s.", int(ToPut.size()),
-//                    ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
-//
-//      continue;
-//    }
-//
-//    if(Amount != ToPut.size())
-//      ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount,
-//                  int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL),
-//                  Amount == 1 ? "s" : "", ContainerName.CStr());
-//
-//    if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
-//    {
-//      for(uint c = 0; c < Amount; ++c)
-//        ToPut[c]->MoveTo(this);
-//
-//      ADD_MESSAGE("You put %s in %s.",
-//                  ToPut[0]->GetName(DEFINITE, Amount).CStr(),
-//                  ContainerName.CStr());
-//      Success = true;
-//    }
-//  }
-//
-//}
-template <typename T> truth choseIngredients(long volume, itemvector& vitInv, character* Char, std::vector<ulong>& ingredients){
+template <typename T> truth choseIngredients(long volume, itemvector& vitInv, character* Char, std::vector<ulong>& ingredients, int& iWeakestCfg){
   // prepare the filter for ALL items also resetting them first!
   for(int i=0;i<vitInv.size();i++){
     vitInv[i]->SetValidRecipeIngredient(false);
@@ -1122,27 +1056,7 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
     }
   }
 
-//  itemvector Chosen;
-//  for(;;)
-//  {
-//    itemvector ToUse;
-//    game::DrawEverythingNoBlit();
-//    Char->GetStack()->DrawContents(ToUse, Char, festring("What ingredient(s) will you use?"), REMEMBER_SELECTED, &item::IsValidRecipeIngredient);
-//    if(ToUse.empty())
-//      break;
-//
-//    for(int i=0;i<ToUse.size();i++){
-//      Chosen.push_back(ToUse[i]);
-//      ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
-//    }
-//  }
-//
-//  for(int i=0;i<Chosen.size();i++){
-//    ingredients.push_back(Chosen[i]->GetID());
-//    volume -= Chosen[i]->GetVolume();
-//    if(volume<=0)
-//      break;
-//  }
+  int iWeakest=-1;
   for(;;)
   {
     itemvector ToUse;
@@ -1152,11 +1066,18 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
       break;
 
     for(int i=0;i<ToUse.size();i++){
+      material* mat = ToUse[i]->GetMainMaterial();
+      if(iWeakest==-1 || iWeakest > mat->GetStrengthValue()){
+        iWeakest = mat->GetStrengthValue();
+        iWeakestCfg = mat->GetConfig();
+      }
+
       ingredients.push_back(ToUse[i]->GetID());
       volume -= ToUse[i]->GetVolume();
+      ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
+
       if(volume<=0)
         break;
-      ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
     }
 
     if(volume<=0)
@@ -1165,61 +1086,59 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
 
   return volume<=0;
 }
-
+void addMissingMsg(festring& where, cfestring& what){
+  if(where.GetSize()>0)
+    where<<", ";
+  where<<what;
+}
 /**
  * Dear developer, be sure to read the ABORT message before adding a recipe! :)
  */
 truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
+  humanoid* h = dynamic_cast<humanoid*>(Char);
+  if(h==NULL){
+    ADD_MESSAGE("This monster type cannot craft.");
+    return false;
+  }
+
+  if(h->GetLeftArm()==NULL && h->GetRightArm()==NULL){
+    ADD_MESSAGE("You need at least one arm to craft.");
+    return false;
+  }
+
+  int iCraftTimeMult=1;
+  if(h->GetLeftArm()==NULL || h->GetRightArm()==NULL){
+    iCraftTimeMult=2;
+  }
+
 //  stack* pStackIngredients = new stack(NULL,Char);
 
   // collect requirements to display recipes
   itemvector vitInv;
   Char->GetStack()->FillItemVector(vitInv);
-//  int iStickCount=0;
-//  int iGlueCount=0;
-//  for(int i=0;i<vitInv.size();i++){
-//    if(dynamic_cast<stick*>(vitInv[i])!=NULL)
-//      iStickCount++;
-////    corpse* Corpse = dynamic_cast<corpse*>(vit[i]);
-////    if(Corpse!=NULL && dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL)
-////      iGlueCount+=100;
-//  }
+  item* itW=NULL;
+  if(h->GetLeftArm()!=NULL){
+    itW=h->GetLeftWielded();
+    if(itW)vitInv.push_back(itW);
+  }
+  if(h->GetRightArm()!=NULL){
+    itW=h->GetRightWielded();
+    if(itW)vitInv.push_back(itW);
+  }
 
-//  festring recipe;
-//  recipe.Empty(); recipe << "chair" << " "
-//  craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iKeyIndex++, true);
-
-  // check requirements and display recipes
+  //TODO check requirements and display recipes
   int iEntryIndex=0;
 
-  if(vrp.size()==0){
-    addRecipe(&rpChair);
-    addRecipe(&rpWall);
-    addRecipe(&rpPoison);
+  int Selected=-2; //default is -1 means not set, -2 to init
+  if(vrp.size()>0){
+    game::SetStandardListAttributes(craftRecipes);
+    craftRecipes.AddFlags(SELECTABLE);
+    Selected = craftRecipes.Draw(); DBG1(Selected);
+
+    if(Selected & FELIST_ERROR_BIT)
+      return false;
   }
-//  recipe rpChair;
-//  rpChair.name="chair";
-////  if(iStickCount>=50){
-////    if(iStickCount>=50 && iGlueCount>=100){
-//    //TODO add 100 spider web ingredients as glue, when moving thru webs get 1 to 3 spider web ingredient, if it is destroyed get x5 times more
-//    //TODO use 50 nails instead, can be bought at shops (do not prevent other items spawning there, just add to one of the shop's square's stack)
-//    craftRecipes.AddEntry("chair", LIGHT_GRAY, 20, iChairIndex=iEntryIndex++, true); DBG1(iChairIndex);
-//    craftRecipes.AddEntry("wall", LIGHT_GRAY, 20, iWallIndex=iEntryIndex++, true); DBG1(iWallIndex);
-////  }
-
-//  if(craftRecipes.GetLength()==0){
-//    ADD_MESSAGE("You do not have the required ingredients to craft anything right now.");
-//    //TODO show recipe's requirements as unselectable entries at the end of the list
-//    return false;
-//  }
-
-  game::SetStandardListAttributes(craftRecipes);
-  craftRecipes.AddFlags(SELECTABLE);
-  int Selected = craftRecipes.Draw(); DBG1(Selected);
-
-  if(Selected & FELIST_ERROR_BIT)
-    return false;
 
   bool bSuccess=false;
 
@@ -1230,220 +1149,217 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   lsquare* lsqrWhere = NULL;
   bool bCanBePlaced=false;
   bool bHasIngredients=false;
-//  itemvector vitIngredients;
   v2 v2PlaceAt(0,0);
   object* craftWhat=NULL;
   item* itTool=NULL;
   int iTurnsToFinish=1; //TODO should be based on attributes
   std::vector<ulong> ingredients; //TODO must be filled based on required volume to craft something
+//  festring reqMissingMsg("");
 
-//  int iSpiderCorpseCount=0;
-//  int iStickCount=0;
-//  int iStoneCount=0;
-//  material* mat=NULL;
-//  for(int i=0;i<vitInv.size();i++){
-//    if(dynamic_cast<stone*>(vitInv[i])!=NULL){
-//      vitIngredients.push_back(vitInv[i]);
-//      if(mat==NULL)mat=vitInv[i]->GetMaterial(0);
-//      iStoneCount++;
-//    }
-//
-//    if(dynamic_cast<stick*>(vitInv[i])!=NULL){
-//      if(vitInv[i]->IsBurning())continue;
-////TODO          vitInv[i]->GetVolume();
-//      vitIngredients.push_back(vitInv[i]);
-//      iStickCount++;
-//    }
-//
-//    corpse* Corpse = dynamic_cast<corpse*>(vit[i]);
-//    if(Corpse!=NULL && dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL)
-//      iGlueCount+=100;
-//
-//  }
+  /****************************************************************************
+   * extract poison
+   */
+  { // a block to reuse var names w/o specifying the recipe name on them
+    static int iAddVolMin = 25;
+    static int iAddVolExtra = 75;
+    festring fsTool="dagger";
+    festring fsVenomC="venomous creature corpse";
+    festring fsBottle="bottle";
+    if(rpPoison.desc.GetSize()==0) //TODO automate the sync of req ingredients description
+      rpPoison.desc << "Use a " << fsTool << " to extract " << iAddVolMin << " to " << iAddVolMin+iAddVolExtra << " cm3 "
+        "of the poison glands from a " << fsVenomC <<" into a " << fsBottle <<  ".";
+//    if(strlen(rpPoison.desc)==0) //TODO automate the sync of req ingredients description
+//      sprintf(rpChair.desc,"Use a %s to extract %d to %d cm3 of the poison glands from a %s into a %s.",
+//        fsTool.CStr(),
+//        iAddVolMin,iAddVolMin+iAddVolExtra,
+//        fsVenomC,fsBottle);
+    if(Selected == rpPoison.iListIndex){
+      prp=&rpPoison;
 
-  if(Selected == rpPoison.iListIndex){
-    prp=&rpPoison;
-
-    //TODO extract poison glands as a new item to be used here instead of the corpse?
-    item* itBottle=NULL;
-    item* itPoisonousCorpse=NULL;
-    material* mat = NULL;
-    long currentVolume=0;
-    for(int i=0;i<vitInv.size();i++){
-      potion* pot = dynamic_cast<potion*>(vitInv[i]);
-      if(pot!=NULL){
-        mat = pot->GetSecondaryMaterial();
-//        if(mat==NULL || mat->GetType()==POISON_LIQUID){
-        if(mat && mat->GetEffect()==EFFECT_POISON){ //TODO should be more precise like the material actually be the same poison of spider...
-          long vol = mat->GetVolume();
-          if(vol < pot->GetDefaultSecondaryVolume()){
-            itBottle = pot;
-            currentVolume=vol;
-          }
+      for(int i=0;i<vitInv.size();i++){
+        if(vitInv[i]->GetConfig()==DAGGER){
+          itTool=vitInv[i];
+          break;
         }
       }
-    }
+//      if(itTool==NULL)
+//        addMissingMsg(reqMissingMsg,fsTool);
 
-    if(itBottle==NULL)
+      //TODO extract poison glands as a new item (so a new recipe to create it) to be used here instead of the corpse?
+      item* itBottle=NULL;
+      item* itPoisonousCorpse=NULL;
+      material* mat = NULL;
+      long currentVolume=0;
       for(int i=0;i<vitInv.size();i++){
         potion* pot = dynamic_cast<potion*>(vitInv[i]);
         if(pot!=NULL){
           mat = pot->GetSecondaryMaterial();
-          if(mat==NULL) //empty
-            itBottle = pot;
+  //        if(mat==NULL || mat->GetType()==POISON_LIQUID){
+          if(mat && mat->GetEffect()==EFFECT_POISON){ //TODO should be more precise like the material actually be the same poison of spider...
+            long vol = mat->GetVolume();
+            if(vol < pot->GetDefaultSecondaryVolume()){
+              itBottle = pot;
+              currentVolume = vol;
+            }
+          }
         }
       }
 
-    for(int i=0;i<vitInv.size();i++){
-      corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
-      if(Corpse!=NULL){
-        if(
-            dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
-            dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
-            dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL ||
-            false //to easy add tests above
-        ){
-          itPoisonousCorpse=Corpse;
+      if(itBottle==NULL)
+        for(int i=0;i<vitInv.size();i++){
+          potion* pot = dynamic_cast<potion*>(vitInv[i]);
+          if(pot!=NULL){
+            mat = pot->GetSecondaryMaterial();
+            if(mat==NULL) //empty
+              itBottle = pot;
+          }
+        }
+//      if(itBottle==NULL)
+//        addMissingMsg(reqMissingMsg,fsBottle);
+
+      for(int i=0;i<vitInv.size();i++){
+        corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
+        if(Corpse!=NULL){
+          if(
+              dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
+              dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
+              dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL ||
+              false //to easy add tests above
+          ){
+            itPoisonousCorpse=Corpse;
+          }
         }
       }
-    }
+//      if(itPoisonousCorpse==NULL)
+//        addMissingMsg(reqMissingMsg,fsVenomC);
 
-    if(itBottle && itPoisonousCorpse){
-      bHasIngredients=true;
-
-      int volume = currentVolume +25 +(clock()%75);
-//      material* mat = itBottle->GetSecondaryMaterial();
-//      if(mat!=NULL)
-//        volume+=mat->GetVolume();
-
-      if(volume > itBottle->GetDefaultSecondaryVolume()){
-        volume = itBottle->GetDefaultSecondaryVolume();
-      }
-//      if(mat==NULL)
-//        mat = liquid::Spawn(POISON_LIQUID, 1);
-
-//      liquid* poison = liquid::Spawn(POISON_LIQUID, mat->GetVolume()+100);
-      liquid* poison = liquid::Spawn(POISON_LIQUID, volume);
-      itBottle->DipInto(poison, Char);
-//      delete poison;
-
-      itPoisonousCorpse->RemoveFromSlot();
-      itPoisonousCorpse->SendToHell();
-
-      iTurnsToFinish=5;
-
-      bSuccess=true;
-    }
-  }
-
-  if(Selected == rpChair.iListIndex){
-    prp=&rpChair;
-
-    lsqrWhere=lsqrCharPos;
-    if(lsqrWhere->GetOLTerrain()==NULL){
-      bCanBePlaced=true;
-
-//      int iReqStickVolume=20000; //TODO this volume should be on the .dat file as chair attribute...
-//
-//      // prepare the filter for ALL items also resetting them first!
-//      for(int i=0;i<vitInv.size();i++){
-//        vitInv[i]->SetValidRecipeIngredient(false);
-//        if(dynamic_cast<stick*>(vitInv[i])!=NULL){
-//          if(vitInv[i]->IsBurning())continue;
-//          vitInv[i]->SetValidRecipeIngredient(true);
-//        }
-//      }
-//
-//      itemvector Chosen;
-//      for(;;)
-//      {
-//        itemvector ToUse;
-//        game::DrawEverythingNoBlit();
-//        Char->GetStack()->DrawContents(ToUse, Char, festring("What ingredient(s) will you use?"), REMEMBER_SELECTED, &item::IsValidRecipeIngredient);
-//        if(ToUse.empty())
-//          break;
-//
-//        for(int i=0;i<ToUse.size();i++){
-//          Chosen.push_back(ToUse[i]);
-//          ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
-//        }
-//      }
-//
-//      for(int i=0;i<Chosen.size();i++){
-//        ingredients.push_back(Chosen[i]->GetID());
-//        iReqStickVolume -= Chosen[i]->GetVolume();
-//        if(iReqStickVolume<=0)
-//          break;
-//      }
-//
-//      if(iReqStickVolume<=0){
-      if(choseIngredients<stick>(20000, vitInv, Char, ingredients)){ //TODO this volume should be on the .dat file as chair attribute...
+      if(itBottle && itPoisonousCorpse && itTool){
         bHasIngredients=true;
 
-        v2PlaceAt = lsqrWhere->GetPos();
-        otSpawn=decoration::Spawn(CHAIR);
-        iTurnsToFinish=10;
+  //      int iAddStrength=0;
+        int iAddVolume = +iAddVolMin +(clock()%iAddVolExtra);
+        int volume = currentVolume + iAddVolume;
+  //      material* mat = itBottle->GetSecondaryMaterial();
+  //      if(mat!=NULL)
+  //        volume+=mat->GetVolume();
 
-        bSuccess=true;
-      }
+        if(volume > itBottle->GetDefaultSecondaryVolume()){
+          volume = itBottle->GetDefaultSecondaryVolume();
+        }
+  //      if(mat==NULL)
+  //        mat = liquid::Spawn(POISON_LIQUID, 1);
 
-    }
-  }
+        mat = itBottle->GetSecondaryMaterial();
+        if(mat!=NULL)
+          mat->GetEffectStrength(); //TODO mmm seems to have no strengh diff? only takes more time if "stronger" like not from large spider
 
-  if(Selected == rpWall.iListIndex){ // a wall will destroy whatever is in the place
-    prp = &rpWall;
+  //      liquid* poison = liquid::Spawn(POISON_LIQUID, mat->GetVolume()+100);
+        liquid* poison = liquid::Spawn(POISON_LIQUID, volume);
+        itBottle->DipInto(poison, Char);
+        // WARNING: delete poison; crashes..
 
-    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
-    if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
-      lsqrWhere = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
+        itPoisonousCorpse->RemoveFromSlot();
+        itPoisonousCorpse->SendToHell();
 
-    if(lsqrWhere!=NULL && lsqrWhere->GetOLTerrain()==NULL && lsqrWhere->GetCharacter()==NULL){
-      bCanBePlaced=true;
-
-//      int iReqStone=9;//max dropped is 3 stones, but these are what didnt turn to dust!
-//      int iReqStonesVolume=9000; //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-//
-//      // prepare the filter for ALL items also resetting them first!
-//      for(int i=0;i<vitInv.size();i++){
-//        vitInv[i]->SetValidRecipeIngredient(false);
-//        if(dynamic_cast<stone*>(vitInv[i])!=NULL){
-//          vitInv[i]->SetValidRecipeIngredient(true);
-//        }
-//      }
-//
-//      itemvector Chosen;
-//      for(;;)
-//      {
-//        itemvector ToUse;
-//        game::DrawEverythingNoBlit();
-//        Char->GetStack()->DrawContents(ToUse, Char, festring("What ingredient(s) will you use?"), REMEMBER_SELECTED, &item::IsValidRecipeIngredient);
-//        if(ToUse.empty())
-//          break;
-//
-//        for(int i=0;i<ToUse.size();i++){
-//          Chosen.push_back(ToUse[i]);
-//          ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
-//        }
-//      }
-//
-//      for(int i=0;i<Chosen.size();i++){
-//        ingredients.push_back(Chosen[i]->GetID());
-//        iReqStonesVolume -= Chosen[i]->GetVolume();
-//        if(iReqStonesVolume<=0)
-//          break;
-//      }
-//
-//      if(iReqStonesVolume<=0){
-      if(choseIngredients<stone>(9000, vitInv, Char, ingredients)){ //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-        bHasIngredients=true;
-
-        v2PlaceAt = lsqrWhere->GetPos();
-        otSpawn=earth::Spawn();
-        iTurnsToFinish=20;
+        iTurnsToFinish=5; //TODO make it work
 
         bSuccess=true;
       }
     }
+  }
+
+  /****************************************************************************
+   * chair
+   */
+  { // a block to reuse var names w/o specifying the recipe name on them
+    static const int iTotToolTypes=3;
+    static const int aiTypesInOrderOfPreference[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
+    static const int iReqStickVol=20000;
+    if(rpChair.desc.GetSize()==0) //TODO automate the sync of req ingredients description
+      rpChair.desc << "Use hammers or a frying pan with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
+//    if(strlen(rpChair.desc)==0) //TODO automate the sync of req ingredients description
+//      sprintf(rpChair.desc,"Use hammers or a frying pan and %d cm3 of sticks.",iReqStickVol); //TODO needs nails (for hammer) or glue (no hammer needed then)
+    if(Selected == rpChair.iListIndex){
+      prp=&rpChair;
+
+      int iBaseTurnsToFinish=10;
+      int iAddTurns=0;
+      float fIncTurnsStep=0.25;
+      for(int j=0;j<iTotToolTypes;j++){
+        if(itTool!=NULL)break;
+        for(int i=0;i<vitInv.size();i++){
+          if(vitInv[i]->GetConfig()==aiTypesInOrderOfPreference[j]){
+            itTool=vitInv[i];
+            iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
+            break;
+          }
+        }
+      }
+//      if(itTool==NULL)
+//        addMissingMsg(reqMissingMsg,cfestring("a hammer or a frying pan"));
+
+      lsqrWhere=lsqrCharPos;
+      if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
+        bCanBePlaced=true;
+
+        int iCfg=-1;
+        if(choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg)){ //TODO this volume should be on the .dat file as chair attribute...
+          bHasIngredients=true;
+
+          v2PlaceAt = lsqrWhere->GetPos();
+          otSpawn=decoration::Spawn(CHAIR);
+          otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
+          iTurnsToFinish=10;
+
+          bSuccess=true;
+        }
+      }
+
+    }
+  }
+
+  /**********************************************************************************************
+   * wall
+   */
+  { // a block to reuse var names w/o specifying the recipe name on them
+    static const int iReqStoneVol=9000;
+    if(rpWall.desc.GetSize()==0) //TODO automate the sync of req ingredients description
+      rpWall.desc << "Pile " << iReqStoneVol << " cm3 of stones to create a wall.";
+//    if(strlen(rpWall.desc)==0) //TODO automate the sync of req ingredients description
+//      sprintf(rpWall.desc,"Pile %d cm3 of stones to create a wall.",iReqStoneVol);
+    if(Selected == rpWall.iListIndex){ // a wall will destroy whatever is in the place
+      prp = &rpWall;
+
+      int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
+      if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+        lsqrWhere = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
+
+      if(lsqrWhere!=NULL && lsqrWhere->GetOLTerrain()==NULL && lsqrWhere->GetCharacter()==NULL){
+        bCanBePlaced=true;
+
+        int iCfg=-1;
+        if(choseIngredients<stone>(iReqStoneVol, vitInv, Char, ingredients, iCfg)){ //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
+          bHasIngredients=true;
+
+          v2PlaceAt = lsqrWhere->GetPos();
+          otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
+          otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStoneVol));
+          iTurnsToFinish=20;
+
+          bSuccess=true;
+        }
+      }
+    }
+  }
+
+  /******************************************************************************************
+   * 1st call it just initializes the recipes list
+   */
+  if(vrp.size()==0){
+    addRecipe(&rpChair);
+    addRecipe(&rpWall);
+    addRecipe(&rpPoison);
+    return Craft(Char); //init recipes descriptions at least, one time recursion :>
   }
 
   if(prp==NULL)
@@ -1479,7 +1395,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
 
     if(otSpawn!=NULL || itSpawn!=NULL) {
-      Char->SwitchToCraft(ingredients, iTurnsToFinish, itTool, itSpawn, otSpawn, lsqrWhere->GetPos());
+      Char->SwitchToCraft(ingredients, iTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn, lsqrWhere->GetPos());
       Char->DexterityAction(5); //TODO is this good?
 //      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
     }
@@ -1490,8 +1406,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   }else{
     if(otSpawn && !bCanBePlaced)
       ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
-    else if(!bHasIngredients)
-      ADD_MESSAGE("You don't have enough materials to create %s",prp->name.CStr());
+    else if(!bHasIngredients){
+      festring fsMsg;
+      fsMsg<<"You don't have what is required to "<<prp->action<<" "<<prp->name<<".";
+//      if(reqMissingMsg.GetSize()>0)
+//        fsMsg<<" It is missing "<<reqMissingMsg<<".";
+      ADD_MESSAGE(fsMsg.CStr());
+    }
   }
 
   return false;
