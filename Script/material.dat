@@ -1876,6 +1876,7 @@ solid
     AttachedGod = SCABIES;
     SoftenedMaterial = LEAD;
     HardenedMaterial = SOLARIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 20;
     Flexibility = 1;
     ExplosivePower = 30000;
@@ -1896,6 +1897,7 @@ solid
     AttachedGod = SCABIES;
     SoftenedMaterial = URANIUM;
     HardenedMaterial = NEUTRONIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 30;
     Flexibility = 1;
     ExplosivePower = 60000;
@@ -1915,6 +1917,7 @@ solid
     NameStem = "neutronium";
     AttachedGod = SCABIES;
     SoftenedMaterial = SOLARIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 40;
     Flexibility = 1;
     ExplosivePower = 120000;
