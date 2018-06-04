@@ -71,22 +71,22 @@ script:
   - mkdir build
   - cd build
   - if [[ -z "$IVAN_PLATFORM" ]]; then cmake .. -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option ${CXXFLAGS}"; fi
-  - if [[ -n "$IVAN_PLATFORM" ]]; then ../ci/${IVAN_PLATFORM}/build.sh; fi
+  - if [[ -n "$IVAN_PLATFORM" ]]; then "../ci/$IVAN_PLATFORM/build.sh"; fi
   - make
   - make igor
   - make mihail
   - if [[ -z "$IVAN_PLATFORM" ]]; then sudo make install; fi
   - if [[ -n "$IVAN_PLATFORM" ]]; then make install; fi
-  - if [[ -n "$IVAN_PLATFORM" ]]; then ../ci/${IVAN_PLATFORM}/package.sh; fi
+  - if [[ -n "$IVAN_PLATFORM" ]]; then "../ci/$IVAN_PLATFORM/package.sh"; fi
 
 deploy:
   provider: releases
-  api_key: "$GH_API_KEY"
+  api_key: $GH_API_KEY
   skip_cleanup: true
   file_glob: true
-  file: ${IVAN_BUILD_DIR}/${IVAN_PLATFORM}/*.zip
+  file: $IVAN_BUILD_DIR/$IVAN_PLATFORM/*.zip
   on:
-    condition: ${IVAN_PLATFORM} =~ ^(win|osx)$
+    condition: '"$IVAN_PLATFORM" =~ ^(win|osx)$'
     repo: Attnam/ivan
     tags: true
     branch: master
