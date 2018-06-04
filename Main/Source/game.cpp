@@ -4629,7 +4629,7 @@ festring game::GetStateDir()
 {
 #ifdef UNIX
 #ifdef MAC_APP
-  return GetHomeDir() + "Bones/";
+  return GetHomeDir();
 #else
   return LOCAL_STATE_DIR "/";
 #endif
