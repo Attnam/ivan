@@ -1109,7 +1109,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
   int iCraftTimeMult=1;
   if(h->GetLeftArm()==NULL || h->GetRightArm()==NULL){
-    iCraftTimeMult=2;
+    iCraftTimeMult++;
   }
 
 //  stack* pStackIngredients = new stack(NULL,Char);
@@ -1154,6 +1154,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   item* itTool=NULL;
   int iTurnsToFinish=1; //TODO should be based on attributes
   std::vector<ulong> ingredients; //TODO must be filled based on required volume to craft something
+//  bool bBrokenTool=false;
 //  festring reqMissingMsg("");
 
   /****************************************************************************
@@ -1177,7 +1178,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       prp=&rpPoison;
 
       for(int i=0;i<vitInv.size();i++){
-        if(vitInv[i]->GetConfig()==DAGGER){
+        if(vitInv[i]->GetConfig()==DAGGER || vitInv[i]->GetConfig()==(DAGGER|BROKEN)){
           itTool=vitInv[i];
           break;
         }
@@ -1273,12 +1274,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
    */
   { // a block to reuse var names w/o specifying the recipe name on them
     static const int iTotToolTypes=3;
-    static const int aiTypesInOrderOfPreference[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
+    // types InOrderOfPreference
+    static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
     static const int iReqStickVol=20000;
     if(rpChair.desc.GetSize()==0) //TODO automate the sync of req ingredients description
       rpChair.desc << "Use hammers or a frying pan with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
 //    if(strlen(rpChair.desc)==0) //TODO automate the sync of req ingredients description
-//      sprintf(rpChair.desc,"Use hammers or a frying pan and %d cm3 of sticks.",iReqStickVol); //TODO needs nails (for hammer) or glue (no hammer needed then)
+//      sprintf(rpChair.desc,"Use hammers or a frying pan and %d cm3 of sticks.",iReqStickVol); //TODO needs nails ingredients (for hammer) or glue (no hammer needed then)
     if(Selected == rpChair.iListIndex){
       prp=&rpChair;
 
@@ -1288,7 +1290,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       for(int j=0;j<iTotToolTypes;j++){
         if(itTool!=NULL)break;
         for(int i=0;i<vitInv.size();i++){
-          if(vitInv[i]->GetConfig()==aiTypesInOrderOfPreference[j]){
+          if(vitInv[i]->GetConfig()==aiTypes[j] || vitInv[i]->GetConfig()==(aiTypes[j]|BROKEN)){
             itTool=vitInv[i];
             iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
             break;
@@ -1395,6 +1397,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
 
     if(otSpawn!=NULL || itSpawn!=NULL) {
+      if(itTool && itTool->IsBroken())
+        iCraftTimeMult++;
       Char->SwitchToCraft(ingredients, iTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn, lsqrWhere->GetPos());
       Char->DexterityAction(5); //TODO is this good?
 //      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
