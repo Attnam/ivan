@@ -1140,8 +1140,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       return false;
   }
 
-  bool bSuccess=false;
-
+  bool bCanStart=false;
   olterrain* otSpawn=NULL;
   item* itSpawn=NULL;
   recipe* prp = NULL;
@@ -1254,17 +1253,22 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         if(mat!=NULL)
           mat->GetEffectStrength(); //TODO mmm seems to have no strengh diff? only takes more time if "stronger" like not from large spider
 
+        itSpawn = potion::Spawn();
+//        itSpawn->SetSecondaryMaterial(NULL);
+//        itSpawn = new item(itBottle);
+
   //      liquid* poison = liquid::Spawn(POISON_LIQUID, mat->GetVolume()+100);
         liquid* poison = liquid::Spawn(POISON_LIQUID, volume);
-        itBottle->DipInto(poison, Char);
+        itSpawn->SetSecondaryMaterial(poison);
+//        itSpawn->DipInto(poison, Char);
         // WARNING: delete poison; crashes..
 
-        itPoisonousCorpse->RemoveFromSlot();
-        itPoisonousCorpse->SendToHell();
+        ingredients.push_back(itBottle->GetID()); //just to be destroyed too if crafting completes
+        ingredients.push_back(itPoisonousCorpse->GetID());
 
-        iTurnsToFinish=5; //TODO make it work
+        iTurnsToFinish=5;
 
-        bSuccess=true;
+        bCanStart=true;
       }
     }
   }
@@ -1313,7 +1317,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
           iTurnsToFinish=10;
 
-          bSuccess=true;
+          bCanStart=true;
         }
       }
 
@@ -1348,7 +1352,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStoneVol));
           iTurnsToFinish=20;
 
-          bSuccess=true;
+          bCanStart=true;
         }
       }
     }
@@ -1368,7 +1372,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     return false;
 
   //TODO these messages are generic, therefore dont look good... improve it
-  if(bSuccess){
+  if(bCanStart){
     object* pChk=NULL;
     for(int i=0;i<2;i++){
       switch(i){
@@ -1399,9 +1403,12 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     if(otSpawn!=NULL || itSpawn!=NULL) {
       if(itTool && itTool->IsBroken())
         iCraftTimeMult++;
-      Char->SwitchToCraft(ingredients, iTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn, lsqrWhere->GetPos());
+      Char->SwitchToCraft(ingredients, iTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn,
+        lsqrWhere?lsqrWhere->GetPos():lsqrCharPos->GetPos() );
       Char->DexterityAction(5); //TODO is this good?
 //      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
+    }else{
+      ABORT("crafting nothing?");
     }
 
 //    ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
