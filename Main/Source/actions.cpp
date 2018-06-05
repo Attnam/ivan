@@ -283,6 +283,7 @@ void craft::Handle()
       otWhat=NULL; //see destructor
     }
 
+    festring fsIngMsg("");
     for(int i=0;i<Ingredients.size();i++){
       item* it=game::SearchItem(Ingredients[i]);
       it->RemoveFromSlot();
@@ -294,6 +295,9 @@ void craft::Handle()
       }
 
       if(bSendToHell){
+        if(fsIngMsg.GetSize()>0)
+          fsIngMsg<<", ";
+        fsIngMsg << it->GetName(DEFINITE);
         it->SendToHell();
       }else{
         //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
@@ -301,6 +305,8 @@ void craft::Handle()
         it->MoveTo(lsqrWhere->GetStack());
       }
     }
+    if(fsIngMsg.GetSize()>0)
+      ADD_MESSAGE("Ingredient(s) used: %s.",fsIngMsg.CStr());
 
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
 

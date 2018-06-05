@@ -1029,16 +1029,24 @@ truth commandsystem::WhatToEngrave(character* Char)
 }
 
 struct recipe{
-  recipe(cchar* act,cchar* nm):action(act),name(nm),iListIndex(-1){};//,desc(""){};
+  void init(cchar* act,cchar* nm){
+    action=(act);
+    name=(nm);
+    iListIndex=(-1);//,desc(""){};
+  }
   festring action;
   festring name;
   int iListIndex;
   festring desc;
 //  char desc[200];
 };
-recipe rpChair("build","a chair");
-recipe rpWall("construct","a wall");
-recipe rpPoison("extract","some poison");
+recipe rpChair;
+recipe rpWall;
+recipe rpPoison;
+recipe rpAcid;
+//recipe rpChair("build","a chair");
+//recipe rpWall("construct","a wall");
+//recipe rpExtrctFluids("extract","fluids");
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrp;
 void addRecipe(recipe* prp){
@@ -1157,47 +1165,102 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //  festring reqMissingMsg("");
 
   /****************************************************************************
-   * extract poison
+   * extract fluids (not blood as it can be used as nutrition right?)
    */
   { // a block to reuse var names w/o specifying the recipe name on them
     static int iAddVolMin = 25;
     static int iAddVolExtra = 75;
     festring fsTool="dagger";
-    festring fsVenomC="venomous creature corpse";
+    festring fsCorpse="creature corpse";
     festring fsBottle="bottle";
-    if(rpPoison.desc.GetSize()==0) //TODO automate the sync of req ingredients description
-      rpPoison.desc << "Use a " << fsTool << " to extract " << iAddVolMin << " to " << iAddVolMin+iAddVolExtra << " cm3 "
-        "of the poison glands from a " << fsVenomC <<" into a " << fsBottle <<  ".";
-//    if(strlen(rpPoison.desc)==0) //TODO automate the sync of req ingredients description
+    if(rpPoison.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpPoison.init("extract","some poison");
+      rpPoison.desc << "Use a " << fsTool << " to " << rpPoison.action << " " <<rpPoison.name << " from "
+        << fsCorpse << " into a " << fsBottle <<  ".";
+    }
+    if(rpAcid.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpAcid.init("extract","some acid");
+      rpAcid.desc << "Use a " << fsTool << " to " << rpAcid.action << " " <<rpAcid.name << " from "
+        << fsCorpse << " into a " << fsBottle <<  ".";
+    }
+//    if(strlen(rpExtrctFluids.desc)==0) //TODO automate the sync of req ingredients description
 //      sprintf(rpChair.desc,"Use a %s to extract %d to %d cm3 of the poison glands from a %s into a %s.",
 //        fsTool.CStr(),
 //        iAddVolMin,iAddVolMin+iAddVolExtra,
 //        fsVenomC,fsBottle);
-    if(Selected == rpPoison.iListIndex){
+    if(Selected == rpPoison.iListIndex)
       prp=&rpPoison;
-
+    if(Selected == rpAcid.iListIndex)
+      prp=&rpAcid;
+    if(prp!=NULL){
+      ///////////// tool ////////////////
       for(int i=0;i<vitInv.size();i++){
-        if(vitInv[i]->GetConfig()==DAGGER || vitInv[i]->GetConfig()==(DAGGER|BROKEN)){
+        if(vitInv[i]->GetConfig()==DAGGER){
           itTool=vitInv[i];
           break;
         }
       }
+
+      if(itTool==NULL)
+        for(int i=0;i<vitInv.size();i++){
+          if(vitInv[i]->GetConfig()==(DAGGER|BROKEN)){
+            itTool=vitInv[i];
+            break;
+          }
+        }
 //      if(itTool==NULL)
 //        addMissingMsg(reqMissingMsg,fsTool);
 
+//      if(choseIngredients<corpse>(500, vitInv, Char, ingredients, iCfg)){ //TODO this volume should be on the .dat file as chair attribute...
+//      }
+      item* itCorpse=NULL;
+      int iAcidicity=0;
+      for(int i=0;i<vitInv.size();i++){
+        corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
+        if(Corpse!=NULL){
+          character* D = Corpse->GetDeceased();
+          static const materialdatabase* blood;blood = material::GetDataBase(D->GetBloodMaterial());
+          static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
+
+          if(prp==&rpPoison)
+            if(blood->Effect==EFFECT_POISON || flesh->Effect==EFFECT_POISON)
+              itCorpse=Corpse;
+
+          if(prp==&rpAcid)
+            if((iAcidicity=blood->Acidicity)>0 || (iAcidicity=flesh->Acidicity)>0)
+              itCorpse=Corpse;
+//          if(
+//              dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
+//              dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
+//              dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL || //from poisonous flesh
+//              false //to easy add tests above
+//          ){
+//            itCorpse=Corpse;
+//          }
+        }
+      }
+
       //TODO extract poison glands as a new item (so a new recipe to create it) to be used here instead of the corpse?
       item* itBottle=NULL;
-      item* itPoisonousCorpse=NULL;
       material* mat = NULL;
       long currentVolume=0;
+
       for(int i=0;i<vitInv.size();i++){
         potion* pot = dynamic_cast<potion*>(vitInv[i]);
         if(pot!=NULL){
           mat = pot->GetSecondaryMaterial();
+          if(mat==NULL)continue;
+
   //        if(mat==NULL || mat->GetType()==POISON_LIQUID){
-          if(mat && mat->GetEffect()==EFFECT_POISON){ //TODO should be more precise like the material actually be the same poison of spider...
+          bool bChkVol=false;
+          if(prp==&rpPoison && mat->GetEffect()==EFFECT_POISON) //TODO should be more precise like the material actually be the same poison of spider...
+              bChkVol=true;
+          if(prp==&rpAcid && mat->GetConfig()==SULPHURIC_ACID)
+              bChkVol=true;
+
+          if(bChkVol){
             long vol = mat->GetVolume();
-            if(vol < pot->GetDefaultSecondaryVolume()){
+            if(vol < pot->GetDefaultSecondaryVolume()){ //less than max
               itBottle = pot;
               currentVolume = vol;
             }
@@ -1214,26 +1277,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
               itBottle = pot;
           }
         }
-//      if(itBottle==NULL)
-//        addMissingMsg(reqMissingMsg,fsBottle);
 
-      for(int i=0;i<vitInv.size();i++){
-        corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
-        if(Corpse!=NULL){
-          if(
-              dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
-              dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
-              dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL ||
-              false //to easy add tests above
-          ){
-            itPoisonousCorpse=Corpse;
-          }
-        }
-      }
-//      if(itPoisonousCorpse==NULL)
-//        addMissingMsg(reqMissingMsg,fsVenomC);
-
-      if(itBottle && itPoisonousCorpse && itTool){
+      if(itBottle && itCorpse && itTool){
         bHasIngredients=true;
 
   //      int iAddStrength=0;
@@ -1258,13 +1303,14 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //        itSpawn = new item(itBottle);
 
   //      liquid* poison = liquid::Spawn(POISON_LIQUID, mat->GetVolume()+100);
-        liquid* poison = liquid::Spawn(POISON_LIQUID, volume);
-        itSpawn->SetSecondaryMaterial(poison);
-//        itSpawn->DipInto(poison, Char);
-        // WARNING: delete poison; crashes..
+        int iLiqCfg = -1;
+        if(prp==&rpPoison)iLiqCfg=POISON_LIQUID;
+        if(prp==&rpAcid)iLiqCfg=SULPHURIC_ACID;
+
+        itSpawn->SetSecondaryMaterial(liquid::Spawn(iLiqCfg, volume));
 
         ingredients.push_back(itBottle->GetID()); //just to be destroyed too if crafting completes
-        ingredients.push_back(itPoisonousCorpse->GetID());
+        ingredients.push_back(itCorpse->GetID());
 
         iTurnsToFinish=5;
 
@@ -1281,8 +1327,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     // types InOrderOfPreference
     static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
     static const int iReqStickVol=20000;
-    if(rpChair.desc.GetSize()==0) //TODO automate the sync of req ingredients description
+    if(rpChair.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpChair.init("build","a chair");
       rpChair.desc << "Use hammers or a frying pan with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
+    }
 //    if(strlen(rpChair.desc)==0) //TODO automate the sync of req ingredients description
 //      sprintf(rpChair.desc,"Use hammers or a frying pan and %d cm3 of sticks.",iReqStickVol); //TODO needs nails ingredients (for hammer) or glue (no hammer needed then)
     if(Selected == rpChair.iListIndex){
@@ -1329,8 +1377,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
    */
   { // a block to reuse var names w/o specifying the recipe name on them
     static const int iReqStoneVol=9000;
-    if(rpWall.desc.GetSize()==0) //TODO automate the sync of req ingredients description
+    if(rpWall.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpWall.init("construct","a wall");
       rpWall.desc << "Pile " << iReqStoneVol << " cm3 of stones to create a wall.";
+    }
 //    if(strlen(rpWall.desc)==0) //TODO automate the sync of req ingredients description
 //      sprintf(rpWall.desc,"Pile %d cm3 of stones to create a wall.",iReqStoneVol);
     if(Selected == rpWall.iListIndex){ // a wall will destroy whatever is in the place
@@ -1365,6 +1415,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     addRecipe(&rpChair);
     addRecipe(&rpWall);
     addRecipe(&rpPoison);
+    addRecipe(&rpAcid);
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
   }
 
