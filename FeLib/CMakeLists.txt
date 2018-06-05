@@ -1,6 +1,6 @@
 file(GLOB FELIB_SOURCES Include/*.h Source/*.cpp)
 
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_definitions(-DGCC) # TODO: Use __GNUC__ in the code instead.
 endif()
 
@@ -34,7 +34,7 @@ if(MINGW)
 
   if((NOT BUILD_SHARED_LIBS) AND BUILD_STATIC_LIBS)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-    set(SDL2_LIBRARIES "${SDL2_LIBRARIES} ${SDL2_LDFLAGS}")
+    set(SDL2_LIBRARIES ${SDL2_LIBRARY} ${SDL2_LDFLAGS})
   else()
     install(FILES "${sdl_lib_dir}/../bin/SDL2.dll" DESTINATION "ivan")
   endif()
