@@ -69,6 +69,7 @@ class felist
   static truth isAnyFelistCurrentlyDrawn();
   static bool PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg);
   static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
+  static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:
   void DrawDescription(bitmap*) const;
@@ -87,6 +88,7 @@ class felist
   entrydrawer EntryDrawer;
   v2 v2FinalPageSize;
   static v2 v2SelectedPos;
+  static col16 colSelectedBkg;
   v2 v2OriginalPos;
   static v2 v2DefaultEntryImageSize;
 };

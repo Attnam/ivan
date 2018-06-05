@@ -23,6 +23,7 @@
 
 const felist* FelistCurrentlyDrawn = 0;
 
+col16 felist::colSelectedBkg = MakeRGB16(8,8,8);//TRANSPARENT_COLOR;
 v2 felist::v2SelectedPos = v2(0,0);
 v2 felist::v2DefaultEntryImageSize=v2(0,0);
 
@@ -412,11 +413,17 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 
     Str << Entry[c]->String;
 
+    truth isTheSelectedOne = Flags & SELECTABLE && Entry[c]->Selectable && Selected == i;
+
+    col16 colBkg = BackColor;
+    if(isTheSelectedOne && colSelectedBkg!=TRANSPARENT_COLOR) //colBkg==BLACK
+      colBkg=colSelectedBkg;
+
     if(Entry[c]->ImageKey != NO_IMAGE)
     {
       if(Str.GetSize() <= (Width - 50) >> 3)
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, colBkg);
 
         v2 v2EntryPos = v2(Pos.X + 13, LastFillBottom);
         if(EntryDrawer && IsEntryDrawingAtValidPos(Buffer,v2EntryPos)){
@@ -425,7 +432,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
                       Entry[c]->ImageKey);
         }
 
-        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i){
+        if(isTheSelectedOne){
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 5),
                                WHITE, "%s", Str.CStr());
           felist::v2SelectedPos = v2EntryPos;
@@ -448,7 +455,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
         {
           Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
-          if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i) {
+          if(isTheSelectedOne) {
             FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
                                  WHITE, "%s", Chapter[l].CStr());
             felist::v2SelectedPos = v2EntryPos;
