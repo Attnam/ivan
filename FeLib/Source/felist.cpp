@@ -453,7 +453,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 
         for(uint l = 0; l < ChapterSize; ++l)
         {
-          Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+          Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, colBkg);
 
           if(isTheSelectedOne) {
             FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
@@ -481,7 +481,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 
       for(uint l = 0; l < ChapterSize; ++l)
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, colBkg);
 
         if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i){
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 14, LastFillBottom + 1),
