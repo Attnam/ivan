@@ -258,6 +258,9 @@ void craft::Handle()
   truth AlreadyTerminated = Actor->GetAction() != this;
   truth Stopped = finished || AlreadyTerminated;
 
+  festring fsCreated;
+  festring fsMsg("");
+  int Case = INDEFINITE;
   if(finished)
   {
     if(itWhatID!=0){
@@ -266,7 +269,8 @@ void craft::Handle()
 
       if(itWhat!=NULL){
         itWhat->MoveTo(Actor->GetStack());
-        ADD_MESSAGE("You created %s.", itWhat->GetName(DEFINITE).CStr());
+        fsCreated << itWhat->GetName(Case);
+        fsMsg << "You prepared " << fsCreated.CStr();
         itWhat=NULL; //see destructor
       }
     }
@@ -278,11 +282,15 @@ void craft::Handle()
         iWallMaterialConfig = otWhat->GetMainMaterial()->GetConfig();
 
 //      if(lsqrWhere->CanBeSeenByPlayer())
-        ADD_MESSAGE("You placed %s.", otWhat->GetName(DEFINITE).CStr());
+      fsCreated << otWhat->GetName(Case);
+      fsMsg << "You built " << fsCreated.CStr();
 
       otWhat=NULL; //see destructor
     }
 
+    festring fsIng,fsIngP;
+    festring fsIngPrev,fsIngPPrev;
+    int iCountEqual=1;
     festring fsIngMsg("");
     for(int i=0;i<Ingredients.size();i++){
       item* it=game::SearchItem(Ingredients[i]);
@@ -295,18 +303,49 @@ void craft::Handle()
       }
 
       if(bSendToHell){
-        if(fsIngMsg.GetSize()>0)
-          fsIngMsg<<", ";
-        fsIngMsg << it->GetName(DEFINITE);
         it->SendToHell();
       }else{
         //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
         //TODO what about amulet of phasing or ghost mode?
         it->MoveTo(lsqrWhere->GetStack());
       }
+
+      fsIng.Empty();fsIng << it->GetName(Case);
+      fsIngP.Empty();fsIngP << it->GetName(PLURAL);
+      if(fsCreated==fsIng)continue;
+
+      bool bNewType = fsIngPrev!=fsIng;
+
+      bool bDumpPrev = false;
+      if(bNewType)
+        bDumpPrev=true;
+      if(i==Ingredients.size()-1){
+        bDumpPrev=true;
+        fsIngPrev=fsIng;
+      }
+
+      if(bDumpPrev){
+        if(fsIngMsg.GetSize()>0)
+          fsIngMsg<<", ";
+
+        if(iCountEqual>1){
+          fsIngMsg << iCountEqual << " " << fsIngPPrev;
+        }else{
+          fsIngMsg << fsIngPrev;
+        }
+
+        iCountEqual=1;
+      }else
+        iCountEqual++;
+
+      fsIngPrev.Empty();fsIngPrev<<fsIng;
+      fsIngPPrev.Empty();fsIngPPrev<<fsIngP;
     }
-    if(fsIngMsg.GetSize()>0)
-      ADD_MESSAGE("Ingredient(s) used: %s.",fsIngMsg.CStr());
+    if(fsIngMsg.GetSize()>0) //TODO this needs improving, for plural etc, to look good
+      fsMsg << " using " << fsIngMsg.CStr();
+    fsMsg << ".";
+
+    ADD_MESSAGE(fsMsg.CStr());
 
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
 
