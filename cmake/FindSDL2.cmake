@@ -116,7 +116,6 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 		)
 	ENDIF(NOT ${SDL2_INCLUDE_DIR} MATCHES ".framework")
 ENDIF(NOT SDL2_BUILDING_LIBRARY)
-SET(SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} ${SDL2_mixer_INCLUDE_DIR})
 
 # SDL2 may require threads on your system.
 # The Apple build may not need an explicit flag because one of the
@@ -139,37 +138,42 @@ IF(SDL2_LIBRARY_TEMP)
 			SET(SDL2_LIBRARY_TEMP ${SDL2MAIN_LIBRARY} ${SDL2_LIBRARY_TEMP})
 		ENDIF(SDL2MAIN_LIBRARY)
 	ENDIF(NOT SDL2_BUILDING_LIBRARY)
-
-	# For OS X, SDL2 uses Cocoa as a backend so it must link to Cocoa.
-	# CMake doesn't display the -framework Cocoa string in the UI even
-	# though it actually is there if I modify a pre-used variable.
-	# I think it has something to do with the CACHE STRING.
-	# So I use a temporary variable until the end so I can set the
-	# "real" variable in one-shot.
-	IF(APPLE)
-		SET(SDL2_LIBRARY_TEMP ${SDL2_LIBRARY_TEMP} "-framework Cocoa")
-	ENDIF(APPLE)
-
-	# For threads, as mentioned Apple doesn't need this.
-	# In fact, there seems to be a problem if I used the Threads package
-	# and try using this line, so I'm just skipping it entirely for OS X.
-	IF(NOT APPLE)
-		SET(SDL2_LIBRARY_TEMP ${SDL2_LIBRARY_TEMP} ${CMAKE_THREAD_LIBS_INIT})
-	ENDIF(NOT APPLE)
-
-	# For MinGW library
-	IF(MINGW)
-		SET(SDL2_LIBRARY_TEMP ${MINGW32_LIBRARY} ${SDL2_LIBRARY_TEMP})
-	ENDIF(MINGW)
-
-	# Set the final string here so the GUI reflects the final state.
-	SET(SDL2_LIBRARY_TEMP ${SDL2_LIBRARY_TEMP} ${SDL2_mixer_LIBRARY_TEMP})
-	SET(SDL2_LIBRARY ${SDL2_LIBRARY_TEMP} CACHE STRING "Where the SDL2 Library can be found")
-	# Set the temp variable to INTERNAL so it is not seen in the CMake GUI
-	SET(SDL2_mixer_LIBRARY_TEMP "${SDL2_mixer_LIBRARY_TEMP}" CACHE INTERNAL "")
-	SET(SDL2_LIBRARY_TEMP "${SDL2_LIBRARY_TEMP}" CACHE INTERNAL "")
 ENDIF(SDL2_LIBRARY_TEMP)
+
+MACRO(SET_SDL2_LIBRARY_WITH_TEMP SDL_LIB)
+	IF(${SDL_LIB}_LIBRARY_TEMP)
+		# For OS X, SDL2 uses Cocoa as a backend so it must link to Cocoa.
+		# CMake doesn't display the -framework Cocoa string in the UI even
+		# though it actually is there if I modify a pre-used variable.
+		# I think it has something to do with the CACHE STRING.
+		# So I use a temporary variable until the end so I can set the
+		# "real" variable in one-shot.
+		IF(APPLE)
+			SET(${SDL_LIB}_LIBRARY_TEMP ${${SDL_LIB}_LIBRARY_TEMP} "-framework Cocoa")
+		ENDIF(APPLE)
+
+		# For threads, as mentioned Apple doesn't need this.
+		# In fact, there seems to be a problem if I used the Threads package
+		# and try using this line, so I'm just skipping it entirely for OS X.
+		IF(NOT APPLE)
+			SET(${SDL_LIB}_LIBRARY_TEMP ${${SDL_LIB}_LIBRARY_TEMP} ${CMAKE_THREAD_LIBS_INIT})
+		ENDIF(NOT APPLE)
+
+		# For MinGW library
+		IF(MINGW)
+			SET(${SDL_LIB}_LIBRARY_TEMP ${MINGW32_LIBRARY} ${${SDL_LIB}_LIBRARY_TEMP})
+		ENDIF(MINGW)
+
+		# Set the final string here so the GUI reflects the final state.
+		SET(${SDL_LIB}_LIBRARY ${${SDL_LIB}_LIBRARY_TEMP} CACHE STRING "Where the ${SDL_LIB} Library can be found")
+		# Set the temp variable to INTERNAL so it is not seen in the CMake GUI
+		SET(${SDL_LIB}_LIBRARY_TEMP "${${SDL_LIB}_LIBRARY_TEMP}" CACHE INTERNAL "")
+	ENDIF(${SDL_LIB}_LIBRARY_TEMP)
+ENDMACRO(SET_SDL2_LIBRARY_WITH_TEMP)
+
+SET_SDL2_LIBRARY_WITH_TEMP(SDL2)
+SET_SDL2_LIBRARY_WITH_TEMP(SDL2_mixer)
 
 INCLUDE(FindPackageHandleStandardArgs)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL2 REQUIRED_VARS SDL2_LIBRARY SDL2_INCLUDE_DIR SDL2_mixer_LIBRARY SDL2_mixer_INCLUDE_DIR)

@@ -8,6 +8,8 @@ if(NOT PCRE_FOUND)
   add_definitions(${PCRE_DEFINITIONS})
 endif()
 
+find_package(SDL2 REQUIRED)
+
 file(GLOB IVAN_SOURCES Include/*.h Source/*.cpp)
 # The following files are #included from other .cpp files and so shouldn't be
 # compiled directly. Setting the HEADER_FILE_ONLY property to TRUE prevents it.
@@ -25,8 +27,8 @@ set_source_files_properties(
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
 add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
-target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ${PCRE_INCLUDE_DIRS})
-target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname ${PCRE_LIBRARIES})
+target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ${PCRE_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIR})
+target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname ${PCRE_LIBRARIES} ${SDL2_mixer_LIBRARY})
 
 if(UNIX)
     install(TARGETS ivan DESTINATION "${CMAKE_INSTALL_BINDIR}")

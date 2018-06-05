@@ -12,15 +12,7 @@ endif()
 
 add_library(FeLib ${FELIB_SOURCES})
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-find_package(SDL2)
-if(SDL2_FOUND)
-  message(STATUS "Using SDL2")
-else()
-  message(WARNING "SDL2 not found")
-  find_package(SDL 1.2.0 REQUIRED)
-  message(STATUS "Using SDL1")
-endif()
+find_package(SDL2 REQUIRED)
 
 if(MSVC)
   # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.

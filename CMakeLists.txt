@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12.2)
 project(ivan CXX C)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 53)
 set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
