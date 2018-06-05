@@ -1356,8 +1356,18 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
         bCanBePlaced=true;
 
+        bool bOk=false;
         int iCfg=-1;
-        if(choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg)){ //TODO this volume should be on the .dat file as chair attribute...
+        //TODO this volume should be on the .dat file as chair attribute...
+        if(!bOk){
+          ingredients.clear();
+          bOk=choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+        }
+        if(!bOk){
+          ingredients.clear();
+          bOk=choseIngredients<bone>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+        }
+        if(bOk){
           bHasIngredients=true;
 
           v2PlaceAt = lsqrWhere->GetPos();
@@ -1394,7 +1404,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         bCanBePlaced=true;
 
         int iCfg=-1;
-        if(choseIngredients<stone>(iReqStoneVol, vitInv, Char, ingredients, iCfg)){ //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
+        bool bOk=choseIngredients<stone>(iReqStoneVol, vitInv, Char, ingredients, iCfg);
+        //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
+        if(bOk){
           bHasIngredients=true;
 
           v2PlaceAt = lsqrWhere->GetPos();
