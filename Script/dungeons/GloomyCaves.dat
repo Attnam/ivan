@@ -888,8 +888,8 @@ Dungeon ELPURI_CAVE;
 
   Level DARK_LEVEL;
   {
-    Description = "dark level";
-    ShortDescription = "Dark Level";
+    Description = "dark fortress";
+    ShortDescription = "Dark Fortress";
     LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
     FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
     TunnelSquare = STEEL solidterrain(FLOOR), 0;
