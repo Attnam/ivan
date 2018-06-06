@@ -45,6 +45,7 @@ class globalwindowhandler
   static truth WaitForKeyEvent(uint Key);
   static truth WaitForKeyDown(){return WaitForKeyEvent(SDL_KEYDOWN);}
   static truth WaitForKeyUp  (){return WaitForKeyEvent(SDL_KEYUP  );}
+  static truth IsLastSDLkeyEventKeyUp();
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());
   static ulong GetTick() { return Tick; }

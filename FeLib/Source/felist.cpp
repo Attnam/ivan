@@ -217,6 +217,7 @@ uint felist::Draw()
     PageBegin = 0;
 
   bool bWaitKeyUp=false;
+  bool bClearKeyBufferOnce=false;
   graphics::PrepareBeforeDrawingFelist();
   for(;;)
   {
@@ -240,7 +241,12 @@ uint felist::Draw()
       graphics::DrawAtDoubleBufferBeforeFelistPage(); // here helps on hiding unstretched static squares
     }
 
-    uint Pressed = GET_KEY(false);DBGLN;
+    bool bClearKeyBuffer=false;
+    if(bClearKeyBufferOnce){
+      bClearKeyBuffer=true;
+      bClearKeyBufferOnce=false;
+    }
+    uint Pressed = GET_KEY(bClearKeyBuffer);DBGLN;
 
     if(Flags & SELECTABLE && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
@@ -291,6 +297,9 @@ uint felist::Draw()
         }
       }
 
+      if(globalwindowhandler::IsLastSDLkeyEventKeyUp())
+        bClearKeyBufferOnce=true;
+
       continue;
     }
 
@@ -317,6 +326,9 @@ uint felist::Draw()
 
         Selected = PageBegin = 0;
       }
+
+      if(globalwindowhandler::IsLastSDLkeyEventKeyUp())
+        bClearKeyBufferOnce=true;
 
       continue;
     }
