@@ -494,7 +494,7 @@ farmer
     LegBitmapPos = 16, 160;
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
-    Belt = BLACK_LEATHER belt { Enchantment = 1; }
+    Belt = HUMAN_SKIN belt { Enchantment = 2; }
     RightWielded = meleeweapon(BASTARD_SWORD);
     KnownCWeaponSkills == LARGE_SWORDS;
     IsSadist = true;
@@ -2798,7 +2798,7 @@ golem
   UsesNutrition = false;
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
-  Frequency = 800;
+  Frequency = 300;
   DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
@@ -3924,7 +3924,7 @@ housewife
     LegMainColor = rgb16(50, 50, 50);
     ClothColor = rgb16(50, 50, 50);
     BeltColor = rgb16(100, 100, 100);
-    Cloak = HUMAN_SKIN cloak { Enchantment = 1; }
+    Cloak = HUMAN_SKIN cloak { Enchantment = 2; }
     /* RightWielded overridden */
     IsExtraCoward = false;
     IsSadist = true;
