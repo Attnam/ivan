@@ -4897,7 +4897,7 @@ void necromancer::BeTalkedTo()
   /* From here we are talking to the necromancer in the attnamese catacombs */
   if(GetRelation(PLAYER) == HOSTILE)
   {
-    ADD_MESSAGE("I will bury you in the catacombs with all the others!");
+    ADD_MESSAGE("\"I will bury you in the catacombs with all the others!\"");
     return;
   }
 
