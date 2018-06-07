@@ -28,7 +28,7 @@
 truth outputfile::bakcupBeforeSaving = false;
 truth outputfile::saveOnNewFileAlways = false;
 
-void outputfile::SetSafeSaving(truth b){
+void outputfile::SetSafeSaving(truth b){DBGLN;
   bakcupBeforeSaving=b;
   saveOnNewFileAlways=b;
 }
@@ -37,6 +37,9 @@ void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewF
   File.close();
 
   if(saveOnNewFileAlways){ // This moves the new .tmp file to the correct filename, before removing it.
+    if(FileNameNewTmp.IsEmpty())
+      ABORT("new tmp filename is empty, 'save on new file always' option was properly set before this output file '%s' ?",FileName.CStr());
+
     std::ifstream newTmpFile(FileNameNewTmp.CStr(), std::ios::binary);
     if(newTmpFile.good()){
       std::remove(FileName.CStr()); //just to not let existing one create any doubts if some crash happens here
@@ -49,7 +52,7 @@ void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewF
 
       std::remove(FileNameNewTmp.CStr()); //last thing
     }else{
-      ABORT("the new savegame tmp file '%s' should exist!",FileNameNewTmp.CStr());
+      ABORT("the new tmp file '%s' should exist!",FileNameNewTmp.CStr());
     }
   }
 }
@@ -57,6 +60,9 @@ void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewF
 outputfile::outputfile(cfestring& fileName, truth AbortOnErr)
 : FileName(fileName)
 {
+  if(FileName.IsEmpty())
+    ABORT("empty output filename");
+
   // If FileName contains a directory, make sure the directory exists first.
   festring::csizetype LastPathSeparatorPos = FileName.FindLast('/');
   if(LastPathSeparatorPos != festring::NPos)

@@ -34,7 +34,8 @@
 #define PINK 61470
 
 #define WHITE 65535
-#define LIGHT_GRAY 46518
+#define LIGHT_GRAY 38066
+#define LIGHT_GRAY2 46518
 #define DARK_GRAY 21130
 #define BLACK 0
 
@@ -73,8 +74,8 @@
 #define FASTING (1 << 30)
 #define PARASITE_MIND_WORM (1 << 31)
 
-#define HEAD 1
-#define TORSO 2
+#define TORSO 1
+#define HEAD 2
 #define RIGHT_ARM 4
 #define LEFT_ARM 8
 #define ARMS 12

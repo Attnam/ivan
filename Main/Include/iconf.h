@@ -36,6 +36,7 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsGenerateDefinesValidator(){return GenerateDefinesValidator.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -149,6 +150,7 @@ class ivanconfig
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
+  static void GenerateDefinesValidatorChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -176,6 +178,7 @@ class ivanconfig
   static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption GenerateDefinesValidator;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
