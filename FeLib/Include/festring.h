@@ -32,7 +32,7 @@ class festring
   festring(sizetype, char);
   festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
   festring(cchar* CStr, sizetype N)
-  : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
+  : Data(0), Size(0), OwnsData(false) { SlowAppend(CStr, N); }
   festring(cfestring&);
   ~festring();
   festring& Capitalize();
@@ -139,11 +139,9 @@ inline festringpile operator+(cfestring& S, const festringpile& What)
 { return festringpile(S) + What; }
 
 inline festring::festring(cfestring& Str)
-: Data(Str.Data), Size(Str.Size),
-  OwnsData(Str.OwnsData), Reserved(Str.Reserved)
+: Data(0), Size(0), OwnsData(false)
 {
-  if(Data && OwnsData)
-    ++REFS(Data);
+  SlowAppend(Str.Data, Str.Size);
 }
 
 inline festring::festring(sizetype N)

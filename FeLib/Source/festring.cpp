@@ -39,54 +39,15 @@ festring& festring::Append(cchar* CStr, sizetype N)
 
 festring& festring::operator=(cchar* CStr)
 {
-  sizetype NewSize = strlen(CStr);
-  Size = NewSize;
-  char* Ptr = Data;
-
-  if(Ptr && OwnsData)
-  {
-    if(!REFS(Ptr) && NewSize <= Reserved)
-    {
-      memcpy(Ptr, CStr, NewSize);
-      return *this;
-    }
-
-    if(!REFS(Ptr)--)
-      delete [] &REFS(Ptr);
-  }
-
-  Data = const_cast<char*>(CStr);
-  OwnsData = false;
+  Empty();
+  SlowAppend(CStr,strlen(CStr));
   return *this;
 }
 
 festring& festring::operator=(cfestring& Str)
 {
-  sizetype NewSize = Str.Size;
-  Size = NewSize;
-  char* Ptr = Data;
-  char* StrPtr = Str.Data;
-
-  if(Ptr && OwnsData)
-  {
-    if(!REFS(Ptr) && NewSize <= Reserved)
-    {
-      if(StrPtr)
-        memcpy(Ptr, StrPtr, NewSize);
-
-      return *this;
-    }
-
-    if(!REFS(Ptr)--)
-      delete [] &REFS(Ptr);
-  }
-
-  if((Data = StrPtr) && (OwnsData = Str.OwnsData))
-  {
-    ++REFS(StrPtr);
-    Reserved = Str.Reserved;
-  }
-
+  Empty();
+  SlowAppend(Str.Data,Str.Size);
   return *this;
 }
 
