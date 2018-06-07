@@ -983,8 +983,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     {
       while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
       closedir(dp);
-    }else{
-      return "";
     }
   }
 #endif
