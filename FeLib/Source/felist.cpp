@@ -297,7 +297,7 @@ uint felist::Draw()
         }
       }
 
-      if(globalwindowhandler::IsLastSDLkeyEventKeyUp())
+      if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
         bClearKeyBufferOnce=true;
 
       continue;
@@ -327,7 +327,7 @@ uint felist::Draw()
         Selected = PageBegin = 0;
       }
 
-      if(globalwindowhandler::IsLastSDLkeyEventKeyUp())
+      if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
         bClearKeyBufferOnce=true;
 
       continue;
@@ -384,7 +384,10 @@ uint felist::Draw()
   FelistCurrentlyDrawn=NULL;DBGLN;
 
   #ifdef FELIST_WAITKEYUP
-  if(bWaitKeyUp)for(;;){if(WAIT_FOR_KEY_UP())break;};
+  if(bWaitKeyUp && !globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
+    for(;;)
+      if(WAIT_FOR_KEY_UP()) //TODO it is NOT waiting, why? that's the reason of `for(;;)` above...
+        break;
   #endif
 
   return Return;

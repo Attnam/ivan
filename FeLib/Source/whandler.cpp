@@ -461,7 +461,7 @@ truth globalwindowhandler::WaitForKeyEvent(uint Key)
   return false;
 }
 
-truth globalwindowhandler::IsLastSDLkeyEventKeyUp()
+truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
 {
   return bLastSDLkeyEventIsKeyUp;
 }
