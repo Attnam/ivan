@@ -804,6 +804,29 @@ Dungeon ELPURI_CAVE;
     {
       Character = vladimir { Team = IVAN_TEAM; }
     }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Items == LEAD itemcontainer(LARGE_CHEST|HEXAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == URANIUM stick { Times = 3:17; } }
+    }
+
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      OTerrain = URANIUM decoration(SHARD);
+      Times = 1:3;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = URANIUM boulder(1);
+      Times = 0:5;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = URANIUM boulder(2);
+      Times = 0:5;
+    }
   }
 
   RandomLevel 6:8;
@@ -865,8 +888,8 @@ Dungeon ELPURI_CAVE;
 
   Level DARK_LEVEL;
   {
-    Description = "dark level";
-    ShortDescription = "Dark Level";
+    Description = "dark fortress";
+    ShortDescription = "Dark Fortress";
     LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
     FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
     TunnelSquare = STEEL solidterrain(FLOOR), 0;

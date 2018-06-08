@@ -983,8 +983,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     {
       while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
       closedir(dp);
-    }else{
-      return "";
     }
   }
 #endif
@@ -1141,7 +1139,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(bSaveGameSortModeByDtTm)
         id<<fsVer<<rfi.time<<" ";
 
-      id<<sPrettyNameWork.c_str()<<" ";
+      id<<sPrettyNameWork.c_str()<<(rfi.WizardMode?" (WIZ)":"")<<" ";
 
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it

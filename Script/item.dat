@@ -269,7 +269,7 @@ meleeweapon
                            RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 79,
@@ -307,7 +307,7 @@ meleeweapon
                            HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
                            MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 36,
                               25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
@@ -357,7 +357,7 @@ meleeweapon
                            RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 79,
@@ -397,7 +397,7 @@ meleeweapon
                            HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
                            MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 36,
                               25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
@@ -448,7 +448,7 @@ meleeweapon
                            RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 79,
@@ -488,7 +488,7 @@ meleeweapon
                            HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
                            MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 36,
                               25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
@@ -571,20 +571,20 @@ meleeweapon
                            CYPRESS_WOOD, HOLLY_WOOD, YEW_WOOD, BEECH_WOOD, BAMBOO_WOOD,
                            MAHOGANY_WOOD, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD,
                            OAK_WOOD, TEAK_WOOD, EBONY_WOOD, KAURI_WOOD, RATA_WOOD,
-                           SIDGURE_WOOD, DRAGON_BONE, MAHOGANY_WOOD, MAHOGANY_WOOD, MAHOGANY_WOOD,
-                           DEEP_CORAL, HALCYON, ASH_WOOD, ASH_WOOD, ASH_WOOD,
+                           SIDGURE_WOOD, YEW_WOOD, MAHOGANY_WOOD, MAHOGANY_WOOD, MAHOGANY_WOOD,
+                           FUNGI_WOOD, FUNGI_WOOD, ASH_WOOD, ASH_WOOD, ASH_WOOD,
                            EBONY_WOOD, EBONY_WOOD, KAURI_WOOD, KAURI_WOOD, RATA_WOOD,
-                           BEECH_WOOD, BEECH_WOOD, PETRIFIED_WOOD, FIR_WOOD,
-                           HARDENED_ASH, BIRCH_WOOD, BIRCH_WOOD, YEW_WOOD, FUNGI_WOOD, OAK_WOOD,
-                           OAK_WOOD, SIDGURE_WOOD, CYPRESS_WOOD, CYPRESS_WOOD, CORAL, RATA_WOOD,
+                           BEECH_WOOD, BEECH_WOOD, YEW_WOOD, FIR_WOOD,
+                           ASH_WOOD, BIRCH_WOOD, BIRCH_WOOD, YEW_WOOD, FUNGI_WOOD, OAK_WOOD,
+                           OAK_WOOD, SIDGURE_WOOD, CYPRESS_WOOD, CYPRESS_WOOD, FUNGI_WOOD, RATA_WOOD,
                            OAK_WOOD, OAK_WOOD, TEAK_WOOD, TEAK_WOOD, EBONY_WOOD, BIRCH_WOOD,
                            BIRCH_WOOD, OAK_WOOD, OAK_WOOD, EBONY_WOOD, BEECH_WOOD, BEECH_WOOD,
                            ASH_WOOD, EBONY_WOOD, OAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
-                           OAK_WOOD, EBONY_WOOD, MAHOGANY_WOOD, GLASS,
+                           OAK_WOOD, EBONY_WOOD, MAHOGANY_WOOD, EBONY_WOOD,
                            MAHOGANY_WOOD, MAHOGANY_WOOD, EBONY_WOOD, EBONY_WOOD, ELM_WOOD,
                            FIR_WOOD, BIRCH_WOOD, BIRCH_WOOD, OAK_WOOD, OAK_WOOD,
                            TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD, TEAK_WOOD,
-                           BONE, OAK_WOOD, OAK_WOOD, TEAK_WOOD, SIDGURE_WOOD, OAK_WOOD,
+                           YEW_WOOD, OAK_WOOD, OAK_WOOD, TEAK_WOOD, SIDGURE_WOOD, OAK_WOOD,
                            OAK_WOOD, TEAK_WOOD; }
     MaterialConfigChances = { 96,
                               5, 10, 15, 50, 100, 150, 5, 10, 15, 75, 120, 5, 10, 15,
@@ -617,7 +617,7 @@ meleeweapon
                            PRIMORDIAL_ICE, STEEL, DWARF_STEEL, METEORIC_STEEL, UKKU_STEEL,
                            SOUL_STEEL, BLOOD_STEEL, ADAMANT, OMMEL_BONE, OMMEL_TOOTH; }
     SecondaryMaterialConfig = { 42,
-                           EBONY_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, DRAGON_BONE,
+                           EBONY_WOOD, KAURI_WOOD, RATA_WOOD, SIDGURE_WOOD, SIDGURE_WOOD,
                            KAURI_WOOD, KAURI_WOOD, RATA_WOOD, RATA_WOOD, SIDGURE_WOOD, KAURI_WOOD, KAURI_WOOD,
                            RATA_WOOD, RATA_WOOD, SIDGURE_WOOD, SIDGURE_WOOD,
                            SIDGURE_WOOD, RATA_WOOD, RATA_WOOD, RATA_WOOD, EBONY_WOOD, EBONY_WOOD,
@@ -977,7 +977,7 @@ meleeweapon
                            STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, JOTUN_ICE, PRIMORDIAL_ICE, STEEL_LEAF,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 67,
@@ -1012,7 +1012,7 @@ meleeweapon
                            DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
                            FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 33,
                               10, 5, 5, 5, 5, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
                               1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
@@ -1058,7 +1058,7 @@ meleeweapon
                            STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, STEEL_LEAF,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 67,
@@ -1094,7 +1094,7 @@ meleeweapon
                            DEEP_BRONZE, BRASS, HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER,
                            FAIRY_STEEL, MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 33,
                               10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50, 15, 5,
                               1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 500, 100,
@@ -1144,7 +1144,7 @@ meleeweapon
                            RUBBER, STAINLESS_STEEL, MAGIC_CRYSTAL, ARCANITE, GLASS,
                            PEARL_GLASS, ILLITHIUM, RED_ICE, JOTUN_ICE, KAURI_WOOD,
                            PIG_IRON, IRON, STEEL, DWARF_STEEL, METEORIC_STEEL,
-                           UKKU_STEEL, BLACK_IRON, SOUL_STEEL, IRON, STEEL,
+                           UKKU_STEEL, BLACK_IRON, STEEL, IRON, STEEL,
                            WHALE_BONE, WRAITH_BONE, OMMEL_BONE, OMMEL_TOOTH, SHARK_TOOTH,
                            TROLL_TUSK, MAMMOTH_TUSK; }
     MaterialConfigChances = { 79,
@@ -1182,7 +1182,7 @@ meleeweapon
                            HEPATIZON, OCTIRON, ORICHALCUM, MOON_SILVER, FAIRY_STEEL,
                            MITHRIL, GALVORN, STAR_METAL, DARK_GOLD, DARK_MATTER,
                            STAINLESS_STEEL, ARCANITE, ILLITHIUM, STEEL, DWARF_STEEL,
-                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, SOUL_STEEL, STEEL; }
+                           METEORIC_STEEL, UKKU_STEEL, ADAMANT, STEEL, STEEL; }
     MaterialConfigChances = { 36,
                               25, 25, 25, 10, 5, 5, 5, 25, 15, 10, 5, 5, 5, 5, 250, 50,
                               15, 5, 1, 100, 50, 25, 5, 1, 50, 25, 100, 25, 25, 300, 100,
@@ -2624,7 +2624,7 @@ wand
     /* BeamRange has no effect */
     MinCharges = 3;
     MaxCharges = 6;
-    BeamColor = LIGHT_GRAY;
+    BeamColor = LIGHT_GRAY2;
     BeamEffect = BEAM_DOOR_CREATION;
     BeamStyle = SHIELD_BEAM;
     AttachedGod = LORICATUS;
