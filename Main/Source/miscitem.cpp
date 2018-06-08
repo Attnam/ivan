@@ -1278,6 +1278,10 @@ void itemcontainer::PostConstruct()
 {
   lockableitem::PostConstruct();
   SetIsLocked(RAND_N(3));
+  
+  if((GetConfig()&LOCK_BITS)&BROKEN_LOCK)
+    SetIsLocked(false);
+  
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
   for(int c = 0; c < ItemNumber; ++c)
