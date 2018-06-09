@@ -22,6 +22,7 @@ class ivanconfig
   static cfestring& GetDefaultName() { return DefaultName.Value; }
   static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
+  static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -35,6 +36,7 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsGenerateDefinesValidator(){return GenerateDefinesValidator.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -101,6 +103,7 @@ class ivanconfig
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth FantasyNameChangeInterface(stringoption* O);
+  static truth SelectedBkgColorChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -111,6 +114,7 @@ class ivanconfig
   static truth FrameSkipChangeInterface(numberoption* O);
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
+  static void SelectedBkgColorChanger(stringoption* O, cfestring& What);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void ShowItemsAtPlayerSquareChanger(cycleoption* O, long What);
@@ -146,6 +150,7 @@ class ivanconfig
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
+  static void GenerateDefinesValidatorChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -153,6 +158,7 @@ class ivanconfig
   static stringoption DefaultName;
   static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
+  static stringoption SelectedBkgColor;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;
@@ -172,6 +178,7 @@ class ivanconfig
   static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption GenerateDefinesValidator;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;

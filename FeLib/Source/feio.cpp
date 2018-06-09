@@ -933,6 +933,8 @@ struct fileInfo{
   char* GameScript = 0; //dummy
   int CurrentDungeonIndex = -1;
   int CurrentLevelIndex = -1;
+  v2 Camera; //dummy
+  truth WizardMode;
   festring fileName=festring(); //TODO this init helps with festring? is it buggy?
   festring absFileName=festring(); //contains the full path
   festring time=festring();
@@ -981,8 +983,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     {
       while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
       closedir(dp);
-    }else{
-      return "";
     }
   }
 #endif
@@ -1128,6 +1128,8 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       skipSeek(&SaveFile); //DUMMY (for here) binary data skipper
       //TODO the current dungeon and many other useful info could be stored in a simple text file just to be used during this game loading list!
       SaveFile >> rfi.CurrentDungeonIndex >> rfi.CurrentLevelIndex; DBG2(rfi.CurrentDungeonIndex,rfi.CurrentLevelIndex);
+      SaveFile >> rfi.Camera; //skipper
+      SaveFile >> rfi.WizardMode;
       SaveFile.Close();
 
       festring fsVer("");
@@ -1137,7 +1139,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(bSaveGameSortModeByDtTm)
         id<<fsVer<<rfi.time<<" ";
 
-      id<<sPrettyNameWork.c_str()<<" ";
+      id<<sPrettyNameWork.c_str()<<(rfi.WizardMode?" (WIZ)":"")<<" ";
 
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
@@ -1224,49 +1226,49 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     festring chosen;chosen<<List.GetEntry(Check);
     for(int i=0;i<vFiles.size();i++){
       if(chosen == vFiles[i].idOnList){
-        if(!vFiles[i].fileNameAutoSave.IsEmpty()){
+        if(!vFiles[i].fileNameAutoSave.IsEmpty() && !vFiles[i].WizardMode){ //wizard mode always keep autosaves and when loading would always move back to the past what is at least annoying
           /**
            * autosaves are old and apparently a safe thing,
            * therefore will be preferred as restoration override.
            */
           return vFiles[i].fileNameAutoSave;
-        }else{
-          /**
-           * Backups are a fallback mainly when a crash happens like this:
-           *
-           * - USER action: you try to enter a new dungeon (so it will be created now)
-           *
-           * - game action: saves a backup of the current dungeon last save at ".bkp"
-           * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
-           * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
-           *
-           * - game bug: the new dungeon creation fails and crashes.
-           *
-           * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
-           */
-          std::vector<festring>& rvBackups = vFiles[i].vBackups;
-          if(rvBackups.size()>0){
-            if(AlertConfirmMsg("Try to restore the backup?")){
-              for(int b=0;b<rvBackups.size();b++){
-                festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+        }
 
-                festring fsFinal("");fsFinal << fsBkp;
-                fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
+        /**
+         * Backups are a fallback mainly when a crash happens like this:
+         *
+         * - USER action: you try to enter a new dungeon (so it will be created now)
+         *
+         * - game action: saves a backup of the current dungeon last save at ".bkp"
+         * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
+         * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
+         *
+         * - game bug: the new dungeon creation fails and crashes.
+         *
+         * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
+         */
+        std::vector<festring>& rvBackups = vFiles[i].vBackups;
+        if(rvBackups.size()>0){
+          if(AlertConfirmMsg("Try to restore the backup?")){
+            for(int b=0;b<rvBackups.size();b++){
+              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
 
-                std::remove(fsFinal.CStr()); // remove broken save file
+              festring fsFinal("");fsFinal << fsBkp;
+              fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
-                std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
-                if(flBkp.good()){
-                  std::ofstream final(fsFinal.CStr(), std::ios::binary);
-                  final << flBkp.rdbuf();
+              std::remove(fsFinal.CStr()); // remove broken save file
 
-                  final.close();
-                  flBkp.close();
+              std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
+              if(flBkp.good()){
+                std::ofstream final(fsFinal.CStr(), std::ios::binary);
+                final << flBkp.rdbuf();
 
-                  // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
-                }else{
-                  ABORT("unable to access the backup file '%s'",fsBkp.CStr());
-                }
+                final.close();
+                flBkp.close();
+
+                // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
+              }else{
+                ABORT("unable to access the backup file '%s'",fsBkp.CStr());
               }
             }
           }

@@ -8747,7 +8747,7 @@ void character::ShowAdventureInfoAlt() const
     int Answer =
      game::KeyQuestion(
        CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
-         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+         'z', 11, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
 #endif
 
     if(Answer == 'i' || Answer == 'I'){

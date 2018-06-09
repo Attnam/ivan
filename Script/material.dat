@@ -386,7 +386,7 @@ solid
     ConsumeType = CT_METAL;
     Density = 20000;
     Color = rgb16(224, 224, 0);
-    PriceModifier = 1000;
+    PriceModifier = 1500;
     NameStem = "gold";
     AdjectiveStem = "golden";
     Flexibility = 3;
@@ -405,7 +405,7 @@ solid
     ConsumeType = CT_METAL;
     Density = 20000;
     Color = rgb16(112, 112, 0);
-    PriceModifier = 1500;
+    PriceModifier = 2500;
     NameStem = "dark gold";
     Flexibility = 3;
     AttachedGod = MELLIS;
@@ -423,7 +423,7 @@ solid
     ConsumeType = CT_MINERAL;
     Density = 20000;
     Color = rgb16(33, 33, 33);
-    PriceModifier = 2000;
+    PriceModifier = 3000;
     NameStem = "dark matter";
     Flexibility = 2;
     AttachedGod = MORTIFER;
@@ -1206,6 +1206,7 @@ solid
     Color = rgb16(210, 180, 140);
     NameStem = "harpy feather";
     Flexibility = 20;
+    PriceModifier = 50;
     AttachedGod = SILVA;
     SoftenedMaterial = OSTRICH_FEATHER;
     HardenedMaterial = GRIFFON_FEATHER;
@@ -1222,6 +1223,7 @@ solid
     Color = rgb16(218, 165, 32);
     NameStem = "griffon feather";
     Flexibility = 25;
+    PriceModifier = 150;
     AttachedGod = SILVA;
     SoftenedMaterial = HARPY_FEATHER;
     HardenedMaterial = PHOENIX_FEATHER;
@@ -1800,7 +1802,7 @@ solid
     HardenedMaterial = CARBIDE;
     NaturalForm = stone;
     IntelligenceRequirement = 6;
-    PriceModifier = 250;
+    PriceModifier = 2000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
     InteractionFlags = Base|CAN_BURN;
@@ -1874,6 +1876,7 @@ solid
     AttachedGod = SCABIES;
     SoftenedMaterial = LEAD;
     HardenedMaterial = SOLARIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 20;
     Flexibility = 1;
     ExplosivePower = 30000;
@@ -1894,6 +1897,7 @@ solid
     AttachedGod = SCABIES;
     SoftenedMaterial = URANIUM;
     HardenedMaterial = NEUTRONIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 30;
     Flexibility = 1;
     ExplosivePower = 60000;
@@ -1913,6 +1917,7 @@ solid
     NameStem = "neutronium";
     AttachedGod = SCABIES;
     SoftenedMaterial = SOLARIUM;
+    NaturalForm = stick;
     IntelligenceRequirement = 40;
     Flexibility = 1;
     ExplosivePower = 120000;
@@ -2030,7 +2035,7 @@ solid
     SoftenedMaterial = SAND_STONE;
     HardenedMaterial = PEARL_GLASS;
     IntelligenceRequirement = 5;
-    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config PEARL_GLASS;
@@ -2041,7 +2046,7 @@ solid
     Color = rgb16(100, 100, 255);
     NameStem = "pearl glass";
     Alpha = 150;
-    PriceModifier = 250;
+    PriceModifier = 1500;
     AttachedGod = LEGIFER;
     SoftenedMaterial = GLASS;
     HardenedMaterial = ILLITHIUM;
@@ -2127,6 +2132,7 @@ solid
     NameStem = "primordial ice";
     Alpha = 175;
     IntelligenceRequirement = 28;
+    PriceModifier = 1750;
     AttachedGod = ATAVUS;
     SoftenedMaterial = JOTUN_ICE;
     NaturalForm = stone;
@@ -2470,6 +2476,7 @@ solid
     AttachedGod = SILVA;
     Flexibility = 2;
     IntelligenceRequirement = 8;
+    PriceModifier = 250;
     NaturalForm = stick;
     SoftenedMaterial = ASH_WOOD;
     HardenedMaterial = KAURI_WOOD;
@@ -2561,6 +2568,7 @@ solid
     AttachedGod = SILVA;
     Flexibility = 2;
     IntelligenceRequirement = 9;
+    PriceModifier = 250;
     NaturalForm = stick;
     SoftenedMaterial = BAMBOO_WOOD;
     HardenedMaterial = KAURI_WOOD;
@@ -2694,6 +2702,7 @@ solid
     HardenedMaterial = KAURI_WOOD;
     Flexibility = 2;
     IntelligenceRequirement = 10;
+    PriceModifier = 250;
     CommonFlags = Base|IS_VALUABLE;
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -2715,6 +2724,7 @@ solid
     HardenedMaterial = RATA_WOOD;
     Flexibility = 2;
     IntelligenceRequirement = 12;
+    PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base|CAN_BURN;
@@ -2735,6 +2745,7 @@ solid
     HardenedMaterial = SIDGURE_WOOD;
     Flexibility = 2;
     IntelligenceRequirement = 15;
+    PriceModifier = 750;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base|CAN_BURN;
@@ -2753,6 +2764,7 @@ solid
     NaturalForm = stick;
     Flexibility = 3;
     IntelligenceRequirement = 20;
+    PriceModifier = 900;
     SoftenedMaterial = RATA_WOOD;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -2854,6 +2866,7 @@ solid
     Color = rgb16(200, 200, 200);
     NameStem = "unicorn horn";
     IntelligenceRequirement = 20;
+    PriceModifier = 1250;
     AttachedGod = SEGES;
     SoftenedMaterial = MOOSE_ANTLER;
     CommonFlags = Base|IS_VALUABLE;
@@ -2903,6 +2916,7 @@ solid
     ConsumeType = CT_MINERAL;
     Color = rgb16(218, 206, 184);
     IntelligenceRequirement = 24;
+    PriceModifier = 1250;
     NameStem = "petrified dragon bone";
     AttachedGod = MORTIFER;
     SoftenedMaterial = TURTLE_SHELL;
@@ -3018,6 +3032,7 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     IntelligenceRequirement = 4;
+    PriceModifier = 1500;
     SoftenedMaterial = SHALE;
     HardenedMaterial = MARBLE;
     NameFlags = Base|USE_AN;
@@ -3084,7 +3099,7 @@ solid
     IntelligenceRequirement = 8;
     SoftenedMaterial = JASPER;
     HardenedMaterial = AGATE;
-    PriceModifier = 900;
+    PriceModifier = 1500;
     Alpha = 200;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3102,7 +3117,7 @@ solid
     IntelligenceRequirement = 9;
     SoftenedMaterial = JACINTH;
     HardenedMaterial = TOURMALINE;
-    PriceModifier = 1000;
+    PriceModifier = 2000;
     Alpha = 200;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
@@ -3121,7 +3136,7 @@ solid
     IntelligenceRequirement = 10;
     SoftenedMaterial = AGATE;
     HardenedMaterial = CHALCEDONY;
-    PriceModifier = 1200;
+    PriceModifier = 2500;
     Alpha = 200;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3139,7 +3154,7 @@ solid
     IntelligenceRequirement = 12;
     SoftenedMaterial = TOURMALINE;
     HardenedMaterial = SLADE;
-    PriceModifier = 1500;
+    PriceModifier = 3500;
     Alpha = 200;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3261,7 +3276,7 @@ solid
     IntelligenceRequirement = 8;
     SoftenedMaterial = FLINT;
     HardenedMaterial = LAPIS_LAZULI;
-    PriceModifier = 900;
+    PriceModifier = 1500;
     Alpha = 180;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3279,7 +3294,7 @@ solid
     IntelligenceRequirement = 9;
     SoftenedMaterial = CITRINE;
     HardenedMaterial = AMBER;
-    PriceModifier = 1000;
+    PriceModifier = 2000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -3296,7 +3311,7 @@ solid
     IntelligenceRequirement = 10;
     SoftenedMaterial = LAPIS_LAZULI;
     HardenedMaterial = OPAL;
-    PriceModifier = 1100;
+    PriceModifier = 3000;
     Alpha = 200;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
@@ -3315,7 +3330,7 @@ solid
     IntelligenceRequirement = 11;
     SoftenedMaterial = AMBER;
     HardenedMaterial = ONYX;
-    PriceModifier = 1300;
+    PriceModifier = 3500;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3333,7 +3348,8 @@ solid
     IntelligenceRequirement = 13;
     SoftenedMaterial = OPAL;
     HardenedMaterial = SLADE;
-    PriceModifier = 1600;
+    PriceModifier = 4000;
+    Alpha = 200;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -3350,7 +3366,7 @@ solid
     NaturalForm = stone;
     IntelligenceRequirement = 18;
     SoftenedMaterial = ROCK_CRYSTAL;
-    PriceModifier = 2600;
+    PriceModifier = 6000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
@@ -3367,7 +3383,7 @@ solid
     IntelligenceRequirement = 6;
     SoftenedMaterial = LIME_STONE;
     HardenedMaterial = PEARL;
-    PriceModifier = 900;
+    PriceModifier = 2000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
   }
@@ -3384,7 +3400,7 @@ solid
     IntelligenceRequirement = 8;
     SoftenedMaterial = NACRE;
     HardenedMaterial = CORAL;
-    PriceModifier = 1600;
+    PriceModifier = 3000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
   }
@@ -3401,7 +3417,7 @@ solid
     IntelligenceRequirement = 10;
     SoftenedMaterial = PEARL;
     HardenedMaterial = DEEP_CORAL;
-    PriceModifier = 1400;
+    PriceModifier = 1500;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -3417,7 +3433,7 @@ solid
     NaturalForm = stone;
     IntelligenceRequirement = 12;
     SoftenedMaterial = CORAL;
-    PriceModifier = 1800;
+    PriceModifier = 2500;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -3433,7 +3449,7 @@ solid
     NaturalForm = stone;
     IntelligenceRequirement = 16;
     SoftenedMaterial = DEEP_CORAL;
-    PriceModifier = 2200;
+    PriceModifier = 4000;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -3448,6 +3464,7 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     IntelligenceRequirement = 3;
+    PriceModifier = 900;
     SoftenedMaterial = SAND;
     HardenedMaterial = QUARTZITE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -3463,6 +3480,7 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     IntelligenceRequirement = 5;
+    PriceModifier = 1500;
     SoftenedMaterial = MILKY_QUARTZ;
     HardenedMaterial = ROSE_QUARTZ;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -3480,7 +3498,7 @@ solid
     IntelligenceRequirement = 7;
     SoftenedMaterial = QUARTZITE;
     HardenedMaterial = NETHER_QUARTZ;
-    PriceModifier = 800;
+    PriceModifier = 2000;
     Alpha = 180;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3498,7 +3516,7 @@ solid
     IntelligenceRequirement = 9;
     SoftenedMaterial = ROSE_QUARTZ;
     HardenedMaterial = AMETHYST;
-    PriceModifier = 1100;
+    PriceModifier = 3000;
     Alpha = 180;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -3517,7 +3535,7 @@ solid
     NaturalForm = stone;
     SoftenedMaterial = NETHER_QUARTZ;
     HardenedMaterial = TOPAZ;
-    PriceModifier = 1000;
+    PriceModifier = 5000;
     IntelligenceRequirement = 30;
     Alpha = 160;
     NameFlags = Base|USE_AN;
@@ -3537,7 +3555,7 @@ solid
     NaturalForm = stone;
     SoftenedMaterial = AMETHYST;
     HardenedMaterial = SAPPHIRE;
-    PriceModifier = 2000;
+    PriceModifier = 6000;
     IntelligenceRequirement = 32;
     Alpha = 160;
     CommonFlags = Base|IS_VALUABLE;
@@ -3556,7 +3574,7 @@ solid
     NaturalForm = stone;
     SoftenedMaterial = TOPAZ;
     HardenedMaterial = EMERALD;
-    PriceModifier = 4000;
+    PriceModifier = 7000;
     IntelligenceRequirement = 34;
     Alpha = 200;
     CommonFlags = Base|IS_VALUABLE;
@@ -3575,7 +3593,7 @@ solid
     NaturalForm = stone;
     SoftenedMaterial = SAPPHIRE;
     HardenedMaterial = RUBY;
-    PriceModifier = 6000;
+    PriceModifier = 8000;
     IntelligenceRequirement = 36;
     Alpha = 200;
     NameFlags = Base|USE_AN;
@@ -3595,7 +3613,7 @@ solid
     NaturalForm = stone;
     SoftenedMaterial = EMERALD;
     HardenedMaterial = DIAMOND;
-    PriceModifier = 8000;
+    PriceModifier = 9000;
     IntelligenceRequirement = 38;
     Alpha = 200;
     CommonFlags = Base|IS_VALUABLE;
@@ -3649,7 +3667,7 @@ solid
     Color = rgb16(24, 136, 64);
     NameStem = "jadeite";
     IntelligenceRequirement = 7;
-    PriceModifier = 50;
+    PriceModifier = 1500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = BASALT;
@@ -3665,7 +3683,7 @@ solid
     Color = rgb16(11, 218, 81);
     NameStem = "malachite";
     IntelligenceRequirement = 8;
-    PriceModifier = 150;
+    PriceModifier = 2000;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = JADEITE;
@@ -3681,7 +3699,7 @@ solid
     Color = rgb16(130, 140, 131);
     NameStem = "nephrite";
     IntelligenceRequirement = 9;
-    PriceModifier = 500;
+    PriceModifier = 2500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = MALACHITE;
@@ -3697,7 +3715,7 @@ solid
     Color = rgb16(69, 71, 61);
     NameStem = "black jade";
     IntelligenceRequirement = 11;
-    PriceModifier = 1500;
+    PriceModifier = 3000;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = NEPHRITE;
@@ -3715,7 +3733,7 @@ solid
     Color = rgb16(238, 64, 53);
     NameStem = "red jade";
     IntelligenceRequirement = 19;
-    PriceModifier = 2500;
+    PriceModifier = 3500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = BLACK_JADE;
@@ -3733,7 +3751,7 @@ solid
     Color = rgb16(122, 192, 67);
     NameStem = "green jade";
     IntelligenceRequirement = 25;
-    PriceModifier = 3500;
+    PriceModifier = 4500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = RED_JADE;
@@ -3751,7 +3769,7 @@ solid
     Color = rgb16(158, 217, 247);
     NameStem = "blue jade";
     IntelligenceRequirement = 30;
-    PriceModifier = 4500;
+    PriceModifier = 5500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_JADE;
@@ -3769,7 +3787,7 @@ solid
     Color = rgb16(239, 240, 237);
     NameStem = "white jade";
     IntelligenceRequirement = 35;
-    PriceModifier = 5500;
+    PriceModifier = 6500;
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = BLUE_JADE;
@@ -3993,6 +4011,7 @@ solid
     Density = 2500;
     Flexibility = 1;
     IntelligenceRequirement = 7;
+    PriceModifier = 7000;
     Color = rgb16(223, 220, 218);
     NameStem = "porcelain";
     AttachedGod = SILVA;
@@ -4028,7 +4047,7 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = ROCK_SALT;
-    PriceModifier = 100;
+    PriceModifier = 1000;
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -4047,7 +4066,7 @@ solid
     IntelligenceRequirement = 4;
     SoftenedMaterial = CALCITE;
     HardenedMaterial = MARBLE;
-    PriceModifier = 100;
+    PriceModifier = 2000;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -4065,7 +4084,7 @@ solid
     IntelligenceRequirement = 3;
     SoftenedMaterial = GRANITE;
     HardenedMaterial = PIG_IRON;
-    PriceModifier = 600;
+    PriceModifier = 1750;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -5166,7 +5185,7 @@ liquid
     AttachedGod = MELLIS;
     RustModifier = 200;
     Acidicity = 10;
-    PriceModifier = 1000;
+    PriceModifier = 10000;
     CommonFlags = Base|IS_VALUABLE;
     StepInWisdomLimit = 20;
   }
@@ -5214,7 +5233,7 @@ liquid
     ConsumeWisdomLimit = 3;
     Alpha = 255;
     AttachedGod = MORTIFER;
-    PriceModifier = 50;
+    PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
   }
 
@@ -5231,7 +5250,7 @@ liquid
     ConsumeWisdomLimit = 3;
     Alpha = 150;
     AttachedGod = CRUENTUS;
-    PriceModifier = 50;
+    PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
   }
 
