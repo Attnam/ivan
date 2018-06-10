@@ -2572,7 +2572,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   UpdateAltSilhouette(AnimationDraw);
 
   UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
-  
+
   #ifdef WIZARD
     DBG1(vDbgDrawOverlayFunctions.size());
     if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
@@ -4043,7 +4043,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 
   if(Permanently && !WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
     {
@@ -4404,7 +4404,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iW=ivanconfig::GetAltListItemWidth();
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
-  
+
   v2TopLeft=v2(iX,iY);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
@@ -4671,7 +4671,12 @@ festring game::GetHomeDir()
 {
 #ifdef UNIX
   festring Dir;
-  Dir << getenv("HOME") << "/.ivan/";
+  Dir << getenv("HOME");
+#ifdef MAC_APP
+  Dir << "/Library/Application Support/IVAN/";
+#else
+  Dir << "/.ivan/";
+#endif
 #ifdef DBGMSG
   dbgmsg::SetDebugLogPath(Dir.CStr());
 #endif
@@ -4696,34 +4701,41 @@ festring game::GetScrshotDir()
 festring game::GetDataDir()
 {
 #ifdef UNIX
+#ifdef MAC_APP
+  return "../Resources/ivan/";
+#else
   return DATADIR "/ivan/";
+#endif
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return GetHomeDir();
+#endif
+}
+
+festring game::GetStateDir()
+{
+#ifdef UNIX
+#ifdef MAC_APP
+  return GetHomeDir();
+#else
+  return LOCAL_STATE_DIR "/";
+#endif
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return GetHomeDir();
 #endif
 }
 
 festring game::GetBoneDir()
 {
-#ifdef UNIX
-  return LOCAL_STATE_DIR "/Bones/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Bones/";
-#endif
+  return GetStateDir() + "Bones/";
 }
 
 festring game::GetMusicDir()
 {
-#ifdef UNIX
   return GetDataDir() + "Music/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Music/";
-#endif
 }
 
 level* game::GetLevel(int I)

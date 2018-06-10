@@ -2320,7 +2320,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(!game::WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(!HScore.CheckVersion())
     {

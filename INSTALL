@@ -8,6 +8,7 @@ installed on your system:
 - CMake (https://cmake.org) version 2.8.12.2 or newer
 - SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
 - libpng (http://www.libpng.org/pub/png/libpng.html)
+- pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
 
 --------------------------------------
 
@@ -159,3 +160,21 @@ libmad-0.dll
 
 
 Use dependencywalker if you need to check for missing libraries, and if you get the message: "error cannot find entrypoint inflateValidate (in dll libpng16-16.dll)" then you need to include zlib1.dll
+
+--------------------------------------
+
+To build standalone application on MacOS:
+
+Using Homebrew: https://brew.sh/
+
+$ export SDL2DIR="$HOME/Downloads/SDL2Frameworks"
+$ export BUILD_MAC_APP=ON
+$ export IVAN_BUILD_DIR="$PWD/build"
+$ mkdir build && cd build
+$ ../ci/osx/requirements.sh
+$ ../ci/osx/build.sh
+$ make install
+$ ../ci/osx/package.sh
+$ ls ./osx
+
+The user data will be stored at "$HOME/Library/Application Support/IVAN".

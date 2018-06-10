@@ -160,7 +160,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore;
+        highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }
