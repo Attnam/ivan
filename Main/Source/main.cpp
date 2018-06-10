@@ -106,7 +106,7 @@ int main(int argc, char** argv)
   audio::LoadMIDIFile("mainmenu.mid", 0, 100);
   audio::SetPlaybackStatus(audio::PLAYING);
 
-  for(;;)
+  for(int running = 1; running;)
   {
     int Select = iosystem::Menu(igraph::GetMenuGraphic(),
                                 v2(RES.X / 2, RES.Y / 2 - 20),
@@ -174,7 +174,12 @@ int main(int argc, char** argv)
 
 #endif
 
-      return 0;
+      running = 0;
+      break;
     }
   }
+
+  msgsystem::DeInit();
+
+  return 0;
 }
