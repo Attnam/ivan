@@ -218,6 +218,7 @@ uint felist::Draw()
     PageBegin = 0;
 
   bool bWaitKeyUp=false;
+  bool bClearKeyBufferOnce=false;
   graphics::PrepareBeforeDrawingFelist();
   for(;;)
   {
@@ -241,7 +242,12 @@ uint felist::Draw()
       graphics::DrawAtDoubleBufferBeforeFelistPage(); // here helps on hiding unstretched static squares
     }
 
-    uint Pressed = GET_KEY(false);DBGLN;
+    bool bClearKeyBuffer=false;
+    if(bClearKeyBufferOnce){
+      bClearKeyBuffer=true;
+      bClearKeyBufferOnce=false;
+    }
+    uint Pressed = GET_KEY(bClearKeyBuffer);DBGLN;
 
     if(Flags & SELECTABLE && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
@@ -292,6 +298,9 @@ uint felist::Draw()
         }
       }
 
+      if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
+        bClearKeyBufferOnce=true;
+
       continue;
     }
 
@@ -318,6 +327,9 @@ uint felist::Draw()
 
         Selected = PageBegin = 0;
       }
+
+      if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
+        bClearKeyBufferOnce=true;
 
       continue;
     }
@@ -373,7 +385,10 @@ uint felist::Draw()
   FelistCurrentlyDrawn=NULL;DBGLN;
 
   #ifdef FELIST_WAITKEYUP
-  if(bWaitKeyUp)for(;;){if(WAIT_FOR_KEY_UP())break;};
+  if(bWaitKeyUp && !globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
+    for(;;)
+      if(WAIT_FOR_KEY_UP()) //TODO it is NOT waiting, why? that's the reason of `for(;;)` above...
+        break;
   #endif
 
   return Return;
