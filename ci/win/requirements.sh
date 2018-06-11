@@ -13,13 +13,13 @@ sudo apt-get update
 
 sudo apt-get --yes install upx-ucl
 
-if [ "$IVAN_PLATFORM" = "IvanWin" ]; then
-    MXE_TARGET=i686-w64-mingw32.static
+if [ -n "${IVAN_PLATFORM}" ]; then
+  MXE_TARGET=i686-w64-mingw32.static
 fi
 
-MXE2_TARGET=$(echo "$MXE_TARGET" | sed 's/_/-/g')
+MXE2_TARGET=$(echo "${MXE_TARGET}" | sed 's/_/-/g')
 sudo apt-get --yes install \
-    mxe-${MXE2_TARGET}-qt
+    "mxe-${MXE2_TARGET}-qt"
 
 # MXE doesn't have 64bit NSIS
 sudo apt-get --yes install \
@@ -36,5 +36,3 @@ sudo apt-get --yes install \
 # MXE doesn't have PCRE by default
 sudo apt-get --yes install \
     mxe-i686-w64-mingw32.static-pcre
-
-set +xue
