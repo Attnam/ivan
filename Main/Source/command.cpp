@@ -99,6 +99,8 @@ command* commandsystem::Command[] =
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&SwapWeapons, "swap weapons", 'b', 'b', 'b', false),
+  new command(&SwapWeaponsCfg, "swap weapons configuration", 'B', 'B', 'B', false),
   new command(&Throw, "throw", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
@@ -488,6 +490,244 @@ truth commandsystem::Close(character* Char)
     ADD_MESSAGE("This monster type cannot close anything.");
 
   return false;
+}
+
+struct swapweaponcfg{
+  int iKeyRm=-1;
+
+  item* itLeft=NULL;
+//  ulong iLeftId=0;
+
+  item* itRight=NULL;
+//  ulong iRightId=0;
+
+  void Save(outputfile& SaveFile){DBGLN;
+    SaveFile << (itLeft  ? itLeft ->GetID() : 0); DBGEXEC(if(itLeft)DBG1(itLeft->GetID()););
+    SaveFile << (itRight ? itRight->GetID() : 0); DBGEXEC(if(itRight)DBG1(itRight->GetID()););
+  }
+  void Load(inputfile& SaveFile){DBGLN;
+    ulong iLeftId=0;SaveFile >> iLeftId;
+    itLeft  = iLeftId  ? game::SearchItem(iLeftId ) : NULL; DBG2(iLeftId,itLeft);
+
+    ulong iRightId=0;SaveFile >> iRightId;
+    itRight = iRightId ? game::SearchItem(iRightId) : NULL; DBG2(iRightId,itRight);
+  }
+};
+std::vector<swapweaponcfg> vSWCfg;
+int iSwapCurrentIndex=0;
+
+void commandsystem::ClearSwapWeapons()
+{
+  vSWCfg.clear();
+}
+void commandsystem::SaveSwapWeapons(outputfile& SaveFile)
+{DBGLN;
+  SaveFile << static_cast<ushort>(iSwapCurrentIndex);
+
+  SaveFile << static_cast<ushort>(vSWCfg.size()); DBG2(iSwapCurrentIndex,vSWCfg.size());
+  for(int i=0;i<vSWCfg.size();i++)
+    vSWCfg[i].Save(SaveFile);
+
+  //do not ClearSwapWeapons() as it saves 2 times subsequently TODO why?
+  DBGLN;
+}
+void commandsystem::LoadSwapWeapons(inputfile& SaveFile)
+{DBGLN;
+  SaveFile >> reinterpret_cast<ushort&>(iSwapCurrentIndex);
+
+  int iSize=0;
+  SaveFile >> reinterpret_cast<ushort&>(iSize); DBG2(iSwapCurrentIndex,iSize);
+  ClearSwapWeapons();
+  for(int i=0;i<iSize;i++){
+    swapweaponcfg cfg;
+    cfg.Load(SaveFile);
+    vSWCfg.push_back(cfg);
+  }
+}
+truth commandsystem::SwapWeaponsCfg(character* Char)
+{DBGLN;
+  if(!Char->IsHumanoid()){DBGLN;
+    ADD_MESSAGE("This monster type cannot wield weapons.");
+    return false;
+  }
+
+  humanoid* h = dynamic_cast<humanoid*>(Char);DBGLN;
+
+  for(;;){DBGLN;
+    int iKeyIndexCount=0,iKeyAdd=-1;
+
+    felist Cfgs(CONST_S("How you want to change your swap weapons configurations?"));
+
+    Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,iKeyAdd=iKeyIndexCount++,true);
+
+    // each config
+    for(int i=0;i<vSWCfg.size();i++){
+      festring fsRm;fsRm<<"Remove this config";
+      if(iSwapCurrentIndex==i)fsRm<<" (current)";
+      Cfgs.AddEntry(fsRm,WHITE,0,vSWCfg[i].iKeyRm=iKeyIndexCount++,true);
+      for(int j=0;j<2;j++){
+        festring fs;
+        item* it = NULL;
+        switch(j){
+        case 0:
+          it = vSWCfg[i].itLeft;
+          fs << "(L";
+          if(it && h->GetLeftArm()  && it==h->GetLeftWielded())fs<<"!";
+          fs << ") ";
+          break;
+        case 1:
+          it = vSWCfg[i].itRight;
+          fs << "(R";
+          if(it && h->GetRightArm() && it==h->GetRightWielded())fs<<"!";
+          fs << ") ";
+          break;
+        }
+        if(it){
+          it->AddInventoryEntry(Char, fs, 1, true);
+          //TODO show item image: Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
+          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, 0, false);
+        }
+      }
+    }
+
+    /**
+     * TODO to show item images...
+     * non selectables can have images at all?
+     * selectables (when using game::ItemEntryDrawer) must have images assigned?
+     * for now... this is disabled as is crashing...
+     */
+    game::SetStandardListAttributes(Cfgs);DBGLN;
+    //TODO show item image:     Cfgs.SetEntryDrawer(game::ItemEntryDrawer);
+    Cfgs.AddFlags(SELECTABLE);
+    int Selected = Cfgs.Draw(); DBG1(Selected);
+    //TODO show item image:     game::ClearItemDrawVector();
+
+    if(Selected & FELIST_ERROR_BIT)
+      return false;
+
+    if(Selected==iKeyAdd){DBGLN;
+      swapweaponcfg cfg;
+      if(h->GetLeftArm() && h->GetLeftWielded())
+        cfg.itLeft=h->GetLeftWielded();
+      if(h->GetRightArm() && h->GetRightWielded())
+        cfg.itRight=h->GetRightWielded();
+      vSWCfg.push_back(cfg);
+    }
+
+    for(int i=0;i<vSWCfg.size();i++){
+      if(Selected==vSWCfg[i].iKeyRm){DBGLN;
+        vSWCfg.erase(vSWCfg.begin()+i);
+        if(iSwapCurrentIndex==i)
+          iSwapCurrentIndex=vSWCfg.size(); //to be 0 next request TODO could just be next on list but may be unnecessarily complex to implement?
+        break; //vector safe
+      }
+    }
+  }
+
+  return false;
+}
+
+truth commandsystem::SwapWeapons(character* Char)
+{
+  if(!Char->IsHumanoid()){DBGLN;
+    ADD_MESSAGE("This monster type cannot wield weapons.");
+    return false;
+  }
+
+  if(!Char->CanUseEquipment()){DBGLN;
+    ADD_MESSAGE("You cannot wield anything.");
+    return false;
+  }
+
+  if(vSWCfg.size()==0){DBGLN;
+    ADD_MESSAGE("You should prepare some quick swap weapons first!");
+    return false;
+  }
+
+  iSwapCurrentIndex++;
+
+  if(iSwapCurrentIndex >= vSWCfg.size())
+    iSwapCurrentIndex=0;
+
+  humanoid* h = dynamic_cast<humanoid*>(Char); DBG2(iSwapCurrentIndex,vSWCfg.size());
+
+  bool bDidSwap=false;
+
+  stack* stk = h->GetStack();
+
+  for(int iArm=0;iArm<2;iArm++){DBGLN;
+    item* it = NULL;
+    item* w  = NULL;
+    arm* Arm = NULL;
+
+    switch(iArm){
+    case 0:
+      Arm=h->GetLeftArm();
+      if(Arm)w=h->GetLeftWielded();
+      it = vSWCfg[iSwapCurrentIndex].itLeft;
+      break;
+    case 1:
+      Arm=h->GetRightArm();
+      if(Arm)w=h->GetRightWielded();
+      it = vSWCfg[iSwapCurrentIndex].itRight;
+      break;
+    }
+
+    if(Arm){
+      /**
+       * important to work correctly if user asks for 2handed in both hands, or if it repeats on another cfg,
+       * anyway, should be like the user configured and not guessed.
+       */
+      if(w)
+        w->MoveTo(stk);
+
+      std::vector<item*> iv;
+      stk->FillItemVector(iv);
+
+      if(it){
+        bool bHasItem=false;
+        for(int j=0;j<iv.size();j++)
+          if(iv[j]==it)
+          {
+            bHasItem=true;
+            break;
+          }
+        if(bHasItem){//TODO why this other code won't compile? -> if(std::find(iv.begin(),iv.end(),it) != iv.end()){
+          it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
+          switch(iArm){
+          case 0:
+            h->SetLeftWielded(it);
+            break;
+          case 1:
+            h->SetRightWielded(it);
+            break;
+          }
+          bDidSwap=true;
+        }
+      }
+    }
+
+  }
+
+//  if(h->GetRightArm()){
+//    it = vSWCfg[iSwapCurrentIndex].itRight;
+//    if(std::find(iv.begin(),iv.end(),it) != iv.end()){
+//      if(h->GetRightWielded())
+//        h->GetRightWielded()->MoveTo(h->GetStack());
+//
+//      if(it){
+//        h->SetRightWielded(it);
+//        bDidSwap=true;
+//      }
+//    }
+//  }
+
+//  iSwapCurrentIndex++; //may not have swapped (if item not available) but try next always
+
+  if(bDidSwap)
+    Char->DexterityAction(5);
+
+  return true;
 }
 
 truth commandsystem::Drop(character* Char)

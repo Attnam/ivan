@@ -33,6 +33,7 @@
 #include "balance.h"
 #include "bitmap.h"
 #include "confdef.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -58,6 +59,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+
 #include "namegen.h"
 
 #define DBGMSG_BLITDATA
@@ -803,6 +805,7 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
+      commandsystem::ClearSwapWeapons();
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -2984,6 +2987,9 @@ truth game::Save(cfestring& SaveName)
 
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
+
+  commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+
   return true;
 }
 
@@ -3078,6 +3084,9 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
+  if(game::GetSaveFileVersion()>=132)
+    commandsystem::LoadSwapWeapons(SaveFile);
+
   UpdateCamera();
 
   return LOADED;
@@ -3107,7 +3116,7 @@ festring game::SaveName(cfestring& Base)
 
       BaseOk[c] = '_';
     }
-  }DBG3(PlayerName.CStr(),BaseOk.CStr(),Base.CStr());
+  } DBG3(PlayerName.CStr(),BaseOk.CStr(),Base.CStr()); //DBGSTK;
 
   SaveName << BaseOk;
 
@@ -3213,7 +3222,7 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
 }
 
 void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
-{
+{ DBG2(RealSavesAlso,onlyBackups);
   festring bkp(".bkp");
 
   if(RealSavesAlso)
@@ -3228,22 +3237,24 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 
   for(int i = 1; i < Dungeons; ++i)
     for(int c = 0; c < GetDungeon(i)->GetLevels(); ++c)
-    {
+    { DBG2(i,c);
       /* This looks very odd. And it is very odd.
        * Indeed, gcc is very odd to not compile this correctly with -O3
        * if it is written in a less odd way. */
 
       File = SaveName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
       if(RealSavesAlso)
         remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
 
       File = GetAutoSaveFileName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
-      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr()); DBGLN;
     }
+
+  DBGLN; DBGSTK;
 }
 
 void game::SetPlayer(character* NP)
@@ -4033,20 +4044,20 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   if(!Permanently)
     game::Save();
 
-  game::RemoveSaves(true,true); // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
+  game::RemoveSaves(true,true); DBGLN; // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
 
-  globalwindowhandler::DeInstallControlLoop(AnimationController);
-  SetIsRunning(false);
+  globalwindowhandler::DeInstallControlLoop(AnimationController); DBGLN;
+  SetIsRunning(false); DBGLN;
 
   if(Permanently || !WizardModeIsReallyActive())
     RemoveSaves(Permanently);
 
   if(Permanently && !WizardModeIsReallyActive())
-  {
+  { DBGLN;
     highscore HScore;
 
     if(HScore.LastAddFailed())
-    {
+    { DBGLN;
       iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
                            + GetPlayerName() + ", " + DeathMessage + "\nRIP");
     }
@@ -4055,17 +4066,19 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   }
 
   if(AndGoToMenu)
-  {
+  { DBGLN;
     /* This prevents monster movement etc. after death. */
 
     /* Set off the main menu music */
-    audio::SetPlaybackStatus(0);
-    audio::ClearMIDIPlaylist();
-    audio::LoadMIDIFile("mainmenu.mid", 0, 100);
-    audio::SetPlaybackStatus(audio::PLAYING);
+    audio::SetPlaybackStatus(0); DBGLN;
+    audio::ClearMIDIPlaylist(); DBGLN;
+    audio::LoadMIDIFile("mainmenu.mid", 0, 100); DBGLN;
+    audio::SetPlaybackStatus(audio::PLAYING); DBGLN;
 
     throw quitrequest();
   }
+
+  DBGLN;
 }
 
 void game::PlayVictoryMusic()
