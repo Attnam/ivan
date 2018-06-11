@@ -46,6 +46,7 @@ ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
 truth globalwindowhandler::playInBackground=false;
 festring globalwindowhandler::ScrshotDirectoryName = "";
+truth bLastSDLkeyEventIsKeyUp=false;
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
@@ -357,9 +358,13 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     }
     else
     {
-      if(SDL_PollEvent(&Event))
+      bool bHasEvents=false;
+      while(SDL_PollEvent(&Event)){
         ProcessMessage(&Event);
-      else
+        bHasEvents=true;
+      }
+
+      if(!bHasEvents)
       {
 #if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
@@ -456,6 +461,11 @@ truth globalwindowhandler::WaitForKeyEvent(uint Key)
   return false;
 }
 
+truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
+{
+  return bLastSDLkeyEventIsKeyUp;
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed = 0;
@@ -486,7 +496,12 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       exit(0);
 
     return;
+
+   case SDL_KEYUP:
+    bLastSDLkeyEventIsKeyUp=true;
+    break;
    case SDL_KEYDOWN:
+    bLastSDLkeyEventIsKeyUp=false;
     switch(Event->key.keysym.sym)
     {
      case SDLK_RETURN:
@@ -577,6 +592,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       KeyBuffer.push_back(KeyPressed);
 #endif
   }
+
 }
 
 // returns true if shift is being pressed

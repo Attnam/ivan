@@ -245,7 +245,7 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
-                                          "use sounds",
+                                          "use sound effects",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "show the turn on log messages",
