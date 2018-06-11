@@ -54,6 +54,7 @@ class commandsystem
   static truth Dip(character*);
   static truth DrawMessageHistory(character*);
   static truth SwapWeapons(character* Char);
+  static truth SwapWeaponsWork(character* Char, int iIndexOverride=-1);
   static truth SwapWeaponsCfg(character* Char);
   static truth Drop(character*);
   static truth ForceVomit(character*);

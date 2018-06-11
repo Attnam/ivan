@@ -496,6 +496,7 @@ truth commandsystem::Close(character* Char)
 
 struct swapweaponcfg{
   int iKeyRm=-1;
+  int iKeyActivate=-1;
 
   item* itLeft=NULL;
 //  ulong iLeftId=0;
@@ -566,7 +567,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     for(int i=0;i<vSWCfg.size();i++){
       festring fsRm;fsRm<<"Remove this config";
       if(iSwapCurrentIndex==i)fsRm<<" (current)";
-      Cfgs.AddEntry(fsRm,WHITE,0,vSWCfg[i].iKeyRm=iKeyIndexCount++,true);
+      Cfgs.AddEntry(fsRm,RED,0,vSWCfg[i].iKeyRm=iKeyIndexCount++,true);
+      Cfgs.AddEntry("Wield these now!",WHITE,0,vSWCfg[i].iKeyActivate=iKeyIndexCount++,true);
       for(int j=0;j<2;j++){
         festring fs;
         item* it = NULL;
@@ -623,6 +625,11 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
           iSwapCurrentIndex=vSWCfg.size(); //to be 0 next request TODO could just be next on list but may be unnecessarily complex to implement?
         break; //vector safe
       }
+
+      if(Selected==vSWCfg[i].iKeyActivate){DBGLN;
+        SwapWeaponsWork(Char,i);
+        return true;
+      }
     }
   }
 
@@ -630,6 +637,10 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 }
 
 truth commandsystem::SwapWeapons(character* Char)
+{
+  return SwapWeaponsWork(Char);
+}
+truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
 {
   if(!Char->IsHumanoid()){DBGLN;
     ADD_MESSAGE("This monster type cannot wield weapons.");
@@ -646,7 +657,10 @@ truth commandsystem::SwapWeapons(character* Char)
     return false;
   }
 
-  iSwapCurrentIndex++;
+  if(iIndexOverride==-1)
+    iSwapCurrentIndex++;
+  else
+    iSwapCurrentIndex=iIndexOverride;
 
   if(iSwapCurrentIndex >= vSWCfg.size())
     iSwapCurrentIndex=0;
