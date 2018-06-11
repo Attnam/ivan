@@ -32,6 +32,8 @@
 #include "wsquare.h"
 #include "wterras.h"
 
+#include "dbgmsgproj.h"
+
 #ifdef WIZARD
 #include "proto.h"
 #endif
