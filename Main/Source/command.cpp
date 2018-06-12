@@ -560,18 +560,18 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
   for(;;){DBGLN;
     felist Cfgs(CONST_S("How you want to change your swap weapons configurations?"));
 
-    int iKeyAdd = game::AddToItemDrawVector(itemvector());
-    Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,iKeyAdd,true);
+    int iSelectableIndex=0;
 
-//    int iSelectableIndex=0;
+    int iKeyAdd = iSelectableIndex++;
+    Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,game::AddToItemDrawVector(itemvector()),true);
 
     // each config
     for(int i=0;i<vSWCfg.size();i++){
-      vSWCfg[i].iKeyRm = game::AddToItemDrawVector(itemvector()); DBG2(i,vSWCfg[i].iKeyRm);
-      Cfgs.AddEntry(festring()<<"Remove this config"<<(iSwapCurrentIndex==i?" (current)":""), RED,0,vSWCfg[i].iKeyRm,true);
+      vSWCfg[i].iKeyRm = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyRm);
+      Cfgs.AddEntry(festring()<<"Remove this config"<<(iSwapCurrentIndex==i?" (current)":""), RED,0,game::AddToItemDrawVector(itemvector()),true);
 
-      vSWCfg[i].iKeyActivate = game::AddToItemDrawVector(itemvector()); DBG2(i,vSWCfg[i].iKeyActivate);
-      Cfgs.AddEntry(festring()<<"Wield these now"<<(iSwapCurrentIndex==i?" (current)":""),WHITE,0,vSWCfg[i].iKeyActivate,true);
+      vSWCfg[i].iKeyActivate = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyActivate);
+      Cfgs.AddEntry(festring()<<"Wield these now"<<(iSwapCurrentIndex==i?" (current)":""),WHITE,0,game::AddToItemDrawVector(itemvector()),true);
 
       for(int j=0;j<2;j++){
         festring fs;
@@ -598,8 +598,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
           //TODO show item image: Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
 //          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, 0, false);
 //          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, ImageKey, false);
-          int iKeyDummy = game::AddToItemDrawVector(itemvector(1,it)); DBG2(i,iKeyDummy);
-          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, iKeyDummy, false);
+//          int iKeyDummy = game::AddToItemDrawVector(itemvector(1,it)); DBG2(i,iKeyDummy);
+          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
         }
       }
     }
