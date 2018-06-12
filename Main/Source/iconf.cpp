@@ -490,7 +490,7 @@ truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
   festring String;
 
   if(iosystem::StringQuestion(String, CONST_S("Set name generator pattern (recommended \"!ss !sV\"):"),
-                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
+                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true, NULL, true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   clearToBackgroundAfterChangeInterface();
