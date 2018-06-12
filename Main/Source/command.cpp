@@ -149,7 +149,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -175,6 +175,8 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+//  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -209,7 +211,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -235,6 +237,8 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
