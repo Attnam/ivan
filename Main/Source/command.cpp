@@ -499,9 +499,18 @@ truth commandsystem::Close(character* Char)
 }
 
 struct swapweaponcfg{
-  int iKeyRm=-1;
   int iKeyActivate=-1;
-  int iSelectableIndex=-1;
+  int iKeyRm=-1;
+  int iKeyDown=-1;
+  int iKeyUp=-1;
+
+  void ClearListControls(){
+    iKeyActivate=-1;
+    iKeyRm=-1;
+    iKeyDown=-1;
+    iKeyUp=-1;
+  }
+//  int iSelectableIndex=-1;
 
   item* itLeft=NULL;
 //  ulong iLeftId=0;
@@ -522,8 +531,9 @@ struct swapweaponcfg{
   }
 };
 std::vector<swapweaponcfg> vSWCfg;
+std::vector<swapweaponcfg> vSWCfgRemoved; //wont be saved tho
 int iSwapCurrentIndex=0;
-
+static int awRL[2]={RIGHT_WIELDED_INDEX,LEFT_WIELDED_INDEX};
 void commandsystem::ClearSwapWeapons()
 {
   vSWCfg.clear();
@@ -552,6 +562,13 @@ void commandsystem::LoadSwapWeapons(inputfile& SaveFile)
     vSWCfg.push_back(cfg);
   }
 }
+truth hasItem(itemvector& iv, item* it){
+  //TODO why this wont compile? ->   if(std::find(iv.begin(),iv.end(),it)!=iv.end())return true;
+  for(int i=0;i<iv.size();i++)
+    if(iv[i]==it)
+      return true;
+  return false;
+}
 truth commandsystem::SwapWeaponsCfg(character* Char)
 {DBGLN;
   if(!Char->IsHumanoid()){DBGLN;
@@ -561,6 +578,23 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
   humanoid* h = dynamic_cast<humanoid*>(Char);DBGLN;
 
+  itemvector iv;
+  h->GetStack()->FillItemVector(iv);
+
+  item* wL = h->GetLeftWielded();
+  item* wR = h->GetRightWielded();
+
+  // less colors as possible to be less confusing
+  static col16 colMaintOpts = LIGHT_GRAY; //MakeRGB16(255*0.5,0xFF*0.5,0xFF*0.75); //dark gray bluish
+  //  static col16 colWieldedCfg = MakeRGB16(200,200,200); // a bit lighter gray
+  static col16 colWieldedCfg = colMaintOpts; //MakeRGB16(255*0.5,0xFF*0.75,0xFF*0.5); // gray greenish
+  static col16 colAlert = colMaintOpts; //MakeRGB16(255*0.75,0xFF*0.75,0xFF*0.5); //dark gray yellowish
+  static col16 colNotOnInv = MakeRGB16(255*0.75,0xFF*0.5,0xFF*0.5); //dark gray reddish
+  static col16 colWielded = colMaintOpts;
+//  static col16 colWieldedCfg = MakeRGB16(0,255*0.75,255);//cyan
+
+  bool bMaintenanceMode=false;
+  int iSelectAgain=-1;
   for(;;){DBGLN;
     felist Cfgs(CONST_S("How you want to change your swap weapons configurations?"));
 
@@ -569,43 +603,86 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     int iKeyAdd = iSelectableIndex++;
     Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,game::AddToItemDrawVector(itemvector()),true);
 
+    int iKeyUndoLastRm = -1;
+    if(bMaintenanceMode)
+      if(vSWCfgRemoved.size()>0){
+        iKeyUndoLastRm = iSelectableIndex++;
+        Cfgs.AddEntry(festring("Undo previous removal"),colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
+      }
+
+    int iKeyMaintenance=-1;
+    if(!bMaintenanceMode){
+      iKeyMaintenance = iSelectableIndex++;
+      Cfgs.AddEntry(festring("Maintenance mode"),colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
+    }
+
     // each config
     for(int i=0;i<vSWCfg.size();i++){
-      vSWCfg[i].iKeyRm = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyRm);
-      Cfgs.AddEntry(festring()<<"Remove this config"<<(iSwapCurrentIndex==i?" (current)":""), RED,0,game::AddToItemDrawVector(itemvector()),true);
+      vSWCfg[i].ClearListControls();
 
-      vSWCfg[i].iKeyActivate = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyActivate);
-      Cfgs.AddEntry(festring()<<"Wield these now"<<(iSwapCurrentIndex==i?" (current)":""),WHITE,0,game::AddToItemDrawVector(itemvector()),true);
+//      if(iSwapCurrentIndex==i)
+      if(h->GetLeftWielded()==vSWCfg[i].itLeft && h->GetRightWielded()==vSWCfg[i].itRight)
+        Cfgs.AddEntry(festring()<<"   CURRENTLY WIELDED ----------------------",colWieldedCfg,0,game::AddToItemDrawVector(itemvector()),false);
+      else{
+        vSWCfg[i].iKeyActivate = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyActivate);
+        Cfgs.AddEntry(festring()<<"Wield these now ---------------------------",WHITE,0,game::AddToItemDrawVector(itemvector()),true);
+      }
+
+      if(bMaintenanceMode){
+        vSWCfg[i].iKeyRm = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyRm);
+        Cfgs.AddEntry(festring()<<"Remove this config", colAlert,0,game::AddToItemDrawVector(itemvector()),true);
+
+        if(i>0){
+          vSWCfg[i].iKeyUp = iSelectableIndex++;
+          Cfgs.AddEntry(festring()<<"Move up", colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
+        }
+      }
 
       for(int j=0;j<2;j++){
-        festring fs;
+        festring fs; fs<<"   ";
         item* it = NULL;
-        switch(j){
-        case 0:
+        item* w = NULL;
+        col16 cW = DARK_GRAY; //LIGHT_GRAY;
+//        static col16 colDarkW    = MakeRGB16(      0, 255*0.5, 255*0.75); // dark cyan
+//        static col16 colDarkW    = MakeRGB16(200,200,200); // a bit lighter gray
+//        static col16 colNotOnInv = MakeRGB16(255*0.75,0xFF*0.5,0xFF*0.5); //dark gray reddish
+
+        switch(awRL[j]){
+        case LEFT_WIELDED_INDEX:
           it = vSWCfg[i].itLeft;
+          w = wL;
           fs << "(L";
-          if(it && h->GetLeftArm()  && it==h->GetLeftWielded())fs<<"!";
+//          if(it==w)cW=colDarkW;//fs<<"!";
           fs << ") ";
           break;
-        case 1:
+        case RIGHT_WIELDED_INDEX:
           it = vSWCfg[i].itRight;
+          w = wR;
           fs << "(R";
-          if(it && h->GetRightArm() && it==h->GetRightWielded())fs<<"!";
+//          if(it==w)cW=colDarkW;//fs<<"!";
           fs << ") ";
           break;
         }
 
         if(it){
+          if(it==wL || it==wR)
+            cW = colWielded;//colDarkW;
+          else if(!hasItem(iv,it))
+            cW = colNotOnInv;
+
+//          if(it!=wL && it!=wR && !hasItem(iv,it))cW = colNotOnInv;
+
           it->AddInventoryEntry(Char, fs, 1, true);
-//          int ImageKey = game::AddToItemDrawVector(itemvector(1,it));
-//          int ImageKey = game::AddToItemDrawVector(PileVector[p]);
-          //TODO show item image: Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
-//          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, 0, false);
-//          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, ImageKey, false);
-//          int iKeyDummy = game::AddToItemDrawVector(itemvector(1,it)); DBG2(i,iKeyDummy);
-          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
+          Cfgs.AddEntry(fs, cW, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
         }
       }
+
+      if(bMaintenanceMode)
+        if(i<vSWCfg.size()-1){
+          vSWCfg[i].iKeyDown = iSelectableIndex++;
+          Cfgs.AddEntry(festring()<<"Move down", colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
+        }
+
     }
 
     /**
@@ -618,6 +695,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     Cfgs.SetEntryDrawer(game::ItemEntryDrawer);
     Cfgs.AddFlags(SELECTABLE);
     game::DrawEverythingNoBlit(); // doesn't prevent mirage puppies
+    if(iSelectAgain>-1)
+      Cfgs.SetSelected(iSelectAgain);
     int Selected = Cfgs.Draw(); DBG1(Selected);
     game::ClearItemDrawVector();
 
@@ -631,23 +710,44 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
       if(h->GetRightArm() && h->GetRightWielded())
         cfg.itRight=h->GetRightWielded();
       vSWCfg.push_back(cfg);
+    }else
+    if(bMaintenanceMode && Selected==iKeyUndoLastRm){DBGLN;
+      vSWCfg.push_back(vSWCfgRemoved[vSWCfgRemoved.size()-1]);
+      vSWCfgRemoved.erase(vSWCfgRemoved.end());//-1);
+    }else
+    if(Selected==iKeyMaintenance){
+      bMaintenanceMode=true;
+    }else{
+      for(int i=0;i<vSWCfg.size();i++){
+        if(bMaintenanceMode && Selected==vSWCfg[i].iKeyRm){ DBG3(i,Selected,vSWCfg[i].iKeyRm);
+          vSWCfgRemoved.push_back(vSWCfg[i]);
+          vSWCfg.erase(vSWCfg.begin()+i);
+          if(iSwapCurrentIndex==i)
+            iSwapCurrentIndex=vSWCfg.size(); //to be 0 next request TODO could just be next on list but may be unnecessarily complex to implement?
+          break; //vector safe
+        }else
+        if(bMaintenanceMode && (Selected==vSWCfg[i].iKeyDown || Selected==vSWCfg[i].iKeyUp)){
+          swapweaponcfg cfgMove = vSWCfg[i]; DBG2(cfgMove.itRight,cfgMove.itLeft);
+
+          if(Selected==vSWCfg[i].iKeyDown){
+            vSWCfg.insert(vSWCfg.begin()+i+2,cfgMove);
+            vSWCfg.erase (vSWCfg.begin()+i);
+          }else
+          if(Selected==vSWCfg[i].iKeyUp){
+            vSWCfg.insert(vSWCfg.begin()+i-1,cfgMove);
+            vSWCfg.erase (vSWCfg.begin()+i+1);
+          }
+
+          break; //vector safe
+        }else
+        if(Selected==vSWCfg[i].iKeyActivate){DBGLN;
+          SwapWeaponsWork(Char,i);
+          return false; //to close it as gained experience with dexterity action!
+        }
+      }
     }
 
-    for(int i=0;i<vSWCfg.size();i++){
-      if(Selected==vSWCfg[i].iKeyRm){ DBG3(i,Selected,vSWCfg[i].iKeyRm);
-        vSWCfg.erase(vSWCfg.begin()+i);
-        if(iSwapCurrentIndex==i)
-          iSwapCurrentIndex=vSWCfg.size(); //to be 0 next request TODO could just be next on list but may be unnecessarily complex to implement?
-        break; //vector safe
-      }
-
-      if(Selected==vSWCfg[i].iKeyActivate){DBGLN;
-        SwapWeaponsWork(Char,i);
-        return false; //to close it
-      }
-    }
-
-  } // list infinite loop
+  } // list draw loop
 
   return false;
 }
@@ -687,74 +787,53 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
 
   stack* stk = h->GetStack();
 
+  item* wL = h->GetLeftWielded();
+  item* wR = h->GetRightWielded();
+
+  /**
+   * important to work correctly if user asks for 2handed in both hands, or if it repeats on another cfg,
+   * anyway, should be like the user configured and not guessed.
+   */
+  if(wL)wL->MoveTo(stk);
+  if(wR)wR->MoveTo(stk);
+
   for(int iArm=0;iArm<2;iArm++){DBGLN;
     item* it = NULL;
     item* w  = NULL;
     arm* Arm = NULL;
 
-    switch(iArm){
-    case 0:
+    switch(awRL[iArm]){
+    case LEFT_WIELDED_INDEX:
       Arm=h->GetLeftArm();
-      if(Arm)w=h->GetLeftWielded();
+      w=wL;
       it = vSWCfg[iSwapCurrentIndex].itLeft;
       break;
-    case 1:
+    case RIGHT_WIELDED_INDEX:
       Arm=h->GetRightArm();
-      if(Arm)w=h->GetRightWielded();
+      w=wR;
       it = vSWCfg[iSwapCurrentIndex].itRight;
       break;
     }
 
-    if(Arm){
-      /**
-       * important to work correctly if user asks for 2handed in both hands, or if it repeats on another cfg,
-       * anyway, should be like the user configured and not guessed.
-       */
-      if(w)
-        w->MoveTo(stk);
-
+    if(Arm && it){
       std::vector<item*> iv;
       stk->FillItemVector(iv);
-
-      if(it){
-        bool bHasItem=false;
-        for(int j=0;j<iv.size();j++)
-          if(iv[j]==it)
-          {
-            bHasItem=true;
-            break;
-          }
-        if(bHasItem){//TODO why this other code won't compile? -> if(std::find(iv.begin(),iv.end(),it) != iv.end()){
-          it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
-          switch(iArm){
-          case 0:
-            h->SetLeftWielded(it);
-            break;
-          case 1:
-            h->SetRightWielded(it);
-            break;
-          }
-          bDidSwap=true;
-        }
+      if(hasItem(iv,it)){
+        it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
+        h->SetEquipment(awRL[iArm],it);
+//        switch(iArm){
+//        case LEFT_WIELDED_INDEX:
+//          h->SetLeftWielded(it);
+//          break;
+//        case RIGHT_WIELDED_INDEX:
+//          h->SetRightWielded(it);
+//          break;
+//        }
+        bDidSwap=true;
       }
     }
 
   }
-
-//  if(h->GetRightArm()){
-//    it = vSWCfg[iSwapCurrentIndex].itRight;
-//    if(std::find(iv.begin(),iv.end(),it) != iv.end()){
-//      if(h->GetRightWielded())
-//        h->GetRightWielded()->MoveTo(h->GetStack());
-//
-//      if(it){
-//        h->SetRightWielded(it);
-//        bDidSwap=true;
-//      }
-//    }
-//  }
-
-//  iSwapCurrentIndex++; //may not have swapped (if item not available) but try next always
 
   if(bDidSwap)
     Char->DexterityAction(5);
