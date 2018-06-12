@@ -3254,7 +3254,7 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
       remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr()); DBGLN;
     }
 
-  DBGLN; DBGSTK;
+  DBGLN; //DBGSTK;
 }
 
 void game::SetPlayer(character* NP)
@@ -5265,20 +5265,20 @@ v2 ItemDisplacement[3][3] =
 };
 
 void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
-{
+{ DBG3(DBGAV2(Bitmap->GetSize()),DBGAV2(Pos),I);
   blitdata B = { Bitmap,
                  { 0, 0 },
                  { 0, 0 },
                  { TILE_SIZE, TILE_SIZE },
                  { NORMAL_LUMINANCE },
                  TRANSPARENT_COLOR,
-                 ALLOW_ANIMATE };
+                 ALLOW_ANIMATE }; DBGLN;
 
-  itemvector ItemVector = ItemDrawVector[I];
-  int Amount = Min<int>(ItemVector.size(), 3);
+  itemvector ItemVector = ItemDrawVector[I]; DBGLN;
+  int Amount = Min<int>(ItemVector.size(), 3); DBGLN;
 
   for(int c = 0; c < Amount; ++c)
-  {
+  { DBGLN;
     v2 Displacement = ItemDisplacement[Amount - 1][c];
 
     if(!ItemVector[0]->HasNormalPictureDirection())
@@ -5294,7 +5294,7 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
   }
 
   if(ItemVector.size() > 3)
-  {
+  { DBGLN;
     B.Src.X = 0;
     B.Src.Y = 16;
     B.Dest = ItemVector[0]->HasNormalPictureDirection() ? Pos + v2(11, -2) : Pos + v2(-2, -2);

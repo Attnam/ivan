@@ -497,6 +497,7 @@ truth commandsystem::Close(character* Char)
 struct swapweaponcfg{
   int iKeyRm=-1;
   int iKeyActivate=-1;
+  int iSelectableIndex=-1;
 
   item* itLeft=NULL;
 //  ulong iLeftId=0;
@@ -557,18 +558,21 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
   humanoid* h = dynamic_cast<humanoid*>(Char);DBGLN;
 
   for(;;){DBGLN;
-    int iKeyIndexCount=0,iKeyAdd=-1;
-
     felist Cfgs(CONST_S("How you want to change your swap weapons configurations?"));
 
-    Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,iKeyAdd=iKeyIndexCount++,true);
+    int iKeyAdd = game::AddToItemDrawVector(itemvector());
+    Cfgs.AddEntry(festring("Add current wieldings as a new config"),WHITE,0,iKeyAdd,true);
+
+//    int iSelectableIndex=0;
 
     // each config
     for(int i=0;i<vSWCfg.size();i++){
-      festring fsRm;fsRm<<"Remove this config";
-      if(iSwapCurrentIndex==i)fsRm<<" (current)";
-      Cfgs.AddEntry(fsRm,RED,0,vSWCfg[i].iKeyRm=iKeyIndexCount++,true);
-      Cfgs.AddEntry("Wield these now!",WHITE,0,vSWCfg[i].iKeyActivate=iKeyIndexCount++,true);
+      vSWCfg[i].iKeyRm = game::AddToItemDrawVector(itemvector()); DBG2(i,vSWCfg[i].iKeyRm);
+      Cfgs.AddEntry(festring()<<"Remove this config"<<(iSwapCurrentIndex==i?" (current)":""), RED,0,vSWCfg[i].iKeyRm,true);
+
+      vSWCfg[i].iKeyActivate = game::AddToItemDrawVector(itemvector()); DBG2(i,vSWCfg[i].iKeyActivate);
+      Cfgs.AddEntry(festring()<<"Wield these now"<<(iSwapCurrentIndex==i?" (current)":""),WHITE,0,vSWCfg[i].iKeyActivate,true);
+
       for(int j=0;j<2;j++){
         festring fs;
         item* it = NULL;
@@ -586,10 +590,16 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
           fs << ") ";
           break;
         }
+
         if(it){
           it->AddInventoryEntry(Char, fs, 1, true);
+//          int ImageKey = game::AddToItemDrawVector(itemvector(1,it));
+//          int ImageKey = game::AddToItemDrawVector(PileVector[p]);
           //TODO show item image: Cfgs.AddEntry(fs, LIGHT_GRAY, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
-          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, 0, false);
+//          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, 0, false);
+//          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, ImageKey, false);
+          int iKeyDummy = game::AddToItemDrawVector(itemvector(1,it)); DBG2(i,iKeyDummy);
+          Cfgs.AddEntry(fs, LIGHT_GRAY, 0, iKeyDummy, false);
         }
       }
     }
@@ -601,10 +611,11 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
      * for now... this is disabled as is crashing...
      */
     game::SetStandardListAttributes(Cfgs);DBGLN;
-    //TODO show item image:     Cfgs.SetEntryDrawer(game::ItemEntryDrawer);
+    Cfgs.SetEntryDrawer(game::ItemEntryDrawer);
     Cfgs.AddFlags(SELECTABLE);
+    game::DrawEverythingNoBlit(); // doesn't prevent mirage puppies
     int Selected = Cfgs.Draw(); DBG1(Selected);
-    //TODO show item image:     game::ClearItemDrawVector();
+    game::ClearItemDrawVector();
 
     if(Selected & FELIST_ERROR_BIT)
       return false;
@@ -619,7 +630,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     }
 
     for(int i=0;i<vSWCfg.size();i++){
-      if(Selected==vSWCfg[i].iKeyRm){DBGLN;
+      if(Selected==vSWCfg[i].iKeyRm){ DBG3(i,Selected,vSWCfg[i].iKeyRm);
         vSWCfg.erase(vSWCfg.begin()+i);
         if(iSwapCurrentIndex==i)
           iSwapCurrentIndex=vSWCfg.size(); //to be 0 next request TODO could just be next on list but may be unnecessarily complex to implement?
@@ -628,10 +639,11 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
       if(Selected==vSWCfg[i].iKeyActivate){DBGLN;
         SwapWeaponsWork(Char,i);
-        return true;
+        return false; //to close it
       }
     }
-  }
+
+  } // list infinite loop
 
   return false;
 }
