@@ -43,6 +43,7 @@ command::command(truth (*LinkedFunction)(character*), cchar* Description, char K
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
+  game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
 char command::GetKey() const
@@ -101,8 +102,8 @@ command* commandsystem::Command[] =
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Sit, "sit", '_', '_', '_', false),
-  new command(&SwapWeapons, "swap weapons", 'b', 'b', 'b', false),
-  new command(&SwapWeaponsCfg, "swap weapons configuration", 'B', 'B', 'B', false),
+  new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
+  new command(&SwapWeaponsCfg, "swap weapons configuration", 'X', 'X', 'X', false),
   new command(&Throw, "throw", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
@@ -110,7 +111,7 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', 'X', 'X', true),
+  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 

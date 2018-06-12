@@ -634,6 +634,7 @@ void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyN
   if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
 
   NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+//  NameGen::Random genR(gen);
   rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
 }
 
@@ -5192,6 +5193,32 @@ bonesghost* game::CreateGhost()
     delete EnemyVector[c];
 
   return Ghost;
+}
+
+void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
+{
+  static const int iTot=9;
+  for(int i=0;i<3;i++){
+//    static cint a[iTot]={0,0,0,0,0,0,0,0,0};
+    static cint* pa;
+    int Key = -1;
+
+    switch(i){
+    case DIR_NORM:
+      pa=game::MoveNormalCommandKey; Key=Key1; break;
+    case DIR_ALT:
+      pa=game::MoveAbnormalCommandKey; Key=Key2; break;
+    case DIR_HACK:
+      pa=game::MoveNetHackCommandKey; Key=Key3; break;
+    }
+
+    for(int j=0;j<iTot;j++){
+      if(Key==pa[j] && Key!='.'){
+        char ac[2]={(char)pa[j],0};
+        ABORT("conflicting command keys %d %d %d vs %d@%d '%s'",Key1,Key2,Key3,pa[j],i,ac);
+      }
+    }
+  }
 }
 
 int game::GetMoveCommandKey(int I)
