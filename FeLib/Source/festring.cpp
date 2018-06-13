@@ -15,6 +15,9 @@
 #include "festring.h"
 #include "allocate.h"
 #include "error.h"
+#include <string>         // std::string
+
+#include "dbgmsgproj.h"
 
 char** festring::IntegerMap = 0;
 cchar* festring::EmptyString = "";
@@ -37,15 +40,37 @@ festring& festring::Append(cchar* CStr, sizetype N)
   return *this;
 }
 
+/**
+ * code to track new festring assignment (that makes a copy of the string instead of absorbing it) possible bugs
+ */
+void bugTrackInvalidChars(cchar* c,int size){
+  if(!c || !size)return;
+
+//  DBG1(c);
+
+  //symbols and characters that are not "usually" expected
+  for(int i=0;i<size;i++){
+    static char C;C=c[i];
+    if(
+        (C < 0x20 || C > 0x7E)
+        && C!='\r' && C!='\n' && C!='\t'
+        && C!=0
+//        && C!='+' // o.O
+    ){
+      ABORT("string contains \"probably invalid\" chars, possibly a bug: \"%s\", [%d], 0x%X /0%o %d '%c'",c, i, C,C,C,C); //actual char '?' must be last as may break the string!
+    }
+  }
+}
+
 festring& festring::operator=(cchar* CStr)
-{
+{DBGLN;DBGEXEC(bugTrackInvalidChars(CStr,strlen(CStr)));
   Empty();
   SlowAppend(CStr,strlen(CStr));
   return *this;
 }
 
 festring& festring::operator=(cfestring& Str)
-{
+{DBGLN;DBGEXEC(bugTrackInvalidChars(Str.CStr(),Str.Size));
   Empty();
   SlowAppend(Str.Data,Str.Size);
   return *this;
@@ -74,7 +99,7 @@ festring& festring::Capitalize()
 }
 
 void festring::CreateOwnData(cchar* CStr, sizetype N)
-{
+{DBGEXEC(DBG1(N);if(N&&CStr)DBG1(CStr);bugTrackInvalidChars(CStr,N););
   Size = N;
   Reserved = N|FESTRING_PAGE;
   char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];

@@ -35,6 +35,7 @@ class festring
   : Data(0), Size(0), OwnsData(false) { SlowAppend(CStr, N); }
   festring(cfestring&);
   ~festring();
+//  festring& SetInternalDataReferenceTo(cfestring& Str);
   festring& Capitalize();
   festring CapitalizeCopy() const { return festring(*this).Capitalize(); }
   festring& operator=(cchar*);
