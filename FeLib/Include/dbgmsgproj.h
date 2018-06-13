@@ -80,7 +80,7 @@
 
   #else
     //dbgmsg macro erasers
-    #define DBGOE
+    #define DBGOE(s)
     #define DBGSS(s)
     #define DBG1(a)
     #define DBG2(a,b)
