@@ -12,7 +12,7 @@
 
 /* Compiled through materset.cpp */
 
-#define DBGMSG_BLITDATA
+//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 int iDrawTot=3;

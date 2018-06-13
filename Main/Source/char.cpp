@@ -25,7 +25,7 @@
 
 #include "hiteffect.h" //TODO move to charsset.cpp?
 
-#define DBGMSG_V2
+//#define DBGMSG_V2
 #include "dbgmsgproj.h"
 
 struct statedata

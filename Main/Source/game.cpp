@@ -62,7 +62,7 @@
 
 #include "namegen.h"
 
-#define DBGMSG_BLITDATA
+//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
@@ -3922,9 +3922,9 @@ void game::InitGlobalValueMap()
     if(Word != "#" || SaveFile.ReadWord() != "define")
       ABORT("Illegal datafile define on line %ld!", SaveFile.TellLine());
 
-    SaveFile.ReadWord(Word);
+    SaveFile.ReadWord(Word);DBG1(Word.CStr());
 
-    long value = SaveFile.ReadNumber();
+    long value = SaveFile.ReadNumber();DBG1(value);
     GlobalValueMap.insert(std::make_pair(Word, value));
   }
 
