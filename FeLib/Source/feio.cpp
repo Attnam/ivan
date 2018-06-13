@@ -320,7 +320,8 @@ int iosystem::StringQuestion(festring& Input,
                              festring::sizetype MinLetters,
                              festring::sizetype MaxLetters,
                              truth Fade, truth AllowExit,
-                             stringkeyhandler StringKeyHandler)
+                             stringkeyhandler StringKeyHandler,
+                             truth fantasyNameMode)
 {
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
@@ -371,7 +372,7 @@ int iosystem::StringQuestion(festring& Input,
     /* if LastKey is less than 20 it is a control
        character not available in the font */
 
-    while(!(IsAcceptableForStringQuestion(LastKey)))
+    while(!(IsAcceptableForStringQuestion(LastKey,fantasyNameMode)))
     {
       LastKey = GET_KEY(false);
 
@@ -1283,11 +1284,14 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   return ""; //dummy just to gcc do not complain..
 }
 
-truth iosystem::IsAcceptableForStringQuestion(int Key)
+truth iosystem::IsAcceptableForStringQuestion(int Key,truth fantasyNameMode)
 {
-  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
-     || Key == '/' || Key == '\\' || Key == ':')
+  if(Key == '?' || Key == '*' || Key == '/' || Key == '\\' || Key == ':')
     return false;
+
+  if(!fantasyNameMode)
+    if(Key == '|' || Key == '<' || Key == '>')
+      return false;
 
   if(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC
      || Key == KEY_HOME || Key == KEY_END || Key == KEY_LEFT || Key == KEY_RIGHT)

@@ -30,7 +30,7 @@ class iosystem
   static void SetSaveGameSortMode(int i);
   static int StringQuestion(festring&, cfestring&, v2, col16,
                             festring::sizetype, festring::sizetype,
-                            truth, truth, stringkeyhandler = 0);
+                            truth, truth, stringkeyhandler = 0, truth = false);
   static long NumberQuestion(cfestring&, v2, col16,
                              truth, truth = false);
   static long ScrollBarQuestion(cfestring&, v2, long, long, long,
@@ -43,7 +43,7 @@ class iosystem
   static void TextScreen(cfestring&, v2 Disp = ZERO_V2,
                          col16 = 0xFFFF, truth = true,
                          truth = true, bitmapeditor = 0);
-  static truth IsAcceptableForStringQuestion(int);
+  static truth IsAcceptableForStringQuestion(int,truth=false);
   static truth IsOnMenu();
 };
 
