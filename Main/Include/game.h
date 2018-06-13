@@ -208,7 +208,7 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
-  static void UpdateShowItemsAtPlayerPos(bool bAllowed);
+  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos);
   static void UpdateAltSilhouette(bool bAllowed);
   static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
   static int ItemUnderCode(int iCycleValue);
