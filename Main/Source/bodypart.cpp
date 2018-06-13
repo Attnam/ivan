@@ -3239,28 +3239,15 @@ void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Mod
       if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
       {
         Master->SetLastAcidMsgMin(Minute);
-//        DBG1(Material->GetName(false, false).CStr());DBG1(Material->GetName(false, false).CStr());
-//        festring fsDbg2 = Material->GetName(false, false);DBG1(fsDbg2.CStr());DBG1(fsDbg2.CStr());
-//        festring fsDbg3 = Material->GetName(false, false).CStr();DBG1(fsDbg3.CStr());DBG1(fsDbg3.CStr());
         cfestring MName = Material->GetName(false, false); //DBGEXEC(DBGLN;DBG2(MName,&MName);festring fsDbg(MName);DBG1(fsDbg.CStr()););
-//        DBG2(MName,&MName);
-//        DBG2(MName,&MName);
 
         if(Master->IsPlayer())
         {
-//          DBG2(MName,&MName);
           cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
-//          DBG2(MName,&MName);
-//          DBGEXEC(
-//            festring fsDbgMName; Material->AddName(fsDbgMName,false,false);
-//            DBG4(MName, Material->GetNameStem().CStr(), fsDbgMName.CStr(), Material->GetName(false, false).CStr());
-//          );
-//          DBG2(MName,&MName);
           ADD_MESSAGE("Acidous %s dissolves your %s.", MName.CStr(), TName);
         }
         else
           ADD_MESSAGE("Acidous %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
-//        DBG2(MName,&MName);
       }
 
       Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
