@@ -2624,7 +2624,7 @@ wand
     /* BeamRange has no effect */
     MinCharges = 3;
     MaxCharges = 6;
-    BeamColor = LIGHT_GRAY;
+    BeamColor = LIGHT_GRAY2;
     BeamEffect = BEAM_DOOR_CREATION;
     BeamStyle = SHIELD_BEAM;
     AttachedGod = LORICATUS;

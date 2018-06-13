@@ -3349,6 +3349,7 @@ solid
     SoftenedMaterial = OPAL;
     HardenedMaterial = SLADE;
     PriceModifier = 4000;
+    Alpha = 200;
     NameFlags = Base|USE_AN;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;

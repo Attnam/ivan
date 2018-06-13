@@ -122,6 +122,12 @@ truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
+truthoption ivanconfig::GenerateDefinesValidator("GenerateDefinesValidator",
+                                          "generate validator and validate define.dat (may abort)",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &GenerateDefinesValidatorChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -239,7 +245,7 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
-                                          "use sounds",
+                                          "use sound effects",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "show the turn on log messages",
@@ -794,6 +800,14 @@ void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
+void ivanconfig::GenerateDefinesValidatorChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+
+  if(What)
+    game::GenerateDefinesValidator(true); //TODO make validation (that aborts) optional using cycleoption
+}
+
 void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
 {
   if(O!=NULL)O->Value = What;
@@ -953,6 +967,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
+  configsystem::AddOption(fsCategory,&GenerateDefinesValidator);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *

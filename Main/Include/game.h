@@ -208,7 +208,7 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
-  static void UpdateShowItemsAtPlayerPos(bool bAllowed);
+  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos);
   static void UpdateAltSilhouette(bool bAllowed);
   static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
   static int ItemUnderCode(int iCycleValue);
@@ -292,6 +292,7 @@ class game
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
+  static void GenerateDefinesValidator(bool bValidade);
   static void TextScreen(cfestring&, v2 = ZERO_V2, col16 = 0xFFFF, truth = true, truth = true, bitmapeditor = 0);
   static void SetCursorPos(v2 What) { CursorPos = What; }
   static truth DoZoom() { return Zoom; }
@@ -345,6 +346,7 @@ class game
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetDataDir();
+  static festring GetStateDir();
   static festring GetBoneDir();
   static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }

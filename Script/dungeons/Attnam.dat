@@ -22,7 +22,7 @@
 Dungeon ATTNAM;
 {
   Levels = 5;
-  Description = "Attnamese Catacombs";
+  Description = "attnamese catacombs";
   ShortDescription = "AC";
 
   LevelDefault
@@ -84,8 +84,8 @@ Dungeon ATTNAM;
 
   Level 0;
   {
-    Description = Attnam;
-    ShortDescription = Attnam;
+    Description = "Attnam";
+    ShortDescription = "Attnam";
     FillSquare = solidterrain(SNOW_TERRAIN), 0;
     Size = 61, 67;
     GenerateMonsters = false;
@@ -878,8 +878,8 @@ Dungeon ATTNAM;
 
   Level 1;
   {
-    Description = Cellar;
-    ShortDescription = Cellar;
+    Description = "cathedral cellar";
+    ShortDescription = "Cellar";
     Size = 42, 48;
     GenerateMonsters = false;
     Rooms = 1;
@@ -1342,6 +1342,8 @@ Dungeon ATTNAM;
 
   Level 4;
   {
+    Description = "lost tomb";
+    ShortDescription = "Lost Tomb";
     LevelMessage = "You hear rhythmic chanting of some profane ritual: \"Ia! Ia! Khaz-zadm fhtagn!\"";
     DifficultyBase = 100;
     DifficultyDelta = 0;
