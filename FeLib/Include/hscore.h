@@ -19,11 +19,11 @@
 #include "festring.h"
 
 #ifdef UNIX
-#define HIGH_SCORE_FILENAME LOCAL_STATE_DIR "/ivan-highscore.scores"
+#define HIGH_SCORE_FILENAME "ivan-highscore.scores"
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-#define HIGH_SCORE_FILENAME CONST_S("HScore.dat")
+#define HIGH_SCORE_FILENAME "HScore.dat"
 #endif
 
 class festring;
@@ -31,11 +31,11 @@ class festring;
 class highscore
 {
  public:
-  highscore(cfestring& = HIGH_SCORE_FILENAME);
+  highscore(cfestring&);
   truth Add(long, cfestring&);
   void Draw() const;
-  void Save(cfestring& = HIGH_SCORE_FILENAME) const;
-  void Load(cfestring& = HIGH_SCORE_FILENAME);
+  void Save(cfestring& = "") const;
+  void Load(cfestring& = "");
   truth LastAddFailed() const;
   void AddToFile(highscore*) const;
   truth MergeToFile(highscore*) const;
@@ -54,6 +54,7 @@ class highscore
   std::vector<long> RandomID;
   int LastAdd;
   ushort Version;
+  cfestring DefaultFile;
 };
 
 #endif

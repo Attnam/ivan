@@ -2571,7 +2571,8 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
   UpdateAltSilhouette(AnimationDraw);
 
-  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+  UpdateShowItemsAtPos(!bXBRZandFelist,
+    bPositionQuestionMode ? CursorPos : Player->GetPos()); //last thing as this is a temp overlay
   
   #ifdef WIZARD
     DBG1(vDbgDrawOverlayFunctions.size());
@@ -2703,20 +2704,26 @@ v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
   return v2StretchedBufferDest;
 }
 
-void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work with look mode for visible squares too?
+void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
   bool bOk=true;
 
   if(bOk && !bAllowed)bOk=false;
 
-  if(bOk && bPositionQuestionMode)bOk=false;
+//  if(bOk && !bAllowPosMode && bPositionQuestionMode)bOk=false;
 
   if(bOk && !Player->IsEnabled())bOk=false;
 
   if(bOk && Player->IsDead())bOk=false;
 
-  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+  if(bOk && !OnScreen(v2AtPos))bOk=false;
 
   if(bOk && IsInWilderness())bOk=false;
+
+  if(bOk){
+    if(v2AtPos!=Player->GetPos())
+      if(!GetCurrentLevel()->GetLSquare(v2AtPos)->CanBeSeenByPlayer())
+        bOk=false;
+  }
 
   bool bDynamic=false;
   bool bDynamicItems=false;
@@ -2733,7 +2740,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   stack* su = NULL;
   if(bOk){
-    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    //    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    su=GetCurrentLevel()->GetLSquare(v2AtPos)->GetStack();
     if(bOk && su==NULL)bOk=false; //TODO can this happen?
     if(bOk && su->GetItems()==0)bOk=false;
     if(bOk){
@@ -2752,7 +2760,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
 
   /////////////////////// ok ////////////////////////
-  const v2 v2AbsLevelSqrPos = Player->GetPos();
+  const v2 v2AbsLevelSqrPos = v2AtPos;
 
   bool bNearEC=false;
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
@@ -2768,7 +2776,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
   if(bNearEC)bAboveHead=true;
 
-  if(bDynamic && bAboveHead){
+  if(bDynamic && bAboveHead && !bPositionQuestionMode){ // will not be above head in bPositionQuestionMode
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
     bool bCharAboveNear=false;
     bool bItemAboveNear=false;
@@ -2840,7 +2848,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   v2 v2SqrPosIni(0,0);
 
   if(bAboveHead){ //only for x1 dungeon scale
-    v2SqrPosIni=Player->GetPos();
+    v2SqrPosIni=v2AtPos;
 
     v2SqrPosIni.X-=iTot/2;
     v2SqrPosIni.Y--;
@@ -4043,7 +4051,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 
   if(Permanently && !WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
     {
@@ -4404,7 +4412,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iW=ivanconfig::GetAltListItemWidth();
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
-  
+
   v2TopLeft=v2(iX,iY);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
@@ -4671,7 +4679,12 @@ festring game::GetHomeDir()
 {
 #ifdef UNIX
   festring Dir;
-  Dir << getenv("HOME") << "/.ivan/";
+  Dir << getenv("HOME");
+#ifdef MAC_APP
+  Dir << "/Library/Application Support/IVAN/";
+#else
+  Dir << "/.ivan/";
+#endif
 #ifdef DBGMSG
   dbgmsg::SetDebugLogPath(Dir.CStr());
 #endif
@@ -4696,34 +4709,41 @@ festring game::GetScrshotDir()
 festring game::GetDataDir()
 {
 #ifdef UNIX
+#ifdef MAC_APP
+  return "../Resources/ivan/";
+#else
   return DATADIR "/ivan/";
+#endif
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return GetHomeDir();
+#endif
+}
+
+festring game::GetStateDir()
+{
+#ifdef UNIX
+#ifdef MAC_APP
+  return GetHomeDir();
+#else
+  return LOCAL_STATE_DIR "/";
+#endif
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return GetHomeDir();
 #endif
 }
 
 festring game::GetBoneDir()
 {
-#ifdef UNIX
-  return LOCAL_STATE_DIR "/Bones/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Bones/";
-#endif
+  return GetStateDir() + "Bones/";
 }
 
 festring game::GetMusicDir()
 {
-#ifdef UNIX
   return GetDataDir() + "Music/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Music/";
-#endif
 }
 
 level* game::GetLevel(int I)
