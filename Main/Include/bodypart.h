@@ -770,4 +770,18 @@ ITEM(spidertorso, normaltorso)
   virtual v2 GetBitmapPos(int) const;
 };
 
+ITEM(snaketorso, normaltorso)
+{
+ protected:
+  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual v2 GetBitmapPos(int) const;
+};
+
+ITEM(magpietorso, normaltorso)
+{
+ protected:
+  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual v2 GetBitmapPos(int) const;
+};
+
 #endif

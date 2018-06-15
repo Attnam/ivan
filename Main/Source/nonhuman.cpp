@@ -36,6 +36,10 @@ bodypart* dog::MakeBodyPart(int) const { return dogtorso::Spawn(0, NO_MATERIALS)
 
 bodypart* spider::MakeBodyPart(int) const { return spidertorso::Spawn(0, NO_MATERIALS); }
 
+bodypart* snake::MakeBodyPart(int) const { return snaketorso::Spawn(0, NO_MATERIALS); }
+
+bodypart* magpie::MakeBodyPart(int) const { return magpietorso::Spawn(0, NO_MATERIALS); }
+
 int dolphin::GetSpecialBodyPartFlags(int) const { return RAND() & (MIRROR|ROTATE); }
 
 bodypart* bat::MakeBodyPart(int) const { return battorso::Spawn(0, NO_MATERIALS); }

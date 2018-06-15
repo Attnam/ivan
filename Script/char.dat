@@ -5854,7 +5854,9 @@ snake
   DefaultCharisma = 5;
   DefaultMana = 0;
   TotalVolume = 10000;
-  TorsoBitmapPos = 384, 0;
+  TorsoBitmapPos = 368, 0;
+  TorsoMainColor = rgb16(30, 30, 30);
+  TorsoSpecialColor = rgb16(200, 200, 0); /* RattleColor */
   HostileReplies =
   {
     2,
@@ -7186,7 +7188,7 @@ magpie
   StandVerb = "flying";
   CanOpen = false;
   TotalVolume = 500;
-  TorsoBitmapPos = 560, 0;
+  TorsoBitmapPos = 336, 16;
   HostileReplies == "@Dd peeps evilly.";
   FriendlyReplies == "@Dd chirps happily.";
   TotalSize = 20;
