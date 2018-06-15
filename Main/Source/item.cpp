@@ -2092,10 +2092,11 @@ void item::AddContainerPostFix(festring& String) const
     float fRatio = GetSecondaryMaterial()->GetVolume()/(float)GetDefaultSecondaryVolume();
     const char* c="full of";
     if     (fRatio<=0.10)c="with just a little bit of";
-    if     (fRatio<=0.25)c="with a bit of";
-    else if(fRatio<=0.50)c="with some";
-    else if(fRatio<=0.75)c="with"; //TODO any better phrasing for this?
-    else if(fRatio<=0.90)c="almost full of";
+    else if(fRatio<=0.25)c="with a bit of";
+    else if(fRatio<=0.45)c="with some";
+    else if(fRatio<=0.55)c="half full of";
+    else if(fRatio<=0.75)c="well filled with"; //TODO any better phrasing for this?
+    else if(fRatio<=0.93)c="almost full of"; //nice arguable arbitrary percent :)
     GetSecondaryMaterial()->AddName(String << " "<< c << " ", false, false);
   }
 }
