@@ -2086,6 +2086,20 @@ void item::SendMemorizedUpdateRequest() const
       }
 }
 
+void item::AddContainerPostFix(festring& String) const
+{
+  if(GetSecondaryMaterial()){
+    float fRatio = GetSecondaryMaterial()->GetVolume()/(float)GetDefaultSecondaryVolume();
+    const char* c="full of";
+    if     (fRatio<=0.10)c="with just a little bit of";
+    if     (fRatio<=0.25)c="with a bit of";
+    else if(fRatio<=0.50)c="with some";
+    else if(fRatio<=0.75)c="with"; //TODO any better phrasing for this?
+    else if(fRatio<=0.90)c="almost full of";
+    GetSecondaryMaterial()->AddName(String << " "<< c << " ", false, false);
+  }
+}
+
 truth item::AddStateDescription(festring& Name, truth Articled) const
 {
   if(!Spoils() || !(ItemFlags & (HASTE|SLOW)))

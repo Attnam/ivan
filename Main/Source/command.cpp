@@ -1111,7 +1111,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   }
 
   if(h->GetLeftArm()==NULL && h->GetRightArm()==NULL){
-    ADD_MESSAGE("You need at least one arm to craft.");
+    ADD_MESSAGE("You need at least one arm to be able to craft.");
     return false;
   }
 
