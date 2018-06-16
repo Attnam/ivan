@@ -1232,6 +1232,8 @@ struct mapnote{
 
   int iNoteLength;
   int iNoteWidthInPixels;
+  v2 v2LineHook;
+  v2 basePos;
 
   mapnote(lsquare* lsqr_,cchar* note_,v2 tinyMapPos_):lsqr(lsqr_),note(note_),tinyMapPos(tinyMapPos_),iNoteLength(0),
     iNoteWidthInPixels(0){}
@@ -1273,40 +1275,49 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
   int iMaxW=0;
   switch(iMapNotesRotation){
   case 0: //right
-    v2MapNotesTopLeft = v2MapTopLeft+v2(v2MapSize.X,0);
+    v2MapNotesTopLeft = v2MapTopLeft+v2(v2MapSize.X+iM,0);
     break;
   case 1: //below
-    v2MapNotesTopLeft = v2MapTopLeft+v2(0,v2MapSize.Y);
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,v2MapSize.Y+iM);
     break;
   case 2: //left
     iMaxW=(iMaxLineLength+1)*iFontWidth;
-    v2MapNotesTopLeft = v2MapTopLeft+v2(-iMaxW,0);
+    v2MapNotesTopLeft = v2MapTopLeft+v2(-(iMaxW+iM),0);
     bHookAtRight=true;
     break;
   case 3: //above
-    v2MapNotesTopLeft = v2MapTopLeft+v2(0,-(vMapNotes.size()*iLineHeightPixels));
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,-((vMapNotes.size()*iLineHeightPixels) + iM));
     break;
   }
 
   for(int i=0;i<vMapNotes.size();i++){
-    v2 basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
+    vMapNotes[i].basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
 
 //    int w=iFontWidth*strlen(vMapNotes[i].note)+iM;
     vMapNotes[i].iNoteWidthInPixels=iFontWidth*vMapNotes[i].iNoteLength;
     int w=vMapNotes[i].iNoteWidthInPixels+iM;
-    if(bHookAtRight)basePos.X+=iMaxW-w;
+    if(bHookAtRight)vMapNotes[i].basePos.X+=iMaxW-w;
 
-    v2 bkgTL=basePos-v2(iM,iM);
+    v2 bkgTL=vMapNotes[i].basePos-v2(iM,iM);
     v2 bkgB=v2(w,iLineHeightPixels);
     buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
     buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,false); //bkg
 
-    v2 hook = basePos;
-    if(bHookAtRight)hook.X+=w;
-    buffer->DrawLine(vMapNotes[i].scrPos, hook, ac[i%iTotCol], false);
-
-    FONT->Printf(buffer, basePos, WHITE, "%s", vMapNotes[i].note);
+    vMapNotes[i].v2LineHook=vMapNotes[i].basePos;
+    if(bHookAtRight)vMapNotes[i].v2LineHook.X+=w;
+    switch(iMapNotesRotation){
+    case 1: //below
+    case 3: //above
+      vMapNotes[i].v2LineHook.X+=iFontWidth*i;
+      break;
+    }
   }
+
+  for(int i=0;i<vMapNotes.size();i++)
+    buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], false);
+
+  for(int i=0;i<vMapNotes.size();i++)
+    FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
 void game::DrawMapOverlay(bitmap* buffer)
