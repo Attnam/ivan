@@ -3866,8 +3866,13 @@ v2 spidertorso::GetBitmapPos(int Frame) const
 v2 snaketorso::GetBitmapPos(int Frame) const
 {
   v2 BasePos = torso::GetBitmapPos(Frame);
-  Frame &= 0xF;
-  return v2(BasePos.X + ((Frame &~ 7) << 1), BasePos.Y);
+
+  if(Frame<16)
+    return v2(BasePos.X + ((Frame/2)%2)*TILE_SIZE, BasePos.Y);
+  else
+  if(Frame<24)
+    return v2(BasePos.X + TILE_SIZE, BasePos.Y);
+  return BasePos;
 }
 
 v2 magpietorso::GetBitmapPos(int Frame) const
@@ -3876,10 +3881,10 @@ v2 magpietorso::GetBitmapPos(int Frame) const
   Frame &= 0xF;
 
   /**
-   * TODO are all these guessed explanations correct?
    * GetClassAnimationFrames() is the total animation frames per second, so Frame is from 0 to 15 here
    * Magpie has 8 pictures, so it will draw the same picture for each 2 frames.
    * GetBitmapPos() method will be called only once and stored on the savegame file, therefore there is no need for speed.
+   * TODO correct?
    */
   float fPicTot=8.0;
   float fDiv = GetClassAnimationFrames()/fPicTot; //each 2 frames

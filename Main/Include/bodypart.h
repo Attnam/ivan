@@ -773,7 +773,7 @@ ITEM(spidertorso, normaltorso)
 ITEM(snaketorso, normaltorso)
 {
  protected:
-  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual int GetClassAnimationFrames() const { return 32; }
   virtual v2 GetBitmapPos(int) const;
 };
 
