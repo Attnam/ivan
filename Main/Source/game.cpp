@@ -1254,7 +1254,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
     buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,false); //bkg
 
-    buffer->DrawLine(vMapNotes[i].scrPos, basePos, ac[i%iTotCol], true);
+    buffer->DrawLine(vMapNotes[i].scrPos, basePos, ac[i%iTotCol], false);
 
     FONT->Printf(buffer, basePos, WHITE, "%s", vMapNotes[i].note);
   }

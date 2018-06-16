@@ -965,6 +965,7 @@ truth commandsystem::Look(character* Char)
 }
 
 bool bEngraveNote=false;
+v2 v2EngraveNotePos;
 truth commandsystem::WhatToEngrave(character* Char)
 {
   if(!Char->CanRead())
@@ -987,8 +988,16 @@ truth commandsystem::WhatToEngrave(character* Char)
       festring ask = bEngraveNote ?
           CONST_S("Write your map note:") :
           CONST_S("What do you want to engrave here?");
-      if(game::StringQuestion(What, ask, WHITE, 0, 80, true) == NORMAL_EXIT)
-        Char->GetNearLSquare(Char->GetPos())->Engrave(What);
+
+      v2 where = Char->GetPos();
+      if(bEngraveNote)
+        where = v2EngraveNotePos;
+
+      if(game::StringQuestion(What, ask, WHITE, 0, 80, true) == NORMAL_EXIT){
+        festring finalWhat;if(bEngraveNote)finalWhat << game::MapNoteToken();
+        finalWhat << What;
+        Char->GetNearLSquare(where)->Engrave(finalWhat);
+      }
 
       break;
     }
@@ -1418,27 +1427,38 @@ truth commandsystem::ShowMap(character* Char)
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
       while(true){
+        v2 noteAddPos = Char->GetPos();
 //        switch(game::KeyQuestion(CONST_S("Cartography. Toggle (n)otes. To add a map note, engrave like '#some note'."),
-        switch(game::KeyQuestion(CONST_S("Cartography action (t)oggle notes, (a)dd note"),
-          KEY_ESC, 2, 't', 'a') //TODO add a mapnote from here by calling the engrave command directly
+        switch(game::KeyQuestion(CONST_S("Cartography action (t)oggle notes, (a)dd note, (l)ook mode."),
+          KEY_ESC, 3, 't', 'a', 'l') //TODO add a mapnote from here by calling the engrave command directly
         ){
          case 't':
           if(game::ToggleShowMapNotes()){
             ADD_MESSAGE("Let me see my map notes...");
           }
           continue;
+         case 'l':
+          noteAddPos = game::PositionQuestion(CONST_S(
+            "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
+            Char->GetPos(), NULL, 0, false);
+            /* no break */
          case 'a':
-          {bEngraveNote=true;WhatToEngrave(Char);bEngraveNote=false;} DBGLN;
+          { // behavior changer block
+            bEngraveNote=true;
+            v2EngraveNotePos=noteAddPos;
+            WhatToEngrave(Char);
+            bEngraveNote=false;
+          } DBGLN;
 
-          lsquare* lsqr = Char->GetNearLSquare(Char->GetPos()); DBGLN;
-
-          festring e;
-          if(lsqr->GetEngraved()==NULL)
-            e.Empty();
-          else
-            e << game::MapNoteToken() << lsqr->GetEngraved();
-
-          lsqr->Engrave(e); DBGLN;
+//          lsquare* lsqr = Char->GetNearLSquare(noteAddPos); DBGLN;
+//
+//          festring e;
+//          if(lsqr->GetEngraved()==NULL)
+//            e.Empty();
+//          else
+//            e << game::MapNoteToken() << lsqr->GetEngraved();
+//
+//          lsqr->Engrave(e); DBGLN;
 
           // update the notes list
           game::ToggleDrawMapOverlay(); //off
