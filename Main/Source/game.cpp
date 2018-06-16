@@ -1175,7 +1175,9 @@ bool game::ToggleDrawMapOverlay()
 
 void game::SetDrawMapOverlay(bool b)
 {
-  static bool bDummyInit = [](){graphics::AddDrawAboveAll(&DrawMapOverlay,1000,"Map");return true;}();
+  static bool bDummyInit  = [](){
+    graphics::AddDrawAboveAll(&DrawMapOverlay     ,1000,"Map"     );
+    graphics::AddDrawAboveAll(&DrawMapNotesOverlay,1100,"MapNotes"); return true;}();
 
   bDrawMapOverlayEnabled=b;
 
@@ -1198,6 +1200,65 @@ bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftF
 
   return bld.Bitmap;
 };
+
+char game::MapNoteToken()
+{
+  return '#';
+}
+
+bool bShowMapNotes=false;
+bool game::ToggleShowMapNotes()
+{
+  bShowMapNotes=!bShowMapNotes;
+  return bShowMapNotes;
+}
+
+bool bImersiveMapMode=false;
+struct mapnote{
+  lsquare* lsqr;
+  v2 tinyMapPos;
+  v2 scrPos;
+  cchar* note;
+  mapnote(lsquare* lsqr_,cchar* note_,v2 tinyMapPos_):lsqr(lsqr_),note(note_),tinyMapPos(tinyMapPos_){}
+};
+static std::vector<mapnote> vMapNotes;
+v2 v2MapNotesTopLeft;
+col16 colMapNoteBkg;
+void game::DrawMapNotesOverlay(bitmap* buffer)
+{
+  if(!bDrawMapOverlayEnabled)return;
+
+  if(!bShowMapNotes)return;
+
+  if(!bImersiveMapMode)return; //the problem is space for the auto positioning of notes
+
+  //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
+  int iLineHeightPixels=15; //line height in pixels
+  int iFontWidth=8; //font width
+  int iM=3; //margin
+
+  const static int iTotCol=5;
+  static col16 ac[iTotCol];//={BLACK,DARK_GRAY};
+  static bool bDummyInit = [](){
+    int step=25;
+    for(int i=0;i<iTotCol;i++){
+      ac[i]=MakeRGB16(i*step,i*step,i*step);
+    }return true;}();
+
+  for(int i=0;i<vMapNotes.size();i++){
+    v2 basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
+    int w=iFontWidth*strlen(vMapNotes[i].note)+iM;
+
+    v2 bkgTL=basePos-v2(iM,iM);
+    v2 bkgB=v2(w,iLineHeightPixels);
+    buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+    buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,false); //bkg
+
+    buffer->DrawLine(vMapNotes[i].scrPos, basePos, ac[i%iTotCol], true);
+
+    FONT->Printf(buffer, basePos, WHITE, "%s", vMapNotes[i].note);
+  }
+}
 
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
@@ -1222,6 +1283,7 @@ void game::DrawMapOverlay(bitmap* buffer)
     iImersiveMap=3;
     break;
   }
+  bImersiveMapMode=iImersiveMap!=0;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
     ADD_MESSAGE("This map is as big as the world!");
@@ -1315,6 +1377,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 
       v2 v2PlayerScrPos(0,0);
       v2 v2Dest(0,0);
+      vMapNotes.clear();
       for(int iY=v2Min.Y;iY<=v2Max.Y;iY++){
 //        B.Dest.Y = v2TopLeft.Y +iY*iMapTileSize;
         v2Dest.Y = (iY-v2Min.Y)*iMapTileSize;
@@ -1361,6 +1424,7 @@ void game::DrawMapOverlay(bitmap* buffer)
             colorNaturalWall=clMap[k++];
             colorFloor      =clMap[k++];
             colorMapBkg     =clMap[k++]; //always darker than everything else based on height
+            colMapNoteBkg=colorMapBkg;
             return true;
           }();
 
@@ -1371,6 +1435,7 @@ void game::DrawMapOverlay(bitmap* buffer)
             static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
             static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
             static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+            static col16 colorNote    =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white TODO why?
 //            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
 
             static const int iTotRM=5 +1; //5 is max rest modifier from dat files
@@ -1388,7 +1453,11 @@ void game::DrawMapOverlay(bitmap* buffer)
             }();
 
             static olterrain* olt;olt = lsqr->GetOLTerrain();
-            if(olt){
+            cchar* note = lsqr->GetEngraved();
+            if(note!=NULL && note[0]==game::MapNoteToken()){
+              colorO=colorNote;
+              vMapNotes.push_back(mapnote(lsqr,note,v2Dest));
+            }else if(olt){
               if(olt->IsDoor()){
                 colorO=colorDoor;
               }else if(olt->IsWall()){
@@ -1418,6 +1487,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 
             if(lsqr->IsMaterialDetected()) //color override
               colorO=YELLOW;
+
           }else{
             colorO=colorMapBkg;
           }
@@ -1432,6 +1502,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 //      graphics::DrawRectangleOutlineAround(
 //        B.Bitmap, v2TopLeft, v2CL*iMapTileSize, LIGHT_GRAY, true);
 
+      // player location. general override
       if(iMapTileSize<3){
         bmpMapBuffer->Fill(v2PlayerScrPos, v2MapTileSize, RED);
       }else{
@@ -1444,6 +1515,7 @@ void game::DrawMapOverlay(bitmap* buffer)
       v2MapScrSizeFinal = v2MapScrSize;
     } DBG3(bmpMapBuffer,iMapOverlayDrawCount,DBGAV2(v2TopLeft));
 
+    int iFinalMapScaling=0;
     if((bUsexBRZ || iImersiveMap>0) && iMapOverlayDrawCount==0){ //double stretch
       /**
        * these are "best fit" double stretch values
@@ -1547,6 +1619,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 //          buffer, bld.Dest, bld.Border*bld.Stretch, LIGHT_GRAY, true);
       }
 
+      iFinalMapScaling=a*b;
+
     }
 
     if(iImersiveMap>0 && iMapOverlayDrawCount==0){ // at player hands!
@@ -1563,6 +1637,13 @@ void game::DrawMapOverlay(bitmap* buffer)
       if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
       if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
       if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+
+      // prepare notes
+      for(int i=0;i<vMapNotes.size();i++)
+        vMapNotes[i].scrPos = v2TopLeftFinal
+          -(vMapNotes[i].tinyMapPos*iFinalMapScaling); //pos
+          //+((v2(iMapTileSize,iMapTileSize)/2)*iFinalMapScaling); //TODO center (make it work)
+      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
     }
 
     bmpFinal->FastBlit(buffer, v2TopLeftFinal);

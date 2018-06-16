@@ -368,6 +368,9 @@ class game
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
   static void DrawMapOverlay(bitmap* =NULL);
+  static void DrawMapNotesOverlay(bitmap* =NULL);
+  static bool ToggleShowMapNotes();
+  static char MapNoteToken();
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
