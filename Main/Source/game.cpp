@@ -2571,8 +2571,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
   UpdateAltSilhouette(AnimationDraw);
 
-  UpdateShowItemsAtPos(!bXBRZandFelist,
-    bPositionQuestionMode ? CursorPos : Player->GetPos()); //last thing as this is a temp overlay
+  UpdateShowItemsAtPos(!bXBRZandFelist); //last thing as this is a temp overlay
   
   #ifdef WIZARD
     DBG1(vDbgDrawOverlayFunctions.size());
@@ -2705,6 +2704,8 @@ v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
 }
 
 void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
+  if(v2AtPos.Is0() && bPositionQuestionMode) v2AtPos = CursorPos;
+
   bool bOk=true;
 
   if(bOk && !bAllowed)bOk=false;
@@ -2714,6 +2715,10 @@ void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
   if(bOk && !Player->IsEnabled())bOk=false;
 
   if(bOk && Player->IsDead())bOk=false;
+
+  if(bOk && v2AtPos.Is0()){ //after validating player
+    v2AtPos = Player->GetPos();
+  }
 
   if(bOk && !OnScreen(v2AtPos))bOk=false;
 
@@ -3752,7 +3757,11 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   SetCursorPos(v2(-1, -1));
 
   if(ivanconfig::IsCenterOnPlayerAfterLook()){
-    UpdateCamera();
+    v2 ppos = Player->GetPosSafely();
+    if(!ppos.Is0()){
+      UpdateCameraX(ppos.X);
+      UpdateCameraY(ppos.Y);
+    }
   }
 
   return Return;
@@ -3777,13 +3786,16 @@ void game::LookHandler(v2 CursorPos)
 
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
-    if(!IsInWilderness()
-       && !Square->CanBeSeenByPlayer()
-       && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
+    if(
+        !IsInWilderness()
+        && !Square->CanBeSeenByPlayer()
+        && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
+        && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
+    ){
       Msg = CONST_S("You feel here ");
-    else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
+    }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
       Msg = CONST_S("You see here ");
-    else
+    }else
       Msg = CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
@@ -3984,8 +3996,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
    case 'i':
     if(!IsInWilderness())
     {
-      if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
-      {
+      if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPosSafely() || GetSeeWholeMapCheatMode()){
         lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
         stack* Stack = LSquare->GetStack();
 

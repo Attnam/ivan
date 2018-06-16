@@ -4664,6 +4664,37 @@ truth character::AllowDamageTypeBloodSpill(int Type)
   return false;
 }
 
+v2 character::GetPosSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  if(sqr)return sqr->GetPos();
+  return v2();
+}
+
+square* character::GetSquareUnderSafely() const
+{ //prevents crash if polymorphed (here at least)
+  if(!SquareUnder[0])
+    return SquareUnder[0];
+
+  if(IsPolymorphed())
+  {
+    character* pb = GetPolymorphBackup(); DBG1(pb->GetNameSingular().CStr());
+    if(!pb->SquareUnder[0]) //TODO to use square under index here may cause inconsistencies?
+      return pb->SquareUnder[0];
+  }
+
+  return NULL;
+}
+
+stack* character::GetStackUnderSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  lsquare* lsqr = dynamic_cast<lsquare*>(sqr);
+  if(lsqr)return lsqr->GetStack();
+  return NULL;
+}
+
+
 /* Returns truly done damage */
 
 int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
@@ -4761,10 +4792,18 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
         {
           /** No multi-tile humanoid support! */
 
-          GetStackUnder()->AddItem(Severed);
+          stack* su = GetStackUnderSafely();
+          if(su){
+            su->AddItem(Severed);
 
-          if(Direction != YOURSELF)
-            Severed->Fly(0, Direction, Damage);
+            if(Direction != YOURSELF)
+              Severed->Fly(0, Direction, Damage);
+          }else{
+            /**
+             * this may happen when polymorphing (tests were made as a snake) during an explosion that severe body parts
+             */
+            GetStack()->AddItem(Severed); DBGLN;
+          }
         }
         else
           GetStack()->AddItem(Severed);
@@ -8193,7 +8232,11 @@ truth character::SelectFromPossessions(itemvector& ReturnVector, cfestring& Topi
     List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
     List.SetEntryDrawer(game::ItemEntryDrawer);
     game::DrawEverythingNoBlit();
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     int Chosen = List.Draw();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     game::ClearItemDrawVector();
 
     if(Chosen != ESCAPED)
