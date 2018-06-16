@@ -1248,7 +1248,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
   if(!bShowMapNotes)return;
 
-  if(!bImersiveMapMode)return; //the problem is space for the auto positioning of notes
+//  if(!bImersiveMapMode)return; //the problem is space for the auto positioning of notes
 
   //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
   int iLineHeightPixels=15; //line height in pixels
@@ -1700,8 +1700,8 @@ void game::DrawMapOverlay(bitmap* buffer)
 
       // prepare notes
       for(int i=0;i<vMapNotes.size();i++)
-        vMapNotes[i].scrPos = v2TopLeftFinal
-          -(vMapNotes[i].tinyMapPos*iFinalMapScaling); //pos
+        vMapNotes[i].scrPos = v2TopLeftFinal+
+          ((vMapNotes[i].tinyMapPos*iFinalMapScaling*(bImersiveMapMode?-1:1))); //pos
           //+((v2(iMapTileSize,iMapTileSize)/2)*iFinalMapScaling); //TODO center (make it work)
 //      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
       v2MapTopLeft = v2TopLeftFinal;
