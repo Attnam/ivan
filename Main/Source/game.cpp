@@ -1206,6 +1206,16 @@ char game::MapNoteToken()
   return '#';
 }
 
+int iMapNotesRotation=0;
+int game::RotateMapNotes()
+{
+  iMapNotesRotation++;
+  if(iMapNotesRotation>3)
+    iMapNotesRotation=0;
+
+  return iMapNotesRotation;
+}
+
 bool bShowMapNotes=false;
 bool game::ToggleShowMapNotes()
 {
@@ -1219,10 +1229,16 @@ struct mapnote{
   v2 tinyMapPos;
   v2 scrPos;
   cchar* note;
-  mapnote(lsquare* lsqr_,cchar* note_,v2 tinyMapPos_):lsqr(lsqr_),note(note_),tinyMapPos(tinyMapPos_){}
+
+  int iNoteLength;
+  int iNoteWidthInPixels;
+
+  mapnote(lsquare* lsqr_,cchar* note_,v2 tinyMapPos_):lsqr(lsqr_),note(note_),tinyMapPos(tinyMapPos_),iNoteLength(0),
+    iNoteWidthInPixels(0){}
 };
 static std::vector<mapnote> vMapNotes;
-v2 v2MapNotesTopLeft;
+v2 v2MapTopLeft;
+v2 v2MapSize;
 col16 colMapNoteBkg;
 void game::DrawMapNotesOverlay(bitmap* buffer)
 {
@@ -1240,21 +1256,54 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
   const static int iTotCol=5;
   static col16 ac[iTotCol];//={BLACK,DARK_GRAY};
   static bool bDummyInit = [](){
-    int step=25;
+    int step=20;
     for(int i=0;i<iTotCol;i++){
       ac[i]=MakeRGB16(i*step,i*step,i*step);
     }return true;}();
 
+  int iMaxLineLength=0;
+  for(int i=0;i<vMapNotes.size();i++){
+    vMapNotes[i].iNoteLength=strlen(vMapNotes[i].note);
+    if(vMapNotes[i].iNoteLength>iMaxLineLength)
+      iMaxLineLength=vMapNotes[i].iNoteLength;
+  }
+
+  v2 v2MapNotesTopLeft;
+  bool bHookAtRight=false;
+  int iMaxW=0;
+  switch(iMapNotesRotation){
+  case 0: //right
+    v2MapNotesTopLeft = v2MapTopLeft+v2(v2MapSize.X,0);
+    break;
+  case 1: //below
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,v2MapSize.Y);
+    break;
+  case 2: //left
+    iMaxW=(iMaxLineLength+1)*iFontWidth;
+    v2MapNotesTopLeft = v2MapTopLeft+v2(-iMaxW,0);
+    bHookAtRight=true;
+    break;
+  case 3: //above
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,-(vMapNotes.size()*iLineHeightPixels));
+    break;
+  }
+
   for(int i=0;i<vMapNotes.size();i++){
     v2 basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
-    int w=iFontWidth*strlen(vMapNotes[i].note)+iM;
+
+//    int w=iFontWidth*strlen(vMapNotes[i].note)+iM;
+    vMapNotes[i].iNoteWidthInPixels=iFontWidth*vMapNotes[i].iNoteLength;
+    int w=vMapNotes[i].iNoteWidthInPixels+iM;
+    if(bHookAtRight)basePos.X+=iMaxW-w;
 
     v2 bkgTL=basePos-v2(iM,iM);
     v2 bkgB=v2(w,iLineHeightPixels);
     buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
     buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,false); //bkg
 
-    buffer->DrawLine(vMapNotes[i].scrPos, basePos, ac[i%iTotCol], false);
+    v2 hook = basePos;
+    if(bHookAtRight)hook.X+=w;
+    buffer->DrawLine(vMapNotes[i].scrPos, hook, ac[i%iTotCol], false);
 
     FONT->Printf(buffer, basePos, WHITE, "%s", vMapNotes[i].note);
   }
@@ -1643,7 +1692,9 @@ void game::DrawMapOverlay(bitmap* buffer)
         vMapNotes[i].scrPos = v2TopLeftFinal
           -(vMapNotes[i].tinyMapPos*iFinalMapScaling); //pos
           //+((v2(iMapTileSize,iMapTileSize)/2)*iFinalMapScaling); //TODO center (make it work)
-      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
+//      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
+      v2MapTopLeft = v2TopLeftFinal;
+      v2MapSize = v2MapScrSizeFinal;
     }
 
     bmpFinal->FastBlit(buffer, v2TopLeftFinal);

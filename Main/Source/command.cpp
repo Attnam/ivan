@@ -36,6 +36,8 @@
 #include "proto.h"
 #endif
 
+#include "dbgmsgproj.h"
+
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
@@ -1428,10 +1430,12 @@ truth commandsystem::ShowMap(character* Char)
     if(game::ToggleDrawMapOverlay()){
       while(true){
         v2 noteAddPos = Char->GetPos();
-//        switch(game::KeyQuestion(CONST_S("Cartography. Toggle (n)otes. To add a map note, engrave like '#some note'."),
-        switch(game::KeyQuestion(CONST_S("Cartography action (t)oggle notes, (a)dd note, (l)ook mode."),
-          KEY_ESC, 3, 't', 'a', 'l') //TODO add a mapnote from here by calling the engrave command directly
+        switch(game::KeyQuestion(CONST_S("Cartography action: (t)oggle notes, (a)dd note, (l)ook mode, (r)otate."),
+          KEY_ESC, 4, 't', 'a', 'l', 'r')
         ){
+         case 'r':
+          game::RotateMapNotes();
+          continue;
          case 't':
           if(game::ToggleShowMapNotes()){
             ADD_MESSAGE("Let me see my map notes...");

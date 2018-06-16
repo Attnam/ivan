@@ -370,6 +370,7 @@ class game
   static void DrawMapOverlay(bitmap* =NULL);
   static void DrawMapNotesOverlay(bitmap* =NULL);
   static bool ToggleShowMapNotes();
+  static int RotateMapNotes();
   static char MapNoteToken();
 
 #ifdef WIZARD
