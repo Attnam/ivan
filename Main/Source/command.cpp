@@ -164,7 +164,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -226,7 +226,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -572,7 +572,7 @@ truth hasItem(itemvector& iv, item* it){
 }
 truth commandsystem::SwapWeaponsCfg(character* Char)
 {DBGLN;
-  if(!Char->IsHumanoid()){DBGLN;
+  if(!Char->IsHumanoid() || dynamic_cast<ghost*>(Char)){DBGLN;
     ADD_MESSAGE("This monster type cannot wield weapons.");
     return false;
   }
@@ -633,13 +633,13 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
         vSWCfg[i].iKeyRm = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyRm);
         Cfgs.AddEntry(festring()<<"Remove this config", colAlert,0,game::AddToItemDrawVector(itemvector()),true);
 
-        if(i>0){
+        if(i>0){DBGLN;
           vSWCfg[i].iKeyUp = iSelectableIndex++;
           Cfgs.AddEntry(festring()<<"Move up", colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
-        }
+        }DBGLN;
       }
 
-      for(int j=0;j<2;j++){
+      for(int j=0;j<2;j++){DBGLN;
         festring fs; fs<<"   ";
         item* it = NULL;
         item* w = NULL;
@@ -1297,10 +1297,10 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg;
+  festring Msg; DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
-      game::GetCurrentLevel()->AddSpecialCursors();
+      game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
     }else{
       Char->GetLevel()->AddSpecialCursors();
     }
