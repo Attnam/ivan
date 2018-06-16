@@ -4667,21 +4667,22 @@ truth character::AllowDamageTypeBloodSpill(int Type)
 v2 character::GetPosSafely() const
 {
   square* sqr = GetSquareUnderSafely();
-  if(sqr)return sqr->GetPos();
+  if(sqr!=NULL)return sqr->GetPos();
   return v2();
 }
 
 square* character::GetSquareUnderSafely() const
 { //prevents crash if polymorphed (here at least)
-  if(!SquareUnder[0])
+  if(SquareUnder[0]!=NULL){DBGLN;
     return SquareUnder[0];
+  }DBGLN;
 
-  if(IsPolymorphed())
-  {
-    character* pb = GetPolymorphBackup(); DBG1(pb->GetNameSingular().CStr());
-    if(!pb->SquareUnder[0]) //TODO to use square under index here may cause inconsistencies?
+  if(IsPolymorphed()){DBGLN;
+    character* pb = GetPolymorphBackup();
+    if(pb!=NULL && pb->SquareUnder[0]!=NULL){ DBG1(pb->GetNameSingular().CStr()); //TODO to use square under index here may cause inconsistencies?
       return pb->SquareUnder[0];
-  }
+    }
+  }DBGLN;
 
   return NULL;
 }
@@ -4690,7 +4691,7 @@ stack* character::GetStackUnderSafely() const
 {
   square* sqr = GetSquareUnderSafely();
   lsquare* lsqr = dynamic_cast<lsquare*>(sqr);
-  if(lsqr)return lsqr->GetStack();
+  if(lsqr!=NULL)return lsqr->GetStack();
   return NULL;
 }
 
