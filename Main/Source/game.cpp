@@ -1514,10 +1514,11 @@ void game::DrawMapOverlay(bitmap* buffer)
 
             static olterrain* olt;olt = lsqr->GetOLTerrain();
             cchar* note = lsqr->GetEngraved();
-            if(note!=NULL && note[0]==game::MapNoteToken()){
-              colorO=colorNote;
+            if(note!=NULL && note[0]==game::MapNoteToken())//{
               vMapNotes.push_back(mapnote(lsqr,note,v2Dest));
-            }else if(olt){
+            //              colorO=colorNote;
+//            }else
+            if(olt){
               if(olt->IsDoor()){
                 colorO=colorDoor;
               }else if(olt->IsWall()){
@@ -1701,8 +1702,8 @@ void game::DrawMapOverlay(bitmap* buffer)
       // prepare notes
       for(int i=0;i<vMapNotes.size();i++)
         vMapNotes[i].scrPos = v2TopLeftFinal+
-          ((vMapNotes[i].tinyMapPos*iFinalMapScaling*(bImersiveMapMode?-1:1))); //pos
-          //+((v2(iMapTileSize,iMapTileSize)/2)*iFinalMapScaling); //TODO center (make it work)
+          (vMapNotes[i].tinyMapPos*iFinalMapScaling*(bImersiveMapMode?-1:1)) //pos
+          +v2(2,2);//+((v2(iMapTileSize,iMapTileSize)/2)*iFinalMapScaling); //TODO center properly
 //      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
       v2MapTopLeft = v2TopLeftFinal;
       v2MapSize = v2MapScrSizeFinal;
