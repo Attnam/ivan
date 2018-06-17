@@ -1242,6 +1242,13 @@ static std::vector<mapnote> vMapNotes;
 v2 v2MapTopLeft;
 v2 v2MapSize;
 col16 colMapNoteBkg;
+int iNoteHighlight=-1;
+lsquare* game::GetHighlightedMapNoteLSquare()
+{DBGLN;
+  if(iNoteHighlight==-1)return NULL;DBGLN;
+  if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
+  return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
+}
 void game::DrawMapNotesOverlay(bitmap* buffer)
 {
   if(!bDrawMapOverlayEnabled)return;
@@ -1290,6 +1297,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     break;
   }
 
+  iNoteHighlight=-1;
   for(int i=0;i<vMapNotes.size();i++){
     vMapNotes[i].basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
 
@@ -1300,8 +1308,18 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
     v2 bkgTL=vMapNotes[i].basePos-v2(iM,iM);
     v2 bkgB=v2(w,iLineHeightPixels);
+
+    v2 mouse = globalwindowhandler::GetMouseLocation();
+    if( iNoteHighlight==-1 &&
+        mouse.X >= bkgTL.X         && mouse.Y >= bkgTL.Y          &&
+        mouse.X < (bkgTL.X+bkgB.X) && mouse.Y < (bkgTL.Y+bkgB.Y)
+    ){
+      iNoteHighlight=i;
+    }
+
+//    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
-    buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,false); //bkg
+    buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
 
     vMapNotes[i].v2LineHook=vMapNotes[i].basePos;
     if(bHookAtRight)vMapNotes[i].v2LineHook.X+=w;
@@ -1313,8 +1331,9 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
   }
 
-  for(int i=0;i<vMapNotes.size();i++)
-    buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], false);
+  for(int i=0;i<vMapNotes.size();i++){
+    buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+  }
 
   for(int i=0;i<vMapNotes.size();i++)
     FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);

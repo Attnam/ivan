@@ -369,6 +369,7 @@ class game
   static void SetDrawMapOverlay(bool b);
   static void DrawMapOverlay(bitmap* =NULL);
   static void DrawMapNotesOverlay(bitmap* =NULL);
+  static lsquare* GetHighlightedMapNoteLSquare();
   static bool ToggleShowMapNotes();
   static int RotateMapNotes();
   static char MapNoteToken();

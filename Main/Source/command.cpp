@@ -992,13 +992,25 @@ truth commandsystem::WhatToEngrave(character* Char)
           CONST_S("What do you want to engrave here?");
 
       v2 where = Char->GetPos();
-      if(bEngraveNote)
+      lsquare* lsqr = Char->GetNearLSquare(where);
+      if(bEngraveNote){
         where = v2EngraveNotePos;
+        lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(where);
+        if(lsqrN!=NULL){
+          lsqr = lsqrN;
+          if(lsqr->GetEngraved()!=NULL){
+            What = lsqr->GetEngraved();
+            if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
+              std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
+            }
+          }
+        }
+      }
 
       if(game::StringQuestion(What, ask, WHITE, 0, 80, true) == NORMAL_EXIT){
         festring finalWhat;if(bEngraveNote)finalWhat << game::MapNoteToken();
         finalWhat << What;
-        Char->GetNearLSquare(where)->Engrave(finalWhat);
+        lsqr->Engrave(finalWhat);
       }
 
       break;
@@ -1422,53 +1434,60 @@ truth commandsystem::Rest(character* Char)
   return true;
 }
 
+void updateMapNotesList(){
+  game::ToggleDrawMapOverlay(); //off
+  game::ToggleDrawMapOverlay(); //on
+}
 truth commandsystem::ShowMap(character* Char)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
 
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
+      lsquare* lsqrH=NULL;
       while(true){
         v2 noteAddPos = Char->GetPos();
-        switch(game::KeyQuestion(CONST_S("Cartography action: (t)oggle notes, (a)dd note, (l)ook mode, (r)otate."),
-          KEY_ESC, 4, 't', 'a', 'l', 'r')
+        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (a)dd, (l)ook, (r)otate, (d)elete, (e)dit."),
+          KEY_ESC, 6, 't', 'a', 'l', 'r','d','e')
         ){
-         case 'r':
-          game::RotateMapNotes();
-          continue;
-         case 't':
-          if(game::ToggleShowMapNotes()){
-            ADD_MESSAGE("Let me see my map notes...");
-          }
-          continue;
-         case 'l':
-          noteAddPos = game::PositionQuestion(CONST_S(
-            "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
-            Char->GetPos(), NULL, 0, false);
+          case 'd':
+            lsqrH = game::GetHighlightedMapNoteLSquare();
+            if(lsqrH!=NULL){
+              lsqrH->Engrave(festring());
+              updateMapNotesList();
+            }
+            continue;
+          case 'r':
+            game::RotateMapNotes();
+            continue;
+          case 't':
+            if(game::ToggleShowMapNotes())
+              ADD_MESSAGE("Let me see my map notes...");
+            continue;
+          case 'l':
+            if(noteAddPos==Char->GetPos()){
+              noteAddPos = game::PositionQuestion(CONST_S(
+                "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
+                Char->GetPos(), NULL, 0, false);
+            }
             /* no break */
-         case 'a':
-          { // behavior changer block
-            bEngraveNote=true;
-            v2EngraveNotePos=noteAddPos;
-            WhatToEngrave(Char);
-            bEngraveNote=false;
-          } DBGLN;
+          case 'e':
+            if(noteAddPos==Char->GetPos()){
+              lsqrH = game::GetHighlightedMapNoteLSquare();
+              if(lsqrH!=NULL)
+                noteAddPos=lsqrH->GetPos();
+            }
+            /* no break */
+          case 'a':
+            { // behavior changer clarifier block
+              bEngraveNote=true;
+              v2EngraveNotePos=noteAddPos;
+              WhatToEngrave(Char);
+              bEngraveNote=false;
+            } DBGLN;
 
-//          lsquare* lsqr = Char->GetNearLSquare(noteAddPos); DBGLN;
-//
-//          festring e;
-//          if(lsqr->GetEngraved()==NULL)
-//            e.Empty();
-//          else
-//            e << game::MapNoteToken() << lsqr->GetEngraved();
-//
-//          lsqr->Engrave(e); DBGLN;
-
-          // update the notes list
-          game::ToggleDrawMapOverlay(); //off
-          game::ToggleDrawMapOverlay(); //on
-
-          continue;
+            updateMapNotesList();
+            continue;
         }
         break;
       }
