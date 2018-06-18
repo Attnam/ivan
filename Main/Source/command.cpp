@@ -993,7 +993,8 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
       if(lsqrN!=NULL){ //TODO can this be NULL?
         if(lsqrN->GetEngraved()!=NULL){
-          What = lsqrN->GetEngraved();
+          cchar* c = lsqrN->GetEngraved();
+          if(c!=NULL)What=c;
           if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
             std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
           }
@@ -1438,10 +1439,6 @@ truth commandsystem::Rest(character* Char)
   return true;
 }
 
-void updateMapNotesList(){
-  game::ToggleDrawMapOverlay(); //off
-  game::ToggleDrawMapOverlay(); //on
-}
 truth commandsystem::ShowMap(character* Char)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
@@ -1458,7 +1455,7 @@ truth commandsystem::ShowMap(character* Char)
             lsqrH = game::GetHighlightedMapNoteLSquare();
             if(lsqrH!=NULL){
               lsqrH->Engrave(festring());
-              updateMapNotesList();
+              game::RefreshDrawMapOverlay();
             }
             continue;
           case 'r':
@@ -1470,9 +1467,12 @@ truth commandsystem::ShowMap(character* Char)
             continue;
           case 'l':
             if(noteAddPos==Char->GetPos()){
+              game::RefreshDrawMapOverlay();
               noteAddPos = game::PositionQuestion(CONST_S(
                 "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
-                Char->GetPos(), NULL, NULL, true);
+                Char->GetPos(), NULL, NULL, true); DBGSV2(noteAddPos);
+              if(noteAddPos==ERROR_V2)
+                continue;
             }
             /* no break */
           case 'e':
@@ -1482,7 +1482,7 @@ truth commandsystem::ShowMap(character* Char)
                 noteAddPos=lsqrH->GetPos();
             }
             WhatToEngrave(Char,true,noteAddPos);
-            updateMapNotesList();
+            game::RefreshDrawMapOverlay();
             continue;
         }
         break;
