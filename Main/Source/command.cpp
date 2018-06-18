@@ -500,17 +500,7 @@ truth commandsystem::Close(character* Char)
 }
 
 struct swapweaponcfg{
-  int iKeyActivate=-1;
-  int iKeyRm=-1;
-  int iKeyDown=-1;
-  int iKeyUp=-1;
 
-  void ClearListControls(){
-    iKeyActivate=-1;
-    iKeyRm=-1;
-    iKeyDown=-1;
-    iKeyUp=-1;
-  }
 //  int iSelectableIndex=-1;
 
   item* itLeft=NULL;
@@ -530,6 +520,21 @@ struct swapweaponcfg{
     ulong iRightId=0;SaveFile >> iRightId;
     itRight = iRightId ? game::SearchItem(iRightId) : NULL; DBG2(iRightId,itRight);
   }
+
+  // temporary LIST CONTROLS
+  int iKeyActivate=-1;
+  int iKeyRm=-1;
+  int iKeySwapArms=-1;
+  int iKeyDown=-1;
+  int iKeyUp=-1;
+  void ClearListControls(){
+    iKeyActivate=-1;
+    iKeyRm=-1;
+    iKeySwapArms=-1;
+    iKeyDown=-1;
+    iKeyUp=-1;
+  }
+
 };
 std::vector<swapweaponcfg> vSWCfg;
 std::vector<swapweaponcfg> vSWCfgRemoved; //wont be saved tho
@@ -632,6 +637,9 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
       if(bMaintenanceMode){
         vSWCfg[i].iKeyRm = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyRm);
         Cfgs.AddEntry(festring()<<"Remove this config", colAlert,0,game::AddToItemDrawVector(itemvector()),true);
+
+        vSWCfg[i].iKeySwapArms = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeySwapArms);
+        Cfgs.AddEntry(festring()<<"Swap arms", colMaintOpts,0,game::AddToItemDrawVector(itemvector()),true);
 
         if(i>0){DBGLN;
           vSWCfg[i].iKeyUp = iSelectableIndex++;
@@ -744,6 +752,12 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
         if(Selected==vSWCfg[i].iKeyActivate){DBGLN;
           SwapWeaponsWork(Char,i);
           return false; //to close it as gained experience with dexterity action!
+        }else
+        if(Selected==vSWCfg[i].iKeySwapArms){DBGLN;
+          item* itL = vSWCfg[i].itLeft;
+          vSWCfg[i].itLeft = vSWCfg[i].itRight;
+          vSWCfg[i].itRight = itL;
+          break;
         }
       }
     }
