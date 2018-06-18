@@ -966,9 +966,11 @@ truth commandsystem::Look(character* Char)
   return false;
 }
 
-bool bEngraveNote=false;
-v2 v2EngraveNotePos;
 truth commandsystem::WhatToEngrave(character* Char)
+{
+  return WhatToEngrave(Char,false,v2());
+}
+truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2EngraveMapNotePos)
 {
   if(!Char->CanRead())
   {
@@ -979,39 +981,41 @@ truth commandsystem::WhatToEngrave(character* Char)
   int Key = 0;
   while(!(Key == KEY_ESC || Key == ' '))
   {
-    if(!bEngraveNote)
+    if(!bEngraveMapNote)
       Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
                                          "'.' square, 'i' inventory, ESC exits"));
 
-    if(Key == '.' || bEngraveNote)
+    int iLSqrLimit=80;
+    if(bEngraveMapNote)
     {
       festring What;
 
-      festring ask = bEngraveNote ?
-          CONST_S("Write your map note:") :
-          CONST_S("What do you want to engrave here?");
-
-      v2 where = Char->GetPos();
-      lsquare* lsqr = Char->GetNearLSquare(where);
-      if(bEngraveNote){
-        where = v2EngraveNotePos;
-        lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(where);
-        if(lsqrN!=NULL){
-          lsqr = lsqrN;
-          if(lsqr->GetEngraved()!=NULL){
-            What = lsqr->GetEngraved();
-            if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
-              std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
-            }
+      lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
+      if(lsqrN!=NULL){ //TODO can this be NULL?
+        if(lsqrN->GetEngraved()!=NULL){
+          What = lsqrN->GetEngraved();
+          if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
+            std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
           }
         }
       }
 
-      if(game::StringQuestion(What, ask, WHITE, 0, 80, true) == NORMAL_EXIT){
-        festring finalWhat;if(bEngraveNote)finalWhat << game::MapNoteToken();
+      if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
+        festring finalWhat;
+        finalWhat << game::MapNoteToken();
         finalWhat << What;
-        lsqr->Engrave(finalWhat);
+        lsqrN->Engrave(finalWhat);
       }
+
+      break;
+    }
+
+    if(Key == '.')
+    {
+      festring What;
+
+      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT)
+        Char->GetNearLSquare(Char->GetPos())->Engrave(What);
 
       break;
     }
@@ -1447,8 +1451,8 @@ truth commandsystem::ShowMap(character* Char)
       lsquare* lsqrH=NULL;
       while(true){
         v2 noteAddPos = Char->GetPos();
-        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (a)dd, (l)ook, (r)otate, (d)elete, (e)dit."),
-          KEY_ESC, 6, 't', 'a', 'l', 'r','d','e')
+        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
+          KEY_ESC, 6, 't', 'l', 'r','d','e')
         ){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
@@ -1468,7 +1472,7 @@ truth commandsystem::ShowMap(character* Char)
             if(noteAddPos==Char->GetPos()){
               noteAddPos = game::PositionQuestion(CONST_S(
                 "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
-                Char->GetPos(), NULL, 0, false);
+                Char->GetPos(), NULL, NULL, true);
             }
             /* no break */
           case 'e':
@@ -1477,15 +1481,7 @@ truth commandsystem::ShowMap(character* Char)
               if(lsqrH!=NULL)
                 noteAddPos=lsqrH->GetPos();
             }
-            /* no break */
-          case 'a':
-            { // behavior changer clarifier block
-              bEngraveNote=true;
-              v2EngraveNotePos=noteAddPos;
-              WhatToEngrave(Char);
-              bEngraveNote=false;
-            } DBGLN;
-
+            WhatToEngrave(Char,true,noteAddPos);
             updateMapNotesList();
             continue;
         }

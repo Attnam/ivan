@@ -71,6 +71,7 @@ class commandsystem
   static truth Throw(character*);
   static truth EquipmentScreen(character*);
   static truth WhatToEngrave(character*);
+  static truth WhatToEngrave(character* Char,bool bEngraveNote,v2 v2EngraveNotePos);
   static truth Zap(character*);
   static truth Rest(character*);
   static truth Sit(character*);
