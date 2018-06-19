@@ -2808,6 +2808,7 @@ golem
   IsEnormous = true;
   CanChoke = false;
   UndeadVersions = false;
+  AllowedDungeons = { 2, XINROCH_TOMB, ELPURI_CAVE; }
 
   Config VALPURIUM;
   {
