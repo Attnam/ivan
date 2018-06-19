@@ -159,7 +159,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -219,7 +219,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -945,10 +945,10 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg;
+  festring Msg; //DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
-      game::GetCurrentLevel()->AddSpecialCursors();
+      game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
     }else{
       Char->GetLevel()->AddSpecialCursors();
     }
@@ -959,7 +959,9 @@ truth commandsystem::Look(character* Char)
   else
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
 
-  game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
+  v2 pos = Char->GetPosSafely();
+  if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
+  game::PositionQuestion(Msg,pos,&game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
   game::RemoveSpecialCursors();
   return false;
 }

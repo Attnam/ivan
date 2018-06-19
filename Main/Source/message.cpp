@@ -174,6 +174,8 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  game::RegionListItemEnable(false); //this fix the problem that happens on death
+
   MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
