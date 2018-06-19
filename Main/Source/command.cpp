@@ -1125,15 +1125,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   // collect requirements to display recipes
   itemvector vitInv;
   Char->GetStack()->FillItemVector(vitInv);
-  item* itW=NULL;
-  if(h->GetLeftArm()!=NULL){
-    itW=h->GetLeftWielded();
-    if(itW)vitInv.push_back(itW);
-  }
-  if(h->GetRightArm()!=NULL){
-    itW=h->GetRightWielded();
-    if(itW)vitInv.push_back(itW);
-  }
+  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
+  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
 
   //TODO check requirements and display recipes
   int iEntryIndex=0;
