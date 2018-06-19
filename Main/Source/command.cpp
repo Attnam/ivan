@@ -1556,17 +1556,6 @@ truth commandsystem::Kick(character* Char)
 
   if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE
      && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
-<<<<<<<
-=======
-  // collect requirements to display recipes
-  itemvector vitInv;
-  Char->GetStack()->FillItemVector(vitInv);
-  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
-  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
-
-  //TODO check requirements and display recipes
-  int iEntryIndex=0;
->>>>>>>
     return false;
 
   /*if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
