@@ -3120,7 +3120,7 @@ festring game::SaveName(cfestring& Base)
   {
     if(AutoSaveFileName.GetSize() == 0)
     {
-      AutoSaveFileName << PlayerName << '-' << time(0);  // e.g. PlayerName-1529392480
+      AutoSaveFileName << PlayerName << '_' << time(0);  // e.g. PlayerName-1529392480
   
       for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
       {
@@ -3128,7 +3128,6 @@ festring game::SaveName(cfestring& Base)
         if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
         if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
         if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
-        if(AutoSaveFileName[i]=='-' || AutoSaveFileName[i]=='.')continue;
   
         AutoSaveFileName[i] = '_';
       }
