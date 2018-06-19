@@ -184,6 +184,7 @@ truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
+festring game::AutoSaveFileName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
@@ -3106,25 +3107,40 @@ festring game::SaveName(cfestring& Base)
    * it will not be found if it gets changed...
    */
   festring BaseOk;
-  BaseOk << Base; DBG2(PlayerName.CStr(),Base.CStr());
 
-  if(Base.GetSize()==0){
-    BaseOk.Empty();
-    BaseOk << PlayerName; //ATTENTION! festring reuses the internal festring data pointer of other festring when using operator= even to char* !
+  DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
 
-    for(festring::sizetype c = 0; c < BaseOk.GetSize(); ++c){
-      // this prevents all possibly troublesome characters in all OSs
-      if(BaseOk[c]>=0x41 && BaseOk[c]<=0x5A)continue; //A-Z
-      if(BaseOk[c]>=0x61 && BaseOk[c]<=0x7A)continue; //a-z
-      if(BaseOk[c]>=0x30 && BaseOk[c]<=0x39)continue; //0-9
-
-      BaseOk[c] = '_';
+  if(Base.GetSize() > 0)
+  {
+    AutoSaveFileName.Empty();
+    AutoSaveFileName << Base;
+    BaseOk << Base;
+  }
+  else
+  {
+    if(AutoSaveFileName.GetSize() == 0)
+    {
+      AutoSaveFileName << PlayerName << '-' << time(0);  // e.g. PlayerName-1529392480
+  
+      for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
+      {
+        // this prevents all possibly troublesome characters in all OSs
+        if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
+        if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
+        if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
+        if(AutoSaveFileName[i]=='-' || AutoSaveFileName[i]=='.')continue;
+  
+        AutoSaveFileName[i] = '_';
+      }
     }
-  }DBG3(PlayerName.CStr(),BaseOk.CStr(),Base.CStr());
+    BaseOk << AutoSaveFileName;
+  }
+
+  DBG4(PlayerName.CStr(), BaseOk.CStr(), Base.CStr(), AutoSaveFileName.CStr());
 
   SaveName << BaseOk;
 
-#if defined(WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
   if(SaveName.GetSize() > 13)
     SaveName.Resize(13);
 #endif

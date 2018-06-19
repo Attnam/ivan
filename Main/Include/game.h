@@ -494,7 +494,6 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -558,6 +557,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
+  static festring AutoSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
