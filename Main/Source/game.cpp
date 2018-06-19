@@ -3106,15 +3106,13 @@ festring game::SaveName(cfestring& Base)
    * the problem on modifying it is that as it is read from the filesystem
    * it will not be found if it gets changed...
    */
-  festring BaseOk;
-
   DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
 
   if(Base.GetSize() > 0)
   {
     AutoSaveFileName.Empty();
     AutoSaveFileName << Base;
-    BaseOk << Base;
+    SaveName << Base;
   }
   else
   {
@@ -3132,12 +3130,10 @@ festring game::SaveName(cfestring& Base)
         AutoSaveFileName[i] = '_';
       }
     }
-    BaseOk << AutoSaveFileName;
+    SaveName << AutoSaveFileName;
   }
 
-  DBG4(PlayerName.CStr(), BaseOk.CStr(), Base.CStr(), AutoSaveFileName.CStr());
-
-  SaveName << BaseOk;
+  DBG4(PlayerName.CStr(), SaveName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
 
 #if defined(__DJGPP__)
   if(SaveName.GetSize() > 13)
