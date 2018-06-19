@@ -243,21 +243,7 @@ void craft::Handle()
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   iTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
-  /* Save these here because the EditNP call below can cause 'this' to be terminated
-     and deleted, if the player decides to stop digging because of becoming hungry. */
-
-  truth MoveDigger = this->MoveCraftTool;
-  ulong RightBackupID = this->RightBackupID;
-  ulong LeftBackupID = this->LeftBackupID;
-
-  Actor->EditExperience(DEXTERITY, 200, 1 << 5); //TODO are these values good for crafting?
-  Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
-  Actor->EditNP(-500);
-
   truth finished = iTurnsToFinish==0;
-  truth AlreadyTerminated = Actor->GetAction() != this;
-  truth Stopped = finished || AlreadyTerminated;
-
   festring fsCreated;
   festring fsMsg("");
   int Case = INDEFINITE;
@@ -351,14 +337,29 @@ void craft::Handle()
 
     if(!Actor->IsEnabled())
       return;
-
-    if(!AlreadyTerminated)
-      Terminate(true);
   }
+
+  /*******************
+   * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
+   * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
+   *******************/
+  truth MoveCraftTool = this->MoveCraftTool;
+  ulong RightBackupID = this->RightBackupID;
+  ulong LeftBackupID = this->LeftBackupID;
+
+  Actor->EditExperience(DEXTERITY, 200, 1 << 5); //TODO are these values good for crafting?
+  Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
+  Actor->EditNP(-500);
+
+  truth AlreadyTerminated = Actor->GetAction() != this;
+  truth Stopped = finished || AlreadyTerminated;
+
+  if(finished && !AlreadyTerminated)
+    Terminate(true);
 
   if(Stopped)
   {
-    if(MoveDigger && Actor->GetMainWielded())
+    if(MoveCraftTool && Actor->GetMainWielded())
       Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
     item* RightBackup = game::SearchItem(RightBackupID);

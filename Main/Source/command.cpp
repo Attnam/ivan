@@ -1379,10 +1379,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
    * wall
    */
   { // a block to reuse var names w/o specifying the recipe name on them
-    static const int iReqStoneVol=9000;
     if(rpWall.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       rpWall.init("construct","a wall");
-      rpWall.desc << "Pile " << iReqStoneVol << " cm3 of stones to create a wall.";
+      rpWall.desc << "Pile stones or skulls to create a wall.";
     }
 //    if(strlen(rpWall.desc)==0) //TODO automate the sync of req ingredients description
 //      sprintf(rpWall.desc,"Pile %d cm3 of stones to create a wall.",iReqStoneVol);
@@ -1397,14 +1396,25 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         bCanBePlaced=true;
 
         int iCfg=-1;
-        bool bOk=choseIngredients<stone>(iReqStoneVol, vitInv, Char, ingredients, iCfg);
+        bool bOk=false;
+        int iVol=-1;
+        if(!bOk){
+          ingredients.clear();
+          iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
+          bOk=choseIngredients<stone>(iVol, vitInv, Char, ingredients, iCfg);
+        }
+        if(!bOk){
+          ingredients.clear();
+          iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
+          bOk=choseIngredients<skull>(iVol, vitInv, Char, ingredients, iCfg);
+        }
         //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
         if(bOk){
           bHasIngredients=true;
 
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
-          otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStoneVol));
+          otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
           iTurnsToFinish=20;
 
           bCanStart=true;
