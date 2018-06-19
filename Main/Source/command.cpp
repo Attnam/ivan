@@ -1368,7 +1368,9 @@ truth commandsystem::Look(character* Char)
   else
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
 
-  game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
+  v2 pos = Char->GetPosSafely();
+  if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
+  game::PositionQuestion(Msg,pos,&game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
   game::RemoveSpecialCursors();
   return false;
 }
