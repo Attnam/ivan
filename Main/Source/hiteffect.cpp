@@ -35,12 +35,30 @@ square* hiteffect::GetSquareUnderEntity(int) const {
     DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
     DBG5(setup.Type,bWhoIsHitDied,iDrawCount,bBlitdataWasSet,DBGAV2(v2HitFromSqrPos)); \
     DBGSV2(v2HitToSqrPos); \
-    DBGEXEC(if(setup.WhoHits ->Exists())DBG1(setup.WhoHits ->GetName(DEFINITE).CStr())); \
-    DBGEXEC(if(setup.WhoIsHit->Exists())DBG1(setup.WhoIsHit->GetName(DEFINITE).CStr())); \
-    DBGEXEC(if(setup.itemEffectReference->Exists())DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(WhoHitsExists  ())DBG1(setup.WhoHits ->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(WhoIsHitExists ())DBG1(setup.WhoIsHit->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(ItemEfRefExists())DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr())); \
     DBGSV2(bmpHitEffect->GetSize()); \
     DBGBLD(bldFinalDraw); \
     DBGSTK;
+
+bool hiteffect::ItemEfRefExists() const
+{
+  if(game::SearchItem(setup.lItemEffectReferenceID)==NULL)return false; //TODO this encumbers the CPU?
+  return setup.itemEffectReference->Exists(); //TODO necessary/redundant?
+}
+
+bool hiteffect::WhoIsHitExists() const
+{
+  if(game::SearchCharacter(setup.lWhoIsHitID)==NULL)return false;
+  return setup.WhoIsHit->Exists();
+}
+
+bool hiteffect::WhoHitsExists() const
+{
+  if(game::SearchCharacter(setup.lWhoHitsID)==NULL)return false;
+  return setup.WhoHits->Exists();
+}
 
 hiteffect::hiteffect(hiteffectSetup s)
 : entity(HAS_BE), Next(NULL), iDrawCount(0), iState(0), bBlitdataWasSet(false), lStartTime(clock())
@@ -64,6 +82,10 @@ hiteffect::hiteffect(hiteffectSetup s)
   bldLum.Bitmap->ClearToColor(TRANSPARENT_COLOR); //reset
 
   setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
+
+  setup.lWhoHitsID = setup.WhoHits->GetID();
+  setup.lWhoIsHitID = setup.WhoIsHit->GetID();
+  setup.lItemEffectReferenceID = setup.itemEffectReference->GetID();
 
   bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
 
@@ -361,7 +383,7 @@ truth hiteffect::DrawStep()
   if(ivanconfig::IsHideWeirdHitAnimationsThatLookLikeMiss()){
     //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
     if(bAnimate && bWhoIsHitDied)bAnimate=false;
-    if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
+    if(bAnimate && !WhoIsHitExists())bAnimate=false;
     if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=v2HitToSqrPos){
       /*
        * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)

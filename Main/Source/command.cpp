@@ -500,25 +500,65 @@ truth commandsystem::Close(character* Char)
 }
 
 struct swapweaponcfg{
-
-//  int iSelectableIndex=-1;
-
-  item* itLeft=NULL;
-//  ulong iLeftId=0;
-
+  private:
+  item* itLeft =NULL;
   item* itRight=NULL;
-//  ulong iRightId=0;
 
-  void Save(outputfile& SaveFile){DBGLN;
-    SaveFile << (itLeft  ? itLeft ->GetID() : 0); DBGEXEC(if(itLeft)DBG1(itLeft->GetID()););
-    SaveFile << (itRight ? itRight->GetID() : 0); DBGEXEC(if(itRight)DBG1(itRight->GetID()););
+  public:
+  ulong iLeftId=0;
+  ulong iRightId=0;
+
+  void SetLR(bool bL, item* it){
+    if(bL){
+      itLeft=it;
+      iLeftId  = itLeft !=NULL ? itLeft ->GetID() : 0;
+    }else{
+      itRight=it;
+      iRightId = itRight!=NULL ? itRight->GetID() : 0;
+    }
+  }
+
+  void SetL(item* it){
+    SetLR(true,it);
+  }
+  void SetR(item* it){
+    SetLR(false,it);
+  }
+
+  item* GetLR(bool bL){
+    if(game::SearchItem(bL?iLeftId:iRightId)!=NULL)
+      return bL?itLeft:itRight;
+
+    // cleanup on not found
+    if(bL)
+      SetL(NULL);
+    else
+      SetR(NULL);
+
+    return NULL;
+  }
+
+  item* GetL(){
+    return GetLR(true);
+  }
+  item* GetR(){
+    return GetLR(false);
+  }
+
+  void Save(outputfile& SaveFile){DBG2(iLeftId,iRightId);
+    SaveFile << iLeftId;
+    SaveFile << iRightId;
   }
   void Load(inputfile& SaveFile){DBGLN;
-    ulong iLeftId=0;SaveFile >> iLeftId;
-    itLeft  = iLeftId  ? game::SearchItem(iLeftId ) : NULL; DBG2(iLeftId,itLeft);
+    ulong iLeftId =0;SaveFile >> iLeftId;
+    SetL(iLeftId !=0 ? game::SearchItem(iLeftId ) : NULL); DBG2(iLeftId,itLeft);
 
     ulong iRightId=0;SaveFile >> iRightId;
-    itRight = iRightId ? game::SearchItem(iRightId) : NULL; DBG2(iRightId,itRight);
+    SetR(iRightId!=0 ? game::SearchItem(iRightId) : NULL); DBG2(iRightId,itRight);
+  }
+
+  bool IsValid(){
+    return GetL()!=NULL || GetR()!=NULL;
   }
 
   // temporary LIST CONTROLS
@@ -568,6 +608,11 @@ void commandsystem::LoadSwapWeapons(inputfile& SaveFile)
     vSWCfg.push_back(cfg);
   }
 }
+void clearInvalidSwapCfgs(){
+  for(int i=vSWCfg.size()-1;i>=0;i--) //from last to 1st has no problem erasing, wont break the indexes!
+    if(!vSWCfg[i].IsValid())
+      {vSWCfg.erase(vSWCfg.begin()+i);DBG2("removingInvalid",i);}
+}
 truth hasItem(itemvector& iv, item* it){
   //TODO why this wont compile? ->   if(std::find(iv.begin(),iv.end(),it)!=iv.end())return true;
   for(int i=0;i<iv.size();i++)
@@ -576,7 +621,7 @@ truth hasItem(itemvector& iv, item* it){
   return false;
 }
 truth commandsystem::SwapWeaponsCfg(character* Char)
-{DBGLN;
+{DBG1(vSWCfg.size());
   if(!Char->IsHumanoid() || dynamic_cast<ghost*>(Char)){DBGLN;
     ADD_MESSAGE("This monster type cannot wield weapons.");
     return false;
@@ -623,11 +668,13 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
     }
 
     // each config
+    bool bHasInvalid=false;
     for(int i=0;i<vSWCfg.size();i++){
       vSWCfg[i].ClearListControls();
+      if(!vSWCfg[i].IsValid()){bHasInvalid=true;DBG2("skipInvalid",i);continue;}
 
 //      if(iSwapCurrentIndex==i)
-      if(h->GetLeftWielded()==vSWCfg[i].itLeft && h->GetRightWielded()==vSWCfg[i].itRight)
+      if(h->GetLeftWielded()==vSWCfg[i].GetL() && h->GetRightWielded()==vSWCfg[i].GetR())
         Cfgs.AddEntry(festring()<<"   CURRENTLY WIELDED ----------------------",colWieldedCfg,0,game::AddToItemDrawVector(itemvector()),false);
       else{
         vSWCfg[i].iKeyActivate = iSelectableIndex++; DBG2(i,vSWCfg[i].iKeyActivate);
@@ -658,14 +705,14 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
         switch(awRL[j]){
         case LEFT_WIELDED_INDEX:
-          it = vSWCfg[i].itLeft;
+          it = vSWCfg[i].GetL();
           w = wL;
           fs << "(L";
 //          if(it==w)cW=colDarkW;//fs<<"!";
           fs << ") ";
           break;
         case RIGHT_WIELDED_INDEX:
-          it = vSWCfg[i].itRight;
+          it = vSWCfg[i].GetR();
           w = wR;
           fs << "(R";
 //          if(it==w)cW=colDarkW;//fs<<"!";
@@ -694,12 +741,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
     }
 
-    /**
-     * TODO to show item images...
-     * non selectables can have images at all?
-     * selectables (when using game::ItemEntryDrawer) must have images assigned?
-     * for now... this is disabled as is crashing...
-     */
+    if(bHasInvalid)clearInvalidSwapCfgs();
+
     game::SetStandardListAttributes(Cfgs);DBGLN;
     Cfgs.SetEntryDrawer(game::ItemEntryDrawer);
     Cfgs.AddFlags(SELECTABLE);
@@ -714,10 +757,10 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
     if(Selected==iKeyAdd){DBGLN;
       swapweaponcfg cfg;
-      if(h->GetLeftArm() && h->GetLeftWielded())
-        cfg.itLeft=h->GetLeftWielded();
-      if(h->GetRightArm() && h->GetRightWielded())
-        cfg.itRight=h->GetRightWielded();
+      if(h->GetLeftWielded())
+        cfg.SetL(h->GetLeftWielded());
+      if(h->GetRightWielded())
+        cfg.SetR(h->GetRightWielded());
       vSWCfg.push_back(cfg);
     }else
     if(bMaintenanceMode && Selected==iKeyUndoLastRm){DBGLN;
@@ -736,7 +779,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
           break; //vector safe
         }else
         if(bMaintenanceMode && (Selected==vSWCfg[i].iKeyDown || Selected==vSWCfg[i].iKeyUp)){
-          swapweaponcfg cfgMove = vSWCfg[i]; DBG2(cfgMove.itRight,cfgMove.itLeft);
+          swapweaponcfg cfgMove = vSWCfg[i]; DBG2(cfgMove.GetR(),cfgMove.GetL());
 
           if(Selected==vSWCfg[i].iKeyDown){
             vSWCfg.insert(vSWCfg.begin()+i+2,cfgMove);
@@ -754,9 +797,9 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
           return false; //to close it as gained experience with dexterity action!
         }else
         if(Selected==vSWCfg[i].iKeySwapArms){DBGLN;
-          item* itL = vSWCfg[i].itLeft;
-          vSWCfg[i].itLeft = vSWCfg[i].itRight;
-          vSWCfg[i].itRight = itL;
+          item* itL = vSWCfg[i].GetL();
+          vSWCfg[i].SetL(vSWCfg[i].GetR());
+          vSWCfg[i].SetR(itL);
           break;
         }
       }
@@ -821,12 +864,12 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     case LEFT_WIELDED_INDEX:
       Arm=h->GetLeftArm();
       w=wL;
-      it = vSWCfg[iSwapCurrentIndex].itLeft;
+      it = vSWCfg[iSwapCurrentIndex].GetL();
       break;
     case RIGHT_WIELDED_INDEX:
       Arm=h->GetRightArm();
       w=wR;
-      it = vSWCfg[iSwapCurrentIndex].itRight;
+      it = vSWCfg[iSwapCurrentIndex].GetR();
       break;
     }
 
@@ -1513,6 +1556,17 @@ truth commandsystem::Kick(character* Char)
 
   if(Enemy && !(Enemy->IsMasochist() && Char->GetRelation(Enemy) == FRIEND) && Char->GetRelation(Enemy) != HOSTILE
      && !game::TruthQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+<<<<<<<
+=======
+  // collect requirements to display recipes
+  itemvector vitInv;
+  Char->GetStack()->FillItemVector(vitInv);
+  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
+  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
+
+  //TODO check requirements and display recipes
+  int iEntryIndex=0;
+>>>>>>>
     return false;
 
   /*if(Square->GetCharacter() && Char->GetRelation(Square->GetCharacter()) != HOSTILE)
