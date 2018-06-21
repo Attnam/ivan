@@ -22,6 +22,9 @@ festring::csizetype festring::NPos = festring::sizetype(-1);
 
 festring& festring::Append(cchar* CStr, sizetype N)
 {
+  if(N <= 0)
+    return *this;
+
   sizetype OldSize = Size;
   sizetype NewSize = OldSize + N;
   char* OldPtr = Data;
