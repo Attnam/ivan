@@ -3239,15 +3239,15 @@ void bodypart::ReceiveAcid(material* Material, cfestring& LocationName, long Mod
       if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
       {
         Master->SetLastAcidMsgMin(Minute);
-        cchar* MName = Material->GetName(false, false).CStr();
+        cfestring MName = Material->GetName(false, false); //DBGEXEC(DBGLN;DBG2(MName,&MName);festring fsDbg(MName);DBG1(fsDbg.CStr()););
 
         if(Master->IsPlayer())
         {
           cchar* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
-          ADD_MESSAGE("Acidous %s dissolves your %s.", MName, TName);
+          ADD_MESSAGE("Acidous %s dissolves your %s.", MName.CStr(), TName);
         }
         else
-          ADD_MESSAGE("Acidous %s dissolves %s.", MName, Master->CHAR_NAME(DEFINITE));
+          ADD_MESSAGE("Acidous %s dissolves %s.", MName.CStr(), Master->CHAR_NAME(DEFINITE));
       }
 
       Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);

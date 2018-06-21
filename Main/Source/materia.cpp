@@ -12,6 +12,8 @@
 
 /* Compiled through materset.cpp */
 
+#include "dbgmsgproj.h"
+
 materialprototype::materialprototype(const materialprototype* Base,
                                      materialspawner Spawner,
                                      materialcloner Cloner,
@@ -46,7 +48,7 @@ festring material::GetName(truth Articled, truth Adjective) const
 {
   static festring Name;
   Name.Empty();
-  AddName(Name, Articled, Adjective);
+  AddName(Name, Articled, Adjective); DBGEXEC(cchar* cDbg=(Name).CStr();DBG2(&cDbg,cDbg));
   return Name;
 }
 
