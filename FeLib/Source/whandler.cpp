@@ -466,6 +466,12 @@ truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
   return bLastSDLkeyEventIsKeyUp;
 }
 
+v2 v2MousePos;
+v2 globalwindowhandler::GetMouseLocation()
+{
+  return v2MousePos;
+}
+
 int iMouseButtonDown=-1;
 int globalwindowhandler::ConsumeMouseButtonDownEvent()
 {
@@ -506,6 +512,11 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       exit(0);
 
     return;
+
+   case SDL_MOUSEMOTION:
+     v2MousePos.X=Event->motion.x;
+     v2MousePos.Y=Event->motion.y;
+     break;
 
    case SDL_MOUSEBUTTONDOWN:
      iMouseButtonDown=Event->button.button;

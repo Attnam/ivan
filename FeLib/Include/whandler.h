@@ -46,6 +46,7 @@ class globalwindowhandler
   static truth WaitForKeyEvent(uint Key);
   static truth WaitForKeyDown(){return WaitForKeyEvent(SDL_KEYDOWN);}
   static truth WaitForKeyUp  (){return WaitForKeyEvent(SDL_KEYUP  );}
+  static v2 GetMouseLocation();
   static truth IsLastSDLkeyEventWasKeyUp();
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());
