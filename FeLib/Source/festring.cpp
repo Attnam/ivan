@@ -39,12 +39,18 @@ festring& festring::Append(cchar* CStr, sizetype N)
 
 festring& festring::operator=(cchar* CStr)
 {
-  sizetype N = strlen(CStr);
-  if(N > 0)
+  sizetype NewSize = strlen(CStr);
+  char* Ptr = Data;
+
+  if(OwnsData && Ptr && !REFS(Ptr) && NewSize <= Reserved)
   {
-    DiscardData();
-    CreateOwnData(CStr, N);
+    Size = NewSize;
+    memcpy(Ptr, CStr, NewSize);
+    return *this;
   }
+
+  if(NewSize > 0)
+    CreateOwnData(CStr, NewSize);
   else
     Empty();
 
@@ -874,19 +880,6 @@ long festring::GetCheckSum() const
     Counter = Data[c];
 
   return Counter;
-}
-
-void festring::DiscardData()
-{
-  char* Ptr = Data;
-
-  if(Ptr && !REFS(Ptr)--)
-    delete [] &REFS(Ptr);
-
-  Size = 0;
-  Data = 0;
-  OwnsData = false;
-  Reserved = 0;
 }
 
 void festring::EnsureOwnsData(bool Unique)

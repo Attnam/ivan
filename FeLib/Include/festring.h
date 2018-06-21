@@ -120,7 +120,6 @@ class festring
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
-  void DiscardData();
   void CreateOwnData(cchar*, sizetype);
   festring& Append(long);
   festring& Append(cchar*, sizetype);
