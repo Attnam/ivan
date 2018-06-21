@@ -137,23 +137,13 @@ festring& festring::Capitalize()
 
 void festring::CreateOwnData(cchar* CStr, sizetype N)
 {
-  if(CStr)
-  {
-    Size = N;
-    Reserved = N|FESTRING_PAGE;
-    char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
-    REFS(Ptr) = 0;
-    Data = Ptr;
-    memcpy(Ptr, CStr, N);
-    OwnsData = true;
-  }
-  else
-  {
-    Size = 0;
-    Data = 0;
-    OwnsData = false;
-    Reserved = 0;
-  }
+  Size = N;
+  Reserved = N|FESTRING_PAGE;
+  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
+  REFS(Ptr) = 0;
+  Data = Ptr;
+  memcpy(Ptr, CStr, N);
+  OwnsData = true;
 }
 
 void festring::SlowAppend(char Char)
