@@ -280,10 +280,14 @@ inline void festring::Empty()
     {
       --REFS(Ptr);
       Data = 0;
+      OwnsData = false;
     }
   }
   else
+  {
     Data = 0;
+    OwnsData = false;
+  }
 }
 
 inline festring& festring::operator<<(char Char)
