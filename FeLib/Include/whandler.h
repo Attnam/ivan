@@ -31,16 +31,24 @@
 #define WAIT_FOR_KEY_DOWN globalwindowhandler::WaitForKeyDown
 #define WAIT_FOR_KEY_UP globalwindowhandler::WaitForKeyUp
 
+struct mouseclick{
+ int btn=-1;
+ v2 pos;
+};
+
 class globalwindowhandler
 {
  public:
-  static void CheckKeyTimeout();
-  static truth IsKeyTimeoutEnabled();
-  static int ConsumeMouseButtonDownEvent();
-  static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static void ResetGetKeyTimeout(){SetGetKeyTimeout(0,'.');}
+  static void CheckGetKeyTimeout();
+  static truth IsGetKeyTimeoutEnabled();
+  static void SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static mouseclick ConsumeMouseButtonClickEvent();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
+  static uint PollEvents(SDL_Event* pEvent = NULL);
+  static uint UpdateMouse();
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);

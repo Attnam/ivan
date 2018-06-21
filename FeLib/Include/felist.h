@@ -52,7 +52,8 @@ class felist
   void EditSelected(int What) { Selected += What; }
   static void SetDefaultEntryImageSize(v2 v2Size){v2DefaultEntryImageSize=v2Size;}
   static bool IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos);
-  truth DrawPage(bitmap*, v2* pv2FinalPageSize) const;
+  truth DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, uint* piSelectedHere, v2 v2MousePos) const;
+  truth DrawPageAndSelect(bitmap* Buffer, v2 v2MousePos, bool* = NULL);
   void Pop();
   static void CreateQuickDrawFontCaches(rawbitmap*, col16, uint);
   void PrintToFile(cfestring&);

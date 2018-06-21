@@ -67,7 +67,7 @@ bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
 
 truth FelistDrawController()
 {
-  FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER,NULL);
+  FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER,NULL,NULL,globalwindowhandler::GetMouseLocation());
   return true;
 }
 
@@ -150,6 +150,22 @@ void felist::Pop()
   Entry.pop_back();
 }
 
+truth felist::DrawPageAndSelect(bitmap* Buffer, v2 v2MousePos, bool* pbAtTheEnd)
+{
+  uint iSelectedAtDrawPage=Selected;
+  bool b = DrawPage(Buffer,&v2FinalPageSize,&iSelectedAtDrawPage,v2MousePos); //grants click at correct selected one
+  if(pbAtTheEnd!=NULL)
+    (*pbAtTheEnd) = b;
+
+  if(iSelectedAtDrawPage!=-1){ DBG2(Selected,iSelectedAtDrawPage);
+    if(Flags & ALLOW_MOUSE_SELECT)
+      Selected=iSelectedAtDrawPage;
+    return true;
+  }
+
+  return false;
+}
+
 uint felist::Draw()
 {
   if(Flags & SELECTABLE){
@@ -179,8 +195,9 @@ uint felist::Draw()
     return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;DBGLN;
-  static int iTimeoutMillis=100;
-  globalwindowhandler::SetKeyTimeout(iTimeoutMillis,'.');
+//  static int iTimeoutMillis=1000/60; //60 as fps like
+//  globalwindowhandler::SetKeyTimeout(iTimeoutMillis,'.');
+  globalwindowhandler::SetGetKeyTimeout(10,'.');
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -223,15 +240,27 @@ uint felist::Draw()
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   graphics::PrepareBeforeDrawingFelist();
+  static v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
   for(;;)
   {
     graphics::DrawAtDoubleBufferBeforeFelistPage(); // here prevents full dungeon blink
-    truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
-//    if(AtTheEnd){
-//      if(bSafeScrollToEnd)
-//        Selected = Selectables-1;
-//      bSafeScrollToEnd=false;
+    uint iSelectedAtDrawPage=Selected;
+    truth AtTheEnd = false;
+//    for(;;){
+    DrawPageAndSelect(Buffer,globalwindowhandler::GetMouseLocation(),&AtTheEnd);
+//      AtTheEnd = DrawPage(Buffer,&v2FinalPageSize,&iSelectedAtDrawPage,globalwindowhandler::GetMouseLocation());
+//      if(iSelectedAtDrawPage!=Selected)
+//        Selected=iSelectedAtDrawPage;
+
+//      if(iSelectedAtDrawPage!=Selected){ DBG2(Selected,iSelectedAtDrawPage);
+//        Selected=iSelectedAtDrawPage;
+//        Buffer->FastBlit(DOUBLE_BUFFER);
+//        continue;
+//      }
+//      break;
 //    }
+//    if(AtTheEnd && bSafeScrollToEnd)
+//      JustSelectMove=false;
 
     if(Flags & FADE)
     {
@@ -244,8 +273,7 @@ uint felist::Draw()
         Buffer->FadeToScreen();
 
       JustSelectMove = false;
-    }
-    else{
+    }else{
       graphics::BlitDBToScreen();
       graphics::DrawAtDoubleBufferBeforeFelistPage(); // here helps on hiding unstretched static squares
     }
@@ -257,33 +285,107 @@ uint felist::Draw()
      */
     static uint DefaultAnswer='.';
     uint Pressed=DefaultAnswer;
-    bool bLeftMouseButtonDown=false;
-    v2 v2MousePos=globalwindowhandler::GetMouseLocation();
+    bool bLeftMouseButtonClick=false;
+    bool bMouseButtonClick=false;
+    bool bMouseHovering=false;
     if(bSafeScrollToEnd)
       Pressed=KEY_PAGE_DOWN;
-    else
-      while(Pressed==DefaultAnswer){
-        if(bSafeScrollToEnd)
-          break;
+    else{
+      for(;;){
+        /**
+         * every section here may break the loop and they are prioritized
+         */
 
+        ////////////////////////////// scroll to end by-pass
+        if(bSafeScrollToEnd){
+          JustSelectMove=true;
+          break;
+        }
+
+        ////////////////////////////// mouse click
+//        v2 v2MousePos = globalwindowhandler::GetMouseLocation(); DBG1(DBGAV2(v2MousePos));
+//        int iBtn=globalwindowhandler::ConsumeMouseButtonClickEvent();
+        mouseclick mc=globalwindowhandler::ConsumeMouseButtonClickEvent();
+        if((Flags & ALLOW_MOUSE_SELECT) && mc.btn!=-1){ DBG1(mc.btn);
+          switch(mc.btn){
+          case 1:
+            bLeftMouseButtonClick=true;
+            bMouseButtonClick=true;
+//            globalwindowhandler::PollEvents(); //this will grant the mouse location is fastly updated
+            break;
+          }
+//          break;
+
+          if(bMouseButtonClick){
+//            v2MousePos = globalwindowhandler::GetMouseLocation(); DBG1(DBGAV2(v2MousePos));
+            if(DrawPageAndSelect(Buffer,mc.pos))
+              break;
+            else{ //invalid outside of felist entries click
+              bMouseButtonClick=false;
+              bLeftMouseButtonClick=false;
+            }
+//            DrawPage(Buffer,&v2FinalPageSize,&iSelectedAtDrawPage,mc.pos); //grants click at correct selected one
+//            if(iSelectedAtDrawPage!=Selected){ DBG2(Selected,iSelectedAtDrawPage);
+//              Selected=iSelectedAtDrawPage;
+////              DrawPage(Buffer,&v2FinalPageSize,&iSelectedAtDrawPage);
+//            }
+//            break;
+          }
+        }
+
+        ////////////////////////////// mouse move/hover (to not be hindered by getkey timeout
+        static clock_t lastMouseMoveTime=clock();
+//        static uint lastMouseMoveSel=Selected;
+        v2 v2MousePos = globalwindowhandler::GetMouseLocation(); DBG1(DBGAV2(v2MousePos));
+        if((Flags & ALLOW_MOUSE_SELECT) && v2MousePosPrevious!=v2MousePos){ DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
+//          if(bMouseButtonClick)
+//            if(iSelectedAtDrawPage!=Selected){ DBG2(Selected,iSelectedAtDrawPage);
+//              Selected=iSelectedAtDrawPage;
+//              DrawPage(Buffer,&v2FinalPageSize,&iSelectedAtDrawPage);
+//            }
+//
+//          if(lastMouseMoveSel!=Selected){
+            bMouseHovering=true;
+            JustSelectMove=true;
+//            lastMouseMoveSel=Selected;
+//          }
+//
+          v2MousePosPrevious=v2MousePos; //reset
+          lastMouseMoveTime=clock();
+//          globalwindowhandler::PollEvents(); //this will grant the mouse location is fastly updated
+          break; //to refresh the list
+        }
+
+        ////////////////////////////// this will keep mouse fast list hovering while being moved
+        if((Flags & ALLOW_MOUSE_SELECT) && (clock() - lastMouseMoveTime) < (0.5 * CLOCKS_PER_SEC)){
+//          JustSelectMove=true;
+          bMouseHovering=true;
+          break;
+        }
+
+        //        JustSelectMove=false;
+
+//        ////////////////////////////// in case there was no mouse movement, it will grant the break
+//        if(bMouseButtonClick)
+//          break;
+
+        ////////////////////////////// normal key press
         bool bClearKeyBuffer=false;
         if(bClearKeyBufferOnce){
           bClearKeyBuffer=true;
           bClearKeyBufferOnce=false;
         }
-        Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis
-
-        int iBtn=globalwindowhandler::ConsumeMouseButtonDownEvent();
-        if(iBtn!=-1){DBG1(iBtn);
-          switch(iBtn){
-          case 0:
-            bLeftMouseButtonDown=true;
-            break;
-          }
+        Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis above
+        if(Pressed!=DefaultAnswer)
           break;
-        }
+
       }
+    }
     DBGLN;
+
+//    if(bMouseHovering && !bMouseButtonClick)
+    if(bMouseHovering)
+      continue;
 
     if((Flags & SELECTABLE) && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
@@ -370,10 +472,11 @@ uint felist::Draw()
       continue;
     }
 
-    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonDown))
+    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonClick))
     {
       Return = Selected;
-      bWaitKeyUp=true;
+      if(Pressed!=DefaultAnswer)
+        bWaitKeyUp=true;
       break;
     }
 
@@ -492,7 +595,7 @@ uint felist::Draw()
         break;
   #endif
 
-  globalwindowhandler::SetKeyTimeout(0,'.');
+  globalwindowhandler::ResetGetKeyTimeout();
   return Return;
 }
 
@@ -503,7 +606,7 @@ bool felist::IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos){
   return Buffer->IsValidPos(pos.X+v2DefaultEntryImageSize.X, pos.Y+v2DefaultEntryImageSize.Y);
 }
 
-truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
+truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, uint* piSelectedHere, v2 v2MousePos) const
 {
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   DrawDescription(Buffer);
@@ -517,20 +620,30 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
   while(!Entry[c]->Selectable && Entry[c]->String.IsEmpty()) ++c;
   std::vector<festring> Chapter;
 
+//  if(piSelectedHere==NULL)
+//    piSelectedHere=new uint();
+//  (*piSelectedHere) = Selected; DBG1(Selected)
+//  v2 v2MousePos=globalwindowhandler::GetMouseLocation();
+  bool bWasSelectedHere=false;
   for(;;)
   {
     Str.Empty();
     uint Marginal = Entry[c]->Marginal;
 
-    if(Flags & SELECTABLE && Entry[c]->Selectable)
-    {
+    bool bIsSelectable = (Flags & SELECTABLE) && Entry[c]->Selectable;
+    if(bIsSelectable){
       Str << char('A' + (i - PageBegin)) << ": ";
       Marginal += 3;
     }
 
     Str << Entry[c]->String;
 
-    truth isTheSelectedOne = Flags & SELECTABLE && Entry[c]->Selectable && Selected == i;
+    int iTLX=Pos.X + 3;
+    int iTLY=LastFillBottom;
+    int iWidth = Width - 6;
+    int iHeight = -1;
+
+    truth isTheSelectedOne = bIsSelectable && Selected == i;
 
     col16 colBkg = BackColor;
     if(isTheSelectedOne && colSelectedBkg!=TRANSPARENT_COLOR) //colBkg==BLACK
@@ -540,7 +653,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
     {
       if(Str.GetSize() <= (Width - 50) >> 3)
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, colBkg);
+        Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=20, colBkg);
 
         v2 v2EntryPos = v2(Pos.X + 13, LastFillBottom);
         if(EntryDrawer && IsEntryDrawingAtValidPos(Buffer,v2EntryPos)){
@@ -570,7 +683,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 
         for(uint l = 0; l < ChapterSize; ++l)
         {
-          Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, colBkg);
+          Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=10, colBkg);
 
           if(isTheSelectedOne) {
             FONT->PrintfUnshaded(Buffer, v2(Pos.X + 38, LastFillBottom + 1),
@@ -598,9 +711,9 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
 
       for(uint l = 0; l < ChapterSize; ++l)
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, colBkg);
+        Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=10, colBkg);
 
-        if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i){
+        if(isTheSelectedOne){
           FONT->PrintfUnshaded(Buffer, v2(Pos.X + 14, LastFillBottom + 1),
                                WHITE, "%s", Chapter[l].CStr());
         }else
@@ -611,6 +724,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
       }
     }
 
+    bool bBreak=false;
     if(
         (i - PageBegin == PageLength - 1 && Entry[c]->Selectable)
         ||
@@ -618,16 +732,16 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
       )
     {
       if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1)
-         || (Flags & INVERSE_MODE && PageBegin))
+         || ((Flags & INVERSE_MODE) && PageBegin))
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
+        Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
                      "- Press PgUp/PgDn/Home/End or SPACE to continue, ESC to exit -");
         LastFillBottom += 30;
       }
       else
       {
-        Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+        Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=10, BackColor);
         LastFillBottom += 10;
       }
 
@@ -642,12 +756,33 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
         pv2FinalPageSize->Y = iBottom-iTop;
       }
 
-      break;
+      bBreak=true;
     }
+
+    if(iHeight==-1)
+      ABORT("list entry height was not set! %d %d %d %d",i,c,iTLX,iTLY);
+    DBG7(bIsSelectable,i,c,iTLX,iTLY,iWidth,iHeight);
+    if(piSelectedHere!=NULL && bIsSelectable){
+      v2 v2TopLeft(iTLX, iTLY);
+      v2 v2BottomRight(v2TopLeft+v2(iWidth,iHeight));
+      if(
+          v2MousePos.X > v2TopLeft.X     && v2MousePos.Y > v2TopLeft.Y &&
+          v2MousePos.X < v2BottomRight.X && v2MousePos.Y < v2BottomRight.Y
+      ){
+        (*piSelectedHere) = i; DBG2("insideRectangle",(*piSelectedHere))
+        bWasSelectedHere=true;
+      }
+    }
+
+    if(bBreak)
+      break;
 
     if(Entry[c++]->Selectable)
       ++i;
   }
+
+  if(piSelectedHere!=NULL && !bWasSelectedHere)
+    (*piSelectedHere)=-1;
 
   return c == Entry.size() - 1;
 }

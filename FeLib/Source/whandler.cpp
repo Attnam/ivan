@@ -272,19 +272,22 @@ int iTimeoutDefaultKey;
 long keyTimeoutRequestedAt;
 /**
  * This is intended to remain active ONLY until the user hits any key.
+ * iTimeoutMillis can be 0 or >=10
  */
-void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
+void globalwindowhandler::SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
 {
+  if(iTimeoutMillis<0)ABORT("invalid negative timeout %d",iTimeoutMillis);
+
   iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
   if(iTimeoutDelay>0 && iTimeoutDelay<10)iTimeoutDelay=10; // we are unable to issue commands if it is too low TODO could be less than 10ms?
 
   iTimeoutDefaultKey=iDefaultReturnedKey;
 }
-truth globalwindowhandler::IsKeyTimeoutEnabled()
+truth globalwindowhandler::IsGetKeyTimeoutEnabled()
 {
   return iTimeoutDelay>0;
 }
-void globalwindowhandler::CheckKeyTimeout()
+void globalwindowhandler::CheckGetKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
     if(!KeyBuffer.empty()){ // user pressed some key
@@ -334,16 +337,14 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
   if(EmptyBuffer)
   {
-    while(SDL_PollEvent(&Event))
-      ProcessMessage(&Event);
-
+    PollEvents(&Event);
     KeyBuffer.clear();
   }
 
   keyTimeoutRequestedAt=clock();
   int iDelayMS=iDefaultDelayMS;
   for(;;){
-    CheckKeyTimeout();
+    CheckGetKeyTimeout();
 
     if(!KeyBuffer.empty())
     {
@@ -358,11 +359,12 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     }
     else
     {
-      bool bHasEvents=false;
-      while(SDL_PollEvent(&Event)){
-        ProcessMessage(&Event);
-        bHasEvents=true;
-      }
+      bool bHasEvents=PollEvents(&Event)>0;
+//      bool bHasEvents=false;
+//      while(SDL_PollEvent(&Event)){
+//        ProcessMessage(&Event);
+//        bHasEvents=true;
+//      }
 
       if(!bHasEvents)
       {
@@ -413,6 +415,26 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
   }
 }
 
+uint globalwindowhandler::PollEvents(SDL_Event* pEvent)
+{
+  if(pEvent==NULL)
+    pEvent=new SDL_Event();
+
+  uint i=0;
+  while(SDL_PollEvent(pEvent)){
+    ProcessMessage(pEvent);
+    i++;
+  }
+
+  return i;
+}
+
+v2 v2MousePos;
+uint globalwindowhandler::UpdateMouse()
+{
+  return SDL_GetMouseState(&v2MousePos.X,&v2MousePos.Y);
+}
+
 int globalwindowhandler::ReadKey()
 {
   SDL_Event Event;
@@ -423,8 +445,7 @@ int globalwindowhandler::ReadKey()
   if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
 #endif
   {
-    while(SDL_PollEvent(&Event))
-      ProcessMessage(&Event);
+    PollEvents(&Event);
   }
   else
   {
@@ -466,20 +487,27 @@ truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
   return bLastSDLkeyEventIsKeyUp;
 }
 
-v2 v2MousePos;
 v2 globalwindowhandler::GetMouseLocation()
 {
+  UpdateMouse();
   return v2MousePos;
 }
 
-int iMouseButtonDown=-1;
-int globalwindowhandler::ConsumeMouseButtonDownEvent()
+//int iMouseButtonClicked=-1;
+mouseclick mc;
+mouseclick globalwindowhandler::ConsumeMouseButtonClickEvent() //TODO buffer it?
 {
-  int i=iMouseButtonDown;
-  if(iMouseButtonDown!=-1){
-    iMouseButtonDown=-1;
+//  int i=iMouseButtonClicked;
+//  if(iMouseButtonClicked!=-1){
+//    iMouseButtonClicked=-1;
+//  }
+//  int i=mc.btn;
+  mouseclick mcR;
+  if(mc.btn!=-1){
+    mcR=mc;
+    mc.btn=-1;
   }
-  return i;
+  return mcR;
 }
 
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
@@ -513,13 +541,18 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
     return;
 
-   case SDL_MOUSEMOTION:
-     v2MousePos.X=Event->motion.x;
-     v2MousePos.Y=Event->motion.y;
-     break;
+//   case SDL_MOUSEMOTION: //this is not very precise tho, see UpdateMouse()
+//     v2MousePos.X=Event->motion.x;
+//     v2MousePos.Y=Event->motion.y;
+//     break;
 
-   case SDL_MOUSEBUTTONDOWN:
-     iMouseButtonDown=Event->button.button;
+   case SDL_MOUSEBUTTONUP:
+     if(Event->button.button==1 && Event->button.clicks>0){
+       mc.btn = 1;
+       mc.pos.X=Event->button.x;
+       mc.pos.Y=Event->button.y;
+//       iMouseButtonClicked=1;
+     }
      break;
 
    case SDL_KEYUP:
