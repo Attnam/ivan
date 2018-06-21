@@ -309,6 +309,10 @@ inline festring& festring::operator<<(char Char)
 inline festring& festring::operator<<(cchar* CStr)
 {
   sizetype N = strlen(CStr);
+
+  if(N <= 0)
+    return *this;
+
   sizetype OldSize = Size;
   sizetype NewSize = OldSize + N;
   char* OldPtr = Data;
@@ -327,6 +331,10 @@ inline festring& festring::operator<<(cchar* CStr)
 inline festring& festring::operator<<(cfestring& Str)
 {
   sizetype N = Str.Size;
+
+  if(N <= 0)
+    return *this;
+
   sizetype OldSize = Size;
   sizetype NewSize = OldSize + N;
   char* OldPtr = Data;
