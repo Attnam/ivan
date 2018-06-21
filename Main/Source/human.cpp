@@ -6157,7 +6157,7 @@ void kamikazedwarf::SingRandomSong()
     break;
    case 1:
     {
-      festring Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
+      cchar* Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
       Song = festring("Joy to the world, ") + God
              + " is come! Let all above Valpurus receive her " + Title;
       break;

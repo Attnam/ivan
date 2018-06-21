@@ -33,7 +33,7 @@ int olterrain::GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
 
 truth olterraindatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-festring olterrain::GetText() const { return ""; }
+festring olterrain::GetText() const { return CONST_S(""); }
 
 void lterrain::Load(inputfile& SaveFile)
 {

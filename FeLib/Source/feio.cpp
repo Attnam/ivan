@@ -1056,7 +1056,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
   std::vector<festring> vIds,vInvIds,vBackups;
   std::vector<fileInfo> vComponents;
-  festring autoSaveFound("");
+  festring autoSaveFound;
   int iPrepareSavFileIndex=-1;
   int iAutoSaveSavFileIndex=-1;
   std::string sPrettyNamePrevious="";
@@ -1119,7 +1119,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     if(iPrepareSavFileIndex>-1){
       fileInfo& rfi = vFiles[iPrepareSavFileIndex];
 
-      festring id("");
+      festring id;
 
       // savegame version (save structure taken from game::Load())
       inputfile SaveFile(rfi.absFileName, 0, false);
@@ -1132,7 +1132,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       SaveFile >> rfi.WizardMode;
       SaveFile.Close();
 
-      festring fsVer("");
+      festring fsVer;
       if(rfi.Version != iSaveFileVersion)
         fsVer<<"(v"<<rfi.Version<<") ";
 
@@ -1144,7 +1144,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
 
-      festring currentDungeonLevel("");
+      festring currentDungeonLevel;
       currentDungeonLevel << rfi.CurrentDungeonIndex << rfi.CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
       if(bSaveGameSortModeProgress && !vComponents.empty()){
         for(int k=0;k<vComponents.size();k++){
@@ -1251,9 +1251,9 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
         if(rvBackups.size()>0){
           if(AlertConfirmMsg("Try to restore the backup?")){
             for(int b=0;b<rvBackups.size();b++){
-              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+              festring fsBkp(rvBackups[b]); DBG1(fsBkp.CStr());
 
-              festring fsFinal("");fsFinal << fsBkp;
+              festring fsFinal(fsBkp);
               fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
               std::remove(fsFinal.CStr()); // remove broken save file

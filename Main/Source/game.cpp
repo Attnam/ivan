@@ -3227,16 +3227,16 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
 
 void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 {
-  festring bkp(".bkp");
+  cchar* bkp = ".bkp";
 
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp:"")).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp:"")).CStr());
   }
 
-  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp:"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp:"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
@@ -3250,12 +3250,12 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
       File << c;
 
       if(RealSavesAlso)
-        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+        remove(festring(File + (onlyBackups?bkp:"")).CStr());
 
       File = GetAutoSaveFileName() + '.' + i;
       File << c;
 
-      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+      remove(festring(File + (onlyBackups?bkp:"")).CStr());
     }
 }
 

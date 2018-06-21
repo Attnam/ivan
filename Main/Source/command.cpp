@@ -1414,7 +1414,7 @@ truth commandsystem::ShowMap(character* Char)
 
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
-      while(!game::TruthQuestion(festring("Hit a key to close your map."), YES, 'm'));
+      while(!game::TruthQuestion(CONST_S("Hit a key to close your map."), YES, 'm'));
       game::ToggleDrawMapOverlay();
     }
   }else{

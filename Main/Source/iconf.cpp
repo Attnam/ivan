@@ -672,7 +672,7 @@ void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 
 void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
 {
-  if(What.GetSize()>0){
+  if(!What.IsEmpty()){
     int RGB[3]={1,1,1}, j=0;
     std::string sC;
     for(int i=0;i<What.GetSize();i++){
