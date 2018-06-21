@@ -24,6 +24,19 @@ class festring
  public:
   typedef ulong sizetype;
   typedef const ulong csizetype;
+
+  class staticstring
+  {
+    friend class festring;
+
+    public:
+      template<sizetype N>
+      constexpr staticstring(const char (&s)[N]): Data(s), Size(strlen(s)) {}
+    private:
+      const char* const Data;
+      sizetype const Size;
+  };
+
   /* It can be proven that the code works even if OwnsData is left
      uninitialized. However, Valgrind reports this as a possible error
      which is annoying */
@@ -32,12 +45,15 @@ class festring
   festring(sizetype, char);
   festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
   festring(cchar* CStr, sizetype N)
-  : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
+  : Data(0), Size(0), OwnsData(false) { CreateOwnData(CStr, N); }
+  festring(staticstring SStr)
+  : Data(const_cast<char*>(SStr.Data)), Size(SStr.Size), OwnsData(false) { }
   festring(cfestring&);
   ~festring();
   festring& Capitalize();
   festring CapitalizeCopy() const { return festring(*this).Capitalize(); }
   festring& operator=(cchar*);
+  festring& operator=(staticstring);
   festring& operator=(cfestring&);
   festring& operator<<(char);
   festring& operator<<(cchar*);
@@ -98,10 +114,11 @@ class festring
   void SwapData(festring&);
   void ExtractWord(festring&);
   long GetCheckSum() const;
-  void EnsureOwnsData();
+  void EnsureOwnsData(bool = false);
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
+  void DiscardData();
   void CreateOwnData(cchar*, sizetype);
   festring& Append(long);
   festring& Append(cchar*, sizetype);
@@ -328,7 +345,7 @@ struct ignorecaseorderer
   { return festring::IgnoreCaseCompare(S1, S2); }
 };
 
-#define CONST_S(str) festring(str, sizeof(str) - 1)
+#define CONST_S(str) festring::staticstring(str)
 
 /*
  * This macro doesn't evaluate with if what

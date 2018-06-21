@@ -39,7 +39,15 @@ festring& festring::Append(cchar* CStr, sizetype N)
 
 festring& festring::operator=(cchar* CStr)
 {
-  sizetype NewSize = strlen(CStr);
+  DiscardData();
+  CreateOwnData(CStr, strlen(CStr));
+  return *this;
+}
+
+festring& festring::operator=(staticstring SStr)
+{
+  const char* CStr = SStr.Data;
+  sizetype NewSize = SStr.Size;
   Size = NewSize;
   char* Ptr = Data;
 
@@ -94,6 +102,9 @@ festring& festring::operator=(cfestring& Str)
 
 festring& festring::Capitalize()
 {
+  if(!Data || Size <= 0)
+    return *this;
+
   char* OldPtr = Data;
 
   if(*OldPtr > 0x60 && *OldPtr < 0x7B)
@@ -200,7 +211,7 @@ void festring::Assign(sizetype N, char C)
       memset(Ptr, C, N);
       return;
     }
-    else
+    else if(!REFS(Ptr)--)
       delete [] &REFS(Ptr);
   }
 
@@ -684,6 +695,7 @@ void festring::SearchAndReplace(festring& Where, cfestring& What,
   {
     Where.Erase(Pos, What.GetSize());
     Where.Insert(Pos, With);
+    Pos += With.GetSize();
   }
 }
 
@@ -710,6 +722,8 @@ bool festring::IgnoreCaseCompare(cfestring& First,
 
 void festring::PreProcessForFebot()
 {
+  EnsureOwnsData(true);
+
   sizetype c, d, Length;
 
   for(c = 0, Length = 0;
@@ -768,6 +782,8 @@ void festring::PreProcessForFebot()
 
 void festring::PostProcessForFebot()
 {
+  EnsureOwnsData(true);
+
   Capitalize();
   truth CapitalizeNextChar = false;
 
@@ -845,8 +861,26 @@ long festring::GetCheckSum() const
   return Counter;
 }
 
-void festring::EnsureOwnsData()
+void festring::DiscardData()
+{
+  char* Ptr = Data;
+
+  if(Ptr && !REFS(Ptr)--)
+    delete [] &REFS(Ptr);
+
+  Size = 0;
+  Data = 0;
+  OwnsData = false;
+  Reserved = 0;
+}
+
+void festring::EnsureOwnsData(bool Unique)
 {
   if(!OwnsData)
     CreateOwnData(Data, Size);
+  else if(Unique && Data && REFS(Data))
+  {
+    --REFS(Data);
+    CreateOwnData(Data, Size);
+  }
 }
