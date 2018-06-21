@@ -39,8 +39,15 @@ festring& festring::Append(cchar* CStr, sizetype N)
 
 festring& festring::operator=(cchar* CStr)
 {
-  DiscardData();
-  CreateOwnData(CStr, strlen(CStr));
+  sizetype N = strlen(CStr);
+  if(N > 0)
+  {
+    DiscardData();
+    CreateOwnData(CStr, N);
+  }
+  else
+    Empty();
+
   return *this;
 }
 
@@ -187,6 +194,9 @@ void festring::SlowAppend(char Char)
 
 void festring::SlowAppend(cchar* CStr, sizetype N)
 {
+  if(N <= 0)
+    return;
+
   char* OldPtr = Data;
 
   if(OldPtr)
@@ -891,11 +901,16 @@ void festring::DiscardData()
 
 void festring::EnsureOwnsData(bool Unique)
 {
+  const char* CStr = Data ? Data : EmptyString;
+  sizetype N = Data ? Size : 0;
+
   if(!OwnsData)
-    CreateOwnData(Data, Size);
-  else if(Unique && Data && REFS(Data))
+    CreateOwnData(CStr, N);
+  else if(Unique && (!Data || REFS(Data)))
   {
-    --REFS(Data);
-    CreateOwnData(Data, Size);
+    if(Data && REFS(Data))
+      --REFS(Data);
+
+    CreateOwnData(CStr, N);
   }
 }

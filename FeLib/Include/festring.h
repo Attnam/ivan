@@ -47,7 +47,7 @@ class festring
   festring(sizetype, char);
   festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
   festring(cchar* CStr, sizetype N)
-  : Data(0), Size(0), OwnsData(false) { CreateOwnData(CStr, N); }
+  : Data(0), Size(0), OwnsData(false) { if(N > 0) CreateOwnData(CStr, N); }
   festring(staticstring SStr)
   : Data(const_cast<char*>(SStr.Data)), Size(SStr.Size), OwnsData(false) { }
   festring(cfestring&);
