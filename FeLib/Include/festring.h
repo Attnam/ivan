@@ -13,11 +13,13 @@
 #ifndef __FESTRING_H__
 #define __FESTRING_H__
 
+#include <climits>
 #include <vector>
 
 #include "felibdef.h"
 
 #define FESTRING_PAGE 0x7F
+#define FESTRING_REF_MAX ULONG_MAX
 
 class festring
 {
@@ -160,7 +162,12 @@ inline festring::festring(cfestring& Str)
   OwnsData(Str.OwnsData), Reserved(Str.Reserved)
 {
   if(Data && OwnsData)
-    ++REFS(Data);
+  {
+    if(REFS(Data) < FESTRING_REF_MAX)
+      ++REFS(Data);
+    else
+      CreateOwnData(Str.Data, Str.Size);
+  }
 }
 
 inline festring::festring(sizetype N)

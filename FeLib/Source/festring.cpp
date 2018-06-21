@@ -91,8 +91,13 @@ festring& festring::operator=(cfestring& Str)
 
   if((Data = StrPtr) && (OwnsData = Str.OwnsData))
   {
-    ++REFS(StrPtr);
-    Reserved = Str.Reserved;
+    if(REFS(StrPtr) < FESTRING_REF_MAX)
+    {
+      ++REFS(StrPtr);
+      Reserved = Str.Reserved;
+    }
+    else
+      CreateOwnData(StrPtr, NewSize);
   }
 
   return *this;
