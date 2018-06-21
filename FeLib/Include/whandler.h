@@ -36,6 +36,7 @@ class globalwindowhandler
  public:
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
+  static int ConsumeMouseButtonDownEvent();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);

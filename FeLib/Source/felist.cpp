@@ -179,6 +179,8 @@ uint felist::Draw()
     return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;DBGLN;
+  static int iTimeoutMillis=100;
+  globalwindowhandler::SetKeyTimeout(iTimeoutMillis,'.');
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -217,6 +219,7 @@ uint felist::Draw()
   else
     PageBegin = 0;
 
+  bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   graphics::PrepareBeforeDrawingFelist();
@@ -224,6 +227,11 @@ uint felist::Draw()
   {
     graphics::DrawAtDoubleBufferBeforeFelistPage(); // here prevents full dungeon blink
     truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize);
+//    if(AtTheEnd){
+//      if(bSafeScrollToEnd)
+//        Selected = Selectables-1;
+//      bSafeScrollToEnd=false;
+//    }
 
     if(Flags & FADE)
     {
@@ -242,33 +250,61 @@ uint felist::Draw()
       graphics::DrawAtDoubleBufferBeforeFelistPage(); // here helps on hiding unstretched static squares
     }
 
-    bool bClearKeyBuffer=false;
-    if(bClearKeyBufferOnce){
-      bClearKeyBuffer=true;
-      bClearKeyBufferOnce=false;
-    }
-    uint Pressed = GET_KEY(bClearKeyBuffer);DBGLN;
+    /**
+     * '.' is a skipper to ignore actions,
+     * this means if felist expects '.' to be pressed,
+     * that will fail TODO so may be this should be configurable? just expose defaulting to '.'
+     */
+    static uint DefaultAnswer='.';
+    uint Pressed=DefaultAnswer;
+    bool bLeftMouseButtonDown=false;
+    v2 v2MousePos=globalwindowhandler::GetMouseLocation();
+    if(bSafeScrollToEnd)
+      Pressed=KEY_PAGE_DOWN;
+    else
+      while(Pressed==DefaultAnswer){
+        if(bSafeScrollToEnd)
+          break;
 
-    if(Flags & SELECTABLE && Pressed > 64 // 65='A' 90='Z'
+        bool bClearKeyBuffer=false;
+        if(bClearKeyBufferOnce){
+          bClearKeyBuffer=true;
+          bClearKeyBufferOnce=false;
+        }
+        Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis
+
+        int iBtn=globalwindowhandler::ConsumeMouseButtonDownEvent();
+        if(iBtn!=-1){DBG1(iBtn);
+          switch(iBtn){
+          case 0:
+            bLeftMouseButtonDown=true;
+            break;
+          }
+          break;
+        }
+      }
+    DBGLN;
+
+    if((Flags & SELECTABLE) && Pressed > 64 // 65='A' 90='Z'
        && Pressed < 91 && Pressed - 65 < PageLength
        && Pressed - 65 + PageBegin < Selectables)
-    {
+    {DBGLN;
       Return = Selected = Pressed - 65 + PageBegin;
       bWaitKeyUp=true;
       break;
     }
 
-    if(Flags & SELECTABLE && Pressed > 96 // 97='a' 122='z'
+    if((Flags & SELECTABLE) && Pressed > 96 // 97='a' 122='z'
        && Pressed < 123 && Pressed - 97 < PageLength
        && Pressed - 97 + PageBegin < Selectables)
-    {
+    {DBGLN;
       Return = Selected = Pressed - 97 + PageBegin;
       bWaitKeyUp=true;
       break;
     }
 
-    if(Flags & SELECTABLE && Pressed == UpKey)
-    {
+    if((Flags & SELECTABLE) && Pressed == UpKey)
+    {DBGLN;
       if(Selected)
       {
         --Selected;
@@ -304,8 +340,8 @@ uint felist::Draw()
       continue;
     }
 
-    if(Flags & SELECTABLE && Pressed == DownKey)
-    {
+    if((Flags & SELECTABLE) && Pressed == DownKey)
+    {DBGLN;
       if(!AtTheEnd || Selected != Selectables - 1)
       {
         ++Selected;
@@ -334,7 +370,7 @@ uint felist::Draw()
       continue;
     }
 
-    if(Flags & SELECTABLE && Pressed == KEY_ENTER)
+    if((Flags & SELECTABLE) && (Pressed == KEY_ENTER || bLeftMouseButtonDown))
     {
       Return = Selected;
       bWaitKeyUp=true;
@@ -347,20 +383,85 @@ uint felist::Draw()
       break;
     }
 
-    if((AtTheEnd && !(Flags & INVERSE_MODE))
-       || (!PageBegin && Flags & INVERSE_MODE))
-    {
-      Return = NOTHING_SELECTED;
-      break;
+    /**
+     * PAGE navigation
+     */
+    DBG8(Entry.size(),Selectables,Selectables/PageLength,KEY_SPACE,KEY_PAGE_UP,KEY_PAGE_DOWN,KEY_HOME,KEY_END);
+    bool bNav=false; //navigating
+    if(!bNav && Pressed == KEY_PAGE_DOWN)bNav=true;
+    if(!bNav && Pressed == KEY_PAGE_UP)bNav=true;
+    if(!bNav && Pressed == KEY_HOME)bNav=true;
+    if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
+    if(!bNav && Pressed == KEY_SPACE && !AtTheEnd)bNav=true; //space works as PGDN
+    if(Pressed == KEY_SPACE || bNav){DBGLN;
+      int iDir = 1;
+      if(Flags & INVERSE_MODE)
+        iDir *= -1;
+      if(Pressed == KEY_PAGE_UP){ //TODO confirm that this inverts the INVERSE_MODE behavior
+        iDir *= -1;
+      }
+
+      int iCurrent = PageBegin + iDir*PageLength;
+      if(iCurrent<0) //PageBegin is uint ...
+        iCurrent=0;
     }
-    else
-    {
+
+    if(!bNav) {
+      if(Pressed == KEY_SPACE) //to work stictly as on the help info
+        if( (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && (Flags & INVERSE_MODE)) )
+        {
+          Return = NOTHING_SELECTED;
+          break;
+        }
+    } else {
       BackGround.FastBlit(Buffer);
 
+      int iDir = 1;
       if(Flags & INVERSE_MODE)
-        PageBegin -= PageLength;
-      else
-        PageBegin += PageLength;
+        iDir *= -1;
+      if(Pressed == KEY_PAGE_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
+        iDir *= -1;
+
+      int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
+      if(iPB<0) //PageBegin is uint ...
+        iPB=0;
+
+      /**
+       * overriders
+       * obs.: pgdn and space are default "advance page" action
+       */
+      if(AtTheEnd && Pressed == KEY_PAGE_DOWN){
+        bSafeScrollToEnd=false;
+        Selected = Selectables-1;
+        continue; //do nothing
+      }
+
+      if(Flags & INVERSE_MODE ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
+        iPB=0;
+
+      if(Flags & INVERSE_MODE ? Pressed == KEY_HOME : Pressed == KEY_END){ // go to last
+        if(Entry.size()<=PageLength){ //only one page
+          Selected = Selectables-1;
+          continue; //do nothing
+        }
+
+        if(AtTheEnd){
+          Selected = Selectables-1;
+          continue; //do nothing
+        }
+
+        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
+      }
+
+      // fail safe LAST check
+      if(iPB >= Selectables){ DBG3("how it happened?",iPB,Selectables);
+        continue; //do nothing
+      }
+
+      // apply
+      PageBegin = iPB;
+
+      DBG3(PageBegin,Pressed,iDir);
 
       if(Flags & SELECTABLE)
         Selected = PageBegin;
@@ -391,6 +492,7 @@ uint felist::Draw()
         break;
   #endif
 
+  globalwindowhandler::SetKeyTimeout(0,'.');
   return Return;
 }
 
@@ -520,7 +622,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize) const
       {
         Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-                     "- Press SPACE to continue, ESC to exit -");
+                     "- Press PgUp/PgDn/Home/End or SPACE to continue, ESC to exit -");
         LastFillBottom += 30;
       }
       else

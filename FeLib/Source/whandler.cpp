@@ -466,6 +466,16 @@ truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
   return bLastSDLkeyEventIsKeyUp;
 }
 
+int iMouseButtonDown=-1;
+int globalwindowhandler::ConsumeMouseButtonDownEvent()
+{
+  int i=iMouseButtonDown;
+  if(iMouseButtonDown!=-1){
+    iMouseButtonDown=-1;
+  }
+  return i;
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed = 0;
@@ -496,6 +506,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       exit(0);
 
     return;
+
+   case SDL_MOUSEBUTTONDOWN:
+     iMouseButtonDown=Event->button.button;
+     break;
 
    case SDL_KEYUP:
     bLastSDLkeyEventIsKeyUp=true;
