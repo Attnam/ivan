@@ -882,7 +882,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 //#endif
 //}
 
-bool AlertConfirmMsg(const char* cMsg, bool bAbortIfNot=true) //TODO this method could be more global
+bool AlertConfirmMsg(const char* cMsg) //TODO this method could be more global
 {
   v2 v2Border(700,100);
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
@@ -896,7 +896,8 @@ bool AlertConfirmMsg(const char* cMsg, bool bAbortIfNot=true) //TODO this method
 
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y')return true;
+  if(GET_KEY() == 'y')
+    return true;
 
   return false;
 }
@@ -1226,13 +1227,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     festring chosen;chosen<<List.GetEntry(Check);
     for(int i=0;i<vFiles.size();i++){
       if(chosen == vFiles[i].idOnList){
-        if(!vFiles[i].fileNameAutoSave.IsEmpty() && !vFiles[i].WizardMode){ //wizard mode always keep autosaves and when loading would always move back to the past what is at least annoying
-          /**
-           * autosaves are old and apparently a safe thing,
-           * therefore will be preferred as restoration override.
-           */
-          return vFiles[i].fileNameAutoSave;
-        }
+        bool bHasAutosave = !vFiles[i].fileNameAutoSave.IsEmpty();
 
         /**
          * Backups are a fallback mainly when a crash happens like this:
@@ -1249,14 +1244,33 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          */
         std::vector<festring>& rvBackups = vFiles[i].vBackups;
         if(rvBackups.size()>0){
-          if(AlertConfirmMsg("Try to restore the backup?")){
+          bool bRestoreBkp = false;
+          if(!vFiles[i].WizardMode){
+            // normal savegame
+            bRestoreBkp = AlertConfirmMsg("The backup may be unnecessary, restore it anyway?");
+          }else{
+            // wizard mode special case
+            if(bHasAutosave){
+              /**
+               * TODO this is guessed, not 100% correct... the files' datetime should be compared instead...
+               */
+              bRestoreBkp = AlertConfirmMsg("(Wizard) The autosave is newer. Restore backup anyway?");
+            }
+          }
+          if(bRestoreBkp){
             for(int b=0;b<rvBackups.size();b++){
               festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+              DBG2("RestoringBackupFrom",fsBkp.CStr());
 
               festring fsFinal("");fsFinal << fsBkp;
               fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
-              std::remove(fsFinal.CStr()); // remove broken save file
+              /**
+               * Removes broken save file.
+               * This action is destructive, preventing other possible options...
+               * TODO instead, just rename to something like .OLD ?
+               */
+              std::remove(fsFinal.CStr());
 
               std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
               if(flBkp.good()){
@@ -1274,9 +1288,43 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
           }
         }
 
+        if(bHasAutosave){
+          bool bUseAutosave=true; //normal game
+
+          if(bUseAutosave && vFiles[i].WizardMode){
+            /**
+             * wizard mode always keep autosaves
+             */
+            if(rvBackups.size()==0){
+              /**
+               * Wizard mode without backups means it saved safely to main menu,
+               * and also mean that the autosaves are OLDER than normal saves.
+               */
+              bUseAutosave=false; //this will let the NEWER wiz normal saves be loaded
+            }else{
+              /**
+               * If the game crashes it will have backups.
+               * And the autosaves will be NEWER than normal saves and backups.
+               * UNLESS the backups were restored above losing the NEWER autosaves!!!
+               */
+            }
+          }
+
+          if(bUseAutosave){
+            /**
+             * autosaves are old and apparently a safe thing,
+             * therefore will be preferred as restoration override.
+             */
+            DBG2("LoadingAutoSave",vFiles[i].fileNameAutoSave.CStr());
+            return vFiles[i].fileNameAutoSave;
+          }
+        }
+
+        DBG2("Loading",vFiles[i].fileName.CStr());
         return vFiles[i].fileName;
       }
     }
+
     ABORT("failed to match chosen file with id %s",chosen.CStr()); //shouldnt happen
   }
 
