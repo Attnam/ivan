@@ -935,12 +935,12 @@ struct fileInfo{
   int CurrentLevelIndex = -1;
   v2 Camera; //dummy
   truth WizardMode;
-  festring fileName=festring(); //TODO this init helps with festring? is it buggy?
-  festring absFileName=festring(); //contains the full path
-  festring time=festring();
-  festring idOnList=festring();
-  festring dungeonID=festring();
-  festring fileNameAutoSave=festring();
+  festring fileName;
+  festring absFileName;
+  festring time;
+  festring idOnList;
+  festring dungeonID;
+  festring fileNameAutoSave;
   std::vector<festring> vBackups;
   bool bIsBkp = false;
 };
@@ -952,7 +952,7 @@ bool addFileInfo(const char* c){
 
   // do add
   fileInfo fi;
-  fi.fileName<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
+  fi.fileName=c;
   vFiles.push_back(fi); //stores a copy
 
   return true; //added
