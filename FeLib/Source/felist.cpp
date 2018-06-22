@@ -327,7 +327,8 @@ uint felist::Draw()
              */
             if(v2MousePos != mc.pos){
               v2MousePosFix = v2MousePos - mc.pos;
-            }
+            }else
+              v2MousePosFix=v2();
 
             uint iSel = GetMouseSelectedEntry(mc.pos); //make sure selected is the one at mouse pos no matter the highlight
             if(iSel!=-1){
