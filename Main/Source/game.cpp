@@ -4431,7 +4431,7 @@ void game::SetStandardListAttributes(felist& List)
 
   List.SetPos(v2TopLeft);
   List.SetWidth(iW);
-  List.SetFlags( IsRunning() ? DRAW_BACKGROUND_AFTERWARDS|ALLOW_MOUSE_SELECT : DRAW_BACKGROUND_AFTERWARDS );
+  List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
   List.SetUpKey(GetMoveCommandKey(KEY_UP_INDEX));
   List.SetDownKey(GetMoveCommandKey(KEY_DOWN_INDEX));
 }

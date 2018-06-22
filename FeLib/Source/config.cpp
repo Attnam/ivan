@@ -169,8 +169,10 @@ void configsystem::Show(void (*BackGroundDrawer)(),
     if(SlaveScreen && ListAttributeInitializer)
       ListAttributeInitializer(List);
 
-    List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)
-                  |(!SlaveScreen && !TruthChange ? FADE : 0));
+//    List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)
+//                  |(!SlaveScreen && !TruthChange ? FADE : 0));
+    List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)|(!SlaveScreen ? FADE : 0));
+    List.SetFirstDrawNoFade(TruthChange); //ignored if not fading
     Chosen = List.Draw();
     festring String;
 
@@ -178,6 +180,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       TruthChange = Option[Chosen]->ActivateChangeInterface();
     else
     {
+      TruthChange=false;
       Save();
       return;
     }
