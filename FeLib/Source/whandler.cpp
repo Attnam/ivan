@@ -432,7 +432,13 @@ uint globalwindowhandler::PollEvents(SDL_Event* pEvent)
 v2 v2MousePos;
 uint globalwindowhandler::UpdateMouse()
 {
-  return SDL_GetMouseState(&v2MousePos.X,&v2MousePos.Y);
+  /**
+   * global didnt fix the wrong mouse position relatively to the visible cursor...
+  if(SDL_GetWindowFlags(graphics::GetWindow()) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+    return SDL_GetGlobalMouseState(&v2MousePos.X,&v2MousePos.Y);
+  else
+   */
+    return SDL_GetMouseState(&v2MousePos.X,&v2MousePos.Y);
 }
 
 int globalwindowhandler::ReadKey()
@@ -493,20 +499,17 @@ v2 globalwindowhandler::GetMouseLocation()
   return v2MousePos;
 }
 
-//int iMouseButtonClicked=-1;
 mouseclick mc;
-mouseclick globalwindowhandler::ConsumeMouseButtonClickEvent() //TODO buffer it?
+mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
 {
-//  int i=iMouseButtonClicked;
-//  if(iMouseButtonClicked!=-1){
-//    iMouseButtonClicked=-1;
-//  }
-//  int i=mc.btn;
   mouseclick mcR;
-  if(mc.btn!=-1){
+  if(mc.btn!=-1 || mc.wheelY!=0)
     mcR=mc;
-    mc.btn=-1;
-  }
+
+  mc.btn=-1;
+  mc.pos=v2();
+  mc.wheelY=0;
+
   return mcR;
 }
 
@@ -541,18 +544,15 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 
     return;
 
-//   case SDL_MOUSEMOTION: //this is not very precise tho, see UpdateMouse()
-//     v2MousePos.X=Event->motion.x;
-//     v2MousePos.Y=Event->motion.y;
-//     break;
-
    case SDL_MOUSEBUTTONUP:
      if(Event->button.button==1 && Event->button.clicks>0){
        mc.btn = 1;
        mc.pos.X=Event->button.x;
        mc.pos.Y=Event->button.y;
-//       iMouseButtonClicked=1;
      }
+     break;
+   case SDL_MOUSEWHEEL:
+     mc.wheelY = Event->wheel.y;
      break;
 
    case SDL_KEYUP:

@@ -34,6 +34,7 @@
 struct mouseclick{
  int btn=-1;
  v2 pos;
+ int wheelY=0;
 };
 
 class globalwindowhandler
@@ -43,7 +44,7 @@ class globalwindowhandler
   static void CheckGetKeyTimeout();
   static truth IsGetKeyTimeoutEnabled();
   static void SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
-  static mouseclick ConsumeMouseButtonClickEvent();
+  static mouseclick ConsumeMouseEvent();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();

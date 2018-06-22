@@ -163,6 +163,12 @@ void graphics::DeInit()
 
 #ifdef USE_SDL
 
+bool bAllowMouseInFullScreen=false;
+void graphics::SetAllowMouseInFullScreen(bool b)
+{
+  bAllowMouseInFullScreen=b;
+}
+
 void graphics::SetMode(cchar* Title, cchar* IconName,
                        v2 NewRes, int NewScale, int ScalingQuality,
                        truth FullScreen)
@@ -181,7 +187,8 @@ void graphics::SetMode(cchar* Title, cchar* IconName,
 
   if(FullScreen)
   {
-    SDL_ShowCursor(SDL_DISABLE);
+    if(!bAllowMouseInFullScreen)
+      SDL_ShowCursor(SDL_DISABLE);
 #if SDL_MAJOR_VERSION == 1
     Flags |= SDL_FULLSCREEN;
 #else
@@ -756,7 +763,8 @@ void graphics::SwitchMode()
   }
   else
   {
-    SDL_ShowCursor(SDL_DISABLE);
+    if(!bAllowMouseInFullScreen)
+      SDL_ShowCursor(SDL_DISABLE);
     SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
   }
   BlitDBToScreen();

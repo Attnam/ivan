@@ -107,6 +107,12 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
+                                          "Enable mouse cursor on lists",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &AllowMouseOnFelistChanger);
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
@@ -822,6 +828,13 @@ void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
   game::UpdateSRegionsXBRZ();
 }
 
+void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+  felist::SetAllowMouse(What);
+  graphics::SetAllowMouseInFullScreen(What);
+}
+
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
@@ -962,6 +975,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
   configsystem::AddOption(fsCategory,&SelectedBkgColor);
+  configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
@@ -995,4 +1009,5 @@ void ivanconfig::Initialize()
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
   SavegameSafelyChanger(NULL, SavegameSafely.Value);
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
+  AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }

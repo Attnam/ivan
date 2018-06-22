@@ -172,7 +172,12 @@ void felist::SetFirstDrawNoFade(bool b)
   FirstDrawNoFade=b;
 }
 
-bool bAllowMouseSelect=true; //TODO expose? make a cfg option?
+bool bAllowMouseSelect=false;
+void felist::SetAllowMouse(bool b)
+{
+  bAllowMouseSelect=b;
+}
+
 uint felist::Draw()
 {
   uint FlagsChk = Flags;
@@ -204,9 +209,7 @@ uint felist::Draw()
     return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;DBGLN;
-//  static int iTimeoutMillis=1000/60; //60 as fps like
-//  globalwindowhandler::SetKeyTimeout(iTimeoutMillis,'.');
-  globalwindowhandler::SetGetKeyTimeout(10,'.');
+  globalwindowhandler::SetGetKeyTimeout(10,'.'); //using the min millis value grants mouse will be updated most often possible
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -304,8 +307,11 @@ uint felist::Draw()
           break;
         }
 
+        /////////////////////////////////////////// MOUSE ///////////////////////////////////////
+        v2 v2MousePos = globalwindowhandler::GetMouseLocation();
+        mouseclick mc=globalwindowhandler::ConsumeMouseEvent();
+        static v2 v2MousePosFix;
         ////////////////////////////// mouse click
-        mouseclick mc=globalwindowhandler::ConsumeMouseButtonClickEvent();
         if(bAllowMouseSelect && mc.btn!=-1){ DBG1(mc.btn);
           switch(mc.btn){
           case 1:
@@ -315,6 +321,14 @@ uint felist::Draw()
           }
 
           if(bMouseButtonClick){
+            /**
+             * when clicking the pos is correct/matches the visible cursor,
+             * this problem actually happens in fullscreen mode only
+             */
+            if(v2MousePos != mc.pos){
+              v2MousePosFix = v2MousePos - mc.pos;
+            }
+
             uint iSel = GetMouseSelectedEntry(mc.pos); //make sure selected is the one at mouse pos no matter the highlight
             if(iSel!=-1){
               Selected=iSel;
@@ -322,11 +336,17 @@ uint felist::Draw()
             }
           }
         }
+        v2MousePos-=v2MousePosFix;
+
+        ////////////////////////////// mouse wheel scroll
+        if(bAllowMouseSelect && mc.wheelY!=0){
+          Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
+          break;
+        }
 
         ////////////////////////////// mouse move/hover (to not be hindered by getkey timeout
-        static clock_t lastMouseMoveTime=clock();
-        v2 v2MousePos = globalwindowhandler::GetMouseLocation();
-        if(bAllowMouseSelect && v2MousePosPrevious!=v2MousePos){ DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
+        static clock_t lastMouseMoveTime=clock(); //static as mouse is a global thing
+        if(bAllowMouseSelect && v2MousePosPrevious!=v2MousePos){ //DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
           bool bSelChanged = false;
 
           uint iSel = GetMouseSelectedEntry(v2MousePos);
@@ -346,6 +366,7 @@ uint felist::Draw()
 //        if((Flags & ALLOW_MOUSE_SELECT) && (clock() - lastMouseMoveTime) < (0.5 * CLOCKS_PER_SEC)){
 //        }
 
+        ///////////////////////////////////////// KEYBOARD /////////////////////////////////////
         ////////////////////////////// normal key press
         bool bClearKeyBuffer=false;
         if(bClearKeyBufferOnce){
