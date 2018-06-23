@@ -26,6 +26,10 @@ char Capitalize(char Char)
   return (Char >= 'a' && Char <= 'z') ? (Char ^ 0x20) : Char;
 }
 
+/* All operations that may change the underlying data will avoid touching the
+   memory allocator and deallocator as much as possible. They try very hard to
+   save memory and go for speed. */
+
 festring& festring::operator=(cchar* CStr)
 {
   CheckNull(CStr);
@@ -115,6 +119,7 @@ festring& festring::operator=(cfestring& Str)
   return *this;
 }
 
+/// Capitalize the first letter.
 festring& festring::Capitalize()
 {
   if(!Size)
@@ -185,6 +190,7 @@ void festring::SlowAppend(char Char)
   SlowAppend(&Char, 1);
 }
 
+/// Always allocate new memory before append data.
 void festring::SlowAppend(cchar* CStr, sizetype N)
 {
   if(!N)
@@ -207,6 +213,7 @@ void festring::SlowAppend(cchar* CStr, sizetype N)
     delete [] FreePtr;
 }
 
+/// Set the data to a string of the same char.
 void festring::Assign(sizetype NewSize, char Char)
 {
   if(!NewSize)
@@ -233,6 +240,7 @@ void festring::Assign(sizetype NewSize, char Char)
   Size = NewSize;
 }
 
+/// Resize the string and use a char for padding.
 void festring::Resize(sizetype NewSize, char Char)
 {
   if(Size > NewSize)
@@ -286,6 +294,7 @@ void festring::Resize(sizetype NewSize, char Char)
     return;
 }
 
+/// Find a char not before the specified position.
 festring::sizetype festring::Find(char Char, sizetype Pos) const
 {
   if(Size <= Pos)
@@ -296,6 +305,7 @@ festring::sizetype festring::Find(char Char, sizetype Pos) const
   return Result ? (Result - Data) : NPos;
 }
 
+/// Find a string not before the specified position.
 festring::sizetype festring::Find(cchar* CStr,
                                   sizetype Pos,
                                   sizetype N) const
@@ -324,6 +334,7 @@ festring::sizetype festring::Find(cchar* CStr,
   return NPos;
 }
 
+/// Find the last occurrence of a char not after the specified position.
 festring::sizetype festring::FindLast(char Char, sizetype Pos) const
 {
   if(Pos >= Size)
@@ -337,6 +348,7 @@ festring::sizetype festring::FindLast(char Char, sizetype Pos) const
   return i;
 }
 
+/// Find the last occurrence of a string not after the specified position.
 festring::sizetype festring::FindLast(cchar* CStr,
                                       sizetype Pos,
                                       sizetype N) const
@@ -356,6 +368,7 @@ festring::sizetype festring::FindLast(cchar* CStr,
   return NPos;
 }
 
+/// Erase the substring starting from the specified position.
 void festring::Erase(sizetype Pos, sizetype Length)
 {
   if(!Length || Size <= Pos)
@@ -390,6 +403,7 @@ void festring::Erase(sizetype Pos, sizetype Length)
   Size = NewSize;
 }
 
+/// Insert a string at the specified position.
 void festring::Insert(sizetype Pos, cchar* CStr, sizetype N)
 {
   if(!N)
