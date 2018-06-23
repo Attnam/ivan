@@ -28,6 +28,8 @@ char Capitalize(char Char)
 
 festring& festring::operator=(cchar* CStr)
 {
+  CheckNull(CStr);
+
   sizetype NewSize = strlen(CStr);
 
   if(OwnsData)
@@ -53,6 +55,8 @@ festring& festring::operator=(cchar* CStr)
 
 festring& festring::operator=(staticstring SStr)
 {
+  CheckNull(SStr.Data);
+
   cchar* CStr = SStr.Data;
   sizetype NewSize = SStr.Size;
 
@@ -470,6 +474,12 @@ void festring::DeInstallIntegerMap()
 {
   delete [] IntegerMap;
   IntegerMap = 0;
+}
+
+void festring::CheckNull(cchar* Ptr)
+{
+  if(!Ptr)
+    ABORT("Null pointer detected!");
 }
 
 /* Displays numbers in the range [-2147483647, 2147483647].

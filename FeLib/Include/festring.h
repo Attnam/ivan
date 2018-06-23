@@ -42,15 +42,16 @@ class festring
   /* It can be proven that the code works even if OwnsData is left
      uninitialized. However, Valgrind reports this as a possible error
      which is annoying */
-  festring() : Data(const_cast<char*>(EmptyString)), Size(0), OwnsData(false) { }
+  festring()
+  : Data(const_cast<char*>(EmptyString)), Size(0), OwnsData(false) { }
+  festring(cfestring&);
   festring(sizetype, char);
   festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
-  festring(cchar* CStr, sizetype N)
-  : Data(const_cast<char*>(EmptyString)), Size(0), OwnsData(false)
-  { if(N) CreateOwnData(CStr, N); }
+  festring(cchar* CStr, sizetype N) : festring()
+  { CheckNull(CStr); if(N) CreateOwnData(CStr, N); }
   festring(staticstring SStr)
-  : Data(const_cast<char*>(SStr.Data)), Size(SStr.Size), OwnsData(false) { }
-  festring(cfestring&);
+  : Data(const_cast<char*>(SStr.Data)), Size(SStr.Size), OwnsData(false)
+  { CheckNull(Data); }
   ~festring();
   festring& Capitalize();
   festring CapitalizeCopy() const { return festring(*this).Capitalize(); }
@@ -120,6 +121,7 @@ class festring
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
+  static void CheckNull(cchar*);
   void CreateNewData(sizetype);
   void CreateOwnData(cchar*, sizetype);
   festring& AppendInt(long);
