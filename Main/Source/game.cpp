@@ -5011,14 +5011,26 @@ void game::AutoPlayModeApply(){
     break;
   case 4:
     msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
-    iTimeout=(1000/10); // like 10 FPS, so user has 100ms chance to disable it
+    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
   globalwindowhandler::SetPlayInBackground(bPlayInBackground);
-  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
+
+  if(!ivanconfig::IsXBRZScale()){
+    /**
+     * TODO
+     * This is an horrible gum solution...
+     * I still have no idea why this happens.
+     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
+     * But the debug log shows the correct timeouts :(, clueless for now...
+     */
+    iTimeout/=2;
+  }
+
+  globalwindowhandler::SetGetKeyTimeout(iTimeout,'.');//,'~');
 }
 
 void game::IncAutoPlayMode() {
