@@ -38,8 +38,8 @@ class iosystem
                                 int, truth, void (*)(long) = 0);
   static int Menu(cbitmap*, v2, cfestring&,
                   cfestring&, col16,
-                  cfestring& = "",
-                  cfestring& = "");
+                  cfestring& = CONST_S(""),
+                  cfestring& = CONST_S(""));
   static void TextScreen(cfestring&, v2 Disp = ZERO_V2,
                          col16 = 0xFFFF, truth = true,
                          truth = true, bitmapeditor = 0);
