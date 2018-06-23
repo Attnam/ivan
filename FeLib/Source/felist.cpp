@@ -309,6 +309,7 @@ uint felist::Draw()
 
         /////////////////////////////////////////// MOUSE ///////////////////////////////////////
         v2 v2MousePos = globalwindowhandler::GetMouseLocation();
+        v2MousePos/=graphics::GetScale();
         mouseclick mc=globalwindowhandler::ConsumeMouseEvent();
         static v2 v2MousePosFix;
         ////////////////////////////// mouse click

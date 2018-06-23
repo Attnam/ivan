@@ -639,10 +639,11 @@ void graphics::AddDrawAboveAll(drawabove da, int iPriority, const char* desc)
   bool bCOut = c!=NULL && strcmp(c,"true")==0;
   festring fsDrawAbovePriority("");
   for(int i=0;i<vDrawabove.size();i++){
-    fsDrawAbovePriority << vDrawabove[i].iPriority << ":" << vDrawabove[i].desc;
+    fsDrawAbovePriority << "DrawAbovePriority:" << vDrawabove[i].iPriority << ":" << vDrawabove[i].desc;
     if(bCOut)
       std::cout << fsDrawAbovePriority.CStr() << std::endl;
     DBG1(fsDrawAbovePriority.CStr());
+    fsDrawAbovePriority.Empty();
   }
 
 }
