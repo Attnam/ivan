@@ -163,15 +163,28 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   int c = 0;
 
   if(BackGround){
-    //vanilla was 800x600 as the background menu image. TODO provide calculations for lower than 800x600 one day?
-    if(RES.X < BackGround->GetSize().X)ABORT("invalid window width %d",RES.X);
-    if(RES.Y < BackGround->GetSize().Y)ABORT("invalid window height %d",RES.Y);
-
     if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+      blitdata B = DEFAULT_BLITDATA;
+      B.Bitmap = &Buffer;
+
+      B.Src.X = (RES.X - BackGround->GetSize().X)/2;
+      if(B.Src.X>0)B.Src.X=0;
+      if(B.Src.X<0)B.Src.X*=-1;
+      B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
+      if(B.Src.Y>0)B.Src.Y=0;
+      if(B.Src.Y<0)B.Src.Y*=-1;
+
+      B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
+      if(B.Dest.X<0)B.Dest.X=0;
+      B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
+      if(B.Dest.Y<0)B.Dest.Y=0;
+
+      B.Border = BackGround->GetSize() - v2();
+
       Buffer.ClearToColor(0);
-      BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+      BackGround->NormalBlit(B);
     }else{
-      BackGround->FastBlit(&Buffer);
+      BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
     }
   }else
     Buffer.ClearToColor(0);
