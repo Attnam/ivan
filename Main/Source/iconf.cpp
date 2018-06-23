@@ -494,6 +494,7 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set name generator pattern (recommended \"!ss !sV\"):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -507,6 +508,7 @@ truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -520,6 +522,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new Red,Green,Blue color (8 to 200 each value) or empty to disable:"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -533,6 +536,7 @@ truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
 truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
