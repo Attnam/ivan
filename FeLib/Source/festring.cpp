@@ -708,8 +708,6 @@ bool festring::IgnoreCaseCompare(cfestring& First,
 
 void festring::PreProcessForFebot()
 {
-  EnsureOwnsData(true);
-
   sizetype c, d, Length;
 
   for(c = 0, Length = 0;
@@ -733,7 +731,7 @@ void festring::PreProcessForFebot()
     char Char = Data[c + 1];
 
     if(Data[c] == '\t')
-      Data[c] = ' ';
+      (*this)[c] = ' ';  // Use (*this)[c] to modify Data[c]!
     else if(Data[c] == '\"' || Data[c] == '(' || Data[c] == ')')
     {
       Erase(c--, 1);
@@ -768,8 +766,6 @@ void festring::PreProcessForFebot()
 
 void festring::PostProcessForFebot()
 {
-  EnsureOwnsData(true);
-
   Capitalize();
   truth CapitalizeNextChar = false;
 
@@ -791,11 +787,10 @@ void festring::PostProcessForFebot()
     else if((Char1 == '.' || Char1 == '!' || Char1 == '?')
             && (c == Size - 2 || Data[c + 2] == ' ' || Data[c + 2] == '\t'))
       CapitalizeNextChar = true;
-    /* Erase() guarantees that OwnsData != false && REFS(Data) == 0 */
     else if(CapitalizeNextChar)
     {
       if(Char1 > 0x60 && Char1 < 0x7B)
-        Data[c] &= ~0x20;
+        (*this)[c] &= ~0x20;  // Use (*this)[c] to modify Data[c]!
 
       CapitalizeNextChar = false;
     }
