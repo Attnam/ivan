@@ -3298,7 +3298,11 @@ void character::GetPlayerCommand()
 
 #ifdef WIZARD
     if(IsPlayerAutoPlay()){
-      if(Key=='.'){ // pressed or simulated
+      bool bForceStop = false;
+      if(game::GetAutoPlayMode()>=2)
+        bForceStop = globalwindowhandler::IsKeyPressed(SDL_SCANCODE_ESCAPE);
+
+      if(!bForceStop && Key=='.'){ // pressed or simulated
         if(game::IsInWilderness()){
           Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
         }else{
@@ -3310,7 +3314,7 @@ void character::GetPlayerCommand()
          * if the user hits any key during the autoplay mode that runs by itself, it will be disabled.
          * at non auto mode, can be moved around but cannot rest or will move by itself
          */
-        if(game::GetAutoPlayMode()>=2 && Key!='~'){
+        if(game::GetAutoPlayMode()>=2 && (Key!='~' || bForceStop)){
           game::DisableAutoPlayMode();
           AutoPlayAIReset(true); // this will help on re-randomizing things, mainly paths
         }

@@ -73,6 +73,12 @@ void globalwindowhandler::DeInstallControlLoop(truth (*What)())
   }
 }
 
+bool globalwindowhandler::IsKeyPressed(int iSDLScanCode)
+{
+  return SDL_GetKeyboardState(NULL)[iSDLScanCode];
+}
+
+
 #ifdef __DJGPP__
 
 #include <pc.h>

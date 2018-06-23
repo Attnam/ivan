@@ -34,9 +34,12 @@
 class globalwindowhandler
 {
  public:
+  static bool IsKeyPressed(int iSDLScanCode);
+  static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static mouseclick ConsumeMouseEvent();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();

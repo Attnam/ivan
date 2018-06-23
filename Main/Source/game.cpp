@@ -5030,7 +5030,7 @@ void game::AutoPlayModeApply(){
     iTimeout/=2;
   }
 
-  globalwindowhandler::SetGetKeyTimeout(iTimeout,'.');//,'~');
+  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 
 void game::IncAutoPlayMode() {
