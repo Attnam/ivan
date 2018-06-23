@@ -30,11 +30,17 @@ festring& festring::operator=(cchar* CStr)
 {
   sizetype NewSize = strlen(CStr);
 
-  if(OwnsData && !REFS(Data) && NewSize <= Reserved)
+  if(OwnsData)
   {
-    memcpy(Data, CStr, NewSize);
-    Size = NewSize;
-    return *this;
+    if(!REFS(Data) && NewSize <= Reserved)
+    {
+      memcpy(Data, CStr, NewSize);
+      Size = NewSize;
+      return *this;
+    }
+
+    if(!REFS(Data)--)
+      delete [] &REFS(Data);
   }
 
   if(NewSize)
@@ -227,17 +233,18 @@ void festring::Resize(sizetype NewSize, char Char)
 {
   if(Size > NewSize)
   {
-    Size = NewSize;
-
     if(OwnsData)
     {
       if(!REFS(Data))
+      {
+        Size = NewSize;
         return;
+      }
 
       --REFS(Data);
-      CreateOwnData(Data, NewSize);
     }
 
+    CreateOwnData(Data, NewSize);
     return;
   }
   else if(Size < NewSize)
@@ -371,11 +378,6 @@ void festring::Erase(sizetype Pos, sizetype Length)
     }
     else
       --REFS(OldData);
-  }
-  else if(EraseEnd == OldSize)
-  {
-    Size = NewSize;
-    return;
   }
 
   CreateNewData(NewSize);
@@ -598,19 +600,19 @@ int festring::SplitString(cfestring& Source,
     StringVector[0].Empty();
 
   SplitString(CopyOfSource, StringVector[0], Length);
-  sizetype Size = 1;
+  sizetype Result = 1;
 
   while(!CopyOfSource.IsEmpty())
   {
-    if(StringVector.size() <= Size)
+    if(StringVector.size() <= Result)
       StringVector.push_back(festring());
 
-    festring& String = StringVector[Size++];
+    festring& String = StringVector[Result++];
     String.Assign(Marginal, ' ');
     SplitString(CopyOfSource, String, Length - Marginal);
   }
 
-  return Size;
+  return Result;
 }
 
 /* Returns the position of the first occurance of What in Where

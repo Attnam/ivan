@@ -255,8 +255,6 @@ inline cchar* festring::CStr() const
 
 inline void festring::Empty()
 {
-  Size = 0;
-
   if(OwnsData)
   {
     if(REFS(Data))
@@ -271,6 +269,8 @@ inline void festring::Empty()
     Data = const_cast<char*>(EmptyString);
     OwnsData = false;
   }
+
+  Size = 0;
 }
 
 inline festring& festring::operator<<(char Char)
