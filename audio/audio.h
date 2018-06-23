@@ -121,7 +121,7 @@ public:
    static void LoadMIDIFile(cfestring& filename, int intensitylow, int intensityhigh);
 
 
-   static void ClearMIDIPlaylist(cfestring& exceptFilename = "");
+   static void ClearMIDIPlaylist(cfestring& exceptFilename = CONST_S(""));
 
    static int IsPlaybackStopped(void);
 
