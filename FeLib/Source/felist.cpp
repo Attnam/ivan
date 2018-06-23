@@ -179,7 +179,6 @@ uint felist::Draw()
     return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;DBGLN;
-  globalwindowhandler::SetKeyTimeout(10,'.'); //using the min millis value grants mouse will be updated most often possible
 
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
@@ -392,7 +391,6 @@ uint felist::Draw()
         break;
   #endif
 
-  globalwindowhandler::ResetKeyTimeout();
   return Return;
 }
 
