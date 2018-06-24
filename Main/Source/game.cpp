@@ -1254,6 +1254,20 @@ lsquare* game::GetHighlightedMapNoteLSquare()
   if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
   return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
 }
+bool validateV2(v2 v2Chk, bitmap* buffer=NULL, v2 Border=v2()){
+  if(v2Chk.X<0 || v2Chk.Y<0)return false;
+
+  if(buffer!=NULL){
+    if(v2Chk.X > buffer->GetSize().X || v2Chk.Y > buffer->GetSize().Y)return false;
+
+    if(!Border.Is0()){
+      v2 ending = v2Chk+Border;
+      if(ending.X>buffer->GetSize().X || ending.Y>buffer->GetSize().Y)return false;
+    }
+  }
+
+  return true;
+}
 void game::DrawMapNotesOverlay(bitmap* buffer)
 {
   if(!bDrawMapOverlayEnabled)return;
@@ -1325,8 +1339,10 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
 
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
-    buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
-    buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
+    if(validateV2(bkgTL,buffer,bkgB)){
+      buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+      buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
+    }
 
     vMapNotes[i].v2LineHook=vMapNotes[i].basePos;
     if(bHookAtRight)vMapNotes[i].v2LineHook.X+=w;
@@ -1339,11 +1355,13 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
   }
 
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
-    buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
+      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
   }
 
   for(int i=0;i<vMapNotes.size();i++)
-    FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
+    if(validateV2(vMapNotes[i].basePos,buffer))
+      FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
 void game::DrawMapOverlay(bitmap* buffer)
