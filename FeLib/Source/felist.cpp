@@ -253,6 +253,7 @@ uint felist::Draw()
   bool bClearKeyBufferOnce=false;
   graphics::PrepareBeforeDrawingFelist();
   v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
+  globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
   int iDrawCount=0;
   for(;;)
   {
