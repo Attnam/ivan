@@ -5011,7 +5011,7 @@ void game::AutoPlayModeApply(){
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
   globalwindowhandler::SetPlayInBackground(bPlayInBackground);
-  globalwindowhandler::SetGetKeyTimeout(iTimeout,'.');//,'~');
+  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 
 void game::IncAutoPlayMode() {

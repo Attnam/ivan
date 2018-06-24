@@ -40,10 +40,10 @@ struct mouseclick{
 class globalwindowhandler
 {
  public:
-  static void ResetGetKeyTimeout(){SetGetKeyTimeout(0,'.');}
-  static void CheckGetKeyTimeout();
-  static truth IsGetKeyTimeoutEnabled();
-  static void SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
+  static void CheckKeyTimeout();
+  static truth IsKeyTimeoutEnabled();
+  static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static mouseclick ConsumeMouseEvent();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);

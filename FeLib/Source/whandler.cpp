@@ -274,7 +274,7 @@ long keyTimeoutRequestedAt;
  * This is intended to remain active ONLY until the user hits any key.
  * iTimeoutMillis can be 0 or >=10
  */
-void globalwindowhandler::SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
+void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
 {
   if(iTimeoutMillis<0)ABORT("invalid negative timeout %d",iTimeoutMillis);
 
@@ -283,11 +283,11 @@ void globalwindowhandler::SetGetKeyTimeout(int iTimeoutMillis,int iDefaultReturn
 
   iTimeoutDefaultKey=iDefaultReturnedKey;
 }
-truth globalwindowhandler::IsGetKeyTimeoutEnabled()
+truth globalwindowhandler::IsKeyTimeoutEnabled()
 {
   return iTimeoutDelay>0;
 }
-void globalwindowhandler::CheckGetKeyTimeout()
+void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
     if(!KeyBuffer.empty()){ // user pressed some key
@@ -344,7 +344,7 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
   keyTimeoutRequestedAt=clock();
   int iDelayMS=iDefaultDelayMS;
   for(;;){
-    CheckGetKeyTimeout();
+    CheckKeyTimeout();
 
     if(!KeyBuffer.empty())
     {
