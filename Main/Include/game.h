@@ -367,7 +367,13 @@ class game
   static void PlayDefeatMusic();
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
+  static void RefreshDrawMapOverlay();
   static void DrawMapOverlay(bitmap* =NULL);
+  static void DrawMapNotesOverlay(bitmap* =NULL);
+  static lsquare* GetHighlightedMapNoteLSquare();
+  static bool ToggleShowMapNotes();
+  static int RotateMapNotes();
+  static char MapNoteToken();
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
