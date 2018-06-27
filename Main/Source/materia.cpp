@@ -50,12 +50,12 @@ festring material::GetName(truth Articled, truth Adjective) const
   return Name;
 }
 
-material* material::TakeDipVolumeAway()
+material* material::TakeDipVolumeAway(long MaxVolume)
 {
-  if(Volume > 500)
+  if(Volume > MaxVolume)
   {
-    EditVolume(-500);
-    return SpawnMore(500);
+    EditVolume(-MaxVolume);
+    return SpawnMore(MaxVolume);
   }
   else
     return MotherEntity->RemoveMaterial(this);

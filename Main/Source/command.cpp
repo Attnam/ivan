@@ -70,6 +70,7 @@ command* commandsystem::Command[] =
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
+  new command(&Taste, "taste", 'T', 'T', 'T', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
@@ -585,7 +586,24 @@ truth commandsystem::Drink(character* Char)
   return b;
 }
 
-truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
+truth commandsystem::Taste(character* Char)
+{
+  if(!Char->CheckConsume(CONST_S("drink")))
+    return false;
+
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
+  {
+    if(Square->GetOLTerrain()->Drink(Char))
+      return true;
+  }
+
+  return Consume(Char, "sip", "sipping", &item::IsDrinkable, true);
+}
+
+truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, cchar* ConsumeVerbPresentParticiple,
+                             sorter Sorter, truth nibbling)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -606,7 +624,7 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
-  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerb + CONST_S("ing")) : false;
+  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerbPresentParticiple, nibbling) : false;
 }
 
 truth commandsystem::ShowInventory(character* Char)
@@ -886,7 +904,7 @@ truth commandsystem::Dip(character* Char)
           return false;
         }
 
-        Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        Item->DipInto(DipTo->CreateDipLiquid(Item->DipIntoVolume()), Char);
         return true;
       }
     }
