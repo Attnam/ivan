@@ -245,7 +245,10 @@ truth configsystem::NormalCycleChangeInterface(cycleoption* O)
 }
 void stringoption::SaveValue(std::ofstream& SaveFile) const
 {
-  SaveFile << '\"' << Value.CStr() << '\"';
+  festring String;
+  String << Value;
+  SEARCH_N_REPLACE(String, "\"", "\\\"");
+  SaveFile << '\"' << String.CStr() << '\"';
 }
 
 void stringoption::LoadValue(inputfile& SaveFile)
