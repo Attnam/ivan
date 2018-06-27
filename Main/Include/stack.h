@@ -94,6 +94,7 @@ class stack
   truth SortedItems(ccharacter*, sorter) const;
   void BeKicked(character*, int, int);
   void Polymorph(character*);
+  void Alchemize(character*);
   void CheckForStepOnEffect(character*);
   lsquare* GetLSquareTrulyUnder(int) const;
   void ReceiveDamage(character*, int, int, int = YOURSELF);
@@ -154,6 +155,9 @@ class stack
   ccharacter* FindCarrier() const;
   void Haste();
   void Slow();
+  static void SetStandardPageLength(uint l){ StandardPageLength = l; };
+  static uint GetStandardPageLength(){ return StandardPageLength; };
+  static uint GetDefaultPageLength(){ return 12; };
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, ccharacter*, cfestring&, int, int, sorter) const;
@@ -169,6 +173,7 @@ class stack
   col24 Emitation : 24;
   ulong Flags : 8;
   int Items;
+  static uint StandardPageLength;
 };
 
 #endif

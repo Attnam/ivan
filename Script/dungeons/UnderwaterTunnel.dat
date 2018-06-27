@@ -21,8 +21,8 @@
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-  Levels = 4;
-  Description = "underwater tunnel";
+  Levels = 5;
+  Description = "Underwater Tunnel";
   ShortDescription = "UT";
 
   LevelDefault
@@ -52,11 +52,12 @@ Dungeon UNDER_WATER_TUNNEL;
     BackGroundType = GRAY_FRACTAL;
     IsCatacomb = false;
     EarthquakesAffectTunnels = true;
-    AudioPlayList = 
+    AudioPlayList =
     {
-      2,
+      3,
       "Dungeon.mid",
-      "Dungeon2.mid";
+      "Dungeon2.mid",
+      "Dungeon3.mid";
     }
 
     Square, Random;
@@ -92,6 +93,87 @@ Dungeon UNDER_WATER_TUNNEL;
       GenerateWindows = false;
       UseFillSquareWalls = false;
       Flags = 0;
+    }
+  }
+
+  RandomLevel 0:1;
+  {
+    Room
+    {
+      AllowBoobyTrappedDoors = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CHAIR);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(ANVIL);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(FORGE);
+      }
+    }
+  }
+
+  RandomLevel 0:2; /* Vault */
+  {
+    Room
+    {
+      WallSquare = solidterrain(GROUND), 0;
+      FloorSquare = solidterrain(GROUND), 0;
+      DoorSquare = solidterrain(GROUND), 0;
+      GenerateLanterns = false;
+      GenerateFountains = false;
+      GenerateDoor = false;
+      AltarPossible = false;
+      Size = 5,5;
+      Flags = NO_MONSTER_GENERATION;
+
+      OTerrainMap
+      {
+        Pos = 1,1;
+        Size = 3,3;
+        Types
+        {
+          # = SAND_STONE earth;
+        }
+      }
+      {
+        ###
+        #.#
+        ###
+      }
+
+      Square, Pos 2,2;
+      {
+        Items == RATA_WOOD itemcontainer(CHEST|HEXAGONAL_LOCK)
+        {
+          Parameters = LOCKED;
+          ItemsInside = { 3, Random { MinPrice = 300; Chance = 75; Category = WEAPON|SHIELD; },
+                             Random { MinPrice = 300; Chance = 75; Category = HELMET|CLOAK|BODY_ARMOR|GAUNTLET|BELT|BOOT; },
+                             Random { Category = FOOD|POTION|VALUABLE; }
+                        }
+        }
+        Character = golem(BAMBOO_WOOD);
+      }
+
+      Square, Pos 0,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,0;
+      {
+        AttachRequired = true;
+      }
+      Square, Pos 4,4;
+      {
+        AttachRequired = true;
+      }
     }
   }
 
@@ -305,16 +387,16 @@ Dungeon UNDER_WATER_TUNNEL;
   {
     Rooms = 17:30;
     Size = 64, 36;
+    Description = "crystal cave";
+    ShortDescription = "Crystal Cave";
     LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
-    FillSquare = solidterrain(DARK_GRASS_TERRAIN), BASALT earth;
+    FillSquare = solidterrain(GROUND), ROCK_CRYSTAL earth;
     TunnelSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
     DifficultyBase = 100;
     DifficultyDelta = 0;
     MonsterAmountBase = 25;
     MonsterGenerationIntervalBase = 60;
     MonsterGenerationIntervalDelta = 0;
-    ItemMinPriceBase = 70;
-    ItemMinPriceDelta = 0;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 40;
@@ -327,7 +409,7 @@ Dungeon UNDER_WATER_TUNNEL;
       Pos = 2:XSize-5,2:YSize-5;
       GenerateLanterns = false;
       Shape = ROUND_CORNERS;
-      WallSquare = solidterrain(DARK_GRASS_TERRAIN), BASALT earth;
+      WallSquare = solidterrain(GROUND), ROCK_CRYSTAL earth;
       FloorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
       DoorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
       AltarPossible = false;
@@ -335,26 +417,34 @@ Dungeon UNDER_WATER_TUNNEL;
 
     Room
     {
+      Flags = NO_MONSTER_GENERATION;
+
       Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
         OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; }
         EntryIndex = STAIRS_UP;
       }
 
-      /*Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
-        OTerrain = stairs(STAIRS_DOWN);
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
         EntryIndex = STAIRS_DOWN;
-      }*/
+      }
     }
 
     Room
     {
       DivineMaster = TERRA;
+      Flags = NO_MONSTER_GENERATION;
 
       Square, Random HAS_NO_OTERRAIN;
       {
         OTerrain = BASALT altar(TERRA);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(HOLY_TREE);
       }
     }
 
@@ -374,6 +464,30 @@ Dungeon UNDER_WATER_TUNNEL;
     {
       OTerrain = boulder(2);
       Times = 5:15;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(BIRCH);
+      Times = 0:10;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(DWARF_BIRCH);
+      Times = 0:10;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(TEAK);
+      Times = 0:10;
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(PINE);
+      Times = 0:10;
     }
 
     Square, Random;
@@ -399,12 +513,206 @@ Dungeon UNDER_WATER_TUNNEL;
 
     Square, Random;
     {
-      Character = spider(LARGE);
-      Times = 15;
+      Character = bear(BLACK_BEAR);
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Character = bear(GRIZZLY_BEAR);
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Character = bear(CAVE_BEAR);
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Character = buffalo;
+      Times = 0:2;
+    }
+
+    Square, Random;
+    {
+      Character = magpie;
+      Times = 0:10;
+    }
+
+    Square, Random;
+    {
+      Character = skunk;
+      Times = 0:5;
+    }
+
+    Square, Random;
+    {
+      Character = largecat;
+      Times = 0:5;
+    }
+
+    Square, Random;
+    {
+      Character = lion;
+      Times = 0:5;
+    }
+
+    Square, Random;
+    {
+      Items == stone(SOL_STONE);
+      Times = 1:3;
     }
   }
 
-  /*Level SPIDER_LEVEL;
+  Level SPIDER_LEVEL;
   {
-  }*/
+    Rooms = 1;
+    Size = 64, 36;
+    Description = "spider nest";
+    ShortDescription = "Spider Nest";
+    LevelMessage = "The air feels stale and sickly, and you hear thousands of tiny scuttling feet.";
+    IgnoreDefaultSpecialSquares = true;
+    EarthquakesAffectTunnels = false;
+    FillSquare = solidterrain(GROUND), BASALT earth;
+    DifficultyBase = 100;
+    DifficultyDelta = 0;
+    MonsterAmountBase = 25;
+    MonsterGenerationIntervalBase = 30;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 40;
+    EnchantmentPlusChanceDelta = 0;
+    LOSModifier = 10;
+
+    Room
+    {
+      Size = 59,32;
+      Pos = 2,2;
+      GenerateLanterns = false;
+      AltarPossible = false;
+      GenerateTunnel = false;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      WallSquare = solidterrain(GROUND), BASALT earth;
+      FloorSquare = solidterrain(SAND_TERRAIN), 0;
+      DoorSquare = solidterrain(SAND_TERRAIN), 0;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = true;
+      Flags = 0;
+
+      OTerrainMap
+      {
+        Size = 60, 32;
+        Pos = 0, 0;
+        Types
+        {
+          # = BASALT earth;
+          x = ADAMANT wall(BRICK_FINE);
+          + = ADAMANT door { Parameters = LOCKED; }
+        }
+      }
+      {
+        ############################################################
+        ####..######.....#######################..........#.....#..#
+        ##.....#.###.......###################....................##
+        #..................###########..#...##............#......###
+        #.......####........###########.......#..................###
+        #........###........########..............................##
+        ##......#.##.........#######..........#..................###
+        ####.................#######...........#####.#.........#.###
+        ####..#.............##########.........#######..........####
+        ######..............##########......###########.........####
+        #####.............###########......############..##.......##
+        ####..............#.##########........#########...##.......#
+        #####................######...........########..####.......#
+        ######................#####..........##########.#.##.......#
+        ########...........###..####.........###########..####.....#
+        ########..........#####...##..........##########..#######.##
+        #######.........########..............########.##.#.##..#..#
+        #######......##.##########.............######..#....##...#.#
+        ########..#.#################..........####.........#......#
+        ########..###################.........#####................#
+        ########.###################............##...............###
+        ######...###################...............................#
+        ######..####################...............................#
+        ######..##############..###...........#..................###
+        ######..#############...###..........##......#.........#####
+        #####...###########.....##.........###.......##.........####
+        ####...##########.........#####....###........##........####
+        ##......#######..........#######..###.........###......#####
+        #.......######..#........############.........####..#..#####
+        #.......######...........##############.......####..##.#####
+        ##.....#########.......#..###########...###..###############
+        ############################################################
+      }
+
+      /* Square, Pos 58, 1;
+      {
+        OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 5; }
+        EntryIndex = STAIRS_DOWN;
+      } */
+
+      Square, BoundedRandom 1, 27, 7, 30, HAS_NO_OTERRAIN;
+      {
+        OTerrain = stairs(STAIRS_UP) { AttachedArea = 3; }
+        EntryIndex = STAIRS_UP;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = boulder(1);
+        Times = 5:15;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = boulder(2);
+        Times = 5:15;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        OTerrain = decoration(CACTUS);
+        Times = 15;
+      }
+
+      Square, Random;
+      {
+        Character = spider(LARGE);
+        Times = 20;
+      }
+
+      Square, Random;
+      {
+        Character = spider(GIANT);
+        Times = 50;
+      }
+
+      Square, Random;
+      {
+        Character = spider(ARANEA);
+        Times = 30;
+      }
+
+      Square, Random;
+      {
+        Character = lobhse;
+      }
+
+      Square, Random;
+      {
+        Items == SPIDER_SILK bodyarmor(PLATE_MAIL);
+      }
+
+      Square, Random;
+      {
+        Items == taiaha(BROKEN);
+      }
+    }
+  }
 }

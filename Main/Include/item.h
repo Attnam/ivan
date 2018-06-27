@@ -131,11 +131,13 @@ struct itemdatabase : public databasebase
   truth CanBeBurned;
   truth CanBePiled;
   long Category;
+  int EnergyResistance;
   int FireResistance;
   int PoisonResistance;
   int ElectricityResistance;
   int AcidResistance;
   int StrengthModifier;
+  int SoundResistance;
   int FormModifier;
   int DefaultSize;
   long DefaultMainVolume;
@@ -247,18 +249,23 @@ class item : public object
   virtual liquid* CreateDipLiquid(long MaxVolume = 500) { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual int GetOfferValue(int) const;
-  virtual void Fly(character*, int, int);
+  virtual void Fly(character*, int, int, truth=false);
   int HitCharacter(character*, character*, int, double, int);
   virtual truth DogWillCatchAndConsume(ccharacter*) const { return false; }
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
+  virtual truth Alchemize(character*, stack*);
   virtual truth CheckPickUpEffect(character*) { return true; }
   virtual void StepOnEffect(character*) { }
   virtual truth IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(int);
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth IsExplosive() const { return false; }
+  virtual void SetLabel(cfestring& What);
+  virtual cfestring& GetLabel() const { return label; }
+  virtual void AddName(festring&, int) const;
+  virtual void AddName(festring& a, int b, int c) const {object::AddName(a,b,c);} //required because of AddName(festring&,int)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
@@ -320,10 +327,12 @@ class item : public object
   DATA_BASE_VALUE(int, WeaponCategory);
   DATA_BASE_TRUTH(IsAutoInitializable);
   DATA_BASE_VALUE(long, Category);
+  DATA_BASE_VALUE(int, EnergyResistance);
   DATA_BASE_VALUE(int, FireResistance);
   DATA_BASE_VALUE(int, PoisonResistance);
   DATA_BASE_VALUE(int, ElectricityResistance);
   DATA_BASE_VALUE(int, AcidResistance);
+  DATA_BASE_VALUE(int, SoundResistance);
   DATA_BASE_VALUE(int, StrengthModifier);
   virtual DATA_BASE_VALUE(int, FormModifier);
   DATA_BASE_VALUE(int, DefaultSize);
@@ -487,6 +496,7 @@ class item : public object
   virtual truth IsEncryptedScroll() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
+  virtual truth IsRuneSword() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;
@@ -625,7 +635,9 @@ class item : public object
   fluid** Fluid;
   int SquaresUnder;
   int LifeExpectancy;
+  festring label;
   ulong ItemFlags;
+  int iRotateFlyingThrownStep;
   virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 

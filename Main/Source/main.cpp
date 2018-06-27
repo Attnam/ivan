@@ -17,6 +17,14 @@
 #include <sys/farptr.h>
 #endif
 
+#ifndef WIN32
+#include <csignal>
+#include <cstring>
+#include <cstdlib>
+#include <execinfo.h>
+#include <unistd.h>
+#endif
+
 #include "game.h"
 #include "database.h"
 #include "feio.h"
@@ -30,8 +38,36 @@
 #include "proto.h"
 #include "audio.h"
 
+#include "dbgmsgproj.h"
+
+#ifndef WIN32
+void CrashHandler(int Signal)
+{
+  globalerrorhandler::DumpStackTraceToStdErr(Signal);
+  exit(1);
+}
+#endif
+
+void SkipGameScript(inputfile* pSaveFile){
+  gamescript* gs=0;
+  (*pSaveFile) >> gs; //dummy just to "seek" for next binary data TODO if dungeon and level was saved before it, this would not be necessary... re-structuring the savegame file (one day) would be good.
+}
+
 int main(int argc, char** argv)
 {
+#ifndef WIN32
+  signal(SIGABRT, CrashHandler);
+  signal(SIGBUS, CrashHandler);
+  signal(SIGFPE, CrashHandler);
+  signal(SIGILL, CrashHandler);
+  signal(SIGINT, CrashHandler);
+  signal(SIGSEGV, CrashHandler);
+  signal(SIGSYS, CrashHandler);
+  signal(SIGTERM, CrashHandler);
+  signal(SIGTRAP, CrashHandler);
+  signal(SIGQUIT, CrashHandler);
+#endif
+
   if(argc > 1 && festring(argv[1]) == "--version")
   {
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
@@ -47,7 +83,7 @@ int main(int argc, char** argv)
 
 #endif /* __DJGPP__ */
 
-  audio::Init();
+  audio::Init(game::GetMusicDir());
 
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
@@ -62,6 +98,7 @@ int main(int argc, char** argv)
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
+  game::PrepareStretchRegionsLazy();
 
   /* Set off the main menu music */
   audio::SetPlaybackStatus(0);
@@ -69,13 +106,15 @@ int main(int argc, char** argv)
   audio::LoadMIDIFile("mainmenu.mid", 0, 100);
   audio::SetPlaybackStatus(audio::PLAYING);
 
-  for(;;)
+  for(int running = 1; running;)
   {
     int Select = iosystem::Menu(igraph::GetMenuGraphic(),
                                 v2(RES.X / 2, RES.Y / 2 - 20),
                                 CONST_S("\r"),
-                                CONST_S("Start Game\rContinue Game\r"
-                                        "Configuration\rHighscores\r"
+                                CONST_S("Start Game\r"
+                                        "Continue Game\r"
+                                        "Configuration\r"
+                                        "Highscores\r"
                                         "Quit\r"),
                                 LIGHT_GRAY,
                                 CONST_S("Released under the GNU\r"
@@ -98,11 +137,12 @@ int main(int argc, char** argv)
       break;
      case 1:
       {
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
+        iosystem::SetSkipSeekSave(&SkipGameScript);
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion(), ivanconfig::IsAllowImportOldSavegame());
 
         if(LoadName.GetSize())
         {
-          LoadName.Resize(LoadName.GetSize() - 4);
+          LoadName.Resize(LoadName.GetSize() - 4); // - ".sav"
 
           if(game::Init(LoadName))
           {
@@ -120,7 +160,7 @@ int main(int argc, char** argv)
       break;
      case 3:
       {
-        highscore HScore;
+        highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
         HScore.Draw();
         break;
       }
@@ -134,7 +174,12 @@ int main(int argc, char** argv)
 
 #endif
 
-      return 0;
+      running = 0;
+      break;
     }
   }
+
+  msgsystem::DeInit();
+
+  return 0;
 }

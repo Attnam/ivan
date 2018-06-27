@@ -12,12 +12,15 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 int bodypart::GetArticleMode() const { return IsUnique() ? FORCE_THE : 0; }
 truth bodypart::IsAlive() const { return MainMaterial->GetBodyFlags() & IS_ALIVE; }
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 col16 bodypart::GetMaterialColorA(int) const { return GetMainMaterial()->GetSkinColor(); }
 truth bodypart::IsWarm() const { return MainMaterial->GetBodyFlags() & IS_WARM || IsBurning(); }
+truth bodypart::IsWarmBlooded() const { return MainMaterial->GetBodyFlags() & IS_WARM_BLOODED; }
 truth bodypart::UseMaterialAttributes() const
 { return MainMaterial->GetBodyFlags() & USE_MATERIAL_ATTRIBUTES || !Master || Master->AlwaysUseMaterialAttributes(); }
 truth bodypart::CanRegenerate() const { return MainMaterial->GetBodyFlags() & CAN_REGENERATE; }
@@ -27,6 +30,8 @@ lsquare* bodypart::GetLSquareUnder(int I) const
 { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
 item* bodypart::GetExternalBodyArmor() const { return GetHumanoidMaster()->GetBodyArmor(); }
 item* bodypart::GetExternalCloak() const { return GetHumanoidMaster()->GetCloak(); }
+item* bodypart::GetExternalHelmet() const { return GetHumanoidMaster()->GetHelmet(); }
+item* bodypart::GetExternalBelt() const { return GetHumanoidMaster()->GetBelt(); }
 truth bodypart::AllowFluidBe() const { return !Master || !Master->IsPolymorphed(); }
 
 int head::GetBodyPartIndex() const { return HEAD_INDEX; }
@@ -193,14 +198,14 @@ int leg::GetTotalResistance(int Type) const
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BaseBiteStrength;
+  SaveFile << BaseBiteStrength << BonusBiteStrength;
   SaveFile << HelmetSlot << AmuletSlot;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BaseBiteStrength;
+  SaveFile >> BaseBiteStrength >> BonusBiteStrength;
   SaveFile >> HelmetSlot >> AmuletSlot;
 }
 
@@ -249,7 +254,7 @@ void leg::Load(inputfile& SaveFile)
 }
 
 truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
-{
+{DBG1(Damager);
   if(Master)
   {
     if(Type & POISON && !IsAlive())
@@ -265,7 +270,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int Dire
 
     EditHP(1, -Damage);
 
-    if(Type & DRAIN && IsAlive())
+    if(Damager!=NULL && (Type & DRAIN) && IsAlive())
       for(int c = 0; c < Damage; ++c)
         Damager->HealHitPoint();
 
@@ -498,7 +503,10 @@ void head::CalculateDamage()
   if(!Master)
     return;
 
-  BiteDamage = 7.07e-6 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  if(Master->StateIsActivated(VAMPIRISM))
+    BiteDamage = 7.07e-6 * (GetBaseBiteStrength() + GetBonusBiteStrength()) * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  else
+    BiteDamage = 7.07e-6 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void head::CalculateToHitValue()
@@ -1171,6 +1179,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 void head::InitSpecialAttributes()
 {
   BaseBiteStrength = Master->GetBaseBiteStrength();
+  BonusBiteStrength = Master->GetBonusBiteStrength();
 }
 
 void arm::InitSpecialAttributes()
@@ -1655,7 +1664,7 @@ void arm::WieldedSkillHit(int Hits)
   }
 }
 
-head::head(const head& Head) : mybase(Head), BaseBiteStrength(Head.BaseBiteStrength)
+head::head(const head& Head) : mybase(Head), BaseBiteStrength(Head.BaseBiteStrength), BonusBiteStrength(Head.BonusBiteStrength)
 {
   HelmetSlot.Init(this, HELMET_INDEX);
   AmuletSlot.Init(this, AMULET_INDEX);
@@ -2077,6 +2086,14 @@ void arm::CalculateAttributeBonuses()
   {
     ApplyDexterityPenalty(GetExternalCloak());
     ApplyDexterityPenalty(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalHelmet());
+    ApplyStrengthBonus(GetExternalCloak());
+    ApplyStrengthBonus(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalBelt());
+    ApplyDexterityBonus(GetExternalHelmet());
+    ApplyDexterityBonus(GetExternalCloak());
+    ApplyDexterityBonus(GetExternalBodyArmor());
+    ApplyDexterityBonus(GetExternalBelt());
   }
 
   if(!UseMaterialAttributes())
@@ -2107,6 +2124,14 @@ void leg::CalculateAttributeBonuses()
   {
     ApplyAgilityPenalty(GetExternalCloak());
     ApplyAgilityPenalty(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalHelmet());
+    ApplyStrengthBonus(GetExternalCloak());
+    ApplyStrengthBonus(GetExternalBodyArmor());
+    ApplyStrengthBonus(GetExternalBelt());
+    ApplyAgilityBonus(GetExternalHelmet());
+    ApplyAgilityBonus(GetExternalCloak());
+    ApplyAgilityBonus(GetExternalBodyArmor());
+    ApplyAgilityBonus(GetExternalBelt());
   }
 
   if(!UseMaterialAttributes())
@@ -2160,6 +2185,30 @@ int arm::GetWieldedHitStrength() const
   }
 
   return HitStrength - Requirement;
+}
+
+void arm::ApplyStrengthBonus(item* Item)
+{
+  if(Item && Item->AffectsArmStrength())
+    StrengthBonus += Item->GetEnchantment() / 2;
+}
+
+void arm::ApplyDexterityBonus(item* Item)
+{
+  if(Item && Item->AffectsDexterity())
+    DexterityBonus += Item->GetEnchantment() / 2;
+}
+
+void leg::ApplyStrengthBonus(item* Item)
+{
+  if(Item && Item->AffectsLegStrength())
+    StrengthBonus += Item->GetEnchantment() / 2;
+}
+
+void leg::ApplyAgilityBonus(item* Item)
+{
+  if(Item && Item->AffectsAgility())
+    AgilityBonus += Item->GetEnchantment() / 2;
 }
 
 void arm::ApplyDexterityPenalty(item* Item)
@@ -2377,7 +2426,6 @@ truth arm::CheckIfWeaponTooHeavy(cchar* WeaponDescription) const
       else
         ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(),
                     Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
-
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
   }
@@ -3668,7 +3716,7 @@ truth bodypart::IsDestroyable(ccharacter*) const
 
 truth bodypart::DamageTypeCanScar(int Type)
 {
-  return !(Type == POISON || Type == DRAIN);
+  return !(Type == POISON || Type == DRAIN || Type == PSI);
 }
 
 void bodypart::GenerateScar(int Damage, int Type)

@@ -39,6 +39,7 @@ class msgsystem
   static void EnterBigMessageMode() { BigMessageMode = true; }
   static void LeaveBigMessageMode();
   static void Init();
+  static void DeInit();
   static void InitMessagesSinceLastKeyScan();
   static void ThyMessagesAreNowOld();
  private:
@@ -53,5 +54,29 @@ class msgsystem
   static bitmap* QuickDrawCache;
   static int LastMessageLines;
 };
+
+#ifndef NOSOUND
+#include "SDL_mixer.h"
+#include <vector>
+#include "festring.h"
+
+class soundsystem
+{
+ friend class msgsystem;
+
+ public:
+  static void playSound(festring Buffer);
+ 
+ private:
+  static int SoundState;
+  static void initSound();
+  static void deInitSound();
+  static std::vector<struct SoundFile> files;
+  static std::vector<struct SoundInfo> patterns;
+  static int addFile(festring filename);
+  static truth matches(festring Pattern, festring Buffer);
+  static struct SoundFile *findMatchingSound(festring Buffer);
+};
+#endif
 
 #endif

@@ -192,6 +192,25 @@ ITEM(scrollofteleportation, scroll)
   virtual void FinishReading(character*);
 };
 
+ITEM(scrolloffireballs, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+  virtual truth IsExplosive() const { return true; }
+};
+
+ITEM(scrollofearthquake, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
+ITEM(scrollofbodyswitch, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
 ITEM(scrollofcharging, scroll)
 {
  public:
@@ -291,6 +310,7 @@ ITEM(backpack, materialcontainer)
  public:
   virtual truth Apply(character*);
   virtual truth IsAppliable(ccharacter*) const { return true; }
+  virtual truth IsCloak(ccharacter*) const { return true; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth IsExplosive() const;
   virtual long GetTotalExplosivePower() const;
@@ -496,6 +516,7 @@ ITEM(skull, item)
 {
  public:
   virtual truth IsASkull() const { return true; }
+  virtual truth IsHelmet(ccharacter*) const { return true; }
 };
 
 ITEM(skullofxinroch, item)
@@ -503,6 +524,9 @@ ITEM(skullofxinroch, item)
  public:
   virtual truth IsASkull() const { return true; }
   virtual void Be() { }
+  virtual bool SpecialOfferEffect(int);
+  virtual truth AllowSpoil() const { return false; }
+  virtual truth Spoils() const { return false; }
  protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual col16 GetOutlineColor(int) const;
@@ -628,6 +652,22 @@ ITEM(pantheonbook, holybook)
   virtual col16 GetMaterialColorA(int) const;
 };
 
+ITEM(celestialmonograph, holybook)
+{
+ public:
+  virtual void FinishReading(character*);
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
+};
+
+ITEM(materialmanual, holybook)
+{
+ public:
+  virtual void FinishReading(character*);
+ protected:
+  virtual col16 GetMaterialColorA(int) const;
+};
+
 ITEM(gorovitscopyoflenin, item)
 {
  protected:
@@ -642,6 +682,75 @@ ITEM(firstbornchild, item)
   virtual truth Spoils() const { return false; } // temporary
  protected:
   virtual col16 GetMaterialColorB(int) const;
+};
+
+ITEM(ullrbone, item)
+{
+ public:
+  ullrbone() : TimesUsed(0), Charges(8) { }
+  virtual truth Zap(character*, v2, int);
+  virtual void ChargeFully(character*) { TimesUsed = 0; }
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void Be() { }
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  int TimesUsed;
+  int Charges;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
+ITEM(mango, item)
+{
+};
+
+ITEM(sausage, item)
+{
+};
+
+ITEM(cauldron, materialcontainer)
+{
+ public:
+  virtual item* BetterVersion() const;
+  virtual void DipInto(liquid*, character*);
+  virtual liquid* CreateDipLiquid();
+  virtual truth IsDippable(ccharacter*) const { return !SecondaryMaterial; }
+  virtual truth IsDipDestination(ccharacter*) const;
+  virtual truth IsExplosive() const;
+  virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual truth EffectIsGood() const;
+  virtual truth IsKamikazeWeapon(ccharacter*) const { return IsExplosive(); }
+ protected:
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
+  virtual truth AddAdjective(festring&, truth) const;
+};
+
+ITEM(trinket, item)
+{
+ public:
+  virtual material* RemoveMaterial(material* Material);
+  virtual truth Necromancy(character*);
+  virtual truth RaiseTheDead(character*);
+ protected:
+  virtual col16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorC(int) const;
+};
+
+ITEM(gastrap, itemtrap<materialcontainer>)
+{
+ public:
+  virtual void StepOnEffect(character*);
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth Apply(character* User);
+  virtual truth IsDangerous(ccharacter*) const { return Active; }
+  virtual truth CheckPickUpEffect(character*);
+ protected:
+  virtual truth AddAdjective(festring&, truth) const;
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
 };
 
 #endif

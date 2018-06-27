@@ -71,7 +71,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 //
   std::stack<inputfile *> infStack;
   infStack.push(&SaveFile);
-  while (!infStack.empty()) 
+  while (!infStack.empty())
   {
     inputfile *inFile = infStack.top();
     infStack.pop();
@@ -151,7 +151,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             ConfigDataBase->InitDefaults(Proto, ConfigNumber);
             TempConfig[Configs++] = ConfigDataBase;
             if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
-            for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word)) 
+            for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
               if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
             }
@@ -355,6 +355,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
   ADD_MEMBER(AcidResistance);
+  ADD_MEMBER(SoundResistance);
   ADD_MEMBER(IsUnique);
   ADD_MEMBER(ConsumeFlags);
   ADD_MEMBER(TotalVolume);
@@ -395,6 +396,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BaseUnarmedStrength);
   ADD_MEMBER(BaseBiteStrength);
   ADD_MEMBER(BaseKickStrength);
+  ADD_MEMBER(BonusBiteStrength);
   ADD_MEMBER(AttackStyle);
   ADD_MEMBER(CanUseEquipment);
   ADD_MEMBER(CanKick);
@@ -518,10 +520,12 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsPolymorphSpawnable);
   ADD_MEMBER(IsAutoInitializable);
   ADD_MEMBER(Category);
+  ADD_MEMBER(EnergyResistance);
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
   ADD_MEMBER(AcidResistance);
+  ADD_MEMBER(SoundResistance);
   ADD_MEMBER(StrengthModifier);
   ADD_MEMBER(FormModifier);
   ADD_MEMBER(DefaultSize);
@@ -741,10 +745,12 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Acidicity);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
+  ADD_MEMBER(SoftenedMaterial);
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(Stickiness);
   ADD_MEMBER(DisablesPanicWhenConsumed);
   ADD_MEMBER(FireResistance);
+  ADD_MEMBER(BlockESP);
 }
 
 #define ADD_BASE_VALUE(name)\

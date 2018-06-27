@@ -166,7 +166,7 @@ inline int GetMinColor24(col24 Color)
 #define FLIP 2
 #define ROTATE 4
 
-#define TRANSPARENT_COLOR 0xF81F
+#define TRANSPARENT_COLOR 0xF81F  // pink
 
 #define RED 0xF800
 #define GREEN 0x07E0
@@ -182,6 +182,9 @@ inline int GetMinColor24(col24 Color)
 
 #define NORMAL_LUMINANCE 0x808080
 
+#ifdef USE_SDL
+#include "SDL_version.h"
+#endif
 #if SDL_MAJOR_VERSION == 2 || !defined(__APPLE__)
 #define KEY_BACK_SPACE 0x08
 #else

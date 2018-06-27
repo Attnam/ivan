@@ -59,6 +59,12 @@ void area::Load(inputfile& SaveFile)
   SaveFile.Read(reinterpret_cast<char*>(FlagMap[0]), XSizeTimesYSize * sizeof(uchar));
 }
 
+v2 area::topLeftCorner=v2(16,32);
+int area::iOutlineThickness=2;
+
+int area::getOutlineThickness(){return iOutlineThickness;}
+v2 area::getTopLeftCorner(){return topLeftCorner;}
+
 void area::SendNewDrawRequest()
 {
   cint XMin = Max(game::GetCamera().X, 0);
@@ -71,13 +77,13 @@ void area::SendNewDrawRequest()
       Map[x][y]->SendStrongNewDrawRequest();
 
   igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
-  DOUBLE_BUFFER->DrawRectangle(14, 30,
-                               17 + (game::GetScreenXSize() << 4),
-                               33 + (game::GetScreenYSize() << 4),
+  DOUBLE_BUFFER->DrawRectangle(topLeftCorner.X-iOutlineThickness, topLeftCorner.Y-iOutlineThickness,
+                               17 + (game::GetScreenXSize() << 4), //outline of (possibly shrinked) dungeon area related to camera too
+                               33 + (game::GetScreenYSize() << 4), //outline of (possibly shrinked) dungeon area related to camera too
                                DARK_GRAY, true);
-  DOUBLE_BUFFER->Fill(16, 32,
-                      game::GetScreenXSize() << 4,
-                      game::GetScreenYSize() << 4,
+  DOUBLE_BUFFER->Fill(topLeftCorner.X, topLeftCorner.Y,
+                      game::GetScreenXSize() << 4, // unknown area (possibly shrinked) dungeon area related to camera too
+                      game::GetScreenYSize() << 4, // unknown area (possibly shrinked) dungeon area related to camera too
                       BLACK);
 }
 

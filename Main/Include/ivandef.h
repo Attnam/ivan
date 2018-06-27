@@ -122,7 +122,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 22
+#define STATES 32
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -139,13 +139,24 @@ const name##prototype name::ProtoType
 #define TELEPORT_CONTROL (1 << 12)
 #define PANIC (1 << 13)
 #define CONFUSED (1 << 14)
-#define PARASITIZED (1 << 15)
+#define PARASITE_TAPE_WORM (1 << 15)
 #define SEARCHING (1 << 16)
 #define GAS_IMMUNITY (1 << 17)
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
 #define HICCUPS (1 << 20)
 #define ETHEREAL_MOVING (1 << 21)
+#define VAMPIRISM (1 << 22)
+#define SWIMMING (1 << 23)
+#define DETECTING (1 << 24)
+#define POLYMORPH_LOCK (1 << 25)
+#define REGENERATION (1 << 26)
+#define DISEASE_IMMUNITY (1 << 27)
+#define TELEPORT_LOCK (1 << 28)
+#define FEARLESS (1 << 29)
+#define FASTING (1 << 30)
+#define PARASITE_MIND_WORM (1 << 31)
+
 
 #define TORSO 1
 #define HEAD 2
@@ -278,7 +289,7 @@ const name##prototype name::ProtoType
 #define WOBBLE_FREQ_SHIFT 4
 #define WOBBLE_FREQ_RANGE (3 << WOBBLE_FREQ_SHIFT)
 
-cv2 SILHOUETTE_SIZE(48, 64);
+cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 
 #define ITEM_CATEGORIES 18
 
@@ -381,6 +392,11 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define EFFECT_OMMEL_BONE 29
 #define EFFECT_MUSTARD_GAS 30
 #define EFFECT_MUSTARD_GAS_LIQUID 31
+#define EFFECT_VAMPIRISM 32
+#define EFFECT_PANACEA 33
+#define EFFECT_OMMEL_BLOOD 34
+#define EFFECT_PANIC 35
+#define EFFECT_TRAIN_WISDOM 36
 
 /* CEM = Consume End Message */
 
@@ -400,6 +416,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define CEM_GRAY_UNICORN_FLESH 13
 #define CEM_WHITE_UNICORN_FLESH 14
 #define CEM_OMMEL_BONE 15
+#define CEM_COCA_COLA 16
+#define CEM_LIQUID_HORROR 17
 
 /* HM = Hit Message */
 
@@ -499,6 +517,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define NO_MATERIALS 8
 #define NO_EQUIPMENT 16
 #define NO_SIGNALS 32
+#define NO_SEVERED_LIMBS 64
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2
@@ -529,7 +548,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define DARK_LEVEL 8
 #define OREE_LAIR 12
 
-#define DUAL_ENNER_BEAST_LEVEL 7
+#define DUAL_ENNER_BEAST_LEVEL 5
+#define NECRO_CHAMBER_LEVEL 6
 
 /* stack::DrawContents flags */
 
@@ -576,7 +596,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define HIT 1
 #define CATCHED 2
 
-#define BEAM_EFFECTS 13
+#define BEAM_EFFECTS 15
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -591,6 +611,8 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define BEAM_DOOR_CREATION 10
 #define BEAM_ACID_RAIN 11
 #define BEAM_NECROMANCY 12
+#define BEAM_WEBBING 13
+#define BEAM_ALCHEMY 14
 
 #define BEAM_STYLES 3
 
@@ -660,7 +682,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 
 #define LOCK_BITS 0xFC00
 
-#define BROKEN_LOCK S_LOCK_ID
+#define BROKEN_LOCK 32768
 
 /* Normal lock types, which can be randomized */
 
@@ -1093,6 +1115,7 @@ cv2 SILHOUETTE_SIZE(48, 64);
 #define CAN_HAVE_PARASITE 4
 #define USE_MATERIAL_ATTRIBUTES 8
 #define CAN_REGENERATE 16
+#define IS_WARM_BLOODED 32
 
 /* InteractionFlags */
 #define CAN_BURN 1

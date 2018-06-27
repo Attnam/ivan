@@ -31,7 +31,7 @@ Dungeon NEW_ATTNAM;
     FillSquare = solidterrain(GRASS_TERRAIN), 0;
     Size = 55, 55;
     GenerateMonsters = false;
-    Rooms = 6:10;
+    Rooms = 8:12;
     Items = 0;
     IsOnGround = true;
     TeamDefault = NEW_ATTNAM_TEAM;
@@ -47,7 +47,7 @@ Dungeon NEW_ATTNAM;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
     EarthquakesAffectTunnels = true;
-    AudioPlayList = 
+    AudioPlayList =
     {
       1,
       "Empty.mid";
@@ -81,7 +81,7 @@ Dungeon NEW_ATTNAM;
       Type = ROOM_BANANA_DROP_AREA;
       Pos = 4,4;
       Size = 17,19;
-      WallSquare = solidterrain(GRASS_TERRAIN), EBONY_WOOD wall(BRICK_FINE);
+      WallSquare = BALSA_WOOD solidterrain(PARQUET), EBONY_WOOD wall(BRICK_FINE);
       FloorSquare = BALSA_WOOD solidterrain(PARQUET), 0;
       GenerateDoor = false;
       DivineMaster = SILVA;
@@ -95,20 +95,25 @@ Dungeon NEW_ATTNAM;
         Types
         {
           _ = 0;
-          # = 0;
+          # = EBONY_WOOD wall(BRICK_FINE);
           p = GOLD wall(BRICK_PROPAGANDA);
           $ = GOLD wall(BRICK_FINE);
           ^ = decoration(HOLY_TREE);
           c = decoration(COUCH);
+          b = decoration(DOUBLE_BED);
+          s = decoration(SHACKLES);
+          O = decoration(OVEN);
+          t = BALSA_WOOD decoration(TABLE);
+          C = BALSA_WOOD olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, FABRIC cloak, FABRIC whip; } }
           d = EBONY_WOOD door;
           o = EBONY_WOOD wall(BRICK_FINE|WINDOW);
         }
       }
       {
-        .#o##o##o##o##o#.
-        ##.............##
-        o...............o
-        #.....$$p$$.....#
+        .#o##o#####o##o#.
+        ##.....C#t.....##
+        o..bs...#.......o
+        #.....$$p$$O....#
         #...$$$___$$$...#
         #..$$_______$$..#
         o..$____c____$..o
@@ -117,7 +122,7 @@ Dungeon NEW_ATTNAM;
         o..$$_______$$..o
         #...$$_____$$...#
         #....$$___$$....#
-        o.....$___$.....o
+        ###d##$___$##d###
         #.....$___$.....#
         #.....$___$.....#
         #.....$___$.....#
@@ -187,31 +192,38 @@ Dungeon NEW_ATTNAM;
 
       ItemMap
       {
-        Pos = 3,3;
-        Size = 11,13;
+        Pos = 0,0;
+        Size = 17,19;
         Types
         {
           # == 0;
-          _ == 0;
           2 == lantern { SquarePosition = DOWN; }
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
+          c == GOLD itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, stone { Times = 0:10; }, GOLD banana; } }
+          Y == trinket(LARGE_CLOCK);
         }
       }
       {
-        ...#2#2#...
-        .###___###.
-        ##_______##
-        #_________#
-        3_________4
-        #_________#
-        #3_______4#
-        .##_____##.
-        ..##___##..
-        ...#___#...
-        ...#___#...
-        ...#___#...
-        ...2___2...
+        .###2#######2###.
+        ##......#......##
+        #......c#.......#
+        #.....#2#2##....#
+        #...###...###...#
+        #..##.......##..#
+        #..4.........3..#
+        #..3.........4..#
+        #..4.........3..#
+        #..#3.......4#..#
+        #...##.....##...#
+        #...Y##...##....#
+        ###.###...###.###
+        #.....#...#.....#
+        #.....#...#.....#
+        #.....2...2.....#
+        #...............#
+        ##.............##
+        .#######.#######.
       }
     }
 
@@ -271,11 +283,12 @@ Dungeon NEW_ATTNAM;
           p = wall(BRICK_PRIMITIVE_PROPAGANDA);
           o = wall(BRICK_PRIMITIVE|WINDOW);
           d = BALSA_WOOD door(BROKEN_LOCK);
+          b = decoration(CHEAP_BED);
         }
       }
       {
         #p##
-        #..#
+        #b.#
         #..#
         #do#
       }
@@ -312,13 +325,14 @@ Dungeon NEW_ATTNAM;
           p = TEAK_WOOD wall(BRICK_PRIMITIVE_PROPAGANDA);
           o = TEAK_WOOD wall(BRICK_PRIMITIVE|WINDOW);
           d = TEAK_WOOD door;
+          c = decoration(CHAIR);
         }
       }
       {
         .##p##.
         ##...##
         #.....#
-        o.....o
+        o..c..o
         #.....#
         ##...##
         .##d##.
@@ -355,12 +369,18 @@ Dungeon NEW_ATTNAM;
       Pos = 25,20;
       Size = 4,3;
       GenerateDoor = false;
-      DivineMaster = SILVA;
       GenerateWindows = false;
+      DivineMaster = SILVA;
+      FloorSquare = solidterrain(FLOOR), 0;
 
       Square, Pos 2, 1;
       {
         Character = priest(SILVA) { Flags = IS_MASTER; }
+      }
+
+      Square, Pos 1, 2;
+      {
+        GTerrain = solidterrain(FLOOR);
       }
 
       OTerrainMap
@@ -373,11 +393,47 @@ Dungeon NEW_ATTNAM;
           p = wall(BRICK_PRIMITIVE_PROPAGANDA);
           o = wall(BRICK_PRIMITIVE|WINDOW);
           d = BALSA_WOOD door;
+          c = decoration(CHAIR);
         }
       }
       {
         #p##
-        #..o
+        #.co
+        #d##
+      }
+    }
+
+    Room
+    {
+      Size = 4, 4;
+      Pos = 49, 2;
+      GenerateDoor = false;
+      GenerateWindows = false;
+      FloorSquare = solidterrain(FLOOR), 0;
+
+      Square, Pos 1, 3;
+      {
+        GTerrain = solidterrain(FLOOR);
+      }
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 4,4;
+        Types
+        {
+          # = 0;
+          o = wall(BRICK_PRIMITIVE|WINDOW);
+          d = BALSA_WOOD door;
+          b = decoration(CHEAP_BED);
+          c = BALSA_WOOD decoration(CHAIR);
+          t = BALSA_WOOD decoration(TABLE);
+        }
+      }
+      {
+        ####
+        otc#
+        #.b#
         #d##
       }
     }
@@ -403,6 +459,17 @@ Dungeon NEW_ATTNAM;
     {
       OTerrain = decoration(PALM);
       Times = 100;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(BANANA_TREE);
+      Times = 0:10;
+    }
+
+    Square, BoundedRandom 1, 46, 44, 53, HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(WELL);
     }
 
     Square, Pos 20, 44;
@@ -499,7 +566,7 @@ Dungeon NEW_ATTNAM;
   Level 1;
   {
     Description = "New Attnam's sumo wrestling arena";
-    ShortDescription = "SumoArena";
+    ShortDescription = "Sumo Arena";
     FillSquare = solidterrain(GROUND), MORAINE earth;
     Size = 55, 55;
     Rooms = 1;

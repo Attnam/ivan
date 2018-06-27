@@ -44,11 +44,13 @@ EXTENDED_SYSTEM_SPECIALIZATIONS(olterrain)(0, 0, "olterrain");
 #include "fluid.h"
 #include "nonhuman.h"
 #include "smoke.h"
+#include "hiteffect.h"
 #include "save.h"
 #include "allocate.h"
 #include "whandler.h"
 #include "rain.h"
 #include "balance.h"
+#include "traps.h"
 
 #include "level.cpp"
 #include "lsquare.cpp"

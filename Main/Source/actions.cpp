@@ -243,11 +243,23 @@ void dig::Handle()
 
   int Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
   Terrain->EditHP(-Max(Damage, 1));
+
+  /* Save these here because the EditNP call below can cause 'this' to be terminated
+     and deleted, if the player decides to stop digging because of becoming hungry. */
+
+  truth MoveDigger = this->MoveDigger;
+  ulong RightBackupID = this->RightBackupID;
+  ulong LeftBackupID = this->LeftBackupID;
+
   Actor->EditExperience(ARM_STRENGTH, 200, 1 << 5);
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-500);
 
-  if(Terrain->GetHP() <= 0)
+  truth TerrainDestroyed = Terrain->GetHP() <= 0;
+  truth AlreadyTerminated = Actor->GetAction() != this;
+  truth StoppedDigging = TerrainDestroyed || AlreadyTerminated;
+
+  if(TerrainDestroyed)
   {
     if(Square->CanBeSeenByPlayer())
       ADD_MESSAGE("%s", Terrain->GetDigMessage().CStr());
@@ -259,6 +271,12 @@ void dig::Handle()
     if(!Actor->IsEnabled())
       return;
 
+    if(!AlreadyTerminated)
+      Terminate(true);
+  }
+
+  if(StoppedDigging)
+  {
     if(MoveDigger && Actor->GetMainWielded())
       Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
@@ -277,10 +295,9 @@ void dig::Handle()
       LeftBackup->RemoveFromSlot();
       Actor->SetLeftWielded(LeftBackup);
     }
-
-    Terminate(true);
   }
-  else
+
+  if(!TerrainDestroyed)
     game::DrawEverything();
 }
 

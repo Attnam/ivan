@@ -15,8 +15,6 @@
 
 #include "lterra.h"
 
-class ghost;
-
 OLTERRAIN(wall, olterrain)
 {
 };
@@ -264,6 +262,15 @@ OLTERRAIN(ironmaiden, olterrain)
  protected:
   virtual v2 GetBitmapPos(int) const;
   truth Opened;
+};
+
+OLTERRAIN(christmastree, olterrain)
+{
+ public:
+  virtual int GetSparkleFlags() const;
+ protected:
+  virtual int GetClassAnimationFrames() const;
+  virtual v2 GetBitmapPos(int) const;
 };
 
 #endif

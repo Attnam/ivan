@@ -50,7 +50,9 @@ class felist
   uint GetSelected() const { return Selected; }
   void SetSelected(uint What) { Selected = What; }
   void EditSelected(int What) { Selected += What; }
-  truth DrawPage(bitmap*) const;
+  static void SetDefaultEntryImageSize(v2 v2Size){v2DefaultEntryImageSize=v2Size;}
+  static bool IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos);
+  truth DrawPage(bitmap*, v2* pv2FinalPageSize) const;
   void Pop();
   static void CreateQuickDrawFontCaches(rawbitmap*, col16, uint);
   void PrintToFile(cfestring&);
@@ -64,6 +66,11 @@ class felist
   void SetUpKey(uint What) { UpKey = What; }
   void SetDownKey(uint What) { DownKey = What; }
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
+  static truth isAnyFelistCurrentlyDrawn();
+  static bool PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg);
+  static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
+  static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
+  void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:
   void DrawDescription(bitmap*) const;
   std::vector<felistentry*> Entry;
@@ -79,6 +86,11 @@ class felist
   uint UpKey;
   uint DownKey;
   entrydrawer EntryDrawer;
+  v2 v2FinalPageSize;
+  static v2 v2SelectedPos;
+  static col16 colSelectedBkg;
+  v2 v2OriginalPos;
+  static v2 v2DefaultEntryImageSize;
 };
 
 #endif

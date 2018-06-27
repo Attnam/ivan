@@ -330,6 +330,9 @@ void level::Generate(int Index)
      || (Index == 0 && GetDungeon()->GetIndex() == ATTNAM))
     NightAmbientLuminance = MakeRGB24(95, 95, 95);
 
+  if((Index == 0) && (GetDungeon()->GetIndex() == XINROCH_TOMB))
+    NightAmbientLuminance = MakeRGB24(105, 95, 95);
+
   int x, y;
 
   for(x = 0; x < XSize; ++x)
@@ -1211,6 +1214,18 @@ truth level::CollectCreatures(charactervector& CharacterArray, character* Leader
   return true;
 }
 
+void level::DrawHitEffects(cint XMin,cint XMax,cint YMin,cint YMax) const
+{
+  if(ivanconfig::GetHitIndicator()==0)return;
+
+  for(int x = XMin; x < XMax; ++x)
+  {
+    lsquare** SquarePtr = &Map[x][YMin];
+    for(int y = YMin; y < YMax; ++y, ++SquarePtr)
+      (*SquarePtr)->DrawHitEffect();
+  }
+}
+
 void level::Draw(truth AnimationDraw) const
 {
   cint XMin = Max(game::GetCamera().X, 0);
@@ -1289,6 +1304,8 @@ void level::Draw(truth AnimationDraw) const
         (*SquarePtr)->Draw(BlitData);
     }
   }
+
+  DrawHitEffects(XMin,XMax,YMin,YMax); // so it will be drawn above everything else
 }
 
 v2 level::GetEntryPos(ccharacter* Char, int I) const
@@ -2504,6 +2521,22 @@ void level::CheckSunLight()
       AmbientLuminance = NightAmbientLuminance;
     }
   }
+  else if(Index == 0 && GetDungeon()->GetIndex() == XINROCH_TOMB)
+  {
+    double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+    if(Cos > 0.51)
+    {
+      int E = int(100 + (Cos - 0.50) * 20);
+      SunLightEmitation = MakeRGB24(E + 20, E, E);
+      AmbientLuminance = MakeRGB24(E + 15, E - 5, E - 5);
+    }
+    else
+    {
+      SunLightEmitation = 0;
+      AmbientLuminance = NightAmbientLuminance;
+    }
+  }
   else
     return;
 
@@ -2926,6 +2959,7 @@ int level::DetectMaterial(cmaterial* Material)
       if(Square->DetectMaterial(Material))
       {
         Square->Reveal(Tick, true);
+        Square->bMaterialDetected=true;
         ++Squares;
       }
     }
@@ -2972,6 +3006,7 @@ void level::CalculateLuminances()
       Square->CalculateLuminance();
       Square->Flags |= MEMORIZED_UPDATE_REQUEST
                        | DESCRIPTION_CHANGE;
+      Square->bMaterialDetected=false; //detection is about luminance anyway
     }
 }
 

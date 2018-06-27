@@ -1,0 +1,18 @@
+To see how it works, modify the define.dat file like
+
+1) change ex. TORSO value to 2 (so that it will differ from TORSO value at ivandef.h, could be other .h file tho), 
+actually the problem will happen when someone create a new value at define.dat and use another value at c++ .h files with the same `#define` identifier,
+or when someone changes a value only at `define.dat` or at some c++ .h file, so they we be out of sync.
+
+2) compile and install the game.
+
+3) go to that option and toggle it to yes.
+
+4) the file `definesvalidator.h` will be created at the same path where the `ivan.conf` is located.
+
+5) move `definesvalidator.h` to the project development path at `Main/Include/definesvalidator.h` overwriting it
+
+6) compile and install again so that the validator will know what value the c++ `#define` should have, based on the define.dat file.
+in case c++ has no such define, it will be ignored ex.: the check will be performed only `#ifdef EMISSARY` (currently not used in c++ .h files)
+
+7) run and activate that option to `yes`, it will abort complaining about TORSO value with this message: "Defined TORSO with value 2 from .dat file mismatches hardcoded c++ define value of 1!"

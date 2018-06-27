@@ -29,6 +29,7 @@ typedef std::map<col16, std::pair<cachedfont*, cachedfont*>> fontcache;
 class rawbitmap
 {
  public:
+  friend class bitmap;
   rawbitmap(cfestring&);
   rawbitmap(v2);
   ~rawbitmap();

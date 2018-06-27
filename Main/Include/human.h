@@ -162,13 +162,20 @@ CHARACTER(humanoid, character)
   virtual truth AllowUnconsciousness() const;
   virtual truth CanChokeOnWeb(web*) const;
   virtual truth BrainsHurt() const;
+  virtual truth IsHeadless() const;
   virtual cchar* GetRunDescriptionLine(int) const;
   virtual cchar* GetNormalDeathMessage() const;
   virtual void ApplySpecialAttributeBonuses();
   virtual truth MindWormCanPenetrateSkull(mindworm*) const;
   truth HasSadistWeapon() const;
+  truth CheckAIZapOpportunity();
   virtual truth HasSadistAttackMode() const;
+  truth AutoPlayAIequip();
+  static v2 GetSilhouetteWhere(){return SilhouetteWhere;}
+  static v2 GetSilhouetteWhereDefault(){return SilhouetteWhereDefault;}
+  static void SetSilhouetteWhere(v2 pos){SilhouetteWhere=pos;}
  protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
   virtual col16 GetBodyPartColorC(int, truth = false) const;
@@ -190,6 +197,8 @@ CHARACTER(humanoid, character)
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
   static cint DrawOrder[];
+  static v2 SilhouetteWhereDefault;
+  static v2 SilhouetteWhere;
 };
 
 CHARACTER(playerkind, humanoid)
@@ -276,8 +285,9 @@ CHARACTER(shopkeeper, humanoid)
 CHARACTER(priest, humanoid)
 {
  protected:
-  virtual void GetAICommand() { StandIdleAI(); }
+  virtual void GetAICommand();
   virtual void BeTalkedTo();
+  void CallForMonsters();
 };
 
 CHARACTER(oree, humanoid)
@@ -296,6 +306,9 @@ CHARACTER(oree, humanoid)
 
 CHARACTER(darkknight, humanoid)
 {
+ public:
+  virtual truth SpecialEnemySightedReaction(character*);
+  virtual truth CheckForUsefulItemsOnGround(truth = true);
  protected:
   virtual int ModifyBodyPartHitPreference(int, int) const;
   virtual int ModifyBodyPartToHitChance(int, int) const;
@@ -339,6 +352,8 @@ CHARACTER(skeleton, humanoid)
 
 CHARACTER(goblin, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(golem, humanoid)
@@ -405,6 +420,7 @@ CHARACTER(housewife, humanoid)
 {
  public:
   virtual truth SpecialEnemySightedReaction(character*);
+  virtual void CreateInitialEquipment(int);
  protected:
   virtual int GetHairColor() const;
   virtual v2 GetHeadBitmapPos() const;
@@ -445,14 +461,14 @@ CHARACTER(zombie, humanoid)
   festring Description;
 };
 
-CHARACTER(spirit, humanoid)
+CHARACTER(ghost, humanoid)
 {
  public:
-  spirit() : Active(true) { }
+  ghost() : Active(true) { }
   virtual truth BodyPartIsVital(int) const;
 //  virtual void CreateBodyParts(int); // as per zombies, in case some body parts are missing?
   void SetDescription(cfestring What) { Description = What; }
-  virtual festring GetSpiritDescription() const;
+  virtual festring GetGhostDescription() const;
   virtual void AddName(festring&, int) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -477,7 +493,7 @@ CHARACTER(spirit, humanoid)
   festring Description;
 };
 
-CHARACTER(bonesghost, spirit)
+CHARACTER(bonesghost, ghost)
 {
  public:
   virtual col16 GetHairColor() const { return HairColor; }
@@ -494,11 +510,12 @@ CHARACTER(bonesghost, spirit)
   col16 EyeColor;
 };
 
-CHARACTER(xinrochghost, spirit)
+CHARACTER(xinrochghost, ghost)
 {
  public:
   virtual truth IsNameable() const { return false; }
   virtual truth IsPolymorphable() const { return false; }
+  virtual truth CheckForUsefulItemsOnGround(truth = true) { return false; }
  protected:
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
@@ -506,6 +523,8 @@ CHARACTER(xinrochghost, spirit)
 
 CHARACTER(imp, humanoid)
 {
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(mistress, humanoid)
@@ -524,6 +543,14 @@ CHARACTER(werewolfwolf, humanoid)
 {
  public:
   virtual festring GetKillName() const;
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+};
+
+CHARACTER(vampire, humanoid)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(kobold, humanoid)
@@ -583,6 +610,8 @@ CHARACTER(genie, humanoid)
 
 CHARACTER(orc, humanoid)
 {
+ public:
+  virtual truth MoveRandomly();
  protected:
   virtual void PostConstruct();
 };
@@ -715,12 +744,31 @@ CHARACTER(siren, humanoid)
 {
  public:
   virtual void GetAICommand();
+  virtual truth MoveRandomly();
  protected:
   virtual truth TryToSing();
 };
 
 CHARACTER(punisher, humanoid)
 {
+};
+
+CHARACTER(child, humanoid)
+{
+};
+
+CHARACTER(bum, humanoid)
+{
+};
+
+CHARACTER(nihil, humanoid)
+{
+ public:
+  virtual truth BodyPartIsVital(int) const;
+  virtual truth CanCreateBodyPart(int) const;
+  virtual int GetAttribute(int, truth = true) const;
+  virtual col24 GetBaseEmitation() const { return MakeRGB24(150, 110, 110); }
+  virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
 };
 
 #endif

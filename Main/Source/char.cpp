@@ -23,6 +23,11 @@
  * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
  * & duration flags at once. */
 
+#include "hiteffect.h" //TODO move to charsset.cpp?
+
+#define DBGMSG_V2
+#include "dbgmsgproj.h"
+
 struct statedata
 {
   cchar* Description;
@@ -79,7 +84,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "LifeSaved",
+    "Life Saved",
     SECRET,
     &character::PrintBeginLifeSaveMessage,
     &character::PrintEndLifeSaveMessage,
@@ -188,7 +193,7 @@ statedata StateData[STATES] =
     &character::CanBeConfused,
     &character::ConfusedSituationDangerModifier
   }, {
-    "Parasitized",
+    "Parasite (tapeworm)",
     SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
@@ -208,7 +213,7 @@ statedata StateData[STATES] =
     0,
     0
   }, {
-    "GasImmunity",
+    "Gas Immunity",
     SECRET|(RANDOMIZABLE&~(SRC_GOOD|SRC_EVIL)),
     &character::PrintBeginGasImmunityMessage,
     &character::PrintEndGasImmunityMessage,
@@ -256,6 +261,106 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Vampirism",
+    DUR_FLAGS,
+    &character::PrintBeginVampirismMessage,
+    &character::PrintEndVampirismMessage,
+    0,
+    0,
+    &character::VampirismHandler,
+    0,
+    0
+  }, {
+    "Swimming",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginSwimmingMessage,
+    &character::PrintEndSwimmingMessage,
+    &character::BeginSwimming, &character::EndSwimming,
+    0,
+    0,
+    0
+  }, {
+    "Detecting",
+    SECRET|(RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL)),
+    &character::PrintBeginDetectMessage,
+    &character::PrintEndDetectMessage,
+    0,
+    0,
+    &character::DetectHandler,
+    0,
+    0
+  }, {
+    "Polymorph Locked",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginPolymorphLockMessage,
+    &character::PrintEndPolymorphLockMessage,
+    0,
+    0,
+    &character::PolymorphLockHandler,
+    0,
+    0
+  }, {
+    "Regenerating",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginRegenerationMessage,
+    &character::PrintEndRegenerationMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Disease Immunity",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginDiseaseImmunityMessage,
+    &character::PrintEndDiseaseImmunityMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Teleport Locked",
+    SECRET,
+    &character::PrintBeginTeleportLockMessage,
+    &character::PrintEndTeleportLockMessage,
+    0,
+    0,
+    &character::TeleportLockHandler,
+    0,
+    0
+  }, {
+    "Fearless",
+    RANDOMIZABLE&~SRC_EVIL,
+    &character::PrintBeginFearlessMessage,
+    &character::PrintEndFearlessMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Fasting",
+    SECRET|(RANDOMIZABLE&~SRC_EVIL),
+    &character::PrintBeginFastingMessage,
+    &character::PrintEndFastingMessage,
+    0,
+    0,
+    0,
+    0,
+    0
+  }, {
+    "Parasite (mindworm)",
+    SECRET|(RANDOMIZABLE&~DUR_TEMPORARY),
+    &character::PrintBeginMindwormedMessage,
+    &character::PrintEndMindwormedMessage,
+    0,
+    0,
+    &character::MindwormedHandler,
+    &character::CanBeParasitized, // We are using TorsoIsAlive right now, but I think it's OK,
+                                  // because with unliving torso, your head will not be much better for mind worms.
+    &character::ParasitizedSituationDangerModifier
   }
 };
 
@@ -355,7 +460,10 @@ int character::GetMoveType() const
           : DataBase->MoveType | FLY) |
           (!StateIsActivated(ETHEREAL_MOVING)
           ? DataBase->MoveType
-          : DataBase->MoveType | ETHEREAL)); }
+          : DataBase->MoveType | ETHEREAL) |
+          (!StateIsActivated(SWIMMING)
+          ? DataBase->MoveType
+          : DataBase->MoveType | WALK|SWIM)); }
 festring character::GetZombieDescription() const
 { return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
@@ -364,7 +472,7 @@ truth character::HasBeenSeen() const
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
 cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
-festring character::GetSpiritDescription() const
+festring character::GetGhostDescription() const
 { return " of " + GetName(INDEFINITE); }
 
 int characterdatabase::* ExpPtr[ATTRIBUTES] =
@@ -422,6 +530,11 @@ character::character(ccharacter& Char)
 
   int c;
 
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    MemorizedEquippedItemIDs[c] = Char.MemorizedEquippedItemIDs[c];
+
+  v2HoldPos=Char.v2HoldPos;
+
   for(c = 0; c < STATES; ++c)
     TemporaryStateCounter[c] = Char.TemporaryStateCounter[c];
 
@@ -471,6 +584,13 @@ character::character()
   WarnFlags(0), ScienceTalks(0), TrapData(0), CounterToMindWormHatch(0)
 {
   Stack = new stack(0, this, HIDDEN);
+
+  int c;
+
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    MemorizedEquippedItemIDs[c]=0;
+
+  v2HoldPos=v2(0,0);
 }
 
 character::~character()
@@ -558,6 +678,32 @@ int character::TakeHit(character* Enemy, item* Weapon,
                        int Success, int Type, int GivenDir,
                        truth Critical, truth ForceHit)
 {
+  hiteffectSetup* pHitEff=NULL;DBGLN;
+  bool bShowHitEffect = false;
+  static bool bHardestMode = false; //TODO make these an user hardcore combat option?
+  if(!bHardestMode){
+    //w/o ESP/infravision and if the square is visible even if both fighting are invisible
+    static bool bPlayerCanHearWhereTheFightIsHappening = true; //TODO this feels like cheating? making things easier? if so, set it to false
+    static bool bPlayerCanSensePetFighting = true; //TODO this feels like cheating? making things easier? if so, set it to false
+
+    if(bPlayerCanHearWhereTheFightIsHappening) //TODO should then also show at non directly visible squares?
+      if(GetLSquareUnder()->CanBeSeenByPlayer() || Enemy->GetLSquareUnder()->CanBeSeenByPlayer())bShowHitEffect = true;
+
+    if(bPlayerCanSensePetFighting && IsPet())bShowHitEffect=true; // override for team awareness
+  }
+  if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())bShowHitEffect=true; //throwing hits in the air is valid (seen) if the other one is invisible
+  if(IsPlayer())bShowHitEffect=true; //override
+  if(bShowHitEffect){DBGLN;
+    pHitEff=new hiteffectSetup();
+    pHitEff->Critical=Critical;
+    pHitEff->GivenDir=GivenDir;
+    pHitEff->Type=Type;
+    pHitEff->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
+    pHitEff->WhoIsHit=this;
+    pHitEff->itemEffectReference = Weapon;
+    if(pHitEff->itemEffectReference==NULL)pHitEff->itemEffectReference=EnemyBodyPart;
+  }
+
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
   double DodgeValue = GetDodgeValue();
 
@@ -619,6 +765,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//    if(hitEff!=NULL)hitEff->End();
     return HAS_DODGED;
   }
 
@@ -702,6 +849,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
       else
         DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//      if(hitEff!=NULL)hitEff->End();
       return HAS_BLOCKED;
     }
   }
@@ -714,7 +862,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
                                          && Enemy->BiteCapturesBodyPart());
   truth Succeeded = (GetBodyPart(BodyPart)
                      && HitEffect(Enemy, Weapon, HitPos, Type,
-                                  BodyPart, Dir, !DoneDamage))
+                                  BodyPart, Dir, !DoneDamage, Critical, DoneDamage))
                     || DoneDamage;
 
   if(Succeeded)
@@ -722,6 +870,9 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
+//    if(CanBeSeenByPlayer())
+//      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
+
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
@@ -744,7 +895,13 @@ int character::TakeHit(character* Enemy, item* Weapon,
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
+//    if(hitEff!=NULL)hitEff->End();
     return DID_NO_DAMAGE;
+  }
+
+  if(pHitEff!=NULL){DBGLN;
+    GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
+    delete pHitEff; //already copied
   }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
@@ -875,14 +1032,12 @@ void character::Be()
         }
       }
       audio::IntensityLevel( audio::MAX_INTENSITY_VOLUME - MinHPPercent );
-
-
     }
 
     if(Stamina != MaxStamina)
       RegenerateStamina();
 
-    if(HP != MaxHP)
+    if(HP != MaxHP || StateIsActivated(REGENERATION))
       Regenerate();
 
     if(Action && AP >= 1000)
@@ -924,7 +1079,9 @@ void character::Be()
         Search(GetAttribute(PERCEPTION));
 
       if(!Action)
+      {
         GetPlayerCommand();
+      }
       else
       {
         if(Action->ShowEnvironment())
@@ -940,8 +1097,11 @@ void character::Be()
 
         msgsystem::ThyMessagesAreNowOld();
 
-        if(Action->IsVoluntary() && READ_KEY())
+        if(Action->IsVoluntary() && WAIT_FOR_KEY_DOWN())
+        {
+          READ_KEY();
           Action->Terminate(false);
+        }
       }
     }
     else
@@ -1192,7 +1352,7 @@ int character::CalculateNewSquaresUnder(lsquare** NewSquare, v2 Pos) const
     return 0;
 }
 
-truth character::TryMove(v2 MoveVector, truth Important, truth Run)
+truth character::TryMove(v2 MoveVector, truth Important, truth Run, truth* pbWaitNeutralMove)
 {
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   character* Pet[MAX_SQUARES_UNDER];
@@ -1251,22 +1411,27 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
         return Hit(Hostile[Index], HostilePos[Index], Direction);
       }
 
-      if(Neutrals == 1)
-      {
-        if(!IsPlayer() && !Pets && Important && CanMoveOn(MoveToSquare[0]))
-          return HandleCharacterBlockingTheWay(Neutral[0], NeutralPos[0], Direction);
-        else
-          return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
-      }
-      else if(Neutrals)
-      {
-        if(IsPlayer())
+      if(Neutrals>0 && ivanconfig::IsWaitNeutralsMoveAway() && pbWaitNeutralMove!=NULL){
+        (*pbWaitNeutralMove)=true;
+        return false;
+      }else{
+        if(Neutrals == 1)
         {
-          int Index = RAND() % Neutrals;
-          return Hit(Neutral[Index], NeutralPos[Index], Direction);
+          if(!IsPlayer() && !Pets && Important && CanMoveOn(MoveToSquare[0]))
+            return HandleCharacterBlockingTheWay(Neutral[0], NeutralPos[0], Direction);
+          else
+            return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
         }
-        else
-          return false;
+        else if(Neutrals)
+        {
+          if(IsPlayer())
+          {
+            int Index = RAND() % Neutrals;
+            return Hit(Neutral[Index], NeutralPos[Index], Direction);
+          }
+          else
+            return false;
+        }
       }
 
       if(!IsPlayer())
@@ -1315,9 +1480,10 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
               {
                 /* not sure if this is better than "the door is locked", but I guess it _might_ be slightly better */
                 ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr());
-                return false;
+                if(!IsPlayerAutoPlay())return false;
               }
-              else if(Important && CheckKick())
+
+              if(Important && CheckKick())
               {
                 room* Room = MoveToSquare[c]->GetRoom();
 
@@ -1446,6 +1612,32 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
+void character::AutoPlayAITeleport(bool bDeathCountBased)
+{
+  bool bTeleportNow=false;
+
+  if(bDeathCountBased){ // this is good to prevent autoplay AI getting stuck endless dieing
+    static int iDieMax=10;
+    static int iDieTeleportCountDown=iDieMax;
+    if(iDieTeleportCountDown==0){ //this helps on defeating not so strong enemies in spot
+      if(IsPlayerAutoPlay())
+        bTeleportNow=true;
+      iDieTeleportCountDown=iDieMax;
+    }else{
+      static v2 v2DiePos(0,0);
+      if(v2DiePos==GetPos()){
+        iDieTeleportCountDown--;
+      }else{
+        v2DiePos=GetPos();
+        iDieTeleportCountDown=iDieMax;
+      }
+    }
+  }
+
+  if(bTeleportNow)
+    Move(GetLevel()->GetRandomSquare(this), true); //not using teleport function to avoid prompts, but this code is from there TODO and should be in sync! create TeleportRandomDirectly() ?
+}
+
 void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
 {
   /* Note: This function musn't delete any objects, since one of these may be
@@ -1464,7 +1656,10 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
     {
       game::DrawEverything();
 
-      if(!game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))
+      bool bInstaResurrect=false;
+      if(!bInstaResurrect && IsPlayerAutoPlay())bInstaResurrect=true;
+      if(!bInstaResurrect && !game::TruthQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))bInstaResurrect=true;
+      if(bInstaResurrect)
       {
         RestoreBodyParts();
         ResetSpoiling();
@@ -1479,6 +1674,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
         ResetStates();
         SetNP(SATIATED_LEVEL);
         SendNewDrawRequest();
+        if(IsPlayerAutoPlay())AutoPlayAITeleport(true);
         return;
       }
     }
@@ -1579,6 +1775,7 @@ void character::Die(ccharacter* Killer, cfestring& Msg, ulong DeathFlags)
       for(int c = 0; c < GetSquaresUnder(); ++c)
         LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
+    game::SRegionAroundDisable();
     game::PlayDefeatMusic();
     ShowAdventureInfo();
 
@@ -1984,6 +2181,9 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << CWeaponSkill[c];
 
   SaveFile << static_cast<ushort>(GetConfig());
+
+  for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+    SaveFile << MemorizedEquippedItemIDs[c];
 }
 
 void character::Load(inputfile& SaveFile)
@@ -2041,6 +2241,13 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> CWeaponSkill[c];
 
   databasecreator<character>::InstallDataBase(this, ReadType<ushort>(SaveFile));
+
+  if(game::GetCurrentSavefileVersion()>=132){
+    for(c = 0; c < MAX_EQUIPMENT_SLOTS; c++)
+      SaveFile >> MemorizedEquippedItemIDs[c];
+  }
+
+  /////////////// loading ended /////////////////////////
 
   if(IsEnabled() && !game::IsInWilderness())
     for(c = 1; c < GetSquaresUnder(); ++c)
@@ -2113,7 +2320,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(!game::WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(!HScore.CheckVersion())
     {
@@ -2229,7 +2436,7 @@ truth character::CheckDeath(cfestring& Msg, ccharacter* Murderer, ulong DeathFla
 
 truth character::CheckStarvationDeath(cfestring& Msg)
 {
-  if(GetNP() < 1 && UsesNutrition())
+  if(GetNP() < 1 && UsesNutrition() && !(StateIsActivated(FASTING)))
     return CheckDeath(Msg, 0, FORCE_DEATH);
   else
     return false;
@@ -2240,7 +2447,8 @@ void character::ThrowItem(int Direction, item* ToBeThrown)
   if(Direction > 7)
     ABORT("Throw in TOO odd direction...");
 
-  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH));
+  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH),
+    ToBeThrown->IsWeapon(this) && !ToBeThrown->IsBroken());
 }
 
 void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, double ToHitValue, int Direction)
@@ -2254,7 +2462,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, int Damage, d
   int WeaponSkillHits = Thrower ? CalculateWeaponSkillHits(Thrower) : 0;
   int DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, Thingy->GetPos(), THROW_ATTACK,
-                                                        BodyPart, Direction, !DoneDamage)) || DoneDamage;
+                                                        BodyPart, Direction, !DoneDamage, false, DoneDamage)) || DoneDamage;
 
   if(Succeeded && Thrower)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK, WeaponSkillHits);
@@ -2280,15 +2488,782 @@ truth character::DodgesFlyingItem(item* Item, double ToHitValue)
   return !Item->EffectIsGood() && RAND() % int(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
+character* AutoPlayLastChar=NULL;
+const int iMaxWanderTurns=20;
+const int iMinWanderTurns=3;
+
+/**
+ * 5 seems good, broken cheap weapons, stones, very cheap weapons non broken etc
+ * btw, lantern price is currently 10.
+ */
+static int iMaxValueless = 5;
+
+v2 v2KeepGoingTo=v2(0,0);
+v2 v2TravelingToAnotherDungeon=v2(0,0);
+int iWanderTurns=iMinWanderTurns;
+bool bAutoPlayUseRandomNavTargetOnce=false;
+std::vector<v2> vv2DebugDrawSqrPrevious;
+v2 v2LastDropPlayerWasAt=v2(0,0);
+std::vector<v2> vv2FailTravelToTargets;
+std::vector<v2> vv2WrongGoingTo;
+
+void character::AutoPlayAIReset(bool bFailedToo)
+{ DBG7(bFailedToo,iWanderTurns,DBGAV2(v2KeepGoingTo),DBGAV2(v2TravelingToAnotherDungeon),DBGAV2(v2LastDropPlayerWasAt),vv2FailTravelToTargets.size(),vv2DebugDrawSqrPrevious.size());
+  v2KeepGoingTo=v2(0,0); //will retry
+  v2TravelingToAnotherDungeon=v2(0,0);
+  iWanderTurns=0; // warning: this other code was messing the logic ---> if(iWanderTurns<iMinWanderTurns)iWanderTurns=iMinWanderTurns; //to wander just a bit looking for random spot from where Route may work
+  bAutoPlayUseRandomNavTargetOnce=false;
+  v2LastDropPlayerWasAt=v2(0,0);
+  vv2DebugDrawSqrPrevious.clear();
+
+  PLAYER->TerminateGoingTo();
+
+  if(bFailedToo){
+    vv2FailTravelToTargets.clear();
+    vv2WrongGoingTo.clear();
+  }
+}
+truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
+{
+  v2KeepGoingTo=v2KGTo;
+  SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
+  CreateRoute();
+  if(!Route.empty())
+    return true;
+
+  DBG1("RouteCreationFailed");
+  TerminateGoingTo(); //redundant?
+  vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+  bAutoPlayUseRandomNavTargetOnce=true;
+
+  AutoPlayAIReset(false);
+
+  return false;
+}
+
+void character::AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex, bool bWide, bool bKeepColor)
+{
+  static v2 v2ScrPos=v2(0,0); //static to avoid instancing
+  static int iAddPos;iAddPos=bWide?2:1;
+  static int iSubBorder;iSubBorder=bWide?3:2;
+  if(game::OnScreen(v2SqrPos)){
+    v2ScrPos=game::CalculateScreenCoordinates(v2SqrPos);
+
+    DOUBLE_BUFFER->DrawRectangle(
+        v2ScrPos.X+iAddPos, v2ScrPos.Y+iAddPos,
+        v2ScrPos.X+TILE_SIZE-iSubBorder, v2ScrPos.Y+TILE_SIZE-iSubBorder,
+        color, bWide);
+
+    if(iPrintIndex>-1)
+      FONT->Printf(DOUBLE_BUFFER, v2(v2ScrPos.X+1,v2ScrPos.Y+5), DARK_GRAY, "%d", iPrintIndex);
+
+    if(!bKeepColor)
+      vv2DebugDrawSqrPrevious.push_back(v2SqrPos);
+  }
+}
+
+const int iVisitAgainMax=10;
+int iVisitAgainCount=iVisitAgainMax;
+std::vector<lsquare*> vv2AllDungeonSquares;
+bool character::AutoPlayAICheckAreaLevelChangedAndReset()
+{
+  static area* areaPrevious=NULL;
+  area* Area = game::GetCurrentArea();
+  if(Area != areaPrevious){
+    areaPrevious=Area;
+
+    iVisitAgainCount=iVisitAgainMax;
+
+    vv2DebugDrawSqrPrevious.clear();
+
+    vv2AllDungeonSquares.clear();
+    if(!game::IsInWilderness())
+      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+        vv2AllDungeonSquares.push_back(game::GetCurrentLevel()->GetLSquare(iX, iY));
+      }}
+
+    return true;
+  }
+
+  return false;
+}
+
+void character::AutoPlayAIDebugDrawOverlay()
+{
+  if(!game::WizardModeIsActive())return;
+
+  AutoPlayAICheckAreaLevelChangedAndReset();
+
+  // redraw previous to clean them
+  area* Area = game::GetCurrentArea(); //got the Area to draw in the wilderness too and TODO navigate there one day
+  std::vector<v2> vv2DebugDrawSqrPreviousCopy(vv2DebugDrawSqrPrevious);
+  for(int i=0;i<vv2DebugDrawSqrPreviousCopy.size();i++){
+//    Area->GetSquare(vv2DebugDrawSqrPrevious[i])->SendNewDrawRequest();
+//    square* sqr = Area->GetSquare(vv2DebugDrawSqrPrevious[i]);
+//    if(sqr)sqr->SendStrongNewDrawRequest(); //TODO sqr NULL?
+    AutoPlayAIDebugDrawSquareRect(vv2DebugDrawSqrPreviousCopy[i],DARK_GRAY);
+  }
+
+  // draw new ones
+  vv2DebugDrawSqrPrevious.clear(); //empty before fillup below
+
+  for(int i=0;i<vv2FailTravelToTargets.size();i++)
+    AutoPlayAIDebugDrawSquareRect(vv2FailTravelToTargets[i],RED,i==(vv2FailTravelToTargets.size()-1),i,true);
+
+  if(!PLAYER->Route.empty())
+    for(int i=0;i<PLAYER->Route.size();i++)
+      AutoPlayAIDebugDrawSquareRect(PLAYER->Route[i],GREEN);
+
+  if(!v2KeepGoingTo.Is0())
+    AutoPlayAIDebugDrawSquareRect(v2KeepGoingTo,BLUE,PLAYER->Route.size(),true);
+  else if(iWanderTurns>0)
+    AutoPlayAIDebugDrawSquareRect(PLAYER->GetPos(),YELLOW,iWanderTurns);
+
+  for(int i=0;i<vv2WrongGoingTo.size();i++)
+    AutoPlayAIDebugDrawSquareRect(vv2WrongGoingTo[i],BLUE,i,false,true);
+}
+
+truth character::AutoPlayAIDropThings()
+{
+//  level* lvl = game::GetCurrentLevel(); DBG1(lvl);
+//  area* Area = game::GetCurrentArea();
+
+  /**
+   *  unburden
+   */
+  bool bDropSomething = false;
+  static item* eqDropChk=NULL;
+  item* eqBroken=NULL;
+  for(int i=0;i<GetEquipments();i++){
+    eqDropChk=GetEquipment(i);
+    if(eqDropChk!=NULL && eqDropChk->IsBroken()){ DBG2("chkDropBroken",eqDropChk);
+      eqBroken=eqDropChk;
+      bDropSomething=true;
+      break;
+    }
+  }
+
+  if(!bDropSomething && GetBurdenState() == STRESSED){
+    if(clock()%100<5){ //5% chance to drop something weighty randomly every turn
+      bDropSomething=true; DBGLN;
+    }
+  }
+
+  if(!bDropSomething && GetBurdenState() == OVER_LOADED){
+    bDropSomething=true;
+  }
+
+  if(bDropSomething){ DBG1("DropSomething");
+    item* dropMe=NULL;
+    if(eqBroken!=NULL)dropMe=eqBroken;
+
+    item* heaviest=NULL;
+    item* cheapest=NULL;
+
+//    bool bFound=false;
+//    for(int k=0;k<2;k++){
+//      if(dropMe!=NULL)break;
+//    static item* eqDropChk=NULL;
+//    for(int i=0;i<GetEquipments();i++){
+//      eqDropChk=GetEquipment(i);
+//      if(eqDropChk!=NULL && eqDropChk->IsBroken()){
+//        dropMe=eqDropChk;
+//        break;
+//      }
+//    }
+
+    if(dropMe==NULL){
+      static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
+      for(int i=0;i<vit.size();i++){ DBG4("CurrentChkToDrop",vit[i]->GetName(DEFINITE).CStr(),vit[i]->GetTruePrice(),vit[i]->GetWeight());
+        if(vit[i]->IsEncryptedScroll())continue;
+//        if(!bPlayerHasLantern && dynamic_cast<lantern*>(vit[i])!=NULL){
+//          bPlayerHasLantern=true; //will keep only the 1st lantern
+//          continue;
+//        }
+
+        if(vit[i]->IsBroken()){ //TODO use repair scroll?
+          dropMe=vit[i];
+          break;
+        }
+
+        if(heaviest==NULL)heaviest=vit[i];
+        if(cheapest==NULL)cheapest=vit[i];
+
+//        switch(k){
+//        case 0: //better not implement this as a user function as that will remove the doubt about items values what is another fun challenge :)
+          if(vit[i]->GetTruePrice() < cheapest->GetTruePrice()) //cheapest
+            cheapest=vit[i];
+//          break;
+//        case 1: //this could be added as user function to avoid browsing the drop list, but may not be that good...
+          if(vit[i]->GetWeight() > heaviest->GetWeight()) //heaviest
+            heaviest=vit[i];
+//          break;
+//        }
+      }
+    }
+
+    if(heaviest!=NULL && cheapest!=NULL){
+      if(dropMe==NULL && heaviest==cheapest)
+        dropMe=heaviest;
+
+      if(dropMe==NULL && cheapest->GetTruePrice()<=iMaxValueless){ DBG2("DropValueless",cheapest->GetName(DEFINITE).CStr());
+        dropMe=cheapest;
+      }
+
+      if(dropMe==NULL){
+        // the worst price VS weight will be dropped
+        float fC = cheapest ->GetTruePrice()/(float)cheapest ->GetWeight();
+        float fW = heaviest->GetTruePrice()/(float)heaviest->GetWeight(); DBG3("PriceVsWeightRatio",fC,fW);
+        if(fC < fW){
+          dropMe = cheapest;
+        }else{
+          dropMe = heaviest;
+        }
+      }
+
+      if(dropMe==NULL)
+        dropMe = clock()%2==0 ? heaviest : cheapest;
+    }
+
+    // chose a throw direction
+    if(dropMe!=NULL){
+      static std::vector<int> vv2DirBase;static bool bDummyInit = [](){for(int i=0;i<8;i++)vv2DirBase.push_back(i);return true;}();
+      std::vector<int> vv2Dir(vv2DirBase);
+      int iDirOk=-1;
+      v2 v2DropAt(0,0);
+      lsquare* lsqrDropAt=NULL;
+      for(int i=0;i<8;i++){
+        int k = clock()%vv2Dir.size(); //random chose from remaining TODO could be where there is NPC foe
+        int iDir = vv2Dir[k]; //collect direction value
+        vv2Dir.erase(vv2Dir.begin() + k); //remove using the chosen index to prepare next random choice
+
+        v2 v2Dir = game::GetMoveVector(iDir);
+        v2 v2Chk = GetPos() + v2Dir;
+        if(game::GetCurrentLevel()->IsValidPos(v2Chk)){
+          lsquare* lsqrChk=game::GetCurrentLevel()->GetLSquare(v2Chk);
+          if(lsqrChk->IsFlyable()){
+            iDirOk = iDir;
+            v2DropAt = v2Chk;
+            lsqrDropAt=lsqrChk;
+            break;
+          }
+        }
+      };DBGLN;
+
+      if(iDirOk==-1){iDirOk=clock()%8;DBG2("RandomDir",iDirOk);}DBGLN; //TODO should just drop may be? unless hitting w/e is there could help
+
+      if(iDirOk>-1){DBG2("KickOrThrow",iDirOk);
+        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(dropMe);DBGLN;
+        static humanoid* h;h = dynamic_cast<humanoid*>(this);DBGLN;
+        DBG8("CanKickLockedChest",lsqrDropAt,itc,itc?itc->IsLocked():-1,CanKick(),h,h?h->GetLeftLeg():0,h?h->GetRightLeg():0);
+        if(lsqrDropAt && itc && itc->IsLocked() && CanKick() && h && h->GetLeftLeg() && h->GetRightLeg()){DBGLN;
+          dropMe->MoveTo(lsqrDropAt->GetStack());DBGLN; //drop in front..
+          Kick(lsqrDropAt,iDirOk,true);DBGLN; // ..to kick it
+        }else{DBGLN;
+          ThrowItem(iDirOk, dropMe); DBG5("DropThrow",iDirOk,dropMe->GetName(DEFINITE).CStr(),dropMe->GetTruePrice(),dropMe->GetWeight());
+        }
+      }else{DBGLN;
+        dropMe->MoveTo(GetLSquareUnder()->GetStack());DBGLN; //just drop
+      }
+
+      v2LastDropPlayerWasAt=GetPos();DBGSV2(v2LastDropPlayerWasAt);
+
+      return true;
+    }
+
+    DBG1("AutoPlayNeedsImprovement:DropItem");
+    ADD_MESSAGE("%s says \"I need more intelligence to drop trash...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
+    //TODO stop autoplay mode? if not, something random may happen some time and wont reach here ex.: spoil, fire, etc..
+  }
+
+  return false;
+}
+
+truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
+{
+  static humanoid* h;h = dynamic_cast<humanoid*>(this);
+  if(h==NULL)return false;
+
+  if(h->AutoPlayAIequip())
+    return true;
+
+  if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
+    if(v2LastDropPlayerWasAt!=GetPos()){
+      static bool bHoarder=true; //TODO wizard autoplay AI config exclusive felist
+
+      if(CheckForUsefulItemsOnGround(false))
+        if(!bHoarder)
+          return true;
+
+      //just pick up any useful stuff
+      static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
+      for(uint c = 0; c < vit.size(); ++c){
+        if(!vit[c]->CanBeSeenBy(this))continue;
+        if(!vit[c]->IsPickable(this))continue;
+        if(vit[c]->GetSquaresUnder()!=1)continue; //avoid big corpses 2x2
+
+        if(!bPlayerHasLantern && vit[c]->IsOnFire(this)){
+          //ok
+        }else{
+          if(vit[c]->IsBroken())continue;
+          if(vit[c]->GetTruePrice()<=iMaxValueless)continue; //mainly to avoid all rocks from broken walls
+          if(vit[c]->GetSpoilLevel()>0)continue;
+        }
+
+        static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
+        if(itc && !itc->IsLocked()){
+          static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
+          for(uint d = 0; d < vitItc.size(); ++d)
+            vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
+          continue;
+        }
+
+        vit[c]->MoveTo(GetStack()); DBG2("pickup",vit[c]->GetNameSingular().CStr());
+//          if(GetBurdenState()==OVER_LOADED)ThrowItem(clock()%8,ItemVector[c]);
+//          return true;
+        if(!bHoarder)
+          return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+static const int iMoreThanMaxDist=10000000; //TODO should be max integer but this will do for now in 2018 :)
+truth character::AutoPlayAITestValidPathTo(v2 v2To)
+{
+  return AutoPlayAIFindWalkDist(v2To) < iMoreThanMaxDist;
+}
+
+int character::AutoPlayAIFindWalkDist(v2 v2To)
+{
+  static bool bUseSimpleDirectDist=false; //very bad navigation this is
+  if(bUseSimpleDirectDist)return (v2To - GetPos()).GetLengthSquare();
+
+  static v2 GoingToBkp;GoingToBkp = GoingTo; //IsGoingSomeWhere() ? GoingTo : v2(0,0);
+
+  SetGoingTo(v2To);
+  CreateRoute();
+  static int iDist;iDist=Route.size();
+  TerminateGoingTo();
+
+  if(GoingToBkp!=ERROR_V2){ DBG2("Warning:WrongUsage:ShouldBeGoingNoWhere",DBGAV2(GoingToBkp));
+    SetGoingTo(GoingToBkp);
+    CreateRoute();
+  }
+
+  return iDist>0?iDist:iMoreThanMaxDist;
+}
+
+truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
+{
+  /**
+   * navigate the unknown dungeon
+   */
+  std::vector<v2> v2Exits;
+  if(v2KeepGoingTo.Is0()){ DBG1("TryNewMoveTarget");
+    // target undiscovered squares to explore
+    v2 v2PreferedTarget(0,0);
+
+    int iNearestLanterOnFloorDist = iMoreThanMaxDist;
+    v2 v2PreferedLanternOnFloorTarget(0,0);
+
+    v2 v2NearestUndiscovered(0,0);
+    int iNearestUndiscoveredDist=iMoreThanMaxDist;
+    std::vector<v2> vv2UndiscoveredValidPathSquares;
+
+    lsquare* lsqrNearestSquareWithWallLantern=NULL;
+    lsquare* lsqrNearestDropWallLanternAt=NULL;
+    stack* stkNearestDropWallLanternAt = NULL;
+    int iNearestSquareWithWallLanternDist=iMoreThanMaxDist;
+    item* itNearestWallLantern=NULL;
+
+    /***************************************************************
+     * scan whole dungeon squares
+     */
+    for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){ for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+      lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(iX,iY);
+
+      olterrain* olt = lsqr->GetOLTerrain();
+      if(olt && (olt->GetConfig() == STAIRS_UP || olt->GetConfig() == STAIRS_DOWN)){
+        v2Exits.push_back(v2(lsqr->GetPos())); DBGSV2(v2Exits[v2Exits.size()-1]);
+      }
+
+      stack* stkSqr = lsqr->GetStack();
+      static itemvector vit;vit.clear();stkSqr->FillItemVector(vit);
+      bool bAddValidTargetSquare=true;
+
+      // find nearest wall lantern
+      if(!bPlayerHasLantern && !CanMoveOn(lsqr)){ //probably a wall
+        for(int n=0;n<vit.size();n++){
+          if(vit[n]->IsLanternOnWall() && !vit[n]->IsBroken()){
+            static stack* stkDropWallLanternAt;stkDropWallLanternAt = lsqr->GetStackOfAdjacentSquare(vit[n]->GetSquarePosition());
+            static lsquare* lsqrDropWallLanternAt;lsqrDropWallLanternAt =
+              stkDropWallLanternAt?stkDropWallLanternAt->GetLSquareUnder():NULL;
+
+            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanMoveOn(lsqrDropWallLanternAt)){
+              int iDist = AutoPlayAIFindWalkDist(lsqrDropWallLanternAt->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
+              if(lsqrNearestSquareWithWallLantern==NULL || iDist<iNearestSquareWithWallLanternDist){
+                iNearestSquareWithWallLanternDist=iDist;
+
+                lsqrNearestSquareWithWallLantern=lsqr;
+                itNearestWallLantern=vit[n]; DBG3(iNearestSquareWithWallLanternDist,DBGAV2(lsqr->GetPos()),DBGAV2(GetPos()));
+                lsqrNearestDropWallLanternAt=lsqrDropWallLanternAt;
+                stkNearestDropWallLanternAt=stkDropWallLanternAt;
+              }
+            }
+
+            break;
+          }
+        }
+      }
+
+      if(bAddValidTargetSquare && !CanMoveOn(lsqr))
+        bAddValidTargetSquare=false;
+
+      bool bIsFailToTravelSquare=false;
+      if(bAddValidTargetSquare){
+        for(int j=0;j<vv2FailTravelToTargets.size();j++)
+          if(vv2FailTravelToTargets[j]==lsqr->GetPos()){
+            bAddValidTargetSquare=false;
+            bIsFailToTravelSquare=true;
+            break;
+          }
+      }
+
+      if(!bIsFailToTravelSquare){
+
+//          if(bAddValidTargetSquare && v2PreferedTarget.Is0() && (lsqr->HasBeenSeen() || !bPlayerHasLantern)){
+        if(bAddValidTargetSquare && (lsqr->HasBeenSeen() || !bPlayerHasLantern)){
+          bool bVisitAgain=false;
+          if(iVisitAgainCount>0 || !bPlayerHasLantern){
+            if(stkSqr!=NULL && stkSqr->GetItems()>0){
+              for(int n=0;n<vit.size();n++){ DBG1(vit[n]);DBG1(vit[n]->GetID());DBG1(vit[n]->GetType());DBG3("VisitAgain:ChkItem",vit[n]->GetNameSingular().CStr(),vit.size());
+                if(vit[n]->IsBroken())continue; DBGLN;
+
+                static bool bIsLanternOnFloor;bIsLanternOnFloor = dynamic_cast<lantern*>(vit[n])!=NULL;// || vit[n]->IsOnFire(this); DBGLN;
+
+                if( // if is useful to the AutoPlay AI endless tests
+                    vit[n]->IsShield  (this) ||
+                    vit[n]->IsWeapon  (this) ||
+                    vit[n]->IsArmor   (this) ||
+                    vit[n]->IsAmulet  (this) ||
+                    vit[n]->IsZappable(this) ||
+                    vit[n]->IsRing    (this) ||
+                    bIsLanternOnFloor
+                ){
+                  bVisitAgain=true;
+
+                  if(bIsLanternOnFloor && !bPlayerHasLantern){
+                    static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
+                    if(iDist<iNearestLanterOnFloorDist){
+                      iNearestLanterOnFloorDist=iDist;
+                      v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
+                    }
+                  }else{
+                    iVisitAgainCount--;
+                  }
+
+                  DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
+                  break;
+                }
+              }
+            }
+          }
+
+          if(!bVisitAgain)bAddValidTargetSquare=false;
+        }
+
+      }
+
+      if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
+        static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
+
+        if(iDist<iMoreThanMaxDist) //add only valid paths
+          vv2UndiscoveredValidPathSquares.push_back(lsqr->GetPos());
+
+        if(iDist<iNearestUndiscoveredDist){
+          iNearestUndiscoveredDist=iDist;
+          v2NearestUndiscovered=lsqr->GetPos(); DBG3(iNearestUndiscoveredDist,DBGAV2(lsqr->GetPos()),DBGAV2(GetPos()));
+        }
+      }
+    }} DBG2(DBGAV2(v2PreferedTarget),vv2UndiscoveredValidPathSquares.size());
+
+    /***************************************************************
+     * define prefered navigation target
+     */
+    if(!bPlayerHasLantern && v2PreferedTarget.Is0()){
+      bool bUseWallLantern=false;
+      if(!v2PreferedLanternOnFloorTarget.Is0() && lsqrNearestSquareWithWallLantern!=NULL){
+        if(iNearestLanterOnFloorDist <= iNearestSquareWithWallLanternDist){
+          v2PreferedTarget=v2PreferedLanternOnFloorTarget;
+        }else{
+          bUseWallLantern=true;
+        }
+      }else if(!v2PreferedLanternOnFloorTarget.Is0()){
+        v2PreferedTarget=v2PreferedLanternOnFloorTarget;
+      }else if(lsqrNearestSquareWithWallLantern!=NULL){
+        bUseWallLantern=true;
+      }
+
+      if(bUseWallLantern){
+        /**
+         * target to nearest wall lantern
+         * check for lanterns on walls of adjacent squares if none found on floors
+         */
+        itNearestWallLantern->MoveTo(stkNearestDropWallLanternAt); // the AI is prepared to get things from the floor only so "magically" drop it :)
+        v2PreferedTarget = lsqrNearestDropWallLanternAt->GetPos(); DBG2("PreferWallLanternAt",DBGAV2(lsqrNearestDropWallLanternAt->GetPos()))
+      }
+
+    }
+
+    /***************************************************************
+     * validate and set new navigation target
+     */
+//    DBG9("AllNavigatePossibilities",DBGAV2(v2PreferedTarget),DBGAV2(v2PreferedLanternOnFloorTarget),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2(),DBGAV2());
+    v2 v2NewKGTo=v2(0,0);
+
+    if(v2NewKGTo.Is0()){
+      //TODO if(!v2PreferedTarget.Is0){ // how can this not be compiled? error: cannot convert ‘v2::Is0’ from type ‘truth (v2::)() const {aka bool (v2::)() const}’ to type ‘bool’
+      if(v2PreferedTarget.GetLengthSquare()>0)
+        if(AutoPlayAITestValidPathTo(v2PreferedTarget))
+          v2NewKGTo=v2PreferedTarget; DBGSV2(v2PreferedTarget);
+    }
+
+    if(v2NewKGTo.Is0()){
+      if(bAutoPlayUseRandomNavTargetOnce){ //these targets were already path validated and are safe to use!
+        v2NewKGTo=vv2UndiscoveredValidPathSquares[clock()%vv2UndiscoveredValidPathSquares.size()]; DBG2("RandomTarget",DBGAV2(v2NewKGTo));
+        bAutoPlayUseRandomNavTargetOnce=false;
+      }else{    //find nearest
+        if(!v2NearestUndiscovered.Is0()){
+          v2NewKGTo=v2NearestUndiscovered; DBGSV2(v2NearestUndiscovered);
+        }
+      }
+    }
+
+    if(v2NewKGTo.Is0()){ //no new destination: fully explored
+      if(v2Exits.size()>0){
+        if(game::GetCurrentDungeonTurnsCount()==0){ DBG1("Dungeon:FullyExplored:FirstTurn");
+          iWanderTurns=100+clock()%300; DBG2("WanderALotOnFullyExploredLevel",iWanderTurns); //just move around a lot, some NPC may spawn
+        }else{
+          // travel between dungeons if current fully explored
+          v2 v2Try = v2Exits[clock()%v2Exits.size()];
+          if(AutoPlayAITestValidPathTo(v2Try))
+            v2NewKGTo = v2TravelingToAnotherDungeon = v2Try; DBGSV2(v2TravelingToAnotherDungeon);
+        }
+      }else{
+        DBG1("AutoPlayNeedsImprovement:Navigation")
+        ADD_MESSAGE("%s says \"I need more intelligence to move around...\"", CHAR_NAME(DEFINITE)); // improve the dropping AI
+        //TODO stop autoplay mode?
+      }
+    }
+
+    if(v2NewKGTo.Is0()){ DBG1("Desperately:TryAnyRandomTargetNavWithValidPath");
+      std::vector<lsquare*> vlsqrChk(vv2AllDungeonSquares);
+
+      while(vlsqrChk.size()>0){
+        static int i;i=clock()%vlsqrChk.size();
+        static v2 v2Chk; v2Chk = vlsqrChk[i]->GetPos();
+
+        if(!AutoPlayAITestValidPathTo(v2Chk)){
+          vlsqrChk.erase(vlsqrChk.begin()+i);
+        }else{
+          v2NewKGTo=v2Chk;
+          break;
+        }
+      }
+    }
+
+    if(!v2NewKGTo.Is0()){
+      AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
+    }
+
+    DBG1("TODO:too complex paths are failing... improve create path method?");
+  }
+
+  if(!v2KeepGoingTo.Is0()){
+    if(v2KeepGoingTo==GetPos()){ DBG3("ReachedDestination",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+      //wander a bit before following new target destination
+      iWanderTurns=(clock()%iMaxWanderTurns)+iMinWanderTurns; DBG2("WanderAroundAtReachedDestination",iWanderTurns);
+
+//      v2KeepGoingTo=v2(0,0);
+//      TerminateGoingTo();
+      AutoPlayAIReset(false);
+      return true;
+    }
+
+//    CheckForUsefulItemsOnGround(false); DBGSV2(GoingTo);
+//    CheckForEnemies(false, true, false, false); DBGSV2(GoingTo);
+
+//    if(!IsGoingSomeWhere() || v2KeepGoingTo!=GoingTo){ DBG3("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo));
+//      SetGoingTo(v2KeepGoingTo);
+//    }
+    static int iForceGoingToCountDown=10;
+    static v2 v2GoingToBkp;v2GoingToBkp=GoingTo;
+    if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
+      if(iForceGoingToCountDown==0){
+        DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
+
+        if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
+          static int iSetFailTeleportCountDown=10;
+          iSetFailTeleportCountDown--;
+          vv2WrongGoingTo.push_back(v2GoingToBkp);
+          if(iSetFailTeleportCountDown==0){
+            AutoPlayAITeleport(false);
+            AutoPlayAIReset(true); //refresh to test/try it all again
+            iSetFailTeleportCountDown=10;
+          }
+        }
+        DBGSV2(GoingTo);
+        return true;
+      }else{
+        iForceGoingToCountDown--;
+      }
+    }else{
+      iForceGoingToCountDown=10;
+    }
+
+    /**
+     * Determinedly blindly moves towards target, the goal is to Navigate!
+     *
+     * this has several possible status if returning false...
+     * so better do not decide anything based on it?
+     */
+    MoveTowardsTarget(false);
+
+//    if(!MoveTowardsTarget(false)){ DBG3("OrFailedGoingTo,OrReachedDestination...",DBGAV2(GoingTo),DBGAV2(GetPos())); // MoveTowardsTarget may break the GoingTo EVEN if it succeeds?????
+//      TerminateGoingTo();
+//      v2KeepGoingTo=v2(0,0); //reset only this one to try again
+//      GetAICommand(); //wander once for randomicity
+//    }
+
+    return true;
+  }
+
+  return false;
+}
+
+truth character::AutoPlayAICommand(int& rKey)
+{ DBGSV2(GetPos());
+  if(AutoPlayLastChar!=this){
+    AutoPlayAIReset(true);
+    AutoPlayLastChar=this;
+  }
+
+  if(AutoPlayAICheckAreaLevelChangedAndReset()){
+    AutoPlayAIReset(true);
+  }
+
+  static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayAIDebugDrawOverlay);return true;}();
+
+  truth bPlayerHasLantern=false;
+  static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
+  for(int i=0;i<vit.size();i++){
+    if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this)){
+      bPlayerHasLantern=true; //will keep only the 1st lantern
+      break;
+    }
+  }
+
+  if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
+    for(int c = 1; c <= GODS; ++c)
+      if(game::GetGod(c)->IsKnown())
+        if(clock()%10==0){
+          game::GetGod(c)->Pray(); DBG2("PrayingTo",game::GetGod(c)->GetName());
+          break;
+        }
+
+    iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+  }
+
+  //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
+//  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
+//  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
+  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues
+    iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+  }
+
+  if(AutoPlayAIDropThings())
+    return true;
+
+  if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
+    return true;
+
+  if(iWanderTurns>0){
+    GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
+    iWanderTurns--;
+    return true;
+  }
+
+  /***************************************************************************************************
+   * WANDER above here
+   * NAVIGATE below here
+   ***************************************************************************************************/
+
+  /**
+   * travel between dungeons
+   */
+  if(!v2TravelingToAnotherDungeon.Is0() && GetPos() == v2TravelingToAnotherDungeon){
+    bool bTravel=false;
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2TravelingToAnotherDungeon);
+//    square* sqr = Area->GetSquare(v2TravelingToAnotherDungeon);
+    olterrain* ot = lsqr->GetOLTerrain();
+//    oterrain* ot = sqr->GetOTerrain();
+    if(ot){
+      if(ot->GetConfig() == STAIRS_UP){
+        rKey='<';
+        bTravel=true;
+      }
+
+      if(ot->GetConfig() == STAIRS_DOWN){
+        rKey='>';
+        bTravel=true;
+      }
+    }
+
+    if(bTravel){ DBG3("travel",DBGAV2(v2TravelingToAnotherDungeon),rKey);
+      AutoPlayAIReset(true);
+      return false; //so the new/changed key will be used as command, otherwise it would be ignored
+    }
+  }
+
+  if(AutoPlayAINavigateDungeon(bPlayerHasLantern))
+    return true;
+
+  /****************************************
+   * Twighlight zone
+   */
+
+  ADD_MESSAGE("%s says \"I need more intelligence to do things by myself...\"", CHAR_NAME(DEFINITE)); DBG1("TODO: AI needs improvement");
+
+  static int iDesperateResetCountDown=10;
+  if(iDesperateResetCountDown==0){
+    iDesperateResetCountDown=10;
+
+    AutoPlayAIReset(true);
+
+    // AFTER THE RESET!!!
+    iWanderTurns=iMaxWanderTurns; DBG2("DesperateResetToSeeIfAIWorksAgain",iWanderTurns);
+  }else{
+    GetAICommand(); DBG2("WanderingDesperatelyNotKnowingWhatToDo",iDesperateResetCountDown); // :)
+    iDesperateResetCountDown--;
+  }
+
+  return true;
+}
+
 void character::GetPlayerCommand()
 {
   truth HasActed = false;
 
   while(!HasActed)
   {
+    graphics::SetAllowStretchedBlit(); //overall great/single location to re-enable stretched blit!
+
     game::DrawEverything();
 
-    if(game::GetDangerFound())
+    if(!StateIsActivated(FEARLESS) && game::GetDangerFound())
     {
       if(game::GetDangerFound() > 500.)
       {
@@ -2315,33 +3290,69 @@ void character::GetPlayerCommand()
     int Key = GET_KEY();
     game::SetIsInGetCommand(false);
 
-    if(Key != '+' && Key != '-' && Key != 'M') // gum
+    if(Key != '+' && Key != '-' && Key != 'M') // gum (these are the messages keys M=ShowHistory +-=ScrollHistUpDown)
       msgsystem::ThyMessagesAreNowOld();
 
     truth ValidKeyPressed = false;
     int c;
 
-    for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-      if(Key == game::GetMoveCommandKey(c))
-      {
-        HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning());
-        ValidKeyPressed = true;
+#ifdef WIZARD
+    if(IsPlayerAutoPlay()){
+      if(Key=='.'){ // pressed or simulated
+        if(game::IsInWilderness()){
+          Key='>'; //blindly tries to go back to the dungeon safety :) TODO target and move to other dungeons/towns in the wilderness
+        }else{
+          HasActed = AutoPlayAICommand(Key); DBG2("Simulated",Key);
+          if(HasActed)ValidKeyPressed = true; //valid simulated action
+        }
+      }else{
+        /**
+         * if the user hits any key during the autoplay mode that runs by itself, it will be disabled.
+         * at non auto mode, can be moved around but cannot rest or will move by itself
+         */
+        if(game::GetAutoPlayMode()>=2 && Key!='~'){
+          game::DisableAutoPlayMode();
+          AutoPlayAIReset(true); // this will help on re-randomizing things, mainly paths
+        }
       }
+    }
+#endif
 
-    for(c = 1; commandsystem::GetCommand(c); ++c)
-      if(Key == commandsystem::GetCommand(c)->GetKey())
-      {
-        if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
-          ADD_MESSAGE("This function cannot be used while in wilderness.");
-        else
-          if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
-            ADD_MESSAGE("Activate wizardmode to use this function.");
+    if(!HasActed){
+
+      for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+        if(Key == game::GetMoveCommandKey(c))
+        {
+          bool bWaitNeutralMove=false;
+          HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+          if(!HasActed && bWaitNeutralMove){
+            //cant access.. HasActed = commandsystem::NOP(this);
+            Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
+          }
+          ValidKeyPressed = true;
+        }
+
+      for(c = 1; commandsystem::GetCommand(c); ++c)
+        if(Key == commandsystem::GetCommand(c)->GetKey())
+        {
+          if(game::IsInWilderness() && !commandsystem::GetCommand(c)->IsUsableInWilderness())
+            ADD_MESSAGE("This function cannot be used while in wilderness.");
           else
-            HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+            if(!game::WizardModeIsActive() && commandsystem::GetCommand(c)->IsWizardModeFunction())
+              ADD_MESSAGE("Activate wizardmode to use this function.");
+            else{
+              game::RegionListItemEnable(commandsystem::IsForRegionListItem(c));
+              game::RegionSilhouetteEnable(commandsystem::IsForRegionSilhouette(c));
+              HasActed = commandsystem::GetCommand(c)->GetLinkedFunction()(this);
+              game::RegionListItemEnable(false);
+              game::RegionSilhouetteEnable(false);
+            }
 
-        ValidKeyPressed = true;
-        break;
-      }
+          ValidKeyPressed = true;
+          break;
+        }
+
+    }
 
     if(!ValidKeyPressed)
       ADD_MESSAGE("Unknown key. Press '?' for a list of commands.");
@@ -2375,12 +3386,12 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
     CheckStarvationDeath(CONST_S("vomited himself to death"));
   }
 
-  if(StateIsActivated(PARASITIZED) && !(RAND() & 7))
+  if(StateIsActivated(PARASITE_TAPE_WORM) && !(RAND() & 7))
   {
     if(IsPlayer())
       ADD_MESSAGE("You notice a dead broad tapeworm among your former stomach contents.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
   }
 
   if(!game::IsInWilderness())
@@ -2595,6 +3606,14 @@ truth character::LoseConsciousness(int Counter, truth HungerFaint)
   return true;
 }
 
+void character::DeActivateTemporaryState(long What)
+{
+  if(PolymorphBackup)
+    PolymorphBackup->TemporaryState &= ~What;
+
+  TemporaryState &= ~What;
+}
+
 void character::DeActivateVoluntaryAction(cfestring& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
@@ -2683,7 +3702,7 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
     if(SpecialEnemySightedReaction(NearestChar))
       return true;
 
-    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5)
+    if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5 && !StateIsActivated(FEARLESS))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s sees %s.", CHAR_NAME(DEFINITE), NearestChar->CHAR_DESCRIPTION(DEFINITE));
@@ -2791,26 +3810,40 @@ truth character::FollowLeader(character* Leader)
   if(!Leader || Leader == this || !IsEnabled())
     return false;
 
-  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this) && Leader->SquareUnderCanBeSeenBy(this, true))
-  {
-    v2 Distance = GetPos() - GoingTo;
+  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this) && Leader->SquareUnderCanBeSeenBy(this, true)){
+    v2HoldPos = GoingTo; //will keep the last reference position possible
 
+    v2 Distance = GetPos() - GoingTo; //set by SeekLeader()
     if(abs(Distance.X) <= 2 && abs(Distance.Y) <= 2)
       return false;
     else
       return MoveTowardsTarget(false);
   }
-  else
-    if(IsGoingSomeWhere())
-      if(!MoveTowardsTarget(true))
-      {
-        TerminateGoingTo();
-        return false;
-      }
-      else
-        return true;
-    else
+
+  if(IsGoingSomeWhere()){
+    if(!MoveTowardsTarget(true)){
+      TerminateGoingTo();
       return false;
+    }else{
+      return true;
+    }
+  }else{
+    // just hold near position
+    if(v2HoldPos.Is0())
+      v2HoldPos=GetPos(); //when the game is loaded keep current pos TODO could be savegamed tho
+    if(ivanconfig::GetHoldPosMaxDist()>0){
+      v2 v2HoldDist = GetPos() - v2HoldPos;
+      if(abs(v2HoldDist.X) < ivanconfig::GetHoldPosMaxDist() && abs(v2HoldDist.Y) < ivanconfig::GetHoldPosMaxDist()){
+        // will do other things
+        return false;
+      }else{
+        SetGoingTo(v2HoldPos); DBG4(GetNameSingular().CStr(),DBGAV2(v2HoldPos),DBGAV2(Leader->GetPos()),DBGAV2(v2HoldDist));
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 void character::SeekLeader(ccharacter* Leader)
@@ -2826,7 +3859,7 @@ void character::SeekLeader(ccharacter* Leader)
     {
       team* Team = GetTeam();
 
-      for(character* p : Team->GetMember())
+      for(character* p : Team->GetMember()){
         if(p->IsEnabled()
            && p->GetID() != GetID()
            && (CommandFlags & FOLLOW_LEADER)
@@ -2842,6 +3875,10 @@ void character::SeekLeader(ccharacter* Leader)
             break;
           }
         }
+      }
+
+//      if(!IsGoingSomeWhere()){ // couldnt follow leader neather team mate
+//      }
     }
   }
 }
@@ -3162,8 +4199,63 @@ void character::GoOn(go* Go, truth FirstStep)
 
   if(GetStackUnder()->GetVisibleItems(this))
   {
-    Go->Terminate(false);
-    return;
+    bool bUseless=false,bTooCheap=false,bEncumbering=false;
+
+    switch(ivanconfig::GetGoOnStopMode()){
+    case 0: Go->Terminate(false); return;
+    case 1:bUseless=true;break;
+    case 2:bTooCheap=true;break;
+    case 3:bEncumbering=true;break;
+    default:
+      ABORT("unsupported go on stop mode %d",ivanconfig::GetGoOnStopMode());
+      break;
+    }
+
+    itemvector vit;
+    GetStackUnder()->FillItemVector(vit);
+    for(int i=0;i<vit.size();i++){
+      DBG9(vit[i]->GetNameSingular().CStr(), vit[i]->AllowEquip(), vit[i]->IsAppliable(this), vit[i]->IsConsumable(),
+        vit[i]->IsEatable(this), vit[i]->IsDrinkable(this), vit[i]->IsOpenable(this), vit[i]->IsReadable(this), vit[i]->IsZappable(this) );
+      DBG8(vit[i]->GetNameSingular().CStr(),vit[i]->IsWeapon(this),vit[i]->IsArmor(this),vit[i]->IsBodyArmor(this),vit[i]->IsHelmet(this),
+        vit[i]->IsGauntlet(this),vit[i]->IsBoot(this),vit[i]->IsBelt(this) );
+      if( //TODO ? vit[i]->GetSpoilLevel()==0
+          vit[i]->IsOpenable(this) //doors are not items, but works for chests too
+          ||
+          (bUseless &&
+            (
+              vit[i]->IsAppliable(this) ||
+              vit[i]->IsZappable(this)  ||
+
+              // bad!              vit[i]->IsConsumable() ||
+              vit[i]->IsEatable(this) ||
+              vit[i]->IsDrinkable(this) ||
+
+              // bad!              vit[i]->AllowEquip() ||
+              vit[i]->IsWeapon(this) ||
+              vit[i]->IsArmor(this) || //all armor slots
+//              vit[i]->IsBodyArmor(this) ||
+//              vit[i]->IsHelmet(this) ||
+//              vit[i]->IsGauntlet(this) ||
+//              vit[i]->IsBoot(this) ||
+//              vit[i]->IsBelt(this) ||
+
+              vit[i]->IsAmulet(this) ||
+              vit[i]->IsRing(this) ||
+
+              vit[i]->IsReadable(this)
+            )
+          ) ||
+          (bTooCheap &&
+            (vit[i]->GetTruePrice() > iMaxValueless)
+          ) ||
+          (bEncumbering && //calc in float price vs weight
+            (vit[i]->GetTruePrice()/(vit[i]->GetWeight()/1000.0)) > (iMaxValueless*2)
+          )
+      ){
+        Go->Terminate(false);
+        return;
+      }
+    }
   }
 
   game::DrawEverything();
@@ -3368,6 +4460,12 @@ void character::TeleportRandomly(truth Intentional)
 {
   v2 TelePos = ERROR_V2;
 
+  if(StateIsActivated(TELEPORT_LOCK))
+  {
+    ADD_MESSAGE("You flicker for a second.");
+    return;
+  }
+
   if(StateIsActivated(TELEPORT_CONTROL))
   {
     if(IsPlayer())
@@ -3442,6 +4540,70 @@ void character::TeleportRandomly(truth Intentional)
 
   if(GetAction() && GetAction()->IsVoluntary())
     GetAction()->Terminate(false);
+
+  if(IsPlayerAutoPlay())
+    AutoPlayAIReset(true);
+}
+
+truth character::IsPlayerAutoPlay()
+{
+  return IsPlayer() && game::GetAutoPlayMode()>0;
+}
+
+void character::DoDetecting()
+{
+  if(IsPlayerAutoPlay())return;
+
+  material* TempMaterial;
+
+  for(;;)
+  {
+    festring Temp;
+
+    if(game::DefaultQuestion(Temp, CONST_S("What material do you want to detect?"),
+                             game::GetDefaultDetectMaterial(), true) == ABORTED)
+    {
+      if(game::TruthQuestion(CONST_S("Really cancel? [y/N]")))
+        return;
+      else
+        continue;
+    }
+
+    TempMaterial = protosystem::CreateMaterial(Temp);
+
+    if(TempMaterial)
+      break;
+    else
+      game::DrawEverythingNoBlit();
+  }
+
+  level* Level = GetLevel();
+  int Squares = Level->DetectMaterial(TempMaterial);
+
+  if(Squares > GetAttribute(INTELLIGENCE) * (25 + RAND() % 51))
+  {
+    ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
+    Level->BlurMemory();
+    BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
+    EditExperience(INTELLIGENCE, -100, 1 << 12);
+  }
+  else if(!Squares)
+  {
+    ADD_MESSAGE("You feel a sudden urge to imagine the dark void of a starless night sky.");
+    EditExperience(INTELLIGENCE, 20, 1 << 12);
+  }
+  else
+  {
+    ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
+    game::SetDrawMapOverlay(ivanconfig::IsShowMapAtDetectMaterial());
+    game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), GetPos(), 0, 0, false);
+    game::SetDrawMapOverlay(false);
+    EditExperience(INTELLIGENCE, 30, 1 << 12);
+  }
+
+  delete TempMaterial;
+  Level->CalculateLuminances();
+  game::SendLOSUpdateRequest();
 }
 
 void character::RestoreHP()
@@ -3501,6 +4663,38 @@ truth character::AllowDamageTypeBloodSpill(int Type)
   ABORT("Unknown blood effect destroyed the dungeon!");
   return false;
 }
+
+v2 character::GetPosSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  if(sqr!=NULL)return sqr->GetPos();
+  return v2();
+}
+
+square* character::GetSquareUnderSafely() const
+{ //prevents crash if polymorphed (here at least)
+  if(SquareUnder[0]!=NULL){DBGLN;
+    return SquareUnder[0];
+  }DBGLN;
+
+  if(IsPolymorphed()){DBGLN;
+    character* pb = GetPolymorphBackup();
+    if(pb!=NULL && pb->SquareUnder[0]!=NULL){ DBG1(pb->GetNameSingular().CStr()); //TODO to use square under index here may cause inconsistencies?
+      return pb->SquareUnder[0];
+    }
+  }DBGLN;
+
+  return NULL;
+}
+
+stack* character::GetStackUnderSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  lsquare* lsqr = dynamic_cast<lsquare*>(sqr);
+  if(lsqr!=NULL)return lsqr->GetStack();
+  return NULL;
+}
+
 
 /* Returns truly done damage */
 
@@ -3599,10 +4793,18 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
         {
           /** No multi-tile humanoid support! */
 
-          GetStackUnder()->AddItem(Severed);
+          stack* su = GetStackUnderSafely();
+          if(su){
+            su->AddItem(Severed);
 
-          if(Direction != YOURSELF)
-            Severed->Fly(0, Direction, Damage);
+            if(Direction != YOURSELF)
+              Severed->Fly(0, Direction, Damage);
+          }else{
+            /**
+             * this may happen when polymorphing (tests were made as a snake) during an explosion that severe body parts
+             */
+            GetStack()->AddItem(Severed); DBGLN;
+          }
         }
         else
           GetStack()->AddItem(Severed);
@@ -3618,7 +4820,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
 
     if(CanPanicFromSeveredBodyPart()
        && RAND() % 100 < GetPanicLevel()
-       && !StateIsActivated(PANIC) && !IsDead())
+       && !StateIsActivated(PANIC)
+       && !StateIsActivated(FEARLESS)
+       && !IsDead())
       BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
 
     SpecialBodyPartSeverReaction();
@@ -3638,6 +4842,9 @@ item* character::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, sta
 
   if(StateIsActivated(LEPROSY))
     BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
+
+  if(BodyPartIndex == HEAD_INDEX && StateIsActivated(PARASITE_MIND_WORM))
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
 
   if(ForceDisappearance
      || BodyPartsDisappearWhenSevered()
@@ -3836,7 +5043,6 @@ int character::GetResistance(int Type) const
   switch(Type&0xFFF)
   {
    case PHYSICAL_DAMAGE:
-   case SOUND:
    case DRAIN:
    case MUSTARD_GAS_DAMAGE:
    case PSI:
@@ -3846,6 +5052,7 @@ int character::GetResistance(int Type) const
    case POISON: return GetPoisonResistance();
    case ELECTRICITY: return GetElectricityResistance();
    case ACID: return GetAcidResistance();
+   case SOUND: return GetSoundResistance();
   }
 
   ABORT("Resistance lack detected!");
@@ -3854,6 +5061,21 @@ int character::GetResistance(int Type) const
 
 void character::Regenerate()
 {
+  if(StateIsActivated(REGENERATION) && !(RAND() % 3000))
+  {
+    bodypart* NewBodyPart = GenerateRandomBodyPart();
+
+    if(NewBodyPart)
+    {
+      NewBodyPart->SetHP(1);
+
+      if(IsPlayer())
+        ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr());
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
+    }
+  }
+
   if(HP == MaxHP)
     return;
 
@@ -4246,7 +5468,7 @@ void character::ReceiveHeal(long Amount)
   if(RAND() % 10 < Amount)
     HealHitPoint();
 
-  if(Amount >= 250 || RAND() % 250 < Amount)
+  if(Amount >= 1000 || RAND() % 1000 < Amount)
   {
     bodypart* NewBodyPart = GenerateRandomBodyPart();
 
@@ -4304,6 +5526,15 @@ void character::AddSchoolFoodHitMessage() const
 void character::ReceiveNutrition(long SizeOfEffect)
 {
   EditNP(SizeOfEffect);
+}
+
+void character::ReceiveOmmelBlood(long Amount)
+{
+  EditExperience(WILL_POWER, 500, Amount << 4);
+  EditExperience(MANA, 500, Amount << 4);
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
 }
 
 void character::ReceiveOmmelUrine(long Amount)
@@ -4398,6 +5629,14 @@ void character::AddPepsiConsumeEndMessage() const
     ADD_MESSAGE("%s looks very lame.", CHAR_NAME(DEFINITE));
 }
 
+void character::AddCocaColaConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your guruism rising!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks awesome.", CHAR_NAME(DEFINITE));
+}
+
 void character::ReceiveDarkness(long Amount)
 {
   EditExperience(INTELLIGENCE, -Amount / 5, 1 << 13);
@@ -4474,11 +5713,11 @@ void character::DrawPanel(truth AnimationDraw) const
     return;
   }
 
-  igraph::BlitBackGround(v2(19 + (game::GetScreenXSize() << 4), 0),
-                         v2(RES.X - 19 - (game::GetScreenXSize() << 4), RES.Y));
-  igraph::BlitBackGround(v2(16, 45 + (game::GetScreenYSize() << 4)),
-                         v2(game::GetScreenXSize() << 4, 9));
-  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
+  igraph::BlitBackGround(v2(19 + (game::GetMaxScreenXSize() << 4), 0),
+                         v2(RES.X - 19 - (game::GetMaxScreenXSize() << 4), RES.Y));
+  igraph::BlitBackGround(v2(16, 45 + (game::GetMaxScreenYSize() << 4)),
+                         v2(game::GetMaxScreenXSize() << 4, 9));
+  FONT->Printf(DOUBLE_BUFFER, v2(16, 45 + (game::GetMaxScreenYSize() << 4)), WHITE, "%s", GetPanelName().CStr());
   game::UpdateAttributeMemory();
   int PanelPosX = RES.X - 96;
   int PanelPosY = DrawStats(false);
@@ -4486,9 +5725,12 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
   PrintAttribute("Int", INTELLIGENCE, PanelPosX, PanelPosY++);
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
-  PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
+  PrintAttribute("Will", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
+  PrintAttribute("Mana", MANA, PanelPosX, PanelPosY++);
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Ht   %d cm", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Wt   %d kg", GetTotalCharacterWeight());
+  ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   ++PanelPosY;
@@ -4524,22 +5766,22 @@ void character::DrawPanel(truth AnimationDraw) const
                    (1 << c) & EquipmentState || TemporaryStateCounter[c] >= PERMANENT ? BLUE : WHITE,
                    "%s", StateData[c].Description);
 
-  static cchar* HungerStateStrings[] = { "Starving", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
-  static cpackcol16 HungerStateColors[] = { RED, BLUE, BLUE, 0, WHITE, WHITE, WHITE };
+  static cchar* HungerStateStrings[] = { "Starving!", "Very hungry", "Hungry", "", "Satiated", "Bloated", "Overfed!" };
+  static cpackcol16 HungerStateColors[] = { RED, RED, YELLOW, 0, WHITE, WHITE, YELLOW };
   int HungerState = GetHungerState();
   if(HungerState != NOT_HUNGRY)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  HungerStateColors[HungerState], HungerStateStrings[HungerState]);
 
   static cchar* BurdenStateStrings[] = { "Overload!", "Stressed", "Burdened" };
-  static cpackcol16 BurdenStateColors[] = { RED, BLUE, BLUE };
+  static cpackcol16 BurdenStateColors[] = { RED, RED, YELLOW };
   int BurdenState = GetBurdenState();
   if(BurdenState != UNBURDENED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
                  BurdenStateColors[BurdenState], BurdenStateStrings[BurdenState]);
 
-  static cchar* TirednessStateStrings[] = { "Fainting", "Exhausted" };
-  static cpackcol16 TirednessStateColors[] = { RED, WHITE };
+  static cchar* TirednessStateStrings[] = { "Fainting!", "Exhausted" };
+  static cpackcol16 TirednessStateColors[] = { RED, YELLOW };
   int TirednessState = GetTirednessState();
   if(TirednessState != UNTIRED)
     FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
@@ -4848,6 +6090,46 @@ void character::PrintEndLycanthropyMessage() const
     ADD_MESSAGE("You feel the wolf inside you has had enough of your bad habits.");
 }
 
+void character::PrintBeginVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly decide you have always hated garlic.");
+}
+
+void character::PrintEndVampirismMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You recall your delight of the morning sunshine back in New Attnam.");
+}
+
+void character::PrintBeginFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You shout: \"I am invincible!\"");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks very calm.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndFearlessMessage () const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Everything looks much more dangerous now.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s seems to have lost all confidence.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintBeginFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your life-force invigorating your entire body.");
+}
+
+void character::PrintEndFastingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your stomach growls in discontent.");
+}
+
 void character::PrintBeginInvisibilityMessage() const
 {
   if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm())
@@ -4900,6 +6182,22 @@ void character::PrintEndEtherealityMessage() const
     ADD_MESSAGE("You drop out of the firmament, feeling suddenly quite dense.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("Suddenly %s displaces the air with a puff.", CHAR_NAME(INDEFINITE));
+}
+
+void character::PrintBeginSwimmingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You fondly remember the sound of ocean waves.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks wet.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndSwimmingMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly remember how you nearly drowned as a child.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s looks less wet.", CHAR_NAME(INDEFINITE));
 }
 
 void character::PrintBeginInfraVisionMessage() const
@@ -5028,6 +6326,12 @@ character* character::ForceEndPolymorph()
 
 void character::LycanthropyHandler()
 {
+  if(StateIsActivated(POLYMORPH_LOCK))
+    return;
+
+  if(GetType() == werewolfwolf::ProtoType.GetIndex())
+    return;
+
   if(!(RAND() % 2000))
   {
     if(StateIsActivated(POLYMORPH_CONTROL)
@@ -5098,9 +6402,14 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 {
   character* NewForm = 0;
 
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return NewForm;
+  }
   if(StateIsActivated(POLYMORPH_CONTROL))
   {
-    if(IsPlayer())
+    if(IsPlayer() && !IsPlayerAutoPlay())
     {
       if(!GetNewFormForPolymorphWithControl(NewForm))
         return NewForm;
@@ -5149,7 +6458,7 @@ truth character::CanBeSeenByPlayer(truth Theoretically, truth IgnoreESP) const
 {
   if(IsEnabled() && !game::IsGenerating() && (Theoretically || GetSquareUnder()))
   {
-    truth MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+    truth MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && !IsESPBlockedByEquipment();
     truth MayBeInfraSeen = PLAYER->IsEnabled() && PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
     truth Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
@@ -5451,6 +6760,11 @@ truth character::IsWarm() const
   return combinebodypartpredicates()(this, &bodypart::IsWarm, 1);
 }
 
+truth character::IsWarmBlooded() const
+{
+  return combinebodypartpredicates()(this, &bodypart::IsWarmBlooded, 1);
+}
+
 void character::BeginInvisibility()
 {
   UpdatePictures();
@@ -5474,6 +6788,10 @@ void character::BeginEthereality()
 {
 }
 
+void character::BeginSwimming()
+{
+}
+
 void character::EndInvisibility()
 {
   UpdatePictures();
@@ -5494,6 +6812,10 @@ void character::EndESP()
 }
 
 void character::EndEthereality()
+{
+}
+
+void character::EndSwimming()
 {
 }
 
@@ -5560,6 +6882,18 @@ void character::PrintEndTeleportMessage() const
     ADD_MESSAGE("You suddenly realize you've always preferred walking to jumping.");
 }
 
+void character::PrintBeginDetectMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel curious about your surroundings.");
+}
+
+void character::PrintEndDetectMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You decide to rely on your own sight from now on.");
+}
+
 void character::TeleportHandler()
 {
   if(!(RAND() % 1500) && !game::IsInWilderness())
@@ -5571,6 +6905,20 @@ void character::TeleportHandler()
 
     TeleportRandomly();
   }
+}
+
+void character::DetectHandler()
+{
+  if(IsPlayer()) //the AI can't be asked position questions! So only the player can have this state really.
+  {
+    if(!(RAND() % 3000) && !game::IsInWilderness())
+    {
+      ADD_MESSAGE("Your mind wanders in search of something.");
+      DoDetecting();
+    }
+  }
+  else
+    return;
 }
 
 void character::PrintBeginPolymorphMessage() const
@@ -5591,6 +6939,28 @@ void character::PolymorphHandler()
     PolymorphRandomly(1, 999999, 200 + RAND() % 800);
 }
 
+void character::PrintBeginPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel incredibly stubborn about who you are.");
+}
+
+void character::PrintEndPolymorphLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel more open to new ideas.");
+}
+
+void character::PolymorphLockHandler()
+{
+  if (TemporaryStateIsActivated(POLYMORPHED))
+  {
+      EditTemporaryStateCounter(POLYMORPHED, 1);
+      if (GetTemporaryStateCounter(POLYMORPHED) < 1000)
+        EditTemporaryStateCounter(POLYMORPHED, 1);
+  }
+}
+
 void character::PrintBeginTeleportControlMessage() const
 {
   if(IsPlayer())
@@ -5603,16 +6973,67 @@ void character::PrintEndTeleportControlMessage() const
     ADD_MESSAGE("You feel your control slipping.");
 }
 
+void character::PrintBeginRegenerationMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your heart races.");
+}
+
+void character::PrintEndRegenerationMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your rapid heartbeat calms down.");
+}
+
+void character::PrintBeginDiseaseImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel especially healthy.");
+}
+
+void character::PrintEndDiseaseImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You develop a sudden fear of germs.");
+}
+
+void character::PrintBeginTeleportLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel firmly planted in reality.");
+}
+
+void character::PrintEndTeleportLockMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your mind soars far and wide.");
+}
+
+void character::TeleportLockHandler()
+{
+  if (StateIsActivated(TELEPORT_LOCK))
+  {
+    EditTemporaryStateCounter(TELEPORT_LOCK, 1);
+    if (GetTemporaryStateCounter(TELEPORT_LOCK) < 1000)
+      EditTemporaryStateCounter(TELEPORT_LOCK, 1);
+  }
+}
+
 void character::DisplayStethoscopeInfo(character*) const
 {
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
   Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-  //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Mana: ") + GetAttribute(MANA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
 
   if(GetAction())
@@ -5651,6 +7072,14 @@ truth character::CanUseStethoscope(truth PrintReason) const
 
 void character::TeleportSomePartsAway(int NumberToTeleport)
 {
+  if(StateIsActivated(TELEPORT_LOCK))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You feel very itchy for a moment.");
+
+    return;
+  }
+
   for(int c = 0; c < NumberToTeleport; ++c)
   {
     int RandomBodyPart = GetRandomNonVitalBodyPart();
@@ -5713,6 +7142,23 @@ int character::GetRandomNonVitalBodyPart() const
       OKBodyPart[OKBodyParts++] = c;
 
   return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
+}
+
+int character::GetTotalCharacterWeight() const
+{
+  int CharacterWeight = 0;
+
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      CharacterWeight += BodyPart->GetWeight();
+    }
+  }
+
+  return (floor(CharacterWeight / 1000));
 }
 
 void character::CalculateVolumeAndWeight()
@@ -6104,7 +7550,7 @@ truth character::ContentsCanBeSeenBy(ccharacter* Viewer) const
 }
 
 truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
-                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+                           int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(Weapon)
     return Weapon->HitEffect(this, Enemy, HitPos, BodyPartIndex, Direction, BlockedByArmour);
@@ -6116,7 +7562,7 @@ truth character::HitEffect(character* Enemy, item* Weapon, v2 HitPos, int Type,
    case KICK_ATTACK:
     return Enemy->SpecialKickEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
    case BITE_ATTACK:
-    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+    return Enemy->SpecialBiteEffect(this, HitPos, BodyPartIndex, Direction, BlockedByArmour, Critical, DoneDamage);
   }
 
   return false;
@@ -6181,7 +7627,7 @@ character* character::Duplicate(ulong Flags)
   return Char;
 }
 
-truth character::TryToEquip(item* Item)
+truth character::TryToEquip(item* Item, truth onlyIfEmpty, int onlyAt)
 {
   if(!Item->AllowEquip()
      || !CanUseEquipment()
@@ -6189,7 +7635,9 @@ truth character::TryToEquip(item* Item)
      || Item->GetSquaresUnder() != 1)
     return false;
 
-  for(int e = 0; e < GetEquipments(); ++e)
+  for(int e = 0; e < GetEquipments(); ++e){
+    if(onlyAt>-1 && e!=onlyAt)continue;
+
     if(GetBodyPartOfEquipment(e) && EquipmentIsAllowed(e))
     {
       sorter Sorter = EquipmentSorter(e);
@@ -6201,6 +7649,7 @@ truth character::TryToEquip(item* Item)
          && AllowEquipment(Item, e))
       {
         item* OldEquipment = GetEquipment(e);
+        if(onlyIfEmpty && OldEquipment!=NULL)continue;
 
         if(BoundToUse(OldEquipment, e))
           continue;
@@ -6277,6 +7726,7 @@ truth character::TryToEquip(item* Item)
         }
       }
     }
+  }
 
   return false;
 }
@@ -6322,7 +7772,7 @@ void character::PrintEndPanicMessage() const
 void character::CheckPanic(int Ticks)
 {
   if(GetPanicLevel() > 1 && !StateIsActivated(PANIC)
-     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1))
+     && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1) && !StateIsActivated(FEARLESS))
     BeginTemporaryState(PANIC, ((Ticks * 3) >> 2) + RAND() % ((Ticks >> 1) + 1)); // 25% randomness to ticks...
 }
 
@@ -6507,16 +7957,25 @@ void character::ReceiveAntidote(long Amount)
     }
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(PARASITIZED))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_TAPE_WORM))
   {
     if(IsPlayer())
       ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
-    DeActivateTemporaryState(PARASITIZED);
+    DeActivateTemporaryState(PARASITE_TAPE_WORM);
     Amount -= Min(100L, Amount);
   }
 
-  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(PARASITE_MIND_WORM))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Something in your head screeches in pain.");
+
+    DeActivateTemporaryState(PARASITE_MIND_WORM);
+    Amount -= Min(100L, Amount);
+  }
+
+  if((Amount > 500 || RAND_N(1000) < Amount) && StateIsActivated(LEPROSY))
   {
     if(IsPlayer())
       ADD_MESSAGE("You are not falling to pieces anymore.");
@@ -6774,7 +8233,11 @@ truth character::SelectFromPossessions(itemvector& ReturnVector, cfestring& Topi
     List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
     List.SetEntryDrawer(game::ItemEntryDrawer);
     game::DrawEverythingNoBlit();
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     int Chosen = List.Draw();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     game::ClearItemDrawVector();
 
     if(Chosen != ESCAPED)
@@ -6938,14 +8401,14 @@ void character::PrintEndParasitizedMessage() const
 
 void character::ParasitizedHandler()
 {
-  EditNP(-5);
+  EditNP(-10);
 
   if(!(RAND() % 250))
   {
     if(IsPlayer())
       ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
-    ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
+    ReceiveDamage(0, 1, DRAIN, TORSO, 8, false, false, false, false); // Use DRAIN here so that resistances do not apply.
     CheckDeath(CONST_S("killed by a vile parasite"), 0);
   }
 }
@@ -6974,7 +8437,16 @@ festring character::GetPanelName() const
   festring Name;
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
-  return Name;
+
+  festring PanelName;
+  if(!game::IsInWilderness()){
+    PanelName << Name;
+    if(ivanconfig::IsShowFullDungeonName()){
+      PanelName << " (at " << game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true) << ')';
+    }
+  }
+
+  return PanelName;
 }
 
 long character::GetMoveAPRequirement(int Difficulty) const
@@ -7139,7 +8611,10 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
   truth Pummeled = ReceiveDamage(Explosion->Terrorist, Explosion->FireOnly ? 0 : (Damage >> 1),
                                  PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
 
-  if(Pummeled && GetArea()->IsValidPos(SpillPos))
+  // The ReceiveDamage calls above might cause 'this' to be polymorphed, in which case
+  // SquareUnder[0] is null and calling GetArea or SpillBlood will crash.
+  // See https://github.com/Attnam/ivan/issues/237 for details.
+  if(SquareUnder[0] && Pummeled && GetArea()->IsValidPos(SpillPos))
     GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
   festring Msg;
@@ -7261,26 +8736,84 @@ void character::PrintEndGasImmunityMessage() const
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
 
+void inventoryInfo(const character* pC){
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+
+  pC->GetStack()->DrawContents(pC, CONST_S("Your inventory"), REMEMBER_SELECTED);
+
+  for(stackiterator i = pC->GetStack()->GetBottom(); i.HasItem(); ++i)
+    i->DrawContents(pC);
+
+  doforequipmentswithparam<ccharacter*>()(pC, &item::DrawContents, pC);
+
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+}
+
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems()
-     && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+  graphics::SetAllowStretchedBlit();
+
+  if(ivanconfig::IsAltAdentureInfo())
   {
-    GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
+    ShowAdventureInfoAlt();
+  }
+  else
+  {
+    if(GetStack()->GetItems()
+       && game::TruthQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
+    {
+      inventoryInfo(this);
+    }
 
-    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      i->DrawContents(this);
+    if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
+      msgsystem::DrawMessageHistory();
 
-    doforequipmentswithparam<ccharacter*>()(this, &item::DrawContents, this);
+    if(!game::MassacreListsEmpty()
+       && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
+    {
+      game::DisplayMassacreLists();
+    }
   }
 
-  if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
-    msgsystem::DrawMessageHistory();
-
-  if(!game::MassacreListsEmpty()
-     && game::TruthQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
-    game::DisplayMassacreLists();
+  graphics::SetDenyStretchedBlit(); //back to menu
 }
+
+void character::ShowAdventureInfoAlt() const
+{
+  while(true) {
+#ifdef WIZARD
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook, (x) cheat look or [ESC]/(n)othing?"),
+         'z', 13, 'i','I', 'm','M', 'k','K', 'l','L', 'x','X', 'N','n', KEY_ESC); //default answer 'z' is ignored
+#else
+    int Answer =
+     game::KeyQuestion(
+       CONST_S("See (i)nventory, (m)essage history, (k)ill list, (l)ook or [ESC]/(n)othing?"),
+         'z', 11, 'i','I', 'm','M', 'k','K', 'l','L', 'n','N', KEY_ESC); //default answer 'z' is ignored
+#endif
+
+    if(Answer == 'i' || Answer == 'I'){
+      inventoryInfo(this);
+    }else if(Answer == 'm' || Answer == 'M'){
+      msgsystem::DrawMessageHistory();
+    }else if(Answer == 'k' || Answer == 'K'){
+      game::DisplayMassacreLists();
+#ifdef WIZARD
+    }else if(Answer == 'l' || Answer == 'L' || Answer == 'x' || Answer == 'X'){
+      commandsystem::PlayerDiedLookMode(Answer == 'x' || Answer == 'X');
+#else
+    }else if(Answer == 'l' || Answer == 'L'){
+      commandsystem::PlayerDiedLookMode();
+#endif
+    }else if(Answer == 'n' || Answer == 'N' || Answer == KEY_ESC){
+      return;
+    }
+  }
+}
+
 
 truth character::EditAllAttributes(int Amount)
 {
@@ -8179,6 +9712,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       UpdatePictures();
 
     break;
+   case WILL_POWER:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel incredibly stubborn.";
+      NPCMsg = "You notice %s looks much more determined.";
+    }
+    else
+    {
+      PlayerMsg = "You loose your determination.";
+      NPCMsg = "You notice how wimpy %s looks.";
+    }
+    break;
    case CHARISMA:
     if(Change > 0)
     {
@@ -8220,8 +9765,18 @@ void character::EditExperience(int Identifier, double Value, double Speed)
       PlayerMsg = "You feel your magical abilities withering slowly.";
       NPCMsg = "You notice strange vibrations in the air around %s. But they disappear rapidly.";
     }
-
     break;
+   default:
+    if(Change > 0)
+    {
+      PlayerMsg = "You feel more awesome!";
+      NPCMsg = "You notice how cool %s looks.";
+    }
+    else
+    {
+      PlayerMsg = "You feel a strange sensation, but then it passes.";
+      NPCMsg = "You notice there is something different about %s.";
+    }
   }
 
   if(IsPlayer())
@@ -8271,6 +9826,9 @@ int character::GetAttribute(int Identifier, truth AllowBonus) const
 
   if(AllowBonus && Identifier == INTELLIGENCE && BrainsHurt())
     return Max((A + AttributeBonus[INTELLIGENCE]) / 3, 1);
+
+  if(AllowBonus && Identifier == PERCEPTION && IsHeadless())
+    return 0;
 
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
@@ -8323,7 +9881,8 @@ void character::CheckIfSeen()
 void character::SignalSeen()
 {
   if(!(WarnFlags & WARNED)
-     && GetRelation(PLAYER) == HOSTILE)
+     && GetRelation(PLAYER) == HOSTILE
+     && !StateIsActivated(FEARLESS))
   {
     double Danger = GetRelativeDanger(PLAYER);
 
@@ -8385,8 +9944,36 @@ truth character::CanUseEquipment(int I) const
   return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I) && EquipmentIsAllowed(I);
 }
 
-/* Target mustn't have any equipment */
+void character::MemorizeEquipedItems(){DBGCHAR(this,"");
+  int iEqCount=0;
+  for(int c = 0; c < MAX_EQUIPMENT_SLOTS; ++c)
+  {
+    item* Item = NULL;
+    if(CanUseEquipment(c))Item=GetEquipment(c);
 
+    if(Item!=NULL){
+      MemorizedEquippedItemIDs[c]=Item->GetID(); DBGSI(MemorizedEquippedItemIDs[c]);
+      iEqCount++;
+    }else{
+      MemorizedEquippedItemIDs[c]=0;
+    }
+  }
+}
+
+void addPolymorphBkpToVector(character* CharIni,std::vector<character*>* pvCharMemory){
+  character* CharMemory = CharIni;
+
+  while(CharMemory!=NULL){
+    if(std::find(pvCharMemory->begin(), pvCharMemory->end(), CharMemory) == pvCharMemory->end()){ //if not already in vector
+      pvCharMemory->push_back(CharMemory); DBGCHAR(CharMemory,"");
+    }
+
+    CharMemory=CharMemory->GetPolymorphBackup();
+
+    if(CharMemory==CharIni){DBG1("weirdRecurrentPolymorphBkp?");break;} //TODO keep this? just in case some weird thing happens out of here? it probably would mean inconsistency?
+  }
+}
+/* Target mustn't have any equipment */
 void character::DonateEquipmentTo(character* Character)
 {
   if(IsPlayer())
@@ -8415,8 +10002,7 @@ void character::DonateEquipmentTo(character* Character)
       else if(EquipmentMemory[c]
               && Character->CanUseEquipment(c))
       {
-        for(stackiterator i = Character->GetStack()->GetBottom();
-            i.HasItem(); ++i)
+        for(stackiterator i = Character->GetStack()->GetBottom(); i.HasItem(); ++i)
           if(i->GetID() == EquipmentMemory[c])
           {
             item* Item = *i;
@@ -8431,9 +10017,35 @@ void character::DonateEquipmentTo(character* Character)
   }
   else
   {
+    bool bImprovedEquipping =
+       ivanconfig::GetMemorizeEquipmentMode()==2 ||
+      (ivanconfig::GetMemorizeEquipmentMode()==1 && IsPet());
+
+    if(bImprovedEquipping)MemorizeEquipedItems();
+
     for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Item = GetEquipment(c);
+
+      if(bImprovedEquipping && Item==NULL){
+        /**
+         *
+         * Looks as much far as possible for Equipped memories.
+         */
+        std::vector<character*> vCharMemory;
+        addPolymorphBkpToVector(Character,&vCharMemory);
+        addPolymorphBkpToVector(this,&vCharMemory); DBGSI(vCharMemory.size());
+
+        /* The target has all items on it's inventory now, so search at it only. */
+        DBGCHAR(Character,""); DBGCHAR(this,"");
+        for(int i=0;i<vCharMemory.size();i++){ character* CharMemory=vCharMemory[i]; DBGCHAR(CharMemory,"");
+          Item=Character->SearchForItem(CharMemory->MemorizedEquippedItemIDs[c]);
+          if(Item!=NULL){
+            DBG5("FoundMemEqAtInv",DBGI(Item->GetID()),DBGI(CharMemory->GetID()),DBGI(this->GetID()),DBGI(Character->GetID()));
+            break;
+          }
+        }
+      }
 
       if(Item)
       {
@@ -8443,7 +10055,13 @@ void character::DonateEquipmentTo(character* Character)
           Character->SetEquipment(c, Item);
         }
         else
-          Item->MoveTo(Character->GetStackUnder());
+        {
+          if(bImprovedEquipping){
+            Item->MoveTo(Character->GetStack());
+          }else{
+            Item->MoveTo(Character->GetStackUnder());
+          }
+        }
       }
     }
   }
@@ -8681,8 +10299,9 @@ void character::ReceiveWhiteUnicorn(long Amount)
   BeginTemporaryState(TELEPORT, Amount / 100);
   DecreaseStateCounter(LYCANTHROPY, -Amount / 100);
   DecreaseStateCounter(POISONED, -Amount / 100);
-  DecreaseStateCounter(PARASITIZED, -Amount / 100);
+  DecreaseStateCounter(PARASITE_TAPE_WORM, -Amount / 100);
   DecreaseStateCounter(LEPROSY, -Amount / 100);
+  DecreaseStateCounter(VAMPIRISM, -Amount / 100);
 }
 
 /* Counter should be negative. Removes intrinsics. */
@@ -8723,7 +10342,7 @@ void character::DecreaseStateCounter(long State, int Counter)
 
 truth character::IsImmuneToLeprosy() const
 {
-  return DataBase->IsImmuneToLeprosy || UseMaterialAttributes();
+  return DataBase->IsImmuneToLeprosy || UseMaterialAttributes() || StateIsActivated(DISEASE_IMMUNITY);
 }
 
 void character::LeprosyHandler()
@@ -8737,6 +10356,12 @@ void character::LeprosyHandler()
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
   CheckDeath(CONST_S("killed by leprosy"));
+}
+
+void character::VampirismHandler()
+{
+  EditExperience(WISDOM, -25, 1 << 1);
+  CheckDeath(CONST_S("killed by vampirism"));
 }
 
 bodypart* character::SearchForOriginalBodyPart(int I) const
@@ -8894,7 +10519,7 @@ void character::SignalDisappearance()
 
 truth character::HornOfFearWorks() const
 {
-  return CanHear() && GetPanicLevel() > RAND() % 33;
+  return CanHear() && GetPanicLevel() > RAND() % 33 && !StateIsActivated(FEARLESS);
 }
 
 void character::BeginLeprosy()
@@ -9008,7 +10633,13 @@ truth character::ChatMenu()
 
 truth character::ChangePetEquipment()
 {
-  if(EquipmentScreen(PLAYER->GetStack(), GetStack()))
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
+  bool b = EquipmentScreen(PLAYER->GetStack(), GetStack());
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
+
+  if(b)
   {
     DexterityAction(3);
     return true;
@@ -9026,6 +10657,9 @@ truth character::TakePetItems()
   {
     itemvector ToTake;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     GetStack()->DrawContents(ToTake,
                              0,
                              PLAYER,
@@ -9035,6 +10669,8 @@ truth character::TakePetItems()
                              GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                              GetVerbalBurdenStateColor(),
                              REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToTake.empty())
       break;
@@ -9064,6 +10700,9 @@ truth character::GivePetItems()
   {
     itemvector ToGive;
     game::DrawEverythingNoBlit();
+
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     PLAYER->GetStack()->DrawContents(ToGive,
                                      0,
                                      this,
@@ -9073,6 +10712,8 @@ truth character::GivePetItems()
                                      GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
                                      GetVerbalBurdenStateColor(),
                                      REMEMBER_SELECTED);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
 
     if(ToGive.empty())
       break;
@@ -9312,12 +10953,22 @@ truth character::GetNewFormForPolymorphWithControl(character*& NewForm)
   festring Topic, Temp;
   NewForm = 0;
 
+  if(StateIsActivated(POLYMORPH_LOCK))
+  {
+    ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return false;
+  }
+
   while(!NewForm)
   {
     festring Temp;
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true); //polymorphing may unequip items, so taking a look at them is good
     int Return = game::DefaultQuestion(Temp, CONST_S("What do you want to become? [press '?' for a list]"),
                                        game::GetDefaultPolymorphTo(), true,
                                        &game::PolymorphControlKeyHandler);
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     if(Return == ABORTED)
     {
       ADD_MESSAGE("You choose not to polymorph.");
@@ -9368,7 +11019,7 @@ liquid* character::CreateSweat(long Volume) const
 
 truth character::TeleportRandomItem(truth TryToHinderVisibility)
 {
-  if(IsImmuneToItemTeleport())
+  if(IsImmuneToItemTeleport() || StateIsActivated(TELEPORT_LOCK))
     return false;
 
   itemvector ItemVector;
@@ -9565,7 +11216,7 @@ void character::PoisonedSituationDangerModifier(double& Danger) const
 
 void character::PolymorphingSituationDangerModifier(double& Danger) const
 {
-  if(!StateIsActivated(POLYMORPH_CONTROL))
+  if((!StateIsActivated(POLYMORPH_CONTROL)) && (!StateIsActivated(POLYMORPH_LOCK)))
     Danger *= 1.5;
 }
 
@@ -9629,11 +11280,6 @@ void character::AddRandomScienceName(festring& String) const
     if(!Prefix.IsEmpty() && Science.Find(Prefix) != festring::NPos)
       Prefix.Empty();
   }
-
-  int L = Prefix.GetSize();
-
-  if(L && Prefix[L - 1] == Science[0])
-    Science.Erase(0, 1);
 
   if(!NoAttrib && !NoSecondAdjective == !RAND_GOOD(3))
   {
@@ -9964,7 +11610,7 @@ truth character::AllowUnconsciousness() const
 
 truth character::CanPanic() const
 {
-  return !Action || !Action->IsUnconsciousness();
+  return !Action || !Action->IsUnconsciousness() || !StateIsActivated(FEARLESS);
 }
 
 int character::GetRandomBodyPart(ulong Possible) const
@@ -10022,6 +11668,14 @@ void character::AddOmmelBoneConsumeEndMessage() const
     ADD_MESSAGE("You feel the power of all your canine ancestors combining in your body.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("For a moment %s looks extremely ferocious. You shudder.", CHAR_NAME(DEFINITE));
+}
+
+void character::AddLiquidHorrorConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Untold horrors flash before your eyes. The melancholy of the world is on your shoulders!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks as if the true terror of existence flashed before %s eyes!.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 }
 
 int character::GetBodyPartSparkleFlags(int) const
@@ -10285,67 +11939,66 @@ void character::ApplyAllGodsKnownBonus()
   pantheonbook* NewBook = pantheonbook::Spawn();
   AddPlace->AddItem(NewBook);
 
-  ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA\"");
+  ADD_MESSAGE("\"MORTAL! BEHOLD THE HOLY SAGA!\"");
   ADD_MESSAGE("%s materializes near your feet.",
               NewBook->CHAR_NAME(INDEFINITE));
 }
 
-void character::ReceiveSirenSong(character* Siren)
+truth character::ReceiveSirenSong(character* Siren)
 {
-  if(Siren->GetTeam() == GetTeam())
-    return;
+  if(Siren->GetRelation(this) != HOSTILE)
+    return false;
 
   if(!RAND_N(4))
   {
     if(IsPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.",
-                  Siren->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes you feel sleepy.", Siren->CHAR_NAME(DEFINITE));
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.",
-                  Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The beautiful melody of %s makes %s look sleepy.", Siren->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
 
     Stamina -= (1 + RAND_N(4)) * 10000;
-    return;
+    return true;
   }
 
-  if(!IsPlayer() && IsCharmable() && !RAND_N(5))
+  if(!IsPlayer() && IsCharmable() && CanTameWithDulcis(Siren) && !RAND_N(5))
   {
     ChangeTeam(Siren->GetTeam());
-    ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE),
-                Siren->CHAR_NAME(DEFINITE));
-    return;
+
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s seems to be totally brainwashed by %s melodies.", CHAR_NAME(DEFINITE), Siren->CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("You hear a beautiful song.");
+
+    return true;
   }
 
-  if(!RAND_N(4))
+  if(!IsImmuneToWhipOfThievery() && !RAND_N(4))
   {
     item* What = GiveMostExpensiveItem(Siren);
 
     if(What)
     {
       if(IsPlayer())
-      {
-        ADD_MESSAGE("%s music persuades you to give %s to %s as a present.",
-                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-      }
-      else
-      {
+        ADD_MESSAGE("%s song persuades you to give %s to %s as a present.",
+                    Siren->CHAR_NAME(DEFINITE), What->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s is persuaded to give %s to %s because of %s beautiful singing.",
-                    CHAR_NAME(DEFINITE),
-                    What->CHAR_NAME(INDEFINITE),
-                    Siren->CHAR_NAME(DEFINITE),
-                    Siren->CHAR_OBJECT_PRONOUN);
-
-      }
+                    CHAR_NAME(DEFINITE), What->CHAR_NAME(INDEFINITE), Siren->CHAR_NAME(DEFINITE), Siren->CHAR_OBJECT_PRONOUN);
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
     else
     {
       if(IsPlayer())
         ADD_MESSAGE("You would like to give something to %s.", Siren->CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You hear a beautiful song.");
     }
-
-    return;
+    return true;
   }
+  return false;
 }
 
 // return 0, if no item found
@@ -10434,9 +12087,64 @@ character* character::GetNearestEnemy() const
   return NearestEnemy;
 }
 
+void character::PrintBeginMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You have a killer headache.");
+}
+
+void character::PrintEndMindwormedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your headache finally subsides.");
+}
+
 truth character::MindWormCanPenetrateSkull(mindworm*) const
 {
-  return false;
+  if(!(RAND() % 2))
+    return true;
+  else
+    return false;
+}
+
+void character::MindwormedHandler()
+{
+  if(!(RAND() % 200))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("Your brain hurts!");
+
+    BeginTemporaryState(CONFUSED, 100 + RAND_N(100));
+    return;
+  }
+
+  // Multiple mind worm hatchlings can hatch, because multiple eggs could have been implanted.
+  if(!game::IsInWilderness() && !(RAND() % 500))
+  {
+    character* Spawned = mindworm::Spawn(HATCHLING);
+    v2 Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Spawned, GetPos());
+
+    if(Pos == ERROR_V2)
+    {
+      delete Spawned;
+      return;
+    }
+
+    Spawned->SetTeam(game::GetTeam(MONSTER_TEAM));
+    Spawned->PutTo(Pos);
+
+    if(IsPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of your skull.", Spawned->CHAR_NAME(INDEFINITE));
+    }
+    else if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s suddenly digs out of %s's skull.", Spawned->CHAR_NAME(INDEFINITE), CHAR_NAME(DEFINITE));
+    }
+
+    ReceiveDamage(0, 1, DRAIN, HEAD, 8, false, false, false, false); // Use DRAIN here so that AV does not apply.
+    CheckDeath(CONST_S("killed by giving birth to ") + Spawned->GetName(INDEFINITE));
+  }
 }
 
 truth character::CanTameWithDulcis(const character* Tamer) const
@@ -10567,4 +12275,178 @@ void character::Slow()
   doforbodyparts()(this, &bodypart::Slow);
   doforequipments()(this, &item::Slow);
   BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+}
+
+truth character::IsESPBlockedByEquipment() const
+{
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item *Item = GetEquipment(c);
+
+    if (Item && Item->IsHelmet(this) &&
+        ((Item->GetMainMaterial() && Item->GetMainMaterial()->BlockESP()) ||
+         (Item->GetSecondaryMaterial() && Item->GetSecondaryMaterial()->BlockESP())))
+      return !(Item->IsBroken());
+  }
+  return false;
+}
+
+truth character::TemporaryStateIsActivated (long What) const
+{
+  if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState&What) & (~PANIC));
+  }
+  if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
+  {
+    return ((TemporaryState&What) & (~ESP));
+  }
+  return (TemporaryState & What);
+}
+
+truth character::StateIsActivated (long What) const
+{
+  if ((What & PANIC) && ((TemporaryState|EquipmentState) & PANIC) && StateIsActivated(FEARLESS))
+  {
+    return ((TemporaryState & What) & (~PANIC)) || ((EquipmentState & What) & (~PANIC));
+  }
+  if ((What & ESP) && ((TemporaryState|EquipmentState) & ESP) && IsESPBlockedByEquipment())
+  {
+    return ((TemporaryState & What) & (~ESP)) || ((EquipmentState & What) & (~ESP));
+  }
+  return (TemporaryState & What) || (EquipmentState & What);
+}
+
+truth character::CheckAIZapOpportunity()
+{
+  if(!CanZap() || !IsHumanoid() || !IsEnabled())
+    return false;
+
+  // Check visible area for hostiles:
+  v2 Pos = GetPos();
+  v2 TestPos;
+  int SensibleRange = 5;
+  int RangeMax = GetLOSRange();
+
+  if(RangeMax < SensibleRange)
+    SensibleRange = RangeMax;
+
+  int CandidateDirections[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+  int HostileFound = 0;
+
+  for(int r = 2; r <= SensibleRange; ++r)
+  {
+    for(int dir = 0; dir < 8; ++dir)
+    {
+      switch(dir)
+      {
+       case 0:
+        TestPos = v2(Pos.X - r, Pos.Y - r);
+        break;
+       case 1:
+        TestPos = v2(Pos.X, Pos.Y - r);
+        break;
+       case 2:
+        TestPos = v2(Pos.X + r, Pos.Y - r);
+        break;
+       case 3:
+        TestPos = v2(Pos.X - r, Pos.Y);
+        break;
+       case 4:
+        TestPos = v2(Pos.X + r, Pos.Y);
+        break;
+       case 5:
+        TestPos = v2(Pos.X - r, Pos.Y + r);
+        break;
+       case 6:
+        TestPos = v2(Pos.X, Pos.Y + r);
+        break;
+       case 7:
+        TestPos = v2(Pos.X + r, Pos.Y + r);
+        break;
+      }
+
+      level* Level = GetLevel();
+
+      if(Level->IsValidPos(TestPos))
+      {
+        square* TestSquare = GetNearSquare(TestPos);
+        character* Dude = TestSquare->GetCharacter();
+
+        if((Dude && Dude->IsEnabled() && (GetRelation(Dude) != HOSTILE)
+           && Dude->SquareUnderCanBeSeenBy(this, false)))
+        {
+          CandidateDirections[dir] = BLOCKED;
+        }
+
+        if(Dude && Dude->IsEnabled() && (GetRelation(Dude) == HOSTILE)
+           && Dude->SquareUnderCanBeSeenBy(this, false)
+           && (CandidateDirections[dir] != BLOCKED))
+        {
+          CandidateDirections[dir] = SUCCESS;
+          HostileFound = 1;
+        }
+      }
+    }
+  }
+
+  int ZapDirection = 0;
+  int TargetFound = 0;
+
+  if(HostileFound)
+  {
+    for(uint dir = 0; dir < 8; ++dir)
+    {
+      if((CandidateDirections[dir] == SUCCESS) && !TargetFound)
+      {
+        ZapDirection = dir;
+        TargetFound = 1;
+      }
+    }
+    if(!TargetFound)
+    {
+      return false;
+    }
+  }
+  else
+    return false;
+
+
+  // Check inventory for zappable item.
+  itemvector ItemVector;
+  GetStack()->FillItemVector(ItemVector);
+  item* ToBeZapped = 0;
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if((ItemVector[c]->GetMinCharges() > 0) && ItemVector[c]->GetPrice()) // Empty wands have zero price!
+    {
+      ToBeZapped = ItemVector[c];
+
+      if(!(RAND() % 3)) // Do not always pick the first available wand to zap.
+        break;
+    }
+
+  if(!ToBeZapped)
+    return false;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s zaps %s.", CHAR_NAME(DEFINITE), ToBeZapped->CHAR_NAME(INDEFINITE));
+
+  if(ToBeZapped->Zap(this, GetPos(), ZapDirection))
+  {
+    EditAP(-100000 / APBonus(GetAttribute(PERCEPTION)));
+    return true;
+  }
+  else
+    return false;
+
+  TerminateGoingTo(); // Is this useful here? I don't think the code will ever
+  return true;        // get down here.
+
+  // Steps:
+  // (1) - Acquire target as nearest enemy.
+  // (2) - Check that this enemy is in range, and is in appropriate direction.
+  //       No friendly fire!
+  // (3) - Check inventory for zappable item.
+  // (4) - Zap item in direction where the enemy is.
 }

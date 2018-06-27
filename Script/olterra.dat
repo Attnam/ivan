@@ -152,6 +152,7 @@ wall
     BitmapPos = 0, 32;
     HPModifier = 40;
   }
+
   Config BROKEN_WALL;
   {
     OKVisualEffects = MIRROR|FLIP;
@@ -241,12 +242,55 @@ decoration
     MainMaterialConfig == FABRIC;
     NameSingular = "couch";
     BitmapPos = 0, 400;
-    RestModifier = 2;
+    RestModifier = 3;
     MaterialColorB = rgb16(200, 200, 0);
     SitMessage = "The couch is extremely soft and comfortable. You relax well.";
     RestMessage = "You rest well on the soft sofa.";
     HPModifier = 25;
     LeftOverItems == stone { Times = 1:2; }
+  }
+
+  Config CHAIR;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You destroy the chair.";
+    MainMaterialConfig == FIR_WOOD;
+    SitMessage = "You sit on the chair.";
+    RestMessage = "You relax on the chair.";
+    NameSingular = "chair";
+    RestModifier = 2;
+    BitmapPos = 80, 288;
+    HPModifier = 25;
+  }
+
+  Config ARM_CHAIR;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You destroy the armchair.";
+    MainMaterialConfig == LINEN_CLOTH;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(140, 96, 48);
+    SitMessage = "You sit on the comfortable armchair.";
+    RestMessage = "You relax well on the comfortable armchair.";
+    NameSingular = "armchair";
+    UsesLongArticle = true;
+    RestModifier = 3;
+    BitmapPos = 0, 416;
+    HPModifier = 25;
+    LeftOverItems == 0;
+  }
+
+  Config BENCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You destroy the bench.";
+    MainMaterialConfig == FIR_WOOD;
+    SitMessage = "You sit on the bench.";
+    RestMessage = "You relax on the bench.";
+    NameSingular = "bench";
+    RestModifier = 2;
+    BitmapPos = 48, 224;
+    HPModifier = 25;
   }
 
   Config DOUBLE_BED;
@@ -262,6 +306,56 @@ decoration
     RestModifier = 5;
     SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
     RestMessage = "You lay yourself on the comfortable bed.";
+    HPModifier = 25;
+    LeftOverItems == 0;
+  }
+
+  Config CHEAP_BED;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You smash the bed into pieces.";
+    MainMaterialConfig == HEMP_CLOTH;
+    Adjective = "cheap";
+    NameSingular = "bed";
+    BitmapPos = 0, 352;
+    MaterialColorB = rgb16(160, 108, 50);
+    ShowMaterial = false;
+    RestModifier = 2;
+    SitMessage = "You lay down on the bed.";
+    RestMessage = "You rest well on the bed.";
+    HPModifier = 25;
+    LeftOverItems == 0;
+  }
+
+  Config PLAIN_BED;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You smash the bed into pieces.";
+    MainMaterialConfig == LINEN_CLOTH;
+    NameSingular = "bed";
+    BitmapPos = 0, 336;
+    MaterialColorB = rgb16(140, 96, 48);
+    ShowMaterial = false;
+    RestModifier = 3;
+    SitMessage = "You lay down on the bed.";
+    RestMessage = "You rest well on the bed.";
+    HPModifier = 25;
+    LeftOverItems == 0;
+  }
+
+  Config EXPENSIVE_BED;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You smash the bed into pieces.";
+    MainMaterialConfig == FABRIC;
+    Adjective = "luxurious";
+    NameSingular = "bed";
+    BitmapPos = 0, 336;
+    MaterialColorB = rgb16(200, 200, 0);
+    ShowMaterial = false;
+    RestModifier = 4;
+    SitMessage = "You lay down on the soft and comfortable bed.";
+    RestMessage = "You rest very well on the comfortable bed.";
     HPModifier = 25;
     LeftOverItems == 0;
   }
@@ -294,6 +388,7 @@ decoration
     PostFix = "covered with snow";
     BitmapPos = 16, 320;
     HPModifier = 25;
+    /* no pineapples in winter */
   }
 
   Config SNOW_FIR;
@@ -320,6 +415,7 @@ decoration
     NameSingular = "anvil";
     BitmapPos = 16, 432;
     HPModifier = 25;
+    Walkability = ETHEREAL;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   }
 
@@ -346,9 +442,10 @@ decoration
     MaterialColorB = rgb16(32, 100, 32);
     NameSingular = "cactus";
     NamePlural = "cactuses";
-    BitmapPos = 16, 352;
+    BitmapPos = 48, 352;
     HPModifier = 20;
     LeftOverItems == 0;
+    SitMessage = "You sit on the cactus. Ouch! You have thorns in your backside!";
   }
 
   Config OAK;
@@ -402,17 +499,193 @@ decoration
     BitmapPos = 32, 368;
     HPModifier = 10;
   }
-  Config DWARF_BIRCH;
+
+  Config PEDESTAL;
   {
     CanBeDestroyed = true;
-    DigMessage = "You chop the dwarf birch down.";
-    MainMaterialConfig == BIRCH_WOOD;
+    DigMessage = "You shatter the pedestal.";
+    MainMaterialConfig == MARBLE;
+    SitMessage = "The pedestal is hard and cold, and not very comfortable to sit on.";
+    RestMessage = "You feel sore after resting on the cold pedestal.";
+    NameSingular = "pedestal";
+    BitmapPos = 0, 0;
+  }
+
+  Config FORGE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the forge.";
+    MainMaterialConfig == BASALT;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
-    MaterialColorB = rgb16(125, 160, 80);
-    MaterialColorC = rgb16(220, 220, 220);
-    NameSingular = "dwarf birch";
-    BitmapPos = 32, 368;
+    Walkability = ETHEREAL;
+    NameSingular = "forge";
+    BitmapPos = 16, 16;
+    LeftOverItems == 0;
+  }
+
+  Config FURNACE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the furnace.";
+    MainMaterialConfig == BASALT;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
+    ShowMaterial = false;
+    Walkability = ETHEREAL;
+    NameSingular = "furnace";
+    BitmapPos = 32, 16;
+    LeftOverItems == 0;
+  }
+
+  Config OVEN;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the oven.";
+    MainMaterialConfig == COPPER;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(220, 220, 0);
+    MaterialColorD = rgb16(160, 0, 0);
+    ShowMaterial = false;
+    Walkability = ETHEREAL;
+    NameSingular = "oven";
+    UsesLongArticle = true;
+    BitmapPos = 80, 32;
+    LeftOverItems == 0;
+  }
+
+  Config WOODEN_HORSE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the wooden horse.";
+    MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(100, 50, 30);
+    ShowMaterial = false;
+    SitMessage = "Ouch! What did you think? It's painful to sit on the wooden horse.";
+    NameSingular = "wooden horse";
+    BitmapPos = 16, 48;
+    HPModifier = 25;
+  }
+
+  Config TORTURE_RACK;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the torture rack.";
+    MainMaterialConfig == LEATHER;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(100, 50, 30);
+    ShowMaterial = false;
+    RestMessage = "As long as you're not strapped here, it's nice to rest on the torture rack.";
+    NameSingular = "torture rack";
+    BitmapPos = 80, 64;
+    HPModifier = 25;
+  }
+
+  Config DESK;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the writing desk.";
+    MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(210, 210, 210);
+    MaterialColorC = rgb16(100, 50, 30);
+    SitMessage = "You sit on the desk.";
+    RestMessage = "You take a nap on the desk.";
+    NameSingular = "writing desk";
+    BitmapPos = 48, 48;
+    HPModifier = 25;
+    Walkability = ETHEREAL;
+  }
+
+  Config WORK_BENCH;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the workbench.";
+    MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(96, 96, 96);
+    MaterialColorC = rgb16(124, 50, 16);
+    SitMessage = "You sit on the workbench.";
+    RestMessage = "You take a nap on the workbench.";
+    NameSingular = "workbench";
+    BitmapPos = 32, 224;
+    HPModifier = 25;
+    Walkability = ETHEREAL;
+  }
+
+  Config TABLE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the table.";
+    MainMaterialConfig == FIR_WOOD;
+    SitMessage = "You sit on the table.";
+    RestMessage = "You take a nap on the table.";
+    NameSingular = "table";
+    BitmapPos = 48, 240;
+    HPModifier = 25;
+    Walkability = ETHEREAL;
+  }
+
+  Config WELL;
+  {
+    CanBeDestroyed = false;
+    DigMessage = "You stop digging as you nearly fall in the well.";
+    MainMaterialConfig == GRANITE;
+    MaterialColorB = rgb16(140, 96, 48);
+    MaterialColorC = rgb16(100, 50, 30);
+    ShowMaterial = false;
+    SitMessage = "You sit beside the well.";
+    NameSingular = "well";
+    BitmapPos = 64, 240;
+  }
+
+  Config SHACKLES;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You break the shackles.";
+    MainMaterialConfig == IRON;
+    NameSingular = "shackles";
+    BitmapPos = 112, 288;
+    HPModifier = 25;
+  }
+
+  Config BANANA_TREE;
+  {
+    OKVisualEffects = MIRROR;
+    CanBeDestroyed = true;
+    DigMessage = "You chop the tree down.";
+    MainMaterialConfig == BALSA_WOOD;
+    ShowMaterial = false;
+    MaterialColorB = rgb16(32, 80, 32);
+    NameSingular = "palm";
+    BitmapPos = 16, 368;
+    HPModifier = 25;
+    /* IsAlwaysTransparent = false; */
+    LeftOverItems == banana { Times = 0:1; }
+  }
+
+  Config DEAD_TREE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You mercifully chop the tree down.";
+    MainMaterialConfig == FIR_WOOD;
+    ShowMaterial = false;
+    NameSingular = "dead tree";
+    BitmapPos = 64, 336;
     HPModifier = 10;
+  }
+
+  Config STRANGE_TREE;
+  {
+    CanBeDestroyed = true;
+    DigMessage = "You chop the strange tree down.";
+    MainMaterialConfig == BONE;
+    ShowMaterial = true;
+    Adjective = "strange";
+    NameSingular = "tree";
+    BitmapPos = 80, 352;
   }
 }
 
@@ -429,11 +702,13 @@ door /* olterrain-> */
   CreateLockConfigurations = true;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   IsAlwaysTransparent = false;
+
   Config BARDOOR;
   {
     BitmapPos = 16, 96;
     IsAlwaysTransparent = true;
   }
+
   Config SECRET_DOOR;
   {
     BitmapPos = 16, 144;
@@ -548,6 +823,7 @@ olterraincontainer /* olterrain->decoration-> */
   {
     CanBeDestroyed = true;
     MainMaterialConfig == FIR_WOOD;
+    MaterialColorB = rgb16(124, 50, 16);
     NameSingular = "chest of drawers";
     BitmapPos = 0, 224;
     SitMessage = "The chest of drawers is very uncomfortable to sit on.";
@@ -556,6 +832,7 @@ olterraincontainer /* olterrain->decoration-> */
     AttachedGod = SOPHOS;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1000; } Times = 1:2; }
   }
+
   Config SHELF;
   {
     CanBeDestroyed = true;
@@ -589,11 +866,13 @@ brokendoor /* olterrain->door-> */
   Adjective = "broken";
   BitmapPos = 0, 160;
   CreateLockConfigurations = true;
+
   Config BARDOOR;
   {
     IsAlwaysTransparent = true;
     BitmapPos = 32,96;
   }
+
   Config SECRET_DOOR;
   {
     BitmapPos = 16, 160;
@@ -712,7 +991,6 @@ barwall
   ShowThingsUnder = true;
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
   IsWall = true;
-
   DigMessage = "You break the bars.";
   MainMaterialConfig == IRON;
   NameSingular = "bars";
@@ -720,6 +998,7 @@ barwall
   HPModifier = 25;
   ShowThingsUnder = true;
   AttachedGod = LEGIFER;
+
   Config BROKEN_BARWALL;
   {
     BitmapPos = 32, 112;
@@ -732,9 +1011,29 @@ ironmaiden
 {
   LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
   CanBeDestroyed = true;
+  UsesLongArticle = true;
   DigMessage = "The iron maiden falls into pieces.";
+  SitMessage = "You sit in the iron maiden. This doesn't seem safe at all.";
   MainMaterialConfig == IRON;
   ShowMaterial = false;
   NameSingular = "iron maiden";
   HPModifier = 250;
+}
+
+christmastree
+{
+  OKVisualEffects = MIRROR;
+  CanBeDestroyed = true;
+  DigMessage = "You chop the tree down.";
+  MainMaterialConfig == SNOW;
+  ShowMaterial = false;
+  MaterialColorB = rgb16(32, 100, 32);
+  MaterialColorC = rgb16(0, 180, 80);
+  MaterialColorD = rgb16(180, 20, 0);
+  NameSingular = "fir";
+  PostFix = "covered with snow";
+  /* BitmapPos overridden */
+  HPModifier = 25;
+  IsAlwaysTransparent = false;
+  LeftOverItems == stick { MainMaterial = FIR_WOOD { Volume = 500:1500; } Times = 1:4; }
 }

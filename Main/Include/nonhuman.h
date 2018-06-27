@@ -122,6 +122,7 @@ CHARACTER(dog, canine)
   virtual truth Catches(item*);
   virtual void BeTalkedTo();
  protected:
+  virtual void CreateCorpse(lsquare*);
   virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
 };
@@ -131,7 +132,7 @@ CHARACTER(spider, nonhumanoid)
  public:
   virtual truth IsSpider() const { return true; }
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual bodypart* MakeBodyPart(int) const;
 };
@@ -159,6 +160,12 @@ CHARACTER(bat, nonhumanoid)
 {
  protected:
   virtual bodypart* MakeBodyPart(int) const;
+};
+
+CHARACTER(vampirebat, bat)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(largecat, nonhumanoid)
@@ -208,7 +215,7 @@ CHARACTER(buffalo, nonhumanoid)
 CHARACTER(snake, nonhumanoid)
 {
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
 CHARACTER(ostrich, nonhumanoid)
@@ -280,33 +287,6 @@ CHARACTER(magicmushroom, mushroom)
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
-};
-
-CHARACTER(ghost, nonhumanoid)
-{
- public:
-  ghost() : Active(true) { }
-  virtual void AddName(festring&, int) const;
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  void SetOwnerSoul(cfestring& What) { OwnerSoul = What; }
-  virtual truth IsNameable() const { return OwnerSoul.IsEmpty(); }
-  virtual truth RaiseTheDead(character*);
-  virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, truth = false, truth = false, truth = true, truth = false);
-  virtual truth SpecialEnemySightedReaction(character*);
-  void SetIsActive(truth What) { Active = What; }
-  virtual truth IsPolymorphable() const { return MaxHP < 100; }
- protected:
-  virtual int GetBodyPartWobbleData(int) const;
-  virtual cchar* FirstPersonBiteVerb() const;
-  virtual cchar* FirstPersonCriticalBiteVerb() const;
-  virtual cchar* ThirdPersonBiteVerb() const;
-  virtual cchar* ThirdPersonCriticalBiteVerb() const;
-  virtual truth AttackIsBlockable(int) const { return false; }
-  virtual truth AttackMayDamageArmor() const { return false; }
-  virtual void GetAICommand();
-  festring OwnerSoul;
-  truth Active;
 };
 
 CHARACTER(twoheadedmoose, nonhumanoid)
@@ -464,7 +444,7 @@ CHARACTER(lobhse, largecreature)
  public:
   virtual truth IsSpider() const { return true; }
  protected:
-  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
@@ -475,7 +455,7 @@ CHARACTER(mindworm, nonhumanoid)
 {
  protected:
   virtual void GetAICommand();
-  virtual void TryToImplantLarvae(character*);
+  virtual truth TryToImplantLarvae(character*);
   virtual void PsiAttack(character*);
 };
 #endif

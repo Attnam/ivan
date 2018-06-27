@@ -59,8 +59,7 @@ int main(int argc, char** argv)
 
   if(argc == 4)
   {
-    highscore Input;
-    Input.Load(argv[1]);
+    highscore Input(argv[1]);
 
     if(!Input.CheckVersion())
     {
@@ -68,8 +67,7 @@ int main(int argc, char** argv)
       return 2;
     }
 
-    highscore Output;
-    Output.Load(argv[2]);
+    highscore Output(argv[2]);
 
     if(!Output.CheckVersion())
     {
@@ -115,8 +113,7 @@ truth DebugDraw(festring Filename)
 
 int OutputHTML(festring InputFilename)
 {
-  highscore Input;
-  Input.Load(InputFilename);
+  highscore Input(InputFilename);
   std::cout << "<TABLE BORDER=3> \n <TR> <TH>Rank</TH> <TH>Who</TH> <TH>Score</TH>\n";
 
   for(int c = 0; c < Input.GetSize();++c)

@@ -40,6 +40,9 @@ class commandsystem
 {
  public:
   static command* GetCommand(int I) { return Command[I]; }
+  static truth IsForRegionListItem(int iIndex);
+  static truth IsForRegionSilhouette(int iIndex);
+  static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
  private:
   static truth Apply(character*);
   static truth Close(character*);
@@ -72,6 +75,7 @@ class commandsystem
   static truth Zap(character*);
   static truth Rest(character*);
   static truth Sit(character*);
+  static truth ShowMap(character*);
   static truth Go(character*);
   static truth ShowConfigScreen(character*);
   static truth ScrollMessagesDown(character*);
@@ -83,6 +87,7 @@ class commandsystem
   static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
 #ifdef WIZARD
   static truth WizardMode(character*);
+  static truth AutoPlay(character* Char);
   static truth RaiseStats(character*);
   static truth LowerStats(character*);
   static truth SeeWholeMap(character*);

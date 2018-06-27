@@ -10,9 +10,15 @@
  *
  */
 
+#include <iostream>
+#include <memory>
+#include <utility>
+
 #include <cstdarg>
 #include <cctype>
+#include <pcre.h>
 
+#include "iconf.h"
 #include "message.h"
 #include "festring.h"
 #include "felist.h"
@@ -53,6 +59,10 @@ void msgsystem::AddMessage(cchar* Format, ...)
   if(!Buffer.GetSize())
     ABORT("Empty message request!");
 
+#ifndef NOSOUND
+  soundsystem::playSound(Buffer);
+#endif
+
   Buffer.Capitalize();
 
   /* Comment the first line and uncomment the second before the release! */
@@ -90,6 +100,12 @@ void msgsystem::AddMessage(cchar* Format, ...)
   }
 
   festring Temp;
+
+  if(ivanconfig::IsShowTurn())
+  {
+    Temp << game::GetTurn() << " ";
+  }
+
   Temp << Begin.X << ':';
 
   if(Begin.Y < 10)
@@ -158,6 +174,9 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  game::RegionListItemEnable(false); //this fix the problem that happens on death
+
+  MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
 
@@ -212,10 +231,19 @@ void msgsystem::LeaveBigMessageMode()
 
 void msgsystem::Init()
 {
-  QuickDrawCache = new bitmap(v2((game::GetScreenXSize() << 4) + 6, 106));
+  QuickDrawCache = new bitmap(v2((game::GetMaxScreenXSize() << 4) + 6, 106));
   QuickDrawCache->ActivateFastFlag();
   game::SetStandardListAttributes(MessageHistory);
   MessageHistory.AddFlags(INVERSE_MODE);
+}
+
+void msgsystem::DeInit()
+{
+  delete QuickDrawCache;
+
+#ifndef NOSOUND
+  soundsystem::deInitSound();
+#endif
 }
 
 void msgsystem::ThyMessagesAreNowOld()
@@ -226,3 +254,254 @@ void msgsystem::ThyMessagesAreNowOld()
   for(uint c = 0; c < MessageHistory.GetLength(); ++c)
     MessageHistory.SetColor(c, LIGHT_GRAY);
 }
+
+/* SOUND SYSTEM */
+
+#ifndef NOSOUND
+
+struct SoundFile
+{
+  festring filename;
+  std::unique_ptr<Mix_Chunk*> chunk = std::unique_ptr<Mix_Chunk*>(new (Mix_Chunk*)(NULL));
+  //Mix_Music *music;
+
+  SoundFile() = default;
+  SoundFile(SoundFile&) = delete;
+  SoundFile(SoundFile&&) = default;
+  ~SoundFile()
+  {
+    if(chunk.get() && *chunk) Mix_FreeChunk(*chunk);
+  }
+};
+
+struct SoundInfo
+{
+  std::vector<int> sounds;
+  std::unique_ptr<pcre*> re = std::unique_ptr<pcre*>(new (pcre*)());
+  std::unique_ptr<pcre_extra*> extra = std::unique_ptr<pcre_extra*>(new (pcre_extra*)(NULL));
+
+  SoundInfo() = default;
+  SoundInfo(SoundInfo&) = delete;
+  SoundInfo(SoundInfo&&) = default;
+  ~SoundInfo()
+  {
+    if(re.get() && *re) free(*re);
+    if(extra.get() && *extra) pcre_free_study(*extra);
+  }
+};
+
+int soundsystem::SoundState = 0;
+
+std::vector<SoundFile> soundsystem::files;
+std::vector<SoundInfo> soundsystem::patterns;
+
+#include <ctype.h>
+
+int soundsystem::addFile(festring filename) {
+  for(int i=0; i < int(files.size()); i++)
+    if(files[i].filename == filename) return i;
+  SoundFile p;
+  p.filename = filename;
+  *p.chunk = NULL;
+  //p.music = NULL;
+  files.push_back(std::move(p));
+  return files.size() - 1;
+}
+
+bool eol = false;
+
+festring getstr(FILE *f, truth word)
+{
+  if(eol && word) return "";
+  festring s;
+  while(1)
+  {
+    char c = fgetc(f);
+    if(c == EOF) return s;
+    if(c == 13) continue;
+    if(c == 10 && s != "") return eol = true, s;
+    if(c == 10) continue;
+    if(c == ' ' && word && s != "") return s;
+    s = s + c;
+  }
+}
+
+void soundsystem::initSound()
+{
+  const char *error;
+  int erroffset;
+
+  if(SoundState == 0)
+  {
+    festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
+    FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
+    if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
+
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0)
+    {
+      ADD_MESSAGE("Unable to initialize audio: %s\n", Mix_GetError());
+      if(debf)fprintf(debf, "Unable to initialize audio: %s\n", Mix_GetError());
+      SoundState = -1;
+      return;
+    }
+    Mix_AllocateChannels(16);
+    SoundState = -2;
+
+    /**
+     * The last matching pattern will win (if more than one matches).
+     * Sound files are chosen randomly (if there is more than one).
+     */
+
+    // new config file (new syntax)
+    festring cfgfileNew = game::GetDataDir() + "Sound/SoundEffects.cfg";
+    FILE *fNew = fopen(cfgfileNew.CStr(), "rt");
+
+    if(!fNew) SoundState = -1;
+
+    truth bDbg=false; //TODO global command line for debug messages
+    if(bDbg)std::cout << "Sound Effects (new) config file setup:" << std::endl;
+    if(fNew)
+    {
+      festring Line;
+      while((Line = getstr(fNew, false)) != "")
+      {
+        cchar* c = Line.CStr();
+        if(Line.IsEmpty())continue; //empty lines will be ignored (good for formating, easy readability)
+        if(c[0]=='#')continue; // lines beggining with '#' will be skipped, ignored like a comment
+
+        if(bDbg)std::cout << "LINE:'" << Line.CStr() <<"'"<< std::endl;
+
+        SoundInfo si;
+        int iPart=0;
+        festring Pattern, AllFiles, Description, TmpPart="";
+        for(int i=0;i<Line.GetSize();i++)
+        {
+          if( c[i]!=';' || i==(Line.GetSize()-1) ) // skip separator and add last char
+          {
+            TmpPart = TmpPart + c[i];
+          }
+
+          if( c[i]==';' || i==(Line.GetSize()-1) ) // prepare part if it is the separator or the last char
+          {
+            switch(iPart){
+            case 0: // description, good for sorting in groups by similarity (like everything about 'door: ')
+              Description = TmpPart;
+              if(bDbg)std::cout << "Desc:'" << Description.CStr() <<"'"<< std::endl;
+              break;
+            case 1: // files
+              AllFiles = TmpPart;
+              if(bDbg)std::cout << "Fles:'" << AllFiles.CStr() <<"'"<< std::endl;
+              break;
+            case 2: // regex
+              Pattern = TmpPart;
+              if(bDbg)std::cout << "Ptrn:'" << Pattern.CStr() <<"'"<< std::endl;
+              break;
+            }
+            TmpPart=""; //reset
+            iPart++;
+          }
+        }
+
+        // configure the regex
+        *si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
+        if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
+        if(*si.re) *si.extra = pcre_study(*si.re, 0, &error);
+        if(error) *si.extra = NULL;
+
+        // configure the assigned files, now they are separated with ',' and the filename now accepts spaces.
+        festring FileName="";
+        truth bFoundDot=false;
+        for(int i=0;i<AllFiles.GetSize();i++)
+        {
+          if( FileName.GetSize()==0 && AllFiles[i] == ' ' )continue; //skip spaces from start TODO remove trailing spaces for each file
+          if( bFoundDot && AllFiles[i] == ' ' )continue; //skip spaces from end TODO this "after dot" trick will prevent more than one dot per file :/
+
+          if( AllFiles[i]!=',' || i==(AllFiles.GetSize()-1) ) // skip separator and add last char
+          {
+            FileName = FileName + AllFiles[i];
+          }
+
+          if(AllFiles[i]=='.')bFoundDot=true;
+
+          if( AllFiles[i]==',' || i==(AllFiles.GetSize()-1) ) // prepare part if it is the separator or the last char
+          {
+            si.sounds.push_back(addFile(FileName));
+            if(bDbg)std::cout <<"'"<<FileName.CStr()<<"'"<< " - " <<"'"<<Pattern.CStr()<<"'"<< std::endl;
+
+            //reset
+            FileName="";
+            bFoundDot=false;
+          }
+        }
+        if(bDbg)std::cout << "SInfoSize=" << si.sounds.size() << std::endl;
+
+        if(si.sounds.size() != 0) patterns.push_back(std::move(si));
+        if(bDbg)std::cout << "PtrnSize=" << patterns.data()->sounds.size() << std::endl;
+      }
+
+      fclose(fNew);
+      SoundState = 1;
+    }
+
+    //Mix_HookMusicFinished(changeMusic); // will this music type be used again one day? TODO may be as environment/ambient sounds!
+
+    if(debf) fclose(debf);
+  }
+}
+
+void soundsystem::deInitSound()
+{
+  Mix_AllocateChannels(0);
+
+  int freq, chans;
+  Uint16 fmt;
+  for(int times = Mix_QuerySpec(&freq, &fmt, &chans); times >= 0; times--)
+    Mix_CloseAudio();
+
+  while(Mix_Init(0))
+    Mix_Quit();
+
+  SoundState = 2;
+}
+
+SoundFile *soundsystem::findMatchingSound(festring Buffer)
+{
+  for(int i = patterns.size() - 1; i >= 0; i--)
+  if(*patterns[i].re)
+  if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+    return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
+  return NULL;
+}
+
+void soundsystem::playSound(festring Buffer)
+{
+  if(!ivanconfig::GetPlaySounds()) return;
+  initSound();
+  if(SoundState == 1)
+  {
+    SoundFile *sf = findMatchingSound(Buffer);
+    if(!sf) return;
+
+    if(!*sf->chunk)
+    {
+      festring sndfile = game::GetDataDir() + "Sound/" + sf->filename;
+      *sf->chunk = Mix_LoadWAV(sndfile.CStr());
+    }
+
+    if(*sf->chunk)
+    {
+			for(int i=0; i<16; i++)
+			{
+				if(!Mix_Playing(i))
+				{
+					Mix_PlayChannel(i, *sf->chunk, 0);
+//					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
+		//    Mix_SetPosition(i, angle, dist);
+					return;
+				}
+			}
+		}
+  }
+}
+
+#endif

@@ -12,6 +12,8 @@
 
 /* Compiled through levelset.cpp */
 
+#include "dbgmsgproj.h"
+
 lsquare*** eyecontroller::Map;
 
 lsquare*** pathcontroller::Map;
@@ -41,7 +43,7 @@ truth lsquare::IsDipDestination() const
 
 lsquare::lsquare(level* LevelUnder, v2 Pos)
 : square(LevelUnder, Pos),
-  Fluid(0), Smoke(0), Rain(0), Trap(0),
+  Fluid(0), Smoke(0), HitEffect(0), bMaterialDetected(false), Rain(0), Trap(0),
   GLTerrain(0), OLTerrain(0),
   Memorized(0), FowMemorized(0),
   Engraved(0),
@@ -87,6 +89,13 @@ lsquare::~lsquare()
   {
     smoke* ToDel = S;
     S = S->Next;
+    delete ToDel;
+  }
+
+  for(hiteffect* H = HitEffect; H;)
+  {
+    hiteffect* ToDel = H;
+    H = H->Next;
     delete ToDel;
   }
 
@@ -338,7 +347,26 @@ void lsquare::Draw(blitdata& BlitData) const
       }
     }
 
+    if(ivanconfig::GetHitIndicator()>0){
+      hiteffect* HE = HitEffect;
+      while(HE){
+        HE->PrepareBlitdata(BlitData);
+        HE = HE->Next;
+      }
+    }
+
     Flags &= ~STRONG_NEW_DRAW_REQUEST;
+  }
+}
+
+void lsquare::DrawHitEffect(){
+  // end this tmp effect as soon as possible
+  for(hiteffect* HE = HitEffect; HE; HE = HE->Next){
+    /**
+     * This is not the normal drawing. The drawing itself determines how long it will last. Therefore not const.
+     * One draw step per frame.
+     */
+    if(HE->DrawStep())break;
   }
 }
 
@@ -1677,7 +1705,9 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::Lightning,
   &lsquare::DoorCreation,
   &lsquare::AcidRain,
-  &lsquare::Necromancy
+  &lsquare::Necromancy,
+  &lsquare::Webbing,
+  &lsquare::Alchemize
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -1838,6 +1868,79 @@ void lsquare::SignalSmokeAlphaChange(int What)
 {
   SmokeAlphaSum += What;
   SignalPossibleTransparencyChange();
+}
+
+hiteffect* lsquare::AddHitEffect(hiteffectSetup s)
+{DBGLN;
+  if(ivanconfig::GetHitIndicator()==0)return NULL;
+
+  if(s.itemEffectReference==NULL){
+//    switch(Type)
+//    {
+//     case UNARMED_ATTACK:
+//      itemEffectReference=WhoHits->getbo
+//      break;
+//     case KICK_ATTACK:
+//      break;
+//     case BITE_ATTACK:
+//      break;
+//     case THROW_ATTACK:
+//      break;
+//    }
+
+    if(s.itemEffectReference==NULL)return NULL;
+  }
+
+  s.iMode=ivanconfig::GetHitIndicator();
+  s.LSquareUnder=this;
+  hiteffect* S = HitEffect; //head of the linked list
+  hiteffect* New = new hiteffect(s);
+
+  if(!S)
+  {
+    HitEffect = New;
+    IncAnimatedEntities();
+  }
+  else
+  {
+    hiteffect* LS;
+
+    do
+    { // The same item can be re-added if it hits again later
+      LS = S; //finds the tail of linked list
+      S = S->Next;
+    }
+    while(S);
+
+    LS->Next = New;
+  }
+
+  return New;
+}
+void lsquare::RemoveHitEffect(hiteffect* ToBeRemoved)
+{
+  hiteffect* H = HitEffect;
+
+  if(H == ToBeRemoved) // head  of linked list
+  {
+    HitEffect = H->Next;
+
+    if(!H)
+      DecAnimatedEntities();
+  }
+  else
+  {
+    hiteffect* LH; // last or previously linked
+
+    do
+    {
+      LH = H;
+      H = H->Next;
+    }
+    while(H != ToBeRemoved);
+
+    LH->Next = H->Next;
+  }
 }
 
 int lsquare::GetDivineMaster() const
@@ -2880,4 +2983,20 @@ void lsquare::AddSpecialCursors()
 {
   if((FowMemorized || game::GetSeeWholeMapCheatMode()) && OLTerrain)
     OLTerrain->AddSpecialCursors();
+}
+
+truth lsquare::Webbing(const beamdata&)
+{
+  web* Web = web::Spawn();
+  Web->SetStrength(50);
+
+  AddTrap(Web);
+
+  return false;
+}
+
+truth lsquare::Alchemize(const beamdata& Beam)
+{
+  GetStack()->Alchemize(Beam.Owner);
+  return false;
 }

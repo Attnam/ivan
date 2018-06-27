@@ -13,7 +13,7 @@
 #include <cctype>
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <direct.h> // for _mkdir
 #else
 #include <dirent.h>
@@ -23,9 +23,46 @@
 #include "save.h"
 #include "femath.h"
 
-outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
-: FileName(FileName)
+#include "dbgmsgproj.h"
+
+truth outputfile::bakcupBeforeSaving = false;
+truth outputfile::saveOnNewFileAlways = false;
+
+void outputfile::SetSafeSaving(truth b){DBGLN;
+  bakcupBeforeSaving=b;
+  saveOnNewFileAlways=b;
+}
+
+void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewFileAlways);
+  File.close();
+
+  if(saveOnNewFileAlways){ // This moves the new .tmp file to the correct filename, before removing it.
+    if(FileNameNewTmp.IsEmpty())
+      ABORT("new tmp filename is empty, 'save on new file always' option was properly set before this output file '%s' ?",FileName.CStr());
+
+    std::ifstream newTmpFile(FileNameNewTmp.CStr(), std::ios::binary);
+    if(newTmpFile.good()){
+      std::remove(FileName.CStr()); //just to not let existing one create any doubts if some crash happens here
+
+      std::ofstream final(FileName.CStr(), std::ios::binary);
+      final << newTmpFile.rdbuf();
+
+      final.close();
+      newTmpFile.close();
+
+      std::remove(FileNameNewTmp.CStr()); //last thing
+    }else{
+      ABORT("the new tmp file '%s' should exist!",FileNameNewTmp.CStr());
+    }
+  }
+}
+
+outputfile::outputfile(cfestring& fileName, truth AbortOnErr)
+: FileName(fileName)
 {
+  if(FileName.IsEmpty())
+    ABORT("empty output filename");
+
   // If FileName contains a directory, make sure the directory exists first.
   festring::csizetype LastPathSeparatorPos = FileName.FindLast('/');
   if(LastPathSeparatorPos != festring::NPos)
@@ -35,40 +72,52 @@ outputfile::outputfile(cfestring& FileName, truth AbortOnErr)
     MakePath(DirectoryPath);
   }
 
-  Buffer = fopen(FileName.CStr(), "wb");
+  if(bakcupBeforeSaving){ // this is not that useful, the tmp files are better as they prevent overwriting the final files in case the game crashes
+    std::ifstream orig(FileName.CStr(), std::ios::binary);
+    if(orig.good()){
+      festring fsBkp("");fsBkp << FileName << ".bkp";
+      std::remove(fsBkp.CStr()); //just to have a granted clean new backup
+
+      std::ofstream bkp(fsBkp.CStr(), std::ios::binary);
+      bkp << orig.rdbuf();
+
+      orig.close();
+      bkp.close();
+
+      // backups are kept until leaving the game
+    }
+  }
+
+  festring FileNameNew("");
+  FileNameNew<<FileName;
+  if(saveOnNewFileAlways){
+    FileNameNew<<".tmp";
+    FileNameNewTmp<<FileNameNew;
+
+    /**
+     * if happened a crash and a tmp file is still there,
+     * it is most probably invalid and incomplete,
+     * so just remove it.
+     */
+    std::remove(FileNameNew.CStr());
+  }
+
+  File.open(FileNameNew.CStr(), std::ios::binary);
 
   if(AbortOnErr && !IsOpen())
-    ABORT("Can't open %s for output!", FileName.CStr());
-}
-
-outputfile::~outputfile()
-{
-  if(Buffer)
-    fclose(Buffer);
-}
-
-void outputfile::ReOpen()
-{
-  fclose(Buffer);
-  Buffer = fopen(FileName.CStr(), "ab");
+    ABORT("Can't open %s for output!", FileNameNew.CStr());
 }
 
 inputfile::inputfile(cfestring& FileName,
                      const valuemap* ValueMap,
                      truth AbortOnErr)
-: Buffer(fopen(FileName.CStr(), "rb")),
+: File(FileName.CStr(), std::ios::binary),
   FileName(FileName),
   ValueMap(ValueMap),
   lastWordWasString(false)
 {
   if(AbortOnErr && !IsOpen())
     ABORT("File %s not found!", FileName.CStr());
-}
-
-inputfile::~inputfile()
-{
-  if(Buffer)
-    fclose(Buffer);
 }
 
 festring inputfile::ReadWord(truth AbortOnEOF)
@@ -88,9 +137,9 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
 {
   if(Char == '/')
   {
-    if(!feof(Buffer))
+    if(!Eof())
     {
-      Char = fgetc(Buffer);
+      Char = Get();
 
       if(Char == '*')
       {
@@ -99,11 +148,11 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
 
         for(;;)
         {
-          if(feof(Buffer))
+          if(Eof())
             ABORT("Unterminated comment in file %s, beginning at line %ld!",
                   FileName.CStr(), TellLineOfPos(StartPos));
 
-          Char = fgetc(Buffer);
+          Char = Get();
 
           if(OldChar != '*' || Char != '/')
           {
@@ -128,13 +177,13 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
       }
       else
       {
-        ungetc(Char, Buffer);
-        clearerr(Buffer);
+        File.putback(Char);
+        File.clear();
       }
     }
 
     if(Mode)
-      ungetc('/', Buffer);
+      File.putback('/');
     else
       String << '/';
 
@@ -143,7 +192,7 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
 
   if(Mode)
   {
-    ungetc(Char, Buffer);
+    File.putback(Char);
     return PUNCT_RETURN;
   }
 
@@ -155,11 +204,11 @@ int inputfile::HandlePunct(festring& String, int Char, int Mode)
 
     for(;;)
     {
-      if(feof(Buffer))
+      if(Eof())
         ABORT("Unterminated string in file %s, beginning at line %ld!",
               FileName.CStr(), TellLineOfPos(StartPos));
 
-      Char = fgetc(Buffer);
+      Char = Get();
 
       if(Char != '"')
       {
@@ -186,7 +235,7 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
   String.Empty();
   lastWordWasString = false;
 
-  for(int Char = fgetc(Buffer); !feof(Buffer); Char = fgetc(Buffer))
+  for(int Char = Get(); !Eof(); Char = Get())
   {
     if(isalpha(Char) || Char == '_')
     {
@@ -194,7 +243,7 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
         Mode = MODE_WORD;
       else if(Mode == MODE_NUMBER)
       {
-        ungetc(Char, Buffer);
+        File.putback(Char);
         return;
       }
 
@@ -208,7 +257,7 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
         Mode = MODE_NUMBER;
       else if(Mode == MODE_WORD)
       {
-        ungetc(Char, Buffer);
+        File.putback(Char);
         return;
       }
 
@@ -227,12 +276,12 @@ void inputfile::ReadWord(festring& String, truth AbortOnEOF)
     ABORT("Unexpected end of file %s!", FileName.CStr());
 
   if(Mode)
-    clearerr(Buffer);
+    File.clear();
 }
 
 char inputfile::ReadLetter(truth AbortOnEOF)
 {
-  for(int Char = fgetc(Buffer); !feof(Buffer); Char = fgetc(Buffer))
+  for(int Char = Get(); !Eof(); Char = Get())
   {
     if(isalpha(Char) || isdigit(Char))
       return Char;
@@ -241,9 +290,9 @@ char inputfile::ReadLetter(truth AbortOnEOF)
     {
       if(Char == '/')
       {
-        if(!feof(Buffer))
+        if(!Eof())
         {
-          Char = fgetc(Buffer);
+          Char = Get();
 
           if(Char == '*')
           {
@@ -252,12 +301,12 @@ char inputfile::ReadLetter(truth AbortOnEOF)
 
             for(;;)
             {
-              if(feof(Buffer))
+              if(Eof())
                 ABORT("Unterminated comment in file %s, "
                       "beginning at line %ld!",
                       FileName.CStr(), TellLineOfPos(StartPos));
 
-              Char = fgetc(Buffer);
+              Char = Get();
 
               if(OldChar != '*' || Char != '/')
               {
@@ -281,7 +330,7 @@ char inputfile::ReadLetter(truth AbortOnEOF)
             continue;
           }
           else
-            ungetc(Char, Buffer);
+            File.putback(Char);
         }
 
         return '/';
@@ -336,7 +385,7 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
       if(First == ';' || First == ',' || First == ':')
       {
         if(CallLevel != HIGHEST || PreserveTerminator)
-          ungetc(First, Buffer);
+          File.putback(First);
 
         *num = Value;
         return res;
@@ -345,7 +394,7 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
       if(First == ')')
       {
         if((CallLevel != HIGHEST && CallLevel != 4) || PreserveTerminator)
-          ungetc(')', Buffer);
+          File.putback(')');
 
         *num = Value;
         return res;
@@ -371,7 +420,7 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
               }\
             else\
               {\
-                ungetc(#op[0], Buffer);\
+                File.putback(#op[0]);\
                 *num = Value;\
                 return res;\
               }\
@@ -394,13 +443,13 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
           }
           else
           {
-            ungetc('<', Buffer);
-            ungetc('<', Buffer);
+            File.putback('<');
+            File.putback('<');
             *num = Value;
             return res;
           }
         else
-          ungetc(Next, Buffer);
+          File.putback(Next);
       }
 
       if(First == '>')
@@ -416,20 +465,20 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
           }
           else
           {
-            ungetc('>', Buffer);
-            ungetc('>', Buffer);
+            File.putback('>');
+            File.putback('>');
             *num = Value;
             return res;
           }
         else
-          ungetc(Next, Buffer);
+          File.putback(Next);
       }
 
       if(First == '(')
       {
         if(NumberCorrect)
         {
-          ungetc('(', Buffer);
+          File.putback('(');
           *num = Value;
           return res;
         }
@@ -446,7 +495,7 @@ festring inputfile::ReadNumberIntr(int CallLevel, long *num, truth *isString, tr
 
       if(First == '#') // for #defines
       {
-        ungetc('#', Buffer);
+        File.putback('#');
         *num = Value;
         return res;
       }
@@ -695,7 +744,7 @@ ulong inputfile::TellLineOfPos(long Pos)
   SeekPosBegin(0);
 
   while(TellPos() != Pos)
-    if(fgetc(Buffer) == '\n')
+    if(Get() == '\n')
       ++Line;
 
   if(TellPos() != BackupPos)

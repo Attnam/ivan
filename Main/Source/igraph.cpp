@@ -28,20 +28,20 @@ bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
 cchar* igraph::RawGraphicFileName[] =
 {
-  "Graphics/GLTerra.pcx",
-  "Graphics/OLTerra.pcx",
-  "Graphics/Item.pcx",
-  "Graphics/Char.pcx",
-  "Graphics/Humanoid.pcx",
-  "Graphics/Effect.pcx",
-  "Graphics/Cursor.pcx"
+  "Graphics/GLTerra.png",
+  "Graphics/OLTerra.png",
+  "Graphics/Item.png",
+  "Graphics/Char.png",
+  "Graphics/Humanoid.png",
+  "Graphics/Effect.png",
+  "Graphics/Cursor.png"
 };
 cchar* igraph::GraphicFileName[] =
 {
-  "Graphics/WTerra.pcx",
-  "Graphics/FOW.pcx",
-  "Graphics/Symbol.pcx",
-  "Graphics/Smiley.pcx"
+  "Graphics/WTerra.png",
+  "Graphics/FOW.png",
+  "Graphics/Symbol.png",
+  "Graphics/Smiley.png"
 };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
@@ -60,6 +60,12 @@ int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
+	if(ivanconfig::IsStartingOutlinedGfx()){
+		RawGraphicFileName[GR_ITEM]="Graphics/Item-outlined.png";
+		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
+		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
+	}
+  
   static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
@@ -68,15 +74,21 @@ void igraph::Init()
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
-                      v2(800, 600), ivanconfig::GetFullScreenMode());
+                      v2(ivanconfig::GetStartingWindowWidth(), ivanconfig::GetStartingWindowHeight()),
+#ifndef __DJGPP__
+                      ivanconfig::GetGraphicsScale(),
+                      ivanconfig::GetScalingQuality(),
+#endif
+                      ivanconfig::GetFullScreenMode());
     DOUBLE_BUFFER->ClearToColor(0);
     graphics::BlitDBToScreen();
 #ifndef __DJGPP__
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
-    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.pcx");
+    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
+    felist::SetDefaultEntryImageSize(TILE_V2);
     felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
     felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
     object::InitSparkleValidityArrays();
@@ -464,13 +476,48 @@ void igraph::CreateBodyBitmapValidityMaps()
 
 void igraph::LoadMenu()
 {
-  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.pcx");
+  Menu = new bitmap(game::GetDataDir() + "Graphics/Menu.png");
 }
 
 void igraph::UnLoadMenu()
 {
   delete Menu;
 }
+
+#ifdef IMPORT_EXPORT_GFX //INCOMPLETE WORK. for (one day) load each gfx from independent files.
+bool isFileExist(const char *fileName) //TODO this should be more global
+{
+  DBG2("chkIfFileExist:",fileName);
+  std::ifstream fl(fileName);
+  bool b=fl.good(); //ifstream destructor will close the file
+  DBG2("chkIfFileExist:",b);
+  return b;
+}
+bool importGfx(festring fsFile,bitmap** ppbmpSC){
+  DBG2("importing:",fsFile.CStr());
+  (*ppbmpSC) = new bitmap(SILHOUETTE_SIZE, 0);
+  inputfile flIn(fsFile);
+  (*ppbmpSC)->Load(flIn);
+  flIn.Close();
+  DBG2("imported:",fsFile.CStr());
+
+  return true; //TODO make it sure the file load woked, catching errors and so on...
+}
+bool bExportGfx=false; //if ran at a readonly location, true will fail.
+void chkExportGfx(){
+  //TODO inform this env var in some kind of developer documentation (preferable in an existing one)
+  char* env=std::getenv("IVAN_EXPORTGFX"); DBG2("bExportGfx",env);
+
+  if(env!=NULL){
+    bExportGfx = strcmp(env,"true")==0; DBG2("bExportGfx",bExportGfx);
+  }
+
+}
+festring prepareFileName(const char* strName){
+  festring fs="";
+  return fs<<game::GetDataDir()<<"Graphics/HumanBodypartSilhouette/"<<strName<<".png";
+}
+#endif
 
 void igraph::CreateSilhouetteCaches()
 {
@@ -505,6 +552,28 @@ void igraph::CreateSilhouetteCaches()
   }
 }
 
+//void igraph::CreateBackGround(int ColorType)
+//{
+//  if(CurrentColorType == ColorType)
+//    return;
+//
+//  CurrentColorType = ColorType;
+//  delete BackGround;
+//  BackGround = new bitmap(RES);
+//  int Side = 1025;
+//  int** Map;
+//  Alloc2D(Map, Side, Side);
+//  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+//
+//  for(int x = 0; x < RES.X; ++x)
+//    for(int y = 0; y < RES.Y; ++y)
+//    {
+//      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+//      BackGround->PutPixel(x, y, GetBackGroundColor(E));
+//    }
+//
+//  delete [] Map;
+//}
 void igraph::CreateBackGround(int ColorType)
 {
   if(CurrentColorType == ColorType)
@@ -513,15 +582,17 @@ void igraph::CreateBackGround(int ColorType)
   CurrentColorType = ColorType;
   delete BackGround;
   BackGround = new bitmap(RES);
-  int Side = 1025;
+  int base=1024; //TODO explain this: fractals require multiple of 1024 to work/workBetter?
+  while(ivanconfig::GetStartingWindowWidth()>base)base+=1024;
+  int Side = base+1;
   int** Map;
-  Alloc2D(Map, Side, Side);
-  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
+  Alloc2D(Map, Side, Side); //TODO confirm and explain this: it seems fractals work better on a squared img right?
+  femath::GenerateFractalMap(Map, Side, Side - 1, ivanconfig::GetStartingWindowWidth());
 
   for(int x = 0; x < RES.X; ++x)
     for(int y = 0; y < RES.Y; ++y)
     {
-      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
+      int E = Limit<int>(abs(Map[base - x][base - (RES.Y - y)]) / 30, 0, 100);
       BackGround->PutPixel(x, y, GetBackGroundColor(E));
     }
 
@@ -544,7 +615,12 @@ col16 igraph::GetBackGroundColor(int Element)
 
 void igraph::BlitBackGround(v2 Pos, v2 Border)
 {
-  blitdata B = { DOUBLE_BUFFER,
+  BlitBackGround(DOUBLE_BUFFER, Pos, Border);
+}
+
+void igraph::BlitBackGround(bitmap* bmpAt, v2 Pos, v2 Border)
+{
+  blitdata B = { bmpAt,
                   { Pos.X, Pos.Y },
                   { Pos.X, Pos.Y },
                   { Border.X, Border.Y },

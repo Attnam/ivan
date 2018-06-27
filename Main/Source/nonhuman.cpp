@@ -49,13 +49,6 @@ int eddy::GetBodyPartWobbleData(int) const { return WOBBLE_VERTICALLY|(2 << WOBB
 
 bodypart* magicmushroom::MakeBodyPart(int) const { return magicmushroomtorso::Spawn(0, NO_MATERIALS); }
 
-cchar* ghost::FirstPersonBiteVerb() const { return "touch"; }
-cchar* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
-cchar* ghost::ThirdPersonBiteVerb() const { return "touches"; }
-cchar* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
-truth ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
-int ghost::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
-
 cchar* magpie::FirstPersonBiteVerb() const { return "peck"; }
 cchar* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
 cchar* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
@@ -152,13 +145,13 @@ truth unicorn::SpecialEnemySightedReaction(character*)
 {
   if(!(RAND() & 15))
   {
-    MonsterTeleport("neighs happily");
+    MonsterTeleport(" happily");
     return true;
   }
 
   if(StateIsActivated(PANIC) || (RAND() & 1 && IsInBadCondition()))
   {
-    MonsterTeleport("neighs");
+    MonsterTeleport("");
     return true;
   }
 
@@ -559,6 +552,23 @@ void dog::BeTalkedTo()
     ADD_MESSAGE("\"Meow.\"");
 }
 
+void dog::CreateCorpse(lsquare* Square)
+{
+  if(GetConfig() == SKELETON_DOG)
+  {
+    Square->AddItem(skull::Spawn(PUPPY_SKULL));
+
+    int Amount = 2 + (RAND() & 3);
+
+    for(int c = 0; c < Amount; ++c)
+      Square->AddItem(bone::Spawn());
+
+    SendToHell();
+  }
+  else
+    nonhumanoid::CreateCorpse(Square);
+}
+
 col16 wolf::GetSkinColor() const
 {
   int Element = 40 + RAND() % 50;
@@ -900,7 +910,7 @@ void elpuri::CreateCorpse(lsquare* Square)
   Square->AddItem(headofelpuri::Spawn());
 }
 
-truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
@@ -911,12 +921,35 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
     return false;
 }
 
-truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
     Char->BeginTemporaryState(POISONED, GetConfig() == LARGE ? 80 + RAND_N(40) : 400 + RAND_N(200));
     return true;
+  }
+  else
+    return false;
+}
+
+truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 3) || Critical) && !Victim->AllowSpoil())
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+    else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(LYCANTHROPY) && !Victim->StateIsActivated(DISEASE_IMMUNITY))
+      Victim->BeginTemporaryState(VAMPIRISM, 500 + RAND_N(250));
+
+      // HP recieved is about half the damage done; against werewolves this is full
+      int DrainDamage = (DoneDamage >> 1) + 1;
+      if(Victim->StateIsActivated(LYCANTHROPY))
+        DrainDamage = DoneDamage + 1;
+
+    return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
   }
   else
     return false;
@@ -1377,73 +1410,6 @@ truth genetrixvesana::MustBeRemovedFromBone() const
          || GetTeam()->GetID() != MONSTER_TEAM
          || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL
          || GetLevel()->GetIndex() != VESANA_LEVEL;
-}
-
-void ghost::AddName(festring& String, int Case) const
-{
-  if(OwnerSoul.IsEmpty() || Case & PLURAL)
-    character::AddName(String, Case);
-  else
-  {
-    character::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
-    String << " of " << OwnerSoul;
-  }
-}
-
-void ghost::Save(outputfile& SaveFile) const
-{
-  nonhumanoid::Save(SaveFile);
-  SaveFile << OwnerSoul << Active;
-}
-
-void ghost::Load(inputfile& SaveFile)
-{
-  nonhumanoid::Load(SaveFile);
-  SaveFile >> OwnerSoul >> Active;
-}
-
-truth ghost::RaiseTheDead(character* Summoner)
-{
-  itemvector ItemVector;
-  GetStackUnder()->FillItemVector(ItemVector);
-
-  for(uint c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->SuckSoul(this, Summoner))
-      return true;
-
-  if(IsPlayer())
-    ADD_MESSAGE("You shudder.");
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s shudders.", CHAR_NAME(DEFINITE));
-
-  return false;
-}
-
-int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
-                                 int Direction, truth PenetrateResistance, truth Critical,
-                                 truth ShowNoDamageMsg, truth CaptureBodyPart)
-{
-  if(Type != SOUND)
-  {
-    Active = true;
-    return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction,
-                                            PenetrateResistance, Critical, ShowNoDamageMsg, CaptureBodyPart);
-  }
-  else
-    return 0;
-}
-
-void ghost::GetAICommand()
-{
-  if(Active)
-    character::GetAICommand();
-  else
-  {
-    if(CheckForEnemies(false, false, false))
-      return;
-
-    EditAP(-1000);
-  }
 }
 
 int largecreature::GetSquareIndex(v2 Pos) const
@@ -2407,7 +2373,7 @@ truth lobhse::MustBeRemovedFromBone() const
          || GetLevel()->GetIndex() != SPIDER_LEVEL;
 }
 
-truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour, truth Critical, int DoneDamage)
 {
   if(!BlockedByArmour)
   {
@@ -2439,45 +2405,48 @@ void lobhse::CreateCorpse(lsquare* Square)
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
-
-  if(NeighbourEnemy && NeighbourEnemy->IsHumanoid() && NeighbourEnemy->HasHead()
-  && !NeighbourEnemy->IsInfectedByMindWorm())
-  {
-    TryToImplantLarvae(NeighbourEnemy);
-    return;
-  }
-
   character* NearestEnemy = GetNearestEnemy();
 
-  if(NearestEnemy)
+  if(GetConfig() == BOIL && NeighbourEnemy)
+  {
+    if(NeighbourEnemy->HasHead() && !NeighbourEnemy->StateIsActivated(PARASITE_MIND_WORM))
+    {
+      if(TryToImplantLarvae(NeighbourEnemy))
+        return;
+    }
+  }
+  if(NearestEnemy && !NearestEnemy->IsESPBlockedByEquipment() && !StateIsActivated(CONFUSED) && !(RAND() & 2))
   {
     PsiAttack(NearestEnemy);
     return;
   }
-
-  if(MoveRandomly())
-    return;
-
-  EditAP(-1000);
+  else
+    nonhumanoid::GetAICommand();
 }
 
-void mindworm::TryToImplantLarvae(character* Victim)
+truth mindworm::TryToImplantLarvae(character* Victim)
 {
-  if(Victim->MindWormCanPenetrateSkull(this))
+  if(Victim->MindWormCanPenetrateSkull(this) && Victim->CanBeParasitized())
   {
-    Victim->SetCounterToMindWormHatch(100);
     if(Victim->IsPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through your skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through your skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
     else if(Victim->CanBeSeenByPlayer())
     {
-      ADD_MESSAGE("%s penetrates digs through %s's skull, lays %s eggs and jumps out.",
+      ADD_MESSAGE("%s digs through %s's skull, lays %s eggs and jumps out.",
                   CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN);
     }
+
+    Victim->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200));
+
     MoveRandomly();
+    EditAP(-1000);
+    return true;
   }
+  else
+    return false;
 }
 
 void mindworm::PsiAttack(character* Victim)
@@ -2488,9 +2457,11 @@ void mindworm::PsiAttack(character* Victim)
   }
   else if(Victim->CanBeSeenByPlayer() && PLAYER->GetAttribute(PERCEPTION) > RAND_N(20))
   {
-    ADD_MESSAGE("%s looks scared.", Victim->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s looks pained.", Victim->CHAR_NAME(DEFINITE));
   }
 
-  Victim->ReceiveDamage(this, 1 + RAND_N(5), PSI, ALL, 8, false, false, false, false);
+  Victim->ReceiveDamage(this, 1, PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
+  EditAP(-2000);
+  EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);
 }

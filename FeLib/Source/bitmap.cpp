@@ -12,6 +12,8 @@
 
 #include <cmath>
 #include <ctime>
+#include <iostream>
+#include <vector>
 
 #include "bitmap.h"
 #include "graphics.h"
@@ -19,6 +21,10 @@
 #include "allocate.h"
 #include "femath.h"
 #include "rawbit.h"
+#include "libxbrzscale.h"
+
+#define DBGMSG_V2
+#include "dbgmsgproj.h"
 
 /*
  * Blitting must be as fast as possible, even if no optimizations are used;
@@ -109,56 +115,21 @@ int Blue;\
 bitmap::bitmap(cfestring& FileName)
 : FastFlag(0), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
-  inputfile File(FileName.CStr(), 0, false);
-
-  if(!File.IsOpen())
-    ABORT("Bitmap %s not found!", FileName.CStr());
-
-  uchar Palette[768];
-  File.SeekPosEnd(-768);
-  File.Read(reinterpret_cast<char*>(Palette), 768);
-  File.SeekPosBegin(8);
-  Size.X  =  File.Get();
-  Size.X += (File.Get() << 8) + 1;
-  Size.Y  =  File.Get();
-  Size.Y += (File.Get() << 8) + 1;
+  rawbitmap Temp(FileName);
+  Size = Temp.Size;
   XSizeTimesYSize = Size.X * Size.Y;
-  File.SeekPosBegin(128);
   Alloc2D(Image, Size.Y, Size.X);
   packcol16* Buffer = Image[0];
+  paletteindex* TempBuffer = Temp.PaletteBuffer[0];
 
   for(int y = 0; y < Size.Y; ++y)
     for(int x = 0; x < Size.X; ++x)
     {
-      int Char1 = File.Get();
-
-      if(Char1 > 192)
-      {
-        --x;
-        int Char2 = File.Get();
-        int Char3 = Char2 + (Char2 << 1);
-        int Color = int(Palette[Char3] >> 3) << 11
-                    | int(Palette[Char3 + 1] >> 2) << 5
-                    | int(Palette[Char3 + 2] >> 3);
-
-        for(; Char1 > 192; --Char1)
-        {
-          *Buffer++ = Color;
-
-          if(++x == Size.X)
-          {
-            x = 0;
-            ++y;
-          }
-        }
-      }
-      else
-      {
-        int Char3 = Char1 + (Char1 << 1);
-        *Buffer++ = int(Palette[Char3] >> 3) << 11
-                    | int(Palette[Char3 + 1] >> 2) << 5
-                    | int(Palette[Char3 + 2] >> 3);
-      }
+      int Char1 = *TempBuffer++;
+      int Char3 = Char1 + (Char1 << 1);
+      *Buffer++ = int(Temp.Palette[Char3] >> 3) << 11
+                | int(Temp.Palette[Char3 + 1] >> 2) << 5
+                | int(Temp.Palette[Char3 + 2] >> 3);
     }
 }
 
@@ -329,6 +300,30 @@ void bitmap::ClearToColor(col16 Color)
     while(Ptr != EndPtr)
       *Ptr++ = Color;
   }
+}
+
+truth bitmap::HasColor(col16 findColor)
+{
+  for(int iY=0;iY<Size.Y;iY++)
+    for(int iX=0;iX<Size.X;iX++)
+      if(Image[iY][iX]==findColor)
+        return true;
+
+  return false;
+}
+
+void bitmap::ReplaceColor(col16 findColor,col16 replaceWith)
+{
+  for(int iY=0;iY<Size.Y;iY++)
+    for(int iX=0;iX<Size.X;iX++)
+      if(Image[iY][iX]==findColor)
+        Image[iY][iX]=replaceWith;
+}
+
+void bitmap::CopyLineFrom(int iYDest, bitmap* bmpFrom, int iYFrom, int iSize, bool bFailSafe){
+  iSize*=sizeof(packcol16);
+  if(bFailSafe && iYDest>=Size.Y)return;
+  memcpy(&Image[iYDest][0], &bmpFrom->Image[iYFrom][0], iSize);
 }
 
 void bitmap::NormalBlit(cblitdata& BlitData) const
@@ -1190,6 +1185,191 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
   B.Flags = 0;
   NormalMaskedBlit(B);
   graphics::BlitDBToScreen();
+}
+
+std::vector<SDL_Surface*> vSurfaceCache;
+SDL_Surface* SurfaceCache(blitdata B,bool bUseScale){ // good to prevent memory hungryness
+  int iW=B.Border.X;
+  if(bUseScale)iW*=B.Stretch;
+
+  int iH=B.Border.Y;
+  if(bUseScale)iH*=B.Stretch;
+
+  for(int i=0;i<vSurfaceCache.size();i++){
+    if(vSurfaceCache[i]->w==iW && vSurfaceCache[i]->h==iH){
+      return vSurfaceCache[i];
+    }
+  }
+
+  DBG4("Cache not found for surface w=",iW," h=",iH);
+  SDL_Surface* srf = libxbrzscale::createARGBSurface(iW, iH); //src img for look zoom at least is always 16x16 tho
+
+  vSurfaceCache.push_back(srf);DBG3(srf,DBGI(srf->w),DBGI(srf->h));
+  DBGSI(vSurfaceCache.size());
+
+  return srf;
+}
+
+void bitmap::ResetBlitdataRotation(blitdata& B)
+{
+  B.Flags &= ~MIRROR;
+  B.Flags &= ~FLIP;
+  B.Flags &= ~ROTATE;
+}
+
+void bitmap::ConfigureBlitdataRotation(blitdata& B,int iR){
+  ResetBlitdataRotation(B);
+
+  // set
+  iR %= 4;
+  /****
+   * 1 1
+   * 2 2
+   * 3 3
+   * 4 0->4
+   * 5 1
+   * 6 2
+   * 7 3
+   * 8 0->4
+   */
+  if(iR==0)iR = 4 * (iR>0 ? 1 : -1);
+  /*** the blade side is inverted, so invert the rotation
+   * -1 -> -4
+   * -2 -> -3
+   * -3 -> -2
+   * -4 -> -1
+   */
+  switch(iR){
+  case -1:iR=-4;break;
+  case -2:iR=-3;break;
+  case -3:iR=-2;break;
+  case -4:iR=-1;break;
+  }
+
+  switch(iR){
+  case 1:    // 1st step always rotate once
+    B.Flags |= ROTATE; //90 degrees
+    break;
+  case 2:
+    B.Flags |= FLIP|MIRROR; //180 degrees
+    break;
+  case 3:
+    B.Flags |= ROTATE|FLIP|MIRROR; //270 degrees
+    break;
+  case 4:
+    // initial/default rotation
+    break;
+  case -1:    // 1st step always rotate once
+    B.Flags |= MIRROR; //-90 degrees
+    break;
+  case -2:
+    B.Flags |= FLIP|ROTATE; //-180 degrees
+    break;
+  case -3:
+    B.Flags |= FLIP; //-270 degrees
+    break;
+  case -4:
+    B.Flags |= MIRROR|ROTATE; //-0 degrees (like a mirrored image :))
+    break;
+  }
+}
+
+SDL_PixelFormat* fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888); //format based on xbrzscale code
+
+SDL_Surface* bitmap::CopyToSurface(v2 v2TopLeft, v2 v2Size, col16 MaskColor, SDL_Surface* srf) const
+{
+  if(srf==NULL) srf = libxbrzscale::createARGBSurface(this->Size.X,this->Size.Y);
+
+  // copy pixels to surface
+  Uint32 color32bit;
+  packcol16 PixelFrom;
+  unsigned char ca=0xff;
+  for(int x1 = 0; x1 < v2Size.X; x1++)
+  {
+    for(int y1 = 0; y1 < v2Size.Y; y1++)
+    {
+      PixelFrom = Image[v2TopLeft.Y + y1][v2TopLeft.X + x1];
+
+      if(PixelFrom == MaskColor){ //0 invisible, 0xff opaque
+        ca = 0;
+//        static packcol16 DarkestNotBlack = MakeRGB16(1,1,1);
+//        PixelFrom = DarkestNotBlack; //didnt work :(
+        PixelFrom = WHITE; //xBRZ blends countours perfectly this way
+      }else{
+        ca = 0xff;
+      }
+
+      color32bit = SDL_MapRGBA(
+        fmt,
+        (unsigned char)GetRed16(PixelFrom),
+        (unsigned char)GetGreen16(PixelFrom),
+        (unsigned char)GetBlue16(PixelFrom),
+        ca
+      );
+      libxbrzscale::SDL_PutPixel(srf, x1, y1, color32bit);
+    }
+  }
+
+  return srf;
+}
+
+/**
+ * stretch from 2 to 6 only!
+ */
+void bitmap::StretchBlitXbrz(cblitdata& BlitDataTo, bool bAllowTransparency) const
+{
+  if(
+      (BlitDataTo.Src.X+BlitDataTo.Border.X) > Size.X
+      ||
+      (BlitDataTo.Src.Y+BlitDataTo.Border.Y) > Size.Y
+  ){
+    ABORT("requested copy from rectangle pos=%d,%d size=%d,%d outside of limits=%d,%d",BlitDataTo.Src.X,BlitDataTo.Src.Y,BlitDataTo.Border.X,BlitDataTo.Border.Y,Size.X,Size.Y);
+  }
+
+  blitdata Bto = BlitDataTo;DBGLN; //to easy coding
+  if(Bto.Dest.X>=Bto.Bitmap->GetSize().X || Bto.Dest.Y>=Bto.Bitmap->GetSize().Y){
+    ABORT("invalid stretch destination %d,%d on target bitmap size %d,%d",Bto.Dest.X,Bto.Dest.Y,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
+  }
+
+  static bool bXbrzLibCfgInitialized=false;
+  if(!bXbrzLibCfgInitialized){ //TODO this config should be placed more globally?
+    libxbrzscale::setUseCache(true);DBGLN;
+#ifdef DBGMSG
+    libxbrzscale::setDebugMsg(true);DBGLN;
+#endif
+    libxbrzscale::setFreeSurfaceAfterScale(false,false);DBGLN;
+    bXbrzLibCfgInitialized=true;DBGLN;
+  }
+
+  bool bFreeImg=false;DBGLN;
+
+  DBG2(Bto.Bitmap,DBGAV2(Bto.Bitmap->GetSize()));
+  SDL_Surface* imgCopy = CopyToSurface(Bto.Src, Bto.Border, Bto.MaskColor, SurfaceCache(Bto,false));DBGLN;
+
+  Uint32 color32bit;DBGLN;
+  unsigned char cr,cg,cb,ca;DBGLN;
+  SDL_Surface* imgStretchedCopy=NULL;DBGLN;
+  imgStretchedCopy=libxbrzscale::scale(SurfaceCache(Bto,true), imgCopy, Bto.Stretch);DBG3(imgStretchedCopy,DBGI(imgStretchedCopy->w),DBGI(imgStretchedCopy->h));
+//  if( ((Bto.Dest.X+imgStretchedCopy->w) >= Bto.Bitmap->GetSize().X) ||
+//      ((Bto.Dest.Y+imgStretchedCopy->h) >= Bto.Bitmap->GetSize().Y)    )ABORT("blit %d,%d + %d,%d outside dest bitmap %d,%d",Bto.Dest.X,Bto.Dest.Y,imgStretchedCopy->w,imgStretchedCopy->h,Bto.Bitmap->GetSize().X,Bto.Bitmap->GetSize().Y);
+  // copy from surface the scaled image back to where it is expected TODO comment a more precise info...
+  for(int x1 = 0; x1 < imgStretchedCopy->w; ++x1)
+  {
+    for(int y1 = 0; y1 < imgStretchedCopy->h; ++y1)
+    {
+      color32bit = libxbrzscale::SDL_GetPixel(imgStretchedCopy,x1,y1);//DBGLN;
+      SDL_GetRGBA(color32bit,fmt,&cr,&cg,&cb,&ca);//DBGLN;
+      if(!bAllowTransparency || ca==0xff){ //TODO ca==0xff may work better than ca!=0 the day xBRZScale blends from opaque to transparent with a half-transparent alpha value as result!?
+        if((Bto.Dest.X+x1)<Bto.Bitmap->GetSize().X && (Bto.Dest.Y+y1)<Bto.Bitmap->GetSize().Y){
+          Bto.Bitmap->Image[Bto.Dest.Y+y1][Bto.Dest.X+x1] = MakeRGB16(cr,cg,cb);//DBGLN; //TODO does alpha make any sense here anyway?
+        }
+      }
+    }
+  }
+  DBGLN;
+
+//  SDL_FreeSurface(imgCopy);
+//  SDL_FreeSurface(imgStretchedCopy);
 }
 
 void bitmap::StretchBlit(cblitdata& BlitData) const

@@ -391,7 +391,7 @@ truth god::TryToAttachBodyPart(character* Char)
     {
       BodyPart = 0;
       materialvector MaterialVector;
-      protosystem::CreateEveryMaterial(MaterialVector, this, Char);
+      protosystem::CreateEveryGodlyMaterial(MaterialVector, this, Char);
       std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(0));
       uint c;
 
@@ -459,7 +459,7 @@ truth god::TryToHardenBodyPart(character* Char)
   material* OldMaterial = BodyPart->GetMainMaterial();
   int OldModifier = OldMaterial->GetHardenModifier(BodyPart);
   materialvector MaterialVector;
-  protosystem::CreateEveryMaterial(MaterialVector, this, Char);
+  protosystem::CreateEveryGodlyMaterial(MaterialVector, this, Char);
   std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(BodyPart));
   truth Changed = false;
 

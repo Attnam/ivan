@@ -111,6 +111,7 @@ ITEM(bodypart, item)
   virtual int GetSpecialFlags() const;
   virtual truth IsRepairable(ccharacter*) const;
   truth IsWarm() const;
+  truth IsWarmBlooded() const;
   truth UseMaterialAttributes() const;
   truth CanRegenerate() const;
   virtual square* GetSquareUnder(int = 0) const;
@@ -126,6 +127,8 @@ ITEM(bodypart, item)
   virtual void UpdatePictures();
   item* GetExternalBodyArmor() const;
   item* GetExternalCloak() const;
+  item* GetExternalHelmet() const;
+  item* GetExternalBelt() const;
   virtual void ReceiveAcid(material*, cfestring&, long);
   virtual truth ShowFluids() const { return false; }
   virtual void TryToRust(long);
@@ -228,6 +231,8 @@ ITEM(head, bodypart)
   virtual int GetEquipments() const { return 2; }
   int GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(long What) { BaseBiteStrength = What; }
+  int GetBonusBiteStrength() const { return BonusBiteStrength; }
+  void SetBonusBiteStrength(long What) { BonusBiteStrength = What; }
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
@@ -235,11 +240,13 @@ ITEM(head, bodypart)
   virtual head* Behead();
   virtual item* GetArmorToReceiveFluid(truth) const;
   virtual void SignalPossibleUsabilityChange();
+  virtual truth IsHelmet(ccharacter*) const { return true; }
  protected:
   void UpdateHeadArmorPictures(graphicdata&) const;
   gearslot HelmetSlot;
   gearslot AmuletSlot;
   int BaseBiteStrength;
+  int BonusBiteStrength;
   double BiteToHitValue;
   double BiteDamage;
   long BiteAPCost;
@@ -344,6 +351,8 @@ ITEM(arm, bodypart)
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*, citem*);
   void ApplyDexterityPenalty(item*);
+  void ApplyStrengthBonus(item*);
+  void ApplyDexterityBonus(item*);
   virtual truth DamageArmor(character*, int, int);
   truth CheckIfWeaponTooHeavy(cchar*) const;
   virtual truth EditAllAttributes(int);
@@ -449,6 +458,8 @@ ITEM(leg, bodypart)
   virtual void CalculateAttributeBonuses();
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyAgilityPenalty(item*);
+  void ApplyStrengthBonus(item*);
+  void ApplyAgilityBonus(item*);
   virtual void SignalVolumeAndWeightChange();
   virtual truth DamageArmor(character*, int, int);
   virtual truth EditAllAttributes(int);

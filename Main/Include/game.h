@@ -166,12 +166,24 @@ typedef std::vector<character*> charactervector;
 class quitrequest { };
 class areachangerequest { };
 
+typedef void (*dbgdrawoverlay)();
+
 class game
 {
  public:
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static void PrepareStretchRegionsLazy();
+  static void UpdateSRegionsXBRZ();
+  static void RegionSilhouetteEnable(bool b);
+  static void RegionListItemEnable(bool b);
+  static void UpdatePosAroundForXBRZ(v2 ScreenPos);
+  static void SRegionAroundDisable();
+  static void SRegionAroundAllow();
+  static void SRegionAroundDeny();
+  static void PrepareToClearNonVisibleSquaresAround(v2);
+  static void UpdatePlayerOnScreenSBSBlitdata();
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -196,10 +208,18 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
+  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos=v2(0,0));
+  static void UpdateAltSilhouette(bool bAllowed);
+  static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
+  static int ItemUnderCode(int iCycleValue);
+  static int ItemUnderCorner(int val);
+  static int ItemUnderZoom(int val);
+  static bool ItemUnderHV(int val);
   static truth Save(cfestring& = SaveName(""));
   static int Load(cfestring& = SaveName(""));
+  static int GetCurrentSavefileVersion();
   static truth IsRunning() { return Running; }
-  static void SetIsRunning(truth What) { Running = What; }
+  static void SetIsRunning(truth What);
   static void UpdateCameraX(int);
   static void UpdateCameraY(int);
   static int GetCurrentLevelIndex() { return CurrentLevelIndex; }
@@ -217,9 +237,9 @@ class game
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return AutoSaveFileName; }
+  static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false);
-  static void RemoveSaves(truth = true);
+  static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }
@@ -254,10 +274,13 @@ class game
   static void SetPetrus(character* What) { Petrus = What; }
   static truth HandleQuitMessage();
   static int GetDirectionForVector(v2);
+  static int GetPlayerAlignment();
   static cchar* GetVerbalPlayerAlignment();
   static void CreateGods();
-  static int GetScreenXSize() { return 42; }
-  static int GetScreenYSize() { return 26; }
+  static int GetScreenXSize();
+  static int GetScreenYSize();
+  static int GetMaxScreenXSize();
+  static int GetMaxScreenYSize();
   static v2 CalculateScreenCoordinates(v2);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*, truth);
@@ -269,6 +292,7 @@ class game
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
+  static void GenerateDefinesValidator(bool bValidade);
   static void TextScreen(cfestring&, v2 = ZERO_V2, col16 = 0xFFFF, truth = true, truth = true, bitmapeditor = 0);
   static void SetCursorPos(v2 What) { CursorPos = What; }
   static truth DoZoom() { return Zoom; }
@@ -322,6 +346,7 @@ class game
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetDataDir();
+  static festring GetStateDir();
   static festring GetBoneDir();
   static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
@@ -340,9 +365,17 @@ class game
   static truth MassacreListsEmpty();
   static void PlayVictoryMusic();
   static void PlayDefeatMusic();
+  static bool ToggleDrawMapOverlay();
+  static void SetDrawMapOverlay(bool b);
+  static void DrawMapOverlay(bitmap* =NULL);
+
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
   static truth WizardModeIsActive() { return WizardMode; }
+  static void IncAutoPlayMode();
+  static int GetAutoPlayMode() { return AutoPlayMode; }
+  static void AutoPlayModeApply();
+  static void DisableAutoPlayMode() {AutoPlayMode=0;AutoPlayModeApply();}
   static void SeeWholeMap();
   static int GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static truth GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
@@ -351,7 +384,9 @@ class game
   static truth WizardModeIsActive() { return false; }
   static int GetSeeWholeMapCheatMode() { return 0; }
   static truth GoThroughWallsCheatIsActive() { return false; }
+  static int GetAutoPlayMode() { return 0; }
 #endif
+
   static truth WizardModeIsReallyActive() { return WizardMode; }
   static void CreateBone();
   static int GetQuestMonstersFound() { return QuestMonstersFound; }
@@ -401,7 +436,7 @@ class game
   static int DefaultQuestion(festring&, festring, festring&, truth, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
-  static void IncreaseTurn() { ++Turn; }
+  static void IncreaseTurn() { ++Turn; ++iCurrentDungeonTurn; }
   static int GetTotalMinutes() { return Tick * 60 / 2000; }
   static truth PolymorphControlKeyHandler(int, festring&);
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
@@ -432,12 +467,14 @@ class game
   static void LearnAbout(god*);
   static truth PlayerKnowsAllGods();
   static void AdjustRelationsToAllGods(int);
+  static void SetRelationsToAllGods(int);
   static void ShowDeathSmiley(bitmap*, truth);
   static void SetEnterImage(cbitmap* What) { EnterImage = What; }
-  static void SetEnterTextDisplacement(v2 What)
-  {
-    EnterTextDisplacement = What;
-  }
+  static void SetEnterTextDisplacement(v2 What){ EnterTextDisplacement = What; }
+  static int getDefaultItemsListWidth(){ return iListWidth; }
+  static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
+  static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
+  static int GetSaveFileVersion();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -457,7 +494,7 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring AutoSaveFileName;
+  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -509,6 +546,7 @@ class game
   static long PetMassacreAmount;
   static long MiscMassacreAmount;
   static truth WizardMode;
+  static int AutoPlayMode;
   static int SeeWholeMapCheatMode;
   static truth GoThroughWallsCheat;
   static int QuestMonstersFound;
@@ -548,6 +586,10 @@ class game
   static truth PlayerHasReceivedAllGodsKnownBonus;
   static cbitmap* EnterImage;
   static v2 EnterTextDisplacement;
+  static blitdata bldAroundOnScreenTMP;
+  const static int iListWidth = 652;
+  static std::vector<dbgdrawoverlay> vDbgDrawOverlayFunctions;
+  static int iCurrentDungeonTurn;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

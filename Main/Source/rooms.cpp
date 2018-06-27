@@ -182,9 +182,7 @@ truth shop::DropItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(ForSale->IsQuestItem())
     {
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;
@@ -518,9 +516,7 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(ForSale->IsQuestItem())
     {
       ADD_MESSAGE("\"I think it is yours. Take it.\"");
       return true;

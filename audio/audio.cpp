@@ -38,20 +38,11 @@
 #include "game.h"
 
 
-musicfile::musicfile(cchar* filename, int LowThreshold, int HighThreshold) :
-      LowThreshold(LowThreshold), HighThreshold(HighThreshold)
+musicfile::musicfile(cfestring& Filename, int LowThreshold, int HighThreshold)
+:  Filename(Filename), LowThreshold(LowThreshold), HighThreshold(HighThreshold)
 {
    isPlaying = false;
-   Filename = new char[strlen(filename) + 1];
-   memcpy(Filename, filename, strlen(filename) + 1);
 }
-
-musicfile::~musicfile()
-{
-   delete[] Filename;
-}
-
-
 
 int audio::MasterVolume;
 int audio::TargetIntensity;
@@ -59,17 +50,18 @@ int audio::CurrentIntensity;
 bool audio::isInit;
 
 int audio::PlaybackState;
-bool audio::isTrackPlaying;
+volatile bool audio::isTrackPlaying;
 
 bool audio::volumeChangeRequest;
 
 int audio::CurrentPosition;
 int audio::CurrentMIDIOutPort;
 
-std::vector<musicfile*> audio::Tracks;
+std::vector<musicfile> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
 
-char* audio::CurrentTrack;
+cchar* audio::CurrentTrack;
+festring audio::MusDir;
 
 /** For each increase in intensity, the respective MIDI channel changes by the following amount */
 int  audio::DeltaVolumePerIntensity[MAX_MIDI_CHANNELS] = {0, 0, 0, 0, 0, -1, -1, -1, -1, 0, -1, 1, 1, 1, 1, 1};
@@ -85,7 +77,7 @@ void audio::error(RtMidiError::Type type, const std::string &errorText, void *us
 
 }
 
-void audio::Init()
+void audio::Init(cfestring& musicDirectory)
 {
    int audio_rate, audio_channels;
    unsigned short audio_format;
@@ -102,6 +94,7 @@ void audio::Init()
    TargetIntensity = 0;
    volumeChangeRequest = false;
    CurrentTrack = 0;
+   MusDir = musicDirectory;
 
    // RtMidiOut constructor
    try
@@ -137,12 +130,8 @@ void audio::Init()
 
 void audio::DeInit(void)
 {
+   SetPlaybackStatus(STOPPED);
    isInit = false;
-
-   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
-   {
-      delete *it;
-   }
 
    if( midiout )
    {
@@ -165,9 +154,8 @@ int audio::Loop(void *ptr)
       {
          isTrackPlaying = true;
          int randomIndex = rand() % Tracks.size();
-         CurrentTrack = Tracks[randomIndex]->GetFilename();
+         CurrentTrack = Tracks[randomIndex].GetFilename().CStr();
 
-         festring MusDir = game::GetMusicDir();
          festring MusFile = MusDir + festring(CurrentTrack);
 
          PlayMIDIFile( (char*)MusFile.CStr(), 1);
@@ -179,7 +167,7 @@ int audio::Loop(void *ptr)
 }
 
 
-char* audio::GetCurrentlyPlayedFile(void)
+cchar* audio::GetCurrentlyPlayedFile()
 {
    return CurrentTrack;
 }
@@ -395,12 +383,11 @@ void audio::SetPlaybackStatus(uint8_t newStateBitmap)
 }
 
 
-void audio::ClearMIDIPlaylist(char* exceptFilename)
+void audio::ClearMIDIPlaylist(cchar* exceptFilename)
 {
-   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); )
+   for(auto it = Tracks.begin(); it != Tracks.end();)
    {
-      musicfile* p = *it;
-      if( exceptFilename && strcmp(exceptFilename, p->GetFilename() ) == 0 )
+      if(exceptFilename && it->GetFilename() == exceptFilename)
       {
          ++it;
       }
@@ -413,21 +400,18 @@ void audio::ClearMIDIPlaylist(char* exceptFilename)
 
 void audio::RemoveMIDIFile(char* filename)
 {
-   for (std::vector<musicfile*>::iterator it = Tracks.begin(); it != Tracks.end(); ++it)
+   for(auto it = Tracks.begin(); it != Tracks.end(); ++it)
    {
-      musicfile* p = *it;
-      if( strcmp(filename, p->GetFilename() ) == 0 )
+      if(it->GetFilename() == filename)
       {
          Tracks.erase(it);
       }
    }
-
 }
 
 void audio::LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh)
 {
-  musicfile* mf = new musicfile(filename, intensitylow, intensityhigh);
-  Tracks.push_back(mf);
+  Tracks.push_back(musicfile(filename, intensitylow, intensityhigh));
 }
 
 void audio::SendMIDIEvent(std::vector<unsigned char>* message)

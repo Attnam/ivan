@@ -28,6 +28,7 @@ v2 meleeweapon::GetWieldedBitmapPos(int I) const
 { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
 void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP)
 { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
+truth meleeweapon::IsRuneSword() const { return (GetConfig() == RUNE_SWORD); }
 
 col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
@@ -51,11 +52,11 @@ int armor::GetCarryingBonus() const { return Enchantment << 1; }
 double armor::GetTHVBonus() const { return Enchantment * .5; }
 double armor::GetDamageBonus() const { return Enchantment; }
 truth armor::IsDippable(ccharacter*) const { return !!IsBurning() && !Fluid; }
+cfestring& armor::GetNameSingular() const
+{ return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 truth bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
-cfestring& bodyarmor::GetNameSingular() const
-{ return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 cchar* bodyarmor::GetBreakVerb() const
 { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
@@ -100,6 +101,10 @@ col16 helmet::GetMaterialColorB(int) const
 col16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
 
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
+
+int taiaha::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
+
+int filthytunic::GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
 
 truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2,
                              int BodyPartIndex, int Direction, truth BlockedByArmour)
@@ -645,10 +650,8 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, " << GetBaseBlockValueDescription();
-
-    if(!IsBroken())
-      Entry << ", " << GetStrengthValueDescription();
+    Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue();
+    Entry << ", " << GetBaseBlockValueDescription();
 
     int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
     int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -748,7 +751,7 @@ truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
   {
     if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
       ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.",
-                  Hitter->CHAR_PERSONAL_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+                  Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
     if(Hitter->IsPlayer())
     {
@@ -1159,4 +1162,336 @@ void wondersmellstaff::Break(character* Who, int Much)
     ADD_MESSAGE("%s unleashes a puff of a wonderous gas.", CHAR_NAME(DEFINITE));
 
   meleeweapon::Break(Who, Much);
+}
+
+void darkaxe::Be()
+{
+  meleeweapon::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 10));
+  }
+}
+
+truth slowaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled())
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s axe chills %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The axe chills %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    Enemy->BeginTemporaryState(SLOW, 400 + RAND_N(200));
+    return BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth terrorscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 2))
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s scythe terrifies %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The scythe terrifies %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    Enemy->BeginTemporaryState(PANIC, 200 + RAND_N(100));
+    return BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth bansheesickle::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                              int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && RAND() & 1)
+  {
+    if(Hitter)
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s sickle shrieks at %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+    else
+    {
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("The sickle shrieks at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    }
+
+    return Enemy->ReceiveBodyPartDamage(Hitter, 4 + (RAND() & 4), SOUND, BodyPartIndex, Direction) || BaseSuccess;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth rustscythe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                           int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid())
+  {
+    bodypart* BodyPartHit = Enemy->GetBodyPart(BodyPartIndex);
+    item* MainArmor = 0;
+
+    switch(BodyPartIndex)
+    {
+     case TORSO_INDEX:
+      MainArmor = Enemy->GetEquipment(BODY_ARMOR_INDEX);
+      break;
+     case HEAD_INDEX:
+      MainArmor = Enemy->GetEquipment(HELMET_INDEX);
+      break;
+     case RIGHT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? RIGHT_WIELDED_INDEX : RIGHT_GAUNTLET_INDEX);
+      break;
+     case LEFT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? LEFT_WIELDED_INDEX : LEFT_GAUNTLET_INDEX);
+      break;
+     case GROIN_INDEX:
+      MainArmor = Enemy->GetEquipment(BELT_INDEX);
+      break;
+     case RIGHT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(RIGHT_BOOT_INDEX);
+      break;
+     case LEFT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(LEFT_BOOT_INDEX);
+      break;
+    }
+
+    if(MainArmor/* && BlockedByArmor */)
+    {
+      MainArmor->TryToRust(10000000);
+    }
+    else if(BodyPartHit)
+    {
+      BodyPartHit->TryToRust(10000000);
+    }
+  }
+
+  return BaseSuccess;
+}
+
+void rustscythe::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
+{
+  if(!IsBroken() && Weapon)
+  {
+    Weapon->TryToRust(10000000);
+  }
+}
+
+truth sharpaxe::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                         int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid() && !(Enemy->IsUnique()))
+  {
+    bodypart* ToBeSevered = Enemy->GetBodyPart(BodyPartIndex);
+
+    if(ToBeSevered && Enemy->BodyPartCanBeSevered(BodyPartIndex))
+    {
+      if(Enemy->IsPlayer())
+        ADD_MESSAGE("Your %s is severed off!", ToBeSevered->GetBodyPartName().CStr());
+      else if(Enemy->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s %s is severed off!", Enemy->GetPossessivePronoun().CStr(), ToBeSevered->GetBodyPartName().CStr());
+
+      item* Severed = Enemy->SevereBodyPart(BodyPartIndex);
+      Enemy->SendNewDrawRequest();
+
+      if(Severed)
+      {
+        Enemy->GetStack()->AddItem(Severed);
+        Severed->DropEquipment();
+      }
+      else if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+      {
+        ADD_MESSAGE("It vanishes.");
+      }
+
+      if(Enemy->IsPlayer())
+        game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
+    }
+
+    return true;
+  }
+  else
+    return BaseSuccess;
+}
+
+truth taiaha::Zap(character* Zapper, v2, int Direction)
+{
+  if((Charges <= TimesUsed) || IsBroken())
+  {
+    ADD_MESSAGE("Nothing happens.");
+    return true;
+  }
+
+  Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+
+  beamdata Beam
+    (
+      Zapper,
+      CONST_S("killed by ") + GetName(INDEFINITE) + " zapped @bk",
+      Zapper->GetPos(),
+      GREEN,
+      BEAM_STRIKE,
+      Direction,
+      15,
+      0
+    );
+
+  (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
+  ++TimesUsed;
+  return true;
+}
+
+void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+  {
+    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+		Entry << ", " << GetBaseToHitValueDescription();
+
+		if(!IsBroken() && !IsWhip())
+      Entry << ", " << GetStrengthValueDescription();
+
+		int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+		if(CWeaponSkillLevel || SWeaponSkillLevel)
+      Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+
+    if(TimesUsed == 1)
+      Entry << ", zapped 1 time]";
+    else if(TimesUsed)
+      Entry << ", zapped " << TimesUsed << " times]";
+    else
+      Entry << "]";
+  }
+}
+
+void taiaha::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << TimesUsed << Charges;
+	SaveFile << Enchantment;
+  SaveFile << SecondaryMaterial;
+}
+
+void taiaha::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> TimesUsed >> Charges;
+	SaveFile >> Enchantment;
+  LoadMaterial(SaveFile, SecondaryMaterial);
+}
+
+void taiaha::PostConstruct()
+{
+  Charges = GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1);
+  TimesUsed = 0;
+	meleeweapon::PostConstruct();
+}
+
+alpha taiaha::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  else
+    return 255;
+}
+
+col16 taiaha::GetOutlineColor(int Frame) const
+{
+  if(!IsBroken())
+    switch((Frame&127) >> 5)
+    {
+     case 0: return BLUE;
+     case 1: return GREEN;
+     case 2: return RED;
+     case 3: return YELLOW;
+    }
+
+  return TRANSPARENT_COLOR;
+}
+
+void filthytunic::Be()
+{
+  bodyarmor::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 90)
+      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+  }
+}
+
+alpha filthytunic::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  else
+    return 255;
+}
+
+col16 filthytunic::GetOutlineColor(int Frame) const
+{
+  if(!IsBroken())
+    return MakeRGB16(77, 254, 21);
+  else
+    return TRANSPARENT_COLOR;
 }

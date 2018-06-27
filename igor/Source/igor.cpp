@@ -50,17 +50,17 @@ int main(int, char**)
   OConfigFile.close();
 
   graphics::Init();
-  graphics::SetMode("IGOR 1.203", 0, v2(800, 600), false);
-  graphics::LoadDefaultFont(Directory + "Font.pcx");
+  graphics::SetMode("IGOR 1.203", 0, v2(800, 600), 1, 0, false);
+  graphics::LoadDefaultFont(Directory + "Font.png");
   DOUBLE_BUFFER->ClearToColor(0);
 
   rawbitmap* CBitmap;
   felist List(CONST_S("Choose file to edit:"));
-  List.AddEntry(CONST_S("Char.pcx"), LIGHT_GRAY);
-  List.AddEntry(CONST_S("Humanoid.pcx"), LIGHT_GRAY);
-  List.AddEntry(CONST_S("Item.pcx"), LIGHT_GRAY);
-  List.AddEntry(CONST_S("GLTerra.pcx"), LIGHT_GRAY);
-  List.AddEntry(CONST_S("OLTerra.pcx"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("Char.png"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("Humanoid.png"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("Item.png"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("GLTerra.png"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("OLTerra.png"), LIGHT_GRAY);
   ushort Selected;
   festring FileName;
   List.SetPos(v2(300, 250));
@@ -72,15 +72,15 @@ int main(int, char**)
 
   switch(Selected)
     {
-    case 0: FileName = CONST_S("Char.pcx"); break;
-    case 1: FileName = CONST_S("Humanoid.pcx"); break;
-    case 2: FileName = CONST_S("Item.pcx"); break;
-    case 3: FileName = CONST_S("GLTerra.pcx"); break;
-    case 4: FileName = CONST_S("OLTerra.pcx"); break;
+    case 0: FileName = CONST_S("Char.png"); break;
+    case 1: FileName = CONST_S("Humanoid.png"); break;
+    case 2: FileName = CONST_S("Item.png"); break;
+    case 3: FileName = CONST_S("GLTerra.png"); break;
+    case 4: FileName = CONST_S("OLTerra.png"); break;
     }
 
   CBitmap = new rawbitmap(Directory + FileName);
-  bitmap CursorBitmap(Directory + "Cursor.pcx");
+  bitmap CursorBitmap(Directory + "Cursor.png");
   CursorBitmap.ActivateFastFlag();
   v2 Cursor(0, 0);
   int k = 0;

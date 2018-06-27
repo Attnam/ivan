@@ -12,6 +12,8 @@
 
 /* Compiled through charsset.cpp */
 
+#include "dbgmsgproj.h"
+
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
 
@@ -43,16 +45,18 @@ v2 housewife::GetHeadBitmapPos() const { return v2(112, (RAND() % 6) << 4); }
 truth zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
-truth spirit::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX || I == HEAD_INDEX; }
-festring spirit::GetSpiritDescription() const { return Description; }
-cchar* spirit::FirstPersonUnarmedHitVerb() const { return "touch"; }
-cchar* spirit::FirstPersonCriticalUnarmedHitVerb() const
+truth ghost::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
+festring ghost::GetGhostDescription() const { return Description; }
+cchar* ghost::FirstPersonUnarmedHitVerb() const { return "touch"; }
+cchar* ghost::FirstPersonCriticalUnarmedHitVerb() const
 { return "critically touch"; }
-cchar* spirit::ThirdPersonUnarmedHitVerb() const { return "touches"; }
-cchar* spirit::ThirdPersonCriticalUnarmedHitVerb() const
+cchar* ghost::ThirdPersonUnarmedHitVerb() const { return "touches"; }
+cchar* ghost::ThirdPersonCriticalUnarmedHitVerb() const
 { return "critically touches"; }
 
 truth angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
+
+truth nihil::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
 truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
@@ -60,7 +64,7 @@ material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MA
 
 truth sumowrestler::EquipmentIsAllowed(int I) const { return I == BELT_INDEX; }
 
-truth spirit::SpecialEnemySightedReaction(character*) { return !(Active = true); }
+truth ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
 petrus::~petrus()
 {
@@ -481,6 +485,16 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
       break;
     }
 
+  if(StateIsActivated(VAMPIRISM) && !(RAND() % 2))
+    {
+      if(Chosen == USE_ARMS && CanAttackWithAnArm())
+        if(!GetRightWielded() && !GetLeftWielded())
+          Chosen = USE_HEAD;
+
+      if(Chosen == USE_LEGS && HasTwoUsableLegs())
+        Chosen = USE_HEAD;
+    }
+
   switch(Chosen)
   {
    case USE_ARMS:
@@ -754,7 +768,7 @@ void priest::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)
   {
-    ADD_MESSAGE("\"Sinner! My hands shall pour Divine Wrath upon thee!\"");
+    character::BeTalkedTo();
     return;
   }
 
@@ -774,7 +788,7 @@ void priest::BeTalkedTo()
         return;
       }
     }
-    else 
+    else
       ADD_MESSAGE("\"Good %s, you're on fire! Quick, go find %ld gold so that I can help!\"", GetMasterGod()->GetName(), Price);
   }
 
@@ -930,7 +944,7 @@ void priest::BeTalkedTo()
     if(PLAYER->GetMoney() >= Price)
     {
       ADD_MESSAGE("\"You seem to be turning into a werewolf quite frequently. Well, everyone has right to "
-                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray %s to "
+                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray to %s to "
                   "remove the canine blood from your veins, just so you don't scare our blessed youth.\"",
                   Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
 
@@ -948,6 +962,79 @@ void priest::BeTalkedTo()
                   "for that but I need %ldgp for the ritual materials first.\"", Price);
   }
 
+  if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"You seem to have an addiction to drinking blood. Well, everyone has right to "
+                  "little secret habits, but if you wish to donate %ldgp to %s, maybe I could pray "
+                  "%s to remove your vampiric urges, just so you don't victimize our besotted youth.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(VAMPIRISM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to be vampiric. I might be able to do something for that but "
+                  "I need %ldgp for the ritual materials first.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your guts. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
+  {
+    long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+    if(PLAYER->GetMoney() >= Price)
+    {
+      ADD_MESSAGE("\"Ugh, there seems to be some other creature living in your body. I could try "
+                  "to purge the parasite, that is if you wish to donate %ldgp to %s, of course.\""
+                  , Price, GetMasterGod()->GetName(), GetMasterGod()->GetObjectPronoun());
+
+      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+      {
+        ADD_MESSAGE("You feel better.");
+        PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+        PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+        SetMoney(GetMoney() + Price);
+        return;
+      }
+    }
+    else
+      ADD_MESSAGE("\"You seem to have an unwanted guest in your head. I can help but "
+                  "I need %ldgp for a ritual of cleansing.\"", Price);
+  }
+
   static long Said;
 
   if(GetConfig() != SILVA)
@@ -963,7 +1050,7 @@ void skeleton::BeTalkedTo()
   if(GetHead())
     humanoid::BeTalkedTo();
   else
-    ADD_MESSAGE("The headless %s remains silent.", PLAYER->CHAR_DESCRIPTION(UNARTICLED));
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void communist::BeTalkedTo()
@@ -980,7 +1067,7 @@ void communist::BeTalkedTo()
     {
       if(Char != this)
         Char->ChangeTeam(PLAYER->GetTeam());
-      
+
       if(GetTeam()->GetMembers() == 1) // Only Ivan left in Party
         break;
     }
@@ -1119,6 +1206,9 @@ void slave::BeTalkedTo()
 void slave::GetAICommand()
 {
   SeekLeader(GetLeader());
+
+  if(CheckAIZapOpportunity())
+    return;
 
   if(CheckForEnemies(true, true, true))
     return;
@@ -1259,7 +1349,11 @@ truth communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
+  if(!HasHead())
+  {
+    ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
+  }
+  else if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
   {
     if(RAND() % 5)
     {
@@ -1272,7 +1366,7 @@ void zombie::BeTalkedTo()
       ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   }
   else
-    ADD_MESSAGE("\"Need brain but you too stoopid!\"");
+    character::BeTalkedTo();
 }
 
 void angel::Save(outputfile& SaveFile) const
@@ -1823,6 +1917,8 @@ v2 humanoid::GetEquipmentPanelPos(int I) const // convert to array
   return v2(24, 12);
 }
 
+v2 humanoid::SilhouetteWhere=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
+v2 humanoid::SilhouetteWhereDefault=v2(0,0); //zeroed because wont init properly here.. TODO explain why.
 void humanoid::DrawSilhouette(truth AnimationDraw) const
 {
   int c;
@@ -1834,14 +1930,16 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
                   TRANSPARENT_COLOR,
                   ALLOW_ANIMATE };
 
-  v2 Where(RES.X - SILHOUETTE_SIZE.X - 39, 53);
   cint Equipments = GetEquipments();
+
+  if(SilhouetteWhereDefault.Is0())SilhouetteWhereDefault={RES.X - SILHOUETTE_SIZE.X - 39, 53};
+  if(SilhouetteWhere.Is0())SilhouetteWhere=SilhouetteWhereDefault;
 
   if(CanUseEquipment())
     for(c = 0; c < Equipments; ++c)
       if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
       {
-        v2 Pos = Where + GetEquipmentPanelPos(c);
+        v2 Pos = SilhouetteWhereDefault + GetEquipmentPanelPos(c);
 
         if(!AnimationDraw)
           DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
@@ -1865,7 +1963,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
   {
     blitdata B2 = { DOUBLE_BUFFER,
                     { 0, 0 },
-                    { Where.X + 8, Where.Y },
+                    { SilhouetteWhere.X + 8, SilhouetteWhere.Y },
                     { SILHOUETTE_SIZE.X, SILHOUETTE_SIZE.Y },
                     { 0 },
                     0,
@@ -1892,6 +1990,18 @@ int humanoid::GetGlobalResistance(int Type) const
 
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
+
+  if(GetRightWielded())
+  {
+    if(GetRightWielded()->IsShield(this))
+      Resistance += GetRightWielded()->GetResistance(Type);
+  }
+
+  if(GetLeftWielded())
+  {
+    if(GetLeftWielded()->IsShield(this))
+      Resistance += GetLeftWielded()->GetResistance(Type);
+  }
 
   if(!(Type & PHYSICAL_DAMAGE))
   {
@@ -2612,6 +2722,16 @@ int angel::GetAttribute(int Identifier, truth AllowBonus) const // temporary unt
     return humanoid::GetAttribute(Identifier, AllowBonus);
 }
 
+int nihil::GetAttribute(int Identifier, truth AllowBonus) const
+{
+  if(Identifier == LEG_STRENGTH)
+    return GetDefaultLegStrength();
+  else if(Identifier == AGILITY)
+    return GetDefaultAgility();
+  else
+    return humanoid::GetAttribute(Identifier, AllowBonus);
+}
+
 int genie::GetAttribute(int Identifier, truth AllowBonus) const // temporary until someone invents a better way of doing this
 {
   if(Identifier == LEG_STRENGTH)
@@ -2714,7 +2834,7 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
 void zombie::CreateBodyParts(int SpecialFlags)
 {
   bool Anyway = false;
-  if(GetConfig() == ZOMBIE_OF_KHAZ_ZADM)
+  if((GetConfig() == ZOMBIE_OF_KHAZ_ZADM) || !!(SpecialFlags & NO_SEVERED_LIMBS))
   {
     Anyway = true;
   } // Khaz-Zadm needs his hands...
@@ -2727,7 +2847,7 @@ void zombie::CreateBodyParts(int SpecialFlags)
     }
 }
 
-void spirit::AddName(festring& String, int Case) const
+void ghost::AddName(festring& String, int Case) const
 {
   if(OwnerSoul.IsEmpty() || Case & PLURAL)
     character::AddName(String, Case);
@@ -2738,13 +2858,13 @@ void spirit::AddName(festring& String, int Case) const
   }
 }
 
-void spirit::Save(outputfile& SaveFile) const
+void ghost::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
   SaveFile << OwnerSoul << Active << Description;
 }
 
-void spirit::Load(inputfile& SaveFile)
+void ghost::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> OwnerSoul >> Active >> Description;
@@ -2762,7 +2882,7 @@ void bonesghost::Load(inputfile& SaveFile)
   SaveFile >> OwnerSoul >> Active >> Description >> EyeColor >> HairColor;
 }
 
-truth spirit::RaiseTheDead(character* Summoner)
+truth ghost::RaiseTheDead(character* Summoner)
 {
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
@@ -2779,7 +2899,7 @@ truth spirit::RaiseTheDead(character* Summoner)
   return false;
 }
 
-int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
+int ghost::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
                                  int Direction, truth PenetrateResistance, truth Critical,
                                  truth ShowNoDamageMsg, truth CaptureBodyPart)
 {
@@ -2793,7 +2913,7 @@ int spirit::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int 
     return 0;
 }
 
-void spirit::GetAICommand()
+void ghost::GetAICommand()
 {
   if(Active)
     character::GetAICommand();
@@ -3251,6 +3371,11 @@ truth angel::CanCreateBodyPart(int I) const
   return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
 }
 
+truth nihil::CanCreateBodyPart(int I) const
+{
+  return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
+}
+
 truth genie::CanCreateBodyPart(int I) const
 {
   return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
@@ -3346,6 +3471,152 @@ long skeleton::GetBodyPartVolume(int I) const
   return 0;
 }
 
+truth humanoid::AutoPlayAIequip()
+{
+  item* iL = GetEquipment(LEFT_WIELDED_INDEX);
+  item* iR = GetEquipment(RIGHT_WIELDED_INDEX);
+
+  //every X turns remove all equipments
+  bool bTryWieldNow=false;
+  static int iLastReEquipAllTurn=-1;
+  if(game::GetTurn()>(iLastReEquipAllTurn+150)){ DBG2(game::GetTurn(),iLastReEquipAllTurn);
+    iLastReEquipAllTurn=game::GetTurn();
+    for(int i=0;i<MAX_EQUIPMENT_SLOTS;i++){
+      item* eq = GetEquipment(i);
+      if(eq){eq->MoveTo(GetStack());SetEquipment(i,NULL);} //eq is moved to end of stack!
+      if(iL==eq)iL=NULL;
+      if(iR==eq)iR=NULL;
+    }
+//        if(iL!=NULL){iL->MoveTo(GetStack());iL=NULL;SetEquipment(LEFT_WIELDED_INDEX ,NULL);DBGLN;}
+//        if(iR!=NULL){iR->MoveTo(GetStack());iR=NULL;SetEquipment(RIGHT_WIELDED_INDEX,NULL);DBGLN;}
+    bTryWieldNow=true;
+  }
+
+  //wield some weapon from the inventory as the NPC AI is not working for the player TODO why?
+  //every X turns try to wield
+  static int iLastTryToWieldTurn=-1;
+  if(bTryWieldNow || game::GetTurn()>(iLastTryToWieldTurn+10)){ DBG2(game::GetTurn(),iLastTryToWieldTurn);
+    iLastTryToWieldTurn=game::GetTurn();
+    bool bDoneLR=false;
+    bool bL2H = iL && iL->IsTwoHanded();
+    bool bR2H = iR && iR->IsTwoHanded();
+
+    //2handed
+    static int iTryWieldWhat=0; iTryWieldWhat++;
+    if(iTryWieldWhat%2==0){ //will try 2handed first, alternating. If player has only 2handeds, the 1handeds will not be wielded and it will use punches, what is good too for tests.
+      if( !bDoneLR &&
+          iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX )!=NULL &&
+          iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX)!=NULL
+      ){
+        static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+        for(uint c = 0; c < vitEqW.size(); ++c){
+          if(vitEqW[c]->IsWeapon(this) && vitEqW[c]->IsTwoHanded()){
+            vitEqW[c]->RemoveFromSlot();
+            SetEquipment(clock()%2==0 ? LEFT_WIELDED_INDEX : RIGHT_WIELDED_INDEX, vitEqW[c]); //DBG3("Wield",iEqIndex,vitEqW[c]->GetName(DEFINITE).CStr());
+            bDoneLR=true;
+            break;
+          }
+        }
+      }
+    }
+
+    //dual 1handed (if not 2hd already)
+    if(!bDoneLR){
+      for(int i=0;i<2;i++){
+        int iChk=-1;
+        if(i==0)iChk=LEFT_WIELDED_INDEX;
+        if(i==1)iChk=RIGHT_WIELDED_INDEX;
+
+        if(
+            !bDoneLR &&
+            (
+              (iChk==LEFT_WIELDED_INDEX  && iL==NULL && GetBodyPartOfEquipment(LEFT_WIELDED_INDEX ) && !bR2H)
+              ||
+              (iChk==RIGHT_WIELDED_INDEX && iR==NULL && GetBodyPartOfEquipment(RIGHT_WIELDED_INDEX) && !bL2H)
+            )
+        ){
+          static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+          for(uint c = 0; c < vitEqW.size(); ++c){
+            if(
+                (vitEqW[c]->IsWeapon(this) && !vitEqW[c]->IsTwoHanded())
+                ||
+                vitEqW[c]->IsShield(this)
+            ){
+              vitEqW[c]->RemoveFromSlot();
+              SetEquipment(iChk, vitEqW[c]);
+              bDoneLR=true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  static int iLastTryToUseInvTurn=-1;
+  if(game::GetTurn()>(iLastTryToUseInvTurn+5)){ //every X turns try to use stuff from inv
+    iLastTryToUseInvTurn=game::GetTurn();
+
+    //////////////////////////////// consume food/drink
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(GetHungerState() >= BLOATED)break;
+        if(TryToConsume(vitEqW[c]))return true;
+      }
+    }
+
+    //////////////////////////////// equip
+    {
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(TryToEquip(vitEqW[c],true)){
+          return true;
+        }else{
+          vitEqW[c]->MoveTo(GetStack()); //was dropped, get back, will be in the end of the stack! :)
+        }
+      }
+    }
+
+    //////////////////////////////// zap
+    static int iLastZapTurn=-1;
+    if(game::GetTurn()>(iLastZapTurn+100)){ //every X turns try to use stuff from inv
+      iLastZapTurn=game::GetTurn();
+
+      int iDir=clock()%(8+1); // index 8 is the macro YOURSELF already... if(iDir==8)iDir=YOURSELF;
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsZappable(this))continue;
+
+        if(vitEqW[c]->Zap(this, GetPos(), iDir)) //TODO try to aim at NPCs
+          return true;
+
+        if(vitEqW[c]->Apply(this))
+          return true;
+      }
+    }
+
+    //////////////////////////////// read book
+    static int iLastReadTurn=-1;
+    if(game::GetTurn()>(iLastReadTurn+50)){ //every X turns try to use stuff from inv
+      iLastReadTurn=game::GetTurn();
+
+      static itemvector vitEqW;vitEqW.clear();GetStack()->FillItemVector(vitEqW);
+      for(uint c = 0; c < vitEqW.size(); ++c){
+        if(!vitEqW[c]->IsReadable(this))continue;
+        static holybook* hb;hb = dynamic_cast<holybook*>(vitEqW[c]);
+        if(hb==NULL)continue;
+
+        if(vitEqW[c]->Read(this)) //TODO try to aim at NPCs
+          return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 truth humanoid::CheckIfEquipmentIsNotUsable(int I) const
 {
   return (I == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy("this item"))
@@ -3397,6 +3668,43 @@ truth housewife::SpecialEnemySightedReaction(character* Char)
                 Weapon->GetArticle(), Weapon->GetNameSingular().CStr());
 
   return false;
+}
+
+void housewife::CreateInitialEquipment(int SpecialFlags)
+{
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  meleeweapon* Weapon;
+
+  if(GetConfig() == CULTIST)
+  {
+    Weapon = meleeweapon::Spawn(SCYTHE);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(POLE_ARMS)->AddHit(100);
+    GetCurrentRightSWeaponSkill()->AddHit(50);
+    return;
+  }
+  else switch(RAND() % 4)
+  {
+   case 0:
+    Weapon = meleeweapon::Spawn(ROLLING_PIN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 1:
+    Weapon = meleeweapon::Spawn(FRYING_PAN);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   case 2:
+    Weapon = meleeweapon::Spawn(MEAT_CLEAVER);
+    SetRightWielded(Weapon);
+    GetCWeaponSkill(SMALL_SWORDS)->AddHit(50);
+    GetCurrentRightSWeaponSkill()->AddHit(10);
+    break;
+   default: break;
+  }
 }
 
 void guard::Save(outputfile& SaveFile) const
@@ -3805,6 +4113,31 @@ festring werewolfwolf::GetKillName() const
     return GetName(INDEFINITE);
 
   return humanoid::GetKillName();
+}
+
+truth werewolfwolf::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+  {
+    // Werewolf wolf gives lycanthropy
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY) && !Victim->StateIsActivated(DISEASE_IMMUNITY))
+      Victim->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000));
+
+    // Werewolves do double damage against vampires and this is a drain attack
+    if(Victim->StateIsActivated(VAMPIRISM) && (DoneDamage >= 1))
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You drain some life force from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+      else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some life force from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+      return Victim->ReceiveBodyPartDamage(this, DoneDamage, DRAIN, BodyPartIndex, Direction);
+    }
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 int humanoid::GetRandomApplyBodyPart() const
@@ -4383,7 +4716,7 @@ void necromancer::GetAICommand()
 
   if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
   {
-    if(GetConfig() == MASTER_NECROMANCER && !(RAND() & 3))
+    if(GetConfig() != APPRENTICE_NECROMANCER && !(RAND() & 3))
     {
       if(CanBeSeenByPlayer())
         ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
@@ -4427,7 +4760,7 @@ void necromancer::GetAICommand()
      case APPRENTICE_NECROMANCER:
       RaiseSkeleton();
       break;
-     case MASTER_NECROMANCER:
+     default:
       if(RAND() % 5)
         RaiseSkeleton();
       else
@@ -4523,7 +4856,7 @@ void necromancer::RaiseSkeleton()
   databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
   skeleton* Skeleton;
 
-  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
+  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(game::GetCurrentDungeonIndex() == XINROCH_TOMB) && !(RAND() % 250))
   {
     Skeleton = skeleton::Spawn(WAR_LORD);
     Skeleton->SetTeam(GetTeam());
@@ -4564,7 +4897,7 @@ void necromancer::BeTalkedTo()
   /* From here we are talking to the necromancer in the attnamese catacombs */
   if(GetRelation(PLAYER) == HOSTILE)
   {
-    ADD_MESSAGE("I will bury you in the catacombs with all the others!");
+    ADD_MESSAGE("\"I will bury you in the catacombs with all the others!\"");
     return;
   }
 
@@ -4634,9 +4967,11 @@ void necromancer::BeTalkedTo()
                                  "from my minions. But alas, no more necromancy, that stupid floating eye hovers by here\n"
                                  "every now and again to check up on me.\"\n"));
 
-        game::TextScreen(CONST_S("\"I can relate the history of dark knighthood to you. Long ago, there lived a\n"
-                                 "powerful warrior, Xinroch, who rose up the ranks of the fearsome order of the\n"
-                                 "dark knights, to become the grand master dark knight. \n\n"
+        game::TextScreen(CONST_S("\"Wait, don't go yet! It gets lonely here, with no one to talk to but the punishers.\n"
+                                 "Keep me company a little longer, please... Maybe I can tell you a story? I can relate\n"
+                                 "the history of dark knighthood to you.\n\n"
+                                 "Long ago, there lived a powerful warrior, Xinroch, who rose up the ranks\n"
+                                 "of the fearsome order of the dark knights, to become the grand master dark knight. \n\n"
                                  "His soul dwells within his mausoleum, not far from here. He doesn't stand a chance\n"
                                  "of returning to us; not without a piece of his soul getting out. There is a cadre\n"
                                  "of devoted dark knights, called the Templars. Being eager to protect the resting place\n"
@@ -4762,6 +5097,65 @@ void oree::Bite(character* Enemy, v2 HitPos, int, truth)
     ADD_MESSAGE("%s vomits acidous blood at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
   Vomit(HitPos, 500 + RAND() % 500, false);
+}
+
+truth vampire::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+    else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+    if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY) && !Victim->StateIsActivated(DISEASE_IMMUNITY))
+      Victim->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500));
+
+      // HP recieved is about half the damage done; against werewolves this is full
+      int DrainDamage = (DoneDamage >> 1) + 1;
+      if(Victim->StateIsActivated(LYCANTHROPY))
+        DrainDamage = DoneDamage + 1;
+
+    if(IsPlayer())
+      game::DoEvilDeed(10);
+
+    return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
+  }
+  else
+    return false;
+}
+
+truth humanoid::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  if(StateIsActivated(VAMPIRISM))
+  {
+    if(!BlockedByArmour && Victim->IsWarmBlooded() && (!(RAND() % 2) || Critical) && !Victim->AllowSpoil())
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You drain some precious lifeblood from %s!", Victim->CHAR_DESCRIPTION(DEFINITE));
+      else if(Victim->IsPlayer() || Victim->CanBeSeenByPlayer() || CanBeSeenByPlayer())
+        ADD_MESSAGE("%s drains some precious lifeblood from %s!", CHAR_DESCRIPTION(DEFINITE), Victim->CHAR_DESCRIPTION(DEFINITE));
+
+      if(Victim->IsHumanoid() && !Victim->StateIsActivated(VAMPIRISM) && !Victim->StateIsActivated(LYCANTHROPY) && !Victim->StateIsActivated(DISEASE_IMMUNITY))
+        Victim->BeginTemporaryState(VAMPIRISM, 2000 + RAND_N(500));
+
+      // HP recieved is about half the damage done; against werewolves this is full
+      int DrainDamage = (DoneDamage >> 1) + 1;
+      if(Victim->StateIsActivated(LYCANTHROPY))
+        DrainDamage = DoneDamage + 1;
+
+      // To perpetuate vampirism, simply keep doing drain attacks
+      BeginTemporaryState(VAMPIRISM, 50*DrainDamage);
+      if(IsPlayer())
+        game::DoEvilDeed(10);
+
+      return Victim->ReceiveBodyPartDamage(this, DrainDamage, DRAIN, BodyPartIndex, Direction);
+    }
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 void sumowrestler::GetAICommand()
@@ -4986,18 +5380,39 @@ void darkknight::SpecialBodyPartSeverReaction()
 {
   if(!IsPlayer())
   {
-    if(IsUsingHead())
-      ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
-    else if(!(RAND() % 5))
-      switch(RAND() % 3)
+    if(!(GetConfig() == MASTER))
+    {
+      if(IsUsingHead())
+        ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
+      else if(!(RAND() % 5))
+        switch(RAND() % 3)
+        {
+         case 0:
+          ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 1:
+          ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+         case 2:
+          ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        }
+    }
+    else if((GetConfig() == MASTER) && HasHead())
+    {
+      character* Called = 0;
+      Called = darkknight::Spawn(ELITE);
+      Called->SetTeam(GetTeam());
+      Called->PutNear(GetPos());
+      Called->SignalGeneration();
+
+      if(CanBeSeenByPlayer())
       {
-       case 0:
-        ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 1:
-        ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
-       case 2:
-        ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+        ADD_MESSAGE("%s screams a profane incantation to Infuscor before disappearing.", CHAR_NAME(DEFINITE));
+        TeleportRandomly(true);
       }
+      if(Called->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the shadows.", Called->CHAR_NAME(INDEFINITE));
+      }
+      else
+        ADD_MESSAGE("You feel the sudden presence of a violent enemy nearby.");
   }
 }
 
@@ -5109,43 +5524,17 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   GetStack()->AddItem(holybook::Spawn(GetConfig(), SpecialFlags));
-  armor* Equipment;
-  meleeweapon* Weapon;
 
   switch(GetMasterGod()->GetBasicAlignment())
   {
    case GOOD:
-    Weapon = flamingsword::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(ADAMANT), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetRightWielded(Weapon);
-    Equipment = shield::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Equipment->InitMaterials(MAKE_MATERIAL(DIAMOND), !(SpecialFlags & NO_PIC_UPDATE));
-    Equipment->SetEnchantment(4);
-    SetLeftWielded(Equipment);
-    GetCWeaponSkill(LARGE_SWORDS)->AddHit(200000);
-    GetCWeaponSkill(SHIELDS)->AddHit(500000);
-    GetCurrentRightSWeaponSkill()->AddHit(200000);
-    GetCurrentLeftSWeaponSkill()->AddHit(200000);
     GetRightArm()->SetDexterity(70);
     GetLeftArm()->SetDexterity(70);
     break;
    case NEUTRAL:
-    Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetRightWielded(Weapon);
-    GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500000);
-    GetCurrentRightSWeaponSkill()->AddHit(200000);
     SetEndurance(70);
     break;
    case EVIL:
-    Weapon = meleeweapon::Spawn(HALBERD, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetLeftWielded(Weapon);
-    GetCWeaponSkill(POLE_ARMS)->AddHit(500000);
-    GetCurrentLeftSWeaponSkill()->AddHit(500000);
     GetRightArm()->SetStrength(70);
     GetLeftArm()->SetStrength(70);
   }
@@ -5155,6 +5544,18 @@ void zombie::PostConstruct()
 {
   if(!RAND_N(3))
     GainIntrinsic(LEPROSY);
+}
+
+truth orc::MoveRandomly()
+{
+  if(GetConfig() == REPRESENTATIVE)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
 }
 
 void orc::PostConstruct()
@@ -5394,6 +5795,65 @@ void oree::CallForMonsters()
   delete ToBeCalled;
 }
 
+void priest::GetAICommand()
+{
+  if(GetConfig() == INFUSCOR)
+  {
+    if(!RAND_N(50))
+      CallForMonsters();
+  }
+
+  StandIdleAI();
+}
+
+void priest::CallForMonsters()
+{
+  if(GetDungeon()->GetIndex() != XINROCH_TOMB || GetLevel()->GetIndex() != NECRO_CHAMBER_LEVEL)
+    return;
+
+  character* ToBeCalled = 0;
+
+  switch(RAND_N(6))
+  {
+   case 0:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 1:
+    ToBeCalled = zombie::Spawn();
+    break;
+   case 2:
+    ToBeCalled = frog::Spawn(DARK);
+    break;
+   case 3:
+    ToBeCalled = skeleton::Spawn(RAND_2 ? 0 : WARRIOR);
+    break;
+   case 4:
+    ToBeCalled = zombie::Spawn();
+    break;
+   case 5:
+    ToBeCalled = necromancer::Spawn(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+    break;
+  }
+
+  v2 TryToCreate;
+
+  for(int c = 0; c < 100; ++c)
+  {
+    TryToCreate = game::GetMonsterPortal()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+    if(GetArea()->IsValidPos(TryToCreate)
+       && ToBeCalled->CanMoveOn(GetNearLSquare(TryToCreate))
+       && ToBeCalled->IsFreeForMe(GetNearLSquare(TryToCreate)))
+    {
+      ToBeCalled->SetTeam(game::GetTeam(MONSTER_TEAM));
+      ToBeCalled->PutTo(TryToCreate);
+      return;
+    }
+  }
+
+  delete ToBeCalled;
+}
+
 int humanoid::RandomizeTryToUnStickBodyPart(ulong PossibleBodyParts) const
 {
   int Possible = 0, PossibleArray[3];
@@ -5496,6 +5956,12 @@ truth humanoid::BrainsHurt() const
 {
   head* Head = GetHead();
   return !Head || Head->IsBadlyHurt();
+}
+
+truth humanoid::IsHeadless() const
+{
+  head* Head = GetHead();
+  return !Head;
 }
 
 void playerkind::PostConstruct()
@@ -5756,6 +6222,18 @@ void siren::GetAICommand()
   humanoid::GetAICommand();
 }
 
+truth siren::MoveRandomly()
+{
+  if(GetConfig() == AMBASSADOR_SIREN)
+  {
+    return MoveRandomlyInRoom();
+  }
+  else
+  {
+    return humanoid::MoveRandomly();
+  }
+}
+
 truth siren::TryToSing()
 {
   truth Success = false;
@@ -5765,8 +6243,10 @@ truth siren::TryToSing()
 
     if(Square && Square->GetCharacter())
     {
-      Success = true;
-      Square->GetCharacter()->ReceiveSirenSong(this);
+      Success = Square->GetCharacter()->ReceiveSirenSong(this);
+
+      if(Success)
+        break;
     }
   }
   if(Success)
@@ -5775,17 +6255,15 @@ truth siren::TryToSing()
   return Success;
 }
 
-truth humanoid::MindWormCanPenetrateSkull(mindworm* Worm) const
+truth humanoid::MindWormCanPenetrateSkull(mindworm*) const
 {
   if(GetHelmet())
   {
-    if(RAND_N(102) > GetHelmet()->GetCoverPercentile())
-    {
-      return RAND_2;
-    }
+    if(RAND() % 100 < GetHelmet()->GetCoverPercentile())
+      return false;
   }
 
-  return RAND_2;
+  return true;
 }
 
 truth humanoid::HasSadistWeapon() const
@@ -5979,4 +6457,81 @@ void xinrochghost::CreateCorpse(lsquare* Square)
       for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
         game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
   }
+}
+
+truth darkknight::SpecialEnemySightedReaction(character*)
+{
+  if((GetConfig() == MASTER))
+  {
+    const database* WarLordDataBase;
+    databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton::ProtoType, WAR_LORD);
+    skeleton* Skeleton;
+
+    if(!(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 5))
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+      Skeleton = skeleton::Spawn(WAR_LORD);
+      Skeleton->SetTeam(GetTeam());
+      Skeleton->PutNear(GetPos());
+      Skeleton->SignalGeneration();
+
+      if(Skeleton->CanBeSeenByPlayer())
+        ADD_MESSAGE("The whole area trembles terribly as %s emerges from the ground.", Skeleton->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+        ADD_MESSAGE("%s casts a powerful spell which makes the whole area tremble.", CHAR_NAME(DEFINITE));
+      else
+        ADD_MESSAGE("You feel the presence of an ancient evil being awakened from its long slumber. You shiver.");
+
+      Skeleton->SetGenerationDanger(GetGenerationDanger());
+      return true;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
+
+truth darkknight::CheckForUsefulItemsOnGround(truth CheckFood)
+{
+  if(GetConfig() == MASTER)
+    return false;
+  else
+    return character::CheckForUsefulItemsOnGround(CheckFood);
+}
+
+void goblin::GetAICommand()
+{
+  if(CheckAIZapOpportunity())
+    return;
+
+  humanoid::GetAICommand();
+}
+
+truth humanoid::CheckAIZapOpportunity()
+{
+  if(!HasAUsableArm() || !CanZap() || !(RAND() % 2) || StateIsActivated(CONFUSED))
+    return false;
+  else
+    return character::CheckAIZapOpportunity();
+}
+
+truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour, truth Critical, int DoneDamage)
+{
+  bodypart* BodyPart = Victim->GetBodyPart(BodyPartIndex);
+
+  if(BodyPart && BodyPart->IsDestroyable(Victim)
+     && BodyPart->GetMainMaterial() && BodyPart->CanBeBurned()
+     && (BodyPart->GetMainMaterial()->GetInteractionFlags() & CAN_BURN)
+     && !BodyPart->IsBurning())
+      {
+        if(BodyPart->TestActivationEnergy(150))
+        {
+          return true;
+        }
+      }
+
+  return false;
 }

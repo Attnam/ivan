@@ -353,7 +353,8 @@ std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataB
     Result.first += DataBase->PostFix.GetSize();
 
   for(uint c = 0; c < DataBase->Alias.Size; ++c)
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos)
+    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos
+       && (Result.first == 0 || DataBase->Alias[c].GetSize() > Result.first))
       Result.first += DataBase->Alias[c].GetSize();
 
   return Result;
@@ -528,19 +529,6 @@ void protosystem::CreateEveryItem(itemvectorvector& Item)
   }
 }
 
-void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
-{
-  for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
-  {
-    const material::prototype* Proto = protocontainer<material>::GetProto(c1);
-    const material::database*const* ConfigData = Proto->GetConfigData();
-    int ConfigSize = Proto->GetConfigSize();
-
-    for(int c2 = 1; c2 < ConfigSize; ++c2)
-      Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
-  }
-}
-
 #endif
 
 void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
@@ -687,7 +675,8 @@ void protosystem::CreateEverySeenCharacter(charactervector& Character)
   }
 }
 
-void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const god* God, ccharacter* Char)
+// For gods
+void protosystem::CreateEveryGodlyMaterial(std::vector<material*>& Material, const god* God, ccharacter* Char)
 {
   for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
   {
@@ -698,5 +687,19 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const go
     for(int c2 = 1; c2 < ConfigSize; ++c2)
       if(God->LikesMaterial(ConfigData[c2], Char))
         Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
+  }
+}
+
+// For wizards and alchemists
+void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
+{
+  for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
+  {
+    const material::prototype* Proto = protocontainer<material>::GetProto(c1);
+    const material::database*const* ConfigData = Proto->GetConfigData();
+    int ConfigSize = Proto->GetConfigSize();
+
+    for(int c2 = 1; c2 < ConfigSize; ++c2)
+      Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
   }
 }
