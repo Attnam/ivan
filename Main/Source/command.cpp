@@ -562,9 +562,7 @@ truth commandsystem::Eat(character* Char)
     }
   }
 
-  bool b=Consume(Char, "eat", &item::IsEatable);
-
-  return b;
+  return Consume(Char, "eat", "eating", &item::IsEatable);
 }
 
 truth commandsystem::Drink(character* Char)
@@ -583,9 +581,7 @@ truth commandsystem::Drink(character* Char)
     }
   }
 
-  bool b=Consume(Char, "drink", &item::IsDrinkable);
-
-  return b;
+  return Consume(Char, "drink", "drinking", &item::IsDrinkable);
 }
 
 truth commandsystem::Taste(character* Char)
