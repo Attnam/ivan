@@ -4714,6 +4714,14 @@ spidertorso /* normaltorso-> */
 {
 }
 
+snaketorso /* normaltorso-> */
+{
+}
+
+magpietorso /* normaltorso-> */
+{
+}
+
 whistle
 {
   Possibility = 50;
