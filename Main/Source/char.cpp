@@ -8554,7 +8554,7 @@ void character::SetBodyPart(int I, bodypart* What)
   }
 }
 
-truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
+truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb, truth nibbling)
 {
   if(IsPlayer()
      && HasHadBodyPart(Item)
@@ -8572,6 +8572,7 @@ truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
   consume* Consume = consume::Spawn(this);
   Consume->SetDescription(ConsumeVerb);
   Consume->SetConsumingID(Item->GetID());
+  Consume->SetNibbling(nibbling);
   SetAction(Consume);
   DexterityAction(5);
   return true;
