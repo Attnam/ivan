@@ -517,14 +517,14 @@ void brokenbottle::StepOnEffect(character* Stepper)
   }
 }
 
-liquid* can::CreateDipLiquid()
+liquid* can::CreateDipLiquid(long MaxVolume)
 {
-  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway(MaxVolume));
 }
 
-liquid* potion::CreateDipLiquid()
+liquid* potion::CreateDipLiquid(long MaxVolume)
 {
-  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway(MaxVolume));
 }
 
 liquid* cauldron::CreateDipLiquid()
@@ -539,7 +539,17 @@ void potion::DipInto(liquid* Liquid, character* Dipper)
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeSecondaryMaterial(Liquid);
+  liquid* ReceivingLiquid = Liquid;
+
+  if (Liquid->GetVolume() > GetDefaultSecondaryVolume())
+  {
+    ReceivingLiquid = static_cast<liquid*>(Liquid->SpawnMore(GetDefaultSecondaryVolume()));
+    Liquid->SetVolume(Liquid->GetVolume() - GetDefaultSecondaryVolume());
+    Dipper->SpillFluid(Dipper, Liquid, Dipper->GetSquareIndex(GetPos()));
+    ADD_MESSAGE("You clumsily spill %s all over yourself.", Liquid->GetName(false, false).CStr());
+  }
+
+  ChangeSecondaryMaterial(ReceivingLiquid);
   Dipper->DexterityAction(10);
 }
 
@@ -1278,6 +1288,10 @@ void itemcontainer::PostConstruct()
 {
   lockableitem::PostConstruct();
   SetIsLocked(RAND_N(3));
+  
+  if((GetConfig()&LOCK_BITS)&BROKEN_LOCK)
+    SetIsLocked(false);
+  
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
   for(int c = 0; c < ItemNumber; ++c)
@@ -1831,7 +1845,7 @@ void potion::Break(character* Breaker, int Dir)
       Room->HostileAction(Breaker);
   }
 
-  item* Remains = brokenbottle::Spawn(0, NO_MATERIALS);
+  item* Remains = brokenbottle::Spawn(GetConfig(), NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->SpawnMore());
   DonateFluidsTo(Remains);
   DonateIDTo(Remains);
@@ -2185,7 +2199,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
 item* brokenbottle::Fix()
 {
-  potion* Potion = potion::Spawn(0, NO_MATERIALS);
+  potion* Potion = potion::Spawn(GetConfig(), NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
   DonateFluidsTo(Potion);
   DonateIDTo(Potion);

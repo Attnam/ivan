@@ -684,6 +684,7 @@ void festring::SearchAndReplace(festring& Where, cfestring& What,
   {
     Where.Erase(Pos, What.GetSize());
     Where.Insert(Pos, With);
+    Pos += With.GetSize();
   }
 }
 

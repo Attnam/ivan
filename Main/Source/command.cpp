@@ -36,6 +36,8 @@
 #include "proto.h"
 #endif
 
+#include "dbgmsgproj.h"
+
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
@@ -70,6 +72,7 @@ command* commandsystem::Command[] =
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
+  new command(&Taste, "taste", 'T', 'T', 'T', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
@@ -159,7 +162,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -219,7 +222,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"pick up")==0)return true;
   if(strcmp(str,"pray")==0)return true;
 //  if(strcmp(str,"quit")==0)return true;
-//  if(strcmp(str,"read")==0)return true;
+  if(strcmp(str,"read")==0)return true;
 //  if(strcmp(str,"rest/heal")==0)return true;
 //  if(strcmp(str,"save game")==0)return true;
 //  if(strcmp(str,"scroll messages down")==0)return true;
@@ -559,9 +562,7 @@ truth commandsystem::Eat(character* Char)
     }
   }
 
-  bool b=Consume(Char, "eat", &item::IsEatable);
-
-  return b;
+  return Consume(Char, "eat", "eating", &item::IsEatable);
 }
 
 truth commandsystem::Drink(character* Char)
@@ -580,12 +581,27 @@ truth commandsystem::Drink(character* Char)
     }
   }
 
-  bool b=Consume(Char, "drink", &item::IsDrinkable);
-
-  return b;
+  return Consume(Char, "drink", "drinking", &item::IsDrinkable);
 }
 
-truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
+truth commandsystem::Taste(character* Char)
+{
+  if(!Char->CheckConsume(CONST_S("drink")))
+    return false;
+
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
+  {
+    if(Square->GetOLTerrain()->Drink(Char))
+      return true;
+  }
+
+  return Consume(Char, "sip", "sipping", &item::IsDrinkable, true);
+}
+
+truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, cchar* ConsumeVerbPresentParticiple,
+                             sorter Sorter, truth nibbling)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -606,7 +622,7 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
-  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerb + CONST_S("ing")) : false;
+  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerbPresentParticiple, nibbling) : false;
 }
 
 truth commandsystem::ShowInventory(character* Char)
@@ -886,7 +902,7 @@ truth commandsystem::Dip(character* Char)
           return false;
         }
 
-        Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        Item->DipInto(DipTo->CreateDipLiquid(Item->DipIntoVolume()), Char);
         return true;
       }
     }
@@ -945,10 +961,10 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg;
+  festring Msg; //DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
-      game::GetCurrentLevel()->AddSpecialCursors();
+      game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
     }else{
       Char->GetLevel()->AddSpecialCursors();
     }
@@ -959,12 +975,18 @@ truth commandsystem::Look(character* Char)
   else
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
 
-  game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
+  v2 pos = Char->GetPosSafely();
+  if(pos.Is0())pos = game::GetCamera()+v2(game::GetScreenXSize(),game::GetScreenYSize())/2; // gum: this may happen if player died, the probably position is around screen center, if it is not good enough just deny it and add a log message saying unable to.
+  game::PositionQuestion(Msg,pos,&game::LookHandler, &game::LookKeyHandler, ivanconfig::GetLookZoom());
   game::RemoveSpecialCursors();
   return false;
 }
 
 truth commandsystem::WhatToEngrave(character* Char)
+{
+  return WhatToEngrave(Char,false,v2());
+}
+truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2EngraveMapNotePos)
 {
   if(!Char->CanRead())
   {
@@ -975,14 +997,41 @@ truth commandsystem::WhatToEngrave(character* Char)
   int Key = 0;
   while(!(Key == KEY_ESC || Key == ' '))
   {
-    Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
-                                       "'.' square, 'i' inventory, ESC exits"));
+    if(!bEngraveMapNote)
+      Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
+                                         "'.' square, 'i' inventory, ESC exits"));
+
+    int iLSqrLimit=80;
+    if(bEngraveMapNote)
+    {
+      festring What;
+
+      lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
+      if(lsqrN!=NULL){ //TODO can this be NULL?
+        if(lsqrN->GetEngraved()!=NULL){
+          cchar* c = lsqrN->GetEngraved();
+          if(c!=NULL)What=c;
+          if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
+            std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
+          }
+        }
+      }
+
+      if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
+        festring finalWhat;
+        finalWhat << game::MapNoteToken();
+        finalWhat << What;
+        lsqrN->Engrave(finalWhat);
+      }
+
+      break;
+    }
 
     if(Key == '.')
     {
       festring What;
 
-      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
+      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT)
         Char->GetNearLSquare(Char->GetPos())->Engrave(What);
 
       break;
@@ -1412,7 +1461,49 @@ truth commandsystem::ShowMap(character* Char)
 
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
-      while(!game::TruthQuestion(festring("Hit a key to close your map."), YES, 'm'));
+      lsquare* lsqrH=NULL;
+      while(true){
+        v2 noteAddPos = Char->GetPos();
+        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
+          KEY_ESC, 6, 't', 'l', 'r','d','e')
+        ){
+          case 'd':
+            lsqrH = game::GetHighlightedMapNoteLSquare();
+            if(lsqrH!=NULL){
+              lsqrH->Engrave(festring());
+              game::RefreshDrawMapOverlay();
+            }
+            continue;
+          case 'r':
+            game::RotateMapNotes();
+            continue;
+          case 't':
+            if(game::ToggleShowMapNotes())
+              ADD_MESSAGE("Let me see my map notes...");
+            continue;
+          case 'l':
+            if(noteAddPos==Char->GetPos()){
+              game::RefreshDrawMapOverlay();
+              noteAddPos = game::PositionQuestion(CONST_S(
+                "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
+                Char->GetPos(), NULL, NULL, true); DBGSV2(noteAddPos);
+              if(noteAddPos==ERROR_V2)
+                continue;
+            }
+            /* no break */
+          case 'e':
+            if(noteAddPos==Char->GetPos()){
+              lsqrH = game::GetHighlightedMapNoteLSquare();
+              if(lsqrH!=NULL)
+                noteAddPos=lsqrH->GetPos();
+            }
+            WhatToEngrave(Char,true,noteAddPos);
+            game::RefreshDrawMapOverlay();
+            continue;
+        }
+        break;
+      }
+
       game::ToggleDrawMapOverlay();
     }
   }else{

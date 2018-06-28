@@ -27,6 +27,12 @@ struct felistdescription;
 
 typedef void (*entrydrawer)(bitmap*, v2, uint);
 
+struct EntryRect {
+  uint iSelectableIndex;
+  v2 v2TopLeft;
+  v2 v2BottomRight;
+};
+
 class felist
 {
  public:
@@ -35,7 +41,10 @@ class felist
   void AddEntry(cfestring&, col16, uint = 0,
                 uint = NO_IMAGE, truth = true);
   void AddDescription(cfestring&, col16 = WHITE);
+  static void SetAllowMouse(bool b);
   uint Draw();
+  void SetFirstDrawNoFade(bool b);
+  uint GetMouseSelectedEntry(v2 v2MousePos);
   void QuickDraw(bitmap*, uint) const;
   void Empty();
   void EmptyDescription();
@@ -52,7 +61,8 @@ class felist
   void EditSelected(int What) { Selected += What; }
   static void SetDefaultEntryImageSize(v2 v2Size){v2DefaultEntryImageSize=v2Size;}
   static bool IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos);
-  truth DrawPage(bitmap*, v2* pv2FinalPageSize) const;
+  truth DrawPage(bitmap* Buffer, v2* pv2FinalPageSize = NULL, std::vector<EntryRect>* pvEntryRect = NULL) const;
+//  truth DrawPageAndSelect(bitmap* Buffer, v2 v2MousePos, bool* = NULL);
   void Pop();
   static void CreateQuickDrawFontCaches(rawbitmap*, col16, uint);
   void PrintToFile(cfestring&);
@@ -73,6 +83,8 @@ class felist
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:
   void DrawDescription(bitmap*) const;
+  bool FirstDrawNoFade;
+  std::vector<EntryRect> vEntryRect;
   std::vector<felistentry*> Entry;
   std::vector<felistdescription*> Description;
   uint PageBegin;

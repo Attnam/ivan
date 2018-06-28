@@ -208,7 +208,7 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
-  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos);
+  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos=v2(0,0));
   static void UpdateAltSilhouette(bool bAllowed);
   static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
   static int ItemUnderCode(int iCycleValue);
@@ -367,7 +367,13 @@ class game
   static void PlayDefeatMusic();
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
+  static void RefreshDrawMapOverlay();
   static void DrawMapOverlay(bitmap* =NULL);
+  static void DrawMapNotesOverlay(bitmap* =NULL);
+  static lsquare* GetHighlightedMapNoteLSquare();
+  static bool ToggleShowMapNotes();
+  static int RotateMapNotes();
+  static char MapNoteToken();
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -494,7 +500,6 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -558,6 +563,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
+  static festring AutoSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
