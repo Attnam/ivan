@@ -216,6 +216,7 @@ CHARACTER(snake, nonhumanoid)
 {
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
+  virtual bodypart* MakeBodyPart(int) const;
 };
 
 CHARACTER(ostrich, nonhumanoid)
@@ -305,6 +306,7 @@ CHARACTER(magpie, nonhumanoid)
   virtual cchar* FirstPersonCriticalBiteVerb() const;
   virtual cchar* ThirdPersonBiteVerb() const;
   virtual cchar* ThirdPersonCriticalBiteVerb() const;
+  virtual bodypart* MakeBodyPart(int) const;
 };
 
 CHARACTER(skunk, nonhumanoid)
