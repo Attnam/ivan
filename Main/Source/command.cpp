@@ -1447,8 +1447,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   for(;;){ //loop just to lower the code nesting..
     // also a block to reuse var names w/o specifying the recipe name on them
     if(rpMelt.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      rpMelt.init("melt","some metal");
-      rpMelt.desc << "Near a forge you can melt anything made of metal.";
+      rpMelt.init("melt","ingot");
+      rpMelt.desc << "Near a forge you can melt things.";
     }
 
     if(Selected != rpMelt.iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
@@ -1464,17 +1464,31 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         /**
          * min is gold: str 55 and spends 5 turns each 1000cm3.
          * TODO quite arbritrary but gameplay wise enough?
-         * TODO should use density? or something else than str?
+         * TODO should use density? or something else than str? fireresistance is not melting point...
          */
-        return 5 * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision
+        float f = 5 * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision
+        if(f>0 && f<1)f=1;
+        return f;
       }
       item* prepareLump(material* mat, character* C){
         if(mat==NULL)return NULL;
-        item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
-        LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-        C->GetStack()->AddItem(LumpTmp);
-        ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
-        return LumpTmp;
+        if(mat->IsLiquid()){
+          C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
+        }else{
+          item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
+          LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
+          C->GetStack()->AddItem(LumpTmp);
+          ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
+          return LumpTmp;
+        }
+        return NULL;
+      }
+      truth IsMeltable(material* mat){ //TODO add all meltables
+        if(mat->GetCategoryFlags() & IS_METAL)
+          return true;
+        if(mat->GetConfig()==GLASS)
+          return true;
+        return false;
       }
     };
     static localFuncs lf;
@@ -1528,27 +1542,27 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
     /////////////////////// smash into lumps
     if(dynamic_cast<lump*>(itToUse)!=NULL){
-      if(itToUse->GetMainMaterial()->GetCategoryFlags() & IS_METAL)
+      if(lf.IsMeltable(itToUse->GetMainMaterial()))
         Lump = itToUse;
     }else{ // not a lump? it is a destroyable item then..
       // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
       item* LumpM = lf.prepareLump(matM,Char);
-      if(LumpM->GetMainMaterial()->GetCategoryFlags() & IS_METAL)
+      if(lf.IsMeltable(LumpM->GetMainMaterial()))
         Lump = LumpM;
 
       item* LumpS = lf.prepareLump(matS,Char); //must always be prepared to not lose it
-      if(LumpS!=NULL && (LumpM->GetMainMaterial()->GetCategoryFlags() & IS_METAL))
+      if( LumpS!=NULL && lf.IsMeltable(LumpM->GetMainMaterial()) )
         Lump = LumpS;
 
       ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
-
+      itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
       itToUse->SendToHell(); //TODO if has any magic should release it and also harm
 
       bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
     }
 
     if(Lump==NULL){
-      ADD_MESSAGE("Can only melt metal lumps.");
+      ADD_MESSAGE("Can't melt that.");
       break; //actually exits this recipe flow
     }
 
