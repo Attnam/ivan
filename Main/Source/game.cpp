@@ -325,6 +325,15 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
+{
+  return it->IsHeadOfElpuri()
+      || it->IsGoldenEagleShirt()
+      || it->IsPetrussNut()
+      || it->IsTheAvatar()
+      || it->IsEncryptedScroll();
+}
+
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;

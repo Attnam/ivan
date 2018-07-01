@@ -1044,6 +1044,7 @@ recipe rpChair;
 recipe rpWall;
 recipe rpPoison;
 recipe rpAcid;
+recipe rpMelt;
 //recipe rpChair("build","a chair");
 //recipe rpWall("construct","a wall");
 //recipe rpExtrctFluids("extract","fluids");
@@ -1116,7 +1117,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   }
 
   int iCraftTimeMult=1;
-  if(h->GetLeftArm()==NULL || h->GetRightArm()==NULL){
+  if(h->GetLeftArm()==NULL || h->GetRightArm()==NULL){ //using only one hand will take more time
     iCraftTimeMult++;
   }
 
@@ -1148,12 +1149,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   lsquare* lsqrCharPos = game::GetCurrentLevel()->GetLSquare(Char->GetPos());
   lsquare* lsqrWhere = NULL;
   bool bCanBePlaced=false;
-  bool bHasIngredients=false;
+  bool bHasAllIngredients=false;
   v2 v2PlaceAt(0,0);
   object* craftWhat=NULL;
   item* itTool=NULL;
-  int iTurnsToFinish=1; //TODO should be based on attributes
+  int iBaseTurnsToFinish=1; //TODO should be based on attributes
   std::vector<ulong> ingredients; //TODO must be filled based on required volume to craft something
+  bool bSpendCurrentTurn=false;
 //  bool bBrokenTool=false;
 //  festring reqMissingMsg("");
 
@@ -1172,15 +1174,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         << fsCorpse << " into a " << fsBottle <<  ".";
     }
     if(rpAcid.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      rpAcid.init("extract","some acid");
-      rpAcid.desc << "Use a " << fsTool << " to " << rpAcid.action << " " <<rpAcid.name << " from "
+      rpAcid.init("extract","some acidous fluid");
+      rpAcid.desc   << "Use a " << fsTool << " to " << rpAcid.action   << " " <<rpAcid.name   << " from "
         << fsCorpse << " into a " << fsBottle <<  ".";
     }
-//    if(strlen(rpExtrctFluids.desc)==0) //TODO automate the sync of req ingredients description
-//      sprintf(rpChair.desc,"Use a %s to extract %d to %d cm3 of the poison glands from a %s into a %s.",
-//        fsTool.CStr(),
-//        iAddVolMin,iAddVolMin+iAddVolExtra,
-//        fsVenomC,fsBottle);
     if(Selected == rpPoison.iListIndex)
       prp=&rpPoison;
     if(Selected == rpAcid.iListIndex)
@@ -1201,11 +1198,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
             break;
           }
         }
-//      if(itTool==NULL)
-//        addMissingMsg(reqMissingMsg,fsTool);
-
-//      if(choseIngredients<corpse>(500, vitInv, Char, ingredients, iCfg)){ //TODO this volume should be on the .dat file as chair attribute...
-//      }
       item* itCorpse=NULL;
       int iAcidicity=0;
       for(int i=0;i<vitInv.size();i++){
@@ -1222,14 +1214,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           if(prp==&rpAcid)
             if((iAcidicity=blood->Acidicity)>0 || (iAcidicity=flesh->Acidicity)>0)
               itCorpse=Corpse;
-//          if(
-//              dynamic_cast<spider*>(Corpse->GetDeceased())!=NULL ||
-//              dynamic_cast<snake*>(Corpse->GetDeceased())!=NULL ||
-//              dynamic_cast<skunk*>(Corpse->GetDeceased())!=NULL || //from poisonous flesh
-//              false //to easy add tests above
-//          ){
-//            itCorpse=Corpse;
-//          }
         }
       }
 
@@ -1244,7 +1228,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           mat = pot->GetSecondaryMaterial();
           if(mat==NULL)continue;
 
-  //        if(mat==NULL || mat->GetType()==POISON_LIQUID){
           bool bChkVol=false;
           if(prp==&rpPoison && mat->GetEffect()==EFFECT_POISON) //TODO should be more precise like the material actually be the same poison of spider...
               bChkVol=true;
@@ -1272,30 +1255,18 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         }
 
       if(itBottle && itCorpse && itTool){
-        bHasIngredients=true;
-
-  //      int iAddStrength=0;
         int iAddVolume = +iAddVolMin +(clock()%iAddVolExtra);
         int volume = currentVolume + iAddVolume;
-  //      material* mat = itBottle->GetSecondaryMaterial();
-  //      if(mat!=NULL)
-  //        volume+=mat->GetVolume();
 
         if(volume > itBottle->GetDefaultSecondaryVolume()){
           volume = itBottle->GetDefaultSecondaryVolume();
         }
-  //      if(mat==NULL)
-  //        mat = liquid::Spawn(POISON_LIQUID, 1);
 
         mat = itBottle->GetSecondaryMaterial();
         if(mat!=NULL)
           mat->GetEffectStrength(); //TODO mmm seems to have no strengh diff? only takes more time if "stronger" like not from large spider
 
         itSpawn = potion::Spawn();
-//        itSpawn->SetSecondaryMaterial(NULL);
-//        itSpawn = new item(itBottle);
-
-  //      liquid* poison = liquid::Spawn(POISON_LIQUID, mat->GetVolume()+100);
         int iLiqCfg = -1;
         if(prp==&rpPoison)iLiqCfg=POISON_LIQUID;
         if(prp==&rpAcid)iLiqCfg=SULPHURIC_ACID;
@@ -1304,8 +1275,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
         ingredients.push_back(itBottle->GetID()); //just to be destroyed too if crafting completes
         ingredients.push_back(itCorpse->GetID());
+        bHasAllIngredients=true;
 
-        iTurnsToFinish=5;
+        iBaseTurnsToFinish=5;
 
         bCanStart=true;
       }
@@ -1342,8 +1314,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           }
         }
       }
-//      if(itTool==NULL)
-//        addMissingMsg(reqMissingMsg,cfestring("a hammer or a frying pan"));
 
       lsqrWhere=lsqrCharPos;
       if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
@@ -1361,12 +1331,12 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           bOk=choseIngredients<bone>(iReqStickVol, vitInv, Char, ingredients, iCfg);
         }
         if(bOk){
-          bHasIngredients=true;
+          bHasAllIngredients=true;
 
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=decoration::Spawn(CHAIR);
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
-          iTurnsToFinish=10;
+          iBaseTurnsToFinish=10;
 
           bCanStart=true;
         }
@@ -1383,8 +1353,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       rpWall.init("construct","a wall");
       rpWall.desc << "Pile stones or skulls to create a wall.";
     }
-//    if(strlen(rpWall.desc)==0) //TODO automate the sync of req ingredients description
-//      sprintf(rpWall.desc,"Pile %d cm3 of stones to create a wall.",iReqStoneVol);
     if(Selected == rpWall.iListIndex){ // a wall will destroy whatever is in the place
       prp = &rpWall;
 
@@ -1410,17 +1378,148 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         }
         //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
         if(bOk){
-          bHasIngredients=true;
+          bHasAllIngredients=true;
 
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
-          iTurnsToFinish=20;
+          iBaseTurnsToFinish=20;
 
           bCanStart=true;
         }
       }
     }
+  }
+
+  /**********************************************************************************************
+   * melt
+   *
+   * lumps are not usable until melt into an ingot.
+   * TODO stones should be ingots one day, and be used to prepare them too
+   */
+  for(;;){ //loop just to lower the code nesting..
+    // also a block to reuse var names w/o specifying the recipe name on them
+    if(rpMelt.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpMelt.init("melt","some metal");
+      rpMelt.desc << "Near a forge you can melt anything made of metal.";
+    }
+
+    if(Selected != rpMelt.iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
+      break; //actually exits this recipe flow
+
+    prp = &rpMelt;
+
+    ///////////////////////////// init
+    item* Lump = NULL;
+
+    struct localFuncs{
+      int calcTurns(material* mat){ //local function trick TODO anything better?
+        /**
+         * min is gold: str 55 and spends 5 turns each 1000cm3.
+         * TODO quite arbritrary but gameplay wise enough?
+         * TODO should use density? or something else than str?
+         */
+        return 5 * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision
+      }
+      item* prepareLump(material* mat, character* C){
+        if(mat==NULL)return NULL;
+        item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
+        LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
+        C->GetStack()->AddItem(LumpTmp);
+        ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
+        return LumpTmp;
+      }
+    };
+    static localFuncs lf;
+
+    ////////////// find the FORGE
+    lsquare* lsqrFORGE = NULL;
+    int iDist = 1; //TODO improve this (despite fun, is wrong..)
+    for(int i=0;i<(8*iDist);i++){
+      int iDir = i%8;
+      int iMult = 1 + i/8;
+      v2 v2Add = game::GetMoveVector(iDir) * iMult;
+      v2 v2Pos = Char->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
+      if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+        lsquare* lsqr = Char->GetNearLSquare(v2Pos);
+        olterrain* ot = lsqr->GetOLTerrain();
+        if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(Char)){
+          lsqrFORGE = lsqr;
+          break;
+        }
+      }
+    }
+    if(lsqrFORGE==NULL){
+      ADD_MESSAGE("No forge nearby."); //TODO allow user miss-chose
+      break; //actually exits this recipe flow
+    }
+
+    ///////////////////// chose item to melt/smash
+    itemvector ToUse;
+    game::DrawEverythingNoBlit();
+    Char->GetStack()->DrawContents(ToUse, Char, festring("What do you want to melt?"), REMEMBER_SELECTED, NULL);
+    if(ToUse.empty())
+      break; //actually exits this recipe flow
+
+    item* itToUse = ToUse[0];
+    if(game::IsQuestItem(itToUse)){
+      ADD_MESSAGE("You feel that would be a bad idea and carefully stores it back in your inventory.");
+      break; //actually exits this recipe flow
+    }
+
+    material* matM=NULL;
+    material* matS=NULL;
+    material* matIngot=NULL;
+
+    matM = itToUse->GetMainMaterial();
+    matS = itToUse->GetSecondaryMaterial();
+
+    if(dynamic_cast<stone*>(itToUse)!=NULL){ //TODO should be ingot
+      ADD_MESSAGE("No need to melt ingots.");
+      break; //actually exits this recipe flow
+    }
+
+    /////////////////////// smash into lumps
+    if(dynamic_cast<lump*>(itToUse)!=NULL){
+      if(itToUse->GetMainMaterial()->GetCategoryFlags() & IS_METAL)
+        Lump = itToUse;
+    }else{ // not a lump? it is a destroyable item then..
+      // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
+      item* LumpM = lf.prepareLump(matM,Char);
+      if(LumpM->GetMainMaterial()->GetCategoryFlags() & IS_METAL)
+        Lump = LumpM;
+
+      item* LumpS = lf.prepareLump(matS,Char); //must always be prepared to not lose it
+      if(LumpS!=NULL && (LumpM->GetMainMaterial()->GetCategoryFlags() & IS_METAL))
+        Lump = LumpS;
+
+      ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
+
+      itToUse->SendToHell(); //TODO if has any magic should release it and also harm
+
+      bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+    }
+
+    if(Lump==NULL){
+      ADD_MESSAGE("Can only melt metal lumps.");
+      break; //actually exits this recipe flow
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    ////////////////////////// melt lumps ////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    iBaseTurnsToFinish = lf.calcTurns(Lump->GetMainMaterial()); DBG1(iBaseTurnsToFinish);
+
+    ingredients.push_back(Lump->GetID());
+    bHasAllIngredients=true;
+
+    itSpawn = stone::Spawn(0, NO_MATERIALS);
+    itSpawn->SetMainMaterial(material::MakeMaterial(
+      Lump->GetMainMaterial()->GetConfig(), Lump->GetMainMaterial()->GetVolume() ));
+
+    bCanStart=true;
+
+    break; //LAST THING!!!!! required to surely exit the loop-block trick
   }
 
   /******************************************************************************************
@@ -1431,6 +1530,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     addRecipe(&rpWall);
     addRecipe(&rpPoison);
     addRecipe(&rpAcid);
+    addRecipe(&rpMelt);
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
   }
 
@@ -1441,21 +1541,33 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   if(bCanStart){
     object* pChk=NULL;
     for(int i=0;i<2;i++){
-      switch(i){
-      case 0:if(otSpawn!=NULL)pChk=otSpawn;break;
-      case 1:if(itSpawn!=NULL)pChk=itSpawn;break;
-      }
-      if(pChk==NULL)continue;
+      bool bAbort=false;
 
-      if(
-          dynamic_cast<amulet*>(pChk)!=NULL ||
-          dynamic_cast<horn*  >(pChk)!=NULL ||
-          dynamic_cast<ring*  >(pChk)!=NULL ||
-          dynamic_cast<scroll*>(pChk)!=NULL ||
-          dynamic_cast<wand*  >(pChk)!=NULL ||
-          false // just to make it easier to re-organize and add entries above
-          //TODO check if item has any kind of magic property
-      ){
+      switch(i){
+      case 0:
+        if(otSpawn!=NULL){
+          // anything to check here?
+        }
+        break;
+      case 1:
+        if(itSpawn!=NULL){
+          if(
+            game::IsQuestItem(itSpawn) ||
+            dynamic_cast<amulet*>(itSpawn)!=NULL ||
+            dynamic_cast<horn*  >(itSpawn)!=NULL ||
+            dynamic_cast<ring*  >(itSpawn)!=NULL ||
+            dynamic_cast<scroll*>(itSpawn)!=NULL ||
+            dynamic_cast<wand*  >(itSpawn)!=NULL ||
+            false // just to make it easier to re-organize and add checks above
+            //TODO check if item has any kind of magic property, how?
+          ){
+            bAbort=true;
+          }
+        }
+        break;
+      }
+
+      if(bAbort){
         ABORT(
           "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
           "- Quest items.\n"
@@ -1469,28 +1581,31 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     if(otSpawn!=NULL || itSpawn!=NULL) {
       if(itTool && itTool->IsBroken())
         iCraftTimeMult++;
-      Char->SwitchToCraft(ingredients, iTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn,
+
+      if(iBaseTurnsToFinish<1)
+        ABORT("invalid iBaseTurnsToFinish %d",iBaseTurnsToFinish);
+
+      Char->SwitchToCraft(ingredients, iBaseTurnsToFinish*iCraftTimeMult, itTool, itSpawn, otSpawn,
         lsqrWhere?lsqrWhere->GetPos():lsqrCharPos->GetPos() );
+
       Char->DexterityAction(5); //TODO is this good?
-//      lsqrWhere->ChangeOLTerrainAndUpdateLights(otSpawn);
     }else{
       ABORT("crafting nothing?");
     }
-
-//    ADD_MESSAGE("You finish crafting: %s",prp->name.CStr()); //not fine neither nice :)
 
     return true;
   }else{
     if(otSpawn && !bCanBePlaced)
       ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
-    else if(!bHasIngredients){
+    else if(!bHasAllIngredients){
       festring fsMsg;
-      fsMsg<<"You don't have what is required to "<<prp->action<<" "<<prp->name<<".";
-//      if(reqMissingMsg.GetSize()>0)
-//        fsMsg<<" It is missing "<<reqMissingMsg<<".";
+      fsMsg<<"Requirements to "<<prp->action<<" "<<prp->name<<" are not available.";
       ADD_MESSAGE(fsMsg.CStr());
     }
   }
+
+  if(bSpendCurrentTurn)
+    return true;
 
   return false;
 }

@@ -184,6 +184,7 @@ class game
   static void SRegionAroundDeny();
   static void PrepareToClearNonVisibleSquaresAround(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
+  static truth IsQuestItem(item*);
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
