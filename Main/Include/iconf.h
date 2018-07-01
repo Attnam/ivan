@@ -62,6 +62,7 @@ class ivanconfig
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
+  static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
@@ -130,6 +131,7 @@ class ivanconfig
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
+  static void AllowMouseOnFelistChanger(truthoption*, truth);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -224,6 +226,7 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+  static truthoption AllowMouseOnFelist;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

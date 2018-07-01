@@ -415,7 +415,6 @@ decoration
     NameSingular = "anvil";
     BitmapPos = 16, 432;
     HPModifier = 25;
-    Walkability = ETHEREAL;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   }
 
@@ -535,7 +534,6 @@ decoration
     MaterialColorC = rgb16(220, 220, 0);
     MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
-    Walkability = ETHEREAL;
     NameSingular = "furnace";
     BitmapPos = 32, 16;
     LeftOverItems == 0;

@@ -2320,7 +2320,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(!game::WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(!HScore.CheckVersion())
     {
@@ -4664,6 +4664,38 @@ truth character::AllowDamageTypeBloodSpill(int Type)
   return false;
 }
 
+v2 character::GetPosSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  if(sqr!=NULL)return sqr->GetPos();
+  return v2();
+}
+
+square* character::GetSquareUnderSafely() const
+{ //prevents crash if polymorphed (here at least)
+  if(SquareUnder[0]!=NULL){DBGLN;
+    return SquareUnder[0];
+  }DBGLN;
+
+  if(IsPolymorphed()){DBGLN;
+    character* pb = GetPolymorphBackup();
+    if(pb!=NULL && pb->SquareUnder[0]!=NULL){ DBG1(pb->GetNameSingular().CStr()); //TODO to use square under index here may cause inconsistencies?
+      return pb->SquareUnder[0];
+    }
+  }DBGLN;
+
+  return NULL;
+}
+
+stack* character::GetStackUnderSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  lsquare* lsqr = dynamic_cast<lsquare*>(sqr);
+  if(lsqr!=NULL)return lsqr->GetStack();
+  return NULL;
+}
+
+
 /* Returns truly done damage */
 
 int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
@@ -4761,10 +4793,18 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
         {
           /** No multi-tile humanoid support! */
 
-          GetStackUnder()->AddItem(Severed);
+          stack* su = GetStackUnderSafely();
+          if(su){
+            su->AddItem(Severed);
 
-          if(Direction != YOURSELF)
-            Severed->Fly(0, Direction, Damage);
+            if(Direction != YOURSELF)
+              Severed->Fly(0, Direction, Damage);
+          }else{
+            /**
+             * this may happen when polymorphing (tests were made as a snake) during an explosion that severe body parts
+             */
+            GetStack()->AddItem(Severed); DBGLN;
+          }
         }
         else
           GetStack()->AddItem(Severed);
@@ -8193,7 +8233,11 @@ truth character::SelectFromPossessions(itemvector& ReturnVector, cfestring& Topi
     List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
     List.SetEntryDrawer(game::ItemEntryDrawer);
     game::DrawEverythingNoBlit();
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     int Chosen = List.Draw();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     game::ClearItemDrawVector();
 
     if(Chosen != ESCAPED)
@@ -8510,7 +8554,7 @@ void character::SetBodyPart(int I, bodypart* What)
   }
 }
 
-truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
+truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb, truth nibbling)
 {
   if(IsPlayer()
      && HasHadBodyPart(Item)
@@ -8528,6 +8572,7 @@ truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
   consume* Consume = consume::Spawn(this);
   Consume->SetDescription(ConsumeVerb);
   Consume->SetConsumingID(Item->GetID());
+  Consume->SetNibbling(nibbling);
   SetAction(Consume);
   DexterityAction(5);
   return true;

@@ -10,18 +10,18 @@
 #include "namegen.h"
 
 #include <algorithm>  // for move, reverse
+#include <chrono>     // for rng seed
 #include <cwchar>     // for size_t, mbsrtowcs, wcsrtombs
 #include <cwctype>    // for towupper
 #include <memory>     // for make_unique
-#include <random>     // for mt19937, random_device, uniform_real_distribution
+#include <random>     // for mt19937, uniform_real_distribution
 #include <stdexcept>  // for invalid_argument, out_of_range
 
 
 using namespace NameGen;
 
 
-static std::random_device rd;  // Random device engine, usually based on /dev/random on UNIX-like systems
-static std::mt19937 rng(rd()); // Initialize Mersennes' twister using rd to generate the seed
+static std::mt19937 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
 
 // https://isocpp.org/wiki/faq/ctors#static-init-order

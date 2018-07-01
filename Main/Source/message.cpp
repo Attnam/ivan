@@ -11,6 +11,8 @@
  */
 
 #include <iostream>
+#include <memory>
+#include <utility>
 
 #include <cstdarg>
 #include <cctype>
@@ -172,6 +174,8 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  game::RegionListItemEnable(false); //this fix the problem that happens on death
+
   MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
@@ -233,6 +237,15 @@ void msgsystem::Init()
   MessageHistory.AddFlags(INVERSE_MODE);
 }
 
+void msgsystem::DeInit()
+{
+  delete QuickDrawCache;
+
+#ifndef NOSOUND
+  soundsystem::deInitSound();
+#endif
+}
+
 void msgsystem::ThyMessagesAreNowOld()
 {
   if(MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
@@ -249,15 +262,32 @@ void msgsystem::ThyMessagesAreNowOld()
 struct SoundFile
 {
   festring filename;
-  Mix_Chunk *chunk;
-  Mix_Music *music;
+  std::unique_ptr<Mix_Chunk*> chunk = std::unique_ptr<Mix_Chunk*>(new (Mix_Chunk*)(NULL));
+  //Mix_Music *music;
+
+  SoundFile() = default;
+  SoundFile(SoundFile&) = delete;
+  SoundFile(SoundFile&&) = default;
+  ~SoundFile()
+  {
+    if(chunk.get() && *chunk) Mix_FreeChunk(*chunk);
+  }
 };
 
 struct SoundInfo
 {
-  pcre *re;
-  pcre_extra *extra;
   std::vector<int> sounds;
+  std::unique_ptr<pcre*> re = std::unique_ptr<pcre*>(new (pcre*)());
+  std::unique_ptr<pcre_extra*> extra = std::unique_ptr<pcre_extra*>(new (pcre_extra*)(NULL));
+
+  SoundInfo() = default;
+  SoundInfo(SoundInfo&) = delete;
+  SoundInfo(SoundInfo&&) = default;
+  ~SoundInfo()
+  {
+    if(re.get() && *re) free(*re);
+    if(extra.get() && *extra) pcre_free_study(*extra);
+  }
 };
 
 int soundsystem::SoundState = 0;
@@ -272,9 +302,9 @@ int soundsystem::addFile(festring filename) {
     if(files[i].filename == filename) return i;
   SoundFile p;
   p.filename = filename;
-  p.chunk = NULL;
-  p.music = NULL;
-  files.push_back(p);
+  *p.chunk = NULL;
+  //p.music = NULL;
+  files.push_back(std::move(p));
   return files.size() - 1;
 }
 
@@ -306,8 +336,8 @@ void soundsystem::initSound()
     festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
     FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
-		
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0) 
+
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8000) != 0)
     {
       ADD_MESSAGE("Unable to initialize audio: %s\n", Mix_GetError());
       if(debf)fprintf(debf, "Unable to initialize audio: %s\n", Mix_GetError());
@@ -316,7 +346,7 @@ void soundsystem::initSound()
     }
     Mix_AllocateChannels(16);
     SoundState = -2;
-      
+
     /**
      * The last matching pattern will win (if more than one matches).
      * Sound files are chosen randomly (if there is more than one).
@@ -373,9 +403,10 @@ void soundsystem::initSound()
         }
 
         // configure the regex
-        si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
-        if(debf && !si.re) fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
-        if(si.re) si.extra = pcre_study(si.re, 0, &error);
+        *si.re = pcre_compile(Pattern.CStr(), 0, &error, &erroffset, NULL);
+        if(debf && !*si.re) fprintf(debf, "PCRE compilation failed at expression offset %d: %s\n", erroffset, error);
+        if(*si.re) *si.extra = pcre_study(*si.re, 0, &error);
+        if(error) *si.extra = NULL;
 
         // configure the assigned files, now they are separated with ',' and the filename now accepts spaces.
         festring FileName="";
@@ -404,7 +435,7 @@ void soundsystem::initSound()
         }
         if(bDbg)std::cout << "SInfoSize=" << si.sounds.size() << std::endl;
 
-        if(si.sounds.size() != 0) patterns.push_back(si);
+        if(si.sounds.size() != 0) patterns.push_back(std::move(si));
         if(bDbg)std::cout << "PtrnSize=" << patterns.data()->sounds.size() << std::endl;
       }
 
@@ -418,11 +449,26 @@ void soundsystem::initSound()
   }
 }
 
+void soundsystem::deInitSound()
+{
+  Mix_AllocateChannels(0);
+
+  int freq, chans;
+  Uint16 fmt;
+  for(int times = Mix_QuerySpec(&freq, &fmt, &chans); times >= 0; times--)
+    Mix_CloseAudio();
+
+  while(Mix_Init(0))
+    Mix_Quit();
+
+  SoundState = 2;
+}
+
 SoundFile *soundsystem::findMatchingSound(festring Buffer)
 {
   for(int i = patterns.size() - 1; i >= 0; i--)
-  if(patterns[i].re)
-  if(pcre_exec(patterns[i].re, patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
+  if(*patterns[i].re)
+  if(pcre_exec(*patterns[i].re, *patterns[i].extra, Buffer.CStr(), Buffer.GetSize(), 0, 0, NULL, 0) >= 0)
     return &files[patterns[i].sounds[rand() % patterns[i].sounds.size()]];
   return NULL;
 }
@@ -435,20 +481,20 @@ void soundsystem::playSound(festring Buffer)
   {
     SoundFile *sf = findMatchingSound(Buffer);
     if(!sf) return;
-    
-    if(!sf->chunk)
+
+    if(!*sf->chunk)
     {
       festring sndfile = game::GetDataDir() + "Sound/" + sf->filename;
-      sf->chunk = Mix_LoadWAV(sndfile.CStr());
+      *sf->chunk = Mix_LoadWAV(sndfile.CStr());
     }
-    
-    if(sf->chunk) 
+
+    if(*sf->chunk)
     {
-			for(int i=0; i<16; i++) 
+			for(int i=0; i<16; i++)
 			{
 				if(!Mix_Playing(i))
-				{	
-					Mix_PlayChannel(i, sf->chunk, 0);	
+				{
+					Mix_PlayChannel(i, *sf->chunk, 0);
 //					fprintf(debf, "Mix_PlayChannel(%d, \"%s\", 0);\n", i, sf->filename.CStr());
 		//    Mix_SetPosition(i, angle, dist);
 					return;

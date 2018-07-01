@@ -28,5 +28,7 @@ endif(APPLE)
 target_include_directories(FeAudio PUBLIC ../FeLib/Include ../Main/Include)
 target_link_libraries(FeAudio ${RTMIDI_DEPENDENCIES})
 
-target_include_directories(FeAudio SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(FeAudio ${SDL2_LIBRARY})
+find_package(SDL2 REQUIRED)
+
+target_include_directories(FeAudio SYSTEM PUBLIC ${SDL2_mixer_INCLUDE_DIR})
+target_link_libraries(FeAudio ${SDL2_mixer_LIBRARY})

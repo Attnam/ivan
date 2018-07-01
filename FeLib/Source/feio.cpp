@@ -371,7 +371,11 @@ int iosystem::StringQuestion(festring& Input,
     /* if LastKey is less than 20 it is a control
        character not available in the font */
 
-    while(!(IsAcceptableForStringQuestion(LastKey)))
+    while(!(LastKey >= 0x20 && LastKey < 0x7F)
+          && LastKey != KEY_ENTER && LastKey != KEY_ESC
+          && LastKey != KEY_HOME && LastKey != KEY_END
+          && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
+          && LastKey != KEY_BACK_SPACE)
     {
       LastKey = GET_KEY(false);
 
@@ -1281,20 +1285,4 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   }
 
   return ""; //dummy just to gcc do not complain..
-}
-
-truth iosystem::IsAcceptableForStringQuestion(int Key)
-{
-  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
-     || Key == '/' || Key == '\\' || Key == ':')
-    return false;
-
-  if(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC
-     || Key == KEY_HOME || Key == KEY_END || Key == KEY_LEFT || Key == KEY_RIGHT)
-    return true;
-
-  if(Key < 0x20 || Key >= 0x7F)
-    return false;
-
-  return true;
 }

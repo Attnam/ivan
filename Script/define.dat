@@ -780,6 +780,8 @@
 
 #define RUNED_WHIP 1
 
+#define VIAL 1
+
 #define SOL_STONE 1
 
 #define BIG_MINE 1
