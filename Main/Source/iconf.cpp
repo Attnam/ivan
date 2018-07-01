@@ -122,6 +122,9 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "wait neutral NPCs move away from your path",
                                           false);
+truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
+                                          "only pile clutter with equal weights on list", //clutter are useful now for crafting so their weight matters...
+                                          false);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
                                           false,
@@ -927,6 +930,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
+  configsystem::AddOption(fsCategory,&AllWeightIsRelevant);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

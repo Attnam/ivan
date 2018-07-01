@@ -757,7 +757,7 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
   }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g]";
+    Entry << " [" << GetWeight() * Amount << "g]"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
 }
 
 const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig, int Configs, int ConfigNumber)
@@ -895,7 +895,7 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
   return (GetType() == Item->GetType()
           && GetConfig() == Item->GetConfig()
           && ItemFlags == Item->ItemFlags
-          && (WeightIsIrrelevant() || Weight == Item->Weight)
+          && ((!ivanconfig::IsAllWeightIsRelevant() && WeightIsIrrelevant()) || Weight == Item->Weight)
           && MainMaterial->IsSameAs(Item->MainMaterial)
           && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
           && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()

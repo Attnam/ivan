@@ -783,6 +783,7 @@
 #define VIAL 1
 
 #define SOL_STONE 1
+#define INGOT 2
 
 #define BIG_MINE 1
 

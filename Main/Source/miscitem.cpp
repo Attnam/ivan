@@ -60,6 +60,8 @@ long backpack::GetTotalExplosivePower() const
 
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
+//long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
+
 col16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
 col16 itemcontainer::GetMaterialColorB(int) const { return MakeRGB16(80, 80, 80); }

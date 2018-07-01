@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
+  static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -185,6 +186,7 @@ class ivanconfig
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
   static truthoption WaitNeutralsMoveAway;
+  static truthoption AllWeightIsRelevant;
 
   static cycleoption MemorizeEquipmentMode;
 

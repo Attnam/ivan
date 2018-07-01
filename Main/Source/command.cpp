@@ -1113,6 +1113,8 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
   }
 
   int iWeakest=-1;
+  game::RegionListItemEnable(true);
+  game::RegionSilhouetteEnable(true);
   for(;;)
   {
     itemvector ToUse;
@@ -1139,8 +1141,19 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
     if(volume<=0)
       break;
   }
+  game::RegionListItemEnable(false);
+  game::RegionSilhouetteEnable(false);
 
   return volume<=0;
+}
+void choseOneIngredient(itemvector& vitInv, character* Char, std::vector<ulong>& ingredients){
+  int iWeakestCfgDummy;
+  choseIngredients<item>(
+    1, //just to chose one
+    vitInv,
+    Char,
+    ingredients,
+    iWeakestCfgDummy);
 }
 void addMissingMsg(festring& where, cfestring& what){
   if(where.GetSize()>0)
@@ -1313,7 +1326,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         if(mat!=NULL)
           mat->GetEffectStrength(); //TODO mmm seems to have no strengh diff? only takes more time if "stronger" like not from large spider
 
-        itSpawn = potion::Spawn();
+        itSpawn = potion::Spawn(itBottle->GetConfig()); //may be a vial
         int iLiqCfg = -1;
         if(prp==&rpPoison)iLiqCfg=POISON_LIQUID;
         if(prp==&rpAcid)iLiqCfg=SULPHURIC_ACID;
@@ -1366,20 +1379,17 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
         bCanBePlaced=true;
 
-        bool bOk=false;
         int iCfg=-1;
         //TODO this volume should be on the .dat file as chair attribute...
-        if(!bOk){
+        if(!bHasAllIngredients){
           ingredients.clear();
-          bOk=choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg);
         }
-        if(!bOk){
+        if(!bHasAllIngredients){
           ingredients.clear();
-          bOk=choseIngredients<bone>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<bone>(iReqStickVol, vitInv, Char, ingredients, iCfg);
         }
-        if(bOk){
-          bHasAllIngredients=true;
-
+        if(bHasAllIngredients){
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=decoration::Spawn(CHAIR);
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
@@ -1411,22 +1421,19 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         bCanBePlaced=true;
 
         int iCfg=-1;
-        bool bOk=false;
         int iVol=-1;
-        if(!bOk){
+        if(!bHasAllIngredients){
           ingredients.clear();
           iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
-          bOk=choseIngredients<stone>(iVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<stone>(iVol, vitInv, Char, ingredients, iCfg);
         }
-        if(!bOk){
+        if(!bHasAllIngredients){
           ingredients.clear();
           iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
-          bOk=choseIngredients<skull>(iVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<skull>(iVol, vitInv, Char, ingredients, iCfg);
         }
         //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-        if(bOk){
-          bHasAllIngredients=true;
-
+        if(bHasAllIngredients){
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
@@ -1442,7 +1449,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
    * melt
    *
    * lumps are not usable until melt into an ingot.
-   * TODO stones should be ingots one day, and be used to prepare them too
    */
   for(;;){ //loop just to lower the code nesting..
     // also a block to reuse var names w/o specifying the recipe name on them
@@ -1518,6 +1524,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     ///////////////////// chose item to melt/smash
     itemvector ToUse;
     game::DrawEverythingNoBlit();
+    choseOneIngredient(vitInv, Char, ingredients);
     Char->GetStack()->DrawContents(ToUse, Char, festring("What do you want to melt?"), REMEMBER_SELECTED, NULL);
     if(ToUse.empty())
       break; //actually exits this recipe flow
@@ -1535,7 +1542,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     matM = itToUse->GetMainMaterial();
     matS = itToUse->GetSecondaryMaterial();
 
-    if(dynamic_cast<stone*>(itToUse)!=NULL){ //TODO should be ingot
+    if(dynamic_cast<stone*>(itToUse)!=NULL && itToUse->GetConfig()==INGOT){
       ADD_MESSAGE("No need to melt ingots.");
       break; //actually exits this recipe flow
     }
@@ -1546,13 +1553,17 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         Lump = itToUse;
     }else{ // not a lump? it is a destroyable item then..
       // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
-      item* LumpM = lf.prepareLump(matM,Char);
-      if(lf.IsMeltable(LumpM->GetMainMaterial()))
-        Lump = LumpM;
+      {
+        item* LumpM = lf.prepareLump(matM,Char);
+        if(lf.IsMeltable(LumpM->GetMainMaterial()))
+          Lump = LumpM;
+      }
 
-      item* LumpS = lf.prepareLump(matS,Char); //must always be prepared to not lose it
-      if( LumpS!=NULL && lf.IsMeltable(LumpM->GetMainMaterial()) )
-        Lump = LumpS;
+      {
+        item* LumpS = lf.prepareLump(matS,Char); //must always be prepared to not lose it
+        if( LumpS!=NULL && lf.IsMeltable(LumpS->GetMainMaterial()) )
+          Lump = LumpS;
+      }
 
       ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
       itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
@@ -1574,7 +1585,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     ingredients.push_back(Lump->GetID());
     bHasAllIngredients=true;
 
-    itSpawn = stone::Spawn(0, NO_MATERIALS);
+//    itSpawn = stone::Spawn(0, NO_MATERIALS);
+//    itSpawn = ingot::Spawn(0, NO_MATERIALS);
+    itSpawn = stone::Spawn(INGOT, NO_MATERIALS);
     itSpawn->SetMainMaterial(material::MakeMaterial(
       Lump->GetMainMaterial()->GetConfig(), Lump->GetMainMaterial()->GetVolume() ));
 
@@ -1656,11 +1669,11 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
     return true;
   }else{
-    if(otSpawn && !bCanBePlaced)
+    if(lsqrWhere!=NULL && !bCanBePlaced)
       ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
     else if(!bHasAllIngredients){
       festring fsMsg;
-      fsMsg<<"Requirements to "<<prp->action<<" "<<prp->name<<" are not available.";
+      fsMsg<<"Requirements to "<<prp->action<<" "<<prp->name<<" are not met.";
       ADD_MESSAGE(fsMsg.CStr());
     }
   }
