@@ -17,6 +17,7 @@
 #include "script.h"
 #include "wskill.h"
 #include "save.h"
+#include "craft.h"
 
 #define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).CStr()
 #define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).CStr()
@@ -279,6 +280,7 @@ class characterprototype
   cchar* ClassID;
 };
 
+class rpdata;
 class character : public entity, public id
 {
  public:
@@ -417,7 +419,7 @@ class character : public entity, public id
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
-  virtual void SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* ActItem, item* itSpawn, int itSpawnTot, olterrain* otSpawn, v2 v2Where) { }
+  virtual void SwitchToCraft(rpdata rpd) { }
   virtual void SwitchToDig(item*, v2) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }

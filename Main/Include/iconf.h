@@ -34,6 +34,7 @@ class ivanconfig
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
   static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
+  static truth IsShowVolume() { return ShowVolume.Value;}
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
@@ -187,6 +188,7 @@ class ivanconfig
   static truthoption ShowMapAtDetectMaterial;
   static truthoption WaitNeutralsMoveAway;
   static truthoption AllWeightIsRelevant;
+  static truthoption ShowVolume;
 
   static cycleoption MemorizeEquipmentMode;
 

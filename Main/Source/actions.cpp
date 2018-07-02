@@ -215,22 +215,24 @@ void rest::Terminate(truth Finished)
 void craft::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << iTurnsToFinish << ToolRequired << itWhatID << itWhatTot << otWhat << v2PlaceAt << MoveCraftTool << RightBackupID << LeftBackupID;
+  SaveFile << rpd.iBaseTurnsToFinish << ToolRequired << itWhatID << rpd.itSpawnTot << rpd.otSpawn << rpd.v2PlaceAt
+           << MoveCraftTool << RightBackupID << LeftBackupID << rpd.ingredientsIDs;
 }
 
 void craft::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> iTurnsToFinish >> ToolRequired >> itWhatID >> itWhatTot >> otWhat >> v2PlaceAt >> MoveCraftTool >> RightBackupID >> LeftBackupID;
+  SaveFile >> rpd.iBaseTurnsToFinish >> ToolRequired >> itWhatID >> rpd.itSpawnTot >> rpd.otSpawn >> rpd.v2PlaceAt
+           >> MoveCraftTool >> RightBackupID >> LeftBackupID >> rpd.ingredientsIDs;
 }
 
 void craft::Handle()
 {DBGLN;
-  if(itWhatID!=0 && itWhat==NULL)
-    itWhat = game::SearchItem(itWhatID); // here to work correctly at ~craft
+  if(itWhatID!=0 && rpd.itSpawn==NULL)
+    rpd.itSpawn = game::SearchItem(itWhatID); // here to work correctly at ~craft
 
   character* Actor = GetActor();
-  item* Tool = Actor->GetMainWielded();
+  item* Tool = Actor->GetMainWielded();DBGLN;
 
   if(ToolRequired && Tool==NULL)
   {DBGLN;
@@ -239,31 +241,32 @@ void craft::Handle()
     return;
   }
 
-  lsquare* lsqrWhere = Actor->GetNearLSquare(v2PlaceAt);
+  DBGSV2(rpd.v2PlaceAt);
+  lsquare* lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt);
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
-  if(otWhat!=NULL && oltExisting!=NULL){DBGLN;
-    ADD_MESSAGE("%s cannot be placed there.", otWhat->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
+  if(rpd.otSpawn!=NULL && oltExisting!=NULL){DBGLN;
+    ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
     Terminate(false);
     return;
   }
 
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
-  iTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
+  rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
-  truth finished = iTurnsToFinish==0;
+  truth finished = rpd.iBaseTurnsToFinish==0;
   festring fsCreated;
   festring fsMsg("");
   int Case = INDEFINITE;
   if(finished)
-  {
-    if(itWhat!=NULL){DBGLN;
-      item* itWhatTmp=itWhat;
-      itWhat=NULL; //see ~craft
+  {DBGLN;
+    if(rpd.itSpawn!=NULL){DBGLN;
+      item* itWhatTmp=rpd.itSpawn;
+      rpd.itSpawn=NULL; //see ~craft
       itWhatID=0;
 
-      if(itWhatTot > 1){DBGLN;
-        fsCreated << itWhatTot << " " << itWhatTmp->GetNamePlural();DBGLN;
-        for(int i=0;i<itWhatTot-1;i++){ //-1 as the last one will be the original
+      if(rpd.itSpawnTot > 1){DBGLN;
+        fsCreated << rpd.itSpawnTot << " " << itWhatTmp->GetNamePlural();DBGLN;
+        for(int i=0;i<rpd.itSpawnTot-1;i++){ //-1 as the last one will be the original
           /**
            * IMPORTANT!!!
            * the duplicator will vanish with the item ID that is being duplicated
@@ -280,25 +283,25 @@ void craft::Handle()
     }
 
     int iWallMaterialConfig=-1;
-    if(otWhat!=NULL){
-      lsqrWhere->ChangeOLTerrainAndUpdateLights(otWhat);
-      if(dynamic_cast<wall*>(otWhat)!=NULL)
-        iWallMaterialConfig = otWhat->GetMainMaterial()->GetConfig();
+    if(rpd.otSpawn!=NULL){DBGLN;
+      lsqrWhere->ChangeOLTerrainAndUpdateLights(rpd.otSpawn);
+      if(dynamic_cast<wall*>(rpd.otSpawn)!=NULL)
+        iWallMaterialConfig = rpd.otSpawn->GetMainMaterial()->GetConfig();
 
 //      if(lsqrWhere->CanBeSeenByPlayer())
-      fsCreated << otWhat->GetName(Case);
+      fsCreated << rpd.otSpawn->GetName(Case);
       fsMsg << "You built " << fsCreated.CStr();
 
-      otWhat=NULL; //see ~craft
+      rpd.otSpawn=NULL; //see ~craft
     }
 
     festring fsIng,fsIngP;
     festring fsIngPrev,fsIngPPrev;
     int iCountEqual=1;
     festring fsIngMsg("");
-    for(int i=0;i<Ingredients.size();i++){DBG1(Ingredients[i]);
-      item* it=game::SearchItem(Ingredients[i]);DBGLN;
-      if(it==NULL)ABORT("ingredient id %d not found",Ingredients[i]);
+    for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
+      item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
+      if(it==NULL)ABORT("ingredient id %d not found",rpd.ingredientsIDs[i]);
       it->RemoveFromSlot();DBGLN;
 
       bool bSendToHell=true;
@@ -324,7 +327,7 @@ void craft::Handle()
       bool bDumpPrev = false;
       if(bNewType)
         bDumpPrev=true;
-      if(i==Ingredients.size()-1){DBGLN;
+      if(i==rpd.ingredientsIDs.size()-1){DBGLN;
         bDumpPrev=true;
         fsIngPrev=fsIng;
       }
@@ -403,32 +406,32 @@ void craft::Handle()
 }
 
 void craft::Terminate(truth Finished)
-{
+{DBGLN;
   if(Flags & TERMINATING)
     return;
 
   Flags |= TERMINATING;
 
   if(!Finished)
-  {
+  {DBGLN;
     if(GetActor()->IsPlayer())
       ADD_MESSAGE("You stop crafting.");
     else if(GetActor()->CanBeSeenByPlayer())
       ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
   }
 
-  action::Terminate(Finished);
+  action::Terminate(Finished);DBGLN;
 }
 
-craft::~craft(){ // called from Terminate()
+craft::~craft(){DBGLN; // called from Terminate()
   // cleanups if not finished
 
-  if(itWhat && itWhat->Exists()){
-    itWhat->SendToHell();
+  if(rpd.itSpawn && rpd.itSpawn->Exists()){DBGLN;
+    rpd.itSpawn->SendToHell();
   }
 
-  if(otWhat && otWhat->Exists()){
-    otWhat->SendToHell();
+  if(rpd.otSpawn && rpd.otSpawn->Exists()){DBGLN;
+    rpd.otSpawn->SendToHell();
   }
 }
 

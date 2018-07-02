@@ -425,7 +425,10 @@ void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())
@@ -640,7 +643,10 @@ void armor::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sh
   }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << ']';
+    Entry << " [" << GetWeight() * Amount << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue() << ']';
 }
 
 void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
@@ -650,7 +656,10 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue();
     Entry << ", " << GetBaseBlockValueDescription();
 
     int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
@@ -1387,7 +1396,10 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
 		Entry << ", " << GetBaseToHitValueDescription();
 
 		if(!IsBroken() && !IsWhip())

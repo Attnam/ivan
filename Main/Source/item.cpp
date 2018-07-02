@@ -756,8 +756,12 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
     AddName(Entry, PLURAL);
   }
 
-  if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g]"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
+  if(ShowSpecialInfo){
+    Entry << " [" << GetWeight() * Amount << "g"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() * Amount << "cm3";
+    Entry << "]";
+  }
 }
 
 const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig, int Configs, int ConfigNumber)

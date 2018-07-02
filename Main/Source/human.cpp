@@ -1779,16 +1779,16 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* itTool, item* itSpawn, int itSpawnTot, olterrain* otSpawn, v2 v2Where)
-{
-  craft* Act = craft::Spawn(this);
+void humanoid::SwitchToCraft(rpdata rpd)
+{DBGLN;
+  craft* Act = craft::Spawn(this);DBGLN;
 
-  if(itTool!=NULL){
+  if(rpd.itTool!=NULL){DBGLN;
     if(GetRightArm())
-    {
+    {DBGLN;
       item* Item = GetRightArm()->GetWielded();
 
-      if(Item && Item != itTool)
+      if(Item && Item != rpd.itTool)
       {
         Act->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
         GetRightArm()->GetWielded()->MoveTo(GetStack());
@@ -1796,32 +1796,32 @@ void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish,
     }
 
     if(GetLeftArm())
-    {
+    {DBGLN;
       item* Item = GetLeftArm()->GetWielded();
 
-      if(Item && Item != itTool)
+      if(Item && Item != rpd.itTool)
       {
         Act->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
         GetLeftArm()->GetWielded()->MoveTo(GetStack());
       }
     }
 
-    if(GetMainWielded() != itTool)
-    {
+    if(GetMainWielded() != rpd.itTool)
+    {DBGLN;
       Act->SetMoveCraftTool(true);
-      itTool->RemoveFromSlot();
+      rpd.itTool->RemoveFromSlot();
 
       if(GetMainArm() && GetMainArm()->IsUsable())
-        GetMainArm()->SetWielded(itTool);
+        GetMainArm()->SetWielded(rpd.itTool);
       else
-        GetSecondaryArm()->SetWielded(itTool);
+        GetSecondaryArm()->SetWielded(rpd.itTool);
     }
     else
       Act->SetMoveCraftTool(false);
-  }
+  }DBGLN;
 
-  Act->SetCraftWhat(ingredients,iTurnsToFinish, itTool!=NULL, itSpawn,itSpawnTot, otSpawn,v2Where);
-  SetAction(Act);
+  Act->SetCraftWhat(rpd);DBGLN;
+  SetAction(Act);DBGLN;
 }
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)

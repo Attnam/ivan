@@ -125,6 +125,9 @@ truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
 truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
                                           "only pile clutter with equal weights on list", //clutter are useful now for crafting so their weight matters...
                                           false);
+truthoption ivanconfig::ShowVolume(       "ShowVolume",
+                                          "show items volume in cm3",
+                                          false);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
                                           false,
@@ -931,6 +934,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
   configsystem::AddOption(fsCategory,&AllWeightIsRelevant);
+  configsystem::AddOption(fsCategory,&ShowVolume);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

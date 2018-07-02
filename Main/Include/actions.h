@@ -18,6 +18,7 @@
 #include "v2.h"
 #include "lterra.h"
 #include "item.h"
+#include "craft.h"
 
 ACTION(unconsciousness, action)
 {
@@ -99,13 +100,12 @@ ACTION(dig, action)
 ACTION(craft, action)
 {
  public:
-  craft() : RightBackupID(0), LeftBackupID(0) { }
+  craft() : RightBackupID(0), LeftBackupID(0), rpd(NULL) { }
   ~craft();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetCraftWhat(std::vector<ulong> ingredients, int iTurns, truth toolRequired, item* itSpawn, int itTot, olterrain* otSpawn=NULL, v2 v2Where=v2(0,0))
-    { Ingredients=ingredients, iTurnsToFinish=iTurns; ToolRequired=toolRequired; itWhat=itSpawn; itWhatTot=itTot; itWhatID=itWhat?itWhat->GetID():0; otWhat=otSpawn; v2PlaceAt=v2Where; }
+  void SetCraftWhat(rpdata rpdCopyFrom){rpd=rpdCopyFrom; ToolRequired=rpd.itTool!=NULL; itWhatID=rpd.itSpawn?rpd.itSpawn->GetID():0;}
   virtual void Terminate(truth);
   void SetRightBackupID(ulong What) { RightBackupID = What; }
   void SetLeftBackupID(ulong What) { LeftBackupID = What; }
@@ -114,17 +114,12 @@ ACTION(craft, action)
   virtual truth ShowEnvironment() const { return false; }
   void SetMoveCraftTool(truth What) { MoveCraftTool = What; }
  protected:
+  rpdata rpd;
   ulong RightBackupID;
   ulong LeftBackupID;
   truth MoveCraftTool;
-  std::vector<ulong> Ingredients;
-  int iTurnsToFinish;
-  int itWhatTot;
   truth ToolRequired;
-  item* itWhat;
   ulong itWhatID;
-  olterrain* otWhat;
-  v2 v2PlaceAt;
 };
 
 ACTION(go, action)
