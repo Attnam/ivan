@@ -17,9 +17,14 @@
 #include <iostream>
 #include <vector>
 #include <bitset>
+#include <ctime>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
+#endif
+
+#ifdef UNIX
+#include <time.h>
 #endif
 
 #ifdef WIN32
@@ -3270,6 +3275,21 @@ int game::Load(cfestring& saveName)
   return LOADED;
 }
 
+/**
+ * this prevents all possibly troublesome characters in all OSs
+ */
+void fixChars(festring& fs)
+{
+  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
+  {
+    if(fs[i]>='A' && fs[i]<='Z')continue;
+    if(fs[i]>='a' && fs[i]<='z')continue;
+    if(fs[i]>='0' && fs[i]<='9')continue;
+
+    fs[i] = '_';
+  }
+}
+
 festring game::SaveName(cfestring& Base)
 {
   festring SaveName = GetSaveDir();
@@ -3289,19 +3309,19 @@ festring game::SaveName(cfestring& Base)
   }
   else
   {
+    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    std::string strASFN; strASFN = AutoSaveFileName.CStr();
+    // this is important in case player name changes like when using the fantasy name generator
+    if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
+      AutoSaveFileName.Empty();
+
     if(AutoSaveFileName.GetSize() == 0)
     {
-      AutoSaveFileName << PlayerName << '_' << time(0);  // e.g. PlayerName-1529392480
-  
-      for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
-      {
-        // this prevents all possibly troublesome characters in all OSs
-        if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
-        if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
-        if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
-  
-        AutoSaveFileName[i] = '_';
-      }
+      int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
+      strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
+
+      AutoSaveFileName << PlayerName << '_' << cTime;
+      fixChars(AutoSaveFileName);
     }
     SaveName << AutoSaveFileName;
   }
