@@ -29,6 +29,7 @@
 #include "message.h"
 #include "miscitem.h"
 #include "nonhuman.h"
+#include "proto.h"
 #include "room.h"
 #include "stack.h"
 #include "team.h"
