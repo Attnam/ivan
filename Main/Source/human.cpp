@@ -1779,7 +1779,7 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* itTool, item* itSpawn, olterrain* otSpawn, v2 v2Where)
+void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* itTool, item* itSpawn, int itSpawnTot, olterrain* otSpawn, v2 v2Where)
 {
   craft* Act = craft::Spawn(this);
 
@@ -1820,7 +1820,7 @@ void humanoid::SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish,
       Act->SetMoveCraftTool(false);
   }
 
-  Act->SetCraftWhat(ingredients,iTurnsToFinish, itTool!=NULL, itSpawn,otSpawn,v2Where);
+  Act->SetCraftWhat(ingredients,iTurnsToFinish, itTool!=NULL, itSpawn,itSpawnTot, otSpawn,v2Where);
   SetAction(Act);
 }
 

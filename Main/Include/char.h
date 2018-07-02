@@ -417,7 +417,7 @@ class character : public entity, public id
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
-  virtual void SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* ActItem, item* itSpawn, olterrain* otSpawn, v2 v2Where) { }
+  virtual void SwitchToCraft(std::vector<ulong> ingredients, int iTurnsToFinish, item* ActItem, item* itSpawn, int itSpawnTot, olterrain* otSpawn, v2 v2Where) { }
   virtual void SwitchToDig(item*, v2) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }

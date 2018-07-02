@@ -104,8 +104,8 @@ ACTION(craft, action)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetCraftWhat(std::vector<ulong> ingredients, int iTurns, truth toolRequired, item* itSpawn, olterrain* otSpawn=NULL, v2 v2Where=v2(0,0)) {
-    Ingredients=ingredients, iTurnsToFinish=iTurns; ToolRequired=toolRequired; itWhat=itSpawn; itWhatID=itWhat?itWhat->GetID():0; otWhat=otSpawn; v2PlaceAt=v2Where; }
+  void SetCraftWhat(std::vector<ulong> ingredients, int iTurns, truth toolRequired, item* itSpawn, int itTot, olterrain* otSpawn=NULL, v2 v2Where=v2(0,0))
+    { Ingredients=ingredients, iTurnsToFinish=iTurns; ToolRequired=toolRequired; itWhat=itSpawn; itWhatTot=itTot; itWhatID=itWhat?itWhat->GetID():0; otWhat=otSpawn; v2PlaceAt=v2Where; }
   virtual void Terminate(truth);
   void SetRightBackupID(ulong What) { RightBackupID = What; }
   void SetLeftBackupID(ulong What) { LeftBackupID = What; }
@@ -119,6 +119,7 @@ ACTION(craft, action)
   truth MoveCraftTool;
   std::vector<ulong> Ingredients;
   int iTurnsToFinish;
+  int itWhatTot;
   truth ToolRequired;
   item* itWhat;
   ulong itWhatID;

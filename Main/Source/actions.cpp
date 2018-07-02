@@ -12,6 +12,8 @@
 
 /* Compiled through actset.cpp */
 
+#include "dbgmsgproj.h"
+
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
 cchar* unconsciousness::GetDescription() const { return "unconscious"; }
 cchar* consume::GetDescription() const { return Description.CStr(); }
@@ -213,31 +215,34 @@ void rest::Terminate(truth Finished)
 void craft::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << iTurnsToFinish << ToolRequired << itWhatID << otWhat << v2PlaceAt << MoveCraftTool << RightBackupID << LeftBackupID;
+  SaveFile << iTurnsToFinish << ToolRequired << itWhatID << itWhatTot << otWhat << v2PlaceAt << MoveCraftTool << RightBackupID << LeftBackupID;
 }
 
 void craft::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> iTurnsToFinish >> ToolRequired >> itWhatID >> otWhat >> v2PlaceAt >> MoveCraftTool >> RightBackupID >> LeftBackupID;
+  SaveFile >> iTurnsToFinish >> ToolRequired >> itWhatID >> itWhatTot >> otWhat >> v2PlaceAt >> MoveCraftTool >> RightBackupID >> LeftBackupID;
 }
 
 void craft::Handle()
-{
+{DBGLN;
+  if(itWhatID!=0 && itWhat==NULL)
+    itWhat = game::SearchItem(itWhatID); // here to work correctly at ~craft
+
   character* Actor = GetActor();
   item* Tool = Actor->GetMainWielded();
 
   if(ToolRequired && Tool==NULL)
-  {
-    ADD_MESSAGE("You have not the required tool to craft this.");
+  {DBGLN;
+    ADD_MESSAGE("You have not the required tool to craft this."); //TODO like in case the tool is destroyed by sulf. acid?
     Terminate(false);
     return;
   }
 
   lsquare* lsqrWhere = Actor->GetNearLSquare(v2PlaceAt);
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
-  if(otWhat!=NULL && oltExisting!=NULL){
-    ADD_MESSAGE("%s cannot be placed there.", otWhat->GetName(DEFINITE).CStr());
+  if(otWhat!=NULL && oltExisting!=NULL){DBGLN;
+    ADD_MESSAGE("%s cannot be placed there.", otWhat->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
     Terminate(false);
     return;
   }
@@ -251,16 +256,27 @@ void craft::Handle()
   int Case = INDEFINITE;
   if(finished)
   {
-    if(itWhatID!=0){
-      if(itWhat==NULL)
-        itWhat = game::SearchItem(itWhatID);
+    if(itWhat!=NULL){DBGLN;
+      item* itWhatTmp=itWhat;
+      itWhat=NULL; //see ~craft
+      itWhatID=0;
 
-      if(itWhat!=NULL){
-        itWhat->MoveTo(Actor->GetStack());
-        fsCreated << itWhat->GetName(Case);
-        fsMsg << "You prepared " << fsCreated.CStr();
-        itWhat=NULL; //see destructor
+      if(itWhatTot > 1){DBGLN;
+        fsCreated << itWhatTot << " " << itWhatTmp->GetNamePlural();DBGLN;
+        for(int i=0;i<itWhatTot-1;i++){ //-1 as the last one will be the original
+          /**
+           * IMPORTANT!!!
+           * the duplicator will vanish with the item ID that is being duplicated
+           */
+          itWhatTmp->DuplicateToStack(Actor->GetStack());
+        }
+      }else{DBGLN;
+        fsCreated << itWhatTmp->GetName(Case);
       }
+
+      itWhatTmp->MoveTo(Actor->GetStack());DBGLN;
+
+      fsMsg << "You prepared "<< fsCreated.CStr();
     }
 
     int iWallMaterialConfig=-1;
@@ -273,46 +289,47 @@ void craft::Handle()
       fsCreated << otWhat->GetName(Case);
       fsMsg << "You built " << fsCreated.CStr();
 
-      otWhat=NULL; //see destructor
+      otWhat=NULL; //see ~craft
     }
 
     festring fsIng,fsIngP;
     festring fsIngPrev,fsIngPPrev;
     int iCountEqual=1;
     festring fsIngMsg("");
-    for(int i=0;i<Ingredients.size();i++){
-      item* it=game::SearchItem(Ingredients[i]);
-      it->RemoveFromSlot();
+    for(int i=0;i<Ingredients.size();i++){DBG1(Ingredients[i]);
+      item* it=game::SearchItem(Ingredients[i]);DBGLN;
+      if(it==NULL)ABORT("ingredient id %d not found",Ingredients[i]);
+      it->RemoveFromSlot();DBGLN;
 
       bool bSendToHell=true;
-      if(iWallMaterialConfig!=-1){
+      if(iWallMaterialConfig!=-1){DBGLN;
         if(it->GetMainMaterial()->GetConfig() != iWallMaterialConfig)
           bSendToHell=false;
       }
 
-      if(bSendToHell){
+      if(bSendToHell){DBGLN;
         it->SendToHell();
-      }else{
+      }else{DBGLN;
         //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
         //TODO what about amulet of phasing or ghost mode?
         it->MoveTo(lsqrWhere->GetStack());
-      }
+      }DBGLN;
 
-      fsIng.Empty();fsIng << it->GetName(Case);
-      fsIngP.Empty();fsIngP << it->GetName(PLURAL);
+      fsIng.Empty();fsIng << it->GetName(Case);DBGLN;
+      fsIngP.Empty();fsIngP << it->GetName(PLURAL);DBGLN;
       if(fsCreated==fsIng)continue;
 
-      bool bNewType = fsIngPrev!=fsIng;
+      bool bNewType = fsIngPrev!=fsIng;DBGLN;
 
       bool bDumpPrev = false;
       if(bNewType)
         bDumpPrev=true;
-      if(i==Ingredients.size()-1){
+      if(i==Ingredients.size()-1){DBGLN;
         bDumpPrev=true;
         fsIngPrev=fsIng;
       }
 
-      if(bDumpPrev){
+      if(bDumpPrev){DBGLN;
         if(fsIngMsg.GetSize()>0)
           fsIngMsg<<", ";
 
@@ -345,29 +362,29 @@ void craft::Handle()
    * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
    * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
    *******************/
-  truth MoveCraftTool = this->MoveCraftTool;
+  truth MoveCraftTool = this->MoveCraftTool;DBGLN;
   ulong RightBackupID = this->RightBackupID;
   ulong LeftBackupID = this->LeftBackupID;
 
-  Actor->EditExperience(DEXTERITY, 200, 1 << 5); //TODO are these values good for crafting?
+  Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-500);
 
-  truth AlreadyTerminated = Actor->GetAction() != this;
+  truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
   truth Stopped = finished || AlreadyTerminated;
 
   if(finished && !AlreadyTerminated)
     Terminate(true);
 
   if(Stopped)
-  {
+  {DBGLN;
     if(MoveCraftTool && Actor->GetMainWielded())
       Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
     item* RightBackup = game::SearchItem(RightBackupID);
 
     if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
-    {
+    {DBGLN;
       RightBackup->RemoveFromSlot();
       Actor->SetRightWielded(RightBackup);
     }
@@ -375,7 +392,7 @@ void craft::Handle()
     item* LeftBackup = game::SearchItem(LeftBackupID);
 
     if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
-    {
+    {DBGLN;
       LeftBackup->RemoveFromSlot();
       Actor->SetLeftWielded(LeftBackup);
     }
