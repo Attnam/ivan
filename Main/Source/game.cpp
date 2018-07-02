@@ -5800,6 +5800,7 @@ int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowE
   for(;;)
   {
     festring Temp;
+    Temp << DefaultWish; // to let us fix previous instead of having to fully type it again
 
     if(DefaultQuestion(Temp, CONST_S("What do you want to wish for?"), DefaultWish, AllowExit) == ABORTED)
       return ABORTED;

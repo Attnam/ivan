@@ -1092,6 +1092,7 @@ recipe rpWall;
 recipe rpPoison;
 recipe rpAcid;
 recipe rpMelt;
+recipe rpForgeItem;
 //recipe rpChair("build","a chair");
 //recipe rpWall("construct","a wall");
 //recipe rpExtrctFluids("extract","fluids");
@@ -1102,13 +1103,68 @@ void addRecipe(recipe* prp){
   craftRecipes.AddEntry(prp->name+" - "+prp->desc, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
   vrp.push_back(prp);
 }
-template <typename T> truth choseIngredients(long volume, itemvector& vitInv, character* Char, std::vector<ulong>& ingredients, int& iWeakestCfg, bool bMultSelect = true){DBGLN;
+itemvector vitInv(humanoid* h){
+  itemvector vi;
+  h->GetStack()->FillItemVector(vi);
+  if(h->GetLeftWielded ())vi.push_back(h->GetLeftWielded ());
+  if(h->GetRightWielded())vi.push_back(h->GetRightWielded());
+  return vi;
+}
+void lumpMix(itemvector vi,item* lumpToMix, bool& bSpendCurrentTurn){
+  // to easily (as possible) create a big lump
+  for(int i=0;i<vi.size();i++){
+    if(lumpToMix==vi[i])continue;
+
+    if(dynamic_cast<lump*>(vi[i])!=NULL){
+      lump* lumpAtInv = (lump*)vi[i];
+      if(lumpAtInv->GetMainMaterial()->GetConfig() == lumpToMix->GetMainMaterial()->GetConfig()){
+        lumpAtInv->GetMainMaterial()->SetVolume(
+          lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
+
+        lumpToMix->RemoveFromSlot();
+        lumpToMix->SendToHell(); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
+        bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+        break;
+      }
+    }
+  }
+}
+item* CreateLumpAtCharStack(material* mat, character* C){
+  if(mat==NULL)return NULL;
+  if(mat->IsLiquid()){
+    C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
+  }else{
+    item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
+    LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
+    C->GetStack()->AddItem(LumpTmp);
+    ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
+    return LumpTmp;
+  }
+  return NULL;
+}
+template <typename T> truth choseIngredients(
+    cfestring fsQ, long volume, humanoid* h, std::vector<ulong>& ingredients,
+    int& iWeakestCfg, bool& bSpendCurrentTurn, bool bMultSelect = true, int iReqCfg=0, bool bMainMaterRemainAsLump=false
+){DBGLN;
   // prepare the filter for ALL items also resetting them first!
-  for(int i=0;i<vitInv.size();i++){
-    vitInv[i]->SetValidRecipeIngredient(false);
-    if(dynamic_cast<T*>(vitInv[i])!=NULL){
-      if(vitInv[i]->IsBurning())continue;
-      vitInv[i]->SetValidRecipeIngredient(true);
+  const itemvector vi = vitInv(h);
+  for(int i=0;i<vi.size();i++){
+    vi[i]->SetValidRecipeIngredient(false);
+    if(dynamic_cast<T*>(vi[i])!=NULL){
+      if(vi[i]->IsBurning())continue;
+
+      if(iReqCfg>0 && vi[i]->GetConfig()!=iReqCfg)continue;
+
+      bool bAlreadyUsed=false;
+      for(int j=0;j<ingredients.size();j++){
+        if(vi[i]->GetID()==ingredients[j]){
+          bAlreadyUsed=true;
+          break;
+        }
+      }
+      if(bAlreadyUsed)continue;
+
+      vi[i]->SetValidRecipeIngredient(true);
     }
   }
 
@@ -1120,7 +1176,8 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
     itemvector ToUse;
     game::DrawEverythingNoBlit();
     int flags = bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
-    Char->GetStack()->DrawContents(ToUse, Char, festring("What ingredient(s) will you use?"), flags, &item::IsValidRecipeIngredient);
+    h->GetStack()->DrawContents(ToUse, h,
+      festring("What ingredient(s) will you use ")+fsQ+festring("?"), flags, &item::IsValidRecipeIngredient);
     if(ToUse.empty())
       break;
 
@@ -1135,8 +1192,24 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
       volume -= ToUse[i]->GetVolume(); DBG2(volume,ToUse[i]->GetVolume());
       ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
 
-      if(volume<=0)
+      if(volume<=0){
+        long lRemainingVol=volume*-1;
+        if(lRemainingVol>0 && bMainMaterRemainAsLump){
+          material* matM = ToUse[i]->GetMainMaterial();
+          long lVolM = matM->GetVolume();
+          lVolM -= lRemainingVol; //to sub
+          if(lVolM<=0)
+            ABORT("ingredient volume reduced to negative or zero %d %s",lVolM,ToUse[i]->GetNameSingular());
+          matM->SetVolume(lVolM);
+
+          item* lumpR = CreateLumpAtCharStack(matM, h);
+          lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
+
+          lumpMix(vi,lumpR,bSpendCurrentTurn);
+        }
+
         break;
+      }
     }
 
     if(volume<=0)
@@ -1147,14 +1220,15 @@ template <typename T> truth choseIngredients(long volume, itemvector& vitInv, ch
 
   return volume<=0;
 }
-template <typename T> void choseOneIngredient(itemvector& vitInv, character* Char, std::vector<ulong>& ingredients){
+template <typename T> void choseOneIngredient(humanoid* h, std::vector<ulong>& ingredients,bool& bSpendCurrentTurn){
   int iWeakestCfgDummy;
   choseIngredients<T>(
+    festring(""),
     1, //just to chose one of anything
-    vitInv,
-    Char,
+    h,
     ingredients,
     iWeakestCfgDummy,
+    bSpendCurrentTurn,
     false);
 }
 void addMissingMsg(festring& where, cfestring& what){
@@ -1186,10 +1260,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //  stack* pStackIngredients = new stack(NULL,Char);
 
   // collect requirements to display recipes
-  itemvector vitInv;
-  Char->GetStack()->FillItemVector(vitInv);
-  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
-  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
+//  itemvector vitInv;
+//  Char->GetStack()->FillItemVector(vitInv);
+//  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
+//  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
 
   //TODO check requirements and display recipes
   int iEntryIndex=0;
@@ -1222,6 +1296,38 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //  bool bBrokenTool=false;
 //  festring reqMissingMsg("");
 
+  ///////////////////////////// init
+  struct localFuncs{
+    int calcTurns(material* mat,float fMult=1.0){ //local function trick TODO anything better?
+      /**
+       * min is gold: str 55 and spends 5 turns each 1000cm3.
+       * TODO quite arbritrary but gameplay wise enough?
+       * TODO should use density? or something else than str? fireresistance is not melting point...
+       */
+      DBG2(mat->GetStrengthValue(),mat->GetVolume());
+      float f = 5 * fMult * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision
+      if(f>0 && f<1)f=1;
+      return f;
+    }
+    truth IsMeltable(material* mat){ //TODO add all meltables
+      if(mat->GetCategoryFlags() & IS_METAL)
+        return true;
+      if(mat->GetConfig()==GLASS)
+        return true;
+      return false;
+    }
+    item* FindTool(itemvector vitInv, int iCfg){
+      for(int i=0;i<vitInv.size();i++)
+        if(vitInv[i]->GetConfig()==iCfg)
+          return vitInv[i];
+      for(int i=0;i<vitInv.size();i++)
+        if(vitInv[i]->GetConfig()==(iCfg|BROKEN))
+          return vitInv[i];
+      return NULL;
+    }
+  };
+  static localFuncs lf;
+
   /****************************************************************************
    * extract fluids (not blood as it can be used as nutrition right?)
    */
@@ -1247,24 +1353,26 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       prp=&rpAcid;
     if(prp!=NULL){
       ///////////// tool ////////////////
-      for(int i=0;i<vitInv.size();i++){
-        if(vitInv[i]->GetConfig()==DAGGER){
-          itTool=vitInv[i];
-          break;
-        }
-      }
-
-      if(itTool==NULL)
-        for(int i=0;i<vitInv.size();i++){
-          if(vitInv[i]->GetConfig()==(DAGGER|BROKEN)){
-            itTool=vitInv[i];
-            break;
-          }
-        }
+      itTool = lf.FindTool(vitInv(h), DAGGER);
+//      for(int i=0;i<vitInv.size();i++){
+//        if(vitInv[i]->GetConfig()==DAGGER){
+//          itTool=vitInv[i];
+//          break;
+//        }
+//      }
+//
+//      if(itTool==NULL)
+//        for(int i=0;i<vitInv.size();i++){
+//          if(vitInv[i]->GetConfig()==(DAGGER|BROKEN)){
+//            itTool=vitInv[i];
+//            break;
+//          }
+//        }
       item* itCorpse=NULL;
       int iAcidicity=0;
-      for(int i=0;i<vitInv.size();i++){
-        corpse* Corpse = dynamic_cast<corpse*>(vitInv[i]);
+      itemvector vi = vitInv(h);
+      for(int i=0;i<vi.size();i++){
+        corpse* Corpse = dynamic_cast<corpse*>(vi[i]);
         if(Corpse!=NULL){
           character* D = Corpse->GetDeceased();
           static const materialdatabase* blood;blood = material::GetDataBase(D->GetBloodMaterial());
@@ -1285,8 +1393,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       material* mat = NULL;
       long currentVolume=0;
 
-      for(int i=0;i<vitInv.size();i++){
-        potion* pot = dynamic_cast<potion*>(vitInv[i]);
+      vi = vitInv(h);
+      for(int i=0;i<vi.size();i++){
+        potion* pot = dynamic_cast<potion*>(vi[i]);
         if(pot!=NULL){
           mat = pot->GetSecondaryMaterial();
           if(mat==NULL)continue;
@@ -1308,8 +1417,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       }
 
       if(itBottle==NULL)
-        for(int i=0;i<vitInv.size();i++){
-          potion* pot = dynamic_cast<potion*>(vitInv[i]);
+        itemvector vi = vitInv(h);
+        for(int i=0;i<vi.size();i++){
+          potion* pot = dynamic_cast<potion*>(vi[i]);
           if(pot!=NULL){
             mat = pot->GetSecondaryMaterial();
             if(mat==NULL) //empty
@@ -1367,30 +1477,35 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       int iBaseTurnsToFinish=10;
       int iAddTurns=0;
       float fIncTurnsStep=0.25;
+      itemvector vi = vitInv(h);
       for(int j=0;j<iTotToolTypes;j++){
         if(itTool!=NULL)break;
-        for(int i=0;i<vitInv.size();i++){
-          if(vitInv[i]->GetConfig()==aiTypes[j] || vitInv[i]->GetConfig()==(aiTypes[j]|BROKEN)){
-            itTool=vitInv[i];
-            iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
-            break;
-          }
-        }
+        itTool = lf.FindTool(vi, aiTypes[j]);
+        if(itTool)
+          iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
+//        for(int i=0;i<vitInv.size();i++){
+//          if(vitInv[i]->GetConfig()==aiTypes[j] || vitInv[i]->GetConfig()==(aiTypes[j]|BROKEN)){
+//            itTool=vitInv[i];
+//            iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
+//            break;
+//          }
+//        }
       }
 
       lsqrWhere=lsqrCharPos;
       if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
         bCanBePlaced=true;
 
+        festring fsQ("to build ");fsQ<<prp->name;
         int iCfg=-1;
         //TODO this volume should be on the .dat file as chair attribute...
         if(!bHasAllIngredients){
           ingredients.clear();
-          bHasAllIngredients=choseIngredients<stick>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<stick>(fsQ,iReqStickVol, h, ingredients, iCfg, bSpendCurrentTurn);
         }
         if(!bHasAllIngredients){
           ingredients.clear();
-          bHasAllIngredients=choseIngredients<bone>(iReqStickVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<bone>(fsQ,iReqStickVol, h, ingredients, iCfg, bSpendCurrentTurn);
         }
         if(bHasAllIngredients){
           v2PlaceAt = lsqrWhere->GetPos();
@@ -1411,7 +1526,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   { // a block to reuse var names w/o specifying the recipe name on them
     if(rpWall.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       rpWall.init("construct","a wall");
-      rpWall.desc << "Pile stones or skulls to create a wall.";
+      rpWall.desc << "Pile stones or skulls to create " << rpWall.name;
     }
     if(Selected == rpWall.iListIndex){ // a wall will destroy whatever is in the place
       prp = &rpWall;
@@ -1423,17 +1538,18 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       if(lsqrWhere!=NULL && lsqrWhere->GetOLTerrain()==NULL && lsqrWhere->GetCharacter()==NULL){
         bCanBePlaced=true;
 
+        festring fsQ("to build ");fsQ<<prp->name;
         int iCfg=-1;
         int iVol=-1;
         if(!bHasAllIngredients){
           ingredients.clear();
           iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
-          bHasAllIngredients=choseIngredients<stone>(iVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<stone>(fsQ,iVol, h, ingredients, iCfg, bSpendCurrentTurn);
         }
         if(!bHasAllIngredients){
           ingredients.clear();
           iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
-          bHasAllIngredients=choseIngredients<skull>(iVol, vitInv, Char, ingredients, iCfg);
+          bHasAllIngredients=choseIngredients<skull>(fsQ,iVol, h, ingredients, iCfg, bSpendCurrentTurn);
         }
         //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
         if(bHasAllIngredients){
@@ -1450,13 +1566,12 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
   /**********************************************************************************************
    * melt
-   *
    * lumps are not usable until melt into an ingot.
    */
   for(;;){ //loop just to lower the code nesting..
     // also a block to reuse var names w/o specifying the recipe name on them
     if(rpMelt.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      rpMelt.init("melt","ingot");
+      rpMelt.init("melt","an ingot");
       rpMelt.desc << "Near a forge you can melt things.";
     }
 
@@ -1464,41 +1579,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       break; //actually exits this recipe flow
 
     prp = &rpMelt;
-
-    ///////////////////////////// init
-    struct localFuncs{
-      int calcTurns(material* mat){ //local function trick TODO anything better?
-        /**
-         * min is gold: str 55 and spends 5 turns each 1000cm3.
-         * TODO quite arbritrary but gameplay wise enough?
-         * TODO should use density? or something else than str? fireresistance is not melting point...
-         */
-        float f = 5 * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision
-        if(f>0 && f<1)f=1;
-        return f;
-      }
-      item* CreateLumpAtCharStack(material* mat, character* C){
-        if(mat==NULL)return NULL;
-        if(mat->IsLiquid()){
-          C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
-        }else{
-          item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
-          LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-          C->GetStack()->AddItem(LumpTmp);
-          ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
-          return LumpTmp;
-        }
-        return NULL;
-      }
-      truth IsMeltable(material* mat){ //TODO add all meltables
-        if(mat->GetCategoryFlags() & IS_METAL)
-          return true;
-        if(mat->GetConfig()==GLASS)
-          return true;
-        return false;
-      }
-    };
-    static localFuncs lf;
 
     ////////////// find the FORGE
     lsquare* lsqrFORGE = NULL;
@@ -1524,7 +1604,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
     ///////////////////// chose item to melt/smash
     game::DrawEverythingNoBlit();
-    choseOneIngredient<item>(vitInv, Char, ingredients);DBGLN;
+    choseOneIngredient<item>(h, ingredients, bSpendCurrentTurn);DBGLN;
     if(ingredients.empty())
       break; //actually exits this recipe flow
 
@@ -1559,13 +1639,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
 
       { // main material ALWAYS exist
-        item* LumpM = lf.CreateLumpAtCharStack(matM,Char);
+        item* LumpM = CreateLumpAtCharStack(matM,Char);
         if(lf.IsMeltable(LumpM->GetMainMaterial()))
           LumpMeltable = LumpM;
       }
 
       {
-        item* LumpS = lf.CreateLumpAtCharStack(matS,Char); //must always be prepared to not lose it
+        item* LumpS = CreateLumpAtCharStack(matS,Char); //must always be prepared to not lose it
         if( LumpS!=NULL && lf.IsMeltable(LumpS->GetMainMaterial()) )
           LumpMeltable = LumpS;
       }
@@ -1587,23 +1667,25 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
 
     if(bJustLumpfyTheIngot){
-      // to easily (as possible) create a big lump
-      for(int i=0;i<vitInv.size();i++){
-        if(LumpMeltable==vitInv[i])continue;
-
-        if(dynamic_cast<lump*>(vitInv[i])!=NULL){
-          lump* lumpAtInv = (lump*)vitInv[i];
-          if(lumpAtInv->GetMainMaterial()->GetConfig() == LumpMeltable->GetMainMaterial()->GetConfig()){
-            lumpAtInv->GetMainMaterial()->SetVolume(
-              lumpAtInv->GetMainMaterial()->GetVolume() + LumpMeltable->GetMainMaterial()->GetVolume());
-
-            LumpMeltable->RemoveFromSlot();
-            LumpMeltable->SendToHell(); DBG5("SentToHell",LumpMeltable,LumpMeltable->GetID(),lumpAtInv,lumpAtInv->GetID());
-            bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
-            break;
-          }
-        }
-      }
+      lumpMix(vitInv(h),LumpMeltable,bSpendCurrentTurn);
+//      // to easily (as possible) create a big lump
+//      itemvector vi = vitInv(h);
+//      for(int i=0;i<vi.size();i++){
+//        if(LumpMeltable==vi[i])continue;
+//
+//        if(dynamic_cast<lump*>(vi[i])!=NULL){
+//          lump* lumpAtInv = (lump*)vi[i];
+//          if(lumpAtInv->GetMainMaterial()->GetConfig() == LumpMeltable->GetMainMaterial()->GetConfig()){
+//            lumpAtInv->GetMainMaterial()->SetVolume(
+//              lumpAtInv->GetMainMaterial()->GetVolume() + LumpMeltable->GetMainMaterial()->GetVolume());
+//
+//            LumpMeltable->RemoveFromSlot();
+//            LumpMeltable->SendToHell(); DBG5("SentToHell",LumpMeltable,LumpMeltable->GetID(),lumpAtInv,lumpAtInv->GetID());
+//            bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+//            break;
+//          }
+//        }
+//      }
       break; //actually exits this recipe flow
     }
 
@@ -1652,6 +1734,126 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     break; //LAST THING!!!!! required to surely exit the loop-block trick
   }
 
+  /**********************************************************************************************
+   * melt
+   * lumps are not usable until melt into an ingot.
+   */
+  for(;;){ //loop just to lower the code nesting..
+    // also a block to reuse var names w/o specifying the recipe name on them
+    if(rpForgeItem.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      rpForgeItem.init("forge","an item");
+      rpForgeItem.desc << "Using a hammer, close to an anvil and with a forge nearby you can create items.";
+    }
+
+    if(Selected != rpForgeItem.iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
+      break; //actually exits this recipe flow
+
+    prp = &rpForgeItem;
+
+    ////////////// find the anvil
+    lsquare* lsqrAnvil = NULL;
+    for(int iDir=0;iDir<8;iDir++){
+      v2 v2Add = game::GetMoveVector(iDir);
+      v2 v2Pos = Char->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
+      if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+        lsquare* lsqr = Char->GetNearLSquare(v2Pos);DBG1(lsqr);
+        olterrain* ot = lsqr->GetOLTerrain();
+        if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(Char)){
+          lsqrAnvil = lsqr;
+          break;
+        }
+      }
+    }
+    if(lsqrAnvil==NULL){
+      ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
+      break; //actually exits this recipe flow
+    }
+
+    ////////////// find the forge
+    lsquare* lsqrForge = NULL;
+    for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){
+      for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+        lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
+        olterrain* ot = lsqr->GetOLTerrain();
+        if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(Char)){
+          lsqrForge = lsqr;
+          break;
+        }
+      }
+    }
+    if(lsqrForge==NULL){
+      ADD_MESSAGE("No visible forge nearby."); //TODO allow user miss-chose
+      break; //actually exits this recipe flow
+    }
+
+    itTool = lf.FindTool(vitInv(h), HAMMER);
+    if(itTool==NULL)
+      break; //actually exits this recipe flow
+
+    //////////////// let user type the item name
+    festring Default;
+    item* TempItem = NULL;
+    for(;;){
+      festring Temp;
+      Temp << Default; // to let us fix previous instead of having to fully type it again
+
+      if(game::DefaultQuestion(Temp, CONST_S("What do you want to create?"), Default, true) == ABORTED){DBGLN;
+        break;
+      }
+
+      TempItem = protosystem::CreateItemToCraft(Temp);DBGLN;
+
+      if(TempItem){DBGLN;
+        break;
+      }else{
+        ADD_MESSAGE("Be more precise!");
+      }
+
+      Default.Empty();DBGLN;
+      Default << Temp;
+    }
+
+    if(TempItem==NULL)
+      break; //actually exits this recipe flow
+
+    material* matM = TempItem->GetMainMaterial();
+
+    long lVolM = matM->GetVolume();
+    material* matS = TempItem->GetSecondaryMaterial();
+
+    long lVolS = 0;
+    if(matS!=NULL)
+      lVolS = matS->GetVolume();
+
+    DBG2(lVolM,lVolS);
+    int iCfgM=-1;
+    int iCfgS=-1;
+    if(
+      choseIngredients<stone>(festring("as main material"     ),lVolM, h, ingredients, iCfgM, bSpendCurrentTurn, true, INGOT,true) &&
+      choseIngredients<stone>(festring("as secondary material"),lVolS, h, ingredients, iCfgS, bSpendCurrentTurn, true, INGOT,true)
+    ){
+      bHasAllIngredients=true;
+
+      TempItem->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
+      TempItem->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
+      itSpawn = TempItem;
+
+      float fMult=10;//hammering to form it takes time even if the volume is low.
+      iBaseTurnsToFinish=lf.calcTurns(matM,fMult);DBG1(iBaseTurnsToFinish);
+      if(matS!=NULL){
+        iBaseTurnsToFinish+=lf.calcTurns(matS,fMult);DBG1(iBaseTurnsToFinish);
+      }
+
+//      if(iBaseTurnsToFinish>1){
+//        iBaseTurnsToFinish*=10;DBG1(iBaseTurnsToFinish); //hammering to form it takes time even if the volume is low.
+//      }
+
+      bCanStart=true;
+    }
+
+    break; //LAST THING!!!!! required to surely exit the loop-block trick
+  }
+
   /******************************************************************************************
    * 1st call it just initializes the recipes list after all recipes have been configured!
    */
@@ -1661,6 +1863,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     addRecipe(&rpPoison);
     addRecipe(&rpAcid);
     addRecipe(&rpMelt);
+    addRecipe(&rpForgeItem);
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
   }
 
@@ -1720,7 +1923,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           item* itDbg123=game::SearchItem(ingredients[iDbg123]);
           if(itDbg123==NULL)ABORT("ingredient id %d vanished?",ingredients[iDbg123]);
         }
-      );
+      );DBG1(iBaseTurnsToFinish);
       Char->SwitchToCraft(ingredients, iBaseTurnsToFinish*iCraftTimeMult, itTool, itSpawn, itSpawnTot, otSpawn,
         lsqrWhere?lsqrWhere->GetPos():lsqrCharPos->GetPos() );
 
