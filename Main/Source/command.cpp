@@ -1319,11 +1319,28 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
     item* FindTool(itemvector vitInv, int iCfg){
       for(int i=0;i<vitInv.size();i++)
-        if(vitInv[i]->GetConfig()==iCfg)
+        if(dynamic_cast<meleeweapon*>(vitInv[i])!=NULL && vitInv[i]->GetConfig()==iCfg)
           return vitInv[i];
       for(int i=0;i<vitInv.size();i++)
-        if(vitInv[i]->GetConfig()==(iCfg|BROKEN))
+        if(dynamic_cast<meleeweapon*>(vitInv[i])!=NULL && vitInv[i]->GetConfig()==(iCfg|BROKEN))
           return vitInv[i];
+      return NULL;
+    }
+    item* FindHammeringTool(humanoid* h, int& iBaseTurnsToFinish){
+      int iBaseTurns = iBaseTurnsToFinish;
+      static const int iTotToolTypes=4;
+      static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER,MACE}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
+      float fIncTurnsStep=0.25;
+      itemvector vi = vitInv(h);
+      item* it = NULL;
+      for(int j=0;j<iTotToolTypes;j++){DBG2(j,aiTypes[j]);
+        it = FindTool(vi, aiTypes[j]);
+        if(it){DBG2(it->GetConfig(),it->GetName(DEFINITE).CStr());
+          int iAddTurns=iBaseTurns*(j*fIncTurnsStep);
+          iBaseTurnsToFinish = iBaseTurns + iAddTurns;
+          return it;
+        }
+      }
       return NULL;
     }
   };
@@ -1462,36 +1479,34 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
    * chair
    */
   { // a block to reuse var names w/o specifying the recipe name on them
-    static const int iTotToolTypes=3;
+//    static const int iTotToolTypes=3;
     // types InOrderOfPreference
-    static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
+//    static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER,MACE}; //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
     static const int iReqStickVol=20000;
     if(rpChair.desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       rpChair.init("build","a chair");
-      rpChair.desc << "Use hammers or a frying pan with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
+      rpChair.desc << "Use hammers, a frying pan or even a mace with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
     }
 //    if(strlen(rpChair.desc)==0) //TODO automate the sync of req ingredients description
 //      sprintf(rpChair.desc,"Use hammers or a frying pan and %d cm3 of sticks.",iReqStickVol); //TODO needs nails ingredients (for hammer) or glue (no hammer needed then)
     if(Selected == rpChair.iListIndex){
       prp=&rpChair;
 
-      int iBaseTurnsToFinish=10;
-      int iAddTurns=0;
-      float fIncTurnsStep=0.25;
-      itemvector vi = vitInv(h);
-      for(int j=0;j<iTotToolTypes;j++){
-        if(itTool!=NULL)break;
-        itTool = lf.FindTool(vi, aiTypes[j]);
-        if(itTool)
-          iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
-//        for(int i=0;i<vitInv.size();i++){
-//          if(vitInv[i]->GetConfig()==aiTypes[j] || vitInv[i]->GetConfig()==(aiTypes[j]|BROKEN)){
-//            itTool=vitInv[i];
-//            iAddTurns=iBaseTurnsToFinish*(j*fIncTurnsStep);
-//            break;
-//          }
+      iBaseTurnsToFinish=10;
+      itTool = lf.FindHammeringTool(h,iBaseTurnsToFinish);
+//      int iBT=10;
+//      int iAddTurns=0;
+//      float fIncTurnsStep=0.25;
+//      itemvector vi = vitInv(h);
+//      for(int j=0;j<iTotToolTypes;j++){
+//        if(itTool!=NULL)break;
+//        itTool = lf.FindTool(vi, aiTypes[j]);
+//        if(itTool){
+//          iAddTurns=iBT*(j*fIncTurnsStep);
+//          break;
 //        }
-      }
+//      }
+//      iBaseTurnsToFinish = iBT + iAddTurns;
 
       lsqrWhere=lsqrCharPos;
       if(lsqrWhere->GetOLTerrain()==NULL && itTool!=NULL){
@@ -1512,8 +1527,6 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
           v2PlaceAt = lsqrWhere->GetPos();
           otSpawn=decoration::Spawn(CHAIR);
           otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
-          iBaseTurnsToFinish=10;
-
           bCanStart=true;
         }
       }
@@ -1736,8 +1749,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   }
 
   /**********************************************************************************************
-   * melt
-   * lumps are not usable until melt into an ingot.
+   * forge items
    */
   for(;;){ //loop just to lower the code nesting..
     // also a block to reuse var names w/o specifying the recipe name on them
@@ -1787,9 +1799,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       break; //actually exits this recipe flow
     }
 
-    itTool = lf.FindTool(vitInv(h), HAMMER);
-    if(itTool==NULL)
-      break; //actually exits this recipe flow
+//    itTool = lf.FindTool(vitInv(h), HAMMER);
+//    itTool = lf.FindHammeringTool(h,10,iBaseTurnsToFinish);
+//    if(itTool==NULL)
+//      break; //actually exits this recipe flow
 
     //////////////// let user type the item name
     festring Default;
@@ -1845,6 +1858,10 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         iBaseTurnsToFinish+=lf.calcTurns(matS,fMult);DBG1(iBaseTurnsToFinish);
       }
 
+      itTool = lf.FindHammeringTool(h,iBaseTurnsToFinish);
+      if(itTool==NULL)
+        break; //actually exits this recipe flow
+
 //      if(iBaseTurnsToFinish>1){
 //        iBaseTurnsToFinish*=10;DBG1(iBaseTurnsToFinish); //hammering to form it takes time even if the volume is low.
 //      }
@@ -1873,6 +1890,9 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
   //TODO these messages are generic, therefore dont look good... improve it
   if(bCanStart){
+    if(itTool!=NULL)
+      ADD_MESSAGE("My tool will be %s",itTool->GetName(INDEFINITE).CStr());
+
     object* pChk=NULL;
     for(int i=0;i<2;i++){
       bool bAbort=false;
@@ -1939,8 +1959,12 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
     else if(!bHasAllIngredients){
       festring fsMsg;
-      fsMsg<<"Requirements to "<<prp->action<<" "<<prp->name<<" are not met.";
+      fsMsg<<"Required ingredients to "<<prp->action<<" "<<prp->name<<" are not met.";
       ADD_MESSAGE(fsMsg.CStr());
+    }else if(itTool == NULL){ //TODO a bool to determine if tools is req?
+      ADD_MESSAGE("Required tool is missing.");
+    }else{
+      ABORT("explain why crafting won't work.");
     }
   }
 
