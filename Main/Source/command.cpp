@@ -1200,7 +1200,7 @@ template <typename T> truth choseIngredients(
           long lVolM = matM->GetVolume();
           lVolM -= lRemainingVol; //to sub
           if(lVolM<=0)
-            ABORT("ingredient volume reduced to negative or zero %d %s",lVolM,ToUse[i]->GetNameSingular());
+            ABORT("ingredient volume reduced to negative or zero %d %s",lVolM,ToUse[i]->GetNameSingular().CStr());
           matM->SetVolume(lVolM);
 
           item* lumpR = CreateLumpAtCharStack(matM, h);
