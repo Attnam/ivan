@@ -189,7 +189,7 @@ truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
-festring game::AutoSaveFileName;
+festring game::CurrentBaseSaveFileName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
@@ -646,7 +646,7 @@ truth game::Init(cfestring& loadBaseName)
   festring absLoadNameOk;
 
   if(!loadBaseName.IsEmpty()){
-    absLoadNameOk = SaveName(loadBaseName); //will prepend the path
+    absLoadNameOk = SaveName(loadBaseName,true); //will prepend the path
   }else{
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
@@ -661,6 +661,8 @@ truth game::Init(cfestring& loadBaseName)
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+
+    CurrentBaseSaveFileName.Empty(); //this is important to prevent loading another character with the same name that was just played in this current session (w/o restarting the game)
 
     absLoadNameOk = SaveName(); //default is to use PlayerName
   }
@@ -3290,50 +3292,78 @@ void fixChars(festring& fs)
   }
 }
 
-festring game::SaveName(cfestring& Base)
+bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
+  std::string strChk;
+  strChk = fs.CStr();
+  int i = strChk.find(AUTOSAVE_SUFFIX);
+  if(i!=std::string::npos){
+    if(bAlsoFixIt){
+      fs.Empty();
+      fs<<strChk.substr(0,i).c_str();DBG1(fs.CStr());
+    }
+    return true;
+  }
+
+  return false;
+}
+
+festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
 {
-  festring SaveName = GetSaveDir();
+  festring PathAndBaseSaveName = GetSaveDir();
 
   /**
    * Base must come OK, will just prepend directory,
    * the problem on modifying it is that as it is read from the filesystem
    * it will not be found if it gets changed...
    */
-  DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG3(PlayerName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
   if(Base.GetSize() > 0)
   {
-    AutoSaveFileName.Empty();
-    AutoSaveFileName << Base;
-    SaveName << Base;
+    CurrentBaseSaveFileName.Empty();
+    CurrentBaseSaveFileName << Base;
+    chkAutoSaveSuffix(CurrentBaseSaveFileName,true);
+
+    PathAndBaseSaveName << Base;
   }
   else
   {
-    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
-    std::string strASFN; strASFN = AutoSaveFileName.CStr();
     // this is important in case player name changes like when using the fantasy name generator
+    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
     if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
-      AutoSaveFileName.Empty();
+      CurrentBaseSaveFileName.Empty();
 
-    if(AutoSaveFileName.GetSize() == 0)
+    if(CurrentBaseSaveFileName.GetSize() == 0)
     {
       int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
       strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
 
-      AutoSaveFileName << PlayerName << '_' << cTime;
-      fixChars(AutoSaveFileName);
+      CurrentBaseSaveFileName << PlayerName << '_' << cTime;
+      fixChars(CurrentBaseSaveFileName);
     }
-    SaveName << AutoSaveFileName;
+    
+    PathAndBaseSaveName << CurrentBaseSaveFileName;
   }
 
-  DBG4(PlayerName.CStr(), SaveName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG4(PlayerName.CStr(), PathAndBaseSaveName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
 #if defined(__DJGPP__)
-  if(SaveName.GetSize() > 13)
-    SaveName.Resize(13);
+  if(PathAndBaseSaveName.GetSize() > 13)
+    PathAndBaseSaveName.Resize(13);
 #endif
 
-  return SaveName;
+  if(!bLoadingFromAnAutosave){ //very specific use case
+    if(chkAutoSaveSuffix(PathAndBaseSaveName)){
+      /**
+       * this ABORT is important to prevent the troubling autosave suffix duplicity,
+       * it's consistency is kept using only: GetAutoSaveFileName()
+       */
+      ABORT("The base savegame filename '%s' must not contain '%s'",PathAndBaseSaveName.CStr(),AUTOSAVE_SUFFIX);
+    }
+  }
+
+  return PathAndBaseSaveName;
 }
 
 int game::GetMoveCommandKeyBetweenPoints(v2 A, v2 B)

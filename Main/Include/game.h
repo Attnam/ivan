@@ -168,12 +168,14 @@ class areachangerequest { };
 
 typedef void (*dbgdrawoverlay)();
 
+#define AUTOSAVE_SUFFIX ".AutoSave"
 class game
 {
  public:
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static festring SaveName(cfestring& = CONST_S(""),bool = false); //before all calls to this method, made still here on the header file
   static void PrepareStretchRegionsLazy();
   static void UpdateSRegionsXBRZ();
   static void RegionSilhouetteEnable(bool b);
@@ -230,14 +232,13 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
-  static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
   static double GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
+  static festring GetAutoSaveFileName() { return SaveName() + AUTOSAVE_SUFFIX; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
@@ -563,7 +564,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
-  static festring AutoSaveFileName;
+  static festring CurrentBaseSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
