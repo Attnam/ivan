@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 cchar* ToHitValueDescription[] =
 {
   "unbelievably inaccurate",
@@ -1043,7 +1045,7 @@ void item::SignalSpoilLevelChange(material*)
 }
 
 truth item::AllowSpoil() const
-{
+{DBG1(GetName(DEFINITE).CStr());
   if(IsOnGround())
   {
     lsquare* Square = GetLSquareUnder();

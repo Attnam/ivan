@@ -1141,6 +1141,21 @@ rpdata::rpdata(humanoid* H)
   ingredientsIDs.clear(); //just to init
 }
 
+bool canBeCrafted(item* it){
+  if(
+    game::IsQuestItem(it) ||
+    it->GetEnchantment()!=0 ||
+    dynamic_cast<amulet*>(it)!=NULL ||
+    dynamic_cast<horn*  >(it)!=NULL ||
+    dynamic_cast<ring*  >(it)!=NULL ||
+    dynamic_cast<scroll*>(it)!=NULL ||
+    dynamic_cast<wand*  >(it)!=NULL ||
+    false // just to make it easier to re-organize and add checks above
+  )return false;
+
+  return true;
+}
+
 struct recipe{
   festring action;
   festring name;
@@ -1206,8 +1221,12 @@ struct recipe{
   }
 
   template <typename T> static truth choseIngredients(
-      cfestring fsQ, long volume, rpdata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0, bool bMainMaterRemainAsLump=false
+      cfestring fsQ, long volume, rpdata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
+      bool bMainMaterRemainsBecomeLump=false
   ){DBGLN;
+    if(volume==0)
+      ABORT("ingredient required 0 volume?");
+
     // prepare the filter for ALL items also resetting them first!
     const itemvector vi = vitInv(rpd.h);
     for(int i=0;i<vi.size();i++){
@@ -1233,13 +1252,14 @@ struct recipe{
     int iWeakest=-1;
     game::RegionListItemEnable(true);
     game::RegionSilhouetteEnable(true);
+    std::vector<unsigned long> tmpIngredientsIDs;
     for(;;)
     {
       itemvector ToUse;
       game::DrawEverythingNoBlit();
       int flags = bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
       rpd.h->GetStack()->DrawContents(ToUse, rpd.h,
-        festring("What ingredient(s) will you use ")+fsQ+festring("?"), flags, &item::IsValidRecipeIngredient);
+        festring("What ingredient(s) will you use ")+fsQ+festring("? (hit ESC for more options if available)"), flags, &item::IsValidRecipeIngredient);
       if(ToUse.empty())
         break;
 
@@ -1250,33 +1270,41 @@ struct recipe{
           iWeakestCfg = mat->GetConfig();
         }
 
-        rpd.ingredientsIDs.push_back(ToUse[i]->GetID()); DBG1(ToUse[i]->GetID());
+        tmpIngredientsIDs.push_back(ToUse[i]->GetID()); DBG1(ToUse[i]->GetID());
         volume -= ToUse[i]->GetVolume(); DBG2(volume,ToUse[i]->GetVolume());
         ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
 
         if(volume<=0){
           long lRemainingVol=volume*-1;
-          if(lRemainingVol>0 && bMainMaterRemainAsLump){
+          if(lRemainingVol>0 && bMainMaterRemainsBecomeLump){
             material* matM = ToUse[i]->GetMainMaterial();
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
-              ABORT("ingredient volume reduced to negative or zero %d %s",lVolM,ToUse[i]->GetNameSingular().CStr());
+              ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             matM->SetVolume(lVolM);
 
             item* lumpR = CreateLumpAtCharStack(matM, rpd.h);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
+
+            material* matS = ToUse[i]->GetSecondaryMaterial();
+            if(matS!=NULL && matS->GetVolume()>0)
+              ABORT("ingredient secondary material should not have volume %d %s %s",matS->GetVolume(),matS->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
           }
 
           break;
         }
       }
 
-      if(volume<=0)
+      if(volume<=0){
+        for(int i=0;i<tmpIngredientsIDs.size();i++)
+          rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
         break;
+      }
     }
+
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
@@ -1321,17 +1349,63 @@ struct recipe{
     }
   }
 
-  static item* CreateLumpAtCharStack(material* mat, character* C){
-    if(mat==NULL)return NULL;
+  static bool canBeAWoodenStick(item* it,material* mat){
+//    material* matM = it->GetMainMaterial();
+//    material* matS = it->GetSecondaryMaterial();
+//
+//    if(matM->GetConfig()==mat->GetConfig()){
+//      DBG6(matM->GetConfig(),matM->GetAdjectiveStem().CStr(),matM->GetType(),matM->GetNaturalForm().GetCategory(),matM->GetNaturalForm().GetContentType(),matM->GetProtoType()->GetClassID());
+//      if(IsMeltable(matM))return false;
+//      if(matM->GetConfig()>=FUNGI_WOOD && matM->GetConfig()<=PETRIFIED_WOOD)return true;
+//    }
+//
+//    if(matS!=NULL){
+//      DBG6(matS->GetConfig(),matS->GetAdjectiveStem().CStr(),matS->GetType(),matS->GetNaturalForm().GetCategory(),matS->GetNaturalForm().GetContentType(),matS->GetProtoType()->GetClassID());
+//      if(matS->GetConfig()==mat->GetConfig()){
+//        if(IsMeltable(matS))return false;
+//      }
+//    }
+
+    material* matChk = it->GetMainMaterial();
+    for(;;){
+      if(matChk->GetConfig()==mat->GetConfig()){
+        //DBG6(matChk->GetConfig(),matChk->GetAdjectiveStem().CStr(),matChk->GetType(),matChk->GetNaturalForm().GetCategory(),matChk->GetNaturalForm().GetContentType(),matChk->GetProtoType()->GetClassID());
+        if(IsMeltable(matChk))
+          return false;
+        if(matChk->GetConfig()>=FUNGI_WOOD && matChk->GetConfig()<=PETRIFIED_WOOD)
+          return true;
+      }
+
+      if(matChk==it->GetSecondaryMaterial())
+        break;
+
+      matChk=it->GetSecondaryMaterial();
+      if(matChk==NULL)
+        break;
+    }
+
+    return false;
+  }
+
+  static item* CreateLumpAtCharStack(material* mat, character* C, bool bWoodenCreateStick=false){
+    if(mat==NULL)
+      ABORT("NULL lump material");
+
     if(mat->IsLiquid()){
       C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
     }else{
       item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
+      if(bWoodenCreateStick){
+        LumpTmp = stick::Spawn(0, NO_MATERIALS);
+      }else{
+        LumpTmp = lump::Spawn(0, NO_MATERIALS);
+      }
       LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
       C->GetStack()->AddItem(LumpTmp);
       ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
       return LumpTmp;
     }
+
     return NULL;
   }
 
@@ -1492,16 +1566,20 @@ struct srpMelt : public recipe{
       // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
 
       { // main material ALWAYS exist
-        item* LumpM = CreateLumpAtCharStack(matM,rpd.h);
+        item* LumpM = CreateLumpAtCharStack(matM,rpd.h,canBeAWoodenStick(itToUse,matM));
         if(IsMeltable(LumpM->GetMainMaterial()))
           LumpMeltable = LumpM;
       }
 
-      {
-        item* LumpS = CreateLumpAtCharStack(matS,rpd.h); //must always be prepared to not lose it
-        if( LumpS!=NULL && IsMeltable(LumpS->GetMainMaterial()) )
-          LumpMeltable = LumpS;
+      if(matS!=NULL){
+        item* LumpS = CreateLumpAtCharStack(matS,rpd.h,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
+        if(LumpS!=NULL)
+          if(IsMeltable(LumpS->GetMainMaterial()) )
+            if(LumpMeltable==NULL)
+              LumpMeltable = LumpS;
       }
+
+      // OBS.: one of the lumps will have to be turned into ingot later by user action
 
       ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
       itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
@@ -1576,7 +1654,7 @@ struct srpForgeItem : public recipe{
     // also a block to reuse var names w/o specifying the recipe name on them
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("forge","an item");
-      desc << "Using a hammer, close to an anvil and with a forge nearby you can create items.";
+      desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
     }
 
     if(rpd.Selected != iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
@@ -1621,8 +1699,8 @@ struct srpForgeItem : public recipe{
     }
 
     //////////////// let user type the item name
-    festring Default;
-    item* TempItem = NULL;
+    static festring Default; //static to help on reusing! like creating more of the same
+    item* itCreate = NULL;
     for(;;){
       festring Temp;
       Temp << Default; // to let us fix previous instead of having to fully type it again
@@ -1631,10 +1709,16 @@ struct srpForgeItem : public recipe{
         break;
       }
 
-      TempItem = protosystem::CreateItemToCraft(Temp);DBGLN;
+      itCreate = protosystem::CreateItemToCraft(Temp);DBGLN;
 
-      if(TempItem){DBGLN;
-        break;
+      if(itCreate){DBGLN;
+        if(!canBeCrafted(itCreate)){
+          ADD_MESSAGE("You can't enchant it!");
+          itCreate->RemoveFromSlot(); //just in case to prevent problems later...
+          itCreate->SendToHell();
+        }else{
+          break;
+        }
       }else{
         ADD_MESSAGE("Be more precise!");
       }
@@ -1643,45 +1727,103 @@ struct srpForgeItem : public recipe{
       Default << Temp;
     }
 
-    if(TempItem==NULL){
+    if(itCreate==NULL){
       rpd.bAlreadyExplained=true; //actually was just cancelled by user
       return true;
     }
 
-    material* matM = TempItem->GetMainMaterial();
+    material* matM = itCreate->GetMainMaterial();
 
     long lVolM = matM->GetVolume();
-    material* matS = TempItem->GetSecondaryMaterial();
+    if(lVolM==0)
+      ABORT("main material 0 volume??? %s",itCreate->GetName(DEFINITE).CStr());
+    material* matS = itCreate->GetSecondaryMaterial();
 
     long lVolS = 0;
-    if(matS!=NULL)
+    if(matS!=NULL){
       lVolS = matS->GetVolume();
+      if(lVolS==0)
+        ABORT("secondary material set with 0 volume??? %s",itCreate->GetName(DEFINITE).CStr());
+    }
 
     DBG2(lVolM,lVolS);
     int iCfgM=-1;
     int iCfgS=-1;
-    if(
-      choseIngredients<stone>(festring("as main material"     ),lVolM, rpd, iCfgM, true, INGOT,true) &&
-      choseIngredients<stone>(festring("as secondary material"),lVolS, rpd, iCfgS, true, INGOT,true)
-    ){
-      rpd.bHasAllIngredients=true;
 
-      TempItem->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
-      TempItem->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
-      rpd.itSpawn = TempItem;
+    bool bM = false;
+    festring fsM("as MAIN material");DBGLN;
+    fsM<<" ["<<lVolM<<"cm3]";
+    if(!bM)bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, true, INGOT, true);
+    if(!bM)bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, true, 0, true);
+    if(!bM)bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, true, 0, true);
+    if(!bM){
+      ADD_MESSAGE("I will craft it later...");
+      rpd.bAlreadyExplained=true;
+      return true;
+    }
 
-      float fMult=10;//hammering to form it takes time even if the volume is low.
-      rpd.iBaseTurnsToFinish=calcTurns(matM,fMult);DBG1(rpd.iBaseTurnsToFinish);
-      if(matS!=NULL){
-        rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult);DBG1(rpd.iBaseTurnsToFinish);
+    materialcontainer* mc = dynamic_cast<materialcontainer*>(itCreate);DBGLN;
+    bool bIsContainer =
+      itCreate->GetStorageVolume()>0 || //chests
+      mc!=NULL; //potions, mines... also bananas xD
+
+    /**
+     * TODO problem: basically sulphuric acid can already be stored on a metal can ...
+     * TODO every materialcontainer should rust depending on it's contents, if made of anything else than glass
+     * Keeping allowing creating materialcontainer of non glass because the fix is already required for the existing metal can,
+     * so preventing it would still not fix how metal can works...
+     */
+
+    bool bIsWeapon = itCreate->IsWeapon(rpd.h);
+    bool bReqS = bIsWeapon;
+    bool bAllowS = true;
+    if(bIsContainer)bAllowS=false;
+    if(lVolS==0)bAllowS=false;
+    if(bAllowS){DBGLN;
+      bool bS = false;
+      festring fsS("as Secondary material");DBGLN;
+      fsS<<" ["<<lVolS<<"cm3]";
+      if(!bS)bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, true, INGOT, true);
+      if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
+        if(!bS)bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, true, 0, true);
+        if(!bS)bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, true, 0, true);
       }
 
-      rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
-      if(rpd.itTool==NULL)
+      if(!bS){
+        ADD_MESSAGE("I will craft it later...");
+        rpd.bAlreadyExplained=true;
         return true;
-
-      rpd.bCanStart=true;
+      }
     }
+
+    if(bReqS && !bAllowS)
+      ABORT("item reqs secondary mat but doesnt allow it??? %s",itCreate->GetName(DEFINITE).CStr());
+
+    rpd.bHasAllIngredients=true;
+
+    itCreate->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
+    if(bAllowS)
+      itCreate->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
+    else{
+      if(mc!=NULL)
+        delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
+    }
+    rpd.itSpawn = itCreate;
+
+    float fMult=10;//hammering to form it takes time even if the volume is low.
+    rpd.iBaseTurnsToFinish=calcTurns(matM,fMult);DBG1(rpd.iBaseTurnsToFinish);
+    if(bAllowS && matS!=NULL){
+      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult);DBG1(rpd.iBaseTurnsToFinish);
+    }
+
+    //TODO glass should require proper tools (don't know what but sure not a hammer)
+    //TODO bone should require a dagger
+    //TODO 2 tools, one for meltables and the other for glass or bone
+    rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
+    if(rpd.itTool==NULL)
+      return true;
+
+    rpd.bCanStart=true;
 
     return true;
   }
@@ -1967,18 +2109,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         break;
       case 1:
         if(rpd.itSpawn!=NULL){
-          if(
-            game::IsQuestItem(rpd.itSpawn) ||
-            dynamic_cast<amulet*>(rpd.itSpawn)!=NULL ||
-            dynamic_cast<horn*  >(rpd.itSpawn)!=NULL ||
-            dynamic_cast<ring*  >(rpd.itSpawn)!=NULL ||
-            dynamic_cast<scroll*>(rpd.itSpawn)!=NULL ||
-            dynamic_cast<wand*  >(rpd.itSpawn)!=NULL ||
-            false // just to make it easier to re-organize and add checks above
-            //TODO check if item has any kind of magic property, how? thru it's name?
-          ){
+          if(!canBeCrafted(rpd.itSpawn))
             bAbort=true;
-          }
         }
         break;
       }
@@ -2011,6 +2143,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       rpd.iBaseTurnsToFinish*=iCraftTimeMult;
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrWhere!=NULL ? rpd.lsqrWhere->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
+      if(rpd.itSpawn!=NULL)
+        Char->GetStack()->AddItem(rpd.itSpawn); //this is important because during crafting::handle it may item::Be on this item and it may require checking the item's slot that would be NULL w/o this line ex.: during a bone item spoilage
       Char->SwitchToCraft(rpd);
 
       Char->DexterityAction(5); //TODO is this good? should this be here at all or only after crafting finishes?
@@ -2035,6 +2169,15 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         ABORT("explain why crafting won't work.");
       }
     }
+
+    // cleanups
+    if(rpd.itSpawn!=NULL){
+      rpd.itSpawn->RemoveFromSlot(); //just in case it is required one day, this prevents a lot of trouble...
+      rpd.itSpawn->SendToHell();
+    }
+
+    if(rpd.otSpawn!=NULL)
+      rpd.otSpawn->SendToHell();
   }
 
   if(rpd.bSpendCurrentTurn)

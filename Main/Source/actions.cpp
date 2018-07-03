@@ -427,6 +427,7 @@ craft::~craft(){DBGLN; // called from Terminate()
   // cleanups if not finished
 
   if(rpd.itSpawn && rpd.itSpawn->Exists()){DBGLN;
+    rpd.itSpawn->RemoveFromSlot(); //just in case it is required one day, this prevents a lot of trouble...
     rpd.itSpawn->SendToHell();
   }
 
