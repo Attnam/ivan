@@ -1811,9 +1811,9 @@ struct srpForgeItem : public recipe{
     rpd.itSpawn = itCreate;
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
-    rpd.iBaseTurnsToFinish=calcTurns(matM,fMult);DBG1(rpd.iBaseTurnsToFinish);
+    rpd.iBaseTurnsToFinish=calcTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
     if(bAllowS && matS!=NULL){
-      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult);DBG1(rpd.iBaseTurnsToFinish);
+      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult); DBG4(rpd.iBaseTurnsToFinish,matS->GetName(DEFINITE).CStr(),matS->GetConfig(),matS->GetVolume());
     }
 
     //TODO glass should require proper tools (don't know what but sure not a hammer)
@@ -2141,10 +2141,16 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       );DBG1(rpd.iBaseTurnsToFinish);
 
       rpd.iBaseTurnsToFinish*=iCraftTimeMult;
+
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrWhere!=NULL ? rpd.lsqrWhere->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
+
       if(rpd.itSpawn!=NULL)
         Char->GetStack()->AddItem(rpd.itSpawn); //this is important because during crafting::handle it may item::Be on this item and it may require checking the item's slot that would be NULL w/o this line ex.: during a bone item spoilage
+
+      if(rpd.itSpawn->GetSlot()==NULL)
+        ABORT("tmp crafting item should be on a slot for consistency with code everywhere.");
+
       Char->SwitchToCraft(rpd);
 
       Char->DexterityAction(5); //TODO is this good? should this be here at all or only after crafting finishes?

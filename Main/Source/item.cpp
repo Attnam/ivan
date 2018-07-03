@@ -1045,7 +1045,7 @@ void item::SignalSpoilLevelChange(material*)
 }
 
 truth item::AllowSpoil() const
-{DBG1(GetName(DEFINITE).CStr());
+{DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
   if(IsOnGround())
   {
     lsquare* Square = GetLSquareUnder();
