@@ -1259,7 +1259,7 @@ struct recipe{
       game::DrawEverythingNoBlit();
       int flags = bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
       rpd.h->GetStack()->DrawContents(ToUse, rpd.h,
-        festring("What ingredient(s) will you use ")+fsQ+festring("? (hit ESC for more options if available)"), flags, &item::IsValidRecipeIngredient);
+        festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)"), flags, &item::IsValidRecipeIngredient);
       if(ToUse.empty())
         break;
 
@@ -1415,7 +1415,7 @@ struct srpChair : public recipe{
     static const int iReqStickVol=20000;
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("build","a chair");
-      desc << "Use hammers, a frying pan or even a mace with " << iReqStickVol << " cm3 of sticks."; //TODO this sounds a bit weird :)
+      desc << "Use hammers, a frying pan or even a mace with sticks."; //TODO this sounds a bit weird :)
     }
 
     if(rpd.Selected != iListIndex)
@@ -1752,7 +1752,6 @@ struct srpForgeItem : public recipe{
 
     bool bM = false;
     festring fsM("as MAIN material");DBGLN;
-    fsM<<" ["<<lVolM<<"cm3]";
     if(!bM)bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, true, INGOT, true);
     if(!bM)bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, true, 0, true);
     if(!bM)bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, true, 0, true);
@@ -1782,7 +1781,6 @@ struct srpForgeItem : public recipe{
     if(bAllowS){DBGLN;
       bool bS = false;
       festring fsS("as Secondary material");DBGLN;
-      fsS<<" ["<<lVolS<<"cm3]";
       if(!bS)bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, true, INGOT, true);
       if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
         if(!bS)bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, true, 0, true);
