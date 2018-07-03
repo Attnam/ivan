@@ -2125,7 +2125,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     }
 
     if(rpd.otSpawn!=NULL || rpd.itSpawn!=NULL) {
-      if(rpd.itTool && rpd.itTool->IsBroken())
+      if(rpd.itTool!=NULL && rpd.itTool->IsBroken())
         iCraftTimeMult++;
 
       if(rpd.iBaseTurnsToFinish<1)
@@ -2143,11 +2143,11 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrWhere!=NULL ? rpd.lsqrWhere->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
 
-      if(rpd.itSpawn!=NULL)
+      if(rpd.itSpawn!=NULL){
         Char->GetStack()->AddItem(rpd.itSpawn); //this is important because during crafting::handle it may item::Be on this item and it may require checking the item's slot that would be NULL w/o this line ex.: during a bone item spoilage
-
-      if(rpd.itSpawn->GetSlot()==NULL)
-        ABORT("tmp crafting item should be on a slot for consistency with code everywhere.");
+        if(rpd.itSpawn->GetSlot()==NULL)
+          ABORT("tmp crafting item should be on a slot for consistency with code everywhere.");
+      }
 
       Char->SwitchToCraft(rpd);
 
