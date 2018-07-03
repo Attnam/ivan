@@ -499,6 +499,25 @@ v2 globalwindowhandler::GetMouseLocation()
   return v2MousePos;
 }
 
+bool globalwindowhandler::IsMouseAtRect(v2 v2TopLeft, v2 v2BorderOrBottomRigh, bool b2ndParmIsBorder, v2 v2MousePosOverride)
+{
+  v2 v2MP = v2MousePosOverride;
+  if(v2MousePosOverride.Is0()){
+    UpdateMouse();
+    v2MP=v2MousePos;
+  }
+
+  v2 v2BottomRight = v2BorderOrBottomRigh;
+  if(b2ndParmIsBorder)
+    v2BottomRight += v2TopLeft;
+
+  return
+    v2MP.X > v2TopLeft.X     &&
+    v2MP.Y > v2TopLeft.Y     &&
+    v2MP.X < v2BottomRight.X &&
+    v2MP.Y < v2BottomRight.Y    ;
+}
+
 mouseclick mc;
 mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
 {
