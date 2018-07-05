@@ -1308,6 +1308,9 @@ struct recipe{
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
+    if(volume>0)
+      ADD_MESSAGE("This amount of materials won't work...");
+
     return volume<=0;
   }
 
@@ -1703,27 +1706,32 @@ struct srpForgeItem : public recipe{
     item* itCreate = NULL;
     for(;;){
       festring Temp;
-      Temp << Default; // to let us fix previous instead of having to fully type it again
+      Temp << Default;DBG4(Default.CStr(),Default.GetSize(),Temp.CStr(),Temp.GetSize()); // to let us fix previous instead of having to fully type it again
 
-      if(game::DefaultQuestion(Temp, CONST_S("What do you want to create?"), Default, true) == ABORTED){DBGLN;
+      if(game::DefaultQuestion(Temp, CONST_S("What do you probably want to create?"), Default, true) == ABORTED){DBGLN;
+        /**
+         * The wishing system will try to guess what item matches whatever we type,
+         * so it may not be what we typed exactly...
+         */
         break;
-      }
+      }DBG1(Temp.CStr());
 
       itCreate = protosystem::CreateItemToCraft(Temp);DBGLN;
 
-      if(itCreate){DBGLN;
+      if(itCreate!=NULL){DBGLN;
         if(!canBeCrafted(itCreate)){
-          ADD_MESSAGE("You can't enchant it!");
+          ADD_MESSAGE("You can't enchant %s!",itCreate->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
           itCreate->RemoveFromSlot(); //just in case to prevent problems later...
           itCreate->SendToHell();
+          itCreate = NULL; //IMPORTANT!!! if user press ESC...
         }else{
           break;
         }
       }else{
-        ADD_MESSAGE("Be more precise!");
+        ADD_MESSAGE("I don't know how to create %s.",Temp.CStr());
       }
 
-      Default.Empty();DBGLN;
+      Default.Empty();DBG1(Default.CStr());
       Default << Temp;
     }
 
@@ -1731,6 +1739,8 @@ struct srpForgeItem : public recipe{
       rpd.bAlreadyExplained=true; //actually was just cancelled by user
       return true;
     }
+
+    ADD_MESSAGE("Now I need the material(s) to create a %s as I would create %s.",Default.CStr(),itCreate->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
 
     material* matM = itCreate->GetMainMaterial();
 
@@ -1817,7 +1827,7 @@ struct srpForgeItem : public recipe{
     //TODO glass should require proper tools (don't know what but sure not a hammer)
     //TODO bone should require a dagger
     //TODO 2 tools, one for meltables and the other for glass or bone
-    rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
+    rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);DBG1(rpd.iBaseTurnsToFinish);
     if(rpd.itTool==NULL)
       return true;
 
@@ -2139,6 +2149,16 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       );DBG1(rpd.iBaseTurnsToFinish);
 
       rpd.iBaseTurnsToFinish*=iCraftTimeMult;
+
+      /**
+       * LAST turn calc thing!!!
+       * ex.: dex=10 wis=10 -> 1.0
+       */
+      rpd.iBaseTurnsToFinish /=
+        ( Char->GetAttribute(WISDOM   )/10.0 +
+          Char->GetAttribute(DEXTERITY)/10.0   ) / 2.0;
+      if(rpd.iBaseTurnsToFinish==0)
+        rpd.iBaseTurnsToFinish=1;
 
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrWhere!=NULL ? rpd.lsqrWhere->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
