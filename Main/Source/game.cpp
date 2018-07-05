@@ -1350,7 +1350,8 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
-      buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+      buffer->Fill(bkgTL,bkgB,
+        festring(vMapNotes[i].note).Find("!")!=festring::NPos ? RED : colMapNoteBkg); //bkg
       buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
     }
 
@@ -1364,11 +1365,13 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
   }
 
+  // line
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
     if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
       buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
   }
 
+  // note
   for(int i=0;i<vMapNotes.size();i++)
     if(validateV2(vMapNotes[i].basePos,buffer))
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
