@@ -1140,7 +1140,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(bSaveGameSortModeByDtTm)
         id<<fsVer<<rfi.time<<" ";
 
-      id<<sPrettyNameWork.c_str()<<(rfi.WizardMode?" (WIZ)":"")<<" ";
+      id<<(rfi.WizardMode?"WIZ:":"")<<sPrettyNameWork.c_str()<<" ";
 
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
