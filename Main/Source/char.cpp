@@ -2921,11 +2921,6 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
       if(bAddValidTargetSquare && !CanMoveOn(lsqr))
         bAddValidTargetSquare=false;
-      else{
-        if(olt && olt->IsWall()){ DBG5(iX,iY,"Can move on walls?",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
-          bAddValidTargetSquare=false;
-        }
-      }
 
       bool bIsFailToTravelSquare=false;
       if(bAddValidTargetSquare){
@@ -2981,6 +2976,11 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         }
 
       }
+
+      if(bAddValidTargetSquare)
+        if(olt && olt->IsWall()){ DBG5(iX,iY,"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+          bAddValidTargetSquare=false;
+        }
 
       if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
         static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();

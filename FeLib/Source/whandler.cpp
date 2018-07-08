@@ -368,12 +368,25 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
       if(!bHasEvents)
       {
+        bool bPlay=true;
+
 #if SDL_MAJOR_VERSION == 1
-        if(SDL_GetAppState() & SDL_APPACTIVE
+        if(bPlay && !(SDL_GetAppState() & SDL_APPACTIVE))
 #else
-        if( (playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)))
+        if(bPlay &&
+          !( SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) )
+        )
 #endif
-           && Controls && ControlLoopsEnabled)
+          if(!playInBackground)
+            bPlay=false;
+
+        if(bPlay && Controls==0)
+          bPlay=false;
+
+        if(bPlay && !ControlLoopsEnabled)
+          bPlay=false;
+
+        if(bPlay)
         {
           static ulong LastTick = 0;
           UpdateTick();
@@ -448,7 +461,7 @@ int globalwindowhandler::ReadKey()
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if( playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)) )
 #endif
   {
     PollEvents(&Event);
@@ -469,7 +482,7 @@ truth globalwindowhandler::WaitForKeyEvent(uint Key)
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if( playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)) )
 #endif
   {
 #if SDL_MAJOR_VERSION == 2
