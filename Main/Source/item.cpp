@@ -1045,7 +1045,51 @@ void item::SignalSpoilLevelChange(material*)
 }
 
 truth item::AllowSpoil() const
-{DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
+{
+  DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
+  DBGEXEC( //this wont even compile if DBGMSG is not enabled
+    /** crash helper
+     * seems to be about a buggy organic spawned "on floor" that has no square under...
+    *  happens below at: if(IsOnGround())
+   *   item.cpp:1048:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="92980";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x8272630";
+   *     ./bin//ivan(_ZN6dbgmsg20getCurrentStackTraceEbRi+0xaa) [0x92f43e]
+   *     ./bin//ivan(_ZN6dbgmsg22getCurrentStackTraceSSB5cxx11Ebb+0x54) [0x92f53c]
+    *    ./bin//ivan(_ZN6dbgmsg8SigHndlrEi+0x1ae) [0x92fcdc]
+     *   /lib/x86_64-linux-gnu/libc.so.6(+0x354b0) [0x7f6b145e14b0]
+      *  ./bin//ivan(_ZNK4item10IsOnGroundEv+0x17) [0x8963c7]
+      *  ./bin//ivan(_ZNK5stack10IsOnGroundEv+0x38) [0x8f12a8]
+      *  ./bin//ivan(_ZNK9stackslot10IsOnGroundEv+0x20) [0x8ebb96]
+     *   ./bin//ivan(_ZNK4item10IsOnGroundEv+0x31) [0x8963e1]
+    *    ./bin//ivan(_ZNK4item10AllowSpoilEv+0x27f) [0x89b0ab]
+   *     ./bin//ivan(_ZN7organic2BeEm+0x4f) [0x839d0d]
+   *     ./bin//ivan(_ZN4item2BeEv+0x49) [0x89a819]
+   *     ./bin//ivan(_ZN4pool2BeEv+0x3b) [0x69593b]
+    *    ./bin//ivan(_ZN4game3RunEv+0x3da) [0x77ad5a]
+     *   ./bin//ivan(main+0x4d7) [0x70d462]
+      *  /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f6b145cc830]
+      *  ./bin//ivan(_start+0x29) [0x68f999]
+     */
+    if(dynamic_cast<stackslot*>(GetSlot())!=NULL){
+      stackslot* ss = (stackslot*)GetSlot();
+      item* itSS = ss->GetItem();
+      DBG2(itSS,ss->GetSquareUnder());
+      if(itSS!=NULL)DBG2(itSS->GetID(),itSS->GetNameSingular().CStr());
+      stack* stkM=ss->GetMotherStack();
+      if(stkM!=NULL){
+        entity* ent = stkM->GetMotherEntity();
+        DBG3(ss->GetMotherStack()->GetItems(), ent, ss->GetMotherStack()->GetSquareUnder());
+        if(ent!=NULL){
+          DBG1(ent->GetSquareUnderEntity());
+//          if(dynamic_cast<id*>(ent))DBG1(((id*)ent)->GetID());
+          if(dynamic_cast<item*>(ent)){
+            item* itM = (item*)ent;
+            DBG2(itM->GetID(),itM->GetNameSingular().CStr());
+          }
+        }
+      }
+    }
+  );
+
   if(IsOnGround())
   {
     lsquare* Square = GetLSquareUnder();

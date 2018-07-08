@@ -1703,7 +1703,8 @@ struct srpForgeItem : public recipe{
 
     //////////////// let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
-    item* itCreate = NULL;
+    if(rpd.itSpawn!=NULL) // this is important to grant the cleanup
+      ABORT("item to be crafted should be NULL %d %s",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr());
     for(;;){
       festring Temp;
       Temp << Default;DBG4(Default.CStr(),Default.GetSize(),Temp.CStr(),Temp.GetSize()); // to let us fix previous instead of having to fully type it again
@@ -1716,14 +1717,14 @@ struct srpForgeItem : public recipe{
         break;
       }DBG1(Temp.CStr());
 
-      itCreate = protosystem::CreateItemToCraft(Temp);DBGLN;
+      rpd.itSpawn = protosystem::CreateItemToCraft(Temp);DBGLN;
 
-      if(itCreate!=NULL){DBGLN;
-        if(!canBeCrafted(itCreate)){
-          ADD_MESSAGE("You can't enchant %s!",itCreate->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
-          itCreate->RemoveFromSlot(); //just in case to prevent problems later...
-          itCreate->SendToHell();
-          itCreate = NULL; //IMPORTANT!!! if user press ESC...
+      if(rpd.itSpawn!=NULL){DBGLN;
+        if(!canBeCrafted(rpd.itSpawn)){DBG4("SendingToHellRejectedCraftItem",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr(),rpd.itSpawn);
+          ADD_MESSAGE("You can't enchant %s!",rpd.itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
+          rpd.itSpawn->RemoveFromSlot(); //just in case to prevent problems later...
+          rpd.itSpawn->SendToHell();
+          rpd.itSpawn = NULL; //IMPORTANT!!! if user press ESC...
         }else{
           break;
         }
@@ -1735,25 +1736,25 @@ struct srpForgeItem : public recipe{
       Default << Temp;
     }
 
-    if(itCreate==NULL){
+    if(rpd.itSpawn==NULL){
       rpd.bAlreadyExplained=true; //actually was just cancelled by user
       return true;
     }
 
-    ADD_MESSAGE("Now I need the material(s) to create a %s as I would create %s.",Default.CStr(),itCreate->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
+    ADD_MESSAGE("Now I need the material(s) to create a %s as I would create %s.",Default.CStr(),rpd.itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
 
-    material* matM = itCreate->GetMainMaterial();
+    material* matM = rpd.itSpawn->GetMainMaterial();
 
     long lVolM = matM->GetVolume();
     if(lVolM==0)
-      ABORT("main material 0 volume??? %s",itCreate->GetName(DEFINITE).CStr());
-    material* matS = itCreate->GetSecondaryMaterial();
+      ABORT("main material 0 volume??? %s",rpd.itSpawn->GetName(DEFINITE).CStr());
+    material* matS = rpd.itSpawn->GetSecondaryMaterial();
 
     long lVolS = 0;
     if(matS!=NULL){
       lVolS = matS->GetVolume();
       if(lVolS==0)
-        ABORT("secondary material set with 0 volume??? %s",itCreate->GetName(DEFINITE).CStr());
+        ABORT("secondary material set with 0 volume??? %s",rpd.itSpawn->GetName(DEFINITE).CStr());
     }
 
     DBG2(lVolM,lVolS);
@@ -1771,9 +1772,9 @@ struct srpForgeItem : public recipe{
       return true;
     }
 
-    materialcontainer* mc = dynamic_cast<materialcontainer*>(itCreate);DBGLN;
+    materialcontainer* mc = dynamic_cast<materialcontainer*>(rpd.itSpawn);DBGLN;
     bool bIsContainer =
-      itCreate->GetStorageVolume()>0 || //chests
+        rpd.itSpawn->GetStorageVolume()>0 || //chests
       mc!=NULL; //potions, mines... also bananas xD
 
     /**
@@ -1783,7 +1784,7 @@ struct srpForgeItem : public recipe{
      * so preventing it would still not fix how metal can works...
      */
 
-    bool bIsWeapon = itCreate->IsWeapon(rpd.h);
+    bool bIsWeapon = rpd.itSpawn->IsWeapon(rpd.h);
     bool bReqS = bIsWeapon;
     bool bAllowS = true;
     if(bIsContainer)bAllowS=false;
@@ -1805,18 +1806,17 @@ struct srpForgeItem : public recipe{
     }
 
     if(bReqS && !bAllowS)
-      ABORT("item reqs secondary mat but doesnt allow it??? %s",itCreate->GetName(DEFINITE).CStr());
+      ABORT("item reqs secondary mat but doesnt allow it??? %s",rpd.itSpawn->GetName(DEFINITE).CStr());
 
     rpd.bHasAllIngredients=true;
 
-    itCreate->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
+    rpd.itSpawn->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
     if(bAllowS)
-      itCreate->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
+      rpd.itSpawn->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
     else{
       if(mc!=NULL)
         delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
     }
-    rpd.itSpawn = itCreate;
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
     rpd.iBaseTurnsToFinish=calcTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
