@@ -130,7 +130,7 @@ truthoption ivanconfig::ShowVolume(       "ShowVolume",
                                           false);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
