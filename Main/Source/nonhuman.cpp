@@ -959,11 +959,10 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
     return false;
 }
 
-truth chameleon::SpecialEnemySightedReaction(character*)
-{
-  if(HP != MaxHP || !(RAND() % 3))
-  {
-    character* NewForm = PolymorphRandomly(100, 1000, 500 + RAND() % 500);
+bool ChamaleonPolymorphRandomly(chameleon* c){
+  if(!c->StateIsActivated(POLYMORPH_LOCK)){
+    character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
+    if(NewForm==NULL)ABORT("chameleon PolymorphRandomly failed"); //means needs more checks
     NewForm->GainIntrinsic(POLYMORPH);
     return true;
   }
@@ -971,17 +970,23 @@ truth chameleon::SpecialEnemySightedReaction(character*)
   return false;
 }
 
+truth chameleon::SpecialEnemySightedReaction(character*)
+{
+  if(HP != MaxHP || !(RAND() % 3))
+    if(ChamaleonPolymorphRandomly(this))
+      return true;
+
+  return false;
+}
+
 int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
                        double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
-{
+{DBG1(GetNameSingular().CStr());
   int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
                                     Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
-  {
-    character* NewForm = PolymorphRandomly(100, 1000, 500 + RAND() % 500);
-    NewForm->GainIntrinsic(POLYMORPH);
-  }
+    ChamaleonPolymorphRandomly(this);
 
   return Return;
 }

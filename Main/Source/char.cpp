@@ -27,6 +27,7 @@
 
 #define DBGMSG_V2
 #include "dbgmsgproj.h"
+#include <bitset>
 
 struct statedata
 {
@@ -2528,19 +2529,36 @@ void character::AutoPlayAIReset(bool bFailedToo)
 truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
 {
   v2KeepGoingTo=v2KGTo;
-  SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
-  CreateRoute();
-  if(!Route.empty())
-    return true;
 
-  DBG1("RouteCreationFailed");
-  TerminateGoingTo(); //redundant?
-  vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-  bAutoPlayUseRandomNavTargetOnce=true;
+  bool bOk=true;
 
-  AutoPlayAIReset(false);
+  if(bOk){
+    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
+    if(olt && olt->IsWall()){
+      //TODO is this a bug in the CanMoveOn() code?
+      DBG4(DBGAV2(v2KeepGoingTo),"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+      bOk=false;
+    }
+  }
 
-  return false;
+  if(bOk){
+    SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
+    CreateRoute();
+    if(Route.empty()){
+      TerminateGoingTo(); //redundant?
+      bOk=false;
+    }
+  }
+
+  if(!bOk){
+    DBG1("RouteCreationFailed");
+    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+    bAutoPlayUseRandomNavTargetOnce=true;
+
+    AutoPlayAIReset(false); //v2KeepGoingTo is reset here too
+  }
+
+  return bOk;
 }
 
 void character::AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex, bool bWide, bool bKeepColor)
@@ -3093,9 +3111,9 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
     if(!v2NewKGTo.Is0()){
       AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
+    }else{
+      DBG1("TODO:too complex paths are failing... improve CreateRoute()?"); //TODO is this info correctly placed?
     }
-
-    DBG1("TODO:too complex paths are failing... improve CreateRoute()?");
   }
 
   if(!v2KeepGoingTo.Is0()){
@@ -6423,28 +6441,30 @@ void character::SaveLife()
 }
 
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
-{
+{DBG1(GetNameSingular().CStr());
   character* NewForm = 0;
 
   if(StateIsActivated(POLYMORPH_LOCK))
-  {
+  {DBGLN;
     ADD_MESSAGE("You feel uncertain about your body for a moment.");
     return NewForm;
   }
-  if(StateIsActivated(POLYMORPH_CONTROL))
-  {
-    if(IsPlayer() && !IsPlayerAutoPlay())
-    {
-      if(!GetNewFormForPolymorphWithControl(NewForm))
-        return NewForm;
-    }
-    else
-      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);
-  }
-  else
-    NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
 
-  Polymorph(NewForm, Time);
+  if(StateIsActivated(POLYMORPH_CONTROL))
+  {DBGLN;
+    if(IsPlayer() && !IsPlayerAutoPlay())
+    {DBGLN;
+      if(!GetNewFormForPolymorphWithControl(NewForm)){DBG1(NewForm);
+        return NewForm;
+      }
+    }else{DBGLN;
+      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);DBG1(NewForm);
+    }
+  }else{DBGLN;
+    NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);DBG1(NewForm);
+  }DBGLN;
+
+  Polymorph(NewForm, Time);DBG1(NewForm);
   return NewForm;
 }
 
@@ -12316,16 +12336,17 @@ truth character::IsESPBlockedByEquipment() const
 }
 
 truth character::TemporaryStateIsActivated (long What) const
-{
+{DBG7(this,GetNameSingular().CStr(),TemporaryState&What,TemporaryState,std::bitset<32>(TemporaryState),What,std::bitset<32>(What));
   if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
-  {
+  {DBGLN;
     return ((TemporaryState&What) & (~PANIC));
-  }
+  }DBGLN;
   if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
-  {
+  {DBGLN;
     return ((TemporaryState&What) & (~ESP));
-  }
-  return (TemporaryState & What);
+  }DBGLN;
+  bool b = (TemporaryState & What); DBGLN;
+  return b;
 }
 
 truth character::StateIsActivated (long What) const
