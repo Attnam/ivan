@@ -1197,10 +1197,12 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
 
 void character::GetAICommand()
 {
-  SeekLeader(GetLeader());
+  if(!IsPlayerAutoPlay()){
+    SeekLeader(GetLeader());
 
-  if(FollowLeader(GetLeader()))
-    return;
+    if(FollowLeader(GetLeader()))
+      return;
+  }
 
   if(CheckForEnemies(true, true, true))
     return;
@@ -2779,6 +2781,23 @@ truth character::AutoPlayAIDropThings()
   return false;
 }
 
+bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
+{
+  if(!it->CanBeSeenBy(this))return false;
+  if(!it->IsPickable(this))return false;
+  if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
+
+  if(!bPlayerHasLantern && it->IsOnFire(this)){
+    //ok
+  }else{
+    if(it->IsBroken())return false;
+    if(it->GetTruePrice()<=iMaxValueless)return false; //mainly to avoid all rocks from broken walls
+    if(clock()%3!=0 && it->GetSpoilLevel()>0)return false; //some spoiled may be consumed to randomly test diseases flows
+  }
+
+  return true;
+}
+
 truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(this);
@@ -2798,20 +2817,10 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
       //just pick up any useful stuff
       static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
       for(uint c = 0; c < vit.size(); ++c){
-        if(!vit[c]->CanBeSeenBy(this))continue;
-        if(!vit[c]->IsPickable(this))continue;
-        if(vit[c]->GetSquaresUnder()!=1)continue; //avoid big corpses 2x2
-
-        if(!bPlayerHasLantern && vit[c]->IsOnFire(this)){
-          //ok
-        }else{
-          if(vit[c]->IsBroken())continue;
-          if(vit[c]->GetTruePrice()<=iMaxValueless)continue; //mainly to avoid all rocks from broken walls
-          if(clock()%3!=0 && vit[c]->GetSpoilLevel()>0)continue; //some spoiled may be consumed to randomly test diseases flows
-        }
+        if(!IsAutoplayAICanPickup(vit[c],bPlayerHasLantern))continue;
 
         static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
-        if(itc && !itc->IsLocked()){
+        if(itc && !itc->IsLocked()){ //get items from unlocked container
           static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
           for(uint d = 0; d < vitItc.size(); ++d)
             vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
@@ -2945,29 +2954,31 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
                 static bool bIsLanternOnFloor;bIsLanternOnFloor = dynamic_cast<lantern*>(vit[n])!=NULL;// || vit[n]->IsOnFire(this); DBGLN;
 
                 if( // if is useful to the AutoPlay AI endless tests
-                    vit[n]->IsShield  (this) ||
-                    vit[n]->IsWeapon  (this) ||
-                    vit[n]->IsArmor   (this) ||
-                    vit[n]->IsAmulet  (this) ||
-                    vit[n]->IsZappable(this) ||
-                    vit[n]->IsRing    (this) ||
-                    bIsLanternOnFloor
-                ){
-                  bVisitAgain=true;
+                  vit[n]->IsShield  (this) ||
+                  vit[n]->IsWeapon  (this) ||
+                  vit[n]->IsArmor   (this) ||
+                  vit[n]->IsAmulet  (this) ||
+                  vit[n]->IsZappable(this) ||
+                  vit[n]->IsRing    (this) ||
+                  bIsLanternOnFloor
+                )
+                  if(IsAutoplayAICanPickup(vit[n],bPlayerHasLantern))
+                  {
+                    bVisitAgain=true;
 
-                  if(bIsLanternOnFloor && !bPlayerHasLantern){
-                    static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
-                    if(iDist<iNearestLanterOnFloorDist){
-                      iNearestLanterOnFloorDist=iDist;
-                      v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
+                    if(bIsLanternOnFloor && !bPlayerHasLantern){
+                      static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
+                      if(iDist<iNearestLanterOnFloorDist){
+                        iNearestLanterOnFloorDist=iDist;
+                        v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
+                      }
+                    }else{
+                      iVisitAgainCount--;
                     }
-                  }else{
-                    iVisitAgainCount--;
-                  }
 
-                  DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
-                  break;
-                }
+                    DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
+                    break;
+                  }
               }
             }
           }

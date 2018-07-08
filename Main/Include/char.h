@@ -1197,6 +1197,7 @@ class character : public entity, public id
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
+  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
   int   AutoPlayAIFindWalkDist(v2 v2To);
   truth AutoPlayAITestValidPathTo(v2 v2To);
