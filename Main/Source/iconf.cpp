@@ -124,10 +124,10 @@ truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           false);
 truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
                                           "allow distant lights to be seen",
-                                          false);
+                                          true);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);

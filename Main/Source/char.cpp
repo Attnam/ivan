@@ -2807,7 +2807,7 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
         }else{
           if(vit[c]->IsBroken())continue;
           if(vit[c]->GetTruePrice()<=iMaxValueless)continue; //mainly to avoid all rocks from broken walls
-          if(vit[c]->GetSpoilLevel()>0)continue;
+          if(clock()%3!=0 && vit[c]->GetSpoilLevel()>0)continue; //some spoiled may be consumed to randomly test diseases flows
         }
 
         static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
@@ -2921,6 +2921,11 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
       if(bAddValidTargetSquare && !CanMoveOn(lsqr))
         bAddValidTargetSquare=false;
+      else{
+        if(olt && olt->IsWall()){ DBG5(iX,iY,"Can move on walls?",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+          bAddValidTargetSquare=false;
+        }
+      }
 
       bool bIsFailToTravelSquare=false;
       if(bAddValidTargetSquare){
@@ -3079,7 +3084,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
     }
 
-    DBG1("TODO:too complex paths are failing... improve create path method?");
+    DBG1("TODO:too complex paths are failing... improve CreateRoute()?");
   }
 
   if(!v2KeepGoingTo.Is0()){
@@ -3159,7 +3164,7 @@ truth character::AutoPlayAICommand(int& rKey)
 
   truth bPlayerHasLantern=false;
   static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
-  for(int i=0;i<vit.size();i++){
+  for(uint i=0;i<vit.size();i++){
     if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this)){
       bPlayerHasLantern=true; //will keep only the 1st lantern
       break;
@@ -3180,8 +3185,16 @@ truth character::AutoPlayAICommand(int& rKey)
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
 //  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
 //  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
-  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues
+  static bool bPreviousTurnWasGhost=false;
+  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues mainly related to navigation
     iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+    bPreviousTurnWasGhost=true;
+  }else{
+    if(bPreviousTurnWasGhost){
+      AutoPlayAIReset(true); //this may help on navigation
+      bPreviousTurnWasGhost=false;
+      return true;
+    }
   }
 
   if(AutoPlayAIDropThings())
