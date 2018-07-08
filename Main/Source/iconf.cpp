@@ -124,7 +124,7 @@ truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           false);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
