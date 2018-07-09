@@ -1394,7 +1394,13 @@ struct recipe{
     if(mat==NULL)
       ABORT("NULL lump material");
 
-    if(mat->IsLiquid()){
+    DBG2(mat->GetName(DEFINITE).CStr(),mat->GetVolume());
+    bool bLiquid = mat->IsLiquid();
+    if(mat->IsPowder())bLiquid=false; //TODO if explosive could have a chance to xplod
+
+    if(dynamic_cast<gas*>(mat)!=NULL)return NULL; //TODO should have a chance to release the gas effect
+
+    if(bLiquid){
       C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
     }else{
       item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
