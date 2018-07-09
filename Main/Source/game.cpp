@@ -287,10 +287,12 @@ void game::RemoveItemID(ulong ID)
   if(ID){
     DBG2("Erasing:ItemID",ID);
 //    if(ID==20957)DBGSTK;//temp test case debug
-    if(SearchItem(ID)==NULL){
-      DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
-      DBGSTK;
-    }
+    DBGEXEC(
+      if(SearchItem(ID)==NULL){
+        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
+        DBGSTK;
+      }
+    );
     ItemIDMap.erase(ItemIDMap.find(ID));
     DBG2("ERASED!:ItemID",ID);
   }
@@ -3266,7 +3268,7 @@ int game::Load(cfestring& saveName)
   character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
   if(CharAtPos==NULL || !CharAtPos->IsPlayer())
     ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter(),Pos) ); DBG2(GetCurrentArea()->GetSquare(Pos)->GetCharacter(),Player); DBG2(PLAYER,DBGAV2(Pos));
+  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
