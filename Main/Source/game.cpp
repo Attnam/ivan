@@ -61,10 +61,6 @@
 #include "wsquare.h"
 #include "namegen.h"
 
-#define DBGMSG_BLITDATA
-#include "dbgmsgproj.h"
-
-#define DBGMSG_V2
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
