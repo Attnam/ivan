@@ -12,6 +12,8 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <string>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include <bitset>
@@ -41,6 +43,7 @@
 #include "hscore.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
@@ -55,6 +58,7 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+#include "namegen.h"
 
 #define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
@@ -63,7 +67,7 @@
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 117 // Increment this if changes make bonefiles incompatible
+#define BONE_FILE_VERSION 118 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -177,11 +181,13 @@ festring game::DefaultWish;
 festring game::DefaultChangeMaterial;
 festring game::DefaultDetectMaterial;
 truth game::WizardMode;
+int game::AutoPlayMode=0;
 int game::SeeWholeMapCheatMode;
 truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
+festring game::AutoSaveFileName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
@@ -214,6 +220,10 @@ v2 ZoomPos = v2(0,0);
 v2 silhouettePos = v2(0,0);
 
 bool bPositionQuestionMode=false;
+
+std::vector<dbgdrawoverlay> game::vDbgDrawOverlayFunctions;
+
+int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
@@ -420,6 +430,8 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
 }
 
 void game::SRegionAroundDisable(){
+  if(iRegionAroundXBRZ==-1)return;
+
   graphics::SetSRegionEnabled(iRegionAroundXBRZ,false);
 }
 
@@ -631,13 +643,25 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
   UpdateSRegionsXBRZ();
 }
 
-truth game::Init(cfestring& Name)
+void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyNamePattern().CStr());
+  if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
+
+  NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+  rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
+}
+
+truth game::Init(cfestring& loadBaseName)
 {
-  if(Name.IsEmpty())
-  {
+  festring absLoadNameOk;
+
+  if(!loadBaseName.IsEmpty()){
+    absLoadNameOk = SaveName(loadBaseName); //will prepend the path
+  }else{
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
       PlayerName.Empty();
+
+      FantasyName(PlayerName); DBG1(PlayerName.CStr());
 
       if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"),
                                   v2(30, 46), WHITE, 1, 20, true, true) == ABORTED
@@ -646,9 +670,9 @@ truth game::Init(cfestring& Name)
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+
+    absLoadNameOk = SaveName(); //default is to use PlayerName
   }
-  else
-    PlayerName = Name;
 
 #ifdef WIN32
   _mkdir("Save");
@@ -670,8 +694,8 @@ truth game::Init(cfestring& Name)
   DangerFound = 0;
   CausePanicFlag = false;
 
-  bool bSuccess=false;
-  switch(Load(SaveName(PlayerName)))
+  bool bSuccess=false; DBG3(PlayerName.CStr(),loadBaseName.CStr(),absLoadNameOk.CStr());
+  switch(Load(absLoadNameOk))
   {
    case LOADED:
     {
@@ -1164,13 +1188,20 @@ bool game::ToggleDrawMapOverlay()
   return bDrawMapOverlayEnabled;
 }
 
+void game::RefreshDrawMapOverlay()
+{
+  iMapOverlayDrawCount=0;
+}
+
 void game::SetDrawMapOverlay(bool b)
 {
-  static bool bDummyInit = [](){graphics::AddDrawAboveAll(&DrawMapOverlay,1000,"Map");return true;}();
+  static bool bDummyInit  = [](){
+    graphics::AddDrawAboveAll(&DrawMapOverlay     ,1000,"Map"     );
+    graphics::AddDrawAboveAll(&DrawMapNotesOverlay,1100,"MapNotes"); return true;}();
 
   bDrawMapOverlayEnabled=b;
 
-  if(bDrawMapOverlayEnabled)iMapOverlayDrawCount=0;
+  if(bDrawMapOverlayEnabled)RefreshDrawMapOverlay();
 }
 
 bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftFinal, v2& v2MapScrSizeFinal, v2 v2Center){
@@ -1190,9 +1221,173 @@ bitmap* finalMapBmp(blitdata& bld, int iStretch, bitmap* bmpFrom, v2& v2TopLeftF
   return bld.Bitmap;
 };
 
+char game::MapNoteToken()
+{
+  return '#';
+}
+
+int iMapNotesRotation=0;
+int game::RotateMapNotes()
+{
+  iMapNotesRotation++;
+  if(iMapNotesRotation>3)
+    iMapNotesRotation=0;
+
+  return iMapNotesRotation;
+}
+
+bool bShowMapNotes=false;
+bool game::ToggleShowMapNotes()
+{
+  bShowMapNotes=!bShowMapNotes;
+  return bShowMapNotes;
+}
+
+bool bImersiveMapMode=false;
+struct mapnote{
+  lsquare* lsqr;
+  v2 tinyMapPos;
+  v2 scrPos;
+  cchar* note;
+
+  int iNoteLength;
+  int iNoteWidthInPixels;
+  v2 v2LineHook;
+  v2 basePos;
+
+  mapnote(lsquare* lsqr_,cchar* note_,v2 tinyMapPos_):lsqr(lsqr_),note(note_),tinyMapPos(tinyMapPos_),iNoteLength(0),
+    iNoteWidthInPixels(0){}
+};
+static std::vector<mapnote> vMapNotes;
+v2 v2MapTopLeft;
+v2 v2MapSize;
+col16 colMapNoteBkg;
+int iNoteHighlight=-1;
+lsquare* game::GetHighlightedMapNoteLSquare()
+{DBGLN;
+  if(iNoteHighlight==-1)return NULL;DBGLN;
+  if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
+  return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
+}
+bool validateV2(v2 v2Chk, bitmap* buffer=NULL, v2 Border=v2()){
+  if(v2Chk.X<0 || v2Chk.Y<0)return false;
+
+  if(buffer!=NULL){
+    if(v2Chk.X > buffer->GetSize().X || v2Chk.Y > buffer->GetSize().Y)return false;
+
+    if(!Border.Is0()){
+      v2 ending = v2Chk+Border;
+      if(ending.X>buffer->GetSize().X || ending.Y>buffer->GetSize().Y)return false;
+    }
+  }
+
+  return true;
+}
+void game::DrawMapNotesOverlay(bitmap* buffer)
+{
+  if(!bDrawMapOverlayEnabled)return;
+
+  if(!bShowMapNotes)return;
+
+  if(vMapNotes.size()==0)return;
+
+//  if(!bImersiveMapMode)return; //the problem is space for the auto positioning of notes
+
+  //TODO draw to a bitmap in the 1st call and just fast blit it later (with mask), unless it becomes animated in some way.
+  int iLineHeightPixels=15; //line height in pixels
+  int iFontWidth=8; //font width
+  int iM=3; //margin
+
+  const static int iTotCol=5;
+  static col16 ac[iTotCol];//={BLACK,DARK_GRAY};
+  static bool bDummyInit = [](){
+    int step=20;
+    for(int i=0;i<iTotCol;i++){
+      ac[i]=MakeRGB16(i*step,i*step,i*step);
+    }return true;}();
+
+  int iMaxLineLength=0;
+  for(int i=0;i<vMapNotes.size();i++){
+    vMapNotes[i].iNoteLength=strlen(vMapNotes[i].note);
+    if(vMapNotes[i].iNoteLength>iMaxLineLength)
+      iMaxLineLength=vMapNotes[i].iNoteLength;
+  }
+
+  v2 v2MapNotesTopLeft;
+  bool bHookAtRight=false;
+  int iMaxW=0;
+  switch(iMapNotesRotation){
+  case 0: //right
+    v2MapNotesTopLeft = v2MapTopLeft+v2(v2MapSize.X+iM,0);
+    break;
+  case 1: //below
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,v2MapSize.Y+iM);
+    break;
+  case 2: //left
+    iMaxW=(iMaxLineLength+1)*iFontWidth;
+    v2MapNotesTopLeft = v2MapTopLeft+v2(-(iMaxW+iM),0);
+    bHookAtRight=true;
+    break;
+  case 3: //above
+    v2MapNotesTopLeft = v2MapTopLeft+v2(0,-((vMapNotes.size()*iLineHeightPixels) + iM));
+    break;
+  }
+
+  iNoteHighlight=-1;
+  for(int i=0;i<vMapNotes.size();i++){
+    vMapNotes[i].basePos=v2MapNotesTopLeft+v2(iM,i*iLineHeightPixels);
+
+//    int w=iFontWidth*strlen(vMapNotes[i].note)+iM;
+    vMapNotes[i].iNoteWidthInPixels=iFontWidth*vMapNotes[i].iNoteLength;
+    int w=vMapNotes[i].iNoteWidthInPixels+iM;
+    if(bHookAtRight)vMapNotes[i].basePos.X+=iMaxW-w;
+
+    v2 bkgTL=vMapNotes[i].basePos-v2(iM,iM);
+    v2 bkgB=v2(w,iLineHeightPixels);
+
+    v2 mouse = globalwindowhandler::GetMouseLocation();
+    if( iNoteHighlight==-1 &&
+        mouse.X >= bkgTL.X         && mouse.Y >= bkgTL.Y          &&
+        mouse.X < (bkgTL.X+bkgB.X) && mouse.Y < (bkgTL.Y+bkgB.Y)
+    ){
+      iNoteHighlight=i;
+    }
+
+//    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
+    if(validateV2(bkgTL,buffer,bkgB)){
+      buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+      buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
+    }
+
+    vMapNotes[i].v2LineHook=vMapNotes[i].basePos;
+    if(bHookAtRight)vMapNotes[i].v2LineHook.X+=w;
+    switch(iMapNotesRotation){
+    case 1: //below
+    case 3: //above
+      vMapNotes[i].v2LineHook.X+=iFontWidth*i;
+      break;
+    }
+  }
+
+  for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
+    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
+      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+  }
+
+  for(int i=0;i<vMapNotes.size();i++)
+    if(validateV2(vMapNotes[i].basePos,buffer))
+      FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
+}
+
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
+
+  if(ivanconfig::GetStartingDungeonGfxScale()==1){
+    ADD_MESSAGE("This map is as big as the world!");
+    bDrawMapOverlayEnabled=false;
+    return;
+  }
 
   bool bUsexBRZ=false;
   int iImersiveMap=0;
@@ -1213,110 +1408,119 @@ void game::DrawMapOverlay(bitmap* buffer)
     iImersiveMap=3;
     break;
   }
+  bImersiveMapMode = iImersiveMap>0;
 
-  if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
-  }else{ //it actually work works (for now) if there is any dungeon stretching going on
-    if(buffer==NULL)return; //TODO can this happen?
+  //it actually only works (for now) if there is any dungeon stretching going on
+  if(buffer==NULL)return; //TODO can this happen?
 
-    static bitmap* bmpMapBuffer=NULL;
+  static bitmap* bmpMapBuffer=NULL;
 
-    int iMapTileSizeMax=32; //TODO this starting is too big if known map is still tiny?
-    int iMapTileSize=iMapTileSizeMax;
-    static v2 v2TopLeft(0,0);
-    static v2 v2Center(0,0);
-    static v2 v2MapScrSize(0,0);
-    static v2 v2BmpSize(0,0);
-    static v2 v2TopLeftFinal(0,0);
-    static v2 v2MapScrSizeFinal(0,0);
-    static bitmap* bmpFinal;
+  int iMapTileSizeMax=32; //TODO this starting is too big if known map is still tiny?
+  int iMapTileSize=iMapTileSizeMax;
+  static v2 v2TopLeft(0,0);
+  static v2 v2Center(0,0);
+  static v2 v2MapScrSize(0,0);
+  static v2 v2BmpSize(0,0);
+  static v2 v2TopLeftFinal(0,0);
+  static v2 v2MapScrSizeFinal(0,0);
+  static bitmap* bmpFinal;
 
-    if(iMapOverlayDrawCount==0){
-  //    static level* lvlLast=NULL; //this is just a changed dungeon indicator
-  //    if(lvlLast == game::GetCurrentLevel())return;
-  //    lvlLast=game::GetCurrentLevel();
+  if(bPositionQuestionMode){
+    static v2 v2PreviousCursorPos;
+    if(v2PreviousCursorPos != CursorPos){
+      v2PreviousCursorPos = CursorPos;
+      RefreshDrawMapOverlay();
+    }
+  }
+
+  if(iMapOverlayDrawCount==0){
+//    static level* lvlLast=NULL; //this is just a changed dungeon indicator
+//    if(lvlLast == game::GetCurrentLevel())return;
+//    lvlLast=game::GetCurrentLevel();
 
 //      static int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like
 //      static col16 colorMapBkg=MakeRGB16(iR,iG,iB);
-  //      static const int iLumTot=5;
-  //      static col16 bkg[iLumTot];
-  //      static col24 lum[iLumTot];static bool bDummyInit=[](){
-  //        for(int i=0;i<iLumTot;i++){
-  //          float fD   = 0.02;
-  //          float f    = 1.00 -(fD*iLumTot) + fD*i;
-  //          lum[i]=MakeRGB24(iR*f   , iG*f   , iB*f   );
-  //
-  //          float fBkgD = 0.05;
-  //          float fBkg = 1.00 -(fBkgD*iLumTot) + fBkgD*i; //col16 has less variations
-  //          bkg[i]=MakeRGB16(iR*fBkg, iG*fBkg, iB*fBkg);
-  //
-  //          DBG5(i,f,fBkg,lum[i],bkg[i]);
-  //        };return true;}();
+//      static const int iLumTot=5;
+//      static col16 bkg[iLumTot];
+//      static col24 lum[iLumTot];static bool bDummyInit=[](){
+//        for(int i=0;i<iLumTot;i++){
+//          float fD   = 0.02;
+//          float f    = 1.00 -(fD*iLumTot) + fD*i;
+//          lum[i]=MakeRGB24(iR*f   , iG*f   , iB*f   );
+//
+//          float fBkgD = 0.05;
+//          float fBkg = 1.00 -(fBkgD*iLumTot) + fBkgD*i; //col16 has less variations
+//          bkg[i]=MakeRGB16(iR*fBkg, iG*fBkg, iB*fBkg);
+//
+//          DBG5(i,f,fBkg,lum[i],bkg[i]);
+//        };return true;}();
 
-      v2 v2KnownDungeonSize;
-      v2 v2Min(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
-      v2 v2Max(0,0);
-      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
-        static lsquare* lsqr;lsqr=CurrentLevel->GetLSquare(iX,iY);
-        if(lsqr->HasBeenSeen()){
-          if(v2Min.X > lsqr->GetPos().X) v2Min.X = lsqr->GetPos().X;
-          if(v2Min.Y > lsqr->GetPos().Y) v2Min.Y = lsqr->GetPos().Y;
-          if(v2Max.X < lsqr->GetPos().X) v2Max.X = lsqr->GetPos().X;
-          if(v2Max.Y < lsqr->GetPos().Y) v2Max.Y = lsqr->GetPos().Y;
-        }
+    v2 v2KnownDungeonSize;
+    v2 v2Min(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
+    v2 v2Max(0,0);
+    for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+      static lsquare* lsqr;lsqr=CurrentLevel->GetLSquare(iX,iY);
+      if(lsqr->HasBeenSeen()){
+        if(v2Min.X > lsqr->GetPos().X) v2Min.X = lsqr->GetPos().X;
+        if(v2Min.Y > lsqr->GetPos().Y) v2Min.Y = lsqr->GetPos().Y;
+        if(v2Max.X < lsqr->GetPos().X) v2Max.X = lsqr->GetPos().X;
+        if(v2Max.Y < lsqr->GetPos().Y) v2Max.Y = lsqr->GetPos().Y;
+      }
 
-        v2KnownDungeonSize = (v2Max+v2(1,1)) -v2Min;
-      }} DBG3(DBGAV2(v2Min),DBGAV2(v2Max),DBGAV2(v2KnownDungeonSize));
+      v2KnownDungeonSize = (v2Max+v2(1,1)) -v2Min;
+    }} DBG3(DBGAV2(v2Min),DBGAV2(v2Max),DBGAV2(v2KnownDungeonSize));
 
 
 //      v2 v2FullDungeonSize=v2(game::GetCurrentLevel()->GetXSize(),game::GetCurrentLevel()->GetYSize());
-      while(iMapTileSizeMax*v2KnownDungeonSize.X > RES.X*0.9)iMapTileSizeMax--;
-      while(iMapTileSizeMax*v2KnownDungeonSize.Y > RES.Y*0.9)iMapTileSizeMax--;
-      iMapTileSize=iMapTileSizeMax;
-      if(iImersiveMap>0 || bUsexBRZ){
-        iMapTileSize=1; //1 works best with xBRZ (2 makes it blocky again)
+    while(iMapTileSizeMax*v2KnownDungeonSize.X > RES.X*0.9)iMapTileSizeMax--;
+    while(iMapTileSizeMax*v2KnownDungeonSize.Y > RES.Y*0.9)iMapTileSizeMax--;
+    iMapTileSize=iMapTileSizeMax;
+    if(bImersiveMapMode || bUsexBRZ){
+      iMapTileSize=1; //1 works best with xBRZ (2 makes it blocky again)
 
-        if(iImersiveMap>0)
-          iMapTileSizeMax = 3 + iImersiveMap; //forces x2 scale tiny map
-      }DBG2(iMapTileSizeMax,iMapTileSize);
-      /********** ONLY USE iMapTileSize BELOW HERE!!! *************/
+      if(bImersiveMapMode)
+        iMapTileSizeMax = 3 + iImersiveMap; //forces x2 scale tiny map
+    }DBG2(iMapTileSizeMax,iMapTileSize);
+    /********** ONLY USE iMapTileSize BELOW HERE!!! *************/
 
-      v2 v2MapTileSize(iMapTileSize,iMapTileSize);
+    v2 v2MapTileSize(iMapTileSize,iMapTileSize);
 
-      v2MapScrSize=v2KnownDungeonSize*iMapTileSize;
+    v2MapScrSize=v2KnownDungeonSize*iMapTileSize;
 
-      v2 v2DungeonScrSize(GetScreenXSize(),GetScreenYSize()); //the visible dungeon size b4 stretching
-      v2DungeonScrSize *= TILE_SIZE*ivanconfig::GetStartingDungeonGfxScale(); //the final size in pixels
-      DBG4(DBGAV2(v2KnownDungeonSize),DBGAV2(area::getTopLeftCorner()),DBGAV2(v2DungeonScrSize),DBGAV2(v2MapScrSize));
+    v2 v2DungeonScrSize(GetScreenXSize(),GetScreenYSize()); //the visible dungeon size b4 stretching
+    v2DungeonScrSize *= TILE_SIZE*ivanconfig::GetStartingDungeonGfxScale(); //the final size in pixels
+    DBG4(DBGAV2(v2KnownDungeonSize),DBGAV2(area::getTopLeftCorner()),DBGAV2(v2DungeonScrSize),DBGAV2(v2MapScrSize));
 //      v2 v2VisibleDungeonScrSize=v2CL*TILE_SIZE;
-      v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
-      v2TopLeft = v2Center -v2MapScrSize/2;
-      if(v2TopLeft.X<0)v2TopLeft.X=0;
-      if(v2TopLeft.Y<0)v2TopLeft.Y=0;
+    v2Center = area::getTopLeftCorner() +v2DungeonScrSize/2;
+    v2TopLeft = v2Center -v2MapScrSize/2;
+    if(v2TopLeft.X<0)v2TopLeft.X=0;
+    if(v2TopLeft.Y<0)v2TopLeft.Y=0;
 //        v2(
 //          RES.X/2 -(v2CL.X * iMapTileSize)/2,
 //          RES.Y/2 -(v2CL.Y * iMapTileSize)/2);
 
-      v2BmpSize=v2KnownDungeonSize*iMapTileSize;
-      if(bmpMapBuffer==NULL || bmpMapBuffer->GetSize()!=v2BmpSize){
-        delete bmpMapBuffer;
-        bmpMapBuffer=new bitmap(v2BmpSize);
-      }
+    v2BmpSize=v2KnownDungeonSize*iMapTileSize;
+    if(bmpMapBuffer==NULL || bmpMapBuffer->GetSize()!=v2BmpSize){
+      delete bmpMapBuffer;
+      bmpMapBuffer=new bitmap(v2BmpSize);
+    }
 //      bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
 
-      v2 v2PlayerScrPos(0,0);
-      v2 v2Dest(0,0);
-      for(int iY=v2Min.Y;iY<=v2Max.Y;iY++){
+    v2 v2PlayerScrPos(0,0);
+    v2 v2CursorScrPos(-1,-1);
+    v2 v2Dest(0,0);
+    vMapNotes.clear();
+    for(int iY=v2Min.Y;iY<=v2Max.Y;iY++){
 //        B.Dest.Y = v2TopLeft.Y +iY*iMapTileSize;
-        v2Dest.Y = (iY-v2Min.Y)*iMapTileSize;
+      v2Dest.Y = (iY-v2Min.Y)*iMapTileSize;
 
-        for(int iX=v2Min.X;iX<=v2Max.X;iX++){
+      for(int iX=v2Min.X;iX<=v2Max.X;iX++){
 //          B.Dest.X = v2TopLeft.X +iX*iMapTileSize;
-          v2Dest.X = (iX-v2Min.X)*iMapTileSize;
+        v2Dest.X = (iX-v2Min.X)*iMapTileSize; DBGSV2(v2Dest);
 
-          static v2 v2SqrPos;v2SqrPos.X=iX;v2SqrPos.Y=iY;
+        static v2 v2SqrPos;v2SqrPos.X=iX;v2SqrPos.Y=iY;
 
-          static lsquare* lsqr;lsqr=CurrentLevel->GetLSquare(v2SqrPos);
+        static lsquare* lsqr;lsqr=CurrentLevel->GetLSquare(v2SqrPos);
 
 //          static float fStepDelay=3.0;
 //          static int iAdd;iAdd = ((int)(clock()/(CLOCKS_PER_SEC*fStepDelay))) % ((iLumTot-1)*2); //moving waves
@@ -1336,87 +1540,127 @@ void game::DrawMapOverlay(bitmap* buffer)
 //          static float fB=fFrom-fStep; //always darker than everything else based on height
 //          static col16 colorMapBkg=MakeRGB16(iR*fB,iG*fB,iB*fB);
 
-          static col16 colorWall,colorFloor,colorMapBkg;
-          static bool bDummyInit = [](){
-            int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
-            float fFrom=0.95;
-            float fStep=0.20;
-            int iTot=1.0/fStep;
-            col16 clMap[iTot];
-            for(int i=0;i<iTot;i++){
-              float f=fFrom -fStep*i;
-              clMap[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(clMap[i]);
+        static col16 colorNaturalWall,colorBuiltWall,colorFloor,colorMapBkg;
+        static bool bDummyInit = [](){
+          int iR=0xFF, iG=0xFF*0.80, iB=0xFF*0.60; //old paper like, well.. should be at least ;)
+          float fFrom=0.95;
+          float fStep=0.15;
+          int iTot=1.0/fStep;
+          col16 clMap[iTot];
+          for(int i=0;i<iTot;i++){
+            float f=fFrom -fStep*i;
+            clMap[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(clMap[i]);
+          }
+          int k=0;
+          colorBuiltWall  =clMap[k++];
+          colorNaturalWall=clMap[k++];
+          colorFloor      =clMap[k++];
+          colorMapBkg     =clMap[k++]; //always darker than everything else based on height
+          colMapNoteBkg=colorMapBkg;
+          return true;
+        }();
+
+        col16 colorO;
+        if(lsqr->HasBeenSeen()){
+          static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
+          static col16 colorFountain=MakeRGB16(        0,         0,0xFF     ); //blue
+          static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
+          static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
+          static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+          static col16 colorNote    =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white TODO why?
+//            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
+
+          static const int iTotRM=5 +1; //5 is max rest modifier from dat files
+          static col16 colorOnGroundRM[iTotRM];
+          static bool bDummyInit2 = [](){
+            int iR=0xFF, iG=0xFF*0.70, iB=0xFF*0.40; //light orange
+            float fFrom=1.00;
+            float fStep=0.05;
+            for(int i=0;i<iTotRM;i++){
+              float f=fFrom -fStep*(iTotRM-1 -i);
+              colorOnGroundRM[i]=MakeRGB16(iR*f,iG*f,iB*f); DBG1(colorOnGroundRM[i]);
             }
-            colorWall  =clMap[0];
-            colorFloor =clMap[1];
-            colorMapBkg=clMap[2]; //always darker than everything else based on height
+//              colorOnGround = colorOnGroundRM[0];
             return true;
           }();
 
-          col16 colorO;
-          if(lsqr->HasBeenSeen()){
-            static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
-            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
-            static col16 colorFountain=MakeRGB16(        0,         0,0xFF     );
-            static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0);
-            static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0);
-
-            static olterrain* olt;olt = lsqr->GetOLTerrain();
-            if(olt){
-              if(olt->IsDoor()){
-                colorO=colorDoor;
-              }else if(olt->IsWall()){
-                colorO=colorWall;
-              }else if(olt->IsFountainWithWater()){
-                colorO=colorFountain;
+          static olterrain* olt;olt = lsqr->GetOLTerrain();
+          cchar* note = lsqr->GetEngraved();
+          if(note!=NULL && note[0]==game::MapNoteToken())//{
+            vMapNotes.push_back(mapnote(lsqr,note,v2Dest));
+          //              colorO=colorNote;
+//            }else
+          if(olt){
+            if(olt->IsDoor()){
+              colorO=colorDoor;
+            }else if(olt->IsWall()){
+              if(dynamic_cast<earth*>(olt)!=NULL)
+                colorO=colorNaturalWall;
+              else
+                colorO=colorBuiltWall;
+            }else if(olt->IsFountainWithWater()){
+              colorO=colorFountain;
 //              }else if(olt->IsUpLink()){
-              }else if(olt->GetConfig() == STAIRS_UP   || olt->GetConfig() == SUMO_ARENA_EXIT ){
-                colorO=colorUp;
-              }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
-                colorO=colorDown;
-              }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
-                colorO=colorOnGround;
-              }
-            }else{ //floor
-              colorO=colorFloor;
+            }else if(olt->GetConfig() == STAIRS_UP   || olt->GetConfig() == SUMO_ARENA_EXIT ){
+              colorO=colorUp;
+            }else if(olt->GetConfig() == STAIRS_DOWN || olt->GetConfig() == SUMO_ARENA_ENTRY){
+              colorO=colorDown;
+            }else if(dynamic_cast<altar*>(olt)!=NULL){
+              colorO=colorAltar;
+            }else if(olt->IsOnGround()){ //LAST ONE! as is generic thing
+//                if(olt->GetRestModifier()>1)
+//                  colorO=colorOnGround;
+//                else
+//                  colorO=colorOnGround;
+              colorO=colorOnGroundRM[olt->GetRestModifier()]; //TODO this may break if another RM level is configured at .dat files
             }
-
-            //this happens during detect material! TODO this is just a guess work and may fail one day or at some untested place
-            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){
-              colorO=YELLOW;
-            }
-          }else{
-//            if(lsqr->GetLuminance()==NORMAL_LUMINANCE){ //this happens during detect material!
-//              colorO=YELLOW;
-//            }else{
-              colorO=colorMapBkg;
-    //            colorO=bkg[iLumIndex];
-//            }
+          }else{ //floor
+            colorO=colorFloor;
           }
 
-          bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
+          if(lsqr->IsMaterialDetected()) //color override
+            colorO=YELLOW;
 
-          if(PLAYER->GetPos() == v2SqrPos)
-            v2PlayerScrPos=v2Dest;
+        }else{
+          colorO=colorMapBkg;
         }
+
+        bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
+
+        if(CursorPos == v2SqrPos)
+          v2CursorScrPos=v2Dest;
+
+        if(PLAYER->GetPos() == v2SqrPos)
+          v2PlayerScrPos=v2Dest;
       }
+    }
 
 //      graphics::DrawRectangleOutlineAround(
 //        B.Bitmap, v2TopLeft, v2CL*iMapTileSize, LIGHT_GRAY, true);
 
-      if(iMapTileSize<3){
-        bmpMapBuffer->Fill(v2PlayerScrPos, v2MapTileSize, RED);
-      }else{
+    // player location. general override
+    if(iMapTileSize<3){
+      if(bPositionQuestionMode && v2CursorScrPos!=v2(-1,-1))
+        bmpMapBuffer->Fill(v2CursorScrPos, v2MapTileSize, WHITE);
+
+      bmpMapBuffer->Fill(v2PlayerScrPos, v2MapTileSize, RED);
+    }else{
+      if(bPositionQuestionMode && v2CursorScrPos!=v2(-1,-1))
         graphics::DrawRectangleOutlineAround(
-          bmpMapBuffer, v2PlayerScrPos, v2MapTileSize, RED, iMapTileSize>12);
-      }
+          bmpMapBuffer, v2CursorScrPos-v2(1,1), v2MapTileSize+v2(2,2), WHITE, iMapTileSize>12);
 
-      bmpFinal = bmpMapBuffer;
-      v2TopLeftFinal = v2TopLeft;
-      v2MapScrSizeFinal = v2MapScrSize;
-    } DBG3(bmpMapBuffer,iMapOverlayDrawCount,DBGAV2(v2TopLeft));
+      graphics::DrawRectangleOutlineAround(
+        bmpMapBuffer, v2PlayerScrPos, v2MapTileSize, RED, iMapTileSize>12);
+    }
 
-    if((bUsexBRZ || iImersiveMap>0) && iMapOverlayDrawCount==0){ //double stretch
+    bmpFinal = bmpMapBuffer;
+    v2TopLeftFinal = v2TopLeft;
+    v2MapScrSizeFinal = v2MapScrSize;
+
+    DBG3(bmpMapBuffer,iMapOverlayDrawCount,DBGAV2(v2TopLeft));
+
+    int iFinalMapScaling=0;
+    if(bUsexBRZ || bImersiveMapMode){ //double stretch
       /**
        * these are "best fit" double stretch values
        *
@@ -1429,7 +1673,7 @@ void game::DrawMapOverlay(bitmap* buffer)
        * TODO a smart formulae that allows above 32 too one day? :>
        */
       int a=-1,b=-1;
-//      if(iMapTileSize==1){
+  //      if(iMapTileSize==1){
         if(iMapTileSizeMax>32)ABORT("not supported yet: iMapTileSizeMax=%d",iMapTileSizeMax);
         switch(iMapTileSizeMax/iMapTileSize){
         case 32:case 31:case 30:
@@ -1459,26 +1703,7 @@ void game::DrawMapOverlay(bitmap* buffer)
         default: // <=6
           a=iMapTileSizeMax;
         }
-//      }
-//      else
-//      if(iMapTileSize==2){ // the final result is a bit messy... kept in case we use it anyway
-//        switch(iMapTileSizeVanillaBkp){ //
-//        case 32:
-//          a=4;b=4;break;
-//        case 31:case 30:
-//          a=3;b=5;break;
-//        case 29:case 28:case 27:case 26:case 25:case 24:
-//          a=3;b=4;break;
-//        case 23:case 22:case 21:case 20:
-//          a=2;b=5;break;
-//        case 19:case 18:
-//          a=3;b=3;break;
-//        case 17:case 16:
-//          a=2;b=4;break;
-//        default: // <=15
-//          a=iMapTileSizeVanillaBkp/2;
-//        }
-//      }
+
       DBG4(a,b,iMapTileSize,iMapTileSizeMax);
       if(a<b)ABORT("a=%d should be bigger than b=%d for best initial xBRZ results",a,b);
 
@@ -1486,42 +1711,21 @@ void game::DrawMapOverlay(bitmap* buffer)
         v2 v2BmpSizeIn=v2BmpSize;
         static blitdata bldA=DEFAULT_BLITDATA;
         bmpFinal=finalMapBmp(bldA,a,bmpFinal,v2TopLeftFinal,v2MapScrSizeFinal,v2Center);
-//        /* a */
-//        { // a block to prevent mistakes at 'b'
-//          static blitdata bld=DEFAULT_BLITDATA;
-//          v2MapScrSizeFinal = v2BmpSizeIn*a;
-//          if(bld.Bitmap == NULL || bld.Bitmap->GetSize()!=v2MapScrSizeFinal){
-//            delete bld.Bitmap;
-//            bmpFinal = bld.Bitmap = new bitmap(v2MapScrSizeFinal);
-//          }
-//          bld.Stretch = a;
-//          bld.Border = v2BmpSizeIn;
-//          graphics::Stretch(true,bmpFinal,bld,false);
-//          v2TopLeftFinal = v2Center -(bld.Border*bld.Stretch)/2;
-//        }
-//
-//        /* b */
+
         if(b>=2){
           static blitdata bldB=DEFAULT_BLITDATA;
           bmpFinal=finalMapBmp(bldB,b,bmpFinal,v2TopLeftFinal,v2MapScrSizeFinal,v2Center);
-//          v2MapScrSizeFinal = v2BmpSize*a;
-//          if(bld.Bitmap == NULL || bld.Bitmap->GetSize()!=v2MapScrSizeFinal){
-//            delete bld.Bitmap;
-//            bmpFinal = bld.Bitmap = new bitmap(v2MapScrSizeFinal);
-//          }
-//          bld.Stretch = a;
-//          bld.Border = v2BmpSize;
-//          graphics::Stretch(true,bmpFinal,bld,false);
-//          v2TopLeftFinal = v2Center -(bld.Border*bld.Stretch)/2;
         }
 
-//        graphics::DrawRectangleOutlineAround(
-//          buffer, bld.Dest, bld.Border*bld.Stretch, LIGHT_GRAY, true);
+  //        graphics::DrawRectangleOutlineAround(
+  //          buffer, bld.Dest, bld.Border*bld.Stretch, LIGHT_GRAY, true);
       }
+
+      iFinalMapScaling = (a!=-1?a:1) * (b!=-1?b:1); DBG3(a,b,iFinalMapScaling);
 
     }
 
-    if(iImersiveMap>0 && iMapOverlayDrawCount==0){ // at player hands!
+    if(bImersiveMapMode && !bPositionQuestionMode){ // at player hands!
       v2TopLeftFinal = area::getTopLeftCorner()
         + (CalculateScreenCoordinates(PLAYER->GetPos()) -area::getTopLeftCorner()) * ivanconfig::GetStartingDungeonGfxScale()
         + (TILE_V2*ivanconfig::GetStartingDungeonGfxScale())/2 //find center at player tile
@@ -1530,18 +1734,30 @@ void game::DrawMapOverlay(bitmap* buffer)
         ;
     }
 
-    if(iMapOverlayDrawCount==0){
-      if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
-      if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
-      if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
-      if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    if((v2TopLeftFinal.X+v2MapScrSizeFinal.X) > RES.X)v2TopLeftFinal.X=RES.X-v2MapScrSizeFinal.X;
+    if((v2TopLeftFinal.Y+v2MapScrSizeFinal.Y) > RES.Y)v2TopLeftFinal.Y=RES.Y-v2MapScrSizeFinal.Y;
+    if(v2TopLeftFinal.X<0)v2TopLeftFinal.X=0;
+    if(v2TopLeftFinal.Y<0)v2TopLeftFinal.Y=0;
+    DBGSV2(v2TopLeftFinal);
+
+    // prepare notes
+    int iMult=(iFinalMapScaling>0?iFinalMapScaling:1);
+    for(int i=0;i<vMapNotes.size();i++){
+      vMapNotes[i].scrPos = v2TopLeftFinal+
+        (vMapNotes[i].tinyMapPos*iMult) //pos
+//        +v2(2,2);//
+        +((v2(iMapTileSize,iMapTileSize)*iMult)/2);
+      DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(v2TopLeftFinal),iFinalMapScaling,iMult,DBGAV2(vMapNotes[i].tinyMapPos));
     }
-
-    bmpFinal->FastBlit(buffer, v2TopLeftFinal);
-    graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
-
-    iMapOverlayDrawCount++;
+//      v2MapNotesTopLeft = v2TopLeftFinal+v2(v2MapScrSizeFinal.X,0);
+    v2MapTopLeft = v2TopLeftFinal;
+    v2MapSize = v2MapScrSizeFinal;
   }
+
+  bmpFinal->FastBlit(buffer, v2TopLeftFinal);
+  graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
+
+  iMapOverlayDrawCount++;
 
 }
 /****************
@@ -1725,7 +1941,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
     iTallState=iTotTallStates-1;
     iAltSilBlitCount=0;
     humanoid::SetSilhouetteWhere(humanoid::GetSilhouetteWhereDefault());
-    if(iRegionVanillaSilhouette!=-1)graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+    if(iRegionVanillaSilhouette!=-1)
+      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     return;
   }
 
@@ -2542,7 +2759,16 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 
   UpdateAltSilhouette(AnimationDraw);
 
-  UpdateShowItemsAtPlayerPos(!bXBRZandFelist); //last thing as this is a temp overlay
+  UpdateShowItemsAtPos(!bXBRZandFelist); //last thing as this is a temp overlay
+  
+  #ifdef WIZARD
+    DBG1(vDbgDrawOverlayFunctions.size());
+    if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
+      for(int i=0;i<vDbgDrawOverlayFunctions.size();i++)
+        vDbgDrawOverlayFunctions[i](); //call it
+    }
+  #endif
+
 }
 
 int game::ItemUnderCode(int iCycleValue){
@@ -2585,7 +2811,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   if(iMax>-1)iTot = Min(iMax,iTot);
   if(iTot==0)return NULL;
 
-  v2 v2Pos = v2PosIni;
+  v2 v2Pos = v2PosIni; DBGSV2(v2PosIni);
 
   blitdata B = DEFAULT_BLITDATA;
   B.CustomData = ALLOW_ANIMATE;
@@ -2606,7 +2832,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
   B.Bitmap=bmpTgt;
   B.CustomData |= ALLOW_ANIMATE|ALLOW_ALPHA;
 
-  bool bLight=false;
+  static bool bLight=false; //TODO make this an user option?
   col16 clOutline = bLight ? LIGHT_GRAY : BLACK;//DARK_GRAY;
   if(!bLight){ //overall around if tiny
     v2 v2BkgIni = v2(0,0);
@@ -2635,7 +2861,7 @@ bitmap* PrepareItemsUnder(bool bUseDB, stack* su, int iMax, v2 v2PosIni, int iDi
       graphics::DrawRectangleOutlineAround(bmpTgt, v2Pos+v2(1,1), B.Border-v2(2,2), clOutline, false);
     }
 
-    B.Dest = v2Pos;
+    B.Dest = v2Pos; DBGBLD(B);
     it->Draw(B);
 
     v2Pos.X+=(TILE_SIZE*iDirX);
@@ -2665,20 +2891,32 @@ v2 game::CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos){
   return v2StretchedBufferDest;
 }
 
-void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work with look mode for visible squares too?
+void game::UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos){
+  if(v2AtPos.Is0() && bPositionQuestionMode) v2AtPos = CursorPos;
+
   bool bOk=true;
 
   if(bOk && !bAllowed)bOk=false;
 
-  if(bOk && bPositionQuestionMode)bOk=false;
+//  if(bOk && !bAllowPosMode && bPositionQuestionMode)bOk=false;
 
   if(bOk && !Player->IsEnabled())bOk=false;
 
   if(bOk && Player->IsDead())bOk=false;
 
-  if(bOk && !OnScreen(Player->GetPos()))bOk=false;
+  if(bOk && v2AtPos.Is0()){ //after validating player
+    v2AtPos = Player->GetPos();
+  }
+
+  if(bOk && !OnScreen(v2AtPos))bOk=false;
 
   if(bOk && IsInWilderness())bOk=false;
+
+  if(bOk){
+    if(v2AtPos!=Player->GetPos())
+      if(!GetCurrentLevel()->GetLSquare(v2AtPos)->CanBeSeenByPlayer())
+        bOk=false;
+  }
 
   bool bDynamic=false;
   bool bDynamicItems=false;
@@ -2695,7 +2933,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   stack* su = NULL;
   if(bOk){
-    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    //    su=Player->GetStackUnder(); //try{su=Player->GetStackUnder();}catch(std::exception& e){bOk=false;} TODO is this catch too generic/permissive?
+    su=GetCurrentLevel()->GetLSquare(v2AtPos)->GetStack();
     if(bOk && su==NULL)bOk=false; //TODO can this happen?
     if(bOk && su->GetItems()==0)bOk=false;
     if(bOk){
@@ -2714,7 +2953,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
 
   /////////////////////// ok ////////////////////////
-  v2 v2AbsLevelSqrPos = Player->GetPos();
+  const v2 v2AbsLevelSqrPos = v2AtPos;
 
   bool bNearEC=false;
   int iNearEC=3; //near edges/corners to avoid hiding player/NPCs that can be in combat TODO use player view distance?
@@ -2730,7 +2969,7 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
   }
   if(bNearEC)bAboveHead=true;
 
-  if(bDynamic && bAboveHead){
+  if(bDynamic && bAboveHead && !bPositionQuestionMode){ // will not be above head in bPositionQuestionMode
     v2 v2Chk; //(v2AbsLevelSqrPos.X,v2AbsLevelSqrPos.Y-1);
     bool bCharAboveNear=false;
     bool bItemAboveNear=false;
@@ -2757,10 +2996,17 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     }
   }
 
+  int iTot = su->GetItems();
+  if(iTot>game::GetScreenXSize())
+    iTot=game::GetScreenXSize();
+  if(iTot>GetCurrentArea()->GetXSize())
+    iTot=GetCurrentArea()->GetXSize();
+
+  //////////////////////////////////////////////////////////////////////////////////////
   // above head with x1 dungeon scale will fall back to "Dungeon square overwrite mode"
   if(bAboveHead && ivanconfig::GetStartingDungeonGfxScale()>=2){ //use xBRZ stretch region
     // TODO ? Some possible tips if look mode is used later: GetCurrentArea()->, Player->GetArea()->get, game::GetCurrentDungeon()->
-    bitmap* bmp = PrepareItemsUnder(false, su, -1, v2(0,0), 1, 0);
+    bitmap* bmp = PrepareItemsUnder(false, su, iTot, v2(0,0), 1, 0);
 
     int iStretch=iItemsUnderStretch;
     if(su->GetItems()==1)iStretch++;
@@ -2771,8 +3017,11 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
     v2StretchedBufferDest.Y-= bmp->GetSize().Y*iStretch; // above player's head
     v2StretchedBufferDest.Y-=2; //just to look better
 
-    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)v2StretchedBufferDest.X=area::getTopLeftCorner().X;
-    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
+    if(v2StretchedBufferDest.X<area::getTopLeftCorner().X)
+      v2StretchedBufferDest.X=area::getTopLeftCorner().X;
+
+    if(v2StretchedBufferDest.Y<area::getTopLeftCorner().Y)
+      v2StretchedBufferDest.Y=area::getTopLeftCorner().Y;
 
     graphics::SetSRegionSrcBitmapOverride(iRegionItemsUnder,bmp,iStretch,v2StretchedBufferDest);
     graphics::SetSRegionEnabled(iRegionItemsUnder,true);
@@ -2788,25 +3037,35 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 
   //this overwrites over dungeon squares pixels and is faster as it will go within the full dungeon stretch!
   int iDirX=1,iDirY=0;
-  int iTot = su->GetItems();
-  v2 v2ScrPosIni;
-  v2 v2SqrPosIni;
+//  v2 v2ScrPosIni(0,0);
+  v2 v2SqrPosIni(0,0);
 
   if(bAboveHead){ //only for x1 dungeon scale
-    v2SqrPosIni=Player->GetPos();
-    v2SqrPosIni.Y--;
-    v2SqrPosIni.X-=iTot/2;
+    v2SqrPosIni=v2AtPos;
 
-    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
-  }else{
-    int iCorner = ItemUnderCorner(iCode);
-    bool bHorizontal = ItemUnderHV(iCode);
+    v2SqrPosIni.X-=iTot/2;
+    v2SqrPosIni.Y--;
 
     // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
-    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
-    v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
-    if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X;
-    if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+    if(v2SqrPosIni.X<0)v2SqrPosIni.X=0;
+    if(v2SqrPosIni.Y<0)v2SqrPosIni.Y=0;
+
+//    v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni);
+//  }else{
+//    v2ScrPosIni = area::getTopLeftCorner();DBGSV2(v2ScrPosIni);DBGSV2(CalculateScreenCoordinates(Camera));
+  }
+
+//  v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
+//
+//  // the dungeon area may be smaller than the dungeon MAX area (boundings outline)
+//  v2 v2Sqr00ScrPos=CalculateScreenCoordinates(GetCurrentLevel()->GetLSquare(v2(0,0))->GetPos());DBGSV2(v2Sqr00ScrPos);
+//  if(v2ScrPosIni.X<v2Sqr00ScrPos.X)v2ScrPosIni.X=v2Sqr00ScrPos.X; //TODO can this conflict with or miss v2SqrPosIni position ?
+//  if(v2ScrPosIni.Y<v2Sqr00ScrPos.Y)v2ScrPosIni.Y=v2Sqr00ScrPos.Y;
+//  DBGSV2(v2SqrPosIni);
+
+  if(!bAboveHead){
+    int iCorner = ItemUnderCorner(iCode);
+    bool bHorizontal = ItemUnderHV(iCode);
 
     // min top left dungeon sqr coords
     v2SqrPosIni=Camera;DBGSV2(v2SqrPosIni);
@@ -2825,24 +3084,26 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
         break;
       case 1: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0: 1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         break;
       case 2: iDirX=bHorizontal? 1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
       case 3: iDirX=bHorizontal?-1:0; iDirY=bHorizontal?0:-1;
         v2SqrPosIni.X+=iSqrMaxX;
-        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
+//        v2ScrPosIni.X+=iSqrMaxX*TILE_SIZE;
         v2SqrPosIni.Y+=iSqrMaxY;
-        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
+//        v2ScrPosIni.Y+=iSqrMaxY*TILE_SIZE;
         break;
     }
 
-    if(bHorizontal){
-      if(iTot>game::GetScreenXSize())iTot=game::GetScreenXSize();
-    }else{
-      if(iTot>game::GetScreenYSize())iTot=game::GetScreenYSize();
+    if(!bHorizontal){
+      if(iTot>game::GetScreenYSize())
+        iTot=game::GetScreenYSize();
+
+      if(iTot>GetCurrentArea()->GetYSize())
+        iTot=GetCurrentArea()->GetYSize();
     }
 
 //
@@ -2858,6 +3119,8 @@ void game::UpdateShowItemsAtPlayerPos(bool bAllowed){ //TODO should this work wi
 //        break;
 
   }
+
+  v2 v2ScrPosIni=CalculateScreenCoordinates(v2SqrPosIni); DBG2(DBGAV2(v2SqrPosIni),DBGAV2(v2ScrPosIni));
 
   PrepareItemsUnder(true,su,iTot,v2ScrPosIni,iDirX,iDirY);
 
@@ -2925,9 +3188,9 @@ truth game::Save(cfestring& SaveName)
   return true;
 }
 
-int game::Load(cfestring& SaveName)
+int game::Load(cfestring& saveName)
 {DBGLN;
-  inputfile SaveFile(SaveName + ".sav", 0, false);
+  inputfile SaveFile(saveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
     return NEW_GAME;
@@ -2990,13 +3253,13 @@ int game::Load(cfestring& SaveName)
 
   if(InWilderness)
   {
-    SetCurrentArea(LoadWorldMap(SaveName));
+    SetCurrentArea(LoadWorldMap(saveName));
     CurrentWSquareMap = WorldMap->GetMap();
     igraph::CreateBackGround(GRAY_FRACTAL);
   }
   else
   {
-    SetCurrentArea(CurrentLevel = GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex));
+    SetCurrentArea(CurrentLevel = GetCurrentDungeon()->LoadLevel(saveName, CurrentLevelIndex));
     CurrentLSquareMap = CurrentLevel->GetMap();
     igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
   }
@@ -3372,16 +3635,41 @@ festring game::SaveName(cfestring& Base)
 {
   festring SaveName = GetSaveDir();
 
-  if(!Base.GetSize())
-    SaveName << PlayerName;
-  else
+  /**
+   * Base must come OK, will just prepend directory,
+   * the problem on modifying it is that as it is read from the filesystem
+   * it will not be found if it gets changed...
+   */
+  DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+
+  if(Base.GetSize() > 0)
+  {
+    AutoSaveFileName.Empty();
+    AutoSaveFileName << Base;
     SaveName << Base;
+  }
+  else
+  {
+    if(AutoSaveFileName.GetSize() == 0)
+    {
+      AutoSaveFileName << PlayerName << '_' << time(0);  // e.g. PlayerName-1529392480
+  
+      for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
+      {
+        // this prevents all possibly troublesome characters in all OSs
+        if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
+        if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
+        if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
+  
+        AutoSaveFileName[i] = '_';
+      }
+    }
+    SaveName << AutoSaveFileName;
+  }
 
-  for(festring::sizetype c = 0; c < SaveName.GetSize(); ++c)
-    if(SaveName[c] == ' ') //TODO prevent other possibly troublesome invalid characters like ;:^/\... etc etc, should allow only a-zA-Z0-9
-      SaveName[c] = '_';
+  DBG4(PlayerName.CStr(), SaveName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
 
-#if defined(WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
   if(SaveName.GetSize() > 13)
     SaveName.Resize(13);
 #endif
@@ -3918,7 +4206,8 @@ int game::AskForKeyPress(cfestring& Topic)
 
   int Key = GET_KEY();
   #ifdef FELIST_WAITKEYUP //not actually felist here but is the waitkeyup event
-  for(;;){if(WAIT_FOR_KEY_UP())break;};
+  if(game::GetAutoPlayMode()==0)
+    for(;;){if(WAIT_FOR_KEY_UP())break;};
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
@@ -4013,7 +4302,11 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   SetCursorPos(v2(-1, -1));
 
   if(ivanconfig::IsCenterOnPlayerAfterLook()){
-    UpdateCamera();
+    v2 ppos = Player->GetPosSafely();
+    if(!ppos.Is0()){
+      UpdateCameraX(ppos.X);
+      UpdateCameraY(ppos.Y);
+    }
   }
 
   return Return;
@@ -4038,13 +4331,16 @@ void game::LookHandler(v2 CursorPos)
 
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
-    if(!IsInWilderness()
-       && !Square->CanBeSeenByPlayer()
-       && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
+    if(
+        !IsInWilderness()
+        && !Square->CanBeSeenByPlayer()
+        && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
+        && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
+    ){
       Msg = CONST_S("You feel here ");
-    else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
+    }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
       Msg = CONST_S("You see here ");
-    else
+    }else
       Msg = CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
@@ -4086,6 +4382,89 @@ truth game::AnimationController()
   return true;
 }
 
+//static void DefinesValidatorAppend(std::string s);
+//static void DefinesValidatorTop();
+//static void DefinesValidatorAppendCode(std::string s);
+std::ofstream DefinesValidator;
+void DefinesValidatorAppend(std::string s)
+{
+  static std::stringstream ssValidateLine;ssValidateLine.str(std::string());ssValidateLine.clear(); //actually clear/empty it = ""
+
+  ssValidateLine << s << std::endl;
+
+  static bool bDummyInit = [](){
+    DefinesValidator.open(
+        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
+        std::ios::binary);
+    return true;}();
+
+  DefinesValidator.write(ssValidateLine.str().c_str(),ssValidateLine.str().length());
+}
+void DefinesValidatorTop()
+{
+  DefinesValidatorAppend("/****");
+  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
+  DefinesValidatorAppend(" *");
+  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
+  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
+  DefinesValidatorAppend(" */");
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
+  DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("  std::stringstream ssErrors;");
+  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
+  DefinesValidatorAppend("");
+}
+void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
+{
+  static std::stringstream ssMsg;ssMsg.str(std::string());ssMsg.clear(); //actually clear/empty it = ""
+
+  ssMsg << "\"Defined " << sDefineId << " with value " << valueReadFromDatFile << " from .dat file " <<
+    "mismatches hardcoded c++ define value of \" << " << sDefineId << " << \"!\"";
+
+
+  static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
+
+//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
+  ssCode <<
+    "  " << std::endl <<
+    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
+    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
+    "  bsB = " << sDefineId << ";" << std::endl <<
+    "  if(bsA!=bsB)" << std::endl <<
+    "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
+    "#endif " << std::endl;
+
+
+  DefinesValidatorAppend(ssCode.str());
+}
+void DefinesValidatorClose(){
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("  if(ssErrors.str().length() > 0) ABORT(ssErrors.str().c_str());");
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("}};");
+  DefinesValidatorAppend("");
+  DefinesValidatorAppend("#endif // _DEFINESVALIDATOR_H_");
+
+  DefinesValidator.close();
+}
+#include "definesvalidator.h" //tip: 1st run this was commented
+void game::GenerateDefinesValidator(bool bValidade)
+{
+  DefinesValidatorTop();
+
+  for(const valuemap::value_type& p : GlobalValueMap)
+    DefinesValidatorAppendCode(p.first.CStr(), p.second);
+
+  DefinesValidatorClose();
+
+  if(bValidade)
+    definesvalidator::Validate(); //tip: 1st run this was commented
+}
+
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
@@ -4097,8 +4476,11 @@ void game::InitGlobalValueMap()
       ABORT("Illegal datafile define on line %ld!", SaveFile.TellLine());
 
     SaveFile.ReadWord(Word);
-    GlobalValueMap.insert(std::make_pair(Word, SaveFile.ReadNumber()));
+
+    long value = SaveFile.ReadNumber();
+    GlobalValueMap.insert(std::make_pair(Word, value));
   }
+
 }
 
 void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
@@ -4159,8 +4541,7 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
    case 'i':
     if(!IsInWilderness())
     {
-      if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPos() || GetSeeWholeMapCheatMode())
-      {
+      if(Square->CanBeSeenByPlayer() || CursorPos == Player->GetPosSafely() || GetSeeWholeMapCheatMode()){
         lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
         stack* Stack = LSquare->GetStack();
 
@@ -4226,7 +4607,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 
   if(Permanently && !WizardModeIsReallyActive())
   {
-    highscore HScore;
+    highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
     {
@@ -4541,6 +4922,8 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     if(ivanconfig::GetAutoSaveInterval())
       Save(GetAutoSaveFileName().CStr());
   }
+
+  iCurrentDungeonTurn=-1; //-1 as it will be the turn index and be inc before checking
 }
 
 int game::CompareLightToInt(col24 L, col24 Int)
@@ -4589,7 +4972,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iW=ivanconfig::GetAltListItemWidth();
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
-  
+
   v2TopLeft=v2(iX,iY);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
@@ -4856,7 +5239,12 @@ festring game::GetHomeDir()
 {
 #ifdef UNIX
   festring Dir;
-  Dir << getenv("HOME") << "/.ivan/";
+  Dir << getenv("HOME");
+#ifdef MAC_APP
+  Dir << "/Library/Application Support/IVAN/";
+#else
+  Dir << "/.ivan/";
+#endif
 #ifdef DBGMSG
   dbgmsg::SetDebugLogPath(Dir.CStr());
 #endif
@@ -4881,34 +5269,41 @@ festring game::GetScrshotDir()
 festring game::GetDataDir()
 {
 #ifdef UNIX
+#ifdef MAC_APP
+  return "../Resources/ivan/";
+#else
   return DATADIR "/ivan/";
+#endif
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return GetHomeDir();
+#endif
+}
+
+festring game::GetStateDir()
+{
+#ifdef UNIX
+#ifdef MAC_APP
+  return GetHomeDir();
+#else
+  return LOCAL_STATE_DIR "/";
+#endif
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return GetHomeDir();
 #endif
 }
 
 festring game::GetBoneDir()
 {
-#ifdef UNIX
-  return LOCAL_STATE_DIR "/Bones/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Bones/";
-#endif
+  return GetStateDir() + "Bones/";
 }
 
 festring game::GetMusicDir()
 {
-#ifdef UNIX
   return GetDataDir() + "Music/";
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return "Music/";
-#endif
 }
 
 level* game::GetLevel(int I)
@@ -5143,6 +5538,56 @@ truth game::MassacreListsEmpty()
 
 #ifdef WIZARD
 
+void game::AutoPlayModeApply(){
+  int iTimeout=0;
+  bool bPlayInBackground=false;
+
+  const char* msg;
+  switch(game::AutoPlayMode){
+  case 0:
+    // disabled
+    msg="%s says \"I can rest now.\"";
+    break;
+  case 1:
+    // no timeout, user needs to hit '.' to it autoplay once, the behavior is controled by AutoPlayMode AND the timeout delay that if 0 will have no timeout but will still autoplay.
+    msg="%s says \"I won't rest!\"";
+    break;
+  case 2: // TIMEOUTs key press from here to below
+    msg="%s says \"I can't wait anymore!\"";
+    iTimeout=(1000);
+    bPlayInBackground=true;
+    break;
+  case 3:
+    msg="%s says \"I am in a hurry!!\"";
+    iTimeout=(1000/2);
+    bPlayInBackground=true;
+    break;
+  case 4:
+    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    bPlayInBackground=true;
+    break;
+  }
+  ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
+
+  globalwindowhandler::SetPlayInBackground(bPlayInBackground);
+  globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
+}
+
+void game::IncAutoPlayMode() {
+//  if(!globalwindowhandler::IsKeyTimeoutEnabled()){
+//    if(AutoPlayMode>=2){
+//      AutoPlayMode=0; // TIMEOUT was disabled there at window handler! so reset here.
+//      AutoPlayModeApply();
+//    }
+//  }
+
+  ++AutoPlayMode;
+  if(AutoPlayMode>4)AutoPlayMode=0;
+
+  AutoPlayModeApply();
+}
+
 void game::SeeWholeMap()
 {
   if(SeeWholeMapCheatMode < 2)
@@ -5193,7 +5638,7 @@ truth game::PrepareRandomBone(int LevelIndex)
   for(BoneIndex = 0; BoneIndex < 1000; ++BoneIndex)
   {
     BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
-    inputfile BoneFile(BoneName, 0, false);
+    inputfile BoneFile(BoneName, 0, false); DBG1(BoneFile.GetFileName().CStr());
 
     if(BoneFile.IsOpen() && !(RAND() & 7))
     {
@@ -5706,6 +6151,8 @@ ulong game::IncreaseSquarePartEmitationTicks()
 
 int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowExit)
 {
+  if(Wisher->IsPlayerAutoPlay())return ABORTED;
+
   for(;;)
   {
     festring Temp;

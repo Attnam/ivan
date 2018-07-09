@@ -71,7 +71,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 //
   std::stack<inputfile *> infStack;
   infStack.push(&SaveFile);
-  while (!infStack.empty()) 
+  while (!infStack.empty())
   {
     inputfile *inFile = infStack.top();
     infStack.pop();
@@ -151,7 +151,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             ConfigDataBase->InitDefaults(Proto, ConfigNumber);
             TempConfig[Configs++] = ConfigDataBase;
             if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
-            for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word)) 
+            for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
               if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
             }
@@ -745,6 +745,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Acidicity);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
+  ADD_MEMBER(SoftenedMaterial);
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(Stickiness);
   ADD_MEMBER(DisablesPanicWhenConsumed);

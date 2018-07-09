@@ -371,7 +371,11 @@ int iosystem::StringQuestion(festring& Input,
     /* if LastKey is less than 20 it is a control
        character not available in the font */
 
-    while(!(IsAcceptableForStringQuestion(LastKey)))
+    while(!(LastKey >= 0x20 && LastKey < 0x7F)
+          && LastKey != KEY_ENTER && LastKey != KEY_ESC
+          && LastKey != KEY_HOME && LastKey != KEY_END
+          && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
+          && LastKey != KEY_BACK_SPACE)
     {
       LastKey = GET_KEY(false);
 
@@ -390,7 +394,7 @@ int iosystem::StringQuestion(festring& Input,
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
@@ -407,9 +411,23 @@ int iosystem::StringQuestion(festring& Input,
       }
     }
 
+    if(LastKey == KEY_HOME)
+    {
+      CursorPos = 0;
+
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      CursorPos = static_cast<int>(Input.GetSize());
+
+      continue;
+    }
+
     if(LastKey == KEY_LEFT)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         --CursorPos;
 
       continue;
@@ -423,25 +441,9 @@ int iosystem::StringQuestion(festring& Input,
       continue;
     }
 
-    if(LastKey == KEY_LEFT)
-    {
-      if(CursorPos)
-        --CursorPos;
-
-      continue;
-    }
-
-    if(LastKey == KEY_RIGHT)
-    {
-      if(CursorPos < static_cast<int>(Input.GetSize()))
-        ++CursorPos;
-
-      continue;
-    }
-
-    if(LastKey >= 0x20 && Input.GetSize() < MaxLetters
+    if(LastKey >= 0x20 && LastKey < 0x7F
        && (LastKey != ' ' || !Input.IsEmpty())
-       && LastKey != KEY_UP && LastKey != KEY_DOWN)
+       && Input.GetSize() < MaxLetters)
       Input.Insert(static_cast<festring::sizetype>(CursorPos++),
                    static_cast<char>(LastKey));
   }
@@ -506,13 +508,14 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 
     while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE
           && LastKey != KEY_ENTER && LastKey != KEY_ESC
+          && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != KEY_LEFT && LastKey != KEY_RIGHT
           && (LastKey != '-' || !Input.IsEmpty()))
       LastKey = GET_KEY(false);
 
     if(LastKey == KEY_BACK_SPACE)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         Input.Erase(static_cast<festring::sizetype>(--CursorPos), 1);
 
       continue;
@@ -529,9 +532,23 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
       break;
     }
 
+    if(LastKey == KEY_HOME)
+    {
+      CursorPos = 0;
+
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      CursorPos = static_cast<int>(Input.GetSize());
+
+      continue;
+    }
+
     if(LastKey == KEY_LEFT)
     {
-      if(CursorPos)
+      if(CursorPos > 0)
         --CursorPos;
 
       continue;
@@ -678,6 +695,7 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
     while(!isdigit(LastKey) && LastKey != KEY_ESC
           && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER
           && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>'
+          && LastKey != KEY_HOME && LastKey != KEY_END
           && LastKey != RightKey && LastKey != LeftKey
           && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
       LastKey = GET_KEY(false);
@@ -698,6 +716,24 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
 
     if(LastKey == KEY_ENTER || LastKey == KEY_SPACE)
       break;
+
+    if(LastKey == KEY_HOME)
+    {
+      BarValue = Min;
+
+      Input.Empty();
+      Input << BarValue;
+      continue;
+    }
+
+    if(LastKey == KEY_END)
+    {
+      BarValue = Max;
+
+      Input.Empty();
+      Input << BarValue;
+      continue;
+    }
 
     if(LastKey == '<' || LastKey == LeftKey || LastKey == KEY_LEFT)
     {
@@ -901,32 +937,39 @@ struct fileInfo{
   char* GameScript = 0; //dummy
   int CurrentDungeonIndex = -1;
   int CurrentLevelIndex = -1;
-  festring name=festring(); //TODO this init helps with festring? it is buggy?
-  festring fullName=festring();
+  v2 Camera; //dummy
+  truth WizardMode;
+  festring fileName=festring(); //TODO this init helps with festring? is it buggy?
+  festring absFileName=festring(); //contains the full path
   festring time=festring();
   festring idOnList=festring();
   festring dungeonID=festring();
-  festring nameAutoSave=festring();
+  festring fileNameAutoSave=festring();
   std::vector<festring> vBackups;
   bool bIsBkp = false;
 };
 std::vector<fileInfo> vFiles;
-bool addFileInfo(char* c){
+bool addFileInfo(const char* c){
   // skippers
   if(strcmp(c,".")==0)return false;
   if(strcmp(c,"..")==0)return false;
 
   // do add
   fileInfo fi;
-  fi.name<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
+  fi.fileName<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
   vFiles.push_back(fi); //stores a copy
 
   return true; //added
 }
 skipseeksave skipSeek=NULL;
 void iosystem::SetSkipSeekSave(skipseeksave sss){skipSeek = sss;}
-/* DirectoryName is the directory where the savefiles are located. Returns
-   the selected file or "" if an error occures or if no files are found. */
+
+/**
+ * DirectoryName is the directory where the savefiles are located. Returns
+ * the selected file or "" if an error occures or if no files are found.
+ *
+ * returns the savegame basename (w/o path)
+ */
 festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
                                 cfestring& DirectoryName, const int iSaveFileVersion, bool bAllowImportOldSavegame)
 {
@@ -944,8 +987,6 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     {
       while( (ep = readdir(dp)) ) addFileInfo(ep->d_name);
       closedir(dp);
-    }else{
-      return "";
     }
   }
 #endif
@@ -992,70 +1033,123 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   }
 
   /////////////////////////////// sort work //////////////////////////////////////
+
+//  /**
+//   * this is rerquired when there is only one savegame and it is just an ...AutoSave.sav
+//   */
+//  static festring fsLastChangeDetector="_Last_Change_Detector_.sav";
+//  addFileInfo(fsLastChangeDetector.CStr());
+
   int iTmSz=100;
   struct stat attr;
   for(int i=0;i<vFiles.size();i++)
   {
-    vFiles[i].fullName<<DirectoryName<<"/"<<vFiles[i].name;
-    if(stat(vFiles[i].fullName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",vFiles[i].fullName.CStr(),std::strerror(errno));
+    vFiles[i].absFileName<<DirectoryName<<"/"<<vFiles[i].fileName;
+    if(stat(vFiles[i].absFileName.CStr(), &attr)<0)ABORT("stat() failed: %s %s",vFiles[i].absFileName.CStr(),std::strerror(errno));
 
     char cTime[iTmSz];
     strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M:%S",localtime(&(attr.st_mtime))); // this format is important for the sorting that is text based
     vFiles[i].time<<cTime;
-    DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].fullName.CStr(),attr.st_ino);
+    DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].absFileName.CStr(),attr.st_ino);
   }
 
   // sort the vector BY NAME ONLY (to get the dungeon ids easily, numbers come before letters)
   std::sort( vFiles.begin(), vFiles.end(),
-    [ ]( const fileInfo& l, const fileInfo& r ){ return l.name < r.name; }
+    [ ]( const fileInfo& l, const fileInfo& r ){ return l.fileName < r.fileName; }
   );DBGLN;
 
   std::vector<festring> vIds,vInvIds,vBackups;
   std::vector<fileInfo> vComponents;
   festring autoSaveFound("");
-  for(int i=0;i<vFiles.size();i++)
+  int iPrepareSavFileIndex=-1;
+  int iAutoSaveSavFileIndex=-1;
+  std::string sPrettyNamePrevious="";
+  for(int i=0;i<vFiles.size();) //no i++ here!!!
   {
-    DBGSC(vFiles[i].name.CStr());
+    DBG2(vFiles[i].fileName.CStr(),sPrettyNamePrevious);
 
-    if(vFiles[i].name.Find(".wm" ) != vFiles[i].name.NPos){
-      //skipped from the list
-    }else
-    if(vFiles[i].name.Find(".bkp") != vFiles[i].name.NPos){ //skipped from the list
-      vBackups.push_back(vFiles[i].fullName);
-      vFiles[i].bIsBkp=true;
-    }else
-    if(vFiles[i].name.Find(".AutoSave.") != vFiles[i].name.NPos){ //skipped from the list
-      if(vFiles[i].name.Find(".AutoSave.sav") != vFiles[i].name.NPos){ // the correct autosave to be returned
-        autoSaveFound=vFiles[i].name;
+    /** caution with this about endless loop! */
+    bool bNextFile=false;
+
+    std::string sPrettyName=vFiles[i].fileName.CStr(); //as pretty as possible... TODO a simple text file containing the correct player name related to the current savegame file
+    sPrettyName=sPrettyName.substr(0,sPrettyName.find("."));
+    std::string sPrettyNameWork=sPrettyName;
+
+//    if(!sPrettyNamePrevious.empty() && sPrettyNamePrevious!=sPrettyName){
+    bool bPlayerFilesGroupChanged = !sPrettyNamePrevious.empty() && sPrettyNamePrevious!=sPrettyName;
+    if(i==vFiles.size()-1 || bPlayerFilesGroupChanged){
+      /**
+       * the .sav main file for one player character was not found on the previous loop step
+       * or it reached the last file w/o finding it
+       */
+      if(iAutoSaveSavFileIndex>-1){
+        // but has .AutoSave.sav and will use it
+        iPrepareSavFileIndex=iAutoSaveSavFileIndex;
+        sPrettyNameWork=sPrettyNamePrevious;
+        // bNextFile will remain false, so at next loop step it will use the current one again.
       }
-    }else
-    if(vFiles[i].name.Find(".sav") != vFiles[i].name.NPos){
+    }
+
+    if(iPrepareSavFileIndex==-1){
+//      if(vFiles[i].fileName == fsLastChangeDetector){
+//        break;
+//      }else
+      if(vFiles[i].fileName.Find(".wm" ) != vFiles[i].fileName.NPos){
+        //skipped from the list
+      }else
+      if(vFiles[i].fileName.Find(".bkp") != vFiles[i].fileName.NPos){ //skipped from the list
+        vBackups.push_back(vFiles[i].absFileName);
+        vFiles[i].bIsBkp=true;
+      }else
+      if(vFiles[i].fileName.Find(".AutoSave.") != vFiles[i].fileName.NPos){ //skipped from the list
+        if(vFiles[i].fileName.Find(".AutoSave.sav") != vFiles[i].fileName.NPos){ // the correct autosave to be returned
+          autoSaveFound=vFiles[i].fileName;
+          iAutoSaveSavFileIndex=i;
+        }
+      }else
+      if(vFiles[i].fileName.Find(".sav") != vFiles[i].fileName.NPos){
+        iPrepareSavFileIndex=i;
+      }else{ //dungeon IDs TODO this will mess if player's name has dots '.', prevent it during filename creation as spaces are
+        std::string s=vFiles[i].fileName.CStr();
+        s=s.substr(s.find(".")+1);
+        vFiles[i].dungeonID<<festring(s.c_str());
+        vComponents.push_back(vFiles[i]);
+        DBG3(vFiles[i].fileName.CStr(),s,vComponents.size());//,dungeonIds.CStr());
+      }
+
+      bNextFile=true;
+    }
+
+    if(iPrepareSavFileIndex>-1){
+      fileInfo& rfi = vFiles[iPrepareSavFileIndex];
+
       festring id("");
 
-      // savegame version (structure taken from game::Load()
-      inputfile SaveFile(vFiles[i].fullName, 0, false);
-      SaveFile >> vFiles[i].Version; DBGSI(vFiles[i].Version);
+      // savegame version (save structure taken from game::Load())
+      inputfile SaveFile(rfi.absFileName, 0, false);
+      SaveFile >> rfi.Version; DBGSI(rfi.Version);
       if(skipSeek==NULL)ABORT("SkipSeek function not set");
       skipSeek(&SaveFile); //DUMMY (for here) binary data skipper
-      SaveFile >> vFiles[i].CurrentDungeonIndex >> vFiles[i].CurrentLevelIndex; DBG2(vFiles[i].CurrentDungeonIndex,vFiles[i].CurrentLevelIndex);
+      //TODO the current dungeon and many other useful info could be stored in a simple text file just to be used during this game loading list!
+      SaveFile >> rfi.CurrentDungeonIndex >> rfi.CurrentLevelIndex; DBG2(rfi.CurrentDungeonIndex,rfi.CurrentLevelIndex);
+      SaveFile >> rfi.Camera; //skipper
+      SaveFile >> rfi.WizardMode;
       SaveFile.Close();
 
       festring fsVer("");
-      if(vFiles[i].Version != iSaveFileVersion)
-        fsVer<<"(v"<<vFiles[i].Version<<") ";
+      if(rfi.Version != iSaveFileVersion)
+        fsVer<<"(v"<<rfi.Version<<") ";
 
       if(bSaveGameSortModeByDtTm)
-        id<<fsVer<<vFiles[i].time<<" ";
+        id<<fsVer<<rfi.time<<" ";
 
-      std::string sname=vFiles[i].name.CStr();
-      sname=sname.substr(0,sname.find(".")); //prettier name
-      id<<sname.c_str()<<" ";
+      id<<sPrettyNameWork.c_str()<<(rfi.WizardMode?" (WIZ)":"")<<" ";
 
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
 
       festring currentDungeonLevel("");
-      currentDungeonLevel << vFiles[i].CurrentDungeonIndex << vFiles[i].CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
+      currentDungeonLevel << rfi.CurrentDungeonIndex << rfi.CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
       if(bSaveGameSortModeProgress && !vComponents.empty()){
         for(int k=0;k<vComponents.size();k++){
           if(k>0)id<<" ";
@@ -1069,23 +1163,23 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
 
       if(!autoSaveFound.IsEmpty()){
         id<<" has AutoSave!";
-        vFiles[i].nameAutoSave=autoSaveFound;
+        rfi.fileNameAutoSave=autoSaveFound;
       }
 
       if(vBackups.size()>0){
         id<<" has backup(s)!";
-        vFiles[i].vBackups=vBackups; //makes a copy
+        rfi.vBackups=vBackups; //makes a copy
       }
 
-      vFiles[i].idOnList<<id;
+      rfi.idOnList<<id;
 
       bool bValid=false;
       static const int iOldSavegameVersionImportSince=131;
-      if(!bValid && vFiles[i].Version == iSaveFileVersion)
+      if(!bValid && rfi.Version == iSaveFileVersion)
         bValid=true;
-      if(!bValid && vFiles[i].Version <  iSaveFileVersion)
+      if(!bValid && rfi.Version <  iSaveFileVersion)
         if(bAllowImportOldSavegame)
-          if(vFiles[i].Version >= iOldSavegameVersionImportSince)
+          if(rfi.Version >= iOldSavegameVersionImportSince)
             bValid=true;
 
       if(bValid){
@@ -1098,13 +1192,13 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       vComponents.clear();
       vBackups.clear();
       autoSaveFound.Empty();
-    }else{ //dungeon IDs TODO this will mess if player's name has dots '.', deny it during new game
-      std::string s=vFiles[i].name.CStr();
-      s=s.substr(s.find(".")+1);
-      vFiles[i].dungeonID<<festring(s.c_str());
-      vComponents.push_back(vFiles[i]);
-      DBG3(vFiles[i].name.CStr(),s,vComponents.size());//,dungeonIds.CStr());
+      iPrepareSavFileIndex=-1;
+      iAutoSaveSavFileIndex=-1;
     }
+
+    sPrettyNamePrevious=sPrettyName;
+
+    if(bNextFile)i++;
   }
 
   // this will sort the ids alphabetically even if by time (so will sort the time as a string)
@@ -1136,72 +1230,59 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     festring chosen;chosen<<List.GetEntry(Check);
     for(int i=0;i<vFiles.size();i++){
       if(chosen == vFiles[i].idOnList){
-        if(!vFiles[i].nameAutoSave.IsEmpty()){
+        if(!vFiles[i].fileNameAutoSave.IsEmpty() && !vFiles[i].WizardMode){ //wizard mode always keep autosaves and when loading would always move back to the past what is at least annoying
           /**
            * autosaves are old and apparently a safe thing,
            * therefore will be preferred as restoration override.
            */
-          return vFiles[i].nameAutoSave;
-        }else{
-          /**
-           * Backups are a fallback mainly when a crash happens like this:
-           *
-           * - USER action: you try to enter a new dungeon (so it will be created now)
-           *
-           * - game action: saves a backup of the current dungeon last save at ".bkp"
-           * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
-           * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
-           *
-           * - game bug: the new dungeon creation fails and crashes.
-           *
-           * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
-           */
-          std::vector<festring>& rvBackups = vFiles[i].vBackups;
-          if(rvBackups.size()>0){
-            if(AlertConfirmMsg("Try to restore the backup?")){
-              for(int b=0;b<rvBackups.size();b++){
-                festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+          return vFiles[i].fileNameAutoSave;
+        }
 
-                festring fsFinal("");fsFinal << fsBkp;
-                fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
+        /**
+         * Backups are a fallback mainly when a crash happens like this:
+         *
+         * - USER action: you try to enter a new dungeon (so it will be created now)
+         *
+         * - game action: saves a backup of the current dungeon last save at ".bkp"
+         * - game action: saves the current dungeon w/o the player on it at ".tmp" (so if this saving crashes, the corrupted .tmp will just be ignored)
+         * - game action: copies the sane ".tmp" to the final filename (and deletes the ".tmp" just after)
+         *
+         * - game bug: the new dungeon creation fails and crashes.
+         *
+         * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
+         */
+        std::vector<festring>& rvBackups = vFiles[i].vBackups;
+        if(rvBackups.size()>0){
+          if(AlertConfirmMsg("Try to restore the backup?")){
+            for(int b=0;b<rvBackups.size();b++){
+              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
 
-                std::remove(fsFinal.CStr()); // remove broken save file
+              festring fsFinal("");fsFinal << fsBkp;
+              fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
-                std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
-                if(flBkp.good()){
-                  std::ofstream final(fsFinal.CStr(), std::ios::binary);
-                  final << flBkp.rdbuf();
+              std::remove(fsFinal.CStr()); // remove broken save file
 
-                  final.close();
-                  flBkp.close();
+              std::ifstream flBkp(fsBkp.CStr(), std::ios::binary);
+              if(flBkp.good()){
+                std::ofstream final(fsFinal.CStr(), std::ios::binary);
+                final << flBkp.rdbuf();
 
-                  // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
-                }else{
-                  ABORT("unable to access the backup file '%s'",fsBkp.CStr());
-                }
+                final.close();
+                flBkp.close();
+
+                // DO NOT Remove the backup here. If the game is playable, when returning to main menu, it will be done properly there!
+              }else{
+                ABORT("unable to access the backup file '%s'",fsBkp.CStr());
               }
             }
           }
         }
 
-        return vFiles[i].name;
+        return vFiles[i].fileName;
       }
     }
     ABORT("failed to match chosen file with id %s",chosen.CStr()); //shouldnt happen
   }
 
   return ""; //dummy just to gcc do not complain..
-}
-
-truth iosystem::IsAcceptableForStringQuestion(char Key)
-{
-  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
-     || Key == '/' || Key == '\\' || Key == ':')
-    return false;
-
-  if(Key < 0x20
-     && !(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC))
-    return false;
-
-  return true;
 }

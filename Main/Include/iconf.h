@@ -20,7 +20,9 @@ class ivanconfig
 {
  public:
   static cfestring& GetDefaultName() { return DefaultName.Value; }
+  static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
+  static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -29,13 +31,17 @@ class ivanconfig
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
   static int GetBugWorkaroundDupPlayer() { return BugWorkaroundDupPlayer.Value; }
   static long GetFrameSkip() { return FrameSkip.Value; }
+  static long GetGoOnStopMode() { return GoOnStopMode.Value; }
+  static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
   static truth IsSavegameSafely(){ return SavegameSafely.Value; }
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
+  static truth IsGenerateDefinesValidator(){return GenerateDefinesValidator.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
+  static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
@@ -57,12 +63,14 @@ class ivanconfig
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
+  static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
 
 #ifndef __DJGPP__
   static int GetGraphicsScale() { return GraphicsScale.Value; }
+  static int GetScalingQuality() { return ScalingQuality.Value; }
   static truth GetFullScreenMode() { return FullScreenMode.Value; }
   static void SwitchModeHandler();
 #else
@@ -82,9 +90,11 @@ class ivanconfig
   static void AutoSaveIntervalDisplayer(const numberoption*, festring&);
   static void XBRZSquaresAroundPlayerDisplayer(const numberoption* O, festring& Entry);
   static void ShowMapDisplayer(const cycleoption* O, festring& Entry);
+  static void GoOnStopModeDisplayer(const cycleoption* O, festring& Entry);
   static void ShowItemsAtPlayerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void RotateTimesPerSquareDisplayer(const cycleoption* O, festring& Entry);
   static void AltSilhouettePreventColorGlitchDisplayer(const cycleoption* O, festring& Entry);
+  static void HoldPosMaxDistDisplayer(const cycleoption* O, festring& Entry);
   static void HitIndicatorDisplayer(const cycleoption* O, festring& Entry);
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
@@ -94,6 +104,8 @@ class ivanconfig
   static void ContrastDisplayer(const numberoption*, festring&);
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
+  static truth FantasyNameChangeInterface(stringoption* O);
+  static truth SelectedBkgColorChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -104,6 +116,7 @@ class ivanconfig
   static truth FrameSkipChangeInterface(numberoption* O);
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
+  static void SelectedBkgColorChanger(stringoption* O, cfestring& What);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void ShowItemsAtPlayerSquareChanger(cycleoption* O, long What);
@@ -119,9 +132,11 @@ class ivanconfig
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
+  static void AllowMouseOnFelistChanger(truthoption*, truth);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
+  static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
   static void BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry);
@@ -139,12 +154,15 @@ class ivanconfig
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
+  static void GenerateDefinesValidatorChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
 
   static stringoption DefaultName;
+  static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
+  static stringoption SelectedBkgColor;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;
@@ -157,15 +175,18 @@ class ivanconfig
   static numberoption WindowHeight;
   static int iStartingWindowHeight;
 
+  static cycleoption HoldPosMaxDist;
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
   static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
+  static truthoption GenerateDefinesValidator;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
+  static truthoption WaitNeutralsMoveAway;
 
   static cycleoption MemorizeEquipmentMode;
 
@@ -184,6 +205,7 @@ class ivanconfig
 
   static numberoption XBRZSquaresAroundPlayer;
   static cycleoption DirectionKeyMap;
+  static cycleoption GoOnStopMode;
   static cycleoption SilhouetteScale;
   static cycleoption AltSilhouette;
   static cycleoption AltListItemPos;
@@ -200,6 +222,7 @@ class ivanconfig
 #ifndef __DJGPP__
   static cycleoption GraphicsScale;
   static truthoption FullScreenMode;
+  static cycleoption ScalingQuality;
 #endif
 
   static col24 ContrastLuminance;
@@ -207,6 +230,7 @@ class ivanconfig
   static truthoption ShowTurn;
 
   static cycleoption BugWorkaroundDupPlayer;
+  static truthoption AllowMouseOnFelist;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)

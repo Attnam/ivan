@@ -37,17 +37,20 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+  static void SetAllowMouseInFullScreen(bool b);
+  static int GetScale(){return Scale;}
 
 #ifdef USE_SDL
   static void SetScale(int);
   static void SwitchMode();
+  static void SetMode(cchar*, cchar*, v2, int, int, truth);
 #endif
 
 #ifdef __DJGPP__
   static void SwitchMode() { }
+  static void SetMode(cchar*, cchar*, v2, truth);
 #endif
 
-  static void SetMode(cchar*, cchar*, v2, int, truth);
   static void Stretch(bool, bitmap*, blitdata&, bool);
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();

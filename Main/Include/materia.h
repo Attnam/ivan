@@ -62,6 +62,7 @@ struct materialdatabase : public databasebase
   int Acidicity;
   contentscript<item> NaturalForm;
   int HardenedMaterial;
+  int SoftenedMaterial;
   int IntelligenceRequirement;
   int Stickiness;
   truth DisablesPanicWhenConsumed;
@@ -105,10 +106,10 @@ class material
   material(int NewConfig, long InitVolume = 0, truth Load = false)
   : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material() : MotherEntity(0) { }
-  virtual ~material() = default; 
+  virtual ~material() = default;
   void AddName(festring&, truth = false, truth = true) const;
   festring GetName(truth = false, truth = true) const;
-  material* TakeDipVolumeAway();
+  material* TakeDipVolumeAway(long MaxVolume = 500);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   truth Effect(character*, int, long);
@@ -209,6 +210,7 @@ class material
   virtual void SetIsInfectedByLeprosy(truth) { }
   virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
   int GetHardenedMaterial(citem*) const;
+  int GetSoftenedMaterial(citem*) const;
   int GetHardenModifier(citem*) const;
   virtual int GetSpoilPercentage() const { return 0; }
   virtual truth Spoils() const { return false; }

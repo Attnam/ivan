@@ -50,12 +50,12 @@ festring material::GetName(truth Articled, truth Adjective) const
   return Name;
 }
 
-material* material::TakeDipVolumeAway()
+material* material::TakeDipVolumeAway(long MaxVolume)
 {
-  if(Volume > 500)
+  if(Volume > MaxVolume)
   {
-    EditVolume(-500);
-    return SpawnMore(500);
+    EditVolume(-MaxVolume);
+    return SpawnMore(MaxVolume);
   }
   else
     return MotherEntity->RemoveMaterial(this);
@@ -117,8 +117,10 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       break;
     }
    case EFFECT_TRAIN_PERCEPTION:
-    Char->EditExperience(PERCEPTION, Amount, 1 << 14);
-    break;
+    {
+      Char->EditExperience(PERCEPTION, Amount, 1 << 14);
+      break;
+    }
    case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
@@ -164,6 +166,19 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       {
         break;
       }
+    }
+   case EFFECT_PANACEA:
+    {
+      Char->ReceiveHeal(Amount);
+      Char->ReceiveAntidote(Amount);
+      break;
+    }
+   case EFFECT_OMMEL_BLOOD: Char->ReceiveOmmelBlood(Amount); break;
+   case EFFECT_PANIC: Char->BeginTemporaryState(PANIC, Amount); break;
+   case EFFECT_TRAIN_WISDOM:
+    {
+      Char->EditExperience(WISDOM, Amount, 1 << 14);
+      break;
     }
    default: return false;
   }
@@ -296,6 +311,8 @@ void material::AddConsumeEndMessage(character* Eater) const
     Eater->AddWhiteUnicornConsumeEndMessage();
     break;
    case CEM_OMMEL_BONE: Eater->AddOmmelBoneConsumeEndMessage(); break;
+   case CEM_COCA_COLA: Eater->AddCocaColaConsumeEndMessage(); break;
+   case CEM_LIQUID_HORROR: Eater->AddLiquidHorrorConsumeEndMessage(); break;
   }
 }
 
@@ -461,6 +478,24 @@ int material::GetHardenedMaterial(citem* Item) const
   }
 
   return DB->HardenedMaterial;
+}
+
+int material::GetSoftenedMaterial(citem* Item) const
+{
+  const materialdatabase* DB = DataBase;
+
+  if(!Item->FlexibilityIsEssential())
+    return DB->SoftenedMaterial;
+
+  while(DB->SoftenedMaterial != NONE)
+  {
+    DB = material::GetDataBase(DB->SoftenedMaterial);
+
+    if(DataBase->Flexibility <= DB->Flexibility)
+      return DB->Config;
+  }
+
+  return DB->SoftenedMaterial;
 }
 
 int material::GetHardenModifier(citem* Item) const

@@ -246,7 +246,7 @@ class item : public object
   virtual void FinishReading(character*) { }
   virtual truth HitEffect(character*, character*, v2, int, int, truth) { return false; }
   virtual void DipInto(liquid*, character*) { }
-  virtual liquid* CreateDipLiquid() { return 0; }
+  virtual liquid* CreateDipLiquid(long MaxVolume = 500) { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual int GetOfferValue(int) const;
   virtual void Fly(character*, int, int, truth=false);
@@ -262,6 +262,10 @@ class item : public object
   virtual void SignalSquarePositionChange(int);
   virtual truth CanBeEatenByAI(ccharacter*) const;
   virtual truth IsExplosive() const { return false; }
+  virtual void SetLabel(cfestring& What);
+  virtual cfestring& GetLabel() const { return label; }
+  virtual void AddName(festring&, int) const;
+  virtual void AddName(festring& a, int b, int c) const {object::AddName(a,b,c);} //required because of AddName(festring&,int)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
@@ -540,6 +544,7 @@ class item : public object
   virtual void CalculateEmitation();
   void FillFluidVector(fluidvector&, int = 0) const;
   virtual void SpillFluid(character*, liquid*, int = 0);
+  virtual long DipIntoVolume() const { return 500; }
   virtual void TryToRust(long);
   virtual truth TestActivationEnergy(int);
   void RemoveFluid(fluid*);
@@ -631,6 +636,7 @@ class item : public object
   fluid** Fluid;
   int SquaresUnder;
   int LifeExpectancy;
+  festring label;
   ulong ItemFlags;
   int iRotateFlyingThrownStep;
   virtual truth NeedsBurningPostFix() const { return IsBurning(); }

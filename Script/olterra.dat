@@ -267,7 +267,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You destroy the armchair.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == LINEN_CLOTH;
     ShowMaterial = false;
     MaterialColorB = rgb16(140, 96, 48);
     SitMessage = "You sit on the comfortable armchair.";
@@ -314,7 +314,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You smash the bed into pieces.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == HEMP_CLOTH;
     Adjective = "cheap";
     NameSingular = "bed";
     BitmapPos = 0, 352;
@@ -331,7 +331,7 @@ decoration
   {
     CanBeDestroyed = true;
     DigMessage = "You smash the bed into pieces.";
-    MainMaterialConfig == CLOTH;
+    MainMaterialConfig == LINEN_CLOTH;
     NameSingular = "bed";
     BitmapPos = 0, 336;
     MaterialColorB = rgb16(140, 96, 48);
@@ -415,7 +415,6 @@ decoration
     NameSingular = "anvil";
     BitmapPos = 16, 432;
     HPModifier = 25;
-    Walkability = ETHEREAL;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
   }
 
@@ -535,7 +534,6 @@ decoration
     MaterialColorC = rgb16(220, 220, 0);
     MaterialColorD = rgb16(160, 0, 0);
     ShowMaterial = false;
-    Walkability = ETHEREAL;
     NameSingular = "furnace";
     BitmapPos = 32, 16;
     LeftOverItems == 0;

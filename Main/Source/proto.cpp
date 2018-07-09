@@ -14,6 +14,8 @@
 
 #include "confdef.h"
 
+#include "dbgmsgproj.h"
+
 itemdatabase** protosystem::ItemConfigData;
 int protosystem::ItemConfigDataSize;
 itemdatabase** protosystem::ItemCategoryData[ITEM_CATEGORIES];
@@ -529,19 +531,6 @@ void protosystem::CreateEveryItem(itemvectorvector& Item)
   }
 }
 
-void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
-{
-  for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
-  {
-    const material::prototype* Proto = protocontainer<material>::GetProto(c1);
-    const material::database*const* ConfigData = Proto->GetConfigData();
-    int ConfigSize = Proto->GetConfigSize();
-
-    for(int c2 = 1; c2 < ConfigSize; ++c2)
-      Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
-  }
-}
-
 #endif
 
 void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
@@ -568,8 +557,8 @@ void protosystem::Initialize()
 
   for(c = 1; c < protocontainer<item>::GetSize(); ++c)
   {
-    const prototype* Proto = protocontainer<item>::GetProtoData()[c];
-    ItemConfigDataSize += Proto->GetConfigSize();
+    const prototype* Proto = protocontainer<item>::GetProtoData()[c]; DBG1(Proto->GetClassID());
+    ItemConfigDataSize += Proto->GetConfigSize(); DBG1(Proto->GetConfigData());
 
     if(Proto->GetConfigData()[0]->IsAbstract)
       --ItemConfigDataSize;
@@ -688,7 +677,8 @@ void protosystem::CreateEverySeenCharacter(charactervector& Character)
   }
 }
 
-void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const god* God, ccharacter* Char)
+// For gods
+void protosystem::CreateEveryGodlyMaterial(std::vector<material*>& Material, const god* God, ccharacter* Char)
 {
   for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
   {
@@ -699,5 +689,19 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material, const go
     for(int c2 = 1; c2 < ConfigSize; ++c2)
       if(God->LikesMaterial(ConfigData[c2], Char))
         Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
+  }
+}
+
+// For wizards and alchemists
+void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
+{
+  for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
+  {
+    const material::prototype* Proto = protocontainer<material>::GetProto(c1);
+    const material::database*const* ConfigData = Proto->GetConfigData();
+    int ConfigSize = Proto->GetConfigSize();
+
+    for(int c2 = 1; c2 < ConfigSize; ++c2)
+      Material.push_back(Proto->Spawn(ConfigData[c2]->Config));
   }
 }

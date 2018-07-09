@@ -44,7 +44,9 @@ truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 truth globalwindowhandler::ControlLoopsEnabled = true;
+truth globalwindowhandler::playInBackground=false;
 festring globalwindowhandler::ScrshotDirectoryName = "";
+truth bLastSDLkeyEventIsKeyUp=false;
 
 void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
@@ -265,6 +267,38 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+int iTimeoutDelay=0; // must init with 0
+int iTimeoutDefaultKey;
+long keyTimeoutRequestedAt;
+/**
+ * This is intended to remain active ONLY until the user hits any key.
+ * iTimeoutMillis can be 0 or >=10
+ */
+void globalwindowhandler::SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey)//,int iIgnoreKeyWhenDisabling)
+{
+  if(iTimeoutMillis<0)ABORT("invalid negative timeout %d",iTimeoutMillis);
+
+  iTimeoutDelay = (iTimeoutMillis/1000.0) * CLOCKS_PER_SEC;
+  if(iTimeoutDelay>0 && iTimeoutDelay<10)iTimeoutDelay=10; // we are unable to issue commands if it is too low TODO could be less than 10ms?
+
+  iTimeoutDefaultKey=iDefaultReturnedKey;
+}
+truth globalwindowhandler::IsKeyTimeoutEnabled()
+{
+  return iTimeoutDelay>0;
+}
+void globalwindowhandler::CheckKeyTimeout()
+{
+  if(iTimeoutDelay>0){ // timeout mode is enalbed
+    if(!KeyBuffer.empty()){ // user pressed some key
+      keyTimeoutRequestedAt=clock(); // resets reference time to wait from
+    }else{
+      if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
+        KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
+    }
+  }
+}
+
 float globalwindowhandler::GetFPS(bool bInsta){
   if(bInsta)return fInstaFPS;
   return iLastSecCountFPS;
@@ -303,14 +337,15 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
   if(EmptyBuffer)
   {
-    while(SDL_PollEvent(&Event))
-      ProcessMessage(&Event);
-
+    PollEvents(&Event);
     KeyBuffer.clear();
   }
 
+  keyTimeoutRequestedAt=clock();
   int iDelayMS=iDefaultDelayMS;
-  for(;;)
+  for(;;){
+    CheckKeyTimeout();
+
     if(!KeyBuffer.empty())
     {
       int Key = KeyBuffer[0];
@@ -324,14 +359,19 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     }
     else
     {
-      if(SDL_PollEvent(&Event))
-        ProcessMessage(&Event);
-      else
+      bool bHasEvents=PollEvents(&Event)>0;
+//      bool bHasEvents=false;
+//      while(SDL_PollEvent(&Event)){
+//        ProcessMessage(&Event);
+//        bHasEvents=true;
+//      }
+
+      if(!bHasEvents)
       {
 #if SDL_MAJOR_VERSION == 1
         if(SDL_GetAppState() & SDL_APPACTIVE
 #else
-        if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)
+        if( (playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)))
 #endif
            && Controls && ControlLoopsEnabled)
         {
@@ -371,6 +411,34 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         }
       }
     }
+
+  }
+}
+
+uint globalwindowhandler::PollEvents(SDL_Event* pEvent)
+{
+  if(pEvent==NULL)
+    pEvent=new SDL_Event();
+
+  uint i=0;
+  while(SDL_PollEvent(pEvent)){
+    ProcessMessage(pEvent);
+    i++;
+  }
+
+  return i;
+}
+
+v2 v2MousePos;
+uint globalwindowhandler::UpdateMouse()
+{
+  /**
+   * global didnt fix the wrong mouse position relatively to the visible cursor...
+  if(SDL_GetWindowFlags(graphics::GetWindow()) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+    return SDL_GetGlobalMouseState(&v2MousePos.X,&v2MousePos.Y);
+  else
+   */
+    return SDL_GetMouseState(&v2MousePos.X,&v2MousePos.Y);
 }
 
 int globalwindowhandler::ReadKey()
@@ -383,8 +451,7 @@ int globalwindowhandler::ReadKey()
   if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
 #endif
   {
-    while(SDL_PollEvent(&Event))
-      ProcessMessage(&Event);
+    PollEvents(&Event);
   }
   else
   {
@@ -421,6 +488,31 @@ truth globalwindowhandler::WaitForKeyEvent(uint Key)
   return false;
 }
 
+truth globalwindowhandler::IsLastSDLkeyEventWasKeyUp()
+{
+  return bLastSDLkeyEventIsKeyUp;
+}
+
+v2 globalwindowhandler::GetMouseLocation()
+{
+  UpdateMouse();
+  return v2MousePos;
+}
+
+mouseclick mc;
+mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
+{
+  mouseclick mcR;
+  if(mc.btn!=-1 || mc.wheelY!=0)
+    mcR=mc;
+
+  mc.btn=-1;
+  mc.pos=v2();
+  mc.wheelY=0;
+
+  return mcR;
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed = 0;
@@ -451,7 +543,23 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       exit(0);
 
     return;
+
+   case SDL_MOUSEBUTTONUP:
+     if(Event->button.button==1 && Event->button.clicks>0){
+       mc.btn = 1;
+       mc.pos.X=Event->button.x;
+       mc.pos.Y=Event->button.y;
+     }
+     break;
+   case SDL_MOUSEWHEEL:
+     mc.wheelY = Event->wheel.y;
+     break;
+
+   case SDL_KEYUP:
+    bLastSDLkeyEventIsKeyUp=true;
+    break;
    case SDL_KEYDOWN:
+    bLastSDLkeyEventIsKeyUp=false;
     switch(Event->key.keysym.sym)
     {
      case SDLK_RETURN:
@@ -542,6 +650,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       KeyBuffer.push_back(KeyPressed);
 #endif
   }
+
 }
 
 // returns true if shift is being pressed

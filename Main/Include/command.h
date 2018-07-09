@@ -48,6 +48,7 @@ class commandsystem
   static truth Close(character*);
   static truth Eat(character*);
   static truth Drink(character*);
+  static truth Taste(character*);
   static truth Dip(character*);
   static truth DrawMessageHistory(character*);
   static truth Drop(character*);
@@ -71,6 +72,7 @@ class commandsystem
   static truth Throw(character*);
   static truth EquipmentScreen(character*);
   static truth WhatToEngrave(character*);
+  static truth WhatToEngrave(character* Char,bool bEngraveNote,v2 v2EngraveNotePos);
   static truth Zap(character*);
   static truth Rest(character*);
   static truth Sit(character*);
@@ -83,9 +85,10 @@ class commandsystem
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
   static truth Search(character*);
-  static truth Consume(character*, cchar*, sorter);
+  static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
 #ifdef WIZARD
   static truth WizardMode(character*);
+  static truth AutoPlay(character* Char);
   static truth RaiseStats(character*);
   static truth LowerStats(character*);
   static truth SeeWholeMap(character*);

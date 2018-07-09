@@ -299,7 +299,7 @@ class character : public entity, public id
   truth ReadItem(item*);
   truth TestForPickup(item*) const;
   void ThrowItem(int, item*);
-  truth TryMove(v2, truth, truth);
+  truth TryMove(v2, truth, truth, truth* =NULL);
   truth HasHeadOfElpuri() const;
   truth HasGoldenEagleShirt() const;
   truth HasEncryptedScroll() const;
@@ -336,6 +336,7 @@ class character : public entity, public id
   virtual truth MoveRandomly();
   void ReceiveNutrition(long);
   void ReceiveOmmelUrine(long);
+  void ReceiveOmmelBlood(long);
   void ReceivePepsi(long);
   void ReceiveSchoolFood(long);
   void Regenerate();
@@ -413,7 +414,7 @@ class character : public entity, public id
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   int GetHungerState() const;
-  truth ConsumeItem(item*, cfestring&);
+  truth ConsumeItem(item*, cfestring&, truth = false);
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
@@ -443,6 +444,7 @@ class character : public entity, public id
   void AddSchoolFoodHitMessage() const;
   void AddOmmelConsumeEndMessage() const;
   void AddPepsiConsumeEndMessage() const;
+  void AddCocaColaConsumeEndMessage() const;
   void AddFrogFleshConsumeEndMessage() const;
   void AddKoboldFleshConsumeEndMessage() const;
   void AddKoboldFleshHitMessage() const;
@@ -451,6 +453,7 @@ class character : public entity, public id
   void AddGrayUnicornConsumeEndMessage() const;
   void AddWhiteUnicornConsumeEndMessage() const;
   void AddOmmelBoneConsumeEndMessage() const;
+  void AddLiquidHorrorConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, truth = false, stack* = 0);
   virtual void IgniteBodyPart(int, int);
@@ -750,6 +753,7 @@ class character : public entity, public id
   virtual lsquare* GetNeighbourLSquare(int) const;
   virtual wsquare* GetNeighbourWSquare(int) const;
   stack* GetStackUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I))->GetStack(); }
+  stack* GetStackUnderSafely() const;
   square* GetNearSquare(v2 Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
   square* GetNearSquare(int x, int y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
   lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
@@ -757,7 +761,9 @@ class character : public entity, public id
   wsquare* GetNearWSquare(v2) const;
   wsquare* GetNearWSquare(int, int) const;
   v2 GetPos(int I = 0) const { return GetSquareUnder(I)->GetPos(); }
+  v2 GetPosSafely() const;
   square* GetSquareUnder(int I = 0) const { return !MotherEntity ? SquareUnder[I] : MotherEntity->GetSquareUnderEntity(I); }
+  square* GetSquareUnderSafely() const;
   virtual square* GetSquareUnderEntity(int I = 0) const { return GetSquareUnder(I); }
   lsquare* GetLSquareUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I)); }
   int GetRandomNonVitalBodyPart() const;
@@ -809,7 +815,7 @@ class character : public entity, public id
   void WeaponSkillHit(item*, int, int);
   character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
-  truth TryToEquip(item*);
+  truth TryToEquip(item*, truth onlyIfEmpty=false, int onlyAt=-1);
   truth TryToConsume(item*);
   void UpdateESPLOS() const;
   int GetCWeaponSkillLevel(citem*) const;
@@ -1156,6 +1162,7 @@ class character : public entity, public id
   void SignalBurn();
   void Extinguish(truth);
   truth IsBurnt() const;
+  truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
@@ -1186,6 +1193,20 @@ class character : public entity, public id
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
+
+  truth AutoPlayAICommand(int&);
+  static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
+  static void AutoPlayAIDebugDrawOverlay();
+  static bool AutoPlayAICheckAreaLevelChangedAndReset();
+  truth AutoPlayAIDropThings();
+  truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
+  int   AutoPlayAIFindWalkDist(v2 v2To);
+  truth AutoPlayAITestValidPathTo(v2 v2To);
+  truth AutoPlayAINavigateDungeon(bool bPlayerHasLantern);
+  truth AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo);
+  void AutoPlayAITeleport(bool bDeathCountBased);
+  void AutoPlayAIReset(bool bFailedToo);
+
   virtual void GetAICommand();
   truth MoveTowardsTarget(truth);
   virtual cchar* FirstPersonUnarmedHitVerb() const;
@@ -1267,6 +1288,7 @@ class character : public entity, public id
   expmodifiermap ExpModifierMap;
   int CounterToMindWormHatch;
   ulong MemorizedEquippedItemIDs[MAX_EQUIPMENT_SLOTS];
+  v2 v2HoldPos;
   virtual truth NeedsBurningPostFix() const { return false; }
 };
 

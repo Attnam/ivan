@@ -2959,6 +2959,7 @@ int level::DetectMaterial(cmaterial* Material)
       if(Square->DetectMaterial(Material))
       {
         Square->Reveal(Tick, true);
+        Square->bMaterialDetected=true;
         ++Squares;
       }
     }
@@ -3005,6 +3006,7 @@ void level::CalculateLuminances()
       Square->CalculateLuminance();
       Square->Flags |= MEMORIZED_UPDATE_REQUEST
                        | DESCRIPTION_CHANGE;
+      Square->bMaterialDetected=false; //detection is about luminance anyway
     }
 }
 
