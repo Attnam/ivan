@@ -2979,6 +2979,13 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
       if(Square->Luminance==0)
         continue;
 
+      /**
+       * TODO the farer, less range around the emmiter can be seen
+      long lDelta = lMaxDist - iMinDist;
+      float fPerc = (iDist - iMinDist)/(double)lDelta;
+      int iLightBorder = 0xFF*(0.75 + 0.25*fPerc); //reference LIGHT_BORDER is 0xFF*0.5, but here is for far things
+       */
+
       int iMultDist=1;
       bool bTryReveal=false;
       if(!bTryReveal && hasLight(Square->Emitation,LIGHT_BORDER)){
@@ -3010,68 +3017,6 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 
   return tot;
 }
-//int level::RevealDistantLightsToPlayer()
-//{
-//  cint XMin = Max(game::GetCamera().X, 0);
-//  cint YMin = Max(game::GetCamera().Y, 0);
-//  cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
-//  cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
-//  culong LOSTick = game::GetLOSTick();
-//  int iMinDist = v2(PLAYER->GetLOSRange(),0).GetLengthSquare();
-//
-//  long lMaxDist = v2(PLAYER->GetAttribute(PERCEPTION),0).GetLengthSquare();
-//  int tot=0;
-//  for(int x = XMin; x < XMax; ++x){
-//    lsquare** SquarePtr = &Map[x][YMin];
-//    for(int y = YMin; y < YMax; ++y, ++SquarePtr){
-//      lsquare* Square = *SquarePtr;
-//
-//      if(Square->CanBeSeenByPlayer())
-//        continue; //already seen
-//
-//      int iDist = (Square->GetPos() - PLAYER->GetPos()).GetLengthSquare();
-//
-//      bool bTryReveal=false;
-//      bool bNearEmitter=false;
-//      if(!bTryReveal && Square->Emitation>0){
-//        bTryReveal=true;
-//        bNearEmitter=true;
-//      }
-//
-//      col24 Light = Square->Luminance;
-//      if(Light==0)continue;
-//
-//      if(!bTryReveal && iDist<=iMinDist)bTryReveal=true;
-//      int iMultDist=3;
-//      if(!bTryReveal){
-//        /**
-//         * the farer, less range around the emmiter can be seen
-//        long lDelta = lMaxDist - iMinDist;
-//        float fPerc = (iDist - iMinDist)/(double)lDelta;
-//        int iLightBorder = 0xFF*(0.75 + 0.25*fPerc); //reference LIGHT_BORDER is 0xFF*0.5, but here is for far things
-//         */
-//        if(iDist <= lMaxDist*iMultDist){ //view limit
-//          int iLightBorder = LIGHT_BORDER + LIGHT_BORDER*0.50;
-//          if(!bTryReveal && (Light & 0xFF0000) > (iLightBorder << 16))bTryReveal=true;//RED
-//          if(!bTryReveal && (Light & 0x00FF00) > (iLightBorder <<  8))bTryReveal=true;//GREEN
-//          if(!bTryReveal && (Light & 0x0000FF) > (iLightBorder      ))bTryReveal=true;//BLUE
-//
-//          if(bTryReveal)bNearEmitter=true;
-//          DBG6(x,y,bTryReveal,(Light & 0xFF0000)/0xFFFF,(Light & 0x00FF00)/0xFF,(Light & 0x0000FF));
-//        }
-//      }
-//
-//      if(bTryReveal){
-//        if(Square->CanBeSeenFrom(PLAYER->GetPos(),lMaxDist*(bNearEmitter?iMultDist:1))){
-//          Square->Reveal(LOSTick,false);
-//          ++tot;
-//        }
-//      }
-//    }
-//  }
-//
-//  return tot;
-//}
 
 int level::DetectMaterial(cmaterial* Material)
 {
