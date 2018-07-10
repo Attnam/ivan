@@ -1818,10 +1818,12 @@ struct srpForgeItem : public recipe{
       return true;
     }
 
-    materialcontainer* mc = dynamic_cast<materialcontainer*>(rpd.itSpawn);DBGLN;
-    bool bIsContainer =
-        rpd.itSpawn->GetStorageVolume()>0 || //chests
-      mc!=NULL; //potions, mines... also bananas xD
+    materialcontainer* mc = dynamic_cast<materialcontainer*>(rpd.itSpawn);DBGLN; //potions, mines... also bananas xD
+    itemcontainer* ic = dynamic_cast<itemcontainer*>(rpd.itSpawn);DBGLN; //chests
+//    bool bIsContainer =
+//      rpd.itSpawn->GetStorageVolume()>0 || //something else TODO what?
+//      ic!=NULL || //chests
+//      mc!=NULL; //potions, mines... also bananas xD
 
     /**
      * TODO problem: basically sulphuric acid can already be stored on a metal can ...
@@ -1833,7 +1835,7 @@ struct srpForgeItem : public recipe{
     bool bIsWeapon = rpd.itSpawn->IsWeapon(rpd.h);
     bool bReqS = bIsWeapon;
     bool bAllowS = true;
-    if(bIsContainer)bAllowS=false;
+    if(mc)bAllowS=false;
     if(lVolS==0)bAllowS=false;
     if(bAllowS){DBGLN;
       bool bS = false;
@@ -1862,6 +1864,16 @@ struct srpForgeItem : public recipe{
     else{
       if(mc!=NULL)
         delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
+    }
+
+    if(ic!=NULL){ //empty chests etc
+      stack* stkC = ic->GetContained();
+      itemvector ivC;
+      stkC->FillItemVector(ivC);
+      for(int i=0;i<ivC.size();i++){
+        ivC[i]->RemoveFromSlot();
+        ivC[i]->SendToHell();
+      }
     }
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
