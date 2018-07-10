@@ -2824,7 +2824,7 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
   if(h->AutoPlayAIequip())
     return true;
 
-  if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
+  if(GetBurdenState()!=OVER_LOADED){ DBG4(CommandFlags&DONT_CHANGE_EQUIPMENT,this,GetNameSingular().CStr(),GetSquareUnder());
     if(v2LastDropPlayerWasAt!=GetPos()){
       static bool bHoarder=true; //TODO wizard autoplay AI config exclusive felist
 
@@ -3178,16 +3178,29 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
   return false;
 }
 
+bool character::AutoPlayAIChkInconsistency()
+{
+  if(GetSquareUnder()==NULL){
+    DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
+    DBG6("GetSquareUnderIsNULLhow?",IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
+    return true; //to just ignore this turn expecting on next it will be ok.
+  }
+  return false;
+}
+
 truth character::AutoPlayAICommand(int& rKey)
-{ DBGSV2(GetPos());
+{
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
+  DBGSV2(GetPos());
+
   if(AutoPlayLastChar!=this){
     AutoPlayAIReset(true);
     AutoPlayLastChar=this;
   }
 
-  if(AutoPlayAICheckAreaLevelChangedAndReset()){
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
+  if(AutoPlayAICheckAreaLevelChangedAndReset())
     AutoPlayAIReset(true);
-  }
 
   static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayAIDebugDrawOverlay);return true;}();
 
@@ -3200,6 +3213,7 @@ truth character::AutoPlayAICommand(int& rKey)
     }
   }
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
@@ -3226,13 +3240,23 @@ truth character::AutoPlayAICommand(int& rKey)
     }
   }
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(AutoPlayAIDropThings())
     return true;
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
     return true;
 
   if(iWanderTurns>0){
+    if(!IsPlayer() || game::GetAutoPlayMode()==0 || !IsPlayerAutoPlay()){ //redundancy: yep
+      DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
+      DBG5(IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
+      ABORT("autoplay is inconsistent %d %d %d %d %d %s %d %s %d %d %d %d %d",
+        IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),
+        GetNameSingular().CStr(),game::GetAutoPlayMode(),GetName(DEFINITE).CStr(),
+        IsTemporary(),IsPet(),IsHeadless(),IsPlayer(),IsPlayerAutoPlay());
+    }
     GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
     iWanderTurns--;
     return true;
