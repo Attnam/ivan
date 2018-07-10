@@ -871,9 +871,6 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
-//    if(CanBeSeenByPlayer())
-//      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
-
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
@@ -901,8 +898,9 @@ int character::TakeHit(character* Enemy, item* Weapon,
   }
 
   if(pHitEff!=NULL){DBGLN;
-    GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
-    delete pHitEff; //already copied
+    if(GetLSquareUnder()!=NULL) //may be null if char died TODO right?
+      GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
+    delete pHitEff; //already possibly copied
   }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
@@ -3112,7 +3110,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
     if(!v2NewKGTo.Is0()){
       AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
     }else{
-      DBG1("TODO:too complex paths are failing... improve CreateRoute()?"); //TODO is this info correctly placed?
+      DBG1("TODO:too complex paths are failing... improve CreateRoute()?");
     }
   }
 
@@ -3294,8 +3292,22 @@ truth character::AutoPlayAICommand(int& rKey)
     }
   }
 
-  if(AutoPlayAINavigateDungeon(bPlayerHasLantern))
+  static const int iDesperateResetCountDownDefault=10;
+  static const int iDesperateEarthQuakeCountDownDefault=iDesperateResetCountDownDefault*5;
+  static int iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
+  if(AutoPlayAINavigateDungeon(bPlayerHasLantern)){
+    iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
     return true;
+  }else{
+    if(iDesperateEarthQuakeCountDown==0){
+      iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
+      scrollofearthquake::Spawn()->FinishReading(this);
+      DBG1("UsingTerribleEarthquakeSolution"); // xD
+    }else{
+      iDesperateEarthQuakeCountDown--;
+      DBG1(iDesperateEarthQuakeCountDown);
+    }
+  }
 
   /****************************************
    * Twighlight zone
@@ -3303,9 +3315,9 @@ truth character::AutoPlayAICommand(int& rKey)
 
   ADD_MESSAGE("%s says \"I need more intelligence to do things by myself...\"", CHAR_NAME(DEFINITE)); DBG1("TODO: AI needs improvement");
 
-  static int iDesperateResetCountDown=10;
+  static int iDesperateResetCountDown=iDesperateResetCountDownDefault;
   if(iDesperateResetCountDown==0){
-    iDesperateResetCountDown=10;
+    iDesperateResetCountDown=iDesperateResetCountDownDefault;
 
     AutoPlayAIReset(true);
 
