@@ -1169,7 +1169,12 @@ struct recipe{
     iListIndex=(-1);//,desc(""){};
   }
 
-  virtual bool work(rpdata&){return false;}
+  virtual bool work(rpdata& rpd){
+    if(rpd.Selected != iListIndex)
+      return false;
+    return true;
+  }
+
   virtual ~recipe(){}
 
   static int calcTurns(material* mat,float fMult=1.0){ //local function trick TODO anything better?
@@ -1222,7 +1227,7 @@ struct recipe{
 
   template <typename T> static truth choseIngredients(
       cfestring fsQ, long volume, rpdata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
-      bool bMainMaterRemainsBecomeLump=false
+      bool bMainMaterRemainsBecomeLump=false, bool bClearListIfIncomplete=true
   ){DBGLN;
     if(volume==0)
       ABORT("ingredient required 0 volume?");
@@ -1308,8 +1313,11 @@ struct recipe{
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
-    if(volume>0)
+    if(volume>0){
       ADD_MESSAGE("This amount of materials won't work...");
+      if(bClearListIfIncomplete)
+        rpd.ingredientsIDs.clear();
+    }
 
     return volume<=0;
   }
@@ -1419,18 +1427,22 @@ struct recipe{
   }
 
 };
-struct srpChair : public recipe{
+struct srpOLT : public recipe{
+ protected:
+  int iReqVol=0;
+  int iTurns=0;
+
+  virtual olterrain* spawn(){return NULL;}
+
+ public:
   bool work(rpdata& rpd){
-    static const int iReqStickVol=20000;
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      init("build","a chair");
-      desc << "Use hammers, a frying pan or even a mace with sticks."; //TODO this sounds a bit weird :)
-    }
+    if(desc.GetSize()==0)ABORT("Missing recipe description for OLT");
+    if(iReqVol==0)ABORT("Recipe vol is 0 for OLT");
+    if(iTurns==0)ABORT("Recipe turns is 0 for OLT");
 
-    if(rpd.Selected != iListIndex)
-      return false;
+    if(!recipe::work(rpd))return false;
 
-    rpd.iBaseTurnsToFinish=10;
+    rpd.iBaseTurnsToFinish=iTurns;
     rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
 
     rpd.lsqrWhere=rpd.lsqrCharPos;
@@ -1439,24 +1451,54 @@ struct srpChair : public recipe{
 
       festring fsQ("to build ");fsQ<<name;
       int iCfg=-1;
-      //TODO this volume should be on the .dat file as chair attribute...
-      if(!rpd.bHasAllIngredients){
-        rpd.ingredientsIDs.clear();
-        rpd.bHasAllIngredients=choseIngredients<stick>(fsQ,iReqStickVol, rpd, iCfg);
-      }
-      if(!rpd.bHasAllIngredients){
-        rpd.ingredientsIDs.clear();
-        rpd.bHasAllIngredients=choseIngredients<bone>(fsQ,iReqStickVol, rpd, iCfg);
-      }
-      if(rpd.bHasAllIngredients){
+      bool bH=false;
+      if(!bH)bH=choseIngredients<stick>(fsQ,iReqVol, rpd, iCfg);
+      if(!bH)bH=choseIngredients<bone>(fsQ,iReqVol, rpd, iCfg);
+      if(!bH)bH=choseIngredients<stone>(fsQ,iReqVol, rpd, iCfg, true, INGOT, true);
+      if(bH){
+        rpd.bHasAllIngredients=bH;
         rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
-        rpd.otSpawn=decoration::Spawn(CHAIR);
-        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqStickVol));
+        rpd.otSpawn=spawn(); if(rpd.otSpawn==NULL)ABORT("Recipe spawn is NULL for OLT");
+        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqVol)); //TODO secondary material?
         rpd.bCanStart=true;
       }
     }
 
     return true;
+  }
+};
+struct srpDoor : public srpOLT{
+  virtual olterrain* spawn(){
+    door* Door = door::Spawn();
+    Door->SetIsLocked(false);
+    Door->SetIsOpened(true);
+    //TODO configure lock type based randomly in one of the keys available on player's inventory
+    return Door;
+  }
+
+  bool work(rpdata& rpd){
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("build","a door");
+      desc << "You will need a hammer, a frying pan or even a mace.";
+    }
+
+    iReqVol=30000;       //TODO this volume should be on the .dat file
+    iTurns=30;
+    return srpOLT::work(rpd);
+  }
+};srpDoor rpDoor;
+struct srpChair : public srpOLT{
+  virtual olterrain* spawn(){return decoration::Spawn(CHAIR);}
+
+  bool work(rpdata& rpd){
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("build","a chair");
+      desc << "You will need a hammer, a frying pan or even a mace.";
+    }
+
+    iReqVol=15000;       //TODO this volume should be on the .dat file
+    iTurns=15;
+    return srpOLT::work(rpd);
   }
 };srpChair rpChair;
 
@@ -1467,8 +1509,7 @@ struct srpWall : public recipe{
       desc << "Pile stones or skulls to create " << name;
     }
 
-    if(rpd.Selected != iListIndex) // a wall will destroy whatever is in the place
-      return false;
+    if(!recipe::work(rpd))return false;
 
     int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
     if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
@@ -1513,8 +1554,8 @@ struct srpMelt : public recipe{
       desc << "Near a forge you can melt things.";
     }
 
-    if(rpd.Selected != iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-      return false;
+    //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
+    if(!recipe::work(rpd))return false;
 
     ////////////// find the FORGE
     lsquare* lsqrFORGE = NULL;
@@ -1666,8 +1707,7 @@ struct srpForgeItem : public recipe{
       desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
     }
 
-    if(rpd.Selected != iListIndex) //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-      return false;
+    if(!recipe::work(rpd))return false;
 
     ////////////// find the anvil
     lsquare* lsqrAnvil = NULL;
@@ -1844,6 +1884,7 @@ struct srpForgeItem : public recipe{
 };srpForgeItem rpForgeItem;
 
 struct srpFluids : public recipe{
+ protected:
   int iAddVolMin;
   int iAddVolExtra;
   festring fsTool;
@@ -1852,6 +1893,9 @@ struct srpFluids : public recipe{
   int iLiqCfg;
   int iMatEff;
 
+  virtual bool chkCorpse(const materialdatabase* blood,const materialdatabase* flesh){return false;}
+
+ public:
   srpFluids(){
     //TODO call super class constructor?
 
@@ -1864,12 +1908,9 @@ struct srpFluids : public recipe{
     iMatEff = -1;
   }
 
-  virtual bool chkCorpse(const materialdatabase* blood,const materialdatabase* flesh){return false;}
-
   virtual bool work(rpdata& rpd){
     //extract fluids (not blood as it can be used as nutrition right? *eww* :P)
-    if(rpd.Selected != iListIndex)
-      return false;
+    if(!recipe::work(rpd))return false;
 
     itemvector vi;
 
@@ -2077,27 +2118,23 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       return false;
   }
 
-  recipe* prp=NULL;
-  #define RP(rp) if(rp.work(rpd))prp=&rp;
-  RP(rpAcid);
-  RP(rpChair);
-  RP(rpForgeItem);
-  RP(rpMelt);
-  RP(rpPoison);
-  RP(rpWall);
-
   /******************************************************************************************
    * 1st call it just initializes the recipes list after all recipes have been configured!
    */
-  if(vrp.size()==0){
-    addRecipe((recipe*)&rpChair);
-    addRecipe((recipe*)&rpWall);
-    addRecipe((recipe*)&rpPoison);
-    addRecipe((recipe*)&rpAcid);
-    addRecipe((recipe*)&rpMelt);
-    addRecipe((recipe*)&rpForgeItem);
+  bool bInitRecipes = vrp.size()==0;
+  recipe* prp=NULL;
+  #define RP(rp) \
+    if(rp.work(rpd))prp=&rp; \
+    if(bInitRecipes)addRecipe((recipe*)&rp);
+  RP(rpChair);
+  RP(rpDoor);
+  RP(rpWall);
+  RP(rpPoison);
+  RP(rpAcid);
+  RP(rpMelt);
+  RP(rpForgeItem);
+  if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
-  }DBGLN;
 
   if(prp==NULL){DBGLN;
     return false;
