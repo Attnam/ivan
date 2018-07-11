@@ -41,7 +41,9 @@ class rpdata {
     int itSpawnTot;
     object* craftWhat;
     v2 v2PlaceAt;
-    std::vector<unsigned long> ingredientsIDs;
+    std::vector<ulong> ingredientsIDs;
+//    std::vector<ulong> ingMainIDs;
+//    std::vector<ulong> ingSecondaryIDs;
 
     rpdata(humanoid* H);
 };

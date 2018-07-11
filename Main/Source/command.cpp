@@ -1227,10 +1227,12 @@ struct recipe{
 
   template <typename T> static truth choseIngredients(
       cfestring fsQ, long volume, rpdata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
-      bool bMainMaterRemainsBecomeLump=false, bool bClearListIfIncomplete=true
+      bool bMainMaterRemainsBecomeLump=false
   ){DBGLN;
     if(volume==0)
       ABORT("ingredient required 0 volume?");
+
+//    std::vector<ulong>& rIngIDs = bMain ? rpd.ingMainIDs : rpd.ingSecondaryIDs;
 
     // prepare the filter for ALL items also resetting them first!
     const itemvector vi = vitInv(rpd.h);
@@ -1306,18 +1308,15 @@ struct recipe{
       if(volume<=0){
         for(int i=0;i<tmpIngredientsIDs.size();i++)
           rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
-        break;
+        break; //success
       }
     }
 
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
-    if(volume>0){
+    if(volume>0)
       ADD_MESSAGE("This amount of materials won't work...");
-      if(bClearListIfIncomplete)
-        rpd.ingredientsIDs.clear();
-    }
 
     return volume<=0;
   }
@@ -1521,18 +1520,18 @@ struct srpWall : public recipe{
       festring fsQ("to build ");fsQ<<name;
       int iCfg=-1;
       int iVol=-1;
-      if(!rpd.bHasAllIngredients){
-        rpd.ingredientsIDs.clear();
+      bool bH=false;
+      if(!bH){
         iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
-        rpd.bHasAllIngredients=choseIngredients<stone>(fsQ,iVol, rpd, iCfg);
+        bH=choseIngredients<stone>(fsQ,iVol, rpd, iCfg);
       }
-      if(!rpd.bHasAllIngredients){
-        rpd.ingredientsIDs.clear();
+      if(!bH){
         iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
-        rpd.bHasAllIngredients=choseIngredients<skull>(fsQ,iVol, rpd, iCfg);
+        bH=choseIngredients<skull>(fsQ,iVol, rpd, iCfg);
       }
       //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-      if(rpd.bHasAllIngredients){
+      if(bH){
+        rpd.bHasAllIngredients=true;
         rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
         rpd.otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
         rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
