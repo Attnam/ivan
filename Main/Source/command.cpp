@@ -1240,6 +1240,7 @@ struct recipe{
       vi[i]->SetValidRecipeIngredient(false);
       if(dynamic_cast<T*>(vi[i])!=NULL){
         if(vi[i]->IsBurning())continue;
+        if(vi[i]->GetSpoilLevel()>0)continue;
 
         if(iReqCfg>0 && vi[i]->GetConfig()!=iReqCfg)continue;
 

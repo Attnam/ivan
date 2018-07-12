@@ -372,6 +372,7 @@ void craft::Handle()
   Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-500);
+  Actor->EditStamina(-1000 / Actor->GetAttribute(ARM_STRENGTH), false);
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
   truth Stopped = finished || AlreadyTerminated;
