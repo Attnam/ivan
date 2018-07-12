@@ -503,21 +503,15 @@ truth commandsystem::Close(character* Char)
 }
 
 struct swapweaponcfg{
-  private:
-  item* itLeft =NULL;
-  item* itRight=NULL;
-
   public:
   ulong iLeftId=0;
   ulong iRightId=0;
 
   void SetLR(bool bL, item* it){
     if(bL){
-      itLeft=it;
-      iLeftId  = itLeft !=NULL ? itLeft ->GetID() : 0;
+      iLeftId  = it!=NULL ? it->GetID() : 0;
     }else{
-      itRight=it;
-      iRightId = itRight!=NULL ? itRight->GetID() : 0;
+      iRightId = it!=NULL ? it->GetID() : 0;
     }
   }
 
@@ -529,8 +523,9 @@ struct swapweaponcfg{
   }
 
   item* GetLR(bool bL){
-    if(game::SearchItem(bL?iLeftId:iRightId)!=NULL)
-      return bL?itLeft:itRight;
+    item* it = game::SearchItem(bL?iLeftId:iRightId); //slower? but granted as item::Fix() (at blacksmith) will change the pointer but keep the ID!!!
+    if(it!=NULL)
+      return it;
 
     // cleanup on not found
     if(bL)
@@ -554,10 +549,10 @@ struct swapweaponcfg{
   }
   void Load(inputfile& SaveFile){DBGLN;
     ulong iLeftId =0;SaveFile >> iLeftId;
-    SetL(iLeftId !=0 ? game::SearchItem(iLeftId ) : NULL); DBG2(iLeftId,itLeft);
+    SetL(iLeftId !=0 ? game::SearchItem(iLeftId ) : NULL); DBG1(iLeftId);
 
     ulong iRightId=0;SaveFile >> iRightId;
-    SetR(iRightId!=0 ? game::SearchItem(iRightId) : NULL); DBG2(iRightId,itRight);
+    SetR(iRightId!=0 ? game::SearchItem(iRightId) : NULL); DBG1(iRightId);
   }
 
   bool IsValid(){
@@ -611,7 +606,8 @@ void commandsystem::LoadSwapWeapons(inputfile& SaveFile)
     vSWCfg.push_back(cfg);
   }
 }
-void clearInvalidSwapCfgs(){
+void clearInvalidSwapCfgs()
+{
   for(int i=vSWCfg.size()-1;i>=0;i--) //from last to 1st has no problem erasing, wont break the indexes!
     if(!vSWCfg[i].IsValid())
       {vSWCfg.erase(vSWCfg.begin()+i);DBG2("removingInvalid",i);}
@@ -731,6 +727,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
 //          if(it!=wL && it!=wR && !hasItem(iv,it))cW = colNotOnInv;
 
+          if(!it->Exists())ABORT("item doesnt exist! %d %s",it->GetID(),it->GetName(DEFINITE)); //this may segfault tho...
           it->AddInventoryEntry(Char, fs, 1, true);
           Cfgs.AddEntry(fs, cW, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
         }
@@ -834,22 +831,29 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     return false;
   }
 
-  if(iIndexOverride==-1)
+  humanoid* h = dynamic_cast<humanoid*>(Char); DBG2(iSwapCurrentIndex,vSWCfg.size());
+
+  item* wL = h->GetLeftWielded();
+  item* wR = h->GetRightWielded();
+
+  if(iIndexOverride==-1){
+    //make it sure what is the current index
+    for(int i=0;i<vSWCfg.size();i++)
+      if(vSWCfg[i].GetL()==wL && vSWCfg[i].GetR()==wR){
+        iSwapCurrentIndex=i;
+        break;
+      }
+
     iSwapCurrentIndex++;
-  else
+  }else
     iSwapCurrentIndex=iIndexOverride;
 
   if(iSwapCurrentIndex >= vSWCfg.size())
     iSwapCurrentIndex=0;
 
-  humanoid* h = dynamic_cast<humanoid*>(Char); DBG2(iSwapCurrentIndex,vSWCfg.size());
-
   bool bDidSwap=false;
 
   stack* stk = h->GetStack();
-
-  item* wL = h->GetLeftWielded();
-  item* wR = h->GetRightWielded();
 
   /**
    * important to work correctly if user asks for 2handed in both hands, or if it repeats on another cfg,
@@ -858,21 +862,21 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
   if(wL)wL->MoveTo(stk);
   if(wR)wR->MoveTo(stk);
 
+  int iAlreadyWieldedCfg=0;
   for(int iArm=0;iArm<2;iArm++){DBGLN;
     item* it = NULL;
-    item* w  = NULL;
     arm* Arm = NULL;
 
     switch(awRL[iArm]){
     case LEFT_WIELDED_INDEX:
       Arm=h->GetLeftArm();
-      w=wL;
       it = vSWCfg[iSwapCurrentIndex].GetL();
+      if(it==wL)iAlreadyWieldedCfg++;
       break;
     case RIGHT_WIELDED_INDEX:
       Arm=h->GetRightArm();
-      w=wR;
       it = vSWCfg[iSwapCurrentIndex].GetR();
+      if(it==wR)iAlreadyWieldedCfg++;
       break;
     }
 
@@ -882,19 +886,17 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
       if(hasItem(iv,it)){
         it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
         h->SetEquipment(awRL[iArm],it);
-//        switch(iArm){
-//        case LEFT_WIELDED_INDEX:
-//          h->SetLeftWielded(it);
-//          break;
-//        case RIGHT_WIELDED_INDEX:
-//          h->SetRightWielded(it);
-//          break;
-//        }
         bDidSwap=true;
       }
     }
 
   }
+
+//  static int iRecursiveRetry=0; //this is risky..
+//  if(iAlreadyWieldedCfg==2 && vSWCfg.size()>1){
+//    iRecursiveRetry++;
+//    SwapWeaponsWork(Char,iIndexOverride);
+//  }
 
   if(bDidSwap)
     Char->DexterityAction(5);
