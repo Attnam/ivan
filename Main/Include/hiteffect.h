@@ -35,7 +35,6 @@ struct hiteffectSetup { //TODO some of these are not actually an external setup.
   character* WhoIsHit;
   ulong lWhoIsHitID;
 
-  item* itemEffectReference;
   ulong lItemEffectReferenceID;
 
   int iMode;

@@ -700,8 +700,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     pHitEff->Type=Type;
     pHitEff->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
     pHitEff->WhoIsHit=this;
-    pHitEff->itemEffectReference = Weapon;
-    if(pHitEff->itemEffectReference==NULL)pHitEff->itemEffectReference=EnemyBodyPart;
+    pHitEff->lItemEffectReferenceID = Weapon!=NULL ? Weapon->GetID() : EnemyBodyPart->GetID();
   }
 
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
