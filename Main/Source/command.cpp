@@ -1146,8 +1146,8 @@ struct recipe{
      */
     DBG2(mat->GetStrengthValue(),mat->GetVolume());
     static const int iBaseTurns = 5;
-    static const int fMinStr = 55.0; //float for precision
-    static const int fBaseVol = 1000.0; //float for precision
+    static const float fMinStr = 55.0; //float for precision
+    static const float fBaseVol = 1000.0; //float for precision
     float f = iBaseTurns * fMult * (mat->GetStrengthValue()/fMinStr) * (mat->GetVolume()/fBaseVol); //vol is in cm3, so per 1L or 1Kg(water)
     if(f>0 && f<1)f=1;
     return f;
@@ -1534,6 +1534,7 @@ struct srpMelt : public recipe{
         olterrain* ot = lsqr->GetOLTerrain();
         if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.h)){
           lsqrFORGE = lsqr;
+          rpd.v2ForgeLocation = lsqrFORGE->GetPos();
           break;
         }
       }
@@ -1701,6 +1702,7 @@ struct srpForgeItem : public recipe{
         olterrain* ot = lsqr->GetOLTerrain();
         if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.h)){
           lsqrForge = lsqr;
+          rpd.v2ForgeLocation = lsqrForge->GetPos();
           break;
         }
       }

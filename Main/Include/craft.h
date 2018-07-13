@@ -39,6 +39,7 @@ class recipedata {
     bool bCanStart;
     bool bCanBePlaced;
     bool bAlreadyExplained;
+    v2 v2ForgeLocation;
     item* itSpawn;
     int itSpawnTot;
     object* craftWhat;
