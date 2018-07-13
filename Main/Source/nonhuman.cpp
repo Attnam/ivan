@@ -1096,8 +1096,125 @@ void mushroom::PostConstruct()
   }
 }
 
+/**
+ * this is not gameplay wise as far AI events will not happen,
+ * but will allow the game to still be played at least...
+ */
+bool MagicmushroomCPUwiseAI(magicmushroom* m)
+{
+  int iDist = ivanconfig::GetDistLimitMagicMushrooms();
+  if(iDist==0)return true;
+
+  int iSqDist = m->GetDistanceSquareFrom(PLAYER);
+  int iSqLim = iDist*iDist;
+  int iMaxActiveAI = iDist*2 * iDist*2;
+
+  static int iPreviousTurnActivatedAIs=0;
+  static int iTurnChkAI = 0;
+  if(iTurnChkAI != game::GetTurn()){ DBG4(iTurnChkAI,iPreviousTurnActivatedAIs,iSqLim,iMaxActiveAI);
+    iPreviousTurnActivatedAIs=0;
+    iTurnChkAI = game::GetTurn();
+  }
+
+  bool bActivated = false;
+  if(iTurnChkAI==game::GetTurn()){
+    if(iPreviousTurnActivatedAIs<iMaxActiveAI && iSqDist<=iSqLim){
+      bActivated=true;
+      iPreviousTurnActivatedAIs++;
+    }
+  }
+
+  return bActivated;
+}
+bool MagicmushroomCPUwiseAIOld(magicmushroom* m) //TODO remove on next commit
+{
+  int iSqDist = m->GetDistanceSquareFrom(PLAYER);
+//  static int iActivatedAI = 0;
+  static std::vector<magicmushroom*> v;
+//  static int iPreviousTurnTotAI = 0;
+  static int iTurnChkAI = 0;
+  static bool bDoLimit=false;
+  static v2 v2PlayerLastPos;
+  static int iPreviousTurnActivatedAIs=0;
+
+  int iDistLimCfg=-2; //TODO user cfg?, min 1, -3 no limit=vanilla, -2 dynamic, -1 limit will be always active ???
+  bool bDynamic = iDistLimCfg==-2;
+  int iDistLim=iDistLimCfg;
+
+  bool bCheckLimit=false;
+  if(bDynamic)bCheckLimit=true;
+
+  level* lvl = game::GetCurrentLevel();
+
+  //dynamic dist
+  if(bDynamic){ //they spread too fast TODO review these values
+//    if(     v.size()>25) iDistLim=1;
+//    else if(v.size()>15) iDistLim=2;
+//    else if(v.size()>10) iDistLim=3;
+//    else if(v.size()> 5) iDistLim=4;
+//    else if(v.size()> 2) iDistLim=5;
+    int iMaxAmt=100*2; //1st test will be half of it
+    if(     v.size() > (iMaxAmt/=2)) iDistLim=1;
+    else if(v.size() > (iMaxAmt/=2)) iDistLim=2;
+    else if(v.size() > (iMaxAmt/=2)) iDistLim=3;
+    else if(v.size() > (iMaxAmt/=2)) iDistLim=4;
+    else if(v.size() > (iMaxAmt/=2)) iDistLim=5;
+    else                         iDistLim=iSqDist; //anywhere //Max(lvl->GetXSize(),lvl->GetYSize());
+  }
+
+  static int iMinActiveAI = 8;
+  int iSqNear=iDistLim*iDistLim;
+  int iMaxActiveAI = iSqNear<iMinActiveAI ? iMinActiveAI : iSqNear; //like in player may be fully surrounded by them, so let these ones fight at least!
+  bool bCPUwiseAllowAI=true;
+
+  if(iTurnChkAI != game::GetTurn()){ //resetter and decider once per turn
+    bDoLimit=false;
+//      if(iPreviousTurnTotAI>iMaxActiveAI)
+//      if(v.size()>iMaxActiveAI)
+//        bDoLimit=true; //on next turn
+//      iPreviousTurnTotAI=0;
+    iTurnChkAI = game::GetTurn();
+
+    if(v2PlayerLastPos!=PLAYER->GetPos()){DBGLN; //because this is based on distance TODO if the player doesnt move, they may spread far away
+      v.clear();
+      for(int iY=0;iY<lvl->GetYSize();iY++){for(int iX=0;iX<lvl->GetXSize();iX++){
+        static lsquare* lsqr;lsqr = lvl->GetLSquare(iX,iY);
+        static character* c;c = lsqr->GetCharacter();
+        if(dynamic_cast<magicmushroom*>(c)!=NULL)
+          v.push_back(m);
+      }}
+      v2PlayerLastPos=PLAYER->GetPos();
+    }
+
+//    if(v.size()>iMaxActiveAI && iPreviousTurnActivatedAIs>iMinActiveAI)
+    if(iPreviousTurnActivatedAIs>iMaxActiveAI)
+      bDoLimit=true; //on next turn
+
+    iPreviousTurnActivatedAIs=0;
+  }
+
+  if(bDoLimit){
+    if(iTurnChkAI==game::GetTurn()){ //every magicmushroom
+//      iPreviousTurnTotAI++; //prepare to next turn
+//      if(!std::find(v.begin(), v.end(), m) != v.end()){
+//        v.push_back(m);
+//      }
+
+      if(iSqDist>iSqNear) // m->CanBeSeenByPlayer() wont work as it may be invisible
+        bCPUwiseAllowAI=false;
+    }
+  }
+
+  if(bCPUwiseAllowAI)
+    iPreviousTurnActivatedAIs++;
+
+  DBG8(v.size(),iPreviousTurnActivatedAIs,iTurnChkAI,bDoLimit,iDistLim,iSqNear,iMaxActiveAI,bCPUwiseAllowAI);
+  return bCPUwiseAllowAI;
+}
 void magicmushroom::GetAICommand()
 {
+  if(!MagicmushroomCPUwiseAI(this))return;
+
   if(!(RAND() % 750))
   {
     if(CanBeSeenByPlayer())
