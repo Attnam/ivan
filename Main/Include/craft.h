@@ -15,13 +15,15 @@
 
 #include <vector>
 
-class lsquare;
 class humanoid;
-class olterrain;
-class object;
 class item;
+class lsquare;
+class object;
+class olterrain;
+
 struct v2;
-class rpdata {
+
+class recipedata {
   public: //TODO only methods should be public, only like that to speed up dev
     humanoid* h; //TODO protect: set only once
     int Selected; //TODO protect: set only once
@@ -45,7 +47,11 @@ class rpdata {
 //    std::vector<ulong> ingMainIDs;
 //    std::vector<ulong> ingSecondaryIDs;
 
-    rpdata(humanoid* H);
+    recipedata(humanoid* H);
+};
+class craftcore {
+  public:
+    static bool canBeCrafted(item* it);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

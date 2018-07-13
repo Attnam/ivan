@@ -1779,7 +1779,7 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
-void humanoid::SwitchToCraft(rpdata rpd)
+void humanoid::SwitchToCraft(recipedata rpd)
 {DBGLN;
   craft* Act = craft::Spawn(this);DBGLN;
 

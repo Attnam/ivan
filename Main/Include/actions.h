@@ -105,7 +105,7 @@ ACTION(craft, action)
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetCraftWhat(rpdata rpdCopyFrom){rpd=rpdCopyFrom; ToolRequired=rpd.itTool!=NULL; itWhatID=rpd.itSpawn?rpd.itSpawn->GetID():0;}
+  void SetCraftWhat(recipedata rpdCopyFrom){rpd=rpdCopyFrom; ToolRequired=rpd.itTool!=NULL; itWhatID=rpd.itSpawn?rpd.itSpawn->GetID():0;}
   virtual void Terminate(truth);
   void SetRightBackupID(ulong What) { RightBackupID = What; }
   void SetLeftBackupID(ulong What) { LeftBackupID = What; }
@@ -114,7 +114,7 @@ ACTION(craft, action)
   virtual truth ShowEnvironment() const { return false; }
   void SetMoveCraftTool(truth What) { MoveCraftTool = What; }
  protected:
-  rpdata rpd;
+  recipedata rpd;
   ulong RightBackupID;
   ulong LeftBackupID;
   truth MoveCraftTool;

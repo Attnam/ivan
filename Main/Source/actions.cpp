@@ -253,6 +253,20 @@ void craft::Handle()
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
+  for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
+    item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
+    if(it==NULL)ABORT("ingredient id %d not found",rpd.ingredientsIDs[i]);
+
+    // a magpie or siren may have taken it
+    if(it->GetSquareUnder()!=Actor->GetSquareUnder()){
+      Terminate(false);
+      return;
+    }
+
+    if(!craftcore::canBeCrafted(it)){
+    }
+  }
+
   truth finished = rpd.iBaseTurnsToFinish==0;
   festring fsCreated;
   festring fsMsg("");

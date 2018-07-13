@@ -1077,48 +1077,24 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
   return false;
 }
 
-//struct rpdata {
-//  humanoid* h; //TODO protect: set only once
-//  int Selected; //TODO protect: set only once
-//
-//  //TODO protect: none of these should be modified outside this class and every change should be dbgmsg logged.
-//  int iBaseTurnsToFinish;
-//  item* itTool;
-//  lsquare* lsqrWhere;
-//  lsquare* lsqrCharPos;
-//  olterrain* otSpawn;
-//  bool bSpendCurrentTurn;
-//  bool bHasAllIngredients;
-//  bool bCanStart;
-//  bool bCanBePlaced;
-//  item* itSpawn;
-//  int itSpawnTot;
-//  object* craftWhat;
-//
-//  // no init req
-//  v2 v2PlaceAt;
-//  std::vector<ulong> ingredients; //TODO must be filled based on required volume to craft something
-//
-//  rpdata(humanoid* H){
-//    h=H;
-//
-//    Selected=-2; //default is -1 means not set, -2 to init
-//
-//    otSpawn=NULL;
-//    itSpawn=NULL;
-//    itSpawnTot=1;
-//    lsqrCharPos = game::GetCurrentLevel()->GetLSquare(h->GetPos());
-//    lsqrWhere = NULL;
-//    bCanStart=false;
-//    bCanBePlaced=false;
-//    bHasAllIngredients=false;
-//    bSpendCurrentTurn=false;
-//    craftWhat=NULL;
-//    itTool=NULL;
-//    iBaseTurnsToFinish=1; //TODO should be based on attributes
-//  }
-//};
-rpdata::rpdata(humanoid* H)
+bool craftcore::canBeCrafted(item* it){
+  if(
+    game::IsQuestItem(it) ||
+    it->GetEnchantment()!=0 ||
+    dynamic_cast<amulet*>(it)!=NULL ||
+    dynamic_cast<horn*  >(it)!=NULL ||
+    dynamic_cast<ring*  >(it)!=NULL ||
+    dynamic_cast<scroll*>(it)!=NULL ||
+    dynamic_cast<wand*  >(it)!=NULL ||
+    false // just to make it easier to re-organize and add checks above
+  ){
+    return false;
+  }
+
+  return true;
+}
+
+recipedata::recipedata(humanoid* H)
 {
   h=H;
 
@@ -1141,21 +1117,6 @@ rpdata::rpdata(humanoid* H)
   ingredientsIDs.clear(); //just to init
 }
 
-bool canBeCrafted(item* it){
-  if(
-    game::IsQuestItem(it) ||
-    it->GetEnchantment()!=0 ||
-    dynamic_cast<amulet*>(it)!=NULL ||
-    dynamic_cast<horn*  >(it)!=NULL ||
-    dynamic_cast<ring*  >(it)!=NULL ||
-    dynamic_cast<scroll*>(it)!=NULL ||
-    dynamic_cast<wand*  >(it)!=NULL ||
-    false // just to make it easier to re-organize and add checks above
-  )return false;
-
-  return true;
-}
-
 struct recipe{
   festring action;
   festring name;
@@ -1169,7 +1130,7 @@ struct recipe{
     iListIndex=(-1);//,desc(""){};
   }
 
-  virtual bool work(rpdata& rpd){
+  virtual bool work(recipedata& rpd){
     if(rpd.Selected != iListIndex)
       return false;
     return true;
@@ -1177,14 +1138,17 @@ struct recipe{
 
   virtual ~recipe(){}
 
-  static int calcTurns(material* mat,float fMult=1.0){ //local function trick TODO anything better?
+  static int calcTurns(material* mat,float fMult=1.0){
     /**
      * min is gold: str 55 and spends 5 turns each 1000cm3.
      * TODO quite arbritrary but gameplay wise enough?
-     * TODO should use density? or something else than str? fireresistance is not melting point...
+     * TODO should use density? or something else than str? fireresistance is not defined for most and is not melting point either...
      */
     DBG2(mat->GetStrengthValue(),mat->GetVolume());
-    float f = 5 * fMult * (mat->GetStrengthValue()/55.0) * (mat->GetVolume()/1000.0); //float for precision, vol is in cm3, so per 1L or 1Kg(water)
+    static const int iBaseTurns = 5;
+    static const int fMinStr = 55.0; //float for precision
+    static const int fBaseVol = 1000.0; //float for precision
+    float f = iBaseTurns * fMult * (mat->GetStrengthValue()/fMinStr) * (mat->GetVolume()/fBaseVol); //vol is in cm3, so per 1L or 1Kg(water)
     if(f>0 && f<1)f=1;
     return f;
   }
@@ -1226,7 +1190,7 @@ struct recipe{
   }
 
   template <typename T> static truth choseIngredients(
-      cfestring fsQ, long volume, rpdata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
+      cfestring fsQ, long volume, recipedata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
       bool bMainMaterRemainsBecomeLump=false
   ){DBGLN;
     if(volume==0)
@@ -1322,7 +1286,7 @@ struct recipe{
     return volume<=0;
   }
 
-  template <typename T> static void choseOneIngredient(rpdata& rpd){
+  template <typename T> static void choseOneIngredient(recipedata& rpd){
     int iWeakestCfgDummy;
     choseIngredients<T>(
       festring(""),
@@ -1435,7 +1399,7 @@ struct srpOLT : public recipe{
   virtual olterrain* spawn(){return NULL;}
 
  public:
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0)ABORT("Missing recipe description for OLT");
     if(iReqVol==0)ABORT("Recipe vol is 0 for OLT");
     if(iTurns==0)ABORT("Recipe turns is 0 for OLT");
@@ -1476,7 +1440,7 @@ struct srpDoor : public srpOLT{
     return Door;
   }
 
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("build","a door");
       desc << "You will need a hammer, a frying pan or even a mace.";
@@ -1490,7 +1454,7 @@ struct srpDoor : public srpOLT{
 struct srpChair : public srpOLT{
   virtual olterrain* spawn(){return decoration::Spawn(CHAIR);}
 
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("build","a chair");
       desc << "You will need a hammer, a frying pan or even a mace.";
@@ -1503,7 +1467,7 @@ struct srpChair : public srpOLT{
 };srpChair rpChair;
 
 struct srpWall : public recipe{
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("construct","a wall");
       desc << "Pile stones or skulls to create " << name;
@@ -1547,7 +1511,7 @@ struct srpWall : public recipe{
 };srpWall rpWall;
 
 struct srpMelt : public recipe{
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("melt","an ingot");
@@ -1653,7 +1617,7 @@ struct srpMelt : public recipe{
     ///////////////////////////////////////////////////////////////////////
     ////////////////////////// melt the lump ////////////////////////
     ///////////////////////////////////////////////////////////////////////
-    rpd.iBaseTurnsToFinish = calcTurns(LumpMeltable->GetMainMaterial()); DBG1(rpd.iBaseTurnsToFinish);
+    rpd.iBaseTurnsToFinish = calcTurns(LumpMeltable->GetMainMaterial(),5); DBG1(rpd.iBaseTurnsToFinish);
 
     rpd.bHasAllIngredients=true;
 
@@ -1700,7 +1664,7 @@ struct srpMelt : public recipe{
 };srpMelt rpMelt;
 
 struct srpForgeItem : public recipe{
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     // also a block to reuse var names w/o specifying the recipe name on them
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("forge","an item");
@@ -1766,7 +1730,7 @@ struct srpForgeItem : public recipe{
       rpd.itSpawn = protosystem::CreateItemToCraft(Temp);DBGLN;
 
       if(rpd.itSpawn!=NULL){DBGLN;
-        if(!canBeCrafted(rpd.itSpawn)){DBG4("SendingToHellRejectedCraftItem",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr(),rpd.itSpawn);
+        if(!craftcore::canBeCrafted(rpd.itSpawn)){DBG4("SendingToHellRejectedCraftItem",rpd.itSpawn->GetID(),rpd.itSpawn->GetNameSingular().CStr(),rpd.itSpawn);
           ADD_MESSAGE("You can't enchant %s!",rpd.itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
           rpd.itSpawn->RemoveFromSlot(); //just in case to prevent problems later...
           rpd.itSpawn->SendToHell();
@@ -1920,7 +1884,7 @@ struct srpFluids : public recipe{
     iMatEff = -1;
   }
 
-  virtual bool work(rpdata& rpd){
+  virtual bool work(recipedata& rpd){
     //extract fluids (not blood as it can be used as nutrition right? *eww* :P)
     if(!recipe::work(rpd))return false;
 
@@ -2041,7 +2005,7 @@ struct srpPoison : public srpFluids{
     return (blood->Effect==EFFECT_POISON || flesh->Effect==EFFECT_POISON);
   }
 
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("extract","some poison");
       desc << "Use a " << fsTool << " to " << action << " " << name << " from "
@@ -2060,7 +2024,7 @@ struct srpAcid : public srpFluids{
     return (blood->Acidicity)>0 || (flesh->Acidicity)>0;
   }
 
-  bool work(rpdata& rpd){
+  bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("extract","some acidous fluid");
       desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
@@ -2114,7 +2078,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //  if(h->GetLeftWielded ())vitInv.push_back(h->GetLeftWielded ());
 //  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
 
-  rpdata rpd(h);
+  recipedata rpd(h);
   rpd.lsqrCharPos = game::GetCurrentLevel()->GetLSquare(rpd.h->GetPos());
 
   //TODO check requirements and display recipes
@@ -2172,7 +2136,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
         break;
       case 1:
         if(rpd.itSpawn!=NULL){
-          if(!canBeCrafted(rpd.itSpawn))
+          if(!craftcore::canBeCrafted(rpd.itSpawn))
             bAbort=true;
         }
         break;
