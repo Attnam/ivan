@@ -260,7 +260,7 @@ void craft::Handle()
        * ex.: if something catches fire and is destroyed before the crafting ends.
        */
       ADD_MESSAGE("a required ingredient was destroyed...");DBG1(rpd.ingredientsIDs[i]);
-      Terminate(false); //TODO a crash happens in this line, how? if the tiny explosions trigger things on the floor like wands
+      Terminate(false); //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
       return;
     }
 

@@ -27,26 +27,26 @@ class recipedata {
   public: //TODO only methods should be public, only like that to speed up dev
     humanoid* h; //TODO protect: set only once
     int Selected; //TODO protect: set only once
+    std::vector<ulong> ingredientsIDs;
 
     //TODO protect: none of these should be modified outside this class and every change should be dbgmsg logged.
     int iBaseTurnsToFinish;
+    bool bSpendCurrentTurn;
+    bool bAlreadyExplained;
+    int itSpawnTot;
+    v2 v2ForgeLocation;
+
     item* itTool;
+    item* itSpawn;
+    olterrain* otSpawn;
     lsquare* lsqrWhere;
     lsquare* lsqrCharPos;
-    olterrain* otSpawn;
-    bool bSpendCurrentTurn;
+
+    v2 v2PlaceAt;
     bool bHasAllIngredients;
     bool bCanStart;
     bool bCanBePlaced;
-    bool bAlreadyExplained;
-    v2 v2ForgeLocation;
-    item* itSpawn;
-    int itSpawnTot;
     object* craftWhat;
-    v2 v2PlaceAt;
-    std::vector<ulong> ingredientsIDs;
-//    std::vector<ulong> ingMainIDs;
-//    std::vector<ulong> ingSecondaryIDs;
 
     recipedata(humanoid* H);
 };

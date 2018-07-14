@@ -1097,24 +1097,26 @@ bool craftcore::canBeCrafted(item* it){
 recipedata::recipedata(humanoid* H)
 {
   h=H;
-
   Selected=-2; //default is -1 means not set, -2 to init
+  ingredientsIDs.clear(); //just to init
 
-  otSpawn=NULL;
-  itSpawn=NULL;
-  itSpawnTot=1;
-  lsqrCharPos = NULL;
-  lsqrWhere = NULL;
-  bCanStart=false;
-  bCanBePlaced=false;
-  bHasAllIngredients=false;
+  iBaseTurnsToFinish=1; //TODO should be based on attributes
   bSpendCurrentTurn=false;
   bAlreadyExplained=false;
-  craftWhat=NULL;
+  itSpawnTot=1;
+  v2ForgeLocation=v2(0,0);
+
   itTool=NULL;
-  iBaseTurnsToFinish=1; //TODO should be based on attributes
+  itSpawn=NULL;
+  otSpawn=NULL;
+  lsqrWhere = NULL;
+  lsqrCharPos = NULL;
+
   v2PlaceAt=v2(0,0);
-  ingredientsIDs.clear(); //just to init
+  bHasAllIngredients=false;
+  bCanStart=false;
+  bCanBePlaced=false;
+  craftWhat=NULL;
 }
 
 struct recipe{
