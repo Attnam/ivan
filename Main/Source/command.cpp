@@ -1190,8 +1190,17 @@ struct recipe{
   }
 
   template <typename T> static truth choseIngredients(
-      cfestring fsQ, long volume, recipedata& rpd, int& iWeakestCfg, bool bMultSelect = true, int iReqCfg=0,
-      bool bMainMaterRemainsBecomeLump=false
+      cfestring fsQ,
+      long volume,
+      recipedata& rpd,
+      int& iWeakestCfg,
+      bool bMultSelect = true,
+
+      int iReqCfg=0,
+      bool bMainMaterRemainsBecomeLump=false,
+      bool bOverridesQuestion=false,
+      bool bMsgInsuficientMat=true,
+      bool bInstaAddIngredients=false
   ){DBGLN;
     if(volume==0)
       ABORT("ingredient required 0 volume?");
@@ -1230,8 +1239,15 @@ struct recipe{
       itemvector ToUse;
       game::DrawEverythingNoBlit();
       int flags = bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
+
+      festring fsFullQ;
+      if(bOverridesQuestion)
+        fsFullQ=fsQ;
+      else
+        fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)");
+
       rpd.h->GetStack()->DrawContents(ToUse, rpd.h,
-        festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)"), flags, &item::IsValidRecipeIngredient);
+        fsFullQ, flags, &item::IsValidRecipeIngredient);
       if(ToUse.empty())
         break;
 
@@ -1270,17 +1286,21 @@ struct recipe{
         }
       }
 
-      if(volume<=0){
+      if(volume<=0 || bInstaAddIngredients){
         for(int i=0;i<tmpIngredientsIDs.size();i++)
           rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
-        break; //success
+
+        if(bInstaAddIngredients)
+          tmpIngredientsIDs.clear(); //to avoid dups
+        else
+          break; //success
       }
     }
 
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
-    if(volume>0)
+    if(bMsgInsuficientMat && volume>0)
       ADD_MESSAGE("This amount of materials won't work...");
 
     return volume<=0;
@@ -1510,19 +1530,11 @@ struct srpWall : public recipe{
   }
 };srpWall rpWall;
 
-struct srpMelt : public recipe{
-  bool work(recipedata& rpd){
-    // lumps are not usable until melt into an ingot.
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      init("melt","an ingot");
-      desc << "Near a forge you can melt things.";
-    }
+struct srpUseForge : public recipe{
+  lsquare* lsqrFORGE = NULL;
 
-    //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-    if(!recipe::work(rpd))return false;
-
+  bool findForge(recipedata& rpd){
     ////////////// find the FORGE
-    lsquare* lsqrFORGE = NULL;
     int iDist = 1; //TODO improve this (despite fun, is wrong..)
     for(int i=0;i<(8*iDist);i++){
       int iDir = i%8;
@@ -1539,98 +1551,82 @@ struct srpMelt : public recipe{
         }
       }
     }
+
     if(lsqrFORGE==NULL){
       ADD_MESSAGE("No forge nearby."); //TODO allow user miss-chose
       rpd.bAlreadyExplained=true;
+      return false;
+    }
+
+    return true;
+  }
+
+};
+
+struct srpMelt : public srpUseForge{
+  bool work(recipedata& rpd){
+    // lumps are not usable until melt into an ingot.
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("melt","an ingot");
+      desc << "Near a forge, meltable lumps can be used to prepare ingots.";
+    }
+
+    //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
+    if(!recipe::work(rpd))return false;
+
+    if(!findForge(rpd))
       return true;
-    }
 
-    ///////////////////// chose item to melt/smash
-    game::DrawEverythingNoBlit();
-    if(!choseOneIngredient<item>(rpd))
+    /**
+     * 25cm3 is each of the 2 parts of a dagger, but is too small?
+     * Smaller ingots are easier to manage, less user interaction as they fit better.
+     * TODO make this a numeric option?
+     */
+    int iIngotVol = 25;
+
+    int iWeakestCfgDummy;
+    choseIngredients<lump>(
+      festring("First lump's chosen material will be mixed with further ones, hit ESC to accept."),
+      1000000, //just any huge volume as "limit"
+      rpd, iWeakestCfgDummy, true,
+      0, false, true, false, true);
+    if(rpd.ingredientsIDs.empty())
       return true;
-//    if(rpd.ingredientsIDs.empty())
-//      return true;
 
-    item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
-    rpd.ingredientsIDs.clear();
+    item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
 
-    if(game::IsQuestItem(itToUse)){
-      ADD_MESSAGE("You feel that would be a bad idea and carefully stores it back in your inventory.");
-      rpd.bAlreadyExplained=true;
-      return true;
-    }
-
-    material* matM=NULL;
-    material* matS=NULL;
-    material* matIngot=NULL;
-
-    matM = itToUse->GetMainMaterial();
-    matS = itToUse->GetSecondaryMaterial();
-
-    bool bJustLumpfyTheIngot=false;
-    if(dynamic_cast<stone*>(itToUse)!=NULL && itToUse->GetConfig()==INGOT){
-      bJustLumpfyTheIngot=true;
-    }
-
-    /////////////////////// smash into lumps
-    item* LumpMeltable = NULL;
-    if(dynamic_cast<lump*>(itToUse)!=NULL){
-      if(IsMeltable(itToUse->GetMainMaterial()))
-        LumpMeltable = itToUse;
-    }else{ // not a lump? it is a destroyable item then..
-      // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
-
-      { // main material ALWAYS exist
-        item* LumpM = CreateLumpAtCharStack(matM,rpd.h,canBeAWoodenStick(itToUse,matM));
-        if(IsMeltable(LumpM->GetMainMaterial()))
-          LumpMeltable = LumpM;
-      }
-
-      if(matS!=NULL){
-        item* LumpS = CreateLumpAtCharStack(matS,rpd.h,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
-        if(LumpS!=NULL)
-          if(IsMeltable(LumpS->GetMainMaterial()) )
-            if(LumpMeltable==NULL)
-              LumpMeltable = LumpS;
-      }
-
-      // OBS.: one of the lumps will have to be turned into ingot later by user action
-
-      ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
-      itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
-      itToUse->SendToHell();  DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
-
-      rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
-    }
+    item* LumpMeltable=NULL;
+    if(IsMeltable(Lump->GetMainMaterial()))
+      LumpMeltable = Lump;
 
     if(LumpMeltable==NULL){
-      ADD_MESSAGE("Can't melt that.");
+      ADD_MESSAGE("Can't melt %s.",Lump->GetName(INDEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return true;
     }
 
-    if(bJustLumpfyTheIngot){
-      lumpMix(vitInv(rpd.h),LumpMeltable,rpd.bSpendCurrentTurn);
-      rpd.bAlreadyExplained=true;
-      return true;
+    material* matM=LumpMeltable->GetMainMaterial();
+
+    // multiple (compatible with 1st) lumps will be mixed in a big one again
+    for(int i=1;i<rpd.ingredientsIDs.size();i++){
+      item* LumpAdd = game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
+      if(dynamic_cast<lump*>(LumpAdd)==NULL)continue;
+
+      material* lumpAddM = LumpAdd->GetMainMaterial();DBGLN;
+      if(lumpAddM->GetConfig()!=matM->GetConfig())continue;
+
+      // join
+      matM->SetVolume(matM->GetVolume()+lumpAddM->GetVolume());DBGLN;
+
+      LumpAdd->RemoveFromSlot();
+      LumpAdd->SendToHell();
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    ////////////////////////// melt the lump ////////////////////////
-    ///////////////////////////////////////////////////////////////////////
     rpd.iBaseTurnsToFinish = calcTurns(LumpMeltable->GetMainMaterial(),5); DBG1(rpd.iBaseTurnsToFinish);
 
     rpd.bHasAllIngredients=true;
 
     rpd.itSpawn = stone::Spawn(INGOT, NO_MATERIALS);
-
-    /**
-     * 100cm3 is each of the 2 parts of a dagger.
-     * Smaller ingots are easier to manage, less user interaction as they fit better.
-     * TODO make this a numeric option?
-     */
-    int iIngotVol = 100;
 
     long lVolRemaining = 0;
     long lVolM = LumpMeltable->GetMainMaterial()->GetVolume();
@@ -1657,6 +1653,7 @@ struct srpMelt : public recipe{
     rpd.itSpawn->SetMainMaterial(material::MakeMaterial(
         LumpMeltable->GetMainMaterial()->GetConfig(), iIngotVol ));
 
+    rpd.ingredientsIDs.clear(); //only the final meltable lump shall be sent to hell when it finishes
     rpd.ingredientsIDs.push_back(LumpMeltable->GetID()); //must be AFTER the duplicator
 
     rpd.bCanStart=true;
@@ -1665,11 +1662,100 @@ struct srpMelt : public recipe{
   }
 };srpMelt rpMelt;
 
+struct srpDismantle : public srpUseForge{ //TODO this is instantaneous, should take time?
+  bool work(recipedata& rpd){
+    // lumps are not usable until melt into an ingot.
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("dismantle","some materials");
+      desc << "Near a forge, any item can be dismantled to recover it's materials.";
+    }
+
+    //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
+    if(!recipe::work(rpd))return false;
+
+    if(!findForge(rpd))
+      return true;
+
+    ///////////////////// chose item to melt/smash
+    game::DrawEverythingNoBlit();
+    if(!choseOneIngredient<item>(rpd))
+      return true;
+
+    item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
+    rpd.ingredientsIDs.clear();
+
+    if(game::IsQuestItem(itToUse)){
+      ADD_MESSAGE("You feel that would be a bad idea and carefully stores it back in your inventory.");
+      rpd.bAlreadyExplained=true;
+      return true;
+    }
+
+    material* matM=NULL;
+    material* matS=NULL;
+    material* matIngot=NULL;
+
+    matM = itToUse->GetMainMaterial();
+    matS = itToUse->GetSecondaryMaterial();
+
+    bool bJustLumpfyTheIngot=false;
+    if(dynamic_cast<stone*>(itToUse)!=NULL && itToUse->GetConfig()==INGOT){
+      bJustLumpfyTheIngot=true;
+    }
+
+    /////////////////////// dismantle into lumps
+    if(dynamic_cast<lump*>(itToUse)!=NULL){
+      ADD_MESSAGE("%s is already a lump.", itToUse->GetName(DEFINITE).CStr());
+      rpd.bAlreadyExplained=true;
+      return true;
+    }
+
+    if(dynamic_cast<stick*>(itToUse)!=NULL){
+      ADD_MESSAGE("%s is already a stick.", itToUse->GetName(DEFINITE).CStr());
+      rpd.bAlreadyExplained=true;
+      return true;
+    }
+
+    item* LumpMeltable = NULL;
+    // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
+
+    { // main material ALWAYS exist
+      item* LumpM = CreateLumpAtCharStack(matM,rpd.h,canBeAWoodenStick(itToUse,matM));
+      if(IsMeltable(LumpM->GetMainMaterial()))
+        LumpMeltable = LumpM;
+    }
+
+    if(matS!=NULL){
+      item* LumpS = CreateLumpAtCharStack(matS,rpd.h,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
+      if(LumpS!=NULL)
+        if(IsMeltable(LumpS->GetMainMaterial()) )
+          if(LumpMeltable==NULL)
+            LumpMeltable = LumpS;
+    }
+
+    // OBS.: one of the lumps will have to be turned into ingot later by user action
+
+    ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
+    rpd.bAlreadyExplained=true;
+    itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
+    itToUse->SendToHell();  DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
+
+    rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
+
+    if(bJustLumpfyTheIngot){
+      lumpMix(vitInv(rpd.h),LumpMeltable,rpd.bSpendCurrentTurn);
+      rpd.bAlreadyExplained=true;
+      return true;
+    }
+
+    return true;
+  }
+};srpDismantle rpDismantle;
+
 struct srpSplitLump : public recipe{
   bool work(recipedata& rpd){
     if(desc.GetSize()==0){
-      init("split","a lump");
-      desc << "Split the lump to be easier to work with.";
+      init("split","some lumps");
+      desc << "Split one lump to be easier to work with.";
     }
 
     if(!recipe::work(rpd))return false;
@@ -1682,6 +1768,12 @@ struct srpSplitLump : public recipe{
       if(div<=1)return true;
 
       long volPart = vol/div;
+      if(volPart < 1){
+        ADD_MESSAGE("The splitted part must have some volume.");
+        rpd.bAlreadyExplained=true;
+        return true;
+      }
+
       long volRest = vol%div;
 
       Lump->GetMainMaterial()->SetVolume(volPart);
@@ -2143,6 +2235,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   RP(rpWall);
   RP(rpPoison);
   RP(rpAcid);
+  RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpMelt);
   RP(rpForgeItem);
@@ -2662,7 +2755,7 @@ truth commandsystem::ShowMap(character* Char)
       while(true){
         v2 noteAddPos = Char->GetPos();
         switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
-          KEY_ESC, 6, 't', 'l', 'r','d','e')
+          KEY_ESC, 5, 't', 'l', 'r', 'd', 'e')
         ){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
