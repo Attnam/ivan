@@ -1286,9 +1286,9 @@ struct recipe{
     return volume<=0;
   }
 
-  template <typename T> static void choseOneIngredient(recipedata& rpd){
+  template <typename T> static bool choseOneIngredient(recipedata& rpd){
     int iWeakestCfgDummy;
-    choseIngredients<T>(
+    return choseIngredients<T>(
       festring(""),
       1, //just to chose one of anything
       rpd,
@@ -1547,9 +1547,10 @@ struct srpMelt : public recipe{
 
     ///////////////////// chose item to melt/smash
     game::DrawEverythingNoBlit();
-    choseOneIngredient<item>(rpd);DBGLN;
-    if(rpd.ingredientsIDs.empty())
+    if(!choseOneIngredient<item>(rpd))
       return true;
+//    if(rpd.ingredientsIDs.empty())
+//      return true;
 
     item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
     rpd.ingredientsIDs.clear();
@@ -1664,9 +1665,41 @@ struct srpMelt : public recipe{
   }
 };srpMelt rpMelt;
 
+struct srpSplitLump : public recipe{
+  bool work(recipedata& rpd){
+    if(desc.GetSize()==0){
+      init("split","a lump");
+      desc << "Split the lump to be easier to work with.";
+    }
+
+    if(!recipe::work(rpd))return false;
+
+    if(choseOneIngredient<lump>(rpd)){
+      item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+      long vol=Lump->GetMainMaterial()->GetVolume();
+
+      long div = game::NumberQuestion(CONST_S("Split in how many parts?"), WHITE, true);
+      if(div<=1)return true;
+
+      long volPart = vol/div;
+      long volRest = vol%div;
+
+      Lump->GetMainMaterial()->SetVolume(volPart);
+      for(int i=0;i<(div-1);i++)
+        CreateLumpAtCharStack(Lump->GetMainMaterial(), rpd.h);
+
+      if(volRest>0)
+        Lump->GetMainMaterial()->SetVolume(volPart+volRest);
+
+      rpd.bAlreadyExplained=true; //no need to say anything
+    }
+
+    return true;
+  }
+};srpSplitLump rpSplitLump;
+
 struct srpForgeItem : public recipe{
   bool work(recipedata& rpd){
-    // also a block to reuse var names w/o specifying the recipe name on them
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("forge","an item");
       desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
@@ -2104,11 +2137,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   #define RP(rp) \
     if(rp.work(rpd))prp=&rp; \
     if(bInitRecipes)addRecipe((recipe*)&rp);
+  // these are kind of grouped and not ordered like a-z
   RP(rpChair);
   RP(rpDoor);
   RP(rpWall);
   RP(rpPoison);
   RP(rpAcid);
+  RP(rpSplitLump);
   RP(rpMelt);
   RP(rpForgeItem);
   if(bInitRecipes)

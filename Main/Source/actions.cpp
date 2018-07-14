@@ -272,25 +272,28 @@ void craft::Handle()
     }
 
     if(!rpd.v2ForgeLocation.Is0()){
+      int xplodXtra=0;
+      if(!craftcore::canBeCrafted(it)){ //basically contains some kind of magic
+        //TODO once: apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
+        xplodXtra=clock()%10;
+      }
+
       int xplodStr=0;
       int iFumblePerc=clock()%100;
       float fSkill = ((Actor->GetAttribute(DEXTERITY)+Actor->GetAttribute(WISDOM))/2.0)/20.0;
       int iFumbleBase=20/fSkill;
       int iDiv=0;
-      if(iFumbleBase>0 && iFumblePerc<=iFumbleBase)xplodStr++;
+      iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
       iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
       iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
       if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
-      //reference: weak lantern xplod str is 5, here max is 4
       if(xplodStr>0){
+        xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
         lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), rpd.v2ForgeLocation, xplodStr, false, true);
         ADD_MESSAGE("The forge sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
       }
     }
 
-    if(!craftcore::canBeCrafted(it)){ //basically contains some kind of magic
-      //TODO apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
-    }
   }
 
   truth finished = rpd.iBaseTurnsToFinish==0;
