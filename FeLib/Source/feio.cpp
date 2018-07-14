@@ -762,137 +762,35 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
   return BarValue;
 }
 
-//TODO dropped in favor of non crashing (for old saves) new code protection, clean this commented code later
-///**
-// * this will surely work if savegame sorting is disabled
-// */
-//festring ContinueMenuOldAndSafe(col16 TopicColor, col16 ListColor,
-//                                cfestring& DirectoryName)
-//{
-//#ifdef WIN32
-//  struct _finddata_t Found;
-//  long hFile;
-//  int Check = 0;
-//  festring Buffer;
-//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-//  hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
-//
-//  /* No file found */
-//  if(hFile == -1L)
-//  {
-//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-//    return "";
-//  }
-//
-//  while(!Check)
-//  {
-//    /* Copy all the filenames to Buffer */
-//    /* Buffer = Found.name; Doesn't work because of a festring bug */
-//
-//    Buffer.Empty();
-//    Buffer << Found.name;
-//    List.AddEntry(Buffer, ListColor);
-//    Check = _findnext(hFile, &Found);
-//  }
-//
-//  Check = List.Draw();
-//
-//  /* an error has occured in felist */
-//
-//  if(Check & FELIST_ERROR_BIT)
-//    return "";
-//
-//  return List.GetEntry(Check);
-//#endif
-//
-//#ifdef UNIX
-//  DIR* dp;
-//  struct dirent* ep;
-//  festring Buffer;
-//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-//  dp = opendir(DirectoryName.CStr());
-//
-//  if(dp)
-//  {
-//    while((ep = readdir(dp)))
-//    {
-//      /* Buffer = ep->d_name; Doesn't work because of a festring bug */
-//      Buffer.Empty();
-//      Buffer << ep->d_name;
-//      /* Add to List all save files */
-//      if(Buffer.Find(".sav") != Buffer.NPos)
-//        List.AddEntry(Buffer, ListColor);
-//    }
-//
-//    closedir(dp);
-//
-//    if(List.IsEmpty())
-//    {
-//      iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-//      return "";
-//    }
-//    else
-//    {
-//      int Check = List.Draw();
-//
-//      if(Check & FELIST_ERROR_BIT)
-//        return "";
-//
-//      return List.GetEntry(Check);
-//    }
-//
-//  }
-//
-//  return "";
-//#endif
-//
-//#ifdef __DJGPP__
-//  struct ffblk Found;
-//  int Check = 0;
-//  festring Buffer;
-//  felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
-//
-//  /* get all filenames ending with .sav. Accepts all files even if they
-//     FA_HIDDEN or FA_ARCH flags are set (ie. they are hidden or archives */
-//
-//  Check = findfirst(festring(DirectoryName + "*.sav").CStr(),
-//                    &Found, FA_HIDDEN | FA_ARCH);
-//
-//  if(Check)
-//  {
-//    iosystem::TextScreen(CONST_S("You don't have any previous saves."), ZERO_V2, TopicColor);
-//    return "";
-//  }
-//
-//  while(!Check)
-//  {
-//    /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
-//    Buffer.Empty();
-//    Buffer << Found.ff_name;
-//    List.AddEntry(Buffer, ListColor);
-//    Check = findnext(&Found);
-//  }
-//
-//  Check = List.Draw();
-//
-//  if(Check & FELIST_ERROR_BIT)
-//    return "";
-//
-//  return List.GetEntry(Check);
-//#endif
-//}
-
-bool AlertConfirmMsg(const char* cMsg) //TODO this method could be more global
-{
-  v2 v2Border(700,100);
+bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>())
+{//TODO this method could be more global
+  //TODO calc all line withs to determine the full popup width to not look bad if overflow
+  int iLineHeight=20;
+  v2 v2Border(700,100+(vfsCritMsgs.size()*iLineHeight));
   v2 v2TL(RES.X/2-v2Border.X/2,RES.Y/2-v2Border.Y/2);
 
-  DOUBLE_BUFFER->Fill(v2TL,v2Border,RED);
+  DOUBLE_BUFFER->Fill(v2TL,v2Border,DARK_GRAY);
   graphics::DrawRectangleOutlineAround(DOUBLE_BUFFER, v2TL, v2Border, YELLOW, true);
 
   v2TL+=v2(16,16);
-  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y   ), WHITE, "%s", cMsg);
-  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,v2TL.Y+32), WHITE, "%s", "(y)es, any other key to ignore this message.");
+  int y=v2TL.Y;
+  #define P(S,C) {FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
+  P(cMsg,YELLOW);
+  P("(y)es, any other key to ignore this message.",WHITE);
+//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), YELLOW, "%s", cMsg);
+//  y+=iLineHeight;
+//  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", "(y)es, any other key to ignore this message.");
+//  y+=iLineHeight;
+  for(int i=0;i<vfsCritMsgs.size();i++){
+    if(i==0)
+      P("PROBLEMS:",RED);
+//      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), RED, "%s", "PROBLEMS:");
+//      y+=iLineHeight;
+//    }
+    P(vfsCritMsgs[i].CStr(),WHITE);
+//    FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", vfsCritMsgs[i].CStr());
+//    y+=iLineHeight;
+  }
 
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
@@ -944,6 +842,8 @@ struct fileInfo{
   festring fileNameAutoSave=festring();
   std::vector<festring> vBackups;
   bool bIsBkp = false;
+  struct stat attr;
+  std::vector<festring> afsFullProblems;
 };
 std::vector<fileInfo> vFiles;
 bool addFileInfo(const char* c){
@@ -1047,6 +947,9 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     char cTime[iTmSz];
     strftime(cTime,iTmSz,"%Y/%m/%d-%H:%M:%S",localtime(&(attr.st_mtime))); // this format is important for the sorting that is text based
     vFiles[i].time<<cTime;
+
+    vFiles[i].attr=attr;
+
     DBG6(cTime,attr.st_mtime,attr.st_ctime,attr.st_size,vFiles[i].absFileName.CStr(),attr.st_ino);
   }
 
@@ -1055,9 +958,15 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     [ ]( const fileInfo& l, const fileInfo& r ){ return l.fileName < r.fileName; }
   );DBGLN;
 
+  /********************************************
+   *  ATTENTION!!! some of these NEED to be reset down there!
+   */
   std::vector<festring> vIds,vInvIds,vBackups;
   std::vector<fileInfo> vComponents;
-  festring autoSaveFound("");
+  festring autoSaveFound;
+  festring problems;
+  cfestring cfsProblemToken="PROBLEMS:";
+  std::vector<festring> afsFullProblems;
   int iPrepareSavFileIndex=-1;
   int iAutoSaveSavFileIndex=-1;
   std::string sPrettyNamePrevious="";
@@ -1088,9 +997,34 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     }
 
     if(iPrepareSavFileIndex==-1){
-//      if(vFiles[i].fileName == fsLastChangeDetector){
-//        break;
-//      }else
+      bool bEmptyFileProblem=false;
+      if(vFiles[i].attr.st_size==0){ //empty files will crash-abort with bad_alloc error, but only autosaves may be empty and the game can still be played
+        if(problems.IsEmpty())
+          problems<<cfsProblemToken;
+        problems<<"EmptyFile,"; DBG2("PROBLEM:EmptyFile",vFiles[i].fileName.CStr());
+        afsFullProblems.push_back(festring("EmptyFile:")+vFiles[i].fileName);
+        bEmptyFileProblem=true;
+      }
+
+      bool bCriticalProblemFound=false;
+      if(bEmptyFileProblem){
+        bCriticalProblemFound=true;
+      }
+
+      if(bCriticalProblemFound){
+        /**
+         * will skip the broken/corrupted file, it will be ignored ONLY here. Trying to load may still consider it and crash.
+         *
+         * TODO
+         *  show detailed info about the problems and say what user can do to try to fix it
+         *
+         *  ex.: like removing empty files, but if the empty file has no backup and is required by the .sav,
+         *    the game will still crash and be lost.
+         *    Generating a new level is probably bad as it will ignore whatever happened in that level and may create
+         *    duplicated items (uniques) and characters (uniques that died) when they should not exist,
+         *    may be only for fully random (with non unique things on it) levels such workaround could be used...
+         */
+      }else
       if(vFiles[i].fileName.Find(".wm" ) != vFiles[i].fileName.NPos){
         //skipped from the list
       }else
@@ -1168,6 +1102,13 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
         rfi.vBackups=vBackups; //makes a copy
       }
 
+      if(!problems.IsEmpty()){
+        id<<" ["<<problems<<"]";
+        rfi.afsFullProblems=afsFullProblems;
+      }
+
+      ///////////////// ID is ready /////////////////////
+
       rfi.idOnList<<id;
 
       bool bValid=false;
@@ -1189,6 +1130,8 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       vComponents.clear();
       vBackups.clear();
       autoSaveFound.Empty();
+      problems.Empty();
+      afsFullProblems.clear();
       iPrepareSavFileIndex=-1;
       iAutoSaveSavFileIndex=-1;
     }
@@ -1203,13 +1146,19 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
   std::sort( vInvIds.begin(), vInvIds.end(), [ ]( const festring& l, const festring& r ){return l < r;} );
 
   // reversed or normal
-  int iFirst,iFirstI,iStopAt,iStopAtI,iDir; //TODO implement something more readable...
+  int iFirst,iFirstI,iStopAt,iStopAtI,iDir; //TODO implement something more readable, easier to maintain...
   if(bSaveGameSortModeReversed){
     iDir=-1; iFirst=vIds.size()-1; iStopAt=-1         ; iFirstI=vInvIds.size()-1; iStopAtI=-1            ; }else{
     iDir= 1; iFirst=0            ; iStopAt=vIds.size(); iFirstI=0               ; iStopAtI=vInvIds.size();
   }
-  for(int i=iFirst ;i!=iStopAt ;i+=iDir){List.AddEntry(vIds   [i],ListColor,0,NO_IMAGE,true ); DBG2(DBGC(vIds[i].CStr())   ,"ok"     );}
-  for(int i=iFirstI;i!=iStopAtI;i+=iDir){List.AddEntry(vInvIds[i],DARK_GRAY,0,NO_IMAGE,false); DBG2(DBGC(vInvIds[i].CStr()),"invalid");}
+  for(int i=iFirst ;i!=iStopAt ;i+=iDir){
+    col16 lc = ListColor;
+    if(vIds[i].Find(cfsProblemToken)!=festring::NPos) lc = RED;
+    List.AddEntry(vIds   [i],lc       ,0,NO_IMAGE,true ); DBG2(DBGC(vIds[i].CStr())   ,"ok"     );
+  }
+  for(int i=iFirstI;i!=iStopAtI;i+=iDir){
+    List.AddEntry(vInvIds[i],DARK_GRAY,0,NO_IMAGE,false); DBG2(DBGC(vInvIds[i].CStr()),"invalid");
+  }
 
   if(List.IsEmpty() || vIds.empty())
   {
@@ -1243,18 +1192,21 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          * This means: the only file remaining with player data (a player char at dungeon pos) is the .bkp one!!!
          */
         std::vector<festring>& rvBackups = vFiles[i].vBackups;
+        bool bProblemsSeen=false;
         if(rvBackups.size()>0){
           bool bRestoreBkp = false;
           if(!vFiles[i].WizardMode){
             // normal savegame
-            bRestoreBkp = AlertConfirmMsg("The backup may be unnecessary, restore it anyway?");
+            bRestoreBkp = AlertConfirmMsg("The backup may be unnecessary, restore it anyway?",vFiles[i].afsFullProblems);
+            bProblemsSeen=true;
           }else{
             // wizard mode special case
             if(bHasAutosave){
               /**
                * TODO this is guessed, not 100% correct... the files' datetime should be compared instead...
                */
-              bRestoreBkp = AlertConfirmMsg("(Wizard) The autosave is newer. Restore backup anyway?");
+              bRestoreBkp = AlertConfirmMsg("(Wizard) The autosave is newer. Restore backup anyway?",vFiles[i].afsFullProblems);
+              bProblemsSeen=true;
             }
           }
           if(bRestoreBkp){
@@ -1287,6 +1239,10 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
             }
           }
         }
+
+        if(vFiles[i].afsFullProblems.size()>0 && !bProblemsSeen)
+          if(!AlertConfirmMsg("There are problems with this save, try to load anyway?",vFiles[i].afsFullProblems))
+            return "";
 
         if(bHasAutosave){
           bool bUseAutosave=true; //normal game
