@@ -229,7 +229,7 @@ void craft::Load(inputfile& SaveFile)
 void craft::Handle()
 {DBGLN;
   if(itWhatID!=0 && rpd.itSpawn==NULL)
-    rpd.itSpawn = game::SearchItem(itWhatID); // here to work correctly at ~craft
+    rpd.itSpawn = game::SearchItem(itWhatID); // do this here to work correctly at ~craft
 
   character* Actor = GetActor();
   item* Tool = Actor->GetMainWielded();DBGLN;
@@ -259,8 +259,8 @@ void craft::Handle()
       /**
        * ex.: if something catches fire and is destroyed before the crafting ends.
        */
-      ADD_MESSAGE("%s ingredient was destroyed...",it->GetName(DEFINITE).CStr());
-      Terminate(false);
+      ADD_MESSAGE("a required ingredient was destroyed...");DBG1(rpd.ingredientsIDs[i]);
+      Terminate(false); //TODO a crash happens in this line, how? if the tiny explosions trigger things on the floor like wands
       return;
     }
 
@@ -303,6 +303,10 @@ void craft::Handle()
   if(finished)
   {DBGLN;
     if(rpd.itSpawn!=NULL){DBGLN;
+      item* itChkAgain = game::SearchItem(itWhatID);
+      if(itChkAgain!=rpd.itSpawn)
+        ABORT("spawning item ID changed or vanished %d %d",itWhatID,itChkAgain!=NULL?itChkAgain->GetID():0); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
+
       item* itWhatTmp=rpd.itSpawn;
       rpd.itSpawn=NULL; //see ~craft
       itWhatID=0;
