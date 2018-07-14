@@ -238,7 +238,7 @@ class game
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
   static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
-  static int DirectionQuestion(cfestring&, truth = true, truth = false);
+  static int DirectionQuestion(cfestring&, truth = true, truth = false, int = 0, int = -1);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }

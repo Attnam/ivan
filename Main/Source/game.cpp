@@ -3395,11 +3395,11 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself, int keyChoseDefaultDir, int defaultDir)
 {
   for(;;)
   {
-    int Key = AskForKeyPress(Topic);
+    int Key = AskForKeyPress(Topic); DBG3(Key,keyChoseDefaultDir,defaultDir);
 
     if(AcceptYourself && Key == '.')
       return YOURSELF;
@@ -3407,6 +3407,9 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
     for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == GetMoveCommandKey(c))
         return c;
+
+    if(Key==keyChoseDefaultDir)
+      return defaultDir;
 
     if(!RequireAnswer)
       return DIR_ERROR;
