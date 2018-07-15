@@ -8781,9 +8781,14 @@ character* character::GetRandomNeighbour(int RelationFlags) const
 
 void character::ResetStates()
 {
-  for(int c = 0; c < STATES; ++c)
-    if(1 << c != POLYMORPHED && TemporaryStateIsActivated(1 << c) && TemporaryStateCounter[c] != PERMANENT)
-    {
+  for(int c = 0; c < STATES; ++c){
+    if(
+        1 << c != POLYMORPHED
+        &&
+        TemporaryStateIsActivated(1 << c)
+        &&
+        (IsPlayerAutoPlay() || TemporaryStateCounter[c] != PERMANENT) //autoplay will be messed if not removing some things like leprosy or worms
+    ){
       TemporaryState &= ~(1 << c);
 
       if(StateData[c].EndHandler)
@@ -8794,6 +8799,7 @@ void character::ResetStates()
           return;
       }
     }
+  }
 }
 
 void characterdatabase::InitDefaults(const characterprototype* NewProtoType, int NewConfig)
