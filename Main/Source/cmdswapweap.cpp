@@ -12,6 +12,8 @@
 
 /* compiled thru command.cpp */
 
+#include "dbgmsgproj.h"
+
 struct swapweaponcfg{
   public:
   ulong iLeftId=0;

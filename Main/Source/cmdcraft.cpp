@@ -12,6 +12,8 @@
 
 /* compiled thru command.cpp */
 
+#include "dbgmsgproj.h"
+
 craft* craftcore::craftAction=NULL;
 
 //void craftcore::reinitIfNeeded(){
