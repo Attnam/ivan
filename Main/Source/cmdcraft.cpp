@@ -68,7 +68,7 @@ bool craftcore::HasSuspendedAction() {
 }
 void craftcore::SetSuspendedActionTo(character* Char){
   if(!HasSuspendedAction())
-    ABORT("no suspended craft action to set to %s!",Char->GetName(DEFINITE));
+    ABORT("no suspended craft action to set to %s!",Char->GetName(DEFINITE).CStr());
 
   if(craftAction->WasCraftingAt(Char->GetPos())){
     Char->SetAction(craftAction);
