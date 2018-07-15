@@ -2998,8 +2998,8 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
         bTryReveal=true;
 
       if(!bTryReveal){
-        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
-          continue;
+//        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
+//          continue;
 
         iMultDist=2;
         if(iDist <= lMaxDist*iMultDist) //ground view limit
