@@ -12,6 +12,8 @@
 
 /* Compiled through actset.cpp */
 
+#include "confdef.h"
+
 #include "dbgmsgproj.h"
 
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
@@ -213,17 +215,33 @@ void rest::Terminate(truth Finished)
 }
 
 void craft::Save(outputfile& SaveFile) const
-{
+{DBGLN;DBGSTK;
   action::Save(SaveFile);
   SaveFile << rpd.iBaseTurnsToFinish << ToolRequired << itWhatID << rpd.itSpawnTot << rpd.otSpawn << rpd.v2PlaceAt
            << MoveCraftTool << RightBackupID << LeftBackupID << rpd.ingredientsIDs;
 }
 
 void craft::Load(inputfile& SaveFile)
-{
+{DBGLN;
   action::Load(SaveFile);
   SaveFile >> rpd.iBaseTurnsToFinish >> ToolRequired >> itWhatID >> rpd.itSpawnTot >> rpd.otSpawn >> rpd.v2PlaceAt
            >> MoveCraftTool >> RightBackupID >> LeftBackupID >> rpd.ingredientsIDs;
+
+  craftcore::SetAction(this);
+}
+
+cfestring craft::info(){
+  return rpd.info();
+}
+
+bool craft::IsSuspendedAction() {
+  if(rpd.bSuccesfullyCompleted)
+    return false;
+
+  if(rpd.bCanBeSuspended)
+    return true;
+
+  return false;
 }
 
 void craft::Handle()
@@ -236,9 +254,8 @@ void craft::Handle()
 
   if(ToolRequired && Tool==NULL)
   {DBGLN;
-    ADD_MESSAGE("You have not the required tool to craft this."); //TODO like in case the tool is destroyed by sulf. acid?
-    Terminate(false);
-    return;
+    ADD_MESSAGE("You have not the required tool to craft this."); //TODO like in case the tool is destroyed by sulf. acid? or some xposion etc.
+    rpd.bFailed=true;
   }
 
   DBGSV2(rpd.v2PlaceAt);
@@ -246,13 +263,15 @@ void craft::Handle()
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
   if(rpd.otSpawn!=NULL && oltExisting!=NULL){DBGLN;
     ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
-    Terminate(false);
-    return;
+    rpd.bFailed=true;
   }
 
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
+  lsquare* lsqrActor = Actor->GetLSquareUnder();
+  level* lvl = lsqrActor->GetLevel();
+  int iStrongerXplod=0;
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
     if(it==NULL){ //ABORT("ingredient id %d not found",rpd.ingredientsIDs[i]);
@@ -260,47 +279,78 @@ void craft::Handle()
        * ex.: if something catches fire and is destroyed before the crafting ends.
        */
       ADD_MESSAGE("a required ingredient was destroyed...");DBG1(rpd.ingredientsIDs[i]);
-      Terminate(false); //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
-      return;
+      rpd.bFailed=true; //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
     }
 
     // a magpie or siren may have taken it
-    if(it->GetSquareUnder()!=Actor->GetSquareUnder()){
+    if(it->GetSquareUnder()!=lsqrActor){
       ADD_MESSAGE("%s ingredient went missing...",it->GetName(DEFINITE).CStr());
-      Terminate(false);
-      return;
+      rpd.bFailed=true;
     }
 
-    if(!rpd.v2ForgeLocation.Is0()){
-      int xplodXtra=0;
-      if(!craftcore::canBeCrafted(it)){ //basically contains some kind of magic
-        //TODO once: apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
-        xplodXtra=clock()%10;
-      }
-
-      int xplodStr=0;
-      int iFumblePerc=clock()%100;
-      float fSkill = ((Actor->GetAttribute(DEXTERITY)+Actor->GetAttribute(WISDOM))/2.0)/20.0;
-      int iFumbleBase=20/fSkill;
-      int iDiv=0;
-      iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-      iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-      iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-      if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
-      if(xplodStr>0){
-        xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
-        lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), rpd.v2ForgeLocation, xplodStr, false, true);
-        ADD_MESSAGE("The forge sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
-      }
+    //TODO once: apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
+    if(!craftcore::canBeCrafted(it)){ //basically contains some kind of magic
+      if(it->GetEnchantment()!=0)
+        iStrongerXplod+=abs(it->GetEnchantment());
+      else
+        iStrongerXplod++; //TODO could add based on how hazardous the magic type is ex. fireball wand would be +100 or something like that..
     }
-
   }
 
-  truth finished = rpd.iBaseTurnsToFinish==0;
+  v2 v2XplodAt;
+
+  if(!rpd.v2AnvilLocation.Is0()){
+    olterrain* ot = lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
+    if(ot==NULL || ot->GetConfig()!=ANVIL){
+      ADD_MESSAGE("The anvil was destroyed!");
+      rpd.bFailed=true;
+    }
+
+    v2XplodAt=rpd.v2AnvilLocation;
+  }
+
+  if(!rpd.v2ForgeLocation.Is0()){
+    olterrain* otForge = lvl->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
+    if(otForge==NULL || otForge->GetConfig()!=FORGE){
+      ADD_MESSAGE("The forge was destroyed!");
+      rpd.bFailed=true;
+    }
+
+    v2XplodAt=rpd.v2ForgeLocation;
+  }
+
+  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
+    int xplodXtra=0;
+    for(int i=0;i<iStrongerXplod;i++)
+      xplodXtra+=clock()%5;
+
+    int xplodStr=0;
+    int iFumblePerc=clock()%100;
+    float fSkill = ((Actor->GetAttribute(DEXTERITY)+Actor->GetAttribute(WISDOM))/2.0)/20.0;
+    int iFumbleBase=20/fSkill;
+    int iDiv=0;
+    iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
+    iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
+    iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
+    if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
+    if(xplodStr>0){DBG2(xplodStr,info().CStr());
+      xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
+      //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
+      lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
+      ADD_MESSAGE("The forge sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
+    }
+  }
+
+  if(rpd.bFailed){
+    Terminate(false);
+    return;
+  }
+
+  rpd.bSuccesfullyCompleted = rpd.iBaseTurnsToFinish==0;
   festring fsCreated;
   festring fsMsg("");
   int Case = INDEFINITE;
-  if(finished)
+  if(rpd.bSuccesfullyCompleted)
   {DBGLN;
     if(rpd.itSpawn!=NULL){DBGLN;
       item* itChkAgain = game::SearchItem(itWhatID);
@@ -402,13 +452,19 @@ void craft::Handle()
 
     ADD_MESSAGE(fsMsg.CStr());
 
+    Actor->DexterityAction(rpd.iAddDexterity);
+
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
 
     if(!Actor->IsEnabled())
       return;
   }
 
-  /*******************
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// ATTENTION!!! twiglight zone below here TODO name this more technically... ////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /************************************************************************************************
    * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
    * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
    *******************/
@@ -422,9 +478,9 @@ void craft::Handle()
   Actor->EditStamina(-1000 / Actor->GetAttribute(ARM_STRENGTH), false);
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
-  truth Stopped = finished || AlreadyTerminated;
+  truth Stopped = rpd.bSuccesfullyCompleted || AlreadyTerminated;
 
-  if(finished && !AlreadyTerminated)
+  if(rpd.bSuccesfullyCompleted && !AlreadyTerminated)
     Terminate(true);
 
   if(Stopped)
@@ -449,12 +505,18 @@ void craft::Handle()
     }
   }
 
-  if(!finished)
+  if(!rpd.bSuccesfullyCompleted)
     game::DrawEverything();
 }
 
 void craft::Terminate(truth Finished)
 {DBGLN;
+  if(GetActor()->IsPlayer() && rpd.bCanBeSuspended && !Finished && !rpd.bFailed){
+    ADD_MESSAGE("You suspend crafting.");
+    GetActor()->SetAction(0); //like action::Terminate() w/o deleting this action object
+    return;
+  }
+
   if(Flags & TERMINATING)
     return;
 
@@ -468,6 +530,7 @@ void craft::Terminate(truth Finished)
       ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
   }
 
+  craftcore::SetAction(NULL); //will be deleted below!
   action::Terminate(Finished);DBGLN;
 }
 

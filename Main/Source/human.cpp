@@ -1822,6 +1822,7 @@ void humanoid::SwitchToCraft(recipedata rpd)
 
   Act->SetCraftWhat(rpd);DBGLN;
   SetAction(Act);DBGLN;
+  craftcore::SetAction(Act);DBGLN;
 }
 
 void humanoid::SwitchToDig(item* DigItem, v2 Square)

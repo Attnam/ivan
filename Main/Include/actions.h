@@ -113,6 +113,9 @@ ACTION(craft, action)
   virtual cchar* GetDescription() const;
   virtual truth ShowEnvironment() const { return false; }
   void SetMoveCraftTool(truth What) { MoveCraftTool = What; }
+  bool IsSuspendedAction();
+  cfestring info();
+  bool WasCraftingAt(v2 at){return rpd.v2PlayerCraftingAt==at;}
  protected:
   recipedata rpd;
   ulong RightBackupID;
