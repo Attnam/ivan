@@ -774,20 +774,20 @@ bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::v
 
   v2TL+=v2(16,16);
   int y=v2TL.Y;
-  #define P(S,C) {FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
-  P(cMsg,YELLOW);
-  P("(y)es, any other key to ignore this message.",WHITE);
+  #define ACMPRINT(S,C) {FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), C, "%s", S);y+=iLineHeight;}
+  ACMPRINT(cMsg,YELLOW);
+  ACMPRINT("(y)es, any other key to ignore this message.",WHITE);
 //  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), YELLOW, "%s", cMsg);
 //  y+=iLineHeight;
 //  FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", "(y)es, any other key to ignore this message.");
 //  y+=iLineHeight;
   for(int i=0;i<vfsCritMsgs.size();i++){
     if(i==0)
-      P("PROBLEMS:",RED);
+      ACMPRINT("PROBLEMS:",RED);
 //      FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), RED, "%s", "PROBLEMS:");
 //      y+=iLineHeight;
 //    }
-    P(vfsCritMsgs[i].CStr(),WHITE);
+    ACMPRINT(vfsCritMsgs[i].CStr(),WHITE);
 //    FONT->Printf(DOUBLE_BUFFER, v2(v2TL.X,y), WHITE, "%s", vfsCritMsgs[i].CStr());
 //    y+=iLineHeight;
   }
