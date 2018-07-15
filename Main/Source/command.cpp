@@ -38,7 +38,7 @@
 #include "proto.h"
 #endif
 
-#include "dbgmsgproj.h"
+#include "cmdswapweap.cpp"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
