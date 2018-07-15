@@ -24,7 +24,7 @@ set_source_files_properties(
     Source/smoke.cpp    Source/square.cpp      Source/stack.cpp    Source/team.cpp
     Source/terra.cpp    Source/trap.cpp        Source/traps.cpp    Source/worldmap.cpp
     Source/wsquare.cpp  Source/wterra.cpp      Source/wterras.cpp  Source/hiteffect.cpp
-    Source/cmdcraft.cpp Source/cmdswapweap.cpp 
+    Source/cmdcraft.cpp
     PROPERTIES HEADER_FILE_ONLY TRUE)
 
 add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
