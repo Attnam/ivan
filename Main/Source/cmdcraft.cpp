@@ -14,7 +14,7 @@
 
 #include "dbgmsgproj.h"
 
-craft* craftcore::craftAction=NULL;
+recipedata* craftcore::prpdSuspended=NULL;
 
 //void craftcore::reinitIfNeeded(){
 //  if(player!=PLAYER){
@@ -23,24 +23,31 @@ craft* craftcore::craftAction=NULL;
 //  }
 //}
 
-void craftcore::SetAction(craft* act){DBG2(craftAction,act);
-  if(act==NULL){ //calling as this must be sure to delete the craft* object outside here!
-    craftAction=NULL; //resets
+void craftcore::SetSuspended(recipedata* prpd){DBGLN;
+  if(prpd==NULL){ //calling as this must be sure to delete the craft* object outside here!
+    if(prpdSuspended!=NULL)
+      delete prpdSuspended;
+    prpdSuspended=NULL; //resets
     return;
   }
 
-  if(craftAction==NULL){DBGLN;
-    craftAction=act;
+  if(prpdSuspended==NULL){DBGLN;
+    prpdSuspended=new recipedata(NULL);
+    if(!prpd->bCanBeSuspended)
+      ABORT("action can't be suspended %s",prpd->info().CStr());
+    (*prpdSuspended)=(*prpd); //copy
+    prpdSuspended->ClearRefs();
     return;
   }
 
-  if(craftAction==act){DBGLN;
-    if(act->IsSuspendedAction())
-      return;
-    ABORT("cannot set it again to a not a suspended action %s",craftAction->info().CStr());
-  }
+//  if(craftAction==act){DBGLN;
+//    if(act->IsSuspendedAction())
+//      return;
+//    ABORT("cannot set it again to a not a suspended action %s",craftAction->info().CStr());
+//  }
 
-  ABORT("there is already an action set %s VS %s",craftAction->info().CStr(),act->info().CStr());
+//  ABORT("there is already an action set %s VS %s",craftAction->info().CStr(),act->info().CStr());
+  ABORT("there is already a recipedata set %s VS %s",prpdSuspended->info().CStr(),prpd->info().CStr());
 }
 
 bool craftcore::canBeCrafted(item* it){
@@ -60,35 +67,119 @@ bool craftcore::canBeCrafted(item* it){
   return true;
 }
 
-bool craftcore::HasSuspendedAction() {
-  if(craftAction==NULL)
+bool craftcore::HasSuspended() {
+  if(prpdSuspended==NULL)
     return false;
 
-  return craftAction->IsSuspendedAction();
+  if(prpdSuspended->bSuccesfullyCompleted)
+    return false;
+
+  if(prpdSuspended->bCanBeSuspended)
+    return true;
+
+  return false;
 }
-void craftcore::SetSuspendedActionTo(character* Char){
-  if(!HasSuspendedAction())
+void craftcore::ResumeSuspendedTo(character* Char){
+  if(!HasSuspended())
     ABORT("no suspended craft action to set to %s!",Char->GetName(DEFINITE).CStr());
 
-  if(craftAction->WasCraftingAt(Char->GetPos())){
-    Char->SetAction(craftAction);
+//  if(Char->GetAction()==craftAction){DBG1("Already,How?") //should not happen tho...
+//    return;
+//  }
+
+  if(Char->GetAction()!=NULL){DBG1("AlreadySomethingElse,How?");DBGSTK; //should never happen tho... TODO ABORT() ?
+    ADD_MESSAGE("I am already doing something else.");
+    return;
+  }
+
+  if(prpdSuspended->v2PlayerCraftingAt==Char->GetPos()){
+    Char->SwitchToCraft(*prpdSuspended);
   }else{
-    ADD_MESSAGE("I need to be were I was crafting before."); //TODO add indicator to help player find that place again
+    ADD_MESSAGE("I need to be were I was crafting before."); //TODO add indicator to help player find that place again, could be a simple mapnote #Crafting :)
   }
 }
-void craftcore::TerminateSuspendedAction(){
-  if(craftAction==NULL)ABORT("no craft action set!");
-  if(!craftAction->IsSuspendedAction())ABORT("is not a suspended craft action!"); //TODO show what was being done
-  craftAction->Terminate(false);
+//void craftcore::TerminateSuspendedAction(){
+//  if(prpdSuspended==NULL)ABORT("no craft action set!");
+//  if(!prpdSuspended->bCanBeSuspended)ABORT("is not a suspended craft action!"); //TODO show what was being done
+//  craftAction->Terminate(false);
+//}
+
+void recipedata::Save(outputfile& SaveFile) const
+{
+  SaveFile //commented ones are just to keep the clarity/organization
+//    humanoid* h;
+//    int Selected;
+    << ingredientsIDs
+    << bCanBeSuspended
+    << iAddDexterity
+
+    << iBaseTurnsToFinish
+//  bool bSpendCurrentTurn;
+//  bool bAlreadyExplained;
+    << itSpawnTot
+    << v2ForgeLocation
+
+//  item* itTool;//itToolID
+//  item* itSpawn;//itSpawnID
+    << otSpawn
+//  lsquare* lsqrWhere;
+//  lsquare* lsqrCharPos;
+
+    << v2PlaceAt
+//  bool bHasAllIngredients;
+//  bool bCanStart;
+//  bool bCanBePlaced;
+
+    << bSuccesfullyCompleted
+    << v2AnvilLocation
+    << bFailed
+    << v2PlayerCraftingAt
+    << itSpawnID
+
+    << itToolID
+    << v2BuildWhere
+    ;
 }
 
-cfestring craftcore::SuspendedActionInfo(){
-  if(craftAction==NULL)return "";
+void recipedata::Load(inputfile& SaveFile)
+{
+  SaveFile //commented ones are just to keep the clarity/organization
+//    humanoid* h;
+//    int Selected;
+    >> ingredientsIDs
+    >> bCanBeSuspended
+    >> iAddDexterity
 
-  return craftAction->info();
+    >> iBaseTurnsToFinish
+//  bool bSpendCurrentTurn;
+//  bool bAlreadyExplained;
+    >> itSpawnTot
+    >> v2ForgeLocation
+
+//  item* itTool;//itToolID
+//  item* itSpawn;//itSpawnID
+    >> otSpawn
+//  lsquare* lsqrWhere;
+//  lsquare* lsqrCharPos;
+
+    >> v2PlaceAt
+//  bool bHasAllIngredients;
+//  bool bCanStart;
+//  bool bCanBePlaced;
+
+    >> bSuccesfullyCompleted
+    >> v2AnvilLocation
+    >> bFailed
+    >> v2PlayerCraftingAt
+    >> itSpawnID
+
+    >> itToolID
+    >> v2BuildWhere
+    ;
 }
 
-cfestring recipedata::info(){
+cfestring recipedata::info()
+{
   festring fs;
   #define RPDINFO(o) if(o)fs<<o->GetName(DEFINITE);fs<<";";
   RPDINFO(itTool);
@@ -111,22 +202,29 @@ recipedata::recipedata(humanoid* H)
   itSpawnTot=1;
   v2ForgeLocation=v2(0,0);
 
-  itTool=NULL;
-  itSpawn=NULL;
-  otSpawn=NULL;
-  lsqrWhere = NULL;
-  lsqrCharPos = NULL;
+  ClearRefs();
 
   v2PlaceAt=v2(0,0);
   bHasAllIngredients=false;
   bCanStart=false;
   bCanBePlaced=false;
-  craftWhat=NULL;
 
   bSuccesfullyCompleted=false;
   v2AnvilLocation=v2(0,0);
   bFailed=false;
   v2PlayerCraftingAt=v2(0,0);
+  itSpawnID=0;
+
+  itToolID=0;
+  v2BuildWhere=v2(0,0);
+}
+
+void recipedata::ClearRefs(){ //this is important to revalidate all pointers from IDs in case saving to main menu and loading again w/o exiting the game application
+  itTool=NULL;
+  itSpawn=NULL;
+  otSpawn=NULL;
+  lsqrWhere = NULL;
+  lsqrCharPos = NULL;
 }
 
 struct recipe{
@@ -1195,7 +1293,7 @@ void addMissingMsg(festring& where, cfestring& what){
 truth commandsystem::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
 //  craftcore::reinitIfNeeded();
-  if(craftcore::HasSuspendedAction()){
+  if(craftcore::HasSuspended()){
     /**
      * TODO
      * do this only for suspendable recipes but:
@@ -1206,10 +1304,11 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
      */
 
     if(game::TruthQuestion(festring("Continue crafting? ['n' to end]"),YES)){
-      craftcore::SetSuspendedActionTo(Char);
+      craftcore::ResumeSuspendedTo(Char);
       return true;
     }else{
-      craftcore::TerminateSuspendedAction();
+//      craftcore::TerminateSuspended();
+      craftcore::SetSuspended(NULL); //discards it
     }
   }
 
@@ -1354,7 +1453,15 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
       rpd.v2PlayerCraftingAt = Char->GetPos();
 
-      Char->SwitchToCraft(rpd);
+      if(rpd.itSpawn!=NULL)rpd.itSpawnID=rpd.itSpawn->GetID();
+
+      if(rpd.itTool!=NULL)rpd.itToolID=rpd.itTool->GetID();
+
+      if(rpd.lsqrWhere!=NULL)rpd.v2BuildWhere=rpd.lsqrWhere->GetPos();
+
+      rpd.ClearRefs(); //this is mainly to help on granting consistency. As in case of save/load w/o exiting the game app it will be required, at least during development this will help seeing were such requirements are missing.
+
+      Char->SwitchToCraft(rpd); // everything must be set before this!!!
 
       ADD_MESSAGE("Let me work on %s now.",prp->name.CStr());
     }else{
@@ -1392,3 +1499,4 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
   return false;
 }
+

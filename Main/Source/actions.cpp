@@ -217,43 +217,48 @@ void rest::Terminate(truth Finished)
 void craft::Save(outputfile& SaveFile) const
 {DBGLN;DBGSTK;
   action::Save(SaveFile);
-  SaveFile << rpd.iBaseTurnsToFinish << ToolRequired << itWhatID << rpd.itSpawnTot << rpd.otSpawn << rpd.v2PlaceAt
-           << MoveCraftTool << RightBackupID << LeftBackupID << rpd.ingredientsIDs;
+  rpd.Save(SaveFile);
+  SaveFile << MoveCraftTool << RightBackupID << LeftBackupID;
 }
 
 void craft::Load(inputfile& SaveFile)
 {DBGLN;
   action::Load(SaveFile);
-  SaveFile >> rpd.iBaseTurnsToFinish >> ToolRequired >> itWhatID >> rpd.itSpawnTot >> rpd.otSpawn >> rpd.v2PlaceAt
-           >> MoveCraftTool >> RightBackupID >> LeftBackupID >> rpd.ingredientsIDs;
-
-  craftcore::SetAction(this);
-}
-
-cfestring craft::info(){
-  return rpd.info();
-}
-
-bool craft::IsSuspendedAction() {
-  if(rpd.bSuccesfullyCompleted)
-    return false;
+  rpd.Load(SaveFile);
+  SaveFile >> MoveCraftTool >> RightBackupID >> LeftBackupID;
 
   if(rpd.bCanBeSuspended)
-    return true;
-
-  return false;
+    craftcore::SetSuspended(&rpd);
 }
+
+//cfestring craft::info(){
+//  return rpd.info();
+//}
+
+//bool craft::IsSuspendedAction() {
+//  if(rpd.bSuccesfullyCompleted)
+//    return false;
+//
+//  if(rpd.bCanBeSuspended)
+//    return true;
+//
+//  return false;
+//}
 
 void craft::Handle()
 {DBGLN;
-  if(itWhatID!=0 && rpd.itSpawn==NULL)
-    rpd.itSpawn = game::SearchItem(itWhatID); // do this here to work correctly at ~craft
+  if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
+    rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
+
+  if(rpd.itToolID!=0 && rpd.itTool==NULL)
+    rpd.itTool = game::SearchItem(rpd.itToolID);
 
   character* Actor = GetActor();
-  item* Tool = Actor->GetMainWielded();DBGLN;
+  lsquare* lsqrActor = Actor->GetLSquareUnder();
+  level* lvl = lsqrActor->GetLevel();
 
-  if(ToolRequired && Tool==NULL)
-  {DBGLN;
+  if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
+  {DBGLN; //TODO re-mainWield it
     ADD_MESSAGE("You have not the required tool to craft this."); //TODO like in case the tool is destroyed by sulf. acid? or some xposion etc.
     rpd.bFailed=true;
   }
@@ -269,8 +274,6 @@ void craft::Handle()
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
-  lsquare* lsqrActor = Actor->GetLSquareUnder();
-  level* lvl = lsqrActor->GetLevel();
   int iStrongerXplod=0;
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
@@ -333,7 +336,7 @@ void craft::Handle()
     iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
     iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
     if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
-    if(xplodStr>0){DBG2(xplodStr,info().CStr());
+    if(xplodStr>0){DBG2(xplodStr,rpd.info().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
       //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
       lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
@@ -353,13 +356,13 @@ void craft::Handle()
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
     if(rpd.itSpawn!=NULL){DBGLN;
-      item* itChkAgain = game::SearchItem(itWhatID);
+      item* itChkAgain = game::SearchItem(rpd.itSpawnID);
       if(itChkAgain!=rpd.itSpawn)
-        ABORT("spawning item ID changed or vanished %d %d",itWhatID,itChkAgain!=NULL?itChkAgain->GetID():0); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
+        ABORT("spawning item ID changed or vanished %d %d",rpd.itSpawnID,itChkAgain!=NULL?itChkAgain->GetID():0); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
 
       item* itWhatTmp=rpd.itSpawn;
       rpd.itSpawn=NULL; //see ~craft
-      itWhatID=0;
+      rpd.itSpawnID=0;
 
       if(rpd.itSpawnTot > 1){DBGLN;
         fsCreated << rpd.itSpawnTot << " " << itWhatTmp->GetNamePlural();DBGLN;
@@ -511,26 +514,27 @@ void craft::Handle()
 
 void craft::Terminate(truth Finished)
 {DBGLN;
-  if(GetActor()->IsPlayer() && rpd.bCanBeSuspended && !Finished && !rpd.bFailed){
-    ADD_MESSAGE("You suspend crafting.");
-    GetActor()->SetAction(0); //like action::Terminate() w/o deleting this action object
-    return;
-  }
-
   if(Flags & TERMINATING)
     return;
 
   Flags |= TERMINATING;
 
-  if(!Finished)
-  {DBGLN;
-    if(GetActor()->IsPlayer())
-      ADD_MESSAGE("You stop crafting.");
-    else if(GetActor()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
+  if(Finished){
+    craftcore::SetSuspended(NULL);
+  }else{
+    if(GetActor()->IsPlayer() && rpd.bCanBeSuspended && !rpd.bFailed){
+      ADD_MESSAGE("You suspend crafting.");
+      craftcore::SetSuspended(&rpd);
+    }else{
+      if(GetActor()->IsPlayer())
+        ADD_MESSAGE("You stop crafting.");
+      else if(GetActor()->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
+
+      craftcore::SetSuspended(NULL);
+    }
   }
 
-  craftcore::SetAction(NULL); //will be deleted below!
   action::Terminate(Finished);DBGLN;
 }
 

@@ -27,9 +27,9 @@ struct v2;
 class recipedata {
   public:
     //TODO only methods should be public, it is currently like that to speed up development ONLY!!! but is a sure source of future problems if kept like that!!!
-    //TODO protect: none of these should be modified outside this class and every change should be dbgmsg logged.
+    //TODO protect: none of these fields should be modified outside this class and every change should be dbgmsg logged.
 
-    // tip: for clarity group by 5 no matter group context, but if re-organized, do also at constructor initializer please!!!
+    // tip: for clarity group by max of 5 no matter group context, but if re-organized, do also at constructor initializer please! (but save and load will make existing saved games with suspended crafting incompatible)
     humanoid* h; //TODO protect: set only once
     int Selected; //TODO protect: set only once
     std::vector<ulong> ingredientsIDs;
@@ -52,29 +52,34 @@ class recipedata {
     bool bHasAllIngredients;
     bool bCanStart;
     bool bCanBePlaced;
-    object* craftWhat;
 
     bool bSuccesfullyCompleted;
     v2 v2AnvilLocation;
     bool bFailed;
     v2 v2PlayerCraftingAt;
+    ulong itSpawnID;
 
+    ulong itToolID;
+    v2 v2BuildWhere;
+
+  public:
     recipedata(humanoid* H);
     cfestring info();
+    void Save(outputfile& SaveFile) const;
+    void Load(inputfile& SaveFile);
+    void ClearRefs();
 };
 class craftcore {
   private:
-//    static character* player;
-    static craft* craftAction;
+    static recipedata* prpdSuspended;
 
   public: //TODO suspendable action should be more global to be reused for other actions than crafting!
-//    static void reinitIfNeeded();
     static bool canBeCrafted(item* it);
-    static void SetAction(craft* act);
-    static bool HasSuspendedAction();
-    static void TerminateSuspendedAction();
-    static void SetSuspendedActionTo(character* Char);
-    static cfestring SuspendedActionInfo();
+
+    static void SetSuspended(recipedata* prpd);
+    static bool HasSuspended();
+//    static void TerminateSuspended();
+    static void ResumeSuspendedTo(character* Char);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */
