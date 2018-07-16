@@ -23,30 +23,36 @@ recipedata* craftcore::prpdSuspended=NULL;
 //  }
 //}
 
-void craftcore::SetSuspended(recipedata* prpd){DBGLN;
-  if(prpd==NULL){ //calling as this must be sure to delete the craft* object outside here!
-    if(prpdSuspended!=NULL)
-      delete prpdSuspended;
+void craftcore::ResetSuspended()
+{
+  if(prpdSuspended!=NULL){
+    DBG2("deleting",prpdSuspended->info().CStr());
+    delete prpdSuspended;
     prpdSuspended=NULL; //resets
+  }
+}
+
+void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
+  if(prpd==NULL){ //calling as this must be sure to delete the craft* object outside here!
+    ResetSuspended();
     return;
   }
 
+  if(prpdSuspended!=NULL && prpd!=NULL)
+    if(prpdSuspended->info()==prpd->info()){ DBG2("settingAgainToSameNotAProblemButShouldNotHappen",prpd->info().CStr());
+      //in case some properties got modified, to let it be updated
+      ResetSuspended();
+    }
+
   if(prpdSuspended==NULL){DBGLN;
     prpdSuspended=new recipedata(NULL);
-    if(!prpd->bCanBeSuspended)
+    if(!prpd->IsCanBeSuspended())
       ABORT("action can't be suspended %s",prpd->info().CStr());
     (*prpdSuspended)=(*prpd); //copy
     prpdSuspended->ClearRefs();
     return;
   }
 
-//  if(craftAction==act){DBGLN;
-//    if(act->IsSuspendedAction())
-//      return;
-//    ABORT("cannot set it again to a not a suspended action %s",craftAction->info().CStr());
-//  }
-
-//  ABORT("there is already an action set %s VS %s",craftAction->info().CStr(),act->info().CStr());
   ABORT("there is already a recipedata set %s VS %s",prpdSuspended->info().CStr(),prpd->info().CStr());
 }
 
@@ -74,7 +80,7 @@ bool craftcore::HasSuspended() {
   if(prpdSuspended->bSuccesfullyCompleted)
     return false;
 
-  if(prpdSuspended->bCanBeSuspended)
+  if(prpdSuspended->IsCanBeSuspended())
     return true;
 
   return false;
@@ -94,6 +100,7 @@ void craftcore::ResumeSuspendedTo(character* Char){
 
   if(prpdSuspended->v2PlayerCraftingAt==Char->GetPos()){
     Char->SwitchToCraft(*prpdSuspended);
+    craftcore::SetSuspended(NULL); //was resumed so discard it
   }else{
     ADD_MESSAGE("I need to be were I was crafting before."); //TODO add indicator to help player find that place again, could be a simple mapnote #Crafting :)
   }
@@ -107,10 +114,11 @@ void craftcore::ResumeSuspendedTo(character* Char){
 void recipedata::Save(outputfile& SaveFile) const
 {
   SaveFile //commented ones are just to keep the clarity/organization
+    << bCanBeSuspended
+
 //    humanoid* h;
 //    int Selected;
     << ingredientsIDs
-    << bCanBeSuspended
     << iAddDexterity
 
     << iBaseTurnsToFinish
@@ -144,10 +152,11 @@ void recipedata::Save(outputfile& SaveFile) const
 void recipedata::Load(inputfile& SaveFile)
 {
   SaveFile //commented ones are just to keep the clarity/organization
+    >> bCanBeSuspended
+
 //    humanoid* h;
 //    int Selected;
     >> ingredientsIDs
-    >> bCanBeSuspended
     >> iAddDexterity
 
     >> iBaseTurnsToFinish
@@ -190,10 +199,11 @@ cfestring recipedata::info()
 
 recipedata::recipedata(humanoid* H)
 {
+  bCanBeSuspended=false;
+
   h=H;
   Selected=-2; //default is -1 means not set, -2 to init
   ingredientsIDs.clear(); //just to init
-  bCanBeSuspended=false;
   iAddDexterity=0;
 
   iBaseTurnsToFinish=1; //TODO should be based on attributes
@@ -778,7 +788,7 @@ struct srpMelt : public srpUseForge{
     rpd.ingredientsIDs.clear(); //only the final meltable lump shall be sent to hell when it finishes
     rpd.ingredientsIDs.push_back(LumpMeltable->GetID()); //must be AFTER the duplicator
 
-    rpd.bCanBeSuspended=true;
+    rpd.SetCanBeSuspended();
 
     rpd.bCanStart=true;
 
@@ -1089,7 +1099,7 @@ struct srpForgeItem : public srpUseForge{
     if(rpd.itTool==NULL)
       return true;
 
-    rpd.bCanBeSuspended=true;
+    rpd.SetCanBeSuspended();
 
     rpd.bCanStart=true;
 

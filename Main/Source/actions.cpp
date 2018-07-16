@@ -227,7 +227,7 @@ void craft::Load(inputfile& SaveFile)
   rpd.Load(SaveFile);
   SaveFile >> MoveCraftTool >> RightBackupID >> LeftBackupID;
 
-  if(rpd.bCanBeSuspended)
+  if(rpd.IsCanBeSuspended())
     craftcore::SetSuspended(&rpd);
 }
 
@@ -250,17 +250,25 @@ void craft::Handle()
   if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
     rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
 
-  if(rpd.itToolID!=0 && rpd.itTool==NULL)
-    rpd.itTool = game::SearchItem(rpd.itToolID);
+//  if(rpd.itToolID!=0 && rpd.itTool==NULL)
+  if(rpd.itToolID!=0){
+    rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
+    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
+    if(rpd.itTool==NULL){
+      ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE));
+      rpd.bFailed=true;
+    }DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
+  }
 
   character* Actor = GetActor();
-  lsquare* lsqrActor = Actor->GetLSquareUnder();
+  lsquare* lsqrActor = Actor->GetLSquareUnder(); DBGSV2(lsqrActor->GetPos());
   level* lvl = lsqrActor->GetLevel();
 
   if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
   {DBGLN; //TODO re-mainWield it
-    ADD_MESSAGE("You have not the required tool to craft this."); //TODO like in case the tool is destroyed by sulf. acid? or some xposion etc.
-    rpd.bFailed=true;
+    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE));
+    Terminate(false); //may suspend
+    return;
   }
 
   DBGSV2(rpd.v2PlaceAt);
@@ -268,7 +276,8 @@ void craft::Handle()
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
   if(rpd.otSpawn!=NULL && oltExisting!=NULL){DBGLN;
     ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
-    rpd.bFailed=true;
+    Terminate(false); //may suspend
+    return;
   }
 
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
@@ -288,7 +297,8 @@ void craft::Handle()
     // a magpie or siren may have taken it
     if(it->GetSquareUnder()!=lsqrActor){
       ADD_MESSAGE("%s ingredient went missing...",it->GetName(DEFINITE).CStr());
-      rpd.bFailed=true;
+      Terminate(false); //may suspend
+      return;
     }
 
     //TODO once: apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
@@ -345,7 +355,7 @@ void craft::Handle()
   }
 
   if(rpd.bFailed){
-    Terminate(false);
+    Terminate(false); //won't suspend!
     return;
   }
 
@@ -477,8 +487,8 @@ void craft::Handle()
 
   Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
-  Actor->EditNP(-500);
   Actor->EditStamina(-1000 / Actor->GetAttribute(ARM_STRENGTH), false);
+  Actor->EditNP(-500); /////////// CRITICAL SPOT ///////////////////////////
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
   truth Stopped = rpd.bSuccesfullyCompleted || AlreadyTerminated;
@@ -522,8 +532,8 @@ void craft::Terminate(truth Finished)
   if(Finished){
     craftcore::SetSuspended(NULL);
   }else{
-    if(GetActor()->IsPlayer() && rpd.bCanBeSuspended && !rpd.bFailed){
-      ADD_MESSAGE("You suspend crafting.");
+    if(GetActor()->IsPlayer() && rpd.IsCanBeSuspended() && !rpd.bFailed){
+      ADD_MESSAGE("You suspend crafting (do not modify tools and ingredients)."); //TODO this message refers to a too technical subject: if a tool gets fixed, it's ID will vanish. Not sure if this message could be improved...
       craftcore::SetSuspended(&rpd);
     }else{
       if(GetActor()->IsPlayer())

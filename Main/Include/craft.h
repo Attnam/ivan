@@ -25,7 +25,13 @@ class olterrain;
 struct v2;
 
 class recipedata {
+  private:
+    bool bCanBeSuspended;
+
   public:
+    bool IsCanBeSuspended(){return bCanBeSuspended;}
+    void SetCanBeSuspended(){bCanBeSuspended=true;}
+
     //TODO only methods should be public, it is currently like that to speed up development ONLY!!! but is a sure source of future problems if kept like that!!!
     //TODO protect: none of these fields should be modified outside this class and every change should be dbgmsg logged.
 
@@ -33,7 +39,6 @@ class recipedata {
     humanoid* h; //TODO protect: set only once
     int Selected; //TODO protect: set only once
     std::vector<ulong> ingredientsIDs;
-    bool bCanBeSuspended;
     int iAddDexterity;
 
     int iBaseTurnsToFinish;
@@ -77,6 +82,7 @@ class craftcore {
     static bool canBeCrafted(item* it);
 
     static void SetSuspended(recipedata* prpd);
+    static void ResetSuspended();
     static bool HasSuspended();
 //    static void TerminateSuspended();
     static void ResumeSuspendedTo(character* Char);
