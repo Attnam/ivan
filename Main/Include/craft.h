@@ -134,11 +134,13 @@ class craftcore {
   public: //TODO suspendable action should be more global to be reused for other actions than crafting!
     static bool canBeCrafted(item* it);
 
+    static void SafelySendToHell(item* it);
     static void SetSuspended(recipedata* prpd);
     static void ResetSuspended();
     static bool HasSuspended();
 //    static void TerminateSuspended();
     static void ResumeSuspendedTo(character* Char);
+    static bool EmptyContentsIfPossible(item* itContainer);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

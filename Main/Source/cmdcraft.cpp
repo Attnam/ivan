@@ -32,6 +32,41 @@ void craftcore::ResetSuspended()
   }
 }
 
+bool craftcore::EmptyContentsIfPossible(item* itContainer)
+{
+  materialcontainer* mc = dynamic_cast<materialcontainer*>(itContainer); //potions, mines... also bananas xD
+  itemcontainer* ic = dynamic_cast<itemcontainer*>(itContainer); //chests
+
+  bool bEmptied = false;
+
+  if(mc!=NULL){
+    delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
+    bEmptied = true;
+  }
+
+  if(ic!=NULL){ //empty chests etc
+    stack* stkC = ic->GetContained();
+    itemvector ivC;
+    stkC->FillItemVector(ivC);
+    for(int i=0;i<ivC.size();i++){
+      SafelySendToHell(ivC[i]);
+//      ivC[i]->RemoveFromSlot();
+//      ivC[i]->SendToHell();
+    }
+
+    bEmptied = true;
+  }
+
+  return bEmptied;
+}
+
+void craftcore::SafelySendToHell(item* it)
+{
+  it->RemoveFromSlot(); //just in case to prevent problems later... like crashing elsewhere!!!
+  it->SendToHell(); DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
+//  **rit=NULL;
+}
+
 void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
   if(prpd==NULL){ //calling as this must be sure to delete the craft* object outside here!
     ResetSuspended();
@@ -337,10 +372,19 @@ cfestring recipedata::SpawnItem(){
 //  if(itSpawn!=NULL)
 //    ABORT("craft: when spawning item, it should not be already(still) spawned.");
 
+  material* matS = NULL;
   switch(itSpawnType){
   case CIT_POTION:
-    itSpawn = potion::Spawn(itSpawnCfg,NO_MATERIALS); //may be a vial
-    itSpawn->SetSecondaryMaterial(liquid::Spawn(itSpawnMatSecCfg,itSpawnMatSecVol));
+    /**
+     * IMPORTANT!!!
+     * do not use NO_MATERIALS here,
+     * apparently the main material is always required for items
+     * and the main material would remain uninitialized (instead of NULL)
+     * leading to SEGFAULT when trying to set the main material!
+     */
+    itSpawn = potion::Spawn(itSpawnCfg); //may be a vial
+    if(itSpawnMatSecCfg>0)
+      matS = liquid::Spawn(itSpawnMatSecCfg,itSpawnMatSecVol);
     break;
   case CIT_PROTOTYPE:
     itSpawn = protosystem::CreateItemToCraft(fsItemSpawnSearchPrototype);
@@ -363,9 +407,18 @@ cfestring recipedata::SpawnItem(){
     );
   }
 
+  if(itSpawnMatMainCfg==0 || itSpawnMatMainVol==0)
+    ABORT("main material and/or volume is 0 %s %s",itSpawnMatMainCfg,itSpawnMatMainVol);
   itSpawn->SetMainMaterial(material::MakeMaterial(itSpawnMatMainCfg,itSpawnMatMainVol));
-  if(itSpawnMatSecCfg>0 && itSpawn->GetSecondaryMaterial()==NULL)
-    itSpawn->SetSecondaryMaterial(material::MakeMaterial(itSpawnMatSecCfg,itSpawnMatSecVol));
+
+  if(itSpawnMatSecCfg==0)
+    craftcore::EmptyContentsIfPossible(itSpawn);
+  else{
+    if(matS==NULL)
+      matS = material::MakeMaterial(itSpawnMatSecCfg,itSpawnMatSecVol);
+    if(matS!=NULL)
+      itSpawn->SetSecondaryMaterial(matS);
+  }
 
   itSpawn->MoveTo(h->GetStack());
 
@@ -374,8 +427,8 @@ cfestring recipedata::SpawnItem(){
     fsCreated << itSpawnTot << " " << itSpawn->GetNamePlural();DBGLN;
     for(int i=0;i<itSpawnTot-1;i++){ //-1 as the last one will be the original
       /**
-       * IMPORTANT!!!
-       * the duplicator will vanish with the item ID that is being duplicated
+       * IMPORTANT!!! the duplicator will vanish with the item ID that is being duplicated
+       * so the duplication source item's ID will vanish. TODO could it be safely kept at DuplicateToStack() ?
        */
       itSpawn->DuplicateToStack(h->GetStack());
     }
@@ -698,8 +751,9 @@ struct recipe{
           lumpAtInv->GetMainMaterial()->SetVolume(
             lumpAtInv->GetMainMaterial()->GetVolume() + lumpToMix->GetMainMaterial()->GetVolume());
 
-          lumpToMix->RemoveFromSlot();
-          lumpToMix->SendToHell(); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
+          craftcore::SafelySendToHell(lumpToMix); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
+//          lumpToMix->RemoveFromSlot();
+//          lumpToMix->SendToHell(); DBG5("SentToHell",lumpToMix,lumpToMix->GetID(),lumpAtInv,lumpAtInv->GetID());
           bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
           break;
         }
@@ -973,13 +1027,6 @@ struct srpMelt : public srpUseForge{
     if(!srpUseForge::findForge(rpd))
       return true;
 
-    /**
-     * 25cm3 is each of the 2 parts of a dagger, but is too small?
-     * Smaller ingots are easier to manage, less user interaction as they fit better.
-     * TODO make this a numeric option?
-     */
-    int iIngotVol = 25;
-
     int iWeakestCfgDummy;
     choseIngredients<lump>(
       festring("First lump's chosen material will be mixed with further ones, hit ESC to accept."),
@@ -1014,8 +1061,9 @@ struct srpMelt : public srpUseForge{
       // join
       matM->SetVolume(matM->GetVolume()+lumpAddM->GetVolume());DBGLN;
 
-      LumpAdd->RemoveFromSlot();
-      LumpAdd->SendToHell();
+      craftcore::SafelySendToHell(LumpAdd);
+//      LumpAdd->RemoveFromSlot();
+//      LumpAdd->SendToHell();
     }
 
     rpd.iBaseTurnsToFinish = calcTurns(LumpMeltable->GetMainMaterial(),5); DBG1(rpd.iBaseTurnsToFinish);
@@ -1026,6 +1074,19 @@ struct srpMelt : public srpUseForge{
     rpd.itSpawnCfg = INGOT;
 //    rpd.itSpawn = stone::Spawn(INGOT, NO_MATERIALS);
 
+    /**
+     * 25cm3 is each of the 2 parts of a dagger, but is too small?
+     * Smaller ingots are easier to manage, less user interaction as they fit better.
+     * BUT it may generate a HUGE LOT of tiny ingots and slow down the game when dropping/picking up :(
+     */
+    static long iIngotVol = 250;
+    long iIngotVolTmp = game::NumberQuestion(festring("What volume shall the ingots have? [min 25cm3, last/default ")+iIngotVol+"cm3]",WHITE,true);
+    if(iIngotVolTmp>0){
+      if(iIngotVolTmp<25)
+        iIngotVolTmp=25;
+      iIngotVol=iIngotVolTmp;
+    }
+
     long lVolRemaining = 0;
     long lVolM = LumpMeltable->GetMainMaterial()->GetVolume();
     if(lVolM <= iIngotVol){
@@ -1035,7 +1096,7 @@ struct srpMelt : public srpUseForge{
       rpd.itSpawnTot = lVolM / iIngotVol;
       lVolRemaining = lVolM % iIngotVol;
       if(lVolRemaining>0){ //split
-        LumpMeltable->GetMainMaterial()->SetVolume(lVolM - lVolRemaining); // exact volume that will be used
+        LumpMeltable->GetMainMaterial()->SetVolume(lVolM - lVolRemaining); // keep the exact remaining volume of what will be used
 
         /**
          * IMPORTANT!!!
@@ -1068,7 +1129,7 @@ struct srpDismantle : public srpUseForge{ //TODO this is instantaneous, should t
   bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-      init("dismantle","some materials");
+      init("dismantle","some materials as lumps and sticks");
       desc << "Near a forge, any item can be dismantled to recover it's materials.";
     }
 
@@ -1138,8 +1199,10 @@ struct srpDismantle : public srpUseForge{ //TODO this is instantaneous, should t
 
     ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
     rpd.bAlreadyExplained=true;
-    itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
-    itToUse->SendToHell();  DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
+    craftcore::SafelySendToHell(itToUse);
+//    itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
+//    itToUse->SendToHell();
+    DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
 
     rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
 
@@ -1203,30 +1266,6 @@ struct srpForgeItem : public srpUseForge{
     if(!srpUseForge::work(rpd))
       return false;
 
-    if(!srpUseForge::findForge(rpd,true))
-      return true;
-
-    ////////////// find the anvil
-    lsquare* lsqrAnvil = NULL;
-    for(int iDir=0;iDir<8;iDir++){
-      v2 v2Add = game::GetMoveVector(iDir);
-      v2 v2Pos = rpd.h->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
-      if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-        lsquare* lsqr = rpd.h->GetNearLSquare(v2Pos);DBG1(lsqr);
-        olterrain* ot = lsqr->GetOLTerrain();
-        if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.h)){
-          lsqrAnvil = lsqr;
-          rpd.v2AnvilLocation=lsqrAnvil->GetPos();
-          break;
-        }
-      }
-    }
-    if(lsqrAnvil==NULL){
-      ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
-      rpd.bAlreadyExplained=true;
-      return true;
-    }
-
     //////////////// let user type the item name
     static festring Default; //static to help on reusing! like creating more of the same
 //    if(rpd.itSpawn!=NULL) // this is important to grant the cleanup
@@ -1254,8 +1293,7 @@ struct srpForgeItem : public srpUseForge{
           break;
         }else{
           ADD_MESSAGE("You can't enchant %s!",itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
-          itSpawn->RemoveFromSlot(); //just in case to prevent problems later...
-          itSpawn->SendToHell();
+          craftcore::SafelySendToHell(itSpawn);
           itSpawn = NULL; //IMPORTANT!!! if user press ESC...
         }
       }else{
@@ -1271,7 +1309,7 @@ struct srpForgeItem : public srpUseForge{
       return true;
     }
 
-    ADD_MESSAGE("Now I need the material(s) to create a %s as I would create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
+    ADD_MESSAGE("Now I need the material(s) to create a %s as I would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
 
     material* matM = itSpawn->GetMainMaterial();
 
@@ -1299,11 +1337,13 @@ struct srpForgeItem : public srpUseForge{
     if(!bM){
       ADD_MESSAGE("I will craft it later...");
       rpd.bAlreadyExplained=true;
+      craftcore::SafelySendToHell(itSpawn);
       return true;
     }
 
-    materialcontainer* mc = dynamic_cast<materialcontainer*>(itSpawn);DBGLN; //potions, mines... also bananas xD
-    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);DBGLN; //chests
+    bool bContainerEmptied = craftcore::EmptyContentsIfPossible(itSpawn);
+//    materialcontainer* mc = dynamic_cast<materialcontainer*>(itSpawn);DBGLN; //potions, mines... also bananas xD
+//    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);DBGLN; //chests
 //    bool bIsContainer =
 //      itSpawn->GetStorageVolume()>0 || //something else TODO what?
 //      ic!=NULL || //chests
@@ -1319,7 +1359,8 @@ struct srpForgeItem : public srpUseForge{
     bool bIsWeapon = itSpawn->IsWeapon(rpd.h);
     bool bReqS = bIsWeapon;
     bool bAllowS = true;
-    if(mc)bAllowS=false;
+//    if(mc)bAllowS=false;
+    if(bContainerEmptied)bAllowS=false;
     if(lVolS==0)bAllowS=false;
     if(bAllowS){DBGLN;
       bool bS = false;
@@ -1333,6 +1374,7 @@ struct srpForgeItem : public srpUseForge{
       if(!bS){
         ADD_MESSAGE("I will craft it later...");
         rpd.bAlreadyExplained=true;
+        craftcore::SafelySendToHell(itSpawn);
         return true;
       }
     }
@@ -1345,39 +1387,71 @@ struct srpForgeItem : public srpUseForge{
     itSpawn->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
     if(bAllowS)
       itSpawn->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
-    else{
-      if(mc!=NULL)
-        delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
-    }
+//    else{
+//      if(mc!=NULL)
+//        delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
+//    }
 
-    if(ic!=NULL){ //empty chests etc
-      stack* stkC = ic->GetContained();
-      itemvector ivC;
-      stkC->FillItemVector(ivC);
-      for(int i=0;i<ivC.size();i++){
-        ivC[i]->RemoveFromSlot();
-        ivC[i]->SendToHell();
-      }
-    }
+//    craftcore::EmptyContentsIfPossible(itSpawn);
+//    if(ic!=NULL){ //empty chests etc
+//      stack* stkC = ic->GetContained();
+//      itemvector ivC;
+//      stkC->FillItemVector(ivC);
+//      for(int i=0;i<ivC.size();i++){
+//        ivC[i]->RemoveFromSlot();
+//        ivC[i]->SendToHell();
+//      }
+//    }
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
     rpd.iBaseTurnsToFinish=calcTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
     if(bAllowS && matS!=NULL){
-      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult); DBG4(rpd.iBaseTurnsToFinish,matS->GetName(DEFINITE).CStr(),matS->GetConfig(),matS->GetVolume());
+      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult);
+      DBG4(rpd.iBaseTurnsToFinish,matS->GetName(DEFINITE).CStr(),matS->GetConfig(),matS->GetVolume());
+    }
+
+    if(IsMeltable(matM) || (matS!=NULL && IsMeltable(matS))){
+      if(!srpUseForge::findForge(rpd,true)){
+        craftcore::SafelySendToHell(itSpawn);
+        return true;
+      }
+
+      ////////////// find the anvil
+      lsquare* lsqrAnvil = NULL;
+      for(int iDir=0;iDir<8;iDir++){
+        v2 v2Add = game::GetMoveVector(iDir);
+        v2 v2Pos = rpd.h->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
+        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+          lsquare* lsqr = rpd.h->GetNearLSquare(v2Pos);DBG1(lsqr);
+          olterrain* ot = lsqr->GetOLTerrain();
+          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.h)){
+            lsqrAnvil = lsqr;
+            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
+            break;
+          }
+        }
+      }
+      if(lsqrAnvil==NULL){
+        ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
+        rpd.bAlreadyExplained=true;
+        craftcore::SafelySendToHell(itSpawn);
+        return true;
+      }
     }
 
     //TODO glass should require proper tools (don't know what but sure not a hammer)
     //TODO bone should require a dagger
     //TODO 2 tools, one for meltables and the other for glass or bone
     rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);DBG1(rpd.iBaseTurnsToFinish);
-    if(rpd.itTool==NULL)
+    if(rpd.itTool==NULL){
+      craftcore::SafelySendToHell(itSpawn);
       return true;
+    }
 
     rpd.SetCanBeSuspended();
 
     rpd.CopySpawnItemCfgFrom(itSpawn);
-    itSpawn->RemoveFromSlot();
-    itSpawn->SendToHell();
+    craftcore::SafelySendToHell(itSpawn);
 
     rpd.bCanStart=true;
 
@@ -1512,6 +1586,8 @@ struct srpFluids : public recipe{
 
     rpd.itSpawnType = CIT_POTION;
     rpd.itSpawnCfg = itBottle->GetConfig(); //may be a vial
+    rpd.itSpawnMatMainCfg = itBottle->GetMainMaterial()->GetConfig();
+    rpd.itSpawnMatMainVol = itBottle->GetMainMaterial()->GetVolume();
     rpd.itSpawnMatSecCfg = iLiqCfg;
     rpd.itSpawnMatSecVol = volume;
 //    rpd.itSpawn = potion::Spawn(itBottle->GetConfig()); //may be a vial
@@ -1596,7 +1672,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
      * ex.: so it wont prevent extracting poison if you were melting mithril
      */
 
-    if(game::TruthQuestion(festring("Continue crafting? ['n' to end]"),YES)){
+    if(game::TruthQuestion(festring("Continue crafting? ['n' to cancel this crafting]"),YES)){
       craftcore::ResumeSuspendedTo(Char);
       return true;
     }else{

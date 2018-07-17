@@ -1049,9 +1049,17 @@ truth item::AllowSpoil() const
   DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
   DBGEXEC( //this wont even compile if DBGMSG is not enabled
     /** crash helper
+     * THE CAUSE SEEMS TO BE from crafting a new item, it being a chest, and cancelling. The code was not sending the canceled spawned chest to hell and it was not placed anywhere. Fixed that, this may not happen again.
+     * TODO remove this debug code and the workaround below after sure wont needed anymore.
      * seems to be about a buggy organic spawned "on floor" that has no square under...
     *  happens below at: if(IsOnGround())
    *   item.cpp:1048:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="92980";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x8272630";
+ 2018/07/17-15:36:08(1122986) item.cpp:1049:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="780622";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x38be0e0";
+ 2018/07/17-15:36:08(1122987) item.cpp:1091:AllowSpoil:{itSS}="0x3293700";{ss->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122988) item.cpp:1091:AllowSpoil:{itSS->GetID()}="780622";{itSS->GetNameSingular().CStr()}="loaf";
+ 2018/07/17-15:36:08(1122989) item.cpp:1091:AllowSpoil:{ss->GetMotherStack()->GetItems()}="3";{ent}="0x62a17d0";{ss->GetMotherStack()->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122990) item.cpp:1091:AllowSpoil:{ent->GetSquareUnderEntity()}="0";
+ 2018/07/17-15:36:08(1122991) item.cpp:1091:AllowSpoil:{itM->GetID()}="780621";{itM->GetNameSingular().CStr()}="chest";
    *     ./bin//ivan(_ZN6dbgmsg20getCurrentStackTraceEbRi+0xaa) [0x92f43e]
    *     ./bin//ivan(_ZN6dbgmsg22getCurrentStackTraceSSB5cxx11Ebb+0x54) [0x92f53c]
     *    ./bin//ivan(_ZN6dbgmsg8SigHndlrEi+0x1ae) [0x92fcdc]
@@ -1089,6 +1097,26 @@ truth item::AllowSpoil() const
       }
     }
   );
+//TODO remove this. The workaround is NOT good as SquareUnder is essential everywhere!!!!
+//  bool bIsOnGround=false;
+//  lsquare* Square = GetLSquareUnder(); //TODO what could cause Square to be NULL ?????
+//  static bool bAllowSpoilBugWorkaround=true;
+//  if(bAllowSpoilBugWorkaround){ //See the above bug track code, the origin of the problem is still NOT solved/understood/discovered!!!!!!
+//    if(Square!=NULL){
+//      bIsOnGround=IsOnGround();
+//      DBG1("WorkaroundForItemPlacedNoWhere");
+//    }
+//    /**
+//     * what this means?
+//     *
+//     * not knowing where the item is, if on a room, the item will ALWAYS spoil,
+//     * so if the buggy item "is" on a shop, it will spoil.
+//     *
+//     * and, on this stack/flow that game wont crash, but still may on other code flows!!!
+//     */
+//  }else{
+//    bIsOnGround=IsOnGround();
+//  }
 
   if(IsOnGround())
   {
