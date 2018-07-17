@@ -102,6 +102,7 @@ class recipedata { //TODO split what is savable from what is only work data prio
     ulong otSpawnMatSecVol;
 
     ulong otSpawnType;
+    bool bSpawnBroken;
 
 //    olterrain* otSpawn; //special save/load case as it can't be placed anywhere in the dungeon level
 

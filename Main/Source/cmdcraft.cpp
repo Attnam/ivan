@@ -194,6 +194,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << otSpawnMatSecVol
 
     << otSpawnType
+    << bSpawnBroken
 
     ;
 
@@ -249,7 +250,10 @@ void recipedata::Load(inputfile& SaveFile)
     >> otSpawnMatSecCfg
     >> otSpawnMatSecVol
 
-    >> otSpawnType;
+    >> otSpawnType
+    >> bSpawnBroken
+
+    ;
 
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
@@ -342,6 +346,7 @@ recipedata::recipedata(humanoid* H)
   otSpawnMatSecVol=0;
 
   otSpawnType=CTT_NONE;
+  bSpawnBroken=false;
 
 //  otSpawn=NULL;
 
@@ -372,6 +377,8 @@ cfestring recipedata::SpawnItem(){
 //  if(itSpawn!=NULL)
 //    ABORT("craft: when spawning item, it should not be already(still) spawned.");
 
+//  long cfg = itSpawnCfg;
+//  if(bSpawnBroken)cfg|=BROKEN;
   material* matS = NULL;
   switch(itSpawnType){
   case CIT_POTION:
@@ -419,6 +426,9 @@ cfestring recipedata::SpawnItem(){
     if(matS!=NULL)
       itSpawn->SetSecondaryMaterial(matS);
   }
+
+  if(bSpawnBroken)
+    itSpawn->Break(NULL);
 
   itSpawn->MoveTo(h->GetStack());
 

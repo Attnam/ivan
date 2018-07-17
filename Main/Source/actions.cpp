@@ -347,15 +347,19 @@ void craft::Handle()
     for(int i=0;i<iStrongerXplod;i++)
       xplodXtra+=clock()%5;
 
-    int xplodStr=0;
+    int iFumblePower=0;
     int iFumblePerc=clock()%100;
     float fSkill = ((Actor->GetAttribute(DEXTERITY)+Actor->GetAttribute(WISDOM))/2.0)/20.0;
     int iFumbleBase=20/fSkill;
     int iDiv=0;
-    iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-    iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-    iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
-    if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
+    iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
+    iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
+    iDiv=3;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
+    iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
+    if(iFumblePerc<=1)iFumblePower++; //always have 1% weakest xplod chance
+    /** max fumble power is 5 just to easy calc 10% max chance per fumble round of spawning broken */
+    if(clock()%100<=(iFumblePower*2))rpd.bSpawnBroken=true;
+    int xplodStr = iFumblePower;
     if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
       //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
@@ -376,47 +380,12 @@ void craft::Handle()
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
     if(rpd.itSpawnCfg>0){DBGLN;
-////      item* itChkAgain = game::SearchItem(rpd.itSpawnID);
-////      if(itChkAgain!=rpd.itSpawn)
-////        ABORT("spawning item ID changed or vanished %d %d %s",rpd.itSpawnID,itChkAgain!=NULL?itChkAgain->GetID():0,rpd.dbgInfo().CStr()); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
-//
-////      item* itSpawnBkp=rpd.itSpawn;
-//      item* itSpawnBkp=rpd.SpawnItem();
-////      rpd.itSpawn=NULL; //see ~craft
-////      rpd.itSpawnID=0;
-//
-//      if(rpd.itSpawnTot > 1){DBGLN;
-//        fsCreated << rpd.itSpawnTot << " " << itSpawnBkp->GetNamePlural();DBGLN;
-//        for(int i=0;i<rpd.itSpawnTot-1;i++){ //-1 as the last one will be the original
-//          /**
-//           * IMPORTANT!!!
-//           * the duplicator will vanish with the item ID that is being duplicated
-//           */
-//          itSpawnBkp->DuplicateToStack(Actor->GetStack());
-//        }
-//      }else{DBGLN;
-//        fsCreated << itSpawnBkp->GetName(Case);
-//      }
-//
-//      itSpawnBkp->MoveTo(Actor->GetStack());DBGLN;
-//
-//      fsMsg << "You prepared "<< fsCreated.CStr();
       fsMsg << "You prepared "<< rpd.SpawnItem();
     }
 
     int iWallMaterialConfig=-1;
 //    if(rpd.otSpawn!=NULL){DBGLN;
     if(rpd.otSpawnCfg>0){DBGLN;
-//      rpd.otSpawn = rpd.SpawnTerrain();
-//      lsqrWhere->ChangeOLTerrainAndUpdateLights(rpd.otSpawn);
-//      if(dynamic_cast<wall*>(rpd.otSpawn)!=NULL)
-//        iWallMaterialConfig = rpd.otSpawn->GetMainMaterial()->GetConfig();
-//
-////      if(lsqrWhere->CanBeSeenByPlayer())
-//      fsCreated << rpd.otSpawn->GetName(Case);
-//      fsMsg << "You built " << fsCreated.CStr();
-//
-//      rpd.otSpawn=NULL; //see ~craft
       iWallMaterialConfig = rpd.otSpawnMatMainCfg;
       fsMsg << "You built " << rpd.SpawnTerrain();
     }
