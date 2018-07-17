@@ -262,7 +262,7 @@ void craft::Handle()
     rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
     //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
     if(rpd.itTool==NULL){
-      ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE));
+      ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE).CStr());
       rpd.bFailed=true;
     }
     DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
@@ -275,7 +275,7 @@ void craft::Handle()
 
   if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
   {DBGLN; //TODO re-mainWield it
-    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE));
+    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE).CStr());
     Terminate(false); //may suspend
     return;
   }
