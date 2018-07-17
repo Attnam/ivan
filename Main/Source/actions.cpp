@@ -232,7 +232,7 @@ void craft::Load(inputfile& SaveFile)
 }
 
 //cfestring craft::info(){
-//  return rpd.info();
+//  return rpd.dbgInfo();
 //}
 
 //bool craft::IsSuspendedAction() {
@@ -247,8 +247,15 @@ void craft::Load(inputfile& SaveFile)
 
 void craft::Handle()
 {DBGLN;
-  if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
-    rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
+//  if(rpd.h != dynamic_cast<humanoid*>(Actor))
+  if(rpd.Actor != Actor)
+    ABORT("crafting actor changed '%s' '%s'",rpd.Actor->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
+
+//  if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
+//    rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
+
+  if(rpd.itSpawnCfg==0 && rpd.otSpawnCfg==0)
+    ABORT("crafting nothing? %s",rpd.dbgInfo().CStr());
 
 //  if(rpd.itToolID!=0 && rpd.itTool==NULL)
   if(rpd.itToolID!=0){
@@ -257,8 +264,10 @@ void craft::Handle()
     if(rpd.itTool==NULL){
       ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE));
       rpd.bFailed=true;
-    }DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
+    }
+    DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
   }
+  DBG4(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg);
 
   character* Actor = GetActor();
   lsquare* lsqrActor = Actor->GetLSquareUnder(); DBGSV2(lsqrActor->GetPos());
@@ -274,8 +283,9 @@ void craft::Handle()
   DBGSV2(rpd.v2PlaceAt);
   lsquare* lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt);
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
-  if(rpd.otSpawn!=NULL && oltExisting!=NULL){DBGLN;
-    ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
+  if(rpd.otSpawnCfg>0 && oltExisting!=NULL){DBGLN;
+//  ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
+    ADD_MESSAGE("Unable to place it there."); //TODO like in case something is placed there before ending the construction? but what and how?
     Terminate(false); //may suspend
     return;
   }
@@ -346,7 +356,7 @@ void craft::Handle()
     iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
     iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)xplodStr++;
     if(iFumblePerc<=1)xplodStr++; //always have 1% weakest xplod chance
-    if(xplodStr>0){DBG2(xplodStr,rpd.info().CStr());
+    if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
       //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
       lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
@@ -362,47 +372,53 @@ void craft::Handle()
   rpd.bSuccesfullyCompleted = rpd.iBaseTurnsToFinish==0;
   festring fsCreated;
   festring fsMsg("");
-  int Case = INDEFINITE;
+//  int Case = INDEFINITE;
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
-    if(rpd.itSpawn!=NULL){DBGLN;
-      item* itChkAgain = game::SearchItem(rpd.itSpawnID);
-      if(itChkAgain!=rpd.itSpawn)
-        ABORT("spawning item ID changed or vanished %d %d",rpd.itSpawnID,itChkAgain!=NULL?itChkAgain->GetID():0); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
-
-      item* itWhatTmp=rpd.itSpawn;
-      rpd.itSpawn=NULL; //see ~craft
-      rpd.itSpawnID=0;
-
-      if(rpd.itSpawnTot > 1){DBGLN;
-        fsCreated << rpd.itSpawnTot << " " << itWhatTmp->GetNamePlural();DBGLN;
-        for(int i=0;i<rpd.itSpawnTot-1;i++){ //-1 as the last one will be the original
-          /**
-           * IMPORTANT!!!
-           * the duplicator will vanish with the item ID that is being duplicated
-           */
-          itWhatTmp->DuplicateToStack(Actor->GetStack());
-        }
-      }else{DBGLN;
-        fsCreated << itWhatTmp->GetName(Case);
-      }
-
-      itWhatTmp->MoveTo(Actor->GetStack());DBGLN;
-
-      fsMsg << "You prepared "<< fsCreated.CStr();
+    if(rpd.itSpawnCfg>0){DBGLN;
+////      item* itChkAgain = game::SearchItem(rpd.itSpawnID);
+////      if(itChkAgain!=rpd.itSpawn)
+////        ABORT("spawning item ID changed or vanished %d %d %s",rpd.itSpawnID,itChkAgain!=NULL?itChkAgain->GetID():0,rpd.dbgInfo().CStr()); //could be a duplicate issue? like item::Fix(), //could be something near that exploded and destroyed it?
+//
+////      item* itSpawnBkp=rpd.itSpawn;
+//      item* itSpawnBkp=rpd.SpawnItem();
+////      rpd.itSpawn=NULL; //see ~craft
+////      rpd.itSpawnID=0;
+//
+//      if(rpd.itSpawnTot > 1){DBGLN;
+//        fsCreated << rpd.itSpawnTot << " " << itSpawnBkp->GetNamePlural();DBGLN;
+//        for(int i=0;i<rpd.itSpawnTot-1;i++){ //-1 as the last one will be the original
+//          /**
+//           * IMPORTANT!!!
+//           * the duplicator will vanish with the item ID that is being duplicated
+//           */
+//          itSpawnBkp->DuplicateToStack(Actor->GetStack());
+//        }
+//      }else{DBGLN;
+//        fsCreated << itSpawnBkp->GetName(Case);
+//      }
+//
+//      itSpawnBkp->MoveTo(Actor->GetStack());DBGLN;
+//
+//      fsMsg << "You prepared "<< fsCreated.CStr();
+      fsMsg << "You prepared "<< rpd.SpawnItem();
     }
 
     int iWallMaterialConfig=-1;
-    if(rpd.otSpawn!=NULL){DBGLN;
-      lsqrWhere->ChangeOLTerrainAndUpdateLights(rpd.otSpawn);
-      if(dynamic_cast<wall*>(rpd.otSpawn)!=NULL)
-        iWallMaterialConfig = rpd.otSpawn->GetMainMaterial()->GetConfig();
-
-//      if(lsqrWhere->CanBeSeenByPlayer())
-      fsCreated << rpd.otSpawn->GetName(Case);
-      fsMsg << "You built " << fsCreated.CStr();
-
-      rpd.otSpawn=NULL; //see ~craft
+//    if(rpd.otSpawn!=NULL){DBGLN;
+    if(rpd.otSpawnCfg>0){DBGLN;
+//      rpd.otSpawn = rpd.SpawnTerrain();
+//      lsqrWhere->ChangeOLTerrainAndUpdateLights(rpd.otSpawn);
+//      if(dynamic_cast<wall*>(rpd.otSpawn)!=NULL)
+//        iWallMaterialConfig = rpd.otSpawn->GetMainMaterial()->GetConfig();
+//
+////      if(lsqrWhere->CanBeSeenByPlayer())
+//      fsCreated << rpd.otSpawn->GetName(Case);
+//      fsMsg << "You built " << fsCreated.CStr();
+//
+//      rpd.otSpawn=NULL; //see ~craft
+      iWallMaterialConfig = rpd.otSpawnMatMainCfg;
+      fsMsg << "You built " << rpd.SpawnTerrain();
     }
 
     festring fsIng,fsIngP;
@@ -411,7 +427,7 @@ void craft::Handle()
     festring fsIngMsg("");
     for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
       item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-      if(it==NULL)ABORT("ingredient id %d not found",rpd.ingredientsIDs[i]);
+      if(it==NULL)ABORT("ingredient id %d not found %s",rpd.ingredientsIDs[i],rpd.dbgInfo().CStr());
       it->RemoveFromSlot();DBGLN;
 
       bool bSendToHell=true;
@@ -428,7 +444,7 @@ void craft::Handle()
         it->MoveTo(lsqrWhere->GetStack());
       }DBGLN;
 
-      fsIng.Empty();fsIng << it->GetName(Case);DBGLN;
+      fsIng.Empty();fsIng << it->GetName(INDEFINITE);DBGLN;
       fsIngP.Empty();fsIngP << it->GetName(PLURAL);DBGLN;
       if(fsCreated==fsIng)continue;
 
@@ -522,6 +538,10 @@ void craft::Handle()
     game::DrawEverything();
 }
 
+bool craft::IsSuspending(){
+  return GetActor()->IsPlayer() && rpd.IsCanBeSuspended() && !rpd.bFailed;
+}
+
 void craft::Terminate(truth Finished)
 {DBGLN;
   if(Flags & TERMINATING)
@@ -532,7 +552,7 @@ void craft::Terminate(truth Finished)
   if(Finished){
     craftcore::SetSuspended(NULL);
   }else{
-    if(GetActor()->IsPlayer() && rpd.IsCanBeSuspended() && !rpd.bFailed){
+    if(IsSuspending()){
       ADD_MESSAGE("You suspend crafting (do not modify tools and ingredients)."); //TODO this message refers to a too technical subject: if a tool gets fixed, it's ID will vanish. Not sure if this message could be improved...
       craftcore::SetSuspended(&rpd);
     }else{
@@ -551,14 +571,11 @@ void craft::Terminate(truth Finished)
 craft::~craft(){DBGLN; // called from Terminate()
   // cleanups if not finished
 
-  if(rpd.itSpawn && rpd.itSpawn->Exists()){DBGLN;
-    rpd.itSpawn->RemoveFromSlot(); //just in case it is required one day, this prevents a lot of trouble...
-    rpd.itSpawn->SendToHell();
-  }
-
-  if(rpd.otSpawn && rpd.otSpawn->Exists()){DBGLN;
-    rpd.otSpawn->SendToHell();
-  }
+//  // will be respawned
+//  rpd.SendSpawnItemToHell();
+//
+//  if(!IsSuspending())
+//    rpd.SendTerrainToHell();
 }
 
 void dig::Save(outputfile& SaveFile) const
