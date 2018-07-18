@@ -250,16 +250,19 @@ void craft::Handle()
   rpd.integrityCheck();
 
   character* Actor = GetActor();
+  if(rpd.H()==NULL)
+    rpd.SetHumanoid(Actor);
 
 //  if(rpd.h != dynamic_cast<humanoid*>(Actor))
-  if(rpd.Actor != Actor)
-    ABORT("crafting actor changed '%s' '%s'",rpd.Actor->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
+//  if(rpd.Actor != Actor)
+//    ABORT("crafting actor changed '%s' '%s'",rpd.Actor->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
 
 //  if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
 //    rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
 
-  if(rpd.itSpawnCfg==0 && rpd.otSpawnCfg==0)
-    ABORT("crafting nothing? %s",rpd.dbgInfo().CStr());
+//  if(rpd.itSpawnCfg==0 && rpd.otSpawnCfg==0)
+  if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE)
+    ABORT("craft:Handle nothing? %s",rpd.dbgInfo().CStr());
 
 //  if(rpd.itToolID!=0 && rpd.itTool==NULL)
   if(rpd.itToolID!=0){
@@ -271,7 +274,7 @@ void craft::Handle()
     }
     DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
   }
-  DBG4(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg);
+  DBG6(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg,rpd.itSpawnType,rpd.otSpawnType);
 
   lsquare* lsqrActor = Actor->GetLSquareUnder(); DBGSV2(lsqrActor->GetPos());
   level* lvl = lsqrActor->GetLevel();
@@ -291,9 +294,9 @@ void craft::Handle()
 
   rpd.integrityCheck();
   DBGSV2(rpd.v2PlaceAt);
-  lsquare* lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt);
-  olterrain* oltExisting = lsqrWhere->GetOLTerrain();
-  if(rpd.otSpawnCfg>0 && oltExisting!=NULL){DBGLN;
+  rpd.lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt); //near? it is abs map pos...
+  olterrain* oltExisting = rpd.lsqrWhere->GetOLTerrain();
+  if(rpd.otSpawnType!=CTT_NONE && oltExisting!=NULL){DBGLN;
 //  ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
     ADD_MESSAGE("Unable to place it there."); //TODO like in case something is placed there before ending the construction? but what and how?
     Terminate(false); //may suspend
@@ -360,18 +363,22 @@ void craft::Handle()
     for(int i=0;i<iStrongerXplod;i++)
       xplodXtra+=clock()%5;
 
+    /**
+     * To fumble, base reference is 15% chance at a craft skill of 20.
+     * ex.: Craft skill of 10 will have 30% fumble chance.
+     */
     int iFumblePower=0;
-    int iFumblePerc=clock()%100;
-    float fSkill = ((Actor->GetAttribute(DEXTERITY)+Actor->GetAttribute(WISDOM))/2.0)/20.0;
-    int iFumbleBase=20/fSkill;
+    int iLuckPerc=clock()%100;
+    static const float fBaseCraftSkillToNormalFumble=20.0;
+    static const int iBaseFumbleChancePerc=15;
+    int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(Actor)/fBaseCraftSkillToNormalFumble); //ex.: 30%
     int iDiv=0;
-    iDiv=1;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
-    iDiv=2;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
-    iDiv=3;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
-    iDiv=4;if(iFumbleBase>iDiv && iFumblePerc<=iFumbleBase/iDiv)iFumblePower++;
-    if(iFumblePerc<=1)iFumblePower++; //always have 1% weakest xplod chance
-    /** max fumble power is 5 just to easy calc 10% max chance per fumble round of spawning broken */
-    if(clock()%100<=(iFumblePower*2))rpd.bSpawnBroken=true;
+    iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
+    iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
+    iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
+    iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
+    if(iLuckPerc<=1)iFumblePower++; //always have 1% weakest xplod chance
+    if(clock()%100<=iFumblePower)rpd.bSpawnBroken=true; //current max chance per round of spawning broken is 5%
     xplodStr = iFumblePower;
     if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
@@ -391,13 +398,13 @@ void craft::Handle()
 //  int Case = INDEFINITE;
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
-    if(rpd.itSpawnCfg>0){DBGLN;
+    if(rpd.itSpawnType!=CIT_NONE){DBGLN;
       fsMsg << "You prepared "<< rpd.SpawnItem();
     }
 
     int iWallMaterialConfig=-1;
 //    if(rpd.otSpawn!=NULL){DBGLN;
-    if(rpd.otSpawnCfg>0){DBGLN;
+    if(rpd.otSpawnType!=CTT_NONE){DBGLN;
       iWallMaterialConfig = rpd.otSpawnMatMainCfg;
       fsMsg << "You built " << rpd.SpawnTerrain();
     }
@@ -422,7 +429,7 @@ void craft::Handle()
       }else{DBGLN;
         //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
         //TODO what about amulet of phasing or ghost mode?
-        it->MoveTo(lsqrWhere->GetStack());
+        it->MoveTo(rpd.lsqrWhere->GetStack());
       }DBGLN;
 
       fsIng.Empty();fsIng << it->GetName(INDEFINITE);DBGLN;
@@ -484,11 +491,12 @@ void craft::Handle()
   ulong RightBackupID = this->RightBackupID;
   ulong LeftBackupID = this->LeftBackupID;
   bool bSuccesfullyCompleted = rpd.bSuccesfullyCompleted;
+  lsquare* lsqrWhere = rpd.lsqrWhere;
 
   Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditStamina(-1000 / Actor->GetAttribute(ARM_STRENGTH), false);
-  Actor->EditNP(-500); /////////// CRITICAL SPOT ///////////////////////////
+  Actor->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
   truth Stopped = bSuccesfullyCompleted || AlreadyTerminated;

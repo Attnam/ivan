@@ -30,7 +30,7 @@ struct v2;
 //  CIT_PROTOTYPE=2,
 //  CIT_POTION=3,
 //};
-#define  CIT_NONE 0
+#define  CIT_NONE 0 //TODO use, save and load enums?
 #define  CIT_STONE 1
 #define  CIT_PROTOTYPE 2
 #define  CIT_POTION 3
@@ -41,7 +41,7 @@ struct v2;
 //  CTT_DOOR=2,
 //  CTT_FURNITURE=3,
 //};
-#define  CTT_NONE 0
+#define  CTT_NONE 0 //TODO use, save and load enums?
 #define  CTT_WALL 1
 #define  CTT_DOOR 2
 #define  CTT_FURNITURE 3
@@ -55,12 +55,17 @@ class recipedata {
   private:
     bool bCanBeSuspended;
     ulong lRandomInitKey;
+    humanoid* h;
+    int iDungeonLevelID;
 
   public:
+    humanoid* H(){return h;}
     bool IsCanBeSuspended(){return bCanBeSuspended;}
     void SetCanBeSuspended(){bCanBeSuspended=true;}
+    void SetHumanoid(character* C);
+    int GetDungeonLevelID(){return iDungeonLevelID;}
 
-//    const recipework rpw;
+    //    const recipework rpw;
 
     //TODO only methods should be public, it is currently like that to speed up development ONLY!!! but is a sure source of future problems if kept like that!!!
     //TODO protect: none of these fields should be modified outside this class and every change should be dbgmsg logged.
@@ -107,15 +112,10 @@ class recipedata {
     ulong otSpawnType;
     bool bSpawnBroken;
 
-//    olterrain* otSpawn; //special save/load case as it can't be placed anywhere in the dungeon level
-
     item* itTool;
-//    item* itSpawn;
     lsquare* lsqrWhere;
     lsquare* lsqrCharPos;
-
-    humanoid* h; //TODO protect: set only once
-    character* Actor; //same as humanoid above
+    item* itWeakestIngredient;
 
   public:
     recipedata(humanoid* H);
@@ -130,7 +130,7 @@ class recipedata {
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
     cfestring SpawnTerrain();
     void integrityCheck() const;
-//    void ClearRefs();
+    void ClearRefs();
 };
 class craftcore {
   private:
@@ -146,6 +146,8 @@ class craftcore {
 //    static void TerminateSuspended();
     static void ResumeSuspendedTo(character* Char);
     static bool EmptyContentsIfPossible(item* itContainer);
+    static float CraftSkill(character* Char);
+    static int CurrentDungeonLevelID();
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

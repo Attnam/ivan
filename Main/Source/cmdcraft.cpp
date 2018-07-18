@@ -91,6 +91,10 @@ void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
   ABORT("there is already a recipedata set %s VS %s",prpdSuspended->dbgInfo().CStr(),prpd->dbgInfo().CStr());
 }
 
+float craftcore::CraftSkill(character* Char){ //is the current capability of crafting
+  return (Char->GetAttribute(DEXTERITY)+Char->GetAttribute(WISDOM))/2.0; //ex.: D=10 W=10 Skill=10, D=5 W=10 Skill=7.5
+}
+
 bool craftcore::canBeCrafted(item* it){
   if(
     game::IsQuestItem(it) ||
@@ -134,11 +138,26 @@ void craftcore::ResumeSuspendedTo(character* Char){
   }
 
   prpdSuspended->integrityCheck();
+
+  if(prpdSuspended->GetDungeonLevelID()!=craftcore::CurrentDungeonLevelID()){
+    ADD_MESSAGE("I need to be in the same dungeon I was before."); //TODO better message: place? location? dungeon level sounds a bit non-immersive, or not?
+    return;
+  }
+
   if(prpdSuspended->v2PlayerCraftingAt==Char->GetPos()){
     Char->SwitchToCraft(*prpdSuspended);
     craftcore::SetSuspended(NULL); //was resumed so discard it
   }else{
-    ADD_MESSAGE("I need to be were I was crafting before."); //TODO add indicator to help player find that place again, could be a simple mapnote #Crafting :)
+    festring fsDist;
+    int iDist = (prpdSuspended->v2PlayerCraftingAt - Char->GetPos()).GetLengthSquare();
+    if(iDist<=2)fsDist<<"and I am almost there!";
+    else
+    if(iDist<=10)fsDist<<"and I am near it.";
+    else
+    if(iDist<=20)fsDist<<"but I am still a bit far away from it...";
+    else
+      fsDist<<"but it seems to be quite far from here.";
+    ADD_MESSAGE("I need to be were I was crafting before, %s",fsDist.CStr());
   }
 }
 //void craftcore::TerminateSuspendedAction(){
@@ -199,6 +218,7 @@ void recipedata::Save(outputfile& SaveFile) const
 
     << otSpawnType
     << bSpawnBroken
+    << iDungeonLevelID
 
     ;
 
@@ -256,6 +276,7 @@ void recipedata::Load(inputfile& SaveFile)
 
     >> otSpawnType
     >> bSpawnBroken
+    >> iDungeonLevelID
 
     ;
 
@@ -315,16 +336,19 @@ cfestring recipedata::dbgInfo() const
 
 #define RPD_RANDOM_INIT_KEY 287463298476233489UL
 
+void recipedata::SetHumanoid(character* C){
+  if(h!=NULL)
+    ABORT("Humanoid actor already set '%s' '%s'",C->GetName(DEFINITE).CStr(),h->GetName(DEFINITE).CStr());
+
+  h = dynamic_cast<humanoid*>(C);
+  if(h==NULL)
+    ABORT("Only humanoids can craft '%s'",C->GetName(DEFINITE).CStr());
+}
+
 void recipedata::integrityCheck() const
 {
-  if(
-      h!=Actor || //corrupted or not init
-      h==NULL || //invalid
-      lRandomInitKey!=RPD_RANDOM_INIT_KEY || //corrupted or not init
-      false
-  ){
+  if(lRandomInitKey!=RPD_RANDOM_INIT_KEY) //TODO bools get crazy values too if not initialized
     ABORT("recipedata corrupted, not initialized or invalid");// it will not be possible to show info, would crash on it... , dbgInfo().CStr());
-  }
 }
 
 recipedata::recipedata(humanoid* H)
@@ -374,6 +398,7 @@ recipedata::recipedata(humanoid* H)
 
   otSpawnType=CTT_NONE;
   bSpawnBroken=false;
+  iDungeonLevelID=craftcore::CurrentDungeonLevelID();
 
 //  otSpawn=NULL;
 
@@ -381,8 +406,13 @@ recipedata::recipedata(humanoid* H)
 //  itSpawn=NULL;
   lsqrWhere = NULL;
   lsqrCharPos = NULL;
+  itWeakestIngredient = NULL;
 
-  Actor=h=H;
+  h=H;
+}
+
+int craftcore::CurrentDungeonLevelID(){
+  return game::GetCurrentDungeonIndex()*100+game::GetCurrentLevelIndex();
 }
 
 void recipedata::CopySpawnItemCfgFrom(item* itCfg)
@@ -514,15 +544,16 @@ cfestring recipedata::SpawnTerrain(){
 
   switch(otSpawnType){
   case CTT_FURNITURE:
-    otSpawn=decoration::Spawn(otSpawnCfg);//earth::Spawn();
+    otSpawn=decoration::Spawn(otSpawnCfg);
     break;
   case CTT_DOOR:
-    otSpawn=door::Spawn(otSpawnCfg);//earth::Spawn();
+    otSpawn=door::Spawn(otSpawnCfg);
     ((door*)otSpawn)->SetIsLocked(false);
     ((door*)otSpawn)->SetIsOpened(true);
+    //TODO configure lock type based randomly in one of the keys available on player's inventory
     break;
   case CTT_WALL:
-    otSpawn=wall::Spawn(otSpawnCfg);//earth::Spawn();
+    otSpawn=wall::Spawn(otSpawnCfg); //earth::Spawn();
     break;
   }
 
@@ -569,22 +600,20 @@ cfestring recipedata::SpawnTerrain(){
 //  itSpawnID=0;
 //}
 
-//void recipedata::ClearRefs(){ //this is important to revalidate all pointers from IDs in case saving to main menu and loading again w/o exiting the game application
-////  if(otSpawn!=NULL)
-////    otSpawn->SendToHell();
-//  otSpawn=NULL;
-//
-//  itTool=NULL;
-////  if(itSpawn!=NULL){
-////    itSpawn->RemoveFromSlot(); //just in case it is required one day, this prevents a lot of trouble...
-////    itSpawn->SendToHell();
-////  }
-//  itSpawn=NULL;
-//  lsqrWhere = NULL;
-//  lsqrCharPos = NULL;
-//
-//  h = NULL;
-//}
+void recipedata::ClearRefs(){
+  /**
+   * This is to help on granting consistency.
+   * As in case of save/load all pointers will change.
+   * This is important to revalidate all pointers from IDs.
+   */
+
+  itTool = NULL;
+  lsqrWhere = NULL;
+  lsqrCharPos = NULL;
+  itWeakestIngredient = NULL;
+
+  h = NULL;
+}
 
 struct recipe{
   festring action;
@@ -599,7 +628,7 @@ struct recipe{
     iListIndex=(-1);//,desc(""){};
   }
 
-  virtual bool work(recipedata& rpd){
+  bool IsTheSelectedOne(recipedata& rpd){
     if(rpd.Selected != iListIndex)
       return false;
     return true;
@@ -609,8 +638,8 @@ struct recipe{
 
   static bool where(recipedata& rpd){
     int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
-    if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
-      rpd.lsqrWhere = rpd.h->GetNearLSquare(rpd.h->GetPos() + game::GetMoveVector(Dir));
+    if(Dir != DIR_ERROR && rpd.H()->GetArea()->IsValidPos(rpd.H()->GetPos() + game::GetMoveVector(Dir)))
+      rpd.lsqrWhere = rpd.H()->GetNearLSquare(rpd.H()->GetPos() + game::GetMoveVector(Dir));
 
     if(rpd.lsqrWhere!=NULL && rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.lsqrWhere->GetCharacter()==NULL){
       rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
@@ -654,20 +683,20 @@ struct recipe{
     return NULL;
   }
 
-  static item* FindHammeringTool(humanoid* h, int& iBaseTurnsToFinish){
-    int iBaseTurns = iBaseTurnsToFinish;
+  static item* FindHammeringTool(recipedata& rpd){
+    int iBaseTurns = rpd.iBaseTurnsToFinish;
     static const int iTotToolTypes=4;
     //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
     //mace is not necessarily spiked despite the gfx
     static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER,MACE};
     float fIncTurnsStep=0.25;
-    itemvector vi = vitInv(h);
+    itemvector vi = vitInv(rpd);
     item* it = NULL;
     for(int j=0;j<iTotToolTypes;j++){DBG2(j,aiTypes[j]);
       it = FindTool(vi, aiTypes[j]);
       if(it){DBG2(it->GetConfig(),it->GetName(DEFINITE).CStr());
         int iAddTurns=iBaseTurns*(j*fIncTurnsStep);
-        iBaseTurnsToFinish = iBaseTurns + iAddTurns;
+        rpd.iBaseTurnsToFinish = iBaseTurns + iAddTurns;
         return it;
       }
     }
@@ -693,7 +722,7 @@ struct recipe{
 //    std::vector<ulong>& rIngIDs = bMain ? rpd.ingMainIDs : rpd.ingSecondaryIDs;
 
     // prepare the filter for ALL items also resetting them first!
-    const itemvector vi = vitInv(rpd.h);
+    const itemvector vi = vitInv(rpd);
     for(int i=0;i<vi.size();i++){
 //      if(!vi[i]->Exists())continue;
 //      if(game::SearchItem(vi[i]->GetID())!=vi[i]) //this will crash if the invalid is outside app memory...
@@ -734,7 +763,7 @@ struct recipe{
       else
         fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)");
 
-      rpd.h->GetStack()->DrawContents(ToUse, rpd.h,
+      rpd.H()->GetStack()->DrawContents(ToUse, rpd.H(),
         fsFullQ, flags, &item::IsValidRecipeIngredient);
       if(ToUse.empty())
         break;
@@ -744,6 +773,7 @@ struct recipe{
         if(iWeakest==-1 || iWeakest > mat->GetStrengthValue()){
           iWeakest = mat->GetStrengthValue();
           iWeakestCfg = mat->GetConfig();
+          rpd.itWeakestIngredient = ToUse[i];
         }
 
         tmpIngredientsIDs.push_back(ToUse[i]->GetID()); DBG1(ToUse[i]->GetID());
@@ -760,7 +790,7 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             matM->SetVolume(lVolM);
 
-            item* lumpR = CreateLumpAtCharStack(matM, rpd.h);
+            item* lumpR = CreateLumpAtCharStack(matM, rpd);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
@@ -804,11 +834,11 @@ struct recipe{
       false);
   }
 
-  static itemvector vitInv(const humanoid* h){
+  static itemvector vitInv(recipedata& rpd){
     itemvector vi;
-    h->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
-    if(h->GetLeftWielded ())vi.push_back(h->GetLeftWielded ());
-    if(h->GetRightWielded())vi.push_back(h->GetRightWielded());
+    rpd.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
+    if(rpd.H()->GetLeftWielded ())vi.push_back(rpd.H()->GetLeftWielded ());
+    if(rpd.H()->GetRightWielded())vi.push_back(rpd.H()->GetRightWielded());
     return vi;
   }
 
@@ -871,7 +901,7 @@ struct recipe{
     return false;
   }
 
-  static item* CreateLumpAtCharStack(material* mat, character* C, bool bWoodenCreateStick=false){
+  static item* CreateLumpAtCharStack(material* mat, recipedata& rpd, bool bWoodenCreateStick=false){
     if(mat==NULL)
       ABORT("NULL lump material");
 
@@ -882,7 +912,7 @@ struct recipe{
     if(dynamic_cast<gas*>(mat)!=NULL)return NULL; //TODO should have a chance to release the gas effect
 
     if(bLiquid){
-      C->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
+      rpd.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
     }else{
       item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
       if(bWoodenCreateStick){
@@ -891,7 +921,7 @@ struct recipe{
         LumpTmp = lump::Spawn(0, NO_MATERIALS);
       }
       LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-      C->GetStack()->AddItem(LumpTmp);
+      rpd.H()->GetStack()->AddItem(LumpTmp);
       ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
       return LumpTmp;
     }
@@ -902,7 +932,7 @@ struct recipe{
   lsquare* lsqrFORGE = NULL;
   bool chkForge(recipedata& rpd,lsquare* lsqr){DBGLN;
     olterrain* ot = lsqr->GetOLTerrain();
-    if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.h)){
+    if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.H())){
       lsqrFORGE = lsqr;
       rpd.v2ForgeLocation = lsqrFORGE->GetPos();
       return true;
@@ -921,9 +951,9 @@ struct recipe{
         int iDir = i%8;
         int iMult = 1 + i/8;
         v2 v2Add = game::GetMoveVector(iDir) * iMult;
-        v2 v2Pos = rpd.h->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
+        v2 v2Pos = rpd.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-          lsquare* lsqr = rpd.h->GetNearLSquare(v2Pos);
+          lsquare* lsqr = rpd.H()->GetNearLSquare(v2Pos);
           if(chkForge(rpd,lsqr))break;
         }
       }
@@ -943,29 +973,38 @@ struct recipe{
 struct srpOLT : public recipe{
  protected:
   int iReqVol=0;
+  int iReqVolSkulls=0;
   int iTurns=0;
   bool bRequiresWhere=false;
+  bool bAllowSimpleStones=false;
+  bool bReqForge=false;
 
   virtual bool spawnCfg(recipedata& rpd){return false;}
 
  public:
-  bool work(recipedata& rpd){
-    if(desc.GetSize()==0)ABORT("Missing recipe description for OLT");
+  bool work(recipedata& rpd){DBGLN;
+    if(desc.IsEmpty())ABORT("Missing recipe description for OLT");
     if(iReqVol==0)ABORT("Recipe vol is 0 for OLT");
     if(iTurns==0)ABORT("Recipe turns is 0 for OLT");
 
-    if(!recipe::work(rpd))
+    DBGLN;
+    if(!recipe::IsTheSelectedOne(rpd))
       return false;
 
-    if(bRequiresWhere){
+    if(bReqForge)
+      if(!recipe::findForge(rpd))
+        return true;
+
+    DBGLN;
+    if(bRequiresWhere){DBGLN;
       if(!recipe::where(rpd))
         return true;
-    }else{
+    }else{DBGLN;
       rpd.lsqrWhere=rpd.lsqrCharPos;
     }
 
     rpd.iBaseTurnsToFinish=iTurns;
-    rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
+    rpd.itTool = FindHammeringTool(rpd);
 
     if(rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.itTool!=NULL){
       rpd.bCanBePlaced=true;
@@ -973,16 +1012,18 @@ struct srpOLT : public recipe{
       festring fsQ("to build ");fsQ<<name;
       int iCfg=-1;
       bool bH=false;
-      if(!bH)bH=choseIngredients<stick>(fsQ,iReqVol, rpd, iCfg);
-      if(!bH)bH=choseIngredients<bone>(fsQ,iReqVol, rpd, iCfg);
-      if(!bH)bH=choseIngredients<stone>(fsQ,iReqVol, rpd, iCfg, true, INGOT, true);
+      if(!bH)
+        bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg);
+      if(!bH && iReqVolSkulls>0)
+        bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg);
+      if(!bH)
+        bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg);
+      if(!bH)
+        bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, true, bAllowSimpleStones?0:INGOT, true);
       if(bH){
         rpd.bHasAllIngredients=bH;
         rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
-//        rpd.otSpawn=
         if(!spawnCfg(rpd))ABORT("Recipe spawn cfg not set %s",desc.CStr());
-        // if(rpd.otSpawn==NULL)ABORT("Recipe spawn is NULL for OLT");
-//        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iReqVol)); //TODO secondary material?
         rpd.otSpawnMatMainCfg=iCfg;
         rpd.otSpawnMatMainVol=iReqVol;
         rpd.bCanStart=true;
@@ -996,22 +1037,16 @@ struct srpDoor : public srpOLT{
   virtual bool spawnCfg(recipedata& rpd){
     rpd.otSpawnType=CTT_DOOR;
     rpd.otSpawnCfg=NONE;
-//  virtual void spawnCfg(){
-//    door* Door = door::Spawn();
-//    Door->SetIsLocked(false);
-//    Door->SetIsOpened(true);
-//    //TODO configure lock type based randomly in one of the keys available on player's inventory
-//    return Door;
     return true;
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("build","a door");
       desc << "You will need a hammer, a frying pan or even a mace.";
     }
 
-    iReqVol=30000;       //TODO this volume should be on the .dat file
+    iReqVol=30000;  //TODO this volume should be on the .dat file TODO breaking a door will only drop a few lumps about 2500cm3 only... makes no sense for metal doors
     iTurns=30;
     return srpOLT::work(rpd);
   }
@@ -1026,7 +1061,7 @@ struct srpChair : public srpOLT{
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("build","a chair");
       desc << "You will need a hammer, a frying pan or even a mace.";
     }
@@ -1044,17 +1079,14 @@ struct srpAnvil : public srpOLT{
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("build","an anvil");
       desc << "Near a forge you can create an anvil using a hammer, a frying pan or even a mace.";
     }
 
     iReqVol=750*3; //when destroyed provides 250 to 750 x3, so lets use the max to avoid spawning extra material volume
     iTurns=15;
-
-    if(!recipe::findForge(rpd))
-      return true;
-
+    bReqForge=true;
     return srpOLT::work(rpd);
   }
 };srpAnvil rpAnvil;
@@ -1066,99 +1098,56 @@ struct srpForge : public srpOLT{
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("build","a forge");
       desc << "You can build a forge using a hammer, a frying pan or even a mace.";
     }
 
     iReqVol=15000;
     iTurns=30;
-
+    bRequiresWhere=true;
     //TODO require fire source like fireball wand or 3 lanterns
-
     return srpOLT::work(rpd);
   }
 };srpForge rpForge;
 struct srpWall2 : public srpOLT{
   virtual bool spawnCfg(recipedata& rpd){
     rpd.otSpawnType=CTT_WALL;
-    rpd.otSpawnCfg=STONE_WALL;
+
+    rpd.otSpawnCfg=BRICK_OLD;
+//    if(dynamic_cast<stone>(game::SearchItem(rpd.ingredientsIDs[0]))!=NULL)
+    if(dynamic_cast<stone*>(rpd.itWeakestIngredient)!=NULL)
+      rpd.otSpawnCfg=STONE_WALL;
+
     return true;
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("construct","a wall");
       desc << "You can construct a wall piling stones, sticks or bones.";
     }
 
-    iReqVol=9000;
+    //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
+    iReqVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
+    iReqVolSkulls=12000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
     iTurns=20;
     bRequiresWhere=true;
-
+    bAllowSimpleStones=true;
     return srpOLT::work(rpd);
   }
 };srpWall2 rpWall2;
 
-//struct srpWall : public recipe{ //TODO can it use srpOLT ?
-//  bool work(recipedata& rpd){
-//    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
-//      init("construct","a wall");
-//      desc << "Pile stones or skulls to create " << name;
-//    }
-//
-//    if(!recipe::work(rpd))
-//      return false;
-//
-//    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
-//    if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
-//      rpd.lsqrWhere = rpd.h->GetNearLSquare(rpd.h->GetPos() + game::GetMoveVector(Dir));
-//
-//    if(rpd.lsqrWhere!=NULL && rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.lsqrWhere->GetCharacter()==NULL){
-//      rpd.bCanBePlaced=true;
-//
-//      festring fsQ("to build ");fsQ<<name;
-//      int iCfg=-1;
-//      int iVol=-1;
-//      bool bH=false;
-//      if(!bH){
-//        iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
-//        bH=choseIngredients<stone>(fsQ,iVol, rpd, iCfg);
-//      }
-//      if(!bH){
-//        iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
-//        bH=choseIngredients<skull>(fsQ,iVol, rpd, iCfg);
-//      }
-//      //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-//      if(bH){
-//        rpd.bHasAllIngredients=true;
-//        rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
-//        rpd.otSpawnType=CTT_WALL;
-//        rpd.otSpawnCfg=STONE_WALL;
-//        rpd.otSpawnMatMainCfg=iCfg;
-//        rpd.otSpawnMatMainVol=iVol;
-////        rpd.otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
-////        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
-//        rpd.iBaseTurnsToFinish=20;
-//
-//        rpd.bCanStart=true;
-//      }
-//    }
-//
-//    return true;
-//  }
-//};srpWall rpWall;
-
 struct srpMelt : public recipe{
   bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("melt","an ingot");
       desc << "Near a forge, meltable lumps can be used to prepare ingots.";
     }
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-    if(!recipe::work(rpd))
+    if(!recipe::IsTheSelectedOne(rpd))
       return false;
 
     if(!recipe::findForge(rpd))
@@ -1166,7 +1155,7 @@ struct srpMelt : public recipe{
 
     int iWeakestCfgDummy;
     choseIngredients<lump>(
-      festring("First lump's chosen material will be mixed with further ones, hit ESC to accept."),
+      festring("First lump's chosen material will be mixed with further ones of same material only, hit ESC to accept."),
       1000000, //just any huge volume as "limit"
       rpd, iWeakestCfgDummy, true,
       0, false, true, false, true);
@@ -1239,7 +1228,7 @@ struct srpMelt : public recipe{
          * IMPORTANT!!!
          * the duplicator will vanish with the item ID that is being duplicated
          */
-        item* itLumpR = LumpMeltable->DuplicateToStack(rpd.h->GetStack());
+        item* itLumpR = LumpMeltable->DuplicateToStack(rpd.H()->GetStack());
 
         itLumpR->GetMainMaterial()->SetVolume(lVolRemaining);
       }
@@ -1265,13 +1254,13 @@ struct srpMelt : public recipe{
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("dismantle","some materials as lumps and sticks");
       desc << "Near a forge, any item can be dismantled to recover it's materials.";
     }
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-    if(!recipe::work(rpd))return false;
+    if(!recipe::IsTheSelectedOne(rpd))return false;
 
     if(!recipe::findForge(rpd))
       return true;
@@ -1319,13 +1308,13 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
 
     { // main material ALWAYS exist
-      item* LumpM = CreateLumpAtCharStack(matM,rpd.h,canBeAWoodenStick(itToUse,matM));
+      item* LumpM = CreateLumpAtCharStack(matM,rpd,canBeAWoodenStick(itToUse,matM));
       if(IsMeltable(LumpM->GetMainMaterial()))
         LumpMeltable = LumpM;
     }
 
     if(matS!=NULL){
-      item* LumpS = CreateLumpAtCharStack(matS,rpd.h,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
+      item* LumpS = CreateLumpAtCharStack(matS,rpd,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
       if(LumpS!=NULL)
         if(IsMeltable(LumpS->GetMainMaterial()) )
           if(LumpMeltable==NULL)
@@ -1344,7 +1333,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
 
     if(bJustLumpfyTheIngot){
-      lumpMix(vitInv(rpd.h),LumpMeltable,rpd.bSpendCurrentTurn);
+      lumpMix(vitInv(rpd),LumpMeltable,rpd.bSpendCurrentTurn);
       rpd.bAlreadyExplained=true;
       return true;
     }
@@ -1355,12 +1344,12 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
 struct srpSplitLump : public recipe{
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){
+    if(desc.IsEmpty()){
       init("split","some lumps");
       desc << "Split one lump to be easier to work with.";
     }
 
-    if(!recipe::work(rpd))
+    if(!recipe::IsTheSelectedOne(rpd))
       return false;
 
     if(choseOneIngredient<lump>(rpd)){
@@ -1381,7 +1370,7 @@ struct srpSplitLump : public recipe{
 
       Lump->GetMainMaterial()->SetVolume(volPart);
       for(int i=0;i<(div-1);i++)
-        CreateLumpAtCharStack(Lump->GetMainMaterial(), rpd.h);
+        CreateLumpAtCharStack(Lump->GetMainMaterial(), rpd);
 
       if(volRest>0)
         Lump->GetMainMaterial()->SetVolume(volPart+volRest);
@@ -1394,13 +1383,13 @@ struct srpSplitLump : public recipe{
 };srpSplitLump rpSplitLump;
 
 struct srpForgeItem : public recipe{
-  bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+  bool work(recipedata& rpd){DBGLN;
+    if(desc.IsEmpty()){DBGLN;
       init("forge","an item");
       desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
-    }
+    }DBGLN;
 
-    if(!recipe::work(rpd))
+    if(!recipe::IsTheSelectedOne(rpd))
       return false;
 
     //////////////// let user type the item name
@@ -1490,7 +1479,7 @@ struct srpForgeItem : public recipe{
      * so preventing it would still not fix how metal can works...
      */
 
-    bool bIsWeapon = itSpawn->IsWeapon(rpd.h);
+    bool bIsWeapon = itSpawn->IsWeapon(rpd.H());
     bool bReqS = bIsWeapon;
     bool bAllowS = true;
 //    if(mc)bAllowS=false;
@@ -1557,11 +1546,11 @@ struct srpForgeItem : public recipe{
       lsquare* lsqrAnvil = NULL;
       for(int iDir=0;iDir<8;iDir++){
         v2 v2Add = game::GetMoveVector(iDir);
-        v2 v2Pos = rpd.h->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
+        v2 v2Pos = rpd.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-          lsquare* lsqr = rpd.h->GetNearLSquare(v2Pos);DBG1(lsqr);
+          lsquare* lsqr = rpd.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
           olterrain* ot = lsqr->GetOLTerrain();
-          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.h)){
+          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.H())){
             lsqrAnvil = lsqr;
             rpd.v2AnvilLocation=lsqrAnvil->GetPos();
             break;
@@ -1579,7 +1568,7 @@ struct srpForgeItem : public recipe{
     //TODO glass should require proper tools (don't know what but sure not a hammer)
     //TODO bone should require a dagger
     //TODO 2 tools, one for meltables and the other for glass or bone
-    rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);DBG1(rpd.iBaseTurnsToFinish);
+    rpd.itTool = FindHammeringTool(rpd);DBG1(rpd.iBaseTurnsToFinish);
     if(rpd.itTool==NULL){
       craftcore::SafelySendToHell(itSpawn);
       return true;
@@ -1623,18 +1612,18 @@ struct srpFluids : public recipe{
 
   virtual bool work(recipedata& rpd){
     //extract fluids (not blood as it can be used as nutrition right? *eww* :P)
-    if(!recipe::work(rpd))
+    if(!recipe::IsTheSelectedOne(rpd))
       return false;
 
     itemvector vi;
 
     ///////////// tool ////////////////
-    rpd.itTool = FindTool(vitInv(rpd.h), DAGGER);
+    rpd.itTool = FindTool(vitInv(rpd), DAGGER);
     if(rpd.itTool==NULL)
       return true;
 
     item* itCorpse=NULL;
-    vi = vitInv(rpd.h);
+    vi = vitInv(rpd);
     for(int i=0;i<vi.size();i++){
       corpse* Corpse = dynamic_cast<corpse*>(vi[i]);
       if(Corpse!=NULL){
@@ -1662,7 +1651,7 @@ struct srpFluids : public recipe{
     long currentVolume=0;
 
     // look for compatible bottle first
-    vi = vitInv(rpd.h);
+    vi = vitInv(rpd);
     for(int i=0;i<vi.size();i++){DBGLN;
       potion* pot = dynamic_cast<potion*>(vi[i]);
       if(pot!=NULL){DBGLN;
@@ -1691,7 +1680,7 @@ struct srpFluids : public recipe{
 
     // look for empty bottle
     if(itBottle==NULL){DBGLN;
-      vi = vitInv(rpd.h);
+      vi = vitInv(rpd);
       for(int i=0;i<vi.size();i++){
         potion* pot = dynamic_cast<potion*>(vi[i]);
         if(pot!=NULL){DBGLN;
@@ -1750,7 +1739,7 @@ struct srpPoison : public srpFluids{
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("extract","some poison");
       desc << "Use a " << fsTool << " to " << action << " " << name << " from "
         << fsCorpse << " into a " << fsBottle <<  ".";
@@ -1769,7 +1758,7 @@ struct srpAcid : public srpFluids{
   }
 
   bool work(recipedata& rpd){
-    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+    if(desc.IsEmpty()){ //TODO automate the sync of req ingredients description
       init("extract","some acidous fluid");
       desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
         << fsCorpse << " into a " << fsBottle <<  ".";
@@ -1784,8 +1773,10 @@ struct srpAcid : public srpFluids{
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrp;
 void addRecipe(recipe* prp){
-  static int iEntryIndex=0;
-  craftRecipes.AddEntry(prp->name+" - "+prp->desc, LIGHT_GRAY, 20, prp->iListIndex=iEntryIndex++, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  prp->iListIndex=vrp.size();
+  if(prp->name.IsEmpty())
+    ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
+  craftRecipes.AddEntry(prp->name+" - "+prp->desc, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
   vrp.push_back(prp);
 }
 void addMissingMsg(festring& where, cfestring& what){
@@ -1843,7 +1834,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //  if(h->GetRightWielded())vitInv.push_back(h->GetRightWielded());
 
   recipedata rpd(h);
-  rpd.lsqrCharPos = game::GetCurrentLevel()->GetLSquare(rpd.h->GetPos());
+  rpd.lsqrCharPos = game::GetCurrentLevel()->GetLSquare(rpd.H()->GetPos());
 
   //TODO check requirements and display recipes
   int iEntryIndex=0;
@@ -1864,7 +1855,8 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   bool bInitRecipes = vrp.size()==0;
   recipe* prp=NULL;
   #define RP(rp) \
-    if(rp.work(rpd))prp=&rp; \
+    if(prp==NULL && rp.work(rpd))prp=&rp; \
+    DBG3(prp,&rp,rp.desc.CStr()); \
     if(bInitRecipes)addRecipe((recipe*)&rp);
   // these are kind of grouped and not ordered like a-z
   RP(rpChair);
@@ -1893,36 +1885,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
     if(rpd.itTool!=NULL)
       ADD_MESSAGE("Let me see.. I will use %s as tool.",rpd.itTool->GetName(INDEFINITE).CStr());
 
-//    object* pChk=NULL;
-//    for(int i=0;i<2;i++){
-//      bool bAbort=false;
-//
-//      switch(i){
-//      case 0:
-//        if(rpd.otSpawn!=NULL){
-//          // anything to check here?
-//        }
-//        break;
-//      case 1:
-//        if(rpd.itSpawn!=NULL){
-//          if(!craftcore::canBeCrafted(rpd.itSpawn))
-//            bAbort=true;
-//        }
-//        break;
-//      }
-//
-//      if(bAbort){
-//        ABORT(
-//          "Dear developer, for the sake of balance and challenge do not create recipes for:\n"
-//          "- Quest items.\n"
-//          "- Magical items as rings, amulets, wands, scrolls, horns etc.\n"
-//          "Crafting any of this would be unbalanced as hell and unrealistic given your characters upbringing.\n"
-//          "You're after all a slave, with no knowledge of magic, and crafting magical items should be beyond most craftsmen.\n"
-//        );
-//      }
-//    }
-
-    if(rpd.otSpawnCfg>0 || rpd.itSpawnCfg>0) {
+    if(rpd.otSpawnType!=CTT_NONE || rpd.itSpawnType!=CIT_NONE) {
       if(rpd.itTool!=NULL && rpd.itTool->IsBroken())
         iCraftTimeMult++;
 
@@ -1945,54 +1908,12 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
       rpd.iBaseTurnsToFinish /=
         ( Char->GetAttribute(WISDOM   )/10.0 +
           Char->GetAttribute(DEXTERITY)/10.0   ) / 2.0;
+      craftcore::CraftSkill(Char);
       if(rpd.iBaseTurnsToFinish==0)
         rpd.iBaseTurnsToFinish=1;
 
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrWhere!=NULL ? rpd.lsqrWhere->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
-
-//      if(rpd.itSpawn!=NULL)
-//        ABORT("crafting item shall only be configured, not spawned here.");
-
-//      if(rpd.itSpawn!=NULL){
-//        /**
-//         * this is important because during crafting::handle it may item::Be on this item and it may require
-//         * checking the item's slot that would be NULL w/o this line ex.: during a bone item spoilage
-//         */
-////        rpd.itSpawn->GetMainMaterial()->GetAlpha();
-//        Char->GetStack()->AddItem(rpd.itSpawn);
-//        if(rpd.itSpawn->GetSlot()==NULL)
-//          ABORT("tmp crafting item should be on 'a slot' for consistency with code everywhere.");
-//
-//        rpd.itSpawnID=rpd.itSpawn->GetID();
-//
-//        rpd.itSpawnCfg = rpd.itSpawn->GetConfig();
-//        rpd.itSpawnMatMainCfg = rpd.itSpawn->GetMainMaterial()->GetConfig();
-//        rpd.itSpawnMatMainVol = rpd.itSpawn->GetMainMaterial()->GetVolume();
-//        if(rpd.itSpawn->GetSecondaryMaterial()!=NULL){
-//          rpd.itSpawnMatSecCfg = rpd.itSpawn->GetSecondaryMaterial()->GetConfig();
-//          rpd.itSpawnMatSecVol = rpd.itSpawn->GetSecondaryMaterial()->GetVolume();
-//        }
-//
-////        if(rpd.IsCanBeSuspended())//TODO should not depend on suspendability, should ALWAYS only spawn things when finished!!!
-//          rpd.SendSpawnItemToHell();
-//      }
-
-//      if(rpd.otSpawn!=NULL)
-//        ABORT("crafting terrain shall only be configured, not spawned here.");
-
-//      if(rpd.otSpawn!=NULL){
-//        rpd.otSpawnCfg = rpd.otSpawn->GetConfig();
-//        rpd.otSpawnMatMainCfg = rpd.otSpawn->GetMainMaterial()->GetConfig();
-//        rpd.otSpawnMatMainVol = rpd.otSpawn->GetMainMaterial()->GetVolume();
-//        if(rpd.otSpawn->GetSecondaryMaterial()!=NULL){
-//          rpd.otSpawnMatSecCfg = rpd.otSpawn->GetSecondaryMaterial()->GetConfig();
-//          rpd.otSpawnMatSecVol = rpd.otSpawn->GetSecondaryMaterial()->GetVolume();
-//        }
-//
-////        if(rpd.IsCanBeSuspended())//TODO should not depend on suspendability, should ALWAYS only spawn things when finished!!!
-//          rpd.SendTerrainToHell();
-//      }
 
       rpd.iAddDexterity=5; //TODO crafting difficult things should give more dexterity (wisdom too?)
 
@@ -2002,13 +1923,13 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 
       if(rpd.lsqrWhere!=NULL)rpd.v2BuildWhere=rpd.lsqrWhere->GetPos();
 
-//      rpd.ClearRefs(); //this is mainly to help on granting consistency. As in case of save/load w/o exiting the game app it will be required, at least during development this will help seeing were such requirements are missing.
+      rpd.ClearRefs(); //pointers must be revalidated on the action handler
 
       Char->SwitchToCraft(rpd); // everything must be set before this!!!
 
       ADD_MESSAGE("Let me work on %s now.",prp->name.CStr());
     }else{
-      ABORT("crafting nothing?");
+      ABORT("requested to craft nothing? %s",rpd.dbgInfo().CStr());
     }
 
     return true;
