@@ -607,6 +607,20 @@ struct recipe{
 
   virtual ~recipe(){}
 
+  static bool where(recipedata& rpd){
+    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
+    if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
+      rpd.lsqrWhere = rpd.h->GetNearLSquare(rpd.h->GetPos() + game::GetMoveVector(Dir));
+
+    if(rpd.lsqrWhere!=NULL && rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.lsqrWhere->GetCharacter()==NULL){
+      rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
+      rpd.bCanBePlaced=true;
+      return true;
+    }
+
+    return false;
+  }
+
   static int calcTurns(material* mat,float fMult=1.0){
     /**
      * min is gold: str 55 and spends 5 turns each 1000cm3.
@@ -930,6 +944,7 @@ struct srpOLT : public recipe{
  protected:
   int iReqVol=0;
   int iTurns=0;
+  bool bRequiresWhere=false;
 
   virtual bool spawnCfg(recipedata& rpd){return false;}
 
@@ -942,10 +957,16 @@ struct srpOLT : public recipe{
     if(!recipe::work(rpd))
       return false;
 
+    if(bRequiresWhere){
+      if(!recipe::where(rpd))
+        return true;
+    }else{
+      rpd.lsqrWhere=rpd.lsqrCharPos;
+    }
+
     rpd.iBaseTurnsToFinish=iTurns;
     rpd.itTool = FindHammeringTool(rpd.h,rpd.iBaseTurnsToFinish);
 
-    rpd.lsqrWhere=rpd.lsqrCharPos;
     if(rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.itTool!=NULL){
       rpd.bCanBePlaced=true;
 
@@ -1037,55 +1058,96 @@ struct srpAnvil : public srpOLT{
     return srpOLT::work(rpd);
   }
 };srpAnvil rpAnvil;
+struct srpForge : public srpOLT{
+  virtual bool spawnCfg(recipedata& rpd){
+    rpd.otSpawnType=CTT_FURNITURE;
+    rpd.otSpawnCfg=FORGE;
+    return true;
+  }
 
-struct srpWall : public recipe{ //TODO can it use srpOLT ?
+  bool work(recipedata& rpd){
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("build","a forge");
+      desc << "You can build a forge using a hammer, a frying pan or even a mace.";
+    }
+
+    iReqVol=15000;
+    iTurns=30;
+
+    //TODO require fire source like fireball wand or 3 lanterns
+
+    return srpOLT::work(rpd);
+  }
+};srpForge rpForge;
+struct srpWall2 : public srpOLT{
+  virtual bool spawnCfg(recipedata& rpd){
+    rpd.otSpawnType=CTT_WALL;
+    rpd.otSpawnCfg=STONE_WALL;
+    return true;
+  }
+
   bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("construct","a wall");
-      desc << "Pile stones or skulls to create " << name;
+      desc << "You can construct a wall piling stones, sticks or bones.";
     }
 
-    if(!recipe::work(rpd))
-      return false;
+    iReqVol=9000;
+    iTurns=20;
+    bRequiresWhere=true;
 
-    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
-    if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
-      rpd.lsqrWhere = rpd.h->GetNearLSquare(rpd.h->GetPos() + game::GetMoveVector(Dir));
-
-    if(rpd.lsqrWhere!=NULL && rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.lsqrWhere->GetCharacter()==NULL){
-      rpd.bCanBePlaced=true;
-
-      festring fsQ("to build ");fsQ<<name;
-      int iCfg=-1;
-      int iVol=-1;
-      bool bH=false;
-      if(!bH){
-        iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
-        bH=choseIngredients<stone>(fsQ,iVol, rpd, iCfg);
-      }
-      if(!bH){
-        iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
-        bH=choseIngredients<skull>(fsQ,iVol, rpd, iCfg);
-      }
-      //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
-      if(bH){
-        rpd.bHasAllIngredients=true;
-        rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
-        rpd.otSpawnType=CTT_WALL;
-        rpd.otSpawnCfg=STONE_WALL;
-        rpd.otSpawnMatMainCfg=iCfg;
-        rpd.otSpawnMatMainVol=iVol;
-//        rpd.otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
-//        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
-        rpd.iBaseTurnsToFinish=20;
-
-        rpd.bCanStart=true;
-      }
-    }
-
-    return true;
+    return srpOLT::work(rpd);
   }
-};srpWall rpWall;
+};srpWall2 rpWall2;
+
+//struct srpWall : public recipe{ //TODO can it use srpOLT ?
+//  bool work(recipedata& rpd){
+//    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+//      init("construct","a wall");
+//      desc << "Pile stones or skulls to create " << name;
+//    }
+//
+//    if(!recipe::work(rpd))
+//      return false;
+//
+//    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
+//    if(Dir != DIR_ERROR && rpd.h->GetArea()->IsValidPos(rpd.h->GetPos() + game::GetMoveVector(Dir)))
+//      rpd.lsqrWhere = rpd.h->GetNearLSquare(rpd.h->GetPos() + game::GetMoveVector(Dir));
+//
+//    if(rpd.lsqrWhere!=NULL && rpd.lsqrWhere->GetOLTerrain()==NULL && rpd.lsqrWhere->GetCharacter()==NULL){
+//      rpd.bCanBePlaced=true;
+//
+//      festring fsQ("to build ");fsQ<<name;
+//      int iCfg=-1;
+//      int iVol=-1;
+//      bool bH=false;
+//      if(!bH){
+//        iVol=9000; //TODO is this too little? a broken wall drops 3 rocks that is about 1000 each, so 3 walls to build one is ok?
+//        bH=choseIngredients<stone>(fsQ,iVol, rpd, iCfg);
+//      }
+//      if(!bH){
+//        iVol=10000; //TODO is this too little? necromancers can spawn skeletons making it easy to get skulls, but the broken bone wall will drop bones and not skulls...
+//        bH=choseIngredients<skull>(fsQ,iVol, rpd, iCfg);
+//      }
+//      //TODO this doesnt look good. anyway this volume should be on the .dat file as wall/earthWall attribute...
+//      if(bH){
+//        rpd.bHasAllIngredients=true;
+//        rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
+//        rpd.otSpawnType=CTT_WALL;
+//        rpd.otSpawnCfg=STONE_WALL;
+//        rpd.otSpawnMatMainCfg=iCfg;
+//        rpd.otSpawnMatMainVol=iVol;
+////        rpd.otSpawn=wall::Spawn(STONE_WALL);//earth::Spawn();
+////        rpd.otSpawn->SetMainMaterial(material::MakeMaterial(iCfg,iVol));
+//        rpd.iBaseTurnsToFinish=20;
+//
+//        rpd.bCanStart=true;
+//      }
+//    }
+//
+//    return true;
+//  }
+//};srpWall rpWall;
 
 struct srpMelt : public recipe{
   bool work(recipedata& rpd){
@@ -1807,7 +1869,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   // these are kind of grouped and not ordered like a-z
   RP(rpChair);
   RP(rpDoor);
-  RP(rpWall);
+  RP(rpWall2);
   RP(rpPoison);
   RP(rpAcid);
   RP(rpDismantle);
@@ -1815,6 +1877,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   RP(rpMelt);
   RP(rpForgeItem);
   RP(rpAnvil);
+  RP(rpForge);
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
 
