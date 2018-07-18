@@ -49,9 +49,12 @@ struct v2;
 struct recipework{
 };
 
-class recipedata { //TODO split what is savable from what is only work data prior to begin crafting, at recipework above
+class recipedata {
+  //TODO use std::bitset<32> instead of booleans?
+  //TODO split what is savable from what is only work data prior to begin crafting, at recipework above
   private:
     bool bCanBeSuspended;
+    ulong lRandomInitKey;
 
   public:
     bool IsCanBeSuspended(){return bCanBeSuspended;}
@@ -116,8 +119,8 @@ class recipedata { //TODO split what is savable from what is only work data prio
 
   public:
     recipedata(humanoid* H);
-    cfestring dbgInfo();
-    cfestring id();
+    cfestring dbgInfo() const;
+    cfestring id() const;
 //    void SendSpawnItemToHell();
 //    void SendTerrainToHell();
     void Save(outputfile& SaveFile) const;
@@ -126,6 +129,7 @@ class recipedata { //TODO split what is savable from what is only work data prio
     cfestring SpawnItem();
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
     cfestring SpawnTerrain();
+    void integrityCheck() const;
 //    void ClearRefs();
 };
 class craftcore {

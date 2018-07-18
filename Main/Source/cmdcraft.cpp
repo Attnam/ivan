@@ -84,6 +84,7 @@ void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
       ABORT("action can't be suspended %s",prpd->dbgInfo().CStr());
     (*prpdSuspended)=(*prpd); //copy
 //    prpdSuspended->ClearRefs();
+    (*prpdSuspended).integrityCheck();
     return;
   }
 
@@ -132,6 +133,7 @@ void craftcore::ResumeSuspendedTo(character* Char){
     return;
   }
 
+  prpdSuspended->integrityCheck();
   if(prpdSuspended->v2PlayerCraftingAt==Char->GetPos()){
     Char->SwitchToCraft(*prpdSuspended);
     craftcore::SetSuspended(NULL); //was resumed so discard it
@@ -147,6 +149,8 @@ void craftcore::ResumeSuspendedTo(character* Char){
 
 void recipedata::Save(outputfile& SaveFile) const
 {
+  integrityCheck();
+
   SaveFile //commented ones are just to keep the clarity/organization
     << bCanBeSuspended
 
@@ -257,9 +261,10 @@ void recipedata::Load(inputfile& SaveFile)
 
 //  if(otSpawnType!=CTT_NONE)
 //    SaveFile >> otSpawn;
+  integrityCheck();
 }
 
-cfestring recipedata::id()
+cfestring recipedata::id() const
 {
   /**
    * this is a simple way to detect if the recipedata is the same,
@@ -269,40 +274,62 @@ cfestring recipedata::id()
 
   festring fs;
 
-  #define RPDINFO(o) if(o!=NULL)fs<<o->GetName(DEFINITE);fs<<";";
+  int i=0;
 
-  fs<<bCanBeSuspended<<";";
+  fs<<(i++)<<":"<<bCanBeSuspended<<";";
 
-  fs<<itToolID<<";";
+  #define RPDINFO(o) if(o!=NULL)fs<<(i++)<<":"<<o->GetID()<<","<<o->GetName(DEFINITE);fs<<";";
+  fs<<(i++)<<":"<<itToolID<<";";
   RPDINFO(itTool);
 
-  fs<<itSpawnTot<<";";
-  fs<<itSpawnCfg<<";";
-  fs<<itSpawnMatMainCfg<<";";
-  fs<<itSpawnMatMainVol<<";";
-  fs<<itSpawnMatSecCfg<<";";
-  fs<<itSpawnMatSecVol<<";";
+  fs<<(i++)<<":"<<itSpawnTot<<";";
+  fs<<(i++)<<":"<<itSpawnCfg<<";";
+  fs<<(i++)<<":"<<itSpawnMatMainCfg<<";";
+  fs<<(i++)<<":"<<itSpawnMatMainVol<<";";
+  fs<<(i++)<<":"<<itSpawnMatSecCfg<<";";
+  fs<<(i++)<<":"<<itSpawnMatSecVol<<";";
 //  RPDINFO(itSpawn);
 
 //  RPDINFO(otSpawn);
-  fs<<otSpawnCfg<<";";
-  fs<<otSpawnMatMainCfg<<";";
-  fs<<otSpawnMatMainVol<<";";
-  fs<<otSpawnMatSecCfg<<";";
-  fs<<otSpawnMatSecVol<<";";
+  fs<<(i++)<<":"<<otSpawnCfg<<";";
+  fs<<(i++)<<":"<<otSpawnMatMainCfg<<";";
+  fs<<(i++)<<":"<<otSpawnMatMainVol<<";";
+  fs<<(i++)<<":"<<otSpawnMatSecCfg<<";";
+  fs<<(i++)<<":"<<otSpawnMatSecVol<<";";
+
+  fs<<(i++)<<":"<<v2AnvilLocation.X<<","<<v2AnvilLocation.Y<<";";
+  fs<<(i++)<<":"<<v2BuildWhere.X<<","<<v2BuildWhere.Y<<";";
+  fs<<(i++)<<":"<<v2ForgeLocation.X<<","<<v2ForgeLocation.Y<<";";
+  fs<<(i++)<<":"<<v2PlaceAt.X<<","<<v2PlaceAt.Y<<";";
+  fs<<(i++)<<":"<<v2PlayerCraftingAt.X<<","<<v2PlayerCraftingAt.Y<<";";
 
   return fs;
 }
 
-cfestring recipedata::dbgInfo()
+cfestring recipedata::dbgInfo() const
 {
   festring fs;
   fs << id();
   return fs;
 }
 
+#define RPD_RANDOM_INIT_KEY 287463298476233489UL
+
+void recipedata::integrityCheck() const
+{
+  if(
+      h!=Actor || //corrupted or not init
+      h==NULL || //invalid
+      lRandomInitKey!=RPD_RANDOM_INIT_KEY || //corrupted or not init
+      false
+  ){
+    ABORT("recipedata corrupted, not initialized or invalid");// it will not be possible to show info, would crash on it... , dbgInfo().CStr());
+  }
+}
+
 recipedata::recipedata(humanoid* H)
 {
+  lRandomInitKey = RPD_RANDOM_INIT_KEY;
 //  rpw = new recipework;
 
   bCanBeSuspended=false;
@@ -360,6 +387,7 @@ recipedata::recipedata(humanoid* H)
 
 void recipedata::CopySpawnItemCfgFrom(item* itCfg)
 {
+  integrityCheck();
   if(itCfg==NULL)
     ABORT("NULL itCfg");
 
@@ -373,13 +401,11 @@ void recipedata::CopySpawnItemCfgFrom(item* itCfg)
 }
 
 cfestring recipedata::SpawnItem(){
-  item* itSpawn = NULL;
-//  if(itSpawn!=NULL)
-//    ABORT("craft: when spawning item, it should not be already(still) spawned.");
+  integrityCheck();
 
-//  long cfg = itSpawnCfg;
-//  if(bSpawnBroken)cfg|=BROKEN;
+  item* itSpawn = NULL;
   material* matS = NULL;
+  bool bAllowBreak=false;
   switch(itSpawnType){
   case CIT_POTION:
     /**
@@ -395,6 +421,7 @@ cfestring recipedata::SpawnItem(){
     break;
   case CIT_PROTOTYPE:
     itSpawn = protosystem::CreateItemToCraft(fsItemSpawnSearchPrototype);
+    bAllowBreak=true;
     break;
   case CIT_STONE:
     itSpawn = stone::Spawn(itSpawnCfg, NO_MATERIALS);
@@ -427,10 +454,25 @@ cfestring recipedata::SpawnItem(){
       itSpawn->SetSecondaryMaterial(matS);
   }
 
-  if(bSpawnBroken)
-    itSpawn->Break(NULL);
-
   itSpawn->MoveTo(h->GetStack());
+
+  if(bAllowBreak && bSpawnBroken && !itSpawn->IsBroken()){ //can only break after placed somewhere like on player's inv
+    /**
+     * IMPORTANT!!!
+     *
+     * breaking it with
+     *   itSpawn->Break(NULL);
+     * on the same turn it was spawned will create inconsistent inventory,
+     * The last item will point to invalid memory and may segfault anywhere from next turn on,
+     * or cause unpredictable results,
+     * so do not use it!
+     *
+     * This below was taken from Break() and seems safe.
+     * TODO create a method there like SetSelfAsBreak() to re-use the code to grant they will be in sync
+     */
+    itSpawn->SetConfig(itSpawnCfg | BROKEN);
+    itSpawn->SetSize(itSpawn->GetSize() >> 1);
+  }
 
   festring fsCreated;
   if(itSpawnTot > 1){DBGLN;
@@ -452,6 +494,7 @@ cfestring recipedata::SpawnItem(){
 }
 
 void recipedata::CopySpawnTerrainCfgFrom(olterrain* otCfg){
+  integrityCheck();
   if(otCfg==NULL)
     ABORT("NULL otCfg");
 
@@ -465,6 +508,8 @@ void recipedata::CopySpawnTerrainCfgFrom(olterrain* otCfg){
 }
 
 cfestring recipedata::SpawnTerrain(){
+  integrityCheck();
+
   olterrain* otSpawn = NULL;
 
   switch(otSpawnType){
@@ -636,6 +681,9 @@ struct recipe{
     // prepare the filter for ALL items also resetting them first!
     const itemvector vi = vitInv(rpd.h);
     for(int i=0;i<vi.size();i++){
+//      if(!vi[i]->Exists())continue;
+//      if(game::SearchItem(vi[i]->GetID())!=vi[i]) //this will crash if the invalid is outside app memory...
+//        ABORT("item's list contains invalid pointer %d %d",vi[i]->GetID(),vi[i]); //should just continue instead? but may leave inconsistent data.
       vi[i]->SetValidRecipeIngredient(false);
       if(dynamic_cast<T*>(vi[i])!=NULL){
         if(vi[i]->IsBurning())continue;
@@ -744,7 +792,7 @@ struct recipe{
 
   static itemvector vitInv(const humanoid* h){
     itemvector vi;
-    h->GetStack()->FillItemVector(vi);
+    h->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
     if(h->GetLeftWielded ())vi.push_back(h->GetLeftWielded ());
     if(h->GetRightWielded())vi.push_back(h->GetRightWielded());
     return vi;
@@ -837,11 +885,7 @@ struct recipe{
     return NULL;
   }
 
-};
-
-struct srpUseForge : public recipe{ //TODO how to prevent this intermediary recipe from being instantiated w/o being extended?
   lsquare* lsqrFORGE = NULL;
-
   bool chkForge(recipedata& rpd,lsquare* lsqr){DBGLN;
     olterrain* ot = lsqr->GetOLTerrain();
     if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.h)){
@@ -851,7 +895,6 @@ struct srpUseForge : public recipe{ //TODO how to prevent this intermediary reci
     }
     return false;
   }
-
   bool findForge(recipedata& rpd,bool bReqOnlyVisible=false){
     if(bReqOnlyVisible){DBGLN;
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
@@ -972,6 +1015,28 @@ struct srpChair : public srpOLT{
     return srpOLT::work(rpd);
   }
 };srpChair rpChair;
+struct srpAnvil : public srpOLT{
+  virtual bool spawnCfg(recipedata& rpd){
+    rpd.otSpawnType=CTT_FURNITURE;
+    rpd.otSpawnCfg=ANVIL;
+    return true;
+  }
+
+  bool work(recipedata& rpd){
+    if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
+      init("build","an anvil");
+      desc << "Near a forge you can create an anvil using a hammer, a frying pan or even a mace.";
+    }
+
+    iReqVol=750*3; //when destroyed provides 250 to 750 x3, so lets use the max to avoid spawning extra material volume
+    iTurns=15;
+
+    if(!recipe::findForge(rpd))
+      return true;
+
+    return srpOLT::work(rpd);
+  }
+};srpAnvil rpAnvil;
 
 struct srpWall : public recipe{ //TODO can it use srpOLT ?
   bool work(recipedata& rpd){
@@ -1022,7 +1087,7 @@ struct srpWall : public recipe{ //TODO can it use srpOLT ?
   }
 };srpWall rpWall;
 
-struct srpMelt : public srpUseForge{
+struct srpMelt : public recipe{
   bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
@@ -1031,10 +1096,10 @@ struct srpMelt : public srpUseForge{
     }
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-    if(!srpUseForge::work(rpd))
+    if(!recipe::work(rpd))
       return false;
 
-    if(!srpUseForge::findForge(rpd))
+    if(!recipe::findForge(rpd))
       return true;
 
     int iWeakestCfgDummy;
@@ -1076,7 +1141,7 @@ struct srpMelt : public srpUseForge{
 //      LumpAdd->SendToHell();
     }
 
-    rpd.iBaseTurnsToFinish = calcTurns(LumpMeltable->GetMainMaterial(),5); DBG1(rpd.iBaseTurnsToFinish);
+    rpd.iBaseTurnsToFinish = calcTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
 
     rpd.bHasAllIngredients=true;
 
@@ -1089,8 +1154,8 @@ struct srpMelt : public srpUseForge{
      * Smaller ingots are easier to manage, less user interaction as they fit better.
      * BUT it may generate a HUGE LOT of tiny ingots and slow down the game when dropping/picking up :(
      */
-    static long iIngotVol = 250;
-    long iIngotVolTmp = game::NumberQuestion(festring("What volume shall the ingots have? [min 25cm3, last/default ")+iIngotVol+"cm3]",WHITE,true);
+    static long iIngotVol = 250; //TODO savegame this
+    long iIngotVolTmp = game::NumberQuestion(festring("What volume shall the ingots have? [min 25cm3, ENTER/ESC accepts last (default) ")+iIngotVol+"cm3]",WHITE,true); //TODO how to let ESC cancel it?
     if(iIngotVolTmp>0){
       if(iIngotVolTmp<25)
         iIngotVolTmp=25;
@@ -1135,7 +1200,7 @@ struct srpMelt : public srpUseForge{
   }
 };srpMelt rpMelt;
 
-struct srpDismantle : public srpUseForge{ //TODO this is instantaneous, should take time?
+struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
@@ -1144,9 +1209,9 @@ struct srpDismantle : public srpUseForge{ //TODO this is instantaneous, should t
     }
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-    if(!srpUseForge::work(rpd))return false;
+    if(!recipe::work(rpd))return false;
 
-    if(!srpUseForge::findForge(rpd))
+    if(!recipe::findForge(rpd))
       return true;
 
     ///////////////////// chose item to melt/smash
@@ -1266,14 +1331,14 @@ struct srpSplitLump : public recipe{
   }
 };srpSplitLump rpSplitLump;
 
-struct srpForgeItem : public srpUseForge{
+struct srpForgeItem : public recipe{
   bool work(recipedata& rpd){
     if(desc.GetSize()==0){ //TODO automate the sync of req ingredients description
       init("forge","an item");
       desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
     }
 
-    if(!srpUseForge::work(rpd))
+    if(!recipe::work(rpd))
       return false;
 
     //////////////// let user type the item name
@@ -1321,16 +1386,13 @@ struct srpForgeItem : public srpUseForge{
 
     ADD_MESSAGE("Now I need the material(s) to create a %s as I would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
 
-    material* matM = itSpawn->GetMainMaterial();
-
-    long lVolM = matM->GetVolume();
+    long lVolM = itSpawn->GetMainMaterial()->GetVolume();
     if(lVolM==0)
       ABORT("main material 0 volume??? %s",itSpawn->GetName(DEFINITE).CStr());
-    material* matS = itSpawn->GetSecondaryMaterial();
 
     long lVolS = 0;
-    if(matS!=NULL){
-      lVolS = matS->GetVolume();
+    if(itSpawn->GetSecondaryMaterial()!=NULL){
+      lVolS = itSpawn->GetSecondaryMaterial()->GetVolume();
       if(lVolS==0)
         ABORT("secondary material set with 0 volume??? %s",itSpawn->GetName(DEFINITE).CStr());
     }
@@ -1397,6 +1459,9 @@ struct srpForgeItem : public srpUseForge{
     itSpawn->SetMainMaterial(material::MakeMaterial(iCfgM,lVolM));
     if(bAllowS)
       itSpawn->SetSecondaryMaterial(material::MakeMaterial(iCfgS,lVolS));
+
+    material* matM = itSpawn->GetMainMaterial();
+    material* matS = itSpawn->GetSecondaryMaterial();
 //    else{
 //      if(mc!=NULL)
 //        delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
@@ -1421,7 +1486,7 @@ struct srpForgeItem : public srpUseForge{
     }
 
     if(IsMeltable(matM) || (matS!=NULL && IsMeltable(matS))){
-      if(!srpUseForge::findForge(rpd,true)){
+      if(!recipe::findForge(rpd,true)){
         craftcore::SafelySendToHell(itSpawn);
         return true;
       }
@@ -1749,6 +1814,7 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
   RP(rpSplitLump);
   RP(rpMelt);
   RP(rpForgeItem);
+  RP(rpAnvil);
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
 
@@ -1908,9 +1974,17 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 //      rpd.otSpawn->SendToHell();
   }
 
-  if(rpd.bSpendCurrentTurn)
-    return true;
-
-  return false;
+  /**
+   * ATTENTION!!!
+   * the complexity of granting one turn wont be lost doesnt worth letting the game crash randomly somewhere
+   * hard to track the source of the problem...
+   * so to ALWAYS spend current turn, when things sent to hell will properly be applied everywhere required
+   * is the SAFEST thing! dont change this please!
+   */
+  return true;
+  //  if(rpd.bSpendCurrentTurn)
+  //    return true;
+  //
+  //  return false;
 }
 

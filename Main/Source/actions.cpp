@@ -247,6 +247,10 @@ void craft::Load(inputfile& SaveFile)
 
 void craft::Handle()
 {DBGLN;
+  rpd.integrityCheck();
+
+  character* Actor = GetActor();
+
 //  if(rpd.h != dynamic_cast<humanoid*>(Actor))
   if(rpd.Actor != Actor)
     ABORT("crafting actor changed '%s' '%s'",rpd.Actor->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
@@ -269,7 +273,6 @@ void craft::Handle()
   }
   DBG4(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg);
 
-  character* Actor = GetActor();
   lsquare* lsqrActor = Actor->GetLSquareUnder(); DBGSV2(lsqrActor->GetPos());
   level* lvl = lsqrActor->GetLevel();
 
@@ -280,6 +283,13 @@ void craft::Handle()
     return;
   }
 
+  if(Actor->GetPos()!=rpd.v2PlayerCraftingAt){ //in case player is teleported
+    ADD_MESSAGE("You need to move back to where you started crafting.");
+    Terminate(false); //may suspend
+    return;
+  }
+
+  rpd.integrityCheck();
   DBGSV2(rpd.v2PlaceAt);
   lsquare* lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt);
   olterrain* oltExisting = lsqrWhere->GetOLTerrain();
@@ -293,6 +303,7 @@ void craft::Handle()
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
+  rpd.integrityCheck();
   int iStrongerXplod=0;
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
@@ -322,6 +333,7 @@ void craft::Handle()
 
   v2 v2XplodAt;
 
+  rpd.integrityCheck();
   if(!rpd.v2AnvilLocation.Is0()){
     olterrain* ot = lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
     if(ot==NULL || ot->GetConfig()!=ANVIL){
@@ -330,8 +342,7 @@ void craft::Handle()
     }
 
     v2XplodAt=rpd.v2AnvilLocation;
-  }
-
+  }else
   if(!rpd.v2ForgeLocation.Is0()){
     olterrain* otForge = lvl->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
     if(otForge==NULL || otForge->GetConfig()!=FORGE){
@@ -342,6 +353,8 @@ void craft::Handle()
     v2XplodAt=rpd.v2ForgeLocation;
   }
 
+  rpd.integrityCheck();
+  int xplodStr = 0;
   if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
     int xplodXtra=0;
     for(int i=0;i<iStrongerXplod;i++)
@@ -359,15 +372,14 @@ void craft::Handle()
     if(iFumblePerc<=1)iFumblePower++; //always have 1% weakest xplod chance
     /** max fumble power is 5 just to easy calc 10% max chance per fumble round of spawning broken */
     if(clock()%100<=(iFumblePower*2))rpd.bSpawnBroken=true;
-    int xplodStr = iFumblePower;
+    xplodStr = iFumblePower;
     if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
       //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
-      lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
-      ADD_MESSAGE("The forge sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
     }
   }
 
+  rpd.integrityCheck();
   if(rpd.bFailed){
     Terminate(false); //won't suspend!
     return;
@@ -432,7 +444,7 @@ void craft::Handle()
           fsIngMsg<<", ";
 
         if(iCountEqual>1){
-          fsIngMsg << iCountEqual << " " << fsIngPPrev;
+          fsIngMsg << (iCountEqual+1) << " " << fsIngPPrev;
         }else{
           fsIngMsg << fsIngPrev;
         }
@@ -466,9 +478,12 @@ void craft::Handle()
    * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
    * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
    *******************/
+  rpd.integrityCheck();
+
   truth MoveCraftTool = this->MoveCraftTool;DBGLN;
   ulong RightBackupID = this->RightBackupID;
   ulong LeftBackupID = this->LeftBackupID;
+  bool bSuccesfullyCompleted = rpd.bSuccesfullyCompleted;
 
   Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
@@ -476,9 +491,9 @@ void craft::Handle()
   Actor->EditNP(-500); /////////// CRITICAL SPOT ///////////////////////////
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
-  truth Stopped = rpd.bSuccesfullyCompleted || AlreadyTerminated;
+  truth Stopped = bSuccesfullyCompleted || AlreadyTerminated;
 
-  if(rpd.bSuccesfullyCompleted && !AlreadyTerminated)
+  if(bSuccesfullyCompleted && !AlreadyTerminated)
     Terminate(true);
 
   if(Stopped)
@@ -503,7 +518,16 @@ void craft::Handle()
     }
   }
 
-  if(!rpd.bSuccesfullyCompleted)
+  /**
+   * explosions may trigger something that apparently terminates the action and so also deletes it's recipedata
+   * TODO what is being triggered?
+   */
+  if(!v2XplodAt.Is0() && xplodStr>0){
+    lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
+    ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
+  }
+
+  if(!bSuccesfullyCompleted)
     game::DrawEverything();
 }
 
