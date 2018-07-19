@@ -13,6 +13,7 @@
 /* Compiled through charsset.cpp */
 
 #include "dbgmsgproj.h"
+#include "whandler.h"
 
 cint humanoid::DrawOrder[] =
 { TORSO_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX, HEAD_INDEX };
@@ -1935,18 +1936,32 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
   if(SilhouetteWhereDefault.Is0())SilhouetteWhereDefault={RES.X - SILHOUETTE_SIZE.X - 39, 53};
   if(SilhouetteWhere.Is0())SilhouetteWhere=SilhouetteWhereDefault;
 
+  item* eqMHover = NULL;
   if(CanUseEquipment())
     for(c = 0; c < Equipments; ++c)
       if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
       {
         v2 Pos = SilhouetteWhereDefault + GetEquipmentPanelPos(c);
 
-        if(!AnimationDraw)
-          DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
-
         item* Equipment = GetEquipment(c);
 
-        if(Equipment && (!AnimationDraw || Equipment->IsAnimated()))
+        if(Equipment && globalwindowhandler::IsMouseAtRect(Pos,TILE_V2)){
+          eqMHover = Equipment;
+          static item* eqMHoverPrevious = NULL;
+          if(eqMHoverPrevious != eqMHover){ //prevent spam
+            festring fs;
+            Equipment->AddInventoryEntry(PLAYER,fs,1,true); //to show AV DAM weight volume
+            ADD_MESSAGE("My %s is %s.",GetEquipmentName(c),fs.CStr());
+            msgsystem::Draw();
+            eqMHoverPrevious = eqMHover;
+          }
+        }
+
+        if(!AnimationDraw || eqMHover!=NULL)
+          DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
+//            eqMHover==Equipment ? LIGHT_GRAY : DARK_GRAY);
+
+        if(Equipment && (!AnimationDraw || Equipment->IsAnimated() || eqMHover!=NULL))
         {
           igraph::BlitBackGround(Pos, TILE_V2);
           B1.Dest = Pos;
@@ -1956,6 +1971,12 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 
           Equipment->Draw(B1);
           B1.CustomData &= ~ALLOW_ALPHA;
+
+//          if(eqMHover==Equipment){
+//            v2 v2M = globalwindowhandler::GetMouseLocation();
+//            if(ivanconfig::GetSilhouetteScale()>=2)
+//              DOUBLE_BUFFER->DrawLine(v2M,v2M+v2(1,1),WHITE,true); //mouse "dot"
+//          }
         }
       }
 
