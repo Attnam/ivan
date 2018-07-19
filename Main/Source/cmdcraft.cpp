@@ -334,7 +334,7 @@ cfestring recipedata::dbgInfo() const
   return fs;
 }
 
-#define RPD_RANDOM_INIT_KEY 287463298476233489UL
+ulong ulRPDRandomInitKey = 287463298476233489;
 
 void recipedata::SetHumanoid(character* C){
   if(h!=NULL)
@@ -347,13 +347,13 @@ void recipedata::SetHumanoid(character* C){
 
 void recipedata::integrityCheck() const
 {
-  if(lRandomInitKey!=RPD_RANDOM_INIT_KEY) //TODO bools get crazy values too if not initialized
+  if(lRandomInitKey!=ulRPDRandomInitKey) //TODO bools get crazy values too if not initialized
     ABORT("recipedata corrupted, not initialized or invalid");// it will not be possible to show info, would crash on it... , dbgInfo().CStr());
 }
 
 recipedata::recipedata(humanoid* H)
 {
-  lRandomInitKey = RPD_RANDOM_INIT_KEY;
+  lRandomInitKey = ulRPDRandomInitKey;
 //  rpw = new recipework;
 
   bCanBeSuspended=false;
