@@ -122,6 +122,9 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "wait neutral NPCs move away from your path",
                                           false);
+truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
+                                          "allow distant lights to be seen",
+                                          true);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
                                           true,
@@ -180,6 +183,10 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
+                                          "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
+                                          0, 16,
+                                          &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "sort savegame files and show dungeon IDs progress",
                                           0, 4,
@@ -279,6 +286,14 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
   if(O->Value==-2)Entry  << " = wait"  ;
   if(O->Value==-1)Entry  << " = auto"  ;
   if(O->Value>= 0)Entry  <<   " frames";
+}
+
+void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value==0)
+    Entry << "everywhere";
+  else
+    Entry << O->Value;
 }
 
 void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& Entry)
@@ -927,6 +942,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
+  configsystem::AddOption(fsCategory,&EnhancedLights);
+  configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

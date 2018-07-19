@@ -2670,7 +2670,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
   globalwindowhandler::UpdateTick();
-  if(!bXBRZandFelist)GetCurrentArea()->Draw(AnimationDraw);
+  if(!bXBRZandFelist){
+    if(!IsInWilderness())
+      GetCurrentLevel()->RevealDistantLightsToPlayer();
+    GetCurrentArea()->Draw(AnimationDraw);
+  }
   Player->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -3402,11 +3406,11 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself, int keyChoseDefaultDir, int defaultDir)
 {
   for(;;)
   {
-    int Key = AskForKeyPress(Topic);
+    int Key = AskForKeyPress(Topic); DBG3(Key,keyChoseDefaultDir,defaultDir);
 
     if(AcceptYourself && Key == '.')
       return YOURSELF;
@@ -3414,6 +3418,9 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
     for(int c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
       if(Key == GetMoveCommandKey(c))
         return c;
+
+    if(Key==keyChoseDefaultDir)
+      return defaultDir;
 
     if(!RequireAnswer)
       return DIR_ERROR;
@@ -3981,6 +3988,9 @@ void game::LookHandler(v2 CursorPos)
 
   festring Msg;
 
+  if(WizardModeIsActive())
+    Msg<<"["<<CursorPos.X<<","<<CursorPos.Y<<"]";
+
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
     if(
@@ -3989,11 +3999,11 @@ void game::LookHandler(v2 CursorPos)
         && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
         && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
     ){
-      Msg = CONST_S("You feel here ");
+      Msg << CONST_S("You feel here ");
     }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
-      Msg = CONST_S("You see here ");
+      Msg << CONST_S("You see here ");
     }else
-      Msg = CONST_S("You remember here ");
+      Msg << CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
 
@@ -4020,7 +4030,7 @@ void game::LookHandler(v2 CursorPos)
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000) && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
-    Msg << " You see here a frog eating a magnolia.";
+    Msg << " You see here a frog eating a magnolia."; //TODO this should trigger some special event and also play a sfx :)
 
   ADD_MESSAGE("%s", Msg.CStr());
 

@@ -269,6 +269,18 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   return false;
 }
 
+char findCmdKey(truth (*func)(character*))
+{
+  char cKey=0;
+  for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
+    if(cmd->GetLinkedFunction()==func){
+      cKey = cmd->GetKey();
+      break;
+    }
+  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return cKey;
+}
+
 truth commandsystem::GoUp(character* Char)
 {
   if(!Char->TryToUnStickTraps(ZERO_V2))
@@ -1179,6 +1191,8 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
+  static char cmdKey = findCmdKey(&Kick);
+
   /** No multi-tile support */
 
   if(!Char->CheckKick())
@@ -1191,11 +1205,15 @@ truth commandsystem::Kick(character* Char)
     return true;
   }
 
-  int Dir = game::DirectionQuestion(CONST_S("In what direction do you wish to kick? [press a direction key]"), false);
+  festring fsQ;
+  fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";
+  static int iPreviousDirChosen = DIR_ERROR;
+  int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
   if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
     return false;
 
+  iPreviousDirChosen = Dir;
   lsquare* Square = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
 
   if(!Square->CheckKick(Char))
@@ -1264,6 +1282,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
+  static char cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;
@@ -1275,16 +1294,19 @@ truth commandsystem::Throw(character* Char)
     return false;
   }
 
-  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"));
+  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"), REMEMBER_SELECTED);
 
   if(Item)
   {
+    static int iPreviousDirChosen = DIR_ERROR;
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
-                                                 "[press a direction key]"), false);
+                                                 "[press a direction key or Enter]"), false, false, KEY_ENTER, iPreviousDirChosen);
 
     if(Answer == DIR_ERROR){
       return false;
     }
+
+    iPreviousDirChosen = Answer;
 
     Char->ThrowItem(Answer, Item);
     Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);

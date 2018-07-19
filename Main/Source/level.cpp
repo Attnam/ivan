@@ -12,6 +12,8 @@
 
 /* Compiled through levelset.cpp */
 
+#include "dbgmsgproj.h"
+
 #define FORBIDDEN 1
 #define ON_POSSIBLE_ROUTE 2
 #define STILL_ON_POSSIBLE_ROUTE 4
@@ -2944,6 +2946,76 @@ void sunbeamcontroller::ProcessStack()
 
   for(c = 0; c < StackIndex; ++c)
     Stack[c]->CheckIfIsSecondarySunLightEmitter();
+}
+
+bool hasLight(col24 Light,int iLightBorder){ //based on lsquare::IsDark()
+  if((Light & 0xFF0000) > (iLightBorder << 16))return true;//RED
+  if((Light & 0x00FF00) > (iLightBorder <<  8))return true;//GREEN
+  if((Light & 0x0000FF) > (iLightBorder      ))return true;//BLUE
+  return false;
+}
+int level::RevealDistantLightsToPlayer() //based on Draw() code
+{
+  if(!ivanconfig::IsEnhancedLights())
+    return 0;
+
+  cint XMin = Max(game::GetCamera().X, 0);
+  cint YMin = Max(game::GetCamera().Y, 0);
+  cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  culong LOSTick = game::GetLOSTick();
+  int iMinDist = v2(PLAYER->GetLOSRange(),0).GetLengthSquare();
+
+  long lMaxDist = v2(PLAYER->GetAttribute(PERCEPTION),0).GetLengthSquare();
+  int tot=0;
+  for(int x = XMin; x < XMax; ++x){
+    lsquare** SquarePtr = &Map[x][YMin];
+    for(int y = YMin; y < YMax; ++y, ++SquarePtr){
+      lsquare* Square = *SquarePtr;
+
+      if(Square->CanBeSeenByPlayer())
+        continue; //already seen
+
+      if(Square->Luminance==0)
+        continue;
+
+      /**
+       * TODO the farer, less range around the emmiter can be seen
+      long lDelta = lMaxDist - iMinDist;
+      float fPerc = (iDist - iMinDist)/(double)lDelta;
+      int iLightBorder = 0xFF*(0.75 + 0.25*fPerc); //reference LIGHT_BORDER is 0xFF*0.5, but here is for far things
+       */
+
+      int iMultDist=1;
+      bool bTryReveal=false;
+      if(!bTryReveal && hasLight(Square->Emitation,LIGHT_BORDER)){
+        bTryReveal=true;
+        iMultDist=4;
+      }
+
+      int iDist = (Square->GetPos() - PLAYER->GetPos()).GetLengthSquare();
+      if(!bTryReveal && iDist<=iMinDist) //near player
+        bTryReveal=true;
+
+      if(!bTryReveal){
+//        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
+//          continue;
+
+        iMultDist=2;
+        if(iDist <= lMaxDist*iMultDist) //ground view limit
+          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475))bTryReveal=true; // 0.475 is  based on tests with lantern
+      }
+
+      if(bTryReveal){
+        if(Square->CanBeSeenFrom(PLAYER->GetPos(),lMaxDist*iMultDist)){
+          Square->Reveal(LOSTick,false);
+          ++tot;
+        }
+      }
+    }
+  }
+
+  return tot;
 }
 
 int level::DetectMaterial(cmaterial* Material)
