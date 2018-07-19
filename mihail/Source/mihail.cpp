@@ -120,7 +120,7 @@ int OutputHTML(festring InputFilename)
   {
     festring Rank,Score;
     Score << Input.GetScore(c);
-    Rank << c + 1 << festring(".");
+    Rank << c + 1 << '.';
     std::cout
       << std::string("<TR> <TD>")
       << Rank.CStr()

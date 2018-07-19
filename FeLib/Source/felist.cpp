@@ -151,14 +151,11 @@ void felist::Pop()
   Entry.pop_back();
 }
 
-uint felist::GetMouseSelectedEntry(v2 v2MousePos)
+uint felist::GetMouseSelectedEntry(v2 v2MousePosOverride)
 {
   for(int i=0;i<vEntryRect.size();i++){
     const EntryRect& er = vEntryRect[i];
-    if(
-        v2MousePos.X > er.v2TopLeft.X     && v2MousePos.Y > er.v2TopLeft.Y &&
-        v2MousePos.X < er.v2BottomRight.X && v2MousePos.Y < er.v2BottomRight.Y
-    ){
+    if(globalwindowhandler::IsMouseAtRect(er.v2TopLeft,er.v2BottomRight,false,v2MousePosOverride)){
       Selected = er.iSelectableIndex; DBG2("insideRectangle",er.iSelectableIndex);
       return er.iSelectableIndex;
     }
@@ -251,6 +248,7 @@ uint felist::Draw()
   bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
+  bool bInvM = Flags & INVERSE_MODE;
   graphics::PrepareBeforeDrawingFelist();
   v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
   globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
@@ -260,7 +258,7 @@ uint felist::Draw()
     if(FlagsChk != Flags)ABORT("flags changed during felist draw %s %s",std::bitset<16>(FlagsChk).to_string().c_str(), std::bitset<16>(Flags).to_string().c_str());
 
     graphics::DrawAtDoubleBufferBeforeFelistPage(); // here prevents full dungeon blink
-    truth AtTheEnd = DrawPage(Buffer,&v2FinalPageSize,&vEntryRect);DBGLN;
+    truth LastEntryVisible = DrawPage(Buffer,&v2FinalPageSize,&vEntryRect);DBGLN;
 
     if(FirstDrawNoFade && iDrawCount == 0){
       JustSelectMoveOnce=true;
@@ -295,92 +293,89 @@ uint felist::Draw()
     bool bMouseButtonClick=false;
     bool bJustRefreshOnce=false;
     if(bSafeScrollToEnd)
-      Pressed=KEY_PAGE_DOWN;
-    else{
-      for(;;){
-        /**
-         * every section here may break the loop and they are prioritized
-         */
+      Pressed = bInvM ? KEY_PAGE_UP : KEY_PAGE_DOWN;
 
-        ////////////////////////////// scroll to end by-pass
-        if(bSafeScrollToEnd){
-//          JustSelectMoveOnce=true;
+    for(;;){
+      /**
+       * every section here may break the loop and they are prioritized
+       */
+
+      ////////////////////////////// scroll to end by-pass
+      if(bSafeScrollToEnd)
+        break;
+
+      /////////////////////////////////////////// MOUSE ///////////////////////////////////////
+      v2 v2MousePos = globalwindowhandler::GetMouseLocation();
+      v2MousePos/=graphics::GetScale();
+      mouseclick mc=globalwindowhandler::ConsumeMouseEvent();
+      static v2 v2MousePosFix;
+      ////////////////////////////// mouse click
+      if(bAllowMouseSelect && mc.btn!=-1){ DBG1(mc.btn);
+        switch(mc.btn){
+        case 1:
+          bLeftMouseButtonClick=true;
+          bMouseButtonClick=true;
           break;
         }
 
-        /////////////////////////////////////////// MOUSE ///////////////////////////////////////
-        v2 v2MousePos = globalwindowhandler::GetMouseLocation();
-        v2MousePos/=graphics::GetScale();
-        mouseclick mc=globalwindowhandler::ConsumeMouseEvent();
-        static v2 v2MousePosFix;
-        ////////////////////////////// mouse click
-        if(bAllowMouseSelect && mc.btn!=-1){ DBG1(mc.btn);
-          switch(mc.btn){
-          case 1:
-            bLeftMouseButtonClick=true;
-            bMouseButtonClick=true;
+        if(bMouseButtonClick){
+          /**
+           * when clicking the pos is correct/matches the visible cursor,
+           * this problem actually happens in fullscreen mode only
+           */
+          if(v2MousePos != mc.pos){
+            v2MousePosFix = v2MousePos - mc.pos;
+          }else
+            v2MousePosFix=v2();
+
+          uint iSel = GetMouseSelectedEntry(mc.pos); //make sure selected is the one at mouse pos no matter the highlight
+          if(iSel!=-1){
+            Selected=iSel;
             break;
           }
-
-          if(bMouseButtonClick){
-            /**
-             * when clicking the pos is correct/matches the visible cursor,
-             * this problem actually happens in fullscreen mode only
-             */
-            if(v2MousePos != mc.pos){
-              v2MousePosFix = v2MousePos - mc.pos;
-            }else
-              v2MousePosFix=v2();
-
-            uint iSel = GetMouseSelectedEntry(mc.pos); //make sure selected is the one at mouse pos no matter the highlight
-            if(iSel!=-1){
-              Selected=iSel;
-              break;
-            }
-          }
         }
-        v2MousePos-=v2MousePosFix;
+      }
+      v2MousePos-=v2MousePosFix;
 
-        ////////////////////////////// mouse wheel scroll
-        if(bAllowMouseSelect && mc.wheelY!=0){
-          Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
+      ////////////////////////////// mouse wheel scroll
+      if(bAllowMouseSelect && mc.wheelY!=0){
+        Pressed = mc.wheelY < 0 ? KEY_PAGE_DOWN : KEY_PAGE_UP; //just to simplify it
+        break;
+      }
+
+      ////////////////////////////// mouse move/hover (to not be hindered by getkey timeout
+      static clock_t lastMouseMoveTime=clock(); //static as mouse is a global thing
+      if(bAllowMouseSelect && v2MousePosPrevious!=v2MousePos){ //DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
+        bool bSelChanged = false;
+
+        uint iSel = GetMouseSelectedEntry(v2MousePos);
+        if(iSel!=-1)
+          bSelChanged = Selected!=iSel;
+
+        v2MousePosPrevious=v2MousePos; //reset
+        lastMouseMoveTime=clock();
+
+        if(bSelChanged){
+          Selected = iSel; DBG1(iSel);
+          bJustRefreshOnce=true;
+          JustSelectMoveOnce=true;
           break;
         }
-
-        ////////////////////////////// mouse move/hover (to not be hindered by getkey timeout
-        static clock_t lastMouseMoveTime=clock(); //static as mouse is a global thing
-        if(bAllowMouseSelect && v2MousePosPrevious!=v2MousePos){ //DBG2(DBGAV2(v2MousePosPrevious),DBGAV2(v2MousePos));
-          bool bSelChanged = false;
-
-          uint iSel = GetMouseSelectedEntry(v2MousePos);
-          if(iSel!=-1)
-            bSelChanged = Selected!=iSel;
-
-          v2MousePosPrevious=v2MousePos; //reset
-          lastMouseMoveTime=clock();
-
-          if(bSelChanged){
-            Selected = iSel; DBG1(iSel);
-            bJustRefreshOnce=true;
-            JustSelectMoveOnce=true;
-            break;
-          }
-        }
+      }
 //        if((Flags & ALLOW_MOUSE_SELECT) && (clock() - lastMouseMoveTime) < (0.5 * CLOCKS_PER_SEC)){
 //        }
 
-        ///////////////////////////////////////// KEYBOARD /////////////////////////////////////
-        ////////////////////////////// normal key press
-        bool bClearKeyBuffer=false;
-        if(bClearKeyBufferOnce){
-          bClearKeyBuffer=true;
-          bClearKeyBufferOnce=false;
-        }
-        Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis above
-        if(Pressed!=DefaultAnswer)
-          break;
-
+      ///////////////////////////////////////// KEYBOARD /////////////////////////////////////
+      ////////////////////////////// normal key press
+      bool bClearKeyBuffer=false;
+      if(bClearKeyBufferOnce){
+        bClearKeyBuffer=true;
+        bClearKeyBufferOnce=false;
       }
+      Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis above
+      if(Pressed!=DefaultAnswer)
+        break;
+
     }
     DBGLN;
 
@@ -445,7 +440,7 @@ uint felist::Draw()
 
     if((Flags & SELECTABLE) && Pressed == DownKey)
     {DBGLN;
-      if(!AtTheEnd || Selected != Selectables - 1)
+      if(!LastEntryVisible || Selected != Selectables - 1)
       {
         ++Selected;
 
@@ -492,36 +487,23 @@ uint felist::Draw()
      */
     DBG8(Entry.size(),Selectables,Selectables/PageLength,KEY_SPACE,KEY_PAGE_UP,KEY_PAGE_DOWN,KEY_HOME,KEY_END);
     bool bNav=false; //navigating
+    if(!bNav && Pressed == KEY_SPACE && !(bInvM ? PageBegin==0 : LastEntryVisible))bNav=true; //if at the end, will exit felist
     if(!bNav && Pressed == KEY_PAGE_DOWN)bNav=true;
     if(!bNav && Pressed == KEY_PAGE_UP)bNav=true;
     if(!bNav && Pressed == KEY_HOME)bNav=true;
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
-    if(!bNav && Pressed == KEY_SPACE && !AtTheEnd)bNav=true; //space works as PGDN
-    if(Pressed == KEY_SPACE || bNav){DBGLN;
-      int iDir = 1;
-      if(Flags & INVERSE_MODE)
-        iDir *= -1;
-      if(Pressed == KEY_PAGE_UP){ //TODO confirm that this inverts the INVERSE_MODE behavior
-        iDir *= -1;
-      }
 
-      int iCurrent = PageBegin + iDir*PageLength;
-      if(iCurrent<0) //PageBegin is uint ...
-        iCurrent=0;
-    }
-
-    if(!bNav) {
+    if(!bNav) {DBGLN;
       if(Pressed == KEY_SPACE) //to work stictly as on the help info
-        if( (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && (Flags & INVERSE_MODE)) )
-        {
+        if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
           Return = NOTHING_SELECTED;
           break;
         }
-    } else {
+    } else {DBGLN;
       BackGround.FastBlit(Buffer);
 
       int iDir = 1;
-      if(Flags & INVERSE_MODE)
+      if(bInvM)
         iDir *= -1;
       if(Pressed == KEY_PAGE_UP) //TODO confirm that this inverts the INVERSE_MODE behavior
         iDir *= -1;
@@ -534,22 +516,22 @@ uint felist::Draw()
        * overriders
        * obs.: pgdn and space are default "advance page" action
        */
-      if(AtTheEnd && Pressed == KEY_PAGE_DOWN){
+      if(LastEntryVisible && bSafeScrollToEnd){DBGLN;
         bSafeScrollToEnd=false;
         Selected = Selectables-1;
         continue; //do nothing
       }
 
-      if(Flags & INVERSE_MODE ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
+      if(bInvM ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
         iPB=0;
 
-      if(Flags & INVERSE_MODE ? Pressed == KEY_HOME : Pressed == KEY_END){ // go to last
-        if(Entry.size()<=PageLength){ //only one page
+      if(bInvM ? Pressed == KEY_HOME : Pressed == KEY_END){DBGLN; // go to last
+        if(Entry.size()<=PageLength){DBGLN; //only one page
           Selected = Selectables-1;
           continue; //do nothing
         }
 
-        if(AtTheEnd){
+        if(LastEntryVisible){DBGLN;
           Selected = Selectables-1;
           continue; //do nothing
         }

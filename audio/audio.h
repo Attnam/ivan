@@ -88,7 +88,7 @@ public:
 
    static int Loop(void *ptr);
 
-   static int PlayMIDIFile(char* filename, int32_t loops);
+   static int PlayMIDIFile(cfestring& filename, int32_t loops);
 
    static void SendMIDIEvent(std::vector<unsigned char>* message);
 
@@ -96,7 +96,7 @@ public:
 
    static int ChangeMIDIOutputDevice(int newPort);
 
-   static cchar* GetCurrentlyPlayedFile();
+   static cfestring& GetCurrentlyPlayedFile();
 
    /**
     * @param vol 0 - 128
@@ -112,16 +112,16 @@ public:
     */
    static void IntensityLevel(int intensity);
 
-   static void RemoveMIDIFile(char* filename);
+   static void RemoveMIDIFile(cfestring& filename);
 
    /**
     * @param filename MIDI file location
     * @param intensitylow
     */
-   static void LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh);
+   static void LoadMIDIFile(cfestring& filename, int intensitylow, int intensityhigh);
 
 
-   static void ClearMIDIPlaylist(cchar* exceptFilename = 0);
+   static void ClearMIDIPlaylist(cfestring& exceptFilename = CONST_S(""));
 
    static int IsPlaybackStopped(void);
 
@@ -148,7 +148,7 @@ private:
    static int CurrentPosition;
 
    static int  PlaybackState;
-   static cchar* CurrentTrack;
+   static festring CurrentTrack;
    static festring MusDir;
 
    static std::vector<musicfile> Tracks;

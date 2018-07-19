@@ -100,7 +100,7 @@ void highscore::Draw() const
 
 void highscore::Save(cfestring& File) const
 {
-  outputfile HighScore(File.GetSize() > 0 ? File : DefaultFile);
+  outputfile HighScore(File.IsEmpty() ? DefaultFile : File);
   long CheckSum = HIGH_SCORE_VERSION + LastAdd;
   for(ushort c = 0; c < Score.size(); ++c)
   {
@@ -114,7 +114,7 @@ void highscore::Save(cfestring& File) const
 /* This function needs much more error handling */
 void highscore::Load(cfestring& File)
 {
-  cfestring Path = File.GetSize() > 0 ? File : DefaultFile;
+  cfestring Path = File.IsEmpty() ? DefaultFile : File;
 
   {
     inputfile HighScore(Path, 0, false);
