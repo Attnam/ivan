@@ -151,14 +151,11 @@ void felist::Pop()
   Entry.pop_back();
 }
 
-uint felist::GetMouseSelectedEntry(v2 v2MousePos)
+uint felist::GetMouseSelectedEntry(v2 v2MousePosOverride)
 {
   for(int i=0;i<vEntryRect.size();i++){
     const EntryRect& er = vEntryRect[i];
-    if(
-        v2MousePos.X > er.v2TopLeft.X     && v2MousePos.Y > er.v2TopLeft.Y &&
-        v2MousePos.X < er.v2BottomRight.X && v2MousePos.Y < er.v2BottomRight.Y
-    ){
+    if(globalwindowhandler::IsMouseAtRect(er.v2TopLeft,er.v2BottomRight,false,v2MousePosOverride)){
       Selected = er.iSelectableIndex; DBG2("insideRectangle",er.iSelectableIndex);
       return er.iSelectableIndex;
     }

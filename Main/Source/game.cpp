@@ -2670,7 +2670,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
   globalwindowhandler::UpdateTick();
-  if(!bXBRZandFelist)GetCurrentArea()->Draw(AnimationDraw);
+  if(!bXBRZandFelist){
+    if(!IsInWilderness())
+      GetCurrentLevel()->RevealDistantLightsToPlayer();
+    GetCurrentArea()->Draw(AnimationDraw);
+  }
   Player->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -3402,11 +3406,11 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself, int keyChoseDefaultDir, int defaultDir)
 {
   for(;;)
   {
-    int Key = AskForKeyPress(Topic);
+    int Key = AskForKeyPress(Topic); DBG3(Key,keyChoseDefaultDir,defaultDir);
 
     if(AcceptYourself && Key == '.')
       return YOURSELF;
@@ -3415,6 +3419,9 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
       if(Key == GetMoveCommandKey(c))
         return c;
 
+    if(Key==keyChoseDefaultDir)
+      return defaultDir;
+
     if(!RequireAnswer)
       return DIR_ERROR;
   }
@@ -3422,16 +3429,16 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
 
 void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
 { DBG2(RealSavesAlso,onlyBackups);
-  festring bkp(".bkp");
+  cchar* bkp = ".bkp";
 
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp:"")).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp:"")).CStr());
   }
 
-  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp:"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp:"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
@@ -3445,12 +3452,12 @@ void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
       File << c; DBG1(File.CStr());
 
       if(RealSavesAlso)
-        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+        remove(festring(File + (onlyBackups?bkp:"")).CStr());
 
       File = GetAutoSaveFileName() + '.' + i;
       File << c; DBG1(File.CStr());
 
-      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr()); DBGLN;
+      remove(festring(File + (onlyBackups?bkp:"")).CStr()); DBGLN;
     }
 
   DBGLN; //DBGSTK;
@@ -3981,6 +3988,9 @@ void game::LookHandler(v2 CursorPos)
 
   festring Msg;
 
+  if(WizardModeIsActive())
+    Msg<<"["<<CursorPos.X<<","<<CursorPos.Y<<"]";
+
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
     if(
@@ -3989,11 +3999,11 @@ void game::LookHandler(v2 CursorPos)
         && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
         && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
     ){
-      Msg = CONST_S("You feel here ");
+      Msg << CONST_S("You feel here ");
     }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
-      Msg = CONST_S("You see here ");
+      Msg << CONST_S("You see here ");
     }else
-      Msg = CONST_S("You remember here ");
+      Msg << CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
 
@@ -4020,7 +4030,7 @@ void game::LookHandler(v2 CursorPos)
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000) && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
-    Msg << " You see here a frog eating a magnolia.";
+    Msg << " You see here a frog eating a magnolia."; //TODO this should trigger some special event and also play a sfx :)
 
   ADD_MESSAGE("%s", Msg.CStr());
 
