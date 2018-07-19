@@ -23,7 +23,7 @@
 #include "rawbit.h"
 #include "libxbrzscale.h"
 
-#define DBGMSG_V2
+//#define DBGMSG_V2
 #include "dbgmsgproj.h"
 
 /*

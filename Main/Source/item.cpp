@@ -404,7 +404,7 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
 void item::SetLabel(cfestring& What)
 {
   label.Empty();
-  if(What.GetSize()>0)
+  if(!What.IsEmpty())
     label << What;
 }
 

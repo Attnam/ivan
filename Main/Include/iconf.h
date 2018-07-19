@@ -42,7 +42,9 @@ class ivanconfig
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
+  static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
+  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -99,6 +101,7 @@ class ivanconfig
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
+  static void DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry);
   static void FrameSkipDisplayer(const numberoption* O, festring& Entry);
   static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
@@ -187,6 +190,7 @@ class ivanconfig
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
   static truthoption WaitNeutralsMoveAway;
+  static truthoption EnhancedLights;
 
   static cycleoption MemorizeEquipmentMode;
 
@@ -195,7 +199,8 @@ class ivanconfig
   static truthoption LookZoom;
   static truthoption XBRZScale;
 
-  static cycleoption  SaveGameSortMode;
+  static cycleoption SaveGameSortMode;
+  static cycleoption DistLimitMagicMushrooms;
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;

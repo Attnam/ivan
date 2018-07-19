@@ -75,7 +75,7 @@ outputfile::outputfile(cfestring& fileName, truth AbortOnErr)
   if(bakcupBeforeSaving){ // this is not that useful, the tmp files are better as they prevent overwriting the final files in case the game crashes
     std::ifstream orig(FileName.CStr(), std::ios::binary);
     if(orig.good()){
-      festring fsBkp("");fsBkp << FileName << ".bkp";
+      festring fsBkp;fsBkp << FileName << ".bkp";
       std::remove(fsBkp.CStr()); //just to have a granted clean new backup
 
       std::ofstream bkp(fsBkp.CStr(), std::ios::binary);
@@ -88,8 +88,7 @@ outputfile::outputfile(cfestring& fileName, truth AbortOnErr)
     }
   }
 
-  festring FileNameNew("");
-  FileNameNew<<FileName;
+  festring FileNameNew(FileName);
   if(saveOnNewFileAlways){
     FileNameNew<<".tmp";
     FileNameNewTmp<<FileNameNew;
