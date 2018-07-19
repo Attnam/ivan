@@ -1474,7 +1474,7 @@ truth commandsystem::ShowMap(character* Char)
       while(true){
         v2 noteAddPos = Char->GetPos();
         switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
-          KEY_ESC, 6, 't', 'l', 'r','d','e')
+          KEY_ESC, 5, 't', 'l', 'r','d','e')
         ){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
