@@ -183,6 +183,12 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::FontGfx(          "FontGfx",
+                                          "* Select font",
+                                          1, 3, //from 1 to 3 (three options available)
+                                          &FontGfxDisplayer,
+                                          &FontGfxChangeInterface,
+                                          &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
                                           "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
                                           0, 16,
@@ -506,6 +512,14 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
   return true;
 }
 
+truth ivanconfig::FontGfxChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -808,6 +822,11 @@ void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
+void ivanconfig::FontGfxDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value;
+}
+
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
@@ -821,6 +840,11 @@ void ivanconfig::SaveGameSortModeChanger(cycleoption* O, long What)
 }
 
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+}
+
+void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 {
   O->Value = What;
 }
@@ -918,6 +942,7 @@ void ivanconfig::CalculateContrastLuminance()
 int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
+int  ivanconfig::iStartingFontGfx=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
@@ -968,6 +993,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&FontGfx);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
@@ -1018,6 +1044,7 @@ void ivanconfig::Initialize()
   iStartingWindowWidth = WindowWidth.Value;
   iStartingWindowHeight = WindowHeight.Value;
   iStartingDungeonGfxScale = DungeonGfxScale.Value;
+  iStartingFontGfx = FontGfx.Value;
   bStartingOutlinedGfx = OutlinedGfx.Value;
 
   CalculateContrastLuminance();
