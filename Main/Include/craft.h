@@ -54,7 +54,7 @@ class recipedata {
   //TODO split what is savable from what is only work data prior to begin crafting, at recipework above
   private:
     bool bCanBeSuspended;
-    ulong lRandomInitKey;
+    clock_t initKey;
     humanoid* h;
     int iDungeonLevelID;
 
