@@ -22,7 +22,6 @@ class ivanconfig
   static cfestring& GetDefaultName() { return DefaultName.Value; }
   static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
-  static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -36,7 +35,6 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
-  static truth IsGenerateDefinesValidator(){return GenerateDefinesValidator.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -52,6 +50,7 @@ class ivanconfig
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
+  static int GetStartingFontGfx() { return iStartingFontGfx; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static int GetRotateTimesPerSquare() { return RotateTimesPerSquare.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
@@ -62,7 +61,6 @@ class ivanconfig
   static int GetAltListItemPos() { return AltListItemPos.Value; }
   static truth GetPlaySounds() { return PlaySounds.Value; }
   static truth IsShowTurn() { return ShowTurn.Value; }
-  static truth IsAllowMouseOnFelist(){return AllowMouseOnFelist.Value;}
   static truth IsStartingOutlinedGfx() { return bStartingOutlinedGfx; }
   static long GetVolume() { return Volume.Value; }
   static long GetMIDIOutputDevice() { return MIDIOutputDevice.Value; }
@@ -104,7 +102,6 @@ class ivanconfig
   static void DirectionKeyMapDisplayer(const cycleoption*, festring&);
   static truth DefaultNameChangeInterface(stringoption*);
   static truth FantasyNameChangeInterface(stringoption* O);
-  static truth SelectedBkgColorChangeInterface(stringoption* O);
   static truth DefaultPetNameChangeInterface(stringoption*);
   static truth AutoSaveIntervalChangeInterface(numberoption*);
   static truth XBRZSquaresAroundPlayerChangeInterface(numberoption* O);
@@ -115,7 +112,6 @@ class ivanconfig
   static truth FrameSkipChangeInterface(numberoption* O);
   static truth AltListItemWidthChangeInterface(numberoption* O);
   static truth ContrastChangeInterface(numberoption*);
-  static void SelectedBkgColorChanger(stringoption* O, cfestring& What);
   static void AutoSaveIntervalChanger(numberoption*, long);
   static void XBRZSquaresAroundPlayerChanger(numberoption* O, long What);
   static void ShowItemsAtPlayerSquareChanger(cycleoption* O, long What);
@@ -131,7 +127,6 @@ class ivanconfig
   static truth VolumeChangeInterface(numberoption*);
   static void VolumeChanger(numberoption*, long);
   static void AltSilhouetteDisplayer(const cycleoption* O, festring& Entry);
-  static void AllowMouseOnFelistChanger(truthoption*, truth);
 
 #ifndef __DJGPP__
   static void GraphicsScaleDisplayer(const cycleoption*, festring&);
@@ -142,17 +137,19 @@ class ivanconfig
 #endif
 
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static void FontGfxDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
   static void SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static truth FontGfxChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
+  static void FontGfxChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
   static void SavegameSafelyChanger(truthoption* O, truth What);
-  static void GenerateDefinesValidatorChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -160,7 +157,6 @@ class ivanconfig
   static stringoption DefaultName;
   static stringoption FantasyNamePattern;
   static stringoption DefaultPetName;
-  static stringoption SelectedBkgColor;
   static numberoption AutoSaveInterval;
   static truthoption AltAdentureInfo;
   static truthoption CenterOnPlayerAfterLook;
@@ -180,7 +176,6 @@ class ivanconfig
   static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
-  static truthoption GenerateDefinesValidator;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
@@ -197,6 +192,9 @@ class ivanconfig
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;
+
+  static cycleoption  FontGfx;
+  static int iStartingFontGfx;
 
   static truthoption   OutlinedGfx;
   static bool bStartingOutlinedGfx;
@@ -226,7 +224,6 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
-  static truthoption AllowMouseOnFelist;
 };
 
 inline long ivanconfig::ApplyContrastTo(long L)
