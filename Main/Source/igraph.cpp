@@ -85,13 +85,15 @@ void igraph::Init()
 #ifndef __DJGPP__
     graphics::SetSwitchModeHandler(ivanconfig::SwitchModeHandler);
 #endif
-    graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
-      if(ivanconfig::GetStartingFontGfx()==2){
+    if(ivanconfig::GetStartingFontGfx()==1){
+		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font.png");
+	}
+    if(ivanconfig::GetStartingFontGfx()==2){
 		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font2.png");
-	  }
-      if(ivanconfig::GetStartingFontGfx()==3){
+	}
+    if(ivanconfig::GetStartingFontGfx()==3){
 		graphics::LoadDefaultFont(game::GetDataDir() + "Graphics/Font3.png");
-	  }
+	}
     FONT->CreateFontCache(WHITE);
     FONT->CreateFontCache(LIGHT_GRAY);
     felist::SetDefaultEntryImageSize(TILE_V2);
