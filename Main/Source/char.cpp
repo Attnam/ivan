@@ -10987,8 +10987,8 @@ cfestring& character::GetStandVerb() const
   if(ForceCustomStandVerb())
     return DataBase->StandVerb;
 
-  static festring Hovering = "hovering";
-  static festring Swimming = "swimming";
+  static festring Hovering = CONST_S("hovering");
+  static festring Swimming = CONST_S("swimming");
 
   if(StateIsActivated(LEVITATION))
     return Hovering;

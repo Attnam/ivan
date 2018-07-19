@@ -34,8 +34,8 @@ class highscore
   highscore(cfestring&);
   truth Add(long, cfestring&);
   void Draw() const;
-  void Save(cfestring& = "") const;
-  void Load(cfestring& = "");
+  void Save(cfestring& = CONST_S("")) const;
+  void Load(cfestring& = CONST_S(""));
   truth LastAddFailed() const;
   void AddToFile(highscore*) const;
   truth MergeToFile(highscore*) const;

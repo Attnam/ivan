@@ -838,12 +838,12 @@ struct fileInfo{
   int CurrentLevelIndex = -1;
   v2 Camera; //dummy
   truth WizardMode;
-  festring fileName=festring(); //TODO this init helps with festring? is it buggy?
-  festring absFileName=festring(); //contains the full path
-  festring time=festring();
-  festring idOnList=festring();
-  festring dungeonID=festring();
-  festring fileNameAutoSave=festring();
+  festring fileName;
+  festring absFileName;
+  festring time;
+  festring idOnList;
+  festring dungeonID;
+  festring fileNameAutoSave;
   std::vector<festring> vBackups;
   bool bIsBkp = false;
   struct stat attr;
@@ -857,7 +857,7 @@ bool addFileInfo(const char* c){
 
   // do add
   fileInfo fi;
-  fi.fileName<<c; //TODO this assigning helps with festring instead of '=', it is buggy?
+  fi.fileName=c;
   vFiles.push_back(fi); //stores a copy
 
   return true; //added
@@ -1058,7 +1058,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
     if(iPrepareSavFileIndex>-1){
       fileInfo& rfi = vFiles[iPrepareSavFileIndex];
 
-      festring id("");
+      festring id;
 
       // savegame version (save structure taken from game::Load())
       inputfile SaveFile(rfi.absFileName, 0, false);
@@ -1071,7 +1071,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       SaveFile >> rfi.WizardMode;
       SaveFile.Close();
 
-      festring fsVer("");
+      festring fsVer;
       if(rfi.Version != iSaveFileVersion)
         fsVer<<"(v"<<rfi.Version<<") ";
 
@@ -1083,7 +1083,7 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
       if(!bSaveGameSortModeByDtTm)
         id<<fsVer<<" "; //after to not compromise the alphanumeric default sorting in case user want's to use it
 
-      festring currentDungeonLevel("");
+      festring currentDungeonLevel;
       currentDungeonLevel << rfi.CurrentDungeonIndex << rfi.CurrentLevelIndex; DBG1(currentDungeonLevel.CStr());  //TODO tricky part if any dungeon or level goes beyond 9 ?
       if(bSaveGameSortModeProgress && !vComponents.empty()){
         for(int k=0;k<vComponents.size();k++){
@@ -1215,10 +1215,10 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
           }
           if(bRestoreBkp){
             for(int b=0;b<rvBackups.size();b++){
-              festring fsBkp("");fsBkp << rvBackups[b]; DBG1(fsBkp.CStr());
+              festring fsBkp(rvBackups[b]); DBG1(fsBkp.CStr());
               DBG2("RestoringBackupFrom",fsBkp.CStr());
 
-              festring fsFinal("");fsFinal << fsBkp;
+              festring fsFinal(fsBkp);
               fsFinal.Resize(fsFinal.GetSize() -4); // - ".bkp"
 
               /**
