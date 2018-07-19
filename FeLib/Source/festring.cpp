@@ -17,6 +17,8 @@
 #include "allocate.h"
 #include "error.h"
 
+#include "dbgmsgproj.h"
+
 char** festring::IntegerMap = 0;
 cchar* const festring::EmptyString = "";
 festring::csizetype festring::NPos = festring::sizetype(-1);
@@ -26,12 +28,35 @@ char Capitalize(char Char)
   return (Char >= 'a' && Char <= 'z') ? (Char ^ 0x20) : Char;
 }
 
+/**
+ * code to track new festring assignment (that makes a copy of the string instead of absorbing it) possible bugs
+ */
+void bugTrackInvalidChars(cchar* c,int size){
+  if(!c || !size)return;
+
+  //symbols and characters that are not "usually" expected
+  for(int i=0;i<size;i++){
+    static char C;C=c[i];
+    if(
+        (C < 0x20 || C > 0x7E)
+        && C!='\r' && C!='\n' && C!='\t'
+        && C!=0
+//        && C!='+' // o.O
+    ){
+      /**
+       * this now ends up being more useful to catch wrong usage of the permissive ADD_MESSAGE() passing a festring w/o .CStr()
+       */
+      ABORT("string contains \"probably invalid\" chars, possibly a bug: \"%s\", [%d], 0x%X /0%o %d '%c'",c, i, C,C,C,C); //actual char '?' must be last as may break the string!
+    }
+  }
+}
+
 /* All operations that may change the underlying data will avoid touching the
    memory allocator and deallocator as much as possible. They try very hard to
    save memory and go for speed. */
 
 festring& festring::operator=(cchar* CStr)
-{
+{DBGEXEC(bugTrackInvalidChars(CStr,strlen(CStr)));
   CheckNull(CStr);
 
   sizetype NewSize = strlen(CStr);
@@ -58,7 +83,7 @@ festring& festring::operator=(cchar* CStr)
 }
 
 festring& festring::operator=(staticstring SStr)
-{
+{DBGEXEC(bugTrackInvalidChars(SStr.Data,SStr.Size));
   CheckNull(SStr.Data);
 
   cchar* CStr = SStr.Data;
@@ -84,7 +109,7 @@ festring& festring::operator=(staticstring SStr)
 }
 
 festring& festring::operator=(cfestring& Str)
-{
+{DBGEXEC(bugTrackInvalidChars(Str.Data,Str.Size));
   char* CStr = Str.Data;
   sizetype NewSize = Str.Size;
 

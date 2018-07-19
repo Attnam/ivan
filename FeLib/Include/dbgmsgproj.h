@@ -93,6 +93,7 @@
     #define DBG9(a,b,c,d,e,f,g,h,i)
     #define DBGLN
     #define DBGSTK
+    #define DBGBREAKPOINT
     #define DBGTOSTR_(str)
     #define DBGTOSTR(str)
     #define DBGB(B)

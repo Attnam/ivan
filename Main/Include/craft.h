@@ -47,51 +47,96 @@ struct v2;
 #define  CTT_DOOR 2
 #define  CTT_FURNITURE 3
 
-struct recipework{
-};
-
-class recipedata {
-  //TODO use std::bitset<32> instead of booleans?
-  //TODO split what is savable from what is only work data prior to begin crafting, at recipework above
+class recipecore {
   private:
-    bool bCanBeSuspended;
     clock_t initKey;
+
     humanoid* h;
+
+    bool bCanBeSuspended;
     int iDungeonLevelID;
 
   public:
-    humanoid* H(){return h;}
-    bool IsCanBeSuspended(){return bCanBeSuspended;}
-    void SetCanBeSuspended(){bCanBeSuspended=true;}
+    recipecore(humanoid* H,uint sel);
+
+    void integrityCheck() const;
+
     void SetHumanoid(character* C);
-    int GetDungeonLevelID(){return iDungeonLevelID;}
+    humanoid* H(){return h;}
 
-    //    const recipework rpw;
+    void SetCanBeSuspended(){bCanBeSuspended=true;}
+    bool IsCanBeSuspended() const {return bCanBeSuspended;}
 
-    //TODO only methods should be public, it is currently like that to speed up development ONLY!!! but is a sure source of future problems if kept like that!!!
-    //TODO protect: none of these fields should be modified outside this class and every change should be dbgmsg logged.
+    int GetDungeonLevelID() const {return iDungeonLevelID;}
 
-    // tip: for clarity group by max of 5 no matter group context, but if re-organized, do also at constructor initializer please! btw, save and load will make existing saved games with suspended crafting incompatible
-    int Selected; //TODO protect: set only once
-    std::vector<ulong> ingredientsIDs;
-    int iAddDexterity;
+    void Save(outputfile& SaveFile) const;
+    void Load(inputfile& SaveFile);
 
-    int iBaseTurnsToFinish;
+    void ClearRefs();
+};
+
+class recipedata {
+  /**
+   * tip: for clarity group fields by max of 5 no matter group context (despite in context would be better)
+   */
+
+  friend class craft;
+  friend class craftcore;
+
+  friend struct recipe;
+  friend struct srpFluidsBASE;
+  friend struct srpOltBASE;
+
+  friend struct srpChair;
+  friend struct srpDoor;
+  friend struct srpWall2;
+  friend struct srpPoison;
+  friend struct srpAcid;
+
+  friend struct srpDismantle;
+  friend struct srpSplitLump;
+  friend struct srpMelt;
+  friend struct srpForgeItem;
+  friend struct srpAnvil;
+
+  friend struct srpForge;
+
+  protected:
+    recipecore rc;
+
+    //TODO use std::bitset<32> instead of booleans?
+
+    // references
+    item* itTool;
+    lsquare* lsqrWhere;
+    lsquare* lsqrCharPos;
+    item* itWeakestIngredient;
+
+    uint SelectedRecipe;
     bool bSpendCurrentTurn;
     bool bAlreadyExplained;
+    bool bHasAllIngredients;
+    bool bCanStart;
+
+    bool bCanBePlaced;
+
+    /*******************************************
+     * saveable fields!!!
+     * if re-organized, do also at constructor initializer please!
+     * but save and load will make existing saved games with suspended crafting incompatible then,
+     * so better avoid doing it.
+     */
+    std::vector<ulong> ingredientsIDs;
+    int iAddDexterity;
+    int iBaseTurnsToFinish;
     int itSpawnTot;
     v2 v2ForgeLocation;
 
     v2 v2PlaceAt;
-    bool bHasAllIngredients;
-    bool bCanStart;
-    bool bCanBePlaced;
-
     bool bSuccesfullyCompleted;
     v2 v2AnvilLocation;
     bool bFailed;
     v2 v2PlayerCraftingAt;
-//    ulong itSpawnID;
 
     ulong itToolID;
     v2 v2BuildWhere;
@@ -112,26 +157,25 @@ class recipedata {
 
     ulong otSpawnType;
     bool bSpawnBroken;
-
-    item* itTool;
-    lsquare* lsqrWhere;
-    lsquare* lsqrCharPos;
-    item* itWeakestIngredient;
+    double fDifficulty; //preferably a max of 5.0
+    bool bCanBeBroken;
 
   public:
-    recipedata(humanoid* H);
+    recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
     cfestring dbgInfo() const;
     cfestring id() const;
 //    void SendSpawnItemToHell();
 //    void SendTerrainToHell();
+
     void Save(outputfile& SaveFile) const;
     void Load(inputfile& SaveFile);
     void CopySpawnItemCfgFrom(item* itCfg);
     cfestring SpawnItem();
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
+
     cfestring SpawnTerrain();
-    void integrityCheck() const;
     void ClearRefs();
+    item* GetTool(){return itTool;}
 };
 class craftcore {
   private:
@@ -140,7 +184,7 @@ class craftcore {
   public: //TODO suspendable action should be more global to be reused for other actions than crafting!
     static bool canBeCrafted(item* it);
 
-    static void SafelySendToHell(item* it);
+    static void SendToHellSafely(item* it);
     static void SetSuspended(recipedata* prpd);
     static void ResetSuspended();
     static bool HasSuspended();
@@ -149,6 +193,7 @@ class craftcore {
     static bool EmptyContentsIfPossible(item* itContainer);
     static float CraftSkill(character* Char);
     static int CurrentDungeonLevelID();
+    static truth Craft(character* Char);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

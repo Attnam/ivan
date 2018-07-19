@@ -131,7 +131,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
   std::cout << Buffer << std::endl;
 #endif
 
-  DBGSTK;DBG2("ABORT:",Buffer);
+  DBGSTK;DBG2("ABORT:",Buffer);DBGBREAKPOINT;
   exit(4);
 }
 

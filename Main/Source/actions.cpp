@@ -227,7 +227,7 @@ void craft::Load(inputfile& SaveFile)
   rpd.Load(SaveFile);
   SaveFile >> MoveCraftTool >> RightBackupID >> LeftBackupID;
 
-  if(rpd.IsCanBeSuspended())
+  if(rpd.rc.IsCanBeSuspended())
     craftcore::SetSuspended(&rpd);
 }
 
@@ -247,18 +247,11 @@ void craft::Load(inputfile& SaveFile)
 
 void craft::Handle()
 {DBGLN;
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
 
   character* Actor = GetActor();
-  if(rpd.H()==NULL)
-    rpd.SetHumanoid(Actor);
-
-//  if(rpd.h != dynamic_cast<humanoid*>(Actor))
-//  if(rpd.Actor != Actor)
-//    ABORT("crafting actor changed '%s' '%s'",rpd.Actor->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
-
-//  if(rpd.itSpawnID!=0 && rpd.itSpawn==NULL)
-//    rpd.itSpawn = game::SearchItem(rpd.itSpawnID); // do this here to work correctly at ~craft
+  if(rpd.rc.H()==NULL)
+    rpd.rc.SetHumanoid(Actor);
 
 //  if(rpd.itSpawnCfg==0 && rpd.otSpawnCfg==0)
   if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE)
@@ -292,7 +285,7 @@ void craft::Handle()
     return;
   }
 
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
   DBGSV2(rpd.v2PlaceAt);
   rpd.lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt); //near? it is abs map pos...
   olterrain* oltExisting = rpd.lsqrWhere->GetOLTerrain();
@@ -306,7 +299,7 @@ void craft::Handle()
 //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
   rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
 
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
   int iStrongerXplod=0;
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
@@ -336,7 +329,7 @@ void craft::Handle()
 
   v2 v2XplodAt;
 
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
   if(!rpd.v2AnvilLocation.Is0()){
     olterrain* ot = lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
     if(ot==NULL || ot->GetConfig()!=ANVIL){
@@ -356,9 +349,10 @@ void craft::Handle()
     v2XplodAt=rpd.v2ForgeLocation;
   }
 
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
   int xplodStr = 0;
-  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
+//  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
+  if(rpd.fDifficulty>1.0){
     int xplodXtra=0;
     for(int i=0;i<iStrongerXplod;i++)
       xplodXtra+=clock()%5;
@@ -369,16 +363,24 @@ void craft::Handle()
      */
     int iFumblePower=0;
     int iLuckPerc=clock()%100;
-    static const float fBaseCraftSkillToNormalFumble=20.0;
+    static const float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
     static const int iBaseFumbleChancePerc=15;
     int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(Actor)/fBaseCraftSkillToNormalFumble); //ex.: 30%
+    if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
     int iDiv=0;
     iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
     iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
     iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
     iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
     if(iLuckPerc<=1)iFumblePower++; //always have 1% weakest xplod chance
-    if(clock()%100<=iFumblePower)rpd.bSpawnBroken=true; //current max chance per round of spawning broken is 5%
+    if(clock()%100<=iFumblePower){
+      if(!rpd.bSpawnBroken){
+        rpd.iBaseTurnsToFinish/=2;
+        if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1) //to insta provide the obvious messy lump
+          rpd.iBaseTurnsToFinish=1;
+      }
+      rpd.bSpawnBroken=true; //current max chance per round of spawning broken is 5%
+    }
     xplodStr = iFumblePower;
     if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
       xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
@@ -386,7 +388,7 @@ void craft::Handle()
     }
   }
 
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
   if(rpd.bFailed){
     Terminate(false); //won't suspend!
     return;
@@ -399,7 +401,7 @@ void craft::Handle()
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
     if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      fsMsg << "You prepared "<< rpd.SpawnItem();
+      fsMsg << "You crafted "<< rpd.SpawnItem();
     }
 
     int iWallMaterialConfig=-1;
@@ -485,7 +487,7 @@ void craft::Handle()
    * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
    * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
    *******************/
-  rpd.integrityCheck();
+  rpd.rc.integrityCheck();
 
   truth MoveCraftTool = this->MoveCraftTool;DBGLN;
   ulong RightBackupID = this->RightBackupID;
@@ -540,7 +542,7 @@ void craft::Handle()
 }
 
 bool craft::IsSuspending(){
-  return GetActor()->IsPlayer() && rpd.IsCanBeSuspended() && !rpd.bFailed;
+  return GetActor()->IsPlayer() && rpd.rc.IsCanBeSuspended() && !rpd.bFailed;
 }
 
 void craft::Terminate(truth Finished)
