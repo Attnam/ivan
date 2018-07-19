@@ -14,7 +14,6 @@
 #include "audio.h"
 #include "bitmap.h"
 #include "feio.h"
-#include "felist.h"
 #include "game.h"
 #include "graphics.h"
 #include "iconf.h"
@@ -38,12 +37,6 @@ stringoption ivanconfig::DefaultPetName(  "DefaultPetName",
                                           CONST_S("Kenny"),
                                           &configsystem::NormalStringDisplayer,
                                           &DefaultPetNameChangeInterface);
-stringoption ivanconfig::SelectedBkgColor("SelectedBkgColor",
-                                          "selected list entry's highlight color",
-                                          "8,8,8",
-                                          &configsystem::NormalStringDisplayer,
-                                          &SelectedBkgColorChangeInterface,
-                                          &SelectedBkgColorChanger);
 numberoption ivanconfig::AutoSaveInterval("AutoSaveInterval",
                                           "autosave interval",
                                           100,
@@ -107,12 +100,6 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
-truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
-                                          "Enable mouse cursor on lists",
-                                          false,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &AllowMouseOnFelistChanger);
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
@@ -128,12 +115,6 @@ truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
-truthoption ivanconfig::GenerateDefinesValidator("GenerateDefinesValidator",
-                                          "generate validator and validate define.dat (may abort)",
-                                          false,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &GenerateDefinesValidatorChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -180,6 +161,12 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::FontGfx(          "FontGfx",
+                                          "* Select font",
+                                          1, 3, //from 1 to 3 (three options available)
+                                          &FontGfxDisplayer,
+                                          &FontGfxChangeInterface,
+                                          &FontGfxChanger);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "sort savegame files and show dungeon IDs progress",
                                           0, 4,
@@ -251,7 +238,7 @@ cycleoption ivanconfig::ScalingQuality(   "ScalingQuality",
 #endif
 col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 truthoption ivanconfig::PlaySounds(       "PlaySounds",
-                                          "use sound effects",
+                                          "use sounds",
                                           true);
 truthoption ivanconfig::ShowTurn(         "ShowTurn",
                                           "show the turn on log messages",
@@ -463,11 +450,7 @@ void ivanconfig::MIDIOutputDeviceDisplayer(const cycleoption* O, festring& Entry
 }
 
 void clearToBackgroundAfterChangeInterface(){
-  if(game::IsRunning())
-    igraph::BlitBackGround(
-      v2(16,6),
-      v2(game::GetMaxScreenXSize() << 4, 23)
-    );
+  if(game::IsRunning())igraph::BlitBackGround(v2(16, 6), v2(game::GetMaxScreenXSize() << 4, 23));
 }
 
 truth ivanconfig::GraphicsScaleChangeInterface(cycleoption* O)
@@ -491,10 +474,16 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
   return true;
 }
 
+truth ivanconfig::FontGfxChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
-  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set name generator pattern (recommended \"!ss !sV\"):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -508,23 +497,8 @@ truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
-  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"),
-                              GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
-    O->ChangeValue(String);
-
-  clearToBackgroundAfterChangeInterface();
-
-  return false;
-}
-
-truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
-{
-  festring String;
-  if(O)String<<O->Value;
-
-  if(iosystem::StringQuestion(String, CONST_S("Set new Red,Green,Blue color (8 to 200 each value) or empty to disable:"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
@@ -536,7 +510,6 @@ truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
 truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
-  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -670,6 +643,9 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 //  if(What==1 && GetStartingDungeonGfxScale()<3){ //above head asked
 //    What=2; //upgrade to 1st corner
 //  }
+//  if(What==1 && GetStartingFontGfx()<3){ //I have no idea what these lines mean, copying font stuff in case it's ever important --Stihdjia
+//    What=2; //upgrade to 1st corner
+//  }
 
   O->Value = What;
 }
@@ -678,43 +654,6 @@ void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
   if(What < 800) What = 800;
   O->Value = What;
-}
-
-void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
-{
-  if(What.GetSize()>0){
-    int RGB[3]={1,1,1}, j=0;
-    std::string sC;
-    for(int i=0;i<What.GetSize();i++){
-      if(j==3)return; //wrong usage detected
-
-      if(What[i]>=0x30 && What[i]<=0x39) //0-9
-        sC+=What[i];
-      else{
-        if(What[i]!=',') //wrong usage detected
-          return;
-      }
-
-      if(What[i]==',' || i==What.GetSize()-1){
-        RGB[j]=std::stol(sC);
-        if(RGB[j]<8)return; //0,0,0 makes xBRZ not work well. 8,8,8 is min to have col16 not 0,0,0 (it is less bits than col24 per component)
-        if(RGB[j]>200)return; //if all too high will prevent reading white text
-        j++;
-        sC="";
-      }
-    }
-
-    if(j!=3)return; //wrong usage detected
-
-    felist::SetSelectedBkgColor(MakeRGB16(RGB[0],RGB[1],RGB[2]));
-  }else{
-    felist::SetSelectedBkgColor(TRANSPARENT_COLOR);
-  }
-
-  if(O!=NULL){
-    O->Value.Empty();
-    O->Value<<What;
-  }
 }
 
 void ivanconfig::AutoSaveIntervalChanger(numberoption* O, long What)
@@ -793,6 +732,11 @@ void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
+void ivanconfig::FontGfxDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value /*<< 'x'*/;
+}
+
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
@@ -810,12 +754,9 @@ void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
-void ivanconfig::GenerateDefinesValidatorChanger(truthoption* O, truth What)
+void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 {
-  if(O!=NULL)O->Value = What;
-
-  if(What)
-    game::GenerateDefinesValidator(true); //TODO make validation (that aborts) optional using cycleoption
+  O->Value = What;
 }
 
 void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
@@ -830,13 +771,6 @@ void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
   O->Value = What;
 
   game::UpdateSRegionsXBRZ();
-}
-
-void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
-{
-  if(O!=NULL)O->Value = What;
-  felist::SetAllowMouse(What);
-  graphics::SetAllowMouseInFullScreen(What);
 }
 
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
@@ -903,6 +837,7 @@ void ivanconfig::CalculateContrastLuminance()
 int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
+int  ivanconfig::iStartingFontGfx=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
@@ -951,6 +886,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&FontGfx);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
@@ -978,14 +914,11 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&SaveGameSortMode);
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
-  configsystem::AddOption(fsCategory,&SelectedBkgColor);
-  configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
-  configsystem::AddOption(fsCategory,&GenerateDefinesValidator);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
@@ -998,10 +931,11 @@ void ivanconfig::Initialize()
 
   configsystem::Load();
 
-  iStartingWindowWidth = WindowWidth.Value;
-  iStartingWindowHeight = WindowHeight.Value;
-  iStartingDungeonGfxScale = DungeonGfxScale.Value;
-  bStartingOutlinedGfx = OutlinedGfx.Value;
+  iStartingWindowWidth=WindowWidth.Value;
+  iStartingWindowHeight=WindowHeight.Value;
+  iStartingDungeonGfxScale=DungeonGfxScale.Value;
+  iStartingFontGfx=FontGfx.Value;
+  bStartingOutlinedGfx=OutlinedGfx.Value;
 
   CalculateContrastLuminance();
   audio::ChangeMIDIOutputDevice(MIDIOutputDevice.Value);
@@ -1012,6 +946,4 @@ void ivanconfig::Initialize()
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
   SavegameSafelyChanger(NULL, SavegameSafely.Value);
-  SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
-  AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }
