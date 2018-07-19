@@ -13,6 +13,7 @@
 #ifndef MAIN_INCLUDE_CRAFT_H_
 #define MAIN_INCLUDE_CRAFT_H_
 
+#include <ctime>
 #include <vector>
 
 class craft;

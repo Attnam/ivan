@@ -1155,7 +1155,7 @@ struct srpMelt : public recipe{
 
     int iWeakestCfgDummy;
     choseIngredients<lump>(
-      festring("First lump's chosen material will be mixed with further ones of same material only, hit ESC to accept."),
+      festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
       1000000, //just any huge volume as "limit"
       rpd, iWeakestCfgDummy, true,
       0, false, true, false, true);
