@@ -14,6 +14,8 @@
 
 #include "confdef.h"
 
+#include "dbgmsgproj.h"
+
 itemdatabase** protosystem::ItemConfigData;
 int protosystem::ItemConfigDataSize;
 itemdatabase** protosystem::ItemCategoryData[ITEM_CATEGORIES];
@@ -555,8 +557,8 @@ void protosystem::Initialize()
 
   for(c = 1; c < protocontainer<item>::GetSize(); ++c)
   {
-    const prototype* Proto = protocontainer<item>::GetProtoData()[c];
-    ItemConfigDataSize += Proto->GetConfigSize();
+    const prototype* Proto = protocontainer<item>::GetProtoData()[c]; DBG1(Proto->GetClassID());
+    ItemConfigDataSize += Proto->GetConfigSize(); DBG1(Proto->GetConfigData());
 
     if(Proto->GetConfigData()[0]->IsAbstract)
       --ItemConfigDataSize;

@@ -31,6 +31,12 @@
 #define WAIT_FOR_KEY_DOWN globalwindowhandler::WaitForKeyDown
 #define WAIT_FOR_KEY_UP globalwindowhandler::WaitForKeyUp
 
+struct mouseclick{
+ int btn=-1;
+ v2 pos;
+ int wheelY=0;
+};
+
 class globalwindowhandler
 {
  public:
@@ -39,14 +45,19 @@ class globalwindowhandler
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
+  static mouseclick ConsumeMouseEvent();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
+  static uint PollEvents(SDL_Event* pEvent = NULL);
+  static uint UpdateMouse();
   static int GetKey(truth = true);
   static int ReadKey();
   static truth WaitForKeyEvent(uint Key);
   static truth WaitForKeyDown(){return WaitForKeyEvent(SDL_KEYDOWN);}
   static truth WaitForKeyUp  (){return WaitForKeyEvent(SDL_KEYUP  );}
+  static v2 GetMouseLocation();
+  static bool IsMouseAtRect(v2, v2, bool = true, v2 = v2());
   static truth IsLastSDLkeyEventWasKeyUp();
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());

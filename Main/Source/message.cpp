@@ -174,6 +174,8 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
+  game::RegionListItemEnable(false); //this fix the problem that happens on death
+
   MessageHistory.SetPageLength(ivanconfig::GetStackListPageLength());
   MessageHistory.Draw();
 }
@@ -310,7 +312,7 @@ bool eol = false;
 
 festring getstr(FILE *f, truth word)
 {
-  if(eol && word) return "";
+  if(eol && word) return CONST_S("");
   festring s;
   while(1)
   {
@@ -371,7 +373,7 @@ void soundsystem::initSound()
 
         SoundInfo si;
         int iPart=0;
-        festring Pattern, AllFiles, Description, TmpPart="";
+        festring Pattern, AllFiles, Description, TmpPart;
         for(int i=0;i<Line.GetSize();i++)
         {
           if( c[i]!=';' || i==(Line.GetSize()-1) ) // skip separator and add last char
@@ -395,7 +397,7 @@ void soundsystem::initSound()
               if(bDbg)std::cout << "Ptrn:'" << Pattern.CStr() <<"'"<< std::endl;
               break;
             }
-            TmpPart=""; //reset
+            TmpPart.Empty(); //reset
             iPart++;
           }
         }
@@ -407,16 +409,16 @@ void soundsystem::initSound()
         if(error) *si.extra = NULL;
 
         // configure the assigned files, now they are separated with ',' and the filename now accepts spaces.
-        festring FileName="";
+        festring FileName;
         truth bFoundDot=false;
         for(int i=0;i<AllFiles.GetSize();i++)
         {
-          if( FileName.GetSize()==0 && AllFiles[i] == ' ' )continue; //skip spaces from start TODO remove trailing spaces for each file
+          if( FileName.IsEmpty() && AllFiles[i] == ' ' )continue; //skip spaces from start TODO remove trailing spaces for each file
           if( bFoundDot && AllFiles[i] == ' ' )continue; //skip spaces from end TODO this "after dot" trick will prevent more than one dot per file :/
 
           if( AllFiles[i]!=',' || i==(AllFiles.GetSize()-1) ) // skip separator and add last char
           {
-            FileName = FileName + AllFiles[i];
+            FileName << AllFiles[i];
           }
 
           if(AllFiles[i]=='.')bFoundDot=true;
@@ -427,7 +429,7 @@ void soundsystem::initSound()
             if(bDbg)std::cout <<"'"<<FileName.CStr()<<"'"<< " - " <<"'"<<Pattern.CStr()<<"'"<< std::endl;
 
             //reset
-            FileName="";
+            FileName.Empty();
             bFoundDot=false;
           }
         }

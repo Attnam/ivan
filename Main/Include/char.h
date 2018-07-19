@@ -413,7 +413,7 @@ class character : public entity, public id
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   int GetHungerState() const;
-  truth ConsumeItem(item*, cfestring&);
+  truth ConsumeItem(item*, cfestring&, truth = false);
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
@@ -752,6 +752,7 @@ class character : public entity, public id
   virtual lsquare* GetNeighbourLSquare(int) const;
   virtual wsquare* GetNeighbourWSquare(int) const;
   stack* GetStackUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I))->GetStack(); }
+  stack* GetStackUnderSafely() const;
   square* GetNearSquare(v2 Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
   square* GetNearSquare(int x, int y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
   lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
@@ -759,7 +760,9 @@ class character : public entity, public id
   wsquare* GetNearWSquare(v2) const;
   wsquare* GetNearWSquare(int, int) const;
   v2 GetPos(int I = 0) const { return GetSquareUnder(I)->GetPos(); }
+  v2 GetPosSafely() const;
   square* GetSquareUnder(int I = 0) const { return !MotherEntity ? SquareUnder[I] : MotherEntity->GetSquareUnderEntity(I); }
+  square* GetSquareUnderSafely() const;
   virtual square* GetSquareUnderEntity(int I = 0) const { return GetSquareUnder(I); }
   lsquare* GetLSquareUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I)); }
   int GetRandomNonVitalBodyPart() const;
@@ -1190,10 +1193,12 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
+  bool AutoPlayAIChkInconsistency();
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
+  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
   int   AutoPlayAIFindWalkDist(v2 v2To);
   truth AutoPlayAITestValidPathTo(v2 v2To);

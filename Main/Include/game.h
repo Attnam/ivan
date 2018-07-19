@@ -208,15 +208,15 @@ class game
   static cchar* Insult();
   static truth TruthQuestion(cfestring&, int = 0, int = 0);
   static void DrawEverything();
-  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos);
+  static void UpdateShowItemsAtPos(bool bAllowed,v2 v2AtPos=v2(0,0));
   static void UpdateAltSilhouette(bool bAllowed);
   static v2 CalculateStretchedBufferCoordinatesFromDungeonSquarePos(v2 v2SqrPos);
   static int ItemUnderCode(int iCycleValue);
   static int ItemUnderCorner(int val);
   static int ItemUnderZoom(int val);
   static bool ItemUnderHV(int val);
-  static truth Save(cfestring& = SaveName(""));
-  static int Load(cfestring& = SaveName(""));
+  static truth Save(cfestring& = SaveName(CONST_S("")));
+  static int Load(cfestring& = SaveName(CONST_S("")));
   static int GetCurrentSavefileVersion();
   static truth IsRunning() { return Running; }
   static void SetIsRunning(truth What);
@@ -238,7 +238,7 @@ class game
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
   static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
-  static int DirectionQuestion(cfestring&, truth = true, truth = false);
+  static int DirectionQuestion(cfestring&, truth = true, truth = false, int = 0, int = -1);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
@@ -254,8 +254,8 @@ class game
   static void InitDungeons();
   static truth OnScreen(v2);
   static void DoEvilDeed(int);
-  static void SaveWorldMap(cfestring& = SaveName(""), truth = true);
-  static worldmap* LoadWorldMap(cfestring& = SaveName(""));
+  static void SaveWorldMap(cfestring& = SaveName(CONST_S("")), truth = true);
+  static worldmap* LoadWorldMap(cfestring& = SaveName(CONST_S("")));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID(item*);
@@ -306,7 +306,7 @@ class game
   static truth IsGenerating() { return Generating; }
   static void SetIsGenerating(truth What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = "", cfestring& = "");
+  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static truth TryTravel(int, int, int, truth = false, truth = true);
@@ -367,7 +367,13 @@ class game
   static void PlayDefeatMusic();
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
+  static void RefreshDrawMapOverlay();
   static void DrawMapOverlay(bitmap* =NULL);
+  static void DrawMapNotesOverlay(bitmap* =NULL);
+  static lsquare* GetHighlightedMapNoteLSquare();
+  static bool ToggleShowMapNotes();
+  static int RotateMapNotes();
+  static char MapNoteToken();
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -475,6 +481,7 @@ class game
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersion();
+  static void ValidateCommandKeys(char Key1,char Key2,char Key3);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -494,7 +501,6 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -558,6 +564,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
+  static festring AutoSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;

@@ -60,7 +60,7 @@ int audio::CurrentMIDIOutPort;
 std::vector<musicfile> audio::Tracks;
 RtMidiOut* audio::midiout = 0;
 
-cchar* audio::CurrentTrack;
+festring audio::CurrentTrack;
 festring audio::MusDir;
 
 /** For each increase in intensity, the respective MIDI channel changes by the following amount */
@@ -93,7 +93,7 @@ void audio::Init(cfestring& musicDirectory)
    MasterVolume = 0;
    TargetIntensity = 0;
    volumeChangeRequest = false;
-   CurrentTrack = 0;
+   CurrentTrack.Empty();
    MusDir = musicDirectory;
 
    // RtMidiOut constructor
@@ -154,11 +154,11 @@ int audio::Loop(void *ptr)
       {
          isTrackPlaying = true;
          int randomIndex = rand() % Tracks.size();
-         CurrentTrack = Tracks[randomIndex].GetFilename().CStr();
+         CurrentTrack = Tracks[randomIndex].GetFilename();
 
-         festring MusFile = MusDir + festring(CurrentTrack);
+         festring MusFile = MusDir + CurrentTrack;
 
-         PlayMIDIFile( (char*)MusFile.CStr(), 1);
+         PlayMIDIFile(MusFile, 1);
       }
       isTrackPlaying = false;
       SDL_Delay(1);
@@ -167,7 +167,7 @@ int audio::Loop(void *ptr)
 }
 
 
-cchar* audio::GetCurrentlyPlayedFile()
+cfestring& audio::GetCurrentlyPlayedFile()
 {
    return CurrentTrack;
 }
@@ -257,13 +257,13 @@ void audio::SendVolumeMessage(int targetVolume)
 }
 
 
-int audio::PlayMIDIFile(char* filename, int32_t loops)
+int audio::PlayMIDIFile(cfestring& filename, int32_t loops)
 {
    std::vector<unsigned char> message;
    MIDI_HEADER_CHUNK_t MIDIHdr;
 
 
-   MPB_PlayMIDIFile(&MIDIHdr, filename);
+   MPB_PlayMIDIFile(&MIDIHdr, const_cast<char*>(filename.CStr()));
 
    int usPerTick = MPB_SetTickRate(MIDIHdr.currentState.BPM, MIDIHdr.PPQ);
    int cumulativeWait = 0;
@@ -383,11 +383,11 @@ void audio::SetPlaybackStatus(uint8_t newStateBitmap)
 }
 
 
-void audio::ClearMIDIPlaylist(cchar* exceptFilename)
+void audio::ClearMIDIPlaylist(cfestring& exceptFilename)
 {
    for(auto it = Tracks.begin(); it != Tracks.end();)
    {
-      if(exceptFilename && it->GetFilename() == exceptFilename)
+      if(!exceptFilename.IsEmpty() && it->GetFilename() == exceptFilename)
       {
          ++it;
       }
@@ -398,7 +398,7 @@ void audio::ClearMIDIPlaylist(cchar* exceptFilename)
    }
 }
 
-void audio::RemoveMIDIFile(char* filename)
+void audio::RemoveMIDIFile(cfestring& filename)
 {
    for(auto it = Tracks.begin(); it != Tracks.end(); ++it)
    {
@@ -409,7 +409,7 @@ void audio::RemoveMIDIFile(char* filename)
    }
 }
 
-void audio::LoadMIDIFile(cchar* filename, int intensitylow, int intensityhigh)
+void audio::LoadMIDIFile(cfestring& filename, int intensitylow, int intensityhigh)
 {
   Tracks.push_back(musicfile(filename, intensitylow, intensityhigh));
 }

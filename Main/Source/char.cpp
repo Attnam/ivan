@@ -25,8 +25,9 @@
 
 #include "hiteffect.h" //TODO move to charsset.cpp?
 
-#define DBGMSG_V2
+//#define DBGMSG_V2
 #include "dbgmsgproj.h"
+#include <bitset>
 
 struct statedata
 {
@@ -700,8 +701,7 @@ int character::TakeHit(character* Enemy, item* Weapon,
     pHitEff->Type=Type;
     pHitEff->WhoHits=Enemy; DBGLN;DBG2(Enemy,"WhoHits"); DBGSV2(Enemy->GetPos()); DBG1(Enemy->GetName(DEFINITE).CStr());
     pHitEff->WhoIsHit=this;
-    pHitEff->itemEffectReference = Weapon;
-    if(pHitEff->itemEffectReference==NULL)pHitEff->itemEffectReference=EnemyBodyPart;
+    pHitEff->lItemEffectReferenceID = Weapon!=NULL ? Weapon->GetID() : EnemyBodyPart->GetID();
   }
 
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
@@ -870,9 +870,6 @@ int character::TakeHit(character* Enemy, item* Weapon,
 
   if(Weapon)
   {
-//    if(CanBeSeenByPlayer())
-//      GetLSquareUnder()->AddHitEffect(Weapon,this,Enemy);
-
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
@@ -900,8 +897,9 @@ int character::TakeHit(character* Enemy, item* Weapon,
   }
 
   if(pHitEff!=NULL){DBGLN;
-    GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
-    delete pHitEff; //already copied
+    if(GetLSquareUnder()!=NULL) //may be null if char died TODO right?
+      GetLSquareUnder()->AddHitEffect(*pHitEff); //after all returns of failure and before any other returns
+    delete pHitEff; //already possibly copied
   }
 
   if(CheckDeath(GetNormalDeathMessage(), Enemy,
@@ -1197,10 +1195,12 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
 
 void character::GetAICommand()
 {
-  SeekLeader(GetLeader());
+  if(!IsPlayerAutoPlay()){
+    SeekLeader(GetLeader());
 
-  if(FollowLeader(GetLeader()))
-    return;
+    if(FollowLeader(GetLeader()))
+      return;
+  }
 
   if(CheckForEnemies(true, true, true))
     return;
@@ -2526,19 +2526,36 @@ void character::AutoPlayAIReset(bool bFailedToo)
 truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
 {
   v2KeepGoingTo=v2KGTo;
-  SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
-  CreateRoute();
-  if(!Route.empty())
-    return true;
 
-  DBG1("RouteCreationFailed");
-  TerminateGoingTo(); //redundant?
-  vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
-  bAutoPlayUseRandomNavTargetOnce=true;
+  bool bOk=true;
 
-  AutoPlayAIReset(false);
+  if(bOk){
+    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
+    if(olt && olt->IsWall()){
+      //TODO is this a bug in the CanMoveOn() code?
+      DBG4(DBGAV2(v2KeepGoingTo),"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+      bOk=false;
+    }
+  }
 
-  return false;
+  if(bOk){
+    SetGoingTo(v2KeepGoingTo); DBG3(DBGAV2(GetPos()),DBGAV2(GoingTo),DBGAV2(v2KeepGoingTo));
+    CreateRoute();
+    if(Route.empty()){
+      TerminateGoingTo(); //redundant?
+      bOk=false;
+    }
+  }
+
+  if(!bOk){
+    DBG1("RouteCreationFailed");
+    vv2FailTravelToTargets.push_back(v2KeepGoingTo); DBG3("BlockGoToDestination",DBGAV2(v2KeepGoingTo),vv2FailTravelToTargets.size());
+    bAutoPlayUseRandomNavTargetOnce=true;
+
+    AutoPlayAIReset(false); //v2KeepGoingTo is reset here too
+  }
+
+  return bOk;
 }
 
 void character::AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex, bool bWide, bool bKeepColor)
@@ -2779,6 +2796,23 @@ truth character::AutoPlayAIDropThings()
   return false;
 }
 
+bool character::IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern)
+{
+  if(!it->CanBeSeenBy(this))return false;
+  if(!it->IsPickable(this))return false;
+  if(it->GetSquaresUnder()!=1)return false; //avoid big corpses 2x2
+
+  if(!bPlayerHasLantern && it->IsOnFire(this)){
+    //ok
+  }else{
+    if(it->IsBroken())return false;
+    if(it->GetTruePrice()<=iMaxValueless)return false; //mainly to avoid all rocks from broken walls
+    if(clock()%3!=0 && it->GetSpoilLevel()>0)return false; //some spoiled may be consumed to randomly test diseases flows
+  }
+
+  return true;
+}
+
 truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(this);
@@ -2787,7 +2821,7 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
   if(h->AutoPlayAIequip())
     return true;
 
-  if(GetBurdenState()!=OVER_LOADED){ //DBG2("",CommandFlags&DONT_CHANGE_EQUIPMENT);
+  if(GetBurdenState()!=OVER_LOADED){ DBG4(CommandFlags&DONT_CHANGE_EQUIPMENT,this,GetNameSingular().CStr(),GetSquareUnder());
     if(v2LastDropPlayerWasAt!=GetPos()){
       static bool bHoarder=true; //TODO wizard autoplay AI config exclusive felist
 
@@ -2798,20 +2832,10 @@ truth character::AutoPlayAIEquipAndPickup(bool bPlayerHasLantern)
       //just pick up any useful stuff
       static itemvector vit;vit.clear();GetStackUnder()->FillItemVector(vit);
       for(uint c = 0; c < vit.size(); ++c){
-        if(!vit[c]->CanBeSeenBy(this))continue;
-        if(!vit[c]->IsPickable(this))continue;
-        if(vit[c]->GetSquaresUnder()!=1)continue; //avoid big corpses 2x2
-
-        if(!bPlayerHasLantern && vit[c]->IsOnFire(this)){
-          //ok
-        }else{
-          if(vit[c]->IsBroken())continue;
-          if(vit[c]->GetTruePrice()<=iMaxValueless)continue; //mainly to avoid all rocks from broken walls
-          if(vit[c]->GetSpoilLevel()>0)continue;
-        }
+        if(!IsAutoplayAICanPickup(vit[c],bPlayerHasLantern))continue;
 
         static itemcontainer* itc;itc = dynamic_cast<itemcontainer*>(vit[c]);
-        if(itc && !itc->IsLocked()){
+        if(itc && !itc->IsLocked()){ //get items from unlocked container
           static itemvector vitItc;vitItc.clear();itc->GetContained()->FillItemVector(vitItc);
           for(uint d = 0; d < vitItc.size(); ++d)
             vitItc[d]->MoveTo(itc->GetLSquareUnder()->GetStack());
@@ -2945,29 +2969,31 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
                 static bool bIsLanternOnFloor;bIsLanternOnFloor = dynamic_cast<lantern*>(vit[n])!=NULL;// || vit[n]->IsOnFire(this); DBGLN;
 
                 if( // if is useful to the AutoPlay AI endless tests
-                    vit[n]->IsShield  (this) ||
-                    vit[n]->IsWeapon  (this) ||
-                    vit[n]->IsArmor   (this) ||
-                    vit[n]->IsAmulet  (this) ||
-                    vit[n]->IsZappable(this) ||
-                    vit[n]->IsRing    (this) ||
-                    bIsLanternOnFloor
-                ){
-                  bVisitAgain=true;
+                  vit[n]->IsShield  (this) ||
+                  vit[n]->IsWeapon  (this) ||
+                  vit[n]->IsArmor   (this) ||
+                  vit[n]->IsAmulet  (this) ||
+                  vit[n]->IsZappable(this) ||
+                  vit[n]->IsRing    (this) ||
+                  bIsLanternOnFloor
+                )
+                  if(IsAutoplayAICanPickup(vit[n],bPlayerHasLantern))
+                  {
+                    bVisitAgain=true;
 
-                  if(bIsLanternOnFloor && !bPlayerHasLantern){
-                    static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
-                    if(iDist<iNearestLanterOnFloorDist){
-                      iNearestLanterOnFloorDist=iDist;
-                      v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
+                    if(bIsLanternOnFloor && !bPlayerHasLantern){
+                      static int iDist;iDist = AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
+                      if(iDist<iNearestLanterOnFloorDist){
+                        iNearestLanterOnFloorDist=iDist;
+                        v2PreferedLanternOnFloorTarget = lsqr->GetPos(); DBG2("PreferLanternAt",DBGAV2(lsqr->GetPos()))
+                      }
+                    }else{
+                      iVisitAgainCount--;
                     }
-                  }else{
-                    iVisitAgainCount--;
-                  }
 
-                  DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
-                  break;
-                }
+                    DBG4(bVisitAgain,DBGAV2(lsqr->GetPos()),iVisitAgainCount,bIsLanternOnFloor);
+                    break;
+                  }
               }
             }
           }
@@ -2976,6 +3002,11 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         }
 
       }
+
+      if(bAddValidTargetSquare)
+        if(olt && olt->IsWall()){ DBG5(iX,iY,"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+          bAddValidTargetSquare=false;
+        }
 
       if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
         static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
@@ -3077,9 +3108,9 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
 
     if(!v2NewKGTo.Is0()){
       AutoPlayAISetAndValidateKeepGoingTo(v2NewKGTo);
+    }else{
+      DBG1("TODO:too complex paths are failing... improve CreateRoute()?");
     }
-
-    DBG1("TODO:too complex paths are failing... improve create path method?");
   }
 
   if(!v2KeepGoingTo.Is0()){
@@ -3144,28 +3175,42 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
   return false;
 }
 
+bool character::AutoPlayAIChkInconsistency()
+{
+  if(GetSquareUnder()==NULL){
+    DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
+    DBG6("GetSquareUnderIsNULLhow?",IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
+    return true; //to just ignore this turn expecting on next it will be ok.
+  }
+  return false;
+}
+
 truth character::AutoPlayAICommand(int& rKey)
-{ DBGSV2(GetPos());
+{
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
+  DBGSV2(GetPos());
+
   if(AutoPlayLastChar!=this){
     AutoPlayAIReset(true);
     AutoPlayLastChar=this;
   }
 
-  if(AutoPlayAICheckAreaLevelChangedAndReset()){
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
+  if(AutoPlayAICheckAreaLevelChangedAndReset())
     AutoPlayAIReset(true);
-  }
 
   static bool bDummy_initDbg = [](){game::AddDebugDrawOverlayFunction(&AutoPlayAIDebugDrawOverlay);return true;}();
 
   truth bPlayerHasLantern=false;
   static itemvector vit;vit.clear();GetStack()->FillItemVector(vit);
-  for(int i=0;i<vit.size();i++){
+  for(uint i=0;i<vit.size();i++){
     if(dynamic_cast<lantern*>(vit[i])!=NULL || vit[i]->IsOnFire(this)){
       bPlayerHasLantern=true; //will keep only the 1st lantern
       break;
     }
   }
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
     for(int c = 1; c <= GODS; ++c)
       if(game::GetGod(c)->IsKnown())
@@ -3180,17 +3225,35 @@ truth character::AutoPlayAICommand(int& rKey)
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
 //  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
 //  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
-  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues
+  static bool bPreviousTurnWasGhost=false;
+  if(dynamic_cast<ghost*>(this) != NULL){ DBG1("Wandering:Ghost"); //this avoid many issues mainly related to navigation
     iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+    bPreviousTurnWasGhost=true;
+  }else{
+    if(bPreviousTurnWasGhost){
+      AutoPlayAIReset(true); //this may help on navigation
+      bPreviousTurnWasGhost=false;
+      return true;
+    }
   }
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(AutoPlayAIDropThings())
     return true;
 
+  DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(AutoPlayAIEquipAndPickup(bPlayerHasLantern))
     return true;
 
   if(iWanderTurns>0){
+    if(!IsPlayer() || game::GetAutoPlayMode()==0 || !IsPlayerAutoPlay()){ //redundancy: yep
+      DBG9(this,GetNameSingular().CStr(),IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),IsTemporary(),IsPet());
+      DBG5(IsHeadless(),IsPlayer(),game::GetAutoPlayMode(),IsPlayerAutoPlay(),GetName(DEFINITE).CStr());
+      ABORT("autoplay is inconsistent %d %d %d %d %d %s %d %s %d %d %d %d %d",
+        IsPolymorphed(),IsHuman(),IsHumanoid(),IsPolymorphable(),IsPlayerKind(),
+        GetNameSingular().CStr(),game::GetAutoPlayMode(),GetName(DEFINITE).CStr(),
+        IsTemporary(),IsPet(),IsHeadless(),IsPlayer(),IsPlayerAutoPlay());
+    }
     GetAICommand(); DBG2("Wandering",iWanderTurns); //fallback to default TODO never reached?
     iWanderTurns--;
     return true;
@@ -3228,8 +3291,22 @@ truth character::AutoPlayAICommand(int& rKey)
     }
   }
 
-  if(AutoPlayAINavigateDungeon(bPlayerHasLantern))
+  static const int iDesperateResetCountDownDefault=10;
+  static const int iDesperateEarthQuakeCountDownDefault=iDesperateResetCountDownDefault*5;
+  static int iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
+  if(AutoPlayAINavigateDungeon(bPlayerHasLantern)){
+    iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
     return true;
+  }else{
+    if(iDesperateEarthQuakeCountDown==0){
+      iDesperateEarthQuakeCountDown=iDesperateEarthQuakeCountDownDefault;
+      scrollofearthquake::Spawn()->FinishReading(this);
+      DBG1("UsingTerribleEarthquakeSolution"); // xD
+    }else{
+      iDesperateEarthQuakeCountDown--;
+      DBG1(iDesperateEarthQuakeCountDown);
+    }
+  }
 
   /****************************************
    * Twighlight zone
@@ -3237,9 +3314,9 @@ truth character::AutoPlayAICommand(int& rKey)
 
   ADD_MESSAGE("%s says \"I need more intelligence to do things by myself...\"", CHAR_NAME(DEFINITE)); DBG1("TODO: AI needs improvement");
 
-  static int iDesperateResetCountDown=10;
+  static int iDesperateResetCountDown=iDesperateResetCountDownDefault;
   if(iDesperateResetCountDown==0){
-    iDesperateResetCountDown=10;
+    iDesperateResetCountDown=iDesperateResetCountDownDefault;
 
     AutoPlayAIReset(true);
 
@@ -4668,6 +4745,38 @@ truth character::AllowDamageTypeBloodSpill(int Type)
   return false;
 }
 
+v2 character::GetPosSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  if(sqr!=NULL)return sqr->GetPos();
+  return v2();
+}
+
+square* character::GetSquareUnderSafely() const
+{ //prevents crash if polymorphed (here at least)
+  if(SquareUnder[0]!=NULL){DBGLN;
+    return SquareUnder[0];
+  }DBGLN;
+
+  if(IsPolymorphed()){DBGLN;
+    character* pb = GetPolymorphBackup();
+    if(pb!=NULL && pb->SquareUnder[0]!=NULL){ DBG1(pb->GetNameSingular().CStr()); //TODO to use square under index here may cause inconsistencies?
+      return pb->SquareUnder[0];
+    }
+  }DBGLN;
+
+  return NULL;
+}
+
+stack* character::GetStackUnderSafely() const
+{
+  square* sqr = GetSquareUnderSafely();
+  lsquare* lsqr = dynamic_cast<lsquare*>(sqr);
+  if(lsqr!=NULL)return lsqr->GetStack();
+  return NULL;
+}
+
+
 /* Returns truly done damage */
 
 int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex,
@@ -4765,10 +4874,18 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, i
         {
           /** No multi-tile humanoid support! */
 
-          GetStackUnder()->AddItem(Severed);
+          stack* su = GetStackUnderSafely();
+          if(su){
+            su->AddItem(Severed);
 
-          if(Direction != YOURSELF)
-            Severed->Fly(0, Direction, Damage);
+            if(Direction != YOURSELF)
+              Severed->Fly(0, Direction, Damage);
+          }else{
+            /**
+             * this may happen when polymorphing (tests were made as a snake) during an explosion that severe body parts
+             */
+            GetStack()->AddItem(Severed); DBGLN;
+          }
         }
         else
           GetStack()->AddItem(Severed);
@@ -6363,28 +6480,30 @@ void character::SaveLife()
 }
 
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
-{
+{DBG1(GetNameSingular().CStr());
   character* NewForm = 0;
 
   if(StateIsActivated(POLYMORPH_LOCK))
-  {
+  {DBGLN;
     ADD_MESSAGE("You feel uncertain about your body for a moment.");
     return NewForm;
   }
-  if(StateIsActivated(POLYMORPH_CONTROL))
-  {
-    if(IsPlayer() && !IsPlayerAutoPlay())
-    {
-      if(!GetNewFormForPolymorphWithControl(NewForm))
-        return NewForm;
-    }
-    else
-      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);
-  }
-  else
-    NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
 
-  Polymorph(NewForm, Time);
+  if(StateIsActivated(POLYMORPH_CONTROL))
+  {DBGLN;
+    if(IsPlayer() && !IsPlayerAutoPlay())
+    {DBGLN;
+      if(!GetNewFormForPolymorphWithControl(NewForm)){DBG1(NewForm);
+        return NewForm;
+      }
+    }else{DBGLN;
+      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);DBG1(NewForm);
+    }
+  }else{DBGLN;
+    NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);DBG1(NewForm);
+  }DBGLN;
+
+  Polymorph(NewForm, Time);DBG1(NewForm);
   return NewForm;
 }
 
@@ -8197,7 +8316,11 @@ truth character::SelectFromPossessions(itemvector& ReturnVector, cfestring& Topi
     List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
     List.SetEntryDrawer(game::ItemEntryDrawer);
     game::DrawEverythingNoBlit();
+    game::RegionListItemEnable(true);
+    game::RegionSilhouetteEnable(true);
     int Chosen = List.Draw();
+    game::RegionListItemEnable(false);
+    game::RegionSilhouetteEnable(false);
     game::ClearItemDrawVector();
 
     if(Chosen != ESCAPED)
@@ -8514,7 +8637,7 @@ void character::SetBodyPart(int I, bodypart* What)
   }
 }
 
-truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
+truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb, truth nibbling)
 {
   if(IsPlayer()
      && HasHadBodyPart(Item)
@@ -8532,6 +8655,7 @@ truth character::ConsumeItem(item* Item, cfestring& ConsumeVerb)
   consume* Consume = consume::Spawn(this);
   Consume->SetDescription(ConsumeVerb);
   Consume->SetConsumingID(Item->GetID());
+  Consume->SetNibbling(nibbling);
   SetAction(Consume);
   DexterityAction(5);
   return true;
@@ -8660,9 +8784,14 @@ character* character::GetRandomNeighbour(int RelationFlags) const
 
 void character::ResetStates()
 {
-  for(int c = 0; c < STATES; ++c)
-    if(1 << c != POLYMORPHED && TemporaryStateIsActivated(1 << c) && TemporaryStateCounter[c] != PERMANENT)
-    {
+  for(int c = 0; c < STATES; ++c){
+    if(
+        1 << c != POLYMORPHED
+        &&
+        TemporaryStateIsActivated(1 << c)
+        &&
+        (IsPlayerAutoPlay() || TemporaryStateCounter[c] != PERMANENT) //autoplay will be messed if not removing some things like leprosy or worms
+    ){
       TemporaryState &= ~(1 << c);
 
       if(StateData[c].EndHandler)
@@ -8673,6 +8802,7 @@ void character::ResetStates()
           return;
       }
     }
+  }
 }
 
 void characterdatabase::InitDefaults(const characterprototype* NewProtoType, int NewConfig)
@@ -10861,8 +10991,8 @@ cfestring& character::GetStandVerb() const
   if(ForceCustomStandVerb())
     return DataBase->StandVerb;
 
-  static festring Hovering = "hovering";
-  static festring Swimming = "swimming";
+  static festring Hovering = CONST_S("hovering");
+  static festring Swimming = CONST_S("swimming");
 
   if(StateIsActivated(LEVITATION))
     return Hovering;
@@ -12251,16 +12381,17 @@ truth character::IsESPBlockedByEquipment() const
 }
 
 truth character::TemporaryStateIsActivated (long What) const
-{
+{DBG7(this,GetNameSingular().CStr(),TemporaryState&What,TemporaryState,std::bitset<32>(TemporaryState),What,std::bitset<32>(What));
   if((What&PANIC) && (TemporaryState&PANIC) && StateIsActivated(FEARLESS))
-  {
+  {DBGLN;
     return ((TemporaryState&What) & (~PANIC));
-  }
+  }DBGLN;
   if((What&ESP) && (TemporaryState&ESP) && IsESPBlockedByEquipment())
-  {
+  {DBGLN;
     return ((TemporaryState&What) & (~ESP));
-  }
-  return (TemporaryState & What);
+  }DBGLN;
+  bool b = (TemporaryState & What); DBGLN;
+  return b;
 }
 
 truth character::StateIsActivated (long What) const

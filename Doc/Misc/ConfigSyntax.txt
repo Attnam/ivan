@@ -1,0 +1,308 @@
+// The description of the syntax hidden in the code:
+// * FeLib/Source/save.cpp
+// * FeLib/Source/config.cpp
+//
+// PEG Grammar:
+// https://pegjs.org/online
+// https://pegjs.org/documentation#grammar-syntax-and-semantics
+
+{
+  let S = "string", N = "number", T = "truth", C = "cycle";
+  let OPTIONS = new Map([["DefaultName",S],["FantasyNamePattern",S],["DefaultPetName",S],["AutoSaveInterval",N],["AltAdentureInfo",T],["BeNice",T],["HoldPosMaxDist",N],["MemorizeEquipmentMode",C],["WarnAboutVeryDangerousMonsters",T],["AutoDropLeftOvers",T],["SmartOpenCloseApply",T],["CenterOnPlayerAfterLook",T],["ShowGodInfo",T],["ShowMapAtDetectMaterial",T],["GoOnStopMode",C],["WaitNeutralsMoveAway",T],["Contrast",N],["WindowWidth",N],["WindowHeight",N],["GraphicsScale",C],["FullScreenMode",T],["ScalingQuality",C],["LookZoom",T],["XBRZScale",C],["XBRZSquaresAroundPlayer",N],["SilhouetteScale",C],["AltSilhouette",C],["AltSilhouettePreventColorGlitch",C],["AltListItemPos",C],["AltListItemWidth",N],["StackListPageLength",N],["DungeonGfxScale",C],["OutlinedGfx",T],["FrameSkip",N],["ShowItemsAtPlayerSquare",C],["RotateTimesPerSquare",C],["HitIndicator",C],["ShowMap",C],["PlaySounds",T],["Volume",N],["MIDIOutputDevice",C],["DirectionKeyMap",C],["SaveGameSortMode",C],["ShowTurn",T],["ShowFullDungeonName",T],["SelectedBkgColor",S],["AllowImportOldSavegame",T],["SavegameSafely",T],["HideWeirdHitAnimationsThatLookLikeMiss",T],["GenerateDefinesValidator",T]]);
+  let VARIABLES = new Map([["XSize",30],["YSize",30]]);
+
+  let isdigit = function (char) { return /[0-9]/.test(char); };
+  let atoi = function (str) { return 0 | (parseInt(str, 10) || 0); };
+  let calc = function (a, op, b) {
+    // turn numbers into 32-bit signed integer ("signed long" is 32-64 bits)
+    a = 0 | a; b = 0 | b;  // (0 | null) === 0
+    if ((op === "/" || op === "%") && (b === 0)) {
+      error("division by zero: " + a + op + b);
+    }
+    switch (op) {
+      case "~": return ~b;
+      case "+": return 0 | (a + b);
+      case "-": return 0 | (a - b);
+      case "*": return 0 | (a * b);
+      case "/": return 0 | (a / b);
+      case "%": return 0 | (a % b);
+      case "&": return a & b;
+      case "|": return a | b;
+      case "^": return a ^ b;
+      case "<<": return a << b;
+      case ">>": return a >> b;
+    }
+    error("unrecognized operator " + JSON.stringify(op));
+  };
+  let utf8encode = function (utf16) {
+    let encoder = new TextEncoder();
+    return String.fromCharCode(...encoder.encode(utf16));
+  };
+
+  let name = null;
+  let type = null;
+  let config = new Map();
+  let unknown = new Map();
+  let is_option = function (name, location) {
+    if (OPTIONS.has(name)) return true;
+    let loc = location(), a = loc.start, b = loc.end;
+    let key = `${a.line}:${a.column}-${b.line}:${b.column}`;
+    unknown.set(key, {
+      "unknown option": name,
+      location: key,
+    });
+    return false;
+  };
+}
+
+Config
+    = Option*
+      {
+        // dump collected data
+        let lines = [];
+        for (let [name, value] of config.entries()) {
+            let type = OPTIONS.get(name);
+            if (type === S) value = JSON.stringify(value);
+            if (type === T) value = Boolean(value);
+            lines.push(type.padStart(6) + ": " + name + " = " + value);
+        }
+        if (typeof document != null) {
+          setTimeout(function () {
+            document.getElementById("output").textContent = lines.join("\n");
+          }, 100);
+        }
+        console.clear();
+        console.log(lines.join("\n"));
+        console.table(Array.from(unknown.values()));
+      }
+
+Option
+    = name:OptionName value:OptionValue
+      { config.set(name, value); }
+    / ReadWord
+    / Char
+
+OptionName
+    = a:ReadWord
+      b:( &{ return !is_option(a, location); } OptionName )?
+      {
+        name = (b != null) ? b[1] : a;
+        type = OPTIONS.get(name);
+        return name;
+      }
+
+OptionValue
+    = &{ return OPTIONS.has(name); }
+      a:( &{ return type === S; } StringOption_LoadValue
+        / &{ return type === N; } NumberOption_LoadValue
+        / &{ return type === T; } TruthOption_LoadValue
+        / &{ return type === C; } CycleOption_LoadValue
+        )
+      { return a[1]; }
+
+StringOption_LoadValue
+    = separator:ReadWord value:ReadWord
+      { return utf8encode(value); }
+
+NumberOption_LoadValue
+    = ReadNumber
+
+TruthOption_LoadValue
+    = NumberOption_LoadValue
+
+CycleOption_LoadValue
+    = NumberOption_LoadValue
+
+// CL1: &N |N ^N <<N >>N
+// CL2: *N /N %N
+// CL3: +N -N
+// CL4: ~N (N
+ReadNumber
+    = RN_Terminator
+      { return 0; }
+    / op:ReadWord &{ return op === "="; } value:ReadNumber
+      { return value; }
+    / a:RN_Rank3 b:( RN_Operator_Rank3 RN_Rank3 )* RN_Terminator?
+      { return b.reduce((x,y) => calc(x, y[0], y[1]), (a != null ? a : 0)); }
+    / &{ return true; }
+      { error("unexpected end of input for ReadNumber"); }
+
+RN_Rank3
+    = a:RN_Rank2 b:( RN_Operator_Rank2 RN_Rank2 )*
+      { return b.reduce((x,y) => calc(x, y[0], y[1]), a); }
+
+RN_Rank2
+    = a:RN_Rank1 b:( RN_Operator_Rank1 RN_Rank1 )*
+      { return b.reduce((x,y) => calc(x, y[0], y[1]), a); }
+
+RN_Rank1
+    = lp:ReadWord &{ return lp === "(" } value:ReadNumber
+      { return value; }
+    / a:RN_Operator_Unary+ b:ReadNumber
+      { return a.reduceRight((x,y) => calc(0, y, x), b); }
+    / RN_Rank0
+
+RN_Rank0
+    = RN_Terminator_Ahead
+      { return null; }
+    / a:RN_Value b:RN_Rank0?
+      { return (b != null) ? b : a; }
+
+RN_Value
+    = RN_Number
+    / RN_RGB
+    / RN_Bool
+    / RN_Variable
+
+RN_Operator_Unary
+    = a:ReadWord b:( &{ return /^[~+\-*/%&|^]$/.test(a); }
+                     { return ""; }
+                   / &{ return a === "<"; } "<"
+                     { return "<"; }
+                   / &{ return a === ">"; } ">"
+                     { return ">"; }
+                   )
+      { return a + b; }
+
+RN_Operator_Rank1
+    = a:ReadWord b:( &{ return /^[&|^]$/.test(a); }
+                     { return ""; }
+                   / &{ return a === "<"; } "<"
+                     { return "<"; }
+                   / &{ return a === ">"; } ">"
+                     { return ">"; }
+                   )
+      { return a + b; }
+
+RN_Operator_Rank2
+    = op:ReadWord &{ return /^[*/%]$/.test(op); }
+      { return op; }
+
+RN_Operator_Rank3
+    = op:ReadWord &{ return /^[-+]$/.test(op); }
+      { return op; }
+
+RN_Terminator
+    = a:ReadWord &{ return /^[;,:)]$/.test(a); }
+      { return null; }
+
+RN_Terminator_Ahead
+    = ( &( a:ReadWord
+           ( &{ return /^[;,:)~&|^*/%+\-(#]$/.test(a); }
+           / &{ return a === "<"; } "<"
+           / &{ return a === ">"; } ">"
+           )
+        )
+        ReadWord_Skipped+
+      / &( [;,:)~&|^*/%+\-(#] / "<<" / ">>" )
+      )
+      { return null; }
+
+RN_Number
+    = a:ReadWord &{ return isdigit(a[0]); }
+      { return atoi(a); }
+
+RN_RGB
+    = a:ReadWord &{ return a === "rgb"; }
+      bits:ReadNumber r:ReadNumber g:ReadNumber b:ReadNumber
+      {
+        if (bits === 16) {
+          return (r << 8 & 0xF800) | (g << 3 & 0x7E0) | (b >> 3 & 0x1F);
+        } else if (bits === 24) {
+          return (r << 16 & 0xFF0000) | (g << 8 & 0xFF00) | (b & 0xFF);
+        } else {
+          error('invalid RGB bit size ' + bits);
+        }
+      }
+
+RN_Bool
+    = a:ReadWord &{ return a === "true" || a === "false"; }
+      { return (a === "true") ? 1 : 0; }
+
+RN_Variable
+    = name:ReadWord
+      {
+        if (VARIABLES.has(name)) return atoi(String(VARIABLES.get(name)));
+        error("Odd numeric value " + JSON.stringify(name));
+      }
+
+ReadWord
+    = a:Word b:( !Whitespace ReadWord_Skipped Word? )* Whitespace?
+      { return a + b.map(x => x[2]).join(""); }
+    / a:Number b:( !Whitespace ReadWord_Skipped Number? )* Whitespace?
+      { return a + b.map(x => x[2]).join(""); }
+    / Comment value:ReadWord
+      { return value; }
+    / String
+    / ReadWord_Error
+    / Punct
+    / Char value:ReadWord
+      { return value; }
+
+ReadWord_Skipped
+    = Comment
+    / !( Punct / Alpha / Digit ) Char
+
+ReadWord_Error
+    = CommentStart
+      { error("incomplete comment"); }
+    / DoubleQuote
+      { error("incomplete string"); }
+
+String
+    = DoubleQuote StringChar* DoubleQuote
+      {
+        // strip the two outer double quotes
+        let ActualString = text().replace(/^"|"$/g, "");
+        // replace all Backslash+DoubleQuote with DoubleQuote
+        return ActualString.replace(/\\"/g, "\"");
+      }
+
+StringChar
+    = !DoubleQuote ( EscapedChar / Char )
+
+EscapedChar
+    = Backslash DoubleQuote
+
+DoubleQuote
+    = "\""
+
+Backslash
+    = "\\"
+
+Comment
+    = CommentStart ( Comment / !CommentEnd Char )* CommentEnd
+      { return text(); }
+
+CommentStart
+    = "/*"
+
+CommentEnd
+    = "*/"
+
+Word
+    = ( Alpha / "_" )+
+      { return text(); }
+
+Number                                           "a number"
+    = Digit+
+      { return text(); }
+
+Alpha                                            "a letter"
+    = [a-zA-Z]
+
+Digit                                            "a digit"
+    = [0-9]
+
+Whitespace                                       "a space or newline"
+    = [ \n]
+
+Punct                                            "a punctuation"
+    = [!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]
+
+Char                                             "any character"
+    = [\x00-\xFF]                                // for C++ 8-bit char
+    / .                                          // for JavaScript UTF-16 unit
+
+EOF
+    = !.

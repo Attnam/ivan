@@ -43,13 +43,20 @@ class commandsystem
   static truth IsForRegionListItem(int iIndex);
   static truth IsForRegionSilhouette(int iIndex);
   static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
+  static void SaveSwapWeapons(outputfile& SaveFile);
+  static void LoadSwapWeapons(inputfile& SaveFile);
+  static void ClearSwapWeapons();
  private:
   static truth Apply(character*);
   static truth Close(character*);
   static truth Eat(character*);
   static truth Drink(character*);
+  static truth Taste(character*);
   static truth Dip(character*);
   static truth DrawMessageHistory(character*);
+  static truth SwapWeapons(character* Char);
+  static truth SwapWeaponsWork(character* Char, int iIndexOverride=-1);
+  static truth SwapWeaponsCfg(character* Char);
   static truth Drop(character*);
   static truth ForceVomit(character*);
   static truth GoDown(character*);
@@ -71,6 +78,7 @@ class commandsystem
   static truth Throw(character*);
   static truth EquipmentScreen(character*);
   static truth WhatToEngrave(character*);
+  static truth WhatToEngrave(character* Char,bool bEngraveNote,v2 v2EngraveNotePos);
   static truth Zap(character*);
   static truth Rest(character*);
   static truth Sit(character*);
@@ -83,7 +91,7 @@ class commandsystem
   static truth WieldInLeftArm(character*);
   static truth AssignName(character*);
   static truth Search(character*);
-  static truth Consume(character*, cchar*, sorter);
+  static truth Consume(character*, cchar*, cchar*, sorter, truth = false);
 #ifdef WIZARD
   static truth WizardMode(character*);
   static truth AutoPlay(character* Char);

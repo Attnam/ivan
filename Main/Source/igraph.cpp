@@ -514,7 +514,7 @@ void chkExportGfx(){
 
 }
 festring prepareFileName(const char* strName){
-  festring fs="";
+  festring fs;
   return fs<<game::GetDataDir()<<"Graphics/HumanBodypartSilhouette/"<<strName<<".png";
 }
 #endif

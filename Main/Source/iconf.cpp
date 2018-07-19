@@ -107,6 +107,12 @@ numberoption ivanconfig::FrameSkip(       "FrameSkip",
                                           &FrameSkipDisplayer,
                                           &FrameSkipChangeInterface,
                                           &FrameSkipChanger);
+truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
+                                          "Enable mouse cursor on lists",
+                                          false,
+                                          &configsystem::NormalTruthDisplayer,
+                                          &configsystem::NormalTruthChangeInterface,
+                                          &AllowMouseOnFelistChanger);
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
@@ -116,6 +122,9 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "wait neutral NPCs move away from your path",
                                           false);
+truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
+                                          "allow distant lights to be seen",
+                                          true);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
                                           true,
@@ -174,6 +183,10 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
+                                          "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
+                                          0, 16,
+                                          &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "sort savegame files and show dungeon IDs progress",
                                           0, 4,
@@ -273,6 +286,14 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
   if(O->Value==-2)Entry  << " = wait"  ;
   if(O->Value==-1)Entry  << " = auto"  ;
   if(O->Value>= 0)Entry  <<   " frames";
+}
+
+void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value==0)
+    Entry << "everywhere";
+  else
+    Entry << O->Value;
 }
 
 void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& Entry)
@@ -488,6 +509,7 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set name generator pattern (recommended \"!ss !sV\"):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -501,6 +523,7 @@ truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name (1-20 letters):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -514,6 +537,7 @@ truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new Red,Green,Blue color (8 to 200 each value) or empty to disable:"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -527,6 +551,7 @@ truth ivanconfig::SelectedBkgColorChangeInterface(stringoption* O)
 truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
+  if(O)String<<O->Value;
 
   if(iosystem::StringQuestion(String, CONST_S("Set new default name for the starting pet (1-20 letters):"),
                               GetQuestionPos(), WHITE, 0, 20, !game::IsRunning(), true) == NORMAL_EXIT)
@@ -672,7 +697,7 @@ void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 
 void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
 {
-  if(What.GetSize()>0){
+  if(!What.IsEmpty()){
     int RGB[3]={1,1,1}, j=0;
     std::string sC;
     for(int i=0;i<What.GetSize();i++){
@@ -822,6 +847,13 @@ void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
   game::UpdateSRegionsXBRZ();
 }
 
+void ivanconfig::AllowMouseOnFelistChanger(truthoption* O, truth What)
+{
+  if(O!=NULL)O->Value = What;
+  felist::SetAllowMouse(What);
+  graphics::SetAllowMouseInFullScreen(What);
+}
+
 void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
@@ -910,6 +942,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
+  configsystem::AddOption(fsCategory,&EnhancedLights);
+  configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -962,6 +996,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowTurn);
   configsystem::AddOption(fsCategory,&ShowFullDungeonName);
   configsystem::AddOption(fsCategory,&SelectedBkgColor);
+  configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
@@ -995,4 +1030,5 @@ void ivanconfig::Initialize()
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
   SavegameSafelyChanger(NULL, SavegameSafely.Value);
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
+  AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }

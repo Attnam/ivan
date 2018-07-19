@@ -37,6 +37,7 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+  static void SetAllowMouseInFullScreen(bool b);
   static int GetScale(){return Scale;}
 
 #ifdef USE_SDL
