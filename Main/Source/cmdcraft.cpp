@@ -334,7 +334,7 @@ cfestring recipedata::dbgInfo() const
   return fs;
 }
 
-ulong ulRPDRandomInitKey = 287463298476233489;
+ulong ulRPDRandomInitKey = 287463298476233489UL; //max 18446744073709551615
 
 void recipedata::SetHumanoid(character* C){
   if(h!=NULL)
