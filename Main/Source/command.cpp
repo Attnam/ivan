@@ -32,15 +32,20 @@
 #include "wsquare.h"
 #include "wterras.h"
 
+#include "dbgmsgproj.h"
+
 #ifdef WIZARD
 #include "proto.h"
 #endif
+
+#include "cmdswapweap.cpp"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
+  game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
 char command::GetKey() const
@@ -70,6 +75,7 @@ command* commandsystem::Command[] =
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
+  new command(&Taste, "taste", 'T', 'T', 'T', true),
   new command(&Drop, "drop", 'd', 'd', 'd', true),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
@@ -99,6 +105,8 @@ command* commandsystem::Command[] =
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
+  new command(&SwapWeaponsCfg, "swap weapons configuration", 'X', 'X', 'X', false),
   new command(&Throw, "throw", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
@@ -106,7 +114,7 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', 'X', 'X', true),
+  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 
@@ -145,7 +153,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -171,6 +179,8 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+//  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -205,7 +215,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -231,6 +241,8 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -255,6 +267,18 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"possess creature")==0)return true;
   if(strcmp(str,"polymorph")==0)return true;
   return false;
+}
+
+char findCmdKey(truth (*func)(character*))
+{
+  char cKey=0;
+  for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
+    if(cmd->GetLinkedFunction()==func){
+      cKey = cmd->GetKey();
+      break;
+    }
+  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return cKey;
 }
 
 truth commandsystem::GoUp(character* Char)
@@ -559,9 +583,7 @@ truth commandsystem::Eat(character* Char)
     }
   }
 
-  bool b=Consume(Char, "eat", &item::IsEatable);
-
-  return b;
+  return Consume(Char, "eat", "eating", &item::IsEatable);
 }
 
 truth commandsystem::Drink(character* Char)
@@ -580,12 +602,27 @@ truth commandsystem::Drink(character* Char)
     }
   }
 
-  bool b=Consume(Char, "drink", &item::IsDrinkable);
-
-  return b;
+  return Consume(Char, "drink", "drinking", &item::IsDrinkable);
 }
 
-truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
+truth commandsystem::Taste(character* Char)
+{
+  if(!Char->CheckConsume(CONST_S("drink")))
+    return false;
+
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
+  {
+    if(Square->GetOLTerrain()->Drink(Char))
+      return true;
+  }
+
+  return Consume(Char, "sip", "sipping", &item::IsDrinkable, true);
+}
+
+truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, cchar* ConsumeVerbPresentParticiple,
+                             sorter Sorter, truth nibbling)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -606,7 +643,7 @@ truth commandsystem::Consume(character* Char, cchar* ConsumeVerb, sorter Sorter)
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
-  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerb + CONST_S("ing")) : false;
+  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerbPresentParticiple, nibbling) : false;
 }
 
 truth commandsystem::ShowInventory(character* Char)
@@ -886,7 +923,7 @@ truth commandsystem::Dip(character* Char)
           return false;
         }
 
-        Item->DipInto(DipTo->CreateDipLiquid(), Char);
+        Item->DipInto(DipTo->CreateDipLiquid(Item->DipIntoVolume()), Char);
         return true;
       }
     }
@@ -945,7 +982,7 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg; //DBG1(Char->GetSquareUnder());
+  festring Msg; DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
       game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
@@ -968,6 +1005,10 @@ truth commandsystem::Look(character* Char)
 
 truth commandsystem::WhatToEngrave(character* Char)
 {
+  return WhatToEngrave(Char,false,v2());
+}
+truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2EngraveMapNotePos)
+{
   if(!Char->CanRead())
   {
     ADD_MESSAGE("You can't even read.");
@@ -977,14 +1018,41 @@ truth commandsystem::WhatToEngrave(character* Char)
   int Key = 0;
   while(!(Key == KEY_ESC || Key == ' '))
   {
-    Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
-                                       "'.' square, 'i' inventory, ESC exits"));
+    if(!bEngraveMapNote)
+      Key = game::AskForKeyPress(CONST_S("Where do you want to engrave? "
+                                         "'.' square, 'i' inventory, ESC exits"));
+
+    int iLSqrLimit=80;
+    if(bEngraveMapNote)
+    {
+      festring What;
+
+      lsquare* lsqrN = game::GetCurrentLevel()->GetLSquare(v2EngraveMapNotePos);
+      if(lsqrN!=NULL){ //TODO can this be NULL?
+        if(lsqrN->GetEngraved()!=NULL){
+          cchar* c = lsqrN->GetEngraved();
+          if(c!=NULL)What=c;
+          if(What.GetSize()>0 && What[0]==game::MapNoteToken()){
+            std::string str=What.CStr();What.Empty();What<<str.substr(1).c_str(); //TODO add substr to festring
+          }
+        }
+      }
+
+      if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
+        festring finalWhat;
+        finalWhat << game::MapNoteToken();
+        finalWhat << What;
+        lsqrN->Engrave(finalWhat);
+      }
+
+      break;
+    }
 
     if(Key == '.')
     {
       festring What;
 
-      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true) == NORMAL_EXIT)
+      if(game::StringQuestion(What, CONST_S("What do you want to engrave here?"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT)
         Char->GetNearLSquare(Char->GetPos())->Engrave(What);
 
       break;
@@ -1123,6 +1191,8 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
+  static char cmdKey = findCmdKey(&Kick);
+
   /** No multi-tile support */
 
   if(!Char->CheckKick())
@@ -1135,11 +1205,15 @@ truth commandsystem::Kick(character* Char)
     return true;
   }
 
-  int Dir = game::DirectionQuestion(CONST_S("In what direction do you wish to kick? [press a direction key]"), false);
+  festring fsQ;
+  fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";
+  static int iPreviousDirChosen = DIR_ERROR;
+  int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
   if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
     return false;
 
+  iPreviousDirChosen = Dir;
   lsquare* Square = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
 
   if(!Square->CheckKick(Char))
@@ -1208,6 +1282,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
+  static char cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;
@@ -1219,16 +1294,19 @@ truth commandsystem::Throw(character* Char)
     return false;
   }
 
-  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"));
+  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"), REMEMBER_SELECTED);
 
   if(Item)
   {
+    static int iPreviousDirChosen = DIR_ERROR;
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
-                                                 "[press a direction key]"), false);
+                                                 "[press a direction key or Enter]"), false, false, KEY_ENTER, iPreviousDirChosen);
 
     if(Answer == DIR_ERROR){
       return false;
     }
+
+    iPreviousDirChosen = Answer;
 
     Char->ThrowItem(Answer, Item);
     Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
@@ -1414,7 +1492,49 @@ truth commandsystem::ShowMap(character* Char)
 
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
-      while(!game::TruthQuestion(festring("Hit a key to close your map."), YES, 'm'));
+      lsquare* lsqrH=NULL;
+      while(true){
+        v2 noteAddPos = Char->GetPos();
+        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
+          KEY_ESC, 5, 't', 'l', 'r','d','e')
+        ){
+          case 'd':
+            lsqrH = game::GetHighlightedMapNoteLSquare();
+            if(lsqrH!=NULL){
+              lsqrH->Engrave(festring());
+              game::RefreshDrawMapOverlay();
+            }
+            continue;
+          case 'r':
+            game::RotateMapNotes();
+            continue;
+          case 't':
+            if(game::ToggleShowMapNotes())
+              ADD_MESSAGE("Let me see my map notes...");
+            continue;
+          case 'l':
+            if(noteAddPos==Char->GetPos()){
+              game::RefreshDrawMapOverlay();
+              noteAddPos = game::PositionQuestion(CONST_S(
+                "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
+                Char->GetPos(), NULL, NULL, true); DBGSV2(noteAddPos);
+              if(noteAddPos==ERROR_V2)
+                continue;
+            }
+            /* no break */
+          case 'e':
+            if(noteAddPos==Char->GetPos()){
+              lsqrH = game::GetHighlightedMapNoteLSquare();
+              if(lsqrH!=NULL)
+                noteAddPos=lsqrH->GetPos();
+            }
+            WhatToEngrave(Char,true,noteAddPos);
+            game::RefreshDrawMapOverlay();
+            continue;
+        }
+        break;
+      }
+
       game::ToggleDrawMapOverlay();
     }
   }else{

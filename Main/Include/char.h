@@ -413,7 +413,7 @@ class character : public entity, public id
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   int GetHungerState() const;
-  truth ConsumeItem(item*, cfestring&);
+  truth ConsumeItem(item*, cfestring&, truth = false);
   virtual truth CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
@@ -1193,10 +1193,12 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
+  bool AutoPlayAIChkInconsistency();
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
+  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
   int   AutoPlayAIFindWalkDist(v2 v2To);
   truth AutoPlayAITestValidPathTo(v2 v2To);

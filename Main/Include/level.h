@@ -245,6 +245,7 @@ class level : public area
   lsquare** GetSquareStack() const { return SquareStack; }
   col24 GetNightAmbientLuminance() const { return NightAmbientLuminance; }
   int DetectMaterial(cmaterial*);
+  int RevealDistantLightsToPlayer();
   void BlurMemory();
   void CalculateLuminances();
   int AddRadiusToSquareStack(v2, long) const;

@@ -238,7 +238,7 @@ class game
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
   static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
-  static int DirectionQuestion(cfestring&, truth = true, truth = false);
+  static int DirectionQuestion(cfestring&, truth = true, truth = false, int = 0, int = -1);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
@@ -367,7 +367,13 @@ class game
   static void PlayDefeatMusic();
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
+  static void RefreshDrawMapOverlay();
   static void DrawMapOverlay(bitmap* =NULL);
+  static void DrawMapNotesOverlay(bitmap* =NULL);
+  static lsquare* GetHighlightedMapNoteLSquare();
+  static bool ToggleShowMapNotes();
+  static int RotateMapNotes();
+  static char MapNoteToken();
 
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -475,6 +481,7 @@ class game
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersion();
+  static void ValidateCommandKeys(char Key1,char Key2,char Key3);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -494,7 +501,6 @@ class game
   static character* Player;
   static v2 Camera;
   static ulong Tick;
-  static festring* AutoSaveFileName;
   static truth InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -558,6 +564,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
+  static festring AutoSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
