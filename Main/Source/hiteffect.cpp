@@ -12,7 +12,7 @@
 
 /* Compiled through materset.cpp */
 
-#define DBGMSG_BLITDATA
+//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 int iDrawTot=3;
@@ -32,15 +32,31 @@ square* hiteffect::GetSquareUnderEntity(int) const {
 
 #define DBGHITEFFINFO \
     DBG1(iState); \
-    DBG6("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect,setup.itemEffectReference); \
+    DBG5("pointers",this,setup.WhoHits,setup.WhoIsHit,bmpHitEffect); \
     DBG5(setup.Type,bWhoIsHitDied,iDrawCount,bBlitdataWasSet,DBGAV2(v2HitFromSqrPos)); \
     DBGSV2(v2HitToSqrPos); \
-    DBGEXEC(if(setup.WhoHits ->Exists())DBG1(setup.WhoHits ->GetName(DEFINITE).CStr())); \
-    DBGEXEC(if(setup.WhoIsHit->Exists())DBG1(setup.WhoIsHit->GetName(DEFINITE).CStr())); \
-    DBGEXEC(if(setup.itemEffectReference->Exists())DBGSC(setup.itemEffectReference->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(WhoHitsExists ())DBG1(setup.WhoHits ->GetName(DEFINITE).CStr())); \
+    DBGEXEC(if(WhoIsHitExists())DBG1(setup.WhoIsHit->GetName(DEFINITE).CStr())); \
     DBGSV2(bmpHitEffect->GetSize()); \
     DBGBLD(bldFinalDraw); \
     DBGSTK;
+
+bool hiteffect::ItemEfRefExists() const
+{
+  return game::SearchItem(setup.lItemEffectReferenceID)!=NULL;
+}
+
+bool hiteffect::WhoIsHitExists() const
+{
+  if(game::SearchCharacter(setup.lWhoIsHitID)==NULL)return false;
+  return setup.WhoIsHit->Exists();
+}
+
+bool hiteffect::WhoHitsExists() const
+{
+  if(game::SearchCharacter(setup.lWhoHitsID)==NULL)return false;
+  return setup.WhoHits->Exists();
+}
 
 hiteffect::hiteffect(hiteffectSetup s)
 : entity(HAS_BE), Next(NULL), iDrawCount(0), iState(0), bBlitdataWasSet(false), lStartTime(clock())
@@ -64,6 +80,11 @@ hiteffect::hiteffect(hiteffectSetup s)
   bldLum.Bitmap->ClearToColor(TRANSPARENT_COLOR); //reset
 
   setup=s; DBG4(this,s.WhoHits,s.WhoIsHit,"WhoHits");DBG2(s.WhoHits->GetName(DEFINITE).CStr(),s.WhoIsHit->GetName(DEFINITE).CStr());
+
+  setup.lWhoHitsID = setup.WhoHits->GetID();
+  setup.lWhoIsHitID = setup.WhoIsHit->GetID();
+  if(setup.lItemEffectReferenceID==0)ABORT("invalid item ID for hiteffect");
+  item* itemEffectReference = game::SearchItem(setup.lItemEffectReferenceID);
 
   bldFinalDraw=DEFAULT_BLITDATA; DBGLN;
 
@@ -122,7 +143,7 @@ hiteffect::hiteffect(hiteffectSetup s)
       }
     }else
     if(setup.WhoHits->IsPet()){
-      if(setup.itemEffectReference->IsWeapon(setup.WhoHits)){ //TODO why char as param?
+      if(itemEffectReference->IsWeapon(setup.WhoHits)){ //TODO why char as param?
         bldLum.Luminance = lumBluish;
       }else{
         bldLum.Luminance = lumGreenish;
@@ -151,7 +172,7 @@ hiteffect::hiteffect(hiteffectSetup s)
     if(!bTypePrepared)bTypePrepared=true;
 
     //TODO make it sure the item will be drawn pointing at the same direction found at it's graphics file
-    setup.itemEffectReference->Draw(bldLum); //the item* cant be stored as it may break and be sent to hell after here...
+    itemEffectReference->Draw(bldLum); //the item* cant be stored as it may break and be sent to hell after here...
     break;
 
    /**
@@ -208,7 +229,7 @@ hiteffect::hiteffect(hiteffectSetup s)
   // reset static blitdata dir, grant it is drawn pointing to default top right
   bitmap::ResetBlitdataRotation(bldRotate);
 
-  DBGEXEC(if(setup.WhoHits->IsPlayer())DBG3(DBGI(setup.Type),DBGI(setup.GivenDir),DBGC(setup.itemEffectReference->GetName(DEFINITE).CStr())));
+  DBGEXEC(if(setup.WhoHits->IsPlayer())DBG3(DBGI(setup.Type),DBGI(setup.GivenDir),DBGC(itemEffectReference->GetName(DEFINITE).CStr())));
   // there is no horizontal or vertical easy rotations implemented yet TODO but ex.: spears would not fit in 16x16 w/o shrinking it...
   if(bAllowDirRotate){
     int iDir = setup.GivenDir;
@@ -321,7 +342,7 @@ void hiteffect::cleanup(){
   setup.LSquareUnder=NULL;
   setup.WhoHits=NULL;
   setup.WhoIsHit=NULL;
-  setup.itemEffectReference=NULL;
+  setup.lItemEffectReferenceID=0;
 
   //not external reference, must be deleted at destructor: bmpHitEffect=NULL;
 
@@ -361,7 +382,7 @@ truth hiteffect::DrawStep()
   if(ivanconfig::IsHideWeirdHitAnimationsThatLookLikeMiss()){
     //showing all animations helps on understanding there happened a hit, even if it looks like a miss or weird (kills before hitting) :(
     if(bAnimate && bWhoIsHitDied)bAnimate=false;
-    if(bAnimate && !setup.WhoIsHit->Exists())bAnimate=false; //TODO is this crash safe?
+    if(bAnimate && !WhoIsHitExists())bAnimate=false;
     if(bDraw && bAnimate && setup.WhoIsHit->GetPos()!=v2HitToSqrPos){
       /*
        * TODO if the hit target moves, the effect would play flying to it's last location (where it was actually)

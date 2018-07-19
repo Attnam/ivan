@@ -1196,10 +1196,12 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
+  bool AutoPlayAIChkInconsistency();
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
+  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
   int   AutoPlayAIFindWalkDist(v2 v2To);
   truth AutoPlayAITestValidPathTo(v2 v2To);

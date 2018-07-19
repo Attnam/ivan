@@ -1873,23 +1873,7 @@ void lsquare::SignalSmokeAlphaChange(int What)
 hiteffect* lsquare::AddHitEffect(hiteffectSetup s)
 {DBGLN;
   if(ivanconfig::GetHitIndicator()==0)return NULL;
-
-  if(s.itemEffectReference==NULL){
-//    switch(Type)
-//    {
-//     case UNARMED_ATTACK:
-//      itemEffectReference=WhoHits->getbo
-//      break;
-//     case KICK_ATTACK:
-//      break;
-//     case BITE_ATTACK:
-//      break;
-//     case THROW_ATTACK:
-//      break;
-//    }
-
-    if(s.itemEffectReference==NULL)return NULL;
-  }
+  if(s.lItemEffectReferenceID==0)return NULL;
 
   s.iMode=ivanconfig::GetHitIndicator();
   s.LSquareUnder=this;

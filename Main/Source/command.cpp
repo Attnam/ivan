@@ -39,17 +39,21 @@
 #include "wsquare.h"
 #include "wterras.h"
 
+#include "dbgmsgproj.h"
+
 #ifdef WIZARD
 #include "proto.h"
 #endif
 
 #include "cmdcraft.cpp"
+#include "cmdswapweap.cpp"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
+  game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
 char command::GetKey() const
@@ -110,6 +114,8 @@ command* commandsystem::Command[] =
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
+  new command(&SwapWeaponsCfg, "swap weapons configuration", 'X', 'X', 'X', false),
   new command(&Throw, "throw", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
@@ -117,7 +123,7 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', 'X', 'X', true),
+  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 
@@ -156,7 +162,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -182,6 +188,8 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+//  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -216,7 +224,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -242,6 +250,8 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -266,6 +276,18 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"possess creature")==0)return true;
   if(strcmp(str,"polymorph")==0)return true;
   return false;
+}
+
+char findCmdKey(truth (*func)(character*))
+{
+  char cKey=0;
+  for(int i = 1; command* cmd = commandsystem::GetCommand(i); ++i)
+    if(cmd->GetLinkedFunction()==func){
+      cKey = cmd->GetKey();
+      break;
+    }
+  if(cKey==0)ABORT("can't find key for command."); //TODO how to show what command from *func???
+  return cKey;
 }
 
 truth commandsystem::GoUp(character* Char)
@@ -968,7 +990,7 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg; //DBG1(Char->GetSquareUnder());
+  festring Msg; DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
       game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
@@ -1177,6 +1199,8 @@ truth commandsystem::Pray(character* Char)
 
 truth commandsystem::Kick(character* Char)
 {
+  static char cmdKey = findCmdKey(&Kick);
+
   /** No multi-tile support */
 
   if(!Char->CheckKick())
@@ -1189,11 +1213,15 @@ truth commandsystem::Kick(character* Char)
     return true;
   }
 
-  int Dir = game::DirectionQuestion(CONST_S("In what direction do you wish to kick? [press a direction key]"), false);
+  festring fsQ;
+  fsQ<<"In what direction do you wish to kick? [press a direction key or '"<<cmdKey<<"']";
+  static int iPreviousDirChosen = DIR_ERROR;
+  int Dir = game::DirectionQuestion(fsQ, false, false, cmdKey, iPreviousDirChosen);
 
   if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
     return false;
 
+  iPreviousDirChosen = Dir;
   lsquare* Square = Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir));
 
   if(!Square->CheckKick(Char))
@@ -1262,6 +1290,7 @@ truth commandsystem::DrawMessageHistory(character*)
 
 truth commandsystem::Throw(character* Char)
 {
+  static char cmdKey = findCmdKey(&Throw);
 
   if(!Char->CheckThrow()){
     return false;
@@ -1273,16 +1302,19 @@ truth commandsystem::Throw(character* Char)
     return false;
   }
 
-  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"));
+  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to throw?"), REMEMBER_SELECTED);
 
   if(Item)
   {
+    static int iPreviousDirChosen = DIR_ERROR;
     int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  "
-                                                 "[press a direction key]"), false);
+                                                 "[press a direction key or Enter]"), false, false, KEY_ENTER, iPreviousDirChosen);
 
     if(Answer == DIR_ERROR){
       return false;
     }
+
+    iPreviousDirChosen = Answer;
 
     Char->ThrowItem(Answer, Item);
     Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);

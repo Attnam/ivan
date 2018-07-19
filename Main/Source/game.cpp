@@ -33,6 +33,7 @@
 #include "balance.h"
 #include "bitmap.h"
 #include "confdef.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -58,9 +59,10 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+
 #include "namegen.h"
 
-#define DBGMSG_BLITDATA
+//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
@@ -642,6 +644,7 @@ void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyN
   if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
 
   NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+//  NameGen::Random genR(gen);
   rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
 }
 
@@ -813,6 +816,7 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
+      commandsystem::ClearSwapWeapons();
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -2678,7 +2682,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
   globalwindowhandler::UpdateTick();
-  if(!bXBRZandFelist)GetCurrentArea()->Draw(AnimationDraw);
+  if(!bXBRZandFelist){
+    if(!IsInWilderness())
+      GetCurrentLevel()->RevealDistantLightsToPlayer();
+    GetCurrentArea()->Draw(AnimationDraw);
+  }
   Player->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -3183,6 +3191,9 @@ truth game::Save(cfestring& SaveName)
 
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
+
+  commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+
   return true;
 }
 
@@ -3277,6 +3288,9 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
+  if(game::GetSaveFileVersion()>=132)
+    commandsystem::LoadSwapWeapons(SaveFile);
+
   UpdateCamera();
 
   return LOADED;
@@ -3315,6 +3329,7 @@ festring game::SaveName(cfestring& Base)
         AutoSaveFileName[i] = '_';
       }
     }
+    
     SaveName << AutoSaveFileName;
   }
 
@@ -3403,11 +3418,11 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself, int keyChoseDefaultDir, int defaultDir)
 {
   for(;;)
   {
-    int Key = AskForKeyPress(Topic);
+    int Key = AskForKeyPress(Topic); DBG3(Key,keyChoseDefaultDir,defaultDir);
 
     if(AcceptYourself && Key == '.')
       return YOURSELF;
@@ -3416,43 +3431,48 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
       if(Key == GetMoveCommandKey(c))
         return c;
 
+    if(Key==keyChoseDefaultDir)
+      return defaultDir;
+
     if(!RequireAnswer)
       return DIR_ERROR;
   }
 }
 
 void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
-{
-  festring bkp(".bkp");
+{ DBG2(RealSavesAlso,onlyBackups);
+  cchar* bkp = ".bkp";
 
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp:"")).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp:"")).CStr());
   }
 
-  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp:"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp:"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
     for(int c = 0; c < GetDungeon(i)->GetLevels(); ++c)
-    {
+    { DBG2(i,c);
       /* This looks very odd. And it is very odd.
        * Indeed, gcc is very odd to not compile this correctly with -O3
        * if it is written in a less odd way. */
 
       File = SaveName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
       if(RealSavesAlso)
-        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+        remove(festring(File + (onlyBackups?bkp:"")).CStr());
 
       File = GetAutoSaveFileName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
-      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+      remove(festring(File + (onlyBackups?bkp:"")).CStr()); DBGLN;
     }
+
+  DBGLN; //DBGSTK;
 }
 
 void game::SetPlayer(character* NP)
@@ -3980,6 +4000,9 @@ void game::LookHandler(v2 CursorPos)
 
   festring Msg;
 
+  if(WizardModeIsActive())
+    Msg<<"["<<CursorPos.X<<","<<CursorPos.Y<<"]";
+
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
     if(
@@ -3988,11 +4011,11 @@ void game::LookHandler(v2 CursorPos)
         && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
         && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
     ){
-      Msg = CONST_S("You feel here ");
+      Msg << CONST_S("You feel here ");
     }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
-      Msg = CONST_S("You see here ");
+      Msg << CONST_S("You see here ");
     }else
-      Msg = CONST_S("You remember here ");
+      Msg << CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
 
@@ -4019,7 +4042,7 @@ void game::LookHandler(v2 CursorPos)
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000) && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
-    Msg << " You see here a frog eating a magnolia.";
+    Msg << " You see here a frog eating a magnolia."; //TODO this should trigger some special event and also play a sfx :)
 
   ADD_MESSAGE("%s", Msg.CStr());
 
@@ -4126,9 +4149,9 @@ void game::InitGlobalValueMap()
     if(Word != "#" || SaveFile.ReadWord() != "define")
       ABORT("Illegal datafile define on line %ld!", SaveFile.TellLine());
 
-    SaveFile.ReadWord(Word);
+    SaveFile.ReadWord(Word);DBG1(Word.CStr());
 
-    long value = SaveFile.ReadNumber();
+    long value = SaveFile.ReadNumber();DBG1(value);
     GlobalValueMap.insert(std::make_pair(Word, value));
   }
 
@@ -4251,10 +4274,10 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   if(!Permanently)
     game::Save();
 
-  game::RemoveSaves(true,true); // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
+  game::RemoveSaves(true,true); DBGLN; // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
 
-  globalwindowhandler::DeInstallControlLoop(AnimationController);
-  SetIsRunning(false);
+  globalwindowhandler::DeInstallControlLoop(AnimationController); DBGLN;
+  SetIsRunning(false); DBGLN;
 
   if(Permanently || !WizardModeIsReallyActive())
     RemoveSaves(Permanently);
@@ -4264,7 +4287,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
     highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
-    {
+    { DBGLN;
       iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
                            + GetPlayerName() + ", " + DeathMessage + "\nRIP");
     }
@@ -4273,17 +4296,19 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   }
 
   if(AndGoToMenu)
-  {
+  { DBGLN;
     /* This prevents monster movement etc. after death. */
 
     /* Set off the main menu music */
-    audio::SetPlaybackStatus(0);
-    audio::ClearMIDIPlaylist();
-    audio::LoadMIDIFile("mainmenu.mid", 0, 100);
-    audio::SetPlaybackStatus(audio::PLAYING);
+    audio::SetPlaybackStatus(0); DBGLN;
+    audio::ClearMIDIPlaylist(); DBGLN;
+    audio::LoadMIDIFile("mainmenu.mid", 0, 100); DBGLN;
+    audio::SetPlaybackStatus(audio::PLAYING); DBGLN;
 
     throw quitrequest();
   }
+
+  DBGLN;
 }
 
 void game::PlayVictoryMusic()
@@ -5399,6 +5424,32 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
+void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
+{
+  static const int iTot=9;
+  for(int i=0;i<3;i++){
+//    static cint a[iTot]={0,0,0,0,0,0,0,0,0};
+    static cint* pa;
+    int Key = -1;
+
+    switch(i){
+    case DIR_NORM:
+      pa=game::MoveNormalCommandKey; Key=Key1; break;
+    case DIR_ALT:
+      pa=game::MoveAbnormalCommandKey; Key=Key2; break;
+    case DIR_HACK:
+      pa=game::MoveNetHackCommandKey; Key=Key3; break;
+    }
+
+    for(int j=0;j<iTot;j++){
+      if(Key==pa[j] && Key!='.'){
+        char ac[2]={(char)pa[j],0};
+        ABORT("conflicting command keys %d %d %d vs %d@%d '%s'",Key1,Key2,Key3,pa[j],i,ac);
+      }
+    }
+  }
+}
+
 int game::GetMoveCommandKey(int I)
 {
   switch(ivanconfig::GetDirectionKeyMap())
@@ -5470,20 +5521,20 @@ v2 ItemDisplacement[3][3] =
 };
 
 void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
-{
+{ DBG3(DBGAV2(Bitmap->GetSize()),DBGAV2(Pos),I);
   blitdata B = { Bitmap,
                  { 0, 0 },
                  { 0, 0 },
                  { TILE_SIZE, TILE_SIZE },
                  { NORMAL_LUMINANCE },
                  TRANSPARENT_COLOR,
-                 ALLOW_ANIMATE };
+                 ALLOW_ANIMATE }; DBGLN;
 
-  itemvector ItemVector = ItemDrawVector[I];
-  int Amount = Min<int>(ItemVector.size(), 3);
+  itemvector ItemVector = ItemDrawVector[I]; DBGLN;
+  int Amount = Min<int>(ItemVector.size(), 3); DBGLN;
 
   for(int c = 0; c < Amount; ++c)
-  {
+  { DBGLN;
     v2 Displacement = ItemDisplacement[Amount - 1][c];
 
     if(!ItemVector[0]->HasNormalPictureDirection())
@@ -5499,7 +5550,7 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
   }
 
   if(ItemVector.size() > 3)
-  {
+  { DBGLN;
     B.Src.X = 0;
     B.Src.Y = 16;
     B.Dest = ItemVector[0]->HasNormalPictureDirection() ? Pos + v2(11, -2) : Pos + v2(-2, -2);

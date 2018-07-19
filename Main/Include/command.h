@@ -43,6 +43,9 @@ class commandsystem
   static truth IsForRegionListItem(int iIndex);
   static truth IsForRegionSilhouette(int iIndex);
   static void PlayerDiedLookMode(bool bSeeWholeMapCheatMode=false);
+  static void SaveSwapWeapons(outputfile& SaveFile);
+  static void LoadSwapWeapons(inputfile& SaveFile);
+  static void ClearSwapWeapons();
  private:
   static truth Apply(character*);
   static truth Close(character*);
@@ -51,6 +54,9 @@ class commandsystem
   static truth Taste(character*);
   static truth Dip(character*);
   static truth DrawMessageHistory(character*);
+  static truth SwapWeapons(character* Char);
+  static truth SwapWeaponsWork(character* Char, int iIndexOverride=-1);
+  static truth SwapWeaponsCfg(character* Char);
   static truth Drop(character*);
   static truth ForceVomit(character*);
   static truth GoDown(character*);
