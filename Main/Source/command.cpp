@@ -32,17 +32,20 @@
 #include "wsquare.h"
 #include "wterras.h"
 
+#include "dbgmsgproj.h"
+
 #ifdef WIZARD
 #include "proto.h"
 #endif
 
-#include "dbgmsgproj.h"
+#include "cmdswapweap.cpp"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
                  truth UsableInWilderness, truth WizardModeFunction)
 : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), Key3(Key3),
   UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction)
 {
+  game::ValidateCommandKeys(Key1,Key2,Key3);
 }
 
 char command::GetKey() const
@@ -102,6 +105,8 @@ command* commandsystem::Command[] =
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
   new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
+  new command(&SwapWeaponsCfg, "swap weapons configuration", 'X', 'X', 'X', false),
   new command(&Throw, "throw", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
@@ -109,7 +114,7 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', 'X', 'X', true),
+  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 
@@ -148,7 +153,7 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -174,6 +179,8 @@ truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helpe
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+//  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -208,7 +215,7 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
   if(strcmp(str,"drink")==0)return true;
   if(strcmp(str,"drop")==0)return true;
   if(strcmp(str,"eat")==0)return true;
-//  if(strcmp(str,"engrave")==0)return true;
+  if(strcmp(str,"engrave")==0)return true;
   if(strcmp(str,"equipment menu")==0)return true;
 //  if(strcmp(str,"go")==0)return true;
 //  if(strcmp(str,"go down/enter area")==0)return true;
@@ -234,6 +241,8 @@ truth commandsystem::IsForRegionSilhouette(int iIndex){ //see code generator hel
 //  if(strcmp(str,"show weapon skills")==0)return true;
 //  if(strcmp(str,"search")==0)return true;
 //  if(strcmp(str,"sit")==0)return true;
+//  if(strcmp(str,"swap weapons")==0)return true;
+  if(strcmp(str,"swap weapons configuration")==0)return true;
   if(strcmp(str,"throw")==0)return true;
 //  if(strcmp(str,"toggle running")==0)return true;
 //  if(strcmp(str,"vomit")==0)return true;
@@ -961,7 +970,7 @@ void commandsystem::PlayerDiedLookMode(bool bSeeWholeMapCheatMode){
 
 truth commandsystem::Look(character* Char)
 {
-  festring Msg; //DBG1(Char->GetSquareUnder());
+  festring Msg; DBG1(Char->GetSquareUnder());
   if(!game::IsInWilderness()){
     if(Char->GetSquareUnder()==NULL){ //dead (removed) Char (actually PlayerDiedLookMode())
       game::GetCurrentLevel()->AddSpecialCursors(); //TODO isnt, this alone, enough?
