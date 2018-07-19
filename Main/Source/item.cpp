@@ -760,8 +760,14 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
 
   if(ShowSpecialInfo){
     Entry << " [" << GetWeight() * Amount << "g"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
-    if(ivanconfig::IsShowVolume())
+    if(ivanconfig::IsShowVolume()){
       Entry << " " << GetVolume() * Amount << "cm3";
+      if(GetSecondaryMaterial()==NULL){
+        static char density[20];
+        sprintf(density, "%.1f", GetWeight()/(float)GetVolume());
+        Entry << " " << density << "g/cm3";
+      }
+    }
     Entry << "]";
   }
 }
