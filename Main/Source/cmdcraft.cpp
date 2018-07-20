@@ -519,6 +519,17 @@ void recipedata::ClearRefs(){
   rc.ClearRefs();
 }
 
+struct ci{
+  bool bMultSelect = true;
+
+  int iReqCfg=0;
+  bool bMainMaterRemainsBecomeLump=false;
+  bool bOverridesQuestion=false;
+  bool bMsgInsuficientMat=true;
+  bool bInstaAddIngredients=false;
+
+  bool bFirstMainMaterIsFilter=true;
+};
 struct recipe{
   festring action;
   festring name;
@@ -641,18 +652,6 @@ struct recipe{
       }
     }
   }
-
-  struct ci{
-    bool bMultSelect = true;
-
-    int iReqCfg=0;
-    bool bMainMaterRemainsBecomeLump=false;
-    bool bOverridesQuestion=false;
-    bool bMsgInsuficientMat=true;
-    bool bInstaAddIngredients=false;
-
-    bool bFirstMainMaterIsFilter=true;
-  };
 
   template <typename T> static truth choseIngredients(
       cfestring fsQ,
