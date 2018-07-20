@@ -80,14 +80,14 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* window width in pixels, min 800",
-                                          800,
+                                          "* window width in pixels, min 640",
+                                          640,
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* window height in pixels, min 600",
-                                          600,
+                                          "* window height in pixels, min 480",
+                                          480,
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
@@ -610,7 +610,7 @@ truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 480 to your monitor screen max height):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -618,7 +618,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 640 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -690,7 +690,7 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
-  if(What < 600) What = 600;
+  if(What < 640) What = 640;
   O->Value = What;
 }
 
@@ -705,7 +705,7 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
-  if(What < 800) What = 800;
+  if(What < 480) What = 480;
   O->Value = What;
 }
 
