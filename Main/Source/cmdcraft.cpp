@@ -605,36 +605,17 @@ struct recipe{
     return NULL;
   }
 
-  template <typename T> static truth choseIngredients(
-      cfestring fsQ,
-      long volume,
-      recipedata& rpd,
-      int& iWeakestCfg,
-      bool bMultSelect = true,
-
-      int iReqCfg=0,
-      bool bMainMaterRemainsBecomeLump=false,
-      bool bOverridesQuestion=false,
-      bool bMsgInsuficientMat=true,
-      bool bInstaAddIngredients=false
-  ){DBGLN;
-    if(volume==0)
-      ABORT("ingredient required 0 volume?");
-
-//    std::vector<ulong>& rIngIDs = bMain ? rpd.ingMainIDs : rpd.ingSecondaryIDs;
-
+  template <typename T> static void prepareFilter(recipedata& rpd,const itemvector& vi, int iReqCfg, ulong reqMainMatterCfg=0, std::vector<ulong>* ptmpIngredientsIDs = NULL)
+  {
     // prepare the filter for ALL items also resetting them first!
-    const itemvector vi = vitInv(rpd);
     for(int i=0;i<vi.size();i++){
-//      if(!vi[i]->Exists())continue;
-//      if(game::SearchItem(vi[i]->GetID())!=vi[i]) //this will crash if the invalid is outside app memory...
-//        ABORT("item's list contains invalid pointer %d %d",vi[i]->GetID(),vi[i]); //should just continue instead? but may leave inconsistent data.
       vi[i]->SetValidRecipeIngredient(false);
       if(dynamic_cast<T*>(vi[i])!=NULL){
         if(vi[i]->IsBurning())continue;
         if(vi[i]->GetSpoilLevel()>0)continue;
 
-        if(iReqCfg>0 && vi[i]->GetConfig()!=iReqCfg)continue;
+        if(iReqCfg>0 && vi[i]->GetConfig()!=iReqCfg)
+          continue;
 
         bool bAlreadyUsed=false;
         for(int j=0;j<rpd.ingredientsIDs.size();j++){
@@ -643,24 +624,62 @@ struct recipe{
             break;
           }
         }
-        if(bAlreadyUsed)continue;
+        if(ptmpIngredientsIDs!=NULL)
+          for(int j=0;j < ptmpIngredientsIDs->size();j++){
+            if(vi[i]->GetID() == (*ptmpIngredientsIDs)[j]){
+              bAlreadyUsed=true;
+              break;
+            }
+          }
+        if(bAlreadyUsed)
+          continue;
+
+        if(reqMainMatterCfg > 0 && vi[i]->GetMainMaterial()->GetConfig() != reqMainMatterCfg)
+          continue;
 
         vi[i]->SetValidRecipeIngredient(true);
       }
     }
+  }
+
+  struct ci{
+    bool bMultSelect = true;
+
+    int iReqCfg=0;
+    bool bMainMaterRemainsBecomeLump=false;
+    bool bOverridesQuestion=false;
+    bool bMsgInsuficientMat=true;
+    bool bInstaAddIngredients=false;
+
+    bool bFirstMainMaterIsFilter=true;
+  };
+
+  template <typename T> static truth choseIngredients(
+      cfestring fsQ,
+      long volume,
+      recipedata& rpd,
+      int& iWeakestCfg,
+      ci CI=ci()
+  ){DBGLN;
+    if(volume==0)
+      ABORT("ingredient required 0 volume?");
+
+    const itemvector vi = vitInv(rpd);
+    prepareFilter<T>(rpd,vi,CI.iReqCfg);
 
     int iWeakest=-1;
     game::RegionListItemEnable(true);
     game::RegionSilhouetteEnable(true);
-    std::vector<unsigned long> tmpIngredientsIDs;
+    std::vector<ulong> tmpIngredientsIDs;
+    ulong fistMainMatterCfg=0;
     for(;;)
     {
       itemvector ToUse;
       game::DrawEverythingNoBlit();
-      int flags = bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
+      int flags = CI.bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
 
       festring fsFullQ;
-      if(bOverridesQuestion)
+      if(CI.bOverridesQuestion)
         fsFullQ=fsQ;
       else
         fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)");
@@ -671,10 +690,11 @@ struct recipe{
         break;
 
       for(int i=0;i<ToUse.size();i++){
-        material* mat = ToUse[i]->GetMainMaterial();
-        if(iWeakest==-1 || iWeakest > mat->GetStrengthValue()){
-          iWeakest = mat->GetStrengthValue();
-          iWeakestCfg = mat->GetConfig();
+        material* matM = ToUse[i]->GetMainMaterial();
+        if(fistMainMatterCfg==0)fistMainMatterCfg=matM->GetConfig();
+        if(iWeakest==-1 || iWeakest > matM->GetStrengthValue()){
+          iWeakest = matM->GetStrengthValue();
+          iWeakestCfg = matM->GetConfig();
           rpd.itWeakestIngredient = ToUse[i];
         }
 
@@ -684,8 +704,7 @@ struct recipe{
 
         if(volume<=0){
           long lRemainingVol=volume*-1;
-          if(lRemainingVol>0 && bMainMaterRemainsBecomeLump){
-            material* matM = ToUse[i]->GetMainMaterial();
+          if(lRemainingVol>0 && CI.bMainMaterRemainsBecomeLump){
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
@@ -706,21 +725,24 @@ struct recipe{
         }
       }
 
-      if(volume<=0 || bInstaAddIngredients){
+      if(volume<=0 || CI.bInstaAddIngredients){
         for(int i=0;i<tmpIngredientsIDs.size();i++)
           rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
 
-        if(bInstaAddIngredients)
+        if(CI.bInstaAddIngredients)
           tmpIngredientsIDs.clear(); //to avoid dups
         else
           break; //success
       }
+
+      if(CI.bFirstMainMaterIsFilter)
+        prepareFilter<T>(rpd,vi,CI.iReqCfg,fistMainMatterCfg,&tmpIngredientsIDs);
     }
 
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
-    if(bMsgInsuficientMat && volume>0)
+    if(CI.bMsgInsuficientMat && volume>0)
       ADD_MESSAGE("This amount of materials won't work...");
 
     return volume<=0;
@@ -728,12 +750,14 @@ struct recipe{
 
   template <typename T> static bool choseOneIngredient(recipedata& rpd){
     int iWeakestCfgDummy;
+    ci CI;
+    CI.bMultSelect=false;
     return choseIngredients<T>(
       festring(""),
       1, //just to chose one of anything
       rpd,
       iWeakestCfgDummy,
-      false);
+      CI);
   }
 
   static itemvector vitInv(recipedata& rpd){
@@ -880,6 +904,7 @@ struct srpOltBASE : public recipe{
   bool bRequiresWhere=false;
   bool bAllowSimpleStones=false;
   bool bReqForge=false;
+  ci CIdefault;
 
   virtual bool spawnCfg(recipedata& rpd){return false;}
 
@@ -915,13 +940,17 @@ struct srpOltBASE : public recipe{
       int iCfg=-1;
       bool bH=false;
       if(!bH)
-        bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg);
+        bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg, CIdefault);
       if(!bH && iReqVolSkulls>0)
-        bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg);
+        bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg, CIdefault);
       if(!bH)
-        bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg);
-      if(!bH)
-        bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, true, bAllowSimpleStones?0:INGOT, true);
+        bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
+      if(!bH){
+        ci CI = CIdefault;
+        CI.iReqCfg = bAllowSimpleStones?0:INGOT;
+        CI.bMainMaterRemainsBecomeLump = true;
+        bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, CI); //true, bAllowSimpleStones?0:INGOT, true);
+      }
       if(bH){
         rpd.bHasAllIngredients=bH;
         rpd.v2PlaceAt = rpd.lsqrWhere->GetPos();
@@ -1036,6 +1065,7 @@ struct srpWall2 : public srpOltBASE{
     iTurns=20;
     bRequiresWhere=true;
     bAllowSimpleStones=true;
+    CIdefault.bFirstMainMaterIsFilter=false;
     return srpOltBASE::work(rpd);
   }
 };srpWall2 rpWall2;
@@ -1055,12 +1085,15 @@ struct srpMelt : public recipe{
     if(!recipe::findForge(rpd))
       return true;
 
+    ci CI;
+    CI.bOverridesQuestion=true;
+    CI.bMsgInsuficientMat=false;
+    CI.bInstaAddIngredients=true;
     int iWeakestCfgDummy;
-    choseIngredients<lump>(
+    bool bDummy = choseIngredients<lump>(
       festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
       1000000, //just any huge volume as "limit"
-      rpd, iWeakestCfgDummy, true,
-      0, false, true, false, true);
+      rpd, iWeakestCfgDummy, CI); // true, 0, false, true, false, true);
     if(rpd.ingredientsIDs.empty())
       return true;
 
@@ -1090,8 +1123,6 @@ struct srpMelt : public recipe{
       matM->SetVolume(matM->GetVolume()+lumpAddM->GetVolume());DBGLN;
 
       craftcore::SendToHellSafely(LumpAdd);
-//      LumpAdd->RemoveFromSlot();
-//      LumpAdd->SendToHell();
     }
 
     rpd.iBaseTurnsToFinish = calcTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
@@ -1356,9 +1387,20 @@ struct srpForgeItem : public recipe{
 
     bool bM = false;
     festring fsM("as MAIN material");DBGLN;
-    if(!bM)bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, true, INGOT, true);
-    if(!bM)bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, true, 0, true);
-    if(!bM)bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, true, 0, true);
+    ci CI;
+    CI.bMainMaterRemainsBecomeLump=true;
+    if(!bM){
+      CI.iReqCfg=INGOT;
+      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);// true, INGOT, true);
+    }
+    if(!bM){
+      CI.iReqCfg=0;
+      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);// true, 0, true);
+    }
+    if(!bM){
+      CI.iReqCfg=0;
+      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);// true, 0, true);
+    }
     if(!bM){
       ADD_MESSAGE("I will craft it later...");
       rpd.bAlreadyExplained=true;
@@ -1390,10 +1432,21 @@ struct srpForgeItem : public recipe{
     if(bAllowS){DBGLN;
       bool bS = false;
       festring fsS("as Secondary material");DBGLN;
-      if(!bS)bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, true, INGOT, true);
+      ci CI;
+      CI.bMainMaterRemainsBecomeLump=true;
+      if(!bS){
+        CI.iReqCfg=INGOT;
+        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);//, true, INGOT, true);
+      }
       if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
-        if(!bS)bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, true, 0, true);
-        if(!bS)bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, true, 0, true);
+        if(!bS){
+          CI.iReqCfg=0;
+          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);// true, 0, true);
+        }
+        if(!bS){
+          CI.iReqCfg=0;
+          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CI);// true, 0, true);
+        }
       }
 
       if(!bS){
