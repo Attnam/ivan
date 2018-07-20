@@ -712,9 +712,15 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
         c == Entry.size() - 1
       )
     {
+      bool bShowHelp = false;
       if((!(Flags & INVERSE_MODE) && c != Entry.size() - 1)
          || ((Flags & INVERSE_MODE) && PageBegin))
       {
+        bShowHelp=true;
+      }
+      static bool bShowAlways=true; //TODO user option?
+      if(bShowAlways)bShowHelp=true;
+      if(bShowHelp){
         Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
                      "- Press PgUp/PgDn/Home/End or SPACE to continue, ESC to exit -");
