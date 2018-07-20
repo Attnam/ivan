@@ -1186,6 +1186,8 @@ void item::PreProcessForBone()
   }
 }
 
+void item::_BugWorkaround_ItemDup(ulong key){ID=key;} //keep it simple!
+
 void item::PostProcessForBone()
 {
   boneidmap::iterator BI = game::GetBoneItemIDMap().find(-ID);

@@ -183,6 +183,10 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
+                                          "BugFix missing/DUP player (experimental/slow)",
+                                          0, 4,
+                                          &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           "* Select font",
                                           1, 3, //from 1 to 3 (three options available)
@@ -798,6 +802,16 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "missing only";break;
+  case 2: Entry << "prefer old player";break;
+  case 3: Entry << "prefer new player";break;
+  }
+}
+
 void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -1025,6 +1039,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&BugWorkaroundDupPlayer);
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);

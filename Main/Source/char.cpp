@@ -9057,6 +9057,12 @@ truth character::PreProcessForBone()
   return true;
 }
 
+void character::_BugWorkaround_PlayerDup(ulong key){
+  ID=key;
+  // brute force empty the inv list leaving objects untracked in volatile memory. TODO really untracked?
+  Stack = new stack(0, this, HIDDEN); //like constructor init
+}
+
 truth character::PostProcessForBone(double& DangerSum, int& Enemies)
 {
   if(PostProcessForBone())

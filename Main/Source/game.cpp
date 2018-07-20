@@ -37,6 +37,7 @@
 #include "audio.h"
 #include "balance.h"
 #include "bitmap.h"
+#include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
 #include "feio.h"
@@ -67,7 +68,6 @@
 
 #include "namegen.h"
 
-//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
@@ -288,10 +288,23 @@ void game::AddItemID(item* Item, ulong ID)
 {
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
+
 void game::RemoveItemID(ulong ID)
 {
-  if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+  if(ID){
+    DBG2("Erasing:ItemID",ID);
+//    if(ID==20957)DBGSTK;//temp test case debug
+    DBGEXEC(
+      if(SearchItem(ID)==NULL){
+        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
+        DBGSTK;
+      }
+    );
+    ItemIDMap.erase(ItemIDMap.find(ID));
+    DBG2("ERASED!:ItemID",ID);
+  }
 }
+
 void game::UpdateItemID(item* Item, ulong ID)
 {
   ItemIDMap.find(ID)->second = Item;
@@ -3280,7 +3293,7 @@ int game::Load(cfestring& saveName)
   character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
   if(CharAtPos==NULL || !CharAtPos->IsPlayer())
     ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
+  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -4278,9 +4291,9 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       character* Char = Square->GetCharacter();
 
-      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
+      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-      else
+      }else
         ADD_MESSAGE("You see no one here.");
     }
     else
@@ -4558,7 +4571,11 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       Player->PutToOrNear(Pos);
     }
     else
+    {
       SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+    }
+
+    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 
