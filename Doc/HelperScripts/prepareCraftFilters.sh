@@ -66,7 +66,7 @@ sedAutoCode="s'ITEM\(([^,]*),.*'${sedAutoCodeReplacer}'" #the filters
 
 echo >"$strOutFile" #cleanup
 echo "/* compiled thru cmdcraft.cpp */" >>"$strOutFile"
-echo "// you can modify this file directly or preferably update it's generator (linux) script `basename "$0"`" >>"$strOutFile"
+echo "// you can modify this file directly or preferably update it's generator (linux) script `basename "$0"` TODO convert the generator to c++ code?" >>"$strOutFile"
 echo "bool craftcore::MoreCraftDeniedFilters(item* it){" >>"$strOutFile"
 
 echo "  // BASE TYPES"  >>"$strOutFile"

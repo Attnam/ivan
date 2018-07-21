@@ -59,7 +59,7 @@ class recipecore {
   public:
     recipecore(humanoid* H,uint sel);
 
-    void integrityCheck() const;
+    void integrityCheck(character* Char=NULL) const;
 
     void SetHumanoid(character* C);
     humanoid* H(){return h;}
@@ -108,10 +108,14 @@ class recipedata {
 
     // references
     item* itTool;
-    lsquare* lsqrWhere;
+    lsquare* lsqrPlaceAt;
     lsquare* lsqrCharPos;
     item* itWeakestIngredient;
+    lsquare* lsqrActor;
 
+    level* lvl;
+
+    // no need to save
     uint SelectedRecipe;
     bool bSpendCurrentTurn;
     bool bAlreadyExplained;
@@ -119,9 +123,12 @@ class recipedata {
     bool bCanStart;
 
     bool bCanBePlaced;
+    int xplodStr;
+    int iStrongerXplod;
+    v2 v2XplodAt;
 
     /*******************************************
-     * saveable fields!!!
+     * save REQUIRED fields!!!
      * if re-organized, do also at constructor initializer please!
      * but save and load will make existing saved games with suspended crafting incompatible then,
      * so better avoid doing it.
@@ -171,10 +178,8 @@ class recipedata {
     void Save(outputfile& SaveFile) const;
     void Load(inputfile& SaveFile);
     void CopySpawnItemCfgFrom(item* itCfg);
-    cfestring SpawnItem();
     void CopySpawnTerrainCfgFrom(olterrain* otCfg);
 
-    cfestring SpawnTerrain();
     void ClearRefs();
     item* GetTool(){return itTool;}
 };
@@ -186,16 +191,30 @@ class craftcore {
     static bool canBeCrafted(item* it);
 
     static void SendToHellSafely(item* it);
+
     static void SetSuspended(recipedata* prpd);
     static void ResetSuspended();
     static bool HasSuspended();
-//    static void TerminateSuspended();
     static void ResumeSuspendedTo(character* Char);
-    static bool EmptyContentsIfPossible(item* itContainer);
-    static float CraftSkill(character* Char);
+
     static int CurrentDungeonLevelID();
+
     static truth Craft(character* Char);
+    static float CraftSkill(character* Char);
     static bool MoreCraftDeniedFilters(item* it);
+
+    static void CheckEverything(recipedata& rpd);
+    static void CheckFumble(recipedata& rpd);
+    static void CheckIngredients(recipedata& rpd);
+    static void CheckFacilities(recipedata& rpd);
+    static void CheckTools(recipedata& rpd);
+
+    static bool EmptyContentsIfPossible(item* itContainer);
+
+    static cfestring SpawnItem(recipedata& rpd);
+    static cfestring SpawnTerrain(recipedata& rpd);
+
+    static cfestring DestroyIngredients(recipedata& rpd);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

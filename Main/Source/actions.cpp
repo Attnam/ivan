@@ -247,146 +247,16 @@ void craft::Load(inputfile& SaveFile)
 
 void craft::Handle()
 {DBGLN;
-  rpd.rc.integrityCheck();
-
   character* Actor = GetActor();
+  rpd.rc.integrityCheck(Actor);
   if(rpd.rc.H()==NULL)
     rpd.rc.SetHumanoid(Actor);
 
-//  if(rpd.itSpawnCfg==0 && rpd.otSpawnCfg==0)
   if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE)
     ABORT("craft:Handle nothing? %s",rpd.dbgInfo().CStr());
 
-//  if(rpd.itToolID!=0 && rpd.itTool==NULL)
-  if(rpd.itToolID!=0){
-    rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
-    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
-    if(rpd.itTool==NULL){
-      ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE).CStr());
-      rpd.bFailed=true;
-    }
-    DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
-  }
-  DBG6(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg,rpd.itSpawnType,rpd.otSpawnType);
-
-  lsquare* lsqrActor = Actor->GetLSquareUnder(); DBGSV2(lsqrActor->GetPos());
-  level* lvl = lsqrActor->GetLevel();
-
-  if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
-  {DBGLN; //TODO re-mainWield it
-    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE).CStr());
-    Terminate(false); //may suspend
-    return;
-  }
-
-  if(Actor->GetPos()!=rpd.v2PlayerCraftingAt){ //in case player is teleported
-    ADD_MESSAGE("I need to move back to where I started crafting.");
-    Terminate(false); //may suspend
-    return;
-  }
-
-  rpd.rc.integrityCheck();
-  DBGSV2(rpd.v2PlaceAt);
-  rpd.lsqrWhere = Actor->GetNearLSquare(rpd.v2PlaceAt); //near? it is abs map pos...
-  olterrain* oltExisting = rpd.lsqrWhere->GetOLTerrain();
-  if(rpd.otSpawnType!=CTT_NONE && oltExisting!=NULL){DBGLN;
-//  ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
-    ADD_MESSAGE("Unable to place it there."); //TODO like in case something is placed there before ending the construction? but what and how?
-    Terminate(false); //may suspend
-    return;
-  }
-
-//  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
-  rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
-
-  rpd.rc.integrityCheck();
-  int iStrongerXplod=0;
-  for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
-    item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-    if(it==NULL){ //ABORT("ingredient id %d not found",rpd.ingredientsIDs[i]);
-      /**
-       * ex.: if something catches fire and is destroyed before the crafting ends.
-       */
-      ADD_MESSAGE("a required ingredient was destroyed...");DBG1(rpd.ingredientsIDs[i]);
-      rpd.bFailed=true; //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
-    }
-
-    // a magpie or siren may have taken it
-    if(it->GetSquareUnder()!=lsqrActor){
-      ADD_MESSAGE("%s ingredient went missing...",it->GetName(DEFINITE).CStr());
-      Terminate(false); //may suspend
-      return;
-    }
-
-    //TODO once: apply wands, release rings/ammys effects, xplod str 5+ if enchanteds +1 +2 etc
-    if(!craftcore::canBeCrafted(it)){ //basically contains some kind of magic
-      if(it->GetEnchantment()!=0)
-        iStrongerXplod+=abs(it->GetEnchantment());
-      else
-        iStrongerXplod++; //TODO could add based on how hazardous the magic type is ex. fireball wand would be +100 or something like that..
-    }
-  }
-
-  v2 v2XplodAt;
-
-  rpd.rc.integrityCheck();
-  if(!rpd.v2AnvilLocation.Is0()){
-    olterrain* ot = lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
-    if(ot==NULL || ot->GetConfig()!=ANVIL){
-      ADD_MESSAGE("The anvil was destroyed!");
-      rpd.bFailed=true;
-    }
-
-    v2XplodAt=rpd.v2AnvilLocation;
-  }else
-  if(!rpd.v2ForgeLocation.Is0()){
-    olterrain* otForge = lvl->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
-    if(otForge==NULL || otForge->GetConfig()!=FORGE){
-      ADD_MESSAGE("The forge was destroyed!");
-      rpd.bFailed=true;
-    }
-
-    v2XplodAt=rpd.v2ForgeLocation;
-  }
-
-  rpd.rc.integrityCheck();
-  int xplodStr = 0;
-//  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
-  if(rpd.fDifficulty>1.0){
-    int xplodXtra=0;
-    for(int i=0;i<iStrongerXplod;i++)
-      xplodXtra+=clock()%5;
-
-    /**
-     * To fumble, base reference is 15% chance at a craft skill of 20.
-     * ex.: Craft skill of 10 will have 30% fumble chance.
-     */
-    int iFumblePower=0;
-    int iLuckPerc=clock()%100;
-    static const float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
-    static const int iBaseFumbleChancePerc=15;
-    int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(Actor)/fBaseCraftSkillToNormalFumble); //ex.: 30%
-    if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
-    int iDiv=0;
-    iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
-    iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
-    iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
-    iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
-    if(iLuckPerc<=1)iFumblePower++; //always have 1% weakest xplod chance
-    if(clock()%100<=iFumblePower){
-      if(!rpd.bSpawnBroken){
-        rpd.iBaseTurnsToFinish/=2;
-        if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1) //to insta provide the obvious messy lump
-          rpd.iBaseTurnsToFinish=1;
-      }
-      rpd.bSpawnBroken=true; //current max chance per round of spawning broken is 5%
-    }
-    xplodStr = iFumblePower;
-    if(xplodStr>0){DBG2(xplodStr,rpd.dbgInfo().CStr());
-      xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
-      //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
-    }
-  }
+  if(!rpd.bFailed)
+    craftcore::CheckEverything(rpd);
 
   rpd.rc.integrityCheck();
   if(rpd.bFailed){
@@ -394,79 +264,24 @@ void craft::Handle()
     return;
   }
 
+  //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
+  rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
+
   rpd.bSuccesfullyCompleted = rpd.iBaseTurnsToFinish==0;
-  festring fsCreated;
   festring fsMsg("");
 //  int Case = INDEFINITE;
   if(rpd.bSuccesfullyCompleted)
   {DBGLN;
     if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      fsMsg << "You crafted "<< rpd.SpawnItem();
+      fsMsg << "You crafted "<< craftcore::SpawnItem(rpd);
     }
 
-    int iWallMaterialConfig=-1;
-//    if(rpd.otSpawn!=NULL){DBGLN;
+  //    if(rpd.otSpawn!=NULL){DBGLN;
     if(rpd.otSpawnType!=CTT_NONE){DBGLN;
-      iWallMaterialConfig = rpd.otSpawnMatMainCfg;
-      fsMsg << "You built " << rpd.SpawnTerrain();
+      fsMsg << "You built " << craftcore::SpawnTerrain(rpd);
     }
 
-    festring fsIng,fsIngP;
-    festring fsIngPrev,fsIngPPrev;
-    int iCountEqual=1;
-    festring fsIngMsg("");
-    for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
-      item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-      if(it==NULL)ABORT("ingredient id %d not found %s",rpd.ingredientsIDs[i],rpd.dbgInfo().CStr());
-      it->RemoveFromSlot();DBGLN;
-
-      bool bSendToHell=true;
-      if(iWallMaterialConfig!=-1){DBGLN;
-        if(it->GetMainMaterial()->GetConfig() != iWallMaterialConfig)
-          bSendToHell=false;
-      }
-
-      if(bSendToHell){DBGLN;
-        it->SendToHell();
-      }else{DBGLN;
-        //this way, the lower quality wall will still contain all stones in a non destructive way, is more fair
-        //TODO what about amulet of phasing or ghost mode?
-        it->MoveTo(rpd.lsqrWhere->GetStack());
-      }DBGLN;
-
-      fsIng.Empty();fsIng << it->GetName(INDEFINITE);DBGLN;
-      fsIngP.Empty();fsIngP << it->GetName(PLURAL);DBGLN;
-      if(fsCreated==fsIng)continue;
-
-      bool bNewType = fsIngPrev!=fsIng;DBGLN;
-
-      bool bDumpPrev = false;
-      if(bNewType)
-        bDumpPrev=true;
-      if(i==rpd.ingredientsIDs.size()-1){DBGLN;
-        bDumpPrev=true;
-        fsIngPrev=fsIng;
-      }
-
-      if(bDumpPrev){DBGLN;
-        if(fsIngMsg.GetSize()>0)
-          fsIngMsg<<", ";
-
-        if(iCountEqual>1){
-          fsIngMsg << (iCountEqual+1) << " " << fsIngPPrev;
-        }else{
-          fsIngMsg << fsIngPrev;
-        }
-
-        iCountEqual=1;
-      }else
-        iCountEqual++;
-
-      fsIngPrev.Empty();fsIngPrev<<fsIng;
-      fsIngPPrev.Empty();fsIngPPrev<<fsIngP;
-    }
-    if(fsIngMsg.GetSize()>0) //TODO this needs improving, for plural etc, to look good
-      fsMsg << " using " << fsIngMsg.CStr();
+    fsMsg << craftcore::DestroyIngredients(rpd);
     fsMsg << ".";
 
     ADD_MESSAGE(fsMsg.CStr());
@@ -492,8 +307,7 @@ void craft::Handle()
   truth MoveCraftTool = this->MoveCraftTool;DBGLN;
   ulong RightBackupID = this->RightBackupID;
   ulong LeftBackupID = this->LeftBackupID;
-  bool bSuccesfullyCompleted = rpd.bSuccesfullyCompleted;
-  lsquare* lsqrWhere = rpd.lsqrWhere;
+  recipedata rpdBkp = rpd;
 
   Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
   Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
@@ -501,9 +315,9 @@ void craft::Handle()
   Actor->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
 
   truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
-  truth Stopped = bSuccesfullyCompleted || AlreadyTerminated;
+  truth Stopped = rpdBkp.bSuccesfullyCompleted || AlreadyTerminated;
 
-  if(bSuccesfullyCompleted && !AlreadyTerminated)
+  if(rpdBkp.bSuccesfullyCompleted && !AlreadyTerminated)
     Terminate(true);
 
   if(Stopped)
@@ -532,12 +346,13 @@ void craft::Handle()
    * explosions may trigger something that apparently terminates the action and so also deletes it's recipedata
    * TODO what is being triggered?
    */
-  if(!v2XplodAt.Is0() && xplodStr>0){
-    lsqrWhere->GetLevel()->Explosion(Actor, CONST_S("killed by the forge heat"), v2XplodAt, xplodStr, false, false);
+  if(!rpdBkp.v2XplodAt.Is0() && rpdBkp.xplodStr>0){
+    rpdBkp.lsqrPlaceAt->GetLevel()->Explosion(
+      Actor, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
     ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
   }
 
-  if(!bSuccesfullyCompleted)
+  if(!rpdBkp.bSuccesfullyCompleted)
     game::DrawEverything();
 }
 

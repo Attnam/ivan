@@ -1,6 +1,6 @@
 
 /* compiled thru cmdcraft.cpp */
-// you can modify this file directly or preferably update it's generator (linux) script prepareCraftFilters.sh
+// you can modify this file directly or preferably update it's generator (linux) script prepareCraftFilters.sh TODO convert the generator to c++ code?
 bool craftcore::MoreCraftDeniedFilters(item* it){
   // BASE TYPES
   if(dynamic_cast<holybook*>(it)!=NULL)return false;
