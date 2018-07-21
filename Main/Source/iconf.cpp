@@ -694,7 +694,7 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
-  if(What < 640) What = 640;
+  if(What < 480) What = 480;
   O->Value = What;
 }
 
@@ -709,7 +709,7 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
-  if(What < 480) What = 480;
+  if(What < 640) What = 640;
   O->Value = What;
 }
 
