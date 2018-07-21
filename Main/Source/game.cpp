@@ -37,6 +37,7 @@
 #include "audio.h"
 #include "balance.h"
 #include "bitmap.h"
+#include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
 #include "feio.h"
@@ -67,7 +68,6 @@
 
 #include "namegen.h"
 
-//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
@@ -288,10 +288,23 @@ void game::AddItemID(item* Item, ulong ID)
 {
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
+
 void game::RemoveItemID(ulong ID)
 {
-  if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+  if(ID){
+    DBG2("Erasing:ItemID",ID);
+//    if(ID==20957)DBGSTK;//temp test case debug
+    DBGEXEC(
+      if(SearchItem(ID)==NULL){
+        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
+        DBGSTK;
+      }
+    );
+    ItemIDMap.erase(ItemIDMap.find(ID));
+    DBG2("ERASED!:ItemID",ID);
+  }
 }
+
 void game::UpdateItemID(item* Item, ulong ID)
 {
   ItemIDMap.find(ID)->second = Item;
@@ -610,11 +623,13 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
 
       // alt vanilla silhouette pos
-      bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
-      bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
-      iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
-      graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
-      graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      if(graphics::GetScale()==1){
+        bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
+        bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
+        iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
+        graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      }
     }
   }
 
@@ -1950,7 +1965,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 //  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
   bool bRolling=false;
   bool bHopping=false; DBG1(iRegionVanillaSilhouette);
-  if(iRegionVanillaSilhouette!=-1){
+  if(iRegionVanillaSilhouette!=-1 || graphics::GetScale()>1){
     bool bOk2=true;
 
     if(bOk2 && ZoomPos.Is0())bOk2=false;
@@ -1964,6 +1979,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bHopping = !bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
 
       v2 v2Pos=ZoomPos;
+      if(graphics::GetScale()>1)
+        v2Pos+=TILE_V2*3; //to avoid as much as possible be over the status texts
 
       humanoid::SetSilhouetteWhere(v2Pos);DBGSV2(v2Pos);
 
@@ -1972,19 +1989,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           h->DrawSilhouette(false);DBGLN;
         }
 
-      bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
+      if(graphics::GetScale()==1){ //TODO make these things optional? but there is no good place to draw it w/o hiding things behind it...
+        bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
 
-      v2 v2Dest = v2Pos;
-      v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
-      if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
-      if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
-      bldVanillaSilhouetteTMP.Dest=v2Dest;
+        v2 v2Dest = v2Pos;
+        v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
+        if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
+        if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
+        bldVanillaSilhouetteTMP.Dest=v2Dest;
 
-      graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
-      //h->DrawSilhouette(AnimationDraw); //TODO necessary?
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
+        //h->DrawSilhouette(AnimationDraw); //TODO necessary?
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+      }
     }else{
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+      if(iRegionVanillaSilhouette!=-1)
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     }
   }
 
@@ -3273,7 +3293,7 @@ int game::Load(cfestring& saveName)
   character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
   if(CharAtPos==NULL || !CharAtPos->IsPlayer())
     ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
+  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -4271,9 +4291,9 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       character* Char = Square->GetCharacter();
 
-      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
+      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-      else
+      }else
         ADD_MESSAGE("You see no one here.");
     }
     else
@@ -4551,7 +4571,11 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       Player->PutToOrNear(Pos);
     }
     else
+    {
       SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+    }
+
+    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 
@@ -5273,13 +5297,25 @@ void game::AutoPlayModeApply(){
     break;
   case 4:
     msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
-    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
   globalwindowhandler::SetPlayInBackground(bPlayInBackground);
+
+  if(!ivanconfig::IsXBRZScale()){
+    /**
+     * TODO
+     * This is an horrible gum solution...
+     * I still have no idea why this happens.
+     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
+     * But the debug log shows the correct timeouts :(, clueless for now...
+     */
+    iTimeout/=2;
+  }
+
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 

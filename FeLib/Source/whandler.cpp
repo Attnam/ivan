@@ -73,6 +73,12 @@ void globalwindowhandler::DeInstallControlLoop(truth (*What)())
   }
 }
 
+bool globalwindowhandler::IsKeyPressed(int iSDLScanCode)
+{
+  return SDL_GetKeyboardState(NULL)[iSDLScanCode];
+}
+
+
 #ifdef __DJGPP__
 
 #include <pc.h>
@@ -290,9 +296,9 @@ truth globalwindowhandler::IsKeyTimeoutEnabled()
 void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
-    if(!KeyBuffer.empty()){ // user pressed some key
+    if(!KeyBuffer.empty()){ DBG2(KeyBuffer.size(),KeyBuffer[0]); // user pressed some key
       keyTimeoutRequestedAt=clock(); // resets reference time to wait from
-    }else{
+    }else{ DBG2(keyTimeoutRequestedAt,iTimeoutDelay);
       if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
         KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
     }

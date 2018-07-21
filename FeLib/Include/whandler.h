@@ -40,6 +40,7 @@ struct mouseclick{
 class globalwindowhandler
 {
  public:
+  static bool IsKeyPressed(int iSDLScanCode);
   static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();

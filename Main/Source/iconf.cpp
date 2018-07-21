@@ -80,14 +80,14 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* window width in pixels, min 800",
-                                          800,
+                                          "* window width in pixels, min 640",
+                                          640,
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* window height in pixels, min 600",
-                                          600,
+                                          "* window height in pixels, min 480",
+                                          480,
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
@@ -183,6 +183,10 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
+                                          "BugFix missing/DUP player (experimental/slow)",
+                                          0, 4,
+                                          &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           "* Select font",
                                           1, 3, //from 1 to 3 (three options available)
@@ -610,7 +614,7 @@ truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 480 to your monitor screen max height):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -618,7 +622,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 640 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -690,7 +694,7 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
-  if(What < 600) What = 600;
+  if(What < 480) What = 480;
   O->Value = What;
 }
 
@@ -705,7 +709,7 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
-  if(What < 800) What = 800;
+  if(What < 640) What = 640;
   O->Value = What;
 }
 
@@ -795,6 +799,16 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   case 0:Entry << "disabled";break; //do not show
   case 1:Entry << "no";break; //default pos
   case 2:Entry << "yes";break; //alt pos
+  }
+}
+
+void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "missing only";break;
+  case 2: Entry << "prefer old player";break;
+  case 3: Entry << "prefer new player";break;
   }
 }
 
@@ -1025,6 +1039,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&BugWorkaroundDupPlayer);
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);

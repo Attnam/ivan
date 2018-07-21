@@ -29,6 +29,7 @@ class ivanconfig
   static long GetShowItemsAtPlayerSquare(){ return ShowItemsAtPlayerSquare.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
+  static int GetBugWorkaroundDupPlayer() { return BugWorkaroundDupPlayer.Value; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
   static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
@@ -142,6 +143,7 @@ class ivanconfig
   static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry);
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
 
@@ -238,6 +240,8 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+
+  static cycleoption BugWorkaroundDupPlayer;
   static truthoption AllowMouseOnFelist;
 };
 
