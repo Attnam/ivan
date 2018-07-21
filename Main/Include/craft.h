@@ -159,6 +159,7 @@ class recipedata {
     bool bSpawnBroken;
     double fDifficulty; //preferably a max of 5.0
     bool bCanBeBroken;
+    bool bMeltable;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
@@ -194,6 +195,7 @@ class craftcore {
     static float CraftSkill(character* Char);
     static int CurrentDungeonLevelID();
     static truth Craft(character* Char);
+    static bool MoreCraftDeniedFilters(item* it);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

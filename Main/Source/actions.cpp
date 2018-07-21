@@ -280,7 +280,7 @@ void craft::Handle()
   }
 
   if(Actor->GetPos()!=rpd.v2PlayerCraftingAt){ //in case player is teleported
-    ADD_MESSAGE("You need to move back to where you started crafting.");
+    ADD_MESSAGE("I need to move back to where I started crafting.");
     Terminate(false); //may suspend
     return;
   }
