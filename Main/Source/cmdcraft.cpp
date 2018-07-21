@@ -531,6 +531,8 @@ struct ci{
   bool bInstaAddIngredients=false;
 
   bool bFirstMainMaterIsFilter=true;
+  int iReqMatCfgMain=0;
+  int iReqMatCfgSec=0;
 };
 struct recipe{
   festring action;
@@ -627,7 +629,11 @@ struct recipe{
     return NULL;
   }
 
-  template <typename T> static void prepareFilter(recipedata& rpd,const itemvector& vi, int iReqCfg, ulong reqMainMatterCfg=0, std::vector<ulong>* ptmpIngredientsIDs = NULL)
+  template <typename T> static void prepareFilter(
+    recipedata& rpd,
+    const itemvector& vi,
+    ci CI=ci(),
+    std::vector<ulong>* ptmpIngredientsIDs = NULL)
   {
     // prepare the filter for ALL items also resetting them first!
     for(int i=0;i<vi.size();i++){
@@ -636,7 +642,7 @@ struct recipe{
         if(vi[i]->IsBurning())continue;
         if(vi[i]->GetSpoilLevel()>0)continue;
 
-        if(iReqCfg>0 && vi[i]->GetConfig()!=iReqCfg)
+        if(CI.iReqCfg>0 && vi[i]->GetConfig()!=CI.iReqCfg)
           continue;
 
         bool bAlreadyUsed=false;
@@ -656,7 +662,10 @@ struct recipe{
         if(bAlreadyUsed)
           continue;
 
-        if(reqMainMatterCfg > 0 && vi[i]->GetMainMaterial()->GetConfig() != reqMainMatterCfg)
+        if(CI.iReqMatCfgMain > 0 && vi[i]->GetMainMaterial()->GetConfig() != CI.iReqMatCfgMain)
+          continue;
+
+        if(CI.iReqMatCfgSec > 0 && vi[i]->GetMainMaterial()->GetConfig() != CI.iReqMatCfgSec)
           continue;
 
         vi[i]->SetValidRecipeIngredient(true);
@@ -675,13 +684,13 @@ struct recipe{
       ABORT("ingredient required 0 volume?");
 
     const itemvector vi = vitInv(rpd);
-    prepareFilter<T>(rpd,vi,CI.iReqCfg);
+    prepareFilter<T>(rpd,vi,CI);
 
     int iWeakest=-1;
     game::RegionListItemEnable(true);
     game::RegionSilhouetteEnable(true);
     std::vector<ulong> tmpIngredientsIDs;
-    ulong fistMainMatterCfg=0;
+    ulong firstMainMatterCfg=0;
     for(;;)
     {
       itemvector ToUse;
@@ -701,7 +710,7 @@ struct recipe{
 
       for(int i=0;i<ToUse.size();i++){
         material* matM = ToUse[i]->GetMainMaterial();
-        if(fistMainMatterCfg==0)fistMainMatterCfg=matM->GetConfig();
+        if(firstMainMatterCfg==0)firstMainMatterCfg=matM->GetConfig();
         if(iWeakest==-1 || iWeakest > matM->GetStrengthValue()){
           iWeakest = matM->GetStrengthValue();
           iWeakestCfg = matM->GetConfig();
@@ -745,8 +754,12 @@ struct recipe{
           break; //success
       }
 
-      if(CI.bFirstMainMaterIsFilter)
-        prepareFilter<T>(rpd,vi,CI.iReqCfg,fistMainMatterCfg,&tmpIngredientsIDs);
+      if(CI.bFirstMainMaterIsFilter){
+        if(CI.iReqMatCfgMain!=0)
+          ABORT("not implemented how to deal with bFirstMainMaterIsFilter=true VS iReqMatCfgMain!=0");
+        CI.iReqMatCfgMain = firstMainMatterCfg;
+        prepareFilter<T>(rpd,vi,CI,&tmpIngredientsIDs);
+      }
     }
 
     game::RegionListItemEnable(false);
@@ -1390,21 +1403,29 @@ struct srpForgeItem : public recipe{
     int iCfgM=-1;
     int iCfgS=-1;
 
+    ci CIM;
+    CIM.bMainMaterRemainsBecomeLump=true;
+    ci CIS;
+    CIS.bMainMaterRemainsBecomeLump=true;
+
+    // some material constraints/limitations
+    if(dynamic_cast<potion*>(itSpawn)!=NULL){
+      CIM.iReqMatCfgMain=GLASS; //TODO there are other materials that can hold sulphuric acid?
+    }
+
     bool bM = false;
     festring fsM("as MAIN material");DBGLN;
-    ci CI;
-    CI.bMainMaterRemainsBecomeLump=true;
     if(!bM){
-      CI.iReqCfg=INGOT;
-      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);// true, INGOT, true);
+      CIM.iReqCfg=INGOT;
+      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CIM);// true, INGOT, true);
     }
     if(!bM){
-      CI.iReqCfg=0;
-      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);// true, 0, true);
+      CIM.iReqCfg=0;
+      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CIM);// true, 0, true);
     }
     if(!bM){
-      CI.iReqCfg=0;
-      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);// true, 0, true);
+      CIM.iReqCfg=0;
+      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CIM);// true, 0, true);
     }
     if(!bM){
       ADD_MESSAGE("I will craft it later...");
@@ -1414,12 +1435,6 @@ struct srpForgeItem : public recipe{
     }
 
     bool bContainerEmptied = craftcore::EmptyContentsIfPossible(itSpawn);
-//    materialcontainer* mc = dynamic_cast<materialcontainer*>(itSpawn);DBGLN; //potions, mines... also bananas xD
-//    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);DBGLN; //chests
-//    bool bIsContainer =
-//      itSpawn->GetStorageVolume()>0 || //something else TODO what?
-//      ic!=NULL || //chests
-//      mc!=NULL; //potions, mines... also bananas xD
 
     /**
      * TODO problem: basically sulphuric acid can already be stored on a metal can ...
@@ -1437,20 +1452,18 @@ struct srpForgeItem : public recipe{
     if(bAllowS){DBGLN;
       bool bS = false;
       festring fsS("as Secondary material");DBGLN;
-      ci CI;
-      CI.bMainMaterRemainsBecomeLump=true;
       if(!bS){
-        CI.iReqCfg=INGOT;
-        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);//, true, INGOT, true);
+        CIS.iReqCfg=INGOT;
+        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CIS);//, true, INGOT, true);
       }
       if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
         if(!bS){
-          CI.iReqCfg=0;
-          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);// true, 0, true);
+          CIS.iReqCfg=0;
+          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CIS);// true, 0, true);
         }
         if(!bS){
-          CI.iReqCfg=0;
-          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CI);// true, 0, true);
+          CIS.iReqCfg=0;
+          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CIS);// true, 0, true);
         }
       }
 
