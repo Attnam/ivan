@@ -264,32 +264,13 @@ void craft::Handle()
     return;
   }
 
-  //  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Tool->GetMainMaterial()->GetStrengthValue() / 500;
-  rpd.iBaseTurnsToFinish--; //TODO is this way correct? as long one Handle() call per turn will work.
+  craftcore::CraftWorkTurn(rpd);
 
-  rpd.bSuccesfullyCompleted = rpd.iBaseTurnsToFinish==0;
-  festring fsMsg("");
-//  int Case = INDEFINITE;
   if(rpd.bSuccesfullyCompleted)
-  {DBGLN;
-    if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      fsMsg << "You crafted "<< craftcore::SpawnItem(rpd);
-    }
-
-  //    if(rpd.otSpawn!=NULL){DBGLN;
-    if(rpd.otSpawnType!=CTT_NONE){DBGLN;
-      fsMsg << "You built " << craftcore::SpawnTerrain(rpd);
-    }
-
-    fsMsg << craftcore::DestroyIngredients(rpd);
-    fsMsg << ".";
-
-    ADD_MESSAGE(fsMsg.CStr());
-
-    Actor->DexterityAction(rpd.iAddDexterity);
+  {
+    Actor->DexterityAction(rpd.iAddDexterity); //TODO is this necessary/useful? below also affects dex
 
     /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
-
     if(!Actor->IsEnabled())
       return;
   }

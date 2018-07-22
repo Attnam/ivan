@@ -98,6 +98,9 @@ float craftcore::CraftSkill(character* Char){ //is the current capability of cra
 }
 
 bool craftcore::canBeCrafted(item* it){
+  if(dynamic_cast<lump*>(it)!=NULL)
+    return true;
+
   const itemdatabase* itdb = it->GetProtoType()->GetConfigData()[0];
 
   if(
@@ -364,7 +367,7 @@ recipecore::recipecore(humanoid* H,uint sel){
 
   h=H;
 
-  bCanBeSuspended=false;
+  bCanBeSuspended=true;
   iDungeonLevelID=craftcore::CurrentDungeonLevelID();
 }
 
@@ -490,7 +493,7 @@ cfestring craftcore::SpawnTerrain(recipedata& rpd){
   if(rpd.otSpawnMatSecCfg>0)
     otSpawn->SetSecondaryMaterial(material::MakeMaterial(rpd.otSpawnMatSecCfg,rpd.otSpawnMatSecVol));
 
-  festring fsCreated;
+  festring fsCreated = "You built ";
   rpd.lsqrPlaceAt->ChangeOLTerrainAndUpdateLights(otSpawn);
 
   fsCreated << otSpawn->GetName(INDEFINITE);
@@ -577,7 +580,7 @@ struct recipe{
     return false;
   }
 
-  static int calcTurns(material* mat,float fMult=1.0){
+  static int calcMeltableTurns(material* mat,float fMult=1.0){
     /**
      * min is gold: str 55 and spends 5 turns each 1000cm3.
      * TODO quite arbritrary but gameplay wise enough?
@@ -625,13 +628,13 @@ struct recipe{
     return FindTool(rpd,0,iWCategory);
   }
 
-  static void calcToolTurns(recipedata& rpd,int iMult){
-    if(iMult==0)
+  static void calcToolTurns(recipedata& rpd,int iPrecalculatedMultBasedOnTool){
+    if(iPrecalculatedMultBasedOnTool==0)
       return;
 
     int iBaseTurns = rpd.iBaseTurnsToFinish;
     float fIncTurnsStep=0.25;
-    int iAddTurns=iBaseTurns*(iMult*fIncTurnsStep);
+    int iAddTurns=iBaseTurns*(iPrecalculatedMultBasedOnTool*fIncTurnsStep);
     rpd.iBaseTurnsToFinish = iBaseTurns + iAddTurns;
   }
 
@@ -742,6 +745,9 @@ struct recipe{
     if(volume==0)
       ABORT("ingredient required 0 volume?");
 
+    if(CI.bFirstMainMaterIsFilter && CI.iReqMatCfgMain!=0)
+      ABORT("not implemented how to deal with bFirstMainMaterIsFilter=true VS iReqMatCfgMain!=0 %d",CI.iReqMatCfgMain);
+
     const itemvector vi = vitInv(rpd);
     prepareFilter<T>(rpd,vi,CI);
 
@@ -749,7 +755,6 @@ struct recipe{
     game::RegionListItemEnable(true);
     game::RegionSilhouetteEnable(true);
     std::vector<ulong> tmpIngredientsIDs;
-    ulong firstMainMatterCfg=0;
     for(;;)
     {
       itemvector ToUse;
@@ -771,7 +776,9 @@ struct recipe{
         tmpIngredientsIDs.push_back(ToUse[0]->GetID());
       }else for(int i=0;i<ToUse.size();i++){
         material* matM = ToUse[i]->GetMainMaterial();
-        if(firstMainMatterCfg==0)firstMainMatterCfg=matM->GetConfig();
+        if(CI.bFirstMainMaterIsFilter && CI.iReqMatCfgMain==0)
+          CI.iReqMatCfgMain=matM->GetConfig();
+
         if(iWeakest==-1 || iWeakest > matM->GetStrengthValue()){
           iWeakest = matM->GetStrengthValue();
           iWeakestCfg = matM->GetConfig();
@@ -818,12 +825,8 @@ struct recipe{
           break; //success
       }
 
-      if(CI.bFirstMainMaterIsFilter){
-        if(CI.iReqMatCfgMain!=0)
-          ABORT("not implemented how to deal with bFirstMainMaterIsFilter=true VS iReqMatCfgMain!=0");
-        CI.iReqMatCfgMain = firstMainMatterCfg;
+      if(CI.bFirstMainMaterIsFilter) //prepare filter for next list display
         prepareFilter<T>(rpd,vi,CI,&tmpIngredientsIDs);
-      }
     }
 
     game::RegionListItemEnable(false);
@@ -935,16 +938,16 @@ struct recipe{
     if(bLiquid){
       rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
     }else{
-      item* LumpTmp = lump::Spawn(0, NO_MATERIALS);
+      item* itTmp = lump::Spawn(0, NO_MATERIALS);
       if(bWoodenCreateStick){
-        LumpTmp = stick::Spawn(0, NO_MATERIALS);
+        itTmp = stick::Spawn(0, NO_MATERIALS);
       }else{
-        LumpTmp = lump::Spawn(0, NO_MATERIALS);
+        itTmp = lump::Spawn(0, NO_MATERIALS);
       }
-      LumpTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-      rpd.rc.H()->GetStack()->AddItem(LumpTmp);
-      ADD_MESSAGE("%s was recovered.", LumpTmp->GetName(DEFINITE).CStr());
-      return LumpTmp;
+      itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
+      rpd.rc.H()->GetStack()->AddItem(itTmp);
+      ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
+      return itTmp;
     }
 
     return NULL;
@@ -1215,7 +1218,7 @@ struct srpMelt : public recipe{
       craftcore::SendToHellSafely(LumpAdd);
     }
 
-    rpd.iBaseTurnsToFinish = calcTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
+    rpd.iBaseTurnsToFinish = calcMeltableTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
 
     rpd.bHasAllIngredients=true;
 
@@ -1266,7 +1269,7 @@ struct srpMelt : public recipe{
     rpd.ingredientsIDs.clear(); //only the final meltable lump shall be sent to hell when it finishes
     rpd.ingredientsIDs.push_back(LumpMeltable->GetID()); //must be AFTER the duplicator
 
-    rpd.rc.SetCanBeSuspended();
+    rpd.bMeltable = true;
 
     rpd.bCanStart=true;
 
@@ -1300,7 +1303,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     }
 
     if(dynamic_cast<corpse*>(itToUse)!=NULL){
-      ADD_MESSAGE("I should try to split %s instead.",itToUse->GetName(INDEFINITE).CStr());
+      ADD_MESSAGE("I should try to split %s instead.",itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
     }
@@ -1385,33 +1388,12 @@ struct srpSplitLump : public recipe{
   }
 
   virtual bool work(recipedata& rpd){
+    item* Lump = NULL;
+
     if(choseOneIngredient<lump>(rpd)){
-      item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
-      long vol=Lump->GetMainMaterial()->GetVolume();
-
-      long div = game::NumberQuestion(CONST_S("Split in how many parts?"), WHITE, true);
-      if(div<=1)
-        return false;
-
-      long volPart = vol/div;
-      if(volPart < 1){
-        ADD_MESSAGE("The splitted part must have some volume.");
-        rpd.bAlreadyExplained=true;
-        return false;
-      }
-
-      long volRest = vol%div;
-
-      Lump->GetMainMaterial()->SetVolume(volPart);
-      for(int i=0;i<(div-1);i++)
-        CreateLumpAtCharStack(Lump->GetMainMaterial(), rpd);
-
-      if(volRest>0)
-        Lump->GetMainMaterial()->SetVolume(volPart+volRest);
-
-      rpd.bAlreadyExplained=true; //no need to say anything
+      Lump = game::SearchItem(rpd.ingredientsIDs[0]);
     }else
-    if(choseOneIngredient<corpse>(rpd)){
+    if(choseOneIngredient<corpse>(rpd)){ //this is just a simplified conversion from corpse to a big lump...
       corpse* Corpse = (corpse*)game::SearchItem(rpd.ingredientsIDs[0]);
 
       rpd.itTool = FindCuttingTool(rpd);
@@ -1424,10 +1406,50 @@ struct srpSplitLump : public recipe{
       //TODO this should take time as an action
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
-      CreateLumpAtCharStack(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      Lump = CreateLumpAtCharStack(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+
       craftcore::SendToHellSafely(Corpse);
+      rpd.ingredientsIDs.clear();
+
+      rpd.ingredientsIDs.push_back(Lump->GetID());
+
       rpd.bAlreadyExplained=true; //no need to say anything
     }
+
+    if(Lump==NULL)
+      return false;
+
+    long volM=Lump->GetMainMaterial()->GetVolume();
+
+    long totParts = game::NumberQuestion(CONST_S("Split in how many parts?"), WHITE, true);
+    if(totParts<=1)
+      return false;
+
+    long volPart = volM/totParts;
+    if(volPart < 1){
+      ADD_MESSAGE("The splitted part must have some volume.");
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+
+    long volRest = volM%totParts;
+
+    rpd.CopySpawnItemCfgFrom(Lump);
+    rpd.itSpawnMatMainVol = volPart;
+    rpd.itSpawnType = CIT_LUMP;
+    rpd.itSpawnTot = totParts-1; //part of the original lump is kept
+
+    float fTotTurns=0;
+    for(int i=1;i<=totParts;i++){ //better try to not explain this :) TODO should be based on cut area/length
+      float fCurrentPartVol=volM/(float)i;
+      float fTurns=fCurrentPartVol/100000.0; //bear is 150000cm3
+      fTotTurns+=fTurns; //turn time is one minute but when fighting it also spends 1 min... w/e...
+    }
+    rpd.iBaseTurnsToFinish = fTotTurns;
+
+    rpd.bAlreadyExplained=true; //no need to say anything
+
+    rpd.bCanStart = true;
 
     return true;
   }
@@ -1594,9 +1616,9 @@ struct srpForgeItem : public recipe{
     rpd.bMeltable = IsMeltable(matM) || (matS!=NULL && IsMeltable(matS));
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
-    rpd.iBaseTurnsToFinish=calcTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
+    rpd.iBaseTurnsToFinish=calcMeltableTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
     if(bAllowS && matS!=NULL){
-      rpd.iBaseTurnsToFinish+=calcTurns(matS,fMult);
+      rpd.iBaseTurnsToFinish+=calcMeltableTurns(matS,fMult);
       DBG4(rpd.iBaseTurnsToFinish,matS->GetName(DEFINITE).CStr(),matS->GetConfig(),matS->GetVolume());
     }
 
@@ -1710,7 +1732,7 @@ struct srpForgeItem : public recipe{
           rpd.iBaseTurnsToFinish += iBaseTTF*10;
     }
 
-    rpd.rc.SetCanBeSuspended();
+//    rpd.rc.SetCanBeSuspended();
 
     rpd.CopySpawnItemCfgFrom(itSpawn);
     craftcore::SendToHellSafely(itSpawn);
@@ -2055,6 +2077,8 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
       if(rpd.lsqrPlaceAt!=NULL)rpd.v2BuildWhere=rpd.lsqrPlaceAt->GetPos();
 
+      rpd.iRemainingTurnsToFinish = rpd.iBaseTurnsToFinish;
+
       rpd.ClearRefs(); //pointers must be revalidated on the action handler
 
       Char->SwitchToCraft(rpd); // everything must be set before this!!!
@@ -2092,35 +2116,42 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   return true;
 }
 
+
 cfestring craftcore::SpawnItem(recipedata& rpd){
+  return SpawnItem(rpd,rpd.itSpawnTot);
+}
+cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
   rpd.rc.integrityCheck();
 
   item* itSpawn = NULL;
   material* matS = NULL;
   bool bAllowBreak=false;
   switch(rpd.itSpawnType){
-  case CIT_POTION:
-    /**
-     * IMPORTANT!!!
-     * do not use NO_MATERIALS here,
-     * apparently the main material is always required for items
-     * and the main material would remain uninitialized (instead of NULL)
-     * leading to SEGFAULT when trying to set the main material!
-     */
-    itSpawn = potion::Spawn(rpd.itSpawnCfg); //may be a vial
-    if(rpd.itSpawnMatSecCfg>0)
-      matS = liquid::Spawn(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
-    break;
-  case CIT_PROTOTYPE:
-    itSpawn = protosystem::CreateItemToCraft(rpd.fsItemSpawnSearchPrototype);
-    bAllowBreak=true;
-    if(rpd.itSpawnTot>1)
-      ABORT("crafting multiple from prototype is not supported yet %d '%s' '%s'",
-        rpd.itSpawnTot,rpd.fsItemSpawnSearchPrototype.CStr(),rpd.dbgInfo().CStr());
-    break;
-  case CIT_STONE:
-    itSpawn = stone::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
-    break;
+    case CIT_POTION:
+      /**
+       * IMPORTANT!!!
+       * do not use NO_MATERIALS here,
+       * apparently the main material is always required for items
+       * and the main material would remain uninitialized (instead of NULL)
+       * leading to SEGFAULT when trying to set the main material!
+       */
+      itSpawn = potion::Spawn(rpd.itSpawnCfg); //may be a vial
+      if(rpd.itSpawnMatSecCfg>0)
+        matS = liquid::Spawn(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
+      break;
+    case CIT_PROTOTYPE:
+      itSpawn = protosystem::CreateItemToCraft(rpd.fsItemSpawnSearchPrototype);
+      bAllowBreak=true;
+      if(iSpawnTot>1)
+        ABORT("crafting multiple from prototype is not supported yet %d '%s' '%s'",
+          iSpawnTot,rpd.fsItemSpawnSearchPrototype.CStr(),rpd.dbgInfo().CStr());
+      break;
+    case CIT_STONE:
+      itSpawn = stone::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
+      break;
+    case CIT_LUMP:
+      itSpawn = lump::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
+      break;
   }
 
   if(itSpawn==NULL)
@@ -2151,7 +2182,7 @@ cfestring craftcore::SpawnItem(recipedata& rpd){
 
   itSpawn->MoveTo(rpd.rc.H()->GetStack());
 
-  festring fsCreated;
+  festring fsCreated = "You crafted ";
 
   if(bAllowBreak && rpd.bSpawnBroken && !itSpawn->IsBroken()){
     if(itSpawn->CanBeBroken()){
@@ -2184,9 +2215,9 @@ cfestring craftcore::SpawnItem(recipedata& rpd){
   }
 
   if(itSpawn!=NULL){
-    if(rpd.itSpawnTot > 1){DBGLN;
-      fsCreated << rpd.itSpawnTot << " " << itSpawn->GetNamePlural();DBGLN;
-      for(int i=0;i<rpd.itSpawnTot-1;i++){ //-1 as the last one will be the original
+    if(iSpawnTot > 1){DBGLN;
+      fsCreated << iSpawnTot << " " << itSpawn->GetNamePlural();DBGLN;
+      for(int i=0;i<iSpawnTot-1;i++){ //-1 as the last one will be the original
         /**
          * IMPORTANT!!! the duplicator will vanish with the item ID that is being duplicated
          * so the duplication source item's ID will vanish. TODO could it be safely kept at DuplicateToStack() ?
@@ -2201,6 +2232,83 @@ cfestring craftcore::SpawnItem(recipedata& rpd){
   }
 
   return fsCreated;
+}
+
+void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
+  rpd.iRemainingTurnsToFinish--;
+  rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
+
+  bool bLumpMode = CraftFromLumpOverride(rpd);
+
+  if(rpd.bSuccesfullyCompleted && !bLumpMode)
+  {DBGLN;
+    festring fsMsg("");
+
+    if(rpd.itSpawnType!=CIT_NONE){DBGLN;
+      fsMsg << craftcore::SpawnItem(rpd);
+    }
+
+    if(rpd.otSpawnType!=CTT_NONE){DBGLN;
+      fsMsg << craftcore::SpawnTerrain(rpd);
+    }
+
+    fsMsg << craftcore::DestroyIngredients(rpd);
+    fsMsg << ".";
+
+    ADD_MESSAGE(fsMsg.CStr());
+  }
+}
+
+bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
+  if(rpd.ingredientsIDs.size()!=1)
+    return false;
+
+  item* Lump=game::SearchItem(rpd.ingredientsIDs[0]);DBGLN;
+  if(dynamic_cast<lump*>(Lump)==NULL)
+    return false;
+
+  material* matM = Lump->GetMainMaterial();DBGLN;
+  long matMRemVol = matM->GetVolume();
+
+  /**
+   * ex.: tot=20 base=10 remain=9
+   * base  rem    rem*tot
+   * __  = __ ; x=_____=18 ; tot-x=SpawnNow=2
+   * tot   x       base
+   */
+  float fRemain = (rpd.iRemainingTurnsToFinish*rpd.itSpawnTot)/((float)rpd.iBaseTurnsToFinish);
+  int iSpawnNow = rpd.itSpawnTot-fRemain;
+  ulong spawnedVol = rpd.itSpawnMatMainVol*iSpawnNow;
+  DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
+  if(iSpawnNow==0)
+    return true; //holding until required time is met ex.: each spawned requires more than one turn, even if a fraction.
+
+  festring fsMsg = craftcore::SpawnItem(rpd,iSpawnNow);
+  ADD_MESSAGE("%s.",fsMsg.CStr()); //per turn
+
+  rpd.itSpawnTot -= iSpawnNow;
+  rpd.iBaseTurnsToFinish = rpd.iRemainingTurnsToFinish; //TODO should a total turns required be always kept?
+
+  if(rpd.itSpawnTot<0)
+    ABORT("crafting remaining to spawn went negative %d %s",rpd.itSpawnTot,rpd.dbgInfo().CStr());
+  if(rpd.itSpawnTot==0){
+    rpd.bSuccesfullyCompleted=true;
+    if(rpd.iRemainingTurnsToFinish>0){
+      ADD_MESSAGE("I worked well and gained %d minutes!",rpd.iRemainingTurnsToFinish); //TODO despite this actually means a lack of calc precision :P, not less fun tho :)
+      rpd.iRemainingTurnsToFinish=0; //overriding for consistency.
+    }
+  }
+
+  if(spawnedVol==matMRemVol)
+    DestroyIngredients(rpd); //cant be left with 0 volume
+  else
+  if(spawnedVol>matMRemVol) //the total calc being precise, and leaving a tiny remaining lump behind, this will never happen, just in case something is changed...
+    ABORT("lump volume would become negative (if not unsigned long) or 0 as %d > %d",spawnedVol,matMRemVol);
+  else
+    matM->SetVolume(matMRemVol-spawnedVol); //the remaining volume becomes the action control/limit
+
+  DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
+  return true;
 }
 
 void craftcore::CheckFumble(recipedata& rpd)

@@ -31,10 +31,11 @@ struct v2;
 //  CIT_PROTOTYPE=2,
 //  CIT_POTION=3,
 //};
-#define  CIT_NONE 0 //TODO use, save and load enums?
-#define  CIT_STONE 1
-#define  CIT_PROTOTYPE 2
-#define  CIT_POTION 3
+#define CIT_NONE 0 //TODO use, save and load enums?
+#define CIT_STONE 1
+#define CIT_PROTOTYPE 2
+#define CIT_POTION 3
+#define CIT_LUMP 4
 
 //enum craftTerrainType{
 //  CTT_NONE=0,
@@ -42,10 +43,10 @@ struct v2;
 //  CTT_DOOR=2,
 //  CTT_FURNITURE=3,
 //};
-#define  CTT_NONE 0 //TODO use, save and load enums?
-#define  CTT_WALL 1
-#define  CTT_DOOR 2
-#define  CTT_FURNITURE 3
+#define CTT_NONE 0 //TODO use, save and load enums?
+#define CTT_WALL 1
+#define CTT_DOOR 2
+#define CTT_FURNITURE 3
 
 class recipecore {
   private:
@@ -64,7 +65,7 @@ class recipecore {
     void SetHumanoid(character* C);
     humanoid* H(){return h;}
 
-    void SetCanBeSuspended(){bCanBeSuspended=true;}
+    void SetCannotBeSuspended(){bCanBeSuspended=false;}
     bool IsCanBeSuspended() const {return bCanBeSuspended;}
 
     int GetDungeonLevelID() const {return iDungeonLevelID;}
@@ -168,6 +169,8 @@ class recipedata {
     bool bCanBeBroken;
     bool bMeltable;
 
+    int iRemainingTurnsToFinish;
+
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
     cfestring dbgInfo() const;
@@ -212,7 +215,11 @@ class craftcore {
     static bool EmptyContentsIfPossible(item* itContainer);
 
     static cfestring SpawnItem(recipedata& rpd);
+    static cfestring SpawnItem(recipedata& rpd,int iSpawnTot);
     static cfestring SpawnTerrain(recipedata& rpd);
+
+    static void CraftWorkTurn(recipedata& rpd);
+    static bool CraftFromLumpOverride(recipedata& rpd);
 
     static cfestring DestroyIngredients(recipedata& rpd);
 };
