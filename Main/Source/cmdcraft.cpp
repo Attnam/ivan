@@ -533,6 +533,7 @@ struct ci{
   bool bFirstMainMaterIsFilter=true;
   int iReqMatCfgMain=0;
   int iReqMatCfgSec=0;
+  bool bJustAcceptFirstChosenAndReturn=false;
 };
 struct recipe{
   festring action;
@@ -599,34 +600,92 @@ struct recipe{
     return false;
   }
 
-  static item* FindTool(itemvector vitInv, int iCfg){
-    for(int i=0;i<vitInv.size();i++)
-      if(dynamic_cast<meleeweapon*>(vitInv[i])!=NULL && vitInv[i]->GetConfig()==iCfg)
-        return vitInv[i];
-    for(int i=0;i<vitInv.size();i++)
-      if(dynamic_cast<meleeweapon*>(vitInv[i])!=NULL && vitInv[i]->GetConfig()==(iCfg|BROKEN))
-        return vitInv[i];
+  static bool chkWeapon(item* it, int iCfg, int iWeaponCategory){
+    return
+      dynamic_cast<meleeweapon*>(it)!=NULL
+      &&
+      (
+        (iCfg!=0 && it->GetConfig()==iCfg) ||
+        (iWeaponCategory!=0 && it->GetWeaponCategory()==iWeaponCategory)
+      );
+  }
+
+  static item* FindTool(recipedata& rpd, int iCfg, int iWeaponCategory=0){
+    itemvector vit = vitInv(rpd);
+    for(int i=0;i<vit.size();i++)
+      if(chkWeapon(vit[i],iCfg,iWeaponCategory))
+        return vit[i];
+    for(int i=0;i<vit.size();i++)
+      if(chkWeapon(vit[i],iCfg|BROKEN,iWeaponCategory))
+        return vit[i];
     return NULL;
   }
 
-  static item* FindHammeringTool(recipedata& rpd){
+  static item* FindByWeaponCategory(recipedata& rpd,int iWCategory){
+    return FindTool(rpd,0,iWCategory);
+  }
+
+  static void calcToolTurns(recipedata& rpd,int iMult){
+    if(iMult==0)
+      return;
+
     int iBaseTurns = rpd.iBaseTurnsToFinish;
-    static const int iTotToolTypes=4;
-    //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool
-    //mace is not necessarily spiked despite the gfx
-    static const int aiTypes[iTotToolTypes]={HAMMER,FRYING_PAN,WAR_HAMMER,MACE};
     float fIncTurnsStep=0.25;
-    itemvector vi = vitInv(rpd);
+    int iAddTurns=iBaseTurns*(iMult*fIncTurnsStep);
+    rpd.iBaseTurnsToFinish = iBaseTurns + iAddTurns;
+  }
+
+  static item* FindBluntTool(recipedata& rpd){
+    //TODO could be based on volume and weight vs strengh and dexterity to determine how hard is to use the tool, unbalanced considering the required precision
+    static const int iTotToolTypes=3;
+    static const int aiTypes[iTotToolTypes]={HAMMER, FRYING_PAN, WAR_HAMMER};
+
     item* it = NULL;
+    int iMult = 0;
     for(int j=0;j<iTotToolTypes;j++){DBG2(j,aiTypes[j]);
-      it = FindTool(vi, aiTypes[j]);
+      it = FindTool(rpd, aiTypes[j]);
       if(it){DBG2(it->GetConfig(),it->GetName(DEFINITE).CStr());
-        int iAddTurns=iBaseTurns*(j*fIncTurnsStep);
-        rpd.iBaseTurnsToFinish = iBaseTurns + iAddTurns;
-        return it;
+        iMult=j;
+        break;
       }
     }
-    return NULL;
+
+    if(it==NULL){
+      it = FindByWeaponCategory(rpd,BLUNT_WEAPONS);
+      iMult=iTotToolTypes;
+    }
+
+    calcToolTurns(rpd,iMult);
+
+    return it;
+  }
+
+  static item* FindCuttingTool(recipedata& rpd){//,bool bReversedTimeMult=false){
+    int iBaseTurns = rpd.iBaseTurnsToFinish;
+
+    item* it = NULL;
+    int iMult = 0;
+    int iMaxMult = 0;
+
+    #define FBWC(WC) \
+      if(it==NULL){ \
+        it = FindByWeaponCategory(rpd,WC); \
+        if(it==NULL)iMult++; \
+      } \
+      iMaxMult++;
+    FBWC(SMALL_SWORDS);
+    FBWC(AXES);
+    FBWC(LARGE_SWORDS);
+    FBWC(POLE_ARMS);
+
+    if(it!=NULL){
+//      if(bReversedTimeMult)
+//        iMult = iMaxMult-iMult;
+
+      calcToolTurns(rpd,iMult);
+    }
+
+    return it;
   }
 
   template <typename T> static void prepareFilter(
@@ -708,7 +767,9 @@ struct recipe{
       if(ToUse.empty())
         break;
 
-      for(int i=0;i<ToUse.size();i++){
+      if(CI.bJustAcceptFirstChosenAndReturn){
+        tmpIngredientsIDs.push_back(ToUse[0]->GetID());
+      }else for(int i=0;i<ToUse.size();i++){
         material* matM = ToUse[i]->GetMainMaterial();
         if(firstMainMatterCfg==0)firstMainMatterCfg=matM->GetConfig();
         if(iWeakest==-1 || iWeakest > matM->GetStrengthValue()){
@@ -744,9 +805,12 @@ struct recipe{
         }
       }
 
-      if(volume<=0 || CI.bInstaAddIngredients){
+      if(volume<=0 || CI.bInstaAddIngredients || CI.bJustAcceptFirstChosenAndReturn){
         for(int i=0;i<tmpIngredientsIDs.size();i++)
           rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
+
+        if(CI.bJustAcceptFirstChosenAndReturn)
+          break;
 
         if(CI.bInstaAddIngredients)
           tmpIngredientsIDs.clear(); //to avoid dups
@@ -765,16 +829,24 @@ struct recipe{
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
-    if(CI.bMsgInsuficientMat && volume>0)
-      ADD_MESSAGE("This amount of materials won't work...");
+    if(!CI.bJustAcceptFirstChosenAndReturn)
+      if(CI.bMsgInsuficientMat && volume>0)
+        ADD_MESSAGE("This amount of materials won't work...");
 
-    return volume<=0;
+    if(volume<=0)
+      return true;
+
+    if(CI.bJustAcceptFirstChosenAndReturn && rpd.ingredientsIDs.size()>0)
+      return true;
+
+    return false;
   }
 
   template <typename T> static bool choseOneIngredient(recipedata& rpd){
     int iWeakestCfgDummy;
     ci CI;
     CI.bMultSelect=false;
+    CI.bJustAcceptFirstChosenAndReturn=true;
     return choseIngredients<T>(
       festring(""),
       1, //just to chose one of anything
@@ -928,6 +1000,7 @@ struct srpOltBASE : public recipe{
   bool bAllowSimpleStones=false;
   bool bReqForge=false;
   ci CIdefault;
+  festring fsDescBASE = "You will need a hammer or other blunt weapon.";
 
   virtual bool spawnCfg(recipedata& rpd){return false;}
 
@@ -949,7 +1022,7 @@ struct srpOltBASE : public recipe{
     }
 
     rpd.iBaseTurnsToFinish=iTurns;
-    rpd.itTool = FindHammeringTool(rpd);
+    rpd.itTool = FindBluntTool(rpd);
 
     if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.itTool!=NULL){
       rpd.bCanBePlaced=true;
@@ -992,7 +1065,7 @@ struct srpDoor : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a door");
-    desc << "You will need a hammer, a frying pan or even a mace.";
+    desc << "You will need a hammer or other blunt weapon.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1012,7 +1085,7 @@ struct srpChair : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a chair");
-    desc << "You will need a hammer, a frying pan or even a mace.";
+    desc << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1030,7 +1103,7 @@ struct srpAnvil : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","an anvil");
-    desc << "Near a forge you can create an anvil using a hammer, a frying pan or even a mace.";
+    desc << "Near a forge you can create an anvil. " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1049,7 +1122,7 @@ struct srpForge : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a forge");
-    desc << "You can build a forge using a hammer, a frying pan or even a mace.";
+    desc << "You can build a forge. " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1204,16 +1277,13 @@ struct srpMelt : public recipe{
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
     init("dismantle","some materials as lumps and sticks");
-    desc << "Near a forge, any item can be dismantled to recover it's materials.";
+    desc << "Near a forge, any meltable item can be dismantled to recover it's materials. Otherwise you just need a cutting tool.";
   }
 
   virtual bool work(recipedata& rpd){
     // lumps are not usable until melt into an ingot.
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
-
-    if(!recipe::findForge(rpd))
-      return false;
 
     ///////////////////// chose item to melt/smash
     game::DrawEverythingNoBlit();
@@ -1229,12 +1299,28 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
 
+    if(dynamic_cast<corpse*>(itToUse)!=NULL){
+      ADD_MESSAGE("I should try to split %s instead.",itToUse->GetName(INDEFINITE).CStr());
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+
     material* matM=NULL;
     material* matS=NULL;
     material* matIngot=NULL;
 
     matM = itToUse->GetMainMaterial();
     matS = itToUse->GetSecondaryMaterial();
+
+    rpd.bMeltable = IsMeltable(matM) || (matS!=NULL && IsMeltable(matS));
+    if(rpd.bMeltable){
+      if(!recipe::findForge(rpd))
+        return false;
+    }else{
+      rpd.itTool = FindCuttingTool(rpd);//,true);
+      if(!rpd.itTool)
+        return false;
+    }
 
     bool bJustLumpfyTheIngot=false;
     if(dynamic_cast<stone*>(itToUse)!=NULL && itToUse->GetConfig()==INGOT){
@@ -1323,6 +1409,23 @@ struct srpSplitLump : public recipe{
       if(volRest>0)
         Lump->GetMainMaterial()->SetVolume(volPart+volRest);
 
+      rpd.bAlreadyExplained=true; //no need to say anything
+    }else
+    if(choseOneIngredient<corpse>(rpd)){
+      corpse* Corpse = (corpse*)game::SearchItem(rpd.ingredientsIDs[0]);
+
+      rpd.itTool = FindCuttingTool(rpd);
+      if(rpd.itTool==NULL){
+        ADD_MESSAGE("I need a cutting weapon to split %s.",Corpse->GetName(INDEFINITE).CStr());
+        rpd.bAlreadyExplained=true;
+        return false;
+      }
+
+      //TODO this should take time as an action
+      character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
+      static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
+      CreateLumpAtCharStack(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      craftcore::SendToHellSafely(Corpse);
       rpd.bAlreadyExplained=true; //no need to say anything
     }
 
@@ -1527,9 +1630,9 @@ struct srpForgeItem : public recipe{
     }
 
     if(rpd.bMeltable){ //TODO glass should require proper tools (don't know what but sure not a hammer)
-      rpd.itTool = FindHammeringTool(rpd);
+      rpd.itTool = FindBluntTool(rpd);
     }else{
-      rpd.itTool = FindTool(vitInv(rpd), DAGGER); //carving
+      rpd.itTool = FindTool(rpd, DAGGER); //carving
     }
     DBG1(rpd.iBaseTurnsToFinish);
 
@@ -1649,7 +1752,7 @@ struct srpFluidsBASE : public recipe{
     itemvector vi;
 
     ///////////// tool ////////////////
-    rpd.itTool = FindTool(vitInv(rpd), DAGGER);
+    rpd.itTool = FindTool(rpd, DAGGER);
     if(rpd.itTool==NULL)
       return false;
 
