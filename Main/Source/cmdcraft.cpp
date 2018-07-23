@@ -34,7 +34,7 @@ void craftcore::ResetSuspended()
   }
 }
 
-bool craftcore::EmptyContentsIfPossible(item* itContainer)
+bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool bMoveToInventory)
 {
   materialcontainer* mc = dynamic_cast<materialcontainer*>(itContainer); //potions, mines... also bananas xD
   itemcontainer* ic = dynamic_cast<itemcontainer*>(itContainer); //chests
@@ -42,7 +42,12 @@ bool craftcore::EmptyContentsIfPossible(item* itContainer)
   bool bEmptied = false;
 
   if(mc!=NULL){
-    delete mc->RemoveSecondaryMaterial(); //prevents: ex. random liquids like antidote
+    if(mc->GetSecondaryMaterial()!=NULL){
+      if(bMoveToInventory)
+        PrepareRemains(mc->GetSecondaryMaterial(),rpd);
+      else
+        delete mc->RemoveSecondaryMaterial(); //prevents keeping: ex. random liquids like antidote
+    }
     bEmptied = true;
   }
 
@@ -51,9 +56,10 @@ bool craftcore::EmptyContentsIfPossible(item* itContainer)
     itemvector ivC;
     stkC->FillItemVector(ivC);
     for(int i=0;i<ivC.size();i++){
-      SendToHellSafely(ivC[i]);
-//      ivC[i]->RemoveFromSlot();
-//      ivC[i]->SendToHell();
+      if(bMoveToInventory)
+        ivC[i]->MoveTo(rpd.rc.H()->GetStack());
+      else
+        SendToHellSafely(ivC[i]);
     }
 
     bEmptied = true;
@@ -212,10 +218,14 @@ void recipedata::Save(outputfile& SaveFile) const
     << fsItemSpawnSearchPrototype
 
     << itSpawnCfg
+
     << itSpawnMatMainCfg
     << itSpawnMatMainVol
+//    << itSpawnMatMainSpoilLevel
+
     << itSpawnMatSecCfg
     << itSpawnMatSecVol
+//    << itSpawnMatSecSpoilLevel
 
     << otSpawnCfg
     << otSpawnMatMainCfg
@@ -266,10 +276,14 @@ void recipedata::Load(inputfile& SaveFile)
     >> fsItemSpawnSearchPrototype
 
     >> itSpawnCfg
+
     >> itSpawnMatMainCfg
     >> itSpawnMatMainVol
+//    >> itSpawnMatMainSpoilLevel
+
     >> itSpawnMatSecCfg
     >> itSpawnMatSecVol
+//    >> itSpawnMatSecSpoilLevel
 
     >> otSpawnCfg
     >> otSpawnMatMainCfg
@@ -415,10 +429,14 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   fsItemSpawnSearchPrototype="";
 
   itSpawnCfg=0;
+
   itSpawnMatMainCfg=0;
   itSpawnMatMainVol=0;
+//  itSpawnMatMainSpoilLevel=0;
+
   itSpawnMatSecCfg=0;
   itSpawnMatSecVol=0;
+//  itSpawnMatSecSpoilLevel=0;
 
   otSpawnCfg=0;
   otSpawnMatMainCfg=0;
@@ -444,11 +462,15 @@ void recipedata::CopySpawnItemCfgFrom(item* itCfg)
     ABORT("NULL itCfg");
 
   itSpawnCfg = itCfg->GetConfig();
-  itSpawnMatMainCfg = itCfg->GetMainMaterial()->GetConfig();
-  itSpawnMatMainVol = itCfg->GetMainMaterial()->GetVolume();
+  material* matM = itCfg->GetMainMaterial();
+  itSpawnMatMainCfg = matM->GetConfig();
+  itSpawnMatMainVol = matM->GetVolume();
+//  itSpawnMatMainSpoilLevel = matM->GetSpoilLevel();
   if(itCfg->GetSecondaryMaterial()!=NULL){
-    itSpawnMatSecCfg = itCfg->GetSecondaryMaterial()->GetConfig();
-    itSpawnMatSecVol = itCfg->GetSecondaryMaterial()->GetVolume();
+    material* matS = itCfg->GetSecondaryMaterial();
+    itSpawnMatSecCfg = matS->GetConfig();
+    itSpawnMatSecVol = matS->GetVolume();
+//    itSpawnMatSecSpoilLevel = matS->GetSpoilLevel();
   }
 }
 
@@ -466,24 +488,24 @@ void recipedata::CopySpawnTerrainCfgFrom(olterrain* otCfg){
   }
 }
 
-cfestring craftcore::SpawnTerrain(recipedata& rpd){
+olterrain* craftcore::SpawnTerrain(recipedata& rpd, festring& fsCreated){
   rpd.rc.integrityCheck();
 
   olterrain* otSpawn = NULL;
 
   switch(rpd.otSpawnType){
-  case CTT_FURNITURE:
-    otSpawn=decoration::Spawn(rpd.otSpawnCfg);
-    break;
-  case CTT_DOOR:
-    otSpawn=door::Spawn(rpd.otSpawnCfg);
-    ((door*)otSpawn)->SetIsLocked(false);
-    ((door*)otSpawn)->SetIsOpened(true);
-    //TODO configure lock type based randomly in one of the keys available on player's inventory
-    break;
-  case CTT_WALL:
-    otSpawn=wall::Spawn(rpd.otSpawnCfg); //earth::Spawn();
-    break;
+    case CTT_FURNITURE:
+      otSpawn=decoration::Spawn(rpd.otSpawnCfg);
+      break;
+    case CTT_DOOR:
+      otSpawn=door::Spawn(rpd.otSpawnCfg);
+      ((door*)otSpawn)->SetIsLocked(false);
+      ((door*)otSpawn)->SetIsOpened(true);
+      //TODO configure lock type based randomly in one of the keys available on player's inventory
+      break;
+    case CTT_WALL:
+      otSpawn=wall::Spawn(rpd.otSpawnCfg); //earth::Spawn();
+      break;
   }
 
   if(otSpawn==NULL)
@@ -493,12 +515,12 @@ cfestring craftcore::SpawnTerrain(recipedata& rpd){
   if(rpd.otSpawnMatSecCfg>0)
     otSpawn->SetSecondaryMaterial(material::MakeMaterial(rpd.otSpawnMatSecCfg,rpd.otSpawnMatSecVol));
 
-  festring fsCreated = "You built ";
+  fsCreated << "You built ";
   rpd.lsqrPlaceAt->ChangeOLTerrainAndUpdateLights(otSpawn);
 
   fsCreated << otSpawn->GetName(INDEFINITE);
 
-  return fsCreated;
+  return otSpawn;
 }
 
 void recipecore::ClearRefs()
@@ -537,6 +559,7 @@ struct ci{
   int iReqMatCfgMain=0;
   int iReqMatCfgSec=0;
   bool bJustAcceptFirstChosenAndReturn=false;
+  bool bDenyDegradation = true;
 };
 struct recipe{
   festring action;
@@ -593,14 +616,6 @@ struct recipe{
     float f = iBaseTurns * fMult * (mat->GetStrengthValue()/fMinStr) * (mat->GetVolume()/fBaseVol); //vol is in cm3, so per 1L or 1Kg(water)
     if(f>0 && f<1)f=1;
     return f;
-  }
-
-  static truth IsMeltable(material* mat){ //TODO add all meltables
-    if(mat->GetCategoryFlags() & IS_METAL)
-      return true;
-    if(mat->GetConfig()==GLASS)
-      return true;
-    return false;
   }
 
   static bool chkWeapon(item* it, int iCfg, int iWeaponCategory){
@@ -691,18 +706,29 @@ struct recipe{
     return it;
   }
 
+  /**
+   * prepare the filter for ALL items also resetting them first!
+   */
   template <typename T> static void prepareFilter(
     recipedata& rpd,
     const itemvector& vi,
     ci CI=ci(),
     std::vector<ulong>* ptmpIngredientsIDs = NULL)
   {
-    // prepare the filter for ALL items also resetting them first!
     for(int i=0;i<vi.size();i++){
       vi[i]->SetValidRecipeIngredient(false);
       if(dynamic_cast<T*>(vi[i])!=NULL){
         if(vi[i]->IsBurning())continue;
-        if(vi[i]->GetSpoilLevel()>0)continue;
+
+        /**
+         * w/o this, things can be indirectly repaired to their original state,
+         * unless spawining/cloning/copying changes to have to same
+         * (or average in case of many to one) degradation data
+         *
+         * degradation should only be "fixable" thru magic (scroll of repair)
+         */
+        if(CI.bDenyDegradation && craftcore::IsDegraded(vi[i])) //TODO lower the volume of "remaining perfect materials" based on the degradation levels ?
+          continue;
 
         if(CI.iReqCfg>0 && vi[i]->GetConfig()!=CI.iReqCfg)
           continue;
@@ -798,7 +824,7 @@ struct recipe{
               ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             matM->SetVolume(lVolM);
 
-            item* lumpR = CreateLumpAtCharStack(matM, rpd);
+            item* lumpR = craftcore::PrepareRemains(matM, rpd);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
@@ -845,17 +871,18 @@ struct recipe{
     return false;
   }
 
-  template <typename T> static bool choseOneIngredient(recipedata& rpd){
+  template <typename T> static bool choseOneIngredient(recipedata& rpd, ci* pCI=NULL){
     int iWeakestCfgDummy;
-    ci CI;
-    CI.bMultSelect=false;
-    CI.bJustAcceptFirstChosenAndReturn=true;
+    ci CIok;
+    if(pCI)CIok=*pCI;
+    CIok.bMultSelect=false;
+    CIok.bJustAcceptFirstChosenAndReturn=true;
     return choseIngredients<T>(
       festring(""),
       1, //just to chose one of anything
       rpd,
       iWeakestCfgDummy,
-      CI);
+      CIok);
   }
 
   static itemvector vitInv(recipedata& rpd){
@@ -885,72 +912,6 @@ struct recipe{
         }
       }
     }
-  }
-
-  static bool canBeAWoodenStick(item* it,material* mat){
-//    material* matM = it->GetMainMaterial();
-//    material* matS = it->GetSecondaryMaterial();
-//
-//    if(matM->GetConfig()==mat->GetConfig()){
-//      DBG6(matM->GetConfig(),matM->GetAdjectiveStem().CStr(),matM->GetType(),matM->GetNaturalForm().GetCategory(),matM->GetNaturalForm().GetContentType(),matM->GetProtoType()->GetClassID());
-//      if(IsMeltable(matM))return false;
-//      if(matM->GetConfig()>=FUNGI_WOOD && matM->GetConfig()<=PETRIFIED_WOOD)return true;
-//    }
-//
-//    if(matS!=NULL){
-//      DBG6(matS->GetConfig(),matS->GetAdjectiveStem().CStr(),matS->GetType(),matS->GetNaturalForm().GetCategory(),matS->GetNaturalForm().GetContentType(),matS->GetProtoType()->GetClassID());
-//      if(matS->GetConfig()==mat->GetConfig()){
-//        if(IsMeltable(matS))return false;
-//      }
-//    }
-
-    material* matChk = it->GetMainMaterial();
-    for(;;){
-      if(matChk->GetConfig()==mat->GetConfig()){
-        //DBG6(matChk->GetConfig(),matChk->GetAdjectiveStem().CStr(),matChk->GetType(),matChk->GetNaturalForm().GetCategory(),matChk->GetNaturalForm().GetContentType(),matChk->GetProtoType()->GetClassID());
-        if(IsMeltable(matChk))
-          return false;
-        if(matChk->GetConfig()>=FUNGI_WOOD && matChk->GetConfig()<=PETRIFIED_WOOD)
-          return true;
-      }
-
-      if(matChk==it->GetSecondaryMaterial())
-        break;
-
-      matChk=it->GetSecondaryMaterial();
-      if(matChk==NULL)
-        break;
-    }
-
-    return false;
-  }
-
-  static item* CreateLumpAtCharStack(material* mat, recipedata& rpd, bool bWoodenCreateStick=false){
-    if(mat==NULL)
-      ABORT("NULL lump material");
-
-    DBG2(mat->GetName(DEFINITE).CStr(),mat->GetVolume());
-    bool bLiquid = mat->IsLiquid();
-    if(mat->IsPowder())bLiquid=false; //TODO if explosive could have a chance to xplod
-
-    if(dynamic_cast<gas*>(mat)!=NULL)return NULL; //TODO should have a chance to release the gas effect
-
-    if(bLiquid){
-      rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
-    }else{
-      item* itTmp = lump::Spawn(0, NO_MATERIALS);
-      if(bWoodenCreateStick){
-        itTmp = stick::Spawn(0, NO_MATERIALS);
-      }else{
-        itTmp = lump::Spawn(0, NO_MATERIALS);
-      }
-      itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
-      rpd.rc.H()->GetStack()->AddItem(itTmp);
-      ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
-      return itTmp;
-    }
-
-    return NULL;
   }
 
   lsquare* lsqrFORGE = NULL;
@@ -1164,7 +1125,61 @@ struct srpWall2 : public srpOltBASE{
   }
 };srpWall2 rpWall2;
 
-struct srpMelt : public recipe{
+struct srpJoinLumps : public recipe{
+  virtual void fillInfo(){
+    init("join","a lump");
+    desc << "Join lumps of same material.";
+  }
+
+  void askForEqualLumps(recipedata& rpd){
+    ci CI;
+    CI.bOverridesQuestion=true;
+    CI.bMsgInsuficientMat=false;
+    CI.bInstaAddIngredients=true;
+    int iWeakestCfgDummy;
+    bool bDummy = choseIngredients<lump>(
+      festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
+      1000000, //just any "impossible" huge volume as "limit"
+      rpd, iWeakestCfgDummy, CI); // true, 0, false, true, false, true);
+  }
+
+  void joinLumpsEqualTo(recipedata& rpd,material* matM){
+    // multiple (compatible with 1st) lumps will be mixed in a big one again
+    for(int i=1;i<rpd.ingredientsIDs.size();i++){
+      item* LumpToAdd = game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
+      if(dynamic_cast<lump*>(LumpToAdd)==NULL)continue;
+
+      material* LumpToAddM = LumpToAdd->GetMainMaterial();DBGLN;
+      if(LumpToAddM->GetConfig()!=matM->GetConfig())continue;
+
+      // join
+      matM->SetVolume(matM->GetVolume()+LumpToAddM->GetVolume());DBGLN;
+
+      craftcore::SendToHellSafely(LumpToAdd);
+    }
+  }
+
+  void joinLumpsEqualToFirst(recipedata& rpd){
+    item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+    material* matM=Lump->GetMainMaterial();
+    joinLumpsEqualTo(rpd,matM);
+  }
+
+  virtual bool work(recipedata& rpd){ // it is just like to put them all together, no effort, instant.
+    askForEqualLumps(rpd);
+
+    if(rpd.ingredientsIDs.empty())
+      return false;
+
+    joinLumpsEqualToFirst(rpd);
+
+    rpd.bAlreadyExplained = true;
+
+    return true;
+  }
+};srpJoinLumps rpJoinLumps;
+
+struct srpMelt : public srpJoinLumps{
   virtual void fillInfo(){
     init("melt","an ingot");
     desc << "Near a forge, meltable lumps can be used to prepare ingots.";
@@ -1178,22 +1193,15 @@ struct srpMelt : public recipe{
     if(!recipe::findForge(rpd))
       return false;
 
-    ci CI;
-    CI.bOverridesQuestion=true;
-    CI.bMsgInsuficientMat=false;
-    CI.bInstaAddIngredients=true;
-    int iWeakestCfgDummy;
-    bool bDummy = choseIngredients<lump>(
-      festring("First chosen lump's material will be mixed with further ones of same material only, hit ESC to accept."),
-      1000000, //just any huge volume as "limit"
-      rpd, iWeakestCfgDummy, CI); // true, 0, false, true, false, true);
+    askForEqualLumps(rpd);
+
     if(rpd.ingredientsIDs.empty())
       return false;
 
     item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
 
     item* LumpMeltable=NULL;
-    if(IsMeltable(Lump->GetMainMaterial()))
+    if(craftcore::IsMeltable(Lump->GetMainMaterial()))
       LumpMeltable = Lump;
 
     if(LumpMeltable==NULL){
@@ -1204,19 +1212,7 @@ struct srpMelt : public recipe{
 
     material* matM=LumpMeltable->GetMainMaterial();
 
-    // multiple (compatible with 1st) lumps will be mixed in a big one again
-    for(int i=1;i<rpd.ingredientsIDs.size();i++){
-      item* LumpAdd = game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-      if(dynamic_cast<lump*>(LumpAdd)==NULL)continue;
-
-      material* lumpAddM = LumpAdd->GetMainMaterial();DBGLN;
-      if(lumpAddM->GetConfig()!=matM->GetConfig())continue;
-
-      // join
-      matM->SetVolume(matM->GetVolume()+lumpAddM->GetVolume());DBGLN;
-
-      craftcore::SendToHellSafely(LumpAdd);
-    }
+    joinLumpsEqualTo(rpd,matM);
 
     rpd.iBaseTurnsToFinish = calcMeltableTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
 
@@ -1290,7 +1286,9 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
     ///////////////////// chose item to melt/smash
     game::DrawEverythingNoBlit();
-    if(!choseOneIngredient<item>(rpd))
+    ci CI;
+    CI.bDenyDegradation=false; //to let user know what is happening w/o spamming it.
+    if(!choseOneIngredient<item>(rpd,&CI))
       return false;
 
     item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
@@ -1308,6 +1306,11 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
 
+    if(craftcore::IsDegraded(itToUse,true)){
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+
     material* matM=NULL;
     material* matS=NULL;
     material* matIngot=NULL;
@@ -1315,7 +1318,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     matM = itToUse->GetMainMaterial();
     matS = itToUse->GetSecondaryMaterial();
 
-    rpd.bMeltable = IsMeltable(matM) || (matS!=NULL && IsMeltable(matS));
+    rpd.bMeltable = craftcore::IsMeltable(matM) || (matS!=NULL && craftcore::IsMeltable(matS));
     if(rpd.bMeltable){
       if(!recipe::findForge(rpd))
         return false;
@@ -1347,26 +1350,24 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
 
     { // main material ALWAYS exist
-      item* LumpM = CreateLumpAtCharStack(matM,rpd,canBeAWoodenStick(itToUse,matM));
-      if(IsMeltable(LumpM->GetMainMaterial()))
+      item* LumpM = craftcore::PrepareRemains(matM,rpd);
+      if(craftcore::IsMeltable(LumpM->GetMainMaterial()))
         LumpMeltable = LumpM;
     }
 
     if(matS!=NULL){
-      item* LumpS = CreateLumpAtCharStack(matS,rpd,canBeAWoodenStick(itToUse,matS)); //must always be prepared to not lose it
+      item* LumpS = craftcore::PrepareRemains(matS,rpd); //must always be prepared to not lose it
       if(LumpS!=NULL)
-        if(IsMeltable(LumpS->GetMainMaterial()) )
+        if(craftcore::IsMeltable(LumpS->GetMainMaterial()) )
           if(LumpMeltable==NULL)
             LumpMeltable = LumpS;
     }
 
-    // OBS.: one of the lumps will have to be turned into ingot later by user action
+    craftcore::EmptyContentsIfPossible(rpd,itToUse,true);
 
     ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
     rpd.bAlreadyExplained=true;
     craftcore::SendToHellSafely(itToUse);
-//    itToUse->RemoveFromSlot(); //important to not crash elsewhere!!!
-//    itToUse->SendToHell();
     DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
 
     rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
@@ -1383,8 +1384,8 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
 struct srpSplitLump : public recipe{
   virtual void fillInfo(){
-    init("split","some lumps");
-    desc << "Split one lump to be easier to work with.";
+    init("split","some lumps or sticks");
+    desc << "Split it to be easier to work with.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1407,7 +1408,7 @@ struct srpSplitLump : public recipe{
       //TODO this should take time as an action
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
-      Lump = CreateLumpAtCharStack(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      Lump = craftcore::PrepareRemains(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
       rpd.itSpawnType = CIT_LUMP;
 
       craftcore::SendToHellSafely(Corpse);
@@ -1424,6 +1425,11 @@ struct srpSplitLump : public recipe{
 
     if(Lump==NULL)
       return false;
+
+    if(craftcore::IsDegraded(Lump)){
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
 
     long volM=Lump->GetMainMaterial()->GetVolume();
 
@@ -1566,13 +1572,13 @@ struct srpForgeItem : public recipe{
       return false;
     }
 
-    bool bContainerEmptied = craftcore::EmptyContentsIfPossible(itSpawn);
+    bool bContainerEmptied = craftcore::EmptyContentsIfPossible(rpd,itSpawn);
 
     /**
      * TODO problem: basically sulphuric acid can already be stored on a metal can ...
      * TODO every materialcontainer should rust depending on it's contents, if made of anything else than glass
      * Keeping allowing creating materialcontainer of non glass because the fix is already required for the existing metal can,
-     * so preventing it would still not fix how metal can works...
+     * so preventing it would still not fix how 'metal can' works...
      */
 
     bool bIsWeapon = itSpawn->IsWeapon(rpd.rc.H());
@@ -1620,7 +1626,7 @@ struct srpForgeItem : public recipe{
 
     material* matM = itSpawn->GetMainMaterial();
     material* matS = itSpawn->GetSecondaryMaterial();
-    rpd.bMeltable = IsMeltable(matM) || (matS!=NULL && IsMeltable(matS));
+    rpd.bMeltable = craftcore::IsMeltable(matM) || (matS!=NULL && craftcore::IsMeltable(matS));
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
     rpd.iBaseTurnsToFinish=calcMeltableTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
@@ -2024,6 +2030,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   RP(rpDismantle);
   RP(rpSplitLump);
+  RP(rpJoinLumps);
   RP(rpMelt);
   RP(rpForgeItem);
   RP(rpAnvil);
@@ -2124,10 +2131,104 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 }
 
 
-cfestring craftcore::SpawnItem(recipedata& rpd){
-  return SpawnItem(rpd,rpd.itSpawnTot);
+item* craftcore::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated)
+{
+  bool bBreak = rpd.bSpawnBroken;
+
+  if(bAllowBreak && bBreak && !itSpawn->IsBroken()){
+    if(itSpawn->CanBeBroken()){
+      /**
+       * IMPORTANT!!!
+       *
+       * can only break after placed somewhere like on player's inv
+       *
+       * breaking it with
+       *   itSpawn->Break(NULL);
+       * on the same turn it was spawned will create inconsistent inventory,
+       * The last item will point to invalid memory and may segfault anywhere from next turn on,
+       * or cause unpredictable results,
+       * so do not use it!
+       *
+       * This below was taken from Break() and seems safe.
+       * TODO create a method there like SetSelfAsBroken() to re-use the code to grant they will be in sync
+       */
+      itSpawn->SetConfig(rpd.itSpawnCfg | BROKEN);
+      itSpawn->SetSize(itSpawn->GetSize() >> 1);
+    }else{
+      ADD_MESSAGE("My lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
+      craftcore::PrepareRemains(itSpawn->GetMainMaterial(), rpd);
+      if(itSpawn->GetSecondaryMaterial()!=NULL)
+        craftcore::PrepareRemains(itSpawn->GetSecondaryMaterial(), rpd);
+      craftcore::SendToHellSafely(itSpawn);
+      itSpawn=NULL; //because the result can be 2 items (2 lumps!)
+      fsCreated << "a funny looking lump";
+    }
+  }
+
+  return itSpawn;
 }
-cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
+
+material* craftcore::CreateMaterial(material* matCopyFrom)
+{
+  material* mat = matCopyFrom->Duplicate();
+
+  DBG4(mat->GetSpoilLevel(),matCopyFrom->GetSpoilLevel(),mat->GetRustLevel(),matCopyFrom->GetRustLevel());
+  if( //TODO temporary, remove as soon all looks good, faster than scanning the whole code manually to grant it works...
+      mat->GetSpoilLevel() != matCopyFrom->GetSpoilLevel() ||
+      mat->GetRustLevel() != matCopyFrom->GetRustLevel()
+  ) ABORT("material full duplication failed");
+
+//  return CreateMaterial(true/*dummy*/,NULL,matCopyFrom);
+  return mat;
+}
+material* craftcore::CreateMaterial(bool bMain,recipedata& rpd)
+{
+  material* mat = material::MakeMaterial(
+    (bMain ? rpd.itSpawnMatMainCfg : rpd.itSpawnMatSecCfg),
+    (bMain ? rpd.itSpawnMatMainVol : rpd.itSpawnMatSecVol)
+  );
+  return mat;
+}
+////material* craftcore::CreateMaterial(bool bMain,recipedata* prpd,material* matOverride)
+//material* craftcore::CreateMaterial(bool bMain,recipedata* prpd)
+//{
+////  if(prpd==NULL && matOverride==NULL)
+////    ABORT("to create material, one must not be NULL");
+////
+//  material* mat = material::MakeMaterial(
+//    (bMain ? prpd->itSpawnMatMainCfg : prpd->itSpawnMatSecCfg),
+//    (bMain ? prpd->itSpawnMatMainVol : prpd->itSpawnMatSecVol)
+//  );
+//
+////  if(mat!=NULL){
+////    if(dynamic_cast<organic*>(mat)!=NULL){
+////      ((organic*)mat)->SetSpoilLevel(
+////        (bMain ? prpd->itSpawnMatMainSpoilLevel : prpd->itSpawnMatSecSpoilLevel) );
+////    }
+////  }
+//
+//  return mat;
+//}
+//material* craftcore::CreateMaterial(bool bMain,recipedata* prpd,material* matOverride)
+//{
+//  if(prpd==NULL && matOverride==NULL)
+//    ABORT("to create material, one must not be NULL");
+//
+//  material* mat = material::MakeMaterial(
+//    matOverride!=NULL ? matOverride->GetConfig() : (bMain ? prpd->itSpawnMatMainCfg : prpd->itSpawnMatSecCfg),
+//    matOverride!=NULL ? matOverride->GetVolume() : (bMain ? prpd->itSpawnMatMainVol : prpd->itSpawnMatSecVol)
+//  );
+//
+//  if(mat!=NULL){
+//    mat->SetSpoilLevel(
+//      matOverride!=NULL ? matOverride->GetSpoilLevel() : (bMain ? prpd->itSpawnMatMainSpoilLevel : prpd->itSpawnMatSecSpoilLevel) );
+//  }
+//
+//  return mat;
+//}
+
+item* craftcore::SpawnItem(recipedata& rpd, festring& fsCreated)
+{
   rpd.rc.integrityCheck();
 
   item* itSpawn = NULL;
@@ -2138,7 +2239,7 @@ cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
       /**
        * IMPORTANT!!!
        * do not use NO_MATERIALS here,
-       * apparently the main material is always required for items
+       * apparently the main material is always required for it
        * and the main material would remain uninitialized (instead of NULL)
        * leading to SEGFAULT when trying to set the main material!
        */
@@ -2149,9 +2250,6 @@ cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
     case CIT_PROTOTYPE:
       itSpawn = protosystem::CreateItemToCraft(rpd.fsItemSpawnSearchPrototype);
       bAllowBreak=true;
-      if(iSpawnTot>1)
-        ABORT("crafting multiple from prototype is not supported yet %d '%s' '%s'",
-          iSpawnTot,rpd.fsItemSpawnSearchPrototype.CStr(),rpd.dbgInfo().CStr());
       break;
     case CIT_STONE:
       itSpawn = stone::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
@@ -2179,69 +2277,37 @@ cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
 
   if(rpd.itSpawnMatMainCfg==0 || rpd.itSpawnMatMainVol==0)
     ABORT("main material and/or volume is 0 %s %s",rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
-  itSpawn->SetMainMaterial(material::MakeMaterial(rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol));
+
+//  material* matM = material::MakeMaterial(rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
+//  matM->SetSpoilCounter(rpd.itSpawnMatMainSpoilLevel);
+  material* matM = CreateMaterial(true,rpd);
+  itSpawn->SetMainMaterial(matM);
 
   if(rpd.itSpawnMatSecCfg==0)
-    craftcore::EmptyContentsIfPossible(itSpawn);
+    craftcore::EmptyContentsIfPossible(rpd,itSpawn);
   else{
     if(matS==NULL)
-      matS = material::MakeMaterial(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
-    if(matS!=NULL)
+      matS = CreateMaterial(false,rpd);
+//      matS = material::MakeMaterial(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
+    if(matS!=NULL){
+//      matS->SetSpoilCounter(rpd.itSpawnMatSecSpoilLevel);
       itSpawn->SetSecondaryMaterial(matS);
+    }
   }
 
   itSpawn->MoveTo(rpd.rc.H()->GetStack());
 
-  festring fsCreated = "You crafted ";
+  if(!fsCreated.IsEmpty())
+    fsCreated << " ";
+  fsCreated << "I crafted ";
 
-  if(bAllowBreak && rpd.bSpawnBroken && !itSpawn->IsBroken()){
-    if(itSpawn->CanBeBroken()){
-      /**
-       * IMPORTANT!!!
-       *
-       * can only break after placed somewhere like on player's inv
-       *
-       * breaking it with
-       *   itSpawn->Break(NULL);
-       * on the same turn it was spawned will create inconsistent inventory,
-       * The last item will point to invalid memory and may segfault anywhere from next turn on,
-       * or cause unpredictable results,
-       * so do not use it!
-       *
-       * This below was taken from Break() and seems safe.
-       * TODO create a method there like SetSelfAsBroken() to re-use the code to grant they will be in sync
-       */
-      itSpawn->SetConfig(rpd.itSpawnCfg | BROKEN);
-      itSpawn->SetSize(itSpawn->GetSize() >> 1);
-    }else{
-      ADD_MESSAGE("My lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
-      recipe::CreateLumpAtCharStack(itSpawn->GetMainMaterial(), rpd);
-      if(itSpawn->GetSecondaryMaterial()!=NULL)
-        recipe::CreateLumpAtCharStack(itSpawn->GetSecondaryMaterial(), rpd);
-      craftcore::SendToHellSafely(itSpawn);
-      itSpawn=NULL;
-      fsCreated = "a funny looking lump";
-    }
-  }
-
+  itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
   if(itSpawn!=NULL){
-    if(iSpawnTot > 1){DBGLN;
-      fsCreated << iSpawnTot << " " << itSpawn->GetNamePlural();DBGLN;
-      for(int i=0;i<iSpawnTot-1;i++){ //-1 as the last one will be the original
-        /**
-         * IMPORTANT!!! the duplicator will vanish with the item ID that is being duplicated
-         * so the duplication source item's ID will vanish. TODO could it be safely kept at DuplicateToStack() ?
-         */
-        itSpawn->DuplicateToStack(rpd.rc.H()->GetStack());
-      }
-    }else{DBGLN;
-      fsCreated << itSpawn->GetName(INDEFINITE);
-    }
-
+    fsCreated << itSpawn->GetName(INDEFINITE);
     itSpawn->MoveTo(rpd.rc.H()->GetStack());DBGLN;
   }
 
-  return fsCreated;
+  return itSpawn;
 }
 
 void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
@@ -2255,11 +2321,11 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
     festring fsMsg("");
 
     if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      fsMsg << craftcore::SpawnItem(rpd);
+      craftcore::SpawnItem(rpd,fsMsg);
     }
 
     if(rpd.otSpawnType!=CTT_NONE){DBGLN;
-      fsMsg << craftcore::SpawnTerrain(rpd);
+      craftcore::SpawnTerrain(rpd,fsMsg);
     }
 
     fsMsg << craftcore::DestroyIngredients(rpd);
@@ -2293,8 +2359,29 @@ bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
   if(iSpawnNow==0)
     return true; //holding until required time is met ex.: each spawned requires more than one turn, even if a fraction.
 
-  festring fsMsg = craftcore::SpawnItem(rpd,iSpawnNow);
-  ADD_MESSAGE("%s.",fsMsg.CStr()); //per turn
+  recipedata rpdTmp = rpd; // a copy to avoid messing it
+  if(rpdTmp.itSpawnType==CIT_STICK && rpdTmp.fDifficulty<=1.0)
+    rpdTmp.fDifficulty=1.1; //just a little bit difficult then to allow fumble
+  for(int i=0;i<iSpawnNow;i++){
+    if(rpdTmp.itSpawnType==CIT_STICK)
+      CheckFumble(rpdTmp,false);
+
+    festring fsMsg;
+
+    /**
+     * IMPORTANT!!! the duplicator would vanish with the item ID that is being duplicated (the original one)
+     * so the duplication source item's ID will vanish. TODO could it be safely kept at DuplicateToStack() ?
+     * ex.:
+    item* itDup = itSpawn->DuplicateToStack(rpd.rc.H()->GetStack());
+     * so just avoiding using it here.
+     */
+    item* itSpawned = craftcore::SpawnItem(rpdTmp,fsMsg);
+
+    ADD_MESSAGE("%s.",fsMsg.CStr());
+
+    if(rpdTmp.itSpawnType==CIT_STICK)
+      rpdTmp.bCanBeBroken=false; //reset for next stick fumble check
+  }
 
   rpd.itSpawnTot -= iSpawnNow;
   rpd.iBaseTurnsToFinish = rpd.iRemainingTurnsToFinish; //TODO should a total turns required be always kept?
@@ -2321,7 +2408,7 @@ bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
   return true;
 }
 
-void craftcore::CheckFumble(recipedata& rpd)
+void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
 {
   rpd.rc.integrityCheck();
 //  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
@@ -2346,13 +2433,14 @@ void craftcore::CheckFumble(recipedata& rpd)
     iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
     iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
     if(iLuckPerc<=1)iFumblePower++; //always have 1% weakest xplod chance
+    //current max chance per round of spawning broken is 5%
     if(clock()%100<=iFumblePower){
-      if(!rpd.bSpawnBroken){
-        rpd.iBaseTurnsToFinish/=2;
+      if(!rpd.bSpawnBroken && bChangeTurns){
+        rpd.iBaseTurnsToFinish/=2; //just complete the broken item (as AV gets halved) TODO repair system
         if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1) //to insta provide the obvious messy lump
           rpd.iBaseTurnsToFinish=1;
       }
-      rpd.bSpawnBroken=true; //current max chance per round of spawning broken is 5%
+      rpd.bSpawnBroken=true;
     }
     rpd.xplodStr = iFumblePower;
     if(rpd.xplodStr>0){DBG2(rpd.xplodStr,rpd.dbgInfo().CStr());
@@ -2527,4 +2615,66 @@ cfestring craftcore::DestroyIngredients(recipedata& rpd){
     return festring() << " using " << fsIngMsg.CStr();
 
   return "";
+}
+
+item* craftcore::PrepareRemains(material* mat, recipedata& rpd)
+{
+  bool bWoodenCreateStick = IsWooden(mat);
+
+  if(mat==NULL)
+    ABORT("NULL lump material");
+
+  DBG2(mat->GetName(DEFINITE).CStr(),mat->GetVolume());
+  bool bLiquid = mat->IsLiquid();
+  if(mat->IsPowder())bLiquid=false; //TODO if explosive could have a chance to xplod use the fumble function TODO generalize it
+
+  if(dynamic_cast<gas*>(mat)!=NULL)return NULL; //TODO should have a chance to release the gas effect if not 100% :)
+
+  if(bLiquid){
+    rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
+  }else{
+    item* itTmp = NULL;
+    if(bWoodenCreateStick){
+      itTmp = stick::Spawn(0, NO_MATERIALS);
+    }else{
+      itTmp = lump::Spawn(0, NO_MATERIALS);
+    }
+//    itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
+    itTmp->SetMainMaterial(CreateMaterial(mat));
+    rpd.rc.H()->GetStack()->AddItem(itTmp);
+    ADD_MESSAGE("%s was recovered.", itTmp->GetName(DEFINITE).CStr());
+    return itTmp;
+  }
+
+  return NULL;
+}
+
+bool craftcore::IsWooden(material* mat){
+  if(IsMeltable(mat))
+    return false;
+  if(mat->GetConfig()>=FUNGI_WOOD && mat->GetConfig()<=PETRIFIED_WOOD)
+    return true;
+  return false;
+}
+
+truth craftcore::IsMeltable(material* mat){
+  if(mat->GetCategoryFlags() & IS_METAL)
+    return true;
+  if(mat->GetConfig()==GLASS)
+    return true;
+  //TODO find more meltables and add them here
+  return false;
+}
+
+bool craftcore::IsDegraded(item* it,bool bShowMsg){
+  bool b=false;
+
+  if(it->GetBurnLevel()>0)b= true;
+  if(it->GetSpoilLevel()>0)b= true;
+  if(it->GetMainMaterialRustLevel()>0)b= true;
+
+  if(b && bShowMsg)
+    ADD_MESSAGE("%s is too degraded to work with.",it->GetName(DEFINITE).CStr());
+
+  return b;
 }

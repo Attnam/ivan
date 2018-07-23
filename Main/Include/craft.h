@@ -102,6 +102,7 @@ class recipedata {
   friend struct srpAnvil;
 
   friend struct srpForge;
+  friend struct srpJoinLumps;
 
   protected:
     recipecore rc;
@@ -153,10 +154,15 @@ class recipedata {
     festring fsItemSpawnSearchPrototype;
 
     ulong itSpawnCfg;
+
+    //TODO if duplicating the material works with spoil, rust etc, save THE MATERIAL and load it to dup from. and remove all these vars about'em
     ulong itSpawnMatMainCfg;
     ulong itSpawnMatMainVol;
+//    ulong itSpawnMatMainSpoilLevel;
+
     ulong itSpawnMatSecCfg;
     ulong itSpawnMatSecVol;
+//    ulong itSpawnMatSecSpoilLevel;
 
     ulong otSpawnCfg;
     ulong otSpawnMatMainCfg;
@@ -208,21 +214,31 @@ class craftcore {
     static bool MoreCraftDeniedFilters(item* it);
 
     static void CheckEverything(recipedata& rpd);
-    static void CheckFumble(recipedata& rpd);
+    static void CheckFumble(recipedata& rpd,bool bChangeTurns=true);
     static void CheckIngredients(recipedata& rpd);
     static void CheckFacilities(recipedata& rpd);
     static void CheckTools(recipedata& rpd);
 
-    static bool EmptyContentsIfPossible(item* itContainer);
+    static bool EmptyContentsIfPossible(recipedata& rpd,item* itContainer,bool bMoveToInventory=false);
 
-    static cfestring SpawnItem(recipedata& rpd);
-    static cfestring SpawnItem(recipedata& rpd,int iSpawnTot);
-    static cfestring SpawnTerrain(recipedata& rpd);
+    static item* CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated);
+
+    static item* SpawnItem(recipedata& rpd, festring& fsCreated);
+    static olterrain* SpawnTerrain(recipedata& rpd, festring& fsCreated);
 
     static void CraftWorkTurn(recipedata& rpd);
     static bool CraftFromLumpOverride(recipedata& rpd);
 
     static cfestring DestroyIngredients(recipedata& rpd);
+
+    static bool IsDegraded(item* it,bool bShowMsg=false);
+    static truth IsMeltable(material* mat);
+    static bool IsWooden(material* mat);
+    static item* PrepareRemains(material* mat, recipedata& rpd);
+
+//    static material* CreateMaterial(bool bMain,recipedata* prpd,material* matOverride=NULL);
+    static material* CreateMaterial(bool bMain,recipedata& rpd);
+    static material* CreateMaterial(material* matCopyFrom);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

@@ -13,6 +13,7 @@
 /* Compiled through actset.cpp */
 
 #include "confdef.h"
+#include "human.h"
 
 #include "dbgmsgproj.h"
 
@@ -306,20 +307,27 @@ void craft::Handle()
     if(MoveCraftTool && Actor->GetMainWielded())
       Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
-    item* RightBackup = game::SearchItem(RightBackupID);
+    humanoid* h = dynamic_cast<humanoid*>(Actor);
+    if(h){
+      if(h->GetRightArm()){
+        item* RightBackup = game::SearchItem(RightBackupID);
 
-    if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
-    {DBGLN;
-      RightBackup->RemoveFromSlot();
-      Actor->SetRightWielded(RightBackup);
-    }
+        if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
+        {DBGLN;
+          RightBackup->RemoveFromSlot();
+          Actor->SetRightWielded(RightBackup);
+        }
+      }
 
-    item* LeftBackup = game::SearchItem(LeftBackupID);
+      if(h->GetLeftArm()){
+        item* LeftBackup = game::SearchItem(LeftBackupID);
 
-    if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
-    {DBGLN;
-      LeftBackup->RemoveFromSlot();
-      Actor->SetLeftWielded(LeftBackup);
+        if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
+        {DBGLN;
+          LeftBackup->RemoveFromSlot();
+          Actor->SetLeftWielded(LeftBackup);
+        }
+      }
     }
   }
 

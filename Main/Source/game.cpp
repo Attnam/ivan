@@ -2660,21 +2660,23 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 {
   bool bXBRZandFelist = ivanconfig::IsXBRZScale() && felist::isAnyFelistCurrentlyDrawn();
 
-  if(LOSUpdateRequested && Player->IsEnabled())
-  {
-    if(!IsInWilderness())
-      GetCurrentLevel()->UpdateLOS();
-    else
-      GetWorldMap()->UpdateLOS();
-  }
+  if(!bXBRZandFelist)
+    if(LOSUpdateRequested && Player->IsEnabled())
+    {
+      if(!IsInWilderness())
+        GetCurrentLevel()->UpdateLOS();
+      else
+        GetWorldMap()->UpdateLOS();
+    }
 
-  if(OnScreen(CursorPos))
-  {
-    if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || GetSeeWholeMapCheatMode())
-      CurrentArea->GetSquare(CursorPos)->SendStrongNewDrawRequest();
-    else
-      DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
-  }
+  if(!bXBRZandFelist)
+    if(OnScreen(CursorPos))
+    {
+      if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || GetSeeWholeMapCheatMode())
+        CurrentArea->GetSquare(CursorPos)->SendStrongNewDrawRequest();
+      else
+        DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
+    }
 
   if(!bXBRZandFelist)
     for(size_t c = 0; c < SpecialCursorPos.size(); ++c)
