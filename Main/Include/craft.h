@@ -36,6 +36,7 @@ struct v2;
 #define CIT_PROTOTYPE 2
 #define CIT_POTION 3
 #define CIT_LUMP 4
+#define CIT_STICK 5
 
 //enum craftTerrainType{
 //  CTT_NONE=0,

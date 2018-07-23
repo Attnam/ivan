@@ -1392,6 +1392,7 @@ struct srpSplitLump : public recipe{
 
     if(choseOneIngredient<lump>(rpd)){
       Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+      rpd.itSpawnType = CIT_LUMP;
     }else
     if(choseOneIngredient<corpse>(rpd)){ //this is just a simplified conversion from corpse to a big lump...
       corpse* Corpse = (corpse*)game::SearchItem(rpd.ingredientsIDs[0]);
@@ -1407,6 +1408,7 @@ struct srpSplitLump : public recipe{
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
       Lump = CreateLumpAtCharStack(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      rpd.itSpawnType = CIT_LUMP;
 
       craftcore::SendToHellSafely(Corpse);
       rpd.ingredientsIDs.clear();
@@ -1414,6 +1416,10 @@ struct srpSplitLump : public recipe{
       rpd.ingredientsIDs.push_back(Lump->GetID());
 
       rpd.bAlreadyExplained=true; //no need to say anything
+    }else
+    if(choseOneIngredient<stick>(rpd)){
+      Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+      rpd.itSpawnType = CIT_STICK;
     }
 
     if(Lump==NULL)
@@ -1436,7 +1442,6 @@ struct srpSplitLump : public recipe{
 
     rpd.CopySpawnItemCfgFrom(Lump);
     rpd.itSpawnMatMainVol = volPart;
-    rpd.itSpawnType = CIT_LUMP;
     rpd.itSpawnTot = totParts-1; //part of the original lump is kept
 
     float fTotTurns=0;
@@ -2153,6 +2158,9 @@ cfestring craftcore::SpawnItem(recipedata& rpd,int iSpawnTot){
       break;
     case CIT_LUMP:
       itSpawn = lump::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
+      break;
+    case CIT_STICK:
+      itSpawn = stick::Spawn(rpd.itSpawnCfg, NO_MATERIALS);
       break;
   }
 
