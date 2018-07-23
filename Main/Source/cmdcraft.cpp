@@ -1446,6 +1446,8 @@ struct srpSplitLump : public recipe{
       fTotTurns+=fTurns; //turn time is one minute but when fighting it also spends 1 min... w/e...
     }
     rpd.iBaseTurnsToFinish = fTotTurns;
+    if(rpd.iBaseTurnsToFinish<1)
+      rpd.iBaseTurnsToFinish=1;
 
     rpd.bAlreadyExplained=true; //no need to say anything
 
