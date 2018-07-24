@@ -1,6 +1,19 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
 #include "char.h"
 #include "bitmap.h"
 #include "bugworkaround.h"
+#include "devcons.h"
 #include "game.h"
 #include "graphics.h"
 #include "iconf.h"
@@ -314,10 +327,42 @@ void bugWorkaroundDupPlayer::DupPlayerFix(character* DupPlayer)
   DBGCHAR(DupPlayer,"CharFix:CharToBeLost");
 }
 
+void bugWorkaroundDupPlayer::init()
+{
+  devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd);
+}
+
+character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(square* sqr)
+{
+//  static bool bDymmyInit = [](){
+//    devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd);
+//    return true;
+//  }();
+
+  v2 Pos =  sqr->GetPos();
+
+  character* CharAtPos = sqr->GetCharacter(); DBG3(CharAtPos,PLAYER,DBGAV2(Pos));
+
+  if(CharAtPos==NULL || !CharAtPos->IsPlayer()) //the file is already corrupted, so bug fix will kick in automatically
+    CharAtPos = bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos);
+
+  if(CharAtPos==NULL) //was unable to fix
+    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
+
+  return (CharAtPos);
+}
+
+void bugWorkaroundDupPlayer::DevConsCmd(std::string strCmdParams)
+{
+  BugWorkaroundDupPlayer();
+}
+
 character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer()
 {
   return BugWorkaroundDupPlayer(PLAYER,PLAYER->GetPos());
 }
+
+bool bForceDupPlayerCheck=false; //TODO this is when console commands is implemented and remove the user config option away
 character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAskedNewInstance, v2 v2AskedPos){ DBG2(CharAskedNewInstance,DBGAV2(v2AskedPos));
   bugWorkaroundDupPlayer::Accepted=false; //init to ask again if needed, so the user knows what is happening
 
@@ -331,6 +376,10 @@ character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAskedNe
   //this can ONLY return one char with ID=1 EVER, so there wont be a DUP char with ID=1 on the characters' map
   character* CharPlayerConsistent = game::SearchCharacter(1);
   DBGCHAR(CharPlayerConsistent,"CharFix:CharPlayerConsistent");
+
+  if(!bForceDupPlayerCheck)
+    if(CharPlayerConsistent==CharAskedNewInstance) //is theoretically ok
+      return CharAskedNewInstance;
 
   std::vector<character*> vCharsOnLevel;
   bugWorkaroundDupPlayer::CollectAllCharactersOnLevel(&vCharsOnLevel);

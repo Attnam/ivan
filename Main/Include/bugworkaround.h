@@ -1,3 +1,15 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
 #ifndef MAIN_INCLUDE_BUGWORKAROUND_H_
 #define MAIN_INCLUDE_BUGWORKAROUND_H_
 
@@ -8,8 +20,11 @@ struct bugWorkaroundDupPlayerCharItem{
 };
 class bugWorkaroundDupPlayer{
   public:
+    static void init();
+    static character* BugWorkaroundDupPlayer(square* sqr);
     static character* BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos);
     static character* BugWorkaroundDupPlayer();
+    static void DevConsCmd(std::string strCmdParams);
   private:
     static void GatherAllItemInLevel();
     static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);

@@ -3295,12 +3295,7 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter(); DBG3(CharAtPos,Player,DBGAV2(Pos));
-  if(CharAtPos==NULL || !CharAtPos->IsPlayer() || ivanconfig::GetBugWorkaroundDupPlayer()>0)
-    CharAtPos = bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos);
-  if(CharAtPos==NULL)
-    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer(CharAtPos);
+  SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -4574,15 +4569,22 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     if(Player)
     {
-      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+      lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
+      character* NPC = lsqr->GetCharacter();
+      if(
+          !NPC->IsAlly(Player) &&
+          !NPC->IsRooted() &&
+          !NPC->IsEnormous() &&
+          !NPC->IsStuck()
+      ){ //this at least prevents glitch of moving genetrix vesana away when coming in from above
+        lsqr->KickAnyoneStandingHereAway();
+      }
       Player->PutToOrNear(Pos);
     }
     else
     {
-      SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+      SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentLevel()->GetLSquare(Pos)));
     }
-
-    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 

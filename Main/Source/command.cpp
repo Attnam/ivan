@@ -15,6 +15,7 @@
 #include "char.h"
 #include "command.h"
 #include "database.h"
+#include "devcons.h"
 #include "felist.h"
 #include "game.h"
 #include "god.h"
@@ -114,7 +115,9 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
+  new command(&WizardMode, "wizard mode activation (Ctrl+ to access console commands)", '`', '`', '`', true), //hardcoded at whandler
+#else
+  new command(&DevConsCmd, "access console commands", '`', '`', '`', true), //works w/o Ctrl in this case
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 
@@ -1693,6 +1696,12 @@ truth commandsystem::Search(character* Char)
 {
   Char->Search(Char->GetAttribute(PERCEPTION) << 2);
   return true;
+}
+
+truth commandsystem::DevConsCmd(character* Char)
+{ // this is also hardcoded at whandler
+  devcons::Command();
+  return false;
 }
 
 #ifdef WIZARD

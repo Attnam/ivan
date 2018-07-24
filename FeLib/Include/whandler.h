@@ -74,6 +74,7 @@ class globalwindowhandler
   static void SetQuitMessageHandler(truth (*What)()){ QuitMessageHandler = What; }
   static ulong UpdateTick() { return Tick = SDL_GetTicks() / 40; }
 #endif
+  static void SetDeveloperConsoleHandler(void (*What)()){ CmdDevConsHandler = What; }
 #ifdef __DJGPP__
   static void Init() { }
   static void SetQuitMessageHandler(truth (*)()) { }
@@ -91,6 +92,7 @@ class globalwindowhandler
   static truth ControlLoopsEnabled;
   static truth playInBackground;
   static festring ScrshotDirectoryName;
+  static void (*CmdDevConsHandler)();
 };
 
 #endif

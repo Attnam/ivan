@@ -140,6 +140,7 @@ int globalwindowhandler::ReadKey()
 
 std::vector<int> globalwindowhandler::KeyBuffer;
 truth (*globalwindowhandler::QuitMessageHandler)() = 0;
+void (*globalwindowhandler::CmdDevConsHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
@@ -600,6 +601,11 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     bLastSDLkeyEventIsKeyUp=false;
     switch(Event->key.keysym.sym)
     {
+     case SDLK_BACKQUOTE:
+      if(Event->key.keysym.mod & KMOD_CTRL)
+        if(CmdDevConsHandler!=NULL)
+          CmdDevConsHandler();
+      break;
      case SDLK_RETURN:
      case SDLK_KP_ENTER:
       if(Event->key.keysym.mod & KMOD_ALT)

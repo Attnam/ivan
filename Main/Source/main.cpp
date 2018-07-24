@@ -27,6 +27,7 @@
 
 #include "game.h"
 #include "database.h"
+#include "devcons.h"
 #include "feio.h"
 #include "igraph.h"
 #include "iconf.h"
@@ -39,6 +40,8 @@
 #include "audio.h"
 
 #include "dbgmsgproj.h"
+
+#include "bugworkaround.h"
 
 #ifndef WIN32
 void CrashHandler(int Signal)
@@ -97,6 +100,8 @@ int main(int argc, char** argv)
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
+  globalwindowhandler::SetDeveloperConsoleHandler(devcons::Command);
+  bugWorkaroundDupPlayer::init();
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
