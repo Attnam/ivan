@@ -22,6 +22,7 @@
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
+#include "bugworkaround.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -183,9 +184,9 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
-cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
+cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer", //TODO truthoption
                                           "BugFix missing/DUP player (experimental/slow)",
-                                          0, 4,
+                                          0, 2,
                                           &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           "* Select font",
@@ -806,9 +807,11 @@ void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring&
 {
   switch(O->Value){
   case 0: Entry << "disabled";break;
-  case 1: Entry << "missing only";break;
-  case 2: Entry << "prefer old player";break;
-  case 3: Entry << "prefer new player";break;
+  case 1:
+    Entry << "enabled";
+    if(game::IsRunning())
+      bugWorkaroundDupPlayer::BugWorkaroundDupPlayer();
+    break;
   }
 }
 

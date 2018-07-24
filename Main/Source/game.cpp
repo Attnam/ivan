@@ -293,13 +293,18 @@ void game::RemoveItemID(ulong ID)
 {
   if(ID){
     DBG2("Erasing:ItemID",ID);
-//    if(ID==20957)DBGSTK;//temp test case debug
-    DBGEXEC(
+
+    //TODO if(ivanconfig::GetBugWorkaroundDupPlayer()>0){ //TODO if the search affects performance, uncomment this!
       if(SearchItem(ID)==NULL){
-        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
-        DBGSTK;
+        /**
+         * This happens when the duplicated player bug happens!
+         * so it will try to erase the item 2 times and CRASH on the second,
+         * therefore the abort is appropriate.
+         */
+        ABORT("AlreadyErased:ItemID %d, possible dup char bug, try it's advanced option",ID);
       }
-    );
+    //TODO }
+
     ItemIDMap.erase(ItemIDMap.find(ID));
     DBG2("ERASED!:ItemID",ID);
   }
@@ -3290,10 +3295,12 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
-  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
+  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter(); DBG3(CharAtPos,Player,DBGAV2(Pos));
+  if(CharAtPos==NULL || !CharAtPos->IsPlayer() || ivanconfig::GetBugWorkaroundDupPlayer()>0)
+    CharAtPos = bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos);
+  if(CharAtPos==NULL)
     ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
+  SetPlayer(CharAtPos);
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -4928,6 +4935,15 @@ character* game::SearchCharacter(ulong ID)
 {
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
+}
+
+std::vector<character*> game::GetAllCharacters()
+{
+  std::vector<character*> vc;
+  for(int i=0;i<CharacterIDMap.size();i++){
+    vc.push_back(CharacterIDMap[i]);
+  }
+  return vc;
 }
 
 item* game::SearchItem(ulong ID)

@@ -588,9 +588,12 @@ struct drawaboveentry{
 std::vector<drawaboveentry> vDrawabove;
 void graphics::DrawAboveAll(bitmap* bmpDest)
 {
-  for(int i=0;i<vDrawabove.size();i++){
-    vDrawabove[i].da(StretchedBuffer);
-  }
+  bitmap* DrawAtBuffer = DoubleBuffer;
+  if(isStretchedRegionsAllowed())
+    DrawAtBuffer = StretchedBuffer;
+
+  for(int i=0;i<vDrawabove.size();i++)
+    vDrawabove[i].da(DrawAtBuffer);
 }
 
 /**

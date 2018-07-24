@@ -9,6 +9,7 @@ struct bugWorkaroundDupPlayerCharItem{
 class bugWorkaroundDupPlayer{
   public:
     static character* BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos);
+    static character* BugWorkaroundDupPlayer();
   private:
     static void GatherAllItemInLevel();
     static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
@@ -26,7 +27,10 @@ class bugWorkaroundDupPlayer{
     static void CollectAllCharactersOnLevel(std::vector<character*>* pvCharsOnLevel);
     static void CollectAllCharactersAndItemsOnLevel(std::vector<bugWorkaroundDupPlayerCharItem>* pvAllCharAndOrItemsInLevel);
     static bool FindDupItemOnLevel(item* itWork, bool bIgnoreBodyParts, bool bAbortOnMultiples);
+    static void ValidateFullLevel();
+    static void DupPlayerFix(character*);
 
+    static void DrawAlertConfirmFix(bitmap* Buffer);
     static void AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot);
 //    static bool isItemOnVector(std::vector<item*>* pv, item* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
 //    static bool isCharOnVector(std::vector<character*>* pv, character* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
