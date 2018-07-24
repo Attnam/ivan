@@ -29,6 +29,7 @@ class ivanconfig
   static long GetShowItemsAtPlayerSquare(){ return ShowItemsAtPlayerSquare.Value; }
   static long GetStartingWindowWidth() { return iStartingWindowWidth; }
   static long GetStartingWindowHeight() { return iStartingWindowHeight; }
+  static int GetBugWorkaroundDupPlayer() { return BugWorkaroundDupPlayer.Value; }
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
   static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
@@ -41,7 +42,9 @@ class ivanconfig
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
+  static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
+  static int GetDistLimitMagicMushrooms() { return DistLimitMagicMushrooms.Value; }
   static truth IsShowFullDungeonName() { return ShowFullDungeonName.Value; }
   static truth IsCenterOnPlayerAfterLook(){ return CenterOnPlayerAfterLook.Value; }
   static truth IsShowGodInfo(){ return ShowGodInfo.Value; }
@@ -52,6 +55,7 @@ class ivanconfig
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
+  static int GetStartingFontGfx() { return iStartingFontGfx; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static int GetRotateTimesPerSquare() { return RotateTimesPerSquare.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
@@ -98,6 +102,7 @@ class ivanconfig
   static void WindowWidthDisplayer(const numberoption* O, festring& Entry);
   static void WindowHeightDisplayer(const numberoption* O, festring& Entry);
   static void StackListPageLengthDisplayer(const numberoption* O, festring& Entry);
+  static void DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry);
   static void FrameSkipDisplayer(const numberoption* O, festring& Entry);
   static void AltListItemWidthDisplayer(const numberoption* O, festring& Entry);
   static void ContrastDisplayer(const numberoption*, festring&);
@@ -138,16 +143,20 @@ class ivanconfig
   static void ScalingQualityDisplayer(const cycleoption*, festring&);
   static truth GraphicsScaleChangeInterface(cycleoption*);
   static void GraphicsScaleChanger(cycleoption*, long);
+  static void BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry);
   static void FullScreenModeChanger(truthoption*, truth);
 #endif
 
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static void FontGfxDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
   static void SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static truth FontGfxChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
+  static void FontGfxChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
@@ -185,6 +194,7 @@ class ivanconfig
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
   static truthoption WaitNeutralsMoveAway;
+  static truthoption EnhancedLights;
 
   static cycleoption MemorizeEquipmentMode;
 
@@ -193,10 +203,14 @@ class ivanconfig
   static truthoption LookZoom;
   static truthoption XBRZScale;
 
-  static cycleoption  SaveGameSortMode;
+  static cycleoption SaveGameSortMode;
+  static cycleoption DistLimitMagicMushrooms;
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;
+
+  static cycleoption  FontGfx;
+  static int iStartingFontGfx;
 
   static truthoption   OutlinedGfx;
   static bool bStartingOutlinedGfx;
@@ -226,6 +240,8 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+
+  static cycleoption BugWorkaroundDupPlayer;
   static truthoption AllowMouseOnFelist;
 };
 

@@ -40,6 +40,7 @@ struct mouseclick{
 class globalwindowhandler
 {
  public:
+  static bool IsKeyPressed(int iSDLScanCode);
   static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
   static void CheckKeyTimeout();
   static truth IsKeyTimeoutEnabled();
@@ -56,6 +57,7 @@ class globalwindowhandler
   static truth WaitForKeyDown(){return WaitForKeyEvent(SDL_KEYDOWN);}
   static truth WaitForKeyUp  (){return WaitForKeyEvent(SDL_KEYUP  );}
   static v2 GetMouseLocation();
+  static bool IsMouseAtRect(v2, v2, bool = true, v2 = v2());
   static truth IsLastSDLkeyEventWasKeyUp();
   static void InstallControlLoop(truth (*)());
   static void DeInstallControlLoop(truth (*)());

@@ -73,6 +73,12 @@ void globalwindowhandler::DeInstallControlLoop(truth (*What)())
   }
 }
 
+bool globalwindowhandler::IsKeyPressed(int iSDLScanCode)
+{
+  return SDL_GetKeyboardState(NULL)[iSDLScanCode];
+}
+
+
 #ifdef __DJGPP__
 
 #include <pc.h>
@@ -290,9 +296,9 @@ truth globalwindowhandler::IsKeyTimeoutEnabled()
 void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
-    if(!KeyBuffer.empty()){ // user pressed some key
+    if(!KeyBuffer.empty()){ DBG2(KeyBuffer.size(),KeyBuffer[0]); // user pressed some key
       keyTimeoutRequestedAt=clock(); // resets reference time to wait from
-    }else{
+    }else{ DBG2(keyTimeoutRequestedAt,iTimeoutDelay);
       if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
         KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
     }
@@ -368,12 +374,25 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
 
       if(!bHasEvents)
       {
+        bool bPlay=true;
+
 #if SDL_MAJOR_VERSION == 1
-        if(SDL_GetAppState() & SDL_APPACTIVE
+        if(bPlay && !(SDL_GetAppState() & SDL_APPACTIVE))
 #else
-        if( (playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)))
+        if(bPlay &&
+          !( SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) )
+        )
 #endif
-           && Controls && ControlLoopsEnabled)
+          if(!playInBackground)
+            bPlay=false;
+
+        if(bPlay && Controls==0)
+          bPlay=false;
+
+        if(bPlay && !ControlLoopsEnabled)
+          bPlay=false;
+
+        if(bPlay)
         {
           static ulong LastTick = 0;
           UpdateTick();
@@ -448,7 +467,7 @@ int globalwindowhandler::ReadKey()
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if( playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)) )
 #endif
   {
     PollEvents(&Event);
@@ -469,7 +488,7 @@ truth globalwindowhandler::WaitForKeyEvent(uint Key)
 #if SDL_MAJOR_VERSION == 1
   if(SDL_GetAppState() & SDL_APPACTIVE)
 #else
-  if(SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS))
+  if( playInBackground || (SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS)) )
 #endif
   {
 #if SDL_MAJOR_VERSION == 2
@@ -497,6 +516,25 @@ v2 globalwindowhandler::GetMouseLocation()
 {
   UpdateMouse();
   return v2MousePos;
+}
+
+bool globalwindowhandler::IsMouseAtRect(v2 v2TopLeft, v2 v2BorderOrBottomRigh, bool b2ndParmIsBorder, v2 v2MousePosOverride)
+{
+  v2 v2MP = v2MousePosOverride;
+  if(v2MousePosOverride.Is0()){
+    UpdateMouse();
+    v2MP=v2MousePos;
+  }
+
+  v2 v2BottomRight = v2BorderOrBottomRigh;
+  if(b2ndParmIsBorder)
+    v2BottomRight += v2TopLeft;
+
+  return
+    v2MP.X > v2TopLeft.X     &&
+    v2MP.Y > v2TopLeft.Y     &&
+    v2MP.X < v2BottomRight.X &&
+    v2MP.Y < v2BottomRight.Y    ;
 }
 
 mouseclick mc;

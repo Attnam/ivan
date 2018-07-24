@@ -404,7 +404,7 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
 void item::SetLabel(cfestring& What)
 {
   label.Empty();
-  if(What.GetSize()>0)
+  if(!What.IsEmpty())
     label << What;
 }
 
@@ -1185,6 +1185,8 @@ void item::PreProcessForBone()
     game::AddItemID(this, ID);
   }
 }
+
+void item::_BugWorkaround_ItemDup(ulong key){ID=key;} //keep it simple!
 
 void item::PostProcessForBone()
 {

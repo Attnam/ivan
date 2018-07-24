@@ -13,41 +13,62 @@
 #ifndef __FESTRING_H__
 #define __FESTRING_H__
 
+#include <climits>
 #include <vector>
 
 #include "felibdef.h"
 
 #define FESTRING_PAGE 0x7F
+#define FESTRING_REF_MAX ULONG_MAX
 
 class festring
 {
  public:
   typedef ulong sizetype;
   typedef const ulong csizetype;
+
+  class staticstring
+  {
+    friend class festring;
+
+    public:
+      template<sizetype N>
+      constexpr staticstring(cchar (&s)[N]): Data(s), Size(strlen(s)) {}
+    private:
+      cchar* const Data;
+      sizetype const Size;
+  };
+
   /* It can be proven that the code works even if OwnsData is left
      uninitialized. However, Valgrind reports this as a possible error
      which is annoying */
-  festring() : Data(0), Size(0), OwnsData(false) { }
-  explicit festring(sizetype);
+  festring()
+  : Data(const_cast<char*>(EmptyString)), Size(0), OwnsData(false) { }
+  festring(cfestring&);
   festring(sizetype, char);
   festring(cchar* CStr) : festring(CStr, strlen(CStr)) { }
-  festring(cchar* CStr, sizetype N)
-  : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
-  festring(cfestring&);
+  festring(cchar* CStr, sizetype N) : festring()
+  { CheckNull(CStr); if(N) CreateOwnData(CStr, N); }
+  festring(staticstring SStr)
+  : Data(const_cast<char*>(SStr.Data)), Size(SStr.Size), OwnsData(false)
+  { CheckNull(Data); }
   ~festring();
   festring& Capitalize();
   festring CapitalizeCopy() const { return festring(*this).Capitalize(); }
+  char operator[](sizetype N) const { return Data[N]; }
+  char& operator[](sizetype N) { EnsureOwnsData(true); return Data[N]; }
   festring& operator=(cchar*);
+  festring& operator=(staticstring);
   festring& operator=(cfestring&);
   festring& operator<<(char);
   festring& operator<<(cchar*);
   festring& operator<<(cfestring&);
-  festring& operator<<(short Int) { return Append(Int); }
-  festring& operator<<(ushort Int) { return Append(Int); }
-  festring& operator<<(int Int) { return Append(Int); }
-  festring& operator<<(uint Int) { return Append(Int); }
-  festring& operator<<(long Int) { return Append(Int); }
-  festring& operator<<(ulong Int) { return Append(Int); }
+  festring& operator<<(short Int) { return AppendInt(Int); }
+  festring& operator<<(ushort Int) { return AppendInt(Int); }
+  festring& operator<<(int Int) { return AppendInt(Int); }
+  festring& operator<<(uint Int) { return AppendInt(Int); }
+  festring& operator<<(long Int) { return AppendInt(Int); }
+  festring& operator<<(ulong Int) { return AppendInt(Int); }
   bool operator<(cfestring&) const;
   truth operator==(cfestring&) const;
   truth operator!=(cfestring&) const;
@@ -66,14 +87,14 @@ class festring
   sizetype Find(cfestring& S, sizetype Pos = 0) const
   { return Find(S.Data, Pos, S.Size); }
   sizetype FindLast(char, sizetype = NPos) const;
-  sizetype FindLast(const char* CStr, sizetype Pos = NPos) const
+  sizetype FindLast(cchar* CStr, sizetype Pos = NPos) const
   { return FindLast(CStr, Pos, strlen(CStr)); }
-  sizetype FindLast(const char*, sizetype, sizetype) const;
-  sizetype FindLast(const festring& S, sizetype Pos = NPos) const
+  sizetype FindLast(cchar*, sizetype, sizetype) const;
+  sizetype FindLast(cfestring& S, sizetype Pos = NPos) const
   { return FindLast(S.Data, Pos, S.Size); }
   void Erase(sizetype, sizetype);
-  void Insert(sizetype Pos, char C)
-  { char Buffer[] = " "; Insert(Pos, &(Buffer[0] = C), 1); }
+  void Insert(sizetype Pos, char Char)
+  { Insert(Pos, &Char, 1); }
   void Insert(sizetype Pos, cchar* CStr)
   { Insert(Pos, CStr, strlen(CStr)); }
   void Insert(sizetype, cchar*, sizetype);
@@ -91,24 +112,26 @@ class festring
                                cfestring&, sizetype = 0);
   static bool IgnoreCaseCompare(cfestring&, cfestring&);
   truth IsEmpty() const { return !Size; }
-  /* HORRIBLE ERROR!!!! */
-  char& operator[](sizetype Index) const { return Data[Index]; }
   void PreProcessForFebot();
   void PostProcessForFebot();
   void SwapData(festring&);
   void ExtractWord(festring&);
   long GetCheckSum() const;
-  void EnsureOwnsData();
+  void EnsureOwnsData(bool = false);
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
+  static void CheckNull(cchar*);
+  void CreateNewData(sizetype);
   void CreateOwnData(cchar*, sizetype);
-  festring& Append(long);
+  festring& AppendInt(long);
+  festring& Append(char);
   festring& Append(cchar*, sizetype);
+  festring& Append(cfestring&);
   void SlowAppend(char);
   void SlowAppend(cchar*, sizetype);
   static char** IntegerMap;
-  static cchar* EmptyString;
+  static cchar* const EmptyString;
   char* Data;
   sizetype Size;
   sizetype OwnsData : 1;
@@ -142,33 +165,27 @@ inline festring::festring(cfestring& Str)
 : Data(Str.Data), Size(Str.Size),
   OwnsData(Str.OwnsData), Reserved(Str.Reserved)
 {
-  if(Data && OwnsData)
-    ++REFS(Data);
+  if(OwnsData)
+  {
+    if(REFS(Data) < FESTRING_REF_MAX)
+      ++REFS(Data);
+    else
+      CreateOwnData(Str.Data, Str.Size);
+  }
 }
 
-inline festring::festring(sizetype N)
-: Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
+inline festring::festring(sizetype N, char Char)
 {
-  char* Ptr = sizeof(int*) + new char[Reserved + sizeof(int*) + 1];
-  REFS(Ptr) = 0;
-  Data = Ptr;
-}
-
-inline festring::festring(sizetype N, char C)
-: festring(N)
-{
-  memset(Data, C, N);
+  CreateNewData(N);
+  memset(Data, Char, N);
+  Size = N;
 }
 
 inline festring::~festring()
 {
   if(OwnsData)
-  {
-    char* Ptr = Data;
-
-    if(Ptr && !(REFS(Ptr)--))
-      delete [] &REFS(Ptr);
-  }
+    if(!REFS(Data)--)
+      delete [] &REFS(Data);
 }
 
 inline bool festring::operator<(cfestring& Str) const
@@ -232,88 +249,45 @@ inline int festring::Compare(cfestring& Str) const
 
 inline cchar* festring::CStr() const
 {
-  char* Ptr = Data;
+  if(OwnsData)
+    Data[Size] = 0;
 
-  if(Ptr)
-  {
-    if(OwnsData)
-      Ptr[Size] = 0;
-
-    return Ptr;
-  }
-  else
-    return EmptyString;
+  return Data;
 }
 
 inline void festring::Empty()
 {
-  Size = 0;
-
   if(OwnsData)
   {
-    char* Ptr = Data;
-
-    if(Ptr && REFS(Ptr))
+    if(REFS(Data))
     {
-      --REFS(Ptr);
-      Data = 0;
+      --REFS(Data);
+      Data = const_cast<char*>(EmptyString);
+      OwnsData = false;
     }
   }
   else
-    Data = 0;
+  {
+    Data = const_cast<char*>(EmptyString);
+    OwnsData = false;
+  }
+
+  Size = 0;
 }
 
 inline festring& festring::operator<<(char Char)
 {
-  char* OldPtr = Data;
-  sizetype OldSize = Size;
-
-  if(OwnsData && OldPtr && !REFS(OldPtr) && OldSize < Reserved)
-  {
-    OldPtr[OldSize] = Char;
-    ++Size;
-  }
-  else
-    SlowAppend(Char);
-
-  return *this;
+  return Append(Char);
 }
 
 inline festring& festring::operator<<(cchar* CStr)
 {
-  sizetype N = strlen(CStr);
-  sizetype OldSize = Size;
-  sizetype NewSize = OldSize + N;
-  char* OldPtr = Data;
-
-  if(OwnsData && OldPtr && !REFS(OldPtr) && NewSize <= Reserved)
-  {
-    memcpy(OldPtr + OldSize, CStr, N);
-    Size = NewSize;
-  }
-  else
-    SlowAppend(CStr, N);
-
-  return *this;
+  return Append(CStr, strlen(CStr));
 }
 
 inline festring& festring::operator<<(cfestring& Str)
 {
-  sizetype N = Str.Size;
-  sizetype OldSize = Size;
-  sizetype NewSize = OldSize + N;
-  char* OldPtr = Data;
-  char* OtherPtr = Str.Data;
-
-  if(OwnsData && OldPtr && !REFS(OldPtr) && NewSize <= Reserved)
-  {
-    memcpy(OldPtr + OldSize, OtherPtr, N);
-    Size = NewSize;
-  }
-  else
-    SlowAppend(OtherPtr, N);
-
-  return *this;
+  return Append(Str);
 }
 
 struct charcomparer
@@ -328,7 +302,7 @@ struct ignorecaseorderer
   { return festring::IgnoreCaseCompare(S1, S2); }
 };
 
-#define CONST_S(str) festring(str, sizeof(str) - 1)
+#define CONST_S(str) festring::staticstring(str)
 
 /*
  * This macro doesn't evaluate with if what

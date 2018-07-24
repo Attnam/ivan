@@ -168,12 +168,14 @@ class areachangerequest { };
 
 typedef void (*dbgdrawoverlay)();
 
+#define AUTOSAVE_SUFFIX ".AutoSave"
 class game
 {
  public:
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static festring SaveName(cfestring& = CONST_S(""),bool = false); //before all calls to this method, made still here on the header file
   static void PrepareStretchRegionsLazy();
   static void UpdateSRegionsXBRZ();
   static void RegionSilhouetteEnable(bool b);
@@ -215,8 +217,8 @@ class game
   static int ItemUnderCorner(int val);
   static int ItemUnderZoom(int val);
   static bool ItemUnderHV(int val);
-  static truth Save(cfestring& = SaveName(""));
-  static int Load(cfestring& = SaveName(""));
+  static truth Save(cfestring& = SaveName(CONST_S("")));
+  static int Load(cfestring& = SaveName(CONST_S("")));
   static int GetCurrentSavefileVersion();
   static truth IsRunning() { return Running; }
   static void SetIsRunning(truth What);
@@ -230,15 +232,14 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
-  static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
   static double GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
-  static int DirectionQuestion(cfestring&, truth = true, truth = false);
+  static festring GetAutoSaveFileName() { return SaveName() + AUTOSAVE_SUFFIX; }
+  static int DirectionQuestion(cfestring&, truth = true, truth = false, int = 0, int = -1);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(truth What) { InWilderness = What; }
@@ -254,8 +255,8 @@ class game
   static void InitDungeons();
   static truth OnScreen(v2);
   static void DoEvilDeed(int);
-  static void SaveWorldMap(cfestring& = SaveName(""), truth = true);
-  static worldmap* LoadWorldMap(cfestring& = SaveName(""));
+  static void SaveWorldMap(cfestring& = SaveName(CONST_S("")), truth = true);
+  static worldmap* LoadWorldMap(cfestring& = SaveName(CONST_S("")));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID(item*);
@@ -306,7 +307,7 @@ class game
   static truth IsGenerating() { return Generating; }
   static void SetIsGenerating(truth What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = "", cfestring& = "");
+  static int Menu(bitmap*, v2, cfestring&, cfestring&, col16, cfestring& = CONST_S(""), cfestring& = CONST_S(""));
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static truth TryTravel(int, int, int, truth = false, truth = true);
@@ -481,6 +482,7 @@ class game
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
   static int GetSaveFileVersion();
+  static void ValidateCommandKeys(char Key1,char Key2,char Key3);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static cchar* const Alignment[];
@@ -563,7 +565,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
-  static festring AutoSaveFileName;
+  static festring CurrentBaseSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;

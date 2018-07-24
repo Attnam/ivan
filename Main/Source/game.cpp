@@ -17,9 +17,14 @@
 #include <iostream>
 #include <vector>
 #include <bitset>
+#include <ctime>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
+#endif
+
+#ifdef UNIX
+#include <time.h>
 #endif
 
 #ifdef WIN32
@@ -32,7 +37,9 @@
 #include "audio.h"
 #include "balance.h"
 #include "bitmap.h"
+#include "bugworkaround.h"
 #include "confdef.h"
+#include "command.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -58,9 +65,9 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
+
 #include "namegen.h"
 
-#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
@@ -184,7 +191,7 @@ truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
-festring game::AutoSaveFileName;
+festring game::CurrentBaseSaveFileName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
@@ -281,10 +288,23 @@ void game::AddItemID(item* Item, ulong ID)
 {
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
+
 void game::RemoveItemID(ulong ID)
 {
-  if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+  if(ID){
+    DBG2("Erasing:ItemID",ID);
+//    if(ID==20957)DBGSTK;//temp test case debug
+    DBGEXEC(
+      if(SearchItem(ID)==NULL){
+        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
+        DBGSTK;
+      }
+    );
+    ItemIDMap.erase(ItemIDMap.find(ID));
+    DBG2("ERASED!:ItemID",ID);
+  }
 }
+
 void game::UpdateItemID(item* Item, ulong ID)
 {
   ItemIDMap.find(ID)->second = Item;
@@ -603,11 +623,13 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
 
       // alt vanilla silhouette pos
-      bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
-      bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
-      iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
-      graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
-      graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      if(graphics::GetScale()==1){
+        bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
+        bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
+        iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
+        graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      }
     }
   }
 
@@ -633,6 +655,7 @@ void FantasyName(festring& rfsName){ DBG2(rfsName.CStr(),ivanconfig::GetFantasyN
   if(ivanconfig::GetFantasyNamePattern().IsEmpty())return;
 
   NameGen::Generator gen(ivanconfig::GetFantasyNamePattern().CStr());
+//  NameGen::Random genR(gen);
   rfsName << gen.toString().c_str(); DBG1(rfsName.CStr());
 }
 
@@ -641,7 +664,7 @@ truth game::Init(cfestring& loadBaseName)
   festring absLoadNameOk;
 
   if(!loadBaseName.IsEmpty()){
-    absLoadNameOk = SaveName(loadBaseName); //will prepend the path
+    absLoadNameOk = SaveName(loadBaseName,true); //will prepend the path
   }else{
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
@@ -656,6 +679,8 @@ truth game::Init(cfestring& loadBaseName)
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+
+    CurrentBaseSaveFileName.Empty(); //this is important to prevent loading another character with the same name that was just played in this current session (w/o restarting the game)
 
     absLoadNameOk = SaveName(); //default is to use PlayerName
   }
@@ -804,6 +829,7 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
+      commandsystem::ClearSwapWeapons();
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -1939,7 +1965,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 //  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
   bool bRolling=false;
   bool bHopping=false; DBG1(iRegionVanillaSilhouette);
-  if(iRegionVanillaSilhouette!=-1){
+  if(iRegionVanillaSilhouette!=-1 || graphics::GetScale()>1){
     bool bOk2=true;
 
     if(bOk2 && ZoomPos.Is0())bOk2=false;
@@ -1953,6 +1979,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bHopping = !bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
 
       v2 v2Pos=ZoomPos;
+      if(graphics::GetScale()>1)
+        v2Pos+=TILE_V2*3; //to avoid as much as possible be over the status texts
 
       humanoid::SetSilhouetteWhere(v2Pos);DBGSV2(v2Pos);
 
@@ -1961,19 +1989,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           h->DrawSilhouette(false);DBGLN;
         }
 
-      bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
+      if(graphics::GetScale()==1){ //TODO make these things optional? but there is no good place to draw it w/o hiding things behind it...
+        bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
 
-      v2 v2Dest = v2Pos;
-      v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
-      if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
-      if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
-      bldVanillaSilhouetteTMP.Dest=v2Dest;
+        v2 v2Dest = v2Pos;
+        v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
+        if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
+        if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
+        bldVanillaSilhouetteTMP.Dest=v2Dest;
 
-      graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
-      //h->DrawSilhouette(AnimationDraw); //TODO necessary?
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
+        //h->DrawSilhouette(AnimationDraw); //TODO necessary?
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+      }
     }else{
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+      if(iRegionVanillaSilhouette!=-1)
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     }
   }
 
@@ -2666,7 +2697,11 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
         CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
 
   globalwindowhandler::UpdateTick();
-  if(!bXBRZandFelist)GetCurrentArea()->Draw(AnimationDraw);
+  if(!bXBRZandFelist){
+    if(!IsInWilderness())
+      GetCurrentLevel()->RevealDistantLightsToPlayer();
+    GetCurrentArea()->Draw(AnimationDraw);
+  }
   Player->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -3171,6 +3206,9 @@ truth game::Save(cfestring& SaveName)
 
   SaveFile << PlayerHasReceivedAllGodsKnownBonus;
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
+
+  commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+
   return true;
 }
 
@@ -3255,7 +3293,7 @@ int game::Load(cfestring& saveName)
   character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
   if(CharAtPos==NULL || !CharAtPos->IsPlayer())
     ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
+  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -3265,55 +3303,101 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
+  if(game::GetSaveFileVersion()>=132)
+    commandsystem::LoadSwapWeapons(SaveFile);
+
   UpdateCamera();
 
   return LOADED;
 }
 
-festring game::SaveName(cfestring& Base)
+/**
+ * this prevents all possibly troublesome characters in all OSs
+ */
+void fixChars(festring& fs)
 {
-  festring SaveName = GetSaveDir();
+  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
+  {
+    if(fs[i]>='A' && fs[i]<='Z')continue;
+    if(fs[i]>='a' && fs[i]<='z')continue;
+    if(fs[i]>='0' && fs[i]<='9')continue;
+
+    fs[i] = '_';
+  }
+}
+
+bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
+  std::string strChk;
+  strChk = fs.CStr();
+  int i = strChk.find(AUTOSAVE_SUFFIX);
+  if(i!=std::string::npos){
+    if(bAlsoFixIt){
+      fs.Empty();
+      fs<<strChk.substr(0,i).c_str();DBG1(fs.CStr());
+    }
+    return true;
+  }
+
+  return false;
+}
+
+festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
+{
+  festring PathAndBaseSaveName = GetSaveDir();
 
   /**
    * Base must come OK, will just prepend directory,
    * the problem on modifying it is that as it is read from the filesystem
    * it will not be found if it gets changed...
    */
-  DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG3(PlayerName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
   if(Base.GetSize() > 0)
   {
-    AutoSaveFileName.Empty();
-    AutoSaveFileName << Base;
-    SaveName << Base;
+    CurrentBaseSaveFileName.Empty();
+    CurrentBaseSaveFileName << Base;
+    chkAutoSaveSuffix(CurrentBaseSaveFileName,true);
+
+    PathAndBaseSaveName << Base;
   }
   else
   {
-    if(AutoSaveFileName.GetSize() == 0)
+    // this is important in case player name changes like when using the fantasy name generator
+    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
+    if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
+      CurrentBaseSaveFileName.Empty();
+
+    if(CurrentBaseSaveFileName.GetSize() == 0)
     {
-      AutoSaveFileName << PlayerName << '_' << time(0);  // e.g. PlayerName-1529392480
-  
-      for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
-      {
-        // this prevents all possibly troublesome characters in all OSs
-        if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
-        if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
-        if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
-  
-        AutoSaveFileName[i] = '_';
-      }
+      int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
+      strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
+
+      CurrentBaseSaveFileName << PlayerName << '_' << cTime;
+      fixChars(CurrentBaseSaveFileName);
     }
-    SaveName << AutoSaveFileName;
+    
+    PathAndBaseSaveName << CurrentBaseSaveFileName;
   }
 
-  DBG4(PlayerName.CStr(), SaveName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG4(PlayerName.CStr(), PathAndBaseSaveName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
 #if defined(__DJGPP__)
-  if(SaveName.GetSize() > 13)
-    SaveName.Resize(13);
+  if(PathAndBaseSaveName.GetSize() > 13)
+    PathAndBaseSaveName.Resize(13);
 #endif
 
-  return SaveName;
+  if(!bLoadingFromAnAutosave){ //very specific use case
+    if(chkAutoSaveSuffix(PathAndBaseSaveName)){
+      /**
+       * this ABORT is important to prevent the troubling autosave suffix duplicity,
+       * it's consistency is kept using only: GetAutoSaveFileName()
+       */
+      ABORT("The base savegame filename '%s' must not contain '%s'",PathAndBaseSaveName.CStr(),AUTOSAVE_SUFFIX);
+    }
+  }
+
+  return PathAndBaseSaveName;
 }
 
 int game::GetMoveCommandKeyBetweenPoints(v2 A, v2 B)
@@ -3391,11 +3475,11 @@ void game::ShowLevelMessage()
   CurrentLevel->SetLevelMessage("");
 }
 
-int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself)
+int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptYourself, int keyChoseDefaultDir, int defaultDir)
 {
   for(;;)
   {
-    int Key = AskForKeyPress(Topic);
+    int Key = AskForKeyPress(Topic); DBG3(Key,keyChoseDefaultDir,defaultDir);
 
     if(AcceptYourself && Key == '.')
       return YOURSELF;
@@ -3404,43 +3488,48 @@ int game::DirectionQuestion(cfestring& Topic, truth RequireAnswer, truth AcceptY
       if(Key == GetMoveCommandKey(c))
         return c;
 
+    if(Key==keyChoseDefaultDir)
+      return defaultDir;
+
     if(!RequireAnswer)
       return DIR_ERROR;
   }
 }
 
 void game::RemoveSaves(truth RealSavesAlso,truth onlyBackups)
-{
-  festring bkp(".bkp");
+{ DBG2(RealSavesAlso,onlyBackups);
+  cchar* bkp = ".bkp";
 
   if(RealSavesAlso)
   {
-    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+    remove(festring(SaveName() + ".sav" + (onlyBackups?bkp:"")).CStr());
+    remove(festring(SaveName() + ".wm"  + (onlyBackups?bkp:"")).CStr());
   }
 
-  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp.CStr():"") ).CStr());
-  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp.CStr():"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".sav" + (onlyBackups?bkp:"") ).CStr());
+  remove(festring(GetAutoSaveFileName() + ".wm"  + (onlyBackups?bkp:"") ).CStr());
   festring File;
 
   for(int i = 1; i < Dungeons; ++i)
     for(int c = 0; c < GetDungeon(i)->GetLevels(); ++c)
-    {
+    { DBG2(i,c);
       /* This looks very odd. And it is very odd.
        * Indeed, gcc is very odd to not compile this correctly with -O3
        * if it is written in a less odd way. */
 
       File = SaveName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
       if(RealSavesAlso)
-        remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+        remove(festring(File + (onlyBackups?bkp:"")).CStr());
 
       File = GetAutoSaveFileName() + '.' + i;
-      File << c;
+      File << c; DBG1(File.CStr());
 
-      remove(festring(File + (onlyBackups?bkp.CStr():"")).CStr());
+      remove(festring(File + (onlyBackups?bkp:"")).CStr()); DBGLN;
     }
+
+  DBGLN; //DBGSTK;
 }
 
 void game::SetPlayer(character* NP)
@@ -3968,6 +4057,9 @@ void game::LookHandler(v2 CursorPos)
 
   festring Msg;
 
+  if(WizardModeIsActive())
+    Msg<<"["<<CursorPos.X<<","<<CursorPos.Y<<"]";
+
   if(Square->HasBeenSeen() || GetSeeWholeMapCheatMode())
   {
     if(
@@ -3976,11 +4068,11 @@ void game::LookHandler(v2 CursorPos)
         && Player->IsEnabled() && Player->GetSquareUnderSafely() // important to block this on death
         && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer()
     ){
-      Msg = CONST_S("You feel here ");
+      Msg << CONST_S("You feel here ");
     }else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode()){
-      Msg = CONST_S("You see here ");
+      Msg << CONST_S("You see here ");
     }else
-      Msg = CONST_S("You remember here ");
+      Msg << CONST_S("You remember here ");
 
     Msg << Square->GetMemorizedDescription() << '.';
 
@@ -4007,7 +4099,7 @@ void game::LookHandler(v2 CursorPos)
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000) && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
-    Msg << " You see here a frog eating a magnolia.";
+    Msg << " You see here a frog eating a magnolia."; //TODO this should trigger some special event and also play a sfx :)
 
   ADD_MESSAGE("%s", Msg.CStr());
 
@@ -4114,9 +4206,9 @@ void game::InitGlobalValueMap()
     if(Word != "#" || SaveFile.ReadWord() != "define")
       ABORT("Illegal datafile define on line %ld!", SaveFile.TellLine());
 
-    SaveFile.ReadWord(Word);
+    SaveFile.ReadWord(Word);DBG1(Word.CStr());
 
-    long value = SaveFile.ReadNumber();
+    long value = SaveFile.ReadNumber();DBG1(value);
     GlobalValueMap.insert(std::make_pair(Word, value));
   }
 
@@ -4199,9 +4291,9 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       character* Char = Square->GetCharacter();
 
-      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
+      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-      else
+      }else
         ADD_MESSAGE("You see no one here.");
     }
     else
@@ -4236,10 +4328,10 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   if(!Permanently)
     game::Save();
 
-  game::RemoveSaves(true,true); // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
+  game::RemoveSaves(true,true); DBGLN; // ONLY THE BACKUPS: after fully saving successfully, is a safe moment to remove them.
 
-  globalwindowhandler::DeInstallControlLoop(AnimationController);
-  SetIsRunning(false);
+  globalwindowhandler::DeInstallControlLoop(AnimationController); DBGLN;
+  SetIsRunning(false); DBGLN;
 
   if(Permanently || !WizardModeIsReallyActive())
     RemoveSaves(Permanently);
@@ -4249,7 +4341,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
     highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
-    {
+    { DBGLN;
       iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
                            + GetPlayerName() + ", " + DeathMessage + "\nRIP");
     }
@@ -4258,17 +4350,19 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
   }
 
   if(AndGoToMenu)
-  {
+  { DBGLN;
     /* This prevents monster movement etc. after death. */
 
     /* Set off the main menu music */
-    audio::SetPlaybackStatus(0);
-    audio::ClearMIDIPlaylist();
-    audio::LoadMIDIFile("mainmenu.mid", 0, 100);
-    audio::SetPlaybackStatus(audio::PLAYING);
+    audio::SetPlaybackStatus(0); DBGLN;
+    audio::ClearMIDIPlaylist(); DBGLN;
+    audio::LoadMIDIFile("mainmenu.mid", 0, 100); DBGLN;
+    audio::SetPlaybackStatus(audio::PLAYING); DBGLN;
 
     throw quitrequest();
   }
+
+  DBGLN;
 }
 
 void game::PlayVictoryMusic()
@@ -4477,7 +4571,11 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       Player->PutToOrNear(Pos);
     }
     else
+    {
       SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+    }
+
+    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 
@@ -5199,13 +5297,25 @@ void game::AutoPlayModeApply(){
     break;
   case 4:
     msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
-    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
   globalwindowhandler::SetPlayInBackground(bPlayInBackground);
+
+  if(!ivanconfig::IsXBRZScale()){
+    /**
+     * TODO
+     * This is an horrible gum solution...
+     * I still have no idea why this happens.
+     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
+     * But the debug log shows the correct timeouts :(, clueless for now...
+     */
+    iTimeout/=2;
+  }
+
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 
@@ -5384,6 +5494,32 @@ bonesghost* game::CreateGhost()
   return Ghost;
 }
 
+void game::ValidateCommandKeys(char Key1,char Key2,char Key3)
+{
+  static const int iTot=9;
+  for(int i=0;i<3;i++){
+//    static cint a[iTot]={0,0,0,0,0,0,0,0,0};
+    static cint* pa;
+    int Key = -1;
+
+    switch(i){
+    case DIR_NORM:
+      pa=game::MoveNormalCommandKey; Key=Key1; break;
+    case DIR_ALT:
+      pa=game::MoveAbnormalCommandKey; Key=Key2; break;
+    case DIR_HACK:
+      pa=game::MoveNetHackCommandKey; Key=Key3; break;
+    }
+
+    for(int j=0;j<iTot;j++){
+      if(Key==pa[j] && Key!='.'){
+        char ac[2]={(char)pa[j],0};
+        ABORT("conflicting command keys %d %d %d vs %d@%d '%s'",Key1,Key2,Key3,pa[j],i,ac);
+      }
+    }
+  }
+}
+
 int game::GetMoveCommandKey(int I)
 {
   switch(ivanconfig::GetDirectionKeyMap())
@@ -5455,20 +5591,20 @@ v2 ItemDisplacement[3][3] =
 };
 
 void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
-{
+{ DBG3(DBGAV2(Bitmap->GetSize()),DBGAV2(Pos),I);
   blitdata B = { Bitmap,
                  { 0, 0 },
                  { 0, 0 },
                  { TILE_SIZE, TILE_SIZE },
                  { NORMAL_LUMINANCE },
                  TRANSPARENT_COLOR,
-                 ALLOW_ANIMATE };
+                 ALLOW_ANIMATE }; DBGLN;
 
-  itemvector ItemVector = ItemDrawVector[I];
-  int Amount = Min<int>(ItemVector.size(), 3);
+  itemvector ItemVector = ItemDrawVector[I]; DBGLN;
+  int Amount = Min<int>(ItemVector.size(), 3); DBGLN;
 
   for(int c = 0; c < Amount; ++c)
-  {
+  { DBGLN;
     v2 Displacement = ItemDisplacement[Amount - 1][c];
 
     if(!ItemVector[0]->HasNormalPictureDirection())
@@ -5484,7 +5620,7 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
   }
 
   if(ItemVector.size() > 3)
-  {
+  { DBGLN;
     B.Src.X = 0;
     B.Src.Y = 16;
     B.Dest = ItemVector[0]->HasNormalPictureDirection() ? Pos + v2(11, -2) : Pos + v2(-2, -2);

@@ -2246,6 +2246,7 @@ potion /* materialcontainer-> */
   {
     DefaultSize = 10;
     NameSingular = "vial";
+    BitmapPos = 128, 0;
     DefaultMainVolume = 10;
     DefaultSecondaryVolume = 100;
     TeleportPriority = 20;

@@ -309,6 +309,7 @@ class character : public entity, public id
   truth HasLostRubyFlamingSword() const;
   truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
+  ulong GetFlags() const { return Flags; } //mainly for debugging
   truth Engrave(cfestring&);
   void AddScoreEntry(cfestring&, double = 1., truth = true) const;
   long GetAP() const { return AP; }
@@ -892,6 +893,7 @@ class character : public entity, public id
   void SetHomePos(v2);
   void RemoveHomeData();
   ulong GetID() const { return ID; }
+  void _BugWorkaround_PlayerDup(ulong key);
   void AddESPConsumeMessage() const;
   const std::list<ulong>& GetOriginalBodyPartID(int) const;
   void GetHitByExplosion(const explosion*, int);
@@ -1193,10 +1195,12 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
+  bool AutoPlayAIChkInconsistency();
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();
   static bool AutoPlayAICheckAreaLevelChangedAndReset();
   truth AutoPlayAIDropThings();
+  bool IsAutoplayAICanPickup(item* it,bool bPlayerHasLantern);
   truth AutoPlayAIEquipAndPickup(bool bPlayerHasLantern);
   int   AutoPlayAIFindWalkDist(v2 v2To);
   truth AutoPlayAITestValidPathTo(v2 v2To);

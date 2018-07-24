@@ -80,14 +80,14 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* window width in pixels, min 800",
-                                          800,
+                                          "* window width in pixels, min 640",
+                                          640,
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* window height in pixels, min 600",
-                                          600,
+                                          "* window height in pixels, min 480",
+                                          480,
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
@@ -122,9 +122,12 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "wait neutral NPCs move away from your path",
                                           false);
+truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
+                                          "allow distant lights to be seen",
+                                          true);
 truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
                                           "Safely save games",
-                                          false,
+                                          true,
                                           &configsystem::NormalTruthDisplayer,
                                           &configsystem::NormalTruthChangeInterface,
                                           &SavegameSafelyChanger);
@@ -180,6 +183,20 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
+                                          "BugFix missing/DUP player (experimental/slow)",
+                                          0, 4,
+                                          &BugWorkaroundDupPlayerDisplayer);
+cycleoption ivanconfig::FontGfx(          "FontGfx",
+                                          "* Select font",
+                                          1, 3, //from 1 to 3 (three options available)
+                                          &FontGfxDisplayer,
+                                          &FontGfxChangeInterface,
+                                          &FontGfxChanger);
+cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
+                                          "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
+                                          0, 16,
+                                          &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
                                           "sort savegame files and show dungeon IDs progress",
                                           0, 4,
@@ -279,6 +296,14 @@ void ivanconfig::FrameSkipDisplayer(const numberoption* O, festring& Entry)
   if(O->Value==-2)Entry  << " = wait"  ;
   if(O->Value==-1)Entry  << " = auto"  ;
   if(O->Value>= 0)Entry  <<   " frames";
+}
+
+void ivanconfig::DistLimitMagicMushroomsDisplayer(const cycleoption* O, festring& Entry)
+{
+  if(O->Value==0)
+    Entry << "everywhere";
+  else
+    Entry << O->Value;
 }
 
 void ivanconfig::StackListPageLengthDisplayer(const numberoption* O, festring& Entry)
@@ -491,6 +516,14 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
   return true;
 }
 
+truth ivanconfig::FontGfxChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -581,7 +614,7 @@ truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 480 to your monitor screen max height):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -589,7 +622,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 640 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -661,7 +694,7 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
-  if(What < 600) What = 600;
+  if(What < 480) What = 480;
   O->Value = What;
 }
 
@@ -676,13 +709,13 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
-  if(What < 800) What = 800;
+  if(What < 640) What = 640;
   O->Value = What;
 }
 
 void ivanconfig::SelectedBkgColorChanger(stringoption* O, cfestring& What)
 {
-  if(What.GetSize()>0){
+  if(!What.IsEmpty()){
     int RGB[3]={1,1,1}, j=0;
     std::string sC;
     for(int i=0;i<What.GetSize();i++){
@@ -769,6 +802,16 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
+void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry)
+{
+  switch(O->Value){
+  case 0: Entry << "disabled";break;
+  case 1: Entry << "missing only";break;
+  case 2: Entry << "prefer old player";break;
+  case 3: Entry << "prefer new player";break;
+  }
+}
+
 void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -793,6 +836,11 @@ void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
+void ivanconfig::FontGfxDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value;
+}
+
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
@@ -806,6 +854,11 @@ void ivanconfig::SaveGameSortModeChanger(cycleoption* O, long What)
 }
 
 void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
+{
+  O->Value = What;
+}
+
+void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 {
   O->Value = What;
 }
@@ -903,6 +956,7 @@ void ivanconfig::CalculateContrastLuminance()
 int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
+int  ivanconfig::iStartingFontGfx=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
@@ -927,6 +981,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
+  configsystem::AddOption(fsCategory,&EnhancedLights);
+  configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -951,6 +1007,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&FontGfx);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
@@ -982,6 +1039,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
+  configsystem::AddOption(fsCategory,&BugWorkaroundDupPlayer);
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
   configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
@@ -1001,6 +1059,7 @@ void ivanconfig::Initialize()
   iStartingWindowWidth = WindowWidth.Value;
   iStartingWindowHeight = WindowHeight.Value;
   iStartingDungeonGfxScale = DungeonGfxScale.Value;
+  iStartingFontGfx = FontGfx.Value;
   bStartingOutlinedGfx = OutlinedGfx.Value;
 
   CalculateContrastLuminance();

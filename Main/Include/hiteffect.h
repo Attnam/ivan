@@ -28,9 +28,15 @@ struct hiteffectSetup { //TODO some of these are not actually an external setup.
   truth Critical;
   int GivenDir;
   int Type;
+
   character* WhoHits;
+  ulong lWhoHitsID;
+
   character* WhoIsHit;
-  item* itemEffectReference;
+  ulong lWhoIsHitID;
+
+  ulong lItemEffectReferenceID;
+
   int iMode;
   lsquare* LSquareUnder;
 };
@@ -51,6 +57,9 @@ class hiteffect : public entity
   virtual truth IsOnGround() const { return true; } //TODO false?
   void End();
  protected:
+  bool ItemEfRefExists() const;
+  bool WhoIsHitExists() const;
+  bool WhoHitsExists() const;
   truth CheckIntegrity(int iDbgState) const;
   void cleanup();
   void chkCleanupAlready() const;
