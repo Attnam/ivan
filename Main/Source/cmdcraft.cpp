@@ -213,6 +213,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << v2PlayerCraftingAt
 
     << itToolID
+    << itTool2ID
     << v2BuildWhere
     << itSpawnType
     << fsItemSpawnSearchPrototype
@@ -271,6 +272,7 @@ void recipedata::Load(inputfile& SaveFile)
     >> v2PlayerCraftingAt
 
     >> itToolID
+    >> itTool2ID
     >> v2BuildWhere
     >> itSpawnType
     >> fsItemSpawnSearchPrototype
@@ -319,7 +321,7 @@ cfestring recipedata::id() const
   fs<<(i++)<<":"<<rc.IsCanBeSuspended()<<";";
 
   #define RPDINFO(o) if(o!=NULL)fs<<(i++)<<":"<<o->GetID()<<","<<o->GetName(DEFINITE);fs<<";";
-  fs<<(i++)<<":"<<itToolID<<";";
+  fs<<(i++)<<":"<<itToolID<<";"<<itTool2ID<<";";
   RPDINFO(itTool);
 
   fs<<(i++)<<":"<<itSpawnTot<<";";
@@ -388,6 +390,7 @@ recipecore::recipecore(humanoid* H,uint sel){
 recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
 {
   itTool=NULL;
+  itTool2=NULL;
   lsqrPlaceAt = NULL;
   lsqrCharPos = rc.H()==NULL ? NULL : game::GetCurrentLevel()->GetLSquare(rc.H()->GetPos());
   itWeakestIngredient = NULL;
@@ -424,6 +427,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   v2PlayerCraftingAt=v2(0,0);
 
   itToolID=0;
+  itTool2ID=0;
   v2BuildWhere=v2(0,0);
   itSpawnType=CIT_NONE;
   fsItemSpawnSearchPrototype="";
@@ -536,6 +540,7 @@ void recipedata::ClearRefs(){
    */
 
   itTool = NULL;
+  itTool2 = NULL;
   lsqrPlaceAt = NULL;
   lsqrCharPos = NULL;
   itWeakestIngredient = NULL;
@@ -560,6 +565,8 @@ struct ci{
   int iReqMatCfgSec=0;
   bool bJustAcceptFirstChosenAndReturn=false;
   bool bDenyDegradation = true;
+
+  bool bFirstItemMustHaveFullVolumeRequired=false;
 };
 struct recipe{
   festring action;
@@ -618,9 +625,11 @@ struct recipe{
     return f;
   }
 
-  static bool chkWeapon(item* it, int iCfg, int iWeaponCategory){
+  static bool chkWeapon(item* it, int iCfg, int iWeaponCategory, int iMainMatterMinStrengh){
     return
       dynamic_cast<meleeweapon*>(it)!=NULL
+      &&
+      it->GetMainMaterial()->GetStrengthValue()>=iMainMatterMinStrengh
       &&
       (
         (iCfg!=0 && it->GetConfig()==iCfg) ||
@@ -628,13 +637,13 @@ struct recipe{
       );
   }
 
-  static item* FindTool(recipedata& rpd, int iCfg, int iWeaponCategory=0){
+  static item* FindTool(recipedata& rpd, int iCfg, int iWeaponCategory=0, int iMainMatterMinStrengh=0){
     itemvector vit = vitInv(rpd);
     for(int i=0;i<vit.size();i++)
-      if(chkWeapon(vit[i],iCfg,iWeaponCategory))
+      if(chkWeapon(vit[i],iCfg,iWeaponCategory,iMainMatterMinStrengh))
         return vit[i];
     for(int i=0;i<vit.size();i++)
-      if(chkWeapon(vit[i],iCfg|BROKEN,iWeaponCategory))
+      if(chkWeapon(vit[i],iCfg|BROKEN,iWeaponCategory,iMainMatterMinStrengh))
         return vit[i];
     return NULL;
   }
@@ -712,9 +721,10 @@ struct recipe{
   template <typename T> static void prepareFilter(
     recipedata& rpd,
     const itemvector& vi,
+    long reqVol,
     ci CI=ci(),
-    std::vector<ulong>* ptmpIngredientsIDs = NULL)
-  {
+    std::vector<ulong>* ptmpIngredientsIDs = NULL
+  ){
     for(int i=0;i<vi.size();i++){
       vi[i]->SetValidRecipeIngredient(false);
       if(dynamic_cast<T*>(vi[i])!=NULL){
@@ -731,6 +741,9 @@ struct recipe{
           continue;
 
         if(CI.iReqCfg>0 && vi[i]->GetConfig()!=CI.iReqCfg)
+          continue;
+
+        if(CI.bFirstItemMustHaveFullVolumeRequired && vi[i]->GetVolume()<reqVol)
           continue;
 
         bool bAlreadyUsed=false;
@@ -763,19 +776,19 @@ struct recipe{
 
   template <typename T> static truth choseIngredients(
       cfestring fsQ,
-      long volume,
+      long reqVol,
       recipedata& rpd,
       int& iWeakestCfg,
       ci CI=ci()
   ){DBGLN;
-    if(volume==0)
+    if(reqVol==0)
       ABORT("ingredient required 0 volume?");
 
     if(CI.bFirstMainMaterIsFilter && CI.iReqMatCfgMain!=0)
       ABORT("not implemented how to deal with bFirstMainMaterIsFilter=true VS iReqMatCfgMain!=0 %d",CI.iReqMatCfgMain);
 
     const itemvector vi = vitInv(rpd);
-    prepareFilter<T>(rpd,vi,CI);
+    prepareFilter<T>(rpd,vi,reqVol,CI);
 
     int iWeakest=-1;
     game::RegionListItemEnable(true);
@@ -791,7 +804,7 @@ struct recipe{
       if(CI.bOverridesQuestion)
         fsFullQ=fsQ;
       else
-        fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+volume+"cm3]"+festring("? (hit ESC for more options if available)");
+        fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+reqVol+"cm3]"+festring("? (hit ESC for more options if available)");
 
       rpd.rc.H()->GetStack()->DrawContents(ToUse, rpd.rc.H(),
         fsFullQ, flags, &item::IsValidRecipeIngredient);
@@ -812,11 +825,11 @@ struct recipe{
         }
 
         tmpIngredientsIDs.push_back(ToUse[i]->GetID()); DBG1(ToUse[i]->GetID());
-        volume -= ToUse[i]->GetVolume(); DBG2(volume,ToUse[i]->GetVolume());
+        reqVol -= ToUse[i]->GetVolume(); DBG2(reqVol,ToUse[i]->GetVolume());
         ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
 
-        if(volume<=0){
-          long lRemainingVol=volume*-1;
+        if(reqVol<=0){
+          long lRemainingVol=reqVol*-1;
           if(lRemainingVol>0 && CI.bMainMaterRemainsBecomeLump){
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
@@ -834,11 +847,14 @@ struct recipe{
               ABORT("ingredient secondary material should not have volume %d %s %s",matS->GetVolume(),matS->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
           }
 
-          break;
+          break; //SUCCESS!
         }
+
+//        if(CI.bFirstItemMustHaveFullVolumeRequired)
+//          break; //may fail
       }
 
-      if(volume<=0 || CI.bInstaAddIngredients || CI.bJustAcceptFirstChosenAndReturn){
+      if(reqVol<=0 || CI.bInstaAddIngredients || CI.bJustAcceptFirstChosenAndReturn){
         for(int i=0;i<tmpIngredientsIDs.size();i++)
           rpd.ingredientsIDs.push_back(tmpIngredientsIDs[i]);
 
@@ -852,17 +868,20 @@ struct recipe{
       }
 
       if(CI.bFirstMainMaterIsFilter) //prepare filter for next list display
-        prepareFilter<T>(rpd,vi,CI,&tmpIngredientsIDs);
+        prepareFilter<T>(rpd,vi,reqVol,CI,&tmpIngredientsIDs);
+
+//      if(CI.bFirstItemMustHaveFullVolumeRequired)
+//        break;
     }
 
     game::RegionListItemEnable(false);
     game::RegionSilhouetteEnable(false);
 
     if(!CI.bJustAcceptFirstChosenAndReturn)
-      if(CI.bMsgInsuficientMat && volume>0)
+      if(CI.bMsgInsuficientMat && reqVol>0)
         ADD_MESSAGE("This amount of materials won't work...");
 
-    if(volume<=0)
+    if(reqVol<=0)
       return true;
 
     if(CI.bJustAcceptFirstChosenAndReturn && rpd.ingredientsIDs.size()>0)
@@ -887,9 +906,13 @@ struct recipe{
 
   static itemvector vitInv(recipedata& rpd){
     itemvector vi;
-    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
+
+    //prefer already equipped
     if(rpd.rc.H()->GetLeftWielded ())vi.push_back(rpd.rc.H()->GetLeftWielded ());
     if(rpd.rc.H()->GetRightWielded())vi.push_back(rpd.rc.H()->GetRightWielded());
+
+    rpd.rc.H()->GetStack()->FillItemVector(vi); //TODO once, the last item from here had an invalid pointer, HOW?
+
     return vi;
   }
 
@@ -1554,16 +1577,23 @@ struct srpForgeItem : public recipe{
     bool bM = false;
     festring fsM("as MAIN material");DBGLN;
     if(!bM){
-      CIM.iReqCfg=INGOT;
-      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CIM);// true, INGOT, true);
+      ci CI = CIM;
+      CI.iReqCfg=INGOT; //meltables
+      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
-      CIM.iReqCfg=0;
-      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CIM);// true, 0, true);
+      ci CI = CIM; //carving: only one stone per material allowed, so it must have required volume
+      CI.bFirstItemMustHaveFullVolumeRequired=true;
+      CI.bMultSelect=false;
+      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
-      CIM.iReqCfg=0;
-      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CIM);// true, 0, true);
+      ci CI = CIM;
+      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);
+    }
+    if(!bM){
+      ci CI = CIM;
+      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
       ADD_MESSAGE("I will craft it later...");
@@ -1591,17 +1621,24 @@ struct srpForgeItem : public recipe{
       bool bS = false;
       festring fsS("as Secondary material");DBGLN;
       if(!bS){
-        CIS.iReqCfg=INGOT;
-        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CIS);//, true, INGOT, true);
+        ci CI=CIS;
+        CI.iReqCfg=INGOT;
+        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
+      }
+      if(!bS){
+        ci CI=CIS; //carving: only one stone per material allowed, so it must have required volume
+        CI.bFirstItemMustHaveFullVolumeRequired=true;
+        CI.bMultSelect=false;
+        bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
       }
       if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
         if(!bS){
-          CIS.iReqCfg=0;
-          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CIS);// true, 0, true);
+          ci CI=CIS;
+          bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);
         }
         if(!bS){
-          CIS.iReqCfg=0;
-          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CIS);// true, 0, true);
+          ci CI=CIS;
+          bS = choseIngredients<stick>(fsS,lVolS, rpd, iCfgS, CI);
         }
       }
 
@@ -1626,7 +1663,9 @@ struct srpForgeItem : public recipe{
 
     material* matM = itSpawn->GetMainMaterial();
     material* matS = itSpawn->GetSecondaryMaterial();
-    rpd.bMeltable = craftcore::IsMeltable(matM) || (matS!=NULL && craftcore::IsMeltable(matS));
+    bool bMeltableM = craftcore::IsMeltable(matM);
+    bool bMeltableS = (matS!=NULL && craftcore::IsMeltable(matS));
+    rpd.bMeltable = bMeltableM || bMeltableS;
 
     float fMult=10;//hammering to form it takes time even if the volume is low.
     rpd.iBaseTurnsToFinish=calcMeltableTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
@@ -1664,14 +1703,48 @@ struct srpForgeItem : public recipe{
       }
     }
 
+    // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
+    bool bMissingTools=false;
     if(rpd.bMeltable){ //TODO glass should require proper tools (don't know what but sure not a hammer)
       rpd.itTool = FindBluntTool(rpd);
-    }else{
-      rpd.itTool = FindTool(rpd, DAGGER); //carving
+      if(rpd.itTool==NULL)
+        bMissingTools=true;
     }
+
+    // DAGGER for carving
+    if(!bMissingTools){
+      if(!bMeltableM || !bMeltableS){
+        //TODO findCarvingTool()
+        int iCarvingStr=0;
+        if(!bMeltableM)iCarvingStr=matM->GetStrengthValue();
+        if(!bMeltableS)iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
+        int iMinCarvingStr = iCarvingStr/2;
+        item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
+        if(itTool!=NULL){
+          if(rpd.itTool==NULL)
+            rpd.itTool=itTool;
+          else
+            rpd.itTool2=itTool;
+
+          int iMult=1;
+          if(iCarvingStr>1){
+            int itStr=itTool->GetMainMaterial()->GetStrengthValue();
+            if(itStr<iCarvingStr)
+              iMult++;
+            if(itStr==iMinCarvingStr)
+              iMult++;
+          }
+          calcToolTurns(rpd,iMult);
+        }else{
+          bMissingTools=true;
+        }
+      }
+    }
+
     DBG1(rpd.iBaseTurnsToFinish);
 
-    if(rpd.itTool==NULL){
+    if(bMissingTools){
+      rpd.itTool=rpd.itTool2=NULL; //to make it easy to check/inform, wont start if missing one anyway
       craftcore::SendToHellSafely(itSpawn);
       return false;
     }
@@ -2050,11 +2123,21 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     if(rpd.ingredientsIDs.size()==0)
       ABORT("no ingredients chosen?");
 
+    festring fsTools;
     if(rpd.itTool!=NULL)
-      ADD_MESSAGE("Let me see.. I will use %s as tool.",rpd.itTool->GetName(INDEFINITE).CStr());
+      fsTools=rpd.itTool->GetName(INDEFINITE);
+    if(rpd.itTool2!=NULL){
+      if(!fsTools.IsEmpty())
+        fsTools<<" and ";
+      fsTools<<rpd.itTool->GetName(INDEFINITE);
+    }
+    if(!fsTools.IsEmpty())
+      ADD_MESSAGE("Let me see.. I will use %s as tool(s).",fsTools.CStr());
 
     if(rpd.otSpawnType!=CTT_NONE || rpd.itSpawnType!=CIT_NONE) {
-      if(rpd.itTool!=NULL && rpd.itTool->IsBroken())
+      if(rpd.itTool !=NULL && rpd.itTool ->IsBroken())
+        iCraftTimeMult++;
+      if(rpd.itTool2!=NULL && rpd.itTool2->IsBroken())
         iCraftTimeMult++;
 
       if(rpd.iBaseTurnsToFinish<1)
@@ -2087,7 +2170,8 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
       rpd.v2PlayerCraftingAt = Char->GetPos();
 
-      if(rpd.itTool!=NULL)rpd.itToolID=rpd.itTool->GetID();
+      if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
+      if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
       if(rpd.lsqrPlaceAt!=NULL)rpd.v2BuildWhere=rpd.lsqrPlaceAt->GetPos();
 
@@ -2111,7 +2195,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
         festring fsMsg;
         fsMsg<<"Required ingredients to "<<prp->action<<" "<<prp->name<<" are not met.";
         ADD_MESSAGE(fsMsg.CStr());
-      }else if(rpd.itTool == NULL){ //TODO a bool to determine if tools is req?
+      }else if(rpd.itTool == NULL){
         ADD_MESSAGE("Required tool is missing.");
       }else{
         ABORT("explain why crafting won't work.");
@@ -2502,26 +2586,73 @@ void craftcore::CheckFacilities(recipedata& rpd){
   }
 }
 
-void craftcore::CheckTools(recipedata& rpd){
-  if(rpd.itToolID!=0){
-    rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
+item* checkTool(ulong id,lsquare* lsqrActor){
+  item* it=NULL;
+  if(id!=0){
+    it = game::SearchItem(id); //must keep searching it as it may have been destroyed.
     //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
-    if(rpd.itTool==NULL){
-      ADD_MESSAGE("The unmodified tool to craft this is missing.",rpd.itTool->GetName(DEFINITE).CStr());
-      rpd.bFailed=true;
+    if(it==NULL){
+      ADD_MESSAGE("One unmodified tool to craft this is missing or destroyed.");
+      return NULL;
     }
-    DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
+    DBGEXEC(if(it!=NULL)DBGSV2(it->GetLSquareUnder()->GetPos()));
   }
-  DBG6(rpd.itToolID,rpd.itTool,rpd.itSpawnCfg,rpd.otSpawnCfg,rpd.itSpawnType,rpd.otSpawnType);
 
+  if(it!=NULL && it->GetLSquareUnder()!=lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
+  {DBGLN; //TODO re-mainWield it
+    ADD_MESSAGE("%s went missing.",it->GetName(DEFINITE).CStr());
+    return NULL;
+  }
+
+  return it;
+}
+
+void craftcore::CheckTools(recipedata& rpd){
   rpd.lsqrActor = rpd.rc.H()->GetLSquareUnder(); DBGSV2(rpd.lsqrActor->GetPos());
   rpd.lvl = rpd.lsqrActor->GetLevel();
 
-  if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=rpd.lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
-  {DBGLN; //TODO re-mainWield it
-    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE).CStr());
+  rpd.itTool=checkTool(rpd.itToolID,rpd.lsqrActor);
+  if(rpd.itTool==NULL)
     rpd.bFailed=true;
-  }
+
+  rpd.itTool2=checkTool(rpd.itTool2ID,rpd.lsqrActor);
+  if(rpd.itTool2ID>0 && rpd.itTool2==NULL)
+    rpd.bFailed=true;
+
+  if(rpd.bFailed)
+    rpd.itTool=rpd.itTool2=NULL; //consistency or have the two (if required), or have none
+
+//  if(rpd.itToolID!=0){
+//    rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
+//    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
+//    if(rpd.itTool==NULL){
+//      ADD_MESSAGE("The unmodified tool to craft this is missing or destroyed.");//,rpd.itTool->GetName(DEFINITE).CStr());
+//      rpd.bFailed=true;
+//    }
+//    DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
+//  }
+//  if(rpd.itTool2ID!=0){
+//    rpd.itTool2 = game::SearchItem(rpd.itTool2ID); //must keep searching it as it may have been destroyed.
+//    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
+//    if(rpd.itTool2==NULL){
+//      ADD_MESSAGE("The unmodified tool to craft this is missing or destroyed.");//,rpd.itTool2->GetName(DEFINITE).CStr());
+//      rpd.bFailed=true;
+//    }
+//    DBGEXEC(if(rpd.itTool2!=NULL)DBGSV2(rpd.itTool2->GetLSquareUnder()->GetPos()));
+//  }
+
+  DBG8(rpd.itToolID,rpd.itTool,rpd.itTool2ID,rpd.itTool2,rpd.itSpawnCfg,rpd.otSpawnCfg,rpd.itSpawnType,rpd.otSpawnType);
+
+//  if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=rpd.lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
+//  {DBGLN; //TODO re-mainWield it
+//    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE).CStr());
+//    rpd.bFailed=true;
+//  }
+//  if(rpd.itTool2!=NULL && rpd.itTool2->GetLSquareUnder()!=rpd.lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
+//  {DBGLN; //TODO re-mainWield it
+//    ADD_MESSAGE("%s went missing.",rpd.itTool2->GetName(DEFINITE).CStr());
+//    rpd.bFailed=true;
+//  }
 
 }
 
@@ -2666,12 +2797,17 @@ truth craftcore::IsMeltable(material* mat){
   return false;
 }
 
+bool IsDegradedMat(material* mat){
+  if(mat==NULL)return false;
+  if(mat->GetBurnLevel()>0)return true;
+  if(mat->GetSpoilLevel()>0)return true;
+  if(mat->GetRustLevel()>0)return true;
+  return false;
+}
 bool craftcore::IsDegraded(item* it,bool bShowMsg){
   bool b=false;
-
-  if(it->GetBurnLevel()>0)b= true;
-  if(it->GetSpoilLevel()>0)b= true;
-  if(it->GetMainMaterialRustLevel()>0)b= true;
+  if(IsDegradedMat(it->GetMainMaterial()))b=true;
+  if(IsDegradedMat(it->GetSecondaryMaterial()))b=true;
 
   if(b && bShowMsg)
     ADD_MESSAGE("%s is too degraded to work with.",it->GetName(DEFINITE).CStr());

@@ -111,6 +111,7 @@ class recipedata {
 
     // references
     item* itTool;
+    item* itTool2;
     lsquare* lsqrPlaceAt;
     lsquare* lsqrCharPos;
     item* itWeakestIngredient;
@@ -149,6 +150,7 @@ class recipedata {
     v2 v2PlayerCraftingAt;
 
     ulong itToolID;
+    ulong itTool2ID;
     v2 v2BuildWhere;
     ulong itSpawnType;
     festring fsItemSpawnSearchPrototype;
@@ -192,6 +194,7 @@ class recipedata {
 
     void ClearRefs();
     item* GetTool(){return itTool;}
+    item* GetTool2(){return itTool2;}
 };
 class craftcore {
   private:

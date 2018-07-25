@@ -1821,6 +1821,8 @@ void humanoid::SwitchToCraft(recipedata rpd)
       Craft->SetMoveCraftTool(false);
   }DBGLN;
 
+  //TODO let the GetTool2() be equipped too
+
   Craft->SetCraftWhat(rpd);DBGLN;
   SetAction(Craft);DBGLN;
 }
