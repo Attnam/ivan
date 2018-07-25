@@ -40,7 +40,7 @@ void devcons::Command()
     festring fsQ;
     if(game::WizardModeIsActive())
       fsQ="Developer(wizard) ";
-    fsQ<<"Console Command:";
+    fsQ<<"Console Command: (type 'help' for options)";
     if(game::StringQuestion(fsFullCmd, fsQ, WHITE, 1, 255, true) == NORMAL_EXIT){
       runCommand(fsFullCmd);
     }else
@@ -82,6 +82,7 @@ void devcons::Help(std::string strFilter)
   for(int j=0;j<vCmd.size();j++){
     ADD_MESSAGE("%s - %s",vCmd[j].strCmd.c_str(),vCmd[j].strHelp.c_str());
   }
+  ADD_MESSAGE("Ps.: main commands are case insensitive.");
 }
 
 callcmd devcons::Find(std::string strCmd)

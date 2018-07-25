@@ -4572,6 +4572,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
       character* NPC = lsqr->GetCharacter();
       if(
+          NPC!=NULL &&
           !NPC->IsAlly(Player) &&
           !NPC->IsRooted() &&
           !NPC->IsEnormous() &&
