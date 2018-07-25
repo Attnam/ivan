@@ -8,8 +8,26 @@
 #ifndef _DEFINESVALIDATOR_H_
 #define _DEFINESVALIDATOR_H_
 
-class definesvalidator{ public: static void Validate() {
+#include <string>
+#include <algorithm>
+#include <cstdarg>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <bitset>
+#include <ctime>
 
+#include "error.h"
+
+class definesvalidator{
+
+ public:
+  static void init();
+  static void DevConsCmd(std::string);
+  static void GenerateDefinesValidator(std::string);
+
+ static void Validate() {
   std::stringstream ssErrors;
   std::bitset<32> bsA, bsB;
 
@@ -4534,6 +4552,14 @@ class definesvalidator{ public: static void Validate() {
 #endif 
 
   
+#ifdef INGOT // DO NOT MODIFY!
+  bsA = 2;
+  bsB = INGOT;
+  if(bsA!=bsB)
+    ssErrors << "Defined INGOT with value 2 from .dat file mismatches hardcoded c++ define value of " << INGOT << "!" << std::endl;
+#endif 
+
+  
 #ifdef INK // DO NOT MODIFY!
   bsA = 16396;
   bsB = INK;
@@ -8643,6 +8669,14 @@ class definesvalidator{ public: static void Validate() {
   bsB = VETERAN_FEMALE;
   if(bsA!=bsB)
     ssErrors << "Defined VETERAN_FEMALE with value 15 from .dat file mismatches hardcoded c++ define value of " << VETERAN_FEMALE << "!" << std::endl;
+#endif 
+
+  
+#ifdef VIAL // DO NOT MODIFY!
+  bsA = 1;
+  bsB = VIAL;
+  if(bsA!=bsB)
+    ssErrors << "Defined VIAL with value 1 from .dat file mismatches hardcoded c++ define value of " << VIAL << "!" << std::endl;
 #endif 
 
   

@@ -25,13 +25,8 @@
 
 #include "dbgmsgproj.h"
 
-truth outputfile::bakcupBeforeSaving = false;
-truth outputfile::saveOnNewFileAlways = false;
-
-void outputfile::SetSafeSaving(truth b){DBGLN;
-  bakcupBeforeSaving=b;
-  saveOnNewFileAlways=b;
-}
+truth outputfile::bakcupBeforeSaving = true;
+truth outputfile::saveOnNewFileAlways = true;
 
 void outputfile::Close() { DBG3(FileNameNewTmp.CStr(),FileName.CStr(),saveOnNewFileAlways);
   File.close();

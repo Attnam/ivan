@@ -18,7 +18,9 @@
 #include "message.h"
 
 /**
- * Attention!
+ * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
+ * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
+ * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
  *
  * Non-wizard commands are intended ONLY to easify fixing the game,
  * help the player get un-stuck,
@@ -36,11 +38,12 @@ void devcons::Command()
   }();
 
   for(;;){
-    festring fsFullCmd;
+    static festring fsFullCmd;
     festring fsQ;
     if(game::WizardModeIsActive())
       fsQ="Developer(wizard) ";
     fsQ<<"Console Command: (type 'help' for options)";
+    //TODO key up/down commands history and save/load to a txt file
     if(game::StringQuestion(fsFullCmd, fsQ, WHITE, 1, 255, true) == NORMAL_EXIT){
       runCommand(fsFullCmd);
     }else
@@ -77,12 +80,13 @@ void devcons::AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp)
   vCmd.push_back(dc);
 }
 
+const char* cPrompt=" > ";
 void devcons::Help(std::string strFilter)
 {
   for(int j=0;j<vCmd.size();j++){
-    ADD_MESSAGE("%s - %s",vCmd[j].strCmd.c_str(),vCmd[j].strHelp.c_str());
+    ADD_MESSAGE("%s%s - %s",cPrompt,vCmd[j].strCmd.c_str(),vCmd[j].strHelp.c_str());
   }
-  ADD_MESSAGE("Ps.: main commands are case insensitive.");
+  ADD_MESSAGE("%sPs.: main commands are case insensitive.",cPrompt);
 }
 
 callcmd devcons::Find(std::string strCmd)
@@ -108,14 +112,16 @@ void devcons::runCommand(festring fsFullCmd)
     strCmd = strFullCmd;
   else{
     strCmd = strFullCmd.substr(0,i);
-    std::string strParams = strFullCmd.substr(i+1);
+    strParams = strFullCmd.substr(i+1);
   }
+
+  ADD_MESSAGE("%sTrying to run: %s ('%s' '%s')",cPrompt,strFullCmd.c_str(),strCmd.c_str(),strParams.c_str());
 
   callcmd cc = Find(strCmd);
   if(cc){
     cc(strParams);
-    ADD_MESSAGE("command %s completed",strCmd.c_str());
+    ADD_MESSAGE("%scommand %s completed",cPrompt,strCmd.c_str());
   }else{
-    ADD_MESSAGE("command %s not found",strCmd.c_str());
+    ADD_MESSAGE("%scommand %s not found",cPrompt,strCmd.c_str());
   }
 }

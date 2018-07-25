@@ -27,6 +27,7 @@
 
 #include "game.h"
 #include "database.h"
+#include "definesvalidator.h"
 #include "devcons.h"
 #include "feio.h"
 #include "igraph.h"
@@ -102,6 +103,7 @@ int main(int argc, char** argv)
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
   globalwindowhandler::SetDeveloperConsoleHandler(devcons::Command);
   bugWorkaroundDupPlayer::init();
+  definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();

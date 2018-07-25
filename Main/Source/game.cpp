@@ -40,6 +40,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -4113,89 +4114,6 @@ truth game::AnimationController()
 {
   DrawEverythingNoBlit(true);
   return true;
-}
-
-//static void DefinesValidatorAppend(std::string s);
-//static void DefinesValidatorTop();
-//static void DefinesValidatorAppendCode(std::string s);
-std::ofstream DefinesValidator;
-void DefinesValidatorAppend(std::string s)
-{
-  static std::stringstream ssValidateLine;ssValidateLine.str(std::string());ssValidateLine.clear(); //actually clear/empty it = ""
-
-  ssValidateLine << s << std::endl;
-
-  static bool bDummyInit = [](){
-    DefinesValidator.open(
-        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
-        std::ios::binary);
-    return true;}();
-
-  DefinesValidator.write(ssValidateLine.str().c_str(),ssValidateLine.str().length());
-}
-void DefinesValidatorTop()
-{
-  DefinesValidatorAppend("/****");
-  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
-  DefinesValidatorAppend(" *");
-  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
-  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
-  DefinesValidatorAppend(" */");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  std::stringstream ssErrors;");
-  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
-  DefinesValidatorAppend("");
-}
-void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
-{
-  static std::stringstream ssMsg;ssMsg.str(std::string());ssMsg.clear(); //actually clear/empty it = ""
-
-  ssMsg << "\"Defined " << sDefineId << " with value " << valueReadFromDatFile << " from .dat file " <<
-    "mismatches hardcoded c++ define value of \" << " << sDefineId << " << \"!\"";
-
-
-  static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
-
-//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
-  ssCode <<
-    "  " << std::endl <<
-    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
-    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
-    "  bsB = " << sDefineId << ";" << std::endl <<
-    "  if(bsA!=bsB)" << std::endl <<
-    "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
-    "#endif " << std::endl;
-
-
-  DefinesValidatorAppend(ssCode.str());
-}
-void DefinesValidatorClose(){
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  if(ssErrors.str().length() > 0) ABORT(ssErrors.str().c_str());");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("}};");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#endif // _DEFINESVALIDATOR_H_");
-
-  DefinesValidator.close();
-}
-#include "definesvalidator.h" //tip: 1st run this was commented
-void game::GenerateDefinesValidator(bool bValidade)
-{
-  DefinesValidatorTop();
-
-  for(const valuemap::value_type& p : GlobalValueMap)
-    DefinesValidatorAppendCode(p.first.CStr(), p.second);
-
-  DefinesValidatorClose();
-
-  if(bValidade)
-    definesvalidator::Validate(); //tip: 1st run this was commented
 }
 
 void game::InitGlobalValueMap()

@@ -22,8 +22,7 @@ class bugWorkaroundDupPlayer{
   public:
     static void init();
     static character* BugWorkaroundDupPlayer(square* sqr);
-    static character* BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos);
-    static character* BugWorkaroundDupPlayer();
+    static character* BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos,bool bForceDupPlayerCheck=false);
     static void DevConsCmd(std::string strCmdParams);
   private:
     static void GatherAllItemInLevel();

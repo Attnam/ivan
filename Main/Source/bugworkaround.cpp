@@ -329,7 +329,8 @@ void bugWorkaroundDupPlayer::DupPlayerFix(character* DupPlayer)
 
 void bugWorkaroundDupPlayer::init()
 {
-  devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd);
+  devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd,
+    "BugFix DUP player (experimental/slow). If the player went missing, it will kickin automatically on loading.");
 }
 
 character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(square* sqr)
@@ -354,24 +355,17 @@ character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(square* sqr)
 
 void bugWorkaroundDupPlayer::DevConsCmd(std::string strCmdParams)
 {
-  BugWorkaroundDupPlayer();
+  BugWorkaroundDupPlayer(PLAYER,PLAYER->GetPos(),true);
 }
 
-character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer()
-{
-  return BugWorkaroundDupPlayer(PLAYER,PLAYER->GetPos());
-}
-
-bool bForceDupPlayerCheck=false; //TODO this is when console commands is implemented and remove the user config option away
-character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAskedNewInstance, v2 v2AskedPos){ DBG2(CharAskedNewInstance,DBGAV2(v2AskedPos));
+character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAskedNewInstance, v2 v2AskedPos,bool bForceDupPlayerCheck){ DBG2(CharAskedNewInstance,DBGAV2(v2AskedPos));
   bugWorkaroundDupPlayer::Accepted=false; //init to ask again if needed, so the user knows what is happening
 
   DBGCHAR(CharAskedNewInstance,"CharFix:CharAskedNewInstance");
 
-  bool bAllowPlayerBugFix = ivanconfig::GetBugWorkaroundDupPlayer()!=0;
-
-  if(!bAllowPlayerBugFix && CharAskedNewInstance==NULL)
-    ABORT("Player not found at asked pos=(%d,%d), you can try the 'missing or dup player' workaround option",v2AskedPos.X,v2AskedPos.Y);
+//  bool bAllowPlayerBugFix = ivanconfig::GetBugWorkaroundDupPlayer()!=0;
+//  if(!bAllowPlayerBugFix && CharAskedNewInstance==NULL)
+//    ABORT("Player not found at asked pos=(%d,%d), you can try the 'missing or dup player' workaround option",v2AskedPos.X,v2AskedPos.Y);
 
   //this can ONLY return one char with ID=1 EVER, so there wont be a DUP char with ID=1 on the characters' map
   character* CharPlayerConsistent = game::SearchCharacter(1);
