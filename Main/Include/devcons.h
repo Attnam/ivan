@@ -25,7 +25,7 @@ class devcons{
     static void runCommand(festring fsCmd);
   public:
     static void Command();
-    static void AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp=festring());
+    static void AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp=festring(), bool bWizardModeOnly=false);
 };
 
 #endif /* MAIN_INCLUDE_DEVCONS_H_ */

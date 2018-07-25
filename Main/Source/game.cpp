@@ -4489,15 +4489,15 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     {
       lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
       character* NPC = lsqr->GetCharacter();
-      if(
-          NPC!=NULL &&
-          !NPC->IsAlly(Player) &&
-          !NPC->IsRooted() &&
-          !NPC->IsEnormous() &&
-          !NPC->IsStuck()
-      ){ //this at least prevents glitch of moving genetrix vesana away when coming in from above
+
+      bool bMoveAway=true;
+      /** g.v. goal is to protect the passage */ //TODO coming from above could grant a huge damage strike to kill it, what is a tactical manouver
+      if(bMoveAway && dynamic_cast<genetrixvesana*>(NPC)!=NULL)bMoveAway=false;
+      //TODO add other restrictions here, if any
+
+      if(bMoveAway)
         lsqr->KickAnyoneStandingHereAway();
-      }
+
       Player->PutToOrNear(Pos);
     }
     else
@@ -4862,7 +4862,8 @@ std::vector<character*> game::GetAllCharacters()
 {
   std::vector<character*> vc;
   for(int i=0;i<CharacterIDMap.size();i++){
-    vc.push_back(CharacterIDMap[i]);
+    if(CharacterIDMap[i]!=NULL)
+      vc.push_back(CharacterIDMap[i]);
   }
   return vc;
 }

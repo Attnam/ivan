@@ -122,7 +122,7 @@ void CmdDevConsGenDefVal(std::string strOpt){
   definesvalidator::GenerateDefinesValidator(strOpt);
 }
 void definesvalidator::init(){
-  devcons::AddDevCmd("gendefval", CmdDevConsGenDefVal,
+  devcons::AddDevCmd("DefVal", CmdDevConsGenDefVal,
     "<generate|validate> generate the validator at user config path or validate the file 'define.dat' (may abort)");
 }
 void definesvalidator::GenerateDefinesValidator(std::string strOpt)

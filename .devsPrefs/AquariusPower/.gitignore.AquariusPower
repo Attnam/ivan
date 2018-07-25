@@ -82,3 +82,4 @@ dbgmsg.cpp
 /SDL2-2.0.4/
 build
 build.*
+.kdev_include_paths

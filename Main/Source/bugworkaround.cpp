@@ -329,17 +329,12 @@ void bugWorkaroundDupPlayer::DupPlayerFix(character* DupPlayer)
 
 void bugWorkaroundDupPlayer::init()
 {
-  devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd,
+  devcons::AddDevCmd("FixDupPlayer",bugWorkaroundDupPlayer::DevConsCmd,
     "BugFix DUP player (experimental/slow). If the player went missing, it will kickin automatically on loading.");
 }
 
 character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(square* sqr)
 {
-//  static bool bDymmyInit = [](){
-//    devcons::AddDevCmd("fixdupplayer",bugWorkaroundDupPlayer::DevConsCmd);
-//    return true;
-//  }();
-
   v2 Pos =  sqr->GetPos();
 
   character* CharAtPos = sqr->GetCharacter(); DBG3(CharAtPos,PLAYER,DBGAV2(Pos));
