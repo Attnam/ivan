@@ -708,6 +708,7 @@
 #define DWARF_BIRCH 24
 #define FORGE 26
 #define FURNACE 27
+#define WORK_BENCH 32
 
 #define SNOW_BOULDER 4
 

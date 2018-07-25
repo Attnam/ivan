@@ -219,14 +219,10 @@ void recipedata::Save(outputfile& SaveFile) const
     << fsItemSpawnSearchPrototype
 
     << itSpawnCfg
-
     << itSpawnMatMainCfg
     << itSpawnMatMainVol
-//    << itSpawnMatMainSpoilLevel
-
     << itSpawnMatSecCfg
     << itSpawnMatSecVol
-//    << itSpawnMatSecSpoilLevel
 
     << otSpawnCfg
     << otSpawnMatMainCfg
@@ -239,6 +235,8 @@ void recipedata::Save(outputfile& SaveFile) const
     << fDifficulty
     << bCanBeBroken
     << bMeltable
+
+    << v2WorkbenchLocation
 
     ;
 
@@ -278,14 +276,10 @@ void recipedata::Load(inputfile& SaveFile)
     >> fsItemSpawnSearchPrototype
 
     >> itSpawnCfg
-
     >> itSpawnMatMainCfg
     >> itSpawnMatMainVol
-//    >> itSpawnMatMainSpoilLevel
-
     >> itSpawnMatSecCfg
     >> itSpawnMatSecVol
-//    >> itSpawnMatSecSpoilLevel
 
     >> otSpawnCfg
     >> otSpawnMatMainCfg
@@ -298,6 +292,8 @@ void recipedata::Load(inputfile& SaveFile)
     >> fDifficulty
     >> bCanBeBroken
     >> bMeltable
+
+    >> v2WorkbenchLocation
 
     ;
 
@@ -339,9 +335,10 @@ cfestring recipedata::id() const
   fs<<(i++)<<":"<<otSpawnMatSecCfg<<";";
   fs<<(i++)<<":"<<otSpawnMatSecVol<<";";
 
-  fs<<(i++)<<":"<<v2AnvilLocation.X<<","<<v2AnvilLocation.Y<<";";
   fs<<(i++)<<":"<<v2BuildWhere.X<<","<<v2BuildWhere.Y<<";";
+  fs<<(i++)<<":"<<v2AnvilLocation.X<<","<<v2AnvilLocation.Y<<";";
   fs<<(i++)<<":"<<v2ForgeLocation.X<<","<<v2ForgeLocation.Y<<";";
+  fs<<(i++)<<":"<<v2WorkbenchLocation.X<<","<<v2WorkbenchLocation.Y<<";";
   fs<<(i++)<<":"<<v2PlaceAt.X<<","<<v2PlaceAt.Y<<";";
   fs<<(i++)<<":"<<v2PlayerCraftingAt.X<<","<<v2PlayerCraftingAt.Y<<";";
 
@@ -409,6 +406,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   xplodStr=0;
   iStrongerXplod=0;
   v2XplodAt=v2(0,0);
+  bOnlyXplodIfCriticalFumble=false;
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
@@ -433,14 +431,10 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   fsItemSpawnSearchPrototype="";
 
   itSpawnCfg=0;
-
   itSpawnMatMainCfg=0;
   itSpawnMatMainVol=0;
-//  itSpawnMatMainSpoilLevel=0;
-
   itSpawnMatSecCfg=0;
   itSpawnMatSecVol=0;
-//  itSpawnMatSecSpoilLevel=0;
 
   otSpawnCfg=0;
   otSpawnMatMainCfg=0;
@@ -453,6 +447,8 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   fDifficulty=1.0;
   bCanBeBroken=true; //most can, anyway b4 breaking should be revalidated
   bMeltable=false;
+
+  v2WorkbenchLocation=v2(0,0);
 }
 
 int craftcore::CurrentDungeonLevelID(){
@@ -938,43 +934,136 @@ struct recipe{
   }
 
   lsquare* lsqrFORGE = NULL;
-  bool chkForge(recipedata& rpd,lsquare* lsqr){DBGLN;
-    olterrain* ot = lsqr->GetOLTerrain();
-    if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.rc.H())){
+  lsquare* lsqrANVIL = NULL;
+  lsquare* lsqrWorkbench = NULL;
+  void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
+    switch(iCfgOLT){
+    case FORGE:
       lsqrFORGE = lsqr;
-      rpd.v2ForgeLocation = lsqrFORGE->GetPos();
+      rpd.v2ForgeLocation = lsqr->GetPos();
+      break;
+    case ANVIL:
+      lsqrANVIL = lsqr;
+      rpd.v2AnvilLocation = lsqr->GetPos();
+      break;
+    case WORK_BENCH:
+      lsqrWorkbench = lsqr;
+      rpd.v2WorkbenchLocation = lsqr->GetPos();
+      break;
+    }
+  }
+  bool chkOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){DBGLN;
+    olterrain* ot = lsqr->GetOLTerrain();
+    if(ot!=NULL && ot->GetConfig() == iCfgOLT && lsqr->CanBeSeenBy(rpd.rc.H())){
+      SetOLT(rpd,lsqr,iCfgOLT);
       return true;
     }
     return false;
   }
-  bool findForge(recipedata& rpd,bool bReqOnlyVisible=false){
+  bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
+    bool bFound=false;
     if(bReqOnlyVisible){DBGLN;
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
         lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
-        if(chkForge(rpd,lsqr))break;
+        if(chkOLT(rpd,lsqr,iCfgOLT)){
+          bFound = true;
+          break;
+        }
       }}
     }else{DBGLN; //must be on adjacent square
-      int iDist = 1; //TODO improve this (despite fun, is wrong..)
-      for(int i=0;i<(8*iDist);i++){
-        int iDir = i%8;
-        int iMult = 1 + i/8;
-        v2 v2Add = game::GetMoveVector(iDir) * iMult;
-        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
+//      int iDist = 1; //TODO improve this (despite fun, is wrong..)
+//      for(int i=0;i<(8*iDist);i++){
+//        int iDir = i%8;
+//        int iMult = 1 + i/8;
+//        v2 v2Add = game::GetMoveVector(iDir) * iMult;
+//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
+//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);
+//          if(chkOLT(rpd,lsqr,iCfgOLT)){
+//            bFound = true;
+//            break;
+//          }
+//        }
+//      }
+      for(int iDir=0;iDir<8;iDir++){
+        v2 v2Add = game::GetMoveVector(iDir);
+        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);
-          if(chkForge(rpd,lsqr))break;
+          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
+          if(chkOLT(rpd,lsqr,iCfgOLT)){
+            bFound = true;
+            break;
+          }
+//          olterrain* ot = lsqr->GetOLTerrain();
+//          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.rc.H())){
+//            lsqrAnvil = lsqr;
+//            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
+//            break;
+//          }
         }
       }
+
     }
 
-    if(lsqrFORGE==NULL){
-      ADD_MESSAGE(bReqOnlyVisible?"No visible forge nearby.":"No forge nearby.");
+    if(!bFound){
+      festring fsWhat;
+      switch(iCfgOLT){
+      case FORGE:fsWhat="forge";break;
+      case ANVIL:fsWhat="anvil";break;
+      case WORK_BENCH:fsWhat="workbench";break;
+      }
+
+      festring fsMsg="No ";
+      if(bReqOnlyVisible)
+        fsMsg<<"visible ";
+      fsMsg<<fsWhat<<" nearby.";
+      ADD_MESSAGE(fsMsg.CStr());
+
       rpd.bAlreadyExplained=true;
+
       return false;
     }
 
     return true;
   }
+
+//  bool chkForge(recipedata& rpd,lsquare* lsqr){DBGLN;
+//    olterrain* ot = lsqr->GetOLTerrain();
+//    if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.rc.H())){
+//      lsqrFORGE = lsqr;
+//      rpd.v2ForgeLocation = lsqrFORGE->GetPos();
+//      return true;
+//    }
+//    return false;
+//  }
+//  bool findForge(recipedata& rpd,bool bReqOnlyVisible=false){
+//    if(bReqOnlyVisible){DBGLN;
+//      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
+//        lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
+//        if(chkForge(rpd,lsqr))break;
+//      }}
+//    }else{DBGLN; //must be on adjacent square
+//      int iDist = 1; //TODO improve this (despite fun, is wrong..)
+//      for(int i=0;i<(8*iDist);i++){
+//        int iDir = i%8;
+//        int iMult = 1 + i/8;
+//        v2 v2Add = game::GetMoveVector(iDir) * iMult;
+//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
+//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);
+//          if(chkForge(rpd,lsqr))break;
+//        }
+//      }
+//    }
+//
+//    if(lsqrFORGE==NULL){
+//      ADD_MESSAGE(bReqOnlyVisible?"No visible forge nearby.":"No forge nearby.");
+//      rpd.bAlreadyExplained=true;
+//      return false;
+//    }
+//
+//    return true;
+//  }
 
 };
 
@@ -997,7 +1086,7 @@ struct srpOltBASE : public recipe{
     if(iTurns==0)ABORT("Recipe turns is 0 for OLT");
 
     if(bReqForge)
-      if(!recipe::findForge(rpd))
+      if(!recipe::findOLT(rpd,FORGE))
         return false;
 
     DBGLN;
@@ -1120,6 +1209,24 @@ struct srpForge : public srpOltBASE{
     return srpOltBASE::work(rpd);
   }
 };srpForge rpForge;
+struct srpWorkBench : public srpOltBASE{
+  virtual bool spawnCfg(recipedata& rpd){
+    rpd.otSpawnType=CTT_FURNITURE;
+    rpd.otSpawnCfg=WORK_BENCH;
+    return true;
+  }
+
+  virtual void fillInfo(){
+    init("build","a workbench");
+    desc << "You can build a workbench. " << fsDescBASE;
+  }
+
+  virtual bool work(recipedata& rpd){
+    iReqVol=3000;
+    iTurns=10;
+    return srpOltBASE::work(rpd);
+  }
+};srpWorkBench rpWorkBench;
 struct srpWall2 : public srpOltBASE{
   virtual bool spawnCfg(recipedata& rpd){
     rpd.otSpawnType=CTT_WALL;
@@ -1213,7 +1320,7 @@ struct srpMelt : public srpJoinLumps{
 
     //TODO wands should xplode, other magical items should release something harmful beyond the very effect they are imbued with.
 
-    if(!recipe::findForge(rpd))
+    if(!recipe::findOLT(rpd,FORGE))
       return false;
 
     askForEqualLumps(rpd);
@@ -1343,7 +1450,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
     rpd.bMeltable = craftcore::IsMeltable(matM) || (matS!=NULL && craftcore::IsMeltable(matS));
     if(rpd.bMeltable){
-      if(!recipe::findForge(rpd))
+      if(!recipe::findOLT(rpd,FORGE))
         return false;
     }else{
       rpd.itTool = FindCuttingTool(rpd);//,true);
@@ -1675,32 +1782,36 @@ struct srpForgeItem : public recipe{
     }
 
     if(rpd.bMeltable){
-      if(!recipe::findForge(rpd,true)){
+      if(!recipe::findOLT(rpd,FORGE,true)){
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
 
-      ////////////// find the anvil
-      lsquare* lsqrAnvil = NULL;
-      for(int iDir=0;iDir<8;iDir++){
-        v2 v2Add = game::GetMoveVector(iDir);
-        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
-        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
-          olterrain* ot = lsqr->GetOLTerrain();
-          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.rc.H())){
-            lsqrAnvil = lsqr;
-            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
-            break;
-          }
-        }
-      }
-      if(lsqrAnvil==NULL){
-        ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
-        rpd.bAlreadyExplained=true;
+      if(!recipe::findOLT(rpd,ANVIL,true)){
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
+//      ////////////// find the anvil
+//      lsquare* lsqrAnvil = NULL;
+//      for(int iDir=0;iDir<8;iDir++){
+//        v2 v2Add = game::GetMoveVector(iDir);
+//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
+//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
+//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
+//          olterrain* ot = lsqr->GetOLTerrain();
+//          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.rc.H())){
+//            lsqrAnvil = lsqr;
+//            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
+//            break;
+//          }
+//        }
+//      }
+//      if(lsqrAnvil==NULL){
+//        ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
+//        rpd.bAlreadyExplained=true;
+//        craftcore::SendToHellSafely(itSpawn);
+//        return false;
+//      }
     }
 
     // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
@@ -1735,6 +1846,11 @@ struct srpForgeItem : public recipe{
               iMult++;
           }
           calcToolTurns(rpd,iMult);
+
+          if(!recipe::findOLT(rpd,WORK_BENCH)){
+            ADD_MESSAGE("There is no workbench here, this will take time...");
+            rpd.iBaseTurnsToFinish *= 3;
+          }
         }else{
           bMissingTools=true;
         }
@@ -2097,18 +2213,22 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   // these are kind of grouped and not ordered like a-z
   RP(rpChair);
   RP(rpDoor);
+
   RP(rpWall2);
+
   RP(rpPoison);
   RP(rpAcid);
 
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
+
   RP(rpMelt);
   RP(rpForgeItem);
   RP(rpAnvil);
-
   RP(rpForge);
+
+  RP(rpWorkBench);
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion :>
 
@@ -2516,7 +2636,11 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
     iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
     iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
     iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
-    if(iLuckPerc<=1)iFumblePower++; //always have 1% weakest xplod chance
+    bool bCriticalFumble=false;
+    if(iLuckPerc<=1){
+      iFumblePower++; //always have 1% weakest xplod chance
+      bCriticalFumble=true;
+    }
     //current max chance per round of spawning broken is 5%
     if(clock()%100<=iFumblePower){
       if(!rpd.bSpawnBroken && bChangeTurns){
@@ -2526,10 +2650,17 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
       }
       rpd.bSpawnBroken=true;
     }
-    rpd.xplodStr = iFumblePower;
-    if(rpd.xplodStr>0){DBG2(rpd.xplodStr,rpd.dbgInfo().CStr());
-      rpd.xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
-      //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
+
+    bool bXplod=true;
+    if(rpd.bOnlyXplodIfCriticalFumble && !bCriticalFumble)
+      bXplod=false;
+    rpd.xplodStr=0;
+    if(bXplod){
+      rpd.xplodStr = iFumblePower;
+      if(rpd.xplodStr>0){DBG2(rpd.xplodStr,rpd.dbgInfo().CStr());
+        rpd.xplodStr+=clock()%5+xplodXtra; //reference: weak lantern xplod str is 5
+        //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
+      }
     }
   }
 }
@@ -2583,6 +2714,16 @@ void craftcore::CheckFacilities(recipedata& rpd){
     }
 
     rpd.v2XplodAt=rpd.v2ForgeLocation;
+  }else
+  if(!rpd.v2WorkbenchLocation.Is0()){
+    olterrain* otWorkbench = rpd.lvl->GetLSquare(rpd.v2WorkbenchLocation)->GetOLTerrain();
+    if(otWorkbench==NULL || otWorkbench->GetConfig()!=WORK_BENCH){
+      ADD_MESSAGE("The workbench was destroyed!");
+      rpd.bFailed=true;
+    }
+
+    rpd.bOnlyXplodIfCriticalFumble=true;
+    rpd.v2XplodAt=rpd.v2WorkbenchLocation;
   }
 }
 
@@ -2700,8 +2841,9 @@ cfestring craftcore::DestroyIngredients(recipedata& rpd){
     bool bSendToHell=true;
     if(rpd.otSpawnMatMainCfg!=0)
       if(it->GetMainMaterial()->GetConfig() != rpd.otSpawnMatMainCfg)
-        if(!rpd.rc.H()->CanMoveOn(rpd.lsqrPlaceAt)) //keep inaccessible ingredients TODO but as ghost they would still be recoverable...
-          bSendToHell=false;
+        if(rpd.rc.H()->GetPos()!=rpd.lsqrPlaceAt->GetPos()) //TODO this shouldnt be necessary, CanMoveOn() should suffice..
+          if(!rpd.rc.H()->CanMoveOn(rpd.lsqrPlaceAt)) //keep inaccessible ingredients TODO but as ghost they would still be recoverable...
+            bSendToHell=false;
 
     if(bSendToHell){DBGLN;
       it->SendToHell();

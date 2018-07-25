@@ -103,6 +103,7 @@ class recipedata {
 
   friend struct srpForge;
   friend struct srpJoinLumps;
+  friend struct srpWorkBench;
 
   protected:
     recipecore rc;
@@ -130,6 +131,7 @@ class recipedata {
     int xplodStr;
     int iStrongerXplod;
     v2 v2XplodAt;
+    bool bOnlyXplodIfCriticalFumble;
 
     /*******************************************
      * save REQUIRED fields!!!
@@ -179,6 +181,7 @@ class recipedata {
     bool bMeltable;
 
     int iRemainingTurnsToFinish;
+    v2 v2WorkbenchLocation;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
