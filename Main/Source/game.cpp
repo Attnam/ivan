@@ -4868,6 +4868,16 @@ std::vector<character*> game::GetAllCharacters()
   return vc;
 }
 
+std::vector<item*> game::GetAllItems()
+{
+  std::vector<item*> vc;
+  for(int i=0;i<ItemIDMap.size();i++){
+    if(ItemIDMap[i]!=NULL)
+      vc.push_back(ItemIDMap[i]);
+  }
+  return vc;
+}
+
 item* game::SearchItem(ulong ID)
 {
   itemidmap::iterator Iterator = ItemIDMap.find(ID);

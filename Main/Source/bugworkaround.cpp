@@ -267,7 +267,7 @@ void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, 
 
       if(bSendToHell){
         itWork->SendToHell();
-        DBG3("SentToHell:ItemsID",DBGI(itWork->GetID()),itWork);
+        DBG3("CharFix:SentToHell:ItemsID",DBGI(itWork->GetID()),itWork);
       }
     }else{
       DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(itWork->GetID()),itWork); //some helpful info for comparison and understanding
@@ -277,6 +277,8 @@ void bugWorkaroundDupPlayer::ItemWork(character* Char, item* itWork, bool bFix, 
 
 void bugWorkaroundDupPlayer::ValidateFullLevel()
 {
+  DEVCMDMSG("%s","validate full level against dup stuff");
+
   // validate full level against other possible dup items
   std::vector<item*> vAllItemsOnLevel;
   bugWorkaroundDupPlayer::CollectAllItemsOnLevel(&vAllItemsOnLevel);
@@ -318,11 +320,13 @@ void bugWorkaroundDupPlayer::DupPlayerFix(character* DupPlayer)
     DupPlayer->SetAssignedName("_DupPlayerBug_");DBGLN; //non immersive naming, shall not be, this bug shall be properly fixed one day.
     DupPlayer->LoseConsciousness(100000,false); //may not fall asleep tho
     DupPlayer->SetNP(1); //to die soon at least
-    //TODO add other effects to auto-kill it
+    //TODO add other effects to auto-kill it, poison? spill sulf acid? must gas? polymorph into y.bunny?
   }
 
   CharBodypartsWork(DupPlayer,true,false);DBGLN; //bodyparts sent to hell would crash!!!
   //BEWARE!!! this leads to crash: DupPlayer->Remove();
+
+  DEVCMDMSG("fixed dup player '%s'",DupPlayer->GetName(DEFINITE).CStr());
 
   DBGCHAR(DupPlayer,"CharFix:CharToBeLost");
 }
@@ -451,12 +455,21 @@ character* bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(character* CharAskedNe
     ABORT("Unfortunately the player character can't be found anywhere. NPCs found: %s",fsAllC.IsEmpty()?"none":fsAllC.CStr()); //OMG... may be this is pointless, better just fix to prevent such bugs from ever happening...
   }
 
-  for(int j=0;j<vOtherPlayersOnLevel.size();j++)
-    DupPlayerFix(vOtherPlayersOnLevel[j]);
+  std::vector<character*> vOtherPlayersOnLevelAndPB = vOtherPlayersOnLevel;
+  for(int j=0;j<vOtherPlayersOnLevel.size();j++){ //TODO this is unnecessary?
+    character* pb = vOtherPlayersOnLevel[j]->GetPolymorphBackup(); //TODO the backup of the backup?
+    if(pb!=NULL && pb!=CharWins)
+      vOtherPlayersOnLevelAndPB.push_back(pb);
+  }
+
+  for(int j=0;j<vOtherPlayersOnLevelAndPB.size();j++)
+    DupPlayerFix(vOtherPlayersOnLevelAndPB[j]);
 
   // last thing is grant player's stuff is consistent
   CharEquipmentsWork(CharWins,true,false);DBGLN;
+  DEVCMDMSG("fixed player '%s' equipments",CharWins->GetName(DEFINITE).CStr());
   CharInventoryWork (CharWins,true,false);DBGLN;
+  DEVCMDMSG("fixed player '%s' inventory",CharWins->GetName(DEFINITE).CStr());
 
   // just a final validation, may abort on failure
   ValidateFullLevel();
