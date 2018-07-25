@@ -32,7 +32,6 @@ class ivanconfig
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
   static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
-  static truth IsShowVolume() { return ShowVolume.Value;}
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
