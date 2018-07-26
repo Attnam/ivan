@@ -36,26 +36,42 @@
 #ifdef WIZARD
 void ListChars(std::string strFilter){
   ulong idFilter=0;
-  if(!strFilter.empty())atoi(strFilter.c_str());
+  if(!strFilter.empty())
+    idFilter=atoi(strFilter.c_str());
 
   DEVCMDMSG("params: %d",idFilter);
 
-  std::vector<character*> vc = game::GetAllCharacters();
-  for(int i=0;i<vc.size();i++){
-    if(idFilter!=0 && idFilter!=vc[i]->GetID())continue;
+//  std::vector<character*> vc = game::GetAllCharacters();
+//  for(int i=0;i<vc.size();i++){
+  characteridmap map = game::GetCharacterIDMapCopy();
+  for(characteridmap::iterator itr = map.begin();itr!=map.end();itr++){
+    character* C = itr->second;
+    if(idFilter!=0 && idFilter!=C->GetID())continue;
 
     festring fsPos="NULL";
-    if(vc[i]->GetSquareUnder()!=NULL){
+    if(C->GetSquareUnder()!=NULL){
       fsPos.Empty();
-      fsPos<<vc[i]->GetPos().X<<","<<vc[i]->GetPos().Y;
+      fsPos<<C->GetPos().X<<","<<C->GetPos().Y;
     }
-    DEVCMDMSG("%sid=%d (%s) '%s'.",
-//    ADD_MESSAGE("%sid=%d (%d,%d) '%s'.",
-      vc[i]->IsPlayer()?"@":" ",
-      vc[i]->GetID(),
-      fsPos.CStr(),
-      vc[i]->GetName(DEFINITE).CStr()
-    );
+
+    festring fsMsg;
+    fsMsg << (C->IsPlayer()?"@":" ") <<
+        "id="<<C->GetID()<<"["<<itr->first<<"] "<<
+        "("<<fsPos<<") "<<
+        "'"<<C->GetName(DEFINITE)<<"'";
+    character* PB = C->GetPolymorphBackup();
+    if(PB!=NULL)
+      fsMsg << " PB='"<<PB->GetID() <<"/"<< PB->GetName(DEFINITE)<<"'";
+    fsMsg << ".";
+    DEVCMDMSG("%s",fsMsg.CStr());
+//    DEVCMDMSG("%sid=%d[%d] (%s) '%s'.",
+////    ADD_MESSAGE("%sid=%d (%d,%d) '%s'.",
+//      C->IsPlayer()?"@":" ",
+//      C->GetID(),
+//      itr->first,
+//      fsPos.CStr(),
+//      C->GetName(DEFINITE).CStr()
+//    );
   }
 }
 void ListItems(std::string strParams){
@@ -79,54 +95,102 @@ void ListItems(std::string strParams){
 
   DEVCMDMSG("params: %d %d",idFilter,idCharFilter);
 
-  std::vector<item*> vc = game::GetAllItems();
-  for(int i=0;i<vc.size();i++){
-    if(idFilter!=0 && idFilter!=vc[i]->GetID())
-      continue;
+  itemidmap map = game::GetItemIDMapCopy();
+  for(itemidmap::iterator itr = map.begin();itr!=map.end();itr++){
+//  return Iterator != ItemIDMap.end() ? Iterator->second : 0;
+//  std::vector<item*> vc = game::GetAllItems();
+//  for(int i=0;i<vc.size();i++){
+//    item* it = vc[i]; //helps on debugging too
+    item* it = itr->second; //helps on debugging too
 
-    slot* Slot = vc[i]->GetSlot();
-
-    ccharacter* CC;
-    entity* ent=NULL;
-    if(dynamic_cast<gearslot*>(Slot)!=NULL)
-      CC=((gearslot*)Slot)->FindCarrier();
-    else
-    if(dynamic_cast<bodypart*>(Slot)!=NULL)
-      CC=((bodypart*)Slot)->FindCarrier();
-    else
-    if(dynamic_cast<stackslot*>(Slot)!=NULL){
-      CC=((stackslot*)Slot)->FindCarrier();
-      stackslot* sl = ((stackslot*)Slot);
-      if(sl->GetMotherStack()!=NULL)
-        ent=sl->GetMotherStack()->GetMotherEntity();
-    }else
-      CC=NULL;
-
-    if(CC!=NULL && idCharFilter!=0 && CC->GetID()!=idCharFilter)
-      continue;
-
-    character* entC=NULL;
-    item* entI=NULL;
-    if(dynamic_cast<item*>(ent))
-      entI=(item*)ent;
-    if(dynamic_cast<character*>(ent))
-      entC=(character*)ent;
-
-    bool bPlayerStuff = CC==PLAYER;
-
-    festring fsPos="NULL";
-    if(vc[i]->GetSquareUnder()!=NULL){
-      fsPos.Empty();
-      fsPos<<vc[i]->GetPos().X<<","<<vc[i]->GetPos().Y;
+    //TODO could check app memory range if pointer is within limits...
+    if( //TODO items could have a random key to detect if they were not deleted improperly or w/e, could still segfault when reading it tho...
+      it->GetVolume()==0 ||
+      it->GetID()==0 ||
+      it->GetSquaresUnder()==0 ||
+      it->GetSquaresUnder()>100 || //something improbable, could be just 8 I guess...
+      false
+    ){
+      DEVCMDMSG("item REFERENCE INVALID at consistent list ID=%d 0x%X",itr->first,it); //was the item deleted or what happened?
     }
 
-    DEVCMDMSG("%sid=%d (%s) '%s' owner '%s' '%s'.",
+    if(idFilter!=0 && idFilter!=it->GetID())
+      continue;
+
+    slot* Slot = it->GetSlot();
+
+    const entity* ent;
+    festring fsType;
+    if(dynamic_cast<gearslot*>(Slot)!=NULL){
+      ent=((gearslot*)Slot)->FindCarrier();
+      fsType="gear";
+    }else
+    if(dynamic_cast<bodypartslot*>(Slot)!=NULL){
+      ent=((bodypartslot*)Slot)->GetMaster();
+      fsType="bodypart";
+    }else
+    if(dynamic_cast<stackslot*>(Slot)!=NULL){
+      stackslot* sl = ((stackslot*)Slot);
+      ent=sl->FindCarrier();
+      if(sl->GetMotherStack()!=NULL)
+        ent=sl->GetMotherStack()->GetMotherEntity();
+      fsType="stack";
+    }else
+      ent=NULL;
+
+    festring fsDec;
+    citem* entI;
+    ccharacter* entC;
+    if(dynamic_cast<citem*>(ent)){
+      entI=(citem*)ent;
+      entC=NULL;
+      if(dynamic_cast<const corpse*>(ent)){
+        const corpse* CP = (const corpse*)ent;
+        entC = CP->GetDeceased();
+        fsDec=",Dec";
+      }
+    }else
+    if(dynamic_cast<ccharacter*>(ent)){
+      entI=NULL;
+      entC=(ccharacter*)ent;
+    }else{
+      entI=NULL;
+      entC=NULL;
+    }
+
+    if(idCharFilter!=0)
+      if(entC==NULL || entC->GetID()!=idCharFilter)
+        continue;
+
+    bool bPlayerStuff = entC!=NULL && entC->IsPlayer();
+
+    festring fsPB;
+    if(entC!=NULL && entC->GetPolymorphBackup()!=NULL && entC->GetPolymorphBackup()->IsPlayer())
+      fsPB=",PB";
+
+    festring fsPos="NULL";
+    if(it->GetSquareUnder()!=NULL){
+      fsPos.Empty();
+      fsPos<<it->GetPos().X<<","<<it->GetPos().Y;
+    }
+
+    DEVCMDMSG("%sid=%d (%s) '%s' owner '%d/%s' '%d/%s' (%s%s%s).",
       bPlayerStuff?"@":" ",
-      vc[i]->GetID(),
+      it->GetID(),
+
       fsPos.CStr(),
-      vc[i]->GetName(DEFINITE).CStr(),
+
+      it->GetName(DEFINITE).CStr(),
+
+      entC!=NULL ? entC->GetID() : 0,
       entC!=NULL ? entC->GetName(DEFINITE).CStr() : "NoEntC",
-      entI!=NULL ? entI->GetName(DEFINITE).CStr() : "NoEntI"
+
+      entI!=NULL ? entI->GetID() : 0,
+      entI!=NULL ? entI->GetName(DEFINITE).CStr() : "NoEntI",
+
+      fsType.CStr(),
+      fsPB.CStr(),
+      fsDec.CStr()
     );
   }
 }

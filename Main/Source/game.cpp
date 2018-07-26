@@ -295,16 +295,15 @@ void game::RemoveItemID(ulong ID)
   if(ID){
     DBG2("Erasing:ItemID",ID);
 
-    //TODO if(ivanconfig::GetBugWorkaroundDupPlayer()>0){ //TODO if the search affects performance, uncomment this!
-      if(SearchItem(ID)==NULL){
-        /**
-         * This happens when the duplicated player bug happens!
-         * so it will try to erase the item 2 times and CRASH on the second,
-         * therefore the abort is appropriate.
-         */
-        ABORT("AlreadyErased:ItemID %d, possible dup char bug, try it's advanced option",ID);
-      }
-    //TODO }
+    //TODO if the search affects performance, make this optional
+    if(SearchItem(ID)==NULL){
+      /**
+       * This happens when the duplicated player bug happens!
+       * so it will try to erase the item 2 times and CRASH on the second,
+       * therefore the abort is appropriate.
+       */
+      ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+    }
 
     ItemIDMap.erase(ItemIDMap.find(ID));
     DBG2("ERASED!:ItemID",ID);
@@ -3296,7 +3295,7 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentArea()->GetSquare(Pos)));
+  SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentArea()->GetSquare(Pos)));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -4502,7 +4501,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     }
     else
     {
-      SetPlayer(bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(GetCurrentLevel()->GetLSquare(Pos)));
+      SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentLevel()->GetLSquare(Pos)));
     }
 
     uint c;
@@ -4868,6 +4867,11 @@ std::vector<character*> game::GetAllCharacters()
   return vc;
 }
 
+characteridmap game::GetCharacterIDMapCopy()
+{
+  return CharacterIDMap;
+}
+
 std::vector<item*> game::GetAllItems()
 {
   std::vector<item*> vc;
@@ -4876,6 +4880,10 @@ std::vector<item*> game::GetAllItems()
       vc.push_back(ItemIDMap[i]);
   }
   return vc;
+}
+itemidmap game::GetItemIDMapCopy()
+{
+  return ItemIDMap;
 }
 
 item* game::SearchItem(ulong ID)

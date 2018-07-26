@@ -18,13 +18,15 @@ struct bugWorkaroundDupPlayerCharItem{
   character* Char;
   item* it;
 };
-class bugWorkaroundDupPlayer{
+class bugfixdp{
   public:
     static void init();
-    static character* BugWorkaroundDupPlayer(square* sqr);
-    static character* BugWorkaroundDupPlayer(character* CharAsked, v2 v2AskedPos,bool bForceDupPlayerCheck=false);
-    static void DevConsCmd(std::string strCmdParams);
+    static character* ValidatePlayerAt(square* sqr);
+
   private:
+    static character* BugWorkaroundDupPlayer();
+    static void DevConsCmd(std::string strCmdParams);
+
     static void GatherAllItemInLevel();
     static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
     static void FixPlayerDupInv(character* CharChk);
@@ -36,6 +38,9 @@ class bugWorkaroundDupPlayer{
     static void CharAllItemsInfo(character* CharAsked);
     static void CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem);
 
+    static character* FindValidPlayer(v2 ReqPosL,bool bAndFixIt);
+    static std::vector<character*> FindPlayersOnLevel();
+    static std::vector<character*> FindCharactersOnLevel(bool bOnlyPlayers=false);
     static bool ScanLevelForCharactersAndItemsWork(item*, bool, bool, std::vector<bugWorkaroundDupPlayerCharItem>*);
     static void CollectAllItemsOnLevel(std::vector<item*>* pvAllItemsOnLevel);
     static void CollectAllCharactersOnLevel(std::vector<character*>* pvCharsOnLevel);
@@ -45,10 +50,7 @@ class bugWorkaroundDupPlayer{
     static void DupPlayerFix(character*);
 
     static void DrawAlertConfirmFix(bitmap* Buffer);
-    static void AlertConfirmFixMsg(const char* cMsg, bool bAbortIfNot);
-//    static bool isItemOnVector(std::vector<item*>* pv, item* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
-//    static bool isCharOnVector(std::vector<character*>* pv, character* e){return (std::find(pv->begin(), pv->end(), e) != pv->end());}
-    static bool Accepted;
+    static bool AlertConfirmFixMsg(const char* cMsg);
 };
 
 

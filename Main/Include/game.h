@@ -327,7 +327,9 @@ class game
   static void CallForAttention(v2, int);
   static character* SearchCharacter(ulong);
   static std::vector<character*> GetAllCharacters();
+  static characteridmap GetCharacterIDMapCopy();
   static std::vector<item*> GetAllItems();
+  static itemidmap GetItemIDMapCopy();
   static item* SearchItem(ulong);
   static entity* SearchTrap(ulong);
   static void AddCharacterID(character*, ulong);

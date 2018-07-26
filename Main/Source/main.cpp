@@ -102,7 +102,7 @@ int main(int argc, char** argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
   globalwindowhandler::SetDeveloperConsoleHandler(devcons::Command);
-  bugWorkaroundDupPlayer::init();
+  bugfixdp::init();
   definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();
