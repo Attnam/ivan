@@ -659,7 +659,7 @@ struct recipe{
       return;
     }
 
-    ABORT("at most 2 tools '%s' '%s' '%s'",rpd.itTool->GetName(INDEFINITE),rpd.itTool2->GetName(INDEFINITE),itTool->GetName(INDEFINITE));
+    ABORT("at most 2 tools '%s' '%s' '%s'",rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetName(INDEFINITE).CStr(),itTool->GetName(INDEFINITE).CStr());
   }
 
   static item* findCarvingTool(recipedata& rpd,item* itToWorkOn){
