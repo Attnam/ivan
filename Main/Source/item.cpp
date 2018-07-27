@@ -1057,7 +1057,7 @@ truth item::AllowSpoil() const
   DBGEXEC( //this wont even compile if DBGMSG is not enabled
     /** crash helper
      * THE CAUSE SEEMS TO BE from crafting a new item, it being a chest, and cancelling. The code was not sending the canceled spawned chest to hell and it was not placed anywhere. Fixed that, this may not happen again.
-     * TODO remove this debug code and the workaround below after sure wont needed anymore.
+     * TODO remove this debug code and the workaround below after sure wont need anymore. despite the debug code will only compile if using DBGMSG
      * seems to be about a buggy organic spawned "on floor" that has no square under...
     *  happens below at: if(IsOnGround())
    *   item.cpp:1048:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="92980";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x8272630";

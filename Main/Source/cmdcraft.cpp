@@ -237,6 +237,8 @@ void recipedata::Save(outputfile& SaveFile) const
     << bMeltable
 
     << v2WorkbenchLocation
+    << iRemainingTurnsToFinish
+    << bGradativeCraftOverride
 
     ;
 
@@ -294,6 +296,8 @@ void recipedata::Load(inputfile& SaveFile)
     >> bMeltable
 
     >> v2WorkbenchLocation
+    >> iRemainingTurnsToFinish
+    >> bGradativeCraftOverride
 
     ;
 
@@ -449,6 +453,8 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bMeltable=false;
 
   v2WorkbenchLocation=v2(0,0);
+  iRemainingTurnsToFinish=iBaseTurnsToFinish;
+  bGradativeCraftOverride=false;
 }
 
 int craftcore::CurrentDungeonLevelID(){
@@ -563,6 +569,7 @@ struct ci{
   bool bDenyDegradation = true;
 
   bool bFirstItemMustHaveFullVolumeRequired=false;
+  bool bAllowMeltables=true;
 };
 struct recipe{
   festring action;
@@ -633,6 +640,70 @@ struct recipe{
       );
   }
 
+  static bool setTools(recipedata& rpd,item* itTool,item* itTool2){
+    addTool(rpd,itTool);
+    addTool(rpd,itTool2);
+    return rpd.itTool2!=NULL;
+  }
+  static void addTool(recipedata& rpd,item* itTool){
+    if(rpd.itTool==itTool)return;
+    if(rpd.itTool2==itTool)return;
+
+    if(rpd.itTool==NULL){
+      rpd.itTool=itTool;
+      return;
+    }
+
+    if(rpd.itTool2==NULL){
+      rpd.itTool2=itTool;
+      return;
+    }
+
+    ABORT("at most 2 tools '%s' '%s' '%s'",rpd.itTool->GetName(INDEFINITE),rpd.itTool2->GetName(INDEFINITE),itTool->GetName(INDEFINITE));
+  }
+
+  static item* findCarvingTool(recipedata& rpd,item* itToWorkOn){
+    int iCarvingStr=0;
+
+    material* matM = itToWorkOn->GetMainMaterial();
+    material* matS = itToWorkOn->GetSecondaryMaterial();
+    if(!craftcore::IsMeltable(matM))
+      iCarvingStr=matM->GetStrengthValue();
+    if(matS!=NULL && !craftcore::IsMeltable(matS))
+      iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
+
+    int iMinCarvingStr = iCarvingStr/2;
+
+    item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
+
+    if(itTool!=NULL){
+//      addTool(itTool);
+//      if(rpd.itTool==NULL)
+//        rpd.itTool=itTool;
+//      else
+//        rpd.itTool2=itTool;
+
+      int iMult=1;
+      if(iCarvingStr>1){
+        int itStr=itTool->GetMainMaterial()->GetStrengthValue();
+        if(itStr<iCarvingStr)
+          iMult++;
+        if(itStr==iMinCarvingStr)
+          iMult++;
+      }
+      calcToolTurns(rpd,iMult);
+
+      if(!recipe::findOLT(rpd,WORK_BENCH)){
+        ADD_MESSAGE("There is no workbench here, this will take time..."); //it is good to measure, hold tight, has a good height etc...
+        rpd.iBaseTurnsToFinish *= 3;
+      }
+
+//      return true;
+    }
+//    return false;
+    return itTool;
+  }
+
   static item* FindTool(recipedata& rpd, int iCfg, int iWeaponCategory=0, int iMainMatterMinStrengh=0){
     itemvector vit = vitInv(rpd);
     for(int i=0;i<vit.size();i++)
@@ -696,8 +767,8 @@ struct recipe{
         if(it==NULL)iMult++; \
       } \
       iMaxMult++;
-    FBWC(SMALL_SWORDS);
-    FBWC(AXES);
+    FBWC(SMALL_SWORDS); //DAGGER is here
+    FBWC(AXES); //has more cutting power but less precision and takes more time TODO is this good?
     FBWC(LARGE_SWORDS);
     FBWC(POLE_ARMS);
 
@@ -740,6 +811,9 @@ struct recipe{
           continue;
 
         if(CI.bFirstItemMustHaveFullVolumeRequired && vi[i]->GetVolume()<reqVol)
+          continue;
+
+        if(!CI.bAllowMeltables && craftcore::IsMeltable(vi[i]))
           continue;
 
         bool bAlreadyUsed=false;
@@ -933,26 +1007,27 @@ struct recipe{
     }
   }
 
-  lsquare* lsqrFORGE = NULL;
-  lsquare* lsqrANVIL = NULL;
-  lsquare* lsqrWorkbench = NULL;
-  void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
+//  lsquare* lsqrFORGE = NULL;
+//  lsquare* lsqrANVIL = NULL;
+//  lsquare* lsqrWorkbench = NULL;
+  static void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
     switch(iCfgOLT){
     case FORGE:
-      lsqrFORGE = lsqr;
+//      lsqrFORGE = lsqr;
       rpd.v2ForgeLocation = lsqr->GetPos();
       break;
     case ANVIL:
-      lsqrANVIL = lsqr;
+//      lsqrANVIL = lsqr;
       rpd.v2AnvilLocation = lsqr->GetPos();
       break;
     case WORK_BENCH:
-      lsqrWorkbench = lsqr;
+//      lsqrWorkbench = lsqr;
       rpd.v2WorkbenchLocation = lsqr->GetPos();
       break;
     }
   }
-  bool chkOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){DBGLN;
+
+  static bool chkOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){DBGLN;
     olterrain* ot = lsqr->GetOLTerrain();
     if(ot!=NULL && ot->GetConfig() == iCfgOLT && lsqr->CanBeSeenBy(rpd.rc.H())){
       SetOLT(rpd,lsqr,iCfgOLT);
@@ -960,7 +1035,7 @@ struct recipe{
     }
     return false;
   }
-  bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
+  static bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
     bool bFound=false;
     if(bReqOnlyVisible){DBGLN;
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
@@ -1331,7 +1406,7 @@ struct srpMelt : public srpJoinLumps{
     item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
 
     item* LumpMeltable=NULL;
-    if(craftcore::IsMeltable(Lump->GetMainMaterial()))
+    if(craftcore::IsMeltable(Lump))
       LumpMeltable = Lump;
 
     if(LumpMeltable==NULL){
@@ -1345,6 +1420,8 @@ struct srpMelt : public srpJoinLumps{
     joinLumpsEqualTo(rpd,matM);
 
     rpd.iBaseTurnsToFinish = calcMeltableTurns(matM,5); DBG1(rpd.iBaseTurnsToFinish);
+
+    rpd.bGradativeCraftOverride=true;
 
     rpd.bHasAllIngredients=true;
 
@@ -1448,7 +1525,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     matM = itToUse->GetMainMaterial();
     matS = itToUse->GetSecondaryMaterial();
 
-    rpd.bMeltable = craftcore::IsMeltable(matM) || (matS!=NULL && craftcore::IsMeltable(matS));
+    rpd.bMeltable = craftcore::IsMeltable(itToUse);
     if(rpd.bMeltable){
       if(!recipe::findOLT(rpd,FORGE))
         return false;
@@ -1513,57 +1590,94 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 };srpDismantle rpDismantle;
 
 struct srpSplitLump : public recipe{
+  void explain(recipedata& rpd,festring fs){
+    ADD_MESSAGE("I need a cutting weapon to split %s.",fs.CStr());
+    rpd.bAlreadyExplained=true;
+  }
+
+  bool reqCut(recipedata& rpd,cfestring fs){
+    rpd.itTool = FindCuttingTool(rpd);
+    if(rpd.itTool==NULL){
+      explain(rpd,fs);
+      return false;
+    }
+    return true;
+  }
+
   virtual void fillInfo(){
-    init("split","some lumps or sticks");
-    desc << "Split it to be easier to work with.";
+    init("split","some base materials");
+    desc << "Split them to be easier to work with.";
   }
 
   virtual bool work(recipedata& rpd){
-    item* Lump = NULL;
+    item* ToSplit = NULL;
 
-    if(choseOneIngredient<lump>(rpd)){
-      Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+    if(ToSplit==NULL && choseOneIngredient<lump>(rpd)){ //can  be split with hands only
+      ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
       rpd.itSpawnType = CIT_LUMP;
-    }else
-    if(choseOneIngredient<corpse>(rpd)){ //this is just a simplified conversion from corpse to a big lump...
+    }
+
+    if(ToSplit==NULL && choseOneIngredient<corpse>(rpd)){ //this is just a simplified conversion from corpse to a big lump...
       corpse* Corpse = (corpse*)game::SearchItem(rpd.ingredientsIDs[0]);
 
-      rpd.itTool = FindCuttingTool(rpd);
-      if(rpd.itTool==NULL){
-        ADD_MESSAGE("I need a cutting weapon to split %s.",Corpse->GetName(INDEFINITE).CStr());
-        rpd.bAlreadyExplained=true;
+      if(!reqCut(rpd,Corpse->GetName(INDEFINITE)))
         return false;
-      }
 
       //TODO this should take time as an action
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
-      Lump = craftcore::PrepareRemains(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      ToSplit = craftcore::PrepareRemains(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
       rpd.itSpawnType = CIT_LUMP;
 
       craftcore::SendToHellSafely(Corpse);
       rpd.ingredientsIDs.clear();
 
-      rpd.ingredientsIDs.push_back(Lump->GetID());
+      rpd.ingredientsIDs.push_back(ToSplit->GetID());
 
       rpd.bAlreadyExplained=true; //no need to say anything
-    }else
-    if(choseOneIngredient<stick>(rpd)){
-      Lump = game::SearchItem(rpd.ingredientsIDs[0]);
+    }
+
+    if(ToSplit==NULL && choseOneIngredient<stick>(rpd)){
+      ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
+      if(!reqCut(rpd,ToSplit->GetName(INDEFINITE)))
+        return false;
       rpd.itSpawnType = CIT_STICK;
     }
 
-    if(Lump==NULL)
+    {
+      ci CI;
+      CI.bAllowMeltables=false;
+      if(ToSplit==NULL && choseOneIngredient<stone>(rpd,&CI)){
+        ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
+        if(!setTools(rpd,FindBluntTool(rpd),findCarvingTool(rpd,ToSplit))){ //the blunt is to hit the cutting one
+          explain(rpd,ToSplit->GetName(INDEFINITE));
+          return false;
+        }
+//        bool bHasAllTools=true;
+//        addTool(rpd,FindBluntTool(rpd));
+//        //        if(!reqCut(rpd,ToSplit->GetName(INDEFINITE)))
+//        addTool(findCarvingTool(rpd,ToSplit));
+//        if(!findCarvingTool(rpd,ToSplit)){
+//          explain(rpd,ToSplit->GetName(INDEFINITE));
+//          return false;
+//        }
+        rpd.itSpawnType = CIT_STONE;
+      }
+    }
+
+    if(ToSplit==NULL)
       return false;
 
-    if(craftcore::IsDegraded(Lump)){
+    if(craftcore::IsDegraded(ToSplit)){
       rpd.bAlreadyExplained=true;
       return false;
     }
 
-    long volM=Lump->GetMainMaterial()->GetVolume();
+    long volM=ToSplit->GetMainMaterial()->GetVolume();
 
-    long totParts = game::NumberQuestion(CONST_S("Split in how many parts?"), WHITE, true);
+    festring fsInfo;
+    ToSplit->AddInventoryEntry(rpd.rc.H(),fsInfo,1,true);
+    long totParts = game::NumberQuestion(festring()+"Split "+fsInfo+" in how many parts?", WHITE, true);
     if(totParts<=1)
       return false;
 
@@ -1574,14 +1688,14 @@ struct srpSplitLump : public recipe{
       return false;
     }
 
-    long volRest = volM%totParts;
+    long volRest = volM%totParts; //gradative work should take care of it
 
-    rpd.CopySpawnItemCfgFrom(Lump);
+    rpd.CopySpawnItemCfgFrom(ToSplit);
     rpd.itSpawnMatMainVol = volPart;
-    rpd.itSpawnTot = totParts-1; //part of the original lump is kept
+    rpd.itSpawnTot = totParts;
 
     float fTotTurns=0;
-    for(int i=1;i<=totParts;i++){ //better try to not explain this :) TODO should be based on cut area/length
+    for(int i=1;i<=totParts;i++){ //TODO should be based on cut area/length
       float fCurrentPartVol=volM/(float)i;
       float fTurns=fCurrentPartVol/100000.0; //bear is 150000cm3
       fTotTurns+=fTurns; //turn time is one minute but when fighting it also spends 1 min... w/e...
@@ -1589,6 +1703,8 @@ struct srpSplitLump : public recipe{
     rpd.iBaseTurnsToFinish = fTotTurns;
     if(rpd.iBaseTurnsToFinish<1)
       rpd.iBaseTurnsToFinish=1;
+
+    rpd.bGradativeCraftOverride=true;
 
     rpd.bAlreadyExplained=true; //no need to say anything
 
@@ -1632,7 +1748,7 @@ struct srpForgeItem : public recipe{
           break;
         }else{
           festring fsDoWhat = "I don't have the power required to enchant";
-          if(itSpawn->GetCategory()==FOOD)fsDoWhat="I never learned how to cook"; //TODO sounds weird for kiwi/banana
+          if(itSpawn->GetCategory()==FOOD)fsDoWhat="I never learned how to cook"; //TODO sounds weird for kiwi/banana TODO could at least roast stuff TODO needs seeds to create flour and bake breads
           if(itSpawn->GetCategory()==BOOK)fsDoWhat="I don't have time to write";
           ADD_MESSAGE("%s %s!",fsDoWhat.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
           craftcore::SendToHellSafely(itSpawn);
@@ -1825,35 +1941,37 @@ struct srpForgeItem : public recipe{
     // DAGGER for carving
     if(!bMissingTools){
       if(!bMeltableM || !bMeltableS){
-        //TODO findCarvingTool()
-        int iCarvingStr=0;
-        if(!bMeltableM)iCarvingStr=matM->GetStrengthValue();
-        if(!bMeltableS)iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
-        int iMinCarvingStr = iCarvingStr/2;
-        item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
-        if(itTool!=NULL){
-          if(rpd.itTool==NULL)
-            rpd.itTool=itTool;
-          else
-            rpd.itTool2=itTool;
-
-          int iMult=1;
-          if(iCarvingStr>1){
-            int itStr=itTool->GetMainMaterial()->GetStrengthValue();
-            if(itStr<iCarvingStr)
-              iMult++;
-            if(itStr==iMinCarvingStr)
-              iMult++;
-          }
-          calcToolTurns(rpd,iMult);
-
-          if(!recipe::findOLT(rpd,WORK_BENCH)){
-            ADD_MESSAGE("There is no workbench here, this will take time...");
-            rpd.iBaseTurnsToFinish *= 3;
-          }
-        }else{
+        if(!findCarvingTool(rpd,itSpawn))
           bMissingTools=true;
-        }
+//        //TODO findCarvingTool()
+//        int iCarvingStr=0;
+//        if(!bMeltableM)iCarvingStr=matM->GetStrengthValue();
+//        if(!bMeltableS)iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
+//        int iMinCarvingStr = iCarvingStr/2;
+//        item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
+//        if(itTool!=NULL){
+//          if(rpd.itTool==NULL)
+//            rpd.itTool=itTool;
+//          else
+//            rpd.itTool2=itTool;
+//
+//          int iMult=1;
+//          if(iCarvingStr>1){
+//            int itStr=itTool->GetMainMaterial()->GetStrengthValue();
+//            if(itStr<iCarvingStr)
+//              iMult++;
+//            if(itStr==iMinCarvingStr)
+//              iMult++;
+//          }
+//          calcToolTurns(rpd,iMult);
+//
+//          if(!recipe::findOLT(rpd,WORK_BENCH)){
+//            ADD_MESSAGE("There is no workbench here, this will take time...");
+//            rpd.iBaseTurnsToFinish *= 3;
+//          }
+//        }else{
+//          bMissingTools=true;
+//        }
       }
     }
 
@@ -2249,7 +2367,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     if(rpd.itTool2!=NULL){
       if(!fsTools.IsEmpty())
         fsTools<<" and ";
-      fsTools<<rpd.itTool->GetName(INDEFINITE);
+      fsTools<<rpd.itTool2->GetName(INDEFINITE);
     }
     if(!fsTools.IsEmpty())
       ADD_MESSAGE("Let me see.. I will use %s as tool(s).",fsTools.CStr());
@@ -2290,6 +2408,9 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
       rpd.v2PlayerCraftingAt = Char->GetPos();
 
+      if(rpd.itTool!=NULL && rpd.itTool2!=NULL)
+        if(rpd.itTool==rpd.itTool2)
+          ABORT("both tools are the same item %d:%s %d:%s",rpd.itTool->GetID(),rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetID(),rpd.itTool2->GetName(INDEFINITE).CStr());
       if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
@@ -2359,6 +2480,10 @@ item* craftcore::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn
       itSpawn->SetConfig(rpd.itSpawnCfg | BROKEN);
       itSpawn->SetSize(itSpawn->GetSize() >> 1);
     }else{
+      /**
+       * things that can't be broken are special.
+       * if it can't be broken, will just create a messy lump.
+       */
       ADD_MESSAGE("My lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
       craftcore::PrepareRemains(itSpawn->GetMainMaterial(), rpd);
       if(itSpawn->GetSecondaryMaterial()!=NULL)
@@ -2444,7 +2569,7 @@ item* craftcore::SpawnItem(recipedata& rpd, festring& fsCreated)
        * IMPORTANT!!!
        * do not use NO_MATERIALS here,
        * apparently the main material is always required for it
-       * and the main material would remain uninitialized (instead of NULL)
+       * and the main material would remain uninitialized (instead of NULL TODO fix that?)
        * leading to SEGFAULT when trying to set the main material!
        */
       itSpawn = potion::Spawn(rpd.itSpawnCfg); //may be a vial
@@ -2518,9 +2643,10 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
 
-  bool bLumpMode = CraftFromLumpOverride(rpd);
+  if(rpd.bGradativeCraftOverride)
+    GradativeCraftOverride(rpd);
 
-  if(rpd.bSuccesfullyCompleted && !bLumpMode)
+  if(rpd.bSuccesfullyCompleted && !rpd.bGradativeCraftOverride)
   {DBGLN;
     festring fsMsg("");
 
@@ -2539,15 +2665,17 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
   }
 }
 
-bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
+/**
+ * ex.:
+ * - a big meltable lump into ingots
+ * - a big stick into tiny ones
+ * - a rock into smaller ones
+ */
+void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
-    return false;
+    ABORT("incompatible gradative mode and ingredients count %d",rpd.ingredientsIDs.size());
 
-  item* Lump=game::SearchItem(rpd.ingredientsIDs[0]);DBGLN;
-  if(dynamic_cast<lump*>(Lump)==NULL)
-    return false;
-
-  material* matM = Lump->GetMainMaterial();DBGLN;
+  material* matM = game::SearchItem(rpd.ingredientsIDs[0])->GetMainMaterial();DBGLN;
   long matMRemVol = matM->GetVolume();
 
   /**
@@ -2556,12 +2684,14 @@ bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
    * __  = __ ; x=_____=18 ; tot-x=SpawnNow=2
    * tot   x       base
    */
-  float fRemain = (rpd.iRemainingTurnsToFinish*rpd.itSpawnTot)/((float)rpd.iBaseTurnsToFinish);
+  float fRemain = 0;
+  if(rpd.iBaseTurnsToFinish>1)
+    fRemain = (rpd.iRemainingTurnsToFinish*rpd.itSpawnTot)/((float)rpd.iBaseTurnsToFinish);
   int iSpawnNow = rpd.itSpawnTot-fRemain;
   ulong spawnedVol = rpd.itSpawnMatMainVol*iSpawnNow;
   DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
   if(iSpawnNow==0)
-    return true; //holding until required time is met ex.: each spawned requires more than one turn, even if a fraction.
+    return; //holding until required time is met ex.: each spawned requires more than one turn, even if a fraction.
 
   recipedata rpdTmp = rpd; // a copy to avoid messing it
   if(rpdTmp.itSpawnType==CIT_STICK && rpdTmp.fDifficulty<=1.0)
@@ -2584,7 +2714,7 @@ bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
     ADD_MESSAGE("%s.",fsMsg.CStr());
 
     if(rpdTmp.itSpawnType==CIT_STICK)
-      rpdTmp.bCanBeBroken=false; //reset for next stick fumble check
+      rpdTmp.bSpawnBroken=false; //reset for next stick fumble check
   }
 
   rpd.itSpawnTot -= iSpawnNow;
@@ -2608,8 +2738,8 @@ bool craftcore::CraftFromLumpOverride(recipedata& rpd){DBGLN;
   else
     matM->SetVolume(matMRemVol-spawnedVol); //the remaining volume becomes the action control/limit
 
+  matMRemVol=matM->GetVolume();
   DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
-  return true;
 }
 
 void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
@@ -2645,7 +2775,11 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
     if(clock()%100<=iFumblePower){
       if(!rpd.bSpawnBroken && bChangeTurns){
         rpd.iBaseTurnsToFinish/=2; //just complete the broken item (as AV gets halved) TODO repair system
-        if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1) //to insta provide the obvious messy lump
+        /**
+         * this will insta provide the obvious messy lump as the item can't be broken
+         * and won't even be half-usable, so dont wast player's time to craft nothing useful.
+         */
+        if(!rpd.bCanBeBroken && rpd.iBaseTurnsToFinish>1)
           rpd.iBaseTurnsToFinish=1;
       }
       rpd.bSpawnBroken=true;
@@ -2697,6 +2831,7 @@ void craftcore::CheckIngredients(recipedata& rpd){
 
 void craftcore::CheckFacilities(recipedata& rpd){
   rpd.rc.integrityCheck();
+  rpd.lvl = rpd.lsqrActor->GetLevel();
   if(!rpd.v2AnvilLocation.Is0()){
     olterrain* ot = rpd.lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
     if(ot==NULL || ot->GetConfig()!=ANVIL){
@@ -2750,15 +2885,18 @@ item* checkTool(ulong id,lsquare* lsqrActor){
 
 void craftcore::CheckTools(recipedata& rpd){
   rpd.lsqrActor = rpd.rc.H()->GetLSquareUnder(); DBGSV2(rpd.lsqrActor->GetPos());
-  rpd.lvl = rpd.lsqrActor->GetLevel();
 
-  rpd.itTool=checkTool(rpd.itToolID,rpd.lsqrActor);
-  if(rpd.itTool==NULL)
-    rpd.bFailed=true;
+  if(rpd.itToolID>0){
+    rpd.itTool=checkTool(rpd.itToolID,rpd.lsqrActor);
+    if(rpd.itTool==NULL)
+      rpd.bFailed=true;
+  }
 
-  rpd.itTool2=checkTool(rpd.itTool2ID,rpd.lsqrActor);
-  if(rpd.itTool2ID>0 && rpd.itTool2==NULL)
-    rpd.bFailed=true;
+  if(rpd.itTool2ID>0){
+    rpd.itTool2=checkTool(rpd.itTool2ID,rpd.lsqrActor);
+    if(rpd.itTool2ID>0 && rpd.itTool2==NULL)
+      rpd.bFailed=true;
+  }
 
   if(rpd.bFailed)
     rpd.itTool=rpd.itTool2=NULL; //consistency or have the two (if required), or have none
@@ -2928,6 +3066,20 @@ bool craftcore::IsWooden(material* mat){
   if(mat->GetConfig()>=FUNGI_WOOD && mat->GetConfig()<=PETRIFIED_WOOD)
     return true;
   return false;
+}
+
+truth craftcore::IsMeltable(item* it)
+{
+  return IsMeltable(it->GetMainMaterial(),it->GetSecondaryMaterial());
+}
+
+truth craftcore::IsMeltable(material* matM,material* matS)
+{
+  if(!craftcore::IsMeltable(matM))
+    return false;
+  if(matS!=NULL && !craftcore::IsMeltable(matS))
+    return false;
+  return true;
 }
 
 truth craftcore::IsMeltable(material* mat){

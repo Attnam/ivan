@@ -180,8 +180,9 @@ class recipedata {
     bool bCanBeBroken;
     bool bMeltable;
 
-    int iRemainingTurnsToFinish;
     v2 v2WorkbenchLocation;
+    int iRemainingTurnsToFinish;
+    bool bGradativeCraftOverride;
 
   public:
     recipedata(humanoid* H=NULL,uint sel=FELIST_ERROR_BIT);
@@ -233,13 +234,16 @@ class craftcore {
     static olterrain* SpawnTerrain(recipedata& rpd, festring& fsCreated);
 
     static void CraftWorkTurn(recipedata& rpd);
-    static bool CraftFromLumpOverride(recipedata& rpd);
+    static void GradativeCraftOverride(recipedata& rpd);
 
     static cfestring DestroyIngredients(recipedata& rpd);
 
     static bool IsDegraded(item* it,bool bShowMsg=false);
     static truth IsMeltable(material* mat);
+    static truth IsMeltable(material* matM,material* matS);
+    static truth IsMeltable(item* it);
     static bool IsWooden(material* mat);
+
     static item* PrepareRemains(material* mat, recipedata& rpd);
 
 //    static material* CreateMaterial(bool bMain,recipedata* prpd,material* matOverride=NULL);

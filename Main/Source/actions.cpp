@@ -350,7 +350,7 @@ bool craft::IsSuspending(){
 }
 
 void craft::Terminate(truth Finished)
-{DBGLN;
+{DBGSTK;
   if(Flags & TERMINATING)
     return;
 
