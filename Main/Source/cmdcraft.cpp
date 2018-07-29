@@ -1717,7 +1717,7 @@ struct srpSplitLump : public recipe{
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("forge","an item");
-    desc << "Using something as a hammer, close to an anvil and with a forge nearby you can create items.";
+    desc << "Using a blunt weapon as hammer, close to an anvil and with a forge nearby you can create items.";
   }
 
   virtual bool work(recipedata& rpd){DBGLN;
