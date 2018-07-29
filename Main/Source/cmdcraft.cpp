@@ -522,7 +522,7 @@ olterrain* craftcore::SpawnTerrain(recipedata& rpd, festring& fsCreated){
     otSpawn->SetSecondaryMaterial(material::MakeMaterial(rpd.otSpawnMatSecCfg,rpd.otSpawnMatSecVol));
 
   fsCreated << "You built ";
-  rpd.lsqrPlaceAt->ChangeOLTerrainAndUpdateLights(otSpawn);
+  rpd.lsqrPlaceAt->ChangeOLTerrainAndUpdateLights(otSpawn); //TODO a forge seems to not be emitting light...
 
   fsCreated << otSpawn->GetName(INDEFINITE);
 
@@ -563,7 +563,7 @@ struct ci{
   bool bInstaAddIngredients=false;
 
   bool bFirstMainMaterIsFilter=true;
-  int iReqMatCfgMain=0;
+  int iReqMatCfgMain=0; //setting this overrides bFirstMainMaterIsFilter
   int iReqMatCfgSec=0;
   bool bJustAcceptFirstChosenAndReturn=false;
   bool bDenyDegradation = true;
@@ -856,9 +856,6 @@ struct recipe{
     if(reqVol==0)
       ABORT("ingredient required 0 volume?");
 
-    if(CI.bFirstMainMaterIsFilter && CI.iReqMatCfgMain!=0)
-      ABORT("not implemented how to deal with bFirstMainMaterIsFilter=true VS iReqMatCfgMain!=0 %d",CI.iReqMatCfgMain);
-
     const itemvector vi = vitInv(rpd);
     prepareFilter<T>(rpd,vi,reqVol,CI);
 
@@ -1009,21 +1006,15 @@ struct recipe{
     }
   }
 
-//  lsquare* lsqrFORGE = NULL;
-//  lsquare* lsqrANVIL = NULL;
-//  lsquare* lsqrWorkbench = NULL;
   static void SetOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){
     switch(iCfgOLT){
     case FORGE:
-//      lsqrFORGE = lsqr;
       rpd.v2ForgeLocation = lsqr->GetPos();
       break;
     case ANVIL:
-//      lsqrANVIL = lsqr;
       rpd.v2AnvilLocation = lsqr->GetPos();
       break;
     case WORK_BENCH:
-//      lsqrWorkbench = lsqr;
       rpd.v2WorkbenchLocation = lsqr->GetPos();
       break;
     }
@@ -1031,7 +1022,7 @@ struct recipe{
 
   static bool chkOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){DBGLN;
     olterrain* ot = lsqr->GetOLTerrain();
-    if(ot!=NULL && ot->GetConfig() == iCfgOLT && lsqr->CanBeSeenBy(rpd.rc.H())){
+    if(ot!=NULL && ot->GetConfig() == iCfgOLT){
       SetOLT(rpd,lsqr,iCfgOLT);
       return true;
     }
@@ -1039,47 +1030,27 @@ struct recipe{
   }
   static bool findOLT(recipedata& rpd,int iCfgOLT,bool bReqOnlyVisible=false){
     bool bFound=false;
-    if(bReqOnlyVisible){DBGLN;
+    if(bReqOnlyVisible){DBGLN; //even if far away
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
         lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
-        if(chkOLT(rpd,lsqr,iCfgOLT)){
+        if((lsqr->CanBeFeltByPlayer() || lsqr->CanBeSeenBy(rpd.rc.H())) && chkOLT(rpd,lsqr,iCfgOLT)){
           bFound = true;
           break;
         }
       }}
     }else{DBGLN; //must be on adjacent square
-//      int iDist = 1; //TODO improve this (despite fun, is wrong..)
-//      for(int i=0;i<(8*iDist);i++){
-//        int iDir = i%8;
-//        int iMult = 1 + i/8;
-//        v2 v2Add = game::GetMoveVector(iDir) * iMult;
-//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
-//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);
-//          if(chkOLT(rpd,lsqr,iCfgOLT)){
-//            bFound = true;
-//            break;
-//          }
-//        }
-//      }
       for(int iDir=0;iDir<8;iDir++){
         v2 v2Add = game::GetMoveVector(iDir);
         v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
         if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
           lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
-          if(chkOLT(rpd,lsqr,iCfgOLT)){
+//          if(lsqr->CanBeFeltBy(rpd.rc.H()) && chkOLT(rpd,lsqr,iCfgOLT)){
+          if(lsqr->CanBeFeltByPlayer() && chkOLT(rpd,lsqr,iCfgOLT)){
             bFound = true;
             break;
           }
-//          olterrain* ot = lsqr->GetOLTerrain();
-//          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.rc.H())){
-//            lsqrAnvil = lsqr;
-//            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
-//            break;
-//          }
         }
       }
-
     }
 
     if(!bFound){
