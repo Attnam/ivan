@@ -322,19 +322,35 @@ void dig::Terminate(truth Finished)
 void go::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Direction << WalkingInOpen;
+  SaveFile << Direction << WalkingInOpen << RouteGoOn;
 }
 
 void go::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Direction >> WalkingInOpen;
+  SaveFile >> Direction >> WalkingInOpen >> RouteGoOn;
+}
+
+void go::SetDirectionFromRoute()
+{
+  v2 next = RouteGoOn.back();
+  RouteGoOn.pop_back();
+  SetDirection(
+    game::GetDirectionForVector(
+      next-Actor->GetPos()));
 }
 
 void go::Handle()
 {
+  bool bRouteMode = IsRouteMode();
+  if(bRouteMode)
+    SetDirectionFromRoute();
+
   GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
   GetActor()->GoOn(this);
+
+  if(bRouteMode && RouteGoOn.size()==0) //last step
+    Terminate(false);
 }
 
 void study::Handle()

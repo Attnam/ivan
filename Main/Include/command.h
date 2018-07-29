@@ -48,6 +48,8 @@ class commandsystem
   static void ClearSwapWeapons();
  private:
   static truth Apply(character*);
+  static truth ApplyWork(character* Char,item* itOverride=NULL);
+  static truth ApplyAgain(character* Char);
   static truth Close(character*);
   static truth Eat(character*);
   static truth Drink(character*);
@@ -83,6 +85,7 @@ class commandsystem
   static truth Rest(character*);
   static truth Sit(character*);
   static truth ShowMap(character*);
+  static truth ShowMapWork(character* Char,v2* pv2ChoseLocation=NULL);
   static truth Go(character*);
   static truth ShowConfigScreen(character*);
   static truth ScrollMessagesDown(character*);

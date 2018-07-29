@@ -71,6 +71,7 @@ command* commandsystem::Command[] =
   /* Sort according to description */
 
   new command(&Apply, "apply", 'a', 'a', 'a', false),
+  new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Dip, "dip", '!', '!', '!', false),
@@ -1322,9 +1323,37 @@ truth commandsystem::Throw(character* Char)
   }
 }
 
+ulong itLastApplyID=0; //save it?
+truth commandsystem::ApplyAgain(character* Char)
+{
+  if(itLastApplyID==0){
+    ADD_MESSAGE("I need to apply something first.");
+    return false;
+  }
+
+  item* it=game::SearchItem(itLastApplyID);
+  if(!it){
+    itLastApplyID=0;
+    ADD_MESSAGE("I can't re-apply, it was destroyed.");
+    return false;
+  }
+
+  if(it->FindCarrier()==Char){
+    ADD_MESSAGE("I will apply my %s again.",it->GetName(UNARTICLED).CStr());
+    return ApplyWork(Char,it);
+  }else
+    ADD_MESSAGE("I need to get my %s back!",it->GetName(UNARTICLED).CStr());
+
+  return false;
+}
+
 truth commandsystem::Apply(character* Char)
 {
+  return ApplyWork(Char);
+}
 
+truth commandsystem::ApplyWork(character* Char,item* itOverride)
+{
   if(!Char->CanApply())
   {
     ADD_MESSAGE("This monster type cannot apply.");
@@ -1341,8 +1370,13 @@ truth commandsystem::Apply(character* Char)
     return false;
   }
 
-  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
+  item* Item = itOverride;
+  if(Item==NULL)
+    Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
   bool b = Item && Item->Apply(Char);
+
+  if(b)
+    itLastApplyID=Item->GetID();
 
   return b;
 }
@@ -1488,6 +1522,10 @@ truth commandsystem::Rest(character* Char)
 
 truth commandsystem::ShowMap(character* Char)
 {
+  return ShowMapWork(Char);
+}
+truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
+{
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
 
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
@@ -1495,9 +1533,15 @@ truth commandsystem::ShowMap(character* Char)
       lsquare* lsqrH=NULL;
       while(true){
         v2 noteAddPos = Char->GetPos();
-        switch(game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
-          KEY_ESC, 5, 't', 'l', 'r','d','e')
-        ){
+
+        int key;
+        if(pv2ChoseLocation!=NULL)
+          key='l';
+        else
+          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
+            KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
+
+        switch(key){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
             if(lsqrH!=NULL){
@@ -1515,11 +1559,28 @@ truth commandsystem::ShowMap(character* Char)
           case 'l':
             if(noteAddPos==Char->GetPos()){
               game::RefreshDrawMapOverlay();
-              noteAddPos = game::PositionQuestion(CONST_S(
-                "Where do you wish to add a map note? [direction keys move cursor, space accepts]"),
-                Char->GetPos(), NULL, NULL, true); DBGSV2(noteAddPos);
+
+              festring fsMsg = pv2ChoseLocation!=NULL ? "Chose a location." :
+                "Where do you wish to add a map note?";
+              fsMsg<<" [direction keys move cursor, space accepts]";
+
+              v2 start;
+              if(pv2ChoseLocation!=NULL){
+                if(!(*pv2ChoseLocation).Is0())
+                  if(Char->GetLevel()->IsValidPos((*pv2ChoseLocation)))
+                    start=(*pv2ChoseLocation);
+              }
+              if(start.Is0())
+                start=Char->GetPos();
+
+              noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
               if(noteAddPos==ERROR_V2)
                 continue;
+              if(pv2ChoseLocation!=NULL){
+                (*pv2ChoseLocation)=noteAddPos;
+                game::ToggleDrawMapOverlay();
+                return (*pv2ChoseLocation) != Char->GetPos();
+              }
             }
             /* no break */
           case 'e':
@@ -1550,26 +1611,83 @@ truth commandsystem::Sit(character* Char)
   return (Square->GetOLTerrain() && Square->GetOLTerrain()->SitOn(Char)) || Square->GetGLTerrain()->SitOn(Char);
 }
 
+level* lvlRoute=NULL;
+v2 v2RouteTarget=v2(0,0); //TODO save this?
 truth commandsystem::Go(character* Char)
 {
-  int Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key]"), false);
+  int Dir = DIR_ERROR;
+
+  if(lvlRoute!=Char->GetLevel())
+    v2RouteTarget=v2(0,0);
+
+  if(Char->GetPos()==v2RouteTarget)
+    v2RouteTarget=v2(0,0);
+
+  if(!v2RouteTarget.Is0()){
+    if(game::TruthQuestion("Continue going thru the route? [y]"))
+      Dir = YOURSELF;
+    else
+      v2RouteTarget=v2(0,0);
+  }
+
+  if(Dir == DIR_ERROR)
+    Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key or '.' for map route]"), false, true);
 
   if(Dir == DIR_ERROR)
     return false;
 
-  go* Go = go::Spawn(Char);
-  Go->SetDirection(Dir);
-  int OKDirectionsCounter = 0;
+  std::vector<v2> RouteGoOn;
+  if(Dir == YOURSELF){
+    if(v2RouteTarget.Is0())
+      if(!ShowMapWork(Char,&v2RouteTarget)){
+        v2RouteTarget=v2(0,0);
+        return false;
+      }
 
-  for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
-  {
-    lsquare* Square = Char->GetNeighbourLSquare(d);
+    if(Char->GetPos()==v2RouteTarget){
+      v2RouteTarget=v2(0,0);
+      return false;
+    }
 
-    if(Square && Char->CanMoveOn(Square))
-      ++OKDirectionsCounter;
+    std::set<v2> Illegal;
+    node* Node = Char->GetLevel()->FindRoute(Char->GetPos(), v2RouteTarget, Illegal, 0, Char);
+    if(Node){
+      RouteGoOn.clear();
+      while(Node->Last)
+      {
+        RouteGoOn.push_back(Node->Pos);
+        Node = Node->Last;
+      }
+    }
   }
 
-  Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+  if(Dir == YOURSELF && RouteGoOn.size()==0){
+    v2RouteTarget=v2(0,0);
+    return false;
+  }
+
+  go* Go = go::Spawn(Char);
+  if(Dir == YOURSELF){
+    Go->SetRoute(RouteGoOn);
+    Go->SetDirectionFromRoute();
+    Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
+    lvlRoute=Char->GetLevel();
+  }else{
+    Go->SetDirection(Dir);
+
+    int OKDirectionsCounter = 0;
+
+    for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = Char->GetNeighbourLSquare(d);
+
+      if(Square && Char->CanMoveOn(Square))
+        ++OKDirectionsCounter;
+    }
+
+    Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
+  }
+
   Char->SetAction(Go);
   Char->EditAP(Char->GetStateAPGain(100)); // gum solution
   Char->GoOn(Go, true);
