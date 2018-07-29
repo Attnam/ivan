@@ -1890,6 +1890,12 @@ struct srpForgeItem : public recipe{
     bool bMeltableS = (matS!=NULL && craftcore::IsMeltable(matS));
     rpd.bMeltable = bMeltableM || bMeltableS;
 
+    /**
+     * ex.:
+     * working with valpurium will take much longer,
+     * and the longer it takes the more are the checks to determine if it will fumble and break.
+     */
+
     float fMult=10;//hammering to form it takes time even if the volume is low.
     rpd.iBaseTurnsToFinish=calcMeltableTurns(matM,fMult); DBG4(rpd.iBaseTurnsToFinish,matM->GetName(DEFINITE).CStr(),matM->GetConfig(),matM->GetVolume());
     if(bAllowS && matS!=NULL){
@@ -1907,27 +1913,6 @@ struct srpForgeItem : public recipe{
         craftcore::SendToHellSafely(itSpawn);
         return false;
       }
-//      ////////////// find the anvil
-//      lsquare* lsqrAnvil = NULL;
-//      for(int iDir=0;iDir<8;iDir++){
-//        v2 v2Add = game::GetMoveVector(iDir);
-//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG3(DBGAV2(v2Add),DBGAV2(v2Pos),iDir);
-//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
-//          olterrain* ot = lsqr->GetOLTerrain();
-//          if(ot!=NULL && ot->GetConfig() == ANVIL && lsqr->CanBeSeenBy(rpd.rc.H())){
-//            lsqrAnvil = lsqr;
-//            rpd.v2AnvilLocation=lsqrAnvil->GetPos();
-//            break;
-//          }
-//        }
-//      }
-//      if(lsqrAnvil==NULL){
-//        ADD_MESSAGE("No anvil nearby."); //TODO allow user miss-chose
-//        rpd.bAlreadyExplained=true;
-//        craftcore::SendToHellSafely(itSpawn);
-//        return false;
-//      }
     }
 
     // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
@@ -1943,35 +1928,6 @@ struct srpForgeItem : public recipe{
       if(!bMeltableM || !bMeltableS){
         if(!findCarvingTool(rpd,itSpawn))
           bMissingTools=true;
-//        //TODO findCarvingTool()
-//        int iCarvingStr=0;
-//        if(!bMeltableM)iCarvingStr=matM->GetStrengthValue();
-//        if(!bMeltableS)iCarvingStr=Max(iCarvingStr,matS->GetStrengthValue());
-//        int iMinCarvingStr = iCarvingStr/2;
-//        item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
-//        if(itTool!=NULL){
-//          if(rpd.itTool==NULL)
-//            rpd.itTool=itTool;
-//          else
-//            rpd.itTool2=itTool;
-//
-//          int iMult=1;
-//          if(iCarvingStr>1){
-//            int itStr=itTool->GetMainMaterial()->GetStrengthValue();
-//            if(itStr<iCarvingStr)
-//              iMult++;
-//            if(itStr==iMinCarvingStr)
-//              iMult++;
-//          }
-//          calcToolTurns(rpd,iMult);
-//
-//          if(!recipe::findOLT(rpd,WORK_BENCH)){
-//            ADD_MESSAGE("There is no workbench here, this will take time...");
-//            rpd.iBaseTurnsToFinish *= 3;
-//          }
-//        }else{
-//          bMissingTools=true;
-//        }
       }
     }
 
@@ -2757,7 +2713,7 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
      */
     int iFumblePower=0;
     int iLuckPerc=clock()%100;
-    static const float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
+    float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
     static const int iBaseFumbleChancePerc=15;
     int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
     if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
@@ -2796,6 +2752,8 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
         //TODO anvil should always be near the forge. Anvil have no sparks. Keeping messages like that til related code is improved
       }
     }
+
+    DBG9(fBaseCraftSkillToNormalFumble,iFumbleBase,iLuckPerc,iFumblePower,bXplod,rpd.xplodStr,rpd.bCanBeBroken,rpd.bSpawnBroken,rpd.iBaseTurnsToFinish);
   }
 }
 
