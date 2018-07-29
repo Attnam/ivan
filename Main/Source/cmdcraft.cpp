@@ -570,6 +570,8 @@ struct ci{
 
   bool bFirstItemMustHaveFullVolumeRequired=false;
   bool bAllowMeltables=true;
+  bool bAllowWood=true;
+  bool bAllowBones=true;
 };
 struct recipe{
   festring action;
@@ -1188,12 +1190,14 @@ struct srpOltBASE : public recipe{
         CI.bMainMaterRemainsBecomeLump = true;
         bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, CI); //true, bAllowSimpleStones?0:INGOT, true);
       }
-      if(!bH)
+      if(!bH && CIdefault.bAllowWood)
         bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg, CIdefault);
-      if(!bH && iReqVolSkulls>0)
-        bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg, CIdefault);
-      if(!bH)
-        bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
+      if(CIdefault.bAllowBones){
+        if(!bH && iReqVolSkulls>0)
+          bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg, CIdefault);
+        if(!bH)
+          bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
+      }
       if(bH){
         rpd.bHasAllIngredients=bH;
         rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
@@ -1261,6 +1265,8 @@ struct srpAnvil : public srpOltBASE{
     iReqVol=750*3; //when destroyed provides 250 to 750 x3, so lets use the max to avoid spawning extra material volume
     iTurns=15;
     bReqForge=true;
+    CIdefault.bAllowBones=false;
+    CIdefault.bAllowWood=false;
     return srpOltBASE::work(rpd);
   }
 };srpAnvil rpAnvil;
@@ -1280,6 +1286,9 @@ struct srpForge : public srpOltBASE{
     iReqVol=15000;
     iTurns=30;
     bRequiresWhere=true;
+    bAllowSimpleStones=true;
+    CIdefault.bAllowBones=false;
+    CIdefault.bAllowWood=false;
     //TODO require fire source like fireball wand or 3 lanterns
     return srpOltBASE::work(rpd);
   }
@@ -1299,6 +1308,7 @@ struct srpWorkBench : public srpOltBASE{
   virtual bool work(recipedata& rpd){
     iReqVol=3000;
     iTurns=10;
+    bRequiresWhere=true;
     return srpOltBASE::work(rpd);
   }
 };srpWorkBench rpWorkBench;
