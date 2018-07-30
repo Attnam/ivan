@@ -411,8 +411,15 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
         v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
         plsqChk = plv->GetLSquare(v2ChkSqrPos);
 
-        if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-        if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+        if(plsqChk->CanBeSeenByPlayer())
+          continue;
+        if(!IsInWilderness()){
+          if(plsqChk->CanBeFeltByPlayer())
+            continue;
+          if(plsqChk->GetCharacter()!=NULL)
+            if(plsqChk->GetCharacter()->CanBeSeenByPlayer())
+              continue;
+        }
 
         /********************************************************************************************
          * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
