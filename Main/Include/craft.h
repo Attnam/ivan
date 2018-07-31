@@ -104,6 +104,7 @@ class recipedata {
   friend struct srpForge;
   friend struct srpJoinLumps;
   friend struct srpWorkBench;
+  friend struct srpResistanceVS;
 
   protected:
     recipecore rc;

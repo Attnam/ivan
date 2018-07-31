@@ -572,6 +572,7 @@ struct ci{
   bool bAllowMeltables=true;
   bool bAllowWood=true;
   bool bAllowBones=true;
+  int iMinMainMaterStr=0;
 };
 struct recipe{
   festring action;
@@ -816,6 +817,9 @@ struct recipe{
           continue;
 
         if(!CI.bAllowMeltables && craftcore::IsMeltable(vi[i]))
+          continue;
+
+        if(vi[i]->GetStrengthValue() < CI.iMinMainMaterStr)
           continue;
 
         bool bAlreadyUsed=false;
@@ -1074,45 +1078,6 @@ struct recipe{
 
     return true;
   }
-
-//  bool chkForge(recipedata& rpd,lsquare* lsqr){DBGLN;
-//    olterrain* ot = lsqr->GetOLTerrain();
-//    if(ot!=NULL && ot->GetConfig() == FORGE && lsqr->CanBeSeenBy(rpd.rc.H())){
-//      lsqrFORGE = lsqr;
-//      rpd.v2ForgeLocation = lsqrFORGE->GetPos();
-//      return true;
-//    }
-//    return false;
-//  }
-//  bool findForge(recipedata& rpd,bool bReqOnlyVisible=false){
-//    if(bReqOnlyVisible){DBGLN;
-//      for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
-//        lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
-//        if(chkForge(rpd,lsqr))break;
-//      }}
-//    }else{DBGLN; //must be on adjacent square
-//      int iDist = 1; //TODO improve this (despite fun, is wrong..)
-//      for(int i=0;i<(8*iDist);i++){
-//        int iDir = i%8;
-//        int iMult = 1 + i/8;
-//        v2 v2Add = game::GetMoveVector(iDir) * iMult;
-//        v2 v2Pos = rpd.rc.H()->GetPos() + v2Add; DBG5(DBGAV2(v2Add),DBGAV2(v2Pos),iMult,iDir,i);
-//        if(game::GetCurrentLevel()->IsValidPos(v2Pos)){
-//          lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);
-//          if(chkForge(rpd,lsqr))break;
-//        }
-//      }
-//    }
-//
-//    if(lsqrFORGE==NULL){
-//      ADD_MESSAGE(bReqOnlyVisible?"No visible forge nearby.":"No forge nearby.");
-//      rpd.bAlreadyExplained=true;
-//      return false;
-//    }
-//
-//    return true;
-//  }
-
 };
 
 struct srpOltBASE : public recipe{
@@ -1569,6 +1534,61 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     return true;
   }
 };srpDismantle rpDismantle;
+
+struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
+  virtual void fillInfo(){
+    init("resistance check","weaker material result");
+    desc << "Hit an item with another, the weaker one will receive a scratch.";
+  }
+
+  virtual bool work(recipedata& rpd){
+    ci CI;
+    CI.iMinMainMaterStr=1;
+    if(!choseOneIngredient<item>(rpd,&CI))
+      return false;
+
+    // yes, a 2nd time
+    if(!choseOneIngredient<item>(rpd,&CI))
+      return false;
+
+    if(rpd.ingredientsIDs.size()!=2)
+      return false;
+
+    item* it0 = game::SearchItem(rpd.ingredientsIDs[0]);
+    item* it1 = game::SearchItem(rpd.ingredientsIDs[1]);
+    item* itWeaker=NULL;
+    item* itStronger=NULL;
+    int iStr0=it0->GetStrengthValue(); //main materials only
+    int iStr1=it1->GetStrengthValue();
+    int iStrDiff=iStr0-iStr1;
+    float fRatio=Min(iStr0,iStr1)/(float)Max(iStr0,iStr1);
+
+    if(iStrDiff<0){
+      ADD_MESSAGE("%s receives a scratch.",it0->GetName(DEFINITE).CStr());
+      itWeaker=it0;
+      itStronger=it1;
+    }else
+    if(iStrDiff>0){
+      ADD_MESSAGE("%s receives a scratch.",it1->GetName(DEFINITE).CStr());
+      itWeaker=it1;
+      itStronger=it0;
+    }else
+    if(iStrDiff==0)
+      ADD_MESSAGE("It seems both items are equally hard.");
+
+    if(itWeaker!=NULL){ //the item may break
+      float dmg =
+        ( itStronger->GetWeight()*itStronger->GetStrengthValue() ) /
+        (float)
+        ( itWeaker  ->GetWeight()*itWeaker  ->GetStrengthValue() )   ;
+      itWeaker->ReceiveDamage(rpd.rc.H(), (int)dmg, THROW|PHYSICAL_DAMAGE); //based on item::Fly() "breaks" but not that much
+    }
+
+    rpd.bAlreadyExplained=true;
+
+    return true;
+  }
+};srpResistanceVS rpResistanceVS;
 
 struct srpSplitLump : public recipe{
   void explain(recipedata& rpd,festring fs){
@@ -2277,6 +2297,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
+  RP(rpResistanceVS);
 
   RP(rpMelt);
   RP(rpForgeItem);
