@@ -1558,8 +1558,8 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
     item* it1 = game::SearchItem(rpd.ingredientsIDs[1]);
     item* itWeaker=NULL;
     item* itStronger=NULL;
-    int iStr0=it0->GetStrengthValue(); //main materials only
-    int iStr1=it1->GetStrengthValue();
+    int iStr0=it0->GetMainMaterial()->GetStrengthValue(); //main materials only
+    int iStr1=it1->GetMainMaterial()->GetStrengthValue();
     int iStrDiff=iStr0-iStr1;
     float fRatio=Min(iStr0,iStr1)/(float)Max(iStr0,iStr1);
 
@@ -1578,9 +1578,9 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
 
     if(itWeaker!=NULL){ //the item may break
       float dmg =
-        ( itStronger->GetWeight()*itStronger->GetStrengthValue() ) /
+        ( itStronger->GetWeight()*itStronger->GetMainMaterial()->GetStrengthValue() ) /
         (float)
-        ( itWeaker  ->GetWeight()*itWeaker  ->GetStrengthValue() )   ;
+        ( itWeaker  ->GetWeight()*itWeaker  ->GetMainMaterial()->GetStrengthValue() )   ;
       itWeaker->ReceiveDamage(rpd.rc.H(), (int)dmg, THROW|PHYSICAL_DAMAGE); //based on item::Fly() "breaks" but not that much
     }
 
