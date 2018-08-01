@@ -305,7 +305,6 @@ void recipedata::Load(inputfile& SaveFile)
 //    SaveFile >> otSpawn;
   rc.integrityCheck();
 }
-
 cfestring recipedata::id() const
 {
   /**
@@ -585,6 +584,21 @@ struct recipe{
 
   virtual void fillInfo(){ ABORT("missing recipe info implementation"); }
 
+  void failPlacementMsg(recipedata& rpd){
+    ADD_MESSAGE("%s can't be placed here!",name.CStr());
+    rpd.bAlreadyExplained=true;
+  }
+  void failIngredientsMsg(recipedata& rpd){
+    festring fsMsg;
+    fsMsg<<"Required ingredients to "<<action<<" "<<name<<" are not met.";
+    ADD_MESSAGE(fsMsg.CStr());
+    rpd.bAlreadyExplained=true;
+  }
+  void failToolMsg(recipedata& rpd){
+    ADD_MESSAGE("Required tool is missing.");
+    rpd.bAlreadyExplained=true;
+  }
+
   bool IsTheSelectedOne(recipedata& rpd){
     if(desc.IsEmpty())
       fillInfo();
@@ -598,7 +612,7 @@ struct recipe{
 
   virtual ~recipe(){}
 
-  static bool where(recipedata& rpd){
+  bool where(recipedata& rpd){
     int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
     if(Dir != DIR_ERROR && rpd.rc.H()->GetArea()->IsValidPos(rpd.rc.H()->GetPos() + game::GetMoveVector(Dir)))
       rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(rpd.rc.H()->GetPos() + game::GetMoveVector(Dir));
@@ -609,6 +623,7 @@ struct recipe{
       return true;
     }
 
+    failPlacementMsg(rpd);
     return false;
   }
 
@@ -1108,6 +1123,10 @@ struct srpOltBASE : public recipe{
 
     rpd.iBaseTurnsToFinish=iTurns;
     rpd.itTool = FindBluntTool(rpd);
+    if(rpd.itTool==NULL){
+      failToolMsg(rpd);
+      return false;
+    }
 
     if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.itTool!=NULL){
       rpd.bCanBePlaced=true;
@@ -1130,6 +1149,7 @@ struct srpOltBASE : public recipe{
         if(!bH)
           bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
       }
+
       if(bH){
         rpd.bHasAllIngredients=bH;
         rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
@@ -1137,6 +1157,9 @@ struct srpOltBASE : public recipe{
         rpd.otSpawnMatMainCfg=iCfg;
         rpd.otSpawnMatMainVol=iReqVol;
         rpd.bCanStart=true;
+      }else{
+        failIngredientsMsg(rpd);
+        rpd.bAlreadyExplained=true;
       }
     }
 
@@ -1196,7 +1219,6 @@ struct srpAnvil : public srpOltBASE{
   virtual bool work(recipedata& rpd){
     iReqVol=750*3; //when destroyed provides 250 to 750 x3, so lets use the max to avoid spawning extra material volume
     iTurns=15;
-    bRequiresWhere=true;
     bReqForge=true;
     CIdefault.bAllowBones=false;
     CIdefault.bAllowWood=false;
@@ -1343,8 +1365,10 @@ struct srpMelt : public srpJoinLumps{
 
     askForEqualLumps(rpd);
 
-    if(rpd.ingredientsIDs.empty())
+    if(rpd.ingredientsIDs.empty()){
+      failIngredientsMsg(rpd);
       return false;
+    }
 
     item* Lump = game::SearchItem(rpd.ingredientsIDs[0]);
 
@@ -1438,8 +1462,10 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     game::DrawEverythingNoBlit();
     ci CI;
     CI.bDenyDegradation=false; //to let user know what is happening w/o spamming it.
-    if(!choseOneIngredient<item>(rpd,&CI))
+    if(!choseOneIngredient<item>(rpd,&CI)){
+      rpd.bAlreadyExplained=true; //no need to explain if nothing chosen
       return false;
+    }
 
     item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
     rpd.ingredientsIDs.clear();
@@ -1474,8 +1500,10 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
         return false;
     }else{
       rpd.itTool = FindCuttingTool(rpd);//,true);
-      if(!rpd.itTool)
+      if(!rpd.itTool){
+        failToolMsg(rpd);
         return false;
+      }
     }
 
     bool bJustLumpfyTheIngot=false;
@@ -1541,15 +1569,21 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
   virtual bool work(recipedata& rpd){
     ci CI;
     CI.iMinMainMaterStr=1;
-    if(!choseOneIngredient<item>(rpd,&CI))
+    if(!choseOneIngredient<item>(rpd,&CI)){
+      rpd.bAlreadyExplained=true;
       return false;
+    }
 
     // yes, a 2nd time
-    if(!choseOneIngredient<item>(rpd,&CI))
+    if(!choseOneIngredient<item>(rpd,&CI)){
+      rpd.bAlreadyExplained=true;
       return false;
+    }
 
-    if(rpd.ingredientsIDs.size()!=2)
+    if(rpd.ingredientsIDs.size()!=2){
+      rpd.bAlreadyExplained=true;
       return false;
+    }
 
     item* it0 = game::SearchItem(rpd.ingredientsIDs[0]);
     item* it1 = game::SearchItem(rpd.ingredientsIDs[1]);
@@ -2467,19 +2501,8 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
     return true; //spends current turn
   }else{
-    if(!rpd.bAlreadyExplained){
-      if(rpd.lsqrPlaceAt!=NULL && !rpd.bCanBePlaced)
-        ADD_MESSAGE("%s can't be placed here!",prp->name.CStr());
-      else if(!rpd.bHasAllIngredients){
-        festring fsMsg;
-        fsMsg<<"Required ingredients to "<<prp->action<<" "<<prp->name<<" are not met.";
-        ADD_MESSAGE(fsMsg.CStr());
-      }else if(rpd.itTool == NULL){
-        ADD_MESSAGE("Required tool is missing.");
-      }else{
-        ABORT("explain why crafting won't work.");
-      }
-    }
+    if(!rpd.bAlreadyExplained)
+      ABORT("explain why crafting won't work.");
   }
 
   /**
