@@ -316,35 +316,31 @@ cfestring recipedata::id() const
 
   festring fs;
 
-  int i=0;
+  #define RPDINFO(o) fs<<(#o)<<"="<<(o)<<"; ";
+  RPDINFO(rc.IsCanBeSuspended());
 
-  fs<<(i++)<<":"<<rc.IsCanBeSuspended()<<";";
+  RPDINFO(itToolID);
+  RPDINFO(itTool2ID);
 
-  #define RPDINFO(o) if(o!=NULL)fs<<(i++)<<":"<<o->GetID()<<","<<o->GetName(DEFINITE);fs<<";";
-  fs<<(i++)<<":"<<itToolID<<";"<<itTool2ID<<";";
-  RPDINFO(itTool);
+  RPDINFO(itSpawnCfg);
+  RPDINFO(itSpawnMatMainCfg);
+  RPDINFO(itSpawnMatMainVol);
+  RPDINFO(itSpawnMatSecCfg);
+  RPDINFO(itSpawnMatSecVol);
 
-  fs<<(i++)<<":"<<itSpawnTot<<";";
-  fs<<(i++)<<":"<<itSpawnCfg<<";";
-  fs<<(i++)<<":"<<itSpawnMatMainCfg<<";";
-  fs<<(i++)<<":"<<itSpawnMatMainVol<<";";
-  fs<<(i++)<<":"<<itSpawnMatSecCfg<<";";
-  fs<<(i++)<<":"<<itSpawnMatSecVol<<";";
-//  RPDINFO(itSpawn);
+  RPDINFO(otSpawnCfg);
+  RPDINFO(otSpawnMatMainCfg);
+  RPDINFO(otSpawnMatMainVol);
+  RPDINFO(otSpawnMatSecCfg);
+  RPDINFO(otSpawnMatSecVol);
 
-//  RPDINFO(otSpawn);
-  fs<<(i++)<<":"<<otSpawnCfg<<";";
-  fs<<(i++)<<":"<<otSpawnMatMainCfg<<";";
-  fs<<(i++)<<":"<<otSpawnMatMainVol<<";";
-  fs<<(i++)<<":"<<otSpawnMatSecCfg<<";";
-  fs<<(i++)<<":"<<otSpawnMatSecVol<<";";
-
-  fs<<(i++)<<":"<<v2BuildWhere.X<<","<<v2BuildWhere.Y<<";";
-  fs<<(i++)<<":"<<v2AnvilLocation.X<<","<<v2AnvilLocation.Y<<";";
-  fs<<(i++)<<":"<<v2ForgeLocation.X<<","<<v2ForgeLocation.Y<<";";
-  fs<<(i++)<<":"<<v2WorkbenchLocation.X<<","<<v2WorkbenchLocation.Y<<";";
-  fs<<(i++)<<":"<<v2PlaceAt.X<<","<<v2PlaceAt.Y<<";";
-  fs<<(i++)<<":"<<v2PlayerCraftingAt.X<<","<<v2PlayerCraftingAt.Y<<";";
+  #define RPDINFOV2(o) fs<<(#o)<<"="<<(o.X)<<","<<(o.Y)<<"; ";
+  RPDINFOV2(v2BuildWhere);
+  RPDINFOV2(v2AnvilLocation);
+  RPDINFOV2(v2ForgeLocation);
+  RPDINFOV2(v2WorkbenchLocation);
+  RPDINFOV2(v2PlaceAt);
+  RPDINFOV2(v2PlayerCraftingAt);
 
   return fs;
 }
@@ -1200,6 +1196,7 @@ struct srpAnvil : public srpOltBASE{
   virtual bool work(recipedata& rpd){
     iReqVol=750*3; //when destroyed provides 250 to 750 x3, so lets use the max to avoid spawning extra material volume
     iTurns=15;
+    bRequiresWhere=true;
     bReqForge=true;
     CIdefault.bAllowBones=false;
     CIdefault.bAllowWood=false;
@@ -1718,7 +1715,7 @@ struct srpSplitLump : public recipe{
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("forge","an item");
-    desc << "Using a blunt weapon as hammer, close to an anvil and with a forge nearby you can create items.";
+    desc << "Using a blunt weapon as hammer, close to an anvil and with a forge nearby you can create items. Or a cutting weapon, if close to a workbench will speed up the work.";
   }
 
   virtual bool work(recipedata& rpd){DBGLN;
@@ -1768,6 +1765,7 @@ struct srpForgeItem : public recipe{
       return false;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     if(Default == itSpawn->GetName(INDEFINITE)) //TODO compare for EQUAL ignoring case
       ADD_MESSAGE("Now I need the material(s) to create a %s.",itSpawn->GetName(INDEFINITE).CStr());
     else
@@ -1817,6 +1815,7 @@ struct srpForgeItem : public recipe{
     }
     if(!bM){
       ci CI = CIM;
+      CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
       bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
@@ -1826,6 +1825,7 @@ struct srpForgeItem : public recipe{
       return false;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     bool bContainerEmptied = craftcore::EmptyContentsIfPossible(rpd,itSpawn);
 
     /**
@@ -1855,7 +1855,7 @@ struct srpForgeItem : public recipe{
         CI.bMultSelect=false;
         bS = choseIngredients<stone>(fsS,lVolS, rpd, iCfgS, CI);
       }
-      if(bIsWeapon){DBGLN; //this is mainly to prevent mc being filled with non-sense materials TODO powders one day would be ok
+      if(bIsWeapon){DBGLN; //this is mainly to prevent "material containers" being filled with non-sense materials like a bottle fille with wood... TODO powders one day would be ok
         if(!bS){
           ci CI=CIS;
           bS = choseIngredients<bone>(fsS,lVolS, rpd, iCfgS, CI);
@@ -1904,6 +1904,7 @@ struct srpForgeItem : public recipe{
       DBG4(rpd.iBaseTurnsToFinish,matS->GetName(DEFINITE).CStr(),matS->GetConfig(),matS->GetVolume());
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     if(rpd.bMeltable){
       if(!recipe::findOLT(rpd,FORGE,true)){
         craftcore::SendToHellSafely(itSpawn);
@@ -1916,6 +1917,7 @@ struct srpForgeItem : public recipe{
       }
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
     bool bMissingTools=false;
     if(rpd.bMeltable){ //TODO glass should require proper tools (don't know what but sure not a hammer)
@@ -1940,77 +1942,92 @@ struct srpForgeItem : public recipe{
       return false;
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    bool bSpecialExtendedTurns=false;
     //TODO are these difficulties below well balanced (not cheap neither excessive/notFun)?
-
-    for(;;){ // just to break on match
-      whistle* itWist = dynamic_cast<whistle*>(itSpawn);
-      if(itWist){
-        rpd.fDifficulty = 3.5;
-        break;
-      }
-
-      key* itKey = dynamic_cast<key*>(itSpawn);
-      if(itKey!=NULL){ //TODO are these difficulties below good?
-        rpd.fDifficulty = 3.0;
-        if(itKey->CanOpenLockType(HEXAGONAL_LOCK))
-          rpd.fDifficulty = 4.0;
-        if(itKey->CanOpenLockType(OCTAGONAL_LOCK))
-          rpd.fDifficulty = 4.0;
-        if(itKey->CanOpenLockType(HEART_SHAPED_LOCK))
-          rpd.fDifficulty = 5.0;
-
-        break;
-      }
-
-      stethoscope* itSte = dynamic_cast<stethoscope*>(itSpawn);
-      if(itSte){
-        rpd.fDifficulty = 3.5;
-        break;
-      }
-
-      meleeweapon* itMW = dynamic_cast<meleeweapon*>(itSpawn);
-      if(itMW!=NULL){ //TODO are these difficulties below good?
-        rpd.fDifficulty = 2.0;
-        if(itMW->IsTwoHanded())
-          rpd.fDifficulty = 3.5;
-        break;
-      }
-
-      shield* itSH = dynamic_cast<shield*>(itSpawn);
-      if(itSH!=NULL){
-        rpd.fDifficulty = 2.5;
-        break;
-      }
-
-      armor* itAR = dynamic_cast<armor*>(itSpawn);
-      if(itAR!=NULL){
-        rpd.fDifficulty = 1.5;
-        bodyarmor* itBAR = dynamic_cast<bodyarmor*>(itSpawn);
-        if(itBAR!=NULL)
-          rpd.fDifficulty = 3.0;
-        break;
-      }
-
-      break; //block trick exiter
+    whistle* itWist = dynamic_cast<whistle*>(itSpawn);
+    if(itWist){
+      rpd.fDifficulty = 3.5;
+      bSpecialExtendedTurns=true;
     }
 
-    { // special extra turns (dont use difficulty to calc turns as it is a per-turn check)
+    key* itKey = dynamic_cast<key*>(itSpawn);
+    if(itKey!=NULL){ //TODO are these difficulties below good?
+      rpd.fDifficulty = 3.0;
+      if(itKey->CanOpenLockType(HEXAGONAL_LOCK))
+        rpd.fDifficulty = 4.0;
+      if(itKey->CanOpenLockType(OCTAGONAL_LOCK))
+        rpd.fDifficulty = 4.0;
+      if(itKey->CanOpenLockType(HEART_SHAPED_LOCK))
+        rpd.fDifficulty = 5.0;
+
+      bSpecialExtendedTurns=true;
+    }
+
+    stethoscope* itSte = dynamic_cast<stethoscope*>(itSpawn);
+    if(itSte){
+      rpd.fDifficulty = 3.5;
+      bSpecialExtendedTurns=true;
+    }
+
+    meleeweapon* itMW = dynamic_cast<meleeweapon*>(itSpawn);
+    if(itMW!=NULL){ //TODO are these difficulties below good?
+      rpd.fDifficulty = 2.0;
+      if(itMW->IsTwoHanded())
+        rpd.fDifficulty = 3.5;
+    }
+
+    shield* itSH = dynamic_cast<shield*>(itSpawn);
+    if(itSH!=NULL){
+      rpd.fDifficulty = 2.5;
+    }
+
+    armor* itAR = dynamic_cast<armor*>(itSpawn);
+    if(itAR!=NULL){
+      rpd.fDifficulty = 1.5;
+      bodyarmor* itBAR = dynamic_cast<bodyarmor*>(itSpawn);
+      if(itBAR!=NULL)
+        rpd.fDifficulty = 3.0;
+    }
+
+    if(bSpecialExtendedTurns){ // special extra turns (dont use difficulty to calc turns as it is a per-turn check)
       int iBaseTTF = rpd.iBaseTurnsToFinish;
 
-      if(!rpd.bMeltable) //carving
+      if(!rpd.bMeltable) //carving takes longer
         rpd.iBaseTurnsToFinish += iBaseTTF;
 
-      if(!rpd.bCanBeBroken){ //after created will be granted til the end of the game...
-        rpd.iBaseTurnsToFinish += iBaseTTF*10;
-      }
+      rpd.iBaseTurnsToFinish += iBaseTTF*10;
 
-      if(!rpd.bMeltable)
-        if(!itSpawn->CanBeBurned()) //another special quality
-          rpd.iBaseTurnsToFinish += iBaseTTF*10;
+      /**
+       * TODO !CanBeBroken and !CanBeBurned are so special items that will never be craftable right?
+       */
+    }else{
+      /**
+       * here are special turns overriders
+       * these things, mainly by their volume, wont fit well in the complex turns calcs above.
+       * consider it like ingots/sticks/planks/bones/etc are ready just need to be joined
+       */
+      itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
+      if(ic!=NULL){
+        //their huge volume would make the turns calc an unplayable delay.
+        switch(ic->GetVirtualConfig()){
+        case SMALL_CHEST:
+          rpd.iBaseTurnsToFinish=10;
+          break;
+        case STRONG_BOX:
+          rpd.iBaseTurnsToFinish=20;
+          break;
+        case CHEST:
+          rpd.iBaseTurnsToFinish=30;
+          break;
+        case LARGE_CHEST:
+          rpd.iBaseTurnsToFinish=60;
+          break;
+        }
+      }
     }
 
-//    rpd.rc.SetCanBeSuspended();
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////
     rpd.CopySpawnItemCfgFrom(itSpawn);
     craftcore::SendToHellSafely(itSpawn);
 
@@ -2306,7 +2323,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   RP(rpWorkBench);
   if(bInitRecipes)
-    return Craft(Char); //init recipes descriptions at least, one time recursion :>
+    return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
 
   if(prp==NULL){DBGLN;
     return false;
@@ -2348,16 +2365,27 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
       rpd.iBaseTurnsToFinish*=iCraftTimeMult;
 
-      /**
+      /**********************************************************************
        * LAST turn calc thing!!!
-       * ex.: dex=10 wis=10 -> 1.0
-       */
-      rpd.iBaseTurnsToFinish /=
-        ( Char->GetAttribute(WISDOM   )/10.0 +
-          Char->GetAttribute(DEXTERITY)/10.0   ) / 2.0;
-      craftcore::CraftSkill(Char);
-      if(rpd.iBaseTurnsToFinish==0)
+       * ex.: initial dex=10 wis=10 is 1.0 means wont modify turns
+       **********************************************************************/
+      rpd.iBaseTurnsToFinish /= craftcore::CraftSkill(Char)/10.0;
+      if(rpd.iBaseTurnsToFinish==0) //if div zeroed it
         rpd.iBaseTurnsToFinish=1;
+      int iH = rpd.iBaseTurnsToFinish/60;
+      int iD = iH/24;
+      iH = iH%24;
+      int iM = rpd.iBaseTurnsToFinish%60;
+      if(iH>=1 || iD>1){
+        festring fs;
+        fs<<"It will take ";
+        if(iD>1)
+          fs<<iD<<" days "; //this may happen in case the stats/skill went too low, so user has a chance to recover from the debuff
+        fs<<iH<<" hours and "<<iM<<" minutes to complete";
+        fs<<", Continue? [y/N]";
+        if(!game::TruthQuestion(fs))
+          return true; // see at the end why
+      }
 
       if(rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrPlaceAt!=NULL ? rpd.lsqrPlaceAt->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
@@ -2377,6 +2405,8 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       rpd.iRemainingTurnsToFinish = rpd.iBaseTurnsToFinish;
 
       rpd.ClearRefs(); //pointers must be revalidated on the action handler
+
+      DBG1(rpd.dbgInfo().CStr());
 
       Char->SwitchToCraft(rpd); // everything must be set before this!!!
 
