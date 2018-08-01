@@ -1043,6 +1043,9 @@ void character::Be()
 
     if(Action && AP >= 1000)
     {
+      if(IsPlayer() && ivanconfig::IsXBRZScale())
+        game::UpdateSRegionsXBRZ(false); // to speed up the action processing
+
       Action->Handle();
 
       if(!IsEnabled())
