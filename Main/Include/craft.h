@@ -134,6 +134,8 @@ class recipedata {
     v2 v2XplodAt;
     bool bOnlyXplodIfCriticalFumble;
 
+    bool bSpecialExtendedTurns;
+
     /*******************************************
      * save REQUIRED fields!!!
      * if re-organized, do also at constructor initializer please!

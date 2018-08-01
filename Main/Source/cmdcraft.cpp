@@ -407,6 +407,8 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   v2XplodAt=v2(0,0);
   bOnlyXplodIfCriticalFumble=false;
 
+  bSpecialExtendedTurns=false;
+
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
   //////////////////////////////////
@@ -962,7 +964,7 @@ struct recipe{
     game::RegionSilhouetteEnable(false);
 
     if(!CI.bJustAcceptFirstChosenAndReturn)
-      if(CI.bMsgInsuficientMat && reqVol>0)
+      if(CI.bMsgInsuficientMat && reqVol>0 && rpd.ingredientsIDs.size()>0)
         ADD_MESSAGE("This amount of materials won't work...");
 
     if(reqVol<=0)
@@ -1710,8 +1712,10 @@ struct srpSplitLump : public recipe{
     festring fsInfo;
     ToSplit->AddInventoryEntry(rpd.rc.H(),fsInfo,1,true);
     long totParts = game::NumberQuestion(festring()+"Split "+fsInfo+" in how many parts?", WHITE, true);
-    if(totParts<=1)
+    if(totParts<=1){
+      rpd.bAlreadyExplained=true; //no need to say anything
       return false;
+    }
 
     long volPart = volM/totParts;
     if(volPart < 1){
@@ -1750,6 +1754,59 @@ struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("forge","an item");
     desc << "Using a blunt weapon as hammer, close to an anvil and with a forge nearby you can create items. Or a cutting weapon, if close to a workbench will speed up the work.";
+  }
+
+  /**
+   * IMPORTANT!!!
+   *
+   * dont use difficulty to calc/increase turns as it is already a per-turn check
+   */
+  void applyDifficulty(recipedata& rpd,item* itSpawn){
+    //TODO are these difficulties below well balanced (not cheap neither excessive/notFun)?
+    whistle* itWist = dynamic_cast<whistle*>(itSpawn);
+    if(itWist){
+      rpd.fDifficulty = 3.5;
+      rpd.bSpecialExtendedTurns=true;
+    }
+
+    key* itKey = dynamic_cast<key*>(itSpawn);
+    if(itKey!=NULL){ //TODO are these difficulties below good?
+      rpd.fDifficulty = 3.0;
+      if(itKey->CanOpenLockType(HEXAGONAL_LOCK))
+        rpd.fDifficulty = 4.0;
+      if(itKey->CanOpenLockType(OCTAGONAL_LOCK))
+        rpd.fDifficulty = 4.0;
+      if(itKey->CanOpenLockType(HEART_SHAPED_LOCK))
+        rpd.fDifficulty = 5.0;
+
+      rpd.bSpecialExtendedTurns=true;
+    }
+
+    stethoscope* itSte = dynamic_cast<stethoscope*>(itSpawn);
+    if(itSte){
+      rpd.fDifficulty = 3.5;
+      rpd.bSpecialExtendedTurns=true;
+    }
+
+    meleeweapon* itMW = dynamic_cast<meleeweapon*>(itSpawn);
+    if(itMW!=NULL){ //TODO are these difficulties below good?
+      rpd.fDifficulty = 2.0;
+      if(itMW->IsTwoHanded())
+        rpd.fDifficulty = 3.5;
+    }
+
+    shield* itSH = dynamic_cast<shield*>(itSpawn);
+    if(itSH!=NULL){
+      rpd.fDifficulty = 2.5;
+    }
+
+    armor* itAR = dynamic_cast<armor*>(itSpawn);
+    if(itAR!=NULL){
+      rpd.fDifficulty = 1.5;
+      bodyarmor* itBAR = dynamic_cast<bodyarmor*>(itSpawn);
+      if(itBAR!=NULL)
+        rpd.fDifficulty = 3.0;
+    }
   }
 
   virtual bool work(recipedata& rpd){DBGLN;
@@ -1952,6 +2009,72 @@ struct srpForgeItem : public recipe{
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
+    applyDifficulty(rpd,itSpawn);
+
+    if(!itSpawn->CanBeBroken() || !itSpawn->CanBeBurned())
+      rpd.bSpecialExtendedTurns=true;
+
+    if(rpd.bSpecialExtendedTurns){DBGLN;
+      /**
+       * special extra turns
+       * for special items
+       */
+      int iBaseTTF = rpd.iBaseTurnsToFinish;
+
+      rpd.iBaseTurnsToFinish += iBaseTTF*10;
+
+      if(!rpd.bMeltable) //carving takes longer
+        rpd.iBaseTurnsToFinish *= 1.25;
+    }
+
+    /************************************************************************************************
+     * this sector OVERRIDES all turns calculations from above if necessary,
+     * while keeping all other prepared data.
+     * These things, mainly by their volume, wont fit well in the complex turns calcs above.
+     * Consider it like ingots/sticks/planks/bones/etc are ready just need to be joined.
+     ****************************************************************************************/
+    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
+    if(ic!=NULL){ DBGLN;
+      /**
+       * Reference is: (from current .dat values)
+       * - large biggest stg. volume
+            StorageVolume = 1000000;
+            DamageDivider = 4;
+            StrengthModifier = 200;
+       * - strongbox biggest damage divider.
+            StorageVolume = 5000;
+            DamageDivider = 5;
+            StrengthModifier = 150;
+       * - small chest (weakest)
+            StorageVolume = 10000;
+            DamageDivider = 2;
+            StrengthModifier = 100;
+       */
+
+      int iMaxTurns=60*3; //for large chest reference 3h
+
+      /**
+       * transform large chest field values into max turns.
+       */
+      float SVolRef=1000000;
+      float DDivRef=4;
+      float StrModRef=200;
+
+      float SVolRatio = ic->GetStorageVolume()/SVolRef; //large is 10x normal chest, strongbox is 1/2 small chest
+      float DDivRatio = ic->GetDamageDivider()/DDivRef; //strongbox has biggest value
+      float StrModRatio = ic->GetStrengthModifier()/StrModRef; //strongbox equals to normal chest
+
+      float SVolW=1.0;
+      float DDivW=3.0;
+      float StrMW=2.0;
+      float W = SVolW+DDivW+StrMW;
+
+      float Ratio = (SVolW*SVolRatio + DDivW*DDivRatio + StrMW*StrModRatio)/W; //div by total weight of summed ratios
+
+      rpd.iBaseTurnsToFinish = iMaxTurns * Ratio; DBG3(rpd.iBaseTurnsToFinish,ic->GetNameSingular().CStr(),ic->GetAdjective().CStr());
+    }
+
+    /// TOOLS ///////////////////////////////////////////////////////////////////////////////////////////////
     // HAMMER like for meltables (still hot and easy to work, any hammer will do) TODO damage the hammer thru the heat of the forge
     bool bMissingTools=false;
     if(rpd.bMeltable){ //TODO glass should require proper tools (don't know what but sure not a hammer)
@@ -1960,7 +2083,6 @@ struct srpForgeItem : public recipe{
         bMissingTools=true;
     }
 
-    // DAGGER for carving
     if(!bMissingTools){
       if(!bMeltableM || !bMeltableS){
         if(!findCarvingTool(rpd,itSpawn))
@@ -1976,142 +2098,7 @@ struct srpForgeItem : public recipe{
       return false;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    bool bSpecialExtendedTurns=false;
-    //TODO are these difficulties below well balanced (not cheap neither excessive/notFun)?
-    whistle* itWist = dynamic_cast<whistle*>(itSpawn);
-    if(itWist){
-      rpd.fDifficulty = 3.5;
-      bSpecialExtendedTurns=true;
-    }
-
-    key* itKey = dynamic_cast<key*>(itSpawn);
-    if(itKey!=NULL){ //TODO are these difficulties below good?
-      rpd.fDifficulty = 3.0;
-      if(itKey->CanOpenLockType(HEXAGONAL_LOCK))
-        rpd.fDifficulty = 4.0;
-      if(itKey->CanOpenLockType(OCTAGONAL_LOCK))
-        rpd.fDifficulty = 4.0;
-      if(itKey->CanOpenLockType(HEART_SHAPED_LOCK))
-        rpd.fDifficulty = 5.0;
-
-      bSpecialExtendedTurns=true;
-    }
-
-    stethoscope* itSte = dynamic_cast<stethoscope*>(itSpawn);
-    if(itSte){
-      rpd.fDifficulty = 3.5;
-      bSpecialExtendedTurns=true;
-    }
-
-    meleeweapon* itMW = dynamic_cast<meleeweapon*>(itSpawn);
-    if(itMW!=NULL){ //TODO are these difficulties below good?
-      rpd.fDifficulty = 2.0;
-      if(itMW->IsTwoHanded())
-        rpd.fDifficulty = 3.5;
-    }
-
-    shield* itSH = dynamic_cast<shield*>(itSpawn);
-    if(itSH!=NULL){
-      rpd.fDifficulty = 2.5;
-    }
-
-    armor* itAR = dynamic_cast<armor*>(itSpawn);
-    if(itAR!=NULL){
-      rpd.fDifficulty = 1.5;
-      bodyarmor* itBAR = dynamic_cast<bodyarmor*>(itSpawn);
-      if(itBAR!=NULL)
-        rpd.fDifficulty = 3.0;
-    }
-
-    /**
-     * IMPORTANT!!!
-     *
-     * dont use difficulty to calc/increase turns as it is already a per-turn check
-     */
-
-    if(!itSpawn->CanBeBroken() || !itSpawn->CanBeBurned())
-      bSpecialExtendedTurns=true;
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    bool bTurnsOverriden=false;
-    /**
-     * here are special turns overriders
-     * these things, mainly by their volume, wont fit well in the complex turns calcs above.
-     * consider it like ingots/sticks/planks/bones/etc are ready just need to be joined
-     */
-    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
-    if(ic!=NULL){DBGLN;
-      /*
-       * TODO
-       * none of these info helped... the defines about type arent stored anywhere?
-       * they can be spawned using them but after that, they are unrelated?
-       * so the easiest was to use the strings from .dat files :(
-      const itemdatabase* const* itdbAll = ic->GetProtoType()->GetConfigData();
-      const itemdatabase* itdb = ic->GetProtoType()->GetConfigData()[0];
-      itemcontainer* ic1 = itemcontainer::Spawn(SMALL_CHEST);
-      itemcontainer* ic2 = itemcontainer::Spawn(CHEST);
-      itemcontainer* ic3 = itemcontainer::Spawn(LARGE_CHEST);
-      itemcontainer* ic4 = itemcontainer::Spawn(STRONG_BOX);
-      DBG2(ic->GetConfig(),ic->GetVirtualConfig());
-      DBG2(ic1->GetConfig(),ic1->GetVirtualConfig());
-      DBG2(ic2->GetConfig(),ic2->GetVirtualConfig());
-      DBG2(ic3->GetConfig(),ic3->GetVirtualConfig());
-      DBG2(ic4->GetConfig(),ic4->GetVirtualConfig());
-      */
-
-      int iChestType=0;
-      if(ic->GetNameSingular()=="chest"){
-        iChestType=CHEST;
-        if(ic->GetAdjective()=="small"){
-          iChestType=SMALL_CHEST;
-        }else
-        if(ic->GetAdjective()=="large"){
-          iChestType=LARGE_CHEST;
-        }
-      }else
-      if(ic->GetNameSingular()=="strong-box"){
-        iChestType=STRONG_BOX;
-      }
-
-      //their huge volume would make the normal/complex turns calc from above, an unplayable delay.
-      switch(iChestType){
-      case SMALL_CHEST:
-        rpd.iBaseTurnsToFinish=10;
-        bTurnsOverriden=true;
-        break;
-      case STRONG_BOX:
-        rpd.iBaseTurnsToFinish=20;
-        bTurnsOverriden=true;
-        break;
-      case CHEST:
-        rpd.iBaseTurnsToFinish=30;
-        bTurnsOverriden=true;
-        break;
-      case LARGE_CHEST:
-        rpd.iBaseTurnsToFinish=60;
-        bTurnsOverriden=true;
-        break;
-      }
-
-      if(!bTurnsOverriden)
-        DBGBREAKPOINT;
-    }
-
-    if(!bTurnsOverriden && bSpecialExtendedTurns){DBGLN;
-      /**
-       * special extra turns
-       * for special items
-       */
-      int iBaseTTF = rpd.iBaseTurnsToFinish;
-
-      rpd.iBaseTurnsToFinish += iBaseTTF*10;
-
-      if(!rpd.bMeltable) //carving takes longer
-        rpd.iBaseTurnsToFinish *= 1.25;
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+    /// finishing ///////////////////////////////////////////////////////////////////////////////////////////////
     rpd.CopySpawnItemCfgFrom(itSpawn);
     craftcore::SendToHellSafely(itSpawn);
 
@@ -2360,12 +2347,6 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
   }
 
-  int iCraftTimeMult=1;
-  if(!bLOk || !bROk){ //using only one hand will take more time
-    iCraftTimeMult++;
-  }
-
-
   uint sel = FELIST_ERROR_BIT;
   if(vrp.size()>0){
     game::SetStandardListAttributes(craftRecipes);
@@ -2413,7 +2394,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
   }DBGLN;
 
-  bool bDummy = prp->work(rpd); //bDummy as there is more detailed fail status from rpd bools
+  bool bDummy = prp->work(rpd); //bDummy(fied) as there is more detailed fail status from rpd bools
 
   //TODO these messages are generic, therefore dont look good... improve it
   if(rpd.bCanStart){DBGLN;
@@ -2432,10 +2413,21 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       ADD_MESSAGE("Let me see.. I will use %s as tool(s).",fsTools.CStr());
 
     if(rpd.otSpawnType!=CTT_NONE || rpd.itSpawnType!=CIT_NONE) {
-      if(rpd.itTool !=NULL && rpd.itTool ->IsBroken())
+      int iCraftTimeMult=1;
+
+      if(!bLOk || !bROk){ //using only one hand will take more time even if only one tool is required as even if 2 were, only 1 would be handled per time
+        ADD_MESSAGE("I don't have one arm, this will take longer.");
         iCraftTimeMult++;
-      if(rpd.itTool2!=NULL && rpd.itTool2->IsBroken())
+      }
+
+      if(rpd.itTool !=NULL && rpd.itTool ->IsBroken()){
+        ADD_MESSAGE("The first tool is broken, this will take longer.");
         iCraftTimeMult++;
+      }
+      if(rpd.itTool2!=NULL && rpd.itTool2->IsBroken()){
+        ADD_MESSAGE("The second tool is broken, this will take longer.");
+        iCraftTimeMult++;
+      }
 
       if(rpd.iBaseTurnsToFinish<1)
         ABORT("invalid iBaseTurnsToFinish %d",rpd.iBaseTurnsToFinish);
