@@ -1990,41 +1990,91 @@ struct srpForgeItem : public recipe{
         rpd.fDifficulty = 3.0;
     }
 
-    if(bSpecialExtendedTurns){ // special extra turns (dont use difficulty to calc turns as it is a per-turn check)
-      int iBaseTTF = rpd.iBaseTurnsToFinish;
+    /**
+     * IMPORTANT!!!
+     *
+     * dont use difficulty to calc/increase turns as it is already a per-turn check
+     */
 
-      if(!rpd.bMeltable) //carving takes longer
-        rpd.iBaseTurnsToFinish += iBaseTTF;
+    if(!itSpawn->CanBeBroken() || !itSpawn->CanBeBurned())
+      bSpecialExtendedTurns=true;
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    bool bTurnsOverriden=false;
+    /**
+     * here are special turns overriders
+     * these things, mainly by their volume, wont fit well in the complex turns calcs above.
+     * consider it like ingots/sticks/planks/bones/etc are ready just need to be joined
+     */
+    itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
+    if(ic!=NULL){DBGLN;
+      /*
+       * TODO
+       * none of these info helped... the defines about type arent stored anywhere?
+       * they can be spawned using them but after that, they are unrelated?
+       * so the easiest was to use the strings from .dat files :(
+      const itemdatabase* const* itdbAll = ic->GetProtoType()->GetConfigData();
+      const itemdatabase* itdb = ic->GetProtoType()->GetConfigData()[0];
+      itemcontainer* ic1 = itemcontainer::Spawn(SMALL_CHEST);
+      itemcontainer* ic2 = itemcontainer::Spawn(CHEST);
+      itemcontainer* ic3 = itemcontainer::Spawn(LARGE_CHEST);
+      itemcontainer* ic4 = itemcontainer::Spawn(STRONG_BOX);
+      DBG2(ic->GetConfig(),ic->GetVirtualConfig());
+      DBG2(ic1->GetConfig(),ic1->GetVirtualConfig());
+      DBG2(ic2->GetConfig(),ic2->GetVirtualConfig());
+      DBG2(ic3->GetConfig(),ic3->GetVirtualConfig());
+      DBG2(ic4->GetConfig(),ic4->GetVirtualConfig());
+      */
+
+      int iChestType=0;
+      if(ic->GetNameSingular()=="chest"){
+        iChestType=CHEST;
+        if(ic->GetAdjective()=="small"){
+          iChestType=SMALL_CHEST;
+        }else
+        if(ic->GetAdjective()=="large"){
+          iChestType=LARGE_CHEST;
+        }
+      }else
+      if(ic->GetNameSingular()=="strong-box"){
+        iChestType=STRONG_BOX;
+      }
+
+      //their huge volume would make the normal/complex turns calc from above, an unplayable delay.
+      switch(iChestType){
+      case SMALL_CHEST:
+        rpd.iBaseTurnsToFinish=10;
+        bTurnsOverriden=true;
+        break;
+      case STRONG_BOX:
+        rpd.iBaseTurnsToFinish=20;
+        bTurnsOverriden=true;
+        break;
+      case CHEST:
+        rpd.iBaseTurnsToFinish=30;
+        bTurnsOverriden=true;
+        break;
+      case LARGE_CHEST:
+        rpd.iBaseTurnsToFinish=60;
+        bTurnsOverriden=true;
+        break;
+      }
+
+      if(!bTurnsOverriden)
+        DBGBREAKPOINT;
+    }
+
+    if(!bTurnsOverriden && bSpecialExtendedTurns){DBGLN;
+      /**
+       * special extra turns
+       * for special items
+       */
+      int iBaseTTF = rpd.iBaseTurnsToFinish;
 
       rpd.iBaseTurnsToFinish += iBaseTTF*10;
 
-      /**
-       * TODO !CanBeBroken and !CanBeBurned are so special items that will never be craftable right?
-       */
-    }else{
-      /**
-       * here are special turns overriders
-       * these things, mainly by their volume, wont fit well in the complex turns calcs above.
-       * consider it like ingots/sticks/planks/bones/etc are ready just need to be joined
-       */
-      itemcontainer* ic = dynamic_cast<itemcontainer*>(itSpawn);
-      if(ic!=NULL){
-        //their huge volume would make the turns calc an unplayable delay.
-        switch(ic->GetVirtualConfig()){
-        case SMALL_CHEST:
-          rpd.iBaseTurnsToFinish=10;
-          break;
-        case STRONG_BOX:
-          rpd.iBaseTurnsToFinish=20;
-          break;
-        case CHEST:
-          rpd.iBaseTurnsToFinish=30;
-          break;
-        case LARGE_CHEST:
-          rpd.iBaseTurnsToFinish=60;
-          break;
-        }
-      }
+      if(!rpd.bMeltable) //carving takes longer
+        rpd.iBaseTurnsToFinish *= 1.25;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
