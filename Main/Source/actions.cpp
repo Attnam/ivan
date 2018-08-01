@@ -83,6 +83,22 @@ void consume::Handle()
 
   character* Actor = GetActor();
 
+  if(!InDNDMode() && Consuming->GetSpoilLevel() > 0) //TODO if begun eating spoiled shouldnt ask
+  {
+    if(Actor->IsPlayer())
+    {
+      ADD_MESSAGE("This thing is starting to get spoiled."); //TODO a better message?
+
+      if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
+        ActivateInDNDMode();
+      else
+      {
+        Terminate(false);
+        return;
+      }
+    }
+  }
+
   if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
   {
     if(Actor->IsPlayer())
