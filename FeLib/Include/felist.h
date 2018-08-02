@@ -43,6 +43,7 @@ class felist
   void AddDescription(cfestring&, col16 = WHITE);
   static void SetAllowMouse(bool b);
   uint Draw();
+  uint ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer);
   void SetFirstDrawNoFade(bool b);
   uint GetMouseSelectedEntry(v2 v2MousePos);
   void QuickDraw(bitmap*, uint) const;

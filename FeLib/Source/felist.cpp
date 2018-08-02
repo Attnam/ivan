@@ -175,6 +175,25 @@ void felist::SetAllowMouse(bool b)
   bAllowMouseSelect=b;
 }
 
+uint felist::ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer)
+{
+  Selected=0;
+
+  for(uint c = 0; c < Entry.size(); ++c)
+    if(Entry[c]->Selectable)
+      ++Selected;
+
+  --Selected;
+
+  uint pb = Selected - Selected % PageLength;
+  if(PageBegin == pb)
+    JustSelectMoveOnce = true;
+  else
+    BackGround.FastBlit(Buffer);
+
+  return pb;
+}
+
 uint felist::Draw()
 {
   uint FlagsChk = Flags;
@@ -379,6 +398,12 @@ uint felist::Draw()
     }
     DBGLN;
 
+    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
+    {
+      Return = ESCAPED;
+      break;
+    }
+
 //    if(bMouseHovering && !bMouseButtonClick)
     if(bJustRefreshOnce)
       continue;
@@ -417,19 +442,7 @@ uint felist::Draw()
       }
       else
       {
-        for(c = 0, Selected = 0; c < Entry.size(); ++c)
-          if(Entry[c]->Selectable)
-            ++Selected;
-
-        --Selected;
-
-        if(PageBegin == Selected - Selected % PageLength)
-          JustSelectMoveOnce = true;
-        else
-        {
-          BackGround.FastBlit(Buffer);
-          PageBegin = Selected - Selected % PageLength;
-        }
+        PageBegin = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer);
       }
 
       if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
@@ -476,12 +489,6 @@ uint felist::Draw()
       break;
     }
 
-    if(Pressed == KEY_ESC)
-    {
-      Return = ESCAPED;
-      break;
-    }
-
     /**
      * PAGE navigation
      */
@@ -509,7 +516,7 @@ uint felist::Draw()
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
-      if(iPB<0) //PageBegin is uint ...
+      if(iPB<0) //BEWARE!!! PageBegin is uint ...
         iPB=0;
 
       /**
@@ -536,11 +543,14 @@ uint felist::Draw()
           continue; //do nothing
         }
 
-        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
+        //        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
+        DBG6("Before",iPB,Selectables,Selected,PageLength,Entry.size());
+        iPB = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer);
+        DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
       }
 
       // fail safe LAST check
-      if(iPB >= Selectables){ DBG3("how it happened?",iPB,Selectables);
+      if(iPB >= Selectables){ DBG6("HowItHappened?",iPB,Selectables,Selected,PageLength,Entry.size());
         continue; //do nothing
       }
 
