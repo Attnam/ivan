@@ -1101,6 +1101,7 @@ struct srpOltBASE : public recipe{
   bool bRequiresWhere=false;
   bool bAllowSimpleStones=false;
   bool bReqForge=false;
+  bool bReqToolBlunt=true;
   ci CIdefault;
   festring fsDescBASE = "You will need a hammer or other blunt weapon.";
 
@@ -1124,13 +1125,16 @@ struct srpOltBASE : public recipe{
     }
 
     rpd.iBaseTurnsToFinish=iTurns;
-    rpd.itTool = FindBluntTool(rpd);
-    if(rpd.itTool==NULL){
-      failToolMsg(rpd);
-      return false;
+
+    if(bReqToolBlunt){
+      rpd.itTool = FindBluntTool(rpd);
+      if(rpd.itTool==NULL){
+        failToolMsg(rpd);
+        return false;
+      }
     }
 
-    if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.itTool!=NULL){
+    if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL){
       rpd.bCanBePlaced=true;
 
       festring fsQ("to build ");fsQ<<name;
@@ -1171,12 +1175,12 @@ struct srpOltBASE : public recipe{
 struct srpDoor : public srpOltBASE{
   virtual bool spawnCfg(recipedata& rpd){
     rpd.otSpawnType=CTT_DOOR;
-    rpd.otSpawnCfg=NONE;
+    rpd.otSpawnCfg=SECRET_DOOR; //it currently just looks like BRICK_OLD
     return true;
   }
 
   virtual void fillInfo(){
-    init("build","a door");
+    init("build","a secret door");
     desc << "You will need a hammer or other blunt weapon.";
   }
 
@@ -1293,6 +1297,7 @@ struct srpWall2 : public srpOltBASE{
     iTurns=20;
     bRequiresWhere=true;
     bAllowSimpleStones=true;
+    bReqToolBlunt=false;
     return srpOltBASE::work(rpd);
   }
 };srpWall2 rpWall2;
