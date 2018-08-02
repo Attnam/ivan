@@ -264,7 +264,6 @@ uint felist::Draw()
   else
     PageBegin = 0;
 
-  bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   bool bInvM = Flags & INVERSE_MODE;
@@ -311,17 +310,11 @@ uint felist::Draw()
     bool bLeftMouseButtonClick=false;
     bool bMouseButtonClick=false;
     bool bJustRefreshOnce=false;
-    if(bSafeScrollToEnd)
-      Pressed = bInvM ? KEY_PAGE_UP : KEY_PAGE_DOWN;
 
     for(;;){
       /**
        * every section here may break the loop and they are prioritized
        */
-
-      ////////////////////////////// scroll to end by-pass
-      if(bSafeScrollToEnd)
-        break;
 
       /////////////////////////////////////////// MOUSE ///////////////////////////////////////
       v2 v2MousePos = globalwindowhandler::GetMouseLocation();
@@ -523,15 +516,11 @@ uint felist::Draw()
        * overriders
        * obs.: pgdn and space are default "advance page" action
        */
-      if(LastEntryVisible && bSafeScrollToEnd){DBGLN;
-        bSafeScrollToEnd=false;
-        Selected = Selectables-1;
-        continue; //do nothing
-      }
 
       if(bInvM ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
         iPB=0;
 
+      bool bSelLast=false;
       if(bInvM ? Pressed == KEY_HOME : Pressed == KEY_END){DBGLN; // go to last
         if(Entry.size()<=PageLength){DBGLN; //only one page
           Selected = Selectables-1;
@@ -543,10 +532,9 @@ uint felist::Draw()
           continue; //do nothing
         }
 
-        //        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
         DBG6("Before",iPB,Selectables,Selected,PageLength,Entry.size());
-        iPB = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer);
-        DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
+        iPB = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer); DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
+        bSelLast=true;
       }
 
       // fail safe LAST check
@@ -555,12 +543,11 @@ uint felist::Draw()
       }
 
       // apply
-      PageBegin = iPB;
+      PageBegin = iPB; DBG3(PageBegin,Pressed,iDir);
 
-      DBG3(PageBegin,Pressed,iDir);
-
-      if(Flags & SELECTABLE)
-        Selected = PageBegin;
+      if(!bSelLast)
+        if(Flags & SELECTABLE)
+          Selected = PageBegin;
     }
   }
 
