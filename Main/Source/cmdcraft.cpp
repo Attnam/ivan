@@ -1704,8 +1704,10 @@ struct srpSplitLump : public recipe{
       }
     }
 
-    if(ToSplit==NULL)
+    if(ToSplit==NULL){
+      rpd.bAlreadyExplained=true; //no need to say anything
       return false;
+    }
 
     if(craftcore::IsDegraded(ToSplit)){
       rpd.bAlreadyExplained=true;
