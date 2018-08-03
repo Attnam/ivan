@@ -46,6 +46,8 @@ class globalwindowhandler
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static mouseclick ConsumeMouseEvent();
+  static bool ConsumeFilterEvent(festring&);
+  static void ClearFilterRequest();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
@@ -74,6 +76,7 @@ class globalwindowhandler
   static void SetQuitMessageHandler(truth (*What)()){ QuitMessageHandler = What; }
   static ulong UpdateTick() { return Tick = SDL_GetTicks() / 40; }
 #endif
+  static void SetFilterHandler(cfestring (*What)()){ FilterHandler = What; }
 #ifdef __DJGPP__
   static void Init() { }
   static void SetQuitMessageHandler(truth (*)()) { }
@@ -91,6 +94,7 @@ class globalwindowhandler
   static truth ControlLoopsEnabled;
   static truth playInBackground;
   static festring ScrshotDirectoryName;
+  static cfestring (*FilterHandler)();
 };
 
 #endif

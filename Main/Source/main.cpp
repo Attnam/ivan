@@ -97,6 +97,7 @@ int main(int argc, char** argv)
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
+  globalwindowhandler::SetFilterHandler(game::FilterListQuestion);
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
