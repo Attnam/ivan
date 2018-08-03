@@ -11972,6 +11972,18 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
                             BodyPartIndex, YOURSELF, false, false, false);
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
     }
+
+    if(BodyPartIsVital(BodyPartIndex)
+       && GetAction() && GetAction()->IsRest()
+       && BodyPart->IsBadlyHurt())
+    {
+      rest* Rest = dynamic_cast<rest*>(GetAction());
+
+      if(!Rest->GetWasBadlyHurt() && game::TruthQuestion(CONST_S("You're about to die from mustard gas. Try to find a healer? [Y/n]"), YES))
+        Rest->Terminate(false);
+      else
+        Rest->SetWasBadlyHurt(true);
+    }
   }
 }
 
