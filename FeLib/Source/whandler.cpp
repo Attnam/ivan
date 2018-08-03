@@ -599,10 +599,11 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     break;
    case SDL_KEYDOWN:
     bLastSDLkeyEventIsKeyUp=false;
+    bool bCTRL = Event->key.keysym.mod & KMOD_CTRL;
     switch(Event->key.keysym.sym)
     {
      case SDLK_BACKQUOTE:
-      if(Event->key.keysym.mod & KMOD_CTRL)
+      if(bCTRL)
         if(CmdDevConsHandler!=NULL)
           CmdDevConsHandler();
       break;
