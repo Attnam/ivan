@@ -314,6 +314,7 @@ uint felist::DrawFiltered()
   else
     PageBegin = 0;
 
+  bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   bool bInvM = Flags & INVERSE_MODE;
