@@ -597,7 +597,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
    case SDL_KEYUP:
     bLastSDLkeyEventIsKeyUp=true;
     break;
-   case SDL_KEYDOWN:
+   case SDL_KEYDOWN:{
     bLastSDLkeyEventIsKeyUp=false;
     bool bCTRL = Event->key.keysym.mod & KMOD_CTRL;
     switch(Event->key.keysym.sym)
@@ -687,7 +687,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     }
     if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
       KeyBuffer.push_back(KeyPressed);
-    break;
+   }break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:
     KeyPressed = Event->text.text[0];
