@@ -11973,15 +11973,18 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
     }
 
-    if(IsPlayer() && BodyPartIsVital(BodyPartIndex)
-       && GetAction() && GetAction()->IsRest() && BodyPart->IsBadlyHurt())
+    if(IsPlayer())
     {
-      rest* Rest = dynamic_cast<rest*>(GetAction());
+      action* Action = GetAction();
 
-      if(!Rest->GetWasBadlyHurt() && game::TruthQuestion(CONST_S("You're about to die from mustard gas. Try to find a healer? [Y/n]"), YES))
-        Rest->Terminate(false);
-      else
-        Rest->SetWasBadlyHurt(true);
+      if(Action && Action->IsRest() && !Action->InDNDMode()
+         && BodyPartIsVital(BodyPartIndex) && BodyPart->IsBadlyHurt())
+      {
+        if(game::TruthQuestion(CONST_S("You're about to die from mustard gas. Try to find a healer? [Y/n]"), YES))
+          Action->Terminate(false);
+        else
+          Action->ActivateInDNDMode();
+      }
     }
   }
 }

@@ -67,12 +67,9 @@ ACTION(rest, action)
   virtual truth IsRest() const { return true; }
   virtual cchar* GetDescription() const;
   void SetMinToStop(int What) { MinToStop = What; }
-  void SetWasBadlyHurt(truth What) { WasBadlyHurt = What; }
-  truth GetWasBadlyHurt() const { return WasBadlyHurt; }
  protected:
   int GoalHP;
   int MinToStop;
-  truth WasBadlyHurt = false;
 };
 
 ACTION(dig, action)
