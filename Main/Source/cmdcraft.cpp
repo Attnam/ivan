@@ -1478,13 +1478,20 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     item* itToUse = game::SearchItem(rpd.ingredientsIDs[0]); DBG2(rpd.ingredientsIDs[0],itToUse);
     rpd.ingredientsIDs.clear();
 
+    material* matM=NULL;
+    material* matS=NULL;
+    material* matIngot=NULL;
+
+    matM = itToUse->GetMainMaterial();
+    matS = itToUse->GetSecondaryMaterial();
+
     if(game::IsQuestItem(itToUse)){
       ADD_MESSAGE("You feel that would be a bad idea and carefully stores it back in your inventory.");
       rpd.bAlreadyExplained=true;
       return false;
     }
 
-    if(dynamic_cast<corpse*>(itToUse)!=NULL){
+    if(dynamic_cast<corpse*>(itToUse)!=NULL || matM==NULL){ //TODO may be there are other things than corpses that also have no main material?
       ADD_MESSAGE("I should try to split %s instead.",itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
@@ -1494,13 +1501,6 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       rpd.bAlreadyExplained=true;
       return false;
     }
-
-    material* matM=NULL;
-    material* matS=NULL;
-    material* matIngot=NULL;
-
-    matM = itToUse->GetMainMaterial();
-    matS = itToUse->GetSecondaryMaterial();
 
     rpd.bMeltable = craftcore::IsMeltable(itToUse);
     if(rpd.bMeltable){
@@ -1512,11 +1512,6 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
         failToolMsg(rpd);
         return false;
       }
-    }
-
-    bool bJustLumpfyTheIngot=false;
-    if(dynamic_cast<stone*>(itToUse)!=NULL && itToUse->GetConfig()==INGOT){
-      bJustLumpfyTheIngot=true;
     }
 
     /////////////////////// dismantle into lumps
@@ -1532,37 +1527,23 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
 
-    item* LumpMeltable = NULL;
     // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
-
-    { // main material ALWAYS exist
-      item* LumpM = craftcore::PrepareRemains(matM,rpd);
-      if(craftcore::IsMeltable(LumpM->GetMainMaterial()))
-        LumpMeltable = LumpM;
-    }
-
-    if(matS!=NULL){
-      item* LumpS = craftcore::PrepareRemains(matS,rpd); //must always be prepared to not lose it
-      if(LumpS!=NULL)
-        if(craftcore::IsMeltable(LumpS->GetMainMaterial()) )
-          if(LumpMeltable==NULL)
-            LumpMeltable = LumpS;
-    }
+    item* RmnM = craftcore::PrepareRemains(matM,rpd);
+    item* RmnS = matS==NULL ? NULL : craftcore::PrepareRemains(matS,rpd); //must always be prepared to not lose it
 
     craftcore::EmptyContentsIfPossible(rpd,itToUse,true);
 
     ADD_MESSAGE("%s was completely dismantled.", itToUse->GetName(DEFINITE).CStr());
     rpd.bAlreadyExplained=true;
-    craftcore::SendToHellSafely(itToUse);
-    DBG4("SentToHell",itToUse->GetID(),itToUse,LumpMeltable); //TODO if has any magic should release it and also harm
+
+    craftcore::SendToHellSafely(itToUse); DBG3("SentToHell",itToUse->GetID(),itToUse); //TODO if has any magic should release it and also harm
 
     rpd.bSpendCurrentTurn=true; //this is necessary or item wont be sent to hell...
 
-    if(bJustLumpfyTheIngot){
-      lumpMix(vitInv(rpd),LumpMeltable,rpd.bSpendCurrentTurn);
-      rpd.bAlreadyExplained=true;
-      return false;
-    }
+    if(dynamic_cast<lump*>(RmnM)!=NULL)
+      lumpMix(vitInv(rpd),RmnM,rpd.bSpendCurrentTurn);
+    if(dynamic_cast<lump*>(RmnS)!=NULL)
+      lumpMix(vitInv(rpd),RmnS,rpd.bSpendCurrentTurn);
 
     return true;
   }
@@ -1917,26 +1898,31 @@ struct srpForgeItem : public recipe{
     }
 
     bool bM = false;
-    festring fsM("as MAIN material");DBGLN;
     if(!bM){
       ci CI = CIM;
-      CI.iReqCfg=INGOT; //meltables
+      CI.iReqCfg=INGOT; //meltables are 100% usable
+      festring fsM("as MAIN material (ingots 100%)");
       bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
       ci CI = CIM; //carving: only one stone per material allowed, so it must have required volume
       CI.bFirstItemMustHaveFullVolumeRequired=true;
       CI.bMultSelect=false;
-      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
+      festring fsM("as MAIN material (stones 75%)"); //roundy shape loses material
+      bM = choseIngredients<stone>(fsM,lVolM/0.75, rpd, iCfgM, CI);
+      //TODO remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3, prepare a stone with 25cm3 and a lump with 8cm3, currently it is just lost (what is not a big problem...)
     }
-    if(!bM){
-      ci CI = CIM;
-      bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);
-    }
-    if(!bM){
-      ci CI = CIM;
-      CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
-      bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
+    {//stick block //TODO see 'remaining lump' TODO above
+      festring fsM("as MAIN material (sticks 50%)"); //stick shapes can't provide enough to the required dimensions (this is a xtremely wild simplification btw :))
+      if(!bM){
+        ci CI = CIM;
+        bM = choseIngredients<bone>(fsM,lVolM/0.50, rpd, iCfgM, CI);
+      }
+      if(!bM){
+        ci CI = CIM;
+        CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
+        bM = choseIngredients<stick>(fsM,lVolM/0.50, rpd, iCfgM, CI);
+      }
     }
     if(!bM){
       ADD_MESSAGE("I will craft it later...");
@@ -3138,7 +3124,10 @@ item* craftcore::PrepareRemains(material* mat, recipedata& rpd)
     if(bWoodenCreateStick){
       itTmp = stick::Spawn(0, NO_MATERIALS);
     }else{
-      itTmp = lump::Spawn(0, NO_MATERIALS);
+      if(craftcore::IsMeltable(mat))
+        itTmp = lump::Spawn(0, NO_MATERIALS);
+      else
+        itTmp = stone::Spawn(0, NO_MATERIALS); //could be a shaped stone, not suitable to all re-uses, but item creation already won't use full volume of non meltable stones
     }
 //    itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
     itTmp->SetMainMaterial(CreateMaterial(mat));
