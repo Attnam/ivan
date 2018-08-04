@@ -408,6 +408,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bOnlyXplodIfCriticalFumble=false;
 
   bSpecialExtendedTurns=false;
+  iMinTurns=0;
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
@@ -1651,6 +1652,8 @@ struct srpSplitLump : public recipe{
   virtual bool work(recipedata& rpd){
     item* ToSplit = NULL;
 
+    rpd.bGradativeCraftOverride=true; //may be disabled below
+
     if(ToSplit==NULL && choseOneIngredient<lump>(rpd)){ //can  be split with hands only
       ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
       rpd.itSpawnType = CIT_LUMP;
@@ -1666,12 +1669,29 @@ struct srpSplitLump : public recipe{
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
       ToSplit = craftcore::PrepareRemains(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
-      rpd.itSpawnType = CIT_LUMP;
+      if(dynamic_cast<humanoid*>(D)!=NULL){
+        /**
+         * this is to try to keep necromancers, raising zombies, challenging,
+         * despite their action is random and not timed, so let it be random here too :)
+         * TODO instead of just lump, also remove head and limbs (if available) so a friendly zombie could attach it?
+         */
+        rpd.iMinTurns = 3 + clock()%3;
+        rpd.bGradativeCraftOverride=false;
 
-      craftcore::SendToHellSafely(Corpse);
+        // tmp flesh lump
+        rpd.itSpawnCfg = ToSplit->GetConfig();
+        rpd.itSpawnMatMainCfg = ToSplit->GetMainMaterial()->GetConfig();
+        craftcore::SendToHellSafely(ToSplit);
+
+        ToSplit = Corpse;
+      }else{
+        craftcore::SendToHellSafely(Corpse);
+      }
+
       rpd.ingredientsIDs.clear();
-
       rpd.ingredientsIDs.push_back(ToSplit->GetID());
+
+      rpd.itSpawnType = CIT_LUMP;
 
       rpd.bAlreadyExplained=true; //no need to say anything
     }
@@ -1683,23 +1703,15 @@ struct srpSplitLump : public recipe{
       rpd.itSpawnType = CIT_STICK;
     }
 
-    {
+    if(ToSplit==NULL){
       ci CI;
       CI.bAllowMeltables=false;
-      if(ToSplit==NULL && choseOneIngredient<stone>(rpd,&CI)){
+      if(choseOneIngredient<stone>(rpd,&CI)){
         ToSplit = game::SearchItem(rpd.ingredientsIDs[0]);
         if(!setTools(rpd,FindBluntTool(rpd),findCarvingTool(rpd,ToSplit))){ //the blunt is to hit the cutting one
           explain(rpd,ToSplit->GetName(INDEFINITE));
           return false;
         }
-//        bool bHasAllTools=true;
-//        addTool(rpd,FindBluntTool(rpd));
-//        //        if(!reqCut(rpd,ToSplit->GetName(INDEFINITE)))
-//        addTool(findCarvingTool(rpd,ToSplit));
-//        if(!findCarvingTool(rpd,ToSplit)){
-//          explain(rpd,ToSplit->GetName(INDEFINITE));
-//          return false;
-//        }
         rpd.itSpawnType = CIT_STONE;
       }
     }
@@ -1709,45 +1721,55 @@ struct srpSplitLump : public recipe{
       return false;
     }
 
+    /*
     if(craftcore::IsDegraded(ToSplit)){
       rpd.bAlreadyExplained=true;
       return false;
     }
+    */
 
-    long volM=ToSplit->GetMainMaterial()->GetVolume();
+    if(ToSplit->GetSecondaryMaterial()!=NULL)
+      ABORT("can only split items without secondary material");
+
+    // some items may not have main material like corpses
+    long volTot=ToSplit->GetVolume();
 
     festring fsInfo;
     ToSplit->AddInventoryEntry(rpd.rc.H(),fsInfo,1,true);
-    long totParts = game::NumberQuestion(festring()+"Split "+fsInfo+" in how many parts?", WHITE, true);
-    if(totParts<=1){
+    rpd.itSpawnTot = game::NumberQuestion(festring()+"Split "+fsInfo+" in how many parts? [2 or more]", WHITE, true);
+    if(rpd.itSpawnTot<=1){
       rpd.bAlreadyExplained=true; //no need to say anything
       return false;
     }
 
-    long volPart = volM/totParts;
-    if(volPart < 1){
+    rpd.itSpawnMatMainVol = volTot/rpd.itSpawnTot;
+    if(rpd.itSpawnMatMainVol < 1){
       ADD_MESSAGE("The splitted part must have some volume.");
       rpd.bAlreadyExplained=true;
       return false;
     }
 
-    long volRest = volM%totParts; //gradative work should take care of it
+    /**
+     * gradative work takes care of remaining vol
+     * if not gradative, this little remainder will just be lost (probably only in case of corpses)
+     * kept the code active as reference if someone thinks a good way to use that value :)
+     */
+    long volRest = volTot%rpd.itSpawnTot;
 
-    rpd.CopySpawnItemCfgFrom(ToSplit);
-    rpd.itSpawnMatMainVol = volPart;
-    rpd.itSpawnTot = totParts;
+    if(rpd.itSpawnCfg==0)
+      rpd.itSpawnCfg = ToSplit->GetConfig();
+    if(rpd.itSpawnMatMainCfg==0)
+      rpd.itSpawnMatMainCfg = ToSplit->GetMainMaterial()->GetConfig();
 
     float fTotTurns=0;
-    for(int i=1;i<=totParts;i++){ //TODO should be based on cut area/length
-      float fCurrentPartVol=volM/(float)i;
-      float fTurns=fCurrentPartVol/100000.0; //bear is 150000cm3
+    for(int i=1;i<=rpd.itSpawnTot;i++){ //TODO should be based on cut area/length
+      float fCurrentPartVol=volTot/(float)i;
+      float fTurns=fCurrentPartVol/100000.0; //reference: bear is 150000cm3
       fTotTurns+=fTurns; //turn time is one minute but when fighting it also spends 1 min... w/e...
     }
     rpd.iBaseTurnsToFinish = fTotTurns;
     if(rpd.iBaseTurnsToFinish<1)
       rpd.iBaseTurnsToFinish=1;
-
-    rpd.bGradativeCraftOverride=true;
 
     rpd.bAlreadyExplained=true; //no need to say anything
 
@@ -2455,6 +2477,10 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       rpd.iBaseTurnsToFinish /= craftcore::CraftSkill(Char)/10.0;
       if(rpd.iBaseTurnsToFinish==0) //if div zeroed it
         rpd.iBaseTurnsToFinish=1;
+      if(rpd.iBaseTurnsToFinish<rpd.iMinTurns)
+        rpd.iBaseTurnsToFinish=rpd.iMinTurns;
+      rpd.iRemainingTurnsToFinish = rpd.iBaseTurnsToFinish;
+      // warn if will take too long
       int iH = rpd.iBaseTurnsToFinish/60;
       int iD = iH/24;
       iH = iH%24;
@@ -2484,8 +2510,6 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
       if(rpd.lsqrPlaceAt!=NULL)rpd.v2BuildWhere=rpd.lsqrPlaceAt->GetPos();
-
-      rpd.iRemainingTurnsToFinish = rpd.iBaseTurnsToFinish;
 
       rpd.ClearRefs(); //pointers must be revalidated on the action handler
 
@@ -2711,7 +2735,8 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
     festring fsMsg("");
 
     if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      craftcore::SpawnItem(rpd,fsMsg);
+      for(int i=0;i<rpd.itSpawnTot;i++)
+        craftcore::CopyDegradationIfPossible(rpd,craftcore::SpawnItem(rpd,fsMsg));
     }
 
     if(rpd.otSpawnType!=CTT_NONE){DBGLN;
@@ -2726,10 +2751,12 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
 }
 
 /**
+ * Always 1 to many.
  * ex.:
- * - a big meltable lump into ingots
- * - a big stick into tiny ones
- * - a rock into smaller ones
+ * - one big meltable lump into ingots
+ * - one big stick into tiny ones
+ * - one rock into smaller ones
+ * - one organic
  */
 void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
@@ -2770,6 +2797,7 @@ void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
      * so just avoiding using it here.
      */
     item* itSpawned = craftcore::SpawnItem(rpdTmp,fsMsg);
+    craftcore::CopyDegradation(matM,itSpawned->GetMainMaterial());
 
     ADD_MESSAGE("%s.",fsMsg.CStr());
 
@@ -3169,4 +3197,47 @@ bool craftcore::IsDegraded(item* it,bool bShowMsg){
     ADD_MESSAGE("%s is too degraded to work with.",it->GetName(DEFINITE).CStr());
 
   return b;
+}
+
+void craftcore::CopyDegradation(item* itFrom,material* matTo)
+{
+  material* matFromM = itFrom->GetMainMaterial();
+  if(matFromM!=NULL){
+    CopyDegradation(matFromM,matTo);
+  }else{
+    /**
+     * w/o main material there is:
+     * - no rust available
+     * - no burn available
+     * //TODO will this make things easier to player?
+     * PS.: this ends being probably only for corpses.
+     */
+    ushort SC=0;
+    while(true){ //TODO reverse SpoilLevel into SpoilCounter value
+      matTo->SetSpoilCounter(SC);
+      if(matTo->GetSpoilLevel()>=itFrom->GetSpoilLevel())
+        break;
+      SC+=5; // from slowest at organic::Be
+    }
+  }
+}
+void craftcore::CopyDegradation(material* matFrom,material* matTo)
+{
+  if(dynamic_cast<organic*>(matTo)!=NULL)
+    ((organic*)matTo)->SetSpoilCounter(((organic*)matFrom)->GetSpoilCounter());
+  matTo->SetBurnLevel(matFrom->GetBurnLevel(),false);
+  matTo->SetRustLevel(matFrom->GetRustLevel());
+}
+
+void craftcore::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
+{
+  /**
+   * will work with simple recipes only
+   * where the work is from one simple ingredient
+   */
+  if(rpd.ingredientsIDs.size()==1){
+    item* itIng = game::SearchItem(rpd.ingredientsIDs[0]);
+    if(itIng->GetSecondaryMaterial()==NULL)
+      CopyDegradation(itIng,itTo->GetMainMaterial());
+  }
 }

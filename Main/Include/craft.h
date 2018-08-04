@@ -135,6 +135,7 @@ class recipedata {
     bool bOnlyXplodIfCriticalFumble;
 
     bool bSpecialExtendedTurns;
+    int iMinTurns;
 
     /*******************************************
      * save REQUIRED fields!!!
@@ -241,6 +242,9 @@ class craftcore {
 
     static cfestring DestroyIngredients(recipedata& rpd);
 
+    static void CopyDegradation(material* matM,material* matSpM);
+    static void CopyDegradation(item* itFrom,material* matTo);
+    static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
     static bool IsDegraded(item* it,bool bShowMsg=false);
     static truth IsMeltable(material* mat);
     static truth IsMeltable(material* matM,material* matS);
