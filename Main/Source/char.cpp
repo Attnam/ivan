@@ -11973,9 +11973,8 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
     }
 
-    if(BodyPartIsVital(BodyPartIndex)
-       && GetAction() && GetAction()->IsRest()
-       && BodyPart->IsBadlyHurt())
+    if(IsPlayer() && BodyPartIsVital(BodyPartIndex)
+       && GetAction() && GetAction()->IsRest() && BodyPart->IsBadlyHurt())
     {
       rest* Rest = dynamic_cast<rest*>(GetAction());
 
