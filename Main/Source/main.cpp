@@ -102,6 +102,7 @@ int main(int argc, char** argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
   globalwindowhandler::SetDeveloperConsoleHandler(devcons::Command);
+  globalwindowhandler::SetFilterHandler(game::FilterListQuestion);
   bugfixdp::init();
   definesvalidator::init();
   msgsystem::Init();

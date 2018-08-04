@@ -141,6 +141,7 @@ int globalwindowhandler::ReadKey()
 std::vector<int> globalwindowhandler::KeyBuffer;
 truth (*globalwindowhandler::QuitMessageHandler)() = 0;
 void (*globalwindowhandler::CmdDevConsHandler)() = 0;
+cfestring (*globalwindowhandler::FilterHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
@@ -552,6 +553,27 @@ mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
   return mcR;
 }
 
+bool bFilterRequested=false;
+void globalwindowhandler::ClearFilterRequest()
+{
+  bFilterRequested=false;
+}
+bool globalwindowhandler::ConsumeFilterEvent(festring& fsFilter)
+{
+  if(bFilterRequested){
+    int iTimeoutDelayBkp = iTimeoutDelay;
+    iTimeoutDelay=0;
+    fsFilter=FilterHandler();DBGLN;
+    iTimeoutDelay=iTimeoutDelayBkp;
+
+    bFilterRequested=false;
+
+    return true;
+  }
+
+  return false;
+}
+
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed = 0;
@@ -607,6 +629,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
         if(CmdDevConsHandler!=NULL)
           CmdDevConsHandler();
       break;
+     case SDLK_f:
+       if(bCTRL)
+         bFilterRequested=true;
+       break;
      case SDLK_RETURN:
      case SDLK_KP_ENTER:
       if(Event->key.keysym.mod & KMOD_ALT)

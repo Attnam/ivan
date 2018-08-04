@@ -265,6 +265,7 @@ class game
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
+  static cfestring FilterListQuestion();
   static int StringQuestion(festring&, cfestring&, col16, festring::sizetype, festring::sizetype, truth, stringkeyhandler = 0);
   static long NumberQuestion(cfestring&, int, truth = false);
   static ulong IncreaseLOSTick();

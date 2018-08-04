@@ -82,10 +82,13 @@ class felist
   static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
  private:
+  uint DrawFiltered();
   void DrawDescription(bitmap*) const;
   bool FirstDrawNoFade;
   std::vector<EntryRect> vEntryRect;
   std::vector<felistentry*> Entry;
+  std::vector<felistentry*> EntryBkp;
+  festring* fsFilter;
   std::vector<felistdescription*> Description;
   uint PageBegin;
   uint Maximum;
