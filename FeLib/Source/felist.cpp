@@ -183,6 +183,25 @@ void felist::SetAllowMouse(bool b)
   bAllowMouseSelect=b;
 }
 
+uint felist::ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer)
+{
+  Selected=0;
+
+  for(uint c = 0; c < Entry.size(); ++c)
+    if(Entry[c]->Selectable)
+      ++Selected;
+
+  --Selected;
+
+  uint pb = Selected - Selected % PageLength;
+  if(PageBegin == pb)
+    JustSelectMoveOnce = true;
+  else
+    BackGround.FastBlit(Buffer);
+
+  return pb;
+}
+
 felistentry* RetrieveSelectableEntry(std::vector<felistentry*> Entry,uint Selected){
   uint iSel=0;
   for(uint i=0;i<Entry.size();i++){
@@ -343,7 +362,6 @@ uint felist::DrawFiltered()
   else
     PageBegin = 0;
 
-  bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   bool bInvM = Flags & INVERSE_MODE;
@@ -392,8 +410,6 @@ uint felist::DrawFiltered()
     bool bLeftMouseButtonClick=false;
     bool bMouseButtonClick=false;
     bool bJustRefreshOnce=false;
-    if(bSafeScrollToEnd)
-      Pressed = bInvM ? KEY_PAGE_UP : KEY_PAGE_DOWN;
 
     for(;;){
       /**
@@ -515,6 +531,12 @@ uint felist::DrawFiltered()
     }
     DBGLN;
 
+    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
+    {
+      Return = ESCAPED;
+      break;
+    }
+
 //    if(bMouseHovering && !bMouseButtonClick)
     if(bJustRefreshOnce)
       continue;
@@ -553,19 +575,7 @@ uint felist::DrawFiltered()
       }
       else
       {
-        for(c = 0, Selected = 0; c < Entry.size(); ++c)
-          if(Entry[c]->Selectable)
-            ++Selected;
-
-        --Selected;
-
-        if(PageBegin == Selected - Selected % PageLength)
-          JustSelectMoveOnce = true;
-        else
-        {
-          BackGround.FastBlit(Buffer);
-          PageBegin = Selected - Selected % PageLength;
-        }
+        PageBegin = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer);
       }
 
       if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
@@ -649,22 +659,18 @@ uint felist::DrawFiltered()
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
-      if(iPB<0) //PageBegin is uint ...
+      if(iPB<0) //BEWARE!!! PageBegin is uint ...
         iPB=0;
 
       /**
        * overriders
        * obs.: pgdn and space are default "advance page" action
        */
-      if(LastEntryVisible && bSafeScrollToEnd){DBGLN;
-        bSafeScrollToEnd=false;
-        Selected = Selectables-1;
-        continue; //do nothing
-      }
 
       if(bInvM ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
         iPB=0;
 
+      bool bSelLast=false;
       if(bInvM ? Pressed == KEY_HOME : Pressed == KEY_END){DBGLN; // go to last
         if(Entry.size()<=PageLength){DBGLN; //only one page
           Selected = Selectables-1;
@@ -676,21 +682,22 @@ uint felist::DrawFiltered()
           continue; //do nothing
         }
 
-        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
+        DBG6("Before",iPB,Selectables,Selected,PageLength,Entry.size());
+        iPB = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer); DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
+        bSelLast=true;
       }
 
       // fail safe LAST check
-      if(iPB >= Selectables){ DBG3("how it happened?",iPB,Selectables);
+      if(iPB >= Selectables){ DBG6("HowItHappened?",iPB,Selectables,Selected,PageLength,Entry.size());
         continue; //do nothing
       }
 
       // apply
-      PageBegin = iPB;
+      PageBegin = iPB; DBG3(PageBegin,Pressed,iDir);
 
-      DBG3(PageBegin,Pressed,iDir);
-
-      if(Flags & SELECTABLE)
-        Selected = PageBegin;
+      if(!bSelLast)
+        if(Flags & SELECTABLE)
+          Selected = PageBegin;
     }
   };DBGLN;
 
