@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <algorithm>
 
 #include "bitmap.h"
