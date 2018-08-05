@@ -140,8 +140,8 @@ int globalwindowhandler::ReadKey()
 
 std::vector<int> globalwindowhandler::KeyBuffer;
 truth (*globalwindowhandler::QuitMessageHandler)() = 0;
-void (*globalwindowhandler::CmdDevConsHandler)() = 0;
-cfestring (*globalwindowhandler::FilterHandler)() = 0;
+bool (*globalwindowhandler::FunctionKeyHandler)(SDL_Keycode) = 0;
+bool (*globalwindowhandler::ControlKeyHandler)(SDL_Keycode) = 0;
 
 void globalwindowhandler::Init()
 {
@@ -306,6 +306,16 @@ void globalwindowhandler::CheckKeyTimeout()
     }
   }
 }
+int iTimeoutDelayBkp=0;
+void globalwindowhandler::SuspendKeyTimeout()
+{
+  iTimeoutDelayBkp=iTimeoutDelay;
+  iTimeoutDelay=0;
+}
+void globalwindowhandler::ResumeKeyTimeout()
+{
+  iTimeoutDelay=iTimeoutDelayBkp;
+}
 
 float globalwindowhandler::GetFPS(bool bInsta){
   if(bInsta)return fInstaFPS;
@@ -426,9 +436,11 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
           SDL_Delay(iDelayMS);
         }
         else
-        {
-          SDL_WaitEvent(&Event);
-          ProcessMessage(&Event);
+        {DBG2(Controls,ControlLoopsEnabled);
+//          if(ControlLoopsEnabled && Controls==0)
+//            graphics::BlitDBToScreen();
+          SDL_WaitEvent(&Event);DBGLN;
+          ProcessMessage(&Event);DBGLN;
         }
       }
     }
@@ -553,25 +565,15 @@ mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
   return mcR;
 }
 
-bool bFilterRequested=false;
-void globalwindowhandler::ClearFilterRequest()
+int globalwindowhandler::ChkCtrlKey(SDL_Event* Event)
 {
-  bFilterRequested=false;
-}
-bool globalwindowhandler::ConsumeFilterEvent(festring& fsFilter)
-{
-  if(bFilterRequested){
-    int iTimeoutDelayBkp = iTimeoutDelay;
-    iTimeoutDelay=0;
-    fsFilter=FilterHandler();DBGLN;
-    iTimeoutDelay=iTimeoutDelayBkp;
-
-    bFilterRequested=false;
-
-    return true;
+  if(Event->key.keysym.mod & KMOD_CTRL){ //if CTRL is pressed, user expects something else than the normal key, therefore not permissive
+    if(ControlKeyHandler!=NULL)
+      ControlKeyHandler(Event->key.keysym.sym);
+    return 0;
   }
 
-  return false;
+  return Event->key.keysym.sym;
 }
 
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
@@ -621,18 +623,15 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     break;
    case SDL_KEYDOWN:{
     bLastSDLkeyEventIsKeyUp=false;
-    bool bCTRL = Event->key.keysym.mod & KMOD_CTRL;
     switch(Event->key.keysym.sym)
     {
-     case SDLK_BACKQUOTE:
-      if(bCTRL)
-        if(CmdDevConsHandler!=NULL)
-          CmdDevConsHandler();
-      break;
-     case SDLK_f:
-       if(bCTRL)
-         bFilterRequested=true;
-       break;
+     case SDLK_F1:
+       if(FunctionKeyHandler!=NULL)
+         if(FunctionKeyHandler(Event->key.keysym.sym)){
+           KeyPressed = iTimeoutDefaultKey;
+           break;
+         }
+       return;
      case SDLK_RETURN:
      case SDLK_KP_ENTER:
       if(Event->key.keysym.mod & KMOD_ALT)
@@ -695,14 +694,31 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
 #endif
 
+     case SDLK_BACKQUOTE:
+       KeyPressed = ChkCtrlKey(Event);
+       break;
+
+     case SDLK_c:
+       KeyPressed = ChkCtrlKey(Event);
+       break;
+
      case SDLK_e:
-      if(Event->key.keysym.mod & KMOD_ALT
-         && (Event->key.keysym.mod & KMOD_LCTRL
-             || Event->key.keysym.mod & KMOD_RCTRL))
+      if((Event->key.keysym.mod & KMOD_ALT)
+         && ((Event->key.keysym.mod & KMOD_LCTRL)
+             || (Event->key.keysym.mod & KMOD_RCTRL)))
       {
-        KeyPressed = '\177';
+        KeyPressed = '\177'; //TODO exemplify where this is/can be used.
         break;
       }
+
+     case SDLK_f:
+       KeyPressed = ChkCtrlKey(Event);
+       break;
+
+     case SDLK_v:
+      KeyPressed = ChkCtrlKey(Event);
+      break;
+
      default:
 #if SDL_MAJOR_VERSION == 1
       KeyPressed = Event->key.keysym.unicode;
@@ -711,8 +727,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       if(!KeyPressed)
         return;
     }
-    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
-      KeyBuffer.push_back(KeyPressed);
+
+    if(KeyPressed!=0)
+      if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
+        KeyBuffer.push_back(KeyPressed);
    }break;
 #if SDL_MAJOR_VERSION == 2
    case SDL_TEXTINPUT:

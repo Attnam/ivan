@@ -17,6 +17,7 @@
 #include "festring.h"
 
 class bitmap;
+class inputfile;
 
 typedef truth (*stringkeyhandler)(int, festring&);
 typedef void (*bitmapeditor)(bitmap*, truth);

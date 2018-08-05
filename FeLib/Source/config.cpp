@@ -155,7 +155,13 @@ void configsystem::Show(void (*BackGroundDrawer)(),
     {
       festring Entry = Option[c]->Description;
       Entry.Capitalize();
-      Entry.Resize(60);
+      int iLim=60;
+      if(Entry.GetSize()>iLim-1){
+        Entry.Resize(iLim-4);
+        Entry<<"...";
+      }else
+        Entry.Resize(iLim-1);
+      Entry<<" "; //space between "columns"
       Option[c]->DisplayValue(Entry);
 
       if(fsLastCategory!=Option[c]->fsCategory){
@@ -164,6 +170,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       }
 
       List.AddEntry(Entry, LIGHT_GRAY);
+      List.SetLastEntryHelp(Option[c]->Description);
     }
 
     if(SlaveScreen && ListAttributeInitializer)

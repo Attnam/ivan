@@ -575,7 +575,7 @@ bitmap* graphics::PrepareBuffer(){
     debugTinyDungeon(DoubleBuffer,StretchedBuffer);
   }
 
-  DrawAboveAll(ReturnBuffer);
+  DrawAboveAll();
 
   return ReturnBuffer;
 }
@@ -586,7 +586,7 @@ struct drawaboveentry{
   const char* desc; //to help on development
 };
 std::vector<drawaboveentry> vDrawabove;
-void graphics::DrawAboveAll(bitmap* bmpDest)
+void graphics::DrawAboveAll()
 {
   bitmap* DrawAtBuffer = DoubleBuffer;
   if(isStretchedRegionsAllowed())

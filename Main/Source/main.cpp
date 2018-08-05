@@ -36,6 +36,7 @@
 #include "hscore.h"
 #include "graphics.h"
 #include "script.h"
+#include "specialkeys.h"
 #include "message.h"
 #include "proto.h"
 #include "audio.h"
@@ -101,8 +102,7 @@ int main(int argc, char** argv)
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
-  globalwindowhandler::SetDeveloperConsoleHandler(devcons::Command);
-  globalwindowhandler::SetFilterHandler(game::FilterListQuestion);
+  specialkeys::init();
   bugfixdp::init();
   definesvalidator::init();
   msgsystem::Init();

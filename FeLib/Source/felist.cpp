@@ -15,12 +15,14 @@
 #include <algorithm>
 #include <sstream>
 
+#include "feio.h"
 #include "felist.h"
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
 #include "rawbit.h"
 #include "save.h"
+#include "specialkeys.h"
 #include "festring.h"
 #include "dbgmsgproj.h"
 
@@ -83,12 +85,13 @@ struct felistentry
   uint Marginal;
   uint ImageKey;
   truth Selectable;
+  festring Help;
 };
 
 felistentry::felistentry(cfestring& String, col16 Color,
                          uint Marginal, uint ImageKey, truth Selectable)
 : String(String), Color(Color), Marginal(Marginal),
-  ImageKey(ImageKey), Selectable(Selectable)
+  ImageKey(ImageKey), Selectable(Selectable), Help("")
 {
 }
 
@@ -180,11 +183,24 @@ void felist::SetAllowMouse(bool b)
   bAllowMouseSelect=b;
 }
 
+felistentry* RetrieveSelectableEntry(std::vector<felistentry*> Entry,uint Selected){
+  uint iSel=0;
+  for(uint i=0;i<Entry.size();i++){
+    if(!Entry[i]->Selectable)continue;
+
+    if(iSel==Selected)
+      return Entry[i];
+
+    iSel++;
+  }
+  return NULL;
+}
+
 uint felist::Draw()
 {
   EntryBkp=Entry;
 
-  globalwindowhandler::ClearFilterRequest();
+  specialkeys::ClearRequest();
 
   for(;;){
     uint Return = DrawFiltered();
@@ -192,13 +208,15 @@ uint felist::Draw()
     if(Return == ESCAPED || Return == LIST_WAS_EMPTY) //TODO FELIST_ERROR_BIT?
       return Return;
 
-    if(Return == NOTHING_SELECTED){
+    if(Return == NOTHING_SELECTED){ //special condition if has filter
       if(!fsFilter->IsEmpty()){
         Entry.clear();
         std::string sFilter=fsFilter->CStr();DBG1(sFilter);
         std::transform(sFilter.begin(), sFilter.end(), sFilter.begin(), ::tolower);
         std::string str;
         for(int i=0;i<EntryBkp.size();i++){ //case insensitive
+          if(!EntryBkp[i]->Selectable)continue;
+
           str = EntryBkp[i]->String.CStr();
           std::transform(str.begin(), str.end(), str.begin(), ::tolower); DBG1(str);
           if(str.find(sFilter)!=std::string::npos)
@@ -214,26 +232,37 @@ uint felist::Draw()
       }
     }
 
-    DBG4(Entry[Return]->String.CStr(),Return,Entry.size(),EntryBkp.size());
+    DBG3(Return,Entry.size(),EntryBkp.size());
     if(!fsFilter->IsEmpty()){
       /**
        * the filtered index differs from the original index...
-       * the key will be the entry description
+       * the matching key will be the entry description/text
        */
 
+//      int iSel=0;
+//      for(int i=0;i<Entry.size();i++){ DBG3(i,iSel,Entry[i]->String.CStr());
+//        if(!Entry[i]->Selectable)continue;
+//
+//        if(iSel==Return)
+//          break;
+//        iSel++;
+//      }
+//      felistentry* fleR = Entry[iSel];
       felistentry* fleR = Entry[Return];
 
-      int iSel=0;
-      for(int i=0;i<EntryBkp.size();i++){ DBG2(i,EntryBkp[i]->String.CStr());
+      int iSelB=0;
+      for(int i=0;i<EntryBkp.size();i++){ DBG3(i,iSelB,EntryBkp[i]->String.CStr());
         if(!EntryBkp[i]->Selectable)continue;
 
         if(EntryBkp[i]->String==fleR->String){ //TODO  there may have 2 items with identical descriptions tho... but user wouldnt be able to distinguish either right?
-          Return = iSel; DBG1(Return);
+          Return = iSelB; DBG1(Return);
           break;
         }
 
-        iSel++;
+        iSelB++;
       }
+
+//      DBG3(iSel,iSelB,Return);
     }
 
     Entry=EntryBkp; //to be ready to proper felist::Empty() with deletion
@@ -343,7 +372,7 @@ uint felist::DrawFiltered()
         Buffer->FastBlit(DOUBLE_BUFFER);
         graphics::BlitDBToScreen();
       }else{DBGLN;
-        Buffer->FadeToScreen();
+        Buffer->FadeToScreen();DBGLN;
       }
 
       JustSelectMoveOnce = false;
@@ -371,9 +400,40 @@ uint felist::DrawFiltered()
        * every section here may break the loop and they are prioritized
        */
 
-      if(globalwindowhandler::ConsumeFilterEvent(fsFilterApplyNew)){
+      if(specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)){
 //        if((*fsFilter) != fsFilterApplyNew){DBGLN;
         bApplyNewFilter=true;
+        break;
+      }else
+      if(specialkeys::IsRequestedEvent(specialkeys::CopyToClipboard)){
+        if(Flags & SELECTABLE){
+          felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
+          if(fle!=NULL)
+            specialkeys::ConsumeEvent(specialkeys::CopyToClipboard,fle->String);
+        }else{
+          specialkeys::ClearRequest();
+        }
+        //TODO copy the entiry list if not selectable? nah...?
+      }else
+      if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+        festring fs;
+        felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
+        if(fle!=NULL){
+          if(!fle->Help.IsEmpty())
+            fs<<fle->Help<<"\n";
+          else
+            fs<<fle->String<<"\n";
+          fs<<"\n";
+        }
+        fs<<
+          "[List Help:]\n"
+          " F1 - show this message\n"
+          " Ctrl+f - filter entries\n"
+          " Home/End/PageUp/PageDown - navigate thru pages\n"
+          " ESC - exit the list\n"
+          " SPACE - continue (next page or exit if at last one)\n";
+        specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fs);
+        bJustRefreshOnce=true;
         break;
       }
 
@@ -444,11 +504,14 @@ uint felist::DrawFiltered()
       if(bClearKeyBufferOnce){
         bClearKeyBuffer=true;
         bClearKeyBufferOnce=false;
-      }
-      Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis above
+      }DBGLN;
+      Pressed = GET_KEY(bClearKeyBuffer);DBG2(Pressed,DefaultAnswer); //see iTimeoutMillis above
+//      if(specialkeys::HasEvent()){DBGLN;
+//        bJustRefreshOnce=true;
+//        break;
+//      }
       if(Pressed!=DefaultAnswer)
         break;
-
     }
     DBGLN;
 
@@ -806,7 +869,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
       if(bShowHelp){
         Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-                     "- Press PgUp/PgDn/Home/End or SPACE to continue, Ctrl+F to filter, ESC to exit -");
+                     "- Press F1 to show help info -");
         LastFillBottom += 30;
       }
       else
@@ -943,6 +1006,11 @@ void felist::AddEntry(cfestring& Str, col16 Color,
     delete Entry[0];
     Entry.erase(Entry.begin());
   }
+}
+
+void felist::SetLastEntryHelp(cfestring Help)
+{
+  Entry[Entry.size()-1]->Help=Help;
 }
 
 void felist::Save(outputfile& SaveFile) const

@@ -43,11 +43,11 @@ class globalwindowhandler
   static bool IsKeyPressed(int iSDLScanCode);
   static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
   static void CheckKeyTimeout();
+  static void SuspendKeyTimeout();
+  static void ResumeKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static mouseclick ConsumeMouseEvent();
-  static bool ConsumeFilterEvent(festring&);
-  static void ClearFilterRequest();
   static void SetPlayInBackground(truth b){playInBackground=b;}
   static float GetFPS(bool bInsta);
   static truth HasKeysOnBuffer();
@@ -75,9 +75,10 @@ class globalwindowhandler
   static void Init();
   static void SetQuitMessageHandler(truth (*What)()){ QuitMessageHandler = What; }
   static ulong UpdateTick() { return Tick = SDL_GetTicks() / 40; }
+  static void SetFunctionKeyHandler(bool (*What)(SDL_Keycode)){ FunctionKeyHandler = What; }
+  static void SetControlKeyHandler(bool (*What)(SDL_Keycode)){ ControlKeyHandler = What; }
 #endif
-  static void SetDeveloperConsoleHandler(void (*What)()){ CmdDevConsHandler = What; }
-  static void SetFilterHandler(cfestring (*What)()){ FilterHandler = What; }
+
 #ifdef __DJGPP__
   static void Init() { }
   static void SetQuitMessageHandler(truth (*)()) { }
@@ -85,9 +86,12 @@ class globalwindowhandler
 #endif
  private:
 #ifdef USE_SDL
+  static int ChkCtrlKey(SDL_Event* Event);
   static void ProcessMessage(SDL_Event*);
   static std::vector<int> KeyBuffer;
   static truth (*QuitMessageHandler)();
+  static bool (*FunctionKeyHandler)(SDL_Keycode);
+  static bool (*ControlKeyHandler)(SDL_Keycode);
 #endif
   static truth (*ControlLoop[MAX_CONTROLS])();
   static int Controls;
@@ -95,8 +99,6 @@ class globalwindowhandler
   static truth ControlLoopsEnabled;
   static truth playInBackground;
   static festring ScrshotDirectoryName;
-  static void (*CmdDevConsHandler)();
-  static cfestring (*FilterHandler)();
 };
 
 #endif

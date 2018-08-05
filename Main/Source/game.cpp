@@ -3654,17 +3654,6 @@ void game::CreateTeams()
   }
 }
 
-cfestring game::FilterListQuestion()
-{
-  static festring What;
-  int R = iosystem::StringQuestion(What, CONST_S("Type this list filter:"), v2(16, 6), WHITE, 0, 30, !game::IsRunning(), true, NULL);
-  if(R == NORMAL_EXIT){ DBG1(What.CStr());
-    return What;
-  }
-
-  return cfestring();
-}
-
 /* v2 Pos should be removed from xxxQuestion()s? */
 
 /* If AllowExit is true the user can abort with the esc-key. The function returns ABORTED
@@ -4151,6 +4140,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();
+  //TODO need?  graphics::SetAllowStretchedBlit();
+  //TODO useful or messy?  graphics::BlitDBToScreen();
 }
 
 /* ... all the keys that are acceptable

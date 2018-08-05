@@ -38,13 +38,17 @@ void bugfixdp::DrawAlertConfirmFix(bitmap* Buffer)
 
   v2TL+=v2(16,16);
 
-  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y   ), YELLOW, "%s", fsLastAlertConfirmFixMsg.CStr());
+  int iLH=16;
+
+  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y), YELLOW, "%s", fsLastAlertConfirmFixMsg.CStr());
 
   cchar* c1="Please backup your savegame files.";
-  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y+16),   BLUE, "%s", c1);
+  v2TL.Y+=iLH;
+  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y),   BLUE, "%s", c1);
 
   cchar* c2="Confirm? (y/...)";
-  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y+32),  WHITE, "%s", c2);
+  v2TL.Y+=iLH;
+  FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y),  WHITE, "%s", c2);
 }
 
 bool bugfixdp::AlertConfirmFixMsg(const char* cMsg){
