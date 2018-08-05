@@ -1458,7 +1458,7 @@ struct srpMelt : public srpJoinLumps{
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
     init("dismantle","some materials as lumps and sticks");
-    desc << "Near a forge, any meltable item can be dismantled to recover it's materials. Otherwise you just need a cutting tool.";
+    desc << "Near a forge, any meltable item can be dismantled to recover it's materials.\n Otherwise you just need a cutting tool.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1763,7 +1763,7 @@ struct srpSplitLump : public recipe{
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("forge","an item");
-    desc << "Using a blunt weapon as hammer, close to an anvil and with a forge nearby you can create items. Or a cutting weapon, if close to a workbench will speed up the work.";
+    desc << "Using a blunt weapon as hammer,\n close to an anvil and with a forge nearby you can create items.\n Or a cutting weapon, if close to a workbench will speed up the work.";
   }
 
   /**
@@ -2312,7 +2312,8 @@ void addRecipe(recipe* prp){
   prp->iListIndex=vrp.size();
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
-  craftRecipes.AddEntry(prp->name+" - "+prp->desc, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  craftRecipes.AddEntry(prp->name, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  craftRecipes.SetLastEntryHelp(prp->desc);
   vrp.push_back(prp);
 }
 void addMissingMsg(festring& where, cfestring& what){
