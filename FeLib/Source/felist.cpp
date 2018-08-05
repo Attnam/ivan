@@ -435,11 +435,12 @@ uint felist::DrawFiltered()
         festring fs;
         felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
         if(fle!=NULL){
-          if(!fle->Help.IsEmpty())
-            fs<<fle->Help<<"\n";
-          else
-            fs<<fle->String<<"\n";
+          fs<<fle->String<<"\n";
           fs<<"\n";
+          if(!fle->Help.IsEmpty()){
+            fs<<fle->Help<<"\n";
+            fs<<"\n";
+          }
         }
         fs<<
           "[List Help:]\n"
