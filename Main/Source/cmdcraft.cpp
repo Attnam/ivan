@@ -2109,6 +2109,7 @@ struct srpForgeItem : public recipe{
 
     if(bMissingTools){
       rpd.itTool=rpd.itTool2=NULL; //to make it easy to check/inform, wont start if missing one anyway
+      failToolMsg(rpd);
       craftcore::SendToHellSafely(itSpawn);
       return false;
     }
@@ -2155,8 +2156,10 @@ struct srpFluidsBASE : public recipe{
 
     ///////////// tool ////////////////
     rpd.itTool = FindTool(rpd, DAGGER);
-    if(rpd.itTool==NULL)
+    if(rpd.itTool==NULL){
+      failToolMsg(rpd);
       return false;
+    }
 
     item* itCorpse=NULL;
     vi = vitInv(rpd);
