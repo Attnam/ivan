@@ -77,6 +77,30 @@ class recipecore {
     void ClearRefs();
 };
 
+//class recipedatacore;
+//typedef recipedatacore* (*recipespawner)(character*);
+//class recipeprototype
+//{
+// public:
+//  recipeprototype(recipespawner, cchar*);
+//  recipedatacore* SpawnAndLoad(inputfile&) const;
+//  cchar* GetClassID() const { return ClassID; }
+//  int GetIndex() const { return Index; }
+// private:
+//  int Index;
+//  recipespawner Spawner;
+//  cchar* ClassID;
+//};
+//class recipedatacore {
+//  public:
+//    typedef recipeprototype prototype;
+//    virtual const prototype* GetProtoType() const = 0;
+//    int GetType() const { return GetProtoType()->GetIndex(); }
+//    virtual ~recipedatacore() = default;
+//};
+//class recipedata : public recipecore {
+
+/**/
 class recipedata {
   /**
    * tip: for clarity group fields by max of 5 no matter group context (despite in context would be better)
@@ -209,6 +233,9 @@ class craftcore {
     static recipedata* prpdSuspended;
 
   public: //TODO suspendable action should be more global to be reused for other actions than crafting!
+    static void Save(outputfile& SaveFile);
+    static void Load(inputfile& SaveFile);
+
     static bool canBeCrafted(item* it);
 
     static void SendToHellSafely(item* it);

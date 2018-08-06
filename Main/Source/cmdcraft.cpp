@@ -100,7 +100,7 @@ void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
     return;
   }
 
-  ABORT("there is already a recipedata set %s VS %s",prpdSuspended->dbgInfo().CStr(),prpd->dbgInfo().CStr());
+  ABORT("there is already a different recipedata set\n'%s'\nVS\n'%s'",prpdSuspended->dbgInfo().CStr(),prpd->dbgInfo().CStr());
 }
 
 float craftcore::CraftSkill(character* Char){ //is the current capability of crafting
@@ -190,7 +190,7 @@ void craftcore::ResumeSuspendedTo(character* Char){
 //}
 
 void recipecore::Save(outputfile& SaveFile) const
-{
+{DBGLN;
   integrityCheck();
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -200,7 +200,7 @@ void recipecore::Save(outputfile& SaveFile) const
 }
 
 void recipedata::Save(outputfile& SaveFile) const
-{
+{DBGLN;
   rc.Save(SaveFile);
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -251,7 +251,7 @@ void recipedata::Save(outputfile& SaveFile) const
 }
 
 void recipecore::Load(inputfile& SaveFile)
-{
+{DBGLN;
   SaveFile //commented ones are just to keep the clarity/organization
     >> bCanBeSuspended
     >> iDungeonLevelID
@@ -259,7 +259,7 @@ void recipecore::Load(inputfile& SaveFile)
 }
 
 void recipedata::Load(inputfile& SaveFile)
-{
+{DBGLN;
   rc.Load(SaveFile);
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -3257,3 +3257,38 @@ void craftcore::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
       CopyDegradation(itIng,itTo->GetMainMaterial());
   }
 }
+
+void craftcore::Save(outputfile& SaveFile)
+{DBGSTK;
+  bool b = prpdSuspended!=NULL;
+  SaveFile << b; DBG2(b,SaveFile.GetFullFilename().CStr()); //token
+  if(b){DBGLN;
+    prpdSuspended->Save(SaveFile);
+  }
+}
+
+void craftcore::Load(inputfile& SaveFile)
+{DBGLN;
+  SetSuspended(NULL); //make sure it is always cleaned from memory!
+  if(game::GetCurrentSavefileVersion()<133)
+    return;
+
+  bool b=false; DBG2(b,true);
+  SaveFile >> b; DBG2(b,SaveFile.GetFullFilename().CStr()); //token
+  if(b){DBGLN;
+    recipedata rpd;
+    rpd.Load(SaveFile);
+    if(rpd.rc.IsCanBeSuspended()) //unnecessary check...
+      SetSuspended(&rpd);
+  }
+}
+
+//recipeprototype::recipeprototype(recipespawner Spawner, cchar* ClassID)
+//: Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<recipedatacore>::Add(this); }
+//
+//recipedatacore* recipeprototype::SpawnAndLoad(inputfile& SaveFile) const
+//{
+//  recipedatacore* prpd = Spawner(0);
+//  prpd->Load(SaveFile);
+//  return prpd;
+//}
