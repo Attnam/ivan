@@ -148,7 +148,7 @@ int main(int argc, char** argv)
      case 1:
       {
         iosystem::SetSkipSeekSave(&SkipGameScript);
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion(), ivanconfig::IsAllowImportOldSavegame());
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersionHardcoded(), ivanconfig::IsAllowImportOldSavegame());
 
         if(LoadName.GetSize())
         {
