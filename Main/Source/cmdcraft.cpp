@@ -1346,8 +1346,11 @@ struct srpJoinLumps : public recipe{
   virtual bool work(recipedata& rpd){ // it is just like to put them all together, no effort, instant.
     askForEqualLumps(rpd);
 
-    if(rpd.ingredientsIDs.empty())
+    if(rpd.ingredientsIDs.empty()){
+      ADD_MESSAGE("I have no lumps to work with.");
+      rpd.bAlreadyExplained = true;
       return false;
+    }
 
     joinLumpsEqualToFirst(rpd);
 
@@ -2278,7 +2281,7 @@ struct srpPoison : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some poison");
+    init("extract","some poison fluid");
     desc << "Use a " << fsTool << " to " << action << " " << name << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
@@ -2297,7 +2300,7 @@ struct srpAcid : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some acidous fluid");
+    init("extract","some sulphuric acid fluid");
     desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
@@ -2370,6 +2373,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(vrp.size()>0){
     game::SetStandardListAttributes(craftRecipes);
     craftRecipes.AddFlags(SELECTABLE);
+    craftRecipes.ClearFilter();
     sel = craftRecipes.Draw(); DBG1(sel);
 
     if(sel & FELIST_ERROR_BIT)
