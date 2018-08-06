@@ -12,11 +12,15 @@
 
 /* compiled thru command.cpp */
 
+#include <typeinfo>
+
 #include "dbgmsgproj.h"
 
 #include "cmdcraftfilters.cpp"
 
 recipedata* craftcore::prpdSuspended=NULL;
+
+//#define CICALL(type,msg,vol,cfg) choseIngredients<type>(msg,vol,rpd,cfg,CI,#type)
 
 //void craftcore::reinitIfNeeded(){
 //  if(player!=PLAYER){
@@ -597,8 +601,8 @@ struct recipe{
     ADD_MESSAGE(fsMsg.CStr());
     rpd.bAlreadyExplained=true;
   }
-  void failToolMsg(recipedata& rpd){
-    ADD_MESSAGE("Required tool is missing.");
+  void failToolMsg(recipedata& rpd,festring tool){
+    ADD_MESSAGE("I don't have %s to work on it.",tool.CStr());
     rpd.bAlreadyExplained=true;
   }
 
@@ -694,12 +698,6 @@ struct recipe{
     item* itTool = FindTool(rpd, DAGGER, 0, iMinCarvingStr); //carving: tool cant be too much weaker
 
     if(itTool!=NULL){
-//      addTool(itTool);
-//      if(rpd.itTool==NULL)
-//        rpd.itTool=itTool;
-//      else
-//        rpd.itTool2=itTool;
-
       int iMult=1;
       if(iCarvingStr>1){
         int itStr=itTool->GetMainMaterial()->GetStrengthValue();
@@ -714,10 +712,11 @@ struct recipe{
         ADD_MESSAGE("There is no workbench here, this will take time..."); //it is good to measure, hold tight, has a good height etc...
         rpd.iBaseTurnsToFinish *= 3;
       }
-
-//      return true;
+    }else{
+      ADD_MESSAGE("I have no dagger to work on it."); //it is good to measure, hold tight, has a good height etc...
+      rpd.bAlreadyExplained=true;
     }
-//    return false;
+
     return itTool;
   }
 
@@ -763,10 +762,15 @@ struct recipe{
 
     if(it==NULL){
       it = FindByWeaponCategory(rpd,BLUNT_WEAPONS);
-      iMult=iTotToolTypes;
+      iMult=iTotToolTypes; //max
     }
 
-    calcToolTurns(rpd,iMult);
+    if(it!=NULL)
+      calcToolTurns(rpd,iMult);
+    else{
+      ADD_MESSAGE("I have no blunt weapon to work on it.");
+      rpd.bAlreadyExplained=true;
+    }
 
     return it;
   }
@@ -794,6 +798,9 @@ struct recipe{
 //        iMult = iMaxMult-iMult;
 
       calcToolTurns(rpd,iMult);
+    }else{
+      ADD_MESSAGE("I have no cutting weapon to work on it.");
+      rpd.bAlreadyExplained=true;
     }
 
     return it;
@@ -888,13 +895,19 @@ struct recipe{
       int flags = CI.bMultSelect ? REMEMBER_SELECTED : REMEMBER_SELECTED|NO_MULTI_SELECT;
 
       festring fsFullQ;
+      festring specialDesc;
       if(CI.bOverridesQuestion)
         fsFullQ=fsQ;
-      else
-        fsFullQ = festring("What ingredient(s) will you use ")+fsQ+" ["+reqVol+"cm3]"+festring("? (hit ESC for more options if available)");
+      else{
+        fsFullQ = festring("What ingredient(s) will you use? (hit ESC for more options if available)");
+        specialDesc = fsQ+" ["+reqVol+"cm3]";
+      }
 
-      rpd.rc.H()->GetStack()->DrawContents(ToUse, rpd.rc.H(),
-        fsFullQ, flags, &item::IsValidRecipeIngredient);
+//      rpd.rc.H()->GetStack()->DrawContents(ToUse, rpd.rc.H(),
+//        fsFullQ, flags, &item::IsValidRecipeIngredient);
+      rpd.rc.H()->GetStack()->DrawContents(ToUse, 0, rpd.rc.H(), fsFullQ, CONST_S(""),
+        CONST_S(""), specialDesc, WHITE, flags, &item::IsValidRecipeIngredient);
+
       if(ToUse.empty())
         break;
 
@@ -965,8 +978,14 @@ struct recipe{
     game::RegionSilhouetteEnable(false);
 
     if(!CI.bJustAcceptFirstChosenAndReturn)
-      if(CI.bMsgInsuficientMat && reqVol>0 && rpd.ingredientsIDs.size()>0)
-        ADD_MESSAGE("This amount of materials won't work...");
+      if(CI.bMsgInsuficientMat && reqVol>0){ // && rpd.ingredientsIDs.size()>0)
+        festring fsIngTpNm;
+        if(CI.iReqCfg==INGOT)
+          fsIngTpNm = "ingot";
+        else
+          fsIngTpNm = std::string(typeid(T).name()).substr(1).c_str(); //TODO demangling simple like that may give weird text one day if other types are added
+        ADD_MESSAGE("There is not enough %ss to craft it.",fsIngTpNm.CStr());
+      }
 
     if(reqVol<=0)
       return true;
@@ -1130,7 +1149,7 @@ struct srpOltBASE : public recipe{
     if(bReqToolBlunt){
       rpd.itTool = FindBluntTool(rpd);
       if(rpd.itTool==NULL){
-        failToolMsg(rpd);
+//        failToolMsg(rpd,"blunt weapon");
         return false;
       }
     }
@@ -1182,7 +1201,7 @@ struct srpDoor : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a secret door");
-    desc << "You will need a hammer or other blunt weapon.";
+    desc << "You will need a hammer or other blunt weapon and sticks, bones or ingots.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1220,7 +1239,7 @@ struct srpAnvil : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","an anvil");
-    desc << "Near a forge you can create an anvil. " << fsDescBASE;
+    desc << "Near a forge you can create an anvil using ingots.\n " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1512,7 +1531,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     }else{
       rpd.itTool = FindCuttingTool(rpd);//,true);
       if(!rpd.itTool){
-        failToolMsg(rpd);
+//        failToolMsg(rpd,"a cutting weapon");
         return false;
       }
     }
@@ -2112,7 +2131,7 @@ struct srpForgeItem : public recipe{
 
     if(bMissingTools){
       rpd.itTool=rpd.itTool2=NULL; //to make it easy to check/inform, wont start if missing one anyway
-      failToolMsg(rpd);
+      failToolMsg(rpd,"the required tool(s)");
       craftcore::SendToHellSafely(itSpawn);
       return false;
     }
@@ -2160,7 +2179,7 @@ struct srpFluidsBASE : public recipe{
     ///////////// tool ////////////////
     rpd.itTool = FindTool(rpd, DAGGER);
     if(rpd.itTool==NULL){
-      failToolMsg(rpd);
+      failToolMsg(rpd,"a dagger");
       return false;
     }
 
@@ -2318,7 +2337,7 @@ void addRecipe(recipe* prp){
   prp->iListIndex=vrp.size();
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
-  craftRecipes.AddEntry(prp->name, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
+  craftRecipes.AddEntry(festring()+prp->action+" "+prp->name, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
   craftRecipes.SetLastEntryHelp(prp->desc);
   vrp.push_back(prp);
 }
