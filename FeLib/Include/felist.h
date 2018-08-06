@@ -44,7 +44,6 @@ class felist
   void AddDescription(cfestring&, col16 = WHITE);
   static void SetAllowMouse(bool b);
   uint Draw();
-  void ApplyFilter();
   uint ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer);
   void SetFirstDrawNoFade(bool b);
   uint GetMouseSelectedEntry(v2 v2MousePos);
@@ -87,6 +86,10 @@ class felist
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
   void ClearFilter();
  private:
+  void ApplyFilter();
+  void UpdateFilterDesc();
+  void SetFilter(festring Filter);
+  festring GetFilter();
   uint DrawFiltered();
   void DrawDescription(bitmap*) const;
   bool FirstDrawNoFade;
@@ -94,7 +97,6 @@ class felist
   std::vector<felistentry*> Entry;
   std::vector<felistentry*> EntryBkp;
   bool bJustRestoreEntries;
-  festring* pfsFilter; //TODO shouldnt be pointer...
   std::vector<felistdescription*> Description;
   uint PageBegin;
   uint Maximum;

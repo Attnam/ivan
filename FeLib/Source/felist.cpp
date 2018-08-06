@@ -132,7 +132,6 @@ felist::felist(cfestring& Topic, col16 TopicColor, uint Maximum)
   Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), FirstDrawNoFade(false),
   UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0), v2FinalPageSize(0,0)
 {
-  pfsFilter=new festring();
   AddDescription(Topic, TopicColor);
 }
 
@@ -142,8 +141,6 @@ felist::~felist()
 
   for(uint c = 0; c < Description.size(); ++c)
     delete Description[c];
-
-  delete pfsFilter;
 }
 
 truth felist::IsEmpty() const
@@ -223,11 +220,55 @@ felistentry* RetrieveSelectableEntry(std::vector<felistentry*> Entry,uint Select
   return NULL;
 }
 
+typedef std::map<festring,festring> filtermap;
+filtermap FilterMap;
+
+festring felist::GetFilter()
+{
+  festring key = Description[0]->String;
+  filtermap::iterator Iterator = FilterMap.find(key);
+  return Iterator != FilterMap.end() ? Iterator->second : "";
+}
+
+void felist::SetFilter(festring Filter)
+{
+  festring key = Description[0]->String;
+  filtermap::iterator iter = FilterMap.find(key);
+  if(iter!=FilterMap.end())
+    FilterMap.erase(iter);
+  FilterMap.insert(std::make_pair(key,Filter));
+}
+
+void felist::UpdateFilterDesc()
+{
+  festring Filter=GetFilter();
+
+  static festring fsF="[Filter '";
+  festring fsD = fsF+Filter+"']";
+  bool bFound=false;
+  for(int i=0;i<Description.size();i++){
+    if(std::string(Description[i]->String.CStr()).substr(0,fsF.GetSize())==fsF.CStr()){
+      if(Filter.IsEmpty())
+        Description.erase(Description.begin()+i);
+      else
+        Description[i]->String = fsD;
+      bFound=true;
+      break;
+    }
+  }
+  if(!bFound && !Filter.IsEmpty())
+    AddDescription(fsD,WHITE);
+}
+
 void felist::ApplyFilter()
 {
-  if(!pfsFilter->IsEmpty()){
+  festring Filter=GetFilter();
+
+  UpdateFilterDesc();
+
+  if(!Filter.IsEmpty()){
     Entry.clear();
-    std::string sFilter=pfsFilter->CStr();DBG1(sFilter);
+    std::string sFilter=Filter.CStr();DBG1(sFilter);
     std::transform(sFilter.begin(), sFilter.end(), sFilter.begin(), ::tolower);
     std::string str;
     for(int i=0;i<EntryBkp.size();i++){ //case insensitive
@@ -238,10 +279,10 @@ void felist::ApplyFilter()
       if(str.find(sFilter)!=std::string::npos)
         Entry.push_back(EntryBkp[i]);
     }
-    DBG3(pfsFilter->CStr(),EntryBkp.size(),Entry.size());
+    DBG3(Filter.CStr(),EntryBkp.size(),Entry.size());
     if(Entry.empty()){ //filter was invalid
       Entry=EntryBkp;
-      (*pfsFilter)="";
+      SetFilter("");
     }
   }else{
     if(EntryBkp.size()>0)
@@ -264,11 +305,12 @@ uint felist::Draw()
       return Return;
 
     if(Return == NOTHING_SELECTED){ //special condition if has filter
-      if(!pfsFilter->IsEmpty()){
+      if(!GetFilter().IsEmpty()){
         ApplyFilter();
         continue;
       }else{
         if(bJustRestoreEntries){
+          UpdateFilterDesc();
           Entry=EntryBkp;
           continue;
         }else{
@@ -277,8 +319,9 @@ uint felist::Draw()
       }
     }
 
+    ////////////////////////// something was chosen ///////////////////////
     DBG3(Return,Entry.size(),EntryBkp.size());
-    if(!pfsFilter->IsEmpty()){
+    if(!GetFilter().IsEmpty()){
       /**
        * the filtered index differs from the original index...
        * the matching key will be the entry description/text
@@ -309,7 +352,7 @@ uint felist::Draw()
 
 void felist::ClearFilter()
 {
-  (*pfsFilter)="";
+  SetFilter("");
   ApplyFilter();
 }
 
@@ -390,7 +433,8 @@ uint felist::DrawFiltered()
   v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
   globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
   int iDrawCount=0;
-  festring fsFilterApplyNew=(*pfsFilter);
+  festring Filter=GetFilter();
+  festring fsFilterApplyNew=Filter;
   bool bApplyNewFilter=false;
   for(;;)
   {
@@ -438,7 +482,7 @@ uint felist::DrawFiltered()
        */
 
       if(specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)){
-        if((*pfsFilter) != fsFilterApplyNew){DBGLN;
+        if(Filter != fsFilterApplyNew){DBGLN;
           if(fsFilterApplyNew.IsEmpty())
             bJustRestoreEntries=true;
           bApplyNewFilter=true;
@@ -754,7 +798,7 @@ uint felist::DrawFiltered()
   globalwindowhandler::ResetKeyTimeout();
 
   if(bApplyNewFilter){
-    (*pfsFilter)=fsFilterApplyNew;
+    SetFilter(fsFilterApplyNew);
     return NOTHING_SELECTED;
   }
 
