@@ -32,7 +32,7 @@ class specialkeys
   static bool FunctionKeyHandler(SDL_Keycode);
   static bool ControlKeyHandler(SDL_Keycode);
 
-  static cfestring FilterListQuestion();
+  static cfestring FilterListQuestion(cfestring What);
   static void ClearRequest(){Request=-1;}
 
   static bool ConsumeEvent(SKEvent k){festring fsDummy;return ConsumeEvent(k,fsDummy);}

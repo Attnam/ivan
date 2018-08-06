@@ -42,13 +42,20 @@
 //REQ(CopyToClipboard);
 //REQ(PasteFromClipboard);
 
-cfestring specialkeys::FilterListQuestion()
+cfestring specialkeys::FilterListQuestion(cfestring what)
 {
-  static festring What;
-  int R = iosystem::StringQuestion(What, CONST_S("Type this list filter:"), v2(16, 6), WHITE, 0, 30, false /*TODO !bGameIsRunning*/, true, NULL);
+  festring What=what;
+
+  v2 pos = v2(16, 6);
+  int R = iosystem::StringQuestion(What, CONST_S("Type this list filter:"), pos, WHITE, 0, 30, false /*TODO !bGameIsRunning*/, true, NULL);
+  DOUBLE_BUFFER->Fill(pos,v2(RES.X, 23),BLACK); //TODO clear the filter text using the background! needed when pressing ESC or ENTER and not changing the filter! tip: igraph::BlitBackGround(pos, v2(RES.X, 23));
+
   if(R == NORMAL_EXIT){ DBG1(What.CStr());
     return What;
   }
+
+  if(R == ABORTED)
+    return what;
 
   return cfestring();
 }
@@ -94,7 +101,7 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
   switch(e){
     case Filter:{DBGLN;
       globalwindowhandler::SuspendKeyTimeout();
-      fsInOut=FilterListQuestion();
+      fsInOut=FilterListQuestion(fsInOut);
       globalwindowhandler::ResumeKeyTimeout();
   //    bFilterRequest=false;
       Request=-1;

@@ -140,6 +140,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
   truth TruthChange = false;
 
   felist List(CONST_S("Which setting do you wish to configure? (* - req. restart)"));
+
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
 
@@ -170,7 +171,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       }
 
       List.AddEntry(Entry, LIGHT_GRAY);
-      List.SetLastEntryHelp(Option[c]->Description);
+      List.SetLastEntryHelp(Option[c]->Description); //TODO show all possible values, and each value could have more details, may require cycling thru them all to get all texts...
     }
 
     if(SlaveScreen && ListAttributeInitializer)

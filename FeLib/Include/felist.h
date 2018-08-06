@@ -44,6 +44,7 @@ class felist
   void AddDescription(cfestring&, col16 = WHITE);
   static void SetAllowMouse(bool b);
   uint Draw();
+  void ApplyFilter();
   uint ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer);
   void SetFirstDrawNoFade(bool b);
   uint GetMouseSelectedEntry(v2 v2MousePos);
@@ -80,9 +81,11 @@ class felist
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
   static truth isAnyFelistCurrentlyDrawn();
   static bool PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg);
+  static void SetListItemAltPosMinY(int iY);
   static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
   static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
+  void ClearFilter();
  private:
   uint DrawFiltered();
   void DrawDescription(bitmap*) const;
@@ -90,7 +93,8 @@ class felist
   std::vector<EntryRect> vEntryRect;
   std::vector<felistentry*> Entry;
   std::vector<felistentry*> EntryBkp;
-  festring* fsFilter;
+  bool bJustRestoreEntries;
+  festring* pfsFilter; //TODO shouldnt be pointer...
   std::vector<felistdescription*> Description;
   uint PageBegin;
   uint Maximum;

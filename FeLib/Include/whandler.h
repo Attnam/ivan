@@ -41,7 +41,7 @@ class globalwindowhandler
 {
  public:
   static bool IsKeyPressed(int iSDLScanCode);
-  static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
+  static void ResetKeyTimeout(){SetKeyTimeout(0,iRestWaitKey);}
   static void CheckKeyTimeout();
   static void SuspendKeyTimeout();
   static void ResumeKeyTimeout();
@@ -84,10 +84,15 @@ class globalwindowhandler
   static void SetQuitMessageHandler(truth (*)()) { }
   static ulong UpdateTick() { return Tick = uclock() * 25 / UCLOCKS_PER_SEC; }
 #endif
+
+  const static int iRestWaitKey;
+
  private:
 #ifdef USE_SDL
   static int ChkCtrlKey(SDL_Event* Event);
   static void ProcessMessage(SDL_Event*);
+  static void ProcessKeyDownMessage(SDL_Event* Event);
+  static void AddKeyToBuffer(int KeyPressed);
   static std::vector<int> KeyBuffer;
   static truth (*QuitMessageHandler)();
   static bool (*FunctionKeyHandler)(SDL_Keycode);

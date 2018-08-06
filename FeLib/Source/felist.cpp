@@ -36,6 +36,12 @@ truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
 }
 
+int ListItemAltPosBackgroundMinY=0;
+void felist::SetListItemAltPosMinY(int iY)
+{
+  ListItemAltPosBackgroundMinY=iY;
+}
+
 bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
   if(FelistCurrentlyDrawn==NULL)return false;
 
@@ -49,7 +55,8 @@ bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
   // scaled up item pos
   rB.Dest.X=FelistCurrentlyDrawn->v2OriginalPos.X;//B.Dest.X=5;
   rB.Dest.Y=rB.Src.Y - v2ItemFinalSize.Y/2;
-  if(rB.Dest.Y<0)rB.Dest.Y=0;
+  if(rB.Dest.Y<ListItemAltPosBackgroundMinY)
+    rB.Dest.Y=ListItemAltPosBackgroundMinY; //to not hide stuff above it
 
   // full background where all items will be drawn above it
   if(bAltPosFullBkg){
@@ -120,11 +127,12 @@ struct felistdescription
 };
 
 felist::felist(cfestring& Topic, col16 TopicColor, uint Maximum)
-: Maximum(Maximum), Selected(0), Pos(10, 10), Width(780),
-  PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), FirstDrawNoFade(false),
+: Maximum(Maximum), Selected(0), bJustRestoreEntries(false),
+  Pos(10, 32), //y=32 gum to let filter be nicely readable always
+  Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), FirstDrawNoFade(false),
   UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0), v2FinalPageSize(0,0)
 {
-  fsFilter=new festring();
+  pfsFilter=new festring();
   AddDescription(Topic, TopicColor);
 }
 
@@ -135,7 +143,7 @@ felist::~felist()
   for(uint c = 0; c < Description.size(); ++c)
     delete Description[c];
 
-  delete fsFilter;
+  delete pfsFilter;
 }
 
 truth felist::IsEmpty() const
@@ -183,7 +191,7 @@ void felist::SetAllowMouse(bool b)
   bAllowMouseSelect=b;
 }
 
-uint felist::ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap* Buffer)
+uint felist::ScrollToLastPage(bool& JustRedrawEverythingOnce,bitmap& BackGround,bitmap* Buffer)
 {
   Selected=0;
 
@@ -195,7 +203,7 @@ uint felist::ScrollToLastPage(bool& JustSelectMoveOnce,bitmap& BackGround,bitmap
 
   uint pb = Selected - Selected % PageLength;
   if(PageBegin == pb)
-    JustSelectMoveOnce = true;
+    JustRedrawEverythingOnce = true;
   else
     BackGround.FastBlit(Buffer);
 
@@ -215,11 +223,39 @@ felistentry* RetrieveSelectableEntry(std::vector<felistentry*> Entry,uint Select
   return NULL;
 }
 
+void felist::ApplyFilter()
+{
+  if(!pfsFilter->IsEmpty()){
+    Entry.clear();
+    std::string sFilter=pfsFilter->CStr();DBG1(sFilter);
+    std::transform(sFilter.begin(), sFilter.end(), sFilter.begin(), ::tolower);
+    std::string str;
+    for(int i=0;i<EntryBkp.size();i++){ //case insensitive
+      if(!EntryBkp[i]->Selectable)continue;
+
+      str = EntryBkp[i]->String.CStr();
+      std::transform(str.begin(), str.end(), str.begin(), ::tolower); DBG1(str);
+      if(str.find(sFilter)!=std::string::npos)
+        Entry.push_back(EntryBkp[i]);
+    }
+    DBG3(pfsFilter->CStr(),EntryBkp.size(),Entry.size());
+    if(Entry.empty()){ //filter was invalid
+      Entry=EntryBkp;
+      (*pfsFilter)="";
+    }
+  }else{
+    if(EntryBkp.size()>0)
+      Entry=EntryBkp;
+  }
+}
+
 uint felist::Draw()
 {
   EntryBkp=Entry;
 
   specialkeys::ClearRequest();
+
+  ApplyFilter();
 
   for(;;){
     uint Return = DrawFiltered();
@@ -228,45 +264,26 @@ uint felist::Draw()
       return Return;
 
     if(Return == NOTHING_SELECTED){ //special condition if has filter
-      if(!fsFilter->IsEmpty()){
-        Entry.clear();
-        std::string sFilter=fsFilter->CStr();DBG1(sFilter);
-        std::transform(sFilter.begin(), sFilter.end(), sFilter.begin(), ::tolower);
-        std::string str;
-        for(int i=0;i<EntryBkp.size();i++){ //case insensitive
-          if(!EntryBkp[i]->Selectable)continue;
-
-          str = EntryBkp[i]->String.CStr();
-          std::transform(str.begin(), str.end(), str.begin(), ::tolower); DBG1(str);
-          if(str.find(sFilter)!=std::string::npos)
-            Entry.push_back(EntryBkp[i]);
-        }
-        DBG3(fsFilter->CStr(),EntryBkp.size(),Entry.size());
-        if(Entry.empty()) //filter was invalid
-          Entry=EntryBkp;
-
+      if(!pfsFilter->IsEmpty()){
+        ApplyFilter();
         continue;
       }else{
-        return NOTHING_SELECTED;
+        if(bJustRestoreEntries){
+          Entry=EntryBkp;
+          continue;
+        }else{
+          return NOTHING_SELECTED;
+        }
       }
     }
 
     DBG3(Return,Entry.size(),EntryBkp.size());
-    if(!fsFilter->IsEmpty()){
+    if(!pfsFilter->IsEmpty()){
       /**
        * the filtered index differs from the original index...
        * the matching key will be the entry description/text
        */
 
-//      int iSel=0;
-//      for(int i=0;i<Entry.size();i++){ DBG3(i,iSel,Entry[i]->String.CStr());
-//        if(!Entry[i]->Selectable)continue;
-//
-//        if(iSel==Return)
-//          break;
-//        iSel++;
-//      }
-//      felistentry* fleR = Entry[iSel];
       felistentry* fleR = Entry[Return];
 
       int iSelB=0;
@@ -280,8 +297,6 @@ uint felist::Draw()
 
         iSelB++;
       }
-
-//      DBG3(iSel,iSelB,Return);
     }
 
     Entry=EntryBkp; //to be ready to proper felist::Empty() with deletion
@@ -290,6 +305,12 @@ uint felist::Draw()
   }
 
   return NOTHING_SELECTED; //never reached...
+}
+
+void felist::ClearFilter()
+{
+  (*pfsFilter)="";
+  ApplyFilter();
 }
 
 uint felist::DrawFiltered()
@@ -346,7 +367,7 @@ uint felist::DrawFiltered()
 
   uint c;
   uint Return, Selectables = 0;
-  truth JustSelectMoveOnce = false;
+  truth JustRedrawEverythingOnce = false;
 
   for(c = 0; c < Entry.size(); ++c)
     if(Entry[c]->Selectable)
@@ -369,7 +390,7 @@ uint felist::DrawFiltered()
   v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
   globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
   int iDrawCount=0;
-  festring fsFilterApplyNew;
+  festring fsFilterApplyNew=(*pfsFilter);
   bool bApplyNewFilter=false;
   for(;;)
   {
@@ -379,13 +400,13 @@ uint felist::DrawFiltered()
     truth LastEntryVisible = DrawPage(Buffer,&v2FinalPageSize,&vEntryRect);DBGLN;
 
     if(FirstDrawNoFade && iDrawCount == 0){
-      JustSelectMoveOnce=true;
+      JustRedrawEverythingOnce=true;
     }
     iDrawCount++;
 
     if(Flags & FADE)
     {DBGLN;
-      if(JustSelectMoveOnce)
+      if(JustRedrawEverythingOnce)
       {DBGLN;
         Buffer->FastBlit(DOUBLE_BUFFER);
         graphics::BlitDBToScreen();
@@ -393,7 +414,7 @@ uint felist::DrawFiltered()
         Buffer->FadeToScreen();DBGLN;
       }
 
-      JustSelectMoveOnce = false;
+      JustRedrawEverythingOnce = false;
     }else{DBGLN;
       if(Buffer != DOUBLE_BUFFER)ABORT("felist non-fade Buffer != DOUBLE_BUFFER");
       graphics::BlitDBToScreen();
@@ -417,8 +438,13 @@ uint felist::DrawFiltered()
        */
 
       if(specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)){
-//        if((*fsFilter) != fsFilterApplyNew){DBGLN;
-        bApplyNewFilter=true;
+        if((*pfsFilter) != fsFilterApplyNew){DBGLN;
+          if(fsFilterApplyNew.IsEmpty())
+            bJustRestoreEntries=true;
+          bApplyNewFilter=true;
+        }else{
+          bJustRefreshOnce=true;
+        }
         break;
       }else
       if(specialkeys::IsRequestedEvent(specialkeys::CopyToClipboard)){
@@ -435,12 +461,11 @@ uint felist::DrawFiltered()
         festring fs;
         felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
         if(fle!=NULL){
-          fs<<fle->String<<"\n";
-          fs<<"\n";
-          if(!fle->Help.IsEmpty()){
+          if(!fle->Help.IsEmpty())
             fs<<fle->Help<<"\n";
-            fs<<"\n";
-          }
+          else
+            fs<<fle->String<<"\n";
+          fs<<"\n";
         }
         fs<<
           "[List Help:]\n"
@@ -508,7 +533,7 @@ uint felist::DrawFiltered()
         if(bSelChanged){
           Selected = iSel; DBG1(iSel);
           bJustRefreshOnce=true;
-          JustSelectMoveOnce=true;
+          JustRedrawEverythingOnce=true;
           break;
         }
       }
@@ -572,11 +597,11 @@ uint felist::DrawFiltered()
           PageBegin -= PageLength;
         }
         else
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
       }
       else
       {
-        PageBegin = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer);
+        PageBegin = ScrollToLastPage(JustRedrawEverythingOnce, BackGround, Buffer);
       }
 
       if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
@@ -597,12 +622,12 @@ uint felist::DrawFiltered()
           PageBegin += PageLength;
         }
         else
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
       }
       else
       {
         if(!PageBegin)
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
         else
           BackGround.FastBlit(Buffer);
 
@@ -684,7 +709,7 @@ uint felist::DrawFiltered()
         }
 
         DBG6("Before",iPB,Selectables,Selected,PageLength,Entry.size());
-        iPB = ScrollToLastPage(JustSelectMoveOnce, BackGround, Buffer); DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
+        iPB = ScrollToLastPage(JustRedrawEverythingOnce, BackGround, Buffer); DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
         bSelLast=true;
       }
 
@@ -729,7 +754,7 @@ uint felist::DrawFiltered()
   globalwindowhandler::ResetKeyTimeout();
 
   if(bApplyNewFilter){
-    (*fsFilter)=fsFilterApplyNew;
+    (*pfsFilter)=fsFilterApplyNew;
     return NOTHING_SELECTED;
   }
 
@@ -744,7 +769,7 @@ bool felist::IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos){
 }
 
 truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRect>* pvEntryRect) const
-{
+{ DBGSV2(Pos);
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   DrawDescription(Buffer);
 

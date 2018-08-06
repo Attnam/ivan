@@ -55,6 +55,7 @@
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
+#include "namegen.h"
 #include "nonhuman.h"
 #include "pool.h"
 #include "proto.h"
@@ -66,8 +67,6 @@
 #include "team.h"
 #include "whandler.h"
 #include "wsquare.h"
-
-#include "namegen.h"
 
 #include "dbgmsgproj.h"
 
@@ -4622,7 +4621,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iY=v2TopLeft.Y-3;
   }
 
-  int iItemW=bldListItemTMP.Border.X*bldListItemTMP.Stretch;
+  int iItemW = bldListItemTMP.Border.X * bldListItemTMP.Stretch;
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;
@@ -4635,9 +4634,12 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
 
-  v2TopLeft=v2(iX,iY);
+  v2TopLeft=v2(iX,iY); DBGSV2(v2TopLeft);
 
-  graphics::SetSpecialListItemAltPos(bAltItemPos);
+  if(bAltItemPos){
+    graphics::SetSpecialListItemAltPos(true);
+    felist::SetListItemAltPosMinY(area::getTopLeftCorner().Y);
+  }
 }
 
 int prepareListWidth(int iW){
