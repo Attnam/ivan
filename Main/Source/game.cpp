@@ -65,7 +65,7 @@
 //#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 133 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 118 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -226,14 +226,24 @@ int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
-int game::GetCurrentSavefileVersion(){
+/**
+ * IMPORTANT!!!
+ * this is intended to be called only from Load() and NEVER on Save()!
+ * TODO OS independent backtrace function call name check?
+ */
+int game::GetCurrentSavefileVersion()
+{
   if(CurrentSavefileVersion==-1)
     ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
 
   return CurrentSavefileVersion;
 }
 
-int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
+/**
+ * BEWARE!!!
+ * should only be called once at main(), you probably want GetCurrentSavefileVersion() instead!
+ */
+int  game::GetSaveFileVersionHardcoded(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
@@ -816,7 +826,8 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
-      commandsystem::ClearSwapWeapons();
+      commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
+      craftcore::SetSuspended(NULL); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -3196,6 +3207,8 @@ truth game::Save(cfestring& SaveName)
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
 
+  craftcore::Save(SaveFile);
+
   return true;
 }
 
@@ -3290,8 +3303,10 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
-  if(game::GetSaveFileVersion()>=132)
-    commandsystem::LoadSwapWeapons(SaveFile);
+  commandsystem::LoadSwapWeapons(SaveFile);
+  craftcore::Load(SaveFile);
+
+  ///////////////// loading ended ////////////////
 
   UpdateCamera();
 
@@ -4271,7 +4286,6 @@ v2 game::NameKeyHandler(v2 CursorPos, int Key)
 void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
   game::SRegionAroundDisable();
-  craftcore::ResetSuspended();
 
   if(!Permanently)
     game::Save();
