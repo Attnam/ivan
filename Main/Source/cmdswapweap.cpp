@@ -107,11 +107,14 @@ void commandsystem::SaveSwapWeapons(outputfile& SaveFile)
 }
 void commandsystem::LoadSwapWeapons(inputfile& SaveFile)
 {DBGLN;
+  ClearSwapWeapons(); //make sure it is always cleaned from memory!
+  if(game::GetCurrentSavefileVersion()<132)
+    return;
+
   SaveFile >> reinterpret_cast<ushort&>(iSwapCurrentIndex);
 
   int iSize=0;
   SaveFile >> reinterpret_cast<ushort&>(iSize); DBG2(iSwapCurrentIndex,iSize);
-  ClearSwapWeapons();
   for(int i=0;i<iSize;i++){
     swapweaponcfg cfg;
     cfg.Load(SaveFile);
