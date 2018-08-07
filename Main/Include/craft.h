@@ -108,6 +108,7 @@ class recipedata {
 
   friend class craft;
   friend class craftcore;
+  friend class crafthandle;
 
   friend struct recipe;
   friend struct srpFluidsBASE;
@@ -160,6 +161,8 @@ class recipedata {
 
     bool bSpecialExtendedTurns;
     int iMinTurns;
+    bool bFailedTerminateCancel;
+    bool bFailedSuspend;
 
     /*******************************************
      * save REQUIRED fields!!!
@@ -176,12 +179,10 @@ class recipedata {
     v2 v2PlaceAt;
     bool bSuccesfullyCompleted;
     v2 v2AnvilLocation;
-    bool bFailed;
     v2 v2PlayerCraftingAt;
 
     ulong itToolID;
     ulong itTool2ID;
-    v2 v2BuildWhere;
     ulong itSpawnType;
     festring fsItemSpawnSearchPrototype;
 
@@ -227,51 +228,38 @@ class recipedata {
     void ClearRefs();
     item* GetTool(){return itTool;}
     item* GetTool2(){return itTool2;}
+
+    bool IsFailedSuspendOrCancel(){return bFailedTerminateCancel || bFailedSuspend;}
 };
+
 class craftcore {
   private:
-    static recipedata* prpdSuspended;
+    static recipedata* prpdSuspended; //TODO suspendable action should be more global to be reused for other actions than crafting!
 
-  public: //TODO suspendable action should be more global to be reused for other actions than crafting!
+  public: //TODO review if some should be protected or private
     static void Save(outputfile& SaveFile);
     static void Load(inputfile& SaveFile);
+    static truth Craft(character* Char);
 
     static bool canBeCrafted(item* it);
 
     static void SendToHellSafely(item* it);
 
-    static void SetSuspended(recipedata* prpd);
-    static void ResetSuspended();
-    static bool HasSuspended();
-    static void ResumeSuspendedTo(character* Char);
-
     static int CurrentDungeonLevelID();
 
-    static truth Craft(character* Char);
     static float CraftSkill(character* Char);
     static bool MoreCraftDeniedFilters(item* it);
 
-    static void CheckEverything(recipedata& rpd);
-    static void CheckFumble(recipedata& rpd,bool bChangeTurns=true);
-    static void CheckIngredients(recipedata& rpd);
-    static void CheckFacilities(recipedata& rpd);
-    static void CheckTools(recipedata& rpd);
-
     static bool EmptyContentsIfPossible(recipedata& rpd,item* itContainer,bool bMoveToInventory=false);
 
-    static item* CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated);
+//    static material* CreateMaterial(bool bMain,recipedata* prpd,material* matOverride=NULL);
+    static material* CreateMaterial(bool bMain,recipedata& rpd);
+    static material* CreateMaterial(material* matCopyFrom);
 
-    static item* SpawnItem(recipedata& rpd, festring& fsCreated);
-    static olterrain* SpawnTerrain(recipedata& rpd, festring& fsCreated);
+    static truth CheckArms(humanoid* h);
+    static truth CheckArms(humanoid* h,bool& bLOk,bool& bROk);
+    static humanoid* CheckHumanoid(character* Char);
 
-    static void CraftWorkTurn(recipedata& rpd);
-    static void GradativeCraftOverride(recipedata& rpd);
-
-    static cfestring DestroyIngredients(recipedata& rpd);
-
-    static void CopyDegradation(material* matM,material* matSpM);
-    static void CopyDegradation(item* itFrom,material* matTo);
-    static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
     static bool IsDegraded(item* it,bool bShowMsg=false);
     static truth IsMeltable(material* mat);
     static truth IsMeltable(material* matM,material* matS);
@@ -280,9 +268,34 @@ class craftcore {
 
     static item* PrepareRemains(material* mat, recipedata& rpd);
 
-//    static material* CreateMaterial(bool bMain,recipedata* prpd,material* matOverride=NULL);
-    static material* CreateMaterial(bool bMain,recipedata& rpd);
-    static material* CreateMaterial(material* matCopyFrom);
+    static void SetSuspended(recipedata* prpd);
+    static void ResetSuspended();
+    static bool HasSuspended();
+    static void ResumeSuspendedTo(character* Char);
+};
+
+class crafthandle {
+  private:
+    static void CheckFumble(recipedata& rpd,bool bChangeTurns=true);
+    static void CheckIngredients(recipedata& rpd);
+    static void CheckFacilities(recipedata& rpd);
+    static void CheckTools(recipedata& rpd);
+
+    static void GradativeCraftOverride(recipedata& rpd);
+
+    static item* CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated);
+    static cfestring DestroyIngredients(recipedata& rpd);
+
+    static item* SpawnItem(recipedata& rpd, festring& fsCreated);
+    static olterrain* SpawnTerrain(recipedata& rpd, festring& fsCreated);
+
+    static void CopyDegradation(material* matM,material* matSpM);
+    static void CopyDegradation(item* itFrom,material* matTo);
+    static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
+
+  public:
+    static void CheckEverything(recipedata& rpd, character* Char);
+    static void CraftWorkTurn(recipedata& rpd);
 };
 
 #endif /* MAIN_INCLUDE_CRAFT_H_ */

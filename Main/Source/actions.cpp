@@ -248,24 +248,18 @@ void craft::Load(inputfile& SaveFile)
 
 void craft::Handle()
 {DBGLN;
-  character* Actor = GetActor();
-  rpd.rc.integrityCheck(Actor);
-  if(rpd.rc.H()==NULL)
-    rpd.rc.SetHumanoid(Actor);
-
   if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE)
     ABORT("craft:Handle nothing? %s",rpd.dbgInfo().CStr());
 
-  if(!rpd.bFailed)
-    craftcore::CheckEverything(rpd);
+  if(!rpd.IsFailedSuspendOrCancel())
+    crafthandle::CheckEverything(rpd,Actor);
 
-  rpd.rc.integrityCheck();
-  if(rpd.bFailed){
-    Terminate(false); //won't suspend!
+  if(rpd.IsFailedSuspendOrCancel()){
+    Terminate(false);
     return;
   }
 
-  craftcore::CraftWorkTurn(rpd);
+  crafthandle::CraftWorkTurn(rpd);
 
   if(rpd.bSuccesfullyCompleted)
   {
@@ -290,13 +284,14 @@ void craft::Handle()
   ulong RightBackupID = this->RightBackupID;
   ulong LeftBackupID = this->LeftBackupID;
   recipedata rpdBkp = rpd;
+  character* ActorLocal = GetActor();
 
-  Actor->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
-  Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
-  Actor->EditStamina(-1000 / Actor->GetAttribute(ARM_STRENGTH), false);
-  Actor->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
+  ActorLocal->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
+  ActorLocal->EditAP(-200000 / APBonus(ActorLocal->GetAttribute(DEXTERITY)));
+  ActorLocal->EditStamina(-1000 / ActorLocal->GetAttribute(ARM_STRENGTH), false);
+  ActorLocal->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
 
-  truth AlreadyTerminated = Actor->GetAction() != this;DBGLN;
+  truth AlreadyTerminated = ActorLocal->GetAction() != this;DBGLN;
   truth Stopped = rpdBkp.bSuccesfullyCompleted || AlreadyTerminated;
 
   if(rpdBkp.bSuccesfullyCompleted && !AlreadyTerminated)
@@ -304,28 +299,28 @@ void craft::Handle()
 
   if(Stopped)
   {DBGLN;
-    if(MoveCraftTool && Actor->GetMainWielded())
-      Actor->GetMainWielded()->MoveTo(Actor->GetStack());
+    if(MoveCraftTool && ActorLocal->GetMainWielded())
+      ActorLocal->GetMainWielded()->MoveTo(ActorLocal->GetStack());
 
-    humanoid* h = dynamic_cast<humanoid*>(Actor);
+    humanoid* h = dynamic_cast<humanoid*>(ActorLocal);
     if(h){
       if(h->GetRightArm()){
         item* RightBackup = game::SearchItem(RightBackupID);
 
-        if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
+        if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
         {DBGLN;
           RightBackup->RemoveFromSlot();
-          Actor->SetRightWielded(RightBackup);
+          ActorLocal->SetRightWielded(RightBackup);
         }
       }
 
       if(h->GetLeftArm()){
         item* LeftBackup = game::SearchItem(LeftBackupID);
 
-        if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
+        if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
         {DBGLN;
           LeftBackup->RemoveFromSlot();
-          Actor->SetLeftWielded(LeftBackup);
+          ActorLocal->SetLeftWielded(LeftBackup);
         }
       }
     }
@@ -337,7 +332,7 @@ void craft::Handle()
    */
   if(!rpdBkp.v2XplodAt.Is0() && rpdBkp.xplodStr>0){
     rpdBkp.lsqrPlaceAt->GetLevel()->Explosion(
-      Actor, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
+      ActorLocal, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
     ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
   }
 
@@ -346,7 +341,13 @@ void craft::Handle()
 }
 
 bool craft::IsSuspending(){
-  return GetActor()->IsPlayer() && rpd.rc.IsCanBeSuspended() && !rpd.bFailed;
+  if(!GetActor()->IsPlayer())return false;
+  if(!rpd.rc.IsCanBeSuspended())return false;
+  if(rpd.bFailedTerminateCancel)return false;
+
+  if(rpd.bFailedSuspend)return true; //TODO useless? may be with future newer checks, this can be useful one day, keep it here!
+
+  return true;
 }
 
 void craft::Terminate(truth Finished)
@@ -373,16 +374,6 @@ void craft::Terminate(truth Finished)
   }
 
   action::Terminate(Finished);DBGLN;
-}
-
-craft::~craft(){DBGLN; // called from Terminate()
-  // cleanups if not finished
-
-//  // will be respawned
-//  rpd.SendSpawnItemToHell();
-//
-//  if(!IsSuspending())
-//    rpd.SendTerrainToHell();
 }
 
 void dig::Save(outputfile& SaveFile) const

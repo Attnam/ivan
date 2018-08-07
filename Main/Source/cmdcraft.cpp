@@ -158,14 +158,21 @@ void craftcore::ResumeSuspendedTo(character* Char){
 
   prpdSuspended->rc.integrityCheck();
 
-  if(prpdSuspended->bMeltable || prpdSuspended->otSpawnCfg!=0){ //TODO facilities requirements like oven, workbench etc later must be considered too here!
-    if(prpdSuspended->rc.GetDungeonLevelID()!=craftcore::CurrentDungeonLevelID()){
+  bool bReqSamePos = false;
+//  if(prpdSuspended->bMeltable)bReqSamePos=true;
+  if(!prpdSuspended->v2AnvilLocation.Is0())bReqSamePos=true;
+  if(!prpdSuspended->v2ForgeLocation.Is0())bReqSamePos=true;
+  if(!prpdSuspended->v2PlaceAt.Is0())bReqSamePos=true;
+  if(!prpdSuspended->v2WorkbenchLocation.Is0())bReqSamePos=true;
+  if(prpdSuspended->otSpawnType!=CTT_NONE)bReqSamePos=true;
+  if(bReqSamePos){
+    if(prpdSuspended->rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
       //TODO better message: place? location? dungeon level sounds a bit non-immersive, or not?
-      ADD_MESSAGE("I need to be in the same dungeon I was before to continue preparing it.");
+      ADD_MESSAGE("I need to be in the same dungeon I was before to continue to prepare it.");
       return;
     }
 
-    if(prpdSuspended->v2PlayerCraftingAt!=Char->GetPos()){
+    if(prpdSuspended->v2PlayerCraftingAt != Char->GetPos()){
       festring fsDist;
       int iDist = (prpdSuspended->v2PlayerCraftingAt - Char->GetPos()).GetLengthSquare();
       if(iDist<=2)fsDist<<"and I am almost there!";
@@ -176,10 +183,12 @@ void craftcore::ResumeSuspendedTo(character* Char){
       else
         fsDist<<"but it seems to be quite far from here.";
       ADD_MESSAGE("I need to be were I was crafting before, %s",fsDist.CStr());
+      return;
     }
+  }else{
+    prpdSuspended->v2PlayerCraftingAt = Char->GetPos();
   }
 
-  prpdSuspended->v2PlayerCraftingAt = Char->GetPos();
   Char->SwitchToCraft(*prpdSuspended);
   craftcore::SetSuspended(NULL); //was resumed so discard it
 }
@@ -213,12 +222,10 @@ void recipedata::Save(outputfile& SaveFile) const
     << v2PlaceAt
     << bSuccesfullyCompleted
     << v2AnvilLocation
-    << bFailed
     << v2PlayerCraftingAt
 
     << itToolID
     << itTool2ID
-    << v2BuildWhere
     << itSpawnType
     << fsItemSpawnSearchPrototype
 
@@ -272,12 +279,10 @@ void recipedata::Load(inputfile& SaveFile)
     >> v2PlaceAt
     >> bSuccesfullyCompleted
     >> v2AnvilLocation
-    >> bFailed
     >> v2PlayerCraftingAt
 
     >> itToolID
     >> itTool2ID
-    >> v2BuildWhere
     >> itSpawnType
     >> fsItemSpawnSearchPrototype
 
@@ -338,7 +343,6 @@ cfestring recipedata::id() const
   RPDINFO(otSpawnMatSecVol);
 
   #define RPDINFOV2(o) fs<<(#o)<<"="<<(o.X)<<","<<(o.Y)<<"; ";
-  RPDINFOV2(v2BuildWhere);
   RPDINFOV2(v2AnvilLocation);
   RPDINFOV2(v2ForgeLocation);
   RPDINFOV2(v2WorkbenchLocation);
@@ -358,24 +362,34 @@ cfestring recipedata::dbgInfo() const
 clock_t RPDInitKey = clock();
 
 void recipecore::SetHumanoid(character* C){
-  if(h!=NULL)
-    ABORT("Humanoid actor already set '%s' '%s'",C->GetName(DEFINITE).CStr(),h->GetName(DEFINITE).CStr());
+  integrityCheck(C);
 
-  h = dynamic_cast<humanoid*>(C);
-  if(h==NULL)
-    ABORT("Only humanoids can craft '%s'",C->GetName(DEFINITE).CStr());
+  if(C==NULL)
+    ABORT("actor can't be null, btw h='%s'",h==NULL?"NULL":h->GetName(DEFINITE).CStr());
+
+  if(C==h)
+    return;
+
+  humanoid* hNew = dynamic_cast<humanoid*>(C);
+  if(hNew==NULL)
+    ABORT("Only humanoids can craft C='%s' h='%s'",C->GetName(DEFINITE).CStr(),h==NULL?"NULL":h->GetName(DEFINITE).CStr());
+
+  if(h==NULL || hNew->GetPolymorphBackup()==h || h->GetPolymorphBackup()==hNew)
+    h = hNew;
+  else
+    ABORT("Humanoid actor already set '%s' '%s'",C->GetName(DEFINITE).CStr(),h->GetName(DEFINITE).CStr());
 }
 
 void recipecore::integrityCheck(character* Actor) const
 {
   if(initKey!=RPDInitKey){ //FIRST TEST!!!!!!!!!!!!!!!!!!!!!
+    //TODO bools get crazy values too if not initialized
     ABORT("recipedata corrupted, not initialized or invalid");// it will not be possible to show info, would crash on it... , dbgInfo().CStr());
   }
 
-  //TODO bools get crazy values too if not initialized
-
   if(Actor!=NULL && h!=NULL && h!=Actor)
-    ABORT("actor changed? '%s' '%s'",h->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
+    if(h->GetPolymorphBackup()!=Actor && Actor->GetPolymorphBackup()!=h)
+      ABORT("actor/h is not a polymorph backup? '%s' '%s'",h->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
 }
 
 recipecore::recipecore(humanoid* H,uint sel){
@@ -413,6 +427,8 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
 
   bSpecialExtendedTurns=false;
   iMinTurns=0;
+  bFailedTerminateCancel=false;
+  bFailedSuspend=false;
 
   ////////////////////////////////////////////////////////////////////////////////////
   /// saveables
@@ -427,12 +443,10 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   v2PlaceAt=v2(0,0);
   bSuccesfullyCompleted=false;
   v2AnvilLocation=v2(0,0);
-  bFailed=false;
   v2PlayerCraftingAt=v2(0,0);
 
   itToolID=0;
   itTool2ID=0;
-  v2BuildWhere=v2(0,0);
   itSpawnType=CIT_NONE;
   fsItemSpawnSearchPrototype="";
 
@@ -496,7 +510,7 @@ void recipedata::CopySpawnTerrainCfgFrom(olterrain* otCfg){
   }
 }
 
-olterrain* craftcore::SpawnTerrain(recipedata& rpd, festring& fsCreated){
+olterrain* crafthandle::SpawnTerrain(recipedata& rpd, festring& fsCreated){
   rpd.rc.integrityCheck();
 
   olterrain* otSpawn = NULL;
@@ -2353,39 +2367,58 @@ truth commandsystem::Craft(character* Char) //TODO currently this is an over sim
 {
   return craftcore::Craft(Char);
 }
+truth craftcore::CheckArms(humanoid* h)
+{
+  bool bLOk,bROk; //dummy
+  return CheckArms(h,bLOk,bROk);
+}
+truth craftcore::CheckArms(humanoid* h,bool& bLOk,bool& bROk)
+{
+  bLOk = h->GetLeftArm() !=NULL && h->GetLeftArm()->IsUsable();
+  bROk = h->GetRightArm()!=NULL && h->GetRightArm()->IsUsable();
+  if(!bLOk && !bROk){
+    ADD_MESSAGE("I need at least one usable arm to be able to craft.");
+    return false;
+  }
+
+  /**
+   * TODO
+   * resuming a suspended,
+   * if begun with 1 arm now have 2, should lower remaining turns to speed up
+   * if begun with 2 arms now have 1, should increase remaining turns
+   * also, changes on crafting skill (based on stats) should also dynamically affect remaining turns
+   * !!!BEWARE!!! calculations depending on remaining turns may break!!!
+   */
+
+  return true;
+}
+humanoid* craftcore::CheckHumanoid(character* Char)
+{
+  humanoid* h = dynamic_cast<humanoid*>(Char);
+  if(h==NULL){
+    ADD_MESSAGE("This monster type cannot craft.");
+    return NULL;
+  }
+  return h;
+}
 truth craftcore::Craft(character* Char) //TODO currently this is an over simplified crafting system... should be easy to add recipes and show their formulas...
 {
-//  craftcore::reinitIfNeeded();
-  if(craftcore::HasSuspended()){
-    /**
-     * TODO
-     * do this only for suspendable recipes but:
-     * - ingredients must be stored in an inaccessible place
-     * - crafted spawning item too
-     *
-     * ex.: so it wont prevent extracting poison if you were melting mithril
-     */
+  humanoid* h = CheckHumanoid(Char);
+  if(h==NULL)
+    return false;
 
+  bool bLOk,bROk;
+  if(!CheckArms(h,bLOk,bROk))
+    return false;
+
+  if(craftcore::HasSuspended()){
+    //TODO vector<Suspended> as felist
     if(game::TruthQuestion(festring("Continue crafting? ['n' to cancel this crafting]"),YES)){
       craftcore::ResumeSuspendedTo(Char);
       return true;
     }else{
-//      craftcore::TerminateSuspended();
       craftcore::SetSuspended(NULL); //discards it
     }
-  }
-
-  humanoid* h = dynamic_cast<humanoid*>(Char);
-  if(h==NULL){
-    ADD_MESSAGE("This monster type cannot craft.");
-    return false;
-  }
-
-  bool bLOk = h->GetLeftArm() !=NULL && h->GetLeftArm()->IsUsable();
-  bool bROk = h->GetRightArm()!=NULL && h->GetRightArm()->IsUsable();
-  if(!bLOk && !bROk){
-    ADD_MESSAGE("I need at least one usable arm to be able to craft.");
-    return false;
   }
 
   uint sel = FELIST_ERROR_BIT;
@@ -2522,8 +2555,6 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
-      if(rpd.lsqrPlaceAt!=NULL)rpd.v2BuildWhere=rpd.lsqrPlaceAt->GetPos();
-
       rpd.ClearRefs(); //pointers must be revalidated on the action handler
 
       DBG1(rpd.dbgInfo().CStr());
@@ -2553,7 +2584,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 }
 
 
-item* craftcore::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated)
+item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated)
 {
   bool bBreak = rpd.bSpawnBroken;
 
@@ -2615,45 +2646,8 @@ material* craftcore::CreateMaterial(bool bMain,recipedata& rpd)
   );
   return mat;
 }
-////material* craftcore::CreateMaterial(bool bMain,recipedata* prpd,material* matOverride)
-//material* craftcore::CreateMaterial(bool bMain,recipedata* prpd)
-//{
-////  if(prpd==NULL && matOverride==NULL)
-////    ABORT("to create material, one must not be NULL");
-////
-//  material* mat = material::MakeMaterial(
-//    (bMain ? prpd->itSpawnMatMainCfg : prpd->itSpawnMatSecCfg),
-//    (bMain ? prpd->itSpawnMatMainVol : prpd->itSpawnMatSecVol)
-//  );
-//
-////  if(mat!=NULL){
-////    if(dynamic_cast<organic*>(mat)!=NULL){
-////      ((organic*)mat)->SetSpoilLevel(
-////        (bMain ? prpd->itSpawnMatMainSpoilLevel : prpd->itSpawnMatSecSpoilLevel) );
-////    }
-////  }
-//
-//  return mat;
-//}
-//material* craftcore::CreateMaterial(bool bMain,recipedata* prpd,material* matOverride)
-//{
-//  if(prpd==NULL && matOverride==NULL)
-//    ABORT("to create material, one must not be NULL");
-//
-//  material* mat = material::MakeMaterial(
-//    matOverride!=NULL ? matOverride->GetConfig() : (bMain ? prpd->itSpawnMatMainCfg : prpd->itSpawnMatSecCfg),
-//    matOverride!=NULL ? matOverride->GetVolume() : (bMain ? prpd->itSpawnMatMainVol : prpd->itSpawnMatSecVol)
-//  );
-//
-//  if(mat!=NULL){
-//    mat->SetSpoilLevel(
-//      matOverride!=NULL ? matOverride->GetSpoilLevel() : (bMain ? prpd->itSpawnMatMainSpoilLevel : prpd->itSpawnMatSecSpoilLevel) );
-//  }
-//
-//  return mat;
-//}
 
-item* craftcore::SpawnItem(recipedata& rpd, festring& fsCreated)
+item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 {
   rpd.rc.integrityCheck();
 
@@ -2706,14 +2700,14 @@ item* craftcore::SpawnItem(recipedata& rpd, festring& fsCreated)
 
 //  material* matM = material::MakeMaterial(rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
 //  matM->SetSpoilCounter(rpd.itSpawnMatMainSpoilLevel);
-  material* matM = CreateMaterial(true,rpd);
+  material* matM = craftcore::CreateMaterial(true,rpd);
   itSpawn->SetMainMaterial(matM);
 
   if(rpd.itSpawnMatSecCfg==0)
     craftcore::EmptyContentsIfPossible(rpd,itSpawn);
   else{
     if(matS==NULL)
-      matS = CreateMaterial(false,rpd);
+      matS = craftcore::CreateMaterial(false,rpd);
 //      matS = material::MakeMaterial(rpd.itSpawnMatSecCfg,rpd.itSpawnMatSecVol);
     if(matS!=NULL){
 //      matS->SetSpoilCounter(rpd.itSpawnMatSecSpoilLevel);
@@ -2736,7 +2730,7 @@ item* craftcore::SpawnItem(recipedata& rpd, festring& fsCreated)
   return itSpawn;
 }
 
-void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
+void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish);
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
 
@@ -2749,14 +2743,14 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
 
     if(rpd.itSpawnType!=CIT_NONE){DBGLN;
       for(int i=0;i<rpd.itSpawnTot;i++)
-        craftcore::CopyDegradationIfPossible(rpd,craftcore::SpawnItem(rpd,fsMsg));
+        CopyDegradationIfPossible(rpd,SpawnItem(rpd,fsMsg));
     }
 
     if(rpd.otSpawnType!=CTT_NONE){DBGLN;
-      craftcore::SpawnTerrain(rpd,fsMsg);
+      SpawnTerrain(rpd,fsMsg);
     }
 
-    fsMsg << craftcore::DestroyIngredients(rpd);
+    fsMsg << DestroyIngredients(rpd);
     fsMsg << ".";
 
     ADD_MESSAGE(fsMsg.CStr());
@@ -2771,7 +2765,7 @@ void craftcore::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFinish
  * - one rock into smaller ones
  * - one organic
  */
-void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
+void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
     ABORT("incompatible gradative mode and ingredients count %d",rpd.ingredientsIDs.size());
 
@@ -2809,8 +2803,8 @@ void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
     item* itDup = itSpawn->DuplicateToStack(rpd.rc.H()->GetStack());
      * so just avoiding using it here.
      */
-    item* itSpawned = craftcore::SpawnItem(rpdTmp,fsMsg);
-    craftcore::CopyDegradation(matM,itSpawned->GetMainMaterial());
+    item* itSpawned = SpawnItem(rpdTmp,fsMsg);
+    CopyDegradation(matM,itSpawned->GetMainMaterial());
 
     ADD_MESSAGE("%s.",fsMsg.CStr());
 
@@ -2843,7 +2837,7 @@ void craftcore::GradativeCraftOverride(recipedata& rpd){DBGLN;
   DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
 }
 
-void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
+void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
 {
   rpd.rc.integrityCheck();
 //  if(!v2XplodAt.Is0()){DBGSV2(v2XplodAt);
@@ -2902,7 +2896,7 @@ void craftcore::CheckFumble(recipedata& rpd,bool bChangeTurns)
   }
 }
 
-void craftcore::CheckIngredients(recipedata& rpd){
+void crafthandle::CheckIngredients(recipedata& rpd){
   rpd.rc.integrityCheck();
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
@@ -2911,14 +2905,14 @@ void craftcore::CheckIngredients(recipedata& rpd){
        * ex.: if something catches fire and is destroyed before the crafting ends.
        */
       ADD_MESSAGE("a required ingredient was destroyed...");DBG1(rpd.ingredientsIDs[i]);
-      rpd.bFailed=true; //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
+      rpd.bFailedTerminateCancel=true; //TODO a crash happens in this line, how? memory corruption? if the tiny explosions trigger things on the floor like wands
       break;
     }
 
     // a magpie or siren may have taken it
     if(it->GetSquareUnder()!=rpd.lsqrActor){
       ADD_MESSAGE("%s ingredient went missing...",it->GetName(DEFINITE).CStr());
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
       break;
     }
 
@@ -2932,14 +2926,14 @@ void craftcore::CheckIngredients(recipedata& rpd){
   }
 }
 
-void craftcore::CheckFacilities(recipedata& rpd){
+void crafthandle::CheckFacilities(recipedata& rpd){
   rpd.rc.integrityCheck();
   rpd.lvl = rpd.lsqrActor->GetLevel();
   if(!rpd.v2AnvilLocation.Is0()){
     olterrain* ot = rpd.lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
     if(ot==NULL || ot->GetConfig()!=ANVIL){
       ADD_MESSAGE("The anvil was destroyed!");
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
     }
 
     rpd.v2XplodAt=rpd.v2AnvilLocation;
@@ -2948,7 +2942,7 @@ void craftcore::CheckFacilities(recipedata& rpd){
     olterrain* otForge = rpd.lvl->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
     if(otForge==NULL || otForge->GetConfig()!=FORGE){
       ADD_MESSAGE("The forge was destroyed!");
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
     }
 
     rpd.v2XplodAt=rpd.v2ForgeLocation;
@@ -2957,7 +2951,7 @@ void craftcore::CheckFacilities(recipedata& rpd){
     olterrain* otWorkbench = rpd.lvl->GetLSquare(rpd.v2WorkbenchLocation)->GetOLTerrain();
     if(otWorkbench==NULL || otWorkbench->GetConfig()!=WORK_BENCH){
       ADD_MESSAGE("The workbench was destroyed!");
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
     }
 
     rpd.bOnlyXplodIfCriticalFumble=true;
@@ -2986,90 +2980,82 @@ item* checkTool(ulong id,lsquare* lsqrActor){
   return it;
 }
 
-void craftcore::CheckTools(recipedata& rpd){
+void crafthandle::CheckTools(recipedata& rpd){
   rpd.lsqrActor = rpd.rc.H()->GetLSquareUnder(); DBGSV2(rpd.lsqrActor->GetPos());
 
   if(rpd.itToolID>0){
     rpd.itTool=checkTool(rpd.itToolID,rpd.lsqrActor);
     if(rpd.itTool==NULL)
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
   }
 
   if(rpd.itTool2ID>0){
     rpd.itTool2=checkTool(rpd.itTool2ID,rpd.lsqrActor);
     if(rpd.itTool2ID>0 && rpd.itTool2==NULL)
-      rpd.bFailed=true;
+      rpd.bFailedTerminateCancel=true;
   }
 
-  if(rpd.bFailed)
+  if(rpd.bFailedTerminateCancel)
     rpd.itTool=rpd.itTool2=NULL; //consistency or have the two (if required), or have none
 
-//  if(rpd.itToolID!=0){
-//    rpd.itTool = game::SearchItem(rpd.itToolID); //must keep searching it as it may have been destroyed.
-//    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
-//    if(rpd.itTool==NULL){
-//      ADD_MESSAGE("The unmodified tool to craft this is missing or destroyed.");//,rpd.itTool->GetName(DEFINITE).CStr());
-//      rpd.bFailed=true;
-//    }
-//    DBGEXEC(if(rpd.itTool!=NULL)DBGSV2(rpd.itTool->GetLSquareUnder()->GetPos()));
-//  }
-//  if(rpd.itTool2ID!=0){
-//    rpd.itTool2 = game::SearchItem(rpd.itTool2ID); //must keep searching it as it may have been destroyed.
-//    //TODO if a tool was broken and gets fixed, it's old ID will vanish!!! how to handle it!??!?!
-//    if(rpd.itTool2==NULL){
-//      ADD_MESSAGE("The unmodified tool to craft this is missing or destroyed.");//,rpd.itTool2->GetName(DEFINITE).CStr());
-//      rpd.bFailed=true;
-//    }
-//    DBGEXEC(if(rpd.itTool2!=NULL)DBGSV2(rpd.itTool2->GetLSquareUnder()->GetPos()));
-//  }
-
   DBG8(rpd.itToolID,rpd.itTool,rpd.itTool2ID,rpd.itTool2,rpd.itSpawnCfg,rpd.otSpawnCfg,rpd.itSpawnType,rpd.otSpawnType);
-
-//  if(rpd.itTool!=NULL && rpd.itTool->GetLSquareUnder()!=rpd.lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
-//  {DBGLN; //TODO re-mainWield it
-//    ADD_MESSAGE("%s went missing.",rpd.itTool->GetName(DEFINITE).CStr());
-//    rpd.bFailed=true;
-//  }
-//  if(rpd.itTool2!=NULL && rpd.itTool2->GetLSquareUnder()!=rpd.lsqrActor)//rpd.itTool!=Actor->GetMainWielded())
-//  {DBGLN; //TODO re-mainWield it
-//    ADD_MESSAGE("%s went missing.",rpd.itTool2->GetName(DEFINITE).CStr());
-//    rpd.bFailed=true;
-//  }
-
 }
 
-void craftcore::CheckEverything(recipedata& rpd){
-  if(!rpd.bFailed)
-    craftcore::CheckTools(rpd);
+void crafthandle::CheckEverything(recipedata& rpd, character* CurrentActor){
+  rpd.rc.integrityCheck(CurrentActor);
 
-  if(rpd.rc.H()->GetPos()!=rpd.v2PlayerCraftingAt){ //in case player is teleported
+  if(!rpd.IsFailedSuspendOrCancel())
+    if(craftcore::CheckHumanoid(CurrentActor)==NULL)
+      rpd.bFailedSuspend=true; //may have polymorphed
+
+  if(!rpd.IsFailedSuspendOrCancel())
+    if(rpd.rc.H()!=CurrentActor){
+      /**
+       * it is of ultimate importance to update the current actor
+       */
+      rpd.rc.SetHumanoid(CurrentActor);
+    }
+
+  if(!rpd.IsFailedSuspendOrCancel())
+    if(!craftcore::CheckArms(rpd.rc.H()))
+      rpd.bFailedSuspend=true;
+
+  if(!rpd.IsFailedSuspendOrCancel())
+    CheckTools(rpd);
+
+  DBG2(DBGAV2(CurrentActor->GetPos()),DBGAV2(rpd.v2PlayerCraftingAt));
+  if(CurrentActor->GetPos() != rpd.v2PlayerCraftingAt){ //in case player is teleported
     ADD_MESSAGE("I need to move back to where I started crafting.");
-    rpd.bFailed=true;
+    rpd.bFailedSuspend=true;
   }
 
   rpd.rc.integrityCheck();
   DBGSV2(rpd.v2PlaceAt);
-  if(!rpd.bFailed){
-    rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(rpd.v2PlaceAt); //near? it is abs map pos...
-    olterrain* oltExisting = rpd.lsqrPlaceAt->GetOLTerrain();
-    if(rpd.otSpawnType!=CTT_NONE && oltExisting!=NULL){DBGLN;
-  //  ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
-      ADD_MESSAGE("Unable to place it there."); //TODO like in case something is placed there before ending the construction? but what and how?
-      rpd.bFailed=true;
+  if(!rpd.IsFailedSuspendOrCancel()){
+    if(rpd.otSpawnType!=CTT_NONE){
+      rpd.lsqrPlaceAt = CurrentActor->GetNearLSquare(rpd.v2PlaceAt); //TODO near? it is absolute map pos... confusing method name or I missed something???
+      olterrain* oltExisting = rpd.lsqrPlaceAt->GetOLTerrain();
+      if(oltExisting!=NULL){DBGLN;
+    //  ADD_MESSAGE("%s cannot be placed there.", rpd.otSpawn->GetName(DEFINITE).CStr()); //TODO like in case something is placed there before ending the construction?
+        ADD_MESSAGE("Unable to place it there."); //TODO like in case something is placed there before ending the construction? but what and how?
+        rpd.bFailedTerminateCancel=true;
+      }
     }
   }
 
-  if(!rpd.bFailed)
-    craftcore::CheckIngredients(rpd);
+  if(!rpd.IsFailedSuspendOrCancel())
+    CheckIngredients(rpd);
 
-  if(!rpd.bFailed)
-    craftcore::CheckFacilities(rpd);
+  if(!rpd.IsFailedSuspendOrCancel())
+    CheckFacilities(rpd);
 
-  if(!rpd.bFailed)
-    craftcore::CheckFumble(rpd);
+  if(!rpd.IsFailedSuspendOrCancel())
+    CheckFumble(rpd);
+
+  rpd.rc.integrityCheck();
 }
 
-cfestring craftcore::DestroyIngredients(recipedata& rpd){
+cfestring crafthandle::DestroyIngredients(recipedata& rpd){
   festring fsIng,fsIngP;
   festring fsIngPrev,fsIngPPrev;
   int iCountEqual=1;
@@ -3082,9 +3068,19 @@ cfestring craftcore::DestroyIngredients(recipedata& rpd){
     bool bSendToHell=true;
     if(rpd.otSpawnMatMainCfg!=0)
       if(it->GetMainMaterial()->GetConfig() != rpd.otSpawnMatMainCfg)
-        if(rpd.rc.H()->GetPos()!=rpd.lsqrPlaceAt->GetPos()) //TODO this shouldnt be necessary, CanMoveOn() should suffice..
-          if(!rpd.rc.H()->CanMoveOn(rpd.lsqrPlaceAt)) //keep inaccessible ingredients TODO but as ghost they would still be recoverable...
-            bSendToHell=false;
+        if(rpd.rc.H()->GetPos()!=rpd.lsqrPlaceAt->GetPos()){
+          /**
+           * TODO this diff pos check shouldnt be necessary, CanMoveOn() should suffice but didnt work as it always can't move on, therefore always "true" TODO confirm again...
+          if(!rpd.rc.H()->CanMoveOn(rpd.lsqrPlaceAt))
+           */
+
+          /**
+           * this keep still available but inaccessible ingredients differing from constructed main material
+           * TODO but as ghost they would still be recoverable, keep as trick/feature/secret? or destroy them? or just prevent diff materials at all during their selection?
+           */
+
+          bSendToHell=false;
+        }
 
     if(bSendToHell){DBGLN;
       it->SendToHell();
@@ -3215,7 +3211,7 @@ bool craftcore::IsDegraded(item* it,bool bShowMsg){
   return b;
 }
 
-void craftcore::CopyDegradation(item* itFrom,material* matTo)
+void crafthandle::CopyDegradation(item* itFrom,material* matTo)
 {
   material* matFromM = itFrom->GetMainMaterial();
   if(matFromM!=NULL){
@@ -3237,7 +3233,7 @@ void craftcore::CopyDegradation(item* itFrom,material* matTo)
     }
   }
 }
-void craftcore::CopyDegradation(material* matFrom,material* matTo)
+void crafthandle::CopyDegradation(material* matFrom,material* matTo)
 {
   if(dynamic_cast<organic*>(matTo)!=NULL)
     ((organic*)matTo)->SetSpoilCounter(((organic*)matFrom)->GetSpoilCounter());
@@ -3245,7 +3241,7 @@ void craftcore::CopyDegradation(material* matFrom,material* matTo)
   matTo->SetRustLevel(matFrom->GetRustLevel());
 }
 
-void craftcore::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
+void crafthandle::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
 {
   /**
    * will work with simple recipes only

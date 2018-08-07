@@ -101,7 +101,6 @@ ACTION(craft, action)
 {
  public:
   craft() : RightBackupID(0), LeftBackupID(0), rpd(), MoveCraftTool(false) { }
-  ~craft();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
