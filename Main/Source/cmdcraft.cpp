@@ -103,8 +103,25 @@ void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
   ABORT("there is already a different recipedata set\n'%s'\nVS\n'%s'",prpdSuspended->dbgInfo().CStr(),prpd->dbgInfo().CStr());
 }
 
-float craftcore::CraftSkill(character* Char){ //is the current capability of crafting
-  return (Char->GetAttribute(DEXTERITY)+Char->GetAttribute(WISDOM))/2.0; //ex.: D=10 W=10 Skill=10, D=5 W=10 Skill=7.5
+float craftcore::CraftSkill(character* Char){ //is the current capability of successfully crafting
+  float Skill = 0; // influence/weights of each stat will be the FINAL divider!
+  float fWeight = 0;
+  float fDivFinal = 0;
+
+  #define CALCSK(weig,attr) fWeight = weig; Skill += Char->GetAttribute(attr)*weig; fDivFinal+=weig;
+  CALCSK(15.0,DEXTERITY); //by importance order
+  CALCSK(7.5,WISDOM);
+  CALCSK(3.0,PERCEPTION); //TODO could counter fumbles directly
+  CALCSK(3.0,ARM_STRENGTH); //TODO half if only one arm?
+  CALCSK(2.5,AGILITY);
+  CALCSK(2.5,INTELLIGENCE);
+  CALCSK(2.0,ENDURANCE); //TODO could lower 0.1 per turn crafting, til 0.0
+  CALCSK(1.5,WILL_POWER); //TODO could lower 0.1 per turn crafting, til 0.0
+  CALCSK(0.25,LEG_STRENGTH);
+  //TODO CHARISMA //if one day there is item quality, well finished, attribute that could increase sell price
+  //TODO MANA //if one day anything magical is allowed to be crafted
+
+  return Skill/fDivFinal; // in short, if all stats are 10, craft skill will be 10
 }
 
 bool craftcore::canBeCrafted(item* it){
@@ -2347,12 +2364,27 @@ struct srpAcid : public srpFluidsBASE{
 
 felist craftRecipes(CONST_S("What do you want to craft?"));
 std::vector<recipe*> vrp;
+
+void updateCraftDesc(){
+  craftRecipes.EmptyDescription();
+
+  float fSkill=craftcore::CraftSkill(PLAYER); //TODO should this dynamic value show too where stats are?
+  festring fsSkill="Crafting Skill: ";
+  static char cSkill[20];
+  sprintf(cSkill, "%.1f",fSkill);
+  fsSkill<<cSkill;
+  craftRecipes.AddDescription(fsSkill,fSkill<10?RED:WHITE);
+}
+
 void addRecipe(recipe* prp){
   prp->iListIndex=vrp.size();
+
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
+
   craftRecipes.AddEntry(festring()+prp->action+" "+prp->name, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
   craftRecipes.SetLastEntryHelp(prp->desc);
+
   vrp.push_back(prp);
 }
 void addMissingMsg(festring& where, cfestring& what){
@@ -2426,6 +2458,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     game::SetStandardListAttributes(craftRecipes);
     craftRecipes.AddFlags(SELECTABLE);
     craftRecipes.ClearFilter();
+    updateCraftDesc();
     sel = craftRecipes.Draw(); DBG1(sel);
 
     if(sel & FELIST_ERROR_BIT)
