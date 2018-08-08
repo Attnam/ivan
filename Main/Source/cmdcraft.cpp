@@ -599,7 +599,7 @@ struct ci{
   int iReqMatCfgMain=0; //setting this overrides bFirstMainMaterIsFilter
   int iReqMatCfgSec=0;
   bool bJustAcceptFirstChosenAndReturn=false;
-  bool bDenyDegradation = true;
+  bool bAllowDegradation = false;
 
   bool bFirstItemMustHaveFullVolumeRequired=false;
   bool bAllowMeltables=true;
@@ -859,7 +859,7 @@ struct recipe{
          *
          * degradation should only be "fixable" thru magic (scroll of repair)
          */
-        if(CI.bDenyDegradation && craftcore::IsDegraded(vi[i])) //TODO lower the volume of "remaining perfect materials" based on the degradation levels ?
+        if(!CI.bAllowDegradation && craftcore::IsDegraded(vi[i])) //TODO lower the volume of "remaining perfect materials" based on the degradation levels ?
           continue;
 
         if(CI.iReqCfg>0 && vi[i]->GetConfig()!=CI.iReqCfg)
@@ -1522,7 +1522,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     ///////////////////// chose item to melt/smash
     game::DrawEverythingNoBlit();
     ci CI;
-    CI.bDenyDegradation=false; //to let user know what is happening w/o spamming it.
+    CI.bAllowDegradation=true; //to let user know what is happening w/o spamming it.
     if(!choseOneIngredient<item>(rpd,&CI)){
       rpd.bAlreadyExplained=true; //no need to explain if nothing chosen
       return false;
@@ -1815,7 +1815,7 @@ struct srpSplitLump : public recipe{
 
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
-    init("forge","an item");
+    init("create","an item");
     desc << "Using a blunt weapon as hammer,\n close to an anvil and with a forge nearby you can create items.\n Or a cutting weapon, if close to a workbench will speed up the work.";
   }
 
