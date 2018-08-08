@@ -26,7 +26,8 @@ class devcons{
     static void Help(std::string strFilter);
     static void runCommand(festring fsCmd);
   public:
-    static void Command();
+    static void Init();
+    static void OpenCommandsConsole();
     static void AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp=festring(), bool bWizardModeOnly=false);
 };
 

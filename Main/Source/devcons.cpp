@@ -13,12 +13,15 @@
 #include <algorithm>
 #include <sstream>
 
+#include "SDL.h"
+
 #include "char.h"
 #include "devcons.h"
 #include "error.h"
 #include "game.h"
 #include "message.h"
 #include "stack.h"
+#include "specialkeys.h"
 
 /**
  * ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!! ATTENTION!!!
@@ -196,7 +199,12 @@ void ListItems(std::string strParams){
 }
 #endif
 
-void devcons::Command()
+void devcons::Init()
+{
+  specialkeys::AddControlKeyHandler(SDLK_BACKQUOTE,&OpenCommandsConsole);
+}
+
+void devcons::OpenCommandsConsole()
 {
   static bool bDummyInit = [](){
     #define ADDCMD(cm,sh,bw) AddDevCmd(#cm,cm,sh,bw);

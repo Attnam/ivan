@@ -5,6 +5,8 @@ FIX
 - when felist is open, still showing tiny dungeon animated behind...
 
 IMPROVEMENTS
+- craft dismantle w/o forge should require dagger and hammer if has any meltable
+ - craft test material should allow broken things too
 - felist: default remember_selected
 - simple pile equal items on "show items under", ex.: if more than 1, simply draw a tiny + sign with 2 drawn white lines
  - show items under, begin with the last one, unless if showing them all in lines

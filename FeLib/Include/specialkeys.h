@@ -17,6 +17,8 @@
 
 class festring;
 
+typedef void (*ctrlkeyhandler)();
+
 class specialkeys
 {
  public:
@@ -31,6 +33,7 @@ class specialkeys
 
   static bool FunctionKeyHandler(SDL_Keycode);
   static bool ControlKeyHandler(SDL_Keycode);
+  static void AddControlKeyHandler(SDL_Keycode key, ctrlkeyhandler Handler);
 
   static cfestring FilterListQuestion(cfestring What);
   static void ClearRequest(){Request=-1;}

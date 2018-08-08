@@ -104,6 +104,7 @@ int main(int argc, char** argv)
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
   specialkeys::init();
   bugfixdp::init();
+  devcons::Init();
   definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();

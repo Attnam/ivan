@@ -19,6 +19,7 @@
 
 #include "bitmap.h"
 #include "feio.h"
+#include "error.h"
 #include "festring.h"
 #include "graphics.h"
 #include "rawbit.h"
@@ -47,8 +48,22 @@ cfestring specialkeys::FilterListQuestion(cfestring what)
   festring What=what;
 
   v2 pos = v2(16, 6);
-  int R = iosystem::StringQuestion(What, CONST_S("Type this list filter:"), pos, WHITE, 0, 30, false /*TODO !bGameIsRunning*/, true, NULL);
-  DOUBLE_BUFFER->Fill(pos,v2(RES.X, 23),BLACK); //TODO clear the filter text using the background! needed when pressing ESC or ENTER and not changing the filter! tip: igraph::BlitBackGround(pos, v2(RES.X, 23));
+  static festring Topic = "Type this list filter:";
+
+  int R = iosystem::StringQuestion(What, Topic, pos, WHITE, 0, 30, false /*TODO !bGameIsRunning*/, true, NULL);
+
+  /**
+   * TODO
+   * clear the filter text using the background!
+   * needed when pressing ESC or ENTER and not changing the filter!
+   * tip: igraph::BlitBackGround(pos, v2(RES.X, 23));
+   * also, could may be copy the background from doublebuffer and just paste it back after....
+   */
+
+  // cheap workaround to not look too bad (like input was not accepted) at least
+  //  DOUBLE_BUFFER->Fill(pos,v2(RES.X, 23),BLACK);
+  FONT->Printf(DOUBLE_BUFFER, pos, BLACK, "%s", Topic.CStr());
+  FONT->Printf(DOUBLE_BUFFER, v2(pos.X, pos.Y + 10), BLACK, "%s_", What.CStr());
 
   if(R == NORMAL_EXIT){ DBG1(What.CStr());
     return What;
@@ -180,6 +195,20 @@ bool specialkeys::FunctionKeyHandler(SDL_Keycode key)
   return false;
 }
 
+typedef std::map<SDL_Keycode,ctrlkeyhandler> ckhmap;
+ckhmap CkhMap;
+//std::vector<ctrlkeyhandler> vckh;
+
+void specialkeys::AddControlKeyHandler(SDL_Keycode key, ctrlkeyhandler Handler)
+{
+  ckhmap::iterator Iterator = CkhMap.find(key);
+  if(Iterator != CkhMap.end())
+    ABORT("control key handler already set for key %d",key);
+
+  CkhMap.insert(std::make_pair(key,Handler));
+//  vckh.push_back(Handler);
+}
+
 bool specialkeys::ControlKeyHandler(SDL_Keycode key)
 {
   switch(key){ //TODO use SDLK_ keys?
@@ -192,7 +221,15 @@ bool specialkeys::ControlKeyHandler(SDL_Keycode key)
   case 'v':
     Request=PasteFromClipboard;
     return true;
+  default:
+    ckhmap::iterator Iterator = CkhMap.find(key);
+    if(Iterator != CkhMap.end()){
+      Iterator->second();
+      return true;
+    }
+    break;
   }
+
   return false;
 }
 

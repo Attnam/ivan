@@ -1698,12 +1698,6 @@ truth commandsystem::Search(character* Char)
   return true;
 }
 
-truth commandsystem::DevConsCmd(character* Char)
-{ // this is also hardcoded at whandler
-  devcons::Command();
-  return false;
-}
-
 #ifdef WIZARD
 
 truth commandsystem::WizardMode(character* Char)
