@@ -180,6 +180,7 @@ class recipedata {
     bool bSuccesfullyCompleted;
     v2 v2AnvilLocation;
     v2 v2PlayerCraftingAt;
+    festring fsCraftInfo;
 
     ulong itToolID;
     ulong itTool2ID;
@@ -233,8 +234,8 @@ class recipedata {
 };
 
 class craftcore {
-  private:
-    static recipedata* prpdSuspended; //TODO suspendable action should be more global to be reused for other actions than crafting!
+//  private:
+//    static recipedata* prpdSuspended; //TODO suspendable action should be more global to be reused by other actions than crafting!
 
   public: //TODO review if some should be protected or private
     static void Save(outputfile& SaveFile);
@@ -268,10 +269,13 @@ class craftcore {
 
     static item* PrepareRemains(material* mat, recipedata& rpd);
 
-    static void SetSuspended(recipedata* prpd);
-    static void ResetSuspended();
+    static void AddSuspended(const recipedata& rpd);
+    static void RemoveIfSuspended(const recipedata&rpd);
+    static bool ResumeSuspendedTo(character* Char,recipedata& rpd);
+    static void ClearSuspendedList();
     static bool HasSuspended();
-    static void ResumeSuspendedTo(character* Char);
+
+    static recipedata FindRecipedata(festring fsRpdId);
 };
 
 class crafthandle {

@@ -827,7 +827,7 @@ truth game::Init(cfestring& loadBaseName)
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
       commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
-      craftcore::SetSuspended(NULL); //to clear the memory from possibly previously loaded game
+      craftcore::ClearSuspendedList(); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");

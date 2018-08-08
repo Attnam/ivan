@@ -218,33 +218,22 @@ void rest::Terminate(truth Finished)
 void craft::Save(outputfile& SaveFile) const
 {DBGLN;DBGSTK;
   action::Save(SaveFile);
-  rpd.Save(SaveFile);
+
+  SaveFile << rpd.id();
+
   SaveFile << MoveCraftTool << RightBackupID << LeftBackupID;
 }
 
 void craft::Load(inputfile& SaveFile)
 {DBGLN;
   action::Load(SaveFile);
-  rpd.Load(SaveFile);
+
+  festring fsRpdId;
+  SaveFile >> fsRpdId;
+  rpd = craftcore::FindRecipedata(fsRpdId);
+
   SaveFile >> MoveCraftTool >> RightBackupID >> LeftBackupID;
-
-  if(rpd.rc.IsCanBeSuspended())
-    craftcore::SetSuspended(&rpd);
 }
-
-//cfestring craft::info(){
-//  return rpd.dbgInfo();
-//}
-
-//bool craft::IsSuspendedAction() {
-//  if(rpd.bSuccesfullyCompleted)
-//    return false;
-//
-//  if(rpd.bCanBeSuspended)
-//    return true;
-//
-//  return false;
-//}
 
 void craft::Handle()
 {DBGLN;
@@ -358,18 +347,18 @@ void craft::Terminate(truth Finished)
   Flags |= TERMINATING;
 
   if(Finished){
-    craftcore::SetSuspended(NULL);
+    craftcore::RemoveIfSuspended(rpd);
   }else{
     if(IsSuspending()){
       ADD_MESSAGE("You suspend crafting (do not modify tools and ingredients)."); //TODO this message refers to a too technical subject: if a tool gets fixed, it's ID will vanish. Not sure if this message could be improved...
-      craftcore::SetSuspended(&rpd);
+      craftcore::AddSuspended(rpd);
     }else{
       if(GetActor()->IsPlayer())
         ADD_MESSAGE("You stop crafting.");
       else if(GetActor()->CanBeSeenByPlayer())
         ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
 
-      craftcore::SetSuspended(NULL);
+      craftcore::RemoveIfSuspended(rpd);
     }
   }
 

@@ -18,24 +18,46 @@
 
 #include "cmdcraftfilters.cpp"
 
-recipedata* craftcore::prpdSuspended=NULL;
+std::vector<recipedata> vSuspended; //TODO suspendable action should be more global to be reused by other actions than crafting!
 
-//#define CICALL(type,msg,vol,cfg) choseIngredients<type>(msg,vol,rpd,cfg,CI,#type)
+//recipedata* craftcore::prpdSuspended=NULL;
 
-//void craftcore::reinitIfNeeded(){
-//  if(player!=PLAYER){
-//    player=PLAYER;
-//    craftAction=NULL;
-//  }
-//}
-
-void craftcore::ResetSuspended()
+void craftcore::AddSuspended(const recipedata& rpd)
 {
-  if(prpdSuspended!=NULL){
-    DBG2("deleting",prpdSuspended->dbgInfo().CStr());
-    delete prpdSuspended;
-    prpdSuspended=NULL; //resets
-  }
+  rpd.rc.integrityCheck();
+
+  if(!rpd.rc.IsCanBeSuspended())
+    ABORT("action can't be suspended %s",rpd.dbgInfo().CStr());
+
+  for(int i=0;i<vSuspended.size();i++)
+    if(vSuspended[i].id()==rpd.id())
+      ABORT("it was already suspended '%s'",vSuspended[i].id().CStr());
+
+  vSuspended.push_back(rpd);
+}
+
+void craftcore::RemoveIfSuspended(const recipedata&rpd)
+{
+  for(int i=0;i<vSuspended.size();i++)
+    if(vSuspended[i].id()==rpd.id()){
+      vSuspended.erase(vSuspended.begin()+i);
+      break;
+    }
+}
+
+recipedata craftcore::FindRecipedata(festring fsRpdId)
+{
+  for(int i=0;i<vSuspended.size();i++)
+    if(vSuspended[i].id()==fsRpdId)
+      return vSuspended[i];
+
+  ABORT("unable to find recipedata id='%s'",fsRpdId);
+  return recipedata(); //dummy... just to let it be compiled...
+}
+
+void craftcore::ClearSuspendedList()
+{
+  vSuspended.clear();
 }
 
 bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool bMoveToInventory)
@@ -77,30 +99,6 @@ void craftcore::SendToHellSafely(item* it)
   it->RemoveFromSlot(); //just in case to prevent problems later... like crashing elsewhere!!!
   it->SendToHell(); DBG3("SentToHell",it,it->GetID());//,lumpAtInv,lumpAtInv->GetID());
 //  **rit=NULL;
-}
-
-void craftcore::SetSuspended(recipedata* prpd){DBG2(prpd,prpdSuspended);
-  if(prpd==NULL){ //calling as this must be sure to delete the craft* object outside here!
-    ResetSuspended();
-    return;
-  }
-
-  if(prpdSuspended!=NULL && prpd!=NULL)
-    if(prpdSuspended->id()==prpd->id()){ DBG2("settingAgainToSameNotAProblemButShouldNotHappen",prpd->dbgInfo().CStr());
-      ResetSuspended(); //in case some properties got modified, to let it be updated
-    }
-
-  if(prpdSuspended==NULL){DBGLN;
-    prpdSuspended=new recipedata(NULL);
-    if(!prpd->rc.IsCanBeSuspended())
-      ABORT("action can't be suspended %s",prpd->dbgInfo().CStr());
-    (*prpdSuspended)=(*prpd); //copy
-//    prpdSuspended->ClearRefs();
-    prpdSuspended->rc.integrityCheck();
-    return;
-  }
-
-  ABORT("there is already a different recipedata set\n'%s'\nVS\n'%s'",prpdSuspended->dbgInfo().CStr(),prpd->dbgInfo().CStr());
 }
 
 float craftcore::CraftSkill(character* Char){ //is the current capability of successfully crafting
@@ -149,49 +147,37 @@ bool craftcore::canBeCrafted(item* it){
 }
 
 bool craftcore::HasSuspended() {
-  if(prpdSuspended==NULL)
-    return false;
-
-  if(prpdSuspended->bSuccesfullyCompleted)
-    return false;
-
-  if(prpdSuspended->rc.IsCanBeSuspended())
-    return true;
-
-  return false;
+  return vSuspended.size()>0;
 }
-void craftcore::ResumeSuspendedTo(character* Char){
+bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
+{
   if(!HasSuspended())
     ABORT("no suspended craft action to set to %s!",Char->GetName(DEFINITE).CStr());
 
-//  if(Char->GetAction()==craftAction){DBG1("Already,How?") //should not happen tho...
-//    return;
-//  }
-
-  if(Char->GetAction()!=NULL){DBG1("AlreadySomethingElse,How?");DBGSTK; //should never happen tho... TODO ABORT() ?
+  if(Char->GetAction()!=NULL){DBG1("AlreadySomethingElse,How?");DBGSTK; //may never happen tho... TODO ABORT() ?
     ADD_MESSAGE("I am already doing something else.");
-    return;
+    return false;
   }
 
-  prpdSuspended->rc.integrityCheck();
+  rpd.rc.integrityCheck();
 
   bool bReqSamePos = false;
-//  if(prpdSuspended->bMeltable)bReqSamePos=true;
-  if(!prpdSuspended->v2AnvilLocation.Is0())bReqSamePos=true;
-  if(!prpdSuspended->v2ForgeLocation.Is0())bReqSamePos=true;
-  if(!prpdSuspended->v2PlaceAt.Is0())bReqSamePos=true;
-  if(!prpdSuspended->v2WorkbenchLocation.Is0())bReqSamePos=true;
-  if(prpdSuspended->otSpawnType!=CTT_NONE)bReqSamePos=true;
+//  if(rpd.bMeltable)bReqSamePos=true;
+  if(!rpd.v2AnvilLocation.Is0())bReqSamePos=true;
+  if(!rpd.v2ForgeLocation.Is0())bReqSamePos=true;
+  if(!rpd.v2PlaceAt.Is0())bReqSamePos=true;
+  if(!rpd.v2WorkbenchLocation.Is0())bReqSamePos=true;
+  if(rpd.otSpawnType!=CTT_NONE)bReqSamePos=true;
   if(bReqSamePos){
-    if(prpdSuspended->rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
+    if(rpd.rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
       //TODO better message: place? location? dungeon level sounds a bit non-immersive, or not?
       ADD_MESSAGE("I need to be in the same dungeon I was before to continue to prepare it.");
-      return;
+      return false;
     }
 
-    if(prpdSuspended->v2PlayerCraftingAt != Char->GetPos()){
+    if(rpd.v2PlayerCraftingAt != Char->GetPos()){
       festring fsDist;
-      int iDist = (prpdSuspended->v2PlayerCraftingAt - Char->GetPos()).GetLengthSquare();
+      int iDist = (rpd.v2PlayerCraftingAt - Char->GetPos()).GetLengthSquare();
       if(iDist<=2)fsDist<<"and I am almost there!";
       else
       if(iDist<=10)fsDist<<"and I am near it.";
@@ -200,20 +186,19 @@ void craftcore::ResumeSuspendedTo(character* Char){
       else
         fsDist<<"but it seems to be quite far from here.";
       ADD_MESSAGE("I need to be were I was crafting before, %s",fsDist.CStr());
-      return;
+      game::SetDrawMapOverlay(true); //TODO make this optional?
+      game::PositionQuestion(CONST_S("It was here!"), rpd.v2PlayerCraftingAt, 0, 0, false);
+      game::SetDrawMapOverlay(false);
+      return false;
     }
   }else{
-    prpdSuspended->v2PlayerCraftingAt = Char->GetPos();
+    rpd.v2PlayerCraftingAt = Char->GetPos();
   }
 
-  Char->SwitchToCraft(*prpdSuspended);
-  craftcore::SetSuspended(NULL); //was resumed so discard it
+  Char->SwitchToCraft(rpd);
+
+  return true;
 }
-//void craftcore::TerminateSuspendedAction(){
-//  if(prpdSuspended==NULL)ABORT("no craft action set!");
-//  if(!prpdSuspended->bCanBeSuspended)ABORT("is not a suspended craft action!"); //TODO show what was being done
-//  craftAction->Terminate(false);
-//}
 
 void recipecore::Save(outputfile& SaveFile) const
 {DBGLN;
@@ -240,6 +225,7 @@ void recipedata::Save(outputfile& SaveFile) const
     << bSuccesfullyCompleted
     << v2AnvilLocation
     << v2PlayerCraftingAt
+    << fsCraftInfo
 
     << itToolID
     << itTool2ID
@@ -269,9 +255,6 @@ void recipedata::Save(outputfile& SaveFile) const
     << bGradativeCraftOverride
 
     ;
-
-//  if(otSpawnType!=CTT_NONE)
-//    SaveFile << otSpawn;
 }
 
 void recipecore::Load(inputfile& SaveFile)
@@ -297,6 +280,7 @@ void recipedata::Load(inputfile& SaveFile)
     >> bSuccesfullyCompleted
     >> v2AnvilLocation
     >> v2PlayerCraftingAt
+    >> fsCraftInfo
 
     >> itToolID
     >> itTool2ID
@@ -337,6 +321,7 @@ cfestring recipedata::id() const
    * this is a simple way to detect if the recipedata is the same,
    * here shall only contain things that would not change thru the
    * whole crafting process/time
+   * TODO just use an ulong ID like chars and items do? but keep this as debug info at least!!!
    */
 
   festring fs;
@@ -358,6 +343,9 @@ cfestring recipedata::id() const
   RPDINFO(otSpawnMatMainVol);
   RPDINFO(otSpawnMatSecCfg);
   RPDINFO(otSpawnMatSecVol);
+
+  RPDINFO(fsItemSpawnSearchPrototype);
+  RPDINFO(fsCraftInfo);
 
   #define RPDINFOV2(o) fs<<(#o)<<"="<<(o.X)<<","<<(o.Y)<<"; ";
   RPDINFOV2(v2AnvilLocation);
@@ -461,6 +449,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   bSuccesfullyCompleted=false;
   v2AnvilLocation=v2(0,0);
   v2PlayerCraftingAt=v2(0,0);
+  fsCraftInfo="";
 
   itToolID=0;
   itTool2ID=0;
@@ -1091,7 +1080,6 @@ struct recipe{
   static bool chkOLT(recipedata& rpd,lsquare* lsqr,int iCfgOLT){DBGLN;
     olterrain* ot = lsqr->GetOLTerrain();
     if(ot!=NULL && ot->GetConfig() == iCfgOLT){
-      SetOLT(rpd,lsqr,iCfgOLT);
       return true;
     }
     return false;
@@ -1102,6 +1090,7 @@ struct recipe{
       for(int iY=0;iY<game::GetCurrentLevel()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentLevel()->GetXSize();iX++){
         lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2(iX,iY));DBG3(lsqr,iX,iY);
         if((lsqr->CanBeFeltByPlayer() || lsqr->CanBeSeenBy(rpd.rc.H())) && chkOLT(rpd,lsqr,iCfgOLT)){
+          SetOLT(rpd,lsqr,iCfgOLT);
           bFound = true;
           break;
         }
@@ -1114,6 +1103,7 @@ struct recipe{
           lsquare* lsqr = rpd.rc.H()->GetNearLSquare(v2Pos);DBG1(lsqr);
 //          if(lsqr->CanBeFeltBy(rpd.rc.H()) && chkOLT(rpd,lsqr,iCfgOLT)){
           if(lsqr->CanBeFeltByPlayer() && chkOLT(rpd,lsqr,iCfgOLT)){
+            SetOLT(rpd,lsqr,iCfgOLT);
             bFound = true;
             break;
           }
@@ -1179,10 +1169,8 @@ struct srpOltBASE : public recipe{
 
     if(bReqToolBlunt){
       rpd.itTool = FindBluntTool(rpd);
-      if(rpd.itTool==NULL){
-//        failToolMsg(rpd,"blunt weapon");
+      if(rpd.itTool==NULL)
         return false;
-      }
     }
 
     if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL){
@@ -1214,10 +1202,8 @@ struct srpOltBASE : public recipe{
         rpd.otSpawnMatMainCfg=iCfg;
         rpd.otSpawnMatMainVol=iReqVol;
         rpd.bCanStart=true;
-      }else{
+      }else
         failIngredientsMsg(rpd);
-        rpd.bAlreadyExplained=true;
-      }
     }
 
     return true;
@@ -2444,12 +2430,50 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
 
   if(craftcore::HasSuspended()){
-    //TODO vector<Suspended> as felist
-    if(game::TruthQuestion(festring("Continue crafting? ['n' to cancel this crafting]"),YES)){
-      craftcore::ResumeSuspendedTo(Char);
-      return true;
-    }else{
-      craftcore::SetSuspended(NULL); //discards it
+    int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume, (c)ancel or start a (n)ew one?"),
+      KEY_ESC, 3, 'r', 'c', 'n');
+    if(key==KEY_ESC)return false;
+
+    felist LSusp("Suspended crafting actions:",WHITE);
+    game::SetStandardListAttributes(LSusp);
+    LSusp.AddFlags(SELECTABLE);
+    for(int i=0;i<vSuspended.size();i++)
+      LSusp.AddEntry(vSuspended[i].fsCraftInfo,LIGHT_GRAY);
+
+    festring fsDo;
+    bool bResume=false;
+    bool bNew=false;
+    col16 col=WHITE;
+    switch(key){
+    case 'r':
+      fsDo="Resume";
+      bResume=true;
+      break;
+    case 'c':
+      fsDo="Cancel (cannot be restored after this)"; //TODO could...
+      col=RED;
+      bResume=false;
+      break;
+    case 'n':
+      bNew=true;
+      break;
+    default:
+      return false; //TODO ever reached?
+    }
+
+    if(!bNew){
+      fsDo<<" which crafting action?";
+      LSusp.AddDescription(fsDo,col);
+      uint Sel = LSusp.Draw();
+      if(Sel>=0 && Sel<vSuspended.size()){ //TODO is necessary to check esc key, error bit etc?
+        bool bErase=true;
+        if(bResume)
+          bErase = craftcore::ResumeSuspendedTo(Char,vSuspended[Sel]);
+        if(bErase)
+          vSuspended.erase(vSuspended.begin()+Sel);
+        return bResume;
+      }
+      return false;
     }
   }
 
@@ -2588,10 +2612,13 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
+      rpd.fsCraftInfo =
+        prp->action+" "+prp->name+
+        (rpd.itSpawnCfg!=0 ? festring(" ("+rpd.fsItemSpawnSearchPrototype+")") : festring())+
+        ", started at "+game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex(), true);
+
       rpd.ClearRefs(); //pointers must be revalidated on the action handler
-
       DBG1(rpd.dbgInfo().CStr());
-
       Char->SwitchToCraft(rpd); // everything must be set before this!!!
 
       ADD_MESSAGE("Let me work on %s now.",prp->name.CStr());
@@ -2608,7 +2635,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   /**
    * ATTENTION!!!
    * the (crafting code) complexity of granting one turn wont be lost isnt worth letting the game crash randomly somewhere
-   * that is hard to track the source of the problem...
+   * that is hard to track the source of the problem (mainly because of sendtohell() not being applied if turn is not spent).
    * so to ALWAYS spend current turn, when things sent to hell will properly be applied everywhere required
    * is the SAFEST thing! dont change this please even if you are sure all looks perfect! ;)
    if(rpd.bSpendCurrentTurn)return true;else return false; //old code
@@ -3289,26 +3316,28 @@ void crafthandle::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
 
 void craftcore::Save(outputfile& SaveFile)
 {DBGSTK;
-  bool b = prpdSuspended!=NULL;
-  SaveFile << b; DBG2(b,SaveFile.GetFullFilename().CStr()); //token
-  if(b){DBGLN;
-    prpdSuspended->Save(SaveFile);
+  int size = vSuspended.size();
+  SaveFile << size; DBG2(size,SaveFile.GetFullFilename().CStr()); //token
+  if(size>0){DBGLN;
+    for(int i=0;i<size;i++)
+      vSuspended[i].Save(SaveFile);
   }
 }
 
 void craftcore::Load(inputfile& SaveFile)
 {DBGLN;
-  SetSuspended(NULL); //make sure it is always cleaned from memory!
+  ClearSuspendedList(); //make sure it is always cleaned from memory!
   if(game::GetCurrentSavefileVersion()<133)
     return;
 
-  bool b=false; DBG2(b,true);
-  SaveFile >> b; DBG2(b,SaveFile.GetFullFilename().CStr()); //token
-  if(b){DBGLN;
-    recipedata rpd;
-    rpd.Load(SaveFile);
-    if(rpd.rc.IsCanBeSuspended()) //unnecessary check...
-      SetSuspended(&rpd);
+  int size = 0;
+  SaveFile >> size; DBG2(size,SaveFile.GetFullFilename().CStr()); //token
+  if(size>0){DBGLN;
+    for(int i=0;i<size;i++){
+      recipedata rpd;
+      rpd.Load(SaveFile);
+      vSuspended.push_back(rpd);
+    }
   }
 }
 
