@@ -240,7 +240,6 @@ void devcons::OpenCommandsConsole()
     return;
 
   bOpenCommandsConsole=true;
-
   for(;;){
     static festring fsFullCmd;
     festring fsQ;
@@ -254,7 +253,6 @@ void devcons::OpenCommandsConsole()
     }else
       break;
   }
-
   bOpenCommandsConsole=false;
 }
 
