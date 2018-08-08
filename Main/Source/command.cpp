@@ -151,6 +151,7 @@ command* commandsystem::Command[] =
 truth commandsystem::DevConsCmd(character* Char)
 {
   devcons::OpenCommandsConsole();
+  return false;
 }
 #endif
 
