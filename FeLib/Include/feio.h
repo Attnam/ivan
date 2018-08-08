@@ -45,6 +45,7 @@ class iosystem
                          col16 = 0xFFFF, truth = true,
                          truth = true, bitmapeditor = 0);
   static truth IsOnMenu();
+  static bool IsInUse();
 };
 
 #endif

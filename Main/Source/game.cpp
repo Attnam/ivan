@@ -3941,8 +3941,16 @@ void game::CreateBusyAnimationCache()
   }
 }
 
+bool bQuestionMode=false;
+bool game::IsQuestionMode()
+{
+  return bQuestionMode || bPositionQuestionMode;
+}
+
 int game::AskForKeyPress(cfestring& Topic)
 {
+  bQuestionMode=true;
+
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
@@ -3954,6 +3962,8 @@ int game::AskForKeyPress(cfestring& Topic)
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Key;
 }
 
@@ -4164,6 +4174,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
 
 int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
+  bQuestionMode=true;
+
   int* Key = new int[KeyNumber];
   va_list Arguments;
   va_start(Arguments, KeyNumber);
@@ -4194,6 +4206,8 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 
   delete [] Key;
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Return;
 }
 

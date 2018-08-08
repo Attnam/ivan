@@ -17,7 +17,7 @@
 
 class festring;
 
-typedef void (*ctrlkeyhandler)();
+typedef void (*specialkeyhandler)();
 
 class specialkeys
 {
@@ -33,13 +33,14 @@ class specialkeys
 
   static bool FunctionKeyHandler(SDL_Keycode);
   static bool ControlKeyHandler(SDL_Keycode);
-  static void AddControlKeyHandler(SDL_Keycode key, ctrlkeyhandler Handler);
+  static void AddCtrlOrFuncKeyHandler(SDL_Keycode key, specialkeyhandler Handler);
 
   static cfestring FilterListQuestion(cfestring What);
   static void ClearRequest(){Request=-1;}
 
   static bool ConsumeEvent(SKEvent k){festring fsDummy;return ConsumeEvent(k,fsDummy);}
   static bool ConsumeEvent(SKEvent,festring& fsInOut);
+  static bool IsConsumingEvent();
   static bool IsRequestedEvent(SKEvent e);
   static bool HasEvent(){return Request>=0;}
 

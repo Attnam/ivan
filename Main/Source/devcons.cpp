@@ -15,9 +15,12 @@
 
 #include "SDL.h"
 
+//#include "bugworkaround.h"
 #include "char.h"
 #include "devcons.h"
 #include "error.h"
+#include "feio.h"
+#include "felist.h"
 #include "game.h"
 #include "message.h"
 #include "stack.h"
@@ -201,9 +204,10 @@ void ListItems(std::string strParams){
 
 void devcons::Init()
 {
-  specialkeys::AddControlKeyHandler(SDLK_BACKQUOTE,&OpenCommandsConsole);
+  specialkeys::AddCtrlOrFuncKeyHandler(SDLK_BACKQUOTE,&OpenCommandsConsole);
 }
 
+bool bOpenCommandsConsole=false;
 void devcons::OpenCommandsConsole()
 {
   static bool bDummyInit = [](){
@@ -216,6 +220,26 @@ void devcons::OpenCommandsConsole()
 #endif
     return true;
   }();
+
+  //  if(felist::isAnyFelistCurrentlyDrawn())    return;
+  //  if(iosystem::IsInUse())    return;
+  //  if(iosystem::IsOnMenu())    return;
+  //  if(game::IsQuestionMode())    return;
+  //  if(game::IsInGetCommand())    return;
+  //  if(specialkeys::IsConsumingEvent())    return;
+  //  if(bugfixdp::IsAlertConfirmFixMsgDraw) return;
+  /**
+   * can only be opened if nothing else is being done,
+   * if waiting some global player command,
+   * this is better than all other specific checks.
+   */
+  if(!game::IsInGetCommand())
+    return;
+
+  if(bOpenCommandsConsole)
+    return;
+
+  bOpenCommandsConsole=true;
 
   for(;;){
     static festring fsFullCmd;
@@ -230,6 +254,8 @@ void devcons::OpenCommandsConsole()
     }else
       break;
   }
+
+  bOpenCommandsConsole=false;
 }
 
 typedef void (*callcmd)(std::string);

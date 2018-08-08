@@ -51,6 +51,7 @@ class bugfixdp{
 
     static void DrawAlertConfirmFix(bitmap* Buffer);
     static bool AlertConfirmFixMsg(const char* cMsg);
+    static bool IsAlertConfirmFixMsgDraw();
 };
 
 

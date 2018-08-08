@@ -108,10 +108,18 @@ void DrawHelpDialog(bitmap* Buffer) //TODO this kind'o message should be more gl
     FONT->Printf(Buffer, v2(v2TL.X,v2TL.Y+i*iLH), WHITE, "%s", afsHelpDialog[i].CStr());
 }
 
+bool bConsumingEvent=false;
+bool specialkeys::IsConsumingEvent()
+{
+  return bConsumingEvent;
+}
+
 int specialkeys::Request=-1;
 bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
   if(!IsRequestedEvent(e))
     return false;
+
+  bConsumingEvent=true;
 
   switch(e){
     case Filter:{DBGLN;
@@ -174,6 +182,8 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
     };break;
   }
 
+  bConsumingEvent=false;
+
   return true;
 }
 
@@ -185,30 +195,41 @@ void specialkeys::init()
   graphics::AddDrawAboveAll(&DrawHelpDialog,90000,"HelpDialog");
 }
 
+typedef std::map<SDL_Keycode,specialkeyhandler> ckhmap;
+ckhmap CkhMap;
+
 bool specialkeys::FunctionKeyHandler(SDL_Keycode key)
 {DBGLN;
   switch(key){ //TODO how to not use SDLK_ keys here??? shouldnt anyway????
   case SDLK_F1:DBGLN;
     Request=FocusedElementHelp;
     return true;
+  default:
+    ckhmap::iterator Iterator = CkhMap.find(key);
+    if(Iterator != CkhMap.end()){
+      Iterator->second();
+      return true;
+    }
+    break;
   }
   return false;
 }
 
-typedef std::map<SDL_Keycode,ctrlkeyhandler> ckhmap;
-ckhmap CkhMap;
-//std::vector<ctrlkeyhandler> vckh;
-
-void specialkeys::AddControlKeyHandler(SDL_Keycode key, ctrlkeyhandler Handler)
+/**
+ * add Function or Ctrl+ key handler
+ */
+void specialkeys::AddCtrlOrFuncKeyHandler(SDL_Keycode key, specialkeyhandler Handler)
 {
   ckhmap::iterator Iterator = CkhMap.find(key);
   if(Iterator != CkhMap.end())
     ABORT("control key handler already set for key %d",key);
 
   CkhMap.insert(std::make_pair(key,Handler));
-//  vckh.push_back(Handler);
 }
 
+/**
+ * Ctrl+FunctionKey is here tho
+ */
 bool specialkeys::ControlKeyHandler(SDL_Keycode key)
 {
   switch(key){ //TODO use SDLK_ keys?

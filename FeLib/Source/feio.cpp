@@ -58,10 +58,18 @@
    waits for keypress. BitmapEditor is a pointer to function that is
    called during every fade tick. */
 
+bool bInUse=false;
+bool iosystem::IsInUse()
+{
+  return bInUse;
+}
+
 void iosystem::TextScreen(cfestring& Text, v2 Disp,
                           col16 Color, truth GKey, truth Fade,
                           bitmapeditor BitmapEditor)
 {
+  bInUse=true;
+
   bitmap Buffer(RES, 0);
   Buffer.ActivateFastFlag();
   festring::sizetype c;
@@ -110,6 +118,8 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
     else
       GET_KEY();
   }
+
+  bInUse=false;
 }
 
 /* Returns amount of chars cSF in string sSH */
@@ -335,6 +345,8 @@ int iosystem::StringQuestion(festring& Input,
                              truth Fade, truth AllowExit,
                              stringkeyhandler StringKeyHandler)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -402,8 +414,10 @@ int iosystem::StringQuestion(festring& Input,
     if(!LastKey)
       continue;
 
-    if(LastKey == KEY_ESC && AllowExit)
+    if(LastKey == KEY_ESC && AllowExit){
+      bInUse=false;
       return ABORTED;
+    }
 
     if(LastKey == KEY_BACK_SPACE)
     {
@@ -473,6 +487,7 @@ int iosystem::StringQuestion(festring& Input,
 
   Input.Resize(LastAlpha + 1);
 
+  bInUse=false;
   return NORMAL_EXIT;
 }
 
@@ -484,6 +499,8 @@ int iosystem::StringQuestion(festring& Input,
 long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                               truth Fade, truth ReturnZeroOnEsc)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -539,8 +556,10 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 
     if(LastKey == KEY_ESC)
     {
-      if(ReturnZeroOnEsc)
+      if(ReturnZeroOnEsc){
+        bInUse=false;
         return 0;
+      }
 
       break;
     }
@@ -580,6 +599,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                    static_cast<char>(LastKey));
   }
 
+  bInUse=false;
   return atoi(Input.CStr());
 }
 
@@ -600,6 +620,8 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
                                  col16 Color2, int LeftKey, int RightKey,
                                  truth Fade, void (*Handler)(long))
 {
+  bInUse=true;
+
   long BarValue = StartValue;
   festring Input;
   truth FirstTime = true;
@@ -776,11 +798,15 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
       Input << char(LastKey);
   }
 
+  bInUse=false;
   return BarValue;
 }
 
 bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>())
-{//TODO this method could be more global
+{
+  bInUse=true;
+
+  //TODO this method could be more global
   //TODO calc all line withs to determine the full popup width to not look bad if overflow
   int iLineHeight=20;
   v2 v2Border(700,100+(vfsCritMsgs.size()*iLineHeight));
@@ -811,9 +837,12 @@ bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::v
 
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y')
+  if(GET_KEY() == 'y'){
+    bInUse=false;
     return true;
+  }
 
+  bInUse=false;
   return false;
 }
 

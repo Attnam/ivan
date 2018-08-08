@@ -25,6 +25,11 @@
 #include "dbgmsgproj.h"
 
 bool bAlertConfirmFixMsgDraw=false;
+bool bugfixdp::IsAlertConfirmFixMsgDraw()
+{
+  return bAlertConfirmFixMsgDraw;
+}
+
 festring fsLastAlertConfirmFixMsg;
 void bugfixdp::DrawAlertConfirmFix(bitmap* Buffer)
 {
