@@ -154,7 +154,8 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
   //  static col16 colWieldedCfg = MakeRGB16(200,200,200); // a bit lighter gray
   static col16 colWieldedCfg = colMaintOpts; //MakeRGB16(255*0.5,0xFF*0.75,0xFF*0.5); // gray greenish
   static col16 colAlert = colMaintOpts; //MakeRGB16(255*0.75,0xFF*0.75,0xFF*0.5); //dark gray yellowish
-  static col16 colNotOnInv = MakeRGB16(255*0.75,0xFF*0.5,0xFF*0.5); //dark gray reddish
+  static col16 colNotOnInv = MakeRGB16(255*0.75,0xFF*0.5,0xFF*0.5);
+  static col16 colAtPlayerSquare = MakeRGB16(255*0.5,0xFF*0.62,0xFF*0.5);
   static col16 colWielded = colMaintOpts;
 //  static col16 colWieldedCfg = MakeRGB16(0,255*0.75,255);//cyan
 
@@ -237,8 +238,12 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
         if(it){
           if(it==wL || it==wR)
             cW = colWielded;//colDarkW;
-          else if(!hasItem(iv,it))
-            cW = colNotOnInv;
+          else if(hasItem(iv,it))
+            cW = DARK_GRAY; // on inv
+          else if(it->GetSquareUnder()==Char->GetSquareUnder())
+            cW = colAtPlayerSquare;
+          else
+            cW = colNotOnInv; //inaccessible
 
 //          if(it!=wL && it!=wR && !hasItem(iv,it))cW = colNotOnInv;
 
@@ -398,7 +403,7 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     if(Arm && it){
       std::vector<item*> iv;
       stk->FillItemVector(iv);
-      if(hasItem(iv,it)){
+      if(hasItem(iv,it) || it->GetSquareUnder()==Char->GetSquareUnder()){
         it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
         h->SetEquipment(awRL[iArm],it);
         bDidSwap=true;

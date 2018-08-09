@@ -122,6 +122,11 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
   bConsumingEvent=true;
 
   switch(e){
+    case ClearStringInput:{
+      fsInOut.Empty();
+      Request=-1;
+    };break;
+
     case Filter:{DBGLN;
       globalwindowhandler::SuspendKeyTimeout();
       fsInOut=FilterListQuestion(fsInOut);
@@ -241,6 +246,9 @@ bool specialkeys::ControlKeyHandler(SDL_Keycode key)
     return true;
   case 'v':
     Request=PasteFromClipboard;
+    return true;
+  case SDLK_DELETE:
+    Request=ClearStringInput;
     return true;
   default:
     ckhmap::iterator Iterator = CkhMap.find(key);

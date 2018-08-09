@@ -283,6 +283,7 @@ void felist::ApplyFilter()
     if(Entry.empty()){ //filter was invalid
       Entry=EntryBkp;
       SetFilter("");
+      UpdateFilterDesc();
     }
   }else{
     if(EntryBkp.size()>0)
@@ -481,7 +482,11 @@ uint felist::DrawFiltered()
        * every section here may break the loop and they are prioritized
        */
 
-      if(specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)){
+      if(
+          specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)
+          ||
+          specialkeys::ConsumeEvent(specialkeys::ClearStringInput,fsFilterApplyNew)
+      ){
         if(Filter != fsFilterApplyNew){DBGLN;
           if(fsFilterApplyNew.IsEmpty())
             bJustRestoreEntries=true;
@@ -514,7 +519,8 @@ uint felist::DrawFiltered()
         fs<<
           "[List Help:]\n"
           " F1 - show this message\n"
-          " Ctrl+f - filter entries\n"
+          " Ctrl+F - filter entries\n"
+          " Ctrl+DEL - clear filter\n"
           " Home/End/PageUp/PageDown - navigate thru pages\n"
           " ESC - exit the list\n"
           " SPACE - continue (next page or exit if at last one)\n";

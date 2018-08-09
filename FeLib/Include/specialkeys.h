@@ -24,6 +24,7 @@ class specialkeys
  public:
   enum SKEvent{
     Filter,
+    ClearStringInput,
     CopyToClipboard,
     PasteFromClipboard,
     FocusedElementHelp,
