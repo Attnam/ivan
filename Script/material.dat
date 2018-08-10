@@ -2289,7 +2289,7 @@ solid
     StrengthValue = 125;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 1200;
-    Color = rgb16(0, 255, 0);
+    Color = rgb16(118, 169, 18);
     NameStem = "chlorophyte";
     Flexibility = 5;
     IntelligenceRequirement = 25;
@@ -6444,7 +6444,7 @@ ironalloy /* Iron alloys - Metals that rust. */
   {
     StrengthValue = 100;
     Density = 8000;
-    Color = rgb16(131, 3, 3);
+    Color = rgb16(210, 5, 5);
     PriceModifier = 80;
     NameStem = "blood-red iron";
     RustModifier = 100;
