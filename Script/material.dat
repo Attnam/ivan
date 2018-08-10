@@ -6417,7 +6417,7 @@ ironalloy /* Iron alloys - Metals that rust. */
     StrengthValue = 100;
     Density = 8000;
     Color = rgb16(66, 66, 66);
-    PriceModifier = 80;
+    PriceModifier = 250;
     NameStem = "black iron";
     RustModifier = 100;
     SoftenedMaterial = PIG_IRON;
@@ -6430,7 +6430,7 @@ ironalloy /* Iron alloys - Metals that rust. */
     StrengthValue = 160;
     Density = 9000;
     Color = rgb16(6, 6, 6);
-    PriceModifier = 400;
+    PriceModifier = 1000;
     NameStem = "soulsteel";
     RustModifier = 50;
     SoftenedMaterial = BLACK_IRON;
@@ -6445,7 +6445,7 @@ ironalloy /* Iron alloys - Metals that rust. */
     StrengthValue = 100;
     Density = 8000;
     Color = rgb16(210, 5, 5);
-    PriceModifier = 80;
+    PriceModifier = 250;
     NameStem = "blood-red iron";
     RustModifier = 100;
     SoftenedMaterial = PIG_IRON;
@@ -6458,7 +6458,7 @@ ironalloy /* Iron alloys - Metals that rust. */
     StrengthValue = 140;
     Density = 6000;
     Color = rgb16(91, 0, 0);
-    PriceModifier = 400;
+    PriceModifier = 1000;
     NameStem = "bloodsteel";
     RustModifier = 50;
     SoftenedMaterial = BLOOD_IRON;
