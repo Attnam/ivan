@@ -11980,7 +11980,9 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
       if(Action && Action->IsRest() && !Action->InDNDMode()
          && BodyPartIsVital(BodyPartIndex) && BodyPart->IsBadlyHurt())
       {
-        if(game::TruthQuestion(CONST_S("You're about to die from mustard gas. Try to find a healer? [Y/n]"), YES))
+        ADD_MESSAGE("You're about to die from mustard gas.");
+
+        if(game::TruthQuestion(CONST_S("Try to find a healer? [Y/n]"), YES))
           Action->Terminate(false);
         else
           Action->ActivateInDNDMode();
