@@ -291,6 +291,13 @@ void felist::ApplyFilter()
   }
 }
 
+void felist::PrepareToReturn()
+{
+  UpdateFilterDesc();
+  Entry=EntryBkp; //to be ready to proper felist::Empty() with deletion
+  EntryBkp.clear();
+}
+
 uint felist::Draw()
 {
   EntryBkp=Entry;
@@ -299,11 +306,38 @@ uint felist::Draw()
 
   ApplyFilter();
 
-  for(;;){
-    uint Return = DrawFiltered();
+  if(Flags & SELECTABLE){
+    if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
+  }else{
+    for(int i=0;i<Entry.size();i++)
+      if(Entry[i]->ImageKey != NO_IMAGE){
+        /**
+         * This allows much more visible entries when the list have no images.
+         *
+         * But this is still a dumb guesser, because it considers all entries will have images.
+         *
+         * The difficulty is because having a fixed page length, even if the contents of each page may differ,
+         * we are unable to precisely calculate how many entries will fit on each page. TODO right?
+         *
+         * So, opting for the worst case (all are images) is the safest option.
+         */
+        PageLength/=2;
+        break;
+      }
+  }
 
-    if(Return == ESCAPED || Return == LIST_WAS_EMPTY) //TODO FELIST_ERROR_BIT?
+  for(;;){
+    bool bJustExitTheList=false;
+    uint Return = DrawFiltered(bJustExitTheList);
+    if(bJustExitTheList){
+      PrepareToReturn();
       return Return;
+    }
+
+    if(Return == ESCAPED || Return == LIST_WAS_EMPTY){ //TODO FELIST_ERROR_BIT?
+      PrepareToReturn();
+      return Return;
+    }
 
     if(Return == NOTHING_SELECTED){ //special condition if has filter
       if(!GetFilter().IsEmpty()){
@@ -315,6 +349,7 @@ uint felist::Draw()
           Entry=EntryBkp;
           continue;
         }else{
+          PrepareToReturn();
           return NOTHING_SELECTED;
         }
       }
@@ -343,12 +378,12 @@ uint felist::Draw()
       }
     }
 
-    Entry=EntryBkp; //to be ready to proper felist::Empty() with deletion
-    EntryBkp.clear();
+    PrepareToReturn();
     return Return;
   }
 
-  return NOTHING_SELECTED; //never reached...
+  PrepareToReturn();
+  return NOTHING_SELECTED; //currently never reached, safe dummy tho
 }
 
 void felist::ClearFilter()
@@ -357,29 +392,9 @@ void felist::ClearFilter()
   ApplyFilter();
 }
 
-uint felist::DrawFiltered()
+uint felist::DrawFiltered(bool& bJustExitTheList)
 {
   uint FlagsChk = Flags;
-
-  if(Flags & SELECTABLE){
-    if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
-  }else{
-    for(int i=0;i<Entry.size();i++)
-      if(Entry[i]->ImageKey != NO_IMAGE){
-        /**
-         * This allows much more visible entries when the list have no images.
-         *
-         * But this is still a dumb guesser, because it considers all entries will have images.
-         *
-         * The difficulty is because having a fixed page length, even if the contents of each page may differ,
-         * we are unable to precisely calculate how many entries will fit on each page. TODO right?
-         *
-         * So, opting for the worst case (all are images) is the safest option.
-         */
-        PageLength/=2;
-        break;
-      }
-  }
 
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
@@ -719,13 +734,14 @@ uint felist::DrawFiltered()
     if(!bNav && Pressed == KEY_HOME)bNav=true;
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
 
-    if(!bNav) {DBGLN;
-      if(Pressed == KEY_SPACE) //to work stictly as on the help info
-        if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
-          Return = NOTHING_SELECTED;
-          break;
-        }
-    } else {DBGLN;
+    if(Pressed == KEY_SPACE) //to work stictly as on the help info
+      if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
+        bJustExitTheList=true;
+        Return = NOTHING_SELECTED;
+        break;
+      }
+
+    if(bNav) {
       BackGround.FastBlit(Buffer);
 
       int iDir = 1;

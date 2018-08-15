@@ -86,11 +86,12 @@ class felist
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
   void ClearFilter();
  private:
+  void PrepareToReturn();
   void ApplyFilter();
   void UpdateFilterDesc();
   void SetFilter(festring Filter);
   festring GetFilter();
-  uint DrawFiltered();
+  uint DrawFiltered(bool& bJustExitTheList);
   void DrawDescription(bitmap*) const;
   bool FirstDrawNoFade;
   std::vector<EntryRect> vEntryRect;
