@@ -4666,10 +4666,9 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
 
   v2TopLeft=v2(iX,iY); DBGSV2(v2TopLeft);
 
-  if(bAltItemPos){
-    graphics::SetSpecialListItemAltPos(true);
+  graphics::SetSpecialListItemAltPos(bAltItemPos);
+  if(bAltItemPos)
     felist::SetListItemAltPosMinY(area::getTopLeftCorner().Y);
-  }
 }
 
 int prepareListWidth(int iW){
