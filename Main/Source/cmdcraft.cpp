@@ -1932,6 +1932,8 @@ struct srpForgeItem : public recipe{
       CIM.iReqMatCfgMain=GLASS; //TODO there are other materials that can hold sulphuric acid?
     }
 
+    bool bIsItemContainer = dynamic_cast<itemcontainer*>(itSpawn) !=NULL;
+
     bool bM = false;
     if(!bM){
       ci CI = CIM;
@@ -1948,15 +1950,23 @@ struct srpForgeItem : public recipe{
       //TODO remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3, prepare a stone with 25cm3 and a lump with 8cm3, currently it is just lost (what is not a big problem...)
     }
     {//stick block //TODO see 'remaining lump' TODO above
-      festring fsM("as MAIN material (sticks 50%)"); //stick shapes can't provide enough to the required dimensions (this is a xtremely wild simplification btw :))
+      festring fsM("as MAIN material (sticks/bones ");
+      float fPerc=1.0;
+      if(!bIsItemContainer)
+        fPerc=0.5;
+      fsM<<(int)(fPerc*100)<<"%)";
+      /**
+       * stick shape can't provide enough to the required dimensions (this is a xtremely wild simplification btw :))
+       * so, this will require twice as much sticks if not a container, to be crafted ex.: 35/0.5=70
+       */
       if(!bM){
         ci CI = CIM;
-        bM = choseIngredients<bone>(fsM,lVolM/0.50, rpd, iCfgM, CI);
+        bM = choseIngredients<bone>(fsM,lVolM/fPerc, rpd, iCfgM, CI);
       }
       if(!bM){
         ci CI = CIM;
         CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
-        bM = choseIngredients<stick>(fsM,lVolM/0.50, rpd, iCfgM, CI);
+        bM = choseIngredients<stick>(fsM,lVolM/fPerc, rpd, iCfgM, CI);
       }
     }
     if(!bM){
