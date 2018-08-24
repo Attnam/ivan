@@ -144,8 +144,6 @@ class recipedata {
     item* itWeakestIngredient;
     lsquare* lsqrActor;
 
-    level* lvl;
-
     // no need to save
     uint SelectedRecipe;
     bool bSpendCurrentTurn;

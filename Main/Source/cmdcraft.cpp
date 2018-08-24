@@ -415,8 +415,6 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
   itWeakestIngredient = NULL;
   lsqrActor=NULL;
 
-  lvl=NULL;
-
   // no need to save
   SelectedRecipe=sel;
   bSpendCurrentTurn=false;
@@ -569,8 +567,6 @@ void recipedata::ClearRefs(){
   lsqrCharPos = NULL;
   itWeakestIngredient = NULL;
   lsqrActor = NULL;
-
-  lvl = NULL;
 
   rc.ClearRefs();
 }
@@ -2988,9 +2984,8 @@ void crafthandle::CheckIngredients(recipedata& rpd){
 
 void crafthandle::CheckFacilities(recipedata& rpd){
   rpd.rc.integrityCheck();
-  rpd.lvl = rpd.lsqrActor->GetLevel();
   if(!rpd.v2AnvilLocation.Is0()){
-    olterrain* ot = rpd.lvl->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
+    olterrain* ot = game::GetCurrentLevel()->GetLSquare(rpd.v2AnvilLocation)->GetOLTerrain();
     if(ot==NULL || ot->GetConfig()!=ANVIL){
       ADD_MESSAGE("The anvil was destroyed!");
       rpd.bFailedTerminateCancel=true;
@@ -2999,7 +2994,7 @@ void crafthandle::CheckFacilities(recipedata& rpd){
     rpd.v2XplodAt=rpd.v2AnvilLocation;
   }else
   if(!rpd.v2ForgeLocation.Is0()){
-    olterrain* otForge = rpd.lvl->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
+    olterrain* otForge = game::GetCurrentLevel()->GetLSquare(rpd.v2ForgeLocation)->GetOLTerrain();
     if(otForge==NULL || otForge->GetConfig()!=FORGE){
       ADD_MESSAGE("The forge was destroyed!");
       rpd.bFailedTerminateCancel=true;
@@ -3008,7 +3003,7 @@ void crafthandle::CheckFacilities(recipedata& rpd){
     rpd.v2XplodAt=rpd.v2ForgeLocation;
   }else
   if(!rpd.v2WorkbenchLocation.Is0()){
-    olterrain* otWorkbench = rpd.lvl->GetLSquare(rpd.v2WorkbenchLocation)->GetOLTerrain();
+    olterrain* otWorkbench = game::GetCurrentLevel()->GetLSquare(rpd.v2WorkbenchLocation)->GetOLTerrain();
     if(otWorkbench==NULL || otWorkbench->GetConfig()!=WORK_BENCH){
       ADD_MESSAGE("The workbench was destroyed!");
       rpd.bFailedTerminateCancel=true;
