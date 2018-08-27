@@ -51,7 +51,7 @@ recipedata craftcore::FindRecipedata(festring fsRpdId)
     if(vSuspended[i].id()==fsRpdId)
       return vSuspended[i];
 
-  ABORT("unable to find recipedata id='%s'",fsRpdId);
+  ABORT("unable to find recipedata id='%s'",fsRpdId.CStr());
   return recipedata(); //dummy... just to let it be compiled...
 }
 
@@ -2471,7 +2471,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       fsDo<<" which crafting action?";
       LSusp.AddDescription(fsDo,col);
       uint Sel = LSusp.Draw();
-      if(Sel>=0 && Sel<vSuspended.size()){ //TODO is necessary to check esc key, error bit etc?
+      if(Sel<vSuspended.size()){ //TODO is necessary to check esc key, error bit etc?
         bool bErase=true;
         if(bResume)
           bErase = craftcore::ResumeSuspendedTo(Char,vSuspended[Sel]);
