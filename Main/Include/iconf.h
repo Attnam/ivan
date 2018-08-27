@@ -38,7 +38,6 @@ class ivanconfig
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
-  static truth IsGenerateDefinesValidator(){return GenerateDefinesValidator.Value;}
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
@@ -56,6 +55,7 @@ class ivanconfig
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
+  static int GetStartingFontGfx() { return iStartingFontGfx; }
   static int GetSilhouetteScale() { return SilhouetteScale.Value; }
   static int GetRotateTimesPerSquare() { return RotateTimesPerSquare.Value; }
   static long GetDirectionKeyMap() { return DirectionKeyMap.Value; }
@@ -147,17 +147,18 @@ class ivanconfig
 #endif
 
   static void DungeonGfxScaleDisplayer(const cycleoption*, festring&);
+  static void FontGfxDisplayer(const cycleoption*, festring&);
   static void SilhouetteScaleDisplayer(const cycleoption* O, festring& Entry);
   static void AltListItemPosDisplayer(const cycleoption* O, festring& Entry);
   static void SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry);
   static truth DungeonGfxScaleChangeInterface(cycleoption*);
+  static truth FontGfxChangeInterface(cycleoption*);
   static truth SilhouetteScaleChangeInterface(cycleoption*);
   static void DungeonGfxScaleChanger(cycleoption*, long);
+  static void FontGfxChanger(cycleoption*, long);
   static void SilhouetteScaleChanger(cycleoption*, long);
   static void SaveGameSortModeChanger(cycleoption* O, long What);
   static void XBRZScaleChanger(truthoption*, truth);
-  static void SavegameSafelyChanger(truthoption* O, truth What);
-  static void GenerateDefinesValidatorChanger(truthoption* O, truth What);
   static void ContrastHandler(long);
   static void VolumeHandler(long);
   static void BackGroundDrawer();
@@ -182,10 +183,8 @@ class ivanconfig
   static numberoption FrameSkip;
   static truthoption ShowFullDungeonName;
   static truthoption AllowImportOldSavegame;
-  static truthoption SavegameSafely;
   static cycleoption ShowItemsAtPlayerSquare;
   static truthoption HideWeirdHitAnimationsThatLookLikeMiss;
-  static truthoption GenerateDefinesValidator;
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
@@ -206,6 +205,9 @@ class ivanconfig
 
   static cycleoption  DungeonGfxScale;
   static int iStartingDungeonGfxScale;
+
+  static cycleoption  FontGfx;
+  static int iStartingFontGfx;
 
   static truthoption   OutlinedGfx;
   static bool bStartingOutlinedGfx;
@@ -235,6 +237,7 @@ class ivanconfig
   static col24 ContrastLuminance;
   static truthoption PlaySounds;
   static truthoption ShowTurn;
+
   static truthoption AllowMouseOnFelist;
 };
 

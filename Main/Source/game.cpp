@@ -17,9 +17,14 @@
 #include <iostream>
 #include <vector>
 #include <bitset>
+#include <ctime>
 
 #if defined(UNIX) || defined(__DJGPP__)
 #include <sys/stat.h>
+#endif
+
+#ifdef UNIX
+#include <time.h>
 #endif
 
 #ifdef WIN32
@@ -32,8 +37,10 @@
 #include "audio.h"
 #include "balance.h"
 #include "bitmap.h"
+#include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -48,6 +55,7 @@
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
+#include "namegen.h"
 #include "nonhuman.h"
 #include "pool.h"
 #include "proto.h"
@@ -60,9 +68,6 @@
 #include "whandler.h"
 #include "wsquare.h"
 
-#include "namegen.h"
-
-//#define DBGMSG_BLITDATA
 #include "dbgmsgproj.h"
 
 #define SAVE_FILE_VERSION 133 // Increment this if changes make savefiles incompatible
@@ -186,7 +191,7 @@ truth game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
-festring game::AutoSaveFileName;
+festring game::CurrentBaseSaveFileName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
 std::vector<v2> game::SpecialCursorPos;
@@ -293,10 +298,27 @@ void game::AddItemID(item* Item, ulong ID)
 {
   ItemIDMap.insert(std::make_pair(ID, Item));
 }
+
 void game::RemoveItemID(ulong ID)
 {
-  if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+  if(ID){
+    DBG2("Erasing:ItemID",ID);
+
+    //TODO if the search affects performance, make this optional
+    if(SearchItem(ID)==NULL){
+      /**
+       * This happens when the duplicated player bug happens!
+       * so it will try to erase the item 2 times and CRASH on the second,
+       * therefore the abort is appropriate.
+       */
+      ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+    }
+
+    ItemIDMap.erase(ItemIDMap.find(ID));
+    DBG2("ERASED!:ItemID",ID);
+  }
 }
+
 void game::UpdateItemID(item* Item, ulong ID)
 {
   ItemIDMap.find(ID)->second = Item;
@@ -624,11 +646,13 @@ void game::PrepareStretchRegionsLazy(){ // the ADD order IS important IF they ov
       graphics::SetSRegionDrawRectangleOutline(iRegionSilhouette,true);
 
       // alt vanilla silhouette pos
-      bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
-      bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
-      iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
-      graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
-      graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      if(graphics::GetScale()==1){
+        bldVanillaSilhouetteTMP.Stretch = 2; // minimum to allow setup
+        bldVanillaSilhouetteTMP.Border = SILHOUETTE_SIZE + v2(TILE_SIZE,2);
+        iRegionVanillaSilhouette = graphics::AddStretchRegion(bldVanillaSilhouetteTMP,"AltPosForVanillaSilhouette");
+        graphics::SetSRegionDrawAlways(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionDrawRectangleOutline(iRegionVanillaSilhouette,true);
+      }
     }
   }
 
@@ -663,7 +687,7 @@ truth game::Init(cfestring& loadBaseName)
   festring absLoadNameOk;
 
   if(!loadBaseName.IsEmpty()){
-    absLoadNameOk = SaveName(loadBaseName); //will prepend the path
+    absLoadNameOk = SaveName(loadBaseName,true); //will prepend the path
   }else{
     if(ivanconfig::GetDefaultName().IsEmpty())
     {
@@ -678,6 +702,8 @@ truth game::Init(cfestring& loadBaseName)
     }
     else
       PlayerName = ivanconfig::GetDefaultName();
+
+    CurrentBaseSaveFileName.Empty(); //this is important to prevent loading another character with the same name that was just played in this current session (w/o restarting the game)
 
     absLoadNameOk = SaveName(); //default is to use PlayerName
   }
@@ -1966,7 +1992,7 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
 //  humanoid::SetSilhouetteWhere(ZoomPos+v2(10,10));
   bool bRolling=false;
   bool bHopping=false; DBG1(iRegionVanillaSilhouette);
-  if(iRegionVanillaSilhouette!=-1){
+  if(iRegionVanillaSilhouette!=-1 || graphics::GetScale()>1){
     bool bOk2=true;
 
     if(bOk2 && ZoomPos.Is0())bOk2=false;
@@ -1980,6 +2006,8 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
       bHopping = !bRolling && (!h->GetRightLeg() || !h->GetLeftLeg());
 
       v2 v2Pos=ZoomPos;
+      if(graphics::GetScale()>1)
+        v2Pos+=TILE_V2*3; //to avoid as much as possible be over the status texts
 
       humanoid::SetSilhouetteWhere(v2Pos);DBGSV2(v2Pos);
 
@@ -1988,19 +2016,22 @@ void game::UpdateAltSilhouette(bool AnimationDraw){
           h->DrawSilhouette(false);DBGLN;
         }
 
-      bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
+      if(graphics::GetScale()==1){ //TODO make these things optional? but there is no good place to draw it w/o hiding things behind it...
+        bldVanillaSilhouetteTMP.Src = v2Pos + v2(0,-1);
 
-      v2 v2Dest = v2Pos;
-      v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
-      if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
-      if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
-      bldVanillaSilhouetteTMP.Dest=v2Dest;
+        v2 v2Dest = v2Pos;
+        v2 v2Min = RES - (bldVanillaSilhouetteTMP.Border*bldVanillaSilhouetteTMP.Stretch) - v2(5,5);
+        if(v2Dest.X > v2Min.X)v2Dest.X=v2Min.X;
+        if(v2Dest.Y > v2Min.Y)v2Dest.Y=v2Min.Y;
+        bldVanillaSilhouetteTMP.Dest=v2Dest;
 
-      graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
-      //h->DrawSilhouette(AnimationDraw); //TODO necessary?
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+        graphics::SetSRegionBlitdata(iRegionVanillaSilhouette,bldVanillaSilhouetteTMP);
+        //h->DrawSilhouette(AnimationDraw); //TODO necessary?
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,true);
+      }
     }else{
-      graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
+      if(iRegionVanillaSilhouette!=-1)
+        graphics::SetSRegionEnabled(iRegionVanillaSilhouette,false);
     }
   }
 
@@ -3206,6 +3237,7 @@ truth game::Save(cfestring& SaveName)
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+//TODO  craftcore::Save(SaveFile);
 
   craftcore::Save(SaveFile);
 
@@ -3290,10 +3322,7 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
-  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
-    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer(CharAtPos); DBG2(PLAYER,DBGAV2(Pos));
+  SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentArea()->GetSquare(Pos)));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -3313,51 +3342,93 @@ int game::Load(cfestring& saveName)
   return LOADED;
 }
 
-festring game::SaveName(cfestring& Base)
+/**
+ * this prevents all possibly troublesome characters in all OSs
+ */
+void fixChars(festring& fs)
 {
-  festring SaveName = GetSaveDir();
+  for(festring::sizetype i = 0; i < fs.GetSize(); ++i)
+  {
+    if(fs[i]>='A' && fs[i]<='Z')continue;
+    if(fs[i]>='a' && fs[i]<='z')continue;
+    if(fs[i]>='0' && fs[i]<='9')continue;
+
+    fs[i] = '_';
+  }
+}
+
+bool chkAutoSaveSuffix(festring& fs,bool bAlsoFixIt=false){DBG1(fs.CStr());
+  std::string strChk;
+  strChk = fs.CStr();
+  int i = strChk.find(AUTOSAVE_SUFFIX);
+  if(i!=std::string::npos){
+    if(bAlsoFixIt){
+      fs.Empty();
+      fs<<strChk.substr(0,i).c_str();DBG1(fs.CStr());
+    }
+    return true;
+  }
+
+  return false;
+}
+
+festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
+{
+  festring PathAndBaseSaveName = GetSaveDir();
 
   /**
    * Base must come OK, will just prepend directory,
    * the problem on modifying it is that as it is read from the filesystem
    * it will not be found if it gets changed...
    */
-  DBG3(PlayerName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG3(PlayerName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
   if(Base.GetSize() > 0)
   {
-    AutoSaveFileName.Empty();
-    AutoSaveFileName << Base;
-    SaveName << Base;
+    CurrentBaseSaveFileName.Empty();
+    CurrentBaseSaveFileName << Base;
+    chkAutoSaveSuffix(CurrentBaseSaveFileName,true);
+
+    PathAndBaseSaveName << Base;
   }
   else
   {
-    if(AutoSaveFileName.GetSize() == 0)
+    // this is important in case player name changes like when using the fantasy name generator
+    festring fsPN; fsPN<<PlayerName; fixChars(fsPN);
+    std::string strASFN; strASFN = CurrentBaseSaveFileName.CStr();
+    if(strASFN.substr(0,fsPN.GetSize()) != fsPN.CStr())
+      CurrentBaseSaveFileName.Empty();
+
+    if(CurrentBaseSaveFileName.GetSize() == 0)
     {
-      AutoSaveFileName << PlayerName << '_' << time(0);  // e.g. PlayerName-1529392480
-  
-      for(festring::sizetype i = 0; i < AutoSaveFileName.GetSize(); ++i)
-      {
-        // this prevents all possibly troublesome characters in all OSs
-        if(AutoSaveFileName[i]>='A' && AutoSaveFileName[i]<='Z')continue;
-        if(AutoSaveFileName[i]>='a' && AutoSaveFileName[i]<='z')continue;
-        if(AutoSaveFileName[i]>='0' && AutoSaveFileName[i]<='9')continue;
-  
-        AutoSaveFileName[i] = '_';
-      }
+      int iTmSz=100; char cTime[iTmSz]; time_t now = time(0);
+      strftime(cTime,iTmSz,"%Y%m%d_%H%M%S",localtime(&now)); //pretty DtTm
+
+      CurrentBaseSaveFileName << PlayerName << '_' << cTime;
+      fixChars(CurrentBaseSaveFileName);
     }
     
-    SaveName << AutoSaveFileName;
+    PathAndBaseSaveName << CurrentBaseSaveFileName;
   }
 
-  DBG4(PlayerName.CStr(), SaveName.CStr(), Base.CStr(), AutoSaveFileName.CStr());
+  DBG4(PlayerName.CStr(), PathAndBaseSaveName.CStr(), Base.CStr(), CurrentBaseSaveFileName.CStr());
 
 #if defined(__DJGPP__)
-  if(SaveName.GetSize() > 13)
-    SaveName.Resize(13);
+  if(PathAndBaseSaveName.GetSize() > 13)
+    PathAndBaseSaveName.Resize(13);
 #endif
 
-  return SaveName;
+  if(!bLoadingFromAnAutosave){ //very specific use case
+    if(chkAutoSaveSuffix(PathAndBaseSaveName)){
+      /**
+       * this ABORT is important to prevent the troubling autosave suffix duplicity,
+       * it's consistency is kept using only: GetAutoSaveFileName()
+       */
+      ABORT("The base savegame filename '%s' must not contain '%s'",PathAndBaseSaveName.CStr(),AUTOSAVE_SUFFIX);
+    }
+  }
+
+  return PathAndBaseSaveName;
 }
 
 int game::GetMoveCommandKeyBetweenPoints(v2 A, v2 B)
@@ -3886,8 +3957,16 @@ void game::CreateBusyAnimationCache()
   }
 }
 
+bool bQuestionMode=false;
+bool game::IsQuestionMode()
+{
+  return bQuestionMode || bPositionQuestionMode;
+}
+
 int game::AskForKeyPress(cfestring& Topic)
 {
+  bQuestionMode=true;
+
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
@@ -3899,6 +3978,8 @@ int game::AskForKeyPress(cfestring& Topic)
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Key;
 }
 
@@ -4073,89 +4154,6 @@ truth game::AnimationController()
   return true;
 }
 
-//static void DefinesValidatorAppend(std::string s);
-//static void DefinesValidatorTop();
-//static void DefinesValidatorAppendCode(std::string s);
-std::ofstream DefinesValidator;
-void DefinesValidatorAppend(std::string s)
-{
-  static std::stringstream ssValidateLine;ssValidateLine.str(std::string());ssValidateLine.clear(); //actually clear/empty it = ""
-
-  ssValidateLine << s << std::endl;
-
-  static bool bDummyInit = [](){
-    DefinesValidator.open(
-        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
-        std::ios::binary);
-    return true;}();
-
-  DefinesValidator.write(ssValidateLine.str().c_str(),ssValidateLine.str().length());
-}
-void DefinesValidatorTop()
-{
-  DefinesValidatorAppend("/****");
-  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
-  DefinesValidatorAppend(" *");
-  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
-  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
-  DefinesValidatorAppend(" */");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  std::stringstream ssErrors;");
-  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
-  DefinesValidatorAppend("");
-}
-void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
-{
-  static std::stringstream ssMsg;ssMsg.str(std::string());ssMsg.clear(); //actually clear/empty it = ""
-
-  ssMsg << "\"Defined " << sDefineId << " with value " << valueReadFromDatFile << " from .dat file " <<
-    "mismatches hardcoded c++ define value of \" << " << sDefineId << " << \"!\"";
-
-
-  static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
-
-//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
-  ssCode <<
-    "  " << std::endl <<
-    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
-    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
-    "  bsB = " << sDefineId << ";" << std::endl <<
-    "  if(bsA!=bsB)" << std::endl <<
-    "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
-    "#endif " << std::endl;
-
-
-  DefinesValidatorAppend(ssCode.str());
-}
-void DefinesValidatorClose(){
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  if(ssErrors.str().length() > 0) ABORT(ssErrors.str().c_str());");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("}};");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#endif // _DEFINESVALIDATOR_H_");
-
-  DefinesValidator.close();
-}
-#include "definesvalidator.h" //tip: 1st run this was commented
-void game::GenerateDefinesValidator(bool bValidade)
-{
-  DefinesValidatorTop();
-
-  for(const valuemap::value_type& p : GlobalValueMap)
-    DefinesValidatorAppendCode(p.first.CStr(), p.second);
-
-  DefinesValidatorClose();
-
-  if(bValidade)
-    definesvalidator::Validate(); //tip: 1st run this was commented
-}
-
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
@@ -4181,6 +4179,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();
+  //TODO need?  graphics::SetAllowStretchedBlit();
+  //TODO useful or messy?  graphics::BlitDBToScreen();
 }
 
 /* ... all the keys that are acceptable
@@ -4190,6 +4190,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
 
 int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
+  bQuestionMode=true;
+
   int* Key = new int[KeyNumber];
   va_list Arguments;
   va_start(Arguments, KeyNumber);
@@ -4220,6 +4222,8 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 
   delete [] Key;
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Return;
 }
 
@@ -4251,9 +4255,9 @@ v2 game::LookKeyHandler(v2 CursorPos, int Key)
     {
       character* Char = Square->GetCharacter();
 
-      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode()))
+      if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || GetSeeWholeMapCheatMode())){
         Char->PrintInfo();
-      else
+      }else
         ADD_MESSAGE("You see no one here.");
     }
     else
@@ -4529,11 +4533,23 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     if(Player)
     {
-      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+      lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
+      character* NPC = lsqr->GetCharacter();
+
+      bool bMoveAway=true;
+      /** g.v. goal is to protect the passage */ //TODO coming from above could grant a huge damage strike to kill it, what is a tactical manouver
+      if(bMoveAway && dynamic_cast<genetrixvesana*>(NPC)!=NULL)bMoveAway=false;
+      //TODO add other restrictions here, if any
+
+      if(bMoveAway)
+        lsqr->KickAnyoneStandingHereAway();
+
       Player->PutToOrNear(Pos);
     }
     else
-      SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+    {
+      SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentLevel()->GetLSquare(Pos)));
+    }
 
     uint c;
 
@@ -4651,7 +4667,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iY=v2TopLeft.Y-3;
   }
 
-  int iItemW=bldListItemTMP.Border.X*bldListItemTMP.Stretch;
+  int iItemW = bldListItemTMP.Border.X * bldListItemTMP.Stretch;
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;
@@ -4664,9 +4680,11 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
 
-  v2TopLeft=v2(iX,iY);
+  v2TopLeft=v2(iX,iY); DBGSV2(v2TopLeft);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
+  if(bAltItemPos)
+    felist::SetListItemAltPosMinY(area::getTopLeftCorner().Y);
 }
 
 int prepareListWidth(int iW){
@@ -4886,6 +4904,35 @@ character* game::SearchCharacter(ulong ID)
 {
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
+}
+
+std::vector<character*> game::GetAllCharacters()
+{
+  std::vector<character*> vc;
+  for(int i=0;i<CharacterIDMap.size();i++){
+    if(CharacterIDMap[i]!=NULL)
+      vc.push_back(CharacterIDMap[i]);
+  }
+  return vc;
+}
+
+characteridmap game::GetCharacterIDMapCopy()
+{
+  return CharacterIDMap;
+}
+
+std::vector<item*> game::GetAllItems()
+{
+  std::vector<item*> vc;
+  for(int i=0;i<ItemIDMap.size();i++){
+    if(ItemIDMap[i]!=NULL)
+      vc.push_back(ItemIDMap[i]);
+  }
+  return vc;
+}
+itemidmap game::GetItemIDMapCopy()
+{
+  return ItemIDMap;
 }
 
 item* game::SearchItem(ulong ID)
@@ -5255,13 +5302,25 @@ void game::AutoPlayModeApply(){
     break;
   case 4:
     msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
-    iTimeout=(1000/10); // like 10 FPS, so user has 100ms change to disable it
+    iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;
   }
   ADD_MESSAGE(msg, game::GetPlayer()->CHAR_NAME(DEFINITE));
 
   globalwindowhandler::SetPlayInBackground(bPlayInBackground);
+
+  if(!ivanconfig::IsXBRZScale()){
+    /**
+     * TODO
+     * This is an horrible gum solution...
+     * I still have no idea why this happens.
+     * Autoplay will timeout 2 times slower if xBRZ is disabled! why!??!?!?
+     * But the debug log shows the correct timeouts :(, clueless for now...
+     */
+    iTimeout/=2;
+  }
+
   globalwindowhandler::SetKeyTimeout(iTimeout,'.');//,'~');
 }
 

@@ -428,9 +428,7 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetConfig());
   SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
-    SaveFile << label;
-  }
+  SaveFile << label;
   SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
@@ -450,9 +448,8 @@ void item::Load(inputfile& SaveFile)
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
   SaveFile >> Size >> ID >> LifeExpectancy >> ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
+  if(game::GetCurrentSavefileVersion()>=132)
     SaveFile >> label;
-  }
   LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
@@ -1272,6 +1269,8 @@ void item::PreProcessForBone()
     game::AddItemID(this, ID);
   }
 }
+
+void item::_BugWorkaround_ItemDup(ulong key){ID=key;} //keep it simple!
 
 void item::PostProcessForBone()
 {

@@ -40,8 +40,11 @@ struct mouseclick{
 class globalwindowhandler
 {
  public:
-  static void ResetKeyTimeout(){SetKeyTimeout(0,'.');}
+  static bool IsKeyPressed(int iSDLScanCode);
+  static void ResetKeyTimeout(){SetKeyTimeout(0,iRestWaitKey);}
   static void CheckKeyTimeout();
+  static void SuspendKeyTimeout();
+  static void ResumeKeyTimeout();
   static truth IsKeyTimeoutEnabled();
   static void SetKeyTimeout(int iTimeoutMillis,int iDefaultReturnedKey);
   static mouseclick ConsumeMouseEvent();
@@ -72,17 +75,28 @@ class globalwindowhandler
   static void Init();
   static void SetQuitMessageHandler(truth (*What)()){ QuitMessageHandler = What; }
   static ulong UpdateTick() { return Tick = SDL_GetTicks() / 40; }
+  static void SetFunctionKeyHandler(bool (*What)(SDL_Keycode)){ FunctionKeyHandler = What; }
+  static void SetControlKeyHandler(bool (*What)(SDL_Keycode)){ ControlKeyHandler = What; }
 #endif
+
 #ifdef __DJGPP__
   static void Init() { }
   static void SetQuitMessageHandler(truth (*)()) { }
   static ulong UpdateTick() { return Tick = uclock() * 25 / UCLOCKS_PER_SEC; }
 #endif
+
+  const static int iRestWaitKey;
+
  private:
 #ifdef USE_SDL
+  static int ChkCtrlKey(SDL_Event* Event);
   static void ProcessMessage(SDL_Event*);
+  static void ProcessKeyDownMessage(SDL_Event* Event);
+  static void AddKeyToBuffer(int KeyPressed);
   static std::vector<int> KeyBuffer;
   static truth (*QuitMessageHandler)();
+  static bool (*FunctionKeyHandler)(SDL_Keycode);
+  static bool (*ControlKeyHandler)(SDL_Keycode);
 #endif
   static truth (*ControlLoop[MAX_CONTROLS])();
   static int Controls;

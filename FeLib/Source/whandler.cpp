@@ -73,6 +73,12 @@ void globalwindowhandler::DeInstallControlLoop(truth (*What)())
   }
 }
 
+bool globalwindowhandler::IsKeyPressed(int iSDLScanCode)
+{
+  return SDL_GetKeyboardState(NULL)[iSDLScanCode];
+}
+
+
 #ifdef __DJGPP__
 
 #include <pc.h>
@@ -134,6 +140,8 @@ int globalwindowhandler::ReadKey()
 
 std::vector<int> globalwindowhandler::KeyBuffer;
 truth (*globalwindowhandler::QuitMessageHandler)() = 0;
+bool (*globalwindowhandler::FunctionKeyHandler)(SDL_Keycode) = 0;
+bool (*globalwindowhandler::ControlKeyHandler)(SDL_Keycode) = 0;
 
 void globalwindowhandler::Init()
 {
@@ -267,8 +275,10 @@ int FrameSkipOrDraw(){ //TODO could this be simplified?
   }
 }
 
+const int globalwindowhandler::iRestWaitKey = '.';
+
 int iTimeoutDelay=0; // must init with 0
-int iTimeoutDefaultKey;
+int iTimeoutDefaultKey = globalwindowhandler::iRestWaitKey;
 long keyTimeoutRequestedAt;
 /**
  * This is intended to remain active ONLY until the user hits any key.
@@ -290,13 +300,23 @@ truth globalwindowhandler::IsKeyTimeoutEnabled()
 void globalwindowhandler::CheckKeyTimeout()
 {
   if(iTimeoutDelay>0){ // timeout mode is enalbed
-    if(!KeyBuffer.empty()){ // user pressed some key
+    if(!KeyBuffer.empty()){ DBG2(KeyBuffer.size(),KeyBuffer[0]); // user pressed some key
       keyTimeoutRequestedAt=clock(); // resets reference time to wait from
-    }else{
+    }else{ DBG2(keyTimeoutRequestedAt,iTimeoutDelay);
       if( clock() > (keyTimeoutRequestedAt+iTimeoutDelay) ) //wait for the timeout to...
         KeyBuffer.push_back(iTimeoutDefaultKey); //...simulate the keypress
     }
   }
+}
+int iTimeoutDelayBkp=0;
+void globalwindowhandler::SuspendKeyTimeout()
+{
+  iTimeoutDelayBkp=iTimeoutDelay;
+  iTimeoutDelay=0;
+}
+void globalwindowhandler::ResumeKeyTimeout()
+{
+  iTimeoutDelay=iTimeoutDelayBkp;
 }
 
 float globalwindowhandler::GetFPS(bool bInsta){
@@ -359,33 +379,28 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
     }
     else
     {
+      bool bHasFocus=false;
+#if SDL_MAJOR_VERSION == 1
+      bHasFocus = SDL_GetAppState() & SDL_APPACTIVE;
+#else
+      bHasFocus = SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS);
+#endif
+
+      bool bPlay=true;
+
+      if(bPlay && !bHasFocus && !playInBackground)
+        bPlay=false;
+
+      if(bPlay && Controls==0)
+        bPlay=false;
+
+      if(bPlay && !ControlLoopsEnabled)
+        bPlay=false;
+
       bool bHasEvents=PollEvents(&Event)>0;
-//      bool bHasEvents=false;
-//      while(SDL_PollEvent(&Event)){
-//        ProcessMessage(&Event);
-//        bHasEvents=true;
-//      }
 
       if(!bHasEvents)
       {
-        bool bPlay=true;
-
-#if SDL_MAJOR_VERSION == 1
-        if(bPlay && !(SDL_GetAppState() & SDL_APPACTIVE))
-#else
-        if(bPlay &&
-          !( SDL_GetWindowFlags(graphics::GetWindow()) & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_INPUT_FOCUS) )
-        )
-#endif
-          if(!playInBackground)
-            bPlay=false;
-
-        if(bPlay && Controls==0)
-          bPlay=false;
-
-        if(bPlay && !ControlLoopsEnabled)
-          bPlay=false;
-
         if(bPlay)
         {
           static ulong LastTick = 0;
@@ -419,8 +434,13 @@ int globalwindowhandler::GetKey(truth EmptyBuffer)
         }
         else
         {
-          SDL_WaitEvent(&Event);
-          ProcessMessage(&Event);
+          if(bHasFocus){
+            iDelayMS=1000/30; //30 FPS on main menu just to not use too much CPU there. If one day it is animated, lower this properly.
+            SDL_Delay(iDelayMS);
+          }else{
+            SDL_WaitEvent(&Event);DBGLN;
+            ProcessMessage(&Event);DBGLN;
+          }
         }
       }
     }
@@ -545,16 +565,185 @@ mouseclick globalwindowhandler::ConsumeMouseEvent() //TODO buffer it?
   return mcR;
 }
 
-void globalwindowhandler::ProcessMessage(SDL_Event* Event)
+int globalwindowhandler::ChkCtrlKey(SDL_Event* Event)
 {
+  if(Event->key.keysym.mod & KMOD_CTRL){ //if CTRL is pressed, user expects something else than the normal key, therefore not permissive
+    if(ControlKeyHandler!=NULL)
+      ControlKeyHandler(Event->key.keysym.sym);
+    return iRestWaitKey; //gum TODO 0 should suffice one day...
+  }DBGLN;
+
+  return Event->key.keysym.sym;
+}
+
+void globalwindowhandler::ProcessKeyDownMessage(SDL_Event* Event)
+{DBG4(Event->key.keysym.sym,Event->text.text[0],Event->key.keysym.mod & KMOD_ALT,Event->key.keysym.mod & KMOD_CTRL);
+
+  bLastSDLkeyEventIsKeyUp=false;
+
+  /**
+   * Events are splitted between SDL_KEYDOWN and SDL_TEXTINPUT.
+   *
+   * All managed events must be explicited,
+   * so, all keyDown events that will be modified must be handled here,
+   * all other non modified keyDown events will be handled by SDL_TEXTINPUT event type outside here.
+   *
+   * More modifiers also means higher priority.
+   *
+   * if one or more modifiers are pressed,
+   * user expects something else than the normal key,
+   * therefore wont fill the key buffer
+   *
+   * Non handled ctrl+alt+... or ctrl+... or alt+... will be ignored.
+   * Tho, they may be overriden by the OS and never reach here...
+   */
+
+  if((Event->key.keysym.mod & KMOD_CTRL) && (Event->key.keysym.mod & KMOD_ALT)){
+    switch(Event->key.keysym.sym)
+    {
+    case SDLK_e:
+      /**
+       * TODO
+       * exemplify where this is or can be ever used as tests provided no results on Linux,
+       * is it the windows Explorer key? if so #ifdef WIN32 should be used...
+       */
+      AddKeyToBuffer('\177');
+      break;
+    }
+    return;
+  }
+
+  if(Event->key.keysym.mod & KMOD_CTRL){
+    if(ControlKeyHandler!=NULL) //this one was completely externalized
+      ControlKeyHandler(Event->key.keysym.sym);
+    return;
+  }else
+  if(Event->key.keysym.mod & KMOD_ALT){
+    switch(Event->key.keysym.sym)
+    {
+    case SDLK_RETURN:
+    case SDLK_KP_ENTER:
+      graphics::SwitchMode();
+      break;
+    }
+    return;
+  }
+
+  // other special non buffered keys
+  switch(Event->key.keysym.sym)
+  {
+    case SDLK_F1:    case SDLK_F2:    case SDLK_F3:    case SDLK_F4:    case SDLK_F5:
+    case SDLK_F6:    case SDLK_F7:    case SDLK_F8:    case SDLK_F9:    case SDLK_F10:
+    case SDLK_F11:   case SDLK_F12:   case SDLK_F13:   case SDLK_F14:   case SDLK_F15:
+    case SDLK_F16:   case SDLK_F17:   case SDLK_F18:   case SDLK_F19:   case SDLK_F20:
+    case SDLK_F21:   case SDLK_F22:   case SDLK_F23:   case SDLK_F24:
+      if(FunctionKeyHandler!=NULL)
+        FunctionKeyHandler(Event->key.keysym.sym);
+      return; //no buffer
+
+    case SDLK_SYSREQ:
+    case SDLK_PRINTSCREEN:
+      if(!ScrshotDirectoryName.IsEmpty())
+        DOUBLE_BUFFER->Save(ScrshotNameHandler());
+      return; //no buffer
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////// MODIFIED KEY BUFFER ///////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
   int KeyPressed = 0;
+  switch(Event->key.keysym.sym)
+  {
+    case SDLK_RETURN:
+    case SDLK_KP_ENTER:
+      // both SDL keys are mixed into KEY_ENTER
+      KeyPressed = KEY_ENTER; //TODO SDL1? old comment tip or deadCode: Event->key.keysym.unicode;
+      break;
+
+    case SDLK_DOWN:
+    case SDLK_KP_2:
+      KeyPressed = KEY_DOWN + 0xE000;
+      break;
+
+    case SDLK_UP:
+    case SDLK_KP_8:
+      KeyPressed = KEY_UP + 0xE000;
+      break;
+
+    case SDLK_RIGHT:
+    case SDLK_KP_6:
+      KeyPressed = KEY_RIGHT + 0xE000;
+      break;
+
+    case SDLK_LEFT:
+    case SDLK_KP_4:
+      KeyPressed = KEY_LEFT + 0xE000;
+      break;
+
+    case SDLK_HOME:
+    case SDLK_KP_7:
+      KeyPressed = KEY_HOME + 0xE000;
+      break;
+
+    case SDLK_END:
+    case SDLK_KP_1:
+      KeyPressed = KEY_END + 0xE000;
+      break;
+    case SDLK_PAGEUP:
+    case SDLK_KP_9:
+      KeyPressed = KEY_PAGE_UP + 0xE000;
+      break;
+
+    case SDLK_KP_3:
+    case SDLK_PAGEDOWN:
+      KeyPressed = KEY_PAGE_DOWN + 0xE000;
+      break;
+
+    case SDLK_KP_5:
+      KeyPressed = iRestWaitKey;
+      break;
+
+#if SDL_MAJOR_VERSION == 2 //TODO there is no ESC on SDL1??? but does SDL1 still compiles? anyone uses it yet??? the same question about DJGPP...
+   case SDLK_ESCAPE:
+   case SDLK_BACKSPACE:
+     KeyPressed = Event->key.keysym.sym;
+     break;
+#endif
 
 #if SDL_MAJOR_VERSION == 1
-  switch(Event->active.type)
-#else
-  switch(Event->type)
+   default:
+    KeyPressed = Event->key.keysym.unicode;
+
+    if(!KeyPressed)
+      return;
 #endif
+  }
+  AddKeyToBuffer(KeyPressed);
+}
+
+/**
+ * buffer of yet non processed commands/textInput
+ */
+void globalwindowhandler::AddKeyToBuffer(int KeyPressed)
+{ DBG1(KeyPressed);
+  if(KeyPressed==0)return;
+
+  if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() ) //prevent dups TODO because of fast key-repeat OS feature? should be the last key on buffer only then
+    KeyBuffer.push_back(KeyPressed);
+}
+
+void globalwindowhandler::ProcessMessage(SDL_Event* Event)
+{
+  Uint32 type;
+#if SDL_MAJOR_VERSION == 1
+  type=(Event->active.type);
+#else
+  type=(Event->type);
+#endif
+
+  switch(type)
   {
+
 #if SDL_MAJOR_VERSION == 1
    case SDL_VIDEOEXPOSE:
     graphics::BlitDBToScreen();
@@ -570,10 +759,10 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     }
 #endif
     break;
+
    case SDL_QUIT:
     if(!QuitMessageHandler || QuitMessageHandler())
       exit(0);
-
     return;
 
    case SDL_MOUSEBUTTONUP:
@@ -583,104 +772,24 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
        mc.pos.Y=Event->button.y;
      }
      break;
+
    case SDL_MOUSEWHEEL:
      mc.wheelY = Event->wheel.y;
      break;
 
-   case SDL_KEYUP:
-    bLastSDLkeyEventIsKeyUp=true;
-    break;
-   case SDL_KEYDOWN:
-    bLastSDLkeyEventIsKeyUp=false;
-    switch(Event->key.keysym.sym)
-    {
-     case SDLK_RETURN:
-     case SDLK_KP_ENTER:
-      if(Event->key.keysym.mod & KMOD_ALT)
-      {
-        graphics::SwitchMode();
-        return;
-      }
-      else
-        KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
-
-      break;
-     case SDLK_DOWN:
-     case SDLK_KP_2:
-      KeyPressed = KEY_DOWN + 0xE000;
-      break;
-     case SDLK_UP:
-     case SDLK_KP_8:
-      KeyPressed = KEY_UP + 0xE000;
-      break;
-     case SDLK_RIGHT:
-     case SDLK_KP_6:
-      KeyPressed = KEY_RIGHT + 0xE000;
-      break;
-     case SDLK_LEFT:
-     case SDLK_KP_4:
-      KeyPressed = KEY_LEFT + 0xE000;
-      break;
-     case SDLK_HOME:
-     case SDLK_KP_7:
-      KeyPressed = KEY_HOME + 0xE000;
-      break;
-     case SDLK_END:
-     case SDLK_KP_1:
-      KeyPressed = KEY_END + 0xE000;
-      break;
-     case SDLK_PAGEUP:
-     case SDLK_KP_9:
-      KeyPressed = KEY_PAGE_UP + 0xE000;
-      break;
-     case SDLK_KP_3:
-     case SDLK_PAGEDOWN:
-      KeyPressed = KEY_PAGE_DOWN + 0xE000;
-      break;
-     case SDLK_KP_5:
-      KeyPressed = '.';
-      break;
-     case SDLK_SYSREQ:
-     case SDLK_PRINTSCREEN:
-      if(!ScrshotDirectoryName.IsEmpty())
-      {
-        DOUBLE_BUFFER->Save(ScrshotNameHandler());
-      }
-      return;
-#if SDL_MAJOR_VERSION == 2
-     /* event are now splitted between SDL_KEYDOWN and SDL_TEXTINPUT,
-        all managed events must be explicited */
-     case SDLK_ESCAPE:
-     case SDLK_BACKSPACE:
-      KeyPressed = Event->key.keysym.sym;
-      break;
+#if SDL_MAJOR_VERSION == 2 //BEFORE key up or down
+   case SDL_TEXTINPUT: DBG2(Event->key.keysym.sym,Event->text.text[0]);
+     AddKeyToBuffer(Event->text.text[0]);
+     break;
 #endif
 
-     case SDLK_e:
-      if(Event->key.keysym.mod & KMOD_ALT
-         && (Event->key.keysym.mod & KMOD_LCTRL
-             || Event->key.keysym.mod & KMOD_RCTRL))
-      {
-        KeyPressed = '\177';
-        break;
-      }
-     default:
-#if SDL_MAJOR_VERSION == 1
-      KeyPressed = Event->key.keysym.unicode;
-#endif
+   case SDL_KEYUP: DBGLN;
+     bLastSDLkeyEventIsKeyUp=true;
+     break;
 
-      if(!KeyPressed)
-        return;
-    }
-    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
-      KeyBuffer.push_back(KeyPressed);
-    break;
-#if SDL_MAJOR_VERSION == 2
-   case SDL_TEXTINPUT:
-    KeyPressed = Event->text.text[0];
-    if( std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end() )
-      KeyBuffer.push_back(KeyPressed);
-#endif
+   case SDL_KEYDOWN: DBGLN;
+     ProcessKeyDownMessage(Event);
+     break;
   }
 
 }

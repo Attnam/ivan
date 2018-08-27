@@ -315,7 +315,8 @@ void powder::Load(inputfile& SaveFile)
 material* organic::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
-  GetMotherEntity()->SpecialEatEffect(Eater, Amount);
+  if(GetMotherEntity())
+    GetMotherEntity()->SpecialEatEffect(Eater, Amount);
   Effect(Eater, TORSO_INDEX, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 20 / (1000 * (GetSpoilLevel() + 1)));
 

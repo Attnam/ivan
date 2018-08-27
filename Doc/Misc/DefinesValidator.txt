@@ -6,7 +6,7 @@ or when someone changes a value only at `define.dat` or at some c++ .h file, so 
 
 2) compile and install the game.
 
-3) go to that option and toggle it to yes.
+3) run any game, go to the console ctrl+` and run the generator
 
 4) the file `definesvalidator.h` will be created at the same path where the `ivan.conf` is located.
 
@@ -15,4 +15,4 @@ or when someone changes a value only at `define.dat` or at some c++ .h file, so 
 6) compile and install again so that the validator will know what value the c++ `#define` should have, based on the define.dat file.
 in case c++ has no such define, it will be ignored ex.: the check will be performed only `#ifdef EMISSARY` (currently not used in c++ .h files)
 
-7) run and activate that option to `yes`, it will abort complaining about TORSO value with this message: "Defined TORSO with value 2 from .dat file mismatches hardcoded c++ define value of 1!"
+7) run any game, go to the console ctrl+` and run the validator, it will abort complaining about TORSO value with this message: "Defined TORSO with value 2 from .dat file mismatches hardcoded c++ define value of 1!"

@@ -311,6 +311,7 @@ class character : public entity, public id
   truth HasLostRubyFlamingSword() const;
   truth RemoveShadowVeil();
   truth IsPlayer() const { return Flags & C_PLAYER; }
+  ulong GetFlags() const { return Flags; } //mainly for debugging
   truth Engrave(cfestring&);
   void AddScoreEntry(cfestring&, double = 1., truth = true) const;
   long GetAP() const { return AP; }
@@ -895,6 +896,7 @@ class character : public entity, public id
   void SetHomePos(v2);
   void RemoveHomeData();
   ulong GetID() const { return ID; }
+  void _BugWorkaround_PlayerDup(ulong key);
   void AddESPConsumeMessage() const;
   const std::list<ulong>& GetOriginalBodyPartID(int) const;
   void GetHitByExplosion(const explosion*, int);

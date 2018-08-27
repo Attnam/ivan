@@ -111,6 +111,8 @@ class commandsystem
   static truth LevelTeleport(character*);
   static truth Possess(character*);
   static truth Polymorph(character*);
+#else
+  static truth DevConsCmd(character* Char);
 #endif
   static truth ToggleRunning(character*);
   static truth IssueCommand(character*);

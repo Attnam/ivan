@@ -58,10 +58,18 @@
    waits for keypress. BitmapEditor is a pointer to function that is
    called during every fade tick. */
 
+bool bInUse=false;
+bool iosystem::IsInUse()
+{
+  return bInUse;
+}
+
 void iosystem::TextScreen(cfestring& Text, v2 Disp,
                           col16 Color, truth GKey, truth Fade,
                           bitmapeditor BitmapEditor)
 {
+  bInUse=true;
+
   bitmap Buffer(RES, 0);
   Buffer.ActivateFastFlag();
   festring::sizetype c;
@@ -110,6 +118,8 @@ void iosystem::TextScreen(cfestring& Text, v2 Disp,
     else
       GET_KEY();
   }
+
+  bInUse=false;
 }
 
 /* Returns amount of chars cSF in string sSH */
@@ -163,15 +173,28 @@ int iosystem::Menu(cbitmap* BackGround, v2 Pos,
   int c = 0;
 
   if(BackGround){
-    //vanilla was 800x600 as the background menu image. TODO provide calculations for lower than 800x600 one day?
-    if(RES.X < BackGround->GetSize().X)ABORT("invalid window width %d",RES.X);
-    if(RES.Y < BackGround->GetSize().Y)ABORT("invalid window height %d",RES.Y);
-
     if( (RES.X!=BackGround->GetSize().X) || (RES.Y!=BackGround->GetSize().Y) ){
+      blitdata B = DEFAULT_BLITDATA;
+      B.Bitmap = &Buffer;
+
+      B.Src.X = (RES.X - BackGround->GetSize().X)/2;
+      if(B.Src.X>0)B.Src.X=0;
+      if(B.Src.X<0)B.Src.X*=-1;
+      B.Src.Y = (RES.Y - BackGround->GetSize().Y)/2;
+      if(B.Src.Y>0)B.Src.Y=0;
+      if(B.Src.Y<0)B.Src.Y*=-1;
+
+      B.Dest.X = (RES.X - BackGround->GetSize().X)/2;
+      if(B.Dest.X<0)B.Dest.X=0;
+      B.Dest.Y = (RES.Y - BackGround->GetSize().Y)/2;
+      if(B.Dest.Y<0)B.Dest.Y=0;
+
+      B.Border = BackGround->GetSize() - v2();
+
       Buffer.ClearToColor(0);
-      BackGround->FastBlit(&Buffer,{(RES.X-BackGround->GetSize().X)/2, (RES.Y-BackGround->GetSize().Y)/2});
+      BackGround->NormalBlit(B);
     }else{
-      BackGround->FastBlit(&Buffer);
+      BackGround->FastBlit(&Buffer); //vanilla was 800x600 as the background menu image
     }
   }else
     Buffer.ClearToColor(0);
@@ -322,6 +345,8 @@ int iosystem::StringQuestion(festring& Input,
                              truth Fade, truth AllowExit,
                              stringkeyhandler StringKeyHandler)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -389,8 +414,10 @@ int iosystem::StringQuestion(festring& Input,
     if(!LastKey)
       continue;
 
-    if(LastKey == KEY_ESC && AllowExit)
+    if(LastKey == KEY_ESC && AllowExit){
+      bInUse=false;
       return ABORTED;
+    }
 
     if(LastKey == KEY_BACK_SPACE)
     {
@@ -460,6 +487,7 @@ int iosystem::StringQuestion(festring& Input,
 
   Input.Resize(LastAlpha + 1);
 
+  bInUse=false;
   return NORMAL_EXIT;
 }
 
@@ -471,6 +499,8 @@ int iosystem::StringQuestion(festring& Input,
 long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                               truth Fade, truth ReturnZeroOnEsc)
 {
+  bInUse=true;
+
   v2 V(RES.X, 10); ///???????????
   bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
@@ -526,8 +556,10 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
 
     if(LastKey == KEY_ESC)
     {
-      if(ReturnZeroOnEsc)
+      if(ReturnZeroOnEsc){
+        bInUse=false;
         return 0;
+      }
 
       break;
     }
@@ -567,6 +599,7 @@ long iosystem::NumberQuestion(cfestring& Topic, v2 Pos, col16 Color,
                    static_cast<char>(LastKey));
   }
 
+  bInUse=false;
   return atoi(Input.CStr());
 }
 
@@ -587,6 +620,8 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
                                  col16 Color2, int LeftKey, int RightKey,
                                  truth Fade, void (*Handler)(long))
 {
+  bInUse=true;
+
   long BarValue = StartValue;
   festring Input;
   truth FirstTime = true;
@@ -763,11 +798,15 @@ long iosystem::ScrollBarQuestion(cfestring& Topic, v2 Pos,
       Input << char(LastKey);
   }
 
+  bInUse=false;
   return BarValue;
 }
 
 bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::vector<festring>())
-{//TODO this method could be more global
+{
+  bInUse=true;
+
+  //TODO this method could be more global
   //TODO calc all line withs to determine the full popup width to not look bad if overflow
   int iLineHeight=20;
   v2 v2Border(700,100+(vfsCritMsgs.size()*iLineHeight));
@@ -798,9 +837,12 @@ bool AlertConfirmMsg(const char* cMsg,std::vector<festring> vfsCritMsgs = std::v
 
   graphics::BlitDBToScreen(); //as the final blit may be from StretchedBuffer
 
-  if(GET_KEY() == 'y')
+  if(GET_KEY() == 'y'){
+    bInUse=false;
     return true;
+  }
 
+  bInUse=false;
   return false;
 }
 

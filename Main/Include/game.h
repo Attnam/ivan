@@ -168,12 +168,14 @@ class areachangerequest { };
 
 typedef void (*dbgdrawoverlay)();
 
+#define AUTOSAVE_SUFFIX ".AutoSave"
 class game
 {
  public:
   static truth Init(cfestring& = CONST_S(""));
   static void DeInit();
   static void Run();
+  static festring SaveName(cfestring& = CONST_S(""),bool = false); //before all calls to this method, made still here on the header file
   static void PrepareStretchRegionsLazy();
   static void UpdateSRegionsXBRZ();
   static void RegionSilhouetteEnable(bool b);
@@ -231,14 +233,13 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, int, truth);
   static v2 GetDirectionVectorForKey(int);
-  static festring SaveName(cfestring& = CONST_S(""));
   static void ShowLevelMessage();
   static double GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
   static void IncreaseTick() { ++Tick; }
   static ulong GetTick() { return Tick; }
-  static festring GetAutoSaveFileName() { return SaveName() + ".AutoSave"; }
+  static festring GetAutoSaveFileName() { return SaveName() + AUTOSAVE_SUFFIX; }
   static int DirectionQuestion(cfestring&, truth = true, truth = false, int = 0, int = -1);
   static void RemoveSaves(truth = true,truth onlyBackups=false);
   static truth IsInWilderness() { return InWilderness; }
@@ -288,12 +289,12 @@ class game
   static v2 PositionQuestion(cfestring&, v2, positionhandler = 0, positionkeyhandler = 0, truth = true);
   static void LookHandler(v2);
   static int AskForKeyPress(cfestring&);
+  static bool IsQuestionMode();
   static truth AnimationController();
   static gamescript* GetGameScript() { return GameScript; }
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  static void GenerateDefinesValidator(bool bValidade);
   static void TextScreen(cfestring&, v2 = ZERO_V2, col16 = 0xFFFF, truth = true, truth = true, bitmapeditor = 0);
   static void SetCursorPos(v2 What) { CursorPos = What; }
   static truth DoZoom() { return Zoom; }
@@ -327,6 +328,10 @@ class game
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(v2, int);
   static character* SearchCharacter(ulong);
+  static std::vector<character*> GetAllCharacters();
+  static characteridmap GetCharacterIDMapCopy();
+  static std::vector<item*> GetAllItems();
+  static itemidmap GetItemIDMapCopy();
   static item* SearchItem(ulong);
   static entity* SearchTrap(ulong);
   static void AddCharacterID(character*, ulong);
@@ -481,7 +486,7 @@ class game
   static int getDefaultItemsListWidth(){ return iListWidth; }
   static void AddDebugDrawOverlayFunction(dbgdrawoverlay ddo){vDbgDrawOverlayFunctions.push_back(ddo);}
   static int GetCurrentDungeonTurnsCount(){return iCurrentDungeonTurn;}
-  static int GetSaveFileVersion();
+  static int GetSaveFileVersionHardcoded();
   static void ValidateCommandKeys(char Key1,char Key2,char Key3);
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
@@ -565,7 +570,7 @@ class game
   static charactervector CharacterDrawVector;
   static truth SumoWrestling;
   static festring PlayerName;
-  static festring AutoSaveFileName;
+  static festring CurrentBaseSaveFileName;
   static liquid* GlobalRainLiquid;
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;

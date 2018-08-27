@@ -22,6 +22,7 @@
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
+#include "bugworkaround.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -80,14 +81,14 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           0, 6,
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
-                                          "* window width in pixels, min 800",
-                                          800,
+                                          "* window width in pixels, min 640",
+                                          640,
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
-                                          "* window height in pixels, min 600",
-                                          600,
+                                          "* window height in pixels, min 480",
+                                          480,
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);
@@ -131,18 +132,6 @@ truthoption ivanconfig::ShowVolume(       "ShowVolume",
 truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
                                           "allow distant lights to be seen",
                                           true);
-truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
-                                          "Safely save games",
-                                          true,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &SavegameSafelyChanger);
-truthoption ivanconfig::GenerateDefinesValidator("GenerateDefinesValidator",
-                                          "generate validator and validate define.dat (may abort)",
-                                          false,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &GenerateDefinesValidatorChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -189,8 +178,14 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
+cycleoption ivanconfig::FontGfx(          "FontGfx",
+                                          "* Select font",
+                                          1, 3, //from 1 to 3 (three options available)
+                                          &FontGfxDisplayer,
+                                          &FontGfxChangeInterface,
+                                          &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
-                                          "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
+                                          "Magic mushrooms active AI maximum distance in squares (suggested is 8).",
                                           0, 16,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
@@ -512,6 +507,14 @@ truth ivanconfig::DungeonGfxScaleChangeInterface(cycleoption* O)
   return true;
 }
 
+truth ivanconfig::FontGfxChangeInterface(cycleoption* O)
+{
+  O->ChangeValue(O->Value % O->CycleCount + 1);
+  clearToBackgroundAfterChangeInterface();
+  return true;
+}
+
+
 truth ivanconfig::FantasyNameChangeInterface(stringoption* O)
 {
   festring String;
@@ -602,7 +605,7 @@ truth ivanconfig::StackListPageLengthChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 600 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window height (from 480 to your monitor screen max height):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -610,7 +613,7 @@ truth ivanconfig::WindowHeightChangeInterface(numberoption* O)
 
 truth ivanconfig::WindowWidthChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 800 to your monitor screen max width):"),
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new window width (from 640 to your monitor screen max width):"),
                                           GetQuestionPos(), WHITE, !game::IsRunning()));
   clearToBackgroundAfterChangeInterface();
   return false;
@@ -682,7 +685,7 @@ void ivanconfig::StackListPageLengthChanger(numberoption* O, long What)
 
 void ivanconfig::WindowHeightChanger(numberoption* O, long What)
 {
-  if(What < 600) What = 600;
+  if(What < 480) What = 480;
   O->Value = What;
 }
 
@@ -697,7 +700,7 @@ void ivanconfig::ShowItemsAtPlayerSquareChanger(cycleoption* O, long What)
 
 void ivanconfig::WindowWidthChanger(numberoption* O, long What)
 {
-  if(What < 800) What = 800;
+  if(What < 640) What = 640;
   O->Value = What;
 }
 
@@ -814,6 +817,11 @@ void ivanconfig::DungeonGfxScaleDisplayer(const cycleoption* O, festring& Entry)
   Entry << O->Value << 'x';
 }
 
+void ivanconfig::FontGfxDisplayer(const cycleoption* O, festring& Entry)
+{
+  Entry << O->Value;
+}
+
 void ivanconfig::SilhouetteScaleChanger(cycleoption* O, long What)
 {
   O->Value = What;
@@ -831,19 +839,9 @@ void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
   O->Value = What;
 }
 
-void ivanconfig::GenerateDefinesValidatorChanger(truthoption* O, truth What)
+void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 {
-  if(O!=NULL)O->Value = What;
-
-  if(What)
-    game::GenerateDefinesValidator(true); //TODO make validation (that aborts) optional using cycleoption
-}
-
-void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
-{
-  if(O!=NULL)O->Value = What;
-
-  outputfile::SetSafeSaving(What);
+  O->Value = What;
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
@@ -924,6 +922,7 @@ void ivanconfig::CalculateContrastLuminance()
 int  ivanconfig::iStartingWindowWidth=-1;
 int  ivanconfig::iStartingWindowHeight=-1;
 int  ivanconfig::iStartingDungeonGfxScale=-1;
+int  ivanconfig::iStartingFontGfx=-1;
 bool ivanconfig::bStartingOutlinedGfx=false;
 void ivanconfig::Initialize()
 {
@@ -976,6 +975,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AltListItemWidth);
   configsystem::AddOption(fsCategory,&StackListPageLength);
   configsystem::AddOption(fsCategory,&DungeonGfxScale);
+  configsystem::AddOption(fsCategory,&FontGfx);
   configsystem::AddOption(fsCategory,&OutlinedGfx);
   configsystem::AddOption(fsCategory,&FrameSkip);
   configsystem::AddOption(fsCategory,&ShowItemsAtPlayerSquare);
@@ -1008,9 +1008,7 @@ void ivanconfig::Initialize()
 
   fsCategory="Advanced/Developer options";
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
-  configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
-  configsystem::AddOption(fsCategory,&GenerateDefinesValidator);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
@@ -1026,6 +1024,7 @@ void ivanconfig::Initialize()
   iStartingWindowWidth = WindowWidth.Value;
   iStartingWindowHeight = WindowHeight.Value;
   iStartingDungeonGfxScale = DungeonGfxScale.Value;
+  iStartingFontGfx = FontGfx.Value;
   bStartingOutlinedGfx = OutlinedGfx.Value;
 
   CalculateContrastLuminance();
@@ -1036,7 +1035,6 @@ void ivanconfig::Initialize()
   FrameSkipChanger(NULL,FrameSkip.Value);
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
-  SavegameSafelyChanger(NULL, SavegameSafely.Value);
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }
