@@ -8,10 +8,90 @@
     <df root="Main/Include" name="2">
     </df>
     <df root="FeLib/Include" name="3">
+      <in>felist.h</in>
+      <in>feloops.h</in>
+      <in>femath.h</in>
+      <in>festring.h</in>
+      <in>fetime.h</in>
+      <in>graphics.h</in>
+      <in>hscore.h</in>
     </df>
     <df root="FeLib/Source" name="4">
+      <in>bitmap.cpp</in>
+      <in>config.cpp</in>
+      <in>dbgmsg.cpp</in>
+      <in>error.cpp</in>
+      <in>febot.cpp</in>
+      <in>feio.cpp</in>
+      <in>felist.cpp</in>
+      <in>femath.cpp</in>
+      <in>festring.cpp</in>
+      <in>fetime.cpp</in>
+      <in>graphics.cpp</in>
+      <in>hscore.cpp</in>
+      <in>rawbit.cpp</in>
+      <in>save.cpp</in>
+      <in>specialkeys.cpp</in>
+      <in>whandler.cpp</in>
     </df>
     <df root="Main/Source" name="5">
+      <in>action.cpp</in>
+      <in>actions.cpp</in>
+      <in>actset.cpp</in>
+      <in>area.cpp</in>
+      <in>areaset.cpp</in>
+      <in>bodypart.cpp</in>
+      <in>bugworkaround.cpp</in>
+      <in>char.cpp</in>
+      <in>charset.cpp</in>
+      <in>charsset.cpp</in>
+      <in>cmdcraft.cpp</in>
+      <in>cmdswapweap.cpp</in>
+      <in>command.cpp</in>
+      <in>cont.cpp</in>
+      <in>coreset.cpp</in>
+      <in>database.cpp</in>
+      <in>dataset.cpp</in>
+      <in>definesvalidator.cpp</in>
+      <in>devcons.cpp</in>
+      <in>dungeon.cpp</in>
+      <in>entity.cpp</in>
+      <in>fluid.cpp</in>
+      <in>game.cpp</in>
+      <in>gear.cpp</in>
+      <in>god.cpp</in>
+      <in>gods.cpp</in>
+      <in>godset.cpp</in>
+      <in>hiteffect.cpp</in>
+      <in>iconf.cpp</in>
+      <in>id.cpp</in>
+      <in>igraph.cpp</in>
+      <in>item.cpp</in>
+      <in>itemset.cpp</in>
+      <in>level.cpp</in>
+      <in>levelset.cpp</in>
+      <in>main.cpp</in>
+      <in>materia.cpp</in>
+      <in>materias.cpp</in>
+      <in>materset.cpp</in>
+      <in>message.cpp</in>
+      <in>object.cpp</in>
+      <in>room.cpp</in>
+      <in>rooms.cpp</in>
+      <in>roomset.cpp</in>
+      <in>script.cpp</in>
+      <in>slot.cpp</in>
+      <in>slotset.cpp</in>
+      <in>stack.cpp</in>
+      <in>trap.cpp</in>
+      <in>traps.cpp</in>
+      <in>trapset.cpp</in>
+      <in>wmapset.cpp</in>
+      <in>worldmap.cpp</in>
+      <in>wskill.cpp</in>
+      <in>wsquare.cpp</in>
+      <in>wterra.cpp</in>
+      <in>wterras.cpp</in>
     </df>
     <df root="xbrzscale" name="6">
     </df>
@@ -77,6 +157,166 @@
           <preBuildCommand>${CMAKE} -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX} -DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .</preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="FeLib/Include/felist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/feloops.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/femath.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/festring.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/fetime.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/graphics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Include/hscore.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FeLib/Source/bitmap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/config.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/dbgmsg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/error.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/febot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/feio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/felist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/femath.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/festring.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/fetime.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/graphics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/hscore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/rawbit.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/save.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/specialkeys.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FeLib/Source/whandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/action.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/actions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/actset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/area.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/areaset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/bodypart.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/bugworkaround.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/char.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/charset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/charsset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/cmdcraft.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/cmdswapweap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/command.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/cont.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/coreset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/database.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/dataset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/definesvalidator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/devcons.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/dungeon.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/entity.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/fluid.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/game.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/gear.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/god.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/gods.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/godset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/hiteffect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/iconf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/id.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/igraph.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/itemset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/level.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/levelset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/materia.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/materias.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/materset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/message.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/object.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/room.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/rooms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/roomset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/script.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/slot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/slotset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/stack.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/trap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/traps.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/trapset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wmapset.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/worldmap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wskill.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wsquare.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wterra.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Main/Source/wterras.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
