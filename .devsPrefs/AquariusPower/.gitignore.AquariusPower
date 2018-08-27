@@ -83,3 +83,5 @@ dbgmsg.cpp
 build
 build.*
 .kdev_include_paths
+/.devsPrefs/AquariusPower/nbproject/private/*
+/nbproject

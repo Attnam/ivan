@@ -136,8 +136,13 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
     };break;
 
     case CopyToClipboard:{DBGLN;
-      #ifdef UNIX //TODO works for MACOSX too?
+      #ifdef UNIX //TODO for MACOSX can use `pbcopy` see https://github.com/Attnam/ivan/pull/458#discussion_r212823516
+        /* TODO 
+         * the executable OS command may allow, thru the input text, any OS commands and that is not good.
+         * ex.: echo just needs to be broken like: echo -n ''`anyOtherOSCommand`'' |xclip -i //where the input string is "'`anyOtherOSCommand`'"
+         * so this needs to be done in some other way...
         std::ostringstream osStkCmd;
+        // this will execute an OS command
         osStkCmd<<"echo -n '"<<fsInOut.CStr()<<"' |xclip -i";
         FILE* pipeFile = popen(osStkCmd.str().c_str(),"r"); //TODO exec pipelessly
         if(pipeFile!=NULL){
@@ -145,6 +150,7 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
         }else{
           DBG2("unable to execute popen() with cmd: ",osStkCmd.str());
         }
+        */
       #endif
       //TODO windows (can be hardcoded)
     };break;
