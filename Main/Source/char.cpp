@@ -7118,6 +7118,22 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  
+  festring EntryBP;
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart)
+    {
+      EntryBP.Empty();
+      BodyPart->AddName(EntryBP, UNARTICLED);
+      EntryBP << " made of ";
+      BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
+//      int ImageKey = game::AddToItemDrawVector(itemvector(1, BodyPart));
+      Info.AddEntry(EntryBP, LIGHT_GRAY);//, 20, ImageKey);
+    }
+  }
 
   if(GetAction())
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);
