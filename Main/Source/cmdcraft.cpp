@@ -31,8 +31,10 @@ void craftcore::AddSuspended(const recipedata& rpd)
 
   for(int i=0;i<vSuspended.size();i++)
     if(vSuspended[i].id()==rpd.id())
-      ABORT("it was already suspended '%s'",vSuspended[i].id().CStr());
+      ABORT("this crafting was already suspended '%s'",vSuspended[i].id().CStr());
 
+//  rpd.rc.ClearRefs();
+  
   vSuspended.push_back(rpd);
 }
 
@@ -159,6 +161,8 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
     return false;
   }
 
+  rpd.rc.ClearRefs(); //good to cleanup, will be set again also
+  
   rpd.rc.integrityCheck();
 
   bool bReqSamePos = false;
@@ -379,10 +383,7 @@ void recipecore::SetHumanoid(character* C){
   if(hNew==NULL)
     ABORT("Only humanoids can craft C='%s' h='%s'",C->GetName(DEFINITE).CStr(),h==NULL?"NULL":h->GetName(DEFINITE).CStr());
 
-  if(h==NULL || hNew->GetPolymorphBackup()==h || h->GetPolymorphBackup()==hNew)
-    h = hNew;
-  else
-    ABORT("Humanoid actor already set '%s' '%s'",C->GetName(DEFINITE).CStr(),h->GetName(DEFINITE).CStr());
+  h = hNew;
 }
 
 void recipecore::integrityCheck(character* Actor) const
@@ -391,10 +392,6 @@ void recipecore::integrityCheck(character* Actor) const
     //TODO bools get crazy values too if not initialized
     ABORT("recipedata corrupted, not initialized or invalid");// it will not be possible to show info, would crash on it... , dbgInfo().CStr());
   }
-
-  if(Actor!=NULL && h!=NULL && h!=Actor)
-    if(h->GetPolymorphBackup()!=Actor && Actor->GetPolymorphBackup()!=h)
-      ABORT("actor/h is not a polymorph backup? '%s' '%s'",h->GetName(DEFINITE).CStr(),Actor->GetName(DEFINITE).CStr());
 }
 
 recipecore::recipecore(humanoid* H,uint sel){
