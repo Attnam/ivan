@@ -7124,15 +7124,13 @@ void character::DisplayStethoscopeInfo(character*) const
   {
     bodypart* BodyPart = GetBodyPart(c);
 
-    if(BodyPart)
-    {
-      EntryBP.Empty();
-      BodyPart->AddName(EntryBP, UNARTICLED);
-      EntryBP << " made of ";
+    EntryBP.Empty();
+    if(BodyPart && BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig()){
       BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
-//      int ImageKey = game::AddToItemDrawVector(itemvector(1, BodyPart));
-      Info.AddEntry(EntryBP, LIGHT_GRAY);//, 20, ImageKey);
+      EntryBP<<" ";
     }
+    BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
+    Info.AddEntry(EntryBP, LIGHT_GRAY);
   }
 
   if(GetAction())
