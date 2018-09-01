@@ -72,7 +72,7 @@ bool craftcore::EmptyContentsIfPossible(recipedata& rpd,item* itContainer, bool 
   if(mc!=NULL){
     if(mc->GetSecondaryMaterial()!=NULL){
       if(bMoveToInventory)
-        PrepareRemains(mc->GetSecondaryMaterial(),rpd);
+        PrepareRemains(rpd,mc->GetSecondaryMaterial());
       else
         delete mc->RemoveSecondaryMaterial(); //prevents keeping: ex. random liquids like antidote
     }
@@ -167,11 +167,10 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
 
   bool bReqSamePos = false;
 //  if(rpd.bMeltable)bReqSamePos=true;
-  if(!rpd.v2AnvilLocation.Is0())bReqSamePos=true;
-  if(!rpd.v2ForgeLocation.Is0())bReqSamePos=true;
-  if(!rpd.v2PlaceAt.Is0())bReqSamePos=true;
-  if(!rpd.v2WorkbenchLocation.Is0())bReqSamePos=true;
-  if(rpd.otSpawnType!=CTT_NONE)bReqSamePos=true;
+  if(!rpd.v2AnvilLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2AnvilLocation);
+  if(!rpd.v2ForgeLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2ForgeLocation);
+  if(!rpd.v2WorkbenchLocation.Is0())bReqSamePos=true; DBGSV2(rpd.v2WorkbenchLocation);
+  if(rpd.otSpawnType!=CTT_NONE && !rpd.v2PlaceAt.Is0())bReqSamePos=true; DBG1(rpd.otSpawnType);
   if(bReqSamePos){
     if(rpd.rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
       //TODO better message: place? location? dungeon level sounds a bit non-immersive, or not?
@@ -588,6 +587,8 @@ struct ci{
   bool bAllowWood=true;
   bool bAllowBones=true;
   int iMinMainMaterStr=0;
+  
+  float fUsablePercVol=1.0;
 };
 struct recipe{
   festring action;
@@ -886,11 +887,23 @@ struct recipe{
 
   template <typename T> static truth choseIngredients(
       cfestring fsQ,
-      long reqVol,
+      long reqVolPrecise,
       recipedata& rpd,
       int& iWeakestCfg,
       ci CI=ci()
   ){DBGLN;
+    if(CI.fUsablePercVol>1.0 || CI.fUsablePercVol<=0)
+      ABORT("usable vol is max 100% %f",CI.fUsablePercVol);
+    
+    /**
+     * ex.: vol=100; usable=0.5; req=200=100/0.5;
+     * remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3, 
+     * prepare a stone with 25cm3 and a lump with 8cm3
+     */
+    long reqVolTotal = reqVolPrecise/CI.fUsablePercVol; 
+    
+    long reqVol = reqVolTotal;
+  
     if(reqVol==0)
       ABORT("ingredient required 0 volume?");
 
@@ -942,15 +955,23 @@ struct recipe{
         ToUse[i]->SetValidRecipeIngredient(false); //just to not be shown again on the list
 
         if(reqVol<=0){
-          long lRemainingVol=reqVol*-1;
+          long lRemainingVol = reqVol * -1; //beyond required
+          
+          if(CI.fUsablePercVol<1.0) //while shapping this is what is "lost"
+            lRemainingVol += reqVolTotal * (1.0 - CI.fUsablePercVol); //ex.: a round rock being shaped into a spear tip
+          
           if(lRemainingVol>0 && CI.bMainMaterRemainsBecomeLump){
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
               ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
+            if(lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
+              ABORT("remaining vol calc needs fixing %d != %d, %f, %d",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol); 
             matM->SetVolume(lVolM);
 
-            item* lumpR = craftcore::PrepareRemains(matM, rpd);
+//            bool bForceLump = CI.fUsablePercVol<1.0;
+//            item* lumpR = craftcore::PrepareRemains(rpd,matM,bForceLump);
+            item* lumpR = craftcore::PrepareRemains(rpd,matM,true);
             lumpR->GetMainMaterial()->SetVolume(lRemainingVol);
 
             lumpMix(vi,lumpR,rpd.bSpendCurrentTurn);
@@ -1560,8 +1581,8 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     }
 
     // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
-    item* RmnM = craftcore::PrepareRemains(matM,rpd);
-    item* RmnS = matS==NULL ? NULL : craftcore::PrepareRemains(matS,rpd); //must always be prepared to not lose it
+    item* RmnM = craftcore::PrepareRemains(rpd,matM);
+    item* RmnS = matS==NULL ? NULL : craftcore::PrepareRemains(rpd,matS); //must always be prepared to not lose it
 
     craftcore::EmptyContentsIfPossible(rpd,itToUse,true);
 
@@ -1681,7 +1702,7 @@ struct srpSplitLump : public recipe{
       //TODO this should take time as an action
       character* D = Corpse->GetDeceased(); DBG2(Corpse->GetName(DEFINITE).CStr(),D->GetName(DEFINITE).CStr())
       static const materialdatabase* flesh;flesh = material::GetDataBase(D->GetFleshMaterial());
-      ToSplit = craftcore::PrepareRemains(material::MakeMaterial(flesh->Config,Corpse->GetVolume()), rpd);
+      ToSplit = craftcore::PrepareRemains(rpd,material::MakeMaterial(flesh->Config,Corpse->GetVolume()));
       if(dynamic_cast<humanoid*>(D)!=NULL){
         /**
          * this is to try to keep necromancers, raising zombies, challenging,
@@ -1939,14 +1960,15 @@ struct srpForgeItem : public recipe{
       bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
-      ci CI = CIM; //carving: only one stone per material allowed, so it must have required volume
-      CI.bFirstItemMustHaveFullVolumeRequired=true;
+      ci CI = CIM; 
+      CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
       CI.bMultSelect=false;
-      festring fsM("as MAIN material (stones 75%)"); //roundy shape loses material
-      bM = choseIngredients<stone>(fsM,lVolM/0.75, rpd, iCfgM, CI);
-      //TODO remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3, prepare a stone with 25cm3 and a lump with 8cm3, currently it is just lost (what is not a big problem...)
+      CI.fUsablePercVol=0.75;
+      festring fsM("as MAIN material (stones "); //roundy shape loses material
+      fsM<<(int)(CI.fUsablePercVol*100)<<"%)";
+      bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
-    {//stick block //TODO see 'remaining lump' TODO above
+    {//stick block
       festring fsM("as MAIN material (sticks/bones ");
       float fPerc=1.0;
       if(!bIsItemContainer)
@@ -1958,12 +1980,16 @@ struct srpForgeItem : public recipe{
        */
       if(!bM){
         ci CI = CIM;
-        bM = choseIngredients<bone>(fsM,lVolM/fPerc, rpd, iCfgM, CI);
+        CI.fUsablePercVol=fPerc;
+        CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
+        bM = choseIngredients<bone>(fsM,lVolM, rpd, iCfgM, CI);
       }
       if(!bM){
         ci CI = CIM;
+        CI.fUsablePercVol=fPerc;
+        CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
         CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
-        bM = choseIngredients<stick>(fsM,lVolM/fPerc, rpd, iCfgM, CI);
+        bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
       }
     }
     if(!bM){
@@ -2433,9 +2459,12 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     return false;
 
   if(craftcore::HasSuspended()){
-    int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume, (c)ancel or start a (n)ew one?"),
-      KEY_ESC, 3, 'r', 'c', 'n');
+    int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER, (c)ancel or start a (n)ew one?"),
+      KEY_ESC, 4, 'r', 'c', 'n', KEY_ENTER);
     if(key==KEY_ESC)return false;
+    
+    if(key==KEY_ENTER)
+      key='r';
 
     felist LSusp("Suspended crafting actions:",WHITE);
     game::SetStandardListAttributes(LSusp);
@@ -2602,7 +2631,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
           return true; // see at the end why
       }
 
-      if(rpd.v2PlaceAt.Is0())
+      if(rpd.otSpawnType!=CTT_NONE && rpd.v2PlaceAt.Is0())
         rpd.v2PlaceAt = rpd.lsqrPlaceAt!=NULL ? rpd.lsqrPlaceAt->GetPos() : rpd.lsqrCharPos->GetPos(); //may be ignored anyway, is just a fallback
 
       rpd.iAddDexterity=5; //TODO crafting difficult things should give more dexterity (wisdom too?)
@@ -2646,7 +2675,14 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   return true;
 }
 
-
+/**
+ * 
+ * @param bAllowBreak
+ * @param rpd
+ * @param itSpawn
+ * @param fsCreated
+ * @return beware, can be NULL but still spawn lumps!
+ */
 item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpawn, festring& fsCreated)
 {
   bool bBreak = rpd.bSpawnBroken;
@@ -2676,11 +2712,11 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
        * if it can't be broken, will just create a messy lump.
        */
       ADD_MESSAGE("My lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
-      craftcore::PrepareRemains(itSpawn->GetMainMaterial(), rpd);
+      craftcore::PrepareRemains(rpd,itSpawn->GetMainMaterial(),true);
       if(itSpawn->GetSecondaryMaterial()!=NULL)
-        craftcore::PrepareRemains(itSpawn->GetSecondaryMaterial(), rpd);
+        craftcore::PrepareRemains(rpd,itSpawn->GetSecondaryMaterial(),true);
       craftcore::SendToHellSafely(itSpawn);
-      itSpawn=NULL; //because the result can be 2 items (2 lumps!)
+      itSpawn=NULL; //because the result can be 2 item* (2 lumps, one for each material Main and Secondary!)
       fsCreated << "a funny looking lump";
     }
   }
@@ -2797,26 +2833,30 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
   rpd.iRemainingTurnsToFinish--;
   rpd.bSuccesfullyCompleted = rpd.iRemainingTurnsToFinish==0;
 
-  if(rpd.bGradativeCraftOverride)
+  if(rpd.bGradativeCraftOverride){
     GradativeCraftOverride(rpd);
+  }else{
+    if(rpd.bSuccesfullyCompleted)
+    {
+      festring fsMsg("");
 
-  if(rpd.bSuccesfullyCompleted && !rpd.bGradativeCraftOverride)
-  {DBGLN;
-    festring fsMsg("");
+      if(rpd.itSpawnType!=CIT_NONE){DBGLN;
+        for(int i=0;i<rpd.itSpawnTot;i++){
+          item* itSp = SpawnItem(rpd,fsMsg);
+          if(itSp!=NULL) //TODO apply degradation to lumps as the item broke (therefore is NULL)?
+            CopyDegradationIfPossible(rpd,itSp);
+        }
+      }
 
-    if(rpd.itSpawnType!=CIT_NONE){DBGLN;
-      for(int i=0;i<rpd.itSpawnTot;i++)
-        CopyDegradationIfPossible(rpd,SpawnItem(rpd,fsMsg));
+      if(rpd.otSpawnType!=CTT_NONE){DBGLN;
+        SpawnTerrain(rpd,fsMsg);
+      }
+
+      fsMsg << DestroyIngredients(rpd);
+      fsMsg << ".";
+
+      ADD_MESSAGE(fsMsg.CStr());
     }
-
-    if(rpd.otSpawnType!=CTT_NONE){DBGLN;
-      SpawnTerrain(rpd,fsMsg);
-    }
-
-    fsMsg << DestroyIngredients(rpd);
-    fsMsg << ".";
-
-    ADD_MESSAGE(fsMsg.CStr());
   }
 }
 
@@ -2867,6 +2907,8 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
      * so just avoiding using it here.
      */
     item* itSpawned = SpawnItem(rpdTmp,fsMsg);
+    if(itSpawned==NULL)
+      ABORT("gradative craft should not spawn things that can be broken %s",rpdTmp.dbgInfo().CStr()); //if broken, will be NULL and the inventory may contain lumps
     CopyDegradation(matM,itSpawned->GetMainMaterial());
 
     ADD_MESSAGE("%s.",fsMsg.CStr());
@@ -3189,10 +3231,8 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
   return "";
 }
 
-item* craftcore::PrepareRemains(material* mat, recipedata& rpd)
+item* craftcore::PrepareRemains(recipedata& rpd, material* mat, bool bForceLump)
 {
-  bool bWoodenCreateStick = IsWooden(mat);
-
   if(mat==NULL)
     ABORT("NULL lump material");
 
@@ -3206,14 +3246,20 @@ item* craftcore::PrepareRemains(material* mat, recipedata& rpd)
     rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume()));
   }else{
     item* itTmp = NULL;
-    if(bWoodenCreateStick){
+    
+    if(itTmp==NULL && (bForceLump || craftcore::IsMeltable(mat) || mat->IsFlesh()))
+      itTmp = lump::Spawn(0, NO_MATERIALS);
+    
+    if(itTmp==NULL && IsWooden(mat))
       itTmp = stick::Spawn(0, NO_MATERIALS);
-    }else{
-      if(craftcore::IsMeltable(mat))
-        itTmp = lump::Spawn(0, NO_MATERIALS);
-      else
-        itTmp = stone::Spawn(0, NO_MATERIALS); //could be a shaped stone, not suitable to all re-uses, but item creation already won't use full volume of non meltable stones
-    }
+    
+    /**
+     * could be a shaped stone, not suitable to all re-uses, 
+     * but item creation already won't use full volume of non meltable stones
+     */
+    if(itTmp==NULL)
+      itTmp = stone::Spawn(0, NO_MATERIALS); 
+    
 //    itTmp->SetMainMaterial(material::MakeMaterial(mat->GetConfig(),mat->GetVolume()));
     itTmp->SetMainMaterial(CreateMaterial(mat));
     rpd.rc.H()->GetStack()->AddItem(itTmp);

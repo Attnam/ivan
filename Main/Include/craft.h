@@ -265,7 +265,7 @@ class craftcore {
     static truth IsMeltable(item* it);
     static bool IsWooden(material* mat);
 
-    static item* PrepareRemains(material* mat, recipedata& rpd);
+    static item* PrepareRemains(recipedata&,material*,bool=false);
 
     static void AddSuspended(const recipedata& rpd);
     static void RemoveIfSuspended(const recipedata&rpd);
