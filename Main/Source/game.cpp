@@ -4521,11 +4521,18 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       character* NPC = lsqr->GetCharacter();
 
       bool bMoveAway=true;
-      #ifdef FIX_GENETRIX_TELEGLITCH
-        /** g.v. goal is to protect the passage */ //TODO coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
-        if(bMoveAway && dynamic_cast<genetrixvesana*>(NPC)!=NULL)bMoveAway=false;
+      #ifdef FIX_LARGECREATURE_TELEPORT_GLITCH
+        /**
+         * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
+         * using now largecreature check because of this crash stack:
+            area::GetSquare(v2) const //HERE V2 had invalid huge negative values for X and Y
+            largecreature::PutTo(v2)
+            character::PutNear(v2) //TODO some complexer code could be implemented at this method
+            lsquare::KickAnyoneStandingHereAway()
+            game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
+         */
+        if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
       #endif
-      //TODO add other restrictions here, if any
 
       if(bMoveAway)
         lsqr->KickAnyoneStandingHereAway();
