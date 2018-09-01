@@ -1987,8 +1987,9 @@ struct srpForgeItem : public recipe{
       if(!bM){
         ci CI = CIM;
         CI.fUsablePercVol=fPerc;
-        CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
-        CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even)
+        if(!bIsItemContainer)
+          CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
+        CI.bFirstMainMaterIsFilter=false; //wooden things are cheap (resistances, strength etc), so getting mixed into weakest will cause no trouble like losing good meltables (as they arent even), so let user chose any wood
         bM = choseIngredients<stick>(fsM,lVolM, rpd, iCfgM, CI);
       }
     }
