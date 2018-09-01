@@ -347,10 +347,12 @@ void go::Handle()
     SetDirectionFromRoute();
 
   GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
-  GetActor()->GoOn(this);
+  GetActor()->GoOn(this); 
 
-  if(bRouteMode && RouteGoOn.size()==0) //last step
-    Terminate(false);
+  if(GetActor()->GetAction()) //may have been terminated by GoOn()
+    if(bRouteMode) //was route mode
+      if(RouteGoOn.size()==0) //currently is the last step
+        Terminate(false);
 }
 
 void study::Handle()
