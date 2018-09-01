@@ -4521,8 +4521,10 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       character* NPC = lsqr->GetCharacter();
 
       bool bMoveAway=true;
-      /** g.v. goal is to protect the passage */ //TODO coming from above could grant a huge damage strike to kill it, what is a tactical manouver
-      if(bMoveAway && dynamic_cast<genetrixvesana*>(NPC)!=NULL)bMoveAway=false;
+      #ifdef FIX_GENETRIX_TELEGLITCH
+        /** g.v. goal is to protect the passage */ //TODO coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
+        if(bMoveAway && dynamic_cast<genetrixvesana*>(NPC)!=NULL)bMoveAway=false;
+      #endif
       //TODO add other restrictions here, if any
 
       if(bMoveAway)
