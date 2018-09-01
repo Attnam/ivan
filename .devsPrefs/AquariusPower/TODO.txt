@@ -1,5 +1,11 @@
-FIX
+FIX-CRITICAL
+
+FIX-IMPORTANT
 - validate the existance of all generated savegame files, it is stored in the .sav file, would crash if missing so better just promptly look for them...
+- craft fluid extraction should not require a specific previous location to resume
+
+FIX-MINOR
+- by remembering the previously selected entry list, sometimes the wrong savegame is being loaded, not the "apparently" selected one...
 - skeleton dog shouldn't pee...
 - pet with poly ring and polycontrol ring, polymorphing into ghost then into bunny, when back to human will not re-equip
 - deny showitemsunder if lantern is on the wall? (amulet of phasing)
@@ -9,10 +15,12 @@ FIX
 IMPROVEMENTS
 - craft dismantle w/o forge should require dagger and hammer if has any meltable
  - craft test material should allow broken things too
+ - craft if sat on a chair should lower craft time too
 - felist: default remember_selected
 - simple pile equal items on "show items under", ex.: if more than 1, simply draw a tiny + sign with 2 drawn white lines
  - show items under, begin with the last one, unless if showing them all in lines
 - mini map unfold slowly once per frame one dungeon line of squares animation
+ - optionally auto inscribe some map notes like altars, anvil, chair etc
 - remove flag CanBeDestroyed from items that can be crafted? or deny their crafting? or keep as on fumble creates lump?
 - the materials book could be filtered by typing
  - show material Str only if in possession of the materials book
@@ -23,6 +31,7 @@ NEW STUFF
 - draw the current equipped amulet on the player
 - sfx "It smells oddly intelligent here." the good smoke as opposed to "a sinister stench surrounds you" the bad smoke
 
+==================================================================================================================
 DONE:
 - add a lsquare token during detect material to highlight the square, the guessed luminance fails at daylight 13:02h
 - quick swap weapons hotkey, to also reequip after mining interrupted

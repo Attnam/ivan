@@ -257,7 +257,7 @@ void felist::UpdateFilterDesc()
     }
   }
   if(!bFound && !Filter.IsEmpty())
-    AddDescription(fsD,WHITE);
+    AddDescription(fsD,YELLOW);
 }
 
 void felist::ApplyFilter()
