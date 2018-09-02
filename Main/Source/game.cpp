@@ -1284,6 +1284,8 @@ col16 colMapNoteBkg;
 int iNoteHighlight=-1;
 lsquare* game::GetHighlightedMapNoteLSquare()
 {DBGLN;
+  if(!bDrawMapOverlayEnabled)return NULL;
+  if(!bShowMapNotes)return NULL;
   if(iNoteHighlight==-1)return NULL;DBGLN;
   if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
   return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
@@ -3964,9 +3966,34 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   if(Handler)
     Handler(CursorPos);
 
+  bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
+  
+  /**
+   * using the min millis value grants mouse will be updated most often possible
+   * default key -1 just to be ignored
+   */
+  if(bMapNotesMode)
+    globalwindowhandler::SetKeyTimeout(100,-1); 
+  
   bPositionQuestionMode=true;
+  v2 v2PreviousClick=v2(0,0);
   for(;;)
   {
+    if(bMapNotesMode){
+      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
+      if(lsqrMapNote){
+        mouseclick mc = globalwindowhandler::ConsumeMouseEvent();
+        if(mc.btn==1){
+          CursorPos = lsqrMapNote->GetPos();
+          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
+            Return = CursorPos;
+            break;
+          }
+          v2PreviousClick = CursorPos;
+        }
+      }
+    }
+    
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
     if(!Square->HasBeenSeen()
@@ -4044,6 +4071,9 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     }
   }
 
+  if(bMapNotesMode)
+    globalwindowhandler::ResetKeyTimeout();
+  
   return Return;
 }
 

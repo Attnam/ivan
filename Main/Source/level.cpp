@@ -3003,7 +3003,8 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 
         iMultDist=2;
         if(iDist <= lMaxDist*iMultDist) //ground view limit
-          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475))bTryReveal=true; // 0.475 is  based on tests with lantern
+          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475)) // 0.475 is  based on tests with lantern
+            bTryReveal=true; 
       }
 
       if(bTryReveal){

@@ -1528,6 +1528,12 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
 {
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
 
+  bool bChoseLocationMode = pv2ChoseLocation!=NULL;
+  
+  if(bChoseLocationMode)
+    if(!game::ToggleShowMapNotes())
+      game::ToggleShowMapNotes();
+  
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
       lsquare* lsqrH=NULL;
@@ -1535,10 +1541,10 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
         v2 noteAddPos = Char->GetPos();
 
         int key;
-        if(pv2ChoseLocation!=NULL)
+        if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete."),
+          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, *(e)dit/add, *(l)ook mode, (r)otate, *(d)elete (* accepts mouse)."),
             KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
 
         switch(key){
@@ -1574,8 +1580,10 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
                 start=Char->GetPos();
 
               noteAddPos = game::PositionQuestion(fsMsg, start, NULL, NULL, true); DBGSV2(noteAddPos);
-              if(noteAddPos==ERROR_V2)
-                continue;
+              if(noteAddPos==ERROR_V2){
+                game::ToggleDrawMapOverlay();
+                return false; //continue;
+              }
               if(pv2ChoseLocation!=NULL){
                 (*pv2ChoseLocation)=noteAddPos;
                 game::ToggleDrawMapOverlay();
