@@ -22,6 +22,7 @@
 #include "save.h"
 #include "stack.h"
 #include "whandler.h"
+#include "bugworkaround.h"
 
 stringoption ivanconfig::DefaultName(     "DefaultName",
                                           "player's default name",
@@ -128,18 +129,6 @@ truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
 truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
                                           "allow distant lights to be seen",
                                           true);
-truthoption ivanconfig::SavegameSafely(   "SavegameSafely",
-                                          "Safely save games",
-                                          true,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &SavegameSafelyChanger);
-truthoption ivanconfig::GenerateDefinesValidator("GenerateDefinesValidator",
-                                          "generate validator and validate define.dat (may abort)",
-                                          false,
-                                          &configsystem::NormalTruthDisplayer,
-                                          &configsystem::NormalTruthChangeInterface,
-                                          &GenerateDefinesValidatorChanger);
 truthoption ivanconfig::HideWeirdHitAnimationsThatLookLikeMiss("HideWeirdHitAnimationsThatLookLikeMiss",
                                           "Hide hit animations that look like miss",
                                           true);
@@ -186,10 +175,6 @@ cycleoption ivanconfig::DungeonGfxScale(  "DungeonGfxScale",
                                           &DungeonGfxScaleDisplayer,
                                           &DungeonGfxScaleChangeInterface,
                                           &DungeonGfxScaleChanger);
-cycleoption ivanconfig::BugWorkaroundDupPlayer("BugWorkaroundDupPlayer",
-                                          "BugFix missing/DUP player (experimental/slow)",
-                                          0, 4,
-                                          &BugWorkaroundDupPlayerDisplayer);
 cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           "* Select font",
                                           1, 3, //from 1 to 3 (three options available)
@@ -197,7 +182,7 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChangeInterface,
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
-                                          "Magicshrooms active AI max dist in squares,sugg.8", //TODO we need an integrated detailed help popup
+                                          "Magic mushrooms active AI maximum distance in squares (suggested is 8).",
                                           0, 16,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
@@ -805,16 +790,6 @@ void ivanconfig::AltListItemPosDisplayer(const cycleoption* O, festring& Entry)
   }
 }
 
-void ivanconfig::BugWorkaroundDupPlayerDisplayer(const cycleoption* O, festring& Entry)
-{
-  switch(O->Value){
-  case 0: Entry << "disabled";break;
-  case 1: Entry << "missing only";break;
-  case 2: Entry << "prefer old player";break;
-  case 3: Entry << "prefer new player";break;
-  }
-}
-
 void ivanconfig::SaveGameSortModeDisplayer(const cycleoption* O, festring& Entry)
 {
   switch(O->Value){
@@ -864,21 +839,6 @@ void ivanconfig::DungeonGfxScaleChanger(cycleoption* O, long What)
 void ivanconfig::FontGfxChanger(cycleoption* O, long What)
 {
   O->Value = What;
-}
-
-void ivanconfig::GenerateDefinesValidatorChanger(truthoption* O, truth What)
-{
-  if(O!=NULL)O->Value = What;
-
-  if(What)
-    game::GenerateDefinesValidator(true); //TODO make validation (that aborts) optional using cycleoption
-}
-
-void ivanconfig::SavegameSafelyChanger(truthoption* O, truth What)
-{
-  if(O!=NULL)O->Value = What;
-
-  outputfile::SetSafeSaving(What);
 }
 
 void ivanconfig::XBRZScaleChanger(truthoption* O, truth What)
@@ -1043,11 +1003,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&AllowMouseOnFelist);
 
   fsCategory="Advanced/Developer options";
-  configsystem::AddOption(fsCategory,&BugWorkaroundDupPlayer);
   configsystem::AddOption(fsCategory,&AllowImportOldSavegame);
-  configsystem::AddOption(fsCategory,&SavegameSafely);
   configsystem::AddOption(fsCategory,&HideWeirdHitAnimationsThatLookLikeMiss);
-  configsystem::AddOption(fsCategory,&GenerateDefinesValidator);
 
   /********************************
    * LOAD AND APPLY some SETTINGS *
@@ -1074,7 +1031,6 @@ void ivanconfig::Initialize()
   FrameSkipChanger(NULL,FrameSkip.Value);
   StackListPageLengthChanger(NULL, StackListPageLength.Value);
   SaveGameSortModeChanger(NULL, SaveGameSortMode.Value);
-  SavegameSafelyChanger(NULL, SavegameSafely.Value);
   SelectedBkgColorChanger(NULL, SelectedBkgColor.Value);
   AllowMouseOnFelistChanger(NULL, AllowMouseOnFelist.Value);
 }

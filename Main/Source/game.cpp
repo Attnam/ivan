@@ -40,6 +40,7 @@
 #include "bugworkaround.h"
 #include "confdef.h"
 #include "command.h"
+#include "definesvalidator.h"
 #include "feio.h"
 #include "felist.h"
 #include "fetime.h"
@@ -54,6 +55,7 @@
 #include "materias.h"
 #include "message.h"
 #include "miscitem.h"
+#include "namegen.h"
 #include "nonhuman.h"
 #include "pool.h"
 #include "proto.h"
@@ -66,11 +68,9 @@
 #include "whandler.h"
 #include "wsquare.h"
 
-#include "namegen.h"
-
 #include "dbgmsgproj.h"
 
-#define SAVE_FILE_VERSION 132 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 133 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 118 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
@@ -231,14 +231,24 @@ int game::iCurrentDungeonTurn=-1;
 
 int CurrentSavefileVersion=-1;
 
-int game::GetCurrentSavefileVersion(){
+/**
+ * IMPORTANT!!!
+ * this is intended to be called only from Load() and NEVER on Save()!
+ * TODO OS independent backtrace function call name check?
+ */
+int game::GetCurrentSavefileVersion()
+{
   if(CurrentSavefileVersion==-1)
     ABORT("no savegame loaded yet..."); //just means wrong usage of this method...
 
   return CurrentSavefileVersion;
 }
 
-int  game::GetSaveFileVersion(){return SAVE_FILE_VERSION;}
+/**
+ * BEWARE!!!
+ * should only be called once at main(), you probably want GetCurrentSavefileVersion() instead!
+ */
+int  game::GetSaveFileVersionHardcoded(){return SAVE_FILE_VERSION;}
 
 void game::SetIsRunning(truth What) { Running = What; }
 
@@ -293,13 +303,17 @@ void game::RemoveItemID(ulong ID)
 {
   if(ID){
     DBG2("Erasing:ItemID",ID);
-//    if(ID==20957)DBGSTK;//temp test case debug
-    DBGEXEC(
-      if(SearchItem(ID)==NULL){
-        DBG2("AlreadyErased:ItemID",ID); //TODO ABORT?
-        DBGSTK;
-      }
-    );
+
+    //TODO if the search affects performance, make this optional
+    if(SearchItem(ID)==NULL){
+      /**
+       * This happens when the duplicated player bug happens!
+       * so it will try to erase the item 2 times and CRASH on the second,
+       * therefore the abort is appropriate.
+       */
+      ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+    }
+
     ItemIDMap.erase(ItemIDMap.find(ID));
     DBG2("ERASED!:ItemID",ID);
   }
@@ -836,7 +850,8 @@ truth game::Init(cfestring& loadBaseName)
       GameBegan = time(0);
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
-      commandsystem::ClearSwapWeapons();
+      commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
+//TODO      craftcore::SetSuspended(NULL); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -3310,6 +3325,7 @@ truth game::Save(cfestring& SaveName)
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
+//TODO  craftcore::Save(SaveFile);
 
   return true;
 }
@@ -3392,10 +3408,7 @@ int game::Load(cfestring& saveName)
 
   v2 Pos;
   SaveFile >> Pos >> PlayerName;
-  character* CharAtPos = GetCurrentArea()->GetSquare(Pos)->GetCharacter();
-  if(CharAtPos==NULL || !CharAtPos->IsPlayer())
-    ABORT("Player not found! If there are backup files, try the 'restore backup' option.");
-  SetPlayer( bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(CharAtPos,Pos) ); DBG3(CharAtPos,Player,DBGAV2(Pos));
+  SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentArea()->GetSquare(Pos)));
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
@@ -3405,8 +3418,10 @@ int game::Load(cfestring& saveName)
   LastLoad = time(0);
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
-  if(game::GetSaveFileVersion()>=132)
-    commandsystem::LoadSwapWeapons(SaveFile);
+  commandsystem::LoadSwapWeapons(SaveFile);
+//TODO  craftcore::Load(SaveFile);
+
+  ///////////////// loading ended ////////////////
 
   UpdateCamera();
 
@@ -4028,8 +4043,16 @@ void game::CreateBusyAnimationCache()
   }
 }
 
+bool bQuestionMode=false;
+bool game::IsQuestionMode()
+{
+  return bQuestionMode || bPositionQuestionMode;
+}
+
 int game::AskForKeyPress(cfestring& Topic)
 {
+  bQuestionMode=true;
+
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, v2(16, 8), WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
@@ -4041,6 +4064,8 @@ int game::AskForKeyPress(cfestring& Topic)
   #endif
 
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Key;
 }
 
@@ -4245,89 +4270,6 @@ truth game::AnimationController()
   return true;
 }
 
-//static void DefinesValidatorAppend(std::string s);
-//static void DefinesValidatorTop();
-//static void DefinesValidatorAppendCode(std::string s);
-std::ofstream DefinesValidator;
-void DefinesValidatorAppend(std::string s)
-{
-  static std::stringstream ssValidateLine;ssValidateLine.str(std::string());ssValidateLine.clear(); //actually clear/empty it = ""
-
-  ssValidateLine << s << std::endl;
-
-  static bool bDummyInit = [](){
-    DefinesValidator.open(
-        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
-        std::ios::binary);
-    return true;}();
-
-  DefinesValidator.write(ssValidateLine.str().c_str(),ssValidateLine.str().length());
-}
-void DefinesValidatorTop()
-{
-  DefinesValidatorAppend("/****");
-  DefinesValidatorAppend(" * AUTO-GENERATED CODE FILE, DO NOT MODIFY as modifications will be overwritten !!!");
-  DefinesValidatorAppend(" *");
-  DefinesValidatorAppend(" * After it is generated, update the one at source code path with it and");
-  DefinesValidatorAppend(" * recompile so the results on the abort message (if happens) will be updated !!!");
-  DefinesValidatorAppend(" */");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#ifndef _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("#define _DEFINESVALIDATOR_H_");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("class definesvalidator{ public: static void Validate() {");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  std::stringstream ssErrors;");
-  DefinesValidatorAppend("  std::bitset<32> bsA, bsB;");
-  DefinesValidatorAppend("");
-}
-void DefinesValidatorAppendCode(std::string sDefineId, long valueReadFromDatFile)
-{
-  static std::stringstream ssMsg;ssMsg.str(std::string());ssMsg.clear(); //actually clear/empty it = ""
-
-  ssMsg << "\"Defined " << sDefineId << " with value " << valueReadFromDatFile << " from .dat file " <<
-    "mismatches hardcoded c++ define value of \" << " << sDefineId << " << \"!\"";
-
-
-  static std::stringstream ssCode;ssCode.str(std::string());ssCode.clear(); //actually clear/empty it = ""
-
-//  "  if( " << valueReadFromDatFile << " != ((ulong)" << sDefineId << ") ) // DO NOT MODIFY!" << std::endl <<
-  ssCode <<
-    "  " << std::endl <<
-    "#ifdef " << sDefineId << " // DO NOT MODIFY!" << std::endl <<
-    "  bsA = " << valueReadFromDatFile << ";" << std::endl <<
-    "  bsB = " << sDefineId << ";" << std::endl <<
-    "  if(bsA!=bsB)" << std::endl <<
-    "    ssErrors << " << ssMsg.str() << " << std::endl;" << std::endl <<
-    "#endif " << std::endl;
-
-
-  DefinesValidatorAppend(ssCode.str());
-}
-void DefinesValidatorClose(){
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("  if(ssErrors.str().length() > 0) ABORT(ssErrors.str().c_str());");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("}};");
-  DefinesValidatorAppend("");
-  DefinesValidatorAppend("#endif // _DEFINESVALIDATOR_H_");
-
-  DefinesValidator.close();
-}
-#include "definesvalidator.h" //tip: 1st run this was commented
-void game::GenerateDefinesValidator(bool bValidade)
-{
-  DefinesValidatorTop();
-
-  for(const valuemap::value_type& p : GlobalValueMap)
-    DefinesValidatorAppendCode(p.first.CStr(), p.second);
-
-  DefinesValidatorClose();
-
-  if(bValidade)
-    definesvalidator::Validate(); //tip: 1st run this was commented
-}
-
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetDataDir() + "Script/define.dat", &GlobalValueMap);
@@ -4353,6 +4295,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Displacement, Color, GKey, Fade, BitmapEditor);
   globalwindowhandler::EnableControlLoops();
+  //TODO need?  graphics::SetAllowStretchedBlit();
+  //TODO useful or messy?  graphics::BlitDBToScreen();
 }
 
 /* ... all the keys that are acceptable
@@ -4362,6 +4306,8 @@ void game::TextScreen(cfestring& Text, v2 Displacement, col16 Color,
 
 int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
+  bQuestionMode=true;
+
   int* Key = new int[KeyNumber];
   va_list Arguments;
   va_start(Arguments, KeyNumber);
@@ -4392,6 +4338,8 @@ int game::KeyQuestion(cfestring& Message, int DefaultAnswer, int KeyNumber, ...)
 
   delete [] Key;
   igraph::BlitBackGround(v2(16, 6), v2(GetMaxScreenXSize() << 4, 23));
+
+  bQuestionMode=false;
   return Return;
 }
 
@@ -4457,6 +4405,8 @@ v2 game::NameKeyHandler(v2 CursorPos, int Key)
 
 void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 {
+  game::SRegionAroundDisable();
+
   if(!Permanently)
     game::Save();
 
@@ -4699,15 +4649,32 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
     if(Player)
     {
-      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+      lsquare* lsqr = GetCurrentLevel()->GetLSquare(Pos);
+      character* NPC = lsqr->GetCharacter();
+
+      bool bMoveAway=true;
+      #ifdef FIX_LARGECREATURE_TELEPORT_GLITCH
+        /**
+         * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
+         * using now largecreature check because of this crash stack:
+            area::GetSquare(v2) const //HERE V2 had invalid huge negative values for X and Y
+            largecreature::PutTo(v2)
+            character::PutNear(v2) //TODO some complexer code could be implemented at this method
+            lsquare::KickAnyoneStandingHereAway()
+            game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
+         */
+        if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
+      #endif
+
+      if(bMoveAway)
+        lsqr->KickAnyoneStandingHereAway();
+
       Player->PutToOrNear(Pos);
     }
     else
     {
-      SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+      SetPlayer(bugfixdp::ValidatePlayerAt(GetCurrentLevel()->GetLSquare(Pos)));
     }
-
-    bugWorkaroundDupPlayer::BugWorkaroundDupPlayer(Player,Pos);
 
     uint c;
 
@@ -4825,7 +4792,7 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     iY=v2TopLeft.Y-3;
   }
 
-  int iItemW=bldListItemTMP.Border.X*bldListItemTMP.Stretch;
+  int iItemW = bldListItemTMP.Border.X * bldListItemTMP.Stretch;
   if(bAltItemPos){
     iX += area::getOutlineThickness()*2; //to leave some space to alt item outline
     iX += iItemW;
@@ -4838,9 +4805,11 @@ void prepareList(felist& rList, v2& v2TopLeft, int& iW){
     //cant be so automatic... or user wants alt or default position... //if(bAltItemPos){iW+=iItemW;}
   }
 
-  v2TopLeft=v2(iX,iY);
+  v2TopLeft=v2(iX,iY); DBGSV2(v2TopLeft);
 
   graphics::SetSpecialListItemAltPos(bAltItemPos);
+  if(bAltItemPos)
+    felist::SetListItemAltPosMinY(area::getTopLeftCorner().Y);
 }
 
 int prepareListWidth(int iW){
@@ -5060,6 +5029,35 @@ character* game::SearchCharacter(ulong ID)
 {
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
+}
+
+std::vector<character*> game::GetAllCharacters()
+{
+  std::vector<character*> vc;
+  for(int i=0;i<CharacterIDMap.size();i++){
+    if(CharacterIDMap[i]!=NULL)
+      vc.push_back(CharacterIDMap[i]);
+  }
+  return vc;
+}
+
+characteridmap game::GetCharacterIDMapCopy()
+{
+  return CharacterIDMap;
+}
+
+std::vector<item*> game::GetAllItems()
+{
+  std::vector<item*> vc;
+  for(int i=0;i<ItemIDMap.size();i++){
+    if(ItemIDMap[i]!=NULL)
+      vc.push_back(ItemIDMap[i]);
+  }
+  return vc;
+}
+itemidmap game::GetItemIDMapCopy()
+{
+  return ItemIDMap;
 }
 
 item* game::SearchItem(ulong ID)

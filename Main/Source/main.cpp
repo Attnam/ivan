@@ -27,6 +27,8 @@
 
 #include "game.h"
 #include "database.h"
+#include "definesvalidator.h"
+#include "devcons.h"
 #include "feio.h"
 #include "igraph.h"
 #include "iconf.h"
@@ -34,11 +36,14 @@
 #include "hscore.h"
 #include "graphics.h"
 #include "script.h"
+#include "specialkeys.h"
 #include "message.h"
 #include "proto.h"
 #include "audio.h"
 
 #include "dbgmsgproj.h"
+
+#include "bugworkaround.h"
 
 #ifndef WIN32
 void CrashHandler(int Signal)
@@ -97,6 +102,10 @@ int main(int argc, char** argv)
   game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   globalwindowhandler::SetScrshotDirectory(game::GetScrshotDir());
+  specialkeys::init();
+  bugfixdp::init();
+  devcons::Init();
+  definesvalidator::init();
   msgsystem::Init();
   protosystem::Initialize();
   igraph::LoadMenu();
@@ -140,7 +149,7 @@ int main(int argc, char** argv)
      case 1:
       {
         iosystem::SetSkipSeekSave(&SkipGameScript);
-        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersion(), ivanconfig::IsAllowImportOldSavegame());
+        festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir(), game::GetSaveFileVersionHardcoded(), ivanconfig::IsAllowImportOldSavegame());
 
         if(LoadName.GetSize())
         {

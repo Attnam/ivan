@@ -2157,7 +2157,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   SaveLinkedList(SaveFile, TrapData);
-  SaveFile << Action;
+  SaveFile << Action; DBG1(Action);
 
   for(c = 0; c < STATES; ++c)
     SaveFile << TemporaryStateCounter[c];

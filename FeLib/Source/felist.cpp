@@ -12,13 +12,17 @@
 
 #include <fstream>
 #include <bitset>
+#include <algorithm>
+#include <sstream>
 
+#include "feio.h"
 #include "felist.h"
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
 #include "rawbit.h"
 #include "save.h"
+#include "specialkeys.h"
 #include "festring.h"
 #include "dbgmsgproj.h"
 
@@ -30,6 +34,12 @@ v2 felist::v2DefaultEntryImageSize=v2(0,0);
 
 truth felist::isAnyFelistCurrentlyDrawn(){
   return FelistCurrentlyDrawn!=NULL;
+}
+
+int ListItemAltPosBackgroundMinY=0;
+void felist::SetListItemAltPosMinY(int iY)
+{
+  ListItemAltPosBackgroundMinY=iY;
 }
 
 bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
@@ -45,7 +55,8 @@ bool felist::PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg){
   // scaled up item pos
   rB.Dest.X=FelistCurrentlyDrawn->v2OriginalPos.X;//B.Dest.X=5;
   rB.Dest.Y=rB.Src.Y - v2ItemFinalSize.Y/2;
-  if(rB.Dest.Y<0)rB.Dest.Y=0;
+  if(rB.Dest.Y<ListItemAltPosBackgroundMinY)
+    rB.Dest.Y=ListItemAltPosBackgroundMinY; //to not hide stuff above it
 
   // full background where all items will be drawn above it
   if(bAltPosFullBkg){
@@ -81,12 +92,13 @@ struct felistentry
   uint Marginal;
   uint ImageKey;
   truth Selectable;
+  festring Help;
 };
 
 felistentry::felistentry(cfestring& String, col16 Color,
                          uint Marginal, uint ImageKey, truth Selectable)
 : String(String), Color(Color), Marginal(Marginal),
-  ImageKey(ImageKey), Selectable(Selectable)
+  ImageKey(ImageKey), Selectable(Selectable), Help("")
 {
 }
 
@@ -115,8 +127,9 @@ struct felistdescription
 };
 
 felist::felist(cfestring& Topic, col16 TopicColor, uint Maximum)
-: Maximum(Maximum), Selected(0), Pos(10, 10), Width(780),
-  PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), FirstDrawNoFade(false),
+: Maximum(Maximum), Selected(0), bJustRestoreEntries(false),
+  Pos(10, 32), //y=32 gum to let filter be nicely readable always
+  Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), FirstDrawNoFade(false),
   UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0), v2FinalPageSize(0,0)
 {
   AddDescription(Topic, TopicColor);
@@ -175,9 +188,123 @@ void felist::SetAllowMouse(bool b)
   bAllowMouseSelect=b;
 }
 
+uint felist::ScrollToLastPage(bool& JustRedrawEverythingOnce,bitmap& BackGround,bitmap* Buffer)
+{
+  Selected=0;
+
+  for(uint c = 0; c < Entry.size(); ++c)
+    if(Entry[c]->Selectable)
+      ++Selected;
+
+  --Selected;
+
+  uint pb = Selected - Selected % PageLength;
+  if(PageBegin == pb)
+    JustRedrawEverythingOnce = true;
+  else
+    BackGround.FastBlit(Buffer);
+
+  return pb;
+}
+
+felistentry* RetrieveSelectableEntry(std::vector<felistentry*> Entry,uint Selected){
+  uint iSel=0;
+  for(uint i=0;i<Entry.size();i++){
+    if(!Entry[i]->Selectable)continue;
+
+    if(iSel==Selected)
+      return Entry[i];
+
+    iSel++;
+  }
+  return NULL;
+}
+
+typedef std::map<festring,festring> filtermap;
+filtermap FilterMap;
+
+festring felist::GetFilter()
+{
+  festring key = Description[0]->String;
+  filtermap::iterator Iterator = FilterMap.find(key);
+  return Iterator != FilterMap.end() ? Iterator->second : "";
+}
+
+void felist::SetFilter(festring Filter)
+{
+  festring key = Description[0]->String;
+  filtermap::iterator iter = FilterMap.find(key);
+  if(iter!=FilterMap.end())
+    FilterMap.erase(iter);
+  FilterMap.insert(std::make_pair(key,Filter));
+}
+
+void felist::UpdateFilterDesc()
+{
+  festring Filter=GetFilter();
+
+  static festring fsF="[Filter '";
+  festring fsD = fsF+Filter+"']";
+  bool bFound=false;
+  for(int i=0;i<Description.size();i++){
+    if(std::string(Description[i]->String.CStr()).substr(0,fsF.GetSize())==fsF.CStr()){
+      if(Filter.IsEmpty())
+        Description.erase(Description.begin()+i);
+      else
+        Description[i]->String = fsD;
+      bFound=true;
+      break;
+    }
+  }
+  if(!bFound && !Filter.IsEmpty())
+    AddDescription(fsD,YELLOW);
+}
+
+void felist::ApplyFilter()
+{
+  festring Filter=GetFilter();
+
+  UpdateFilterDesc();
+
+  if(!Filter.IsEmpty()){
+    Entry.clear();
+    std::string sFilter=Filter.CStr();DBG1(sFilter);
+    std::transform(sFilter.begin(), sFilter.end(), sFilter.begin(), ::tolower);
+    std::string str;
+    for(int i=0;i<EntryBkp.size();i++){ //case insensitive
+      if(!EntryBkp[i]->Selectable)continue;
+
+      str = EntryBkp[i]->String.CStr();
+      std::transform(str.begin(), str.end(), str.begin(), ::tolower); DBG1(str);
+      if(str.find(sFilter)!=std::string::npos)
+        Entry.push_back(EntryBkp[i]);
+    }
+    DBG3(Filter.CStr(),EntryBkp.size(),Entry.size());
+    if(Entry.empty()){ //filter was invalid
+      Entry=EntryBkp;
+      SetFilter("");
+      UpdateFilterDesc();
+    }
+  }else{
+    if(EntryBkp.size()>0)
+      Entry=EntryBkp;
+  }
+}
+
+void felist::PrepareToReturn()
+{
+  UpdateFilterDesc();
+  Entry=EntryBkp; //to be ready to proper felist::Empty() with deletion
+  EntryBkp.clear();
+}
+
 uint felist::Draw()
 {
-  uint FlagsChk = Flags;
+  EntryBkp=Entry;
+
+  specialkeys::ClearRequest();
+
+  ApplyFilter();
 
   if(Flags & SELECTABLE){
     if(PageLength > 26)PageLength=26; //constraint limit from aA to zZ as there is no coded support beyond these keys anyways...
@@ -190,7 +317,7 @@ uint felist::Draw()
          * But this is still a dumb guesser, because it considers all entries will have images.
          *
          * The difficulty is because having a fixed page length, even if the contents of each page may differ,
-         * we are unable to precisely calculate how many entries will fit on each page.
+         * we are unable to precisely calculate how many entries will fit on each page. TODO right?
          *
          * So, opting for the worst case (all are images) is the safest option.
          */
@@ -198,6 +325,76 @@ uint felist::Draw()
         break;
       }
   }
+
+  for(;;){
+    bool bJustExitTheList=false;
+    uint Return = DrawFiltered(bJustExitTheList);
+    if(bJustExitTheList){
+      PrepareToReturn();
+      return Return;
+    }
+
+    if(Return == ESCAPED || Return == LIST_WAS_EMPTY){ //TODO FELIST_ERROR_BIT?
+      PrepareToReturn();
+      return Return;
+    }
+
+    if(Return == NOTHING_SELECTED){ //special condition if has filter
+      if(!GetFilter().IsEmpty()){
+        ApplyFilter();
+        continue;
+      }else{
+        if(bJustRestoreEntries){
+          UpdateFilterDesc();
+          Entry=EntryBkp;
+          continue;
+        }else{
+          PrepareToReturn();
+          return NOTHING_SELECTED;
+        }
+      }
+    }
+
+    ////////////////////////// something was chosen ///////////////////////
+    DBG3(Return,Entry.size(),EntryBkp.size());
+    if(!GetFilter().IsEmpty()){
+      /**
+       * the filtered index differs from the original index...
+       * the matching key will be the entry description/text
+       */
+
+      felistentry* fleR = Entry[Return];
+
+      int iSelB=0;
+      for(int i=0;i<EntryBkp.size();i++){ DBG3(i,iSelB,EntryBkp[i]->String.CStr());
+        if(!EntryBkp[i]->Selectable)continue;
+
+        if(EntryBkp[i]->String==fleR->String){ //TODO  there may have 2 items with identical descriptions tho... but user wouldnt be able to distinguish either right?
+          Return = iSelB; DBG1(Return);
+          break;
+        }
+
+        iSelB++;
+      }
+    }
+
+    PrepareToReturn();
+    return Return;
+  }
+
+  PrepareToReturn();
+  return NOTHING_SELECTED; //currently never reached, safe dummy tho
+}
+
+void felist::ClearFilter()
+{
+  SetFilter("");
+  ApplyFilter();
+}
+
+uint felist::DrawFiltered(bool& bJustExitTheList)
+{
+  uint FlagsChk = Flags;
 
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
@@ -229,7 +426,7 @@ uint felist::Draw()
 
   uint c;
   uint Return, Selectables = 0;
-  truth JustSelectMoveOnce = false;
+  truth JustRedrawEverythingOnce = false;
 
   for(c = 0; c < Entry.size(); ++c)
     if(Entry[c]->Selectable)
@@ -245,7 +442,6 @@ uint felist::Draw()
   else
     PageBegin = 0;
 
-  bool bSafeScrollToEnd=false; //page per page
   bool bWaitKeyUp=false;
   bool bClearKeyBufferOnce=false;
   bool bInvM = Flags & INVERSE_MODE;
@@ -253,6 +449,9 @@ uint felist::Draw()
   v2 v2MousePosPrevious=globalwindowhandler::GetMouseLocation();
   globalwindowhandler::ConsumeMouseEvent(); //this call is important to clear the last mouse action outside felist
   int iDrawCount=0;
+  festring Filter=GetFilter();
+  festring fsFilterApplyNew=Filter;
+  bool bApplyNewFilter=false;
   for(;;)
   {
     if(FlagsChk != Flags)ABORT("flags changed during felist draw %s %s",std::bitset<16>(FlagsChk).to_string().c_str(), std::bitset<16>(Flags).to_string().c_str());
@@ -261,21 +460,21 @@ uint felist::Draw()
     truth LastEntryVisible = DrawPage(Buffer,&v2FinalPageSize,&vEntryRect);DBGLN;
 
     if(FirstDrawNoFade && iDrawCount == 0){
-      JustSelectMoveOnce=true;
+      JustRedrawEverythingOnce=true;
     }
     iDrawCount++;
 
     if(Flags & FADE)
     {DBGLN;
-      if(JustSelectMoveOnce)
+      if(JustRedrawEverythingOnce)
       {DBGLN;
         Buffer->FastBlit(DOUBLE_BUFFER);
         graphics::BlitDBToScreen();
       }else{DBGLN;
-        Buffer->FadeToScreen();
+        Buffer->FadeToScreen();DBGLN;
       }
 
-      JustSelectMoveOnce = false;
+      JustRedrawEverythingOnce = false;
     }else{DBGLN;
       if(Buffer != DOUBLE_BUFFER)ABORT("felist non-fade Buffer != DOUBLE_BUFFER");
       graphics::BlitDBToScreen();
@@ -292,17 +491,58 @@ uint felist::Draw()
     bool bLeftMouseButtonClick=false;
     bool bMouseButtonClick=false;
     bool bJustRefreshOnce=false;
-    if(bSafeScrollToEnd)
-      Pressed = bInvM ? KEY_PAGE_UP : KEY_PAGE_DOWN;
 
     for(;;){
       /**
        * every section here may break the loop and they are prioritized
        */
 
-      ////////////////////////////// scroll to end by-pass
-      if(bSafeScrollToEnd)
+      if(
+          specialkeys::ConsumeEvent(specialkeys::Filter,fsFilterApplyNew)
+          ||
+          specialkeys::ConsumeEvent(specialkeys::ClearStringInput,fsFilterApplyNew)
+      ){
+        if(Filter != fsFilterApplyNew){DBGLN;
+          if(fsFilterApplyNew.IsEmpty())
+            bJustRestoreEntries=true;
+          bApplyNewFilter=true;
+        }else{
+          bJustRefreshOnce=true;
+        }
         break;
+      }else
+      if(specialkeys::IsRequestedEvent(specialkeys::CopyToClipboard)){
+        if(Flags & SELECTABLE){
+          felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
+          if(fle!=NULL)
+            specialkeys::ConsumeEvent(specialkeys::CopyToClipboard,fle->String);
+        }else{
+          specialkeys::ClearRequest();
+        }
+        //TODO copy the entiry list if not selectable? nah...?
+      }else
+      if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+        festring fs;
+        felistentry* fle = RetrieveSelectableEntry(Entry,Selected);
+        if(fle!=NULL){
+          if(!fle->Help.IsEmpty())
+            fs<<fle->Help<<"\n";
+          else
+            fs<<fle->String<<"\n";
+          fs<<"\n";
+        }
+        fs<<
+          "[List Help:]\n"
+          " F1 - show this message\n"
+          " Ctrl+F - filter entries\n"
+          " Ctrl+DEL - clear filter\n"
+          " Home/End/PageUp/PageDown - navigate thru pages\n"
+          " ESC - exit the list\n"
+          " SPACE - continue (next page or exit if at last one)\n";
+        specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fs);
+        bJustRefreshOnce=true;
+        break;
+      }
 
       /////////////////////////////////////////// MOUSE ///////////////////////////////////////
       v2 v2MousePos = globalwindowhandler::GetMouseLocation();
@@ -358,7 +598,7 @@ uint felist::Draw()
         if(bSelChanged){
           Selected = iSel; DBG1(iSel);
           bJustRefreshOnce=true;
-          JustSelectMoveOnce=true;
+          JustRedrawEverythingOnce=true;
           break;
         }
       }
@@ -371,13 +611,22 @@ uint felist::Draw()
       if(bClearKeyBufferOnce){
         bClearKeyBuffer=true;
         bClearKeyBufferOnce=false;
-      }
-      Pressed = GET_KEY(bClearKeyBuffer);DBG1(Pressed); //see iTimeoutMillis above
+      }DBGLN;
+      Pressed = GET_KEY(bClearKeyBuffer);DBG2(Pressed,DefaultAnswer); //see iTimeoutMillis above
+//      if(specialkeys::HasEvent()){DBGLN;
+//        bJustRefreshOnce=true;
+//        break;
+//      }
       if(Pressed!=DefaultAnswer)
         break;
-
     }
     DBGLN;
+
+    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
+    {
+      Return = ESCAPED;
+      break;
+    }
 
 //    if(bMouseHovering && !bMouseButtonClick)
     if(bJustRefreshOnce)
@@ -413,23 +662,11 @@ uint felist::Draw()
           PageBegin -= PageLength;
         }
         else
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
       }
       else
       {
-        for(c = 0, Selected = 0; c < Entry.size(); ++c)
-          if(Entry[c]->Selectable)
-            ++Selected;
-
-        --Selected;
-
-        if(PageBegin == Selected - Selected % PageLength)
-          JustSelectMoveOnce = true;
-        else
-        {
-          BackGround.FastBlit(Buffer);
-          PageBegin = Selected - Selected % PageLength;
-        }
+        PageBegin = ScrollToLastPage(JustRedrawEverythingOnce, BackGround, Buffer);
       }
 
       if(globalwindowhandler::IsLastSDLkeyEventWasKeyUp())
@@ -450,12 +687,12 @@ uint felist::Draw()
           PageBegin += PageLength;
         }
         else
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
       }
       else
       {
         if(!PageBegin)
-          JustSelectMoveOnce = true;
+          JustRedrawEverythingOnce = true;
         else
           BackGround.FastBlit(Buffer);
 
@@ -476,7 +713,11 @@ uint felist::Draw()
       break;
     }
 
-    if(Pressed == KEY_ESC)
+    if(bApplyNewFilter){DBGLN;
+      break;
+    }
+
+    if(Pressed == KEY_ESC) // this here grants will be preferred over everything else below
     {
       Return = ESCAPED;
       break;
@@ -493,13 +734,14 @@ uint felist::Draw()
     if(!bNav && Pressed == KEY_HOME)bNav=true;
     if(!bNav && Pressed == KEY_END)bNav=true; //TODO ? END key usage is getting complicated, disabled for now:
 
-    if(!bNav) {DBGLN;
-      if(Pressed == KEY_SPACE) //to work stictly as on the help info
-        if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
-          Return = NOTHING_SELECTED;
-          break;
-        }
-    } else {DBGLN;
+    if(Pressed == KEY_SPACE) //to work stictly as on the help info
+      if(bInvM ? PageBegin==0 : LastEntryVisible){DBGLN;
+        bJustExitTheList=true;
+        Return = NOTHING_SELECTED;
+        break;
+      }
+
+    if(bNav) {
       BackGround.FastBlit(Buffer);
 
       int iDir = 1;
@@ -509,22 +751,18 @@ uint felist::Draw()
         iDir *= -1;
 
       int iPB = PageBegin + iDir*PageLength;DBG1(iPB);
-      if(iPB<0) //PageBegin is uint ...
+      if(iPB<0) //BEWARE!!! PageBegin is uint ...
         iPB=0;
 
       /**
        * overriders
        * obs.: pgdn and space are default "advance page" action
        */
-      if(LastEntryVisible && bSafeScrollToEnd){DBGLN;
-        bSafeScrollToEnd=false;
-        Selected = Selectables-1;
-        continue; //do nothing
-      }
 
       if(bInvM ? Pressed == KEY_END : Pressed == KEY_HOME) // go to first
         iPB=0;
 
+      bool bSelLast=false;
       if(bInvM ? Pressed == KEY_HOME : Pressed == KEY_END){DBGLN; // go to last
         if(Entry.size()<=PageLength){DBGLN; //only one page
           Selected = Selectables-1;
@@ -536,23 +774,24 @@ uint felist::Draw()
           continue; //do nothing
         }
 
-        bSafeScrollToEnd=true; // will just page down once, as this is the default action, otherwise should `continue;`
+        DBG6("Before",iPB,Selectables,Selected,PageLength,Entry.size());
+        iPB = ScrollToLastPage(JustRedrawEverythingOnce, BackGround, Buffer); DBG6("After",iPB,Selectables,Selected,PageLength,Entry.size());
+        bSelLast=true;
       }
 
       // fail safe LAST check
-      if(iPB >= Selectables){ DBG3("how it happened?",iPB,Selectables);
+      if(iPB >= Selectables){ DBG6("HowItHappened?",iPB,Selectables,Selected,PageLength,Entry.size());
         continue; //do nothing
       }
 
       // apply
-      PageBegin = iPB;
+      PageBegin = iPB; DBG3(PageBegin,Pressed,iDir);
 
-      DBG3(PageBegin,Pressed,iDir);
-
-      if(Flags & SELECTABLE)
-        Selected = PageBegin;
+      if(!bSelLast)
+        if(Flags & SELECTABLE)
+          Selected = PageBegin;
     }
-  }
+  };DBGLN;
 
   if(!(Flags & FADE))
   {
@@ -579,6 +818,12 @@ uint felist::Draw()
   #endif
 
   globalwindowhandler::ResetKeyTimeout();
+
+  if(bApplyNewFilter){
+    SetFilter(fsFilterApplyNew);
+    return NOTHING_SELECTED;
+  }
+
   return Return;
 }
 
@@ -590,7 +835,7 @@ bool felist::IsEntryDrawingAtValidPos(bitmap* Buffer,v2 pos){
 }
 
 truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRect>* pvEntryRect) const
-{
+{ DBGSV2(Pos);
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   DrawDescription(Buffer);
 
@@ -723,7 +968,7 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
       if(bShowHelp){
         Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-                     "- Press PgUp/PgDn/Home/End or SPACE to continue, ESC to exit -");
+                     "- Press F1 to show help info -");
         LastFillBottom += 30;
       }
       else
@@ -860,6 +1105,11 @@ void felist::AddEntry(cfestring& Str, col16 Color,
     delete Entry[0];
     Entry.erase(Entry.begin());
   }
+}
+
+void felist::SetLastEntryHelp(cfestring Help)
+{
+  Entry[Entry.size()-1]->Help=Help;
 }
 
 void felist::Save(outputfile& SaveFile) const

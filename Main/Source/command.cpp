@@ -15,6 +15,7 @@
 #include "char.h"
 #include "command.h"
 #include "database.h"
+#include "devcons.h"
 #include "felist.h"
 #include "game.h"
 #include "god.h"
@@ -116,7 +117,9 @@ command* commandsystem::Command[] =
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", '`', '`', '`', true),
+  new command(&WizardMode, "wizard mode activation (Ctrl+ to access console commands)", '`', '`', '`', true),
+#else
+  new command(&DevConsCmd, "access console commands", '`', '`', '`', true), //works w/o Ctrl in this case
 #endif
   new command(&Zap, "zap", 'z', 'z', 'z', false),
 
@@ -145,6 +148,14 @@ command* commandsystem::Command[] =
 
   0
 };
+
+#ifndef WIZARD
+truth commandsystem::DevConsCmd(character* Char)
+{
+  devcons::OpenCommandsConsole();
+  return false;
+}
+#endif
 
 truth commandsystem::IsForRegionListItem(int iIndex){ //see code generator helper script prepareCmdsDescrCode.sh (use cygwin)
   cchar* str = Command[iIndex]->GetDescription();
