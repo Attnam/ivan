@@ -41,6 +41,7 @@ class ivanconfig
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
+  static truth IsTransparentMapLM() { return TransparentMapLM.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
@@ -193,6 +194,7 @@ class ivanconfig
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
+  static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
   static truthoption EnhancedLights;
 

@@ -3406,6 +3406,8 @@ void character::GetPlayerCommand()
         {
           bool bWaitNeutralMove=false;
           HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+          if(HasActed)
+            game::CheckAddAutoMapNote();
           if(!HasActed && bWaitNeutralMove){
             //cant access.. HasActed = commandsystem::NOP(this);
             Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?

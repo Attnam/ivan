@@ -46,6 +46,7 @@ class commandsystem
   static void SaveSwapWeapons(outputfile& SaveFile);
   static void LoadSwapWeapons(inputfile& SaveFile);
   static void ClearSwapWeapons();
+  static std::vector<v2> GetRouteGoOnCopy();
  private:
   static truth Apply(character*);
   static truth ApplyWork(character* Char,item* itOverride=NULL);

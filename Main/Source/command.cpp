@@ -25,6 +25,7 @@
 #include "message.h"
 #include "miscitem.h"
 #include "room.h"
+#include "specialkeys.h"
 #include "stack.h"
 #include "team.h"
 #include "whandler.h"
@@ -1040,10 +1041,7 @@ truth commandsystem::WhatToEngrave(character* Char,bool bEngraveMapNote,v2 v2Eng
       }
 
       if(game::StringQuestion(What, CONST_S("Write your map note (optionally position mouse cursor over it before editing):"), WHITE, 0, iLSqrLimit, true) == NORMAL_EXIT){
-        festring finalWhat;
-        finalWhat << game::MapNoteToken();
-        finalWhat << What;
-        lsqrN->Engrave(finalWhat);
+        game::SetMapNote(lsqrN,What);
       }
 
       break;
@@ -1530,6 +1528,13 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
 
   bool bChoseLocationMode = pv2ChoseLocation!=NULL;
   
+  festring fsHelp;fsHelp<<
+    "[Map Help:]\n"
+    " F1 - show this message\n"
+    " Map notes containing '!' or '!!' will be highlighted.\n"
+    " Position mouse cursor over a map note to edit or delete it.\n"
+    " In look mode, clicking on a map note will navigate to that location.\n";
+  
   if(bChoseLocationMode)
     if(!game::ToggleShowMapNotes())
       game::ToggleShowMapNotes();
@@ -1544,9 +1549,14 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
         if(bChoseLocationMode)
           key='l';
         else
-          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, *(e)dit/add, *(l)ook mode, (r)otate, *(d)elete (* accepts mouse)."),
+          key = game::KeyQuestion(CONST_S("Cartography notes action: (t)oggle, (e)dit/add, (l)ook mode, (r)otate, (d)elete. (F1 help)"), //TODO KeyQuestion() should detect F1 and return a default answer, currently F1 will just override any other key press
             KEY_ESC, 5, 't', 'l', 'r', 'd', 'e');
 
+        if(specialkeys::IsRequestedEvent(specialkeys::FocusedElementHelp)){
+          specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fsHelp);
+          continue;
+        }
+        
         switch(key){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
@@ -1619,8 +1629,14 @@ truth commandsystem::Sit(character* Char)
   return (Square->GetOLTerrain() && Square->GetOLTerrain()->SitOn(Char)) || Square->GetGLTerrain()->SitOn(Char);
 }
 
+std::vector<v2> RouteGoOn;
 level* lvlRoute=NULL;
-v2 v2RouteTarget=v2(0,0); //TODO save this?
+v2 v2RouteTarget=v2(0,0); //TODO savegame this?
+
+std::vector<v2> commandsystem::GetRouteGoOnCopy(){
+  return RouteGoOn;
+}
+
 truth commandsystem::Go(character* Char)
 {
   int Dir = DIR_ERROR;
@@ -1644,7 +1660,7 @@ truth commandsystem::Go(character* Char)
   if(Dir == DIR_ERROR)
     return false;
 
-  std::vector<v2> RouteGoOn;
+  RouteGoOn.clear();
   if(Dir == YOURSELF){
     if(v2RouteTarget.Is0())
       if(!ShowMapWork(Char,&v2RouteTarget)){

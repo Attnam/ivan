@@ -366,6 +366,7 @@ class game
   static truth MassacreListsEmpty();
   static void PlayVictoryMusic();
   static void PlayDefeatMusic();
+  static void SetMapNote(lsquare* lsqrN,festring What);
   static bool ToggleDrawMapOverlay();
   static void SetDrawMapOverlay(bool b);
   static void RefreshDrawMapOverlay();
@@ -373,6 +374,7 @@ class game
   static void DrawMapNotesOverlay(bitmap* =NULL);
   static lsquare* GetHighlightedMapNoteLSquare();
   static bool ToggleShowMapNotes();
+  static bool CheckAddAutoMapNote(square* =NULL);
   static int RotateMapNotes();
   static char MapNoteToken();
 
