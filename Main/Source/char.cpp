@@ -11988,6 +11988,28 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
                             BodyPartIndex, YOURSELF, false, false, false);
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
     }
+
+    if(IsPlayer())
+    {
+      action* Action = GetAction();
+
+      if(Action && Action->IsRest() && !Action->InDNDMode()
+         && BodyPartIsVital(BodyPartIndex) && BodyPart->IsBadlyHurt())
+      {
+        ADD_MESSAGE("You're about to die from mustard gas.");
+
+        if(game::TruthQuestion(CONST_S("Mustard gas is dissolving your flesh."
+                                       " Continue resting? [y/N]"),
+                               NO))
+        {
+          Action->Terminate(false);
+        }
+        else
+        {
+          Action->ActivateInDNDMode();
+        }
+      }
+    }
   }
 }
 
