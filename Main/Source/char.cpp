@@ -7118,6 +7118,20 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  
+  festring EntryBP;
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    EntryBP.Empty();
+    if(BodyPart && BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig()){
+      BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
+      EntryBP<<" ";
+    }
+    BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
+    Info.AddEntry(EntryBP, LIGHT_GRAY);
+  }
 
   if(GetAction())
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);
