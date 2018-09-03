@@ -2,11 +2,10 @@ FIX-CRITICAL
 
 FIX-IMPORTANT
 - validate the existance of all generated savegame files, it is stored in the .sav file, would crash if missing so better just promptly look for them...
-- craft fluid extraction should not require a specific previous location to resume
 
 FIX-MINOR
 - by remembering the previously selected entry list, sometimes the wrong savegame is being loaded, not the "apparently" selected one...
-- skeleton dog shouldn't pee...
+- skeleton dog shouldn't pee..., but could say "tries to pee but nothing happens" :)
 - pet with poly ring and polycontrol ring, polymorphing into ghost then into bunny, when back to human will not re-equip
 - deny showitemsunder if lantern is on the wall? (amulet of phasing)
 - when felist is open, still showing tiny dungeon animated behind...
@@ -16,6 +15,7 @@ IMPROVEMENTS
 - craft dismantle w/o forge should require dagger and hammer if has any meltable
  - craft test material should allow broken things too
  - craft if sat on a chair should lower craft time too
+ - craft tools should take damage too, mainly if the worked materials are harder
 - felist: default remember_selected
 - simple pile equal items on "show items under", ex.: if more than 1, simply draw a tiny + sign with 2 drawn white lines
  - show items under, begin with the last one, unless if showing them all in lines
@@ -40,3 +40,4 @@ DONE:
 - make pet look at last 3 squares player walked before waiting
 - sfx for .*hit.* it is matching white :P
 - list item zoom xBRZ, draw the background behind it to make the blending work properly all times!
+- craft fluid extraction should not require a specific previous location to resume
