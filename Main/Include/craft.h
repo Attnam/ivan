@@ -264,8 +264,9 @@ class craftcore {
     static truth IsMeltable(material* matM,material* matS);
     static truth IsMeltable(item* it);
     static bool IsWooden(material* mat);
+    static bool IsBone(material* mat);
 
-    static item* PrepareRemains(recipedata&,material*,bool=false);
+    static item* PrepareRemains(recipedata&,material*,int ForceType=CIT_NONE);
 
     static void AddSuspended(const recipedata& rpd);
     static void RemoveIfSuspended(const recipedata&rpd);
@@ -274,6 +275,12 @@ class craftcore {
     static bool HasSuspended();
 
     static recipedata FindRecipedata(festring fsRpdId);
+    
+    static void CopyDegradation(material* matM,material* matSpM);
+    static void CopyDegradation(item* itFrom,material* matTo);
+    static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
+    
+    static int CitType(item* it);
 };
 
 class crafthandle {
@@ -290,10 +297,6 @@ class crafthandle {
 
     static item* SpawnItem(recipedata& rpd, festring& fsCreated);
     static olterrain* SpawnTerrain(recipedata& rpd, festring& fsCreated);
-
-    static void CopyDegradation(material* matM,material* matSpM);
-    static void CopyDegradation(item* itFrom,material* matTo);
-    static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
 
   public:
     static void CheckEverything(recipedata& rpd, character* Char);
