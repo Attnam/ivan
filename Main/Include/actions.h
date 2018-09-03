@@ -51,12 +51,14 @@ ACTION(consume, action)
   virtual truth AllowFoodConsumption() const { return false; }
   virtual cchar* GetDescription() const;
   virtual void SetDescription(cfestring&);
-  virtual void SetNibbling(truth What) { nibbling = What; }
-  virtual truth IsNibbling() { return nibbling; }
+  virtual void SetNibbling(truth What) { Nibbling = What; }
+  virtual truth IsNibbling() { return Nibbling; }
  protected:
   festring Description;
   ulong ConsumingID;
-  truth nibbling = false;
+  truth Nibbling = false;
+  truth Gulping = false;
+  truth Spoiling = false;
 };
 
 ACTION(rest, action)

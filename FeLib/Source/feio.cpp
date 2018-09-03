@@ -1069,10 +1069,15 @@ festring iosystem::ContinueMenu(col16 TopicColor, col16 ListColor,
          *    Generating a new level is probably bad as it will ignore whatever happened in that level and may create
          *    duplicated items (uniques) and characters (uniques that died) when they should not exist,
          *    may be only for fully random (with non unique things on it) levels such workaround could be used...
+         * 
+         * TODO for file extensions, find the type only at the end, use std::string if easier/clearer to implement
          */
       }else
       if(vFiles[i].fileName.Find(".wm" ) != vFiles[i].fileName.NPos){
         //skipped from the list
+      }else
+      if(vFiles[i].fileName.Find(".tmp" ) != vFiles[i].fileName.NPos){
+        //just ignored
       }else
       if(vFiles[i].fileName.Find(".bkp") != vFiles[i].fileName.NPos){ //skipped from the list
         vBackups.push_back(vFiles[i].absFileName);

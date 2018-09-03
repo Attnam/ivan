@@ -89,14 +89,30 @@ void consume::Handle()
 
   character* Actor = GetActor();
 
-  if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
+  if(!Spoiling && Consuming->GetSpoilLevel() > 0)
+  {
+    if(Actor->IsPlayer())
+    {
+      ADD_MESSAGE("This thing is starting to get spoiled.");
+
+      if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
+        Spoiling = true;
+      else
+      {
+        Terminate(false);
+        return;
+      }
+    }
+  }
+
+  if(!Gulping && Actor->GetHungerState() >= BLOATED)
   {
     if(Actor->IsPlayer())
     {
       ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
       if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
-        ActivateInDNDMode();
+        Gulping = true;
       else
       {
         Terminate(false);
