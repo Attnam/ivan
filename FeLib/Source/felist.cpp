@@ -967,8 +967,11 @@ truth felist::DrawPage(bitmap* Buffer, v2* pv2FinalPageSize, std::vector<EntryRe
       if(bShowAlways)bShowHelp=true;
       if(bShowHelp){
         Buffer->Fill(iTLX, LastFillBottom, iWidth, iHeight=30, BackColor);
+        int iPg = (PageBegin/PageLength)+1;
+        int iPgTot = Entry.size()/PageLength + (Entry.size()%PageLength>0 ? 1 : 0);
+        if(iPgTot==0)iPgTot=1;
         FONT->Printf(Buffer, v2(Pos.X + 13, LastFillBottom + 10), WHITE,
-                     "- Press F1 to show help info -");
+                     "- Page %d/%d (Press F1 to show help info) -",iPg,iPgTot);
         LastFillBottom += 30;
       }
       else
