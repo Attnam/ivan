@@ -28,6 +28,7 @@ The thirdparty components bundled with the IVAN.app are:
 * libpcre.dylib: uses the BSD-3-clause license
 * libpng.dylib: uses the zlib license
 * SDL2.framework and SDL2_mixer.framework: use the zlib license
+* Font2.png: uses the Creative Commons Attribution-ShareAlike 3.0 license
 
 The verbatim copy of their licenses are provided below and they do not conflict
 with the license of Iter Vehemens ad Necem.  Each of them start after the line
@@ -220,3 +221,12 @@ freely, subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
+
+LICENCE of Font2.png
+--------------------
+
+Font2.png was derived from the original work of Neil Roy.
+Both Font2.png and the original work use the same license.
+
+Origin: https://www.allegro.cc/forums/thread/610576
+License: https://creativecommons.org/licenses/by-sa/3.0/legalcode
