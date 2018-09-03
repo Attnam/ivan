@@ -1466,8 +1466,10 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
   }
 
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
-    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
-      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer)){
+      bool bNH = iNoteHighlight==i;
+      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, bNH ? WHITE : ac[i%iTotCol], bNH);
+    }
   }
 
   for(int i=0;i<vMapNotes.size();i++)
