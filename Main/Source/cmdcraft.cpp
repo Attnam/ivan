@@ -14,6 +14,7 @@
 
 #include <typeinfo>
 
+#include "traps.h"
 #include "dbgmsgproj.h"
 
 #include "cmdcraftfilters.cpp"
@@ -633,16 +634,23 @@ struct recipe{
 
   virtual ~recipe(){}
 
-  bool where(recipedata& rpd){
-    int Dir = game::DirectionQuestion("Build it where?", false, false);DBGLN;
-    if(Dir != DIR_ERROR && rpd.rc.H()->GetArea()->IsValidPos(rpd.rc.H()->GetPos() + game::GetMoveVector(Dir)))
-      rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(rpd.rc.H()->GetPos() + game::GetMoveVector(Dir));
-
-    if(rpd.lsqrPlaceAt!=NULL && rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.lsqrPlaceAt->GetCharacter()==NULL){
-      rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
-      rpd.bCanBePlaced=true;
+  bool whereRaw(recipedata& rpd,festring fsMsg,bool acceptSelfLocation=false){
+    int Dir = game::DirectionQuestion(fsMsg, false, acceptSelfLocation);
+    v2 v2W = rpd.rc.H()->GetPos() + game::GetMoveVector(Dir);
+    if(Dir != DIR_ERROR && rpd.rc.H()->GetArea()->IsValidPos(v2W)){
+      rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(v2W);
       return true;
     }
+    return false;
+  }
+  
+  bool where(recipedata& rpd,bool acceptSelfLocation=false){
+    if(whereRaw(rpd,"Build it where?",acceptSelfLocation))
+      if(rpd.lsqrPlaceAt!=NULL && rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.lsqrPlaceAt->GetCharacter()==NULL){
+        rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
+        rpd.bCanBePlaced=true;
+        return true;
+      }
 
     failPlacementMsg(rpd);
     return false;
@@ -804,8 +812,8 @@ struct recipe{
       iMaxMult++;
     FBWC(SMALL_SWORDS); //DAGGER is here
     FBWC(AXES); //has more cutting power but less precision and takes more time TODO is this good?
-    FBWC(LARGE_SWORDS);
-    FBWC(POLE_ARMS);
+    FBWC(LARGE_SWORDS); //slower
+    FBWC(POLE_ARMS); //even slower, hard to use
 
     if(it!=NULL){
 //      if(bReversedTimeMult)
@@ -1147,6 +1155,165 @@ struct recipe{
     return true;
   }
 };
+
+/**
+ * as we can't kick webs...
+ * 
+ * this is a special kind of "recipe"
+ * is a way to change the existing environment, like engrave does,
+ * but this one was implemented as crafting code
+ * so in short, this could be a command like engrave is, but was implemented thru crafting.
+ * 
+ * TODO
+ * may be, more functionality could be added, like collect web (spiker silk) to be able to 
+ * craft leather/clothing or other things.
+ * may be even recreate a single square spider web with it's strength based on craft skill!
+ */
+struct srpCutWeb : public recipe{
+  virtual void fillInfo(){
+    init("cut","a web");
+    desc << "Focus on cutting the web down. Much safer if you use a cutting tool!";
+  }
+
+  virtual bool work(recipedata& rpd){
+    if(!recipe::whereRaw(rpd,"Cut a web where?",true)){
+      rpd.bAlreadyExplained=true; //no need to explain a cancelled action
+      return false;
+    }
+    
+    web* w=NULL;
+    std::vector<trap*> TrapVector;
+    rpd.lsqrPlaceAt->FillTrapVector(TrapVector);
+    for(int i=0;i<TrapVector.size();i++){
+      if(dynamic_cast<web*>(TrapVector[i])==NULL)
+        continue;
+      w = (web*)TrapVector[i];
+      break;
+    }
+    if(w==NULL){
+      ADD_MESSAGE("There is no web there.");
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+    
+    humanoid* h = rpd.rc.H();
+    
+    arm* ra = h->GetRightArm();
+    arm* la = h->GetLeftArm();
+    if(ra && ra->IsStuck())ra=NULL;
+    if(la && la->IsStuck())la=NULL;
+    if(!ra && !la){
+      ADD_MESSAGE("I have no usable arm to do that.");
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+    
+    bool bSelfPos = rpd.lsqrPlaceAt->GetPos() == h->GetPos();
+    
+    rpd.itTool = FindCuttingTool(rpd);
+    rpd.bAlreadyExplained=false;
+    if(rpd.itTool!=NULL){
+      bool bWielded=false;
+      #define RLWIELD(rl) \
+        if(!bWielded && h->Get##rl##Arm() && !h->Get##rl##Arm()->IsStuck()){ \
+          if(h->Get##rl##Wielded()) \
+            h->Get##rl##Wielded()->MoveTo(h->GetStack()); \
+          rpd.itTool->RemoveFromSlot(); \
+          h->Set##rl##Wielded(rpd.itTool); \
+          bWielded=true; \
+        }
+      RLWIELD(Right);
+      RLWIELD(Left);
+    }
+
+    /**
+     * IMPORTANT! 
+     * this repetition is about action quality and NOT time taken 
+     * because trying to tear down the web is a random check 
+     * based on a fixed modifier (vanilla one) per turn!!!
+     */
+    int tot=1;
+    if(ra && la)
+      tot+=2; //means something like using both arms to destroy a single web spot
+    if(bSelfPos)
+      tot *= 3; //to make it worther than just trying to move, and to compensate for not moving too as player won't insta flee from attacks
+    if(rpd.itTool!=NULL) //float multiplier last thing!
+      tot *= 1 + craftcore::CraftSkill(h)/10;
+    DBG1(tot);
+    bool b = false;
+    for(int i=0;i<tot;i++)
+      if(w->TryToTearDown(h)){
+        b=true;
+        break;
+      }
+    
+    if(b){
+      rpd.bAlreadyExplained=true;
+    }else{
+      bool bGetStuckOnTheWeb=false;
+      bool bLoseWeapon=false;
+      bool bCriticalFumble=false;
+      int iFumblePower=0;
+      if(craftcore::CheckFumble(rpd, bCriticalFumble, iFumblePower)){DBGLN;
+        if(bCriticalFumble){DBGLN;
+          bGetStuckOnTheWeb=true;
+          if(rpd.itTool!=NULL)
+            if(clock()%100 < 50){DBGLN;
+              bLoseWeapon=true;
+            }
+        }else{DBGLN;
+          if(rpd.itTool!=NULL){DBGLN;
+            bLoseWeapon=true;
+          }else{DBGLN;
+            bGetStuckOnTheWeb=true;
+          }
+        }
+      }
+
+      if(bGetStuckOnTheWeb){
+        if(rpd.lsqrPlaceAt->GetCharacter()==NULL){
+          h->Remove();
+          h->PutTo(rpd.lsqrPlaceAt->GetPos());
+          w->StepOnEffect(h);
+          ADD_MESSAGE("I got stuck on the web!");
+          rpd.bAlreadyExplained=true;
+        }else{
+          if(rpd.itTool!=NULL){
+            bLoseWeapon=true;
+          }
+        }
+      }
+      
+      if(bLoseWeapon){
+        rpd.itTool->RemoveFromSlot();
+        rpd.itTool->MoveTo(rpd.lsqrPlaceAt->GetStack());
+        ADD_MESSAGE("I lost my %s!",rpd.itTool->GetName(UNARTICLED).CStr());
+        rpd.bAlreadyExplained=true;
+      }
+      
+      if(bSelfPos && !bGetStuckOnTheWeb && !bLoseWeapon){
+        w->StepOnEffect(h); //so every try will make it more difficult!! :)
+      }
+      
+      int iSt = w->GetTrapBaseModifier();DBG1(iSt);
+      iSt -= 1 + clock()%5; // small spider = 10, big = 25, wand beam = 50
+      if(iSt<=0)
+        iSt=1;
+      w->SetStrength(iSt);
+      
+      if(!rpd.bAlreadyExplained){
+        ADD_MESSAGE("I failed to tear down the web.");
+        rpd.bAlreadyExplained=true;
+      }
+    }
+    
+    h->EditAP(-500); //to let time pass
+      
+    rpd.bSpendCurrentTurn=true;
+    
+    return true;
+  }
+};srpCutWeb rpCutWeb;
 
 struct srpOltBASE : public recipe{
  protected:
@@ -2546,26 +2713,29 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
     DBG3(prp,&rp,rp.desc.CStr()); \
     if(bInitRecipes)addRecipe((recipe*)&rp);
-  // these are kind of grouped and not ordered like a-z
+  // these are kind of grouped and not ordered like a-z TODO add the commented section code as felist (non selectable) section entries?
+  // furniture
   RP(rpChair);
   RP(rpDoor);
-
+  // buildings
   RP(rpWall2);
-
+  // potions
   RP(rpPoison);
   RP(rpAcid);
-
+  // simple work with materials
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
   RP(rpResistanceVS);
-
+  // black smithing
   RP(rpMelt);
   RP(rpForgeItem);
   RP(rpAnvil);
   RP(rpForge);
-
+  // tailoring
   RP(rpWorkBench);
+  // special usages
+  RP(rpCutWeb);
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
 
@@ -2957,6 +3127,33 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
   DBG7(iSpawnNow,spawnedVol,matMRemVol,rpd.itSpawnTot,rpd.iBaseTurnsToFinish,rpd.iRemainingTurnsToFinish,fRemain);
 }
 
+bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower)
+{
+  /**
+   * To fumble, base reference is 15% chance at a craft skill of 20.
+   * ex.: Craft skill of 10 will have 30% fumble chance.
+   */
+  int iLuckPerc=clock()%100;
+  float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
+  static const int iBaseFumbleChancePerc=15;
+  int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
+  if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
+  int iDiv=0;
+  iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
+  iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
+  iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
+  iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
+  if(iLuckPerc<=1){
+    iFumblePower++; //always have 1% granted fumble chance
+    bCriticalFumble=true;
+  }
+  //current max chance per round of spawning broken is 5%
+  if(clock()%100<=iFumblePower)
+    return true;
+  
+  return false;
+}
+
 void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
 {
   rpd.rc.integrityCheck();
@@ -2965,29 +3162,10 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
     int xplodXtra=0;
     for(int i=0;i<rpd.iStrongerXplod;i++)
       xplodXtra+=clock()%5;
-
-    /**
-     * To fumble, base reference is 15% chance at a craft skill of 20.
-     * ex.: Craft skill of 10 will have 30% fumble chance.
-     */
-    int iFumblePower=0;
-    int iLuckPerc=clock()%100;
-    float fBaseCraftSkillToNormalFumble=20.0*rpd.fDifficulty;
-    static const int iBaseFumbleChancePerc=15;
-    int iFumbleBase=iBaseFumbleChancePerc/(craftcore::CraftSkill(rpd.rc.H())/fBaseCraftSkillToNormalFumble); //ex.: 30%
-    if(iFumbleBase>99)iFumbleBase=99; //%1 granted luck
-    int iDiv=0;
-    iDiv=1;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=30%
-    iDiv=2;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <=15%
-    iDiv=4;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 7%
-    iDiv=8;if(iFumbleBase>iDiv && iLuckPerc<=iFumbleBase/iDiv)iFumblePower++; //ex.: <= 3%
+    
     bool bCriticalFumble=false;
-    if(iLuckPerc<=1){
-      iFumblePower++; //always have 1% weakest xplod chance
-      bCriticalFumble=true;
-    }
-    //current max chance per round of spawning broken is 5%
-    if(clock()%100<=iFumblePower){
+    int iFumblePower=0;
+    if(craftcore::CheckFumble(rpd,bCriticalFumble,iFumblePower)){
       if(!rpd.bSpawnBroken && bChangeTurns){
         rpd.iBaseTurnsToFinish/=2; //just complete the broken item (as AV gets halved) TODO repair system
         /**
@@ -3012,7 +3190,7 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
       }
     }
 
-    DBG9(fBaseCraftSkillToNormalFumble,iFumbleBase,iLuckPerc,iFumblePower,bXplod,rpd.xplodStr,rpd.bCanBeBroken,rpd.bSpawnBroken,rpd.iBaseTurnsToFinish);
+//    DBG9(fBaseCraftSkillToNormalFumble,iFumbleBase,iLuckPerc,iFumblePower,bXplod,rpd.xplodStr,rpd.bCanBeBroken,rpd.bSpawnBroken,rpd.iBaseTurnsToFinish);
   }
 }
 

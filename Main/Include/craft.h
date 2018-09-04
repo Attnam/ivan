@@ -130,6 +130,7 @@ class recipedata {
   friend struct srpJoinLumps;
   friend struct srpWorkBench;
   friend struct srpResistanceVS;
+  friend struct srpCutWeb;
 
   protected:
     recipecore rc;
@@ -281,6 +282,7 @@ class craftcore {
     static void CopyDegradationIfPossible(recipedata& rpd, item* itTo);
     
     static int CitType(item* it);
+    static bool CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumblePower);
 };
 
 class crafthandle {
