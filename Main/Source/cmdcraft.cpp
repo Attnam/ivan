@@ -1200,8 +1200,8 @@ struct srpCutWeb : public recipe{
     
     arm* ra = h->GetRightArm();
     arm* la = h->GetLeftArm();
-    if(ra && ra->IsStuck())ra=NULL;
-    if(la && la->IsStuck())la=NULL;
+    if(ra && ra->IsUsable())ra=NULL;
+    if(la && la->IsUsable())la=NULL;
     if(!ra && !la){
       ADD_MESSAGE("I have no usable arm to do that.");
       rpd.bAlreadyExplained=true;
