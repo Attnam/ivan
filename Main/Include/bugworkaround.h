@@ -22,19 +22,21 @@ class bugfixdp{
   public:
     static void init();
     static character* ValidatePlayerAt(square* sqr);
+    static bool IsFixing();
 
   private:
     static character* BugWorkaroundDupPlayer();
     static void DevConsCmd(std::string strCmdParams);
 
     static void GatherAllItemInLevel();
-    static void ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
+    static bool ItemWork(character* Char, item* it, bool bFix, const char* cInfo, std::vector<item*>* pvItem,bool bSendToHell);
     static void FixPlayerDupInv(character* CharChk);
 
-    static void CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
-    static void CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
-    static void CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
-    static void CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static int TrapsWork();
+    static int CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static int CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static int CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
+    static int CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem=NULL);
     static void CharAllItemsInfo(character* CharAsked);
     static void CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem);
 

@@ -13,6 +13,7 @@ FIX-MINOR
 - dupPlayerBugFix: check also for duplicity of TrapIDMap as crashing on save
 
 IMPROVEMENTS
+- mine::WillExplode() if stepper is trying to pickup, check if levitating and 25+ dexterity (or only dexterity but harder like x2) to let it be disarmed and safely picked up
 - craft dismantle w/o forge should require dagger and hammer if has any meltable
  - craft test material should allow broken things too
  - craft if sat on a chair should lower craft time too

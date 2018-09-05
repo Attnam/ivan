@@ -292,7 +292,12 @@ void game::AddCharacterID(character* Char, ulong ID)
 }
 void game::RemoveCharacterID(ulong ID)
 {
-  CharacterIDMap.erase(CharacterIDMap.find(ID));
+  characteridmap::iterator itr = CharacterIDMap.find(ID);
+  if(itr == CharacterIDMap.end() || itr->second == NULL){
+    if(!bugfixdp::IsFixing())
+      ABORT("AlreadyErased:CharacterID %d",ID);
+  }else
+    CharacterIDMap.erase(itr);
 }
 void game::AddItemID(item* Item, ulong ID)
 {
@@ -304,18 +309,19 @@ void game::RemoveItemID(ulong ID)
   if(ID){
     DBG2("Erasing:ItemID",ID);
 
-    //TODO if the search affects performance, make this optional
-    if(SearchItem(ID)==NULL){
+    itemidmap::iterator itr = ItemIDMap.find(ID); //TODO if the search affects performance, make this optional
+    if(itr == ItemIDMap.end() || itr->second == NULL){
       /**
        * This happens when the duplicated player bug happens!
        * so it will try to erase the item 2 times and CRASH on the second,
        * therefore the abort is appropriate.
        */
-      ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+    }else{
+      ItemIDMap.erase(itr);
+      DBG2("ERASED!:ItemID",ID);
     }
-
-    ItemIDMap.erase(ItemIDMap.find(ID));
-    DBG2("ERASED!:ItemID",ID);
   }
 }
 
@@ -329,7 +335,14 @@ void game::AddTrapID(entity* Trap, ulong ID)
 }
 void game::RemoveTrapID(ulong ID)
 {
-  if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
+  if(ID){
+    trapidmap::iterator itr = TrapIDMap.find(ID);
+    if(itr == TrapIDMap.end() || itr->second == NULL){
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:TrapID %d",ID);
+    }else
+      TrapIDMap.erase(itr);
+  }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
 {
