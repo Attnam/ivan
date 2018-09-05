@@ -38,8 +38,8 @@ class bugfixdp{
     static void CharAllItemsInfo(character* CharAsked);
     static void CharAllItemsCollect(character* CharAsked,std::vector<item*>* pvItem);
 
-    static character* FindValidPlayer(v2 ReqPosL,bool bAndFixIt);
-    static std::vector<character*> FindPlayersOnLevel();
+    static character* FindByPlayerID1(v2 ReqPosL,bool bAndFixIt);
+    static std::vector<character*> FindByPlayerFlag();
     static std::vector<character*> FindCharactersOnLevel(bool bOnlyPlayers=false);
     static bool ScanLevelForCharactersAndItemsWork(item*, bool, bool, std::vector<bugWorkaroundDupPlayerCharItem>*);
     static void CollectAllItemsOnLevel(std::vector<item*>* pvAllItemsOnLevel);

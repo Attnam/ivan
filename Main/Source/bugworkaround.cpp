@@ -68,6 +68,7 @@ bool bugfixdp::AlertConfirmFixMsg(const char* cMsg){
 
   bool Accepted=false;
   bAlertConfirmFixMsgDraw=true;
+  graphics::BlitDBToScreen(); //just to be sure
   if(GET_KEY() == 'y')
     Accepted=true;
   bAlertConfirmFixMsgDraw=false;
@@ -344,33 +345,64 @@ character* bugfixdp::ValidatePlayerAt(square* sqr)
   v2 Pos = sqr->GetPos();
   character* CharAtPos = sqr->GetCharacter();
 
-  std::vector<character*> vCL = FindPlayersOnLevel();
+  std::vector<character*> vPF = FindByPlayerFlag();
 
-  if(CharAtPos!=NULL && CharAtPos->IsPlayer() && vCL.size()==1) //very consistent!
-    return CharAtPos;
+  //very consistent!
+  if(CharAtPos!=NULL && CharAtPos->IsPlayer() && vPF.size()==1)
+    if(CharAtPos->GetID()==1 || (CharAtPos->GetPolymorphBackup() && CharAtPos->GetPolymorphBackup()->GetID()==1))
+      return CharAtPos;
 
-  if(vCL.size()==0){
-    character* CharOk = FindValidPlayer(Pos,true);
-    if(CharOk==NULL) //TODO let user chose one NPC to become the player? sounds too messy tho...
-      ABORT("Player can't be found anywhere! Try to restore a backup if available.");
+  //////////////////// there are problems if reaching here ////////////////////
+  
+  /*
+   * TODO 
+   * there is some double-checks/validationRepetition below...
+   * the flow below could be less confusing if possible...
+   */
+  
+  character* CharID1 = FindByPlayerID1(Pos,true); //player is already fixed here, before the question below at (*1)
+  
+  if(vPF.size()==0 && CharID1==NULL){ //TODO let user chose one NPC to become the player? sounds too messy tho...
+    // this can't be fixed automatically
+    ABORT("Player can't be found anywhere! Try to restore a backup if available.");
   }
 
-  if(CharAtPos!=NULL && !CharAtPos->IsPlayer()){
-    if(AlertConfirmFixMsg("Requested location has NPC, try to fix this?")){
-      if(vCL.size()==1)
-        return vCL[0];
-    }else{
-      return CharAtPos; //TODO what happens in this case as game behavior as assings a NPC as player reference?
+  if(vPF.size()>1){ // FIRST CHECK/FIX!
+    festring fsMsg;
+    fsMsg << "Multiple player instances found (x" << vPF.size() << "), try to fix this?";
+    if(AlertConfirmFixMsg(fsMsg.CStr()))
+      return BugWorkaroundDupPlayer();
+    /**
+     * a problem like moving two characters in alternating turns would happen,
+     * also unable to move between dungeons w/o crashing
+     */
+    ABORT("The game would become inconsistent (prone to crash) w/o fixing this problem '%s'",fsMsg.CStr());
+  }
+
+  if(vPF.size()==1){
+    if(vPF[0]==CharID1){
+      festring fsMsg;
+      fsMsg << "There was some problem but the Player character was found and moved to requested position " << Pos.X<<","<<Pos.Y << ", allow this fix?"; // (*1)
+      if(AlertConfirmFixMsg(fsMsg.CStr()))
+        return CharID1;
+    }
+
+    if(CharAtPos==NULL || !CharAtPos->IsPlayer()){
+      festring fsMsg;
+      fsMsg << "Requested location " << Pos.X<<","<<Pos.Y << " has no character or a NPC (not the player), try to fix this?";
+      if( AlertConfirmFixMsg(fsMsg.CStr()) ){
+        return vPF[0]; //TODO check again for ID==1 or polymorphBackupId==1 ?
+      }else{
+        ABORT("The game would become inconsistent (prone to crash) w/o fixing this problem '%s'",fsMsg.CStr());
+        //this looks bad/messy: return CharAtPos; //TODO what happens in this case as game behavior as assings a NPC as player reference?
+      }
     }
   }
 
-  if(vCL.size()>1){
-    festring fsMsg;
-    fsMsg << "Multiple player instances found (x" << vCL.size() << "), try to fix this?";
-    if(AlertConfirmFixMsg(fsMsg.CStr()))
-      return BugWorkaroundDupPlayer();
+  if(CharAtPos==NULL){ //"fail safe" just in  case other checks are added, this is critical to provide readable abort message
+    ABORT("There is no character at requested position %d,%d, and no other fixes could be applied.",Pos.X,Pos.Y);
   }
-
+  
   return CharAtPos;
 }
 
@@ -380,19 +412,24 @@ bool IsPlayerPB(character* C1, character* C2){
   return false;
 }
 
-std::vector<character*> bugfixdp::FindPlayersOnLevel()
+std::vector<character*> bugfixdp::FindByPlayerFlag()
 {
   return FindCharactersOnLevel(true);
 }
 
-std::vector<character*> bugfixdp::FindCharactersOnLevel(bool bOnlyPlayers)
+/**
+ * tests for the CL_PLAYER flag
+ * @param bOnlyPlayers
+ * @return 
+ */
+std::vector<character*> bugfixdp::FindCharactersOnLevel(bool bOnlyPlayerFlag)
 {
   std::vector<character*> v;
   for(int iY=0;iY<game::GetCurrentArea()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentArea()->GetXSize();iX++){
     square* sqr = game::GetCurrentArea()->GetSquare({iX,iY});
     character* C=sqr->GetCharacter();
     if(C==NULL)continue;
-    if(!bOnlyPlayers || C->IsPlayer())
+    if(!bOnlyPlayerFlag || C->IsPlayer())
       v.push_back(C);
   }}
   return v;
@@ -406,11 +443,12 @@ void bugfixdp::DevConsCmd(std::string strCmdParams)
   BugWorkaroundDupPlayer();
 }
 
-character* bugfixdp::FindValidPlayer(v2 ReqPosL,bool bAndFixIt)
-{
+character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
+{DBGSV2(ReqPosL);
   character* CharID1 = game::SearchCharacter(1); //this can ONLY return one char with ID=1 EVER, so there wont be a DUP char with ID=1 on the characters' map
   if(CharID1==NULL)
     return NULL;
+  DBGSV2(CharID1->GetPos());
 
   character* PBID1=NULL;
   character* PPolymL = NULL;
@@ -477,7 +515,7 @@ character* bugfixdp::FindValidPlayer(v2 ReqPosL,bool bAndFixIt)
     CharPlayerOk = CharID1;
     DEVCMDMSG("%s","ID1 will be ok now");
     if(bAndFixIt && CharID1->GetSquareUnder()==NULL){
-      DEVCMDMSG("placing the ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
+      DEVCMDMSG("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
       CharID1->PutToOrNear(ReqPosL); //place he where expected
     }
 //  }
@@ -505,7 +543,7 @@ character* bugfixdp::BugWorkaroundDupPlayer(){
     }
   }
 
-  character* CharPlayerOk = FindValidPlayer(ReqPosL,true);
+  character* CharPlayerOk = FindByPlayerID1(ReqPosL,true);
   if(CharPlayerOk==NULL)
     ABORT("Unable to fix the valid player.");
 

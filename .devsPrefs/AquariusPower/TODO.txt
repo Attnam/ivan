@@ -2,6 +2,7 @@ FIX-CRITICAL
 
 FIX-IMPORTANT
 - validate the existance of all generated savegame files, it is stored in the .sav file, would crash if missing so better just promptly look for them...
+- disappearing pet angel wont drop all equipped items (the ones we give'm and would not normally disappear...), namely torso armor at least
 
 FIX-MINOR
 - by remembering the previously selected entry list, sometimes the wrong savegame is being loaded, not the "apparently" selected one...
