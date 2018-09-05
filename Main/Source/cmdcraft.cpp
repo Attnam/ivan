@@ -973,7 +973,7 @@ struct recipe{
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
               ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
-            if(lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
+            if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
               ABORT("remaining vol calc needs fixing %d != %d, %f, %d",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol); 
             matM->SetVolume(lVolM);
 
