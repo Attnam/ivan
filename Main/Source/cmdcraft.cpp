@@ -1251,7 +1251,7 @@ struct srpCutWeb : public recipe{
       rpd.bAlreadyExplained=true;
     }else{
       bool bGetStuckOnTheWeb=false;
-      bool bLoseWeapon=false;
+      bool bLoseWeapon=false; //TODO if has no weapon, lose one glove instead!
       bool bCriticalFumble=false;
       int iFumblePower=0;
       if(craftcore::CheckFumble(rpd, bCriticalFumble, iFumblePower)){DBGLN;
@@ -1273,7 +1273,7 @@ struct srpCutWeb : public recipe{
       if(bGetStuckOnTheWeb){
         if(rpd.lsqrPlaceAt->GetCharacter()==NULL){
           h->Remove();
-          h->PutTo(rpd.lsqrPlaceAt->GetPos());
+          h->PutTo(rpd.lsqrPlaceAt->GetPos()); //TODO check for walkability first!
           w->StepOnEffect(h);
           ADD_MESSAGE("I got stuck on the web!");
           rpd.bAlreadyExplained=true;
@@ -1286,7 +1286,7 @@ struct srpCutWeb : public recipe{
       
       if(bLoseWeapon){
         rpd.itTool->RemoveFromSlot();
-        rpd.itTool->MoveTo(rpd.lsqrPlaceAt->GetStack());
+        rpd.itTool->MoveTo(rpd.lsqrPlaceAt->GetStack()); //TODO check if is not a WALL!!!
         ADD_MESSAGE("I lost my %s!",rpd.itTool->GetName(UNARTICLED).CStr());
         rpd.bAlreadyExplained=true;
       }
