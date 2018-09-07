@@ -7129,7 +7129,7 @@ void character::DisplayStethoscopeInfo(character*) const
     if(BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
     {
       BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
-      EntryBP<<" ";
+      EntryBP << " ";
     }
     BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
     Info.AddEntry(EntryBP, LIGHT_GRAY);
@@ -11987,6 +11987,28 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
       ReceiveBodyPartDamage(0, Damage, MUSTARD_GAS_DAMAGE,
                             BodyPartIndex, YOURSELF, false, false, false);
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
+    }
+
+    if(IsPlayer())
+    {
+      action* Action = GetAction();
+
+      if(Action && Action->IsRest() && !Action->InDNDMode()
+         && BodyPartIsVital(BodyPartIndex) && BodyPart->IsBadlyHurt())
+      {
+        ADD_MESSAGE("You're about to die from mustard gas.");
+
+        if(game::TruthQuestion(CONST_S("Mustard gas is dissolving your flesh."
+                                       " Continue resting? [y/N]"),
+                               NO))
+        {
+          Action->Terminate(false);
+        }
+        else
+        {
+          Action->ActivateInDNDMode();
+        }
+      }
     }
   }
 }
