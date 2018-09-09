@@ -1645,10 +1645,14 @@ truth commandsystem::Sit(character* Char)
 }
 
 std::vector<v2> RouteGoOn;
-level* lvlRoute=NULL;
+level* LevelRouteGoOn=NULL;
 v2 v2RouteTarget=v2(0,0); //TODO savegame this?
 
 std::vector<v2> commandsystem::GetRouteGoOnCopy(){
+  if(game::GetCurrentLevel()!=LevelRouteGoOn || v2RouteTarget.Is0()){
+    std::vector<v2> empty;
+    return empty;
+  }
   return RouteGoOn;
 }
 
@@ -1656,17 +1660,23 @@ truth commandsystem::Go(character* Char)
 {
   int Dir = DIR_ERROR;
 
-  if(lvlRoute!=Char->GetLevel())
+  if(LevelRouteGoOn!=Char->GetLevel())
     v2RouteTarget=v2(0,0);
 
-  if(Char->GetPos()==v2RouteTarget)
+  if(Char->GetPos()==v2RouteTarget) //TODO is near by 1 dist (2 or more may have a wall in-between)
     v2RouteTarget=v2(0,0);
 
   if(!v2RouteTarget.Is0()){
-    if(game::TruthQuestion("Continue going thru the route? [y]"))
-      Dir = YOURSELF;
-    else
-      v2RouteTarget=v2(0,0);
+    switch(game::KeyQuestion(CONST_S("Continue going thru the route? [y/n]"), KEY_ESC, 2, 'y', 'n')){
+      case 'y':
+        Dir = YOURSELF;
+        break;
+      case 'n':
+        v2RouteTarget=v2(0,0);
+        break;
+      default:
+        return false;
+    }
   }
 
   if(Dir == DIR_ERROR)
@@ -1710,7 +1720,7 @@ truth commandsystem::Go(character* Char)
     Go->SetRoute(RouteGoOn);
     Go->SetDirectionFromRoute();
     Go->SetIsWalkingInOpen(true); //prevents stopping on path crosses/forks
-    lvlRoute=Char->GetLevel();
+    LevelRouteGoOn=Char->GetLevel();
   }else{
     Go->SetDirection(Dir);
 
