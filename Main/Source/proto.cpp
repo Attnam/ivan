@@ -473,7 +473,12 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
     return 0;
 }
 
-material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output)
+material* protosystem::CreateMaterialForDetection(cfestring& What)
+{
+  return CreateMaterial(What,0,true,true);
+}
+
+material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output, truth DetectMode)
 {
   for(int c1 = 1; c1 < protocontainer<material>::GetSize(); ++c1)
   {
@@ -484,11 +489,13 @@ material* protosystem::CreateMaterial(cfestring& What, long Volume, truth Output
     for(int c2 = 1; c2 < ConfigSize; ++c2)
       if(ConfigData[c2]->NameStem == What)
       {
-        if(ConfigData[c2]->CommonFlags & CAN_BE_WISHED
-           || game::WizardModeIsActive())
+        if(
+            (ConfigData[c2]->CommonFlags & CAN_BE_WISHED) || 
+            (DetectMode && (ConfigData[c2]->CommonFlags & CAN_BE_DETECTED)) ||
+            game::WizardModeIsActive()
+        ){
           return ConfigData[c2]->ProtoType->Spawn(ConfigData[c2]->Config, Volume);
-        else if(Output)
-        {
+        }else if(Output){
           ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
           return 0;
         }
