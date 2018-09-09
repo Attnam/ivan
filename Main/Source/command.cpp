@@ -567,6 +567,8 @@ truth commandsystem::Drop(character* Char)
       for(uint c = 0; c < ToDrop.size(); ++c)
       {
         ToDrop[c]->MoveTo(Char->GetStackUnder());
+        if(ivanconfig::IsAutoPickupThrownItems())
+          ToDrop[c]->ClearTag('t'); //throw: to avoid auto-pickup
       }
       Success = true;
     }
@@ -1324,6 +1326,8 @@ truth commandsystem::Throw(character* Char)
     Char->EditExperience(PERCEPTION, 75, 1 << 8);
     Char->EditNP(-50);
     Char->DexterityAction(5);
+    if(ivanconfig::IsAutoPickupThrownItems())
+      Item->SetTag('t');
     return true;
   }
   else

@@ -379,6 +379,7 @@ class game
   static lsquare* GetHighlightedMapNoteLSquare();
   static bool ToggleShowMapNotes();
   static bool CheckAddAutoMapNote(square* =NULL);
+  static bool CheckAutoPickup(square* sqr = NULL);
   static int RotateMapNotes();
   static char MapNoteToken();
 

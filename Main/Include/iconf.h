@@ -50,6 +50,7 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
+  static truth IsAutoPickupThrownItems() { return AutoPickupThrownItems.Value; }
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
@@ -196,6 +197,7 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+  static truthoption AutoPickupThrownItems;
 
   static cycleoption SaveGameSortMode;
   static cycleoption DistLimitMagicMushrooms;

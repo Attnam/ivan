@@ -117,6 +117,9 @@ truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
+truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
+                                          "Auto pick up thrown items",
+                                          true);
 truthoption ivanconfig::TransparentMapLM    ("TransparentMapLM",
                                           "Transparent map in it's look mode",
                                           true);
@@ -946,6 +949,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
   configsystem::AddOption(fsCategory,&EnhancedLights);
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
+  configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);

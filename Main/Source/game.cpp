@@ -1278,13 +1278,37 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
-bool game::CheckAddAutoMapNote(square* sqr)
+bool game::CheckAutoPickup(square* sqr)
 {
-  if(dynamic_cast<lsquare*>(sqr)==NULL)
+  if(!ivanconfig::IsAutoPickupThrownItems())
     return false;
   
   if(sqr==NULL)
     sqr = PLAYER->GetSquareUnder();
+  
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return false;
+  
+  lsquare* lsqr = (lsquare*)sqr;
+  
+  itemvector iv;
+  lsqr->GetStack()->FillItemVector(iv);
+  for(int i=0;i<iv.size();i++){
+    item* it = iv[i];
+    if(it->HasTag('t')){ //throw
+      it->MoveTo(PLAYER->GetStack());
+      ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+    }
+  }
+}
+
+bool game::CheckAddAutoMapNote(square* sqr)
+{
+  if(sqr==NULL)
+    sqr = PLAYER->GetSquareUnder();
+  
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return false;
   
   lsquare* lsqr = (lsquare*)sqr;
   
