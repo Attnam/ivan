@@ -1278,7 +1278,7 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
-bool game::CheckAutoPickup(square* sqr)
+int game::CheckAutoPickup(square* sqr)
 {
   if(!ivanconfig::IsAutoPickupThrownItems())
     return false;
@@ -1293,13 +1293,17 @@ bool game::CheckAutoPickup(square* sqr)
   
   itemvector iv;
   lsqr->GetStack()->FillItemVector(iv);
+  int j=0;
   for(int i=0;i<iv.size();i++){
     item* it = iv[i];
     if(it->HasTag('t')){ //throw
       it->MoveTo(PLAYER->GetStack());
       ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      j++;
     }
   }
+  
+  return j;
 }
 
 bool game::CheckAddAutoMapNote(square* sqr)
