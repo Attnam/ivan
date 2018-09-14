@@ -1861,6 +1861,7 @@ struct srpSplitLump : public recipe{
       rpd.itSpawnType = CIT_LUMP;
     }
 
+    bool bHumanoidCorpse=false;
     if(ToSplit==NULL && choseOneIngredient<corpse>(rpd)){ //this is just a simplified conversion from corpse to a big lump...
       corpse* Corpse = (corpse*)game::SearchItem(rpd.ingredientsIDs[0]);
 
@@ -1886,6 +1887,7 @@ struct srpSplitLump : public recipe{
         craftcore::SendToHellSafely(ToSplit);
 
         ToSplit = Corpse;
+        bHumanoidCorpse=true;
       }else{
         craftcore::SendToHellSafely(Corpse);
       }
@@ -1942,9 +1944,19 @@ struct srpSplitLump : public recipe{
     if(rpd.itSpawnTot==1 || rpd.itSpawnTot==0){
       rpd.bAlreadyExplained=true; //no need to say anything
       return false;
-    }else if(rpd.itSpawnTot<0){ //cut mode
+    }
+    
+    if(rpd.itSpawnTot<0){ //cut mode
+      if(bHumanoidCorpse){
+        ADD_MESSAGE("This needs to be split first."); //see 'why' about necromancers above... TODO a better message?
+        rpd.bAlreadyExplained=true;
+        return false;
+      }
+      
       int iCutVol = rpd.itSpawnTot * -1;
       material* matM = ToSplit->GetMainMaterial();
+      if(matM==NULL)
+        ABORT("main material is null for %s?",ToSplit->GetName(DEFINITE).CStr());
       if((matM->GetVolume() - iCutVol) < 1){
         rpd.bAlreadyExplained=true; //no need to say anything
         return false;
