@@ -8310,7 +8310,7 @@ lobhse
   BaseBiteStrength = 400;
   KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
-  ClassStates = INFRA_VISION|LEPROSY;
+  ClassStates = INFRA_VISION|GAS_IMMUNITY;
   AttachedGod = SCABIES;
   FleshMaterial = SICK_SPIDER_FLESH;
   BloodMaterial = SICK_BLOOD;
@@ -8329,10 +8329,10 @@ lobhse
   IsImmuneToLeprosy = true;
   EnergyResistance = 30;
   FireResistance = 30;
-  PoisonResistance = 100;
+  PoisonResistance = 1000;
   ElectricityResistance = 30;
-  AcidResistance = 100;
-  PanicLevel = 0;
+  AcidResistance = 1000;
+  PanicLevel = 20;
   HostileReplies =
   {
     3,

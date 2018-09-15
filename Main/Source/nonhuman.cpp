@@ -2503,29 +2503,25 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 {
   if(!BlockedByArmour)
   {
-    Char->BeginTemporaryState(POISONED, 80 + RAND() % 40);
+    switch(RAND() % 10)
+    {
+     case 0: Char->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000)); break;
+     case 1: Char->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500)); break;
+     case 2: Char->BeginTemporaryState(PARASITE_TAPE_WORM, 6000 + RAND_N(3000)); break;
+     case 3: Char->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200)); break;
+     case 4: Char->GainIntrinsic(LEPROSY); break;
+     default: Char->BeginTemporaryState(POISONED, 80 + RAND() % 40); break;
+    }
     return true;
   }
   else
     return false;
 }
 
-void lobhse::GetAICommand()
-{
-  SeekLeader(GetLeader()); // will follow if tamed
-
-  if(FollowLeader(GetLeader()))
-    return;
-
-  if(MoveRandomly())
-    return;
-
-  EditAP(-1000);
-}
-
 void lobhse::CreateCorpse(lsquare* Square)
 {
   largecreature::CreateCorpse(Square);
+  Square->AddItem(mangoseedling::Spawn());
 }
 
 void mindworm::GetAICommand()

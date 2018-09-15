@@ -447,7 +447,6 @@ CHARACTER(lobhse, largecreature)
   virtual truth IsSpider() const { return true; }
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
-  virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual truth MustBeRemovedFromBone() const;
   virtual bodypart* MakeBodyPart(int) const;
