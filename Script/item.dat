@@ -2797,7 +2797,7 @@ avatarofvalpurus
   IsDestroyable = false;
   IsMaterialChangeable = false;
   Price = 1000000;
-  Category = MISC;
+  Category = VALUABLE;
   DefaultMainVolume = 250;
   StrengthModifier = 500;
   BitmapPos = 0, 320;
@@ -7127,4 +7127,35 @@ gastrap /*materialcontainer-> */
     Possibility = 0;
     Price = 0;
   }
+}
+
+mangoseedling
+{
+  DefaultSize = 15;
+  DefaultMainVolume = 200;
+  Category = VALUABLE;
+  BitmapPos = 80, 256;
+  WieldedBitmapPos = 160, 208;
+  NameSingular = "seedling";
+  PostFix = "of the Holy Mango Tree";
+  FormModifier = 15;
+  Roundness = 10;
+  Possibility = 0;
+  Price = 100000;
+  MainMaterialConfig == SIDGURE_WOOD;
+  AttachedGod = SILVA;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
+  IsDestroyable = false;
+  IsMaterialChangeable = false;
+  CanBeCloned = false;
+  IsQuestItem = true;
+  CanBeBurned = false;
+  CanBeBroken = false;
+  CanBePiled = false;
+  IsTwoHanded = true;
+  HasSecondaryMaterial = false;
+  IsValuable = true;
 }

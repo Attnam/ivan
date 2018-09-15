@@ -1288,10 +1288,10 @@ void itemcontainer::PostConstruct()
 {
   lockableitem::PostConstruct();
   SetIsLocked(RAND_N(3));
-  
+
   if((GetConfig()&LOCK_BITS)&BROKEN_LOCK)
     SetIsLocked(false);
-  
+
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
   for(int c = 0; c < ItemNumber; ++c)
@@ -4007,4 +4007,11 @@ truth gastrap::CheckPickUpEffect(character*)
 {
   SetIsActive(false);
   return true;
+}
+
+col16 mangoseedling::GetOutlineColor(int) const { return MakeRGB16(118, 158, 226); }
+alpha mangoseedling::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
 }

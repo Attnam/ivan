@@ -710,13 +710,40 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
 truth bananadroparea::DropItem(character* Dropper, item* Item, int)
 {
-  return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam())
-          == HOSTILE
-          || (Dropper->IsPlayer()
-              && ((!Item->IsBanana() && !Item->IsLanternOnWall())
-                  || game::TruthQuestion(CONST_S("Do you wish to "
-                                                 "donate this item "
-                                                 "to the town? [y/N]")))));
+  if(Dropper->IsPlayer() && (Item->IsMangoSeedling()) &&
+    (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) != HOSTILE))
+  {
+    if(game::TweraifIsFree())
+    {
+      if(game::TruthQuestion(CONST_S("Do you wish to plant the mango seedling at this time? [y/N]")))
+      {
+        game::TextScreen(CONST_S("You plant the seedling of the Holy Mango Tree and the people\n"
+                                 "of your home village gather around cheering. Within moments,\n"
+                                 "the seedling sprouts and grows, nourished by the returning\n"
+                                 "favour of Silva. You feel Her glory permeating the whole island,\n"
+                                 "shielding it from the forces of Valpurus, should they attempt\n"
+                                 "to return. Tweraif can be free again!\n\nYou are victorious!"));
+
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("restored Tweraif to independence and remained as its protector");
+        Dropper->AddScoreEntry(Msg, 2, false);
+        game::End(Msg);
+      }
+    }
+    else
+    {
+      ADD_MESSAGE("You feel that the climate is not quite right for growing mangoes.");
+      return false;
+    }
+  }
+  else
+    return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE
+            || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall())
+            || game::TruthQuestion(CONST_S("Do you wish to "
+                                           "donate this item "
+                                           "to the town? [y/N]")))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
