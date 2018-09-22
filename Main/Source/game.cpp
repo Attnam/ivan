@@ -4534,7 +4534,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       character* NPC = lsqr->GetCharacter();
 
       bool bMoveAway=true;
-      #ifdef FIX_LARGECREATURE_TELEPORT_GLITCH
+//      #ifdef FIX_LARGECREATURE_TELEPORT_GLITCH
         /**
          * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
          * using now largecreature check because of this crash stack:
@@ -4545,7 +4545,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
             game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
          */
         if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
-      #endif
+//      #endif
 
       if(bMoveAway)
         lsqr->KickAnyoneStandingHereAway();
