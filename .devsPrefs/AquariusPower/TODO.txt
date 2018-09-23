@@ -10,7 +10,7 @@ FIX-MINOR
 - pet with poly ring and polycontrol ring, polymorphing into ghost then into bunny, when back to human will not re-equip
 - deny showitemsunder if lantern is on the wall? (amulet of phasing)
 - when felist is open, still showing tiny dungeon animated behind...
-- dupPlayerBugFix: check also for duplicity of TrapIDMap as crashing on save
+- the last entry in the savegame list, even after imported, may still show as being in the previous version and after importing a new player name may be used and so a new savegame created, quite a mess... (quite confuse this one, may be a unique bug that only happens when importing some specific random rare old saves...)
 
 IMPROVEMENTS
 - mine::WillExplode() if stepper is trying to pickup, check if levitating and 25+ dexterity (or only dexterity but harder like x2) to let it be disarmed and safely picked up
@@ -22,10 +22,8 @@ IMPROVEMENTS
 - simple pile equal items on "show items under", ex.: if more than 1, simply draw a tiny + sign with 2 drawn white lines
  - show items under, begin with the last one, unless if showing them all in lines
 - mini map unfold slowly once per frame one dungeon line of squares animation
- - optionally auto inscribe some map notes like altars, anvil, chair etc
 - remove flag CanBeDestroyed from items that can be crafted? or deny their crafting? or keep as on fumble creates lump?
-- the materials book could be filtered by typing
- - show material Str only if in possession of the materials book
+- show material Str only if in possession of the materials book
  - inventory 'i' will be selectable if in possession of the materials book and chosing will show at most 2 lines as filter to the book
 - pickup accept many using the same pickup key ',' at least see the other keys  cfgs too
 
@@ -43,3 +41,6 @@ DONE:
 - sfx for .*hit.* it is matching white :P
 - list item zoom xBRZ, draw the background behind it to make the blending work properly all times!
 - craft fluid extraction should not require a specific previous location to resume
+- dupPlayerBugFix: check also for duplicity of TrapIDMap as crashing on save
+- optionally auto inscribe some map notes like altars, anvil, chair etc
+- the materials book could be filtered by typing (felist already can filter anything)
