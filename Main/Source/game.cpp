@@ -1419,12 +1419,13 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
+const char* cHugeMap="I can't open a map that is as big as the world!";
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
     bDrawMapOverlayEnabled=false;
     return;
   }
@@ -1810,7 +1811,7 @@ void DrawMapOverlayFancy(bitmap* buffer)
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
   }else{ //it actually work works (for now) if there is any dungeon stretching going on
     if(buffer!=NULL){
       static float fRGB=0.3;
