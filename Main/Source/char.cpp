@@ -7135,12 +7135,13 @@ void character::DisplayStethoscopeInfo(character*) const
   for(int c = 0; c < BodyParts; ++c)
   {
     bodypart* BodyPart = GetBodyPart(c);
+    if(!BodyPart)continue;
 
     EntryBP.Empty();
-    if(BodyPart && BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
+    if(BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
     {
       BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
-      EntryBP << " ";
+      EntryBP<<" ";
     }
     BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
     Info.AddEntry(EntryBP, LIGHT_GRAY);

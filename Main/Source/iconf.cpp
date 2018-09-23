@@ -82,13 +82,13 @@ cycleoption ivanconfig::RotateTimesPerSquare("RotateTimesPerSquare",
                                           &RotateTimesPerSquareDisplayer);
 numberoption ivanconfig::WindowWidth(     "WindowWidth",
                                           "* window width in pixels, min 640",
-                                          640,
+                                          800, //default will be vanilla, but mininum still can be 640
                                           &WindowWidthDisplayer,
                                           &WindowWidthChangeInterface,
                                           &WindowWidthChanger);
 numberoption ivanconfig::WindowHeight(    "WindowHeight",
                                           "* window height in pixels, min 480",
-                                          480,
+                                          600, //default will be vanilla, but mininum still can be 480
                                           &WindowHeightDisplayer,
                                           &WindowHeightChangeInterface,
                                           &WindowHeightChanger);

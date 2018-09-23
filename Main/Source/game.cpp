@@ -292,7 +292,12 @@ void game::AddCharacterID(character* Char, ulong ID)
 }
 void game::RemoveCharacterID(ulong ID)
 {
-  CharacterIDMap.erase(CharacterIDMap.find(ID));
+  characteridmap::iterator itr = CharacterIDMap.find(ID);
+  if(itr == CharacterIDMap.end() || itr->second == NULL){
+    if(!bugfixdp::IsFixing())
+      ABORT("AlreadyErased:CharacterID %d",ID);
+  }else
+    CharacterIDMap.erase(itr);
 }
 void game::AddItemID(item* Item, ulong ID)
 {
@@ -304,18 +309,19 @@ void game::RemoveItemID(ulong ID)
   if(ID){
     DBG2("Erasing:ItemID",ID);
 
-    //TODO if the search affects performance, make this optional
-    if(SearchItem(ID)==NULL){
+    itemidmap::iterator itr = ItemIDMap.find(ID); //TODO if the search affects performance, make this optional
+    if(itr == ItemIDMap.end() || itr->second == NULL){
       /**
        * This happens when the duplicated player bug happens!
        * so it will try to erase the item 2 times and CRASH on the second,
        * therefore the abort is appropriate.
        */
-      ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+    }else{
+      ItemIDMap.erase(itr);
+      DBG2("ERASED!:ItemID",ID);
     }
-
-    ItemIDMap.erase(ItemIDMap.find(ID));
-    DBG2("ERASED!:ItemID",ID);
   }
 }
 
@@ -329,7 +335,14 @@ void game::AddTrapID(entity* Trap, ulong ID)
 }
 void game::RemoveTrapID(ulong ID)
 {
-  if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
+  if(ID){
+    trapidmap::iterator itr = TrapIDMap.find(ID);
+    if(itr == TrapIDMap.end() || itr->second == NULL){
+      if(!bugfixdp::IsFixing())
+        ABORT("AlreadyErased:TrapID %d",ID);
+    }else
+      TrapIDMap.erase(itr);
+  }
 }
 void game::UpdateTrapID(entity* Trap, ulong ID)
 {
@@ -1505,12 +1518,13 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
+const char* cHugeMap="I can't open a map that is as big as the world!";
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
     bDrawMapOverlayEnabled=false;
     return;
   }
@@ -1929,7 +1943,7 @@ void DrawMapOverlayFancy(bitmap* buffer)
   if(!bDrawMapOverlayEnabled)return;
 
   if(ivanconfig::GetStartingDungeonGfxScale()==1){
-    ADD_MESSAGE("This map is as big as the world!");
+    ADD_MESSAGE(cHugeMap);
   }else{ //it actually work works (for now) if there is any dungeon stretching going on
     if(buffer!=NULL){
       static float fRGB=0.3;
@@ -4683,19 +4697,17 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       character* NPC = lsqr->GetCharacter();
 
       bool bMoveAway=true;
-      #ifdef FIX_LARGECREATURE_TELEPORT_GLITCH
-        /**
-         * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what is a tactical manouver
-         * using now largecreature check because of this crash stack:
-            area::GetSquare(v2) const //HERE V2 had invalid huge negative values for X and Y
-            largecreature::PutTo(v2)
-            character::PutNear(v2) //TODO some complexer code could be implemented at this method
-            lsquare::KickAnyoneStandingHereAway()
-            game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
-         */
-        if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
-      #endif
-
+      /**
+       * Genetrix Vesana goal is to protect the passage (or not?) TODO tho coming from above could grant a huge damage strike to help to kill it, what could be a tactical manouver
+       * using now largecreature check because of this crash stack:
+          area::GetSquare(v2) const //HERE V2 had invalid huge negative values for X and Y
+          largecreature::PutTo(v2)
+          character::PutNear(v2) //TODO some complexer code could be implemented at this method
+          lsquare::KickAnyoneStandingHereAway()
+          game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
+       */
+      if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
+      
       if(bMoveAway)
         lsqr->KickAnyoneStandingHereAway();
 

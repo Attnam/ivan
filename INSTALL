@@ -33,10 +33,6 @@ If config options toggle is too fast, you can add this flag '-DFELIST_WAITKEYUP'
 like this: CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP -DWIZARD" (you may chose what 
 flags to add independently of each other).
 
-If you think Genetrix Vesana should not move away when coming down from
-the world map, add this flag '-DFIX_LARGECREATURE_TELEPORT_GLITCH' what
-also grants other largecreatures will not glitch.
-
 --------------------------------------
 
 Under DOS:

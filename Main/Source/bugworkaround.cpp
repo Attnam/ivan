@@ -18,8 +18,10 @@
 #include "graphics.h"
 #include "iconf.h"
 #include "message.h"
+#include "miscitem.h"
 #include "rawbit.h"
 #include "stack.h"
+#include "trap.h"
 #include "whandler.h"
 
 #include "dbgmsgproj.h"
@@ -68,6 +70,7 @@ bool bugfixdp::AlertConfirmFixMsg(const char* cMsg){
 
   bool Accepted=false;
   bAlertConfirmFixMsgDraw=true;
+  graphics::BlitDBToScreen(); //just to be sure
   if(GET_KEY() == 'y')
     Accepted=true;
   bAlertConfirmFixMsgDraw=false;
@@ -75,24 +78,73 @@ bool bugfixdp::AlertConfirmFixMsg(const char* cMsg){
   return Accepted;
 }
 
-void bugfixdp::CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
-  for(int i=0;i<CharAsked->GetEquipments();i++)
-    bugfixdp::ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell);
-}
-void bugfixdp::CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
-  stack* stk=CharAsked->GetStack(); //inventory
-  for(int i=0;i<stk->GetItems();i++)
-    bugfixdp::ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell);
-}
-void bugfixdp::CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
-  for(int i=0;i<CharAsked->GetBodyParts();i++)
-    bugfixdp::ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell);
+int bugfixdp::TrapsWork()
+{
+  if(game::IsInWilderness())
+    return 0;
+  
+  int iTot=0;
+  std::vector<trap*> vTrapAll;
+  for(int iY=0;iY<game::GetCurrentArea()->GetYSize();iY++){//if(bChangeItemID)break;
+    for(int iX=0;iX<game::GetCurrentArea()->GetXSize();iX++){//if(bChangeItemID)break;
+      lsquare* lsqr = game::GetCurrentLevel()->GetLSquare({iX,iY});
+      lsqr->FillTrapVector(vTrapAll);
+    }
+  }
+  
+  std::vector<trap*> vTrapErase;
+  for(int i=0;i<vTrapAll.size();i++){
+    trap* ti=vTrapAll[i];
+    for(int j=0;j<vTrapAll.size();j++){
+      trap* tj=vTrapAll[j];
+      if(ti==tj)continue;//same object pointer
+      if(ti->GetTrapID()==tj->GetTrapID()){
+        vTrapErase.push_back(tj);
+      }
+    }
+  }
+  
+  for(int i=0;i<vTrapErase.size();i++){
+    trap* t=vTrapErase[i];
+    if(dynamic_cast<beartrap*>(t)!=NULL)
+      ((beartrap*)t)->RemoveFromSlot();
+    t->GetLSquareUnder()->RemoveTrap(t);
+    iTot++;
+    //TODO anything can be done for gas and mines?
+  }  
+  
+  return iTot;
 }
 
-void bugfixdp::CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
-  bugfixdp::CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
-  bugfixdp::CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
-  bugfixdp::CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
+int bugfixdp::CharEquipmentsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
+  int iFixedCount=0;
+  for(int i=0;i<CharAsked->GetEquipments();i++)
+    if(bugfixdp::ItemWork(CharAsked,CharAsked->GetEquipment(i),bFix,"CharFix:Equipped",pvItem,bSendToHell))
+      iFixedCount++;
+  return iFixedCount;
+}
+int bugfixdp::CharInventoryWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
+  int iFixedCount=0;
+  stack* stk=CharAsked->GetStack(); //inventory
+  for(int i=0;i<stk->GetItems();i++)
+    if(bugfixdp::ItemWork(CharAsked,stk->GetItem(i),bFix,"CharFix:Inventory",pvItem,bSendToHell))
+      iFixedCount++;
+  return iFixedCount;
+}
+int bugfixdp::CharBodypartsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
+  int iFixedCount=0;
+  for(int i=0;i<CharAsked->GetBodyParts();i++)
+    if(bugfixdp::ItemWork(CharAsked,CharAsked->GetBodyPart(i),bFix,"CharFix:BodyPart",pvItem,bSendToHell))
+      iFixedCount++;
+  return iFixedCount;
+}
+
+int bugfixdp::CharAllItemsWork(character* CharAsked, bool bFix, bool bSendToHell, std::vector<item*>* pvItem){
+  int iFixedCount=0;
+  iFixedCount+=bugfixdp::CharEquipmentsWork(CharAsked, bFix, bSendToHell, pvItem);
+  iFixedCount+=bugfixdp::CharInventoryWork (CharAsked, bFix, bSendToHell, pvItem);
+  iFixedCount+=bugfixdp::CharBodypartsWork (CharAsked, bFix, bSendToHell, pvItem);
+  return iFixedCount;
 }
 void bugfixdp::CharAllItemsInfo(character* CharAsked){
   bugfixdp::CharAllItemsWork(CharAsked, false, false, NULL);
@@ -232,7 +284,7 @@ bool bugfixdp::ScanLevelForCharactersAndItemsWork(
   return iDupIDCount>0;
 }
 
-void bugfixdp::ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
+bool bugfixdp::ItemWork(character* Char, item* itWork, bool bFix, const char* cInfo, std::vector<item*>* pvItem, bool bSendToHell){
   if(itWork!=NULL){
     if(pvItem!=NULL)pvItem->push_back(itWork);
 
@@ -270,10 +322,14 @@ void bugfixdp::ItemWork(character* Char, item* itWork, bool bFix, const char* cI
         itWork->SendToHell();
         DBG3("CharFix:SentToHell:ItemsID",DBGI(itWork->GetID()),itWork);
       }
+      
+      return bMakeItConsistent;
     }else{
       DBG6(Char,Char->GetID(),cInfo,"CharFix:ItemID",DBGI(itWork->GetID()),itWork); //some helpful info for comparison and understanding
     }
   }
+  
+  return false;
 }
 
 void bugfixdp::ValidateFullLevel()
@@ -295,12 +351,15 @@ void bugfixdp::DupPlayerFix(character* DupPlayer)
   //TODO transfer old player items (pointers/objects/instances) to new player instance if they have the same ID?
 
   /**
-   * TODO confirm this info:
+   * TODO confirm this info and comment with more details here:
    * old player's items are consistent (on the list), they will get a new ID and be sent to hell
    * new player's items have the same ID of old player's ones, their pointers will become consistent later...
    */
-  CharEquipmentsWork(DupPlayer,true,true);DBGLN;
-  CharInventoryWork (DupPlayer,true,true);DBGLN;
+  int iFixedCount=0;
+  iFixedCount=CharEquipmentsWork(DupPlayer,true,true);DBGLN;
+  DEVCMDMSG("fixed equipments %d",iFixedCount);
+  iFixedCount=CharInventoryWork (DupPlayer,true,true);DBGLN;
+  DEVCMDMSG("fixed inv %d",iFixedCount);
 
   ulong idOld = DupPlayer->GetID();
   DupPlayer->_BugWorkaround_PlayerDup(game::CreateNewCharacterID(DupPlayer));DBGLN; // make it consistent as removing it is crashing (also empties inv)
@@ -324,7 +383,8 @@ void bugfixdp::DupPlayerFix(character* DupPlayer)
   DupPlayer->LoseConsciousness(100000,false); //may not fall asleep tho
   DupPlayer->SetNP(1); //to die soon at least
 
-  CharBodypartsWork(DupPlayer,true,false);DBGLN; //bodyparts sent to hell would crash!!! TODO only torso?
+  iFixedCount=CharBodypartsWork(DupPlayer,true,false);DBGLN; //bodyparts sent to hell would crash!!! TODO only torso?
+  DEVCMDMSG("fixed bodyparts %d",iFixedCount);
   //BEWARE!!! this leads to crash: DupPlayer->Remove();
 
   DEVCMDMSG("fixed dup player '%s' id=%d/%d 0x%X",DupPlayer->GetName(DEFINITE).CStr(),idOld,DupPlayer->GetID(),DupPlayer);
@@ -344,33 +404,64 @@ character* bugfixdp::ValidatePlayerAt(square* sqr)
   v2 Pos = sqr->GetPos();
   character* CharAtPos = sqr->GetCharacter();
 
-  std::vector<character*> vCL = FindPlayersOnLevel();
+  std::vector<character*> vPF = FindByPlayerFlag();
 
-  if(CharAtPos!=NULL && CharAtPos->IsPlayer() && vCL.size()==1) //very consistent!
-    return CharAtPos;
+  //very consistent!
+  if(CharAtPos!=NULL && CharAtPos->IsPlayer() && vPF.size()==1)
+    if(CharAtPos->GetID()==1 || (CharAtPos->GetPolymorphBackup() && CharAtPos->GetPolymorphBackup()->GetID()==1))
+      return CharAtPos;
 
-  if(vCL.size()==0){
-    character* CharOk = FindValidPlayer(Pos,true);
-    if(CharOk==NULL) //TODO let user chose one NPC to become the player? sounds too messy tho...
-      ABORT("Player can't be found anywhere! Try to restore a backup if available.");
+  //////////////////// there are problems if reaching here ////////////////////
+  
+  /*
+   * TODO 
+   * there is some double-checks/validationRepetition below...
+   * the flow below could be less confusing if possible...
+   */
+  
+  character* CharID1 = FindByPlayerID1(Pos,true); //player is already fixed here, before the question below at (*1)
+  
+  if(vPF.size()==0 && CharID1==NULL){ //TODO let user chose one NPC to become the player? sounds too messy tho...
+    // this can't be fixed automatically
+    ABORT("Player can't be found anywhere! Try to restore a backup if available.");
   }
 
-  if(CharAtPos!=NULL && !CharAtPos->IsPlayer()){
-    if(AlertConfirmFixMsg("Requested location has NPC, try to fix this?")){
-      if(vCL.size()==1)
-        return vCL[0];
-    }else{
-      return CharAtPos; //TODO what happens in this case as game behavior as assings a NPC as player reference?
+  if(vPF.size()>1){ // FIRST CHECK/FIX!
+    festring fsMsg;
+    fsMsg << "Multiple player instances found (x" << vPF.size() << "), try to fix this?";
+    if(AlertConfirmFixMsg(fsMsg.CStr()))
+      return BugWorkaroundDupPlayer();
+    /**
+     * a problem like moving two characters in alternating turns would happen,
+     * also unable to move between dungeons w/o crashing
+     */
+    ABORT("The game would become inconsistent (prone to crash) w/o fixing this problem '%s'",fsMsg.CStr());
+  }
+
+  if(vPF.size()==1){
+    if(vPF[0]==CharID1){
+      festring fsMsg;
+      fsMsg << "There was some problem but the Player character was found and moved to requested position " << Pos.X<<","<<Pos.Y << ", allow this fix?"; // (*1)
+      if(AlertConfirmFixMsg(fsMsg.CStr()))
+        return CharID1;
+    }
+
+    if(CharAtPos==NULL || !CharAtPos->IsPlayer()){
+      festring fsMsg;
+      fsMsg << "Requested location " << Pos.X<<","<<Pos.Y << " has no character or a NPC (not the player), try to fix this?";
+      if( AlertConfirmFixMsg(fsMsg.CStr()) ){
+        return vPF[0]; //TODO check again for ID==1 or polymorphBackupId==1 ?
+      }else{
+        ABORT("The game would become inconsistent (prone to crash) w/o fixing this problem '%s'",fsMsg.CStr());
+        //this looks bad/messy: return CharAtPos; //TODO what happens in this case as game behavior as assings a NPC as player reference?
+      }
     }
   }
 
-  if(vCL.size()>1){
-    festring fsMsg;
-    fsMsg << "Multiple player instances found (x" << vCL.size() << "), try to fix this?";
-    if(AlertConfirmFixMsg(fsMsg.CStr()))
-      return BugWorkaroundDupPlayer();
+  if(CharAtPos==NULL){ //"fail safe" just in  case other checks are added, this is critical to provide readable abort message
+    ABORT("There is no character at requested position %d,%d, and no other fixes could be applied.",Pos.X,Pos.Y);
   }
-
+  
   return CharAtPos;
 }
 
@@ -380,37 +471,44 @@ bool IsPlayerPB(character* C1, character* C2){
   return false;
 }
 
-std::vector<character*> bugfixdp::FindPlayersOnLevel()
+std::vector<character*> bugfixdp::FindByPlayerFlag()
 {
   return FindCharactersOnLevel(true);
 }
 
-std::vector<character*> bugfixdp::FindCharactersOnLevel(bool bOnlyPlayers)
+/**
+ * tests for the CL_PLAYER flag
+ * @param bOnlyPlayers
+ * @return 
+ */
+std::vector<character*> bugfixdp::FindCharactersOnLevel(bool bOnlyPlayerFlag)
 {
   std::vector<character*> v;
   for(int iY=0;iY<game::GetCurrentArea()->GetYSize();iY++){for(int iX=0;iX<game::GetCurrentArea()->GetXSize();iX++){
     square* sqr = game::GetCurrentArea()->GetSquare({iX,iY});
     character* C=sqr->GetCharacter();
     if(C==NULL)continue;
-    if(!bOnlyPlayers || C->IsPlayer())
+    if(!bOnlyPlayerFlag || C->IsPlayer())
       v.push_back(C);
   }}
   return v;
 }
 
-bool bBufFixDPFullMode=false;
+bool bBufFixDPMode=false;
+bool bugfixdp::IsFixing(){return bBufFixDPMode;}
+
 void bugfixdp::DevConsCmd(std::string strCmdParams)
 {
-  if(strCmdParams=="full")
-    bBufFixDPFullMode=true;
   BugWorkaroundDupPlayer();
+  bBufFixDPMode=true;
 }
 
-character* bugfixdp::FindValidPlayer(v2 ReqPosL,bool bAndFixIt)
-{
+character* bugfixdp::FindByPlayerID1(v2 ReqPosL,bool bAndFixIt)
+{DBGSV2(ReqPosL);
   character* CharID1 = game::SearchCharacter(1); //this can ONLY return one char with ID=1 EVER, so there wont be a DUP char with ID=1 on the characters' map
   if(CharID1==NULL)
     return NULL;
+  DBGSV2(CharID1->GetPos());
 
   character* PBID1=NULL;
   character* PPolymL = NULL;
@@ -477,7 +575,7 @@ character* bugfixdp::FindValidPlayer(v2 ReqPosL,bool bAndFixIt)
     CharPlayerOk = CharID1;
     DEVCMDMSG("%s","ID1 will be ok now");
     if(bAndFixIt && CharID1->GetSquareUnder()==NULL){
-      DEVCMDMSG("placing the ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
+      DEVCMDMSG("placing the character ID1 at %d,%d",ReqPosL.X,ReqPosL.Y);
       CharID1->PutToOrNear(ReqPosL); //place he where expected
     }
 //  }
@@ -505,14 +603,9 @@ character* bugfixdp::BugWorkaroundDupPlayer(){
     }
   }
 
-  character* CharPlayerOk = FindValidPlayer(ReqPosL,true);
+  character* CharPlayerOk = FindByPlayerID1(ReqPosL,true);
   if(CharPlayerOk==NULL)
     ABORT("Unable to fix the valid player.");
-
-//  if(!bBufFixDPFullMode)
-//    return CharPlayerOk;
-
-
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////// below is in case the dup player is not consistent on the characters map /////////////////////
@@ -545,11 +638,14 @@ character* bugfixdp::BugWorkaroundDupPlayer(){
   }
 
   // last thing is grant player's stuff is consistent
-  CharEquipmentsWork(CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG("fixed player '%s' equipments",CharPlayerOk->GetName(DEFINITE).CStr());
-  CharInventoryWork (CharPlayerOk,true,false);DBGLN;
-  DEVCMDMSG("fixed player '%s' inventory",CharPlayerOk->GetName(DEFINITE).CStr());
-
+  int iFixedCount=0;
+  iFixedCount=CharEquipmentsWork(CharPlayerOk,true,false);DBGLN;
+  DEVCMDMSG("fixed player '%s' equipments %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  iFixedCount=CharInventoryWork (CharPlayerOk,true,false);DBGLN;
+  DEVCMDMSG("fixed player '%s' inventory %d",CharPlayerOk->GetName(DEFINITE).CStr(),iFixedCount);
+  iFixedCount=TrapsWork();
+  DEVCMDMSG("fixed traps %d",iFixedCount);
+  
   // just a final validation, may abort on failure
   ValidateFullLevel();
 
