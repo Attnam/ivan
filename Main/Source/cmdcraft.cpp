@@ -205,7 +205,7 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
 }
 
 void recipecore::Save(outputfile& SaveFile) const
-{DBGLN;
+{
   integrityCheck();
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -215,7 +215,7 @@ void recipecore::Save(outputfile& SaveFile) const
 }
 
 void recipedata::Save(outputfile& SaveFile) const
-{DBGLN;
+{
   rc.Save(SaveFile);
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -262,7 +262,7 @@ void recipedata::Save(outputfile& SaveFile) const
 }
 
 void recipecore::Load(inputfile& SaveFile)
-{DBGLN;
+{
   SaveFile //commented ones are just to keep the clarity/organization
     >> bCanBeSuspended
     >> iDungeonLevelID
@@ -270,7 +270,7 @@ void recipecore::Load(inputfile& SaveFile)
 }
 
 void recipedata::Load(inputfile& SaveFile)
-{DBGLN;
+{
   rc.Load(SaveFile);
 
   SaveFile //commented ones are just to keep the clarity/organization
@@ -3649,24 +3649,24 @@ void craftcore::CopyDegradationIfPossible(recipedata& rpd, item* itTo)
 }
 
 void craftcore::Save(outputfile& SaveFile)
-{DBGSTK;
+{
   int size = vSuspended.size();
-  SaveFile << size; DBG2(size,SaveFile.GetFullFilename().CStr()); //token
-  if(size>0){DBGLN;
+  SaveFile << size; //DBG2(size,SaveFile.GetFullFilename().CStr()); //token
+  if(size>0){
     for(int i=0;i<size;i++)
       vSuspended[i].Save(SaveFile);
   }
 }
 
 void craftcore::Load(inputfile& SaveFile)
-{DBGLN;
+{
   ClearSuspendedList(); //make sure it is always cleaned from memory!
   if(game::GetCurrentSavefileVersion()<133)
     return;
 
   int size = 0;
-  SaveFile >> size; DBG2(size,SaveFile.GetFullFilename().CStr()); //token
-  if(size>0){DBGLN;
+  SaveFile >> size; //DBG2(size,SaveFile.GetFullFilename().CStr()); //token
+  if(size>0){
     for(int i=0;i<size;i++){
       recipedata rpd;
       rpd.Load(SaveFile);
