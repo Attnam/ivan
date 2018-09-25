@@ -131,6 +131,8 @@ class recipedata {
   friend struct srpWorkBench;
   friend struct srpResistanceVS;
   friend struct srpCutWeb;
+  
+  friend struct srpInspect;
 
   protected:
     recipecore rc;

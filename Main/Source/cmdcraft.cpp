@@ -1770,6 +1770,41 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
   }
 };srpDismantle rpDismantle;
 
+struct srpInspect : public recipe{ //TODO this is instantaneous, should take time?
+  virtual void fillInfo(){
+    init("inspect","item materials details");
+    desc << "Carefully inspect what materials an item is made of.";
+  }
+
+  virtual bool work(recipedata& rpd){
+    ci CI;
+    if(!choseOneIngredient<item>(rpd,&CI)){
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
+
+    //TODO add each material details if in possesion of the book of matarials!
+    item* it0 = game::SearchItem(rpd.ingredientsIDs[0]);
+    material* matM = it0->GetMainMaterial();
+    material* matS = it0->GetSecondaryMaterial();
+    festring fs;
+    fs<<it0->GetName(DEFINITE)<<" is made of ";
+    if(matM)fs<<matM->GetName(UNARTICLED);
+    if(matS){
+      if(matM)fs<<" and "; //actually, there is only 2nd material if there is main but anyway...
+      fs<<matS->GetName(UNARTICLED);
+    }
+    fs<<".";
+    if(matM||matS){
+      ADD_MESSAGE("%s",fs.CStr());
+    }else{
+      ADD_MESSAGE("I can't inspect %s.",it0->GetName(INDEFINITE).CStr());
+    }
+    rpd.bAlreadyExplained=true;
+    return true;
+  }
+};srpInspect rpInspect;
+
 struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
     init("resistance check","weaker material result");
@@ -2739,6 +2774,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpSplitLump);
   RP(rpJoinLumps);
   RP(rpResistanceVS);
+  RP(rpInspect);
   // black smithing
   RP(rpMelt);
   RP(rpForgeItem);
