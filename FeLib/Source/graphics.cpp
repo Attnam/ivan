@@ -586,11 +586,10 @@ struct drawaboveentry{
   const char* desc; //to help on development
 };
 std::vector<drawaboveentry> vDrawabove;
-void graphics::DrawAboveAll(bitmap* bmpDest)
+void graphics::DrawAboveAll(bitmap* bmpBuffer)
 {
-  for(int i=0;i<vDrawabove.size();i++){
-    vDrawabove[i].da(StretchedBuffer);
-  }
+  for(int i=0;i<vDrawabove.size();i++)
+    vDrawabove[i].da(bmpBuffer);
 }
 
 /**

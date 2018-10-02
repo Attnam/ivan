@@ -2157,7 +2157,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   SaveLinkedList(SaveFile, TrapData);
-  SaveFile << Action;
+  SaveFile << Action; DBG1(Action);
 
   for(c = 0; c < STATES; ++c)
     SaveFile << TemporaryStateCounter[c];
@@ -7123,12 +7123,13 @@ void character::DisplayStethoscopeInfo(character*) const
   for(int c = 0; c < BodyParts; ++c)
   {
     bodypart* BodyPart = GetBodyPart(c);
+    if(!BodyPart)continue;
 
     EntryBP.Empty();
-    if(BodyPart && BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
+    if(BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
     {
       BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
-      EntryBP << " ";
+      EntryBP<<" ";
     }
     BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
     Info.AddEntry(EntryBP, LIGHT_GRAY);
