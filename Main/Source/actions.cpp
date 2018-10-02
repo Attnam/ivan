@@ -347,20 +347,45 @@ void go::Load(inputfile& SaveFile)
   SaveFile >> Direction >> WalkingInOpen >> RouteGoOn;
 }
 
-void go::SetDirectionFromRoute()
+bool go::SetDirectionFromRoute()
 {
   v2 next = RouteGoOn.back();
   RouteGoOn.pop_back();
-  SetDirection(
-    game::GetDirectionForVector(
-      next-Actor->GetPos()));
+  if(next == Actor->GetPos()) //this may happen while confuse state is active
+    if(RouteGoOn.size()>0){
+      next = RouteGoOn.back();
+      RouteGoOn.pop_back();      
+    }
+  
+  v2 v2Diff = next - Actor->GetPos();
+  if(v2Diff.Is0()) //w/o a direction it is impossible to continue...
+    return false;
+  
+  if(abs(v2Diff.X)>1 || abs(v2Diff.Y)>1){ 
+    /**
+     * something weird happened, but there is no need to abort the game
+     * as the user can just try the route again or a new one
+     ABORT("\"too far\" direction %d,%d, actor at %d,%d, remaining route %d",v2Diff.X,v2Diff.Y,Actor->GetPos().X,Actor->GetPos().Y,RouteGoOn.size());
+     */
+    DBG4(DBGAV2(v2Diff),DBGAV2(next),DBGAV2(Actor->GetPos()),RouteGoOn.size());
+    return false;
+  } 
+    
+  int dir = game::GetDirectionForVector(v2Diff); //if reached here, it will not fail with DIR_ERROR
+  
+  SetDirection(dir);
+  
+  return true;
 }
 
 void go::Handle()
 {
   bool bRouteMode = IsRouteMode();
   if(bRouteMode)
-    SetDirectionFromRoute();
+    if(!SetDirectionFromRoute()){
+      Terminate(false);
+      return;
+    }
 
   GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
   GetActor()->GoOn(this); 
