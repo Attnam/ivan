@@ -1354,38 +1354,42 @@ struct srpOltBASE : public recipe{
         return false;
     }
 
-    if(rpd.lsqrPlaceAt->GetOLTerrain()==NULL){
-      rpd.bCanBePlaced=true;
-
-      festring fsQ("to build ");fsQ<<name;
-      int iCfg=-1;
-      bool bH=false;
-      CIdefault.bFirstMainMaterIsFilter=false; //TODO move to constructor
-      if(!bH){
-        ci CI = CIdefault;
-        CI.iReqCfg = bAllowSimpleStones?0:INGOT;
-        CI.bMainMaterRemainsBecomeLump = true;
-        bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, CI); //true, bAllowSimpleStones?0:INGOT, true);
-      }
-      if(!bH && CIdefault.bAllowWood)
-        bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg, CIdefault);
-      if(CIdefault.bAllowBones){
-        if(!bH && iReqVolSkulls>0)
-          bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg, CIdefault);
-        if(!bH)
-          bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
-      }
-
-      if(bH){
-        rpd.bHasAllIngredients=bH;
-        rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
-        if(!spawnCfg(rpd))ABORT("Recipe spawn cfg not set %s",desc.CStr());
-        rpd.otSpawnMatMainCfg=iCfg;
-        rpd.otSpawnMatMainVol=iReqVol;
-        rpd.bCanStart=true;
-      }else
-        failIngredientsMsg(rpd);
+    if(rpd.lsqrPlaceAt->GetOLTerrain()!=NULL){
+      ADD_MESSAGE("It can't be placed here.");
+      rpd.bAlreadyExplained=true;
+      return false;
     }
+      
+    rpd.bCanBePlaced=true;
+
+    festring fsQ("to build ");fsQ<<name;
+    int iCfg=-1;
+    bool bH=false;
+    CIdefault.bFirstMainMaterIsFilter=false; //TODO move to constructor
+    if(!bH){
+      ci CI = CIdefault;
+      CI.iReqCfg = bAllowSimpleStones?0:INGOT;
+      CI.bMainMaterRemainsBecomeLump = true;
+      bH=choseIngredients<stone>(fsQ, iReqVol, rpd, iCfg, CI); //true, bAllowSimpleStones?0:INGOT, true);
+    }
+    if(!bH && CIdefault.bAllowWood)
+      bH=choseIngredients<stick>(fsQ, iReqVol, rpd, iCfg, CIdefault);
+    if(CIdefault.bAllowBones){
+      if(!bH && iReqVolSkulls>0)
+        bH=choseIngredients<skull> (fsQ, iReqVolSkulls, rpd, iCfg, CIdefault);
+      if(!bH)
+        bH=choseIngredients<bone> (fsQ, iReqVol, rpd, iCfg, CIdefault);
+    }
+
+    if(bH){
+      rpd.bHasAllIngredients=bH;
+      rpd.v2PlaceAt = rpd.lsqrPlaceAt->GetPos();
+      if(!spawnCfg(rpd))ABORT("Recipe spawn cfg not set %s",desc.CStr());
+      rpd.otSpawnMatMainCfg=iCfg;
+      rpd.otSpawnMatMainVol=iReqVol;
+      rpd.bCanStart=true;
+    }else
+      failIngredientsMsg(rpd);
 
     return true;
   }
