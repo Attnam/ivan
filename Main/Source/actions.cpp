@@ -12,6 +12,8 @@
 
 /* Compiled through actset.cpp */
 
+#include "dbgmsgproj.h"
+
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
 cchar* unconsciousness::GetDescription() const { return "unconscious"; }
 cchar* consume::GetDescription() const { return Description.CStr(); }
