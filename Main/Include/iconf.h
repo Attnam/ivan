@@ -38,6 +38,7 @@ class ivanconfig
   static int GetAltSilhouettePreventColorGlitch(){return AltSilhouettePreventColorGlitch.Value;}
   static int GetShowMap(){return ShowMap.Value;}
   static truth IsShowMapAtDetectMaterial() { return ShowMapAtDetectMaterial.Value; }
+  static truth IsTransparentMapLM() { return TransparentMapLM.Value; }
   static truth IsWaitNeutralsMoveAway() { return WaitNeutralsMoveAway.Value; }
   static truth IsEnhancedLights() { return EnhancedLights.Value; }
   static int GetMemorizeEquipmentMode() { return MemorizeEquipmentMode.Value; }
@@ -49,6 +50,7 @@ class ivanconfig
   static truth GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static truth GetLookZoom() { return LookZoom.Value; }
   static truth IsXBRZScale() { return XBRZScale.Value; }
+  static truth IsAutoPickupThrownItems() { return AutoPickupThrownItems.Value; }
   static truth IsAltAdentureInfo() { return AltAdentureInfo.Value; }
   static int GetXBRZSquaresAroundPlayer() { return XBRZSquaresAroundPlayer.Value; }
   static int GetStartingDungeonGfxScale() { return iStartingDungeonGfxScale; }
@@ -185,6 +187,7 @@ class ivanconfig
   static cycleoption AltSilhouettePreventColorGlitch;
   static cycleoption ShowMap;
   static truthoption ShowMapAtDetectMaterial;
+  static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
   static truthoption EnhancedLights;
 
@@ -194,6 +197,7 @@ class ivanconfig
   static truthoption AutoDropLeftOvers;
   static truthoption LookZoom;
   static truthoption XBRZScale;
+  static truthoption AutoPickupThrownItems;
 
   static cycleoption SaveGameSortMode;
   static cycleoption DistLimitMagicMushrooms;

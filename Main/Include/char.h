@@ -421,6 +421,7 @@ class character : public entity, public id
   virtual void SwitchToDig(item*, v2) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }
+  truth IsAboveUsefulItem();
   void GoOn(go*, truth = false);
   virtual truth CheckKick() const;
   virtual int OpenMultiplier() const { return 2; }

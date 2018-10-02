@@ -438,8 +438,15 @@ void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
         v2BottomRight=v2ChkSqrPos; //it will keep updating bottom right while it can
         plsqChk = plv->GetLSquare(v2ChkSqrPos);
 
-        if(plsqChk->CanBeSeenByPlayer())continue;DBGLN;
-        if(!IsInWilderness() && plsqChk->CanBeFeltByPlayer())continue;DBGLN;
+        if(plsqChk->CanBeSeenByPlayer())
+          continue;
+        if(!IsInWilderness()){
+          if(plsqChk->CanBeFeltByPlayer())
+            continue;
+          if(plsqChk->GetCharacter()!=NULL)
+            if(plsqChk->GetCharacter()->CanBeSeenByPlayer())
+              continue;
+        }
 
         /********************************************************************************************
          * Now the final thing is to setup the relative pixel position on the small blitdata->bitmap
@@ -1220,6 +1227,14 @@ truth game::OnScreen(v2 Pos)
       && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
+void game::SetMapNote(lsquare* lsqrN,festring What)
+{
+  festring finalWhat;
+  finalWhat << game::MapNoteToken();
+  finalWhat << What;
+  lsqrN->Engrave(finalWhat);
+}
+
 bool bDrawMapOverlayEnabled=false;
 int iMapOverlayDrawCount=0;
 bool game::ToggleDrawMapOverlay()
@@ -1276,7 +1291,80 @@ int game::RotateMapNotes()
   return iMapNotesRotation;
 }
 
-bool bShowMapNotes=false;
+int game::CheckAutoPickup(square* sqr)
+{
+  if(!ivanconfig::IsAutoPickupThrownItems())
+    return false;
+  
+  if(sqr==NULL)
+    sqr = PLAYER->GetSquareUnder();
+  
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return false;
+  
+  lsquare* lsqr = (lsquare*)sqr;
+  
+  itemvector iv;
+  lsqr->GetStack()->FillItemVector(iv);
+  int j=0;
+  for(int i=0;i<iv.size();i++){
+    item* it = iv[i];
+    if(it->HasTag('t')){ //throw
+      it->MoveTo(PLAYER->GetStack());
+      ADD_MESSAGE("%s picked up.", it->GetName(INDEFINITE).CStr());
+      j++;
+    }
+  }
+  
+  return j;
+}
+
+bool game::CheckAddAutoMapNote(square* sqr)
+{
+  if(sqr==NULL)
+    sqr = PLAYER->GetSquareUnder();
+  
+  if(dynamic_cast<lsquare*>(sqr)==NULL)
+    return false;
+  
+  lsquare* lsqr = (lsquare*)sqr;
+  
+  if(lsqr->GetEngraved())
+    return false;
+  
+  olterrain* olt = lsqr->GetOLTerrain();
+  if(!olt)return false;
+  
+  festring fs;
+  if(fs.GetSize()==0 && dynamic_cast<altar*>(olt)!=NULL)
+    fs<<olt->GetMasterGod()->GetName()<<" altar";
+  if(fs.GetSize()==0 && dynamic_cast<sign*>(olt)!=NULL)
+    fs<<"Sign: "<<((sign*)olt)->GetText();
+  
+  if(
+    dynamic_cast<christmastree*>(olt)!=NULL ||
+    dynamic_cast<coffin*>(olt)!=NULL ||
+    dynamic_cast<monsterportal*>(olt)!=NULL ||
+    dynamic_cast<stairs*>(olt)!=NULL ||
+    olt->GetConfig() == ANVIL ||
+    olt->GetConfig() == FORGE ||
+    olt->GetConfig() == WORK_BENCH ||
+    false
+  ){
+    olt->AddName(fs,INDEFINITE);
+//    fs<<olt->GetNameSingular();
+  }
+  
+  if(fs.GetSize()>0){
+    SetMapNote(lsqr,fs);
+    game::RefreshDrawMapOverlay();
+    return true;
+  }
+
+  return false;
+}
+
+bool bShowMapNotes=true;
 bool game::ToggleShowMapNotes()
 {
   bShowMapNotes=!bShowMapNotes;
@@ -1305,6 +1393,8 @@ col16 colMapNoteBkg;
 int iNoteHighlight=-1;
 lsquare* game::GetHighlightedMapNoteLSquare()
 {DBGLN;
+  if(!bDrawMapOverlayEnabled)return NULL;
+  if(!bShowMapNotes)return NULL;
   if(iNoteHighlight==-1)return NULL;DBGLN;
   if(iNoteHighlight>=vMapNotes.size())return NULL;DBGLN;
   return vMapNotes[iNoteHighlight].lsqr; //no need to expose mapnote, all info required is at lsqr
@@ -1395,7 +1485,14 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
 
 //    col16 colBkg = iNoteHighlight==i ? colBkg=YELLOW : colMapNoteBkg;
     if(validateV2(bkgTL,buffer,bkgB)){
-      buffer->Fill(bkgTL,bkgB,colMapNoteBkg); //bkg
+      col16 colMapNoteBkg2=colMapNoteBkg;
+      if(festring(vMapNotes[i].note).Find("!!")!=festring::NPos)
+        colMapNoteBkg2=RED;
+      else
+      if(festring(vMapNotes[i].note).Find("!")!=festring::NPos)
+        colMapNoteBkg2=BLUE;
+      
+      buffer->Fill(bkgTL,bkgB,colMapNoteBkg2); //bkg
       buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
     }
 
@@ -1410,8 +1507,10 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
   }
 
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
-    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer))
-      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, ac[i%iTotCol], iNoteHighlight==i);
+    if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer)){
+      bool bNH = iNoteHighlight==i;
+      buffer->DrawLine(vMapNotes[i].scrPos, vMapNotes[i].v2LineHook, bNH ? WHITE : ac[i%iTotCol], bNH);
+    }
   }
 
   for(int i=0;i<vMapNotes.size();i++)
@@ -1466,6 +1565,8 @@ void game::DrawMapOverlay(bitmap* buffer)
   static v2 v2MapScrSizeFinal(0,0);
   static bitmap* bmpFinal;
 
+  bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
+    
   if(bPositionQuestionMode){
     static v2 v2PreviousCursorPos;
     if(v2PreviousCursorPos != CursorPos){
@@ -1545,12 +1646,14 @@ void game::DrawMapOverlay(bitmap* buffer)
       delete bmpMapBuffer;
       bmpMapBuffer=new bitmap(v2BmpSize);
     }
-//      bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
+//    bmpMapBuffer->ClearToColor(TRANSPARENT_COLOR);
+    bmpMapBuffer->ClearToColor(BLACK);
 
     v2 v2PlayerScrPos(0,0);
     v2 v2CursorScrPos(-1,-1);
     v2 v2Dest(0,0);
     vMapNotes.clear();
+    std::vector<v2> RouteGoOn = commandsystem::GetRouteGoOnCopy();
     for(int iY=v2Min.Y;iY<=v2Max.Y;iY++){
 //        B.Dest.Y = v2TopLeft.Y +iY*iMapTileSize;
       v2Dest.Y = (iY-v2Min.Y)*iMapTileSize;
@@ -1601,16 +1704,18 @@ void game::DrawMapOverlay(bitmap* buffer)
           return true;
         }();
 
+        bool bDrawSqr=true;
         col16 colorO;
-        if(lsqr->HasBeenSeen()){
-          static col16 colorDoor    =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
-          static col16 colorFountain=MakeRGB16(        0,         0,0xFF     ); //blue
-          static col16 colorUp      =MakeRGB16(        0, 0xFF     ,        0); //green
-          static col16 colorDown    =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
-          static col16 colorAltar   =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
-          static col16 colorNote    =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white TODO why?
+        static col16 colorDoor     =MakeRGB16(0xFF*0.66, 0xFF*0.33,        0); //brown
+        static col16 colorFountain =MakeRGB16(        0,         0,0xFF     ); //blue
+        static col16 colorUp       =MakeRGB16(        0, 0xFF     ,        0); //green
+        static col16 colorDown     =MakeRGB16(        0, 0xFF*0.50,        0); //dark green
+        static col16 colorAltar    =MakeRGB16(0xFF*0.50,         0,0xFF     ); //purple
+        static col16 colorNote     =MakeRGB16(0xFF*0.90, 0xFF*0.90,0xFF*0.90); //just not white because white is used as look mode indicator on map
+//        static col16 colorGoOnRoute=MakeRGB16(0xFF*0.75, 0xFF*0.75,0xFF*0.75); //light gray
+        static col16 colorGoOnRoute=MakeRGB16(        0, 0xFF*0.75,0xFF     ); //cyan
 //            static col16 colorOnGround=MakeRGB16(0xFF*0.80, 0xFF*0.50,0xFF*0.20); //orange
-
+        if(lsqr->HasBeenSeen()){
           static const int iTotRM=5 +1; //5 is max rest modifier from dat files
           static col16 colorOnGroundRM[iTotRM];
           static bool bDummyInit2 = [](){
@@ -1657,6 +1762,7 @@ void game::DrawMapOverlay(bitmap* buffer)
             }
           }else{ //floor
             colorO=colorFloor;
+            if(bTransparentMap)bDrawSqr=false;
           }
 
           if(lsqr->IsMaterialDetected()) //color override
@@ -1664,9 +1770,25 @@ void game::DrawMapOverlay(bitmap* buffer)
 
         }else{
           colorO=colorMapBkg;
+          if(bTransparentMap)bDrawSqr=false;
         }
 
-        bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
+        if(RouteGoOn.size()>0)
+          for(auto v2Rt = RouteGoOn.begin(); v2Rt != RouteGoOn.end(); v2Rt++)
+            if(v2SqrPos == *v2Rt){
+              colorO=colorGoOnRoute;
+              bDrawSqr=true;
+              break;
+            }
+//          for(std::list<v2>::iterator itrRt = RouteGoOn.begin(); itrRt != RouteGoOn.end(); itrRt++)
+//            if(itrRt->second == v2SqrPos){
+//              colorO=colorGoOnRoute;
+//              bDrawSqr=true;
+//              break;
+//            }
+        
+        if(bDrawSqr)
+          bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
 
         if(CursorPos == v2SqrPos)
           v2CursorScrPos=v2Dest;
@@ -1795,8 +1917,18 @@ void game::DrawMapOverlay(bitmap* buffer)
     v2MapSize = v2MapScrSizeFinal;
   }
 
-  bmpFinal->FastBlit(buffer, v2TopLeftFinal);
-  graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
+  static blitdata BFinal = DEFAULT_BLITDATA;
+  BFinal.Bitmap = buffer;
+  BFinal.Dest = v2TopLeftFinal;
+  BFinal.Border = bmpFinal->GetSize();
+  BFinal.MaskColor = BLACK;
+  if(bTransparentMap){
+    bmpFinal->NormalMaskedBlit(BFinal);
+  }else
+    bmpFinal->FastBlit(BFinal.Bitmap, BFinal.Dest );
+    
+  if(!bTransparentMap)
+    graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
 
   iMapOverlayDrawCount++;
 
@@ -3996,10 +4128,37 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
   if(Handler)
     Handler(CursorPos);
 
+  bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
+  
+  /**
+   * using the min millis value grants mouse will be updated most often possible
+   * default key -1 just to be ignored
+   */
+  if(bMapNotesMode)
+    globalwindowhandler::SetKeyTimeout(100,-1); 
+  
   bPositionQuestionMode=true;
+  v2 v2PreviousClick=v2(0,0);
   for(;;)
   {
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
+    
+    if(bMapNotesMode){
+      lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
+      if(lsqrMapNote){
+        mouseclick mc = globalwindowhandler::ConsumeMouseEvent();
+        if(mc.btn==1){
+          CursorPos = lsqrMapNote->GetPos();
+          if(v2PreviousClick == CursorPos){ //the 2nd click on same pos will accept as expected TODO fast double click detection, just reset v2PreviousClick after 0.5s ?
+            Return =  CursorPos;
+            break;
+          }
+          v2PreviousClick = CursorPos;
+        }
+      }
+      
+      CheckAddAutoMapNote(Square);
+    }
 
     if(!Square->HasBeenSeen()
        && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer())
@@ -4076,6 +4235,9 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     }
   }
 
+  if(bMapNotesMode)
+    globalwindowhandler::ResetKeyTimeout();
+  
   return Return;
 }
 

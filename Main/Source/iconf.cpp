@@ -117,6 +117,12 @@ truthoption ivanconfig::AllowMouseOnFelist("AllowMouseOnFelist",
 truthoption ivanconfig::ShowMapAtDetectMaterial("ShowMapAtDetectMaterial",
                                           "Show map while detecting material",
                                           false);
+truthoption ivanconfig::AutoPickupThrownItems("AutoPickupThrownItems",
+                                          "Auto pick up thrown items",
+                                          true);
+truthoption ivanconfig::TransparentMapLM    ("TransparentMapLM",
+                                          "Transparent map in it's look mode",
+                                          true);
 truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
                                           "Let old savegames (v131 up) be imported (experimental)",
                                           false);
@@ -943,6 +949,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
   configsystem::AddOption(fsCategory,&EnhancedLights);
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
+  configsystem::AddOption(fsCategory,&AutoPickupThrownItems);
 
   fsCategory="Window";
   configsystem::AddOption(fsCategory,&Contrast);
@@ -974,6 +981,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&RotateTimesPerSquare);
   configsystem::AddOption(fsCategory,&HitIndicator);
   configsystem::AddOption(fsCategory,&ShowMap);
+  configsystem::AddOption(fsCategory,&TransparentMapLM);
 
   fsCategory="Sounds";
   configsystem::AddOption(fsCategory,&PlaySounds);
