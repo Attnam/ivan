@@ -2959,6 +2959,9 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
   if(!ivanconfig::IsEnhancedLights())
     return 0;
 
+  if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
+    return 0;
+  
   cint XMin = Max(game::GetCamera().X, 0);
   cint YMin = Max(game::GetCamera().Y, 0);
   cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
@@ -3003,7 +3006,8 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 
         iMultDist=2;
         if(iDist <= lMaxDist*iMultDist) //ground view limit
-          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475))bTryReveal=true; // 0.475 is  based on tests with lantern
+          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475)) // 0.475 is  based on tests with lantern
+            bTryReveal=true; 
       }
 
       if(bTryReveal){

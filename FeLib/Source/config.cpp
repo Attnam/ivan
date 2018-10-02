@@ -140,6 +140,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
   truth TruthChange = false;
 
   felist List(CONST_S("Which setting do you wish to configure? (* - req. restart)"));
+
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
 
@@ -155,7 +156,13 @@ void configsystem::Show(void (*BackGroundDrawer)(),
     {
       festring Entry = Option[c]->Description;
       Entry.Capitalize();
-      Entry.Resize(60);
+      int iLim=60;
+      if(Entry.GetSize()>iLim-1){
+        Entry.Resize(iLim-4);
+        Entry<<"...";
+      }else
+        Entry.Resize(iLim-1);
+      Entry<<" "; //space between "columns"
       Option[c]->DisplayValue(Entry);
 
       if(fsLastCategory!=Option[c]->fsCategory){
@@ -164,6 +171,7 @@ void configsystem::Show(void (*BackGroundDrawer)(),
       }
 
       List.AddEntry(Entry, LIGHT_GRAY);
+      List.SetLastEntryHelp(Option[c]->Description); //TODO show all possible values, and each value could have more details, may require cycling thru them all to get all texts...
     }
 
     if(SlaveScreen && ListAttributeInitializer)

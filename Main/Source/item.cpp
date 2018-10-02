@@ -401,6 +401,31 @@ truth item::CanBeEatenByAI(ccharacter* Eater) const
     && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
 
+bool item::HasTag(char tag)
+{
+  static char Tag[3]={'#',0,0};
+  Tag[1]=tag;
+  return label.Find(Tag,0) != festring::NPos;
+}
+
+/**
+ * look for all usages to avoid tag clashes
+ */
+void item::SetTag(char tag)
+{
+  if(!HasTag(tag))
+    label<<"#"<<tag;
+}
+
+void item::ClearTag(char tag)
+{
+  static char Tag[3]={'#',0,0};
+  Tag[1]=tag;
+  int pos = label.Find(Tag,0);
+  if(pos != festring::NPos)
+    label.Erase(pos,2);
+}
+
 void item::SetLabel(cfestring& What)
 {
   label.Empty();
@@ -425,9 +450,7 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << static_cast<ushort>(GetConfig());
   SaveFile << static_cast<ushort>(Flags);
   SaveFile << Size << ID << LifeExpectancy << ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
-    SaveFile << label;
-  }
+  SaveFile << label;
   SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
@@ -447,9 +470,8 @@ void item::Load(inputfile& SaveFile)
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
   SaveFile >> Size >> ID >> LifeExpectancy >> ItemFlags;
-  if(game::GetSaveFileVersion()>=132){
+  if(game::GetCurrentSavefileVersion()>=132)
     SaveFile >> label;
-  }
   LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
