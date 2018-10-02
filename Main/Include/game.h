@@ -178,6 +178,7 @@ class game
   static festring SaveName(cfestring& = CONST_S(""),bool = false); //before all calls to this method, made still here on the header file
   static void PrepareStretchRegionsLazy();
   static void UpdateSRegionsXBRZ();
+  static void UpdateSRegionsXBRZ(bool bIsXBRZScale);
   static void RegionSilhouetteEnable(bool b);
   static void RegionListItemEnable(bool b);
   static void UpdatePosAroundForXBRZ(v2 ScreenPos);
