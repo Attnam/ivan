@@ -104,7 +104,7 @@ ACTION(go, action)
   virtual void Handle();
   int GetDirection() const { return Direction; }
   void SetDirection(int What) { Direction = What; }
-  void SetDirectionFromRoute();
+  bool SetDirectionFromRoute();
   void SetRoute(std::vector<v2> What){RouteGoOn=What;};
   truth IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(truth What) { WalkingInOpen = What; }

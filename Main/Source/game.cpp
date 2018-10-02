@@ -602,6 +602,9 @@ void game::RegionSilhouetteEnable(bool bEnable){
 }
 
 void game::UpdateSRegionsXBRZ(){
+  UpdateSRegionsXBRZ(ivanconfig::IsXBRZScale());
+}
+void game::UpdateSRegionsXBRZ(bool bIsXBRZScale){
   for(int i=0;i<graphics::GetTotSRegions();i++){
     if(i==iRegionIndexDungeon){
       graphics::SetSRegionDrawBeforeFelistPage(iRegionIndexDungeon,true,ivanconfig::IsXBRZScale());
@@ -612,7 +615,7 @@ void game::UpdateSRegionsXBRZ(){
       }
     }
 
-    graphics::SetSRegionUseXBRZ(i,ivanconfig::IsXBRZScale());
+    graphics::SetSRegionUseXBRZ(i,bIsXBRZScale);
   }
 }
 

@@ -1043,6 +1043,9 @@ void character::Be()
 
     if(Action && AP >= 1000)
     {
+      if(IsPlayer() && ivanconfig::IsXBRZScale())
+        game::UpdateSRegionsXBRZ(false); // to speed up the action processing
+
       Action->Handle();
 
       if(!IsEnabled())
@@ -4284,6 +4287,12 @@ truth character::IsAboveUsefulItem()
 void character::GoOn(go* Go, truth FirstStep)
 {
   v2 MoveVector = ApplyStateModification(game::GetMoveVector(Go->GetDirection()));
+  if(MoveVector.Is0()) //this is rare and may happen while confuse state is active
+  {
+    Go->Terminate(false);
+    return;
+  }
+    
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 

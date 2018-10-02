@@ -17,6 +17,9 @@ actionprototype::actionprototype(actionspawner Spawner, cchar* ClassID)
 
 void action::Terminate(truth)
 {
+  if(GetActor()->IsPlayer() && ivanconfig::IsXBRZScale())
+    game::UpdateSRegionsXBRZ(true); // to restore it, see character::Be() just b4 action Handle()
+
   GetActor()->SetAction(0);
   delete this;
 }
