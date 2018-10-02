@@ -4287,6 +4287,12 @@ truth character::IsAboveUsefulItem()
 void character::GoOn(go* Go, truth FirstStep)
 {
   v2 MoveVector = ApplyStateModification(game::GetMoveVector(Go->GetDirection()));
+  if(MoveVector.Is0()) //this is rare and may happen while confuse state is active
+  {
+    Go->Terminate(false);
+    return;
+  }
+    
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 

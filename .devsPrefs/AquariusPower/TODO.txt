@@ -5,6 +5,7 @@ FIX-IMPORTANT
 - disappearing pet angel wont drop all equipped items (the ones we give'm and would not normally disappear...), namely torso armor at least
 
 FIX-MINOR
+- center on player after polymorphing back from a ghost while in a wall when we get teleported randomly and a glitch (xBRZ around) happens using 0,0 (probably) position as img source to blit
 - by remembering the previously selected entry list, sometimes the wrong savegame is being loaded, not the "apparently" selected one...
 - skeleton dog shouldn't pee..., but could say "tries to pee but nothing happens" :)
 - pet with poly ring and polycontrol ring, polymorphing into ghost then into bunny, when back to human will not re-equip
