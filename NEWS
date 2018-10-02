@@ -14,9 +14,40 @@ Changes:
 
 Fixes:
 
-
-Version 0.53, released ###TODO### 2018
+Version 0.54, released ###TODO### 2018
 --------------------------------------
+
+Changes:
+* More interesting TX final level.
+* Improved look mode by using showItemsUnder.
+* Limit golem spawns to GC and TX.
+* Fluid rework! You can now sip only a part of a bottle's contents rather than always drink it all.
+* New animations!
+* Mini-map notes through engravings.
+* Mouse support!
+* Mouse hover over silhouette equipment will show a detailed descriptive message on log.
+* Hotkey for quick weapon switching.
+* Improved lights!
+* Text font options added.
+
+Fixes:
+* Balance patche for the new materials.
+* Fix load game in wizard mode.
+* Fix some crashes on iOS.
+* Fix many crashes that may happen on death.
+* Fix memory leaks of message system and sound system.
+* Chests that spawn with broken locks are automatically unlocked.
+* Anvils and forges will no longer block your path.
+* Fix memory overflow in commandsystem::ShowMap().
+* Fix duplicated player after crash.
+* Lower resolution to better fit scaled window.
+
+Dev:
+* Add define.dat validator for script files.
+* Use chrono for rng seed instead of random_device.
+
+Version 0.53 pre-release
+------------------------
 
 Changes:
 * Optional xBRZScale now used to stretch the: full dungeon, Silhouette, inventory items, NPCs on lists.
@@ -29,6 +60,7 @@ Changes:
 * Several new monsters added, including five new uniques.
 * Monster AI now knows how to zap wands at you!
 * Show items at player position, side by side.
+* Nearly 400 new materials added.
 
 Fixes:
 * Mainly when toggling full screen mode on linux, it will now wait until you release the key to apply.

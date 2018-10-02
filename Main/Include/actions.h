@@ -48,12 +48,14 @@ ACTION(consume, action)
   virtual truth AllowFoodConsumption() const { return false; }
   virtual cchar* GetDescription() const;
   virtual void SetDescription(cfestring&);
-  virtual void SetNibbling(truth What) { nibbling = What; }
-  virtual truth IsNibbling() { return nibbling; }
+  virtual void SetNibbling(truth What) { Nibbling = What; }
+  virtual truth IsNibbling() { return Nibbling; }
  protected:
   festring Description;
   ulong ConsumingID;
-  truth nibbling = false;
+  truth Nibbling = false;
+  truth Gulping = false;
+  truth Spoiling = false;
 };
 
 ACTION(rest, action)
@@ -102,14 +104,18 @@ ACTION(go, action)
   virtual void Handle();
   int GetDirection() const { return Direction; }
   void SetDirection(int What) { Direction = What; }
+  void SetDirectionFromRoute();
+  void SetRoute(std::vector<v2> What){RouteGoOn=What;};
   truth IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(truth What) { WalkingInOpen = What; }
+  bool IsRouteMode(){return RouteGoOn.size()>0;}
   virtual truth TryDisplace();
   virtual cchar* GetDescription() const;
   virtual truth ShowEnvironment() const { return false; }
  protected:
   int Direction;
   truth WalkingInOpen;
+  std::vector<v2> RouteGoOn;
 };
 
 ACTION(study, action)

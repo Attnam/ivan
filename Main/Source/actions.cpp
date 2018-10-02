@@ -83,14 +83,30 @@ void consume::Handle()
 
   character* Actor = GetActor();
 
-  if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
+  if(!Spoiling && Consuming->GetSpoilLevel() > 0)
+  {
+    if(Actor->IsPlayer())
+    {
+      ADD_MESSAGE("This thing is starting to get spoiled.");
+
+      if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
+        Spoiling = true;
+      else
+      {
+        Terminate(false);
+        return;
+      }
+    }
+  }
+
+  if(!Gulping && Actor->GetHungerState() >= BLOATED)
   {
     if(Actor->IsPlayer())
     {
       ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
       if(game::TruthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
-        ActivateInDNDMode();
+        Gulping = true;
       else
       {
         Terminate(false);
@@ -322,19 +338,37 @@ void dig::Terminate(truth Finished)
 void go::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Direction << WalkingInOpen;
+  SaveFile << Direction << WalkingInOpen << RouteGoOn;
 }
 
 void go::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Direction >> WalkingInOpen;
+  SaveFile >> Direction >> WalkingInOpen >> RouteGoOn;
+}
+
+void go::SetDirectionFromRoute()
+{
+  v2 next = RouteGoOn.back();
+  RouteGoOn.pop_back();
+  SetDirection(
+    game::GetDirectionForVector(
+      next-Actor->GetPos()));
 }
 
 void go::Handle()
 {
+  bool bRouteMode = IsRouteMode();
+  if(bRouteMode)
+    SetDirectionFromRoute();
+
   GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
-  GetActor()->GoOn(this);
+  GetActor()->GoOn(this); 
+
+  if(GetActor()->GetAction()) //may have been terminated by GoOn()
+    if(bRouteMode) //was route mode
+      if(RouteGoOn.size()==0) //currently is the last step
+        Terminate(false);
 }
 
 void study::Handle()

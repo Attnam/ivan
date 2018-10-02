@@ -40,6 +40,7 @@ class felist
   ~felist();
   void AddEntry(cfestring&, col16, uint = 0,
                 uint = NO_IMAGE, truth = true);
+  void SetLastEntryHelp(cfestring Help);
   void AddDescription(cfestring&, col16 = WHITE);
   static void SetAllowMouse(bool b);
   uint Draw();
@@ -79,14 +80,24 @@ class felist
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
   static truth isAnyFelistCurrentlyDrawn();
   static bool PrepareListItemAltPosBackground(blitdata& rB,bool bAltPosFullBkg);
+  static void SetListItemAltPosMinY(int iY);
   static v2 GetCurrentListSelectedItemPos(){return v2SelectedPos;};
   static void SetSelectedBkgColor(col16 col){colSelectedBkg=col;}
   void SetOriginalPos(v2 pos){v2OriginalPos = pos;};
+  void ClearFilter();
  private:
+  void PrepareToReturn();
+  void ApplyFilter();
+  void UpdateFilterDesc();
+  void SetFilter(festring Filter);
+  festring GetFilter();
+  uint DrawFiltered(bool& bJustExitTheList);
   void DrawDescription(bitmap*) const;
   bool FirstDrawNoFade;
   std::vector<EntryRect> vEntryRect;
   std::vector<felistentry*> Entry;
+  std::vector<felistentry*> EntryBkp;
+  bool bJustRestoreEntries;
   std::vector<felistdescription*> Description;
   uint PageBegin;
   uint Maximum;

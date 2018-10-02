@@ -2160,7 +2160,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   SaveLinkedList(SaveFile, TrapData);
-  SaveFile << Action;
+  SaveFile << Action; DBG1(Action);
 
   for(c = 0; c < STATES; ++c)
     SaveFile << TemporaryStateCounter[c];
@@ -3409,6 +3409,10 @@ void character::GetPlayerCommand()
         {
           bool bWaitNeutralMove=false;
           HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning(), &bWaitNeutralMove);
+          if(HasActed){
+            game::CheckAddAutoMapNote();
+            game::CheckAutoPickup();
+          }
           if(!HasActed && bWaitNeutralMove){
             //cant access.. HasActed = commandsystem::NOP(this);
             Key = '.'; //TODO request NOP()'s key instead of this '.' hardcoded here. how?
@@ -4220,73 +4224,14 @@ truth character::MoveRandomlyInRoom()
   return false;
 }
 
-void character::GoOn(go* Go, truth FirstStep)
+truth character::IsAboveUsefulItem()
 {
-  v2 MoveVector = ApplyStateModification(game::GetMoveVector(Go->GetDirection()));
-  lsquare* MoveToSquare[MAX_SQUARES_UNDER];
-  int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
-
-  if(!Squares || !CanMoveOn(MoveToSquare[0]))
-  {
-    Go->Terminate(false);
-    return;
-  }
-
-  uint OldRoomIndex = GetLSquareUnder()->GetRoomIndex();
-  uint CurrentRoomIndex = MoveToSquare[0]->GetRoomIndex();
-
-  if((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep)
-  {
-    Go->Terminate(false);
-    return;
-  }
-
-  for(int c = 0; c < Squares; ++c)
-    if((MoveToSquare[c]->GetCharacter() && GetTeam() != MoveToSquare[c]->GetCharacter()->GetTeam())
-       || MoveToSquare[c]->IsDangerous(this))
-    {
-      Go->Terminate(false);
-      return;
-    }
-
-  int OKDirectionsCounter = 0;
-
-  for(int d = 0; d < GetNeighbourSquares(); ++d)
-  {
-    lsquare* Square = GetNeighbourLSquare(d);
-
-    if(Square && CanMoveOn(Square))
-      ++OKDirectionsCounter;
-  }
-
-  if(!Go->IsWalkingInOpen())
-  {
-    if(OKDirectionsCounter > 2)
-    {
-      Go->Terminate(false);
-      return;
-    }
-  }
-  else
-    if(OKDirectionsCounter <= 2)
-      Go->SetIsWalkingInOpen(false);
-
-  square* BeginSquare = GetSquareUnder();
-
-  if(!TryMove(MoveVector, true, game::PlayerIsRunning())
-     || BeginSquare == GetSquareUnder()
-     || (CurrentRoomIndex && (OldRoomIndex != CurrentRoomIndex)))
-  {
-    Go->Terminate(false);
-    return;
-  }
-
   if(GetStackUnder()->GetVisibleItems(this))
   {
     bool bUseless=false,bTooCheap=false,bEncumbering=false;
 
     switch(ivanconfig::GetGoOnStopMode()){
-    case 0: Go->Terminate(false); return;
+    case 0: return true;
     case 1:bUseless=true;break;
     case 2:bTooCheap=true;break;
     case 3:bEncumbering=true;break;
@@ -4310,18 +4255,13 @@ void character::GoOn(go* Go, truth FirstStep)
               vit[i]->IsAppliable(this) ||
               vit[i]->IsZappable(this)  ||
 
-              // bad!              vit[i]->IsConsumable() ||
+              // bad! keep as info! vit[i]->IsConsumable() ||
               vit[i]->IsEatable(this) ||
               vit[i]->IsDrinkable(this) ||
 
-              // bad!              vit[i]->AllowEquip() ||
+              // bad! keep as info! vit[i]->AllowEquip() ||
               vit[i]->IsWeapon(this) ||
               vit[i]->IsArmor(this) || //all armor slots
-//              vit[i]->IsBodyArmor(this) ||
-//              vit[i]->IsHelmet(this) ||
-//              vit[i]->IsGauntlet(this) ||
-//              vit[i]->IsBoot(this) ||
-//              vit[i]->IsBelt(this) ||
 
               vit[i]->IsAmulet(this) ||
               vit[i]->IsRing(this) ||
@@ -4336,10 +4276,82 @@ void character::GoOn(go* Go, truth FirstStep)
             (vit[i]->GetTruePrice()/(vit[i]->GetWeight()/1000.0)) > (iMaxValueless*2)
           )
       ){
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+void character::GoOn(go* Go, truth FirstStep)
+{
+  v2 MoveVector = ApplyStateModification(game::GetMoveVector(Go->GetDirection()));
+  lsquare* MoveToSquare[MAX_SQUARES_UNDER];
+  int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
+
+  if(!Squares || !CanMoveOn(MoveToSquare[0]))
+  {
+    Go->Terminate(false);
+    return;
+  }
+
+  uint OldRoomIndex = GetLSquareUnder()->GetRoomIndex();
+  uint CurrentRoomIndex = MoveToSquare[0]->GetRoomIndex();
+
+  if(!Go->IsRouteMode())
+    if((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep)
+    {
+      Go->Terminate(false);
+      return;
+    }
+
+  for(int c = 0; c < Squares; ++c)
+    if((MoveToSquare[c]->GetCharacter() && GetTeam() != MoveToSquare[c]->GetCharacter()->GetTeam())
+       || MoveToSquare[c]->IsDangerous(this))
+    {
+      Go->Terminate(false);
+      return;
+    }
+
+  if(!Go->IsRouteMode()){
+    int OKDirectionsCounter = 0;
+
+    for(int d = 0; d < GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = GetNeighbourLSquare(d);
+
+      if(Square && CanMoveOn(Square))
+        ++OKDirectionsCounter;
+    }
+
+    if(!Go->IsWalkingInOpen())
+    {
+      if(OKDirectionsCounter > 2)
+      {
         Go->Terminate(false);
         return;
       }
     }
+    else
+      if(OKDirectionsCounter <= 2)
+        Go->SetIsWalkingInOpen(false);
+  }
+
+  square* BeginSquare = GetSquareUnder();
+
+  if(!TryMove(MoveVector, true, game::PlayerIsRunning())
+     || BeginSquare == GetSquareUnder()
+     || (!Go->IsRouteMode() && CurrentRoomIndex && (OldRoomIndex != CurrentRoomIndex)))
+  {
+    Go->Terminate(false);
+    return;
+  }
+
+  if(IsAboveUsefulItem())
+  {
+    Go->Terminate(false);
+    return;
   }
 
   game::DrawEverything();
@@ -7121,6 +7133,22 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  
+  festring EntryBP;
+  for(int c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+    if(!BodyPart)continue;
+
+    EntryBP.Empty();
+    if(BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
+    {
+      BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
+      EntryBP<<" ";
+    }
+    BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
+    Info.AddEntry(EntryBP, LIGHT_GRAY);
+  }
 
   if(GetAction())
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);
@@ -11974,6 +12002,28 @@ void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
       ReceiveBodyPartDamage(0, Damage, MUSTARD_GAS_DAMAGE,
                             BodyPartIndex, YOURSELF, false, false, false);
       CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
+    }
+
+    if(IsPlayer())
+    {
+      action* Action = GetAction();
+
+      if(Action && Action->IsRest() && !Action->InDNDMode()
+         && BodyPartIsVital(BodyPartIndex) && BodyPart->IsBadlyHurt())
+      {
+        ADD_MESSAGE("You're about to die from mustard gas.");
+
+        if(game::TruthQuestion(CONST_S("Mustard gas is dissolving your flesh."
+                                       " Continue resting? [y/N]"),
+                               NO))
+        {
+          Action->Terminate(false);
+        }
+        else
+        {
+          Action->ActivateInDNDMode();
+        }
+      }
     }
   }
 }

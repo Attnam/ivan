@@ -55,7 +55,7 @@ class graphics
   static void DrawRectangleOutlineAround(bitmap* bmpAt, v2 v2TopLeft, v2 v2Border, col16 color, bool wide);
   static void BlitDBToScreen();
 
-  static void DrawAboveAll(bitmap* bmpDest);
+  static void DrawAboveAll(bitmap* bmpBuffer);
   static void AddDrawAboveAll(drawabove da, int iPriority, const char* desc);
 
   static v2 GetRes() { return Res; }
