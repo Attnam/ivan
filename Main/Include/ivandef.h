@@ -971,6 +971,7 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define CAN_BE_DESTROYED 16
 #define IS_VALUABLE 32
 #define CAN_BE_MIRRORED 64
+#define CAN_BE_DETECTED 128
 
 /* NameFlags */
 #define USE_AN 1

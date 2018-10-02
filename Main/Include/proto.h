@@ -77,7 +77,8 @@ class protosystem
   static character* CreateMonster(int = 1, int = 999999, int = 0);
   static character* CreateMonster(cfestring&, int = 0, truth = true);
   static item* CreateItem(cfestring&, truth = true);
-  static material* CreateMaterial(cfestring&, long = 0, truth = true);
+  static material* CreateMaterial(cfestring&, long = 0, truth = true, truth = false);
+  static material* CreateMaterialForDetection(cfestring& What);
   static void CreateEveryNormalEnemy(charactervector&);
 #ifdef WIZARD
   static void CreateEveryCharacter(charactervector&);
