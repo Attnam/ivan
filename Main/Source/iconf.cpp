@@ -129,6 +129,12 @@ truthoption ivanconfig::AllowImportOldSavegame("AllowImportOldSavegame",
 truthoption ivanconfig::WaitNeutralsMoveAway("WaitNeutralsMoveAway",
                                           "wait neutral NPCs move away from your path",
                                           false);
+truthoption ivanconfig::AllWeightIsRelevant("AllWeightIsRelevant",
+                                          "only pile clutter with equal weights on list", //clutter are useful now for crafting so their weight matters...
+                                          false);
+truthoption ivanconfig::ShowVolume(       "ShowVolume",
+                                          "show items volume in cm3",
+                                          false);
 truthoption ivanconfig::EnhancedLights(   "EnhancedLights",
                                           "allow distant lights to be seen",
                                           true);
@@ -947,6 +953,8 @@ void ivanconfig::Initialize()
   configsystem::AddOption(fsCategory,&ShowMapAtDetectMaterial);
   configsystem::AddOption(fsCategory,&GoOnStopMode);
   configsystem::AddOption(fsCategory,&WaitNeutralsMoveAway);
+  configsystem::AddOption(fsCategory,&AllWeightIsRelevant);
+  configsystem::AddOption(fsCategory,&ShowVolume);
   configsystem::AddOption(fsCategory,&EnhancedLights);
   configsystem::AddOption(fsCategory,&DistLimitMagicMushrooms);
   configsystem::AddOption(fsCategory,&AutoPickupThrownItems);

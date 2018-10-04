@@ -567,6 +567,9 @@ void protosystem::Initialize()
     const prototype* Proto = protocontainer<item>::GetProtoData()[c]; DBG1(Proto->GetClassID());
     ItemConfigDataSize += Proto->GetConfigSize(); DBG1(Proto->GetConfigData());
 
+    if(Proto->GetConfigData()==NULL)
+      ABORT("missing prototype for '%s' ex. at item.dat add: %s { }",Proto->GetClassID(),Proto->GetClassID());
+
     if(Proto->GetConfigData()[0]->IsAbstract)
       --ItemConfigDataSize;
   }

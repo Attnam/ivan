@@ -88,9 +88,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(game::IsQuestItem(ForSale))
     {
       ADD_MESSAGE("\"I think it is yours. Take it.\"");
       return true;
@@ -299,9 +297,10 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || !Item->GetTruePrice()
-       || Item->IsEncryptedScroll())
+    if(game::IsQuestItem(Item) && !Item->IsTheAvatar())
+      return true;
+
+    if(!Item->GetTruePrice())
       return true;
 
     ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
@@ -324,9 +323,7 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || Item->IsTheAvatar()
-       || Item->IsEncryptedScroll())
+    if(game::IsQuestItem(Item))
     {
       ADD_MESSAGE("Donating this to the Cathedral wouldn't "
                   "be wise. You may still need it.");
@@ -601,9 +598,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(game::IsQuestItem(ForSale))
     {
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;

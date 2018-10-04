@@ -44,6 +44,8 @@ TRAP(web, trap)
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void Untrap();
+  int GetRemoveTrapModifier(character* C);
+  truth TryToTearDown(character* C,int Modifier=-1);
  protected:
   trapdata TrapData;
   bitmap* Picture;
