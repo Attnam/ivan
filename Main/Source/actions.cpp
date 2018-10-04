@@ -14,7 +14,6 @@
 
 #include "confdef.h"
 #include "human.h"
-
 #include "dbgmsgproj.h"
 
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
@@ -494,19 +493,62 @@ void dig::Terminate(truth Finished)
 void go::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Direction << WalkingInOpen;
+  SaveFile << Direction << WalkingInOpen << RouteGoOn;
 }
 
 void go::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Direction >> WalkingInOpen;
+  SaveFile >> Direction >> WalkingInOpen >> RouteGoOn;
+}
+
+bool go::SetDirectionFromRoute()
+{
+  v2 next = RouteGoOn.back();
+  RouteGoOn.pop_back();
+  if(next == Actor->GetPos()) //this may happen while confuse state is active
+    if(RouteGoOn.size()>0){
+      next = RouteGoOn.back();
+      RouteGoOn.pop_back();      
+    }
+  
+  v2 v2Diff = next - Actor->GetPos();
+  if(v2Diff.Is0()) //w/o a direction it is impossible to continue...
+    return false;
+  
+  if(abs(v2Diff.X)>1 || abs(v2Diff.Y)>1){ 
+    /**
+     * something weird happened, but there is no need to abort the game
+     * as the user can just try the route again or a new one
+     ABORT("\"too far\" direction %d,%d, actor at %d,%d, remaining route %d",v2Diff.X,v2Diff.Y,Actor->GetPos().X,Actor->GetPos().Y,RouteGoOn.size());
+     */
+    DBG4(DBGAV2(v2Diff),DBGAV2(next),DBGAV2(Actor->GetPos()),RouteGoOn.size());
+    return false;
+  } 
+    
+  int dir = game::GetDirectionForVector(v2Diff); //if reached here, it will not fail with DIR_ERROR
+  
+  SetDirection(dir);
+  
+  return true;
 }
 
 void go::Handle()
 {
+  bool bRouteMode = IsRouteMode();
+  if(bRouteMode)
+    if(!SetDirectionFromRoute()){
+      Terminate(false);
+      return;
+    }
+
   GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
-  GetActor()->GoOn(this);
+  GetActor()->GoOn(this); 
+
+  if(GetActor()->GetAction()) //may have been terminated by GoOn()
+    if(bRouteMode) //was route mode
+      if(RouteGoOn.size()==0) //currently is the last step
+        Terminate(false);
 }
 
 void study::Handle()

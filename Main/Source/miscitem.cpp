@@ -3025,7 +3025,7 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
         continue;
     }
 
-    TempMaterial = protosystem::CreateMaterial(Temp);
+    TempMaterial = protosystem::CreateMaterialForDetection(Temp);
 
     if(TempMaterial)
       break;

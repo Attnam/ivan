@@ -207,6 +207,33 @@ void devcons::Init()
   specialkeys::AddCtrlOrFuncKeyHandler(SDLK_BACKQUOTE,&OpenCommandsConsole);
 }
 
+const int iVarTot=10;
+float afVars[iVarTot];
+void devcons::SetVar(std::string strParams)
+{
+  if(!strParams.empty()){
+    std::string part;
+    std::stringstream iss(strParams);
+    
+    iss >> part;
+    int index = atoi(part.c_str()); //TODO use string IDs instead of index and create a map
+    if(index<0 || index>=iVarTot)
+      ABORT("invalid var index %d",index);
+    
+    iss >> part;
+    int value = atof(part.c_str());
+    
+    afVars[index]=value;
+  }
+}
+float devcons::GetVar(int index,float fDefaultIf0) 
+{
+  static bool bDummyInit = [](){for(int i=0;i<iVarTot;i++)afVars[i]=0;return true;}();
+  if(index<0 || index>=iVarTot)
+    ABORT("invalid var index %d",index);
+  return afVars[index] == 0 ? fDefaultIf0 : afVars[index];
+}
+
 bool bOpenCommandsConsole=false;
 void devcons::OpenCommandsConsole()
 {
@@ -215,6 +242,7 @@ void devcons::OpenCommandsConsole()
     ADDCMD(Help,"show this help",false);
     AddDevCmd("?",Help,"show this help",false);
 #ifdef WIZARD
+    ADDCMD(SetVar,festring()<<"<index> <floatValue> set a float variable index (max "<<(iVarTot-1)<<") to be used on debug",true);
     ADDCMD(ListChars,"[filterCharID:ulong] list all characters on current dungeon level",true);
     ADDCMD(ListItems,"[[c|i] <filterID:ulong>] filter by char or item ID. List all items on current dungeon level, including on characters inventory and containers",true);
 #endif

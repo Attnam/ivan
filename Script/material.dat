@@ -50,7 +50,7 @@ material
   HardenedMaterial = NONE;
   SoftenedMaterial = NONE;
   IntelligenceRequirement = 1;
-  CommonFlags = IS_ABSTRACT|CAN_BE_WISHED|CAN_BE_MIRRORED;
+  CommonFlags = IS_ABSTRACT|CAN_BE_WISHED|CAN_BE_MIRRORED|CAN_BE_DETECTED;
   NameFlags = 0;
   CategoryFlags = 0;
   BodyFlags = USE_MATERIAL_ATTRIBUTES;

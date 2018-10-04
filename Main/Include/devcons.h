@@ -29,6 +29,8 @@ class devcons{
     static void Init();
     static void OpenCommandsConsole();
     static void AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp=festring(), bool bWizardModeOnly=false);
+    static void SetVar(std::string strParams);
+    static float GetVar(int iIndex,float fDefaultIf0);
 };
 
 #endif /* MAIN_INCLUDE_DEVCONS_H_ */

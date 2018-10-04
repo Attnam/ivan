@@ -151,6 +151,16 @@
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
+          <ccTool>
+            <preprocessorList>
+              <Elem>DBGMSG</Elem>
+              <Elem>FELIST_WAITKEYUP</Elem>
+              <Elem>FIX_LARGECREATURE_TELEPORT_GLITCH</Elem>
+              <Elem>UNIX</Elem>
+              <Elem>USE_SDL</Elem>
+              <Elem>WIZARD</Elem>
+            </preprocessorList>
+          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>

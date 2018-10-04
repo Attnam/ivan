@@ -2958,13 +2958,18 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
 {
   if(!ivanconfig::IsEnhancedLights())
     return 0;
+  
+  if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
+   return 0;
 
+  if(!PLAYER->GetSquareUnder()) //NULL may happen on player's death, was polymorphed when the crash happened
+    return 0;
+  
   cint XMin = Max(game::GetCamera().X, 0);
   cint YMin = Max(game::GetCamera().Y, 0);
   cint XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
   cint YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
   culong LOSTick = game::GetLOSTick();
-  int iMinDist = v2(PLAYER->GetLOSRange(),0).GetLengthSquare();
 
   long lMaxDist = v2(PLAYER->GetAttribute(PERCEPTION),0).GetLengthSquare();
   int tot=0;
@@ -2979,31 +2984,35 @@ int level::RevealDistantLightsToPlayer() //based on Draw() code
       if(Square->Luminance==0)
         continue;
 
-      /**
-       * TODO the farer, less range around the emmiter can be seen
-      long lDelta = lMaxDist - iMinDist;
-      float fPerc = (iDist - iMinDist)/(double)lDelta;
-      int iLightBorder = 0xFF*(0.75 + 0.25*fPerc); //reference LIGHT_BORDER is 0xFF*0.5, but here is for far things
-       */
-
       int iMultDist=1;
       bool bTryReveal=false;
-      if(!bTryReveal && hasLight(Square->Emitation,LIGHT_BORDER)){
+      if(!bTryReveal && hasLight(Square->Emitation,LIGHT_BORDER)){ //EMMITERS
         bTryReveal=true;
         iMultDist=4;
       }
 
-      int iDist = (Square->GetPos() - PLAYER->GetPos()).GetLengthSquare();
-      if(!bTryReveal && iDist<=iMinDist) //near player
-        bTryReveal=true;
-
       if(!bTryReveal){
+        // TODO the farer, less range around the emmiter should be seen        
+        
 //        if(Square->GetOLTerrain() && Square->GetOLTerrain()->IsWall()) //do not show far walls to look better
 //          continue;
 
         iMultDist=2;
-        if(iDist <= lMaxDist*iMultDist) //ground view limit
-          if(!bTryReveal && hasLight(Square->Luminance,0xFF*0.475))bTryReveal=true; // 0.475 is  based on tests with lantern
+        int iDist = (Square->GetPos() - PLAYER->GetPos()).GetLengthSquare();
+        if(iDist <= lMaxDist*iMultDist){ //ground view limit, NON EMMITERS but still lighted up
+          // TODO create a better generic formula to calc this?
+          static float fLBorderLanternLOSM16=0.475; //based on tests with lantern
+          static int LOSMdef=16; //LOSModifier=16 (default for most dungeon levels)
+          static float fLBmax = 0.80; //the bigger, less squares will be visible around emitters
+          static float fLBStep = (fLBmax-fLBorderLanternLOSM16)/LOSMdef;
+          float fLBorder=fLBorderLanternLOSM16;
+          if(GetLOSModifier()<LOSMdef){ //the idea (for now) is just to darken the environment if needed, as it is already very well litten up everywhere else
+            int LOSMdelta=LOSMdef-GetLOSModifier();
+            fLBorder = fLBorderLanternLOSM16 + fLBStep*LOSMdelta;
+          }
+          if(!bTryReveal && hasLight(Square->Luminance,0xFF*fLBorder))
+            bTryReveal=true; 
+        }
       }
 
       if(bTryReveal){
