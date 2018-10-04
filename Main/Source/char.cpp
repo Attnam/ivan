@@ -2533,12 +2533,30 @@ truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
   bool bOk=true;
 
   if(bOk){
-    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
-    if(olt && olt->IsWall()){
-      //TODO is this a bug in the CanMoveOn() code?
-      DBG4(DBGAV2(v2KeepGoingTo),"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo);
+    if(!CanTheoreticallyMoveOn(lsqr))
       bOk=false;
-    }
+//    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
+//    if(olt){
+//      if(bOk && !CanMoveOn(olt)){
+//        DBG4(DBGAV2(v2KeepGoingTo),"olterrain? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+//        bOk=false;
+//      }
+//      
+//      /****
+//       * keep these commented for awhile, may be useful later
+//       * 
+//      if(bOk && olt->IsWall()){ //TODO this may be unnecessary cuz  of above test
+//        //TODO is this a bug in the CanMoveOn() code? navigation AI is disabled when player is ghost TODO confirm about ethereal state, ammy of phasing
+//        DBG4(DBGAV2(v2KeepGoingTo),"walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+//        bOk=false;
+//      }
+//      
+//      if(bOk && (olt->GetWalkability() & ETHEREAL)){ //TODO this may be too much unnecessary test
+//        bOk=false;
+//      }
+//      */
+//    }
   }
 
   if(bOk){
@@ -2922,14 +2940,14 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       bool bAddValidTargetSquare=true;
 
       // find nearest wall lantern
-      if(!bPlayerHasLantern && !CanMoveOn(lsqr)){ //probably a wall
+      if(!bPlayerHasLantern && olt && olt->IsWall()){
         for(int n=0;n<vit.size();n++){
           if(vit[n]->IsLanternOnWall() && !vit[n]->IsBroken()){
             static stack* stkDropWallLanternAt;stkDropWallLanternAt = lsqr->GetStackOfAdjacentSquare(vit[n]->GetSquarePosition());
             static lsquare* lsqrDropWallLanternAt;lsqrDropWallLanternAt =
               stkDropWallLanternAt?stkDropWallLanternAt->GetLSquareUnder():NULL;
 
-            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanMoveOn(lsqrDropWallLanternAt)){
+            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanTheoreticallyMoveOn(lsqrDropWallLanternAt)){
               int iDist = AutoPlayAIFindWalkDist(lsqrDropWallLanternAt->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
               if(lsqrNearestSquareWithWallLantern==NULL || iDist<iNearestSquareWithWallLanternDist){
                 iNearestSquareWithWallLanternDist=iDist;
@@ -2946,7 +2964,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         }
       }
 
-      if(bAddValidTargetSquare && !CanMoveOn(lsqr))
+      if(bAddValidTargetSquare && !CanTheoreticallyMoveOn(lsqr))
         bAddValidTargetSquare=false;
 
       bool bIsFailToTravelSquare=false;
@@ -3007,9 +3025,8 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       }
 
       if(bAddValidTargetSquare)
-        if(olt && olt->IsWall()){ DBG5(iX,iY,"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+        if(!CanTheoreticallyMoveOn(lsqr)) //if(olt && !CanMoveOn(olt))
           bAddValidTargetSquare=false;
-        }
 
       if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
         static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
@@ -3138,7 +3155,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
     if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
       if(iForceGoingToCountDown==0){
         DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
-
+        
         if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
           static int iSetFailTeleportCountDown=10;
           iSetFailTeleportCountDown--;
@@ -3152,7 +3169,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         DBGSV2(GoingTo);
         return true;
       }else{
-        iForceGoingToCountDown--;
+        iForceGoingToCountDown--; DBG1(iForceGoingToCountDown);
       }
     }else{
       iForceGoingToCountDown=10;
