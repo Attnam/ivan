@@ -28,9 +28,6 @@ char Capitalize(char Char)
   return (Char >= 'a' && Char <= 'z') ? (Char ^ 0x20) : Char;
 }
 
-/**
- * code to track new festring assignment (that makes a copy of the string instead of absorbing it) possible bugs
- */
 void bugTrackInvalidChars(cchar* c,int size){
   if(!c || !size)return;
 
@@ -44,7 +41,7 @@ void bugTrackInvalidChars(cchar* c,int size){
 //        && C!='+' // o.O
     ){
       /**
-       * this now ends up being more useful to catch wrong usage of the permissive ADD_MESSAGE() passing a festring w/o .CStr()
+       * after strenghtened festring, this now ends up being more useful to catch wrong usage of the permissive ADD_MESSAGE() passing a festring w/o .CStr()
        */
       ABORT("string contains \"probably invalid\" chars, possibly a bug: \"%s\", [%d], 0x%X /0%o %d '%c'",c, i, C,C,C,C); //actual char '?' must be last as may break the string!
     }
