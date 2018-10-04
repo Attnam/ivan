@@ -90,7 +90,6 @@ truth web::TryToUnStick(character* Victim, v2)
 
   if(TryToTearDown(Victim,Modifier))
     return true;
-  }
 
   Modifier = GetTrapBaseModifier()
              * (Victim->GetAttribute(DEXTERITY)
