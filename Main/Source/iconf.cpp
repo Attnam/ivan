@@ -191,7 +191,7 @@ cycleoption ivanconfig::FontGfx(          "FontGfx",
                                           &FontGfxChangeInterface,
                                           &FontGfxChanger);
 cycleoption ivanconfig::DistLimitMagicMushrooms("DistLimitMagicMushrooms",
-                                          "Magic mushrooms active AI maximum distance in squares (suggested is 8).",
+                                          "Magic mushrooms or carnivorous plants' active AI maximum distance in squares (suggested is 8).",
                                           0, 16,
                                           &DistLimitMagicMushroomsDisplayer);
 cycleoption ivanconfig::SaveGameSortMode( "SaveGameSortMode",
