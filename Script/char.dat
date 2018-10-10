@@ -8314,6 +8314,8 @@ lobhse
   AttachedGod = SCABIES;
   FleshMaterial = SICK_SPIDER_FLESH;
   BloodMaterial = SICK_BLOOD;
+  SweatMaterial = LIQUID_DARKNESS;
+  Sweats = true;
   CanOpen = false;
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
@@ -8332,7 +8334,7 @@ lobhse
   PoisonResistance = 1000;
   ElectricityResistance = 30;
   AcidResistance = 1000;
-  PanicLevel = 20;
+  PanicLevel = 3;
   HostileReplies =
   {
     3,
@@ -8348,7 +8350,7 @@ lobhse
     "\"You... new mommy?\"",
     "You pet @dd.";
   }
-  DeathMessage = "@Dd groans horribly and the world is finally freed from this terrible menace.";
+  DeathMessage = "@Dd vomits up a glowing seedling and dies in a pool of sizzling blood.";
 }
 
 siren

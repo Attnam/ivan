@@ -2524,6 +2524,79 @@ void lobhse::CreateCorpse(lsquare* Square)
   Square->AddItem(mangoseedling::Spawn());
 }
 
+void lobhse::GetAICommand()
+{
+  /* Follow the leader, if any. */
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  if(GetHP() > (GetMaxHP() / 2))
+  {
+    /* Boss fight, first phase: Spin webs and attack when player is entangled. */
+    character* NearestChar = 0;
+    long NearestDistance = 0x7FFFFFFF;
+    v2 Pos = GetPos();
+    int Hostiles = 0;
+
+    for(int c = 0; c < game::GetTeams(); ++c)
+      if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+        for(character* p : game::GetTeam(c)->GetMember())
+          if(p->IsEnabled() && GetAttribute(WISDOM) < p->GetAttackWisdomLimit())
+          {
+            long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
+            ++Hostiles;
+
+            if((ThisDistance < NearestDistance
+                || (ThisDistance == NearestDistance && !(RAND() % 3)))
+               && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+               && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
+            {
+              NearestChar = p;
+              NearestDistance = ThisDistance;
+            }
+          }
+
+    if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
+    {
+      web* Web = web::Spawn();
+      Web->SetStrength(30);
+
+      if(GetLSquareUnder()->AddTrap(Web))
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s spins a web.", CHAR_NAME(DEFINITE));
+
+        EditAP(-1000);
+        return;
+      }
+    }
+
+    if(NearestChar)
+    {
+      if(NearestChar->IsStuck())
+        SetGoingTo(NearestChar->GetPos());
+      else
+        SetGoingTo((Pos << 1) - NearestChar->GetPos());
+
+      if(MoveTowardsTarget(true))
+        return;
+    }
+
+    if(MoveRandomly())
+      return;
+
+    EditAP(-1000);
+    return;
+  }
+  else
+  {
+    /* Boss fight, second phase: Attack all the time. */
+    character::GetAICommand();
+  }
+}
+
 void mindworm::GetAICommand()
 {
   character* NeighbourEnemy = GetRandomNeighbour(HOSTILE);
