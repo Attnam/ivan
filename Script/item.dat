@@ -3286,6 +3286,72 @@ shield /* armor-> */
     CanBePiled = false;
     Price = 1000;
   }
+
+  Config SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 5;
+    PostFix = "of fire resistance";
+    Price = 250;
+    FireResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 3;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    FireResistance = 5;
+    Price = 100;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 5;
+    PostFix = "of electricity resistance";
+    Price = 250;
+    ElectricityResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 3;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    ElectricityResistance = 5;
+    Price = 100;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 5;
+    PostFix = "of magic resistance";
+    Price = 250;
+    EnergyResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 3;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    EnergyResistance = 5;
+    Price = 100;
+    EnchantmentPlusChance = 10;
+  }
 }
 
 cloak /* armor-> */
@@ -6441,7 +6507,7 @@ acidshield /* armor ->*/
   MaterialConfigChances = { 13,
                             300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   EnchantmentPlusChance = 2;
-  AcidResistance = 1;
+  AcidResistance = 10;
   NameSingular = "acid shield";
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
