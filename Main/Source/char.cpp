@@ -7141,12 +7141,12 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Mana: ") + GetAttribute(MANA), LIGHT_GRAY);
-  Info.AddEntry(CONST_S(""));
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
-  Info.AddEntry(CONST_S(""));
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
-  Info.AddEntry(CONST_S(""));
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
   festring EntryBP;
   for(int c = 0; c < BodyParts; ++c)
@@ -7164,7 +7164,7 @@ void character::DisplayStethoscopeInfo(character*) const
     Info.AddEntry(EntryBP, BodyPart->GetMainMaterial()->GetColor());
   }
 
-  Info.AddEntry(CONST_S(""));
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
   if(GetAction())
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);

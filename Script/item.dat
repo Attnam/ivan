@@ -6552,7 +6552,7 @@ acidshield /* armor ->*/
   MaterialConfigChances = { 13,
                             300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   EnchantmentPlusChance = 2;
-  AcidResistance = 10;
+  AcidResistance = 3;
   NameSingular = "acid shield";
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
