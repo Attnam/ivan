@@ -853,6 +853,7 @@
 #define HELM_OF_ENLIGHTENMENT 10
 #define HELM_OF_MANA 11
 #define MASK 12
+#define WAR_MASK 13
 
 #define BELT_OF_CARRYING 1
 #define BELT_OF_LEVITATION 2

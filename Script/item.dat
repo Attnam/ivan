@@ -5495,6 +5495,40 @@ helmet
                               50, 10, 5, 25, 25; }
     EnchantmentPlusChance = 40;
   }
+
+  Config WAR_MASK;
+  {
+    DefaultSize = 25;
+    DefaultMainVolume = 100;
+    StrengthModifier = 250;
+    FormModifier = 10;
+    CoverPercentile = 30;
+    Price = 1000;
+    BitmapPos = 80, 208;
+    Possibility = 1;
+    Adjective = "war";
+    NameSingular = "mask";
+    PostFix = "of Tlachtlallotlachitl";
+    Alias == "war mask";
+    HelmetBitmapPos = 112, 129;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBePiled = false;
+    CanBeBroken = false;
+    AffectsIntelligence = true;
+    AffectsWisdom = true;
+    AffectsWillPower = true;
+    PriceIsProportionalToEnchantment = true;
+    MainMaterialConfig == TIN;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    EnchantmentPlusChance = 30;
+    AttachedGod = CRUENTUS;
+  }
 }
 
 stethoscope
