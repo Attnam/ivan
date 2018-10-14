@@ -4586,6 +4586,16 @@ amulet
     AttachedGod = SOPHOS;
     Alias == "amulet of teleport lock";
   }
+
+  Config AMULET_OF_FASTING;
+  {
+    Possibility = 3;
+    PostFix = "of fasting";
+    MainMaterialConfig == PEARL;
+    GearStates = FASTING;
+    Price = 2000;
+    AttachedGod = DULCIS;
+  }
 }
 
 bodypart
