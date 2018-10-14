@@ -5301,7 +5301,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
@@ -5333,7 +5333,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
@@ -5379,6 +5379,7 @@ helmet
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    CanBeBroken = false;
     AffectsPerception = true;
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
@@ -5407,7 +5408,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;

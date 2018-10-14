@@ -4292,7 +4292,7 @@ void character::GoOn(go* Go, truth FirstStep)
     Go->Terminate(false);
     return;
   }
-    
+
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 
@@ -5201,6 +5201,11 @@ void character::Regenerate()
     return;
 
   RegenerationBonus *= (50 + GetAttribute(ENDURANCE));
+
+  if(StateIsActivated(REGENERATION))
+  {
+    RegenerationBonus *= GetAttribute(ENDURANCE) << 1;
+  }
 
   if(Action && Action->IsRest())
   {

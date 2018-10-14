@@ -4850,7 +4850,7 @@ liquid
   Config PEA_SOUP;
   {
     StrengthValue = 5;
-    NutritionValue = 500;
+    NutritionValue = 1500;
     Color = rgb16(0, 200, 0);
     NameStem = "pea soup";
     Effect = EFFECT_PEA_SOUP;
@@ -4863,7 +4863,7 @@ liquid
   Config CHICKEN_SOUP;
   {
     StrengthValue = 5;
-    NutritionValue = 1000;
+    NutritionValue = 1500;
     Color = rgb16(244, 164, 96);
     NameStem = "chicken soup";
     Effect = EFFECT_HEAL; /* Chiken soup is good hwne you're ill! */
@@ -4901,7 +4901,7 @@ liquid
   Config MILK;
   {
     StrengthValue = 1;
-    NutritionValue = 500;
+    NutritionValue = 1000;
     Color = rgb16(220, 217, 205);
     NameStem = "milk";
     AttachedGod = SEGES;
@@ -4913,7 +4913,7 @@ liquid
   Config HONEY;
   {
     StrengthValue = 3;
-    NutritionValue = 1500;
+    NutritionValue = 1000;
     Color = rgb16(199, 149, 31);
     PriceModifier = 900;
     NameStem = "honey";
@@ -5480,7 +5480,7 @@ liquid
     InteractionFlags = Base|EFFECT_IS_GOOD;
     Effect = EFFECT_ANTIDOTE;
     ConsumeEndMessage = CEM_ANTIDOTE;
-    EffectStrength = 50;
+    EffectStrength = 100;
   }
 
   Config OMMEL_BLOOD;
