@@ -3211,12 +3211,15 @@ bool character::AutoPlayAIChkInconsistency()
 
 truth character::AutoPlayAIPray()
 {
-  if(bSafePrayOnce){}
-  else if(StateIsActivated(PANIC) && clock()%10==0){} //if(StateIsActivated(PANIC))DBG1("Wandering:InPanic");
-  else return false;
+  bool bSPO = bSafePrayOnce;
+  bSafePrayOnce=false;
   
-  bool bPrayed=false;
+  if(bSPO){}
+  else if(StateIsActivated(PANIC) && clock()%10==0){
+    iWanderTurns=1; DBG1("Wandering:InPanic"); // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+  }else return false;
   
+  // check for known gods
   int aiKGods[GODS];
   int iKGTot=0;
   int aiKGodsP[GODS];
@@ -3230,7 +3233,8 @@ truth character::AutoPlayAIPray()
     
     aiKGods[iKGTot++]=c;
     
-    if(game::GetGod(c)->GetRelation() > iPleased){ //TODO is this good?
+    if(game::GetGod(c)->GetRelation() > iPleased){ 
+//      //TODO could this help?      
 //      switch(game::GetGod(c)->GetBasicAlignment()){ //game::GetGod(c)->GetAlignment();
 //        case GOOD:
 //          if(game::GetPlayerAlignment()>=2){}else continue;
@@ -3245,52 +3249,31 @@ truth character::AutoPlayAIPray()
       aiKGodsP[iKGTotP++] = c;
     }
   }
-
-  if(iKGTot>0){
-    int iKGGranted  =             clock()%iKGTot;
-    int iKGGrantedP = iKGTotP>0 ? clock()%iKGTotP : -1;
-    for(int l=0;l<2;l++){ //0=safe 1=unsafe
-      for(int kg = 0; kg < iKGTot; ++kg){
-        god* g = game::GetGod(aiKGods[kg]);
-        
-        switch(l){
-          case 0:
-            if(g->GetRelation() <= iPleased && !bSafePrayOnce)
-              if(clock()%10!=0)continue; //low disastrous pray chance allowed
-            else{
-              if(iKGGrantedP==-1)
-                continue;
-              else
-                if(g!=game::GetGod(aiKGodsP[iKGGrantedP]))
-                  continue;
-            }
-            break;
-          case 1:
-            if(iKGGranted!=kg)continue;
-            break;
-        }
-        
-        g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
-        g->Pray();
-        bPrayed=true;
-        DBG2("PrayingTo",g->GetName());
-        
-        bool bRecover=false;
-        if(g->GetRelation()==-1000)bRecover=true; //to test all relation range again
-        if(l==1 && g->GetRelation() <= iPleased)bRecover=true; //if all are not pleased, one will be recovered
-        if(bRecover)
-          g->SetRelation(1000);
-        
-        break;
-      }
-      if(bPrayed || bSafePrayOnce)break;
+  if(iKGTot==0)return false;
+//  if(bSPO && iKGTotP==0)return false;
+  
+  // chose and pray to one god
+  god* g = NULL;
+  if(iKGTotP>0 && (bSPO || clock()%10!=0))
+    g = game::GetGod(aiKGodsP[clock()%iKGTotP]);
+  else
+    g = game::GetGod(aiKGods[clock()%iKGTot]);
+  
+  if(bSPO || clock()%10!=0){ //it may not recover some times to let pray unsafely
+    int iRecover=0;
+    if(iKGTotP==0){
+      if(iRecover==0 && g->GetRelation()==-1000)iRecover=1000; //to test all relation range
+      if(iRecover==0 && g->GetRelation() <= iPleased)iRecover=iPleased; //to alternate tests on many with low good relation
     }
+    if(iRecover>0)
+      g->SetRelation(iRecover);
+    
+    g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
   }
 
-  iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
-  bSafePrayOnce=false;
+  g->Pray(); DBG2("PrayingTo",g->GetName());
   
-  return bPrayed;
+  return true;
 }
 
 truth character::AutoPlayAICommand(int& rKey)
