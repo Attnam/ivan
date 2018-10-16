@@ -24,6 +24,8 @@
  * & duration flags at once. */
 
 #include "hiteffect.h" //TODO move to charsset.cpp?
+#include "lterras.h"
+#include "gods.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -1615,6 +1617,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
+bool bSafePrayOnce=false;
 void character::AutoPlayAITeleport(bool bDeathCountBased)
 {
   bool bTeleportNow=false;
@@ -1626,6 +1629,7 @@ void character::AutoPlayAITeleport(bool bDeathCountBased)
       if(IsPlayerAutoPlay())
         bTeleportNow=true;
       iDieTeleportCountDown=iDieMax;
+      bSafePrayOnce=true;
     }else{
       static v2 v2DiePos(0,0);
       if(v2DiePos==GetPos()){
@@ -3205,6 +3209,90 @@ bool character::AutoPlayAIChkInconsistency()
   return false;
 }
 
+truth character::AutoPlayAIPray()
+{
+  if(bSafePrayOnce){}
+  else if(StateIsActivated(PANIC) && clock()%10==0){} //if(StateIsActivated(PANIC))DBG1("Wandering:InPanic");
+  else return false;
+  
+  bool bPrayed=false;
+  
+  int aiKGods[GODS];
+  int iKGTot=0;
+  int aiKGodsP[GODS];
+  int iKGTotP=0;
+  static int iPleased=50; //see god::PrintRelation()
+  for(int c = 1; c <= GODS; ++c){
+    if(!game::GetGod(c)->IsKnown())continue;
+    // even known, praying to these extreme ones will be messy if Relation<1000
+    if(dynamic_cast<valpurus*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
+    if(dynamic_cast<mortifer*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
+    
+    aiKGods[iKGTot++]=c;
+    
+    if(game::GetGod(c)->GetRelation() > iPleased){ //TODO is this good?
+//      switch(game::GetGod(c)->GetBasicAlignment()){ //game::GetGod(c)->GetAlignment();
+//        case GOOD:
+//          if(game::GetPlayerAlignment()>=2){}else continue;
+//          break;
+//        case NEUTRAL:
+//          if(game::GetPlayerAlignment()<2 && game::GetPlayerAlignment()>-2){}else continue;
+//          break;
+//        case EVIL:
+//          if(game::GetPlayerAlignment()<=-2){}else continue;
+//          break;
+//      }
+      aiKGodsP[iKGTotP++] = c;
+    }
+  }
+
+  if(iKGTot>0){
+    int iKGGranted  =             clock()%iKGTot;
+    int iKGGrantedP = iKGTotP>0 ? clock()%iKGTotP : -1;
+    for(int l=0;l<2;l++){ //0=safe 1=unsafe
+      for(int kg = 0; kg < iKGTot; ++kg){
+        god* g = game::GetGod(aiKGods[kg]);
+        
+        switch(l){
+          case 0:
+            if(g->GetRelation() <= iPleased && !bSafePrayOnce)
+              if(clock()%10!=0)continue; //low disastrous pray chance allowed
+            else{
+              if(iKGGrantedP==-1)
+                continue;
+              else
+                if(g!=game::GetGod(aiKGodsP[iKGGrantedP]))
+                  continue;
+            }
+            break;
+          case 1:
+            if(iKGGranted!=kg)continue;
+            break;
+        }
+        
+        g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
+        g->Pray();
+        bPrayed=true;
+        DBG2("PrayingTo",g->GetName());
+        
+        bool bRecover=false;
+        if(g->GetRelation()==-1000)bRecover=true; //to test all relation range again
+        if(l==1 && g->GetRelation() <= iPleased)bRecover=true; //if all are not pleased, one will be recovered
+        if(bRecover)
+          g->SetRelation(1000);
+        
+        break;
+      }
+      if(bPrayed || bSafePrayOnce)break;
+    }
+  }
+
+  iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+  bSafePrayOnce=false;
+  
+  return bPrayed;
+}
+
 truth character::AutoPlayAICommand(int& rKey)
 {
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
@@ -3231,46 +3319,8 @@ truth character::AutoPlayAICommand(int& rKey)
   }
 
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
-    if(clock()%10==0){
-//      int aiKGods[GODS];
-//      int iKGTot=0;
-//      game::getkn TODO;
-//      for(int c = 1; c <= GODS; ++c){
-//        aiKGods[c-1]=0;
-//      for(int c = 1; c <= GODS; ++c){
-//        aiKGods[c-1]=0;
-//        if(!game::GetGod(c)->IsKnown())continue;
-//        aiKGods[iKGTot]=c;
-//      }
-      bool bPrayed=false;
-      int iGrantedPray=(clock()%GODS)+1;
-      for(int l=0;l<2;l++){
-        for(int c = 1; c <= GODS; ++c){
-          if(!game::GetGod(c)->IsKnown())continue;
-          if(game::GetGod(c)->GetRelation() < 0){
-            if(l==0 && clock()%10!=0)continue;
-            if(l==1 && iGrantedPray!=c)continue;//if(l==1 && clock()%3!=0)continue;
-          }else{
-            if(l==0 && iGrantedPray!=c)continue;
-          }
-          game::GetGod(c)->Pray();
-          bPrayed=true;
-          DBG2("PrayingTo",game::GetGod(c)->GetName());
-          bool bRecover=false;
-          if(game::GetGod(c)->GetRelation()==-1000)bRecover=true; //to test all relation range again
-          if(l==1 && game::GetGod(c)->GetRelation() < 0)bRecover=true;
-          if(bRecover)
-            game::GetGod(c)->SetRelation(1000);
-          break;
-        }
-        if(bPrayed)break;
-      }
-    }
-
-    iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
-  }
-
+  AutoPlayAIPray();
+  
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
 //  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
 //  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
