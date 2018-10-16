@@ -3232,12 +3232,41 @@ truth character::AutoPlayAICommand(int& rKey)
 
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
   if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
-    for(int c = 1; c <= GODS; ++c)
-      if(game::GetGod(c)->IsKnown())
-        if(clock()%10==0){
-          game::GetGod(c)->Pray(); DBG2("PrayingTo",game::GetGod(c)->GetName());
+    if(clock()%10==0){
+//      int aiKGods[GODS];
+//      int iKGTot=0;
+//      game::getkn TODO;
+//      for(int c = 1; c <= GODS; ++c){
+//        aiKGods[c-1]=0;
+//      for(int c = 1; c <= GODS; ++c){
+//        aiKGods[c-1]=0;
+//        if(!game::GetGod(c)->IsKnown())continue;
+//        aiKGods[iKGTot]=c;
+//      }
+      bool bPrayed=false;
+      int iGrantedPray=(clock()%GODS)+1;
+      for(int l=0;l<2;l++){
+        for(int c = 1; c <= GODS; ++c){
+          if(!game::GetGod(c)->IsKnown())continue;
+          if(game::GetGod(c)->GetRelation() < 0){
+            if(l==0 && clock()%10!=0)continue;
+            if(l==1 && iGrantedPray!=c)continue;//if(l==1 && clock()%3!=0)continue;
+          }else{
+            if(l==0 && iGrantedPray!=c)continue;
+          }
+          game::GetGod(c)->Pray();
+          bPrayed=true;
+          DBG2("PrayingTo",game::GetGod(c)->GetName());
+          bool bRecover=false;
+          if(game::GetGod(c)->GetRelation()==-1000)bRecover=true; //to test all relation range again
+          if(l==1 && game::GetGod(c)->GetRelation() < 0)bRecover=true;
+          if(bRecover)
+            game::GetGod(c)->SetRelation(1000);
           break;
         }
+        if(bPrayed)break;
+      }
+    }
 
     iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
   }
