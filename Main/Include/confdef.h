@@ -295,6 +295,7 @@
 #define FART (GAS_ID + 10)
 #define MUSTARD_GAS (GAS_ID + 11)
 #define SLEEPING_GAS (GAS_ID + 12)
+#define TELEPORT_GAS (GAS_ID + 13)
 
 #define LIQUID_ID (4 << 12)
 

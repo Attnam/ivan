@@ -228,6 +228,8 @@
 #define EFFECT_OMMEL_BLOOD 34
 #define EFFECT_PANIC 35
 #define EFFECT_TRAIN_WISDOM 36
+#define EFFECT_REGENERATION 37
+#define EFFECT_TELEPORTATION 38
 
 /* CEM = Consume End Message */
 
@@ -541,6 +543,7 @@
 #define FART (GAS_ID + 10)
 #define MUSTARD_GAS (GAS_ID + 11)
 #define SLEEPING_GAS (GAS_ID + 12)
+#define TELEPORT_GAS (GAS_ID + 13)
 
 #define LIQUID_ID (4096 * 4)
 

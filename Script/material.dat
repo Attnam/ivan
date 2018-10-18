@@ -4766,6 +4766,16 @@ gas
     Effect = EFFECT_KOBOLD_FLESH;
     StepInWisdomLimit = 3;
   }
+
+  Config TELEPORT_GAS;
+  {
+    Color = rgb16(148, 0, 211);
+    NameStem = "warp gas";
+    Alpha = 100;
+    AttachedGod = SOPHOS;
+    Effect = EFFECT_TELEPORTATION;
+    StepInWisdomLimit = 10;
+  }
 }
 
 liquid

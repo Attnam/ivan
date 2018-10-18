@@ -4950,6 +4950,7 @@ beartrap
                             300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
                             5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                             15, 50, 10, 5; }
+  Alias == "trap";
 
   Config BROKEN;
   {
@@ -6430,12 +6431,13 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 6,
+  SecondaryMaterialConfig = { 7,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR,
-                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR; }
-  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 5; }
+                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS; }
+  MaterialConfigChances = { 7,
+                            50, 10, 1, 10, 5, 5, 10; }
   Adjective = "dwarven";
-  Alias == "gas grenade";
+  Alias == "grenade";
 }
 
 holyhandgrenade
@@ -7219,11 +7221,11 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 7,
+  SecondaryMaterialConfig = { 8,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
-                              EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
-  MaterialConfigChances = { 7,
-                            20, 30, 1, 15, 10, 15, 5; }
+                              EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS; }
+  MaterialConfigChances = { 8,
+                            20, 30, 1, 15, 10, 15, 5, 10; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;

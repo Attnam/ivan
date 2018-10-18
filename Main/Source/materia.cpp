@@ -180,6 +180,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       Char->EditExperience(WISDOM, Amount, 1 << 14);
       break;
     }
+   case EFFECT_REGENERATION: Char->BeginTemporaryState(REGENERATION, Amount); break;
+   case EFFECT_TELEPORTATION:
+    {
+      Char->BeginTemporaryState(TELEPORT, Amount);
+      Char->TeleportRandomly(false);
+      break;
+    }
    default: return false;
   }
 
