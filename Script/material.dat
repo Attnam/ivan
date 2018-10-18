@@ -4920,7 +4920,7 @@ liquid
     Effect = EFFECT_HEAL;
     ConsumeEndMessage = CEM_HEALING_LIQUID;
     HitMessage = HM_HEALING_LIQUID;
-    EffectStrength = 25;
+    EffectStrength = 50;
     Alpha = 200;
     AttachedGod = SEGES;
   }
@@ -5383,10 +5383,7 @@ liquid
     NameStem = "troll blood";
     Alpha = 175;
     Flexibility = 40;
-    Effect = EFFECT_HEAL;
-    ConsumeEndMessage = CEM_HEALING_LIQUID;
-    HitMessage = HM_HEALING_LIQUID;
-    EffectStrength = 50;
+    Effect = EFFECT_REGENERATION;
     PriceModifier = 750;
     AttachedGod = CRUENTUS;
     CommonFlags = Base|IS_VALUABLE;

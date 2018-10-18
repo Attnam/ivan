@@ -5204,7 +5204,7 @@ void character::Regenerate()
 
   if(StateIsActivated(REGENERATION))
   {
-    RegenerationBonus *= GetAttribute(ENDURANCE) << 1;
+    RegenerationBonus *= GetAttribute(ENDURANCE) /*<< 1*/;
   }
 
   if(Action && Action->IsRest())
