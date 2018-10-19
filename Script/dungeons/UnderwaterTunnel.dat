@@ -448,6 +448,11 @@ Dungeon UNDER_WATER_TUNNEL;
       {
         OTerrain = decoration(HOLY_TREE);
       }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = terra { Team = TERRA_TEAM; }
+      }
     }
 
     Square, Random HAS_NO_OTERRAIN;

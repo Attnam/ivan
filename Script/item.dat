@@ -7134,10 +7134,10 @@ mangoseedling
   DefaultSize = 15;
   DefaultMainVolume = 200;
   Category = VALUABLE;
-  BitmapPos = 80, 256;
+  BitmapPos = 79, 255;
   WieldedBitmapPos = 160, 208;
   NameSingular = "seedling";
-  PostFix = "of the Holy Mango Tree";
+  PostFix = "of the Holy Mango World-tree";
   FormModifier = 15;
   Roundness = 10;
   Possibility = 0;

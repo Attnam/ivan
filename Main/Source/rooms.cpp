@@ -715,21 +715,23 @@ truth bananadroparea::DropItem(character* Dropper, item* Item, int)
   {
     if(game::TweraifIsFree())
     {
-      if(game::TruthQuestion(CONST_S("Do you wish to plant the mango seedling at this time? [y/N]")))
+      if(game::TruthQuestion(CONST_S("Do you wish to plant the mango seedling? [y/n]")))
       {
-        game::TextScreen(CONST_S("You plant the seedling of the Holy Mango Tree and the people\n"
-                                 "of your home village gather around cheering. Within moments,\n"
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("You plant the seedling of the Holy Mango World-tree and the people\n"
+                                 "of your home village gather around, cheering. Within moments,\n"
                                  "the seedling sprouts and grows, nourished by the returning\n"
                                  "favour of Silva. You feel Her glory permeating the whole island,\n"
-                                 "shielding it from the forces of Valpurus, should they attempt\n"
+                                 "hiding it from the forces of Valpurus, should they attempt\n"
                                  "to return. Tweraif can be free again!\n\nYou are victorious!"));
 
         game::GetCurrentArea()->SendNewDrawRequest();
         game::DrawEverything();
         PLAYER->ShowAdventureInfo();
         festring Msg = CONST_S("restored Tweraif to independence and remained as its protector");
-        Dropper->AddScoreEntry(Msg, 2, false);
+        PLAYER->AddScoreEntry(Msg, 2, false);
         game::End(Msg);
+        return true;
       }
     }
     else

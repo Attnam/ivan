@@ -6286,14 +6286,6 @@ imperialist
   TotalVolume = 160000;
   TotalSize = 160;
   NameSingular = "imperialist";
-  Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-  BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-  Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
-  RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
-  LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
-  LeftRing = ring(RING_OF_INFRA_VISION);
-  RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
-  RightBoot = MITHRIL boot(BOOT_OF_KICKING) { Enchantment = 3; }
   KnownCWeaponSkills = { 2, WHIPS, KICK; }
   CWeaponSkillHits = { 2, 500, 500; }
   RightSWeaponSkillHits = 500;
@@ -6307,11 +6299,9 @@ imperialist
   UsesLongArticle = true;
   Inventory = { 6, stone, stone, stone, stone, stone, holybook(MELLIS); }
   CanRead = true;
-  HostileReplies == "\"Die you communist pig!\"";
   IsUnique = true;
   IsNameable = false;
   CanBeCloned = false;
-  DefaultName = "Richel Decos";
   AttackStyle = USE_ARMS|USE_LEGS;
   CriticalModifier = 4;
   TamingDifficulty = NO_TAMING;
@@ -6319,21 +6309,6 @@ imperialist
   AttachedGod = MELLIS;
   CanBeConfused = false;
   IsPolymorphable = false;
-  FriendlyReplies =
-  {
-    11, /* the last isn't used if the player is a sumo champion */
-    "@Dd wonders if he should buy a small country.",
-    "\"And they said levitating ostriches had no future! Hah!\"",
-    "\"Happiness is a great thing, but it won't buy you much.\"",
-    "\"Everything can be bought, if you know the price. Once we appraise everything, we will be able to buy the universe!\"",
-    "\"Everything has a price - your loyalty and life, the air we breathe, sunshine, even my own beliefs.\"",
-    "\"Poor people shouldn't complain - after all it's their own fault.\"",
-    "\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if my room has something to do with it?\"",
-    "\"I couldn't possibly thank this city enough for making Decos Bananas Co. the world's greatest fruit producer. So I don't do it all.\"",
-    "\"Low work and transportation costs have allowed me to thrive in a way envied by all rivals.\"",
-    "\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"",
-    "\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"";
-  }
   AutomaticallySeen = true;
   ScienceTalkAdjectiveAttribute =
   {
@@ -6399,6 +6374,35 @@ imperialist
   IsSadist = true;
   UndeadVersions = false;
 
+  Config VICE_ROY;
+  {
+    DefaultName = "Richel Decos";
+    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+    BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+    Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
+    RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
+    LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
+    LeftRing = ring(RING_OF_INFRA_VISION);
+    RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+    RightBoot = MITHRIL boot(BOOT_OF_KICKING) { Enchantment = 3; }
+    HostileReplies == "\"Die you communist pig!\"";
+    FriendlyReplies =
+    {
+      11, /* the last isn't used if the player is a sumo champion */
+      "@Dd wonders if he should buy a small country.",
+      "\"And they said levitating ostriches had no future! Hah!\"",
+      "\"Happiness is a great thing, but it won't buy you much.\"",
+      "\"Everything can be bought, if you know the price. Once we appraise everything, we will be able to buy the universe!\"",
+      "\"Everything has a price - your loyalty and life, the air we breathe, sunshine, even my own beliefs.\"",
+      "\"Poor people shouldn't complain - after all it's their own fault.\"",
+      "\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if my room has something to do with it?\"",
+      "\"I couldn't possibly thank this city enough for making Decos Bananas Co. the world's greatest fruit producer. So I don't do it all.\"",
+      "\"Low work and transportation costs have allowed me to thrive in a way envied by all rivals.\"",
+      "\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"",
+      "\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"";
+    }
+  }
+
   Config MASTER_TORTURER;
   {
     DefaultWisdom = 25;
@@ -6416,6 +6420,7 @@ imperialist
     BodyArmor = BLACK_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 3; }
     Belt = BLACK_LEATHER belt { Enchantment = 2; }
     RightRing = ring(RING_OF_FIRE_RESISTANCE);
+    LeftRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
     RightWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
     LeftWielded = BLACK_LEATHER whip(RUNED_WHIP) { Enchantment = 3; }
     RightGauntlet = BLACK_LEATHER gauntlet { Enchantment = 1; }
@@ -6510,11 +6515,11 @@ imperialist
       10,
       "\"I was appointed the Cardinal of Plenty because I can juggle the numbers like no one else.\"",
       "\"It's only thanks to my skills with numbers that the Cathedral's accounting books show a steady economic growth.\"",
-      "\"The citizens have no bread, you say? Let them eat cake!\"",
-      "\"There can be economy only where there is efficiency.\"",
+      "\"The citizens have no bread, you say? Hmm... Let them eat cake!\"",
+      "\"Hmm, there can be economy only where there is efficiency.\"",
       "\"The way to turn our economy stronger is not by making rich people poorer, it's by making poor people work harder.\"",
       "\"It's called political economy because it is has nothing to do with either politics or economy.\"",
-      "\"It is virtually impossible to compete in today's economy without the Cathedral's favor.\"",
+      "\"Hmm... It is virtually impossible to compete in today's economy without the Cathedral's favor.\"",
       "\"The Attnamese domination of the local economy is based on its army.\"",
       "\"A powerful Attnam is coming, and Bazzaria has only two choices: Either they're at the table, or they're on the menu!\"",
       "\"The trick to strong and stable economy is to work the citizens hard enough they can't afford the luxury of thought.\"";
@@ -6638,7 +6643,7 @@ elder
   HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
   FriendlyReplies =
   {
-    15,
+    16,
     "\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out surprising things and eventually die a violent death. Good luck.\"",
     "\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
     "\"It is said Mortifer was the first being to die, felled by the hand of His brother, Valpurus.\"",
@@ -6651,9 +6656,10 @@ elder
     "\"Previously we could use donkeys to carry the bananas. Then one day Attnamese tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
     "\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
     "\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"",
-    "\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-Se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses. Through the millenia she has gained every imaginable disease and bitten by every existing poisonous creature; now she is practically invulnerable to all damage.\"",
+    "\"Oh, you're going to Attnam through the tunnel? I don't envy you. There's a dreadful monster dwelling in the its forbidden depths: Lobh-se, the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses.\"",
+    "\"Through the millenia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
     "\"When I was a child, we used to travel through the tunnel to easily reach the mainland. A mighty and wise guardian lived down there then... But now the tunnel is overrun by hedgehogs and carnivorous plants.\"",
-    "\"Beware and avoid Lobh-Se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty there and she returns promptly when satiated.\"";
+    "\"Beware and avoid Lobh-se at all costs! Fortunately, this is rather easy, as she only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty in the hidden cave, and she returns promptly when satiated.\"";
   }
   AutomaticallySeen = true;
   ScienceTalkPossibility = 75;
@@ -8304,7 +8310,7 @@ lobhse
   TotalSize = 200;
   TotalVolume = 500000;
   TamingDifficulty = 50;
-  DefaultName = "Lobh-Se";
+  DefaultName = "Lobh-se";
   NameSingular = "behemoth spider";
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 400;
@@ -9018,4 +9024,58 @@ nihil
   }
   Inventory = { 8, celestialmonograph, NEUTRONIUM stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
   DayRequirementForGeneration = 60;
+}
+
+terra
+{
+  DefaultArmStrength = 15;
+  DefaultLegStrength = 15;
+  DefaultDexterity = 25;
+  DefaultAgility = 25;
+  DefaultEndurance = 15;
+  DefaultPerception = 28;
+  DefaultIntelligence = 25;
+  DefaultWisdom = 42;
+  DefaultCharisma = 35;
+  DefaultMana = 55;
+  TotalVolume = 50000;
+  TotalSize = 160;
+  HeadBitmapPos = 112, 0;
+  TorsoBitmapPos = 32, 208;
+  ArmBitmapPos = 64, 208;
+  LegBitmapPos = 0, 144;
+  SkinColor = rgb16(160, 100, 64);
+  HairColor = rgb16(80, 48, 32);
+  AttachedGod = SILVA;
+  DefaultName = "Terra";
+  NameSingular = "elder priestess";
+  PostFix = "of Silva";
+  Sex = FEMALE;
+  BodyArmor = RATA_WOOD bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+  Cloak = RAINBOW_CLOTH cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 3; }
+  Belt = RATA_WOOD belt(BELT_OF_REGENERATION) { Enchantment = 3; }
+  RightWielded = SIDGURE_WOOD BLUE_CRYSTAL meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
+  RightRing = ring(RING_OF_INFRA_VISION);
+  LeftRing = ring(RING_OF_POISON_RESISTANCE);
+  RightGauntlet = RAINBOW_CLOTH gauntlet { Enchantment = 3; }
+  RightBoot = RAINBOW_CLOTH boot { Enchantment = 3; }
+  KnownCWeaponSkills == BLUNT_WEAPONS;
+  CWeaponSkillHits == 500;
+  RightSWeaponSkillHits = 200;
+  FriendlyReplies =
+  {
+    11,
+    "\"The Holy Mango World-tree, Silva's earthly manifestation, supports the elven city of Lunethia.\"",
+    "\"Silva is the goddess of earth, forests and animals. She is the Mother Nature and the source of all that is alive.\"",
+    "\"The roots of Silva drink from the Waters of Eternity, where the dead souls wander over an endless twilight ocean, and Her treetop supports the Heavens of the other gods.\"",
+    "\"Would you happen to know Kaethos? I hope he is alright after all those years. Sometimes, I still think back to our... Nevermind.\"",
+    "\"Hopefully one day, I will find an apprentice to take my place. How I wish to see Tweraif again!\"",
+    "\"My vigil is long and lonely, but necessary. Lobh-se cannot be let out of her prison.\"",
+    "\"Beware and avoid Lobh-se at all costs! She is the misbegotten daughter of Scabies, who exists only to devour any man or beast she senses.\"",
+    "\"Through the millenia, Lobh-se has gained every imaginable disease and was bitten by every existing poisonous creature. Now she is practically invulnerable to all damage.\"",
+    "\"Fortunately, Lobh-se only leaves her lair in the heart of the night and even then does not venture far, since nutrition is plenty here, and she returns promptly when satiated. Still, it is becoming harder and harder to ward her off.\"",
+    "\"This cave once was a magnificent garden, a bulwark against evil. But after the Attnamese invasion, the power of Silva was weakened, and darkness and strife crept in here from below.\"",
+    "\"I am bound by sacred oaths to protect this shrine with my life. I remained behind when Tweraifians buried the entrance to hide this place from Attnam.\"";
+  }
+  DeathMessage = "@Dd dies, whispering: \"I'm sorry! I failed you, Silva.\"";
 }

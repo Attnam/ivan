@@ -717,7 +717,7 @@ ITEM(mangoseedling, item)
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual col16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-}
+};
 
 ITEM(sausage, item)
 {

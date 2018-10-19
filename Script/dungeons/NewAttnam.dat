@@ -139,7 +139,7 @@ Dungeon NEW_ATTNAM;
         {
           _ = 0;
           # = 0;
-          I = imperialist { Team = COLONIST_TEAM; Flags = IS_MASTER; }
+          I = imperialist(VICE_ROY) { Team = COLONIST_TEAM; Flags = IS_MASTER; }
           g = guard(ROOKIE) { Team = COLONIST_TEAM; }
           f = femaleslave(NEW_ATTNAM) { Team = NEW_ATTNAM_TEAM; }
         }
