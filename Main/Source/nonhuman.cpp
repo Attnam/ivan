@@ -245,7 +245,7 @@ void nonhumanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHi
   EditAP(-GetBiteAPCost());
   EditExperience(ARM_STRENGTH, 75, 1 << 8);
   EditExperience(AGILITY, 150, 1 << 8);
-  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(AGILITY)), false);
   Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26,
                  BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -254,7 +254,7 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
 {
   EditNP(-50);
   EditAP(-GetKickAPCost());
-  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(ARM_STRENGTH)), false);
 
   if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26,
                       Direction, !(RAND() % GetCriticalModifier()), ForceHit))
@@ -343,7 +343,7 @@ void nonhumanoid::UnarmedHit(character* Enemy, v2 HitPos, int Direction, truth F
 {
   EditNP(-50);
   EditAP(-GetUnarmedAPCost());
-  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(ARM_STRENGTH)), false);
 
   switch(Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(),
                         RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction,
@@ -2658,5 +2658,5 @@ void mindworm::PsiAttack(character* Victim)
   Victim->ReceiveDamage(this, 1, PSI, HEAD, YOURSELF, true);
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
   EditAP(-2000);
-  EditStamina(-10000 / GetAttribute(INTELLIGENCE), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(INTELLIGENCE)), false);
 }

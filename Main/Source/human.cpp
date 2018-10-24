@@ -540,7 +540,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
       EditNP(-50);
       EditAP(-Max(FirstAPCost, SecondAPCost));
-      EditStamina(-10000 / Strength, false);
+      EditStamina(GetAdjustedStaminaCost(-1000, Strength), false);
       msgsystem::LeaveBigMessageMode();
       return true;
     }
@@ -2243,7 +2243,7 @@ void humanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 150, 1 << 9);
-  EditStamina(-1000, false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(AGILITY)), false);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(),
                  RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -2253,7 +2253,7 @@ void humanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
   leg* KickLeg = RAND_2 ? GetRightLeg() : GetLeftLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  EditStamina(-10000 / GetAttribute(LEG_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(LEG_STRENGTH)), false);
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(),
                       RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
