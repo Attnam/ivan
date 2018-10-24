@@ -6659,7 +6659,7 @@ void elder::BeTalkedTo()
                              "and a miracle of such strength requires more power than any priest\n"
                              "could channel. We need a conduit, something close to Silva herself.\"\n"
                              "\n"
-                             "\"We need a splinter of the Holy Mango World-tree.\"\n"
+                             "\"We need a scion of the Holy Mango World-tree.\"\n"
                              "\n"
                              "\"You have done so much for your village, yet I must ask for another\n"
                              "favour. You know that the late viceroy destroyed the altar of Silva\n"

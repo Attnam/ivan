@@ -8315,8 +8315,8 @@ lobhse
   AttackStyle = USE_HEAD;
   BaseBiteStrength = 400;
   KnownCWeaponSkills == BITE;
-  CWeaponSkillHits == 50;
-  ClassStates = INFRA_VISION|GAS_IMMUNITY;
+  CWeaponSkillHits == 500;
+  ClassStates = INFRA_VISION|GAS_IMMUNITY|DISEASE_IMMUNITY;
   AttachedGod = SCABIES;
   FleshMaterial = SICK_SPIDER_FLESH;
   BloodMaterial = SICK_BLOOD;
@@ -8335,12 +8335,14 @@ lobhse
   DestroysWalls = true;
   AllowUnconsciousness = false;
   IsImmuneToLeprosy = true;
+  VomittingIsUnhealthy = false;
   EnergyResistance = 30;
   FireResistance = 30;
   PoisonResistance = 1000;
   ElectricityResistance = 30;
   AcidResistance = 1000;
   PanicLevel = 3;
+  DisplacePriority = 8;
   HostileReplies =
   {
     3,

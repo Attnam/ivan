@@ -740,12 +740,12 @@ truth bananadroparea::DropItem(character* Dropper, item* Item, int)
       return false;
     }
   }
-  else
-    return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE
-            || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall())
-            || game::TruthQuestion(CONST_S("Do you wish to "
-                                           "donate this item "
-                                           "to the town? [y/N]")))));
+
+  return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE
+          || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall())
+          || game::TruthQuestion(CONST_S("Do you wish to "
+                                         "donate this item "
+                                         "to the town? [y/N]")))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
