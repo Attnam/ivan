@@ -501,6 +501,7 @@ class item : public object
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
   virtual truth IsRuneSword() const { return false; }
+  virtual truth IsKicking() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;

@@ -3564,7 +3564,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, v2 HitPos
    case HAS_HIT:
    case HAS_BLOCKED:
    case DID_NO_DAMAGE:
-    if(IsEnabled() && !CheckBalance(KickDamage))
+    if(IsEnabled() && (!CheckBalance(KickDamage) || (Boot && Boot->IsKicking())))
     {
       if(IsPlayer())
         ADD_MESSAGE("The kick throws you off balance.");
