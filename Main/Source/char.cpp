@@ -12626,3 +12626,15 @@ int character::GetAdjustedStaminaCost(int BaseCost, int Attribute)
 
   return BaseCost / 0.20;
 }
+
+int character::GetMagicItemCooldown(int BaseCooldown)
+{
+  int Attribute = GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
+}

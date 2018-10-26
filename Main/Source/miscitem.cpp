@@ -1237,13 +1237,14 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && game::GetTick() - LastUsed < 2000)
+  if(LastUsed && ((game::GetTick() - LastUsed) < Whistler->GetMagicItemCooldown(2000)))
   {
     whistle::BlowEffect(Whistler);
     return;
   }
   else
     LastUsed = game::GetTick();
+    Whistler->EditExperience(MANA, 150, 1 << 12);
 
   if(Whistler->IsPlayer())
   {
@@ -2225,9 +2226,10 @@ truth horn::Apply(character* Blower)
     return false;
   }
 
-  if(!LastUsed || game::GetTick() - LastUsed >= 2500)
+  if(!LastUsed || game::GetTick() - LastUsed >= Blower->GetMagicItemCooldown(2500))
   {
     LastUsed = game::GetTick();
+    Blower->EditExperience(MANA, 150, 1 << 12);
 
     cchar* SoundDescription;
     switch(GetConfig())
@@ -2763,7 +2765,7 @@ void horn::FinalProcessForBone()
 
 truth charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed && game::GetTick() - LastUsed < 10000)
+  if(LastUsed && game::GetTick() - LastUsed < Charmer->GetMagicItemCooldown(10000))
   {
     if(Charmer->IsPlayer())
     {
@@ -2786,6 +2788,8 @@ truth charmlyre::Apply(character* Charmer)
   else
   {
     LastUsed = game::GetTick();
+    Charmer->EditExperience(MANA, 150, 1 << 12);
+
     if(Charmer->IsPlayer())
     {
       if(Charmer->CanHear())
