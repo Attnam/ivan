@@ -28,6 +28,7 @@
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
 #include <bitset>
+#include <cmath>
 
 struct statedata
 {
@@ -1151,23 +1152,23 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
         EditAP(-GetMoveAPRequirement(ED) >> 1);
         EditNP(-24 * ED);
         EditExperience(AGILITY, 125, ED << 7);
-        int Base = 10000;
+        int Base = 1000;
 
         if(IsPlayer())
           switch(GetHungerState())
           {
            case SATIATED:
-            Base = 11000;
+            Base = 1100;
             break;
            case BLOATED:
-            Base = 12500;
+            Base = 1250;
             break;
            case OVER_FED:
-            Base = 15000;
+            Base = 1500;
             break;
           }
 
-        EditStamina(-Base / Max(GetAttribute(LEG_STRENGTH), 1), true);
+        EditStamina(GetAdjustedStaminaCost(-Base, Max(GetAttribute(LEG_STRENGTH), 1)), true);
       }
       else
       {
@@ -5972,7 +5973,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
       long DexExp = Weight ? Limit(75000L / Weight, 75L, 300L) : 300;
       Arm->EditExperience(ARM_STRENGTH, StrExp, 1 << 8);
       Arm->EditExperience(DEXTERITY, DexExp, 1 << 8);
-      EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
+      EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(ARM_STRENGTH)), false);
 
       if(Arm->TwoHandWieldIsActive())
       {
@@ -12122,7 +12123,7 @@ truth character::ReceiveSirenSong(character* Siren)
     else
       ADD_MESSAGE("You hear a beautiful song.");
 
-    Stamina -= (1 + RAND_N(4)) * 10000;
+    EditStamina(-((1 + RAND_N(4)) * 10000), true);
     return true;
   }
 
@@ -12614,4 +12615,14 @@ truth character::CheckAIZapOpportunity()
   //       No friendly fire!
   // (3) - Check inventory for zappable item.
   // (4) - Zap item in direction where the enemy is.
+}
+
+int character::GetAdjustedStaminaCost(int BaseCost, int Attribute)
+{
+  if(Attribute > 1)
+  {
+    return BaseCost / log10(Attribute);
+  }
+
+  return BaseCost / 0.20;
 }

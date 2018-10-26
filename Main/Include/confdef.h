@@ -640,6 +640,10 @@
 #define MARSHAL 5
 #define REPRESENTATIVE 6
 
+#define VICE_ROY 1
+#define MASTER_TORTURER 2
+#define HOARD_MASTER 3
+
 #define APPRENTICE 1
 #define BATTLE_MAGE 2
 #define ELDER 3

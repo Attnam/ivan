@@ -497,6 +497,7 @@ class item : public object
   virtual void SetItemsInside(const fearray<contentscript<item>>&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
   virtual truth IsBanana() const { return false; }
+  virtual truth IsMangoSeedling() const { return false; }
   virtual truth IsEncryptedScroll() const { return false; }
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }

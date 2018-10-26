@@ -1165,6 +1165,7 @@ class character : public entity, public id
   truth IsBurnt() const;
   truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
+  int GetAdjustedStaminaCost(int, int);
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
