@@ -3716,7 +3716,7 @@ solid
     NameStem = "black jade";
     IntelligenceRequirement = 11;
     PriceModifier = 3000;
-    AttachedGod = SILVA;
+    AttachedGod = INFUSCOR;
     NaturalForm = stone;
     SoftenedMaterial = NEPHRITE;
     HardenedMaterial = RED_JADE;
@@ -3734,7 +3734,7 @@ solid
     NameStem = "red jade";
     IntelligenceRequirement = 19;
     PriceModifier = 3500;
-    AttachedGod = SILVA;
+    AttachedGod = CRUENTUS;
     NaturalForm = stone;
     SoftenedMaterial = BLACK_JADE;
     HardenedMaterial = GREEN_JADE;
@@ -3752,7 +3752,7 @@ solid
     NameStem = "green jade";
     IntelligenceRequirement = 25;
     PriceModifier = 4500;
-    AttachedGod = SILVA;
+    AttachedGod = SCABIES;
     NaturalForm = stone;
     SoftenedMaterial = RED_JADE;
     HardenedMaterial = BLUE_JADE;
@@ -3770,7 +3770,7 @@ solid
     NameStem = "blue jade";
     IntelligenceRequirement = 30;
     PriceModifier = 5500;
-    AttachedGod = SILVA;
+    AttachedGod = CLEPTIA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_JADE;
     HardenedMaterial = WHITE_JADE;
@@ -3788,9 +3788,10 @@ solid
     NameStem = "white jade";
     IntelligenceRequirement = 35;
     PriceModifier = 6500;
-    AttachedGod = SILVA;
+    AttachedGod = NEFAS;
     NaturalForm = stone;
     SoftenedMaterial = BLUE_JADE;
+    HardenedMaterial = BLACK_DIAMOND;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;

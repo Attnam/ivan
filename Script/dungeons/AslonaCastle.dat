@@ -1,0 +1,547 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon ASLONA_CASTLE;
+{
+  Levels = 5;
+  Description = "sewers";
+  ShortDescription = "Sw";
+
+  LevelDefault
+  {
+    Size = 42, 26;
+    GenerateMonsters = true;
+    Rooms = 0;
+    Items = 0;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    CanGenerateBone = true;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 5;
+    EnchantmentPlusChanceDelta = 5;
+    BackGroundType = BLUE_FRACTAL;
+    FillSquare = LIME_STONE solidterrain(GROUND), LIME_STONE earth;
+    TunnelSquare = LIME_STONE solidterrain(GROUND), 0;
+    DifficultyBase = 70;
+    DifficultyDelta = 10;
+    MonsterAmountBase = 10;
+    MonsterAmountDelta = 5;
+    MonsterGenerationIntervalBase = 150;
+    MonsterGenerationIntervalDelta = -25;
+    EarthquakesAffectTunnels = true;
+    AudioPlayList =
+    {
+      1,
+      "Empty.mid";
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      WallSquare = LIME_STONE solidterrain(GROUND), CALCITE wall(BRICK_OLD);
+      FloorSquare = LIME_STONE solidterrain(PARQUET), 0;
+      DoorSquare = LIME_STONE solidterrain(PARQUET), 0;
+
+      Size = 4:11,4:11;
+      AltarPossible = false;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = false;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      AttachRequired = true;
+    }
+  }
+
+  Level 0;
+  {
+    Description = "Aslona Castle";
+    ShortDescription = "Castle";
+    FillSquare = liquidterrain(SEA), 0;
+    Size = 50, 50;
+    GenerateMonsters = false;
+    Rooms = 1;
+    Items = 0;
+    IsOnGround = true;
+    TeamDefault = ASLONA_TEAM;
+    LOSModifier = 48;
+    IgnoreDefaultSpecialSquares = true;
+    CanGenerateBone = false;
+    BackGroundType = GRAY_FRACTAL;
+
+    RoomDefault
+    {
+      GenerateTunnel = false;
+      IsInside = false;
+      UseFillSquareWalls = true;
+    }
+
+    /* The Castle */
+
+    Room
+    {
+      Pos = 0,0;
+      Size = 50,50;
+      WallSquare = liquidterrain(SEA);
+      DivineMaster = SEGES;
+      Type = ROOM_OWNED_AREA;
+
+      GTerrainMap
+      {
+        Pos = 0,0;
+        Size = 50,49;
+        Types
+        {
+          # = BASALT solidterrain(GROUND) { IsInside = true; }
+          . = MARBLE solidterrain(FLOOR) { IsInside = true; }
+          1 = CORAL solidterrain(FLOOR) { IsInside = true; }
+          2 = NACRE solidterrain(FLOOR) { IsInside = true; }
+          _ = MAHOGANY_WOOD solidterrain(PARQUET) { IsInside = true; }
+          - = liquidterrain(POOL) { IsInside = true; }
+          + = solidterrain(GROUND);
+          , = solidterrain(GRASS_TERRAIN);
+          ~ = liquidterrain(SEA);
+        }
+      }
+      {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
+        ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
+        ~~~~,############,,,,,,,,,,,,,,,############,~~~~
+        ~~~,,#__________#,,,,,,,,,,,,,,,#...#......#,~~~~
+        ~~~,~#__________#,,,,,,,,,,,,,,,#...#......#,,~~~
+        ~~~~~#__________#################...#......#,,~~~
+        ~~~~,#__________#...............#...#......#,,,~~
+        ~~~~,#_---______#...............#...########,,,~~
+        ~~~,,#_---______#################..........#,,,~~
+        ~~~,,#_---______#121212121212121#..........#,,,~~
+        ~~~,,#__________#212121212121212#..........#,,,~~
+        ~~~,,############121212121212121############,,,~~
+        ~~,,,,,,#.......#212121212121212#......#,,,,,,,~~
+        ~~,,,,,,#.......#121212121212121#......#,,,,,,,~~
+        ~~,,,,,,#.......#212121212121212#......#,,,,,,,~~
+        ~~,,,,,,#.......#121212121212121#......#,,,,,,,~~
+        ~~,,,,,,################################,,,,,,,~~
+        ~~,,,,,,#....#,,,,,,,##,+,##,,,,,,,#...#,,,,,,,~~
+        ~~,,,,,,#....#,,,,,,,#,,+,,#,,,,,,,#...#,,,,,,,~~
+        ~,,,,,,,#....#,,,,,,,,,,+,,,,,,,,,,#...#,,,,,,,~~
+        ~,,,,,,,#....#,,,,,,##,,+,,##,,,,,,#...#,#######~
+        ~,,,,,,,#....#,,,,,,##.....##,,,,,,#...#,#_____#~
+        ~,,,,,,,#....#,,,,,,,..---..,,,,,,,#...#,#_____#~
+        ~,,,,,,,#....#,,,,,,,.-----.,,,,,,,#...#,#_____#~
+        ~,,,,,,,#....#,,,,,,,.-----.+++++++#...#,#_____#~
+        ~,,,,,,,######,,,,,,,..---..,,,,,,,#####,#_____#~
+        ~,,,,,,,#++++,,,,,,,##.....##,,,,,,#...#,#######~
+        ~~,,,,,,#++++,,,,,,,##,+++,##,,,,,,#...#,,,,,,,~~
+        ~~,,,###########,,,,,,,+++,,,,,,,###########,,,~~
+        ~~~,,#___#.#___#+++++++++++++++++#.........#,,,~~
+        ~~~,,#___#.#___###################.#.....#.#,,,~~
+        ~~~,,#####.#___#......#...#......#.........#,,,~~
+        ~~~,,#___#.#####......#...#......#.#.....#.#,,~~~
+        ~~~,,#___#.#___#......#...#......#.........#,,~~~
+        ~~~,,#####.#___#......#...#......#.#.....#.#,,,~~
+        ~~~,,#___#.#######################.........#,,~~~
+        ~~~,,#___#.#___#,,,,,,,+++,,,,,,,#.#.....#.#~~~~~
+        ~~~,,#___#.#___#,,,,,,,+++,,,,,,,#.........#~~~~~
+        ~~~,,###########,,,,,,,+++,,,,,,,###########~~~~~
+        ~~~,,,,,,,,,,,,,,,,,,,,+++,,,,,,,,,,,~~~~~~~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,___,,,,,,~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
+      }
+
+      OTerrainMap
+      {
+        Pos = 0,0;
+        Size = 50,49;
+        Types
+        {
+          ~ = 0;
+          , = 0;
+          # = BASALT wall(BRICK_FINE);
+          o = BASALT wall(BRICK_FINE|WINDOW);
+          T = throne;
+          | = decoration(CARPET);
+          A = SAPPHIRE altar(SEGES);
+          + = MAHOGANY_WOOD door(HEXAGONAL_LOCK);
+          L = MAHOGANY_WOOD door(HEXAGONAL_LOCK) { Parameters = LOCKED; }
+          S = BASALT door(SECRET_DOOR) { Parameters = LOCKED; }
+          & = decoration(DWARF_BIRCH);
+          8 = decoration(BIRCH);
+          9 = decoration(TEAK);
+          ; = boulder(1);
+          : = boulder(2);
+          1 = decoration(POOL_CORNER) { VisualEffects = NONE; }
+          2 = decoration(POOL_CORNER) { VisualEffects = MIRROR; }
+          3 = decoration(POOL_CORNER) { VisualEffects = MIRROR | FLIP; }
+          4 = decoration(POOL_CORNER) { VisualEffects = FLIP; }
+          5 = decoration(POOL_BORDER) { VisualEffects = NONE; }
+          6 = decoration(POOL_BORDER) { VisualEffects = ROTATE; }
+          7 = decoration(POOL_BORDER) { VisualEffects = FLIP; }
+          8 = decoration(POOL_BORDER) { VisualEffects = MIRROR | ROTATE; }
+          s = decoration(COUCH);
+          f = fountain;
+          d = decoration(DOUBLE_BED);
+          b = decoration(PLAIN_BED);
+          B = SILVER boulder(1);
+          - = decoration(BENCH);
+          _ = decoration(DESK);
+          h = decoration(CHAIR);
+          a = decoration(ARM_CHAIR);
+          = = decoration(EXPENSIVE_BED);
+          [ = decoration(OVEN);
+          O = decoration(TABLE);
+          n = decoration(ANVIL);
+          v = decoration(WELL);
+          P = decoration(PEDESTAL);
+          F = decoration(FORGE);
+          w = decoration(WORK_BENCH);
+          x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; }, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } } }
+          X = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; } } }
+          % = DEEP_BRONZE barwall;
+          D = DEEP_BRONZE door(BARDOOR);
+          H = olterraincontainer(SHELF)
+          {
+            ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, trinket(DEAD_FISH) { Times = 5:15; }, carrot { Times = 0:3; } }
+          }
+          W = olterraincontainer(SHELF)
+          {
+            ItemsInside = { 3, potion { Times = 0:3; SecondaryMaterial = CIDER; }, potion { Times = 0:3; SecondaryMaterial = WHITE_WINE; }, potion { Times = 0:3; SecondaryMaterial = RED_WINE; } }
+          }
+          > = stairs(STAIRS_DOWN);
+        }
+      }
+      {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~,,8,,,,,,&,,8,,,,,,,,,,,,,,8,,,&,,~~~~~~~
+        ~~~~~~,8,,,,;,,,8,,,,,,,,,8,,,,,8,,,,,,,,8,~~~~~~
+        ~~~~~,,,,,8,,,,,,,,,,8,,,,,,,,8,,,,:,,8,,,,,~~~~~
+        ~~~~,#########o##,,,,,,,v,,,,,,,##o#########,~~~~
+        ~~~,,#XXXX..s...#,,8,,,,,,,8,,,,#...#HHHHHH#,~~~~
+        ~~~,~#X.......d.o,,,,;8,,,,,,,8,S.h.#W....O#8,~~~
+        ~~~~~#X.a.......#################.O.#[....O#,,~~~
+        ~~~~,o......s..x#.....B.D.D.....#.h.#[.....#;,,~~
+        ~~~~,#.152.....x#.B.....%.%B....#...######+#,8,~~
+        ~~~,&#.8~6......#########S#######..h....h..#,,,~~
+        ~~~,,#.473....a_#......|T|......#.hOh..hOh.o,,,~~
+        ~~~,,#..........#......|||......#..h....h..#,,8~~
+        ~~~,,########L###.......|.......#####+###o##,,,~~
+        ~~,;,,,>#.s....s#.......|.......#......#,,,,8,,~~
+        ~~,,,,8,#.......#.......|.......#..PP..#,:,,,,&~~
+        ~~8,,,,,#s......+.......|.......+..PP..#,,,,,,,~~
+        ~~,,&,,,#....s..#.......|.......#......#,,8,,,,~~
+        ~~,,,,8,##++##o#####o###+###o#####o##+##,,,,,8,~~
+        ~~,,,,,,#....#,,-,-,,##,.,##,,-,-,,#...#,,&,,,,~~
+        ~~,,,8,,#....#,,,,,,,#,,.,,#,,,,,,,o..-#8,,,,,,~~
+        ~,,8,,,,#....o,,,f,,,,,,.,,,,,,f,,,#...#,,,,,,8~~
+        ~,,,,,,,#....#,,,,,,##,,.,,##,,,,,,o..-#,###o###~
+        ~8,,,,,8#....#,9,,9,##.....##,9,,9,#...#,#XX_XX#~
+        ~,,,&,,,#....o,,,,,,,..~~~..,,,,,,,o..-#,#X.a.X#~
+        ~,,,,;,,#....#,9,,9,,.~~~~~.,,9,,9,#...#,ox...=o~
+        ~,8,,,,,#....#,,,,,,,.~~~~~........+...#8#X...X#~
+        ~,,,,,,,##++##,9,,9,,..~~~..,,9,,9,##L##,#XX.XX#~
+        ~,,8,,8,#....,,,,,,,##.....##,,,,,,o...#,###+###~
+        ~~,,,,,,#....,,,,,,,##,...,##,,,,,,#...#,,,,,,,~~
+        ~~&,,#####+##o##,,,,,,,...,,,,,,,###########,&,~~
+        ~~~,,#b..#.#hw.+.................+.........#,,,~~
+        ~~~,,oh..+.+...###+####%%%####+###.#--|--#.#,,,~~
+        ~~~,,#####.#n.F#b.....#...#.....b#....|....#,,;~~
+        ~~~,:#...L.#####......+...L......#.#--|--#.#,,~~~
+        ~~~,,o.b.#.#x.b#b.....#...#.....b#....|....#,,~~~
+        ~~~,,#####.+...#.b.b.b#...#b.b.b.#.#--|--#.#,,8~~
+        ~~~,,#X.a#.########o###%D%###o####....|....#:,~~~
+        ~~~,,o=._#.#..b#,,,,,,,...,,,,,,,#.#..A..#.#~~~~~
+        ~~~,,#x..+.L..O#,,,;,,,...,,,,,&,#.........#~~~~~
+        ~~~,8#####o#####,,,,,,,...,,,,,,,###o#o#o###~~~~~
+        ~~~,,,,,,,,,,,,,,,,,&,,...,:,,,,,,8,,~~~~~~~~~~~~
+        ~~~~~,,,,,,,,8,,,,,,,,,...,,,,,,~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+      }
+
+      ItemMap
+      {
+        Pos = 0,0;
+        Size = 50,49;
+        Types
+        {
+          # == 0;
+          ~ == 0;
+          , == 0;
+          + == 0;
+          e == backpack;
+          g == SUN_CRYSTAL stone(SOL_STONE) { Times = 1:3; }
+          L == oillamp;
+          5 == PLATINUM stone;
+          6 == EMERALD stone;
+          7 == WHITE_JADE stone;
+          8 == BLACK_DIAMOND stone;
+          1 == lantern { SquarePosition = UP; }
+          2 == lantern { SquarePosition = DOWN; }
+          3 == lantern { SquarePosition = RIGHT; }
+          4 == lantern { SquarePosition = LEFT; }
+          Y == MITHRIL itemcontainer(LARGE_CHEST) { Parameters = LOCKED; ItemsInside == Random { Times = 3:7; MinPrice = 1250; } }
+          y == MITHRIL itemcontainer(SMALL_CHEST) { Parameters = LOCKED; ItemsInside = { 2, stone { Times = 3:15; }, fiftymillionroubles; } }
+          C == cauldron { SecondaryMaterial = CHICKEN_SOUP; }
+          a == PEARL amulet(AMULET_OF_WARDING);
+          A == SLADE amulet(AMULET_OF_SPEED);
+          b == HEPATIZON ring(RING_OF_POLYMORPH_LOCK);
+          B == HEPATIZON ring(RING_OF_BRAVERY);
+          c == VACUUM bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 3; }
+          E == PSYPHER EBONY_WOOD rustscythe;
+          d == PRIMORDIAL_ICE helmet(HELM_OF_TELEPORTATION);
+          D == PETRIFIED_DARK helmet(HELM_OF_MANA) { Enchantment = 7; }
+          f == SEA_SERPENT_SCALE belt(BELT_OF_REGENERATION);
+          F == CORAL wand(WAND_OF_ALCHEMY);
+          G == trinket(LARGE_CLOCK);
+          i == trinket(POTTED_PLANT);
+          I == trinket(POTTED_CACTUS);
+          h == itemcontainer(SMALL_CHEST) { Parameters = LOCKED; ItemsInside == Random { Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } }
+          H == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, sausage { Times = 0:10; }, trinket(DEAD_FISH) { Times = 0:3; } } }
+          j == trinket(SMALL_CLOCK);
+          J == RUBY GOLD meleeweapon(TWO_HANDED_SCIMITAR);
+          k == EMERALD BRASS meleeweapon(TWO_HANDED_SCIMITAR);
+          K == SAPPHIRE SILVER meleeweapon(TWO_HANDED_SCIMITAR);
+          l == DIAMOND OCTIRON meleeweapon(TWO_HANDED_SCIMITAR);
+        }
+      }
+      {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
+        ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
+        ~~~~,######2#####,,,,,,,,,,,,,,,############,~~~~
+        ~~~,,#..........#,,,,,,,,,,,,,,,#...#......#,~~~~
+        ~~~,~#..........#,,,,,,,,,,,,,,,+...#......#,,~~~
+        ~~~~~#..........#########2#######...4...C..#,,~~~
+        ~~~~,#..........#gBc65+a+.+dY5fA#...#..H...#,,,~~
+        ~~~~,#.~~~......#E+7bF5y+.++6D8L#...##2#1#+#,,,~~
+        ~~~,,#Y~~~......4#2###2##+2###2##..........#,,,~~
+        ~~~,,3.~~~......#...............#..........#,,,~~
+        ~~~,,#.i..hh...G#...............#..........#,,,~~
+        ~~~,,######2#+##3...............4##2#+######,,,~~
+        ~~,,,,,,#.......#...............#......#,,,,,,,~~
+        ~~,,,,,,#.......3...............4..jk..#,,,,,,,~~
+        ~~,,,,,,#.......+...............+..Kl..4,,,,,,,~~
+        ~~,,,,,,3.......#...............#......#,,,,,,,~~
+        ~~,,,,,,##++2#####1###1#+#1###1######+##,,,,,,,~~
+        ~~,,,,,,#...e#,,,,,,,##,.,##,,,,,,,#..i#,,,,,,,~~
+        ~~,,,,,,#e...#,,,,,,,#,,.,,#,,,,,,,#...#,,,,,,,~~
+        ~,,,,,,,#...e#,,,,,,,,,,.,,,,,,,,,,#..I4,,,,,,,~~
+        ~,,,,,,,3e...#,,,,,,##,,.,,##,,,,,,#...#,#######~
+        ~,,,,,,,#...e#,,,,,,##.....##,,,,,,#..i#,#.....#~
+        ~,,,,,,,#e...#,,,,,,,..~~~..,,,,,,,#...#,#.....#~
+        ~,,,,,,,#...e#,,,,,,,.~~~~~.,,,,,,,#..I4,#.....#~
+        ~,,,,,,,#e...#,,,,,,,.~~~~~........+..G#,#.....#~
+        ~,,,,,,,#1++#2,,,,,,,..~~~..,,,,,,,##+##,#.....#~
+        ~,,,,,,,#....,,,,,,,##.....##,,,,,,#...#,###+###~
+        ~~,,,,,,#....,,,,,,,##,...,##,,,,,,#...#,,,,,,,~~
+        ~~,,,##2##+#####,,,,,,,...,,,,,,,#####2#####,,,~~
+        ~~~,,#..h#.#...+.................+.........#,,,~~
+        ~~~,,#...+.+...###+#2##+++##2#+###.#.....#.#,,,~~
+        ~~~,,##2##.#...#......#...#......3.........4,,,~~
+        ~~~,,#j..+.41##3h.....+...+.....h4.#.....#.#,,~~~
+        ~~~,,#..h#.#.h.#......3...4......#.........#,,~~~
+        ~~~,,####3.+..i#h.h.h.#...#.h.h.h#.#.....#.#,,,~~
+        ~~~,,#...#.##1#########+++#######3.........4,,~~~
+        ~~~,,#...#.#h..#,,,,,,,...,,,,,,,#.#.....#.#~~~~~
+        ~~~,,#...+.+...#,,,,,,,...,,,,,,,#.........#~~~~~
+        ~~~,,##1#####1##,,,,,,,...,,,,,,,###########~~~~~
+        ~~~,,,,,,,,,,,,,,,,,,,,...,,,,,,,,,,,~~~~~~~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,...,,,,,,~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+      }
+
+      CharacterMap
+      {
+        Pos = 0,0;
+        Size = 50,49;
+        Types
+        {
+          # = 0;
+          ~ = 0;
+          , = 0;
+          + = 0;
+          P = chancellor { Flags = IS_MASTER; }
+          N = knight(KING);
+          g = guard(CASTLE);
+          G = guard(ROYAL);
+          C = guard(GUARD_CAPTAIN);
+          s = smith(ASLONA_CASTLE);
+          t = tailor(ASLONA_CASTLE);
+          W = wizard(ALSONA_CASTLE);
+          p = priest(SEGES);
+          D = dolphin(ADULT_MALE);
+          j = femaleslave(JESTER);
+          k = kamikazedwarf(SEGES);
+          K = veterankamikazedwarf(SEGES);
+        }
+      }
+      {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
+        ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
+        ~~~~,############,,,,,,,,,,,,,,,############,~~~~
+        ~~~g,#..........#,,,,,,,,,,,,,,,#...#......#,~~~~
+        ~~~,~#..........#,,,,,,,,,,,,,,,+...#......#,,~~~
+        ~~~~~#........N.#################...#......#,,~~~
+        ~~~~,#..........#...............#...#......#,,,~~
+        ~~~~,#.~~~......#...............#...######+#,,,~~
+        ~~~,,#.~~~......#########+#######..........#,,,~~
+        ~~~,,#.~~~......#G..G..G.G..G..G#.g........#,,,~~
+        ~~~,,#..........#...............#..........#,,,~~
+        ~~~,,########+###.........P.....#####+######,,,~~
+        ~~,,,,,,#...G.G.#G.............G#......#,,,,,,,~~
+        ~~,,,,,,#.......#...............#......#,,,,,,,~~
+        ~~,,,,,,#.......+...............+......#,,,,,,,~~
+        ~~,,,,,,#.......#G..G..G.G..G..G#......#,,,,,,,~~
+        ~~,,,,,,##++############+############+##,,,,,,,~~
+        ~~,,,,,,#k...#,,,,,,,##g.g##,,,,j,,#...#,,,,,,,~~
+        ~~,,,,,,#...k#,,,,,,,#g,.,g#,,,,,,,#...#,,,,,,,~~
+        ~,,,,,,,#k...#,,,,,,,,,,.,,,,,,,,,,#...#,,,,,,,~~
+        ~,,,,,,,#...k#,,,,,,##,,.,,##,,,,,,#...#,#######~
+        ~,,,,,,,#k...#,,,,,,##.....##,,,,,,#...#,#.....#~
+        ~,,,,,,,#...k#,,,,,,,..~~~..,,,,,,,#...#,#..W..#~
+        ~,,,,,,,#k...#,,,,,,,.~~D~~.,,,,,,,#...#,#.....#~
+        ~,,,,,,,#...k#,,,,,,,.~~~~~........+...#,#.....#~
+        ~,,,,,,,##++##,,,,,,,..~~~..,,,,,,,##+##,#.....#~
+        ~,,,,,,,#g...,,,,,,,##.....##,,,,,,#...#,###+###~
+        ~~,,,,,,#g...,,,,,,,##,...,##,,,,,,#...#,,,,,,,~~
+        ~~,,,#####+#####,,,,,,,...,,,,,,,###########,,,~~
+        ~~~,,#...#.#t..+.................+.........#,,,~~
+        ~~~,,#g..+.+...###+####+++####+###.#.....#.#,,,~~
+        ~~~,,#####.#.s.#.....g#...#g.....#.........#,,,~~
+        ~~~,,#...+.#####.g....+...+....g.#.#K....#.#,,~~~
+        ~~~,,#...#.#...#.....g#...#g.....#.........#,,~~~
+        ~~~,,#####.+...#......#...#......#.#.....#.#,,,~~
+        ~~~,,#..C#.############+++########.....p...#,,~~~
+        ~~~,,#...#.#...#,,,,,,g...g,,,,,,#.#.....#.#~~~~~
+        ~~~,,#...+.+...#,,,,,,,...,,,,,,,#.........#~~~~~
+        ~~~,,###########,,,,,,,...,,,,,,,###########~~~~~
+        ~~~,,,,,,,,,,,,,,,,,,,,...,,,,,,,,,,,~~~~~~~~~~~~
+        ~~~~~,,,,,,,,,,,,,,,,,,...,,,,,,~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
+      }
+    }
+
+    Square, Pos 49,24;
+    {
+      EntryIndex = STAIRS_UP;
+    }
+
+    Square, Pos 17,7;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+    }
+
+  }
+
+  Level 4;
+  {
+    Description = "cistern";
+    ShortDescription = "Cistern";
+    Rooms = 1;
+    DifficultyBase = 100;
+    DifficultyDelta = 0;
+    IgnoreDefaultSpecialSquares = true;
+
+    Square, Random NOT_IN_ROOM|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = angel(SEGES) { Inventory = { 3, wand(WAND_OF_MIRRORING), Random { Category = AMULET|RING|SCROLL|WAND; }, Random { Category = AMULET|RING|SCROLL|WAND; } } }
+    }
+  }
+}

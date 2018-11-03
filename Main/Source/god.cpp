@@ -305,7 +305,14 @@ truth god::ReceiveOffer(item* Sacrifice)
   {
     if(!Sacrifice->IsDestroyable(PLAYER))
     {
-      ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
+      if(Sacrifice->IsQuestItem())
+      {
+        ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
+      }
+      else
+      {
+        ADD_MESSAGE("%s cannot be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
+      }
       return false;
     }
 

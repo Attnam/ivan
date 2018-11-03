@@ -88,9 +88,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(ForSale->IsQuestItem())
     {
       ADD_MESSAGE("\"I think it is yours. Take it.\"");
       return true;
@@ -299,9 +297,7 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || !Item->GetTruePrice()
-       || Item->IsEncryptedScroll())
+    if(Item->IsQuestItem())
       return true;
 
     ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
@@ -324,9 +320,7 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || Item->IsTheAvatar()
-       || Item->IsEncryptedScroll())
+    if(Item->IsQuestItem())
     {
       ADD_MESSAGE("Donating this to the Cathedral wouldn't "
                   "be wise. You may still need it.");
@@ -601,9 +595,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(ForSale->IsQuestItem())
     {
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;
@@ -964,6 +956,200 @@ character* cathedral::FindRandomExplosiveReceiver() const
   std::vector<character*> ListOfDwarfs;
 
   for(character* p : game::GetTeam(ATTNAM_TEAM)->GetMember())
+    if(p->IsEnabled() && p->IsKamikazeDwarf())
+      ListOfDwarfs.push_back(p);
+
+  if(ListOfDwarfs.empty())
+    return 0;
+  else
+    return ListOfDwarfs[RAND_N(ListOfDwarfs.size())];
+}
+
+/* TODO */
+
+truth ownedarea::PickupItem(character* Visitor, item* Item, int)
+{
+  if(!MasterIsActive() || Visitor == GetMaster() ||
+     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+    return true;
+
+  if(Visitor->IsPlayer())
+  {
+    if(Item->IsQuestItem())
+      return true;
+
+    ADD_MESSAGE("Picking up private property is prohibited.");
+
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    {
+      Visitor->Hostility(GetMaster());
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth ownedarea::DropItem(character* Visitor, item* Item, int)
+{
+  if(!MasterIsActive() || Visitor == GetMaster() ||
+     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+    return true;
+
+  if(Visitor->IsPlayer())
+  {
+    if(Item->IsQuestItem())
+    {
+      ADD_MESSAGE("Donating this item wouldn't be wise. You may still need it.");
+      return false;
+    }
+
+    if(game::TruthQuestion(CONST_S("Do you wish to donate this item? [y/n]")))
+      return true;
+  }
+
+  return false;
+}
+
+void ownedarea::KickSquare(character* Kicker, lsquare* Square)
+{
+  if(!AllowKick(Kicker, Square) && Kicker->IsPlayer() &&
+     (GetMaster()->GetRelation(Kicker) != HOSTILE))
+  {
+    ADD_MESSAGE("You have harmed a private property!");
+    Kicker->Hostility(GetMaster());
+  }
+}
+
+truth ownedarea::ConsumeItem(character* HungryMan, item*, int)
+{
+  if(!MasterIsActive() || HungryMan == GetMaster() ||
+     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+    return true;
+
+  if(HungryMan->IsPlayer())
+  {
+    ADD_MESSAGE("Eating private property is forbidden.");
+
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/n]")))
+    {
+      HungryMan->Hostility(GetMaster());
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth ownedarea::Drink(character* Thirsty) const
+{
+  if(!MasterIsActive() || Thirsty == GetMaster() ||
+     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+    return true;
+
+  if(Thirsty->IsPlayer())
+  {
+    ADD_MESSAGE("Drinking private property is prohibited.");
+
+    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/n]")))
+    {
+      Thirsty->Hostility(GetMaster());
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void ownedarea::TeleportSquare(character* Infidel, lsquare* Square)
+{
+  if(Square->GetStack()->GetItems() && MasterIsActive()
+     && Infidel && Infidel != GetMaster()
+     && GetMaster()->GetRelation(Infidel) != HOSTILE)
+  {
+    ADD_MESSAGE("\"Thief! Thief!\"");
+    Infidel->Hostility(GetMaster());
+  }
+}
+
+truth ownedarea::Dip(character* Thirsty) const
+{
+  if(!MasterIsActive() || Thirsty == GetMaster() ||
+     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+    return true;
+
+  if(Thirsty->IsPlayer())
+  {
+    /* What if it's not water? */
+
+    ADD_MESSAGE("Stealing water is prohibited.");
+
+    if(game::TruthQuestion(CONST_S("Are you sure you want to dip? [y/n]")))
+    {
+      Thirsty->Hostility(GetMaster());
+      return true;
+    }
+  }
+
+  return false;
+}
+
+truth ownedarea::AllowKick(ccharacter* Char, const lsquare* LSquare) const
+{
+  return (!LSquare->GetStack()->GetItems() || !MasterIsActive()
+          || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE
+          || !LSquare->CanBeSeenBy(GetMaster()));
+}
+
+void ownedarea::HostileAction(character* Guilty) const
+{
+  if(MasterIsActive() && Guilty && Guilty != GetMaster()
+     && GetMaster()->GetRelation(Guilty) != HOSTILE)
+  {
+    ADD_MESSAGE("\"You vandal!\"");
+    Guilty->Hostility(GetMaster());
+  }
+}
+
+void ownedarea::AddItemEffect(item* Dropped)
+{
+
+  truth SeenBeforeTeleport = Dropped->CanBeSeenByPlayer();
+  character* KamikazeDwarf = FindRandomExplosiveReceiver();
+
+  if(!Dropped->IsKamikazeWeapon(KamikazeDwarf))
+    return;
+
+  if(KamikazeDwarf)
+  {
+    Dropped->MoveTo(KamikazeDwarf->GetStack());
+
+    if(KamikazeDwarf->CanBeSeenByPlayer())
+    {
+      if(SeenBeforeTeleport)
+        ADD_MESSAGE("%s disappears and reappears in %s's inventory.",
+                    Dropped->GetName(DEFINITE).CStr(),
+                    KamikazeDwarf->GetName(DEFINITE).CStr());
+      else
+        ADD_MESSAGE("%s appears in %s's inventory.",
+                    Dropped->GetName(DEFINITE).CStr(),
+                    KamikazeDwarf->GetName(DEFINITE).CStr());
+    }
+    else if(SeenBeforeTeleport)
+      ADD_MESSAGE("%s disappears.", Dropped->GetName(DEFINITE).CStr());
+  }
+  else
+  {
+    if(SeenBeforeTeleport)
+      ADD_MESSAGE("%s flickers for a moment.", Dropped->GetNameSingular().CStr());
+  }
+}
+
+character* ownedarea::FindRandomExplosiveReceiver() const
+{
+  std::vector<character*> ListOfDwarfs;
+
+  for(character* p : GetMaster()->GetTeam()->GetMember())
     if(p->IsEnabled() && p->IsKamikazeDwarf())
       ListOfDwarfs.push_back(p);
 

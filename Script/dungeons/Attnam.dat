@@ -736,7 +736,7 @@ Dungeon ATTNAM;
 
       Square, Pos 3, 2;
       {
-        Character = smith { Flags = IS_MASTER; }
+        Character = smith(ATTNAM) { Flags = IS_MASTER; }
       }
 
       Square, Pos 3, 3;
@@ -810,7 +810,7 @@ Dungeon ATTNAM;
 
       Square, Pos 3, 2;
       {
-        Character = tailor { Flags = IS_MASTER; }
+        Character = tailor(ATTNAM) { Flags = IS_MASTER; }
       }
 
       Square, Pos 3, 3;

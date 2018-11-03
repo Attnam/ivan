@@ -6551,9 +6551,7 @@ smith
   TotalSize = 190;
   NameSingular = "smith";
   Helmet = STEEL helmet { Enchantment = 1; }
-  Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
   BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
   RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
   RightRing = ring(RING_OF_FIRE_RESISTANCE);
   LeftRing = ring(RING_OF_FIRE_RESISTANCE);
@@ -6562,20 +6560,43 @@ smith
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 192;
-  HeadBitmapPos = 112, 160;
-  ArmBitmapPos = 64, 64;
-  LegBitmapPos = 0, 96;
-  HairColor = rgb16(200, 200, 200);
-  ClothColor = rgb16(100, 100, 100);
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
   IsNameable = false;
   CanBeCloned = false;
-  DefaultName = "Ikiros";
   TamingDifficulty = NO_TAMING;
   AttachedGod = LORICATUS;
+
+  Config ATTNAM;
+  {
+    DefaultName = "Ikiros";
+    TorsoBitmapPos = 48, 192;
+    HeadBitmapPos = 112, 160;
+    ArmBitmapPos = 64, 64;
+    LegBitmapPos = 0, 96;
+    HairColor = rgb16(200, 200, 200);
+    ClothColor = rgb16(100, 100, 100);
+    Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    DefaultName = "Khalybs";
+    TorsoBitmapPos = 48, 192;
+    HeadBitmapPos = 112, 480;
+    ArmBitmapPos = 64, 64;
+    LegBitmapPos = 0, 96;
+    HairColor = rgb16(44, 34, 43);
+    ClothColor = rgb16(100, 100, 100);
+    TotalVolume = 90000;
+    TotalSize = 200;
+    Cloak = IMP_HIDE cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
+    LeftWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
+    Sex = FEMALE;
+  }
 }
 
 ostrich
@@ -8092,7 +8113,7 @@ archangel
     Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
     BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
     Cloak = SPIDER_SILK cloak { Enchantment = 0; }
-    RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
+    RightWielded = OCCULTUM OCCULTUM meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
     Belt = SPIDER_SILK belt { Enchantment = 0; }
     RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
@@ -8206,32 +8227,58 @@ tailor
   DefaultWisdom = 15;
   DefaultCharisma = 15;
   DefaultMana = 10;
-  TotalVolume = 70000;
-  TotalSize = 180;
   NameSingular = "tailor";
-  Cloak = LEATHER cloak { Enchantment = 1; }
-  BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
-  RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-  RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
   KnownCWeaponSkills == SMALL_SWORDS;
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 48;
-  HeadBitmapPos = 96, 0;
-  ArmBitmapPos = 64, 16;
-  LegBitmapPos = 0, 0;
-  ClothColor = rgb16(200, 200, 200);
-  LegMainColor = rgb16(111, 64, 37);
   CanRead = true;
   /* Replies overridden */
   IsUnique = true;
   IsNameable = false;
   CanBeCloned = false;
-  DefaultName = "Mirvo";
   TamingDifficulty = NO_TAMING;
   AttachedGod = SOPHOS;
+
+  Config ATTNAM;
+  {
+    DefaultName = "Mirvo";
+    TorsoBitmapPos = 48, 48;
+    HeadBitmapPos = 96, 0;
+    ArmBitmapPos = 64, 16;
+    LegBitmapPos = 0, 0;
+    ClothColor = rgb16(200, 200, 200);
+    LegMainColor = rgb16(111, 64, 37);
+    TotalVolume = 70000;
+    TotalSize = 180;
+    Cloak = LEATHER cloak { Enchantment = 1; }
+    BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+    RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+    RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    DefaultName = "Palea";
+    NameSingular = "seamstress";
+    HeadBitmapPos = 112, 64;
+    TorsoBitmapPos = 32, 160;
+    ArmBitmapPos = 64, 160;
+    LegBitmapPos = 0, 112;
+    HairColor = rgb16(181, 82, 57);
+    ClothColor = rgb16(39, 119, 20);
+    BeltColor = rgb16(100, 100, 200);
+    TotalVolume = 60000;
+    TotalSize = 165;
+    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+    BodyArmor = ELF_CLOTH bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Belt = NYMPH_HAIR belt { Enchantment = 1; }
+    RightWielded = STAINLESS_STEEL meleeweapon(DAGGER) { Enchantment = 6; }
+    RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightBoot = ELF_CLOTH boot { Enchantment = 1; }
+    Sex = FEMALE;
+  }
 }
 
 mysticfrog
