@@ -445,4 +445,13 @@ ITEM(taiaha, meleeweapon)
   int TimesUsed;
 };
 
+ITEM(gleipnir, whip)
+{
+ public:
+  gleipnir() { Enable(); }
+  virtual void Be();
+protected:
+  virtual truth CalculateHasBe() const { return true; }
+};
+
 #endif

@@ -313,6 +313,7 @@ class item : public object
   virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
   virtual truth IsBeverage(ccharacter*) const;
   virtual truth CanBeHardened(ccharacter*) const;
+  virtual truth CanBeSoftened(ccharacter*) const;
   virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;
   int GetResistance(int) const;

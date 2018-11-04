@@ -3141,22 +3141,45 @@ key
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
   Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
+
   Config HEXAGONAL_LOCK;
   {
     MainMaterialConfig == MITHRIL;
     Adjective = "hexagonal";
   }
+
   Config OCTAGONAL_LOCK;
   {
     MainMaterialConfig == OCTIRON;
     UsesLongAdjectiveArticle = true;
     Adjective = "octagonal";
   }
+
   Config HEART_SHAPED_LOCK;
   {
     MainMaterialConfig == GOLD;
     Adjective = "heart-shaped";
   }
+}
+
+skeletonkey
+{
+  Possibility = 1;
+  Price = 5000;
+  MainMaterialConfig == DRAGON_BONE;
+  Adjective = "skeleton";
+  AttachedGod = CLEPTIA;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
 }
 
 shield /* armor-> */
@@ -7276,4 +7299,32 @@ mangoseedling
   IsTwoHanded = true;
   HasSecondaryMaterial = false;
   IsValuable = true;
+}
+
+gleipnir /* meleeweapon->whip-> */
+{
+  DefaultSize = 250;
+  Possibility = 1;
+  DefaultMainVolume = 1000;
+  DefaultSecondaryVolume = 50;
+  StrengthModifier = 125;
+  Adjective = "celestial";
+  NameSingular = "whip";
+  PostFix = "named Gleipnir";
+  MainMaterialConfig == SHADOW_CLOTH;
+  SecondaryMaterialConfig == PURPLE_CRYSTAL;
+  Roundness = 5;
+  FormModifier = 30;
+  Price = 2500;
+  AttachedGod = NEFAS;
+  EnchantmentPlusChance = 5;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
 }

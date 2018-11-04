@@ -1813,6 +1813,11 @@ truth item::CanBeHardened(ccharacter*) const
   return MainMaterial->GetHardenedMaterial(this) != NONE;
 }
 
+truth item::CanBeSoftened(ccharacter*) const
+{
+  return MainMaterial->GetSoftenedMaterial(this) != NONE;
+}
+
 void item::SetLifeExpectancy(int Base, int RandPlus)
 {
   LifeExpectancy = RandPlus > 1 ? Base + RAND_N(RandPlus) : Base;

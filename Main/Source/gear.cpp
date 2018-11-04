@@ -1095,8 +1095,8 @@ void daggerofvenom::Be()
       Volume += L->GetVolume(); // I imagine that there is a function I don't know to do this...
     }
 
-    if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(POISON_LIQUID, 10));
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(POISON_LIQUID, 50));
   }
 }
 
@@ -1181,8 +1181,8 @@ void darkaxe::Be()
       Volume += L->GetVolume();
     }
 
-    if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 10));
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 50));
   }
 }
 
@@ -1474,7 +1474,7 @@ void filthytunic::Be()
     }
 
     if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+      SpillFluid(0, liquid::Spawn(GLOWING_BLOOD, 10));
   }
 }
 
@@ -1495,4 +1495,25 @@ col16 filthytunic::GetOutlineColor(int Frame) const
     return MakeRGB16(77, 254, 21);
   else
     return TRANSPARENT_COLOR;
+}
+
+void gleipnir::Be()
+{
+  whip::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(SULPHURIC_ACID, 50));
+  }
 }

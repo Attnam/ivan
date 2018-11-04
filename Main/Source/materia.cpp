@@ -490,18 +490,6 @@ int material::GetHardenedMaterial(citem* Item) const
 int material::GetSoftenedMaterial(citem* Item) const
 {
   const materialdatabase* DB = DataBase;
-
-  if(!Item->FlexibilityIsEssential())
-    return DB->SoftenedMaterial;
-
-  while(DB->SoftenedMaterial != NONE)
-  {
-    DB = material::GetDataBase(DB->SoftenedMaterial);
-
-    if(DataBase->Flexibility <= DB->Flexibility)
-      return DB->Config;
-  }
-
   return DB->SoftenedMaterial;
 }
 

@@ -3755,14 +3755,14 @@ truth ullrbone::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	Zapper,
-	CONST_S("killed by ") + GetName(INDEFINITE),
-	Zapper->GetPos(),
-	YELLOW,
-	BEAM_LIGHTNING,
-	Direction,
-	50,
-	0
+	      Zapper,
+	      CONST_S("killed by ") + GetName(INDEFINITE),
+	      Zapper->GetPos(),
+	      YELLOW,
+	      BEAM_LIGHTNING,
+	      Direction,
+	      50,
+	      0
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -4018,4 +4018,21 @@ alpha mangoseedling::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+alpha skeletonkey::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return Frame * (31 - Frame) >> 1;
+}
+
+col16 skeletonkey::GetOutlineColor(int Frame) const
+{
+  switch((Frame&127) >> 5)
+  {
+   case 0: return BLUE;
+   case 1: return GREEN;
+   case 2: return RED;
+   case 3: return YELLOW;
+  }
 }
