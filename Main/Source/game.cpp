@@ -5191,6 +5191,9 @@ festring game::GetDataDir()
 
 festring game::GetStateDir()
 {
+#ifdef USE_HOME_FOR_STATE_DIR
+  return GetHomeDir();
+#endif
 #ifdef UNIX
 #ifdef MAC_APP
   return GetHomeDir();
