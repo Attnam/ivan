@@ -33,6 +33,9 @@ If config options toggle is too fast, you can add this flag '-DFELIST_WAITKEYUP'
 like this: CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP -DWIZARD" (you may chose what 
 flags to add independently of each other).
 
+To store score and bones' files at user $HOME/.ivan/ path, you can turn on cmake
+option 'USE_HOME_FOR_STATE_DIR', like this: "-DUSE_HOME_FOR_STATE_DIR=ON".
+
 --------------------------------------
 
 Under DOS:
