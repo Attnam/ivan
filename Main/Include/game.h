@@ -348,7 +348,6 @@ class game
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
-  static festring GetHomeDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
   static festring GetDataDir();

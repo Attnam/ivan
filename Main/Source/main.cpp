@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   signal(SIGQUIT, CrashHandler);
 #endif
 
-  game::GetHomeDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
+  game::GetStateDir(); //just to properly initialize as soon as possible DBGMSG correct path b4 everywhere it may be used.
 
   if(argc > 1 && festring(argv[1]) == "--version")
   {

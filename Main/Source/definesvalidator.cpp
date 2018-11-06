@@ -36,7 +36,7 @@ void DefinesValidatorAppend(std::string s)
 
   static bool bDummyInit = [](){
     DefinesValidator.open(
-        festring(game::GetHomeDir() + "definesvalidator.h").CStr(),
+        festring(game::GetStateDir() + "definesvalidator.h").CStr(),
         std::ios::binary);
     return true;}();
 

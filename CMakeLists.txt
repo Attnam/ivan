@@ -13,14 +13,10 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 
 option(BUILD_MAC_APP "Build standalone application for MacOS" OFF)
-option(USE_HOME_FOR_STATE_DIR "Statedir will be /.ivan/ in current user's homedir" OFF)
 
 if(UNIX)
   add_definitions(-DUNIX)
   include(GNUInstallDirs)
-  if(USE_HOME_FOR_STATE_DIR)
-    add_definitions(-DUSE_HOME_FOR_STATE_DIR)
-  endif(USE_HOME_FOR_STATE_DIR)
 
   if(BUILD_MAC_APP)
     install(DIRECTORY Graphics Script Music Sound DESTINATION "ivan")
@@ -28,8 +24,7 @@ if(UNIX)
     add_definitions(-DMAC_APP)
   else()
     install(DIRECTORY Graphics Script Music Sound DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
-    add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
-                    -DLOCAL_STATE_DIR="${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
+    add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
   endif()
 
 elseif(WIN32)

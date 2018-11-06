@@ -733,7 +733,7 @@ truth game::Init(cfestring& loadBaseName)
 #endif
 
 #ifdef UNIX
-  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetStateDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
@@ -5143,7 +5143,7 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 /* The program can only create directories to the deepness of one, no more... */
 
-festring game::GetHomeDir()
+festring game::GetStateDir()
 {
 #ifdef UNIX
   festring Dir;
@@ -5160,18 +5160,18 @@ festring game::GetHomeDir()
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return "./";
 #endif
 }
 
 festring game::GetSaveDir()
 {
-  return GetHomeDir() + "Save/";
+  return GetStateDir() + "Save/";
 }
 
 festring game::GetScrshotDir()
 {
-  return GetHomeDir() + "Scrshot/";
+  return GetStateDir() + "Scrshot/";
 }
 
 festring game::GetDataDir()
@@ -5185,25 +5185,7 @@ festring game::GetDataDir()
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
-#endif
-}
-
-festring game::GetStateDir()
-{
-#ifdef USE_HOME_FOR_STATE_DIR
-  return GetHomeDir();
-#endif
-#ifdef UNIX
-#ifdef MAC_APP
-  return GetHomeDir();
-#else
-  return LOCAL_STATE_DIR "/";
-#endif
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
+  return GetStateDir();
 #endif
 }
 
