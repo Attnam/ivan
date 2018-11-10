@@ -5160,7 +5160,7 @@ festring game::GetHomeDir()
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return "./";
 #endif
 }
 
