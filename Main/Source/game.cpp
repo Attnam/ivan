@@ -725,17 +725,20 @@ truth game::Init(cfestring& loadBaseName)
 #ifdef WIN32
   _mkdir("Save");
   _mkdir("Bones");
+  _mkdir("Scrshot");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
   mkdir("Bones", S_IWUSR);
+  mkdir("Scrshot", S_IWUSR);
 #endif
 
 #ifdef UNIX
   mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
