@@ -18,9 +18,6 @@ option(USE_HOME_FOR_STATE_DIR "Statedir will be /.ivan/ in current user's homedi
 if(UNIX)
   add_definitions(-DUNIX)
   include(GNUInstallDirs)
-  if(USE_HOME_FOR_STATE_DIR)
-    add_definitions(-DUSE_HOME_FOR_STATE_DIR)
-  endif(USE_HOME_FOR_STATE_DIR)
 
   if(BUILD_MAC_APP)
     install(DIRECTORY Graphics Script Music Sound DESTINATION "ivan")
@@ -28,8 +25,16 @@ if(UNIX)
     add_definitions(-DMAC_APP)
   else()
     install(DIRECTORY Graphics Script Music Sound DESTINATION "${CMAKE_INSTALL_DATADIR}/ivan")
-    add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}"
-                    -DLOCAL_STATE_DIR="${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
+    add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
+
+    message("\n*NOTICE*\n"
+            "    Highscore files and Bone files are now stored at \"\$HOME/.ivan\".\n"
+            "    Your HOME directory is \"$ENV{HOME}\".\n")
+    if(IS_DIRECTORY "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan")
+      message(WARNING
+              "If you have game data in \"${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/ivan\","
+              " please move them to \"$ENV{HOME}/.ivan\".")
+    endif()
   endif()
 
 elseif(WIN32)
