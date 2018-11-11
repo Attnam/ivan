@@ -334,7 +334,7 @@ void soundsystem::initSound()
 
   if(SoundState == 0)
   {
-    festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
+    festring fsSndDbgFile = game::GetUserDataDir() + "ivanSndDebug.txt";
     FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 
