@@ -222,6 +222,8 @@ CHARACTER(playerkind, humanoid)
   virtual int GetNaturalSparkleFlags() const;
   virtual truth IsPlayerKind() const { return true; }
   virtual double GetNaturalExperience(int) const;
+  virtual int GetTalent() const { return Talent; }
+  virtual int GetWeakness() const { return Weakness; }
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void PostConstruct();

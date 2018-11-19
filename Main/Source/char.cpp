@@ -7149,6 +7149,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
+  Info.AddEntry(CONST_S("Body parts:"), LIGHT_GRAY);
   festring EntryBP;
   for(int c = 0; c < BodyParts; ++c)
   {
@@ -7166,6 +7167,47 @@ void character::DisplayStethoscopeInfo(character*) const
   }
 
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Status effects:"), LIGHT_GRAY);
+
+  if(GetTalent() != GetWeakness())
+  {
+    if(GetTalent())
+    {
+      switch(GetTalent())
+      {
+        case TALENT_STRONG:
+         Info.AddEntry("Strong", LIGHT_GRAY);
+         break;
+        case TALENT_FAST_N_ACCURATE:
+         Info.AddEntry("Swift", LIGHT_GRAY);
+         break;
+        case TALENT_HEALTHY:
+         Info.AddEntry("Healthy", LIGHT_GRAY);
+         break;
+        case TALENT_CLEVER:
+         Info.AddEntry("Clever", LIGHT_GRAY);
+         break;
+      }
+    }
+    if(GetWeakness())
+    {
+      switch(GetWeakness())
+      {
+        case TALENT_STRONG:
+         Info.AddEntry("Weak", LIGHT_GRAY);
+         break;
+        case TALENT_FAST_N_ACCURATE:
+         Info.AddEntry("Clumsy", LIGHT_GRAY);
+         break;
+        case TALENT_HEALTHY:
+         Info.AddEntry("Frail", LIGHT_GRAY);
+         break;
+        case TALENT_CLEVER:
+         Info.AddEntry("Dim", LIGHT_GRAY);
+         break;
+      }
+    }
+  }
 
   if(GetAction())
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);

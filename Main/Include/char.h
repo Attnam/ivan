@@ -915,6 +915,8 @@ class character : public entity, public id
   virtual truth BoundToUse(citem*, int) const { return false; }
   virtual truth IsBananaGrower() const { return false; }
   virtual int GetRandomApplyBodyPart() const;
+  virtual int GetTalent() const { return 0; }
+  virtual int GetWeakness() const { return 0; }
 #ifdef WIZARD
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const = 0;
