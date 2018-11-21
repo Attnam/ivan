@@ -3001,7 +3001,7 @@ truth lsquare::SoftenMaterial(const beamdata& Beam)
       Beam.Owner->Hostility(Character);
 
     itemvector AllItems;
-    sortdata SortData(AllItems, Beam.Owner, true, &item::IsMaterialChangeable);
+    sortdata SortData(AllItems, Beam.Owner, true, &item::MaterialIsChangeable);
     SortAllItems(SortData);
     item* RandomItem;
 

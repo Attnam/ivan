@@ -311,10 +311,10 @@ class item : public object
   virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
-  virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
+  virtual truth MaterialIsChangeable(ccharacter*) const { return IsMaterialChangeable(); }
   virtual truth IsBeverage(ccharacter*) const;
   virtual truth CanBeHardened(ccharacter*) const;
-  virtual truth CanBeSoftened(ccharacter*) const;
+  virtual truth CanBeSoftened() const;
   virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;
   int GetResistance(int) const;

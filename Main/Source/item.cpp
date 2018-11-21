@@ -362,13 +362,10 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
 
 truth item::SoftenMaterial()
 {
-  if(!IsMaterialChangeable() || !CanBeSoftened(this))
+  if(!IsMaterialChangeable() || !CanBeSoftened())
   {
     return false;
   }
-
-  if(CanBeSeenByPlayer())
-    ADD_MESSAGE("Suddenly %s starts glowing dull yellow. It softens into %s!", CHAR_NAME(DEFINITE), GetMainMaterial()->GetName(false, false).CStr());
 
   int Config = GetMainMaterial()->GetSoftenedMaterial(this);
 
@@ -386,6 +383,9 @@ truth item::SoftenMaterial()
     ChangeSecondaryMaterial(TempMaterial->SpawnMore());
 
   ChangeMainMaterial(TempMaterial);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s starts glowing dull yellow. It softens into %s!", CHAR_NAME(INDEFINITE), GetMainMaterial()->GetName(false, false).CStr());
 
   return true;
 }
@@ -1843,7 +1843,7 @@ truth item::CanBeHardened(ccharacter*) const
   return MainMaterial->GetHardenedMaterial(this) != NONE;
 }
 
-truth item::CanBeSoftened(ccharacter*) const
+truth item::CanBeSoftened() const
 {
   return MainMaterial->GetSoftenedMaterial(this) != NONE;
 }
