@@ -1707,7 +1707,8 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::AcidRain,
   &lsquare::Necromancy,
   &lsquare::Webbing,
-  &lsquare::Alchemize
+  &lsquare::Alchemize,
+  &lsquare::SoftenMaterial
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -2982,5 +2983,34 @@ truth lsquare::Webbing(const beamdata&)
 truth lsquare::Alchemize(const beamdata& Beam)
 {
   GetStack()->Alchemize(Beam.Owner);
+  return false;
+}
+
+truth lsquare::SoftenMaterial(const beamdata& Beam)
+{
+  GetStack()->SoftenMaterial(Beam.Owner);
+
+  /*if(GetOLTerrain())
+    GetOLTerrain()->SoftenMaterial(Beam.Owner);*/
+
+  character* Character = GetCharacter();
+
+  if(Character)
+  {
+    if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(Character);
+
+    itemvector AllItems;
+    sortdata SortData(AllItems, Beam.Owner, true, &item::IsMaterialChangeable);
+    SortAllItems(SortData);
+    item* RandomItem;
+
+    if(!AllItems.empty())
+    {
+      RandomItem = AllItems[RAND() % AllItems.size()];
+      RandomItem->SoftenMaterial();
+    }
+  }
+
   return false;
 }

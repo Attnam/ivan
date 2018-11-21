@@ -2771,7 +2771,7 @@ wand
   Config WAND_OF_ALCHEMY;
   {
     Possibility = 20;
-    Price = 500;
+    Price = 1000;
     PostFix = "of alchemy";
     MainMaterialConfig == LEAD;
     BeamRange = 5;
@@ -2781,6 +2781,21 @@ wand
     BeamEffect = BEAM_ALCHEMY;
     AttachedGod = MELLIS;
     BreakMsg = "explodes in a puff of golden dust";
+  }
+
+  Config WAND_OF_SOFTEN_MATERIAL;
+  {
+    Possibility = 10;
+    Price = 500;
+    PostFix = "of soften material";
+    MainMaterialConfig == FUNGI_WOOD;
+    BeamRange = 5;
+    MinCharges = 2;
+    MaxCharges = 5;
+    BeamColor = YELLOW;
+    BeamEffect = BEAM_SOFTEN_MATERIAL;
+    AttachedGod = SCABIES; /* Change to SOLICITUS? */
+    BreakMsg = "turns itself into dust";
   }
 }
 
@@ -7328,4 +7343,44 @@ gleipnir /* meleeweapon->whip-> */
   CanBeBroken = false;
   CanBeBurned = false;
   CanBePiled = false;
+}
+
+eptyron /* meleeweapon-> */
+{
+  DefaultSize = 150;
+  Possibility = 1;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 400;
+  DefaultSecondaryVolume = 800;
+  BitmapPos = 112, 240;
+  FormModifier = 175;
+  StrengthModifier = 150;
+  Adjective = "blasphemous";
+  ArticleMode = FORCE_THE;
+  NameSingular = "great axe";
+  PostFix = "named Eptyron";
+  MainMaterialConfig == PLASTIC_STEEL;
+  SecondaryMaterialConfig = HARDENED_PLASTIC;
+  Roundness = 30;
+  IsTwoHanded = true;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  Alias == "Eptyron";
+  Price = 2500;
+  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 96, 240;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
 }

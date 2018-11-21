@@ -360,6 +360,36 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
   }
 }
 
+truth item::SoftenMaterial()
+{
+  if(!IsMaterialChangeable() || !CanBeSoftened(this))
+  {
+    return false;
+  }
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s starts glowing dull yellow. It softens into %s!", CHAR_NAME(DEFINITE), GetMainMaterial()->GetName(false, false).CStr());
+
+  int Config = GetMainMaterial()->GetSoftenedMaterial(this);
+
+  if(!Config)
+  {
+    /* Should not be possible. */
+    return false;
+  }
+
+  material* TempMaterial = MAKE_MATERIAL(Config);
+  material* MainMaterial = GetMainMaterial();
+  material* SecondaryMaterial = GetSecondaryMaterial();
+
+  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+
+  ChangeMainMaterial(TempMaterial);
+
+  return true;
+}
+
 /* Returns whether the Eater must stop eating the item */
 
 truth item::Consume(character* Eater, long Amount)

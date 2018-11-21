@@ -185,6 +185,7 @@ class lsquare : public square
   truth Necromancy(const beamdata&);
   truth Webbing(const beamdata&);
   truth Alchemize(const beamdata&);
+  truth SoftenMaterial(const beamdata&);
   truth WaterRain(const beamdata&);
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }

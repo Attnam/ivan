@@ -2566,14 +2566,17 @@ goblin
       "\"Me know great body-part-zuppe! Me prepare - you want?\"",
       "@Dd laughs: \"Humie friend. Many mommo we teleport. Many spider we polymorph.\"";
     }
-    Inventory = { 7,
+    Inventory = { 10,
                   wand(WAND_OF_TELEPORTATION) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_DOOR_CREATION) { Chance = 30; LifeExpectancy = 10000; },
                   wand(WAND_OF_ACID_RAIN) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_WEBBING) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_MIRRORING) { Chance = 5; LifeExpectancy = 10000; },
                   wand(WAND_OF_POLYMORPH) { Chance = 5; LifeExpectancy = 10000; },
-                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; }
+                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; },
+                  wand(WAND_OF_SOFTEN_MATERIAL) { Chance = 1; LifeExpectancy = 10000; },
+                  wand(WAND_OF_FIRE_BALLS) { Chance = 1; LifeExpectancy = 10000; },
+                  wand(WAND_OF_LIGHTNING) { Chance = 1; LifeExpectancy = 10000; }
                 }
     DangerModifier = 150;
     HPRequirementForGeneration = 50;

@@ -105,6 +105,8 @@ int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128
 
 int taiaha::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
+int eptyron::GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
+
 int filthytunic::GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
 
 truth meleeweapon::HitEffect(character* Enemy, character* Hitter, v2,
@@ -1516,4 +1518,79 @@ void gleipnir::Be()
     if(Volume < 500)
       SpillFluid(0, liquid::Spawn(SULPHURIC_ACID, 50));
   }
+}
+
+truth eptyron::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                         int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid())
+  {
+    bodypart* BodyPartHit = Enemy->GetBodyPart(BodyPartIndex);
+    item* MainArmor = 0;
+
+    switch(BodyPartIndex)
+    {
+     case TORSO_INDEX:
+      MainArmor = Enemy->GetEquipment(BODY_ARMOR_INDEX);
+      break;
+     case HEAD_INDEX:
+      MainArmor = Enemy->GetEquipment(HELMET_INDEX);
+      break;
+     case RIGHT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? RIGHT_WIELDED_INDEX : RIGHT_GAUNTLET_INDEX);
+      break;
+     case LEFT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? LEFT_WIELDED_INDEX : LEFT_GAUNTLET_INDEX);
+      break;
+     case GROIN_INDEX:
+      MainArmor = Enemy->GetEquipment(BELT_INDEX);
+      break;
+     case RIGHT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(RIGHT_BOOT_INDEX);
+      break;
+     case LEFT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(LEFT_BOOT_INDEX);
+      break;
+    }
+
+    if(MainArmor/* && BlockedByArmor */)
+    {
+      MainArmor->SoftenMaterial();
+    }
+    else if(BodyPartHit)
+    {
+      BodyPartHit->SoftenMaterial();
+    }
+  }
+
+  return BaseSuccess;
+}
+
+void eptyron::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
+{
+  if(!IsBroken() && Weapon)
+  {
+    Weapon->SoftenMaterial();
+  }
+}
+
+alpha eptyron::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  else
+    return 255;
+}
+
+col16 eptyron::GetOutlineColor(int Frame) const
+{
+  if(!IsBroken())
+    return YELLOW;
+  else
+    return TRANSPARENT_COLOR;
 }

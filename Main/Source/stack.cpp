@@ -279,6 +279,19 @@ void stack::Alchemize(character* Midas)
       break;
 }
 
+void stack::SoftenMaterial(character* Jerk)
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+  int p = 0;
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Exists()
+       && ItemVector[c]->SoftenMaterial()
+       && ++p == 5)
+      break;
+}
+
 void stack::CheckForStepOnEffect(character* Stepper)
 {
   itemvector ItemVector;

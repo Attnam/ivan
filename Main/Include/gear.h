@@ -454,4 +454,16 @@ protected:
   virtual truth CalculateHasBe() const { return true; }
 };
 
+ITEM(eptyron, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void BlockEffect(character*, character*, item*, int Type);
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  virtual int GetClassAnimationFrames() const;
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 #endif
