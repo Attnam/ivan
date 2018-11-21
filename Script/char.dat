@@ -2492,6 +2492,7 @@ goblin
     AttributeBonus = 50;
     RightWielded = 0;
     LeftWielded = 0;
+    RightGauntlet = gauntlet { Enchantment = 1; }
     Belt = BLACK_LEATHER belt;
     AttackStyle = USE_ARMS|USE_LEGS;
     BaseUnarmedStrength = 800;
@@ -5152,8 +5153,8 @@ kobold
   Config ASSASSIN;
   {
     AttributeBonus = 90;
-    RightWielded = IRON IRON meleeweapon(DAGGER);
-    LeftWielded = IRON IRON meleeweapon(DAGGER);
+    RightWielded = IRON IRON meleeweapon(DAGGER) { Enchantment = 1; }
+    LeftWielded = IRON IRON meleeweapon(DAGGER) { Enchantment = 1; }
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
@@ -5169,10 +5170,10 @@ kobold
   Config MASTER_ASSASSIN;
   {
     AttributeBonus = 120;
-    Helmet = TIN helmet(MASK);
-    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 1; }
-    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 1; }
+    Helmet = TIN helmet(MASK) { Enchantment = 2; }
+    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
+    LeftWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
     Belt = NYMPH_HAIR belt;
     Cloak = NYMPH_HAIR cloak(CLOAK_OF_INVISIBILITY);
     RightGauntlet = NYMPH_HAIR gauntlet;

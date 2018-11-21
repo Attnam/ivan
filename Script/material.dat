@@ -4641,7 +4641,7 @@ gas
 
   Config AIR;
   {
-    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
+    Color = rgb16(180, 180, 255); /* TRANSPARENT_COLOR does not work. */
     NameStem = "air";
     Alpha = 150;
     AttachedGod = SILVA;
@@ -4650,7 +4650,7 @@ gas
 
   Config VACUUM;
   {
-    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
+    Color = rgb16(180, 180, 255); /* TRANSPARENT_COLOR does not work. */
     NameStem = "vacuum";
     Alpha = 150;
     AttachedGod = MORTIFER;
@@ -4774,6 +4774,7 @@ gas
     Alpha = 100;
     AttachedGod = SOPHOS;
     Effect = EFFECT_TELEPORTATION;
+    HardenedMaterial = TELEPORT_FLUID;
     StepInWisdomLimit = 10;
   }
 }
@@ -4855,6 +4856,21 @@ liquid
     HardenedMaterial = MAGIC_CRYSTAL;
     InteractionFlags = Base|EFFECT_IS_GOOD;
     CategoryFlags = Base|IS_SPARKLING;
+  }
+
+  Config TELEPORT_FLUID;
+  {
+    StrengthValue = 1;
+    Density = 50;
+    NutritionValue = 1;
+    RustModifier = 0;
+    Color = rgb16(153, 50, 204);
+    NameStem = "warp fluid";
+    Alpha = 150;
+    AttachedGod = SOPHOS;
+    Effect = EFFECT_TELEPORTATION;
+    SoftenedMaterial = TELEPORT_GAS;
+    CommonFlags = Base|IS_VALUABLE;
   }
 
   Config PEA_SOUP;
@@ -5276,6 +5292,23 @@ liquid
     Stickiness = 250;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
+  }
+
+  Config VINEGAR;
+  {
+    StrengthValue = 1;
+    NutritionValue = 1000;
+    Color = rgb16(100, 100, 0);
+    NameStem = "vinegar";
+    Alpha = 150;
+    Flexibility = 45;
+    AttachedGod = SCABIES;
+    RustModifier = 150;
+    Acidicity = 75;
+    ConsumeWisdomLimit = 6;
+    PriceModifier = 100;
+    InteractionFlags = Base|AFFECT_INSIDE;
+    StepInWisdomLimit = 10;
   }
 
   /* Bodily fluids */
@@ -6473,5 +6506,34 @@ ironalloy /* Iron alloys - Metals that rust. */
     IntelligenceRequirement = 15;
     CategoryFlags = Base|IS_SCARY;
     CommonFlags = Base|IS_VALUABLE;
+  }
+
+  Config WHITE_STEEL;
+  {
+    StrengthValue = 130;
+    Density = 7000;
+    Color = rgb16(211, 211, 211);
+    PriceModifier = 250;
+    NameStem = "white steel";
+    RustModifier = 50;
+    SoftenedMaterial = IRON;
+    HardenedMaterial = UR_STEEL;
+    IntelligenceRequirement = 10;
+    CommonFlags = Base|IS_VALUABLE;
+  }
+
+  Config UR_STEEL;
+  {
+    StrengthValue = 200;
+    Density = 6000;
+    Color = rgb16(222, 222, 222);
+    PriceModifier = 1000;
+    NameStem = "ur-steel";
+    RustModifier = 25;
+    SoftenedMaterial = WHITE_STEEL;
+    HardenedMaterial = UKKU_STEEL;
+    IntelligenceRequirement = 25;
+    CommonFlags = Base|IS_VALUABLE;
+    NameFlags = Base|USE_AN;
   }
 }
