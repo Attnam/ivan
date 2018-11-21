@@ -1014,9 +1014,9 @@ void ivanconfig::Initialize()
    * LOAD AND APPLY some SETTINGS *
    ********************************/
 #if defined(WIN32) || defined(__DJGPP__)
-  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.cfg");
+  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.cfg");
 #else
-  configsystem::SetConfigFileName(game::GetHomeDir() + "ivan.conf");
+  configsystem::SetConfigFileName(game::GetUserDataDir() + "ivan.conf");
 #endif
 
   configsystem::Load();

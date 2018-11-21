@@ -2162,8 +2162,8 @@ truth commandsystem::SecretKnowledge(character* Char)
       delete Material[c];
   }
 
-  List.PrintToFile(game::GetHomeDir() + "secret" + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetHomeDir().CStr(), Chosen);
+  List.PrintToFile(game::GetUserDataDir() + "secret" + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetUserDataDir().CStr(), Chosen);
   return false;
 }
 
