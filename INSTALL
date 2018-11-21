@@ -7,6 +7,9 @@ installed on your system:
 - compiler with C++11 support (e.g. Clang 3.3 or newer, GCC 4.8 or newer)
 - CMake (https://cmake.org) version 2.8.12.2 or newer
 - SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
+  (NOTE: If you have both SDL1 and SDL2 installed in your compiler libraries, 
+  you may encounter an error of this sort: https://attnam.com/posts/29409,
+  which can be remedied with this solution: https://attnam.com/posts/29417)
 - libpng (http://www.libpng.org/pub/png/libpng.html)
 - pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
 
