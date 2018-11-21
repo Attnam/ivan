@@ -1664,7 +1664,7 @@ meleeweapon
   Config RUNE_SWORD;
   {
     DefaultSize = 120;
-    Possibility = 2;
+    Possibility = 1;
     WeaponCategory = LARGE_SWORDS;
     DefaultMainVolume = 130;
     DefaultSecondaryVolume = 45;
@@ -1689,7 +1689,7 @@ meleeweapon
 
   Config BROKEN|RUNE_SWORD;
   {
-    Possibility = 3;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     EnchantmentPlusChance = 20;
@@ -3317,7 +3317,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 5;
+    Possibility = 2;
     PostFix = "of fire resistance";
     Price = 250;
     FireResistance = 15;
@@ -3326,7 +3326,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 3;
+    Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -3339,7 +3339,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 5;
+    Possibility = 2;
     PostFix = "of electricity resistance";
     Price = 250;
     ElectricityResistance = 15;
@@ -3348,7 +3348,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 3;
+    Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -3361,7 +3361,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_MAGIC_RESISTANCE;
   {
-    Possibility = 5;
+    Possibility = 2;
     PostFix = "of magic resistance";
     Price = 250;
     EnergyResistance = 15;
@@ -3370,7 +3370,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_MAGIC_RESISTANCE;
   {
-    Possibility = 3;
+    Possibility = 1;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -5583,7 +5583,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -5626,7 +5626,7 @@ flamingsword /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     MainMaterialConfig = { 33,
@@ -5798,7 +5798,7 @@ turox /* meleeweapon-> */
 whipofthievery /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -6059,7 +6059,7 @@ horn
 thunderhammer /* meleeweapon-> */
 {
   DefaultSize = 50;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 200;
@@ -6101,7 +6101,7 @@ thunderhammer /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 192;
     Price = 100;
     WieldedBitmapPos = 176, 224;
@@ -6166,7 +6166,7 @@ saalthul
 chameleonwhip /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -6274,7 +6274,7 @@ sausage
 wondersmellstaff
 {
   DefaultSize = 220;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   StrengthModifier = 150;
   BitmapPos = 64, 240;
@@ -6298,7 +6298,7 @@ wondersmellstaff
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     EnchantmentPlusChance = 10;
@@ -6489,7 +6489,7 @@ holyhandgrenade
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -6519,7 +6519,7 @@ daggerofvenom
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 288;
     WieldedBitmapPos = 176, 288;
     EnchantmentPlusChance = 4;
@@ -6529,7 +6529,7 @@ daggerofvenom
 weepblade
 {
   DefaultSize = 70;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 70;
   DefaultSecondaryVolume = 30;
@@ -6554,7 +6554,7 @@ weepblade
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
     MainMaterialConfig = { 15,
@@ -6570,7 +6570,7 @@ weepblade
 acidshield /* armor ->*/
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   Category = SHIELD;
   DefaultMainVolume = 350;
   StrengthModifier = 100;
@@ -6593,7 +6593,7 @@ acidshield /* armor ->*/
 
   Config BROKEN;
   {
-    Possibility = 3;
+    Possibility = 2;
     DefaultSize = 45;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -6605,6 +6605,7 @@ acidshield /* armor ->*/
                            BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
     MaterialConfigChances = { 15,
                               250, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 5; }
+    AcidResistance = 1;
     EnchantmentPlusChance = 4;
   }
 }
@@ -6764,7 +6765,7 @@ darkaxe  /* meleeweapon-> */
 slowaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6795,7 +6796,7 @@ slowaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -6805,7 +6806,7 @@ slowaxe  /* meleeweapon-> */
 terrorscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6838,7 +6839,7 @@ terrorscythe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6848,7 +6849,7 @@ terrorscythe  /* meleeweapon-> */
 bansheesickle  /* meleeweapon-> */
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 50;
@@ -6878,7 +6879,7 @@ bansheesickle  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
@@ -6888,7 +6889,7 @@ bansheesickle  /* meleeweapon-> */
 rustscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6914,7 +6915,7 @@ rustscythe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6924,7 +6925,7 @@ rustscythe  /* meleeweapon-> */
 sharpaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6955,7 +6956,7 @@ sharpaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -7052,7 +7053,7 @@ taiaha /* meleeweapon-> */
 {
   CanBePiled = false;
   DefaultSize = 160;
-  Possibility = 0;
+  Possibility = 1;
   WeaponCategory = POLE_ARMS;
   StrengthModifier = 90;
   BitmapPos = 96, 352;
