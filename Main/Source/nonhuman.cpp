@@ -835,8 +835,8 @@ void genetrixvesana::CreateCorpse(lsquare* Square)
 
 void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
-  Info.AddEntry(CONST_S("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Strength:     ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility:      ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 void floatingeye::Save(outputfile& SaveFile) const

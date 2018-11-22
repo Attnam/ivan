@@ -2360,6 +2360,8 @@ scrollofbodyswitch /* scroll-> */
   PostFix = "of body switch";
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeWished = false;
   AttachedGod = INFUSCOR;
   ReadDifficulty = 3000;
 }
@@ -3195,6 +3197,7 @@ skeletonkey
   CanBeBurned = false;
   CanBePiled = false;
   IsValuable = true;
+  BaseEmitation = rgb24(125, 125, 105);
 }
 
 shield /* armor-> */

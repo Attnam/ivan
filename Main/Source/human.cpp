@@ -3829,8 +3829,8 @@ void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
   Info.AddEntry(CONST_S("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Dexterity:    ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility:      ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 item* humanoid::GetPairEquipment(int I) const
@@ -5670,6 +5670,16 @@ void golem::CreateCorpse(lsquare* Square)
 
   if(Material->IsSolid())
     Square->AddItem(Material->CreateNaturalForm(ItemVolume));
+  if(Material->IsLiquid())
+  {
+    for(int d = 0; d < GetExtendedNeighbourSquares(); ++d)
+    {
+      lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
+
+      if(NeighbourSquare)
+        NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
+    }
+  }
 
   SendToHell();
 }

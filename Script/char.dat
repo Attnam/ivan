@@ -5164,6 +5164,7 @@ kobold
     LeftSWeaponSkillHits = 20;
     NameSingular = "kobold assassin";
     PanicLevel = 40;
+    CriticalModifier = 10;
     ClothColor = rgb16(80, 80, 160);
     LegMainColor = rgb16(111, 74, 37);
     TotalSize = 80;
@@ -5195,6 +5196,7 @@ kobold
     CanBeCloned = false;
     TotalSize = 70;
     PanicLevel = 20;
+    CriticalModifier = 10;
     ClothColor = rgb16(20, 20, 160);
     LegMainColor = rgb16(111, 74, 37);
     Inventory == Random { Category = POTION; Times = 2:8; }
@@ -5277,15 +5279,15 @@ gibberling
     13, /* Famous literature, distorted into gibberish. */
     "\"Who would fard that dream? Ay, and there's tural shocks that dreams momething afterprises the sleep; no more!\"", /* Hamlet */
     "\"Buzzing a buzzing-noise, put lived unders, and he got of all he tree, and buzzing. If there's a buzzing.\"", /* Winnie the Pooh */
-    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That’s a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
+    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That's a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
     "\"The heart. The most be seen or touched, things in they are felt with the heart.\"", /* The Little Prince */
     "\"Fear is the its past not fear has gone that brings to see inner me. And then my fear. Fear is there will turn the inner me.\"", /* Dune */
     "\"You want you remember and you? Yes. You forever, he said. You want to forget.\"", /* The Road */
     "\"Candles exploding, burn live, the same are mad to talk, mad to like stars.\"", /* On The Road */
     "\"Did seraphs, exhibit number for a princedom by the was and gentlemen initial girl-child. She tongue tip of my loin!\"", /* Lolita */
-    "\"That sometimes you realize truth arrives on you can’t even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
+    "\"That sometimes you realize truth arrives on you can't even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
     "\"Minitrue, which mainment, education and Minipax, the Miniluv and order. The Miniplenty.\"", /* 1984 */
-    "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
+    "\"But I wasn't me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
     "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
     "@Dd gibbers.";
   }
@@ -5293,10 +5295,10 @@ gibberling
   Config LORD;
   {
     AttributeBonus = 50;
-    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE);
-    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 1; }
-    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 1; }
+    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 3; }
+    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 3; }
+    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 3; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, SHIELDS; }
     CWeaponSkillHits = { 2, 100, 100; }
     RightSWeaponSkillHits = 50;

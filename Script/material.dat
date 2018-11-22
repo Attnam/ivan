@@ -4975,6 +4975,7 @@ liquid
     NameStem = "ink";
     Alpha = 175;
     AttachedGod = SOPHOS;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config BRINE;
@@ -5161,6 +5162,7 @@ liquid
     ConsumeWisdomLimit = 3;
     BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
     InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     Stickiness = 100;
     StepInWisdomLimit = 4;
   }
@@ -5180,6 +5182,7 @@ liquid
     ConsumeWisdomLimit = 4;
     BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
     InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     Stickiness = 25;
     StepInWisdomLimit = 5;
   }
@@ -5261,6 +5264,7 @@ liquid
     AttachedGod = MORTIFER;
     PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config LIQUID_FEAR;
@@ -5278,6 +5282,7 @@ liquid
     AttachedGod = CRUENTUS;
     PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config ASPHALT;
@@ -5292,6 +5297,7 @@ liquid
     Stickiness = 250;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config VINEGAR;
@@ -5325,6 +5331,7 @@ liquid
     RustModifier = 200;
     Acidicity = 10;
     InteractionFlags = Base|AFFECT_INSIDE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     StepInWisdomLimit = 5;
   }
 
@@ -5362,7 +5369,7 @@ liquid
     Flexibility = 40;
     AttachedGod = CRUENTUS;
     RustModifier = 1;
-    CategoryFlags = IS_BLOOD;
+    CategoryFlags = Base|IS_BLOOD|IS_GOLEM_MATERIAL;
   }
 
   Config GREEN_BLOOD;
@@ -5671,6 +5678,7 @@ liquid
     HardenedMaterial = CLAY;
     Stickiness = 25;
     StepInWisdomLimit = 5;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config QUICK_SAND;

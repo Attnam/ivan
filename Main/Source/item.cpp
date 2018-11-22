@@ -375,6 +375,11 @@ truth item::SoftenMaterial()
     return false;
   }
 
+  msgsystem::EnterBigMessageMode();
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s starts glowing dull yellow.", CHAR_NAME(INDEFINITE));
+
   material* TempMaterial = MAKE_MATERIAL(Config);
   material* MainMaterial = GetMainMaterial();
   material* SecondaryMaterial = GetSecondaryMaterial();
@@ -385,8 +390,9 @@ truth item::SoftenMaterial()
   ChangeMainMaterial(TempMaterial);
 
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("Suddenly %s starts glowing dull yellow. It softens into %s!", CHAR_NAME(INDEFINITE), GetMainMaterial()->GetName(false, false).CStr());
+    ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
 
+  msgsystem::LeaveBigMessageMode();
   return true;
 }
 

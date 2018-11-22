@@ -7140,18 +7140,18 @@ void character::DisplayStethoscopeInfo(character*) const
   game::RegionSilhouetteEnable(false);
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
-  Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Endurance:    ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Perception:   ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Mana: ") + GetAttribute(MANA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Wisdom:       ") + GetAttribute(WISDOM), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Willpower:    ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Charisma:     ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Mana:         ") + GetAttribute(MANA), LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Hit points: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
   Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
   Info.AddEntry(CONST_S("Body parts:"), LIGHT_GRAY);

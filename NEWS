@@ -18,6 +18,8 @@ Changes:
 * Buff regeneration. It now both regrows limbs and speeds up restoration of HP.
 * Stamina cost reworked. It will decrease more slowly, balancing powerful artificial limbs better.
 * Mana attribute decreases cooldown of magical items.
+* Scroll of body switch is once again unwishable.
+* Decrease frequency of magical equipment.
 
 Fixes:
 
