@@ -2523,7 +2523,7 @@ wand
 
   Config WAND_OF_POLYMORPH;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 500;
     IsPolymorphSpawnable = false;
     PostFix = "of polymorph";
@@ -2541,7 +2541,7 @@ wand
 
   Config WAND_OF_STRIKING;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of striking";
     MainMaterialConfig == IRON;
@@ -2557,7 +2557,7 @@ wand
 
   Config WAND_OF_FIRE_BALLS;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of fireballs";
     MainMaterialConfig == BRONZE;
@@ -2574,7 +2574,7 @@ wand
 
   Config WAND_OF_TELEPORTATION;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 500;
     PostFix = "of teleportation";
     MainMaterialConfig == SILVER;
@@ -2591,7 +2591,7 @@ wand
 
   Config WAND_OF_HASTE;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of haste";
     MainMaterialConfig == TIN;
@@ -2606,7 +2606,7 @@ wand
 
   Config WAND_OF_SLOW;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of slow";
     MainMaterialConfig == GRANITE;
@@ -2621,7 +2621,7 @@ wand
 
   Config WAND_OF_RESURRECTION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 750;
     PostFix = "of resurrection";
     MainMaterialConfig == PHOENIX_FEATHER;
@@ -2637,7 +2637,7 @@ wand
 
   Config WAND_OF_DOOR_CREATION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 250;
     PostFix = "of door creation";
     MainMaterialConfig == OAK_WOOD;
@@ -2653,7 +2653,7 @@ wand
 
   Config WAND_OF_INVISIBILITY;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 250;
     PostFix = "of invisibility";
     MainMaterialConfig == GLASS;
@@ -2668,7 +2668,7 @@ wand
 
   Config WAND_OF_CLONING;
   {
-    Possibility = 5;
+    Possibility = 2;
     Price = 2000;
     IsPolymorphSpawnable = false;
     PostFix = "of cloning";
@@ -2686,7 +2686,7 @@ wand
 
   Config WAND_OF_LIGHTNING;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 250;
     PostFix = "of lightning";
     MainMaterialConfig == GOLD;
@@ -2704,7 +2704,7 @@ wand
 
   Config WAND_OF_ACID_RAIN;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of acid rain";
     MainMaterialConfig == SULFUR;
@@ -2721,7 +2721,7 @@ wand
 
   Config WAND_OF_MIRRORING;
   {
-    Possibility = 15;
+    Possibility = 7;
     Price = 1000;
     IsPolymorphSpawnable = false;
     PostFix = "of mirroring";
@@ -2739,7 +2739,7 @@ wand
 
   Config WAND_OF_NECROMANCY;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of necromancy";
     MainMaterialConfig == BONE;
@@ -2755,7 +2755,7 @@ wand
 
   Config WAND_OF_WEBBING;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of webbing";
     MainMaterialConfig == SPIDER_SILK;
@@ -2770,7 +2770,7 @@ wand
 
   Config WAND_OF_ALCHEMY;
   {
-    Possibility = 20;
+    Possibility = 5;
     Price = 1000;
     PostFix = "of alchemy";
     MainMaterialConfig == LEAD;
@@ -2785,7 +2785,7 @@ wand
 
   Config WAND_OF_SOFTEN_MATERIAL;
   {
-    Possibility = 10;
+    Possibility = 5;
     Price = 500;
     PostFix = "of soften material";
     MainMaterialConfig == FUNGI_WOOD;
