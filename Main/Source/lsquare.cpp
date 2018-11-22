@@ -1691,6 +1691,28 @@ truth lsquare::DoorCreation(const beamdata& Beam)
   return false;
 }
 
+truth lsquare::WallCreation(const beamdata& Beam)
+{
+  if((!GetOLTerrain()
+      || GetOLTerrain()->IsSafeToCreateDoor())
+     && !GetCharacter()
+     && (GetLevel()->IsOnGround()
+         || (Pos.X > 0 && Pos.Y > 0
+             && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
+  {
+    if(Beam.Owner && GetRoom())
+      GetRoom()->HostileAction(Beam.Owner);
+
+    earth* Wall = earth::Spawn(0, NO_MATERIALS);
+    Wall->InitMaterials(MAKE_MATERIAL(GRANITE));
+
+    ChangeOLTerrainAndUpdateLights(Wall);
+    return true;
+  }
+
+  return false;
+}
+
 truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
 {
   &lsquare::Polymorph,
@@ -1708,7 +1730,8 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::Necromancy,
   &lsquare::Webbing,
   &lsquare::Alchemize,
-  &lsquare::SoftenMaterial
+  &lsquare::SoftenMaterial,
+  &lsquare::WallCreation
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -3009,6 +3032,17 @@ truth lsquare::SoftenMaterial(const beamdata& Beam)
     {
       RandomItem = AllItems[RAND() % AllItems.size()];
       RandomItem->SoftenMaterial();
+    }
+
+    // Kill the golems!!!
+    for(uint c = 1; c < uint(Character->GetBodyParts()); ++c)
+    {
+      bodypart* BodyPart = Character->GetBodyPart(c);
+
+      if(BodyPart)
+      {
+        BodyPart->SoftenMaterial();
+      }
     }
   }
 

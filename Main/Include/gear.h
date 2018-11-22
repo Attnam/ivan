@@ -466,4 +466,21 @@ ITEM(eptyron, meleeweapon)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(unpick, pickaxe)
+{
+ public:
+  unpick() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth AllowAlphaEverywhere() const { return true; }
+  virtual void FinalProcessForBone();
+ protected:
+  ulong LastUsed;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
 #endif

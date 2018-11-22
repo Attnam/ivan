@@ -7384,3 +7384,27 @@ eptyron /* meleeweapon-> */
     EnchantmentPlusChance = 4;
   }
 }
+
+unpick
+{
+  Possibility = 1;
+  StrengthModifier = 100;
+  FormModifier = 75;
+  Price = 5000;
+  Adjective = "cursed";
+  PostFix = "of Kharaz-arad";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
+  MainMaterialConfig == PSYPHER;
+  SecondaryMaterialConfig == RATA_WOOD;
+  Alias = { 2, "unpick", "unpickaxe"; }
+}

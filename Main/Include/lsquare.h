@@ -181,6 +181,7 @@ class lsquare : public square
   truth Duplicate(const beamdata&);
   truth Lightning(const beamdata&);
   truth DoorCreation(const beamdata&);
+  truth WallCreation(const beamdata&);
   truth AcidRain(const beamdata&);
   truth Necromancy(const beamdata&);
   truth Webbing(const beamdata&);

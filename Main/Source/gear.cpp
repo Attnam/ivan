@@ -34,6 +34,8 @@ col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
 col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
+col16 unpick::GetOutlineColor(int) const { return MakeRGB16(100, 60, 30); }
+
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
 truth flamingsword::IsLostRubyFlamingSword() const
 {
@@ -805,6 +807,12 @@ alpha gorovitsweapon::GetOutlineAlpha(int Frame) const
 }
 
 alpha goldeneagleshirt::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+alpha unpick::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
@@ -1593,4 +1601,50 @@ col16 eptyron::GetOutlineColor(int Frame) const
     return YELLOW;
   else
     return TRANSPARENT_COLOR;
+}
+
+void unpick::Save(outputfile& SaveFile) const
+{
+  pickaxe::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void unpick::Load(inputfile& SaveFile)
+{
+  pickaxe::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void unpick::FinalProcessForBone()
+{
+  pickaxe::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+truth unpick::Zap(character* Zapper, v2, int Direction)
+{
+  if(!LastUsed || game::GetTick() - LastUsed >= Zapper->GetMagicItemCooldown(1000))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+
+    beamdata Beam
+      (
+	      Zapper,
+	      CONST_S("killed by ") + GetName(INDEFINITE),
+	      Zapper->GetPos(),
+	      TRANSPARENT_COLOR,
+	      BEAM_WALL_CREATION,
+	      Direction,
+	      1,
+	      0
+      );
+
+    (GetLevel()->*level::GetBeam(SHIELD_BEAM))(Beam);
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
 }
