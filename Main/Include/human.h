@@ -539,6 +539,8 @@ CHARACTER(mistress, humanoid)
 
 CHARACTER(werewolfhuman, humanoid)
 {
+ public:
+  virtual void GetAICommand();
 };
 
 CHARACTER(werewolfwolf, humanoid)
