@@ -344,6 +344,34 @@ void seges::PrayGoodEffect()
     return;
   }
 
+  if(PLAYER->TemporaryStateIsActivated(LYCANTHROPY))
+  {
+    ADD_MESSAGE("%s cures your animalistic urges.", GetName());
+    PLAYER->DeActivateTemporaryState(LYCANTHROPY);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
+  {
+    ADD_MESSAGE("%s cures your bloodlust.", GetName());
+    PLAYER->DeActivateTemporaryState(VAMPIRISM);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
+  {
+    ADD_MESSAGE("%s removes the evil hidden in your guts.", GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
+  {
+    ADD_MESSAGE("%s removes the evil hidden in your brain.", GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+    return;
+  }
+
   if(PLAYER->GetNP() < SATIATED_LEVEL)
   {
     ADD_MESSAGE("Your stomach feels full again.");
@@ -362,12 +390,10 @@ void seges::PrayGoodEffect()
     return;
   }
 
-  if(PLAYER->GetStamina() < PLAYER->GetMaxStamina() >> 1)
-  {
-    ADD_MESSAGE("You don't feel a bit tired anymore.");
-    PLAYER->RestoreStamina();
-    return;
-  }
+  // Always return at least some message.
+  ADD_MESSAGE("You don't feel a bit tired anymore.");
+  PLAYER->RestoreStamina();
+  return;
 }
 
 void seges::PrayBadEffect()
@@ -375,7 +401,7 @@ void seges::PrayBadEffect()
   if(PLAYER->UsesNutrition())
   {
     ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
-    PLAYER->EditNP(-10000);
+    PLAYER->EditNP(-100000 / Max(PLAYER->GetAttribute(WISDOM), 1));
     PLAYER->CheckStarvationDeath(CONST_S("starved by ") + GetName());
   }
   else
@@ -469,7 +495,7 @@ void silva::PrayGoodEffect()
 {
   if(PLAYER->GetNP() < HUNGER_LEVEL)
   {
-    ADD_MESSAGE("Your stomach feels full again.");
+    ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
     PLAYER->SetNP(SATIATED_LEVEL);
   }
 
@@ -557,7 +583,7 @@ void silva::PrayGoodEffect()
           if(Char)
           {
             if(Char->CanBeSeenByPlayer())
-              ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
+              ADD_MESSAGE("%s is hit by a rock falling from the ceiling!", Char->CHAR_NAME(DEFINITE));
 
             Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
             Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
@@ -1015,12 +1041,19 @@ void infuscor::PrayBadEffect()
       ADD_MESSAGE("\"I'm going to enjoy watching you burn, insolent mortal!\"");
   }
 
-  ADD_MESSAGE("Vile and evil knowledge pumps into your brain. It's too much for you to handle; you faint.");
+  ADD_MESSAGE("%s pumps vile and evil knowledge into your brain. It's too much for you to handle and you faint.", GetName());
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
 void nefas::PrayGoodEffect()
 {
+  if(PLAYER->GetNP() < HUNGER_LEVEL)
+  {
+    ADD_MESSAGE("%s breast-feeds you.", GetName());
+    PLAYER->SetNP(SATIATED_LEVEL);
+    return;
+  }
+
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
