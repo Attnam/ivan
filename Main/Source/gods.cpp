@@ -812,25 +812,43 @@ void loricatus::PrayBadEffect()
 
 void cleptia::PrayGoodEffect()
 {
+  int Duration = 200 * PLAYER->GetAttribute(WISDOM) + Max(Relation, 0);
   PLAYER->RestoreStamina();
+
+  if(PLAYER->StateIsActivated(SLOW))
+  {
+    ADD_MESSAGE("%s restores the swiftness of your movement.", GetName());
+    PLAYER->DeActivateTemporaryState(SLOW);
+    return;
+  }
 
   if(!PLAYER->StateIsActivated(HASTE))
   {
     ADD_MESSAGE("%s gives you the talent for speed.", GetName());
-    PLAYER->BeginTemporaryState(HASTE, 2500);
+    PLAYER->BeginTemporaryState(HASTE, Duration);
     return;
   }
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
   {
-    ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GetName());
-    PLAYER->BeginTemporaryState(INVISIBLE, 2500);
+    ADD_MESSAGE("%s hides from your enemies.", GetName());
+    PLAYER->BeginTemporaryState(INVISIBLE, Duration);
     return;
   }
 
-  ADD_MESSAGE("Cleptia helps you, but you really don't know how.");
-  int StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
-  PLAYER->BeginTemporaryState(StateToActivate, 2500);
+  if(!PLAYER->StateIsActivated(INFRA_VISION))
+  {
+    ADD_MESSAGE("%s orders darkness to hinder you no more.", GetName());
+    PLAYER->BeginTemporaryState(INFRA_VISION, Duration);
+    return;
+  }
+
+  // Nothing else helped so far.
+  int Experience = Min(200, Max(50, GetRelation() / 4));
+  int WhichAttribute = RAND() & 1 ? DEXTERITY : AGILITY;
+  PLAYER->EditExperience(WhichAttribute, Experience, 1 << 10);
+  ADD_MESSAGE("%s helps you, but you really don't know how.", GetName());
+  return;
 }
 
 void cleptia::PrayBadEffect()
@@ -1097,7 +1115,7 @@ void nefas::PrayGoodEffect()
           if(Audience->CanBeSeenByPlayer())
             ADD_MESSAGE("%s confuses %s with her sweet lies.", GetName(), Audience->CHAR_NAME(DEFINITE));
 
-          Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
+          Audience->BeginTemporaryState(CONFUSED, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
         }
       }
   }
@@ -1288,7 +1306,7 @@ void infuscor::PrayGoodEffect()
 
   if(!Success)
   {
-    int Duration = 5000 + Relation * 15;
+    int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
 
     if(!PLAYER->StateIsActivated(ESP) ||
         PLAYER->GetTemporaryStateCounter(ESP) < Duration)
@@ -1308,14 +1326,37 @@ void infuscor::PrayGoodEffect()
         PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, Duration);
       else
         PLAYER->EditTemporaryStateCounter(POLYMORPH_CONTROL, PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL)+Duration);
-      ADD_MESSAGE("You feel %s whisper throughout your whole body.", GetName());
+      ADD_MESSAGE("You feel %s gently touch your body.", GetName());
       return;
     }
+
+    if(!PLAYER->StateIsActivated(TELEPORT_CONTROL) ||
+        PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL) < Duration)
+    {
+      if(!PLAYER->StateIsActivated(TELEPORT_CONTROL))
+        PLAYER->BeginTemporaryState(TELEPORT_CONTROL, Duration);
+      else
+        PLAYER->EditTemporaryStateCounter(TELEPORT_CONTROL, PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL)+Duration);
+      ADD_MESSAGE("You feel %s gently touch your soul.", GetName());
+      return;
+    }
+
+    ADD_MESSAGE("You feel %s smiling at you.", GetName());
   }
+
+  return;
 }
 
 void cruentus::PrayGoodEffect()
 {
+  if(PLAYER->StateIsActivated(PANIC))
+  {
+    ADD_MESSAGE("\"Fight, you lousy coward!\"", GetName());
+    PLAYER->DeActivateTemporaryState(PANIC);
+    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 5);
+    return;
+  }
+
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
@@ -1351,27 +1392,30 @@ void cruentus::PrayGoodEffect()
            && !Audience->TemporaryStateIsActivated(PANIC)
            && PLAYER->GetRelation(Audience) == HOSTILE
            && Audience->GetPanicLevel() > RAND() % 33)
-          Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+          Audience->BeginTemporaryState(PANIC, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
       }
 
     return;
   }
 
-  item* Weapon = PLAYER->GetMainWielded();
-
-  for(int i = 0; i < 2; i++)
+  if(!RAND_2)
   {
-    if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
+    item* Weapon = PLAYER->GetMainWielded();
+
+    for(int i = 0; i < 2; i++)
     {
-      int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
-      if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+      if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
       {
-        ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
-        Weapon->EditEnchantment(1);
-        return;
+        int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+        if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+        {
+          ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
+          Weapon->EditEnchantment(1);
+          return;
+        }
       }
+      Weapon = PLAYER->GetSecondaryWielded();
     }
-    Weapon = PLAYER->GetSecondaryWielded();
   }
 
   if(RAND() & 3)
