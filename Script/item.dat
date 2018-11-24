@@ -3337,7 +3337,7 @@ shield /* armor-> */
   {
     Possibility = 2;
     PostFix = "of fire resistance";
-    Price = 250;
+    Price = 500;
     FireResistance = 15;
     EnchantmentPlusChance = 5;
   }
@@ -3351,7 +3351,7 @@ shield /* armor-> */
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
     FireResistance = 5;
-    Price = 100;
+    Price = 250;
     EnchantmentPlusChance = 10;
   }
 
@@ -3359,7 +3359,7 @@ shield /* armor-> */
   {
     Possibility = 2;
     PostFix = "of electricity resistance";
-    Price = 250;
+    Price = 500;
     ElectricityResistance = 15;
     EnchantmentPlusChance = 5;
   }
@@ -3373,7 +3373,7 @@ shield /* armor-> */
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
     ElectricityResistance = 5;
-    Price = 100;
+    Price = 250;
     EnchantmentPlusChance = 10;
   }
 
@@ -3381,7 +3381,7 @@ shield /* armor-> */
   {
     Possibility = 2;
     PostFix = "of magic resistance";
-    Price = 250;
+    Price = 500;
     EnergyResistance = 15;
     EnchantmentPlusChance = 5;
   }
@@ -3395,7 +3395,7 @@ shield /* armor-> */
     BitmapPos = 48, 224;
     WieldedBitmapPos = 128, 48;
     EnergyResistance = 5;
-    Price = 100;
+    Price = 250;
     EnchantmentPlusChance = 10;
   }
 }

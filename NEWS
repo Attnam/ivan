@@ -13,13 +13,14 @@ Next version
 Changes:
 * Added Freedom for Tweraif victory: It is now possible to win by bringing freedom to Tweraif, and then making sure it stays free. It is a low-ranking win, but at least your village will be safe.
 * Considerably reworked Lobh-se.
-* Added new shields, amulet and artifacts.
-* Added warp gas.
-* Buff regeneration. It now both regrows limbs and speeds up restoration of HP.
+* Added new shields, amulet, wand and artifacts.
+* Added several new materials.
+* Buffed regeneration. It now both regrows limbs and speeds up restoration of HP.
 * Stamina cost reworked. It will decrease more slowly, balancing powerful artificial limbs better.
 * Mana attribute decreases cooldown of magical items.
 * Scroll of body switch is once again unwishable.
-* Decrease frequency of magical equipment.
+* Decreased frequency of magical equipment.
+* Improved stethoscope display.
 
 Fixes:
 
