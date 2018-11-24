@@ -1071,7 +1071,8 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  if(!RAND_N(10))
+  // TODO: as champion grant green slime vomit
+  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your follwers.
   {
     for(int c = 0; c < game::GetTeams(); ++c)
       if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -1082,9 +1083,53 @@ void scabies::PrayGoodEffect()
         }
 
     ADD_MESSAGE("You feel a horrible disease spreading.");
+  }
+
+  int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
+
+  if((PLAYER->GetNP() < HUNGER_LEVEL) &&
+     (!PLAYER->StateIsActivated(FASTING) || PLAYER->GetTemporaryStateCounter(FASTING) < Duration))
+  {
+    if(!PLAYER->StateIsActivated(FASTING))
+      PLAYER->BeginTemporaryState(FASTING, Duration);
+    else
+      PLAYER->EditTemporaryStateCounter(FASTING, PLAYER->GetTemporaryStateCounter(FASTING) + Duration);
+    ADD_MESSAGE("%s whispers in your mind: \"Famine culls the weak but purifies the strong, my child.\"", GetName());
     return;
   }
 
+  // Scabies wants followers who can spread her word, not those who just lie on thr ground, missing limbs.
+  if(PLAYER->StateIsActivated(LEPROSY) && !PLAYER->IsImmuneToLeprosy())
+  {
+    PLAYER->BeginTemporaryState(DISEASE_IMMUNITY, Duration);
+    ADD_MESSAGE("%s chuckles in your mind: \"No need to fall apart, my dear.\"", GetName());
+    return;
+  }
+
+  truth Success = false;
+
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  {
+    lsquare* Square = PLAYER->GetNeighbourLSquare(d);
+
+    if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
+    {
+      if(!RAND_2)
+      {
+        ADD_MESSAGE("%s vomits poison on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+        Square->SpillFluid(PLAYER, liquid::Spawn(POISON_LIQUID, 30 * PLAYER->GetAttribute(WISDOM)));
+        Success = true;
+      }
+      else
+      {
+        ADD_MESSAGE("%s vomits acid on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+        Square->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+        Success = true;
+      }
+    }
+  }
+
+  // First try to deal with enemies, then give stuff.
   if(!(RAND() % 50))
   {
     ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
@@ -1099,37 +1144,24 @@ void scabies::PrayGoodEffect()
     return;
   }
 
-  truth Success = false;
-
-  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
-  {
-    lsquare* Square = PLAYER->GetNeighbourLSquare(d);
-
-    if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
-    {
-      ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
-      Square->SpillFluid(PLAYER, liquid::Spawn(POISON_LIQUID, 500));
-      Success = true;
-    }
-  }
-
   if(!Success)
     PLAYER->PolymorphRandomly(2500, 10000, 1000 + RAND() % 1000);
 }
 
 void scabies::PrayBadEffect()
 {
-  if(!(RAND() % 50))
+  if(!RAND_2)
   {
     ADD_MESSAGE("%s makes you eat a LOT of school food.", GetName());
     material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 2000);
     SchoolFood->EatEffect(PLAYER, 1000);
     delete SchoolFood;
+
     ADD_MESSAGE("You feel your muscles softening terribly...");
     PLAYER->EditAttribute(ARM_STRENGTH, -1);
     PLAYER->EditAttribute(DEXTERITY, -1);
   }
-  else if(RAND_2)
+  else if(PLAYER->IsImmuneToLeprosy())
   {
     ADD_MESSAGE("%s unleashes all her fury upon you!", GetName());
     PLAYER->BeginTemporaryState(POISONED, 600 + RAND() % 400);
@@ -1323,8 +1355,20 @@ void cruentus::PrayBadEffect()
 
 truth scabies::PlayerVomitedOnAltar(liquid*)
 {
-  ADD_MESSAGE("%s feels that you are indeed her follower.", GetName());
-  AdjustRelation(1);
+  if(Relation == 1000)
+  {
+    ADD_MESSAGE("%s exclaims: \"You have pleased me greatly, darling!\"", GetName());
+
+    if(PLAYER->GetVomitMaterial() != GREEN_SLIME)
+    {
+      PLAYER->SetNewVomitMaterial(GREEN_SLIME);
+    }
+  }
+  else
+  {
+    ADD_MESSAGE("%s feels that you are indeed her follower.", GetName());
+    AdjustRelation(1);
+  }
   return false;
 }
 
