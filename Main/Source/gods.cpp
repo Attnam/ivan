@@ -212,16 +212,18 @@ void valpurus::PrayBadEffect()
 
 void legifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
-                                     PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
+  // ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
+  ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),
+                                     (Max(20 * PLAYER->GetAttribute(WISDOM), 1) + Max(GetRelation(), 0)) >> 3, false);
 }
 
 void legifer::PrayBadEffect()
 {
-  ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GetName());
+  ADD_MESSAGE("%s casts horrible yet righteous flames upon you.", GetName());
   PLAYER->ReceiveDamage(0, 50 + RAND() % 50, FIRE, ALL);
-  PLAYER->CheckDeath(CONST_S("burned to death by the wrath of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("burned to death by the holy flames of ") + GetName(), 0);
 }
 
 void dulcis::PrayGoodEffect()
