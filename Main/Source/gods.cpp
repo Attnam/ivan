@@ -157,7 +157,7 @@ void sophos::PrayGoodEffect()
        PLAYER->EditExperience(MANA, Experience, 1 << 10);
        break;
       default:
-       SecretType = "a weird and disturbing"
+       SecretType = "a weird and disturbing";
        break;
     }
 
@@ -197,7 +197,7 @@ void valpurus::PrayGoodEffect()
   }
   else // Player already received championship gift, give holy handgrenade instead.
   {
-    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE"
+    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE "
                 "THAT WITH IT THOU MAYEST BLOW THY ENEMIES TO TINY BITS, MY PALADIN!\"");
     PLAYER->GetGiftStack()->AddItem(holyhandgrenade::Spawn());
   }
@@ -1475,7 +1475,7 @@ truth scabies::PlayerVomitedOnAltar(liquid*)
   {
     ADD_MESSAGE("%s exclaims: \"You have pleased me greatly, darling!\"", GetName());
 
-    if(PLAYER->GetVomitMaterial() != GREEN_SLIME)
+    if(PLAYER->GetMyVomitMaterial() != GREEN_SLIME)
     {
       PLAYER->SetNewVomitMaterial(GREEN_SLIME);
     }

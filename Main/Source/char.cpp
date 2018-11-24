@@ -3484,7 +3484,7 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
 
   if(!game::IsInWilderness())
     GetNearLSquare(Pos)->ReceiveVomit(this,
-                                      liquid::Spawn(GetVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+                                      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
 }
 
 truth character::Polymorph(character* NewForm, int Counter)
@@ -5449,6 +5449,7 @@ void character::LoadDataBaseStats()
   }
 
   SetMoney(GetDefaultMoney());
+  SetNewVomitMaterial(GetVomitMaterial());
   const fearray<long>& Skills = GetKnownCWeaponSkills();
 
   if(Skills.Size)

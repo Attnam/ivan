@@ -1165,7 +1165,8 @@ class character : public entity, public id
   truth IsBurnt() const;
   truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
-  void SetNewVomitMaterial(int What) { VomitMaterial = What; }
+  int GetMyVomitMaterial() { return MyVomitMaterial; }
+  void SetNewVomitMaterial(int What) { MyVomitMaterial = What; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1250,6 +1251,7 @@ class character : public entity, public id
   v2 GoingTo;
   double RandomMoveDir;
   long Money;
+  int MyVomitMaterial;
   std::list<character*>::iterator TeamIterator;
   bodypartslot* BodyPartSlot;
   festring AssignedName;
