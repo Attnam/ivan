@@ -150,21 +150,27 @@ void sophos::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  if(RAND() & 1)
+  if(!game::PlayerIsGodChampion())
   {
-    ADD_MESSAGE("You hear booming voice: \"THIS WILL PROTECT THEE FROM MORTIFER, MY "
-                "PALADIN!\" A shield glittering with holy might appears from nothing.");
-    shield* Shield = shield::Spawn();
-    Shield->InitMaterials(MAKE_MATERIAL(VALPURIUM));
-    PLAYER->GetGiftStack()->AddItem(Shield);
-  }
-  else
-  {
-    ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" "
-                "A sword glittering with holy might appears from nothing.");
+    ADD_MESSAGE("You hear a booming voice: \"I RECOGNIZETH THEE AS MINE OWN CHAMPION! "
+                "JOURNEY FORTH WITH THESE ARMAMENTS TO DEFEAT MORTIFER AND ALL "
+                "THE CHAOS HE HADST SOWN!\" A set of holy arms appear from nothing.");
+
     meleeweapon* Weapon = meleeweapon::Spawn(TWO_HANDED_SWORD);
     Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), true);
     PLAYER->GetGiftStack()->AddItem(Weapon);
+
+    shield* Shield = shield::Spawn();
+    Shield->InitMaterials(MAKE_MATERIAL(VALPURIUM));
+    PLAYER->GetGiftStack()->AddItem(Shield);
+
+    game::MakePlayerGodChampion();
+  }
+  else // Player already received championship gift, give holy handgrenade instead.
+  {
+    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE"
+                "THAT WITH IT THOU MAYEST BLOW THY ENEMIES TO TINY BITS, MY PALADIN!\"");
+    PLAYER->GetGiftStack()->AddItem(holyhandgrenade::Spawn());
   }
 }
 
@@ -778,16 +784,34 @@ void cleptia::PrayBadEffect()
 
 void mortifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes "
-              "through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHy ReWaRd, "
-              "ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
-  PLAYER->GetGiftStack()->AddItem(neercseulb::Spawn());
+  if(!game::PlayerIsGodChampion())
+  {
+    ADD_MESSAGE("The air vibrates violently as a terrible undead voice echoes "
+                "around you: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHy ReWaRd, "
+                "ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
+
+    PLAYER->GetGiftStack()->AddItem(neercseulb::Spawn());
+    game::MakePlayerGodChampion();
+  }
+  else
+  {
+    ADD_MESSAGE("The air suddenly feels much colder. A terrible undead voice shreds "
+                "the silence: \"I aM PlEaSeD By tHy sQuIrMiNg, WoRm! WaLkEtH WiTh mE "
+                "ThRoUgH ThE ShAdOwS As oNe oF ThE DeAd!\"");
+
+    if(!PLAYER->StateIsActivated(ETHEREAL_MOVING))
+      PLAYER->BeginTemporaryState(ETHEREAL_MOVING, PLAYER->GetAttribute(WISDOM) * 300);
+    else
+      PLAYER->EditTemporaryStateCounter(ETHEREAL_MOVING,
+        PLAYER->GetTemporaryStateCounter(ETHEREAL_MOVING) + (PLAYER->GetAttribute(WISDOM) * 100));
+  }
 }
 
 void mortifer::PrayBadEffect()
 {
   ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! ThOu ArT nOt WoRtHy! "
               "I sHaLl dEsTrOy ThEe LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
+
   PLAYER->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
   PLAYER->EditAttribute(AGILITY, -1);
   PLAYER->EditAttribute(ARM_STRENGTH, -1);

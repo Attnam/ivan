@@ -346,6 +346,8 @@ class game
   static void SetStoryState(int What) { StoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
+  static truth PlayerIsGodChampion() { return PlayerIsChampion; }
+  static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
   static festring GetDataDir();
@@ -577,6 +579,7 @@ class game
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
+  static truth PlayerIsChampion; // This marks the player as a champion of some god.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

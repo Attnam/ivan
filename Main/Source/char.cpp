@@ -4292,7 +4292,7 @@ void character::GoOn(go* Go, truth FirstStep)
     Go->Terminate(false);
     return;
   }
-    
+
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 
@@ -7139,7 +7139,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
-  
+
   festring EntryBP;
   for(int c = 0; c < BodyParts; ++c)
   {
