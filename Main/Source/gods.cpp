@@ -128,17 +128,46 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
-  if(PLAYER->StateIsActivated(TELEPORT_LOCK))
+  if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
   {
-    ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
-    return;
+    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
+    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+  }
+
+  // Give a little attribute experience (Cha already given by Dulcis and not Wis,
+  // as we want to check Wis to give the experience).
+  if(PLAYER->GetAttribute(WISDOM) > RAND_128)
+  {
+    cchar* SecretType;
+    int Experience = Min(200, Max(50, GetRelation() / 4));
+
+    switch(RAND() % 2)
+    {
+      case 0:
+       SecretType = "an ancient";
+       PLAYER->EditExperience(INTELLIGENCE, Experience, 1 << 10);
+       break;
+      case 1:
+       SecretType = "a terrible";
+       PLAYER->EditExperience(WILL_POWER, Experience, 1 << 10);
+       break;
+      case 2:
+       SecretType = "a profound";
+       PLAYER->EditExperience(MANA, Experience, 1 << 10);
+       break;
+      default:
+       SecretType = "a weird and disturbing"
+       break;
+    }
+
+    ADD_MESSAGE("%s whispers %s secret to you.", GetName(), SecretType);
   }
   else
   {
-    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally "
-                "powerful quantum displacement! You teleport away!");
-    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
   }
+  return;
 }
 
 void sophos::PrayBadEffect()
