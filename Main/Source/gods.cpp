@@ -879,29 +879,33 @@ void mortifer::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   truth Success = false;
-  itemvector OKItems;
 
-  for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
+  if(!RAND_2)
   {
-    if(!i->HasBetterVersion())
-      continue;
+    itemvector OKItems;
 
-    OKItems.push_back(*i);
-    Success = true;
-  }
+    for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
+    {
+      if(!i->HasBetterVersion())
+        continue;
 
-  item* NewVersion;
+      OKItems.push_back(*i);
+      Success = true;
+    }
 
-  for(int c = 0; !OKItems.empty() && c < 4; ++c)
-  {
-    item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
-    NewVersion = ToBeDeleted->BetterVersion();
-    ADD_MESSAGE("%s manages to trade %s into %s.", GetName(),
-                ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
-    PLAYER->GetStack()->AddItem(NewVersion);
-    ToBeDeleted->RemoveFromSlot();
-    ToBeDeleted->SendToHell();
-    OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+    item* NewVersion;
+
+    for(int c = 0; !OKItems.empty() && c < 4; ++c)
+    {
+      item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
+      NewVersion = ToBeDeleted->BetterVersion();
+      ADD_MESSAGE("%s manages to trade %s into %s.", GetName(),
+                  ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
+      PLAYER->GetStack()->AddItem(NewVersion);
+      ToBeDeleted->RemoveFromSlot();
+      ToBeDeleted->SendToHell();
+      OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+    }
   }
 
   if((Success && !(RAND() % 5)) || (!Success && !(RAND() % 3)))
@@ -924,7 +928,11 @@ void mellis::PrayGoodEffect()
   }
 
   if(!Success)
-    ADD_MESSAGE("Nothing happens.");
+  {
+    PLAYER->SetMoney(PLAYER->GetMoney() + (PLAYER->GetAttribute(WISDOM) * 2));
+    ADD_MESSAGE("%s gives you some pocket money.", GetName());
+  }
+  return;
 }
 
 void mellis::PrayBadEffect()
