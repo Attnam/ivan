@@ -213,8 +213,8 @@ void valpurus::PrayBadEffect()
 void legifer::PrayGoodEffect()
 {
   // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
-  // ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
+  ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
+  //ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
   game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),
                                      (Max(20 * PLAYER->GetAttribute(WISDOM), 1) + Max(GetRelation(), 0)) >> 3, false);
 }
@@ -831,7 +831,7 @@ void cleptia::PrayGoodEffect()
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
   {
-    ADD_MESSAGE("%s hides from your enemies.", GetName());
+    ADD_MESSAGE("%s hides you from your enemies.", GetName());
     PLAYER->BeginTemporaryState(INVISIBLE, Duration);
     return;
   }
@@ -1391,7 +1391,7 @@ void cruentus::PrayGoodEffect()
         if(Audience
            && !Audience->TemporaryStateIsActivated(PANIC)
            && PLAYER->GetRelation(Audience) == HOSTILE
-           && Audience->GetPanicLevel() > RAND() % 33)
+           && Audience->GetPanicLevel() > (RAND() % (50 - Min(PLAYER->GetAttribute(WISDOM), 49))))
           Audience->BeginTemporaryState(PANIC, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
       }
 
