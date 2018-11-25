@@ -4022,8 +4022,12 @@ alpha mangoseedling::GetOutlineAlpha(int Frame) const
 
 alpha skeletonkey::GetOutlineAlpha(int Frame) const
 {
-  Frame &= 31;
-  return Frame * (31 - Frame) >> 1;
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  return 0;
 }
 
 col16 skeletonkey::GetOutlineColor(int Frame) const
@@ -4035,4 +4039,5 @@ col16 skeletonkey::GetOutlineColor(int Frame) const
    case 2: return RED;
    case 3: return YELLOW;
   }
+  return TRANSPARENT_COLOR;
 }

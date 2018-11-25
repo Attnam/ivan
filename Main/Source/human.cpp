@@ -6608,9 +6608,9 @@ void goblin::GetAICommand()
   humanoid::GetAICommand();
 }
 
-void werewolfhuman::GetAICommand()
+void werewolfwolf::GetAICommand()
 {
-  if(GetConfig() == DRUID)
+  if(GetConfig() == DRUID && !RAND_2)
     if(CheckAIZapOpportunity())
       return;
 

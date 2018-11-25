@@ -539,14 +539,13 @@ CHARACTER(mistress, humanoid)
 
 CHARACTER(werewolfhuman, humanoid)
 {
- public:
-  virtual void GetAICommand();
 };
 
 CHARACTER(werewolfwolf, humanoid)
 {
  public:
   virtual festring GetKillName() const;
+  virtual void GetAICommand();
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
