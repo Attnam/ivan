@@ -83,7 +83,7 @@ void consume::Handle()
     return;
   }
 
-  character* Actor = GetActor();
+  character* Actor = GetActor();  // in case the action is interrupted
 
   if(!Spoiling && Consuming->GetSpoilLevel() > 0)
   {
@@ -149,7 +149,7 @@ void consume::Terminate(truth Finished)
 
   Flags |= TERMINATING;
   item* Consuming = game::SearchItem(ConsumingID);
-  character* Actor = GetActor();
+  character* Actor = GetActor();  // in case the action is interrupted
 
   if(Actor->IsPlayer())
     ADD_MESSAGE("You %s %s.", Finished ? "finish" : "stop", Description.CStr());
@@ -241,7 +241,7 @@ void dig::Load(inputfile& SaveFile)
 
 void dig::Handle()
 {
-  character* Actor = GetActor();
+  character* Actor = GetActor();  // in case the action is interrupted
   item* Digger = Actor->GetMainWielded();
 
   if(!Digger)
@@ -356,14 +356,14 @@ bool go::SetDirectionFromRoute()
   if(next == Actor->GetPos()) //this may happen while confuse state is active
     if(RouteGoOn.size()>0){
       next = RouteGoOn.back();
-      RouteGoOn.pop_back();      
+      RouteGoOn.pop_back();
     }
-  
+
   v2 v2Diff = next - Actor->GetPos();
   if(v2Diff.Is0()) //w/o a direction it is impossible to continue...
     return false;
-  
-  if(abs(v2Diff.X)>1 || abs(v2Diff.Y)>1){ 
+
+  if(abs(v2Diff.X)>1 || abs(v2Diff.Y)>1){
     /**
      * something weird happened, but there is no need to abort the game
      * as the user can just try the route again or a new one
@@ -371,12 +371,12 @@ bool go::SetDirectionFromRoute()
      */
     DBG4(DBGAV2(v2Diff),DBGAV2(next),DBGAV2(Actor->GetPos()),RouteGoOn.size());
     return false;
-  } 
-    
+  }
+
   int dir = game::GetDirectionForVector(v2Diff); //if reached here, it will not fail with DIR_ERROR
-  
+
   SetDirection(dir);
-  
+
   return true;
 }
 
@@ -389,10 +389,12 @@ void go::Handle()
       return;
     }
 
-  GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
-  GetActor()->GoOn(this); 
+  character* Actor = GetActor();  // in case the action is interrupted
 
-  if(GetActor()->GetAction()) //may have been terminated by GoOn()
+  Actor->EditAP(Actor->GetStateAPGain(100)); // gum solution
+  Actor->GoOn(this);
+
+  if(Actor->GetAction()) //may have been terminated by GoOn()
     if(bRouteMode) //was route mode
       if(RouteGoOn.size()==0) //currently is the last step
         Terminate(false);
@@ -445,7 +447,7 @@ void study::Terminate(truth Finished)
     else if(GetActor()->CanBeSeenByPlayer())
       ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
 
-    character* Actor = GetActor();
+    character* Actor = GetActor();  // in case the action is interrupted
     Literature->FinishReading(Actor);
 
     if(!Actor->IsEnabled())
