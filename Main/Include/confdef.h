@@ -694,6 +694,7 @@
 #define HOLY_TREE 3
 #define CARPET 4
 #define COUCH 5
+#define CHAIR 6
 #define DOUBLE_BED 9
 #define POOL_BORDER 13
 #define POOL_CORNER 14

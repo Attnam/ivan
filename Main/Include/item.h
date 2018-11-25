@@ -629,6 +629,7 @@ class item : public object
   virtual truth WeightIsIrrelevant() const { return false; }
   virtual const prototype* FindProtoType() const { return &ProtoType; }
   virtual truth AddStateDescription(festring&, truth) const;
+  virtual void AddContainerPostFix(festring&) const;
   static const prototype ProtoType;
   slot** Slot;
   int Size;

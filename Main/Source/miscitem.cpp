@@ -1756,14 +1756,16 @@ void wand::AddInventoryEntry(ccharacter*, festring& Entry, int, truth ShowSpecia
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
 
     if(TimesUsed == 1)
-      Entry << "g, used 1 time]";
+      Entry << ", used 1 time]";
     else if(TimesUsed)
-      Entry << "g, used " << TimesUsed << " times]";
+      Entry << ", used " << TimesUsed << " times]";
     else
-      Entry << "g]";
+      Entry << "]";
   }
 }
 
@@ -2674,7 +2676,10 @@ void holybanana::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, tru
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())
@@ -3776,7 +3781,10 @@ void ullrbone::AddInventoryEntry(const character* Viewer, festring& Entry, int, 
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())

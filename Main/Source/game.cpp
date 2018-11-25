@@ -373,6 +373,15 @@ void game::InitScript()
   GameScript->RandomizeLevels();
 }
 
+truth game::IsQuestItem(item* it) //dont protect against null item* it may be a problem outside here.
+{
+  return it->IsHeadOfElpuri()
+      || it->IsGoldenEagleShirt()
+      || it->IsPetrussNut()
+      || it->IsTheAvatar()
+      || it->IsEncryptedScroll();
+}
+
 void game::PrepareToClearNonVisibleSquaresAround(v2 v2SqrPos) {
   int i=ivanconfig::GetXBRZSquaresAroundPlayer();
   if(i==0)return;
@@ -1512,6 +1521,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
   }
 
+  // line
   for(int i=0;i<vMapNotes.size();i++){ DBG7(i,vMapNotes.size(),DBGAV2(vMapNotes[i].scrPos),DBGAV2(vMapNotes[i].v2LineHook),ac[i%iTotCol],iNoteHighlight==i, iMapOverlayDrawCount);
     if(validateV2(vMapNotes[i].scrPos,buffer) && validateV2(vMapNotes[i].v2LineHook,buffer)){
       bool bNH = iNoteHighlight==i;
@@ -1519,6 +1529,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
     }
   }
 
+  // note
   for(int i=0;i<vMapNotes.size();i++)
     if(validateV2(vMapNotes[i].basePos,buffer))
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
@@ -6090,6 +6101,7 @@ int game::Wish(character* Wisher, cchar* MsgSingle, cchar* MsgPair, truth AllowE
   for(;;)
   {
     festring Temp;
+    Temp << DefaultWish; // to let us fix previous instead of having to fully type it again
 
     if(DefaultQuestion(Temp, CONST_S("What do you want to wish for?"), DefaultWish, AllowExit) == ABORTED)
       return ABORTED;

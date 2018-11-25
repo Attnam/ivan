@@ -23,6 +23,7 @@ class ivanconfig
   static cfestring& GetFantasyNamePattern() { return FantasyNamePattern.Value; }
   static cfestring& GetDefaultPetName() { return DefaultPetName.Value; }
   static cfestring& GetSelectedBkgColor() { return SelectedBkgColor.Value; }
+  static truth IsAllWeightIsRelevant() { return AllWeightIsRelevant.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
   static long GetHitIndicator() { return HitIndicator.Value; }
@@ -32,6 +33,7 @@ class ivanconfig
   static long GetFrameSkip() { return FrameSkip.Value; }
   static long GetGoOnStopMode() { return GoOnStopMode.Value; }
   static long GetHoldPosMaxDist() { return HoldPosMaxDist.Value; }
+  static truth IsShowVolume() { return ShowVolume.Value;}
   static truth IsAllowImportOldSavegame(){ return AllowImportOldSavegame.Value; }
   static long GetAltSilhouette() { return AltSilhouette.Value; }
   static truth IsHideWeirdHitAnimationsThatLookLikeMiss(){return HideWeirdHitAnimationsThatLookLikeMiss.Value;}
@@ -189,6 +191,8 @@ class ivanconfig
   static truthoption ShowMapAtDetectMaterial;
   static truthoption TransparentMapLM;
   static truthoption WaitNeutralsMoveAway;
+  static truthoption AllWeightIsRelevant;
+  static truthoption ShowVolume;
   static truthoption EnhancedLights;
 
   static cycleoption MemorizeEquipmentMode;

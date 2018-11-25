@@ -29,7 +29,17 @@ struct packv2
 
 struct v2
 {
-  v2() = default;
+  /**
+   * TODO
+   * Is there some reason to NOT initialize X and Y ???
+   * what 'default' does that is really important/useful/necessary/required?
+   * as 'default' is not setting'em to 0, it is probably not good enough tho.
+   *
+   * PS.: regex to find all possible problematic places w/o this new constructor: "v2 [^=(:]*;"
+   *  where non-initialized v2 could cause trouble.
+   */
+  v2() : X(0), Y(0) { }; //was: v2() = default;
+
   v2(int X, int Y) : X(X), Y(Y) { }
   v2 operator+(v2 V) const { return v2(X + V.X, Y + V.Y); }
   v2& operator+=(v2 V) { X += V.X; Y += V.Y; return *this; }

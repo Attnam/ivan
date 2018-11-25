@@ -1263,7 +1263,7 @@ truth commandsystem::Offer(character* Char)
       return false;
     }
 
-    item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to offer?"));
+    item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to offer?"), REMEMBER_SELECTED);
 
     if(Item)
     {

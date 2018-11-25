@@ -12,6 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
+#include "dbgmsgproj.h"
+
 cchar* ToHitValueDescription[] =
 {
   "unbelievably inaccurate",
@@ -777,8 +779,20 @@ void item::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sho
     AddName(Entry, PLURAL);
   }
 
-  if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g]";
+  if(ShowSpecialInfo){
+    Entry << " [" << GetWeight() * Amount << "g"; //TODO if the 1st and 2nd of 3 items have 100g and the last has 2000g, the weight shown would be 300g ... now that lumps, stones and sticks are useful, this may not be that good...
+    if(ivanconfig::IsShowVolume()){
+      Entry << " " << GetVolume() * Amount << "cm3"; //the item can be seen therefore it's volume guessed already
+      if(GetSecondaryMaterial()==NULL){ //simple items like ingots sticks etc
+        static char density[20];
+        sprintf(density, "%.1f", GetWeight()/(float)GetVolume());
+        Entry << " " << density << "g/cm3"; //the item can be seen and weighted already so this just helps avoiding having to mentally calc density for every item
+        if(game::WizardModeIsActive()) //TODO || Char-> possess item <materialmanual*>
+          Entry << " " << GetStrengthValue() << "str"; //this is special info tho.
+      }
+    }
+    Entry << "]";
+  }
 }
 
 const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig, int Configs, int ConfigNumber)
@@ -916,7 +930,7 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
   return (GetType() == Item->GetType()
           && GetConfig() == Item->GetConfig()
           && ItemFlags == Item->ItemFlags
-          && (WeightIsIrrelevant() || Weight == Item->Weight)
+          && ((!ivanconfig::IsAllWeightIsRelevant() && WeightIsIrrelevant()) || Weight == Item->Weight)
           && MainMaterial->IsSameAs(Item->MainMaterial)
           && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
           && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
@@ -2107,6 +2121,21 @@ void item::SendMemorizedUpdateRequest() const
         lsquare* Square = GetLSquareUnder(c);
         Square->SendMemorizedUpdateRequest();
       }
+}
+
+void item::AddContainerPostFix(festring& String) const
+{
+  if(GetSecondaryMaterial()){
+    float fRatio = GetSecondaryMaterial()->GetVolume()/(float)GetDefaultSecondaryVolume();
+    const char* c="full of";
+    if     (fRatio<=0.10)c="with just a little bit of";
+    else if(fRatio<=0.25)c="with a bit of";
+    else if(fRatio<=0.45)c="with some";
+    else if(fRatio<=0.55)c="half full of";
+    else if(fRatio<=0.75)c="well filled with"; //TODO any better phrasing for this?
+    else if(fRatio<=0.93)c="almost full of"; //nice arguable arbitrary percent :)
+    GetSecondaryMaterial()->AddName(String << " "<< c << " ", false, false);
+  }
 }
 
 truth item::AddStateDescription(festring& Name, truth Articled) const
