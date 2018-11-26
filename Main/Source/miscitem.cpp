@@ -500,7 +500,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
 item* brokenbottle::BetterVersion() const
 {
-  return potion::Spawn();
+  return potion::Spawn(GetConfig());
 }
 
 void brokenbottle::StepOnEffect(character* Stepper)
@@ -573,7 +573,7 @@ void lantern::SignalSquarePositionChange(int SquarePosition)
 item* potion::BetterVersion() const
 {
   if(!GetSecondaryMaterial())
-    return potion::Spawn();
+    return potion::Spawn(GetConfig());
   else
     return 0;
 }
