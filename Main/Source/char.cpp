@@ -2151,7 +2151,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << ExpModifierMap;
   SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks
            << CounterToMindWormHatch;
-  SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
+  SaveFile << TemporaryState << EquipmentState << Money << MyVomitMaterial << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
   SaveFile << HomeData << BlocksSinceLastTurn << CommandFlags;
   SaveFile << WarnFlags << static_cast<ushort>(Flags);
@@ -2203,7 +2203,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> ExpModifierMap;
   SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks
            >> CounterToMindWormHatch;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> MyVomitMaterial >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!SaveFile.Get())
     Disable();
