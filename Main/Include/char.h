@@ -1199,6 +1199,7 @@ class character : public entity, public id
   void GetPlayerCommand();
 
   truth AutoPlayAICommand(int&);
+  truth AutoPlayAIPray();
   bool AutoPlayAIChkInconsistency();
   static void AutoPlayAIDebugDrawSquareRect(v2 v2SqrPos, col16 color, int iPrintIndex=-1, bool bWide=false, bool bKeepColor=false);
   static void AutoPlayAIDebugDrawOverlay();

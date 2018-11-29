@@ -15,5 +15,5 @@ IVAN_BUILD_DIR=${IVAN_BUILD_DIR:-"${PWD}"}
 
 cmake .. \
     -DBUILD_MAC_APP="${BUILD_MAC_APP}" \
-    -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option ${CXXFLAGS}" \
+    -DCMAKE_CXX_FLAGS="-Werror -Wno-undefined-var-template -Wno-unknown-warning-option ${CXXFLAGS}" \
     -DCMAKE_INSTALL_PREFIX="${IVAN_BUILD_DIR}/${IVAN_PLATFORM}"

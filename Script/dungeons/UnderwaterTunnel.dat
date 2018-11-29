@@ -394,6 +394,8 @@ Dungeon UNDER_WATER_TUNNEL;
     TunnelSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
     DifficultyBase = 100;
     DifficultyDelta = 0;
+    ItemMinPriceBase = 50;
+    ItemMinPriceDelta = 0;
     MonsterAmountBase = 25;
     MonsterGenerationIntervalBase = 60;
     MonsterGenerationIntervalDelta = 0;
@@ -445,6 +447,11 @@ Dungeon UNDER_WATER_TUNNEL;
       Square, Random HAS_NO_OTERRAIN;
       {
         OTerrain = decoration(HOLY_TREE);
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Character = terra { Team = TERRA_TEAM; }
       }
     }
 
@@ -578,11 +585,13 @@ Dungeon UNDER_WATER_TUNNEL;
     FillSquare = solidterrain(GROUND), BASALT earth;
     DifficultyBase = 100;
     DifficultyDelta = 0;
+    ItemMinPriceBase = 50;
+    ItemMinPriceDelta = 0;
     MonsterAmountBase = 25;
     MonsterGenerationIntervalBase = 30;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
-    EnchantmentPlusChanceBase = 40;
+    EnchantmentPlusChanceBase = 60;
     EnchantmentPlusChanceDelta = 0;
     LOSModifier = 10;
 

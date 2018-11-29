@@ -657,9 +657,13 @@ CHARACTER(smith, humanoid)
 
 CHARACTER(elder, humanoid)
 {
+ public:
+  elder() : HasBeenSpokenTo(false) { }
  protected:
   virtual void GetAICommand();
   virtual void CreateBodyParts(int);
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
 };
 
 CHARACTER(encourager, humanoid)
@@ -770,6 +774,15 @@ CHARACTER(nihil, humanoid)
   virtual int GetAttribute(int, truth = true) const;
   virtual col24 GetBaseEmitation() const { return MakeRGB24(150, 110, 110); }
   virtual cfestring& GetStandVerb() const { return character::GetStandVerb(); }
+};
+
+CHARACTER(terra, priest)
+{
+ public:
+  terra() : HasBeenSpokenTo(false) { }
+ protected:
+  virtual void BeTalkedTo();
+  truth HasBeenSpokenTo;
 };
 
 #endif

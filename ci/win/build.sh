@@ -20,5 +20,5 @@ IVAN_BUILD_DIR=${IVAN_BUILD_DIR:-"${PWD}"}
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_STATIC_LIBS=ON \
     -DSDL2_LDFLAGS="${SDL2_PKGCONFIG_LFLAGS2}" \
-    -DCMAKE_CXX_FLAGS="-Werror -Wno-format-security -Wno-undefined-var-template -Wno-unknown-warning-option ${CXXFLAGS}" \
+    -DCMAKE_CXX_FLAGS="-Werror -Wno-undefined-var-template -Wno-unknown-warning-option ${CXXFLAGS}" \
     -DCMAKE_INSTALL_PREFIX="${IVAN_BUILD_DIR}/${IVAN_PLATFORM}"

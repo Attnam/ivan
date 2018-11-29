@@ -178,7 +178,7 @@ bool specialkeys::ConsumeEvent(SKEvent e,festring& fsInOut){DBGLN;
 
       std::stringstream ss(fsInOut.CStr());
       std::string line;
-      while(std::getline(ss,line,'\n'))
+      while(std::getline(ss,line,'\n')) //TODO limit also by line length based on screen width
         afsHelpDialog.push_back(festring(line.c_str()));
 
       graphics::BlitDBToScreen();DBGLN;

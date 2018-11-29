@@ -734,17 +734,20 @@ truth game::Init(cfestring& loadBaseName)
 #ifdef WIN32
   _mkdir("Save");
   _mkdir("Bones");
+  _mkdir("Scrshot");
 #endif
 
 #ifdef __DJGPP__
   mkdir("Save", S_IWUSR);
   mkdir("Bones", S_IWUSR);
+  mkdir("Scrshot", S_IWUSR);
 #endif
 
 #ifdef UNIX
-  mkdir(GetHomeDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetUserDataDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
   mkdir(GetBoneDir().CStr(), S_IRWXU|S_IRWXG);
+  mkdir(GetScrshotDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   LOSTick = 2;
@@ -4478,7 +4481,7 @@ void game::End(festring DeathMessage, truth Permanently, truth AndGoToMenu)
 
   if(Permanently && !WizardModeIsReallyActive())
   {
-    highscore HScore(GetStateDir() + HIGH_SCORE_FILENAME);
+    highscore HScore(GetUserDataDir() + HIGH_SCORE_FILENAME);
 
     if(HScore.LastAddFailed())
     { DBGLN;
@@ -5154,7 +5157,22 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 /* The program can only create directories to the deepness of one, no more... */
 
-festring game::GetHomeDir()
+festring game::GetDataDir()
+{
+#ifdef UNIX
+#ifdef MAC_APP
+  return "../Resources/ivan/";
+#else
+  return DATADIR "/ivan/";
+#endif
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return GetUserDataDir();
+#endif
+}
+
+festring game::GetUserDataDir()
 {
 #ifdef UNIX
   festring Dir;
@@ -5171,53 +5189,23 @@ festring game::GetHomeDir()
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
-  return "";
+  return "./";
 #endif
 }
 
 festring game::GetSaveDir()
 {
-  return GetHomeDir() + "Save/";
+  return GetUserDataDir() + "Save/";
 }
 
 festring game::GetScrshotDir()
 {
-  return GetHomeDir() + "Scrshot/";
-}
-
-festring game::GetDataDir()
-{
-#ifdef UNIX
-#ifdef MAC_APP
-  return "../Resources/ivan/";
-#else
-  return DATADIR "/ivan/";
-#endif
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
-#endif
-}
-
-festring game::GetStateDir()
-{
-#ifdef UNIX
-#ifdef MAC_APP
-  return GetHomeDir();
-#else
-  return LOCAL_STATE_DIR "/";
-#endif
-#endif
-
-#if defined(WIN32) || defined(__DJGPP__)
-  return GetHomeDir();
-#endif
+  return GetUserDataDir() + "Scrshot/";
 }
 
 festring game::GetBoneDir()
 {
-  return GetStateDir() + "Bones/";
+  return GetUserDataDir() + "Bones/";
 }
 
 festring game::GetMusicDir()

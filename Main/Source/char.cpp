@@ -24,6 +24,8 @@
  * & duration flags at once. */
 
 #include "hiteffect.h" //TODO move to charsset.cpp?
+#include "lterras.h"
+#include "gods.h"
 
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
@@ -1615,6 +1617,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
+bool bSafePrayOnce=false;
 void character::AutoPlayAITeleport(bool bDeathCountBased)
 {
   bool bTeleportNow=false;
@@ -1626,6 +1629,7 @@ void character::AutoPlayAITeleport(bool bDeathCountBased)
       if(IsPlayerAutoPlay())
         bTeleportNow=true;
       iDieTeleportCountDown=iDieMax;
+      bSafePrayOnce=true;
     }else{
       static v2 v2DiePos(0,0);
       if(v2DiePos==GetPos()){
@@ -2323,7 +2327,7 @@ void character::AddScoreEntry(cfestring& Description, double Multiplier, truth A
 {
   if(!game::WizardModeIsReallyActive())
   {
-    highscore HScore(game::GetStateDir() + HIGH_SCORE_FILENAME);
+    highscore HScore(game::GetUserDataDir() + HIGH_SCORE_FILENAME);
 
     if(!HScore.CheckVersion())
     {
@@ -2533,12 +2537,30 @@ truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
   bool bOk=true;
 
   if(bOk){
-    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
-    if(olt && olt->IsWall()){
-      //TODO is this a bug in the CanMoveOn() code?
-      DBG4(DBGAV2(v2KeepGoingTo),"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+    lsquare* lsqr = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo);
+    if(!CanTheoreticallyMoveOn(lsqr))
       bOk=false;
-    }
+//    olterrain* olt = game::GetCurrentLevel()->GetLSquare(v2KeepGoingTo)->GetOLTerrain();
+//    if(olt){
+//      if(bOk && !CanMoveOn(olt)){
+//        DBG4(DBGAV2(v2KeepGoingTo),"olterrain? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+//        bOk=false;
+//      }
+//      
+//      /****
+//       * keep these commented for awhile, may be useful later
+//       * 
+//      if(bOk && olt->IsWall()){ //TODO this may be unnecessary cuz  of above test
+//        //TODO is this a bug in the CanMoveOn() code? navigation AI is disabled when player is ghost TODO confirm about ethereal state, ammy of phasing
+//        DBG4(DBGAV2(v2KeepGoingTo),"walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+//        bOk=false;
+//      }
+//      
+//      if(bOk && (olt->GetWalkability() & ETHEREAL)){ //TODO this may be too much unnecessary test
+//        bOk=false;
+//      }
+//      */
+//    }
   }
 
   if(bOk){
@@ -2922,14 +2944,14 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       bool bAddValidTargetSquare=true;
 
       // find nearest wall lantern
-      if(!bPlayerHasLantern && !CanMoveOn(lsqr)){ //probably a wall
+      if(!bPlayerHasLantern && olt && olt->IsWall()){
         for(int n=0;n<vit.size();n++){
           if(vit[n]->IsLanternOnWall() && !vit[n]->IsBroken()){
             static stack* stkDropWallLanternAt;stkDropWallLanternAt = lsqr->GetStackOfAdjacentSquare(vit[n]->GetSquarePosition());
             static lsquare* lsqrDropWallLanternAt;lsqrDropWallLanternAt =
               stkDropWallLanternAt?stkDropWallLanternAt->GetLSquareUnder():NULL;
 
-            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanMoveOn(lsqrDropWallLanternAt)){
+            if(stkDropWallLanternAt && lsqrDropWallLanternAt && CanTheoreticallyMoveOn(lsqrDropWallLanternAt)){
               int iDist = AutoPlayAIFindWalkDist(lsqrDropWallLanternAt->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
               if(lsqrNearestSquareWithWallLantern==NULL || iDist<iNearestSquareWithWallLanternDist){
                 iNearestSquareWithWallLanternDist=iDist;
@@ -2946,7 +2968,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         }
       }
 
-      if(bAddValidTargetSquare && !CanMoveOn(lsqr))
+      if(bAddValidTargetSquare && !CanTheoreticallyMoveOn(lsqr))
         bAddValidTargetSquare=false;
 
       bool bIsFailToTravelSquare=false;
@@ -3007,9 +3029,8 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
       }
 
       if(bAddValidTargetSquare)
-        if(olt && olt->IsWall()){ DBG5(iX,iY,"CanMoveOn() walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
+        if(!CanTheoreticallyMoveOn(lsqr)) //if(olt && !CanMoveOn(olt))
           bAddValidTargetSquare=false;
-        }
 
       if(bAddValidTargetSquare){ DBG2("addValidSqr",DBGAV2(lsqr->GetPos()));
         static int iDist;iDist=AutoPlayAIFindWalkDist(lsqr->GetPos()); //(lsqr->GetPos() - GetPos()).GetLengthSquare();
@@ -3138,7 +3159,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
     if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
       if(iForceGoingToCountDown==0){
         DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
-
+        
         if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
           static int iSetFailTeleportCountDown=10;
           iSetFailTeleportCountDown--;
@@ -3152,7 +3173,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
         DBGSV2(GoingTo);
         return true;
       }else{
-        iForceGoingToCountDown--;
+        iForceGoingToCountDown--; DBG1(iForceGoingToCountDown);
       }
     }else{
       iForceGoingToCountDown=10;
@@ -3188,6 +3209,73 @@ bool character::AutoPlayAIChkInconsistency()
   return false;
 }
 
+truth character::AutoPlayAIPray()
+{
+  bool bSPO = bSafePrayOnce;
+  bSafePrayOnce=false;
+  
+  if(bSPO){}
+  else if(StateIsActivated(PANIC) && clock()%10==0){
+    iWanderTurns=1; DBG1("Wandering:InPanic"); // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
+  }else return false;
+  
+  // check for known gods
+  int aiKGods[GODS];
+  int iKGTot=0;
+  int aiKGodsP[GODS];
+  int iKGTotP=0;
+  static int iPleased=50; //see god::PrintRelation()
+  for(int c = 1; c <= GODS; ++c){
+    if(!game::GetGod(c)->IsKnown())continue;
+    // even known, praying to these extreme ones will be messy if Relation<1000
+    if(dynamic_cast<valpurus*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
+    if(dynamic_cast<mortifer*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
+    
+    aiKGods[iKGTot++]=c;
+    
+    if(game::GetGod(c)->GetRelation() > iPleased){ 
+//      //TODO could this help?      
+//      switch(game::GetGod(c)->GetBasicAlignment()){ //game::GetGod(c)->GetAlignment();
+//        case GOOD:
+//          if(game::GetPlayerAlignment()>=2){}else continue;
+//          break;
+//        case NEUTRAL:
+//          if(game::GetPlayerAlignment()<2 && game::GetPlayerAlignment()>-2){}else continue;
+//          break;
+//        case EVIL:
+//          if(game::GetPlayerAlignment()<=-2){}else continue;
+//          break;
+//      }
+      aiKGodsP[iKGTotP++] = c;
+    }
+  }
+  if(iKGTot==0)return false;
+//  if(bSPO && iKGTotP==0)return false;
+  
+  // chose and pray to one god
+  god* g = NULL;
+  if(iKGTotP>0 && (bSPO || clock()%10!=0))
+    g = game::GetGod(aiKGodsP[clock()%iKGTotP]);
+  else
+    g = game::GetGod(aiKGods[clock()%iKGTot]);
+  
+  if(bSPO || clock()%10!=0){ //it may not recover some times to let pray unsafely
+    int iRecover=0;
+    if(iKGTotP==0){
+      if(iRecover==0 && g->GetRelation()==-1000)iRecover=1000; //to test all relation range
+      if(iRecover==0 && g->GetRelation() <= iPleased)iRecover=iPleased; //to alternate tests on many with low good relation
+    }
+    if(iRecover>0)
+      g->SetRelation(iRecover);
+    
+    g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
+  }
+
+  g->Pray(); DBG2("PrayingTo",g->GetName());
+  
+  return true;
+}
+
 truth character::AutoPlayAICommand(int& rKey)
 {
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
@@ -3214,17 +3302,8 @@ truth character::AutoPlayAICommand(int& rKey)
   }
 
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
-  if(StateIsActivated(PANIC)){ DBG1("Wandering:InPanic");
-    for(int c = 1; c <= GODS; ++c)
-      if(game::GetGod(c)->IsKnown())
-        if(clock()%10==0){
-          game::GetGod(c)->Pray(); DBG2("PrayingTo",game::GetGod(c)->GetName());
-          break;
-        }
-
-    iWanderTurns=1; // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
-  }
-
+  AutoPlayAIPray();
+  
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
 //  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
 //  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
