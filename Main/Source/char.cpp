@@ -30,6 +30,7 @@
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
 #include <bitset>
+#include <cmath>
 
 struct statedata
 {
@@ -12683,4 +12684,24 @@ truth character::CheckAIZapOpportunity()
   //       No friendly fire!
   // (3) - Check inventory for zappable item.
   // (4) - Zap item in direction where the enemy is.
+}
+
+truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
+{
+  double perception_check;
+  if(Shopkeeper)
+  {
+    perception_check = 100 - (1000 / (10 + Shopkeeper->GetAttribute(PERCEPTION)));
+  }
+  else
+  {
+    perception_check = 0;
+  }
+
+  double base_chance = 100 - (100000 / (2000 + game::GetGod(CLEPTIA)->GetRelation()));
+  double size_mod = std::pow(0.99999, ((ToSteal->GetWeight() * ToSteal->GetSize()) / GetAttribute(ARM_STRENGTH)));
+  double stat_mod = std::pow(1.01, ((100 - (1000 / (10 + GetAttribute(DEXTERITY)))) - perception_check));
+  int normalized_chance = Max(5, Min(95, int(base_chance * size_mod * stat_mod)));
+
+  return (1 + RAND() % 100 < normalized_chance);
 }
