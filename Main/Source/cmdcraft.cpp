@@ -901,7 +901,7 @@ struct recipe{
       ci CI=ci()
   ){DBGLN;
     if(CI.fUsablePercVol>1.0 || CI.fUsablePercVol<=0)
-      ABORT("usable vol is max 100% %f",CI.fUsablePercVol);
+      ABORT("usable vol is max 100%% %f",CI.fUsablePercVol);
     
     /**
      * ex.: vol=100; usable=0.5; req=200=100/0.5;
@@ -972,9 +972,9 @@ struct recipe{
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
-              ABORT("ingredient volume reduced to negative or zero %d %d %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
+              ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
-              ABORT("remaining vol calc needs fixing %d != %d, %f, %d",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol); 
+              ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol); 
             matM->SetVolume(lVolM);
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
@@ -986,7 +986,7 @@ struct recipe{
 
             material* matS = ToUse[i]->GetSecondaryMaterial();
             if(matS!=NULL && matS->GetVolume()>0)
-              ABORT("ingredient secondary material should not have volume %d %s %s",matS->GetVolume(),matS->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
+              ABORT("ingredient secondary material should not have volume %ld %s %s",matS->GetVolume(),matS->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
           }
 
           break; //SUCCESS!
@@ -2546,9 +2546,13 @@ struct srpFluidsBASE : public recipe{
     if(volume > itBottle->GetDefaultSecondaryVolume())
       volume = itBottle->GetDefaultSecondaryVolume();
 
+    /***
+     * TODO 
+     * mmm seems to have no strengh diff? 
+     * only takes more time if "stronger" like "not from large spider"
     mat = itBottle->GetSecondaryMaterial();
-    if(mat!=NULL)
-      mat->GetEffectStrength(); //TODO mmm seems to have no strengh diff? only takes more time if "stronger" like not from large spider
+    if(mat!=NULL)mat->GetEffectStrength(); //TODO could average current poison strengh in some way if ever one day
+    */
 
     rpd.itSpawnType = CIT_POTION;
     rpd.itSpawnCfg = itBottle->GetConfig(); //may be a vial
@@ -2611,7 +2615,7 @@ struct srpAcid : public srpFluidsBASE{
 };srpAcid rpAcid;
 
 felist craftRecipes(CONST_S("What do you want to craft?"));
-std::vector<recipe*> vrp;
+std::vector<recipe*> vrpAllRecipes;
 
 void updateCraftDesc(){
   craftRecipes.EmptyDescription();
@@ -2625,7 +2629,7 @@ void updateCraftDesc(){
 }
 
 void addRecipe(recipe* prp){
-  prp->iListIndex=vrp.size();
+  prp->iListIndex=vrpAllRecipes.size();
 
   if(prp->name.IsEmpty())
     ABORT("empty recipe name '%s' '%s' %d",prp->name.CStr(),prp->desc.CStr(),prp->iListIndex);
@@ -2633,7 +2637,7 @@ void addRecipe(recipe* prp){
   craftRecipes.AddEntry(festring()+prp->action+" "+prp->name, LIGHT_GRAY, 20, prp->iListIndex, true); DBG2(prp->name.CStr(),prp->iListIndex);
   craftRecipes.SetLastEntryHelp(prp->desc);
 
-  vrp.push_back(prp);
+  vrpAllRecipes.push_back(prp);
 }
 void addMissingMsg(festring& where, cfestring& what){
   if(where.GetSize()>0)
@@ -2743,7 +2747,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   }
 
   uint sel = FELIST_ERROR_BIT;
-  if(vrp.size()>0){
+  if(vrpAllRecipes.size()>0){
     game::SetStandardListAttributes(craftRecipes);
     craftRecipes.AddFlags(SELECTABLE);
     craftRecipes.ClearFilter();
@@ -2758,7 +2762,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   /******************************************************************************************
    * 1st call it just initializes the recipes list after all recipes have been configured!
    */
-  bool bInitRecipes = vrp.size()==0;
+  bool bInitRecipes = vrpAllRecipes.size()==0;
   recipe* prp=NULL;
   #define RP(rp) \
     if(prp==NULL && rp.IsTheSelectedOne(rpd))prp=&rp; \
@@ -2877,7 +2881,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
       if(rpd.itTool!=NULL && rpd.itTool2!=NULL)
         if(rpd.itTool==rpd.itTool2)
-          ABORT("both tools are the same item %d:%s %d:%s",rpd.itTool->GetID(),rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetID(),rpd.itTool2->GetName(INDEFINITE).CStr());
+          ABORT("both tools are the same item %lu:%s %lu:%s",rpd.itTool->GetID(),rpd.itTool->GetName(INDEFINITE).CStr(),rpd.itTool2->GetID(),rpd.itTool2->GetName(INDEFINITE).CStr());
       if(rpd.itTool !=NULL)rpd.itToolID =rpd.itTool ->GetID();
       if(rpd.itTool2!=NULL)rpd.itTool2ID=rpd.itTool2->GetID();
 
@@ -3032,7 +3036,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
   }
 
   if(rpd.itSpawnMatMainCfg==0 || rpd.itSpawnMatMainVol==0)
-    ABORT("main material and/or volume is 0 %s %s",rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
+    ABORT("main material and/or volume is 0 %lu %lu",rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
 
 //  material* matM = material::MakeMaterial(rpd.itSpawnMatMainCfg,rpd.itSpawnMatMainVol);
 //  matM->SetSpoilCounter(rpd.itSpawnMatMainSpoilLevel);
@@ -3107,7 +3111,7 @@ void crafthandle::CraftWorkTurn(recipedata& rpd){ DBG1(rpd.iRemainingTurnsToFini
  */
 void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
   if(rpd.ingredientsIDs.size()!=1)
-    ABORT("incompatible gradative mode and ingredients count %d",rpd.ingredientsIDs.size());
+    ABORT("incompatible gradative mode and ingredients count %lu",rpd.ingredientsIDs.size());
 
   material* matM = game::SearchItem(rpd.ingredientsIDs[0])->GetMainMaterial();DBGLN;
   long matMRemVol = matM->GetVolume();
@@ -3171,7 +3175,7 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
     DestroyIngredients(rpd); //cant be left with 0 volume
   else
   if(spawnedVol>matMRemVol) //the total calc being precise, and leaving a tiny remaining lump behind, this will never happen, just in case something is changed...
-    ABORT("lump volume would become negative (if not unsigned long) or 0 as %d > %d",spawnedVol,matMRemVol);
+    ABORT("lump volume would become negative (if not unsigned long) or 0 as %lu > %l",spawnedVol,matMRemVol);
   else
     matM->SetVolume(matMRemVol-spawnedVol); //the remaining volume becomes the action control/limit
 
@@ -3411,7 +3415,7 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
   festring fsIngMsg("");
   for(int i=0;i<rpd.ingredientsIDs.size();i++){DBG1(rpd.ingredientsIDs[i]);
     item* it=game::SearchItem(rpd.ingredientsIDs[i]);DBGLN;
-    if(it==NULL)ABORT("ingredient id %d not found %s",rpd.ingredientsIDs[i],rpd.dbgInfo().CStr());
+    if(it==NULL)ABORT("ingredient id %lu not found %s",rpd.ingredientsIDs[i],rpd.dbgInfo().CStr());
     it->RemoveFromSlot();DBGLN;
 
     bool bSendToHell=true;
