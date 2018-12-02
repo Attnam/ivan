@@ -12703,5 +12703,8 @@ truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
   double stat_mod = std::pow(1.01, ((100 - (1000 / (10 + GetAttribute(DEXTERITY)))) - perception_check));
   int normalized_chance = Max(5, Min(95, int(base_chance * size_mod * stat_mod)));
 
+  game::DoEvilDeed(25);
+  game::GetGod(CLEPTIA)->AdjustRelation(50);
+
   return (1 + RAND() % 100 < normalized_chance);
 }
