@@ -1,27 +1,27 @@
 
-			    IVAN deity chart
+			            IVAN deity chart
 
-		/----------------------------------------\
-		|  Valpurus  |	Atavus	   |   Dulcis    |
-		|  creator   |	charity    |   love	 |
-   altruism	|	     |		   |		 |
-		|  Seges     |	Sophos	   |   Verax     |
-		|  health    |	good magic |   truth	 |
-		|----------------------------------------|
-		|  Legifer   |		   |   Silva     |
-		|  law	     |		   |   nature	 |
-		|	     |		   |		 |
-		|  Loricatus |		   |   Cleptia   |
-		|  machines  |		   |   crime	 |
-		|----------------------------------------|
-		|  Mellis    |	Infuscor   |   Scabies   |
-		|  trade     |	dark magic |   disease	 |
-    egoism	|	     |		   |		 |
-		|  Cruentus  |	Nefas	   |   Mortifer  |
-		|  war       |	greed	   |   death	 |
-		\----------------------------------------/
+		    /----------------------------------------\
+		    |  Valpurus  |	Atavus	   |   Dulcis    |
+		    |  creator   |	charity    |   love	     |
+   altruism	|	         |		       |	    	 |
+		    |  Seges     |	Sophos	   |   Verax     |
+		    |  health    |	good magic |   truth	 |
+		    |----------------------------------------|
+		    |  Legifer   |		       |   Silva     |
+		    |  law	     |		       |   nature	 |
+		    |    	     |		       |	    	 |
+		    |  Loricatus |		       |   Cleptia   |
+		    |  machines  |		       |   crime	 |
+		    |----------------------------------------|
+		    |  Mellis    |	Infuscor   |   Scabies   |
+		    |  trade     |	dark magic |   disease	 |
+    egoism	|	         |	    	   |		     |
+		    |  Cruentus  |	Nefas	   |   Mortifer  |
+		    |  war       |	greed	   |   death	 |
+		    \----------------------------------------/
 
-		    order		        chaos
+		        order		                chaos
 
 Perfect harmony:
 
