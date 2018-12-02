@@ -1887,7 +1887,7 @@ struct srpSplitLump : public recipe{
 
   virtual void fillInfo(){
     init("split or cut","some base materials");
-    desc << "Split them to be easier to work with.\n To just cut out (subtract) some volume, specify a negative value in cm3.";
+    desc << "Split them to be easier to work with.\n To just cut out (subtract) some volume, specify a negative value in cm3. \nIt is good to cut them precisely to not waste materials.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -2048,7 +2048,13 @@ struct srpSplitLump : public recipe{
 struct srpForgeItem : public recipe{
   virtual void fillInfo(){
     init("create","an item");
-    desc << "Using a blunt weapon as hammer,\n close to an anvil and with a forge nearby you can create items.\n Or a cutting weapon, if close to a workbench will speed up the work.";
+    desc << "Using a blunt weapon as hammer,\n close to an anvil and with a forge nearby you can create items.\n Or a cutting weapon, if close to a workbench will speed up the work.\n"
+    "Meltables requires to be near a forge and an anvil.\n"
+    "Carving will be faster if near a workbench.\n"
+    "Ingots will be fully used.\n"
+    "Sticks will be almost fully used.\n"
+    "A single stone will be partially used thru carving.\n"
+    "Remaining materials will become lumps.\n";
   }
 
   /**
@@ -2769,29 +2775,38 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     DBG3(prp,&rp,rp.desc.CStr()); \
     if(bInitRecipes)addRecipe((recipe*)&rp);
   // these are kind of grouped and not ordered like a-z TODO add the commented section code as felist (non selectable) section entries?
-  // furniture
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Furniture:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpChair);
   RP(rpDoor);
-  // buildings
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Buildings:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpWall2);
-  // potions
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Potions:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpPoison);
   RP(rpAcid);
-  // simple work with materials
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Simple work with materials:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
   RP(rpResistanceVS);
   RP(rpInspect);
-  // black smithing
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"BlackSmithing:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpMelt);
-  RP(rpForgeItem);
   RP(rpAnvil);
   RP(rpForge);
-  // tailoring
+
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Craft items:", DARK_GRAY, 0, NO_IMAGE, false);
+  RP(rpForgeItem);
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Wood work (carving):", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpWorkBench);
-  // special usages
+  
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Tailoring:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpCutWeb);
+  
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
 
