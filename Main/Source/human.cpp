@@ -6224,7 +6224,7 @@ cchar* humanoid::GetNormalDeathMessage() const
   else if(BodyPartIsVital(GROIN_INDEX) && (!GetGroin() || GetGroin()->GetHP() <= 0))
     return "killed @bkp dirty attack below the belt";
   else
-    return "killed @k";
+    return character::GetNormalDeathMessage();
 }
 
 void kamikazedwarf::SingRandomSong()

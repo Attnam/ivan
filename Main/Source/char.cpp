@@ -473,7 +473,19 @@ truth character::HasBeenSeen() const
 { return DataBase->Flags & HAS_BEEN_SEEN; }
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
-cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
+
+cchar* character::GetNormalDeathMessage() const
+{
+  const char* killed_by[] = { "murdered @k", "eliminated @k", "slain @k",
+    "dismembered @k", "sent to the next life @k", "overpowered @k",
+    "killed @k", "inhumed @k", "dispatched @k", "exterminated @k",
+    "done in @k", "defeated @k", "struck down @k", "offed @k", "mowed down @k",
+    "taken down @k", "sent to the grave @k", "destroyed @k", "executed @k",
+    "slaughtered @k", "annihilated @k", "finished @k", "neutralized @k",
+    "obliterated @k", "snuffed @k", "done away with @k", "put to death @k" };
+  return killed_by[RAND() % 27];
+}
+
 festring character::GetGhostDescription() const
 { return " of " + GetName(INDEFINITE); }
 
