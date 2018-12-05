@@ -17,11 +17,14 @@
 #include <sys/farptr.h>
 #endif
 
+#ifdef BACKTRACE
+#include <execinfo.h>
+#endif
+
 #ifndef WIN32
 #include <csignal>
 #include <cstring>
 #include <cstdlib>
-#include <execinfo.h>
 #include <unistd.h>
 #endif
 
@@ -45,7 +48,7 @@
 
 #include "bugworkaround.h"
 
-#ifndef WIN32
+#ifdef BACKTRACE
 void CrashHandler(int Signal)
 {
   globalerrorhandler::DumpStackTraceToStdErr(Signal);
@@ -60,7 +63,7 @@ void SkipGameScript(inputfile* pSaveFile){
 
 int main(int argc, char** argv)
 {
-#ifndef WIN32
+#ifdef BACKTRACE
   signal(SIGABRT, CrashHandler);
   signal(SIGBUS, CrashHandler);
   signal(SIGFPE, CrashHandler);
