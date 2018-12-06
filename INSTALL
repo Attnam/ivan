@@ -9,6 +9,7 @@ installed on your system:
 - SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
 - libpng (http://www.libpng.org/pub/png/libpng.html)
 - pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
+- glibc if backtrace support is enabled (https://www.gnu.org/software/libc/)
 
 --------------------------------------
 
@@ -18,9 +19,9 @@ cmake .
 make -j
 make install
 
-Note: Wizard Mode is disabled by default. To enable it run:
+Note: Wizard Mode and backtrace are disabled by default. To enable it run:
 
-cmake -D CMAKE_CXX_FLAGS="-DWIZARD" .
+cmake -D CMAKE_CXX_FLAGS="-DWIZARD -DBACKTRACE" .
 make -j
 make install
 
