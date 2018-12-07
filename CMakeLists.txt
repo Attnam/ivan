@@ -14,6 +14,7 @@ add_definitions(-DIVAN_VERSION="${PROJECT_VERSION}" -DUSE_SDL)
 
 option(BUILD_MAC_APP "Build standalone application for MacOS" OFF)
 option(USE_HOME_FOR_STATE_DIR "Statedir will be /.ivan/ in current user's homedir" OFF)
+option(WIZARD "Enable Wizard Mode" OFF)
 
 if(UNIX)
   add_definitions(-DUNIX)
@@ -51,6 +52,15 @@ elseif(WIN32)
   # Switching to std::chrono should not be hard, but it's not a topic for this pull request.
   add_definitions(-D_USE_32BIT_TIME_T)
 endif(UNIX)
+
+if(WIZARD)
+  add_definitions(-DWIZARD)
+endif()
+
+find_path(EXECINFO_INCLUDE_DIR NAMES execinfo.h)
+if(NOT EXECINFO_INCLUDE_DIR MATCHES "-NOTFOUND$")
+  add_definitions(-DBACKTRACE)
+endif()
 
 add_subdirectory(FeLib)
 add_subdirectory(audio)

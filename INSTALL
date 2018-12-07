@@ -9,7 +9,6 @@ installed on your system:
 - SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
 - libpng (http://www.libpng.org/pub/png/libpng.html)
 - pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
-- glibc if backtrace support is enabled (https://www.gnu.org/software/libc/)
 
 --------------------------------------
 
@@ -19,9 +18,9 @@ cmake .
 make -j
 make install
 
-Note: Wizard Mode and backtrace are disabled by default. To enable it run:
+Note: Wizard Mode is disabled by default. To enable it run:
 
-cmake -D CMAKE_CXX_FLAGS="-DWIZARD -DBACKTRACE" .
+cmake -DWIZARD=ON .
 make -j
 make install
 
@@ -30,9 +29,8 @@ To install IVAN to a custom prefix, pass the additional flag
 (In particular, simply doing `make DESTDIR=/your/prefix/path install`
 doesn't work because IVAN needs the prefix information at build-time.)
 
-If config options toggle is too fast, you can add this flag '-DFELIST_WAITKEYUP', 
-like this: CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP -DWIZARD" (you may chose what 
-flags to add independently of each other).
+If config options toggle is too fast, you can add this flag '-DFELIST_WAITKEYUP',
+like this: CMAKE_CXX_FLAGS="-DFELIST_WAITKEYUP"
 
 --------------------------------------
 
