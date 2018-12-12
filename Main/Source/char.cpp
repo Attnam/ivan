@@ -2155,7 +2155,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << ExpModifierMap;
   SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks
            << CounterToMindWormHatch;
-  SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
+  SaveFile << TemporaryState << EquipmentState << Money << MyVomitMaterial << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile.Put(!!IsEnabled());
   SaveFile << HomeData << BlocksSinceLastTurn << CommandFlags;
   SaveFile << WarnFlags << static_cast<ushort>(Flags);
@@ -2207,7 +2207,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> ExpModifierMap;
   SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks
            >> CounterToMindWormHatch;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> MyVomitMaterial >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!SaveFile.Get())
     Disable();
@@ -3563,7 +3563,7 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
 
   if(!game::IsInWilderness())
     GetNearLSquare(Pos)->ReceiveVomit(this,
-                                      liquid::Spawn(GetVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
+                                      liquid::Spawn(GetMyVomitMaterial(), long(sqrt(GetBodyVolume()) * Amount / 1000)));
 }
 
 truth character::Polymorph(character* NewForm, int Counter)
@@ -4371,7 +4371,7 @@ void character::GoOn(go* Go, truth FirstStep)
     Go->Terminate(false);
     return;
   }
-    
+
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 
@@ -5528,6 +5528,7 @@ void character::LoadDataBaseStats()
   }
 
   SetMoney(GetDefaultMoney());
+  SetNewVomitMaterial(GetVomitMaterial());
   const fearray<long>& Skills = GetKnownCWeaponSkills();
 
   if(Skills.Size)
@@ -7218,7 +7219,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
-  
+
   festring EntryBP;
   for(int c = 0; c < BodyParts; ++c)
   {
