@@ -21,8 +21,20 @@ Changes:
 * Scroll of body switch is once again unwishable.
 * Decreased frequency of magical equipment.
 * Improved stethoscope display.
+* Tweak the effects of prayers.
+* You may only become the champion of either Valpurus or Mortifer.
+* Increase effects of Wisdom on prayers.
+* You can now attempt to steal from shops.
+* Added crafting.
+* Move saves, bones and config to user directory.
+* Add LGTM code quality badges.
 
 Fixes:
+* Backtrace.
+* Broken vials are no longer fixed into bottles.
+* Fix wizard mode autoplay mode.
+* Fix heap-use-after-free in go::Handle().
+* Harden bitmap::Fill().
 
 Version 0.54, released 2nd October 2018
 ---------------------------------------

@@ -50,6 +50,7 @@ class outputfile
   void Close();
   ~outputfile(){Close();}
   static void SetSafeSaving(truth b);
+  festring GetFullFilename(){return FileName;}
  private:
   static truth bakcupBeforeSaving;
   static truth saveOnNewFileAlways;
@@ -81,6 +82,7 @@ class inputfile
   ulong TellLineOfPos(long);
   cfestring& GetFileName() const { return FileName; }
   void Close() { File.close(); }
+  festring GetFullFilename(){return FileName;}
  private:
   festring ReadNumberIntr (int CallLevel, long *num, truth *isString, truth allowStr, truth PreserveTerminator);
   int HandlePunct(festring&, int, int);

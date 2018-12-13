@@ -11,6 +11,16 @@
 
   #ifdef DBGMSG
 
+    #ifdef ECLIPSE_IDE
+      #define __V2_H__
+      #define __BITMAP_H__
+      #define __GRAPHICS_H__
+      #define __CHAR_H__
+      #define __ITEM_H__
+      #define __ERROR_H__
+      #define DBGMSG_STRETCHREGION
+    #endif
+
     #include "dbgmsg.h"
 
     /********************************************************************************************
@@ -93,6 +103,7 @@
     #define DBG9(a,b,c,d,e,f,g,h,i)
     #define DBGLN
     #define DBGSTK
+    #define DBGBREAKPOINT
     #define DBGTOSTR_(str)
     #define DBGTOSTR(str)
     #define DBGB(B)

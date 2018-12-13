@@ -21,6 +21,10 @@
 #include "graphics.h"
 #endif
 
+#ifdef BACKTRACE
+#include <execinfo.h>
+#endif
+
 #ifdef WIN32
 #include "SDL.h"
 #include <windows.h>
@@ -29,7 +33,6 @@
 #include <csignal>
 #include <cstring>
 #include <cstdlib>
-#include <execinfo.h>
 #include <unistd.h>
 #endif
 
@@ -65,7 +68,7 @@ int globalerrorhandler::Signal[SIGNALS]
 = { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
 #endif
 
-#ifndef WIN32
+#ifdef BACKTRACE
 void globalerrorhandler::DumpStackTraceToStdErr(int Signal){
   // Prints stack trace to stderr.
   void* CallStack[128];
@@ -105,7 +108,7 @@ void globalerrorhandler::DeInstall()
 
 void globalerrorhandler::Abort(cchar* Format, ...)
 {
-#ifndef WIN32
+#ifdef BACKTRACE
   DumpStackTraceToStdErr();
 #endif
 
@@ -131,7 +134,7 @@ void globalerrorhandler::Abort(cchar* Format, ...)
   std::cout << Buffer << std::endl;
 #endif
 
-  DBGSTK;DBG2("ABORT:",Buffer);
+  DBGSTK;DBG2("ABORT:",Buffer);DBGBREAKPOINT;
   exit(4);
 }
 

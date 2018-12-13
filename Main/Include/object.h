@@ -86,7 +86,7 @@ class object : public entity, public id
   virtual truth AddMaterialDescription(festring&, truth) const;
   int RandomizeMaterialConfiguration();
   virtual int GetClassAnimationFrames() const { return 1; }
-  void AddContainerPostFix(festring&) const;
+  virtual void AddContainerPostFix(festring&) const;
   void AddLumpyPostFix(festring&) const;
   truth AddEmptyAdjective(festring&, truth) const;
   truth AddBurningAdjective(festring&, truth) const;

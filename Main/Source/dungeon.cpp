@@ -230,7 +230,7 @@ festring dungeon::GetLevelDescription(int I,bool bPretty)
     int i = I+1;
 
     if(bPretty){
-      festring fsRoman;
+      festring fsRoman; // roman numbers
       const char* X[] = {"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC"};
       fsRoman << X[(i%100)/10];
       const char* I[] = {"","I","II","III","IV","V","VI","VII","VIII","IX"};

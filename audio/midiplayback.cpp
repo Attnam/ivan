@@ -1020,5 +1020,5 @@ void _MIDI_fileclose(void)
 void _MIDI_readbuf(uint8_t* position, uint8_t* buf, uint16_t size)
 {
    fseek(midifile, (long long) position, 0);
-   fread(buf, 1, size, midifile);
+   size_t a = fread(buf, 1, size, midifile);
 }

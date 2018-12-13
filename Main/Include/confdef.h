@@ -250,6 +250,8 @@
 #define HARDENED_ASH (SOLID_ID + 230)
 #define PSYPHER (SOLID_ID + 231)
 
+#define INGOT 2
+
 #define ORGANIC_ID (2 << 12)
 
 #define PLANT_FIBER (ORGANIC_ID + 1)
@@ -708,6 +710,7 @@
 #define HOLY_TREE 3
 #define CARPET 4
 #define COUCH 5
+#define CHAIR 6
 #define DOUBLE_BED 9
 #define POOL_BORDER 13
 #define POOL_CORNER 14

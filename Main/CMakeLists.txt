@@ -24,6 +24,7 @@ set_source_files_properties(
     Source/smoke.cpp    Source/square.cpp    Source/stack.cpp    Source/team.cpp
     Source/terra.cpp    Source/trap.cpp      Source/traps.cpp    Source/worldmap.cpp
     Source/wsquare.cpp  Source/wterra.cpp    Source/wterras.cpp  Source/hiteffect.cpp
+    Source/cmdcraft.cpp Source/cmdcraftfilters.cpp
     Source/cmdswapweap.cpp
     PROPERTIES HEADER_FILE_ONLY TRUE)
 

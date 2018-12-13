@@ -1780,6 +1780,53 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
+void humanoid::SwitchToCraft(recipedata rpd)
+{DBGLN;
+  craft* Craft = craft::Spawn(this);DBGLN;
+
+  if(rpd.GetTool()!=NULL){DBGLN;
+    if(GetRightArm())
+    {DBGLN;
+      item* Item = GetRightArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+        GetRightArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetLeftArm())
+    {DBGLN;
+      item* Item = GetLeftArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+        GetLeftArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetMainWielded() != rpd.GetTool())
+    {DBGLN;
+      Craft->SetMoveCraftTool(true);
+      rpd.GetTool()->RemoveFromSlot();
+
+      if(GetMainArm() && GetMainArm()->IsUsable())
+        GetMainArm()->SetWielded(rpd.GetTool());
+      else
+        GetSecondaryArm()->SetWielded(rpd.GetTool());
+    }
+    else
+      Craft->SetMoveCraftTool(false);
+  }DBGLN;
+
+  //TODO let the GetTool2() be equipped too
+
+  Craft->SetCraftWhat(rpd);DBGLN;
+  SetAction(Craft);DBGLN;
+}
+
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   dig* Dig = dig::Spawn(this);
