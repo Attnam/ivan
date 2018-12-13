@@ -1168,6 +1168,7 @@ class character : public entity, public id
   truth IsBurnt() const;
   truth IsPlayerAutoPlay();
   truth CheckAIZapOpportunity();
+  truth TryToStealFromShop(character*, item*);
   int GetMyVomitMaterial() { return MyVomitMaterial; }
   void SetNewVomitMaterial(int What) { MyVomitMaterial = What; }
  protected:

@@ -136,10 +136,12 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::TruthQuestion(CONST_S("Are you sure you want to "
-                                   "commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to steal it? [y/N]")))
     {
-      Customer->Hostility(GetMaster());
+      if(!Customer->TryToStealFromShop(GetMaster(), ForSale))
+      {
+        Customer->Hostility(GetMaster());
+      }
       return true;
     }
     else
@@ -305,9 +307,12 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
     ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
 
-    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you want to steal it? [y/N]")))
     {
-      Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+      if(!Visitor->TryToStealFromShop(GetMaster(), Item))
+      {
+        Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+      }
       return true;
     }
   }
@@ -561,10 +566,12 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::TruthQuestion(CONST_S("Are you sure you want to "
-                                   "commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to steal it? [y/N]")))
     {
-      Customer->Hostility(GetMaster());
+      if(!Customer->TryToStealFromShop(GetMaster(), ForSale))
+      {
+        Customer->Hostility(GetMaster());
+      }
       return true;
     }
     else
@@ -695,7 +702,10 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
     if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
-      Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+      if(!Hungry->TryToStealFromShop(GetMaster(), Item))
+      {
+        Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+      }
       return true;
     }
   }

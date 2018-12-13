@@ -30,6 +30,7 @@
 //#define DBGMSG_V2
 #include "dbgmsgproj.h"
 #include <bitset>
+#include <cmath>
 
 struct statedata
 {
@@ -2546,16 +2547,16 @@ truth character::AutoPlayAISetAndValidateKeepGoingTo(v2 v2KGTo)
 //        DBG4(DBGAV2(v2KeepGoingTo),"olterrain? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
 //        bOk=false;
 //      }
-//      
+//
 //      /****
 //       * keep these commented for awhile, may be useful later
-//       * 
+//       *
 //      if(bOk && olt->IsWall()){ //TODO this may be unnecessary cuz  of above test
 //        //TODO is this a bug in the CanMoveOn() code? navigation AI is disabled when player is ghost TODO confirm about ethereal state, ammy of phasing
 //        DBG4(DBGAV2(v2KeepGoingTo),"walls? fixing it...",olt->GetNameSingular().CStr(),PLAYER->GetPanelName().CStr());
 //        bOk=false;
 //      }
-//      
+//
 //      if(bOk && (olt->GetWalkability() & ETHEREAL)){ //TODO this may be too much unnecessary test
 //        bOk=false;
 //      }
@@ -3159,7 +3160,7 @@ truth character::AutoPlayAINavigateDungeon(bool bPlayerHasLantern)
     if(!v2KeepGoingTo.IsAdjacent(GoingTo)){
       if(iForceGoingToCountDown==0){
         DBG4("ForceKeepGoingTo",DBGAV2(v2KeepGoingTo),DBGAV2(GoingTo),DBGAV2(GetPos()));
-        
+
         if(!AutoPlayAISetAndValidateKeepGoingTo(v2KeepGoingTo)){
           static int iSetFailTeleportCountDown=10;
           iSetFailTeleportCountDown--;
@@ -3213,12 +3214,12 @@ truth character::AutoPlayAIPray()
 {
   bool bSPO = bSafePrayOnce;
   bSafePrayOnce=false;
-  
+
   if(bSPO){}
   else if(StateIsActivated(PANIC) && clock()%10==0){
     iWanderTurns=1; DBG1("Wandering:InPanic"); // to regain control as soon it is a ghost anymore as it can break navigation when inside walls
   }else return false;
-  
+
   // check for known gods
   int aiKGods[GODS];
   int iKGTot=0;
@@ -3230,11 +3231,11 @@ truth character::AutoPlayAIPray()
     // even known, praying to these extreme ones will be messy if Relation<1000
     if(dynamic_cast<valpurus*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
     if(dynamic_cast<mortifer*>(game::GetGod(c))!=NULL && game::GetGod(c)->GetRelation()<1000)continue;
-    
+
     aiKGods[iKGTot++]=c;
-    
-    if(game::GetGod(c)->GetRelation() > iPleased){ 
-//      //TODO could this help?      
+
+    if(game::GetGod(c)->GetRelation() > iPleased){
+//      //TODO could this help?
 //      switch(game::GetGod(c)->GetBasicAlignment()){ //game::GetGod(c)->GetAlignment();
 //        case GOOD:
 //          if(game::GetPlayerAlignment()>=2){}else continue;
@@ -3251,14 +3252,14 @@ truth character::AutoPlayAIPray()
   }
   if(iKGTot==0)return false;
 //  if(bSPO && iKGTotP==0)return false;
-  
+
   // chose and pray to one god
   god* g = NULL;
   if(iKGTotP>0 && (bSPO || clock()%10!=0))
     g = game::GetGod(aiKGodsP[clock()%iKGTotP]);
   else
     g = game::GetGod(aiKGods[clock()%iKGTot]);
-  
+
   if(bSPO || clock()%10!=0){ //it may not recover some times to let pray unsafely
     int iRecover=0;
     if(iKGTotP==0){
@@ -3267,12 +3268,12 @@ truth character::AutoPlayAIPray()
     }
     if(iRecover>0)
       g->SetRelation(iRecover);
-    
+
     g->AdjustTimer(-1000000000); //TODO filter gods using timer too instead of this reset?
   }
 
   g->Pray(); DBG2("PrayingTo",g->GetName());
-  
+
   return true;
 }
 
@@ -3303,7 +3304,7 @@ truth character::AutoPlayAICommand(int& rKey)
 
   DBGLN;if(AutoPlayAIChkInconsistency())return true;
   AutoPlayAIPray();
-  
+
   //TODO this doesnt work??? -> if(IsPolymorphed()){ //to avoid some issues TODO but could just check if is a ghost
 //  if(dynamic_cast<humanoid*>(this) == NULL){ //this avoid some issues TODO but could just check if is a ghost
 //  if(StateIsActivated(ETHEREAL_MOVING)){ //this avoid many issues
@@ -12684,4 +12685,27 @@ truth character::CheckAIZapOpportunity()
   //       No friendly fire!
   // (3) - Check inventory for zappable item.
   // (4) - Zap item in direction where the enemy is.
+}
+
+truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
+{
+  double perception_check;
+  if(Shopkeeper)
+  {
+    perception_check = 100 - (1000 / (10 + Shopkeeper->GetAttribute(PERCEPTION)));
+  }
+  else
+  {
+    perception_check = 0;
+  }
+
+  double base_chance = 100 - (100000 / (2000 + game::GetGod(CLEPTIA)->GetRelation()));
+  double size_mod = std::pow(0.99999, ((ToSteal->GetWeight() * ToSteal->GetSize()) / GetAttribute(ARM_STRENGTH)));
+  double stat_mod = std::pow(1.01, ((100 - (1000 / (10 + GetAttribute(DEXTERITY)))) - perception_check));
+  int normalized_chance = Max(5, Min(95, int(base_chance * size_mod * stat_mod)));
+
+  game::DoEvilDeed(25);
+  game::GetGod(CLEPTIA)->AdjustRelation(50);
+
+  return (1 + RAND() % 100 < normalized_chance);
 }
