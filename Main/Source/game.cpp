@@ -881,7 +881,7 @@ truth game::Init(cfestring& loadBaseName)
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
       commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
-//TODO      craftcore::SetSuspended(NULL); //to clear the memory from possibly previously loaded game
+      craftcore::ClearSuspendedList(); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -3388,7 +3388,7 @@ truth game::Save(cfestring& SaveName)
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
-//TODO  craftcore::Save(SaveFile);
+  craftcore::Save(SaveFile);
 
   return true;
 }
@@ -3482,7 +3482,7 @@ int game::Load(cfestring& saveName)
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
   commandsystem::LoadSwapWeapons(SaveFile);
-//TODO  craftcore::Load(SaveFile);
+  craftcore::Load(SaveFile);
 
   ///////////////// loading ended ////////////////
 

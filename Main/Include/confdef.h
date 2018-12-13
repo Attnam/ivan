@@ -250,6 +250,8 @@
 #define HARDENED_ASH (SOLID_ID + 230)
 #define PSYPHER (SOLID_ID + 231)
 
+#define INGOT 2
+
 #define ORGANIC_ID (2 << 12)
 
 #define PLANT_FIBER (ORGANIC_ID + 1)

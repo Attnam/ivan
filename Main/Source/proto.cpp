@@ -446,6 +446,14 @@ character* protosystem::CreateMonster(cfestring& What, int SpecialFlags, truth O
     return 0;
 }
 
+item* protosystem::CreateItemToCraft(cfestring& What)
+{
+  std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, false);
+  if(ID.first)
+    return ID.first->Spawn(ID.second);
+  return NULL;
+}
+
 item* protosystem::CreateItem(cfestring& What, truth Output)
 {
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, Output);
