@@ -12,6 +12,8 @@
 
 /* Compiled through actset.cpp */
 
+#include "confdef.h"
+#include "human.h"
 #include "dbgmsgproj.h"
 
 cchar* unconsciousness::GetDeathExplanation() const { return " unconscious"; }
@@ -19,6 +21,7 @@ cchar* unconsciousness::GetDescription() const { return "unconscious"; }
 cchar* consume::GetDescription() const { return Description.CStr(); }
 void consume::SetDescription(cfestring& What) { Description = What; }
 cchar* rest::GetDescription() const { return "resting"; }
+cchar* craft::GetDescription() const { return "crafting"; }
 cchar* dig::GetDescription() const { return "digging"; }
 cchar* go::GetDescription() const { return "going"; }
 cchar* study::GetDescription() const { return "reading"; }
@@ -225,6 +228,156 @@ void rest::Terminate(truth Finished)
   }
 
   action::Terminate(Finished);
+}
+
+void craft::Save(outputfile& SaveFile) const
+{DBGLN;DBGSTK;
+  action::Save(SaveFile);
+
+  SaveFile << rpd.id();
+
+  SaveFile << MoveCraftTool << RightBackupID << LeftBackupID;
+}
+
+void craft::Load(inputfile& SaveFile)
+{DBGLN;
+  action::Load(SaveFile);
+
+  festring fsRpdId;
+  SaveFile >> fsRpdId;
+  rpd = craftcore::FindRecipedata(fsRpdId);
+
+  SaveFile >> MoveCraftTool >> RightBackupID >> LeftBackupID;
+}
+
+void craft::Handle()
+{DBGLN;
+  if(rpd.otSpawnType==CTT_NONE && rpd.itSpawnType==CIT_NONE)
+    ABORT("craft:Handle nothing? %s",rpd.dbgInfo().CStr());
+
+  if(!rpd.IsFailedSuspendOrCancel())
+    crafthandle::CheckEverything(rpd,Actor);
+
+  if(rpd.IsFailedSuspendOrCancel()){
+    Terminate(false);
+    return;
+  }
+
+  crafthandle::CraftWorkTurn(rpd);
+
+  if(rpd.bSuccesfullyCompleted)
+  {
+    Actor->DexterityAction(rpd.iAddDexterity); //TODO is this necessary/useful? below also affects dex
+
+    /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
+    if(!Actor->IsEnabled())
+      return;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// ATTENTION!!! twiglight zone below here TODO name this more technically... ////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /************************************************************************************************
+   * ATTENTION!!! Save these here because the EditNP call below can cause 'this' to be terminated
+   * and DELETED!!!!!!. if the player decides to stop crafting because of becoming hungry.
+   *******************/
+  rpd.rc.integrityCheck();
+
+  truth MoveCraftTool = this->MoveCraftTool;DBGLN;
+  ulong RightBackupID = this->RightBackupID;
+  ulong LeftBackupID = this->LeftBackupID;
+  recipedata rpdBkp = rpd;
+  character* ActorLocal = GetActor();
+
+  ActorLocal->EditExperience(DEXTERITY, 200, 1 << 5);DBGLN; //TODO are these values good for crafting?
+  ActorLocal->EditAP(-200000 / APBonus(ActorLocal->GetAttribute(DEXTERITY)));
+  ActorLocal->EditStamina(-1000 / ActorLocal->GetAttribute(ARM_STRENGTH), false);
+  ActorLocal->EditNP(-500); ////////////////////////// CRITICAL BELOW HERE //////////////////////////////
+
+  truth AlreadyTerminated = ActorLocal->GetAction() != this;DBGLN;
+  truth Stopped = rpdBkp.bSuccesfullyCompleted || AlreadyTerminated;
+
+  if(rpdBkp.bSuccesfullyCompleted && !AlreadyTerminated)
+    Terminate(true);
+
+  if(Stopped)
+  {DBGLN;
+    if(MoveCraftTool && ActorLocal->GetMainWielded())
+      ActorLocal->GetMainWielded()->MoveTo(ActorLocal->GetStack());
+
+    humanoid* h = dynamic_cast<humanoid*>(ActorLocal);
+    if(h){
+      if(h->GetRightArm()){
+        item* RightBackup = game::SearchItem(RightBackupID);
+
+        if(RightBackup && RightBackup->Exists() && ActorLocal->IsOver(RightBackup))
+        {DBGLN;
+          RightBackup->RemoveFromSlot();
+          ActorLocal->SetRightWielded(RightBackup);
+        }
+      }
+
+      if(h->GetLeftArm()){
+        item* LeftBackup = game::SearchItem(LeftBackupID);
+
+        if(LeftBackup && LeftBackup->Exists() && ActorLocal->IsOver(LeftBackup))
+        {DBGLN;
+          LeftBackup->RemoveFromSlot();
+          ActorLocal->SetLeftWielded(LeftBackup);
+        }
+      }
+    }
+  }
+
+  /**
+   * explosions may trigger something that apparently terminates the action and so also deletes it's recipedata
+   * TODO what is being triggered?
+   */
+  if(!rpdBkp.v2XplodAt.Is0() && rpdBkp.xplodStr>0){
+    game::GetCurrentLevel()->Explosion(
+      ActorLocal, CONST_S("killed by the forge heat"), rpdBkp.v2XplodAt, rpdBkp.xplodStr, false, false);
+    ADD_MESSAGE("Forging sparks explode lightly."); //this will let sfx play TODO better message? the idea is to make forging a bit hazardous,
+  }
+
+  if(!rpdBkp.bSuccesfullyCompleted)
+    game::DrawEverything();
+}
+
+bool craft::IsSuspending(){
+  if(!GetActor()->IsPlayer())return false;
+  if(!rpd.rc.IsCanBeSuspended())return false;
+  if(rpd.bFailedTerminateCancel)return false;
+
+  if(rpd.bFailedSuspend)return true; //TODO useless? may be with future newer checks, this can be useful one day, keep it here!
+
+  return true;
+}
+
+void craft::Terminate(truth Finished)
+{DBGSTK;
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
+
+  if(Finished){
+    craftcore::RemoveIfSuspended(rpd);
+  }else{
+    if(IsSuspending()){
+      ADD_MESSAGE("You suspend crafting (do not modify tools and ingredients)."); //TODO this message refers to a too technical subject: if a tool gets fixed, it's ID will vanish. Not sure if this message could be improved...
+      craftcore::AddSuspended(rpd);
+    }else{
+      if(GetActor()->IsPlayer())
+        ADD_MESSAGE("You stop crafting.");
+      else if(GetActor()->CanBeSeenByPlayer())
+        ADD_MESSAGE("%s stops crafting.", GetActor()->CHAR_NAME(DEFINITE));
+
+      craftcore::RemoveIfSuspended(rpd);
+    }
+  }
+
+  action::Terminate(Finished);DBGLN;
 }
 
 void dig::Save(outputfile& SaveFile) const

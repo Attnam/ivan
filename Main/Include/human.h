@@ -69,6 +69,7 @@ CHARACTER(humanoid, character)
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
+  virtual void SwitchToCraft(recipedata rpd);
   virtual void SwitchToDig(item*, v2);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;

@@ -3072,6 +3072,14 @@ stone
     IsValuable = true;
     TeleportPriority = 2000;
   }
+
+  Config INGOT;
+  {
+    BitmapPos = 128, 16;
+    Possibility = 10;
+    NameSingular = "ingot";
+    IsValuable = true;
+  }
 }
 
 scrolloftaming /* scroll-> */

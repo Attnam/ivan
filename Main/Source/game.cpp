@@ -100,6 +100,7 @@ int game::Teams;
 int game::Dungeons;
 int game::StoryState;
 int game::XinrochTombStoryState;
+truth game::PlayerIsChampion;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
@@ -849,6 +850,7 @@ truth game::Init(cfestring& loadBaseName)
       InitPlayerAttributeAverage();
       StoryState = 0;
       XinrochTombStoryState = 0;
+      PlayerIsChampion = false;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
       MiscMassacreMap.clear();
@@ -879,7 +881,7 @@ truth game::Init(cfestring& loadBaseName)
       LastLoad = time(0);
       TimePlayedBeforeLastLoad = time::GetZeroTime();
       commandsystem::ClearSwapWeapons(); //to clear the memory from possibly previously loaded game
-//TODO      craftcore::SetSuspended(NULL); //to clear the memory from possibly previously loaded game
+      craftcore::ClearSuspendedList(); //to clear the memory from possibly previously loaded game
       bool PlayerHasReceivedAllGodsKnownBonus = false;
       ADD_MESSAGE("You commence your journey to Attnam. Use direction keys to "
                   "move, '>' to enter an area and '?' to view other commands.");
@@ -1310,15 +1312,15 @@ int game::CheckAutoPickup(square* sqr)
 {
   if(!ivanconfig::IsAutoPickupThrownItems())
     return false;
-  
+
   if(sqr==NULL)
     sqr = PLAYER->GetSquareUnder();
-  
+
   if(dynamic_cast<lsquare*>(sqr)==NULL)
     return false;
-  
+
   lsquare* lsqr = (lsquare*)sqr;
-  
+
   itemvector iv;
   lsqr->GetStack()->FillItemVector(iv);
   int j=0;
@@ -1330,7 +1332,7 @@ int game::CheckAutoPickup(square* sqr)
       j++;
     }
   }
-  
+
   return j;
 }
 
@@ -1338,24 +1340,24 @@ bool game::CheckAddAutoMapNote(square* sqr)
 {
   if(sqr==NULL)
     sqr = PLAYER->GetSquareUnder();
-  
+
   if(dynamic_cast<lsquare*>(sqr)==NULL)
     return false;
-  
+
   lsquare* lsqr = (lsquare*)sqr;
-  
+
   if(lsqr->GetEngraved())
     return false;
-  
+
   olterrain* olt = lsqr->GetOLTerrain();
   if(!olt)return false;
-  
+
   festring fs;
   if(fs.GetSize()==0 && dynamic_cast<altar*>(olt)!=NULL)
     fs<<olt->GetMasterGod()->GetName()<<" altar";
   if(fs.GetSize()==0 && dynamic_cast<sign*>(olt)!=NULL)
     fs<<"Sign: "<<((sign*)olt)->GetText();
-  
+
   if(
     dynamic_cast<christmastree*>(olt)!=NULL ||
     dynamic_cast<coffin*>(olt)!=NULL ||
@@ -1369,7 +1371,7 @@ bool game::CheckAddAutoMapNote(square* sqr)
     olt->AddName(fs,INDEFINITE);
 //    fs<<olt->GetNameSingular();
   }
-  
+
   if(fs.GetSize()>0){
     SetMapNote(lsqr,fs);
     game::RefreshDrawMapOverlay();
@@ -1506,7 +1508,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
       else
       if(festring(vMapNotes[i].note).Find("!")!=festring::NPos)
         colMapNoteBkg2=BLUE;
-      
+
       buffer->Fill(bkgTL,bkgB,colMapNoteBkg2); //bkg
       buffer->DrawRectangle(bkgTL,bkgTL+bkgB,LIGHT_GRAY,iNoteHighlight==i); //bkg
     }
@@ -1583,7 +1585,7 @@ void game::DrawMapOverlay(bitmap* buffer)
   static bitmap* bmpFinal;
 
   bool bTransparentMap = bPositionQuestionMode && (CursorPos != PLAYER->GetPos()) && ivanconfig::IsTransparentMapLM();
-    
+
   if(bPositionQuestionMode){
     static v2 v2PreviousCursorPos;
     if(v2PreviousCursorPos != CursorPos){
@@ -1803,7 +1805,7 @@ void game::DrawMapOverlay(bitmap* buffer)
 //              bDrawSqr=true;
 //              break;
 //            }
-        
+
         if(bDrawSqr)
           bmpMapBuffer->Fill(v2Dest, v2MapTileSize, colorO);
 
@@ -1943,7 +1945,7 @@ void game::DrawMapOverlay(bitmap* buffer)
     bmpFinal->NormalMaskedBlit(BFinal);
   }else
     bmpFinal->FastBlit(BFinal.Bitmap, BFinal.Dest );
-    
+
   if(!bTransparentMap)
     graphics::DrawRectangleOutlineAround(buffer, v2TopLeftFinal, v2MapScrSizeFinal, LIGHT_GRAY, true);
 
@@ -2959,7 +2961,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
   UpdateAltSilhouette(AnimationDraw);
 
   UpdateShowItemsAtPos(!bXBRZandFelist); //last thing as this is a temp overlay
-  
+
   #ifdef WIZARD
     DBG1(vDbgDrawOverlayFunctions.size());
     if(vDbgDrawOverlayFunctions.size()>0){DBGLN; // ULTRA last thing
@@ -3351,7 +3353,7 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
+  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState << PlayerIsChampion;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3386,7 +3388,7 @@ truth game::Save(cfestring& SaveName)
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
 
   commandsystem::SaveSwapWeapons(SaveFile); DBGLN;
-//TODO  craftcore::Save(SaveFile);
+  craftcore::Save(SaveFile);
 
   return true;
 }
@@ -3428,7 +3430,7 @@ int game::Load(cfestring& saveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
+  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState >> PlayerIsChampion;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3480,7 +3482,7 @@ int game::Load(cfestring& saveName)
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
 
   commandsystem::LoadSwapWeapons(SaveFile);
-//TODO  craftcore::Load(SaveFile);
+  craftcore::Load(SaveFile);
 
   ///////////////// loading ended ////////////////
 
@@ -3554,7 +3556,7 @@ festring game::SaveName(cfestring& Base,bool bLoadingFromAnAutosave)
       CurrentBaseSaveFileName << PlayerName << '_' << cTime;
       fixChars(CurrentBaseSaveFileName);
     }
-    
+
     PathAndBaseSaveName << CurrentBaseSaveFileName;
   }
 
@@ -4146,20 +4148,20 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
     Handler(CursorPos);
 
   bool bMapNotesMode = bDrawMapOverlayEnabled && bShowMapNotes;
-  
+
   /**
    * using the min millis value grants mouse will be updated most often possible
    * default key -1 just to be ignored
    */
   if(bMapNotesMode)
-    globalwindowhandler::SetKeyTimeout(100,-1); 
-  
+    globalwindowhandler::SetKeyTimeout(100,-1);
+
   bPositionQuestionMode=true;
   v2 v2PreviousClick=v2(0,0);
   for(;;)
   {
     square* Square = GetCurrentArea()->GetSquare(CursorPos);
-    
+
     if(bMapNotesMode){
       lsquare* lsqrMapNote = GetHighlightedMapNoteLSquare();
       if(lsqrMapNote){
@@ -4173,7 +4175,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
           v2PreviousClick = CursorPos;
         }
       }
-      
+
       CheckAddAutoMapNote(Square);
     }
 
@@ -4254,7 +4256,7 @@ v2 game::PositionQuestion(cfestring& Topic, v2 CursorPos, void (*Handler)(v2),
 
   if(bMapNotesMode)
     globalwindowhandler::ResetKeyTimeout();
-  
+
   return Return;
 }
 
@@ -4724,7 +4726,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
           game::EnterArea(std::vector<character*, std::allocator<character*> >&, int, int)+0x164)
        */
       if(bMoveAway && dynamic_cast<largecreature*>(NPC)!=NULL)bMoveAway=false;
-      
+
       if(bMoveAway)
         lsqr->KickAnyoneStandingHereAway();
 

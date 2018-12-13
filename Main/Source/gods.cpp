@@ -128,17 +128,46 @@ col16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
-  if(PLAYER->StateIsActivated(TELEPORT_LOCK))
+  if(!PLAYER->StateIsActivated(TELEPORT_LOCK))
   {
-    ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
-    return;
+    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
+    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+  }
+
+  // Give a little attribute experience (Cha already given by Dulcis and not Wis,
+  // as we want to check Wis to give the experience).
+  if(PLAYER->GetAttribute(WISDOM) > RAND_128)
+  {
+    cchar* SecretType;
+    int Experience = Min(200, Max(50, GetRelation() / 4));
+
+    switch(RAND() % 2)
+    {
+      case 0:
+       SecretType = "an ancient";
+       PLAYER->EditExperience(INTELLIGENCE, Experience, 1 << 10);
+       break;
+      case 1:
+       SecretType = "a terrible";
+       PLAYER->EditExperience(WILL_POWER, Experience, 1 << 10);
+       break;
+      case 2:
+       SecretType = "a profound";
+       PLAYER->EditExperience(MANA, Experience, 1 << 10);
+       break;
+      default:
+       SecretType = "a weird and disturbing";
+       break;
+    }
+
+    ADD_MESSAGE("%s whispers %s secret to you.", GetName(), SecretType);
   }
   else
   {
-    ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally "
-                "powerful quantum displacement! You teleport away!");
-    PLAYER->Move(game::GetCurrentLevel()->GetRandomSquare(PLAYER), true);
+    ADD_MESSAGE("You hear a booming voice: \"Alas, I cannot help thee, mortal.\"");
   }
+  return;
 }
 
 void sophos::PrayBadEffect()
@@ -150,21 +179,27 @@ void sophos::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  if(RAND() & 1)
+  if(!game::PlayerIsGodChampion())
   {
-    ADD_MESSAGE("You hear booming voice: \"THIS WILL PROTECT THEE FROM MORTIFER, MY "
-                "PALADIN!\" A shield glittering with holy might appears from nothing.");
-    shield* Shield = shield::Spawn();
-    Shield->InitMaterials(MAKE_MATERIAL(VALPURIUM));
-    PLAYER->GetGiftStack()->AddItem(Shield);
-  }
-  else
-  {
-    ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" "
-                "A sword glittering with holy might appears from nothing.");
+    ADD_MESSAGE("You hear a booming voice: \"I RECOGNIZETH THEE AS MINE OWN CHAMPION! "
+                "JOURNEY FORTH WITH THESE ARMAMENTS TO DEFEAT MORTIFER AND ALL "
+                "THE CHAOS HE HADST SOWN!\" A set of holy arms appear from nothing.");
+
     meleeweapon* Weapon = meleeweapon::Spawn(TWO_HANDED_SWORD);
     Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), true);
     PLAYER->GetGiftStack()->AddItem(Weapon);
+
+    shield* Shield = shield::Spawn();
+    Shield->InitMaterials(MAKE_MATERIAL(VALPURIUM));
+    PLAYER->GetGiftStack()->AddItem(Shield);
+
+    game::MakePlayerGodChampion();
+  }
+  else // Player already received championship gift, give holy handgrenade instead.
+  {
+    ADD_MESSAGE("You hear a booming voice: \"I GRANT THEE THIS HOLY HAND GRENADE "
+                "THAT WITH IT THOU MAYEST BLOW THY ENEMIES TO TINY BITS, MY PALADIN!\"");
+    PLAYER->GetGiftStack()->AddItem(holyhandgrenade::Spawn());
   }
 }
 
@@ -177,16 +212,18 @@ void valpurus::PrayBadEffect()
 
 void legifer::PrayGoodEffect()
 {
+  // I think this is a remnant of past development that you call upon Inlux rather than Legifer. --red_kangaroo
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(),
-                                     PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  //ADD_MESSAGE("You are surrounded by the righteous flames of %s.", GetName());
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy flames of ") + GetName(), PLAYER->GetPos(),
+                                     (Max(20 * PLAYER->GetAttribute(WISDOM), 1) + Max(GetRelation(), 0)) >> 3, false);
 }
 
 void legifer::PrayBadEffect()
 {
-  ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GetName());
+  ADD_MESSAGE("%s casts horrible yet righteous flames upon you.", GetName());
   PLAYER->ReceiveDamage(0, 50 + RAND() % 50, FIRE, ALL);
-  PLAYER->CheckDeath(CONST_S("burned to death by the wrath of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("burned to death by the holy flames of ") + GetName(), 0);
 }
 
 void dulcis::PrayGoodEffect()
@@ -307,6 +344,34 @@ void seges::PrayGoodEffect()
     return;
   }
 
+  if(PLAYER->TemporaryStateIsActivated(LYCANTHROPY))
+  {
+    ADD_MESSAGE("%s cures your animalistic urges.", GetName());
+    PLAYER->DeActivateTemporaryState(LYCANTHROPY);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(VAMPIRISM))
+  {
+    ADD_MESSAGE("%s cures your bloodlust.", GetName());
+    PLAYER->DeActivateTemporaryState(VAMPIRISM);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_TAPE_WORM))
+  {
+    ADD_MESSAGE("%s removes the evil hidden in your guts.", GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_TAPE_WORM);
+    return;
+  }
+
+  if(PLAYER->TemporaryStateIsActivated(PARASITE_MIND_WORM))
+  {
+    ADD_MESSAGE("%s removes the evil hidden in your brain.", GetName());
+    PLAYER->DeActivateTemporaryState(PARASITE_MIND_WORM);
+    return;
+  }
+
   if(PLAYER->GetNP() < SATIATED_LEVEL)
   {
     ADD_MESSAGE("Your stomach feels full again.");
@@ -325,12 +390,10 @@ void seges::PrayGoodEffect()
     return;
   }
 
-  if(PLAYER->GetStamina() < PLAYER->GetMaxStamina() >> 1)
-  {
-    ADD_MESSAGE("You don't feel a bit tired anymore.");
-    PLAYER->RestoreStamina();
-    return;
-  }
+  // Always return at least some message.
+  ADD_MESSAGE("You don't feel a bit tired anymore.");
+  PLAYER->RestoreStamina();
+  return;
 }
 
 void seges::PrayBadEffect()
@@ -338,7 +401,7 @@ void seges::PrayBadEffect()
   if(PLAYER->UsesNutrition())
   {
     ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
-    PLAYER->EditNP(-10000);
+    PLAYER->EditNP(-100000 / Max(PLAYER->GetAttribute(WISDOM), 1));
     PLAYER->CheckStarvationDeath(CONST_S("starved by ") + GetName());
   }
   else
@@ -432,7 +495,7 @@ void silva::PrayGoodEffect()
 {
   if(PLAYER->GetNP() < HUNGER_LEVEL)
   {
-    ADD_MESSAGE("Your stomach feels full again.");
+    ADD_MESSAGE("%s feeds you fruits and wild berries.", GetName());
     PLAYER->SetNP(SATIATED_LEVEL);
   }
 
@@ -520,7 +583,7 @@ void silva::PrayGoodEffect()
           if(Char)
           {
             if(Char->CanBeSeenByPlayer())
-              ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
+              ADD_MESSAGE("%s is hit by a rock falling from the ceiling!", Char->CHAR_NAME(DEFINITE));
 
             Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
             Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
@@ -749,25 +812,43 @@ void loricatus::PrayBadEffect()
 
 void cleptia::PrayGoodEffect()
 {
+  int Duration = 200 * PLAYER->GetAttribute(WISDOM) + Max(Relation, 0);
   PLAYER->RestoreStamina();
+
+  if(PLAYER->StateIsActivated(SLOW))
+  {
+    ADD_MESSAGE("%s restores the swiftness of your movement.", GetName());
+    PLAYER->DeActivateTemporaryState(SLOW);
+    return;
+  }
 
   if(!PLAYER->StateIsActivated(HASTE))
   {
     ADD_MESSAGE("%s gives you the talent for speed.", GetName());
-    PLAYER->BeginTemporaryState(HASTE, 2500);
+    PLAYER->BeginTemporaryState(HASTE, Duration);
     return;
   }
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
   {
-    ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GetName());
-    PLAYER->BeginTemporaryState(INVISIBLE, 2500);
+    ADD_MESSAGE("%s hides you from your enemies.", GetName());
+    PLAYER->BeginTemporaryState(INVISIBLE, Duration);
     return;
   }
 
-  ADD_MESSAGE("Cleptia helps you, but you really don't know how.");
-  int StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
-  PLAYER->BeginTemporaryState(StateToActivate, 2500);
+  if(!PLAYER->StateIsActivated(INFRA_VISION))
+  {
+    ADD_MESSAGE("%s orders darkness to hinder you no more.", GetName());
+    PLAYER->BeginTemporaryState(INFRA_VISION, Duration);
+    return;
+  }
+
+  // Nothing else helped so far.
+  int Experience = Min(200, Max(50, GetRelation() / 4));
+  int WhichAttribute = RAND() & 1 ? DEXTERITY : AGILITY;
+  PLAYER->EditExperience(WhichAttribute, Experience, 1 << 10);
+  ADD_MESSAGE("%s helps you, but you really don't know how.", GetName());
+  return;
 }
 
 void cleptia::PrayBadEffect()
@@ -778,16 +859,34 @@ void cleptia::PrayBadEffect()
 
 void mortifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes "
-              "through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHy ReWaRd, "
-              "ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
-  PLAYER->GetGiftStack()->AddItem(neercseulb::Spawn());
+  if(!game::PlayerIsGodChampion())
+  {
+    ADD_MESSAGE("The air vibrates violently as a terrible undead voice echoes "
+                "around you: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHy ReWaRd, "
+                "ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
+
+    PLAYER->GetGiftStack()->AddItem(neercseulb::Spawn());
+    game::MakePlayerGodChampion();
+  }
+  else
+  {
+    ADD_MESSAGE("The air suddenly feels much colder. A terrible undead voice shreds "
+                "the silence: \"I aM PlEaSeD By tHy sQuIrMiNg, WoRm! WaLkEtH WiTh mE "
+                "ThRoUgH ThE ShAdOwS As oNe oF ThE DeAd!\"");
+
+    if(!PLAYER->StateIsActivated(ETHEREAL_MOVING))
+      PLAYER->BeginTemporaryState(ETHEREAL_MOVING, PLAYER->GetAttribute(WISDOM) * 300);
+    else
+      PLAYER->EditTemporaryStateCounter(ETHEREAL_MOVING,
+        PLAYER->GetTemporaryStateCounter(ETHEREAL_MOVING) + (PLAYER->GetAttribute(WISDOM) * 100));
+  }
 }
 
 void mortifer::PrayBadEffect()
 {
   ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! ThOu ArT nOt WoRtHy! "
               "I sHaLl dEsTrOy ThEe LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
+
   PLAYER->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
   PLAYER->EditAttribute(AGILITY, -1);
   PLAYER->EditAttribute(ARM_STRENGTH, -1);
@@ -798,29 +897,33 @@ void mortifer::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   truth Success = false;
-  itemvector OKItems;
 
-  for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
+  if(!RAND_2)
   {
-    if(!i->HasBetterVersion())
-      continue;
+    itemvector OKItems;
 
-    OKItems.push_back(*i);
-    Success = true;
-  }
+    for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
+    {
+      if(!i->HasBetterVersion())
+        continue;
 
-  item* NewVersion;
+      OKItems.push_back(*i);
+      Success = true;
+    }
 
-  for(int c = 0; !OKItems.empty() && c < 4; ++c)
-  {
-    item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
-    NewVersion = ToBeDeleted->BetterVersion();
-    ADD_MESSAGE("%s manages to trade %s into %s.", GetName(),
-                ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
-    PLAYER->GetStack()->AddItem(NewVersion);
-    ToBeDeleted->RemoveFromSlot();
-    ToBeDeleted->SendToHell();
-    OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+    item* NewVersion;
+
+    for(int c = 0; !OKItems.empty() && c < 4; ++c)
+    {
+      item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
+      NewVersion = ToBeDeleted->BetterVersion();
+      ADD_MESSAGE("%s manages to trade %s into %s.", GetName(),
+                  ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
+      PLAYER->GetStack()->AddItem(NewVersion);
+      ToBeDeleted->RemoveFromSlot();
+      ToBeDeleted->SendToHell();
+      OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+    }
   }
 
   if((Success && !(RAND() % 5)) || (!Success && !(RAND() % 3)))
@@ -843,7 +946,11 @@ void mellis::PrayGoodEffect()
   }
 
   if(!Success)
-    ADD_MESSAGE("Nothing happens.");
+  {
+    PLAYER->SetMoney(PLAYER->GetMoney() + (PLAYER->GetAttribute(WISDOM) * 2));
+    ADD_MESSAGE("%s gives you some pocket money.", GetName());
+  }
+  return;
 }
 
 void mellis::PrayBadEffect()
@@ -960,12 +1067,19 @@ void infuscor::PrayBadEffect()
       ADD_MESSAGE("\"I'm going to enjoy watching you burn, insolent mortal!\"");
   }
 
-  ADD_MESSAGE("Vile and evil knowledge pumps into your brain. It's too much for you to handle; you faint.");
+  ADD_MESSAGE("%s pumps vile and evil knowledge into your brain. It's too much for you to handle and you faint.", GetName());
   PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
 void nefas::PrayGoodEffect()
 {
+  if(PLAYER->GetNP() < HUNGER_LEVEL)
+  {
+    ADD_MESSAGE("%s breast-feeds you.", GetName());
+    PLAYER->SetNP(SATIATED_LEVEL);
+    return;
+  }
+
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
@@ -1001,7 +1115,7 @@ void nefas::PrayGoodEffect()
           if(Audience->CanBeSeenByPlayer())
             ADD_MESSAGE("%s confuses %s with her sweet lies.", GetName(), Audience->CHAR_NAME(DEFINITE));
 
-          Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
+          Audience->BeginTemporaryState(CONFUSED, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
         }
       }
   }
@@ -1047,7 +1161,8 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  if(!RAND_N(10))
+  // TODO: as champion grant green slime vomit
+  if(PLAYER->IsImmuneToLeprosy()) // Spread leprosy whenever you won't harm your follwers.
   {
     for(int c = 0; c < game::GetTeams(); ++c)
       if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -1058,9 +1173,53 @@ void scabies::PrayGoodEffect()
         }
 
     ADD_MESSAGE("You feel a horrible disease spreading.");
+  }
+
+  int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
+
+  if((PLAYER->GetNP() < HUNGER_LEVEL) &&
+     (!PLAYER->StateIsActivated(FASTING) || PLAYER->GetTemporaryStateCounter(FASTING) < Duration))
+  {
+    if(!PLAYER->StateIsActivated(FASTING))
+      PLAYER->BeginTemporaryState(FASTING, Duration);
+    else
+      PLAYER->EditTemporaryStateCounter(FASTING, PLAYER->GetTemporaryStateCounter(FASTING) + Duration);
+    ADD_MESSAGE("%s whispers in your mind: \"Famine culls the weak but purifies the strong, my child.\"", GetName());
     return;
   }
 
+  // Scabies wants followers who can spread her word, not those who just lie on thr ground, missing limbs.
+  if(PLAYER->StateIsActivated(LEPROSY) && !PLAYER->IsImmuneToLeprosy())
+  {
+    PLAYER->BeginTemporaryState(DISEASE_IMMUNITY, Duration);
+    ADD_MESSAGE("%s chuckles in your mind: \"No need to fall apart, my dear.\"", GetName());
+    return;
+  }
+
+  truth Success = false;
+
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  {
+    lsquare* Square = PLAYER->GetNeighbourLSquare(d);
+
+    if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
+    {
+      if(!RAND_2)
+      {
+        ADD_MESSAGE("%s vomits poison on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+        Square->SpillFluid(PLAYER, liquid::Spawn(POISON_LIQUID, 30 * PLAYER->GetAttribute(WISDOM)));
+        Success = true;
+      }
+      else
+      {
+        ADD_MESSAGE("%s vomits acid on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+        Square->SpillFluid(PLAYER, liquid::Spawn(SULPHURIC_ACID, 30 * PLAYER->GetAttribute(WISDOM)));
+        Success = true;
+      }
+    }
+  }
+
+  // First try to deal with enemies, then give stuff.
   if(!(RAND() % 50))
   {
     ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
@@ -1075,37 +1234,24 @@ void scabies::PrayGoodEffect()
     return;
   }
 
-  truth Success = false;
-
-  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
-  {
-    lsquare* Square = PLAYER->GetNeighbourLSquare(d);
-
-    if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
-    {
-      ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
-      Square->SpillFluid(PLAYER, liquid::Spawn(POISON_LIQUID, 500));
-      Success = true;
-    }
-  }
-
   if(!Success)
     PLAYER->PolymorphRandomly(2500, 10000, 1000 + RAND() % 1000);
 }
 
 void scabies::PrayBadEffect()
 {
-  if(!(RAND() % 50))
+  if(!RAND_2)
   {
     ADD_MESSAGE("%s makes you eat a LOT of school food.", GetName());
     material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 2000);
     SchoolFood->EatEffect(PLAYER, 1000);
     delete SchoolFood;
+
     ADD_MESSAGE("You feel your muscles softening terribly...");
     PLAYER->EditAttribute(ARM_STRENGTH, -1);
     PLAYER->EditAttribute(DEXTERITY, -1);
   }
-  else if(RAND_2)
+  else if(PLAYER->IsImmuneToLeprosy())
   {
     ADD_MESSAGE("%s unleashes all her fury upon you!", GetName());
     PLAYER->BeginTemporaryState(POISONED, 600 + RAND() % 400);
@@ -1160,7 +1306,7 @@ void infuscor::PrayGoodEffect()
 
   if(!Success)
   {
-    int Duration = 5000 + Relation * 15;
+    int Duration = 300 * PLAYER->GetAttribute(WISDOM) + Relation * 5;
 
     if(!PLAYER->StateIsActivated(ESP) ||
         PLAYER->GetTemporaryStateCounter(ESP) < Duration)
@@ -1180,14 +1326,37 @@ void infuscor::PrayGoodEffect()
         PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, Duration);
       else
         PLAYER->EditTemporaryStateCounter(POLYMORPH_CONTROL, PLAYER->GetTemporaryStateCounter(POLYMORPH_CONTROL)+Duration);
-      ADD_MESSAGE("You feel %s whisper throughout your whole body.", GetName());
+      ADD_MESSAGE("You feel %s gently touch your body.", GetName());
       return;
     }
+
+    if(!PLAYER->StateIsActivated(TELEPORT_CONTROL) ||
+        PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL) < Duration)
+    {
+      if(!PLAYER->StateIsActivated(TELEPORT_CONTROL))
+        PLAYER->BeginTemporaryState(TELEPORT_CONTROL, Duration);
+      else
+        PLAYER->EditTemporaryStateCounter(TELEPORT_CONTROL, PLAYER->GetTemporaryStateCounter(TELEPORT_CONTROL)+Duration);
+      ADD_MESSAGE("You feel %s gently touch your soul.", GetName());
+      return;
+    }
+
+    ADD_MESSAGE("You feel %s smiling at you.", GetName());
   }
+
+  return;
 }
 
 void cruentus::PrayGoodEffect()
 {
+  if(PLAYER->StateIsActivated(PANIC))
+  {
+    ADD_MESSAGE("\"Fight, you lousy coward!\"", GetName());
+    PLAYER->DeActivateTemporaryState(PANIC);
+    PLAYER->BeginTemporaryState(FEARLESS, 200 * PLAYER->GetAttribute(WISDOM) + Relation * 5);
+    return;
+  }
+
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   truth AudiencePresent = false;
@@ -1222,28 +1391,31 @@ void cruentus::PrayGoodEffect()
         if(Audience
            && !Audience->TemporaryStateIsActivated(PANIC)
            && PLAYER->GetRelation(Audience) == HOSTILE
-           && Audience->GetPanicLevel() > RAND() % 33)
-          Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+           && Audience->GetPanicLevel() > (RAND() % (50 - Min(PLAYER->GetAttribute(WISDOM), 49))))
+          Audience->BeginTemporaryState(PANIC, 30 * PLAYER->GetAttribute(WISDOM) + RAND() % 500);
       }
 
     return;
   }
 
-  item* Weapon = PLAYER->GetMainWielded();
-
-  for(int i = 0; i < 2; i++)
+  if(!RAND_2)
   {
-    if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
+    item* Weapon = PLAYER->GetMainWielded();
+
+    for(int i = 0; i < 2; i++)
     {
-      int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
-      if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+      if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted())
       {
-        ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
-        Weapon->EditEnchantment(1);
-        return;
+        int EnchDiff = (Weapon->GetEnchantment()*250 - GetRelation()) / 50;
+        if (EnchDiff <= 1 || !RAND_N(EnchDiff))
+        {
+          ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
+          Weapon->EditEnchantment(1);
+          return;
+        }
       }
+      Weapon = PLAYER->GetSecondaryWielded();
     }
-    Weapon = PLAYER->GetSecondaryWielded();
   }
 
   if(RAND() & 3)
@@ -1299,8 +1471,20 @@ void cruentus::PrayBadEffect()
 
 truth scabies::PlayerVomitedOnAltar(liquid*)
 {
-  ADD_MESSAGE("%s feels that you are indeed her follower.", GetName());
-  AdjustRelation(1);
+  if(Relation == 1000)
+  {
+    ADD_MESSAGE("%s exclaims: \"You have pleased me greatly, darling!\"", GetName());
+
+    if(PLAYER->GetMyVomitMaterial() != GREEN_SLIME)
+    {
+      PLAYER->SetNewVomitMaterial(GREEN_SLIME);
+    }
+  }
+  else
+  {
+    ADD_MESSAGE("%s feels that you are indeed her follower.", GetName());
+    AdjustRelation(1);
+  }
   return false;
 }
 

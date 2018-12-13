@@ -28,6 +28,7 @@ SYSTEM_SPECIALIZATIONS(action)
 #include "save.h"
 #include "iconf.h"
 #include "stack.h"
+#include "lterras.h"
 
 #include "action.cpp"
 #include "actions.cpp"

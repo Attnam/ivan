@@ -64,6 +64,7 @@ truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED
 truth item::IsBurnt() const { return MainMaterial->GetBurnLevel() != NOT_BURNT; }
 truth item::IsEatable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable() && !IsBurning(); }
 truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable() && !IsBurning(); }
+truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
@@ -1075,6 +1076,78 @@ void item::SignalSpoilLevelChange(material*)
 
 truth item::AllowSpoil() const
 {
+  DBG5(GetName(DEFINITE).CStr(),GetID(),GetSquareUnder(),GetWearer(),GetSlot());
+  DBGEXEC( //this wont even compile if DBGMSG is not enabled
+    /** crash helper
+     * THE CAUSE SEEMS TO BE from crafting a new item, it being a chest, and cancelling. The code was not sending the canceled spawned chest to hell and it was not placed anywhere. Fixed that, this may not happen again.
+     * TODO remove this debug code and the workaround below after sure wont need anymore. despite the debug code will only compile if using DBGMSG
+     * seems to be about a buggy organic spawned "on floor" that has no square under...
+    *  happens below at: if(IsOnGround())
+   *   item.cpp:1048:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="92980";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x8272630";
+ 2018/07/17-15:36:08(1122986) item.cpp:1049:AllowSpoil:{GetName(2).CStr()}="the loaf of dark bread";{GetID()}="780622";{GetSquareUnder()}="0";{GetWearer()}="0";{GetSlot()}="0x38be0e0";
+ 2018/07/17-15:36:08(1122987) item.cpp:1091:AllowSpoil:{itSS}="0x3293700";{ss->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122988) item.cpp:1091:AllowSpoil:{itSS->GetID()}="780622";{itSS->GetNameSingular().CStr()}="loaf";
+ 2018/07/17-15:36:08(1122989) item.cpp:1091:AllowSpoil:{ss->GetMotherStack()->GetItems()}="3";{ent}="0x62a17d0";{ss->GetMotherStack()->GetSquareUnder()}="0";
+ 2018/07/17-15:36:08(1122990) item.cpp:1091:AllowSpoil:{ent->GetSquareUnderEntity()}="0";
+ 2018/07/17-15:36:08(1122991) item.cpp:1091:AllowSpoil:{itM->GetID()}="780621";{itM->GetNameSingular().CStr()}="chest";
+   *     ./bin//ivan(_ZN6dbgmsg20getCurrentStackTraceEbRi+0xaa) [0x92f43e]
+   *     ./bin//ivan(_ZN6dbgmsg22getCurrentStackTraceSSB5cxx11Ebb+0x54) [0x92f53c]
+    *    ./bin//ivan(_ZN6dbgmsg8SigHndlrEi+0x1ae) [0x92fcdc]
+     *   /lib/x86_64-linux-gnu/libc.so.6(+0x354b0) [0x7f6b145e14b0]
+      *  ./bin//ivan(_ZNK4item10IsOnGroundEv+0x17) [0x8963c7]
+      *  ./bin//ivan(_ZNK5stack10IsOnGroundEv+0x38) [0x8f12a8]
+      *  ./bin//ivan(_ZNK9stackslot10IsOnGroundEv+0x20) [0x8ebb96]
+     *   ./bin//ivan(_ZNK4item10IsOnGroundEv+0x31) [0x8963e1]
+    *    ./bin//ivan(_ZNK4item10AllowSpoilEv+0x27f) [0x89b0ab]
+   *     ./bin//ivan(_ZN7organic2BeEm+0x4f) [0x839d0d]
+   *     ./bin//ivan(_ZN4item2BeEv+0x49) [0x89a819]
+   *     ./bin//ivan(_ZN4pool2BeEv+0x3b) [0x69593b]
+    *    ./bin//ivan(_ZN4game3RunEv+0x3da) [0x77ad5a]
+     *   ./bin//ivan(main+0x4d7) [0x70d462]
+      *  /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f6b145cc830]
+      *  ./bin//ivan(_start+0x29) [0x68f999]
+     */
+    if(dynamic_cast<stackslot*>(GetSlot())!=NULL){
+      stackslot* ss = (stackslot*)GetSlot();
+      item* itSS = ss->GetItem();
+      DBG2(itSS,ss->GetSquareUnder());
+      if(itSS!=NULL)DBG2(itSS->GetID(),itSS->GetNameSingular().CStr());
+      stack* stkM=ss->GetMotherStack();
+      if(stkM!=NULL){
+        entity* ent = stkM->GetMotherEntity();
+        DBG3(ss->GetMotherStack()->GetItems(), ent, ss->GetMotherStack()->GetSquareUnder());
+        if(ent!=NULL){
+          DBG1(ent->GetSquareUnderEntity());
+//          if(dynamic_cast<id*>(ent))DBG1(((id*)ent)->GetID());
+          if(dynamic_cast<item*>(ent)){
+            item* itM = (item*)ent;
+            DBG2(itM->GetID(),itM->GetNameSingular().CStr());
+          }
+        }
+      }
+    }
+  );
+//TODO remove this. The workaround is NOT good as SquareUnder is essential everywhere!!!!
+//  bool bIsOnGround=false;
+//  lsquare* Square = GetLSquareUnder(); //TODO what could cause Square to be NULL ?????
+//  static bool bAllowSpoilBugWorkaround=true;
+//  if(bAllowSpoilBugWorkaround){ //See the above bug track code, the origin of the problem is still NOT solved/understood/discovered!!!!!!
+//    if(Square!=NULL){
+//      bIsOnGround=IsOnGround();
+//      DBG1("WorkaroundForItemPlacedNoWhere");
+//    }
+//    /**
+//     * what this means?
+//     *
+//     * not knowing where the item is, if on a room, the item will ALWAYS spoil,
+//     * so if the buggy item "is" on a shop, it will spoil.
+//     *
+//     * and, on this stack/flow that game wont crash, but still may on other code flows!!!
+//     */
+//  }else{
+//    bIsOnGround=IsOnGround();
+//  }
+
   if(IsOnGround())
   {
     lsquare* Square = GetLSquareUnder();
