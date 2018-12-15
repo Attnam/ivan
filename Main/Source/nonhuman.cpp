@@ -1097,15 +1097,19 @@ void mushroom::PostConstruct()
 }
 
 /**
- * this is not gameplay wise as far AI events will not happen,
- * but will allow the game to still be played at least...
+ * This is not gameplay wise as far AI events will not happen,
+ * but will allow the game to still be playable at least...
+ * Use this on any NPC class that may encumber the CPU too much.
  */
-bool MagicmushroomCPUwiseAI(magicmushroom* m)
+bool CPUwiseAI(nonhumanoid* nh)
 {
+  if(!nh->IsRooted())return true; //only NPCs that can't move
+  if(nh->StateIsActivated(LEVITATION))return true; //this keeps levitating ones still active what may be good TODO add user option to deny them?
+  
   int iDist = ivanconfig::GetDistLimitMagicMushrooms();
   if(iDist==0)return true;
 
-  int iSqDist = m->GetDistanceSquareFrom(PLAYER);
+  int iSqDist = nh->GetDistanceSquareFrom(PLAYER);
   int iSqLim = iDist*iDist;
   int iMaxActiveAI = iDist*2 * iDist*2;
 
@@ -1126,94 +1130,9 @@ bool MagicmushroomCPUwiseAI(magicmushroom* m)
 
   return bActivated;
 }
-bool MagicmushroomCPUwiseAIOld(magicmushroom* m) //TODO remove on next commit
-{
-  int iSqDist = m->GetDistanceSquareFrom(PLAYER);
-//  static int iActivatedAI = 0;
-  static std::vector<magicmushroom*> v;
-//  static int iPreviousTurnTotAI = 0;
-  static int iTurnChkAI = 0;
-  static bool bDoLimit=false;
-  static v2 v2PlayerLastPos;
-  static int iPreviousTurnActivatedAIs=0;
-
-  int iDistLimCfg=-2; //TODO user cfg?, min 1, -3 no limit=vanilla, -2 dynamic, -1 limit will be always active ???
-  bool bDynamic = iDistLimCfg==-2;
-  int iDistLim=iDistLimCfg;
-
-  bool bCheckLimit=false;
-  if(bDynamic)bCheckLimit=true;
-
-  level* lvl = game::GetCurrentLevel();
-
-  //dynamic dist
-  if(bDynamic){ //they spread too fast TODO review these values
-//    if(     v.size()>25) iDistLim=1;
-//    else if(v.size()>15) iDistLim=2;
-//    else if(v.size()>10) iDistLim=3;
-//    else if(v.size()> 5) iDistLim=4;
-//    else if(v.size()> 2) iDistLim=5;
-    int iMaxAmt=100*2; //1st test will be half of it
-    if(     v.size() > (iMaxAmt/=2)) iDistLim=1;
-    else if(v.size() > (iMaxAmt/=2)) iDistLim=2;
-    else if(v.size() > (iMaxAmt/=2)) iDistLim=3;
-    else if(v.size() > (iMaxAmt/=2)) iDistLim=4;
-    else if(v.size() > (iMaxAmt/=2)) iDistLim=5;
-    else                         iDistLim=iSqDist; //anywhere //Max(lvl->GetXSize(),lvl->GetYSize());
-  }
-
-  static int iMinActiveAI = 8;
-  int iSqNear=iDistLim*iDistLim;
-  int iMaxActiveAI = iSqNear<iMinActiveAI ? iMinActiveAI : iSqNear; //like in player may be fully surrounded by them, so let these ones fight at least!
-  bool bCPUwiseAllowAI=true;
-
-  if(iTurnChkAI != game::GetTurn()){ //resetter and decider once per turn
-    bDoLimit=false;
-//      if(iPreviousTurnTotAI>iMaxActiveAI)
-//      if(v.size()>iMaxActiveAI)
-//        bDoLimit=true; //on next turn
-//      iPreviousTurnTotAI=0;
-    iTurnChkAI = game::GetTurn();
-
-    if(v2PlayerLastPos!=PLAYER->GetPos()){DBGLN; //because this is based on distance TODO if the player doesnt move, they may spread far away
-      v.clear();
-      for(int iY=0;iY<lvl->GetYSize();iY++){for(int iX=0;iX<lvl->GetXSize();iX++){
-        static lsquare* lsqr;lsqr = lvl->GetLSquare(iX,iY);
-        static character* c;c = lsqr->GetCharacter();
-        if(dynamic_cast<magicmushroom*>(c)!=NULL)
-          v.push_back(m);
-      }}
-      v2PlayerLastPos=PLAYER->GetPos();
-    }
-
-//    if(v.size()>iMaxActiveAI && iPreviousTurnActivatedAIs>iMinActiveAI)
-    if(iPreviousTurnActivatedAIs>iMaxActiveAI)
-      bDoLimit=true; //on next turn
-
-    iPreviousTurnActivatedAIs=0;
-  }
-
-  if(bDoLimit){
-    if(iTurnChkAI==game::GetTurn()){ //every magicmushroom
-//      iPreviousTurnTotAI++; //prepare to next turn
-//      if(!std::find(v.begin(), v.end(), m) != v.end()){
-//        v.push_back(m);
-//      }
-
-      if(iSqDist>iSqNear) // m->CanBeSeenByPlayer() wont work as it may be invisible
-        bCPUwiseAllowAI=false;
-    }
-  }
-
-  if(bCPUwiseAllowAI)
-    iPreviousTurnActivatedAIs++;
-
-  DBG8(v.size(),iPreviousTurnActivatedAIs,iTurnChkAI,bDoLimit,iDistLim,iSqNear,iMaxActiveAI,bCPUwiseAllowAI);
-  return bCPUwiseAllowAI;
-}
 void magicmushroom::GetAICommand()
 {
-  if(!MagicmushroomCPUwiseAI(this))return;
+  if(!CPUwiseAI(this))return;
 
   if(!(RAND() % 750))
   {
@@ -2197,6 +2116,8 @@ void genetrixvesana::FinalProcessForBone()
 
 void carnivorousplant::GetAICommand()
 {
+  if(!CPUwiseAI(this))return;
+  
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -2503,29 +2424,98 @@ truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 {
   if(!BlockedByArmour)
   {
-    Char->BeginTemporaryState(POISONED, 80 + RAND() % 40);
+    switch(RAND() % 10)
+    {
+     case 0: Char->BeginTemporaryState(LYCANTHROPY, 6000 + RAND_N(2000)); break;
+     case 1: Char->BeginTemporaryState(VAMPIRISM, 5000 + RAND_N(2500)); break;
+     case 2: Char->BeginTemporaryState(PARASITE_TAPE_WORM, 6000 + RAND_N(3000)); break;
+     case 3: Char->BeginTemporaryState(PARASITE_MIND_WORM, 400 + RAND_N(200)); break;
+     case 4: Char->GainIntrinsic(LEPROSY); break;
+     default: Char->BeginTemporaryState(POISONED, 80 + RAND() % 40); break;
+    }
     return true;
   }
   else
     return false;
 }
 
+void lobhse::CreateCorpse(lsquare* Square)
+{
+  largecreature::CreateCorpse(Square);
+  Square->AddItem(mangoseedling::Spawn());
+}
+
 void lobhse::GetAICommand()
 {
-  SeekLeader(GetLeader()); // will follow if tamed
+  /* Follow the leader, if any. */
+  SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
     return;
 
-  if(MoveRandomly())
+  if(GetHP() > (GetMaxHP() / 2))
+  {
+    /* Boss fight, first phase: Spin webs and attack when player is entangled. */
+    character* NearestChar = 0;
+    long NearestDistance = 0x7FFFFFFF;
+    v2 Pos = GetPos();
+    int Hostiles = 0;
+
+    for(int c = 0; c < game::GetTeams(); ++c)
+      if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+        for(character* p : game::GetTeam(c)->GetMember())
+          if(p->IsEnabled() && GetAttribute(WISDOM) < p->GetAttackWisdomLimit())
+          {
+            long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
+            ++Hostiles;
+
+            if((ThisDistance < NearestDistance
+                || (ThisDistance == NearestDistance && !(RAND() % 3)))
+               && p->CanBeSeenBy(this, false, IsGoingSomeWhere())
+               && (!IsGoingSomeWhere() || HasClearRouteTo(p->GetPos())))
+            {
+              NearestChar = p;
+              NearestDistance = ThisDistance;
+            }
+          }
+
+    if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
+    {
+      web* Web = web::Spawn();
+      Web->SetStrength(30);
+
+      if(GetLSquareUnder()->AddTrap(Web))
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s spins a web.", CHAR_NAME(DEFINITE));
+
+        EditAP(-1000);
+        return;
+      }
+    }
+
+    if(NearestChar)
+    {
+      if(NearestChar->IsStuck())
+        SetGoingTo(NearestChar->GetPos());
+      else
+        SetGoingTo((Pos << 1) - NearestChar->GetPos());
+
+      if(MoveTowardsTarget(true))
+        return;
+    }
+
+    if(MoveRandomly())
+      return;
+
+    EditAP(-1000);
     return;
-
-  EditAP(-1000);
-}
-
-void lobhse::CreateCorpse(lsquare* Square)
-{
-  largecreature::CreateCorpse(Square);
+  }
+  else
+  {
+    /* Boss fight, second phase: Attack all the time. */
+    character::GetAICommand();
+  }
 }
 
 void mindworm::GetAICommand()

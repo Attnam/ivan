@@ -11,6 +11,9 @@ Iter Vehemens ad Necem
 [![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v054.svg)](https://github.com/Attnam/ivan/compare/v054...master)
 [![Total Downloads](https://img.shields.io/github/downloads/attnam/ivan/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Attnam/ivan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Attnam/ivan/alerts/)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/Attnam/ivan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Attnam/ivan/context:cpp)
+
 Iter Vehemens ad Necem (IVAN) is a graphical roguelike game, which currently
 runs in Windows, DOS, Linux, and OS X. It features advanced bodypart and
 material handling, multi-colored lighting and, above all, deep gameplay.

@@ -60,6 +60,8 @@ long backpack::GetTotalExplosivePower() const
 
 long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
+//long ingot::GetTruePrice() const { return item::GetTruePrice() << 1; }
+
 col16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
 col16 itemcontainer::GetMaterialColorB(int) const { return MakeRGB16(80, 80, 80); }
@@ -500,7 +502,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
 item* brokenbottle::BetterVersion() const
 {
-  return potion::Spawn();
+  return potion::Spawn(GetConfig());
 }
 
 void brokenbottle::StepOnEffect(character* Stepper)
@@ -573,7 +575,7 @@ void lantern::SignalSquarePositionChange(int SquarePosition)
 item* potion::BetterVersion() const
 {
   if(!GetSecondaryMaterial())
-    return potion::Spawn();
+    return potion::Spawn(GetConfig());
   else
     return 0;
 }
@@ -1288,10 +1290,10 @@ void itemcontainer::PostConstruct()
 {
   lockableitem::PostConstruct();
   SetIsLocked(RAND_N(3));
-  
+
   if((GetConfig()&LOCK_BITS)&BROKEN_LOCK)
     SetIsLocked(false);
-  
+
   long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
   for(int c = 0; c < ItemNumber; ++c)
@@ -1756,14 +1758,16 @@ void wand::AddInventoryEntry(ccharacter*, festring& Entry, int, truth ShowSpecia
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
 
     if(TimesUsed == 1)
-      Entry << "g, used 1 time]";
+      Entry << ", used 1 time]";
     else if(TimesUsed)
-      Entry << "g, used " << TimesUsed << " times]";
+      Entry << ", used " << TimesUsed << " times]";
     else
-      Entry << "g]";
+      Entry << "]";
   }
 }
 
@@ -2674,7 +2678,10 @@ void holybanana::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, tru
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())
@@ -3776,7 +3783,10 @@ void ullrbone::AddInventoryEntry(const character* Viewer, festring& Entry, int, 
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())
@@ -4007,4 +4017,11 @@ truth gastrap::CheckPickUpEffect(character*)
 {
   SetIsActive(false);
   return true;
+}
+
+col16 mangoseedling::GetOutlineColor(int) const { return MakeRGB16(118, 158, 226); }
+alpha mangoseedling::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
 }

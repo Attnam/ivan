@@ -446,6 +446,14 @@ character* protosystem::CreateMonster(cfestring& What, int SpecialFlags, truth O
     return 0;
 }
 
+item* protosystem::CreateItemToCraft(cfestring& What)
+{
+  std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, false);
+  if(ID.first)
+    return ID.first->Spawn(ID.second);
+  return NULL;
+}
+
 item* protosystem::CreateItem(cfestring& What, truth Output)
 {
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, Output);
@@ -566,6 +574,9 @@ void protosystem::Initialize()
   {
     const prototype* Proto = protocontainer<item>::GetProtoData()[c]; DBG1(Proto->GetClassID());
     ItemConfigDataSize += Proto->GetConfigSize(); DBG1(Proto->GetConfigData());
+
+    if(Proto->GetConfigData()==NULL)
+      ABORT("missing prototype for '%s' ex. at item.dat add: %s { }",Proto->GetClassID(),Proto->GetClassID());
 
     if(Proto->GetConfigData()[0]->IsAbstract)
       --ItemConfigDataSize;

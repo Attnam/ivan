@@ -21,23 +21,27 @@
 
 /* Team data for the game */
 
-Teams = 16;
+Teams = 17;
 
 /*
  * Description of hard-coded teams:
- * 0 == PLAYER_TEAM == Player and pets
- * 1 == MONSTER_TEAM == Monsters, default relation to other teams == hostile
- * 2 == ATTNAM_TEAM == Residents of Attnam
- * 3 == SUMO_TEAM == Huang Ming Pong during an arena figth
- * 7 == NEW_ATTNAM_TEAM == natives and ostriches of New Attnam
- * 8 == COLONIST_TEAM == colonists of New Attnam
- * 9 == TOURIST_GUIDE_TEAM == dummy team which holds the village elder, who tourists follow
- * 10 == TOURIST_TEAM == tourists of New Attnam
- * 11 == BETRAYED_TEAM == pets which the player has angered
- * 12 == XINROCH_TOMB_ENTRY_TEAM == The dudes in the tomb entrance of the Xinroch Tomb story arc
- * 13 == XINROCH_TOMB_NECRO_TEAM == Necro chamber operators in Xinroch's tomb
- * 14 == XINROCH_TOMB_KAMIKAZE_DWARF_TEAM == the fanatics in the gas chambers
- * 15 == PRISONER_TEAM == prisoners in the Cathedral Cellar
+ *  0 == PLAYER_TEAM == Player and pets.
+ *  1 == MONSTER_TEAM == Monsters, by default hostile.
+ *  2 == ATTNAM_TEAM == Residents of Attnam.
+ *  3 == SUMO_TEAM == Huang Ming Pong during an arena fight.
+ *  4 == ANGEL_TEAM == Spawned hostile angels.
+ *  5 == GUILD_TEAM == Dungeon shopkeepers.
+ *  6 == IVAN_TEAM == Ivan and Vladimir.
+ *  7 == NEW_ATTNAM_TEAM == Natives and ostriches of New Attnam.
+ *  8 == COLONIST_TEAM == Colonists of New Attnam.
+ *  9 == TOURIST_GUIDE_TEAM == Dummy team which holds the village elder, whom the tourists follow.
+ * 10 == TOURIST_TEAM == Tourists of New Attnam.
+ * 11 == BETRAYED_TEAM == Pets which the player has angered.
+ * 12 == XINROCH_TOMB_ENTRY_TEAM == The dudes in the tomb entrance of the Xinroch Tomb story arc.
+ * 13 == XINROCH_TOMB_NECRO_TEAM == Necro chamber operators in Xinroch's tomb.
+ * 14 == XINROCH_TOMB_KAMIKAZE_DWARF_TEAM == The fanatics in the gas chambers.
+ * 15 == PRISONER_TEAM == Prisoners in the Cathedral Cellar.
+ * 16 == TERRA_TEAM == Terra in the Crystal Cave.
  */
 
 Team ATTNAM_TEAM;
@@ -115,6 +119,14 @@ Team XINROCH_TOMB_KAMIKAZE_DWARF_TEAM;
 {
   Relation 1, UNCARING;
   KillEvilness = 100;
+}
+
+Team TERRA_TEAM;
+{
+  Relation 1, UNCARING;
+  Relation 2, HOSTILE;
+  Relation 7, FRIEND;
+  KillEvilness = 150;
 }
 
 /* Dungeons to be included in the game */

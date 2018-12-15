@@ -35,12 +35,43 @@ web::~web()
   game::RemoveTrapID(TrapData.TrapID);
 }
 
+int web::GetRemoveTrapModifier(character* C)
+{
+  return 7 * GetTrapBaseModifier()
+         / Max(C->GetAttribute(DEXTERITY)
+               + C->GetAttribute(ARM_STRENGTH), 1);
+}
+
+truth web::TryToTearDown(character* Actor,int Modifier)
+{
+  if(Modifier==-1)
+    Modifier = GetRemoveTrapModifier(Actor);
+  
+  if(!RAND_N(Max(Modifier << 1, 2)))
+  {
+    //if(GetLSquareUnder()->GetPos()==Actor->GetPos())C->RemoveTrap(GetTrapID());else
+    if(GetLSquareUnder()->GetCharacter())
+      GetLSquareUnder()->GetCharacter()->RemoveTrap(GetTrapID());
+    TrapData.VictimID = 0;
+    GetLSquareUnder()->RemoveTrap(this);
+    SendToHell();
+
+    if(Actor->IsPlayer())
+      ADD_MESSAGE("You tear the web down.");
+    else if(Actor->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tears the web down.", Actor->CHAR_NAME(DEFINITE));
+
+    Actor->EditAP(-500);
+    return true;
+  }
+  
+  return false;
+}
+
 truth web::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = 7 * GetTrapBaseModifier()
-                 / Max(Victim->GetAttribute(DEXTERITY)
-                       + Victim->GetAttribute(ARM_STRENGTH), 1);
+  int Modifier = GetRemoveTrapModifier(Victim);
 
   if(!RAND_N(Max(Modifier, 2)))
   {
@@ -57,21 +88,8 @@ truth web::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  if(!RAND_N(Max(Modifier << 1, 2)))
-  {
-    Victim->RemoveTrap(TrapID);
-    TrapData.VictimID = 0;
-    GetLSquareUnder()->RemoveTrap(this);
-    SendToHell();
-
-    if(Victim->IsPlayer())
-      ADD_MESSAGE("You tear the web down.");
-    else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s tears the web down.", Victim->CHAR_NAME(DEFINITE));
-
-    Victim->EditAP(-500);
+  if(TryToTearDown(Victim,Modifier))
     return true;
-  }
 
   Modifier = GetTrapBaseModifier()
              * (Victim->GetAttribute(DEXTERITY)

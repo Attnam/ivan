@@ -28,6 +28,8 @@
 #include "bitmap.h"
 #include "igraph.h"
 
+#include "dbgmsgproj.h"
+
 felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
 festring msgsystem::LastMessage;
 festring msgsystem::BigMessage;
@@ -76,7 +78,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
     if(BigMessage.GetSize())
       BigMessage << ' ';
 
-    BigMessage << Buffer;
+    BigMessage << Buffer; DBG1(Buffer.CStr());
     return;
   }
 
@@ -128,7 +130,7 @@ void msgsystem::AddMessage(cchar* Format, ...)
 
   Temp << ' ';
   int Marginal = Temp.GetSize();
-  Temp << Buffer;
+  Temp << Buffer; DBG1(Temp.CStr());
 
   std::vector<festring> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
@@ -334,7 +336,7 @@ void soundsystem::initSound()
 
   if(SoundState == 0)
   {
-    festring fsSndDbgFile=game::GetHomeDir()+"/"+"ivanSndDebug.txt";
+    festring fsSndDbgFile = game::GetUserDataDir() + "ivanSndDebug.txt";
     FILE *debf = fopen(fsSndDbgFile.CStr(), "wt"); //"a");
     if(debf)fprintf(debf, "This file can be used to diagnose problems with sound.\n");
 

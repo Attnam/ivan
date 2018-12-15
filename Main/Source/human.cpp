@@ -1780,6 +1780,53 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
+void humanoid::SwitchToCraft(recipedata rpd)
+{DBGLN;
+  craft* Craft = craft::Spawn(this);DBGLN;
+
+  if(rpd.GetTool()!=NULL){DBGLN;
+    if(GetRightArm())
+    {DBGLN;
+      item* Item = GetRightArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+        GetRightArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetLeftArm())
+    {DBGLN;
+      item* Item = GetLeftArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+        GetLeftArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetMainWielded() != rpd.GetTool())
+    {DBGLN;
+      Craft->SetMoveCraftTool(true);
+      rpd.GetTool()->RemoveFromSlot();
+
+      if(GetMainArm() && GetMainArm()->IsUsable())
+        GetMainArm()->SetWielded(rpd.GetTool());
+      else
+        GetSecondaryArm()->SetWielded(rpd.GetTool());
+    }
+    else
+      Craft->SetMoveCraftTool(false);
+  }DBGLN;
+
+  //TODO let the GetTool2() be equipped too
+
+  Craft->SetCraftWhat(rpd);DBGLN;
+  SetAction(Craft);DBGLN;
+}
+
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   dig* Dig = dig::Spawn(this);
@@ -5282,35 +5329,88 @@ void tourist::GetAICommand()
 
 void imperialist::BeTalkedTo()
 {
-  decosadshirt* Shirt = static_cast<decosadshirt*>(PLAYER->SearchForItem(this, &item::IsDecosAdShirt));
-
-  if(Shirt)
+  if(GetConfig() == VICE_ROY)
   {
-    ulong Reward = Shirt->GetEquippedTicks() / 500;
+    if(GetRelation(PLAYER) != HOSTILE)
+    {
+      decosadshirt* Shirt = static_cast<decosadshirt*>(PLAYER->SearchForItem(this, &item::IsDecosAdShirt));
 
-    if(Reward)
-    {
-      ADD_MESSAGE("%s smiles. \"I see you have advertised our company diligently. "
-                  "Here's %ldgp as a token of my gratitude.\"", CHAR_NAME(DEFINITE), Reward);
-      PLAYER->EditMoney(Reward);
-      Shirt->SetEquippedTicks(0);
-      return;
+      if(Shirt)
+      {
+        ulong Reward = Shirt->GetEquippedTicks() / 500;
+
+        if(Reward)
+        {
+          ADD_MESSAGE("%s smiles. \"I see you have advertised our company diligently. "
+                      "Here's %ldgp as a token of my gratitude.\"", CHAR_NAME(DEFINITE), Reward);
+          PLAYER->EditMoney(Reward);
+          Shirt->SetEquippedTicks(0);
+          return;
+        }
+        else if(!(RAND() % 5))
+        {
+          ADD_MESSAGE("\"Come back when you've worn the shirt for some time and I'll reward you generously!\"");
+          return;
+        }
+      }
     }
-    else if(!(RAND() % 5))
+
+    static long Said;
+
+    if(GetRelation(PLAYER) == HOSTILE)
+      ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
+    else if(!game::PlayerIsSumoChampion())
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
+    else
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
+  }
+  else if(GetConfig() == HOARD_MASTER && (PLAYER->GetMoney() >= 50000) &&
+          game::TweraifIsFree() && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    if(game::TruthQuestion(CONST_S("Do you want to bribe the hoardmaster? [y/n]"), REQUIRES_ANSWER))
     {
-      ADD_MESSAGE("\"Come back when you've worn the shirt for some time and I'll reward you generously!\"");
+      game::TextScreen(CONST_S("\"Hmm, so you're saying you 'freed' New Attnam, right? And when you say\n"
+                               "'freed', you mean 'slaughtered our soldiers and the viceroy'. Hmm...\"\n"
+                               "\n"
+                               "\"And what makes you think I won't call the guards this very instant, hmm?\n"
+                               "I could hand you over to the master torturer. Did you know he and\n"
+                               "the late viceroy were brothers? Not especially close brothers, but I think\n"
+                               "he'll still want to roast you very slowly over a firepit; flay and cut and\n"
+                               "tear and break you; and then have the priests heal you up to start over again.\n"
+                               "So why did you come to tell me this, hmm?\"\n"));
+
+      game::TextScreen(CONST_S("\"Fifty thousand gold?! Oh, sorry I cried out. Hmm, yes, now I can see your point.\"\n"
+                               "\n"
+                               "\"But you do realize that the high priest will just send a war ship or two\n"
+                               "in the Spring, and your precious New Attnam will have a new viceroy and\n"
+                               "a new squad of soldiers? Even if there were no plantations, we cannot have\n"
+                               "bits of the Empire just breaking free. It sets a bad example.\"\n"
+                               "\n"
+                               "\"Hmm, so fifty thousand gold pieces a year. And of course, you will\n"
+                               "provide a steady supply of bananas. Hmm...\"\n"));
+
+      game::TextScreen(CONST_S("\"Hmm...\"\n"));
+
+      game::TextScreen(CONST_S("\"Very well! In that case, trouble yourself not with the master torturer,\n"
+                               "nor with the high priest. I will handle things here, as long as you handle\n"
+                               "things in your village. We have a deal. Hmm...\"\n"
+                               "\n"
+                               "\"Congratulations, mister. It's nice to meet the new viceroy of Tweraif.\"\n"));
+
+      game::PlayVictoryMusic();
+      game::TextScreen(CONST_S("You are victorious!"));
+
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
+      festring Msg = CONST_S("became the new viceroy of Tweraif and worked hard for the well-being of his people");
+      AddScoreEntry(Msg, 2, false);
+      game::End(Msg);
       return;
     }
   }
-
-  static long Said;
-
-  if(GetRelation(PLAYER) == HOSTILE)
-    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
-  else if(!game::PlayerIsSumoChampion())
-    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
   else
-    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
+    humanoid::BeTalkedTo();
 }
 
 character* humanoid::CreateZombie() const
@@ -6569,4 +6669,127 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
       }
 
   return false;
+}
+
+void elder::BeTalkedTo()
+{
+  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    game::TextScreen(CONST_S("\"My boy, my wonderful boy! From the very day I found you,\n"
+                             "I knew there was something special in you, something even\n"
+                             "the accursed hippos couldn't spoil. And now you have saved us\n"
+                             "from valpurian clutches and given us a chance at freedom!\n"
+                             "Thank you so very, very much.\"\n"
+                             "\n"
+                             "\"Alas, I'm afraid Tweraif is not yet out of the proverbial woods.\n"
+                             "We are few and the Attnamese army is massive. Their battleships\n"
+                             "will be ready once the winter ends and the ice thaws, and they will\n"
+                             "not hesitate to bring their tyranny back. I still don't get why they\n"
+                             "love those bananas so much.\"\n"
+                             "\n"
+                             "\"We have no hope to defeat them in a fight, so fight them we shan't.\"\n"));
+
+    game::TextScreen(CONST_S("\"Let me tell you a story, or a myth if you will.\"\n"
+                             "\n"
+                             "\"Once upon a time, there was a town. No one could find the town\n"
+                             "unless they already knew where it was, and on one could enter\n"
+                             "uninvited. The town was called Mondedr and it was concealed\n"
+                             "from the world by the power of Cleptia. It was never conquered.\"\n"
+                             "\n"
+                             "\"The thing is, I know for a fact that Mondedr exists, and that\n"
+                             "their cloaking spell can be replicated. Attnam tried to take our\n"
+                             "goddess away, but she is still strong in our hearts. I have faith\n"
+                             "she will protect this island from valpurians, just as Cleptia did\n"
+                             "for Mondedr.\"\n"));
+
+    game::TextScreen(CONST_S("\"The prayers are simple, but no god can affect the world uninvited,\n"
+                             "and a miracle of such strength requires more power than any priest\n"
+                             "could channel. We need a conduit, something close to Silva herself.\"\n"
+                             "\n"
+                             "\"We need a scion of the Holy Mango World-tree.\"\n"
+                             "\n"
+                             "\"You have done so much for your village, yet I must ask for another\n"
+                             "favour. You know that the late viceroy destroyed the altar of Silva\n"
+                             "in our shrine, but you might not know that there is another shrine of Silva\n"
+                             "on this island, or rather below it. I would implore you to go down into\n"
+                             "the underwater tunnel and find a strange formation of rock where our people\n"
+                             "buried the stairs to the crystal cave of Silva under a cave-in,\n"
+                             "once it was obvious that we will be conquered. We couldn't let the Attnamese\n"
+                             "desecrate that most holy place. There, in an ancient temple of Silva,\n"
+                             "grows a tree of wondrous power, a tiny sapling of the World-tree.\"\n"));
+
+    game::TextScreen(CONST_S("\"Please, bring back a seedling of this tree. Once we plant it here,\n"
+                             "in the village, I can cast the spell and no army will find us.\n"
+                             "The first valpurian attack surprised us, caught us unaware, unprepared\n"
+                             "and unable to defend our land. So let's not repeat history and\n"
+                             "get ready for them this time.\"\n"));
+
+    GetArea()->SendNewDrawRequest();
+    ADD_MESSAGE("\"Oh, and give my regards to Terra, if she's still alive.\"");
+
+    HasBeenSpokenTo = true;
+  }
+  else
+    humanoid::BeTalkedTo();
+}
+
+void terra::BeTalkedTo()
+{
+  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
+                             "\n"
+                             "\"I have volunteered all those years ago to be buried here in this cave\n"
+                             "along with the shrine, to tend it and to protect the rites and traditions\n"
+                             "that the Attnamese would rather see burnt and forgotten. Yet I have hoped\n"
+                             "every day that a word would come about an end to the tyranny, that\n"
+                             "I would be free to return home. I guess my hope dwindled over the years,\n"
+                             "but you are here now and my wishes came true. Thank you.\"\n"
+                             "\n"
+                             "\"Nevertheless, I know what you came for. A seedling of this holy tree,\n"
+                             "to channel the power of Silva and shroud Tweraif against further attacks.\n"
+                             "I wish it was that simple, but I have no seeds to give you.\"\n"));
+
+    game::TextScreen(CONST_S("\"You see, this shrine is built in a remote, lost cave for a reason.\n"
+                             "It is a guarding post, a bulwark, and a seal on a prison.\"\n"
+                             "\n"
+                             "\"One thousand years ago, Nefas, the goddess of forbidden pleasures,\n"
+                             "came to Scabies, the goddess of diseases, mutations and deformity,\n"
+                             "in the form of a handsome hero, and seduced her. Whether it was\n"
+                             "for Nefas' own amusement, or the humiliation Scabies suffered\n"
+                             "when she discovered who she laid with, no one knows, but Scabies got\n"
+                             "pregnant and eventually delivered a divine baby - a monstrous spider\n"
+                             "the likes of which this world had never seen before.\"\n"
+                             "\n"
+                             "\"The spider was a behemoth of her kind, massive and terrifying\n"
+                             "and truly detestable. Spurned and abandoned by both her mothers,\n"
+                             "the spider rampaged through the world until she was defeated and\n"
+                             "bound by a circle of druids and priests. Her name is Lobh-se and\n"
+                             "she is imprisoned below this cave, trapped by the power of Silva\n"
+                             "channeled through the Holy Mango Tree.\"\n"));
+
+    game::TextScreen(CONST_S("\"Lobh-se is a terrible creature, an avatar of famine and consumption.\n"
+                             "She breeds thousands of lesser spiders and immediately devours them\n"
+                             "in her endless hunger. She strains against her bonds and even comes here,\n"
+                             "feasting on the animals attracted to the magicks of Silva, and on the few\n"
+                             "plants that scrape a living this deep underground. I can somewhat keep her\n"
+                             "at bay, protecting myself and the tree, but the magic of the holy seedlings\n"
+                             "is sweet to Lobh-se, and not strong enough to ward her off. She devoured\n"
+                             "the last seedling just a few days ago.\"\n"
+                             "\n"
+                             "\"You are a hero already for liberating our village,\n"
+                             "but if you really wish to ensure the safety of Tweraif, you have to venture\n"
+                             "deeper, to the very lair of Lobh-se. She may be a godling, but her body\n"
+                             "is still mortal. Cut the seedling from her gullet, and I will keep her spirit\n"
+                             "bound so that it cannot create a new body to harass this world.\"\n"));
+
+    game::TextScreen(CONST_S("\"May Silva bless you in your doings.\"\n"));
+
+    GetArea()->SendNewDrawRequest();
+    ADD_MESSAGE("\"Oh, and give my love to Kaethos, if he's still alive.\"");
+
+    HasBeenSpokenTo = true;
+  }
+  else
+    priest::BeTalkedTo();
 }

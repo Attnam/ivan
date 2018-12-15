@@ -88,9 +88,7 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(game::IsQuestItem(ForSale))
     {
       ADD_MESSAGE("\"I think it is yours. Take it.\"");
       return true;
@@ -138,10 +136,12 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::TruthQuestion(CONST_S("Are you sure you want to "
-                                   "commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to steal it? [y/N]")))
     {
-      Customer->Hostility(GetMaster());
+      if(!Customer->TryToStealFromShop(GetMaster(), ForSale))
+      {
+        Customer->Hostility(GetMaster());
+      }
       return true;
     }
     else
@@ -299,16 +299,20 @@ truth cathedral::PickupItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || !Item->GetTruePrice()
-       || Item->IsEncryptedScroll())
+    if(game::IsQuestItem(Item) && !Item->IsTheAvatar())
+      return true;
+
+    if(!Item->GetTruePrice())
       return true;
 
     ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
 
-    if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Do you want to steal it? [y/N]")))
     {
-      Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+      if(!Visitor->TryToStealFromShop(GetMaster(), Item))
+      {
+        Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+      }
       return true;
     }
   }
@@ -324,9 +328,7 @@ truth cathedral::DropItem(character* Visitor, item* Item, int)
 
   if(Visitor->IsPlayer())
   {
-    if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt()
-       || Item->IsPetrussNut() || Item->IsTheAvatar()
-       || Item->IsEncryptedScroll())
+    if(game::IsQuestItem(Item))
     {
       ADD_MESSAGE("Donating this to the Cathedral wouldn't "
                   "be wise. You may still need it.");
@@ -564,10 +566,12 @@ truth library::PickupItem(character* Customer, item* ForSale, int Amount)
     }
   }
   else
-    if(game::TruthQuestion(CONST_S("Are you sure you want to "
-                                   "commit this thievery? [y/N]")))
+    if(game::TruthQuestion(CONST_S("Are you sure you want to steal it? [y/N]")))
     {
-      Customer->Hostility(GetMaster());
+      if(!Customer->TryToStealFromShop(GetMaster(), ForSale))
+      {
+        Customer->Hostility(GetMaster());
+      }
       return true;
     }
     else
@@ -601,9 +605,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
 
   if(Customer->CanBeSeenBy(GetMaster()))
   {
-    if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt()
-       || ForSale->IsPetrussNut() || ForSale->IsTheAvatar()
-       || ForSale->IsEncryptedScroll())
+    if(game::IsQuestItem(ForSale))
     {
       ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
       return false;
@@ -700,7 +702,10 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
     if(game::TruthQuestion(CONST_S("Do you still want to do this? [y/N]")))
     {
-      Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+      if(!Hungry->TryToStealFromShop(GetMaster(), Item))
+      {
+        Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+      }
       return true;
     }
   }
@@ -710,13 +715,42 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
 truth bananadroparea::DropItem(character* Dropper, item* Item, int)
 {
-  return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam())
-          == HOSTILE
-          || (Dropper->IsPlayer()
-              && ((!Item->IsBanana() && !Item->IsLanternOnWall())
-                  || game::TruthQuestion(CONST_S("Do you wish to "
-                                                 "donate this item "
-                                                 "to the town? [y/N]")))));
+  if(Dropper->IsPlayer() && (Item->IsMangoSeedling()) &&
+    (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) != HOSTILE))
+  {
+    if(game::TweraifIsFree())
+    {
+      if(game::TruthQuestion(CONST_S("Do you wish to plant the mango seedling? [y/n]")))
+      {
+        game::PlayVictoryMusic();
+        game::TextScreen(CONST_S("You plant the seedling of the Holy Mango World-tree and the people\n"
+                                 "of your home village gather around, cheering. Within moments,\n"
+                                 "the seedling sprouts and grows, nourished by the returning\n"
+                                 "favour of Silva. You feel Her glory permeating the whole island,\n"
+                                 "hiding it from the forces of Valpurus, should they attempt\n"
+                                 "to return. Tweraif can be free again!\n\nYou are victorious!"));
+
+        game::GetCurrentArea()->SendNewDrawRequest();
+        game::DrawEverything();
+        PLAYER->ShowAdventureInfo();
+        festring Msg = CONST_S("restored Tweraif to independence and remained as its protector");
+        PLAYER->AddScoreEntry(Msg, 2, false);
+        game::End(Msg);
+        return true;
+      }
+    }
+    else
+    {
+      ADD_MESSAGE("You feel that the climate is not quite right for growing mangoes.");
+      return false;
+    }
+  }
+
+  return (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE
+          || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall())
+          || game::TruthQuestion(CONST_S("Do you wish to "
+                                         "donate this item "
+                                         "to the town? [y/N]")))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
