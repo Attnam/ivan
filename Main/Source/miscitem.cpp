@@ -1239,13 +1239,14 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && game::GetTick() - LastUsed < 2000)
+  if(LastUsed && ((game::GetTick() - LastUsed) < Whistler->GetMagicItemCooldown(2000)))
   {
     whistle::BlowEffect(Whistler);
     return;
   }
   else
     LastUsed = game::GetTick();
+    Whistler->EditExperience(MANA, 150, 1 << 12);
 
   if(Whistler->IsPlayer())
   {
@@ -2229,9 +2230,10 @@ truth horn::Apply(character* Blower)
     return false;
   }
 
-  if(!LastUsed || game::GetTick() - LastUsed >= 2500)
+  if(!LastUsed || game::GetTick() - LastUsed >= Blower->GetMagicItemCooldown(2500))
   {
     LastUsed = game::GetTick();
+    Blower->EditExperience(MANA, 150, 1 << 12);
 
     cchar* SoundDescription;
     switch(GetConfig())
@@ -2770,7 +2772,7 @@ void horn::FinalProcessForBone()
 
 truth charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed && game::GetTick() - LastUsed < 10000)
+  if(LastUsed && game::GetTick() - LastUsed < Charmer->GetMagicItemCooldown(10000))
   {
     if(Charmer->IsPlayer())
     {
@@ -2793,6 +2795,8 @@ truth charmlyre::Apply(character* Charmer)
   else
   {
     LastUsed = game::GetTick();
+    Charmer->EditExperience(MANA, 150, 1 << 12);
+
     if(Charmer->IsPlayer())
     {
       if(Charmer->CanHear())
@@ -3758,14 +3762,14 @@ truth ullrbone::Zap(character* Zapper, v2, int Direction)
 
     beamdata Beam
       (
-	Zapper,
-	CONST_S("killed by ") + GetName(INDEFINITE),
-	Zapper->GetPos(),
-	YELLOW,
-	BEAM_LIGHTNING,
-	Direction,
-	50,
-	0
+	      Zapper,
+	      CONST_S("killed by ") + GetName(INDEFINITE),
+	      Zapper->GetPos(),
+	      YELLOW,
+	      BEAM_LIGHTNING,
+	      Direction,
+	      50,
+	      0
       );
 
     (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
@@ -4024,4 +4028,26 @@ alpha mangoseedling::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+alpha skeletonkey::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  return 0;
+}
+
+col16 skeletonkey::GetOutlineColor(int Frame) const
+{
+  switch((Frame&127) >> 5)
+  {
+   case 0: return BLUE;
+   case 1: return GREEN;
+   case 2: return RED;
+   case 3: return YELLOW;
+  }
+  return TRANSPARENT_COLOR;
 }

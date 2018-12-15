@@ -475,7 +475,19 @@ truth character::HasBeenSeen() const
 { return DataBase->Flags & HAS_BEEN_SEEN; }
 truth character::IsTemporary() const
 { return GetTorso()->GetLifeExpectancy(); }
-cchar* character::GetNormalDeathMessage() const { return "killed @k"; }
+
+cchar* character::GetNormalDeathMessage() const
+{
+  const char* killed_by[] = { "murdered @k", "eliminated @k", "slain @k",
+    "dismembered @k", "sent to the next life @k", "overpowered @k",
+    "killed @k", "inhumed @k", "dispatched @k", "exterminated @k",
+    "done in @k", "defeated @k", "struck down @k", "offed @k", "mowed down @k",
+    "taken down @k", "sent to the grave @k", "destroyed @k", "executed @k",
+    "slaughtered @k", "annihilated @k", "finished @k", "neutralized @k",
+    "obliterated @k", "snuffed @k", "done away with @k", "put to death @k" };
+  return killed_by[RAND() % 27];
+}
+
 festring character::GetGhostDescription() const
 { return " of " + GetName(INDEFINITE); }
 
@@ -1154,23 +1166,23 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
         EditAP(-GetMoveAPRequirement(ED) >> 1);
         EditNP(-24 * ED);
         EditExperience(AGILITY, 125, ED << 7);
-        int Base = 10000;
+        int Base = 1000;
 
         if(IsPlayer())
           switch(GetHungerState())
           {
            case SATIATED:
-            Base = 11000;
+            Base = 1100;
             break;
            case BLOATED:
-            Base = 12500;
+            Base = 1250;
             break;
            case OVER_FED:
-            Base = 15000;
+            Base = 1500;
             break;
           }
 
-        EditStamina(-Base / Max(GetAttribute(LEG_STRENGTH), 1), true);
+        EditStamina(GetAdjustedStaminaCost(-Base, Max(GetAttribute(LEG_STRENGTH), 1)), true);
       }
       else
       {
@@ -3644,7 +3656,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, v2 HitPos
    case HAS_HIT:
    case HAS_BLOCKED:
    case DID_NO_DAMAGE:
-    if(IsEnabled() && !CheckBalance(KickDamage))
+    if(IsEnabled() && (!CheckBalance(KickDamage) || (Boot && Boot->IsKicking())))
     {
       if(IsPlayer())
         ADD_MESSAGE("The kick throws you off balance.");
@@ -4706,6 +4718,11 @@ void character::TeleportRandomly(truth Intentional)
       }
     }
   }
+  else if(IsPlayer())
+  {
+    // This is to prevent uncontrolled teleportation from going unnoticed by players.
+    game::AskForKeyPress(CONST_S("You teleport! [press any key to continue]"));
+  }
 
   if(IsPlayer())
     ADD_MESSAGE("A rainbow-colored whirlpool twists the existence around you. "
@@ -5281,6 +5298,11 @@ void character::Regenerate()
     return;
 
   RegenerationBonus *= (50 + GetAttribute(ENDURANCE));
+
+  if(StateIsActivated(REGENERATION))
+  {
+    RegenerationBonus *= GetAttribute(ENDURANCE) /*<< 1*/;
+  }
 
   if(Action && Action->IsRest())
   {
@@ -6048,7 +6070,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
       long DexExp = Weight ? Limit(75000L / Weight, 75L, 300L) : 300;
       Arm->EditExperience(ARM_STRENGTH, StrExp, 1 << 8);
       Arm->EditExperience(DEXTERITY, DexExp, 1 << 8);
-      EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
+      EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(ARM_STRENGTH)), false);
 
       if(Arm->TwoHandWieldIsActive())
       {
@@ -7210,31 +7232,78 @@ void character::DisplayStethoscopeInfo(character*) const
   game::RegionSilhouetteEnable(false);
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
-  Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Endurance:    ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Perception:   ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Mana: ") + GetAttribute(MANA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Wisdom:       ") + GetAttribute(WISDOM), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Willpower:    ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Charisma:     ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Mana:         ") + GetAttribute(MANA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Height: ") + GetSize() + " cm", LIGHT_GRAY);
   Info.AddEntry(CONST_S("Weight: ") + GetTotalCharacterWeight() + " kg", LIGHT_GRAY);
-  Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Hit points: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
 
+  Info.AddEntry(CONST_S("Body parts:"), LIGHT_GRAY);
   festring EntryBP;
   for(int c = 0; c < BodyParts; ++c)
   {
     bodypart* BodyPart = GetBodyPart(c);
-    if(!BodyPart)continue;
+    if(!BodyPart) continue;
 
     EntryBP.Empty();
     if(BodyPart->GetMainMaterial()->GetConfig() == GetTorso()->GetMainMaterial()->GetConfig())
     {
       BodyPart->GetMainMaterial()->AddName(EntryBP, UNARTICLED);
-      EntryBP<<" ";
+      EntryBP << " ";
     }
     BodyPart->AddName(EntryBP, UNARTICLED); //this already says the material if differs from torso
-    Info.AddEntry(EntryBP, LIGHT_GRAY);
+    Info.AddEntry(EntryBP, BodyPart->GetMainMaterial()->GetColor());
+  }
+
+  Info.AddEntry(CONST_S(""), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Status effects:"), LIGHT_GRAY);
+
+  if(GetTalent() != GetWeakness())
+  {
+    if(GetTalent())
+    {
+      switch(GetTalent())
+      {
+        case TALENT_STRONG:
+         Info.AddEntry("Strong", LIGHT_GRAY);
+         break;
+        case TALENT_FAST_N_ACCURATE:
+         Info.AddEntry("Swift", LIGHT_GRAY);
+         break;
+        case TALENT_HEALTHY:
+         Info.AddEntry("Healthy", LIGHT_GRAY);
+         break;
+        case TALENT_CLEVER:
+         Info.AddEntry("Clever", LIGHT_GRAY);
+         break;
+      }
+    }
+    if(GetWeakness())
+    {
+      switch(GetWeakness())
+      {
+        case TALENT_STRONG:
+         Info.AddEntry("Weak", LIGHT_GRAY);
+         break;
+        case TALENT_FAST_N_ACCURATE:
+         Info.AddEntry("Clumsy", LIGHT_GRAY);
+         break;
+        case TALENT_HEALTHY:
+         Info.AddEntry("Frail", LIGHT_GRAY);
+         break;
+        case TALENT_CLEVER:
+         Info.AddEntry("Dim", LIGHT_GRAY);
+         break;
+      }
+    }
   }
 
   if(GetAction())
@@ -12193,7 +12262,7 @@ truth character::ReceiveSirenSong(character* Siren)
     else
       ADD_MESSAGE("You hear a beautiful song.");
 
-    Stamina -= (1 + RAND_N(4)) * 10000;
+    EditStamina(-((1 + RAND_N(4)) * 10000), true);
     return true;
   }
 
@@ -12685,6 +12754,28 @@ truth character::CheckAIZapOpportunity()
   //       No friendly fire!
   // (3) - Check inventory for zappable item.
   // (4) - Zap item in direction where the enemy is.
+}
+
+int character::GetAdjustedStaminaCost(int BaseCost, int Attribute)
+{
+  if(Attribute > 1)
+  {
+    return BaseCost / log10(Attribute);
+  }
+
+  return BaseCost / 0.20;
+}
+
+int character::GetMagicItemCooldown(int BaseCooldown)
+{
+  int Attribute = GetAttribute(MANA);
+
+  if(Attribute > 1)
+  {
+    return BaseCooldown / log10(Attribute);
+  }
+
+  return BaseCooldown / 0.20;
 }
 
 truth character::TryToStealFromShop(character* Shopkeeper, item* ToSteal)
