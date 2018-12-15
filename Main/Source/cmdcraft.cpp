@@ -35,7 +35,7 @@ void craftcore::AddSuspended(const recipedata& rpd)
       ABORT("this crafting was already suspended '%s'",vSuspended[i].id().CStr());
 
 //  rpd.rc.ClearRefs();
-  
+
   vSuspended.push_back(rpd);
 }
 
@@ -163,7 +163,7 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
   }
 
   rpd.rc.ClearRefs(); //good to cleanup, will be set again also
-  
+
   rpd.rc.integrityCheck();
 
   bool bReqSamePos = false;
@@ -588,7 +588,7 @@ struct ci{
   bool bAllowWood=true;
   bool bAllowBones=true;
   int iMinMainMaterStr=0;
-  
+
   float fUsablePercVol=1.0;
 };
 struct recipe{
@@ -636,14 +636,16 @@ struct recipe{
 
   bool whereRaw(recipedata& rpd,festring fsMsg,bool acceptSelfLocation=false){
     int Dir = game::DirectionQuestion(fsMsg, false, acceptSelfLocation);
-    v2 v2W = rpd.rc.H()->GetPos() + game::GetMoveVector(Dir);
-    if(Dir != DIR_ERROR && rpd.rc.H()->GetArea()->IsValidPos(v2W)){
-      rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(v2W);
-      return true;
+    if(Dir != DIR_ERROR) {
+      v2 v2W = rpd.rc.H()->GetPos() + game::GetMoveVector(Dir);
+      if(rpd.rc.H()->GetArea()->IsValidPos(v2W)){
+        rpd.lsqrPlaceAt = rpd.rc.H()->GetNearLSquare(v2W);
+        return true;
+      }
     }
     return false;
   }
-  
+
   bool where(recipedata& rpd,bool acceptSelfLocation=false){
     if(whereRaw(rpd,"Build it where?",acceptSelfLocation))
       if(rpd.lsqrPlaceAt!=NULL && rpd.lsqrPlaceAt->GetOLTerrain()==NULL && rpd.lsqrPlaceAt->GetCharacter()==NULL){
@@ -902,16 +904,16 @@ struct recipe{
   ){DBGLN;
     if(CI.fUsablePercVol>1.0 || CI.fUsablePercVol<=0)
       ABORT("usable vol is max 100%% %f",CI.fUsablePercVol);
-    
+
     /**
      * ex.: vol=100; usable=0.5; req=200=100/0.5;
-     * remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3, 
+     * remaining lump: after shapping the stone, should become lump, ex.: dagger 25cm3 req 33cm3,
      * prepare a stone with 25cm3 and a lump with 8cm3
      */
-    long reqVolTotal = reqVolPrecise/CI.fUsablePercVol; 
-    
+    long reqVolTotal = reqVolPrecise/CI.fUsablePercVol;
+
     long reqVol = reqVolTotal;
-  
+
     if(reqVol==0)
       ABORT("ingredient required 0 volume?");
 
@@ -964,17 +966,17 @@ struct recipe{
 
         if(reqVol<=0){
           long lRemainingVol = reqVol * -1; //beyond required
-          
+
           if(CI.fUsablePercVol<1.0) //while shapping this is what is "lost"
             lRemainingVol += reqVolTotal * (1.0 - CI.fUsablePercVol); //ex.: a round rock being shaped into a spear tip
-          
+
           if(lRemainingVol>0 && CI.bMainMaterRemainsBecomeLump){
             long lVolM = matM->GetVolume();
             lVolM -= lRemainingVol; //to sub
             if(lVolM<=0)
               ABORT("ingredient volume reduced to negative or zero %ld %ld %s %s",lVolM,lRemainingVol,matM->GetName(DEFINITE).CStr(),ToUse[i]->GetNameSingular().CStr());
             if(!CI.bMultSelect && lVolM!=reqVolPrecise) //TODO use error margin because of float VS integer calc? ex.: if diff is +1 or -1, just allow it.
-              ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol); 
+              ABORT("remaining vol calc needs fixing %ld != %ld, %f, %ld",lVolM,reqVolPrecise,CI.fUsablePercVol,lRemainingVol);
             matM->SetVolume(lVolM);
 
 //            bool bForceLump = CI.fUsablePercVol<1.0;
@@ -1158,14 +1160,14 @@ struct recipe{
 
 /**
  * as we can't kick webs...
- * 
+ *
  * this is a special kind of "recipe"
  * is a way to change the existing environment, like engrave does,
  * but this one was implemented as crafting code
  * so in short, this could be a command like engrave is, but was implemented thru crafting.
- * 
+ *
  * TODO
- * may be, more functionality could be added, like collect web (spiker silk) to be able to 
+ * may be, more functionality could be added, like collect web (spiker silk) to be able to
  * craft leather/clothing or other things.
  * may be even recreate a single square spider web with it's strength based on craft skill!
  */
@@ -1180,7 +1182,7 @@ struct srpCutWeb : public recipe{
       rpd.bAlreadyExplained=true; //no need to explain a cancelled action
       return false;
     }
-    
+
     web* w=NULL;
     std::vector<trap*> TrapVector;
     rpd.lsqrPlaceAt->FillTrapVector(TrapVector);
@@ -1195,9 +1197,9 @@ struct srpCutWeb : public recipe{
       rpd.bAlreadyExplained=true;
       return false;
     }
-    
+
     humanoid* h = rpd.rc.H();
-    
+
     arm* ra = h->GetRightArm();
     arm* la = h->GetLeftArm();
     if(ra && !ra->IsUsable())ra=NULL;
@@ -1207,9 +1209,9 @@ struct srpCutWeb : public recipe{
       rpd.bAlreadyExplained=true;
       return false;
     }
-    
+
     bool bSelfPos = rpd.lsqrPlaceAt->GetPos() == h->GetPos();
-    
+
     rpd.itTool = FindCuttingTool(rpd);
     rpd.bAlreadyExplained=false;
     if(rpd.itTool!=NULL){
@@ -1227,9 +1229,9 @@ struct srpCutWeb : public recipe{
     }
 
     /**
-     * IMPORTANT! 
-     * this repetition is about action quality and NOT time taken 
-     * because trying to tear down the web is a random check 
+     * IMPORTANT!
+     * this repetition is about action quality and NOT time taken
+     * because trying to tear down the web is a random check
      * based on a fixed modifier (vanilla one) per turn!!!
      */
     int tot=1;
@@ -1246,7 +1248,7 @@ struct srpCutWeb : public recipe{
         b=true;
         break;
       }
-    
+
     if(b){
       rpd.bAlreadyExplained=true;
     }else{
@@ -1283,34 +1285,34 @@ struct srpCutWeb : public recipe{
           }
         }
       }
-      
+
       if(bLoseWeapon){
         rpd.itTool->RemoveFromSlot();
         rpd.itTool->MoveTo(rpd.lsqrPlaceAt->GetStack()); //TODO check if is not a WALL!!!
         ADD_MESSAGE("I lost my %s!",rpd.itTool->GetName(UNARTICLED).CStr());
         rpd.bAlreadyExplained=true;
       }
-      
+
       if(bSelfPos && !bGetStuckOnTheWeb && !bLoseWeapon){
         w->StepOnEffect(h); //so every try will make it more difficult!! :)
       }
-      
+
       int iSt = w->GetTrapBaseModifier();DBG1(iSt);
       iSt -= 1 + clock()%5; // small spider = 10, big = 25, wand beam = 50
       if(iSt<=0)
         iSt=1;
       w->SetStrength(iSt);
-      
+
       if(!rpd.bAlreadyExplained){
         ADD_MESSAGE("I failed to tear down the web.");
         rpd.bAlreadyExplained=true;
       }
     }
-    
+
     h->EditAP(-500); //to let time pass
-      
+
     rpd.bSpendCurrentTurn=true;
-    
+
     return true;
   }
 };srpCutWeb rpCutWeb;
@@ -1359,7 +1361,7 @@ struct srpOltBASE : public recipe{
       rpd.bAlreadyExplained=true;
       return false;
     }
-      
+
     rpd.bCanBePlaced=true;
 
     festring fsQ("to build ");fsQ<<name;
@@ -1984,14 +1986,14 @@ struct srpSplitLump : public recipe{
       rpd.bAlreadyExplained=true; //no need to say anything
       return false;
     }
-    
+
     if(rpd.itSpawnTot<0){ //cut mode
       if(bHumanoidCorpse){
         ADD_MESSAGE("This needs to be split first."); //see 'why' about necromancers above... TODO a better message?
         rpd.bAlreadyExplained=true;
         return false;
       }
-      
+
       int iCutVol = rpd.itSpawnTot * -1;
       material* matM = ToSplit->GetMainMaterial();
       if(matM==NULL)
@@ -2000,7 +2002,7 @@ struct srpSplitLump : public recipe{
         rpd.bAlreadyExplained=true; //no need to say anything
         return false;
       }
-      
+
       item* cut = craftcore::PrepareRemains(rpd,matM,craftcore::CitType(ToSplit));
       cut->GetMainMaterial()->SetVolume(iCutVol);
       matM->SetVolume(matM->GetVolume() - iCutVol);
@@ -2198,7 +2200,7 @@ struct srpForgeItem : public recipe{
       bM = choseIngredients<stone>(fsM,lVolM, rpd, iCfgM, CI);
     }
     if(!bM){
-      ci CI = CIM; 
+      ci CI = CIM;
       CI.bFirstItemMustHaveFullVolumeRequired=true; //carving: only one ingredient piece per material allowed, so it must have required volume
       CI.bMultSelect=false;
       CI.fUsablePercVol=0.75;
@@ -2553,8 +2555,8 @@ struct srpFluidsBASE : public recipe{
       volume = itBottle->GetDefaultSecondaryVolume();
 
     /***
-     * TODO 
-     * mmm seems to have no strengh diff? 
+     * TODO
+     * mmm seems to have no strengh diff?
      * only takes more time if "stronger" like "not from large spider"
     mat = itBottle->GetSecondaryMaterial();
     if(mat!=NULL)mat->GetEffectStrength(); //TODO could average current poison strengh in some way if ever one day
@@ -2705,7 +2707,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
     int key = game::KeyQuestion(CONST_S("There are suspended crafting actions: (r)esume/ENTER, (c)ancel or start a (n)ew one?"),
       KEY_ESC, 4, 'r', 'c', 'n', KEY_ENTER);
     if(key==KEY_ESC)return false;
-    
+
     if(key==KEY_ENTER)
       key='r';
 
@@ -2778,21 +2780,21 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Furniture:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpChair);
   RP(rpDoor);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Buildings:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpWall2);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Potions:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpPoison);
   RP(rpAcid);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Simple work with materials:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
   RP(rpResistanceVS);
   RP(rpInspect);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"BlackSmithing:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpMelt);
   RP(rpAnvil);
@@ -2800,13 +2802,13 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Craft items:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpForgeItem);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Wood work (carving):", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpWorkBench);
-  
+
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Tailoring:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpCutWeb);
-  
+
   if(bInitRecipes)
     return Craft(Char); //init recipes descriptions at least, one time recursion and returns here :>
 
@@ -2932,7 +2934,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
 }
 
 /**
- * 
+ *
  * @param bAllowBreak
  * @param rpd
  * @param itSpawn
@@ -3221,7 +3223,7 @@ bool craftcore::CheckFumble(recipedata& rpd, bool& bCriticalFumble,int& iFumbleP
   //current max chance per round of spawning broken is 5%
   if(clock()%100<=iFumblePower)
     return true;
-  
+
   return false;
 }
 
@@ -3233,7 +3235,7 @@ void crafthandle::CheckFumble(recipedata& rpd,bool bChangeTurns)
     int xplodXtra=0;
     for(int i=0;i<rpd.iStrongerXplod;i++)
       xplodXtra+=clock()%5;
-    
+
     bool bCriticalFumble=false;
     int iFumblePower=0;
     if(craftcore::CheckFumble(rpd,bCriticalFumble,iFumblePower)){
@@ -3496,11 +3498,11 @@ cfestring crafthandle::DestroyIngredients(recipedata& rpd){
 }
 
 /**
- * 
+ *
  * @param rpd
  * @param mat
- * @param ForceType CIT_... stick, lump, stone 
- * @return 
+ * @param ForceType CIT_... stick, lump, stone
+ * @return
  */
 item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) //TODO force type could be a class (type) reference?
 {
@@ -3517,7 +3519,7 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
     rpd.rc.H()->SpillFluid(NULL,liquid::Spawn(mat->GetConfig(),mat->GetVolume())); //TODO use a fumble check to determine on floor or on character (worse)
     return NULL;
   }
-  
+
   item* itTmp = NULL;
 
   int Type = CIT_NONE;
@@ -3526,8 +3528,8 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
     Type=ForceType;DBGLN;
   }else{
     /**
-     * TODO 
-     * create leather/cloth pieces, seweing tools and cloth crafting. 
+     * TODO
+     * create leather/cloth pieces, seweing tools and cloth crafting.
      * Chain mail should be this too and require metal cutting tool.
      */
     if(Type==CIT_NONE) //specific lumps
@@ -3566,7 +3568,7 @@ item* craftcore::PrepareRemains(recipedata& rpd, material* mat, int ForceType) /
        * the requested could be a shaped stone, not suitable to all re-uses.
        * also see item creation that already won't use full volume of non meltable stones
        */
-      itTmp = stone::Spawn(0, NO_MATERIALS); 
+      itTmp = stone::Spawn(0, NO_MATERIALS);
       break;
   }
 
@@ -3594,14 +3596,14 @@ bool craftcore::IsBone(material* mat)
     // new IDs wont be sequential, so no range...
     return true;
   }();bDummyInit=true;//assigning just to remove IDE's unused warnings.. is dead code anyway, should not exist...
-  
+
   if(IsMeltable(mat))
     return false;
-  
+
   for(auto pcfg = vBone.begin(); pcfg != vBone.end(); pcfg++)
     if(mat->GetConfig() == *pcfg)
       return true;
-  
+
   return false;
 }
 
