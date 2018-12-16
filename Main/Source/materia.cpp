@@ -180,6 +180,13 @@ truth material::Effect(character* Char, int BodyPart, long Amount)
       Char->EditExperience(WISDOM, Amount, 1 << 14);
       break;
     }
+   case EFFECT_REGENERATION: Char->BeginTemporaryState(REGENERATION, Amount); break;
+   case EFFECT_TELEPORTATION:
+    {
+      Char->BeginTemporaryState(TELEPORT, Amount);
+      Char->TeleportRandomly(false);
+      break;
+    }
    default: return false;
   }
 
@@ -483,18 +490,6 @@ int material::GetHardenedMaterial(citem* Item) const
 int material::GetSoftenedMaterial(citem* Item) const
 {
   const materialdatabase* DB = DataBase;
-
-  if(!Item->FlexibilityIsEssential())
-    return DB->SoftenedMaterial;
-
-  while(DB->SoftenedMaterial != NONE)
-  {
-    DB = material::GetDataBase(DB->SoftenedMaterial);
-
-    if(DataBase->Flexibility <= DB->Flexibility)
-      return DB->Config;
-  }
-
   return DB->SoftenedMaterial;
 }
 
