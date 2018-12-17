@@ -1434,6 +1434,15 @@ meleeweapon
 
   Config MAGE_STAFF;
   {
+    /*
+     * Two hundred years ago, the hellish Dwarven Wars came to a close when
+     * the joint forces of Kharaz-arad and Khaz-zadm broke through the defences
+     * of Khazad-durr and ended their enemy in gunpowder explosions and clouds
+     * of mustard gas. Yet it is said that the sovereign of Khazad-durr was
+     * never captured, instead transforming into a gargantuan spider and
+     * scuttling away. His regalia vanished along with him, including the royal
+     * staff bearing the name Y'yter Durr.
+     */
     DefaultSize = 220;
     Possibility = 1;
     WeaponCategory = BLUNT_WEAPONS;
@@ -1664,7 +1673,7 @@ meleeweapon
   Config RUNE_SWORD;
   {
     DefaultSize = 120;
-    Possibility = 2;
+    Possibility = 1;
     WeaponCategory = LARGE_SWORDS;
     DefaultMainVolume = 130;
     DefaultSecondaryVolume = 45;
@@ -1689,7 +1698,7 @@ meleeweapon
 
   Config BROKEN|RUNE_SWORD;
   {
-    Possibility = 3;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     EnchantmentPlusChance = 20;
@@ -2222,7 +2231,7 @@ potion /* materialcontainer-> */
   FormModifier = 25;
   NameSingular = "bottle";
   MainMaterialConfig == GLASS;
-  SecondaryMaterialConfig = { 43,
+  SecondaryMaterialConfig = { 44,
                               WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID,
                               VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT,
                               OMMEL_TEARS, SULPHURIC_ACID, MUSTARD_GAS_LIQUID, LIQUID_DARKNESS,
@@ -2231,10 +2240,10 @@ potion /* materialcontainer-> */
                               MILK, HONEY, COCA_COLA, INK, BRINE, CIDER, WHITE_WINE, RED_WINE,
                               BEER, ELF_ALE, DWARF_BEER, LIQUID_FEAR, ASPHALT, BLOOD, GREEN_BLOOD,
                               BLUE_BLOOD, PLANT_SAP, GLOWING_BLOOD, MERCURY, QUICK_SILVER,
-                              OMMEL_BLOOD; }
-  MaterialConfigChances = { 43,
-                            50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 20, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
-                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5; }
+                              OMMEL_BLOOD, VINEGAR; }
+  MaterialConfigChances = { 44,
+                            50, 50, 5, 20, 1, 8, 5, 20, 5, 5, 10, 2, 1, 3, 1, 2, 2, 1, 2, 3, 1,
+                            5, 5, 5, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 10; }
   Alias = { 2, "potion", "drink"; }
   Roundness = 70;
   CanBeBroken = true;
@@ -2242,6 +2251,7 @@ potion /* materialcontainer-> */
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   TeleportPriority = 200;
+
   Config VIAL;
   {
     DefaultSize = 10;
@@ -2250,8 +2260,12 @@ potion /* materialcontainer-> */
     DefaultMainVolume = 10;
     DefaultSecondaryVolume = 100;
     TeleportPriority = 20;
-    SecondaryMaterialConfig = { 9, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, ANTIDOTE_LIQUID, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
-    MaterialConfigChances = { 9, 75, 50, 5, 50, 30, 25, 5, 5, 25; }
+    SecondaryMaterialConfig = { 9,
+                                WATER, HEALING_LIQUID, TROLL_BLOOD, SULPHURIC_ACID,
+                                LIGHT_FROG_BLOOD, CURE_ALL_LIQUID, MAGIC_LIQUID,
+                                LIQUID_FEAR, TELEPORT_FLUID; }
+    MaterialConfigChances = { 9,
+                              25, 75, 20, 10, 3, 1, 20, 5, 10; }
   }
 }
 
@@ -2355,6 +2369,8 @@ scrollofbodyswitch /* scroll-> */
   PostFix = "of body switch";
   IsPolymorphSpawnable = false;
   CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeWished = false;
   AttachedGod = INFUSCOR;
   ReadDifficulty = 3000;
 }
@@ -2518,7 +2534,7 @@ wand
 
   Config WAND_OF_POLYMORPH;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 500;
     IsPolymorphSpawnable = false;
     PostFix = "of polymorph";
@@ -2536,7 +2552,7 @@ wand
 
   Config WAND_OF_STRIKING;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of striking";
     MainMaterialConfig == IRON;
@@ -2552,7 +2568,7 @@ wand
 
   Config WAND_OF_FIRE_BALLS;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of fireballs";
     MainMaterialConfig == BRONZE;
@@ -2569,7 +2585,7 @@ wand
 
   Config WAND_OF_TELEPORTATION;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 500;
     PostFix = "of teleportation";
     MainMaterialConfig == SILVER;
@@ -2586,7 +2602,7 @@ wand
 
   Config WAND_OF_HASTE;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of haste";
     MainMaterialConfig == TIN;
@@ -2601,7 +2617,7 @@ wand
 
   Config WAND_OF_SLOW;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of slow";
     MainMaterialConfig == GRANITE;
@@ -2616,7 +2632,7 @@ wand
 
   Config WAND_OF_RESURRECTION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 750;
     PostFix = "of resurrection";
     MainMaterialConfig == PHOENIX_FEATHER;
@@ -2632,7 +2648,7 @@ wand
 
   Config WAND_OF_DOOR_CREATION;
   {
-    Possibility = 20;
+    Possibility = 10;
     Price = 250;
     PostFix = "of door creation";
     MainMaterialConfig == OAK_WOOD;
@@ -2648,7 +2664,7 @@ wand
 
   Config WAND_OF_INVISIBILITY;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 250;
     PostFix = "of invisibility";
     MainMaterialConfig == GLASS;
@@ -2663,7 +2679,7 @@ wand
 
   Config WAND_OF_CLONING;
   {
-    Possibility = 5;
+    Possibility = 2;
     Price = 2000;
     IsPolymorphSpawnable = false;
     PostFix = "of cloning";
@@ -2681,7 +2697,7 @@ wand
 
   Config WAND_OF_LIGHTNING;
   {
-    Possibility = 60;
+    Possibility = 30;
     Price = 250;
     PostFix = "of lightning";
     MainMaterialConfig == GOLD;
@@ -2699,7 +2715,7 @@ wand
 
   Config WAND_OF_ACID_RAIN;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of acid rain";
     MainMaterialConfig == SULFUR;
@@ -2716,7 +2732,7 @@ wand
 
   Config WAND_OF_MIRRORING;
   {
-    Possibility = 15;
+    Possibility = 7;
     Price = 1000;
     IsPolymorphSpawnable = false;
     PostFix = "of mirroring";
@@ -2734,7 +2750,7 @@ wand
 
   Config WAND_OF_NECROMANCY;
   {
-    Possibility = 30;
+    Possibility = 15;
     Price = 500;
     PostFix = "of necromancy";
     MainMaterialConfig == BONE;
@@ -2750,7 +2766,7 @@ wand
 
   Config WAND_OF_WEBBING;
   {
-    Possibility = 40;
+    Possibility = 20;
     Price = 500;
     PostFix = "of webbing";
     MainMaterialConfig == SPIDER_SILK;
@@ -2765,8 +2781,8 @@ wand
 
   Config WAND_OF_ALCHEMY;
   {
-    Possibility = 20;
-    Price = 500;
+    Possibility = 5;
+    Price = 1000;
     PostFix = "of alchemy";
     MainMaterialConfig == LEAD;
     BeamRange = 5;
@@ -2776,6 +2792,21 @@ wand
     BeamEffect = BEAM_ALCHEMY;
     AttachedGod = MELLIS;
     BreakMsg = "explodes in a puff of golden dust";
+  }
+
+  Config WAND_OF_SOFTEN_MATERIAL;
+  {
+    Possibility = 5;
+    Price = 500;
+    PostFix = "of soften material";
+    MainMaterialConfig == FUNGI_WOOD;
+    BeamRange = 5;
+    MinCharges = 2;
+    MaxCharges = 5;
+    BeamColor = YELLOW;
+    BeamEffect = BEAM_SOFTEN_MATERIAL;
+    AttachedGod = SCABIES; /* Change to SOLICITUS? */
+    BreakMsg = "turns itself into dust";
   }
 }
 
@@ -3144,22 +3175,46 @@ key
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
   Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
   Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
+
   Config HEXAGONAL_LOCK;
   {
     MainMaterialConfig == MITHRIL;
     Adjective = "hexagonal";
   }
+
   Config OCTAGONAL_LOCK;
   {
     MainMaterialConfig == OCTIRON;
     UsesLongAdjectiveArticle = true;
     Adjective = "octagonal";
   }
+
   Config HEART_SHAPED_LOCK;
   {
     MainMaterialConfig == GOLD;
     Adjective = "heart-shaped";
   }
+}
+
+skeletonkey
+{
+  Possibility = 1;
+  Price = 5000;
+  MainMaterialConfig == DRAGON_BONE;
+  Adjective = "skeleton";
+  AttachedGod = CLEPTIA;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
+  BaseEmitation = rgb24(125, 125, 105);
 }
 
 shield /* armor-> */
@@ -3293,6 +3348,72 @@ shield /* armor-> */
     CanBeMirrored = true;
     CanBePiled = false;
     Price = 1000;
+  }
+
+  Config SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 2;
+    PostFix = "of fire resistance";
+    Price = 500;
+    FireResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
+  {
+    Possibility = 1;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    FireResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 2;
+    PostFix = "of electricity resistance";
+    Price = 500;
+    ElectricityResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
+  {
+    Possibility = 1;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    ElectricityResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
+  }
+
+  Config SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 2;
+    PostFix = "of magic resistance";
+    Price = 500;
+    EnergyResistance = 15;
+    EnchantmentPlusChance = 5;
+  }
+
+  Config BROKEN|SHIELD_OF_MAGIC_RESISTANCE;
+  {
+    Possibility = 1;
+    DefaultSize = 40;
+    FormModifier = 20;
+    StrengthModifier = 50;
+    BitmapPos = 48, 224;
+    WieldedBitmapPos = 128, 48;
+    EnergyResistance = 5;
+    Price = 250;
+    EnchantmentPlusChance = 10;
   }
 }
 
@@ -4528,6 +4649,16 @@ amulet
     AttachedGod = SOPHOS;
     Alias == "amulet of teleport lock";
   }
+
+  Config AMULET_OF_FASTING;
+  {
+    Possibility = 3;
+    PostFix = "of fasting";
+    MainMaterialConfig == PEARL;
+    GearStates = FASTING;
+    Price = 2000;
+    AttachedGod = DULCIS;
+  }
 }
 
 bodypart
@@ -4882,6 +5013,7 @@ beartrap
                             300, 750, 10, 100, 25, 50, 25, 10, 5, 1, 100, 25, 10,
                             5, 5, 5, 1, 500, 1000, 300, 100, 50, 10, 50, 15, 50,
                             15, 50, 10, 5; }
+  Alias == "trap";
 
   Config BROKEN;
   {
@@ -5233,7 +5365,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
@@ -5265,7 +5397,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 5;
@@ -5311,6 +5443,7 @@ helmet
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
+    CanBeBroken = false;
     AffectsPerception = true;
     MainMaterialConfig == BLUE_CRYSTAL;
     MaterialConfigChances == 100;
@@ -5339,7 +5472,7 @@ helmet
   {
     DefaultSize = 40;
     DefaultMainVolume = 250;
-    StrengthModifier = 150;
+    StrengthModifier = 125;
     FormModifier = 25;
     BitmapPos = 48, 32;
     Possibility = 1;
@@ -5427,6 +5560,48 @@ helmet
                               50, 10, 5, 25, 25; }
     EnchantmentPlusChance = 40;
   }
+
+  Config WAR_MASK;
+  {
+    /*
+     * In an age long past, the goblin empire of Quetzaltia fought a terrible
+     * war against the spawn of Scabies, the dreaded mind worms. The goblins
+     * were barely holding on until the wizards and alchemists of their king,
+     * the venerable Tlachtlallotlachitl, invented a new type of mask that
+     * rendered the powers of mind worms useless. Very few of those masks
+     * remain today, but any worm-slayer would give a fortune to own one.
+     */
+    DefaultSize = 25;
+    DefaultMainVolume = 100;
+    StrengthModifier = 250;
+    FormModifier = 10;
+    CoverPercentile = 30;
+    Price = 1000;
+    BitmapPos = 80, 208;
+    Possibility = 1;
+    Adjective = "war";
+    NameSingular = "mask";
+    PostFix = "of Tlachtlallotlachitl";
+    Alias == "war mask";
+    HelmetBitmapPos = 112, 129;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBePiled = false;
+    CanBeBroken = false;
+    AffectsIntelligence = true;
+    AffectsWisdom = true;
+    AffectsWillPower = true;
+    PriceIsProportionalToEnchantment = true;
+    MainMaterialConfig == TIN;
+    MaterialConfigChances == 100;
+    BaseEnchantment = 1;
+    EnchantmentPlusChance = 30;
+    AttachedGod = CRUENTUS;
+  }
 }
 
 stethoscope
@@ -5451,7 +5626,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
   DefaultSize = 120;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = LARGE_SWORDS;
   DefaultMainVolume = 130;
   DefaultSecondaryVolume = 45;
@@ -5494,7 +5669,7 @@ flamingsword /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 208;
     WieldedBitmapPos = 176, 80;
     MainMaterialConfig = { 33,
@@ -5666,7 +5841,7 @@ turox /* meleeweapon-> */
 whipofthievery /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -5927,7 +6102,7 @@ horn
 thunderhammer /* meleeweapon-> */
 {
   DefaultSize = 50;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 200;
@@ -5969,7 +6144,7 @@ thunderhammer /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 192;
     Price = 100;
     WieldedBitmapPos = 176, 224;
@@ -6034,7 +6209,7 @@ saalthul
 chameleonwhip /* meleeweapon->whip-> */
 {
   DefaultSize = 250;
-  Possibility = 5;
+  Possibility = 2;
   DefaultMainVolume = 1000;
   DefaultSecondaryVolume = 50;
   StrengthModifier = 100;
@@ -6142,7 +6317,7 @@ sausage
 wondersmellstaff
 {
   DefaultSize = 220;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = BLUNT_WEAPONS;
   StrengthModifier = 150;
   BitmapPos = 64, 240;
@@ -6166,7 +6341,7 @@ wondersmellstaff
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 256;
     WieldedBitmapPos = 176, 304;
     EnchantmentPlusChance = 10;
@@ -6327,12 +6502,13 @@ gasgrenade
   Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 6,
+  SecondaryMaterialConfig = { 7,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR,
-                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR; }
-  MaterialConfigChances = { 6, 50, 10, 1, 10, 10, 5; }
+                              SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS; }
+  MaterialConfigChances = { 7,
+                            50, 10, 1, 10, 5, 5, 10; }
   Adjective = "dwarven";
-  Alias == "gas grenade";
+  Alias == "grenade";
 }
 
 holyhandgrenade
@@ -6356,7 +6532,7 @@ holyhandgrenade
 daggerofvenom
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 25;
   DefaultSecondaryVolume = 25;
@@ -6386,7 +6562,7 @@ daggerofvenom
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 288;
     WieldedBitmapPos = 176, 288;
     EnchantmentPlusChance = 4;
@@ -6396,7 +6572,7 @@ daggerofvenom
 weepblade
 {
   DefaultSize = 70;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 70;
   DefaultSecondaryVolume = 30;
@@ -6421,7 +6597,7 @@ weepblade
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 272;
     WieldedBitmapPos = 176, 208;
     MainMaterialConfig = { 15,
@@ -6437,7 +6613,7 @@ weepblade
 acidshield /* armor ->*/
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   Category = SHIELD;
   DefaultMainVolume = 350;
   StrengthModifier = 100;
@@ -6449,7 +6625,7 @@ acidshield /* armor ->*/
   MaterialConfigChances = { 13,
                             300, 250, 200, 100, 50, 25, 15, 25, 250, 150, 75, 50, 25; }
   EnchantmentPlusChance = 2;
-  AcidResistance = 1;
+  AcidResistance = 3;
   NameSingular = "acid shield";
   BitmapPos = 32, 336;
   WeaponCategory = SHIELDS;
@@ -6460,7 +6636,7 @@ acidshield /* armor ->*/
 
   Config BROKEN;
   {
-    Possibility = 3;
+    Possibility = 2;
     DefaultSize = 45;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -6472,6 +6648,7 @@ acidshield /* armor ->*/
                            BLUE_JADE, AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY; }
     MaterialConfigChances = { 15,
                               250, 25, 10, 5, 250, 150, 100, 75, 50, 25, 5, 5, 5, 5, 5; }
+    AcidResistance = 1;
     EnchantmentPlusChance = 4;
   }
 }
@@ -6631,7 +6808,7 @@ darkaxe  /* meleeweapon-> */
 slowaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6662,7 +6839,7 @@ slowaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -6672,7 +6849,7 @@ slowaxe  /* meleeweapon-> */
 terrorscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6705,7 +6882,7 @@ terrorscythe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6715,7 +6892,7 @@ terrorscythe  /* meleeweapon-> */
 bansheesickle  /* meleeweapon-> */
 {
   DefaultSize = 40;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = SMALL_SWORDS;
   DefaultMainVolume = 100;
   DefaultSecondaryVolume = 50;
@@ -6745,7 +6922,7 @@ bansheesickle  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 48, 176;
     WieldedBitmapPos = 176, 240;
     EnchantmentPlusChance = 4;
@@ -6755,7 +6932,7 @@ bansheesickle  /* meleeweapon-> */
 rustscythe  /* meleeweapon-> */
 {
   DefaultSize = 200;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = POLE_ARMS;
   DefaultMainVolume = 150;
   DefaultSecondaryVolume = 1800;
@@ -6781,7 +6958,7 @@ rustscythe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 64, 128;
     WieldedBitmapPos = 160, 48;
     EnchantmentPlusChance = 4;
@@ -6791,7 +6968,7 @@ rustscythe  /* meleeweapon-> */
 sharpaxe  /* meleeweapon-> */
 {
   DefaultSize = 60;
-  Possibility = 5;
+  Possibility = 2;
   WeaponCategory = AXES;
   DefaultMainVolume = 200;
   DefaultSecondaryVolume = 500;
@@ -6822,7 +6999,7 @@ sharpaxe  /* meleeweapon-> */
 
   Config BROKEN;
   {
-    Possibility = 5;
+    Possibility = 2;
     BitmapPos = 32, 176;
     WieldedBitmapPos = 176, 176;
     EnchantmentPlusChance = 4;
@@ -6886,6 +7063,11 @@ materialmanual /* holybook-> */
 
 ullrbone
 {
+  /*
+   * Once upon a time an ancient orcish wizard was said to travel the seas
+   * on a magical bone inscribed with foul magic and wreak havoc on all lands
+   * he visited.
+   */
   Possibility = 1;
   DefaultMainVolume = 500;
   StrengthModifier = 100;
@@ -6919,7 +7101,7 @@ taiaha /* meleeweapon-> */
 {
   CanBePiled = false;
   DefaultSize = 160;
-  Possibility = 0;
+  Possibility = 1;
   WeaponCategory = POLE_ARMS;
   StrengthModifier = 90;
   BitmapPos = 96, 352;
@@ -7116,11 +7298,11 @@ gastrap /*materialcontainer-> */
   Adjective = "dwarven";
   NameSingular = "gas trap";
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig = { 7,
+  SecondaryMaterialConfig = { 8,
                               MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR, SLEEPING_GAS,
-                              EVIL_WONDER_STAFF_VAPOUR, SMOKE; }
-  MaterialConfigChances = { 7,
-                            20, 30, 1, 15, 10, 15, 5; }
+                              EVIL_WONDER_STAFF_VAPOUR, SMOKE, TELEPORT_GAS; }
+  MaterialConfigChances = { 8,
+                            20, 30, 1, 15, 10, 15, 5, 10; }
   Roundness = 50;
   Price = 25;
   CanBePiled = false;
@@ -7166,4 +7348,96 @@ mangoseedling
   IsTwoHanded = true;
   HasSecondaryMaterial = false;
   IsValuable = true;
+}
+
+gleipnir /* meleeweapon->whip-> */
+{
+  DefaultSize = 250;
+  Possibility = 1;
+  DefaultMainVolume = 1000;
+  DefaultSecondaryVolume = 50;
+  StrengthModifier = 125;
+  Adjective = "celestial";
+  NameSingular = "whip";
+  PostFix = "named Gleipnir";
+  MainMaterialConfig == SHADOW_CLOTH;
+  SecondaryMaterialConfig == PURPLE_CRYSTAL;
+  Roundness = 5;
+  FormModifier = 30;
+  Price = 2500;
+  AttachedGod = NEFAS;
+  EnchantmentPlusChance = 5;
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+}
+
+eptyron /* meleeweapon-> */
+{
+  DefaultSize = 150;
+  Possibility = 1;
+  WeaponCategory = AXES;
+  DefaultMainVolume = 400;
+  DefaultSecondaryVolume = 800;
+  BitmapPos = 112, 240;
+  FormModifier = 175;
+  StrengthModifier = 150;
+  Adjective = "blasphemous";
+  ArticleMode = FORCE_THE;
+  NameSingular = "great axe";
+  PostFix = "named Eptyron";
+  MainMaterialConfig == PLASTIC_STEEL;
+  SecondaryMaterialConfig == HARDENED_PLASTIC;
+  Roundness = 30;
+  IsTwoHanded = true;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBePiled = false;
+  Alias == "Eptyron";
+  Price = 2500;
+  AttachedGod = NONE; /* or more accurately Solicitus, the toppled god of atheism and hopeless situations */
+  WieldedBitmapPos = 160, 176;
+  EnchantmentPlusChance = 2;
+  DamageFlags = SLASH;
+
+  Config BROKEN;
+  {
+    Possibility = 0;
+    BitmapPos = 96, 240;
+    WieldedBitmapPos = 176, 176;
+    EnchantmentPlusChance = 4;
+  }
+}
+
+unpick
+{
+  Possibility = 1;
+  StrengthModifier = 100;
+  FormModifier = 75;
+  Price = 5000;
+  Adjective = "cursed";
+  PostFix = "of Kharaz-arad";
+  ArticleMode = FORCE_THE;
+  CanBeWished = false;
+  IsMaterialChangeable = false;
+  IsPolymorphable = false;
+  IsDestroyable = false;
+  CanBeCloned = false;
+  CanBeMirrored = true;
+  CanBeBroken = false;
+  CanBeBurned = false;
+  CanBePiled = false;
+  IsValuable = true;
+  MainMaterialConfig == PSYPHER;
+  SecondaryMaterialConfig == RATA_WOOD;
+  Alias = { 2, "unpick", "unpickaxe"; }
 }

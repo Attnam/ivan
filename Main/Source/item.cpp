@@ -363,6 +363,42 @@ truth item::Alchemize(character* Midas, stack* CurrentStack)
   }
 }
 
+truth item::SoftenMaterial()
+{
+  if(!IsMaterialChangeable() || !CanBeSoftened())
+  {
+    return false;
+  }
+
+  int Config = GetMainMaterial()->GetSoftenedMaterial(this);
+
+  if(!Config)
+  {
+    /* Should not be possible. */
+    return false;
+  }
+
+  msgsystem::EnterBigMessageMode();
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s starts glowing dull yellow.", CHAR_NAME(INDEFINITE));
+
+  material* TempMaterial = MAKE_MATERIAL(Config);
+  material* MainMaterial = GetMainMaterial();
+  material* SecondaryMaterial = GetSecondaryMaterial();
+
+  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+
+  ChangeMainMaterial(TempMaterial);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
+
+  msgsystem::LeaveBigMessageMode();
+  return true;
+}
+
 /* Returns whether the Eater must stop eating the item */
 
 truth item::Consume(character* Eater, long Amount)
@@ -1898,6 +1934,11 @@ truth item::Read(character* Reader)
 truth item::CanBeHardened(ccharacter*) const
 {
   return MainMaterial->GetHardenedMaterial(this) != NONE;
+}
+
+truth item::CanBeSoftened() const
+{
+  return MainMaterial->GetSoftenedMaterial(this) != NONE;
 }
 
 void item::SetLifeExpectancy(int Base, int RandPlus)

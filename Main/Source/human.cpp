@@ -540,7 +540,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
       EditNP(-50);
       EditAP(-Max(FirstAPCost, SecondAPCost));
-      EditStamina(-10000 / Strength, false);
+      EditStamina(GetAdjustedStaminaCost(-1000, Strength), false);
       msgsystem::LeaveBigMessageMode();
       return true;
     }
@@ -2290,7 +2290,7 @@ void humanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 150, 1 << 9);
-  EditStamina(-1000, false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(AGILITY)), false);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(),
                  RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -2300,7 +2300,7 @@ void humanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
   leg* KickLeg = RAND_2 ? GetRightLeg() : GetLeftLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  EditStamina(-10000 / GetAttribute(LEG_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(LEG_STRENGTH)), false);
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(),
                       RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
@@ -3876,8 +3876,8 @@ void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
   Info.AddEntry(CONST_S("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Dexterity:    ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility:      ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 item* humanoid::GetPairEquipment(int I) const
@@ -5717,6 +5717,16 @@ void golem::CreateCorpse(lsquare* Square)
 
   if(Material->IsSolid())
     Square->AddItem(Material->CreateNaturalForm(ItemVolume));
+  if(Material->IsLiquid())
+  {
+    for(int d = 0; d < GetExtendedNeighbourSquares(); ++d)
+    {
+      lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
+
+      if(NeighbourSquare)
+        NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
+    }
+  }
 
   SendToHell();
 }
@@ -6261,7 +6271,7 @@ cchar* humanoid::GetNormalDeathMessage() const
   else if(BodyPartIsVital(GROIN_INDEX) && (!GetGroin() || GetGroin()->GetHP() <= 0))
     return "killed @bkp dirty attack below the belt";
   else
-    return "killed @k";
+    return character::GetNormalDeathMessage();
 }
 
 void kamikazedwarf::SingRandomSong()
@@ -6645,6 +6655,15 @@ void goblin::GetAICommand()
   humanoid::GetAICommand();
 }
 
+void werewolfwolf::GetAICommand()
+{
+  if(GetConfig() == DRUID && !RAND_2)
+    if(CheckAIZapOpportunity())
+      return;
+
+  humanoid::GetAICommand();
+}
+
 truth humanoid::CheckAIZapOpportunity()
 {
   if(!HasAUsableArm() || !CanZap() || !(RAND() % 2) || StateIsActivated(CONFUSED))
@@ -6673,7 +6692,7 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 
 void elder::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"My boy, my wonderful boy! From the very day I found you,\n"
                              "I knew there was something special in you, something even\n"
@@ -6724,10 +6743,15 @@ void elder::BeTalkedTo()
                              "and unable to defend our land. So let's not repeat history and\n"
                              "get ready for them this time.\"\n"));
 
+    game::SetFreedomStoryState(1);
     GetArea()->SendNewDrawRequest();
     ADD_MESSAGE("\"Oh, and give my regards to Terra, if she's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You have the seedling! Wonderful. Please, plant it by the banana delivery spot, and we shan't fear the imperialists anymore.\"");
   }
   else
     humanoid::BeTalkedTo();
@@ -6735,7 +6759,7 @@ void elder::BeTalkedTo()
 
 void terra::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
                              "\n"
@@ -6789,6 +6813,10 @@ void terra::BeTalkedTo()
     ADD_MESSAGE("\"Oh, and give my love to Kaethos, if he's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You bested her, I see! Now hurry back to the village, and Attnam shall threaten us no more.\"");
   }
   else
     priest::BeTalkedTo();
