@@ -1529,8 +1529,8 @@ struct srpWall2 : public srpOltBASE{
 
 struct srpJoinLumps : public recipe{
   virtual void fillInfo(){
-    init("join","a lump");
-    desc << "Join lumps of same material.";
+    init("merge","lumps");
+    desc << "Merge lumps of the same material.";
   }
 
   void askForEqualLumps(recipedata& rpd){
@@ -1684,7 +1684,7 @@ struct srpMelt : public srpJoinLumps{
 
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("dismantle","some materials as lumps and sticks");
+    init("dismantle","item");
     desc << "Near a forge, any meltable item can be dismantled to recover it's materials.\n Otherwise you just need a cutting tool.";
   }
 
@@ -1779,7 +1779,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
 struct srpInspect : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("inspect","item materials details");
+    init("inspect","item materials");
     desc << "Carefully inspect what materials an item is made of.";
   }
 
@@ -1814,7 +1814,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
 
 struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("hardness check","weaker material results");
+    init("hardness check","(weaker material results)");
     desc << "Hit an item with another, the weaker one will receive a scratch.";
   }
 
@@ -1889,7 +1889,7 @@ struct srpSplitLump : public recipe{
   }
 
   virtual void fillInfo(){
-    init("split or cut","some base materials");
+    init("split","raw materials");
     desc << "Split them to be easier to work with.\n To just cut out (subtract) some volume, specify a negative value in cm3. \nIt is good to cut them precisely to not waste materials.";
   }
 
@@ -2592,7 +2592,7 @@ struct srpPoison : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some poison fluid");
+    init("extract","some poison");
     desc << "Use a " << fsTool << " to " << action << " " << name << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
@@ -2611,7 +2611,7 @@ struct srpAcid : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some sulphuric acid fluid");
+    init("extract","some sulphuric acid");
     desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
