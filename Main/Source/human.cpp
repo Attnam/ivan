@@ -6692,7 +6692,7 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 
 void elder::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"My boy, my wonderful boy! From the very day I found you,\n"
                              "I knew there was something special in you, something even\n"
@@ -6743,10 +6743,15 @@ void elder::BeTalkedTo()
                              "and unable to defend our land. So let's not repeat history and\n"
                              "get ready for them this time.\"\n"));
 
+    game::SetFreedomStoryState(1);
     GetArea()->SendNewDrawRequest();
     ADD_MESSAGE("\"Oh, and give my regards to Terra, if she's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You have the seedling! Wonderful. Please, plant it by the banana delivery spot, and we shan't fear the imperialists anymore.\"");
   }
   else
     humanoid::BeTalkedTo();
@@ -6754,7 +6759,7 @@ void elder::BeTalkedTo()
 
 void terra::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
                              "\n"
@@ -6808,6 +6813,10 @@ void terra::BeTalkedTo()
     ADD_MESSAGE("\"Oh, and give my love to Kaethos, if he's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You bested her, I see! Now hurry back to the village, and Attnam shall threaten us no more.\"");
   }
   else
     priest::BeTalkedTo();
