@@ -1691,6 +1691,28 @@ truth lsquare::DoorCreation(const beamdata& Beam)
   return false;
 }
 
+truth lsquare::WallCreation(const beamdata& Beam)
+{
+  if((!GetOLTerrain()
+      || GetOLTerrain()->IsSafeToCreateDoor())
+     && !GetCharacter()
+     && (GetLevel()->IsOnGround()
+         || (Pos.X > 0 && Pos.Y > 0
+             && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
+  {
+    if(Beam.Owner && GetRoom())
+      GetRoom()->HostileAction(Beam.Owner);
+
+    earth* Wall = earth::Spawn(0, NO_MATERIALS);
+    Wall->InitMaterials(MAKE_MATERIAL(GRANITE));
+
+    ChangeOLTerrainAndUpdateLights(Wall);
+    return true;
+  }
+
+  return false;
+}
+
 truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
 {
   &lsquare::Polymorph,
@@ -1707,7 +1729,9 @@ truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::AcidRain,
   &lsquare::Necromancy,
   &lsquare::Webbing,
-  &lsquare::Alchemize
+  &lsquare::Alchemize,
+  &lsquare::SoftenMaterial,
+  &lsquare::WallCreation
 };
 
 truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -2982,5 +3006,45 @@ truth lsquare::Webbing(const beamdata&)
 truth lsquare::Alchemize(const beamdata& Beam)
 {
   GetStack()->Alchemize(Beam.Owner);
+  return false;
+}
+
+truth lsquare::SoftenMaterial(const beamdata& Beam)
+{
+  GetStack()->SoftenMaterial(Beam.Owner);
+
+  /*if(GetOLTerrain())
+    GetOLTerrain()->SoftenMaterial(Beam.Owner);*/
+
+  character* Character = GetCharacter();
+
+  if(Character)
+  {
+    if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(Character);
+
+    itemvector AllItems;
+    sortdata SortData(AllItems, Beam.Owner, true, &item::MaterialIsChangeable);
+    SortAllItems(SortData);
+    item* RandomItem;
+
+    if(!AllItems.empty())
+    {
+      RandomItem = AllItems[RAND() % AllItems.size()];
+      RandomItem->SoftenMaterial();
+    }
+
+    // Kill the golems!!!
+    for(uint c = 1; c < uint(Character->GetBodyParts()); ++c)
+    {
+      bodypart* BodyPart = Character->GetBodyPart(c);
+
+      if(BodyPart)
+      {
+        BodyPart->SoftenMaterial();
+      }
+    }
+  }
+
   return false;
 }

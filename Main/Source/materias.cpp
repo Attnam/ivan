@@ -186,6 +186,11 @@ int solid::GetStrengthValue() const
   return 0; /* not possible */
 }
 
+int organic::CalcNewSpoilLevel()
+{
+  return ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+}
+
 void organic::Be(ulong Flags)
 {
   if(SpoilCheckCounter++ >= 50)
@@ -203,7 +208,7 @@ void organic::Be(ulong Flags)
       {
         if(SpoilCounter << 1 >= GetSpoilModifier())
         {
-          int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+          int NewSpoilLevel = CalcNewSpoilLevel();
 
           if(NewSpoilLevel != SpoilLevel)
           {
@@ -352,6 +357,11 @@ void organic::AddConsumeEndMessage(character* Eater) const
   material::AddConsumeEndMessage(Eater);
 }
 
+ushort organic::GetSpoilCounter()
+{
+  return SpoilCounter;
+}
+
 void organic::SetSpoilCounter(int What)
 {
   SpoilCounter = What;
@@ -360,7 +370,7 @@ void organic::SetSpoilCounter(int What)
   {
     if(SpoilCounter << 1 >= GetSpoilModifier())
     {
-      int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+      int NewSpoilLevel = CalcNewSpoilLevel();
 
       if(NewSpoilLevel != SpoilLevel)
       {

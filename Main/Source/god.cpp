@@ -406,7 +406,7 @@ truth god::TryToAttachBodyPart(character* Char)
         if(ForceGiveBodyPart()
            || (MaterialVector[c]->GetCommonFlags() & CAN_BE_WISHED
                && !RAND_N(6000 / (GetRelation() + 2000))
-               && !RAND_N(Max(MaterialVector[c]->GetIntelligenceRequirement() - 10, 1))))
+               && !RAND_N(Max(MaterialVector[c]->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1))))
         {
           BodyPart = Char->GenerateRandomBodyPart();
           BodyPart->ChangeMainMaterial(MaterialVector[c]->SpawnMore());
@@ -477,7 +477,7 @@ truth god::TryToHardenBodyPart(character* Char)
 
       if(Material->GetHardenModifier(BodyPart) > OldModifier
          && !RAND_N(12000 / (GetRelation() + 2000))
-         && !RAND_N(Max(Material->GetIntelligenceRequirement() - 15, 1)))
+         && !RAND_N(Max(Material->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1)))
       {
         BodyPart->ChangeMainMaterial(Material->SpawnMore());
         ADD_MESSAGE("%s changes your %s to %s.",

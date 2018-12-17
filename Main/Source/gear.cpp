@@ -34,6 +34,8 @@ col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
 col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
+col16 unpick::GetOutlineColor(int) const { return MakeRGB16(100, 60, 30); }
+
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
 truth flamingsword::IsLostRubyFlamingSword() const
 {
@@ -79,6 +81,7 @@ truth cloak::IsShadowVeil() const
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }
+truth boot::IsKicking() const { return (GetConfig() == BOOT_OF_KICKING); }
 
 long gauntlet::GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
 truth gauntlet::IsInCorrectSlot(int I) const { return I == RIGHT_GAUNTLET_INDEX || I == LEFT_GAUNTLET_INDEX; }
@@ -103,6 +106,8 @@ col16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
 int taiaha::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
+
+int eptyron::GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
 
 int filthytunic::GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
 
@@ -425,7 +430,10 @@ void meleeweapon::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
     Entry << ", " << GetBaseToHitValueDescription();
 
     if(!IsBroken())
@@ -640,7 +648,10 @@ void armor::AddInventoryEntry(ccharacter*, festring& Entry, int Amount, truth Sh
   }
 
   if(ShowSpecialInfo)
-    Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << ']';
+    Entry << " [" << GetWeight() * Amount << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue() << ']';
 }
 
 void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
@@ -650,7 +661,10 @@ void shield::AddInventoryEntry(ccharacter* Viewer, festring& Entry,
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", AV " << GetStrengthValue();
     Entry << ", " << GetBaseBlockValueDescription();
 
     int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
@@ -802,6 +816,12 @@ alpha gorovitsweapon::GetOutlineAlpha(int Frame) const
 }
 
 alpha goldeneagleshirt::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+alpha unpick::GetOutlineAlpha(int Frame) const
 {
   Frame &= 31;
   return 50 + (Frame * (31 - Frame) >> 1);
@@ -1094,8 +1114,8 @@ void daggerofvenom::Be()
       Volume += L->GetVolume(); // I imagine that there is a function I don't know to do this...
     }
 
-    if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(POISON_LIQUID, 10));
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(POISON_LIQUID, 50));
   }
 }
 
@@ -1180,8 +1200,8 @@ void darkaxe::Be()
       Volume += L->GetVolume();
     }
 
-    if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 10));
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(LIQUID_DARKNESS, 50));
   }
 }
 
@@ -1387,7 +1407,10 @@ void taiaha::AddInventoryEntry(ccharacter* Viewer, festring& Entry, int, truth S
 
   if(ShowSpecialInfo)
   {
-    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << " [" << GetWeight() << "g";
+    if(ivanconfig::IsShowVolume())
+      Entry << " " << GetVolume() << "cm3";
+    Entry << ", DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
 		Entry << ", " << GetBaseToHitValueDescription();
 
 		if(!IsBroken() && !IsWhip())
@@ -1473,7 +1496,7 @@ void filthytunic::Be()
     }
 
     if(Volume < 90)
-      SpillFluid(0, liquid::Spawn(BLOOD, 10));
+      SpillFluid(0, liquid::Spawn(GLOWING_BLOOD, 10));
   }
 }
 
@@ -1494,4 +1517,146 @@ col16 filthytunic::GetOutlineColor(int Frame) const
     return MakeRGB16(77, 254, 21);
   else
     return TRANSPARENT_COLOR;
+}
+
+void gleipnir::Be()
+{
+  whip::Be();
+
+  if(Exists() && !IsBroken() && (*Slot)->IsGearSlot() && !RAND_N(10))
+  {
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
+    uint Volume = 0;
+
+    for(uint c = 0; c < FluidVector.size(); ++c)
+    {
+      liquid* L = FluidVector[c]->GetLiquid();
+      Volume += L->GetVolume();
+    }
+
+    if(Volume < 500)
+      SpillFluid(0, liquid::Spawn(SULPHURIC_ACID, 50));
+  }
+}
+
+truth eptyron::HitEffect(character* Enemy, character* Hitter, v2 HitPos,
+                         int BodyPartIndex, int Direction, truth BlockedByArmour)
+{
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && Enemy->IsHumanoid())
+  {
+    bodypart* BodyPartHit = Enemy->GetBodyPart(BodyPartIndex);
+    item* MainArmor = 0;
+
+    switch(BodyPartIndex)
+    {
+     case TORSO_INDEX:
+      MainArmor = Enemy->GetEquipment(BODY_ARMOR_INDEX);
+      break;
+     case HEAD_INDEX:
+      MainArmor = Enemy->GetEquipment(HELMET_INDEX);
+      break;
+     case RIGHT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? RIGHT_WIELDED_INDEX : RIGHT_GAUNTLET_INDEX);
+      break;
+     case LEFT_ARM_INDEX:
+      MainArmor = Enemy->GetEquipment(RAND_2 ? LEFT_WIELDED_INDEX : LEFT_GAUNTLET_INDEX);
+      break;
+     case GROIN_INDEX:
+      MainArmor = Enemy->GetEquipment(BELT_INDEX);
+      break;
+     case RIGHT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(RIGHT_BOOT_INDEX);
+      break;
+     case LEFT_LEG_INDEX:
+      MainArmor = Enemy->GetEquipment(LEFT_BOOT_INDEX);
+      break;
+    }
+
+    if(MainArmor/* && BlockedByArmor */)
+    {
+      MainArmor->SoftenMaterial();
+    }
+    else if(BodyPartHit)
+    {
+      BodyPartHit->SoftenMaterial();
+    }
+  }
+
+  return BaseSuccess;
+}
+
+void eptyron::BlockEffect(character* Blocker, character* Attacker, item* Weapon, int Type)
+{
+  if(!IsBroken() && Weapon)
+  {
+    Weapon->SoftenMaterial();
+  }
+}
+
+alpha eptyron::GetOutlineAlpha(int Frame) const
+{
+  if(!IsBroken())
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
+  else
+    return 255;
+}
+
+col16 eptyron::GetOutlineColor(int Frame) const
+{
+  if(!IsBroken())
+    return YELLOW;
+  else
+    return TRANSPARENT_COLOR;
+}
+
+void unpick::Save(outputfile& SaveFile) const
+{
+  pickaxe::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void unpick::Load(inputfile& SaveFile)
+{
+  pickaxe::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void unpick::FinalProcessForBone()
+{
+  pickaxe::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+truth unpick::Zap(character* Zapper, v2, int Direction)
+{
+  if(!LastUsed || game::GetTick() - LastUsed >= Zapper->GetMagicItemCooldown(1000))
+  {
+    LastUsed = game::GetTick();
+    ADD_MESSAGE("You zap %s!", CHAR_NAME(DEFINITE));
+    Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
+
+    beamdata Beam
+      (
+	      Zapper,
+	      CONST_S("killed by ") + GetName(INDEFINITE),
+	      Zapper->GetPos(),
+	      TRANSPARENT_COLOR,
+	      BEAM_WALL_CREATION,
+	      Direction,
+	      1,
+	      0
+      );
+
+    (GetLevel()->*level::GetBeam(SHIELD_BEAM))(Beam);
+  }
+  else
+    ADD_MESSAGE("Nothing happens.");
+
+  return true;
 }

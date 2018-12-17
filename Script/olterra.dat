@@ -522,7 +522,7 @@ decoration
     Walkability = ETHEREAL;
     NameSingular = "forge";
     BitmapPos = 16, 16;
-    LeftOverItems == 0;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 1000:3000; } Times = 2:5; }
   }
 
   Config FURNACE;

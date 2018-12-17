@@ -95,6 +95,7 @@ class stack
   void BeKicked(character*, int, int);
   void Polymorph(character*);
   void Alchemize(character*);
+  void SoftenMaterial(character*);
   void CheckForStepOnEffect(character*);
   lsquare* GetLSquareTrulyUnder(int) const;
   void ReceiveDamage(character*, int, int, int = YOURSELF);

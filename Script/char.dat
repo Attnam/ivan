@@ -2492,6 +2492,7 @@ goblin
     AttributeBonus = 50;
     RightWielded = 0;
     LeftWielded = 0;
+    RightGauntlet = gauntlet { Enchantment = 1; }
     Belt = BLACK_LEATHER belt;
     AttackStyle = USE_ARMS|USE_LEGS;
     BaseUnarmedStrength = 800;
@@ -2565,14 +2566,17 @@ goblin
       "\"Me know great body-part-zuppe! Me prepare - you want?\"",
       "@Dd laughs: \"Humie friend. Many mommo we teleport. Many spider we polymorph.\"";
     }
-    Inventory = { 7,
+    Inventory = { 10,
                   wand(WAND_OF_TELEPORTATION) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_DOOR_CREATION) { Chance = 30; LifeExpectancy = 10000; },
                   wand(WAND_OF_ACID_RAIN) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_WEBBING) { Chance = 50; LifeExpectancy = 10000; },
                   wand(WAND_OF_MIRRORING) { Chance = 5; LifeExpectancy = 10000; },
                   wand(WAND_OF_POLYMORPH) { Chance = 5; LifeExpectancy = 10000; },
-                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; }
+                  wand(WAND_OF_SLOW) { Chance = 30; LifeExpectancy = 10000; },
+                  wand(WAND_OF_SOFTEN_MATERIAL) { Chance = 1; LifeExpectancy = 10000; },
+                  wand(WAND_OF_FIRE_BALLS) { Chance = 1; LifeExpectancy = 10000; },
+                  wand(WAND_OF_LIGHTNING) { Chance = 1; LifeExpectancy = 10000; }
                 }
     DangerModifier = 150;
     HPRequirementForGeneration = 50;
@@ -4914,7 +4918,7 @@ werewolfwolf
   BaseBiteStrength = 1200;
   CanUseEquipment = false;
   CanBeWished = false;
-  ClassStates = INFRA_VISION|LYCANTHROPY|REGENERATION;
+  ClassStates = INFRA_VISION|LYCANTHROPY;
   PanicLevel = 0;
   FleshMaterial = WERE_WOLF_FLESH;
   AttachedGod = INFUSCOR;
@@ -5152,14 +5156,15 @@ kobold
   Config ASSASSIN;
   {
     AttributeBonus = 90;
-    RightWielded = IRON IRON meleeweapon(DAGGER);
-    LeftWielded = IRON IRON meleeweapon(DAGGER);
+    RightWielded = IRON IRON meleeweapon(DAGGER) { Enchantment = 1; }
+    LeftWielded = IRON IRON meleeweapon(DAGGER) { Enchantment = 1; }
     KnownCWeaponSkills == SMALL_SWORDS;
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
     NameSingular = "kobold assassin";
     PanicLevel = 40;
+    CriticalModifier = 10;
     ClothColor = rgb16(80, 80, 160);
     LegMainColor = rgb16(111, 74, 37);
     TotalSize = 80;
@@ -5169,10 +5174,10 @@ kobold
   Config MASTER_ASSASSIN;
   {
     AttributeBonus = 120;
-    Helmet = TIN helmet(MASK);
-    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 1; }
-    LeftWielded = MITHRIL MITHRIL meleeweapon(DAGGER) { Enchantment = 1; }
+    Helmet = TIN helmet(MASK) { Enchantment = 2; }
+    BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
+    LeftWielded = MITHRIL MITHRIL daggerofvenom { Enchantment = 2; }
     Belt = NYMPH_HAIR belt;
     Cloak = NYMPH_HAIR cloak(CLOAK_OF_INVISIBILITY);
     RightGauntlet = NYMPH_HAIR gauntlet;
@@ -5191,6 +5196,7 @@ kobold
     CanBeCloned = false;
     TotalSize = 70;
     PanicLevel = 20;
+    CriticalModifier = 10;
     ClothColor = rgb16(20, 20, 160);
     LegMainColor = rgb16(111, 74, 37);
     Inventory == Random { Category = POTION; Times = 2:8; }
@@ -5273,15 +5279,15 @@ gibberling
     13, /* Famous literature, distorted into gibberish. */
     "\"Who would fard that dream? Ay, and there's tural shocks that dreams momething afterprises the sleep; no more!\"", /* Hamlet */
     "\"Buzzing a buzzing-noise, put lived unders, and he got of all he tree, and buzzing. If there's a buzzing.\"", /* Winnie the Pooh */
-    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That’s a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
+    "\"Shoot at tin the backyard, but sin cribs, do somethingbirds. That tin to enjoy. That's a sing, and I asked Miss Maudie.\"", /* To Kill a Mockingbird */
     "\"The heart. The most be seen or touched, things in they are felt with the heart.\"", /* The Little Prince */
     "\"Fear is the its past not fear has gone that brings to see inner me. And then my fear. Fear is there will turn the inner me.\"", /* Dune */
     "\"You want you remember and you? Yes. You forever, he said. You want to forget.\"", /* The Road */
     "\"Candles exploding, burn live, the same are mad to talk, mad to like stars.\"", /* On The Road */
     "\"Did seraphs, exhibit number for a princedom by the was and gentlemen initial girl-child. She tongue tip of my loin!\"", /* Lolita */
-    "\"That sometimes you realize truth arrives on you can’t even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
+    "\"That sometimes you realize truth arrives on you can't even now, I wonder how much of my life is convinced.\"", /* The Book Thief */
     "\"Minitrue, which mainment, education and Minipax, the Miniluv and order. The Miniplenty.\"", /* 1984 */
-    "\"But I wasn’t me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
+    "\"But I wasn't me thing deaf; it was people that first started acting like I remembered one that first started acting.\"", /* One Flew Over the Cuckoos Nest */
     "\"And better to commit a hasty action which nobody feels but yourself, than to all consequences with yourself.\"", /* Jane Eyre */
     "@Dd gibbers.";
   }
@@ -5289,10 +5295,10 @@ gibberling
   Config LORD;
   {
     AttributeBonus = 50;
-    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE);
-    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 1; }
-    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 1; }
+    BodyArmor = ROSE_QUARTZ bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Cloak = cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 3; }
+    RightWielded = ROSE_QUARTZ ROSE_QUARTZ weepblade { Enchantment = 3; }
+    LeftWielded = ROSE_QUARTZ acidshield { Enchantment = 3; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, SHIELDS; }
     CWeaponSkillHits = { 2, 100, 100; }
     RightSWeaponSkillHits = 50;

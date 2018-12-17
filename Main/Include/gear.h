@@ -254,6 +254,7 @@ ITEM(boot, armor)
   virtual long GetPrice() const;
   virtual truth IsBoot(ccharacter*) const { return true; }
   virtual truth IsInCorrectSlot(int) const;
+  virtual truth IsKicking() const;
 };
 
 ITEM(gauntlet, armor)
@@ -442,6 +443,44 @@ ITEM(taiaha, meleeweapon)
   virtual void PostConstruct();
   int Charges;
   int TimesUsed;
+};
+
+ITEM(gleipnir, whip)
+{
+ public:
+  gleipnir() { Enable(); }
+  virtual void Be();
+protected:
+  virtual truth CalculateHasBe() const { return true; }
+};
+
+ITEM(eptyron, meleeweapon)
+{
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual void BlockEffect(character*, character*, item*, int Type);
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  virtual int GetClassAnimationFrames() const;
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
+};
+
+ITEM(unpick, pickaxe)
+{
+ public:
+  unpick() : LastUsed(0) { }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual truth Zap(character*, v2, int);
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth AllowAlphaEverywhere() const { return true; }
+  virtual void FinalProcessForBone();
+ protected:
+  ulong LastUsed;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
 };
 
 #endif

@@ -362,6 +362,15 @@ ITEM(stone, item)
   virtual truth WeightIsIrrelevant() const { return true; }
 };
 
+//ITEM(ingot, item)
+//{
+// public:
+//  virtual long GetTruePrice() const;
+//  virtual truth IsLuxuryItem(ccharacter*) const { return GetTruePrice() > 0; }
+// protected:
+//  virtual truth WeightIsIrrelevant() const { return true; }
+//};
+
 ITEM(scrolloftaming, scroll)
 {
  public:
@@ -762,6 +771,17 @@ ITEM(gastrap, itemtrap<materialcontainer>)
  protected:
   virtual truth AddAdjective(festring&, truth) const;
   virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
+};
+
+ITEM(skeletonkey, key)
+{
+ public:
+  virtual truth CanOpenLockType(int AnotherLockType) const { return true; }
+  virtual truth AllowAlphaEverywhere() const { return true; }
+ protected:
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
 };
 
 #endif

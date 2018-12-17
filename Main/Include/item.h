@@ -256,6 +256,7 @@ class item : public object
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
   virtual truth Alchemize(character*, stack*);
+  virtual truth SoftenMaterial();
   virtual truth CheckPickUpEffect(character*) { return true; }
   virtual void StepOnEffect(character*) { }
   virtual truth IsTheAvatar() const { return false; }
@@ -288,6 +289,7 @@ class item : public object
   virtual truth IsConsumable() const { return true; }
   truth IsEatable(ccharacter*) const;
   truth IsDrinkable(ccharacter*) const;
+  truth IsValidRecipeIngredient(ccharacter* Eater) const;
   virtual truth IsOpenable(ccharacter*) const { return false; }
   virtual truth IsReadable(ccharacter*) const { return false; }
   virtual truth IsDippable(ccharacter*) const { return false; }
@@ -310,9 +312,10 @@ class item : public object
   virtual truth IsRepairable(ccharacter*) const { return IsBroken() || IsRusted() || IsBurnt(); }
   virtual truth IsDecosAdShirt(ccharacter*) const { return false; }
   virtual truth IsLuxuryItem(ccharacter*) const { return false; }
-  virtual truth MaterialIsChangeable(ccharacter*) const { return true; }
+  virtual truth MaterialIsChangeable(ccharacter*) const { return IsMaterialChangeable(); }
   virtual truth IsBeverage(ccharacter*) const;
   virtual truth CanBeHardened(ccharacter*) const;
+  virtual truth CanBeSoftened() const;
   virtual truth HasLock(ccharacter*) const { return false; }
   virtual truth IsOnGround() const;
   int GetResistance(int) const;
@@ -502,6 +505,7 @@ class item : public object
   virtual truth IsShadowVeil() const { return false; }
   virtual truth IsLostRubyFlamingSword() const { return false; }
   virtual truth IsRuneSword() const { return false; }
+  virtual truth IsKicking() const { return false; }
   cchar* GetStrengthValueDescription() const;
   cchar* GetBaseToHitValueDescription() const;
   cchar* GetBaseBlockValueDescription() const;
@@ -617,6 +621,7 @@ class item : public object
   void SendMemorizedUpdateRequest() const;
   virtual void Ignite();
   virtual void Extinguish(truth);
+  void SetValidRecipeIngredient(truth b){ValidRecipeIngredient=b;}
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
@@ -629,6 +634,7 @@ class item : public object
   virtual truth WeightIsIrrelevant() const { return false; }
   virtual const prototype* FindProtoType() const { return &ProtoType; }
   virtual truth AddStateDescription(festring&, truth) const;
+  virtual void AddContainerPostFix(festring&) const;
   static const prototype ProtoType;
   slot** Slot;
   int Size;
@@ -643,6 +649,7 @@ class item : public object
   festring label;
   ulong ItemFlags;
   int iRotateFlyingThrownStep;
+  truth ValidRecipeIngredient;
   virtual truth NeedsBurningPostFix() const { return IsBurning(); }
 };
 

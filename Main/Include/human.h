@@ -69,6 +69,7 @@ CHARACTER(humanoid, character)
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipments() const { return 13; }
+  virtual void SwitchToCraft(recipedata rpd);
   virtual void SwitchToDig(item*, v2);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;
@@ -222,6 +223,8 @@ CHARACTER(playerkind, humanoid)
   virtual int GetNaturalSparkleFlags() const;
   virtual truth IsPlayerKind() const { return true; }
   virtual double GetNaturalExperience(int) const;
+  virtual int GetTalent() const { return Talent; }
+  virtual int GetWeakness() const { return Weakness; }
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void PostConstruct();
@@ -543,6 +546,7 @@ CHARACTER(werewolfwolf, humanoid)
 {
  public:
   virtual festring GetKillName() const;
+  virtual void GetAICommand();
  protected:
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };

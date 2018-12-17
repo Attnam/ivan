@@ -14,17 +14,24 @@
 #include "bitmap.h"
 #include "char.h"
 #include "command.h"
+#include "confdef.h"
+#include "craft.h"
 #include "database.h"
 #include "devcons.h"
 #include "felist.h"
 #include "game.h"
+#include "gear.h"
 #include "god.h"
 #include "graphics.h"
 #include "human.h"
 #include "iconf.h"
+#include "lterras.h"
 #include "materia.h"
+#include "materias.h"
 #include "message.h"
 #include "miscitem.h"
+#include "nonhuman.h"
+#include "proto.h"
 #include "room.h"
 #include "specialkeys.h"
 #include "stack.h"
@@ -40,6 +47,7 @@
 #include "proto.h"
 #endif
 
+#include "cmdcraft.cpp"
 #include "cmdswapweap.cpp"
 
 command::command(truth (*LinkedFunction)(character*), cchar* Description, char Key1, char Key2, char Key3,
@@ -76,6 +84,7 @@ command* commandsystem::Command[] =
   new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
   new command(&Close, "close", 'c', 'c', 'c', false),
+  new command(&Craft, "craft", 'f', 'F', 'f', false),
   new command(&Dip, "dip", '!', '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', 'D', true),
   new command(&Taste, "taste", 'T', 'T', 'T', true),
@@ -1263,7 +1272,7 @@ truth commandsystem::Offer(character* Char)
       return false;
     }
 
-    item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to offer?"));
+    item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to offer?"), REMEMBER_SELECTED);
 
     if(Item)
     {
@@ -2162,8 +2171,8 @@ truth commandsystem::SecretKnowledge(character* Char)
       delete Material[c];
   }
 
-  List.PrintToFile(game::GetHomeDir() + "secret" + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetHomeDir().CStr(), Chosen);
+  List.PrintToFile(game::GetUserDataDir() + "secret" + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetUserDataDir().CStr(), Chosen);
   return false;
 }
 

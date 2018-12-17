@@ -187,6 +187,7 @@ class game
   static void SRegionAroundDeny();
   static void PrepareToClearNonVisibleSquaresAround(v2);
   static void UpdatePlayerOnScreenSBSBlitdata();
+  static truth IsQuestItem(item*);
   static int GetMoveCommandKey(int);
   static cv2 GetMoveVector(int I) { return MoveVector[I]; }
   static cv2 GetClockwiseMoveVector(int I) { return ClockwiseMoveVector[I]; }
@@ -346,13 +347,14 @@ class game
   static void SetStoryState(int What) { StoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
+  static truth PlayerIsGodChampion() { return PlayerIsChampion; }
+  static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
   static truth IsInGetCommand() { return InGetCommand; }
-  static festring GetHomeDir();
+  static festring GetDataDir();
+  static festring GetUserDataDir();
   static festring GetSaveDir();
   static festring GetScrshotDir();
-  static festring GetDataDir();
-  static festring GetStateDir();
   static festring GetBoneDir();
   static festring GetMusicDir();
   static truth PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
@@ -578,6 +580,7 @@ class game
   static v2 GlobalRainSpeed;
   static long GlobalRainTimeModifier;
   static truth PlayerSumoChampion;
+  static truth PlayerIsChampion; // This marks the player as a champion of some god.
   static truth TouristHasSpider;
   static ulong SquarePartEmitationTick;
   static cint LargeMoveDirection[];

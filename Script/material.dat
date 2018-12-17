@@ -4642,7 +4642,7 @@ gas
 
   Config AIR;
   {
-    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
+    Color = rgb16(180, 180, 255); /* TRANSPARENT_COLOR does not work. */
     NameStem = "air";
     Alpha = 150;
     AttachedGod = SILVA;
@@ -4651,7 +4651,7 @@ gas
 
   Config VACUUM;
   {
-    Color = rgb16(255, 0, 255); /* TRANSPARENT_COLOR */
+    Color = rgb16(180, 180, 255); /* TRANSPARENT_COLOR does not work. */
     NameStem = "vacuum";
     Alpha = 150;
     AttachedGod = MORTIFER;
@@ -4767,6 +4767,17 @@ gas
     Effect = EFFECT_KOBOLD_FLESH;
     StepInWisdomLimit = 3;
   }
+
+  Config TELEPORT_GAS;
+  {
+    Color = rgb16(148, 0, 211);
+    NameStem = "warp gas";
+    Alpha = 100;
+    AttachedGod = SOPHOS;
+    Effect = EFFECT_TELEPORTATION;
+    HardenedMaterial = TELEPORT_FLUID;
+    StepInWisdomLimit = 10;
+  }
 }
 
 liquid
@@ -4848,10 +4859,25 @@ liquid
     CategoryFlags = Base|IS_SPARKLING;
   }
 
+  Config TELEPORT_FLUID;
+  {
+    StrengthValue = 1;
+    Density = 50;
+    NutritionValue = 1;
+    RustModifier = 0;
+    Color = rgb16(153, 50, 204);
+    NameStem = "warp fluid";
+    Alpha = 150;
+    AttachedGod = SOPHOS;
+    Effect = EFFECT_TELEPORTATION;
+    SoftenedMaterial = TELEPORT_GAS;
+    CommonFlags = Base|IS_VALUABLE;
+  }
+
   Config PEA_SOUP;
   {
     StrengthValue = 5;
-    NutritionValue = 500;
+    NutritionValue = 1500;
     Color = rgb16(0, 200, 0);
     NameStem = "pea soup";
     Effect = EFFECT_PEA_SOUP;
@@ -4864,7 +4890,7 @@ liquid
   Config CHICKEN_SOUP;
   {
     StrengthValue = 5;
-    NutritionValue = 1000;
+    NutritionValue = 1500;
     Color = rgb16(244, 164, 96);
     NameStem = "chicken soup";
     Effect = EFFECT_HEAL; /* Chiken soup is good hwne you're ill! */
@@ -4902,7 +4928,7 @@ liquid
   Config MILK;
   {
     StrengthValue = 1;
-    NutritionValue = 500;
+    NutritionValue = 1000;
     Color = rgb16(220, 217, 205);
     NameStem = "milk";
     AttachedGod = SEGES;
@@ -4914,14 +4940,14 @@ liquid
   Config HONEY;
   {
     StrengthValue = 3;
-    NutritionValue = 1500;
+    NutritionValue = 1000;
     Color = rgb16(199, 149, 31);
     PriceModifier = 900;
     NameStem = "honey";
     Effect = EFFECT_HEAL;
     ConsumeEndMessage = CEM_HEALING_LIQUID;
     HitMessage = HM_HEALING_LIQUID;
-    EffectStrength = 25;
+    EffectStrength = 50;
     Alpha = 200;
     AttachedGod = SEGES;
   }
@@ -4950,6 +4976,7 @@ liquid
     NameStem = "ink";
     Alpha = 175;
     AttachedGod = SOPHOS;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config BRINE;
@@ -5136,6 +5163,7 @@ liquid
     ConsumeWisdomLimit = 3;
     BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
     InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     Stickiness = 100;
     StepInWisdomLimit = 4;
   }
@@ -5155,6 +5183,7 @@ liquid
     ConsumeWisdomLimit = 4;
     BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
     InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     Stickiness = 25;
     StepInWisdomLimit = 5;
   }
@@ -5236,6 +5265,7 @@ liquid
     AttachedGod = MORTIFER;
     PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config LIQUID_FEAR;
@@ -5253,6 +5283,7 @@ liquid
     AttachedGod = CRUENTUS;
     PriceModifier = 500;
     CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config ASPHALT;
@@ -5267,6 +5298,24 @@ liquid
     Stickiness = 250;
     ConsumeWisdomLimit = 3;
     StepInWisdomLimit = 4;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
+  }
+
+  Config VINEGAR;
+  {
+    StrengthValue = 1;
+    NutritionValue = 1000;
+    Color = rgb16(100, 100, 0);
+    NameStem = "vinegar";
+    Alpha = 150;
+    Flexibility = 45;
+    AttachedGod = SCABIES;
+    RustModifier = 150;
+    Acidicity = 75;
+    ConsumeWisdomLimit = 6;
+    PriceModifier = 100;
+    InteractionFlags = Base|AFFECT_INSIDE;
+    StepInWisdomLimit = 10;
   }
 
   /* Bodily fluids */
@@ -5283,6 +5332,7 @@ liquid
     RustModifier = 200;
     Acidicity = 10;
     InteractionFlags = Base|AFFECT_INSIDE;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
     StepInWisdomLimit = 5;
   }
 
@@ -5320,7 +5370,7 @@ liquid
     Flexibility = 40;
     AttachedGod = CRUENTUS;
     RustModifier = 1;
-    CategoryFlags = IS_BLOOD;
+    CategoryFlags = Base|IS_BLOOD|IS_GOLEM_MATERIAL;
   }
 
   Config GREEN_BLOOD;
@@ -5384,10 +5434,7 @@ liquid
     NameStem = "troll blood";
     Alpha = 175;
     Flexibility = 40;
-    Effect = EFFECT_HEAL;
-    ConsumeEndMessage = CEM_HEALING_LIQUID;
-    HitMessage = HM_HEALING_LIQUID;
-    EffectStrength = 50;
+    Effect = EFFECT_REGENERATION;
     PriceModifier = 750;
     AttachedGod = CRUENTUS;
     CommonFlags = Base|IS_VALUABLE;
@@ -5481,7 +5528,7 @@ liquid
     InteractionFlags = Base|EFFECT_IS_GOOD;
     Effect = EFFECT_ANTIDOTE;
     ConsumeEndMessage = CEM_ANTIDOTE;
-    EffectStrength = 50;
+    EffectStrength = 100;
   }
 
   Config OMMEL_BLOOD;
@@ -5632,6 +5679,7 @@ liquid
     HardenedMaterial = CLAY;
     Stickiness = 25;
     StepInWisdomLimit = 5;
+    CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
 
   Config QUICK_SAND;
@@ -6467,5 +6515,34 @@ ironalloy /* Iron alloys - Metals that rust. */
     IntelligenceRequirement = 15;
     CategoryFlags = Base|IS_SCARY;
     CommonFlags = Base|IS_VALUABLE;
+  }
+
+  Config WHITE_STEEL;
+  {
+    StrengthValue = 130;
+    Density = 7000;
+    Color = rgb16(211, 211, 211);
+    PriceModifier = 250;
+    NameStem = "white steel";
+    RustModifier = 50;
+    SoftenedMaterial = IRON;
+    HardenedMaterial = UR_STEEL;
+    IntelligenceRequirement = 10;
+    CommonFlags = Base|IS_VALUABLE;
+  }
+
+  Config UR_STEEL;
+  {
+    StrengthValue = 200;
+    Density = 6000;
+    Color = rgb16(222, 222, 222);
+    PriceModifier = 1000;
+    NameStem = "ur-steel";
+    RustModifier = 25;
+    SoftenedMaterial = WHITE_STEEL;
+    HardenedMaterial = UKKU_STEEL;
+    IntelligenceRequirement = 25;
+    CommonFlags = Base|IS_VALUABLE;
+    NameFlags = Base|USE_AN;
   }
 }

@@ -540,7 +540,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, int Flags)
 
       EditNP(-50);
       EditAP(-Max(FirstAPCost, SecondAPCost));
-      EditStamina(-10000 / Strength, false);
+      EditStamina(GetAdjustedStaminaCost(-1000, Strength), false);
       msgsystem::LeaveBigMessageMode();
       return true;
     }
@@ -1780,6 +1780,53 @@ void humanoid::SetEquipment(int I, item* What)
   }
 }
 
+void humanoid::SwitchToCraft(recipedata rpd)
+{DBGLN;
+  craft* Craft = craft::Spawn(this);DBGLN;
+
+  if(rpd.GetTool()!=NULL){DBGLN;
+    if(GetRightArm())
+    {DBGLN;
+      item* Item = GetRightArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+        GetRightArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetLeftArm())
+    {DBGLN;
+      item* Item = GetLeftArm()->GetWielded();
+
+      if(Item && Item != rpd.GetTool())
+      {
+        Craft->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+        GetLeftArm()->GetWielded()->MoveTo(GetStack());
+      }
+    }
+
+    if(GetMainWielded() != rpd.GetTool())
+    {DBGLN;
+      Craft->SetMoveCraftTool(true);
+      rpd.GetTool()->RemoveFromSlot();
+
+      if(GetMainArm() && GetMainArm()->IsUsable())
+        GetMainArm()->SetWielded(rpd.GetTool());
+      else
+        GetSecondaryArm()->SetWielded(rpd.GetTool());
+    }
+    else
+      Craft->SetMoveCraftTool(false);
+  }DBGLN;
+
+  //TODO let the GetTool2() be equipped too
+
+  Craft->SetCraftWhat(rpd);DBGLN;
+  SetAction(Craft);DBGLN;
+}
+
 void humanoid::SwitchToDig(item* DigItem, v2 Square)
 {
   dig* Dig = dig::Spawn(this);
@@ -2243,7 +2290,7 @@ void humanoid::Bite(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 150, 1 << 9);
-  EditStamina(-1000, false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(AGILITY)), false);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(),
                  RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -2253,7 +2300,7 @@ void humanoid::Kick(lsquare* Square, int Direction, truth ForceHit)
   leg* KickLeg = RAND_2 ? GetRightLeg() : GetLeftLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  EditStamina(-10000 / GetAttribute(LEG_STRENGTH), false);
+  EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(LEG_STRENGTH)), false);
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(),
                       RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
@@ -3829,8 +3876,8 @@ void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
   Info.AddEntry(CONST_S("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
-  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Dexterity:    ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility:      ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 item* humanoid::GetPairEquipment(int I) const
@@ -5670,6 +5717,16 @@ void golem::CreateCorpse(lsquare* Square)
 
   if(Material->IsSolid())
     Square->AddItem(Material->CreateNaturalForm(ItemVolume));
+  if(Material->IsLiquid())
+  {
+    for(int d = 0; d < GetExtendedNeighbourSquares(); ++d)
+    {
+      lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
+
+      if(NeighbourSquare)
+        NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
+    }
+  }
 
   SendToHell();
 }
@@ -6214,7 +6271,7 @@ cchar* humanoid::GetNormalDeathMessage() const
   else if(BodyPartIsVital(GROIN_INDEX) && (!GetGroin() || GetGroin()->GetHP() <= 0))
     return "killed @bkp dirty attack below the belt";
   else
-    return "killed @k";
+    return character::GetNormalDeathMessage();
 }
 
 void kamikazedwarf::SingRandomSong()
@@ -6594,6 +6651,15 @@ void goblin::GetAICommand()
 {
   if(CheckAIZapOpportunity())
     return;
+
+  humanoid::GetAICommand();
+}
+
+void werewolfwolf::GetAICommand()
+{
+  if(GetConfig() == DRUID && !RAND_2)
+    if(CheckAIZapOpportunity())
+      return;
 
   humanoid::GetAICommand();
 }
