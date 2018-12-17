@@ -35,6 +35,8 @@ Fixes:
 * Fix wizard mode autoplay mode.
 * Fix heap-use-after-free in go::Handle().
 * Harden bitmap::Fill().
+* Fix first person being used in crafting messages.
+* Fix dialogue of Terra.
 
 Version 0.54, released 2nd October 2018
 ---------------------------------------

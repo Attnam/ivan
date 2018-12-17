@@ -158,7 +158,7 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
     ABORT("no suspended craft action to set to %s!",Char->GetName(DEFINITE).CStr());
 
   if(Char->GetAction()!=NULL){DBG1("AlreadySomethingElse,How?");DBGSTK; //may never happen tho... TODO ABORT() ?
-    ADD_MESSAGE("I am already doing something else.");
+    ADD_MESSAGE("You are already doing something else.");
     return false;
   }
 
@@ -175,21 +175,21 @@ bool craftcore::ResumeSuspendedTo(character* Char,recipedata& rpd)
   if(bReqSamePos){
     if(rpd.rc.GetDungeonLevelID() != craftcore::CurrentDungeonLevelID()){
       //TODO better message: place? location? dungeon level sounds a bit non-immersive, or not?
-      ADD_MESSAGE("I need to be in the same dungeon I was before to continue to prepare it.");
+      ADD_MESSAGE("You need to be in the same dungeon as before to continue crafting.");
       return false;
     }
 
     if(rpd.v2PlayerCraftingAt != Char->GetPos()){
       festring fsDist;
       int iDist = (rpd.v2PlayerCraftingAt - Char->GetPos()).GetLengthSquare();
-      if(iDist<=2)fsDist<<"and I am almost there!";
+      if(iDist<=2)fsDist<<"and you are almost there!";
       else
-      if(iDist<=10)fsDist<<"and I am near it.";
+      if(iDist<=10)fsDist<<"and you are nearby.";
       else
-      if(iDist<=20)fsDist<<"but I am still a bit far away from it...";
+      if(iDist<=20)fsDist<<"but you are still a bit far away from it...";
       else
         fsDist<<"but it seems to be quite far from here.";
-      ADD_MESSAGE("I need to be were I was crafting before, %s",fsDist.CStr());
+      ADD_MESSAGE("You need to be where you were crafting before, %s",fsDist.CStr());
       game::SetDrawMapOverlay(true); //TODO make this optional?
       game::PositionQuestion(CONST_S("It was here!"), rpd.v2PlayerCraftingAt, 0, 0, false);
       game::SetDrawMapOverlay(false);
@@ -617,7 +617,7 @@ struct recipe{
     rpd.bAlreadyExplained=true;
   }
   void failToolMsg(recipedata& rpd,festring tool){
-    ADD_MESSAGE("I don't have %s to work on it.",tool.CStr());
+    ADD_MESSAGE("You don't have %s to work on.",tool.CStr());
     rpd.bAlreadyExplained=true;
   }
 
@@ -737,7 +737,8 @@ struct recipe{
         rpd.iBaseTurnsToFinish *= 3;
       }
     }else{
-      ADD_MESSAGE("I have no dagger to work on it."); //it is good to measure, hold tight, has a good height etc...
+      ADD_MESSAGE("You have no dagger to work on it."); //it is good to measure, hold tight, has a good height etc...
+                                                        // Does it have to be dagger? Wouldn't "tool" be better? --red_kangaroo
       rpd.bAlreadyExplained=true;
     }
 
@@ -792,7 +793,7 @@ struct recipe{
     if(it!=NULL)
       calcToolTurns(rpd,iMult);
     else{
-      ADD_MESSAGE("I have no blunt weapon to work on it.");
+      ADD_MESSAGE("You have no blunt tool to work on it.");
       rpd.bAlreadyExplained=true;
     }
 
@@ -823,7 +824,7 @@ struct recipe{
 
       calcToolTurns(rpd,iMult);
     }else{
-      ADD_MESSAGE("I have no cutting weapon to work on it.");
+      ADD_MESSAGE("You have no cutting tool to work on it.");
       rpd.bAlreadyExplained=true;
     }
 
@@ -1205,7 +1206,7 @@ struct srpCutWeb : public recipe{
     if(ra && !ra->IsUsable())ra=NULL;
     if(la && !la->IsUsable())la=NULL;
     if(!ra && !la){
-      ADD_MESSAGE("I have no usable arm to do that.");
+      ADD_MESSAGE("You have no usable arm to do that.");
       rpd.bAlreadyExplained=true;
       return false;
     }
@@ -1277,7 +1278,7 @@ struct srpCutWeb : public recipe{
           h->Remove();
           h->PutTo(rpd.lsqrPlaceAt->GetPos()); //TODO check for walkability first!
           w->StepOnEffect(h);
-          ADD_MESSAGE("I got stuck on the web!");
+          ADD_MESSAGE("You've got stuck on the web!");
           rpd.bAlreadyExplained=true;
         }else{
           if(rpd.itTool!=NULL){
@@ -1289,7 +1290,7 @@ struct srpCutWeb : public recipe{
       if(bLoseWeapon){
         rpd.itTool->RemoveFromSlot();
         rpd.itTool->MoveTo(rpd.lsqrPlaceAt->GetStack()); //TODO check if is not a WALL!!!
-        ADD_MESSAGE("I lost my %s!",rpd.itTool->GetName(UNARTICLED).CStr());
+        ADD_MESSAGE("You lost your %s!",rpd.itTool->GetName(UNARTICLED).CStr());
         rpd.bAlreadyExplained=true;
       }
 
@@ -1304,7 +1305,7 @@ struct srpCutWeb : public recipe{
       w->SetStrength(iSt);
 
       if(!rpd.bAlreadyExplained){
-        ADD_MESSAGE("I failed to tear down the web.");
+        ADD_MESSAGE("You fail to tear down the web.");
         rpd.bAlreadyExplained=true;
       }
     }
@@ -1327,7 +1328,7 @@ struct srpOltBASE : public recipe{
   bool bReqForge=false;
   bool bReqToolBlunt=true;
   ci CIdefault;
-  festring fsDescBASE = "You will need a hammer or other blunt weapon.";
+  festring fsDescBASE = "You will need a hammer or other blunt tool.";
 
   virtual bool spawnCfg(recipedata& rpd){return false;}
 
@@ -1405,7 +1406,7 @@ struct srpDoor : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","a secret door");
-    desc << "You will need a hammer or other blunt weapon and sticks, bones or ingots.";
+    desc << "You will need a hammer or other blunt tool, and sticks, bones or ingots.";
   }
 
   virtual bool work(recipedata& rpd){
@@ -1443,7 +1444,7 @@ struct srpAnvil : public srpOltBASE{
 
   virtual void fillInfo(){
     init("build","an anvil");
-    desc << "Near a forge you can create an anvil using ingots.\n " << fsDescBASE;
+    desc << "You can create an anvil using ingots while near a forge.\n " << fsDescBASE;
   }
 
   virtual bool work(recipedata& rpd){
@@ -1528,8 +1529,8 @@ struct srpWall2 : public srpOltBASE{
 
 struct srpJoinLumps : public recipe{
   virtual void fillInfo(){
-    init("join","a lump");
-    desc << "Join lumps of same material.";
+    init("merge","lumps");
+    desc << "Merge lumps of the same material.";
   }
 
   void askForEqualLumps(recipedata& rpd){
@@ -1570,7 +1571,7 @@ struct srpJoinLumps : public recipe{
     askForEqualLumps(rpd);
 
     if(rpd.ingredientsIDs.empty()){
-      ADD_MESSAGE("I have no lumps to work with.");
+      ADD_MESSAGE("You have no lumps to work with.");
       rpd.bAlreadyExplained = true;
       return false;
     }
@@ -1683,7 +1684,7 @@ struct srpMelt : public srpJoinLumps{
 
 struct srpDismantle : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("dismantle","some materials as lumps and sticks");
+    init("dismantle","item");
     desc << "Near a forge, any meltable item can be dismantled to recover it's materials.\n Otherwise you just need a cutting tool.";
   }
 
@@ -1712,13 +1713,13 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
     matS = itToUse->GetSecondaryMaterial();
 
     if(game::IsQuestItem(itToUse)){
-      ADD_MESSAGE("You feel that would be a bad idea and carefully stores it back in your inventory.");
+      ADD_MESSAGE("You feel that would be a bad idea and carefully store it back in your inventory.");
       rpd.bAlreadyExplained=true;
       return false;
     }
 
     if(dynamic_cast<corpse*>(itToUse)!=NULL || matM==NULL){ //TODO may be there are other things than corpses that also have no main material?
-      ADD_MESSAGE("I should try to split %s instead.",itToUse->GetName(DEFINITE).CStr());
+      ADD_MESSAGE("You should try to split %s instead.",itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;
     }
@@ -1778,7 +1779,7 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
 
 struct srpInspect : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("inspect","item materials details");
+    init("inspect","item materials");
     desc << "Carefully inspect what materials an item is made of.";
   }
 
@@ -1804,7 +1805,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
     if(matM||matS){
       ADD_MESSAGE("%s",fs.CStr());
     }else{
-      ADD_MESSAGE("I can't inspect %s.",it0->GetName(INDEFINITE).CStr());
+      ADD_MESSAGE("You can't inspect %s.",it0->GetName(INDEFINITE).CStr());
     }
     rpd.bAlreadyExplained=true;
     return true;
@@ -1813,7 +1814,7 @@ struct srpInspect : public recipe{ //TODO this is instantaneous, should take tim
 
 struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should take time?
   virtual void fillInfo(){
-    init("resistance check","weaker material result");
+    init("hardness check","(weaker material results)");
     desc << "Hit an item with another, the weaker one will receive a scratch.";
   }
 
@@ -1874,7 +1875,7 @@ struct srpResistanceVS : public recipe{ //TODO this is instantaneous, should tak
 
 struct srpSplitLump : public recipe{
   void explain(recipedata& rpd,festring fs){
-    ADD_MESSAGE("I need a cutting weapon to split %s.",fs.CStr());
+    ADD_MESSAGE("You need a cutting tool to split %s.",fs.CStr());
     rpd.bAlreadyExplained=true;
   }
 
@@ -1888,7 +1889,7 @@ struct srpSplitLump : public recipe{
   }
 
   virtual void fillInfo(){
-    init("split or cut","some base materials");
+    init("split","raw materials");
     desc << "Split them to be easier to work with.\n To just cut out (subtract) some volume, specify a negative value in cm3. \nIt is good to cut them precisely to not waste materials.";
   }
 
@@ -2012,7 +2013,7 @@ struct srpSplitLump : public recipe{
 
     rpd.itSpawnMatMainVol = volTot/rpd.itSpawnTot;
     if(rpd.itSpawnMatMainVol < 1){
-      ADD_MESSAGE("The splitted part must have some volume.");
+      ADD_MESSAGE("The split part must have some volume.");
       rpd.bAlreadyExplained=true;
       return false;
     }
@@ -2123,7 +2124,7 @@ struct srpForgeItem : public recipe{
       festring Temp;
       Temp << Default;DBG4(Default.CStr(),Default.GetSize(),Temp.CStr(),Temp.GetSize()); // to let us fix previous instead of having to fully type it again
 
-      if(game::DefaultQuestion(Temp, CONST_S("What do you probably want to create?"), Default, true) == ABORTED){DBGLN;
+      if(game::DefaultQuestion(Temp, CONST_S("What do you want to try to create?"), Default, true) == ABORTED){DBGLN;
         /**
          * The wishing system will try to guess what item matches whatever we type,
          * so it may not be what we typed exactly...
@@ -2139,15 +2140,15 @@ struct srpForgeItem : public recipe{
           rpd.fsItemSpawnSearchPrototype = Temp;
           break;
         }else{
-          festring fsDoWhat = "I don't have the power required to enchant";
-          if(itSpawn->GetCategory()==FOOD)fsDoWhat="I never learned how to cook"; //TODO sounds weird for kiwi/banana TODO could at least roast stuff TODO needs seeds to create flour and bake breads
-          if(itSpawn->GetCategory()==BOOK)fsDoWhat="I don't have time to write";
+          festring fsDoWhat = "You don't have the power required to enchant";
+          if(itSpawn->GetCategory()==FOOD)fsDoWhat="You never learned how to cook"; //TODO sounds weird for kiwi/banana TODO could at least roast stuff TODO needs seeds to create flour and bake breads
+          if(itSpawn->GetCategory()==BOOK)fsDoWhat="You don't have time to write";
           ADD_MESSAGE("%s %s!",fsDoWhat.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
           craftcore::SendToHellSafely(itSpawn);
           itSpawn = NULL; //IMPORTANT!!! if user press ESC...
         }
       }else{
-        ADD_MESSAGE("I don't know how to create %s.",Temp.CStr());
+        ADD_MESSAGE("You don't know how to create %s.",Temp.CStr());
       }
 
       Default.Empty();DBG1(Default.CStr());
@@ -2161,9 +2162,9 @@ struct srpForgeItem : public recipe{
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     if(Default == itSpawn->GetName(INDEFINITE)) //TODO compare for EQUAL ignoring case
-      ADD_MESSAGE("Now I need the material(s) to create a %s.",itSpawn->GetName(INDEFINITE).CStr());
+      ADD_MESSAGE("Now you need the materials to create a %s.",itSpawn->GetName(INDEFINITE).CStr());
     else
-      ADD_MESSAGE("Now I need the material(s) to create a %s as I would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr());
+      ADD_MESSAGE("Now you need the materials to create a %s as you would probably create %s.",Default.CStr(),itSpawn->GetName(INDEFINITE).CStr());
 
     long lVolM = itSpawn->GetMainMaterial()->GetVolume();
     if(lVolM==0)
@@ -2234,7 +2235,7 @@ struct srpForgeItem : public recipe{
       }
     }
     if(!bM){
-      ADD_MESSAGE("I will craft it later...");
+      ADD_MESSAGE("You will craft it later...");
       rpd.bAlreadyExplained=true;
       craftcore::SendToHellSafely(itSpawn);
       return false;
@@ -2282,7 +2283,7 @@ struct srpForgeItem : public recipe{
       }
 
       if(!bS){
-        ADD_MESSAGE("I will craft it later...");
+        ADD_MESSAGE("You will craft it later...");
         rpd.bAlreadyExplained=true;
         craftcore::SendToHellSafely(itSpawn);
         return false;
@@ -2591,7 +2592,7 @@ struct srpPoison : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some poison fluid");
+    init("extract","some poison");
     desc << "Use a " << fsTool << " to " << action << " " << name << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
@@ -2610,7 +2611,7 @@ struct srpAcid : public srpFluidsBASE{
   }
 
   virtual void fillInfo(){
-    init("extract","some sulphuric acid fluid");
+    init("extract","some sulphuric acid");
     desc   << "Use a " << fsTool << " to " << action   << " " << name   << " from "
       << fsCorpse << " into a " << fsBottle <<  ".";
   }
@@ -2669,7 +2670,7 @@ truth craftcore::CheckArms(humanoid* h,bool& bLOk,bool& bROk)
   bLOk = h->GetLeftArm() !=NULL && h->GetLeftArm()->IsUsable();
   bROk = h->GetRightArm()!=NULL && h->GetRightArm()->IsUsable();
   if(!bLOk && !bROk){
-    ADD_MESSAGE("I need at least one usable arm to be able to craft.");
+    ADD_MESSAGE("You need at least one usable arm to be able to craft.");
     return false;
   }
 
@@ -2688,7 +2689,7 @@ humanoid* craftcore::CheckHumanoid(character* Char)
 {
   humanoid* h = dynamic_cast<humanoid*>(Char);
   if(h==NULL){
-    ADD_MESSAGE("This monster type cannot craft.");
+    ADD_MESSAGE("This monster cannot craft.");
     return NULL;
   }
   return h;
@@ -2788,22 +2789,22 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
   RP(rpPoison);
   RP(rpAcid);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Simple work with materials:", DARK_GRAY, 0, NO_IMAGE, false);
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Material crafting:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpDismantle);
   RP(rpSplitLump);
   RP(rpJoinLumps);
   RP(rpResistanceVS);
   RP(rpInspect);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"BlackSmithing:", DARK_GRAY, 0, NO_IMAGE, false);
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Blacksmithing:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpMelt);
   RP(rpAnvil);
   RP(rpForge);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Craft items:", DARK_GRAY, 0, NO_IMAGE, false);
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Item crafting:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpForgeItem);
 
-  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Wood work (carving):", DARK_GRAY, 0, NO_IMAGE, false);
+  if(bInitRecipes)craftRecipes.AddEntry(festring()+"Wood carving:", DARK_GRAY, 0, NO_IMAGE, false);
   RP(rpWorkBench);
 
   if(bInitRecipes)craftRecipes.AddEntry(festring()+"Tailoring:", DARK_GRAY, 0, NO_IMAGE, false);
@@ -2832,13 +2833,13 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       fsTools<<rpd.itTool2->GetName(INDEFINITE);
     }
     if(!fsTools.IsEmpty())
-      ADD_MESSAGE("Let me see.. I will use %s as tool(s).",fsTools.CStr());
+      ADD_MESSAGE("Let's see.. You will use %s as tool(s).",fsTools.CStr());
 
     if(rpd.otSpawnType!=CTT_NONE || rpd.itSpawnType!=CIT_NONE) {
       int iCraftTimeMult=1;
 
       if(!bLOk || !bROk){ //using only one hand will take more time even if only one tool is required as even if 2 were, only 1 would be handled per time
-        ADD_MESSAGE("I don't have one arm, this will take longer.");
+        ADD_MESSAGE("You only have one arm, this will take longer.");
         iCraftTimeMult++;
       }
 
@@ -2911,7 +2912,7 @@ truth craftcore::Craft(character* Char) //TODO currently this is an over simplif
       DBG1(rpd.dbgInfo().CStr());
       Char->SwitchToCraft(rpd); // everything must be set before this!!!
 
-      ADD_MESSAGE("Let me work on %s now.",prp->name.CStr());
+      ADD_MESSAGE("You will work on %s now.",prp->name.CStr());
     }else{
       ABORT("requested to craft nothing? %s",rpd.dbgInfo().CStr());
     }
@@ -2969,7 +2970,7 @@ item* crafthandle::CheckBreakItem(bool bAllowBreak, recipedata& rpd, item* itSpa
        * things that can't be broken are special.
        * if it can't be broken, will just create a messy lump.
        */
-      ADD_MESSAGE("My lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
+      ADD_MESSAGE("Your lack of skill broke %s into pieces...",itSpawn->GetName(DEFINITE).CStr());
       craftcore::PrepareRemains(rpd,itSpawn->GetMainMaterial(),CIT_LUMP);
       if(itSpawn->GetSecondaryMaterial()!=NULL)
         craftcore::PrepareRemains(rpd,itSpawn->GetSecondaryMaterial(),CIT_LUMP);
@@ -3076,7 +3077,7 @@ item* crafthandle::SpawnItem(recipedata& rpd, festring& fsCreated)
 
   if(!fsCreated.IsEmpty())
     fsCreated << " ";
-  fsCreated << "I crafted ";
+  fsCreated << "You crafted ";
 
   itSpawn = CheckBreakItem(bAllowBreak, rpd, itSpawn, fsCreated);
   if(itSpawn!=NULL){
@@ -3183,7 +3184,7 @@ void crafthandle::GradativeCraftOverride(recipedata& rpd){DBGLN;
   if(rpd.itSpawnTot==0){
     rpd.bSuccesfullyCompleted=true;
     if(rpd.iRemainingTurnsToFinish>0){
-      ADD_MESSAGE("I worked well and gained %d minutes!",rpd.iRemainingTurnsToFinish); //TODO despite this actually means a lack of calc precision :P, not less fun tho :)
+      ADD_MESSAGE("You worked well and gained %d minutes!",rpd.iRemainingTurnsToFinish); //TODO despite this actually means a lack of calc precision :P, not less fun tho :)
       rpd.iRemainingTurnsToFinish=0; //overriding for consistency.
     }
   }
@@ -3395,7 +3396,7 @@ void crafthandle::CheckEverything(recipedata& rpd, character* CurrentActor){
 
   DBG2(DBGAV2(CurrentActor->GetPos()),DBGAV2(rpd.v2PlayerCraftingAt));
   if(CurrentActor->GetPos() != rpd.v2PlayerCraftingAt){ //in case player is teleported
-    ADD_MESSAGE("I need to move back to where I started crafting.");
+    ADD_MESSAGE("You need to move back to where you started crafting.");
     rpd.bFailedSuspend=true;
   }
 

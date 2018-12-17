@@ -1105,7 +1105,7 @@ bool CPUwiseAI(nonhumanoid* nh)
 {
   if(!nh->IsRooted())return true; //only NPCs that can't move
   if(nh->StateIsActivated(LEVITATION))return true; //this keeps levitating ones still active what may be good TODO add user option to deny them?
-  
+
   int iDist = ivanconfig::GetDistLimitMagicMushrooms();
   if(iDist==0)return true;
 
@@ -2117,7 +2117,7 @@ void genetrixvesana::FinalProcessForBone()
 void carnivorousplant::GetAICommand()
 {
   if(!CPUwiseAI(this))return;
-  
+
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -2443,6 +2443,7 @@ void lobhse::CreateCorpse(lsquare* Square)
 {
   largecreature::CreateCorpse(Square);
   Square->AddItem(mangoseedling::Spawn());
+  game::SetFreedomStoryState(2);
 }
 
 void lobhse::GetAICommand()

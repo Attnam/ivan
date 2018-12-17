@@ -347,6 +347,8 @@ class game
   static void SetStoryState(int What) { StoryState = What; }
   static int GetXinrochTombStoryState() { return XinrochTombStoryState; }
   static void SetXinrochTombStoryState(int What) { XinrochTombStoryState = What; }
+  static int GetFreedomStoryState() { return FreedomStoryState; }
+  static void SetFreedomStoryState(int What) { FreedomStoryState = What; }
   static truth PlayerIsGodChampion() { return PlayerIsChampion; }
   static void MakePlayerGodChampion() { PlayerIsChampion = true; } // No way to switch that back, only one championship per game.
   static void SetIsInGetCommand(truth What) { InGetCommand = What; }
@@ -545,6 +547,7 @@ class game
   static int Dungeons;
   static int StoryState;
   static int XinrochTombStoryState;
+  static int FreedomStoryState;
   static truth InGetCommand;
   static truth PlayerHurtByExplosion;
   static area* CurrentArea;
