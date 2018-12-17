@@ -35,6 +35,7 @@ Fixes:
 * Fix wizard mode autoplay mode.
 * Fix heap-use-after-free in go::Handle().
 * Harden bitmap::Fill().
+* Fix first person being used in crafting messsages.
 
 Version 0.54, released 2nd October 2018
 ---------------------------------------
