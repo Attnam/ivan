@@ -826,7 +826,7 @@ guard
     PanicLevel = 5;
     TamingDifficulty = NO_TAMING;
     IsUnique = true;
-    DefaultName = "Sir Haedlac Galladon VII";
+    DefaultName = "Sir Haedlac Galladon VII"; /* Galahad */
     IsNameable = false;
     CanBeCloned = false;
     IsPolymorphable = false;
@@ -985,7 +985,7 @@ guard
     LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
     RightGauntlet = BRASS gauntlet { Enchantment = 2; }
     RightBoot = BRASS boot { Enchantment = 2; }
-    DefaultName = "Sir Lancelyn";
+    DefaultName = "Sir Lancelyn"; /* Lancelot */
     NameSingular = "emissary";
     PostFix = "of Aslona";
     CWeaponSkillHits = { 2, 500, 500; }
@@ -1022,6 +1022,59 @@ guard
       "\"Die, you treacherous bastard!\"",
       "\"What are you doing? I have a diplomatic immunity!\"",
       "\"Low-blooded scum! You dare to attack a knight of Aslona?\"";
+    }
+  }
+
+  Config CASTLE;
+  {
+    Helmet = DEEP_BRONZE helmet(FULL_HELMET);
+    BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
+    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(LONG_SWORD);
+    LeftWielded = DEEP_BRONZE shield;
+    Adjective = "castle";
+    CWeaponSkillHits = { 2, 100, 100; }
+    RightSWeaponSkillHits = 10;
+    LeftSWeaponSkillHits = 10;
+    PanicLevel = 25;
+    ClothColor = rgb16(120, 80, 40);
+    FriendlyReplies =
+    {
+      5,
+      "@Dd says gravely: \"This is a placeholder dialogue.\"",
+      "@Dd snorts.",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"This is a placeholder dialogue.\"";
+    }
+  }
+
+  Config ROYAL;
+  {
+    AttributeBonus = 40;
+    Helmet = HEPATIZON helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = HEPATIZON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = HEPATIZON OCTIRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
+    LeftWielded = HEPATIZON shield { Enchantment = 2; }
+    RightGauntlet = HEPATIZON gauntlet { Enchantment = 2; }
+    RightBoot = HEPATIZON boot { Enchantment = 2; }
+    RightRing = ring(RING_OF_INFRA_VISION);
+    LeftRing = ring(RING_OF_POISON_RESISTANCE);
+    Adjective = "royal";
+    CWeaponSkillHits = { 2, 500, 500; }
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    PanicLevel = 10;
+    TamingDifficulty = 30;
+    TotalVolume = 80000;
+    ClothColor = rgb16(91, 81, 31);
+    FriendlyReplies =
+    {
+      5,
+      "@Dd says gravely: \"This is a placeholder dialogue.\"",
+      "@Dd snorts.",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"This is a placeholder dialogue.\"";
     }
   }
 }
@@ -6558,7 +6611,6 @@ smith
   NameSingular = "smith";
   Helmet = STEEL helmet { Enchantment = 1; }
   BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-  RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
   RightRing = ring(RING_OF_FIRE_RESISTANCE);
   LeftRing = ring(RING_OF_FIRE_RESISTANCE);
   RightBoot = STEEL boot { Enchantment = 1; }
@@ -6584,6 +6636,7 @@ smith
     HairColor = rgb16(200, 200, 200);
     ClothColor = rgb16(100, 100, 100);
     Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
     RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
   }
 
@@ -6598,7 +6651,8 @@ smith
     ClothColor = rgb16(100, 100, 100);
     TotalVolume = 90000;
     TotalSize = 200;
-    Cloak = IMP_HIDE cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    Cloak = SELKIE_SKIN cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
+    RightGauntlet = SELKIE_SKIN gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
     RightWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
     LeftWielded = CHROME MAHOGANY_WOOD meleeweapon(HAMMER);
     Sex = FEMALE;
@@ -8277,12 +8331,12 @@ tailor
     BeltColor = rgb16(100, 100, 200);
     TotalVolume = 60000;
     TotalSize = 165;
-    Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-    BodyArmor = ELF_CLOTH bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-    Belt = NYMPH_HAIR belt { Enchantment = 1; }
+    Cloak = MERMAID_HAIR cloak { Enchantment = 1; }
+    BodyArmor = MERMAID_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Belt = MERMAID_HAIR belt { Enchantment = 1; }
     RightWielded = STAINLESS_STEEL meleeweapon(DAGGER) { Enchantment = 6; }
-    RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-    RightBoot = ELF_CLOTH boot { Enchantment = 1; }
+    RightGauntlet = MERMAID_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+    RightBoot = SELKIE_SKIN boot { Enchantment = 1; }
     Sex = FEMALE;
   }
 }

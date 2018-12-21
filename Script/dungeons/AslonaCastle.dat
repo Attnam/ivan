@@ -372,10 +372,10 @@ Dungeon ASLONA_CASTLE;
           h == itemcontainer(SMALL_CHEST) { Parameters = LOCKED; ItemsInside == Random { Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } }
           H == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, sausage { Times = 0:10; }, trinket(DEAD_FISH) { Times = 0:3; } } }
           j == trinket(SMALL_CLOCK);
-          J == RUBY GOLD meleeweapon(TWO_HANDED_SCIMITAR);
-          k == EMERALD BRASS meleeweapon(TWO_HANDED_SCIMITAR);
-          K == SAPPHIRE SILVER meleeweapon(TWO_HANDED_SCIMITAR);
-          l == DIAMOND OCTIRON meleeweapon(TWO_HANDED_SCIMITAR);
+          J == RUBY GOLD meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
+          k == EMERALD BRASS meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
+          K == SAPPHIRE SILVER meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
+          l == DIAMOND OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
         }
       }
       {
@@ -441,15 +441,15 @@ Dungeon ASLONA_CASTLE;
           ~ = 0;
           , = 0;
           + = 0;
-          P = chancellor { Flags = IS_MASTER; }
-          N = knight(KING);
+          P = chancellor { Flags = IS_MASTER; } //TODO
+          N = knight(KING); //TODO
           g = guard(CASTLE);
           G = guard(ROYAL);
-          C = guard(GUARD_CAPTAIN);
+          C = guard(GUARD_CAPTAIN); //TODO
           s = smith(ASLONA_CASTLE);
           t = tailor(ASLONA_CASTLE);
-          W = wizard(ALSONA_CASTLE);
-          p = priest(SEGES);
+          W = wizard(ALSONA_CASTLE); //TODO
+          p = priest(SEGES); //TODO
           D = dolphin(ADULT_MALE);
           j = femaleslave(JESTER);
           k = kamikazedwarf(SEGES);

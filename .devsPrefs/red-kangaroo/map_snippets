@@ -1,0 +1,33 @@
+/* Cat room */
+
+RandomLevel 1:2;
+{
+  LevelMessage = "You hear distant purring.";
+
+  Room
+  {
+    Size = 7,7;
+    AltarPossible = false;
+    Shape = ROUND_CORNERS;
+
+    CharacterMap
+    {
+      Pos = 1,1;
+      Size = 5,5;
+
+      Types
+      {
+        c = largecat;
+        l = lion;
+        F = /*Felicia*/ { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+      }
+    }
+    {
+      .ccc.
+      clllc
+      clFlc
+      clllc
+      .ccc.
+    }
+  }
+}

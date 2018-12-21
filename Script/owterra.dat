@@ -88,6 +88,28 @@ underwatertunnelexit
   NativeGTerrainType = JUNGLE;
 }
 
+aslonacastle
+{
+  BitmapPos = 0, 64;
+  NameStem = "mighty seaside castle";
+  UsesLongArticle = false;
+  AttachedDungeon = ASLONA_CASTLE;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
+rebelcamp
+{
+  BitmapPos = 0, 64;
+  NameStem = "hidden camp";
+  UsesLongArticle = false;
+  AttachedDungeon = REBEL_CAMP;
+  CanBeGenerated = true;
+  HideLocationInitially = true;
+  NativeGTerrainType = STEPPE;
+}
+
 locationAA
 {
   BitmapPos = 0, 64;

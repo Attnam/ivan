@@ -77,6 +77,14 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(aslonacastle, owterrain)
+{
+};
+
+OWTERRAIN(rebelcamp, owterrain)
+{
+};
+
 OWTERRAIN(locationAA, owterrain)
 {
 };
