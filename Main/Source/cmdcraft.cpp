@@ -414,7 +414,7 @@ recipedata::recipedata(humanoid* H,uint sel) : rc(H,sel)
 
   // no need to save
   SelectedRecipe=sel;
-  bSpendCurrentTurn=false;
+  bSpendCurrentTurn=false; //TODO review everywhere to let it work as expected instead of always spending a turn what ignores this
   bAlreadyExplained=false;
   bHasAllIngredients=false;
   bCanStart=false;
@@ -816,7 +816,7 @@ struct recipe{
     FBWC(SMALL_SWORDS); //DAGGER is here
     FBWC(AXES); //has more cutting power but less precision and takes more time TODO is this good?
     FBWC(LARGE_SWORDS); //slower
-    FBWC(POLE_ARMS); //even slower, hard to use
+    FBWC(POLE_ARMS); //even slower, hard to use 
 
     if(it!=NULL){
 //      if(bReversedTimeMult)
@@ -1160,13 +1160,15 @@ struct recipe{
 };
 
 /**
- * as we can't kick webs...
- *
- * this is a special kind of "recipe"
+ * As we can't (shouldn't) kick webs...
+ * 
+ * This is a special kind of "recipe"
  * is a way to change the existing environment, like engrave does,
  * but this one was implemented as crafting code
  * so in short, this could be a command like engrave is, but was implemented thru crafting.
- *
+ * 
+ * This action is like a simple slash on the web, so will spend only one turn.
+ * 
  * TODO
  * may be, more functionality could be added, like collect web (spiker silk) to be able to
  * craft leather/clothing or other things.
@@ -1212,23 +1214,28 @@ struct srpCutWeb : public recipe{
     }
 
     bool bSelfPos = rpd.lsqrPlaceAt->GetPos() == h->GetPos();
-
-    rpd.itTool = FindCuttingTool(rpd);
+    
+    rpd.itTool = FindCuttingTool(rpd); // no blunt, no non-cutting, imagine a web that can wold on air the weight of a whole body, only cutting tools
     rpd.bAlreadyExplained=false;
+    item* wieldBkp=NULL;
+    bool bIsWBkpRHand = true;
     if(rpd.itTool!=NULL){
       bool bWielded=false;
-      #define RLWIELD(rl) \
+      #define RLWIELD(rl,br) \
         if(!bWielded && h->Get##rl##Arm() && !h->Get##rl##Arm()->IsStuck()){ \
-          if(h->Get##rl##Wielded()) \
-            h->Get##rl##Wielded()->MoveTo(h->GetStack()); \
+          if(h->Get##rl##Wielded()){ \
+            wieldBkp = h->Get##rl##Wielded(); \
+            wieldBkp->MoveTo(h->GetStack()); \
+          } \
           rpd.itTool->RemoveFromSlot(); \
           h->Set##rl##Wielded(rpd.itTool); \
           bWielded=true; \
+          bIsWBkpRHand=br; \
         }
-      RLWIELD(Right);
-      RLWIELD(Left);
+      RLWIELD(Right,true);
+      RLWIELD(Left,false);
     }
-
+    
     /**
      * IMPORTANT!
      * this repetition is about action quality and NOT time taken
@@ -1243,14 +1250,15 @@ struct srpCutWeb : public recipe{
     if(rpd.itTool!=NULL) //float multiplier last thing!
       tot *= 1 + craftcore::CraftSkill(h)/10;
     DBG1(tot);
-    bool b = false;
-    for(int i=0;i<tot;i++)
+    bool bSuccess = false;
+    for(int i=0;i<tot;i++){
       if(w->TryToTearDown(h)){
-        b=true;
+        bSuccess=true;
         break;
       }
-
-    if(b){
+    }
+    
+    if(bSuccess){
       rpd.bAlreadyExplained=true;
     }else{
       bool bGetStuckOnTheWeb=false;
@@ -1307,6 +1315,22 @@ struct srpCutWeb : public recipe{
       if(!rpd.bAlreadyExplained){
         ADD_MESSAGE("You fail to tear down the web.");
         rpd.bAlreadyExplained=true;
+      }
+      
+    }
+    
+    if(wieldBkp!=NULL){
+      if(wieldBkp->GetSlot()->FindCarrier() == h){
+        wieldBkp->RemoveFromSlot();;
+        if(bIsWBkpRHand){
+          if(h->GetRightWielded())
+            h->GetRightWielded()->MoveTo(h->GetStack());
+          h->SetRightWielded(wieldBkp);
+        }else{
+          if(h->GetLeftWielded())
+            h->GetLeftWielded()->MoveTo(h->GetStack());
+          h->SetLeftWielded(wieldBkp);
+        }
       }
     }
 
