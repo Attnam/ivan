@@ -51,10 +51,9 @@
 /* Shouldn't be initialized here! */
 
 cchar* globalerrorhandler::BugMsg
-= "\n\nPlease send bug report to ivan-support@googlegroups.com\n"
+= "\n\nPlease submit a bug report on our forum at http://attnam.com\n"
 "including a brief description of what you did, what version\n"
-"you are running and which kind of system you are using.\n"
-"Or submit on our forum at http://attnam.com";
+"you are running and which kind of system you are using.";
 
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;

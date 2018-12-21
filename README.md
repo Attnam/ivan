@@ -157,9 +157,7 @@ Score = sqrt(a) * b * b
 
 **Q:** I've found a bug. What should I do?  
 **A:** Write a small description on how the bug occurred and if possible even
-   how we could replicate it, and send this information by email to
-   ivan-support@googlegroups.com. You can also report this bug on our
-   forum:
+   how we could replicate it, and post this information on our forum:
 
    http://attnam.com
 
@@ -167,8 +165,7 @@ Score = sqrt(a) * b * b
    AUTHORS file, if you are the first to discover this bug.
 
 **Q:** I've got a great idea to make IVAN better! What should I do?  
-**A:** Describe the idea to us by sending it to ivan-support@googlegroups.com
-   or report it on our forum (see above). You will be credited if we
+**A:** Post the idea on our forum (see above). You will be credited if we
    implement the feature, it's non-trivial, and you're first to suggest it.
 
 **Q:** I'm a programmer willing to help you. What should I do?  
