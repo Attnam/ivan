@@ -1349,22 +1349,22 @@ ulong itLastApplyID=0; //save it?
 truth commandsystem::ApplyAgain(character* Char)
 {
   if(itLastApplyID==0){
-    ADD_MESSAGE("I need to apply something first.");
+    ADD_MESSAGE("You need to apply something first, %s.", game::Insult());
     return false;
   }
 
   item* it=game::SearchItem(itLastApplyID);
   if(!it){
     itLastApplyID=0;
-    ADD_MESSAGE("I can't re-apply, it was destroyed.");
+    ADD_MESSAGE("You cannot apply something that was destroyed, %s.", game::Insult());
     return false;
   }
 
   if(it->FindCarrier()==Char){
-    ADD_MESSAGE("I will apply my %s again.",it->GetName(UNARTICLED).CStr());
-    return ApplyWork(Char,it);
+    //ADD_MESSAGE("You will apply your %s again.",it->GetName(UNARTICLED).CStr());
+    return ApplyWork(Char,it); // There is already a message from the applied item, no? --red_kangaroo
   }else
-    ADD_MESSAGE("I need to get my %s back!",it->GetName(UNARTICLED).CStr());
+    ADD_MESSAGE("You need to get your %s back!",it->GetName(UNARTICLED).CStr());
 
   return false;
 }
@@ -1551,18 +1551,18 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
 
   bool bChoseLocationMode = pv2ChoseLocation!=NULL;
-  
+
   festring fsHelp;fsHelp<<
     "[Map Help:]\n"
     " F1 - show this message\n"
     " Map notes containing '!' or '!!' will be highlighted.\n"
     " Position mouse cursor over a map note to edit or delete it.\n"
     " In look mode, clicking on a map note will navigate to that location.\n";
-  
+
   if(bChoseLocationMode)
     if(!game::ToggleShowMapNotes())
       game::ToggleShowMapNotes();
-  
+
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
       lsquare* lsqrH=NULL;
@@ -1580,7 +1580,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
           specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fsHelp);
           continue;
         }
-        
+
         switch(key){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
@@ -1641,7 +1641,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
       game::ToggleDrawMapOverlay();
     }
   }else{
-    ADD_MESSAGE("I can't hold the map!");
+    ADD_MESSAGE("You can't hold the map!");
   }
 
   return true;

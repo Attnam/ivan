@@ -1998,7 +1998,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
           if(eqMHoverPrevious != eqMHover){ //prevent spam
             festring fs;
             Equipment->AddInventoryEntry(PLAYER,fs,1,true); //to show AV DAM weight volume
-            ADD_MESSAGE("My %s is %s.",GetEquipmentName(c),fs.CStr());
+            ADD_MESSAGE("Your %s is %s.",GetEquipmentName(c),fs.CStr());
             msgsystem::Draw();
             eqMHoverPrevious = eqMHover;
           }
