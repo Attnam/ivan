@@ -65,23 +65,25 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+# Caveat: If you want to find standard libraries or headers before frameworks,
+#         you must pass -DCMAKE_FIND_FRAMEWORK=LAST to cmake.
 SET(SDL2_SEARCH_PATHS
 	# other paths like ~/Library/Frameworks and /usr/local
-	# should be provided by $ENV{SDL2DIR}
+	# should be provided/prioritized by setting $ENV{SDL2DIR}
 	/Library/Frameworks
 	/usr
 )
 
 # CPU architecture detection for MSVC
 if(CMAKE_SIZEOF_VOID_P MATCHES 8)
-    set(CPU_ARCH "x64")
+	set(CPU_ARCH "x64")
 else()
-    set(CPU_ARCH "x86")
+	set(CPU_ARCH "x86")
 endif()
 
 FIND_PATH(SDL2_INCLUDE_DIR
 	NAMES SDL.h
-	PATH_SUFFIXES include/SDL2 include
+	PATH_SUFFIXES include/SDL2 SDL2 include
 	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
 )
 
@@ -93,7 +95,7 @@ FIND_LIBRARY(SDL2_LIBRARY_TEMP
 
 FIND_PATH(SDL2_mixer_INCLUDE_DIR
 	NAMES SDL_mixer.h
-	PATH_SUFFIXES include/SDL2 include
+	PATH_SUFFIXES include/SDL2 SDL2 include
 	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
 )
 
