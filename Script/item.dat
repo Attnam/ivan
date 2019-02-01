@@ -4514,6 +4514,10 @@ ring
     AttachedGod = SEGES;
     TeleportPriority = 1000;
     Alias == "ring of polymorph lock";
+    CanBeWished = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 
   Config RING_OF_WORM;
