@@ -80,49 +80,49 @@ command* commandsystem::Command[] =
 
   /* Sort according to description */
 
-  new command(&Apply, "apply", 'a', 'a', 'a', false),
+  new command(&Apply, "apply item", 'a', 'a', 'a', false),
   new command(&ApplyAgain, "apply last item again", 'A', 'A', 'A', false),
   new command(&Talk, "chat", 'C', 'C', 'C', false),
   new command(&Close, "close", 'c', 'c', 'c', false),
   new command(&Craft, "craft", 'f', 'F', 'f', false),
-  new command(&Dip, "dip", '!', '!', '!', false),
-  new command(&Drink, "drink", 'D', 'D', 'D', true),
-  new command(&Taste, "taste", 'T', 'T', 'T', true),
-  new command(&Drop, "drop", 'd', 'd', 'd', true),
+  new command(&Dip, "dip into liquid", '!', '!', '!', false),
+  new command(&Drink, "drink liquid", 'D', 'D', 'D', true),
+  new command(&Taste, "taste a bit of liquid", 'T', 'T', 'T', true),
+  new command(&Drop, "drop item", 'd', 'd', 'd', true),
   new command(&Eat, "eat", 'e', 'e', 'e', true),
-  new command(&WhatToEngrave, "engrave", 'G', 'G', 'G', false),
+  new command(&WhatToEngrave, "engrave message", 'G', 'G', 'G', false),
   new command(&EquipmentScreen, "equipment menu", 'E', 'E', 'E', true),
-  new command(&Go, "go", 'g', 'g', 'g', false),
-  new command(&GoDown, "go down/enter area", '>', '>', '>', true),
+  new command(&Go, "go / fastwalk", 'g', 'g', 'g', false),
+  new command(&GoDown, "go down / enter area", '>', '>', '>', true),
   new command(&GoUp, "go up", '<', '<', '<', true),
-  new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', 'I', false),
+  new command(&IssueCommand, "issue commands to team members", 'I', 'I', 'I', false),
   new command(&Kick, "kick", 'k', 'K', 'K', false),
-  new command(&Look, "look", 'l', 'L', 'L', true),
+  new command(&Look, "look around", 'l', 'L', 'L', true),
   new command(&ShowMap, "show map", 'm', 'm', 'm', false),
-  new command(&AssignName , "name", 'n', 'n', 'N', false),
-  new command(&Offer, "offer", 'O', 'f', 'O', false),
+  new command(&AssignName , "name team members", 'n', 'n', 'N', false),
+  new command(&Offer, "offer to gods", 'O', 'f', 'O', false),
   new command(&Open, "open", 'o', 'O', 'o', false),
-  new command(&PickUp, "pick up", ',', ',', ',', false),
+  new command(&PickUp, "pick up item", ',', ',', ',', false),
   new command(&Pray, "pray", 'p', 'p', 'p', false),
-  new command(&Quit, "quit", 'Q', 'Q', 'Q', true),
+  new command(&Quit, "quit and abandon", 'Q', 'Q', 'Q', true),
   new command(&Read, "read", 'r', 'r', 'r', false),
-  new command(&Rest, "rest/heal", 'h', 'h', 'H', true),
-  new command(&Save, "save game", 'S', 'S', 'S', true),
+  new command(&Rest, "rest and heal", 'h', 'h', 'H', true),
+  new command(&Save, "save and quit", 'S', 'S', 'S', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', '+', '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', '-', '-', true),
-  new command(&ShowConfigScreen, "show config screen", '\\', '\\', '\\', true),
+  new command(&ShowConfigScreen, "show options menu", '\\', '\\', '\\', true),
   new command(&ShowInventory, "show inventory", 'i', 'i', 'i', true),
   new command(&ShowKeyLayout, "show key layout", '?', '?', '?', true),
   new command(&DrawMessageHistory, "show message history", 'M', 'M', 'M', true),
   new command(&ShowWeaponSkills, "show weapon skills", '@', '@', '@', true),
   new command(&Search, "search", 's', 's', 's', false),
-  new command(&Sit, "sit", '_', '_', '_', false),
+  new command(&Sit, "sit down", '_', '_', '_', false),
   new command(&SwapWeapons, "swap weapons", 'x', 'x', 'x', false),
-  new command(&SwapWeaponsCfg, "swap weapons configuration", 'X', 'X', 'X', false),
-  new command(&Throw, "throw", 't', 't', 't', false),
+  new command(&SwapWeaponsCfg, "swapping menu", 'X', 'X', 'X', false),
+  new command(&Throw, "throw item", 't', 't', 't', false),
   new command(&ToggleRunning, "toggle running", 'u', 'U', 'U', true),
   new command(&ForceVomit, "vomit", 'V', 'V', 'V', false),
-  new command(&NOP, "wait", '.', '.', '.', true),
+  new command(&NOP, "wait a turn", '.', '.', '.', true),
   new command(&WieldInRightArm, "wield in right arm", 'w', 'w', 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', 'W', true),
 #ifdef WIZARD
@@ -130,7 +130,7 @@ command* commandsystem::Command[] =
 #else
   new command(&DevConsCmd, "access console commands", '`', '`', '`', true), //works w/o Ctrl in this case
 #endif
-  new command(&Zap, "zap", 'z', 'z', 'z', false),
+  new command(&Zap, "zap wand", 'z', 'z', 'z', false),
 
 #ifdef WIZARD
 
@@ -1349,22 +1349,22 @@ ulong itLastApplyID=0; //save it?
 truth commandsystem::ApplyAgain(character* Char)
 {
   if(itLastApplyID==0){
-    ADD_MESSAGE("I need to apply something first.");
+    ADD_MESSAGE("You need to apply something first, %s.", game::Insult());
     return false;
   }
 
   item* it=game::SearchItem(itLastApplyID);
   if(!it){
     itLastApplyID=0;
-    ADD_MESSAGE("I can't re-apply, it was destroyed.");
+    ADD_MESSAGE("You cannot apply something that was destroyed, %s.", game::Insult());
     return false;
   }
 
   if(it->FindCarrier()==Char){
-    ADD_MESSAGE("I will apply my %s again.",it->GetName(UNARTICLED).CStr());
-    return ApplyWork(Char,it);
+    //ADD_MESSAGE("You will apply your %s again.",it->GetName(UNARTICLED).CStr());
+    return ApplyWork(Char,it); // There is already a message from the applied item, no? --red_kangaroo
   }else
-    ADD_MESSAGE("I need to get my %s back!",it->GetName(UNARTICLED).CStr());
+    ADD_MESSAGE("You need to get your %s back!",it->GetName(UNARTICLED).CStr());
 
   return false;
 }
@@ -1551,18 +1551,18 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
   static humanoid* h;h = dynamic_cast<humanoid*>(PLAYER);
 
   bool bChoseLocationMode = pv2ChoseLocation!=NULL;
-  
+
   festring fsHelp;fsHelp<<
     "[Map Help:]\n"
     " F1 - show this message\n"
     " Map notes containing '!' or '!!' will be highlighted.\n"
     " Position mouse cursor over a map note to edit or delete it.\n"
     " In look mode, clicking on a map note will navigate to that location.\n";
-  
+
   if(bChoseLocationMode)
     if(!game::ToggleShowMapNotes())
       game::ToggleShowMapNotes();
-  
+
   if( h && (h->GetLeftArm() || h->GetRightArm()) ){
     if(game::ToggleDrawMapOverlay()){
       lsquare* lsqrH=NULL;
@@ -1580,7 +1580,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
           specialkeys::ConsumeEvent(specialkeys::FocusedElementHelp,fsHelp);
           continue;
         }
-        
+
         switch(key){
           case 'd':
             lsqrH = game::GetHighlightedMapNoteLSquare();
@@ -1641,7 +1641,7 @@ truth commandsystem::ShowMapWork(character* Char,v2* pv2ChoseLocation)
       game::ToggleDrawMapOverlay();
     }
   }else{
-    ADD_MESSAGE("I can't hold the map!");
+    ADD_MESSAGE("You can't hold the map!");
   }
 
   return true;
