@@ -20,8 +20,8 @@ brew_install() {
 
 install_sdl2() {
   local urls=(
-    'https://libsdl.org/release/SDL2-2.0.8.dmg'
-    'https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.2.dmg'
+    'https://libsdl.org/release/SDL2-2.0.9.dmg'
+    'https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-2.0.4.dmg'
   )
 
   mkdir -p "${CACHE_DIR}"
@@ -30,6 +30,7 @@ install_sdl2() {
     local tmpdir=$(mktemp -d)
     pushd "${tmpdir}"
 
+    local url
     for url in "${urls[@]}"; do
       curl -L --fail --retry 5 -o sdl.dmg "${url}"
       hdiutil mount -readonly -mountpoint sdl sdl.dmg

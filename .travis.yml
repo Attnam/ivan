@@ -79,12 +79,15 @@ script:
   - if [[ -n "$IVAN_PLATFORM" ]]; then make install; fi
   - if [[ -n "$IVAN_PLATFORM" ]]; then "../ci/$IVAN_PLATFORM/package.sh"; fi
 
+# https://docs.travis-ci.com/user/deployment/releases
 deploy:
   provider: releases
   api_key: $GH_API_KEY
   skip_cleanup: true
   file_glob: true
-  file: $IVAN_BUILD_DIR/$IVAN_PLATFORM/*.zip
+  file:
+    - $IVAN_BUILD_DIR/$IVAN_PLATFORM/*.zip
+    - $IVAN_BUILD_DIR/$IVAN_PLATFORM/*.dmg
   on:
     condition: '"$IVAN_PLATFORM" =~ ^(win|osx)$'
     repo: Attnam/ivan
