@@ -129,14 +129,20 @@ bool craftcore::canBeCrafted(item* it){
   if(dynamic_cast<lump*>(it)!=NULL)
     return true;
 
-  const itemdatabase* itdb = it->GetProtoType()->GetConfigData()[0];
+  const itemdatabase* itdb = it->GetDataBase();
 
+  // TODO figure out how to create an empty can or bottle
   if(
     game::IsQuestItem(it) ||
     it->GetEnchantment()!=0 ||
     it->GetCategory()==BOOK ||
     it->GetCategory()==FOOD || //TODO allow near oven, but the problem is the ingredients... also may be blocked below too
+    it->GetCategory()==MISC ||
+    it->GetCategory()==SCROLL ||
+    it->GetCategory()==POTION ||
     !itdb->CanBeWished ||
+    itdb->Possibility <= 0 ||
+    !itdb->PostFix.IsEmpty() ||
     false // just to make it easier to re-organize and add checks above
   ){
     return false;
@@ -816,7 +822,7 @@ struct recipe{
     FBWC(SMALL_SWORDS); //DAGGER is here
     FBWC(AXES); //has more cutting power but less precision and takes more time TODO is this good?
     FBWC(LARGE_SWORDS); //slower
-    FBWC(POLE_ARMS); //even slower, hard to use 
+    FBWC(POLE_ARMS); //even slower, hard to use
 
     if(it!=NULL){
 //      if(bReversedTimeMult)
@@ -1161,14 +1167,14 @@ struct recipe{
 
 /**
  * As we can't (shouldn't) kick webs...
- * 
+ *
  * This is a special kind of "recipe"
  * is a way to change the existing environment, like engrave does,
  * but this one was implemented as crafting code
  * so in short, this could be a command like engrave is, but was implemented thru crafting.
- * 
+ *
  * This action is like a simple slash on the web, so will spend only one turn.
- * 
+ *
  * TODO
  * may be, more functionality could be added, like collect web (spiker silk) to be able to
  * craft leather/clothing or other things.
@@ -1214,7 +1220,7 @@ struct srpCutWeb : public recipe{
     }
 
     bool bSelfPos = rpd.lsqrPlaceAt->GetPos() == h->GetPos();
-    
+
     rpd.itTool = FindCuttingTool(rpd); // no blunt, no non-cutting, imagine a web that can wold on air the weight of a whole body, only cutting tools
     rpd.bAlreadyExplained=false;
     item* wieldBkp=NULL;
@@ -1235,7 +1241,7 @@ struct srpCutWeb : public recipe{
       RLWIELD(Right,true);
       RLWIELD(Left,false);
     }
-    
+
     /**
      * IMPORTANT!
      * this repetition is about action quality and NOT time taken
@@ -1257,7 +1263,7 @@ struct srpCutWeb : public recipe{
         break;
       }
     }
-    
+
     if(bSuccess){
       rpd.bAlreadyExplained=true;
     }else{
@@ -1316,9 +1322,9 @@ struct srpCutWeb : public recipe{
         ADD_MESSAGE("You fail to tear down the web.");
         rpd.bAlreadyExplained=true;
       }
-      
+
     }
-    
+
     if(wieldBkp!=NULL){
       if(wieldBkp->GetSlot()->FindCarrier() == h){
         wieldBkp->RemoveFromSlot();;
@@ -2166,7 +2172,9 @@ struct srpForgeItem : public recipe{
         }else{
           festring fsDoWhat = "You don't have the power required to enchant";
           if(itSpawn->GetCategory()==FOOD)fsDoWhat="You never learned how to cook"; //TODO sounds weird for kiwi/banana TODO could at least roast stuff TODO needs seeds to create flour and bake breads
+          if(itSpawn->GetCategory()==POTION)fsDoWhat="You never learned how to make";
           if(itSpawn->GetCategory()==BOOK)fsDoWhat="You don't have time to write";
+          if(itSpawn->GetCategory()==MISC)fsDoWhat="You are overwhelmed by the complexity of";
           ADD_MESSAGE("%s %s!",fsDoWhat.CStr(),itSpawn->GetName(INDEFINITE).CStr()); //itCreate->GetNameSingular());//
           craftcore::SendToHellSafely(itSpawn);
           itSpawn = NULL; //IMPORTANT!!! if user press ESC...
