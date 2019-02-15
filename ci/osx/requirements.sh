@@ -11,7 +11,9 @@ CACHE_DIR="${SDL2DIR}"
 brew_install() {
   for dep in "$@"; do
     if brew list "${dep}" &>/dev/null; then
-      brew upgrade "${dep}" || true  # error for "already installed" is so annoying
+      if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
+        brew upgrade "${dep}" || true  # error for "already installed" is so annoying
+      fi
     else
       brew install "${dep}"
     fi
