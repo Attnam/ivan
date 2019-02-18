@@ -22,6 +22,7 @@ BUILD_DIR="${IVAN_BUILD_DIR}/${IVAN_PLATFORM}"
 FILENAME="IVAN-v${IVAN_FILE_VERSION:-000}-${IVAN_PLATFORM}"
 GAME_DIR="${BUILD_DIR}/${FILENAME}"
 ZIP_FILE="${BUILD_DIR}/${FILENAME}.zip"
+DMG_FILE="${BUILD_DIR}/${FILENAME}.dmg"
 
 # directory of this script
 SCRIPT_DIR=$(dirname -- "$0")
@@ -34,8 +35,10 @@ DATA_DIR="${GAME_DIR}/IVAN.app/Contents"
 mkdir -p "${DATA_DIR}"/{MacOS,Resources,Frameworks}
 cp "${BUILD_DIR}"/bin/ivan "${DATA_DIR}/MacOS"
 cp -R "${BUILD_DIR}"/docs/* "${GAME_DIR}"
-cp -R "${BUILD_DIR}"/ivan "${DATA_DIR}/Resources"
+cp -R "${BUILD_DIR}"/ivan "${DATA_DIR}/Resources/data"
 cp -R "${SDL2DIR}"/*.framework "${DATA_DIR}/Frameworks"
+ln -s /Applications "${GAME_DIR}/Applications"
+echo 'Drag IVAN.app into the Applications folder.' > "${GAME_DIR}/INSTALL.txt"
 
 BIN="${DATA_DIR}/MacOS/ivan"
 install_name_tool -add_rpath @loader_path/../Frameworks "${BIN}"
@@ -53,11 +56,14 @@ cp "${libpng}" "${DATA_DIR}/Frameworks/libpng.dylib"
 install_name_tool -change "${libpng}" @loader_path/../Frameworks/libpng.dylib "${BIN}"
 
 # for a good-looking zipball
-cd "${GAME_DIR}/.."
-GAME_DIR=$(basename "${GAME_DIR}")
+#cd "${GAME_DIR}/.."
+#GAME_DIR=$(basename "${GAME_DIR}")
+#if [[ -n "${IVAN_PLATFORM}" ]]; then
+#  zip -9 -r --symlinks "${ZIP_FILE}" "${GAME_DIR}" | grep -v Headers
+#else
+#  zip -9 -r --symlinks "${ZIP_FILE}" "${GAME_DIR}"
+#fi
 
-if [[ -n "${IVAN_PLATFORM}" ]]; then
-  zip -9 -r --symlinks "${ZIP_FILE}" "${GAME_DIR}" | grep -v Headers
-else
-  zip -9 -r --symlinks "${ZIP_FILE}" "${GAME_DIR}"
-fi
+# for a compact dmg file
+hdiutil create -fs HFSX -fsargs '-c c=64,a=16,e=16' -format UDBZ \
+               -volname "${FILENAME}" -srcfolder "${GAME_DIR}" "${DMG_FILE}"
