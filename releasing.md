@@ -4,7 +4,7 @@ To do for each release
 1) Pull from master
 2) Update version numbers in `CMakeLists.txt`
 3) Update savefile version, bonefile version or highscore version, as appropriate
-4) Push a git tag to `master` in the format `v056` (use the same number as the new version number entered in `CMakeLists.txt`)
+4) Push a git tag to `master` in the format `v057` (use the same number as the new version number entered in `CMakeLists.txt`)
 
 A zip file should appear later, on the release page. The binary is compiled with static linking, therefore, no dynamic link libraries are shipped.
 
@@ -16,7 +16,7 @@ Old instructions for posterity
 
 ### Things to change around in the code:
 
- - Update the IVAN version number in the root CMakeLists.txt from 0.55 to 0.56, depending on what the next version is
+ - Update the IVAN version number in the root CMakeLists.txt from 0.56 to 0.57, depending on what the next version is
  - Search for "increment" in the project files and increment the number associated with the bone files, savefiles and high score versions etc
  - Update this file (releasing.md) to the _next_ release number with the instructions for the next release
 
@@ -29,7 +29,7 @@ Old instructions for posterity
 
 ### Include the following files in a zip folder for each release:
 
-**Folder: IvanWin056**
+**Folder: IvanWin057**
 
 **Files = 12**
 
@@ -107,7 +107,7 @@ Old instructions for posterity
 
 **Subfolder: Script\sound**
 
-### Then commit changes, with the release tag v056
+### Then commit changes, with the release tag v057
 Tag can be appended to latest commit
 
 ### Push changes
