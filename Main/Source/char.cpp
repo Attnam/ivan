@@ -4768,7 +4768,7 @@ void character::DoDetecting()
         continue;
     }
 
-    TempMaterial = protosystem::CreateMaterial(Temp);
+    TempMaterial = protosystem::CreateMaterialForDetection(Temp);
 
     if(TempMaterial)
       break;
