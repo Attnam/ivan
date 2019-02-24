@@ -2992,7 +2992,6 @@ backpack /* materialcontainer-> */
   NameSingular = "backpack";
   MainMaterialConfig == LEATHER;
   SecondaryMaterialConfig == GUN_POWDER;
-  Alias == "explosives";
   Alias = { 4, "explosives", "explosion", "dynamite", "death"; }
   Roundness = 70;
   IsTwoHanded = true;
