@@ -2273,6 +2273,7 @@ potion /* materialcontainer-> */
                                 LIQUID_FEAR, TELEPORT_FLUID; }
     MaterialConfigChances = { 9,
                               25, 75, 20, 10, 3, 1, 20, 5, 10; }
+    Alias = { 2, "small potion", "phial"; }
   }
 }
 
@@ -3148,6 +3149,7 @@ mine /*materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
+  Alias = { 2, "mine", "landmine"; }
 
   Config BIG_MINE;
   {
@@ -3157,6 +3159,7 @@ mine /*materialcontainer-> */
     DefaultSecondaryVolume = 12500;
     NameSingular = "big mine";
     BitmapPos = 80, 288;
+    Alias = { 0; }
   }
 }
 
