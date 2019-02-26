@@ -13,6 +13,8 @@
 /* Compiled through dataset.cpp */
 
 #include "confdef.h"
+#include "miscitem.h"
+#include "stack.h"
 
 #include "dbgmsgproj.h"
 
@@ -449,11 +451,26 @@ character* protosystem::CreateMonster(cfestring& What, int SpecialFlags, truth O
     return 0;
 }
 
+static void EmptyContainer(item* Item)
+{
+  if (materialcontainer* Container = dynamic_cast<materialcontainer*>(Item))
+  {
+    material* OldMaterial = Container->RemoveSecondaryMaterial();
+    delete OldMaterial;
+  }
+  else if (itemcontainer* Container = dynamic_cast<itemcontainer*>(Item))
+    Container->GetContained()->Clean();
+}
+
 item* protosystem::CreateItemToCraft(cfestring& What)
 {
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, false);
   if(ID.first)
-    return ID.first->Spawn(ID.second);
+  {
+    item* Item = ID.first->Spawn(ID.second);
+    EmptyContainer(Item);
+    return Item;
+  }
   return NULL;
 }
 
@@ -464,6 +481,9 @@ item* protosystem::CreateItem(cfestring& What, truth Output)
   if(ID.first)
   {
     item* Item = ID.first->Spawn(ID.second);
+
+    if(festring::IgnoreCaseFind(" " + What + ' ', " empty ") != festring::NPos)
+      EmptyContainer(Item);
 
     if(game::WizardModeIsActive())
         // If WizMode prompt player to confirm wish
