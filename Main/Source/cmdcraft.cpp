@@ -131,20 +131,36 @@ bool craftcore::canBeCrafted(item* it){
 
   const itemdatabase* itdb = it->GetDataBase();
 
-  // TODO figure out how to create an empty can or bottle
   if(
     game::IsQuestItem(it) ||
     it->GetEnchantment()!=0 ||
     it->GetCategory()==BOOK ||
-    it->GetCategory()==FOOD || //TODO allow near oven, but the problem is the ingredients... also may be blocked below too
     it->GetCategory()==MISC ||
     it->GetCategory()==SCROLL ||
-    it->GetCategory()==POTION ||
     !itdb->CanBeWished ||
     itdb->Possibility <= 0 ||
     !itdb->PostFix.IsEmpty() ||
     false // just to make it easier to re-organize and add checks above
   ){
+    return false;
+  }
+
+  if(it->GetCategory()==POTION)
+  {
+    item* Bottle = dynamic_cast<potion*>(it);
+    if(Bottle && !Bottle->GetSecondaryMaterial() && Bottle->GetNameSingular() == "bottle")
+      return true;
+
+    return false;
+  }
+
+  // TODO allow near oven, but the problem is the ingredients... also may be blocked below too
+  if(it->GetCategory()==FOOD)
+  {
+    item* Can = dynamic_cast<can*>(it);
+    if(Can && !Can->GetSecondaryMaterial())
+      return true;
+
     return false;
   }
 
