@@ -959,7 +959,7 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
     return false;
 }
 
-bool ChamaleonPolymorphRandomly(chameleon* c){
+bool ChameleonPolymorphRandomly(chameleon* c){
   if(!c->StateIsActivated(POLYMORPH_LOCK)){
     character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
     if(NewForm==NULL)ABORT("chameleon PolymorphRandomly failed"); //means needs more checks
@@ -973,7 +973,7 @@ bool ChamaleonPolymorphRandomly(chameleon* c){
 truth chameleon::SpecialEnemySightedReaction(character*)
 {
   if(HP != MaxHP || !(RAND() % 3))
-    if(ChamaleonPolymorphRandomly(this))
+    if(ChameleonPolymorphRandomly(this))
       return true;
 
   return false;
@@ -986,7 +986,7 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
                                     Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
-    ChamaleonPolymorphRandomly(this);
+    ChameleonPolymorphRandomly(this);
 
   return Return;
 }
