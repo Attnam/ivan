@@ -297,7 +297,7 @@ void game::RemoveCharacterID(ulong ID)
   characteridmap::iterator itr = CharacterIDMap.find(ID);
   if(itr == CharacterIDMap.end() || itr->second == NULL){
     if(!bugfixdp::IsFixing())
-      ABORT("AlreadyErased:CharacterID %d",ID);
+      ABORT("AlreadyErased:CharacterID %lu",ID);
   }else
     CharacterIDMap.erase(itr);
 }
@@ -319,7 +319,7 @@ void game::RemoveItemID(ulong ID)
        * therefore the abort is appropriate.
        */
       if(!bugfixdp::IsFixing())
-        ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+        ABORT("AlreadyErased:ItemID %lu, possible dup char bug",ID);
     }else{
       ItemIDMap.erase(itr);
       DBG2("ERASED!:ItemID",ID);
@@ -341,7 +341,7 @@ void game::RemoveTrapID(ulong ID)
     trapidmap::iterator itr = TrapIDMap.find(ID);
     if(itr == TrapIDMap.end() || itr->second == NULL){
       if(!bugfixdp::IsFixing())
-        ABORT("AlreadyErased:TrapID %d",ID);
+        ABORT("AlreadyErased:TrapID %lu",ID);
     }else
       TrapIDMap.erase(itr);
   }

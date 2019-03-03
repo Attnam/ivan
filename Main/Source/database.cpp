@@ -153,7 +153,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
             for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
-              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
+              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%ld, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
             }
             ConfigDataBase->PostProcess();
           }
