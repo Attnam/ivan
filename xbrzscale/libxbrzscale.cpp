@@ -22,10 +22,10 @@
 #include <iostream>
 
 #ifndef XBRZLIB_RELATIVEPATHSDL
-#include <SDL2/SDL_endian.h>
-#include <SDL2/SDL_error.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_surface.h>
+#include <SDL_endian.h>
+#include <SDL_error.h>
+#include <SDL_pixels.h>
+#include <SDL_surface.h>
 #else
 #include "SDL_endian.h"
 #include "SDL_error.h"

@@ -1539,7 +1539,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
-const char* cHugeMap="I can't open a map that is as big as the world!";
+const char* cHugeMap="Cannot display a map that is as big as the world!";
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
@@ -5167,7 +5167,7 @@ festring game::GetDataDir()
 {
 #ifdef UNIX
 #ifdef MAC_APP
-  return "../Resources/ivan/";
+  return "../Resources/data/";
 #else
   return DATADIR "/ivan/";
 #endif
@@ -5471,12 +5471,12 @@ void game::AutoPlayModeApply(){
     bPlayInBackground=true;
     break;
   case 3:
-    msg="%s says \"I am in a hurry!!\"";
+    msg="%s says \"I am in a hurry!\"";
     iTimeout=(1000/2);
     bPlayInBackground=true;
     break;
   case 4:
-    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
     iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;

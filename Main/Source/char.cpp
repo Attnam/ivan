@@ -4768,7 +4768,7 @@ void character::DoDetecting()
         continue;
     }
 
-    TempMaterial = protosystem::CreateMaterial(Temp);
+    TempMaterial = protosystem::CreateMaterialForDetection(Temp);
 
     if(TempMaterial)
       break;
@@ -10084,8 +10084,14 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
      || (Value < 0 && OldExp <= NaturalExp * (100 + Value) / 100))
     return 0;
 
-  if(!IsPlayer())
+  if(IsPlayer() && !IsPlayerKind())
+  {
+    Speed *= 0.5; // Slow down attribute gain of polymorphed player.
+  }
+  else if(!IsPlayer())
+  {
     Speed *= 1.5;
+  }
 
   Exp += (NaturalExp * (100 + Value) - 100 * OldExp) * Speed * EXP_DIVISOR;
   LimitRef(Exp, MIN_EXP, MAX_EXP);

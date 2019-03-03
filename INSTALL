@@ -6,7 +6,7 @@ installed on your system:
 
 - compiler with C++11 support (e.g. Clang 3.3 or newer, GCC 4.8 or newer)
 - CMake (https://cmake.org) version 2.8.12.2 or newer
-- SDL (https://www.libsdl.org) version 1.2 or newer, at least 2.0 recommended
+- SDL (https://www.libsdl.org) version 2.0 or newer
 - libpng (http://www.libpng.org/pub/png/libpng.html)
 - pcre, not pcre2 (ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/)
 
@@ -14,14 +14,18 @@ installed on your system:
 
 Under Linux and OS X, type:
 
-cmake .
-make -j
+mkdir build  # IVAN can be built in a custom folder
+cd build
+cmake ..  # ".." refers to the parent directory of "build"
+make
 make install
 
 Note: Wizard Mode is disabled by default. To enable it run:
 
-cmake -DWIZARD=ON .
-make -j
+mkdir build
+cd build
+cmake -DWIZARD=ON ..
+make
 make install
 
 To install IVAN to a custom prefix, pass the additional flag

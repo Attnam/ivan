@@ -65,7 +65,7 @@ void igraph::Init()
 		RawGraphicFileName[GR_CHARACTER]="Graphics/Char-outlined.png";
 		RawGraphicFileName[GR_HUMANOID]="Graphics/Humanoid-outlined.png";
 	}
-  
+
   static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
@@ -73,7 +73,11 @@ void igraph::Init()
     AlreadyInstalled = true;
     graphics::Init();
     graphics::SetMode("IVAN " IVAN_VERSION,
+#ifndef MAC_APP
                       festring(game::GetDataDir() + "Graphics/Icon.bmp").CStr(),
+#else
+                      NULL,
+#endif
                       v2(ivanconfig::GetStartingWindowWidth(), ivanconfig::GetStartingWindowHeight()),
 #ifndef __DJGPP__
                       ivanconfig::GetGraphicsScale(),

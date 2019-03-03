@@ -5,10 +5,10 @@ Iter Vehemens ad Necem
 [![Build status](https://ci.appveyor.com/api/projects/status/lsx9yspma48ag0fr?svg=true)](https://ci.appveyor.com/project/Attnam/ivan)
 
 [![Community](https://img.shields.io/badge/forum-cathedral%20of%20attnam-yellow.svg)](https://attnam.com/)
-[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v054)
+[![Latest Release](https://img.shields.io/github/release/attnam/ivan/all.svg)](https://github.com/Attnam/ivan/releases/tag/v056)
 
-[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v054/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
-[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v054.svg)](https://github.com/Attnam/ivan/compare/v054...master)
+[![Latest Release Downloads](https://img.shields.io/github/downloads/attnam/ivan/v056/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
+[![Commits Since Latest Release](https://img.shields.io/github/commits-since/attnam/ivan/v056.svg)](https://github.com/Attnam/ivan/compare/v056...master)
 [![Total Downloads](https://img.shields.io/github/downloads/attnam/ivan/total.svg)](https://attnam.com/projects/official/IVAN-Continuation)
 
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/Attnam/ivan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Attnam/ivan/alerts/)
@@ -157,9 +157,7 @@ Score = sqrt(a) * b * b
 
 **Q:** I've found a bug. What should I do?  
 **A:** Write a small description on how the bug occurred and if possible even
-   how we could replicate it, and send this information by email to
-   ivan-support@googlegroups.com. You can also report this bug on our
-   forum:
+   how we could replicate it, and post this information on our forum:
 
    http://attnam.com
 
@@ -167,8 +165,7 @@ Score = sqrt(a) * b * b
    AUTHORS file, if you are the first to discover this bug.
 
 **Q:** I've got a great idea to make IVAN better! What should I do?  
-**A:** Describe the idea to us by sending it to ivan-support@googlegroups.com
-   or report it on our forum (see above). You will be credited if we
+**A:** Post the idea on our forum (see above). You will be credited if we
    implement the feature, it's non-trivial, and you're first to suggest it.
 
 **Q:** I'm a programmer willing to help you. What should I do?  
