@@ -1292,6 +1292,7 @@ priest
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     AttachedGod = SILVA;
+    BloodMaterial = PLANT_SAP;
     DefaultName = "Florea";
     NameSingular = "priestess";
     PostFix = "of Silva";
@@ -1338,6 +1339,7 @@ priest
     HairColor = rgb16(64, 0, 64);
     EyeColor = rgb16(128, 0, 64);
     AttachedGod = INFUSCOR;
+    BloodMaterial = MAGIC_LIQUID;
     DefaultName = "Praecantrix";
     NameSingular = "priestess";
     PostFix = "of Infuscor";

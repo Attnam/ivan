@@ -3894,6 +3894,46 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_CRYSTAL;
+    HardenedMaterial = CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config CRYSTEEL;
+  {
+    StrengthValue = 200;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(100, 149, 237);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "crysteel";
+    Alpha = 150;
+    PriceModifier = 9000;
+    IntelligenceRequirement = 26;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = SUN_CRYSTAL;
+    HardenedMaterial = FLAWLESS_CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config FLAWLESS_CRYSTEEL;
+  {
+    StrengthValue = 255;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(70, 130, 180);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "flawless crysteel";
+    Alpha = 150;
+    PriceModifier = 10000;
+    IntelligenceRequirement = 35;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = CRYSTEEL;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
@@ -4850,6 +4890,8 @@ liquid
     Emitation = rgb24(139, 0, 139);
     NameStem = "raw liquefied magic";
     Alpha = 150;
+    EffectStrength = 250;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
     SoftenedMaterial = MAGIC_VAPOUR;
@@ -4867,6 +4909,7 @@ liquid
     Color = rgb16(153, 50, 204);
     NameStem = "warp fluid";
     Alpha = 150;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_TELEPORTATION;
     SoftenedMaterial = TELEPORT_GAS;
@@ -4974,6 +5017,7 @@ liquid
     Color = rgb16(0, 15, 85);
     NameStem = "ink";
     Alpha = 175;
+    PriceModifier = 1000;
     AttachedGod = SOPHOS;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -5253,6 +5297,7 @@ liquid
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
     SoftenedMaterial = MUSTARD_GAS;
     ConsumeWisdomLimit = 3;
+    PriceModifier = 300;
   }
 
   Config LIQUID_DARKNESS;

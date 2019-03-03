@@ -249,6 +249,8 @@
 #define PYRITE (SOLID_ID + 229)
 #define HARDENED_ASH (SOLID_ID + 230)
 #define PSYPHER (SOLID_ID + 231)
+#define CRYSTEEL (SOLID_ID + 232)
+#define FLAWLESS_CRYSTEEL (SOLID_ID + 233)
 
 #define INGOT 2
 
@@ -355,6 +357,9 @@
 #define QUICK_SILVER (LIQUID_ID + 52)
 #define MUD (LIQUID_ID + 53)
 #define QUICK_SAND (LIQUID_ID + 54)
+#define TELEPORT_FLUID (LIQUID_ID + 55)
+#define VINEGAR (LIQUID_ID + 56)
+#define BLACK_BLOOD (LIQUID_ID + 57)
 
 #define FLESH_ID (5 << 12)
 
