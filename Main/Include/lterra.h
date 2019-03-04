@@ -102,8 +102,7 @@ class lterrain : public object
   virtual void TryToRust(long);
   virtual void ReceiveAcid(material*, long) { }
   void InitMaterials(material*, truth = true);
-  void SetMainMaterial(material*, int = 0);
-  void ChangeMainMaterial(material*, int = 0);
+  material* SetMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   virtual const fearray<long>& GetMainMaterialConfig() const = 0;

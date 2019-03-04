@@ -67,10 +67,8 @@ truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eat
 truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
-{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
-{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+material* item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ return SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
 { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
@@ -81,15 +79,14 @@ item::item(citem& Item)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
+
   CloneMotherID = new idholder(Item.ID);
   idholder* TI = CloneMotherID;
-
   for(idholder* II = Item.CloneMotherID; II; II = II->Next)
     TI = TI->Next = new idholder(II->ID);
-
   TI->Next = 0;
-  Slot = new slot*[SquaresUnder];
 
+  Slot = new slot*[SquaresUnder];
   for(int c = 0; c < SquaresUnder; ++c)
     Slot[c] = 0;
 }
@@ -388,9 +385,9 @@ truth item::SoftenMaterial()
   material* SecondaryMaterial = GetSecondaryMaterial();
 
   if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+    delete SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-  ChangeMainMaterial(TempMaterial);
+  delete SetMainMaterial(TempMaterial);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
@@ -797,11 +794,6 @@ item* item::Duplicate(ulong Flags)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
                              Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
-  idholder* I = new idholder(ID);
-  I->Next = CloneMotherID;
-  CloneMotherID = I;
-  game::RemoveItemID(ID);
-  ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }

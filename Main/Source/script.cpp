@@ -434,10 +434,10 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(int Sp
   else
   {
     if(MainMaterial)
-      Instance->ChangeMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      delete Instance->SetMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
     if(SecondaryMaterial)
-      Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      delete Instance->SetSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
   }
 
   if(!(SpecialFlags & NO_PIC_UPDATE))

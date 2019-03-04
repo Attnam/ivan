@@ -581,8 +581,7 @@ class item : public object
   virtual material* RemoveMaterial(material*);
   virtual void Cannibalize();
   void InitMaterials(material*, truth = true);
-  void SetMainMaterial(material*, int = 0);
-  void ChangeMainMaterial(material*, int = 0);
+  material* SetMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
   virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }

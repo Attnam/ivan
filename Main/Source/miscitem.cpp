@@ -12,10 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
-void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags)
-{ SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags)
-{ ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+material* materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags)
+{ return SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void materialcontainer::InitMaterials(material* M1, material* M2, truth CUP)
 { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(),
                       SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
@@ -465,9 +463,9 @@ void scrollofchangematerial::FinishReading(character* Reader)
         ADD_MESSAGE("As the fire dies out it looks greatly altered.");
 
         if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-          Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+          delete Item[0]->SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-        Item[0]->ChangeMainMaterial(TempMaterial);
+        delete Item[0]->SetMainMaterial(TempMaterial);
       }
       else
         ADD_MESSAGE("As the fire dies out it looks unchanged.");
@@ -480,12 +478,12 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
         if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
           for(uint c = 0; c < Item.size(); ++c)
-            Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+            delete Item[c]->SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-        Item[0]->ChangeMainMaterial(TempMaterial);
+        delete Item[0]->SetMainMaterial(TempMaterial);
 
         for(uint c = 1; c < Item.size(); ++c)
-          Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
+          delete Item[c]->SetMainMaterial(TempMaterial->SpawnMore());
       }
       else
         ADD_MESSAGE("As the fire dies out they look unchanged.");
@@ -551,7 +549,7 @@ void potion::DipInto(liquid* Liquid, character* Dipper)
     ADD_MESSAGE("You clumsily spill %s all over yourself.", Liquid->GetName(false, false).CStr());
   }
 
-  ChangeSecondaryMaterial(ReceivingLiquid);
+  delete SetSecondaryMaterial(ReceivingLiquid);
   Dipper->DexterityAction(10);
 }
 
@@ -562,7 +560,7 @@ void cauldron::DipInto(liquid* Liquid, character* Dipper)
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeSecondaryMaterial(Liquid);
+  delete SetSecondaryMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
@@ -2204,8 +2202,9 @@ void scrollofrepair::FinishReading(character* Reader)
 
 item* brokenbottle::Fix()
 {
+  material* OldMaterial = GetMainMaterial();
   potion* Potion = potion::Spawn(GetConfig(), NO_MATERIALS);
-  Potion->InitMaterials(GetMainMaterial(), 0);
+  Potion->InitMaterials(OldMaterial, 0);
   DonateFluidsTo(Potion);
   DonateIDTo(Potion);
   DonateSlotTo(Potion);
@@ -2626,7 +2625,7 @@ void can::DipInto(liquid* Liquid, character* Dipper)
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeSecondaryMaterial(Liquid);
+  delete SetSecondaryMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
@@ -2930,9 +2929,10 @@ material* materialcontainer::RemoveMainMaterial()
   {
     if(!game::IsInWilderness())
     {
+      material* OldMaterial = SecondaryMaterial;
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
-      Square->SpillFluid(0, static_cast<liquid*>(SecondaryMaterial));
+      Square->SpillFluid(0, static_cast<liquid*>(OldMaterial));
       SetSecondaryMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
     }
     else
@@ -2940,8 +2940,9 @@ material* materialcontainer::RemoveMainMaterial()
   }
   else
   {
+    material* OldMaterial = SecondaryMaterial;
     item* Lump = lump::Spawn(0, NO_MATERIALS);
-    Lump->InitMaterials(SecondaryMaterial);
+    Lump->InitMaterials(OldMaterial);
     DonateFluidsTo(Lump);
     DonateIDTo(Lump);
     DonateSlotTo(Lump);
@@ -2958,16 +2959,17 @@ material* materialcontainer::RemoveMainMaterial()
 
 material* materialcontainer::RemoveSecondaryMaterial()
 {
-  material* Material = SecondaryMaterial;
+  material* OldMaterial = SecondaryMaterial;
   SetSecondaryMaterial(0);
   SendNewDrawAndMemorizedUpdateRequest();
-  return Material;
+  return OldMaterial;
 }
 
 material* banana::RemoveSecondaryMaterial()
 {
+  material* OldMaterial = MainMaterial;
   item* Peel = bananapeels::Spawn(0, NO_MATERIALS);
-  Peel->InitMaterials(MainMaterial);
+  Peel->InitMaterials(OldMaterial);
   DonateSlotTo(Peel);
   DonateIDTo(Peel);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
@@ -3171,9 +3173,9 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       ADD_MESSAGE("As the fire dies out it looks much harder.");
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-        Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+        delete Item[0]->SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-      Item[0]->ChangeMainMaterial(TempMaterial);
+      delete Item[0]->SetMainMaterial(TempMaterial);
     }
     else
     {
@@ -3181,12 +3183,12 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
         for(uint c = 0; c < Item.size(); ++c)
-          Item[c]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+          delete Item[c]->SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-      Item[0]->ChangeMainMaterial(TempMaterial);
+      delete Item[0]->SetMainMaterial(TempMaterial);
 
       for(uint c = 1; c < Item.size(); ++c)
-        Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
+        delete Item[c]->SetMainMaterial(TempMaterial->SpawnMore());
     }
 
     msgsystem::LeaveBigMessageMode();

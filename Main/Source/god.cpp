@@ -409,7 +409,7 @@ truth god::TryToAttachBodyPart(character* Char)
                && !RAND_N(Max(MaterialVector[c]->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1))))
         {
           BodyPart = Char->GenerateRandomBodyPart();
-          BodyPart->ChangeMainMaterial(MaterialVector[c]->SpawnMore());
+          delete BodyPart->SetMainMaterial(MaterialVector[c]->SpawnMore());
           Char->UpdatePictures();
           festring MadeOf;
 
@@ -479,7 +479,7 @@ truth god::TryToHardenBodyPart(character* Char)
          && !RAND_N(12000 / (GetRelation() + 2000))
          && !RAND_N(Max(Material->GetIntelligenceRequirement() - PLAYER->GetAttribute(WISDOM), 1)))
       {
-        BodyPart->ChangeMainMaterial(Material->SpawnMore());
+        delete BodyPart->SetMainMaterial(Material->SpawnMore());
         ADD_MESSAGE("%s changes your %s to %s.",
                     GetName(), BodyPart->GetBodyPartName().CStr(),
                     Material->GetName(false, false).CStr());
