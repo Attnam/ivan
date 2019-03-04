@@ -132,9 +132,9 @@ character* protosystem::BalancedCreateMonster()
     }
   }
 
+  ABORT("BalancedCreateMonster failed!");
   /* This line is never reached, but it prevents warnings given by some (stupid) compilers. */
-
-  return 0;
+  return NULL;
 }
 
 item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory,
@@ -276,10 +276,13 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialFlags)
 {
   std::vector<configid> Possible;
-  character* Monster = 0;
+  character* Monster = NULL;
 
-  for(int c = 0; !Monster; ++c)
+  for(int i = 0; !Monster; ++i)
   {
+    if(i == -1)
+      break;  // this means the algorithm is bad
+
     for(int Type = 1; Type < protocontainer<character>::GetSize(); ++Type)
     {
       const character::prototype* Proto = protocontainer<character>::GetProto(Type);
@@ -328,6 +331,8 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
     Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
   }
 
+  if(Monster == NULL)
+    ABORT("Failed to create monster!");
   return Monster;
 }
 

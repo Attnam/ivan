@@ -960,9 +960,10 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
 }
 
 bool ChameleonPolymorphRandomly(chameleon* c){
-  if(!c->StateIsActivated(POLYMORPH_LOCK)){
-    character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
-    if(NewForm==NULL)ABORT("chameleon PolymorphRandomly failed"); //means needs more checks
+  character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
+
+  if(NewForm != NULL)
+  {
     NewForm->GainIntrinsic(POLYMORPH);
     return true;
   }
