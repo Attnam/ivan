@@ -247,7 +247,7 @@ truth commandsystem::SwapWeaponsCfg(character* Char)
 
 //          if(it!=wL && it!=wR && !hasItem(iv,it))cW = colNotOnInv;
 
-          if(!it->Exists())ABORT("item doesnt exist! %d %s",it->GetID(),it->GetName(DEFINITE).CStr()); //this may segfault tho...
+          if(!it->Exists())ABORT("item doesnt exist! %lu %s",it->GetID(),it->GetName(DEFINITE).CStr()); //this may segfault tho...
           it->AddInventoryEntry(Char, fs, 1, true);
           Cfgs.AddEntry(fs, cW, 0, game::AddToItemDrawVector(itemvector(1,it)), false);
         }

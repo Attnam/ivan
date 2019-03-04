@@ -4328,7 +4328,7 @@ truth character::IsAboveUsefulItem()
     case 2:bTooCheap=true;break;
     case 3:bEncumbering=true;break;
     default:
-      ABORT("unsupported go on stop mode %d",ivanconfig::GetGoOnStopMode());
+      ABORT("unsupported go on stop mode %ld",ivanconfig::GetGoOnStopMode());
       break;
     }
 

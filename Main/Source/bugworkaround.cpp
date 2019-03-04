@@ -275,8 +275,8 @@ bool bugfixdp::ScanLevelForCharactersAndItemsWork(
   if(bAbortOnMultiples)
     if(iDupIDCount>1 || iPointerMatchCount>1)
       ABORT( //more than 2 copies (one valid and one invalid) is more complicated and the code is not ready yet to deal with that.
-        "iDupCount=%d found for item 0x%x id=%d."
-        "tot=%d item pointer/object/reference 0x%x found for id=%d.",
+        "iDupCount=%d found for item 0x%x id=%lu."
+        "tot=%d item pointer/object/reference 0x%x found for id=%lu.",
         iDupIDCount,itWork,itWork->GetID(),
         iPointerMatchCount,itWork,itWork->GetID()
       );
