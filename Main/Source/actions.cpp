@@ -161,7 +161,7 @@ void consume::Terminate(truth Finished)
 
   if(Finished)
   {
-    truth PlayerWantsToDiscard = false;
+    truth PlayerWantsToDiscard = ivanconfig::GetAutoDropLeftOvers();
     if(Consuming->GetSecondaryMaterial()){
       PlayerWantsToDiscard = (
         ivanconfig::GetAutoDropLeftOvers() &&
