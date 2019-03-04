@@ -67,10 +67,8 @@ truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eat
 truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
-{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
-{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+material* item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ return SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
 { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
@@ -388,9 +386,9 @@ truth item::SoftenMaterial()
   material* SecondaryMaterial = GetSecondaryMaterial();
 
   if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+    delete SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-  ChangeMainMaterial(TempMaterial);
+  delete SetMainMaterial(TempMaterial);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());

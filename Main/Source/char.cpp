@@ -4616,38 +4616,30 @@ int character::GetSize() const
   return GetTorso()->GetSize();
 }
 
-void character::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+// NOTE: Do not reuse the old materials!
+material* character::SetMainMaterial(material* NewMaterial, int SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
+  delete GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
 
   for(int c = 1; c < BodyParts; ++c)
   {
     NewMaterial = NewMaterial->SpawnMore(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-    GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
+    delete GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
   }
+
+  return NULL;
 }
 
 void character::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
 {
-  NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->ChangeMainMaterial(NewMaterial, SpecialFlags);
-
-  for(int c = 1; c < BodyParts; ++c)
-  {
-    NewMaterial = NewMaterial->SpawnMore(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-    GetBodyPart(c)->ChangeMainMaterial(NewMaterial, SpecialFlags);
-  }
+  delete SetMainMaterial(NewMaterial, SpecialFlags);
 }
 
-void character::SetSecondaryMaterial(material*, int)
+material* character::SetSecondaryMaterial(material*, int)
 {
   ABORT("Illegal character::SetSecondaryMaterial call!");
-}
-
-void character::ChangeSecondaryMaterial(material*, int)
-{
-  ABORT("Illegal character::ChangeSecondaryMaterial call!");
+  return NULL;
 }
 
 void character::TeleportRandomly(truth Intentional)

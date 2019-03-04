@@ -455,8 +455,7 @@ static void EmptyContainer(item* Item)
 {
   if (materialcontainer* Container = dynamic_cast<materialcontainer*>(Item))
   {
-    material* OldMaterial = Container->RemoveSecondaryMaterial();
-    delete OldMaterial;
+    delete Container->RemoveSecondaryMaterial();
   }
   else if (itemcontainer* Container = dynamic_cast<itemcontainer*>(Item))
     Container->GetContained()->Clean();

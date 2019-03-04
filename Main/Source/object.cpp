@@ -95,11 +95,6 @@ void object::InitMaterial(material*& Material, material* NewMaterial, long Defau
   }
 }
 
-void object::ChangeMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
-{
-  delete SetMaterial(Material, NewMaterial, DefaultVolume, SpecialFlags);
-}
-
 material* object::SetMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
 {
   material* OldMaterial = Material;

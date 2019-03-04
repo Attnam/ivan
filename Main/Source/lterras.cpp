@@ -23,8 +23,7 @@ v2 monsterportal::GetBitmapPos(int Frame) const { return v2(16 + (((Frame & 31) 
 int christmastree::GetClassAnimationFrames() const { return game::IsXMas() ? 32 : 1; }
 v2 christmastree::GetBitmapPos(int Frame) const { return game::IsXMas() ? v2(16 + (((Frame & 31) << 3)&~8), 448) : v2(0, 448); }
 
-void fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
-void fountain::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
+material* fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { return SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::InitMaterials(material* M1, material* M2, truth CUP) { ObjectInitMaterials(MainMaterial, M1, 0, SecondaryMaterial, M2, 0, CUP); }
 v2 fountain::GetBitmapPos(int) const { return v2(GetSecondaryMaterial() ? 16 : 32, 288); }
 void fountain::InitMaterials(const materialscript* M, const materialscript* C, truth CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
@@ -603,7 +602,7 @@ truth fountain::Drink(character* Drinker)
 void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CHAR_NAME(DEFINITE));
-  ChangeSecondaryMaterial(0);
+  delete SetSecondaryMaterial(0);
 
   if(GetLSquareUnder())
   {
