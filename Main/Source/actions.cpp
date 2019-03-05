@@ -161,19 +161,23 @@ void consume::Terminate(truth Finished)
 
   if(Finished)
   {
-    truth PlayerWantsToDiscard = ivanconfig::GetAutoDropLeftOvers();
-    if(Consuming->GetSecondaryMaterial()){
-      PlayerWantsToDiscard = (
-        ivanconfig::GetAutoDropLeftOvers() &&
-        (Consuming->GetSecondaryMaterial()->GetVolume() == 0) // don't drop after tasting
-      );
-    }
-
-    if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || PlayerWantsToDiscard))
+    if(Consuming && Consuming->Exists())
     {
-      Consuming->RemoveFromSlot();
-      Actor->GetStackUnder()->AddItem(Consuming);
-      Actor->DexterityAction(2);
+      truth PlayerWantsToDiscard = ivanconfig::GetAutoDropLeftOvers();
+      if(Consuming->GetSecondaryMaterial())
+      {
+        PlayerWantsToDiscard = (
+          ivanconfig::GetAutoDropLeftOvers() &&
+          (Consuming->GetSecondaryMaterial()->GetVolume() == 0) // don't drop after tasting
+        );
+      }
+
+      if(!game::IsInWilderness() && (!Actor->IsPlayer() || PlayerWantsToDiscard))
+      {
+        Consuming->RemoveFromSlot();
+        Actor->GetStackUnder()->AddItem(Consuming);
+        Actor->DexterityAction(2);
+      }
     }
   }
   else if(Consuming && Consuming->Exists())
