@@ -161,8 +161,8 @@ Dungeon XINROCH_TOMB;
       Flags = 0;
     }
 
-    Square, Pos 28, 51; { Character = guard(TOMB_ENTRY); }
-    Square, Pos 32, 51; { Character = guard(TOMB_ENTRY); }
+    Square, Pos 28, 50; { Character = guard(TOMB_ENTRY); }
+    Square, Pos 32, 50; { Character = guard(TOMB_ENTRY); }
 
     Square, Random NOT_IN_ROOM;
     {
@@ -217,6 +217,11 @@ Dungeon XINROCH_TOMB;
       IsInside = false;
       GenerateWindows = false;
 
+      Square, Pos 18, 40;
+      {
+        OTerrain = 0;
+      }
+
       Square, Pos 19, 40;
       {
         OTerrain = 0;
@@ -228,6 +233,11 @@ Dungeon XINROCH_TOMB;
       }
 
       Square, Pos 21, 40;
+      {
+        OTerrain = 0;
+      }
+
+      Square, Pos 22, 40;
       {
         OTerrain = 0;
       }
