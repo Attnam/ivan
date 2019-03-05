@@ -594,6 +594,7 @@ truth IsValidScript(const fearray<contentscript<item>>* Array)
 void contentscript<glterrain>::InitDataMap()
 {
   INIT_ENTRY(IsInside);
+  INIT_ENTRY(IsExpansive);
 }
 
 contentscript<olterrain>::contentscript()

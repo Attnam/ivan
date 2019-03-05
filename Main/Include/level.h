@@ -257,6 +257,7 @@ class level : public area
   void AddSpecialCursors();
   void GasExplosion(gas*, lsquare*, character*);
  protected:
+  truth CheckExpansiveArea(olterrain*, int, int, truth = false) const;
   truth GenerateLanterns(int, int, int) const;
   truth GenerateWindows(int, int) const;
   void CreateRoomSquare(glterrain*, olterrain*, int, int, int, int) const;
