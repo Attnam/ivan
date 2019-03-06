@@ -153,7 +153,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
             for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
-              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%ld, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
+              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%ld, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), ConfigNumber, inFile->TellLine());
             }
             ConfigDataBase->PostProcess();
           }
@@ -166,7 +166,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
           fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
           continue;
         }
-        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), inFile->TellLine());
+        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), inFile->TellLine());
       }
       DataBase->PostProcess();
       //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
@@ -946,7 +946,7 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   FindDataBase(Instance->DataBase, Proto, Config);
 
   if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", Proto->GetClassID(), Config);
+    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
 }
 
 #define INST_INSTALL_DATABASE(type)\
