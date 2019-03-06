@@ -105,7 +105,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
       if (!Proto) ABORT("Something weird with <%s>!", Word.CStr());
       if (Proto->Base && !Proto->Base->ConfigData)
       {
-        ABORT("Database has no description of <%s>!", Proto->Base->GetClassID());
+        ABORT("Database has no description of <%s>!", const_cast<char*>(Proto->Base->GetClassID()));
       }
       database *DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
       DataBase->InitDefaults(Proto, 0);
