@@ -572,7 +572,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
     v2 CharSize = *CharacterMap->GetSize();
 
     if(!IsValidPos(CharPos) || !IsValidPos(CharPos + CharSize - v2(1, 1)))
-      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%d CharacterMap(%dx%d) at (%d,%d)!",
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu CharacterMap(%dx%d) at (%d,%d)!",
             GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), CharSize.X, CharSize.Y, CharPos.X, CharPos.Y);
 
     for(x = 0; x < CharSize.X; ++x)
@@ -612,7 +612,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
     v2 ItemSize = *ItemMap->GetSize();
 
     if(!IsValidPos(ItemPos) || !IsValidPos(ItemPos + ItemSize - v2(1, 1)))
-      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%d ItemMap(%dx%d) at (%d,%d)!",
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu ItemMap(%dx%d) at (%d,%d)!",
             GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), ItemSize.X, ItemSize.Y, ItemPos.X, ItemPos.Y);
 
     for(x = 0; x < ItemSize.X; ++x)
@@ -657,7 +657,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
     v2 GTerrainSize = *GTerrainMap->GetSize();
 
     if(!IsValidPos(GTerrainPos) || !IsValidPos(GTerrainPos + GTerrainSize - v2(1, 1)))
-      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%d GTerrainMap(%dx%d) at (%d,%d)!",
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu GTerrainMap(%dx%d) at (%d,%d)!",
             GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), GTerrainSize.X, GTerrainSize.Y, GTerrainPos.X, GTerrainPos.Y);
 
     for(x = 0; x < GTerrainSize.X; ++x)
@@ -698,7 +698,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
     v2 OTerrainSize = *OTerrainMap->GetSize();
 
     if(!IsValidPos(OTerrainPos) || !IsValidPos(OTerrainPos + OTerrainSize - v2(1, 1)))
-      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%d OTerrainMap(%dx%d) at (%d,%d)!",
+      ABORT("Invalid Dungeon#%d Level#%d(%dx%d) Room#%lu OTerrainMap(%dx%d) at (%d,%d)!",
             GetDungeon()->GetIndex(), Index, XSize, YSize, Room.size(), OTerrainSize.X, OTerrainSize.Y, OTerrainPos.X, OTerrainPos.Y);
 
     for(x = 0; x < OTerrainSize.X; ++x)
