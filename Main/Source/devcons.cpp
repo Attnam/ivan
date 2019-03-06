@@ -300,7 +300,7 @@ void devcons::AddDevCmd(festring fsCmd, callcmd Call, festring fsHelp,bool bWiza
 {
   callcmd cc = Find(fsCmd.CStr());
   if(cc!=NULL) //TODO ignore if equal?
-    ABORT("command %s already set %x %x",fsCmd.CStr(),cc,Call);
+    ABORT("command %s already set %x %x",fsCmd.CStr(),(uint)cc,(uint)Call);
 
   DevCmd dc;
   dc.strCmd=fsCmd.CStr();
