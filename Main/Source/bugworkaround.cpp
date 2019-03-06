@@ -277,8 +277,8 @@ bool bugfixdp::ScanLevelForCharactersAndItemsWork(
       ABORT( //more than 2 copies (one valid and one invalid) is more complicated and the code is not ready yet to deal with that.
         "iDupCount=%d found for item 0x%x id=%lu."
         "tot=%d item pointer/object/reference 0x%x found for id=%lu.",
-        iDupIDCount,(uint)itWork,itWork->GetID(),
-        iPointerMatchCount,(uint)itWork,itWork->GetID()
+        iDupIDCount,reinterpret_cast<uint*>(itWork),itWork->GetID(),
+        iPointerMatchCount,reinterpret_cast<uint*>(itWork),itWork->GetID()
       );
 
   return iDupIDCount>0;
