@@ -75,11 +75,11 @@ SET(SDL2_SEARCH_PATHS
 )
 
 # CPU architecture detection for MSVC
-if(CMAKE_SIZEOF_VOID_P MATCHES 8)
-	set(CPU_ARCH "x64")
-else()
-	set(CPU_ARCH "x86")
-endif()
+IF(CMAKE_SIZEOF_VOID_P MATCHES 8)
+	SET(CPU_ARCH "x64")
+ELSE()
+	SET(CPU_ARCH "x86")
+ENDIF()
 
 # Precedence (CMake 2.6+): HINTS > SYSTEM_PATHS > PATHS
 FIND_PATH(SDL2_INCLUDE_DIR
@@ -112,7 +112,7 @@ FIND_LIBRARY(SDL2_mixer_LIBRARY_TEMP
 
 IF((SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
 	IF ((NOT SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (NOT SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
-	message(WARNING
+	MESSAGE(WARNING
 		"You don't seem to have all of these frameworks installed in your system:\n"
 		"    SDL2.framework: ${SDL2_INCLUDE_DIR};${SDL2_LIBRARY_TEMP}\n"
 		"    SDL2_mixer.framework: ${SDL2_mixer_INCLUDE_DIR};${SDL2_mixer_LIBRARY_TEMP}\n"
