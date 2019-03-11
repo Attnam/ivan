@@ -75,11 +75,11 @@ SET(SDL2_SEARCH_PATHS
 )
 
 # CPU architecture detection for MSVC
-if(CMAKE_SIZEOF_VOID_P MATCHES 8)
-	set(CPU_ARCH "x64")
-else()
-	set(CPU_ARCH "x86")
-endif()
+IF(CMAKE_SIZEOF_VOID_P MATCHES 8)
+	SET(CPU_ARCH "x64")
+ELSE()
+	SET(CPU_ARCH "x86")
+ENDIF()
 
 # Precedence (CMake 2.6+): HINTS > SYSTEM_PATHS > PATHS
 FIND_PATH(SDL2_INCLUDE_DIR
@@ -110,8 +110,18 @@ FIND_LIBRARY(SDL2_mixer_LIBRARY_TEMP
 	PATHS ${SDL2_SEARCH_PATHS}
 )
 
+IF((SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
+	IF ((NOT SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (NOT SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
+	MESSAGE(WARNING
+		"You don't seem to have all of these frameworks installed in your system:\n"
+		"    SDL2.framework: ${SDL2_INCLUDE_DIR};${SDL2_LIBRARY_TEMP}\n"
+		"    SDL2_mixer.framework: ${SDL2_mixer_INCLUDE_DIR};${SDL2_mixer_LIBRARY_TEMP}\n"
+		"Pass -DCMAKE_FIND_FRAMEWORK=LAST to cmake if you don't want to use the framework bundles.")
+	ENDIF()
+ENDIF()
+
 IF(NOT SDL2_BUILDING_LIBRARY)
-	IF(NOT SDL2_INCLUDE_DIR MATCHES ".framework")
+	IF(NOT SDL2_INCLUDE_DIR MATCHES "\\.framework")
 		# Non-OS X framework versions expect you to also dynamically link to
 		# SDL2main. This is mainly for Windows and OS X. Other (Unix) platforms
 		# seem to provide SDL2main for compatibility even though they don't
@@ -122,7 +132,7 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 			HINTS $ENV{SDL2DIR}
 			PATHS ${SDL2_SEARCH_PATHS}
 		)
-	ENDIF(NOT SDL2_INCLUDE_DIR MATCHES ".framework")
+	ENDIF(NOT SDL2_INCLUDE_DIR MATCHES "\\.framework")
 ENDIF(NOT SDL2_BUILDING_LIBRARY)
 
 # SDL2 may require threads on your system.

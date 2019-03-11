@@ -707,9 +707,9 @@ void loricatus::PrayGoodEffect()
 
             if(SecondaryWielded->GetSecondaryMaterial()
                && SecondaryWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
-              SecondaryWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(Config));
+              delete SecondaryWielded->SetSecondaryMaterial(MAKE_MATERIAL(Config));
 
-            SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(Config));
+            delete SecondaryWielded->SetMainMaterial(MAKE_MATERIAL(Config));
           }
           else
           {
@@ -719,9 +719,9 @@ void loricatus::PrayGoodEffect()
 
           if(MainWielded->GetSecondaryMaterial()
              && MainWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
-            MainWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(Config));
+            delete MainWielded->SetSecondaryMaterial(MAKE_MATERIAL(Config));
 
-          MainWielded->ChangeMainMaterial(MAKE_MATERIAL(Config));
+          delete MainWielded->SetMainMaterial(MAKE_MATERIAL(Config));
           ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.CStr());
           return;
         }
@@ -788,7 +788,7 @@ void loricatus::PrayBadEffect()
       {
         MainWielded->AddName(Desc, PLURAL);
         Desc << " vibrate and soften";
-        SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
+        delete SecondaryWielded->SetMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
       }
       else
       {
@@ -796,7 +796,7 @@ void loricatus::PrayBadEffect()
         Desc << " vibrates and softens";
       }
 
-      MainWielded->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
+      delete MainWielded->SetMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
       ADD_MESSAGE("Your %s.", Desc.CStr());
     }
     else

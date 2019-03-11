@@ -2880,7 +2880,8 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
     else
       Bone = bone::Spawn(0, NO_MATERIALS);
 
-    Bone->InitMaterials(BodyPart->GetMainMaterial());
+    material* OldMaterial = BodyPart->GetMainMaterial();
+    Bone->InitMaterials(OldMaterial);
     BodyPart->DropEquipment(EquipmentDropStack);
     BodyPart->RemoveFromSlot();
     BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
@@ -5446,7 +5447,7 @@ character* humanoid::CreateZombie() const
       material* M = BodyPart->GetMainMaterial()->Duplicate();
       M->SetSpoilCounter(2000 + RAND() % 1000);
       M->SetSkinColor(Zombie->GetSkinColor());
-      ZombieBodyPart->ChangeMainMaterial(M);
+      delete ZombieBodyPart->SetMainMaterial(M);
       ZombieBodyPart->CopyAttributes(BodyPart);
     }
     else if(!Zombie->BodyPartIsVital(c))

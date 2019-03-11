@@ -3581,6 +3581,9 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
 
 truth character::Polymorph(character* NewForm, int Counter)
 {
+  if(NewForm == NULL)
+    ABORT("Unable to polymorph into NULL!");
+
   if(!IsPolymorphable() || (!IsPlayer() && game::IsInWilderness()))
   {
     delete NewForm;
@@ -4616,38 +4619,30 @@ int character::GetSize() const
   return GetTorso()->GetSize();
 }
 
-void character::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+// NOTE: Do not reuse the old materials!
+material* character::SetMainMaterial(material* NewMaterial, int SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
+  delete GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
 
   for(int c = 1; c < BodyParts; ++c)
   {
     NewMaterial = NewMaterial->SpawnMore(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-    GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
+    delete GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
   }
+
+  return NULL;
 }
 
 void character::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
 {
-  NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->ChangeMainMaterial(NewMaterial, SpecialFlags);
-
-  for(int c = 1; c < BodyParts; ++c)
-  {
-    NewMaterial = NewMaterial->SpawnMore(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-    GetBodyPart(c)->ChangeMainMaterial(NewMaterial, SpecialFlags);
-  }
+  delete SetMainMaterial(NewMaterial, SpecialFlags);
 }
 
-void character::SetSecondaryMaterial(material*, int)
+material* character::SetSecondaryMaterial(material*, int)
 {
   ABORT("Illegal character::SetSecondaryMaterial call!");
-}
-
-void character::ChangeSecondaryMaterial(material*, int)
-{
-  ABORT("Illegal character::ChangeSecondaryMaterial call!");
+  return NULL;
 }
 
 void character::TeleportRandomly(truth Intentional)
@@ -6605,12 +6600,13 @@ void character::SaveLife()
 
 character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 {DBG1(GetNameSingular().CStr());
-  character* NewForm = 0;
+  character* NewForm = NULL;
 
   if(StateIsActivated(POLYMORPH_LOCK))
   {DBGLN;
-    ADD_MESSAGE("You feel uncertain about your body for a moment.");
-    return NewForm;
+    if(IsPlayer())
+      ADD_MESSAGE("You feel uncertain about your body for a moment.");
+    return NULL;
   }
 
   if(StateIsActivated(POLYMORPH_CONTROL))
@@ -6618,7 +6614,7 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
     if(IsPlayer() && !IsPlayerAutoPlay())
     {DBGLN;
       if(!GetNewFormForPolymorphWithControl(NewForm)){DBG1(NewForm);
-        return NewForm;
+        return NULL;
       }
     }else{DBGLN;
       NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);DBG1(NewForm);
@@ -6627,8 +6623,12 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
     NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);DBG1(NewForm);
   }DBGLN;
 
-  Polymorph(NewForm, Time);DBG1(NewForm);
-  return NewForm;
+  if(NewForm != NULL && Polymorph(NewForm, Time))
+  {
+    DBG1(NewForm);
+    return NewForm;
+  }
+  return NULL;
 }
 
 /* In reality, the reading takes Time / (Intelligence * 10) turns */

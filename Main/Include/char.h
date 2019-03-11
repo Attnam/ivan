@@ -393,10 +393,9 @@ class character : public entity, public id
   void SetTorso(torso* What) { SetBodyPart(TORSO_INDEX, What); }
   bodypart* GetBodyPart(int I) const { return static_cast<bodypart*>(*BodyPartSlot[I]); }
   void SetBodyPart(int, bodypart*);
-  void SetMainMaterial(material*, int = 0);
+  material* SetMainMaterial(material*, int = 0);  // NOTE: Do not reuse the old materials!
   void ChangeMainMaterial(material*, int = 0);
-  void SetSecondaryMaterial(material*, int = 0);
-  void ChangeSecondaryMaterial(material*, int = 0);
+  material* SetSecondaryMaterial(material*, int = 0);
   void RestoreHP();
   void RestoreLivingHP();
   void RestoreStamina() { Stamina = MaxStamina; }
