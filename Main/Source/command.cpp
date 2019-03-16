@@ -719,7 +719,12 @@ truth commandsystem::PickUp(character* Char)
          && PileVector[0][0]->CheckPickUpEffect(Char))
       {
         for(int c = 0; c < Amount; ++c)
+        {
+          if(ivanconfig::GetRotateTimesPerSquare() > 0)
+            PileVector[0][c]->ResetFlyingThrownStep();
+
           PileVector[0][c]->MoveTo(Char->GetStack());
+        }
 
         ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
         Char->DexterityAction(2);
@@ -756,7 +761,12 @@ truth commandsystem::PickUp(character* Char)
          && ToPickup[0]->CheckPickUpEffect(Char))
       {
         for(uint c = 0; c < ToPickup.size(); ++c)
+        {
+          if(ivanconfig::GetRotateTimesPerSquare() > 0)
+            ToPickup[c]->ResetFlyingThrownStep();
+
           ToPickup[c]->MoveTo(Char->GetStack());
+        }
 
         ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
         Success = true;
