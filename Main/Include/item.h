@@ -621,6 +621,7 @@ class item : public object
   virtual void Ignite();
   virtual void Extinguish(truth);
   void SetValidRecipeIngredient(truth b){ValidRecipeIngredient=b;}
+  void ResetFlyingThrownStep() { iRotateFlyingThrownStep = 0; }
  protected:
   virtual cchar* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

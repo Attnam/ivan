@@ -10964,7 +10964,12 @@ truth character::TakePetItems()
       break;
 
     for(uint c = 0; c < ToTake.size(); ++c)
+    {
+      if(ivanconfig::GetRotateTimesPerSquare() > 0)
+        ToTake[c]->ResetFlyingThrownStep();
+
       ToTake[c]->MoveTo(PLAYER->GetStack());
+    }
 
     ADD_MESSAGE("You take %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr());
     Success = true;

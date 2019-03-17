@@ -1762,6 +1762,9 @@ item* humanoid::GetEquipment(int I) const
 
 void humanoid::SetEquipment(int I, item* What)
 {
+  if(ivanconfig::GetRotateTimesPerSquare() > 0)
+    What->ResetFlyingThrownStep();
+
   switch(I)
   {
    case HELMET_INDEX: SetHelmet(What); break;
