@@ -959,10 +959,11 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
     return false;
 }
 
-bool ChamaleonPolymorphRandomly(chameleon* c){
-  if(!c->StateIsActivated(POLYMORPH_LOCK)){
-    character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
-    if(NewForm==NULL)ABORT("chameleon PolymorphRandomly failed"); //means needs more checks
+bool ChameleonPolymorphRandomly(chameleon* c){
+  character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
+
+  if(NewForm != NULL)
+  {
     NewForm->GainIntrinsic(POLYMORPH);
     return true;
   }
@@ -973,7 +974,7 @@ bool ChamaleonPolymorphRandomly(chameleon* c){
 truth chameleon::SpecialEnemySightedReaction(character*)
 {
   if(HP != MaxHP || !(RAND() % 3))
-    if(ChamaleonPolymorphRandomly(this))
+    if(ChameleonPolymorphRandomly(this))
       return true;
 
   return false;
@@ -986,7 +987,7 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
                                     Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
-    ChamaleonPolymorphRandomly(this);
+    ChameleonPolymorphRandomly(this);
 
   return Return;
 }
@@ -1105,7 +1106,7 @@ bool CPUwiseAI(nonhumanoid* nh)
 {
   if(!nh->IsRooted())return true; //only NPCs that can't move
   if(nh->StateIsActivated(LEVITATION))return true; //this keeps levitating ones still active what may be good TODO add user option to deny them?
-  
+
   int iDist = ivanconfig::GetDistLimitMagicMushrooms();
   if(iDist==0)return true;
 
@@ -2117,7 +2118,7 @@ void genetrixvesana::FinalProcessForBone()
 void carnivorousplant::GetAICommand()
 {
   if(!CPUwiseAI(this))return;
-  
+
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -2443,6 +2444,7 @@ void lobhse::CreateCorpse(lsquare* Square)
 {
   largecreature::CreateCorpse(Square);
   Square->AddItem(mangoseedling::Spawn());
+  game::SetFreedomStoryState(2);
 }
 
 void lobhse::GetAICommand()

@@ -516,6 +516,7 @@ meleeweapon
     SecondaryMaterialConfig == SILVER;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     Roundness = 20;
     IsTwoHanded = true;
     CanBeCloned = false;
@@ -1466,6 +1467,7 @@ meleeweapon
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -1751,6 +1753,7 @@ holybanana /* materialcontainer->banana-> */
   PostFix = "of Oily Orpiv";
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 20;
   WieldedBitmapPos = 160, 320;
   CanBePiled = false;
@@ -1784,6 +1787,7 @@ justifier /* meleeweapon-> */
   MainMaterialConfig == VALPURIUM;
   SecondaryMaterialConfig == VALPURIUM;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Justifier";
   Roundness = 20;
   CanBeCloned = false;
@@ -1820,6 +1824,7 @@ neercseulb /* meleeweapon-> */
   MainMaterialConfig == MITHRIL;
   SecondaryMaterialConfig == MITHRIL;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Neerc Se-ulb";
   Roundness = 35;
   IsTwoHanded = true;
@@ -2170,6 +2175,7 @@ bodyarmor /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBePiled = false;
     CanBeCloned = false;
     CanBeMirrored = true;
@@ -2202,6 +2208,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
   MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeBroken = false;
   CanBeBurned = false;
   CanBeCloned = false;
@@ -2266,6 +2273,7 @@ potion /* materialcontainer-> */
                                 LIQUID_FEAR, TELEPORT_FLUID; }
     MaterialConfigChances = { 9,
                               25, 75, 20, 10, 3, 1, 20, 5, 10; }
+    Alias = { 2, "small potion", "phial"; }
   }
 }
 
@@ -2418,6 +2426,7 @@ leftnutofpetrus /* nut-> */
   PostFix = "of Petrus";
   ArticleMode = FORCE_THE;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeWished = false;
   CanBeCloned = false;
   CanBePiled = false;
@@ -2839,6 +2848,7 @@ avatarofvalpurus
   ArticleMode = FORCE_THE;
   MainMaterialConfig == VALPURIUM;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 80;
   CanBeCloned = false;
   AttachedGod = VALPURUS;
@@ -2983,7 +2993,6 @@ backpack /* materialcontainer-> */
   NameSingular = "backpack";
   MainMaterialConfig == LEATHER;
   SecondaryMaterialConfig == GUN_POWDER;
-  Alias == "explosives";
   Alias = { 4, "explosives", "explosion", "dynamite", "death"; }
   Roundness = 70;
   IsTwoHanded = true;
@@ -3140,6 +3149,7 @@ mine /*materialcontainer-> */
   IsTwoHanded = true;
   AttachedGod = CRUENTUS;
   WieldedBitmapPos = 160, 128;
+  Alias = { 2, "mine", "landmine"; }
 
   Config BIG_MINE;
   {
@@ -3149,6 +3159,7 @@ mine /*materialcontainer-> */
     DefaultSecondaryVolume = 12500;
     NameSingular = "big mine";
     BitmapPos = 80, 288;
+    Alias = { 0; }
   }
 }
 
@@ -3207,6 +3218,7 @@ skeletonkey
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   IsDestroyable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -3306,6 +3318,7 @@ shield /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -3344,6 +3357,7 @@ shield /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -3557,6 +3571,7 @@ cloak /* armor-> */
     IsDestroyable = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
@@ -3577,6 +3592,7 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -3608,6 +3624,7 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -3723,6 +3740,7 @@ cloak /* armor-> */
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -4498,6 +4516,10 @@ ring
     AttachedGod = SEGES;
     TeleportPriority = 1000;
     Alias == "ring of polymorph lock";
+    CanBeWished = false;
+    IsPolymorphSpawnable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
   }
 
   Config RING_OF_WORM;
@@ -4515,6 +4537,7 @@ ring
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     IsDestroyable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
@@ -4770,6 +4793,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
   ArticleMode = FORCE_THE;
   MainMaterialConfig == ELPURI_FLESH;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Roundness = 80;
   IsTwoHanded = true;
   CanBeCloned = false;
@@ -5322,6 +5346,7 @@ helmet
     SoundResistance = 0;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -5440,6 +5465,7 @@ helmet
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -5588,6 +5614,7 @@ helmet
     CanBeWished = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     CanBeMirrored = true;
     CanBePiled = false;
@@ -5702,6 +5729,7 @@ flamingsword /* meleeweapon-> */
     IsDestroyable = false;
     IsMaterialChangeable = false;
     IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
     CanBeCloned = false;
     IsQuestItem = true;
     CanBeBurned = false;
@@ -5736,6 +5764,7 @@ mjolak /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false;*/
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   Alias == "Mjolak";
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -5778,6 +5807,7 @@ vermis /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -5820,6 +5850,7 @@ turox /* meleeweapon-> */
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -5933,6 +5964,7 @@ skullofxinroch
   IsDestroyable = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeBurned = false;
   CanBeBroken = false;
@@ -5951,6 +5983,7 @@ gorovitsweapon
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   IsQuestItem = true;
@@ -6186,6 +6219,7 @@ saalthul
   CanBeWished = false;
   /* IsMaterialChangeable = false; */
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -6413,6 +6447,7 @@ filthytunic /* armor->bodyarmor-> */
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBePiled = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -6668,6 +6703,7 @@ pantheonbook /* holybook-> */
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
@@ -6707,6 +6743,7 @@ gorovitscopyoflenin /* item-> */
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -7021,6 +7058,7 @@ celestialmonograph /* holybook-> */
   ArticleMode = FORCE_THE;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
@@ -7082,6 +7120,7 @@ ullrbone
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   IsDestroyable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
@@ -7370,12 +7409,14 @@ gleipnir /* meleeweapon->whip-> */
   ArticleMode = FORCE_THE;
   CanBeWished = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   IsDestroyable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBeBroken = false;
   CanBeBurned = false;
   CanBePiled = false;
+  Alias == "Gleipnir";
 }
 
 eptyron /* meleeweapon-> */
@@ -7399,6 +7440,7 @@ eptyron /* meleeweapon-> */
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   CanBeCloned = false;
   CanBeMirrored = true;
   CanBePiled = false;
@@ -7430,6 +7472,7 @@ unpick
   CanBeWished = false;
   IsMaterialChangeable = false;
   IsPolymorphable = false;
+  IsPolymorphSpawnable = false;
   IsDestroyable = false;
   CanBeCloned = false;
   CanBeMirrored = true;

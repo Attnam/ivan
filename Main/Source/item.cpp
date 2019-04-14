@@ -67,29 +67,27 @@ truth item::IsDrinkable(ccharacter* Eater) const { return GetConsumeMaterial(Eat
 truth item::IsValidRecipeIngredient(ccharacter*) const { return ValidRecipeIngredient; }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
-void item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
-{ SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags)
-{ ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+material* item::SetMainMaterial(material* NewMaterial, int SpecialFlags)
+{ return SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP)
 { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
 item::item(citem& Item)
 : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight),
+  iRotateFlyingThrownStep(Item.iRotateFlyingThrownStep),
   Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy), ItemFlags(Item.ItemFlags)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
+
   CloneMotherID = new idholder(Item.ID);
   idholder* TI = CloneMotherID;
-
   for(idholder* II = Item.CloneMotherID; II; II = II->Next)
     TI = TI->Next = new idholder(II->ID);
-
   TI->Next = 0;
-  Slot = new slot*[SquaresUnder];
 
+  Slot = new slot*[SquaresUnder];
   for(int c = 0; c < SquaresUnder; ++c)
     Slot[c] = 0;
 }
@@ -124,7 +122,10 @@ item::~item()
 
 void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrownRotation)
 {
-  iRotateFlyingThrownStep=0; //simple granted reset
+  if(ivanconfig::GetRotateTimesPerSquare() > 0)
+  {
+    iRotateFlyingThrownStep=0; //simple granted reset
+  }
   lsquare* LandingSquare=NULL;
 
   int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
@@ -221,7 +222,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
       if(Draw)
         while(clock() - StartTime < fFlyDelay * CLOCKS_PER_SEC);
 
-      if(iRotateFlyingThrownStep!=0){
+      if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){
         if(iRotateTimes==1){
           iRotateFlyingThrownStep += iRotateFlyingThrownStep>0 ? 1 : -1; //next rotation step on next square
         }else{ //if rotation steps is >= 2 rotate at least one more time on the same square
@@ -245,7 +246,7 @@ void item::Fly(character* Thrower, int Direction, int Force, bool bTryStartThrow
 
   }
 
-  if(iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ //must be disabled before exiting Fly()
     iRotateFlyingThrownStep=4; //default rotation is w/o the rotation flags at the switch(){}
     //force redraw at default rotation to avoid another spin when player moves TODO how to let it stay in the last rotation?
     RemoveFromSlot();LandingSquare->GetStack()->AddItem(this, false); //TODO find a better way then remove and re-add to same square...
@@ -388,9 +389,9 @@ truth item::SoftenMaterial()
   material* SecondaryMaterial = GetSecondaryMaterial();
 
   if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-    ChangeSecondaryMaterial(TempMaterial->SpawnMore());
+    delete SetSecondaryMaterial(TempMaterial->SpawnMore());
 
-  ChangeMainMaterial(TempMaterial);
+  delete SetMainMaterial(TempMaterial);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("It softens into %s!", GetMainMaterial()->GetName(false, false).CStr());
@@ -797,11 +798,6 @@ item* item::Duplicate(ulong Flags)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
                              Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
-  idholder* I = new idholder(ID);
-  I->Next = CloneMotherID;
-  CloneMotherID = I;
-  game::RemoveItemID(ID);
-  ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }
@@ -1434,7 +1430,7 @@ void item::Draw(blitdata& BlitData) const
   cint F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
 
   bitmap* bmp = GraphicData.Picture[F];
-  if(iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
+  if(ivanconfig::GetRotateTimesPerSquare()>0 && iRotateFlyingThrownStep!=0){ // tests made using a single bladed (unbalanced) thrown axe where 0 degrees was: blade at topRight poiting downwards
     static blitdata B = [](){B=DEFAULT_BLITDATA; //to reuse tmp bitmap memory
       B.Bitmap = new bitmap(TILE_V2); //bmp->GetSize());
       B.Border = TILE_V2; return B; }();

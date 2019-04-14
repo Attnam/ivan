@@ -1762,6 +1762,9 @@ item* humanoid::GetEquipment(int I) const
 
 void humanoid::SetEquipment(int I, item* What)
 {
+  if(ivanconfig::GetRotateTimesPerSquare() > 0)
+    What->ResetFlyingThrownStep();
+
   switch(I)
   {
    case HELMET_INDEX: SetHelmet(What); break;
@@ -1998,7 +2001,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
           if(eqMHoverPrevious != eqMHover){ //prevent spam
             festring fs;
             Equipment->AddInventoryEntry(PLAYER,fs,1,true); //to show AV DAM weight volume
-            ADD_MESSAGE("My %s is %s.",GetEquipmentName(c),fs.CStr());
+            ADD_MESSAGE("Your %s is %s.",GetEquipmentName(c),fs.CStr());
             msgsystem::Draw();
             eqMHoverPrevious = eqMHover;
           }
@@ -2880,7 +2883,8 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
     else
       Bone = bone::Spawn(0, NO_MATERIALS);
 
-    Bone->InitMaterials(BodyPart->GetMainMaterial());
+    material* OldMaterial = BodyPart->GetMainMaterial();
+    Bone->InitMaterials(OldMaterial);
     BodyPart->DropEquipment(EquipmentDropStack);
     BodyPart->RemoveFromSlot();
     BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
@@ -5446,7 +5450,7 @@ character* humanoid::CreateZombie() const
       material* M = BodyPart->GetMainMaterial()->Duplicate();
       M->SetSpoilCounter(2000 + RAND() % 1000);
       M->SetSkinColor(Zombie->GetSkinColor());
-      ZombieBodyPart->ChangeMainMaterial(M);
+      delete ZombieBodyPart->SetMainMaterial(M);
       ZombieBodyPart->CopyAttributes(BodyPart);
     }
     else if(!Zombie->BodyPartIsVital(c))
@@ -6692,7 +6696,7 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 
 void elder::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"My boy, my wonderful boy! From the very day I found you,\n"
                              "I knew there was something special in you, something even\n"
@@ -6743,10 +6747,15 @@ void elder::BeTalkedTo()
                              "and unable to defend our land. So let's not repeat history and\n"
                              "get ready for them this time.\"\n"));
 
+    game::SetFreedomStoryState(1);
     GetArea()->SendNewDrawRequest();
     ADD_MESSAGE("\"Oh, and give my regards to Terra, if she's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You have the seedling! Wonderful. Please, plant it by the banana delivery spot, and we shan't fear the imperialists anymore.\"");
   }
   else
     humanoid::BeTalkedTo();
@@ -6754,7 +6763,7 @@ void elder::BeTalkedTo()
 
 void terra::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
   {
     game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
                              "\n"
@@ -6808,6 +6817,10 @@ void terra::BeTalkedTo()
     ADD_MESSAGE("\"Oh, and give my love to Kaethos, if he's still alive.\"");
 
     HasBeenSpokenTo = true;
+  }
+  else if((game::GetFreedomStoryState() == 2) && !(GetRelation(PLAYER) == HOSTILE))
+  {
+    ADD_MESSAGE("\"You bested her, I see! Now hurry back to the village, and Attnam shall threaten us no more.\"");
   }
   else
     priest::BeTalkedTo();

@@ -100,6 +100,7 @@ int game::Teams;
 int game::Dungeons;
 int game::StoryState;
 int game::XinrochTombStoryState;
+int game::FreedomStoryState;
 truth game::PlayerIsChampion;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
@@ -296,7 +297,7 @@ void game::RemoveCharacterID(ulong ID)
   characteridmap::iterator itr = CharacterIDMap.find(ID);
   if(itr == CharacterIDMap.end() || itr->second == NULL){
     if(!bugfixdp::IsFixing())
-      ABORT("AlreadyErased:CharacterID %d",ID);
+      ABORT("AlreadyErased:CharacterID %lu",ID);
   }else
     CharacterIDMap.erase(itr);
 }
@@ -318,7 +319,7 @@ void game::RemoveItemID(ulong ID)
        * therefore the abort is appropriate.
        */
       if(!bugfixdp::IsFixing())
-        ABORT("AlreadyErased:ItemID %d, possible dup char bug",ID);
+        ABORT("AlreadyErased:ItemID %lu, possible dup char bug",ID);
     }else{
       ItemIDMap.erase(itr);
       DBG2("ERASED!:ItemID",ID);
@@ -340,7 +341,7 @@ void game::RemoveTrapID(ulong ID)
     trapidmap::iterator itr = TrapIDMap.find(ID);
     if(itr == TrapIDMap.end() || itr->second == NULL){
       if(!bugfixdp::IsFixing())
-        ABORT("AlreadyErased:TrapID %d",ID);
+        ABORT("AlreadyErased:TrapID %lu",ID);
     }else
       TrapIDMap.erase(itr);
   }
@@ -850,6 +851,7 @@ truth game::Init(cfestring& loadBaseName)
       InitPlayerAttributeAverage();
       StoryState = 0;
       XinrochTombStoryState = 0;
+      FreedomStoryState = 0;
       PlayerIsChampion = false;
       PlayerMassacreMap.clear();
       PetMassacreMap.clear();
@@ -1537,7 +1539,7 @@ void game::DrawMapNotesOverlay(bitmap* buffer)
       FONT->Printf(buffer, vMapNotes[i].basePos, WHITE, "%s", vMapNotes[i].note);
 }
 
-const char* cHugeMap="I can't open a map that is as big as the world!";
+const char* cHugeMap="Cannot display a map that is as big as the world!";
 void game::DrawMapOverlay(bitmap* buffer)
 { DBGLN;
   if(!bDrawMapOverlayEnabled)return;
@@ -3353,7 +3355,8 @@ truth game::Save(cfestring& SaveName)
   SaveFile << AveragePlayerLegStrengthExperience;
   SaveFile << AveragePlayerDexterityExperience;
   SaveFile << AveragePlayerAgilityExperience;
-  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState << PlayerIsChampion;
+  SaveFile << Teams << Dungeons << StoryState << PlayerRunning << XinrochTombStoryState;
+  SaveFile << FreedomStoryState << PlayerIsChampion;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -3430,7 +3433,8 @@ int game::Load(cfestring& saveName)
   SaveFile >> AveragePlayerLegStrengthExperience;
   SaveFile >> AveragePlayerDexterityExperience;
   SaveFile >> AveragePlayerAgilityExperience;
-  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState >> PlayerIsChampion;
+  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning >> XinrochTombStoryState;
+  SaveFile >> FreedomStoryState >> PlayerIsChampion;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
@@ -5163,7 +5167,7 @@ festring game::GetDataDir()
 {
 #ifdef UNIX
 #ifdef MAC_APP
-  return "../Resources/ivan/";
+  return "../Resources/data/";
 #else
   return DATADIR "/ivan/";
 #endif
@@ -5467,12 +5471,12 @@ void game::AutoPlayModeApply(){
     bPlayInBackground=true;
     break;
   case 3:
-    msg="%s says \"I am in a hurry!!\"";
+    msg="%s says \"I am in a hurry!\"";
     iTimeout=(1000/2);
     bPlayInBackground=true;
     break;
   case 4:
-    msg="%s says \"I... *frenzy* yeah! try to follow me now! hahaha!\"";
+    msg="%s says \"I... *frenzy* yeah! Try to follow me now! Hahaha!\"";
     iTimeout=10;//min possible to be fastest //(1000/10); // like 10 FPS, so user has 100ms chance to disable it
     bPlayInBackground=true;
     break;

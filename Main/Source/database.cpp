@@ -100,25 +100,25 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
         continue;
       }
       int Type = protocontainer<type>::SearchCodeName(Word);
-      if (!Type) ABORT("Odd term <%s> encountered in %s datafile line %ld!", Word.CStr(), protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      if (!Type) ABORT("Odd term <%s> encountered in %s datafile line %ld!", Word.CStr(), const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
       prototype *Proto = protocontainer<type>::GetProtoData()[Type];
       if (!Proto) ABORT("Something weird with <%s>!", Word.CStr());
       if (Proto->Base && !Proto->Base->ConfigData)
       {
-        ABORT("Database has no description of <%s>!", Proto->Base->GetClassID());
+        ABORT("Database has no description of <%s>!", const_cast<char*>(Proto->Base->GetClassID()));
       }
       database *DataBase = Proto->Base ? new database(**Proto->Base->ConfigData) : new database;
       DataBase->InitDefaults(Proto, 0);
       TempConfig[0] = DataBase;
       int Configs = 1;
-      if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+      if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
       //for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
       for (;;)
       {
         inFile->ReadWord(Word, false);
         if (Word == "" && inFile->Eof())
         {
-          if (infStack.empty()) ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+          if (infStack.empty()) ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
           delete inFile;
           inFile = infStack.top();
           infStack.pop();
@@ -150,10 +150,10 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
             database *ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
             ConfigDataBase->InitDefaults(Proto, ConfigNumber);
             TempConfig[Configs++] = ConfigDataBase;
-            if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", protocontainer<type>::GetMainClassID(), inFile->TellLine());
+            if (inFile->ReadWord() != "{") ABORT("Bracket missing in %s datafile line %ld!", const_cast<char*>(protocontainer<type>::GetMainClassID()), inFile->TellLine());
             for (inFile->ReadWord(Word); Word != "}"; inFile->ReadWord(Word))
             {
-              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%d, line %ld!", Word.CStr(), Proto->GetClassID(), ConfigNumber, inFile->TellLine());
+              if (!AnalyzeData(*inFile, Word, *ConfigDataBase)) ABORT("Illegal datavalue %s found while building up %s config #%ld, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), ConfigNumber, inFile->TellLine());
             }
             ConfigDataBase->PostProcess();
           }
@@ -166,7 +166,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
           fprintf(stderr, "MESSAGE: %s\n", Word.CStr());
           continue;
         }
-        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), Proto->GetClassID(), inFile->TellLine());
+        if (!AnalyzeData(*inFile, Word, *DataBase)) ABORT("Illegal datavalue %s found while building up %s, line %ld!", Word.CStr(), const_cast<char*>(Proto->GetClassID()), inFile->TellLine());
       }
       DataBase->PostProcess();
       //Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
@@ -946,7 +946,7 @@ template <class type> void databasecreator<type>::InstallDataBase(type* Instance
   FindDataBase(Instance->DataBase, Proto, Config);
 
   if(!Instance->DataBase)
-    ABORT("Undefined %s configuration #%d sought!", Proto->GetClassID(), Config);
+    ABORT("Undefined %s configuration #%d sought!", const_cast<char*>(Proto->GetClassID()), Config);
 }
 
 #define INST_INSTALL_DATABASE(type)\

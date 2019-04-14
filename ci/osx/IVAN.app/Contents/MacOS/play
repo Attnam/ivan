@@ -1,8 +1,8 @@
 #!/bin/sh
 
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin
-
-cd "$(dirname -- "$0")"
+set -e
+export PATH=/usr/bin:/bin
+cd -- "$(dirname -- "$0")"
 
 if [ "$(uname -r | cut -d. -f1)" -ge 11 ]; then
   export DYLD_LIBRARY_PATH=. DYLD_FRAMEWORK_PATH=.

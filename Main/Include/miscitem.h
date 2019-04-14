@@ -24,8 +24,7 @@ ITEM(materialcontainer, item)
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
-  virtual void SetSecondaryMaterial(material*, int = 0);
-  virtual void ChangeSecondaryMaterial(material*, int = 0);
+  virtual material* SetSecondaryMaterial(material*, int = 0);
   void InitMaterials(material*, material*, truth = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

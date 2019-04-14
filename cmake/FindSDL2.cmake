@@ -65,46 +65,63 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+# Caveat: If you want to find standard libraries or headers before frameworks,
+#         you must pass -DCMAKE_FIND_FRAMEWORK=LAST to cmake.
 SET(SDL2_SEARCH_PATHS
 	# other paths like ~/Library/Frameworks and /usr/local
-	# should be provided by $ENV{SDL2DIR}
+	# should be provided/prioritized by setting $ENV{SDL2DIR}
 	/Library/Frameworks
 	/usr
 )
 
 # CPU architecture detection for MSVC
-if(CMAKE_SIZEOF_VOID_P MATCHES 8)
-    set(CPU_ARCH "x64")
-else()
-    set(CPU_ARCH "x86")
-endif()
+IF(CMAKE_SIZEOF_VOID_P MATCHES 8)
+	SET(CPU_ARCH "x64")
+ELSE()
+	SET(CPU_ARCH "x86")
+ENDIF()
 
+# Precedence (CMake 2.6+): HINTS > SYSTEM_PATHS > PATHS
 FIND_PATH(SDL2_INCLUDE_DIR
 	NAMES SDL.h
-	PATH_SUFFIXES include/SDL2 include
-	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
+	PATH_SUFFIXES include/SDL2 SDL2 include
+	HINTS $ENV{SDL2DIR}
+	PATHS ${SDL2_SEARCH_PATHS}
 )
 
 FIND_LIBRARY(SDL2_LIBRARY_TEMP
 	NAMES SDL2
 	PATH_SUFFIXES lib64 lib lib/${CPU_ARCH}
-	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
+	HINTS $ENV{SDL2DIR}
+	PATHS ${SDL2_SEARCH_PATHS}
 )
 
 FIND_PATH(SDL2_mixer_INCLUDE_DIR
 	NAMES SDL_mixer.h
-	PATH_SUFFIXES include/SDL2 include
-	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
+	PATH_SUFFIXES include/SDL2 SDL2 include
+	HINTS $ENV{SDL2DIR}
+	PATHS ${SDL2_SEARCH_PATHS}
 )
 
 FIND_LIBRARY(SDL2_mixer_LIBRARY_TEMP
 	NAMES SDL2_mixer
 	PATH_SUFFIXES lib64 lib lib/${CPU_ARCH}
-	PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
+	HINTS $ENV{SDL2DIR}
+	PATHS ${SDL2_SEARCH_PATHS}
 )
 
+IF((SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
+	IF ((NOT SDL2_INCLUDE_DIR MATCHES "\\.framework") OR (NOT SDL2_mixer_INCLUDE_DIR MATCHES "\\.framework"))
+	MESSAGE(WARNING
+		"You don't seem to have all of these frameworks installed in your system:\n"
+		"    SDL2.framework: ${SDL2_INCLUDE_DIR};${SDL2_LIBRARY_TEMP}\n"
+		"    SDL2_mixer.framework: ${SDL2_mixer_INCLUDE_DIR};${SDL2_mixer_LIBRARY_TEMP}\n"
+		"Pass -DCMAKE_FIND_FRAMEWORK=LAST to cmake if you don't want to use the framework bundles.")
+	ENDIF()
+ENDIF()
+
 IF(NOT SDL2_BUILDING_LIBRARY)
-	IF(NOT SDL2_INCLUDE_DIR MATCHES ".framework")
+	IF(NOT SDL2_INCLUDE_DIR MATCHES "\\.framework")
 		# Non-OS X framework versions expect you to also dynamically link to
 		# SDL2main. This is mainly for Windows and OS X. Other (Unix) platforms
 		# seem to provide SDL2main for compatibility even though they don't
@@ -112,9 +129,10 @@ IF(NOT SDL2_BUILDING_LIBRARY)
 		FIND_LIBRARY(SDL2MAIN_LIBRARY
 			NAMES SDL2main
 			PATH_SUFFIXES lib64 lib "lib/${CPU_ARCH}"
-			PATHS $ENV{SDL2DIR} ${SDL2_SEARCH_PATHS}
+			HINTS $ENV{SDL2DIR}
+			PATHS ${SDL2_SEARCH_PATHS}
 		)
-	ENDIF(NOT SDL2_INCLUDE_DIR MATCHES ".framework")
+	ENDIF(NOT SDL2_INCLUDE_DIR MATCHES "\\.framework")
 ENDIF(NOT SDL2_BUILDING_LIBRARY)
 
 # SDL2 may require threads on your system.

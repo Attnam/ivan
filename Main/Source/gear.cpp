@@ -12,10 +12,8 @@
 
 /* Compiled through itemset.cpp */
 
-void meleeweapon::SetSecondaryMaterial(material* What, int SpecialFlags)
-{ SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void meleeweapon::ChangeSecondaryMaterial(material* What, int SpecialFlags)
-{ ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+material* meleeweapon::SetSecondaryMaterial(material* What, int SpecialFlags)
+{ return SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::InitMaterials(material* M1, material* M2, truth CUP)
 { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(),
                       SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
