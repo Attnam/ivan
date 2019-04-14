@@ -983,7 +983,7 @@ character* cathedral::FindRandomExplosiveReceiver() const
 truth ownedarea::PickupItem(character* Visitor, item* Item, int)
 {
   if(!MasterIsActive() || Visitor == GetMaster() ||
-     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+     GetMaster()->GetRelation(Visitor) == HOSTILE)
     return true;
 
   if(Visitor->IsPlayer())
@@ -1006,7 +1006,7 @@ truth ownedarea::PickupItem(character* Visitor, item* Item, int)
 truth ownedarea::DropItem(character* Visitor, item* Item, int)
 {
   if(!MasterIsActive() || Visitor == GetMaster() ||
-     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+     GetMaster()->GetRelation(Visitor) == HOSTILE)
     return true;
 
   if(Visitor->IsPlayer())
@@ -1037,7 +1037,7 @@ void ownedarea::KickSquare(character* Kicker, lsquare* Square)
 truth ownedarea::ConsumeItem(character* HungryMan, item*, int)
 {
   if(!MasterIsActive() || HungryMan == GetMaster() ||
-     GetMaster()->GetRelation(Thirsty) == HOSTILE)
+     GetMaster()->GetRelation(HungryMan) == HOSTILE)
     return true;
 
   if(HungryMan->IsPlayer())
