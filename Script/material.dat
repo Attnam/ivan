@@ -3895,6 +3895,46 @@ solid
     AttachedGod = SILVA;
     NaturalForm = stone;
     SoftenedMaterial = GREEN_CRYSTAL;
+    HardenedMaterial = CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config CRYSTEEL;
+  {
+    StrengthValue = 200;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(100, 149, 237);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "crysteel";
+    Alpha = 150;
+    PriceModifier = 9000;
+    IntelligenceRequirement = 26;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = SUN_CRYSTAL;
+    HardenedMaterial = FLAWLESS_CRYSTEEL;
+    CommonFlags = Base|IS_VALUABLE;
+    CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
+    InteractionFlags = Base&~CAN_DISSOLVE;
+  }
+
+  Config FLAWLESS_CRYSTEEL;
+  {
+    StrengthValue = 255;
+    ConsumeType = CT_MINERAL;
+    Density = 2000;
+    Color = rgb16(70, 130, 180);
+    Emitation = rgb24(135, 135, 160);
+    NameStem = "flawless crysteel";
+    Alpha = 150;
+    PriceModifier = 10000;
+    IntelligenceRequirement = 35;
+    AttachedGod = SILVA;
+    NaturalForm = stone;
+    SoftenedMaterial = CRYSTEEL;
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
     InteractionFlags = Base&~CAN_DISSOLVE;
@@ -4793,7 +4833,7 @@ liquid
   Config ANTIDOTE_LIQUID;
   {
     StrengthValue = 1;
-    NutritionValue = 100;
+    NutritionValue = 10;
     Color = rgb16(128, 0, 128);
     NameStem = "antidote";
     Effect = EFFECT_ANTIDOTE;
@@ -4827,7 +4867,7 @@ liquid
   Config HEALING_LIQUID;
   {
     StrengthValue = 1;
-    NutritionValue = 250;
+    NutritionValue = 50;
     Color = rgb16(180, 0, 0);
     PriceModifier = 1500;
     NameStem = "healing potion";
@@ -4851,6 +4891,8 @@ liquid
     Emitation = rgb24(139, 0, 139);
     NameStem = "raw liquefied magic";
     Alpha = 150;
+    EffectStrength = 250;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
     SoftenedMaterial = MAGIC_VAPOUR;
@@ -4868,6 +4910,7 @@ liquid
     Color = rgb16(153, 50, 204);
     NameStem = "warp fluid";
     Alpha = 150;
+    PriceModifier = 500;
     AttachedGod = SOPHOS;
     Effect = EFFECT_TELEPORTATION;
     SoftenedMaterial = TELEPORT_GAS;
@@ -4893,7 +4936,7 @@ liquid
     NutritionValue = 1500;
     Color = rgb16(244, 164, 96);
     NameStem = "chicken soup";
-    Effect = EFFECT_HEAL; /* Chiken soup is good hwne you're ill! */
+    Effect = EFFECT_HEAL; /* Chiken soup is good when you're ill! */
     ConsumeEndMessage = CEM_HEALING_LIQUID;
     HitMessage = HM_HEALING_LIQUID;
     EffectStrength = 50;
@@ -4975,6 +5018,7 @@ liquid
     Color = rgb16(0, 15, 85);
     NameStem = "ink";
     Alpha = 175;
+    PriceModifier = 1000;
     AttachedGod = SOPHOS;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
   }
@@ -5020,6 +5064,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|CAN_EXPLODE|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config VODKA;
@@ -5056,6 +5101,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config WHITE_WINE;
@@ -5073,6 +5119,7 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config RED_WINE;
@@ -5090,12 +5137,13 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(216, 120, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "beer";
@@ -5107,12 +5155,13 @@ liquid
     CommonFlags = Base|IS_VALUABLE;
     CategoryFlags = Base|IS_BEVERAGE;
     InteractionFlags = Base|EFFECT_IS_GOOD;
+    DisablesPanicWhenConsumed = true;
   }
 
   Config ELF_ALE;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(247, 148, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "elven ale";
@@ -5130,7 +5179,7 @@ liquid
   Config DWARF_BEER;
   {
     StrengthValue = 1;
-    NutritionValue = 80;
+    NutritionValue = 150;
     Color = rgb16(192, 72, 0);
     ConsumeWisdomLimit = 10;
     NameStem = "dwarven stout";
@@ -5249,6 +5298,7 @@ liquid
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
     SoftenedMaterial = MUSTARD_GAS;
     ConsumeWisdomLimit = 3;
+    PriceModifier = 300;
   }
 
   Config LIQUID_DARKNESS;
@@ -5304,7 +5354,7 @@ liquid
   Config VINEGAR;
   {
     StrengthValue = 1;
-    NutritionValue = 1000;
+    NutritionValue = 80;
     Color = rgb16(100, 100, 0);
     NameStem = "vinegar";
     Alpha = 150;
@@ -5363,7 +5413,7 @@ liquid
   Config BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(100, 0, 0);
     NameStem = "blood";
     Alpha = 175;
@@ -5376,9 +5426,22 @@ liquid
   Config GREEN_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(0, 128, 0);
     NameStem = "green blood"; /* goblin blood */
+    Alpha = 175;
+    Flexibility = 40;
+    AttachedGod = CRUENTUS;
+    RustModifier = 1;
+    CategoryFlags = IS_BLOOD;
+  }
+
+  Config BLACK_BLOOD;
+  {
+    StrengthValue = 1;
+    NutritionValue = 500;
+    Color = rgb16(40, 40, 40);
+    NameStem = "black blood"; /* orcish blood */
     Alpha = 175;
     Flexibility = 40;
     AttachedGod = CRUENTUS;
@@ -5389,7 +5452,7 @@ liquid
   Config BLUE_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 50;
+    NutritionValue = 500;
     Color = rgb16(0, 0, 128);
     NameStem = "blue blood"; /* noble blood */
     Alpha = 175;
@@ -5397,12 +5460,13 @@ liquid
     AttachedGod = CRUENTUS;
     RustModifier = 1;
     CategoryFlags = IS_BLOOD;
+    PriceModifier = 1000;
   }
 
   Config PLANT_SAP;
   {
     StrengthValue = 1;
-    NutritionValue = 150;
+    NutritionValue = 250;
     Color = rgb16(126, 255, 126);
     NameStem = "sap"; /* plant blood */
     Alpha = 175;
@@ -5494,6 +5558,7 @@ liquid
     InteractionFlags = Base|AFFECT_INSIDE;
     StepInWisdomLimit = 10;
     NameFlags = Base|USE_AN;
+    PriceModifier = 1000;
   }
 
   Config SICK_BLOOD;
@@ -5517,7 +5582,7 @@ liquid
   Config LIGHT_FROG_BLOOD;
   {
     StrengthValue = 1;
-    NutritionValue = 40;
+    NutritionValue = 400;
     Color = rgb16(150, 0, 0);
     Emitation = rgb24(160, 100, 100);
     NameStem = "light frog blood";
@@ -5529,6 +5594,7 @@ liquid
     Effect = EFFECT_ANTIDOTE;
     ConsumeEndMessage = CEM_ANTIDOTE;
     EffectStrength = 100;
+    PriceModifier = 1500;
   }
 
   Config OMMEL_BLOOD;

@@ -5194,8 +5194,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of piercing perception";
     AffectsPerception = true;
-    MainMaterialConfig == ILLITHIUM;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5229,8 +5227,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of understanding";
     AffectsWisdom = true;
-    MainMaterialConfig == UNICORN_HORN;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5264,8 +5260,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of brilliance";
     AffectsIntelligence = true;
-    MainMaterialConfig == ARCANITE;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5298,8 +5292,23 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of attractivity";
     AffectsCharisma = true;
-    MainMaterialConfig == GOLD;
-    MaterialConfigChances == 100;
+    MainMaterialConfig = { 60,
+                           SILVER, MOON_SILVER, GOLD, DARK_GOLD, PLATINUM, ELECTRUM,
+                           TITANITE, ADAMANT, CHAR_COAL, COAL, JET, URANIUM, SOLARIUM,
+                           NEUTRONIUM, MAGIC_CRYSTAL, BLUE_CRYSTAL, GREEN_CRYSTAL,
+                           PURPLE_CRYSTAL, PEARL_GLASS, PETRIFIED_WOOD, PETRIFIED_DARK,
+                           DRAGON_BONE, MAMMOTH_TUSK, OBSIDIAN, JASPER, JACINTH, AGATE,
+                           TOURMALINE, CHALCEDONY, CITRINE, LAPIS_LAZULI, OCCULTUM,
+                           AMBER, OPAL, ONYX, PEARL, CORAL, ROSE_QUARTZ, NETHER_QUARTZ,
+                           AMETHYST, TOPAZ, SAPPHIRE, EMERALD, RUBY, DIAMOND, BLACK_DIAMOND,
+                           JADEITE, MALACHITE, NEPHRITE, BLACK_JADE, RED_JADE, GREEN_JADE,
+                           BLUE_JADE, WHITE_JADE, BRIM_STONE, ALABASTER, HEMATITE,
+                           PYRITE, PRIMORDIAL_ICE, HALCYON; }
+    MaterialConfigChances = { 60,
+                              300, 25, 200, 25, 50, 75, 5, 5, 10, 10, 25, 1, 1, 1,
+                              5, 5, 5, 5, 3, 2, 1, 1, 25, 50, 75, 50, 50, 50, 50, 50,
+                              50, 5, 75, 75, 75, 50, 25, 25, 25, 50, 50, 50, 50, 50,
+                              25, 5, 50, 50, 50, 25, 20, 15, 10, 5, 2, 1, 2, 5, 1, 1; }
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5364,8 +5373,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of indomitable will";
     AffectsWillPower = true;
-    MainMaterialConfig == OCTIRON;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
@@ -5398,8 +5405,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of telepathy";
     GearStates = ESP;
-    MainMaterialConfig == SOUL_STEEL;
-    MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = INFUSCOR;
     CoverPercentile = 90;
@@ -5430,8 +5435,6 @@ helmet
     FlexibleNameSingular = "cap";
     PostFix = "of teleportation";
     GearStates = TELEPORT;
-    MainMaterialConfig == MITHRIL;
-    MaterialConfigChances == 100;
     Price = 100;
     AttachedGod = SOPHOS;
     CoverPercentile = 90;
@@ -5507,8 +5510,6 @@ helmet
     PostFix = "of essence plethora";
     Alias == "helm of mana";
     AffectsMana = true;
-    MainMaterialConfig == AMETHYST;
-    MaterialConfigChances == 100;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;

@@ -398,6 +398,7 @@ petrus
   DefaultName = "Petrus";
   DeathMessage = "The high priest disappears in a bright light and only his left nut is left behind.";
   /* Replies overridden */
+  /* BloodMaterial specifically *not* BLUE_BLOOD, as Petrus is of humble parentage */
   AttachedGod = VALPURUS;
   BodyPartsDisappearWhenSevered = true;
   CanBeConfused = false;
@@ -1344,6 +1345,7 @@ priest
     SkinColor = rgb16(160, 100, 64);
     HairColor = rgb16(80, 48, 32);
     AttachedGod = SILVA;
+    BloodMaterial = PLANT_SAP;
     DefaultName = "Florea";
     NameSingular = "priestess";
     PostFix = "of Silva";
@@ -1390,6 +1392,7 @@ priest
     HairColor = rgb16(64, 0, 64);
     EyeColor = rgb16(128, 0, 64);
     AttachedGod = INFUSCOR;
+    BloodMaterial = MAGIC_LIQUID;
     DefaultName = "Praecantrix";
     NameSingular = "priestess";
     PostFix = "of Infuscor";
@@ -3810,6 +3813,7 @@ petrusswife
       "hunting", "horses", "steppe", "trapping", "sharpshooting",
       "combat", "traditions", "storytelling", "freedom", "boredom";
     }
+    BloodMaterial = BLUE_BLOOD;
   }
 
   Config 4;
@@ -3908,6 +3912,7 @@ petrusswife
       "hunting", "horses", "steppe", "trapping", "sharpshooting",
       "combat", "traditions", "storytelling", "freedom", "boredom";
     }
+    BloodMaterial = BLUE_BLOOD;
   }
 }
 
@@ -5979,6 +5984,7 @@ orc
   RightSWeaponSkillHits = 20;
   LeftSWeaponSkillHits = 20;
   ClassStates = GAS_IMMUNITY|INFRA_VISION;
+  BloodMaterial = BLACK_BLOOD;
   PanicLevel = 50;
   HostileReplies =
   {
@@ -9160,6 +9166,7 @@ terra
   NameSingular = "elder priestess";
   PostFix = "of Silva";
   Sex = FEMALE;
+  BloodMaterial = PLANT_SAP;
   BodyArmor = RATA_WOOD bodyarmor(PLATE_MAIL) { Enchantment = 3; }
   Cloak = RAINBOW_CLOTH cloak(CLOAK_OF_ACID_RESISTANCE) { Enchantment = 3; }
   Belt = RATA_WOOD belt(BELT_OF_REGENERATION) { Enchantment = 3; }

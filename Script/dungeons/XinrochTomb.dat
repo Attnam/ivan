@@ -1228,12 +1228,18 @@ Dungeon XINROCH_TOMB;
     Square, Random IN_ROOM;
     {
       Character = golem(ICE);
-      Times = 2:5;
+      Times = 1:4;
     }
 
     Square, Random IN_ROOM;
     {
-      Character = golem(BLUE_CRYSTAL);
+      Character = golem(SNOW);
+      Times = 1:3;
+    }
+
+    Square, Random IN_ROOM;
+    {
+      Character = golem(PRIMORDIAL_ICE);
       Times = 2;
     }
 
