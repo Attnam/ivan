@@ -213,6 +213,7 @@ Dungeon XINROCH_TOMB;
       FloorSquare = ASH solidterrain(SNOW_TERRAIN), 0;
       GenerateDoor = false;
       DivineMaster = INFUSCOR;
+      Type = ROOM_OWNED_AREA;
       GenerateLanterns = false;
       IsInside = false;
       GenerateWindows = false;
@@ -1239,7 +1240,7 @@ Dungeon XINROCH_TOMB;
 
     Square, Random IN_ROOM;
     {
-      Character = golem(PRIMORDIAL_ICE);
+      Character = golem(JOTUN_ICE);
       Times = 2;
     }
 

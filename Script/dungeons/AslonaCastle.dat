@@ -21,15 +21,15 @@
 
 Dungeon ASLONA_CASTLE;
 {
-  Levels = 5;
-  Description = "sewers";
-  ShortDescription = "Sw";
+  Levels = 4;
+  Description = "castle sewers";
+  ShortDescription = "CS";
 
   LevelDefault
   {
     Size = 42, 26;
     GenerateMonsters = true;
-    Rooms = 0;
+    Rooms = 3:5;
     Items = 0;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -48,7 +48,7 @@ Dungeon ASLONA_CASTLE;
     MonsterAmountBase = 10;
     MonsterAmountDelta = 5;
     MonsterGenerationIntervalBase = 150;
-    MonsterGenerationIntervalDelta = -25;
+    MonsterGenerationIntervalDelta = -50;
     EarthquakesAffectTunnels = true;
     AudioPlayList =
     {
@@ -59,11 +59,10 @@ Dungeon ASLONA_CASTLE;
     RoomDefault
     {
       Pos = 2:XSize-5,2:YSize-5;
-      WallSquare = LIME_STONE solidterrain(GROUND), CALCITE wall(BRICK_OLD);
-      FloorSquare = LIME_STONE solidterrain(PARQUET), 0;
-      DoorSquare = LIME_STONE solidterrain(PARQUET), 0;
+      FloorSquare = LIME_STONE solidterrain(GROUND), 0;
+      DoorSquare = LIME_STONE solidterrain(GROUND), 0;
 
-      Size = 4:11,4:11;
+      Size = 3:4,3:4;
       AltarPossible = false;
       GenerateDoor = true;
       DivineMaster = 0;
@@ -76,7 +75,7 @@ Dungeon ASLONA_CASTLE;
       Shape = RECTANGLE;
       IsInside = true;
       GenerateWindows = false;
-      UseFillSquareWalls = false;
+      UseFillSquareWalls = true;
       Flags = 0;
     }
 
@@ -93,26 +92,6 @@ Dungeon ASLONA_CASTLE;
       EntryIndex = STAIRS_DOWN;
       AttachRequired = true;
     }
-
-    Square, Random NOT_IN_ROOM|ATTACHABLE;
-    {
-      AttachRequired = true;
-    }
-
-    Square, Random NOT_IN_ROOM|ATTACHABLE;
-    {
-      AttachRequired = true;
-    }
-
-    Square, Random NOT_IN_ROOM|ATTACHABLE;
-    {
-      AttachRequired = true;
-    }
-
-    Square, Random NOT_IN_ROOM|ATTACHABLE;
-    {
-      AttachRequired = true;
-    }
   }
 
   Level 0;
@@ -120,7 +99,7 @@ Dungeon ASLONA_CASTLE;
     Description = "Aslona Castle";
     ShortDescription = "Castle";
     FillSquare = liquidterrain(SEA), 0;
-    Size = 50, 50;
+    Size = 54, 54;
     GenerateMonsters = false;
     Rooms = 1;
     Items = 0;
@@ -129,7 +108,6 @@ Dungeon ASLONA_CASTLE;
     LOSModifier = 48;
     IgnoreDefaultSpecialSquares = true;
     CanGenerateBone = false;
-    BackGroundType = GRAY_FRACTAL;
 
     RoomDefault
     {
@@ -142,23 +120,23 @@ Dungeon ASLONA_CASTLE;
 
     Room
     {
-      Pos = 0,0;
+      Pos = 2,2;
       Size = 50,50;
-      WallSquare = liquidterrain(SEA);
       DivineMaster = SEGES;
       Type = ROOM_OWNED_AREA;
 
       GTerrainMap
       {
         Pos = 0,0;
-        Size = 50,49;
+        Size = 49,50;
         Types
         {
           # = BASALT solidterrain(GROUND) { IsInside = true; }
-          . = MARBLE solidterrain(FLOOR) { IsInside = true; }
+          ; = MARBLE solidterrain(FLOOR) { IsInside = true; }
           1 = CORAL solidterrain(FLOOR) { IsInside = true; }
           2 = NACRE solidterrain(FLOOR) { IsInside = true; }
-          _ = MAHOGANY_WOOD solidterrain(PARQUET) { IsInside = true; }
+          _ = CYPRESS_WOOD solidterrain(PARQUET) { IsInside = true; }
+          * = CYPRESS_WOOD solidterrain(PARQUET);
           - = liquidterrain(POOL) { IsInside = true; }
           + = solidterrain(GROUND);
           , = solidterrain(GRASS_TERRAIN);
@@ -166,62 +144,62 @@ Dungeon ASLONA_CASTLE;
         }
       }
       {
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
-        ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
-        ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
-        ~~~~,############,,,,,,,,,,,,,,,############,~~~~
-        ~~~,,#__________#,,,,,,,,,,,,,,,#...#......#,~~~~
-        ~~~,~#__________#,,,,,,,,,,,,,,,#...#......#,,~~~
-        ~~~~~#__________#################...#......#,,~~~
-        ~~~~,#__________#...............#...#......#,,,~~
-        ~~~~,#_---______#...............#...########,,,~~
-        ~~~,,#_---______#################..........#,,,~~
-        ~~~,,#_---______#121212121212121#..........#,,,~~
-        ~~~,,#__________#212121212121212#..........#,,,~~
-        ~~~,,############121212121212121############,,,~~
-        ~~,,,,,,#.......#212121212121212#......#,,,,,,,~~
-        ~~,,,,,,#.......#121212121212121#......#,,,,,,,~~
-        ~~,,,,,,#.......#212121212121212#......#,,,,,,,~~
-        ~~,,,,,,#.......#121212121212121#......#,,,,,,,~~
-        ~~,,,,,,################################,,,,,,,~~
-        ~~,,,,,,#....#,,,,,,,##,+,##,,,,,,,#...#,,,,,,,~~
-        ~~,,,,,,#....#,,,,,,,#,,+,,#,,,,,,,#...#,,,,,,,~~
-        ~,,,,,,,#....#,,,,,,,,,,+,,,,,,,,,,#...#,,,,,,,~~
-        ~,,,,,,,#....#,,,,,,##,,+,,##,,,,,,#...#,#######~
-        ~,,,,,,,#....#,,,,,,##.....##,,,,,,#...#,#_____#~
-        ~,,,,,,,#....#,,,,,,,..---..,,,,,,,#...#,#_____#~
-        ~,,,,,,,#....#,,,,,,,.-----.,,,,,,,#...#,#_____#~
-        ~,,,,,,,#....#,,,,,,,.-----.+++++++#...#,#_____#~
-        ~,,,,,,,######,,,,,,,..---..,,,,,,,#####,#_____#~
-        ~,,,,,,,#++++,,,,,,,##.....##,,,,,,#...#,#######~
-        ~~,,,,,,#++++,,,,,,,##,+++,##,,,,,,#...#,,,,,,,~~
-        ~~,,,###########,,,,,,,+++,,,,,,,###########,,,~~
-        ~~~,,#___#.#___#+++++++++++++++++#.........#,,,~~
-        ~~~,,#___#.#___###################.#.....#.#,,,~~
-        ~~~,,#####.#___#......#...#......#.........#,,,~~
-        ~~~,,#___#.#####......#...#......#.#.....#.#,,~~~
-        ~~~,,#___#.#___#......#...#......#.........#,,~~~
-        ~~~,,#####.#___#......#...#......#.#.....#.#,,,~~
-        ~~~,,#___#.#######################.........#,,~~~
-        ~~~,,#___#.#___#,,,,,,,+++,,,,,,,#.#.....#.#~~~~~
-        ~~~,,#___#.#___#,,,,,,,+++,,,,,,,#.........#~~~~~
-        ~~~,,###########,,,,,,,+++,,,,,,,###########~~~~~
-        ~~~,,,,,,,,,,,,,,,,,,,,+++,,,,,,,,,,,~~~~~~~~~~~~
-        ~~~~~,,,,,,,,,,,,,,,,,,___,,,,,,~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~~~~~~~~~~~~~~~~~~~~~___~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
+      ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
+      ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
+      ~~~~,############,,,,,,,,,,,,,,,############,~~~~
+      ~~~,,#______#___#,,,,,,,,,,,,,,,#;;;#;;;;;;#,~~~~
+      ~~~,~#______#___#,,,,,,,,,,,,,,,#;;;#;;;;;;#,,~~~
+      ~~~~~#______#___#################;;;#;;;;;;#,,~~~
+      ~~~~,#______#;###_______________#;;;#;;;;;;#,,,~~
+      ~~~~,#_---______#_______________#;;;######;#,,,~~
+      ~~~,,#_---______#################;;;;;;;;;;#,,,~~
+      ~~~,,#_---______#121212121212121#;;;;;;;;;;#,,,~~
+      ~~~,,#__________#212121212121212#;;;;;;;;;;#,,,~~
+      ~~~,,########;###121212121212121#####;######,,,~~
+      ~~,,,,,,#;;;;;;;#212121212121212#;;;;;;#,,,,,,,~~
+      ~~,,,,,,#;;;;;;;#121212121212121#;;;;;;#,,,,,,,~~
+      ~~,,,,,,#;;;;;;;;212121212121212;;;;;;;#,,,,,,,~~
+      ~~,,,,,,#;;;;;;;#121212121212121#;;;;;;#,,,,,,,~~
+      ~~,,,,,,##;;############;############;##,,,,,,,~~
+      ~~,,,,,,#;;;;#,,,,,,,##,+,##,,,,,,,#;;;#,,,,,,,~~
+      ~~,,,,,,#;;;;#,,,,,,,#,,+,,#,,,,,,,#;;;#,,,,,,,~~
+      ~,,,,,,,#;;;;#,,,,,,,,,,+,,,,,,,,,,#;;;#,,,,,,,~~
+      ~,,,,,,,#;;;;#,,,,,,##,,+,,##,,,,,,#;;;#,#######~
+      ~,,,,,,,#;;;;#,,,,,,##;;;;;##,,,,,,#;;;#,#_____#~
+      ~,,,,,,,#;;;;#,,,,,,,;;---;;,,,,,,,#;;;#,#_____#~
+      ~,,,,,,,#;;;;#,,,,,,,;-----;,,,,,,,#;;;#,#_____#~
+      ~,,,,,,,#;;;;#,,,,,,,;-----;+++++++;;;;#,#_____#~
+      ~,,,,,,,##;;##,,,,,,,;;---;;,,,,,,,##;##,#_____#~
+      ~,,,,,,,#++++,,,,,,,##;;;;;##,,,,,,#;;;#,###;###~
+      ~~,,,,,,#++++,,,,,,,##,+++,##,,,,,,#;;;#,,,,,,,~~
+      ~~,,,#####;#####,,,,,,,+++,,,,,,,###########,,,~~
+      ~~~,,#___#;#___;+++++++++++++++++;;;;;;;;;;#,,,~~
+      ~~~,,#___;;;___###;####;;;####;###;#;;;;;#;#,,,~~
+      ~~~,,#####;#___#;;;;;;#;;;#;;;;;;#;;;;;;;;;#,,,~~
+      ~~~,,#___;;#####;;;;;;;;;;;;;;;;;#;#;;;;;#;#,,~~~
+      ~~~,,#___#;#___#;;;;;;#;;;#;;;;;;#;;;;;;;;;#,,~~~
+      ~~~,,#####;;___#;;;;;;#;;;#;;;;;;#;#;;;;;#;#,,,~~
+      ~~~,,#___#;############;;;########;;;;;;;;;#,,~~~
+      ~~~,,#___#;#___#,,,,,,,+++,,,,,,,#;#;;;;;#;#~~~~~
+      ~~~,,#___;;;___#,,,,,,,+++,,,,,,,#;;;;;;;;;#~~~~~
+      ~~~,,###########,,,,,,,+++,,,,,,,###########~~~~~
+      ~~~,,,,,,,,,,,,,,,,,,,,+++,,,,,,,,,,,~~~~~~~~~~~~
+      ~~~~~,,,,,,,,,,,,,,,,,,***,,,,,,~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~***~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~***~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~***~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~***~~~~~~~~~~~~~~~~~~~~~~~
       }
 
       OTerrainMap
       {
         Pos = 0,0;
-        Size = 50,49;
+        Size = 49,50;
         Types
         {
           ~ = 0;
@@ -246,7 +224,7 @@ Dungeon ASLONA_CASTLE;
           5 = decoration(POOL_BORDER) { VisualEffects = NONE; }
           6 = decoration(POOL_BORDER) { VisualEffects = ROTATE; }
           7 = decoration(POOL_BORDER) { VisualEffects = FLIP; }
-          8 = decoration(POOL_BORDER) { VisualEffects = MIRROR | ROTATE; }
+          0 = decoration(POOL_BORDER) { VisualEffects = MIRROR | ROTATE; }
           s = decoration(COUCH);
           f = fountain;
           d = decoration(DOUBLE_BED);
@@ -261,7 +239,7 @@ Dungeon ASLONA_CASTLE;
           O = decoration(TABLE);
           n = decoration(ANVIL);
           v = decoration(WELL);
-          P = decoration(PEDESTAL);
+          P = BLACK_GRANITE decoration(PEDESTAL);
           F = decoration(FORGE);
           w = decoration(WORK_BENCH);
           x = olterraincontainer(CHEST_OF_DRAWERS) { ItemsInside = { 2, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; }, Random { MinPrice = 100; Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } } }
@@ -288,14 +266,14 @@ Dungeon ASLONA_CASTLE;
         ~~~~~~,8,,,,;,,,8,,,,,,,,,8,,,,,8,,,,,,,,8,~~~~~~
         ~~~~~,,,,,8,,,,,,,,,,8,,,,,,,,8,,,,:,,8,,,,,~~~~~
         ~~~~,#########o##,,,,,,,v,,,,,,,##o#########,~~~~
-        ~~~,,#XXXX..s...#,,8,,,,,,,8,,,,#...#HHHHHH#,~~~~
-        ~~~,~#X.......d.o,,,,;8,,,,,,,8,S.h.#W....O#8,~~~
-        ~~~~~#X.a.......#################.O.#[....O#,,~~~
-        ~~~~,o......s..x#.....B.D.D.....#.h.#[.....#;,,~~
-        ~~~~,#.152.....x#.B.....%.%B....#...######+#,8,~~
-        ~~~,&#.8~6......#########S#######..h....h..#,,,~~
-        ~~~,,#.473....a_#......|T|......#.hOh..hOh.o,,,~~
-        ~~~,,#..........#......|||......#..h....h..#,,8~~
+        ~~~,,#XXXX.x#...#,,8,,,,,,,8,,,,#...#HHHHHH#,~~~~
+        ~~~,~#X.....#.d.o,,,,;8,,,,,,,8,S.h.#W....O#8,~~~
+        ~~~~~#X.a...#...#################.O.#[....O#,,~~~
+        ~~~~,o......#+###.....B.D.D.....#.h.#[.....#;,,~~
+        ~~~~,#.152.....s#.B.....%.%B....#...######+#,8,~~
+        ~~~,&#.0~6......#########S#######..h....h..#,,,~~
+        ~~~,,#.473....a_#.......T.......#.hOh..hOh.o,,,~~
+        ~~~,,#..........#.......|.......#..h....h..#,,8~~
         ~~~,,########L###.......|.......#####+###o##,,,~~
         ~~,;,,,>#.s....s#.......|.......#......#,,,,8,,~~
         ~~,,,,8,#.......#.......|.......#..PP..#,:,,,,&~~
@@ -335,7 +313,7 @@ Dungeon ASLONA_CASTLE;
       ItemMap
       {
         Pos = 0,0;
-        Size = 50,49;
+        Size = 49,50;
         Types
         {
           # == 0;
@@ -372,10 +350,10 @@ Dungeon ASLONA_CASTLE;
           h == itemcontainer(SMALL_CHEST) { Parameters = LOCKED; ItemsInside == Random { Category = CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; } }
           H == itemcontainer(LARGE_CHEST) { ItemsInside = { 4, can { Times = 0:3; }, loaf { Times = 2:10; }, sausage { Times = 0:10; }, trinket(DEAD_FISH) { Times = 0:3; } } }
           j == trinket(SMALL_CLOCK);
-          J == RUBY GOLD meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
-          k == EMERALD BRASS meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
-          K == SAPPHIRE SILVER meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
-          l == DIAMOND OCTIRON meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
+          J == OCTIRON SAPPHIRE wondersmellstaff { Enchantment = 2; }
+          k == EMERALD BRASS sharpaxe { Enchantment = 2; }
+          K == SHADOW_CLOTH SAPPHIRE chameleonwhip { Enchantment = 2; }
+          l == DIAMOND SIDGURE_WOOD taiaha { Enchantment = 2; }
         }
       }
       {
@@ -386,18 +364,18 @@ Dungeon ASLONA_CASTLE;
         ~~~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~~
         ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
         ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
-        ~~~~,######2#####,,,,,,,,,,,,,,,############,~~~~
-        ~~~,,#..........#,,,,,,,,,,,,,,,#...#......#,~~~~
-        ~~~,~#..........#,,,,,,,,,,,,,,,+...#......#,,~~~
-        ~~~~~#..........#########2#######...4...C..#,,~~~
-        ~~~~,#..........#gBc65+a+.+dY5fA#...#..H...#,,,~~
+        ~~~~,#####2######,,,,,,,,,,,,,,,############,~~~~
+        ~~~,,#......#...#,,,,,,,,,,,,,,,#...#......#,~~~~
+        ~~~,~#.....h3...#,,,,,,,,,,,,,,,+...#......#,,~~~
+        ~~~~~#.....h#...#########2#######...4...C..#,,~~~
+        ~~~~,#......#.###gBc65+a+.+dY5fA#...#..H...#,,,~~
         ~~~~,#.~~~......#E+7bF5y+.++6D8L#...##2#1#+#,,,~~
-        ~~~,,#Y~~~......4#2###2##+2###2##..........#,,,~~
+        ~~~,,#.~~~......4#2###2##+2###2##..........#,,,~~
         ~~~,,3.~~~......#...............#..........#,,,~~
-        ~~~,,#.i..hh...G#...............#..........#,,,~~
+        ~~~,,#.i.......G#...............#..........#,,,~~
         ~~~,,######2#+##3...............4##2#+######,,,~~
         ~~,,,,,,#.......#...............#......#,,,,,,,~~
-        ~~,,,,,,#.......3...............4..jk..#,,,,,,,~~
+        ~~,,,,,,#.......3...............4..Jk..#,,,,,,,~~
         ~~,,,,,,#.......+...............+..Kl..4,,,,,,,~~
         ~~,,,,,,3.......#...............#......#,,,,,,,~~
         ~~,,,,,,##++2#####1###1#+#1###1######+##,,,,,,,~~
@@ -434,7 +412,7 @@ Dungeon ASLONA_CASTLE;
       CharacterMap
       {
         Pos = 0,0;
-        Size = 50,49;
+        Size = 49,50;
         Types
         {
           # = 0;
@@ -442,14 +420,14 @@ Dungeon ASLONA_CASTLE;
           , = 0;
           + = 0;
           P = chancellor { Flags = IS_MASTER; } //TODO
-          N = knight(KING); //TODO
+          N = child(KING);
           g = guard(CASTLE);
           G = guard(ROYAL);
-          C = guard(GUARD_CAPTAIN); //TODO
+          C = guard(GUARD_CAPTAIN);
           s = smith(ASLONA_CASTLE);
           t = tailor(ASLONA_CASTLE);
           W = wizard(ALSONA_CASTLE); //TODO
-          p = priest(SEGES); //TODO
+          p = priest(SEGES);
           D = dolphin(ADULT_MALE);
           j = femaleslave(JESTER);
           k = kamikazedwarf(SEGES);
@@ -465,10 +443,10 @@ Dungeon ASLONA_CASTLE;
         ~~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~~
         ~~~~~,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~~~~
         ~~~~,############,,,,,,,,,,,,,,,############,~~~~
-        ~~~g,#..........#,,,,,,,,,,,,,,,#...#......#,~~~~
-        ~~~,~#..........#,,,,,,,,,,,,,,,+...#......#,,~~~
-        ~~~~~#........N.#################...#......#,,~~~
-        ~~~~,#..........#...............#...#......#,,,~~
+        ~~~g,#......#...#,,,,,,,,,,,,,,,#...#......#,~~~~
+        ~~~,~#......#...#,,,,,,,,,,,,,,,+...#......#,,~~~
+        ~~~~~#......#.N.#################...#......#,,~~~
+        ~~~~,#......#.###...............#...#......#,,,~~
         ~~~~,#.~~~......#...............#...######+#,,,~~
         ~~~,,#.~~~......#########+#######..........#,,,~~
         ~~~,,#.~~~......#G..G..G.G..G..G#.g........#,,,~~
@@ -508,28 +486,50 @@ Dungeon ASLONA_CASTLE;
         ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
         ~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~~~~~~~~~~~~~
       }
+
+      Square, Pos 7,17;
+      {
+        OTerrain = stairs(STAIRS_DOWN);
+        EntryIndex = STAIRS_DOWN;
+      }
     }
 
-    Square, Pos 49,24;
+    Square, Pos 25,YSize - 1;
     {
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
+    }
+
+    Square, Pos 26,YSize - 1;
+    {
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
       EntryIndex = STAIRS_UP;
     }
 
-    Square, Pos 17,7;
+    Square, Pos 27,YSize - 1;
     {
-      OTerrain = stairs(STAIRS_DOWN);
-      EntryIndex = STAIRS_DOWN;
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
     }
 
+    Square, Pos 25,YSize - 2;
+    {
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
+    }
+
+    Square, Pos 26,YSize - 2;
+    {
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
+    }
+
+    Square, Pos 27,YSize - 2;
+    {
+      GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
+    }
   }
 
-  Level 4;
+  Level 3;
   {
     Description = "cistern";
     ShortDescription = "Cistern";
-    Rooms = 1;
-    DifficultyBase = 100;
-    DifficultyDelta = 0;
     IgnoreDefaultSpecialSquares = true;
 
     Square, Random NOT_IN_ROOM|ATTACHABLE;
@@ -539,9 +539,24 @@ Dungeon ASLONA_CASTLE;
       AttachRequired = true;
     }
 
-    Square, Random IN_ROOM;
+    Room
     {
-      Character = angel(SEGES) { Inventory = { 3, wand(WAND_OF_MIRRORING), Random { Category = AMULET|RING|SCROLL|WAND; }, Random { Category = AMULET|RING|SCROLL|WAND; } } }
+      Size = 7,7;
+      GenerateLanterns = true;
+      UseFillSquareWalls = false;
+
+      WallSquare = LIME_STONE solidterrain(GROUND), CALCITE wall(BRICK_OLD);
+      FloorSquare = LIME_STONE solidterrain(PARQUET), 0;
+      DoorSquare = LIME_STONE solidterrain(PARQUET), 0;
+
+      Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+      {
+        Character = angel(SEGES) { Inventory = { 3, wand(WAND_OF_MIRRORING),
+                                                    Random { Category = AMULET|RING|SCROLL|WAND; },
+                                                    Random { Category = AMULET|RING|SCROLL|WAND; }
+                                               }
+                                 }
+      }
     }
   }
 }

@@ -193,7 +193,7 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 lump
@@ -214,7 +214,7 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 meleeweapon
@@ -1730,7 +1730,7 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 
   Config BROKEN;
   {
@@ -2478,7 +2478,7 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 scrollofwishing /* scroll-> */
@@ -2874,7 +2874,7 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 pineapple
@@ -2893,7 +2893,7 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 palmbranch
@@ -6289,7 +6289,7 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 
   Config BROKEN;
   {
@@ -6346,7 +6346,7 @@ sausage
   WieldedBitmapPos = 160, 320;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 6, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP; }
 }
 
 wondersmellstaff

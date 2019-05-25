@@ -709,6 +709,7 @@
 #define STONE_WALL 6
 #define ICE_WALL 7
 #define BROKEN_WALL 8
+#define TENT_WALL 9
 
 #define PINE 1
 #define FIR 2

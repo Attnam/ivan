@@ -164,6 +164,16 @@ wall
     BitmapPos = 48, 288;
     HPModifier = 25;
   }
+
+  Config TENT_WALL;
+  {
+    OKVisualEffects = MIRROR;
+    DigMessage = "The tear down the tent wall.";
+    MainMaterialConfig == FELT;
+    NameSingular = "tent wall";
+    BitmapPos = 0, 432;
+    HPModifier = 20;
+  }
 }
 
 decoration
@@ -713,6 +723,14 @@ door /* olterrain-> */
     NameSingular = "door";
     Adjective = "very secret";
   }
+
+  Config CURTAIN;
+  {
+    DigMessage = "You tear at the curtain.";
+    BitmapPos = 0, 112;
+    NameSingular = "curtain";
+    MainMaterialConfig == FELT;
+  }
 }
 
 stairs /* olterrain-> */
@@ -876,6 +894,14 @@ brokendoor /* olterrain->door-> */
     BitmapPos = 16, 160;
     NameSingular = "door";
     Adjective = "broken very secret";
+  }
+
+  Config CURTAIN;
+  {
+    DigMessage = "You tear down the curtain.";
+    BitmapPos = 0, 96;
+    Adjective = "torn";
+    NameSingular = "curtain";
   }
 }
 

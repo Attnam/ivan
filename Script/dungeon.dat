@@ -57,13 +57,13 @@ Team SUMO_TEAM;
   Relation 0, HOSTILE;
 }
 
-Team 4; /* Spawned hostile angels */
+Team ANGEL_TEAM;
 {
   Relation 0, HOSTILE;
   Relation 1, UNCARING;
 }
 
-Team 5; /* Dungeon shopkeepers */
+Team GUILD_TEAM;
 {
   Relation 1, UNCARING;
   KillEvilness = 100;

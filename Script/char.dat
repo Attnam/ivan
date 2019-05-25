@@ -718,7 +718,7 @@ guard
 
   Config PATROL;
   {
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
+    Helmet = IRON helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
     BodyArmor = IRON bodyarmor(PLATE_MAIL);
     Cloak = BEAR_SKIN cloak;
     RightWielded = IRON IRON meleeweapon(LONG_SWORD);
@@ -810,7 +810,7 @@ guard
   {
     AttributeBonus = 60;
     TotalVolume = 120000;
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
+    Helmet = ILLITHIUM helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
     Amulet = amulet(AMULET_OF_ESP);
     BodyArmor = ILLITHIUM bodyarmor(PLATE_MAIL) { Enchantment = 3; }
     Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_FIRE_RESISTANCE);
@@ -981,11 +981,11 @@ guard
     ClothColor = rgb16(128, 128, 128);
     HeadBitmapPos = 96, 368;
     Helmet = 0;
-    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    BodyArmor = HEPATIZON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
     RightWielded = OCTIRON EMERALD meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
     LeftWielded = EBONY_WOOD shield { Enchantment = 2; }
-    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
-    RightBoot = BRASS boot { Enchantment = 2; }
+    RightGauntlet = HEPATIZON gauntlet { Enchantment = 2; }
+    RightBoot = HEPATIZON boot { Enchantment = 2; }
     DefaultName = "Sir Lancelyn"; /* Lancelot */
     NameSingular = "emissary";
     PostFix = "of Aslona";
@@ -1030,7 +1030,7 @@ guard
   {
     Helmet = DEEP_BRONZE helmet(FULL_HELMET);
     BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
-    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(LONG_SWORD);
+    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(BASTARD_SWORD);
     LeftWielded = DEEP_BRONZE shield;
     Adjective = "castle";
     CWeaponSkillHits = { 2, 100, 100; }
@@ -1052,12 +1052,12 @@ guard
   Config ROYAL;
   {
     AttributeBonus = 40;
-    Helmet = HEPATIZON helmet(FULL_HELMET) { Enchantment = 2; }
-    BodyArmor = HEPATIZON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-    RightWielded = HEPATIZON OCTIRON meleeweapon(LONG_SWORD) { Enchantment = 2; }
-    LeftWielded = HEPATIZON shield { Enchantment = 2; }
-    RightGauntlet = HEPATIZON gauntlet { Enchantment = 2; }
-    RightBoot = HEPATIZON boot { Enchantment = 2; }
+    Helmet = BRASS helmet(FULL_HELMET) { Enchantment = 2; }
+    BodyArmor = BRASS bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+    RightWielded = BRASS OCTIRON meleeweapon(BASTARD_SWORD) { Enchantment = 2; }
+    LeftWielded = BRASS shield { Enchantment = 2; }
+    RightGauntlet = BRASS gauntlet { Enchantment = 2; }
+    RightBoot = BRASS boot { Enchantment = 2; }
     RightRing = ring(RING_OF_INFRA_VISION);
     LeftRing = ring(RING_OF_POISON_RESISTANCE);
     Adjective = "royal";
@@ -1067,7 +1067,7 @@ guard
     PanicLevel = 10;
     TamingDifficulty = 30;
     TotalVolume = 80000;
-    ClothColor = rgb16(91, 81, 31);
+    ClothColor = rgb16(181, 166, 66);
     FriendlyReplies =
     {
       5,
@@ -1077,6 +1077,59 @@ guard
       "\"Hmph.\"",
       "\"This is a placeholder dialogue.\"";
     }
+  }
+
+  Config GUARD_CAPTAIN;
+  {
+    AttributeBonus = 50;
+    TotalVolume = 120000;
+    Helmet = HEPATIZON helmet(FULL_HELMET) { Enchantment = 3; }
+    Amulet = amulet(AMULET_OF_WARDING);
+    BodyArmor = SEA_SERPENT_SCALE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Cloak = MERMAID_HAIR cloak(CLOAK_OF_QUICKNESS) { Enchantment = 3; }
+    RightWielded = OCTIRON SAPPHIRE meleeweapon(BASTARD_SWORD) { Enchantment = 3; }
+    LeftWielded = EBONY_WOOD shield { Enchantment = 3; }
+    RightRing = ring(RING_OF_TELEPORT_CONTROL);
+    LeftRing = ring(RING_OF_INFRA_VISION);
+    RightGauntlet = SEA_SERPENT_SCALE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+    RightBoot = SEA_SERPENT_SCALE boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+    NameSingular = "guard captain";
+    CWeaponSkillHits = { 2, 2000, 2000; }
+    RightSWeaponSkillHits = 200;
+    LeftSWeaponSkillHits = 200;
+    PanicLevel = 5;
+    TamingDifficulty = NO_TAMING;
+    BloodMaterial = BLUE_BLOOD;
+    IsUnique = true;
+    DefaultName = "Lord Mittrars"; /* Tristram */
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    ClothColor = rgb16(0, 0, 139);
+    CanBeConfused = false;
+    /*Inventory == key(HEXAGONAL_LOCK);*/
+    FriendlyReplies =
+    {
+      5,
+      "@Dd says gravely: \"This is a placeholder dialogue.\"",
+      "@Dd snorts.",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"This is a placeholder dialogue.\"";
+    }
+    HostileReplies =
+    {
+      5,
+      "@Dd says gravely: \"This is a placeholder dialogue.\"",
+      "@Dd snorts.",
+      "\"...\"",
+      "\"Hmph.\"",
+      "\"This is a placeholder dialogue.\"";
+    }
+    IsImmuneToItemTeleport = true;
+    AllowUnconsciousness = false;
+    DisplacePriority = 4;
+    UndeadVersions = false;
   }
 }
 
@@ -1523,6 +1576,45 @@ priest
       "history", "moral code", "divine wisdom", "warfare", "secret teachings",
       "tradition", "knightly orders", "heraldry", "quests", "genealogy";
     }
+  }
+
+  Config SEGES;
+  {
+    DefaultArmStrength = 8;
+    DefaultLegStrength = 12;
+    DefaultDexterity = 10;
+    DefaultAgility = 15;
+    DefaultEndurance = 18;
+    DefaultPerception = 14;
+    DefaultIntelligence = 20;
+    DefaultWisdom = 35;
+    DefaultCharisma = 20;
+    DefaultMana = 30;
+    HairColor = rgb16(204, 204, 204);
+    EyeColor = rgb16(0, 126, 178);
+    ClothColor = rgb16(39, 119, 20);
+    HeadBitmapPos = 96, 128;
+    TorsoBitmapPos = 32, 16;
+    ArmBitmapPos = 64, 16;
+    LegBitmapPos = 0, 32;
+    TotalVolume = 8000;
+    TotalSize = 175;
+    DefaultName = "Senex";
+    AttachedGod = SEGES;
+    PostFix = "of Seges";
+    Helmet = HEPATIZON helmet { Enchantment = 2; }
+    BodyArmor = HEPATIZON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+    Cloak = ELF_CLOTH cloak { Enchantment = 2; }
+    Belt = ELF_CLOTH belt { Enchantment = 2; }
+    RightWielded = HEPATIZON meleeweapon(SICKLE) { Enchantment = 3; }
+    LeftWielded = holybook(SEGES);
+    RightGauntlet = ELF_CLOTH gauntlet { Enchantment = 2; }
+    RightBoot = ELF_CLOTH boot { Enchantment = 2; }
+    KnownCWeaponSkills == SMALL_SWORDS;
+    CWeaponSkillHits == 50;
+    RightSWeaponSkillHits = 20;
+    LeftSWeaponSkillHits = 20;
+    Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
   }
 }
 
@@ -2868,7 +2960,7 @@ golem
   IsEnormous = true;
   CanChoke = false;
   UndeadVersions = false;
-  AllowedDungeons = { 2, XINROCH_TOMB, ELPURI_CAVE; }
+  AllowedDungeons = { 3, XINROCH_TOMB, ELPURI_CAVE, ASLONA_CASTLE; }
 
   Config VALPURIUM;
   {
@@ -3040,7 +3132,7 @@ dog
     Adjective = "skeleton";
     BaseBiteStrength = 800;
     CWeaponSkillHits == 80;
-    AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+    AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE; }
     Frequency = 2000;
   }
 }
@@ -4670,7 +4762,7 @@ vampirebat
   TotalSize = 30;
   SkinColor = rgb16(64, 64, 96);
   NameSingular = "vampire bat";
-  AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
+  AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE; }
 }
 
 mistress
@@ -5095,7 +5187,7 @@ vampire
   IsCatacombCreature = true;
   StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
-  AllowedDungeons = { 2, ATTNAM, XINROCH_TOMB; }
+  AllowedDungeons = { 3, ATTNAM, XINROCH_TOMB, ASLONA_CASTLE; }
 }
 
 kobold
@@ -6197,7 +6289,7 @@ orc
     TorsoBitmapPos = 48, 32;
     ArmBitmapPos = 80, 16;
     LegBitmapPos = 0, 224;
-    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
+    Helmet = GOLD helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 7; }
     Cloak = FABRIC cloak { Enchantment = 2; }
     BodyArmor = GOLD bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
     Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
@@ -8136,7 +8228,7 @@ archangel
   Config LEGIFER;
   {
     DefaultName = "Iustitia";
-    Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
+    Helmet = ILLITHIUM helmet(HELM_OF_PERCEPTION) { Enchantment = 4; }
     BodyArmor = ILLITHIUM bodyarmor(CHAIN_MAIL) { Enchantment = 4; }
     RightWielded = SUN_CRYSTAL GOLD flamingsword { Enchantment = 7; }
     LeftWielded = SUN_CRYSTAL shield { Enchantment = 7; }
@@ -8154,7 +8246,7 @@ archangel
   Config DULCIS;
   {
     DefaultName = "Amatrix";
-    Helmet = helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
+    Helmet = DARK_GOLD helmet(HELM_OF_ATTRACTIVITY) { Enchantment = 10; }
     RightWielded = 0;
     LeftWielded = 0;
     KnownCWeaponSkills = { 2, UNARMED, BITE; }
@@ -8166,7 +8258,7 @@ archangel
   Config SEGES;
   {
     DefaultName = "Salubris";
-    Helmet = helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
+    Helmet = UNICORN_HORN helmet(HELM_OF_UNDERSTANDING) { Enchantment = 4; }
     RightWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
     LeftWielded = DIAMOND OCTIRON bansheesickle { Enchantment = 6; }
     KnownCWeaponSkills = { 2, SMALL_SWORDS, LARGE_SWORDS; }
@@ -8176,7 +8268,7 @@ archangel
   Config SOPHOS;
   {
     DefaultName = "Magus";
-    Helmet = helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
+    Helmet = ARCANITE helmet(HELM_OF_BRILLIANCE) { Enchantment = 4; }
     BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 0; }
     Cloak = SPIDER_SILK cloak { Enchantment = 0; }
     RightWielded = OCCULTUM OCCULTUM meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
@@ -8253,7 +8345,7 @@ archangel
   {
     DefaultName = "Sinistra";
     IsSadist = true;
-    Helmet = helmet(HELM_OF_MANA) { Enchantment = 4; }
+    Helmet = OCTIRON helmet(HELM_OF_MANA) { Enchantment = 4; }
     RightWielded = OCTIRON PURPLE_CRYSTAL wondersmellstaff { Enchantment = 6; }
     KnownCWeaponSkills = { 2, BLUNT_WEAPONS, UNARMED; }
   }
@@ -8333,7 +8425,7 @@ tailor
     ArmBitmapPos = 64, 160;
     LegBitmapPos = 0, 112;
     HairColor = rgb16(181, 82, 57);
-    ClothColor = rgb16(39, 119, 20);
+    ClothColor = rgb16(0, 191, 255);
     BeltColor = rgb16(100, 100, 200);
     TotalVolume = 60000;
     TotalSize = 165;
@@ -8862,6 +8954,49 @@ child
       "\"My sister was eaten by a wolf yesterday.\"",
       "\"I hope I will get a doll of the high priest on Atavus day.\"",
       "\"Do you want to play make-believe? I will be a princess and you can be my man-servant!\"";
+    }
+  }
+
+  Config KING;
+  {
+    HeadBitmapPos = 96, 415;
+    HairColor = rgb16(36, 36, 36);
+    ClothColor = rgb16(176, 0, 0);
+    DefaultName = "His Majesty King Artorius";
+    Adjective = "young";
+    NameSingular = "sovereign";
+    PostFix = "of Aslona";
+    Amulet = GOLD amulet(AMULET_OF_LIFE_SAVING);
+    Cloak = FABRIC cloak { Enchantment = 3; }
+    Belt = FABRIC belt { Enchantment = 3; }
+    RightRing = GOLD ring(RING_OF_FIRE_RESISTANCE);
+    LeftRing = GOLD ring(RING_OF_POISON_RESISTANCE);
+    RightBoot = SELKIE_SKIN boot { Enchantment = 3; }
+    Sex = MALE;
+    AttachedGod = SEGES;
+    BloodMaterial = BLUE_BLOOD;
+    TamingDifficulty = NO_TAMING;
+    IsUnique = true;
+    IsNameable = false;
+    CanBeCloned = false;
+    IsPolymorphable = false;
+    UndeadVersions = false;
+    IsExtraFragile = false;
+    AutomaticallySeen = false;
+    CanRead = true;
+    FriendlyReplies =
+    {
+      3,
+      "\"This is a placeholder message.\"",
+      "\"This is a placeholder message.\"",
+      "\"This is a placeholder message.\"";
+    }
+    HostileReplies =
+    {
+      3,
+      "\"How dare you assault the king!\"",
+      "\"Guards! Guards!\"",
+      "@Dd screams for help.";
     }
   }
 }
