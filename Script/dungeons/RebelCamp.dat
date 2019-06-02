@@ -23,17 +23,19 @@ Dungeon REBEL_CAMP;
 {
   Levels = 1;
   Description = "rebel camp";
-  ShortDescription = "Rebel Camp";
+  ShortDescription = "RC";
 
   Level 0;
   {
+    LevelMessage = "You pass the sentries and draw closer to the camp.";
+    ShortDescription = "Rebel Camp";
     FillSquare = solidterrain(GRASS_TERRAIN), 0;
-    Size = 42, 26;
+    Size = 55, 55;
     GenerateMonsters = false;
-    Rooms = 0;
+    Rooms = 10:15;
     Items = 0;
     IsOnGround = true;
-    TeamDefault = MONSTER_TEAM;
+    TeamDefault = REBEL_TEAM;
     LOSModifier = 48;
     IgnoreDefaultSpecialSquares = false;
     AutoReveal = true;
@@ -42,26 +44,42 @@ Dungeon REBEL_CAMP;
     DifficultyDelta = 0;
     EnchantmentMinusChanceBase = -15;
     EnchantmentMinusChanceDelta = 0;
-    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceBase = 5;
     EnchantmentPlusChanceDelta = 0;
     BackGroundType = GREEN_FRACTAL;
-    EarthquakesAffectTunnels = true;
+    EarthquakesAffectTunnels = false;
     AudioPlayList =
     {
       1,
       "Empty.mid";
     }
 
-    Square, Random;
+    RoomDefault
     {
-      Items == beartrap { Team = MONSTER_TEAM; IsActive = false; }
-      Times = 0:3;
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:6,4:6;
+      AltarPossible = false;
+      WallSquare = solidterrain(GRASS_TERRAIN), wall(TENT_WALL);
+      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
+      DoorSquare = solidterrain(GRASS_TERRAIN), door(CURTAIN);
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = false;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = ROUND_CORNERS;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
     }
 
-    Square, Random;
+    Square, Pos XSize/2, 0;
     {
-      Items == Random { Category = FOOD; }
-      Times = 1:2;
+      EntryIndex = STAIRS_UP;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
@@ -76,27 +94,36 @@ Dungeon REBEL_CAMP;
       Times = 10;
     }
 
-    RoomDefault
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
-      Pos = 2:40,2:24;
-      Size = 4:6,4:6;
-      AltarPossible = false;
-      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
-      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
-      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
-      GenerateDoor = true;
-      DivineMaster = 0;
-      GenerateTunnel = false;
-      GenerateLanterns = false;
-      Type = ROOM_NORMAL;
-      GenerateFountains = false;
-      AllowLockedDoors = false;
-      AllowBoobyTrappedDoors = false;
-      Shape = ROUND_CORNERS;
-      IsInside = true;
-      GenerateWindows = true;
-      UseFillSquareWalls = false;
-      Flags = 0;
+      OTerrain = decoration(BIRCH);
+      Times = 30:50;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(TEAK);
+      Times = 30:50;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(DEAD_TREE);
+      Times = 10;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = decoration(WELL);
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      Items == itemcontainer(CHEST)
+      {
+        Parameters = LOCKED;
+        ItemsInside = { 3,  Random { Category = WEAPON; }, potion(VIAL) { SecondaryMaterial = HEALING_LIQUID; }, DARK_BREAD loaf; }
+      }
     }
   }
 }
