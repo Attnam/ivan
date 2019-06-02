@@ -788,4 +788,11 @@ CHARACTER(terra, priest)
   truth HasBeenSpokenTo;
 };
 
+CHARACTER(wizard, humanoid)
+{
+ protected:
+  virtual void GetAICommand();
+  int GetSpellAPCost() const;
+};
+
 #endif

@@ -5785,6 +5785,19 @@ int darkmage::GetSpellAPCost() const
   return 4000;
 }
 
+int wizard::GetSpellAPCost() const
+{
+  /*switch(GetConfig())
+  {
+   case APPRENTICE: return 4000;
+   case BATTLE_MAGE: return 2000;
+   case ELDER: return 1000;
+   case ARCH_MAGE: return 500;
+ }*/
+
+  return 1000;
+}
+
 int necromancer::GetSpellAPCost() const
 {
   switch(GetConfig())
@@ -6824,4 +6837,143 @@ void terra::BeTalkedTo()
   }
   else
     priest::BeTalkedTo();
+}
+
+void wizard::GetAICommand()
+{
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  character* NearestEnemy = 0;
+  long NearestEnemyDistance = 0x7FFFFFFF;
+  character* RandomFriend = 0;
+  charactervector Friend;
+  v2 Pos = GetPos();
+
+  for(int c = 0; c < game::GetTeams(); ++c)
+  {
+    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+    {
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled())
+        {
+          long ThisDistance = Max<long>(abs(p->GetPos().X - Pos.X), abs(p->GetPos().Y - Pos.Y));
+
+          if((ThisDistance < NearestEnemyDistance
+              || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && p->CanBeSeenBy(this))
+          {
+            NearestEnemy = p;
+            NearestEnemyDistance = ThisDistance;
+          }
+        }
+    }
+    else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
+    {
+      for(character* p : game::GetTeam(c)->GetMember())
+        if(p->IsEnabled() && p->CanBeSeenBy(this))
+          Friend.push_back(p);
+    }
+  }
+
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos) &&
+     (!(RAND() & 4) || StateIsActivated(PANIC)))
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+
+    TeleportRandomly(true);
+    EditAP(-GetSpellAPCost());
+    return;
+  }
+
+  if(CheckAIZapOpportunity())
+    return;
+
+  if(NearestEnemy && (NearestEnemyDistance < 10 || StateIsActivated(PANIC)) && RAND() & 3)
+  {
+    SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
+
+    if(MoveTowardsTarget(true))
+      return;
+  }
+
+  if(Friend.size() && !(RAND() & 3))
+  {
+    RandomFriend = Friend[RAND() % Friend.size()];
+    NearestEnemy = 0;
+  }
+
+  beamdata Beam
+    (
+      this,
+      CONST_S("killed by the spells of ") + GetName(INDEFINITE),
+      YOURSELF,
+      0
+    );
+
+  if(NearestEnemy)
+  {
+    lsquare* Square = NearestEnemy->GetLSquareUnder();
+    EditAP(-GetSpellAPCost());
+
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+    character* ToBeCalled = 0;
+
+    switch(RAND_N(6))
+    {
+     case 0:
+      ToBeCalled = mysticfrog::Spawn(LIGHT);
+      break;
+     default:
+      const int* MaterialConfig[] = {
+        MUSTARD_GAS, MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS };
+
+      ToBeCalled = golem::Spawn(MaterialConfig[RAND() % 6]);
+      break;
+    }
+
+    v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
+
+    if(Where == ERROR_V2)
+    {
+      if(CanBeSeenByPlayer())
+        ADD_MESSAGE("Nothing happens.");
+
+      delete ToBeCalled;
+    }
+    else
+    {
+      ToBeCalled->SetGenerationDanger(GetGenerationDanger());
+      ToBeCalled->SetTeam(GetTeam());
+      ToBeCalled->PutTo(Where);
+
+      if(ToBeCalled->CanBeSeenByPlayer())
+        ADD_MESSAGE("Suddenly %s materializes!", ToBeCalled->CHAR_NAME(INDEFINITE));
+
+      ToBeCalled->GetLSquareUnder()->DrawParticles(RED);
+    }
+
+    if(CanBeSeenByPlayer())
+      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE)
+                                              + CONST_S(" interrupts you."));
+    else
+      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
+
+    return;
+  }
+
+  if(RandomFriend)
+  {
+    EditAP(-GetSpellAPCost());
+    RandomFriend->GetLSquareUnder()->DrawParticles(RED);
+    RandomFriend->BeginTemporaryState(GAS_IMMUNITY, 500 + RAND() % 1000);
+
+    return;
+  }
+
+  StandIdleAI();
 }
