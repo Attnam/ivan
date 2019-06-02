@@ -5135,7 +5135,6 @@ helmet
                               25, 10, 5, 2, 1, 25, 5; }
     HelmetBitmapPos = 112, 496;
     EnchantmentPlusChance = 30;
-    SoundResistance = 0;
   }
 
   Config FULL_HELMET;
@@ -5184,99 +5183,69 @@ helmet
 
   Config HELM_OF_PERCEPTION;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of piercing perception";
     AffectsPerception = true;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = LEGIFER;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
     Alias = { 2, "helm of perception", "perception"; }
   }
 
   Config BROKEN|HELM_OF_PERCEPTION;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsPerception = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_UNDERSTANDING;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of understanding";
     AffectsWisdom = true;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SOPHOS;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
     Alias = { 2, "helm of wisdom", "wisdom"; }
   }
 
   Config BROKEN|HELM_OF_UNDERSTANDING;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsWisdom = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_BRILLIANCE;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of brilliance";
     AffectsIntelligence = true;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
-    SoundResistance = 1;
     Alias = { 2, "helm of intelligence", "intelligence"; }
   }
 
   Config BROKEN|HELM_OF_BRILLIANCE;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 2;
     Price = 25;
     AffectsIntelligence = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5289,7 +5258,7 @@ helmet
     BitmapPos = 48, 32;
     Possibility = 5;
     NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
     PostFix = "of attractivity";
     AffectsCharisma = true;
     MainMaterialConfig = { 60,
@@ -5363,93 +5332,66 @@ helmet
 
   Config HELM_OF_WILLPOWER;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of indomitable will";
     AffectsWillPower = true;
     BaseEnchantment = 1;
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = LEGIFER;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     Alias = { 3, "helm of willpower", "willpower", "will"; }
   }
 
   Config BROKEN|HELM_OF_WILLPOWER;
   {
-    BitmapPos = 64, 32;
-    Possibility = 0;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
+    Possibility = 1;
     Price = 25;
     AffectsWillPower = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_TELEPATHY;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 5;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of telepathy";
     GearStates = ESP;
     Price = 100;
     AttachedGod = INFUSCOR;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     Alias == "helm of ESP";
   }
 
   Config BROKEN|HELM_OF_TELEPATHY;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 3;
     Price = 25;
     GearStates = 0;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
   Config HELM_OF_TELEPORTATION;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 5;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of teleportation";
     GearStates = TELEPORT;
     Price = 100;
     AttachedGod = SOPHOS;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
     Alias == "helm of teleport";
   }
 
   Config BROKEN|HELM_OF_TELEPORTATION;
   {
-    BitmapPos = 64, 32;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
     Possibility = 3;
     Price = 25;
     GearStates = 0;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
@@ -5483,6 +5425,7 @@ helmet
     CoverPercentile = 90;
     HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
+    SoundResistance = 1;
     GearStates = INFRA_VISION|SEARCHING;
   }
 
@@ -5499,14 +5442,7 @@ helmet
 
   Config HELM_OF_MANA;
   {
-    DefaultSize = 40;
-    DefaultMainVolume = 250;
-    StrengthModifier = 125;
-    FormModifier = 25;
-    BitmapPos = 48, 32;
     Possibility = 1;
-    NameSingular = "helmet";
-    FlexibleNameSingular = "cap";
     PostFix = "of essence plethora";
     Alias == "helm of mana";
     AffectsMana = true;
@@ -5514,18 +5450,16 @@ helmet
     Price = 100;
     PriceIsProportionalToEnchantment = true;
     AttachedGod = SOPHOS;
-    CoverPercentile = 90;
-    HelmetBitmapPos = 96, 432;
     EnchantmentPlusChance = 2;
   }
 
   Config BROKEN|HELM_OF_MANA;
   {
-    BitmapPos = 64, 32;
-    Possibility = 0;
+    BitmapPos = 64, 64;
+    HelmetBitmapPos = 112, 496;
+    Possibility = 1;
     Price = 25;
     AffectsMana = false;
-    HelmetBitmapPos = 96, 512;
     EnchantmentPlusChance = 4;
   }
 
