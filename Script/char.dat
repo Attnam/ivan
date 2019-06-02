@@ -9331,3 +9331,87 @@ terra
   }
   DeathMessage = "@Dd dies, whispering: \"I'm sorry! I failed you, Silva.\"";
 }
+
+wizard
+{
+  HeadBitmapPos = 112, 304;
+  TorsoBitmapPos = 48, 224;
+  ArmBitmapPos = 80, 64;
+  LegBitmapPos = 16, 160;
+  ClothColor = rgb16(111, 74, 37);
+  NameSingular = "wizard";
+  CanRead = true;
+  CanBeGenerated = false;
+  ClassStates = ESP;
+  HostileReplies =
+  {
+    6,
+    "\"Abracadabra!\"",
+    "\"Hocus pocus!\"",
+    "\"Alakazam.\"",
+    "\"Sim sala bim!\"",
+    "@Dd screams: \"I shall blow thee to smithereens!\"",
+    "@Dd yells: \"Prepare to meet your maker!\"";
+  }
+  FriendlyReplies =
+  {
+    10,
+    "\"This is a placeholder message, my friend.\"",
+    "\"Knowledge itself is never dangerous, it is how that knowledge is used that is dangerous.\"",
+    "\"Everything looks better when it's dead and on fire!\"",
+    "\"My motto? If it's not on fire now, it will be soon.\"",
+    "\"What hurts you, blesses you. Darkness is your candle.\"",
+    "@Dd seems not to notice you.",
+    "@Dd seems to mutter a cantrip.",
+    "@Dd complains about unpleasant dungeon conditions.",
+    "@Dd cackles madly: \"Build a man a fire, and he'll be warm for a day. Set a man on fire, and he'll be warm for the rest of his life.\"",
+    "\"Death awaits our foes.\"";
+  }
+  IgnoreDanger = true;
+  AttachedGod = SOPHOS;
+  IsAbstract = true;
+  KnownCWeaponSkills == BLUNT_WEAPONS;
+  IsExtraFragile = true;
+  ScienceTalkName =
+  {
+    25,
+    "spellcraft", "druidcraft", "illusioncraft", "witchcraft", "conjuration",
+    "charms", "enchantments", "summoning", "necromancy", "pyromancy",
+    "oneiromancy", "transmutation", "transformation", "transmogrification", "alchemy",
+    "elementalism", "animalism", "divination", "arcana", "thaumaturgy",
+    "abjuration", "invocation", "evocation", "incantations", "hexes";
+  }
+
+  Config ASLONA_CASTLE;
+  {
+    DefaultArmStrength = 13;
+    DefaultLegStrength = 13;
+    DefaultDexterity = 20;
+    DefaultAgility = 18;
+    DefaultEndurance = 15;
+    DefaultPerception = 18;
+    DefaultIntelligence = 30;
+    DefaultWisdom = 15;
+    DefaultCharisma = 15;
+    DefaultMana = 30;
+    Adjective = "royal";
+    TotalVolume = 70000;
+    TotalSize = 170;
+    HairColor = rgb16(180, 40, 40);
+    CapColor = rgb16(111, 74, 37);
+    Cloak = FELT cloak { Enchantment = 3; }
+    RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+    Frequency = 0;
+    PanicLevel = 25;
+    CWeaponSkillHits == 100;
+    RightSWeaponSkillHits = 50;
+    LeftSWeaponSkillHits = 50;
+    Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
+    DeathMessage = "@Dd dies laughing: \"You understand nothing! The Darkness will rise and nothing you can do will stop it.\"";
+    ScienceTalkPossibility = 50;
+    ScienceTalkIntelligenceModifier = 25;
+    ScienceTalkWisdomModifier = 10;
+    ScienceTalkIntelligenceRequirement = 20;
+    ScienceTalkWisdomRequirement = 10;
+  }
+}

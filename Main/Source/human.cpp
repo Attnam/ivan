@@ -6935,10 +6935,16 @@ void wizard::GetAICommand()
       ToBeCalled = mysticfrog::Spawn(LIGHT);
       break;
      default:
-      const int* MaterialConfig[] = {
-        MUSTARD_GAS, MUSTARD_GAS, MAGIC_VAPOUR, SLEEPING_GAS, EVIL_WONDER_STAFF_VAPOUR, TELEPORT_GAS };
+      int MaterialConfig = MUSTARD_GAS;
+      switch (RAND_N(6))
+      {
+        case 0: MaterialConfig = MAGIC_VAPOUR; break;
+        case 1: MaterialConfig = SLEEPING_GAS; break;
+        case 2: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
+        case 3: MaterialConfig = TELEPORT_GAS; break;
+      }
 
-      ToBeCalled = golem::Spawn(MaterialConfig[RAND() % 6]);
+      ToBeCalled = golem::Spawn(MaterialConfig);
       break;
     }
 

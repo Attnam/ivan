@@ -426,7 +426,7 @@ Dungeon ASLONA_CASTLE;
           C = guard(GUARD_CAPTAIN);
           s = smith(ASLONA_CASTLE);
           t = tailor(ASLONA_CASTLE);
-          W = wizard(ALSONA_CASTLE); //TODO
+          W = wizard(ASLONA_CASTLE);
           p = priest(SEGES);
           D = dolphin(ADULT_MALE);
           j = femaleslave(JESTER);
