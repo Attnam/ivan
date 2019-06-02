@@ -85,6 +85,10 @@ OWTERRAIN(rebelcamp, owterrain)
 {
 };
 
+OWTERRAIN(goblinfort, owterrain)
+{
+};
+
 OWTERRAIN(locationAA, owterrain)
 {
 };

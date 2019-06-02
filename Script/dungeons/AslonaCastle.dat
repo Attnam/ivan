@@ -45,10 +45,10 @@ Dungeon ASLONA_CASTLE;
     TunnelSquare = LIME_STONE solidterrain(GROUND), 0;
     DifficultyBase = 70;
     DifficultyDelta = 10;
-    MonsterAmountBase = 10;
+    MonsterAmountBase = 5;
     MonsterAmountDelta = 5;
     MonsterGenerationIntervalBase = 150;
-    MonsterGenerationIntervalDelta = -50;
+    MonsterGenerationIntervalDelta = -40;
     EarthquakesAffectTunnels = true;
     AudioPlayList =
     {

@@ -110,6 +110,17 @@ rebelcamp
   NativeGTerrainType = STEPPE;
 }
 
+goblinfort
+{
+  BitmapPos = 64, 64;
+  NameStem = "overgrown ruins";
+  UsesLongArticle = true;
+  AttachedDungeon = GOBLIN_FORT;
+  CanBeGenerated = true;
+  HideLocationInitially = false;
+  NativeGTerrainType = EVERGREEN_FOREST;
+}
+
 locationAA
 {
   BitmapPos = 0, 64;

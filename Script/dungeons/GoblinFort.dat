@@ -1,0 +1,249 @@
+/*
+ *
+ *  Iter Vehemens ad Necem (IVAN)
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under the GNU General
+ *  Public License
+ *
+ *  See LICENSING which should be included
+ *  along with this file for more details
+ *
+ */
+
+/*
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
+
+Dungeon GOBLIN_FORT;
+{
+  Levels = 21;
+  Description = "Goblin Fort";
+  ShortDescription = "GF";
+
+  LevelDefault
+  {
+    FillSquare = COBBLE_STONE solidterrain(GROUND), CLAY earth;
+    TunnelSquare = COBBLE_STONE solidterrain(GROUND), 0;
+    Size = 42, 26;
+    Rooms = 8:20;
+    Items = 25:50;
+    GenerateMonsters = true;
+    IsOnGround = false;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 16;
+    IgnoreDefaultSpecialSquares = false;
+    DifficultyBase = 50;
+    DifficultyDelta = 10;
+    MonsterAmountBase = 10;
+    MonsterAmountDelta = 2;
+    MonsterGenerationIntervalBase = 140;
+    MonsterGenerationIntervalDelta = -10;
+    CanGenerateBone = true;
+    ItemMinPriceBase = 20;
+    ItemMinPriceDelta = 10;
+    EnchantmentMinusChanceBase = 0;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 5;
+    EnchantmentPlusChanceDelta = 5;
+    BackGroundType = GRAY_FRACTAL;
+    IsCatacomb = false;
+    EarthquakesAffectTunnels = true;
+    AudioPlayList =
+    {
+      3,
+      "Dungeon.mid",
+      "Dungeon2.mid",
+      "Dungeon3.mid";
+    }
+
+    Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+    {
+      Items == stone;
+      Times = 25:50;
+    }
+
+    Square, Random;
+    {
+      Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random;
+    {
+      Items == gastrap { Team = MONSTER_TEAM; IsActive = true; }
+      Times = 0:3;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:XSize-5,2:YSize-5;
+      Size = 4:11,4:11;
+      AltarPossible = true;
+      WallSquare = solidterrain(GROUND), GRANITE wall(BRICK_OLD);
+      FloorSquare = solidterrain(PARQUET), 0;
+      DoorSquare = solidterrain(PARQUET), GRANITE door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = true;
+      GenerateLanterns = true;
+      Type = ROOM_NORMAL;
+      GenerateFountains = true;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      Shape = RECTANGLE;
+      IsInside = true;
+      GenerateWindows = false;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  /* Entrance Ruins */
+  Level 0;
+  {
+    FillSquare = solidterrain(GRASS_TERRAIN), 0;
+    Size = 42, 26;
+    GenerateMonsters = false;
+    Rooms = 0;
+    Items = 0;
+    IsOnGround = true;
+    TeamDefault = MONSTER_TEAM;
+    LOSModifier = 48;
+    IgnoreDefaultSpecialSquares = false;
+    AutoReveal = true;
+    CanGenerateBone = false;
+    DifficultyBase = 50;
+    DifficultyDelta = 0;
+    EnchantmentMinusChanceBase = -15;
+    EnchantmentMinusChanceDelta = 0;
+    EnchantmentPlusChanceBase = 0;
+    EnchantmentPlusChanceDelta = 0;
+    BackGroundType = GREEN_FRACTAL;
+    EarthquakesAffectTunnels = true;
+    AudioPlayList =
+    {
+      1,
+      "Empty.mid";
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(1);
+      Times = 1:10;
+    }
+
+    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = boulder(2);
+      Times = 1:10;
+    }
+
+    RoomDefault
+    {
+      Pos = 2:40,2:24;
+      Size = 4:6,4:6;
+      AltarPossible = false;
+      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
+      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
+      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
+      GenerateDoor = true;
+      DivineMaster = 0;
+      GenerateTunnel = false;
+      GenerateLanterns = false;
+      Type = ROOM_NORMAL;
+      GenerateFountains = false;
+      AllowLockedDoors = false;
+      AllowBoobyTrappedDoors = false;
+      Shape = ROUND_CORNERS;
+      IsInside = true;
+      GenerateWindows = true;
+      UseFillSquareWalls = false;
+      Flags = 0;
+    }
+  }
+
+  /* Random Rooms */
+
+  /* Cat Room  */
+  RandomLevel 4:9;
+  {
+    Room
+    {
+      Size = 6,6;
+      AltarPossible = false;
+      Shape = ROUND_CORNERS;
+
+      /* TODO: reward */
+
+      CharacterMap
+      {
+        Pos = 1,1;
+        Size = 4,4;
+
+        Types
+        {
+          c = largecat;
+          L = lion;
+        }
+      }
+      {
+        .cc.
+        cLLc
+        cLLc
+        .cc.
+      }
+    }
+  }
+
+  /* Throne Room */
+  RandomLevel 1:9;
+  {
+    Room
+    {
+      Size = 3,3;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = false;
+      GenerateFountains = false;
+      GenerateLanterns = false;
+      GenerateDoor = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Pos 1,1;
+      {
+        OTerrain = PORCELAIN throne;
+      }
+
+      Square, Pos 1,2;
+      {
+        OTerrain = BEECH_WOOD door(HEART_SHAPED_LOCK);
+        AttachRequired = true;
+      }
+    }
+  }
+}
