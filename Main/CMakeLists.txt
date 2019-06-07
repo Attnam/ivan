@@ -36,10 +36,9 @@ add_executable(ivan ${IVAN_SOURCES} Resource/Ivan.rc)
 target_include_directories(ivan PUBLIC Include ../Felib/Include ../audio ../fantasyname ${PCRE_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIR})
 target_link_libraries(ivan FeLib FeAudio xbrzscale fantasyname ${PCRE_LIBRARIES} ${SDL2_mixer_LIBRARY})
 
-if(MSVC AND VCPKG_DLL_BINARY_DIRECTORY)
+if(MSVC AND _VCPKG_INSTALLED_DIR)
   # Gum solution. Manually copy pcre.dll to where ivan.exe will end up.
-  message("pcre_bin_dir ${VCPKG_DLL_BINARY_DIRECTORY}")
-  install(FILES "${VCPKG_DLL_BINARY_DIRECTORY}/pcre.dll" DESTINATION "ivan")
+  install(FILES "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/pcre.dll" DESTINATION "ivan")
 endif()
 
 if(UNIX)
