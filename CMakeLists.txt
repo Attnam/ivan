@@ -53,6 +53,12 @@ elseif(WIN32)
   add_definitions(-D_USE_32BIT_TIME_T)
 endif(UNIX)
 
+# In visual studio 2017, add an option to hide the console window (useful where debugging is not intended - i.e. releases)
+if(MSVC AND MSVC_HIDE_CONSOLE_WINDOW)
+  # Hide the console window in visual studio projects
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 if(WIZARD)
   add_definitions(-DWIZARD)
 endif()

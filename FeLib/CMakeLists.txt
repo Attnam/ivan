@@ -14,16 +14,6 @@ add_library(FeLib ${FELIB_SOURCES})
 
 find_package(SDL2 REQUIRED)
 
-if(MSVC)
-  # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.
-  message("SDL2_LIBRARY ${SDL2_LIBRARY}")
-  list(GET SDL2_LIBRARY 0 sdl_lib_dir)
-  message("sdl_lib_dir ${sdl_lib_dir}")
-  get_filename_component(sdl_lib_dir "${sdl_lib_dir}" DIRECTORY)
-  message("sdl_lib_dir ${sdl_lib_dir}")
-  install(FILES "${sdl_lib_dir}/SDL2.dll" DESTINATION "ivan")
-endif()
-
 if(MINGW)
   # Not very pretty solution. This finds SDL2.dll from SDL2.lib path, so that it can be installed where ivan.exe will end up.
   message("SDL2_LIBRARY ${SDL2_LIBRARY}")
@@ -50,6 +40,17 @@ endif()
 if(NOT PNG_FOUND)
   find_package(PNG REQUIRED)
   add_definitions(${PNG_DEFINITIONS})
+endif()
+
+if(MSVC AND VCPKG_DLL_BINARY_DIRECTORY)
+  # Gum solution for manually copying dynamic link libraries from the vcpkg bin directory
+  message("png_bin_dir ${VCPKG_DLL_BINARY_DIRECTORY}")
+  message("zlib_bin_dir ${VCPKG_DLL_BINARY_DIRECTORY}")
+  message("sdl2_bin_dir ${VCPKG_DLL_BINARY_DIRECTORY}")
+  install(FILES "${VCPKG_DLL_BINARY_DIRECTORY}/libpng16.dll DESTINATION "ivan")
+  install(FILES "${VCPKG_DLL_BINARY_DIRECTORY}/zlib1.dll DESTINATION "ivan")
+  install(FILES "${VCPKG_DLL_BINARY_DIRECTORY}/SDL2.dll DESTINATION "ivan")
+  install(FILES "${VCPKG_DLL_BINARY_DIRECTORY}/SDL2_mixer.dll DESTINATION "ivan")
 endif()
 
 target_include_directories(FeLib PUBLIC Include)
