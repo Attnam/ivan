@@ -80,6 +80,7 @@ class festring
   void Empty();
   void Assign(sizetype, char);
   void Resize(sizetype, char = ' ');
+  void ShrinkWhitespace();
   sizetype Find(char, sizetype = 0) const;
   sizetype Find(cchar* CStr, sizetype Pos = 0) const
   { return Find(CStr, Pos, strlen(CStr)); }
