@@ -62,6 +62,7 @@ addons:
       - libsdl2-mixer-dev
 
 before_install:
+  - export HOMEBREW_NO_AUTO_UPDATE=1
   - export IVAN_BUILD_DIR=${TRAVIS_BUILD_DIR}/build
   - export IVAN_FILE_VERSION=${TRAVIS_TAG#v}
   - if [[ "$TRAVIS_OS_NAME" = osx ]]; then ./ci/osx/requirements.sh; fi
