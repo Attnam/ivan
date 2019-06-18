@@ -12,7 +12,7 @@ brew_install() {
   for dep in "$@"; do
     if brew list "${dep}" &>/dev/null; then
       if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
-        brew upgrade "${dep}" || true  # error for "already installed" is so annoying
+        : brew upgrade "${dep}" || true  # error for "already installed" is so annoying
       fi
     else
       brew install "${dep}"
