@@ -49,9 +49,10 @@ install_sdl2() {
   ls -hl "${CACHE_DIR}"
 }
 
-brew update
-
 if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
+  if [[ -n "${TRAVIS_TAG}" ]]; then
+    brew update  # for deployment
+  fi
   brew_install pkg-config cmake pcre libpng
   install_sdl2
 else
