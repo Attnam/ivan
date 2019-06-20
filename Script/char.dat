@@ -2802,7 +2802,8 @@ golem
   UsesNutrition = false;
   AttachedGod = NONE;
   ClassStates = GAS_IMMUNITY;
-  Frequency = 300;
+  Frequency = 100;
+  DangerModifier = 2000;
   DayRequirementForGeneration = 3;
   CanTalk = false;
   CanRead = true;
