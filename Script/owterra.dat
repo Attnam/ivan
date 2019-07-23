@@ -88,6 +88,17 @@ underwatertunnelexit
   NativeGTerrainType = JUNGLE;
 }
 
+blackmarket
+{
+  BitmapPos = 64, 64;
+  NameStem = "old, decrepit building";
+  UsesLongArticle = true;
+  AttachedDungeon = BLACK_MARKET;
+  CanBeGenerated = true;
+  HideLocationInitially = false;
+  NativeGTerrainType = LEAFY_FOREST;
+}
+
 locationAA
 {
   BitmapPos = 0, 64;

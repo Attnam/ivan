@@ -77,6 +77,10 @@ OWTERRAIN(underwatertunnelexit, owterrain)
 {
 };
 
+OWTERRAIN(blackmarket, owterrain)
+{
+};
+
 OWTERRAIN(locationAA, owterrain)
 {
 };

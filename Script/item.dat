@@ -195,7 +195,7 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 lump
@@ -216,7 +216,7 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 meleeweapon
@@ -1736,7 +1736,7 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 
   Config BROKEN;
   {
@@ -2485,7 +2485,7 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 scrollofwishing /* scroll-> */
@@ -2884,7 +2884,7 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 pineapple
@@ -2903,7 +2903,7 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 palmbranch
@@ -4560,6 +4560,29 @@ ring
     AttachedGod = CRUENTUS;
     GearStates = FEARLESS;
     Alias = { 2, "fearlessness", "bravery"; }
+  }
+
+  Config RING_OF_SPEED;
+  {
+    Possibility = 0; /* Artifact held by One-eyed Sam the black marketeer. */
+    PostFix = "of great speed";
+    MainMaterialConfig == QUICK_SILVER;
+    Price = 2500;
+    AttachedGod = CLEPTIA;
+    GearStates = HASTE;
+    TeleportPriority = 500;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    IsDestroyable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBeBroken = false;
+    CanBeBurned = false;
+    CanBePiled = false;
+    Alias = { 2, "speed", "haste"; }
   }
 }
 
@@ -6283,7 +6306,7 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 
   Config BROKEN;
   {
@@ -6309,7 +6332,7 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  /* AllowedDungeons == DARK_FOREST; */
+  /* AllowedDungeons = { 2, DARK_FOREST, BLACK_MARKET; } */
 
   Config BROKEN;
   {
@@ -6340,7 +6363,7 @@ sausage
   WieldedBitmapPos = 160, 320;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 wondersmellstaff

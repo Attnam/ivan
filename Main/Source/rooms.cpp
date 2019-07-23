@@ -65,6 +65,11 @@ truth shop::PickupItem(character* Customer, item* ForSale, int Amount)
       else
         Price = 0;
     }
+
+    if(GetMaster()->GetConfig() == BLACK_MARKET)
+    {
+      Price *= 4;
+    }
   }
 
   if(!Customer->IsPlayer())
