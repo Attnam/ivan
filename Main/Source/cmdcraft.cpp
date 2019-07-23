@@ -1763,6 +1763,12 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       rpd.bAlreadyExplained=true;
       return false;
     }
+    // This is a quick fix, maybe allow dismantling mirrored items into mirrored lumps?
+    if(itToUse->LifeExpectancy){
+      ADD_MESSAGE("%s is made of temporary magical force rather than physical matter and cannot be dismantled.",itToUse->GetName(DEFINITE).CStr());
+      rpd.bAlreadyExplained=true;
+      return false;
+    }
 
     if(dynamic_cast<corpse*>(itToUse)!=NULL || matM==NULL){ //TODO may be there are other things than corpses that also have no main material?
       ADD_MESSAGE("You should try to split %s instead.",itToUse->GetName(DEFINITE).CStr());
@@ -1800,7 +1806,8 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
 
-    // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
+    // for now, uses just one turn to smash anything into lumps but needs to be near a FORGE
+    // TODO should actually require a stronger hammer than the material's hardness being smashed, and could be anywhere...
     bool bW = itToUse->IsWeapon(rpd.rc.H());
     item* RmnM = craftcore::PrepareRemains(rpd, matM, (bW && itToUse->GetConfig()==QUARTER_STAFF) ? CIT_STICK : CIT_NONE);
     item* RmnS = matS==NULL ? NULL : craftcore::PrepareRemains(rpd, matS, bW ? CIT_STICK : CIT_LUMP); //must always be created to not lose it
