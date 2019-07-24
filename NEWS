@@ -11,6 +11,15 @@ Next version
 ------------
 
 Changes:
+* Magic helmets spawn with random material.
+* Switch some helmets from full helmet to normal.
+
+Fixes:
+
+Version 0.55, released 20th December 2018
+-----------------------------------------
+
+Changes:
 * Added Freedom for Tweraif victory: It is now possible to win by bringing freedom to Tweraif, and then making sure it stays free. It is a low-ranking win, but at least your village will be safe.
 * Considerably reworked Lobh-se.
 * Added new shields, amulet, wand and artifacts.

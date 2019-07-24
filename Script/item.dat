@@ -5341,6 +5341,16 @@ helmet
 
   Config HELM_OF_WILLPOWER;
   {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 125;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
     Possibility = 1;
     PostFix = "of indomitable will";
     AffectsWillPower = true;
@@ -5354,8 +5364,8 @@ helmet
 
   Config BROKEN|HELM_OF_WILLPOWER;
   {
-    BitmapPos = 64, 64;
-    HelmetBitmapPos = 112, 496;
+    BitmapPos = 64, 32;
+    HelmetBitmapPos = 96, 512;
     Possibility = 1;
     Price = 25;
     AffectsWillPower = false;
@@ -5385,6 +5395,16 @@ helmet
 
   Config HELM_OF_TELEPORTATION;
   {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 125;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
     Possibility = 5;
     PostFix = "of teleportation";
     GearStates = TELEPORT;
@@ -5396,8 +5416,8 @@ helmet
 
   Config BROKEN|HELM_OF_TELEPORTATION;
   {
-    BitmapPos = 64, 64;
-    HelmetBitmapPos = 112, 496;
+    BitmapPos = 64, 32;
+    HelmetBitmapPos = 96, 512;
     Possibility = 3;
     Price = 25;
     GearStates = 0;
@@ -5451,6 +5471,16 @@ helmet
 
   Config HELM_OF_MANA;
   {
+    DefaultSize = 40;
+    DefaultMainVolume = 250;
+    StrengthModifier = 125;
+    FormModifier = 25;
+    BitmapPos = 48, 32;
+    NameSingular = "helmet";
+    FlexibleNameSingular = "helmet"; /* using full helmet graphics */
+    CoverPercentile = 90;
+    HelmetBitmapPos = 96, 432;
+    SoundResistance = 1;
     Possibility = 1;
     PostFix = "of essence plethora";
     Alias = { 3, "helmet of mana", "helm of mana", "cap of mana"; }
@@ -5464,8 +5494,8 @@ helmet
 
   Config BROKEN|HELM_OF_MANA;
   {
-    BitmapPos = 64, 64;
-    HelmetBitmapPos = 112, 496;
+    BitmapPos = 64, 32;
+    HelmetBitmapPos = 96, 512;;
     Possibility = 1;
     Price = 25;
     AffectsMana = false;
