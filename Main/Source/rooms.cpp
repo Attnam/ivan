@@ -700,7 +700,7 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
   if(Hungry->IsPlayer())
   {
-    if(!Item->IsBanana() && !Item->IsLanternOnWall())
+    if(Item->IsQuestItem())
       return true;
 
     ADD_MESSAGE("That would be stealing.");
@@ -1165,6 +1165,9 @@ void ownedarea::AddItemEffect(item* Dropped)
 
 character* ownedarea::FindRandomExplosiveReceiver() const
 {
+  if(!MasterIsActive())
+    return 0;
+
   std::vector<character*> ListOfDwarfs;
 
   for(character* p : GetMaster()->GetTeam()->GetMember())

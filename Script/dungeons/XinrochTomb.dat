@@ -405,7 +405,7 @@ Dungeon XINROCH_TOMB;
           | = 0;
           % = 0;
           g = guard(TOMB_ENTRY);
-          E = guard(TOMB_ENTRY_MASTER);
+          E = guard(TOMB_ENTRY_MASTER) { Flags = IS_MASTER; }
           y = mysticfrog(DARK);
           k = kamikazedwarf(INFUSCOR);
           K = veterankamikazedwarf(INFUSCOR);

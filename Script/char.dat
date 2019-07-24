@@ -1030,9 +1030,9 @@ guard
   {
     Helmet = DEEP_BRONZE helmet(FULL_HELMET);
     BodyArmor = DEEP_BRONZE bodyarmor(PLATE_MAIL);
-    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(BASTARD_SWORD);
-    LeftWielded = DEEP_BRONZE shield;
+    RightWielded = DEEP_BRONZE MAHOGANY_WOOD meleeweapon(HALBERD);
     Adjective = "castle";
+    KnownCWeaponSkills = { 2, POLE_ARMS, KICK; }
     CWeaponSkillHits = { 2, 100, 100; }
     RightSWeaponSkillHits = 10;
     LeftSWeaponSkillHits = 10;
@@ -1316,7 +1316,7 @@ shopkeeper
     LeftSWeaponSkillHits = 1000;
     Sex = FEMALE;
     FleshMaterial = ORC_FLESH;
-    /* BloodMaterial = BLACK_BLOOD; */ /* TODO: change once orcish blood is implemented */
+    BloodMaterial = BLACK_BLOOD;
     ClassStates = GAS_IMMUNITY|INFRA_VISION;
     HeadBitmapPos = 112, 240;
     TorsoBitmapPos = 32, 16;

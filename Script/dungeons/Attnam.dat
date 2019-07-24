@@ -491,7 +491,7 @@ Dungeon ATTNAM;
           k = kamikazedwarf(VALPURUS);
           K = veterankamikazedwarf(VALPURUS);
           h = imperialist(HOARD_MASTER);
-          G = golem(GOLD);
+          G = golem(GOLD) { Inventory == GOLD stone(SOL_STONE); }
           o = orc(REPRESENTATIVE);
           a = siren(AMBASSADOR_SIREN);
           A = guard(EMISSARY) { WayPoint = { 2, 26, 35, 34, 35; } }

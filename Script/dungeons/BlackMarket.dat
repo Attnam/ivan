@@ -104,10 +104,10 @@ Dungeon BLACK_MARKET;
           # = BASALT wall(BRICK_OLD);
           < = 0;
           > = 0;
-          1 = BLACK_IRON sign { Text = "Welcome to the Black Market! We're open 24/7."; }
+          1 = BLACK_IRON sign { Text = "Welcome to the Black Market! We are open 24/7."; }
           2 = BLACK_IRON sign { Text = "If you need it, we have it. If we don't have it, you didn't need it."; }
           3 = BLACK_IRON sign { Text = "Don't even think about stealing anything. Thieves will be killed."; }
-          4 = BLACK_IRON sign { Text = "Currently renovating, sorry about the mess."; }
+          4 = BLACK_IRON sign { Text = "Don't mind the guards, they are here for your protection!"; }
         }
       }
       {
