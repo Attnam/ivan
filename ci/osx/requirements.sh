@@ -12,7 +12,7 @@ brew_install() {
   for dep in "$@"; do
     if brew list "${dep}" &>/dev/null; then
       if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
-        brew upgrade "${dep}" || true  # error for "already installed" is so annoying
+        : brew upgrade "${dep}" || true  # error for "already installed" is so annoying
       fi
     else
       brew install "${dep}"
@@ -49,9 +49,10 @@ install_sdl2() {
   ls -hl "${CACHE_DIR}"
 }
 
-brew update
-
 if [[ -n "${IVAN_PLATFORM}" || "${BUILD_MAC_APP}" = ON ]]; then
+  if [[ -n "${TRAVIS_TAG}" ]]; then
+    brew update  # for deployment
+  fi
   brew_install pkg-config cmake pcre libpng
   install_sdl2
 else

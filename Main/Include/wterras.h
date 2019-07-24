@@ -89,6 +89,10 @@ OWTERRAIN(goblinfort, owterrain)
 {
 };
 
+OWTERRAIN(blackmarket, owterrain)
+{
+};
+
 OWTERRAIN(locationAA, owterrain)
 {
 };

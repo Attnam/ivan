@@ -11,6 +11,41 @@ Next version
 ------------
 
 Changes:
+* Add Black Market, an end-game shop to spend all excess gold in.
+* Add game lore and fiction to the Doc folder.
+* New "expansive terrain" can help prevent blocking important entrances.
+* Improve item search algorithm.
+* Keys very rarely break when used.
+
+Fixes:
+* Clean up code.
+* Fix ring detection to work same as scrolls.
+* Enable wishes for empty containers, make empty cans and empty bottles wishable.
+* No rotated pictures for equipments and newly-spawned items.
+* Do not aggressively upgrade dependencies for mac build.
+* Mirrored items cannot be dismantled into permanent lump of material.
+* Stop weapon swap from auto-stealing items in shops.
+
+Version 0.56, released 19th February 2019
+-----------------------------------------
+
+ Changes:
+* New banana-and-pick-axe icon on Mac and Windows.
+* Remove Google groups e-mail address.
+
+Fixes:
+* Windows build done using mxe, which should fix issues on Windows 7.
+* Fix first person messages.
+* Simplify command descriptions.
+* Fix path search for SDL2.
+* Fix artifacts being spawned through polypiling.
+* Try to fix stat growth while polymorphed.
+* Fix crafting recipes.
+
+Version 0.55, released 20th December 2018
+-----------------------------------------
+
+Changes:
 * Added Freedom for Tweraif victory: It is now possible to win by bringing freedom to Tweraif, and then making sure it stays free. It is a low-ranking win, but at least your village will be safe.
 * Considerably reworked Lobh-se.
 * Added new shields, amulet, wand and artifacts.

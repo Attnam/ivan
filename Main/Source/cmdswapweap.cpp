@@ -403,7 +403,7 @@ truth commandsystem::SwapWeaponsWork(character* Char, int iIndexOverride)
     if(Arm && it){
       std::vector<item*> iv;
       stk->FillItemVector(iv);
-      if(hasItem(iv,it) || it->GetSquareUnder()==Char->GetSquareUnder()){
+      if(hasItem(iv,it) || (it->GetSquareUnder()==Char->GetSquareUnder() && !it->GetRoom()) ) {
         it->RemoveFromSlot(); // w/o this line of code (TODO mem gets corrupted?), it will SEGFAULT when saving the game! extremelly hard to track!!! TODO it is hard to track right?
         h->SetEquipment(awRL[iArm],it);
         bDidSwap=true;

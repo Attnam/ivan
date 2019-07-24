@@ -337,39 +337,117 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 }
 
 template <class type>
-std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, cfestring& Identifier)
+static void ScoreFlexibleName(
+    const typename type::database* DataBase,
+    cfestring& Identifier,
+    festring& Name,
+    festring::sizetype& NamePos,
+    int& NameScore,
+    std::pair<int, int>& Result)
 {
-  std::pair<int, int> Result(0, 0);
+  // noop
+}
+
+template <>
+void ScoreFlexibleName<item>(
+    const item::database* DataBase,
+    cfestring& Identifier,
+    festring& Name,
+    festring::sizetype& NamePos,
+    int& NameScore,
+    std::pair<int, int>& Result)
+{
+  if(!DataBase->FlexibleNameSingular.IsEmpty() && DataBase->NameSingular != DataBase->FlexibleNameSingular)
+  {
+    if((NamePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->FlexibleNameSingular + ' ')) != festring::NPos)
+    {
+      Name = DataBase->FlexibleNameSingular;
+      NameScore = DataBase->FlexibleNameSingular.GetSize();
+
+      if(Result.second > 0)  // view NameSingular plus FlexibleNameSingular as one
+        --Result.second;
+    }
+    else if(Result.second < 1)
+      ++Result.second;
+  }
+}
+
+template <class type>
+static std::pair<int, int> ScoreName(const typename type::database* DataBase, cfestring& Identifier)
+{
+  std::pair<int, int> Result(0, 0);  // (score, misses)
+  festring Name;
+  festring::sizetype NamePos, AdjectivePos, PostfixPos, AliasPos;
+  int NameScore, AdjectiveScore, PostfixScore, AliasScore;
+
+  NameScore = AdjectiveScore = PostfixScore = AliasScore = 0;
+  NamePos = AdjectivePos = PostfixPos = AliasPos = festring::NPos;
 
   if(!DataBase->NameSingular.IsEmpty())
   {
-    ++Result.second;
-
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ') != festring::NPos)
-      Result.first += DataBase->NameSingular.GetSize();
+    if((NamePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ')) != festring::NPos)
+    {
+      Name = DataBase->NameSingular;
+      NameScore = DataBase->NameSingular.GetSize();
+    }
+    else
+      ++Result.second;
   }
+
+  if(NamePos == festring::NPos)
+    ScoreFlexibleName<type>(DataBase, Identifier, Name, NamePos, NameScore, Result);
 
   if(!DataBase->Adjective.IsEmpty())
   {
-    ++Result.second;
-
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ') != festring::NPos)
-      Result.first += DataBase->Adjective.GetSize();
+    if((AdjectivePos = festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ')) != festring::NPos)
+    {
+      if(NamePos == festring::NPos || AdjectivePos < NamePos)
+        AdjectiveScore = DataBase->Adjective.GetSize();
+      else
+        AdjectiveScore = DataBase->Adjective.GetSize() / 2;
+    }
+    else
+      ++Result.second;
   }
 
   if(!DataBase->PostFix.IsEmpty())
   {
-    ++Result.second;
-
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ') != festring::NPos)
-      Result.first += DataBase->PostFix.GetSize();
+    if((PostfixPos = festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ')) != festring::NPos)
+    {
+      if(NamePos == festring::NPos || PostfixPos >= NamePos + Name.GetSize() + 1)
+        PostfixScore = DataBase->PostFix.GetSize();
+      else
+        PostfixScore = DataBase->PostFix.GetSize() / 2;
+    }
+    else
+      ++Result.second;
   }
 
   for(uint c = 0; c < DataBase->Alias.Size; ++c)
-    if((Result.first == 0 || DataBase->Alias[c].GetSize() > Result.first)
-       && festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos)
-      Result.first += DataBase->Alias[c].GetSize();
+  {
+    cfestring& Alias = DataBase->Alias[c];
 
+    if((AliasPos = festring::IgnoreCaseFind(Identifier, " " + Alias + ' ')) != festring::NPos)
+    {
+      if(AdjectivePos != festring::NPos && AdjectivePos >= AliasPos)
+        AdjectivePos /= 2;
+
+      if(PostfixPos != festring::NPos && PostfixPos < AliasPos + Alias.GetSize() + 1)
+        PostfixScore /= 2;
+
+      if(AliasPos == AdjectivePos)
+        AliasScore += (Alias.GetSize() + DataBase->Adjective.GetSize()) / 2;
+      else if(AliasPos + Alias.GetSize() == PostfixPos + DataBase->PostFix.GetSize())
+        AliasScore += (Alias.GetSize() + DataBase->PostFix.GetSize()) / 2;
+      else
+        AliasScore += Alias.GetSize();
+
+      if(NamePos == festring::NPos)
+        --Result.second;
+    }
+  }
+
+  Result.first = NameScore + AdjectiveScore + PostfixScore + AliasScore;
   return Result;
 }
 
@@ -378,8 +456,9 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
   typedef typename type::prototype prototype;
   typedef typename type::database database;
 
-  festring Identifier;
-  Identifier << ' ' << What << ' ';
+  festring Identifier = " " + What + ' ';
+  Identifier.ShrinkWhitespace();
+
   truth BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
   truth Illegal = false, Conflict = false;
   std::pair<const prototype*, int> ID(0, 0);
@@ -394,20 +473,23 @@ template <class type> std::pair<const typename type::prototype*, int> SearchForP
     for(int c = 0; c < ConfigSize; ++c)
       if(!ConfigData[c]->IsAbstract)
       {
-        if(BrokenRequested == !(ConfigData[c]->Config & BROKEN))
+        truth IsBroken = ConfigData[c]->Config & BROKEN
+          || festring::IgnoreCaseFind(" " + ConfigData[c]->Adjective + ' ', " broken ") != festring::NPos;
+
+        if(BrokenRequested == !IsBroken)
           continue;
 
-        std::pair<int, int> Correct = CountCorrectNameLetters<type>(ConfigData[c], Identifier);
+        std::pair<int, int> Score = ScoreName<type>(ConfigData[c], Identifier);
 
-        if(Correct == Best)
+        if(Score == Best)
           Conflict = true;
-        else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
+        else if(Score.first > Best.first || (Score.first == Best.first && Score.second < Best.second))
         {
           if(ConfigData[c]->CanBeWished || game::WizardModeIsActive())
           {
             ID.first = Proto;
             ID.second = ConfigData[c]->Config;
-            Best = Correct;
+            Best = Score;
             Conflict = false;
           }
           else

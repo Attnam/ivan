@@ -1288,6 +1288,76 @@ shopkeeper
       "\"You'll die and then I'll sell your corpse to the necromancers!\"";
     }
   }
+
+  Config BLACK_MARKET;
+  {
+    DefaultName = "One-eyed Sam";
+    Adjective = "black";
+    NameSingular = "marketeer";
+    DefaultDexterity = 25;
+    DefaultAgility = 20;
+    AttributeBonus = 75;
+    TotalSize = 180;
+    DefaultMoney = 30000;
+    Helmet = STAR_METAL helmet(HELM_OF_TELEPATHY) { Enchantment = 3; }
+    Amulet = DIAMOND amulet(AMULET_OF_LIFE_SAVING);
+    BodyArmor = STAR_METAL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+    Cloak = GOSSAMER cloak(CLOAK_OF_FLYING) { Enchantment = 3; }
+    Belt = GOSSAMER belt(BELT_OF_REGENERATION) { Enchantment = 3; }
+    RightWielded = STAR_METAL DIAMOND bansheesickle { Enchantment = 6; }
+    LeftWielded = STAR_METAL DIAMOND weepblade { Enchantment = 6; }
+    RightRing = DIAMOND ring(RING_OF_TELEPORT_CONTROL);
+    LeftRing = ring(RING_OF_SPEED); /* unique artifact for her */
+    RightGauntlet = GOSSAMER gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+    RightBoot = GOSSAMER boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+    KnownCWeaponSkills = { 3, UNARMED, KICK, SMALL_SWORDS; }
+    CWeaponSkillHits = { 3, 500, 500, 2000; }
+    RightSWeaponSkillHits = 1000;
+    LeftSWeaponSkillHits = 1000;
+    Sex = FEMALE;
+    FleshMaterial = ORC_FLESH;
+    /* BloodMaterial = BLACK_BLOOD; */ /* TODO: change once orcish blood is implemented */
+    ClassStates = GAS_IMMUNITY|INFRA_VISION;
+    HeadBitmapPos = 112, 240;
+    TorsoBitmapPos = 32, 16;
+    ArmBitmapPos = 80, 176;
+    LegBitmapPos = 0, 48;
+    HairColor = rgb16(210, 5, 5);
+    SkinColor = rgb16(48, 48, 48);
+    EyeColor = rgb16(200, 200, 0);
+    ClothColor = rgb16(181, 210, 220);
+    CapColor = rgb16(66, 66, 66);
+    GauntletColor = rgb16(66, 66, 66);
+    BootColor = rgb16(66, 66, 66);
+    WieldedPosition = -1, -1;
+    UndeadVersions = false;
+    PanicLevel = 0;
+    CriticalModifier = 4;
+    FireResistance = 30;
+    ElectricityResistance = 20;
+    EnergyResistance = 20;
+    PoisonResistance = 5;
+    AcidResistance = 5;
+    FriendlyReplies =
+    {
+      6,
+      "\"My wares are not stolen, just... appropriated.\"",
+      "\"Don't mind the blood on some of my wares, I'm sure it will wash off easily.\"",
+      "\"Overpriced? What do you mean, overpriced?!\"",
+      "\"You may well need something from this shop in the future.\"",
+      "@Dd complains about cleaning the blood after shoplifters.",
+      "\"I have only the finest goods for sale!\"";
+    }
+    HostileReplies =
+    {
+      4,
+      "\"Fool! No one messes with the Guild and lives!\"",
+      "\"I'm really looking forward to inheriting all your possessions!\"",
+      "@Dd mentions how much @pp dislikes non-paying customers.",
+      "\"You don't want to pay in gold? You're going to pay in blood!\"";
+    }
+    Inventory = { 2, holybook(MELLIS), DIAMOND EBONY_WOOD pickaxe { Enchantment = -1; } }
+  }
 }
 
 priest
