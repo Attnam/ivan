@@ -13,6 +13,8 @@ Next version
 Changes:
 * Add Black Market, an end-game shop to spend all excess gold in.
 * Add game lore and fiction to the Doc folder.
+* Magic helmets spawn with random material.
+* Switch some helmets from full helmet to normal.
 * New "expansive terrain" can help prevent blocking important entrances.
 * Improve item search algorithm.
 * Keys very rarely break when used.
