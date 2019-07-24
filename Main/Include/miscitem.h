@@ -396,6 +396,7 @@ ITEM(key, item)
   virtual truth IsAppliable(ccharacter*) const { return true; }
   virtual truth CanOpenDoors() const { return true; }
   virtual truth CanOpenLockType(int AnotherLockType) const { return GetConfig() == AnotherLockType; }
+  virtual void Break(character*, int = YOURSELF);
 };
 
 ITEM(headofelpuri, item) // can't wear equipment, so not "head"

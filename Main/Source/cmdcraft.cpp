@@ -1764,7 +1764,8 @@ struct srpDismantle : public recipe{ //TODO this is instantaneous, should take t
       return false;
     }
     // This is a quick fix, maybe allow dismantling mirrored items into mirrored lumps?
-    if(itToUse->LifeExpectancy){
+    if(itToUse->GetLifeExpectancy())
+    {
       ADD_MESSAGE("%s is made of temporary magical force rather than physical matter and cannot be dismantled.",itToUse->GetName(DEFINITE).CStr());
       rpd.bAlreadyExplained=true;
       return false;

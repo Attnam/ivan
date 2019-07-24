@@ -4053,3 +4053,25 @@ col16 skeletonkey::GetOutlineColor(int Frame) const
   }
   return TRANSPARENT_COLOR;
 }
+
+void key::Break(character* Breaker, int)
+{
+  if(!CanBeBroken())
+    return;
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
+
+  if(Breaker && IsOnGround())
+  {
+    room* Room = GetRoom();
+
+    if(Room)
+      Room->HostileAction(Breaker);
+  }
+  if(PLAYER->Equips(this))
+    game::AskForKeyPress(CONST_S("Key broken! [press any key to continue]"));
+
+  RemoveFromSlot();
+  SendToHell();
+}

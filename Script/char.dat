@@ -1187,8 +1187,8 @@ shopkeeper
     DefaultName = "One-eyed Sam";
     Adjective = "black";
     NameSingular = "marketeer";
-    DefaultDexterity = 15;
-    DefaultAgility = 15;
+    DefaultDexterity = 25;
+    DefaultAgility = 20;
     AttributeBonus = 75;
     TotalSize = 180;
     DefaultMoney = 30000;

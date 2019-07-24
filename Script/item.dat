@@ -3193,6 +3193,7 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
+  CanBeBroken = true;
   CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }

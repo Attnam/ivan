@@ -156,12 +156,12 @@ Dungeon BLACK_MARKET;
         .....D.....D.........m.......I....
         ...XXX.2.#....#....#....#..3XXX...
         ...XfX..###..###..###..###..XdX...
-        G..XXX...#....#.s..#....#...XXX..G
+        G..XXX...#....#.s..#....#K..XXX..G
         ...........m......................
         ..G............................G..
         .....................D............
         G..XXX...#....#....#....#...XXX..G
-        ...XwX..###..###.S###..###..XKX...
+        ...XwX..###..###.S###..###..XnX...
         .I.XXX...#....#....#.I..#.D.XXX...
         .......n..I......D...........4..I.
         ...1.....................m........
@@ -207,14 +207,14 @@ Dungeon BLACK_MARKET;
         Pos = 1, 1;
         Types
         {
-          1 == Random { ConfigFlags = NO_BROKEN; }
+          1 == Random { MinPrice = 250; ConfigFlags = NO_BROKEN; }
           2 == Random { Category = AMULET; }
           3 == Random { Category = RING; }
-          4 == Random { MinPrice = 250; Category = BELT; ConfigFlags = NO_BROKEN; }
-          5 == Random { MinPrice = 250; Category = CLOAK; ConfigFlags = NO_BROKEN; }
+          4 == Random { MinPrice = 300; Category = BELT; ConfigFlags = NO_BROKEN; }
+          5 == Random { MinPrice = 300; Category = CLOAK; ConfigFlags = NO_BROKEN; }
           6 == Random { Category = SCROLL; }
           7 == Random { Category = TOOL|WAND; }
-          8 == Random { MinPrice = 10; Category = FOOD|POTION; }
+          8 == Random { MinPrice = 40; Category = FOOD|POTION; ConfigFlags = NO_BROKEN; }
           9 == Random { MinPrice = 3000; }
         }
       }
