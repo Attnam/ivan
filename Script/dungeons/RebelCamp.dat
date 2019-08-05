@@ -23,7 +23,7 @@ Dungeon REBEL_CAMP;
 {
   Levels = 1;
   Description = "rebel camp";
-  ShortDescription = "RC";
+  ShortDescription = "Rebel Camp";
 
   Level 0;
   {
@@ -97,13 +97,13 @@ Dungeon REBEL_CAMP;
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(BIRCH);
-      Times = 30:50;
+      Times = 50:150;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
     {
       OTerrain = decoration(TEAK);
-      Times = 30:50;
+      Times = 50:150;
     }
 
     Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;

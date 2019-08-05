@@ -195,7 +195,9 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 lump
@@ -216,7 +218,9 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 meleeweapon
@@ -1736,7 +1740,7 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 
   Config BROKEN;
   {
@@ -2485,7 +2489,9 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 scrollofwishing /* scroll-> */
@@ -2884,7 +2890,9 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 7,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, FUNGAL_CAVE,
+                      DARK_FOREST, BLACK_MARKET; }
 }
 
 pineapple
@@ -2903,7 +2911,9 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 palmbranch
@@ -5519,7 +5529,7 @@ helmet
   Config BROKEN|HELM_OF_MANA;
   {
     BitmapPos = 64, 32;
-    HelmetBitmapPos = 96, 512;;
+    HelmetBitmapPos = 96, 512;
     Possibility = 1;
     Price = 25;
     AffectsMana = false;
@@ -6288,7 +6298,9 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 11,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST, FUNGAL_CAVE; }
 
   Config BROKEN;
   {
@@ -6301,7 +6313,7 @@ mango
 {
   WeaponCategory = BLUNT_WEAPONS;
   DefaultSize = 20;
-  Possibility = 0;
+  Possibility = 400;
   Category = FOOD;
   DefaultMainVolume = 200;
   StrengthModifier = 75;
@@ -6314,7 +6326,7 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  /* AllowedDungeons = { 2, DARK_FOREST, BLACK_MARKET; } */
+  AllowedDungeons = { 3, DARK_FOREST, BLACK_MARKET, FUNGAL_CAVE; }
 
   Config BROKEN;
   {
@@ -6345,7 +6357,9 @@ sausage
   WieldedBitmapPos = 160, 320;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 8, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE, REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET; }
+  AllowedDungeons = { 10,
+                      NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, ASLONA_CASTLE,
+                      REBEL_CAMP, GOBLIN_FORT, BLACK_MARKET, IRINOX, DARK_FOREST; }
 }
 
 wondersmellstaff
