@@ -677,12 +677,15 @@ guard
     ClothColor = rgb16(80, 80, 80);
     FriendlyReplies =
     {
-      11,
+      14,
       "@Dd says gravely: \"You don't have a life. Get it in the army.\"",
       "@Dd snorts.",
       "@Dd spits on the ground.",
       "\"...\"",
       "\"Hmph.\"",
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
       "\"Anything you say can be used against you.\"",
       "\"Put that weapon away before you hurt someone!\"",
       "\"Don't even think of breaking rules.\"",
@@ -763,12 +766,23 @@ guard
     ClothColor = rgb16(100, 100, 100);
     FriendlyReplies =
     {
-      5,
+      10,
       "@Dd says gravely: \"You don't have a life. Get it as a shop guard.\"",
       "@Dd seems very suspicious. \"Don't even think of stealing anything.\"",
       "\"Yes, this is a dangerous place to work, but our boss pays us well.\"",
+      "\"Go fiddling with any locks around here, we're going to have a real problem.\"",
+      "\"I find your hand in my pocket, I'm going to cut it off. Your hand, not my pocket.\"",
+      "\"I know your kind, always sneaking about. Won't fool me!\"",
+      "\"Hands to yourself, thief! Oh, sorry, you came to buy something?\"",
+      "\"Your gold is welcome here.\"",
       "\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't make any rash moves here.\"",
       "\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"";
+    }
+    HostileReplies =
+    {
+      2,
+      "\"Not very intelligent, are you?\"",
+      "\"Ah, you have a death wish.\"";
     }
   }
 
@@ -1040,12 +1054,28 @@ guard
     ClothColor = rgb16(120, 80, 40);
     FriendlyReplies =
     {
-      5,
-      "@Dd says gravely: \"This is a placeholder dialogue.\"",
-      "@Dd snorts.",
+      21,
+      "@Dd says gravely: \"I think we're all in for some hard times.\"",
       "\"...\"",
       "\"Hmph.\"",
-      "\"This is a placeholder dialogue.\"";
+      "\"Move along, stranger.\"",
+      "\"What do you need?\"",
+      "\"Trouble? Causing or having?\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor king Artorius. He's too young to rule a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the young king and this country in their hour of need.\"",
+      "\"I've heard that Harvan Black-cloak poisoned old king Othyr and tried to dispose of king Artorius as well.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"Damn the rebel scum! We should hunt them down and hang them from the castle walls.\"",
+      "\"I've heard the orc are stirring now, too. We should have burned down the freeholds when we had a chance.\"",
+      "\"The guard duty here in the castle is usually a dull affair. Near the borders, though, things are a bit more challenging, and one can make a name for oneself.\"",
+      "\"Kings have been assassinated before, but this time... I don't know. It's different.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Can you believe that the bastard Black-cloak managed to sneak into the very king's rooms?!\"",
+      "\"If you've got to travel, by Seges, stay on the roads! The wilderness just isn't safe. We've had sightings of bandits, goblins and even undead!\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
+      "\"I understand that the treasury is empty, but begging for help in Attnam seems like a bad idea.\"",
+      "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
     }
   }
 
@@ -1070,12 +1100,17 @@ guard
     ClothColor = rgb16(181, 166, 66);
     FriendlyReplies =
     {
-      5,
-      "@Dd says gravely: \"This is a placeholder dialogue.\"",
-      "@Dd snorts.",
-      "\"...\"",
-      "\"Hmph.\"",
-      "\"This is a placeholder dialogue.\"";
+      10,
+      "@Dd says gravely: \"The king's death was a harsh lesson for all of us. We failed in our duty. It must not happen again.\"",
+      "\"Things have been bad since old king Othyr died.\"",
+      "\"Poor king Artorius. He's too young to rule a broken country.\"",
+      "\"Seges bless Lord Regent for standing by the young king and this country in their hour of need.\"",
+      "\"Lord Regent saved the kingdom, sure enough.\"",
+      "\"Kings have been assassinated before, but this time... I don't know. It's different.\"",
+      "\"The king is dead, his heir too young. We needed a strong leader and Lord Regent answered the call.\"",
+      "\"Would you believe it? Harvan Black-cloak murdered king Othyr, and yet people go flocking to the banner of his rebellion!\"",
+      "\"I understand that the treasury is empty, but begging for help in Attnam seems like a bad idea.\"",
+      "\"So many bandits have appeared in the backcountry. We just don't have the troops nor the time to comb the wilderness for them.\"";
     }
   }
 
@@ -1083,7 +1118,7 @@ guard
   {
     AttributeBonus = 50;
     TotalVolume = 120000;
-    Helmet = HEPATIZON helmet(FULL_HELMET) { Enchantment = 3; }
+    Helmet = SEA_SERPENT_SCALE helmet(FULL_HELMET) { Enchantment = 3; }
     Amulet = amulet(AMULET_OF_WARDING);
     BodyArmor = SEA_SERPENT_SCALE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
     Cloak = MERMAID_HAIR cloak(CLOAK_OF_QUICKNESS) { Enchantment = 3; }
@@ -1684,6 +1719,15 @@ priest
     CWeaponSkillHits == 50;
     RightSWeaponSkillHits = 20;
     LeftSWeaponSkillHits = 20;
+    FriendlyReplies =
+    {
+      5,
+      "\"The people have faith in Seges, and I do my best to heal and comfort them in adversity.\"",
+      "\"No wonder everyone is so cranky these days. If you had to live year-round in a cold, drafty castle like this one, you'd be cranky, too.\"",
+      "\"Was it the Black-cloak or Lord Regent who caused the old king's death? I doubt we'll ever know for sure.\"",
+      "\"I've sometimes thought I'd like to make a pilgrimage to the Cathedral of Attnam, but my duties prevent me from such extensive and dangerous travel.\"",
+      "\"There's something strange about Lord Regent.\"";
+    }
     Inventory = { 2, lantern, potion { Times = 2; SecondaryMaterial = CURE_ALL_LIQUID; } }
   }
 }
@@ -3000,9 +3044,11 @@ golem
   PanicLevel = 0;
   HostileReplies = /* No quotes! (golem engraves) */
   {
-    3,
+    5,
     "GOLEM KILL, GOLEM THEN RETURN",
     "GOLEM KILL ALL HUMANS",
+    "MASTER WANTED, UNDEAD OR ALIVE",
+    "HAVE YOU SEEN MY MASTER",
     "GOLEM NEED MASTER";
   }
   FriendlyReplies =
@@ -3751,37 +3797,10 @@ slave
   DefaultMoney = 0;
   FriendlyReplies = /* used only if the slave has been bought */
   {
-    33,
+    6,
     "\"Whatever the master wants.\"",
     "\"What if we're ambushed in a dungeon like this?\"",
     "\"Will you make me a gladiator? I've heard they have all the fame and women!\"",
-    "\"I once was a professor of philosophy, back in Tweraif, you know?\"",
-    "\"Errare humanum est.\"",
-    "\"Asinus manebis in saecula saeculorum.\"",
-    "\"Cuius regio, eius religion.\"",
-    "\"Faber suae quisque fortunae. *snicker*\"",
-    "\"Fortes fortuna adiuvat.\"",
-    "\"Historia magistra vitae.\"",
-    "\"Hominem te esse, memento.\"",
-    "\"Homo doctus in se semper divitias habet.\"",
-    "\"Honesta quaedam scelera successus facit.\"",
-    "\"In vino veritas, in aqua sanitas.\"",
-    "\"Malo periculosam libertatem quam quietum servitium.\"",
-    "\"Militia est vita hominis super terram.\"",
-    "\"Nondum omnium dierum sol occidit.\"",
-    "\"Omnis vita supplicium est.\"",
-    "\"Optima philosophia meditatio est mortis.\"",
-    "\"Post nubia phoebus...\"",
-    "\"Quo usque tandem?\"",
-    "\"Scientia est potentia.\"",
-    "\"Stultorum Mater sempiter gravida.\"",
-    "\"Te audire non possum. Musa sapientum fixa est in aure.\"",
-    "\"Temeritas est damnare, quod nescias.\"",
-    "\"Vae victis!\"",
-    "\"Quidquid latine dictum sit, altum videtur.\"",
-    "\"Vita non est vivere sed valere vita est.\"",
-    "\"Mors ultima linea rerum.\"",
-    "\"Of course I speak the Old Tongue. I also know Ancient Elvish, High and Low Dwarven, a bit of Draconic, plus five dialects of Orcish.\"",
     "\"Work work work all day long. No, that was not a complaint! Don't punish!\"",
     "\"I love all my masters. At least when the whip is being washed.\"",
     "\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
@@ -4103,6 +4122,7 @@ housewife
   TotalVolume = 70000;
   TotalSize = 160;
   CanRead = true;
+  CanBeGenerated = false;
   NameSingular = "housewife";
   NamePlural = "housewives";
   /* RightWielded overridden */
@@ -4115,13 +4135,12 @@ housewife
   WieldedPosition = 0, -1;
   FriendlyReplies =
   {
-    7,
+    6,
     "\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
     "\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
     "\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
     "\"Petrus' wives are so arrogant towards us working class ones. Grr...\"",
     "\"Don't think too much, the Cardinals can hear you.\"",
-    "\"When I was just a little girl, I wished to become a scientist.\"",
     "\"If you men only knew!\"";
   }
   ScienceTalkPossibility = 20;
@@ -4139,7 +4158,6 @@ housewife
 
   Config CULTIST;
   {
-    CanBeGenerated = false;
     AttributeBonus = 10;
     NameSingular = "cultist";
     TorsoBitmapPos = 48, 352;
@@ -4442,8 +4460,9 @@ zombie
   /* HostileReplies overridden */
   FriendlyReplies =
   {
-    2,
+    3,
     "\"Need brain but you too stoopid!\"",
+    "\"May I interest you in the idea of forfeiting the ownership of your brain in my favor?\"",
     "\"Brraaaaaaaaiiiiiiinnnz!!!\"";
   }
   DeathMessage = "@Dd is slain (again).";
@@ -4591,10 +4610,11 @@ ghost
   BaseEmitation = rgb24(110, 110, 130);
   HostileReplies =
   {
-    4,
+    5,
     "@Dd moans.",
     "@Dd wails.",
     "@Dd attempts to spook you.",
+    "\"Thou shalt be one of us, soon!\"",
     "\"Boo!\"";
   }
   FriendlyReplies =
@@ -6087,8 +6107,9 @@ snake
   TorsoSpecialColor = rgb16(200, 200, 0); /* RattleColor */
   HostileReplies =
   {
-    2,
+    3,
     "@Dd hisses.",
+    "\"You sssmell deliciousss!\"",
     "@Dd rattles!";
   }
   FriendlyReplies == "@Dd hisses in a friendly manner.";

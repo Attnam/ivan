@@ -641,6 +641,9 @@ truth humanoid::AddSpecialSkillInfo(felist& List) const
 
 void petrus::BeTalkedTo()
 {
+  if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
   if(GetRelation(PLAYER) == HOSTILE)
   {
     ADD_MESSAGE("Heretic! Dev/null is a place not worthy to receive thee!");
@@ -772,6 +775,8 @@ void priest::BeTalkedTo()
     character::BeTalkedTo();
     return;
   }
+  else if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
 
   if(PLAYER->IsBurning())
   {
@@ -1050,7 +1055,7 @@ void skeleton::BeTalkedTo()
 {
   if(GetHead())
     humanoid::BeTalkedTo();
-  else
+  else if(GetPos().IsAdjacent(PLAYER->GetPos()))
     ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
 }
 
@@ -1058,7 +1063,9 @@ void communist::BeTalkedTo()
 {
   if(GetRelation(PLAYER) != HOSTILE
      && GetTeam() != PLAYER->GetTeam()
-     && PLAYER->GetRelativeDanger(this, true) > 0.1)
+     && PLAYER->GetRelativeDanger(this, true) > 0.1
+     && GetPos().IsAdjacent(PLAYER->GetPos())
+   )
   {
     ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"",
                 CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(),
@@ -1092,7 +1099,7 @@ void hunter::BeTalkedTo()
 
 void tourist::BeTalkedTo()
 {
-  if(GetConfig() == CHILD)
+  if(GetConfig() == CHILD && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     character* Spider = 0;
 
@@ -1166,42 +1173,47 @@ void slave::BeTalkedTo()
     return;
   }
 
-  room* Room = GetHomeRoom();
-
-  if(Room && Room->MasterIsActive())
+  if(GetPos().IsAdjacent(PLAYER->GetPos()))
   {
-    character* Master = Room->GetMaster();
+    room* Room = GetHomeRoom();
 
-    if(PLAYER->GetMoney() >= 50)
+    if(Room && Room->MasterIsActive())
     {
-      ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. "
-                  "I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
+      character* Master = Room->GetMaster();
 
-      if(game::TruthQuestion(CONST_S("Do you want to buy him? [y/N]")))
+      if(PLAYER->GetMoney() >= 50)
       {
-        PLAYER->SetMoney(PLAYER->GetMoney() - 50);
-        Master->SetMoney(Master->GetMoney() + 50);
-        ChangeTeam(PLAYER->GetTeam());
-        RemoveHomeData();
+        ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. "
+                    "I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
+
+        if(game::TruthQuestion(CONST_S("Do you want to buy him? [y/N]")))
+        {
+          PLAYER->SetMoney(PLAYER->GetMoney() - 50);
+          Master->SetMoney(Master->GetMoney() + 50);
+          ChangeTeam(PLAYER->GetTeam());
+          RemoveHomeData();
+        }
       }
+      else
+        ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch "
+                    "sale items. I'm worth 50 gold pieces, you know!\"");
+
+      return;
+    }
+
+    if(GetTeam() == PLAYER->GetTeam())
+    {
+      if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->IsWhip()) ||
+         (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->IsWhip()))
+        ADD_MESSAGE("\"Don't hit me! I work! I obey! I don't think!\"");
+      else
+        character::BeTalkedTo();
     }
     else
-      ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch "
-                  "sale items. I'm worth 50 gold pieces, you know!\"");
-
-    return;
-  }
-
-  if(GetTeam() == PLAYER->GetTeam())
-  {
-    if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->IsWhip()) ||
-       (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->IsWhip()))
-      ADD_MESSAGE("\"Don't hit me! I work! I obey! I don't think!\"");
-    else
-      character::BeTalkedTo();
+      ADD_MESSAGE("\"I'm free! Rejoice!\"");
   }
   else
-    ADD_MESSAGE("\"I'm free! Rejoice!\"");
+    character::BeTalkedTo();
 }
 
 void slave::GetAICommand()
@@ -1243,6 +1255,10 @@ void librarian::BeTalkedTo()
     ADD_MESSAGE("\"The pen is mightier than the sword! Fall, unlearned one!\"");
     return;
   }
+  else if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
+  // TODO: Replies for TX and Aslona!
 
   static long Said;
 
@@ -1350,7 +1366,7 @@ truth communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(!HasHead())
+  if(!HasHead() && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     ADD_MESSAGE("The headless %s remains silent.", CHAR_DESCRIPTION(DEFINITE));
   }
@@ -3159,6 +3175,9 @@ col24 angel::GetBaseEmitation() const
 
 void bananagrower::BeTalkedTo()
 {
+  if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
   static long Said;
 
   if(GetRelation(PLAYER) == HOSTILE)
@@ -3234,6 +3253,9 @@ void bananagrower::Load(inputfile& SaveFile)
 
 void smith::BeTalkedTo()
 {
+  if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
   if(GetRelation(PLAYER) == HOSTILE)
   {
     ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who "
@@ -4974,7 +4996,7 @@ void necromancer::RaiseSkeleton()
 
 void necromancer::BeTalkedTo()
 {
-  if(GetConfig() != IMPRISONED_NECROMANCER)
+  if(GetConfig() != IMPRISONED_NECROMANCER || !GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     humanoid::BeTalkedTo();
     return;
@@ -5333,7 +5355,7 @@ void tourist::GetAICommand()
 
 void imperialist::BeTalkedTo()
 {
-  if(GetConfig() == VICE_ROY)
+  if(GetConfig() == VICE_ROY && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     if(GetRelation(PLAYER) != HOSTILE)
     {
@@ -5369,7 +5391,9 @@ void imperialist::BeTalkedTo()
       ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
   }
   else if(GetConfig() == HOARD_MASTER && (PLAYER->GetMoney() >= 50000) &&
-          game::TweraifIsFree() && !(GetRelation(PLAYER) == HOSTILE))
+          game::TweraifIsFree() && !(GetRelation(PLAYER) == HOSTILE) &&
+          GetPos().IsAdjacent(PLAYER->GetPos())
+         )
   {
     if(game::TruthQuestion(CONST_S("Do you want to bribe the hoardmaster? [y/n]"), REQUIRES_ANSWER))
     {
@@ -5819,6 +5843,9 @@ int necromancer::GetSpellAPCost() const
 
 void tailor::BeTalkedTo()
 {
+  if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
   if(GetRelation(PLAYER) == HOSTILE)
   {
     ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who "
@@ -6459,6 +6486,9 @@ void petrusswife::Load(inputfile& SaveFile)
 
 void petrusswife::BeTalkedTo()
 {
+  if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+    return;
+
   itemvector Item;
 
   if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsLuxuryItem)
@@ -6491,17 +6521,22 @@ void petrusswife::BeTalkedTo()
 
 void guard::BeTalkedTo()
 {
-  itemvector Item;
-
-  if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
-     || Item.empty())
-    humanoid::BeTalkedTo();
-
-  for(size_t c = 0; c < Item.size(); ++c)
+  if(GetPos().IsAdjacent(PLAYER->GetPos()))
   {
-    Item[c]->RemoveFromSlot();
-    GetStack()->AddItem(Item[c]);
+    itemvector Item;
+
+    if(!PLAYER->SelectFromPossessions(Item, CONST_S("Do you have something to give me?"), 0, &item::IsBeverage)
+       || Item.empty())
+
+
+    for(size_t c = 0; c < Item.size(); ++c)
+    {
+      Item[c]->RemoveFromSlot();
+      GetStack()->AddItem(Item[c]);
+    }
   }
+  else
+    humanoid::BeTalkedTo();
 }
 
 void xinrochghost::GetAICommand()
@@ -6715,7 +6750,8 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 
 void elder::BeTalkedTo()
 {
-  if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo
+     && !(GetRelation(PLAYER) == HOSTILE) && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     game::TextScreen(CONST_S("\"My boy, my wonderful boy! From the very day I found you,\n"
                              "I knew there was something special in you, something even\n"
@@ -6782,7 +6818,8 @@ void elder::BeTalkedTo()
 
 void terra::BeTalkedTo()
 {
-  if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE))
+  if((game::GetFreedomStoryState() == 1) && !HasBeenSpokenTo && !(GetRelation(PLAYER) == HOSTILE)
+     && GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     game::TextScreen(CONST_S("\"Tweraif has been freed?! What wonderful news you bring me!\"\n"
                              "\n"

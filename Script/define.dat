@@ -894,8 +894,9 @@
 #define LARGE_CLOCK 6
 
 #define IMPRISONED_FARMER 1
-#define CULTIST 2
-#define CRAZED_FARMER 3
+/* 2 reserved for ATTNAM */
+#define CULTIST 3
+#define CRAZED_FARMER 4
 
 #define ROOKIE 1
 #define VETERAN 2
