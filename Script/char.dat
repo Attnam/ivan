@@ -3009,6 +3009,26 @@ mommo
     FleshMaterial = BROWN_SLIME;
     VomitMaterial = BROWN_SLIME;
   }
+
+  Config CONVEX;
+  {
+    DefaultArmStrength = 2;
+    DefaultAgility = 2;
+    DefaultPerception = 9;
+    DefaultIntelligence = 2;
+    DefaultWisdom = 2;
+    DefaultCharisma = 3;
+    TotalVolume = 100000;
+    TorsoBitmapPos = 128, 16;
+    TotalSize = 50;
+    Adjective = "convex";
+    DayRequirementForGeneration = 3;
+    Frequency = 1500;
+    CanHear = false;
+    BloodMaterial = VOMIT;
+    FleshMaterial = VOMIT;
+    VomitMaterial = VOMIT;
+  }
 }
 
 golem

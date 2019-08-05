@@ -6748,6 +6748,13 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
   return false;
 }
 
+void imp::CreateCorpse(lsquare* Square)
+{
+  GetLevel()->Explosion(0, "consumed by hellfire",
+                        GetPos(), 20 + RAND() % 5 - RAND() % 5);
+  humanoid::CreateCorpse(Square);
+}
+
 void elder::BeTalkedTo()
 {
   if(game::TweraifIsFree() && !game::GetFreedomStoryState() && !HasBeenSpokenTo

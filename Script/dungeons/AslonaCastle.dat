@@ -419,7 +419,7 @@ Dungeon ASLONA_CASTLE;
           ~ = 0;
           , = 0;
           + = 0;
-          P = chancellor { Flags = IS_MASTER; } //TODO
+          P = petrus { Flags = IS_MASTER; } /*TODO chancellor */
           N = child(KING);
           g = guard(CASTLE);
           G = guard(ROYAL);

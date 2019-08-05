@@ -1225,7 +1225,7 @@ void character::GetAICommand()
   {
     // Make NPCs sometimes talk to the player on their own. Hostile enemies will
     // make threats, friendly creatures will just chat.
-    BeTalkedTo()
+    BeTalkedTo();
   }
 
   if(CheckForEnemies(true, true, true))

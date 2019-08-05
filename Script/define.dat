@@ -939,6 +939,7 @@
 
 #define CONICAL 1
 #define FLAT 2
+#define CONVEX 3
 
 #define SKELETON_DOG 1
 
