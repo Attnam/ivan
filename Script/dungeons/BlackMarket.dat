@@ -104,10 +104,10 @@ Dungeon BLACK_MARKET;
           # = BASALT wall(BRICK_OLD);
           < = 0;
           > = 0;
-          1 = BLACK_IRON sign { Text = "Welcome to the Black Market! We're open 24/7."; }
+          1 = BLACK_IRON sign { Text = "Welcome to the Black Market! We are open 24/7."; }
           2 = BLACK_IRON sign { Text = "If you need it, we have it. If we don't have it, you didn't need it."; }
           3 = BLACK_IRON sign { Text = "Don't even think about stealing anything. Thieves will be killed."; }
-          4 = BLACK_IRON sign { Text = "Currently renovating, sorry about the mess."; }
+          4 = BLACK_IRON sign { Text = "Don't mind the guards, they are here for your protection!"; }
         }
       }
       {
@@ -141,6 +141,7 @@ Dungeon BLACK_MARKET;
           d = darkmage(BATTLE_MAGE);
           n = necromancer(MASTER_NECROMANCER);
           D = darkknight(ELITE);
+          F = darkknight(ELITE_FEMALE);
           m = mistress(WHIP_CHAMPION);
           I = invisiblestalker(SLAYER);
           s = siren(PINK_SIREN);
@@ -153,13 +154,13 @@ Dungeon BLACK_MARKET;
       }
       {
         .I................................
-        .....D.....D.........m.......I....
+        .....F.....D.........m.......I....
         ...XXX.2.#....#....#....#..3XXX...
         ...XfX..###..###..###..###..XdX...
         G..XXX...#....#.s..#....#K..XXX..G
         ...........m......................
         ..G............................G..
-        .....................D............
+        .....................F............
         G..XXX...#....#....#....#...XXX..G
         ...XwX..###..###.S###..###..XnX...
         .I.XXX...#....#....#.I..#.D.XXX...

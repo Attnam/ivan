@@ -700,7 +700,7 @@ truth bananadroparea::PickupItem(character* Hungry, item* Item, int)
 
   if(Hungry->IsPlayer())
   {
-    if(!Item->IsBanana() && !Item->IsLanternOnWall())
+    if(Item->IsQuestItem())
       return true;
 
     ADD_MESSAGE("That would be stealing.");
