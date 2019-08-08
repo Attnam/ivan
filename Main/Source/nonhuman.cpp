@@ -1926,9 +1926,11 @@ truth mommo::Hit(character* Enemy, v2 Pos, int, int)
   Hostility(Enemy);
 
   if(IsPlayer())
-    ADD_MESSAGE("You spill acidous slime at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You spill %s at %s.", GetTorso()->GetMainMaterial()->GetName(false, false).CStr(),
+                Enemy->CHAR_DESCRIPTION(DEFINITE));
   else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s spills acidous slime at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s spills %s at %s.", CHAR_DESCRIPTION(DEFINITE),
+                GetTorso()->GetMainMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
   Vomit(Pos, 250 + RAND() % 250, false);
   EditAP(-1000);
@@ -2582,4 +2584,17 @@ void mindworm::PsiAttack(character* Victim)
   Victim->CheckDeath(CONST_S("killed by ") + GetName(INDEFINITE) + "'s psi attack", this);
   EditAP(-2000);
   EditStamina(GetAdjustedStaminaCost(-1000, GetAttribute(INTELLIGENCE)), false);
+}
+
+void bat::GetAICommand()
+{
+  if(!IsRetreating() && !RAND_N(4))
+  {
+    // Bats sometimes just move randomly, flitting even away from the player,
+    // so he must chase them.
+    if(MoveRandomly())
+      return;
+  }
+
+  nonhumanoid::GetAICommand();
 }

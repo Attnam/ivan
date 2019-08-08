@@ -3010,7 +3010,7 @@ mommo
     VomitMaterial = BROWN_SLIME;
   }
 
-  Config CONVEX;
+  Config  BLOAT;
   {
     DefaultArmStrength = 2;
     DefaultAgility = 2;
@@ -3021,9 +3021,8 @@ mommo
     TotalVolume = 100000;
     TorsoBitmapPos = 128, 16;
     TotalSize = 50;
-    Adjective = "convex";
-    DayRequirementForGeneration = 3;
-    Frequency = 1500;
+    Adjective = "bloated";
+    Frequency = 1000;
     CanHear = false;
     BloodMaterial = VOMIT;
     FleshMaterial = VOMIT;
@@ -4775,6 +4774,7 @@ imp
   LegBitmapPos = 16, 80;
   TotalVolume = 40000;
   TotalSize = 100;
+  Adjective = "crimson";
   NameSingular = "imp";
   UsesLongArticle = true;
   CanBeGenerated = true;
@@ -4816,6 +4816,7 @@ imp
     "@Dd grins maniacally.",
     "@Dd grins sadistically.";
   }
+  DeathMessage = "@Dd dies in a gout of hellfire.";
 }
 
 bat
@@ -4862,7 +4863,7 @@ bat
   IsCatacombCreature = true;
 }
 
-vampirebat
+vampirebat /* bat-> */
 {
   DefaultArmStrength = 4;
   TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
@@ -9525,4 +9526,30 @@ wizard
     ScienceTalkIntelligenceRequirement = 20;
     ScienceTalkWisdomRequirement = 10;
   }
+}
+
+gasghoul /* zombie-> */
+{
+  DefaultDexterity = 10;
+  DefaultAgility = 12;
+  HairColor = rgb16(144, 95, 32);
+  CapColor = rgb16(144, 95, 32);
+  EyeColor = rgb16(255, 0, 0);
+  HeadBitmapPos = 112, 512; /* broken gas mask */
+  NameSingular = "gas-ghoul";
+  DangerModifier = 150;
+  HPRequirementForGeneration = 60;
+  DayRequirementForGeneration = 4;
+  IsExtraFragile = false;
+  CreateUndeadConfigurations = false;
+  UndeadVersions = false;
+  FriendlyReplies =
+  {
+    3,
+    "\"War... never... changes...\"",
+    "\"How sweet and honourable it is to die for one's country...\"",
+    "\"No more... Never more...\"";
+  }
+  DeathMessage = "@Dd is put to rest.";
+  Inventory == gasgrenade { Chance = 10; }
 }

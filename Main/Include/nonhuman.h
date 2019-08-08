@@ -160,6 +160,7 @@ CHARACTER(bat, nonhumanoid)
 {
  protected:
   virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
 };
 
 CHARACTER(vampirebat, bat)

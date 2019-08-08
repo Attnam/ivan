@@ -2925,7 +2925,7 @@ void zombie::CreateBodyParts(int SpecialFlags)
   if((GetConfig() == ZOMBIE_OF_KHAZ_ZADM) || !!(SpecialFlags & NO_SEVERED_LIMBS))
   {
     Anyway = true;
-  } // Khaz-Zadm needs his hands...
+  } // Khaz-Zadm needs her hands...
 
   for(int c = 0; c < BodyParts; ++c)
     if(Anyway || BodyPartIsVital(c) || RAND_N(3) || (c == HEAD_INDEX && !RAND_N(3)))
@@ -6750,8 +6750,8 @@ truth imp::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIndex, in
 
 void imp::CreateCorpse(lsquare* Square)
 {
-  GetLevel()->Explosion(0, "consumed by hellfire",
-                        GetPos(), 20 + RAND() % 5 - RAND() % 5);
+  game::GetCurrentLevel()->Explosion(this, "consumed by the hellfire of "  + GetName(INDEFINITE),
+                                     Square->GetPos(), 20 + RAND() % 5 - RAND() % 5);
   humanoid::CreateCorpse(Square);
 }
 
@@ -7032,4 +7032,17 @@ void wizard::GetAICommand()
   }
 
   StandIdleAI();
+}
+
+void gasghoul::GetAICommand()
+{
+  if(RAND_N(3))
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s fumes.", CHAR_NAME(DEFINITE));
+
+    GetLSquareUnder()->AddSmoke(gas::Spawn(MUSTARD_GAS, 20));
+  }
+
+  zombie::GetAICommand();
 }

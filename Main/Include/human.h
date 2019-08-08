@@ -14,6 +14,7 @@
 #define __HUMAN_H__
 
 #include "char.h"
+#include "confdef.h"
 
 CHARACTER(humanoid, character)
 {
@@ -451,7 +452,7 @@ CHARACTER(zombie, humanoid)
   virtual void BeTalkedTo();
   virtual truth BodyPartIsVital(int) const;
   virtual void CreateBodyParts(int);
-  virtual truth AllowSpoil() const { return true; }
+  virtual truth AllowSpoil() const { return GetConfig() == ZOMBIE_OF_KHAZ_ZADM; }
   void SetDescription(cfestring What) { Description = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -794,6 +795,14 @@ CHARACTER(wizard, humanoid)
  protected:
   virtual void GetAICommand();
   int GetSpellAPCost() const;
+};
+
+CHARACTER(gasghoul, zombie)
+{
+ public:
+  virtual truth AllowSpoil() const { return false; }
+ protected:
+  virtual void GetAICommand();
 };
 
 #endif
