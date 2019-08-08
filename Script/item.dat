@@ -3671,13 +3671,14 @@ cloak /* armor-> */
 
   Config CLOAK_OF_FLYING;
   {
-    Possibility = 0;
+    Possibility = 1;
     GearStates = LEVITATION;
     PostFix = "of flying";
     Price = 2500;
     MainMaterialConfig = { 4, FABRIC, OMMEL_HAIR, OSTRICH_FEATHER, GRIFFON_FEATHER; }
     MaterialConfigChances = { 4, 50, 150, 250, 50; }
     EnchantmentPlusChance = 2;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|CLOAK_OF_FLYING;
@@ -4218,7 +4219,7 @@ belt /* armor-> */
 
   Config BELT_OF_LEVITATION;
   {
-    Possibility = 0;
+    Possibility = 1;
     PostFix = "of levitation";
     GearStates = LEVITATION;
     Price = 500;
@@ -4226,6 +4227,7 @@ belt /* armor-> */
     MainMaterialConfig == ANGEL_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|BELT_OF_LEVITATION;
@@ -7281,6 +7283,7 @@ trinket
 
   Config DEAD_FISH;
   {
+    Category = FOOD;
     DefaultSize = 30;
     DefaultMainVolume = 250;
     HasSecondaryMaterial = false;
