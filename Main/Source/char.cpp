@@ -9204,7 +9204,9 @@ void character::ReceiveHolyBanana(long Amount)
   EditExperience(PERCEPTION, Amount, 1 << 13);
   EditExperience(INTELLIGENCE, Amount, 1 << 13);
   EditExperience(WISDOM, Amount, 1 << 13);
+  EditExperience(WILL_POWER, Amount, 1 << 13);
   EditExperience(CHARISMA, Amount, 1 << 13);
+  EditExperience(MANA, Amount, 1 << 13);
   RestoreLivingHP();
 }
 

@@ -6009,7 +6009,7 @@ truth game::EndSumoWrestling(int Result)
     PlayerSumoChampion = true;
     character* Sumo = GetSumo();
     festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
-    Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun()
+    Msg << "Here's a little something as a reward,\" " << Sumo->GetPersonalPronoun()
         << " says and hands you a belt of levitation.\n\"";
     (belt::Spawn(BELT_OF_LEVITATION))->MoveTo(Player->GetStack());
     Msg << "Allow me to also teach you a few nasty martial art tricks the years have taught me.\"";
