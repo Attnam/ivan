@@ -7516,3 +7516,21 @@ unpick
   SecondaryMaterialConfig == RATA_WOOD;
   Alias = { 2, "unpick", "unpickaxe"; }
 }
+
+locationmap /* scroll-> */
+{
+  Possibility = 0;
+  BitmapPos = 112, 400;
+  Price = 110;
+  ReadDifficulty = 1000;
+  NameSingular = "map";
+  AttachedGod = SOPHOS;
+  IsAbstract = true;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+
+  Config BLACK_MARKET;
+  {
+    PostFix = "of black market";
+  }
+}

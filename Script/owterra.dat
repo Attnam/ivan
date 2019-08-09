@@ -95,7 +95,7 @@ blackmarket
   UsesLongArticle = true;
   AttachedDungeon = BLACK_MARKET;
   CanBeGenerated = true;
-  HideLocationInitially = false;
+  HideLocationInitially = true;
   NativeGTerrainType = LEAFY_FOREST;
 }
 
@@ -340,7 +340,7 @@ locationAV
   NativeGTerrainType = STEPPE;
 }
 
-locationAW
+xinrochtomb
 {
   BitmapPos = 0, 64;
   NameStem = "sombre and forbidding mausoleum";

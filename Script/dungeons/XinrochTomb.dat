@@ -1021,6 +1021,11 @@ Dungeon XINROCH_TOMB;
 
       Square, Random;
       {
+        Items == locationmap(BLACK_MARKET);
+      }
+
+      Square, Random;
+      {
         Items == bone;
         Times = 3:9;
       }
