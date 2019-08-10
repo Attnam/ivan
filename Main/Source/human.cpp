@@ -776,7 +776,18 @@ void priest::BeTalkedTo()
     return;
   }
   else if(!GetPos().IsAdjacent(PLAYER->GetPos()))
+  {
+    static long Said;
+
+    if(GetConfig() != SILVA)
+      humanoid::BeTalkedTo();
+    else if(!game::TweraifIsFree())
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 4)]);
+    else
+      ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
+
     return;
+  }
 
   if(PLAYER->IsBurning())
   {
@@ -6535,8 +6546,8 @@ void guard::BeTalkedTo()
       GetStack()->AddItem(Item[c]);
     }
   }
-  else
-    humanoid::BeTalkedTo();
+
+  humanoid::BeTalkedTo();
 }
 
 void xinrochghost::GetAICommand()
