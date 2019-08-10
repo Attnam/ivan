@@ -784,4 +784,10 @@ ITEM(skeletonkey, key)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(locationmap, scroll)
+{
+ public:
+  virtual void FinishReading(character*);
+};
+
 #endif

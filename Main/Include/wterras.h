@@ -182,7 +182,7 @@ OWTERRAIN(locationAV, owterrain)
 {
 };
 
-OWTERRAIN(locationAW, owterrain)
+OWTERRAIN(xinrochtomb, owterrain)
 {
 };
 
