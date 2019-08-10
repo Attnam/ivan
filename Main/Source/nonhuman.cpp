@@ -664,7 +664,9 @@ col16 carnivorousplant::GetTorsoSpecialColor() const // the flower
 
 void ostrich::GetAICommand()
 {
-  if(game::TweraifIsFree())
+  if(game::TweraifIsFree() ||
+     (GetDungeon()->GetIndex() != NEW_ATTNAM)
+   ) // Behave normally outside of New Attnam.
   {
     nonhumanoid::GetAICommand();
     return;
@@ -2588,12 +2590,38 @@ void mindworm::PsiAttack(character* Victim)
 
 void bat::GetAICommand()
 {
-  if(!IsRetreating() && !RAND_N(4))
+  if(!IsRetreating() &&
+     GetPos().IsAdjacent(PLAYER->GetPos()) &&
+     !RAND_N(7))
   {
-    // Bats sometimes just move randomly, flitting even away from the player,
-    // so he must chase them.
+    // Bats sometimes move randomly, flitting even away from the player, so they
+    // have a chance to surround him, or he must chase after them.
     if(MoveRandomly())
       return;
+  }
+
+  nonhumanoid::GetAICommand();
+}
+
+void invisiblestalker::GetAICommand()
+{
+  if(GetPos().IsAdjacent(PLAYER->GetPos())
+  {
+    if(CanBeSeenByPlayer() &&
+       (GetHP() < (GetMaxHP() >> 1) || IsRetreating())
+     )
+    {
+      ADD_MESSAGE("%s notices you looking and disappears.", CHAR_NAME(DEFINITE));
+
+      TeleportRandomly(true);
+      EditAP(-1000);
+      return;
+    }
+    else if(!IsRetreating() && !RAND_N(7))
+    {
+      if(MoveRandomly())
+        return;
+    }
   }
 
   nonhumanoid::GetAICommand();

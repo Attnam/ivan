@@ -488,7 +488,7 @@ farmer
 
   Config CULTIST;
   {
-    CanBeGenerated = false;
+    CanBeGenerated = true;
     AttributeBonus = 10;
     NameSingular = "cultist";
     TorsoBitmapPos = 48, 352;
@@ -538,6 +538,7 @@ farmer
     }
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(CRUENTUS) { Chance = 10; }, wand(WAND_OF_NECROMANCY) { Chance = 10; } }
+    AllowedDungeons == XINROCH_TOMB;
   }
 
   Config CRAZED_FARMER;
@@ -2666,7 +2667,7 @@ skeleton
     }
     FriendlyReplies == "@Dd laughs: \"Verily, thou art a skilled cheater!\""; /* no taming */
     DeathMessage = "As @Dd crumples into a heap of bones, you hear an echoing whisper: \"We shall meet again...\"";
-    AllowedDungeons = { 3, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+    AllowedDungeons = { 7, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
   }
 }
 
@@ -3096,7 +3097,7 @@ golem
   IsEnormous = true;
   CanChoke = false;
   UndeadVersions = false;
-  AllowedDungeons = { 3, XINROCH_TOMB, ELPURI_CAVE, ASLONA_CASTLE; }
+  AllowedDungeons = { 5, XINROCH_TOMB, ELPURI_CAVE, GOBLIN_FORT, PYRAMID, DARK_FOREST; }
 
   Config VALPURIUM;
   {
@@ -3142,6 +3143,43 @@ golem
     Adjective = "acidous blood";
     AttachedGod = CRUENTUS;
   }
+
+  /* The following golems are only summoned by wizards. */
+
+  Config EVIL_WONDER_STAFF_VAPOUR;
+  {
+    CanBeGenerated = false;
+    Adjective = "mysterious red gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config MAGIC_VAPOUR;
+  {
+    CanBeGenerated = false;
+    Adjective = "raw vapourized magic";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config MUSTARD_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "mustard gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config SLEEPING_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "sleeping gas";
+    AttachedGod = INFUSCOR;
+  }
+
+  Config TELEPORT_GAS;
+  {
+    CanBeGenerated = false;
+    Adjective = "warp gas";
+    AttachedGod = INFUSCOR;
+  }
 }
 
 canine
@@ -3184,6 +3222,18 @@ wolf
   ClassStates = INFRA_VISION;
   FleshMaterial = WOLF_FLESH;
   AttachedGod = SILVA;
+
+  Config DIRE;
+  {
+    AttributeBonus = 50;
+    TotalVolume = 120000;
+    TotalSize = 150;
+    Adjective = "dire";
+    TorsoSpecialColor = rgb16(220, 0, 0); /* EyeColor */
+    BaseBiteStrength = 900;
+    CWeaponSkillHits == 600;
+    AllowedDungeons == DARK_FOREST;
+  }
 }
 
 dog
@@ -3268,7 +3318,7 @@ dog
     Adjective = "skeleton";
     BaseBiteStrength = 800;
     CWeaponSkillHits == 80;
-    AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE; }
+    AllowedDungeons = { 2, XINROCH_TOMB, ATTNAM; }
     Frequency = 2000;
   }
 }
@@ -4230,6 +4280,8 @@ housewife
     }
     ScienceTalkPossibility = 0;
     Inventory = { 2, holybook(INFUSCOR) { Chance = 10; }, HUMAN_FLESH lump; }
+    CanBeGenerated = true;
+    AllowedDungeons == XINROCH_TOMB;
   }
 }
 
@@ -4874,7 +4926,7 @@ vampirebat /* bat-> */
   TotalSize = 30;
   SkinColor = rgb16(64, 64, 96);
   NameSingular = "vampire bat";
-  AllowedDungeons = { 3, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE; }
+  AllowedDungeons = { 5, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE, PYRAMID, DARK_FOREST; }
 }
 
 mistress
@@ -5299,7 +5351,7 @@ vampire
   IsCatacombCreature = true;
   StandVerb = "prowling";
   BonusBiteStrength = 0; /* Doesn't need to be more powerful */
-  AllowedDungeons = { 3, ATTNAM, XINROCH_TOMB, ASLONA_CASTLE; }
+  AllowedDungeons = { 3, ATTNAM, XINROCH_TOMB, PYRAMID; }
 }
 
 kobold
@@ -6515,7 +6567,7 @@ bananagrower
   ArmBitmapPos = 64, 64;
   LegBitmapPos = 0, 288;
   Inventory == banana { Times = 10; }
-  TamingDifficulty = NO_TAMING; /* AI will go insane if he leaves New Attnam */
+  /* AI will no longer go insane if he leaves New Attnam. */
   HostileReplies == "\"Banana POWER!\"";
   AttachedGod = SILVA;
   CanRead = true;
@@ -6898,7 +6950,7 @@ ostrich
   FleshMaterial = OSTRICH_FLESH;
   DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
   StandVerb = "floating";
-  TamingDifficulty = NO_TAMING; /* AI will go insane if it leaves New Attnam */
+  /* AI will no longer go insane if it leaves New Attnam */
   AttachedGod = SILVA;
   ClassStates = LEVITATION;
   AutomaticallySeen = true;
@@ -7580,7 +7632,7 @@ invisiblestalker
   DangerModifier = 250;
   KnownCWeaponSkills == UNARMED;
   CWeaponSkillHits == 200;
-  ClassStates = INVISIBLE;
+  ClassStates = INVISIBLE|SEARCHING;
   BodyPartsDisappearWhenSevered = true;
   IsImmuneToStickiness = true;
 
@@ -7591,8 +7643,8 @@ invisiblestalker
     TotalSize = 100;
     CWeaponSkillHits == 500;
     NameSingular = "slayer";
-    PanicLevel = 50;
     EyeColor = rgb16(180, 0, 0);
+    ClassStates = INVISIBLE|SEARCHING|TELEPORT;
   }
 }
 
@@ -9386,7 +9438,8 @@ nihil
     "\"The point is there's no point.\"";
   }
   Inventory = { 8, celestialmonograph, NEUTRONIUM stone(SOL_STONE), wand(WAND_OF_RESURRECTION), wand(WAND_OF_CLONING), scrollofchangematerial, scrollofcharging, scrollofwishing, horn(HEALING); }
-  DayRequirementForGeneration = 60;
+  HPRequirementForGeneration = 450;
+  DayRequirementForGeneration = 45;
 }
 
 terra
@@ -9538,6 +9591,7 @@ gasghoul /* zombie-> */
   HeadBitmapPos = 112, 512; /* broken gas mask */
   NameSingular = "gas-ghoul";
   DangerModifier = 150;
+  PanicLevel = 20;
   HPRequirementForGeneration = 60;
   DayRequirementForGeneration = 4;
   IsExtraFragile = false;

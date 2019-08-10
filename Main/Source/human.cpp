@@ -3349,7 +3349,9 @@ truth humanoid::CheckZap()
 
 void bananagrower::GetAICommand()
 {
-  if(game::TweraifIsFree())
+  if(game::TweraifIsFree() ||
+     (GetDungeon()->GetIndex() != NEW_ATTNAM)
+   ) // Behave normally outside of New Attnam.
   {
     humanoid::GetAICommand();
     return;
@@ -6965,6 +6967,9 @@ void wizard::GetAICommand()
     RandomFriend = Friend[RAND() % Friend.size()];
     NearestEnemy = 0;
   }
+
+  if(GetRelation(PLAYER) == HOSTILE && PLAYER->CanBeSeenBy(this))
+    NearestEnemy = PLAYER;
 
   beamdata Beam
     (

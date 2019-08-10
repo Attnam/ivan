@@ -318,6 +318,8 @@ CHARACTER(skunk, nonhumanoid)
 
 CHARACTER(invisiblestalker, nonhumanoid)
 {
+ protected:
+  virtual void GetAICommand();
 };
 
 CHARACTER(largecreature, nonhumanoid)

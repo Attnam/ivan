@@ -1021,6 +1021,11 @@ void mine::StepOnEffect(character* Stepper)
   if(!WillExplode(Stepper))
     return;
 
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(Stepper->IsPlayer())
   {
     cchar* SenseVerb = Stepper->CanHear() ? "hear" : "sense";
@@ -1507,6 +1512,11 @@ beartrap::~beartrap()
 
 void beartrap::StepOnEffect(character* Stepper)
 {
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(IsActive() && !IsBroken())
   {
     int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
@@ -3883,6 +3893,11 @@ col16 trinket::GetMaterialColorC(int) const
 
 void gastrap::StepOnEffect(character* Stepper)
 {
+  // NPCs should get some benefit from searching too, so make them immune to
+  // traps if they have it.
+  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+    return;
+
   if(IsActive() && !IsBroken())
   {
     if(Stepper->IsPlayer())

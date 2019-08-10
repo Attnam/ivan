@@ -941,6 +941,8 @@
 #define FLAT 2
 #define BLOAT 3
 
+#define DIRE 1
+
 #define SKELETON_DOG 1
 
 #define LARGE 1
