@@ -549,14 +549,16 @@ cv2 SILHOUETTE_SIZE(48, 64); // it is TILE_SIZE*3,TILE_SIZE*4 tho..
 #define UNDER_WATER_TUNNEL 4
 #define EMPTY_AREA 5
 #define XINROCH_TOMB 6
-#define ASLONA_CASTLE 7
-#define REBEL_CAMP 8
-#define GOBLIN_FORT 9
-#define FUNGAL_CAVE 10
-#define PYRAMID 11
-#define IRINOX 12
-#define DARK_FOREST 13
-#define BLACK_MARKET 14
+#define BLACK_MARKET 7
+#define ASLONA_CASTLE 8
+#define REBEL_CAMP 9
+#define GOBLIN_FORT 10
+#define FUNGAL_CAVE 11
+#define PYRAMID 12
+#define BATTLE_FIELD 13
+#define MONDEDR 14
+#define IRINOX 15
+#define DARK_FOREST 16
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2

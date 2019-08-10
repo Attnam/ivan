@@ -89,6 +89,18 @@ OWTERRAIN(goblinfort, owterrain)
 {
 };
 
+OWTERRAIN(fungalcave, owterrain)
+{
+};
+
+OWTERRAIN(pyramid, owterrain)
+{
+};
+
+OWTERRAIN(battlefield, owterrain)
+{
+};
+
 OWTERRAIN(blackmarket, owterrain)
 {
 };

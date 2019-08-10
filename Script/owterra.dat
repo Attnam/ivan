@@ -50,7 +50,7 @@ attnam
 elpuricave
 {
   BitmapPos = 16, 48;
-  NameStem = "hideous cave entry radiating pure evil";
+  NameStem = "hideous cave entrance radiating pure evil";
   UsesLongArticle = false;
   AttachedDungeon = ELPURI_CAVE;
   CanBeGenerated = false; /* Overridden by the world map generator */
@@ -113,12 +113,42 @@ rebelcamp
 goblinfort
 {
   BitmapPos = 64, 64;
-  NameStem = "overgrown ruins";
+  NameStem = "overgrown ruins of ancient fortress";
   UsesLongArticle = true;
   AttachedDungeon = GOBLIN_FORT;
   CanBeGenerated = true;
   HideLocationInitially = false;
   NativeGTerrainType = EVERGREEN_FOREST;
+}
+
+fungalcave
+{
+  BitmapPos = 64, 64;
+  NameStem = "damp and dank cave entrance";
+  AttachedDungeon = FUNGAL_CAVE;
+  CanBeGenerated = true;
+  HideLocationInitially = false;
+  NativeGTerrainType = JUNGLE;
+}
+
+pyramid
+{
+  BitmapPos = 64, 64;
+  NameStem = "crumbling pyramid";
+  AttachedDungeon = PYRAMID;
+  CanBeGenerated = true;
+  HideLocationInitially = false;
+  NativeGTerrainType = DESERT;
+}
+
+battlefield
+{
+  BitmapPos = 64, 64;
+  NameStem = "besieged stronghold";
+  AttachedDungeon = BATTLE_FIELD;
+  CanBeGenerated = true;
+  HideLocationInitially = false;
+  NativeGTerrainType = TUNDRA;
 }
 
 blackmarket
@@ -137,7 +167,7 @@ locationAA
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = MONDEDR;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
@@ -148,7 +178,7 @@ locationAB
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = IRINOX;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
@@ -159,7 +189,7 @@ locationAC
   BitmapPos = 0, 64;
   NameStem = "empty area";
   UsesLongArticle = true;
-  AttachedDungeon = EMPTY_AREA;
+  AttachedDungeon = DARK_FOREST;
   AttachedArea = 0;
   CanBeGenerated = false;
   NativeGTerrainType = JUNGLE;
