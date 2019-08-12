@@ -37,7 +37,7 @@ build_script:
         
         cd $env:APPVEYOR_BUILD_FOLDER
         
-        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
+        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=$env:APPVEYOR_BUILD_FOLDER/build 
         cmake . 
         make -j4 install
         
