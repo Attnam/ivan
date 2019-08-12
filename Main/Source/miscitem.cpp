@@ -1023,7 +1023,7 @@ void mine::StepOnEffect(character* Stepper)
 
   // NPCs should get some benefit from searching too, so make them immune to
   // traps if they have it.
-  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
     return;
 
   if(Stepper->IsPlayer())
@@ -1514,7 +1514,7 @@ void beartrap::StepOnEffect(character* Stepper)
 {
   // NPCs should get some benefit from searching too, so make them immune to
   // traps if they have it.
-  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
     return;
 
   if(IsActive() && !IsBroken())
@@ -3895,7 +3895,7 @@ void gastrap::StepOnEffect(character* Stepper)
 {
   // NPCs should get some benefit from searching too, so make them immune to
   // traps if they have it.
-  if(!Stepper->IsPlayer && Stepper->StateIsActivated(SEARCHING))
+  if(!Stepper->IsPlayer() && Stepper->StateIsActivated(SEARCHING))
     return;
 
   if(IsActive() && !IsBroken())

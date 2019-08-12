@@ -2605,7 +2605,7 @@ void bat::GetAICommand()
 
 void invisiblestalker::GetAICommand()
 {
-  if(GetPos().IsAdjacent(PLAYER->GetPos())
+  if(GetPos().IsAdjacent(PLAYER->GetPos()))
   {
     if(CanBeSeenByPlayer() &&
        (GetHP() < (GetMaxHP() >> 1) || IsRetreating())
