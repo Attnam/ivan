@@ -150,6 +150,7 @@ void globalwindowhandler::Init()
   SDL_EnableKeyRepeat(500, 30);
 #else
   //FIXSDL2 SDL_EnableKeyRepeat(500, 30);
+  SDL_ShowWindow(graphics::GetWindow());
 #endif
 }
 
