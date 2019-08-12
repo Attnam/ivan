@@ -5768,7 +5768,7 @@ void golem::CreateCorpse(lsquare* Square)
   }
   else if(Material->IsGaseous())
   {
-    GetLevel()->GasExplosion(static_cast<gas*>(Material), GetLSquareUnder(), this);
+    game::GetCurrentLevel()->GasExplosion(static_cast<gas*>(Material), Square, this);
   }
   else if(Material->IsSolid())
   {
@@ -6981,70 +6981,73 @@ void wizard::GetAICommand()
 
   if(NearestEnemy)
   {
-    lsquare* Square = NearestEnemy->GetLSquareUnder();
-    EditAP(-GetSpellAPCost());
-
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
 
-    character* ToBeCalled = 0;
-
-    switch(RAND_N(6))
+    if(RandomFriend && !RAND_N(4))
     {
-     case 0:
-      ToBeCalled = mysticfrog::Spawn(LIGHT);
-      break;
-     default:
-      int MaterialConfig = MUSTARD_GAS;
-      switch (RAND_N(6))
+      EditAP(-GetSpellAPCost());
+
+      RandomFriend->GetLSquareUnder()->DrawParticles(RED);
+      RandomFriend->TeleportNear(NearestEnemy);
+      return;
+    }
+    else
+    {
+      lsquare* Square = NearestEnemy->GetLSquareUnder();
+      character* ToBeCalled = 0;
+
+      EditAP(-GetSpellAPCost());
+
+      switch(RAND_N(9))
       {
-        case 0: MaterialConfig = MAGIC_VAPOUR; break;
-        case 1: MaterialConfig = SLEEPING_GAS; break;
-        case 2: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
-        case 3: MaterialConfig = TELEPORT_GAS; break;
+       case 0:
+        ToBeCalled = mysticfrog::Spawn(LIGHT);
+        break;
+       default:
+        int MaterialConfig = MUSTARD_GAS;
+        switch (RAND_N(6))
+        {
+          case 0: MaterialConfig = MAGIC_VAPOUR; break;
+          case 1: MaterialConfig = SLEEPING_GAS; break;
+          case 2:
+          case 3: MaterialConfig = EVIL_WONDER_STAFF_VAPOUR; break;
+          case 4: MaterialConfig = TELEPORT_GAS; break;
+        }
+
+        ToBeCalled = golem::Spawn(MaterialConfig);
+        break;
       }
 
-      ToBeCalled = golem::Spawn(MaterialConfig);
-      break;
-    }
+      v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
 
-    v2 Where = GetLevel()->GetNearestFreeSquare(ToBeCalled, Square->GetPos());
+      if(Where == ERROR_V2)
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("Nothing happens.");
 
-    if(Where == ERROR_V2)
-    {
+        delete ToBeCalled;
+      }
+      else
+      {
+        ToBeCalled->SetGenerationDanger(GetGenerationDanger());
+        ToBeCalled->SetTeam(GetTeam());
+        ToBeCalled->PutTo(Where);
+
+        if(ToBeCalled->CanBeSeenByPlayer())
+          ADD_MESSAGE("Suddenly %s materializes!", ToBeCalled->CHAR_NAME(INDEFINITE));
+
+        ToBeCalled->GetLSquareUnder()->DrawParticles(RED);
+      }
+
       if(CanBeSeenByPlayer())
-        ADD_MESSAGE("Nothing happens.");
+        NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE)
+                                                + CONST_S(" interrupts you."));
+      else
+        NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
 
-      delete ToBeCalled;
+      return;
     }
-    else
-    {
-      ToBeCalled->SetGenerationDanger(GetGenerationDanger());
-      ToBeCalled->SetTeam(GetTeam());
-      ToBeCalled->PutTo(Where);
-
-      if(ToBeCalled->CanBeSeenByPlayer())
-        ADD_MESSAGE("Suddenly %s materializes!", ToBeCalled->CHAR_NAME(INDEFINITE));
-
-      ToBeCalled->GetLSquareUnder()->DrawParticles(RED);
-    }
-
-    if(CanBeSeenByPlayer())
-      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE)
-                                              + CONST_S(" interrupts you."));
-    else
-      NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
-
-    return;
-  }
-
-  if(RandomFriend)
-  {
-    EditAP(-GetSpellAPCost());
-    RandomFriend->GetLSquareUnder()->DrawParticles(RED);
-    RandomFriend->BeginTemporaryState(GAS_IMMUNITY, 500 + RAND() % 1000);
-
-    return;
   }
 
   StandIdleAI();
