@@ -2,7 +2,7 @@ version: 0.50.9.{build}
 
 branches:
   only:
-  - master
+  - update-msys2
 
 environment:
     COMPILER: msys2
