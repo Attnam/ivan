@@ -29,6 +29,7 @@ build_script:
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
         
         cd C:/projects/ivan
