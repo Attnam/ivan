@@ -32,7 +32,7 @@ build_script:
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
         
-        cd C:/projects/ivan
+        cd C:/projects/ivan-tnq82
         
         cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
         cmake . 
