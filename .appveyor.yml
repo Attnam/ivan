@@ -32,12 +32,11 @@ install:
       C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
       C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
 
-cache:
-  - C:\msys64
+cache: C:\msys64\var\cache\pacman\pkg
 
 build_script:
   - ps: |
-      cd C:/projects/ivan-tnq82
+      cd $env:APPVEYOR_BUILD_FOLDER
       
       cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
       cmake . 
