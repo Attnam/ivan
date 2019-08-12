@@ -13,28 +13,33 @@ environment:
 init:
     - cmd: set PATH=C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
 
+install:
+  - ps: |
+      mkdir msys2
+      
+      cd C:/msys64
+      
+      C:\msys64\usr\bin\bash -lc ("for i in {1..3}; do pacman --noconfirm -Syu --force coreutils  && break || sleep 15; done");
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Su"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S git"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-gcc"
+      
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S make"
+      
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
+      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
+
+cache:
+  - C:\msys64
+
 build_script:
-    - ps: |
-        mkdir msys2
-        
-        cd C:/msys64
-        
-        C:\msys64\usr\bin\bash -lc ("for i in {1..3}; do pacman --noconfirm -Syu --force coreutils  && break || sleep 15; done");
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Su"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S git"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-gcc"
-        
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S make"
-        
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
-        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
-        
-        cd C:/projects/ivan-tnq82
-        
-        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
-        cmake . 
-        make -j4 install
-        
+  - ps: |
+      cd C:/projects/ivan-tnq82
+      
+      cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
+      cmake . 
+      make -j4 install
+      
