@@ -13,32 +13,31 @@ environment:
 init:
     - cmd: set PATH=C:\%MSYS2_DIR%\%MSYSTEM%\bin;C:\%MSYS2_DIR%\usr\bin;%PATH%
 
-install:
-  - ps: |
-      mkdir msys2
-      
-      cd C:/msys64
-      
-      C:\msys64\usr\bin\bash -lc ("for i in {1..3}; do pacman --noconfirm -Syu --force coreutils  && break || sleep 15; done");
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Su"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S git"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-gcc"
-      
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S make"
-      
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
-      C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
-
 cache: C:\msys64\var\cache\pacman\pkg
+# N.B. you might need this nifty PS command to clear the cache one day: Remove-Item c:\msys64\var\cache\pacman\pkg -Recurse -Force
 
 build_script:
-  - ps: |
-      cd $env:APPVEYOR_BUILD_FOLDER
-      
-      cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
-      cmake . 
-      make -j4 install
-      
+    - ps: |
+        mkdir msys2
+        
+        cd C:/msys64
+        
+        C:\msys64\usr\bin\bash -lc ("for i in {1..3}; do pacman --noconfirm -Syu --force coreutils  && break || sleep 15; done");
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Su"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S git"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-gcc"
+        
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S make"
+        
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-cmake"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libpng"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-SDL2_mixer"
+        C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
+        
+        cd $env:APPVEYOR_BUILD_FOLDER
+        
+        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=C:/projects/ivan-tnq82/build 
+        cmake . 
+        make -j4 install
+        
