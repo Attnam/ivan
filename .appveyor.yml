@@ -1,8 +1,8 @@
-version: 0.50.9.{build}
+version: 0.90.{build} # Has no bearing on actual IVAN version - haha!
 
 branches:
   only:
-  - update-msys2
+  - master
 
 environment:
     COMPILER: msys2
