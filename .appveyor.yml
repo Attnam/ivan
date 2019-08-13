@@ -36,8 +36,9 @@ build_script:
         C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-pkg-config"
         
         cd $env:APPVEYOR_BUILD_FOLDER
+        $thisclone = Split-Path -Path $env:APPVEYOR_BUILD_FOLDER -Leaf
         
-        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX=$env:APPVEYOR_BUILD_FOLDER/build 
+        cmake -G "MSYS Makefiles" -DCMAKE_CXX_FLAGS=-DWIZARD -DCMAKE_INSTALL_PREFIX="C:/projects/$thisclone/build" 
         cmake . 
         make -j4 install
         
