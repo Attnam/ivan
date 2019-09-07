@@ -5719,8 +5719,6 @@ void golem::CreateCorpse(lsquare* Square)
 {
   material* Material = GetTorso()->GetMainMaterial();
 
-  if(Material->IsSolid())
-    Square->AddItem(Material->CreateNaturalForm(ItemVolume));
   if(Material->IsLiquid())
   {
     for(int d = 0; d < GetExtendedNeighbourSquares(); ++d)
@@ -5730,6 +5728,14 @@ void golem::CreateCorpse(lsquare* Square)
       if(NeighbourSquare)
         NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
     }
+  }
+  else if(Material->IsGaseous())
+  {
+    GetLevel()->GasExplosion(static_cast<gas*>(Material), GetLSquareUnder(), this);
+  }
+  else if(Material->IsSolid())
+  {
+    Square->AddItem(Material->CreateNaturalForm(ItemVolume));
   }
 
   SendToHell();
