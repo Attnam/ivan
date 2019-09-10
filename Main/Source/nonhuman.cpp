@@ -550,7 +550,7 @@ void dog::BeTalkedTo()
     else
       character::BeTalkedTo();
   }
-  else if(RAND_N(5))
+  else if(RAND_N(5) && GetPos().IsAdjacent(PLAYER->GetPos()))
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");
   else
     ADD_MESSAGE("\"Meow.\"");

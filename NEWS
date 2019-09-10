@@ -11,6 +11,28 @@ Next version
 ------------
 
 Changes:
+* NPCs will sometimes talk to yu on their own.
+
+Version 0.56, released 19th February 2019
+-----------------------------------------
+
+ Changes:
+* New banana-and-pick-axe icon on Mac and Windows.
+* Remove Google groups e-mail address.
+
+Fixes:
+* Windows build done using mxe, which should fix issues on Windows 7.
+* Fix first person messages.
+* Simplify command descriptions.
+* Fix path search for SDL2.
+* Fix artifacts being spawned through polypiling.
+* Try to fix stat growth while polymorphed.
+* Fix crafting recipes.
+
+Version 0.55, released 20th December 2018
+-----------------------------------------
+
+Changes:
 * Added Freedom for Tweraif victory: It is now possible to win by bringing freedom to Tweraif, and then making sure it stays free. It is a low-ranking win, but at least your village will be safe.
 * Considerably reworked Lobh-se.
 * Added new shields, amulet, wand and artifacts.
