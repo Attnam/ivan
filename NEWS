@@ -15,6 +15,23 @@ Changes:
 * Switch some helmets from full helmet to normal.
 
 Fixes:
+* NPCs will sometimes talk to you on their own.
+
+Version 0.56, released 19th February 2019
+-----------------------------------------
+
+ Changes:
+* New banana-and-pick-axe icon on Mac and Windows.
+* Remove Google groups e-mail address.
+
+Fixes:
+* Windows build done using mxe, which should fix issues on Windows 7.
+* Fix first person messages.
+* Simplify command descriptions.
+* Fix path search for SDL2.
+* Fix artifacts being spawned through polypiling.
+* Try to fix stat growth while polymorphed.
+* Fix crafting recipes.
 
 Version 0.55, released 20th December 2018
 -----------------------------------------

@@ -79,6 +79,7 @@ MATERIAL(organic, solid)
 MATERIAL(gas, material)
 {
   virtual int IsBurning() const { return 0; }
+  virtual truth IsGaseous() const { return true; }
 };
 
 MATERIAL(liquid, material)
