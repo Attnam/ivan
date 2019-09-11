@@ -164,6 +164,7 @@ class material
   static material* MakeMaterial(int, long = 0);
   virtual truth IsFlesh() const { return false; }
   virtual truth IsLiquid() const { return false; }
+  virtual truth IsGaseous() const { return false; }
   virtual cchar* GetConsumeVerb() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
@@ -191,7 +192,7 @@ class material
   virtual truth TryToRust(long, long = 0) { return false; }
   static const database* GetDataBase(int);
   virtual truth CanSpoil() const { return false; }
-  truth IsSolid() const { return !IsLiquid(); }
+  truth IsSolid() const { return !IsLiquid() && !IsGaseous(); }
   /* A dummy materialpredicate */
   truth True() const { return true; }
   void FinishConsuming(character*);

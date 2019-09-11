@@ -25,6 +25,7 @@ Fixes:
 * Do not aggressively upgrade dependencies for mac build.
 * Mirrored items cannot be dismantled into permanent lump of material.
 * Stop weapon swap from auto-stealing items in shops.
+* NPCs will sometimes talk to you on their own.
 
 Version 0.56, released 19th February 2019
 -----------------------------------------
