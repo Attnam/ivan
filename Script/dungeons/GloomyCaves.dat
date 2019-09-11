@@ -269,7 +269,7 @@ Dungeon ELPURI_CAVE;
           e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
           u == Random { MinPrice = 200; MaxPrice = 10000; Category = WAND|TOOL; }
           r == Random { MinPrice = 200; MaxPrice = 10000; Category = SCROLL|BOOK; }
-          s == wand(WAND_OF_STRIKING);
+          s = { 2, locationmap(BLACK_MARKET), wand(WAND_OF_STRIKING); }
         }
       }
       {

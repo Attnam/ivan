@@ -978,6 +978,9 @@ truth item::CanBePiledWith(citem* Item, ccharacter* Viewer) const
 
 void item::Break(character* Breaker, int)
 {
+  if(!CanBeBroken() || IsBroken())
+    return;
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
 
@@ -2169,6 +2172,13 @@ truth itemlock::TryKey(item* Key, character* Applier)
         ADD_MESSAGE("You lock %s.", GetVirtualDescription(DEFINITE).CStr());
       else if(Applier->CanBeSeenByPlayer())
         ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), GetVirtualDescription(DEFINITE).CStr());
+    }
+
+    // Add a tiny chance that any key you use breaks, so that there is some value in having
+    // multiples of a key, and in keys of better materials.
+    if(!RAND_N(Key->GetMainMaterial()->GetStrengthValue()))
+    {
+      Key->Break(Applier);
     }
 
     Locked = !Locked;
