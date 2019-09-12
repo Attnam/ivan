@@ -195,7 +195,7 @@ can /* materialcontainer-> */
   AttachedGod = NONE;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 lump
@@ -216,7 +216,7 @@ lump
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 112;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 meleeweapon
@@ -1736,7 +1736,7 @@ banana /* materialcontainer-> */
   AllowEquip = false;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 
   Config BROKEN;
   {
@@ -2485,7 +2485,7 @@ loaf
   AttachedGod = NONE;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 scrollofwishing /* scroll-> */
@@ -2884,7 +2884,7 @@ kiwi
   WieldedBitmapPos = 160, 368;
   AllowEquip = false;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 pineapple
@@ -2903,7 +2903,7 @@ pineapple
   AttachedGod = SILVA;
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 palmbranch
@@ -3193,6 +3193,7 @@ key
   AttachedGod = LORICATUS;
   WieldedBitmapPos = 160, 368;
   IsAbstract = true;
+  CanBeBroken = true;
   CanBeBurned = false;
 
   Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
@@ -3660,13 +3661,14 @@ cloak /* armor-> */
 
   Config CLOAK_OF_FLYING;
   {
-    Possibility = 0;
+    Possibility = 1;
     GearStates = LEVITATION;
     PostFix = "of flying";
     Price = 2500;
     MainMaterialConfig = { 4, FABRIC, OMMEL_HAIR, OSTRICH_FEATHER, GRIFFON_FEATHER; }
     MaterialConfigChances = { 4, 50, 150, 250, 50; }
     EnchantmentPlusChance = 2;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|CLOAK_OF_FLYING;
@@ -4207,7 +4209,7 @@ belt /* armor-> */
 
   Config BELT_OF_LEVITATION;
   {
-    Possibility = 0;
+    Possibility = 1;
     PostFix = "of levitation";
     GearStates = LEVITATION;
     Price = 500;
@@ -4215,6 +4217,7 @@ belt /* armor-> */
     MainMaterialConfig == ANGEL_HAIR;
     MaterialConfigChances == 100;
     EnchantmentPlusChance = 0;
+    AllowedDungeons == BLACK_MARKET;
   }
 
   Config BROKEN|BELT_OF_LEVITATION;
@@ -4560,6 +4563,29 @@ ring
     AttachedGod = CRUENTUS;
     GearStates = FEARLESS;
     Alias = { 2, "fearlessness", "bravery"; }
+  }
+
+  Config RING_OF_SPEED;
+  {
+    Possibility = 0; /* Artifact held by One-eyed Sam the black marketeer. */
+    PostFix = "of great speed";
+    MainMaterialConfig == QUICK_SILVER;
+    Price = 2500;
+    AttachedGod = CLEPTIA;
+    GearStates = HASTE;
+    TeleportPriority = 500;
+    ArticleMode = FORCE_THE;
+    CanBeWished = false;
+    IsMaterialChangeable = false;
+    IsPolymorphable = false;
+    IsPolymorphSpawnable = false;
+    IsDestroyable = false;
+    CanBeCloned = false;
+    CanBeMirrored = true;
+    CanBeBroken = false;
+    CanBeBurned = false;
+    CanBePiled = false;
+    Alias = { 2, "speed", "haste"; }
   }
 }
 
@@ -6301,7 +6327,7 @@ carrot
   AttachedGod = SEGES;
   WieldedBitmapPos = 160, 352;
   IsValuable = false;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 
   Config BROKEN;
   {
@@ -6327,7 +6353,7 @@ mango
   WieldedBitmapPos = 176, 144;
   IsValuable = false;
   CanBeBroken = true;
-  /* AllowedDungeons == DARK_FOREST; */
+  /* AllowedDungeons = { 2, DARK_FOREST, BLACK_MARKET; } */
 
   Config BROKEN;
   {
@@ -6358,7 +6384,7 @@ sausage
   WieldedBitmapPos = 160, 320;
   IsValuable = false;
   IsSadistWeapon = true;
-  AllowedDungeons = { 4, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE; }
+  AllowedDungeons = { 5, NEW_ATTNAM, ATTNAM, UNDER_WATER_TUNNEL, ELPURI_CAVE, BLACK_MARKET; }
 }
 
 wondersmellstaff
@@ -7280,6 +7306,7 @@ trinket
 
   Config DEAD_FISH;
   {
+    Category = FOOD;
     DefaultSize = 30;
     DefaultMainVolume = 250;
     HasSecondaryMaterial = false;
@@ -7506,4 +7533,22 @@ unpick
   MainMaterialConfig == PSYPHER;
   SecondaryMaterialConfig == RATA_WOOD;
   Alias = { 2, "unpick", "unpickaxe"; }
+}
+
+locationmap /* scroll-> */
+{
+  Possibility = 0;
+  BitmapPos = 112, 400;
+  Price = 110;
+  ReadDifficulty = 1000;
+  NameSingular = "map";
+  AttachedGod = SOPHOS;
+  IsAbstract = true;
+  IsPolymorphSpawnable = false;
+  CanBeCloned = false;
+
+  Config BLACK_MARKET;
+  {
+    PostFix = "of black market";
+  }
 }

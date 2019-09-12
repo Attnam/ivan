@@ -11,10 +11,29 @@ Next version
 ------------
 
 Changes:
-* Magic helmets spawn with random material.
-* Switch some helmets from full helmet to normal.
 
 Fixes:
+
+Version 0.57, released XXth September 2019
+------------------------------------------
+
+Changes:
+* Add Black Market, an end-game shop to spend all excess gold in.
+* Add game lore and fiction to the Doc folder.
+* Magic helmets spawn with random material.
+* Switch some helmets from full helmet to normal.
+* Keys very rarely break when used.
+
+Fixes:
+* Clean up code.
+* New "expansive terrain" can help prevent blocking important entrances.
+* Improve item search algorithm.
+* Fix ring detection to work same as scrolls.
+* Enable wishes for empty containers, make empty cans and empty bottles wishable.
+* No rotated pictures for equipments and newly-spawned items.
+* Do not aggressively upgrade dependencies for mac build.
+* Mirrored items cannot be dismantled into permanent lump of material.
+* Stop weapon swap from auto-stealing items in shops.
 * NPCs will sometimes talk to you on their own.
 
 Version 0.56, released 19th February 2019

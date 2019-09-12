@@ -878,6 +878,13 @@ truth door::TryKey(item* Thingy, character* Applier)
         ADD_MESSAGE("%s locks the door.", Applier->CHAR_NAME(DEFINITE));
     }
 
+    // Add a tiny chance that any key you use breaks, so that there is some value in having
+    // multiples of a key, and in keys of better materials.
+    if(!RAND_N(Thingy->GetMainMaterial()->GetStrengthValue()))
+    {
+      Thingy->Break(Applier);
+    }
+
     SetIsLocked(!IsLocked());
     return true;
   }
