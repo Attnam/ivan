@@ -11,14 +11,23 @@ Next version
 ------------
 
 Changes:
+
+Fixes:
+
+Version 0.57, released XXth September 2019
+------------------------------------------
+
+Changes:
 * Add Black Market, an end-game shop to spend all excess gold in.
 * Add game lore and fiction to the Doc folder.
-* New "expansive terrain" can help prevent blocking important entrances.
-* Improve item search algorithm.
+* Magic helmets spawn with random material.
+* Switch some helmets from full helmet to normal.
 * Keys very rarely break when used.
 
 Fixes:
 * Clean up code.
+* New "expansive terrain" can help prevent blocking important entrances.
+* Improve item search algorithm.
 * Fix ring detection to work same as scrolls.
 * Enable wishes for empty containers, make empty cans and empty bottles wishable.
 * No rotated pictures for equipments and newly-spawned items.
