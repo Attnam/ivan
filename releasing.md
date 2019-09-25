@@ -4,7 +4,9 @@ To do for each release
 1) Pull from master
 2) Update version numbers in `CMakeLists.txt`
 3) Update savefile version, bonefile version or highscore version, as appropriate
-4) Push a git tag to `master` in the format `v058` (use the same number as the new version number entered in `CMakeLists.txt`)
+4) Commit the above changes
+5) Create a tag in the format `v058` (use the same number as the new version number entered in `CMakeLists.txt`)
+6) Push the above changes including tag to `master` 
 
 A zip file should appear later, on the release page. The binary is compiled with static linking, therefore, no dynamic link libraries are shipped.
 

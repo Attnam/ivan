@@ -5558,7 +5558,7 @@ helmet
   Config BROKEN|HELM_OF_MANA;
   {
     BitmapPos = 64, 32;
-    HelmetBitmapPos = 96, 512;;
+    HelmetBitmapPos = 96, 512;
     Possibility = 1;
     Price = 25;
     AffectsMana = false;
