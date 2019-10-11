@@ -1902,6 +1902,10 @@ truth commandsystem::WizardMode(character* Char)
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
 
+        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
+        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
+
         game::GetWorldMap()->SendNewDrawRequest();
       }
       else
@@ -1914,6 +1918,10 @@ truth commandsystem::WizardMode(character* Char)
         v2 XinrochTombPos = game::GetWorldMap()->GetEntryPos(0, XINROCH_TOMB);
         game::GetWorldMap()->GetWSquare(XinrochTombPos)->ChangeOWTerrain(xinrochtomb::Spawn());
         game::GetWorldMap()->RevealEnvironment(XinrochTombPos, 1);
+
+        v2 BlackMarketPos = game::GetWorldMap()->GetEntryPos(0, BLACK_MARKET);
+        game::GetWorldMap()->GetWSquare(BlackMarketPos)->ChangeOWTerrain(blackmarket::Spawn());
+        game::GetWorldMap()->RevealEnvironment(BlackMarketPos, 1);
 
         game::SaveWorldMap();
       }
@@ -2038,7 +2046,7 @@ truth commandsystem::SecretKnowledge(character* Char)
     switch(Chosen)
     {
      case 0:
-      List.AddDescription(CONST_S("                                                AS LS DX AG EN PE IN WI CH MA"));
+      List.AddDescription(CONST_S("                                                AS LS DX AG EN PE IN WS WL CH MA"));
 
       for(c = 0; c < Character.size(); ++c)
       {

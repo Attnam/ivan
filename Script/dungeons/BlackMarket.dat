@@ -34,7 +34,7 @@ Dungeon BLACK_MARKET;
     GenerateMonsters = false;
     Rooms = 1;
     Items = 0;
-    IsOnGround = true;
+    IsOnGround = false;
     TeamDefault = GUILD_TEAM;
     IgnoreDefaultSpecialSquares = true;
     AutoReveal = false;

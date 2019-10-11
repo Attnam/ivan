@@ -9155,8 +9155,10 @@ void character::AddAttributeInfo(festring& Entry) const
   Entry.Resize(66);
   Entry << GetAttribute(WISDOM);
   Entry.Resize(69);
-  Entry << GetAttribute(CHARISMA);
+  Entry << GetAttribute(WILL_POWER);
   Entry.Resize(72);
+  Entry << GetAttribute(CHARISMA);
+  Entry.Resize(75);
   Entry << GetAttribute(MANA);
 }
 
