@@ -3389,7 +3389,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 2;
+    Possibility = 5;
     PostFix = "of fire resistance";
     Price = 500;
     FireResistance = 15;
@@ -3398,7 +3398,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_FIRE_RESISTANCE;
   {
-    Possibility = 1;
+    Possibility = 2;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;
@@ -3411,7 +3411,7 @@ shield /* armor-> */
 
   Config SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 2;
+    Possibility = 5;
     PostFix = "of electricity resistance";
     Price = 500;
     ElectricityResistance = 15;
@@ -3420,7 +3420,7 @@ shield /* armor-> */
 
   Config BROKEN|SHIELD_OF_ELECTRICITY_RESISTANCE;
   {
-    Possibility = 1;
+    Possibility = 2;
     DefaultSize = 40;
     FormModifier = 20;
     StrengthModifier = 50;

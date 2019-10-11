@@ -21,31 +21,31 @@
 
 Dungeon GOBLIN_FORT;
 {
-  Levels = 21;
+  Levels = 6;
   Description = "Goblin Fort";
   ShortDescription = "GF";
 
   LevelDefault
   {
-    FillSquare = COBBLE_STONE solidterrain(GROUND), CLAY earth;
-    TunnelSquare = COBBLE_STONE solidterrain(GROUND), 0;
-    Size = 42, 26;
-    Rooms = 8:20;
-    Items = 25:50;
+    FillSquare = DIRT solidterrain(GROUND), SLATE earth;
+    TunnelSquare = DIRT solidterrain(GROUND), 0;
+    Size = 40, 40;
+    Rooms = 8:25;
+    Items = 15:35;
     GenerateMonsters = true;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
     LOSModifier = 16;
     IgnoreDefaultSpecialSquares = false;
-    DifficultyBase = 50;
-    DifficultyDelta = 10;
+    DifficultyBase = 60;
+    DifficultyDelta = 15;
     MonsterAmountBase = 10;
-    MonsterAmountDelta = 2;
-    MonsterGenerationIntervalBase = 140;
-    MonsterGenerationIntervalDelta = -10;
+    MonsterAmountDelta = 3;
+    MonsterGenerationIntervalBase = 200;
+    MonsterGenerationIntervalDelta = -30;
     CanGenerateBone = true;
     ItemMinPriceBase = 20;
-    ItemMinPriceDelta = 10;
+    ItemMinPriceDelta = 8;
     EnchantmentMinusChanceBase = 0;
     EnchantmentMinusChanceDelta = 0;
     EnchantmentPlusChanceBase = 5;
@@ -61,12 +61,32 @@ Dungeon GOBLIN_FORT;
       "Dungeon3.mid";
     }
 
+    /* Decorations */
     Square, Random NOT_WALKABLE|NOT_IN_ROOM;
     {
       Items == stone;
-      Times = 25:50;
+      Times = 10:30;
     }
 
+    Square, Random HAS_NO_OTERRAIN;
+    {
+      Items == CLAY stone;
+      Times = 5:15;
+    }
+
+    Square, Random HAS_NO_OTERRAIN|NOT_IN_ROOM;
+    {
+      OTerrain = boulder(1);
+      Times = 1:3;
+    }
+
+    Square, Random HAS_NO_OTERRAIN|NOT_IN_ROOM;
+    {
+      OTerrain = boulder(2);
+      Times = 1:3;
+    }
+
+    /* Traps & Stairs */
     Square, Random;
     {
       Items == mine { Team = MONSTER_TEAM; IsActive = true; }
@@ -102,11 +122,11 @@ Dungeon GOBLIN_FORT;
     RoomDefault
     {
       Pos = 2:XSize-5,2:YSize-5;
-      Size = 4:11,4:11;
+      Size = 3:7,3:7;
       AltarPossible = true;
-      WallSquare = solidterrain(GROUND), GRANITE wall(BRICK_OLD);
-      FloorSquare = solidterrain(PARQUET), 0;
-      DoorSquare = solidterrain(PARQUET), GRANITE door;
+      WallSquare = DIRT solidterrain(GROUND), GNEISS wall(BRICK_OLD);
+      FloorSquare = OAK_WOOD solidterrain(PARQUET), 0;
+      DoorSquare = OAK_WOOD solidterrain(PARQUET), OAK_WOOD door;
       GenerateDoor = true;
       DivineMaster = 0;
       GenerateTunnel = true;
@@ -123,82 +143,27 @@ Dungeon GOBLIN_FORT;
     }
   }
 
-  /* Entrance Ruins */
   Level 0;
   {
-    FillSquare = solidterrain(GRASS_TERRAIN), 0;
-    Size = 42, 26;
-    GenerateMonsters = false;
-    Rooms = 0;
-    Items = 0;
-    IsOnGround = true;
-    TeamDefault = MONSTER_TEAM;
-    LOSModifier = 48;
-    IgnoreDefaultSpecialSquares = false;
-    AutoReveal = true;
-    CanGenerateBone = false;
-    DifficultyBase = 50;
-    DifficultyDelta = 0;
-    EnchantmentMinusChanceBase = -15;
-    EnchantmentMinusChanceDelta = 0;
-    EnchantmentPlusChanceBase = 0;
-    EnchantmentPlusChanceDelta = 0;
-    BackGroundType = GREEN_FRACTAL;
-    EarthquakesAffectTunnels = true;
-    AudioPlayList =
+    Square, Random IN_ROOM;
     {
-      1,
-      "Empty.mid";
-    }
-
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = boulder(1);
-      Times = 1:10;
-    }
-
-    Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
-    {
-      OTerrain = boulder(2);
-      Times = 1:10;
-    }
-
-    RoomDefault
-    {
-      Pos = 2:40,2:24;
-      Size = 4:6,4:6;
-      AltarPossible = false;
-      WallSquare = solidterrain(GRASS_TERRAIN), wall(BRICK_PRIMITIVE);
-      FloorSquare = solidterrain(GRASS_TERRAIN), 0;
-      DoorSquare = solidterrain(GRASS_TERRAIN), BALSA_WOOD door;
-      GenerateDoor = true;
-      DivineMaster = 0;
-      GenerateTunnel = false;
-      GenerateLanterns = false;
-      Type = ROOM_NORMAL;
-      GenerateFountains = false;
-      AllowLockedDoors = false;
-      AllowBoobyTrappedDoors = false;
-      Shape = ROUND_CORNERS;
-      IsInside = true;
-      GenerateWindows = true;
-      UseFillSquareWalls = false;
-      Flags = 0;
+      OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 4; }
+      EntryIndex = STAIRS_DOWN + 1;
     }
   }
 
-  /* Random Rooms */
-
   /* Cat Room  */
-  RandomLevel 4:9;
+  RandomLevel 1:3;
   {
+    LevelMessage = "You hear distant purring.";
+
     Room
     {
       Size = 6,6;
       AltarPossible = false;
       Shape = ROUND_CORNERS;
 
-      /* TODO: reward */
+      /* TODO: reward, maybe switch with map_snippets */
 
       CharacterMap
       {
@@ -217,11 +182,17 @@ Dungeon GOBLIN_FORT;
         cLLc
         .cc.
       }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == trinket(BONE_FISH);
+        Times = 1:5;
+      }
     }
   }
 
   /* Throne Room */
-  RandomLevel 1:9;
+  RandomLevel 0:4;
   {
     Room
     {
@@ -231,6 +202,7 @@ Dungeon GOBLIN_FORT;
       GenerateFountains = false;
       GenerateLanterns = false;
       GenerateDoor = false;
+      GenerateTunnel = false;
       AltarPossible = false;
       Flags = NO_MONSTER_GENERATION;
 
@@ -244,6 +216,240 @@ Dungeon GOBLIN_FORT;
         OTerrain = BEECH_WOOD door(HEART_SHAPED_LOCK);
         AttachRequired = true;
       }
+    }
+  }
+
+  /* Explosive Room */
+  RandomLevel 0:4;
+  {
+    Room
+    {
+      Size = 5,5;
+      AllowLockedDoors = true;
+      AllowBoobyTrappedDoors = true;
+      GenerateFountains = false;
+      AltarPossible = false;
+      Flags = NO_MONSTER_GENERATION;
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine;
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == mine(BIG_MINE);
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gastrap;
+        Times = 1:5;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == backpack;
+        Times = 2:4;
+      }
+
+      Square, Random HAS_NO_OTERRAIN;
+      {
+        Items == gasgrenade;
+        Times = 2:6;
+      }
+    }
+  }
+
+  Level 3;
+  {
+    IgnoreDefaultSpecialSquares = true;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 5; AttachedEntry = STAIRS_UP + 1; }
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+  }
+
+  /* Big Level */
+  Level 4;
+  {
+    Description = "salt cave";
+    ShortDescription = "Salt Cave";
+    Rooms = 50:150;
+    Items = 80:200;
+    Size = 100, 100;
+    LOSModifier = 42;
+    IgnoreDefaultSpecialSquares = true;
+    MonsterAmountBase = 30;
+    MonsterAmountDelta = 30;
+    LevelMessage = "Sounds echo around this huge level.";
+    FillSquare = SALT solidterrain(GROUND), ROCK_SALT earth;
+    TunnelSquare = SALT solidterrain(GROUND), 0;
+
+    RoomDefault
+    {
+      Size = 6:23,6:23;
+      Pos = 2:XSize-5,2:YSize-5;
+      WallSquare = SALT solidterrain(GROUND), LIME_STONE wall(BRICK_OLD);
+      FloorSquare = CALCITE solidterrain(PARQUET), 0;
+      DoorSquare = CALCITE solidterrain(PARQUET), TEAK_WOOD door;
+    }
+
+    /* Stairs are always close together: */
+    Square, BoundedRandom XSize-20, 2, XSize-2, 20, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP) { AttachedArea = 0; AttachedEntry = STAIRS_DOWN + 1; }
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, BoundedRandom XSize-12, 2, XSize-2, 12, NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_DOWN);
+      EntryIndex = STAIRS_DOWN;
+      AttachRequired = true;
+    }
+
+    /* Cave Rooms */
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = SALT solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = SALT solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+
+    Room
+    {
+      Size = 7,7;
+      GenerateFountains = false;
+      Shape = ROUND_CORNERS;
+      FloorSquare = SALT solidterrain(GROUND), 0;
+      UseFillSquareWalls = true;
+      GenerateDoor = false;
+      GenerateLanterns = false;
+      AltarPossible = false;
+
+      Square, Pos 3,0;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 0,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 6,3;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+      Square, Pos 3,6;
+      {
+        OTerrain = 0;
+        AttachRequired = true;
+      }
+    }
+  }
+
+  /* Goblin Prince Level */
+  Level 5;
+  {
+    IgnoreDefaultSpecialSquares = true;
+    FillSquare = COBBLE_STONE solidterrain(GROUND), SLADE earth;
+    TunnelSquare = COBBLE_STONE solidterrain(GROUND), 0;
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP);
+      EntryIndex = STAIRS_UP;
+      AttachRequired = true;
+    }
+
+    Square, Random NOT_WALKABLE|ATTACHABLE;
+    {
+      OTerrain = stairs(STAIRS_UP) { AttachedArea = 3; }
+      EntryIndex = STAIRS_UP + 1;
+      AttachRequired = true;
+    }
+
+    RoomDefault
+    {
+      Size = 4:10,4:10;
+      WallSquare = COBBLE_STONE solidterrain(GROUND), MAHOGANY_WOOD wall(BRICK_OLD);
+      FloorSquare = COBBLE_STONE solidterrain(PARQUET), 0;
+      DoorSquare = COBBLE_STONE solidterrain(PARQUET), MAHOGANY_WOOD door;
     }
   }
 }

@@ -28,8 +28,8 @@ Dungeon ASLONA_CASTLE;
   LevelDefault
   {
     Size = 42, 26;
-    GenerateMonsters = true;
-    Rooms = 3:5;
+    GenerateMonsters = false;
+    Rooms = 5:15;
     Items = 0;
     IsOnGround = false;
     TeamDefault = MONSTER_TEAM;
@@ -41,8 +41,8 @@ Dungeon ASLONA_CASTLE;
     EnchantmentPlusChanceBase = 5;
     EnchantmentPlusChanceDelta = 5;
     BackGroundType = BLUE_FRACTAL;
-    FillSquare = LIME_STONE solidterrain(GROUND), LIME_STONE earth;
-    TunnelSquare = LIME_STONE solidterrain(GROUND), 0;
+    FillSquare = CALCITE solidterrain(GROUND), LIME_STONE earth;
+    TunnelSquare = CALCITE solidterrain(GROUND), 0;
     DifficultyBase = 70;
     DifficultyDelta = 10;
     MonsterAmountBase = 5;
@@ -59,8 +59,8 @@ Dungeon ASLONA_CASTLE;
     RoomDefault
     {
       Pos = 2:XSize-5,2:YSize-5;
-      FloorSquare = LIME_STONE solidterrain(GROUND), 0;
-      DoorSquare = LIME_STONE solidterrain(GROUND), 0;
+      FloorSquare = CALCITE solidterrain(GROUND), 0;
+      DoorSquare = CALCITE solidterrain(GROUND), 0;
 
       Size = 3:4,3:4;
       AltarPossible = false;
@@ -494,6 +494,7 @@ Dungeon ASLONA_CASTLE;
       }
     }
 
+    /* the Bridge */
     Square, Pos 25,YSize - 1;
     {
       GTerrain = CYPRESS_WOOD solidterrain(PARQUET);
@@ -526,6 +527,24 @@ Dungeon ASLONA_CASTLE;
     }
   }
 
+  Level 2;
+  {
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = CYPRESS_WOOD sign { Text = "Entry forbidden by royal decree."; }
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = CYPRESS_WOOD sign { Text = "Beware the danger below!"; }
+    }
+
+    Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+    {
+      OTerrain = CYPRESS_WOOD sign { Text = "Pity those who lost their way."; }
+    }
+  }
+
   Level 3;
   {
     Description = "cistern";
@@ -542,12 +561,16 @@ Dungeon ASLONA_CASTLE;
     Room
     {
       Size = 7,7;
+      GenerateDoor = false;
+      GenerateTunnel = false;
       GenerateLanterns = true;
+      AllowLockedDoors = true;
       UseFillSquareWalls = false;
+      Shape = ROUND_CORNERS;
+      DivineMaster = SEGES;
 
-      WallSquare = LIME_STONE solidterrain(GROUND), CALCITE wall(BRICK_OLD);
-      FloorSquare = LIME_STONE solidterrain(PARQUET), 0;
-      DoorSquare = LIME_STONE solidterrain(PARQUET), 0;
+      WallSquare = CALCITE solidterrain(GROUND), BLACK_IRON wall(BRICK_OLD);
+      FloorSquare = OBSIDIAN solidterrain(PARQUET), 0;
 
       Square, Random IN_ROOM|HAS_NO_OTERRAIN;
       {
@@ -556,6 +579,20 @@ Dungeon ASLONA_CASTLE;
                                                     Random { Category = AMULET|RING|SCROLL|WAND; }
                                                }
                                  }
+      }
+
+      Square, Pos 0,4;
+      {
+        GTerrain = OBSIDIAN solidterrain(PARQUET);
+        OTerrain = BLACK_IRON door(SECRET_DOOR);
+        AttachRequired = true;
+      }
+
+      Square, Pos 6,4;
+      {
+        GTerrain = OBSIDIAN solidterrain(PARQUET);
+        OTerrain = BLACK_IRON door(SECRET_DOOR);
+        AttachRequired = true;
       }
     }
   }
