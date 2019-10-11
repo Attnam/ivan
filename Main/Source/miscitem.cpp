@@ -3891,6 +3891,13 @@ col16 trinket::GetMaterialColorC(int) const
   else { return MakeRGB16(0, 0, 0); }
 }
 
+truth trinket::CatWillCatchAndConsume(ccharacter* Kitty) const
+{
+  return GetConfig() == DEAD_FISH &&
+         GetConsumeMaterial(Kitty)->GetConfig() == SARDINE &&
+         !GetConsumeMaterial(Kitty)->GetSpoilLevel();
+}
+
 void gastrap::StepOnEffect(character* Stepper)
 {
   // NPCs should get some benefit from searching too, so make them immune to

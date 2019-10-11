@@ -18,6 +18,7 @@ Changes:
 * Add several new monsters.
 * Orcs have black blood.
 * Use GitHub app for LGTM.
+* Cats can be tamed with fishes.
 
 Fixes:
 * Decos no longer lets you steal from him.

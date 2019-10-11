@@ -106,8 +106,16 @@ CHARACTER(mommo, nonhumanoid)
   virtual void GetAICommand();
 };
 
+CHARACTER(feline, nonhumanoid)
+{
+ public:
+  virtual truth Catches(item*);
+};
+
 CHARACTER(canine, nonhumanoid)
 {
+ public:
+  virtual truth Catches(item*);
 };
 
 CHARACTER(wolf, canine)
@@ -119,7 +127,6 @@ CHARACTER(wolf, canine)
 CHARACTER(dog, canine)
 {
  public:
-  virtual truth Catches(item*);
   virtual void BeTalkedTo();
  protected:
   virtual void CreateCorpse(lsquare*);
@@ -137,7 +144,7 @@ CHARACTER(spider, nonhumanoid)
   virtual bodypart* MakeBodyPart(int) const;
 };
 
-CHARACTER(jackal, nonhumanoid)
+CHARACTER(jackal, canine)
 {
 };
 
@@ -175,7 +182,7 @@ CHARACTER(nerfbat, bat)
   virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
 };
 
-CHARACTER(largecat, nonhumanoid)
+CHARACTER(largecat, feline)
 {
  public:
   largecat() : Lives(7) { }
@@ -203,7 +210,7 @@ CHARACTER(unicorn, nonhumanoid)
   void MonsterTeleport(cchar*);
 };
 
-CHARACTER(lion, nonhumanoid)
+CHARACTER(lion, feline)
 {
 };
 

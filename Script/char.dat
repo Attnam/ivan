@@ -3188,6 +3188,23 @@ canine
   ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
   AttackStyle = USE_HEAD;
   KnownCWeaponSkills == BITE;
+  HostileReplies =
+  {
+    3,
+    "@Dd lets out a hostile howl.",
+    "@Dd barks in fury.",
+    "@Dd growls madly.";
+
+  }
+  FriendlyReplies =
+  {
+    5,
+    "@Dd growls.",
+    "@Dd howls.",
+    "@Dd yips.",
+    "@Dd whines.",
+    "@Dd barks.";
+  }
 }
 
 wolf
@@ -3202,16 +3219,6 @@ wolf
   DefaultMana = 0;
   TotalVolume = 40000;
   TorsoBitmapPos = 224, 0;
-  HostileReplies == "@Dd growls madly.";
-  FriendlyReplies =
-  {
-    5,
-    "@Dd growls.",
-    "@Dd howls.",
-    "@Dd yips.",
-    "@Dd whines.",
-    "@Dd barks.";
-  }
   TotalSize = 100;
   /* SkinColor overridden */
   NameSingular = "wolf";
@@ -3248,7 +3255,6 @@ dog
   DefaultMana = 0;
   TotalVolume = 20000;
   TorsoBitmapPos = 240, 16;
-  HostileReplies == "@Dd barks in fury.";
   /* FriendlyReplies overridden */
   TotalSize = 70;
   SkinColor = rgb16(111, 74, 37);
@@ -3415,8 +3421,6 @@ jackal
   DefaultMana = 0;
   TotalVolume = 15000;
   TorsoBitmapPos = 304, 0;
-  HostileReplies == "@Dd howls in fury.";
-  FriendlyReplies == "@Dd howls happily.";
   TotalSize = 80;
   SkinColor = rgb16(255, 255, 255);
   NameSingular = "jackal";
@@ -5648,18 +5652,11 @@ gibberling
   }
 }
 
-largecat
+feline
 {
-  DefaultArmStrength = 4;
-  DefaultAgility = 35;
-  DefaultEndurance = 10;
-  DefaultPerception = 21;
-  DefaultIntelligence = 10;
-  DefaultWisdom = 10;
-  DefaultCharisma = 20;
-  DefaultMana = 0;
-  TotalVolume = 15000;
-  TorsoBitmapPos = 496, 0;
+  IsAbstract = true;
+  AttackStyle = USE_HEAD;
+  KnownCWeaponSkills == BITE;
   HostileReplies =
   {
     4,
@@ -5679,14 +5676,26 @@ largecat
     "You pet @dd.",
     "@Dd headbutts you playfully.";
   }
+}
+
+largecat
+{
+  DefaultArmStrength = 4;
+  DefaultAgility = 35;
+  DefaultEndurance = 10;
+  DefaultPerception = 21;
+  DefaultIntelligence = 10;
+  DefaultWisdom = 10;
+  DefaultCharisma = 20;
+  DefaultMana = 0;
+  TotalVolume = 15000;
+  TorsoBitmapPos = 496, 0;
   TotalSize = 60;
   SkinColor = rgb16(50, 50, 50);
   Adjective = "large";
   NameSingular = "cat";
-  AttackStyle = USE_HEAD;
   BaseBiteStrength = 600;
   CanBeGenerated = true;
-  KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 50;
   ClassStates = INFRA_VISION;
   FleshMaterial = CAT_FLESH;
@@ -6060,15 +6069,11 @@ lion
   DefaultMana = 0;
   TotalVolume = 100000;
   TorsoBitmapPos = 576, 0;
-  HostileReplies == "@Dd growls furiously.";
-  FriendlyReplies == "@Dd growls happily.";
   TotalSize = 200;
   SkinColor = rgb16(200, 200, 112);
   NameSingular = "lion";
-  AttackStyle = USE_HEAD;
   BaseBiteStrength = 800;
   CanBeGenerated = true;
-  KnownCWeaponSkills == BITE;
   CWeaponSkillHits == 200;
   FleshMaterial = LION_FLESH;
   DeathMessage = "@Dd growls and is slain.";

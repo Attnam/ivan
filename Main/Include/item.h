@@ -252,6 +252,8 @@ class item : public object
   virtual void Fly(character*, int, int, truth=false);
   int HitCharacter(character*, character*, int, double, int);
   virtual truth DogWillCatchAndConsume(ccharacter*) const { return false; }
+  virtual truth CatWillCatchAndConsume(ccharacter*) const { return false; }
+  virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
@@ -539,7 +541,6 @@ class item : public object
   virtual void Draw(blitdata&) const;
   v2 GetLargeBitmapPos(v2, int) const;
   void LargeDraw(blitdata&) const;
-  virtual truth BunnyWillCatchAndConsume(ccharacter*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
   virtual void SignalBurnLevelChange();

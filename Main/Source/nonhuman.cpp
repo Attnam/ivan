@@ -118,7 +118,7 @@ truth elpuri::Hit(character* Enemy, v2, int, int Flags)
   return true;
 }
 
-truth dog::Catches(item* Thingy)
+truth canine::Catches(item* Thingy)
 {
   if(Thingy->DogWillCatchAndConsume(this))
   {
@@ -131,7 +131,38 @@ truth dog::Catches(item* Thingy)
         if(CanBeSeenByPlayer())
           ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-        ChangeTeam(PLAYER->GetTeam());
+        if(PLAYER->GetRelativeDanger(this, true) > 0.1)
+          ChangeTeam(PLAYER->GetTeam());
+          ADD_MESSAGE("%s seems to be much more friendly towards you.", CHAR_NAME(DEFINITE));
+      }
+    }
+    else if(IsPlayer())
+      ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+
+    return true;
+  }
+  else
+    return false;
+}
+
+truth feline::Catches(item* Thingy)
+{
+  if(Thingy->CatWillCatchAndConsume(this))
+  {
+    if(ConsumeItem(Thingy, CONST_S("eating")))
+    {
+      if(IsPlayer())
+        ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+      else
+      {
+        if(CanBeSeenByPlayer())
+          ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+
+        if(PLAYER->GetRelativeDanger(this, true) > 0.1)
+          ChangeTeam(PLAYER->GetTeam());
+          ADD_MESSAGE("%s seems to be much more friendly towards you.", CHAR_NAME(DEFINITE));
       }
     }
     else if(IsPlayer())
@@ -1904,6 +1935,7 @@ truth bunny::Catches(item* Thingy)
       {
         if(CanBeSeenByPlayer())
           ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+          ADD_MESSAGE("%s seems to be much more friendly towards you.", CHAR_NAME(DEFINITE));
 
         ChangeTeam(PLAYER->GetTeam());
       }
