@@ -15,6 +15,7 @@ Changes:
 * Add new ROOM_OWNED_AREA type for generic owned rooms. Uses code similar to
   the Cathedral or Decos' house.
 * Add crysteel.
+* Add several new monsters.
 * Orcs have black blood.
 * Use GitHub app for LGTM.
 

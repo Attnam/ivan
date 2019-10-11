@@ -4925,8 +4925,18 @@ vampirebat /* bat-> */
   TotalVolume = 1200;
   TotalSize = 30;
   SkinColor = rgb16(64, 64, 96);
-  NameSingular = "vampire bat";
+  Adjective = "vampire";
   AllowedDungeons = { 5, XINROCH_TOMB, ATTNAM, ASLONA_CASTLE, PYRAMID, DARK_FOREST; }
+}
+
+nerfbat /* bat-> */
+{
+  DefaultArmStrength = 3;
+  TorsoSpecialColor = rgb16(128, 0, 128); /* EyeColor */
+  SkinColor = rgb16(175, 150, 175);
+  DefaultIntelligence = 12;
+  Adjective = "nurphe";
+  AllowedDungeons = { 4, GOBLIN_FORT, FUNGAL_CAVE, PYRAMID, DARK_FOREST; }
 }
 
 mistress

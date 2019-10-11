@@ -333,6 +333,50 @@ truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
   }
 }
 
+truth item::Polymorph(character* Polymorpher, character* Wielder)
+{
+  if(!IsPolymorphable())
+    return false;
+  else if(!Wielder->Equips(this))
+    return false;
+  else
+  {
+    if(Polymorpher && Wielder)
+    {
+      Polymorpher->Hostility(Wielder);
+    }
+
+    item* NewItem = protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true);
+    int EquipSlot = GetEquipmentIndex();
+    RemoveFromSlot();
+    SendToHell();
+
+    switch (EquipSlot)
+    {
+      /*
+      case HELMET_INDEX: Wielder->SetHelmet(NewItem); break;
+      case AMULET_INDEX: Wielder->SetAmulet(NewItem); break;
+      case CLOAK_INDEX: Wielder->SetCloak(NewItem); break;
+      case BODY_ARMOR_INDEX: Wielder->SetBodyArmor(NewItem); break;
+      case BELT_INDEX: Wielder->SetBelt(NewItem); break;
+      */
+      case RIGHT_WIELDED_INDEX: Wielder->SetRightWielded(NewItem); break;
+      case LEFT_WIELDED_INDEX: Wielder->SetLeftWielded(NewItem); break;
+      /*
+      case RIGHT_RING_INDEX: Wielder->SetRightRing(NewItem); break;
+      case LEFT_RING_INDEX: Wielder->SetLeftRing(NewItem); break;
+      case RIGHT_GAUNTLET_INDEX: Wielder->SetRightGauntlet(NewItem); break;
+      case LEFT_GAUNTLET_INDEX: Wielder->SetLeftGauntlet(NewItem); break;
+      case RIGHT_BOOT_INDEX: Wielder->SetRightBoot(NewItem); break;
+      case LEFT_BOOT_INDEX: Wielder->SetLeftBoot(NewItem); break;
+      */
+    }
+
+    game::AskForKeyPress(CONST_S("Equipment polymorphed! [press any key to continue]"));
+    return true;
+  }
+}
+
 /* Returns truth that tells whether the alchemical conversion really happened. */
 
 truth item::Alchemize(character* Midas, stack* CurrentStack)

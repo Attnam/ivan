@@ -169,6 +169,12 @@ CHARACTER(vampirebat, bat)
   virtual truth SpecialBiteEffect(character*, v2, int, int, truth, truth, int);
 };
 
+CHARACTER(nerfbat, bat)
+{
+ protected:
+  virtual int TakeHit(character*, item*, bodypart*, v2, double, double, int, int, int, truth, truth);
+};
+
 CHARACTER(largecat, nonhumanoid)
 {
  public:

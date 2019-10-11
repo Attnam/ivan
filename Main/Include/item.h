@@ -255,6 +255,7 @@ class item : public object
   virtual truth Apply(character*);
   virtual truth Zap(character*, v2, int) { return false; }
   virtual truth Polymorph(character*, stack*);
+  virtual truth Polymorph(character*, character*);
   virtual truth Alchemize(character*, stack*);
   virtual truth SoftenMaterial();
   virtual truth CheckPickUpEffect(character*) { return true; }

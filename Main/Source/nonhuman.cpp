@@ -961,6 +961,23 @@ truth vampirebat::SpecialBiteEffect(character* Victim, v2 HitPos, int BodyPartIn
     return false;
 }
 
+int nerfbat::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage,
+                     double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
+{
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue,
+                                    Success, Type, Direction, Critical, ForceHit);
+
+  if(Return != HAS_DIED)
+  {
+    if(Weapon)
+      Weapon->Polymorph(this, Enemy);
+    else if(EnemyBodyPart)
+      Enemy->PolymorphRandomly(1, 999999, (int)(Damage * 100 + RAND() % 100));
+  }
+
+  return Return;
+}
+
 bool ChameleonPolymorphRandomly(chameleon* c){
   character* NewForm = c->PolymorphRandomly(100, 1000, 500 + RAND() % 500);
 
